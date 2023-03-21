@@ -1,11 +1,12 @@
 import React, { useCallback, useState, useMemo } from "react";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Alert, Flex, ProgressLoader, Text } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 
@@ -13,7 +14,7 @@ import { TrackScreen, track } from "../../../analytics";
 import { DeviceActionDefaultRendering } from "..";
 import QueuedDrawer from "../../QueuedDrawer";
 
-import Item from "./Item";
+import Item, { ItemState } from "./Item";
 import Confirmation from "./Confirmation";
 import Restore from "./Restore";
 import { lastSeenDeviceSelector } from "../../../reducers/settings";
@@ -43,6 +44,7 @@ const InstallSetOfApps = ({
   onError,
   remountMe,
 }: Props & { remountMe: () => void }) => {
+  const { t } = useTranslation();
   const [userConfirmed, setUserConfirmed] = useState(false);
   const productName = getDeviceModel(selectedDevice.modelId).productName;
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
@@ -69,7 +71,7 @@ const InstallSetOfApps = ({
       dependencies: dependenciesToInstall.map(appName => ({ appName })),
       appName: "BOLOS",
       withInlineInstallProgress: true,
-      skipAppInstallIfNotFound: true,
+      allowPartialDependencies: true,
     }),
     [dependenciesToInstall],
   );
@@ -81,13 +83,14 @@ const InstallSetOfApps = ({
 
   const {
     allowManagerRequestedWording,
-    listingApps,
+    skippedAppOps,
+    installQueue,
+    listedApps,
     error,
     currentAppOp,
     itemProgress,
     progress,
     opened,
-    installQueue,
   } = status;
 
   const onWrappedError = useCallback(() => {
@@ -101,6 +104,11 @@ const InstallSetOfApps = ({
     }
   }, [remountMe, error, onError]);
 
+  const installing = !opened && typeof progress === "number" && currentAppOp;
+  const missingApps = skippedAppOps?.some(
+    skippedAppOp => skippedAppOp.reason === SkipReason.NoSuchAppOnProvider,
+  );
+
   if (opened) {
     onResult(true);
     return error ? null : (
@@ -110,47 +118,61 @@ const InstallSetOfApps = ({
 
   return userConfirmed ? (
     <Flex height="100%">
-      <Flex flex={1} alignItems="center" justifyContent="center">
-        <Flex mb={2} alignSelf="flex-start">
-          <Text mb={5} variant="paragraphLineHeight">
-            {listingApps ? (
-              <Trans i18nKey="installSetOfApps.ongoing.resolving" />
-            ) : typeof progress === "number" && currentAppOp ? (
-              <Trans
-                i18nKey="installSetOfApps.ongoing.progress"
-                values={{ progress: Math.round(progress * 100) }}
-              />
-            ) : (
-              <Trans i18nKey="installSetOfApps.ongoing.loading" />
-            )}
-          </Text>
-          {itemProgress !== undefined
-            ? dependenciesToInstall?.map((appName, i) => {
-                const isActive = currentAppOp?.name === appName;
-                return (
-                  <>
-                    {!shouldRestoreApps && isActive && (
-                      <TrackScreen category={`Installing ${appName}`} />
-                    )}
-                    <Item
-                      key={appName}
-                      i={i}
-                      appName={appName}
-                      isActive={isActive}
-                      installed={
-                        progress ? !installQueue?.includes(appName) : undefined
-                      }
-                      itemProgress={itemProgress}
-                    />
-                  </>
-                );
-              })
-            : null}
+      <Flex flex={1} alignItems="flex-start">
+        <Flex
+          style={{ width: "100%" }}
+          flexDirection="row"
+          justifyContent="space-between"
+          mb={6}
+        >
+          {installing ? (
+            <Text>{t("installSetOfApps.ongoing.progress")}</Text>
+          ) : (
+            <>
+              <Text>{t("installSetOfApps.ongoing.resolving")}</Text>
+              <ProgressLoader infinite radius={10} strokeWidth={2} />
+            </>
+          )}
         </Flex>
+        {missingApps ? (
+          <Alert
+            title={t("installSetOfApps.ongoing.skippedInfo", { productName })}
+          />
+        ) : null}
+        {!!missingApps && <Flex mb={6} />}
+        {dependenciesToInstall?.map((appName, i) => {
+          const skipped = skippedAppOps.find(
+            skippedAppOp => skippedAppOp.appOp.name === appName,
+          );
+
+          const state = !listedApps
+            ? ItemState.Idle
+            : currentAppOp?.name === appName
+            ? ItemState.Active
+            : skipped?.reason === SkipReason.NoSuchAppOnProvider
+            ? ItemState.Skipped
+            : !installQueue?.includes(appName) ||
+              skipped?.reason === SkipReason.AppAlreadyInstalled
+            ? ItemState.Installed
+            : ItemState.Idle;
+
+          return (
+            <>
+              {!shouldRestoreApps && currentAppOp?.name === appName && (
+                <TrackScreen category={`Installing ${appName}`} />
+              )}
+              <Item
+                key={appName}
+                i={i}
+                appName={appName}
+                state={state}
+                productName={productName}
+                itemProgress={itemProgress}
+              />
+            </>
+          );
+        })}
       </Flex>
-      <Text variant="paragraphLineHeight" color="neutral.c70">
-        <Trans i18nKey="installSetOfApps.ongoing.disclaimer" />
-      </Text>
       <QueuedDrawer
         isRequestingToBeOpened={!!allowManagerRequestedWording || !!error}
         onClose={onWrappedError}

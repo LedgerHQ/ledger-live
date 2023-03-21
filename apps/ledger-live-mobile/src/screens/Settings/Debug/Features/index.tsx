@@ -64,6 +64,12 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugLottie)}
       />
       <SettingsRow
+        title="Install set of apps"
+        desc="Multi app install feature test"
+        iconLeft={<Icons.MugHotMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugInstallSetOfApps)}
+      />
+      <SettingsRow
         title="Videos"
         desc="See all video assets"
         iconLeft={<Icons.PlayMedium size={32} color="black" />}

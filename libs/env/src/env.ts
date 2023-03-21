@@ -331,11 +331,6 @@ const envDefinitions: Record<
     parser: boolParser,
     desc: "enable experimental explorer APIs",
   },
-  EXPERIMENTAL_FALLBACK_APDU_LISTAPPS: {
-    def: false,
-    parser: boolParser,
-    desc: "if HSM list apps fails, fallback on APDU version (>=1.6.0)",
-  },
   EXPERIMENTAL_LANGUAGES: {
     def: false,
     parser: boolParser,
