@@ -498,12 +498,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     lastSeenDevice: {
       ...(state.lastSeenDevice || {}),
-      ...(action as Action<SettingsLastSeenDeviceInfoPayload>).payload.dmi,
+      ...(action as Action<SettingsLastSeenDeviceInfoPayload>).payload
+        .deviceModelInfo,
     },
     knownDeviceModelIds: {
       ...state.knownDeviceModelIds,
-      [(action as Action<SettingsLastSeenDeviceInfoPayload>).payload.dmi
-        .modelId]: true,
+      [(action as Action<SettingsLastSeenDeviceInfoPayload>).payload
+        .deviceModelInfo.modelId]: true,
     },
   }),
 

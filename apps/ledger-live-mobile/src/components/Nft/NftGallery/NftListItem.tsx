@@ -188,11 +188,7 @@ const NftMediaComponent = ({
       ) : null}
 
       {selectable && (
-        <Flex
-          position="absolute"
-          bottom={`${space[7]}px`}
-          left={`${space[4]}px`}
-        >
+        <Flex position="absolute" top={`${space[5]}px`} left={`${space[5]}px`}>
           <NftSelectionCheckbox isSelected={isSelected} />
         </Flex>
       )}

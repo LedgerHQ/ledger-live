@@ -386,8 +386,8 @@ const setLastSeenDeviceInfoAction =
   createAction<SettingsLastSeenDeviceInfoPayload>(
     SettingsActionTypes.LAST_SEEN_DEVICE_INFO,
   );
-export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) =>
-  setLastSeenDeviceInfoAction({ dmi });
+export const setLastSeenDeviceInfo = (deviceModelInfo: DeviceModelInfo) =>
+  setLastSeenDeviceInfoAction({ deviceModelInfo });
 
 const setHasSeenStaxEnabledNftsPopupAction =
   createAction<SettingsSetHasSeenStaxEnabledNftsPopupPayload>(

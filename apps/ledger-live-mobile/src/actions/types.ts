@@ -412,7 +412,7 @@ export type SettingsLastSeenDevicePayload = {
   deviceInfo: NonNullable<SettingsState["lastSeenDevice"]>["deviceInfo"];
 };
 export type SettingsLastSeenDeviceInfoPayload = {
-  dmi: DeviceModelInfo;
+  deviceModelInfo: DeviceModelInfo;
 };
 export type SettingsSetHasSeenStaxEnabledNftsPopupPayload = Pick<
   SettingsState,
