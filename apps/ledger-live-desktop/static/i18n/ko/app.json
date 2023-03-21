@@ -80,6 +80,7 @@
     "selectCurrencyEmptyOption" : "암호화폐 없음",
     "selectValidatorNoOption" : "'{{accountName}}'와/과 일치하는 검증인이 없습니다",
     "selectNoResults" : "{{query}}와 일치하는 결과를 찾을 수 없습니다",
+    "backToLiveApp" : "{{appName}} 앱으로 돌아가기",
     "sortBy" : "정렬 기준",
     "save" : "Ledger Nano S를",
     "lock" : "잠금",
@@ -824,7 +825,20 @@
       "delegation" : {
         "title" : "알고 계셨나요?",
         "description" : "Ledger 검증인은 {{asset}} 스테이킹 서비스를 {{commission}}%의 커미션으로 제공합니다.",
-        "cta" : "Ledger를 통한 스테이킹"
+        "cta" : "Ledger를 통한 스테이킹",
+        "linkText" : "자세히 알아보기",
+        "ethereum" : {
+          "lido" : {
+            "title" : "알고 계셨나요?",
+            "description" : "Lido를 통해 이더리움을 스테이킹하고 매일 보상을 받으세요. 락업 기간 없음. 최소 예치금 없음.",
+            "cta" : "리도(Lido)를 통한 스테이킹"
+          },
+          "kiln" : {
+            "title" : "호들만으로는 부족합니다. 보유한 ETH로 더 큰 수익을 올려보세요",
+            "description" : "ETH를 32개 이상 보유하고 계시나요? Kiln을 통해 ETH를 안전하게 스테이킹하여 불로소득을 올려보세요.",
+            "cta" : "킬른(Kiln)으로 스테이킹"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1413,7 @@
         "label" : "인기 있는"
       },
       "earn" : {
-        "title" : "수익",
+        "title" : "스테이킹",
         "description" : "Ledger와 함께 암호화폐 수익 실현"
       }
     }
@@ -2129,16 +2143,16 @@
           "description" : "신뢰할 수 있는 Ledger 검증인을 통해 ATOM을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 자산을 안전하게 보호합니다."
         },
         "osmo" : {
-          "title" : "OSMO를 성장시켜보세요. Ledger를 통해 Figment로 스테이킹.",
-          "description" : "Ledger를 통해 Figment로 검증인을 통해 OSMO를 스테이킹하세요. 최저 수수료와 슬래싱에 대한 보장이 제공됩니다!"
+          "title" : "OSMO를 성장시켜보세요. Ledger by Figment로 스테이킹.",
+          "description" : "Ledger by Figment로 검증인을 통해 OSMO를 스테이킹하세요. 최저 수수료와 슬래싱에 대한 보장이 제공됩니다!"
         },
         "solana" : {
-          "title" : "SOL을 성장시켜보세요. Ledger를 통해 Figment로 스테이킹.",
-          "description" : "Ledger를 통해 Figment로 검증인을 통해 SOL을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 자산을 안전하게 보호합니다."
+          "title" : "SOL을 성장시켜보세요. Ledger by Figment로 스테이킹.",
+          "description" : "Ledger by Figment로 검증인을 통해 SOL을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 자산을 안전하게 보호합니다."
         },
         "celo" : {
-          "title" : "CELO를 성장시켜보세요. Ledger를 통해 Figment로 스테이킹.",
-          "description" : "Ledger를 통해 Figment로 검증인을 통해 CELO를 스테이킹하세요. Ledger의 타협 없는 확실한 보안을 통해 슬래싱에 완벽히 대비하세요."
+          "title" : "CELO를 성장시켜보세요. Ledger by Figment로 스테이킹.",
+          "description" : "Ledger by Figment로 검증인을 통해 CELO를 스테이킹하세요. Ledger의 타협 없는 확실한 보안을 통해 슬래싱에 완벽히 대비하세요."
         }
       }
     }
@@ -3532,7 +3546,7 @@
           },
           "validator" : {
             "title" : "검증인",
-            "ledgerByFigmentTC" : "Figment 기반 Ledger 이용약관"
+            "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
           },
           "connectDevice" : {
             "title" : "장치"
@@ -5356,7 +5370,7 @@
       "description" : "30초 이내에 서명이 적용되어야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 50 TRX를 지불할 수 있습니다."
     },
     "PairingFailed" : {
       "title" : "페어링 실패",
@@ -5521,6 +5535,10 @@
       "title" : "파일 이미지 로딩 실패",
       "description" : "다른 이미지로 다시 시도하세요"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "NFT 이미지 로딩 실패",
+      "description" : "다른 NFT로 다시 시도하세요"
+    },
     "ImageDownloadError" : {
       "title" : "이미지 다운로드 실패",
       "description" : "다른 이미지로 다시 시도하세요"
@@ -5593,6 +5611,13 @@
       "descriptionWithProductName" : "먼저 {{ productName }} 장치 설정이 필요합니다.\n설정 절차를 안내해드리겠습니다.",
       "goToOnboardingButton" : "내 장치 설정",
       "goToOnboardingButtonWithProductName" : "내 {{ productName }} 설정"
+    },
+    "EtherscanAPIError" : {
+      "title" : "트랜잭션을 가져오지 못했습니다",
+      "description" : "탐색기에서 예상하지 못한 오류가 발생했습니다. 나중에 다시 시도해 주세요"
+    },
+    "GasEstimationError" : {
+      "title" : "가스비를 추정하지 못했습니다"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5656,13 @@
         "stepLabel" : "이미지 선택",
         "description" : "(...)로 설정할 이미지 선택",
         "pickFromNftGallery" : "내 NFT 갤러리에서 선택",
-        "upload" : "내 컴퓨터에서 업로드"
+        "myNfts" : "내 NFT",
+        "upload" : "내 컴퓨터에서 업로드",
+        "chooseNft" : "NFT 선택하기",
+        "selectNft" : "NFT 선택",
+        "previousSelectNft" : "뒤로",
+        "nftEmptyStateTitle" : "아직 표시할 NFT가 없습니다",
+        "nftEmptyStateDescription" : "지갑에 NFT를 추가하고 시작하세요."
       },
       "adjust" : {
         "stepLabel" : "이미지 조정",
