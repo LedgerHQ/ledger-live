@@ -1,6 +1,6 @@
+import axios from "axios";
 import eip55 from "eip55";
 import { log } from "@ledgerhq/logs";
-import network from "@ledgerhq/live-common/network";
 import { DomainServiceResolution, SupportedRegistries } from "../types";
 import {
   getRegistries,
@@ -37,7 +37,7 @@ export const resolveDomain = async (
 
   const responses = Promise.allSettled(
     registries.map((registry) =>
-      network<string>({
+      axios.request<string>({
         method: "GET",
         url: registry.resolvers.forward.replace("{name}", domain),
       })
@@ -108,7 +108,7 @@ export const resolveAddress = async (
 
   const responses = Promise.allSettled(
     registries.map((registry) =>
-      network<string>({
+      axios.request<string>({
         method: "GET",
         url: registry.resolvers.reverse.replace("{address}", address),
       })

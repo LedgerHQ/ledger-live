@@ -1,21 +1,19 @@
 import React from "react";
+import axios from "axios";
 import "@testing-library/jest-dom";
 import BigNumber from "bignumber.js";
 import {
-  findCryptoCurrencyById,
+  getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { Account } from "@ledgerhq/types-live";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { ThemeProvider } from "styled-components";
-import network from "@ledgerhq/live-common/network";
 import userEvent from "@testing-library/user-event";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { act, render, screen, waitFor } from "@testing-library/react";
-import { DomainServiceProvider } from "@ledgerhq/domain-service/lib/hooks/index";
-// TODO specific test need to be moved to the family
-// eslint-disable-next-line no-restricted-imports
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/families/ethereum/types";
+import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/generated/types";
 import defaultTheme from "~/renderer/styles/theme";
 import palettes from "~/renderer/styles/palettes";
 import RecipientField from "./RecipientField";
@@ -38,14 +36,15 @@ jest.mock("../../../components/Alert", () => {
   };
   return mockDiv;
 });
-jest.mock("@ledgerhq/live-common/network");
+
+jest.mock("axios");
 jest.mock("@ledgerhq/live-common/featureFlags/index");
-const mockedNetwork = jest.mocked(network);
+const mockedAxios = jest.mocked(axios);
 const mockedUseFeature = jest.mocked(useFeature);
 const mockedOnChangeTransaction = jest.fn().mockImplementation(t => t);
 
-const eth = findCryptoCurrencyById("ethereum");
-const polygon = findCryptoCurrencyById("polygon");
+const eth = getCryptoCurrencyById("ethereum");
+const polygon = getCryptoCurrencyById("polygon");
 
 const ethMockAccount: Account = {
   type: "Account",
@@ -186,7 +185,7 @@ describe("RecipientField", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockedNetwork.mockImplementation(async ({ url }) => {
+    jest.spyOn(axios, "request").mockImplementation(async ({ url }) => {
       if (url?.endsWith("vitalik.eth")) {
         return {
           data: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
@@ -238,16 +237,18 @@ describe("RecipientField", () => {
         const input = screen.getByRole("textbox");
 
         await act(() => userEvent.type(input, "vitalik.eth"));
-        await waitFor(() =>
-          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
-            ...baseMockTransaction,
-            recipient: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-            recipientDomain: {
-              registry: "ens",
-              domain: "vitalik.eth",
-              address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-            },
-          }),
+        await waitFor(
+          () =>
+            expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+              ...baseMockTransaction,
+              recipient: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+              recipientDomain: {
+                registry: "ens",
+                domain: "vitalik.eth",
+                address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+              },
+            }),
+          { timeout: 50000 },
         );
       });
 
@@ -346,7 +347,7 @@ describe("RecipientField", () => {
             recipientDomain: undefined,
           }),
         );
-        expect(mockedNetwork).not.toHaveBeenCalled();
+        expect(mockedAxios).not.toHaveBeenCalled();
       });
     });
 

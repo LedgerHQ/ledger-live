@@ -1,5 +1,5 @@
+import axios from "axios";
 import { log } from "@ledgerhq/logs";
-import network from "@ledgerhq/live-common/network";
 import { SupportedRegistries } from "../types";
 import { getRegistries } from "../registries";
 
@@ -24,10 +24,11 @@ export const signDomainResolution = async (
     .replace("{name}", domain)
     .replace("{challenge}", challenge);
 
-  return network<{ payload: string }>({
-    method: "GET",
-    url,
-  })
+  return axios
+    .request<{ payload: string }>({
+      method: "GET",
+      url,
+    })
     .then(({ data }) => data.payload)
     .catch((error) => {
       if (error.status !== 404) {
@@ -61,10 +62,11 @@ export const signAddressResolution = async (
     .replace("{address}", address)
     .replace("{challenge}", challenge);
 
-  return network<{ payload: string }>({
-    method: "GET",
-    url,
-  })
+  return axios
+    .request<{ payload: string }>({
+      method: "GET",
+      url,
+    })
     .then(({ data }) => data.payload)
     .catch((error) => {
       if (error.status !== 404) {
