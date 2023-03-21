@@ -80,6 +80,7 @@
     "selectCurrencyEmptyOption" : "Kripto varlık yok",
     "selectValidatorNoOption" : "\"{{accountName}}\" isimli bir doğrulayıcı yok",
     "selectNoResults" : "\"{{query}}\" ile eşleşen bir sonuç bulunamadı",
+    "backToLiveApp" : "{{appName}} sayfasına dön",
     "sortBy" : "Sıralama türü",
     "save" : "Kaydet",
     "lock" : "Kilitle",
@@ -824,7 +825,20 @@
       "delegation" : {
         "title" : "Haberiniz olsun...",
         "description" : "Ledger doğrulayıcısı, {{asset}} varlığınızı %{{commission}} oranında bir komisyonla stake eder.",
-        "cta" : "Ledger ile Stake Edin"
+        "cta" : "Ledger ile Stake Edin",
+        "linkText" : "Daha fazla bilgi",
+        "ethereum" : {
+          "lido" : {
+            "title" : "Kaçırmış olmayın:",
+            "description" : "Lido ile Ethereum stake edin ve her gün ödül kazanın. Kilitleme süresi yok. Minimum yatırma tutarı yok.",
+            "cta" : "Lido ile stake edin"
+          },
+          "kiln" : {
+            "title" : "Sadece HODL ile yetinmeyin. ETH varlıklarınızı artırın",
+            "description" : "32'den fazla ETH'niz mi var? Kiln ile ETH varlıklarınızı güvenle stake ederek pasif ödüller kazanın.",
+            "cta" : "Kiln ile stake edin"
+          }
+        }
       }
     }
   },
@@ -1399,7 +1413,7 @@
         "label" : "Popüler"
       },
       "earn" : {
-        "title" : "Kazan",
+        "title" : "Stake et",
         "description" : "Kriptolarınızı Ledger ile artırın"
       }
     }
@@ -3825,8 +3839,8 @@
           "description" : "Mevcut deneysel kripto varlık entegrasyonlarını kullanın."
         },
         "experimentalExecutionOnRenderer" : {
-          "title" : "Deneysel ağ iletişimleri",
-          "description" : "VPN ile Ledger Live kullanımını en iyi hâle getirmek için deneysel ağ iletişimlerini kullanın. Bu özelliği sadece kullandığınız VPN, sistem hatalarına neden olursa etkinleştirin."
+          "title" : "Deneysel ağ oluşturma",
+          "description" : "VPN ile Ledger Live kullanımını en iyi hâle getirmek için deneysel ağ oluşturmayı kullanın. Bu özelliği sadece kullandığınız VPN, sistem hatalarına neden olursa etkinleştirin."
         },
         "experimentalLanguages" : {
           "title" : "Çeviri testi",
@@ -5097,7 +5111,7 @@
       "title" : "Ana hesaptaki bakiye ağ ücretlerini karşılamak için yetersiz"
     },
     "OperatingSystemOutdated" : {
-      "title" : "İşletim Sisteminizin sürümü eski",
+      "title" : "Your Operating System version is outdated",
       "description" : "Lütfen işletim sisteminizi yükseltin ve tekrar deneyin. Mevcut işletim sistemi sürümünüzde Ledger Live uygulamasının neden desteklenmediğini öğrenmek için aşağıdaki makaleyi inceleyebilirsiniz."
     },
     "PasswordsDontMatch" : {
@@ -5356,7 +5370,7 @@
       "description" : "İmza 30 saniye içinde uygulanmalıdır. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
     },
     "PairingFailed" : {
       "title" : "Eşleştirme başarısız",
@@ -5521,6 +5535,10 @@
       "title" : "Dosyadan görüntü yüklenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "NFT'den görüntü yüklenemedi",
+      "description" : "Lütfen başka bir NFT ile tekrar deneyin"
+    },
     "ImageDownloadError" : {
       "title" : "Görüntü indirilemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
@@ -5593,6 +5611,13 @@
       "descriptionWithProductName" : "Öncelikle {{ productName }} cihazınızın kurulumunu yapmanız gerekiyor.\nKurulum sürecinde size yardımcı olacağız.",
       "goToOnboardingButton" : "Cihazımı kur",
       "goToOnboardingButtonWithProductName" : "{{ productName }} cihazımı kur"
+    },
+    "EtherscanAPIError" : {
+      "title" : "İşlemler alınamadı",
+      "description" : "Tarayıcılarla ilgili beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin"
+    },
+    "GasEstimationError" : {
+      "title" : "Tahmini Gas ücreti hesaplanamadı"
     }
   },
   "cryptoOrg" : {
@@ -5631,7 +5656,13 @@
         "stepLabel" : "Bir görüntü seçin",
         "description" : "Bir görüntü seçip ayarlayın (...)",
         "pickFromNftGallery" : "NFT galerimden seç",
-        "upload" : "Bilgisayarımdan yükle"
+        "myNfts" : "NFT'lerim",
+        "upload" : "Bilgisayarımdan yükle",
+        "chooseNft" : "Bir NFT seçin",
+        "selectNft" : "NFT'yi seç",
+        "previousSelectNft" : "Geri",
+        "nftEmptyStateTitle" : "Gösterilecek NFT yok",
+        "nftEmptyStateDescription" : "Öncelikle cüzdanınıza NFT ekleyin."
       },
       "adjust" : {
         "stepLabel" : "Görüntüyü ayarla",
