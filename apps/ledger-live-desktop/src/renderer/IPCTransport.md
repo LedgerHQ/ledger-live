@@ -79,7 +79,7 @@ Now, this part is interesting: we are actually expecting the transport to have b
 
 ### `exchangeBulk` Observable example
 
-The exact same idea applies now for the Observable. The main difference is that we can then more than one event on an observable, and we also need to be able to unsubscribe to the Observable, so we need to have a way to send an event to the internal to unsubscribe.
+The exact same idea applies now for the Observable. The main difference is that we can then receive more than one event on an observable, and we also need to be able to unsubscribe to the Observable, so we need to have a way to send an event to the internal to unsubscribe.
 
 Knowing this, the implementation of `exchangeBulk` on the renderer side is straightforward:
 
