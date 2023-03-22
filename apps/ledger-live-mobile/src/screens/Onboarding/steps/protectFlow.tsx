@@ -56,7 +56,7 @@ function OnboardingStepProtectFlow() {
         id: RestoreWithProtect.id,
         illustration: (
           <StepLottieAnimation
-            stepId="pinCode"
+            stepId="recover"
             deviceModelId={deviceModelId}
             theme={theme}
           />
