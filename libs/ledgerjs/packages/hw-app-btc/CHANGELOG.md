@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-btc
 
+## 10.0.1-recover-staging.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.2-recover-staging.0
+
 ## 10.0.0
 
 ### Major Changes

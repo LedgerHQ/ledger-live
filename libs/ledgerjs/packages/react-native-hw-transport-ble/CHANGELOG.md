@@ -1,5 +1,14 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.28.4-recover-staging.0
+
+### Patch Changes
+
+- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472)]:
+  - @ledgerhq/errors@6.12.4-recover-staging.0
+  - @ledgerhq/devices@8.0.1-recover-staging.0
+  - @ledgerhq/hw-transport@6.28.2-recover-staging.0
+
 ## 6.28.3
 
 ### Patch Changes
