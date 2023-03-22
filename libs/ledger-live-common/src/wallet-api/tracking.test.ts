@@ -1,5 +1,5 @@
 import trackingWrapper from "./tracking";
-import { LiveAppManifest } from "../platform/types";
+import { AppManifest } from "./types";
 
 describe("trackingWrapper", () => {
   test.each([
@@ -130,7 +130,7 @@ describe("trackingWrapper", () => {
   );
 });
 
-function appManifestFixture(name = "live-app"): LiveAppManifest {
+function appManifestFixture(name = "live-app"): AppManifest {
   return {
     id: "12",
     name,
