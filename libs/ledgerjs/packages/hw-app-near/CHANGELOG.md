@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-near
 
+## 6.27.8-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472)]:
+  - @ledgerhq/errors@6.12.4-nightly.1
+  - @ledgerhq/hw-transport@6.28.2-nightly.1
+
 ## 6.27.8-nightly.0
 
 ### Patch Changes

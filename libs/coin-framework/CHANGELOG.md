@@ -1,5 +1,18 @@
 # @ledgerhq/coin-framework
 
+## 0.2.1-nightly.1
+
+### Patch Changes
+
+- [#2879](https://github.com/LedgerHQ/ledger-live/pull/2879) [`c6a88dd5ab`](https://github.com/LedgerHQ/ledger-live/commit/c6a88dd5abae2b85c3c085ea65e81f89950ecdd4) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve account generator to support delisted tokens
+
+- [#2975](https://github.com/LedgerHQ/ledger-live/pull/2975) [`a1e097d391`](https://github.com/LedgerHQ/ledger-live/commit/a1e097d391644fe1a7dd51ca49cf7b51667e4625) Thanks [@gre](https://github.com/gre)! - chore: slow rate for account incremental sync and countervalues
+
+- Updated dependencies [[`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472)]:
+  - @ledgerhq/errors@6.12.4-nightly.1
+  - @ledgerhq/devices@8.0.1-nightly.1
+  - @ledgerhq/hw-transport@6.28.2-nightly.1
+
 ## 0.2.1-nightly.0
 
 ### Patch Changes

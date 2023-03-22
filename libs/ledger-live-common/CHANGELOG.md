@@ -1,5 +1,35 @@
 # @ledgerhq/live-common
 
+## 29.2.0-nightly.2
+
+### Patch Changes
+
+- [#3002](https://github.com/LedgerHQ/ledger-live/pull/3002) [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support 5102 status on language pack installation (full device)
+
+- [#2814](https://github.com/LedgerHQ/ledger-live/pull/2814) [`81a0cbb8ee`](https://github.com/LedgerHQ/ledger-live/commit/81a0cbb8ee0583bdec083c6de0797510a3bf8be3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Expose listedApps flag from connectApp for better UX on inline install apps
+
+- [#2975](https://github.com/LedgerHQ/ledger-live/pull/2975) [`a1e097d391`](https://github.com/LedgerHQ/ledger-live/commit/a1e097d391644fe1a7dd51ca49cf7b51667e4625) Thanks [@gre](https://github.com/gre)! - chore: slow rate for account incremental sync and countervalues
+
+- Updated dependencies [[`c6a88dd5ab`](https://github.com/LedgerHQ/ledger-live/commit/c6a88dd5abae2b85c3c085ea65e81f89950ecdd4), [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472), [`a1e097d391`](https://github.com/LedgerHQ/ledger-live/commit/a1e097d391644fe1a7dd51ca49cf7b51667e4625)]:
+  - @ledgerhq/coin-framework@0.2.1-nightly.1
+  - @ledgerhq/errors@6.12.4-nightly.1
+  - @ledgerhq/coin-polkadot@0.0.4-nightly.1
+  - @ledgerhq/devices@8.0.1-nightly.1
+  - @ledgerhq/hw-app-algorand@6.27.13-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.27.13-nightly.1
+  - @ledgerhq/hw-app-eth@6.32.2-nightly.1
+  - @ledgerhq/hw-app-near@6.27.8-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.27.13-nightly.1
+  - @ledgerhq/hw-app-solana@7.0.7-nightly.1
+  - @ledgerhq/hw-app-trx@6.27.13-nightly.1
+  - @ledgerhq/hw-transport@6.28.2-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.27.13-nightly.1
+  - @ledgerhq/hw-app-btc@10.0.1-nightly.1
+  - @ledgerhq/hw-app-str@6.27.13-nightly.1
+  - @ledgerhq/hw-app-tezos@6.27.13-nightly.1
+  - @ledgerhq/hw-app-xrp@6.27.13-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.27.13-nightly.1
+
 ## 29.2.0-nightly.1
 
 ### Minor Changes

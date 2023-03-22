@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.18.0-nightly.2
+
+### Patch Changes
+
+- [#2879](https://github.com/LedgerHQ/ledger-live/pull/2879) [`c6a88dd5ab`](https://github.com/LedgerHQ/ledger-live/commit/c6a88dd5abae2b85c3c085ea65e81f89950ecdd4) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve account generator to support delisted tokens
+
+- [#2814](https://github.com/LedgerHQ/ledger-live/pull/2814) [`81a0cbb8ee`](https://github.com/LedgerHQ/ledger-live/commit/81a0cbb8ee0583bdec083c6de0797510a3bf8be3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Adapt UX of install set of apps for missing dependencies
+
+- [#2903](https://github.com/LedgerHQ/ledger-live/pull/2903) [`ba7c9d40b8`](https://github.com/LedgerHQ/ledger-live/commit/ba7c9d40b890b8316b964949c0d0ac5beaa038f5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix UI for add account flow account list screen
+
+- [#2926](https://github.com/LedgerHQ/ledger-live/pull/2926) [`d1b455af86`](https://github.com/LedgerHQ/ledger-live/commit/d1b455af86efb61883251e4801cd808d200662f7) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Handle closing sync onboarding after completion
+
+- [#2960](https://github.com/LedgerHQ/ledger-live/pull/2960) [`51a0ca9654`](https://github.com/LedgerHQ/ledger-live/commit/51a0ca9654c71efa6fee6ae341f750d91e11048d) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent duplicated USB entries on old device selector.
+  Fix broken device action modals caused by nanoFTS state hack.
+  Fix UI for Android empty USB state, text overflowing.
+  Fix add account flow undismissable modal (x/back drop) close.
+- Updated dependencies [[`c6a88dd5ab`](https://github.com/LedgerHQ/ledger-live/commit/c6a88dd5abae2b85c3c085ea65e81f89950ecdd4), [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472), [`81a0cbb8ee`](https://github.com/LedgerHQ/ledger-live/commit/81a0cbb8ee0583bdec083c6de0797510a3bf8be3), [`a1e097d391`](https://github.com/LedgerHQ/ledger-live/commit/a1e097d391644fe1a7dd51ca49cf7b51667e4625)]:
+  - @ledgerhq/coin-framework@0.2.1-nightly.1
+  - @ledgerhq/errors@6.12.4-nightly.1
+  - @ledgerhq/live-common@29.2.0-nightly.2
+  - @ledgerhq/devices@8.0.1-nightly.1
+  - @ledgerhq/hw-transport@6.28.2-nightly.1
+  - @ledgerhq/hw-transport-http@6.27.13-nightly.1
+  - @ledgerhq/react-native-hid@6.29.1-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.28.4-nightly.1
+
 ## 3.18.0-nightly.1
 
 ### Minor Changes

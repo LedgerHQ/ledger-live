@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.12.4-nightly.1
+
+### Patch Changes
+
+- [#3002](https://github.com/LedgerHQ/ledger-live/pull/3002) [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support 5102 status on language pack installation (full device)
+
 ## 6.12.4-nightly.0
 
 ### Patch Changes
