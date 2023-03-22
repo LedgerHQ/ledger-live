@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { Icons, NumberedList, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
-import InfoModal from "../../../../../modals/Info";
 import Button from "../../../../../components/wrappedUi/Button";
 import { TrackScreen } from "../../../../../analytics";
 import Touchable from "../../../../../components/Touchable";
+import QueuedDrawer from "../../../../../components/QueuedDrawer";
 
 const RestoreWithProtectScene = () => {
   const { t } = useTranslation();
@@ -46,7 +46,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
   const updateFirmwareLink =
     "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true";
 
-  const supportLink = restoreInfoDrawer?.supportLink;
+  const supportLink = restoreInfoDrawer?.supportLinkURI;
 
   const onOpen = useCallback(() => setIsOpened(true), []);
   const onClose = useCallback(() => setIsOpened(false), []);
@@ -68,49 +68,40 @@ const Next = ({ onNext }: { onNext: () => void }) => {
       <Button type="main" size="large" onPress={onNext} mb={7}>
         {t("onboarding.stepProtect.nextStep")}
       </Button>
-      <InfoModal
-        isOpened={isOpened}
+      <QueuedDrawer
+        isRequestingToBeOpened={isOpened}
         onClose={onClose}
-        data={[
-          {
-            title: t("onboarding.stepProtect.extraInfo.title"),
-          },
-          {
-            description: t("onboarding.stepProtect.extraInfo.desc"),
-            footer: (
-              <>
-                <Button
-                  type="main"
-                  size="large"
-                  onPress={onLearnToUpdate}
-                  Icon={Icons.ExternalLinkMedium}
-                  mt={8}
-                  mb={6}
-                  event={"button_clicked"}
-                  eventProperties={{ button: "Go through manual steps" }}
-                >
-                  {t("onboarding.stepProtect.extraInfo.cta")}
-                </Button>
-                <Button
-                  type="default"
-                  size="large"
-                  onPress={onSupportLink}
-                  Icon={Icons.ExternalLinkMedium}
-                  event={"button_clicked"}
-                  eventProperties={{ button: "Contact Ledger support" }}
-                >
-                  {t("onboarding.stepProtect.extraInfo.supportLink")}
-                </Button>
-                <TrackScreen
-                  category="Why can I not see Restore with Protect on my Ledger"
-                  refreshSource={false}
-                  type="drawer"
-                />
-              </>
-            ),
-          },
-        ]}
-      />
+        title={t("onboarding.stepProtect.extraInfo.title")}
+        description={t("onboarding.stepProtect.extraInfo.desc")}
+      >
+        <Button
+          type="main"
+          size="large"
+          onPress={onLearnToUpdate}
+          Icon={Icons.ExternalLinkMedium}
+          mt={0}
+          mb={6}
+          event={"button_clicked"}
+          eventProperties={{ button: "Go through manual steps" }}
+        >
+          {t("onboarding.stepProtect.extraInfo.cta")}
+        </Button>
+        <Button
+          type="default"
+          size="large"
+          onPress={onSupportLink}
+          Icon={Icons.ExternalLinkMedium}
+          event={"button_clicked"}
+          eventProperties={{ button: "Contact Ledger support" }}
+        >
+          {t("onboarding.stepProtect.extraInfo.supportLink")}
+        </Button>
+        <TrackScreen
+          category="Why can I not see Restore with Protect on my Ledger"
+          refreshSource={false}
+          type="drawer"
+        />
+      </QueuedDrawer>
       {restoreInfoDrawer?.enabled ? (
         <Touchable onPress={onOpen}>
           <Text textAlign="center" variant="large">
