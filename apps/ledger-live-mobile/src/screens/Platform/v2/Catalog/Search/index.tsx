@@ -86,11 +86,14 @@ export function Search({
         />
       </Flex>
       <Text textAlign="center" variant="h4" my={3}>
-        {t("market.warnings.noAppFound")}
+        {t("market.warnings.notFound")}
       </Text>
-
       <Text textAlign="center" variant="body" color="neutral.c70">
-        {t("market.warnings.retrySearchKeyword")}
+        {input.includes(".")
+          ? t("market.warnings.retrySearchKeywordAndUrl", {
+              search: input,
+            })
+          : t("market.warnings.retrySearchKeyword")}
       </Text>
     </Flex>
   );
