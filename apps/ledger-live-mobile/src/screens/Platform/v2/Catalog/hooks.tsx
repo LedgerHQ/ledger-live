@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { TextInput } from "react-native";
 import Fuse from "fuse.js";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { ScreenName } from "../../../../const";
 import { useBanner } from "../../../../components/banners/hooks";
 import { readOnlyModeEnabledSelector } from "../../../../reducers/settings";
@@ -79,7 +80,7 @@ export function useDeeplinkEffect(
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
 export function useDisclaimer(
-  appendRecentlyUsed: (manifest: LiveAppManifest) => void,
+  appendRecentlyUsed: (manifest: AppManifest) => void,
 ) {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();

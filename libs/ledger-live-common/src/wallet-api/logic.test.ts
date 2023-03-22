@@ -6,7 +6,7 @@ import {
   WalletAPIContext,
 } from "./logic";
 
-import { LiveAppManifest } from "../../platform/types";
+import { AppManifest } from "./types";
 import {
   createFixtureAccount,
   createFixtureCryptoCurrency,
@@ -557,7 +557,7 @@ describe("bitcoinFamillyAccountGetXPubLogic", () => {
   });
 });
 
-function createAppManifest(id = "1"): LiveAppManifest {
+function createAppManifest(id = "1"): AppManifest {
   return {
     id,
     private: false,
@@ -566,7 +566,7 @@ function createAppManifest(id = "1"): LiveAppManifest {
     homepageUrl: "https://www.ledger.com",
     supportUrl: "https://www.ledger.com",
     icon: null,
-    platforms: ["ios", "android", "desktop"],
+    platform: "all",
     apiVersion: "1.0.0",
     manifestVersion: "1.0.0",
     branch: "debug",
