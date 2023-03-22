@@ -4,12 +4,10 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { command } from "~/renderer/commands";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 
-const connectAppExec = command("connectApp");
-
-const appAction = createAction(getEnv("MOCK") ? mockedEventEmitter : connectAppExec);
+const appAction = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
 export default function ConnectDevice() {
   return (

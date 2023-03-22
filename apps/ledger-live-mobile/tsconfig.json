@@ -8,7 +8,7 @@
     "isolatedModules": true,
     "jsx": "react-native",
     "lib": ["es2017"],
-    "types": ["jest"],
+    "types": ["jest", "@testing-library/jest-native/extend-expect"],
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": true,

@@ -7,7 +7,7 @@ import type {
   SubAccount,
 } from "@ledgerhq/types-live";
 import { getOperationAmountNumberWithInternals } from "../operation";
-import { granularities } from "../rangeDates";
+import { granularities } from "@ledgerhq/live-portfolio";
 export const emptyHistoryCache = {
   HOUR: {
     latestDate: null,

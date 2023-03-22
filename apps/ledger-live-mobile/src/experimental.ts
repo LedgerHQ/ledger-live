@@ -102,6 +102,14 @@ export const experimentalFeatures: Feature[] = [
     minValue: 0,
     maxValue: 1,
   },
+  {
+    type: "toggle",
+    name: "PLATFORM_DISCOVER_VERSION",
+    title: i18n.t(i18nKey("experimentalPlatformDiscover", "title")),
+    description: i18n.t(i18nKey("experimentalPlatformDiscover", "description")),
+    valueOn: 2,
+    valueOff: 1,
+  },
   ...(__DEV__
     ? [
         {

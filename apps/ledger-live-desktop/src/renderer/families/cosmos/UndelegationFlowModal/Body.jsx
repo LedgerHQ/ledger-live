@@ -17,7 +17,7 @@ import type { Account, Operation } from "@ledgerhq/types-live";
 import type { StepId } from "./types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";

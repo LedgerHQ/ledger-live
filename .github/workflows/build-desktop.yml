@@ -72,7 +72,7 @@ jobs:
           base: ${{ inputs.base_ref }}
       - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
@@ -80,7 +80,7 @@ jobs:
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ./tools/actions/composites/setup-build-desktop
@@ -113,7 +113,7 @@ jobs:
           dotnet-version: 2.1.816
       - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
@@ -146,7 +146,7 @@ jobs:
           persist-credentials: false
       - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
@@ -154,7 +154,7 @@ jobs:
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ./tools/actions/composites/setup-build-desktop

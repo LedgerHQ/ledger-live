@@ -1,6 +1,6 @@
 import React, { useMemo, memo } from "react";
 import { Text } from "@ledgerhq/native-ui";
-import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
+import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import { FontWeightTypes } from "@ledgerhq/native-ui/components/Text/getTextStyle";
 import getFontStyle from "./getFontStyle";
 
@@ -59,6 +59,7 @@ function LText({ color, children, semiBold, bold, ...props }: Opts) {
     () => inferFontWeight({ semiBold, bold }),
     [semiBold, bold],
   );
+
   return (
     <Text {...props} fontWeight={fontWeight} color={color}>
       {children}

@@ -1,7 +1,8 @@
 // @flow
 import React, { useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
-
+import { from } from "rxjs";
+import { checkRPCNodeConfig } from "@ledgerhq/live-common/families/bitcoin/satstack";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import IconCheck from "~/renderer/icons/Check";
@@ -13,7 +14,6 @@ import type { RPCNodeConfig } from "@ledgerhq/live-common/families/bitcoin/satst
 import type { FullNodeSteps, ConnectionStatus } from "~/renderer/modals/FullNode";
 import { CheckWrapper, CrossWrapper, connectionStatus } from "~/renderer/modals/FullNode";
 import useEnv from "~/renderer/hooks/useEnv";
-import { command } from "~/renderer/commands";
 
 const Node = ({
   nodeConnectionStatus = connectionStatus.IDLE,
@@ -32,7 +32,7 @@ const Node = ({
 }) => {
   useEffect(() => {
     if (nodeConnectionStatus === connectionStatus.PENDING) {
-      command("checkRPCNodeConfig")(nodeConfig).subscribe({
+      from(checkRPCNodeConfig(nodeConfig)).subscribe({
         complete: () => setNodeConnectionStatus(connectionStatus.SUCCESS),
         error: () => setNodeConnectionStatus(connectionStatus.FAILURE),
       });

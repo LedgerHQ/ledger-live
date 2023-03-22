@@ -314,6 +314,7 @@ export const StatusCodes = {
   INCORRECT_P1_P2: 0x6b00,
   INS_NOT_SUPPORTED: 0x6d00,
   DEVICE_NOT_ONBOARDED: 0x6d07,
+  DEVICE_NOT_ONBOARDED_2: 0x6611,
   INVALID_KCV: 0x9485,
   INVALID_OFFSET: 0x9402,
   LICENSING: 0x6f42,
@@ -330,6 +331,7 @@ export const StatusCodes = {
   TECHNICAL_PROBLEM: 0x6f00,
   UNKNOWN_APDU: 0x6d02,
   USER_REFUSED_ON_DEVICE: 0x5501,
+  NOT_ENOUGH_SPACE: 0x5102,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {

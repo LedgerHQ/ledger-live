@@ -31,6 +31,7 @@ import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryP
 import BleDevicePairingFlow from "../BleDevicePairingFlow";
 import BuyDeviceCTA from "../BuyDeviceCTA";
 import QueuedDrawer from "../QueuedDrawer";
+import ServicesWidget from "../ServicesWidget";
 
 type Navigation = BaseComposite<
   CompositeScreenProps<
@@ -46,9 +47,14 @@ type Props = {
   // Other component using this component needs to stop the BLE scanning before starting
   // to communicate to a device via BLE.
   stopBleScanning?: boolean;
+  displayServicesWidget?: boolean;
 };
 
-export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
+export default function SelectDevice({
+  onSelect,
+  stopBleScanning,
+  displayServicesWidget,
+}: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
@@ -95,12 +101,18 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
       if (e.type === "remove") setDevice(undefined);
       if (e.type === "add") {
         const { name, deviceModel, id, wired } = e;
-        setDevice({
-          deviceName: name,
-          modelId: deviceModel?.id,
-          deviceId: id,
-          wired,
-        } as Device);
+
+        setDevice((maybeDevice: Device | undefined) => {
+          return (
+            maybeDevice ||
+            ({
+              deviceName: name,
+              modelId: deviceModel?.id,
+              deviceId: id,
+              wired,
+            } as Device)
+          );
+        });
       }
     });
     return () => sub.unsubscribe();
@@ -146,10 +158,10 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
         knownDevice.name !== equivalentScannedDevice.deviceName
       ) {
         dispatch(
-          saveBleDeviceName(
-            knownDevice.id,
-            equivalentScannedDevice?.deviceName,
-          ),
+          saveBleDeviceName({
+            deviceId: knownDevice.id,
+            name: equivalentScannedDevice?.deviceName,
+          }),
         );
       }
     });
@@ -266,8 +278,11 @@ export default function SelectDevice({ onSelect, stopBleScanning }: Props) {
                   <Trans i18nKey="manager.selectDevice.otgBanner" />
                 </Text>
               )}
+            {displayServicesWidget && <ServicesWidget />}
           </ScrollContainer>
-          <BuyDeviceCTA />
+          <Flex alignItems="center" mt={5}>
+            <BuyDeviceCTA />
+          </Flex>
           <QueuedDrawer
             isRequestingToBeOpened={isAddNewDrawerOpen}
             onClose={() => setIsAddNewDrawerOpen(false)}

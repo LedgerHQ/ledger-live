@@ -55,7 +55,7 @@ function getOptimisticOperationDelegationAmount(
       return new BigNumber(`0x${dataDecoded.split("@")[1]}`);
 
     default:
-      return undefined;
+      return new BigNumber(0);
   }
 }
 

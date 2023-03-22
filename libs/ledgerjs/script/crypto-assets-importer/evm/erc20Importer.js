@@ -16,9 +16,9 @@ const getDefinition = (chain, tokenId, definitionJSON, signature) => {
     );
     const delisted = ENTRIES_CHECKS.delisted(definitionJSON.delisted);
     const countervalueTicker = ENTRIES_CHECKS.countervalueTicker(
-      definitionJSON.countervalueTicker
+      definitionJSON.countervalue_ticker
     );
-    const compoundFor = ENTRIES_CHECKS.compoundFor(definitionJSON.compoundFor);
+    const compoundFor = ENTRIES_CHECKS.compoundFor(definitionJSON.compound_for);
 
     return [
       currencyId,

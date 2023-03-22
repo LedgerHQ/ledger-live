@@ -5,12 +5,12 @@ import {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { PlatformTransaction } from "@ledgerhq/live-common/platform/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+
 import prepareSignTransaction from "./liveSDKLogic";
 
 // Fake the support of the test currency
-jest.mock("@ledgerhq/live-common/currencies/support", () => ({
+jest.mock("@ledgerhq/coin-framework/currencies/support", () => ({
   isCurrencySupported: () => true,
 }));
 
@@ -38,15 +38,15 @@ describe("prepareSignTransaction", () => {
       recipient: "0x0123456",
       subAccountId: "ethereumjs:2:ethereum:0x022:",
       useAllAmount: false,
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
     };
 
     // When
     const result = prepareSignTransaction(
       childAccount,
       parentAccount,
-      createEtherumTransaction() as Partial<
-        Transaction & { gasLimit: BigNumber }
-      >,
+      createEtherumTransaction(),
     );
 
     // Then
@@ -55,9 +55,10 @@ describe("prepareSignTransaction", () => {
 });
 
 // *** UTIL FUNCTIONS ***
-function createEtherumTransaction(): PlatformTransaction {
+function createEtherumTransaction(): Partial<
+  Transaction & { gasLimit: BigNumber }
+> {
   return {
-    // @ts-expect-error SDK does not expose the right type here
     family: "ethereum",
     amount: new BigNumber("1000"),
     recipient: "0x0123456",
@@ -72,11 +73,11 @@ const createCryptoCurrency = (family: string): CryptoCurrency => ({
   type: "CryptoCurrency",
   id: "testCoinId" as CryptoCurrencyId,
   coinType: 8008,
-  name: "MyCoin",
-  managerAppName: "MyCoin",
+  name: "ethereum",
+  managerAppName: "ethereum",
   ticker: "MYC",
   countervalueTicker: "MYC",
-  scheme: "mycoin",
+  scheme: "ethereum",
   color: "#ff0000",
   family,
   units: [

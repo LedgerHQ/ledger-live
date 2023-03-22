@@ -8,6 +8,7 @@ import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denomi
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 
+import type { Account } from "@ledgerhq/types-live";
 import type { ActionButtonEvent } from "../../components/FabActions";
 
 import { NavigatorName, ScreenName } from "../../const";
@@ -18,15 +19,18 @@ import { NavigatorName, ScreenName } from "../../const";
 
 export interface getActionsType {
   account: ElrondAccount;
+  parentAccount?: Account;
 }
 export type getActionsReturnType = ActionButtonEvent[] | null | undefined;
+
+type NavigationParamsType = readonly [name: string, options: object];
 
 /*
  * Declare the function that will return the actions' settings array.
  */
 
-const getActions = (props: getActionsType): getActionsReturnType => {
-  const { account } = props;
+const getMainActions = (props: getActionsType): getActionsReturnType => {
+  const { account, parentAccount } = props;
 
   const balance = denominate({
     input: String(account.spendableBalance),
@@ -57,19 +61,35 @@ const getActions = (props: getActionsType): getActionsReturnType => {
   /*
    * Return the array of actions.
    */
-
+  const navigationParams = delegationEnabled
+    ? [
+        NavigatorName.ElrondDelegationFlow,
+        { screen, params: { account, validators } },
+      ]
+    : [
+        NavigatorName.NoFundsFlow,
+        {
+          screen: ScreenName.NoFunds,
+          params: {
+            account,
+            parentAccount,
+          },
+        },
+      ];
   return [
     {
       id: "stake",
-      disabled: !delegationEnabled,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
-      navigationParams: [
-        NavigatorName.ElrondDelegationFlow,
-        { screen, params: { account, validators } },
-      ],
+      navigationParams: navigationParams as unknown as NavigationParamsType,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        token: "ELROND",
+        page: "Account Page",
+      },
     },
   ];
 };
 
-export default { getActions };
+export default { getMainActions };

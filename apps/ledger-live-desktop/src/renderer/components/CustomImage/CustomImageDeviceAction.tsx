@@ -17,8 +17,8 @@ import {
   renderImageLoadRequested,
   renderLoadingImage,
 } from "../DeviceAction/rendering";
+import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { command } from "~/renderer/commands";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 type Props = {
@@ -32,8 +32,7 @@ type Props = {
   blockNavigation?: (blocked: boolean) => void;
 };
 
-const staxLoadImageExec = command("staxLoadImage");
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : staxLoadImageExec);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : staxLoadImage);
 const mockedDevice = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
 
 const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props => {

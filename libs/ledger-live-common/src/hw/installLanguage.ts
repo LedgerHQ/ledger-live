@@ -5,13 +5,15 @@ import {
   TransportError,
   TransportStatusError,
   LanguageNotFound,
+  StatusCodes,
+  ManagerNotEnoughSpaceError,
 } from "@ledgerhq/errors";
 
 import ManagerAPI from "../api/Manager";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import { Language, LanguagePackage } from "@ledgerhq/types-live";
-import network from "@ledgerhq/coin-framework/network";
+import network from "../network";
 import { LanguageInstallRefusedOnDevice } from "../errors";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
@@ -103,11 +105,13 @@ export default function installLanguage({
                 const statusStr = status.toString(16);
 
                 // Some error handling
-                if (status === 0x5501) {
+                if (status === StatusCodes.USER_REFUSED_ON_DEVICE) {
                   return subscriber.error(
                     new LanguageInstallRefusedOnDevice(statusStr)
                   );
-                } else if (status !== 0x9000) {
+                } else if (status === StatusCodes.NOT_ENOUGH_SPACE) {
+                  return subscriber.error(new ManagerNotEnoughSpaceError());
+                } else if (status !== StatusCodes.OK) {
                   return subscriber.error(
                     new TransportError("Unexpected device response", statusStr)
                   );

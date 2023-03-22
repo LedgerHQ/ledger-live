@@ -23,6 +23,16 @@ describe("getDeviceName", () => {
     await expect(res).toMatch("");
   });
 
+  test("should return empty name when the device is not onboarded #2", async () => {
+    const mockedTransport = mockTransportGenerator(
+      Buffer.from("bababababababa6611", "hex")
+    );
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore next-line
+    const res = await getDeviceName(mockedTransport);
+    await expect(res).toMatch("");
+  });
+
   test("unexpected bootloader or any other code, should throw", async () => {
     const mockedTransport = mockTransportGenerator(Buffer.from("662d", "hex"));
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

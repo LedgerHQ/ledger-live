@@ -1,5 +1,8 @@
 import invariant from "invariant";
-import { getDerivationScheme, runDerivationScheme } from "../../derivation";
+import {
+  getDerivationScheme,
+  runDerivationScheme,
+} from "@ledgerhq/coin-framework/derivation";
 import { BigNumber } from "bignumber.js";
 import type {
   GetAccountShape,

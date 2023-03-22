@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { useNavigation } from "@react-navigation/native";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { knownDevicesSelector } from "../../reducers/ble";
 import LocationRequired from "../LocationRequired/index";
@@ -15,6 +16,8 @@ import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
 import lottie from "./assets/bluetooth.json";
 import { urls } from "../../config/urls";
+import { TrackScreen, track } from "../../analytics";
+import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 const CANT_SEE_DEVICE_TIMEOUT = 5000;
@@ -41,6 +44,7 @@ const BleDevicesScanning = ({
   onGoBack,
 }: BleDevicesScanningProps) => {
   const { t } = useTranslation();
+  const navigation = useNavigation();
 
   const productName = filterByDeviceModelId
     ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
@@ -50,7 +54,12 @@ const BleDevicesScanning = ({
     useState<boolean>(false);
   const [locationUnauthorizedError, setLocationUnauthorizedError] =
     useState<boolean>(false);
-  const [stopBleScanning, setStopBleScanning] = useState<boolean>(false);
+
+  // Nb Will reset when we regain focus to start scanning again.
+  const [stopBleScanning, setStopBleScanning] = useResetOnNavigationFocusState(
+    navigation,
+    false,
+  );
 
   const [isCantSeeDeviceShown, setIsCantSeeDeviceShown] =
     useState<boolean>(false);
@@ -63,10 +72,20 @@ const BleDevicesScanning = ({
     return () => clearTimeout(cantSeeDeviceTimeout);
   }, []);
 
-  const onCantSeeDevicePress = useCallback(
-    () => Linking.openURL(urls.pairingIssues),
-    [],
+  const onWrappedDeviceSelect = useCallback(
+    device => {
+      setStopBleScanning(true);
+      onDeviceSelect(device);
+    },
+    [onDeviceSelect, setStopBleScanning],
   );
+
+  const onCantSeeDevicePress = useCallback(() => {
+    track("button_clicked", {
+      button: `Can't find ${productName ?? "device"} Bluetooth`,
+    });
+    Linking.openURL(urls.pairingIssues);
+  }, [productName]);
 
   // If we want to filter on known devices:
   const knownDevices = useSelector(knownDevicesSelector);
@@ -114,13 +133,13 @@ const BleDevicesScanning = ({
         setLocationUnauthorizedError(true);
       }
     }
-  }, [scanningBleError]);
+  }, [scanningBleError, setStopBleScanning]);
 
   const onLocationFixed = useCallback(() => {
     setLocationDisabledError(false);
     setLocationUnauthorizedError(false);
     setStopBleScanning(false);
-  }, [setLocationDisabledError, setLocationUnauthorizedError]);
+  }, [setStopBleScanning]);
 
   if (locationDisabledError) {
     return <LocationRequired onRetry={onLocationFixed} errorType="disabled" />;
@@ -134,6 +153,9 @@ const BleDevicesScanning = ({
 
   return (
     <Flex flex={1}>
+      <TrackScreen
+        category={`Looking for ${productName ?? "device"} Bluetooth`}
+      />
       {onGoBack && (
         <TouchableOpacity onPress={onGoBack}>
           <ArrowLeftMedium size={24} />
@@ -189,7 +211,7 @@ const BleDevicesScanning = ({
                 )
                 .map(deviceMeta => (
                   <BleDeviceItem
-                    onSelect={() => onDeviceSelect(deviceMeta)}
+                    onSelect={() => onWrappedDeviceSelect(deviceMeta)}
                     key={deviceMeta.deviceId}
                     deviceMeta={deviceMeta}
                   />

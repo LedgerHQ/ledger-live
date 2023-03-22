@@ -1,6 +1,6 @@
 import { bip32asBuffer } from "@ledgerhq/hw-app-btc/bip32";
-import type { DerivationMode } from "../../derivation";
-import { getAddressFormatDerivationMode } from "../../derivation";
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getAddressFormatDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import invariant from "invariant";
 const addressFormatMap = {
   legacy: 0,

@@ -47,6 +47,7 @@ import { RootStackParamList } from "../../components/RootNavigator/types/RootNav
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
 import Stories from "../../components/StorylyStories";
+import { TrackScreen, track } from "../../analytics";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -110,9 +111,13 @@ export const SyncOnboarding = ({
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
     CompanionStepKey.Paired,
   );
-  const [seedStatus, setSeedStatus] = useState<"selection" | "new" | "restore">(
-    "selection",
-  );
+  const [seedPathStatus, setSeedPathStatus] = useState<
+    | "choice_new_or_restore"
+    | "new_seed"
+    | "choice_restore_direct_or_recover"
+    | "restore_seed"
+    | "recover_seed"
+  >("choice_new_or_restore");
 
   const getNextStepKey = useCallback(
     (step: CompanionStepKey) => {
@@ -221,16 +226,16 @@ export const SyncOnboarding = ({
     };
   }, []);
 
-  const handleClose = useCallback(() => {
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
-
   const handleDesyncTimedOut = useCallback(() => {
     setDesyncDrawerOpen(true);
   }, []);
 
   const handleDesyncRetry = useCallback(() => {
     // handleDesyncClose is then called
+    track("button_clicked", {
+      button: "Try again",
+      drawer: "Could not connect to Stax",
+    });
     setDesyncDrawerOpen(false);
   }, []);
 
@@ -255,6 +260,10 @@ export const SyncOnboarding = ({
 
     navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
   }, [device, dispatchRedux, navigation]);
+
+  const handleClose = useCallback(() => {
+    readyRedirectTimerRef.current ? handleDeviceReady() : goBackToPairingFlow();
+  }, [goBackToPairingFlow, handleDeviceReady]);
 
   useEffect(() => {
     if (!fatalError) {
@@ -305,23 +314,8 @@ export const SyncOnboarding = ({
       return;
     }
 
+    // case DeviceOnboardingStep.SafetyWarning not handled so the previous step (new seed, restore, recover) is kept
     switch (deviceOnboardingState?.currentOnboardingStep) {
-      case DeviceOnboardingStep.SetupChoice:
-      case DeviceOnboardingStep.SafetyWarning:
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedStatus("selection");
-        break;
-      case DeviceOnboardingStep.NewDevice:
-      case DeviceOnboardingStep.NewDeviceConfirming:
-        setShouldRestoreApps(false);
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedStatus("new");
-        break;
-      case DeviceOnboardingStep.RestoreSeed:
-        setShouldRestoreApps(true);
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedStatus("restore");
-        break;
       case DeviceOnboardingStep.WelcomeScreen1:
       case DeviceOnboardingStep.WelcomeScreen2:
       case DeviceOnboardingStep.WelcomeScreen3:
@@ -332,6 +326,30 @@ export const SyncOnboarding = ({
         break;
       case DeviceOnboardingStep.Pin:
         setCompanionStepKey(CompanionStepKey.Pin);
+        break;
+      case DeviceOnboardingStep.SetupChoice:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("choice_new_or_restore");
+        break;
+      case DeviceOnboardingStep.NewDevice:
+      case DeviceOnboardingStep.NewDeviceConfirming:
+        setShouldRestoreApps(false);
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("new_seed");
+        break;
+      case DeviceOnboardingStep.SetupChoiceRestore:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("choice_restore_direct_or_recover");
+        break;
+      case DeviceOnboardingStep.RestoreSeed:
+        setShouldRestoreApps(true);
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("restore_seed");
+        break;
+      case DeviceOnboardingStep.RecoverRestore:
+        setShouldRestoreApps(true);
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("recover_seed");
         break;
       default:
         break;
@@ -390,9 +408,12 @@ export const SyncOnboarding = ({
           key: CompanionStepKey.Paired,
           title: t("syncOnboarding.pairingStep.title", { productName }),
           renderBody: () => (
-            <Text variant="bodyLineHeight">
-              {t("syncOnboarding.pairingStep.description", { productName })}
-            </Text>
+            <>
+              <TrackScreen category="Set up Ledger Stax: Step 1 device paired" />
+              <Text variant="bodyLineHeight">
+                {t("syncOnboarding.pairingStep.description", { productName })}
+              </Text>
+            </>
           ),
         },
         {
@@ -402,6 +423,7 @@ export const SyncOnboarding = ({
           estimatedTime: 120,
           renderBody: () => (
             <Flex>
+              <TrackScreen category="Set up Ledger Stax: Step 2 PIN" />
               <Text variant="bodyLineHeight">
                 {t("syncOnboarding.pinStep.description", { productName })}
               </Text>
@@ -415,11 +437,8 @@ export const SyncOnboarding = ({
           estimatedTime: 300,
           renderBody: () => (
             <Flex>
-              {seedStatus === "selection" ? (
-                <Text variant="bodyLineHeight">
-                  {t("syncOnboarding.seedStep.selection")}
-                </Text>
-              ) : seedStatus === "new" ? (
+              <TrackScreen category="Set up Ledger Stax: Step 3 Seed" />
+              {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
                   <Stories
                     instanceID={StorylyInstanceID.recoverySeed}
@@ -427,9 +446,21 @@ export const SyncOnboarding = ({
                     keepOriginalOrder
                   />
                 </Flex>
+              ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
+                <Text variant="bodyLineHeight">
+                  {t("syncOnboarding.seedStep.choiceRestoreDirectOrRecover")}
+                </Text>
+              ) : seedPathStatus === "restore_seed" ? (
+                <Text variant="bodyLineHeight">
+                  {t("syncOnboarding.seedStep.restoreSeed", { productName })}
+                </Text>
+              ) : seedPathStatus === "recover_seed" ? (
+                <Text variant="bodyLineHeight">
+                  {t("syncOnboarding.seedStep.recoverSeed")}
+                </Text>
               ) : (
                 <Text variant="bodyLineHeight">
-                  {t("syncOnboarding.seedStep.recovery", { productName })}
+                  {t("syncOnboarding.seedStep.choiceNewOrRestore")}
                 </Text>
               )}
             </Flex>
@@ -482,7 +513,7 @@ export const SyncOnboarding = ({
     [
       t,
       productName,
-      seedStatus,
+      seedPathStatus,
       deviceInitialApps?.enabled,
       device,
       handleSoftwareCheckComplete,
@@ -532,6 +563,10 @@ export const SyncOnboarding = ({
             steps={companionSteps}
             formatEstimatedTime={formatEstimatedTime}
           />
+
+          {companionStepKey === CompanionStepKey.Exit ? (
+            <TrackScreen category="Stax Set Up - Final step: Stax is ready" />
+          ) : null}
         </ScrollContainer>
       </Flex>
     </DeviceSetupView>

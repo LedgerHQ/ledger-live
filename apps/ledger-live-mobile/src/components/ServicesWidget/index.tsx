@@ -76,7 +76,6 @@ function ServicesWidget() {
             resizeMode={"stretch"}
             style={{ width: "100%", height: 8 }}
           />
-          {/* <SvgGradient colors={theme.colors} /> */}
           <Flex p={7}>
             <Flex
               flexDirection="row"

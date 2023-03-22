@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { compose } from "redux";
 import { connect } from "react-redux";

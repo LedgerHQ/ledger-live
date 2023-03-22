@@ -12,6 +12,8 @@ import getTransactionStatus from "../js-getTransactionStatus";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+
 const receive = makeAccountBridgeReceive();
 const currencyBridge: CurrencyBridge = {
   getPreloadStrategy,
@@ -29,6 +31,8 @@ const accountBridge: AccountBridge<Transaction> = {
   receive,
   signOperation,
   broadcast,
+  assignFromAccountRaw,
+  assignToAccountRaw,
 };
 export default {
   currencyBridge,

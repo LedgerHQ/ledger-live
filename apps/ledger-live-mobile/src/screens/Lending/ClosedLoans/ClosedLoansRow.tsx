@@ -15,7 +15,7 @@ import DelegationDrawer from "../../../components/DelegationDrawer";
 import Circle from "../../../components/Circle";
 import Compound, { compoundColor } from "../../../icons/Compound";
 import { rgba } from "../../../colors";
-import FormatDate from "../../../components/FormatDate";
+import FormatDate from "../../../components/DateFormat/FormatDate";
 
 type RowProps = {
   item: ClosedLoanHistory;

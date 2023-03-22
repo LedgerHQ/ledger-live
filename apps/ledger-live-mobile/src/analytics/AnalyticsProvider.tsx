@@ -30,6 +30,7 @@ const AnalyticsProvider = ({
 
   useEffect(() => {
     loadSegment(store);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!loaded || !segmentClient) {

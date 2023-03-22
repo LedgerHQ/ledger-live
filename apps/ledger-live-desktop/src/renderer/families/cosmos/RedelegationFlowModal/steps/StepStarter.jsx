@@ -79,7 +79,11 @@ export function StepStarterFooter({
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />
         </Button>
-        <Button primary onClick={() => transitionTo("validators")}>
+        <Button
+          data-test-id="modal-continue-button"
+          primary
+          onClick={() => transitionTo("validators")}
+        >
           <Trans i18nKey="common.continue" />
         </Button>
       </Box>

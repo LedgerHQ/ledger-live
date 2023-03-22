@@ -30,7 +30,7 @@ runs:
       if: inputs.base && inputs.ref
       shell: bash
       run: |
-        git config user.email "team-live@ledger.fr"
+        git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
         git config user.name "live-github-bot[bot]"
         git fetch --prune --unshallow --no-tags || true
         git checkout ${{ inputs.base }}

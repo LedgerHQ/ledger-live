@@ -4,7 +4,6 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";
-// eslint-disable-next-line import/no-cycle
 import { track } from "../analytics";
 
 const defaultHitSlop = {
