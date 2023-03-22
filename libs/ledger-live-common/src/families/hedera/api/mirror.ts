@@ -5,7 +5,7 @@ import BigNumber from "bignumber.js";
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
 import { base64ToUrlSafeBase64 } from "../utils";
-import { getAccountBalance } from "./network";
+import type { AccountInfo, Node } from "./types";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
@@ -149,4 +149,32 @@ export async function getOperationsForAccount(
   }
 
   return operations;
+}
+
+
+/**
+ * Fetch account information for @param accountId
+ * https://testnet.mirrornode.hedera.com/api/v1/docs/#/accounts/getAccountByIdOrAliasOrEvmAddress
+ */
+export async function getAccountInfo(accountId: string): Promise<AccountInfo> {
+  const { data } = await fetch(`/accounts/${accountId}`);
+
+  return data;
+}
+
+/**
+ * Fetch list of stake-able nodes.
+ * https://testnet.mirrornode.hedera.com/api/v1/docs/#/network/getNetworkNodes
+ */
+export async function getNodeList(): Promise<Node[]> {
+  const nodeList: Node[] = [];
+  let r = await fetch("/network/nodes");
+  nodeList.push(r.data.nodes);
+
+  while (r.data.links.next) {
+    r = await fetch(r.data.links.next);
+    nodeList.push(...r.data.nodes);
+  }
+
+  return nodeList;
 }

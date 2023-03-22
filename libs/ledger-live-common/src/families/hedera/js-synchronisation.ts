@@ -10,15 +10,16 @@ import type {
 } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import type { Result } from "../../hw/getAddress/types";
+import { HederaResources, STAKE_METHOD } from "./types";
 import { encodeAccountId } from "../../account";
 
-import { getAccountsForPublicKey, getOperationsForAccount } from "./api/mirror";
+import { getAccountsForPublicKey, getOperationsForAccount, getAccountInfo } from "./api/mirror";
 import { getAccountBalance } from "./api/network";
-import type { Account } from "@ledgerhq/types-live";
+import type { HederaAccount } from "./types";
 
 const getAccountShape: GetAccountShape = async (
   info
-): Promise<Partial<Account>> => {
+): Promise<Partial<HederaAccount>> => {
   const { currency, derivationMode, address, initialAccount } = info;
 
   invariant(address, "an hedera address is expected");
@@ -33,6 +34,27 @@ const getAccountShape: GetAccountShape = async (
 
   // get current account balance
   const accountBalance = await getAccountBalance(address);
+
+  // get account information
+  const accountInfo = await getAccountInfo(address);
+
+  // determine what the stake method is depending on whether `accountId` or `nodeId` exists
+  const stakeMethod =
+    accountInfo.staked_account_id != null
+      ? STAKE_METHOD.ACCOUNT
+      : accountInfo.staked_node_id != null
+      ? STAKE_METHOD.NODE
+      : null;
+
+  // extract account staking information
+  const hederaResources: HederaResources = {
+    staked: {
+      accountId: accountInfo.staked_account_id,
+      nodeId: accountInfo.staked_node_id,
+      declineRewards: accountInfo.decline_reward,
+      stakeMethod,
+    },
+  };
 
   // grab latest operation's consensus timestamp for incremental sync
   const oldOperations = initialAccount?.operations ?? [];
@@ -57,6 +79,7 @@ const getAccountShape: GetAccountShape = async (
     // NOTE: there are no "blocks" in hedera
     // Set a value just so that operations are considered confirmed according to isConfirmedOperation
     blockHeight: 10,
+    hederaResources
   };
 };
 

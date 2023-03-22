@@ -49,3 +49,11 @@ export function base64ToUrlSafeBase64(data: string): string {
 
   return data.replace(/\//g, "_").replace(/\+/g, "-");
 }
+
+/**
+ * @param str
+ * @returns `str` but capitalized.
+ */
+export function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

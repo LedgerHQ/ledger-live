@@ -6022,6 +6022,50 @@
     },
     "currentAddress": {
       "messageIfVirtual": "Your {{name}} address cannot be confirmed on your Ledger device. Use at your own risk."
+    },
+    "stake": {
+      "stepperHeader": {
+        "stake": "Stake",
+        "changeStake": "Change Stake",
+        "stopStake": "Stop Stake",
+        "summary": "Summary",
+        "selectDevice": "Select your device",
+        "connectDevice": "Device",
+        "confirmation": "Confirmation",
+        "success": "Success",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "stake": {
+          "to": "Stake To",
+          "declineRewards": "Do not receive rewards",
+          "nodeList": {
+            "loading": "Loading node list ...",
+            "nodeNotFound": "No node found."
+          }
+        },
+        "stopStake": {
+          "confirmation": "Are you sure you would like to stop staking your account?"
+        },
+        "summary": {
+          "receiveRewards": "Receive Rewards?"
+        },
+        "success": {
+          "title": "Transaction sent",
+          "description": "Your account's staking information will be updated when the blockchain confirms the transaction.",
+          "viewDetails": "View details"
+        },
+        "error": {
+          "broadcastError": "Your transaction may have failed. Please wait a moment and then check the transaction history before trying again."
+        }
+      }
+    },
+    "common": {
+      "yes": "Yes",
+      "no": "No",
+      "node": "Node",
+      "account": "Account",
+      "continue": "Continue"
     }
   },
   "asset": {

@@ -1,9 +1,10 @@
 import BigNumber from "bignumber.js";
 import * as hedera from "@hashgraph/sdk";
-import { Account } from "@ledgerhq/types-live";
-import { Transaction } from "../types";
+import type { Account } from "@ledgerhq/types-live";
+import type { Transaction } from "../types";
 import { AccountId } from "@hashgraph/sdk";
 import { HederaAddAccountError } from "../errors";
+import { STAKE_METHOD, STAKE_TYPE } from "../types";
 
 export function broadcastTransaction(
   transaction: hedera.Transaction
@@ -28,6 +29,45 @@ export async function buildUnsignedTransaction({
     .addHbarTransfer(accountId, hbarAmount.negated())
     .addHbarTransfer(transaction.recipient, hbarAmount)
     .freeze();
+}
+
+export async function buildUnsignedAccountUpdateTransaction({
+  account,
+  transaction,
+}: {
+  account: Account;
+  transaction: Transaction;
+}): Promise<hedera.AccountUpdateTransaction> {
+  const accountId = account.freshAddress;
+
+  const unsignedTx = new hedera.AccountUpdateTransaction()
+    .setNodeAccountIds([new AccountId(3)])
+    .setTransactionId(hedera.TransactionId.generate(accountId))
+    .setAccountId(accountId);
+
+  if (transaction.staked?.stakeType === STAKE_TYPE.STOP) {
+    unsignedTx.clearStakedAccountId().clearStakedNodeId();
+  } else {
+    if (
+      transaction.staked?.stakeMethod === STAKE_METHOD.ACCOUNT &&
+      transaction.staked.accountId
+    ) {
+      unsignedTx.setStakedAccountId(transaction.staked.accountId);
+    }
+
+    if (
+      transaction.staked?.stakeMethod === STAKE_METHOD.NODE &&
+      transaction.staked.nodeId
+    ) {
+      unsignedTx.setStakedNodeId(transaction.staked.nodeId);
+    }
+
+    if (transaction.staked?.declineRewards != null) {
+      unsignedTx.setDeclineStakingReward(transaction.staked?.declineRewards);
+    }
+  }
+
+  return unsignedTx.freeze();
 }
 
 export interface AccountBalance {

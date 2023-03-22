@@ -11,9 +11,22 @@ import { calculateAmount } from "./utils";
 export function createTransaction(_account: Account): Transaction {
   return {
     family: "hedera",
+    // NOTE: `createTransaction` function definition (in `AccountBridge` interface — `src/types/bridge.ts`)
+    // doesn't allow for extra parameters, so have to set mode at the start of the flow in the UI via `bridge.updateTransaction`
+    mode: null,
+
+    // `TransferTransaction`
     amount: new BigNumber(0),
     recipient: "",
     useAllAmount: false,
+
+     // `AccountUpdateTransaction`
+     staked: {
+      stakeMethod: null,
+      accountId: null,
+      nodeId: null,
+      declineRewards: false,
+    },
   };
 }
 
