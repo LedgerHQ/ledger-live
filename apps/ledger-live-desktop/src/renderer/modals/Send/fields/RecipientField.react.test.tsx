@@ -156,8 +156,8 @@ const baseMockStatus: TransactionStatus = {
 };
 
 const setup = (
-  mockStatus: Partial<TransactionStatus> = {},
-  mockTransaction: Partial<Transaction> = {},
+  mockStatus: Partial<TransactionStatus> | null = {},
+  mockTransaction: Partial<Transaction> | null = {},
   account = ethMockAccount,
 ) => {
   return render(
@@ -237,18 +237,17 @@ describe("RecipientField", () => {
         const input = screen.getByRole("textbox");
 
         await act(() => userEvent.type(input, "vitalik.eth"));
-        await waitFor(
-          () =>
-            expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
-              ...baseMockTransaction,
-              recipient: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-              recipientDomain: {
-                registry: "ens",
-                domain: "vitalik.eth",
-                address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
-              },
-            }),
-          { timeout: 50000 },
+        await waitFor(() =>
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+            recipientDomain: {
+              registry: "ens",
+              domain: "vitalik.eth",
+              address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+              type: "forward",
+            },
+          }),
         );
       });
 
@@ -264,6 +263,7 @@ describe("RecipientField", () => {
               registry: "ens",
               domain: "degendon.eth",
               address: "0x16Bb635bc5c398b63A0fBb38DAC84da709EB3e86",
+              type: "reverse",
             },
           }),
         );
@@ -292,6 +292,7 @@ describe("RecipientField", () => {
               registry: "ens",
               domain: "vitalik.eth",
               address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+              type: "forward",
             },
           },
         );
@@ -322,6 +323,7 @@ describe("RecipientField", () => {
               registry: "ens",
               domain: "vitalik.eth",
               address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+              type: "forward",
             },
           }),
         );

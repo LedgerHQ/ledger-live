@@ -22,14 +22,24 @@ describe("Domain Service", () => {
       it("should resolve a ENS domain by inferring the registries", async () => {
         const resolutions = await resolveDomain("vitalik.eth");
         expect(resolutions).toEqual([
-          { registry: "ens", address: "0x123", domain: "vitalik.eth" },
+          {
+            registry: "ens",
+            address: "0x123",
+            domain: "vitalik.eth",
+            type: "forward",
+          },
         ]);
       });
 
       it("should resolve a ENS domain by specifying the registry", async () => {
         const resolutions = await resolveDomain("vitalik.eth", "ens");
         expect(resolutions).toEqual([
-          { registry: "ens", address: "0x123", domain: "vitalik.eth" },
+          {
+            registry: "ens",
+            address: "0x123",
+            domain: "vitalik.eth",
+            type: "forward",
+          },
         ]);
       });
 
@@ -61,6 +71,7 @@ describe("Domain Service", () => {
             registry: "ens",
             domain: "vitalik.eth",
             address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+            type: "reverse",
           },
         ]);
       });
@@ -75,6 +86,7 @@ describe("Domain Service", () => {
             registry: "ens",
             domain: "vitalik.eth",
             address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+            type: "reverse",
           },
         ]);
       });

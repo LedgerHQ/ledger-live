@@ -71,6 +71,7 @@ export const resolveDomain = async (
         registry: registries[index].name,
         address: checksummedAddress,
         domain,
+        type: "forward",
       });
       return result;
     }, [] as DomainServiceResolution[])
@@ -134,6 +135,7 @@ export const resolveAddress = async (
         registry: registries[index].name,
         domain: promise.value.data,
         address: checksummedAddress,
+        type: "reverse",
       });
       return result;
     }, [] as DomainServiceResolution[])
