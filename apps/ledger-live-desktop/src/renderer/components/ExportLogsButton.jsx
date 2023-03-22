@@ -18,7 +18,7 @@ const saveLogs = async (path: { canceled: boolean, filePath: string }) => {
   await ipcRenderer.invoke(
     "save-logs",
     path,
-    JSON.stringify(memoryLogger.getMemoryLogs(), null, 4),
+    JSON.stringify(memoryLogger.getMemoryLogs(), null, 2),
   );
 };
 
