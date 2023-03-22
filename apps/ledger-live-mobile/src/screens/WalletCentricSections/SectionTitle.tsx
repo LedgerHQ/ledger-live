@@ -2,7 +2,7 @@ import React, { memo, useCallback } from "react";
 import { Flex, Link as TextLink, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import proxyStyled from "@ledgerhq/native-ui/components/styled";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { NavigationProp } from "@react-navigation/native";
 
 type Props = {

@@ -73,7 +73,7 @@ jobs:
       - uses: actions/setup-node@v3
         if: always()
         with:
-          node-version: 16.x
+          node-version: 18
       - uses: ruby/setup-ruby@v1
         if: always()
         with:
@@ -198,7 +198,7 @@ jobs:
       - uses: actions/setup-node@v3
         if: always()
         with:
-          node-version: 16.x
+          node-version: 18
       - name: check git
         if: always()
         id: check-git
@@ -272,7 +272,7 @@ jobs:
       - uses: actions/setup-node@v3
         if: always()
         with:
-          node-version: 16.x
+          node-version: 18
       # - uses: ruby/setup-ruby@v1
       #   if: always()
       #   with:
