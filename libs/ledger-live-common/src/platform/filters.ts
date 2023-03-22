@@ -4,7 +4,7 @@ import { isPlatformTokenCurrency } from "./helpers";
 
 export type FilterParams = {
   branches?: string[];
-  platform?: AppPlatform;
+  platforms?: AppPlatform;
   private?: boolean;
   version?: string;
 };
