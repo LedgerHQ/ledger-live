@@ -8,7 +8,7 @@ export default function useExportLogs() {
   return useCallback(() => {
     const exportLogs = async () => {
       const logs = logReport.getLogs();
-      const base64 = Buffer.from(JSON.stringify(logs, null, 4)).toString(
+      const base64 = Buffer.from(JSON.stringify(logs, null, 2)).toString(
         "base64",
       );
       const version = getFullAppVersion(undefined, undefined, "-");
