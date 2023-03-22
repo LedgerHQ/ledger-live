@@ -26,7 +26,7 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
       parameters={{
         version: getPlatformVersion(),
         private: false,
-        platform: "desktop",
+        platforms: "desktop",
         allowDebugApps,
         allowExperimentalApps,
       }}
