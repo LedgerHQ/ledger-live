@@ -10,7 +10,7 @@ import {
 import {
   DerivationMode,
   getTagDerivationMode,
-} from "@ledgerhq/live-common/derivation";
+} from "@ledgerhq/coin-framework/derivation";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
@@ -61,7 +61,8 @@ const AccountCard = ({
       >
         <CurrencyIcon
           currency={currency}
-          color={disabled ? colors.neutral.c40 : undefined}
+          disabled={disabled}
+          color={colors.constant.white}
           size={32}
           circle
         />

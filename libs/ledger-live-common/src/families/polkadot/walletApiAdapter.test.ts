@@ -1,7 +1,7 @@
 import dot from "./walletApiAdapter";
 import { PolkadotTransaction as PlatformTransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
-import { Transaction } from "./types";
+import { Transaction } from "@ledgerhq/coin-polkadot/types";
 
 describe("getWalletAPITransactionSignFlowInfos", () => {
   describe("should properly get infos for DOT platform tx", () => {

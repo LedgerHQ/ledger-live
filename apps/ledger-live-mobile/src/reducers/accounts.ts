@@ -36,7 +36,7 @@ import {
   makeEmptyTokenAccount,
   isAccountBalanceUnconfirmed,
 } from "@ledgerhq/live-common/account/index";
-import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
+import { decodeNftId } from "@ledgerhq/live-common/nft/index";
 import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
 import type { AccountsState, State } from "./types";
 import type {
@@ -63,20 +63,20 @@ export const INITIAL_STATE: AccountsState = {
 };
 const handlers: ReducerMap<AccountsState, Payload> = {
   [AccountsActionTypes.ACCOUNTS_IMPORT]: (_, action) => ({
-    active: (action as Action<AccountsImportStorePayload>).payload.active,
+    active: (action as Action<AccountsImportStorePayload>).payload,
   }),
 
   [AccountsActionTypes.ACCOUNTS_USER_IMPORT]: (s, action) => ({
     active: importAccountsReduce(
       s.active,
-      (action as Action<AccountsImportAccountsPayload>).payload.input,
+      (action as Action<AccountsImportAccountsPayload>).payload,
     ),
   }),
 
   [AccountsActionTypes.REORDER_ACCOUNTS]: (state, action) => ({
     active: nestedSortAccounts(
       state.active,
-      (action as Action<AccountsReorderPayload>).payload.comparator,
+      (action as Action<AccountsReorderPayload>).payload,
     ),
   }),
 
@@ -114,8 +114,7 @@ const handlers: ReducerMap<AccountsState, Payload> = {
   [AccountsActionTypes.DELETE_ACCOUNT]: (state, action) => ({
     active: state.active.filter(
       acc =>
-        acc.id !==
-        (action as Action<AccountsDeleteAccountPayload>).payload.account.id,
+        acc.id !== (action as Action<AccountsDeleteAccountPayload>).payload.id,
     ),
   }),
 

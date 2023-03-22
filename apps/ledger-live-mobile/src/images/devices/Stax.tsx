@@ -44,7 +44,7 @@ const Stax = ({
         >
           <Stop stop-color="#626060" />
           <Stop offset="0.18" stopColor="#888887" />
-          <Stop offset="0.4" stopColor="5E5D5E" />
+          <Stop offset="0.4" stopColor="#5E5D5E" />
           <Stop offset="0.59" stopColor="#616161" />
           <Stop offset="0.76" stopColor="#6C6B6C" />
           <Stop offset="0.86" stopColor="#767676" />

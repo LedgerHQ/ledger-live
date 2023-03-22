@@ -31,6 +31,7 @@
     "@ledgerhq/hw-transport-node-ble": "workspace:^"
   },
   "dependencies": {
+    "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",

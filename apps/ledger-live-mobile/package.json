@@ -68,6 +68,7 @@
     "@formatjs/intl-numberformat": "^7.4.2",
     "@formatjs/intl-pluralrules": "^4.3.2",
     "@formatjs/intl-relativetimeformat": "^11.1.8",
+    "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",

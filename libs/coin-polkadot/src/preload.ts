@@ -2,11 +2,11 @@
 import { BigNumber } from "bignumber.js";
 import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import { PRELOAD_MAX_AGE } from "./logic";
-import { getRegistry, getMinimumBondBalance } from "./cache";
 import type { PolkadotPreloadData, PolkadotValidator } from "./types";
-import { getStakingProgress, getValidators } from "./validators";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
+import { PolkadotAPI } from "./api";
+
+const PRELOAD_MAX_AGE = 60 * 1000;
 
 let currentPolkadotPreloadedData: PolkadotPreloadData = {
   validators: [],
@@ -105,39 +105,41 @@ const shouldRefreshValidators = (previousState, currentState) => {
   return !previousState || currentState.activeEra !== previousState.activeEra;
 };
 
-export const preload = async (): Promise<PolkadotPreloadData> => {
-  await loadPolkadotCrypto();
-  await getRegistry(); // ensure registry is already in cache.
-  const minimumBondBalance = await getMinimumBondBalance();
-  const minimumBondBalanceStr = minimumBondBalance.toString();
+export const preload =
+  (polkadotAPI: PolkadotAPI) => async (): Promise<PolkadotPreloadData> => {
+    await loadPolkadotCrypto();
+    await polkadotAPI.getRegistry(); // ensure registry is already in cache.
+    const minimumBondBalance = await polkadotAPI.getMinimumBondBalance();
+    const minimumBondBalanceStr = minimumBondBalance.toString();
 
-  const currentStakingProgress = await getStakingProgress();
-  const { validators: previousValidators, staking: previousStakingProgress } =
-    currentPolkadotPreloadedData;
-  let validators = previousValidators;
+    const currentStakingProgress = await polkadotAPI.getStakingProgress();
+    const { validators: previousValidators, staking: previousStakingProgress } =
+      currentPolkadotPreloadedData;
+    let validators = previousValidators;
 
-  if (
-    !validators ||
-    !validators.length ||
-    shouldRefreshValidators(previousStakingProgress, currentStakingProgress)
-  ) {
-    log("polkadot/preload", "refreshing polkadot validators...");
+    if (
+      !validators ||
+      !validators.length ||
+      shouldRefreshValidators(previousStakingProgress, currentStakingProgress)
+    ) {
+      log("polkadot/preload", "refreshing polkadot validators...");
 
-    try {
-      validators = await getValidators("all");
-    } catch (error) {
-      log("polkadot/preload", "failed to fetch validators", {
-        error,
-      });
+      try {
+        validators = await polkadotAPI.getValidators("all");
+      } catch (error) {
+        log("polkadot/preload", "failed to fetch validators", {
+          error,
+        });
+      }
     }
-  }
 
-  return {
-    validators,
-    staking: currentStakingProgress,
-    minimumBondBalance: minimumBondBalanceStr,
+    return {
+      validators,
+      staking: currentStakingProgress,
+      minimumBondBalance: minimumBondBalanceStr,
+    };
   };
-};
+
 export const hydrate = (data: unknown) => {
   const hydrated = fromHydratePreloadData(data);
   log(
