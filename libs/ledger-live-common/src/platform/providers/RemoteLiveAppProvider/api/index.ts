@@ -17,7 +17,7 @@ const api = {
           ...JSON.parse(getEnv("MOCK_REMOTE_LIVE_MANIFEST")),
         ] as LiveAppManifest[];
       }
-      return mockData as unknown as LiveAppManifest[];
+      return mockData as string[];
     }
     try {
       const { data }: { data: LiveAppManifest[] } = await network({
