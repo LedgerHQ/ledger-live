@@ -6112,7 +6112,7 @@
           "desc": "Recover access to your wallet without your Secret Recovery Phrase.",
           "actions": {
             "learnMore": "How does it benefit me?",
-            "alreadySubscribed": "Already subscribed? <LinkAccount>View my account</LinkAccount>"
+            "alreadySubscribed": "Already logged in? <LinkAccount>View my subscription</LinkAccount>"
           }
         },
         "confirmIdentity": {
