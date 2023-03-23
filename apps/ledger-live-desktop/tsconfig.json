@@ -18,7 +18,7 @@
     "rootDir": "."
   },
   "include": ["tests", "**/*.d.ts"],
-  "files": ["package.json", "release-notes.json"],
+  "files": ["package.json", "release-notes.json", "tests/userdata/bot-accounts.json"],
   "exclude": [
     "node_modules",
     "babel.config.js",

@@ -3836,7 +3836,12 @@
       "enableLearnStagingUrl": "Learn page staging URL",
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
-      "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
+      "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step",
+      "mockedAccounts": {
+       "title": "Import mocked accounts", 
+        "desc": "Import a mocked account per currency and merge them with existing accounts",
+        "cta": "Import"
+      }
     },
     "currencies": {
       "selectPlaceholder": "Select crypto asset",

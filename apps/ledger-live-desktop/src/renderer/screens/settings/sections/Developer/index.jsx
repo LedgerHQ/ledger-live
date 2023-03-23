@@ -16,6 +16,7 @@ import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
+import { MockedAccounts } from "./MockedAccounts";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -63,6 +64,7 @@ const Default = () => {
       >
         <OnboardingAppInstallDebugButton />
       </Row>
+      <MockedAccounts />
     </Body>
   );
 };
