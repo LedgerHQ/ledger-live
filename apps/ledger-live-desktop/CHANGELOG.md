@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.56.0-nightly.3
+
+### Patch Changes
+
+- [#2999](https://github.com/LedgerHQ/ledger-live/pull/2999) [`dd737d42b5`](https://github.com/LedgerHQ/ledger-live/commit/dd737d42b568094e0190a2648e7131f66171a4d7) Thanks [@sarneijim](https://github.com/sarneijim)! - Add track to cosmos/osmos account banner
+
+- [#3026](https://github.com/LedgerHQ/ledger-live/pull/3026) [`0b51a77c6c`](https://github.com/LedgerHQ/ledger-live/commit/0b51a77c6c92890d8338417bd388d1fa850a203d) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Make exported logs formatted by default
+
+- Updated dependencies [[`9f55124458`](https://github.com/LedgerHQ/ledger-live/commit/9f551244584c20638e1eec2d984dd725fe2688f6)]:
+  - @ledgerhq/live-common@29.2.0-nightly.3
+  - @ledgerhq/coin-framework@0.2.1-nightly.2
+
 ## 2.56.0-nightly.2
 
 ### Minor Changes

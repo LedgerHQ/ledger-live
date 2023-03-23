@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.2.0-nightly.1
+
+### Minor Changes
+
+- [#3015](https://github.com/LedgerHQ/ledger-live/pull/3015) [`9bb21e26a8`](https://github.com/LedgerHQ/ledger-live/commit/9bb21e26a88a2db7093a3d5cc75ab03d12b25ffb) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating songbird rpc node
+
 ## 9.2.0-nightly.0
 
 ### Minor Changes

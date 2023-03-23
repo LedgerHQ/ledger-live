@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 29.2.0-nightly.3
+
+### Patch Changes
+
+- [#2664](https://github.com/LedgerHQ/ledger-live/pull/2664) [`9f55124458`](https://github.com/LedgerHQ/ledger-live/commit/9f551244584c20638e1eec2d984dd725fe2688f6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove cryptoorg coin specific logic outside of its family folder
+
+- Updated dependencies [[`9bb21e26a8`](https://github.com/LedgerHQ/ledger-live/commit/9bb21e26a88a2db7093a3d5cc75ab03d12b25ffb)]:
+  - @ledgerhq/cryptoassets@9.2.0-nightly.1
+  - @ledgerhq/coin-framework@0.2.1-nightly.2
+  - @ledgerhq/coin-polkadot@0.0.4-nightly.2
+  - @ledgerhq/hw-app-eth@6.32.2-nightly.2
+
 ## 29.2.0-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.18.0-nightly.3
+
+### Patch Changes
+
+- [#3026](https://github.com/LedgerHQ/ledger-live/pull/3026) [`0b51a77c6c`](https://github.com/LedgerHQ/ledger-live/commit/0b51a77c6c92890d8338417bd388d1fa850a203d) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Make exported logs formatted by default
+
+- Updated dependencies [[`9f55124458`](https://github.com/LedgerHQ/ledger-live/commit/9f551244584c20638e1eec2d984dd725fe2688f6)]:
+  - @ledgerhq/live-common@29.2.0-nightly.3
+  - @ledgerhq/coin-framework@0.2.1-nightly.2
+
 ## 3.18.0-nightly.2
 
 ### Patch Changes

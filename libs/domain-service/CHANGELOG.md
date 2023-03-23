@@ -1,5 +1,13 @@
 # @ledgerhq/domain-service
 
+## 0.2.1-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`9bb21e26a8`](https://github.com/LedgerHQ/ledger-live/commit/9bb21e26a88a2db7093a3d5cc75ab03d12b25ffb), [`9f55124458`](https://github.com/LedgerHQ/ledger-live/commit/9f551244584c20638e1eec2d984dd725fe2688f6)]:
+  - @ledgerhq/cryptoassets@9.2.0-nightly.1
+  - @ledgerhq/live-common@29.2.0-nightly.3
+
 ## 0.2.1-nightly.2
 
 ### Patch Changes
