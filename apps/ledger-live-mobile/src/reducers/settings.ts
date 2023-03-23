@@ -290,11 +290,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   }),
 
   [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: (state, action) => {
+    const payload = (action as Action<SettingsCompleteOnboardingPayload>)
+      .payload;
     return {
       ...state,
-      hasCompletedOnboarding: !!(
-        action as Action<SettingsCompleteOnboardingPayload>
-      ).payload,
+      hasCompletedOnboarding: payload === false ? payload : true,
     };
   },
 
