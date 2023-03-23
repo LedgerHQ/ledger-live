@@ -126,12 +126,12 @@ export default function Progress({ navigation, route }: Props) {
       .subscribe({
         next: scannedAccounts => {
           dispatch(
-            setAccounts({
-              active: migrateAccounts({
+            setAccounts(
+              migrateAccounts({
                 scannedAccounts,
                 existingAccounts: accounts,
               }),
-            }),
+            ),
           );
           setStatus("done");
         },

@@ -16,7 +16,6 @@ import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/pos
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import type {
-  AccountsState,
   AppState,
   FwUpdateBackgroundEvent,
   BleState,
@@ -57,7 +56,7 @@ export type AccountsReplaceAccountsPayload = Pick<
   "scannedAccounts" | "selectedIds" | "renamings"
 > &
   Partial<AddAccountsProps>;
-export type AccountsSetAccountsPayload = AccountsState;
+export type AccountsSetAccountsPayload = Account[];
 export type AccountsUpdateAccountWithUpdaterPayload = {
   accountId: string;
   updater: (arg0: Account) => Account;
