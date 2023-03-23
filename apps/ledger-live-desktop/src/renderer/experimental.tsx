@@ -57,6 +57,13 @@ export const experimentalFeatures: Feature[] = [
   },
   {
     type: "toggle",
+    name: "LIST_APPS_V2",
+    title: <Trans i18nKey="settings.experimental.features.listAppsV2.title" />,
+    description: <Trans i18nKey="settings.experimental.features.listAppsV2.description" />,
+    dirty: true,
+  },
+  {
+    type: "toggle",
     name: "SCAN_FOR_INVALID_PATHS",
     title: <Trans i18nKey="settings.experimental.features.scanForInvalidPaths.title" />,
     description: <Trans i18nKey="settings.experimental.features.scanForInvalidPaths.description" />,

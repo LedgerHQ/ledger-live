@@ -3865,6 +3865,10 @@
           "title": "Developer mode",
           "description": "Show developer and testnet apps in My Ledger."
         },
+        "listAppsV2": {
+          "title": "Experimental list apps for My Ledger",
+          "description": "Performance improvement for My Ledger access and inline flows."
+        },
         "scanForInvalidPaths": {
           "title": "Extended account search",
           "description": "Scan for accounts with erroneous derivation paths. Please send potentially found assets to a regular account."
