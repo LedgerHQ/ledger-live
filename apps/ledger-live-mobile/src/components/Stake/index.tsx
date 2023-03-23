@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 import { useMemo, useLayoutEffect, useCallback } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, CompositeScreenProps } from "@react-navigation/native";
 import { Account } from "@ledgerhq/types-live";
 import {
   listCurrencies,
@@ -11,17 +11,25 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "../../const";
 import perFamilyAccountActions from "../../generated/accountActions";
 import logger from "../../logger";
+import type { StackNavigatorProps } from "../RootNavigator/types/helpers";
+import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";
 
-const StakeFlow = () => {
+type Props = CompositeScreenProps<
+  StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
+
+const StakeFlow = ({ route }): Props => {
+  const currencies = route?.params?.currencies;
   const featureFlag = useFeature("stakePrograms");
   const list = featureFlag?.params?.list;
   const navigation =
     useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
-      currencies: list || [],
+      currencies: currencies || list || [],
     });
-  }, [list]);
+  }, [currencies, list]);
 
   const onSuccess = useCallback(
     (account: Account, parentAccount?: Account) => {
@@ -76,15 +84,27 @@ const StakeFlow = () => {
   };
 
   const requestAccount = useCallback(() => {
-    navigation.replace(NavigatorName.RequestAccount, {
-      screen: ScreenName.RequestAccountsSelectCrypto,
-      params: {
-        currencies: cryptoCurrencies,
-        allowAddAccount: true,
-        onSuccess,
-      },
-      onError,
-    });
+    if (cryptoCurrencies.length === 1) {
+      // Navigate to the second screen when there is only one currency
+      navigation.replace(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectAccount,
+        params: {
+          currency: cryptoCurrencies[0],
+          onSuccess,
+        },
+        onError,
+      });
+    } else {
+      navigation.replace(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectCrypto,
+        params: {
+          currencies: cryptoCurrencies,
+          allowAddAccount: true,
+          onSuccess,
+        },
+        onError,
+      });
+    }
   }, [cryptoCurrencies, navigation, onSuccess]);
 
   useLayoutEffect(() => {
