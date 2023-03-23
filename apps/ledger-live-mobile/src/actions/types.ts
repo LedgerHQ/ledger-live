@@ -280,6 +280,7 @@ export enum SettingsActionTypes {
   SET_OVERRIDDEN_FEATURE_FLAGS = "SET_OVERRIDDEN_FEATURE_FLAGS",
   SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
   SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
+  SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -387,6 +388,9 @@ export type SettingsSetFeatureFlagsBannerVisiblePayload =
 export type SettingsSetDebugAppLevelDrawerOpenedPayload =
   SettingsState["debugAppLevelDrawerOpened"];
 
+export type SettingsSetHasBeenUpsoldProtectPayload =
+  SettingsState["hasBeenUpsoldProtect"];
+
 export type SettingsCompleteOnboardingPayload =
   | void
   | SettingsState["hasCompletedOnboarding"];
@@ -441,7 +445,8 @@ export type SettingsPayload =
   | SettingsSetOverriddenFeatureFlagsPlayload
   | SettingsSetFeatureFlagsBannerVisiblePayload
   | SettingsCompleteOnboardingPayload
-  | SettingsSetDebugAppLevelDrawerOpenedPayload;
+  | SettingsSetDebugAppLevelDrawerOpenedPayload
+  | SettingsSetHasBeenUpsoldProtectPayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

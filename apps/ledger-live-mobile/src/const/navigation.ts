@@ -420,7 +420,6 @@ export enum ScreenName {
   OnboardingImportSelectAccount = "OnboardingImportSelectAccount",
   OnboardingQuiz = "OnboardingQuiz",
   OnboardingQuizFinal = "OnboardingQuizFinal",
-  OnboardingFinish = "OnboardingFinish",
   OnboardingLanguageModal = "OnboardingLanguageModal",
   OnboardingModalSetupNewDevice = "OnboardingModalSetupNewDevice",
   OnboardingModalSetupSteps = "OnboardingModalSetupSteps",

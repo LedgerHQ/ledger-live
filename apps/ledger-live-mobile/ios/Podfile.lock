@@ -451,7 +451,7 @@ PODS:
     - TOCropViewController (= 2.5.3)
   - react-native-image-picker (4.8.5):
     - React-Core
-  - react-native-netinfo (6.2.1):
+  - react-native-netinfo (9.3.7):
     - React-Core
   - react-native-pager-view (6.1.0):
     - React-Core
@@ -723,7 +723,7 @@ DEPENDENCIES:
   - "react-native-flipper-performance-plugin (from `../../../node_modules/.pnpm/react-native-flipper-performance-plugin@0.3.1/node_modules/react-native-flipper-performance-plugin`)"
   - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.2_ykxjy5s7xujdxmsgrwxo5mh3y4_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-image-crop-tools`)"
   - "react-native-image-picker (from `../../../node_modules/.pnpm/react-native-image-picker@4.8.5_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-image-picker`)"
-  - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@6.2.1_react-native@0.68.5/node_modules/@react-native-community/netinfo`)"
+  - "react-native-netinfo (from `../../../node_modules/.pnpm/@react-native-community+netinfo@9.3.7_react-native@0.68.5/node_modules/@react-native-community/netinfo`)"
   - "react-native-pager-view (from `../../../node_modules/.pnpm/react-native-pager-view@6.1.0_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-pager-view`)"
   - "react-native-performance (from `../../../node_modules/.pnpm/react-native-performance@3.1.2_react-native@0.68.5/node_modules/react-native-performance`)"
   - "react-native-randombytes (from `../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes`)"
@@ -895,7 +895,7 @@ EXTERNAL SOURCES:
   react-native-image-picker:
     :path: "../../../node_modules/.pnpm/react-native-image-picker@4.8.5_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-image-picker"
   react-native-netinfo:
-    :path: "../../../node_modules/.pnpm/@react-native-community+netinfo@6.2.1_react-native@0.68.5/node_modules/@react-native-community/netinfo"
+    :path: "../../../node_modules/.pnpm/@react-native-community+netinfo@9.3.7_react-native@0.68.5/node_modules/@react-native-community/netinfo"
   react-native-pager-view:
     :path: "../../../node_modules/.pnpm/react-native-pager-view@6.1.0_ondxtwf5lqq5g76dzmsmwamaca/node_modules/react-native-pager-view"
   react-native-performance:
@@ -1065,7 +1065,7 @@ SPEC CHECKSUMS:
   react-native-flipper-performance-plugin: 2b873b68da3e368afeaf29c9c7a8c2b0ff908c4f
   react-native-image-crop-tools: 06b171ac13f1cd520e633a0d190c00f664b4cb79
   react-native-image-picker: cd420f97f6ed6ff74fc4686d27dbcfdbd051db91
-  react-native-netinfo: 3d3769f0d65de15c83a9bf1346f8be71de5a24bf
+  react-native-netinfo: 2517ad504b3d303e90d7a431b0fcaef76d207983
   react-native-pager-view: 7abf89f9834d9a4021b2fb6a5ef2abff570b46fb
   react-native-performance: e66c3730f9e463b959dc21ff38fd2c8b8e53ea79
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846

@@ -71,6 +71,7 @@ import type {
   SettingsCompleteOnboardingPayload,
   SettingsSetDateFormatPayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
+  SettingsSetHasBeenUpsoldProtectPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -166,6 +167,7 @@ export const INITIAL_STATE: SettingsState = {
   featureFlagsBannerVisible: false,
   debugAppLevelDrawerOpened: false,
   dateFormat: "default",
+  hasBeenUpsoldProtect: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -287,12 +289,14 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: (state, action) => ({
-    ...state,
-    hasCompletedOnboarding: !!(
-      action as Action<SettingsCompleteOnboardingPayload>
-    ).payload,
-  }),
+  [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: (state, action) => {
+    const payload = (action as Action<SettingsCompleteOnboardingPayload>)
+      .payload;
+    return {
+      ...state,
+      hasCompletedOnboarding: payload === false ? payload : true,
+    };
+  },
 
   [SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME]: (state, action) => ({
     ...state,
@@ -643,6 +647,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       action as Action<SettingsSetDebugAppLevelDrawerOpenedPayload>
     ).payload,
   }),
+
+  [SettingsActionTypes.SET_HAS_BEEN_UPSOLD_PROTECT]: (state, action) => ({
+    ...state,
+    hasBeenUpsoldProtect: (
+      action as Action<SettingsSetHasBeenUpsoldProtectPayload>
+    ).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -861,3 +872,5 @@ export const featureFlagsBannerVisibleSelector = (state: State) =>
   state.settings.featureFlagsBannerVisible;
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
+export const hasBeenUpsoldProtectSelector = (state: State) =>
+  state.settings.hasBeenUpsoldProtect;
