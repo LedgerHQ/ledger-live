@@ -38,6 +38,7 @@ export enum ScreenName {
   DebugEnv = "DebugEnv",
   DebugExport = "DebugExport",
   DebugFeatureFlags = "DebugFeatureFlags",
+  DebugInstallSetOfApps = "DebugInstallSetOfApps",
   DebugFeatures = "DebugFeatures",
   DebugFetchCustomImage = "DebugFetchCustomImage",
   DebugFirmwareUpdate = "DebugFirmwareUpdate",

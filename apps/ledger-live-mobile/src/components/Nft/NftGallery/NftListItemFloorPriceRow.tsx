@@ -35,9 +35,11 @@ const NftListItemFloorPriceRow = ({ nft }: Props) => {
   );
 
   useEffect(() => {
+    let cancelled = false;
     setFloorPriceLoading(true);
     getFloorPrice(nft, currency)
       .then((result: FloorPrice | null) => {
+        if (cancelled) return;
         if (result) {
           const foundFloorPriceCurrency = findCryptoCurrencyByTicker(
             result.ticker,
@@ -53,7 +55,13 @@ const NftListItemFloorPriceRow = ({ nft }: Props) => {
           }
         }
       })
-      .finally(() => setFloorPriceLoading(false));
+      .finally(() => {
+        if (cancelled) return;
+        setFloorPriceLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [nft, currency]);
 
   return (

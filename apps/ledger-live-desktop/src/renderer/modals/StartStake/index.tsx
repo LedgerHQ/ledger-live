@@ -14,6 +14,7 @@ type CurrencyFamily = keyof typeof perFamilyManageActions;
 interface ModalStartStakeProps {
   account: Account;
   parentAccount: Account | null;
+  alwaysShowNoFunds: boolean;
 }
 
 const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount }) => {

@@ -5,7 +5,7 @@ import sha from "sha.js";
 import { bufferToHex } from "ethereumjs-util";
 import { getAccountBridge } from "../bridge";
 import { getCryptoCurrencyById } from "../currencies";
-import type { DerivationMode } from "../derivation";
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import type { TypedMessageData } from "../families/ethereum/types";
 import { domainHash, messageHash } from "../families/ethereum/hw-signMessage";
 import type { MessageData } from "../hw/signMessage/types";

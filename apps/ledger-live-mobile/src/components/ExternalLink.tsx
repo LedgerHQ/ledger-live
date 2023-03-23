@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Icons, Link as BaseLink } from "@ledgerhq/native-ui";
-import { LinkProps } from "@ledgerhq/native-ui/components/cta/Link";
+import { LinkProps } from "@ledgerhq/native-ui/components/cta/Link/index";
 import { track } from "../analytics";
 
 type Props = {

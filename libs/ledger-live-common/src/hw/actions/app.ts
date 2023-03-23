@@ -37,7 +37,7 @@ import { useReplaySubject } from "../../observable";
 import { getAccountName } from "../../account";
 import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
-import { AppOp } from "../../apps/types";
+import { AppOp, SkippedAppOp } from "../../apps/types";
 import { ConnectAppTimeout } from "../../errors";
 import perFamilyAccount from "../../generated/account";
 import type {
@@ -88,6 +88,8 @@ export type State = {
   currentAppOp?: AppOp;
   itemProgress?: number;
   isLocked: boolean;
+  skippedAppOps: SkippedAppOp[];
+  listedApps?: boolean;
 };
 
 export type AppState = State & {
@@ -109,7 +111,7 @@ export type AppRequest = {
   dependencies?: AppRequest[];
   withInlineInstallProgress?: boolean;
   requireLatestFirmware?: boolean;
-  skipAppInstallIfNotFound?: boolean;
+  allowPartialDependencies?: boolean;
 };
 
 export type AppResult = {
@@ -183,6 +185,8 @@ const getInitialState = (
   request,
   currentAppOp: undefined,
   installQueue: [],
+  listedApps: false, // Nb maybe expose the result
+  skippedAppOps: [],
   itemProgress: 0,
 });
 
@@ -212,7 +216,13 @@ const reducer = (state: State, e: Event): State => {
     case "deviceChange":
       return { ...getInitialState(e.device, state.request), device: e.device };
 
-    case "stream-install":
+    case "some-apps-skipped":
+      return {
+        ...state,
+        skippedAppOps: e.skippedAppOps,
+        installQueue: state.installQueue,
+      };
+    case "inline-install":
       return {
         isLoading: false,
         requestQuitApp: false,
@@ -235,7 +245,9 @@ const reducer = (state: State, e: Event): State => {
         listingApps: false,
 
         request: state.request,
+        skippedAppOps: state.skippedAppOps,
         currentAppOp: e.currentAppOp,
+        listedApps: state.listedApps,
         itemProgress: e.itemProgress || 0,
         installQueue: e.installQueue || [],
       };
@@ -243,6 +255,7 @@ const reducer = (state: State, e: Event): State => {
     case "listing-apps":
       return {
         ...state,
+        listedApps: false,
         listingApps: true,
         unresponsive: false,
         isLocked: false,
@@ -255,7 +268,9 @@ const reducer = (state: State, e: Event): State => {
         error: e.error,
         isLoading: false,
         listingApps: false,
+
         request: state.request,
+        skippedAppOps: state.skippedAppOps,
       };
 
     case "ask-open-app":
@@ -276,7 +291,9 @@ const reducer = (state: State, e: Event): State => {
         unresponsive: false,
         isLocked: false,
         requestOpenApp: e.appName,
+
         request: state.request,
+        skippedAppOps: state.skippedAppOps,
       };
 
     case "ask-quit-app":
@@ -297,7 +314,9 @@ const reducer = (state: State, e: Event): State => {
         unresponsive: false,
         isLocked: false,
         requestQuitApp: true,
+
         request: state.request,
+        skippedAppOps: state.skippedAppOps,
       };
 
     case "device-permission-requested":
@@ -318,7 +337,10 @@ const reducer = (state: State, e: Event): State => {
         allowOpeningRequestedWording: null,
         allowManagerGranted: false,
         allowManagerRequestedWording: e.wording,
+
         request: state.request,
+        skippedAppOps: state.skippedAppOps,
+        installQueue: state.installQueue,
       };
 
     case "device-permission-granted":
@@ -339,7 +361,11 @@ const reducer = (state: State, e: Event): State => {
         allowOpeningRequestedWording: null,
         allowManagerGranted: true,
         allowManagerRequestedWording: null,
+
         request: state.request,
+        skippedAppOps: state.skippedAppOps,
+        installQueue: state.installQueue,
+        listedApps: state.listedApps,
       };
 
     case "app-not-installed":
@@ -363,7 +389,16 @@ const reducer = (state: State, e: Event): State => {
           appNames: e.appNames,
           appName: e.appName,
         },
+
         request: state.request,
+        skippedAppOps: state.skippedAppOps,
+      };
+
+    case "listed-apps":
+      return {
+        ...state,
+        listedApps: true,
+        installQueue: e.installQueue,
       };
 
     case "opened":
@@ -383,7 +418,10 @@ const reducer = (state: State, e: Event): State => {
         opened: true,
         appAndVersion: e.app,
         derivation: e.derivation,
+
         request: state.request,
+        skippedAppOps: state.skippedAppOps,
+        listedApps: state.listedApps,
         displayUpgradeWarning:
           state.device && e.app
             ? shouldUpgrade(state.device.modelId, e.app.name, e.app.version)
@@ -398,7 +436,7 @@ function inferCommandParams(appRequest: AppRequest) {
   let derivationMode;
   let derivationPath;
 
-  const { account, requireLatestFirmware, skipAppInstallIfNotFound } =
+  const { account, requireLatestFirmware, allowPartialDependencies } =
     appRequest;
   let { appName, currency, dependencies } = appRequest;
 
@@ -421,7 +459,7 @@ function inferCommandParams(appRequest: AppRequest) {
       appName,
       dependencies,
       requireLatestFirmware,
-      skipAppInstallIfNotFound,
+      allowPartialDependencies,
     };
   }
 
@@ -457,7 +495,7 @@ function inferCommandParams(appRequest: AppRequest) {
       currencyId: currency.id,
       ...extra,
     },
-    skipAppInstallIfNotFound,
+    allowPartialDependencies,
   };
 }
 

@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@electron/remote": "^2",
+    "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/electron-updater": "^4.2.2",

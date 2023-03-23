@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { Base as BaseButton } from "@ledgerhq/native-ui/components/cta/Button";
+import { Base as BaseButton } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { Image, ImageSourcePropType } from "react-native";
 import Button from "../../components/PreventDoubleClickButton";
 

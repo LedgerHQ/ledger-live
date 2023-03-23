@@ -41,7 +41,7 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1
@@ -56,11 +56,15 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter
-        run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
+        run: |
+          pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
+          cd apps/ledger-live-mobile
+          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./lint.json'))"
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - uses: actions/upload-artifact@v3
         name: upload eslint json output
+        if: always()
         with:
           name: lint
           path: ${{ github.workspace }}/apps/ledger-live-mobile/lint.json
@@ -76,6 +80,7 @@ jobs:
           name: lint
       - uses: actions/github-script@v6
         name: "format report"
+        if: always()
         id: status
         with:
           script: |

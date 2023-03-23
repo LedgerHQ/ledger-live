@@ -15,12 +15,12 @@ import {
 import type Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import type { DerivationMode } from "../derivation";
-import type { AppOp } from "../apps/types";
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
+import type { AppOp, SkippedAppOp } from "../apps/types";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import { withDevice } from "./deviceAccess";
-import { streamAppInstall } from "../apps/hw";
+import { inlineAppInstall } from "../apps/hw";
 import { isDashboardName } from "./isDashboardName";
 import getAppAndVersion from "./getAppAndVersion";
 import getDeviceInfo from "./getDeviceInfo";
@@ -47,7 +47,7 @@ export type Input = {
   dependencies?: string[];
   requireLatestFirmware?: boolean;
   outdatedApp?: AppAndVersion;
-  skipAppInstallIfNotFound?: boolean;
+  allowPartialDependencies: boolean;
 };
 export type AppAndVersion = {
   name: string;
@@ -80,14 +80,22 @@ export type ConnectAppEvent =
       appName: string;
     }
   | {
-      type: "stream-install";
+      type: "inline-install";
       progress: number;
       itemProgress: number;
       currentAppOp: AppOp;
       installQueue: string[];
     }
   | {
+      type: "some-apps-skipped";
+      skippedAppOps: SkippedAppOp[];
+    }
+  | {
       type: "listing-apps";
+    }
+  | {
+      type: "listed-apps";
+      installQueue: string[];
     }
   | {
       type: "dependencies-resolved";
@@ -154,7 +162,7 @@ export const openAppFromDashboard = (
                 switch (e.statusCode) {
                   case 0x6984: // No StatusCodes definition
                   case 0x6807: // No StatusCodes definition
-                    return streamAppInstall({
+                    return inlineAppInstall({
                       transport,
                       appNames: [appName],
                       onSuccessObs: () =>
@@ -269,7 +277,7 @@ const derivationLogic = (
   );
 
 /**
- * @param skipAppInstallIfNotFound If some dependencies need to be installed, and if set to true,
+ * @param allowPartialDependencies If some dependencies need to be installed, and if set to true,
  *   skip any app install if the app is not found from the provider.
  */
 const cmd = ({
@@ -280,7 +288,7 @@ const cmd = ({
   dependencies,
   requireLatestFirmware,
   outdatedApp,
-  skipAppInstallIfNotFound = false,
+  allowPartialDependencies = false,
 }: Input): Observable<ConnectAppEvent> =>
   withDevice(devicePath)(
     (transport) =>
@@ -368,7 +376,7 @@ const cmd = ({
                 // check if we meet dependencies
                 if (dependencies?.length) {
                   const completesInDashboard = isDashboardName(appName);
-                  return streamAppInstall({
+                  return inlineAppInstall({
                     transport,
                     appNames: [
                       ...(completesInDashboard ? [] : [appName]),
@@ -382,7 +390,7 @@ const cmd = ({
                         appName,
                       }); // NB without deps
                     },
-                    skipAppInstallIfNotFound,
+                    allowPartialDependencies,
                   });
                 }
 

@@ -5762,8 +5762,10 @@
     "progress": {
       "loading": "Loading ...",
       "resolving": "Resolving dependencies",
-      "progress": "Installing apps {{progress}}%",
-      "disclaimer": "Add or remove apps at any time from Ledger Live."
+      "progress": "Stay in Ledger Live while apps are installing.",
+      "disclaimer": "Add or remove apps at any time from Ledger Live.",
+      "skippedInfo": "Some apps aren’t available. They are yet to be developed for {{ productName }}.",
+      "skipped": "Not yet available for {{ productName }}"
     },
     "cancelled": {
       "title": "App installation was cancelled on {{productName}}",
