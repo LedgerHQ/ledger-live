@@ -216,6 +216,32 @@ export type Application = {
   compatibleWalletsJSON: string | null | undefined;
 };
 
+export type ApplicationV2 = {
+  versionId: Id;
+  versionName: string;
+  versionDisplayName: string;
+  version: string;
+  currencyId: string;
+  description: string;
+  applicationType: AppType;
+  dateModified: string;
+  icon: string;
+  authorName: string;
+  supportURL: string;
+  contactURL: string;
+  sourceURL: string;
+  compatibleWallets: string;
+  hash: string;
+  perso: string;
+  firmware: string;
+  firmwareKey: string;
+  delete: string;
+  deleteKey: string;
+  bytes: number;
+  warning: string | null;
+  isDevTools: boolean;
+};
+
 /**
  *
  */
@@ -273,6 +299,7 @@ export type Category = {
   date_creation: string;
   date_last_modified: string;
 };
+
 
 /**
  *
