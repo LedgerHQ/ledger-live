@@ -7,6 +7,7 @@ const protectIds = {
   [ProtectEnv.PREPROD]: "protect-preprod",
   [ProtectEnv.STAGING]: "protect-staging",
   [ProtectEnv.SIMU]: "protect-simu",
+  [ProtectEnv.PROD]: "protect-prod",
   [ProtectEnv.SIT]: "protect-sit",
   [ProtectEnv.SEC]: "protect",
 };
@@ -15,6 +16,7 @@ const protectURLs = {
   [ProtectEnv.PREPROD]: "https://protect-frontend-ppr.aws.ppr.ldg-tech.com",
   [ProtectEnv.STAGING]: "https://protect-frontend-stg.aws.stg.ldg-tech.com",
   [ProtectEnv.SIMU]: "https://protect-frontend-simu-stg.aws.stg.ldg-tech.com",
+  [ProtectEnv.PROD]: "https://protect-frontend-prd.aws.prd.ldg-tech.com",
   [ProtectEnv.SEC]: "https://protect-frontend.aws.sec.ldg-tech.com",
   [ProtectEnv.SIT]: "https://protect-frontend.aws.sit.ldg-tech.com",
 };
@@ -24,6 +26,7 @@ const stargatePortalUrls = {
   [ProtectEnv.STAGING]: "https://stargate-portal-stg.api.aws.stg.ldg-tech.com",
   [ProtectEnv.SIMU]:
     "https://stargate-portal-simu-stg.api.aws.stg.ldg-tech.com",
+  [ProtectEnv.PROD]: "https://stargate-portal-prd.api.aws.prd.ldg-tech.com",
   [ProtectEnv.SEC]: "https://stargate-portal-sec.api.aws.sec.ldg-tech.com",
   [ProtectEnv.SIT]: "https://stargate-portal-sit.api.aws.sit.ldg-tech.com",
 };
@@ -36,7 +39,7 @@ const stargatePortalUrl = stargatePortalUrls[protectEnv];
 
 let platformName = "Recover";
 
-if ((protectEnv as ProtectEnv) !== ProtectEnv.SEC) {
+if ([ProtectEnv.SIMU, ProtectEnv.STAGING].includes(protectEnv as ProtectEnv)) {
   platformName += ` ${
     protectEnv.charAt(0).toUpperCase() + protectEnv.slice(1)
   }`;
