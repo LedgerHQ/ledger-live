@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Animated, Easing } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 
 type Props = FlexBoxProps & {
   stopAnimation: boolean;

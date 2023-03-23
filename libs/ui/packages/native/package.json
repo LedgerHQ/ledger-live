@@ -25,6 +25,10 @@
   },
   "exports": {
     ".": "./lib/index.js",
+    "./lib/*": "./lib/*.js",
+    "./lib/*/": "./lib/*/index.js",
+    "./*": "./lib/*.js",
+    "./*/": "./lib/*/index.js",
     "./": "./lib/",
     "./package.json": "./package.json"
   },

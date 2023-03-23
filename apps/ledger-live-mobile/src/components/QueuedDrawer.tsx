@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { BottomDrawer } from "@ledgerhq/native-ui";
 import { useFocusEffect } from "@react-navigation/native";
-import type { BaseModalProps } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal";
+import type { BaseModalProps } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import { useSelector } from "react-redux";
 import { isModalLockedSelector } from "../reducers/appstate";
 import { Merge } from "../types/helpers";

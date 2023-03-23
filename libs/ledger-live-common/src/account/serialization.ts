@@ -1,9 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import {
-  toCryptoOrgResourcesRaw,
-  fromCryptoOrgResourcesRaw,
-} from "../families/crypto_org/serialization";
-import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
@@ -39,12 +35,7 @@ import {
   toOperationRaw as commonToOperationRaw,
   fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
-import {
-  CryptoOrgAccount,
-  CryptoOrgAccountRaw,
-} from "../families/crypto_org/types";
 import { getAccountBridge } from "../bridge";
-export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -435,14 +426,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   }
 
   switch (res.currency.family) {
-    case "crypto_org": {
-      const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
-        .cryptoOrgResources;
-      if (cryptoOrgResourcesRaw)
-        (res as CryptoOrgAccount).cryptoOrgResources =
-          fromCryptoOrgResourcesRaw(cryptoOrgResourcesRaw);
-      break;
-    }
     default: {
       const bridge = getAccountBridge(res);
       const assignFromAccountRaw = bridge.assignFromAccountRaw;
@@ -530,14 +513,6 @@ export function toAccountRaw(account: Account): AccountRaw {
   }
 
   switch (account.currency.family) {
-    case "crypto_org": {
-      const crytpoOrgAccount = account as CryptoOrgAccount;
-      if (crytpoOrgAccount.cryptoOrgResources) {
-        (res as CryptoOrgAccountRaw).cryptoOrgResources =
-          toCryptoOrgResourcesRaw(crytpoOrgAccount.cryptoOrgResources);
-      }
-      break;
-    }
     default: {
       const bridge = getAccountBridge(account);
       const assignToAccountRaw = bridge.assignToAccountRaw;
