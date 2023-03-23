@@ -52,7 +52,7 @@ export const StakeBanner: React.FC<{ account: CosmosAccount; parentAccount: Acco
       page: "Page Account",
       button: "delegate",
       redelegate,
-      token: account?.currency?.id?.toUpperCase(),
+      currency: account?.currency?.id?.toUpperCase(),
     });
 
     if (redelegate) {
