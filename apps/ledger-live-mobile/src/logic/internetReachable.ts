@@ -14,4 +14,5 @@ export const internetReachable = async () => {
   await timeout(200);
 
   isInternetReachable = (await NetInfo.fetch()).isInternetReachable;
+  return isInternetReachable;
 };
