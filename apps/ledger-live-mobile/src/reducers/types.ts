@@ -227,6 +227,7 @@ export type SettingsState = {
   featureFlagsBannerVisible: boolean;
   debugAppLevelDrawerOpened: boolean;
   dateFormat: string;
+  hasBeenUpsoldProtect: boolean;
 };
 
 export type NotificationsSettings = {

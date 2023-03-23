@@ -1,14 +1,21 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { ListRenderItemInfo } from "react-native";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { ListRenderItemInfo, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
+import NetInfo from "@react-native-community/netinfo";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useRefreshAccountsOrdering } from "../../actions/general";
-import { discreetModeSelector } from "../../reducers/settings";
+import {
+  discreetModeSelector,
+  hasBeenUpsoldProtectSelector,
+  lastConnectedDeviceSelector,
+} from "../../reducers/settings";
+import { setHasBeenUpsoldProtect } from "../../actions/settings";
 
 import Carousel from "../../components/Carousel";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -58,9 +65,41 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const { t } = useTranslation();
 
   const discreetMode = useSelector(discreetModeSelector);
+  const hasBeenUpsoldProtect = useSelector(hasBeenUpsoldProtectSelector);
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
+  const protectFeature = useFeature("protectServicesMobile");
+  const postOnboardingURL =
+    protectFeature?.params?.onboardingRestore?.postOnboardingURI;
+  const dispatch = useDispatch();
+
+  const internetReachable = async () => {
+    // workaround : on iOS, netInfo returns null on the first call, see ; https://github.com/react-native-netinfo/react-native-netinfo/issues/572
+    let isInternetReachable = false;
+
+    isInternetReachable = !!(await NetInfo.fetch()).isInternetReachable;
+
+    if (isInternetReachable) {
+      return isInternetReachable;
+    }
+    isInternetReachable = !!(await NetInfo.fetch()).isInternetReachable;
+    return isInternetReachable;
+  };
+
+  useEffect(() => {
+    const openProtectUpsell = async () => {
+      const internetConnected = await internetReachable();
+      if (internetConnected && postOnboardingURL) {
+        Linking.openURL(postOnboardingURL);
+      }
+    };
+    if (!hasBeenUpsoldProtect && lastConnectedDevice?.modelId === "nanoX") {
+      openProtectUpsell();
+      dispatch(setHasBeenUpsoldProtect(true));
+    }
+  }, [hasBeenUpsoldProtect, lastConnectedDevice, postOnboardingURL, dispatch]);
 
   const openAddModal = useCallback(() => {
     track("button_clicked", {

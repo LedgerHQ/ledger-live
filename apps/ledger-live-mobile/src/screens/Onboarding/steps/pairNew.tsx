@@ -116,7 +116,7 @@ function OnboardingStepPairNew() {
       });
       return;
     }
-    dispatch(completeOnboarding());
+    dispatch(completeOnboarding(true));
     resetCurrentStep();
 
     const parentNav =
@@ -134,7 +134,7 @@ function OnboardingStepPairNew() {
       deviceModelId: deviceModelId as DeviceModelId,
       resetNavigationStack: true,
       fallbackIfNoAction: () =>
-        navigation.navigate(NavigatorName.Base, {
+        navigation.replace(NavigatorName.Base, {
           screen: NavigatorName.Main,
         }),
     });

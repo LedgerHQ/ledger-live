@@ -59,6 +59,7 @@ import {
   SettingsLastSeenDeviceLanguagePayload,
   SettingsCompleteOnboardingPayload,
   SettingsSetDateFormatPayload,
+  SettingsSetHasBeenUpsoldProtectPayload,
 } from "./types";
 
 export const setPrivacy = createAction<SettingsSetPrivacyPayload>(
@@ -264,6 +265,11 @@ export const setDebugAppLevelDrawerOpened =
 export const dangerouslyOverrideState =
   createAction<DangerouslyOverrideStatePayload>(
     SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE,
+  );
+
+export const setHasBeenUpsoldProtect =
+  createAction<SettingsSetHasBeenUpsoldProtectPayload>(
+    SettingsActionTypes.SET_HAS_BEEN_UPSOLD_PROTECT,
   );
 
 type PortfolioRangeOption = {
