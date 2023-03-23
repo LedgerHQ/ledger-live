@@ -23,6 +23,7 @@ import IconWallet from "~/renderer/icons/Wallet";
 import { rgba } from "~/renderer/styles/helpers";
 import CounterValue from "~/renderer/components/CounterValue";
 import Alert from "~/renderer/components/Alert";
+import RecipientField from "../RecipientField";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { StepProps } from "../types";
@@ -124,16 +125,11 @@ export default class StepSummary extends PureComponent<StepProps> {
               <Circle>
                 <IconQrCode size={14} />
               </Circle>
-              <Box flex={1}>
-                <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-                  <Trans i18nKey="send.steps.details.to" />
-                </Text>
-                <Ellipsis>
-                  <Text ff="Inter" color="palette.text.shade100" fontSize={4}>
-                    {transaction.recipient}
-                  </Text>
-                </Ellipsis>
-              </Box>
+              <RecipientField
+                account={account}
+                parentAccount={parentAccount}
+                transaction={transaction}
+              />
             </Box>
           </Box>
           <Separator />
