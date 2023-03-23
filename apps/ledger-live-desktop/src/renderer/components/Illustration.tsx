@@ -1,4 +1,4 @@
-import { ThemedComponent } from "renderer/styles/StyleProviderV3";
+import { ThemedComponent } from "~/renderer/styles/StyleProviderV3";
 import styled, { DefaultTheme, ThemeProps } from "styled-components";
 import { Box } from "@ledgerhq/react-ui";
 
