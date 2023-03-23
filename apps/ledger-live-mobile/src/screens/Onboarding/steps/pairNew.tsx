@@ -116,7 +116,7 @@ function OnboardingStepPairNew() {
       });
       return;
     }
-    dispatch(completeOnboarding(true));
+    dispatch(completeOnboarding());
     resetCurrentStep();
 
     const parentNav =
