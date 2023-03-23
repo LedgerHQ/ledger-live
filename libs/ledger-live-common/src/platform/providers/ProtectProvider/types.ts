@@ -11,6 +11,7 @@ export enum ProtectEnv {
   PREPROD = "preprod",
   STAGING = "staging",
   SIMU = "simu",
+  PROD = "prod",
   SEC = "sec",
   SIT = "sit",
 }
