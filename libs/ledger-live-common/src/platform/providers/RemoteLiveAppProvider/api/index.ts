@@ -32,7 +32,9 @@ const api = {
 
       if (!Array.isArray(data)) throw new Error("Response is not an Array");
 
-      const newData = data.filter(({ id }) => id in protectIds);
+      const newData = data.filter(
+        ({ id }) => !Object.values(protectIds).includes(id)
+      );
 
       newData.push(protectConfig.protectManifest);
 
