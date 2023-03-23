@@ -78,8 +78,8 @@ export default function useAssetActions({
   }, [rampCatalog.value, currency]);
 
   const featureFlag = useFeature("stakePrograms");
-  const { params: stakeFlagParams, enabled: stakeFlagEnabled } = featureFlag;
-  const listFlag = stakeFlagParams?.list;
+  const stakeFlagEnabled = featureFlag?.enabled;
+  const listFlag = featureFlag?.params?.list;
   const canBeStaken = stakeFlagEnabled && listFlag.includes(currency?.id);
 
   const actions = useMemo<ActionButtonEvent[]>(

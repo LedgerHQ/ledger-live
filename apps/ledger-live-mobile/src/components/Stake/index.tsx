@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 import { useMemo, useLayoutEffect, useCallback } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useNavigation, CompositeScreenProps } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { Account } from "@ledgerhq/types-live";
 import {
   listCurrencies,
@@ -11,15 +11,17 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "../../const";
 import perFamilyAccountActions from "../../generated/accountActions";
 import logger from "../../logger";
-import type { StackNavigatorProps } from "../RootNavigator/types/helpers";
+import type {
+  StackNavigatorProps,
+  BaseComposite,
+} from "../RootNavigator/types/helpers";
 import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";
 
-type Props = CompositeScreenProps<
-  StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>,
-  StackNavigatorProps<BaseNavigatorStackParamList>
+type Props = BaseComposite<
+  StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>
 >;
 
-const StakeFlow = ({ route }): Props => {
+const StakeFlow = ({ route }: Props) => {
   const currencies = route?.params?.currencies;
   const featureFlag = useFeature("stakePrograms");
   const list = featureFlag?.params?.list;
