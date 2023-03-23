@@ -20,7 +20,7 @@ import type { AppOp, SkippedAppOp } from "../apps/types";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import { withDevice } from "./deviceAccess";
-import { inlineAppInstall } from "../apps/hw";
+import inlineAppInstall from "../apps/inlineAppInstall";
 import { isDashboardName } from "./isDashboardName";
 import getAppAndVersion from "./getAppAndVersion";
 import getDeviceInfo from "./getDeviceInfo";
