@@ -4,7 +4,6 @@ import type { LiveAppManifest } from "../../../types";
 import mockData from "./mock.json";
 import { FilterParams } from "../../../filters";
 import qs from "qs";
-import protectConfig, { protectIds } from "../../ProtectProvider/config";
 
 const api = {
   fetchLiveAppManifests: async (
@@ -31,14 +30,7 @@ const api = {
       });
 
       if (!Array.isArray(data)) throw new Error("Response is not an Array");
-
-      const newData = data.filter(
-        ({ id }) => !Object.values(protectIds).includes(id)
-      );
-
-      newData.push(protectConfig.protectManifest);
-
-      return newData;
+      return data;
     } catch (e) {
       console.error(e);
       return [];
