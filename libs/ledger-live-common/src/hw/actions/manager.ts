@@ -2,15 +2,14 @@ import {
   concat,
   of,
   EMPTY,
-  interval,
   Observable,
   TimeoutError,
   throwError,
+  timer,
 } from "rxjs";
 import {
   scan,
   debounce,
-  debounceTime,
   catchError,
   switchMap,
   tap,
@@ -188,12 +187,13 @@ const reducer = (state: State, e: Event): State => {
   return state;
 };
 
+const DISCONNECT_DEBOUNCE = 5000;
 const implementations = {
   // in this paradigm, we know that deviceSubject is reflecting the device events
   // so we just trust deviceSubject to reflect the device context (switch between apps, dashboard,...)
   event: ({ deviceSubject, connectManager, managerRequest }) =>
     deviceSubject.pipe(
-      debounceTime(1000),
+      debounce((device) => timer(!device ? DISCONNECT_DEBOUNCE : 0)),
       switchMap((d) => connectManager(d, managerRequest))
     ),
   // in this paradigm, we can't observe directly the device, so we have to poll it
@@ -376,20 +376,9 @@ export const createAction = (
       if (repairModalOpened) return;
       const sub = impl
         .pipe(
-          // debounce a bit the connect/disconnect event that we don't need
           tap((e: Event) => log("actions-manager-event", e.type, e)), // tap(e => console.log("connectManager event", e)),
           // we gather all events with a reducer into the UI state
-          scan(reducer, getInitialState()), // tap(s => console.log("connectManager state", s)),
-          // we debounce the UI state to not blink on the UI
-          debounce((s: State) => {
-            if (s.allowManagerRequestedWording || s.allowManagerGranted) {
-              // no debounce for allow manager
-              return EMPTY;
-            }
-
-            // default debounce (to be tweak)
-            return interval(1500);
-          })
+          scan(reducer, getInitialState()) // tap(s => console.log("connectManager state", s)),
         ) // the state simply goes into a React state
         .subscribe(setState);
       return () => {
