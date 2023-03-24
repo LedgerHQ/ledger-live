@@ -2,7 +2,7 @@ import React from "react";
 import { useTheme } from "styled-components/native";
 import { Svg, G, Rect, Path, Defs, ClipPath } from "react-native-svg";
 
-export default function ContinueOnStaxLight() {
+const ContinueOnStax = () => {
   const { theme } = useTheme();
   if (theme === "light") {
     return (
@@ -70,4 +70,6 @@ export default function ContinueOnStaxLight() {
       </Defs>
     </Svg>
   );
-}
+};
+
+export default React.memo(ContinueOnStax);
