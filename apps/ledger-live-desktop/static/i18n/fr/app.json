@@ -84,6 +84,7 @@
     "save" : "Enregistrer",
     "lock" : "Verrouiller",
     "showMore" : "Afficher plus",
+    "backToMatchingURL" : "Retourner sur {{appName}}",
     "back" : "Retour",
     "adjustFees" : "Modifier les frais",
     "reset" : "Réinitialiser",
@@ -214,6 +215,7 @@
     "stars" : "Comptes favoris",
     "accounts" : "Comptes",
     "manager" : "My Ledger",
+    "earn" : "Gagner",
     "exchange" : "Acheter / Vendre",
     "swap" : "Swap",
     "lend" : "Prêter",
@@ -225,15 +227,10 @@
     "tooltip" : "Ajouter aux favoris"
   },
   "bridge" : {
-    "modalTitle" : "Ouvrir pont de connexion (\"bridge\").",
-    "openHeader" : "Exposer les comptes de votre appareil via WebSocket",
-    "openDescription" : "Ouvrir un pont de connexion (\"bridge\") expose tous vos comptes à des applications tierces.",
-    "openedHeader" : "Pont de connexion (\"bridge\") {{appName}} ouvert",
-    "openedDescription" : "Vous pouvez maintenant accéder à votre compte {{appName}} sur une application web tierce via WebSocket.",
-    "completeHeader" : "Session terminée",
-    "completeDescription" : "Le pont de connexion WebSocket est maintenant fermé.",
-    "openButton" : "Ouvrir",
-    "disconnectButton" : "Déconnecter"
+    "modalTitle" : "Pont de connexion",
+    "openHeader" : "Le pont de connexion n’est plus disponible",
+    "openDescription" : "Veuillez configurer les extensions de wallet de votre navigateur pour utiliser WebHID au lieu de Ledger Live.",
+    "closeButton" : "Fermer"
   },
   "swap2" : {
     "title" : "Swap",
@@ -1218,9 +1215,13 @@
         "description" : "Choisissez un code PIN de 4 à 8 chiffres.",
         "text" : "Toute personne ayant accès à votre {{deviceName}} et à votre code PIN peut avoir accès à vos crypto-actifs."
       },
-      "recoveryContent" : {
-        "title" : "Phrase de récupération",
-        "content" : "Regardez les vidéos ci-dessous pour en savoir plus sur votre phrase secrète de récupération."
+      "seedContent" : {
+        "title" : "Phrase de récupération secrète",
+        "choiceNewOrRestore" : "Découvrez nos conseils de configuration.",
+        "newSeed" : "Regardez les vidéos ci-dessous pour en savoir plus sur votre phrase secrète de récupération.",
+        "choiceRestoreDirectOrRecover" : "Placeholder : Choisissez de restaurer directement ou d’utiliser Ledger Recover",
+        "recoverSeed" : "Placeholder : Ledger Recover",
+        "restoreSeed" : "Pour la récupération et pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}."
       },
       "softwareCheckContent" : {
         "title" : "Vérification du logiciel",
@@ -5737,8 +5738,10 @@
     "progress" : {
       "loading" : "Chargement...",
       "resolving" : "Installation des apps requises",
-      "progress" : "Installation des apps : {{progress}} %",
-      "disclaimer" : "Ajoutez ou supprimez des apps à tout moment depuis Ledger Live."
+      "progress" : "Restez dans Ledger Live pendant l’installation.",
+      "disclaimer" : "Ajoutez ou supprimez des apps à tout moment depuis Ledger Live.",
+      "skippedInfo" : "Certaines apps ne sont pas disponibles. Elles doivent encore être développées pour le {{ productName }}.",
+      "skipped" : "Pas encore disponible pour le {{ productName }}"
     },
     "cancelled" : {
       "title" : "Vous avez annulé l’installation de l’app sur votre {{productName}}",
