@@ -1,5 +1,13 @@
 # @ledgerhq/swift-bridge-hw-app-solana
 
+## 1.0.2-recover-simu.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-solana@7.0.7-recover-simu.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.0.2-recover-simu.0
+
 ## 1.0.1
 
 ### Patch Changes

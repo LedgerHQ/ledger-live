@@ -1,6 +1,6 @@
 {
   "name": "live-common-tools",
-  "version": "0.2.26",
+  "version": "0.2.27-recover-simu.0",
   "private": true,
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",

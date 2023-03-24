@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "live-mobile",
-  "version": "3.17.0",
+  "version": "3.18.0-recover-simu.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",

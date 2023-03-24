@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-xrp",
-  "version": "6.27.12",
+  "version": "6.27.13-recover-simu.0",
   "description": "Ledger Hardware Wallet Ripple Application API",
   "keywords": [
     "Ledger",
