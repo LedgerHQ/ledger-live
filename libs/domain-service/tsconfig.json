@@ -14,7 +14,8 @@
     "lib": ["es2020", "dom"],
     "outDir": "lib",
     "typeRoots": ["./types", "./node_modules/@types"],
-    "jsx": "react"
+    "jsx": "react",
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["src/__tests__"]
