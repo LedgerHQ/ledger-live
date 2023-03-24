@@ -1299,6 +1299,7 @@ importers:
       '@ledgerhq/compressjs': github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e
       '@ledgerhq/cryptoassets': workspace:^
       '@ledgerhq/devices': workspace:^
+      '@ledgerhq/domain-service': workspace:^
       '@ledgerhq/errors': workspace:^
       '@ledgerhq/hw-app-algorand': workspace:^
       '@ledgerhq/hw-app-btc': workspace:^
@@ -1487,6 +1488,7 @@ importers:
       '@ledgerhq/compressjs': github.com/LedgerHQ/compressjs/d9e8e4d994923e0ea76a32b97289bcccfe71b82e
       '@ledgerhq/cryptoassets': link:../ledgerjs/packages/cryptoassets
       '@ledgerhq/devices': link:../ledgerjs/packages/devices
+      '@ledgerhq/domain-service': link:../domain-service
       '@ledgerhq/errors': link:../ledgerjs/packages/errors
       '@ledgerhq/hw-app-algorand': link:../ledgerjs/packages/hw-app-algorand
       '@ledgerhq/hw-app-btc': link:../ledgerjs/packages/hw-app-btc
@@ -37677,6 +37679,47 @@ packages:
       slash: 3.0.0
       strip-json-comments: 3.1.1
       ts-node: 10.9.1_cbfmry4sbbh4vatmdrsmatfg5a
+    transitivePeerDependencies:
+      - metro
+      - supports-color
+    dev: true
+
+  /jest-config/28.1.3_jmb5gkrw7p63b5cowrr4cfkufq:
+    resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    peerDependencies:
+      '@types/node': '*'
+      ts-node: '>=9.0.0'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      ts-node:
+        optional: true
+    dependencies:
+      '@babel/core': 7.20.12
+      '@jest/test-sequencer': 28.1.3
+      '@jest/types': 28.1.3
+      '@types/node': 18.15.7
+      babel-jest: 28.1.3_@babel+core@7.20.12
+      chalk: 4.1.2
+      ci-info: 3.3.2
+      deepmerge: 4.3.0
+      glob: 7.2.3
+      graceful-fs: 4.2.10
+      jest-circus: 28.1.3
+      jest-environment-node: 28.1.3
+      jest-get-type: 28.0.2
+      jest-regex-util: 28.0.2
+      jest-resolve: 28.1.3
+      jest-runner: 28.1.3
+      jest-util: 28.1.3
+      jest-validate: 28.1.3
+      micromatch: 4.0.5
+      parse-json: 5.2.0
+      pretty-format: 28.1.3
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+      ts-node: 10.9.1_ox4bw2nfeaywsll3jxp22xcahy
     transitivePeerDependencies:
       - metro
       - supports-color
