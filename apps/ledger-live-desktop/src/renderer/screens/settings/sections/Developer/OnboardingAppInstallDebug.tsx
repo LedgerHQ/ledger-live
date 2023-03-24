@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Button, Flex, Input, SelectInput, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
-import { Device } from "@ledgerhq/types-devices";
 import { DeviceModelId } from "@ledgerhq/devices";
 
 import ButtonV2 from "~/renderer/components/Button";

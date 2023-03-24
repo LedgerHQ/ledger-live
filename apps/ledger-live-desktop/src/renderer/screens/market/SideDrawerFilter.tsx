@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { TFunction } from "react-i18next";
 import Dropdown from "./DropDown";
 
 export default function SideDrawerFilter({
@@ -6,12 +7,12 @@ export default function SideDrawerFilter({
   filters,
   t,
 }: {
-  refresh: (params?: any) => void;
+  refresh: (params?: { starred: []; liveCompatible: boolean }) => void;
   filters: Record<
     "starred" | "liveCompatible",
     { value: boolean; toggle: () => void; disabled?: boolean }
   >;
-  t: any;
+  t: TFunction;
 }) {
   const { starred, liveCompatible } = filters;
   const resetFilters = useCallback(() => refresh({ starred: [], liveCompatible: false }), [

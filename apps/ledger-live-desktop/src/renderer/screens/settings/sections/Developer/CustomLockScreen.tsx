@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import Button from "~/renderer/components/Button";
 import { useHistory } from "react-router-dom";
 import Box from "~/renderer/components/Box";
-import { Flex, Alert } from "@ledgerhq/react-ui";
+import { Flex } from "@ledgerhq/react-ui";
 
 import FramedImage from "~/renderer/components/CustomImage/FramedImage";
 import Animation from "~/renderer/animations";
