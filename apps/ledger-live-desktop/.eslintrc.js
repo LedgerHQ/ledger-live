@@ -68,6 +68,7 @@ module.exports = {
     "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
     "jest/no-done-callback": 0,
     "react/jsx-filename-extension": "error",
+    "no-restricted-imports": ["error", { paths: ["lodash"] }],
   },
   overrides: [
     {
