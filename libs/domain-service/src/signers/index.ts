@@ -2,6 +2,7 @@ import axios from "axios";
 import { log } from "@ledgerhq/logs";
 import { SupportedRegistries } from "../types";
 import { getRegistries } from "../registries";
+import { validateDomain } from "../utils";
 
 /**
  * Get an APDU to sign a domain resolution on the nano
@@ -16,6 +17,11 @@ export const signDomainResolution = async (
   registryName: SupportedRegistries,
   challenge: string
 ): Promise<string | null> => {
+  if (!validateDomain(domain)) {
+    throw new Error(
+      `Domains with more than 255 caracters or with unicode are not supported on the nano. Domain: ${domain}`
+    );
+  }
   const registries = await getRegistries();
   const registry = registries.find((r) => r.name === registryName);
   if (!registry) return null;
