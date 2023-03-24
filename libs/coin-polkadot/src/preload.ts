@@ -2,7 +2,11 @@
 import { BigNumber } from "bignumber.js";
 import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "./types";
+import type {
+  PolkadotPreloadData,
+  PolkadotStakingProgress,
+  PolkadotValidator,
+} from "./types";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "./api";
 
