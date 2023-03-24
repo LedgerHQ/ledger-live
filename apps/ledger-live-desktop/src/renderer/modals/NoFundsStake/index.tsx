@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Icon, Text } from "@ledgerhq/react-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import { Account, AccountLike } from "~/../../../libs/ledgerjs/packages/types-live/lib";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import Modal, { ModalBody } from "~/renderer/components/Modal";

@@ -96,7 +96,7 @@ export default function AssetBalanceSummaryHeader({
 
   const { providers, storedProviders } = useProviders();
 
-  const startStakeFlow = useStakeFlow({ currencies: currency ? [currency.id] : undefined });
+  const startStakeFlow = useStakeFlow();
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
@@ -148,8 +148,8 @@ export default function AssetBalanceSummaryHeader({
       ...stakeDefaultTrack,
     });
     setTrackingSource("Page Asset");
-    startStakeFlow();
-  }, [currency?.ticker, startStakeFlow]);
+    startStakeFlow({ currencies: currency ? [currency.id] : undefined });
+  }, [currency, startStakeFlow]);
 
   return (
     <Box flow={5}>

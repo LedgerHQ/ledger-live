@@ -12,7 +12,7 @@ import {
   isUpToDateAccount,
   nestedSortAccounts,
 } from "@ledgerhq/live-common/account/index";
-import { decodeNftId } from "@ledgerhq/live-common/nft/nftId";
+import { decodeNftId } from "@ledgerhq/live-common/nft/index";
 import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
 import { getEnv } from "@ledgerhq/live-common/env";
 import isEqual from "lodash/isEqual";

@@ -97,7 +97,14 @@ function NewsfeedPage() {
         </Container>
       </Skeleton>
     ),
-    [colors, loadingState, onClickItem, radii, space],
+    [
+      colors.neutral.c30,
+      lastDataLoadingDate,
+      loadingState,
+      onClickItem,
+      radii,
+      space,
+    ],
   );
 
   const ListHeaderComponent = useMemo(

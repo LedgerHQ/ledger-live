@@ -85,6 +85,7 @@ import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
+import StakeFlowNavigator from "./StakeFlowNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -591,6 +592,15 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.NoFundsFlow}
         component={NoFundsFlowNavigator}
+        options={{
+          ...TransparentHeaderNavigationOptions,
+          headerRight: () => <HeaderRightClose preferDismiss={false} />,
+          headerLeft: () => null,
+        }}
+      />
+      <Stack.Screen
+        name={NavigatorName.StakeFlow}
+        component={StakeFlowNavigator}
         options={{
           ...TransparentHeaderNavigationOptions,
           headerRight: () => <HeaderRightClose preferDismiss={false} />,

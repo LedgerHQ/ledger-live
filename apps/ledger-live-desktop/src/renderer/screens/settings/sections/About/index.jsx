@@ -48,6 +48,7 @@ const SectionHelp = () => {
       <TrackPage category="Settings" name="About" />
       <Body>
         <Row
+          dataTestId="version-row"
           title={t("settings.help.version")}
           desc={`Ledger Live ${version}`}
           onClick={onVersionClick}

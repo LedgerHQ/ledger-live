@@ -4,7 +4,7 @@
   },
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "29.0.0",
+  "version": "29.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -151,6 +151,9 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-portfolio": "workspace:^",
+    "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/wallet-api-core": "^0.11.0",
     "@ledgerhq/wallet-api-server": "^0.11.0",
@@ -208,6 +211,7 @@
     "jwt-decode": "^3.1.2",
     "leb128": "^0.0.5",
     "lodash": "^4.17.21",
+    "lru-cache": "^7.14.1",
     "minimatch": "^5.1.0",
     "near-api-js": "^0.44.2",
     "numeral": "^2.0.6",

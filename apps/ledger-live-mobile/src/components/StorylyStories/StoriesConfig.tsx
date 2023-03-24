@@ -5,7 +5,7 @@ import React, { useCallback, useState } from "react";
 import { Camera } from "expo-camera";
 import { Flex, Switch, BaseInput, Text, Icons } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
-import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
+import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
 import { CameraType } from "expo-camera/build/Camera.types";
 import QueuedDrawer from "../QueuedDrawer";
 

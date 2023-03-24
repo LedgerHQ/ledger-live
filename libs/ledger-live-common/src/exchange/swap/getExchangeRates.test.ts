@@ -98,6 +98,7 @@ describe("swap/getExchangeRates", () => {
         rate: "14",
         tradeMethod,
         status: "success",
+        payoutNetworkFees: "0.0030432000000000000000",
       },
     ];
     const resp = {
@@ -125,8 +126,9 @@ describe("swap/getExchangeRates", () => {
       providerType: data[0].providerType as ExchangeRate["providerType"],
       rate: new BigNumber(data[0].rate),
       rateId: data[0].rateId,
-      toAmount: new BigNumber("70000000000000000"),
+      toAmount: new BigNumber("66956800000000000"),
       tradeMethod: data[0].tradeMethod,
+      payoutNetworkFees: new BigNumber("3043200000000000"),
     };
 
     expect(res).toEqual([expectedExchangeRate]);

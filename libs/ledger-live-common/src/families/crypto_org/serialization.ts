@@ -1,5 +1,12 @@
 import { BigNumber } from "bignumber.js";
-import type { CryptoOrgResourcesRaw, CryptoOrgResources } from "./types";
+import type {
+  CryptoOrgResourcesRaw,
+  CryptoOrgResources,
+  CryptoOrgAccountRaw,
+  CryptoOrgAccount,
+} from "./types";
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
+
 export function toCryptoOrgResourcesRaw(
   r: CryptoOrgResources
 ): CryptoOrgResourcesRaw {
@@ -23,4 +30,20 @@ export function fromCryptoOrgResourcesRaw(
     unbondingBalance: new BigNumber(unbondingBalance),
     commissions: new BigNumber(commissions),
   };
+}
+
+export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
+  const crytpoOrgAccount = account as CryptoOrgAccount;
+  if (crytpoOrgAccount.cryptoOrgResources) {
+    (accountRaw as CryptoOrgAccountRaw).cryptoOrgResources =
+      toCryptoOrgResourcesRaw(crytpoOrgAccount.cryptoOrgResources);
+  }
+}
+
+export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
+  const cryptoOrgResourcesRaw = (accountRaw as CryptoOrgAccountRaw)
+    .cryptoOrgResources;
+  if (cryptoOrgResourcesRaw)
+    (account as CryptoOrgAccount).cryptoOrgResources =
+      fromCryptoOrgResourcesRaw(cryptoOrgResourcesRaw);
 }

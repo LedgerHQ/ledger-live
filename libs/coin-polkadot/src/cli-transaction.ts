@@ -1,6 +1,5 @@
 import { from, Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { getValidators } from "./validators";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { isAccount } from "@ledgerhq/coin-framework/account/index";
@@ -14,6 +13,9 @@ import {
 } from "./api/sidecar.types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { PolkadotAccount, Transaction } from "./types";
+import { PolkadotAPI } from "./api";
+import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
+import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
 const options = [
   {
     name: "mode",
@@ -101,45 +103,49 @@ const polkadotValidatorsFormatters = {
     return tableList;
   },
 };
-const polkadotValidators = {
-  args: [
-    {
-      name: "format",
-      desc: Object.keys(polkadotValidatorsFormatters).join("|"),
-      type: String,
-    },
-    {
-      name: "status",
-      desc: "The status of the validators to fetch (all|elected|waiting)",
-      type: String,
-    },
-    {
-      name: "validator",
-      type: String,
-      multiple: true,
-      desc: "address of recipient validator that will receive the delegate",
-    },
-  ],
-  job: ({
-    format,
-    status,
-    validator,
-  }: Partial<{
-    format: string;
-    status: SidecarValidatorsParamStatus | SidecarValidatorsParamAddresses;
-    validator: string[];
-  }>): Observable<string> =>
-    from(
-      getValidators(validator && validator.length ? validator : status)
-    ).pipe(
-      map((validators) => {
-        const f =
-          (format && polkadotValidatorsFormatters[format]) ||
-          polkadotValidatorsFormatters.default;
-        return f(validators);
-      })
-    ),
-};
+function createValidators(polkadotAPI: PolkadotAPI) {
+  return {
+    args: [
+      {
+        name: "format",
+        desc: Object.keys(polkadotValidatorsFormatters).join("|"),
+        type: String,
+      },
+      {
+        name: "status",
+        desc: "The status of the validators to fetch (all|elected|waiting)",
+        type: String,
+      },
+      {
+        name: "validator",
+        type: String,
+        multiple: true,
+        desc: "address of recipient validator that will receive the delegate",
+      },
+    ],
+    job: ({
+      format,
+      status,
+      validator,
+    }: Partial<{
+      format: string;
+      status: SidecarValidatorsParamStatus | SidecarValidatorsParamAddresses;
+      validator: string[];
+    }>): Observable<string> =>
+      from(
+        polkadotAPI.getValidators(
+          validator && validator.length ? validator : status
+        )
+      ).pipe(
+        map((validators) => {
+          const f =
+            (format && polkadotValidatorsFormatters[format]) ||
+            polkadotValidatorsFormatters.default;
+          return f(validators);
+        })
+      ),
+  };
+}
 
 function inferTransactions(
   transactions: Array<{
@@ -175,10 +181,16 @@ function inferTransactions(
   });
 }
 
-export default {
-  options,
-  inferTransactions,
-  commands: {
-    polkadotValidators,
-  },
-};
+export default function makeCliTools(
+  network: NetworkRequestCall,
+  cache: LRUCacheFn
+) {
+  const polkadotAPI = new PolkadotAPI(network, cache);
+  return {
+    options,
+    inferTransactions,
+    commands: {
+      polkadotValidators: createValidators(polkadotAPI),
+    },
+  };
+}

@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
@@ -67,7 +66,7 @@ function Discover() {
   }, []);
 
   const { learnCards } = useDynamicContent();
-  const version = useEnv("PLATFORM_DISCOVER_VERSION");
+  const config = useFeature("discover");
 
   const featuresList: {
     title: string;
@@ -79,7 +78,7 @@ function Discover() {
   }[] = useMemo(
     () =>
       [
-        ...(version === 2
+        ...(config?.enabled && config?.params.version === "2"
           ? [
               {
                 title: t("discover.sections.browseWeb3.title"),
@@ -241,7 +240,7 @@ function Discover() {
       navigation,
       readOnlyTrack,
       isNewsfeedAvailable,
-      version,
+      config,
     ],
   );
 

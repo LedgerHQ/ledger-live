@@ -276,7 +276,7 @@ const Input = React.forwardRef(function Input(
         <ErrorContainer hasError={!hideErrorMessage && (error || warning)}>
           {!hideErrorMessage ? (
             error ? (
-              <ErrorDisplay id="input-error">
+              <ErrorDisplay id="input-error" data-testid="input-error">
                 <TranslatedError error={error} />
               </ErrorDisplay>
             ) : warning ? (

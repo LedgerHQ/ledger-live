@@ -5,7 +5,7 @@ import {
   CircledCheckSolidMedium,
   WarningSolidMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
@@ -13,34 +13,40 @@ import { getDeviceModel } from "@ledgerhq/devices";
 
 import GenuineCheckDrawer from "./GenuineCheckDrawer";
 import FirmwareUpdateDrawer from "./FirmwareUpdateDrawer";
-import GenuineCheckCancelledDrawer from "./GenuineCheckCancelledDrawer";
+import GenuineCheckFailedDrawer from "./GenuineCheckFailedDrawer";
 import UnlockDeviceDrawer from "./UnlockDeviceDrawer";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import { TrackScreen, track } from "../../analytics";
 
-const softwareStepDelay = 2500;
 const lockedDeviceTimeoutMs = 1000;
 
 type CheckStatus = "inactive" | "active" | "completed" | "failed";
 
 type CurrentSoftwareChecksStep = "none" | "genuine-check" | "firmware-update";
 
+// Represents the UI of the step block for the genuine check
 type GenuineCheckUiStepStatus = CheckStatus;
+// Represents the status of the genuine check from which is derived the displayed UI and if the genuine check hook can be started or not
 type GenuineCheckStatus =
   | "unchecked"
   | "requested"
   | "ongoing"
   | "completed"
+  | "skipped"
   | "failed";
+// Defines which drawer should be displayed during the genuine check
 type GenuineCheckUiDrawerStatus =
   | "none"
   | "requested"
   | "allow-manager"
   | "unlock-needed"
-  | "cancelled";
+  | "failed";
 
+// Represents the UI of the step block for the firmware check
 type FirmwareUpdateUiStepStatus = CheckStatus;
+// Represents the status of the firmware check from which is derived the displayed UI and if the genuine check hook can be started or not
 type FirmwareUpdateStatus = "unchecked" | "ongoing" | "completed" | "failed";
+// Defines which drawer should be displayed during the firmware check
 type FirmwareUpdateUiDrawerStatus =
   | "none"
   | "unlock-needed"
@@ -151,14 +157,11 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
       }
       // First time doing the firmware check
       else if (
-        ["completed", "failed"].includes(genuineCheckStatus) &&
+        ["completed", "skipped"].includes(genuineCheckStatus) &&
         currentSoftwareChecksStep === "genuine-check"
       ) {
         setCurrentSoftwareChecksStep("firmware-update");
-
-        setTimeout(() => {
-          setFirmwareUpdateStatus("ongoing");
-        }, softwareStepDelay);
+        setFirmwareUpdateStatus("ongoing");
       }
     }
   }, [isDisplayed, currentSoftwareChecksStep, genuineCheckStatus]);
@@ -190,15 +193,10 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
 
         // Updates the genuineCheckStatus
         if (genuineCheckError) {
-          console.error(
-            "Failed to perform genuine check with error:",
-            genuineCheckError.message,
-          );
           setGenuineCheckStatus("failed");
         } else if (genuineState === "genuine") {
           setGenuineCheckStatus("completed");
         } else if (genuineState === "non-genuine") {
-          // FIXME: if the device is non-genuine, we should display something else
           setGenuineCheckStatus("failed");
         }
 
@@ -208,14 +206,16 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
         } else if (devicePermissionState === "requested") {
           nextDrawerToDisplay = "allow-manager";
         } else if (devicePermissionState === "refused") {
-          nextDrawerToDisplay = "cancelled";
+          nextDrawerToDisplay = "failed";
         }
+      } else if (genuineCheckStatus === "failed") {
+        nextDrawerToDisplay = "failed";
       }
     }
     // currentSoftwareChecksStep can be any value for those UI updates
     if (genuineCheckStatus === "completed") {
       genuineCheckUiStepStatus = "completed";
-    } else if (genuineCheckStatus === "failed") {
+    } else if (genuineCheckStatus === "skipped") {
       genuineCheckUiStepStatus = "failed";
     }
 
@@ -346,7 +346,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
             onClose={() => {
               // Closing because the user pressed on close button, and the genuine check is ongoing
               if (genuineCheckStatus === "ongoing") {
-                // Fails the genuine check entirely
+                // Fails the genuine check entirely - not "skipped" so the GenuineCheckFailedDrawer is displayed
                 setGenuineCheckStatus("failed");
               }
               // Closing because the user pressed on close button, and the firmware check is ongoing
@@ -360,9 +360,10 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
             isOpen={nextDrawerToDisplay === "allow-manager"}
             device={device}
           />
-          <GenuineCheckCancelledDrawer
+          <GenuineCheckFailedDrawer
             productName={productName}
-            isOpen={nextDrawerToDisplay === "cancelled"}
+            isOpen={nextDrawerToDisplay === "failed"}
+            error={genuineCheckError}
             onRetry={() => {
               track("button_clicked", {
                 button: "run genuine check again",
@@ -376,7 +377,7 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
                 button: "check if hardware genuine later",
                 drawer: "Failed Stax hardware check",
               });
-              setGenuineCheckStatus("failed");
+              setGenuineCheckStatus("skipped");
             }}
           />
           <FirmwareUpdateDrawer

@@ -14,7 +14,7 @@ export const INITIAL_STATE: WalletConnectState = {
 const handlers: ReducerMap<WalletConnectState, WalletConnectPayload> = {
   WALLET_CONNECT_SET_URI: (state, action) => ({
     ...state,
-    uri: (action as Action<WalletConnectSetUriPayload>).payload.uri,
+    uri: (action as Action<WalletConnectSetUriPayload>).payload || undefined,
   }),
 };
 

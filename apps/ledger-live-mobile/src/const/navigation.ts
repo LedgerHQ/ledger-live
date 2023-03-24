@@ -38,6 +38,7 @@ export enum ScreenName {
   DebugEnv = "DebugEnv",
   DebugExport = "DebugExport",
   DebugFeatureFlags = "DebugFeatureFlags",
+  DebugInstallSetOfApps = "DebugInstallSetOfApps",
   DebugFeatures = "DebugFeatures",
   DebugFetchCustomImage = "DebugFetchCustomImage",
   DebugFirmwareUpdate = "DebugFirmwareUpdate",
@@ -51,6 +52,8 @@ export enum ScreenName {
   DebugVideos = "DebugVideos",
   DebugMockGenerateAccounts = "DebugMockGenerateAccounts",
   DebugNetwork = "DebugNetwork",
+  DebugPlayground = "DebugPlayground",
+  DebugBluetoothAndLocationServices = "DebugBluetoothAndLocationServices",
   DebugSettings = "DebugSettings",
   DebugStore = "DebugStore",
   DebugStoryly = "DebugStoryly",
@@ -419,7 +422,6 @@ export enum ScreenName {
   OnboardingImportSelectAccount = "OnboardingImportSelectAccount",
   OnboardingQuiz = "OnboardingQuiz",
   OnboardingQuizFinal = "OnboardingQuizFinal",
-  OnboardingFinish = "OnboardingFinish",
   OnboardingLanguageModal = "OnboardingLanguageModal",
   OnboardingModalSetupNewDevice = "OnboardingModalSetupNewDevice",
   OnboardingModalSetupSteps = "OnboardingModalSetupSteps",
@@ -510,6 +512,7 @@ export enum ScreenName {
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
   WalletNftGallery = "WalletNftGallery",
   NoFunds = "NoFunds",
+  Stake = "Stake",
 }
 export enum NavigatorName {
   // Stack
@@ -568,6 +571,7 @@ export enum NavigatorName {
   LendingSupplyFlow = "LendingSupplyFlow",
   LendingWithdrawFlow = "LendingWithdrawFlow",
   NoFundsFlow = "NoFundsFlow",
+  StakeFlow = "StakeFlow",
 
   SignTransaction = "SignTransaction",
   RequestAccount = "RequestAccount",
