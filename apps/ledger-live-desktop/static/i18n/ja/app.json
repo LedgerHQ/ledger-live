@@ -84,6 +84,7 @@
     "save" : "保存",
     "lock" : "ロック",
     "showMore" : "さらに表示",
+    "backToMatchingURL" : "{{appName}}に戻る",
     "back" : "戻る",
     "adjustFees" : "手数料を調整する",
     "reset" : "リセット",
@@ -214,6 +215,7 @@
     "stars" : "お気に入りアカウント",
     "accounts" : "アカウント",
     "manager" : "My Ledger",
+    "earn" : "報酬獲得",
     "exchange" : "購入/売却",
     "swap" : "スワップ",
     "lend" : "レンディング",
@@ -225,15 +227,10 @@
     "tooltip" : "お気に入りアカウント"
   },
   "bridge" : {
-    "modalTitle" : "デバイスブリッジを開く",
-    "openHeader" : "WebSocket経由でデバイスアカウントを公開する",
-    "openDescription" : "ブリッジを開くと、すべてのアカウントがサードパーティのアプリケーションに公開されます。",
-    "openedHeader" : "{{appName}}ブリッジ開通済み",
-    "openedDescription" : "これにより、WebSocketからサードパーティのWebアプリケーション上の{{appName}}アカウントにアクセスできるようになりました。",
-    "completeHeader" : "ブリッジセッション完了済み",
-    "completeDescription" : "WebSocketが閉鎖されました。",
-    "openButton" : "開く",
-    "disconnectButton" : "接続を切断"
+    "modalTitle" : "デバイスブリッジ",
+    "openHeader" : "デバイスブリッジはご利用いただけません",
+    "openDescription" : "Ledger Liveの代わりにWebHIDを使用するよう、ブラウザのウォレット拡張機能を構成してください。",
+    "closeButton" : "閉じる"
   },
   "swap2" : {
     "title" : "スワップ",
@@ -1218,9 +1215,13 @@
         "description" : "PINコードの長さは4～8桁で設定可能です",
         "text" : "お客様の{{deviceName}}とPINコードにアクセスできる人は誰でも、お客様の暗号資産とNFT資産すべてにアクセスできます。"
       },
-      "recoveryContent" : {
-        "title" : "リカバリーフレーズ",
-        "content" : "下の動画をタップして、秘密のリカバリーフレーズを詳しく学ぶ"
+      "seedContent" : {
+        "title" : "秘密のリカバリーフレーズ",
+        "choiceNewOrRestore" : "最適な設定オプションを選択してください。",
+        "newSeed" : "下の動画をタップして、秘密のリカバリーフレーズを詳しく学ぶ",
+        "choiceRestoreDirectOrRecover" : "Placeholder－直接復元を選択するか、Recoverを使用する",
+        "recoverSeed" : "Placeholder：Recover",
+        "restoreSeed" : "リカバリーには、資産の安全性を保証するため、必ずLedgerが生成した秘密のリカバリーフレーズを使用してください。\n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
       },
       "softwareCheckContent" : {
         "title" : "ソフトウェアのチェック",
@@ -5737,8 +5738,10 @@
     "progress" : {
       "loading" : "読み込み中...",
       "resolving" : "依存関係を解決しています",
-      "progress" : "アプリのインストール中{{progress}}%",
-      "disclaimer" : "Ledger Liveからいつでもアプリを追加または削除できます。"
+      "progress" : "アプリのインストール中でもLedger Liveをお使いいただけます。",
+      "disclaimer" : "Ledger Liveからいつでもアプリを追加または削除できます。",
+      "skippedInfo" : "一部のアプリはご利用いただけません。{{ productName }}は今後開発予定です。",
+      "skipped" : "{{ productName }}は現在はご利用いただけません。"
     },
     "cancelled" : {
       "title" : "{{productName}}でアプリのインストールがキャンセルされました",
