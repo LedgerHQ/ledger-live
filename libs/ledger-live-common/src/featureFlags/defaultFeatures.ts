@@ -208,4 +208,10 @@ export const defaultFeatures: DefaultFeatures = {
   newsfeedPage: {
     enabled: false,
   },
+  discover: {
+    enabled: false,
+    params: {
+      version: "1",
+    },
+  },
 };

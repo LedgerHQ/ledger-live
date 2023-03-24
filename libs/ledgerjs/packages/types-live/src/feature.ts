@@ -53,7 +53,8 @@ export type FeatureId =
   | "objkt"
   | "stakeAccountBanner"
   | "newsfeedPage"
-  | "domainInputResolution";
+  | "domainInputResolution"
+  | "discover";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
