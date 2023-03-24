@@ -84,6 +84,7 @@
     "save" : "حفظ",
     "lock" : "إقفال",
     "showMore" : "عرض المزيد",
+    "backToMatchingURL" : "عودة إلى {{appName}}",
     "back" : "عودة",
     "adjustFees" : "تعديل الرسوم",
     "reset" : "إعادة تعيين",
@@ -214,6 +215,7 @@
     "stars" : "الحسابات المفضلة",
     "accounts" : "الحسابات",
     "manager" : "My Ledger",
+    "earn" : "اكسب",
     "exchange" : "شراء / بيع",
     "swap" : "مبادلة",
     "lend" : "إقراض",
@@ -225,15 +227,10 @@
     "tooltip" : "تفضيل حساب"
   },
   "bridge" : {
-    "modalTitle" : "فتح جسر (bridge) الجهاز",
-    "openHeader" : "اكشف حسابات جهازك من خلال WebSocket",
-    "openDescription" : "فتح جسر (bridge) يكشف جميع حساباتك لتطبيقات الطرف الثالث.",
-    "openedHeader" : "تم فتح جسر {{appName}}",
-    "openedDescription" : "يمكنك الآن الوصول إلى حسابك {{appName}} على تطبيق ويب طرف ثالث من خلال WebSocket.",
-    "completeHeader" : "تم إكمال جلسة الجسر",
-    "completeDescription" : "جسر websocket مُغلق الآن.",
-    "openButton" : "فتح",
-    "disconnectButton" : "قطع الاتصال"
+    "modalTitle" : "جسر الجهاز",
+    "openHeader" : "جسر الجهاز لم يعد متاحاً",
+    "openDescription" : "يُرجى تكوين ملحقات محافظ متصفحك لاستخدام WebHID بدلاً من Ledger Live.",
+    "closeButton" : "إغلاق"
   },
   "swap2" : {
     "title" : "مبادلة",
@@ -1218,9 +1215,13 @@
         "description" : "كود PIN خاصتك يمكن أن يتراوح طوله بين 4 إلى 8 أرقام",
         "text" : "أي شخص لديه وصول إلى {{deviceName}} وكود PIN خاصتك يمكنه أيضاً الوصول إلى جميع أصولك المشفرة ورموزك غير القابلة للاستبدال (NFT)."
       },
-      "recoveryContent" : {
-        "title" : "عبارة الاسترداد",
-        "content" : "انقر على مقاطع الفيديو أدناه لتعلُم المزيد عن عبارة الاسترداد السرية خاصتك"
+      "seedContent" : {
+        "title" : "عبارة الاسترداد السرية",
+        "choiceNewOrRestore" : "اختر خيار الإعداد الأكثر ملائمة لك.",
+        "newSeed" : "انقر على مقاطع الفيديو أدناه لتعلُم المزيد عن عبارة الاسترداد السرية خاصتك",
+        "choiceRestoreDirectOrRecover" : "Placeholder - اختيار استعادة مباشرة أو استخدم استرداد",
+        "recoverSeed" : "Placeholder: استرداد",
+        "restoreSeed" : "للاسترداد، تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.\n\nليس لديك واحد؟ استخدم جهاز ك{{productName}} لإنشاء عبارة جديدة."
       },
       "softwareCheckContent" : {
         "title" : "التحقق من البرامج",
@@ -5737,8 +5738,10 @@
     "progress" : {
       "loading" : "جاري التحميل ...",
       "resolving" : "حل التبعيات",
-      "progress" : "تثبيت التطبيقات %{{progress}}",
-      "disclaimer" : "قم بإضافة أو حذف التطبيقات في أي وقت من Ledger Live."
+      "progress" : "لا تُغلق Ledger Live بينما يتم تثبيت التطبيقات.",
+      "disclaimer" : "قم بإضافة أو حذف التطبيقات في أي وقت من Ledger Live.",
+      "skippedInfo" : "بعض التطبيقات غير متاحة. لم يتم تطويرها بعد لـ {{ productName }}.",
+      "skipped" : "ليست متاحة بعد لـ {{ productName }}"
     },
     "cancelled" : {
       "title" : "تم إلغاء تثبيت التطبيق على {{productName}}",
