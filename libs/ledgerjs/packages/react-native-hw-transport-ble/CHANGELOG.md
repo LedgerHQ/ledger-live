@@ -1,5 +1,18 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.28.4-nightly.2
+
+### Patch Changes
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: re-work of the transport error mapping HwTransportErrorType
+
+  And updating functions and hooks using them
+
+- Updated dependencies [[`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b)]:
+  - @ledgerhq/errors@6.12.4-nightly.2
+  - @ledgerhq/devices@8.0.1-nightly.2
+  - @ledgerhq/hw-transport@6.28.2-nightly.2
+
 ## 6.28.4-nightly.1
 
 ### Patch Changes

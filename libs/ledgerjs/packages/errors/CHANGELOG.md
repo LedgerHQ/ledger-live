@@ -1,5 +1,13 @@
 # @ledgerhq/errors
 
+## 6.12.4-nightly.2
+
+### Patch Changes
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: re-work of the transport error mapping HwTransportErrorType
+
+  And updating functions and hooks using them
+
 ## 6.12.4-nightly.1
 
 ### Patch Changes

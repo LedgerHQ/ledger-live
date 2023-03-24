@@ -1,5 +1,35 @@
 # @ledgerhq/live-common
 
+## 29.2.0-nightly.4
+
+### Patch Changes
+
+- [#3030](https://github.com/LedgerHQ/ledger-live/pull/3030) [`9d15eb2e2f`](https://github.com/LedgerHQ/ledger-live/commit/9d15eb2e2f6b72bf796b12daa88736b03873857b) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix wrong amount displayed for Amount to receive
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: re-work of the transport error mapping HwTransportErrorType
+
+  And updating functions and hooks using them
+
+- Updated dependencies [[`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b)]:
+  - @ledgerhq/errors@6.12.4-nightly.2
+  - @ledgerhq/coin-framework@0.2.1-nightly.3
+  - @ledgerhq/coin-polkadot@0.0.4-nightly.3
+  - @ledgerhq/devices@8.0.1-nightly.2
+  - @ledgerhq/hw-app-algorand@6.27.13-nightly.2
+  - @ledgerhq/hw-app-cosmos@6.27.13-nightly.2
+  - @ledgerhq/hw-app-eth@6.32.2-nightly.3
+  - @ledgerhq/hw-app-near@6.27.8-nightly.2
+  - @ledgerhq/hw-app-polkadot@6.27.13-nightly.2
+  - @ledgerhq/hw-app-solana@7.0.7-nightly.2
+  - @ledgerhq/hw-app-trx@6.27.13-nightly.2
+  - @ledgerhq/hw-transport@6.28.2-nightly.2
+  - @ledgerhq/hw-transport-node-speculos@6.27.13-nightly.2
+  - @ledgerhq/hw-app-btc@10.0.1-nightly.2
+  - @ledgerhq/hw-app-str@6.27.13-nightly.2
+  - @ledgerhq/hw-app-tezos@6.27.13-nightly.2
+  - @ledgerhq/hw-app-xrp@6.27.13-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.27.13-nightly.2
+
 ## 29.2.0-nightly.3
 
 ### Patch Changes

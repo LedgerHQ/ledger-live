@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.56.0-nightly.4
+
+### Minor Changes
+
+- [#2671](https://github.com/LedgerHQ/ledger-live/pull/2671) [`6a06aec51a`](https://github.com/LedgerHQ/ledger-live/commit/6a06aec51a59d2e19349504ef31babd9d8fd9e2a) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add ENS on recipient field
+
+### Patch Changes
+
+- [#3031](https://github.com/LedgerHQ/ledger-live/pull/3031) [`0bb1a97a5b`](https://github.com/LedgerHQ/ledger-live/commit/0bb1a97a5b750540f51eb4fb34db982c47a8bd32) Thanks [@sarneijim](https://github.com/sarneijim)! - Rename analytics token attribute in stake banner account
+
+- Updated dependencies [[`9d15eb2e2f`](https://github.com/LedgerHQ/ledger-live/commit/9d15eb2e2f6b72bf796b12daa88736b03873857b), [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b)]:
+  - @ledgerhq/live-common@29.2.0-nightly.4
+  - @ledgerhq/errors@6.12.4-nightly.2
+  - @ledgerhq/domain-service@0.2.1-nightly.4
+  - @ledgerhq/coin-framework@0.2.1-nightly.3
+  - @ledgerhq/devices@8.0.1-nightly.2
+  - @ledgerhq/hw-transport@6.28.2-nightly.2
+  - @ledgerhq/hw-transport-http@6.27.13-nightly.2
+  - @ledgerhq/hw-transport-node-hid-singleton@6.28.10-nightly.2
+
 ## 2.56.0-nightly.3
 
 ### Patch Changes

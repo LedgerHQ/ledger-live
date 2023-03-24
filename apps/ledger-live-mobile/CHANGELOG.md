@@ -1,5 +1,64 @@
 # live-mobile
 
+## 3.18.0-nightly.4
+
+### Patch Changes
+
+- [#3035](https://github.com/LedgerHQ/ledger-live/pull/3035) [`b9c14af6e1`](https://github.com/LedgerHQ/ledger-live/commit/b9c14af6e1d5dfcc105a85aa592d1f78cd7c9543) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Recover - New upsell modal at the end of onboarding for LLM - LNX
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`475f7bea64`](https://github.com/LedgerHQ/ledger-live/commit/475f7bea647731757493535d65a6eb93b26a2634) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: Android native module for location services
+
+  Location services are needed when BLE scanning.
+  This Android Native module provides:
+
+  - a method to check and enable if necessary the location service
+  - a method to listen to the state (enabled/disabled) of the location service
+
+  Also new hook useAndroidEnableLocation using this native module to simplify enabling location services
+
+- [#3017](https://github.com/LedgerHQ/ledger-live/pull/3017) [`65134b090f`](https://github.com/LedgerHQ/ledger-live/commit/65134b090fb12cfe192134338c7d97f88bad5ebd) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Lotties on recover flow in LLM
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`af136336a2`](https://github.com/LedgerHQ/ledger-live/commit/af136336a229ef508f7a34e4e7f5368920961823) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: new bluetooth requirements error views
+
+  Components handling different requirements error views:
+
+  - bluetooth permissions not granted
+  - bluetooth disabled
+  - location permissions nos granted (if needed)
+  - location disabled (if needed)
+    using a new GenericInformationalView component.
+
+  Also some cleaning on error message handling and how some requirements checks were handled
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`759f11851d`](https://github.com/LedgerHQ/ledger-live/commit/759f11851da44287873c6f33c4c9f0356ef944e6) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: flexible bluetooth requirements check and request with drawer and hook
+
+  Possible more fine-grained requirements check and request (only for BLE connecting, or also BLE scanning) with the usage of useRequireBluetooth + RequiresBluetoothDrawer
+
+  Centralized the generic UI of the drawer content in GenericInformationalDrawerContent
+
+  Implemented drawer + hook bluetooth requirements check and requests for:
+
+  - current device selection component
+  - new device selection component
+  - SkipSelectDevice component which automatically select the last connected device
+
+  Also added a debug screen for bluetooth requirements check and request
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`7252ae6c8c`](https://github.com/LedgerHQ/ledger-live/commit/7252ae6c8c87c73e47b42e807885f1c575eaf140) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: re-work of bluetooth permissions and services requirements
+
+  New hooks to simplify bluetooth requirements checks and requests
+  Re-work of associated components using those hooks
+
+- Updated dependencies [[`9d15eb2e2f`](https://github.com/LedgerHQ/ledger-live/commit/9d15eb2e2f6b72bf796b12daa88736b03873857b), [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b)]:
+  - @ledgerhq/live-common@29.2.0-nightly.4
+  - @ledgerhq/react-native-hw-transport-ble@6.28.4-nightly.2
+  - @ledgerhq/errors@6.12.4-nightly.2
+  - @ledgerhq/coin-framework@0.2.1-nightly.3
+  - @ledgerhq/devices@8.0.1-nightly.2
+  - @ledgerhq/hw-transport@6.28.2-nightly.2
+  - @ledgerhq/hw-transport-http@6.27.13-nightly.2
+  - @ledgerhq/react-native-hid@6.29.1-nightly.1
+
 ## 3.18.0-nightly.3
 
 ### Patch Changes
