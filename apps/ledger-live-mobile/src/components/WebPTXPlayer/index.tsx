@@ -155,14 +155,6 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
     });
   }, [manifest, navigation, webviewState, isWhitelistedDomain]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      const webview = safeGetRefValue(webviewAPIRef);
-
-      webview.loadURL("https://google.fr");
-    }, 3000);
-  }, []);
-
   return (
     <SafeAreaView style={[styles.root]}>
       <Web3AppWebview
