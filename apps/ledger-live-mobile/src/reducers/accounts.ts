@@ -94,8 +94,9 @@ const handlers: ReducerMap<AccountsState, Payload> = {
     };
   },
 
-  [AccountsActionTypes.SET_ACCOUNTS]: (_, action) =>
-    (action as Action<AccountsSetAccountsPayload>).payload,
+  [AccountsActionTypes.SET_ACCOUNTS]: (_, action) => ({
+    active: (action as Action<AccountsSetAccountsPayload>).payload,
+  }),
 
   [AccountsActionTypes.UPDATE_ACCOUNT]: (state, action) => {
     const {
