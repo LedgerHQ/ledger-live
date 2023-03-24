@@ -10,7 +10,15 @@ const DEFAULTS = {
   eraPeriod: 64,
 };
 
-const getExtrinsicParams = (a: PolkadotAccount, t: Transaction) => {
+type ExtrinsicParams = {
+  name: string;
+  pallet: "staking" | "balances";
+  args: Record<string, any>;
+};
+const getExtrinsicParams = (
+  a: PolkadotAccount,
+  t: Transaction
+): ExtrinsicParams => {
   const validator = t.validators ? t.validators[0] : null;
 
   switch (t.mode) {
@@ -170,10 +178,8 @@ export const buildTransaction =
     const methodArgs = methodFunction.meta.args;
     const method = methodFunction(
       ...methodArgs.map((arg) => {
-        if (
-          extrinsicParams.args[stringCamelCase(arg.name.toString())] ===
-          undefined
-        ) {
+        const param = extrinsicParams.args[stringCamelCase(arg.name)];
+        if (param === undefined) {
           throw new Error(
             `Method ${extrinsicParams.pallet}::${
               extrinsicParams.name
@@ -181,7 +187,7 @@ export const buildTransaction =
           );
         }
 
-        return extrinsicParams.args[stringCamelCase(arg.name.toString())];
+        return param;
       })
     ).toHex();
     const unsigned = {
