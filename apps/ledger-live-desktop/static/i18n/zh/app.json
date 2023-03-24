@@ -84,6 +84,7 @@
     "save" : "保存",
     "lock" : "锁定",
     "showMore" : "显示更多",
+    "backToMatchingURL" : "返回 {{appName}}",
     "back" : "返回",
     "adjustFees" : "调整费用",
     "reset" : "重置",
@@ -214,6 +215,7 @@
     "stars" : "已标星账户",
     "accounts" : "账户",
     "manager" : "我的 Ledger",
+    "earn" : "赚取",
     "exchange" : "买入 / 卖出",
     "swap" : "互换",
     "lend" : "借出",
@@ -225,15 +227,10 @@
     "tooltip" : "星标账户"
   },
   "bridge" : {
-    "modalTitle" : "打开设备桥接",
-    "openHeader" : "通过 WebSocket 曝露您的设备账户",
-    "openDescription" : "打开桥接使您的所有账户曝露给第三方应用程序。",
-    "openedHeader" : "{{appName}} 已打开桥接",
-    "openedDescription" : "您现在可以通过 WebSocket 在第三方网页应用程序上访问您的 {{appName}} 账户。",
-    "completeHeader" : "桥接会话已完成",
-    "completeDescription" : "Websocket 桥接现已关闭。",
-    "openButton" : "打开",
-    "disconnectButton" : "断开连接"
+    "modalTitle" : "设备桥接",
+    "openHeader" : "设备桥接不再可用",
+    "openDescription" : "请将您的浏览器钱包扩展程序配置为使用 WebHID 而不是 Ledger Live。",
+    "closeButton" : "关闭"
   },
   "swap2" : {
     "title" : "互换",
@@ -1218,9 +1215,13 @@
         "description" : "您的识别码可以长 4 到 8 位",
         "text" : "任何可获取您的 {{deviceName}} 和识别码的人都可以访问您的所有加密资产和 NFT 资产。"
       },
-      "recoveryContent" : {
-        "title" : "恢复短语",
-        "content" : "点按下面的视频，详细了解您的秘密恢复短语"
+      "seedContent" : {
+        "title" : "秘密恢复短语",
+        "choiceNewOrRestore" : "选择最适合您的设置选项。",
+        "newSeed" : "点按下面的视频，详细了解您的秘密恢复短语",
+        "choiceRestoreDirectOrRecover" : "Placeholder - choice direct restore or use Recover",
+        "recoverSeed" : "Placeholder: Recover",
+        "restoreSeed" : "要进行恢复，请务必使用 Ledger 生成的秘密恢复短语保证您的资产安全。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。"
       },
       "softwareCheckContent" : {
         "title" : "软件检查",
@@ -5737,8 +5738,10 @@
     "progress" : {
       "loading" : "正在加载……",
       "resolving" : "解决依赖关系",
-      "progress" : "正在安装应用程序 {{progress}}%",
-      "disclaimer" : "随时在 Ledger Live 中添加或删除应用程序。"
+      "progress" : "在安装应用程序时，停留在 Ledger Live 中。",
+      "disclaimer" : "随时在 Ledger Live 中添加或删除应用程序。",
+      "skippedInfo" : "一些应用程序无法使用。适用于 {{ productName }} 的应用程序有待开发。",
+      "skipped" : "暂不适用于 {{ productName }}"
     },
     "cancelled" : {
       "title" : "安装应用程序已在 {{productName}} 上被取消",
