@@ -304,7 +304,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         return data
           .map((m: any) => {
             if (!m || typeof m !== "object") return;
-            const { spender, value } = m;
+            const { spender, count: value } = m;
             if (typeof spender !== "string" || typeof value !== "string")
               return;
             return {
