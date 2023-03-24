@@ -22,16 +22,15 @@ type Props = BaseComposite<
 >;
 
 const StakeFlow = ({ route }: Props) => {
-  const currencies = route?.params?.currencies;
   const featureFlag = useFeature("stakePrograms");
-  const list = featureFlag?.params?.list;
+  const currencies = route?.params?.currencies || featureFlag?.params?.list;
   const navigation =
     useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
-      currencies: currencies || list || [],
+      currencies: currencies || [],
     });
-  }, [currencies, list]);
+  }, [currencies]);
 
   const onSuccess = useCallback(
     (account: Account, parentAccount?: Account) => {
