@@ -2684,10 +2684,6 @@
         "experimentalSwap": {
           "title": "New SWAP interface",
           "description": "Use the new experimental swap interface"
-        },
-        "experimentalPlatformDiscover": {
-          "title": "Discover v2",
-          "description": "Use the new experimental discover screen"
         }
       },
       "developerFeatures": {
