@@ -28,7 +28,6 @@ const defaultItems = [
     status: ItemStatus.inactive,
     title: "Set your PIN",
     estimatedTime: 120,
-    shouldContinueOnStax: true,
     renderBody: () => (
       <Flex>
         <BodyText>

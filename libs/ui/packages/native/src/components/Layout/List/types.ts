@@ -12,6 +12,5 @@ export type Item = {
   doneTitle?: string;
   estimatedTime?: number;
   progress?: number;
-  shouldContinueOnStax?: boolean;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
 };
