@@ -1,4 +1,3 @@
-import { LiveAppManifest } from "../../types";
 import { ProtectEnv } from "./types";
 
 const protectEnv = ProtectEnv.SIMU;
@@ -36,51 +35,6 @@ const protectId = protectIds[protectEnv];
 const protectUrl = protectURLs[protectEnv];
 
 const stargatePortalUrl = stargatePortalUrls[protectEnv];
-
-let platformName = "Recover";
-
-if ([ProtectEnv.SIMU, ProtectEnv.STAGING].includes(protectEnv as ProtectEnv)) {
-  platformName += ` ${
-    protectEnv.charAt(0).toUpperCase() + protectEnv.slice(1)
-  }`;
-}
-
-const protectManifest = {
-  id: protectId,
-  name: platformName,
-  private: true,
-  url: protectUrl,
-  homepageUrl: "",
-  icon: "",
-  platform: "mobile",
-  apiVersion: "^2.0.0 || ^1.0.0",
-  manifestVersion: "1",
-  branch: "experimental",
-  content: {
-    shortDescription: {
-      en: "Never lose access to your assets with Ledger Recover.",
-    },
-    description: {
-      en: "Never lose access to your assets with Ledger Recover.",
-    },
-  },
-  permissions: [
-    "account.list",
-    "account.receive",
-    "account.request",
-    "currency.list",
-    "device.close",
-    "device.exchange",
-    "device.transport",
-    "message.sign",
-    "transaction.sign",
-    "transaction.signAndBroadcast",
-    "wallet.capabilities",
-    "wallet.info",
-  ],
-  currencies: "*",
-  domains: ["https://*", "http://*"],
-} as LiveAppManifest;
 
 const protectMobileFeatureFlag = {
   enabled: true,
@@ -129,7 +83,6 @@ const protectMobileFeatureFlag = {
 const config = {
   protectId,
   protectEnv,
-  protectManifest,
   protectMobileFeatureFlag,
   protectUrl,
   stargatePortalUrl,
