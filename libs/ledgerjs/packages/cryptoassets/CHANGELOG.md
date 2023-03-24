@@ -1,5 +1,17 @@
 # @ledgerhq/cryptoassets
 
+## 9.2.0-recover-staging.0
+
+### Minor Changes
+
+- [#2297](https://github.com/LedgerHQ/ledger-live/pull/2297) [`f364721cd9`](https://github.com/LedgerHQ/ledger-live/commit/f364721cd9c1681141b62cd807796e0a0a45efe4) Thanks [@Sheng-Long](https://github.com/Sheng-Long)! - Update Hedera explorer links
+
+* [#2942](https://github.com/LedgerHQ/ledger-live/pull/2942) [`0ca89a8067`](https://github.com/LedgerHQ/ledger-live/commit/0ca89a80678743e9462aaf977448e759924a56b2) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Update Cardano Xray token
+
+- [#3015](https://github.com/LedgerHQ/ledger-live/pull/3015) [`9bb21e26a8`](https://github.com/LedgerHQ/ledger-live/commit/9bb21e26a88a2db7093a3d5cc75ab03d12b25ffb) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating songbird rpc node
+
+* [#2929](https://github.com/LedgerHQ/ledger-live/pull/2929) [`170f608de3`](https://github.com/LedgerHQ/ledger-live/commit/170f608de311f320795793b4606b063a3ce96def) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
 ## 9.1.0
 
 ### Minor Changes

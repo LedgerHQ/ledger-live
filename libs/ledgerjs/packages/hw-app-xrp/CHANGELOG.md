@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-xrp
 
+## 6.27.13-recover-staging.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.2-recover-staging.0
+
 ## 6.27.12
 
 ### Patch Changes
