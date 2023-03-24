@@ -123,6 +123,10 @@ export const signOperation = ({
                 ? m.getResolutionConfig(account, transaction)
                 : {};
 
+              if (transaction.recipientDomain?.type === "forward") {
+                resolutionConfig.domains = [transaction.recipientDomain];
+              }
+
               log("rawtx", txHex);
 
               const resolution = await ethLedgerServices.resolveTransaction(
