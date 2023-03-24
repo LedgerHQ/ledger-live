@@ -16,7 +16,7 @@ import {
 import { listTokensForCryptoCurrency } from "../../currencies";
 import { encodeAccountId } from "../../account";
 import type { Operation, TokenAccount, Account } from "@ledgerhq/types-live";
-import { API, apiForCurrency, Tx } from "../../api/Ethereum";
+import { API, apiForCurrency, Block, Tx } from "../../api/Ethereum";
 import { digestTokenAccounts, prepareTokenAccounts } from "./modules";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeNftId, isNFTActive, nftsFromOperations } from "../../nft";
@@ -25,6 +25,7 @@ import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
 } from "../../nft/nftOperationId";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const getAccountShape: GetAccountShape = async (
   infoInput,
@@ -54,28 +55,36 @@ export const getAccountShape: GetAccountShape = async (
   const blockHashExistsOnChain = await api
     .getBlockByHash(mostRecentStableOperation?.blockHash)
     .then(Boolean);
+
   const syncHash =
     JSON.stringify(blacklistedTokenIds || []) +
     "_" +
     listTokensForCryptoCurrency(currency, {
       withDelisted: true,
     }).length;
+
   const outdatedSyncHash = initialAccount?.syncHash !== syncHash;
+  const allOperationsLoaded = initialAccount
+    ? areAllOperationsLoaded(initialAccount)
+    : false;
+
   const pullFromBlockHeight =
     initialAccount &&
-    areAllOperationsLoaded(initialAccount) &&
+    allOperationsLoaded &&
     mostRecentStableOperation &&
     blockHashExistsOnChain &&
     !outdatedSyncHash
       ? mostRecentStableOperation.blockHeight
       : undefined;
+
   const txsP = fetchAllTransactions(api, address, pullFromBlockHeight);
   const [txs, currentBlock, balance] = await Promise.all([
     txsP,
     currentBlockP,
     balanceP,
   ]);
-  const blockHeight = currentBlock.height.toNumber();
+
+  const blockHeight = currentBlock?.height.toNumber();
 
   if (!pullFromBlockHeight && txs.length === 0) {
     log("ethereum", "no ops on " + address);
@@ -566,20 +575,23 @@ const txToOps =
     return ops;
   };
 
-const fetchCurrentBlock = ((perCurrencyId) => (currency) => {
-  if (perCurrencyId[currency.id]) return perCurrencyId[currency.id]();
-  const api = apiForCurrency(currency);
-  const f = throttle(
-    () =>
-      api.getCurrentBlock().catch((e) => {
-        f.cancel();
-        throw e;
-      }),
-    5000
-  );
-  perCurrencyId[currency.id] = f;
-  return f();
-})({});
+const fetchCurrentBlock = (
+  (perCurrencyId) =>
+  (currency: CryptoCurrency): Promise<Block> | undefined => {
+    if (perCurrencyId[currency.id]) return perCurrencyId[currency.id]();
+    const api = apiForCurrency(currency);
+    const f = throttle(
+      () =>
+        api.getCurrentBlock().catch((e) => {
+          f.cancel();
+          throw e;
+        }),
+      5000
+    );
+    perCurrencyId[currency.id] = f;
+    return f();
+  }
+)({});
 
 export const fetchAllTransactions = async (api: API, address, blockHeight) => {
   let accumulatedTxs: Tx[] = [];
@@ -631,7 +643,7 @@ async function loadERC20Balances(tokenAccounts, address, api) {
 
 const SAFE_REORG_THRESHOLD = 80;
 
-function stableOperations(a) {
+function stableOperations(a: Account): Operation[] {
   return a.operations.filter(
     (op) =>
       op.blockHeight && a.blockHeight - op.blockHeight > SAFE_REORG_THRESHOLD

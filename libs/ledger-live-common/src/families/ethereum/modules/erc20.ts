@@ -167,6 +167,7 @@ export const fetchERC20Tokens: () => Promise<ERC20Token[]> = makeLRUCache(
       const { data } = await network({
         url: `${getEnv("DYNAMIC_CAL_BASE_URL")}/erc20.json`,
       });
+
       if (!data || !Array.isArray(data)) {
         throw new Error("ERC20.json file was malformed");
       }

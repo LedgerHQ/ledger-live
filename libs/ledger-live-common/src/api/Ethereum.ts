@@ -155,7 +155,9 @@ export type API = {
     high: BigNumber;
     next_base: BigNumber;
   }>;
-  getBlockByHash: (blockHash: string) => Promise<BlockByHashOutput | undefined>;
+  getBlockByHash: (
+    blockHash: string | null | undefined
+  ) => Promise<BlockByHashOutput | undefined>;
 };
 
 export const apiForCurrency = (currency: CryptoCurrency): API => {
@@ -179,13 +181,16 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         filtering: true,
         noinput: true,
       };
+
       if (blockHeight) {
-        query.block_height = blockHeight;
+        query.from_height = blockHeight;
         query.order = "descending";
       }
+
       if (token) {
         query.token = token;
       }
+
       const txData = await network({
         method: "GET",
         url: URL.format({
@@ -193,6 +198,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
           query,
         }),
       });
+
       return { txs: txData.data.data, nextPageToken: txData.data.token };
     },
 
