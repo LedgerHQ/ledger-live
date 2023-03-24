@@ -134,7 +134,7 @@ function OnboardingStepPairNew() {
       deviceModelId: deviceModelId as DeviceModelId,
       resetNavigationStack: true,
       fallbackIfNoAction: () =>
-        navigation.navigate(NavigatorName.Base, {
+        navigation.replace(NavigatorName.Base, {
           screen: NavigatorName.Main,
         }),
     });

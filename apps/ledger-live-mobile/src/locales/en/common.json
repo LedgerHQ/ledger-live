@@ -832,7 +832,9 @@
     "required": "Sorry, it looks like Bluetooth is disabled",
     "locationRequiredTitle": "Location is required for Bluetooth LE",
     "locationRequiredMessage": "On Android location permission is required to list Bluetooth LE devices.",
-    "checkEnabled": "Please enable Bluetooth in your phone settings."
+    "checkEnabled": "Please enable Bluetooth in your phone settings.",
+    "tryEnablingAgain": "Try enabling bluetooth again",
+    "openSettings": "Open bluetooth settings"
   },
   "webview": {
     "noConnectionError": {
@@ -842,12 +844,10 @@
   },
   "location": {
     "titleServiceRequired": "Location services required",
-    "titlePermissionRequired": "Location permission required",
-    "titlePermissionRequiredPrecise": "Precise location permission required",
     "descriptionServiceRequired": "Ledger Live requires location services to pair your device through Bluetooth.",
-    "descriptionPermissionRequired": "Ledger Live requires the location permission to pair your device through Bluetooth.",
-    "descriptionPermissionRequiredPrecise": "Ledger Live requires the precise location permission to pair your device through Bluetooth.",
     "open": "Open location settings",
+    "openSettings": "Open location settings",
+    "tryEnablingAgain": "Try enabling location again",
     "noInfos": "Ledger does not access your location information."
   },
   "permissions": {
@@ -860,6 +860,12 @@
       "modalButtonLabelBase": "Authorize",
       "modalButtonLabelSettingsVariant": "Go to settings",
       "dontPair": "Don't pair"
+    },
+    "location": {
+      "titlePermissionRequired": "Location permission required",
+      "titlePermissionRequiredPrecise": "Precise location permission required",
+      "descriptionPermissionRequired": "Ledger Live requires the location permission to pair your device through Bluetooth.",
+      "descriptionPermissionRequiredPrecise": "Ledger Live requires the precise location permission to pair your device through Bluetooth."
     },
     "camera": {
       "title": "Authorize camera",
@@ -6112,7 +6118,7 @@
           "desc": "Recover access to your wallet without your Secret Recovery Phrase.",
           "actions": {
             "learnMore": "How does it benefit me?",
-            "alreadySubscribed": "Already subscribed? <LinkAccount>View my account</LinkAccount>"
+            "alreadySubscribed": "Already logged in? <LinkAccount>View my subscription</LinkAccount>"
           }
         },
         "confirmIdentity": {

@@ -77,6 +77,12 @@ export const defaultFeatures: DefaultFeatures = {
   disableNftRaribleOpensea: {
     enabled: false,
   },
+  domainInputResolution: {
+    enabled: false,
+    params: {
+      supportedCurrencyIds: ["ethereum"],
+    },
+  },
   ratingsPrompt: {
     enabled: false,
     params: {

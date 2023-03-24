@@ -43,6 +43,14 @@ export default function Debugging() {
         iconLeft={<Icons.ClipboardListCheckMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugCameraPermissions)}
       />
+      <SettingsRow
+        title="Bluetooth and location services"
+        desc="Bluetooth related permissions and enabled services checks"
+        iconLeft={<Icons.ClipboardListCheckMedium size={32} color="black" />}
+        onPress={() =>
+          navigation.navigate(ScreenName.DebugBluetoothAndLocationServices)
+        }
+      />
     </SettingsNavigationScrollView>
   );
 }

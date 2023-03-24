@@ -1,9 +1,6 @@
 import React from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-// import { StorylyInstanceID } from "@ledgerhq/types-live";
-
-// import { StorylyWrapper } from "~/renderer/components/Storyly";
 import { StepText } from "./shared";
 
 export type SeedPathStatus =
@@ -33,7 +30,6 @@ const SeedStep = ({ seedPathStatus }: Props) => {
           ? t("syncOnboarding.manual.seedContent.recoverSeed")
           : t("syncOnboarding.manual.seedContent.choiceNewOrRestore")}
       </StepText>
-      {/* <StorylyWrapper instanceID={StorylyInstanceID.recoverySeed} /> */}
     </Flex>
   );
 };
