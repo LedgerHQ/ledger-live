@@ -103,10 +103,16 @@ const OnboardingAppInstallDebugScreen = () => {
         Onboarding apps installer
       </Text>
       <Flex pt={8} alignItems="center">
-        <Button mr={6} variant="main" outline={true} onClick={handleRemount}>
+        <Button
+          mr={6}
+          variant="main"
+          outline={true}
+          onClick={handleRemount}
+          data-test-id="reset-button"
+        >
           Reset
         </Button>
-        <Flex flex={1} flexDirection="column">
+        <Flex flex={1} flexDirection="column" data-test-id="input-option-selector">
           <SelectInput
             isMulti={false}
             value={selectedDeviceToRestoreOption}
@@ -147,7 +153,12 @@ const OnboardingAppInstallDebugButton = () => {
   }, []);
 
   return (
-    <ButtonV2 small primary onClick={handleOpenDebugScreen}>
+    <ButtonV2
+      small
+      primary
+      onClick={handleOpenDebugScreen}
+      data-test-id="debug-install-set-of-apps-button"
+    >
       Open
     </ButtonV2>
   );
