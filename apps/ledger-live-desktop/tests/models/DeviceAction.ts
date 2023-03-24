@@ -5,7 +5,7 @@ import {
   deviceInfo210lo5,
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
-import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
+import { AppOp } from "@ledgerhq/live-common/apps/types";
 
 const mockListAppsResult = (...params) => {
   // Nb Should move this polyfill to live-common eventually.
@@ -133,6 +133,48 @@ export class DeviceAction {
   async add50ProgressToLanguageInstallation() {
     await this.page.evaluate(() => {
       (window as any).mock.events.mockDeviceEvent({ type: "progress", progress: 0.5 });
+    });
+  }
+
+  async installSetOfAppsMocked(
+    progress: number,
+    itemProgress: number,
+    currentAppOp: AppOp,
+    installQueue: string[],
+  ) {
+    await this.page.evaluate(
+      args => {
+        const [progress, itemProgress, currentAppOp, installQueue] = args;
+
+        (window as any).mock.events.mockDeviceEvent({
+          type: "inline-install",
+          progress: progress,
+          itemProgress: itemProgress,
+          currentAppOp: currentAppOp,
+          installQueue: installQueue,
+        });
+      },
+      [progress, itemProgress, currentAppOp, installQueue],
+    );
+  }
+
+  async resolveDependenciesMocked(installQueue: string[]) {
+    await this.page.evaluate(
+      args => {
+        const [installQueue] = args;
+
+        (window as any).mock.events.mockDeviceEvent({
+          type: "listed-apps",
+          installQueue: installQueue,
+        });
+      },
+      [installQueue],
+    );
+  }
+
+  async mockOpened() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "opened" });
     });
   }
 
