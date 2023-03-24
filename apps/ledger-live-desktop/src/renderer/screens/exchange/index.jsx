@@ -61,8 +61,6 @@ const DEFAULT_MULTIBUY_APP_ID = "multibuy";
 const LiveAppExchange = ({ appId }: { appId: string }) => {
   const { state: urlParams } = useLocation();
   const locale = useSelector(languageSelector);
-  const multibuyNavigation = useFeature("multibuyNavigation");
-  const shouldDisplayNavigation = multibuyNavigation?.enabled || false;
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = localManifest || remoteManifest;
@@ -72,14 +70,6 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
     <Card grow style={{ overflow: "hidden" }}>
       {manifest ? (
         <WebPTXPlayer
-          config={{
-            topBarConfig: {
-              shouldDisplayName: false,
-              shouldDisplayInfo: false,
-              shouldDisplayClose: false,
-              shouldDisplayNavigation,
-            },
-          }}
           manifest={manifest}
           inputs={{
             theme: themeType,

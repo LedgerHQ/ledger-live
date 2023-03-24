@@ -194,10 +194,17 @@ function useWebView(
 
         webview.reload();
       },
+      // TODO: wallet-api-server lifecycle is not perfect and will try to send messages before a ref is available. Some additional thinkering is needed here.
       postMessage: (message: string) => {
-        const webview = safeGetRefValue(webviewRef);
+        try {
+          const webview = safeGetRefValue(webviewRef);
 
-        webview.postMessage(message);
+          webview.postMessage(message);
+        } catch (error) {
+          console.warn(
+            "wallet-api-server tried to send a message while the webview was not yet initialized.",
+          );
+        }
       },
     };
   }, [webviewRef]);

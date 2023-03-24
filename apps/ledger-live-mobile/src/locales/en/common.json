@@ -12,6 +12,7 @@
     "gotit": "Got it",
     "continue": "Continue",
     "retry": "Retry",
+    "backTo": "Back to {{to}}",
     "done": "Done",
     "sortBy": "Sort by",
     "signOut": "Sign out",
