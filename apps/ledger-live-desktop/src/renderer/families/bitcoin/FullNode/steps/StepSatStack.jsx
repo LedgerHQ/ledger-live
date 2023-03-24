@@ -8,7 +8,7 @@ import Button from "~/renderer/components/Button";
 import { Rotating } from "~/renderer/components/Spinner";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
 import IconCheck from "~/renderer/icons/Check";
-import { CheckWrapper } from "~/renderer/modals/FullNode";
+import { CheckWrapper } from "..";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";

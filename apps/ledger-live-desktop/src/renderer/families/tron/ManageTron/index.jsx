@@ -180,7 +180,7 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
               <Box>
                 <ManageButton
                   disabled={!canFreeze}
-                  onClick={() => onSelectAction("MODAL_FREEZE", onClose)}
+                  onClick={() => onSelectAction("MODAL_TRON_FREEZE", onClose)}
                 >
                   <IconWrapper>
                     <Freeze size={16} />
@@ -196,7 +196,7 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
                 </ManageButton>
                 <ManageButton
                   disabled={!canUnfreeze}
-                  onClick={() => onSelectAction("MODAL_UNFREEZE", onClose)}
+                  onClick={() => onSelectAction("MODAL_TRON_UNFREEZE", onClose)}
                 >
                   <IconWrapper>
                     <Unfreeze size={16} />
@@ -220,7 +220,7 @@ const ManageModal = ({ name, account, parentAccount, ...rest }: Props) => {
                   disabled={!canVote}
                   onClick={() =>
                     onSelectAction(
-                      votes && votes.length > 0 ? "MODAL_VOTE_TRON" : "MODAL_VOTE_TRON_INFO",
+                      votes && votes.length > 0 ? "MODAL_TRON_VOTE" : "MODAL_TRON_VOTE_INFO",
                       onClose,
                     )
                   }

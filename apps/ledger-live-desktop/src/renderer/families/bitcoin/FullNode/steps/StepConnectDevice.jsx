@@ -16,8 +16,8 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import type { FullNodeSteps, ConnectionStatus } from "~/renderer/modals/FullNode";
-import { CheckWrapper, connectionStatus } from "~/renderer/modals/FullNode";
+import type { FullNodeSteps, ConnectionStatus } from "..";
+import { CheckWrapper, connectionStatus } from "..";
 import IconCheck from "~/renderer/icons/Check";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);

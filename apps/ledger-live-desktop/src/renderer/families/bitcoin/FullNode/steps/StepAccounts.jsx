@@ -14,7 +14,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import Input from "~/renderer/components/Input";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-import type { FullNodeSteps } from "~/renderer/modals/FullNode";
+import type { FullNodeSteps } from "..";
 import styled from "styled-components";
 
 const Row = styled(Box).attrs(() => ({

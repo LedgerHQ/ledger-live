@@ -15,7 +15,7 @@ import { modals } from "~/renderer/families/elrond/modals";
 import { AccountBannerState } from "@ledgerhq/live-common/lib/families/elrond/banner";
 import { ElrondDelegation } from "@ledgerhq/live-common/lib/families/elrond/types";
 
-export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
+const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
@@ -102,3 +102,5 @@ export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) =
     />
   );
 };
+
+export default StakeBanner;

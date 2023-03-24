@@ -106,7 +106,7 @@ export function StepConfirmationFooter({
       const { tronResources } = account;
       const { votes } = tronResources || {};
 
-      openModal(votes.length > 0 ? "MODAL_VOTE_TRON" : "MODAL_VOTE_TRON_INFO", {
+      openModal(votes.length > 0 ? "MODAL_TRON_VOTE" : "MODAL_TRON_VOTE_INFO", {
         account: account,
       });
     }

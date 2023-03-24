@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import Modal from "~/renderer/components/Modal";
-import FullNodeBody from "~/renderer/modals/FullNode/FullNodeBody";
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import useEnv from "~/renderer/hooks/useEnv";
+import FullNodeBody from "./FullNodeBody";
 
 export type FullNodeSteps = "landing" | "node" | "device" | "accounts" | "satstack" | "disconnect";
 export const connectionStatus = Object.freeze({
@@ -55,7 +55,7 @@ const FullNode = ({ data, onClose }: *) => {
 const render = ({ data, onClose }) => <FullNode onClose={onClose} data={data} />;
 
 const FullNodeModal = () => (
-  <Modal name="MODAL_FULL_NODE" centered preventBackdropClick render={render} />
+  <Modal name="MODAL_BITCOIN_FULL_NODE" centered preventBackdropClick render={render} />
 );
 
 export default FullNodeModal;

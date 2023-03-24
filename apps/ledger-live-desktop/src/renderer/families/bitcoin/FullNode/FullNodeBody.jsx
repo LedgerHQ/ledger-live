@@ -13,8 +13,8 @@ import StepAccounts, { StepAccountsFooter } from "./steps/StepAccounts";
 import StepConnectDevice, { StepDeviceFooter } from "./steps/StepConnectDevice";
 import StepSatStack, { StepSatStackFooter } from "./steps/StepSatStack";
 import StepDisconnect, { StepDisconnectFooter } from "./steps/StepDisconnect";
-import type { FullNodeSteps, ConnectionStatus } from "~/renderer/modals/FullNode";
-import { connectionStatus } from "~/renderer/modals/FullNode";
+import type { FullNodeSteps, ConnectionStatus } from "./types";
+import { connectionStatus } from ".";
 import useEnv from "~/renderer/hooks/useEnv";
 import { loadLSS, saveLSS } from "~/renderer/storage";
 

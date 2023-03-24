@@ -168,7 +168,7 @@ const AccountPage = ({
               ctoken={ctoken}
             />
           </Box>
-          <AccountStakeBanner account={account} parentAccount={parentAccount} />
+          <AccountStakeBanner account={account} />
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}

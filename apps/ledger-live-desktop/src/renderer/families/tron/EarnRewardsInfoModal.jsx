@@ -24,7 +24,7 @@ export default function TronEarnRewardsInfoModal({ name, account, parentAccount 
   const onNext = useCallback(() => {
     dispatch(closeModal(name));
     dispatch(
-      openModal("MODAL_FREEZE", {
+      openModal("MODAL_TRON_FREEZE", {
         parentAccount,
         account,
       }),
