@@ -1,11 +1,11 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { Linking, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import * as Animatable from "react-native-animatable";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Flex, Text, InfiniteLoader } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import ArrowLeft from "../../../../../icons/ArrowLeft";
 import { TAB_BAR_SAFE_HEIGHT } from "../../../../../components/TabBar/TabBarSafeAreaView";
@@ -28,6 +28,10 @@ type WildcardNavigation = StackNavigationProp<
 >;
 
 const AnimatedView = Animatable.View;
+
+const httpRegex = new RegExp(
+  /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi,
+);
 
 type Props = {
   manifests: LiveAppManifest[];
@@ -75,7 +79,6 @@ export function Search({
       ))}
     </>
   );
-
   const noResultFoundComponent = (
     <Flex flexDirection={"column"} padding={4} marginTop={100}>
       <Flex alignItems="center">
@@ -86,15 +89,32 @@ export function Search({
         />
       </Flex>
       <Text textAlign="center" variant="h4" my={3}>
-        {t("market.warnings.noAppFound")}
+        {t("market.warnings.notFound")}
       </Text>
-
       <Text textAlign="center" variant="body" color="neutral.c70">
-        {t("market.warnings.retrySearchKeyword")}
+        {input.match(httpRegex) ? (
+          <Trans
+            i18nKey="market.warnings.retrySearchKeywordAndUrl"
+            values={{
+              search: input,
+            }}
+            components={{
+              Link: (
+                <Text
+                  style={{ textDecorationLine: "underline" }}
+                  onPress={() => Linking.openURL("http://" + input)}
+                >
+                  {"eiihirer"}
+                </Text>
+              ),
+            }}
+          />
+        ) : (
+          t("market.warnings.retrySearchKeyword")
+        )}
       </Text>
     </Flex>
   );
-
   return (
     <>
       <Layout
