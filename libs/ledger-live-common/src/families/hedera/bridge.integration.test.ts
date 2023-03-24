@@ -95,7 +95,7 @@ const hedera: CurrenciesData<Transaction> = {
           expectedStatus: (account, _, status) => {
             return {
               amount: account.balance.minus(
-                status.estimatedFees.toNumber() * estimatedFeeSafetyRate
+                status.estimatedFees.times(estimatedFeeSafetyRate)
               ),
               errors: {},
               warnings: {},
