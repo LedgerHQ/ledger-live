@@ -8,11 +8,13 @@ import { getDeviceModel } from "@ledgerhq/devices";
 
 import { useTranslation } from "react-i18next";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
+import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 
 import AppInstallItem, { ItemState } from "./AppInstallItem";
 import AllowManagerModal from "./AllowManagerModal";
+import { getEnv } from "@ledgerhq/live-common/env";
 
-const action = createAction(connectApp);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
 type Props = {
   device: Device;
@@ -96,7 +98,9 @@ const InstallSetOfApps = ({
         <Flex flex={1} alignItems="flex-start" flexDirection="column">
           <Flex style={{ width: "100%" }} flexDirection="row" justifyContent="space-between" mb={6}>
             {installing ? (
-              <Text>{t("onboardingAppInstall.progress.progress")}</Text>
+              <Text data-test-id="installing-text">
+                {t("onboardingAppInstall.progress.progress")}
+              </Text>
             ) : (
               <>
                 <Text>{t("onboardingAppInstall.progress.resolving")}</Text>

@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BoxedIcon, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import {
+  BoxedIcon,
+  Flex,
+  InfiniteLoader,
+  Text,
+  VerticalTimeline,
+} from "@ledgerhq/native-ui";
 import {
   CircledCheckSolidMedium,
   WarningSolidMedium,
@@ -416,6 +422,9 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
           category={`Set up ${productName}: Step 4: Software & Hardware checked successfully`}
         />
       ) : null}
+      <VerticalTimeline.BodyText mb={6}>
+        {t("syncOnboarding.softwareChecksSteps.description")}
+      </VerticalTimeline.BodyText>
       <CheckCard
         title={genuineCheckStepTitle}
         status={genuineCheckUiStepStatus}

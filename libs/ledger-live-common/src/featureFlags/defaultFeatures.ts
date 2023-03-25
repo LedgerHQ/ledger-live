@@ -65,7 +65,7 @@ export const defaultFeatures: DefaultFeatures = {
   deviceInitialApps: {
     enabled: false,
     params: {
-      apps: ["Boilerplate", "Boilerplate_2", "Boilerplate_3"],
+      apps: ["Bitcoin", "Ethereum", "Polygon"],
     },
   },
   disableNftSend: {
@@ -207,5 +207,11 @@ export const defaultFeatures: DefaultFeatures = {
   },
   newsfeedPage: {
     enabled: false,
+  },
+  discover: {
+    enabled: false,
+    params: {
+      version: "1",
+    },
   },
 };
