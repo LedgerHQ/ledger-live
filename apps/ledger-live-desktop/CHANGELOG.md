@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.56.0-nightly.5
+
+### Patch Changes
+
+- [#2785](https://github.com/LedgerHQ/ledger-live/pull/2785) [`f1f16c3674`](https://github.com/LedgerHQ/ledger-live/commit/f1f16c3674510286b8b9677ccc0126cd8bb2694e) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Add e2e tests in LLD for install and restore set of apps flow
+
 ## 2.56.0-nightly.4
 
 ### Minor Changes

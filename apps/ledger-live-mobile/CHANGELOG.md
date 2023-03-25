@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.18.0-nightly.5
+
+### Patch Changes
+
+- [#2996](https://github.com/LedgerHQ/ledger-live/pull/2996) [`ecffe19c8b`](https://github.com/LedgerHQ/ledger-live/commit/ecffe19c8be7a13da20ff909ff65322159e03575) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Hide recover webview header for prod env
+
+- [#3037](https://github.com/LedgerHQ/ledger-live/pull/3037) [`7bfd14cbce`](https://github.com/LedgerHQ/ledger-live/commit/7bfd14cbcec3c108737cb7256c3b5b7041d1227c) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix e2e tests that broke during redux rework
+
+- [#3028](https://github.com/LedgerHQ/ledger-live/pull/3028) [`92a0a67e62`](https://github.com/LedgerHQ/ledger-live/commit/92a0a67e62f7eb56c409928f0898a3dfe4abdc18) Thanks [@RamyEB](https://github.com/RamyEB)! - Warning message when app not Found on DiscoverV2
+
+- [#2843](https://github.com/LedgerHQ/ledger-live/pull/2843) [`61848df7ef`](https://github.com/LedgerHQ/ledger-live/commit/61848df7eff1abfef330585ca96b1688c858c637) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - SyncOnboarding: adapt to changes in VerticalTimeline component
+  SyncOnboarding: proper implementation of the "seed" step UI
+  SyncOnboarding: add ContinueOnDevice UI element where needed
+  StorylyStories: play icon and blurred thumbnail for story groups
+- Updated dependencies [[`61848df7ef`](https://github.com/LedgerHQ/ledger-live/commit/61848df7eff1abfef330585ca96b1688c858c637)]:
+  - @ledgerhq/native-ui@0.17.0-nightly.0
+
 ## 3.18.0-nightly.4
 
 ### Patch Changes
