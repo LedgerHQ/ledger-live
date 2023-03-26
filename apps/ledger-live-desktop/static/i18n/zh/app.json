@@ -173,7 +173,49 @@
       "REGISTER" : "已注册",
       "STAKE" : "已权益质押",
       "UNSTAKE" : "已解除权益质押",
-      "WITHDRAW_UNSTAKED" : "已提取"
+      "WITHDRAW_UNSTAKED" : "已提取",
+      "SENDING" : "发送"
+    },
+    "edit" : {
+      "title" : "加速或取消",
+      "description" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。",
+      "stuckDescription" : "您的交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+      "previousFeesInfo" : "当前网络费用 = ",
+      "learnMore" : "我想进一步了解",
+      "panel" : {
+        "title" : "加速或取消",
+        "description" : "您最近的一次“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。"
+      },
+      "speedUp" : {
+        "title" : "加快速度",
+        "description" : "使用较高的网络费用重新提交交易。"
+      },
+      "cancel" : {
+        "title" : "取消",
+        "description" : "发送 0 {{ticker}} 到您自己的地址。为确保取消交易，网络费用比将要取消的交易费用高 30%。"
+      },
+      "steps" : {
+        "method" : {
+          "title" : "方法"
+        },
+        "fees" : {
+          "title" : "费用"
+        },
+        "summary" : {
+          "title" : "概要"
+        },
+        "device" : {
+          "title" : "设备"
+        },
+        "confirmation" : {
+          "title" : "确认"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "无法取消交易，因为您的账户中没有足够的资金。",
+        "notEnoughFundsToSpeedup" : "无法使用加速交易，因为您的账户中没有足够的资金。",
+        "notlowestNonceToSpeedup" : "无法使用加速功能。您的交易有待处理，因为之前的交易已停滞。您可以等待确认交易，加速交易和取消交易。"
+      }
     }
   },
   "byteSize" : {
@@ -819,37 +861,12 @@
       "redelegation" : {
         "title" : "您知道吗……",
         "description" : "Ledger 验证器权益质押的佣金低于您目前使用的验证器。",
-        "cta" : "使用 Ledger 重新委托",
-        "linkText" : "什么是重新委托，需要多长时间？",
-        "solana" : {
-          "title" : "您知道吗？",
-          "description" : "Ledger 提供的佣金率低于您的验证者。此过程最多可能需要 4 天。"
-        },
-        "near" : {
-          "title" : "您知道吗？",
-          "description" : "Ledger 提供的佣金率低于您的验证者。此过程最多可能需要 65 小时。"
-        }
+        "cta" : "使用 Ledger 重新委托"
       },
       "delegation" : {
         "title" : "您知道吗……",
         "description" : "使用 Ledger 验证器权益质押 {{asset}}，仅需 {{commission}}% 的佣金。",
-        "cta" : "使用 Ledger 进行权益质押",
-        "linkText" : "了解更多",
-        "ethereum" : {
-          "lido" : {
-            "title" : "您知道吗……",
-            "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无锁定期。无最低存款限制。",
-            "cta" : "使用 Lido 权益质押"
-          },
-          "kiln" : {
-            "title" : "请不要仅仅长期持有。增长您的以太币",
-            "description" : "有超过 32 个以太币？不妨使用 Kiln 安全权益质押您的以太币来赚取被动奖励。",
-            "cta" : "使用 Kiln 权益质押"
-          }
-        },
-        "near" : {
-          "description" : "使用 Ledger by Figment 验证者权益质押您的 NEAR。您的币仍归您所有，由 Ledger 提供妥善的安全防护。"
-        }
+        "cta" : "使用 Ledger 进行权益质押"
       }
     }
   },
@@ -3801,9 +3818,7 @@
       "runLocalAppDeleteButton" : "删除",
       "runLocalAppOpenButton" : "打开",
       "enableLearnStagingUrl" : "学习页面的模拟环境 URL 网页地址",
-      "enableLearnStagingUrlDesc" : "启用学习页面的模拟环境 URL 网址。",
-      "openOnboardingAppInstallDebug" : "打开入门应用程序安装调试界面",
-      "openOnboardingAppInstallDebugDesc" : "打开一个界面，其中包含同步入门应用程序安装步骤中的组件"
+      "enableLearnStagingUrlDesc" : "启用学习页面的模拟环境 URL 网址。"
     },
     "currencies" : {
       "selectPlaceholder" : "选择加密资产",
@@ -3969,10 +3984,6 @@
       "fullNode" : {
         "title" : "连接比特币完整节点",
         "desc" : "设置您的比特币完整节点，无需使用 Ledger 的浏览器即可进行同步和发送交易。"
-      },
-      "filterTokenOperationsZeroAmount" : {
-        "title" : "值为 0 时隐藏代币交易",
-        "desc" : "隐藏没有价值的代币交易可以防止一些针对以太坊（ETH）、多边形（Polygon）、币安智能链（BSC）和波场（Tron）等的潜在地址中毒攻击"
       }
     }
   },
@@ -4045,7 +4056,7 @@
       "tr" : "Türkçe",
       "ja" : "日本語",
       "ko" : "한국어",
-      "pt" : "Português (Brasil)"
+      "pt" : "Português"
     }
   },
   "theme" : {
@@ -5552,10 +5563,6 @@
       "title" : "从文件加载图片失败",
       "description" : "请使用另一张图片重试"
     },
-    "ImageLoadFromNftError" : {
-      "title" : "从 NFT 加载图片失败",
-      "description" : "请使用另一个 NFT 重试"
-    },
     "ImageDownloadError" : {
       "title" : "图片下载失败",
       "description" : "请使用另一张图片重试"
@@ -5628,13 +5635,6 @@
       "descriptionWithProductName" : "您需要先设置 {{ productName }}。\n我们将引导您完成设置流程。",
       "goToOnboardingButton" : "设置我的设备",
       "goToOnboardingButtonWithProductName" : "设置我的 {{ productName }}"
-    },
-    "EtherscanAPIError" : {
-      "title" : "未能提取交易",
-      "description" : "浏览器出现意外错误。请重试"
-    },
-    "GasEstimationError" : {
-      "title" : "未能估计 Gas 费用"
     }
   },
   "cryptoOrg" : {
@@ -5673,13 +5673,7 @@
         "stepLabel" : "选择一张图片",
         "description" : "选择要设为 (...) 的图片",
         "pickFromNftGallery" : "从我的 NFT 画廊中选择",
-        "myNfts" : "我的 NFT",
-        "upload" : "从我的计算机上传",
-        "chooseNft" : "选择 NFT",
-        "selectNft" : "选择 NFT",
-        "previousSelectNft" : "返回",
-        "nftEmptyStateTitle" : "暂时没有 NFT 可显示",
-        "nftEmptyStateDescription" : "首先将 NFT 添加到您的钱包"
+        "upload" : "从我的计算机上传"
       },
       "adjust" : {
         "stepLabel" : "调整图片",
@@ -5705,37 +5699,5 @@
     },
     "customImageSet" : "锁屏已设置",
     "finishCTA" : "完成"
-  },
-  "onboardingAppInstall" : {
-    "restore" : {
-      "title" : "是否安装与 {{deviceName}} 上相同的应用程序？",
-      "titleNoDeviceName" : "是否安装与上一台 Ledger 设备上相同的应用程序？",
-      "subtitle" : "您可以随时安装或删除应用程序。",
-      "installCTA" : "恢复应用程序",
-      "skipCTA" : "我以后再下载"
-    },
-    "default" : {
-      "title" : "{{ productName }} 使用应用程序完成安全的区块链交易",
-      "subtitle" : "我们建议下载一组默认应用程序。您以后可以下载更多。",
-      "installCTA" : "安装应用程序",
-      "skipCTA" : "我以后再下载"
-    },
-    "progress" : {
-      "loading" : "正在加载……",
-      "resolving" : "解决依赖关系",
-      "progress" : "正在安装应用程序 {{progress}}%",
-      "disclaimer" : "随时在 Ledger Live 中添加或删除应用程序。"
-    },
-    "cancelled" : {
-      "title" : "安装应用程序已在 {{productName}} 上被取消",
-      "subtitle" : "{{productName}} 需要区块链应用程序来批准您的加密货币和 NFT 交易。",
-      "installCTA" : "立即安装",
-      "skipCTA" : "我以后再下载"
-    },
-    "locked" : {
-      "title" : "您的 {{productName}} 已锁定",
-      "subtitle" : "请解锁您的 {{productName}} 并重新开始安装。",
-      "installCTA" : "重新开始安装"
-    }
   }
 }
