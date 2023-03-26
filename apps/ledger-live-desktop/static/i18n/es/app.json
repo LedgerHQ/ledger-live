@@ -828,6 +828,10 @@
         "near" : {
           "title" : "¿Lo sabías?",
           "description" : "Ledger ofrece una comisión más baja que tu validador. Este proceso puede tardar hasta 65 horas."
+        },
+        "elrond" : {
+          "title" : "¿Lo sabías?",
+          "description" : "Ledger ofrece una comisión más baja que tu validador. Este proceso puede tardar hasta 10 días."
         }
       },
       "delegation" : {
@@ -849,6 +853,9 @@
         },
         "near" : {
           "description" : "Pon tus NEAR en participación con el validador Ledger by Figment. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
+        },
+        "elrond" : {
+          "description" : "Pon tus ELROND en participación con el validador Ledger by Figment. Tus monedas seguirán siendo tuyas y estarán respaldadas por la seguridad sin concesiones de Ledger."
         }
       }
     }
@@ -1839,7 +1846,7 @@
       "used" : "Utilizado",
       "firmwareAvailable" : "El firmware está desactualizado:",
       "firmwareUpToDate" : "El firmware está actualizado:",
-      "genuine" : "El dispositivo es auténtico",
+      "genuine" : "Tu dispositivo es original",
       "incomplete" : "No se reconocieron algunas aplicaciones. Desinstálalas y luego vuelve a instalarlas."
     },
     "applist" : {
@@ -2261,6 +2268,13 @@
     },
     "switchButton" : "Cambiar a {{language}}",
     "no" : "Prefiero no hacerlo"
+  },
+  "deviceRename" : {
+    "title" : "Renombrar {{ productName }}",
+    "chooseName" : "Elige un nombre",
+    "placeholder" : "Stax de Tony",
+    "remainingCharacters" : "Quedan {{ remainingCharacters }} caracteres",
+    "renamed" : "El nombre de {{ productName }} se cambió a \n“{{ name }}” "
   },
   "deviceLocalization" : {
     "language" : "Idioma",
@@ -3786,6 +3800,9 @@
       "catalogRampServerDesc" : "Cambiar entre varios proveedores de operaciones",
       "enablePlatformDevTools" : "Habilitar herramientas de desarrollador de plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar ventana de herramientas de desarrollador de aplicaciones de plataforma",
+      "customLockScreen" : "Activos de la pantalla de bloqueo personalizada",
+      "customLockScreenDesc" : "Depurar activos gráficos de la pantalla de bloqueo personalizada",
+      "customLockScreenCTA" : "Ejecutar",
       "featureFlagsTitle" : "Marcas de funciones definidas que se usan en Ledger Live",
       "featureFlagsDesc" : "Los valores anulados se restablecerán si se vuelve a iniciar la aplicación. Solo se aceptarán las cadenas JSON válidas.",
       "featureFlagsEdit" : "Editar",
@@ -4207,6 +4224,10 @@
           "3" : {
             "title" : "Restaura tu Frase de recuperación a un nuevo dispositivo",
             "description" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
+          },
+          "4" : {
+            "title" : "Restaurar con Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4352,6 +4373,25 @@
             "help" : {
               "help" : "Necesitas ayuda",
               "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Selecciona “Restore using Ledger Recover” (Restaurar con Ledger Recover).",
+            "1" : {
+              "title" : "Selecciona \"Restore\" (Restaurar)",
+              "descr" : "Presiona los dos botones a la vez para seleccionar."
+            },
+            "2" : {
+              "title" : "Selecciona “Restore using Ledger Recover” (Restaurar con Ledger Recover)."
+            },
+            "help" : {
+              "iDontSee" : "No veo “Restore using Ledger Recover” (Restaurar con Ledger Recover)",
+              "modal" : {
+                "title" : "Es necesario actualizar el SO de tu Ledger Nano X",
+                "subtitle" : " Puedes probar a actualizar el SO o contactar al servicio de soporte de Ledger para pedir ayuda.",
+                "learnHowToUpdate" : "Aprende cómo actualizarlo",
+                "contactLedgerSupport" : "Ponte en contacto con el Soporte de Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5668,6 +5708,7 @@
   },
   "customImage" : {
     "title" : "Pantalla de bloqueo personalizada",
+    "managerCTA" : "Imagen de pantalla de bloqueo",
     "steps" : {
       "choose" : {
         "stepLabel" : "Elige una imagen",
