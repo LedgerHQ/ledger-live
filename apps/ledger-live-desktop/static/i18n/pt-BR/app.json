@@ -173,7 +173,49 @@
       "REGISTER" : "Registrado",
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
-      "WITHDRAW_UNSTAKED" : "Sacado"
+      "WITHDRAW_UNSTAKED" : "Sacado",
+      "SENDING" : "Enviando"
+    },
+    "edit" : {
+      "title" : "Acelerar ou Cancelar",
+      "description" : "A transação está em andamento. Você pode acelerar a transação com uma taxa de rede maior ou cancelá-la.",
+      "stuckDescription" : "Sua transação está travada. Acelere-a com uma taxa de rede maior ou cancele-a.",
+      "previousFeesInfo" : "Taxa de rede atual = ",
+      "learnMore" : "Quero saber mais",
+      "panel" : {
+        "title" : "Acelerar ou Cancelar",
+        "description" : "Uma de suas transações de 'envio' mais recentes está travada. Acelere a transação com uma taxa de rede maior ou a cancele."
+      },
+      "speedUp" : {
+        "title" : "Acelerar",
+        "description" : "Reenviar a transação com uma taxa de rede maior."
+      },
+      "cancel" : {
+        "title" : "Cancelar",
+        "description" : "Enviando 0 {{ticker}} para seu próprio endereço. Para garantir o cancelamento, a taxa de rede é de 30% mais alta do que a taxa da transação a ser cancelada."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Método"
+        },
+        "fees" : {
+          "title" : "Taxas"
+        },
+        "summary" : {
+          "title" : "Resumo"
+        },
+        "device" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmação"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "Você não tem a opção de cancelar a transação porque não há fundos suficientes em sua conta.",
+        "notEnoughFundsToSpeedup" : "Você não tem a opção de acelerar a transação porque não há fundos suficientes em sua conta.",
+        "notlowestNonceToSpeedup" : "O recurso de aceleração não está disponível. Sua transação está pendente porque uma transação anterior está travada. Você pode esperar até que ela seja confirmada, acelerá-la ou cancelá-la."
+      }
     }
   },
   "byteSize" : {
@@ -819,37 +861,12 @@
       "redelegation" : {
         "title" : "Caso você não saiba...",
         "description" : "O validador Ledger faz staking por uma comissão menor do que o validador que você está usando.",
-        "cta" : "Redelegue com a Ledger",
-        "linkText" : "O que é redelegação e quanto tempo ela leva?",
-        "solana" : {
-          "title" : "Você sabia?",
-          "description" : "A Ledger oferece uma taxa de comissão menor do que seu validador. Este processo pode levar até 4 dias."
-        },
-        "near" : {
-          "title" : "Você sabia?",
-          "description" : "A Ledger oferece uma taxa de comissão menor do que o seu validador. Este processo pode levar até 65 horas."
-        }
+        "cta" : "Redelegue com a Ledger"
       },
       "delegation" : {
         "title" : "Caso você não saiba...",
         "description" : "O validador da Ledger faz staking do seu {{asset}} por uma comissão menor que {{commission}}%.",
-        "cta" : "Faça staking com a Ledger",
-        "linkText" : "Saiba Mais",
-        "ethereum" : {
-          "lido" : {
-            "title" : "Caso você não saiba...",
-            "description" : "Faça staking de Ethereum com Lido e ganhe recompensas diariamente. Sem período de bloqueio. Sem depósito mínimo.",
-            "cta" : "Fazer staking com Lido"
-          },
-          "kiln" : {
-            "title" : "Não se limite ao HODL. Aumente seus ETH",
-            "description" : "Tem mais do que 32 ETH? Receba recompensas passivas fazendo staking dos seus ETH em segurança com Kiln.",
-            "cta" : "Fazer staking com Kiln"
-          }
-        },
-        "near" : {
-          "description" : "Faça staking de NEAR com o validador Ledger by Figment. As suas moedas continuam sendo suas, suportadas pela segurança absoluta da Ledger."
-        }
+        "cta" : "Faça staking com a Ledger"
       }
     }
   },
@@ -3801,9 +3818,7 @@
       "runLocalAppDeleteButton" : "Excluir",
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "Staging URL da página Aprender",
-      "enableLearnStagingUrlDesc" : "Habilite a staging URL da página Aprender.",
-      "openOnboardingAppInstallDebug" : "Abrir a tela inicial de debug da instalação do aplicativo",
-      "openOnboardingAppInstallDebugDesc" : "Abra uma tela com os componentes da etapa de instalação do aplicativo de sincronização inicial"
+      "enableLearnStagingUrlDesc" : "Habilite a staging URL da página Aprender."
     },
     "currencies" : {
       "selectPlaceholder" : "Selecionar Criptoativo",
@@ -3969,10 +3984,6 @@
       "fullNode" : {
         "title" : "Conectar node completo de Bitcoin",
         "desc" : "Configure seu node completo de Bitcoin para sincronizar e enviar transações sem usar os exploradores da Ledger."
-      },
-      "filterTokenOperationsZeroAmount" : {
-        "title" : "Esconder transações de tokens quando o valor é 0",
-        "desc" : "Esconder transações de tokens sem valor pode prevenir possíveis ataques de envenenamento de endereço na Ethereum, Polygon, BSC, Tron..."
       }
     }
   },
@@ -4045,7 +4056,7 @@
       "tr" : "Turco",
       "ja" : "Japonês",
       "ko" : "Coreano",
-      "pt" : "Português (Brasil)"
+      "pt" : "Português"
     }
   },
   "theme" : {
@@ -5552,10 +5563,6 @@
       "title" : "Falha no carregamento da imagem do arquivo",
       "description" : "Tente novamente com outra imagem"
     },
-    "ImageLoadFromNftError" : {
-      "title" : "Falha no carregamento da imagem do NFT",
-      "description" : "Tente novamente com outro NFT"
-    },
     "ImageDownloadError" : {
       "title" : "Falha m baixar a imagem",
       "description" : "Tente novamente com outra imagem"
@@ -5628,13 +5635,6 @@
       "descriptionWithProductName" : "Você precisa configurar sua {{ productName }} primeiro.\nVamos guiar você pelo processo de configuração.",
       "goToOnboardingButton" : "Configurar meu dispositivo",
       "goToOnboardingButtonWithProductName" : "Configurar minha {{ productName }}"
-    },
-    "EtherscanAPIError" : {
-      "title" : "Falha em buscar transações",
-      "description" : "Ocorreu um erro inesperado com os exploradores. Tente novamente mais tarde"
-    },
-    "GasEstimationError" : {
-      "title" : "Falha em estimar o gás"
     }
   },
   "cryptoOrg" : {
@@ -5673,13 +5673,7 @@
         "stepLabel" : "Escolha uma imagem",
         "description" : "Escolha uma imagem para definir como (...)",
         "pickFromNftGallery" : "Selecionar na minha galeria de NFTs",
-        "myNfts" : "Meus NFTs",
-        "upload" : "Carregar do meu computador",
-        "chooseNft" : "Escolha um NFT",
-        "selectNft" : "Escolher NFT",
-        "previousSelectNft" : "voltar",
-        "nftEmptyStateTitle" : "Sem NFTs para mostrar ainda",
-        "nftEmptyStateDescription" : "Comece adicionando NFTs à sua carteira."
+        "upload" : "Carregar do meu computador"
       },
       "adjust" : {
         "stepLabel" : "Ajustar imagem",
@@ -5705,37 +5699,5 @@
     },
     "customImageSet" : "Tela de bloqueio definida",
     "finishCTA" : "Finalizar"
-  },
-  "onboardingAppInstall" : {
-    "restore" : {
-      "title" : "Instalar os mesmos aplicativos da {{deviceName}}?",
-      "titleNoDeviceName" : "Instalar os mesmos aplicativos do dispositivo Ledger anterior?",
-      "subtitle" : "Você pode instalar ou remover aplicativos a qualquer hora.",
-      "installCTA" : "Restaurar aplicativos",
-      "skipCTA" : "Vou fazer isso mais tarde."
-    },
-    "default" : {
-      "title" : "A {{ productName }} utiliza aplicativos para permitir transações seguras em blockchains",
-      "subtitle" : "Recomendamos que você baixe um conjunto padrão de aplicativos. Você pode baixar outros mais tarde.",
-      "installCTA" : "Instalar aplicativos",
-      "skipCTA" : "Vou fazer isso mais tarde."
-    },
-    "progress" : {
-      "loading" : "Carregando...",
-      "resolving" : "Resolvendo dependências",
-      "progress" : "Instalando aplicativos {{progress}}%",
-      "disclaimer" : "Adicione ou remova aplicativos a qualquer hora com o Ledger Live."
-    },
-    "cancelled" : {
-      "title" : "A instalação do aplicativo foi cancelada na {{productName}}",
-      "subtitle" : "A {{productName}} precisa de aplicativos de blockchain para aprovar suas transações de criptomoedas e NFTs.",
-      "installCTA" : "Instalar agora",
-      "skipCTA" : "Vou fazer isso mais tarde."
-    },
-    "locked" : {
-      "title" : "Seu dispositivo {{productName}} está bloqueado",
-      "subtitle" : "Desbloqueie sua {{productName}} e reinicie a instalação.",
-      "installCTA" : "Reiniciar a instalação"
-    }
   }
 }
