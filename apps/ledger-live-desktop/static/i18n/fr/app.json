@@ -828,6 +828,10 @@
         "near" : {
           "title" : "Bon à savoir",
           "description" : "Le taux de commission de Ledger est inférieur à celui de votre validateur. Ce processus peut prendre jusqu’à 65 heures."
+        },
+        "elrond" : {
+          "title" : "Bon à savoir",
+          "description" : "Le taux de commission de Ledger est inférieur à celui de votre validateur. Ce processus peut prendre jusqu’à 10 jours."
         }
       },
       "delegation" : {
@@ -849,6 +853,9 @@
         },
         "near" : {
           "description" : "Stakez vos NEAR avec le validateur Ledger by Figment. Vous restez propriétaire de vos cryptos, tout en bénéficiant de la sécurité inégalée de Ledger."
+        },
+        "elrond" : {
+          "description" : "Stakez vos EGLD avec le validateur Ledger by Figment. Vous restez propriétaire de vos cryptos, tout en bénéficiant de la sécurité inégalée de Ledger."
         }
       }
     }
@@ -2261,6 +2268,13 @@
     },
     "switchButton" : "Basculer en {{language}}",
     "no" : "Non, merci"
+  },
+  "deviceRename" : {
+    "title" : "Renommer mon {{ productName }}",
+    "chooseName" : "Choisissez un nom",
+    "placeholder" : "Stax de Tony",
+    "remainingCharacters" : "{{ remainingCharacters }} caractères restants",
+    "renamed" : "Le nouveau nom de votre {{ productName }} est \n« {{ name }} » "
   },
   "deviceLocalization" : {
     "language" : "Langue",
@@ -3786,6 +3800,9 @@
       "catalogRampServerDesc" : "Choisissez entre plusieurs prestataires de trading.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
       "enablePlatformDevToolsDesc" : "Autorisez la fenêtre Outils de développement Platform.",
+      "customLockScreen" : "Composants de l’écran de verrouillage personnalisé",
+      "customLockScreenDesc" : "Débuggez les composants graphiques de l’écran de verrouillage personnalisé.",
+      "customLockScreenCTA" : "Lancer",
       "featureFlagsTitle" : "Indicateurs de fonctionnalités (feature flags) définis et utilisés dans Ledger Live",
       "featureFlagsDesc" : "Les valeurs remplacées seront réinitialisées lorsque l’application sera relancée. Seules les chaînes JSON valides sont acceptées.",
       "featureFlagsEdit" : "Modifier",
@@ -4207,6 +4224,10 @@
           "3" : {
             "title" : "Restaurer une phrase de récupération sur un nouvel appareil",
             "description" : "Utilisez une phrase de récupération existante pour restaurer vos clés privées sur votre nouveau Nano."
+          },
+          "4" : {
+            "title" : "Restaurer avec Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4352,6 +4373,25 @@
             "help" : {
               "help" : "Besoin d’aide",
               "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Sélectionnez \"Restore using Ledger Recover\"",
+            "1" : {
+              "title" : "Sélectionnez \"Restore\"",
+              "descr" : "Appuyez simultanément sur les deux boutons pour sélectionner."
+            },
+            "2" : {
+              "title" : "Sélectionnez \"Restore using Ledger Recover\""
+            },
+            "help" : {
+              "iDontSee" : "Je ne vois pas \"Restore using Ledger Recover\"",
+              "modal" : {
+                "title" : "Le système d’exploitation de votre Ledger doit être mis à jour",
+                "subtitle" : " Essayez de mettre à jour le système d’exploitation ou contactez l’Assistance Ledger pour obtenir de l’aide.",
+                "learnHowToUpdate" : "Comment mettre à jour",
+                "contactLedgerSupport" : "Contacter l’Assistance Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5668,6 +5708,7 @@
   },
   "customImage" : {
     "title" : "Écran de verrouillage personnalisé",
+    "managerCTA" : "Écran de verrouillage",
     "steps" : {
       "choose" : {
         "stepLabel" : "Choisissez une image",
