@@ -173,7 +173,49 @@
       "REGISTER" : "Kaydedildi",
       "STAKE" : "Stake edildi",
       "UNSTAKE" : "Stake iptali",
-      "WITHDRAW_UNSTAKED" : "Çekildi"
+      "WITHDRAW_UNSTAKED" : "Çekildi",
+      "SENDING" : "Gönderiliyor"
+    },
+    "edit" : {
+      "title" : "Hızlandırın veya İptal Edin",
+      "description" : "İşleminiz devam ediyor. Daha yüksek bir ağ ücretiyle hızlandırabilir ya da işlemi iptal edebilirsiniz.",
+      "stuckDescription" : "İşleminiz takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin.",
+      "previousFeesInfo" : "Mevcut ağ ücreti = ",
+      "learnMore" : "Daha fazla bilgi almak istiyorum",
+      "panel" : {
+        "title" : "Hızlandırın veya İptal Edin",
+        "description" : "En son başlattığınız gönderme işlemlerinden biri takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin."
+      },
+      "speedUp" : {
+        "title" : "Hızlandır",
+        "description" : "İşlemi daha yüksek bir ağ ücretiyle yeniden gönderin."
+      },
+      "cancel" : {
+        "title" : "İptal et",
+        "description" : "Sizin adresinize 0 {{ticker}} gönderiliyor. İptal edildiğinden emin olmak için ağ ücreti, iptal edilecek işlemin işlem ücretinden %30 daha yüksek olacaktır."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Yöntem"
+        },
+        "fees" : {
+          "title" : "Ücretler"
+        },
+        "summary" : {
+          "title" : "Özet"
+        },
+        "device" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "title" : "Onaylayın"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "Hesabınızda yeterince fon olmadığı için işlem iptal edilemiyor.",
+        "notEnoughFundsToSpeedup" : "Hesabınızda yeterince fon olmadığı için işlem hızlandırılamıyor.",
+        "notlowestNonceToSpeedup" : "Hızlandırma özelliği kullanılamıyor. Önceki bir işlem takıldığı için işleminiz beklemede. Onaylanmasını bekleyebilir, hızlandırabilir veya iptal edebilirsiniz."
+      }
     }
   },
   "byteSize" : {
@@ -819,37 +861,12 @@
       "redelegation" : {
         "title" : "Haberiniz olsun...",
         "description" : "Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
-        "cta" : "Ledger ile yeniden yetki devredin",
-        "linkText" : "Yetkinin yeniden devri nedir ve ne kadar sürer?",
-        "solana" : {
-          "title" : "Bunu biliyor muydunuz?",
-          "description" : "Ledger, doğrulayıcınızdan daha düşük bir komisyon oranı sunuyor. Bu işlem 4 güne kadar sürebilir."
-        },
-        "near" : {
-          "title" : "Bunu biliyor muydunuz?",
-          "description" : "Ledger, doğrulayıcınızdan daha düşük bir komisyon oranı sunuyor. Bu işlem 65 saate kadar sürebilir."
-        }
+        "cta" : "Ledger ile yeniden yetki devredin"
       },
       "delegation" : {
         "title" : "Haberiniz olsun...",
         "description" : "Ledger doğrulayıcısı, {{asset}} varlığınızı %{{commission}} oranında bir komisyonla stake eder.",
-        "cta" : "Ledger ile Stake Edin",
-        "linkText" : "Daha fazla bilgi",
-        "ethereum" : {
-          "lido" : {
-            "title" : "Kaçırmış olmayın:",
-            "description" : "Lido ile Ethereum stake edin ve her gün ödül kazanın. Kilitleme süresi yok. Minimum yatırma tutarı yok.",
-            "cta" : "Lido ile stake edin"
-          },
-          "kiln" : {
-            "title" : "Sadece HODL ile yetinmeyin. ETH varlıklarınızı artırın",
-            "description" : "32'den fazla ETH'niz mi var? Kiln ile ETH varlıklarınızı güvenle stake ederek pasif ödüller kazanın.",
-            "cta" : "Kiln ile stake edin"
-          }
-        },
-        "near" : {
-          "description" : "NEAR varlıklarınızı Ledger üzerinden Figment doğrulayıcısı ile stake edin. Coin'leriniz, Ledger'ın taviz vermeyen güvenliği kapsamında size ait olmaya devam eder."
-        }
+        "cta" : "Ledger ile Stake Edin"
       }
     }
   },
@@ -3801,9 +3818,7 @@
       "runLocalAppDeleteButton" : "Sil",
       "runLocalAppOpenButton" : "Aç",
       "enableLearnStagingUrl" : "Öğren sayfası staging URL'si",
-      "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin.",
-      "openOnboardingAppInstallDebug" : "İlk uygulama kurulumu hata ayıklama ekranını açın",
-      "openOnboardingAppInstallDebugDesc" : "İlk uygulama kurulumunu senkronize etme adımındaki bileşenlerin yer aldığı bir ekranı açın"
+      "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin."
     },
     "currencies" : {
       "selectPlaceholder" : "Kripto varlık seç",
@@ -3852,8 +3867,8 @@
           "description" : "Mevcut deneysel kripto varlık entegrasyonlarını kullanın."
         },
         "experimentalExecutionOnRenderer" : {
-          "title" : "Deneysel ağ iletişimleri",
-          "description" : "VPN ile Ledger Live kullanımını en iyi hâle getirmek için deneysel ağ iletişimlerini kullanın. Bu özelliği sadece kullandığınız VPN, sistem hatalarına neden olursa etkinleştirin."
+          "title" : "Deneysel ağ oluşturma",
+          "description" : "VPN ile Ledger Live kullanımını en iyi hâle getirmek için deneysel ağ oluşturmayı kullanın. Bu özelliği sadece kullandığınız VPN, sistem hatalarına neden olursa etkinleştirin."
         },
         "experimentalLanguages" : {
           "title" : "Çeviri testi",
@@ -3969,10 +3984,6 @@
       "fullNode" : {
         "title" : "Bitcoin tam düğümü bağla",
         "desc" : "Ledger'ın tarayıcılarını kullanmadan işlemleri senkronize etmek ve göndermek için Bitcoin tam düğümünüzü ayarlayın."
-      },
-      "filterTokenOperationsZeroAmount" : {
-        "title" : "Değeri 0 olan token işlemlerini gizle",
-        "desc" : "Değer içermeyen token işlemlerini gizleyerek Ethereum, Polygon, BSC ve Tron ağlarındaki bazı potansiyel adres zehirleme saldırılarını önleyebilirsiniz."
       }
     }
   },
@@ -5552,10 +5563,6 @@
       "title" : "Dosyadan görüntü yüklenemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     },
-    "ImageLoadFromNftError" : {
-      "title" : "NFT'den görüntü yüklenemedi",
-      "description" : "Lütfen başka bir NFT ile tekrar deneyin"
-    },
     "ImageDownloadError" : {
       "title" : "Görüntü indirilemedi",
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
@@ -5628,13 +5635,6 @@
       "descriptionWithProductName" : "Öncelikle {{ productName }} cihazınızın kurulumunu yapmanız gerekiyor.\nKurulum sürecinde size yardımcı olacağız.",
       "goToOnboardingButton" : "Cihazımı kur",
       "goToOnboardingButtonWithProductName" : "{{ productName }} cihazımı kur"
-    },
-    "EtherscanAPIError" : {
-      "title" : "İşlemler alınamadı",
-      "description" : "Tarayıcılarla ilgili beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin"
-    },
-    "GasEstimationError" : {
-      "title" : "Tahmini Gas ücreti hesaplanamadı"
     }
   },
   "cryptoOrg" : {
@@ -5673,13 +5673,7 @@
         "stepLabel" : "Bir görüntü seçin",
         "description" : "Bir görüntü seçip ayarlayın (...)",
         "pickFromNftGallery" : "NFT galerimden seç",
-        "myNfts" : "NFT'lerim",
-        "upload" : "Bilgisayarımdan yükle",
-        "chooseNft" : "Bir NFT seçin",
-        "selectNft" : "NFT'yi seç",
-        "previousSelectNft" : "Geri",
-        "nftEmptyStateTitle" : "Gösterilecek NFT yok",
-        "nftEmptyStateDescription" : "Öncelikle cüzdanınıza NFT ekleyin."
+        "upload" : "Bilgisayarımdan yükle"
       },
       "adjust" : {
         "stepLabel" : "Görüntüyü ayarla",
@@ -5705,37 +5699,5 @@
     },
     "customImageSet" : "Kilitli ekran resmi belirlendi",
     "finishCTA" : "Bitir"
-  },
-  "onboardingAppInstall" : {
-    "restore" : {
-      "title" : "{{deviceName}} cihazındaki uygulamalar yüklensin mi?",
-      "titleNoDeviceName" : "Eski Ledger cihazındaki uygulamalar yüklensin mi?",
-      "subtitle" : "Uygulamaları istediğiniz zaman kurabilir ve kaldırabilirsiniz.",
-      "installCTA" : "Uygulamaları geri yükle",
-      "skipCTA" : "Daha sonra yapacağım"
-    },
-    "default" : {
-      "title" : "{{ productName }}, güvenli blok zinciri işlemleri gerçekleştirmek için uygulamalar kullanmaktadır",
-      "subtitle" : "Varsayılan bir uygulama grubunu indirmenizi öneririz. Daha sonra diğer uygulamaları da indirebilirsiniz.",
-      "installCTA" : "Uygulamaları kur",
-      "skipCTA" : "Daha sonra yapacağım"
-    },
-    "progress" : {
-      "loading" : "Yükleniyor...",
-      "resolving" : "Gereksinimler çözülüyor",
-      "progress" : "Uygulamalar yükleniyor %{{progress}}",
-      "disclaimer" : "Ledger Live üzerinden uygulamaları istediğiniz zaman ekleyip kaldırabilirsiniz."
-    },
-    "cancelled" : {
-      "title" : "Uygulama kurulumu, {{productName}} cihazında iptal edildi",
-      "subtitle" : "{{productName}} cihazı, kripto ve NFT işlemlerinizi onaylamak için blok zinciri uygulamaları gerektirmektedir.",
-      "installCTA" : "Şimdi yükle",
-      "skipCTA" : "Daha sonra yapacağım"
-    },
-    "locked" : {
-      "title" : "{{productName}} cihazınız kilitli",
-      "subtitle" : "{{productName}} cihazınızın kilidini açın ve kurulumu yeniden başlatın.",
-      "installCTA" : "Kurulumu yeniden başlat"
-    }
   }
 }
