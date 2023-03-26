@@ -828,6 +828,10 @@
         "near" : {
           "title" : "هل تعلم؟",
           "description" : "Ledger توفِّر مُعدل عمولة أقل من مُدقِّقك. هذه العملية قد تستغرق ما يصل إلى 65 ساعة."
+        },
+        "elrond" : {
+          "title" : "هل تعلم؟",
+          "description" : "Ledger توفِّر مُعدل عمولة أقل من مُدقِّقك. هذه العملية قد تستغرق ما يصل إلى 10 أيام."
         }
       },
       "delegation" : {
@@ -849,6 +853,9 @@
         },
         "near" : {
           "description" : "قم بتكديس NEAR خاصتك مع مُدقِّق Ledger by Figment. عملاتك تظل ملكك، ومدعومة من أمان Ledger الذي لا هوادة فيه."
+        },
+        "elrond" : {
+          "description" : "قم بتكديس ELROND خاصتك مع مُدقِّق Ledger by Figment. عملاتك تظل ملكك، ومدعومة من أمان Ledger الذي لا هوادة فيه."
         }
       }
     }
@@ -1839,7 +1846,7 @@
       "used" : "مُستَخدمة",
       "firmwareAvailable" : "البرنامج الثابت قديم:",
       "firmwareUpToDate" : "البرنامج الثابت محدّث:",
-      "genuine" : "الجهاز أصلي",
+      "genuine" : "جهازك أصلي",
       "incomplete" : "لم يتم التعرف على بعض التطبيقات. يُرجى إلغاء التثبيت، ثم إعادة تثبيتهم."
     },
     "applist" : {
@@ -2261,6 +2268,13 @@
     },
     "switchButton" : "التبديل إلى {{language}}",
     "no" : "أفضل عدم القيام بذلك"
+  },
+  "deviceRename" : {
+    "title" : "إعادة تسمية {{ productName }}",
+    "chooseName" : "اختر اسماً",
+    "placeholder" : "Stax طوني",
+    "remainingCharacters" : "{{ remainingCharacters }} حرف متبقي",
+    "renamed" : "اسم {{ productName }} تم تغييره إلى \n\"{{ name }}\" "
   },
   "deviceLocalization" : {
     "language" : "اللغة",
@@ -3786,6 +3800,9 @@
       "catalogRampServerDesc" : "التبديل بين مزودي تداول متعددين",
       "enablePlatformDevTools" : "تمكين أدوات تطوير المنصة",
       "enablePlatformDevToolsDesc" : "تمكين فتح نافذة أدوات تطوير تطبيقات المنصة",
+      "customLockScreen" : "أصول شاشة القَفل المُخصّصة",
+      "customLockScreenDesc" : "تصحيح أخطاء الأصول الرسومية لشاشة القَفل المُخصّصة",
+      "customLockScreenCTA" : "تشغيل",
       "featureFlagsTitle" : "علامات الميزة المحددة المستخدمة في Ledger Live",
       "featureFlagsDesc" : "القيم المُتجاوزَة سيتم إعادة تعيينها إذا أُعيد إطلاق التطبيق. سيتم قبول خيوط JSON الصالحة فقط.",
       "featureFlagsEdit" : "تعديل",
@@ -4207,6 +4224,10 @@
           "3" : {
             "title" : "استعادة عبارة الاسترداد الخاصة بك على جهاز جديد",
             "description" : "استخدم عبارة استرداد حالية لاستعادة مفاتيحك الخاصة على Nano جديدة!"
+          },
+          "4" : {
+            "title" : "استعادة باستخدام Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4352,6 +4373,25 @@
             "help" : {
               "help" : "بحاجة الى مساعدة",
               "descr" : "لا تعرف ما يتعين عليك فعله؟ احصل على بعض المساعدة لتجتاز هذه الخطوة."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "اختر ’Restore using Ledger Recover [استعادة باستخدام Ledger Recover]’",
+            "1" : {
+              "title" : "اختر ’Restore [استعادة]’",
+              "descr" : "اضغط على كلا الزرين معاً للاختيار."
+            },
+            "2" : {
+              "title" : "اختر ’Restore using Ledger Recover [استعادة باستخدام Ledger Recover]’"
+            },
+            "help" : {
+              "iDontSee" : "لا أرى ’Restore using Ledger Recover [استعادة باستخدام Ledger Recover]’",
+              "modal" : {
+                "title" : "نظام التشغيل على Ledger Nano X خاصتك يحتاج إلى التحديث",
+                "subtitle" : " يمكنك محاولة تحديث نظام التشغيل أو التواصل مع دعم Ledger من أجل المساعدة.",
+                "learnHowToUpdate" : "تعرف على كيفية التحديث",
+                "contactLedgerSupport" : "تواصل مع دعم Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5668,6 +5708,7 @@
   },
   "customImage" : {
     "title" : "شاشة قَفل مُخصّصة",
+    "managerCTA" : "صورة شاشة القَفل",
     "steps" : {
       "choose" : {
         "stepLabel" : "اختر صورة",
