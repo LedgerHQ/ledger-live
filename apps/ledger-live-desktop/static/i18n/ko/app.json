@@ -173,7 +173,49 @@
       "REGISTER" : "등록 완료",
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
-      "WITHDRAW_UNSTAKED" : "출금됨"
+      "WITHDRAW_UNSTAKED" : "출금됨",
+      "SENDING" : "보내기"
+    },
+    "edit" : {
+      "title" : "속도 올리기 또는 취소",
+      "description" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+      "stuckDescription" : "트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높이세요.",
+      "previousFeesInfo" : "현재 네트워크 수수료 = ",
+      "learnMore" : "더 자세히 알고 싶어요",
+      "panel" : {
+        "title" : "속도 올리기 또는 취소",
+        "description" : "가장 최근 실행한 '전송' 트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다."
+      },
+      "speedUp" : {
+        "title" : "스피드 업",
+        "description" : "네트워크 수수료를 높여 트랜잭션을 다시 제출하세요."
+      },
+      "cancel" : {
+        "title" : "취소",
+        "description" : "0의 {{ticker}}를 본인 주소로 전송하기 취소를 담보하기 위해 네트워크 수수료는 취소하려는 트랜잭션 수수료보다 30% 더 높습니다."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "방법"
+        },
+        "fees" : {
+          "title" : "수수료"
+        },
+        "summary" : {
+          "title" : "요약"
+        },
+        "device" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "계정에 충분한 자금이 없기 때문에 트랜잭션을 취소할 수 없습니다.",
+        "notEnoughFundsToSpeedup" : "계정에 충분한 자금이 없기 때문에 트랜잭션 속도를 높일 수 없습니다.",
+        "notlowestNonceToSpeedup" : "속도 향상 기능을 사용할 수 없습니다. 이전 트랜잭션이 중단되어 현재 트랜잭션이 보류 중입니다. 확인될 때까지 기다렸다가 속도를 높이거나 취소할 수 있습니다."
+      }
     }
   },
   "byteSize" : {
@@ -819,37 +861,12 @@
       "redelegation" : {
         "title" : "알고 계셨나요?",
         "description" : "Ledger 검증인의 스테이킹 수수료는 귀하의 현 검증인보다 저렴합니다",
-        "cta" : "Ledger로 재위임",
-        "linkText" : "재위임이란 무엇이며 시간이 얼마나 소요되나요?",
-        "solana" : {
-          "title" : "알고 계셨나요?",
-          "description" : "Ledger 수수료는 검증인 수수료보다 낮습니다. 이 프로세스는 최대 4일이 소요될 수 있습니다."
-        },
-        "near" : {
-          "title" : "알고 계셨나요?",
-          "description" : "Ledger 수수료는 검증인 수수료보다 낮습니다. 이 프로세스는 최대 65시간이 소요될 수 있습니다."
-        }
+        "cta" : "Ledger로 재위임"
       },
       "delegation" : {
         "title" : "알고 계셨나요?",
         "description" : "Ledger 검증인은 {{asset}} 스테이킹 서비스를 {{commission}}%의 커미션으로 제공합니다.",
-        "cta" : "Ledger를 통한 스테이킹",
-        "linkText" : "자세히 알아보기",
-        "ethereum" : {
-          "lido" : {
-            "title" : "알고 계셨나요?",
-            "description" : "Lido를 통해 이더리움을 스테이킹하고 매일 보상을 받으세요. 락업 기간 없음. 최소 예치금 없음.",
-            "cta" : "리도(Lido)를 통한 스테이킹"
-          },
-          "kiln" : {
-            "title" : "호들만으로는 부족합니다. 보유한 ETH로 더 큰 수익을 올려보세요",
-            "description" : "ETH를 32개 이상 보유하고 계시나요? Kiln을 통해 ETH를 안전하게 스테이킹하여 불로소득을 올려보세요.",
-            "cta" : "킬른(Kiln)으로 스테이킹"
-          }
-        },
-        "near" : {
-          "description" : "Ledger by Figment 검증인으로 NEAR를 스테이킹하세요. Ledger의 타협 없는 강력한 보안이 자산을 안전하게 보호합니다."
-        }
+        "cta" : "Ledger를 통한 스테이킹"
       }
     }
   },
@@ -3801,9 +3818,7 @@
       "runLocalAppDeleteButton" : "삭제",
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
-      "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다.",
-      "openOnboardingAppInstallDebug" : "온보딩 앱 설치 디버그 화면 열기",
-      "openOnboardingAppInstallDebugDesc" : "동기화 온보딩 앱 설치 단계의 구성 요소가 있는 화면을 엽니다."
+      "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다."
     },
     "currencies" : {
       "selectPlaceholder" : "암호화 자산 선택",
@@ -3969,10 +3984,6 @@
       "fullNode" : {
         "title" : "비트코인 풀 노드 연결",
         "desc" : "비트코인 풀 노드를 설정해 Ledger의 탐색기를 사용하지 않고 트랜잭션을 동기화하고 전송하세요."
-      },
-      "filterTokenOperationsZeroAmount" : {
-        "title" : "값이 0 인 경우 토큰 트랜잭션을 숨깁니다",
-        "desc" : "값이 없는 토큰 트랜잭션을 숨기는 것은 ETH, 폴리곤, BSC, 트론에 대한 잠재적인 주소 포이즌 공격을 방지 할 수 있습니다..."
       }
     }
   },
@@ -5552,10 +5563,6 @@
       "title" : "파일 이미지 로딩 실패",
       "description" : "다른 이미지로 다시 시도하세요"
     },
-    "ImageLoadFromNftError" : {
-      "title" : "NFT 이미지 로딩 실패",
-      "description" : "다른 NFT로 다시 시도하세요"
-    },
     "ImageDownloadError" : {
       "title" : "이미지 다운로드 실패",
       "description" : "다른 이미지로 다시 시도하세요"
@@ -5628,13 +5635,6 @@
       "descriptionWithProductName" : "먼저 {{ productName }} 장치 설정이 필요합니다.\n설정 절차를 안내해드리겠습니다.",
       "goToOnboardingButton" : "내 장치 설정",
       "goToOnboardingButtonWithProductName" : "내 {{ productName }} 설정"
-    },
-    "EtherscanAPIError" : {
-      "title" : "트랜잭션을 가져오지 못했습니다",
-      "description" : "탐색기에서 예상하지 못한 오류가 발생했습니다. 나중에 다시 시도해 주세요"
-    },
-    "GasEstimationError" : {
-      "title" : "가스비를 추정하지 못했습니다"
     }
   },
   "cryptoOrg" : {
@@ -5673,13 +5673,7 @@
         "stepLabel" : "이미지 선택",
         "description" : "(...)로 설정할 이미지 선택",
         "pickFromNftGallery" : "내 NFT 갤러리에서 선택",
-        "myNfts" : "내 NFT",
-        "upload" : "내 컴퓨터에서 업로드",
-        "chooseNft" : "NFT 선택하기",
-        "selectNft" : "NFT 선택",
-        "previousSelectNft" : "뒤로",
-        "nftEmptyStateTitle" : "아직 표시할 NFT가 없습니다",
-        "nftEmptyStateDescription" : "지갑에 NFT를 추가하고 시작하세요."
+        "upload" : "내 컴퓨터에서 업로드"
       },
       "adjust" : {
         "stepLabel" : "이미지 조정",
@@ -5705,37 +5699,5 @@
     },
     "customImageSet" : "잠금화면을 설정하세요",
     "finishCTA" : "완료"
-  },
-  "onboardingAppInstall" : {
-    "restore" : {
-      "title" : "{{deviceName}}에서와 동일한 앱을 설치하시겠어요?",
-      "titleNoDeviceName" : "이전 Ledger 장치에서와 동일한 앱을 설치하시겠어요?",
-      "subtitle" : "언제든지 앱을 설치하거나 제거할 수 있습니다.",
-      "installCTA" : "애플리케이션 복구",
-      "skipCTA" : "나중에 할게요"
-    },
-    "default" : {
-      "title" : "{{ productName }} 제품은 앱을 사용하여 안전한 블록체인 트랜잭션을 지원합니다",
-      "subtitle" : "기본 앱 세트를 다운로드를 권장드립니다. 이후 추가로 다운로드할 수 있습니다.",
-      "installCTA" : "애플리케이션 설치",
-      "skipCTA" : "나중에 할게요"
-    },
-    "progress" : {
-      "loading" : "로딩 중...",
-      "resolving" : "의존성 해결",
-      "progress" : "앱 설치 중 {{progress}}%",
-      "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요."
-    },
-    "cancelled" : {
-      "title" : "{{productName}}에서 앱 설치가 취소되었습니다",
-      "subtitle" : "{{productName}}에서 암호화폐 및 NFT 트랜잭션을 승인하려면 블록체인 앱이 필요합니다.",
-      "installCTA" : "지금 설치",
-      "skipCTA" : "나중에 할게요"
-    },
-    "locked" : {
-      "title" : "{{productName}} 장치가 잠금 상태입니다",
-      "subtitle" : "{{productName}}의 잠금을 해제하고 설치를 다시 시작하세요.",
-      "installCTA" : "설치 재시작"
-    }
   }
 }
