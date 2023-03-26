@@ -173,7 +173,49 @@
       "REGISTER" : "登録されました",
       "STAKE" : "ステーキング済み",
       "UNSTAKE" : "ステーキング解除済み",
-      "WITHDRAW_UNSTAKED" : "引き出し済み"
+      "WITHDRAW_UNSTAKED" : "引き出し済み",
+      "SENDING" : "送信中"
+    },
+    "edit" : {
+      "title" : "速度を上げる、またはキャンセルする",
+      "description" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
+      "stuckDescription" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
+      "previousFeesInfo" : "現在のネットワーク手数料 = ",
+      "learnMore" : "詳細を知りたいです",
+      "panel" : {
+        "title" : "速度を上げる、またはキャンセルする",
+        "description" : "直近の「送信」トランザクションが滞っています。さらに高いネットワーク手数料でトランザクションを高速化するか、キャンセルしてください。"
+      },
+      "speedUp" : {
+        "title" : "スピードアップ",
+        "description" : "より高いネットワーク手数料でトランザクションを再送信します。"
+      },
+      "cancel" : {
+        "title" : "キャンセル",
+        "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルを確定するには、ネットワーク手数料はキャンセルされるトランザクション手数料よりも30%高くなります。"
+      },
+      "steps" : {
+        "method" : {
+          "title" : "方法"
+        },
+        "fees" : {
+          "title" : "手数料"
+        },
+        "summary" : {
+          "title" : "概要"
+        },
+        "device" : {
+          "title" : "デバイス"
+        },
+        "confirmation" : {
+          "title" : "確認"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "アカウントに十分な資金がないため、トランザクションをキャンセルできません。",
+        "notEnoughFundsToSpeedup" : "アカウントに十分な資金がないため、トランザクションの高速化は利用できません。",
+        "notlowestNonceToSpeedup" : "高速化機能は利用できません。以前のトランザクションが滞っているため、お客様のトランザクションは保留中です。承認されるのを待って、高速化してキャンセルすることができます。"
+      }
     }
   },
   "byteSize" : {
@@ -819,37 +861,12 @@
       "redelegation" : {
         "title" : "ご存知でしたか？",
         "description" : "Ledgerのバリデータは、現在お使いのバリデーターよりも低額の手数料でステーキングを行います。",
-        "cta" : "Ledgerで再デリゲート",
-        "linkText" : "再デリゲートとは？所要時間は？",
-        "solana" : {
-          "title" : "ご存知でしたか？",
-          "description" : "Ledgerは、お客様のバリデーターよりも低いレートをご提供いたします。このプロセスには最大4日かかる場合があります。"
-        },
-        "near" : {
-          "title" : "ご存知でしたか？",
-          "description" : "Ledgerは、お客様のバリデーターよりも低額のレートをご提供します。このプロセスには最大65時間かかる場合があります。"
-        }
+        "cta" : "Ledgerで再デリゲート"
       },
       "delegation" : {
         "title" : "ご存知でしたか？",
         "description" : "Ledgerのバリデーターは、{{commission}}%の手数料で{{asset}}のステーキングを行います。",
-        "cta" : "Ledgerでステーキング",
-        "linkText" : "詳細はこちら",
-        "ethereum" : {
-          "lido" : {
-            "title" : "ご存知でしたか？",
-            "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ロックアップ（凍結）期間なし。最低入金額なし。",
-            "cta" : "Lidoでステーキング"
-          },
-          "kiln" : {
-            "title" : "HODLに限定する必要はありません。ETHを運用しましょう",
-            "description" : "32ETH以上をお持ちですか？KilnでETHを安全にステーキングすることで、受動的な報酬を獲得できます。",
-            "cta" : "Kilnでステーキング"
-          }
-        },
-        "near" : {
-          "description" : "Ledger by FigmentバリデーターでNEARをステーキングしましょう。Ledgerの妥協のないセキュリティで保護されるため、お客様のコインがお客様の元から離れることはありません。"
-        }
+        "cta" : "Ledgerでステーキング"
       }
     }
   },
@@ -3801,9 +3818,7 @@
       "runLocalAppDeleteButton" : "削除",
       "runLocalAppOpenButton" : "開く",
       "enableLearnStagingUrl" : "学習ページのステージングURL",
-      "enableLearnStagingUrlDesc" : "学習ページのステージングURLを有効にする。",
-      "openOnboardingAppInstallDebug" : "オンボーディングアプリのインストールデバッグ画面を開く",
-      "openOnboardingAppInstallDebugDesc" : "同期オンボーディングアプリのインストール手順の構成要素で画面を開きます"
+      "enableLearnStagingUrlDesc" : "学習ページのステージングURLを有効にする。"
     },
     "currencies" : {
       "selectPlaceholder" : "暗号資産を選択",
@@ -3969,10 +3984,6 @@
       "fullNode" : {
         "title" : "Bitcoinフルノードを接続",
         "desc" : "同期およびトランザクションの送信用のBitcoinのフルノードを、Ledgerのエクスプローラを使用せずに設定する。"
-      },
-      "filterTokenOperationsZeroAmount" : {
-        "title" : "数量がゼロのトランザクションを非表示にする",
-        "desc" : "数量がゼロのトランザクションを非表示にすることで、イーサやPolygon、BSC、Tronのポイズニング攻撃などを事前に防ぐことができます。"
       }
     }
   },
@@ -5552,10 +5563,6 @@
       "title" : "ファイルからの画像の読み込みに失敗しました",
       "description" : "別の画像でもう一度お試しください"
     },
-    "ImageLoadFromNftError" : {
-      "title" : "NFTからの画像の読み込みに失敗しました",
-      "description" : "別のNFTでもう一度お試しください"
-    },
     "ImageDownloadError" : {
       "title" : "画像のダウンロードに失敗しました",
       "description" : "別の画像でもう一度お試しください"
@@ -5628,13 +5635,6 @@
       "descriptionWithProductName" : "最初に{{ productName }}をセットアップする必要があります。\nセットアッププロセスをご案内します。",
       "goToOnboardingButton" : "デバイスをセットアップ",
       "goToOnboardingButtonWithProductName" : "{{ productName }}をセットアップする"
-    },
-    "EtherscanAPIError" : {
-      "title" : "トランザクションの取得に失敗しました",
-      "description" : "エクスプローラーで予期しないエラーが発生しました。後でもう一度お試しください"
-    },
-    "GasEstimationError" : {
-      "title" : "ガスの見積もりに失敗しました"
     }
   },
   "cryptoOrg" : {
@@ -5673,13 +5673,7 @@
         "stepLabel" : "画像を選択してください",
         "description" : "(...) として設定する画像を選択",
         "pickFromNftGallery" : "NFTギャラリーから選択",
-        "myNfts" : "私のNFT",
-        "upload" : "パソコンからアップロード",
-        "chooseNft" : "NFTを選択",
-        "selectNft" : "NFTを選択",
-        "previousSelectNft" : "戻る",
-        "nftEmptyStateTitle" : "表示できるNFTはまだありません",
-        "nftEmptyStateDescription" : "NFTをウォレットに追加して始めます。"
+        "upload" : "パソコンからアップロード"
       },
       "adjust" : {
         "stepLabel" : "画像を調整",
@@ -5705,37 +5699,5 @@
     },
     "customImageSet" : "ロック画面が設定されました",
     "finishCTA" : "終了する"
-  },
-  "onboardingAppInstall" : {
-    "restore" : {
-      "title" : "{{deviceName}}と同じアプリをインストールしますか？",
-      "titleNoDeviceName" : "前のLedgerデバイスと同じアプリをインストールしますか？",
-      "subtitle" : "アプリはいつでもインストールまたは削除できます。",
-      "installCTA" : "アプリケーションの復元",
-      "skipCTA" : "後で行う"
-    },
-    "default" : {
-      "title" : "{{ productName }} はアプリを使用し、安全なブロックチェーントランザクションを有効にします",
-      "subtitle" : "既定のアプリ一式をダウンロードすることをお勧めします。後でさらにダウンロードできます。",
-      "installCTA" : "アプリケーションをインストール",
-      "skipCTA" : "後で行う"
-    },
-    "progress" : {
-      "loading" : "読み込み中...",
-      "resolving" : "依存関係を解決しています",
-      "progress" : "アプリのインストール中{{progress}}%",
-      "disclaimer" : "Ledger Liveからいつでもアプリを追加または削除できます。"
-    },
-    "cancelled" : {
-      "title" : "{{productName}}でアプリのインストールがキャンセルされました",
-      "subtitle" : "{{productName}}では、暗号資産とNFTトランザクションを承認するためにブロックチェーンアプリが必要です。",
-      "installCTA" : "今すぐインストールする",
-      "skipCTA" : "後で行う"
-    },
-    "locked" : {
-      "title" : "{{productName}}は、ロックされています",
-      "subtitle" : "{{productName}}のロックを解除し、インストールを再開してください。",
-      "installCTA" : "インストールを再開"
-    }
   }
 }
