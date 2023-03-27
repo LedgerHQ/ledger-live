@@ -1,7 +1,6 @@
-
 ---
 "ledger-live-desktop": minor
-"ledger-mobile": minor
+"live-mobile": minor
 ---
 
 Refactored Webviews;
