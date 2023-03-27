@@ -70,7 +70,7 @@ export default class Exchange {
       return result.slice(0, 32).toString("base64");
     }
 
-    return result.toString("ascii", 0, 10);
+    return result.toString("ascii", 0, result.length - 2);
   }
 
   async setPartnerKey(partnerNameAndPublicKey: Buffer): Promise<void> {
