@@ -85,12 +85,14 @@ export function useDeepLinkHandler() {
           const { address } = query;
           if (address && typeof address === "string") {
             const account = accounts.find(acc => acc.id === address)
-            if (account.type === "Account") {
-              navigate(`/account/${account.id}`);
-            } else {
-              navigate(`/account/${account.parentId}/${account.id}`);
+            if (account) {
+              if (account.type === "Account") {
+                navigate(`/account/${account.id}`);
+              } else {
+                navigate(`/account/${account.parentId}/${account.id}`);
+              }
+              break;
             }
-            break;
           }
           navigate("/accounts");
           break;
