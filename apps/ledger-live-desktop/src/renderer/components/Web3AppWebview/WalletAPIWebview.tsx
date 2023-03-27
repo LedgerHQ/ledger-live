@@ -1,26 +1,20 @@
-import { WebviewTag } from "electron";
+/* eslint-disable react/prop-types */
+
 import * as remote from "@electron/remote";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { forwardRef, RefObject, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Account } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import {
-  useWalletAPIUrl as useWalletAPIUrlRaw,
-  useWalletAPIServer,
-  useConfig,
-  UiHook,
-} from "@ledgerhq/live-common/wallet-api/react";
+import { useWalletAPIServer, useConfig, UiHook } from "@ledgerhq/live-common/wallet-api/react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import { getEnv } from "@ledgerhq/live-common/env";
 
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
-import TrackPage from "../../analytics/TrackPage";
-import useTheme from "../../hooks/useTheme";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -28,16 +22,12 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { track } from "~/renderer/analytics/segment";
 import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
-import TopBar from "./TopBar";
-import { TopBarConfig } from "./type";
-import { Container, Wrapper, Loader } from "./styled";
+import { Loader } from "./styled";
+import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
+import { useWebviewState } from "./helpers";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 const tracking = trackingWrapper(track);
-
-export type WebPlatformPlayerConfig = {
-  topBarConfig?: TopBarConfig;
-};
 
 function useUiHook(manifest: AppManifest): Partial<UiHook> {
   const { pushToast } = useToasts();
@@ -147,25 +137,10 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
   );
 }
 
-function useWalletAPIUrl({ manifest, inputs }: Omit<Props, "onClose">) {
-  const theme = useTheme("colors.palette");
-
-  return useWalletAPIUrlRaw(
-    manifest,
-    {
-      background: theme.background.paper,
-      text: theme.text.shade100,
-    },
-    inputs,
-  );
-}
-
-function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
+function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject<WebviewTag>) {
   const accounts = useSelector(flattenAccountsSelector);
 
-  const webviewRef = useRef<WebviewTag>(null);
   const uiHook = useUiHook(manifest);
-  const url = useWalletAPIUrl({ manifest, inputs });
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const config = useConfig({
     appId: manifest.id,
@@ -185,6 +160,7 @@ function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
         }
       },
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { widgetLoaded, onLoad, onReload, onMessage } = useWalletAPIServer({
@@ -216,6 +192,7 @@ function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
     // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
     // @ts-expect-error: missing typings for api
     window.api.openWindow(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -237,6 +214,7 @@ function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
         webview.removeEventListener("dom-ready", handleDomReady);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleDomReady, handleMessage, onLoad]);
 
   const webviewStyle = useMemo(() => {
@@ -249,36 +227,34 @@ function useWebView({ manifest, inputs }: Pick<Props, "manifest" | "inputs">) {
     };
   }, [widgetLoaded]);
 
-  return { webviewRef, url, widgetLoaded, onReload, webviewStyle };
+  return { webviewRef, widgetLoaded, onReload, webviewStyle };
 }
 
 interface Props {
   manifest: AppManifest;
-  onClose?: () => void;
   inputs?: Record<string, string>;
-  config?: WebPlatformPlayerConfig;
 }
 
-export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
-  const { webviewRef, webviewStyle, url, widgetLoaded, onReload } = useWebView({
-    manifest,
-    inputs,
-  });
+export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
+  ({ manifest, inputs = {}, onStateChange }, ref) => {
+    const { webviewState, webviewRef, webviewProps } = useWebviewState({ manifest, inputs }, ref);
 
-  return (
-    <Container>
-      <TrackPage category="Platform" name="App" appId={manifest.id} params={inputs} />
-      <TopBar
-        manifest={manifest}
-        onReload={onReload}
-        onClose={onClose}
-        webviewRef={webviewRef}
-        config={config?.topBarConfig}
-      />
+    useEffect(() => {
+      if (onStateChange) {
+        onStateChange(webviewState);
+      }
+    }, [webviewState, onStateChange]);
 
-      <Wrapper>
+    const { webviewStyle, widgetLoaded } = useWebView(
+      {
+        manifest,
+      },
+      webviewRef,
+    );
+
+    return (
+      <>
         <webview
-          src={url.toString()}
           ref={webviewRef}
           /**
            * There seem to be an issue between Electron webview and styled-components
@@ -296,13 +272,16 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
            */
           // @ts-expect-error: see above comment
           allowpopups="true"
+          {...webviewProps}
         />
         {!widgetLoaded ? (
           <Loader>
             <BigSpinner data-test-id="live-app-loading-spinner" size={50} />
           </Loader>
         ) : null}
-      </Wrapper>
-    </Container>
-  );
-}
+      </>
+    );
+  },
+);
+
+WalletAPIWebview.displayName = "WalletAPIWebview";

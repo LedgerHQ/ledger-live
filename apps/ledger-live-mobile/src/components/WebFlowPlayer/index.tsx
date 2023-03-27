@@ -1,34 +1,28 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 
 import { useNavigation } from "@react-navigation/native";
-import { Flex } from "@ledgerhq/native-ui";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 
 import { Web3AppWebview } from "../Web3AppWebview";
-import { RightHeader } from "./RightHeader";
-import { BottomBar } from "./BottomBar";
 import {
   RootNavigationComposite,
   StackNavigatorNavigation,
 } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
-import HeaderTitle from "../HeaderTitle";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
-import { InfoPanel } from "./InfoPanel";
 
 type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string>;
 };
 
-const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
+const WebFlowPlayer = ({ manifest, inputs }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] =
     useState<WebviewState>(initialWebviewState);
-  const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
 
   const navigation =
     useNavigation<
@@ -66,22 +60,25 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   }, [handleHardwareBackPress]);
 
   useEffect(() => {
+    const handler = (e: { preventDefault: () => void }) => {
+      const webviewAPI = safeGetRefValue(webviewAPIRef);
+      if (webviewState.canGoBack) {
+        webviewAPI.goBack();
+        e.preventDefault();
+      }
+    };
+    navigation.addListener("beforeRemove", handler);
+
+    return () => {
+      navigation.removeListener("beforeRemove", handler);
+    };
+  }, [webviewState.canGoBack, navigation]);
+
+  useEffect(() => {
     navigation.setOptions({
-      headerTitleAlign: "left",
-      headerLeft: () => null,
-      headerTitleContainerStyle: { marginHorizontal: 0 },
-      headerTitle: () => (
-        <Flex justifyContent={"center"} flex={1}>
-          <HeaderTitle color="neutral.c70"> {manifest.homepageUrl}</HeaderTitle>
-        </Flex>
-      ),
-      headerRight: () => (
-        <RightHeader
-          webviewAPIRef={webviewAPIRef}
-          webviewState={webviewState}
-          handlePressInfo={() => setIsInfoPanelOpened(true)}
-        />
-      ),
+      headerTitleAlign: "center",
+      title: manifest.name,
+      headerRight: () => null,
       headerShown: true,
     });
   }, [manifest, navigation, webviewState]);
@@ -94,25 +91,11 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         inputs={inputs}
         onStateChange={setWebviewState}
       />
-      <BottomBar
-        manifest={manifest}
-        webviewAPIRef={webviewAPIRef}
-        webviewState={webviewState}
-      />
-      <InfoPanel
-        name={manifest.name}
-        icon={manifest.icon}
-        url={manifest.homepageUrl}
-        uri={webviewState.url.toString()}
-        description={manifest.content.description}
-        isOpened={isInfoPanelOpened}
-        setIsOpened={setIsInfoPanelOpened}
-      />
     </SafeAreaView>
   );
 };
 
-export default WebPlatformPlayer;
+export default WebFlowPlayer;
 
 const styles = StyleSheet.create({
   root: {

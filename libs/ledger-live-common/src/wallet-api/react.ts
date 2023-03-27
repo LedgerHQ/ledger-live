@@ -1,4 +1,11 @@
-import { useMemo, useState, useEffect, useRef, useCallback } from "react";
+import {
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  RefObject,
+} from "react";
 import semver from "semver";
 import {
   Account,
@@ -53,51 +60,11 @@ import { MessageData } from "../hw/signMessage/types";
 import { TypedMessageData } from "../families/ethereum/types";
 import { Transaction } from "../generated/types";
 
-/**
- * TODO: we might want to use "searchParams.append" instead of "searchParams.set"
- * to handle duplicated query params (example: "?foo=bar&foo=baz")
- *
- * We can also use the stringify method of qs (https://github.com/ljharb/qs#stringifying)
- */
-export function useWalletAPIUrl(
-  manifest: AppManifest,
-  params: { background?: string; text?: string; loadDate?: Date },
-  inputs?: Record<string, string>
-): URL {
-  return useMemo(() => {
-    const url = new URL(manifest.url.toString());
-
-    if (inputs) {
-      for (const key in inputs) {
-        if (
-          Object.prototype.hasOwnProperty.call(inputs, key) &&
-          inputs[key] !== undefined
-        ) {
-          url.searchParams.set(key, inputs[key]);
-        }
-      }
-    }
-
-    if (params.background)
-      url.searchParams.set("backgroundColor", params.background);
-    if (params.text) url.searchParams.set("textColor", params.text);
-    if (params.loadDate) {
-      url.searchParams.set("loadDate", params.loadDate.valueOf().toString());
-    }
-
-    if (manifest.params) {
-      url.searchParams.set("params", JSON.stringify(manifest.params));
-    }
-
-    return url;
-  }, [
-    manifest.url,
-    manifest.params,
-    inputs,
-    params.background,
-    params.text,
-    params.loadDate,
-  ]);
+export function safeGetRefValue<T>(ref: RefObject<T>): T {
+  if (!ref.current) {
+    throw new Error("Ref objects doesn't have a current value");
+  }
+  return ref.current;
 }
 
 export function useWalletAPIAccounts(
