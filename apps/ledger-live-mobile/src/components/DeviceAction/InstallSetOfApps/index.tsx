@@ -6,7 +6,12 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { Alert, Flex, ProgressLoader, Text } from "@ledgerhq/native-ui";
+import {
+  Alert,
+  Flex,
+  ProgressLoader,
+  VerticalTimeline,
+} from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 
@@ -126,10 +131,14 @@ const InstallSetOfApps = ({
           mb={6}
         >
           {installing ? (
-            <Text>{t("installSetOfApps.ongoing.progress")}</Text>
+            <VerticalTimeline.BodyText>
+              {t("installSetOfApps.ongoing.progress")}
+            </VerticalTimeline.BodyText>
           ) : (
             <>
-              <Text>{t("installSetOfApps.ongoing.resolving")}</Text>
+              <VerticalTimeline.BodyText>
+                {t("installSetOfApps.ongoing.resolving")}
+              </VerticalTimeline.BodyText>
               <ProgressLoader infinite radius={10} strokeWidth={2} />
             </>
           )}
