@@ -35,7 +35,7 @@ export default function VoteTronInfoModalBodyFooter() {
 
     dispatch(closeModal(name));
     dispatch(
-      openModal("MODAL_VOTE_TRON", {
+      openModal("MODAL_TRON_VOTE", {
         parentAccount,
         account,
       }),
