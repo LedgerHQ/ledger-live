@@ -502,7 +502,7 @@
 | Binance Smart Chain | 4THJULY | 0xD3E371dB6977eEeAa338bA86c90Df2Fb3b5993d6 | Happy 4th of July |  | bsc/bep20/happy_4th_of_july |
 | Binance Smart Chain | HAPPY | 0xF5d8A096CcCb31b9D7bcE5afE812BE23e3D4690d | HappyFans |  | bsc/bep20/happyfans |
 | Binance Smart Chain | ONE | 0x03fF0ff224f904be3118461335064bB48Df47938 | Harmony ONE |  | bsc/bep20/harmony_one |
-| Binance Smart Chain | HFT | 0x44Ec807ce2F4a6F2737A92e985f318d035883e47 | Hashflow | countervalues disabled | bsc/bep20/hashflow |
+| Binance Smart Chain | HFT | 0x44Ec807ce2F4a6F2737A92e985f318d035883e47 | Hashflow |  | bsc/bep20/hashflow |
 | Binance Smart Chain | HEDGE | 0xE7784072FC769D8b7f8C0a3Fa008722eEF5dDDD5 | Hedge Token | countervalues disabled | bsc/bep20/hedge_token |
 | Binance Smart Chain | HGET | 0xC7d8D35EBA58a0935ff2D5a33Df105DD9f071731 | Hedget |  | bsc/bep20/hedget |
 | Binance Smart Chain | HELMET | 0x948d2a81086A075b3130BAc19e4c6DEe1D2E3fE8 | Helmet.insure Governance Token | countervalues disabled | bsc/bep20/helmet.insure_governance_token |
@@ -5998,7 +5998,7 @@
 | Ethereum | SLC | 0x2ac22EbC138fF127566F68db600Addad7dF38d38 | Selenium |  | ethereum/erc20/selenium |
 | Ethereum | STOR | 0xA3CEaC0AAc5c5d868973e546cE4731Ba90e873c2 | Self Storage Coin |  | ethereum/erc20/self_storage_coin |
 | Ethereum | SELF | 0x67ab11058eF23D0a19178f61A050D3c38F81Ae21 | Self token |  | ethereum/erc20/self_token |
-| Ethereum | KEY | 0x4CC19356f2D37338b9802aa8E8fc58B0373296E7 | SelfKey | countervalues disabled | ethereum/erc20/selfkey |
+| Ethereum | KEY | 0x4CC19356f2D37338b9802aa8E8fc58B0373296E7 | SelfKey |  | ethereum/erc20/selfkey |
 | Ethereum | SGT | 0x37427576324fE1f3625c9102674772d7CF71377d | SelfieYo Gold Token | delisted, countervalues disabled | ethereum/erc20/selfieyo_gold_token |
 | Ethereum | SENSATORI | 0x4cA74185532DC1789527194e5B9c866dD33F4E82 | SenSatorI Token |  | ethereum/erc20/sensatori_token |
 | Ethereum | SENSE | 0x6745fAB6801e376cD24F03572B9C9B0D4EdDDCcf | Sensay | delisted, countervalues disabled | ethereum/erc20/sensay |
