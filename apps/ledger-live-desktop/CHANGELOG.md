@@ -1,5 +1,12 @@
 # ledger-live-desktop
 
+## 2.56.0-next.1
+
+### Minor Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`e32b1d1d88`](https://github.com/LedgerHQ/ledger-live/commit/e32b1d1d88167a21a555f603bc4983e69db1da20) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Refactored Webviews;
+  Added WebPTXPlayer;
+
 ## 2.56.0-next.0
 
 ### Minor Changes
