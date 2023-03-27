@@ -214,7 +214,11 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
       ) : null}
       <RightContainer>
         <ItemContainer hidden={!isLoading}>
-          <Spinner isRotating size={16} />
+          <Spinner
+            isRotating
+            size={16}
+            data-test-id="web-platform-player-topbar-activity-indicator"
+          />
         </ItemContainer>
         {shouldDisplayInfo && (
           <ItemContainer isInteractive onClick={onClick}>

@@ -173,7 +173,7 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
       ) : null}
       <RightContainer>
         <ItemContainer hidden={!isLoading}>
-          <Spinner isRotating size={16} />
+          <Spinner isRotating size={16} data-test-id="web-ptx-player-topbar-activity-indicator" />
         </ItemContainer>
       </RightContainer>
     </Container>
