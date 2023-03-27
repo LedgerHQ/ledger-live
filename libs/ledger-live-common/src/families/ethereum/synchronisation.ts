@@ -86,8 +86,24 @@ export const getAccountShape: GetAccountShape = async (
 
   const blockHeight = currentBlock?.height.toNumber();
 
+  log("Ethereum", "fetchAllTransactions", txs);
+  log("Ethereum", "pullFromBlockHeight conditions", {
+    initialAccount,
+    allOperationsLoaded,
+    mostRecentStableOperation,
+    blockHashExistsOnChain,
+    outdatedSyncHash,
+  });
+
   if (!pullFromBlockHeight && txs.length === 0) {
     log("ethereum", "no ops on " + address);
+    log(
+      "ethereum",
+      `Current Block { hash: ${currentBlock?.hash}, height: ${
+        currentBlock?.height
+      }, txs: ${currentBlock?.txs.join(" ===== ")} }`
+    );
+
     return {
       id: accountId,
       balance,
@@ -102,6 +118,11 @@ export const getAccountShape: GetAccountShape = async (
   const perTokenAccountIdOperations = {};
   newOps.forEach((op) => {
     const { subOperations } = op;
+    log(
+      "Ethereum:subOperations",
+      subOperations?.length.toString() || "0",
+      subOperations
+    );
 
     if (subOperations?.length) {
       subOperations.forEach((sop) => {
@@ -122,6 +143,7 @@ export const getAccountShape: GetAccountShape = async (
     subAccountsExisting[id] = a;
   });
   const subAccountsExistingIds = Object.keys(subAccountsExisting);
+  log("ethereum", subAccountsExistingIds.join(", "));
   const perTokenAccountChangedIds = Object.keys(perTokenAccountIdOperations);
   log(
     "ethereum",
@@ -154,6 +176,7 @@ export const getAccountShape: GetAccountShape = async (
       const pendingOperations = existing?.pendingOperations || [];
       const starred = existing?.starred || false;
       const swapHistory = existing?.swapHistory || [];
+
       return {
         type: "TokenAccount",
         id,
@@ -176,16 +199,21 @@ export const getAccountShape: GetAccountShape = async (
   tokenAccounts = await prepareTokenAccounts(currency, tokenAccounts, address);
   tokenAccounts = await loadERC20Balances(tokenAccounts, address, api);
   tokenAccounts = await digestTokenAccounts(currency, tokenAccounts, address);
+  log("ethereum", "tokenAccounts", tokenAccounts);
   const subAccounts = reconciliateSubAccounts(tokenAccounts, initialAccount);
+  log("ethereum", "subAccounts", subAccounts);
   // has sub accounts have changed, we need to relink the subOperations
   newOps = newOps.map((o) => ({
     ...o,
     subOperations: inferSubOperations(o.hash, subAccounts),
   }));
+
   const operations = mergeOps(
     blockHashExistsOnChain ? initialStableOperations : [],
     newOps
   );
+
+  log("ethereum", "operations", operations);
 
   const nfts = isNFTActive(currency)
     ? mergeNfts(
@@ -207,6 +235,7 @@ export const getAccountShape: GetAccountShape = async (
     syncHash,
     nfts,
   };
+
   return accountShape;
 };
 

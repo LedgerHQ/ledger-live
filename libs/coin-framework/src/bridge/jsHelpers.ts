@@ -221,6 +221,8 @@ export const makeSync =
             syncConfig
           );
 
+          log("bridge", "getAccountShape", shape);
+
           const updater = (acc: Account): Account => {
             let a = acc; // a is a immutable version of Account, based on acc
 
