@@ -8,22 +8,11 @@ import {
   getRegistriesForDomain,
 } from "../registries";
 
-Promise.allSettled =
-  Promise.allSettled ||
-  ((promises: Promise<any>[]) =>
-    Promise.all(
-      promises.map((p) =>
-        p
-          .then((value) => ({
-            status: "fulfilled",
-            value,
-          }))
-          .catch((reason) => ({
-            status: "rejected",
-            reason,
-          }))
-      )
-    ));
+if (typeof Promise.allSettled === "undefined") {
+  throw new Error(
+    "This lib requires Promise.allSettled in order to work. Please polyfill this method if needed."
+  );
+}
 
 /**
  * Get an array of addresses for a domain

@@ -137,6 +137,7 @@
     "moment": "^2.29.1",
     "node-libs-react-native": "^1.2.1",
     "prando": "^6.0.1",
+    "promise.allsettled": "^1.0.6",
     "prop-types": "^15.8.1",
     "qrloop": "^1.4.1",
     "react": "^17.0.2",
