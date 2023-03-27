@@ -30,14 +30,14 @@ const tasks = new Listr(
       },
     },
     {
-      title: "Run flow",
+      title: "Run typechecks",
       task: async () => {
         try {
-          const { stdout } = await execa("pnpm", ["flow", __dirname]);
+          const { stdout } = await execa("pnpm", ["typecheck", __dirname]);
           return stdout;
         } catch (error) {
           process.stderr.write(error.message);
-          throw new Error("flow test failed");
+          throw new Error("typecheck test failed");
         }
       },
     },

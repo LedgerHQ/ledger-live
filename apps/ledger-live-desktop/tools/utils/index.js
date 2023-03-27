@@ -1,8 +1,7 @@
 const childProcess = require("child_process");
 const { prerelease } = require("semver");
 const path = require("path");
-const { StripFlowPlugin, DotEnvPlugin, nodeExternals } = require("esbuild-utils");
-const { flowPlugin } = require("@bunchtogether/vite-plugin-flow");
+const { DotEnvPlugin, nodeExternals } = require("esbuild-utils");
 const electronPlugin = require("vite-plugin-electron/renderer");
 const reactPlugin = require("@vitejs/plugin-react");
 const { defineConfig } = require("vite");
@@ -112,7 +111,6 @@ const buildViteConfig = argv =>
       esbuildOptions: {
         target: ["es2020"],
         plugins: [
-          StripFlowPlugin(/.jsx?$/),
           {
             name: "Externalize Nodejs Standard Library",
             setup(build) {
@@ -144,7 +142,6 @@ const buildViteConfig = argv =>
       },
     },
     plugins: [
-      flowPlugin(),
       reactPlugin(),
       electronPlugin(),
       // {
