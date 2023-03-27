@@ -9,7 +9,7 @@ import { setLastSeenDevice } from "~/renderer/actions/settings";
 import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import { from, Observable } from "rxjs";
+import { from } from "rxjs";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { getCurrentDevice } from "~/renderer/reducers/devices";

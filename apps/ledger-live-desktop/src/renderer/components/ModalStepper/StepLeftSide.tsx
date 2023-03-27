@@ -21,8 +21,8 @@ export type StepLeftSideProps = {
   continueDisabled?: boolean;
   hideBackButton?: boolean;
   backDisabled?: boolean;
-  onClickContinue?: (...args: any) => any;
-  onClickBack?: (...args: any) => any;
+  onClickContinue?: (...args: unknown) => unknown;
+  onClickBack?: (...args: unknown) => unknown;
 };
 
 const StepLeftSide = ({

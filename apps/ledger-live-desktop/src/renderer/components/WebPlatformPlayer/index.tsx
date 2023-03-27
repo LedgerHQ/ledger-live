@@ -7,7 +7,7 @@ import { WebView as WebViewV1 } from "./WebView";
 
 interface Props {
   manifest: LiveAppManifest;
-  inputs?: Record<string, any>;
+  inputs?: Record<string, string>;
   onClose?: () => void;
   config?: WebPlatformPlayerConfig;
 }
