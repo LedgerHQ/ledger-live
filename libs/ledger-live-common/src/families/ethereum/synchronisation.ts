@@ -15,7 +15,12 @@ import {
 } from "../../account";
 import { listTokensForCryptoCurrency } from "../../currencies";
 import { encodeAccountId } from "../../account";
-import type { Operation, TokenAccount, Account } from "@ledgerhq/types-live";
+import type {
+  Operation,
+  TokenAccount,
+  Account,
+  SubAccount,
+} from "@ledgerhq/types-live";
 import { API, apiForCurrency, Block, Tx } from "../../api/Ethereum";
 import { digestTokenAccounts, prepareTokenAccounts } from "./modules";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
@@ -86,9 +91,9 @@ export const getAccountShape: GetAccountShape = async (
 
   const blockHeight = currentBlock?.height.toNumber();
 
-  log("Ethereum", "fetchAllTransactions", txs);
+  log("Ethereum", "fetchAllTransactions response length", txs.length);
   log("Ethereum", "pullFromBlockHeight conditions", {
-    initialAccount,
+    initialAccount: initialAccount?.subAccounts?.length,
     allOperationsLoaded,
     mostRecentStableOperation,
     blockHashExistsOnChain,
@@ -99,9 +104,7 @@ export const getAccountShape: GetAccountShape = async (
     log("ethereum", "no ops on " + address);
     log(
       "ethereum",
-      `Current Block { hash: ${currentBlock?.hash}, height: ${
-        currentBlock?.height
-      }, txs: ${currentBlock?.txs.join(" ===== ")} }`
+      `Current Block { hash: ${currentBlock?.hash}, height: ${currentBlock?.height}} }`
     );
 
     return {
@@ -118,11 +121,7 @@ export const getAccountShape: GetAccountShape = async (
   const perTokenAccountIdOperations = {};
   newOps.forEach((op) => {
     const { subOperations } = op;
-    log(
-      "Ethereum:subOperations",
-      subOperations?.length.toString() || "0",
-      subOperations
-    );
+    log("Ethereum:subOperations", subOperations?.length.toString() || "0");
 
     if (subOperations?.length) {
       subOperations.forEach((sop) => {
@@ -199,9 +198,8 @@ export const getAccountShape: GetAccountShape = async (
   tokenAccounts = await prepareTokenAccounts(currency, tokenAccounts, address);
   tokenAccounts = await loadERC20Balances(tokenAccounts, address, api);
   tokenAccounts = await digestTokenAccounts(currency, tokenAccounts, address);
-  log("ethereum", "tokenAccounts", tokenAccounts);
   const subAccounts = reconciliateSubAccounts(tokenAccounts, initialAccount);
-  log("ethereum", "subAccounts", subAccounts);
+  log("ethereum", "subAccounts", { length: subAccounts.length });
   // has sub accounts have changed, we need to relink the subOperations
   newOps = newOps.map((o) => ({
     ...o,
@@ -212,8 +210,6 @@ export const getAccountShape: GetAccountShape = async (
     blockHashExistsOnChain ? initialStableOperations : [],
     newOps
   );
-
-  log("ethereum", "operations", operations);
 
   const nfts = isNFTActive(currency)
     ? mergeNfts(
@@ -680,8 +676,11 @@ function stableOperations(a: Account): Operation[] {
 }
 
 // reconciliate the existing token accounts so that refs don't change if no changes is contained
-function reconciliateSubAccounts(tokenAccounts, initialAccount) {
-  let subAccounts;
+function reconciliateSubAccounts(
+  tokenAccounts: TokenAccount[],
+  initialAccount: Account | undefined
+) {
+  let subAccounts: SubAccount[] = [];
 
   if (initialAccount) {
     const initialSubAccounts = initialAccount.subAccounts;
