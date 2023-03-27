@@ -3999,7 +3999,7 @@ var require_public_api = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/node-fetch@2.6.9/node_modules/node-fetch/lib/index.mjs
+// ../../../node_modules/.pnpm/node-fetch@2.6.7/node_modules/node-fetch/lib/index.mjs
 var lib_exports = {};
 __export(lib_exports, {
   FetchError: () => FetchError,
@@ -4388,7 +4388,7 @@ function fetch(url, opts) {
       let error = new AbortError("The user aborted a request.");
       reject(error);
       if (request.body && request.body instanceof import_stream.default.Readable) {
-        destroyStream(request.body, error);
+        request.body.destroy(error);
       }
       if (!response || !response.body)
         return;
@@ -4423,31 +4423,8 @@ function fetch(url, opts) {
     }
     req.on("error", function(err) {
       reject(new FetchError(`request to ${request.url} failed, reason: ${err.message}`, "system", err));
-      if (response && response.body) {
-        destroyStream(response.body, err);
-      }
       finalize();
     });
-    fixResponseChunkedTransferBadEnding(req, function(err) {
-      if (signal && signal.aborted) {
-        return;
-      }
-      if (response && response.body) {
-        destroyStream(response.body, err);
-      }
-    });
-    if (parseInt(process.version.substring(1)) < 14) {
-      req.on("socket", function(s) {
-        s.addListener("close", function(hadError) {
-          const hasDataListener = s.listenerCount("data") > 0;
-          if (response && hasDataListener && !hadError && !(signal && signal.aborted)) {
-            const err = new Error("Premature close");
-            err.code = "ERR_STREAM_PREMATURE_CLOSE";
-            response.body.emit("error", err);
-          }
-        });
-      });
-    }
     req.on("response", function(res) {
       clearTimeout(reqTimeout);
       const headers = createHeadersLenient(res.headers);
@@ -4498,7 +4475,7 @@ function fetch(url, opts) {
               timeout: request.timeout,
               size: request.size
             };
-            if (!isDomainOrSubdomain(request.url, locationURL) || !isSameProtocol(request.url, locationURL)) {
+            if (!isDomainOrSubdomain(request.url, locationURL)) {
               for (const name of ["authorization", "www-authenticate", "cookie", "cookie2"]) {
                 requestOpts.headers.delete(name);
               }
@@ -4559,12 +4536,6 @@ function fetch(url, opts) {
           response = new Response(body, response_options);
           resolve(response);
         });
-        raw.on("end", function() {
-          if (!response) {
-            response = new Response(body, response_options);
-            resolve(response);
-          }
-        });
         return;
       }
       if (codings == "br" && typeof import_zlib.default.createBrotliDecompress === "function") {
@@ -4579,36 +4550,9 @@ function fetch(url, opts) {
     writeToStream(req, request);
   });
 }
-function fixResponseChunkedTransferBadEnding(request, errorCallback) {
-  let socket;
-  request.on("socket", function(s) {
-    socket = s;
-  });
-  request.on("response", function(response) {
-    const headers = response.headers;
-    if (headers["transfer-encoding"] === "chunked" && !headers["content-length"]) {
-      response.once("close", function(hadError) {
-        const hasDataListener = socket.listenerCount("data") > 0;
-        if (hasDataListener && !hadError) {
-          const err = new Error("Premature close");
-          err.code = "ERR_STREAM_PREMATURE_CLOSE";
-          errorCallback(err);
-        }
-      });
-    }
-  });
-}
-function destroyStream(stream, err) {
-  if (stream.destroy) {
-    stream.destroy(err);
-  } else {
-    stream.emit("error", err);
-    stream.end();
-  }
-}
-var import_stream, import_http, import_url, import_whatwg_url, import_https, import_zlib, Readable, BUFFER, TYPE, Blob2, convert, INTERNALS, PassThrough, invalidTokenRegex, invalidHeaderCharRegex, MAP, Headers, INTERNAL, HeadersIteratorPrototype, INTERNALS$1, STATUS_CODES, Response, INTERNALS$2, URL2, parse_url, format_url, streamDestructionSupported, Request, URL$1, PassThrough$1, isDomainOrSubdomain, isSameProtocol, lib_default;
+var import_stream, import_http, import_url, import_whatwg_url, import_https, import_zlib, Readable, BUFFER, TYPE, Blob2, convert, INTERNALS, PassThrough, invalidTokenRegex, invalidHeaderCharRegex, MAP, Headers, INTERNAL, HeadersIteratorPrototype, INTERNALS$1, STATUS_CODES, Response, INTERNALS$2, URL2, parse_url, format_url, streamDestructionSupported, Request, URL$1, PassThrough$1, isDomainOrSubdomain, lib_default;
 var init_lib = __esm({
-  "../../../node_modules/.pnpm/node-fetch@2.6.9/node_modules/node-fetch/lib/index.mjs"() {
+  "../../../node_modules/.pnpm/node-fetch@2.6.7/node_modules/node-fetch/lib/index.mjs"() {
     import_stream = __toESM(require("stream"), 1);
     import_http = __toESM(require("http"), 1);
     import_url = __toESM(require("url"), 1);
@@ -5118,11 +5062,6 @@ var init_lib = __esm({
       const orig = new URL$1(original).hostname;
       const dest = new URL$1(destination).hostname;
       return orig === dest || orig[orig.length - dest.length - 1] === "." && orig.endsWith(dest);
-    };
-    isSameProtocol = function isSameProtocol2(destination, original) {
-      const orig = new URL$1(original).protocol;
-      const dest = new URL$1(destination).protocol;
-      return orig === dest;
     };
     fetch.isRedirect = function(code) {
       return code === 301 || code === 302 || code === 303 || code === 307 || code === 308;
