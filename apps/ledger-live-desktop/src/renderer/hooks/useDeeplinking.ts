@@ -84,7 +84,7 @@ export function useDeepLinkHandler() {
         case "accounts":
           const { address } = query;
           if (address && typeof address === "string") {
-            const account = accounts.find(acc => acc.id === address)
+            const account = accounts.find(acc => acc.freshAddress === address)
             if (account) {
               if (account.type === "Account") {
                 navigate(`/account/${account.id}`);
