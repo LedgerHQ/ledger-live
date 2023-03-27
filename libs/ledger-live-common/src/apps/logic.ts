@@ -3,12 +3,13 @@ import { Subject } from "rxjs";
 import flatMap from "lodash/flatMap";
 import semver from "semver";
 import { getDeviceModel } from "@ledgerhq/devices";
-import type {
+import {
   AppOp,
   State,
   Action,
   ListAppsResult,
   AppsDistribution,
+  SkipReason,
 } from "./types";
 import {
   findCryptoCurrency,
@@ -41,6 +42,7 @@ export const initState = (
     currentProgressSubject: new Subject(),
     currentError: null,
     currentAppOp: null,
+    skippedAppOps: [],
   };
 
   if (appsToRestore) {
@@ -272,7 +274,7 @@ export const reducer = (state: State, action: Action): State => {
     }
 
     case "install": {
-      const { name } = action;
+      const { name, allowPartialDependencies } = action;
 
       if (state.installQueue.includes(name)) {
         // already queued for install
@@ -280,17 +282,23 @@ export const reducer = (state: State, action: Action): State => {
       }
 
       const existing = state.installed.find((app) => app.name === name);
+      const skippedAppOps = [...state.skippedAppOps];
 
       if (existing && existing.updated && state.installedAvailable) {
         // already installed and up to date
-        return state;
+        skippedAppOps.push({
+          reason: SkipReason.AppAlreadyInstalled,
+          appOp: action,
+        });
+        return { ...state, skippedAppOps };
       }
 
-      const depApp: App | null | undefined = state.appByName[name];
+      const appToInstall: App | null | undefined = state.appByName[name];
 
-      // No app found but fw update is available
+      // The target application was not found in the specified provider BUT
+      // we can update the firmware instead, and perhaps in the new FW it is available.
       if (
-        !depApp &&
+        !appToInstall &&
         state.firmware?.updateAvailable?.final?.version &&
         semver.lt(
           state.deviceInfo.version,
@@ -306,21 +314,33 @@ export const reducer = (state: State, action: Action): State => {
         );
       }
 
-      if (!depApp) {
-        throw new NoSuchAppOnProvider("", { appName: name });
+      // The target application was not found in the specified provider.
+      if (!appToInstall) {
+        if (allowPartialDependencies) {
+          // Some flows are resillient to missing operations.
+          skippedAppOps.push({
+            reason: SkipReason.NoSuchAppOnProvider,
+            appOp: action,
+          });
+          return { ...state, skippedAppOps };
+        } else {
+          // Some flows are not, and we want to stop with an error.
+          throw new NoSuchAppOnProvider("", { appName: name });
+        }
       }
 
-      const deps = depApp.dependencies;
-      const dependentsOfDep = flatMap(deps, (dep) =>
+      const dependencies = appToInstall.dependencies;
+      const dependentsOfDep = flatMap(dependencies, (dep) =>
         findDependents(state.appByName, dep)
       );
       const depsInstalledOutdated = state.installed.filter(
-        (a) => deps.includes(a.name) && !a.updated
+        (a) => dependencies.includes(a.name) && !a.updated
       );
       let installList = state.installQueue;
+
       // installing an app will remove if planned for uninstalling
       let uninstallList = state.uninstallQueue.filter(
-        (u) => name !== u && !deps.includes(u)
+        (u) => name !== u && !dependencies.includes(u)
       );
 
       if (state.uninstallQueue.length !== uninstallList.length) {
@@ -339,7 +359,7 @@ export const reducer = (state: State, action: Action): State => {
                 !a.updated &&
                 [
                   name,
-                  ...deps,
+                  ...dependencies,
                   ...directDependents,
                   ...dependentsOfDep,
                 ].includes(a.name)
@@ -350,7 +370,9 @@ export const reducer = (state: State, action: Action): State => {
         }
 
         installList = installList.concat([
-          ...deps.filter((d) => !state.installed.some((a) => a.name === d)),
+          ...dependencies.filter(
+            (d) => !state.installed.some((a) => a.name === d)
+          ),
           name,
         ]);
       }

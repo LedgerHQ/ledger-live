@@ -41,7 +41,7 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: Install dependencies
@@ -73,7 +73,7 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: Install dependencies
@@ -119,7 +119,7 @@ jobs:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: actions/setup-python@v4
@@ -155,10 +155,11 @@ jobs:
           path: |
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
-      - name: Test coverage
-        run: npx codecov -F test
-        env:
-          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+      - uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          flags: test
       - uses: actions/github-script@v6
         if: always()
         with:

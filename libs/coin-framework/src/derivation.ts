@@ -11,7 +11,7 @@ import { log } from "@ledgerhq/logs";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "./currencies";
-import { getEnv } from "./env";
+import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrencyIds } from "@ledgerhq/types-live";
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;

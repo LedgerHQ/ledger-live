@@ -66,6 +66,7 @@ function Discover() {
   }, []);
 
   const { learnCards } = useDynamicContent();
+  const config = useFeature("discover");
 
   const featuresList: {
     title: string;
@@ -77,7 +78,27 @@ function Discover() {
   }[] = useMemo(
     () =>
       [
-        ...(Platform.OS !== "ios"
+        ...(config?.enabled && config?.params.version === "2"
+          ? [
+              {
+                title: t("discover.sections.browseWeb3.title"),
+                subTitle: t("discover.sections.browseWeb3.desc"),
+                onPress: () => {
+                  navigation.navigate(NavigatorName.Discover, {
+                    screen: ScreenName.PlatformCatalog,
+                  });
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={110}
+                    darkSource={images.dark.appsImg}
+                    lightSource={images.light.appsImg}
+                  />
+                ),
+              },
+            ]
+          : Platform.OS !== "ios"
           ? [
               {
                 title: t("discover.sections.ledgerApps.title"),
@@ -98,7 +119,6 @@ function Discover() {
               },
             ]
           : []),
-
         ...(!learn?.enabled && !isNewsfeedAvailable
           ? [
               {
@@ -219,6 +239,8 @@ function Discover() {
       referralProgramConfig?.params.url,
       navigation,
       readOnlyTrack,
+      isNewsfeedAvailable,
+      config,
     ],
   );
 

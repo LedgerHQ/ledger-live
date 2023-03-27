@@ -14,8 +14,9 @@ import { DeviceModelId } from "@ledgerhq/devices";
 
 registerAssets([nanoX, nanoS, nanoS2, nanoXDark, nanoSDark, nanoS2Dark, stax, staxDark]);
 
-const makeAssetSelector = (lightAsset: any, darkAsset: any) => (p: ThemeProps<DefaultTheme>) =>
-  p.theme.colors.palette.type === "light" ? lightAsset : darkAsset;
+const makeAssetSelector = (lightAsset: string, darkAsset: string) => (
+  p: ThemeProps<DefaultTheme>,
+) => (p.theme.colors.palette.type === "light" ? lightAsset : darkAsset);
 
 const NanoS = styled.div`
   // TODO: rendering issue in the SVG in the "hole"

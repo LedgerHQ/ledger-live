@@ -56,7 +56,7 @@ export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) =
       page: "Page Account",
       button: "delegate",
       redelegate: bannerState.bannerType === "redelegate",
-      token: "ELROND",
+      currency: "ELROND",
     });
 
     if (bannerState.bannerType === "redelegate") {

@@ -1,5 +1,4 @@
-import { useEffect, memo } from "react";
-// eslint-disable-next-line import/no-cycle
+import { useEffect, memo, useCallback } from "react";
 import { track } from "./segment";
 
 type Props = {
@@ -14,26 +13,23 @@ type Props = {
 export default memo((props: Props): null => {
   const { event, onMount, onUnmount, onUpdate } = props;
 
-  function doTrack() {
+  const doTrack = useCallback(() => {
     const { event, onMount, onUnmount, onUpdate, mandatory, ...properties } =
       props;
     track(event, properties, mandatory);
-  }
+  }, [props]);
 
-  useEffect(
-    function mount() {
-      if (typeof event !== "string") {
-        console.warn("analytics Track: invalid event=", event);
-      }
+  useEffect(function mount() {
+    if (typeof event !== "string") {
+      console.warn("analytics Track: invalid event=", event);
+    }
 
-      if (onMount) doTrack();
-      return function unmount() {
-        if (onUnmount) doTrack();
-      };
-    },
+    if (onMount) doTrack();
+    return function unmount() {
+      if (onUnmount) doTrack();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  }, []);
 
   if (onUpdate) {
     doTrack();

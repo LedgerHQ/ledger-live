@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import {
   receiveOnAccountLogic,
@@ -55,7 +55,7 @@ type WebPlatformPlayerConfig = {
 type Props = {
   manifest: LiveAppManifest;
   onClose?: () => void;
-  inputs?: Record<string, any>;
+  inputs?: Record<string, string>;
   config?: WebPlatformPlayerConfig;
 };
 
@@ -101,7 +101,7 @@ export function WebView({ manifest, onClose, inputs = {}, config }: Props) {
               openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
                 account,
                 parentAccount,
-                onResult: (_account: Account, _parentAccount: Account) => {
+                onResult: () => {
                   tracking.platformReceiveSuccess(manifest);
                   resolve(accountAddress);
                 },

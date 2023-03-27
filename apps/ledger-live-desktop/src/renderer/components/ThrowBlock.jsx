@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from "react";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import RenderError from "./RenderError";
 
 type Props = {

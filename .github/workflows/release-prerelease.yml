@@ -40,14 +40,14 @@ jobs:
 
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
           registry-url: "https://registry.npmjs.org"
@@ -159,7 +159,7 @@ jobs:
               owner: "ledgerhq",
               repo: "ledger-live-build",
               ref: "main",
-              workflow_id: ${{ inputs.recover }} ? "pre-mobile-recover.yml" : "pre-mobile.yml",
+              workflow_id: "${{ inputs.recover && 'pre-mobile-recover.yml' || 'pre-mobile.yml' }}",
               inputs: {
                 ref: "${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref_name }}",
               }

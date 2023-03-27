@@ -26,7 +26,7 @@ export default class Tabbable extends Component<
   {
     disabled?: boolean;
     unstyled?: boolean;
-    onClick?: (arg: any) => void;
+    onClick?: (arg: KeyboardEvent) => void;
     selected?: boolean;
     children?: JSX.Element;
   },

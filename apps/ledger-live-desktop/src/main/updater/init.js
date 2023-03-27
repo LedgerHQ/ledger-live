@@ -1,11 +1,20 @@
 // @flow
 import { app, BrowserWindow } from "electron";
 import { autoUpdater } from "@ledgerhq/electron-updater";
-import logger from "~/logger";
 import { getMainWindow } from "~/main/window-lifecycle";
-import type { UpdateStatus } from "~/renderer/components/Updater/UpdaterContext";
-
 import createElectronAppUpdater from "./createElectronAppUpdater";
+
+export type UpdateStatus =
+  | "idle"
+  | "checking-for-update"
+  | "update-available"
+  | "update-not-available"
+  | "download-progress"
+  | "update-downloaded"
+  | "checking"
+  | "check-success"
+  | "downloading-update"
+  | "error";
 
 const UPDATE_CHECK_IGNORE = Boolean(process.env.UPDATE_CHECK_IGNORE);
 const UPDATE_CHECK_FEED =
@@ -28,7 +37,7 @@ const handleDownload = async info => {
     }
     sendStatus("check-success");
   } catch (err) {
-    logger.critical(err);
+    console.error(err);
     if (UPDATE_CHECK_IGNORE) {
       sendStatus("check-success");
     } else {
@@ -44,7 +53,7 @@ const init = () => {
   autoUpdater.on("download-progress", p => sendStatus("download-progress", p));
   autoUpdater.on("update-downloaded", handleDownload);
   autoUpdater.on("error", err => {
-    logger.error(err);
+    console.error(err);
   });
 
   autoUpdater.autoInstallOnAppQuit = false;

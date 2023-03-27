@@ -9,9 +9,10 @@ import React, {
 import type { StackScreenProps } from "@react-navigation/stack";
 import {
   Flex,
-  ScrollContainer,
   VerticalTimeline,
   Text,
+  ContinueOnDevice,
+  Divider,
 } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
@@ -25,6 +26,7 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 import { StorylyInstanceID } from "@ledgerhq/types-live";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
@@ -47,6 +49,10 @@ import { RootStackParamList } from "../../components/RootNavigator/types/RootNav
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
 import Stories from "../../components/StorylyStories";
+import { TrackScreen, track } from "../../analytics";
+import ContinueOnStax from "./assets/ContinueOnStax";
+
+const { BodyText, SubtitleText } = VerticalTimeline;
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -91,6 +97,21 @@ enum CompanionStepKey {
   Exit,
 }
 
+const ContinueOnDeviceWithAnim: React.FC<{
+  deviceModelId: DeviceModelId;
+  text: string;
+  withTopDivider?: boolean;
+}> = ({ text, withTopDivider }) => {
+  // TODO: when lotties are available, move this component to its own file and use a different lottie for each deviceModelId, as Icon prop
+  return (
+    <ContinueOnDevice
+      Icon={ContinueOnStax}
+      text={text}
+      withTopDivider={withTopDivider}
+    />
+  );
+};
+
 export const SyncOnboarding = ({
   navigation,
   route,
@@ -110,9 +131,13 @@ export const SyncOnboarding = ({
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
     CompanionStepKey.Paired,
   );
-  const [seedStatus, setSeedStatus] = useState<"selection" | "new" | "restore">(
-    "selection",
-  );
+  const [seedPathStatus, setSeedPathStatus] = useState<
+    | "choice_new_or_restore"
+    | "new_seed"
+    | "choice_restore_direct_or_recover"
+    | "restore_seed"
+    | "recover_seed"
+  >("choice_new_or_restore");
 
   const getNextStepKey = useCallback(
     (step: CompanionStepKey) => {
@@ -221,16 +246,16 @@ export const SyncOnboarding = ({
     };
   }, []);
 
-  const handleClose = useCallback(() => {
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
-
   const handleDesyncTimedOut = useCallback(() => {
     setDesyncDrawerOpen(true);
   }, []);
 
   const handleDesyncRetry = useCallback(() => {
     // handleDesyncClose is then called
+    track("button_clicked", {
+      button: "Try again",
+      drawer: "Could not connect to Stax",
+    });
     setDesyncDrawerOpen(false);
   }, []);
 
@@ -255,6 +280,10 @@ export const SyncOnboarding = ({
 
     navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
   }, [device, dispatchRedux, navigation]);
+
+  const handleClose = useCallback(() => {
+    readyRedirectTimerRef.current ? handleDeviceReady() : goBackToPairingFlow();
+  }, [goBackToPairingFlow, handleDeviceReady]);
 
   useEffect(() => {
     if (!fatalError) {
@@ -305,23 +334,8 @@ export const SyncOnboarding = ({
       return;
     }
 
+    // case DeviceOnboardingStep.SafetyWarning not handled so the previous step (new seed, restore, recover) is kept
     switch (deviceOnboardingState?.currentOnboardingStep) {
-      case DeviceOnboardingStep.SetupChoice:
-      case DeviceOnboardingStep.SafetyWarning:
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedStatus("selection");
-        break;
-      case DeviceOnboardingStep.NewDevice:
-      case DeviceOnboardingStep.NewDeviceConfirming:
-        setShouldRestoreApps(false);
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedStatus("new");
-        break;
-      case DeviceOnboardingStep.RestoreSeed:
-        setShouldRestoreApps(true);
-        setCompanionStepKey(CompanionStepKey.Seed);
-        setSeedStatus("restore");
-        break;
       case DeviceOnboardingStep.WelcomeScreen1:
       case DeviceOnboardingStep.WelcomeScreen2:
       case DeviceOnboardingStep.WelcomeScreen3:
@@ -332,6 +346,30 @@ export const SyncOnboarding = ({
         break;
       case DeviceOnboardingStep.Pin:
         setCompanionStepKey(CompanionStepKey.Pin);
+        break;
+      case DeviceOnboardingStep.SetupChoice:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("choice_new_or_restore");
+        break;
+      case DeviceOnboardingStep.NewDevice:
+      case DeviceOnboardingStep.NewDeviceConfirming:
+        setShouldRestoreApps(false);
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("new_seed");
+        break;
+      case DeviceOnboardingStep.SetupChoiceRestore:
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("choice_restore_direct_or_recover");
+        break;
+      case DeviceOnboardingStep.RestoreSeed:
+        setShouldRestoreApps(true);
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("restore_seed");
+        break;
+      case DeviceOnboardingStep.RecoverRestore:
+        setShouldRestoreApps(true);
+        setCompanionStepKey(CompanionStepKey.Seed);
+        setSeedPathStatus("recover_seed");
         break;
       default:
         break;
@@ -390,21 +428,36 @@ export const SyncOnboarding = ({
           key: CompanionStepKey.Paired,
           title: t("syncOnboarding.pairingStep.title", { productName }),
           renderBody: () => (
-            <Text variant="bodyLineHeight">
-              {t("syncOnboarding.pairingStep.description", { productName })}
-            </Text>
+            <>
+              <TrackScreen category="Set up Ledger Stax: Step 1 device paired" />
+              <BodyText>
+                {t("syncOnboarding.pairingStep.description", { productName })}
+              </BodyText>
+              <ContinueOnDeviceWithAnim
+                deviceModelId={device.modelId}
+                text={t("syncOnboarding.pairingStep.continueOnDevice", {
+                  productName,
+                })}
+              />
+            </>
           ),
         },
         {
           key: CompanionStepKey.Pin,
           title: t("syncOnboarding.pinStep.title"),
           doneTitle: t("syncOnboarding.pinStep.doneTitle"),
-          estimatedTime: 120,
           renderBody: () => (
             <Flex>
-              <Text variant="bodyLineHeight">
+              <TrackScreen category="Set up Ledger Stax: Step 2 PIN" />
+              <BodyText>
                 {t("syncOnboarding.pinStep.description", { productName })}
-              </Text>
+              </BodyText>
+              <ContinueOnDeviceWithAnim
+                deviceModelId={device.modelId}
+                text={t("syncOnboarding.pinStep.continueOnDevice", {
+                  productName,
+                })}
+              />
             </Flex>
           ),
         },
@@ -412,25 +465,78 @@ export const SyncOnboarding = ({
           key: CompanionStepKey.Seed,
           title: t("syncOnboarding.seedStep.title"),
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
-          estimatedTime: 300,
           renderBody: () => (
             <Flex>
-              {seedStatus === "selection" ? (
-                <Text variant="bodyLineHeight">
-                  {t("syncOnboarding.seedStep.selection")}
-                </Text>
-              ) : seedStatus === "new" ? (
+              <TrackScreen category="Set up Ledger Stax: Step 3 Seed" />
+              {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
+                  <BodyText mb={6}>
+                    {t("syncOnboarding.seedStep.newSeedDescription", {
+                      productName,
+                    })}
+                  </BodyText>
                   <Stories
                     instanceID={StorylyInstanceID.recoverySeed}
                     vertical
                     keepOriginalOrder
                   />
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t("syncOnboarding.seedStep.newSeedContinueOnDevice", {
+                      productName,
+                    })}
+                  />
                 </Flex>
+              ) : seedPathStatus === "choice_restore_direct_or_recover" ? (
+                <Flex>
+                  <SubtitleText>
+                    {t("syncOnboarding.seedStep.restoreChoiceSRPTitle")}
+                  </SubtitleText>
+                  <BodyText>
+                    {t("syncOnboarding.seedStep.restoreChoiceSRPDescription")}
+                  </BodyText>
+                  <Divider text={t("common.or")} my={6} />
+                  <SubtitleText>
+                    {t("syncOnboarding.seedStep.restoreChoiceRecoverTitle")}
+                  </SubtitleText>
+                  <BodyText>
+                    {t(
+                      "syncOnboarding.seedStep.restoreChoiceRecoverDescription",
+                    )}
+                  </BodyText>
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t(
+                      "syncOnboarding.seedStep.restoreChoiceContinueOnDevice",
+                      {
+                        productName,
+                      },
+                    )}
+                  />
+                </Flex>
+              ) : seedPathStatus === "restore_seed" ? (
+                <BodyText>
+                  {t("syncOnboarding.seedStep.restoreSeed", { productName })}
+                </BodyText>
+              ) : seedPathStatus === "recover_seed" ? (
+                <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
               ) : (
-                <Text variant="bodyLineHeight">
-                  {t("syncOnboarding.seedStep.recovery", { productName })}
-                </Text>
+                <Flex>
+                  <BodyText>
+                    {t("syncOnboarding.seedStep.selection", {
+                      productName,
+                    })}
+                  </BodyText>
+                  <ContinueOnDeviceWithAnim
+                    deviceModelId={device.modelId}
+                    text={t(
+                      "syncOnboarding.seedStep.selectionContinueOnDevice",
+                      {
+                        productName,
+                      },
+                    )}
+                  />
+                </Flex>
               )}
             </Flex>
           ),
@@ -482,7 +588,7 @@ export const SyncOnboarding = ({
     [
       t,
       productName,
-      seedStatus,
+      seedPathStatus,
       deviceInitialApps?.enabled,
       device,
       handleSoftwareCheckComplete,
@@ -510,29 +616,34 @@ export const SyncOnboarding = ({
         onRetry={handleDesyncRetry}
         device={device}
       />
-      <Flex position="relative" flex={1}>
+      <Flex position="relative" flex={1} px={6}>
         <ResyncOverlay
           isOpen={isDesyncOverlayOpen}
           delay={resyncOverlayDisplayDelayMs}
           productName={productName}
         />
-        <ScrollContainer px={6}>
-          <Flex mb={8} flexDirection="row" alignItems="center">
-            <Text variant="h4" fontWeight="semiBold">
-              {t("syncOnboarding.title", { deviceName })}
-            </Text>
-            {/* TODO: disabled for now but will be used in the future */}
-            {/* <Button
-                  ml={2}
-                  Icon={Question}
-                  onPress={() => setHelpDrawerOpen(true)}
-                /> */}
-          </Flex>
+        <Flex>
           <VerticalTimeline
             steps={companionSteps}
             formatEstimatedTime={formatEstimatedTime}
+            header={
+              <Flex mb={8} flexDirection="row" alignItems="center">
+                <Text variant="h4" fontWeight="semiBold">
+                  {t("syncOnboarding.title", { deviceName })}
+                </Text>
+                {/* TODO: disabled for now but will be used in the future */}
+                {/* <Button
+                    ml={2}
+                    Icon={Question}
+                    onPress={() => setHelpDrawerOpen(true)}
+                  /> */}
+              </Flex>
+            }
           />
-        </ScrollContainer>
+          {companionStepKey === CompanionStepKey.Exit ? (
+            <TrackScreen category="Stax Set Up - Final step: Stax is ready" />
+          ) : null}
+        </Flex>
       </Flex>
     </DeviceSetupView>
   );

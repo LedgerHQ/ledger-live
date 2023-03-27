@@ -145,7 +145,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
 
           {fields ? (
             <Box flex="1">
-              <Button outline small mb={2} onClick={e => setShowAdvanced(!showAdvanced)}>
+              <Button outline small mb={2} onClick={() => setShowAdvanced(!showAdvanced)}>
                 {showAdvanced
                   ? `- ${t("signmessage.eip712.hideFullMessage")}`
                   : `+ ${t("signmessage.eip712.showFullMessage")}`}

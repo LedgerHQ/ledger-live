@@ -3,7 +3,6 @@ import { ProtectStateNumberEnum } from "@ledgerhq/live-common/platform/providers
 import React, { memo, useCallback } from "react";
 import { Linking, Image } from "react-native";
 import { useTranslation } from "react-i18next";
-import Svg, { LinearGradient, Defs, Rect, Stop } from "react-native-svg";
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import NewProtectState from "./Protect/NewProtectState";
@@ -18,28 +17,7 @@ import Touchable from "../Touchable";
 import LedgerRecoverLogoLight from "../../images/ledger_recover_light.png";
 import LedgerRecoverLogoDark from "../../images/ledger_recover_dark.png";
 
-const SvgGradient = () => (
-  <Svg width="100%" height="8px">
-    <Defs>
-      <LinearGradient
-        id="protectGradient"
-        x1="0%"
-        y1="0%"
-        x2="100%"
-        y2="0%"
-        gradientUnits="userSpaceOnUse"
-      >
-        <Stop offset="0%" stopOpacity={1} stopColor="hsla(172, 100%, 42%, 1)" />
-        <Stop
-          offset="100%"
-          stopOpacity={1}
-          stopColor="hsla(220, 100%, 42%, 1)"
-        />
-      </LinearGradient>
-    </Defs>
-    <Rect x="0" y="0" width="100%" height="100%" fill="url(#protectGradient)" />
-  </Svg>
-);
+import LedgerRecoverCardTopImage from "../../images/ledger_recover_card_top.png";
 
 const statesKeys: Record<ProtectStateNumberEnum, string> = {
   [ProtectStateNumberEnum.NEW]: "new",
@@ -88,23 +66,22 @@ function ServicesWidget() {
 
   return enabled && params?.managerStatesData ? (
     <>
-      <Text mt={12} fontWeight="semiBold" variant="h5" mb={6}>
+      <Text mt={10} fontWeight="semiBold" variant="h5" mb={6}>
         {t("servicesWidget.title")}
       </Text>
       <Touchable onPress={onCardPress}>
-        <Flex
-          bg="neutral.c30"
-          borderRadius={8}
-          mt={5}
-          mb={13}
-          overflow="hidden"
-        >
-          <SvgGradient />
-          <Flex p={8}>
+        <Flex bg="neutral.c30" borderRadius={8} mb={13} overflow="hidden">
+          <Image
+            source={LedgerRecoverCardTopImage}
+            resizeMode={"stretch"}
+            style={{ width: "100%", height: 8 }}
+          />
+          <Flex p={7}>
             <Flex
               flexDirection="row"
               justifyContent="space-between"
               alignItems="center"
+              mb={6}
             >
               <Image
                 source={
@@ -118,7 +95,7 @@ function ServicesWidget() {
                 <ProtectStateComponent.StatusTag />
               ) : null}
             </Flex>
-            <Text variant="paragraph" color="neutral.c80" my={7}>
+            <Text variant="body" color="neutral.c80" mb={7}>
               {t(
                 `servicesWidget.protect.status.${statesKeys[protectStatus]}.desc`,
               )}

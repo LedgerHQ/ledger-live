@@ -68,11 +68,6 @@ or open `android/` in Android Studio.
 
 Delete the application data for Ledger Live Mobile, equivalent to doing it manually through settings
 
-### `pnpm mobile android:import importDataString`
-
-Passing a base64 encoded export string (the export from desktop) will trigger an import activity and allow
-easy data setting for development.
-
 ### `pnpm build:llm:ios` 
 
 Produces a development .ipa signed with the developer's current certificates (can be installed on phones added to our apple dev center). Not eligible for AppStore/TestFlight

@@ -31,14 +31,14 @@ jobs:
           base_ref: ${{ inputs.base_ref }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1
@@ -106,14 +106,14 @@ jobs:
           base_ref: ${{ inputs.base_ref }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
           version: latest
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1

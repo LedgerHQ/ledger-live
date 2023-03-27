@@ -5,7 +5,7 @@ import jsQR from "jsqr";
 import styled from "styled-components";
 import { NoAccessToCamera } from "@ledgerhq/errors";
 
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import IconCameraError from "~/renderer/icons/CameraError";
 import IconCross from "~/renderer/icons/Cross";
 import TranslatedError from "./TranslatedError";

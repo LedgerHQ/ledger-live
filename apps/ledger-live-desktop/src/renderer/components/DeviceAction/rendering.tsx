@@ -6,7 +6,7 @@ import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -34,7 +34,6 @@ import { getDeviceAnimation } from "./animations";
 import { DeviceBlocker } from "./DeviceBlocker";
 import ErrorIcon from "~/renderer/components/ErrorIcon";
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
-import SupportLinkError from "~/renderer/components/SupportLinkError";
 import { urls } from "~/config/urls";
 import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
 import ExternalLinkButton from "../ExternalLinkButton";
@@ -51,7 +50,6 @@ import {
   Theme,
   Button as ButtonV3,
   Flex,
-  Icons,
   Text,
   Log,
   ProgressLoader,
@@ -170,7 +168,7 @@ const ErrorDescription = styled(Text).attrs({
   user-select: text;
 `;
 
-const ButtonContainer = styled(Box).attrs(p => ({
+const ButtonContainer = styled(Box).attrs(() => ({
   mt: 25,
   horizontal: true,
 }))``;
@@ -313,7 +311,7 @@ export const InstallingApp = ({
   type: Theme["theme"];
   appName: string;
   progress: number;
-  request: any;
+  request: unknown;
   analyticsPropertyFlow?: string;
 }) => {
   const currency = request?.currency || request?.account?.currency;
@@ -697,14 +695,12 @@ export const renderInWrongAppForAccount = ({
 export const renderConnectYourDevice = ({
   modelId,
   type,
-  onRetry,
   onRepairModal,
   device,
   unresponsive,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
-  onRetry: () => void;
   onRepairModal: () => void;
   device: Device;
   unresponsive?: boolean;
@@ -761,7 +757,6 @@ export const renderSwapDeviceConfirmation = ({
   modelId,
   type,
   transaction,
-  status,
   exchangeRate,
   exchange,
   amountExpectedTo,
@@ -771,7 +766,6 @@ export const renderSwapDeviceConfirmation = ({
   modelId: DeviceModelId;
   type: Theme["theme"];
   transaction: Transaction;
-  status: TransactionStatus;
   exchangeRate: ExchangeRate;
   exchange: Exchange;
   amountExpectedTo?: string;

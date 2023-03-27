@@ -1,5 +1,5 @@
 export * from "./helpers";
-export * from "@ledgerhq/coin-framework/account/addAccounts";
+export * from "./addAccounts";
 export * from "./support";
 export * from "./importAccounts";
 export * from "./serialization";

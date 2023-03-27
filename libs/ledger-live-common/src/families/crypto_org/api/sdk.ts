@@ -1,4 +1,4 @@
-import { utils } from "@crypto-com/chain-jslib";
+import { utils } from "@crypto-org-chain/chain-jslib";
 import {
   CryptoOrgAccountTransaction,
   CryptoOrgMsgSendContent,
@@ -196,23 +196,19 @@ export const getOperations = async (
     const memoTransaction = memo || "";
 
     for (let j = 0; j < msgs.length; j++) {
-      switch (msgs[j].type) {
-        case CryptoOrgAccountTransactionTypeEnum.MsgSend: {
-          const msgSend: CryptoOrgMsgSendContent = msgs[j].content;
-          rawTransactions.push(
-            convertSendTransactionToOperation(
-              accountId,
-              addr,
-              msgSend,
-              accountTransactions[i],
-              currencyId,
-              memoTransaction
-            )
-          );
-          break;
-        }
-
-        default:
+      const msgType: string = msgs[j].type;
+      if (msgType.includes(CryptoOrgAccountTransactionTypeEnum.MsgSend)) {
+        const msgSend: CryptoOrgMsgSendContent = msgs[j].content;
+        rawTransactions.push(
+          convertSendTransactionToOperation(
+            accountId,
+            addr,
+            msgSend,
+            accountTransactions[i],
+            currencyId,
+            memoTransaction
+          )
+        );
       }
     }
   }

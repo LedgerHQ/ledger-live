@@ -20,7 +20,7 @@ import Stepper from "~/renderer/components/Stepper";
 import StepWithdraw, { StepWithdrawFooter } from "./steps/StepWithdraw";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 
 import type { AccountBridge, Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
