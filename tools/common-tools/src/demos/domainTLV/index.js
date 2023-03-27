@@ -18,8 +18,8 @@ const App = () => {
       <button onClick={onSubmit}>Parse TLV</button>
 
       {parsedAPDU ?
-        parsedAPDU.map(({ T, L, V }) => (
-          <ul key={T}>
+        parsedAPDU.map(({ T, L, V }, i) => (
+          <ul key={i} data-key={i}>
             <li>T: {T}</li>
             <li>L: {L}</li>
             <li>V: {V}</li>

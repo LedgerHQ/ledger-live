@@ -38,17 +38,37 @@ export const tlvParser = (
   while (apduLeft.length > 0) {
     const type = apduLeft.substring(0, 2) as TLV_IDS;
     const TLV = TLVs[type] || {};
-    const length = apduLeft.substring(2, 4);
-    const lengthInCaracters = parseInt(length, 16) * 2;
-    const value = apduLeft.substring(4, 4 + lengthInCaracters);
 
-    parsedApdu.push({
-      T: TLV.typeName,
-      L: length,
-      V: TLV.parser?.(value) || null,
-    });
+    const lengthByte = apduLeft.substring(2, 4);
+    // documentation to explain DER integer encoding
+    // @see https://learn.microsoft.com/en-us/windows/win32/seccertenroll/about-integer
+    const isLengthDEREncodedInt = !!(parseInt(lengthByte, 16) >> 7); // check if the high bit of the 7 bits number a 1 ?
 
-    apduLeft = apduLeft.substring(4 + lengthInCaracters);
+    if (isLengthDEREncodedInt) {
+      const lengthByteLast6Bits = parseInt(lengthByte, 16) & 0x3f; // 0x3F === "111111" so this will return the last 6 bits of the DER encoded integer
+      const lengthSizeInBytes = parseInt(lengthByteLast6Bits.toString(16), 10); // length size in bytes as decimal
+      const offset = 4 + lengthSizeInBytes * 2; // we'll have to take the number of bytes for the size into account to not consider it as part of the Value of th TLV
+      const length = parseInt(apduLeft.substring(4, offset), 16); // the actual length of the Value
+      const lengthInChars = length * 2;
+      const value = apduLeft.substring(offset, offset + lengthInChars);
+
+      parsedApdu.push({
+        T: TLV.typeName,
+        L: length.toString(16),
+        V: TLV.parser?.(value) || null,
+      });
+      apduLeft = apduLeft.substring(offset + lengthInChars);
+    } else {
+      const lengthInChars = parseInt(lengthByte, 16) * 2;
+      const value = apduLeft.substring(4, 4 + lengthInChars);
+
+      parsedApdu.push({
+        T: TLV.typeName,
+        L: lengthByte,
+        V: TLV.parser?.(value) || null,
+      });
+      apduLeft = apduLeft.substring(4 + lengthInChars);
+    }
   }
 
   return parsedApdu;
