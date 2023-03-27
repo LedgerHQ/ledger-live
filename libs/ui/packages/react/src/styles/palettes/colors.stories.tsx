@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import Text from "../../components/asorted/Text";
 import Flex from "../../components/layout/Flex";
+import { hex } from "../helpers";
 import { palettes, ColorPalette } from "@ledgerhq/ui-shared";
 
 export default { title: "Particles" };
@@ -20,25 +21,26 @@ const ColorArea = styled.div<{ type: keyof ColorPalette; shade: string }>`
 
 type CardColorProps = { shade: string; type: string; value: string };
 const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
-  const [isHovered, setIsHovered] = useState(false);
+  const rgba = useMemo(() => hex(value), [value]);
 
   const onClick = (type: string, shade: string): void => {
     navigator.clipboard.writeText(`p.theme.colors.${type}.${shade}`);
   };
 
   return (
-    <Flex
-      flexDirection="column"
-      alignItems="center"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <Flex flexDirection="column" alignItems="center">
       <ColorArea
         type={type as keyof ColorPalette}
         shade={shade}
         onClick={() => onClick(type, shade)}
       />
-      <Text variant="tiny">{isHovered ? value : shade}</Text>
+      <Text variant="tiny">{shade}</Text>
+      <Text variant="tiny" color="neutral.c60">
+        {value}
+      </Text>
+      <Text variant="tiny" color="neutral.c60">
+        {rgba}
+      </Text>
     </Flex>
   );
 };

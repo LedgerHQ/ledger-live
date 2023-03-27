@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components/native";
 import Text from "../../../src/components/Text";
 import Flex from "../../../src/components/Layout/Flex";
 import ScrollContainer from "../../../src/components/Layout/ScrollContainer";
 import { storiesOf } from "../storiesOf";
 import { palettes, ColorPalette } from "@ledgerhq/ui-shared";
+import { hex } from "../../../src/styles/helpers";
 
 export default { title: "Particles" };
 
@@ -19,12 +20,20 @@ const ColorArea = styled(Flex)<{ type: keyof ColorPalette; shade: string }>`
   border-radius: 2px;
 `;
 
-type CardColorProps = { shade: string; type: string };
-const CardColor = ({ shade, type }: CardColorProps): JSX.Element => {
+type CardColorProps = { shade: string; type: string; value: string };
+const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
+  const rgba = useMemo(() => hex(value), [value]);
+
   return (
     <Flex m={3} flexDirection="column" alignItems="center">
       <ColorArea type={type as keyof ColorPalette} shade={shade} />
       <Text variant="tiny">{shade}</Text>
+      <Text variant="tiny" color="neutral.c60">
+        {value}
+      </Text>
+      <Text variant="tiny" color="neutral.c60">
+        {rgba}
+      </Text>
     </Flex>
   );
 };
@@ -40,8 +49,8 @@ export const Colors = (): JSX.Element => (
           {type}
         </Text>
         <Flex flexDirection="row" flexWrap="wrap">
-          {Object.entries(shades).map(([shade], j) => (
-            <CardColor key={shade + i + j} shade={shade} type={type} />
+          {Object.entries(shades).map(([shade, value], j) => (
+            <CardColor key={shade + i + j} shade={shade} type={type} value={value} />
           ))}
         </Flex>
       </Flex>
