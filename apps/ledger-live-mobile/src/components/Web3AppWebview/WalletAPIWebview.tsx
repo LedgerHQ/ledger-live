@@ -243,7 +243,15 @@ function renderLoading() {
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, onStateChange }, ref) => {
+  (
+    {
+      manifest,
+      inputs = {},
+      onStateChange,
+      allowsBackForwardNavigationGestures = true,
+    },
+    ref,
+  ) => {
     const { webviewProps, webviewState, webviewRef } = useWebviewState(
       {
         manifest: manifest as AppManifest,
@@ -271,7 +279,9 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         ref={webviewRef}
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}
-        allowsBackForwardNavigationGestures
+        allowsBackForwardNavigationGestures={
+          allowsBackForwardNavigationGestures
+        }
         showsVerticalScrollIndicator={false}
         renderLoading={renderLoading}
         originWhitelist={manifest.domains}

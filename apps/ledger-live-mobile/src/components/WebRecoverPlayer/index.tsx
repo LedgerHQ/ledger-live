@@ -40,15 +40,8 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
     >();
 
   const handleHardwareBackPress = useCallback(() => {
-    const webview = safeGetRefValue(webviewAPIRef);
-
-    if (webviewState.canGoBack) {
-      webview.goBack();
-      return true; // prevent default behavior (native navigation)
-    }
-
-    return false;
-  }, [webviewState.canGoBack, webviewAPIRef]);
+    return true; // prevent default behavior (native navigation)
+  }, []);
 
   // eslint-disable-next-line consistent-return
   useEffect(() => {
@@ -110,6 +103,7 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
         manifest={manifest}
         inputs={inputs}
         onStateChange={setWebviewState}
+        allowsBackForwardNavigationGestures={false}
       />
       <InfoPanel
         name={manifest.name}
