@@ -48,7 +48,6 @@ test("Discover", async ({ page }) => {
 
   await test.step("Navigate to dummy live app", async () => {
     await layout.goToDiscover();
-    await page.pause();
     await discoverPage.openTestApp();
     await drawer.continue();
     await drawer.waitForDrawerToDisappear(); // macos runner was having screenshot issues here because the drawer wasn't disappearing fast enough
