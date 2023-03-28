@@ -22,6 +22,7 @@ import {
 } from "@ledgerhq/live-common/wallet-api/react";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import BigNumber from "bignumber.js";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { NavigatorName, ScreenName } from "../../const";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { track } from "../../analytics/segment";
@@ -210,7 +211,7 @@ function useWebView(
   }, [webviewRef]);
 
   const { onMessage: onMessageRaw, onLoadError } = useWalletAPIServer({
-    manifest,
+    manifest: manifest as AppManifest,
     accounts,
     tracking,
     config,
@@ -245,7 +246,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
     const { webviewProps, webviewState, webviewRef } = useWebviewState(
       {
-        manifest,
+        manifest: manifest as AppManifest,
         inputs,
       },
       ref,
