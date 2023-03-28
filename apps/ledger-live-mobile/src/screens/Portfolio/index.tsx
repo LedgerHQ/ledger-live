@@ -86,7 +86,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       openProtectUpsell();
       dispatch(setHasBeenUpsoldProtect(true));
     }
-  }, [hasBeenUpsoldProtect, lastConnectedDevice, recoverUpsellURL, dispatch]);
+  }, [
+    hasBeenUpsoldProtect,
+    lastConnectedDevice,
+    recoverUpsellURL,
+    dispatch,
+    protectFeature?.enabled,
+  ]);
 
   const openAddModal = useCallback(() => {
     track("button_clicked", {
