@@ -1,5 +1,14 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.28.4-next.1
+
+### Patch Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`57c52a9fca`](https://github.com/LedgerHQ/ledger-live/commit/57c52a9fca18595e5fe6b0a81fc7b5967b2ca74c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: request for a specific MTU when trying to BLE connect
+
+  ConnectionOptions was commented as "not used" in react-native-ble-plx,
+  but it is actually used and needed when connecting to a device.
+
 ## 6.28.4-next.0
 
 ### Patch Changes
