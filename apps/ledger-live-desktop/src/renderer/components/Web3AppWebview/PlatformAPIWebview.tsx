@@ -392,10 +392,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         />
         {!widgetLoaded ? (
           <Loader>
-            <BigSpinner
-              //  data-test-id="live-app-loading-spinner"
-              size={50}
-            />
+            <BigSpinner size={50} />
           </Loader>
         ) : null}
       </>
