@@ -76,11 +76,11 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7.30.0
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 18.15.0
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ./tools/actions/composites/setup-build-desktop
@@ -117,7 +117,7 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7.30.0
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
@@ -150,11 +150,11 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7.30.0
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 18.15.0
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ./tools/actions/composites/setup-build-desktop
