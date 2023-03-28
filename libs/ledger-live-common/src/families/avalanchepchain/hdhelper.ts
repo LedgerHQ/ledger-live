@@ -172,10 +172,18 @@ class HDHelper {
     }
 
     const pkHex = key.publicKey.toString("hex");
-    const pkBuff = Buffer.from(pkHex, "hex");
+    // const pkBuff = Buffer.from(pkHex, "hex");
+
+    // const isBuffer = Buffer.isBuffer(pkBuff);
+    // const test = pkBuff.buffer;
+    // const isBufferTest = Buffer.isBuffer(test);
+
     const chainId = this.chainId;
 
-    const addrBuf = AVMKeyPair.addressFromPublicKey(pkBuff as any);
+    // console.log("pkBuff: ", pkBuff);
+    // console.log("type of pkBuff: ", typeof(pkBuff));
+
+    const addrBuf = AVMKeyPair.addressFromPublicKey(key.publicKey);
     const addr = binTools.addressToString(AVAX_HRP, chainId, addrBuf);
 
     this.addressCache[index] = addr;

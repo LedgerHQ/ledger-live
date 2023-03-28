@@ -110,7 +110,7 @@
   },
   "dependencies": {
     "@avalabs/avalanche-wallet-sdk": "^0.19.1",
-    "@avalabs/hw-app-avalanche": "^0.7.0",
+    "@avalabs/hw-app-avalanche": "^0.7.1",
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.1.0",
     "@celo/connect": "^3.0.1",
     "@celo/contractkit": "^3.0.1",
@@ -178,7 +178,7 @@
     "algo-msgpack-with-bigint": "^2.1.1",
     "algosdk": "1.13.0",
     "async": "^3.2.3",
-    "avalanche": "3.15.5",
+    "avalanche": "^3.16.0",
     "axios": "0.26.1",
     "axios-retry": "^3.2.4",
     "base32-decode": "^1.0.0",
