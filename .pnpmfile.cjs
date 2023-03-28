@@ -40,23 +40,6 @@ function readPackage(pkg, context) {
     };
   }
 
-  if (pkg.name === "@dfinity/utils") {
-    pkg.dependencies["@dfinity/agent"] = "^0.15.0";
-  }
-
-  if (pkg.name === "@dfinity/agent") {
-    pkg.dependencies["buffer"] = "^6.0.3";
-  }
-
-  if (pkg.name === "@dfinity/candid") {
-    pkg.dependencies["@dfinity/principal"] = "^0.15.0";
-  }
-
-  if (pkg.name === "@dfinity/nns") {
-    pkg.dependencies["@dfinity/principal"] = "^0.15.0";
-    pkg.dependencies["@dfinity/agent"] = "^0.15.0";
-  }
-
   process(
     [
       /*
