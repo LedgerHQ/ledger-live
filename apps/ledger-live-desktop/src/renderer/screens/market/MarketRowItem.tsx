@@ -2,8 +2,8 @@ import React, { useCallback, memo } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import styled, { useTheme } from "styled-components";
-import { Flex, Text, Icon, Box } from "@ledgerhq/react-ui";
+import styled, { CSSProperties, useTheme } from "styled-components";
+import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
@@ -44,7 +44,7 @@ const EllipsisText = styled(Text)`
 type Props = {
   currency: CurrencyData;
   counterCurrency: string;
-  style: any;
+  style: CSSProperties;
   loading: boolean;
   locale: string;
   isStarred: boolean;

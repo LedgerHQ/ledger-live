@@ -1,21 +1,55 @@
-import semver from "semver";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
-import React from "react";
-import { WebView as WebViewV2, WebPlatformPlayerConfig } from "./WebViewV2";
-import { WebView as WebViewV1 } from "./WebView";
+import React, { useRef, useState } from "react";
+import styled from "styled-components";
 
-interface Props {
-  manifest: LiveAppManifest;
-  inputs?: Record<string, any>;
+import { Web3AppWebview } from "../Web3AppWebview";
+import { TopBar, TopBarConfig } from "./TopBar";
+import Box from "../Box";
+import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
+import { initialWebviewState } from "../Web3AppWebview/helpers";
+
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+`;
+
+export const Wrapper = styled(Box).attrs(() => ({
+  flex: 1,
+}))`
+  position: relative;
+`;
+
+export type WebPlatformPlayerConfig = {
+  topBarConfig?: TopBarConfig;
+};
+
+type Props = {
   onClose?: () => void;
   config?: WebPlatformPlayerConfig;
-}
+} & WebviewProps;
 
-export default function WebView({ manifest, inputs, onClose, config }: Props) {
-  if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
-    return <WebViewV2 manifest={manifest} inputs={inputs} onClose={onClose} config={config} />;
-  }
+export default function WebPlatformPlayer({ manifest, inputs, onClose, config }: Props) {
+  const webviewAPIRef = useRef<WebviewAPI>(null);
+  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
-  return <WebViewV1 manifest={manifest} inputs={inputs} onClose={onClose} config={config} />;
+  return (
+    <Container>
+      <Wrapper>
+        <TopBar
+          manifest={manifest}
+          onClose={onClose}
+          webviewAPIRef={webviewAPIRef}
+          webviewState={webviewState}
+          config={config?.topBarConfig}
+        />
+        <Web3AppWebview
+          manifest={manifest}
+          inputs={inputs}
+          onStateChange={setWebviewState}
+          ref={webviewAPIRef}
+        />
+      </Wrapper>
+    </Container>
+  );
 }

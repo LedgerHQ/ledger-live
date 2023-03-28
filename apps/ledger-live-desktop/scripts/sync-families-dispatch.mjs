@@ -25,11 +25,14 @@ const targets = [
   "AccountHeaderManageActions.js",
   "StepReceiveFunds.jsx",
   "NoAssociatedAccounts.jsx",
+  "live-common-setup.ts",
+  "modals.ts",
+  "StakeBanner.tsx",
 ];
 
 async function genTarget(target) {
-  let imports = `// @flow`;
-  let exprts = `export default {`;
+  let imports = "";
+  let exprts = "export default {";
   const outpath = path.join(generatedPath, target);
   const [targetName, extension] = target.split(".");
 

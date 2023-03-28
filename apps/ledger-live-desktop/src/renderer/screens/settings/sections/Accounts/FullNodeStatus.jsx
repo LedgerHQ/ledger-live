@@ -11,6 +11,9 @@ import styled from "styled-components";
 import { colors } from "~/renderer/styles/theme";
 import useEnv from "~/renderer/hooks/useEnv";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
+
+// TODO move to bitcoin family
+// eslint-disable-next-line no-restricted-imports
 import type { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 
 const Dot: ThemedComponent<{

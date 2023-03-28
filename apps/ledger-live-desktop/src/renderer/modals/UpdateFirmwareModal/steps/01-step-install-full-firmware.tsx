@@ -37,7 +37,7 @@ const Title = styled(Box).attrs(() => ({
   mb: 3,
 }))``;
 
-const Identifier = styled(Box).attrs(p => ({
+const Identifier = styled(Box).attrs(() => ({
   bg: "palette.background.default",
   borderRadius: 1,
   color: "palette.text.shade100",
