@@ -3,12 +3,12 @@ import React, { useState, useCallback, Component, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
-import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
@@ -16,15 +16,6 @@ import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
-import BigNumber from "bignumber.js";
-
-import {
-  TransactionRaw,
-} from "@ledgerhq/live-common/families/ethereum/types";
-import {
-  EIP1559ShouldBeUsed,
-  fromTransactionRaw,
-} from "@ledgerhq/live-common/families/ethereum/transaction";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
@@ -56,6 +47,7 @@ import {
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 import { EditTransactionParamList } from "../../components/RootNavigator/types/EditTransactionNavigator";
+import { CurrentNetworkFee } from "../../families/ethereum/CurrentNetworkFee";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<
@@ -356,50 +348,6 @@ function SendSummary({ navigation, route }: Props) {
     </SafeAreaView>
   );
 }
-
-const CurrentNetworkFee = ({
-  account,
-  parentAccount,
-  operation,
-}: {
-  account: AccountLike;
-  parentAccount: Account | null | undefined;
-  operation: Operation;
-}) => {
-  const { t } = useTranslation();
-
-  if (operation && operation.transactionRaw) {
-    const transactionRaw = fromTransactionRaw(
-      operation.transactionRaw as TransactionRaw,
-    );
-    const mainAccount = getMainAccount(account, parentAccount);
-    const feePerGas = new BigNumber(
-      (account.type === "Account" && EIP1559ShouldBeUsed(account.currency)) ||
-      (account.type === "TokenAccount" &&
-        EIP1559ShouldBeUsed(account.token.parentCurrency))
-        ? transactionRaw.maxFeePerGas!
-        : transactionRaw.gasPrice!,
-    );
-
-    const feeValue = new BigNumber(
-      transactionRaw!.userGasLimit || transactionRaw!.estimatedGasLimit || 1,
-    )
-      .times(feePerGas)
-      .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
-
-    return feeValue.toNumber() > 0 ? (
-      <Alert type="hint">
-        <LText>
-          {t("editTransaction.previousFeesInfo", {
-            amount: feeValue.toNumber(),
-          })}
-        </LText>
-      </Alert>
-    ) : null;
-  }
-
-  return null;
-};
 
 const styles = StyleSheet.create({
   root: {
