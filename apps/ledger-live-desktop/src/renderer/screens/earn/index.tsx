@@ -6,6 +6,7 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
 
 const DEFAULT_EARN_APP_ID = "earn";
 
@@ -15,6 +16,8 @@ const Earn = () => {
   const remoteManifest = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
   const manifest = localManifest || remoteManifest;
   const themeType = useTheme("colors.palette.type");
+
+  useDeepLinkListener();
 
   return (
     // TODO: Remove @ts-ignore after Card component be compatible with TS

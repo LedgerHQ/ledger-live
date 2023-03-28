@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BoxedIcon, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
+import {
+  BoxedIcon,
+  Flex,
+  InfiniteLoader,
+  Text,
+  VerticalTimeline,
+} from "@ledgerhq/native-ui";
 import {
   CircledCheckSolidMedium,
   WarningSolidMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
@@ -416,6 +422,9 @@ const SoftwareChecksStep = ({ device, isDisplayed, onComplete }: Props) => {
           category={`Set up ${productName}: Step 4: Software & Hardware checked successfully`}
         />
       ) : null}
+      <VerticalTimeline.BodyText mb={6}>
+        {t("syncOnboarding.softwareChecksSteps.description")}
+      </VerticalTimeline.BodyText>
       <CheckCard
         title={genuineCheckStepTitle}
         status={genuineCheckUiStepStatus}

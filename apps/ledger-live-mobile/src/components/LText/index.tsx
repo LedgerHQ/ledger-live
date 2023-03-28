@@ -1,6 +1,6 @@
 import React, { useMemo, memo } from "react";
 import { Text } from "@ledgerhq/native-ui";
-import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
+import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import { FontWeightTypes } from "@ledgerhq/native-ui/components/Text/getTextStyle";
 import getFontStyle from "./getFontStyle";
 

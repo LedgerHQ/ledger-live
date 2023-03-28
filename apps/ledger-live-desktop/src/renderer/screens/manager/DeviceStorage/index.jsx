@@ -12,7 +12,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
-import { Flex } from "@ledgerhq/react-ui";
+import { Flex, Icons } from "@ledgerhq/react-ui";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import ByteSize from "~/renderer/components/ByteSize";
@@ -37,7 +37,6 @@ import blue from "~/renderer/images/devices/blue.png";
 import CustomImageManagerButton from "./CustomImageManagerButton";
 import DeviceLanguage from "./DeviceLanguage";
 import DeviceName from "./DeviceName";
-import { Icons } from "~/../../../libs/ui/packages/react/lib";
 
 const illustrations = {
   nanoS: {

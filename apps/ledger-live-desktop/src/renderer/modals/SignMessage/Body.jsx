@@ -7,7 +7,11 @@ import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepSign from "./steps/StepSign";
 import type { St, StepProps } from "./types";
 import Stepper from "~/renderer/components/Stepper";
+// TODO move the specific parts to each family!
+// eslint-disable-next-line no-restricted-imports
 import type { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
+// TODO move the specific parts to each family!
+// eslint-disable-next-line no-restricted-imports
 import type { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 
 type OwnProps = {|

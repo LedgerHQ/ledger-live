@@ -46,7 +46,7 @@ const RecoveryHowTo3Animation = () => {
 
 RecoveryHowTo3.Illustration = <RecoveryHowTo3Animation />;
 
-const Footer = (props: any) => {
+const Footer = (props: unknown) => {
   const { t } = useTranslation();
   return (
     <AsideFooter

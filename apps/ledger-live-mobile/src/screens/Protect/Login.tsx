@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
-import BaseInput from "@ledgerhq/native-ui/components/Form/Input/BaseInput";
+import BaseInput from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
 import { login } from "@ledgerhq/live-common/platform/providers/ProtectProvider/api/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 

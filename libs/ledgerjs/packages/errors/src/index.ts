@@ -245,10 +245,10 @@ export const DBNotReset = createCustomErrorClass("DBNotReset");
  * Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport
  */
 export enum HwTransportErrorType {
-  Unknown = 0,
-  BleLocationServicesDisabled = 1,
-  BleBluetoothUnauthorized = 2,
-  BleScanStartFailed = 3,
+  Unknown = "Unknown",
+  LocationServicesDisabled = "LocationServicesDisabled",
+  LocationServicesUnauthorized = "LocationServicesUnauthorized",
+  BluetoothScanStartFailed = "BluetoothScanStartFailed",
 }
 
 /**
@@ -331,6 +331,7 @@ export const StatusCodes = {
   TECHNICAL_PROBLEM: 0x6f00,
   UNKNOWN_APDU: 0x6d02,
   USER_REFUSED_ON_DEVICE: 0x5501,
+  NOT_ENOUGH_SPACE: 0x5102,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {

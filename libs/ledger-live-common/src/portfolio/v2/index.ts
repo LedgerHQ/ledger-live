@@ -6,12 +6,9 @@ import {
   getAccountHistoryBalances,
 } from "../../account";
 import { getEnv } from "../../env";
-import {
-  getPortfolioRangeConfig,
-  getDates,
-} from "@ledgerhq/coin-framework/rangeDates";
+import { getPortfolioRangeConfig, getDates } from "@ledgerhq/live-portfolio";
 
-export { getDates, getRanges } from "@ledgerhq/coin-framework/rangeDates";
+export { getDates, getRanges } from "@ledgerhq/live-portfolio";
 
 export const defaultAssetsDistribution = {
   minShowFirst: 1,

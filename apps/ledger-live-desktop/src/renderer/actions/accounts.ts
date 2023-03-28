@@ -39,17 +39,22 @@ export const fetchAccounts = () => async (dispatch: Dispatch) => {
   });
 };
 
+type UpdateAccountAction = {
+  type: string;
+  payload: { updater: (account: Account) => Account; accountId?: string };
+};
+
 export type UpdateAccountWithUpdater = (
   accountId: string,
   updater: (account: Account) => Account,
-) => any;
+) => UpdateAccountAction;
 
 export const updateAccountWithUpdater: UpdateAccountWithUpdater = (accountId, updater) => ({
   type: "DB:UPDATE_ACCOUNT",
   payload: { accountId, updater },
 });
 
-export type UpdateAccount = (account: Partial<Account>) => any;
+export type UpdateAccount = (account: Partial<Account>) => UpdateAccountAction;
 export const updateAccount: UpdateAccount = payload => ({
   type: "DB:UPDATE_ACCOUNT",
   payload: {
@@ -58,11 +63,7 @@ export const updateAccount: UpdateAccount = payload => ({
   },
 });
 
-type ToggleAction = {
-  type: string;
-  payload: { updater: (account: Account) => any; accountId?: string };
-};
-export const toggleStarAction = (id: string, parentId?: string): ToggleAction => {
+export const toggleStarAction = (id: string, parentId?: string): UpdateAccountAction => {
   return {
     type: "DB:UPDATE_ACCOUNT",
     payload: {

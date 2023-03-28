@@ -42,10 +42,12 @@ export function useDeepLinkHandler() {
   const walletConnectLiveApp = useFeature("walletConnectLiveApp");
 
   const navigate = useCallback(
-    (url: string, state?: any, search?: string) => {
-      if (url !== location.pathname) {
+    (pathname: string, state?: any, search?: string) => {
+      const hasNewPathname = pathname !== location.pathname;
+      const hasNewSearch = typeof search === "string" && search !== location.search;
+      if (hasNewPathname || hasNewSearch) {
         setTrackingSource("deeplink");
-        history.push({ pathname: url, state, search });
+        history.push({ pathname, state, search });
       }
     },
     [history, location],
@@ -53,7 +55,7 @@ export function useDeepLinkHandler() {
 
   const handler = useCallback(
     (event: any, deeplink: string) => {
-      const { pathname, searchParams } = new URL(deeplink);
+      const { pathname, searchParams, search } = new URL(deeplink);
       /**
        * TODO: handle duplicated query params
        * Today, it only keeps one (the last) key / value pair encountered in search params
@@ -91,6 +93,11 @@ export function useDeepLinkHandler() {
         case "buy":
           navigate("/exchange");
           break;
+
+        case "earn": {
+          navigate("/earn", undefined, search);
+          break;
+        }
 
         case "myledger": {
           const { installApp } = query;

@@ -18,7 +18,7 @@ import {
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "../../transaction/common";
+} from "@ledgerhq/coin-framework/transaction/common";
 import type { Account } from "@ledgerhq/types-live";
 import { findSubAccountById, getAccountUnit } from "../../account";
 import { formatCurrencyUnit, getTokenById } from "../../currencies";

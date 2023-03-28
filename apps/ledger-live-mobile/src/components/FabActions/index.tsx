@@ -10,7 +10,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Box } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { Linking, TouchableOpacityProps } from "react-native";
-import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
+import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { StackNavigationProp } from "@react-navigation/stack";
 import InfoModal from "../InfoModal";

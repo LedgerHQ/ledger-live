@@ -55,8 +55,8 @@ export type State = {
   recentlyInstalledApps: string[];
   installQueue: string[];
   uninstallQueue: string[];
-  // queue saved at the time of a "updateAll" action
-  updateAllQueue: string[];
+  skippedAppOps: SkippedAppOp[]; // Nb If an AppOp couldn't be completed, track why.
+  updateAllQueue: string[]; // queue saved at the time of a "updateAll" action
   currentAppOp: AppOp | null | undefined;
   currentProgressSubject: Subject<number> | null | undefined;
   currentError:
@@ -76,6 +76,18 @@ export type AppOp =
       type: "uninstall";
       name: string;
     };
+
+export enum SkipReason {
+  NoSuchAppOnProvider,
+  AppAlreadyInstalled,
+  NotEnoughSpace,
+}
+
+export type SkippedAppOp = {
+  reason: SkipReason;
+  appOp: AppOp;
+};
+
 export type Action =  // recover from an error
   | {
       type: "recover";
@@ -91,6 +103,7 @@ export type Action =  // recover from an error
   | {
       type: "install";
       name: string;
+      allowPartialDependencies?: boolean;
     } // update all
   | {
       type: "updateAll";

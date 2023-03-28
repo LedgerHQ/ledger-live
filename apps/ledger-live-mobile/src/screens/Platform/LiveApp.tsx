@@ -15,15 +15,12 @@ import { useLocale } from "../../context/Locale";
 import { ScreenName } from "../../const";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ExchangeNavigatorParamList } from "../../components/RootNavigator/types/ExchangeNavigator";
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
-export type Props =
-  | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PlatformApp>
-  | StackNavigatorProps<
-      ExchangeNavigatorParamList,
-      ScreenName.ExchangeBuy | ScreenName.ExchangeSell
-    >;
+export type Props = StackNavigatorProps<
+  BaseNavigatorStackParamList,
+  ScreenName.PlatformApp
+>;
 
 export function LiveApp({ route }: Props) {
   const { theme } = useTheme();

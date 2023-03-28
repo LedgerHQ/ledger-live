@@ -2,6 +2,7 @@ import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { sync, scanAccounts } from "../js-synchronisation";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import {
   createTransaction,
   updateTransaction,
@@ -27,6 +28,8 @@ const accountBridge: AccountBridge<Transaction> = {
   receive,
   signOperation,
   broadcast,
+  assignFromAccountRaw,
+  assignToAccountRaw,
 };
 export default {
   currencyBridge,
