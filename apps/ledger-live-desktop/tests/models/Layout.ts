@@ -8,6 +8,7 @@ export class Layout {
   readonly loadingLogo: Locator;
   readonly logo: Locator;
   readonly loadingSpinner: Locator;
+  readonly bigLoadingSpinner: Locator;
   readonly inputError: Locator;
   readonly inputWarning: Locator;
   readonly drawerCollapseButton: Locator;
@@ -71,6 +72,7 @@ export class Layout {
     this.inputError = page.locator("id=input-error"); // no data-test-id because css style is applied
     this.inputWarning = page.locator("id=input-warning"); // no data-test-id because css style is applied
     this.loadingSpinner = page.locator("data-test-id=loading-spinner");
+    this.bigLoadingSpinner = page.locator("data-test-id=-big-loading-spinner");
 
     // updater
     this.appUpdateBanner = page.locator("data-test-id=layout-app-update-banner");
@@ -132,6 +134,11 @@ export class Layout {
   async waitForLoadingSpinner() {
     await this.loadingSpinner.waitFor({ state: "visible" });
     await this.loadingSpinner.waitFor({ state: "detached" });
+  }
+
+  async waitForBigLoadingSpinner() {
+    await this.bigLoadingSpinner.waitFor({ state: "visible" });
+    await this.bigLoadingSpinner.waitFor({ state: "detached" });
   }
 
   async waitForLoadingSpinnerToHaveDisappeared() {

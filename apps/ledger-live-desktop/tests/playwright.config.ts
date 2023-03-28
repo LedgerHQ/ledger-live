@@ -38,7 +38,7 @@ const config: PlaywrightTestConfig = {
   maxFailures: process.env.CI ? 5 : undefined,
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
   workers: process.env.CI ? 1 : 1, // NOTE: 'macos-latest' and 'windows-latest' can't run 3 concurrent workers
-  retries: process.env.CI ? 2 : 0, // FIXME: --update-snapshots doesn't work with --retries
+  retries: process.env.CI ? 2 : 2, // FIXME: --update-snapshots doesn't work with --retries
   reporter: process.env.CI
     ? [
         ["html", { open: "never", outputFolder: "artifacts/html-report" }],

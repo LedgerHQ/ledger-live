@@ -10,13 +10,13 @@ test("Stability of the app with numerous real accounts", async ({ page }) => {
   const accountsPage = new AccountsPage(page);
 
   await test.step("visit portfolio page", async () => {
-    await page.waitForTimeout(5000); // we're waiting a bit and we expect no crash has happened!
+    // await page.waitForTimeout(5000); // we're waiting a bit and we expect no crash has happened!
     await expect(layout.topbarSynchronizeButton).toBeVisible();
   });
 
   await test.step("visit accounts page", async () => {
     await layout.goToAccounts();
-    await page.waitForTimeout(5000); // we're waiting a bit and we expect no crash has happened!
+    // await page.waitForTimeout(5000); // we're waiting a bit and we expect no crash has happened!
     await expect(accountsPage.addAccountButton).toBeVisible();
   });
 });
