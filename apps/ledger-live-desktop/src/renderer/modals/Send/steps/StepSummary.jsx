@@ -128,8 +128,19 @@ export default class StepSummary extends PureComponent<StepProps> {
                 <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
                   <Trans i18nKey="send.steps.details.to" />
                 </Text>
+                {transaction.recipientDomain && (
+                  <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={4}>
+                    {transaction.recipientDomain.domain}
+                  </Text>
+                )}
                 <Ellipsis>
-                  <Text ff="Inter" color="palette.text.shade100" fontSize={4}>
+                  <Text
+                    ff="Inter"
+                    color={
+                      transaction.recipientDomain ? "palette.text.shade70" : "palette.text.shade100"
+                    }
+                    fontSize={4}
+                  >
                     {transaction.recipient}
                   </Text>
                 </Ellipsis>

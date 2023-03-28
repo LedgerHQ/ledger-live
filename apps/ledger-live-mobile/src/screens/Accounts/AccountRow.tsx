@@ -9,7 +9,7 @@ import { TokenAccount, AccountLike, ChildAccount } from "@ledgerhq/types-live";
 import {
   DerivationMode,
   getTagDerivationMode,
-} from "@ledgerhq/live-common/derivation";
+} from "@ledgerhq/coin-framework/derivation";
 import { useSelector } from "react-redux";
 import { GestureResponderEvent } from "react-native";
 import { useStartProfiler } from "@shopify/react-native-performance";
@@ -118,6 +118,8 @@ const AccountRow = ({
       navigation,
       navigationParams,
       parentId,
+      sourceScreenName,
+      startNavigationTTITimer,
     ],
   );
 

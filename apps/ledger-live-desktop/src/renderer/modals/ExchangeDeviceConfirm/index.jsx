@@ -12,7 +12,7 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import Modal from "~/renderer/components/Modal";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import Box from "~/renderer/components/Box";
-import { command } from "~/renderer/commands";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { useSelector } from "react-redux";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Text from "~/renderer/components/Text";
@@ -37,9 +37,7 @@ export const Separator: ThemedComponent<{}> = styled.div`
   }
 `;
 
-const connectAppExec = command("connectApp");
-
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectAppExec);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
 const Receive1ShareAddress = ({ name, address }: { name: string, address: string }) => {
   return (

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { Box, Text, Flex, Icon, Switch } from "@ledgerhq/react-ui";
+import { Box, Text, TextProps, Flex, Icon, Switch } from "@ledgerhq/react-ui";
 import { SwitchProps } from "@ledgerhq/react-ui/components/form/Switch/Switch";
 
 export const WaveContainer = styled(Box).attrs({
@@ -28,8 +28,9 @@ export const IllustrationContainer = styled(Flex)<{ src: string }>`
   background-size: contain;
 `;
 
-export const Title = (props: any) => <Text variant="h2" mb={12} {...props} />;
-export const SubTitle = (props: any) => (
+export const Title = (props: TextProps) => <Text variant="h2" mb={12} {...props} />;
+
+export const SubTitle = (props: TextProps) => (
   <Text variant="body" mb={2} color="palette.neutral.c80" {...props} />
 );
 

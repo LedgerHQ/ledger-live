@@ -42,19 +42,19 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum Classic | [🙏](https://blockscout.com/etc/mainnet/address/0x932E8214E25AceC996aD7d195339AF5139625065/transactions) | [🙏](https://blockscout.com/etc/mainnet/address/0x932E8214E25AceC996aD7d195339AF5139625065/transactions) |
 | Ethereum Goerli | [🙏](https://goerli.etherscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | [🙏](https://goerli.etherscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
 | Cronos | [🙏](https://cronoscan.com/address/0x932E8214E25AceC996aD7d195339AF5139625065) | [🙏](https://cronoscan.com/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
-| Fantom | [🙏](https://ftmscan.com/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ❌ |
-| Moonbeam | [🙏](https://moonbeam.moonscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ⚠️ |
-| Songbird | ❌ | [🙏](https://songbird-explorer.flare.network/address/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f/transactions) |
-| Flare | ⚠️ | ❌ |
-| Filecoin | [🙏](https://filfox.info/en/address/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) | [🙏](https://filfox.info/en/address/rnmiQggEzwTHNqwJFpqYGgqt1rM7K5qPhw) |
-| Hedera | ❌ | [🙏](https://v2.explorer.kabuto.sh/id/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) |
-| NEAR | [🙏](https://explorer.near.org/accounts/rnmiQggEzwTHNqwJFpqYGgqt1rM7K5qPhw) | ❌ |
-| XRP | [🙏](https://bithomp.com/explorer/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) | ✅ |
-| Solana | ❌ | ✅ |
-| Stellar | ⚠️ | ? |
-| Tezos | ✅ | ? |
-| Tron | [🙏](https://tronscan.org/#/address/SU26L3FCVKVC6BDCOGDDV6QYDS72MB7DCYSF6RVUV6CW45FQI7PC7HKXCQ) | ? |
-| Polkadot | [🙏](https://polkadot.subscan.io/account/bc1q4wwuhvp882637t80khxxph6mx5wyfzy7t0j82m) | ? |
+| Fantom | [🙏](https://ftmscan.com/address/0x932E8214E25AceC996aD7d195339AF5139625065) | [🙏](https://ftmscan.com/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
+| Moonbeam | [🙏](https://moonbeam.moonscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | [🙏](https://moonbeam.moonscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) |
+| Songbird | [🙏](https://songbird-explorer.flare.network/address/0x932E8214E25AceC996aD7d195339AF5139625065/transactions) | ❌ |
+| Flare | ❌ | ⚠️ |
+| Filecoin | ⚠️ | [🙏](https://filfox.info/en/address/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) |
+| Hedera | [🙏](https://hashscan.io/mainnet/account/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) | ❌ |
+| NEAR | ❌ | [🙏](https://explorer.near.org/accounts/rnmiQggEzwTHNqwJFpqYGgqt1rM7K5qPhw) |
+| XRP | [🙏](https://bithomp.com/explorer/rnmiQggEzwTHNqwJFpqYGgqt1rM7K5qPhw) | [🙏](https://bithomp.com/explorer/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) |
+| Solana | [🙏](https://explorer.solana.com/address/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) | ❌ |
+| Stellar | ❌ | ⚠️ |
+| Tezos | ✅ | ✅ |
+| Tron | ✅ | ? |
+| Polkadot | [🙏](https://polkadot.subscan.io/account/SU26L3FCVKVC6BDCOGDDV6QYDS72MB7DCYSF6RVUV6CW45FQI7PC7HKXCQ) | ? |
 
 </details>
 

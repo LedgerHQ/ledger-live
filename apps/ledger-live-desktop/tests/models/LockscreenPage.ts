@@ -9,10 +9,10 @@ export class LockscreenPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.container = page.locator('data-test-id=lockscreen-container');
-    this.passwordInput = page.locator('data-test-id=lockscreen-password-input');
-    this.forgottenButton = page.locator('data-test-id=lockscreen-forgotten-button');
-    this.loginButton = page.locator('data-test-id=lockscreen-login-button');
+    this.container = page.locator("data-test-id=lockscreen-container");
+    this.passwordInput = page.locator("data-test-id=lockscreen-password-input");
+    this.forgottenButton = page.locator("data-test-id=lockscreen-forgotten-button");
+    this.loginButton = page.locator("data-test-id=lockscreen-login-button");
   }
 
   async login(password: string) {

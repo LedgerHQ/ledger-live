@@ -48,7 +48,7 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
       page: "Page Account",
       button: "delegate",
       redelegate,
-      token: "NEAR",
+      currency: "NEAR",
     });
     if (redelegate) {
       dispatch(

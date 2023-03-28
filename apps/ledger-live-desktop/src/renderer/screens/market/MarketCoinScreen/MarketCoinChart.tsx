@@ -1,5 +1,6 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { Flex, Text, Bar } from "@ledgerhq/react-ui";
+import { TFunction } from "react-i18next";
 import { SwitchTransition, Transition } from "react-transition-group";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
@@ -46,7 +47,7 @@ function Tooltip({
   counterCurrency,
   locale,
 }: {
-  data: any;
+  data: { date: Date; value: number };
   counterCurrency: string;
   locale: string;
 }) {
@@ -74,10 +75,10 @@ type Props = {
   price: number;
   priceChangePercentage: number;
   chartData: Record<string, [number, number][]>;
-  chartRequestParams: any;
-  refreshChart: (params: any) => void;
+  chartRequestParams: { range: string; counterCurrency: string };
+  refreshChart: (params: { range: string }) => void;
   color?: string;
-  t: any;
+  t: TFunction;
   locale: string;
   loading: boolean;
   setCounterCurrency: (currency: string) => void;
@@ -123,7 +124,7 @@ function MarkeCoinChartComponent({
   const suggestedMax = Math.max(...valueArray);
 
   const renderTooltip = useCallback(
-    (data: any) =>
+    (data: { value: number; date: Date }) =>
       !loading && (
         <Tooltip data={data} counterCurrency={counterCurrency.toUpperCase()} locale={locale} />
       ),

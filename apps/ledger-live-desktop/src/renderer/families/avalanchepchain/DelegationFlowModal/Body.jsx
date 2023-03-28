@@ -13,7 +13,6 @@ import { connect, useDispatch } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import { FIGMENT_AVALANCHE_VALIDATOR_NODES } from "@ledgerhq/live-common/families/avalanchepchain/utils";
-import logger from "~/logger/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
@@ -25,6 +24,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
 import StepEndDate, { StepEndDateFooter } from "./steps/StepEndDate";
 import type { St, StepProps } from "./types";
+import logger from "~/renderer/logger";
 
 type OwnProps = {|
   stepId: StepId,

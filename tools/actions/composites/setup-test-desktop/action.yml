@@ -26,7 +26,7 @@ runs:
         dest: ${{ runner.temp }}/setup-pnpm
     - uses: actions/setup-node@v3
       with:
-        node-version: 16
+        node-version: 18
         cache: pnpm
         cache-dependency-path: "**/pnpm-lock.yaml"
     - uses: actions/setup-python@v4
@@ -47,7 +47,7 @@ runs:
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}
-      run: npx playwright@1.27.1 install --with-deps chromium
+      run: npx playwright@1.31.2 install --with-deps chromium
       shell: bash
     - name: TurboRepo local caching server
       id: turborepo-cache-server

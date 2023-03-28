@@ -55,7 +55,6 @@ export type OnboardingNavigatorParamList = {
         deviceModelId?: DeviceModelId;
       }
     | undefined;
-  [ScreenName.OnboardingFinish]: undefined;
   [NavigatorName.PasswordAddFlow]: undefined;
   [ScreenName.OnboardingQuiz]: {
     deviceModelId: DeviceModelId;

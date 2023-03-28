@@ -337,9 +337,10 @@ export function useSignedTxHandler({
           { ...route.params, result: operation },
         );
         dispatch(
-          updateAccountWithUpdater(mainAccount.id, account =>
-            addPendingOperation(account, operation),
-          ),
+          updateAccountWithUpdater({
+            accountId: mainAccount.id,
+            updater: account => addPendingOperation(account, operation),
+          }),
         );
       } catch (error) {
         if (

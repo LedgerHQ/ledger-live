@@ -303,6 +303,9 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-analytics'
 
+    // Needed to enable location services in a native module
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }

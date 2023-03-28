@@ -13,7 +13,7 @@ import {
   groupAccountsOperationsByDay,
   flattenAccounts,
 } from "@ledgerhq/live-common/account/index";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import { openModal } from "~/renderer/actions/modals";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import Box from "~/renderer/components/Box";

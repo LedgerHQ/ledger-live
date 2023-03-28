@@ -5,7 +5,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "module": "commonjs",
+    "module": "es2020",
     "jsx": "react",
     "lib": ["es6", "dom"],
     "moduleResolution": "node",

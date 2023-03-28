@@ -4,7 +4,7 @@ import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Discover from "../../screens/Discover";
-import PlatformCatalog from "../../screens/Platform";
+import { Catalog } from "../../screens/Platform";
 import { DiscoverNavigatorStackParamList } from "./types/DiscoverNavigator";
 
 export default function DiscoverNavigator() {
@@ -25,7 +25,7 @@ export default function DiscoverNavigator() {
       />
       <Stack.Screen
         name={ScreenName.PlatformCatalog}
-        component={PlatformCatalog}
+        component={Catalog}
         options={{
           headerShown: false,
         }}

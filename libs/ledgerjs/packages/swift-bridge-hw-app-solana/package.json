@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/swift-bridge-hw-app-solana",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Package to facilitate bundling hw-app-solana in the SolanaWrapper Swift package",
   "keywords": [
     "Ledger",
@@ -28,8 +28,8 @@
   "types": "lib/Wrapper.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/swift-bridge-hw-transport-ble": "workspace:^",
-    "@ledgerhq/hw-app-solana": "workspace:^"
+    "@ledgerhq/hw-app-solana": "workspace:^",
+    "@ledgerhq/swift-bridge-hw-transport-ble": "workspace:^"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -40,5 +40,16 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest"
   },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.3",
+    "documentation": "13.2.4",
+    "jest": "^28.1.1",
+    "rimraf": "^4.1.2",
+    "source-map-support": "^0.5.21",
+    "ts-jest": "^28.0.5",
+    "ts-node": "^10.4.0",
+    "typescript": "^4"
+  }
 }

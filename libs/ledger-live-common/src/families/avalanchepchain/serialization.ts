@@ -1,10 +1,13 @@
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type {
   AvalanchePChainResourcesRaw,
   AvalanchePChainResources,
+  AvalanchePChainAccount,
+  AvalanchePChainAccountRaw,
 } from "./types";
 
-export function toAvalanchePChainResourcesRaw(
+function toResourcesRaw(
   r: AvalanchePChainResources
 ): AvalanchePChainResourcesRaw {
   const { publicKey, chainCode, stakedBalance, delegations } = r;
@@ -23,7 +26,7 @@ export function toAvalanchePChainResourcesRaw(
   };
 }
 
-export function fromAvalanchePChainResourcesRaw(
+function fromResourcesRaw(
   r: AvalanchePChainResourcesRaw
 ): AvalanchePChainResources {
   const { publicKey, chainCode, stakedBalance, delegations } = r;
@@ -40,4 +43,30 @@ export function fromAvalanchePChainResourcesRaw(
       nodeID: delegation.nodeID,
     })),
   };
+}
+
+
+export function assignToAccountRaw(
+  account: Account,
+  accountRaw: AccountRaw
+): void {
+  const avalanchePChainAccount = account as AvalanchePChainAccount;
+  const avalanchePChainAccountRaw = accountRaw as AvalanchePChainAccountRaw;
+  if (avalanchePChainAccount.avalanchePChainResources) {
+    avalanchePChainAccountRaw.avalanchePChainResources = toResourcesRaw(
+      avalanchePChainAccount.avalanchePChainResources
+    );
+  }
+}
+
+export function assignFromAccountRaw(
+  accountRaw: AccountRaw,
+  account: Account
+): void {
+  const avalanchePChainResourcesRaw = (accountRaw as AvalanchePChainAccountRaw)
+    .avalanchePChainResources;
+  const avalanchePChainAccount = account as AvalanchePChainAccount;
+  if (avalanchePChainResourcesRaw) {
+    avalanchePChainAccount.avalanchePChainResources = fromResourcesRaw(avalanchePChainResourcesRaw);
+  }
 }

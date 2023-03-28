@@ -12,6 +12,7 @@ import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
 import { preload, hydrate } from "../js-preload-data";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
+import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 
 const receive = makeAccountBridgeReceive();
 
@@ -29,6 +30,8 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   sync,
   receive,
+  assignToAccountRaw,
+  assignFromAccountRaw,
   signOperation,
   broadcast,
 };

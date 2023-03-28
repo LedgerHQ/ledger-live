@@ -37,6 +37,7 @@ import "./Tag/Badge.stories";
 import "./Tag/Tag.stories";
 import "./message/Alert/Alert.stories";
 import "./message/Log/Log.stories";
+import "./message/ContinueOnDevice/ContinueOnDevice.stories";
 import "./Particles/Spacing.stories";
 import "./Particles/Colors.stories";
 import "./Form/Checkbox.stories";

@@ -9,7 +9,7 @@ export class TermsModal {
     this.termsModal = page.locator('[data-test-id="terms-update-popup"]');
   }
 
-  async isVisible() {
+  async waitToBeVisible() {
     await this.termsModal.waitFor({ state: "visible" });
   }
 }

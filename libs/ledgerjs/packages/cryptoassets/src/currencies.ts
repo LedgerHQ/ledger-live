@@ -1334,8 +1334,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://v2.explorer.kabuto.sh/transaction/$hash",
-        address: "https://v2.explorer.kabuto.sh/id/$address",
+        tx: "https://hashscan.io/mainnet/transaction/$hash",
+        address: "https://hashscan.io/mainnet/account/$address",
       },
     ],
   },
@@ -3495,7 +3495,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       baseChain: "mainnet",
       chainId: 19,
       networkId: 19,
-      rpc: "https://songbird.towolabs.com/rpc",
+      rpc: "https://songbird-api.flare.network/ext/C/rpc",
       explorer: {
         uri: "https://songbird-explorer.flare.network",
         type: "blockscout",

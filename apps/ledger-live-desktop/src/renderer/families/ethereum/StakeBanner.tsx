@@ -32,7 +32,7 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
       page: "Page Account",
       button: "delegate",
       provider: stakeProvider,
-      token: "ETH",
+      currency: "ETH",
     });
     history.push({
       pathname: `/platform/${providerLiveAppId}`,

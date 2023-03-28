@@ -16,10 +16,7 @@ import { getSentryEnabled, setUserId } from "./internal-lifecycle";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
-import logger from "~/logger";
 import sentry from "~/sentry/main";
-
-app.allowRendererProcessReuse = false;
 
 const gotLock = app.requestSingleInstanceLock();
 const userDataDirectory = resolveUserDataDirectory();
@@ -101,14 +98,7 @@ app.on("ready", async () => {
   ipcMain.handle("clearStorageData", () => {
     const defaultSession = session.defaultSession;
 
-    defaultSession.clearStorageData().then(
-      () => {
-        logger.log("session storageData cleared");
-      },
-      error => {
-        logger.error(error);
-      },
-    );
+    return defaultSession.clearStorageData();
   });
 
   ipcMain.handle("getKey", (event, { ns, keyPath, defaultValue }) => {
@@ -155,8 +145,6 @@ app.on("ready", async () => {
     console.log("reloading renderer ...");
     loadWindow();
   });
-
-  ipcMain.on("log", (event, { log }) => logger.log(log));
 
   // To handle opening new windows from webview
   // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb

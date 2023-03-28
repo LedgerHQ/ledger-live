@@ -114,7 +114,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (10938)
+## Tokens (10973)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin | countervalues disabled | algorand/asa/163650 |
@@ -212,6 +212,7 @@
 | Binance Smart Chain | BBADGER | 0x1F7216fdB338247512Ec99715587bb97BBf96eae | Badger Sett Badger |  | bsc/bep20/badger_sett_badger |
 | Binance Smart Chain | BDIGG | 0x5986D5c77c65e5801a5cAa4fAE80089f870A71dA | Badger Sett Digg |  | bsc/bep20/badger_sett_digg |
 | Binance Smart Chain | BAKE | 0xE02dF9e3e622DeBdD69fb838bB799E3F168902c5 | BakeryToken | countervalues disabled | bsc/bep20/bakerytoken |
+| Binance Smart Chain | BALTO | 0xe5977835A013e3A5a52f44f8422734bd2dc545F0 | Balto Token |  | bsc/bep20/balto_token |
 | Binance Smart Chain | BTD | 0xD1102332a213E21faF78B69C03572031F3552c33 | Bat True Dollar | countervalues disabled | bsc/bep20/bat_true_dollar |
 | Binance Smart Chain | BTS | 0xc2e1acef50aE55661855E8dcB72adB182A3cC259 | Bat True Share | countervalues disabled | bsc/bep20/bat_true_share |
 | Binance Smart Chain | IBAT | 0x19cd9B8e42d4EF62c3EA124110D5Cfd283CEaC43 | BattleInfinity |  | bsc/bep20/battleinfinity |
@@ -277,7 +278,8 @@
 | Binance Smart Chain | YFII | 0x7F70642d88cf1C4a3a7abb072B53B929b653edA5 | Binance-Peg YFII.finance Token | countervalues disabled | bsc/bep20/binance-peg_yfii.finance_token |
 | Binance Smart Chain | ZEC | 0x1Ba42e5193dfA8B03D15dd1B86a3113bbBEF8Eeb | Binance-Peg Zcash Token | countervalues disabled | bsc/bep20/binance-peg_zcash_token |
 | Binance Smart Chain | YFI | 0x88f1A5ae2A3BF98AEAF342D26B30a79438c9142e | Binance-Peg yearn.finance | countervalues disabled | bsc/bep20/binance-peg_yearn.finance |
-| Binance Smart Chain | BNX | 0x8C851d1a123Ff703BD1f9dabe631b69902Df5f97 | BinaryX |  | bsc/bep20/binaryx |
+| Binance Smart Chain | BNX | 0x5b1f874d0b0C5ee17a495CbB70AB8bf64107A3BD | BinaryX |  | bsc/bep20/binaryx |
+| Binance Smart Chain | BNX_ | 0x8C851d1a123Ff703BD1f9dabe631b69902Df5f97 | BinaryX (old) | delisted, countervalues disabled | bsc/bep20/binaryx_ |
 | Binance Smart Chain | BIN | 0xe56842Ed550Ff2794F010738554db45E60730371 | Binemon |  | bsc/bep20/binemon |
 | Binance Smart Chain | BSW | 0x965F527D9159dCe6288a2219DB51fc6Eef120dD1 | Biswap |  | bsc/bep20/biswap |
 | Binance Smart Chain | BTBS | 0x6feFd97F328342a8A840546A55FDcfEe7542F9A8 | BitBase |  | bsc/bep20/bitbase |
@@ -432,6 +434,7 @@
 | Binance Smart Chain | FEG | 0xacFC95585D80Ab62f67A14C566C1b7a49Fe91167 | FEGtoken |  | bsc/bep20/fegtoken |
 | Binance Smart Chain | FLOKI | 0xfb5B838b6cfEEdC2873aB27866079AC55363D37E | FLOKI |  | bsc/bep20/floki |
 | Binance Smart Chain | FLOKI_ | 0x2B3F34e9D4b127797CE6244Ea341a83733ddd6E4 | FLOKI | delisted, countervalues disabled | bsc/bep20/floki_ |
+| Binance Smart Chain | FLOKICEO | 0x45289007706E7Ee7B42b1fA506661d97740Edfb4 | FLOKI CEO |  | bsc/bep20/floki_ceo |
 | Binance Smart Chain | FREE | 0x12e34cDf6A031a10FE241864c32fB03a4FDaD739 | FREE coin BSC | countervalues disabled | bsc/bep20/free_coin_bsc |
 | Binance Smart Chain | FRMX | 0x8523518001ad5d24b2A04e8729743C0643A316c0 | FRMx Token |  | bsc/bep20/frmx_token |
 | Binance Smart Chain | FTM | 0xAD29AbB318791D579433D831ed122aFeAf29dcfe | Fantom |  | bsc/bep20/fantom |
@@ -464,6 +467,7 @@
 | Binance Smart Chain | GFCE | 0x94BaBBE728D9411612Ee41b20241a6FA251b26Ce | GFORCE | countervalues disabled | bsc/bep20/gforce |
 | Binance Smart Chain | GGTKN | 0x1F7e8fe01AEbA6fDAEA85161746f4D53DC9bdA4F | GG TOKEN |  | bsc/bep20/gg_token |
 | Binance Smart Chain | GMT | 0x7Ddc52c4De30e94Be3A6A0A2b259b2850f421989 | GMT Token |  | bsc/bep20/gomining_token |
+| Binance Smart Chain | GQ | 0xF700D4c708C2be1463E355F337603183D20E0808 | Galactic Quadrant |  | bsc/bep20/galactic_quadrant |
 | Binance Smart Chain | GHC | 0x683fae4411249Ca05243dfb919c20920f3f5bfE0 | Galaxy Heroes Coin | delisted, countervalues disabled | bsc/bep20/galaxy_heroes_coin |
 | Binance Smart Chain | GALEON | 0x1d0Ac23F03870f768ca005c84cBb6FB82aa884fD | Galeon |  | bsc/bep20/galeon |
 | Binance Smart Chain | GAFI | 0x89Af13A10b32F1b2f8d1588f93027F69B6F4E27e | GameFi |  | bsc/bep20/gamefi |
@@ -471,6 +475,7 @@
 | Binance Smart Chain | GFX | 0xE4fA3C576c31696322e8d7165C5965d5a1F6A1A5 | GamyFi | countervalues disabled | bsc/bep20/gamyfi |
 | Binance Smart Chain | GLINK | 0x0eE7292BD28F4A490F849Fb30C28CAbAB9440f9E | Gemlink |  | bsc/bep20/gemlink |
 | Binance Smart Chain | GENA | 0x7f4959528D4C9c7379b3437C7Eea40376fD96B8a | Genta | countervalues disabled | bsc/bep20/genta |
+| Binance Smart Chain | GFT | 0x72fF5742319eF07061836F5C924aC6D72c919080 | Gifto |  | bsc/bep20/gifto |
 | Binance Smart Chain | GLCH | 0xF0902eB0049A4003793BAb33F3566A22D2834442 | Glitch |  | bsc/bep20/glitch |
 | Binance Smart Chain | GNOX | 0x132f6f1743e45880aF91D25257e02DB1839bb5Ed | Gnox |  | bsc/bep20/gnox |
 | Binance Smart Chain | GOFI | 0x6B8227A0E18bd35A10849601dB194B24aAB2C8ea | GoSwapp | countervalues disabled | bsc/bep20/goswapp |
@@ -550,6 +555,7 @@
 | Binance Smart Chain | KUNCI | 0x6cf271270662be1C4fc1b7BB7D7D7Fc60Cc19125 | Kunci Coin |  | bsc/bep20/kunci_coin |
 | Binance Smart Chain | KSM | 0x2aa69E8D25C045B659787BC1f03ce47a388DB6E8 | Kusama |  | bsc/bep20/kusama |
 | Binance Smart Chain | KYOTO | 0x69104fb28f4BB9f6efc899bd1d94f386CDF1b9dA | Kyotoprotocol |  | bsc/bep20/kyotoprotocol |
+| Binance Smart Chain | LOIS | 0xad09104083d182D067CAe2a123C6F1b052D2eA42 | LOIS |  | bsc/bep20/lois |
 | Binance Smart Chain | LTO | 0x857B222Fc79e1cBBf8Ca5f78CB133d1b7CF34BBd | LTO Network | countervalues disabled | bsc/bep20/lto_network |
 | Binance Smart Chain | LCR | 0x988F7c894e4001EEB7B570CDE80dffE21CF7B6B9 | LUCRO |  | bsc/bep20/lucro |
 | Binance Smart Chain | LURE | 0xEDCE88aa6DD78d5CE2a247E49C32f549F6DD6b6B | LURE |  | bsc/bep20/lure |
@@ -708,7 +714,8 @@
 | Binance Smart Chain | PROPEL | 0x9B44Df3318972bE845d83f961735609137C4C23c | Propel | countervalues disabled | bsc/bep20/propel |
 | Binance Smart Chain | PROS | 0xEd8c8Aa8299C10f067496BB66f8cC7Fb338A3405 | Prosper |  | bsc/bep20/prosper |
 | Binance Smart Chain | PULSEDOGE | 0xD4d55B811d9eDe2aDce61a98d67d7f91bFfcE495 | PulseDoge |  | bsc/bep20/pulsedoge |
-| Binance Smart Chain | QANX | 0xAAA7A10a8ee237ea61E8AC46C50A8Db8bCC1baaa | QANX Token | delisted, countervalues disabled | bsc/bep20/qanx_token |
+| Binance Smart Chain | QANX | 0xAAA9214F675316182Eaa21C85f0Ca99160CC3AAA | QANX Token |  | bsc/bep20/qanx_token |
+| Binance Smart Chain | QANX_ | 0xAAA7A10a8ee237ea61E8AC46C50A8Db8bCC1baaa | QANX Token (old) | delisted, countervalues disabled | bsc/bep20/qanx_token_ |
 | Binance Smart Chain | KUN | 0x1A2fb0Af670D0234c2857FaD35b789F8Cb725584 | QIAN governance token |  | bsc/bep20/qian_governance_token |
 | Binance Smart Chain | QSD | 0x07AaA29E63FFEB2EBf59B33eE61437E1a91A3bb2 | QIAN second generation dollar |  | bsc/bep20/qian_second_generation_dollar |
 | Binance Smart Chain | QUIDD | 0x7961Ade0a767c0E5B67Dd1a1F78ba44F727642Ed | QUIDD |  | bsc/bep20/quidd |
@@ -849,6 +856,7 @@
 | Binance Smart Chain | XTF | 0x0377FACbDDbeE59d40869808bb67fa741038bC67 | Torum Finance | countervalues disabled | bsc/bep20/torum_finance |
 | Binance Smart Chain | TARP | 0x6C0A568a3fFb61957812fb3e300e4C10B708d336 | Totally A Rug Pull |  | bsc/bep20/totally_a_rug_pull |
 | Binance Smart Chain | TREE | 0x9BD547446Ea13C0c13Df2c1885e1f5B019a77441 | Tree Token | countervalues disabled | bsc/bep20/tree_token |
+| Binance Smart Chain | TRL | 0xE2EB47954e821DC94e19013677004cD59Be0b17f | Triall |  | bsc/bep20/triall |
 | Binance Smart Chain | TRIAS | 0xa4838122c683f732289805FC3C207Febd55BabDD | Trias Token |  | bsc/bep20/trias_token |
 | Binance Smart Chain | TWT | 0x4B0F1812e5Df2A09796481Ff14017e6005508003 | Trust Wallet |  | bsc/bep20/trust_wallet |
 | Binance Smart Chain | TRUSTNFT | 0x08F725D2809FdA409Bc23493F3615a4c85a22d7d | TrustNFT |  | bsc/bep20/trustnft |
@@ -1082,7 +1090,7 @@
 | Cardano | virus | 0fd9819a9d7fb414880883f43a42d33458f12bc5f9841cec6457dc155669527553 | Virus | countervalues disabled | cardano/native/0fd9819a9d7fb414880883f43a42d33458f12bc5f9841cec6457dc155669527553 |
 | Cardano | WDAY | a3914cb7a564d010c7b67774ac8720a8ece3a758279b51d8a1c05cc55745444e4553444159 | Wednesday | countervalues disabled | cardano/native/a3914cb7a564d010c7b67774ac8720a8ece3a758279b51d8a1c05cc55745444e4553444159 |
 | Cardano | WMT | 1d7f33bd23d85e1a25d87d86fac4f199c3197a2f7afeb662a0f34e1e776f726c646d6f62696c65746f6b656e | World Mobile Token |  | cardano/native/1d7f33bd23d85e1a25d87d86fac4f199c3197a2f7afeb662a0f34e1e776f726c646d6f62696c65746f6b656e |
-| Cardano | XRAY | ae2a0aa5a24b27d9868c4a73b7c08077ac21baade5eca0fa467a2bbd58524159 | XRAY | countervalues disabled | cardano/native/ae2a0aa5a24b27d9868c4a73b7c08077ac21baade5eca0fa467a2bbd58524159 |
+| Cardano | XRAY | 86abe45be4d8fb2e8f28e8047d17d0ba5592f2a6c8c452fc88c2c14358524159 | XRAY | countervalues disabled | cardano/native/86abe45be4d8fb2e8f28e8047d17d0ba5592f2a6c8c452fc88c2c14358524159 |
 | Cardano | XT | 300ec0d82a79acdc0616fdc0ef615e7deeddb03275e834685e9ee8a65854 | XT | countervalues disabled | cardano/native/300ec0d82a79acdc0616fdc0ef615e7deeddb03275e834685e9ee8a65854 |
 | Cardano | YAY | 57684adcb032c8dbc40179841bed987d8dee7472617a0e5c25ef414059617953776170 | YaySwap | countervalues disabled | cardano/native/57684adcb032c8dbc40179841bed987d8dee7472617a0e5c25ef414059617953776170 |
 | Cardano | cNETA | b34b3ea80060ace9427bda98690a73d33840e27aaa8d6edb7f0c757a634e455441 | anetaBTC | countervalues disabled | cardano/native/b34b3ea80060ace9427bda98690a73d33840e27aaa8d6edb7f0c757a634e455441 |
@@ -1430,6 +1438,7 @@
 | Ethereum | SOC | 0x2d0E95bd4795D7aCe0da3C0Ff7b706a5970eb9D3 | All Sports Coin |  | ethereum/erc20/all_sports_coin |
 | Ethereum | ATS | 0xE5f55a3b74874531a99359b833b92866A6609f6B | All The Smoke | countervalues disabled | ethereum/erc20/all_the_smoke |
 | Ethereum | ACYC | 0xB56A1f3310578f23120182Fb2e58c087EFE6e147 | AllCoinsYieldCapital |  | ethereum/erc20/allcoinsyieldcapital |
+| Ethereum | NXRA | 0x644192291cc835A93d6330b24EA5f5FEdD0eEF9e | AllianceBlock Nexera Token |  | ethereum/erc20/allianceblock_nexera_token |
 | Ethereum | ALBT | 0x00a8b738E453fFd858a7edf03bcCfe20412f0Eb0 | AllianceBlock Token |  | ethereum/erc20/allianceblock_token |
 | Ethereum | GATOR | 0xF5c0E24ACA5217BcBAe662871caE1A86873F02db | Alligator Fractal Set |  | ethereum/erc20/alligator_fractal_set |
 | Ethereum | ALH | 0x4c6719bF85903d18C295dA44216f862b01b36f43 | AlloHash |  | ethereum/erc20/allohash |
@@ -1705,6 +1714,7 @@
 | Ethereum | BSDC | 0xF26ef5E0545384b7Dcc0f297F2674189586830DF | BSDC |  | ethereum/erc20/bsdc |
 | Ethereum | BSG | 0xB34Ab2f65c6e4F764fFe740ab83F982021Faed6d | BSG | countervalues disabled | ethereum/erc20/bsg |
 | Ethereum | BSGS | 0xA9d232cC381715aE791417B624D7C4509D2c28DB | BSGS | countervalues disabled | ethereum/erc20/bsgs |
+| Ethereum | BSKR | 0x765af00f9278Ab696E815ffA2d0529CdeBD4E10A | BSKR |  | ethereum/erc20/bskr |
 | Ethereum | CBSN | 0x7d4B1d793239707445305D8d2456D2c735F6B25B | BSNcommunitynet |  | ethereum/erc20/bsncommunitynet |
 | Ethereum | BSVBEAR | 0xCe49c3c92b33a1653F34811a9d7e34502bF12B89 | BSVBEAR | delisted, countervalues disabled | ethereum/erc20/bsvbear |
 | Ethereum | BSVBULL | 0x6e13A9e4AE3d0678E511Fb6d2ad531fcF0e247bf | BSVBULL | delisted, countervalues disabled | ethereum/erc20/bsvbull |
@@ -1773,6 +1783,7 @@
 | Ethereum | BPT | 0xccfE5696b853F4b77878919BBA83e1867378C93a | Balancer Pool Token | countervalues disabled | ethereum/erc20/balancer_pool_token |
 | Ethereum | BSP | 0xa1454f9c704AF96636F3A7532b9a04c411f85680 | BallSwap |  | ethereum/erc20/ballswap |
 | Ethereum | BALO | 0x6523203BD28d399068AcC14Db6B7f31D9bF43f1a | Balloon |  | ethereum/erc20/balloon |
+| Ethereum | BALTO | 0x5955f7d312c5d84B004d259D55072C4F0A478dBC | Balto Token |  | ethereum/erc20/balto_token |
 | Ethereum | BAM | 0x22B3FAaa8DF978F6bAFe18aaDe18DC2e3dfA0e0C | Bamboo | countervalues disabled | ethereum/erc20/bamboo |
 | Ethereum | BAMBOO | 0xf56842Af3B56Fd72d17cB103f92d027bBa912e89 | BambooDeFi |  | ethereum/erc20/bamboodefi |
 | Ethereum | BNA | 0x20910e5b5f087f6439DFcB0ddA4e27d1014Ac2b8 | Banana |  | ethereum/erc20/banana |
@@ -2218,6 +2229,7 @@
 | Ethereum | CCS | 0x315cE59FAFd3A8d562b7Ec1C8542382d2710b06c | CacaoShares | countervalues disabled | ethereum/erc20/cacaoshares |
 | Ethereum | CAJ | 0x3C6A7aB47B5F058Be0e7C7fE1A4b7925B8aCA40e | Cajutel |  | ethereum/erc20/cajutel |
 | Ethereum | CALI | 0xB8fA12f8409DA31A4fc43D15c4c78C33d8213B9B | CaliCoin |  | ethereum/erc20/calicoin |
+| Ethereum | RIA | 0x9b110Fda4E20DB18Ad7052f8468a455de7449eb6 | Calvaria: Duels of Eternity |  | ethereum/erc20/calvaria:_duels_of_eternity |
 | Ethereum | CALVIN | 0xdc8092AaF83e00Ebf9B01A2e90b7B7eF867ba503 | Calvin | countervalues disabled | ethereum/erc20/calvin |
 | Ethereum | CAMP | 0xE9E73E1aE76D17A16cC53E3e87a9a7dA78834d37 | Camp |  | ethereum/erc20/camp |
 | Ethereum | CNB | 0xEBf2F9E8De960f64ec0fDCDa6Cb282423133347B | Canabio |  | ethereum/erc20/canabio |
@@ -2986,6 +2998,7 @@
 | Ethereum | DOLZ | 0xe939F011a3d8fC0AA874c97e8156053a903D7176 | Dolz |  | ethereum/erc20/dolz |
 | Ethereum | DRT | 0x9AF4f26941677C706cfEcf6D3379FF01bB85D5Ab | DomRaiderToken |  | ethereum/erc20/domraidertoken |
 | Ethereum | DON | 0x217ddEad61a42369A266F1Fb754EB5d3EBadc88a | Donkey |  | ethereum/erc20/donkey |
+| Ethereum | DBI | 0x2dE509bf0014ddF697b220bE628213034d320EcE | Dont Buy Inu |  | ethereum/erc20/dont_buy_inu |
 | Ethereum | DONUT | 0xC0F9bD5Fa5698B6505F643900FFA515Ea5dF54A9 | Donut | countervalues disabled | ethereum/erc20/donut |
 | Ethereum | DBUY | 0x4EcE5C5CfB9B960A49aAe739E15cDB6cfDcc5782 | Doont Buy |  | ethereum/erc20/doont_buy |
 | Ethereum | DPX | 0xEec2bE5c91ae7f8a338e1e5f3b5DE49d07AfdC81 | Dopex Governance Token |  | ethereum/erc20/dopex_governance_token |
@@ -3724,6 +3737,7 @@
 | Ethereum | GBK | 0x3e522D144814BD6149C1F3e0c6cD19d0941372AC | GoldBlock |  | ethereum/erc20/goldblock |
 | Ethereum | $GOLD | 0xf1b8762a7fa8C244e36F7234EDF40cFaE24394e3 | GoldFarm |  | ethereum/erc20/goldfarm |
 | Ethereum | GFUN | 0x919D3a363776B1ceec9352610c82dfaf80Edc32d | GoldFund |  | ethereum/erc20/goldfund |
+| Ethereum | GOS | 0xc9393609A47f5744ce98369208b9dc66224E6b5d | GoldOnSteroids |  | ethereum/erc20/goldonsteroids |
 | Ethereum | GPO | 0x4ad7a056191F4c9519fAcd6D75FA94CA26003aCE | GoldPesa Option |  | ethereum/erc20/goldpesa_option |
 | Ethereum | GNTO | 0x7b3296198F8A548Edf89BDB16864Da8F37b7D9cB | GoldeNugget Token |  | ethereum/erc20/goldenugget_token |
 | Ethereum | GOLD | 0x40d1F63B5D2048e67E9bEdB1B4c2F1A9fb4b6817 | Golden Goose | countervalues disabled | ethereum/erc20/golden_goose |
@@ -3758,6 +3772,7 @@
 | Ethereum | GRET | 0xE0A16435Df493Bd17A58CB2eE58675f5ea069517 | Green Token |  | ethereum/erc20/green_token |
 | Ethereum | GRMD | 0xb444208cB0516C150178fCf9a52604BC04A1aCEa | GreenMed |  | ethereum/erc20/greenmed |
 | Ethereum | GMT | 0xe3c408BD53c31C085a1746AF401A4042954ff740 | GreenMetaverseToken | countervalues disabled | ethereum/erc20/greenmetaversetoken |
+| Ethereum | GWD | 0x674c964AC0E89d847d6B0aBd144b797bf78BA56b | GreenWorld |  | ethereum/erc20/greenworld |
 | Ethereum | GREY | 0x9b2D81A1AE36E8e66A0875053429816f0B6b829E | Grey Token |  | ethereum/erc20/grey_token |
 | Ethereum | GC | 0x720c2c93F5f9A6b82226e84095558B10F399b0FA | Gric Coin | delisted, countervalues disabled | ethereum/erc20/gric_coin |
 | Ethereum | ZONE | 0xC1D9B5A0776d7C8B98b8A838e5a0DD1Bc5Fdd53C | GridZone.io |  | ethereum/erc20/gridzone_io |
@@ -4076,6 +4091,7 @@
 | Ethereum | INRM | 0x48e5413b73add2434e47504E2a22d14940dBFe78 | Integrated Money |  | ethereum/erc20/integrated_money |
 | Ethereum | INTRATIO | 0xBA8Ea15b647F54D9ff849670FcaAcF35Df21A457 | Intelligent Ratio Set |  | ethereum/erc20/intelligent_ratio_set |
 | Ethereum | INVE | 0xDAC4AE188AcE3C8985765eDc6C9B4739D4845DdC | InterValue |  | ethereum/erc20/intervalue |
+| Ethereum | ITR | 0x1111158f88410DA5F92c7E34c01e7B8649Bc0155 | Intercoin Investor Token |  | ethereum/erc20/intercoin_investor_token |
 | Ethereum | IBETH | 0x67B66C99D3Eb37Fa76Aa3Ed1ff33E8e39F0b9c7A | Interest Bearing ETH |  | ethereum/erc20/interest_bearing_eth |
 | Ethereum | IBETHV2 | 0xeEa3311250FE4c3268F8E684f7C87A82fF183Ec1 | Interest Bearing Ether v2 |  | ethereum/erc20/interest_bearing_ether_v2 |
 | Ethereum | ICETH | 0x7C07F7aBe10CE8e33DC6C5aD68FE033085256A84 | Interest Compounding ETH Index |  | ethereum/erc20/interest_compounding_eth_index |
@@ -4291,6 +4307,7 @@
 | Ethereum | LA | 0xE50365f5D679CB98a1dd62D6F6e58e59321BcdDf | LATOKEN |  | ethereum/erc20/latoken |
 | Ethereum | LATX | 0x2f85E502a988AF76f7ee6D83b7db8d6c0A823bf9 | LAtiumX |  | ethereum/erc20/latiumx |
 | Ethereum | LBK | 0x9cB1AEaFcc8A9406632C5B084246Ea72f62d37b6 | LBK |  | ethereum/erc20/lbk |
+| Ethereum | LBSKR | 0xe5280425d32C26f16887B79B298FC07fd2602A30 | LBSKR |  | ethereum/erc20/lbskr |
 | Ethereum | LCG | 0x6e1A58e7E9e801f32bb82462636a8a2E7B65e036 | LCG Energy |  | ethereum/erc20/lcg_energy |
 | Ethereum | LCMS | 0x86911B82BfA596e9377836838AC1f0d9AD4Ecc19 | LCMS |  | ethereum/erc20/lcms |
 | Ethereum | LCX | 0x037A54AaB062628C9Bbae1FDB1583c195585fe41 | LCX |  | ethereum/erc20/lcx |
@@ -4486,7 +4503,7 @@
 | Ethereum | LMT | 0x327673aE6B33Bd3d90f0096870059994f30Dc8AF | Lympo Market Token |  | ethereum/erc20/lympo_market_token |
 | Ethereum | LYN | 0xB0B1685f55843D03739c7D9b0A230F1B7DcF03D5 | Lynchpin |  | ethereum/erc20/lynchpin |
 | Ethereum | M-ETH | 0x3f4B726668da46f5e0E75aA5D478ACEc9f38210F | M-ETH | delisted, countervalues disabled | ethereum/erc20/m_eth |
-| Ethereum | M3M3 | 0xC6c9C41530769d80b8129C4278848010FE59515b | M3m3coin |  | ethereum/erc20/m3m3coin |
+| Ethereum | M3M3 | 0xC6c9C41530769d80b8129C4278848010FE59515b | M3m3coin | countervalues disabled | ethereum/erc20/m3m3coin |
 | Ethereum | MAC | 0x4c3345105fCc6CdC29DB91058FFAAe33cCA5bCDb | MACARON COIN | countervalues disabled | ethereum/erc20/macaron_coin |
 | Ethereum | MACH | 0xB119Ce94D098C18fe380904c24e358bd887F00BE | MACH Exchange | delisted, countervalues disabled | ethereum/erc20/mach_exchange |
 | Ethereum | MAD | 0x5B09A0371C1DA44A8E24D36Bf5DEb1141a84d875 | MAD |  | ethereum/erc20/mad |
@@ -4654,6 +4671,7 @@
 | Ethereum | MLN | 0xec67005c4E498Ec7f55E092bd1d35cbC47C91892 | Melon Token |  | ethereum/erc20/melon_token |
 | Ethereum | MLN | 0xBEB9eF514a379B997e0798FDcC901Ee474B6D9A1 | Melonport | delisted, countervalues disabled | ethereum/erc20/melonport |
 | Ethereum | MBN | 0x4Eeea7B48b9C3ac8F70a9c932A8B1E8a5CB624c7 | Membrana | delisted, countervalues disabled | ethereum/erc20/membrana |
+| Ethereum | M3M3 | 0x78a2809e8e2ef8e07429559f15703Ee20E885588 | Meme Coin Mafia | countervalues disabled | ethereum/erc20/meme_coin_mafia |
 | Ethereum | MGAMES | 0x311f809F14Cc30eC50570C59DdC708c0d69b8634 | Meme Games |  | ethereum/erc20/meme_games |
 | Ethereum | MEM | 0x42dbBd5ae373FEA2FC320F62d44C058522Bb3758 | Memecoin |  | ethereum/erc20/memecoin |
 | Ethereum | MFUND | 0xddAdDD4F73ABC3a6552dE43aBA325f506232fA8A | Memefund |  | ethereum/erc20/memefund |
@@ -4686,6 +4704,7 @@
 | Ethereum | MESH | 0x01F2AcF2914860331C1Cb1a9AcecDa7475e06Af8 | Meshbox |  | ethereum/erc20/meshbox |
 | Ethereum | MTA | 0xa3BeD4E1c75D00fa6f4E5E6922DB7261B5E9AcD2 | Meta |  | ethereum/erc20/meta |
 | Ethereum | META | 0x2F5C3dD519E8a502c48c9FC104Eee64fDFF05F03 | Meta Bots | countervalues disabled | ethereum/erc20/meta_bots |
+| Ethereum | MEMAG | 0x6E39A587691b8c9D4341cE0A960998ED6F537AF6 | Meta Masters Guild |  | ethereum/erc20/meta_masters_guild |
 | Ethereum | META | 0x8807e69dC04155AF64172Cd6f0B4738F8068D0D4 | Meta Network | countervalues disabled | ethereum/erc20/meta_network |
 | Ethereum | FABRIC | 0x8c6Fa66c21aE3fC435790E451946a9Ea82E6e523 | MetaFabric |  | ethereum/erc20/metafabric |
 | Ethereum | ROBOT | 0xfb5453340C03db5aDe474b27E68B6a9c6b2823Eb | MetaFactory |  | ethereum/erc20/metafactory |
@@ -5024,7 +5043,8 @@
 | Ethereum | ODDZ | 0xCd2828fc4D8E8a0eDe91bB38CF64B1a81De65Bf6 | OddzToken |  | ethereum/erc20/oddztoken |
 | Ethereum | ODIN | 0x57c8D5d5b87A1580FDAF996cEF674Bb0d7F14C98 | OdinBrowser |  | ethereum/erc20/odinbrowser |
 | Ethereum | OMT | 0x4E30910845f0cb4F66781B35c832Eafc09774022 | Official Mars Token |  | ethereum/erc20/official_mars_token |
-| Ethereum | XFT | 0xABe580E7ee158dA464b51ee1a83Ac0289622e6be | Offshift |  | ethereum/erc20/offshift |
+| Ethereum | XFT | 0x76BC677d444f1E9d57dAf5187ee2b7dC852745aE | Offshift |  | ethereum/erc20/offshift |
+| Ethereum | XFT_ | 0xABe580E7ee158dA464b51ee1a83Ac0289622e6be | Offshift (old) | delisted, countervalues disabled | ethereum/erc20/offshift_ |
 | Ethereum | OHNI | 0x6f539a9456A5BCb6334A1A41207c3788f5825207 | Ohni |  | ethereum/erc20/ohni |
 | Ethereum | OIL | 0x0275E1001e293C46CFe158B3702AADe0B99f88a5 | Oiler | countervalues disabled | ethereum/erc20/oiler |
 | Ethereum | OKAGE | 0x8dfc8cc3201425669FaE803e1eB125cddd4189eC | Okage Inu |  | ethereum/erc20/okage_inu |
@@ -5081,6 +5101,7 @@
 | Ethereum | ORC | 0x662b67d00A13FAf93254714DD601F5Ed49Ef2F51 | Orbit Chain |  | ethereum/erc20/orbit_chain |
 | Ethereum | ORBS | 0xff56Cc6b1E6dEd347aA0B7676C85AB0B3D08B0FA | Orbs |  | ethereum/erc20/orbs |
 | Ethereum | OXT | 0x4575f41308EC1483f3d399aa9a2826d74Da13Deb | Orchid |  | ethereum/erc20/orchid |
+| Ethereum | OBTC | 0xfF770E4c68e35DB85c6e0E89a43750eC02bDB2AC | Ordinal BTC |  | ethereum/erc20/ordinal_btc |
 | Ethereum | ORICA | 0x3045d1A840364c3657b8Df6c6F86a4359c23472B | Orica | countervalues disabled | ethereum/erc20/orica |
 | Ethereum | OFT | 0xc0A25a24CcE412E2Fb407c08E3785437FEE9Ad1d | Orient |  | ethereum/erc20/orient |
 | Ethereum | ORTP | 0x6EE10C4C566166135C8DE574cE63F583AfC6d2b2 | Orientum Plus |  | ethereum/erc20/orientum_plus |
@@ -5122,6 +5143,7 @@
 | Ethereum | PATH | 0xF813F3902bBc00A6DCe378634d3B79D84F9803d7 | PATH | delisted, countervalues disabled | ethereum/erc20/path |
 | Ethereum | PATR | 0x9FbA684D77D2d6A1408C24b60A1f5534e71f5b75 | PATRIOT |  | ethereum/erc20/patriot |
 | Ethereum | PAT | 0xF3b3Cad094B89392fcE5faFD40bC03b80F2Bc624 | PATRON |  | ethereum/erc20/patron |
+| Ethereum | PAW | 0xDc63269eA166b70d4780b3A11F5C825C2b761B01 | PAWSWAP |  | ethereum/erc20/pawswap |
 | Ethereum | PAXGBEAR | 0x3C4a46F0C075A7F191A7459bb51EB1f81ac36F8A | PAXGBEAR | delisted, countervalues disabled | ethereum/erc20/paxgbear |
 | Ethereum | PAXGBULL | 0x81f09eD4b98B1c8e99b1Fa838B72acB842AFE94c | PAXGBULL | delisted, countervalues disabled | ethereum/erc20/paxgbull |
 | Ethereum | PAYOU | 0xCb2Fa15F4EA7C55bF6Ef9456A662412B137043e9 | PAYOU.FINANCE |  | ethereum/erc20/payou_finance |
@@ -5439,7 +5461,8 @@
 | Ethereum | QDAO | 0x3166C570935a7D8554c8f4eA792ff965D2EFe1f2 | Q DAO Governance token v1.0 |  | ethereum/erc20/q_dao_governance_token_v1_0 |
 | Ethereum | QDEFI | 0xfee4DBe2751bF8d1B1B861aAF9664961F19Ce91A | Q DeFi Rating Governance token v2.0 |  | ethereum/erc20/q_defi_rating_governance_token_v2_0 |
 | Ethereum | Q8E20 | 0xa31f7a32Db329F270A0E6b59558823e64D8eF0A6 | Q8E20 Token |  | ethereum/erc20/q8e20_token |
-| Ethereum | QANX | 0xAAA7A10a8ee237ea61E8AC46C50A8Db8bCC1baaa | QANX Token |  | ethereum/erc20/qanx_token |
+| Ethereum | QANX | 0xAAA9214F675316182Eaa21C85f0Ca99160CC3AAA | QANX Token |  | ethereum/erc20/qanx_token |
+| Ethereum | QANX_ | 0xAAA7A10a8ee237ea61E8AC46C50A8Db8bCC1baaa | QANX Token (old) | delisted, countervalues disabled | ethereum/erc20/qanx_token_ |
 | Ethereum | QARK | 0x63120ccd7b415743e8753AfD167F5AD4A1732C43 | QARK Token of QAN Platform |  | ethereum/erc20/qark_token_of_qan_platform |
 | Ethereum | QASH | 0x618E75Ac90b12c6049Ba3b27f5d5F8651b0037F6 | QASH |  | ethereum/erc20/qash |
 | Ethereum | QAU | 0x671AbBe5CE652491985342e85428EB1b07bC6c64 | QAU |  | ethereum/erc20/qau |
@@ -5708,6 +5731,7 @@
 | Ethereum | RNB | 0x2A039B1D9bBDccBb91be28691b730ca893e5e743 | Rentible |  | ethereum/erc20/rentible |
 | Ethereum | REN | 0x408e41876cCCDC0F92210600ef50372656052a38 | Republic Protocol |  | ethereum/erc20/republic_protocol |
 | Ethereum | REPV2 | 0x221657776846890989a759BA2973e427DfF5C9bB | Reputation |  | ethereum/erc20/reputation |
+| Ethereum | RALBT | 0x46a9459d34EaeEAb4E792E5238298d4e15261CA1 | Reputational AllianceBlock Token |  | ethereum/erc20/reputational_allianceblock_token |
 | Ethereum | REQ | 0x8f8221aFbB33998d8584A2B05749bA73c37a938a | Request Network |  | ethereum/erc20/request_network |
 | Ethereum | RSV | 0x196f4727526eA7FB1e17b2071B3d8eAA38486988 | Reserve |  | ethereum/erc20/reserve |
 | Ethereum | RSV | 0x1C5857e110CD8411054660F60B5De6a6958CfAE2 | Reserve (old) | delisted, countervalues disabled | ethereum/erc20/reserve_ |
@@ -5728,6 +5752,7 @@
 | Ethereum | RZRV | 0xE70b94C2320fB0289Db0Cac0cCBD60dd8F51ff89 | Rezerve |  | ethereum/erc20/rezerve |
 | Ethereum | RHEA | 0xf7A219FFFeaDe6Cd98789da5642b687F743270Eb | Rhea Protocol |  | ethereum/erc20/rhea_protocol |
 | Ethereum | RHO | 0x3F3Cd642E81d030D7b514a2aB5e3a5536bEb90Ec | Rho Token |  | ethereum/erc20/rho_token |
+| Ethereum | RBN | 0x6123B0049F904d730dB3C36a31167D9d4121fA6B | Ribbon |  | ethereum/erc20/ribbon |
 | Ethereum | RTN | 0x54b293226000ccBFC04DF902eEC567CB4C35a903 | RiderToken |  | ethereum/erc20/ridertoken |
 | Ethereum | RDT | 0x4740735AA98Dc8aa232BD049f8F0210458E7fCa3 | Ridotto |  | ethereum/erc20/ridotto |
 | Ethereum | RIGEL | 0x4cA0654f4fc1025cF1a17B7459c20aC0479522aD | Rigel Finance |  | ethereum/erc20/rigel_finance |
@@ -5824,6 +5849,7 @@
 | Ethereum | SHIB | 0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE | SHIBA INU |  | ethereum/erc20/shiba_inu |
 | Ethereum | SHIBAPE | 0x95Cc8d92f33b160B640652B425a3c642750BbECB | SHIBAPE |  | ethereum/erc20/shibape |
 | Ethereum | SHIBGF | 0x505a84a03e382331A1Be487b632Cf357748b65d6 | SHIBGF | delisted, countervalues disabled | ethereum/erc20/shibgf |
+| Ethereum | SHIK | 0x24dA31e7BB182cb2cABfEF1d88db19C2AE1f5572 | SHIKOKU INU |  | ethereum/erc20/shikoku_inu |
 | Ethereum | SHIT | 0xEF2E9966eb61BB494E5375d5Df8d67B7dB8A780D | SHIT | delisted, countervalues disabled | ethereum/erc20/shit |
 | Ethereum | SHOP | 0x64b78325d7495D6d4be92f234fa3f3B8d8964B8b | SHOP |  | ethereum/erc20/shop |
 | Ethereum | SHRIMP | 0x38c4102D11893351cED7eF187fCF43D33eb1aBE6 | SHRIMP.FINANCE |  | ethereum/erc20/shrimp_finance |
@@ -6048,6 +6074,7 @@
 | Ethereum | SHUF | 0x3A9FfF453d50D4Ac52A6890647b823379ba36B9E | Shuffle.Monster V3 |  | ethereum/erc20/shuffle_monster_v3 |
 | Ethereum | SHFT | 0xcba3eAe7f55D0F423AF43cC85E67ab0fBF87B61C | Shyft [ Byfrost ] | countervalues disabled | ethereum/erc20/shyft_[_byfrost_] |
 | Ethereum | SHFT | 0xb17C88bDA07D28B3838E0c1dE6a30eAfBCF52D85 | Shyft [ Wrapped ] |  | ethereum/erc20/shyft_[_wrapped_] |
+| Ethereum | DOOR | 0x2805390F81A7F19c2c49300A094aa500597b1862 | Shytoshis Vision | countervalues disabled | ethereum/erc20/shytoshis_vision |
 | Ethereum | SI14 | 0x8b98dF4Dff429E64E9A56fc6Eebe2380c6c3409c | Si14Bet |  | ethereum/erc20/si14bet |
 | Ethereum | SCC | 0x74FD51a98a4A1ECBeF8Cc43be801cce630E260Bd | SiaCashCoin | countervalues disabled | ethereum/erc20/siacashcoin |
 | Ethereum | SBTC | 0xb8e103b60A33597136EA9511F46b6dBeB643a3a5 | Siambitcoin | countervalues disabled | ethereum/erc20/siambitcoin |
@@ -6119,7 +6146,8 @@
 | Ethereum | SOL | 0x1F54638b7737193FFd86c19Ec51907A7c41755D8 | Sola Token (ERC20) | delisted, countervalues disabled | ethereum/erc20/sola_token |
 | Ethereum | SDAO | 0x646Cec6ee42d258336165cBbD5deB4AF14F0f476 | Solar DAO Token | delisted, countervalues disabled | ethereum/erc20/solar_dao_token |
 | Ethereum | SLRM | 0x56eE8C9BD1d445a3324ad83E86D8be309Db8f85d | Solareum |  | ethereum/erc20/solareum |
-| Ethereum | SOLID | 0x5011D48D4265b6fB8228600a111b2fAa1fDA3139 | Solid |  | ethereum/erc20/solid |
+| Ethereum | SOLID | 0x5011D48D4265b6fB8228600a111b2fAa1fDA3139 | Solid | countervalues disabled | ethereum/erc20/solid |
+| Ethereum | SOLID | 0x777172D858dC1599914a1C4c6c9fC48c99a60990 | Solidly |  | ethereum/erc20/solidly |
 | Ethereum | SLM | 0x07a0AD7a9dfc3854466F8F29A173bf04bbA5686e | SolomonDefi | countervalues disabled | ethereum/erc20/solomondefi |
 | Ethereum | CUBE | 0xDf801468a808a32656D2eD2D2d80B72A129739f4 | Somnium Space Cubes |  | ethereum/erc20/somnium_space_cubes |
 | Ethereum | SON | 0xCe659De292ad4FA9aafd82B038936Cebd9291E77 | Sonic Token |  | ethereum/erc20/sonic_token |
@@ -6214,7 +6242,8 @@
 | Ethereum | STEAK | 0xeED9e4F2450035D6426276a8aA2084966EE3b1bb | Steaks.finance |  | ethereum/erc20/steaks_finance |
 | Ethereum | STI | 0xB52BBD3D5BfA3836bF2b55fE3B7467219280bc2e | StiB |  | ethereum/erc20/stib |
 | Ethereum | STN | 0x592481A5F6b4F078cc303C2cDE4337dFA2d76fA0 | Sting | countervalues disabled | ethereum/erc20/sting |
-| Ethereum | STBU | 0x212DD60D4Bf0DA8372fe8116474602d429E5735F | Stobox Token |  | ethereum/erc20/stobox_token |
+| Ethereum | STBU | 0xa6422E3E219ee6d4C1B18895275FE43556fd50eD | Stobox Token |  | ethereum/erc20/stobox_token |
+| Ethereum | STBU_ | 0x212DD60D4Bf0DA8372fe8116474602d429E5735F | Stobox Token (old) | delisted, countervalues disabled | ethereum/erc20/stobox_token_ |
 | Ethereum | SCC | 0x355a458d555151D3B27F94227960Ade1504E526a | StockChain Coin | countervalues disabled | ethereum/erc20/stockchain_coin |
 | Ethereum | STN | 0xe63d6B308BCe0F6193AeC6b7E6eBa005f41e36AB | Stone Token | countervalues disabled | ethereum/erc20/stone_token |
 | Ethereum | STONK | 0x35b55c25731E9b05B1d8480ba39463d52C9D0211 | StonkSwap Token | countervalues disabled | ethereum/erc20/stonkswap_token |
@@ -6230,6 +6259,7 @@
 | Ethereum | STRN | 0x90b426067bE0b0FF5De257BC4dd6a4815Ea03b5f | Strain | countervalues disabled | ethereum/erc20/strain |
 | Ethereum | STOS | 0x08c32b0726C5684024ea6e141C50aDe9690bBdcc | Stratos Token |  | ethereum/erc20/stratos_token |
 | Ethereum | BERRY | 0xe944f2B46FCfc9D0E887bBeaad95268D9416d0fD | Strawberry.WTF | delisted, countervalues disabled | ethereum/erc20/strawberry_wtf |
+| Ethereum | STRM | 0xC598275452fA319d75ee5f176FD3B8384925b425 | Stream |  | ethereum/erc20/stream |
 | Ethereum | STPL | 0x9b5C2BE869a19e84BDBcb1386dAD83a2ec8DAe82 | Stream Protocol |  | ethereum/erc20/stream_protocol |
 | Ethereum | SSH | 0x6e2050CBFB3eD8A4d39b64cC9f47E711a03a5a89 | StreamShares |  | ethereum/erc20/streamshares |
 | Ethereum | MIXS | 0xB0BFB1E2F72511cF8b4D004852E2054d7b9a76e1 | Streamix |  | ethereum/erc20/streamix |
@@ -6815,7 +6845,7 @@
 | Ethereum | USF | 0xE0e05c43c097B0982Db6c9d626c4eb9e95C3b9ce | Unslashed Finance Governance Token |  | ethereum/erc20/unslashed_finance_governance_token |
 | Ethereum | UNV | 0xf009f5531dE69067435e32c4b9D36077F4C4A673 | Unvest |  | ethereum/erc20/unvest |
 | Ethereum | UBXT | 0x8564653879a18C560E7C0Ea0E084c516C62F5653 | UpBots |  | ethereum/erc20/upbots |
-| Ethereum | UP | 0x6Ba460AB75Cd2c56343b3517ffeBA60748654D26 | UpToken |  | ethereum/erc20/uptoken |
+| Ethereum | UP | 0x6Ba460AB75Cd2c56343b3517ffeBA60748654D26 | UpToken | countervalues disabled | ethereum/erc20/uptoken |
 | Ethereum | UFR | 0xEA097A2b1dB00627B2Fa17460Ad260c016016977 | Upfiring |  | ethereum/erc20/upfiring |
 | Ethereum | USDU | 0x41a03E41eF555392c9f0AD60f4F61E263078BF10 | Upper Dollar |  | ethereum/erc20/upper_dollar |
 | Ethereum | EURU | 0x6c139349ee94eBAaff55eD52d382673C263B22d6 | Upper Euro |  | ethereum/erc20/upper_euro |
@@ -7583,7 +7613,7 @@
 | Ethereum | PAND | 0x5bC52b5367b637bec5f818E69208EB9f03C426eE | panda.finance |  | ethereum/erc20/panda_finance |
 | Ethereum | PSI | 0xD4Cb461eACe80708078450e465881599d2235f1A | passive.income |  | ethereum/erc20/passive_income |
 | Ethereum | PHT | 0x457a57E931cBa4dfF5Ce8500cC0DFF18356Df041 | phantom |  | ethereum/erc20/phantom |
-| Ethereum | GBPT | 0x86B4dBE5D203e634a12364C0e428fa242A3FbA98 | poundtoken | delisted, countervalues disabled | ethereum/erc20/poundtoken |
+| Ethereum | GBPT | 0x86B4dBE5D203e634a12364C0e428fa242A3FbA98 | poundtoken |  | ethereum/erc20/poundtoken |
 | Ethereum | PROPHET | 0x8D5DB0c1f0681071Cb38A382AE6704588D9DA587 | prophet.finance |  | ethereum/erc20/prophet_finance |
 | Ethereum | PINT | 0xFECBa472B2540C5a2d3700b2C9E06F0aa7dC6462 | pub.finance |  | ethereum/erc20/pub_finance |
 | Ethereum | RUGZ | 0xEdFBd6c48c3dDfF5612Ade14B45bb19F916809ba | pulltherug.finance | countervalues disabled | ethereum/erc20/pulltherug_finance |
@@ -7634,6 +7664,7 @@
 | Ethereum | TSLA | 0xd50825f50384Bc40D5A10118996ef503B3670afd | tsla.finance | countervalues disabled | ethereum/erc20/tsla_finance |
 | Ethereum | UDOO | 0x12f649A9E821F90BB143089a6e56846945892ffB | uDOO | delisted, countervalues disabled | ethereum/erc20/udoo |
 | Ethereum | GASJ21 | 0xa6B9d7E3d76cF23549293Fb22c488E0Ea591A44e | uGAS-JUN21 Token Expiring 30 Jun 2021 | delisted | ethereum/erc20/ugas-jun21_token_expiring_30_jun_2021 |
+| Ethereum | UP | 0x131bF51e864024DF1982F2cd7B1C786e1A005152 | uP | countervalues disabled | ethereum/erc20/up |
 | Ethereum | STONKSA21 | 0xEC58d3aefc9AAa2E0036FA65F70d569f49D9d1ED | uSTONKS Index Token April 2021 | delisted | ethereum/erc20/ustonks_index_token_april_2021 |
 | Ethereum | UDAI | 0x4aD0b81f92B16624BBcF46FC0030cFBBf8d02376 | unagii_Dai Stablecoin |  | ethereum/erc20/unagii_dai_stablecoin |
 | Ethereum | UETH | 0x77607588222e01bf892a29Abab45796A2047fc7b | unagii_ETH |  | ethereum/erc20/unagii_eth |
@@ -7871,8 +7902,8 @@
 | Polygon | ELON | 0xE0339c80fFDE91F3e20494Df88d4206D86024cdF | Dogelon |  | polygon/erc20/dogelon |
 | Polygon | DOGIRA | 0xdDa40cdfe4A0090f42Ff49f264A831402ADB801A | Dogira |  | polygon/erc20/dogira |
 | Polygon | DOM | 0x0e2c818FEa38E7df50410F772b7d59aF20589A62 | Dominium |  | polygon/erc20/dominium |
-| Polygon | DQUICK | 0x958d208Cdf087843e9AD98d23823d32E17d723A1 | Dragon QUICK |  | polygon/erc20/dragon_quick |
-| Polygon | DQUICK_ | 0xf28164A485B0B2C90639E47b0f377b4a438a16B1 | Dragon QUICK (old) | countervalues disabled | polygon/erc20/dragon_quick_old |
+| Polygon | DQUICK | 0x958d208Cdf087843e9AD98d23823d32E17d723A1 | Dragon QUICK | countervalues disabled | polygon/erc20/dragon_quick |
+| Polygon | DQUICK_ | 0xf28164A485B0B2C90639E47b0f377b4a438a16B1 | Dragon QUICK (old) |  | polygon/erc20/dragon_quick_old |
 | Polygon | DYST | 0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb | Dystopia token |  | polygon/erc20/dystopia_token |
 | Polygon | EGX | 0x8Db0A6d1b06950b4e81c4F67D1289Fc7B9359c7f | ENEGRA |  | polygon/erc20/enegra |
 | Polygon | ETH2X-FLI | 0x66d7FDCc7403f18cAE9b0e2e8385649D2AcBC12A | ETH 2x Flexible Leverage Index |  | polygon/erc20/eth_2x_flexible_leverage_index |
@@ -7931,6 +7962,7 @@
 | Polygon | HOPR | 0x6cCBF3627b2C83AFEF05bf2F035E7f7B210Fe30D | HOPR Token |  | polygon/erc20/hopr_token |
 | Polygon | HUSD | 0x2088C47Fc0c78356c622F79dBa4CbE1cCfA84A91 | HUSD |  | polygon/erc20/husd |
 | Polygon | HOT | 0x0C51f415cF478f8D08c246a6C6Ee180C5dC3A012 | HoloToken |  | polygon/erc20/holotoken |
+| Polygon | HMT | 0xc748B2A084F8eFc47E086ccdDD9b7e67aEb571BF | Human Token (PoS) |  | polygon/erc20/human_token_(pos) |
 | Polygon | HT | 0xFAD65Eb62a97fF5Ed91B23aFD039956aaCa6e93b | HuobiToken |  | polygon/erc20/huobitoken |
 | Polygon | ICBT | 0x0F93119bDAc9e80Ca845E9a56Ae027507CB24C6A | ICB Token (PoS) |  | polygon/erc20/icb_token_(pos) |
 | Polygon | IGG | 0xe6FC6C7CB6d2c31b359A49A33eF08aB87F4dE7CE | IG Gold (PoS) |  | polygon/erc20/ig_gold_(pos) |
@@ -7982,6 +8014,7 @@
 | Polygon | LIT | 0xe6E320b7bB22018D6CA1F4D8cea1365eF5d25ced | Litentry |  | polygon/erc20/litentry |
 | Polygon | LPT | 0x3962F4A0A0051DccE0be73A7e09cEf5756736712 | Livepeer Token |  | polygon/erc20/livepeer_token |
 | Polygon | LRC | 0x84e1670F61347CDaeD56dcc736FB990fBB47ddC1 | LoopringCoin V2 |  | polygon/erc20/loopringcoin_v2 |
+| Polygon | LOPES | 0xCEBdc775E9f18156EC2e04Fb4150f1bc54DE690f | Lopes |  | polygon/erc20/lopes |
 | Polygon | SLIVER | 0xA95b410743e8c2F7b64f1373D3Ca2B3454864a94 | Lucky Races Sliver | delisted, countervalues disabled | polygon/erc20/lucky_races_sliver |
 | Polygon | LDN | 0x7dF5638222BBe24cCe39f726c3B61cC03610622a | Ludena Protocol (PoS) |  | polygon/erc20/ludena_protocol_(pos) |
 | Polygon | MAIX | 0x992446B88a7E62C7235Bd88108f44543C1887C1F | MAI (miMATIC) |  | polygon/erc20/mai_(mimatic) |
@@ -8012,6 +8045,7 @@
 | Polygon | MYST | 0x1379E8886A944d2D9d440b3d88DF536Aea08d9F3 | Mysterium (PoS) |  | polygon/erc20/mysterium_(pos) |
 | Polygon | CHAMP | 0x8f9E8e833A69Aa467E42c46cCA640da84DD4585f | NFT Champions |  | polygon/erc20/nft_champions |
 | Polygon | WRLD | 0xD5d86FC8d5C0Ea1aC1Ac5Dfab6E529c9967a45E9 | NFT Worlds |  | polygon/erc20/nft_worlds |
+| Polygon | NFTBS | 0x6396252377F54ad33cFF9131708Da075b21d9B88 | NFTBOOKS |  | polygon/erc20/nftbooks |
 | Polygon | NTDL | 0xD735b487B9018eEaDA2cC0464DB02Aa4B90cA711 | NTDL |  | polygon/erc20/ntdl |
 | Polygon | NAKA | 0x311434160D7537be358930def317AfB606C0D737 | Nakamoto.Games |  | polygon/erc20/nakamoto.games |
 | Polygon | NPX | 0x106035DEDcA635d75d6Ff05F98F25916829eDB77 | NapoleonX |  | polygon/erc20/napoleonx |
@@ -8185,6 +8219,7 @@
 | Polygon | VOXEL | 0xd0258a3fD00f38aa8090dfee343f10A9D4d30D3F | VOXEL Token |  | polygon/erc20/voxel_token |
 | Polygon | VSP | 0x09C5a4BCA808bD1ba2b8E6B3aAF7442046B4ca5B | VesperToken |  | polygon/erc20/vespertoken |
 | Polygon | VIS | 0xcC1B9517460D8aE86fe576f614d091fCa65a28Fc | Vigorus |  | polygon/erc20/vigorus |
+| Polygon | VOLT | 0xF16EC50EC49aBc95FA793C7871682833B6bC47E7 | Volt Inu |  | polygon/erc20/volt_inu |
 | Polygon | VLPEN | 0x55CA76E0341ccD35c2E3F34CbF767C6102aea70f | Vote Locked PEN |  | polygon/erc20/vote_locked_pen |
 | Polygon | VGX | 0x054c42b6414747F5263b4A86f21B1aFAD00326Bf | Voyager |  | polygon/erc20/voyager |
 | Polygon | WEXPOLY | 0x4c4BF319237D98a30A929A96112EfFa8DA3510EB | WaultSwap Polygon |  | polygon/erc20/waultswap_polygon |
