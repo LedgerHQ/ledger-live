@@ -4,7 +4,6 @@ import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 
 import { Web3AppWebview } from "../Web3AppWebview";
