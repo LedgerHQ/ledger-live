@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.18.0-next.4
+
+### Patch Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`a2ba8c5c6a`](https://github.com/LedgerHQ/ledger-live/commit/a2ba8c5c6a1c60c625a964cf02f71d1f416c969d) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fixed upsell triggering even if feature flag is off
+
 ## 3.18.0-next.3
 
 ### Patch Changes
