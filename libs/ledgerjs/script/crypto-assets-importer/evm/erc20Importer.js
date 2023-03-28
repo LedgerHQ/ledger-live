@@ -18,7 +18,6 @@ const getDefinition = (chain, tokenId, definitionJSON, signature) => {
     const countervalueTicker = ENTRIES_CHECKS.countervalueTicker(
       definitionJSON.countervalue_ticker
     );
-    const compoundFor = ENTRIES_CHECKS.compoundFor(definitionJSON.compound_for);
 
     return [
       currencyId,
@@ -31,7 +30,6 @@ const getDefinition = (chain, tokenId, definitionJSON, signature) => {
       disableCountervalue,
       delisted,
       countervalueTicker,
-      compoundFor,
     ];
   } catch (e) {
     console.error(`ERC20 import error: ${chain.name} - ${tokenId}:`, e);
@@ -49,7 +47,7 @@ const getSignatureBuffer = (chain, definitionJSON, signature) => {
 
   // match crypto-assets convention for tickers: testnet tokens are prefixed with "t"
   // https://github.com/LedgerHQ/crypto-assets/blob/d2fe1cf9a110614650191555b846a2e43eb67b8f/scripts/hsm/coin_parameters/coin_parameters.py#L163
-  const prefix = chain.isTestNet ? 't': '';
+  const prefix = chain.isTestNet ? "t" : "";
   const ticker = Buffer.from(prefix + definitionJSON.ticker, "ascii");
 
   const chainId = asUint4be(chain.chainId);
@@ -136,10 +134,10 @@ module.exports = async (chain, outputFolder) => {
   await fs.writeFile(
     path.join(outputDir, "index.ts"),
     // eslint-disable-next-line prettier/prettier
-      "import tokens from \"./erc20.json\";" +
+    'import tokens from "./erc20.json";' +
       String.fromCharCode(10) + // lf line break for linter
       // eslint-disable-next-line prettier/prettier
-      "import signatures from \"./erc20-signatures.json\";" +
+      'import signatures from "./erc20-signatures.json";' +
       String.fromCharCode(10) + // lf line break for linter
       "export default { tokens, signatures };\r" +
       String.fromCharCode(10) // lf line break for linter

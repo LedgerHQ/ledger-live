@@ -17,7 +17,7 @@ import isEqual from "lodash/isEqual";
 import logger from "../logger";
 import accountModel from "./../../helpers/accountModel";
 import { State } from ".";
-import useCompoundAccountEnabled from "../screens/lend/useCompoundAccountEnabled";
+
 import { hiddenNftCollectionsSelector } from "./settings";
 export type AccountsState = Account[];
 const state: AccountsState = [];
@@ -264,13 +264,6 @@ export const isUpToDateAccountSelector: OutputSelector<
   },
   boolean
 > = createSelector(accountSelector, isUpToDateAccount);
-export const hasLendEnabledAccountsSelector: OutputSelector<
-  State,
-  void,
-  boolean
-> = createSelector(shallowAccountsSelector, accounts =>
-  flattenAccounts(accounts).some(accounts => useCompoundAccountEnabled(accounts)),
-);
 export const getAllNFTs: OutputSelector<State, {}, NFT[]> = createSelector(
   accountsSelector,
   accounts => accounts.flatMap(account => account.nfts).filter(Boolean),

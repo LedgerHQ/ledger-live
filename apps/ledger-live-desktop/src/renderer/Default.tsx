@@ -19,7 +19,6 @@ import USBTroubleshooting from "~/renderer/screens/USBTroubleshooting";
 import Account from "~/renderer/screens/account";
 import WalletConnect from "~/renderer/screens/WalletConnect";
 import Asset from "~/renderer/screens/asset";
-import Lend from "~/renderer/screens/lend";
 import PlatformCatalog from "~/renderer/screens/platform";
 import PlatformApp from "~/renderer/screens/platform/App";
 import NFTGallery from "~/renderer/screens/nft/Gallery";
@@ -239,7 +238,6 @@ export default function Default() {
                               path="/platform/:appId?"
                               render={(props: any) => <PlatformApp {...props} />}
                             />
-                            <Route path="/lend" render={props => <Lend {...props} />} />
                             <Route path="/earn" render={props => <Earn {...props} />} />
                             <Route path="/exchange" render={(props: any) => <Exchange />} />
                             <Route

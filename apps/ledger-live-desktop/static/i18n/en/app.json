@@ -147,8 +147,6 @@
       "DELEGATE": "Delegated",
       "REDELEGATE": "Redelegated",
       "UNDELEGATE": "Undelegated",
-      "SUPPLY": "Deposited",
-      "REDEEM": "Withdrawn",
       "APPROVE": "Approved",
       "VOTE": "Voted",
       "FREEZE": "Frozen",
@@ -4918,9 +4916,6 @@
     "ClaimRewardsFeesWarning": {
       "title": "The rewards are smaller than the estimated fees to claim them",
       "description": ""
-    },
-    "CompoundLowerAllowanceOfActiveAccountError": {
-      "title": "You cannot reduce the amount approved while having an active deposit."
     },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",

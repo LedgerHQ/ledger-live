@@ -231,11 +231,6 @@ const envDefinitions: Record<
     parser: stringParser,
     desc: "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
   },
-  COMPOUND_API: {
-    def: "https://api.compound.finance",
-    parser: stringParser,
-    desc: "location of the compound API",
-  },
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
     parser: stringParser,

@@ -4,7 +4,6 @@ import {
   getMainAccount,
   isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
-import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -23,10 +22,8 @@ import perFamilyAccountActions from "~/renderer/generated/accountActions";
 import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
-import Graph from "~/renderer/icons/Graph";
 import IconWalletConnect from "~/renderer/icons/WalletConnect";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
-import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
 import { rgba } from "~/renderer/styles/helpers";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { track } from "~/renderer/analytics/segment";
@@ -164,10 +161,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const ReceiveAction = (decorators && decorators.ReceiveAction) || ReceiveActionDefault;
   const currency = getAccountCurrency(account);
 
-  // check if account already has lending enabled
-  const summary =
-    account.type === "TokenAccount" && makeCompoundSummaryForAccount(account, parentAccount);
-  const availableOnCompound = useCompoundAccountEnabled(account, parentAccount);
   const rampCatalog = useRampCatalog();
 
   // eslint-disable-next-line no-unused-vars
@@ -226,11 +219,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     },
     [currency, history, mainAccount.id, ptxSmartRouting?.enabled, buttonSharedTrackingFields],
   );
-  const onLend = useCallback(() => {
-    openModal("MODAL_LEND_MANAGE", {
-      ...summary,
-    });
-  }, [openModal, summary]);
   const onSwap = useCallback(() => {
     track("button_clicked", {
       button: "swap",
@@ -314,20 +302,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         ...item.eventProperties,
       },
     })),
-    ...(availableOnCompound
-      ? [
-          {
-            key: "Lend",
-            onClick: onLend,
-            event: "Lend Crypto Account Button",
-            eventProperties: {
-              currencyName: currency.name,
-            },
-            icon: Graph,
-            label: <Trans i18nKey="lend.manage.cta" />,
-          },
-        ]
-      : []),
   ];
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
