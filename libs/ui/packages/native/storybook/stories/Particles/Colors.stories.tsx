@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
 import Text from "../../../src/components/Text";
 import Flex from "../../../src/components/Layout/Flex";
 import ScrollContainer from "../../../src/components/Layout/ScrollContainer";
 import { storiesOf } from "../storiesOf";
-import { palettes, ColorPalette } from "@ledgerhq/ui-shared";
+import { ColorPalette } from "@ledgerhq/ui-shared";
 import { hex } from "../../../src/styles/helpers";
 
 export default { title: "Particles" };
@@ -38,24 +38,25 @@ const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const { type: _, ...palette } = palettes.dark;
-
-export const Colors = (): JSX.Element => (
-  <ScrollContainer width="100%">
-    {Object.entries(palette).map(([type, shades], i) => (
-      <Flex my={8} key={type + i} flexDirection="column" rowGap="1rem">
-        <Text m={3} variant="h2" textTransform="uppercase">
-          {type}
-        </Text>
-        <Flex flexDirection="row" flexWrap="wrap">
-          {Object.entries(shades).map(([shade, value], j) => (
-            <CardColor key={shade + i + j} shade={shade} type={type} value={value} />
-          ))}
+export const Colors = (): JSX.Element => {
+  const { colors } = useTheme();
+  const { palette, type, ...others } = colors; // eslint-disable-line @typescript-eslint/no-unused-vars
+  return (
+    <ScrollContainer width="100%">
+      {Object.entries(others).map(([type, shades], i) => (
+        <Flex my={8} key={type + i} flexDirection="column" rowGap="1rem">
+          <Text m={3} variant="h2" textTransform="uppercase">
+            {type}
+          </Text>
+          <Flex flexDirection="row" flexWrap="wrap">
+            {Object.entries(shades).map(([shade, value], j) => (
+              <CardColor key={shade + i + j} shade={shade} type={type} value={value} />
+            ))}
+          </Flex>
         </Flex>
-      </Flex>
-    ))}
-  </ScrollContainer>
-);
+      ))}
+    </ScrollContainer>
+  );
+};
 
 storiesOf((story) => story("Particles", module).add("Colors", Colors));
