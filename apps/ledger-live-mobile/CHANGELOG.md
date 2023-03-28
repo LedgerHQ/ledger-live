@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.18.0-next.2
+
+### Minor Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`3749c3d79a`](https://github.com/LedgerHQ/ledger-live/commit/3749c3d79a6a6fd76789880cd44ac32e7f6e8474) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Recover WebView
+
 ## 3.18.0-next.1
 
 ### Minor Changes
