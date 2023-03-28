@@ -78,7 +78,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   useEffect(() => {
     const openProtectUpsell = async () => {
       const internetConnected = await internetReachable();
-      if (internetConnected && recoverUpsellURL) {
+      if (internetConnected && recoverUpsellURL && protectFeature.enabled) {
         Linking.openURL(recoverUpsellURL);
       }
     };
