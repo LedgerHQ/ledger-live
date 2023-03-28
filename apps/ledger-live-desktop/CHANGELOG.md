@@ -1,5 +1,12 @@
 # ledger-live-desktop
 
+## 2.56.0-nightly.6
+
+### Minor Changes
+
+- [#2891](https://github.com/LedgerHQ/ledger-live/pull/2891) [`04ad7f2de3`](https://github.com/LedgerHQ/ledger-live/commit/04ad7f2de35c5e5e3025f4db81815542af3816f8) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Refactored Webviews;
+  Added WebPTXPlayer;
+
 ## 2.56.0-nightly.5
 
 ### Patch Changes

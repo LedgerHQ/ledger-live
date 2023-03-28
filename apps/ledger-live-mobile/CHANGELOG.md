@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.18.0-nightly.6
+
+### Minor Changes
+
+- [#2891](https://github.com/LedgerHQ/ledger-live/pull/2891) [`04ad7f2de3`](https://github.com/LedgerHQ/ledger-live/commit/04ad7f2de35c5e5e3025f4db81815542af3816f8) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Refactored Webviews;
+  Added WebPTXPlayer;
+
+### Patch Changes
+
+- [#3023](https://github.com/LedgerHQ/ledger-live/pull/3023) [`bbb7d68222`](https://github.com/LedgerHQ/ledger-live/commit/bbb7d6822241ffff0748f1f1f923f3556418c31d) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fixed unnecessary eq id reassignment during the onboarding
+
 ## 3.18.0-nightly.5
 
 ### Patch Changes
