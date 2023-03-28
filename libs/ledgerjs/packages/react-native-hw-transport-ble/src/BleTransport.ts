@@ -579,19 +579,18 @@ export default class BleTransport extends Transport {
 
     await this.exchangeAtomicImpl(async () => {
       try {
-        mtu =
-          (await merge(
-            this.notifyObservable.pipe(
-              tap((maybeError) => {
-                if (maybeError instanceof Error) throw maybeError;
-              }),
-              first((buffer) => buffer.readUInt8(0) === 0x08),
-              map((buffer) => buffer.readUInt8(5))
-            ),
-            defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(
-              ignoreElements()
-            )
-          ).toPromise()) + 3;
+        mtu = await merge(
+          this.notifyObservable.pipe(
+            tap((maybeError) => {
+              if (maybeError instanceof Error) throw maybeError;
+            }),
+            first((buffer) => buffer.readUInt8(0) === 0x08),
+            map((buffer) => buffer.readUInt8(5))
+          ),
+          defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(
+            ignoreElements()
+          )
+        ).toPromise();
       } catch (e: any) {
         log("ble-error", "inferMTU got " + JSON.stringify(e));
 
@@ -603,10 +602,9 @@ export default class BleTransport extends Transport {
       }
     });
 
-    if (mtu > 23) {
-      const mtuSize = mtu - 3;
-      log(TAG, `BleTransport(${this.id}) mtu set to ${mtuSize}`);
-      this.mtuSize = mtuSize;
+    if (mtu > 20) {
+      this.mtuSize = mtu;
+      log(TAG, `BleTransport(${this.id}) mtu set to ${this.mtuSize}`);
     }
 
     return this.mtuSize;
