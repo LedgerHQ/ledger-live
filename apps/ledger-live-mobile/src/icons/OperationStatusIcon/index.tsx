@@ -24,8 +24,6 @@ const iconsComponent = {
   OPT_IN: Icons.PlusMedium,
   OPT_OUT: Icons.TrashMedium,
   CLOSE_ACCOUNT: Icons.TrashMedium,
-  REDEEM: Icons.MinusMedium,
-  SUPPLY: Icons.ArrowRightMedium,
   APPROVE: Icons.PlusMedium,
   BOND: Icons.LinkMedium,
   UNBOND: Icons.LinkNoneMedium,

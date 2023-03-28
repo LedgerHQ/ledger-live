@@ -136,19 +136,6 @@ export function getTokenById(id: string): TokenCurrency {
   return currency;
 }
 
-/**
- * if a given token account is a token that can be used in compound, give the associated compound token (cToken)
- * @param {*} token
- */
-export function findCompoundToken(
-  token: TokenCurrency
-): TokenCurrency | null | undefined {
-  // TODO can be optimized by generating a direct map
-  return listTokensForCryptoCurrency(token.parentCurrency, {
-    withDelisted: true,
-  }).find((t) => t.compoundFor === token.id);
-}
-
 function comparePriority(a: TokenCurrency, b: TokenCurrency) {
   return Number(!!b.disableCountervalue) - Number(!!a.disableCountervalue);
 }
@@ -196,7 +183,6 @@ export function convertERC20([
   disableCountervalue,
   delisted,
   countervalueTicker,
-  compoundFor,
 ]: ERC20Token | PolygonERC20Token): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById(parentCurrencyId);
   return {
@@ -211,9 +197,6 @@ export function convertERC20([
     delisted,
     disableCountervalue: !!parentCurrency.isTestnetFor || !!disableCountervalue,
     countervalueTicker,
-    compoundFor: compoundFor
-      ? parentCurrencyId + "/erc20/" + compoundFor
-      : undefined,
     units: [
       {
         name,

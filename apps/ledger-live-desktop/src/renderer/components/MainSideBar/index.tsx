@@ -8,11 +8,7 @@ import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Icons } from "@ledgerhq/react-ui";
-import {
-  accountsSelector,
-  starredAccountsSelector,
-  hasLendEnabledAccountsSelector,
-} from "~/renderer/reducers/accounts";
+import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   sidebarCollapsedSelector,
   lastSeenDeviceSelector,
@@ -34,7 +30,6 @@ import IconSend from "~/renderer/icons/Send";
 import IconExchange from "~/renderer/icons/Exchange";
 import IconEarn from "~/renderer/icons/Growth";
 import IconChevron from "~/renderer/icons/ChevronRightSmall";
-import IconLending from "~/renderer/icons/Graph";
 import IconExperimental from "~/renderer/icons/Experimental";
 import IconSwap from "~/renderer/icons/Swap";
 import IconMarket from "~/renderer/icons/ChartLine";
@@ -233,7 +228,6 @@ const MainSideBar = () => {
   const hasStarredAccounts = useSelector(starredAccountsSelector).length > 0;
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
   const firstTimeLend = useSelector(state => state.settings.firstTimeLend);
-  const lendingEnabled = useSelector(hasLendEnabledAccountsSelector);
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -274,12 +268,6 @@ const MainSideBar = () => {
   const handleClickEarn = useCallback(() => {
     push("/earn");
   }, [push]);
-  const handleClickLend = useCallback(() => {
-    if (firstTimeLend) {
-      dispatch(setFirstTimeLend());
-    }
-    push("/lend");
-  }, [push, firstTimeLend, dispatch]);
   const handleClickSwap = useCallback(() => {
     push("/swap");
   }, [push]);
@@ -426,19 +414,6 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
-                {lendingEnabled && (
-                  <SideBarListItem
-                    id={"lend"}
-                    label={t("sidebar.lend")}
-                    icon={IconLending}
-                    iconActiveColor="wallet"
-                    onClick={handleClickLend}
-                    isActive={location.pathname === "/lend"}
-                    disabled={noAccounts}
-                    collapsed={secondAnim}
-                    NotifComponent={firstTimeLend ? <Dot collapsed={collapsed} /> : null}
-                  />
-                )}
                 <SideBarListItem
                   id={"card"}
                   label={t("sidebar.card")}

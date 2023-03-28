@@ -40,11 +40,6 @@ import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
-import LendingNavigator from "./LendingNavigator";
-import LendingInfoNavigator from "./LendingInfoNavigator";
-import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
-import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
-import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "../../screens/Analytics/Allocation";
 import AnalyticsOperations from "../../screens/Analytics/Operations";
@@ -226,36 +221,6 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.Swap}
         component={SwapNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.Lending}
-        component={LendingNavigator}
-        options={{
-          ...stackNavigationConfig,
-          headerStyle: styles.headerNoShadow,
-          headerLeft: () => null,
-          title: t("transfer.lending.title"),
-        }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingInfo}
-        component={LendingInfoNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingEnableFlow}
-        component={LendingEnableFlowNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingSupplyFlow}
-        component={LendingSupplyFlowNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingWithdrawFlow}
-        component={LendingWithdrawFlowNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen

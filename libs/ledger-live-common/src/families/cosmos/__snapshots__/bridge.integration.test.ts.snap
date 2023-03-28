@@ -3,9 +3,9 @@
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 Array [
   Object {
-    "balance": "3046789",
+    "balance": "3038644",
     "cosmosResources": Object {
-      "delegatedBalance": "1631177",
+      "delegatedBalance": "1631219",
       "withdrawAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
     },
     "currencyId": "cosmos",
@@ -22,7 +22,7 @@ Array [
     "index": 0,
     "name": "Cosmos 1",
     "nfts": undefined,
-    "operationsCount": 66,
+    "operationsCount": 67,
     "pendingOperations": Array [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
     "starred": false,
@@ -843,6 +843,31 @@ Array [
       "transactionSequenceNumber": 10,
       "type": "IN",
       "value": "1000",
+    },
+    Object {
+      "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",
+      "blockHash": null,
+      "blockHeight": "14489118",
+      "contract": undefined,
+      "extra": Object {
+        "validators": Array [
+          Object {
+            "address": "cosmosvaloper196ax4vc0lwpxndu9dyhvca7jhxp70rmcvrj90c",
+            "amount": "42",
+          },
+        ],
+      },
+      "fee": "8186",
+      "hash": "81DF8F7EB136AB82E06CF257E863121274E54524FFAE29B418F3BD9D194E6865",
+      "id": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:-81DF8F7EB136AB82E06CF257E863121274E54524FFAE29B418F3BD9D194E6865-DELEGATE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 117,
+      "type": "DELEGATE",
+      "value": "8186",
     },
     Object {
       "accountId": "js:2:cosmos:cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl:",

@@ -1,7 +1,6 @@
 import generated from "../generated/modals";
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
-import MODAL_CONFIRM from "./ConfirmModal";
 import MODAL_PASSWORD from "./PasswordModal";
 import MODAL_DISABLE_PASSWORD from "./DisablePasswordModal";
 import MODAL_ADD_ACCOUNTS from "./AddAccounts";
@@ -38,23 +37,12 @@ import MODAL_RECOVERY_SEED_WARNING from "./RecoverySeedWarning";
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 
-// Lending
-import MODAL_LEND_MANAGE from "../screens/lend/modals/ManageLend";
-import MODAL_LEND_ENABLE_INFO from "../screens/lend/modals/EnableInfoModal";
-import MODAL_LEND_SUPPLY from "../screens/lend/modals/Supply";
-import MODAL_LEND_SELECT_ACCOUNT from "../screens/lend/modals/SelectAccountStep";
-import MODAL_LEND_ENABLE_FLOW from "../screens/lend/modals/Enable";
-import MODAL_LEND_WITHDRAW_FLOW from "../screens/lend/modals/Withdraw";
-import MODAL_LEND_NO_ETHEREUM_ACCOUNT from "../screens/lend/modals/NoEthereumAccount";
-import MODAL_LEND_EMPTY_ACCOUNT_DEPOSIT from "../screens/lend/modals/EmptyAccountDeposit";
-
 type ModalComponent = unknown; // FIXME determine the common ground to modals
 type Modals = Record<string, ModalComponent>;
 
 const modals: Modals = {
   MODAL_WEBSOCKET_BRIDGE,
   MODAL_EXPORT_OPERATIONS,
-  MODAL_CONFIRM,
   MODAL_PASSWORD,
   MODAL_DISABLE_PASSWORD,
   MODAL_ADD_ACCOUNTS,
@@ -84,15 +72,6 @@ const modals: Modals = {
   MODAL_START_STAKE,
   MODAL_RECOVERY_SEED_WARNING,
   MODAL_PROTECT_DISCOVER,
-  // Lending
-  MODAL_LEND_MANAGE,
-  MODAL_LEND_ENABLE_INFO,
-  MODAL_LEND_ENABLE_FLOW,
-  MODAL_LEND_SELECT_ACCOUNT,
-  MODAL_LEND_SUPPLY,
-  MODAL_LEND_WITHDRAW_FLOW,
-  MODAL_LEND_NO_ETHEREUM_ACCOUNT,
-  MODAL_LEND_EMPTY_ACCOUNT_DEPOSIT,
   // Swap
   MODAL_SWAP_RESET_KYC,
   // Platform
