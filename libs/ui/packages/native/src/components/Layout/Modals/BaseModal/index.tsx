@@ -27,7 +27,7 @@ export type BaseModalProps = {
   subtitle?: string;
   children?: React.ReactNode;
   noCloseButton?: boolean;
-} & Partial<ModalProps>;
+} & ModalProps;
 
 const SafeContainer = styled.SafeAreaView`
   background-color: ${(p) => p.theme.colors.background.drawer};
@@ -159,7 +159,7 @@ export default function BaseModal({
     <ReactNativeModal
       {...backDropProps}
       {...rest}
-      isVisible={isOpen}
+      isVisible={isOpen || false}
       deviceWidth={width}
       deviceHeight={height}
       useNativeDriver
