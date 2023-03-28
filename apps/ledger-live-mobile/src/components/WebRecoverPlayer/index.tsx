@@ -42,8 +42,6 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
 
-    // TODO show bottom modal and block only if the user cancels
-    // alert("Test");
     if (webviewState.canGoBack) {
       webview.goBack();
       return true; // prevent default behavior (native navigation)
