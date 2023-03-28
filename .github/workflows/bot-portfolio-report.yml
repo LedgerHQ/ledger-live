@@ -66,7 +66,7 @@ jobs:
           path: coin-apps
       - uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7.30.0
       - name: install and build
         run: |
           pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
