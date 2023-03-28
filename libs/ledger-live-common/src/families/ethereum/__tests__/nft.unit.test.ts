@@ -183,7 +183,7 @@ describe("nft helpers", () => {
     test("should return that it's not an NFT transaction", () => {
       const transaction: Transaction = {
         family: "ethereum",
-        mode: "compound.supply",
+        mode: "send",
         amount: new BigNumber(0),
         recipient: "",
         gasPrice: null,

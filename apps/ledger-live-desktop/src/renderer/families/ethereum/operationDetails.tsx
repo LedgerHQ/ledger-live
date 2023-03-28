@@ -23,13 +23,9 @@ type OperationDetailsExtraProps = {
   type: string;
   account: AccountLike | undefined | null;
 };
-const OperationDetailsExtra = ({ extra, type }: OperationDetailsExtraProps) => {
+const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
   const entries = toPairs(extra);
-
-  return (type === "REDEEM" || type === "SUPPLY"
-    ? entries.filter(([key]) => !["compoundValue", "rate"].includes(key))
-    : entries
-  ).map(([key, value]) => (
+  return entries.map(([key, value]) => (
     <OpDetailsSection key={key}>
       <OpDetailsTitle>
         <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />

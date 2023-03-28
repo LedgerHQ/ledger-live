@@ -63,8 +63,6 @@ There are two modes of usage of this library.
     *   [Parameters](#parameters-19)
 *   [getTokenById](#gettokenbyid)
     *   [Parameters](#parameters-20)
-*   [findCompoundToken](#findcompoundtoken)
-    *   [Parameters](#parameters-21)
 
 ### abandonSeedAddresses
 
@@ -255,16 +253,6 @@ Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 *   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 Returns **TokenCurrency** 
-
-### findCompoundToken
-
-if a given token account is a token that can be used in compound, give the associated compound token (cToken)
-
-#### Parameters
-
-*   `token` **any** 
-
-Returns **(TokenCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
 
 ## Maintainance notes
 

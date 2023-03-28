@@ -19,9 +19,6 @@ import type { BaseNavigatorStackParamList } from "../../components/RootNavigator
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../../const";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 import { PolkadotBondFlowParamList } from "./BondFlow/types";
@@ -34,18 +31,6 @@ type Navigation = CompositeScreenProps<
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
   | StackNavigatorProps<

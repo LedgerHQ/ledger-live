@@ -192,11 +192,6 @@ test("tokens are correct", () => {
     expect(typeof unit.name).toBe("string");
     expect(unit.magnitude).toBeGreaterThan(-1);
     expect(typeof unit.magnitude).toBe("number");
-
-    if (token.compoundFor) {
-      const t = findTokenById(token.compoundFor);
-      expect(typeof t).toBe("object");
-    }
   }
 });
 

@@ -38,8 +38,6 @@ export type TokenAccount = {
   token: TokenCurrency;
   balance: BigNumber;
   spendableBalance: BigNumber;
-  // in case of compound, this is the associated balance for the associated ctoken
-  compoundBalance?: BigNumber;
   creationDate: Date;
   operationsCount: number;
   operations: Operation[];
@@ -218,7 +216,6 @@ export type TokenAccountRaw = {
   pendingOperations: OperationRaw[];
   balance: string;
   spendableBalance?: string;
-  compoundBalance?: string;
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
   approvals?: Array<{

@@ -1,0 +1,15 @@
+{
+  "entry": ["index.js"],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
+  "ignorePatterns": ["**/node_modules/**"],
+  "ignoreUnresolved": [],
+  "ignoreUnimported": [
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/*.d.ts",
+    "src/__test__/*",
+    "src/__tests__/*",
+    "src/__mocks__/*"
+  ],
+  "ignoreUnused": []
+}

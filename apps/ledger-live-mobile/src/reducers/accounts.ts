@@ -18,10 +18,6 @@ import type {
   CryptoOrTokenCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-import {
-  makeCompoundSummaryForAccount,
-  getAccountCapabilities,
-} from "@ledgerhq/live-common/compound/logic";
 import isEqual from "lodash/isEqual";
 import {
   addAccounts,
@@ -407,21 +403,6 @@ export const subAccountByCurrencyOrderedScreenSelector =
       currency,
     });
   };
-export const hasLendEnabledAccountsSelector = createSelector(
-  flattenAccountsSelector,
-  accounts =>
-    accounts.some(account => {
-      if (!account || account.type !== "TokenAccount") return false;
-      // check if account already has lending enabled
-      const summary =
-        account.type === "TokenAccount" &&
-        makeCompoundSummaryForAccount(account, undefined);
-      const capabilities = summary
-        ? account.type === "TokenAccount" && getAccountCapabilities(account)
-        : null;
-      return !!capabilities;
-    }),
-);
 
 function accountHasPositiveBalance(account: AccountLike) {
   return Boolean(account.balance?.gt(0));
