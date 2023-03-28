@@ -1,10 +1,11 @@
+import { AxiosRequestConfig } from "axios";
 import { Operation } from "@ledgerhq/types-live";
-import axios, { AxiosRequestConfig } from "axios";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { EtherscanERC20Event, EtherscanOperation } from "../types";
 import { makeLRUCache } from "../../../cache";
 import { EtherscanAPIError } from "../errors";
 import { delay } from "../../../promise";
+import network from "../../../network";
 import {
   etherscanERC20EventToOperation,
   etherscanOperationToOperation,
@@ -18,11 +19,22 @@ async function fetchWithRetries<T>(
   retries = DEFAULT_RETRIES_API
 ): Promise<T> {
   try {
-    const { data } = await axios.request<{
+    const { data } = await network<{
       status: string;
       message: string;
       result: T;
-    }>(params);
+    }>({
+      ...params,
+      headers: {
+        ...(params?.headers || {}),
+        // We enforce a user-agent in order to prevent some restrictions that are being applied on not whitelisted user-agents
+        // E.g. moonscan is refusing `okhttp/4.9.2` (the android user-agent) to get the API response without going through the
+        // DDoS protection on cloudflare which leads to a 403 error
+        // This fix should be removed or improved ASAP.
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9",
+      },
+    });
 
     if (!Number(data.status) && data.message === "NOTOK") {
       throw new EtherscanAPIError(
