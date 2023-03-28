@@ -1,6 +1,6 @@
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 
-import React, { useMemo } from "react";
+import React from "react";
 import { getCurrentElrondPreloadData } from "@ledgerhq/live-common/families/elrond/preload";
 import { randomizeProviders } from "@ledgerhq/live-common/families/elrond/helpers/randomizeProviders";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
@@ -32,10 +32,8 @@ type NavigationParamsType = readonly [name: string, options: object];
 const getMainActions = (props: getActionsType): getActionsReturnType => {
   const { account, parentAccount } = props;
 
-  const delegationEnabled = useMemo(
-    () =>
-      account.spendableBalance.isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT),
-    [account.spendableBalance],
+  const delegationEnabled = account.spendableBalance.isGreaterThanOrEqualTo(
+    MIN_DELEGATION_AMOUNT,
   );
 
   /*
