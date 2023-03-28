@@ -11,10 +11,12 @@ test("Stability of the app with numerous real accounts", async ({ page }) => {
 
   await test.step("visit portfolio page", async () => {
     await expect(layout.topbarSynchronizeButton).toBeVisible();
+    await expect(layout.topbarSynchronizeButton).toHaveText("Synchronized");
   });
 
   await test.step("visit accounts page", async () => {
     await layout.goToAccounts();
     await expect(accountsPage.addAccountButton).toBeVisible();
+    await expect(layout.topbarSynchronizeButton).toHaveText("Synchronized");
   });
 });
