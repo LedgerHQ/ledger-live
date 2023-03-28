@@ -6,7 +6,6 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import TrackScreen from "../../../analytics/TrackScreen";
 import GenericErrorView from "../../../components/GenericErrorView";
 import { useLocale } from "../../../context/Locale";
@@ -35,7 +34,7 @@ export function BuyAndSellScreen({ route }: Props) {
     <>
       <TrackScreen category="Platform" name="App" />
       <WebPTXPlayer
-        manifest={manifest as LiveAppManifest}
+        manifest={manifest}
         inputs={{
           theme,
           lang: locale,

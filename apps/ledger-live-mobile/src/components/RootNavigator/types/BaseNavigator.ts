@@ -119,6 +119,13 @@ export type BaseNavigatorStackParamList = {
     defaultCurrencyId?: string;
     defaultTicker?: string;
   };
+  [ScreenName.Recover]: {
+    platform?: string;
+    name?: string;
+    source?: string;
+    redirectTo?: string;
+    callback?: string;
+  };
   [ScreenName.LearnWebView]: {
     uri?: string;
   };
