@@ -5,8 +5,8 @@ export class OnboardingPage {
   readonly page: Page;
   readonly deviceAction: DeviceAction;
   readonly getStartedButton: Locator;
-  readonly selectDeviceContainer: Function;
-  readonly selectDeviceButton: Function;
+  readonly selectDeviceContainer: (deviceId: string) => Locator;
+  readonly selectDeviceButton: (deviceId: string) => Locator;
   readonly newDeviceButton: Locator;
   readonly connectDeviceButton: Locator;
   readonly restoreDeviceButton: Locator;
@@ -40,11 +40,10 @@ export class OnboardingPage {
     this.page = page;
     this.deviceAction = new DeviceAction(page);
     this.getStartedButton = page.locator("data-test-id=v3-onboarding-get-started-button");
-    this.selectDeviceContainer = (deviceId: string): Locator => {
+    this.selectDeviceContainer = deviceId => {
       return page.locator(`data-test-id=v3-container-device-${deviceId}`);
     };
-    this.selectDeviceButton = (deviceId: string): Locator =>
-      page.locator(`data-test-id=v3-device-${deviceId}`);
+    this.selectDeviceButton = deviceId => page.locator(`data-test-id=v3-device-${deviceId}`);
     this.checkMyNanoButton = page.locator('button:has-text("Check my Nano")');
     this.continueButton = page.locator('button:has-text("Continue")');
     this.newDeviceButton = page.locator("data-test-id=v3-onboarding-new-device");
