@@ -93,7 +93,7 @@ export class CosmosAPI {
       url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/blocks/latest`,
     });
 
-    return data.block.header.height;
+    return parseInt(data.block.header.height);
   };
 
   getAllBalances = async (
