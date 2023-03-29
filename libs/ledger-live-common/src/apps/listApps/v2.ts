@@ -22,8 +22,9 @@ import { getEnv } from "../../env";
 
 import getDeviceName from "../../hw/getDeviceName";
 
-// Hash discrepancies for these apps do NOT indicate a potential update.
-const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
+// Hash discrepancies for these apps do NOT indicate a potential update,
+// these apps have a mechanism that makes their hash change every time.
+const appsWithDynamicHashes = ["Fido U2F", "Security Key"];
 
 // Empty hash data means we won't have information on the app.
 const emptyHashData = "0".repeat(64);
@@ -165,7 +166,7 @@ const listApps = (
         installedAppNames[name] = true;
         const appInCatalog = appByName[name];
         const updateAvailable = appInCatalog?.hash !== hash;
-        const ignoreUpdate = appsThatKeepChangingHashes.includes(name);
+        const ignoreUpdate = appsWithDynamicHashes.includes(name);
         const updated = ignoreUpdate || !updateAvailable;
         const availableVersion = appInCatalog?.version || "";
 
