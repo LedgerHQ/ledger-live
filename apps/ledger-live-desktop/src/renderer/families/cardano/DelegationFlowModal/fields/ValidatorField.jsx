@@ -3,7 +3,6 @@ import React, { useState, useCallback, useEffect } from "react";
 import type { TFunction } from "react-i18next";
 
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { debounce } from "lodash";
 
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -16,10 +15,9 @@ import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
-import {
-  fetchPoolList,
-  fetchPoolDetails,
-} from "@ledgerhq/live-common/families/cardano/api/getPools";
+import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
+
+import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/getPools";
 
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
@@ -41,48 +39,21 @@ const ValidatorField = ({
   onChangeValidator,
   selectedPoolId,
 }: Props) => {
-  const [search, setSearch] = useState("");
   const [ledgerPools, setLedgerPools] = useState([]);
   const unit = getAccountUnit(account);
-  const [validators, setValidators] = useState([]);
-  const [pageNo, setPageNo] = useState(1);
   const [showAll, setShowAll] = useState(
     LEDGER_POOL_IDS.length === 0 ||
       (LEDGER_POOL_IDS.length === 1 && delegation.poolId === LEDGER_POOL_IDS[0]),
   );
 
-  const fetchPoolsFromNextPage = async () => {
-    if (search === "" || validators.length === pageNo * 50) {
-      setPageNo(pageNo + 1);
-      await fetchPools();
-    }
-  };
+  const { pools, searchQuery, setSearchQuery, onScrollEndReached } = useCardanoFamilyPools(
+    account.currency,
+  );
 
   const poolIdsToFilterFromAllPools = [...LEDGER_POOL_IDS];
   if (delegation.poolId) {
     poolIdsToFilterFromAllPools.push(delegation.poolId);
   }
-
-  const fetchPools = async () => {
-    const apiRes = await fetchPoolList(account.currency, search, pageNo, 50);
-    if (pageNo === 1) {
-      setValidators([...apiRes.pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))]);
-    } else {
-      setValidators([
-        ...validators,
-        ...apiRes.pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId)),
-      ]);
-    }
-  };
-
-  const debouncedFetchPools = debounce(fetchPools, 1000);
-
-  useEffect(() => {
-    setPageNo(1);
-    debouncedFetchPools();
-  }, [search]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
 
   useEffect(() => {
     if (LEDGER_POOL_IDS.length) {
@@ -91,6 +62,8 @@ const ValidatorField = ({
       });
     }
   }, [account]);
+
+  const onSearch = useCallback(evt => setSearchQuery(evt.target.value), [setSearchQuery]);
 
   const renderItem = (validator: StakePool, validatorIdx: number) => {
     return (
@@ -106,16 +79,20 @@ const ValidatorField = ({
   };
   return (
     <>
-      {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
+      {showAll && <ValidatorSearchInput noMargin={true} search={searchQuery} onSearch={onSearch} />}
       <ValidatorsFieldContainer>
         <Box p={1}>
           <ScrollLoadingList
-            data={showAll ? validators : ledgerPools}
+            data={
+              showAll
+                ? pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))
+                : ledgerPools
+            }
             style={{ flex: showAll ? "1 0 256px" : "1 0 64px", marginBottom: 0, paddingLeft: 0 }}
             renderItem={renderItem}
             noResultPlaceholder={null}
-            fetchPoolsFromNextPage={fetchPoolsFromNextPage}
-            search={search}
+            fetchPoolsFromNextPage={onScrollEndReached}
+            search={searchQuery}
           />
         </Box>
         {LEDGER_POOL_IDS.length ? (
