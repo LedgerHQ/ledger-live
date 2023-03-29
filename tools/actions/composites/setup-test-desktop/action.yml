@@ -20,15 +20,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: pnpm/action-setup@v2
-      with:
-        version: 7.30.0
-        dest: ${{ runner.temp }}/setup-pnpm
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-        cache: pnpm
-        cache-dependency-path: "**/pnpm-lock.yaml"
+    - name: Setup the toolchain
+      uses: ./tools/actions/composites/setup-toolchain
     - uses: actions/setup-python@v4
       if: ${{ !inputs.skip_python }}
       with:
@@ -43,7 +36,7 @@ runs:
         pnpm add -g node-gyp
       shell: bash
     - name: Install dependencies
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-live-app" --frozen-lockfile --unsafe-perm
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-live-app" --unsafe-perm
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}

@@ -36,14 +36,8 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.base_ref }}
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 7.30.0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.15.0
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
