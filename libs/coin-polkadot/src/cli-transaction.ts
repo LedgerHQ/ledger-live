@@ -12,7 +12,7 @@ import {
   SidecarValidatorsParamStatus,
 } from "./api/sidecar.types";
 import { AccountLike } from "@ledgerhq/types-live";
-import { PolkadotAccount, Transaction } from "./types";
+import { PolkadotAccount, PolkadotValidator, Transaction } from "./types";
 import { PolkadotAPI } from "./api";
 import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
@@ -50,59 +50,61 @@ const options = [
     desc: "Reward destination",
   },
 ];
-const polkadotValidatorsFormatters = {
-  json: (list) => JSON.stringify(list),
-  csv: (list) => {
-    const polkadotUnit = getCryptoCurrencyById("polkadot").units[0];
-    const csvHeader =
-      "ADDRESS IDENTITY TOTAL_BONDED SELF_BONDED NOMINATORS_COUNT COMMISSION REWARD_POINTS\n";
-    const csvList = list
-      .map(
-        (v) =>
-          `${v.address} "${v.identity}" ${formatCurrencyUnit(
-            polkadotUnit,
-            v.totalBonded,
-            {
+type PolkadotValidatorFormatter = (list: PolkadotValidator[]) => string;
+const polkadotValidatorsFormatters: Record<string, PolkadotValidatorFormatter> =
+  {
+    json: (list: PolkadotValidator[]) => JSON.stringify(list),
+    csv: (list: PolkadotValidator[]) => {
+      const polkadotUnit = getCryptoCurrencyById("polkadot").units[0];
+      const csvHeader =
+        "ADDRESS IDENTITY TOTAL_BONDED SELF_BONDED NOMINATORS_COUNT COMMISSION REWARD_POINTS\n";
+      const csvList = list
+        .map(
+          (v) =>
+            `${v.address} "${v.identity}" ${formatCurrencyUnit(
+              polkadotUnit,
+              v.totalBonded,
+              {
+                showCode: false,
+                disableRounding: true,
+                useGrouping: false,
+              }
+            )} ${formatCurrencyUnit(polkadotUnit, v.selfBonded, {
               showCode: false,
               disableRounding: true,
               useGrouping: false,
-            }
-          )} ${formatCurrencyUnit(polkadotUnit, v.selfBonded, {
-            showCode: false,
-            disableRounding: true,
-            useGrouping: false,
-          })} ${v.nominatorsCount} ${v.commission
-            .multipliedBy(100)
-            .toFixed(2)} ${v.rewardPoints}`
-      )
-      .join("\n");
-    return csvHeader + csvList;
-  },
-  default: (list) => {
-    const polkadotUnit = getCryptoCurrencyById("polkadot").units[0];
-    const tableList = list
-      .map(
-        (v) =>
-          `${v.address} "${v.identity}" ${formatCurrencyUnit(
-            polkadotUnit,
-            v.totalBonded,
-            {
+            })} ${v.nominatorsCount} ${v.commission
+              .multipliedBy(100)
+              .toFixed(2)} ${v.rewardPoints}`
+        )
+        .join("\n");
+      return csvHeader + csvList;
+    },
+    default: (list: PolkadotValidator[]) => {
+      const polkadotUnit = getCryptoCurrencyById("polkadot").units[0];
+      const tableList = list
+        .map(
+          (v) =>
+            `${v.address} "${v.identity}" ${formatCurrencyUnit(
+              polkadotUnit,
+              v.totalBonded,
+              {
+                showCode: true,
+                disableRounding: true,
+                useGrouping: false,
+              }
+            )} ${formatCurrencyUnit(polkadotUnit, v.selfBonded, {
               showCode: true,
               disableRounding: true,
               useGrouping: false,
-            }
-          )} ${formatCurrencyUnit(polkadotUnit, v.selfBonded, {
-            showCode: true,
-            disableRounding: true,
-            useGrouping: false,
-          })} ${v.nominatorsCount} ${
-            v.commission.multipliedBy(100).toFixed(2) + "%"
-          } ${v.rewardPoints + " PTS"}`
-      )
-      .join("\n");
-    return tableList;
-  },
-};
+            })} ${v.nominatorsCount} ${
+              v.commission.multipliedBy(100).toFixed(2) + "%"
+            } ${v.rewardPoints + " PTS"}`
+        )
+        .join("\n");
+      return tableList;
+    },
+  };
 function createValidators(polkadotAPI: PolkadotAPI) {
   return {
     args: [
@@ -139,8 +141,9 @@ function createValidators(polkadotAPI: PolkadotAPI) {
       ).pipe(
         map((validators) => {
           const f =
-            (format && polkadotValidatorsFormatters[format]) ||
-            polkadotValidatorsFormatters.default;
+            format && format in polkadotValidatorsFormatters
+              ? polkadotValidatorsFormatters[format]
+              : polkadotValidatorsFormatters.default;
           return f(validators);
         })
       ),
@@ -155,30 +158,39 @@ function inferTransactions(
   opts: Record<string, any>,
   { inferAmount }: any
 ): Transaction[] {
-  return flatMap(transactions, ({ transaction, account }) => {
-    invariant(transaction.family === "polkadot", "polkadot family");
+  return flatMap(
+    transactions,
+    ({
+      transaction,
+      account,
+    }: {
+      account: AccountLike;
+      transaction: Transaction;
+    }) => {
+      invariant(transaction.family === "polkadot", "polkadot family");
 
-    if (isAccount(account)) {
-      invariant(
-        (account as PolkadotAccount).polkadotResources,
-        "unactivated account"
-      );
+      if (isAccount(account)) {
+        invariant(
+          (account as PolkadotAccount).polkadotResources,
+          "unactivated account"
+        );
+      }
+
+      const validators: string[] = opts["validator"] || [];
+      return {
+        ...transaction,
+        family: "polkadot",
+        fees: opts.fees ? inferAmount(account, opts.fees) : null,
+        mode: opts.mode || "send",
+        validators,
+        era: opts.era || null,
+        rewardDestination: opts.rewardDestination || null,
+        numSlashingSpans: isAccount(account)
+          ? (account as PolkadotAccount).polkadotResources?.numSlashingSpans
+          : null,
+      };
     }
-
-    const validators: string[] = opts["validator"] || [];
-    return {
-      ...transaction,
-      family: "polkadot",
-      fees: opts.fees ? inferAmount(account, opts.fees) : null,
-      mode: opts.mode || "send",
-      validators,
-      era: opts.era || null,
-      rewardDestination: opts.rewardDestination || null,
-      numSlashingSpans: isAccount(account)
-        ? (account as PolkadotAccount).polkadotResources?.numSlashingSpans
-        : null,
-    };
-  });
+  );
 }
 
 export default function makeCliTools(
