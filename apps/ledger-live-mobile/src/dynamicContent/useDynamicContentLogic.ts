@@ -13,7 +13,7 @@ import {
   mapAsAssetContentCard,
   mapAsNotificationContentCard,
   mapAsLearnContentCard,
-  filterByPlatform,
+  getMobileContentCards,
 } from "./dynamicContent";
 import { LocationContentCard } from "./types";
 
@@ -24,7 +24,7 @@ export const useDynamicContentLogic = () => {
   const fetchData = useCallback(async () => {
     // Fetch data from Braze
     const contentCards = await Braze.getContentCards();
-    const mobileContentCards = filterByPlatform(contentCards);
+    const mobileContentCards = getMobileContentCards(contentCards);
     // Filtering v0
     const walletCards = filterByPage(
       mobileContentCards,
