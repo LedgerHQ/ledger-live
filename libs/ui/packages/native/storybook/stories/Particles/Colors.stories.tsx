@@ -5,7 +5,7 @@ import Flex from "../../../src/components/Layout/Flex";
 import ScrollContainer from "../../../src/components/Layout/ScrollContainer";
 import { storiesOf } from "../storiesOf";
 import { ColorPalette } from "@ledgerhq/ui-shared";
-import { hex } from "../../../src/styles/helpers";
+import { getAlpha, hex } from "../../../src/styles/helpers";
 
 export default { title: "Particles" };
 
@@ -22,15 +22,15 @@ const ColorArea = styled(Flex)<{ type: keyof ColorPalette; shade: string }>`
 
 type CardColorProps = { shade: string; type: string; value: string };
 const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
-  const rgba = useMemo(() => hex(value), [value]);
+  const rgba = useMemo(
+    () => (value.length > 7 ? `${hex(value)} ${getAlpha(value) * 100}%` : value),
+    [value],
+  );
 
   return (
     <Flex m={3} flexDirection="column" alignItems="center">
       <ColorArea type={type as keyof ColorPalette} shade={shade} />
       <Text variant="tiny">{shade}</Text>
-      <Text variant="tiny" color="neutral.c60">
-        {value}
-      </Text>
       <Text variant="tiny" color="neutral.c60">
         {rgba}
       </Text>

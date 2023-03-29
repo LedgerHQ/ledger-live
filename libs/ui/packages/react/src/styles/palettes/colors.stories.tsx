@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import styled, { useTheme } from "styled-components";
 import Text from "../../components/asorted/Text";
 import Flex from "../../components/layout/Flex";
-import { hex } from "../helpers";
+import { getAlpha, hex } from "../helpers";
 import { ColorPalette } from "@ledgerhq/ui-shared";
 
 export default { title: "Particles" };
@@ -21,7 +21,10 @@ const ColorArea = styled.div<{ type: keyof ColorPalette; shade: string }>`
 
 type CardColorProps = { shade: string; type: string; value: string };
 const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
-  const rgba = useMemo(() => hex(value), [value]);
+  const rgba = useMemo(
+    () => (value.length > 7 ? `${hex(value)} ${getAlpha(value) * 100}%` : value),
+    [value],
+  );
 
   const onClick = (type: string, shade: string): void => {
     navigator.clipboard.writeText(`p.theme.colors.${type}.${shade}`);
@@ -35,9 +38,6 @@ const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
         onClick={() => onClick(type, shade)}
       />
       <Text variant="tiny">{shade}</Text>
-      <Text variant="tiny" color="neutral.c60">
-        {value}
-      </Text>
       <Text variant="tiny" color="neutral.c60">
         {rgba}
       </Text>
