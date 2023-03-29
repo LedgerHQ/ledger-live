@@ -61,11 +61,11 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "staking key",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Staking key",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
         expectedValue: ({ account }) => {
           const stakeCred = getAccountStakeCredential(
             account.xpub as string,
@@ -88,15 +88,15 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "registration?",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Delegate stake to",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "delegation?",
-        button: "LRlr",
+        button: SpeculosButton.BOTH,
       },
       {
         title: "transaction?",
