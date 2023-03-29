@@ -8,7 +8,7 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import { Account, OperationType } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import Section from "../../screens/OperationDetails/Section";
 import { discreetModeSelector, localeSelector } from "../../reducers/settings";

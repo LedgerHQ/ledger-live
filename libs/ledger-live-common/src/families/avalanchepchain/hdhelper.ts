@@ -12,7 +12,7 @@ import BigNumber from "bignumber.js";
 import { BN } from "avalanche";
 import { UnixNow } from "avalanche/dist/utils";
 import { getAddressChains } from "./api";
-import { createHash } from "node:crypto";
+import { createHash } from "crypto";
 
 const INDEX_RANGE = 20;
 const SCAN_SIZE = 100;
@@ -101,7 +101,7 @@ class HDHelper {
   }
 
   async findAvailableIndexExplorer(start = 0): Promise<number> {
-    const upTo = 512;
+    const upTo = 64;
     const addresses: string[] = this.getAllDerivedAddresses(
       start + upTo,
       start
