@@ -1,4 +1,5 @@
 import axios from "axios";
+import { AssertionError } from "assert";
 import { signAddressResolution, signDomainResolution } from "../../signers";
 
 jest.mock("axios");
@@ -35,6 +36,29 @@ describe("Domain Service", () => {
         expect(
           await signDomainResolution("vitalik.eth", "test" as any, "123")
         ).toEqual(null);
+      });
+
+      it("should fail on domain too long or containing non-ascii chars", async () => {
+        const domainTooLong = new Array(256).fill("a").join("");
+        try {
+          await signDomainResolution(domainTooLong, "ens", "0x123");
+          fail("Promise should have been rejected");
+        } catch (e) {
+          if (e instanceof AssertionError) {
+            throw e;
+          }
+          expect(e).toBeTruthy();
+        }
+
+        try {
+          await signDomainResolution("bug🐛.eth", "ens", "0x123");
+          fail("Promise should have been rejected");
+        } catch (e) {
+          if (e instanceof AssertionError) {
+            throw e;
+            expect(e).toBeTruthy();
+          }
+        }
       });
     });
 
