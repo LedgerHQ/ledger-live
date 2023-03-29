@@ -4940,6 +4940,7 @@
       "header": "Votes ({{total}})",
       "Amount": "Amount",
       "noRewards": "No rewards available",
+      "warnDisableStakingMessage": "Staking feature for Tron is currently unavailable",
       "votes": {
         "title": "Votes",
         "description": "Cast your votes for one or more Representatives to start earning rewards.",

@@ -275,6 +275,7 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/6793501085981?support=true&utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_connect_manager",
     TronSendTrc20ToNewAccountForbidden:
       "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
+    TronStakingDisable: "https://support.ledger.com/hc/en-us/articles/9949980566173?support=true",
     OperatingSystemOutdated: "https://support.ledger.com/hc/articles/8083692639901?support=true",
   },
   compound:

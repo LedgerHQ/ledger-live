@@ -3,12 +3,9 @@ import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/in
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import IconCoins from "~/renderer/icons/Coins";
-import { localeSelector } from "~/renderer/reducers/settings";
-import { BigNumber } from "bignumber.js";
 
 type Props = {
   account: AccountLike,
@@ -19,7 +16,6 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const minAmount = 10 ** unit.magnitude;
@@ -55,22 +51,14 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
 
   if (parentAccount) return null;
 
-  const formattedMinAmount = formatCurrencyUnit(unit, BigNumber(minAmount), {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-    locale,
-  });
-
-  const disabledLabel = earnRewardDisabled
-    ? `${t("tron.voting.warnEarnRewards", { amount: formattedMinAmount })}`
-    : undefined;
+  const disabledLabel = t("tron.voting.warnDisableStaking");
 
   return [
     {
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
+      disabled: true,
       label: t("account.stake"),
       tooltip: disabledLabel,
       event: "button_clicked",

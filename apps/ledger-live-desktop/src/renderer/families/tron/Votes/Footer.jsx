@@ -63,7 +63,7 @@ const Footer = ({ total, used, onClick }: Props) => {
         </Text>
       </Box>
       <Box flex="1" />
-      <Button primary onClick={onClick}>
+      <Button primary onClick={onClick} disabled={true}>
         <Trans i18nKey="tron.voting.remainingVotes.button" />
       </Button>
     </Box>

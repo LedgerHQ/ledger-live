@@ -11,7 +11,6 @@ import {
   getLastVotedDate,
   formatVotes,
   getNextRewardDate,
-  MIN_TRANSACTION_AMOUNT,
 } from "@ledgerhq/live-common/families/tron/react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -64,14 +63,7 @@ const Delegation = ({ account }: Props) => {
   const unit = getAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
 
-  const formattedMinAmount = formatCurrencyUnit(unit, BigNumber(MIN_TRANSACTION_AMOUNT), {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-    locale,
-  });
-
-  const { tronResources, spendableBalance } = account;
+  const { tronResources } = account;
   invariant(tronResources, "tron account expected");
   const { votes, tronPower, unwithdrawnReward } = tronResources;
 
@@ -99,16 +91,6 @@ const Delegation = ({ account }: Props) => {
     [account, dispatch, votes],
   );
 
-  const onEarnRewards = useCallback(
-    () =>
-      dispatch(
-        openModal("MODAL_TRON_REWARDS_INFO", {
-          account,
-        }),
-      ),
-    [account, dispatch],
-  );
-
   const hasVotes = formattedVotes.length > 0;
 
   const hasRewards = unwithdrawnReward.gt(0);
@@ -120,9 +102,6 @@ const Delegation = ({ account }: Props) => {
   );
   const canClaimRewards = hasRewards && !formattedNextRewardDate;
 
-  const earnRewardDisabled =
-    tronPower === 0 && (!spendableBalance || !spendableBalance.gte(MIN_TRANSACTION_AMOUNT));
-
   return (
     <TableContainer mb={6}>
       <TableHeader
@@ -130,7 +109,7 @@ const Delegation = ({ account }: Props) => {
         titleProps={{ "data-e2e": "title_Delegation" }}
       >
         {tronPower > 0 && formattedVotes.length > 0 ? (
-          <Button small color="palette.primary.main" onClick={onDelegate} mr={2}>
+          <Button small color="palette.primary.main" onClick={onDelegate} mr={2} disabled={true}>
             <Box horizontal flow={1} alignItems="center">
               <Vote size={12} />
               <Box>
@@ -159,7 +138,7 @@ const Delegation = ({ account }: Props) => {
             }
           >
             <Button
-              disabled={!canClaimRewards}
+              disabled={true}
               color="palette.primary.main"
               small
               onClick={() => {
@@ -235,32 +214,16 @@ const Delegation = ({ account }: Props) => {
             </Box>
           </Box>
           <Box>
-            <ToolTip
-              content={
-                earnRewardDisabled ? (
+            <Button primary small disabled={true}>
+              <Box horizontal flow={1} alignItems="center">
+                <IconChartLine size={12} />
+                <Box>
                   <Trans
-                    i18nKey="tron.voting.warnEarnRewards"
-                    values={{ amount: formattedMinAmount }}
+                    i18nKey={tronPower > 0 ? "tron.voting.emptyState.vote" : "delegation.title"}
                   />
-                ) : null
-              }
-            >
-              <Button
-                primary
-                small
-                disabled={earnRewardDisabled}
-                onClick={tronPower > 0 ? onDelegate : onEarnRewards}
-              >
-                <Box horizontal flow={1} alignItems="center">
-                  <IconChartLine size={12} />
-                  <Box>
-                    <Trans
-                      i18nKey={tronPower > 0 ? "tron.voting.emptyState.vote" : "delegation.title"}
-                    />
-                  </Box>
                 </Box>
-              </Button>
-            </ToolTip>
+              </Box>
+            </Button>
           </Box>
         </Wrapper>
       )}

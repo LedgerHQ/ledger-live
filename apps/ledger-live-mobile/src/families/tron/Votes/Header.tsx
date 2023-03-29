@@ -14,7 +14,12 @@ export default function Header({ count, onPress }: Props) {
     <AccountSectionLabel
       name={t("tron.voting.header", { total: count })}
       RightComponent={
-        <Link type="color" event="TronManageVotes" onPress={onPress}>
+        <Link
+          type="color"
+          event="TronManageVotes"
+          onPress={onPress}
+          disabled={true}
+        >
           <Trans i18nKey="tron.voting.manageVotes" />
         </Link>
       }

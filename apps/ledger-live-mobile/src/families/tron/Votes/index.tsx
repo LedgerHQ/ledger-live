@@ -12,7 +12,6 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   useTronSuperRepresentatives,
   formatVotes,
-  getNextRewardDate,
   getLastVotedDate,
   MIN_TRANSACTION_AMOUNT,
 } from "@ledgerhq/live-common/families/tron/react";
@@ -45,7 +44,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const [infoRewardsModal, setRewardsInfoModal] = useState<boolean>();
+  const [setRewardsInfoModal] = useState<boolean>();
 
   const superRepresentatives = useTronSuperRepresentatives();
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
@@ -85,11 +84,6 @@ const Delegation = ({ account, parentAccount }: Props) => {
   const totalVotesUsed = votes.reduce(
     (sum, { voteCount }) => sum + voteCount,
     0,
-  );
-
-  const openRewardsInfoModal = useCallback(
-    () => setRewardsInfoModal(true),
-    [setRewardsInfoModal],
   );
 
   const closeRewardsInfoModal = useCallback(
@@ -145,10 +139,6 @@ const Delegation = ({ account, parentAccount }: Props) => {
   }, [lastVotedDate, navigation, accountId, parentId]);
 
   const hasRewards = BigNumber(unwithdrawnReward).gt(0);
-  const nextRewardDate = getNextRewardDate(account);
-
-  const canClaimRewards = hasRewards && !nextRewardDate;
-
   const percentVotesUsed = totalVotesUsed / tronPower;
 
   if (!hasRewards && (!tronPower || !formattedVotes.length) && !canFreeze) {
@@ -162,7 +152,6 @@ const Delegation = ({ account, parentAccount }: Props) => {
           <AccountSectionLabel
             name={t("tron.voting.rewards.title")}
             Icon={Icons.InfoMedium}
-            onPress={openRewardsInfoModal}
           />
           <View style={[styles.rewardSection]}>
             <View style={styles.labelSection}>
@@ -185,11 +174,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
                 )}
               </Text>
             </View>
-            <Button
-              type="main"
-              disabled={!canClaimRewards}
-              onPress={claimRewards}
-            >
+            <Button type="main" disabled={true} onPress={claimRewards}>
               <Trans i18nKey="tron.voting.rewards.button" />
             </Button>
           </View>
@@ -219,6 +204,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
               {percentVotesUsed < 1 && (
                 <View style={{ marginBottom: 24 }}>
                   <TouchableOpacity
+                    disabled={true}
                     onPress={onDelegate}
                     style={[styles.warn, { backgroundColor: colors.lightLive }]}
                   >
@@ -255,6 +241,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
                 })}
                 infoUrl={urls.tronStaking}
                 infoTitle={t("tron.voting.howItWorks")}
+                disabled={true}
                 onPress={onDelegate}
                 ctaTitle={t("tron.voting.votes.cta")}
               />
@@ -271,14 +258,14 @@ const Delegation = ({ account, parentAccount }: Props) => {
             })}
             infoUrl={urls.tronStaking}
             infoTitle={t("tron.voting.howItWorks")}
-            disabled={!canFreeze}
+            disabled={true}
             onPress={onDelegateFreeze}
             ctaTitle={t("account.delegation.info.cta")}
           />
         )
       )}
       <InfoModal
-        isOpened={!!infoRewardsModal}
+        isOpened={false}
         onClose={closeRewardsInfoModal}
         data={infoRewardsModalData}
       />
