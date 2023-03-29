@@ -128,6 +128,8 @@ const linkingOptions = {
 
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
+          [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
+
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
