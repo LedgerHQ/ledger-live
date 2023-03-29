@@ -2,8 +2,9 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useAppInstallNeedsDeps, useAppUninstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useHistory } from "react-router-dom";
-import { App } from "@ledgerhq/types-live";
+import { AppType } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
+
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";
@@ -111,16 +112,16 @@ const AppActions = React.memo(
     }, [addAccount]);
     const onNavigateTo = useCallback(() => {
       switch (type) {
-        case "plugin":
+        case AppType.plugin:
           history.push("/platform");
           break;
-        case "app":
+        case AppType.currency:
           openURL(app?.supportURL || urls.appSupport);
           break;
-        case "tool":
+        case AppType.tool:
           openURL(urls.managerAppLearnMore);
           break;
-        case "swap":
+        case AppType.swap:
           history.push("/swap");
           break;
       }
@@ -132,9 +133,11 @@ const AppActions = React.memo(
       () => installed && installQueue.length <= 0 && uninstallQueue.length <= 0,
       [installQueue.length, installed, uninstallQueue.length],
     );
-    const showLearnMore = type === "tool" || (type === "app" && !isLiveSupported);
+
+    const showLearnMore = type === AppType.tool || (type === AppType.currency && !isLiveSupported);
     const hasSpecificAction =
-      ["swap", "plugin"].includes(type) || (type === "app" && isLiveSupported);
+      [AppType.swap, AppType.plugin].includes(type) ||
+      (type === AppType.currency && isLiveSupported);
     const hasTwoCTAS = showLearnMore || installed;
     return (
       <AppActionsWrapper right={!hasTwoCTAS}>
@@ -176,7 +179,7 @@ const AppActions = React.memo(
         ) : showActions ? (
           <>
             {installed && featureFlagActivated ? (
-              type === "app" && isLiveSupported ? (
+              type === AppType.currency && isLiveSupported ? (
                 <Tooltip
                   content={
                     canAddAccount ? (

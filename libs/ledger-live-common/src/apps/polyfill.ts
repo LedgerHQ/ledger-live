@@ -146,6 +146,7 @@ export const mapApplicationV2ToApp = ({
   versionDisplayName: displayName,
   firmwareKey: firmware_key, // No point in refactoring since api wont change.
   deleteKey: delete_key,
+  applicationType: type,
   compatibleWallets,
   parentName,
   ...rest
@@ -156,8 +157,8 @@ export const mapApplicationV2ToApp = ({
   firmware_key,
   delete_key,
   dependencies: parentName ? [parentName] : [],
-  indexOfMarketCap: -1,
-  type: AppType.app,
+  indexOfMarketCap: -1, // We don't know at this point.
+  type: name === "Exchange" ? AppType.swap : type,
   ...rest,
   currencyId: getCurrencyIdFromAppName(name),
   compatibleWallets: parseCompatibleWallets(compatibleWallets, name),

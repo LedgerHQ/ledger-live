@@ -211,7 +211,7 @@ const listApps = (
             application.description &&
             Object.values(AppType).includes(application.description as AppType)
               ? AppType[application.description]
-              : AppType.app;
+              : AppType.currency;
 
           const app: App = polyfillApp({
             id: version.id,
