@@ -1,9 +1,12 @@
 import Transport from "@ledgerhq/hw-transport";
-import { getEnv } from "../env";
+import { App, DeviceInfo } from "@ledgerhq/types-live";
+import { Observable } from "rxjs";
 import { AppOp, Exec } from "./types";
-import { App } from "@ledgerhq/types-live";
+import { getEnv } from "../env";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
+import type { ListAppsEvent } from "./types";
+
 import listAppsV1 from "./listApps/v1";
 import listAppsV2 from "./listApps/v2";
 
@@ -14,4 +17,11 @@ export const execWithTransport =
     return fn(transport, targetId, app);
   };
 
-export const listApps = getEnv("LIST_APPS_V2") ? listAppsV2 : listAppsV1;
+// Nb Written this way to respect runtime changes to the env.
+export const listApps = (
+  transport: Transport,
+  deviceInfo: DeviceInfo
+): Observable<ListAppsEvent> =>
+  getEnv("LIST_APPS_V2")
+    ? listAppsV2(transport, deviceInfo)
+    : listAppsV1(transport, deviceInfo);
