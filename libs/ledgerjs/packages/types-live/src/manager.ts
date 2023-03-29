@@ -233,6 +233,7 @@ export type ApplicationV2 = {
   compatibleWallets: string;
   hash: string;
   perso: string;
+  parentName: string | null;
   firmware: string;
   firmwareKey: string;
   delete: string;
@@ -299,7 +300,6 @@ export type Category = {
   date_creation: string;
   date_last_modified: string;
 };
-
 
 /**
  *

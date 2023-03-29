@@ -147,6 +147,7 @@ export const mapApplicationV2ToApp = ({
   firmwareKey: firmware_key, // No point in refactoring since api wont change.
   deleteKey: delete_key,
   compatibleWallets,
+  parentName,
   ...rest
 }: ApplicationV2): App => ({
   id,
@@ -154,7 +155,7 @@ export const mapApplicationV2ToApp = ({
   displayName,
   firmware_key,
   delete_key,
-  dependencies: [],
+  dependencies: parentName ? [parentName] : [],
   indexOfMarketCap: -1,
   type: AppType.app,
   ...rest,
