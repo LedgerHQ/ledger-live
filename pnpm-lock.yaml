@@ -1113,7 +1113,9 @@ importers:
       '@polkadot/types-known': 9.8.1
       '@polkadot/util': 10.3.1
       '@polkadot/util-crypto': 10.3.1
+      '@types/invariant': ^2.2.2
       '@types/jest': ^29.2.4
+      '@types/lodash': ^4.14.191
       '@typescript-eslint/eslint-plugin': ^5.46.1
       '@typescript-eslint/parser': ^5.46.1
       bignumber.js: ^9.1.0
@@ -1154,7 +1156,9 @@ importers:
       lodash: 4.17.21
       rxjs: 6.6.7
     devDependencies:
+      '@types/invariant': 2.2.35
       '@types/jest': 29.4.0
+      '@types/lodash': 4.14.191
       '@typescript-eslint/eslint-plugin': 5.50.0_26f3njul6gntellyj5og7p3oly
       '@typescript-eslint/parser': 5.50.0_jofidmxrjzhj7l6vknpw5ecvfe
       eslint: 7.32.0

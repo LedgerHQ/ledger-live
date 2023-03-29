@@ -91,6 +91,15 @@ const delay = (ms: number | undefined) =>
  */
 const transportsCache: { [deviceId: string]: BleTransport } = {};
 
+// connectOptions is actually used by react-native-ble-plx even if comment above ConnectionOptions says it's not used
+let connectOptions: Record<string, unknown> = {
+  // 156 bytes to max the iOS < 10 limit (158 bytes)
+  // (185 bytes for iOS >= 10)(up to 512 bytes for Android, but could be blocked at 23 bytes)
+  requestMTU: 156,
+  // Priority 1 = high. TODO: Check firmware update over BLE PR before merging
+  connectionPriority: 1,
+};
+
 /**
  * Returns the instance of the Bluetooth Low Energy Manager. It initializes it only
  * when it's first needed, preventing the permission prompt happening prematurely.
@@ -153,10 +162,15 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
       log(TAG, `connectToDevice(${deviceOrId})`);
       // Nb ConnectionOptions dropped since it's not used internally by ble-plx.
       try {
-        device = await bleManagerInstance().connectToDevice(deviceOrId);
+        device = await bleManagerInstance().connectToDevice(
+          deviceOrId,
+          connectOptions
+        );
       } catch (e: any) {
         log(TAG, `error code ${e.errorCode}`);
         if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
+          // If the MTU update did not work, we try to connect without requesting for a specific MTU
+          connectOptions = {};
           device = await bleManagerInstance().connectToDevice(deviceOrId);
         } else {
           throw e;
@@ -175,10 +189,11 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   if (!(await device.isConnected())) {
     log(TAG, "not connected. connecting...");
     try {
-      await device.connect();
+      await device.connect(connectOptions);
     } catch (e: any) {
       if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
-        // Retry once for this specific error.
+        // If the MTU update did not work, we try to connect without requesting for a specific MTU
+        connectOptions = {};
         await device.connect();
       } else {
         throw e;
@@ -291,6 +306,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     deviceModel
   );
 
+  // Keeping it as a comment for now but if no new bluetooth issues occur, we will be able to remove it
   // await transport.requestConnectionPriority("High");
   // eslint-disable-next-line prefer-const
   let disconnectedSub: Subscription;
@@ -563,19 +579,18 @@ export default class BleTransport extends Transport {
 
     await this.exchangeAtomicImpl(async () => {
       try {
-        mtu =
-          (await merge(
-            this.notifyObservable.pipe(
-              tap((maybeError) => {
-                if (maybeError instanceof Error) throw maybeError;
-              }),
-              first((buffer) => buffer.readUInt8(0) === 0x08),
-              map((buffer) => buffer.readUInt8(5))
-            ),
-            defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(
-              ignoreElements()
-            )
-          ).toPromise()) + 3;
+        mtu = await merge(
+          this.notifyObservable.pipe(
+            tap((maybeError) => {
+              if (maybeError instanceof Error) throw maybeError;
+            }),
+            first((buffer) => buffer.readUInt8(0) === 0x08),
+            map((buffer) => buffer.readUInt8(5))
+          ),
+          defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(
+            ignoreElements()
+          )
+        ).toPromise();
       } catch (e: any) {
         log("ble-error", "inferMTU got " + JSON.stringify(e));
 
@@ -587,10 +602,9 @@ export default class BleTransport extends Transport {
       }
     });
 
-    if (mtu > 23) {
-      const mtuSize = mtu - 3;
-      log(TAG, `BleTransport(${this.id}) mtu set to ${mtuSize}`);
-      this.mtuSize = mtuSize;
+    if (mtu > 20) {
+      this.mtuSize = mtu;
+      log(TAG, `BleTransport(${this.id}) mtu set to ${this.mtuSize}`);
     }
 
     return this.mtuSize;

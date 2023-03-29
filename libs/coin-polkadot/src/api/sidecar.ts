@@ -44,7 +44,8 @@ const getBaseSidecarUrl = (): string => getEnv("API_POLKADOT_SIDECAR");
  *
  * @returns {string}
  */
-const getSidecarUrl = (route): string => `${getBaseSidecarUrl()}${route || ""}`;
+const getSidecarUrl = (route: string): string =>
+  `${getBaseSidecarUrl()}${route || ""}`;
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
 const ELECTION_STATUS_OPTIMISTIC_THRESHOLD =
