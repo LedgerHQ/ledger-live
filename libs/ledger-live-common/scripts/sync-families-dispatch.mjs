@@ -83,9 +83,28 @@ function genCoinFrameworkTarget(targetFile) {
     imports += `import network from "@ledgerhq/live-network/network";\n`;
   }
   if (targetFile === "bridge/js.ts") {
+    imports += `import { of } from "rxjs";\n`;
+    imports += `import {\n`;
+    imports += `  AccountBridge,\n`;
+    imports += `  CurrencyBridge,\n`;
+    imports += `  TransactionCommon,\n`;
+    imports += `} from "@ledgerhq/types-live";\n`;
     imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
     imports += `import network from "@ledgerhq/live-network/network";\n`;
     imports += `import { withDevice } from "../../hw/deviceAccess";\n`;
+    imports += `type Bridge<T extends TransactionCommon> = {\n`;
+    imports += `  currencyBridge: CurrencyBridge;\n`;
+    imports += `  accountBridge: AccountBridge<T>;\n`;
+    imports += `};\n`;
+  }
+  if (targetFile === "hw-getAddress.ts") {
+    imports += `import { of } from "rxjs";\n`;
+    imports += `import type Transport from "@ledgerhq/hw-transport";\n`;
+    imports += `import type {\n`;
+    imports += `  Result,\n`;
+    imports += `  GetAddressOptions,\n`;
+    imports += `} from "@ledgerhq/coin-framework/derivation";\n`;
+    imports += `import { withDevice } from "../hw/deviceAccess";\n`;
   }
 
   // Behavior for coin family with their own package
@@ -97,6 +116,7 @@ function genCoinFrameworkTarget(targetFile) {
     if (
       targetFile !== "bridge/js.ts" &&
       targetFile !== "cli-transaction.ts" &&
+      targetFile !== "hw-getAddress.ts" &&
       fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))
     ) {
       imports += `import ${family} from "${targetImportPath}";\n`;
@@ -105,13 +125,37 @@ function genCoinFrameworkTarget(targetFile) {
 
     if (targetFile === "bridge/js.ts") {
       const bridgeFn = family + "CreateBridges";
+      const signer = family + "Signer";
+      const transactionClazz = family[0].toUpperCase() + family.slice(1);
       imports += `import { createBridges as ${bridgeFn} } from "${targetImportPath}";\n`;
-      exprts += `\n  ${family}: ${bridgeFn}(withDevice, network, makeLRUCache),`;
+      imports += `import { Transaction as ${transactionClazz} } from "@ledgerhq/coin-${family}/types";\n`;
+      imports += `import * as ${signer} from "@ledgerhq/hw-app-${family}";\n`;
+      imports += `const ${family} = async (): Promise<Bridge<${transactionClazz}>> => {\n`;
+      imports += `  const signer = await withDevice("")((transport) =>\n`;
+      imports += `    of(new ${signer}.default(transport))\n`;
+      imports += `  ).toPromise();\n`;
+      imports += `  return ${bridgeFn}(signer, network, makeLRUCache);\n`;
+      imports += `};\n`;
+      exprts += `\n  ${family},`;
     }
     if (targetFile === "cli-transaction.ts") {
       const cliToolsFn = family + "CreateCliTools";
       imports += `import ${cliToolsFn} from "${targetImportPath}";\n`;
       exprts += `\n  ${family}: ${cliToolsFn}(network, makeLRUCache),`;
+    }
+    if (targetFile === "hw-getAddress.ts") {
+      imports += `import * as ${family}Signer from "@ledgerhq/hw-app-${family}";\n`;
+      imports += `import ${family}Resolver from "${targetImportPath}";\n`;
+      imports += `const ${family} = async (\n`;
+      imports += `  transport: Transport,\n`;
+      imports += `  opts: GetAddressOptions\n`;
+      imports += `): Promise<Result> => {\n`;
+      imports += `  const signer = await withDevice("")((transport: Transport) =>\n`;
+      imports += `    of(new ${family}Signer.default(transport))\n`;
+      imports += `  ).toPromise();\n`;
+      imports += `  return ${family}Resolver(signer)(opts);\n`;
+      imports += `};\n`;
+      exprts += `\n  ${family},`;
     }
   }
 

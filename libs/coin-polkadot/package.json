@@ -48,7 +48,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-app-polkadot": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-portfolio": "workspace:^",

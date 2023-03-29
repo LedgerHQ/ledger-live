@@ -13,9 +13,26 @@ import solana from "../families/solana/hw-getAddress";
 import stellar from "../families/stellar/hw-getAddress";
 import tezos from "../families/tezos/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
-import polkadot from "@ledgerhq/coin-polkadot/hw-getAddress";
 import algorand from "@ledgerhq/coin-algorand/hw-getAddress";
 import evm from "@ledgerhq/coin-evm/hw-getAddress";
+import { of } from "rxjs";
+import type Transport from "@ledgerhq/hw-transport";
+import type {
+  Result,
+  GetAddressOptions,
+} from "@ledgerhq/coin-framework/derivation";
+import { withDevice } from "../hw/deviceAccess";
+import * as polkadotSigner from "@ledgerhq/hw-app-polkadot";
+import polkadotResolver from "@ledgerhq/coin-polkadot/hw-getAddress";
+const polkadot = async (
+  transport: Transport,
+  opts: GetAddressOptions
+): Promise<Result> => {
+  const signer = await withDevice("")((transport: Transport) =>
+    of(new polkadotSigner.default(transport))
+  ).toPromise();
+  return polkadotResolver(signer)(opts);
+};
 
 export default {
   bitcoin,
