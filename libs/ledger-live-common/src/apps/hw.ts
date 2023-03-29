@@ -17,6 +17,15 @@ export const execWithTransport =
     return fn(transport, targetId, app);
   };
 
+/**
+ * The moment we deem the v2 as stable enough and we remove this fork in our
+ * logic there will be some cleanup to do too.
+ * - We no longer need the polyfill dependency resolution that is based on the
+ *   currency and parent application. And therefor we no longer need the version
+ *   check that broke that dependency after a certain version for ETH and BTC.
+ * - Remove all the legacy v1 code, and tests.
+ * - Remove the env definition and all the forks based on it here.
+ */
 // Nb Written this way to respect runtime changes to the env.
 export const listApps = (
   transport: Transport,
