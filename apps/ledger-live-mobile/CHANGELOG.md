@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.18.0-nightly.0
+
+### Minor Changes
+
+- [#3075](https://github.com/LedgerHQ/ledger-live/pull/3075) [`eed4dcb2bd`](https://github.com/LedgerHQ/ledger-live/commit/eed4dcb2bd5d5a615686f0082f81f39e8739d55b) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Recover WebView
+
+### Patch Changes
+
+- [#3077](https://github.com/LedgerHQ/ledger-live/pull/3077) [`11badbc999`](https://github.com/LedgerHQ/ledger-live/commit/11badbc9991e26b220bcbdab256b55aa4b295a0d) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Fixed upsell triggering even if feature flag is off
+
+- Updated dependencies [[`5fa4697e8d`](https://github.com/LedgerHQ/ledger-live/commit/5fa4697e8d1cfd1dba0f942745d1bfc6984ae1c9)]:
+  - @ledgerhq/react-native-hw-transport-ble@6.28.4-nightly.3
+
 ## 3.18.0-nightly.6
 
 ### Minor Changes
