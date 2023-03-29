@@ -45,7 +45,13 @@ const BackgroundLayer = styled(Box)`
 `;
 
 type Props = {
+  placeholder: string,
+  autoFocus: boolean | undefined,
+  readOnly: boolean | undefined,
+  error: RecipientRequired | null,
+  warning: Error,
   value: string,
+  id: string,
   // return false if it can't be changed (invalid info)
   onChange: (string, ?{ amount?: BigNumber, currency?: CryptoCurrency }) => Promise<?boolean>,
   withQrCode: boolean,
@@ -60,6 +66,8 @@ class RecipientAddress extends PureComponent<Props, State> {
     value: "",
     onChange: noop,
     withQrCode: true,
+    placeholder: "",
+    autoFocus: undefined,
   };
 
   state = {

@@ -1,7 +1,7 @@
 // @flow
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Button from "~/renderer/components/Button";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";

@@ -6,11 +6,15 @@ import accountModel from "~/helpers/accountModel";
 import memoize from "lodash/memoize";
 import debounce from "lodash/debounce";
 import { setEnvOnAllThreads } from "~/helpers/env";
+
+// TODO move to bitcoin family
+// eslint-disable-next-line no-restricted-imports
 import {
   editSatStackConfig,
   stringifySatStackConfig,
   parseSatStackConfig,
 } from "@ledgerhq/live-common/families/bitcoin/satstack";
+// eslint-disable-next-line no-restricted-imports
 import type { SatStackConfig } from "@ledgerhq/live-common/families/bitcoin/satstack";
 /*
   This file serve as an interface for the RPC binding to the main thread that now manage the config file.

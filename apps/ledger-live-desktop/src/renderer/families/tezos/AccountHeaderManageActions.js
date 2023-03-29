@@ -51,6 +51,10 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
       onClick: onClick,
       icon: IconCoins,
       label: t("account.stake"),
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+      },
     },
   ];
 };

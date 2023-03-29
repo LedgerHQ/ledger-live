@@ -37,6 +37,12 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugFetchCustomImage)}
       />
       <SettingsRow
+        title="Firmware Update"
+        desc="Test the firmware update feature. USE AT YOUR OWN RISK!"
+        iconLeft={<Icons.NanoFirmwareUpdateMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugFirmwareUpdate)}
+      />
+      <SettingsRow
         title="Custom lockscreen graphics"
         desc="Tool for testing the flow's graphics"
         iconLeft={<Icons.BringFrontMedium size={32} color="black" />}
@@ -56,6 +62,12 @@ export default function Features() {
         desc="See all lottie animations per device in one screen"
         iconLeft={<Icons.VideoMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugLottie)}
+      />
+      <SettingsRow
+        title="Install set of apps"
+        desc="Multi app install feature test"
+        iconLeft={<Icons.MugHotMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugInstallSetOfApps)}
       />
       <SettingsRow
         title="Videos"

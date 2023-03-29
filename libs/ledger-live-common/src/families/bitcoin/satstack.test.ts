@@ -17,6 +17,9 @@ import dataset from "./datasets/bitcoin";
 import { inferDescriptorFromAccount, AccountDescriptor } from "./descriptor";
 import { setEnv } from "../../env";
 import { fromAccountRaw } from "../../account";
+import { setSupportedCurrencies } from "../../currencies";
+
+setSupportedCurrencies(["bitcoin"]);
 jest.setTimeout(10000);
 describe("validateRPCNodeConfig", () => {
   test("valid cases", () => {

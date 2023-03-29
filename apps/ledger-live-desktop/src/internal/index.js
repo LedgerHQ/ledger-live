@@ -1,21 +1,17 @@
 // @flow
-import { getSentryIfAvailable } from "../sentry/internal";
+import { captureException, getSentryIfAvailable } from "../sentry/internal";
 import { unsubscribeSetup } from "./live-common-setup";
 import { setEnvUnsafe } from "@ledgerhq/live-common/env";
 import { serializeError } from "@ledgerhq/errors";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { log } from "@ledgerhq/logs";
-import logger from "~/logger";
-import LoggerTransport from "~/logger/logger-transport-internal";
-
-import { executeCommand, unsubscribeCommand, unsubscribeAllCommands } from "./commandHandler";
 import sentry, { setTags } from "~/sentry/internal";
 import {
   transportClose,
   transportExchange,
   transportExchangeBulk,
   transportExchangeBulkUnsubscribe,
+  transportListen,
+  transportListenUnsubscribe,
   transportOpen,
 } from "~/internal/transportHandler";
 import {
@@ -23,17 +19,16 @@ import {
   transportExchangeBulkChannel,
   transportExchangeBulkUnsubscribeChannel,
   transportExchangeChannel,
+  transportListenChannel,
+  transportListenUnsubscribeChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
 
 process.on("exit", () => {
-  logger.debug("exiting process, unsubscribing all...");
+  console.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
-  unsubscribeAllCommands();
   getSentryIfAvailable()?.close(2000);
 });
-
-logger.add(new LoggerTransport());
 
 process.title = "Ledger Live Internal";
 
@@ -46,10 +41,9 @@ process.on("uncaughtException", err => {
   // FIXME we should ideally do this:
   // process.exit(1)
   // but for now, until we kill all exceptions:
-  logger.critical(err, "uncaughtException");
+  console.error(err, "uncaughtException");
+  captureException(err);
 });
-
-const defers = {};
 
 // eslint-disable-next-line no-unused-vars
 let sentryEnabled = process.env.INITIAL_SENTRY_ENABLED !== "false";
@@ -76,33 +70,15 @@ process.on("message", m => {
     case transportExchangeBulkUnsubscribeChannel:
       transportExchangeBulkUnsubscribe(m);
       break;
+    case transportListenChannel:
+      transportListen(m);
+      break;
+    case transportListenUnsubscribeChannel:
+      transportListenUnsubscribe(m);
+      break;
     case transportCloseChannel:
       transportClose(m);
       break;
-
-    case "command":
-      // $FlowFixMe TODO
-      executeCommand(m.command, process.send.bind(process));
-      break;
-
-    case "command-unsubscribe":
-      unsubscribeCommand(m.requestId);
-      break;
-
-    case "executeHttpQueryPayload": {
-      const { payload } = m;
-      const defer = defers[payload.id];
-      if (!defer) {
-        logger.warn("executeHttpQueryPayload: no defer found");
-        return;
-      }
-      if (payload.type === "success") {
-        defer.resolve(payload.result);
-      } else {
-        defer.reject(payload.error);
-      }
-      break;
-    }
 
     case "sentryLogsChanged": {
       const { payload } = m;
@@ -116,29 +92,7 @@ process.on("message", m => {
     }
 
     case "internalCrashTest": {
-      logger.critical(new Error("CrashTestInternal"));
-      break;
-    }
-
-    case "hydrateCurrencyData": {
-      const { currencyId, serialized } = m;
-      const currency = getCryptoCurrencyById(currencyId);
-      const data = serialized && JSON.parse(serialized);
-      log("hydrateCurrencyData", `hydrate currency ${currency.id}`);
-      getCurrencyBridge(currency).hydrate(data, currency);
-      break;
-    }
-
-    case "init": {
-      const { hydratedPerCurrency } = m;
-      // hydrate all
-      log("init", `hydrate currencies ${Object.keys(hydratedPerCurrency).join(", ")}`);
-      Object.keys(hydratedPerCurrency).forEach(currencyId => {
-        const currency = getCryptoCurrencyById(currencyId);
-        const serialized = hydratedPerCurrency[currencyId];
-        const data = serialized && JSON.parse(serialized);
-        getCurrencyBridge(currency).hydrate(data, currency);
-      });
+      captureException(new Error("CrashTestInternal"));
       break;
     }
 

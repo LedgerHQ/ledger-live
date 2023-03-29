@@ -14,7 +14,7 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 
 import uniq from "lodash/uniq";
 import { urls } from "~/config/urls";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import RetryButton from "~/renderer/components/RetryButton";
@@ -403,7 +403,7 @@ export const StepImportFooter = ({
 
   const goFullNode = () => {
     onCloseModal();
-    dispatch(openModal("MODAL_FULL_NODE", { skipNodeSetup: true }));
+    dispatch(openModal("MODAL_BITCOIN_FULL_NODE", { skipNodeSetup: true }));
   };
 
   return (

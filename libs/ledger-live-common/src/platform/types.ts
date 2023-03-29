@@ -51,6 +51,7 @@ export type AppPermission = {
 
 export type LiveAppManifest = {
   id: string;
+  author?: string;
   private?: boolean;
   name: string;
   url: string | URL;

@@ -6,14 +6,12 @@ import { prepareCurrency } from "~/renderer/bridge/cache";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
-import { command } from "~/renderer/commands";
 import type { StepProps } from "..";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
 
-const connectAppExec = command("connectApp");
-
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectAppExec);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
 const StepConnectDevice = ({ currency, device, transitionTo, flow }: StepProps) => {
   invariant(currency, "No crypto asset given");

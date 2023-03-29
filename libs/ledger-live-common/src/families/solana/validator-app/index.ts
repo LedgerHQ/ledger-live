@@ -4,6 +4,8 @@ import { compact } from "lodash/fp";
 import { getEnv } from "../../../env";
 import network from "../../../network";
 
+const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
+
 export type ValidatorsAppValidatorRaw = {
   active_stake?: number | null;
   commission?: number | null;
@@ -57,7 +59,7 @@ const URLS = {
   validatorList: (cluster: Extract<Cluster, "mainnet-beta" | "testnet">) => {
     const clusterSlug = cluster === "mainnet-beta" ? "mainnet" : cluster;
     const baseUrl = getEnv("SOLANA_VALIDATORS_APP_BASE_URL");
-    return `${baseUrl}/${clusterSlug}.json?order=score`;
+    return `${baseUrl}/${clusterSlug}.json?order=score&limit=${MAX_VALIDATORS_NB}`;
   },
 };
 

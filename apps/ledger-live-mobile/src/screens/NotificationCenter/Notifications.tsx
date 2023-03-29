@@ -56,16 +56,34 @@ export default function NotificationCenter() {
   const [isDynamicContentLoading, setIsDynamicContentLoading] = useState(false);
   const displayStatusCenter = useSelector(statusCenterSelector);
 
+  const logCardsImpression = useCallback(() => {
+    // TODO: REWORK like in the Carousel maybe? For Log impression only when it's clearly visible
+    orderedNotificationsCards.forEach(item => {
+      logImpressionCard(item.id);
+    });
+
+    const cards = orderedNotificationsCards.map(n => ({
+      ...n,
+      viewed: true,
+    }));
+
+    dispatch(setDynamicContentNotificationCards(cards));
+  }, [orderedNotificationsCards, dispatch, logImpressionCard]);
+
   const refreshNotifications = useCallback(async () => {
     setIsDynamicContentLoading(true);
     refreshDynamicContent();
     await fetchData();
     setIsDynamicContentLoading(false);
-  }, [refreshDynamicContent, fetchData]);
+
+    logCardsImpression();
+  }, [refreshDynamicContent, fetchData, logCardsImpression]);
 
   useEffect(() => {
-    refreshNotifications();
+    logCardsImpression();
     // Need to refresh just one time when coming in the Page
+    refreshNotifications();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -119,22 +137,9 @@ export default function NotificationCenter() {
 
   const onClickCard = useCallback(
     (item: NotificationContentCard) => {
-      // TODO: REWORK like in the Carousel maybe? For Log impression only when it's clearly visible
-      logImpressionCard(item.id);
-
-      const cards = orderedNotificationsCards.map(n =>
-        n.id === item.id
-          ? {
-              ...n,
-              viewed: true,
-            }
-          : n,
-      );
-
-      dispatch(setDynamicContentNotificationCards(cards));
       onPress(item);
     },
-    [dispatch, logImpressionCard, onPress, orderedNotificationsCards],
+    [onPress],
   );
 
   const onCloseStatusCenter = useCallback(() => {

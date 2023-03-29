@@ -7,7 +7,7 @@ import { Alert } from "@ledgerhq/native-ui";
 import {
   getTagDerivationMode,
   DerivationMode,
-} from "@ledgerhq/live-common/derivation";
+} from "@ledgerhq/coin-framework/derivation";
 import {
   getAccountCurrency,
   isAccount,

@@ -1,147 +1,26 @@
-import React, { useCallback, useState, useEffect } from "react";
-import { StyleSheet, View } from "react-native";
-import { Trans } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
-import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useSelector } from "react-redux";
-import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useBanner } from "../../components/banners/hooks";
-import TrackScreen from "../../analytics/TrackScreen";
-import { ScreenName } from "../../const";
-import CatalogTwitterBanner from "./CatalogTwitterBanner";
-import DAppDisclaimer from "./DAppDisclaimer";
-import type { Props as DisclaimerProps } from "./DAppDisclaimer";
-import CatalogBanner from "./CatalogBanner";
-import AppCard from "./AppCard";
-import AnimatedHeaderView from "../../components/AnimatedHeader";
-import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
-import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { DiscoverNavigatorStackParamList } from "../../components/RootNavigator/types/DiscoverNavigator";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import React from "react";
+import { Catalog as Catalog1, Props as CatalogProps } from "./Catalog";
+import { Catalog as Catalog2 } from "./v2/Catalog";
+import { LiveApp as LiveApp1, Props as LiveAppProps } from "./LiveApp";
+import { LiveApp as LiveApp2 } from "./v2/LiveApp";
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    DiscoverNavigatorStackParamList,
-    ScreenName.PlatformCatalog
-  >
->;
+export function Catalog(props: CatalogProps) {
+  const config = useFeature("discover");
 
-type DisclaimerOpts =
-  | (DisclaimerProps & {
-      isOpened: boolean;
-    })
-  | null;
-const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
-
-const emptyObject: LiveAppManifest[] = [];
-
-const PlatformCatalog = ({ route }: NavigationProps) => {
-  const { platform, ...routeParams } = route.params ?? {};
-  const navigation = useNavigation<NavigationProps["navigation"]>();
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const { state } = useRemoteLiveAppContext();
-  const manifests = state?.value?.liveAppFiltered || emptyObject;
-  // Disclaimer State
-  const [disclaimerOpts, setDisclaimerOpts] = useState<DisclaimerOpts>(null);
-  const [disclaimerOpened, setDisclaimerOpened] = useState<boolean>(false);
-  const [disclaimerDisabled, setDisclaimerDisabled] =
-    useBanner(DAPP_DISCLAIMER_ID);
-  const handlePressCard = useCallback(
-    (manifest: LiveAppManifest) => {
-      const openDApp = () =>
-        navigation.navigate(ScreenName.PlatformApp, {
-          ...routeParams,
-          platform: manifest.id,
-          name: manifest.name,
-        });
-
-      if (!disclaimerDisabled && !readOnlyModeEnabled) {
-        setDisclaimerOpts({
-          disableDisclaimer: () => {
-            if (typeof setDisclaimerDisabled === "function")
-              setDisclaimerDisabled();
-          },
-          closeDisclaimer: () => {
-            setDisclaimerOpened(false);
-          },
-          icon: manifest.icon,
-          name: manifest.name,
-          onContinue: openDApp,
-          isOpened: false,
-        });
-        setDisclaimerOpened(true);
-      } else {
-        openDApp();
-      }
-    },
-    [
-      navigation,
-      routeParams,
-      setDisclaimerDisabled,
-      disclaimerDisabled,
-      readOnlyModeEnabled,
-    ],
+  return config?.enabled && config?.params.version === "2" ? (
+    <Catalog2 {...props} />
+  ) : (
+    <Catalog1 {...props} />
   );
-  useEffect(() => {
-    // platform can be predefined when coming from a deeplink
-    if (platform && manifests) {
-      const manifest = manifests.find(m => m.id === platform);
+}
 
-      if (manifest) {
-        navigation.navigate(ScreenName.PlatformApp, {
-          ...routeParams,
-          platform: manifest.id,
-          name: manifest.name,
-        });
-      }
-    }
-  }, [platform, manifests, navigation, routeParams]);
-  return (
-    <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
-      <AnimatedHeaderView
-        edges={[]}
-        titleStyle={styles.title}
-        title={<Trans i18nKey={"platform.catalog.title"} />}
-        hasBackButton
-      >
-        <TrackScreen category="Platform" name="Catalog" />
-        {disclaimerOpts && (
-          <DAppDisclaimer
-            disableDisclaimer={disclaimerOpts.disableDisclaimer}
-            closeDisclaimer={disclaimerOpts.closeDisclaimer}
-            onContinue={disclaimerOpts.onContinue}
-            isOpened={disclaimerOpened}
-            icon={disclaimerOpts.icon}
-            name={disclaimerOpts.name}
-          />
-        )}
+export function LiveApp(props: LiveAppProps) {
+  const config = useFeature("discover");
 
-        <CatalogBanner />
-        <CatalogTwitterBanner />
-        {manifests.map(manifest => (
-          <AppCard
-            key={`${manifest.id}.${manifest.branch}`}
-            manifest={manifest as LiveAppManifest}
-            onPress={handlePressCard}
-          />
-        ))}
-        <View style={styles.bottomPadding} />
-      </AnimatedHeaderView>
-    </TabBarSafeAreaView>
+  return config?.enabled && config?.params.version === "2" ? (
+    <LiveApp2 {...props} />
+  ) : (
+    <LiveApp1 {...props} />
   );
-};
-
-const styles = StyleSheet.create({
-  title: {
-    lineHeight: 40,
-    textAlign: "left",
-  },
-  bottomPadding: {
-    paddingBottom: TAB_BAR_SAFE_HEIGHT,
-  },
-});
-export default PlatformCatalog;
+}

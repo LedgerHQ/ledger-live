@@ -828,6 +828,10 @@
         "near" : {
           "title" : "Wussten Sie schon?",
           "description" : "Ledger bietet einen niedrigeren Provisionssatz als Ihr Validator. Dieser Vorgang kann bis zu 65 Stunden dauern."
+        },
+        "elrond" : {
+          "title" : "Wussten Sie schon?",
+          "description" : "Ledger bietet einen niedrigeren Provisionssatz als Ihr Validator. Dieser Vorgang kann bis zu 10 Tage dauern."
         }
       },
       "delegation" : {
@@ -849,6 +853,9 @@
         },
         "near" : {
           "description" : "Staken Sie Ihre NEAR mit dem Ledger by Figment Validator. Ihre Coins gehören stets Ihnen, unterstützt durch die kompromisslose Sicherheit von Ledger."
+        },
+        "elrond" : {
+          "description" : "Staken Sie Ihre ELROND mit dem Ledger by Figment Validator. Ihre Coins gehören stets Ihnen, unterstützt durch die kompromisslose Sicherheit von Ledger."
         }
       }
     }
@@ -1839,7 +1846,7 @@
       "used" : "Verwendet",
       "firmwareAvailable" : "Die Firmware ist veraltet:",
       "firmwareUpToDate" : "Die Firmware ist auf dem neuesten Stand:",
-      "genuine" : "Dein Gerät ist echt",
+      "genuine" : "Ihr Gerät ist echt",
       "incomplete" : "Einige Apps wurden nicht erkannt. Bitte deinstallieren Sie diese und installieren Sie sie dann neu."
     },
     "applist" : {
@@ -2261,6 +2268,13 @@
     },
     "switchButton" : "Zu {{language}} wechseln",
     "no" : "Lieber nicht"
+  },
+  "deviceRename" : {
+    "title" : "{{ productName }} umbenennen",
+    "chooseName" : "Wählen Sie einen Namen",
+    "placeholder" : "Tony's Stax",
+    "remainingCharacters" : "{{ remainingCharacters }} Zeichen verbleibend",
+    "renamed" : "{{ productName }}-Name geändert zu “{{ name }}” "
   },
   "deviceLocalization" : {
     "language" : "Sprache",
@@ -3786,6 +3800,9 @@
       "catalogRampServerDesc" : "Zwischen mehreren Handelsanbietern wechseln",
       "enablePlatformDevTools" : "Plattform-Entwicklungswerkzeuge aktivieren",
       "enablePlatformDevToolsDesc" : "Aktivieren Sie das Öffnen des Entwicklerwerkzeug-Fensters für Plattform-Apps",
+      "customLockScreen" : "Individuelle Sperrbildschirm-Elemente",
+      "customLockScreenDesc" : "Debuggen von individuellen Grafikelementen für den Sperrbildschirm",
+      "customLockScreenCTA" : "Starten",
       "featureFlagsTitle" : "In Ledger Live verwendete definierte Feature-Flags",
       "featureFlagsDesc" : "Überschriebene Werte werden zurückgesetzt, wenn die App neu gestartet wird. Es werden nur gültige JSON-Zeichenfolgen akzeptiert.",
       "featureFlagsEdit" : "Bearbeiten",
@@ -3850,10 +3867,6 @@
         "experimentalCurrencies" : {
           "title" : "Experimentelle Integrationen",
           "description" : "Verwenden Sie verfügbare experimentelle Integrationen für Krypto-Werte."
-        },
-        "experimentalExecutionOnRenderer" : {
-          "title" : "Experimentelle Netzwerke",
-          "description" : "Nutzen Sie experimentelle Netzwerke, um Ihr Ledger Live-Erlebnis mit Ihrem VPN zu optimieren. Aktivieren Sie diese Option nur, wenn Ihr aktuelles VPN Systemfehler verursacht."
         },
         "experimentalLanguages" : {
           "title" : "Testen der Übersetzung",
@@ -4045,7 +4058,7 @@
       "tr" : "Türkisch",
       "ja" : "Japanisch",
       "ko" : "Koreanisch",
-      "pt" : "Portugiesisch"
+      "pt" : "Portugiesisch (Brasilien)"
     }
   },
   "theme" : {
@@ -5668,6 +5681,7 @@
   },
   "customImage" : {
     "title" : "Individueller Sperrbildschirm",
+    "managerCTA" : "Bild für Sperrbildschirm",
     "steps" : {
       "choose" : {
         "stepLabel" : "Wählen Sie ein Bild aus",

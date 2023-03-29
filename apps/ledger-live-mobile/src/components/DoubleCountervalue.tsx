@@ -12,7 +12,7 @@ import LText from "./LText";
 import InfoIcon from "../icons/Info";
 import QueuedDrawer from "./QueuedDrawer";
 import Circle from "./Circle";
-import FormatDate from "./FormatDate";
+import FormatDate from "./DateFormat/FormatDate";
 
 type Props = {
   // wich market to query

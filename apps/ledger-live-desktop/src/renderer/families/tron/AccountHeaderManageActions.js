@@ -38,7 +38,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
       );
     } else if (tronPower > 0) {
       dispatch(
-        openModal("MODAL_MANAGE_TRON", {
+        openModal("MODAL_TRON_MANAGE", {
           parentAccount,
           account,
         }),
@@ -73,6 +73,10 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
       icon: IconCoins,
       label: t("account.stake"),
       tooltip: disabledLabel,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+      },
     },
   ];
 };

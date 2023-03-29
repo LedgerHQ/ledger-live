@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import { Box, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
@@ -8,7 +8,7 @@ import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
-import { usePromptBluetoothCallback } from "../logic/usePromptBluetoothCallback";
+import BluetoothDisabled from "./RequiresBLE/BluetoothDisabled";
 
 type Props = {
   error: Error;
@@ -41,15 +41,6 @@ const GenericErrorView = ({
   Icon = CloseMedium,
   iconColor = "error.c100",
 }: Props) => {
-  const promptBluetooth = usePromptBluetoothCallback();
-  useEffect(() => {
-    if (error instanceof BluetoothRequired) {
-      promptBluetooth().catch(() => {
-        /* ignore */
-      });
-    }
-  }, [promptBluetooth, error]);
-
   const { t } = useTranslation();
 
   const onExport = useExportLogs();
@@ -58,6 +49,11 @@ const GenericErrorView = ({
   const subtitleError = outerError ? error : null;
 
   const { space } = useTheme();
+
+  // To avoid regression, but this case should not happen if RequiresBle component is correctly used.
+  if (error instanceof BluetoothRequired) {
+    return <BluetoothDisabled />;
+  }
 
   return (
     <Flex flexDirection={"column"} alignItems={"center"} alignSelf="stretch">

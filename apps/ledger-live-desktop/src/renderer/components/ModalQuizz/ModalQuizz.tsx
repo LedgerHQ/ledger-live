@@ -85,14 +85,12 @@ export type Props = {
   onClose: () => void;
   onLose: () => void;
   onWin: () => void;
-  isOpen: boolean;
   dismissable?: boolean;
 };
 
 const ModalQuizz: React.FunctionComponent<Props> = ({
   title,
   steps,
-  isOpen,
   onClose,
   onLose,
   onWin,

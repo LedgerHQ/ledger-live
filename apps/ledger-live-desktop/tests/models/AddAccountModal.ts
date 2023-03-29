@@ -16,11 +16,11 @@ export class AddAccountModal extends Modal {
     this.page = page;
     this.selectAccount = page.locator("text=Choose a crypto asset"); // FIXME: I need an id
     this.selectAccountInput = page.locator('[placeholder="Search"]'); // FIXME: I need an id
-    this.addAccountsButton = page.locator('data-test-id=add-accounts-import-add-button');
-    this.retryButton = page.locator('data-test-id=add-accounts-import-retry-button');
-    this.stopButton = page.locator('data-test-id=add-accounts-import-stop-button');
-    this.addMoreButton = page.locator('data-test-id=add-accounts-finish-add-more-button');
-    this.doneButton = page.locator('data-test-id=add-accounts-finish-close-button');
+    this.addAccountsButton = page.locator("data-test-id=add-accounts-import-add-button");
+    this.retryButton = page.locator("data-test-id=add-accounts-import-retry-button");
+    this.stopButton = page.locator("data-test-id=add-accounts-import-stop-button");
+    this.addMoreButton = page.locator("data-test-id=add-accounts-finish-add-more-button");
+    this.doneButton = page.locator("data-test-id=add-accounts-finish-close-button");
   }
 
   async select(currency: string) {

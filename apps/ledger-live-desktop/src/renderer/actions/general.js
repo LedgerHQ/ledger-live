@@ -4,6 +4,8 @@ import { useSelector, useDispatch } from "react-redux";
 import type { OutputSelector } from "reselect";
 import { createSelector } from "reselect";
 import type { Account } from "@ledgerhq/types-live";
+// TODO make a generic way to implement this for each family
+// eslint-disable-next-line no-restricted-imports
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/bakers";
 import {
   flattenSortAccounts,
@@ -57,17 +59,6 @@ export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
     comparator,
     options,
   ]);
-}
-
-export function useHaveUndelegatedAccounts() {
-  const accounts = useFlattenSortAccounts({ enforceHideEmptySubAccounts: true });
-  return useMemo(
-    () =>
-      accounts.some(
-        acc => acc.currency && acc.currency.family === "tezos" && !isAccountDelegating(acc),
-      ),
-    [accounts],
-  );
 }
 
 export const delegatableAccountsSelector: OutputSelector<

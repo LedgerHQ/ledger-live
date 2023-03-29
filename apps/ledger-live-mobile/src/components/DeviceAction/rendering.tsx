@@ -58,7 +58,7 @@ import Circle from "../Circle";
 import { MANAGER_TABS } from "../../const/manager";
 import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
-import { track } from "../../analytics";
+import { TrackScreen, track } from "../../analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
@@ -451,6 +451,7 @@ export function renderAllowLanguageInstallation({
 
   return (
     <Wrapper>
+      <TrackScreen category="Allow language installation on Stax" />
       <Text variant="h4" textAlign="center">
         {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
       </Text>

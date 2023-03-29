@@ -4,7 +4,7 @@ import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
-import { Icons } from "@ledgerhq/native-ui/assets";
+import { Icons } from "@ledgerhq/native-ui/assets/index";
 
 import Touchable from "../../../components/Touchable";
 import { TrackScreen } from "../../../analytics";
