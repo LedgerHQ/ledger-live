@@ -6,6 +6,7 @@ import {
   TimeoutError,
   throwError,
   timer,
+  interval,
 } from "rxjs";
 import {
   scan,
@@ -16,8 +17,16 @@ import {
   distinctUntilChanged,
   timeout,
 } from "rxjs/operators";
+import isEqual from "lodash/isEqual";
 import { useEffect, useCallback, useState } from "react";
 import { log } from "@ledgerhq/logs";
+import {
+  DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
+} from "@ledgerhq/errors";
+import { getDeviceModel } from "@ledgerhq/devices";
+import type { DeviceInfo } from "@ledgerhq/types-live";
+import { getEnv } from "@ledgerhq/live-env";
 import type { ListAppsResult } from "../../apps/types";
 import { useReplaySubject } from "../../observable";
 import manager from "../../manager";
@@ -26,15 +35,8 @@ import type {
   Input as ConnectManagerInput,
 } from "../connectManager";
 import type { Action, Device } from "./types";
-import isEqual from "lodash/isEqual";
 import { ConnectManagerTimeout } from "../../errors";
 import { currentMode } from "./app";
-import {
-  DisconnectedDevice,
-  DisconnectedDeviceDuringOperation,
-} from "@ledgerhq/errors";
-import { getDeviceModel } from "@ledgerhq/devices";
-import type { DeviceInfo } from "@ledgerhq/types-live";
 
 type State = {
   isLoading: boolean;
@@ -378,7 +380,17 @@ export const createAction = (
         .pipe(
           tap((e: Event) => log("actions-manager-event", e.type, e)), // tap(e => console.log("connectManager event", e)),
           // we gather all events with a reducer into the UI state
-          scan(reducer, getInitialState()) // tap(s => console.log("connectManager state", s)),
+          scan(reducer, getInitialState()),
+          // we debounce the UI state to not blink on the UI
+          debounce((s: State) => {
+            if (s.allowManagerRequestedWording || s.allowManagerGranted) {
+              // no debounce for allow manager
+              return EMPTY;
+            }
+
+            // default debounce (to be tweak)
+            return interval(getEnv("LIST_APPS_V2") ? 150 : 1500);
+          })
         ) // the state simply goes into a React state
         .subscribe(setState);
       return () => {
