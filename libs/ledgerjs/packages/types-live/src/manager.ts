@@ -247,7 +247,7 @@ export type ApplicationV2 = {
  *
  */
 export enum AppType {
-  app = "app",
+  currency = "currency",
   plugin = "plugin",
   tool = "tool",
   swap = "swap",
