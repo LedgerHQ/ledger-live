@@ -68,12 +68,12 @@ jobs:
       - uses: pnpm/action-setup@v2
         if: always()
         with:
-          version: latest
+          version: 7.30.0
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         if: always()
         with:
-          node-version: 18
+          node-version: 18.15.0
       - uses: ruby/setup-ruby@v1
         if: always()
         with:
@@ -193,12 +193,12 @@ jobs:
       - uses: pnpm/action-setup@v2
         if: always()
         with:
-          version: latest
+          version: 7.30.0
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         if: always()
         with:
-          node-version: 18
+          node-version: 18.15.0
       - name: check git
         if: always()
         id: check-git
@@ -267,12 +267,12 @@ jobs:
       - uses: pnpm/action-setup@v2
         if: always()
         with:
-          version: latest
+          version: 7.30.0
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         if: always()
         with:
-          node-version: 18
+          node-version: 18.15.0
       # - uses: ruby/setup-ruby@v1
       #   if: always()
       #   with:

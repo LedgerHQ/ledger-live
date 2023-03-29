@@ -1,9 +1,7 @@
 {
-  "engines": {
-    "node": ">=14"
-  },
   "name": "live-mobile",
   "version": "3.17.0",
+  "packageManager": "pnpm@7.30.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -70,6 +68,7 @@
     "@formatjs/intl-relativetimeformat": "^11.1.8",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
@@ -138,6 +137,7 @@
     "moment": "^2.29.1",
     "node-libs-react-native": "^1.2.1",
     "prando": "^6.0.1",
+    "promise.allsettled": "^1.0.6",
     "prop-types": "^15.8.1",
     "qrloop": "^1.4.1",
     "react": "^17.0.2",

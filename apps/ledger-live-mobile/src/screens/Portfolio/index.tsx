@@ -78,7 +78,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   useEffect(() => {
     const openProtectUpsell = async () => {
       const internetConnected = await internetReachable();
-      if (internetConnected && recoverUpsellURL) {
+      if (internetConnected && recoverUpsellURL && protectFeature.enabled) {
         Linking.openURL(recoverUpsellURL);
       }
     };
@@ -86,7 +86,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       openProtectUpsell();
       dispatch(setHasBeenUpsoldProtect(true));
     }
-  }, [hasBeenUpsoldProtect, lastConnectedDevice, recoverUpsellURL, dispatch]);
+  }, [
+    hasBeenUpsoldProtect,
+    lastConnectedDevice,
+    recoverUpsellURL,
+    dispatch,
+    protectFeature?.enabled,
+  ]);
 
   const openAddModal = useCallback(() => {
     track("button_clicked", {

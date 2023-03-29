@@ -65,6 +65,7 @@ jobs:
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
+      _JAVA_OPTIONS: "-Xmx7g"
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -76,11 +77,11 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7.30.0
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 18.15.0
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1
@@ -151,10 +152,10 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7.30.0
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 18.15.0
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - uses: ruby/setup-ruby@v1

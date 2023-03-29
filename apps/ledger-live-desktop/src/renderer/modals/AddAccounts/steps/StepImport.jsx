@@ -403,7 +403,7 @@ export const StepImportFooter = ({
 
   const goFullNode = () => {
     onCloseModal();
-    dispatch(openModal("MODAL_FULL_NODE", { skipNodeSetup: true }));
+    dispatch(openModal("MODAL_BITCOIN_FULL_NODE", { skipNodeSetup: true }));
   };
 
   return (

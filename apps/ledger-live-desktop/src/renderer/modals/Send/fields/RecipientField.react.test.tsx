@@ -10,10 +10,11 @@ import { InvalidAddress } from "@ledgerhq/errors";
 import { ThemeProvider } from "styled-components";
 import network from "@ledgerhq/live-common/network";
 import userEvent from "@testing-library/user-event";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/lib/hooks/index";
+// TODO specific test need to be moved to the family
+// eslint-disable-next-line no-restricted-imports
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import defaultTheme from "~/renderer/styles/theme";
 import palettes from "~/renderer/styles/palettes";
@@ -156,14 +157,14 @@ const setup = (
 ) => {
   return render(
     <ThemeProvider
-      theme={{ ...defaultTheme, colors: { ...defaultTheme.colors, palette: palettes.dark } } as any}
+      theme={{ ...defaultTheme, colors: { ...defaultTheme.colors, palette: palettes.dark } }}
     >
       <DomainServiceProvider>
         <RecipientField
           account={account}
           transaction={{ ...baseMockTransaction, ...mockTransaction }}
           t={any => any.toString()}
-          onChangeTransaction={mockedOnChangeTransaction as any}
+          onChangeTransaction={mockedOnChangeTransaction}
           status={{ ...baseMockStatus, ...mockStatus }}
         />
       </DomainServiceProvider>
@@ -190,7 +191,7 @@ describe("RecipientField", () => {
         };
       }
       // eslint-disable-next-line prefer-promise-reject-errors
-      return Promise.reject({ response: { status: 404 } }) as any;
+      return Promise.reject({ response: { status: 404 } });
     });
   });
 

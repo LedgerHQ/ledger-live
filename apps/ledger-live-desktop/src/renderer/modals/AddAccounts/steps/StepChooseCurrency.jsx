@@ -22,6 +22,8 @@ import { openModal } from "~/renderer/actions/modals";
 import FullNodeStatus from "~/renderer/modals/AddAccounts/FullNodeStatus";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 import useEnv from "~/renderer/hooks/useEnv";
+// TODO move to bitcoin family
+// eslint-disable-next-line no-restricted-imports
 import type { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NetworkDown } from "@ledgerhq/errors";

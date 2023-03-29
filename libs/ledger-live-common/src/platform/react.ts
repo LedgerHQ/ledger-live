@@ -29,7 +29,6 @@ import { listCurrencies } from "../currencies";
  */
 export function usePlatformUrl(
   manifest: LiveAppManifest,
-  params: { background?: string; text?: string; loadDate?: Date },
   inputs?: Record<string, string>
 ): URL {
   return useMemo(() => {
@@ -46,19 +45,12 @@ export function usePlatformUrl(
       }
     }
 
-    if (params.background)
-      url.searchParams.set("backgroundColor", params.background);
-    if (params.text) url.searchParams.set("textColor", params.text);
-    if (params.loadDate) {
-      url.searchParams.set("loadDate", params.loadDate.valueOf().toString());
-    }
-
     if (manifest.params) {
       url.searchParams.set("params", JSON.stringify(manifest.params));
     }
 
     return url;
-  }, [manifest.url, manifest.params, params, inputs]);
+  }, [manifest.url, manifest.params, inputs]);
 }
 
 export function usePlatformAccounts(
