@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Trans, useTranslation } from "react-i18next";
@@ -30,8 +30,6 @@ import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import IlluRewards from "../../../icons/images/Rewards";
 import ProgressCircle from "../../../components/ProgressCircle";
-import InfoModal from "../../../modals/Info";
-import ClaimRewards from "../../../icons/ClaimReward";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 
@@ -44,21 +42,9 @@ const Delegation = ({ account, parentAccount }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const [setRewardsInfoModal] = useState<boolean>();
 
   const superRepresentatives = useTronSuperRepresentatives();
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
-
-  const infoRewardsModalData = useMemo(
-    () => [
-      {
-        Icon: () => <ClaimRewards size={18} color={colors.darkBlue} />,
-        title: <Trans i18nKey="tron.info.claimRewards.title" />,
-        description: <Trans i18nKey="tron.info.claimRewards.description" />,
-      },
-    ],
-    [colors.darkBlue],
-  );
 
   const lastDate = lastVotedDate ? (
     <DateFromNow date={lastVotedDate.valueOf()} />
@@ -84,11 +70,6 @@ const Delegation = ({ account, parentAccount }: Props) => {
   const totalVotesUsed = votes.reduce(
     (sum, { voteCount }) => sum + voteCount,
     0,
-  );
-
-  const closeRewardsInfoModal = useCallback(
-    () => setRewardsInfoModal(false),
-    [setRewardsInfoModal],
   );
 
   const bridge = getAccountBridge(account, undefined);
@@ -264,11 +245,6 @@ const Delegation = ({ account, parentAccount }: Props) => {
           />
         )
       )}
-      <InfoModal
-        isOpened={false}
-        onClose={closeRewardsInfoModal}
-        data={infoRewardsModalData}
-      />
     </View>
   );
 };
