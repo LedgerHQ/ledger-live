@@ -65,20 +65,6 @@ export function Search({
 
   const isResultFound = !isSearchBarEmpty && result?.length !== 0;
 
-  const recentlyUsedListComponent = (
-    <>
-      <Text variant={"h4"} fontWeight={"semiBold"} marginBottom={16}>
-        {t("browseWeb3.catalog.section.recentlyUsed")}
-      </Text>
-      {recentlyUsed.map(manifest => (
-        <AppCard
-          key={`${manifest.id}.${manifest.branch}`}
-          manifest={manifest}
-          onPress={onSelect}
-        />
-      ))}
-    </>
-  );
   const noResultFoundComponent = (
     <Flex flexDirection={"column"} padding={4} marginTop={100}>
       <Flex alignItems="center">
