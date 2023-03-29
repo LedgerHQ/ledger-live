@@ -31,7 +31,7 @@ runs:
   steps:
     - uses: pnpm/action-setup@v2
       with:
-        version: latest
+        version: 7.30.0
     - uses: actions/setup-node@v3
       with:
         node-version: 18

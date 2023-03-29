@@ -7,7 +7,6 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import TrackScreen from "../../analytics/TrackScreen";
 import WebPlatformPlayer from "../../components/WebPlatformPlayer";
 import GenericErrorView from "../../components/GenericErrorView";
@@ -15,15 +14,12 @@ import { useLocale } from "../../context/Locale";
 import { ScreenName } from "../../const";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ExchangeNavigatorParamList } from "../../components/RootNavigator/types/ExchangeNavigator";
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
-export type Props =
-  | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PlatformApp>
-  | StackNavigatorProps<
-      ExchangeNavigatorParamList,
-      ScreenName.ExchangeBuy | ScreenName.ExchangeSell
-    >;
+export type Props = StackNavigatorProps<
+  BaseNavigatorStackParamList,
+  ScreenName.PlatformApp
+>;
 
 export function LiveApp({ route }: Props) {
   const { theme } = useTheme();
@@ -46,7 +42,7 @@ export function LiveApp({ route }: Props) {
     <>
       <TrackScreen category="Platform" name="App" />
       <WebPlatformPlayer
-        manifest={manifest as LiveAppManifest}
+        manifest={manifest}
         inputs={{
           theme,
           lang: locale,

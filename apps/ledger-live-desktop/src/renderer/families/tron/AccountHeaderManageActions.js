@@ -34,7 +34,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
       );
     } else if (tronPower > 0) {
       dispatch(
-        openModal("MODAL_MANAGE_TRON", {
+        openModal("MODAL_TRON_MANAGE", {
           parentAccount,
           account,
         }),

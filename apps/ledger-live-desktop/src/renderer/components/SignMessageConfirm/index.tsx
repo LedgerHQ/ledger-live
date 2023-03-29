@@ -7,6 +7,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { NanoDisplayedInfoFor712 } from "~/renderer/modals/SignMessage/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
+// eslint-disable-next-line no-restricted-imports
 import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { getMessageProperties } from "~/renderer/modals/SignMessage/utils";

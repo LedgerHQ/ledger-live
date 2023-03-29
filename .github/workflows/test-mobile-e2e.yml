@@ -47,11 +47,11 @@ jobs:
           base: ${{ inputs.base_ref }}
       - uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7.30.0
           dest: ${{ runner.temp }}/setup-pnpm
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 18.15.0
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: Install applesimutils
@@ -132,10 +132,10 @@ jobs:
   #         ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
   #     - uses: pnpm/action-setup@v2
   #       with:
-  #         version: latest
+  #         version: 7.30.0
   #     - uses: actions/setup-node@v3
   #       with:
-  #         node-version: 18
+  #         node-version: 18.15.0
   #         cache: pnpm
   #         cache-dependency-path: "**/pnpm-lock.yaml"
   #     - name: setup JDK 11

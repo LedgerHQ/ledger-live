@@ -216,4 +216,6 @@ export const urls = {
   recoverSources: {
     myLedger: "ledgerlive://myledger",
   },
+  domainService:
+    "https://support.ledger.com/hc/articles/9710787581469?docs=true",
 };

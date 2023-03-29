@@ -84,7 +84,7 @@ const Delegation = ({ account }: Props) => {
   const onDelegate = useCallback(
     () =>
       dispatch(
-        openModal(votes.length > 0 ? "MODAL_VOTE_TRON" : "MODAL_VOTE_TRON_INFO", {
+        openModal(votes.length > 0 ? "MODAL_TRON_VOTE" : "MODAL_TRON_VOTE_INFO", {
           account,
         }),
       ),
@@ -143,7 +143,7 @@ const Delegation = ({ account }: Props) => {
               small
               onClick={() => {
                 dispatch(
-                  openModal("MODAL_CLAIM_REWARDS", {
+                  openModal("MODAL_TRON_CLAIM_REWARDS", {
                     account,
                     reward: unwithdrawnReward,
                   }),

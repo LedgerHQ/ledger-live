@@ -14,7 +14,7 @@ export class Modal {
   readonly doneButton: Locator;
   readonly closeButton: Locator;
   readonly backButton: Locator;
-  readonly stakeProviderContainer: Function;
+  readonly stakeProviderContainer: (stakeProvider: string) => Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -32,7 +32,7 @@ export class Modal {
     this.doneButton = page.locator("data-test-id=modal-done-button");
     this.closeButton = page.locator("data-test-id=modal-close-button");
     this.backButton = page.locator("data-test-id=modal-back-button");
-    this.stakeProviderContainer = (stakeProvider: string) =>
+    this.stakeProviderContainer = stakeProvider =>
       page.locator(`data-test-id=stake-provider-container-${stakeProvider.toLowerCase()}`);
   }
 

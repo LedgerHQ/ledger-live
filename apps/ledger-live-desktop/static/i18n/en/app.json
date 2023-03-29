@@ -84,6 +84,7 @@
     "save": "Save",
     "lock": "Lock",
     "showMore": "Show more",
+    "backToMatchingURL": "Back to {{appName}}",
     "back": "Back",
     "adjustFees": "Adjust fees",
     "reset": "Reset",

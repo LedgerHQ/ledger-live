@@ -30,7 +30,7 @@ export const Rotating: ThemedComponent<{ size: number, isRotating?: boolean }> =
 
 export default function BigSpinner({ size, ...props }: { size: number, isRotating?: boolean }) {
   return (
-    <Rotating {...props} size={size} data-test-id="loading-spinner">
+    <Rotating size={size} data-test-id="loading-spinner" {...props}>
       <IconBigSpinner size={size} />
     </Rotating>
   );

@@ -22,7 +22,7 @@ runs:
   steps:
     - uses: pnpm/action-setup@v2
       with:
-        version: latest
+        version: 7.30.0
         dest: ${{ runner.temp }}/setup-pnpm
     - uses: actions/setup-node@v3
       with:
