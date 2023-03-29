@@ -153,11 +153,7 @@ export function Search({
             <AnimatedView animation="fadeInUp" delay={50} duration={300}>
               <Flex paddingTop={4} paddingBottom={TAB_BAR_SAFE_HEIGHT + 50}>
                 {isSearchBarEmpty ? (
-                  recentlyUsed.length === 0 ? (
-                    <ManifestList onSelect={onSelect} manifests={manifests} />
-                  ) : (
-                    recentlyUsedListComponent
-                  )
+                  <ManifestList onSelect={onSelect} manifests={manifests} />
                 ) : isResultFound ? (
                   <ManifestList onSelect={onSelect} manifests={result} />
                 ) : (
