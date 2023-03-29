@@ -32,16 +32,16 @@ describe("Contrustructor", () => {
 });
 
 describe("startNewTransaction", () => {
-  it("give correct sequence of APDU", async () => {
+  const textEncoder = new TextEncoder();
+  const mockResponse = "2ac38f187c"; // Response of length 10
+
+  it("sends a correct sequence of APDU", async () => {
     // Given
     const recordStore = new RecordStore();
-    const textEncoder = new TextEncoder();
-    const mockResponse = "nonce";
     const mockTransport = new MockTransport(
       Buffer.concat([
         textEncoder.encode(mockResponse),
-        Buffer.from([0x90, 0x00]),
-        // Buffer.from([StatusCodes.OK]),
+        Buffer.from([0x90, 0x00]), // StatusCodes.OK
       ])
     );
     const transport = createTransportRecorder(mockTransport, recordStore);
@@ -69,12 +69,9 @@ describe("startNewTransaction", () => {
   xit("throws an error if status is not ok", async () => {
     // Given
     const recordStore = new RecordStore();
-    const textEncoder = new TextEncoder();
-    // Buffer.from([0x6e, 0x6f, 0x6e, 0x63, 0x65, 0x90, 0x00])
-    const expectedResult = "nonce";
     const mockTransport = new MockTransport(
       Buffer.concat([
-        textEncoder.encode(expectedResult),
+        textEncoder.encode(mockResponse),
         Buffer.from([0x6a, 0x80]),
       ])
     );
