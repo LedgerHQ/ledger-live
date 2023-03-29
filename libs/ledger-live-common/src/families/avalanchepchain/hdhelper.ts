@@ -1,7 +1,6 @@
 import { avalancheClient } from "./api/client";
 import { binTools } from "./utils";
 import HDKey from "hdkey";
-import { KeyPair as AVMKeyPair } from "avalanche/dist/apis/avm";
 import { AVAX_HRP } from "./utils";
 import {
   AmountOutput,
@@ -13,6 +12,7 @@ import BigNumber from "bignumber.js";
 import { BN } from "avalanche";
 import { UnixNow } from "avalanche/dist/utils";
 import { getAddressChains } from "./api";
+import { createHash } from "node:crypto";
 
 const INDEX_RANGE = 20;
 const SCAN_SIZE = 100;
@@ -171,12 +171,16 @@ class HDHelper {
       this.hdCache[index] = key;
     }
 
-    const pkHex = key.publicKey.toString("hex");
-    const pkBuff = Buffer.from(pkHex, "hex");
     const chainId = this.chainId;
 
-    const addrBuf = AVMKeyPair.addressFromPublicKey(pkBuff as any);
-    const addr = binTools.addressToString(AVAX_HRP, chainId, addrBuf);
+    const sha256 = Buffer.from(
+      createHash("sha256").update(key.publicKey).digest()
+    );
+    const ripesha = Buffer.from(
+      createHash("ripemd160").update(sha256).digest()
+    );
+
+    const addr = binTools.addressToString(AVAX_HRP, chainId, ripesha as any);
 
     this.addressCache[index] = addr;
     return addr;
