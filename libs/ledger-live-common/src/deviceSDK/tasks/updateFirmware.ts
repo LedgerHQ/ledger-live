@@ -1,6 +1,7 @@
 import {
   CantOpenDevice,
   DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
   LockedDeviceError,
   UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
@@ -65,6 +66,7 @@ const waitForGetVersion = retryOnErrorsCommandWrapper({
       )
     ),
   allowedErrors: [
+    { maxRetries: "infinite", errorClass: DisconnectedDeviceDuringOperation },
     { maxRetries: "infinite", errorClass: DisconnectedDevice },
     { maxRetries: "infinite", errorClass: CantOpenDevice },
   ],
