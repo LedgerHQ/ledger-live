@@ -21,6 +21,9 @@ import {
 import { track } from "../analytics";
 import { setDismissedDynamicCards } from "../actions/settings";
 
+export const filterByPlatform = (array: BrazeContentCard[]) =>
+  array.filter(elem => !!elem.extras.platform);
+
 export const filterByPage = (array: BrazeContentCard[], page: string) =>
   array.filter(elem => elem.extras.location === page);
 
