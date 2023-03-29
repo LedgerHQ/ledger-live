@@ -2687,7 +2687,7 @@
           "title": "Experimental Explorers API",
           "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature."
         },
-        "listAppsV2": {
+        "experimentalListAppsV2": {
           "title": "Experimental list apps for My Ledger",
           "description": "Performance improvement for My Ledger access and inline flows."
         },
