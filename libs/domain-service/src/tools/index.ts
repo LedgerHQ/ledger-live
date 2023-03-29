@@ -1,3 +1,11 @@
+/**
+ * Helper designed to parse the APDU crafted by the Ledger backend to clear sign domains.
+ * The APDU is encoded with a TLV scheme: https://en.wikipedia.org/wiki/Type%E2%80%93length%E2%80%93value
+ * This is not used in our implementation per say, use this purely as a debug tool.
+ */
+
+// List of TLV possible based on the `Nano Trusted Names Descriptor Format & APIs` architecture on our confluence.
+// Sorry about that open source people.
 type TLV_TYPES =
   | "STRUCTURE_TYPE"
   | "VERSION"
@@ -28,6 +36,9 @@ const TLVs: Record<
   "15": { typeName: "SIGNATURE", parser: (input) => input },
 };
 
+/**
+ * Parser logic
+ */
 export const tlvParser = (
   apdu: string
 ): { T: TLV_TYPES; L: string; V: string | number | null }[] => {
