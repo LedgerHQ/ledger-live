@@ -37,7 +37,7 @@
     "SUNDAE",
     6,
     false,
-    true
+    false
   ],
   [
     "cardano",
@@ -207,7 +207,7 @@
     "MELD",
     6,
     false,
-    true
+    false
   ],
   [
     "cardano",
@@ -247,7 +247,7 @@
     "WMT",
     6,
     false,
-    true
+    false
   ],
   [
     "cardano",
@@ -487,7 +487,7 @@
     "ADAX",
     0,
     false,
-    true
+    false
   ],
   [
     "cardano",
@@ -957,7 +957,7 @@
     "NMKR",
     6,
     false,
-    true
+    false
   ],
   [
     "cardano",
@@ -967,7 +967,7 @@
     "WRT",
     6,
     false,
-    true
+    false
   ],
   [
     "cardano",
@@ -977,7 +977,7 @@
     "C3",
     6,
     false,
-    true
+    false
   ],
   [
     "cardano",
@@ -987,7 +987,7 @@
     "CLAY",
     4,
     false,
-    true
+    false
   ],
   [
     "cardano",
@@ -997,7 +997,7 @@
     "AGIX",
     8,
     false,
-    true
+    false
   ],
   [
     "cardano",
@@ -1007,7 +1007,7 @@
     "INDY",
     6,
     false,
-    true
+    false
   ],
   [
     "cardano",
@@ -1017,7 +1017,7 @@
     "DJED",
     6,
     false,
-    true
+    false
   ],
   [
     "cardano",
@@ -1027,6 +1027,6 @@
     "iUSD",
     6,
     false,
-    true
+    false
   ]
 ]
