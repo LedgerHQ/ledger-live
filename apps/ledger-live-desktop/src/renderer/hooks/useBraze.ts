@@ -8,8 +8,9 @@ type ContentCard = {
   id: string;
   location: LocationContentCard;
   title: string;
-  content: string;
-  link?: string;
+  description: string;
+  url?: string;
+  path?: string;
   image?: string;
 };
 
@@ -27,10 +28,11 @@ export const mapAsPortfolioContentCard = (card: Card) =>
   ({
     id: card.id,
     title: card.extras?.title,
-    content: card.extras?.content,
+    description: card.extras?.description,
     location: LocationContentCard.Portfolio,
     image: card.extras?.image,
-    link: card.extras?.link,
+    url: card.extras?.url,
+    path: card.extras?.path,
   } as PortfolioContentCard);
 
 export function useBraze() {
