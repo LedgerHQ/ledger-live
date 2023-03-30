@@ -237,7 +237,7 @@ function SendSummary({ navigation, route }: Props) {
         ) : null}
         <SendRowsCustom
           transaction={transaction}
-          account={mainAccount!}
+          account={mainAccount}
           navigation={navigation}
           route={route}
         />
