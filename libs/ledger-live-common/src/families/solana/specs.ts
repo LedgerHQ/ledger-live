@@ -28,9 +28,7 @@ const solana: AppSpec<Transaction> = {
   name: "Solana",
   scanAccountsRetries: 3,
   appQuery: {
-    model: DeviceModelId.nanoS,
-    firmware: "2",
-    appVersion: "1.2.0",
+    model: DeviceModelId.nanoSP,
     appName: "solana",
   },
   genericDeviceAction: acceptTransferTransaction,

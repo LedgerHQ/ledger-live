@@ -15,7 +15,7 @@ const ripple: AppSpec<Transaction> = {
   name: "XRP",
   currency,
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "XRP",
   },
   genericDeviceAction: acceptTransaction,

@@ -435,7 +435,7 @@ const cosmos: AppSpec<Transaction> = {
   name: "Cosmos",
   currency: getCryptoCurrencyById("cosmos"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Cosmos",
   },
   genericDeviceAction: acceptTransaction,
@@ -455,7 +455,7 @@ const osmosis: AppSpec<Transaction> = {
   name: "Osmosis",
   currency: getCryptoCurrencyById("osmosis"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Cosmos",
   },
   genericDeviceAction: acceptTransaction,

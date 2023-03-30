@@ -168,7 +168,7 @@ const elrondSpec: AppSpec<Transaction> = {
   name: "Elrond",
   currency: getCryptoCurrencyById("elrond"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "MultiversX",
   },
   genericDeviceAction: acceptMoveBalanceTransaction,

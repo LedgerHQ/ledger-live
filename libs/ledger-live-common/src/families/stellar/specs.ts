@@ -31,7 +31,7 @@ const stellar: AppSpec<Transaction> = {
   name: "Stellar",
   currency,
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Stellar",
   },
   genericDeviceAction: acceptTransaction,

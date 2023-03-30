@@ -167,8 +167,10 @@ const cronos: AppSpec<Transaction> = {
   name: "Cronos",
   currency: getCryptoCurrencyById("cronos"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Ethereum",
+    // FIXME Why do we need to force the version?
+    // FIXME Remove this when possible (others too in this file)
     appVersion: "1.10.1",
   },
   testTimeout,
@@ -183,7 +185,7 @@ const fantom: AppSpec<Transaction> = {
   name: "Fantom",
   currency: getCryptoCurrencyById("fantom"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Ethereum",
     appVersion: "1.10.1",
   },
@@ -199,7 +201,7 @@ const moonbeam: AppSpec<Transaction> = {
   name: "Moonbeam",
   currency: getCryptoCurrencyById("moonbeam"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Ethereum",
     appVersion: "1.10.1",
   },
@@ -215,7 +217,7 @@ const songbird: AppSpec<Transaction> = {
   name: "Songbird",
   currency: getCryptoCurrencyById("songbird"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Ethereum",
     appVersion: "1.10.1",
   },
@@ -231,7 +233,7 @@ const flare: AppSpec<Transaction> = {
   name: "Flare",
   currency: getCryptoCurrencyById("flare"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Ethereum",
     appVersion: "1.10.1",
   },

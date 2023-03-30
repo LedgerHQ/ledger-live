@@ -58,7 +58,7 @@ const tron: AppSpec<Transaction> = {
   name: "Tron",
   currency,
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Tron",
   },
   genericDeviceAction: acceptTransaction,

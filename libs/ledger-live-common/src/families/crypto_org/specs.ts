@@ -48,7 +48,7 @@ const crypto_org_croeseid: AppSpec<Transaction> = {
   name: "Crypto org Testnet",
   currency: getCryptoCurrencyById("crypto_org_croeseid"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Crypto.orgChain",
   },
   genericDeviceAction: acceptTransaction,
@@ -62,7 +62,7 @@ const crypto_org: AppSpec<Transaction> = {
   name: "Crypto org",
   currency: getCryptoCurrencyById("crypto_org"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Crypto.orgChain",
   },
   genericDeviceAction: acceptTransaction,

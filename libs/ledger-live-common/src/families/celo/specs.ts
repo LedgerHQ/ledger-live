@@ -31,7 +31,7 @@ const celo: AppSpec<Transaction> = {
   name: "Celo",
   currency,
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Celo",
   },
   testTimeout: 4 * 60 * 1000,

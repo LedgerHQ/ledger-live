@@ -159,8 +159,10 @@ const ethereum: AppSpec<Transaction> = {
   name: "Ethereum",
   currency: getCryptoCurrencyById("ethereum"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Ethereum",
+    // FIXME Why do we need to force the version?
+    // FIXME Remove this when possible (others too in this file)
     appVersion: "1.10.1",
   },
   genericDeviceAction: acceptTransaction,
@@ -431,7 +433,7 @@ const ethereumGoerli: AppSpec<Transaction> = {
   name: "Ethereum Goerli",
   currency: getCryptoCurrencyById("ethereum_goerli"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Ethereum",
     appVersion: "1.10.1",
   },
@@ -454,7 +456,7 @@ const bsc: AppSpec<Transaction> = {
   name: "BSC",
   currency: getCryptoCurrencyById("bsc"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Binance Smart Chain",
   },
   genericDeviceAction: acceptTransaction,
@@ -503,7 +505,7 @@ const polygon: AppSpec<Transaction> = {
   name: "Polygon",
   currency: getCryptoCurrencyById("polygon"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Polygon",
   },
   genericDeviceAction: acceptTransaction,
@@ -550,7 +552,7 @@ const avalanche_c_chain: AppSpec<Transaction> = {
   name: "Avalanche C-Chain",
   currency: avax_c_chain,
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Avalanche",
   },
   genericDeviceAction: avalancheSpeculosDeviceAction,

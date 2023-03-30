@@ -71,7 +71,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
   name: "Algorand",
   currency,
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Algorand",
   },
   genericDeviceAction: acceptTransaction,
