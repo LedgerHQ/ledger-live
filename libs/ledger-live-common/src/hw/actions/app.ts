@@ -513,10 +513,7 @@ export const createAction = (
 
     const task: (arg0: ConnectAppInput) => Observable<ConnectAppEvent> =
       useCallback(({ deviceId, request }: ConnectAppInput) => {
-        // Some requests require two runs to complete since we need to
-        // validate before completeing the action. For instance if we have
-        // dependencies we need to reach BOLOS first, then resolve them, and
-        // finally open the target app.
+        //To avoid redundant checks, we remove passed checks from the request.
         const { dependencies, requireLatestFirmware } = request;
 
         return connectAppExec({
