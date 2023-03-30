@@ -95,8 +95,8 @@ export function deviceActionFlow<T extends TransactionCommon>(
 ): DeviceAction<T, State<T>> {
   return (arg: DeviceActionArg<T, State<T>>) => {
     invariant(
-      arg.appCandidate.model === "nanoS",
-      "FIXME: stepper logic is only implemented for Nano S"
+      ["nanoS", "nanoSP"].includes(arg.appCandidate.model),
+      `FIXME: stepper logic is only implemented for Nano S & Nano S+, but tried with: '${arg.appCandidate.model}')`
     );
     const { transport, event, state, disableStrictStepValueValidation } = arg;
     let { finalState, stepTitle, stepValue, acc, currentStep } = state || {
