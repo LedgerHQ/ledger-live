@@ -11,7 +11,6 @@ import ArrowLeft from "../../../../../icons/ArrowLeft";
 import { TAB_BAR_SAFE_HEIGHT } from "../../../../../components/TabBar/TabBarSafeAreaView";
 import { Layout } from "../Layout";
 import { SearchBarValues } from "../types";
-import { AppCard } from "../AppCard";
 import Illustration from "../../../../../images/illustration/Illustration";
 import { SearchBar } from "./SearchBar";
 import { ManifestList } from "../ManifestList";
@@ -45,7 +44,6 @@ type Props = {
 
 export function Search({
   manifests,
-  recentlyUsed,
   title,
   onSelect,
   input,
