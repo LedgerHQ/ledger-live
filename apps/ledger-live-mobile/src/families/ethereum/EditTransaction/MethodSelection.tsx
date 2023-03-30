@@ -2,6 +2,7 @@ import React, { memo, useCallback, useEffect } from "react";
 import invariant from "invariant";
 import { Trans, useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
+import { Linking } from "react-native";
 import { Flex, SelectableList } from "@ledgerhq/native-ui";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import {
@@ -16,8 +17,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { isEditableOperation } from "@ledgerhq/live-common/operation";
-import { Linking } from "react-native";
+import { isOldestEditableOperation } from "@ledgerhq/live-common/operation";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -77,20 +77,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       .plus(account.type === "Account" ? transactionToEdit.amount : 0),
   );
 
-  let isOldestEditableOperation = true;
-
-  account.pendingOperations.forEach(pendingOperation => {
-    if (isEditableOperation(account, pendingOperation)) {
-      if (
-        operation.transactionSequenceNumber &&
-        pendingOperation.transactionSequenceNumber &&
-        pendingOperation.transactionSequenceNumber <
-          operation.transactionSequenceNumber
-      ) {
-        isOldestEditableOperation = false;
-      }
-    }
-  });
+  const oldestOperation = isOldestEditableOperation(operation, account);
 
   const currency = getAccountCurrency(account);
 
@@ -216,7 +203,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
             </Flex>
           </SelectableList.Element>
           <SelectableList.Element
-            disabled={!haveFundToSpeedup || !isOldestEditableOperation}
+            disabled={!haveFundToSpeedup || !oldestOperation}
             value={"speedup"}
           >
             <Trans i18nKey={"editTransaction.speedUp.title"} />
@@ -224,7 +211,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               <LText style={{ marginTop: 15, marginBottom: 0 }}>
                 <Trans
                   i18nKey={
-                    !isOldestEditableOperation
+                    !oldestOperation
                       ? "editTransaction.error.notlowestNonceToSpeedup"
                       : haveFundToSpeedup
                       ? "editTransaction.speedUp.description"
