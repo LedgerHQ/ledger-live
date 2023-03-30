@@ -7,7 +7,7 @@ import { Device } from "@ledgerhq/types-devices";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import { ScreenName } from "../../../const";
+import { ScreenName } from "../../const";
 
 export type EditTransactionParamList = {
   [ScreenName.EditTransactionMethodSelection]: {
