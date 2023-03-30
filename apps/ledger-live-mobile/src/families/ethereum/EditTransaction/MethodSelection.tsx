@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import invariant from "invariant";
 import { Trans, useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
@@ -31,18 +31,23 @@ type Props = StackNavigatorProps<
   ScreenName.EditTransactionMethodSelection
 >;
 
-export function MethodSelection({ navigation, route }: Props) {
+function MethodSelectionComponent({ navigation, route }: Props) {
   const { operation, account, parentAccount } = route.params;
 
+  invariant(
+    operation.transactionRaw,
+    "operation.transactionRaw not found. Could not edit the transaction",
+  );
+
   const transactionToEdit = fromTransactionRaw(
-    operation.transactionRaw! as TransactionRaw,
+    operation.transactionRaw as TransactionRaw,
   ) as Transaction;
 
   const { transaction, setTransaction, status } =
     useBridgeTransaction<Transaction>(() => {
       return {
         account,
-        parentAccount: parentAccount as Account,
+        parentAccount,
         transaction: transactionToEdit,
       };
     });
@@ -52,7 +57,7 @@ export function MethodSelection({ navigation, route }: Props) {
     "[useBridgeTransaction - MethodSelection] could not found transaction from bridge.",
   );
 
-  const mainAccount = getMainAccount(account, parentAccount as Account);
+  const mainAccount = getMainAccount(account, parentAccount);
   const feePerGas = new BigNumber(
     EIP1559ShouldBeUsed(mainAccount.currency)
       ? transactionToEdit.maxFeePerGas!
@@ -60,7 +65,7 @@ export function MethodSelection({ navigation, route }: Props) {
   );
 
   const feeValue = new BigNumber(
-    transactionToEdit.userGasLimit! || transactionToEdit.estimatedGasLimit,
+    transactionToEdit.userGasLimit || transactionToEdit.estimatedGasLimit || 0,
   )
     .times(feePerGas)
     .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
@@ -91,61 +96,77 @@ export function MethodSelection({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account, parentAccount as Account);
 
-  const onSelect = (option: "cancel" | "speedup") => {
-    switch (option) {
-      case "cancel":
-        transactionToEdit.amount = new BigNumber(0);
-        transactionToEdit.data = Buffer.from("");
-        transactionToEdit.nonce = operation.transactionSequenceNumber;
-        transactionToEdit.allowZeroAmount = true;
-        transaction.mode = "send";
+  const onSelect = useCallback(
+    (option: "cancel" | "speedup") => {
+      switch (option) {
+        case "cancel":
+          {
+            const updatedTransaction: Partial<Transaction> = {
+              amount: new BigNumber(0),
+              data: Buffer.from(""),
+              nonce: operation.transactionSequenceNumber,
+              allowZeroAmount: true,
+              mode: "send",
+            };
 
-        if (EIP1559ShouldBeUsed(currency)) {
-          if (transactionToEdit.maxPriorityFeePerGas) {
-            transactionToEdit.maxPriorityFeePerGas = new BigNumber(
-              transactionToEdit.maxPriorityFeePerGas.toNumber() * 1.1,
+            if (EIP1559ShouldBeUsed(mainAccount.currency)) {
+              if (transactionToEdit.maxPriorityFeePerGas) {
+                updatedTransaction.maxPriorityFeePerGas = new BigNumber(
+                  transactionToEdit.maxPriorityFeePerGas.times(1.1),
+                );
+              }
+
+              if (transactionToEdit.maxFeePerGas) {
+                updatedTransaction.maxFeePerGas = new BigNumber(
+                  transactionToEdit.maxFeePerGas.times(1.3),
+                );
+              }
+            } else if (transactionToEdit.gasPrice) {
+              updatedTransaction.gasPrice = new BigNumber(
+                transactionToEdit.gasPrice.times(1.3),
+              );
+            }
+
+            setTransaction(
+              bridge.updateTransaction(transaction, updatedTransaction),
             );
           }
 
-          if (transactionToEdit.maxFeePerGas) {
-            transactionToEdit.maxFeePerGas = new BigNumber(
-              transactionToEdit.maxFeePerGas.toNumber() * 1.3,
+          break;
+
+        case "speedup":
+          {
+            const updatedTransaction: Partial<Transaction> = {
+              nonce: operation.transactionSequenceNumber,
+              networkInfo: null,
+              gasPrice: null,
+              maxFeePerGas: null,
+              maxPriorityFeePerGas: null,
+              mode: "send",
+              recipient:
+                (account as Account)?.freshAddress ??
+                (parentAccount as Account)?.freshAddress,
+            };
+
+            setTransaction(
+              bridge.updateTransaction(transaction, updatedTransaction),
             );
           }
-        } else {
-          if (transactionToEdit.gasPrice) {
-            transactionToEdit.gasPrice = new BigNumber(
-              transactionToEdit.gasPrice.toNumber() * 1.3,
-            );
-          }
-        }
 
-        setTransaction(
-          bridge.updateTransaction(transaction, transactionToEdit),
-        );
-
-        break;
-
-      case "speedup":
-        transactionToEdit.nonce = operation.transactionSequenceNumber;
-        transactionToEdit.networkInfo = null;
-        transactionToEdit.gasPrice = null;
-        transactionToEdit.maxFeePerGas = null;
-        transactionToEdit.maxPriorityFeePerGas = null;
-        transaction.mode = "send";
-        transactionToEdit.recipient =
-          (account as Account)?.freshAddress ??
-          (parentAccount as Account)?.freshAddress;
-
-        setTransaction(
-          bridge.updateTransaction(transaction, transactionToEdit),
-        );
-
-        break;
-      default:
-        break;
-    }
-  };
+          break;
+        default:
+          break;
+      }
+    },
+    [
+      account,
+      parentAccount,
+      transaction,
+      transactionToEdit,
+      bridge,
+      operation.transactionSequenceNumber,
+    ],
+  );
 
   useEffect(() => {
     // if cancel
@@ -162,7 +183,7 @@ export function MethodSelection({ navigation, route }: Props) {
         accountId: account.id,
         parentId: parentAccount?.id,
         transaction,
-        transactionRaw: operation.transactionRaw! as TransactionRaw,
+        transactionRaw: operation.transactionRaw as TransactionRaw,
         operation,
         currentNavigation: ScreenName.EditTransactionMethodSelection,
         nextNavigation: ScreenName.SendSelectDevice,
@@ -224,3 +245,5 @@ export function MethodSelection({ navigation, route }: Props) {
     </Flex>
   );
 }
+
+export const MethodSelection = memo(MethodSelectionComponent);
