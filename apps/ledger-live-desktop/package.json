@@ -1,11 +1,9 @@
 {
-  "engines": {
-    "node": ">=12"
-  },
   "name": "ledger-live-desktop",
   "productName": "Ledger Live",
   "description": "Ledger Live - Desktop",
   "author": "Ledger Live Team <team-live@ledger.fr>",
+  "packageManager": "pnpm@7.30.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"

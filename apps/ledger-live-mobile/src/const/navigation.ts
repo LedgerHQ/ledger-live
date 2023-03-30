@@ -127,6 +127,7 @@ export enum ScreenName {
   ReceiveSelectCrypto = "ReceiveSelectCrypto",
   ReceiveVerificationConfirmation = "ReceiveVerificationConfirmation",
   ReceiveVerifyAddress = "ReceiveVerifyAddress",
+  Recover = "Recover",
   RegionSettings = "RegionSettings",
   RepairDevice = "RepairDevice",
   Resources = "Resources",
@@ -525,6 +526,8 @@ export enum ScreenName {
   AvalancheDelegationConnectDevice = "AvalancheDelegationConnectDevice",
   AvalancheDelegationValidationError = "AvalancheDelegationValidationError",
   AvalancheDelegationValidationSuccess = "AvalancheDelegationValidationSuccess",
+
+  RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
 }
 
 export enum NavigatorName {

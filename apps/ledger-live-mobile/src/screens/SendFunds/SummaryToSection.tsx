@@ -1,19 +1,100 @@
-import React, { memo } from "react";
-import { useTranslation } from "react-i18next";
+import React, { memo, useMemo } from "react";
+
 import { StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
+import { useDomain } from "@ledgerhq/domain-service/hooks/index";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "../../components/Circle";
 import LText from "../../components/LText";
 import QRcode from "../../icons/QRcode";
 
 type Props = {
-  recipient: string;
+  transaction: Transaction;
+  currency: CryptoCurrency;
 };
 
-function SummaryToSection({ recipient }: Props) {
+const DefaultRecipientTemplate = memo(
+  ({ transaction }: Pick<Props, "transaction">) => {
+    const { recipient, recipientDomain } = transaction;
+
+    return (
+      <>
+        <LText numberOfLines={2} style={styles.domainRowText}>
+          {recipientDomain?.domain}
+        </LText>
+        <LText
+          numberOfLines={2}
+          style={recipientDomain ? styles.domainRowText : styles.summaryRowText}
+          color={recipientDomain ? "neutral.c70" : "neutral.c100"}
+        >
+          {recipient}
+        </LText>
+      </>
+    );
+  },
+);
+DefaultRecipientTemplate.displayName = "DefaultRecipientTemplate";
+
+const RecipientWithResolutionTemplate = memo(
+  ({ transaction }: Pick<Props, "transaction">) => {
+    const { recipient } = transaction;
+
+    const domainResolution = useDomain(recipient, "ens");
+    const recipientDomain = useMemo(
+      () =>
+        isLoaded(domainResolution)
+          ? domainResolution.resolutions[0]
+          : undefined,
+      [domainResolution],
+    );
+
+    return (
+      <>
+        <LText numberOfLines={2} style={styles.domainRowText}>
+          {recipientDomain?.domain}
+        </LText>
+        <LText
+          numberOfLines={2}
+          style={recipientDomain ? styles.domainRowText : styles.summaryRowText}
+          color={recipientDomain ? "neutral.c70" : "neutral.c100"}
+        >
+          {recipient}
+        </LText>
+      </>
+    );
+  },
+);
+RecipientWithResolutionTemplate.displayName = "RecipientWithResolutionTemplate";
+
+function SummaryToSection({ transaction, currency }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+
+  const { enabled: isDomainResolutionEnabled, params } =
+    useFeature<{ supportedCurrencyIds: CryptoCurrencyId[] }>(
+      "domainInputResolution",
+    ) || {};
+  const isCurrencySupported =
+    params?.supportedCurrencyIds?.includes(currency.id as CryptoCurrencyId) ||
+    false;
+
+  const shouldTryResolvingDomain = useMemo<boolean>(() => {
+    if (transaction.recipientDomain) {
+      return false;
+    }
+    return !!isDomainResolutionEnabled && isCurrencySupported;
+  }, [
+    transaction.recipientDomain,
+    isDomainResolutionEnabled,
+    isCurrencySupported,
+  ]);
+
   return (
     <SummaryRowCustom
       label={t("send.summary.to")}
@@ -23,9 +104,11 @@ function SummaryToSection({ recipient }: Props) {
         </Circle>
       }
       data={
-        <LText numberOfLines={2} style={styles.summaryRowText}>
-          {recipient}
-        </LText>
+        shouldTryResolvingDomain ? (
+          <RecipientWithResolutionTemplate transaction={transaction} />
+        ) : (
+          <DefaultRecipientTemplate transaction={transaction} />
+        )
       }
     />
   );
@@ -34,6 +117,12 @@ function SummaryToSection({ recipient }: Props) {
 const styles = StyleSheet.create({
   summaryRowText: {
     fontSize: 16,
+  },
+  domainRowText: {
+    fontSize: 14,
+  },
+  addressRowText: {
+    fontSize: 14,
   },
 });
 export default memo<Props>(SummaryToSection);

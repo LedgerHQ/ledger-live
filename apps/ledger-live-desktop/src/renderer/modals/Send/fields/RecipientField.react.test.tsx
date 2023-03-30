@@ -13,6 +13,8 @@ import userEvent from "@testing-library/user-event";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/lib/hooks/index";
+// TODO specific test need to be moved to the family
+// eslint-disable-next-line no-restricted-imports
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import defaultTheme from "~/renderer/styles/theme";
 import palettes from "~/renderer/styles/palettes";
