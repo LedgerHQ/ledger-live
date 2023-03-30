@@ -83,7 +83,7 @@ import {
   NavigationHeaderCloseButton,
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
-import EditTransactionNavigator from "./EditTransactionNavigator";
+import EditTransactionNavigator from "../../families/ethereum/EditTransactionNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
