@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// @flow
 const SentryCli = require("@sentry/cli");
 const yargs = require("yargs");
 const execa = require("execa");
