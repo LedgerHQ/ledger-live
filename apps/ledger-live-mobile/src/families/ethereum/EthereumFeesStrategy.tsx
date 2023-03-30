@@ -82,7 +82,15 @@ export default function EthereumFeesStrategy({
           })
           .map(strategy => strategy.label)
       : [];
-  }, []);
+  }, [
+    account,
+    currency,
+    operation,
+    strategies,
+    transaction.gasPrice,
+    transaction.maxFeePerGas,
+    transaction.maxPriorityFeePerGas,
+  ]);
 
   useEffect(() => {
     const newCustomStrategy = getCustomStrategy(transaction, currency);
