@@ -5,9 +5,9 @@ import { useTheme } from "styled-components/native";
 
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import StepHeader from "../StepHeader";
-import { MethodSelection } from "../../families/ethereum/EditTransaction/MethodSelection";
-import { EditTransactionParamList } from "../../families/ethereum/EditTransactionNavigator";
+import StepHeader from "../../components/StepHeader";
+import { MethodSelection } from "./EditTransaction/MethodSelection";
+import { EditTransactionParamList } from "./EditTransactionNavigator";
 import SendSummary from "../../screens/SendFunds/04-Summary";
 import SelectDevice from "../../screens/SelectDevice";
 import SendConnectDevice from "../../screens/ConnectDevice";
