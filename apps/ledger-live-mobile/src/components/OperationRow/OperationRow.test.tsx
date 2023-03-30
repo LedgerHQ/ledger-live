@@ -71,6 +71,7 @@ describe("OperationRow test (non optimistic operation)", () => {
       />,
     );
 
-    expect(screen.getByTestId("operationRowDate")).toBeOnTheScreen();
+    const operationRowDate = screen.getByTestId("operationRowDate");
+    expect(operationRowDate).toBeDefined();
   });
 });
