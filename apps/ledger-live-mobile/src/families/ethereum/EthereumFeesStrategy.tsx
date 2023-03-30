@@ -63,10 +63,9 @@ export default function EthereumFeesStrategy({
                 transaction.maxFeePerGas!,
               );
 
-              const lessMaxPriorityFeePerGas =
-                strategy.extra?.maxPriorityFeePerGas.isLessThan(
-                  transaction.maxPriorityFeePerGas!.multipliedBy(1.1),
-                );
+              const lessMaxPriorityFeePerGas = strategy.extra?.maxPriorityFeePerGas.isLessThan(
+                transaction.maxPriorityFeePerGas!.multipliedBy(1.1),
+              );
 
               return lessMaxFeePerGas && lessMaxPriorityFeePerGas;
             }
@@ -78,7 +77,9 @@ export default function EthereumFeesStrategy({
           .map(strategy => strategy.label)
       : [];
   }, [
+    account,
     currency,
+    operation,
     strategies,
     transaction.gasPrice,
     transaction.maxFeePerGas,
