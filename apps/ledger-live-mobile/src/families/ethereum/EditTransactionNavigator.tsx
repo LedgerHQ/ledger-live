@@ -5,9 +5,9 @@ import { useTheme } from "styled-components/native";
 
 import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import StepHeader from "../StepHeader";
-import { MethodSelection } from "../../families/ethereum/EditTransaction/MethodSelection";
-import { EditTransactionParamList } from "../../families/ethereum/EditTransactionNavigator";
+import StepHeader from "../../components/StepHeader";
+import { MethodSelection } from "./EditTransaction/MethodSelection";
+import { EditTransactionParamList } from "./EditTransactionParamList";
 import SendSummary from "../../screens/SendFunds/04-Summary";
 import SelectDevice from "../../screens/SelectDevice";
 import SendConnectDevice from "../../screens/ConnectDevice";
@@ -19,10 +19,7 @@ const Stack = createStackNavigator<EditTransactionParamList>();
 export default function EditTransactionNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
