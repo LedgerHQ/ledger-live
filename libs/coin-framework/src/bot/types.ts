@@ -21,6 +21,12 @@ export type AppCandidate = {
   appName: string;
   appVersion: string;
 };
+export type AppSearch = {
+  model?: DeviceModelId;
+  firmware?: string;
+  appName?: string;
+  appVersion?: string;
+};
 export type DeviceActionEvent = {
   text: string;
   x: number;
@@ -121,12 +127,7 @@ export type AppSpec<T extends TransactionCommon> = {
   // if the nano app depends on an app, name of this app
   dependency?: string;
   // a query to select one nano app. the most up to date version is selected when fields aren't set.
-  appQuery: {
-    model?: DeviceModelId;
-    appName?: string;
-    firmware?: string;
-    appVersion?: string;
-  };
+  appQuery: AppSearch;
   // all the possible scenarios of these spec to consider doing transactions with
   mutations: MutationSpec<T>[];
   // can implement generic invariants for a mutation transaction to be possible
