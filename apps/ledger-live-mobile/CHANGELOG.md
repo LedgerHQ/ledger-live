@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.18.0-next.6
+
+### Minor Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`842eaacf83`](https://github.com/LedgerHQ/ledger-live/commit/842eaacf839776956435d12dda8bf6d8b386a784) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - feat: ledger recover feature flag
+
+### Patch Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`803fbee943`](https://github.com/LedgerHQ/ledger-live/commit/803fbee943d5cae2f99bd59a118546e3e978f9bd) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: recover deeplinks
+
+- Updated dependencies [[`842eaacf83`](https://github.com/LedgerHQ/ledger-live/commit/842eaacf839776956435d12dda8bf6d8b386a784)]:
+  - @ledgerhq/live-common@29.2.0-next.1
+
 ## 3.18.0-next.5
 
 ### Patch Changes

@@ -80,6 +80,7 @@
     "pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "afraid-hairs-travel",
     "bright-lions-battle",
     "brown-worms-perform",
     "chilly-owls-boil",
@@ -100,6 +101,7 @@
     "great-humans-move",
     "grumpy-apes-bake",
     "hip-peas-own",
+    "honest-hounds-cover",
     "hot-tips-protect",
     "large-taxis-fail",
     "light-suns-stare",
