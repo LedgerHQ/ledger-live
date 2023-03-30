@@ -16,7 +16,7 @@ import {
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
-import { EditTransactionParamList } from "../../../components/RootNavigator/types/EditTransactionNavigator";
+import { EditTransactionParamList } from "../EditTransactionNavigator";
 
 type Props = BaseComposite<
   | StackNavigatorProps<
