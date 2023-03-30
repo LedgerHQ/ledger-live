@@ -27,6 +27,7 @@ interface OwnProps {
   validators: Array<ElrondProvider>;
   name: string;
   amount: string;
+  delegations: Array<{ validator: string; amount: string }>;
 }
 interface StateProps {
   t: TFunction;

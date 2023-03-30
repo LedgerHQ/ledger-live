@@ -144,7 +144,7 @@ const ValidatorRow = ({
   maxNominatorRewardedPerValidator,
   onUpdateVote,
   onExternalLink,
-  onClick = () => {},
+  onClick = () => null,
   style,
 }: ValidatorRowProps) => {
   const {

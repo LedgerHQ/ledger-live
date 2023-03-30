@@ -11,7 +11,7 @@ export let setDrawer: (
   Component?: State["Component"],
   props?: State["props"],
   options?: State["options"],
-) => void = () => {};
+) => void = () => null;
 
 // reducer
 const reducer = (state: State, update) => {
@@ -32,7 +32,7 @@ export type ContextValue = {
 };
 export const context: React.Context<ContextValue> = React.createContext<ContextValue>({
   state: initialState,
-  setDrawer: () => {},
+  setDrawer: () => null,
 });
 const DrawerProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);

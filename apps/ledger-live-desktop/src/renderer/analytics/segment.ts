@@ -15,6 +15,7 @@ import {
 import { State } from "~/renderer/reducers";
 import { idsToLanguage } from "@ledgerhq/types-live";
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const os = require("os");
 const osType = os.type();
 const osVersion = os.release();

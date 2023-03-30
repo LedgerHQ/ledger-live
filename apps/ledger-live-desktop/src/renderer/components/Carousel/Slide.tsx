@@ -107,7 +107,7 @@ const Slide = ({ url, path, title, description, imgs }: Props) => {
         {imgs.map(({ source, transform, size }, i) => (
           <Layer
             key={i}
-            style={getTransform.apply(null, transform)}
+            style={getTransform(...transform)}
             image={source}
             width={size.width}
             height={size.height}

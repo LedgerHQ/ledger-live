@@ -6,11 +6,11 @@ const electronPlugin = require("vite-plugin-electron/renderer");
 const reactPlugin = require("@vitejs/plugin-react");
 const { defineConfig } = require("vite");
 
-const SENTRY_URL = process.env?.SENTRY_URL;
+const SENTRY_URL = process.env.SENTRY_URL;
 const pkg = require("../../package.json");
 const lldRoot = path.resolve(__dirname, "..", "..");
 
-let GIT_REVISION = process.env?.GIT_REVISION;
+let GIT_REVISION = process.env.GIT_REVISION;
 
 if (!GIT_REVISION) {
   GIT_REVISION = childProcess

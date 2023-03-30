@@ -106,7 +106,7 @@ function ToRow({
         <InputCurrencyContainer flex="1">
           <InputCurrency
             // @DEV: onChange props is required by the composant, there is no read-only logic
-            onChange={() => {}}
+            onChange={() => null}
             value={unit ? toAmount : null}
             disabled
             placeholder="-"

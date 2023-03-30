@@ -20,6 +20,7 @@ export async function killInternalProcess() {
   return delay(1000);
 }
 function reload() {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require("@electron/remote")
     .getCurrentWindow()
     .webContents.reload();

@@ -29,7 +29,7 @@ type Props<C extends Currency> = {
 const getOptionValue = c => c.id;
 
 // TODO: I removed the {...props} that was passed to Select. We might need to check out it doesnt break other stuff
-const SelectCurrency = <C extends any>({
+const SelectCurrency = <C extends Currency>({
   onChange,
   value,
   placeholder,

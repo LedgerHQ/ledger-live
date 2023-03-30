@@ -6,6 +6,7 @@ export default (type: string) => {
   console.log(type);
   switch (type) {
     case "init":
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       updater = require("./init").default;
       break;
     case "quit-and-install":

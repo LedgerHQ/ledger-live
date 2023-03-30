@@ -17,6 +17,7 @@ const config = {
 i18n.use(initReactI18next).init(config);
 if (module.hot) {
   module.hot.accept("./index", () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const newResources = require("./index").default;
     Object.keys(newResources).forEach(lang => {
       const langObj = newResources[lang];

@@ -17,7 +17,6 @@ const useAccount = accountId => {
   );
 };
 
-// eslint-disable-next-line flowtype/no-types-missing-file-annotation
 const Provider = ({ children }: { children: React.ReactNode }) => {
   const [isReady] = useState(true);
   const history = useHistory();

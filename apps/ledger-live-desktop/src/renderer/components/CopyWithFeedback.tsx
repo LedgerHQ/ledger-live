@@ -6,6 +6,7 @@ import IconCopy from "~/renderer/icons/Copy";
 import Box from "~/renderer/components/Box";
 let clipboard = null;
 if (!process.env.STORYBOOK_ENV) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const electron = require("electron");
   clipboard = electron.clipboard; // eslint-disable-line
 }

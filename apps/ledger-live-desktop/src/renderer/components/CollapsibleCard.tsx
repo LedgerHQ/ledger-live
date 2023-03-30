@@ -91,7 +91,7 @@ const CollapsibleCard = ({
   timing = 400,
   chevronVisible = true,
   open: defaultOpen,
-  onOpen = () => {},
+  onOpen = () => null,
   ...props
 }: Props) => {
   const [open, setOpen] = useState(defaultOpen);

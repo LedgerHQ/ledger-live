@@ -31,7 +31,7 @@ export default function AmountField({ account, transaction, status }: Props) {
         grow: true,
       }}
       value={transaction.amount}
-      onChange={() => {}}
+      onChange={() => null}
     />
   );
 }

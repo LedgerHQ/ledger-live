@@ -36,7 +36,7 @@ type Props<T, StepProps> = {
   params?: any;
   hideCloseButton?: boolean;
 };
-const Stepper = <T extends any, StepProps>({
+const Stepper = <T, StepProps>({
   stepId,
   steps,
   onStepChange,

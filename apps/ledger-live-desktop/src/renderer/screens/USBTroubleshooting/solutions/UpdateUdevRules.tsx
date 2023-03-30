@@ -9,6 +9,7 @@ import IconCopy from "~/renderer/icons/Copy";
 import illustration from "~/renderer/images/USBTroubleshooting/illus1.png";
 let clipboard = null;
 if (!process.env.STORYBOOK_ENV) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const electron = require("electron");
   clipboard = electron.clipboard; // eslint-disable-line
 }

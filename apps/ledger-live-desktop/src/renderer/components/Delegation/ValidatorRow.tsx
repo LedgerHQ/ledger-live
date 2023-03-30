@@ -193,7 +193,7 @@ const ValidatorRow = ({
   onExternalLink,
   maxAvailable = 0,
   notEnoughVotes,
-  onClick = () => {},
+  onClick = () => null,
   style,
   unit,
   onMax,

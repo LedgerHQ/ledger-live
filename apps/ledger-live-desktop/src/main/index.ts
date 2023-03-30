@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require("@electron/remote/main").initialize();
 
 /* eslint-disable import/first */
@@ -180,6 +181,7 @@ ipcMain.on("ready-to-show", () => {
   }
 });
 async function installExtensions() {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const installer = require("electron-devtools-installer");
   const forceDownload = true; // process.env.UPGRADE_EXTENSIONS
   const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS"];

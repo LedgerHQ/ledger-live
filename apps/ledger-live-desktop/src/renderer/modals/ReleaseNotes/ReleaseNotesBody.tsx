@@ -14,6 +14,7 @@ type Props = {
 };
 type RenderContentProps = {
   notes: Array<{
+    // eslint-disable-next-line camelcase
     tag_name: string;
     body: string;
   }>;
