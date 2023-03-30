@@ -9,7 +9,12 @@ import { Account, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 
-import { useWalletAPIServer, useConfig, UiHook } from "@ledgerhq/live-common/wallet-api/react";
+import {
+  useWalletAPIServer,
+  useConfig,
+  UiHook,
+  ExchangeType,
+} from "@ledgerhq/live-common/wallet-api/react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import { getEnv } from "@ledgerhq/live-common/env";
