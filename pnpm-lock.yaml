@@ -662,7 +662,7 @@ importers:
       allure-js-commons: 1.3.2
       asyncstorage-down: ^4.2.0
       axios: ^0.26.0
-      babel-jest: ^28.0.0
+      babel-jest: ^26.6.3
       babel-plugin-module-resolver: ^4.1.0
       bignumber.js: ^9.1.0
       buffer: 6.0.3
@@ -671,7 +671,7 @@ importers:
       d3-scale: ^3.2.1
       d3-shape: ^1.3.7
       date-fns: ^2.23.0
-      detox: ^20.6.0
+      detox: ^20.0.3
       eslint: 7.32.0
       eslint-config-airbnb: ^18.2.1
       eslint-config-prettier: ^8.3.0
@@ -978,7 +978,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.43.0_nyvtogynqlwtf2idoqyimls6fu
       '@typescript-eslint/parser': 5.43.0_77fvizpdb3y4icyeo2mf4eo7em
       allure-js-commons: 1.3.2
-      babel-jest: 28.1.3_epmq4ny5eiwbyxkub5iqcapase
+      babel-jest: 26.6.3_epmq4ny5eiwbyxkub5iqcapase
       babel-plugin-module-resolver: 4.1.0
       eslint: 7.32.0
       eslint-config-airbnb: 18.2.1_i27jbuqxx2p7vm6bybvblfglee
@@ -1013,7 +1013,7 @@ importers:
       react-native-performance-flipper-reporter: 3.0.0_7sc2hkefyiisiq72s7zgx4ldd4
       react-test-renderer: 17.0.2_react@17.0.2
       strip-ansi: 6.0.1
-      ts-jest: 28.0.8_d4nbofikyjncpae4w6wi3mk64m
+      ts-jest: 28.0.8_gexfbuwuvn3hxagcrhsppz3ope
       typescript: 4.9.3
       ws: 7.5.7
 
@@ -11177,7 +11177,7 @@ packages:
       chalk: 4.1.2
       connect: 3.7.0
       fs-extra: 9.0.0
-      glob: 8.0.3
+      glob: 7.2.3
       node-fetch: 2.6.7
       open: 8.4.0
       resolve-from: 5.0.0
@@ -11201,7 +11201,7 @@ packages:
       chalk: 4.1.2
       connect: 3.7.0
       fs-extra: 9.0.0
-      glob: 8.0.3
+      glob: 7.2.3
       node-fetch: 2.6.7
       open: 8.4.0
       resolve-from: 5.0.0
@@ -11308,7 +11308,7 @@ packages:
       '@expo/config': 5.0.9
       chalk: 4.1.2
       getenv: 1.0.0
-      glob: 8.0.3
+      glob: 7.2.3
       metro-react-native-babel-transformer: 0.67.0_@babel+core@7.17.10
     transitivePeerDependencies:
       - '@babel/core'
@@ -11324,7 +11324,7 @@ packages:
       debug: 4.3.4
       find-yarn-workspace-root: 2.0.0
       getenv: 1.0.0
-      glob: 8.0.3
+      glob: 7.2.3
       resolve-from: 5.0.0
       sucrase: 3.28.0
     transitivePeerDependencies:
@@ -11340,7 +11340,7 @@ packages:
       debug: 4.3.4
       find-yarn-workspace-root: 2.0.0
       getenv: 1.0.0
-      glob: 8.0.3
+      glob: 7.2.3
       resolve-from: 5.0.0
       sucrase: 3.28.0
     transitivePeerDependencies:
@@ -11356,7 +11356,7 @@ packages:
       debug: 4.3.4
       find-yarn-workspace-root: 2.0.0
       getenv: 1.0.0
-      glob: 8.0.3
+      glob: 7.2.3
       resolve-from: 5.0.0
       sucrase: 3.28.0
     transitivePeerDependencies:
@@ -13380,7 +13380,7 @@ packages:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 18.15.3
+      '@types/node': 17.0.32
       '@types/yargs': 15.0.14
       chalk: 4.1.2
 
@@ -14714,7 +14714,7 @@ packages:
       '@sentry/node': 6.19.7
       pino-pretty: 6.0.0
       pump: 3.0.0
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
       split2: 4.1.0
     transitivePeerDependencies:
       - supports-color
@@ -23103,7 +23103,7 @@ packages:
     resolution: {integrity: sha512-nxwy40TuMiUGqMyRHgCSWZ9FM4VAoRP4xUYSTv5ImRog+h9yISPbVH7H8fASCIzYn9wlEv4zvFL7uKDMCFQm3g==}
     dependencies:
       delegates: 1.0.0
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
     dev: false
 
   /are-we-there-yet/2.0.0:
@@ -23118,7 +23118,7 @@ packages:
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
     dependencies:
       delegates: 1.0.0
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
     dev: false
 
   /arg/4.1.0:
@@ -23753,6 +23753,26 @@ packages:
       - metro
       - supports-color
 
+  /babel-jest/26.6.3_epmq4ny5eiwbyxkub5iqcapase:
+    resolution: {integrity: sha512-pl4Q+GAVOHwvjrck6jKjvmGhnO3jHX/xuB9d27f+EJZ/6k+6nMuPjorrYp7s++bKKdANwzElBWnLWaObvTnaZA==}
+    engines: {node: '>= 10.14.2'}
+    peerDependencies:
+      '@babel/core': ^7.0.0
+    dependencies:
+      '@babel/core': 7.17.10
+      '@jest/transform': 26.6.2_metro@0.67.0
+      '@jest/types': 26.6.2
+      '@types/babel__core': 7.1.19
+      babel-plugin-istanbul: 6.1.1
+      babel-preset-jest: 26.6.2_@babel+core@7.17.10
+      chalk: 4.1.2
+      graceful-fs: 4.2.10
+      slash: 3.0.0
+    transitivePeerDependencies:
+      - metro
+      - supports-color
+    dev: true
+
   /babel-jest/27.5.1_@babel+core@7.17.10:
     resolution: {integrity: sha512-cdQ5dXjGRd0IBRATiQ4mZGlGlRE8kJpjPOixdNRdT+m3UcNqmYWN6rK6nvtXYfY3D76cb8s/O1Ss8ea24PIwcg==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
@@ -23803,25 +23823,6 @@ packages:
       '@types/babel__core': 7.1.19
       babel-plugin-istanbul: 6.1.1
       babel-preset-jest: 28.1.3_@babel+core@7.20.12
-      chalk: 4.1.2
-      graceful-fs: 4.2.10
-      slash: 3.0.0
-    transitivePeerDependencies:
-      - metro
-      - supports-color
-    dev: true
-
-  /babel-jest/28.1.3_epmq4ny5eiwbyxkub5iqcapase:
-    resolution: {integrity: sha512-epUaPOEWMk3cWX0M/sPvCHHCe9fMFAa/9hXEgKP8nFfNl/jlGkE9ucq9NqkZGXLDduCJYS0UvSlPUwC0S+rH6Q==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    peerDependencies:
-      '@babel/core': ^7.8.0
-    dependencies:
-      '@babel/core': 7.17.10
-      '@jest/transform': 28.1.3_metro@0.67.0
-      '@types/babel__core': 7.1.19
-      babel-plugin-istanbul: 6.1.1
-      babel-preset-jest: 28.1.3_@babel+core@7.17.10
       chalk: 4.1.2
       graceful-fs: 4.2.10
       slash: 3.0.0
@@ -24008,6 +24009,16 @@ packages:
     engines: {node: '>= 6'}
     dependencies:
       '@types/babel__traverse': 7.17.1
+
+  /babel-plugin-jest-hoist/26.6.2:
+    resolution: {integrity: sha512-PO9t0697lNTmcEHH69mdtYiOIkkOlj9fySqfO3K1eCcdISevLAE0xY59VLLUj0SoiPiTX/JU2CYFpILydUa5Lw==}
+    engines: {node: '>= 10.14.2'}
+    dependencies:
+      '@babel/template': 7.20.7
+      '@babel/types': 7.20.7
+      '@types/babel__core': 7.1.19
+      '@types/babel__traverse': 7.17.1
+    dev: true
 
   /babel-plugin-jest-hoist/27.5.1:
     resolution: {integrity: sha512-50wCwD5EMNW4aRpOwtqzyZHIewTYNxLA4nhB+09d8BIssfNfzBRhkBIHiaPv1Si226TQSvp8gxAJm2iY2qs2hQ==}
@@ -24430,6 +24441,17 @@ packages:
       '@babel/plugin-syntax-object-rest-spread': 7.8.3_@babel+core@7.9.0
       babel-plugin-jest-hoist: 24.9.0
 
+  /babel-preset-jest/26.6.2_@babel+core@7.17.10:
+    resolution: {integrity: sha512-YvdtlVm9t3k777c5NPQIv6cxFFFapys25HiUmuSgHwIZhfifweR5c5Sf5nwE3MAbfu327CYSvps8Yx6ANLyleQ==}
+    engines: {node: '>= 10.14.2'}
+    peerDependencies:
+      '@babel/core': ^7.0.0
+    dependencies:
+      '@babel/core': 7.17.10
+      babel-plugin-jest-hoist: 26.6.2
+      babel-preset-current-node-syntax: 1.0.1_@babel+core@7.17.10
+    dev: true
+
   /babel-preset-jest/27.5.1_@babel+core@7.17.10:
     resolution: {integrity: sha512-Nptf2FzlPCWYuJg41HBqXVT8ym6bXOevuCTbhxlUpjwtysGaIWFvDEjp4y+G7fl13FgOdjs7P/DmErqH7da0Ag==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
@@ -24450,17 +24472,6 @@ packages:
       babel-plugin-jest-hoist: 27.5.1
       babel-preset-current-node-syntax: 1.0.1_@babel+core@7.20.12
     dev: false
-
-  /babel-preset-jest/28.1.3_@babel+core@7.17.10:
-    resolution: {integrity: sha512-L+fupJvlWAHbQfn74coNX3zf60LXMJsezNvvx8eIh7iOR1luJ1poxYgQk1F8PYtNq/6QODDHCqsSnTFSWC491A==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/core': 7.17.10
-      babel-plugin-jest-hoist: 28.1.3
-      babel-preset-current-node-syntax: 1.0.1_@babel+core@7.17.10
-    dev: true
 
   /babel-preset-jest/28.1.3_@babel+core@7.20.12:
     resolution: {integrity: sha512-L+fupJvlWAHbQfn74coNX3zf60LXMJsezNvvx8eIh7iOR1luJ1poxYgQk1F8PYtNq/6QODDHCqsSnTFSWC491A==}
@@ -34750,6 +34761,7 @@ packages:
       inherits: 2.0.4
       minimatch: 5.1.0
       once: 1.4.0
+    dev: false
 
   /global-agent/3.0.0:
     resolution: {integrity: sha512-PT6XReJ+D07JvGoxQMkT6qji/jVNfX/h364XHZOWeRzy64sSFr+xJ5OX7LI3b4MPQzdL4H8Y8M0xzPpsVMwA8Q==}
@@ -35430,7 +35442,7 @@ packages:
     dependencies:
       inherits: 2.0.4
       obuf: 1.1.2
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
       wbuf: 1.7.3
 
   /hsl-regex/1.0.0:
@@ -38079,7 +38091,7 @@ packages:
     dependencies:
       '@jest/types': 26.6.2
       '@types/graceful-fs': 4.1.5
-      '@types/node': 18.15.3
+      '@types/node': 17.0.32
       anymatch: 3.1.2
       fb-watchman: 2.0.1
       graceful-fs: 4.2.10
@@ -38103,7 +38115,7 @@ packages:
     dependencies:
       '@jest/types': 26.6.2
       '@types/graceful-fs': 4.1.5
-      '@types/node': 18.15.3
+      '@types/node': 17.0.32
       anymatch: 3.1.2
       fb-watchman: 2.0.1
       graceful-fs: 4.2.10
@@ -38855,7 +38867,7 @@ packages:
     resolution: {integrity: sha512-S5wqyz0DXnNJPd/xfIzZ5Xnp1HrJWBczg8mMfMpN78OJ5eDxXyf+Ygld9wX1DnUWbIbhM1YDY95NjR4CBXkb2g==}
     engines: {node: '>= 10.14.2'}
     dependencies:
-      '@types/node': 18.15.3
+      '@types/node': 17.0.32
       graceful-fs: 4.2.10
     dev: true
 
@@ -39004,7 +39016,7 @@ packages:
     engines: {node: '>= 10.14.2'}
     dependencies:
       '@jest/types': 26.6.2
-      '@types/node': 18.15.3
+      '@types/node': 17.0.32
       chalk: 4.1.2
       graceful-fs: 4.2.10
       is-ci: 2.0.0
@@ -44363,7 +44375,7 @@ packages:
       jmespath: 0.15.0
       joycon: 3.1.1
       pump: 3.0.0
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
       rfdc: 1.3.0
       split2: 3.2.2
       strip-json-comments: 3.1.1
@@ -47643,7 +47655,7 @@ packages:
     dependencies:
       '@babel/parser': 7.20.13
       flow-parser: 0.121.0
-      glob: 8.0.3
+      glob: 7.2.3
       invariant: 2.2.4
       jscodeshift: 0.13.1_@babel+preset-env@7.17.10
       nullthrows: 1.1.1
@@ -49054,6 +49066,7 @@ packages:
       inherits: 2.0.4
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
+    dev: false
 
   /readable-stream/3.6.2:
     resolution: {integrity: sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA==}
@@ -51136,7 +51149,7 @@ packages:
       detect-node: 2.1.0
       hpack.js: 2.1.6
       obuf: 1.1.2
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
       wbuf: 1.7.3
     transitivePeerDependencies:
       - supports-color
@@ -51149,7 +51162,7 @@ packages:
       detect-node: 2.1.0
       hpack.js: 2.1.6
       obuf: 1.1.2
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
       wbuf: 1.7.3
     transitivePeerDependencies:
       - supports-color
@@ -51424,7 +51437,7 @@ packages:
     resolution: {integrity: sha512-H73RAHsVBapbim0tU2JwwOiXUj+fikfiaoYAKHF3VJfA0pe2BCzkhAHBlLG6REzE+2WNZcxOXjK7lkso+9euLA==}
     dependencies:
       inherits: 2.0.4
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
     dev: false
 
   /stream-buffers/2.2.0:
@@ -51510,7 +51523,7 @@ packages:
     resolution: {integrity: sha1-gCAEN6mTzDnE/gAmO3s7kDrIevU=}
     dependencies:
       json-stringify-safe: 5.0.1
-      readable-stream: 2.3.7
+      readable-stream: 2.3.8
     dev: true
 
   /strict-uri-encode/1.1.0:
@@ -52133,7 +52146,7 @@ packages:
       methods: 1.1.2
       mime: 2.6.0
       qs: 6.10.3
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
       semver: 7.3.8
     transitivePeerDependencies:
       - supports-color
@@ -52152,7 +52165,7 @@ packages:
       methods: 1.1.2
       mime: 2.6.0
       qs: 6.10.3
-      readable-stream: 3.6.0
+      readable-stream: 3.6.2
       semver: 7.3.8
     transitivePeerDependencies:
       - supports-color
@@ -53296,7 +53309,7 @@ packages:
       yargs-parser: 21.1.1
     dev: true
 
-  /ts-jest/28.0.8_d4nbofikyjncpae4w6wi3mk64m:
+  /ts-jest/28.0.8_gexfbuwuvn3hxagcrhsppz3ope:
     resolution: {integrity: sha512-5FaG0lXmRPzApix8oFG8RKjAz4ehtm8yMKOTy5HX3fY6W8kmvOrmcY0hKDElW52FJov+clhUbrKAqofnj4mXTg==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
@@ -53318,7 +53331,7 @@ packages:
         optional: true
     dependencies:
       '@babel/core': 7.17.10
-      babel-jest: 28.1.3_epmq4ny5eiwbyxkub5iqcapase
+      babel-jest: 26.6.3_epmq4ny5eiwbyxkub5iqcapase
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
       jest: 28.1.3_metro@0.67.0
