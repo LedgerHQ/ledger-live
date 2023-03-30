@@ -46,7 +46,7 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { EditTransactionParamList } from "../../components/RootNavigator/types/EditTransactionNavigator";
+import { EditTransactionParamList } from "../../families/ethereum/EditTransactionNavigator";
 import { CurrentNetworkFee } from "../../families/ethereum/CurrentNetworkFee";
 
 type Navigation = BaseComposite<
