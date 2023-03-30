@@ -70,10 +70,7 @@ export const toggleStarAction = (id: string, parentId?: string): UpdateAccountAc
       updater: (account: Account) => {
         if (parentId && account.subAccounts) {
           const subAccounts: SubAccount[] = account.subAccounts.map(sa =>
-            sa.id === id
-              ? // $FlowFixMe
-                { ...sa, starred: !sa.starred }
-              : sa,
+            sa.id === id ? { ...sa, starred: !sa.starred } : sa,
           );
           return { ...account, subAccounts };
         }
