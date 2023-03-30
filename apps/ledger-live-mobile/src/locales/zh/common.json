@@ -12,6 +12,7 @@
     "gotit" : "知道了",
     "continue" : "继续",
     "retry" : "重试",
+    "backTo" : "返回 {{to}}",
     "done" : "完成",
     "sortBy" : "排序方式",
     "signOut" : "注销",
@@ -88,7 +89,11 @@
     "getSupport" : "获取支持",
     "comingSoon" : "敬请期待",
     "restart" : "重新启动",
-    "loadMore" : "加载更多"
+    "loadMore" : "加载更多",
+    "patterns" : {
+      "id" : "ID {{ value }}",
+      "times" : "x{{ value }}"
+    }
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -694,7 +699,13 @@
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
     },
     "CardanoMinAmountError" : {
-      "title" : "最小可发送数额为 {{amount}} ADA"
+      "title" : "至少需要 {{amount}} 个 ADA"
+    },
+    "AvalancheInvalidDateTimeError" : {
+      "title" : "所选权益质押结束日期无效"
+    },
+    "AvalancheMinimumAmountError" : {
+      "title" : "最低数额为 25 AVAX"
     },
     "CardanoNotEnoughFunds" : {
       "title" : "请确保您的资金足够支付费用"
@@ -828,7 +839,9 @@
     "required" : "抱歉，蓝牙似乎被禁用了",
     "locationRequiredTitle" : "Bluetooth LE 需要定位",
     "locationRequiredMessage" : "Android 安卓系统需要开启定位许可，从而显示 Bluetooth LE 蓝牙低功耗设备列表。",
-    "checkEnabled" : "请在您手机的设置中启用蓝牙。"
+    "checkEnabled" : "请在您手机的设置中启用蓝牙。",
+    "tryEnablingAgain" : "重新尝试启用蓝牙",
+    "openSettings" : "打开蓝牙设置选项"
   },
   "webview" : {
     "noConnectionError" : {
@@ -838,12 +851,10 @@
   },
   "location" : {
     "titleServiceRequired" : "需要定位服务",
-    "titlePermissionRequired" : "需要位置权限",
-    "titlePermissionRequiredPrecise" : "需要精确位置权限",
     "descriptionServiceRequired" : "Ledger Live 需要定位服务才能通过蓝牙配对您的设备。",
-    "descriptionPermissionRequired" : "Ledger Live 需要位置权限才能通过蓝牙配对您的设备。",
-    "descriptionPermissionRequiredPrecise" : "Ledger Live 需要精确位置权限才能通过蓝牙配对您的设备。",
     "open" : "打开定位设置选项",
+    "openSettings" : "打开定位设置选项",
+    "tryEnablingAgain" : "重新尝试启用位置",
     "noInfos" : "Ledger 并不会获取您的位置信息。"
   },
   "permissions" : {
@@ -856,6 +867,12 @@
       "modalButtonLabelBase" : "授权",
       "modalButtonLabelSettingsVariant" : "前往设置选项",
       "dontPair" : "不配对"
+    },
+    "location" : {
+      "titlePermissionRequired" : "需要位置权限",
+      "titlePermissionRequiredPrecise" : "需要精确位置权限",
+      "descriptionPermissionRequired" : "Ledger Live 需要位置权限才能通过蓝牙配对您的设备。",
+      "descriptionPermissionRequiredPrecise" : "Ledger Live 需要精确位置权限才能通过蓝牙配对您的设备。"
     },
     "camera" : {
       "title" : "授权相机",
@@ -1134,6 +1151,10 @@
         "title" : "应用程序",
         "desc" : "一站式探索 Ledger 合作伙伴应用程序"
       },
+      "browseWeb3" : {
+        "title" : "浏览 Web3",
+        "desc" : "浏览与 Ledger 完全集成的 Web3"
+      },
       "earn" : {
         "title" : "赚取",
         "desc" : "通过权益质押和借贷来增长您的加密货币。"
@@ -1154,7 +1175,7 @@
     "restore" : {
       "title" : "是否安装与 {{deviceName}} 上相同的应用程序？",
       "titleNoDeviceName" : "是否安装与上一台 Ledger 设备上相同的应用程序？",
-      "installCTA" : "立即安装",
+      "installCTA" : "立即重置",
       "skipCTA" : "我以后再下载"
     },
     "landing" : {
@@ -1165,10 +1186,10 @@
       "skipCTA" : "我以后再下载"
     },
     "ongoing" : {
-      "loading" : "正在加载……",
       "resolving" : "解决依赖关系",
-      "progress" : "正在安装应用程序 {{progress}}%",
-      "disclaimer" : "随时在 Ledger Live 中添加或删除应用程序。"
+      "progress" : "在安装应用程序时，停留在 Ledger Live 中。",
+      "skippedInfo" : "一些应用程序无法使用。适用于 {{ productName }} 的应用程序有待开发。",
+      "skipped" : "暂不适用于 {{ productName }}"
     }
   },
   "onboarding" : {
@@ -1279,8 +1300,13 @@
       },
       "recovery" : "已经有了恢复短语？",
       "protect" : {
-        "label" : "约 60 分钟",
-        "subTitle" : "使用 Protect 重置"
+        "subTitle" : "使用 Ledger Recover 恢复",
+        "drawer" : {
+          "title" : "使用 Ledger Nano X",
+          "desc" : "Ledger Recover 软启动专用于 Ledger Nano X",
+          "buyNanoX" : "购买 Ledger Nano X",
+          "discoverBenefits" : "了解优势"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1507,25 +1533,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "浏览 ",
-          "label" : "阅读屏幕上的说明，了解如何使用您的设备。"
+          "title" : "选择“Restore”（重置）",
+          "label" : "同时按下两个按钮进行选择。"
         },
         "1" : {
-          "title" : "选择“Restore”（重置）",
-          "label" : "同时按下两个按钮以激活该选项。"
-        },
-        "2" : {
-          "title" : "选择“Restore with Protect”（使用 Protect 重置）模式",
-          "label" : "同时按下两个按钮以激活该选项。"
+          "title" : "选择“使用 Ledger Recover 恢复”",
+          "label" : "同时按下两个按钮进行选择。"
         }
       },
       "nextStep" : "继续",
       "extraInfo" : {
-        "tooltip" : "在我的 Ledger 上看不到它",
-        "title" : "为什么我在 Ledger 上看不到 Restore with Protect（使用 Protect 重置）？",
-        "desc1" : "最有可能的原因是您的设备与 Protect 不兼容。别担心，我们会指导您如何解决此问题。",
-        "desc2" : "请联系我们，选择“My Ledger doesn't display Restore with Protect”（我的 Ledger 不显示使用 Protect 重置），我们会为您提供支持。",
-        "cta" : "完成手动步骤",
+        "tooltip" : "我没看到“使用 Ledger Recover 恢复”",
+        "title" : "Ledger Nano X 的操作系统需要更新",
+        "desc" : "您可以尝试更新操作系统或联系 Ledger 客服寻求帮助。",
+        "cta" : "了解如何更新",
         "supportLink" : "联系 Ledger 客服"
       }
     },
@@ -1667,8 +1688,9 @@
         }
       },
       "protectConnectionInformationModal" : {
-        "title" : "为什么无法连接我的 Ledger 设备？",
-        "description" : "如果您在 Ledger 设备上启用蓝牙后，连接 Ledger Live 手机应用程序时遇到了问题，您可以点按下方的 “Learn how to fix that”（了解如何修复此问题）按钮，按以下说明操作"
+        "title" : "Ledger Nano X 连接",
+        "description" : "确保您的 Ledger 设备靠近手机，然后重试。<LinkBluethooth>蓝牙连接问题\n</LinkBluethooth>。\n如果蓝牙功能正常，您可能需要更新 Ledger 设备的操作系统。请尝试更新操作系统或联系 Ledger 客服寻求帮助。 ",
+        "learnHowToUpdate" : "了解如何更新"
       }
     },
     "stepImportAccounts" : {
@@ -1882,20 +1904,36 @@
     },
     "pairingStep" : {
       "title" : "{{productName}} 已配对",
-      "description" : "继续在 {{productName}} 上设置。回看此处寻求分步协助。"
+      "description" : "继续在 {{productName}} 上设置。回看此处寻求分步协助。",
+      "continueOnDevice" : "点按任意位置在您的 {{productName}} 上继续操作"
     },
     "pinStep" : {
       "title" : "识别码",
       "doneTitle" : "识别码已设置",
-      "description" : "识别码可防止他人未经许可访问您的 {{productName}}。"
+      "description" : "识别码可防止他人未经许可访问您的 {{productName}}。",
+      "continueOnDevice" : "在您的 {{productName}} 上设置识别码"
     },
     "seedStep" : {
       "title" : "秘密恢复短语",
       "doneTitle" : "秘密恢复短语已确认",
-      "description" : "恢复短语是私钥的备份，是由 24 个助记词组成的秘密列表。您的 {{productName}} 会生成独一无二的恢复短语。Ledger 不会保存它的副本"
+      "description" : "恢复短语是私钥的备份，是由 24 个助记词组成的秘密列表。您的 {{productName}} 会生成独一无二的恢复短语。Ledger 不会保存它的副本",
+      "choiceRestoreDirectOrRecover" : "占位符 - 选择直接恢复或使用 Recover",
+      "recoverSeed" : "占位符：Recover",
+      "restoreSeed" : "要进行恢复，请务必使用 Ledger 生成的秘密恢复短语保证您的资产安全。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。",
+      "selection" : "在 {{productName}} 上，选择最适合您的设置选项。",
+      "selectionContinueOnDevice" : "在 {{productName}} 上点按一个选项",
+      "newSeedDescription" : "观看下面的视频，详细了解您的秘密助记词。",
+      "newSeedContinueOnDevice" : "在您的 {{productName}} 上执行此操作",
+      "recovery" : "要进行恢复，请务必使用 Ledger 生成的秘密恢复短语保证您的资产安全。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。",
+      "restoreChoiceContinueOnDevice" : "在您的 {{productName}} 上选择一个选项",
+      "restoreChoiceSRPTitle" : "使用秘密恢复短语恢复",
+      "restoreChoiceSRPDescription" : "请务必使用 Ledger 生成的短语保证您的资产安全。",
+      "restoreChoiceRecoverTitle" : "使用 Ledger Recover 恢复",
+      "restoreChoiceRecoverDescription" : "登录您的 Ledger 账户并确认您的身份来恢复您的恢复短语备份。"
     },
     "softwareChecksSteps" : {
       "title" : "硬件和软件检查",
+      "description" : "检查您的设备是否可以安全使用并具有最新的安全功能。",
       "doneTitle" : "{{productName}} 为正品，且是最新版本",
       "genuineCheckRequestDrawer" : {
         "iconText" : "检验真伪",
@@ -2465,6 +2503,8 @@
       "carouselDesc" : "我们会向您显示一些卡片，其中有个性化提示以及您的专属最新优惠。",
       "language" : "显示语言",
       "languageDesc" : "设置 Ledger Live 显示的语言。",
+      "dateFormat" : "日期格式",
+      "dateFormatDesc" : "设置 Ledger Live 的日期格式",
       "region" : "地区",
       "regionDesc" : "选择您所在的地区来更新日期、时间和货币的格式。",
       "password" : "密码锁",
@@ -2513,7 +2553,13 @@
       "hideEmptyTokenAccounts" : "隐藏空的代币账户",
       "hideEmptyTokenAccountsDesc" : "资产页面中所有空的代币账户都将被隐藏。",
       "filterTokenOperationsZeroAmount" : "值为 0 时隐藏代币交易",
-      "filterTokenOperationsZeroAmountDesc" : "隐藏没有价值的代币交易可以防止一些针对以太坊（ETH）、多边形（Polygon）、币安智能链（BSC）和波场（Tron）等的潜在地址中毒攻击"
+      "filterTokenOperationsZeroAmountDesc" : "隐藏没有价值的代币交易可以防止一些针对以太坊（ETH）、多边形（Polygon）、币安智能链（BSC）和波场（Tron）等的潜在地址中毒攻击",
+      "DateFormatModal" : {
+        "title" : "日期格式",
+        "default" : "默认",
+        "dayFirst" : "日/月/年",
+        "monthFirst" : "月/日/年"
+      }
     },
     "currencies" : {
       "header" : "币种",
@@ -2848,6 +2894,10 @@
     },
     "exchange" : {
       "title" : "买入 / 卖出"
+    },
+    "stake" : {
+      "title" : "权益质押",
+      "description" : "增长您的加密资产持有量。"
     },
     "swap" : {
       "title" : "互换",
@@ -3368,7 +3418,12 @@
       "scan" : "扫描二维码",
       "enterAddress" : "输入地址",
       "input" : "输入地址",
-      "verifyAddress" : "请验证该地址与接收方所提供的一致。"
+      "verifyAddress" : "请验证该地址与接收方所提供的一致。",
+      "domainService" : {
+        "reverse" : "此地址关联了 {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "什么是以太坊域名服务？"
+      }
     },
     "amount" : {
       "available" : "可用总额",
@@ -5324,6 +5379,69 @@
       }
     }
   },
+  "avalanchepchain" : {
+    "delegation" : {
+      "delegationEarn" : "您可以通过委托资产赚取 AVAX 奖励。",
+      "info" : "委托机制如何运作",
+      "iDelegate" : "我委托",
+      "until" : "直到",
+      "validatorRemainingStake" : "可用",
+      "validator" : "节点 ID",
+      "startTime" : "开始时间",
+      "endTime" : "结束时间",
+      "notEnoughToDelegate" : "您必须在 P 链上至少有 25 个可用 AVAX 才能成为委托人。",
+      "stepperHeader" : {
+        "starter" : "赚取奖励",
+        "validator" : "委托资产",
+        "amount" : "要委托的数额",
+        "endDate" : "委托结束日期",
+        "summary" : "概要",
+        "verification" : "验证",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "可用总额",
+            "maxLabel" : "最大值"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您的资产已经成功委托。",
+              "text" : "交易一经网络确认，您的账户余额就会更新。"
+            }
+          },
+          "starter" : {
+            "description" : "委托 AVAX 可安全赚取奖励，时刻掌控您的资产。",
+            "steps" : {
+              "0" : "您保有对已委托资产的所有权",
+              "1" : "使用您的 Ledger 设备进行委托",
+              "2" : "至少需要 25 AVAX 才能进行权益质押",
+              "3" : "AVAX 必须至少委托 2 周"
+            },
+            "cta" : "继续"
+          },
+          "endDate" : "本次委托的结束日期必须在 {{minEndDate}} 至 {{maxEndDate}} 之间。"
+        }
+      }
+    },
+    "info" : {
+      "available" : {
+        "title" : "可用 AVAX",
+        "description" : "该数额可自由支配。"
+      },
+      "delegated" : {
+        "title" : "已质押 AVAX",
+        "description" : "质押给验证者的数额。"
+      },
+      "delegationUnavailable" : {
+        "title" : "委托不可用",
+        "description" : "您的账户中没有足够的可用余额来开始新的委托。"
+      }
+    }
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -5446,6 +5564,7 @@
     "warnDelegation" : "将您的投票权委托出去并不能保证从您的验证者获得任何奖励。",
     "to" : "到",
     "from" : "从",
+    "yield" : "预估收益",
     "forAnEstYield" : "以获得预估收益",
     "yieldPerYear" : "{{yield}} / 年",
     "yieldInfos" : "收益率提供方",
@@ -5573,6 +5692,7 @@
     "cta" : "继续"
   },
   "exchange" : {
+    "count" : "+ 另外 {{count}} 个",
     "buy" : {
       "screenTitle" : "买入加密货币",
       "tabTitle" : "买入",
@@ -5718,6 +5838,51 @@
       }
     }
   },
+  "browseWeb3" : {
+    "catalog" : {
+      "title" : "浏览 Web3",
+      "subtitle" : "浏览与 Ledger 完全集成的 Web3",
+      "section" : {
+        "recentlyUsed" : "最近使用",
+        "categories" : "类别",
+        "clearAll" : "清除所有"
+      },
+      "branch" : {
+        "soon" : "敬请期待",
+        "experimental" : "实验性的",
+        "debug" : "除错"
+      },
+      "banner" : {
+        "title" : "探索我们的 Live 目录",
+        "description" : "解锁一个充满加密可能性的新世界。一个能够让您安全地访问包含 DeFi 应用、NFT 在内的所有的智能服务。"
+      },
+      "twitterBanner" : {
+        "description" : "告诉我们下一个您想要看到的带有哈希标签的服务",
+        "tweetText" : "下一个 Ledger 应用应该是..."
+      },
+      "pollCTA" : {
+        "title" : "调查",
+        "description" : "您想要在 Ledger Live 中看到哪种服务？"
+      },
+      "developerCTA" : {
+        "title" : "面向开发者",
+        "description" : "您所需要的将您的应用程序整合到 Ledger Live 的全部信息。"
+      }
+    },
+    "disclaimer" : {
+      "title" : "外部应用",
+      "description" : "您将被转到一个不由 Ledger 操作的应用程序。",
+      "legalAdvice" : "这个应用程序不由 Ledger 操作。Ledger 不对此类应用程序的服务质量或造成的任何资金损失负责。\n\n一定要确保仔细核实您的设备上显示的信息。",
+      "legalAdviceShort" : "Ledger 不对任何资金损失负责。务必确保仔细核实您设备上显示的信息。",
+      "checkbox" : "不要再提醒我。",
+      "CTA" : "继续"
+    },
+    "webPlatformPlayer" : {
+      "infoPanel" : {
+        "website" : "网站"
+      }
+    }
+  },
   "platform" : {
     "catalog" : {
       "title" : "Live 应用目录",
@@ -5817,10 +5982,13 @@
       "reload" : "重新加载",
       "noCryptosFound" : "未找到币",
       "noCurrencyFound" : "没有找到货币",
+      "noAppFound" : "未找到应用程序",
+      "notFound" : "未能找到",
       "noSearchResultsFor" : "对不起，我们没有找到任何币， <0>{{search}}</0> 。请用另一个关键词重新进行搜索。",
       "noCurrencySearchResultsFor" : "对不起，我们没有为<0>{{search}}</0>找到任何货币。请用另一个关键词重新进行搜索。",
       "noSearchResults" : "对不起，我们没有找到任何搜索结果。",
       "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
+      "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
       "retrySearchParams" : "请用其他参数重新进行搜索。",
       "trackFavAssets" : "追踪您最喜爱的",
       "clickOnStarIcon" : "点击资产旁边的星形图标将自动把它们添加到您的收藏夹。",
@@ -6026,22 +6194,10 @@
       "status" : {
         "new" : {
           "title" : "新",
-          "desc" : "备份您的恢复短语",
-          "0" : {
-            "title" : "受到数百万 Ledger 用户的信赖"
-          },
-          "1" : {
-            "title" : "您的恢复短语与您的身份安全关联"
-          },
-          "2" : {
-            "title" : "最先进的加密技术"
-          },
-          "3" : {
-            "title" : "分成 3 个去中心化的部分，因此您的恢复短语绝不会被窃取"
-          },
+          "desc" : "不用秘密恢复短语即可恢复钱包访问权限。",
           "actions" : {
-            "learnMore" : "了解更多",
-            "alreadySubscribed" : "已经订阅了\"Protect\"保护？"
+            "learnMore" : "这对我有什么好处？",
+            "alreadySubscribed" : "已经登陆了？<LinkAccount>查看我的订阅</LinkAccount>"
           }
         },
         "confirmIdentity" : {
@@ -6104,5 +6260,30 @@
     "title" : "新闻摘要",
     "poweredByCryptopanic" : "由 Cryptopanic 提供支持",
     "noPosts" : "当前无可阅览内容"
+  },
+  "deviceConnect" : {
+    "title" : "连接设备"
+  },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "买入、互换或接收",
+      "text" : "您没有足够的 {{coin}} 可供权益质押",
+      "description" : "资金不足？别担心，您可以直接在 Ledger Live 中买入、互换或接收加密货币。",
+      "options" : {
+        "buy" : {
+          "title" : "买入",
+          "body" : "通过值得信赖的服务提供商买入"
+        },
+        "swap" : {
+          "title" : "互换",
+          "label" : "热门",
+          "body" : "安全转换加密货币"
+        },
+        "receive" : {
+          "title" : "接收",
+          "body" : "在您的钱包中接收加密货币"
+        }
+      }
+    }
   }
 }
