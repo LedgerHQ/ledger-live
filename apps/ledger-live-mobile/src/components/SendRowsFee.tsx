@@ -14,7 +14,7 @@ import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/Sen
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
 import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
-import { EditTransactionParamList } from "./RootNavigator/types/EditTransactionNavigator";
+import { EditTransactionParamList } from "../families/ethereum/EditTransactionNavigator";
 import { ScreenName } from "../const";
 
 type Props = {
