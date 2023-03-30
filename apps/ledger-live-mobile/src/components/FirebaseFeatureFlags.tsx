@@ -10,7 +10,6 @@ import {
 } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId, Feature } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-common/env";
-import protectConfig from "@ledgerhq/live-common/platform/providers/ProtectProvider/config";
 
 import { formatToFirebaseFeatureId } from "./FirebaseRemoteConfig";
 import {
@@ -87,10 +86,6 @@ const getFeature = (args: {
 
     if (__DEV__) {
       config.setConfigSettings({ minimumFetchIntervalMillis: 0 });
-    }
-
-    if (key === "protectServicesMobile") {
-      return protectConfig.protectMobileFeatureFlag;
     }
 
     const value = remoteConfig().getValue(formatToFirebaseFeatureId(key));

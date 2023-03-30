@@ -1,10 +1,10 @@
 import React, {
   useContext,
+  useEffect,
   createContext,
   useMemo,
   useState,
   useCallback,
-  useEffect,
 } from "react";
 import { LiveAppRegistry } from "./types";
 import { LiveAppManifest, Loadable } from "../../types";
