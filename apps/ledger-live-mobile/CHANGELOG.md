@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.18.0-next.5
+
+### Patch Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`d5fc6ddcce`](https://github.com/LedgerHQ/ledger-live/commit/d5fc6ddcce745240bb7377eda27af984988434f5) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: react-native-webview target="\_blank" on iOS
+
+  Also fix the html5 history.pushState navigation on android
+  More infos on both issues below:
+
+  - https://github.com/react-native-webview/react-native-webview/issues/2905
+  - https://github.com/react-native-webview/react-native-webview/issues/2667
+  - https://github.com/react-native-webview/react-native-webview/pull/2598
+
 ## 3.18.0-next.4
 
 ### Patch Changes
