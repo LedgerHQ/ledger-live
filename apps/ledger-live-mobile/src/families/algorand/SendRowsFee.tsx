@@ -25,7 +25,7 @@ import type { LendingSupplyFlowNavigatorParamList } from "../../components/RootN
 import type { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import type { EditTransactionParamList } from "../../components/RootNavigator/types/EditTransactionNavigator";
+import type { EditTransactionParamList } from "../ethereum/EditTransactionNavigator";
 
 type Props = {
   transaction: Transaction;

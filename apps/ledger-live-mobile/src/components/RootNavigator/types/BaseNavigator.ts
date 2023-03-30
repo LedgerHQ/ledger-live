@@ -76,7 +76,7 @@ import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/type
 import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
-import { EditTransactionParamList } from "./EditTransactionNavigator";
+import { EditTransactionParamList } from "../../../families/ethereum/EditTransactionNavigator";
 
 type TradeParams = {
   type: "onRamp" | "offRamp";
