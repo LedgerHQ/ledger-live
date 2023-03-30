@@ -2,10 +2,7 @@ import {
   TransactionRaw,
   Transaction as ETHTransaction,
 } from "@ledgerhq/live-common/families/ethereum/types";
-import {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/types-devices";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -35,9 +32,7 @@ export type EditTransactionParamList = {
     setTransaction: Result<ETHTransaction>["setTransaction"];
     operation?: Operation;
     currentNavigation: ScreenName.EditTransactionMethodSelection;
-    nextNavigation:
-      | ScreenName.SignTransactionSelectDevice
-      | ScreenName.SendSelectDevice;
+    nextNavigation: ScreenName.SignTransactionSelectDevice | ScreenName.SendSelectDevice;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
     appName?: string;
