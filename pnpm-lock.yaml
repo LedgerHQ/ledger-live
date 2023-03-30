@@ -32142,6 +32142,12 @@ packages:
       '@polkadot/util': 10.3.1
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 2c91b7102a (add expect in test)
       '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
 <<<<<<< HEAD
       react: 18.0.0
@@ -32154,6 +32160,18 @@ packages:
 =======
       '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
 >>>>>>> 6ce772fce2 (pdate lockfile)
+<<<<<<< HEAD
+=======
+=======
+      '@polkadot/util-crypto': 10.3.1
+>>>>>>> 5dc4ffd9d4 (wip)
+=======
+      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
+>>>>>>> c1d25cdc3c (remove metro babel register)
+=======
+      '@polkadot/util-crypto': 10.3.1
+>>>>>>> 21a80a1595 (add expect in test)
+>>>>>>> 2c91b7102a (add expect in test)
       react: 17.0.2
       react-native: 0.68.5(@babel/core@7.17.10)(@babel/preset-env@7.17.10)(metro-resolver@0.67.0)(metro-transform-worker@0.67.0)(react@17.0.2)
       react-native-svg: 12.5.1(react-native@0.68.5)(react@17.0.2)
@@ -32239,6 +32257,7 @@ packages:
 =======
 >>>>>>> 90544cf1ec (pdate lockfile)
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
 >>>>>>> 63f98d45aa (remove useless jest config props)
       color: 3.2.1
@@ -32267,7 +32286,36 @@ packages:
 =======
       '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
 >>>>>>> 6ce772fce2 (pdate lockfile)
+<<<<<<< HEAD
+=======
+=======
+      '@polkadot/util-crypto': 10.3.1
+>>>>>>> 5dc4ffd9d4 (wip)
+=======
+      '@polkadot/util-crypto': 10.3.1_@polkadot+util@10.3.1
+>>>>>>> c1d25cdc3c (remove metro babel register)
+=======
+      '@polkadot/util-crypto': 10.3.1
+>>>>>>> 21a80a1595 (add expect in test)
+>>>>>>> 2c91b7102a (add expect in test)
       color: 3.2.1
+    dev: false
+
+  /@polkadot/util-crypto/10.3.1:
+    resolution: {integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.13
+      '@noble/hashes': 1.1.5
+      '@noble/secp256k1': 1.7.1
+      '@polkadot/networks': 10.3.1
+      '@polkadot/util': 10.3.1
+      '@polkadot/wasm-crypto': 6.4.1_hmowrubltiyg4mpvtnqaaplyfm
+      '@polkadot/x-bigint': 10.3.1
+      '@polkadot/x-randomvalues': 10.3.1
+      '@scure/base': 1.1.1
+      ed2curve: 0.3.0
+      tweetnacl: 1.0.3
     dev: false
 
   /@polkadot/util-crypto/10.3.1_@polkadot+util@10.3.1:
@@ -48426,9 +48474,12 @@ packages:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 2f33f0417a (lockfile)
 =======
 >>>>>>> efa74e8938 (lockfile)
+=======
+>>>>>>> 2c91b7102a (add expect in test)
       styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
 =======
 =======
@@ -48446,7 +48497,12 @@ packages:
 =======
 =======
 >>>>>>> 3178ed8851 (lockfile)
+<<<<<<< HEAD
 >>>>>>> efa74e8938 (lockfile)
+=======
+=======
+>>>>>>> e23c6558eb (add expect in test)
+>>>>>>> 2c91b7102a (add expect in test)
 <<<<<<< HEAD
       styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react-native@0.68.5)(react@17.0.2)
 =======
@@ -48486,8 +48542,17 @@ packages:
 =======
       styled-components: 5.3.5_fane7jikarojcev26y27hpbhu4
 >>>>>>> 90c1308c83 (lockfile)
+<<<<<<< HEAD
 >>>>>>> 3178ed8851 (lockfile)
+<<<<<<< HEAD
 >>>>>>> efa74e8938 (lockfile)
+=======
+=======
+=======
+      styled-components: 5.3.5_3a4gaprdt6lucrt3fqgxp3nfme
+>>>>>>> 21a80a1595 (add expect in test)
+>>>>>>> e23c6558eb (add expect in test)
+>>>>>>> 2c91b7102a (add expect in test)
 
 <<<<<<< HEAD
   /babel-plugin-syntax-jsx@6.18.0:
@@ -65400,6 +65465,7 @@ packages:
       fsevents: 2.3.2
     transitivePeerDependencies:
       - metro
+    dev: true
 
 <<<<<<< HEAD
   /jest-haste-map@28.1.3(metro@0.76.0):
@@ -66280,6 +66346,7 @@ packages:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       jest-resolve: 28.1.3(metro@0.76.0)
     dev: true
 =======
@@ -66289,6 +66356,8 @@ packages:
 >>>>>>> fdebb2c348 (lockfile)
 =======
 >>>>>>> 3178ed8851 (lockfile)
+=======
+>>>>>>> e23c6558eb (add expect in test)
 <<<<<<< HEAD
       jest-resolve: 28.1.3(metro@0.67.0)
 =======
@@ -66315,8 +66384,17 @@ packages:
 =======
       jest-resolve: 28.1.3
 >>>>>>> 90c1308c83 (lockfile)
+<<<<<<< HEAD
 >>>>>>> 3178ed8851 (lockfile)
+<<<<<<< HEAD
 >>>>>>> efa74e8938 (lockfile)
+=======
+=======
+=======
+      jest-resolve: 28.1.3_metro@0.67.0
+>>>>>>> 21a80a1595 (add expect in test)
+>>>>>>> e23c6558eb (add expect in test)
+>>>>>>> 2c91b7102a (add expect in test)
 
   /jest-regex-util@24.9.0:
     resolution: {integrity: sha512-05Cmb6CuxaA+Ys6fjr3PhvV3bGQmO+2p2La4hFbU+W5uOc479f7FdLXUWXw4pYMAhhSZIuKHwSXSu6CsSBAXQA==}
@@ -66431,7 +66509,10 @@ packages:
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 2f33f0417a (lockfile)
+=======
+>>>>>>> 2c91b7102a (add expect in test)
     dev: true
 
   /jest-resolve@28.1.3(metro@0.76.0):
@@ -66465,7 +66546,13 @@ packages:
 =======
 =======
 >>>>>>> 3178ed8851 (lockfile)
+<<<<<<< HEAD
 >>>>>>> efa74e8938 (lockfile)
+=======
+=======
+    dev: true
+>>>>>>> e23c6558eb (add expect in test)
+>>>>>>> 2c91b7102a (add expect in test)
 
   /jest-runner@24.9.0:
     resolution: {integrity: sha512-KksJQyI3/0mhcfspnxxEOBueGrd5E4vV7ADQLT9ESaCzz02WnbdbKWIf5Mkaucoaj7obQckYPVX6JJhgUcoWWg==}
@@ -84119,7 +84206,6 @@ packages:
       react-native: 0.68.5_7bkeunqngmazlu32h3v2zcqrja
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
 <<<<<<< HEAD
 <<<<<<< HEAD
