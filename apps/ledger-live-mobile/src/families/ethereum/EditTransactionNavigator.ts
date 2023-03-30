@@ -1,10 +1,13 @@
-import { TransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
+import {
+  TransactionRaw,
+  Transaction as ETHTransaction,
+} from "@ledgerhq/live-common/families/ethereum/types";
 import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/types-devices";
-import { AccountLike, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import { ScreenName } from "../../const";
@@ -13,7 +16,7 @@ export type EditTransactionParamList = {
   [ScreenName.EditTransactionMethodSelection]: {
     operation: Operation;
     account: AccountLike;
-    parentAccount: AccountLike | undefined | null;
+    parentAccount: Account | undefined | null;
   };
   [ScreenName.EthereumCustomFees]: {
     accountId: string;
@@ -29,7 +32,7 @@ export type EditTransactionParamList = {
     deviceId?: string;
     transaction: Transaction;
     transactionRaw?: TransactionRaw;
-    setTransaction: Result<Transaction>["setTransaction"];
+    setTransaction: Result<ETHTransaction>["setTransaction"];
     operation?: Operation;
     currentNavigation: ScreenName.EditTransactionMethodSelection;
     nextNavigation:
