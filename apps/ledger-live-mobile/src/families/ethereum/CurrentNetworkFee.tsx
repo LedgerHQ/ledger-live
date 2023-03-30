@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { TransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import BigNumber from "bignumber.js";
 import {
@@ -11,7 +11,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import Alert from "../../components/Alert";
 import LText from "../../components/LText";
 
-export const CurrentNetworkFee = ({
+const CurrentNetworkFeeComponent = ({
   account,
   parentAccount,
   operation,
@@ -23,20 +23,18 @@ export const CurrentNetworkFee = ({
   const { t } = useTranslation();
 
   if (operation && operation.transactionRaw) {
-    const transactionRaw = fromTransactionRaw(
+    const transaction = fromTransactionRaw(
       operation.transactionRaw as TransactionRaw,
     );
     const mainAccount = getMainAccount(account, parentAccount);
     const feePerGas = new BigNumber(
-      (account.type === "Account" && EIP1559ShouldBeUsed(account.currency)) ||
-      (account.type === "TokenAccount" &&
-        EIP1559ShouldBeUsed(account.token.parentCurrency))
-        ? transactionRaw.maxFeePerGas!
-        : transactionRaw.gasPrice!,
+      EIP1559ShouldBeUsed(mainAccount.currency)
+        ? transaction.maxFeePerGas!
+        : transaction.gasPrice!,
     );
 
     const feeValue = new BigNumber(
-      transactionRaw!.userGasLimit || transactionRaw!.estimatedGasLimit || 1,
+      transaction.userGasLimit || transaction.estimatedGasLimit || 1,
     )
       .times(feePerGas)
       .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
@@ -54,3 +52,5 @@ export const CurrentNetworkFee = ({
 
   return null;
 };
+
+export const CurrentNetworkFee = memo(CurrentNetworkFeeComponent);
