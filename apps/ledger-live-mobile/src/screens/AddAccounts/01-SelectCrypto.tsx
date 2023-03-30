@@ -52,27 +52,13 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const devMode = useEnv("MANAGER_DEV_MODE");
   const { filterCurrencyIds = [], currency } = route.params || {};
 
-  const osmo = useFeature("currencyOsmosisMobile");
-  const fantom = useFeature("currencyFantomMobile");
-  const moonbeam = useFeature("currencyMoonbeamMobile");
-  const cronos = useFeature("currencyCronosMobile");
-  const songbird = useFeature("currencySongbirdMobile");
-  const flare = useFeature("currencyFlareMobile");
-  const near = useFeature("currencyNear");
   const avaxCChain = useFeature("currencyAvalancheCChain");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
-      osmo,
-      fantom,
-      moonbeam,
-      cronos,
-      songbird,
-      flare,
-      near,
       avalanche_c_chain: avaxCChain,
     }),
-    [osmo, fantom, moonbeam, cronos, songbird, flare, near, avaxCChain],
+    [avaxCChain],
   );
 
   const cryptoCurrencies = useMemo(() => {
