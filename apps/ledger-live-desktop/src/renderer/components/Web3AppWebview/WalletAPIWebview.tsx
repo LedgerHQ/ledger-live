@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+
 import { useWalletAPIServer, useConfig, UiHook } from "@ledgerhq/live-common/wallet-api/react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
@@ -135,7 +136,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
         dispatch(
           openModal("MODAL_PLATFORM_EXCHANGE_START", {
-            exchangeType,
+            exchangeType: ExchangeType[exchangeType],
             onResult: (nonce: string) => {
               onSuccess(nonce);
             },
