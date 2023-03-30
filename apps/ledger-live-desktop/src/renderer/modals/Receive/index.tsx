@@ -1,8 +1,7 @@
 import React, { PureComponent } from "react";
 import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
-import Body from "./Body";
-import { StepId } from "./Body";
+import Body, { StepId } from "./Body";
 type State = {
   stepId: StepId;
   isAddressVerified: boolean | undefined | null;
@@ -19,10 +18,12 @@ class ReceiveModal extends PureComponent<{}, State> {
     this.setState({
       ...INITIAL_STATE,
     });
+
   handleStepChange = (stepId: StepId) =>
     this.setState({
       stepId,
     });
+
   handleChangeAddressVerified = (isAddressVerified?: boolean | null, err?: Error | null) => {
     if (err && err.name !== "UserRefusedAddress") {
       logger.critical(err);
@@ -32,6 +33,7 @@ class ReceiveModal extends PureComponent<{}, State> {
       verifyAddressError: err,
     });
   };
+
   render() {
     const { stepId, isAddressVerified, verifyAddressError } = this.state;
     const isModalLocked = stepId === "receive" && isAddressVerified === null;

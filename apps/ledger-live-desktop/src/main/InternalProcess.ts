@@ -10,12 +10,15 @@ class InternalProcess {
     this.onExitCallback = null;
     this.messageQueue = [];
   }
+
   onMessage(callback) {
     this.onMessageCallback = callback;
   }
+
   onExit(callback) {
     this.onExitCallback = callback;
   }
+
   run() {
     while (
       this.messageQueue.length &&
@@ -28,20 +31,24 @@ class InternalProcess {
       this.process.send(message);
     }
   }
+
   send(message) {
     this.messageQueue.push(message);
     if (this.active) {
       this.run();
     }
   }
+
   onStart(callback) {
     this.onStartCallback = callback;
   }
+
   configure(path, args, options) {
     this.path = path;
     this.args = args;
     this.options = options;
   }
+
   start() {
     if (this.process) {
       throw new Error("Internal process is already running !");
@@ -73,6 +80,7 @@ class InternalProcess {
       this.onStartCallback();
     }
   }
+
   stop() {
     return new Promise(resolve => {
       if (!this.process) {
@@ -94,6 +102,7 @@ class InternalProcess {
       }, this.timeout);
     });
   }
+
   restart() {
     return this.stop().then(() => {
       this.start();

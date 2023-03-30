@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { compose } from "redux";
 import { connect, useSelector } from "react-redux";
-import { withTranslation } from "react-i18next";
+import { withTranslation, TFunction } from "react-i18next";
 import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
@@ -38,7 +38,6 @@ import TokensList from "./TokensList";
 import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
 import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
 import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
-import { TFunction } from "react-i18next";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 const mapStateToProps = (
   state,

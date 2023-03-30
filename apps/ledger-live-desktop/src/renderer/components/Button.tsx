@@ -321,9 +321,11 @@ class ButtonInner extends PureComponent<
     danger: false,
     inverted: false,
   };
+
   state = {
     isFocused: false,
   };
+
   handleFocus = () => {
     if (isGlobalTabEnabled()) {
       this.setState({
@@ -331,11 +333,13 @@ class ButtonInner extends PureComponent<
       });
     }
   };
+
   handleBlur = () => {
     this.setState({
       isFocused: false,
     });
   };
+
   render() {
     const { isFocused } = this.state;
     const { disabled, innerRef } = this.props;

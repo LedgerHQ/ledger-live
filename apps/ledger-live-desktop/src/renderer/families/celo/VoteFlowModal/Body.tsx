@@ -5,7 +5,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { Trans, withTranslation } from "react-i18next";
+import { Trans, withTranslation, TFunction } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
@@ -20,7 +20,6 @@ import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepValidatorGroup, { StepValidatorGroupFooter } from "./steps/StepValidatorGroup";
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
-import { TFunction } from "react-i18next";
 import { Transaction } from "@ledgerhq/live-common/families/celo/types";
 import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
 import { St, StepProps, StepId } from "./types";

@@ -1,9 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useState, useRef, useEffect } from "react";
-import { TFunction } from "react-i18next";
+import { TFunction, Trans } from "react-i18next";
 import styled from "styled-components";
-import { Trans } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";

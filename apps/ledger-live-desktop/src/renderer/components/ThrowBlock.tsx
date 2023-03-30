@@ -12,6 +12,7 @@ class ThrowBlock extends PureComponent<Props, State> {
   state = {
     error: null,
   };
+
   componentDidCatch(error: Error) {
     logger.critical(error);
     this.setState({
@@ -21,6 +22,7 @@ class ThrowBlock extends PureComponent<Props, State> {
       this.props.onError(error);
     }
   }
+
   render() {
     const { error } = this.state;
     if (error) {

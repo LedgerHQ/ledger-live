@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Switch, Route } from "react-router-dom";
-import { RouterHistory, Match, Location } from "react-router-dom";
+import { Switch, Route, RouterHistory, Match, Location } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { Item } from "~/renderer/components/Pills";

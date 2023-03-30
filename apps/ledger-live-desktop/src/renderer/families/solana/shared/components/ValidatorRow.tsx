@@ -7,8 +7,10 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import { ValidatorRowProps } from "~/renderer/components/Delegation/ValidatorRow";
-import ValidatorRow, { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
+import ValidatorRow, {
+  ValidatorRowProps,
+  IconContainer,
+} from "~/renderer/components/Delegation/ValidatorRow";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Image from "~/renderer/components/Image";
 import Text from "~/renderer/components/Text";

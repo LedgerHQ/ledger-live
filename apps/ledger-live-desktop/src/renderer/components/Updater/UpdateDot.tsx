@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { colors } from "~/renderer/styles/theme";
-import { UpdateStatus } from "./UpdaterContext";
-import { UpdaterContext } from "./UpdaterContext";
+import { UpdateStatus, UpdaterContext } from "./UpdaterContext";
 import useIsUpdateAvailable from "./useIsUpdateAvailable";
 import { Dot } from "../Dot";
 const getColor = (status: UpdateStatus) => (status === "error" ? colors.alertRed : colors.wallet);

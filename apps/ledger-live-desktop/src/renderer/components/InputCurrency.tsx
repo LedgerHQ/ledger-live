@@ -74,11 +74,13 @@ class InputCurrency extends PureComponent<Props, State> {
     autoFocus: false,
     loading: false,
   };
+
   state = {
     isFocused: false,
     displayValue: "",
     rawValue: "",
   };
+
   componentDidMount() {
     this.syncInput({
       isFocused: !!this.props.autoFocus,
@@ -109,6 +111,7 @@ class InputCurrency extends PureComponent<Props, State> {
       });
     }
   }
+
   handleChange = (val: string) => {
     const { onChange, unit, value, locale, decimals } = this.props;
     const v = decimals === 0 ? val.replace(/[.,]/g, "") : val;
@@ -122,18 +125,21 @@ class InputCurrency extends PureComponent<Props, State> {
       displayValue: r.display,
     });
   };
+
   handleBlur = () => {
     this.syncInput({
       isFocused: false,
     });
     this.props.onChangeFocus(false);
   };
+
   handleFocus = () => {
     this.syncInput({
       isFocused: true,
     });
     this.props.onChangeFocus(true);
   };
+
   syncInput = ({ isFocused }: { isFocused: boolean }) => {
     const {
       showAllDigits,
@@ -160,6 +166,7 @@ class InputCurrency extends PureComponent<Props, State> {
             }),
     });
   };
+
   renderOption = item => item.data.code;
   renderValue = item => item.data.code;
   renderListUnits = () => {
@@ -184,6 +191,7 @@ class InputCurrency extends PureComponent<Props, State> {
       </Currencies>
     );
   };
+
   render() {
     const {
       renderRight,

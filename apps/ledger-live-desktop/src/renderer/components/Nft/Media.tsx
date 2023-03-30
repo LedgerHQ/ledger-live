@@ -23,11 +23,13 @@ class Media extends React.PureComponent<Props, State> {
   state = {
     useFallback: false,
   };
+
   setUseFallback = (_useFallback: boolean): void => {
     this.setState({
       useFallback: _useFallback,
     });
   };
+
   render() {
     const { mediaFormat, metadata, square, tokenId } = this.props;
     const { useFallback } = this.state;

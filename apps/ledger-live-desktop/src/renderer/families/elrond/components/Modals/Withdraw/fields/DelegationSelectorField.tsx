@@ -4,18 +4,17 @@ import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denomi
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Label from "~/renderer/components/Label";
-import Select from "~/renderer/components/Select";
+import Select, { Option } from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { TFunction } from "react-i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { UnbondingType, ElrondProvider } from "~/renderer/families/elrond/types";
-import { Option } from "~/renderer/components/Select";
 type NoOptionsMessageCallbackType = {
   inputValue: string;
 };
 type EnhancedUnbonding = UnbondingType & {
-  disabled: Boolean;
+  disabled: boolean;
 };
 interface Props {
   onChange: (validator: ElrondProvider) => void;

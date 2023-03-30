@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { Trans, withTranslation } from "react-i18next";
-import { TFunction } from "react-i18next";
+import { Trans, withTranslation, TFunction } from "react-i18next";
 import styled from "styled-components";
 import { FinalFirmware, OsuFirmware } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
@@ -39,16 +38,19 @@ class DisclaimerModal extends PureComponent<Props, State> {
   state = {
     seedReady: false,
   };
+
   onClose = () => {
     this.setState({
       seedReady: false,
     });
     this.props.onClose();
   };
+
   onSeedReady = () =>
     this.setState(state => ({
       seedReady: !state.seedReady,
     }));
+
   render(): React.ReactNode {
     const { status, firmware, modelId, t, goToNextStep } = this.props;
     const { seedReady } = this.state;

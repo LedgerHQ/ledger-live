@@ -1,7 +1,6 @@
 /* eslint-disable consistent-return */
 import { BigNumber } from "bignumber.js";
-import React, { useMemo } from "react";
-import { ComponentType } from "react";
+import React, { useMemo, ComponentType } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";

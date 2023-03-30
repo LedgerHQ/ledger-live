@@ -142,6 +142,7 @@ class AccountRowItem extends PureComponent<Props, State> {
       expanded: expandedStates[accountId],
     };
   }
+
   static getDerivedStateFromProps(nextProps: Props) {
     const { account } = nextProps;
     if (account.subAccounts) {
@@ -151,6 +152,7 @@ class AccountRowItem extends PureComponent<Props, State> {
     }
     return null;
   }
+
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (prevState.expanded !== this.state.expanded && !this.state.expanded) {
       const { scrollTopFocusRef } = this;
@@ -162,11 +164,13 @@ class AccountRowItem extends PureComponent<Props, State> {
       }
     }
   }
+
   scrollTopFocusRef: any = React.createRef();
   onClick = () => {
     const { account, parentAccount, onClick } = this.props;
     onClick(account, parentAccount);
   };
+
   toggleAccordion = (e: SyntheticEvent<any>) => {
     e.stopPropagation();
     const { account } = this.props;
@@ -175,6 +179,7 @@ class AccountRowItem extends PureComponent<Props, State> {
       expanded: expandedStates[account.id],
     });
   };
+
   render() {
     const {
       account,

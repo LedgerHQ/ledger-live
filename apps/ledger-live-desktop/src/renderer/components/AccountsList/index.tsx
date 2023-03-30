@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { withTranslation } from "react-i18next";
-import { TFunction } from "react-i18next";
+import { withTranslation, TFunction } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Box from "~/renderer/components/Box";
@@ -40,22 +39,27 @@ class AccountsList extends Component<
   static defaultProps = {
     editedNames: {},
   };
+
   state = {
     collapsed: !!this.props.collapsible,
   };
+
   toggleCollapse = () => {
     this.setState(({ collapsed }) => ({
       collapsed: !collapsed,
     }));
   };
+
   onSelectAll = () => {
     const { accounts, onSelectAll } = this.props;
     if (onSelectAll) onSelectAll(accounts);
   };
+
   onUnselectAll = () => {
     const { accounts, onUnselectAll } = this.props;
     if (onUnselectAll) onUnselectAll(accounts);
   };
+
   render() {
     const {
       accounts,

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
-import { Trans, withTranslation } from "react-i18next";
+import { Trans, withTranslation, TFunction } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
@@ -18,7 +18,6 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { TFunction } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { StepId, StepProps, St } from "./types";
 type OwnProps = {

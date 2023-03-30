@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
-import { Trans, withTranslation } from "react-i18next";
+import { Trans, withTranslation, TFunction } from "react-i18next";
 import { connect } from "react-redux";
-import { TFunction } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Track from "~/renderer/analytics/Track";
@@ -10,8 +9,9 @@ import {
   currencySettingsSelector,
   storeSelector,
   currencySettingsDefaults,
+  SettingsState,
+  CurrencySettings,
 } from "~/renderer/reducers/settings";
-import { SettingsState, CurrencySettings } from "~/renderer/reducers/settings";
 import StepperNumber from "~/renderer/components/StepperNumber";
 import {
   SettingsSectionRow as Row,
@@ -54,6 +54,7 @@ class CurrencyRows extends PureComponent<Props> {
       currenciesSettings: newCurrenciesSettings,
     });
   };
+
   render() {
     const { currency, t, currencySettings } = this.props;
     const { confirmationsNb } = currencySettings;

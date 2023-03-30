@@ -24,6 +24,7 @@ class ModalBody extends PureComponent<Props> {
       this._content.current.focus();
     }
   }
+
   _content: React$ElementRef<any> = React.createRef();
   render() {
     const {

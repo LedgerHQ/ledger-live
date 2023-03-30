@@ -1,7 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
-import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import { bitcoinPickingStrategy, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import { Account } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

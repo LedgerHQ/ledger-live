@@ -4,10 +4,9 @@ import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denomi
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
-import Select from "~/renderer/components/Select";
+import Select, { Option } from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
-import { Option } from "~/renderer/components/Select";
 type NoOptionsMessageCallbackType = {
   inputValue: string;
 };

@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import styled from "styled-components";
-import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
+import ValidatorRow, { ValidatorRowProps } from "~/renderer/components/Delegation/ValidatorRow";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Check from "~/renderer/icons/Check";
@@ -18,7 +18,6 @@ import {
 } from "@ledgerhq/live-common/families/elrond/constants";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
-import { ValidatorRowProps } from "~/renderer/components/Delegation/ValidatorRow";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 export type Recipient = {
   address: string;

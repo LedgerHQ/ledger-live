@@ -1,7 +1,6 @@
 import styled from "styled-components";
-import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
+import ValidatorRow, { ValidatorRowProps } from "~/renderer/components/Delegation/ValidatorRow";
 import Check from "~/renderer/icons/Check";
-import { ValidatorRowProps } from "~/renderer/components/Delegation/ValidatorRow";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 export const StyledValidatorRow: ThemedComponent<ValidatorRowProps> = styled(ValidatorRow)`
   border-color: transparent;

@@ -3,8 +3,7 @@ import styled from "styled-components";
 import get from "lodash/get";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { TFunction } from "react-i18next";
-import { withTranslation, Trans } from "react-i18next";
+import { TFunction, withTranslation, Trans } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { validateNameEdition } from "@ledgerhq/live-common/account/index";
@@ -60,6 +59,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
   state = {
     ...defaultState,
   };
+
   getAccount(data: object): Account {
     const { accountName } = this.state;
     const account = get(data, "account", {});
@@ -72,10 +72,12 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
         : {}),
     };
   }
+
   handleChangeName = (value: string) =>
     this.setState({
       accountName: value,
     });
+
   handleSubmit = (account: Account, onClose: () => void) => (
     e: SyntheticEvent<HTMLFormElement | HTMLInputElement>,
   ) => {
@@ -103,6 +105,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
       onClose();
     }
   };
+
   handleFocus = (e: any, name: string) => {
     e.target.select();
     switch (name) {
@@ -120,19 +123,23 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
         break;
     }
   };
+
   handleChangeUnit = (value: Unit) => {
     this.setState({
       accountUnit: value,
     });
   };
+
   handleOpenRemoveAccountModal = () =>
     this.setState({
       isRemoveAccountModalOpen: true,
     });
+
   handleCloseRemoveAccountModal = () =>
     this.setState({
       isRemoveAccountModalOpen: false,
     });
+
   handleRemoveAccount = (account: Account) => {
     const { removeAccount, onClose } = this.props;
     removeAccount(account);
@@ -141,6 +148,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     });
     onClose();
   };
+
   render() {
     const { accountUnit, accountNameError, isRemoveAccountModalOpen } = this.state;
     const { t, onClose, data } = this.props;

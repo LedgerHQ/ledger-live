@@ -1,13 +1,14 @@
 import invariant from "invariant";
 import React from "react";
-import { Trans, withTranslation } from "react-i18next";
-import { TFunction } from "react-i18next";
+import { Trans, withTranslation, TFunction } from "react-i18next";
 import styled from "styled-components";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { getDeviceTransactionConfig } from "@ledgerhq/live-common/transaction/index";
-import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
+import {
+  getDeviceTransactionConfig,
+  DeviceTransactionField,
+} from "@ledgerhq/live-common/transaction/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import transactionConfirmFieldsPerFamily from "~/renderer/generated/TransactionConfirmFields";
 import Box from "~/renderer/components/Box";

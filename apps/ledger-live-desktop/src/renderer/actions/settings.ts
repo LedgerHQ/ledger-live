@@ -7,8 +7,8 @@ import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelInfo, FeatureId, Feature } from "@ledgerhq/types-live";
 import { setEnvOnAllThreads } from "~/helpers/env";
-import { SettingsState as Settings } from "~/renderer/reducers/settings";
 import {
+  SettingsState as Settings,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,

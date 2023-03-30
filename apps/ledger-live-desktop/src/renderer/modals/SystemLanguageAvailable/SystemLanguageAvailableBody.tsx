@@ -1,7 +1,6 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, TFunction } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { TFunction } from "react-i18next";
 import styled from "styled-components";
 import moment from "moment";
 import { ModalBody } from "~/renderer/components/Modal";

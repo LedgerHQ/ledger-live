@@ -133,11 +133,13 @@ class Unsafe extends PureComponent<any, any> {
   state = {
     error: null,
   };
+
   componentDidCatch(error) {
     this.setState({
       error,
     });
   }
+
   render() {
     const { children } = this.props;
     const { error } = this.state;

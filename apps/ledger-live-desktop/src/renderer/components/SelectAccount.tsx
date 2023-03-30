@@ -5,11 +5,10 @@ import {
   getAccountName,
   listSubAccounts,
 } from "@ledgerhq/live-common/account/index";
-import { TFunction } from "react-i18next";
+import { TFunction, withTranslation, Trans } from "react-i18next";
 import { AccountLike, Account, TokenAccount } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import React, { useCallback, useState, useMemo } from "react";
-import { withTranslation, Trans } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { createFilter, components } from "react-select";
 import { createStructuredSelector } from "reselect";

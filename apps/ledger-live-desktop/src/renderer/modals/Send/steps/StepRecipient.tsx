@@ -95,6 +95,7 @@ export class StepRecipientFooter extends PureComponent<StepProps> {
     const { transitionTo } = this.props;
     transitionTo("amount");
   };
+
   render() {
     const { t, account, parentAccount, status, bridgePending } = this.props;
     const { errors } = status;

@@ -5,7 +5,10 @@ import styled from "styled-components";
 import Track from "~/renderer/analytics/Track";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";
+import DropDownSelector, {
+  DropDownItem,
+  DropDownItemType,
+} from "~/renderer/components/DropDownSelector";
 import Switch from "~/renderer/components/Switch";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconDots from "~/renderer/icons/Dots";
@@ -13,7 +16,6 @@ import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import IconSend from "~/renderer/icons/Send";
 import { openModal } from "~/renderer/actions/modals";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
-import { DropDownItemType } from "~/renderer/components/DropDownSelector";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 const Separator: ThemedComponent<{}> = styled.div`
   background-color: ${p => p.theme.colors.palette.divider};

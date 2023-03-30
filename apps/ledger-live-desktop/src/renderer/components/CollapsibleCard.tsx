@@ -2,8 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import styled from "styled-components";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Transition } from "react-transition-group";
-import { RawCard } from "~/renderer/components/Box/Card";
-import { RawCardProps } from "~/renderer/components/Box/Card";
+import { RawCard, RawCardProps } from "~/renderer/components/Box/Card";
 import ChevronRight from "../icons/ChevronRightSmall";
 const Container: ThemedComponent<{
   timing: number;

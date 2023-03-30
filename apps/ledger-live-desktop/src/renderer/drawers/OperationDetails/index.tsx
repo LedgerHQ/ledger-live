@@ -1,8 +1,7 @@
 import React, { useMemo, Component, useCallback } from "react";
 import { connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { Trans, withTranslation } from "react-i18next";
-import { TFunction } from "react-i18next";
+import { Trans, withTranslation, TFunction } from "react-i18next";
 import styled from "styled-components";
 import uniq from "lodash/uniq";
 import { getEnv } from "@ledgerhq/live-common/env";
@@ -668,12 +667,14 @@ export class DataList extends Component<
     numToShow: 2,
     showMore: true,
   };
+
   onClick = () => {
     this.setState(({ showMore, numToShow }) => ({
       showMore: !showMore,
       numToShow: showMore ? undefined : 2,
     }));
   };
+
   render() {
     const { lines, t } = this.props;
     const { showMore, numToShow } = this.state;

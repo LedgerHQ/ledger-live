@@ -2,9 +2,8 @@ import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 import repairFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import { withTranslation } from "react-i18next";
+import { withTranslation, TFunction } from "react-i18next";
 import logger from "~/renderer/logger";
-import { TFunction } from "react-i18next";
 import Button from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -29,17 +28,20 @@ class RepairDeviceButton extends PureComponent<Props, State> {
     error: null,
     progress: 0,
   };
+
   componentWillUnmount() {
     if (this.timeout) {
       clearTimeout(this.timeout);
     }
     if (this.sub) this.sub.unsubscribe();
   }
+
   open = () =>
     this.setState({
       opened: true,
       error: null,
     });
+
   sub: any;
   timeout: any;
   close = () => {
@@ -56,6 +58,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
       progress: 0,
     });
   };
+
   repair = (version = null) => {
     if (this.state.isLoading) return;
     const { history, onRepair } = this.props;
@@ -103,6 +106,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
       },
     });
   };
+
   render() {
     const { t, buttonProps } = this.props;
     const { opened, isLoading, error, progress } = this.state;

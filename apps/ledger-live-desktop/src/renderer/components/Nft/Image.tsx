@@ -77,10 +77,12 @@ class Image extends React.PureComponent<Props, State> {
     size: 32,
     mediaFormat: "preview",
   };
+
   state = {
     loaded: false,
     error: false,
   };
+
   render() {
     const {
       uri,

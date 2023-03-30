@@ -3,13 +3,12 @@ import { BigNumber } from "bignumber.js";
 import React from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
+import { Trans, TFunction } from "react-i18next";
 import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Operation, Account } from "@ledgerhq/types-live";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import { TFunction } from "react-i18next";
 import {
   OpDetailsTitle,
   OpDetailsData,

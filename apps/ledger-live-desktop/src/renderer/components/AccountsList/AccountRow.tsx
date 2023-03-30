@@ -30,25 +30,31 @@ export default class AccountRow extends PureComponent<Props> {
     e.preventDefault();
     e.stopPropagation();
   };
+
   handleKeyPress = (e: SyntheticEvent<HTMLInputElement>) => {
     // this fixes a bug with the event propagating to the Tabbable
     e.stopPropagation();
   };
+
   onToggleAccount = () => {
     const { onToggleAccount, account, isChecked } = this.props;
     if (onToggleAccount) onToggleAccount(account, !isChecked);
   };
+
   handleChangeName = (name: string) => {
     const { onEditName, account } = this.props;
     if (onEditName) onEditName(account, name);
   };
+
   onClickInput = (e: SyntheticEvent<any>) => {
     e.preventDefault();
     e.stopPropagation();
   };
+
   onFocus = (e: any) => {
     e.target.select();
   };
+
   onBlur = (e: any) => {
     const { onEditName, account } = this.props;
     const { value } = e.target;
@@ -57,12 +63,14 @@ export default class AccountRow extends PureComponent<Props> {
       onEditName(account, account.name);
     }
   };
+
   _input = null;
   overflowStyles = {
     textOverflow: "ellipsis",
     overflow: "hidden",
     whiteSpace: "nowrap",
   };
+
   render() {
     const {
       account,

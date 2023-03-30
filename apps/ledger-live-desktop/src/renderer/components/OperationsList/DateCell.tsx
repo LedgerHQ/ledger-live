@@ -22,6 +22,7 @@ class DateCell extends PureComponent<Props> {
   static defaultProps = {
     withAccount: false,
   };
+
   render() {
     const { t, operation, compact, text } = this.props;
     const ellipsis = {

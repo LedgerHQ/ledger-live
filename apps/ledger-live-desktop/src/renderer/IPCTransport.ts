@@ -65,17 +65,20 @@ export class IPCTransport extends Transport {
       },
     };
   };
+
   static async open(id: string): Promise<Transport> {
     await rendererRequest(transportOpenChannel, {
       descriptor: id,
     });
     return new IPCTransport(id);
   }
+
   id: string;
   constructor(id: string) {
     super();
     this.id = id;
   }
+
   async exchange(apdu: Buffer): Promise<Buffer> {
     const apduHex = apdu.toString("hex");
     log("apdu", "=> " + apduHex);
@@ -86,6 +89,7 @@ export class IPCTransport extends Transport {
     log("apdu", "<= " + responseHex);
     return Buffer.from(responseHex, "hex");
   }
+
   exchangeBulk(apdus: Buffer[], observer: Observer<Buffer>): Subscription {
     const apdusHex = apdus.map(apdu => apdu.toString("hex"));
     log("apdu-info", "bulk of " + apdusHex.length + " apdus");
@@ -123,9 +127,11 @@ export class IPCTransport extends Transport {
       },
     };
   }
+
   setScrambleKey() {
     // empty fn
   }
+
   close(): Promise<void> {
     return rendererRequest(transportCloseChannel, {
       descriptor: this.id,

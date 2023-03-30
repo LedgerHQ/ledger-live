@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
 
-import React, { Fragment } from "react";
+import React, { Fragment, ComponentType } from "react";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
@@ -28,7 +28,6 @@ import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
-import { ComponentType } from "react";
 import { Operation, Account } from "@ledgerhq/types-live";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";

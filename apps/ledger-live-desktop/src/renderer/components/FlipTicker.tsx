@@ -29,6 +29,7 @@ class FlipTicker extends PureComponent<Props, State> {
   state = {
     height: null,
   };
+
   componentDidMount() {
     if (this._node instanceof HTMLDivElement) {
       const { height } = this._node.getBoundingClientRect();
@@ -37,6 +38,7 @@ class FlipTicker extends PureComponent<Props, State> {
       });
     }
   }
+
   _node = null;
   render() {
     const { value, ...p } = this.props;

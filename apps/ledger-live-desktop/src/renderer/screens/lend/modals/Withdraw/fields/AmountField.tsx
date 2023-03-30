@@ -1,12 +1,11 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans, TFunction } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { makeCompoundSummaryForAccount } from "@ledgerhq/live-common/compound/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { TFunction } from "react-i18next";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ethereum/types";
 import Label from "~/renderer/components/Label";

@@ -1,6 +1,5 @@
 import React, { useRef, useMemo } from "react";
-import { FTXProviders } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { getFTXURL } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { FTXProviders, getFTXURL } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import SwapConnectWidget from "../SwapConnectWidget";
 type Props = {
   onClose: Function;

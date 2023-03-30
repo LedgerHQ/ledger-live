@@ -2,11 +2,10 @@ import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import { TFunction } from "react-i18next";
+import { TFunction, Trans, withTranslation } from "react-i18next";
 import { closeModal } from "~/renderer/actions/modals";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
-import { Trans, withTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 type Props = {

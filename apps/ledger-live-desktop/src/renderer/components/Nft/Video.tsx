@@ -62,9 +62,11 @@ class Video extends React.PureComponent<Props, State> {
     full: false,
     size: 32,
   };
+
   state = {
     loaded: false,
   };
+
   render() {
     const {
       uri,

@@ -1,5 +1,4 @@
-import { createSelector, createSelectorCreator, defaultMemoize } from "reselect";
-import { OutputSelector } from "reselect";
+import { createSelector, createSelectorCreator, defaultMemoize, OutputSelector } from "reselect";
 import { handleActions } from "redux-actions";
 import { Account, AccountLike, NFT } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";

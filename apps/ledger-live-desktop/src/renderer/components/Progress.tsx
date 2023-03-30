@@ -76,6 +76,7 @@ class Progress extends Component<Props, State> {
     color: "wallet",
     progress: undefined,
   };
+
   render() {
     const { infinite, color, timing, progress } = this.props;
     return (

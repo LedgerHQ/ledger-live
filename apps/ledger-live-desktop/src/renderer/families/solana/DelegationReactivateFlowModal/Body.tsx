@@ -7,8 +7,7 @@ import { Transaction, SolanaStakeWithMeta } from "@ledgerhq/live-common/families
 import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { Trans, withTranslation } from "react-i18next";
-import { TFunction } from "react-i18next";
+import { Trans, withTranslation, TFunction } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";

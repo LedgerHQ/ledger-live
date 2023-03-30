@@ -38,6 +38,7 @@ class QRCodeExporter extends PureComponent<
   static defaultProps = {
     size: 460,
   };
+
   constructor(props) {
     super();
     const { accounts, settings } = props;
@@ -53,11 +54,13 @@ class QRCodeExporter extends PureComponent<
       console.log(`BRIDGESTREAM_DATA=${BRIDGESTREAM_DATA}`); // eslint-disable-line
     }, 500);
   }
+
   state = {
     frame: 0,
     framesRendered: 1,
     fps: 3,
   };
+
   componentDidMount() {
     const nextFrame = ({ frame, framesRendered }) => {
       frame = (frame + 1) % this.chunks.length;
@@ -77,9 +80,11 @@ class QRCodeExporter extends PureComponent<
     };
     this._raf = requestAnimationFrame(loop);
   }
+
   componentWillUnmount() {
     cancelAnimationFrame(this._raf);
   }
+
   chunks: string[];
   _raf: any;
   render() {

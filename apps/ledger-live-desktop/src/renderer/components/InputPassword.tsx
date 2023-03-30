@@ -1,10 +1,9 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
-import { withTranslation } from "react-i18next";
+import { withTranslation, TFunction } from "react-i18next";
 import zxcvbn from "zxcvbn";
 import debounce from "lodash/debounce";
 import noop from "lodash/noop";
-import { TFunction } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import IconEye from "~/renderer/icons/Eye";
@@ -47,29 +46,35 @@ class InputPassword extends PureComponent<Props, State> {
     onChange: noop,
     value: "",
   };
+
   state = {
     passwordStrength: getPasswordStrength(this.props.value),
     inputType: "password",
   };
+
   componentWillUnmount() {
     this._isUnmounted = true;
   }
+
   _isUnmounted = false;
   toggleInputType = () =>
     this.setState(prev => ({
       inputType: prev.inputType === "text" ? "password" : "text",
     }));
+
   debouncePasswordStrength = debounce(v => {
     if (this._isUnmounted) return;
     this.setState({
       passwordStrength: getPasswordStrength(v),
     });
   }, 150);
+
   handleChange = (v: string) => {
     const { onChange } = this.props;
     onChange(v);
     this.debouncePasswordStrength(v);
   };
+
   render() {
     const { t, value, withStrength } = this.props;
     const { passwordStrength, inputType } = this.state;

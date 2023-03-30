@@ -1,5 +1,8 @@
-import { KYCStatus } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { getProviderName, KYC_STATUS } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import {
+  KYCStatus,
+  getProviderName,
+  KYC_STATUS,
+} from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";

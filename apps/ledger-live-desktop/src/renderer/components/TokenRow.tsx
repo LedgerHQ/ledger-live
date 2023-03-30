@@ -43,6 +43,7 @@ class TokenRow extends PureComponent<Props> {
     const { account, parentAccount, onClick } = this.props;
     onClick(account, parentAccount);
   };
+
   render() {
     const { account, range, index, nested, disableRounding } = this.props;
     const currency = getAccountCurrency(account);

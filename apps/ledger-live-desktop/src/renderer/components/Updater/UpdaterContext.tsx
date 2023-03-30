@@ -1,6 +1,5 @@
-import { ipcRenderer } from "electron";
+import { ipcRenderer, IpcRendererEvent } from "electron";
 import React, { Component } from "react";
-import { IpcRendererEvent } from "electron";
 export type UpdateStatus =
   | "idle"
   | "checking-for-update"
@@ -46,9 +45,11 @@ class Provider extends Component<UpdaterProviderProps, UpdaterProviderState> {
       version: process.env.DEBUG_UPDATE ? "1.2.3" : undefined,
     };
   }
+
   componentWillUnmount() {
     ipcRenderer.removeListener("updater", this.listener);
   }
+
   listener = (
     e: IpcRendererEvent,
     args: {
@@ -75,20 +76,24 @@ class Provider extends Component<UpdaterProviderProps, UpdaterProviderState> {
       this.setStatus(args.status);
     }
   };
+
   setStatus = (status: UpdateStatus) => {
     this.setState({
       status,
     });
   };
+
   setDownloadProgress = (downloadProgress: number) =>
     this.setState({
       downloadProgress,
     });
+
   quitAndInstall = () => ipcRenderer.send("updater", "quit-and-install");
   downloadUpdate = () => {
     this.setStatus("downloading-update");
     return ipcRenderer.send("updater", "download-update");
   };
+
   render() {
     const { status, downloadProgress, error, version } = this.state;
     const value = {

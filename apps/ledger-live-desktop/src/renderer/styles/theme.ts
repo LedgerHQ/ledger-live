@@ -1,5 +1,4 @@
-import { keyframes, css } from "styled-components";
-import { CSSRules } from "styled-components";
+import { keyframes, css, CSSRules } from "styled-components";
 export const space = [0, 5, 10, 15, 20, 30, 40, 50, 70];
 export const fontSizes = [8, 9, 10, 12, 13, 16, 18, 22, 32];
 export const radii = [0, 4];

@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { withTranslation } from "react-i18next";
+import { withTranslation, TFunction } from "react-i18next";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -9,7 +9,6 @@ import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { TFunction } from "react-i18next";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";

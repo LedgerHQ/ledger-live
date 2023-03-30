@@ -9,8 +9,7 @@ import { Account } from "@ledgerhq/types-live";
 import KeyHandler from "react-key-handler";
 import logger, { memoryLogger } from "~/renderer/logger";
 import getUser from "~/helpers/user";
-import Button from "~/renderer/components/Button";
-import { Props as ButtonProps } from "~/renderer/components/Button";
+import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 const saveLogs = async (path: { canceled: boolean; filePath: string }) => {
   await ipcRenderer.invoke(

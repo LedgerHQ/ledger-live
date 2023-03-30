@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { FTXProviders } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { getFTXURL } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { FTXProviders, getFTXURL } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { swapKYCSelector } from "~/renderer/reducers/settings";
 import SwapConnectWidget from "../SwapConnectWidget";
 type Props = {

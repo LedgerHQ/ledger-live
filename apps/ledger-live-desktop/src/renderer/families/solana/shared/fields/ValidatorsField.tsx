@@ -5,8 +5,7 @@ import { Account } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import invariant from "invariant";
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { TFunction } from "react-i18next";
-import { Trans } from "react-i18next";
+import { TFunction, Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import ValidatorSearchInput, {

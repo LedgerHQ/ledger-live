@@ -5,8 +5,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { TFunction } from "react-i18next";
 import Modal from "~/renderer/components/Modal";
-import Stepper from "~/renderer/components/Stepper";
-import { Step } from "~/renderer/components/Stepper";
+import Stepper, { Step } from "~/renderer/components/Stepper";
 import StepOverview, {
   StepOverviewFooter,
 } from "~/renderer/modals/MigrateAccounts/steps/StepOverview";
@@ -92,12 +91,14 @@ class MigrateAccounts extends PureComponent<any, State> {
   componentDidMount() {
     this.handleMoveToNextCurrency();
   }
+
   hideLoopNotice = true;
   STEPS = createSteps();
   handleStepChange = (step: St) =>
     this.setState({
       stepId: step.id,
     });
+
   handleSetScanStatus = (scanStatus: ScanStatus, err: Error | undefined | null = null) => {
     if (err) {
       logger.critical(err);
@@ -107,6 +108,7 @@ class MigrateAccounts extends PureComponent<any, State> {
       err,
     });
   };
+
   getNextCurrency = () => {
     const { currencyIds } = this.props;
     this.hideLoopNotice = false;
@@ -114,12 +116,14 @@ class MigrateAccounts extends PureComponent<any, State> {
     const nextCurrencyId = currencyIds[currencyIds.indexOf(currency && currency.id) + 1];
     return (nextCurrencyId && getCryptoCurrencyById(nextCurrencyId)) || null;
   };
-  handleMoveToNextCurrency = (forceNull: boolean = false) => {
+
+  handleMoveToNextCurrency = (forceNull = false) => {
     const nextCurrency = this.getNextCurrency();
     this.setState({
       currency: (!forceNull && nextCurrency) || null,
     });
   };
+
   handleCloseModal = () => this.props.closeModal("MODAL_MIGRATE_ACCOUNTS");
   addMigratedAccount = (currency: CryptoCurrency, account: Account) =>
     this.setState(state => {
@@ -130,6 +134,7 @@ class MigrateAccounts extends PureComponent<any, State> {
         },
       };
     });
+
   render() {
     const { device, migratableAccounts, currencyIds, accounts, replaceAccounts } = this.props;
     const { stepId, err, scanStatus, currency } = this.state;

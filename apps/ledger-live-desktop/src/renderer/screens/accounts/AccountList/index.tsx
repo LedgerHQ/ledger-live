@@ -93,7 +93,7 @@ const BodyByMode = {
 export const matchesSearch = (
   search: string | undefined | null,
   account: AccountLike,
-  subMatch: boolean = false,
+  subMatch = false,
 ): boolean => {
   if (!search) return true;
   let match;

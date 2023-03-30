@@ -130,10 +130,12 @@ class ConfirmationCheck extends PureComponent<{
   static defaultProps = {
     withTooltip: true,
   };
+
   renderTooltip = () => {
     const { t, isConfirmed } = this.props;
     return t(isConfirmed ? "operationDetails.confirmed" : "operationDetails.notConfirmed");
   };
+
   render() {
     const { marketColor, isConfirmed, t, type, withTooltip, hasFailed, ...props } = this.props;
     const Icon = iconsComponent[type];

@@ -42,7 +42,7 @@ export function sha512sumPath(path: string): Promise<string> {
     stream.on("error", reject);
   });
 }
-async function getDistantFileContent(url: string, binary: boolean = false) {
+async function getDistantFileContent(url: string, binary = false) {
   const query: object = {
     method: "GET",
     url,

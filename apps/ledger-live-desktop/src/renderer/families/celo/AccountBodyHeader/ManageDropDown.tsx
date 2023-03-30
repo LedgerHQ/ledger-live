@@ -1,8 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box/Box";
-import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
-import { DropDownItemType } from "~/renderer/components/DropDownSelector";
+import DropDown, { DropDownItem, DropDownItemType } from "~/renderer/components/DropDownSelector";
 import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import ChevronRight from "~/renderer/icons/ChevronRight";

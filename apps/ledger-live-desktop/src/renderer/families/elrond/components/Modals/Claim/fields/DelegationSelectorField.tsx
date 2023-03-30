@@ -4,12 +4,11 @@ import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denomi
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Label from "~/renderer/components/Label";
-import Select from "~/renderer/components/Select";
+import Select, { Option } from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { TFunction } from "react-i18next";
 import { Transaction, AccountBridge } from "@ledgerhq/types-live";
 import { ElrondProvider, DelegationType } from "~/renderer/families/elrond/types";
-import { Option } from "~/renderer/components/Select";
 type NoOptionsMessageCallbackType = {
   inputValue: string;
 };

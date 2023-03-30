@@ -1,8 +1,7 @@
 import React, { useCallback } from "react";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { Trans, withTranslation } from "react-i18next";
-import { TFunction } from "react-i18next";
+import { Trans, withTranslation, TFunction } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

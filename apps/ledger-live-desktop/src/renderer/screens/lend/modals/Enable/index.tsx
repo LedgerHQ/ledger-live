@@ -23,18 +23,22 @@ class EnableFlowModal extends PureComponent<Props, State> {
     this.setState({
       ...INITIAL_STATE,
     });
+
   handleStepChange = (stepId: StepId) =>
     this.setState({
       stepId,
     });
+
   handleReset = () =>
     this.setState({
       stepId: "amount",
     });
+
   handleStepChange = (stepId: StepId) =>
     this.setState({
       stepId,
     });
+
   render() {
     const { stepId } = this.state;
     const { name, account, parentAccount } = this.props;

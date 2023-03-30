@@ -73,6 +73,7 @@ class Breadcrumb extends PureComponent<Props> {
     stepsDisabled: [],
     stepsErrors: [],
   };
+
   render() {
     const { items, stepsDisabled, stepsErrors, currentStep, ...props } = this.props;
     const itemsLength = items.length;

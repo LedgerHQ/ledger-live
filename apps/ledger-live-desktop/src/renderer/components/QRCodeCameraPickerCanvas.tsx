@@ -89,6 +89,7 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
     intervalCheck: 250,
     dpr: window.devicePixelRatio || 1,
   };
+
   state = {};
   componentDidMount() {
     let getUserMedia;
@@ -220,10 +221,12 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
         });
     }
   }
+
   componentWillUnmount() {
     this.unmounted = true;
     this.unsubscribes.forEach(f => f());
   }
+
   canvasMain: HTMLCanvasElement | undefined | null;
   ctxMain: CanvasRenderingContext2D | undefined | null;
   canvasSecond: HTMLCanvasElement | undefined | null;
@@ -237,6 +240,7 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
       this.ctxMain = canvasMain.getContext("2d");
     }
   };
+
   _onSecondRef = (canvasSecond?: HTMLCanvasElement | null) => {
     if (canvasSecond === this.canvasSecond) return;
     this.canvasSecond = canvasSecond;
@@ -244,6 +248,7 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
       this.ctxSecond = canvasSecond.getContext("2d");
     }
   };
+
   render() {
     const { width, height, dpr } = this.props;
     const { error } = this.state;

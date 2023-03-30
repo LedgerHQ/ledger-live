@@ -1,11 +1,9 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
-import { ProtoNFT } from "@ledgerhq/live-common/nft/index";
+import { nftsByCollections, ProtoNFT } from "@ledgerhq/live-common/nft/index";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import DropDownSelector from "~/renderer/components/DropDownSelector";
-import { DropDownItemType } from "~/renderer/components/DropDownSelector";
+import DropDownSelector, { DropDownItemType } from "~/renderer/components/DropDownSelector";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import IconCheck from "~/renderer/icons/Check";

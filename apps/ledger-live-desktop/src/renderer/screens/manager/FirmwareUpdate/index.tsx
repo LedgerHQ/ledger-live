@@ -7,8 +7,7 @@ import manager from "@ledgerhq/live-common/manager/index";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DisclaimerModal from "~/renderer/modals/DisclaimerModal";
-import UpdateModal from "~/renderer/modals/UpdateFirmwareModal";
-import { StepId } from "~/renderer/modals/UpdateFirmwareModal";
+import UpdateModal, { StepId } from "~/renderer/modals/UpdateFirmwareModal";
 import Text from "~/renderer/components/Text";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import Box from "~/renderer/components/Box";
@@ -47,10 +46,12 @@ class FirmwareUpdate extends PureComponent<Props, State> {
   static defaultProps = {
     disableFirmwareUpdate: false,
   };
+
   state = initializeState(this.props);
   componentWillUnmount() {
     this._unmounting = true;
   }
+
   _unmounting = false;
   handleCloseModal = (reinstall?: boolean) => {
     this.setState({
@@ -61,6 +62,7 @@ class FirmwareUpdate extends PureComponent<Props, State> {
       onReset(installed.map(a => a.name));
     }
   };
+
   handleDisclaimerModal = () => {
     const { firmware } = this.props;
     if (!firmware) return;
@@ -71,10 +73,12 @@ class FirmwareUpdate extends PureComponent<Props, State> {
       modal: "disclaimer",
     });
   };
+
   handleDisclaimerNext = () =>
     this.setState({
       modal: "install",
     });
+
   render() {
     const {
       deviceInfo,

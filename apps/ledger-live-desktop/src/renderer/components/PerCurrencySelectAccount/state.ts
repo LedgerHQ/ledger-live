@@ -10,7 +10,7 @@ export function getAccountTuplesForCurrency(
   currency: CryptoCurrency | TokenCurrency,
   allAccounts: Account[],
   hideEmpty?: boolean | null,
-  accountIds?: Map<String, boolean>,
+  accountIds?: Map<string, boolean>,
 ): AccountTuple[] {
   if (currency.type === "TokenCurrency") {
     return allAccounts

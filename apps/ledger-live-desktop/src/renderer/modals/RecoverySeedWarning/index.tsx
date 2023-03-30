@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import Box from "~/renderer/components/Box";
@@ -8,7 +8,6 @@ import Text from "~/renderer/components/Text";
 import Alert from "~/renderer/components/Alert";
 import Button from "~/renderer/components/Button";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
-import { DeviceModelId } from "@ledgerhq/devices";
 import Track from "~/renderer/analytics/Track";
 import styled from "styled-components";
 import recoverySeedWarning from "~/renderer/images/recoverySeedWarning.png";

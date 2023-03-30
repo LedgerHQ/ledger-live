@@ -7,7 +7,7 @@ import { settingsExportSelector, areSettingsLoaded } from "./../reducers/setting
 let DB_MIDDLEWARE_ENABLED = true;
 
 // ability to temporary disable the db middleware from outside
-export const disable = (ms: number = 1000) => {
+export const disable = (ms = 1000) => {
   DB_MIDDLEWARE_ENABLED = false;
   setTimeout(() => (DB_MIDDLEWARE_ENABLED = true), ms);
 };

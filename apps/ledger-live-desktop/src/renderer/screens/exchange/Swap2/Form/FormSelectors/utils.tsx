@@ -1,9 +1,8 @@
 import React from "react";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { CreateStylesReturnType } from "~/renderer/components/Select/createStyles";
-import { AccountOption } from "~/renderer/components/SelectAccount";
+import { AccountOption, Option as SelectAccountOption } from "~/renderer/components/SelectAccount";
 import { CurrencyOption } from "~/renderer/components/SelectCurrency";
-import { Option as SelectAccountOption } from "~/renderer/components/SelectAccount";
 export const selectRowStylesMap: (
   a: CreateStylesReturnType,
 ) => CreateStylesReturnType = styles => ({

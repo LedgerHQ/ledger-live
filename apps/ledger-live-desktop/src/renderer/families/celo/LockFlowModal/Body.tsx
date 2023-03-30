@@ -1,8 +1,7 @@
 import React, { useState, useCallback } from "react";
-import { TFunction } from "react-i18next";
+import { TFunction, Trans, withTranslation } from "react-i18next";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
-import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";

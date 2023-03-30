@@ -1,5 +1,4 @@
-import React from "react";
-import { ComponentType } from "react";
+import React, { ComponentType } from "react";
 import { Trans } from "react-i18next";
 import { Currency, Unit, Operation, Account } from "@ledgerhq/live-common/types/index";
 import Box from "~/renderer/components/Box";

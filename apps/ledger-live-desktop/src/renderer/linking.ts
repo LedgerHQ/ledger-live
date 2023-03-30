@@ -4,11 +4,7 @@ let shell;
 if (!process.env.STORYBOOK_ENV) {
   shell = electron.shell;
 }
-export const openURL = (
-  url: string,
-  customEventName: string = "OpenURL",
-  extraParams: object = {},
-) => {
+export const openURL = (url: string, customEventName = "OpenURL", extraParams: object = {}) => {
   if (customEventName) {
     track(customEventName, {
       ...extraParams,

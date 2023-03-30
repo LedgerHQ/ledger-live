@@ -138,7 +138,7 @@ export const Wrapper: ThemedComponent<{}> = styled.div`
   flex-direction: row;
   cursor: pointer;
 `;
-export const CAROUSEL_NONCE: number = 6;
+export const CAROUSEL_NONCE = 6;
 const Carousel = ({
   withArrows = true,
   controls = true,

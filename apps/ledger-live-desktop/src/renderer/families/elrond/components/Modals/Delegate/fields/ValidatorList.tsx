@@ -7,14 +7,13 @@ import Text from "~/renderer/components/Text";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
-import ValidatorItem from "./ValidatorItem";
+import ValidatorItem, { ValidatorItemType } from "./ValidatorItem";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import { ValidatorItemType } from "./ValidatorItem";
 const ValidatorsFieldContainer: ThemedComponent<{}> = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;

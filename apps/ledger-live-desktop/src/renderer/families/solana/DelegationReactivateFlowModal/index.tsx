@@ -19,10 +19,12 @@ class DelegationReactivateModal extends PureComponent<
     this.setState({
       ...INITIAL_STATE,
     });
+
   handleStepChange = (stepId: StepId) =>
     this.setState({
       stepId,
     });
+
   render() {
     const { stepId } = this.state;
     const { name } = this.props;

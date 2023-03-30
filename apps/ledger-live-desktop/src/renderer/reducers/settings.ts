@@ -1,6 +1,5 @@
 import { handleActions } from "redux-actions";
-import { createSelector } from "reselect";
-import { OutputSelector, InputSelector as Selector } from "reselect";
+import { createSelector, OutputSelector, InputSelector as Selector } from "reselect";
 import {
   findCurrencyByTicker,
   getCryptoCurrencyById,

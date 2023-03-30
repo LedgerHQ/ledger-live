@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 import Button from "~/renderer/components/Button";
-import { withTranslation } from "react-i18next";
-import { TFunction } from "react-i18next";
+import { withTranslation, TFunction } from "react-i18next";
 type Props = {
   t: TFunction;
 };

@@ -10,12 +10,15 @@ class QRCode extends PureComponent<Props> {
     size: 200,
     errorCorrectionLevel: "Q",
   };
+
   componentDidMount() {
     this.drawQRCode();
   }
+
   componentDidUpdate() {
     this.drawQRCode();
   }
+
   canvas: any = React.createRef();
   drawQRCode() {
     const { data, size, errorCorrectionLevel } = this.props;
@@ -36,6 +39,7 @@ class QRCode extends PureComponent<Props> {
       },
     );
   }
+
   render() {
     const { size } = this.props;
     const px = size * (window.devicePixelRatio || 1);

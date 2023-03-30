@@ -221,7 +221,7 @@ const Banner = ({
 }: {
   capabilities: {
     canSupply: boolean;
-    canSupplyMax: Boolean;
+    canSupplyMax: boolean;
     enabledAmount: BigNumber;
     enabledAmountIsUnlimited: boolean;
     canSupplyMax: boolean;

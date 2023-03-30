@@ -15,11 +15,13 @@ class ReactRoot extends Component<Props, State> {
   state = {
     error: null,
   };
+
   componentDidCatch(error: unknown) {
     this.setState({
       error,
     });
   }
+
   render() {
     const { store, language, initialCountervalues } = this.props;
     const { error } = this.state;

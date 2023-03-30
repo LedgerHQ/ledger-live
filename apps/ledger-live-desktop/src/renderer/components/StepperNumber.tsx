@@ -56,9 +56,11 @@ class StepperNumber extends PureComponent<Props, State> {
     step: 1,
     value: 0,
   };
+
   state = {
     value: this.props.value,
   };
+
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     if (nextProps.value !== prevState.value) {
       return {
@@ -66,6 +68,7 @@ class StepperNumber extends PureComponent<Props, State> {
       };
     }
   }
+
   _timeout = undefined;
   isMax = (v: number) => v >= this.props.max;
   isMin = (v: number) => v <= this.props.min;
@@ -75,6 +78,7 @@ class StepperNumber extends PureComponent<Props, State> {
     });
     this.debounceOnChange(v);
   };
+
   debounceOnChange = debounce((v: number) => this.props.onChange(v), DEBOUNCE_ON_CHANGE);
   decrement = () => {
     const { step, min } = this.props;
@@ -89,6 +93,7 @@ class StepperNumber extends PureComponent<Props, State> {
       }
     }
   };
+
   increment = () => {
     const { step, max } = this.props;
     const { value } = this.state;
@@ -102,6 +107,7 @@ class StepperNumber extends PureComponent<Props, State> {
       }
     }
   };
+
   handleMouseDown = (type: "increment" | "decrement") => () => {
     document.addEventListener("mouseup", this.handleMouseUp);
     if (type === "increment") {
@@ -111,10 +117,12 @@ class StepperNumber extends PureComponent<Props, State> {
       this.decrement();
     }
   };
+
   handleMouseUp = () => {
     clearTimeout(this._timeout);
     document.removeEventListener("mouseup", this.handleMouseUp);
   };
+
   render() {
     const { value } = this.state;
     const isMin = this.isMin(value);

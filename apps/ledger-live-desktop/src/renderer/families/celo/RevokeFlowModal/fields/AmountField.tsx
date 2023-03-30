@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { Trans, TFunction } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
@@ -11,7 +11,6 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
 import * as S from "./AmountField.styles";
-import { TFunction } from "react-i18next";
 import { Account, TransactionStatus } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/celo/types";
 type Props = {

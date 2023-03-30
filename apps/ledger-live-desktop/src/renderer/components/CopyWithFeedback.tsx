@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
-import { withTranslation } from "react-i18next";
-import { TFunction } from "react-i18next";
+import { withTranslation, TFunction } from "react-i18next";
 import { darken, lighten } from "~/renderer/styles/helpers";
 import IconCopy from "~/renderer/icons/Copy";
 import Box from "~/renderer/components/Box";
@@ -21,9 +20,11 @@ class CopyWithFeedback extends PureComponent<Props, State> {
   state = {
     isCopied: false,
   };
+
   componentWillUnmount() {
     this._isUnmounted = true;
   }
+
   _isUnmounted = false;
   handleCopy = () => {
     const { text } = this.props;
@@ -37,6 +38,7 @@ class CopyWithFeedback extends PureComponent<Props, State> {
       });
     }, 1e3);
   };
+
   render() {
     const { t } = this.props;
     const { isCopied } = this.state;

@@ -2,8 +2,7 @@ import React, { PureComponent } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { withTranslation } from "react-i18next";
-import { TFunction } from "react-i18next";
+import { withTranslation, TFunction } from "react-i18next";
 import { Operation, Account, AccountLike } from "@ledgerhq/types-live";
 import keyBy from "lodash/keyBy";
 import {
@@ -63,6 +62,7 @@ export class OperationsList extends PureComponent<Props, State> {
   static defaultProps = {
     withAccount: false,
   };
+
   state = initialState;
   handleClickOperation = (operation: Operation, account: AccountLike, parentAccount?: Account) =>
     setDrawer(OperationDetails, {
@@ -78,6 +78,7 @@ export class OperationsList extends PureComponent<Props, State> {
       nbToShow: this.state.nbToShow + 20,
     });
   };
+
   render() {
     const {
       account,

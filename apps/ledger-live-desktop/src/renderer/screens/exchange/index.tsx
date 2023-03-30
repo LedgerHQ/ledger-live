@@ -19,7 +19,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
 
-const Container: ThemedComponent<{ selectable: boolean, pb: number }> = styled(Box)`
+const Container: ThemedComponent<{ selectable: boolean; pb: number }> = styled(Box)`
   flex: 1;
   display: flex;
 `;

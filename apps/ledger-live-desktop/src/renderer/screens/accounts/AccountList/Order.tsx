@@ -6,8 +6,10 @@ import { saveSettings } from "~/renderer/actions/settings";
 import Track from "~/renderer/analytics/Track";
 import BoldToggle from "~/renderer/components/BoldToggle";
 import Box from "~/renderer/components/Box";
-import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";
-import { DropDownItemType } from "~/renderer/components/DropDownSelector";
+import DropDownSelector, {
+  DropDownItem,
+  DropDownItemType,
+} from "~/renderer/components/DropDownSelector";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import IconAngleUp from "~/renderer/icons/AngleUp";

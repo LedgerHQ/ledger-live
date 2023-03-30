@@ -7,7 +7,7 @@ import { StakeWithMeta, Transaction } from "@ledgerhq/live-common/families/solan
 import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { Trans, withTranslation } from "react-i18next";
+import { Trans, withTranslation, TFunction } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
@@ -21,7 +21,6 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepValidator, { StepValidatorFooter } from "./steps/StepValidator";
 import { St, StepId } from "./types";
-import { TFunction } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 type OwnProps = {
   stepId: StepId;

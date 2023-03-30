@@ -4,8 +4,7 @@ import { Transaction, UPDATE_PROVIDERS_TYPE } from "@ledgerhq/live-common/exchan
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import memoize from "lodash/memoize";
 import { createAction } from "redux-actions";
-import { OutputSelector } from "reselect";
-import { createSelector } from "reselect";
+import { OutputSelector, createSelector } from "reselect";
 import { State } from "~/renderer/reducers";
 import { SwapStateType } from "~/renderer/reducers/swap";
 

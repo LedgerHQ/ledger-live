@@ -101,6 +101,7 @@ export class StepAmountFooter extends PureComponent<StepProps> {
     const { transitionTo } = this.props;
     transitionTo("summary");
   };
+
   render() {
     const { account, parentAccount, status, bridgePending, isNFTSend } = this.props;
     const { errors } = status;

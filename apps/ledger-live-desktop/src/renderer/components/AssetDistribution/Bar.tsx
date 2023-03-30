@@ -36,6 +36,7 @@ class Bar extends PureComponent<Props> {
   static defaultProps = {
     height: 6,
   };
+
   render() {
     const { height, backgroundColor, progressColor, progress } = this.props;
     return (

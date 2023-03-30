@@ -1,9 +1,8 @@
 import React, { useMemo, useCallback } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { withTranslation, Trans } from "react-i18next";
+import { withTranslation, Trans, TFunction } from "react-i18next";
 import { openModal } from "~/renderer/actions/modals";
-import { TFunction } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";

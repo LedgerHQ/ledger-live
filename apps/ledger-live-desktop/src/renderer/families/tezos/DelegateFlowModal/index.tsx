@@ -9,15 +9,18 @@ class SendModal extends PureComponent<{}, State> {
   state = {
     stepId: "starter",
   };
+
   handleReset = () =>
     this.setState({
       stepId: "starter",
     });
+
   handleStepChange = (stepId: StepId) => {
     this.setState({
       stepId,
     });
   };
+
   render() {
     const { stepId } = this.state;
     const isModalLocked = ["account", "confirmation"].includes(stepId);

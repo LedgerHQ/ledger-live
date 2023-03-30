@@ -57,10 +57,12 @@ class OperationComponent extends PureComponent<Props> {
     withAccount: false,
     withAddress: true,
   };
+
   onOperationClick = () => {
     const { account, parentAccount, onOperationClick, operation } = this.props;
     onOperationClick(operation, account, parentAccount);
   };
+
   render() {
     const {
       account,

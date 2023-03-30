@@ -1,8 +1,7 @@
 /* eslint-disable react/jsx-no-literals */
 
 import React, { useState, useCallback, useContext, useEffect } from "react";
-import { UpdaterContext } from "../Updater/UpdaterContext";
-import { UpdateStatus, MaybeUpdateContextType } from "../Updater/UpdaterContext";
+import { UpdaterContext, UpdateStatus, MaybeUpdateContextType } from "../Updater/UpdaterContext";
 import { Item, MockContainer, MockedGlobalStyle } from "./shared";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";

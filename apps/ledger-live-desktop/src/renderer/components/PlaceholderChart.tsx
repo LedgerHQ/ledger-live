@@ -14,6 +14,7 @@ class PlaceholderChart extends Component<Props> {
   shouldComponentUpdate(next: Props) {
     return next.tickXScale !== this.props.tickXScale;
   }
+
   render() {
     const { chartId, data, tickXScale, theme } = this.props;
     const themeType = theme.colors.palette.type;

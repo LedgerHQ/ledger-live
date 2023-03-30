@@ -1,11 +1,10 @@
 import React, { PureComponent } from "react";
 import { compose } from "redux";
-import { TFunction } from "react-i18next";
+import { TFunction, Trans, withTranslation } from "react-i18next";
 import { closeModal } from "~/renderer/actions/modals";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import { InlineDesc, Ul } from "~/renderer/modals/ShareAnalytics";
-import { Trans, withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import Button from "~/renderer/components/Button";
 type Props = {
