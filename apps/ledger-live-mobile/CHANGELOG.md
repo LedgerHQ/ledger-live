@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.18.0-nightly.1
+
+### Minor Changes
+
+- [#2969](https://github.com/LedgerHQ/ledger-live/pull/2969) [`44567eeb17`](https://github.com/LedgerHQ/ledger-live/commit/44567eeb17cb81b8a812d89316d3b66d67fe6aaf) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Domain service for LLM
+
+### Patch Changes
+
+- [#3087](https://github.com/LedgerHQ/ledger-live/pull/3087) [`9c5be7fa63`](https://github.com/LedgerHQ/ledger-live/commit/9c5be7fa63f9bf793c97ea40c0dbc23b5bf56f86) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Small improvement to the logs viewer debug tool
+
+- Updated dependencies [[`64ee0b2e03`](https://github.com/LedgerHQ/ledger-live/commit/64ee0b2e032187f5b742f594390a5b30d3850751)]:
+  - @ledgerhq/live-common@29.1.1-nightly.0
+  - @ledgerhq/domain-service@0.2.1-nightly.5
+
 ## 3.18.0-nightly.0
 
 ### Minor Changes

@@ -88,7 +88,8 @@
     "@ledgerhq/domain-service": "0.1.0",
     "@ledgerhq/live-env": "0.0.1",
     "@ledgerhq/live-portfolio": "0.0.1",
-    "@ledgerhq/live-promise": "0.0.1"
+    "@ledgerhq/live-promise": "0.0.1",
+    "@ledgerhq/hw-app-exchange": "0.1.0"
   },
   "changesets": [
     "bright-lions-battle",
@@ -108,10 +109,13 @@
     "flat-wolves-heal",
     "forty-pants-search",
     "giant-donkeys-smoke",
+    "gorgeous-dodos-bake",
     "great-humans-move",
     "grumpy-apes-bake",
     "hip-peas-own",
+    "hot-poems-dream",
     "hot-tips-protect",
+    "khaki-llamas-know",
     "large-taxis-fail",
     "light-suns-stare",
     "little-apricots-dress",

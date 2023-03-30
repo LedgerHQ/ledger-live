@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 29.1.1-nightly.0
+
+### Patch Changes
+
+- [#3081](https://github.com/LedgerHQ/ledger-live/pull/3081) [`64ee0b2e03`](https://github.com/LedgerHQ/ledger-live/commit/64ee0b2e032187f5b742f594390a5b30d3850751) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add missing conversion from string to number in Cosmos API response
+
 ## 29.2.0-nightly.4
 
 ### Patch Changes
