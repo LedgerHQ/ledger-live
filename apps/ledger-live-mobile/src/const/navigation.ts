@@ -512,11 +512,24 @@ export enum ScreenName {
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
   WalletNftGallery = "WalletNftGallery",
+
   NoFunds = "NoFunds",
   Stake = "Stake",
+  
+  // avalanche
+  AvalancheDelegationStarted = "AvalancheDelegationStarted",
+  AvalancheDelegationValidator = "AvalancheDelegationValidator",
+  AvalancheDelegationValidatorSelect = "AvalancheDelegationValidatorSelect",
+  AvalancheDelegationAmount = "AvalancheDelegationAmount",
+  AvalancheDelegationEndDate = "AvalancheDelegationEndDate",
+  AvalancheDelegationSelectDevice = "AvalancheDelegationSelectDevice",
+  AvalancheDelegationConnectDevice = "AvalancheDelegationConnectDevice",
+  AvalancheDelegationValidationError = "AvalancheDelegationValidationError",
+  AvalancheDelegationValidationSuccess = "AvalancheDelegationValidationSuccess",
 
   RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
 }
+
 export enum NavigatorName {
   // Stack
   // add "Navigator" postfix to distinguish this from ScreenName.Accounts
@@ -604,6 +617,9 @@ export enum NavigatorName {
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",
   NearWithdrawingFlow = "NearWithdrawingFlow",
+
+  // Avalanche
+  AvalancheDelegationFlow = "AvalancheDelegationFlow",
 
   // Tab
   Main = "Main",

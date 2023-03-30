@@ -284,6 +284,31 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     keywords: ["avax", "avalanche", "c-chain"],
     explorerId: "avax",
   },
+  avalanchepchain: {
+    type: "CryptoCurrency",
+    id: "avalanchepchain",
+    coinType: 9000,
+    name: "Avalanche P-Chain",
+    managerAppName: "Avalanche",
+    ticker: "AVAX",
+    scheme: "avalanchepchain",
+    color: "#E84142",
+    family: "avalanchepchain",
+    units: [
+      {
+        name: "AVAX",
+        code: "AVAX",
+        magnitude: 9,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer-xp.avax.network/tx/$hash",
+        address: "https://subnets.avax.network/validators/$address",
+      },
+    ],
+    keywords: ["avax-p-chain", "avalanche-p-chain", "p-chain"],
+  },
   banano: {
     type: "CryptoCurrency",
     id: "banano",

@@ -3530,6 +3530,75 @@
       "providerLink": "Learn more about {{provider}}"
     }
   },
+  "avalanchepchain": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Powered by Figment",
+        "moreInfo": "More info",
+        "drawerTitle": "Powered by Figment",
+        "title": "The AVAX token is now available on Ledger Live",
+        "description": "You can now start to manage your AVAX tokens and secure them through Ledger Live.",
+        "website": "Powered by Figment"
+      }
+    },
+    "stakedBalance": "Staking",
+    "stakedBalanceTooltip": "Amount staked to validators.",
+    "delegation": {
+      "header": "Delegations",
+      "add": "Add",
+      "commission": "Commission",
+      "validator": "NodeID",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "stakeAmount": "Stake",
+      "emptyState": {
+        "description": "You can earn AVAX rewards by delegating your assets.",
+        "info": "How Delegation works",
+        "delegation": "Earn rewards"
+      },
+      "notEnoughToDelegate": "You must have at least 25 AVAX available on the P chain to become a delegator.",
+      "validatorStake": "Validator Stake",
+      "validatorRemainingStake": "Available",
+      "flow": {
+        "title": "Delegate",
+        "steps": {
+          "starter": {
+            "description": "You may earn rewards by delegating your AVAX assets to a validator.",
+            "bullet": [
+              "You keep ownership of delegated assets",
+              "Delegate using your Ledger device",
+              "Minimum 25 AVAX required to stake",
+              "AVAX must be delegated for a minimum of 2 weeks"
+            ]
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "validator": {
+            "title": "Validators",
+            "ledgerByFigmentTC": "Ledger by Figment T&Cs"
+          },
+          "endDate": {
+            "title": "End Date",
+            "text": "Select a time for this delegation to end. The end date for this delegation must be between {{minEndDate}} and {{maxEndDate}}.",
+            "label": "Delegation end date"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "View details"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
+    }
+  },
   "near": {
     "account": {
       "stakedBalance": "Staked balance",
@@ -5579,6 +5648,9 @@
     },
     "StellarBurnAddressError": {
       "title": "A problem occurred while trying to add a Stellar account"
+    },
+    "AvalancheMinimumAmountError": {
+      "title": "Minimum amount is 25 AVAX"
     },
     "HederaAddAccountError": {
       "title": "Your account has not been added. Please try again."

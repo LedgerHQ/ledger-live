@@ -1,0 +1,12 @@
+diff --git a/dist/avalanche.js b/dist/avalanche.js
+index e4eea0db08afe3e26f45fc22fcf6e85c362fb75d..9dad6ed0806237447258fa184ed4536444811fc5 100644
+--- a/dist/avalanche.js
++++ b/dist/avalanche.js
+@@ -266,6 +266,7 @@ class AvalancheCore {
+             // use the fetch adapter if fetch is available e.g. non Node<17 env
+             if (typeof fetch !== "undefined") {
+                 config.adapter = fetchadapter_1.fetchAdapter;
++                delete config.adapter
+             }
+             const resp = yield axios_1.default.request(config);
+             // purging all that is axios

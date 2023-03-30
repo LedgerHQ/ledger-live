@@ -132,6 +132,7 @@
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-os@1.2.6": "patches/react-native-os@1.2.6.patch",
       "react-native-tcp@4.0.0": "patches/react-native-tcp@4.0.0.patch",
+      "avalanche@3.15.5": "patches/avalanche@3.15.5.patch",
       "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch"
     }
   }

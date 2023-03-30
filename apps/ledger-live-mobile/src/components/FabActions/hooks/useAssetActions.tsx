@@ -75,6 +75,12 @@ export default function useAssetActions({
     return [onRampProviders.length > 0, offRampProviders.length > 0];
   }, [rampCatalog.value, currency]);
 
+  const canSend = useMemo(() => currency?.id !== "avalanchepchain", [currency]);
+  const canReceive = useMemo(
+    () => currency?.id !== "avalanchepchain",
+    [currency],
+  );
+
   const actions = useMemo<ActionButtonEvent[]>(
     () => [
       ...(canBeBought
@@ -145,66 +151,77 @@ export default function useAssetActions({
                   },
                 ]
               : []),
-            {
-              id: "receive",
-              label: t("transfer.receive.title"),
-              Icon: iconReceive,
-              navigationParams: [
-                NavigatorName.ReceiveFunds,
-                defaultAccount
-                  ? {
-                      screen: ScreenName.ReceiveConfirmation,
-                      params: {
-                        accountId: defaultAccount.id,
-                        parentId:
-                          defaultAccount.type === "TokenAccount"
-                            ? defaultAccount.parentId
-                            : undefined,
-                        currency,
-                      },
-                    }
-                  : hasMultipleAccounts
-                  ? {
-                      screen: ScreenName.ReceiveSelectAccount,
-                      params: {
-                        currency,
-                      },
-                    }
-                  : {
-                      screen: ScreenName.ReceiveSelectCrypto,
-                      params: {
-                        filterCurrencyIds: currency ? [currency.id] : undefined,
-                      },
+            ...(canReceive
+              ? [
+                  {
+                    id: "receive",
+                    label: t("transfer.receive.title"),
+                    Icon: iconReceive,
+                    navigationParams: [
+                      NavigatorName.ReceiveFunds,
+                      defaultAccount
+                        ? {
+                            screen: ScreenName.ReceiveConfirmation,
+                            params: {
+                              accountId: defaultAccount.id,
+                              parentId:
+                                defaultAccount.type === "TokenAccount"
+                                  ? defaultAccount.parentId
+                                  : undefined,
+                              currency,
+                            },
+                          }
+                        : hasMultipleAccounts
+                        ? {
+                            screen: ScreenName.ReceiveSelectAccount,
+                            params: {
+                              currency,
+                            },
+                          }
+                        : {
+                            screen: ScreenName.ReceiveSelectCrypto,
+                            params: {
+                              filterCurrencyIds: currency
+                                ? [currency.id]
+                                : undefined,
+                            },
+                          },
+                    ] as const,
+                    disabled: !canReceive,
+                  },
+                ]
+              : []),
+            ...(canSend
+              ? [
+                  {
+                    id: "send",
+                    label: t("transfer.send.title"),
+                    Icon: iconSend,
+                    navigationParams: [
+                      NavigatorName.SendFunds,
+                      defaultAccount
+                        ? {
+                            screen: ScreenName.SendSelectRecipient,
+                            params: {
+                              accountId: defaultAccount.id,
+                              parentId:
+                                defaultAccount.type === "TokenAccount"
+                                  ? defaultAccount.parentId
+                                  : undefined,
+                            },
+                          }
+                        : {
+                            screen: ScreenName.SendCoin,
+                            params: { selectedCurrency: currency },
+                          },
+                    ] as const,
+                    disabled: areAccountsBalanceEmpty || !canSend,
+                    modalOnDisabledClick: {
+                      component: ZeroBalanceDisabledModalContent,
                     },
-              ] as const,
-            },
-            {
-              id: "send",
-              label: t("transfer.send.title"),
-              Icon: iconSend,
-              navigationParams: [
-                NavigatorName.SendFunds,
-                defaultAccount
-                  ? {
-                      screen: ScreenName.SendSelectRecipient,
-                      params: {
-                        accountId: defaultAccount.id,
-                        parentId:
-                          defaultAccount.type === "TokenAccount"
-                            ? defaultAccount.parentId
-                            : undefined,
-                      },
-                    }
-                  : {
-                      screen: ScreenName.SendCoin,
-                      params: { selectedCurrency: currency },
-                    },
-              ] as const,
-              disabled: areAccountsBalanceEmpty,
-              modalOnDisabledClick: {
-                component: ZeroBalanceDisabledModalContent,
-              },
-            },
+                  },
+                ]
+              : []),
           ]
         : [
             ...(!readOnlyModeEnabled
@@ -234,6 +251,8 @@ export default function useAssetActions({
       availableOnSwap,
       canBeBought,
       canBeSold,
+      canReceive,
+      canSend,
       currency,
       defaultAccount,
       hasAccounts,

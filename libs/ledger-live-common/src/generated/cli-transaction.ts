@@ -1,4 +1,5 @@
 import algorand from "../families/algorand/cli-transaction";
+import avalanchepchain from "../families/avalanchepchain/cli-transaction";
 import bitcoin from "../families/bitcoin/cli-transaction";
 import cardano from "../families/cardano/cli-transaction";
 import celo from "../families/celo/cli-transaction";
@@ -20,6 +21,7 @@ import polkadotCreateCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
 
 export default {
   algorand,
+  avalanchepchain,
   bitcoin,
   cardano,
   celo,

@@ -125,6 +125,7 @@ export type CryptoCurrencyId =
   | "flare"
   | "songbird"
   | "moonbeam"
+  | "avalanchepchain"
   | "near";
 
 /**

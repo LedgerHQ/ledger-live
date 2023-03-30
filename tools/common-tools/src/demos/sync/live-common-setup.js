@@ -53,4 +53,5 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "avalanchepchain"
 ]);

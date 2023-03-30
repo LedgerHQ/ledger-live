@@ -1,3 +1,4 @@
+export * from "./avalanchepchain";
 export * from "./bitcoin";
 export * from "./ethereum";
 export * from "./ripple";

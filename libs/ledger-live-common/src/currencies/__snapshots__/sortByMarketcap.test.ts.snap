@@ -1364,6 +1364,7 @@ Array [
   "ethereum/erc20/etoro_euro",
   "near",
   "avalanche_c_chain",
+  "avalanchepchain",
   "banano",
   "celo",
   "dexon",

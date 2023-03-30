@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`avalanchepchain currency bridge scanAccounts avalanchepchain seed 1 1`] = `
+Array [
+  Object {
+    "avalanchePChainResources": Object {
+      "chainCode": "0572f641ad2ae06b7d0d0e190e74af86732927ced7b828fef23589257bbed1e5",
+      "delegations": Array [],
+      "publicKey": "03828c8dad550959fba4b8b7aef4fff624ff514acbd5e5ea8095b2e714747eed7e",
+      "stakedBalance": "0",
+    },
+    "balance": "20000000",
+    "currencyId": "avalanchepchain",
+    "derivationMode": "avalanchepchain",
+    "freshAddress": "",
+    "freshAddressPath": "m/44'/9000'/0'",
+    "freshAddresses": Array [
+      Object {
+        "address": "",
+        "derivationPath": "m/44'/9000'/0'",
+      },
+    ],
+    "id": "js:2:avalanchepchain::avalanchepchain",
+    "index": 0,
+    "name": "Avalanche P-Chain 1",
+    "nfts": undefined,
+    "operationsCount": 1,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03828c8dad550959fba4b8b7aef4fff624ff514acbd5e5ea8095b2e714747eed7e",
+    "spendableBalance": "20000000",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": true,
+  },
+]
+`;
+
+exports[`avalanchepchain currency bridge scanAccounts avalanchepchain seed 1 2`] = `
+Array [
+  Array [
+    Object {
+      "accountId": "js:2:avalanchepchain::avalanchepchain",
+      "blockHash": "2iMUqvW5t3mBBvy2YjnJtg5ffuRY4bWyhSktJPu2oFi1tDdYAt",
+      "blockHeight": 4279835,
+      "contract": undefined,
+      "extra": Object {},
+      "fee": "1000000",
+      "hash": "23yMrAvxeHoPFivFunG35i8iXEqXoYgLHeV4f8CV33JqF3GXFh",
+      "id": "js:2:avalanchepchain::avalanchepchain-23yMrAvxeHoPFivFunG35i8iXEqXoYgLHeV4f8CV33JqF3GXFh-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "avax13q2k264xx9l8lf7qeayun8cjle5p9j35pjzmgp",
+      ],
+      "senders": Array [
+        "avax13q2k264xx9l8lf7qeayun8cjle5p9j35pjzmgp",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "20000000",
+    },
+  ],
+]
+`;

@@ -173,6 +173,11 @@ export const urls = {
     stakingPage:
       "https://support.ledger.com/hc/en-us/articles/4731749170461?docs=true",
   },
+  avalanche: {
+    staking: "https://support.ledger.com/hc/en-us/articles/360020765779",
+    learnMoreStakingParameters:
+      "https://support.ledger.com/hc/articles/8827712029725?support=true",
+  },
   resources: {
     gettingStarted:
       "https://www.ledger.com/start?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
