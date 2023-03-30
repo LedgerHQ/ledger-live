@@ -27,7 +27,8 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import Text from "~/renderer/components/Text";
 import useTheme from "~/renderer/hooks/useTheme";
 import { openURL } from "~/renderer/linking";
-import { StepProps } from "../Body";
+import { StepProps } from "~/renderer/modals/Receive/Body";
+
 export const LOCAL_STORAGE_KEY_PREFIX = "receive_staking_";
 const Separator = styled.div`
   border-top: 1px solid #99999933;

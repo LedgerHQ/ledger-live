@@ -2,7 +2,6 @@ import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { PlatformAppDrawers as AppDrawerPayload } from "~/renderer/reducers/UI.js";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import CheckBox from "~/renderer/components/CheckBox";
 import Button from "~/renderer/components/Button";
@@ -10,7 +9,10 @@ import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import { dismissBanner } from "~/renderer/actions/settings";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
-import { platformAppDrawerStateSelector } from "~/renderer/reducers/UI";
+import {
+  PlatformAppDrawers as AppDrawerPayload,
+  platformAppDrawerStateSelector,
+} from "~/renderer/reducers/UI";
 import Text from "../Text";
 import AppDetails from "../Platform/AppDetails";
 import ExternalLink from "../ExternalLink/index";

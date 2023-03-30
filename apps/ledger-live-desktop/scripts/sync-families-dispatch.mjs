@@ -14,7 +14,7 @@ const targets = [
   "operationDetails.tsx",
   "accountActions.tsx",
   "TransactionConfirmFields.tsx",
-  "AccountBodyHeader.js",
+  "AccountBodyHeader.ts",
   "AccountSubHeader.tsx",
   "SendAmountFields.tsx",
   "SendRecipientFields.tsx",
