@@ -21,7 +21,7 @@ import { Linking } from "react-native";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
-import { EditTransactionParamList } from "../../../components/RootNavigator/types/EditTransactionNavigator";
+import { EditTransactionParamList } from "../EditTransactionNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import LText from "../../../components/LText";
 import { urls } from "../../../config/urls";
