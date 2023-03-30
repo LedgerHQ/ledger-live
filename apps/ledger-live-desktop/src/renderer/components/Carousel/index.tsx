@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,10 +9,11 @@ import Button from "~/renderer/components/Button";
 import TimeBasedProgressBar from "~/renderer/components/Carousel/TimeBasedProgressBar";
 import IconCross from "~/renderer/icons/Cross";
 import { getTransitions, useDefaultSlides } from "~/renderer/components/Carousel/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { setCarouselVisibility } from "~/renderer/actions/settings";
 import { carouselVisibilitySelector } from "~/renderer/reducers/settings";
 import { Trans } from "react-i18next";
+import { track } from "~/renderer/analytics/segment";
 
 const CarouselWrapper: ThemedComponent<{}> = styled(Card)`
   position: relative;
@@ -184,22 +183,43 @@ const Carousel = ({
   const onNext = useCallback(() => {
     setReverse(false);
     setIndex((index + 1) % slides.length);
+    track("contentcards_slide", {
+      button: "next",
+      page: "Portfolio",
+    });
   }, [index, slides.length]);
 
   const onPrev = useCallback(() => {
     setReverse(true);
     setIndex(!index ? slides.length - 1 : index - 1);
+    track("contentcards_slide", {
+      button: "previous",
+      page: "Portfolio",
+    });
   }, [index, slides.length]);
 
   const onDismiss = useCallback(() => {
     setWantToDismiss(true);
+    track("contentcards_dismissed", {
+      page: "Portfolio",
+    });
   }, []);
 
   const onUndo = useCallback(() => {
     setWantToDismiss(false);
+    track("button_clicked", {
+      button: "Show cards again",
+      page: "Portfolio",
+    });
   }, []);
 
-  const close = useCallback(() => dispatch(setCarouselVisibility(CAROUSEL_NONCE)), [dispatch]);
+  const close = useCallback(() => {
+    dispatch(setCarouselVisibility(CAROUSEL_NONCE))
+    track("button_clicked", {
+      button: "Confirm cards dismissal",
+      page: "Portfolio",
+    });
+  }, [dispatch]);
 
   if (!slides.length || hidden >= CAROUSEL_NONCE) {
     // No slides or dismissed, no problem

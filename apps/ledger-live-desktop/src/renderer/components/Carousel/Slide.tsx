@@ -7,6 +7,7 @@ import Text from "~/renderer/components/Text";
 import { Wrapper, Label, IllustrationWrapper } from "~/renderer/components/Carousel";
 import { useHistory } from "react-router-dom";
 import Image from "../Image";
+import { track } from "~/renderer/analytics/segment";
 
 const Layer = styled(animated.div)`
   background-image: url('${p => p.image}');
@@ -34,6 +35,7 @@ type Img = {
   size: { width: number, height: number },
 };
 type Props = {
+  id: string,
   url?: string,
   path?: string,
   title: *,
@@ -42,7 +44,7 @@ type Props = {
   image?: string,
 };
 
-const Slide = ({ url, path, title, description, image, imgs }: Props) => {
+const Slide = ({ id, url, path, title, description, image, imgs }: Props) => {
   const history = useHistory();
   const [{ xy }, set] = useSpring(() => ({
     xy: [-120, -30],
@@ -74,6 +76,12 @@ const Slide = ({ url, path, title, description, image, imgs }: Props) => {
     if (url) {
       openURL(url);
     }
+    track("contentcard_clicked", {
+      contentcard: title,
+      link: path || url,
+      campaign: id,
+      page: "Portfolio",
+    });
   }, [history, path, url]);
 
   // After initial slide-in animation, set the offset to zero
