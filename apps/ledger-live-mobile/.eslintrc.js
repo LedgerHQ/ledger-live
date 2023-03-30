@@ -58,7 +58,6 @@ module.exports = {
     "global-require": 0,
     "no-restricted-globals": 0,
     "no-restricted-syntax": 0,
-    "no-lonely-if": 0,
     "import/extensions": 0,
     "import/no-mutable-exports": 0,
     "import/prefer-default-export": 0,
