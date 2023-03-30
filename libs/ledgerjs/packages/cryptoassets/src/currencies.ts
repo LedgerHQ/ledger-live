@@ -287,7 +287,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   avalanchepchain: {
     type: "CryptoCurrency",
     id: "avalanchepchain",
-    coinType: 9000,
+    coinType: CoinType.ETH,
     name: "Avalanche P-Chain",
     managerAppName: "Avalanche",
     ticker: "AVAX",
