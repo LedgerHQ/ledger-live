@@ -18,10 +18,7 @@ import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import network from "../../network";
 import { delay } from "../../promise";
-import Exchange, {
-  ExchangeTypes,
-  RateTypes,
-} from "../hw-app-exchange/Exchange";
+import Exchange, { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
 import { getProviderConfig, getSwapAPIBaseURL } from "./";
 import { mockInitSwap } from "./mock";
 import type { InitSwapInput, SwapRequestEvent } from "./types";

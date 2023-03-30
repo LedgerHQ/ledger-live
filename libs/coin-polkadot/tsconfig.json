@@ -4,8 +4,6 @@
     "declarationMap": true,
     "sourceMap": true,
     "strict": true,
-    "noImplicitAny": false,
-    "noImplicitThis": false,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -16,6 +14,6 @@
     "lib": ["es2020", "dom"],
     "outDir": "lib"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/api/subscan.ts", "src/api/websocket.ts"]
 }
-

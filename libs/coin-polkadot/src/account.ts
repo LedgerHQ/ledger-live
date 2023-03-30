@@ -18,7 +18,7 @@ function formatOperationSpecifics(
     validatorStash,
     amount,
   } = op.extra;
-  let str = (validators || []).map((v) => `\n    ${v}`).join("");
+  let str = (validators || []).map((v: any) => `\n    ${v}`).join("");
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

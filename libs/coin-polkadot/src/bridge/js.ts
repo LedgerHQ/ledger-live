@@ -27,7 +27,10 @@ import { getPreloadStrategy, hydrate, preload } from "../preload";
 import type { Transaction } from "../types";
 import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
 
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
+const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
+  ...t,
+  ...patch,
+});
 
 /**
  * Broadcast the signed transaction

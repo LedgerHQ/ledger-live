@@ -7,7 +7,7 @@ export class InstallSetOfApps {
   readonly installCtaButton: Locator;
   readonly cancelCtaButton: Locator;
   readonly inputOptionSelector: Locator;
-  readonly circleProgressSelector: Function;
+  readonly circleProgressSelector: (circleProgress: string) => Locator;
   readonly installingText: Locator;
 
   constructor(page: Page) {
@@ -20,7 +20,7 @@ export class InstallSetOfApps {
     this.cancelCtaButton = page.locator("data-test-id=skip-cta-button");
     this.inputOptionSelector = page.locator("data-test-id=input-option-selector");
 
-    this.circleProgressSelector = (circleProgress: string): Locator =>
+    this.circleProgressSelector = circleProgress =>
       page.locator(`circle[style="stroke-dashoffset: ${circleProgress};"]`);
     this.installingText = page.locator("data-test-id=installing-text");
   }
