@@ -13,7 +13,6 @@ import {
   LockedDeviceError,
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
-import type { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import type { AppOp, SkippedAppOp } from "../apps/types";
@@ -32,6 +31,7 @@ import { mustUpgrade } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
 import manager from "../manager";
 import { LockedDeviceEvent } from "./actions/types";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -40,8 +40,10 @@ export type RequiresDerivation = {
   forceFormat?: string;
 };
 export type Input = {
-  modelId: DeviceModelId;
-  devicePath: string;
+  deviceId: string;
+  request: ConnectAppRequest;
+};
+export type ConnectAppRequest = {
   appName: string;
   requiresDerivation?: RequiresDerivation;
   dependencies?: string[];
@@ -49,6 +51,7 @@ export type Input = {
   outdatedApp?: AppAndVersion;
   allowPartialDependencies: boolean;
 };
+
 export type AppAndVersion = {
   name: string;
   version: string;
@@ -280,17 +283,16 @@ const derivationLogic = (
  * @param allowPartialDependencies If some dependencies need to be installed, and if set to true,
  *   skip any app install if the app is not found from the provider.
  */
-const cmd = ({
-  modelId,
-  devicePath,
-  appName,
-  requiresDerivation,
-  dependencies,
-  requireLatestFirmware,
-  outdatedApp,
-  allowPartialDependencies = false,
-}: Input): Observable<ConnectAppEvent> =>
-  withDevice(devicePath)(
+const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
+  const {
+    appName,
+    requiresDerivation,
+    dependencies,
+    requireLatestFirmware,
+    outdatedApp,
+    allowPartialDependencies = false,
+  } = request;
+  return withDevice(deviceId)(
     (transport) =>
       new Observable((o) => {
         const timeoutSub = of({
@@ -298,7 +300,6 @@ const cmd = ({
         })
           .pipe(delay(1000))
           .subscribe((e) => o.next(e as ConnectAppEvent));
-
         const innerSub = ({
           appName,
           dependencies,
@@ -408,7 +409,7 @@ const cmd = ({
               }
 
               const appNeedsUpgrade = mustUpgrade(
-                modelId,
+                DeviceModelId.stax, // FIXME dont let me merge this.
                 appAndVersion.name,
                 appAndVersion.version
               );
@@ -496,5 +497,6 @@ const cmd = ({
         };
       })
   );
+};
 
 export default cmd;

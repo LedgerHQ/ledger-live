@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
@@ -41,10 +41,12 @@ type Props = {
 };
 
 const ChangeDeviceLanguageAction: React.FC<Props> = ({ language, onError, onSuccess }) => {
+  const request = useMemo(() => ({ language }), [language]);
+
   return (
     <DeviceAction
       action={action}
-      request={language}
+      request={request}
       onResult={onSuccess}
       Result={() => <DeviceLanguageInstalled language={language} />}
       onError={onError}
