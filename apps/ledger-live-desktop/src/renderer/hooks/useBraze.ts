@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useCallback } from "react";
 import * as braze from "@braze/web-sdk";
 import { Card } from "@braze/web-sdk";
 
@@ -6,6 +6,7 @@ import { getBrazeConfig } from "~/braze-setup";
 import { LocationContentCard, PortfolioContentCard, ContentCard } from "~/types/dynamicContent";
 import { useDispatch } from "react-redux";
 import { setPortfolioCards } from "../actions/dynamicContent";
+import getUser from "~/helpers/user";
 
 const getPortfolioCards = (elem: braze.ContentCards) =>
   elem.cards.filter(card => card.extras?.platform === "desktop");
@@ -21,16 +22,20 @@ export const mapAsPortfolioContentCard = (card: Card) =>
     path: card.extras?.path,
   } as PortfolioContentCard);
 
-export function useBraze() {
+export async function useBraze() {
   const dispatch = useDispatch();
-  useEffect(() => {
+
+  const initBraze = useCallback(async () => {
+    const user = await getUser();
     const brazeConfig = getBrazeConfig();
     braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
       allowUserSuppliedJavascript: true,
       enableLogging: true,
     });
-    // braze.changeUser("7d44cb19-eab3-4f85-b1c8-9f79981a35da");
+    if (user) {
+      braze.changeUser(user.id);
+    }
 
     braze.requestPushPermission(
       (endpoint, publicKey, userAuth) => {
@@ -53,5 +58,9 @@ export function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch]);
+  }, [dispatch])
+  
+  useEffect(() => {
+    initBraze()
+  }, [initBraze]);
 }
