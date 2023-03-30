@@ -1,7 +1,8 @@
 import * as React from "react";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
+import { genAccount } from "@ledgerhq/live-common/mock/account";
 
 import { render, screen } from "../../__test__/test-renderer";
 
@@ -25,40 +26,9 @@ const mockedOperation: Operation = {
 
 const ethereum = getCryptoCurrencyById("ethereum");
 
-const mockedAccount: Account = {
-  type: "Account",
-  name: "Mock Ethereum Account",
-  id: "js:1:ethereum:0xaccount",
-  seedIdentifier: "",
-  derivationMode: "",
-  index: 0,
-  freshAddress: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
-  freshAddressPath: "44'/60'/0'/0/0",
-  freshAddresses: [
-    {
-      address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
-      derivationPath: "44'/60'/0'/0/0",
-    },
-  ],
-  starred: false,
-  used: false,
-  balance: new BigNumber(324567),
-  spendableBalance: new BigNumber(2345674234),
-  blockHeight: 100,
-  creationDate: new Date(),
+const mockedAccount = genAccount("js:1:ethereum:0xaccount", {
   currency: ethereum,
-  unit: ethereum.units[0],
-  operationsCount: 1,
-  operations: [mockedOperation],
-  pendingOperations: [],
-  lastSyncDate: new Date(),
-  balanceHistoryCache: {
-    HOUR: { latestDate: null, balances: [] },
-    DAY: { latestDate: null, balances: [] },
-    WEEK: { latestDate: null, balances: [] },
-  },
-  swapHistory: [],
-};
+});
 
 describe("OperationRow test (non optimistic operation)", () => {
   it("should render correctly", () => {
