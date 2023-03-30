@@ -20,8 +20,14 @@ import defaultTheme from "~/renderer/styles/theme";
 import palettes from "~/renderer/styles/palettes";
 import RecipientField from "./RecipientField";
 
+// LinkWithExternalIcon imports a svg that is not supported by jest
+jest.mock("../../../components/LinkWithExternalIcon", () => {
+  const mockDiv = () => <div />;
+  return mockDiv;
+});
+
 // Temp mock to prevent error on sentry init
-jest.mock("../../../../sentry/install.js", () => ({
+jest.mock("../../../../sentry/install", () => ({
   init: () => null,
 }));
 // Alert component have many problems and many import that make the test break so
