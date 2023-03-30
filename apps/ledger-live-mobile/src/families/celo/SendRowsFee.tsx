@@ -36,10 +36,7 @@ type Props = {
   | StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeAmount>
   | StackNavigatorProps<CeloUnlockFlowParamList, ScreenName.CeloUnlockAmount>
   | StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteAmount>
-  | StackNavigatorProps<
-      CeloWithdrawFlowParamList,
-      ScreenName.CeloWithdrawAmount
-    >,
+  | StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawAmount>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 export default function CeloFeeRow({ account, transaction }: Props) {
