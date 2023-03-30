@@ -92,3 +92,18 @@ export function isEditableOperation(
     isEthFamily && operation.blockHeight === null && !!operation.transactionRaw
   );
 }
+
+export const isOldestEditableOperation = (
+  operation: Operation,
+  account: AccountLike
+): boolean => {
+  return account.pendingOperations.some((pendingOperation) => {
+    return (
+      isEditableOperation(account, pendingOperation) &&
+      operation.transactionSequenceNumber &&
+      pendingOperation.transactionSequenceNumber &&
+      pendingOperation.transactionSequenceNumber <
+        operation.transactionSequenceNumber
+    );
+  });
+};
