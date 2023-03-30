@@ -7,7 +7,7 @@ import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { MethodSelection } from "../../families/ethereum/EditTransaction/MethodSelection";
-import { EditTransactionParamList } from "./types/EditTransactionNavigator";
+import { EditTransactionParamList } from "../../families/ethereum/EditTransactionNavigator";
 import SendSummary from "../../screens/SendFunds/04-Summary";
 import SelectDevice from "../../screens/SelectDevice";
 import SendConnectDevice from "../../screens/ConnectDevice";
