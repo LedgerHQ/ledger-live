@@ -402,10 +402,8 @@ jobs:
             };
 
             let summary = `### TypeCheck
-            {'DISABLED (ts migration in progress)'/*
-            ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
-              - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
-              */}
+
+            DISABLED (ts migration in progress)
 
             ### Dead Code Check
             ${deadcodecheck.pass ? "Dead code checks are fine" : "Unfortunately, dead code checks did not pass. Try \`npx unimported\` in apps/ledger-live-desktop"}
