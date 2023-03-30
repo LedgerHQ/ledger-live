@@ -13,6 +13,7 @@ module.exports = {
     jest: {
       setupTimeout: 500000,
     },
+    retries: 1,
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
