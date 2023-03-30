@@ -16,10 +16,7 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { getEnv } from "../../env";
@@ -200,9 +197,7 @@ function getEthereumjsTxCommon(currency) {
   });
 }
 
-export function EIP1559ShouldBeUsed(
-  currency: CryptoCurrency | TokenCurrency
-): boolean {
+export function EIP1559ShouldBeUsed(currency: CryptoCurrency): boolean {
   return getEnv("EIP1559_ENABLED_CURRENCIES").includes(currency.id);
 }
 
