@@ -1,13 +1,11 @@
-// @flow
-
 import React, { useCallback, useState, memo } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
-import type { StepId } from "./types";
+import { StepId } from "./types";
 
 type Props = {
-  stepId: StepId,
-  onClose: Function,
+  stepId: StepId;
+  onClose: Function;
 };
 
 const EditTransactionModal = ({ stepId: initialStepId, onClose }: Props) => {

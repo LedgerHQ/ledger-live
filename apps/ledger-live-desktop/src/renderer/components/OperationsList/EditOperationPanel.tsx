@@ -1,7 +1,5 @@
-// @flow
-
 import React, { useCallback, memo } from "react";
-import type { AccountLike, Account, Operation } from "@ledgerhq/types-live";
+import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";
@@ -10,12 +8,12 @@ import { useDispatch } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
-  operation: Operation,
-  account: AccountLike,
-  parentAccount?: Account,
+  operation: Operation;
+  account: AccountLike;
+  parentAccount?: Account;
 };
 
-const EditOperationPanel: React$ComponentType<Props> = (props: Props) => {
+const EditOperationPanel = (props: Props) => {
   const { operation, account, parentAccount } = props;
   const dispatch = useDispatch();
   const editEthTx = useFeature("editEthTx");

@@ -7,7 +7,7 @@ import Button from "~/renderer/components/Button";
 import styled from "styled-components";
 import CheckBox from "~/renderer/components/CheckBox";
 import Text from "~/renderer/components/Text";
-import type { StepProps } from "../types";
+import { StepProps } from "../types";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Flex } from "@ledgerhq/react-ui";

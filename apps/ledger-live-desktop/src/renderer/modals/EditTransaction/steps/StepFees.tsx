@@ -1,5 +1,3 @@
-// @flow
-
 import React, { Fragment, PureComponent, memo } from "react";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -9,8 +7,9 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
 import SendAmountFields from "../../Send/SendAmountFields";
-import type { StepProps } from "../types";
+import { StepProps } from "../types";
 import { BigNumber } from "bignumber.js";
+// eslint-disable-next-line no-restricted-imports
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
 
 const StepFees = (props: StepProps) => {

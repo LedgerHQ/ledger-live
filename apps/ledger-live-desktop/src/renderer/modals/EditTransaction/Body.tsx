@@ -1,28 +1,26 @@
-// @flow
-
 import React, { useCallback, useState, memo } from "react";
 import { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import type { TFunction } from "react-i18next";
 import { createStructuredSelector } from "reselect";
-import { Trans, withTranslation } from "react-i18next";
+import { Trans, withTranslation, TFunction } from "react-i18next";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { Account, AccountLike, Operation, TransactionCommonRaw } from "@ledgerhq/types-live";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Account, AccountLike, Operation, TransactionCommonRaw } from "@ledgerhq/types-live";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+// eslint-disable-next-line no-restricted-imports
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import StepMethod, { StepMethodFooter } from "./steps/StepMethod";
 import StepFees, { StepFeesFooter } from "./steps/StepFees";
 import StepConnectDevice from "~/renderer/modals/Send/steps/StepConnectDevice";
@@ -31,42 +29,38 @@ import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import StepConfirmation, {
   StepConfirmationFooter,
 } from "~/renderer/modals/Send/steps/StepConfirmation";
-import type { St, StepId } from "./types";
+import { St, StepId } from "./types";
 
-type OwnProps = {|
-  stepId: StepId,
-  onChangeStepId: StepId => void,
-  onClose: () => void,
+type OwnProps = {
+  stepId: StepId;
+  onChangeStepId: (a: StepId) => void;
+  onClose: () => void;
   params: {
-    account: ?AccountLike,
-    parentAccount: ?Account,
-    recipient?: string,
-    amount?: BigNumber,
-    disableBacks?: string[],
-    transaction?: Transaction,
-    onConfirmationHandler: Function,
-    onFailHandler: Function,
-    transactionRaw: TransactionCommonRaw,
-    transactionSequenceNumber: number,
-    isNftOperation: boolean,
-  },
-|};
+    account: AccountLike | undefined | null;
+    parentAccount: Account | undefined | null;
+    recipient?: string;
+    amount?: BigNumber;
+    disableBacks?: string[];
+    transaction?: Transaction;
+    onConfirmationHandler: Function;
+    onFailHandler: Function;
+    transactionRaw: TransactionCommonRaw;
+    transactionSequenceNumber: number;
+    isNftOperation: boolean;
+  };
+};
 
-type StateProps = {|
-  t: TFunction,
-  device: ?Device,
-  accounts: Account[],
-  closeModal: string => void,
-  openModal: (string, any) => void,
-  updateAccountWithUpdater: (string, (Account) => Account) => void,
-  setIsNFTSend: boolean => void,
-  isNFTSend: boolean,
-|};
-
-type Props = {|
-  ...OwnProps,
-  ...StateProps,
-|};
+type StateProps = {
+  t: TFunction;
+  device: Device | undefined | null;
+  accounts: Account[];
+  closeModal: (a: string) => void;
+  openModal: (b: string, a: any) => void;
+  updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
+  setIsNFTSend: (a: boolean) => void;
+  isNFTSend: boolean;
+};
+type Props = {} & OwnProps & StateProps;
 
 const createSteps = (): St[] => [
   {
@@ -189,6 +183,7 @@ const Body = ({
 
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const error = transactionError || bridgeError;
+
   const mainAccount = getMainAccount(account, parentAccount);
   const feePerGas = new BigNumber(
     EIP1559ShouldBeUsed(mainAccount.currency)
