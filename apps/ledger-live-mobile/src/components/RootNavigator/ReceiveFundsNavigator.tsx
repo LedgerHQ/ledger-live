@@ -17,7 +17,7 @@ import ReceiveAddAccount from "../../screens/ReceiveFunds/02-AddAccount";
 
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
-import HeaderRightClose from "../HeaderRightClose";
+import { HeaderCloseButtonAdvanced } from "../HeaderCloseButton";
 import { track } from "../../analytics";
 import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
 
@@ -36,7 +36,7 @@ export default function ReceiveFundsNavigator() {
   const stackNavigationConfig = useMemo(
     () => ({
       ...getStackNavigatorConfig(colors, true),
-      headerRight: () => <HeaderRightClose onClose={onClose} />,
+      headerRight: () => <HeaderCloseButtonAdvanced onClose={onClose} />,
     }),
     [colors, onClose],
   );
@@ -154,7 +154,9 @@ export default function ReceiveFundsNavigator() {
         options={{
           headerTitle: "",
           headerLeft: () => null,
-          headerRight: () => <HeaderRightClose onClose={onConfirmationClose} />,
+          headerRight: () => (
+            <HeaderCloseButtonAdvanced onClose={onConfirmationClose} />
+          ),
         }}
       />
       {/* Receive Address Device Verification */}
@@ -165,7 +167,9 @@ export default function ReceiveFundsNavigator() {
           headerTitle: "",
           headerLeft: () => null,
           headerRight: () => (
-            <HeaderRightClose onClose={onVerificationConfirmationClose} />
+            <HeaderCloseButtonAdvanced
+              onClose={onVerificationConfirmationClose}
+            />
           ),
         }}
       />

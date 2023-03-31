@@ -30,7 +30,7 @@ import {
 } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
-import HeaderRightClose from "../HeaderRightClose";
+import { HeaderCloseButtonAdvanced } from "../HeaderCloseButton";
 import { track } from "../../analytics";
 
 type BackToWhitelistedDomainProps = {
@@ -100,7 +100,7 @@ function BackToWhitelistedDomain({
 function HeaderRight() {
   const { colors } = useTheme();
 
-  return <HeaderRightClose color={colors.neutral.c100} />;
+  return <HeaderCloseButtonAdvanced color={colors.neutral.c100} />;
 }
 
 type Props = {

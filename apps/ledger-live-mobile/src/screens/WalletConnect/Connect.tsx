@@ -24,7 +24,7 @@ import CrossRound from "../../icons/CrossRound";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import Circle from "../../components/Circle";
 import Alert from "../../components/Alert";
-import HeaderRightClose from "../../components/HeaderRightClose";
+import { HeaderCloseButtonAdvanced } from "../../components/HeaderCloseButton";
 import { TrackScreen } from "../../analytics";
 import AccountHeaderTitle from "../Account/AccountHeaderTitle";
 import { rgba, Theme } from "../../colors";
@@ -66,7 +66,7 @@ export default function Connect({ route, navigation }: Props) {
   useEffect(() => {
     const opts = {
       headerRight: () => (
-        <HeaderRightClose
+        <HeaderCloseButtonAdvanced
           onClose={() => {
             disconnect();
           }}

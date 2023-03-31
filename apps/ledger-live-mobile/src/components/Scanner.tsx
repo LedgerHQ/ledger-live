@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import StyledStatusBar from "./StyledStatusBar";
 import CameraScreen from "./CameraScreen";
-import HeaderRightClose from "./HeaderRightClose";
+import { HeaderCloseButtonAdvanced } from "./HeaderCloseButton";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import RequiresCameraPermissions from "./RequiresCameraPermissions";
 import CameraPermissionContext from "./RequiresCameraPermissions/CameraPermissionContext";
@@ -29,7 +29,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
     if (hasPermission) {
       navigation.setOptions({
         headerRight: () => (
-          <HeaderRightClose
+          <HeaderCloseButtonAdvanced
             color={colors.constant.white}
             preferDismiss={false}
           />
@@ -69,7 +69,10 @@ const ScannerWrappedInRequiresCameraPermission: React.FC<Props> = props => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <HeaderRightClose color={colors.neutral.c100} preferDismiss={false} />
+        <HeaderCloseButtonAdvanced
+          color={colors.neutral.c100}
+          preferDismiss={false}
+        />
       ),
     });
   }, [colors.neutral.c100, navigation]);

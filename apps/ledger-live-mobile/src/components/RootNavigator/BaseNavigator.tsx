@@ -48,7 +48,7 @@ import Account from "../../screens/Account";
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import styles from "../../navigation/styles";
-import HeaderRightClose from "../HeaderRightClose";
+import { HeaderCloseButtonAdvanced } from "../HeaderCloseButton";
 import StepHeader from "../StepHeader";
 import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
@@ -464,7 +464,7 @@ export default function BaseNavigator() {
           ...TransparentHeaderNavigationOptions,
           title: t("send.scan.title"),
           headerRight: () => (
-            <HeaderRightClose
+            <HeaderCloseButtonAdvanced
               color={colors.constant.white}
               preferDismiss={false}
             />
@@ -568,7 +568,9 @@ export default function BaseNavigator() {
         component={NoFundsFlowNavigator}
         options={{
           ...TransparentHeaderNavigationOptions,
-          headerRight: () => <HeaderRightClose preferDismiss={false} />,
+          headerRight: () => (
+            <HeaderCloseButtonAdvanced preferDismiss={false} />
+          ),
           headerLeft: () => null,
         }}
       />
@@ -577,7 +579,9 @@ export default function BaseNavigator() {
         component={StakeFlowNavigator}
         options={{
           ...TransparentHeaderNavigationOptions,
-          headerRight: () => <HeaderRightClose preferDismiss={false} />,
+          headerRight: () => (
+            <HeaderCloseButtonAdvanced preferDismiss={false} />
+          ),
           headerLeft: () => null,
         }}
       />
