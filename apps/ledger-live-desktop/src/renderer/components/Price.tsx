@@ -1,0 +1,120 @@
+import React, { useMemo } from "react";
+import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { BigNumber } from "bignumber.js";
+import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
+import { getCurrencyColor } from "~/renderer/getCurrencyColor";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
+import { colors } from "~/renderer/styles/theme";
+import useTheme from "~/renderer/hooks/useTheme";
+import Box from "~/renderer/components/Box";
+import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
+import IconActivity from "~/renderer/icons/Activity";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { NoCountervaluePlaceholder } from "./CounterValue";
+type Props = {
+  unit?: Unit;
+  rate?: BigNumber;
+  showAllDigits?: boolean;
+  from: Currency;
+  to?: Currency;
+  withActivityCurrencyColor?: boolean;
+  withActivityColor?: string;
+  withIcon?: boolean;
+  withEquality?: boolean;
+  date?: Date;
+  color?: string;
+  fontSize?: number;
+  fontWeight?: number;
+  iconSize?: number;
+  placeholder?: React.ReactNode;
+  dynamicSignificantDigits?: number;
+  staticSignificantDigits?: number;
+};
+export default function Price({
+  from,
+  to,
+  unit,
+  date,
+  withActivityCurrencyColor,
+  withActivityColor,
+  withEquality,
+  placeholder,
+  color,
+  fontSize,
+  fontWeight,
+  iconSize,
+  showAllDigits,
+  withIcon = true,
+  rate,
+  dynamicSignificantDigits,
+  staticSignificantDigits,
+}: Props) {
+  const effectiveUnit = unit || from.units[0];
+  const valueNum = 10 ** effectiveUnit.magnitude;
+  const rawCounterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = to || rawCounterValueCurrency;
+  const rawCounterValue = useCalculate({
+    from,
+    to: counterValueCurrency,
+    value: valueNum,
+    disableRounding: true,
+  });
+  const counterValue = rate
+    ? rate.times(valueNum) // NB Allow to override the rate for swap
+    : typeof rawCounterValue === "number"
+    ? BigNumber(rawCounterValue)
+    : rawCounterValue;
+  const bgColor = useTheme("colors.palette.background.paper");
+  const activityColor = useMemo(
+    () =>
+      withActivityColor
+        ? colors[withActivityColor]
+        : !withActivityCurrencyColor
+        ? color
+          ? colors[color]
+          : undefined
+        : getCurrencyColor(from, bgColor),
+    [bgColor, color, from, withActivityColor, withActivityCurrencyColor],
+  );
+  if (!counterValue || counterValue.isZero())
+    return <NoCountervaluePlaceholder placeholder={placeholder} />;
+  const subMagnitude = counterValue.lt(1) || showAllDigits ? 1 : 0;
+  return (
+    <PriceWrapper color={color} fontSize={fontSize} fontWeight={fontWeight}>
+      {withIcon ? (
+        <IconActivity
+          size={iconSize || 12}
+          style={{
+            color: activityColor,
+            marginRight: 4,
+          }}
+        />
+      ) : null}
+      {!withEquality ? null : (
+        <>
+          <CurrencyUnitValue value={BigNumber(valueNum)} unit={effectiveUnit} showCode />
+          {" = "}
+        </>
+      )}
+      <CurrencyUnitValue
+        unit={counterValueCurrency.units[0]}
+        value={counterValue}
+        disableRounding={!!subMagnitude}
+        subMagnitude={subMagnitude}
+        dynamicSignificantDigits={dynamicSignificantDigits}
+        staticSignificantDigits={staticSignificantDigits}
+        showCode
+      />
+    </PriceWrapper>
+  );
+}
+const PriceWrapper: ThemedComponent<{}> = styled(Box).attrs(() => ({
+  ff: "Inter",
+  horizontal: true,
+}))`
+  line-height: 1.2;
+  white-space: pre;
+  align-items: baseline;
+`;

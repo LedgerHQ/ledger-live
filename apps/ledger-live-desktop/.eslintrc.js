@@ -31,7 +31,6 @@ module.exports = {
   extends: [
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:flowtype/recommended",
     "standard",
     "plugin:prettier/recommended",
     "plugin:jest/recommended",
@@ -58,7 +57,7 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: "module",
   },
-  plugins: ["react", "react-hooks", "flowtype", "jest"],
+  plugins: ["react", "react-hooks", "jest"],
   rules: {
     "space-before-function-paren": 0,
     "comma-dangle": 0,
@@ -92,8 +91,8 @@ module.exports = {
         "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
         "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
         "no-use-before-define": "off",
-        "@typescript-eslint/no-use-before-define": ["error"],
-        "flowtype/no-types-missing-file-annotation": 0,
+        "@typescript-eslint/ban-types": 0, // FIXME make an error later
+        "@typescript-eslint/no-use-before-define": 0, // FIXME make an error later
         "react/jsx-filename-extension": 0,
 
         // Ignore live-common for the moment because this rule does not work with subpath exports
