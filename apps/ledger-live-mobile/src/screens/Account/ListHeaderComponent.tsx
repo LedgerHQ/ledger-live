@@ -39,6 +39,7 @@ import {
   FabAccountMainActions,
 } from "../../components/FabActions/actionsList/account";
 import { ActionButtonEvent } from "../../components/FabActions";
+import { EditOperationCard } from "../../families/ethereum/EditTransaction/EditOperationCard";
 
 type Props = {
   account?: AccountLike;
@@ -168,17 +169,11 @@ export function getListHeaderComponents({
         </Box>
       ),
       oldestEditableOperation ? (
-        <SectionContainer px={6}>
-          <SideImageCard
-            title={t(
-              isOperationStuck
-                ? "editTransaction.panel.stuckMessage"
-                : "editTransaction.panel.speedupMessage",
-            )}
-            cta={t("editTransaction.cta")}
-            onPress={() => onEditTransactionPress(oldestEditableOperation)}
-          />
-        </SectionContainer>
+        <EditOperationCard
+          oldestEditableOperation={oldestEditableOperation}
+          isOperationStuck={isOperationStuck}
+          onEditTransactionPress={onEditTransactionPress}
+        />
       ) : null,
       <SectionContainer px={6} bg={colors.background.main}>
         <SectionTitle
