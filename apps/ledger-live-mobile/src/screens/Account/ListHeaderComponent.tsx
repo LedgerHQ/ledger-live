@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
-import { Box, ColorPalette, SideImageCard } from "@ledgerhq/native-ui";
+import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 import { TFunction } from "react-i18next";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
