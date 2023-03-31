@@ -8,6 +8,7 @@ export type Args = {
   title?: string;
   headerLeft?: (() => React.ReactElement) | null;
   headerRight?: (() => React.ReactElement) | null;
+  header?: () => React.ReactElement;
 };
 
 /**
@@ -23,12 +24,17 @@ export type Args = {
  * @param headerRight function returning a ReactElement displayed on the right of the header.
  *   `components/HeaderRightClose.tsx` should be used for basic close button.
  *   Set to `undefined` in order to reset to the default headerRight, or `null` to display nothing.
+ * @param header function returning a ReactElement displayed as the entire header.
+ *  It overrides every other params.
+ *  Set to `undefined` in order to reset to the default header.
+ *  `null` is forbidden. Use `headerShown` to disable the header.
  */
 export const useSetNavigationHeader = ({
   headerShown = true,
   title,
   headerLeft,
   headerRight,
+  header,
 }: Args) => {
   const navigation = useNavigation();
 
@@ -61,24 +67,38 @@ export const useSetNavigationHeader = ({
 
   // Updates header on dynamic changes
   useEffect(() => {
-    // Checks on `undefined`:
-    // if anOption = undefined, anOption resulting from { ...initialHeaderOptions, anOption } is set to undefined
-    // which results, in the case of react-navigation, in using the default value for anOption,
-    // which can be different than the one set initially before rendering the associated component.
-    // Wanted behavior: if `undefined`, then initial value
-    navigation.setOptions({
-      headerShown:
-        headerShown === undefined
-          ? initialHeaderOptions.headerShown
-          : headerShown,
-      title: title === undefined ? initialHeaderOptions.title : title,
-      headerLeft:
-        headerLeft === undefined ? initialHeaderOptions.headerLeft : headerLeft,
-      headerRight:
-        headerRight === undefined
-          ? initialHeaderOptions.headerRight
-          : headerRight,
-    });
+    // header overrides every other params
+    if (header !== undefined) {
+      navigation.setOptions({
+        headerShown:
+          headerShown === undefined
+            ? initialHeaderOptions.headerShown
+            : headerShown,
+        header,
+      });
+    } else {
+      // Checks on `undefined`:
+      // if anOption = undefined, anOption resulting from { ...initialHeaderOptions, anOption } is set to undefined
+      // which results, in the case of react-navigation, in using the default value for anOption,
+      // which can be different than the one set initially before rendering the associated component.
+      // Wanted behavior: if `undefined`, then initial value
+      navigation.setOptions({
+        header: undefined,
+        headerShown:
+          headerShown === undefined
+            ? initialHeaderOptions.headerShown
+            : headerShown,
+        title: title === undefined ? initialHeaderOptions.title : title,
+        headerLeft:
+          headerLeft === undefined
+            ? initialHeaderOptions.headerLeft
+            : headerLeft,
+        headerRight:
+          headerRight === undefined
+            ? initialHeaderOptions.headerRight
+            : headerRight,
+      });
+    }
   }, [
     headerLeft,
     headerShown,
@@ -86,5 +106,6 @@ export const useSetNavigationHeader = ({
     navigation,
     title,
     initialHeaderOptions,
+    header,
   ]);
 };
