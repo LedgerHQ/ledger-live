@@ -26,45 +26,6 @@ export const defaultFeatures: DefaultFeatures = {
   currencyAvalanchePChain: {
     enabled: false,
   },
-  currencyOsmosis: {
-    enabled: false,
-  },
-  currencyFantom: {
-    enabled: false,
-  },
-  currencyMoonbeam: {
-    enabled: false,
-  },
-  currencyCronos: {
-    enabled: false,
-  },
-  currencyNear: {
-    enabled: false,
-  },
-  currencySongbird: {
-    enabled: false,
-  },
-  currencyFlare: {
-    enabled: false,
-  },
-  currencyOsmosisMobile: {
-    enabled: false,
-  },
-  currencyFantomMobile: {
-    enabled: false,
-  },
-  currencyMoonbeamMobile: {
-    enabled: false,
-  },
-  currencyCronosMobile: {
-    enabled: false,
-  },
-  currencySongbirdMobile: {
-    enabled: false,
-  },
-  currencyFlareMobile: {
-    enabled: false,
-  },
   deviceInitialApps: {
     enabled: false,
     params: {
