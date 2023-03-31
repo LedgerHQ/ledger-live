@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.18.0-nightly.2
+
+### Minor Changes
+
+- [#3016](https://github.com/LedgerHQ/ledger-live/pull/3016) [`5fa3f57e08`](https://github.com/LedgerHQ/ledger-live/commit/5fa3f57e08676481d18bdf7fc2406ac1184b1a9a) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - feat: ledger recover feature flag
+
+### Patch Changes
+
+- [#3111](https://github.com/LedgerHQ/ledger-live/pull/3111) [`e6e71dc909`](https://github.com/LedgerHQ/ledger-live/commit/e6e71dc909ff9382c7b1d1033ebdffde15ec847e) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix a bug on the firmware update making the app to be stuck in a single step of the update model while the device updated.
+
+- [#3104](https://github.com/LedgerHQ/ledger-live/pull/3104) [`1fdf8e7242`](https://github.com/LedgerHQ/ledger-live/commit/1fdf8e72427367e2082d6ecbbd8ae7b0bee45a7b) Thanks [@Justkant](https://github.com/Justkant)! - fix: recover deeplinks
+
+- [#3099](https://github.com/LedgerHQ/ledger-live/pull/3099) [`e29f7c7bda`](https://github.com/LedgerHQ/ledger-live/commit/e29f7c7bda0444e5d592bd873c894b043eb22417) Thanks [@Justkant](https://github.com/Justkant)! - fix: react-native-webview target="\_blank" on iOS
+
+  Also fix the html5 history.pushState navigation on android
+  More infos on both issues below:
+
+  - https://github.com/react-native-webview/react-native-webview/issues/2905
+  - https://github.com/react-native-webview/react-native-webview/issues/2667
+  - https://github.com/react-native-webview/react-native-webview/pull/2598
+
+- Updated dependencies [[`5fa3f57e08`](https://github.com/LedgerHQ/ledger-live/commit/5fa3f57e08676481d18bdf7fc2406ac1184b1a9a), [`fb65760778`](https://github.com/LedgerHQ/ledger-live/commit/fb6576077854fb21541350a9f7c1cb528fba6e6d), [`a62be79a56`](https://github.com/LedgerHQ/ledger-live/commit/a62be79a56e7aaaf7712fe006d357e3517f1c4b9)]:
+  - @ledgerhq/live-common@29.2.0-nightly.1
+  - @ledgerhq/domain-service@0.2.1-nightly.6
+  - @ledgerhq/coin-framework@0.2.1-nightly.4
+
 ## 3.18.0-nightly.1
 
 ### Minor Changes

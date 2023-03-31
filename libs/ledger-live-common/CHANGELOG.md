@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 29.2.0-nightly.1
+
+### Minor Changes
+
+- [#3016](https://github.com/LedgerHQ/ledger-live/pull/3016) [`5fa3f57e08`](https://github.com/LedgerHQ/ledger-live/commit/5fa3f57e08676481d18bdf7fc2406ac1184b1a9a) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - feat: ledger recover feature flag
+
+### Patch Changes
+
+- [#3103](https://github.com/LedgerHQ/ledger-live/pull/3103) [`fb65760778`](https://github.com/LedgerHQ/ledger-live/commit/fb6576077854fb21541350a9f7c1cb528fba6e6d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Update minimum Polkadot app version to 20.9370.0
+
+- [#3093](https://github.com/LedgerHQ/ledger-live/pull/3093) [`a62be79a56`](https://github.com/LedgerHQ/ledger-live/commit/a62be79a56e7aaaf7712fe006d357e3517f1c4b9) Thanks [@lvndry](https://github.com/lvndry)! - ethereum fetchAllTransaction method uses `from_height` query parameter
+
+- Updated dependencies [[`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117)]:
+  - @ledgerhq/cryptoassets@9.2.0-nightly.2
+  - @ledgerhq/coin-framework@0.2.1-nightly.4
+  - @ledgerhq/coin-polkadot@0.0.4-nightly.4
+  - @ledgerhq/hw-app-eth@6.32.2-nightly.4
+
 ## 29.1.1-nightly.0
 
 ### Patch Changes
