@@ -44,7 +44,7 @@ export function Search({
   inputRef,
   result,
   isSearching,
-  onCancel,
+  backAction,
   onChange,
   onFocus,
 }: Props) {
@@ -105,7 +105,7 @@ export function Search({
               top: 10,
             }}
             style={{ paddingVertical: 16 }}
-            onPress={onCancel}
+            onPress={backAction}
           >
             <ArrowLeft size={18} color={colors.neutral.c100} />
           </TouchableOpacity>

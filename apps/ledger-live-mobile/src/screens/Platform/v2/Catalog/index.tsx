@@ -116,7 +116,7 @@ export function Catalog({ navigation }: Props) {
           title={title}
           input={input}
           inputRef={inputRef}
-          onCancel={onCancel}
+          backAction={onCancel}
           onChange={onChange}
           onFocus={onFocus}
           result={result}
