@@ -130,7 +130,6 @@
     "node": "18"
   },
   "dependencies": {
-    "@moonrepo/cli": "^1.0.0"
-  },
-  "packageManager": "pnpm@8.1.1"
+    "@moonrepo/cli": "^1.0.2"
+  }
 }
