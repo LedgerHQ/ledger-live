@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.18.0-next.7
+
+### Patch Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`3ff4c9c3fb`](https://github.com/LedgerHQ/ledger-live/commit/3ff4c9c3fb4f9cf02199ff00364fc9e9464eab84) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix a bug on the firmware update making the app to be stuck in a single step of the update model while the device updated.
+
 ## 3.18.0-next.6
 
 ### Minor Changes
