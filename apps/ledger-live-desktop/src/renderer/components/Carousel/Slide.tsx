@@ -38,8 +38,8 @@ type Props = {
   id: string,
   url?: string,
   path?: string,
-  title: *,
-  description: *,
+  title: string,
+  description: string,
   imgs?: Img[],
   image?: string,
 };
