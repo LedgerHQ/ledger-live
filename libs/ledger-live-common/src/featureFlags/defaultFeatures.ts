@@ -44,6 +44,9 @@ export const defaultFeatures: DefaultFeatures = {
       supportedCurrencyIds: ["ethereum"],
     },
   },
+  editEthTx: {
+    enabled: false,
+  },
   ratingsPrompt: {
     enabled: false,
     params: {
