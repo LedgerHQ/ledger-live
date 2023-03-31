@@ -1,6 +1,6 @@
 import {
   TransactionRaw,
-  Transaction as ETHTransaction,
+  Transaction as EthereumTransaction,
 } from "@ledgerhq/live-common/families/ethereum/types";
 import {
   Transaction,
@@ -21,7 +21,7 @@ export type EditTransactionParamList = {
   [ScreenName.EthereumCustomFees]: {
     accountId: string;
     parentId?: string;
-    transaction: Transaction;
+    transaction: EthereumTransaction;
     currentNavigation: ScreenName.EditTransactionMethodSelection;
     nextNavigation: ScreenName.SendSelectDevice;
     setTransaction: (transaction: Transaction) => void;
@@ -32,7 +32,7 @@ export type EditTransactionParamList = {
     deviceId?: string;
     transaction: Transaction;
     transactionRaw?: TransactionRaw;
-    setTransaction: Result<ETHTransaction>["setTransaction"];
+    setTransaction: Result<EthereumTransaction>["setTransaction"];
     operation?: Operation;
     currentNavigation: ScreenName.EditTransactionMethodSelection;
     nextNavigation:

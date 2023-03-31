@@ -7,13 +7,11 @@ import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/Sen
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
 import { ScreenName } from "../const";
-import { EditTransactionParamList } from "../families/ethereum/editTransactionNavigatorParamsList";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
-  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
 >;
 
 export default ({
