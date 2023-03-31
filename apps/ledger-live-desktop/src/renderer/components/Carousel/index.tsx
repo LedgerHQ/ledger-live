@@ -9,7 +9,7 @@ import Button from "~/renderer/components/Button";
 import TimeBasedProgressBar from "~/renderer/components/Carousel/TimeBasedProgressBar";
 import IconCross from "~/renderer/icons/Cross";
 import { getTransitions, useDefaultSlides } from "~/renderer/components/Carousel/helpers";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { setCarouselVisibility } from "~/renderer/actions/settings";
 import { carouselVisibilitySelector } from "~/renderer/reducers/settings";
 import { Trans } from "react-i18next";
@@ -150,7 +150,7 @@ export const Wrapper: ThemedComponent<{}> = styled.div`
   cursor: pointer;
 `;
 
-export const CAROUSEL_NONCE: number = 6;
+export const CAROUSEL_NONCE = 6;
 
 const Carousel = ({
   withArrows = true,
@@ -214,7 +214,7 @@ const Carousel = ({
   }, []);
 
   const close = useCallback(() => {
-    dispatch(setCarouselVisibility(CAROUSEL_NONCE))
+    dispatch(setCarouselVisibility(CAROUSEL_NONCE));
     track("button_clicked", {
       button: "Confirm cards dismissal",
       page: "Portfolio",
