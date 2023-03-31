@@ -49,7 +49,7 @@ import { LendingEnableFlowParamsList } from "../../components/RootNavigator/type
 import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
 import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { EditTransactionParamList } from "../../families/ethereum/EditTransactionNavigator";
+import { EditTransactionParamList } from "../../families/ethereum/editTransactionNavigatorParamsList";
 import { CurrentNetworkFee } from "../../families/ethereum/CurrentNetworkFee";
 
 type Navigation = BaseComposite<
