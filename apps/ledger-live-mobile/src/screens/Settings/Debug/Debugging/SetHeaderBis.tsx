@@ -24,8 +24,8 @@ export default function DebugSetHeaderBis() {
   useSetNavigationHeader({
     headerShown: true,
     title,
-    HeaderLeft: isLeftBackArrowDisplayed ? () => <HeaderLeftBack /> : null,
-    HeaderRight: isRightCloseDisplayed
+    headerLeft: isLeftBackArrowDisplayed ? () => <HeaderLeftBack /> : null,
+    headerRight: isRightCloseDisplayed
       ? () => (
           <HeaderRightClose color={colors.neutral.c100} preferDismiss={true} />
         )

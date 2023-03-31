@@ -54,10 +54,10 @@ const BleDevicesScanning = ({
 
   useSetNavigationHeader({
     headerShown: !onGoBack ? true : undefined,
-    HeaderLeft: onGoBack
+    headerLeft: onGoBack
       ? () => <HeaderLeftBack onBackPress={onGoBack} />
       : null,
-    HeaderRight: null,
+    headerRight: null,
   });
 
   const productName = filterByDeviceModelId

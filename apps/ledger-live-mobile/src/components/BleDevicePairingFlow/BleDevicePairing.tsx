@@ -70,10 +70,10 @@ const BleDevicePairing = ({
 
   useSetNavigationHeader({
     headerShown: true,
-    HeaderRight: () => (
+    headerRight: () => (
       <HeaderRightClose onClose={handleClose} skipNavigation={true} />
     ),
-    HeaderLeft: null,
+    headerLeft: null,
   });
 
   let content: ReactNode;
