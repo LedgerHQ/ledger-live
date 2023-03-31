@@ -1,10 +1,10 @@
 import * as React from "react";
+import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 
-import { render, screen } from "../../__test__/test-renderer";
+import { render } from "../../__test__/test-renderer";
 
 import OperationRow from ".";
 
@@ -32,7 +32,7 @@ const mockedAccount = genAccount("js:1:ethereum:0xaccount", {
 
 describe("OperationRow test (non optimistic operation)", () => {
   it("should render correctly", () => {
-    render(
+    const { getByTestId } = render(
       <OperationRow
         account={mockedAccount}
         parentAccount={null}
@@ -41,7 +41,7 @@ describe("OperationRow test (non optimistic operation)", () => {
       />,
     );
 
-    const operationRowDate = screen.getByTestId("operationRowDate");
-    expect(operationRowDate).toBeDefined();
+    const operationRowDate = getByTestId("operationRowDate");
+    expect(operationRowDate).toBeVisible();
   });
 });
