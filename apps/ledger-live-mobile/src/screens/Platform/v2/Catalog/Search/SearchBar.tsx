@@ -9,7 +9,10 @@ export function SearchBar({
   inputRef,
   onChange,
   onFocus,
-}: Omit<SearchBarValues<LiveAppManifest>, "result" | "isSearching">) {
+}: Omit<
+  SearchBarValues<LiveAppManifest>,
+  "result" | "isSearching" | "isActive" | "onCancel"
+>) {
   const { t } = useTranslation();
 
   return (

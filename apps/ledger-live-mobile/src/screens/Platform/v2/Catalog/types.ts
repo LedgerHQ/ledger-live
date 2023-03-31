@@ -25,4 +25,5 @@ export interface SearchBarValues<Item> {
   isSearching: boolean;
   onChange: (value: string) => void;
   onFocus: () => void;
+  onCancel: () => void;
 }

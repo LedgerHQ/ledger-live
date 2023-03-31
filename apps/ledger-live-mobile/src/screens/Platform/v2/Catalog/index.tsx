@@ -156,9 +156,7 @@ export function Catalog({ navigation }: Props) {
                 input={input}
                 inputRef={inputRef}
                 onChange={onChange}
-                onCancel={onCancel}
                 onFocus={onFocus}
-                isActive={isActive}
               />
             }
             disableStyleBottomHeader

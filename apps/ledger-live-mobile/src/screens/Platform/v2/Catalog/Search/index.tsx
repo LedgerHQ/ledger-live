@@ -34,7 +34,7 @@ type Props = {
   listTitle?: React.ReactNode;
   backAction?: () => void;
   onSelect: (manifest: LiveAppManifest) => void;
-} & SearchBarValues<LiveAppManifest>;
+} & Omit<SearchBarValues<LiveAppManifest>, "onCancel">;
 
 export function Search({
   manifests,
