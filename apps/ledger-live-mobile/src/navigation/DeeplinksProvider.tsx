@@ -128,6 +128,8 @@ const linkingOptions = {
 
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
+          [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
+
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -410,7 +412,7 @@ export const DeeplinksProvider = ({
           const { hostname, pathname } = url;
           const platform = pathname.split("/")[1];
 
-          if (hostname === "discover" && platform) {
+          if ((hostname === "discover" || hostname === "recover") && platform) {
             /**
              * Upstream validation of "ledgerlive://discover/:platform":
              *  - checking that a manifest exists

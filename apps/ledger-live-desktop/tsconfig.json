@@ -21,7 +21,7 @@
       "tests/*": ["./tests/*"]
     }
   },
-  "include": ["tests", "**/*.d.ts"],
+  "include": ["src"],
   "files": ["package.json", "release-notes.json"],
   "exclude": [
     "node_modules",

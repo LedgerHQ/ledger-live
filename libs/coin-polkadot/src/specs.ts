@@ -39,7 +39,7 @@ const polkadot: AppSpec<Transaction> = {
   name: "Polkadot",
   currency: getCryptoCurrencyById("polkadot"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Polkadot",
   },
   testTimeout: 2 * 60 * 1000,
