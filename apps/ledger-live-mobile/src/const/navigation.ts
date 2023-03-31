@@ -514,7 +514,7 @@ export enum ScreenName {
 
   NoFunds = "NoFunds",
   Stake = "Stake",
-  
+
   // avalanche
   AvalancheDelegationStarted = "AvalancheDelegationStarted",
   AvalancheDelegationValidator = "AvalancheDelegationValidator",

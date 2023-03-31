@@ -45,7 +45,6 @@ function fromResourcesRaw(
   };
 }
 
-
 export function assignToAccountRaw(
   account: Account,
   accountRaw: AccountRaw
@@ -67,6 +66,8 @@ export function assignFromAccountRaw(
     .avalanchePChainResources;
   const avalanchePChainAccount = account as AvalanchePChainAccount;
   if (avalanchePChainResourcesRaw) {
-    avalanchePChainAccount.avalanchePChainResources = fromResourcesRaw(avalanchePChainResourcesRaw);
+    avalanchePChainAccount.avalanchePChainResources = fromResourcesRaw(
+      avalanchePChainResourcesRaw
+    );
   }
 }

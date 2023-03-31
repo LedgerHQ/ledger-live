@@ -26,7 +26,7 @@ Array [
     "nfts": undefined,
     "operationsCount": 1,
     "pendingOperations": Array [],
-    "seedIdentifier": "03828c8dad550959fba4b8b7aef4fff624ff514acbd5e5ea8095b2e714747eed7e",
+    "seedIdentifier": undefined,
     "spendableBalance": "20000000",
     "starred": false,
     "swapHistory": Array [],
