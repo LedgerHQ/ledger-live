@@ -27,7 +27,6 @@ import {
 } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Box, Flex, Link } from "@ledgerhq/native-ui";
 import { getEnv } from "@ledgerhq/live-common/env";
 
 import { NavigatorName, ScreenName } from "../../const";
