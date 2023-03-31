@@ -3,7 +3,6 @@ import { debounce, scan, tap } from "rxjs/operators";
 import { useEffect, useCallback, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
 import type { ListAppsResult } from "../../apps/types";
 import { useReplaySubject } from "../../observable";
 import manager from "../../manager";
@@ -197,14 +196,8 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-manager-event", e.type, e)),
-          scan(reducer, getInitialState()),
-          debounce((s: State) => {
-            if (s.allowManagerRequestedWording || s.allowManagerGranted) {
-              return EMPTY;
-            }
-            //Nb consider dropping altogether (?)
-            return interval(getEnv("LIST_APPS_V2") ? 100 : 1500);
-          })
+          debounce((e: Event) => ("replaceable" in e ? interval(100) : EMPTY)),
+          scan(reducer, getInitialState())
         )
         .subscribe(setState);
       return () => {
