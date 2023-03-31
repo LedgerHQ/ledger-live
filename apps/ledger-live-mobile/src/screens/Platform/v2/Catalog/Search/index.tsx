@@ -1,9 +1,7 @@
 import React from "react";
 import { Linking, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import * as Animatable from "react-native-animatable";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { Flex, Text, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -12,8 +10,8 @@ import { TAB_BAR_SAFE_HEIGHT } from "../../../../../components/TabBar/TabBarSafe
 import { Layout } from "../Layout";
 import { SearchBarValues } from "../types";
 import Illustration from "../../../../../images/illustration/Illustration";
-import { SearchBar } from "./SearchBar";
 import { ManifestList } from "../ManifestList";
+import { SearchBar } from "./SearchBar";
 
 export * from "./SearchBar";
 
@@ -21,10 +19,6 @@ const noResultIllustration = {
   dark: require("../../../../../images/illustration/Dark/_051.png"),
   light: require("../../../../../images/illustration/Light/_051.png"),
 };
-
-type WildcardNavigation = StackNavigationProp<
-  Record<string, object | undefined>
->;
 
 const AnimatedView = Animatable.View;
 
@@ -53,11 +47,9 @@ export function Search({
   onCancel,
   onChange,
   onFocus,
-  isActive,
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation<WildcardNavigation>();
 
   const isSearchBarEmpty = input === "";
 
@@ -113,7 +105,7 @@ export function Search({
               top: 10,
             }}
             style={{ paddingVertical: 16 }}
-            onPress={navigation.goBack}
+            onPress={onCancel}
           >
             <ArrowLeft size={18} color={colors.neutral.c100} />
           </TouchableOpacity>
@@ -123,9 +115,7 @@ export function Search({
             input={input}
             inputRef={inputRef}
             onChange={onChange}
-            onCancel={onCancel}
             onFocus={onFocus}
-            isActive={isActive}
           />
         }
         bodyContent={
