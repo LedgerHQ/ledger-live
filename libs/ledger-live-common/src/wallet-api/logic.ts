@@ -280,7 +280,7 @@ export function completeExchangeLogic(
 
   const realFromAccountId = getAccountIdFromWalletAccountId(fromAccountId);
   if (!realFromAccountId) {
-    return Promise.reject(new Error(`accountId ${realFromAccountId} unknown`));
+    return Promise.reject(new Error(`accountId ${fromAccountId} unknown`));
   }
 
   // Nb get a hold of the actual accounts, and parent accounts
@@ -291,7 +291,7 @@ export function completeExchangeLogic(
   if (toAccountId) {
     const realToAccountId = getAccountIdFromWalletAccountId(toAccountId);
     if (!realToAccountId) {
-      return Promise.reject(new Error(`accountId ${realToAccountId} unknown`));
+      return Promise.reject(new Error(`accountId ${toAccountId} unknown`));
     }
 
     toAccount = accounts.find((a) => a.id === realToAccountId);
