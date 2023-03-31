@@ -74,6 +74,7 @@ import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect from "../../screens/DeviceConnect";
+import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import ExploreTabNavigator from "./ExploreTabNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "../../screens/Protect/Player";
@@ -84,7 +85,6 @@ import {
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import EditTransactionNavigator from "../../families/ethereum/EditTransactionNavigator";
-import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
