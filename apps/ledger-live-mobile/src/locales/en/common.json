@@ -2706,6 +2706,10 @@
           "title": "Allow experimental apps",
           "description": "Display and allow opening experimental tagged platform apps."
         },
+        "debugApps": {
+          "title": "Allow debug apps",
+          "description": "Display and allow opening debug tagged platform apps."
+        },
         "staggingUrl": {
           "title": "Learn staging URL",
           "description": "Use the staging URL for the Learn page."
