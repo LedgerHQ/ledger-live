@@ -51,6 +51,12 @@ export default function Debugging() {
           navigation.navigate(ScreenName.DebugBluetoothAndLocationServices)
         }
       />
+      <SettingsRow
+        title="Debug dynamically setting up (react-navigation) header"
+        desc="Set up the header title, left and righ components"
+        iconLeft={<Icons.CardMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugSetHeader)}
+      />
     </SettingsNavigationScrollView>
   );
 }

@@ -65,6 +65,8 @@ import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 import DebugTermsOfUse from "../../screens/Settings/Debug/Features/TermsOfUse";
 import CameraPermissions from "../../screens/Settings/Debug/Debugging/CameraPermissions";
 import DebugQueuedDrawers from "../../screens/Settings/Debug/Features/QueuedDrawers";
+import DebugSetHeader from "../../screens/Settings/Debug/Debugging/SetHeader";
+import DebugSetHeaderBis from "../../screens/Settings/Debug/Debugging/SetHeaderBis";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -444,6 +446,21 @@ export default function SettingsNavigator() {
         component={DebugQueuedDrawers}
         options={{
           title: "Debug bottom drawers",
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.DebugSetHeader}
+        component={DebugSetHeader}
+        options={{
+          title: "Default title that should be overridden",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugSetHeaderBis}
+        component={DebugSetHeaderBis}
+        options={{
+          title: "Bis - Default title that should be overridden",
         }}
       />
     </Stack.Navigator>
