@@ -103,6 +103,7 @@ const pollingImplementation: Implementation = <
       let shouldStopPolling = false;
       let connectSub: Subscription;
       let loopTimeout: NodeJS.Timeout | null;
+      let firstRound: boolean = true;
 
       let currentDevice: Device;
       const deviceSubjectSub = deviceSubject.subscribe((device) => {
@@ -127,6 +128,7 @@ const pollingImplementation: Implementation = <
             of({
               type: "deviceChange",
               device: currentDevice,
+              replaceable: !firstRound,
             }),
             task({ deviceId: currentDevice.deviceId, request })
           )
@@ -197,6 +199,7 @@ const pollingImplementation: Implementation = <
               },
               complete: () => {
                 if (shouldStopPolling) return;
+                firstRound = false; // For proper debouncing.
                 loopTimeout = setTimeout(actionLoop, pollingFrequency);
               },
             });
