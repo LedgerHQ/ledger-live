@@ -10,7 +10,7 @@ runs:
     - uses: pnpm/action-setup@v2
       if: ${{ runner.os == 'Windows' || runner.os == 'Linux' }}
       with:
-        version: 7
+        version: 8.1
     - uses: actions/setup-node@v3
       if: ${{ runner.os == 'Windows' || runner.os == 'Linux' }}
       with:
