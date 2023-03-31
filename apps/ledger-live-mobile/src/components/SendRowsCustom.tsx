@@ -13,7 +13,6 @@ import type { LendingSupplyFlowNavigatorParamList } from "./RootNavigator/types/
 import type { LendingWithdrawFlowNavigatorParamList } from "./RootNavigator/types/LendingWithdrawFlowNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
 import { ScreenName } from "../const";
-import { EditTransactionParamList } from "../families/ethereum/editTransactionNavigatorParamsList";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<
@@ -37,7 +36,6 @@ type Navigation = BaseComposite<
       ScreenName.LendingWithdrawSummary
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
-  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
 >;
 
 export default ({
