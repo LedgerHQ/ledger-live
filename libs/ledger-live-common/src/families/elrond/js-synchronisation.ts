@@ -1,5 +1,4 @@
 import { TokenAccount } from "@ledgerhq/types-live";
-import { isEqual } from "lodash";
 import { encodeAccountId, inferSubOperations } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
@@ -12,9 +11,6 @@ import {
 import elrondBuildESDTTokenAccounts from "./js-buildSubAccounts";
 import { reconciliateSubAccounts } from "./js-reconciliation";
 import { computeDelegationBalance } from "./logic";
-import { fromElrondResourcesRaw, toElrondResourcesRaw } from "./serialization";
-import { ElrondAccount, ElrondAccountRaw } from "./types";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
@@ -86,27 +82,3 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });
 export const sync = makeSync({ getAccountShape });
-
-export function applyReconciliation(
-  account: Account,
-  updatedRaw: AccountRaw,
-  next: Account
-): boolean {
-  let changed = false;
-  const elrondAcc = account as ElrondAccount;
-  const elrondUpdatedRaw = updatedRaw as ElrondAccountRaw;
-  if (
-    elrondUpdatedRaw.elrondResources &&
-    (!elrondAcc.elrondResources ||
-      !isEqual(
-        toElrondResourcesRaw(elrondAcc.elrondResources),
-        elrondUpdatedRaw.elrondResources
-      ))
-  ) {
-    (next as ElrondAccount).elrondResources = fromElrondResourcesRaw(
-      elrondUpdatedRaw.elrondResources
-    );
-    changed = true;
-  }
-  return changed;
-}

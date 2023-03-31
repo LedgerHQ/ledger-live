@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper";
+import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper/index";
 import {
   Flex,
   FlowStepper,

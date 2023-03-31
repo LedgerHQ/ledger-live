@@ -38,3 +38,33 @@ export function isWalletAPIERC20TokenCurrency(
 ): currency is WalletAPIERC20TokenCurrency {
   return (currency as WalletAPIERC20TokenCurrency).standard === "ERC20";
 }
+
+export function addParamsToURL(
+  url: URL,
+  inputs?: Record<string, string>
+): void {
+  if (inputs) {
+    const keys = Object.keys(inputs);
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const value = inputs[key];
+
+      url.searchParams.set(key, value);
+    }
+  }
+}
+
+type getHostHeadersParams = {
+  client: string;
+  theme: "light" | "dark";
+};
+
+export function getClientHeaders(
+  params: getHostHeadersParams
+): Record<string, string> {
+  return {
+    "x-ledger-host": params.client,
+    "x-ledger-host-theme": params.theme,
+  };
+}

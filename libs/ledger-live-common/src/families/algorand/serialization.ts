@@ -6,7 +6,6 @@ import type {
   AlgorandAccountRaw,
 } from "./types";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
-import isEqual from "lodash/isEqual";
 
 function toResourcesRaw(r: AlgorandResources): AlgorandResourcesRaw {
   const { rewards, nbAssets } = r;
@@ -21,28 +20,6 @@ function fromResourcesRaw(r: AlgorandResourcesRaw): AlgorandResources {
     rewards: new BigNumber(rewards),
     nbAssets,
   };
-}
-
-export function applyReconciliation(
-  account: Account,
-  updatedRaw: AccountRaw,
-  next: Account
-): boolean {
-  let changed = false;
-  const algorandAcc = account as AlgorandAccount;
-  const algorandUpdatedRaw = updatedRaw as AlgorandAccountRaw;
-  if (
-    !isEqual(
-      algorandAcc.algorandResources,
-      algorandUpdatedRaw.algorandResources
-    )
-  ) {
-    (next as AlgorandAccount).algorandResources = fromResourcesRaw(
-      algorandUpdatedRaw.algorandResources
-    );
-    changed = true;
-  }
-  return changed;
 }
 
 export function assignToAccountRaw(

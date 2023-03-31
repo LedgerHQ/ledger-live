@@ -3,3 +3,4 @@ src/renderer/generated
 analytics.min.js
 src/renderer/animations/**/*.json
 src/renderer/components/Onboarding/Screens/Tutorial/assets/animations/**/*.json
+tests/artifacts

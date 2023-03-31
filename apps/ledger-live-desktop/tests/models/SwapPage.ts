@@ -6,7 +6,7 @@ export class SwapPage {
   readonly swapMenuButton: Locator;
   readonly maxSpendableToggle: Locator;
   readonly destinationCurrencyDropdown: Locator;
-  readonly currencyByName: Function;
+  readonly currencyByName: (accountName: string) => Locator;
   readonly fromCurrencyDropdownAddAccountButton: Locator;
   readonly reverseSwapPairButton: Locator;
   readonly addDestinationAccountButton: Locator;
@@ -15,13 +15,13 @@ export class SwapPage {
   readonly seeDetailsButton: Locator;
   readonly detailsSwapId: Locator;
   readonly historyRow: Locator;
-  readonly quoteContainer: Function;
+  readonly quoteContainer: (providerName: string, exchangeType: string) => Locator;
   readonly changeTargetAccountButton: Locator;
   readonly changeNetworkFeesButton: Locator;
   readonly standardFeesSelector: Locator;
   readonly advancedFeesSelector: Locator;
   readonly customFeeTextbox: Locator;
-  readonly targetAccountContainer: Function;
+  readonly targetAccountContainer: (accountName: string) => Locator;
   readonly centralisedQuoteFilterButton: Locator;
   readonly decentralisedQuoteFilterButton: Locator;
   readonly floatQuoteFilterButton: Locator;
@@ -31,7 +31,7 @@ export class SwapPage {
     // Misc Swap Components
     this.page = page;
     this.swapMenuButton = page.locator("data-test-id=drawer-swap-button"); // TODO: Should this be here?
-    this.currencyByName = (accountName: string) => page.getByText(accountName); // TODO: this is rubbish. Changed this
+    this.currencyByName = accountName => page.getByText(accountName); // TODO: this is rubbish. Changed this
 
     // Swap Amount and Currency components
     this.maxSpendableToggle = page.locator("data-test-id=swap-max-spendable-toggle");
@@ -42,7 +42,7 @@ export class SwapPage {
     this.changeTargetAccountButton = page
       .locator("data-test-id=change-exchange-details-button")
       .first();
-    this.targetAccountContainer = (accountName: string): Locator =>
+    this.targetAccountContainer = accountName =>
       page.locator(`data-test-id=target-account-container-${accountName}`).first();
 
     // Network Fee Components
@@ -64,7 +64,7 @@ export class SwapPage {
     this.fixedQuoteFilterButton = page.locator("data-test-id=fixed-quote-filter-button");
 
     // Quote Components
-    this.quoteContainer = (providerName: string, exchangeType: string) =>
+    this.quoteContainer = (providerName, exchangeType) =>
       page.locator(`data-test-id=quote-container-${providerName}-${exchangeType}`);
 
     // Exchange Button Component

@@ -6,7 +6,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { Transaction } from "../../generated/types";
-import { ExchangeTypes, RateTypes } from "../hw-app-exchange/Exchange";
+import { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
 
 export type CompleteExchangeRequestEvent =
   | { type: "complete-exchange" }

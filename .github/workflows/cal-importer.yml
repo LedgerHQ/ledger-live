@@ -24,11 +24,11 @@ jobs:
           path: crypto-assets
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.15.0
       - uses: pnpm/action-setup@v2
         id: pnpm-install
         with:
-          version: latest
+          version: 7.30.0
           run_install: false
       - name: Get pnpm store directory
         id: pnpm-cache
@@ -68,7 +68,6 @@ jobs:
         run: aws cloudfront create-invalidation --distribution-id E2NGFIXS9QJTH --paths "/cryptoassets/*" --debug
       - name: Propagate generated erc20 json towards backend server
         run: |
-         echo "${{ secrets.DATA_FILE }}" | base64 -d > /tmp/data_file_storage
-         echo "${{ secrets.DATA_SCRIPT }}" | base64 -d > /tmp/data_file_script.sh
-         bash /tmp/data_file_script.sh
-
+          echo "${{ secrets.DATA_FILE }}" | base64 -d > /tmp/data_file_storage
+          echo "${{ secrets.DATA_SCRIPT }}" | base64 -d > /tmp/data_file_script.sh
+          bash /tmp/data_file_script.sh

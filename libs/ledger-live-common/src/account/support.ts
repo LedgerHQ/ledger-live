@@ -1,4 +1,4 @@
-import { getMainAccount } from "../account";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getAccountBridge } from "../bridge";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 

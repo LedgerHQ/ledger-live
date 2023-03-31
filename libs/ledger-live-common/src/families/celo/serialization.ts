@@ -5,7 +5,6 @@ import type {
   CeloResourcesRaw,
 } from "./types";
 import { BigNumber } from "bignumber.js";
-import { isEqual } from "lodash";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toCeloResourcesRaw(r: CeloResources): CeloResourcesRaw {
@@ -79,28 +78,4 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   if (celoResourcesRaw)
     (account as CeloAccount).celoResources =
       fromCeloResourcesRaw(celoResourcesRaw);
-}
-
-export function applyReconciliation(
-  account: Account,
-  updatedRaw: AccountRaw,
-  next: Account
-): boolean {
-  const celoAcc = account as CeloAccount;
-  const celoUpdatedRaw = updatedRaw as CeloAccountRaw;
-  let changed = false;
-  if (
-    celoUpdatedRaw.celoResources &&
-    (!celoAcc.celoResources ||
-      !isEqual(
-        toCeloResourcesRaw(celoAcc.celoResources),
-        celoUpdatedRaw.celoResources
-      ))
-  ) {
-    (next as CeloAccount).celoResources = fromCeloResourcesRaw(
-      celoUpdatedRaw.celoResources
-    );
-    changed = true;
-  }
-  return changed;
 }

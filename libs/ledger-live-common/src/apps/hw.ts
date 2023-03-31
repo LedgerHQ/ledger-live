@@ -9,8 +9,13 @@ import { concat, of, EMPTY, from, Observable, throwError, defer } from "rxjs";
 import { mergeMap, map } from "rxjs/operators";
 import { App, AppType, DeviceInfo } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
-import { LatestFirmwareVersionRequired, NoSuchAppOnProvider } from "../errors";
-import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
+import type {
+  Exec,
+  AppOp,
+  ListAppsEvent,
+  ListAppsResult,
+  SkippedAppOp,
+} from "./types";
 import manager, { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
@@ -23,7 +28,7 @@ import {
 } from "../currencies";
 import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
-import hwListApps from "../hw/listApps";
+
 import {
   calculateDependencies,
   polyfillApp,
@@ -48,13 +53,17 @@ export const execWithTransport =
 
 const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
-export type StreamAppInstallEvent =
+export type InlineAppInstallEvent =
   | {
       type: "device-permission-requested";
       wording: string;
     }
   | {
       type: "listing-apps";
+    }
+  | {
+      type: "listed-apps";
+      installQueue: string[];
     }
   | {
       type: "device-permission-granted";
@@ -65,7 +74,11 @@ export type StreamAppInstallEvent =
       appNames: string[];
     }
   | {
-      type: "stream-install";
+      type: "some-apps-skipped";
+      skippedAppOps: SkippedAppOp[];
+    }
+  | {
+      type: "inline-install";
       progress: number;
       itemProgress: number;
       currentAppOp: AppOp;
@@ -78,21 +91,21 @@ export type StreamAppInstallEvent =
  * @param transport Transport instance
  * @param appNames List of app names to install
  * @param onSuccessObs Optional observable to run after the installation
- * @param skipAppInstallIfNotFound If true, skip the installation of any app that were not found from the provider. Default to false.
- * @returns Observable of StreamAppInstallEvent or ConnectAppEvent
- * - Event "stream-install" contains a global progress of the installation
+ * @param allowPartialDependencies If true, keep installing apps even if some are missing
+ * @returns Observable of InlineAppInstallEvent or ConnectAppEvent
+ * - Event "inline-install" contains a global progress of the installation
  */
-export const streamAppInstall = ({
+export const inlineAppInstall = ({
   transport,
   appNames,
   onSuccessObs,
-  skipAppInstallIfNotFound = false,
+  allowPartialDependencies = false,
 }: {
   transport: Transport;
   appNames: string[];
   onSuccessObs?: () => Observable<any>;
-  skipAppInstallIfNotFound?: boolean;
-}): Observable<StreamAppInstallEvent | ConnectAppEvent> =>
+  allowPartialDependencies?: boolean;
+}): Observable<InlineAppInstallEvent | ConnectAppEvent> =>
   concat(
     of({
       type: "listing-apps",
@@ -100,43 +113,38 @@ export const streamAppInstall = ({
     from(getDeviceInfo(transport)).pipe(
       mergeMap((deviceInfo) => listApps(transport, deviceInfo)),
       mergeMap((e) => {
+        // Bubble up events
         if (
           e.type === "device-permission-granted" ||
           e.type === "device-permission-requested"
         ) {
-          // pass in events we need
           return of(e);
         }
 
         if (e.type === "result") {
-          // stream install with the result of list apps
-          const state = appNames.reduce((state, name) => {
-            try {
-              return reducer(state, {
+          // Figure out the operations that need to happen
+          const state = appNames.reduce(
+            (state, name) =>
+              reducer(state, {
                 type: "install",
                 name,
-              });
-            } catch (e: unknown) {
-              if (
-                e instanceof NoSuchAppOnProvider ||
-                e instanceof LatestFirmwareVersionRequired
-              ) {
-                log(
-                  "hw",
-                  `failed to install app: ${name}. Skipping: ${skipAppInstallIfNotFound}`
-                );
+                allowPartialDependencies,
+              }),
+            initState(e.result)
+          );
 
-                // Continues installing the next apps
-                if (skipAppInstallIfNotFound) {
-                  return state;
-                }
-              }
-
-              throw e;
-            }
-          }, initState(e.result));
+          // Failed appOps in this flow will throw by default but if we're here
+          // it means we didn't throw, so we wan't to notify the action about it.
+          const maybeSkippedEvent: Observable<InlineAppInstallEvent> = state
+            .skippedAppOps.length
+            ? of({
+                type: "some-apps-skipped",
+                skippedAppOps: state.skippedAppOps,
+              })
+            : EMPTY;
 
           if (!state.installQueue.length) {
+            // There's nothing to install, we can consider this a success.
             return defer(onSuccessObs || (() => EMPTY));
           }
 
@@ -153,6 +161,11 @@ export const streamAppInstall = ({
 
           const exec = execWithTransport(transport);
           return concat(
+            of({
+              type: "listed-apps",
+              installQueue: state.installQueue,
+            }),
+            maybeSkippedEvent,
             runAllWithProgress(state, exec).pipe(
               map(
                 ({
@@ -161,7 +174,7 @@ export const streamAppInstall = ({
                   installQueue,
                   currentAppOp,
                 }) => ({
-                  type: "stream-install",
+                  type: "inline-install",
                   progress: globalProgress,
                   itemProgress,
                   installQueue,
@@ -177,8 +190,12 @@ export const streamAppInstall = ({
       })
     )
   );
+
 const emptyHashData =
   "0000000000000000000000000000000000000000000000000000000000000000";
+
+//TODO if you are reading this, don't worry, a big rewrite is coming and we'll be able
+//to simplify this a lot. Stay calm.
 export const listApps = (
   transport: Transport,
   deviceInfo: DeviceInfo
@@ -228,26 +245,7 @@ export const listApps = (
           )
           .catch((e) => {
             log("hw", "failed to HSM list apps " + String(e) + "\n" + e.stack);
-
-            if (getEnv("EXPERIMENTAL_FALLBACK_APDU_LISTAPPS")) {
-              return hwListApps(transport)
-                .then((apps) =>
-                  apps.map(({ name, hash, blocks }) => ({
-                    name,
-                    hash,
-                    blocks,
-                  }))
-                )
-                .catch((e) => {
-                  log(
-                    "hw",
-                    "failed to device list apps " + String(e) + "\n" + e.stack
-                  );
-                  throw e;
-                });
-            } else {
-              throw e;
-            }
+            throw e;
           })
           .then((apps) => [apps, true]);
 
@@ -468,7 +466,7 @@ export const listApps = (
         .filter(Boolean);
 
       let customImageBlocks = 0;
-      if (deviceModelId === DeviceModelId.stax) {
+      if (deviceModelId === DeviceModelId.stax && !deviceInfo.isRecoveryMode) {
         const customImageSize = await staxFetchImageSize(transport);
         if (customImageSize) {
           customImageBlocks = Math.ceil(customImageSize / bytesPerBlock);

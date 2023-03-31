@@ -6,7 +6,7 @@ import QueuedDrawer from "../../../../components/QueuedDrawer";
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 import { ScreenName } from "../../../../const";
-import { setDebugAppLelevelDrawerOpened } from "../../../../actions/settings";
+import { setDebugAppLevelDrawerOpened } from "../../../../actions/settings";
 import { debugAppLevelDrawerOpenedSelector } from "../../../../reducers/settings";
 import LockModal from "../../../../components/ModalLock";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
@@ -152,7 +152,7 @@ export default function DebugQueuedDrawers() {
   const dispatch = useDispatch();
   const handleDebugAppLevelDrawerOpenedChange = useCallback(
     (val: boolean) => {
-      dispatch(setDebugAppLelevelDrawerOpened(val));
+      dispatch(setDebugAppLevelDrawerOpened(val));
     },
     [dispatch],
   );

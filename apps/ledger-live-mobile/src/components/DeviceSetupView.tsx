@@ -16,6 +16,15 @@ export type Props = {
   children?: ReactNode;
 };
 
+/**
+ * Represents a simple wrapping view used for components and screens associated to device setup
+ *
+ * If `hasBackButton` or `onBack` is provided, a back button will be rendered
+ * If `renderLeft` is provided, it will be rendered instead of the back button
+ *
+ * If `hasCloseButton` or `onClose` is provided, a close button will be rendered
+ * If `renderRight` is provided, it will be rendered instead of the close button
+ */
 const DeviceSetupView = ({
   hasBackButton,
   hasCloseButton,

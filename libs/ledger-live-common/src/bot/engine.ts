@@ -26,7 +26,7 @@ import {
   releaseSpeculosDevice,
   findAppCandidate,
 } from "../load/speculos";
-import type { AppCandidate } from "../load/speculos";
+import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import {
   formatReportForConsole,
   formatTime,

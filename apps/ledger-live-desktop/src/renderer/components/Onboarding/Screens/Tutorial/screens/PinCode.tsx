@@ -27,7 +27,7 @@ export function PinCode({ toggleUserChosePinCodeHimself, userChosePinCodeHimself
 
 PinCode.Illustration = <IllustrationContainer width="240px" height="245px" src={nanoPinCode} />;
 
-const Footer = (props: any) => {
+const Footer = (props: unknown) => {
   const { t } = useTranslation();
   return (
     <AsideFooter {...props} text={t("onboarding.screens.tutorial.screens.pinCode.help.descr")} />

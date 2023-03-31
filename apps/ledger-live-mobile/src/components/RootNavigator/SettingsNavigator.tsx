@@ -24,11 +24,14 @@ import DebugFirmwareUpdate from "../../screens/Settings/Debug/Features/FirmwareU
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "../../screens/Settings/Debug/Information";
+import DebugInstallSetOfApps from "../../screens/Settings/Debug/Features/InstallSetOfApps";
 import DebugPerformance from "../../screens/Settings/Debug/Performance";
 import DebugLogs from "../../screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "../../screens/Settings/Debug/Features/Lottie";
 import DebugNetwork from "../../screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "../../screens/Settings/Debug/Connectivity/CommandSender";
+import DebugPlayground from "../../screens/Settings/Debug/Playground";
+import DebugBluetoothAndLocationServices from "../../screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "../../screens/Settings/Debug";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
@@ -221,7 +224,7 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugGenerators}
         component={DebugGenerators}
         options={{
-          title: "Generators",
+          title: "Generators and Destructors",
         }}
       />
       <Stack.Screen
@@ -246,6 +249,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugInstallSetOfApps}
+        component={DebugInstallSetOfApps}
+        options={{
+          title: "Install set of apps",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugMockGenerateAccounts}
         component={GenerateMockAccountSelectScreen}
         options={{
@@ -257,6 +267,20 @@ export default function SettingsNavigator() {
         component={DebugExport}
         options={{
           title: "Export Accounts and Settings",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugPlayground}
+        component={DebugPlayground}
+        options={{
+          title: "Playground",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugBluetoothAndLocationServices}
+        component={DebugBluetoothAndLocationServices}
+        options={{
+          title: "Bluetooth and location services",
         }}
       />
       <Stack.Screen

@@ -40,7 +40,7 @@ const ruleTypes = {
 
 type RuleProps = {
   type: "success" | "error";
-  children: any;
+  children: unknown;
 };
 
 function Rule({ type, children }: RuleProps) {

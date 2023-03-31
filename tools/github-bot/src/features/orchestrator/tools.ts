@@ -87,9 +87,9 @@ export async function updateWatcherCheckRun(
             (wr) => (wr as any).path === ".github/workflows/" + workflowMeta[0]
           );
 
-          const workflowLink =
-            workflowRun?.html_url &&
-            ` _[(workflow)](${workflowRun?.html_url})_`;
+          const workflowLink = workflowRun?.html_url
+            ? ` _[(workflow)](${workflowRun.html_url})_`
+            : "";
 
           summary += `\n- ${getStatusEmoji(
             check_run.conclusion || check_run.status

@@ -3,9 +3,7 @@ import { from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
-import ExchangeTransport, {
-  ExchangeTypes,
-} from "../../hw-app-exchange/Exchange";
+import ExchangeTransport, { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
 import perFamily from "../../../generated/exchange";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
