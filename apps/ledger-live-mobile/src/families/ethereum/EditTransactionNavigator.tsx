@@ -8,9 +8,9 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../../components/StepHeader";
 import { MethodSelection } from "./EditTransaction/MethodSelection";
 import { EditTransactionParamList } from "./editTransactionNavigatorParamsList";
-import SendSummary from "../../screens/SendFunds/04-Summary";
 import SelectDevice from "../../screens/SelectDevice";
 import SendConnectDevice from "../../screens/ConnectDevice";
+import SendSummary from "../../screens/SendFunds/04-Summary";
 import SendValidationSuccess from "../../screens/SendFunds/07-ValidationSuccess";
 import SendValidationError from "../../screens/SendFunds/07-ValidationError";
 
