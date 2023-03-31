@@ -57,6 +57,7 @@ import type {
   StackNavigatorNavigation,
 } from "../../components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { EditOperationPanel } from "../../families/ethereum/EditTransaction/EditOperationPanel";
 
 type HelpLinkProps = {
   event: string;
@@ -361,53 +362,10 @@ export default function Content({
       ) : null}
 
       {isEditable ? (
-        <Flex
-          backgroundColor={isOperationStuck ? "warning.c70" : "primary.c80"}
-          color={"primary.c80"}
-          width="95%"
-          alignSelf={"center"}
-          alignContent={"flex-end"}
-          borderRadius={8}
-          padding={8}
-        >
-          {isOperationStuck ? (
-            <Box>
-              <LText color="neutral.c20">
-                {t("editTransaction.panel.stuckMessage")}
-              </LText>
-              <LText marginTop={4}>
-                <Link onPress={onEditTxPress}>
-                  <LText
-                    color="neutral.c20"
-                    style={{ textDecorationLine: "underline" }}
-                    marginTop={4}
-                  >
-                    {t("editTransaction.cta")}
-                  </LText>
-                </Link>
-              </LText>
-            </Box>
-          ) : (
-            <>
-              <Box>
-                <LText color="neutral.c20">
-                  {t("editTransaction.panel.speedupMessage")}
-                </LText>
-                <LText marginTop={4}>
-                  <Link onPress={onEditTxPress}>
-                    <LText
-                      color="neutral.c20"
-                      style={{ textDecorationLine: "underline" }}
-                      marginTop={4}
-                    >
-                      {t("editTransaction.cta")}
-                    </LText>
-                  </Link>
-                </LText>
-              </Box>
-            </>
-          )}
-        </Flex>
+        <EditOperationPanel
+          isOperationStuck={isOperationStuck}
+          onEditTxPress={onEditTxPress}
+        />
       ) : null}
 
       {!disableAllLinks ? (
