@@ -21,7 +21,7 @@ import { isOldestEditableOperation } from "@ledgerhq/live-common/operation";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
-import { EditTransactionParamList } from "../EditTransactionNavigator";
+import { EditTransactionParamList } from "../editTransactionNavigatorParamsList";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import LText from "../../../components/LText";
 import { urls } from "../../../config/urls";
