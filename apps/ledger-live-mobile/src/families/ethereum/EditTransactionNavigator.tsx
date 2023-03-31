@@ -7,7 +7,7 @@ import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../../components/StepHeader";
 import { MethodSelection } from "./EditTransaction/MethodSelection";
-import { EditTransactionParamList } from "./EditTransactionNavigator";
+import { EditTransactionParamList } from "./editTransactionNavigatorParamsList";
 import SendSummary from "../../screens/SendFunds/04-Summary";
 import SelectDevice from "../../screens/SelectDevice";
 import SendConnectDevice from "../../screens/ConnectDevice";
