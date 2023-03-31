@@ -66,6 +66,7 @@ export type FeatureId =
   | "discover"
   | "protectServicesDiscoverDesktop"
   | "protectServicesDesktop";
+  | "editEthTx";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */
