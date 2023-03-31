@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Fragment, PureComponent } from "react";
+import React, { Fragment, PureComponent, memo } from "react";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
@@ -85,4 +85,4 @@ export class StepFeesFooter extends PureComponent<StepProps> {
   }
 }
 
-export default StepFees;
+export default memo<StepProps>(StepFees);

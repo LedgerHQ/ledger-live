@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback } from "react";
+import React, { useCallback, memo } from "react";
 import type { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import Alert from "~/renderer/components/Alert";
@@ -19,38 +19,27 @@ const EditOperationPanel: React$ComponentType<Props> = (props: Props) => {
   const { operation, account, parentAccount } = props;
   const dispatch = useDispatch();
   const editEthTx = useFeature("editEthTx");
+  const handleOpenEditModal = useCallback(() => {
+    dispatch(
+      openModal("MODAL_EDIT_TRANSACTION", {
+        account,
+        parentAccount,
+        transactionRaw: operation.transactionRaw,
+        transactionSequenceNumber: operation.transactionSequenceNumber,
+        isNftOperation: operation.type === "NFT_OUT",
+      }),
+    );
+  }, [parentAccount, account, operation, dispatch]);
   if (!editEthTx?.enabled) {
     return null;
   }
-  const handleOpenEditModal = useCallback(
-    (account, parentAccount, transactionRaw, transactionSequenceNumber, isNftOperation) => {
-      dispatch(
-        openModal("MODAL_EDIT_TRANSACTION", {
-          account,
-          parentAccount,
-          transactionRaw,
-          transactionSequenceNumber,
-          isNftOperation,
-        }),
-      );
-    },
-    [dispatch],
-  );
   return (
     <Alert type="warning" style={{ marginBottom: "40px" }}>
       <Trans i18nKey="operation.edit.panel.description" />
       <div>
         <Link
           style={{ textDecoration: "underline", fontSize: "13px" }}
-          onClick={() => {
-            handleOpenEditModal(
-              account,
-              parentAccount,
-              operation.transactionRaw,
-              operation.transactionSequenceNumber,
-              operation.type === "NFT_OUT",
-            );
-          }}
+          onClick={handleOpenEditModal}
         >
           <Trans i18nKey="operation.edit.panel.title" />
         </Link>
@@ -59,4 +48,4 @@ const EditOperationPanel: React$ComponentType<Props> = (props: Props) => {
   );
 };
 
-export default EditOperationPanel;
+export default memo<Props>(EditOperationPanel);

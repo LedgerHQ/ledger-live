@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, memo } from "react";
 import { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -266,6 +266,6 @@ const Body = ({
 const m: React$ComponentType<OwnProps> = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
-)(Body);
+)(memo(Body));
 
 export default m;

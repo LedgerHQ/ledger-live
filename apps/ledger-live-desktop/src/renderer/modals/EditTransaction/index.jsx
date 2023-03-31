@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, memo } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import type { StepId } from "./types";
@@ -10,7 +10,7 @@ type Props = {
   onClose: Function,
 };
 
-const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
+const EditTransactionModal = ({ stepId: initialStepId, onClose }: Props) => {
   const [stepId, setStep] = useState(() => initialStepId || "method");
   const [isNftSend, setIsNFTSend] = useState(false);
   const handleReset = useCallback(() => setStep("method"), []);
@@ -38,4 +38,4 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
   );
 };
 
-export default SendModal;
+export default memo<Props>(EditTransactionModal);

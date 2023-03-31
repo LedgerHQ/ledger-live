@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { PureComponent, memo } from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -210,4 +210,4 @@ export class StepMethodFooter extends PureComponent<StepProps> {
   }
 }
 
-export default StepMethod;
+export default memo<StepProps>(StepMethod);
