@@ -11,7 +11,7 @@ const TooltipStory = () => {
       title={text("title", "title")}
       description={text("description", "Description")}
       subtitle={text("subtitle", "Subtitle")}
-      Icon={Icons.WarningLight}
+      Icon={Icons.WarningMedium}
       tooltipContent={
         <>
           <Text>Tooltip323</Text>
