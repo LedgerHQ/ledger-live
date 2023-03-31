@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ScrollView, Linking, TouchableOpacity } from "react-native";
+import { ScrollView, Linking } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { HwTransportErrorType } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
@@ -19,6 +18,8 @@ import { TrackScreen, track } from "../../analytics";
 import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
 import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";
 import LocationDisabled from "../RequiresLocation/LocationDisabled";
+import { useSetNavigationHeader } from "../../hooks/useSetNavigationHeader";
+import HeaderLeftBack from "../HeaderLeftBack";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 const CANT_SEE_DEVICE_TIMEOUT = 5000;
@@ -51,6 +52,14 @@ const BleDevicesScanning = ({
   const { t } = useTranslation();
   const navigation = useNavigation();
 
+  useSetNavigationHeader({
+    headerShown: !onGoBack ? true : undefined,
+    HeaderLeft: onGoBack
+      ? () => <HeaderLeftBack onBackPress={onGoBack} />
+      : null,
+    HeaderRight: null,
+  });
+
   const productName = filterByDeviceModelId
     ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
     : null;
@@ -68,6 +77,7 @@ const BleDevicesScanning = ({
 
   const [isCantSeeDeviceShown, setIsCantSeeDeviceShown] =
     useState<boolean>(false);
+
   useEffect(() => {
     const cantSeeDeviceTimeout = setTimeout(
       () => setIsCantSeeDeviceShown(true),
@@ -163,11 +173,6 @@ const BleDevicesScanning = ({
       <TrackScreen
         category={`Looking for ${productName ?? "device"} Bluetooth`}
       />
-      {onGoBack && (
-        <TouchableOpacity onPress={onGoBack}>
-          <ArrowLeftMedium size={24} />
-        </TouchableOpacity>
-      )}
       <Flex flex={1} px={4}>
         <Flex height={180} alignItems="center" justifyContent="center">
           <Animation source={lottie} />

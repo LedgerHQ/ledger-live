@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import {
   useIsFocused,
@@ -15,7 +15,9 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenName } from "../../const";
-import SelectDevice2 from "../../components/SelectDevice2";
+import SelectDevice2, {
+  SelectDeviceStateChange,
+} from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
 import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -51,6 +53,8 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
   const [chosenDevice, setChosenDevice] = useState<Device | null>();
   const [showMenu, setShowMenu] = useState<boolean>(false);
+
+  const [isManagerTitleDisplayed, setIsManagerTitleDisplayed] = useState(true);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
@@ -95,6 +99,14 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     setDevice(params?.device);
   }, [params]);
 
+  const onSelectDeviceStateChange = useCallback(
+    (state: SelectDeviceStateChange) => {
+      // Title is not displayed if the user is on the ble pairing flow
+      setIsManagerTitleDisplayed(state !== "blePairingFlow");
+    },
+    [],
+  );
+
   const insets = useSafeAreaInsets();
 
   if (!isFocused) return null;
@@ -102,11 +114,13 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   return (
     <Flex flex={1} pt={(isExperimental ? ExperimentalHeaderHeight : 0) + 70}>
       <TrackScreen category="Manager" name="ChooseDevice" />
-      <Flex px={16} mb={8}>
-        <Text fontWeight="semiBold" variant="h4" testID="manager-title">
-          <Trans i18nKey="manager.title" />
-        </Text>
-      </Flex>
+      {isManagerTitleDisplayed ? (
+        <Flex px={16} mb={8}>
+          <Text fontWeight="semiBold" variant="h4" testID="manager-title">
+            <Trans i18nKey="manager.title" />
+          </Text>
+        </Flex>
+      ) : null}
 
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex flex={1} px={16} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
@@ -114,6 +128,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
             onSelect={onSelectDevice}
             stopBleScanning={!!device}
             displayServicesWidget
+            onSelectDeviceStateChange={onSelectDeviceStateChange}
           />
         </Flex>
       ) : (

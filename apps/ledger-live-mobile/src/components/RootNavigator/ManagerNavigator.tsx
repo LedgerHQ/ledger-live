@@ -64,6 +64,7 @@ export default function ManagerNavigator() {
         options={{
           headerShown: false,
           gestureEnabled: false,
+          title: "",
         }}
       />
       <Stack.Screen

@@ -43,6 +43,8 @@ type Navigation = BaseComposite<
   >
 >;
 
+export type SelectDeviceStateChange = "deviceSelection" | "blePairingFlow";
+
 type Props = {
   onSelect: (_: Device) => void;
   // This component has side-effects because it uses a BLE scanning hook.
@@ -51,12 +53,18 @@ type Props = {
   // to communicate to a device via BLE.
   stopBleScanning?: boolean;
   displayServicesWidget?: boolean;
+  /**
+   * Callback function when the state SelectDeviceStateChange of the SelectDevice component is updated
+   * Useful to notify the parent component of what is being displayed by the SelectDevice component.
+   */
+  onSelectDeviceStateChange?: (state: SelectDeviceStateChange) => void;
 };
 
 export default function SelectDevice({
   onSelect,
   stopBleScanning,
   displayServicesWidget,
+  onSelectDeviceStateChange,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -262,6 +270,17 @@ export default function SelectDevice({
       },
     });
   }, [navigation]);
+
+  // Notifies parent of a change of what is being displayed by SelectDevice
+  useEffect(() => {
+    if (!onSelectDeviceStateChange) return;
+
+    if (isPairingDevices) {
+      onSelectDeviceStateChange("blePairingFlow");
+    } else {
+      onSelectDeviceStateChange("deviceSelection");
+    }
+  }, [isPairingDevices, onSelectDeviceStateChange]);
 
   return (
     <>
