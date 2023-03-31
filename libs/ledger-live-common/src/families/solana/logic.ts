@@ -1,18 +1,13 @@
-import { findTokenById, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findTokenById } from "@ledgerhq/cryptoassets";
 import { PublicKey } from "@solana/web3.js";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { StakeMeta } from "./api/chain/account/stake";
 import { SolanaStake, StakeAction } from "./types";
 import { assertUnreachable } from "./utils";
-import { parseCurrencyUnit } from "../../currencies";
-
-const currency = getCryptoCurrencyById("solana");
 
 export type Awaited<T> = T extends PromiseLike<infer U> ? U : T;
 
 export const MAX_MEMO_LENGTH = 500;
-
-export const SOLANA_DUST = parseCurrencyUnit(currency.units[0], "0.00001");
 
 export const isValidBase58Address = (address: string): boolean => {
   try {

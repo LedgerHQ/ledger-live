@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@7.20.0",
+  "packageManager": "pnpm@7.30.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -58,6 +58,7 @@
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
     "common-tools": "pnpm --filter live-common-tools",
+    "utils": "pnpm --filter live-utils",
     "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter devices",
@@ -130,7 +131,8 @@
       "react-native-image-crop-tools@1.6.2": "patches/react-native-image-crop-tools@1.6.2.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-os@1.2.6": "patches/react-native-os@1.2.6.patch",
-      "react-native-tcp@4.0.0": "patches/react-native-tcp@4.0.0.patch"
+      "react-native-tcp@4.0.0": "patches/react-native-tcp@4.0.0.patch",
+      "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch"
     }
   }
 }

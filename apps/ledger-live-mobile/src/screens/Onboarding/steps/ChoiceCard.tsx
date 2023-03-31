@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
-import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import Touchable from "../../../components/Touchable";
 
 export type Props = {

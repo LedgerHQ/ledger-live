@@ -2,7 +2,10 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { ChainAPI } from "./api";
-import { getStakeAccountMinimumBalanceForRentExemption } from "./api/chain/web3";
+import {
+  getAccountMinimumBalanceForRentExemption,
+  getStakeAccountMinimumBalanceForRentExemption,
+} from "./api/chain/web3";
 import { getMainAccount } from "../../account";
 import { estimateTxFee } from "./tx-fees";
 
@@ -30,8 +33,16 @@ const estimateMaxSpendableWithAPI = async (
             0
           );
         }
-        default:
-          return BigNumber.max(account.spendableBalance.minus(txFee), 0);
+        default: {
+          const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
+            api,
+            account.freshAddress
+          );
+          return BigNumber.max(
+            account.spendableBalance.minus(txFee).minus(rentExemptMin),
+            0
+          );
+        }
       }
     }
     case "TokenAccount":

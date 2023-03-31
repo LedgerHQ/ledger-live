@@ -8,7 +8,7 @@
     "isolatedModules": true,
     "jsx": "react-native",
     "lib": ["es2017"],
-    "types": ["jest"],
+    "types": ["jest", "@testing-library/jest-native/extend-expect"],
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": true,
@@ -16,7 +16,7 @@
     "target": "esnext",
     "incremental": true
   },
-  "include": ["src/**/*", "e2e/**/*", "**/*.d.ts"],
+  "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
   "exclude": [
     "node_modules",
     "babel.config.js",

@@ -40,7 +40,7 @@ RecordStoreWrongAPDU.prototype = new Error();
 /**
  * thrown by ensureQueueEmpty
  */
-export function RecordStoreRemainingAPDU(expected: string) {
+export function RecordStoreRemainingAPDU(expected: string): void {
   this.name = "RecordStoreRemainingAPDU";
   this.message = `replay expected more APDUs to come:\n${expected}`;
   this.stack = new Error().stack;
@@ -86,14 +86,14 @@ export class RecordStore {
   /**
    * check if there is no more APDUs to replay
    */
-  isEmpty = () => this.queue.length === 0;
+  isEmpty = (): boolean => this.queue.length === 0;
 
   /**
    * Record an APDU (used by createTransportRecorder)
    * @param {Buffer} apdu input
    * @param {Buffer} out response
    */
-  recordExchange(apdu: Buffer, out: Buffer) {
+  recordExchange(apdu: Buffer, out: Buffer): void {
     this.queue.push([apdu.toString("hex"), out.toString("hex")]);
   }
 
@@ -136,7 +136,7 @@ export class RecordStore {
   /**
    * Check all APDUs was replayed. Throw if it's not the case.
    */
-  ensureQueueEmpty() {
+  ensureQueueEmpty(): void {
     if (!this.isEmpty()) {
       throw new RecordStoreRemainingAPDU(this.toString());
     }

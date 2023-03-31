@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
 import { ScreenName } from "../../../const";
 import BaseStepperView, {
@@ -20,6 +19,7 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { Step } from "./setupDevice/scenes/BaseStepperView";
+import { usePostOnboardingURI } from "../../../hooks/recoverFeatureFlag";
 
 type Metadata = {
   id: string;
@@ -40,10 +40,7 @@ function OnboardingStepProtectFlow() {
   const { theme } = useTheme();
   const route = useRoute<NavigationProps["route"]>();
 
-  const servicesConfig = useFeature("protectServicesMobile");
-
-  const postOnboardingURI =
-    servicesConfig?.params?.onboardingRestore?.postOnboardingURI;
+  const postOnboardingURI = usePostOnboardingURI();
 
   const dispatch = useDispatch();
   const { resetCurrentStep } = useNavigationInterceptor();
@@ -56,7 +53,7 @@ function OnboardingStepProtectFlow() {
         id: RestoreWithProtect.id,
         illustration: (
           <StepLottieAnimation
-            stepId="pinCode"
+            stepId="recover"
             deviceModelId={deviceModelId}
             theme={theme}
           />

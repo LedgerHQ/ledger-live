@@ -84,6 +84,7 @@
     "save": "Save",
     "lock": "Lock",
     "showMore": "Show more",
+    "backToMatchingURL": "Back to {{appName}}",
     "back": "Back",
     "adjustFees": "Adjust fees",
     "reset": "Reset",
@@ -2182,7 +2183,13 @@
     "steps": {
       "recipient": {
         "title": "Recipient",
-        "nftRecipient": "NFT to send"
+        "nftRecipient": "NFT to send",
+        "verifyAddress": "Please verify the address matches the one shared by the recipient.",
+        "namingService": {
+          "resolve": "This is a valid ENS linked to the following address :",
+          "supportLink": "What's an Ethereum Name Service ?",
+          "reverse": "This address is linked to {{domain}}"
+        }
       },
       "amount": {
         "title": "Amount",
@@ -5756,8 +5763,10 @@
     "progress": {
       "loading": "Loading ...",
       "resolving": "Resolving dependencies",
-      "progress": "Installing apps {{progress}}%",
-      "disclaimer": "Add or remove apps at any time from Ledger Live."
+      "progress": "Stay in Ledger Live while apps are installing.",
+      "disclaimer": "Add or remove apps at any time from Ledger Live.",
+      "skippedInfo": "Some apps aren’t available. They are yet to be developed for {{ productName }}.",
+      "skipped": "Not yet available for {{ productName }}"
     },
     "cancelled": {
       "title": "App installation was cancelled on {{productName}}",

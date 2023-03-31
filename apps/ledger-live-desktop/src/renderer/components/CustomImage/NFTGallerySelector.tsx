@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Flex, Grid, InfiniteLoader, Text } from "@ledgerhq/react-ui";
 import { NFTMetadata } from "@ledgerhq/types-live";

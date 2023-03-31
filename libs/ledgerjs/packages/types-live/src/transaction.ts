@@ -1,5 +1,6 @@
 import type { BigNumber } from "bignumber.js";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { DomainServiceResolution } from "./domain";
 import type { Operation, OperationRaw } from "./operation";
 
 /**
@@ -78,6 +79,7 @@ export type SignOperationEventRaw =
 export type TransactionCommon = {
   amount: BigNumber;
   recipient: string;
+  recipientDomain?: DomainServiceResolution;
   useAllAmount?: boolean;
   subAccountId?: string | null | undefined;
   feesStrategy?: "slow" | "medium" | "fast" | "custom" | null;
@@ -89,6 +91,7 @@ export type TransactionCommon = {
 export type TransactionCommonRaw = {
   amount: string;
   recipient: string;
+  recipientDomain?: DomainServiceResolution;
   useAllAmount?: boolean;
   subAccountId?: string | null | undefined;
   feesStrategy?: "slow" | "medium" | "fast" | "custom" | null;

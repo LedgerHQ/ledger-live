@@ -17,7 +17,6 @@ module.exports = api =>
             },
           ],
           "@babel/preset-react",
-          "@babel/preset-flow",
           "@babel/preset-typescript",
         ],
         plugins: [

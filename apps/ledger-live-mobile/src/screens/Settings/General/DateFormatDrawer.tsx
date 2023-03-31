@@ -75,6 +75,7 @@ export function DateFormatDrawer({ isOpen, closeModal }: Props) {
       {options.map((option, index) => (
         <Row
           title={option.title}
+          key={option.title}
           onClickRow={() => onClickRow(option.value)}
           isSelected={dateFormat === option.value}
           hasMarginBottom={options.length !== index + 1}

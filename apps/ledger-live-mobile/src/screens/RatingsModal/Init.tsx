@@ -76,8 +76,8 @@ const Init = ({ closeModal, setStep }: Props) => {
   }, [
     closeModal,
     ratingsHappyMoment?.route_name,
-    handleRatingsSetDateOfNextAllowedRequest,
     ratingsFeatureParams,
+    handleInitNotNow,
   ]);
 
   return (

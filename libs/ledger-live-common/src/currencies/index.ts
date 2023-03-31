@@ -43,6 +43,9 @@ import {
   currenciesByMarketcap,
   useCurrenciesByMarketcap,
 } from "./sortByMarketcap";
+
+export * from "@ledgerhq/coin-framework/currencies/BigNumberToLocaleString";
+export * from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 export * from "@ledgerhq/coin-framework/currencies/support";
 export * from "./helpers";
 
