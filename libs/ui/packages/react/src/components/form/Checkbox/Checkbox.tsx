@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import Text from "../../asorted/Text";
-import CheckAloneRegular from "@ledgerhq/icons-ui/react/CheckAloneRegular";
+import CheckAloneMedium from "@ledgerhq/icons-ui/react/CheckAloneMedium";
 import { renderToStaticMarkup } from "react-dom/server";
 
 const Icon = () =>
-  React.cloneElement(CheckAloneRegular({ size: 13, color: "currentColor" }), {
+  React.cloneElement(CheckAloneMedium({ size: 13, color: "currentColor" }), {
     // the xmlns attribute is required to properly display the checkbox
     xmlns: "http://www.w3.org/2000/svg",
   });

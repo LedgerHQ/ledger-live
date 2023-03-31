@@ -65,7 +65,7 @@ export function Selector({
         </Flex>
 
         <Flex>
-          <Icons.ChevronBottomRegular />
+          <Icons.ChevronBottomMedium />
         </Flex>
       </Flex>
     </TouchableOpacity>

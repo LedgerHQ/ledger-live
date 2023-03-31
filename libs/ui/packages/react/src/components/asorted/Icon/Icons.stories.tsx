@@ -39,10 +39,10 @@ const Story = {
   argTypes: {
     weight: {
       type: "enum",
-      description: "Weight",
+      description: "Weight (Deprecated)",
       defaultValue: "Medium",
       control: {
-        options: ["Light", "Medium", "Regular", "Thin", "UltraLight"],
+        options: ["Medium"],
         control: {
           type: "select",
         },
