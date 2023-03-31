@@ -16,7 +16,7 @@ import {
   StackNavigatorProps,
 } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
-import { EditTransactionParamList } from "../EditTransactionNavigator";
+import { EditTransactionParamList } from "../editTransactionNavigatorParamsList";
 
 type Props = BaseComposite<
   | StackNavigatorProps<
@@ -54,7 +54,7 @@ export default function EthereumCustomFees({ route }: Props) {
     <Ethereum1559CustomFees
       account={account}
       parentAccount={parentAccount}
-      transaction={transaction}
+      transaction={transaction as Transaction}
       onValidateFees={onValidateFees}
       transactionRaw={transactionRaw}
     />
@@ -62,10 +62,11 @@ export default function EthereumCustomFees({ route }: Props) {
     <EthereumLegacyCustomFees
       account={account}
       parentAccount={parentAccount}
-      transaction={transaction}
+      transaction={transaction as Transaction}
       onValidateFees={onValidateFees}
       transactionRaw={transactionRaw}
     />
   );
 }
+
 export { options, EthereumCustomFees as component };
