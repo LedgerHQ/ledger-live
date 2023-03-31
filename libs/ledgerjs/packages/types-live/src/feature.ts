@@ -13,7 +13,6 @@ export type FeatureId =
   | "ptxSmartRouting"
   | "ptxEarn"
   | "currencyAvalancheCChain"
-  | "currencyFlareMobile"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
   | "multibuyNavigation"
