@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-str
 
+## 6.27.13-recover-beta.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.2-recover-beta.0
+
 ## 6.27.12
 
 ### Patch Changes

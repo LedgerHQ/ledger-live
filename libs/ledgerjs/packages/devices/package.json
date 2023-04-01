@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/devices",
-  "version": "8.0.0",
+  "version": "8.0.1-recover-beta.0",
   "description": "Ledger devices",
   "keywords": [
     "Ledger"
