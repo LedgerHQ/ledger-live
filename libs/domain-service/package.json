@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/domain-service",
   "description": "Ledger service responsible for domain handling",
-  "version": "0.2.1-nightly.6",
+  "version": "0.2.1-nightly.7",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

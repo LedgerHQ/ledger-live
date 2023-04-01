@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.18.0-nightly.3
+
+### Minor Changes
+
+- [#3113](https://github.com/LedgerHQ/ledger-live/pull/3113) [`e486e56723`](https://github.com/LedgerHQ/ledger-live/commit/e486e56723c2e6fe6d299f53b38cb4b03a3ee3ea) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - remove currency under feature flag that has been release
+
+### Patch Changes
+
+- [#3096](https://github.com/LedgerHQ/ledger-live/pull/3096) [`9133f2fa1c`](https://github.com/LedgerHQ/ledger-live/commit/9133f2fa1cfb61a3f00101d33abebfbf3c86d723) Thanks [@RamyEB](https://github.com/RamyEB)! - Remove recently used from search page Discovery 2
+
+- Updated dependencies [[`282cad03fb`](https://github.com/LedgerHQ/ledger-live/commit/282cad03fb733cc71e767b641c53ee2d469b8295)]:
+  - @ledgerhq/live-common@29.2.0-nightly.2
+  - @ledgerhq/domain-service@0.2.1-nightly.7
+
 ## 3.18.0-nightly.2
 
 ### Minor Changes

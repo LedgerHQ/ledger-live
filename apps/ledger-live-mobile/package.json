@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.18.0-nightly.2",
+  "version": "3.18.0-nightly.3",
   "packageManager": "pnpm@7.30.0",
   "private": true,
   "scripts": {
