@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.18.0-nightly.4
+
+### Patch Changes
+
+- [#3129](https://github.com/LedgerHQ/ledger-live/pull/3129) [`7d0f4855de`](https://github.com/LedgerHQ/ledger-live/commit/7d0f4855de5d6e0c08df9693c957dfa1f09a4bd1) Thanks [@Justkant](https://github.com/Justkant)! - fix: navigation.pop in DeviceConnect
+
+  As it can be used in the Onboarding base navigator now, if you pop by getting the parent, you will pop the BaseNavigator
+
 ## 3.18.0-nightly.3
 
 ### Minor Changes
