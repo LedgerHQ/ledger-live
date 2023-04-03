@@ -77,6 +77,7 @@ describe("useNamingService", () => {
         address: "forced mocked address",
         registry: "ens",
         domain: "vitalik.eth",
+        type: "forward",
       },
     ];
     mockedResolvedDomain.mockImplementation(async () => resolutions);
@@ -114,6 +115,7 @@ describe("useNamingService", () => {
         domain: "vitalik.eth",
         registry: "ens",
         address: "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
+        type: "reverse",
       },
     ];
     mockedResolvedDomain.mockImplementation(async () => {

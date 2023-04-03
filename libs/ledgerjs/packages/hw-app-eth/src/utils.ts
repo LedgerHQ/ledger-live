@@ -151,23 +151,21 @@ export const nftSelectors = [
 ];
 
 export const mergeResolutions = (
-  oldResolution: Partial<LedgerEthTransactionResolution>,
-  newResolution: Partial<LedgerEthTransactionResolution>
+  resolutionsArray: Partial<LedgerEthTransactionResolution>[]
 ): LedgerEthTransactionResolution => {
-  const resolutions: LedgerEthTransactionResolution = {
+  const mergedResolutions: LedgerEthTransactionResolution = {
     nfts: [],
     erc20Tokens: [],
     externalPlugin: [],
     plugin: [],
+    domains: [],
   };
 
-  for (const key in oldResolution) {
-    resolutions[key].push(...oldResolution[key]);
+  for (const resolutions of resolutionsArray) {
+    for (const key in resolutions) {
+      mergedResolutions[key].push(...resolutions[key]);
+    }
   }
 
-  for (const key in newResolution) {
-    resolutions[key].push(...newResolution[key]);
-  }
-
-  return resolutions;
+  return mergedResolutions;
 };
