@@ -65,7 +65,7 @@ export type FeatureId =
   | "domainInputResolution"
   | "discover"
   | "protectServicesDiscoverDesktop"
-  | "protectServicesDesktop";
+  | "protectServicesDesktop"
   | "editEthTx";
 
 /**  We use objects instead of direct booleans for potential future improvements

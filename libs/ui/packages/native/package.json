@@ -155,7 +155,6 @@
     "minimatch": "^5.1.0",
     "prettier": "^2.4.1",
     "prop-types": "^15.8.1",
-<<<<<<< HEAD
     "react": "^18",
     "react-dom": "^18",
     "react-is": "^18",
@@ -163,15 +162,6 @@
     "react-native-reanimated": "^2.15.0",
     "react-native-safe-area-context": "^4.5.0",
     "react-native-web": "~0.18.12",
-=======
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-is": "^17.0.2",
-    "react-native": "^0.68.5",
-    "react-native-gesture-handler": "^1.10.3",
-    "react-native-reanimated": "^2.8.0",
-    "react-native-web": "~0.17.5",
->>>>>>> 2024bd8b51 (chore(llm): fix jest setup)
     "regenerator-runtime": "^0.13.9",
     "rimraf": "^4.4.1",
     "styled-components": "^5.3.3",
