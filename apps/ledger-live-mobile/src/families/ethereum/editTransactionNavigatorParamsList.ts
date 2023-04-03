@@ -23,6 +23,7 @@ export type EditTransactionParamList = {
     transaction: EthereumTransaction;
     currentNavigation: ScreenName.EditTransactionMethodSelection;
     nextNavigation: ScreenName.SendSelectDevice;
+    transactionRaw?: TransactionRaw;
     setTransaction: (transaction: Transaction) => void;
   };
   [ScreenName.SendSummary]: {

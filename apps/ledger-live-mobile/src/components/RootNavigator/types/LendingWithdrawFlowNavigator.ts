@@ -55,8 +55,8 @@ export type LendingWithdrawFlowNavigatorParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
-      | ScreenName.SendSummary
       | ScreenName.EditTransactionMethodSelection
+      | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.LendingWithdrawSelectDevice
