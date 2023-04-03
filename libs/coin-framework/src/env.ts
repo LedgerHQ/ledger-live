@@ -252,7 +252,7 @@ const envDefinitions: Record<
     desc: "location of the crypto.org chain node",
   },
   CRYPTO_ORG_TESTNET_RPC_URL: {
-    def: "https://testnet-croeseid-4.crypto.org:26657",
+    def: "https://rpc-testnet-croeseid-4.crypto.org",
     parser: stringParser,
     desc: "location of the crypto.org chain testnet node",
   },
@@ -365,11 +365,6 @@ const envDefinitions: Record<
     def: false,
     parser: boolParser,
     desc: "enable an experimental swap interface",
-  },
-  EXPERIMENTAL_EXECUTION_ON_RENDERER: {
-    def: false,
-    parser: boolParser,
-    desc: "enable an experimental execution of business logic to run on renderer side (LLD)",
   },
   EXPLORER: {
     def: "https://explorers.api.live.ledger.com",
@@ -705,6 +700,11 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "version used for the platform api",
   },
+  PLATFORM_DISCOVER_VERSION: {
+    def: 1,
+    parser: intParser,
+    desc: "version used for the descover screen",
+  },
   PLAYWRIGHT_RUN: {
     def: false,
     parser: boolParser,
@@ -734,6 +734,11 @@ const envDefinitions: Record<
     def: false,
     parser: boolParser,
     desc: "Show a performance overlay on the app UI",
+  },
+  ETHEREUM_STUCK_TRANSACTION_TIMEOUT: {
+    def: 5 * 60 * 1000,
+    parser: intParser,
+    desc: "Time after which an optimisc operation is considered stuck",
   },
 };
 

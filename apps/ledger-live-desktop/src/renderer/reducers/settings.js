@@ -78,7 +78,6 @@ export type SettingsState = {
   countervalueFirst: boolean,
   autoLockTimeout: number,
   selectedTimeRange: PortfolioRange,
-  marketIndicator: "eastern" | "western",
   currenciesSettings: {
     [currencyId: string]: CurrencySettings,
   },
@@ -162,7 +161,6 @@ const INITIAL_STATE: SettingsState = {
   countervalueFirst: false,
   autoLockTimeout: 10,
   selectedTimeRange: "month",
-  marketIndicator: "western",
   currenciesSettings: {},
   pairExchanges: {},
   developerMode: !!process.env.__DEV__,
@@ -540,7 +538,6 @@ export const preferredDeviceModelSelector = (state: State) => state.settings.pre
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
 export const nftsViewModeSelector = (state: State) => state.settings.nftsViewMode;
-export const marketIndicatorSelector = (state: State) => state.settings.marketIndicator;
 export const sentryLogsSelector = (state: State) => state.settings.sentryLogs;
 export const autoLockTimeoutSelector = (state: State) => state.settings.autoLockTimeout;
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;

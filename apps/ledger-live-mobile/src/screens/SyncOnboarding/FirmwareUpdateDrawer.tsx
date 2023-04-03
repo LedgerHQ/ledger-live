@@ -3,6 +3,7 @@ import { BoxedIcon, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { NanoFirmwareUpdateMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../components/QueuedDrawer";
+import { TrackScreen } from "../../analytics";
 
 export type Props = {
   isOpen: boolean;
@@ -25,11 +26,15 @@ const FirmwareUpdateDrawer = ({
     <QueuedDrawer
       onClose={() => {
         onClose?.();
-        onSkip?.();
+        onSkip?.(); // TODO: skip logic shouldn't be called from there
       }}
       isRequestingToBeOpened={isOpen}
       preventBackdropClick
     >
+      <TrackScreen
+        category={`Set up ${productName}: Step 4: Software update available`}
+        type={"drawer"}
+      />
       <Flex justifyContent="center" alignItems="center">
         <BoxedIcon
           Icon={<NanoFirmwareUpdateMedium color="primary.c90" size={24} />}

@@ -1,5 +1,4 @@
 import { fork } from "child_process";
-import logger from "~/logger";
 import forceKill from "tree-kill";
 
 class InternalProcess {
@@ -64,7 +63,6 @@ class InternalProcess {
     this.active = true;
     const pid = this.process.pid;
 
-    logger.info(`spawned internal process ${pid}`);
     console.log(`spawned internal process ${pid}`);
 
     this.process.on("exit", (code, signal) => {
@@ -72,10 +70,8 @@ class InternalProcess {
 
       if (code !== null) {
         console.log(`internal process ${pid} gracefully exited with code ${code}`);
-        logger.info(`Internal process ${pid} ended with code ${code}`);
       } else {
         console.log(`internal process ${pid} got killed by signal ${signal}`);
-        logger.info(`Internal process ${pid} killed with signal ${signal}`);
       }
 
       if (this.onExitCallback) {
@@ -93,28 +89,6 @@ class InternalProcess {
       this.run();
     }
 
-    this.process.stdout.on("data", data =>
-      String(data)
-        .split("\n")
-        .forEach(msg => {
-          if (!msg) return;
-          if (process.env.INTERNAL_LOGS) console.log(msg);
-          try {
-            const obj = JSON.parse(msg);
-            if (obj && obj.type === "log") {
-              logger.onLog(obj.log);
-              return;
-            }
-          } catch (e) {}
-          logger.debug("I: " + msg);
-        }),
-    );
-    this.process.stderr.on("data", data => {
-      const msg = String(data).trim();
-      if (__DEV__) console.error("I.e: " + msg);
-      logger.error("I.e: " + String(data).trim());
-    });
-
     if (this.onStartCallback) {
       this.onStartCallback();
     }
@@ -130,7 +104,6 @@ class InternalProcess {
       this.messageQueue = [];
       const pid = this.process.pid;
 
-      logger.info(`ending process ${pid} ...`);
       console.log(`ending process ${pid} ...`);
       this.active = false;
       this.process.once("exit", () => {

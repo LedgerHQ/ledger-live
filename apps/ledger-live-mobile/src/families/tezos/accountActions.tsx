@@ -41,7 +41,7 @@ const getExtraReceiveActionParams = ({ account }: { account: AccountLike }) => {
     : {};
 };
 
-const getActions = ({
+const getMainActions = ({
   account,
   parentAccount,
 }: {
@@ -73,5 +73,5 @@ const getActions = ({
 export default {
   getExtraSendActionParams,
   getExtraReceiveActionParams,
-  getActions,
+  getMainActions,
 };

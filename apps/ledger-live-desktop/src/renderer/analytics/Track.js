@@ -1,6 +1,6 @@
 // @flow
 import { PureComponent } from "react";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import { track } from "./segment";
 
 class Track extends PureComponent<{

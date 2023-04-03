@@ -11,9 +11,78 @@ import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";
 
-const getActions = ({
+type NavigationParamsType = readonly [name: string, options: object];
+
+const getMainActions = ({
   account,
   parentAccount,
+}: {
+  account: Account;
+  parentAccount: Account;
+}): ActionButtonEvent[] | null | undefined => {
+  if (!(account as TronAccount).tronResources) return null;
+  const { spendableBalance, tronResources: { tronPower } = {} } =
+    account as TronAccount;
+  const accountId = account.id;
+  const canFreeze =
+    spendableBalance && spendableBalance.gt(MIN_TRANSACTION_AMOUNT);
+  const canVote = (tronPower || 0) > 0;
+
+  const getNavigationParams = () => {
+    if (canVote) {
+      return [
+        NavigatorName.TronVoteFlow,
+        {
+          screen: ScreenName.VoteStarted,
+          params: {
+            params: {
+              accountId,
+              parentId: parentAccount?.id,
+            },
+          },
+        },
+      ];
+    }
+    if (canFreeze) {
+      return [
+        NavigatorName.Freeze,
+        {
+          screen: ScreenName.FreezeInfo,
+          params: {
+            params: {
+              accountId,
+              parentId: parentAccount?.id,
+            },
+          },
+        },
+      ];
+    }
+    return [
+      NavigatorName.NoFundsFlow,
+      {
+        screen: ScreenName.NoFunds,
+        params: {
+          account,
+          parentAccount,
+        },
+      },
+    ];
+  };
+
+  const navigationParams = getNavigationParams();
+
+  return [
+    {
+      id: "stake",
+      navigationParams: navigationParams as unknown as NavigationParamsType,
+      label: <Trans i18nKey="account.stake" />,
+      Icon: Icons.ClaimRewardsMedium,
+    },
+  ];
+};
+
+const getSecondaryActions = ({
+  account,
 }: {
   account: Account;
   parentAccount: Account;
@@ -46,25 +115,8 @@ const getActions = ({
     effectiveTimeToUnfreeze < Date.now();
   const canVote = (tronPower || 0) > 0;
   const lastVotedDate = getLastVotedDate(account as TronAccount);
+
   return [
-    {
-      id: "stake",
-      disabled: !canVote && !canFreeze,
-      navigationParams: [
-        canVote ? NavigatorName.TronVoteFlow : NavigatorName.Freeze,
-        {
-          screen: canVote ? ScreenName.VoteStarted : ScreenName.FreezeInfo,
-          params: {
-            params: {
-              accountId,
-              parentId: parentAccount?.id,
-            },
-          },
-        },
-      ],
-      label: <Trans i18nKey="account.stake" />,
-      Icon: Icons.ClaimRewardsMedium,
-    },
     {
       id: "freeze",
       disabled: !canFreeze,
@@ -125,5 +177,6 @@ const getActions = ({
 };
 
 export default {
-  getActions,
+  getMainActions,
+  getSecondaryActions,
 };

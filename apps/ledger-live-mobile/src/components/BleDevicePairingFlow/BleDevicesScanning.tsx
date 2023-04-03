@@ -15,6 +15,7 @@ import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
 import lottie from "./assets/bluetooth.json";
 import { urls } from "../../config/urls";
+import { TrackScreen, track } from "../../analytics";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 const CANT_SEE_DEVICE_TIMEOUT = 5000;
@@ -63,10 +64,12 @@ const BleDevicesScanning = ({
     return () => clearTimeout(cantSeeDeviceTimeout);
   }, []);
 
-  const onCantSeeDevicePress = useCallback(
-    () => Linking.openURL(urls.pairingIssues),
-    [],
-  );
+  const onCantSeeDevicePress = useCallback(() => {
+    track("button_clicked", {
+      button: `Can't find ${productName ?? "device"} Bluetooth`,
+    });
+    Linking.openURL(urls.pairingIssues);
+  }, [productName]);
 
   // If we want to filter on known devices:
   const knownDevices = useSelector(knownDevicesSelector);
@@ -134,6 +137,9 @@ const BleDevicesScanning = ({
 
   return (
     <Flex flex={1}>
+      <TrackScreen
+        category={`Looking for ${productName ?? "device"} Bluetooth`}
+      />
       {onGoBack && (
         <TouchableOpacity onPress={onGoBack}>
           <ArrowLeftMedium size={24} />

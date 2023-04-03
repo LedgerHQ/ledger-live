@@ -20,6 +20,7 @@ const TouchButton = styled.button`
   background-color: rgba(0, 0, 0, 0);
   display: inline-flex;
   max-height: 100%;
+  -webkit-app-region: no-drag;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   color: ${p => p.theme.colors.palette.text.shade80};

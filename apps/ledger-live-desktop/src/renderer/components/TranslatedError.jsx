@@ -7,7 +7,7 @@
 import React, { PureComponent } from "react";
 import { withTranslation } from "react-i18next";
 import type { TFunction } from "react-i18next";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import Text from "./Text";
 import ExternalLink from "./ExternalLink";
 import { openURL } from "~/renderer/linking";

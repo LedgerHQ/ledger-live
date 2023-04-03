@@ -581,35 +581,22 @@ const fetchCurrentBlock = ((perCurrencyId) => (currency) => {
   return f();
 })({});
 
-// FIXME : We need to use the pagination token from backend
-const fetchAllTransactions = async (api: API, address, blockHeight) => {
-  let getTransactionsResult: Tx[];
-  let txs: Tx[] = [];
-  let maxIteration = 20; // safe limit
-  let lastRequestTxHash: string | undefined;
+export const fetchAllTransactions = async (api: API, address, blockHeight) => {
+  let accumulatedTxs: Tx[] = [];
+  let currentToken: string | undefined;
 
   do {
-    getTransactionsResult = await api.getTransactions(address, blockHeight);
-    if (getTransactionsResult.length === 0) return txs;
-    if (
-      lastRequestTxHash &&
-      getTransactionsResult[getTransactionsResult.length - 1].hash ===
-        lastRequestTxHash
-    ) {
-      return txs;
-    }
+    const { txs, nextPageToken } = await api.getTransactions(
+      address,
+      blockHeight,
+      2000,
+      currentToken
+    );
+    currentToken = nextPageToken;
+    accumulatedTxs = accumulatedTxs.concat(txs);
+  } while (currentToken != null);
 
-    txs = txs.concat(getTransactionsResult);
-    blockHeight = txs[txs.length - 1].block?.height;
-    lastRequestTxHash = txs[txs.length - 1].hash;
-
-    if (!blockHeight) {
-      log("ethereum", "block.height missing!");
-      return txs;
-    }
-  } while (--maxIteration);
-
-  return txs;
+  return accumulatedTxs;
 };
 
 async function loadERC20Balances(tokenAccounts, address, api) {

@@ -38,7 +38,7 @@ export const languageLabels: { [key in Locale]: string } = {
   nl: "Nederlands",
   no: "Norsk",
   pl: "polski",
-  pt: "português",
+  pt: "Português (Brasil)",
   ru: "Русский",
   sr: "српски",
   sv: "svenska",

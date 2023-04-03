@@ -52,6 +52,8 @@ const defaultWindowOptions = {
   icon: path.join(__dirname, "/build/icons/icon.png"),
   backgroundColor: "#fff",
   webPreferences: {
+    // This is a TEMPORARY workaround for some of our backend not yet supporting CORS. we will remove this once it's the case. this is only for develop mode because production don't do strict CORS check at the moment.
+    webSecurity: !(__DEV__ && process.env.BYPASS_CORS === "1"),
     webviewTag: true,
     blinkFeatures: "OverlayScrollbars",
     devTools: __DEV__ || DEV_TOOLS,

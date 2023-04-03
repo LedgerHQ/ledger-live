@@ -199,6 +199,9 @@ export const defaultFeatures: DefaultFeatures = {
   protectServicesMobile: {
     enabled: false,
   },
+  protectServicesDesktop: {
+    enabled: false,
+  },
   newsfeedPage: {
     enabled: false,
   },

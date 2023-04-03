@@ -47,6 +47,7 @@ import { RootStackParamList } from "../../components/RootNavigator/types/RootNav
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
 import Stories from "../../components/StorylyStories";
+import { TrackScreen, track } from "../../analytics";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -231,6 +232,10 @@ export const SyncOnboarding = ({
 
   const handleDesyncRetry = useCallback(() => {
     // handleDesyncClose is then called
+    track("button_clicked", {
+      button: "Try again",
+      drawer: "Could not connect to Stax",
+    });
     setDesyncDrawerOpen(false);
   }, []);
 
@@ -390,9 +395,12 @@ export const SyncOnboarding = ({
           key: CompanionStepKey.Paired,
           title: t("syncOnboarding.pairingStep.title", { productName }),
           renderBody: () => (
-            <Text variant="bodyLineHeight">
-              {t("syncOnboarding.pairingStep.description", { productName })}
-            </Text>
+            <>
+              <TrackScreen category="Set up Ledger Stax: Step 1 device paired" />
+              <Text variant="bodyLineHeight">
+                {t("syncOnboarding.pairingStep.description", { productName })}
+              </Text>
+            </>
           ),
         },
         {
@@ -402,6 +410,7 @@ export const SyncOnboarding = ({
           estimatedTime: 120,
           renderBody: () => (
             <Flex>
+              <TrackScreen category="Set up Ledger Stax: Step 2 PIN" />
               <Text variant="bodyLineHeight">
                 {t("syncOnboarding.pinStep.description", { productName })}
               </Text>
@@ -415,6 +424,7 @@ export const SyncOnboarding = ({
           estimatedTime: 300,
           renderBody: () => (
             <Flex>
+              <TrackScreen category="Set up Ledger Stax: Step 3 Seed" />
               {seedStatus === "selection" ? (
                 <Text variant="bodyLineHeight">
                   {t("syncOnboarding.seedStep.selection")}
@@ -532,6 +542,10 @@ export const SyncOnboarding = ({
             steps={companionSteps}
             formatEstimatedTime={formatEstimatedTime}
           />
+
+          {companionStepKey === CompanionStepKey.Exit ? (
+            <TrackScreen category="Stax Set Up - Final step: Stax is ready" />
+          ) : null}
         </ScrollContainer>
       </Flex>
     </DeviceSetupView>

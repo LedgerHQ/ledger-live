@@ -17,6 +17,8 @@ export const whitelistDependencies = [
   "Bitcoin",
   "Bitcoin Test",
   "Zcash",
+  "Avalanche",
+  "Avalanche Test",
 ];
 
 export function declareDep(name: string, dep: string): void {

@@ -33,7 +33,6 @@ export class MarketPage {
       page.locator(`data-test-id=market-${ticker}-swap-button`);
     this.stakeButton = (ticker: string): Locator =>
       page.locator(`data-test-id=market-${ticker}-stake-button`);
-    this.coinPageStakeButton = page.locator(`data-test-id="market-coin-stake-button`);
   }
 
   async search(query: string) {
@@ -81,6 +80,12 @@ export class MarketPage {
   async waitForLoading() {
     await this.loadingPlaceholder.first().waitFor({ state: "detached" });
     await this.swapButton("btc").waitFor({ state: "attached" }); // swap buttons are displayed few seconds after
+  }
+
+  async waitForSearchBarToBeEmpty() {
+    await this.page.waitForFunction(async () => {
+      return (await this.searchInput?.inputValue()) === "";
+    });
   }
 
   async startStakeFlowByTicker(ticker: string) {

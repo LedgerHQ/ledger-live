@@ -6,7 +6,8 @@ export class AccountPage {
   readonly settingsButton: Locator;
   readonly swapButton: Locator;
   readonly stakeButton: Locator;
-  readonly bannerButton: Locator;
+  readonly stakeBanner: Locator;
+  readonly stakeBannerButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -14,7 +15,8 @@ export class AccountPage {
     this.settingsButton = page.locator("data-test-id=account-settings-button");
     this.swapButton = page.locator("data-test-id=swap-account-action-button");
     this.stakeButton = page.locator("data-test-id=stake-from-account-action-button");
-    this.bannerButton = page.locator("data-test-id=account-banner-button"); // could be multiple banners so need a better way to do this
+    this.stakeBanner = page.locator("data-test-id=account-stake-banner");
+    this.stakeBannerButton = page.locator("data-test-id=account-stake-banner-button");
   }
 
   async navigateToSwap() {
@@ -26,6 +28,6 @@ export class AccountPage {
   }
 
   async clickBannerCTA() {
-    await this.bannerButton.click();
+    await this.stakeBannerButton.click();
   }
 }

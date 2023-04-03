@@ -17,7 +17,7 @@ const flattenStructuredSearchResults = (
     (acc, searchResult) => {
       acc.push(searchResult);
       forEach(searchResult.tokenAccounts, tokenAccount => {
-        acc.push({ account: tokenAccount });
+        acc.push({ account: tokenAccount, match: tokenAccount.match });
       });
       return acc;
     },

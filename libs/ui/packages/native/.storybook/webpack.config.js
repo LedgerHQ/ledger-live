@@ -21,5 +21,8 @@ module.exports = ({ config }) => {
   config.resolve.alias["victory-native"] = "victory";
   config.resolve.modules = [path.resolve(__dirname, "..", "node_modules"), "node_modules"];
 
+  // This is needed because the storybook reads the public path from the "homepage" package.json field…
+  config.output.publicPath = "/";
+
   return config;
 };

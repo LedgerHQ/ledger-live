@@ -107,36 +107,36 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           <Trans i18nKey="manager.title" />
         </Text>
       </Flex>
-      <NavigationScrollView
-        style={{ paddingBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        {newDeviceSelectionFeatureFlag?.enabled ? (
-          <Flex flex={1} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
-            <SelectDevice2
-              onSelect={onSelectDevice}
-              stopBleScanning={!!device}
+
+      {newDeviceSelectionFeatureFlag?.enabled ? (
+        <Flex flex={1} px={16} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
+          <SelectDevice2
+            onSelect={onSelectDevice}
+            stopBleScanning={!!device}
+            displayServicesWidget
+          />
+        </Flex>
+      ) : (
+        <NavigationScrollView
+          style={{ paddingBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <SelectDevice
+            usbOnly={params?.firmwareUpdate}
+            autoSelectOnAdd
+            onSelect={onSelectDevice}
+            onBluetoothDeviceAction={onShowMenu}
+          />
+          {chosenDevice ? (
+            <RemoveDeviceMenu
+              open={showMenu}
+              device={chosenDevice as Device}
+              onHideMenu={onHideMenu}
             />
-          </Flex>
-        ) : (
-          <>
-            <SelectDevice
-              usbOnly={params?.firmwareUpdate}
-              autoSelectOnAdd
-              onSelect={onSelectDevice}
-              onBluetoothDeviceAction={onShowMenu}
-            />
-            {chosenDevice ? (
-              <RemoveDeviceMenu
-                open={showMenu}
-                device={chosenDevice as Device}
-                onHideMenu={onHideMenu}
-              />
-            ) : null}
-          </>
-        )}
-        <ServicesWidget />
-      </NavigationScrollView>
+          ) : null}
+          <ServicesWidget />
+        </NavigationScrollView>
+      )}
       <DeviceActionModal
         onClose={() => onSelectDevice()}
         device={device}
