@@ -12,7 +12,7 @@
     "gotit" : "알겠습니다",
     "continue" : "계속",
     "retry" : "다시 시도",
-    "backTo" : "Back to {{to}}",
+    "backTo" : "{{to}} 앱으로 돌아가기",
     "done" : "완료",
     "sortBy" : "정렬 기준",
     "signOut" : "로그아웃",
