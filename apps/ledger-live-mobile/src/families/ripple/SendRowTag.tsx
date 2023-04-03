@@ -45,6 +45,7 @@ export default function RippleTagRow({ account, transaction }: Props) {
       accountId: account.id,
       parentId: undefined,
       transaction: transaction as RippleTransaction,
+      currentNavigation: ScreenName.SendSummary,
     });
   }, [navigation, route.params, account.id, transaction]);
   const tag = (transaction as RippleTransaction).tag;
