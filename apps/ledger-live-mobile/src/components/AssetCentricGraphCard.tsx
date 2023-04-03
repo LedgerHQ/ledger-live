@@ -13,10 +13,11 @@ import { useTimeRange } from "../actions/settings";
 import Delta from "./Delta";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import getWindowDimensions from "../logic/getWindowDimensions";
+import { NoCountervaluePlaceholder } from "./CounterValue";
 import Graph from "./Graph";
 import { TransactionsPendingConfirmationWarningAllAccounts } from "./TransactionsPendingConfirmationWarning";
 import ParentCurrencyIcon from "./ParentCurrencyIcon";
-import FormatDate from "./FormatDate";
+import FormatDate from "./DateFormat/FormatDate";
 import { ensureContrast } from "../colors";
 import { track } from "../analytics";
 import { Item } from "./Graph/types";
@@ -159,9 +160,11 @@ function AssetCentricGraphCard({
                       mt={3}
                       minHeight={25}
                     >
-                      {items[1].value !== undefined ? (
+                      {items[1].value ? (
                         <CurrencyUnitValue {...items[1]} />
-                      ) : null}
+                      ) : (
+                        <NoCountervaluePlaceholder />
+                      )}
                     </Text>
                     <Text
                       fontFamily="Inter"

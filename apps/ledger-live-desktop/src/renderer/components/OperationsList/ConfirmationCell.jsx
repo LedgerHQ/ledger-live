@@ -1,14 +1,11 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { connect } from "react-redux";
 import type { TFunction } from "react-i18next";
 import styled from "styled-components";
-import { createStructuredSelector } from "reselect";
 import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
-import { marketIndicatorSelector } from "~/renderer/reducers/settings";
 import { getMarketColor } from "~/renderer/styles/helpers";
 
 import Box from "~/renderer/components/Box";
@@ -17,10 +14,6 @@ import ConfirmationCheck from "./ConfirmationCheck";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import perFamilyOperationDetails from "~/renderer/generated/operationDetails";
-
-const mapStateToProps = createStructuredSelector({
-  marketIndicator: marketIndicatorSelector,
-});
 
 const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
   pl: 4,
@@ -38,13 +31,12 @@ type OwnProps = {
 type Props = {
   ...OwnProps,
   confirmationsNb: number,
-  marketIndicator: string,
   isConfirmed: Boolean,
 };
 
 class ConfirmationCell extends PureComponent<Props> {
   render() {
-    const { account, parentAccount, isConfirmed, t, operation, marketIndicator } = this.props;
+    const { account, parentAccount, isConfirmed, t, operation } = this.props;
     const mainAccount = getMainAccount(account, parentAccount);
     const currency = getAccountCurrency(mainAccount);
 
@@ -52,10 +44,7 @@ class ConfirmationCell extends PureComponent<Props> {
 
     const isNegative = amount.isNegative();
 
-    const marketColor = getMarketColor({
-      marketIndicator,
-      isNegative,
-    });
+    const marketColor = getMarketColor({ isNegative });
 
     // $FlowFixMe
     const specific = currency.family ? perFamilyOperationDetails[currency.family] : null;
@@ -86,8 +75,4 @@ class ConfirmationCell extends PureComponent<Props> {
   }
 }
 
-const ConnectedConfirmationCell: React$ComponentType<OwnProps> = connect(mapStateToProps)(
-  ConfirmationCell,
-);
-
-export default ConnectedConfirmationCell;
+export default ConfirmationCell;

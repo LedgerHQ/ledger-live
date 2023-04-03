@@ -5,10 +5,12 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Box from "~/renderer/components/Box";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
+import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import Text from "~/renderer/components/Text";
 import Spinner from "~/renderer/components/Spinner";
 import Button from "~/renderer/components/Button";
-import { command } from "~/renderer/commands";
+import { from } from "rxjs";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import IconCheckFull from "~/renderer/icons/CheckFull";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
@@ -37,7 +39,7 @@ const ConnectionTester = ({ onExit, onDone }: { onExit: () => void, onDone: () =
     let sub;
     if (currentDevice) {
       // Nb if we haven't detected a device at all, there's no point in running the command
-      sub = command("getAppAndVersion")({ deviceId: "" }).subscribe({
+      sub = withDevice("")(transport => from(getAppAndVersion(transport))).subscribe({
         next: e => {
           onDone();
           setConnectionStatus(1);

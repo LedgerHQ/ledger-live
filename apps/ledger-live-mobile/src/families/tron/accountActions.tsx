@@ -13,7 +13,7 @@ import { ActionButtonEvent } from "../../components/FabActions";
 
 type NavigationParamsType = readonly [name: string, options: object];
 
-const getActions = ({
+const getMainActions = ({
   account,
   parentAccount,
 }: {
@@ -21,33 +21,12 @@ const getActions = ({
   parentAccount: Account;
 }): ActionButtonEvent[] | null | undefined => {
   if (!(account as TronAccount).tronResources) return null;
-  const {
-    spendableBalance,
-    tronResources: {
-      tronPower,
-      frozen: { bandwidth, energy } = {},
-      frozen,
-    } = {},
-  } = account as TronAccount;
+  const { spendableBalance, tronResources: { tronPower } = {} } =
+    account as TronAccount;
   const accountId = account.id;
   const canFreeze =
     spendableBalance && spendableBalance.gt(MIN_TRANSACTION_AMOUNT);
-  const timeToUnfreezeBandwidth =
-    bandwidth && bandwidth.expiredAt ? +bandwidth.expiredAt : Infinity;
-  const timeToUnfreezeEnergy =
-    energy && energy.expiredAt ? +energy.expiredAt : Infinity;
-  const effectiveTimeToUnfreeze = Math.min(
-    timeToUnfreezeBandwidth,
-    timeToUnfreezeEnergy,
-  );
-  const canUnfreeze =
-    frozen &&
-    BigNumber((bandwidth && bandwidth.amount) || 0)
-      .plus((energy && energy.amount) || 0)
-      .gt(MIN_TRANSACTION_AMOUNT) &&
-    effectiveTimeToUnfreeze < Date.now();
   const canVote = (tronPower || 0) > 0;
-  const lastVotedDate = getLastVotedDate(account as TronAccount);
 
   const getNavigationParams = () => {
     if (canVote) {
@@ -98,7 +77,52 @@ const getActions = ({
       navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        token: "TRON",
+        page: "Account Page",
+      },
     },
+  ];
+};
+
+const getSecondaryActions = ({
+  account,
+}: {
+  account: Account;
+  parentAccount: Account;
+}): ActionButtonEvent[] | null | undefined => {
+  if (!(account as TronAccount).tronResources) return null;
+  const {
+    spendableBalance,
+    tronResources: {
+      tronPower,
+      frozen: { bandwidth, energy } = {},
+      frozen,
+    } = {},
+  } = account as TronAccount;
+  const accountId = account.id;
+  const canFreeze =
+    spendableBalance && spendableBalance.gt(MIN_TRANSACTION_AMOUNT);
+  const timeToUnfreezeBandwidth =
+    bandwidth && bandwidth.expiredAt ? +bandwidth.expiredAt : Infinity;
+  const timeToUnfreezeEnergy =
+    energy && energy.expiredAt ? +energy.expiredAt : Infinity;
+  const effectiveTimeToUnfreeze = Math.min(
+    timeToUnfreezeBandwidth,
+    timeToUnfreezeEnergy,
+  );
+  const canUnfreeze =
+    frozen &&
+    BigNumber((bandwidth && bandwidth.amount) || 0)
+      .plus((energy && energy.amount) || 0)
+      .gt(MIN_TRANSACTION_AMOUNT) &&
+    effectiveTimeToUnfreeze < Date.now();
+  const canVote = (tronPower || 0) > 0;
+  const lastVotedDate = getLastVotedDate(account as TronAccount);
+
+  return [
     {
       id: "freeze",
       disabled: !canFreeze,
@@ -159,5 +183,6 @@ const getActions = ({
 };
 
 export default {
-  getActions,
+  getMainActions,
+  getSecondaryActions,
 };

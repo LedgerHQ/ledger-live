@@ -13,8 +13,8 @@ export type StepProps = {
   account: Account;
   error: Error;
   message: MessageData | TypedMessageData;
-  onConfirmationHandler: (arg: any) => any;
-  onFailHandler: (arg: any) => any;
+  onConfirmationHandler: (arg: string) => void;
+  onFailHandler: (arg: Error) => void;
 };
 
 export type St = Step<StepId, StepProps>;

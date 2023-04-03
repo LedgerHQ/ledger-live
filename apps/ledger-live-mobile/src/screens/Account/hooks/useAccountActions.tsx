@@ -197,10 +197,10 @@ export default function useAccountActions({
     ...extraReceiveActionParams,
   };
 
-  const baseActions =
+  const familySpecificMainActions =
     (decorators &&
-      decorators.getActions &&
-      decorators.getActions({
+      decorators.getMainActions &&
+      decorators.getMainActions({
         account,
         parentAccount,
         colors,
@@ -211,11 +211,23 @@ export default function useAccountActions({
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
+    ...(!readOnlyModeEnabled ? familySpecificMainActions : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
   ];
+
+  const familySpecificSecondaryActions =
+    (decorators &&
+      decorators.getSecondaryActions &&
+      decorators.getSecondaryActions({
+        account,
+        parentAccount,
+        colors,
+      })) ||
+    [];
+
   const secondaryActions = [
-    ...baseActions,
+    ...familySpecificSecondaryActions,
     ...(isWalletConnectSupported
       ? [
           {

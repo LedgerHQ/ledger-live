@@ -3,7 +3,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
-import { upperFirst } from "lodash";
+import upperFirst from "lodash/upperFirst";
 import { setLocale } from "~/renderer/actions/settings";
 import { languageSelector, localeSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";

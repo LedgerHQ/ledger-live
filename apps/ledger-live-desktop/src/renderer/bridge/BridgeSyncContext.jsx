@@ -3,7 +3,7 @@
 import React, { useCallback } from "react";
 import { BridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useSelector, useDispatch } from "react-redux";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { recentlyChangedExperimental } from "~/renderer/experimental";

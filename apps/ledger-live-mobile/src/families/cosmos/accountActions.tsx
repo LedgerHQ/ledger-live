@@ -9,7 +9,7 @@ import { ActionButtonEvent } from "../../components/FabActions";
 
 type NavigationParamsType = readonly [name: string, options: object];
 
-const getActions = ({
+const getMainActions = ({
   account,
   parentAccount,
 }: {
@@ -44,10 +44,16 @@ const getActions = ({
       navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        token: "COSMOS",
+        page: "Account Page",
+      },
     },
   ];
 };
 
 export default {
-  getActions,
+  getMainActions,
 };

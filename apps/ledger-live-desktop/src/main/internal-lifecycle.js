@@ -4,7 +4,6 @@ import path from "path";
 import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/env";
 import { isRestartNeeded } from "~/helpers/env";
 import { setTags } from "~/sentry/main";
-import logger from "~/logger";
 import InternalProcess from "./InternalProcess";
 import {
   transportCloseChannel,
@@ -12,6 +11,8 @@ import {
   transportExchangeBulkChannel,
   transportOpenChannel,
   transportExchangeBulkUnsubscribeChannel,
+  transportListenChannel,
+  transportListenUnsubscribeChannel,
 } from "~/config/transportChannels";
 
 // ~~~
@@ -57,21 +58,18 @@ const spawnCoreProcess = () => {
   };
 
   internal.configure(path.resolve(__dirname, "main.bundle.js"), [], {
+    silent: true,
     env,
     execArgv: (process.env.LEDGER_INTERNAL_ARGS || "").split(/[ ]+/).filter(Boolean),
-    silent: true,
   });
   internal.start();
 };
 
 internal.onStart(() => {
   internal.process.on("message", handleGlobalInternalMessage);
-
-  internal.send({ type: "init" });
 });
 
 app.on("window-all-closed", async () => {
-  logger.info("cleaning internal because main is done");
   if (internal.active) {
     await internal.stop();
   }
@@ -79,7 +77,6 @@ app.on("window-all-closed", async () => {
 });
 
 ipcMain.on("clean-processes", async () => {
-  logger.info("cleaning processes on demand");
   if (internal.active) {
     await internal.stop();
   }
@@ -228,4 +225,6 @@ internalHandlerPromise(transportOpenChannel);
 internalHandlerPromise(transportExchangeChannel);
 internalHandlerPromise(transportCloseChannel);
 internalHandlerObservable(transportExchangeBulkChannel);
+internalHandlerObservable(transportListenChannel);
 internalHandlerEvent(transportExchangeBulkUnsubscribeChannel);
+internalHandlerEvent(transportListenUnsubscribeChannel);

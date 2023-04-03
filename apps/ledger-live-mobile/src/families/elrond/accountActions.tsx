@@ -29,7 +29,7 @@ type NavigationParamsType = readonly [name: string, options: object];
  * Declare the function that will return the actions' settings array.
  */
 
-const getActions = (props: getActionsType): getActionsReturnType => {
+const getMainActions = (props: getActionsType): getActionsReturnType => {
   const { account, parentAccount } = props;
 
   const balance = denominate({
@@ -82,8 +82,14 @@ const getActions = (props: getActionsType): getActionsReturnType => {
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
       navigationParams: navigationParams as unknown as NavigationParamsType,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        token: "ELROND",
+        page: "Account Page",
+      },
     },
   ];
 };
 
-export default { getActions };
+export default { getMainActions };

@@ -5,8 +5,8 @@ import "../../__tests__/test-helpers/environment";
 import allSpecs from "../../generated/specs";
 import type { AppSpec } from "../types";
 import { Account } from "@ledgerhq/types-live";
+import { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import {
-  AppCandidate,
   createSpeculosDevice,
   findAppCandidate,
   listAppCandidates,
@@ -15,7 +15,7 @@ import {
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { getCurrencyBridge } from "../../bridge";
 import { filter, map, reduce, timeoutWith } from "rxjs/operators";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { throwError } from "rxjs";
 import { Report } from "./types";
 import { toAccountRaw } from "../../account";

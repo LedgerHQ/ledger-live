@@ -9,7 +9,6 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import Modal from "~/renderer/components/Modal";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import Box from "~/renderer/components/Box";
-import { command } from "~/renderer/commands";
 import { Trans, useTranslation } from "react-i18next";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -19,16 +18,15 @@ import BigSpinner from "~/renderer/components/BigSpinner";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { createAction as initSellCreateAction } from "@ledgerhq/live-common/hw/actions/initSell";
-import { toTransactionRaw, toTransactionStatusRaw } from "@ledgerhq/live-common/transaction/index";
-import { toAccountLikeRaw, toAccountRaw } from "@ledgerhq/live-common/account/serialization";
 import { renderError } from "~/renderer/components/DeviceAction/rendering";
 import { useBroadcast } from "~/renderer/hooks/useBroadcast";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import checkSignatureAndPrepare from "@ledgerhq/live-common/exchange/sell/checkSignatureAndPrepare";
+import { from } from "rxjs";
+import getTransactionId from "@ledgerhq/live-common/exchange/sell/getTransactionId";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 
-const checkSignatureAndPrepare = command("checkSignatureAndPrepare");
-const connectAppExec = command("connectApp");
-const initSellExec = command("getTransactionId");
-
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectAppExec);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
 type Props = {
   onClose: () => void,
@@ -106,13 +104,10 @@ const Root = ({ data, onClose }: Props) => {
   const action2 = useMemo(
     () =>
       initSellCreateAction(
-        getEnv("MOCK") ? mockedEventEmitter : connectAppExec,
+        getEnv("MOCK") ? mockedEventEmitter : connectApp,
         getEnv("MOCK")
           ? mockedEventEmitter
-          : ({ deviceId }) =>
-              initSellExec({
-                deviceId,
-              }),
+          : ({ deviceId }) => withDevice(deviceId)(transport => from(getTransactionId(transport))),
         ({
           deviceId,
           transaction,
@@ -122,15 +117,19 @@ const Root = ({ data, onClose }: Props) => {
           parentAccount,
           status,
         }) =>
-          checkSignatureAndPrepare({
-            deviceId,
-            transaction: toTransactionRaw(transaction),
-            binaryPayload,
-            payloadSignature,
-            account: toAccountLikeRaw(account),
-            parentAccount: parentAccount ? toAccountRaw(parentAccount) : undefined,
-            status: toTransactionStatusRaw(status, account.currency.family),
-          }),
+          withDevice(deviceId)(transport =>
+            from(
+              checkSignatureAndPrepare(transport, {
+                binaryPayload,
+                account,
+                parentAccount,
+                status,
+                payloadSignature,
+                transaction,
+              }),
+            ),
+          ),
+
         handleTransactionId,
       ),
     [handleTransactionId],

@@ -5,13 +5,14 @@ import { Trans } from "react-i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({
+const getMainActions = ({
   account,
   parentAccount,
 }: {
   account: Account;
   parentAccount: Account;
 }) => {
+  // TODO: Update ledger-live/apps/ledger-live-mobile/src/components/Stake/index.tsx after Kiln stake implementation
   if (account.type === "Account" && account.currency.id === "ethereum") {
     const navigationParams = isAccountEmpty(account)
       ? [
@@ -40,8 +41,12 @@ const getActions = ({
         navigationParams,
         label: <Trans i18nKey="account.stake" />,
         Icon: Icons.ClaimRewardsMedium,
-        event: "Stake Ethereum Account Button",
-        eventProperties: { currencyName: account?.currency?.name },
+        event: "button_clicked",
+        eventProperties: {
+          button: "stake",
+          token: "ETH",
+          page: "Account Page",
+        },
       },
     ];
   }
@@ -49,5 +54,5 @@ const getActions = ({
 };
 
 export default {
-  getActions,
+  getMainActions,
 };

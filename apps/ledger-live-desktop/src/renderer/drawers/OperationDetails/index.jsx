@@ -49,10 +49,7 @@ import IconExternalLink from "~/renderer/icons/ExternalLink";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { openURL } from "~/renderer/linking";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import {
-  confirmationsNbForCurrencySelector,
-  marketIndicatorSelector,
-} from "~/renderer/reducers/settings";
+import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { getMarketColor, centerEllipsis } from "~/renderer/styles/helpers";
 
 import {
@@ -76,7 +73,6 @@ import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
 
 const mapStateToProps = (state, { operationId, accountId, parentId }) => {
-  const marketIndicator = marketIndicatorSelector(state);
   const parentAccount: ?Account = parentId && accountSelector(state, { accountId: parentId });
   let account: ?AccountLike;
   if (parentAccount) {
@@ -96,7 +92,6 @@ const mapStateToProps = (state, { operationId, accountId, parentId }) => {
   const operation = account ? findOperationInAccount(account, operationId) : null;
 
   return {
-    marketIndicator,
     account,
     parentAccount,
     operation,
@@ -113,13 +108,12 @@ type OwnProps = {
 type Props = OwnProps & {
   parentAccount: ?Account,
   confirmationsNb: number,
-  marketIndicator: *,
   parentOperation?: Operation,
 };
 type openOperationType = "goBack" | "subOperation" | "internalOperation";
 
 const OperationD: React$ComponentType<Props> = (props: Props) => {
-  const { t, onClose, operation, account, parentAccount, confirmationsNb, marketIndicator } = props;
+  const { t, onClose, operation, account, parentAccount, confirmationsNb } = props;
 
   const history = useHistory();
   const location = useLocation();
@@ -150,10 +144,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
 
   const amount = getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
-  const marketColor = getMarketColor({
-    marketIndicator,
-    isNegative,
-  });
+  const marketColor = getMarketColor({ isNegative });
   const confirmationsString = getOperationConfirmationDisplayableNumber(operation, mainAccount);
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
 

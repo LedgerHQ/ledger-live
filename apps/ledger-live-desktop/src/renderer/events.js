@@ -1,17 +1,11 @@
 // @flow
 import { ipcRenderer } from "electron";
-import debug from "debug";
 import { killInternalProcess } from "./reset";
 import { lock } from "./actions/application";
 import { hasEncryptionKey } from "~/renderer/storage";
+import logger from "./logger";
 
 const CHECK_UPDATE_DELAY = 5000;
-
-const d = {
-  // FIXME we should not use debug library. we have our own log() for this!
-  sync: debug("lwd:sync"),
-  update: debug("lwd:update"),
-};
 
 export function sendEvent(channel: string, msgType: string, data: any) {
   ipcRenderer.send(channel, {
@@ -32,6 +26,6 @@ export default ({ store }: { store: Object }) => {
 };
 
 export function checkUpdates() {
-  d.update("Update - check");
+  logger.info("Update - check");
   setTimeout(() => sendEvent("updater", "init"), CHECK_UPDATE_DELAY);
 }

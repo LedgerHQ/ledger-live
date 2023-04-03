@@ -7,7 +7,7 @@ import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({
+const getMainActions = ({
   account,
   parentAccount,
 }: {
@@ -42,10 +42,16 @@ const getActions = ({
       navigationParams,
       label: <Trans i18nKey="account.stake" />,
       Icon: Icons.ClaimRewardsMedium,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        token: "NEAR",
+        page: "Account Page",
+      },
     },
   ];
 };
 
 export default {
-  getActions,
+  getMainActions,
 };

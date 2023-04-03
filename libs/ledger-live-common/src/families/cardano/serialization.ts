@@ -16,7 +16,6 @@ import type {
   TokenRaw,
 } from "./types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
-import isEqual from "lodash/isEqual";
 
 function toTokenRaw({ assetName, policyId, amount }: Token): TokenRaw {
   return {
@@ -180,30 +179,6 @@ export function fromCardanoResourceRaw(
     utxos: r.utxos.map(fromCardanoOutputRaw),
     protocolParams: fromProtocolParamsRaw(r.protocolParams),
   };
-}
-
-export function applyReconciliation(
-  account: Account,
-  updatedRaw: AccountRaw,
-  next: Account
-): boolean {
-  let changed = false;
-  const cardanoAcc = account as CardanoAccount;
-  const cardanoUpdatedRaw = updatedRaw as CardanoAccountRaw;
-  if (
-    cardanoUpdatedRaw.cardanoResources &&
-    (!cardanoAcc.cardanoResources ||
-      !isEqual(
-        toCardanoResourceRaw(cardanoAcc.cardanoResources),
-        cardanoUpdatedRaw.cardanoResources
-      ))
-  ) {
-    (next as CardanoAccount).cardanoResources = fromCardanoResourceRaw(
-      cardanoUpdatedRaw.cardanoResources
-    );
-    changed = true;
-  }
-  return changed;
 }
 
 export function assignToAccountRaw(

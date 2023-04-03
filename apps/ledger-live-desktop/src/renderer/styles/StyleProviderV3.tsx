@@ -15,7 +15,7 @@ type Props = {
   selectedPalette: "light" | "dark";
 };
 
-export type ThemedComponent<T> = StyledComponent<T, Theme, any>;
+export type ThemedComponent<T> = StyledComponent<T, Theme, unknown>;
 
 const StyleProviderV3 = ({ children, selectedPalette }: Props) => {
   const theme: Theme = useMemo(
@@ -41,8 +41,8 @@ const StyleProviderV3 = ({ children, selectedPalette }: Props) => {
   );
 };
 
-export const withV3StyleProvider = (Component: React.ComponentType<any>) => {
-  const WrappedComponent = (props: any) => {
+export const withV3StyleProvider = <T,>(Component: React.ComponentType<T>) => {
+  const WrappedComponent = (props: T) => {
     const theme = useTheme();
 
     return (

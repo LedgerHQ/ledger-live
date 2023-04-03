@@ -5,7 +5,8 @@ import {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { makeRe } from "minimatch";
-import { listTokens, listSupportedCurrencies } from "../currencies";
+import { listTokens } from "@ledgerhq/cryptoassets";
+import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 
 export function isCryptoCurrency(
   currency: Currency

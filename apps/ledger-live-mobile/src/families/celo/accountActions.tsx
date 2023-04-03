@@ -7,7 +7,7 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import CeloIcon from "./components/CeloIcon";
 import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({
+const getMainActions = ({
   account,
   parentAccount,
 }: {
@@ -42,12 +42,18 @@ const getActions = ({
     {
       id: "stake",
       navigationParams,
-      label: <Trans i18nKey="celo.manage.title" />,
+      label: <Trans i18nKey="account.stake" />,
       Icon: () => <CeloIcon isDisabled={false} />,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        token: "CELO",
+        page: "Account Page",
+      },
     },
   ];
 };
 
 export default {
-  getActions,
+  getMainActions,
 };

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button";
+import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { Button as UiButton } from "@ledgerhq/native-ui";
 import { track } from "../../analytics";
 
