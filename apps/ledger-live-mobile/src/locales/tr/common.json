@@ -12,7 +12,7 @@
     "gotit" : "Anladım",
     "continue" : "Devam",
     "retry" : "Tekrar dene",
-    "backTo" : "Back to {{to}}",
+    "backTo" : "{{to}} sayfasına dön",
     "done" : "Tamam",
     "sortBy" : "Sıralama türü",
     "signOut" : "Oturumu kapat",
@@ -2890,7 +2890,7 @@
       "title" : "Satın Al / Sat"
     },
     "stake" : {
-      "title" : "Stake",
+      "title" : "Stake edin",
       "description" : "Elinizdeki kriptoları artırın."
     },
     "swap" : {
