@@ -43,12 +43,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const umee = useFeature("currencyUmee");
   const binanceBeaconChain = useFeature("currencyBinanceBeaconChain");
   const osmo = useFeature("currencyOsmosis");
-  const fantom = useFeature("currencyFantom");
-  const moonbeam = useFeature("currencyMoonbeam");
-  const cronos = useFeature("currencyCronos");
-  const songbird = useFeature("currencySongbird");
-  const flare = useFeature("currencyFlare");
-  const near = useFeature("currencyNear");
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const featureFlaggedCurrencies = useMemo(
     () => ({
@@ -66,12 +60,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       umee,
       binanceBeaconChain,
       osmo,
-      fantom,
-      moonbeam,
-      cronos,
-      songbird,
-      flare,
-      near,
       avalanche_c_chain: avaxCChain,
     }),
     [avaxCChain],
