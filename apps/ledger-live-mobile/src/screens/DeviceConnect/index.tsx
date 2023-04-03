@@ -15,12 +15,10 @@ import DeviceActionModal from "../../components/DeviceActionModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import {
   RootComposite,
-  StackNavigatorNavigation,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../../const";
-import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 
 const action = createAction(connectApp);
 
@@ -46,12 +44,7 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
   const onHideMenu = useCallback(() => setShowMenu(false), []);
 
   const onDone = useCallback(() => {
-    const n =
-      navigation.getParent<StackNavigatorNavigation<RootStackParamList>>();
-
-    if (n) {
-      n.pop();
-    }
+    navigation.pop();
   }, [navigation]);
 
   const handleSuccess = useCallback(
