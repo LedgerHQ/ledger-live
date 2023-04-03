@@ -77,6 +77,7 @@ export type SwapNavigatorParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice
