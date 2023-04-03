@@ -77,7 +77,7 @@ export default function DelegationRow({
 
       <View style={styles.rightWrapper}>
         <Text variant={"body"} fontWeight={"semiBold"}>
-          {formatAmount(stakeAmount)}
+          {formatAmount(stakeAmount.toString())}
         </Text>
 
         <LText color="grey">

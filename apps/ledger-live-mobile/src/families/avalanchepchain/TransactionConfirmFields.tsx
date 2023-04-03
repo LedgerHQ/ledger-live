@@ -23,8 +23,8 @@ type FieldProps = {
   field: DeviceTransactionField;
 };
 
-const getAvalancheAppDate = (unixTimestamp: BigNumber) =>
-  `${new Date(unixTimestamp.toNumber() * 1000)
+const getAvalancheAppDate = (unixTimestamp: BigNumber | null) =>
+  `${new Date((unixTimestamp?.toNumber() || 0) * 1000)
     .toISOString()
     .split(".")[0]
     .replace("T", " ")} UTC`;

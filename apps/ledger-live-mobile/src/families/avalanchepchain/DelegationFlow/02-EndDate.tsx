@@ -13,7 +13,7 @@ import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import {
   FIVE_MINUTES,
   TWO_WEEKS,
@@ -60,12 +60,14 @@ export default function DelegationEndDate({ navigation, route }: Props) {
 
   invariant(transaction, "transaction must be defined");
 
-  const onChange = (_, selectedDate: number) => {
+  const onChange = (_: DateTimePickerEvent, selectedDate: Date | undefined) => {
+    if (selectedDate) {
     setTransaction(
       bridge.updateTransaction(transaction, {
-        endTime: new BigNumber(selectedDate / 1000),
+        endTime: new BigNumber(selectedDate.getTime()  / 1000),
       }),
     );
+    }
   };
 
   const onContinue = () => {
@@ -103,13 +105,13 @@ export default function DelegationEndDate({ navigation, route }: Props) {
                 <View style={styles.datePickers}>
                   <DateTimePicker
                     mode="date"
-                    value={new Date(transaction.endTime * 1000)}
+                    value={new Date(transaction.endTime?.toNumber() || 0 * 1000)}
                     onChange={onChange}
                     style={styles.datePicker}
                   />
                   <DateTimePicker
                     mode="time"
-                    value={new Date(transaction.endTime * 1000)}
+                    value={new Date(transaction.endTime?.toNumber() || 0 * 1000)}
                     onChange={onChange}
                     style={styles.datePicker}
                   />

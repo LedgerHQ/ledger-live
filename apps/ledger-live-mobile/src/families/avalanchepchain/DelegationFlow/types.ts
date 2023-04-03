@@ -5,6 +5,7 @@ import type {
 } from "@ledgerhq/live-common/families/avalanchepchain/types";
 import type { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../../const";
 
 export type AvalancheDelegationFlowParamList = {
@@ -55,5 +56,18 @@ export type AvalancheDelegationFlowParamList = {
     parentId?: string;
     transaction?: Transaction;
     status?: TransactionStatus;
+  };
+  [ScreenName.AvalancheDelegationConnectDevice]: {
+    device: Device;
+    accountId: string;
+    parentId?: string;
+    transaction: Transaction;
+    status: TransactionStatus;
+    appName?: string;
+    selectDeviceLink?: boolean;
+    onSuccess?: (payload: unknown) => void;
+    onError?: (error: Error) => void;
+    analyticsPropertyFlow?: string;
+    forceSelectDevice?: boolean;
   };
 };

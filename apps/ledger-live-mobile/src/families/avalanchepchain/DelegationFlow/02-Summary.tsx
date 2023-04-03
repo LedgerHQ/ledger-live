@@ -200,7 +200,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.AvalancheDelegationSelectDevice, {
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      parentId: parentAccount ? parentAccount.id : undefined,
       transaction,
       status,
     });

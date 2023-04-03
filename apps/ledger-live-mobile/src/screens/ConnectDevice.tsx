@@ -55,6 +55,7 @@ import { TezosDelegationFlowParamList } from "../families/tezos/DelegationFlow/t
 import { TronVoteFlowParamList } from "../families/tron/VoteFlow/types";
 import { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
 import { SignMessageNavigatorStackParamList } from "../components/RootNavigator/types/SignMessageNavigator";
+import { AvalancheDelegationFlowParamList } from "../families/avalanchepchain/DelegationFlow/types";
 
 const action = createAction(connectApp);
 type Props =
@@ -191,6 +192,10 @@ type Props =
   | StackNavigatorProps<
       TezosDelegationFlowParamList,
       ScreenName.DelegationConnectDevice
+    >
+  | StackNavigatorProps<
+      AvalancheDelegationFlowParamList,
+      ScreenName.AvalancheDelegationConnectDevice
     >
   | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>
   | StackNavigatorProps<

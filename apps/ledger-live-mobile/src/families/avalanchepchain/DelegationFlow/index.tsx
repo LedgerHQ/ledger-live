@@ -15,6 +15,7 @@ import SelectValidator from "../SelectValidator";
 import DelegationSummary from "./02-Summary";
 import DelegationValidationError from "./04-ValidationError";
 import DelegationValidationSuccess from "./04-ValidationSuccess";
+import { AvalancheDelegationFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -163,4 +164,4 @@ const options = {
 
 export { DelegationFlow as component, options };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<AvalancheDelegationFlowParamList>();

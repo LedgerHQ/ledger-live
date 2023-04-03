@@ -57,7 +57,9 @@ function Delegations({ account }: Props) {
     [avalanchePChainResources],
   );
 
-  const [delegation, setDelegation] = useState<AvalancheDelegation>();
+  const [delegation, setDelegation] = useState<AvalancheDelegation | null>(
+    null,
+  );
 
   const onNavigate = useCallback(
     ({
@@ -69,7 +71,7 @@ function Delegations({ account }: Props) {
       screen?: string;
       params?: { [key: string]: unknown };
     }) => {
-      setDelegation();
+      setDelegation(null);
       (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
         route,
         {
@@ -92,7 +94,7 @@ function Delegations({ account }: Props) {
   }, [onNavigate, delegations]);
 
   const onCloseDrawer = useCallback(() => {
-    setDelegation();
+    setDelegation(null);
   }, []);
 
   const onOpenExplorer = useCallback(

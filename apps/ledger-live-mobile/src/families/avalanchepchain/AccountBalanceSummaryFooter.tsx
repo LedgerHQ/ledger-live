@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function useInfo(): { [key: InfoName]: ModalInfo[] } {
+function useInfo(): Record<InfoName, ModalInfo[]> {
   const { t } = useTranslation();
   const currency = getCryptoCurrencyById("avalanchepchain");
   const AvalancheIcon = getCryptoCurrencyIcon(currency);
