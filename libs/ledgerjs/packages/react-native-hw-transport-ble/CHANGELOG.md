@@ -1,5 +1,23 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.28.4
+
+### Patch Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`57c52a9fca`](https://github.com/LedgerHQ/ledger-live/commit/57c52a9fca18595e5fe6b0a81fc7b5967b2ca74c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: request for a specific MTU when trying to BLE connect
+
+  ConnectionOptions was commented as "not used" in react-native-ble-plx,
+  but it is actually used and needed when connecting to a device.
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: re-work of the transport error mapping HwTransportErrorType
+
+  And updating functions and hooks using them
+
+- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472), [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b)]:
+  - @ledgerhq/errors@6.12.4
+  - @ledgerhq/devices@8.0.1
+  - @ledgerhq/hw-transport@6.28.2
+
 ## 6.28.4-next.1
 
 ### Patch Changes
