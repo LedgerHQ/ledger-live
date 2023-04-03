@@ -41,7 +41,6 @@ export default function SolanaSendRowsCustom({ account, transaction, navigation,
       parentId: undefined,
       account: account as SolanaAccount,
       transaction: transaction as SolanaTransaction,
-      currentNavigation: ScreenName.SendSummary,
     });
   }, [navigation, route.params, account, transaction]);
 

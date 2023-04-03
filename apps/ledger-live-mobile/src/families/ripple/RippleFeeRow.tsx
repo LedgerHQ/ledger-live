@@ -53,7 +53,6 @@ export default function RippleFeeRow({ account, transaction, parentAccount }: Pr
       accountId: account.id,
       parentId: parentAccount?.id,
       transaction: transaction as RippleTransaction,
-      currentNavigation: ScreenName.SendSummary,
     });
   }, [navigation, route.params, account.id, parentAccount?.id, transaction]);
   const extraInfoFees = useCallback(() => {
