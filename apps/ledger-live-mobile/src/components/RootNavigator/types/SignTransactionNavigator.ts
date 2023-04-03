@@ -51,6 +51,7 @@ export type SignTransactionNavigatorParamList = {
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice

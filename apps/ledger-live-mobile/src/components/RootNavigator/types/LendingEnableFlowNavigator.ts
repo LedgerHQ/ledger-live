@@ -178,6 +178,7 @@ export type LendingEnableFlowParamsList = {
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.LendingWithdrawSelectDevice
@@ -207,6 +208,7 @@ export type LendingEnableFlowParamsList = {
       | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
   };
   [ScreenName.EthereumEditGasLimit]: {
@@ -243,6 +245,7 @@ export type LendingEnableFlowParamsList = {
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.LendingWithdrawSelectDevice
@@ -264,6 +267,7 @@ export type LendingEnableFlowParamsList = {
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.LendingWithdrawSelectDevice
@@ -286,6 +290,7 @@ export type LendingEnableFlowParamsList = {
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.LendingWithdrawSelectDevice
@@ -316,6 +321,7 @@ export type LendingEnableFlowParamsList = {
       | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
   };
   [ScreenName.HederaEditMemo]: {
