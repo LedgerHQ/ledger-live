@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import invariant from "invariant";
 import { Trans, useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
@@ -77,10 +77,12 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       .plus(account.type === "Account" ? transactionToEdit.amount : 0),
   );
 
+  const [selectedMethod, setSelectedMethod] = useState<
+    "cancel" | "speedup" | null
+  >();
+
   const oldestOperation = isOldestEditableOperation(operation, account);
-
   const currency = getAccountCurrency(account);
-
   const bridge = getAccountBridge(account, parentAccount as Account);
 
   const onSelect = useCallback(
@@ -94,6 +96,9 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               nonce: operation.transactionSequenceNumber,
               allowZeroAmount: true,
               mode: "send",
+              recipient:
+                (account as Account)?.freshAddress ??
+                (parentAccount as Account)?.freshAddress,
             };
 
             if (EIP1559ShouldBeUsed(mainAccount.currency)) {
@@ -117,6 +122,8 @@ function MethodSelectionComponent({ navigation, route }: Props) {
             setTransaction(
               bridge.updateTransaction(transaction, updatedTransaction),
             );
+
+            setSelectedMethod("cancel");
           }
 
           break;
@@ -124,20 +131,22 @@ function MethodSelectionComponent({ navigation, route }: Props) {
         case "speedup":
           {
             const updatedTransaction: Partial<Transaction> = {
+              amount: transactionToEdit.amount,
+              data: transactionToEdit.data,
+              recipient: transactionToEdit.recipient,
+              mode: transactionToEdit.mode,
               nonce: operation.transactionSequenceNumber,
               networkInfo: null,
               gasPrice: null,
               maxFeePerGas: null,
               maxPriorityFeePerGas: null,
-              mode: "send",
-              recipient:
-                (account as Account)?.freshAddress ??
-                (parentAccount as Account)?.freshAddress,
             };
 
             setTransaction(
               bridge.updateTransaction(transaction, updatedTransaction),
             );
+
+            setSelectedMethod("speedup");
           }
 
           break;
@@ -156,16 +165,14 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   );
 
   useEffect(() => {
-    // if cancel
-    if (transaction.amount.eq(0)) {
+    if (selectedMethod === "cancel") {
       navigation.navigate(ScreenName.SendSelectDevice, {
         accountId: account.id,
         parentId: parentAccount?.id,
         transaction,
         status,
       });
-      // if speedup
-    } else if (transaction.networkInfo === null) {
+    } else if (selectedMethod === "speedup") {
       navigation.navigate(ScreenName.SendSummary, {
         accountId: account.id,
         parentId: parentAccount?.id,
@@ -177,7 +184,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
         setTransaction,
       });
     }
-  }, [transaction, onSelect]);
+  }, [selectedMethod, transaction]);
 
   const { t } = useTranslation();
 
