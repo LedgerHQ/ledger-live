@@ -47,14 +47,12 @@ import {
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 import { CurrentNetworkFee } from "../../families/ethereum/CurrentNetworkFee";
-import { EditTransactionParamList } from "../../families/ethereum/editTransactionNavigatorParamsList";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<
       SendFundsNavigatorStackParamList,
       ScreenName.SendSummary
     >
-  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
