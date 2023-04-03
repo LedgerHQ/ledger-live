@@ -148,6 +148,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -170,6 +171,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -194,6 +196,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -217,6 +220,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -240,6 +244,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -261,6 +266,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -282,6 +288,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -304,6 +311,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -326,6 +334,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -349,6 +358,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.LendingWithdrawSelectDevice
@@ -370,6 +380,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.LendingWithdrawSelectDevice
@@ -392,6 +403,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.LendingWithdrawSelectDevice
@@ -415,6 +427,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.LendingWithdrawSelectDevice
