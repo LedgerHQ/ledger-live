@@ -6,6 +6,11 @@ tasks:
     deps:
       - ~:build
     platform: node
+  test/libs:
+    command: noop
+    deps:
+      - ~:test
+    platform: node
   build:
     command: pnpm run --if-present build
     deps:
