@@ -114,6 +114,7 @@ type Props = {
   name?: string, // eslint-disable-line
   onBeforeOpen?: ({ data: * }) => *, // eslint-disable-line
   backdropColor: ?boolean,
+  bodyStyle?: any,
 };
 
 class Modal extends PureComponent<Props, { directlyClickedBackdrop: boolean }> {
@@ -200,6 +201,7 @@ class Modal extends PureComponent<Props, { directlyClickedBackdrop: boolean }> {
       isOpened,
       width,
       backdropColor,
+      bodyStyle,
     } = this.props;
 
     const renderProps = {
@@ -242,6 +244,7 @@ class Modal extends PureComponent<Props, { directlyClickedBackdrop: boolean }> {
                   e.stopPropagation();
                 }}
                 data-test-id="modal-container"
+                style={bodyStyle}
               >
                 {render && render(renderProps)}
                 {children}
