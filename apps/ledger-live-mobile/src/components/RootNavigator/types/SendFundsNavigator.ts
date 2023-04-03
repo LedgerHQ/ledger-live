@@ -139,6 +139,7 @@ export type SendFundsNavigatorStackParamList = {
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -155,6 +156,7 @@ export type SendFundsNavigatorStackParamList = {
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -173,6 +175,7 @@ export type SendFundsNavigatorStackParamList = {
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -190,6 +193,7 @@ export type SendFundsNavigatorStackParamList = {
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -207,6 +211,7 @@ export type SendFundsNavigatorStackParamList = {
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -222,6 +227,7 @@ export type SendFundsNavigatorStackParamList = {
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -237,6 +243,7 @@ export type SendFundsNavigatorStackParamList = {
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -253,6 +260,7 @@ export type SendFundsNavigatorStackParamList = {
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -269,6 +277,7 @@ export type SendFundsNavigatorStackParamList = {
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
@@ -286,6 +295,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice
@@ -301,6 +311,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice
@@ -317,6 +328,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice
@@ -334,6 +346,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice

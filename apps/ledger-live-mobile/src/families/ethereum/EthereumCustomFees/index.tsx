@@ -23,7 +23,7 @@ type Props = BaseComposite<
       SendFundsNavigatorStackParamList,
       ScreenName.EthereumCustomFees
     >
-  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<EditTransactionParamList, ScreenName.EthereumCustomFees>
 >;
 
 const options = {
