@@ -118,7 +118,7 @@ export function useWebviewState(
     (event: Electron.DidNavigateInPageEvent) => {
       const webview = webviewRef.current;
 
-      if (!webview) {
+      if (!webview || !event.isMainFrame) {
         return;
       }
 
