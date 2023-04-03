@@ -30,8 +30,8 @@ importers:
   .:
     dependencies:
       '@moonrepo/cli':
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^1.0.3
+        version: 1.0.3
     devDependencies:
       '@changesets/changelog-github':
         specifier: ^0.4.8
@@ -14847,8 +14847,8 @@ packages:
     resolution: {integrity: sha512-H1rQc1ZOHANWBvPcW+JpGwr+juXSxM8Q8YCkm3GhZd8REu1fHR3z99CErO1p9pkcfcxZnMdIZdIsXkOHY0NilA==}
     dev: true
 
-  /@moonrepo/cli@1.0.2:
-    resolution: {integrity: sha512-j6qQ18P56cRRUwHopePc7iEchMfIfp3r1QnlJ3s7PJYh7emUHnWjw39tc9nn/ySAuvMv/k6Mu+PWZY3WWcf2GA==}
+  /@moonrepo/cli@1.0.3:
+    resolution: {integrity: sha512-MVeF2SQEoSRfunh2dTrqWRBN+MOEr3pGLwpKgmgcwyPYi8Xu0UZ9WApHyLzr0uf70zNVQXiGOXMu+XDCCKUckw==}
     hasBin: true
     requiresBuild: true
     dependencies:
