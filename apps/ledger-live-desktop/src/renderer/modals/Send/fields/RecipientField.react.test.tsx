@@ -13,13 +13,21 @@ import userEvent from "@testing-library/user-event";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/lib/hooks/index";
+// TODO specific test need to be moved to the family
+// eslint-disable-next-line no-restricted-imports
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import defaultTheme from "~/renderer/styles/theme";
 import palettes from "~/renderer/styles/palettes";
 import RecipientField from "./RecipientField";
 
+// LinkWithExternalIcon imports a svg that is not supported by jest
+jest.mock("../../../components/LinkWithExternalIcon", () => {
+  const mockDiv = () => <div />;
+  return mockDiv;
+});
+
 // Temp mock to prevent error on sentry init
-jest.mock("../../../../sentry/install.js", () => ({
+jest.mock("../../../../sentry/install", () => ({
   init: () => null,
 }));
 // Alert component have many problems and many import that make the test break so

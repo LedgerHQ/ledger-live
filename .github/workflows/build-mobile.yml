@@ -65,6 +65,7 @@ jobs:
     runs-on: ${{ needs.start-runner.outputs.label }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
+      _JAVA_OPTIONS: "-Xmx7g"
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:

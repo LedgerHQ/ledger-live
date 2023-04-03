@@ -1,3 +1,5 @@
+// TODO solution for families to expose their own webworkers
+// eslint-disable-next-line no-restricted-imports
 import { getSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
 
 function hexToUint8Array(hex: string) {

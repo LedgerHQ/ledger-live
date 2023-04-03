@@ -1,7 +1,4 @@
-// @flow
-
-const { ipcRenderer, contextBridge } = require("electron");
-
+import { ipcRenderer, contextBridge } from "electron";
 contextBridge.exposeInMainWorld("ElectronWebview", {
-  postMessage: (message: any) => ipcRenderer.sendToHost("webviewToParent", message),
+  postMessage: message => ipcRenderer.sendToHost("webviewToParent", message),
 });

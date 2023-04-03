@@ -9,7 +9,7 @@ import { TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import ExchangeTransport from "../hw-app-exchange/Exchange";
+import ExchangeTransport from "@ledgerhq/hw-app-exchange";
 import type {
   CompleteExchangeInputSwap,
   CompleteExchangeRequestEvent,
