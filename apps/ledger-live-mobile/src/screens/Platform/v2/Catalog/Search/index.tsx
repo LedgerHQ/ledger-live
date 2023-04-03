@@ -1,9 +1,7 @@
 import React from "react";
 import { Linking, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import * as Animatable from "react-native-animatable";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { Flex, Text, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -11,10 +9,9 @@ import ArrowLeft from "../../../../../icons/ArrowLeft";
 import { TAB_BAR_SAFE_HEIGHT } from "../../../../../components/TabBar/TabBarSafeAreaView";
 import { Layout } from "../Layout";
 import { SearchBarValues } from "../types";
-import { AppCard } from "../AppCard";
 import Illustration from "../../../../../images/illustration/Illustration";
-import { SearchBar } from "./SearchBar";
 import { ManifestList } from "../ManifestList";
+import { SearchBar } from "./SearchBar";
 
 export * from "./SearchBar";
 
@@ -22,10 +19,6 @@ const noResultIllustration = {
   dark: require("../../../../../images/illustration/Dark/_051.png"),
   light: require("../../../../../images/illustration/Light/_051.png"),
 };
-
-type WildcardNavigation = StackNavigationProp<
-  Record<string, object | undefined>
->;
 
 const AnimatedView = Animatable.View;
 
@@ -41,44 +34,27 @@ type Props = {
   listTitle?: React.ReactNode;
   backAction?: () => void;
   onSelect: (manifest: LiveAppManifest) => void;
-} & SearchBarValues<LiveAppManifest>;
+} & Omit<SearchBarValues<LiveAppManifest>, "onCancel">;
 
 export function Search({
   manifests,
-  recentlyUsed,
   title,
   onSelect,
   input,
   inputRef,
   result,
   isSearching,
-  onCancel,
+  backAction,
   onChange,
   onFocus,
-  isActive,
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation<WildcardNavigation>();
 
   const isSearchBarEmpty = input === "";
 
   const isResultFound = !isSearchBarEmpty && result?.length !== 0;
 
-  const recentlyUsedListComponent = (
-    <>
-      <Text variant={"h4"} fontWeight={"semiBold"} marginBottom={16}>
-        {t("browseWeb3.catalog.section.recentlyUsed")}
-      </Text>
-      {recentlyUsed.map(manifest => (
-        <AppCard
-          key={`${manifest.id}.${manifest.branch}`}
-          manifest={manifest}
-          onPress={onSelect}
-        />
-      ))}
-    </>
-  );
   const noResultFoundComponent = (
     <Flex flexDirection={"column"} padding={4} marginTop={100}>
       <Flex alignItems="center">
@@ -129,7 +105,7 @@ export function Search({
               top: 10,
             }}
             style={{ paddingVertical: 16 }}
-            onPress={navigation.goBack}
+            onPress={backAction}
           >
             <ArrowLeft size={18} color={colors.neutral.c100} />
           </TouchableOpacity>
@@ -139,9 +115,7 @@ export function Search({
             input={input}
             inputRef={inputRef}
             onChange={onChange}
-            onCancel={onCancel}
             onFocus={onFocus}
-            isActive={isActive}
           />
         }
         bodyContent={
@@ -153,11 +127,7 @@ export function Search({
             <AnimatedView animation="fadeInUp" delay={50} duration={300}>
               <Flex paddingTop={4} paddingBottom={TAB_BAR_SAFE_HEIGHT + 50}>
                 {isSearchBarEmpty ? (
-                  recentlyUsed.length === 0 ? (
-                    <ManifestList onSelect={onSelect} manifests={manifests} />
-                  ) : (
-                    recentlyUsedListComponent
-                  )
+                  <ManifestList onSelect={onSelect} manifests={manifests} />
                 ) : isResultFound ? (
                   <ManifestList onSelect={onSelect} manifests={result} />
                 ) : (

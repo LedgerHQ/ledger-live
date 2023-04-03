@@ -19,7 +19,7 @@ import {
 import { emptyHistoryCache } from "../../../account";
 import network from "../../../network";
 import { promiseAllBatched } from "../../../promise";
-import { mergeOps } from "../../../bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { apiForCurrency } from "../../../api/Ethereum";
 import { inferTokenAccount } from "../transaction";
 import { getEnv } from "../../../env";
