@@ -1,14 +1,12 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/helpers";
-import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   useTronSuperRepresentatives,
   formatVotes,
@@ -23,7 +21,6 @@ import { urls } from "../../../config/urls";
 import Row from "./Row";
 import Header from "./Header";
 import LText from "../../../components/LText";
-import { NavigatorName, ScreenName } from "../../../const";
 import ArrowRight from "../../../icons/ArrowRight";
 import DateFromNow from "../../../components/DateFromNow";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
@@ -38,10 +35,9 @@ type Props = {
   parentAccount?: Account;
 };
 
-const Delegation = ({ account, parentAccount }: Props) => {
+const Delegation = ({ account }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const navigation = useNavigation();
 
   const superRepresentatives = useTronSuperRepresentatives();
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
@@ -53,8 +49,6 @@ const Delegation = ({ account, parentAccount }: Props) => {
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
-  const accountId = account.id;
-  const parentId = parentAccount && parentAccount.id;
 
   const { spendableBalance, tronResources } = account;
 
@@ -71,54 +65,6 @@ const Delegation = ({ account, parentAccount }: Props) => {
     (sum, { voteCount }) => sum + voteCount,
     0,
   );
-
-  const bridge = getAccountBridge(account, undefined);
-
-  const { transaction, status } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(account);
-
-    const transaction = bridge.updateTransaction(t, {
-      mode: "claimReward",
-    });
-
-    return { account, transaction };
-  });
-
-  const claimRewards = useCallback(() => {
-    navigation.navigate(NavigatorName.ClaimRewards, {
-      screen: ScreenName.ClaimRewardsSelectDevice,
-      params: {
-        accountId,
-        parentId,
-        transaction,
-        status,
-      },
-    });
-  }, [accountId, navigation, parentId, transaction, status]);
-
-  const onDelegateFreeze = useCallback(() => {
-    navigation.navigate(NavigatorName.Freeze, {
-      screen: ScreenName.FreezeInfo,
-      params: {
-        accountId,
-        parentId,
-      },
-    });
-  }, [accountId, navigation, parentId]);
-
-  const onDelegate = useCallback(() => {
-    const screenName = lastVotedDate
-      ? ScreenName.VoteSelectValidator
-      : ScreenName.VoteStarted;
-    navigation.navigate(NavigatorName.TronVoteFlow, {
-      screen: screenName,
-      params: {
-        accountId,
-        parentId,
-      },
-    });
-  }, [lastVotedDate, navigation, accountId, parentId]);
-
   const hasRewards = BigNumber(unwithdrawnReward).gt(0);
   const percentVotesUsed = totalVotesUsed / tronPower;
 
@@ -155,7 +101,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
                 )}
               </Text>
             </View>
-            <Button type="main" disabled={true} onPress={claimRewards}>
+            <Button type="main" disabled={true}>
               <Trans i18nKey="tron.voting.rewards.button" />
             </Button>
           </View>
@@ -164,7 +110,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
       {tronPower > 0 ? (
         formattedVotes.length > 0 ? (
           <>
-            <Header count={formattedVotes.length} onPress={onDelegate} />
+            <Header count={formattedVotes.length} onPress={() => undefined} />
             <View style={[styles.container, styles.noPadding]}>
               <Box mb={5}>
                 {formattedVotes.map(
@@ -186,7 +132,6 @@ const Delegation = ({ account, parentAccount }: Props) => {
                 <View style={{ marginBottom: 24 }}>
                   <TouchableOpacity
                     disabled={true}
-                    onPress={onDelegate}
                     style={[styles.warn, { backgroundColor: colors.lightLive }]}
                   >
                     <ProgressCircle
@@ -223,7 +168,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
                 infoUrl={urls.tronStaking}
                 infoTitle={t("tron.voting.howItWorks")}
                 disabled={true}
-                onPress={onDelegate}
+                onPress={() => undefined}
                 ctaTitle={t("tron.voting.votes.cta")}
               />
             </Box>
@@ -240,7 +185,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
             infoUrl={urls.tronStaking}
             infoTitle={t("tron.voting.howItWorks")}
             disabled={true}
-            onPress={onDelegateFreeze}
+            onPress={() => undefined}
             ctaTitle={t("account.delegation.info.cta")}
           />
         )

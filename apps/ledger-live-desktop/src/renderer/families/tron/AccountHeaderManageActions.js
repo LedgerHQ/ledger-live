@@ -1,10 +1,7 @@
 // @flow
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
-import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 
 type Props = {
@@ -14,40 +11,6 @@ type Props = {
 
 const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-
-  const unit = getAccountUnit(account);
-  const mainAccount = getMainAccount(account, parentAccount);
-  const minAmount = 10 ** unit.magnitude;
-
-  const { tronResources, spendableBalance } = mainAccount;
-  const tronPower = tronResources?.tronPower ?? 0;
-  const earnRewardDisabled = tronPower === 0 && spendableBalance.lt(minAmount);
-
-  const onClick = useCallback(() => {
-    if (earnRewardDisabled) {
-      dispatch(
-        openModal("MODAL_NO_FUNDS_STAKE", {
-          account,
-          parentAccount,
-        }),
-      );
-    } else if (tronPower > 0) {
-      dispatch(
-        openModal("MODAL_TRON_MANAGE", {
-          parentAccount,
-          account,
-        }),
-      );
-    } else {
-      dispatch(
-        openModal("MODAL_TRON_REWARDS_INFO", {
-          parentAccount,
-          account,
-        }),
-      );
-    }
-  }, [account, earnRewardDisabled, tronPower, dispatch, parentAccount]);
 
   if (parentAccount) return null;
 
@@ -56,7 +19,6 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   return [
     {
       key: "Stake",
-      onClick: onClick,
       icon: IconCoins,
       disabled: true,
       label: t("account.stake"),

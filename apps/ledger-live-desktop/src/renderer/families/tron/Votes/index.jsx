@@ -1,7 +1,7 @@
 // @flow
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import invariant from "invariant";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import type { Account } from "@ledgerhq/types-live";
@@ -18,7 +18,6 @@ import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { openModal } from "~/renderer/actions/modals";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
@@ -50,7 +49,6 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 
 const Delegation = ({ account }: Props) => {
-  const dispatch = useDispatch();
   const locale = useSelector(localeSelector);
 
   const superRepresentatives = useTronSuperRepresentatives();
@@ -81,16 +79,6 @@ const Delegation = ({ account }: Props) => {
 
   const totalVotesUsed = votes.reduce((sum, { voteCount }) => sum + voteCount, 0);
 
-  const onDelegate = useCallback(
-    () =>
-      dispatch(
-        openModal(votes.length > 0 ? "MODAL_TRON_VOTE" : "MODAL_TRON_VOTE_INFO", {
-          account,
-        }),
-      ),
-    [account, dispatch, votes],
-  );
-
   const hasVotes = formattedVotes.length > 0;
 
   const hasRewards = unwithdrawnReward.gt(0);
@@ -109,7 +97,7 @@ const Delegation = ({ account }: Props) => {
         titleProps={{ "data-e2e": "title_Delegation" }}
       >
         {tronPower > 0 && formattedVotes.length > 0 ? (
-          <Button small color="palette.primary.main" onClick={onDelegate} mr={2} disabled={true}>
+          <Button small color="palette.primary.main" mr={2} disabled={true}>
             <Box horizontal flow={1} alignItems="center">
               <Vote size={12} />
               <Box>
@@ -137,19 +125,7 @@ const Delegation = ({ account }: Props) => {
               ) : null
             }
           >
-            <Button
-              disabled={true}
-              color="palette.primary.main"
-              small
-              onClick={() => {
-                dispatch(
-                  openModal("MODAL_TRON_CLAIM_REWARDS", {
-                    account,
-                    reward: unwithdrawnReward,
-                  }),
-                );
-              }}
-            >
+            <Button disabled={true} color="palette.primary.main" small>
               <Box horizontal flow={1} alignItems="center">
                 <ClaimRewards size={12} />
                 <Box>
@@ -191,7 +167,7 @@ const Delegation = ({ account }: Props) => {
               explorerView={explorerView}
             />
           ))}
-          <Footer total={tronPower} used={totalVotesUsed} onClick={onDelegate} />
+          <Footer total={tronPower} used={totalVotesUsed} />
         </>
       ) : (
         <Wrapper horizontal>
