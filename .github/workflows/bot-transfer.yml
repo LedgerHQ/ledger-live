@@ -65,19 +65,13 @@ jobs:
           repository: LedgerHQ/coin-apps
           token: ${{ secrets.GH_PAT }}
           path: coin-apps
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 7.30.0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.15.0
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - name: pull docker image
         run: docker pull ghcr.io/ledgerhq/speculos
       - name: install and build
         run: |
-          pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
+          pnpm i --filter="live-cli..." --filter="ledger-live"
           pnpm build:cli
           cd apps/cli
           npm link
