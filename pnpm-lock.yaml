@@ -13,27 +13,27 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
 
 patchedDependencies:
-  react-native-os@1.2.6:
-    hash: 2e25ffb547hjiczrnsjhxl6geu
-    path: patches/react-native-os@1.2.6.patch
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
-  react-native-webview@11.26.1:
-    hash: no3vzt46yoww4w2wn7ciytbsoy
-    path: patches/react-native-webview@11.26.1.patch
   react-native-image-crop-tools@1.6.2:
     hash: ykxjy5s7xujdxmsgrwxo5mh3y4
     path: patches/react-native-image-crop-tools@1.6.2.patch
+  react-native-os@1.2.6:
+    hash: 2e25ffb547hjiczrnsjhxl6geu
+    path: patches/react-native-os@1.2.6.patch
   react-native-tcp@4.0.0:
     hash: frdjcnsdohx4blxdmaawwvdihy
     path: patches/react-native-tcp@4.0.0.patch
-  rn-fetch-blob@0.12.0:
-    hash: n5yzdsrxz654upecs5xliebtmm
-    path: patches/rn-fetch-blob@0.12.0.patch
   react-native-video@5.2.0:
     hash: lojvl6twgoj4rxeqeytmq4uduq
     path: patches/react-native-video@5.2.0.patch
+  react-native-webview@11.26.1:
+    hash: no3vzt46yoww4w2wn7ciytbsoy
+    path: patches/react-native-webview@11.26.1.patch
+  rn-fetch-blob@0.12.0:
+    hash: n5yzdsrxz654upecs5xliebtmm
+    path: patches/rn-fetch-blob@0.12.0.patch
 
 importers:
 
