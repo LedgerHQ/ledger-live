@@ -8,7 +8,6 @@ import {
 } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/types-devices";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import { ScreenName } from "../../const";
 
@@ -32,9 +31,10 @@ export type EditTransactionParamList = {
     deviceId?: string;
     transaction: Transaction;
     transactionRaw?: TransactionRaw;
-    setTransaction: Result<EthereumTransaction>["setTransaction"];
     operation?: Operation;
-    currentNavigation: ScreenName.EditTransactionMethodSelection;
+    currentNavigation:
+      | ScreenName.EditTransactionMethodSelection
+      | ScreenName.SendSummary;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice;

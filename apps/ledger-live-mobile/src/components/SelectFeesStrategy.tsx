@@ -42,7 +42,6 @@ type Props = {
   onCustomFeesPress: TouchableOpacityProps["onPress"];
   forceUnitLabel?: boolean | React.ReactNode;
   disabledStrategies?: Array<string>;
-  forceValueLabel?: string;
 };
 
 const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
