@@ -87,6 +87,7 @@ export type SendFundsNavigatorStackParamList = {
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SwapForm;
     nextNavigation:
       | ScreenName.LendingWithdrawSelectDevice
