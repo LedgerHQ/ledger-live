@@ -1,12 +1,21 @@
-// @flow
 import React from "react";
 import { Trans, withTranslation } from "react-i18next";
 import MemoField from "./MemoField";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
+import { Transaction } from "@ledgerhq/live-common/families/internet_computer/types";
+import { TransactionStatusCommon } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/live-common/lib/types";
 
-const Root = (props: *) => {
+const Root = (
+  props: JSX.IntrinsicAttributes & {
+    onChange: (a: Transaction) => void;
+    account: Account;
+    transaction: Transaction;
+    status: TransactionStatusCommon;
+  },
+) => {
   return (
     <Box flow={1}>
       <Box

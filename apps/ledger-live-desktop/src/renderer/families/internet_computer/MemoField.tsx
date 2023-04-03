@@ -1,14 +1,12 @@
-// @flow
-
 import React, { useCallback } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Input from "~/renderer/components/Input";
 import invariant from "invariant";
-import type { Account } from "@ledgerhq/types-live";
-import type {
+import {Account} from "@ledgerhq/live-common/lib/types";
+import {
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/families/internet_computer/types";
+} from "@ledgerhq/live-common/lib/families/internet_computer/types";
 import { useTranslation } from "react-i18next";
 
 const MemoField = ({
@@ -17,10 +15,10 @@ const MemoField = ({
   transaction,
   status,
 }: {
-  onChange: string => void,
-  account: Account,
-  transaction: Transaction,
-  status: TransactionStatus,
+  onChange: (a: Transaction) => void;
+  account: Account;
+  transaction: Transaction;
+  status: TransactionStatus;
 }) => {
   invariant(transaction.family === "internet_computer", "Memo: Internet Computer family expected");
 
