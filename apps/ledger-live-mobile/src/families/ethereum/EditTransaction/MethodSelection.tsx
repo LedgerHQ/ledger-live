@@ -181,7 +181,6 @@ function MethodSelectionComponent({ navigation, route }: Props) {
         operation,
         currentNavigation: ScreenName.EditTransactionMethodSelection,
         nextNavigation: ScreenName.SendSelectDevice,
-        setTransaction,
       });
     }
   }, [selectedMethod, transaction]);
