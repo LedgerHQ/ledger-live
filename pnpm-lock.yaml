@@ -1324,8 +1324,8 @@ importers:
       '@ledgerhq/types-cryptoassets': workspace:^
       '@ledgerhq/types-devices': workspace:^
       '@ledgerhq/types-live': workspace:^
-      '@ledgerhq/wallet-api-core': ^0.11.0
-      '@ledgerhq/wallet-api-server': ^0.11.0
+      '@ledgerhq/wallet-api-core': ^0.14.0
+      '@ledgerhq/wallet-api-server': ^0.13.0
       '@solana/spl-token': ^0.2.0
       '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': ^1.0.3
@@ -1510,8 +1510,8 @@ importers:
       '@ledgerhq/live-portfolio': link:../live-portfolio
       '@ledgerhq/live-promise': link:../promise
       '@ledgerhq/logs': link:../ledgerjs/packages/logs
-      '@ledgerhq/wallet-api-core': 0.11.0
-      '@ledgerhq/wallet-api-server': 0.11.0_react@17.0.2
+      '@ledgerhq/wallet-api-core': 0.14.0
+      '@ledgerhq/wallet-api-server': 0.13.0_react@17.0.2
       '@solana/spl-token': 0.2.0
       '@solana/web3.js': 1.41.3
       '@stricahq/bip32ed25519': 1.0.4
@@ -13699,15 +13699,6 @@ packages:
       bignumber.js: 9.1.0
     dev: false
 
-  /@ledgerhq/wallet-api-core/0.11.0:
-    resolution: {integrity: sha512-SHIdZD/gQJ4dMag5zzmRAAfhkkfiyHFVLHR7xz0Srj2BLdMfQZzXneTSnv7YND4YOZrwHIfBTA68Bim+AiKjwA==}
-    dependencies:
-      '@ledgerhq/errors': 6.12.3
-      bignumber.js: 9.1.0
-      uuid: 9.0.0
-      zod: 3.19.1
-    dev: false
-
   /@ledgerhq/wallet-api-core/0.12.0:
     resolution: {integrity: sha512-e8V73MgiXa63mUkyF3MqwqjKxYzVVF6lhLHYWtUVJCUDwyXEq7EmuEK9IxYl7o5oxqmXlkxQ6qXjl7aQTT6P8g==}
     dependencies:
@@ -13717,15 +13708,24 @@ packages:
       zod: 3.19.1
     dev: false
 
-  /@ledgerhq/wallet-api-server/0.11.0_react@17.0.2:
-    resolution: {integrity: sha512-7aOttVBuj0dAfwKa8Na3e9T+xv9ZC8kHjeBwtLHJpCnjsqODTubj50J1SBw0gnqRKXK1dkUHFZCVYOhddYu8Xg==}
+  /@ledgerhq/wallet-api-core/0.14.0:
+    resolution: {integrity: sha512-ZntDYBH40gjwuq9DXS7xT2RZtwm0rU7h7ZLLdH6JOtZwfUZzYyFXqzalptcLNPOLpU1SJb6ozc+XkvWj4gHbbA==}
+    dependencies:
+      '@ledgerhq/errors': 6.12.3
+      bignumber.js: 9.1.0
+      uuid: 9.0.0
+      zod: 3.19.1
+    dev: false
+
+  /@ledgerhq/wallet-api-server/0.13.0_react@17.0.2:
+    resolution: {integrity: sha512-6HttAVhwTwIpphWuh5LlzNA6PRjPHH//eZIz7/YsGuoUWNnneB68vWwchws9y0OVavyQgfPWJUr+BjsCGY5a9A==}
     peerDependencies:
       react: ^17.x || ^18.x
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-      '@ledgerhq/wallet-api-core': 0.12.0
+      '@ledgerhq/wallet-api-core': 0.14.0
       bignumber.js: 9.1.0
       json-rpc-2.0: 1.1.0
       picomatch: 2.3.1
@@ -41934,6 +41934,7 @@ packages:
     peerDependencies:
       '@babel/core': '*'
     dependencies:
+      '@babel/core': 7.20.12
       '@babel/plugin-proposal-class-properties': 7.16.7
       '@babel/plugin-proposal-export-default-from': 7.16.7
       '@babel/plugin-proposal-nullish-coalescing-operator': 7.16.7
