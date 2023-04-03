@@ -4671,7 +4671,7 @@ importers:
         specifier: ^17.0.2
         version: 17.0.2
       react-native:
-        specifier: 0.68.5
+        specifier: ^0.68.5
         version: 0.68.5(@babel/core@7.17.10)(@babel/preset-env@7.17.10)(metro-resolver@0.67.0)(metro-transform-worker@0.67.0)(react@17.0.2)
       react-native-gesture-handler:
         specifier: ^1.10.3
@@ -5741,12 +5741,6 @@ packages:
       '@jridgewell/trace-mapping': 0.3.17
       jsesc: 2.5.2
 
-  /@babel/helper-annotate-as-pure@7.16.7:
-    resolution: {integrity: sha512-s6t2w/IPQVTAET1HitoowRGXooX8mCgtuP5195wD/QJPV6wYjpujCGF7JuMODVX2ZAJOf1GT6DT9MHEZvLOFSw==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/types': 7.21.4
-
   /@babel/helper-annotate-as-pure@7.18.6:
     resolution: {integrity: sha512-duORpUiYrEpzKIop6iNbjnwKLAKnJ47csTyRACyEmWj0QdUrm5aqNJGHSSEQSUAvNW0ojX0dOmK9dZduvkfeXA==}
     engines: {node: '>=6.9.0'}
@@ -5906,7 +5900,7 @@ packages:
       '@babel/core': ^7.0.0
     dependencies:
       '@babel/core': 7.17.10
-      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-annotate-as-pure': 7.18.6
       regexpu-core: 5.0.1
 
   /@babel/helper-create-regexp-features-plugin@7.17.0(@babel/core@7.20.12):
@@ -5916,7 +5910,7 @@ packages:
       '@babel/core': ^7.0.0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-annotate-as-pure': 7.18.6
       regexpu-core: 5.0.1
 
   /@babel/helper-create-regexp-features-plugin@7.17.0(@babel/core@7.9.0):
@@ -5926,7 +5920,7 @@ packages:
       '@babel/core': ^7.0.0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-annotate-as-pure': 7.16.7
+      '@babel/helper-annotate-as-pure': 7.18.6
       regexpu-core: 5.0.1
 
   /@babel/helper-define-polyfill-provider@0.1.5(@babel/core@7.20.12):
@@ -6904,7 +6898,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-create-class-features-plugin': 7.21.4(@babel/core@7.20.12)
+      '@babel/helper-create-class-features-plugin': 7.17.9(@babel/core@7.20.12)
       '@babel/helper-plugin-utils': 7.20.2
     transitivePeerDependencies:
       - supports-color
@@ -8331,7 +8325,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-plugin-utils': 7.18.9
 
   /@babel/plugin-transform-react-display-name@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-qgIg8BcZgd0G/Cz916D5+9kqX0c7nPZyXaP8R2tLNN5tkyIZdG5fEwBrxwplzSnjC1jvQmyMNVwUCZPcbGY7Pg==}
@@ -8340,7 +8334,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-plugin-utils': 7.18.9
 
   /@babel/plugin-transform-react-display-name@7.8.3(@babel/core@7.9.0):
     resolution: {integrity: sha512-3Jy/PCw8Fe6uBKtEgz3M82ljt+lTg+xJaM4og+eyu83qLT87ZUSckn0wy7r31jflURWLO83TW6Ylf7lyXj3m5A==}
@@ -8667,7 +8661,7 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/helper-plugin-utils': 7.20.2
-      '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
+      '@babel/helper-skip-transparent-expression-wrappers': 7.20.0
 
   /@babel/plugin-transform-spread@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-+pjJpgAngb53L0iaA5gU/1MLXJIfXcYepLgXB3esVRf4fqmj8f2cxM3/FKaHsZms08hFQJkFccEWuIpm429TXg==}
@@ -8677,7 +8671,7 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.20.2
-      '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
+      '@babel/helper-skip-transparent-expression-wrappers': 7.20.0
 
   /@babel/plugin-transform-sticky-regex@7.16.7(@babel/core@7.17.10):
     resolution: {integrity: sha512-NJa0Bd/87QV5NZZzTuZG5BPJjLYadeSZ9fO6oOUoL4iQx+9EEuw/eEM92SrsT19Yc2jgB1u1hsjqDtH02c3Drw==}
@@ -8852,7 +8846,7 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/helper-create-regexp-features-plugin': 7.17.0(@babel/core@7.20.12)
-      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-plugin-utils': 7.18.9
 
   /@babel/plugin-transform-unicode-regex@7.16.7(@babel/core@7.9.0):
     resolution: {integrity: sha512-oC5tYYKw56HO75KZVLQ+R/Nl3Hro9kf8iG0hXoaHP7tjAyCpvqBiSNe6vGrZni1Z6MggmUOC6A7VP7AVmw225Q==}
@@ -8862,7 +8856,7 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@babel/helper-create-regexp-features-plugin': 7.17.0(@babel/core@7.9.0)
-      '@babel/helper-plugin-utils': 7.20.2
+      '@babel/helper-plugin-utils': 7.18.9
 
   /@babel/preset-env@7.17.10(@babel/core@7.17.10):
     resolution: {integrity: sha512-YNgyBHZQpeoBSRBg0xixsZzfT58Ze1iZrajvv0lJc70qDDGuGfonEnMGfWeSY0mQ3JTuCWFbMkzFRVafOyJx4g==}
@@ -45932,6 +45926,7 @@ packages:
       metro-react-native-babel-transformer: 0.67.0(@babel/core@7.20.12)
       metro-runtime: 0.67.0
       metro-source-map: 0.66.2
+      mkdirp: 1.0.4
       nullthrows: 1.1.1
       pretty-format: 26.6.2
       promise: 8.1.0
@@ -45945,6 +45940,7 @@ packages:
       use-subscription: 1.7.0(react@17.0.2)
       whatwg-fetch: 3.6.2
       ws: 6.2.2
+      yargs: 17.5.1
     transitivePeerDependencies:
       - '@babel/core'
       - bufferutil
