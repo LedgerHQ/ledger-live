@@ -79,6 +79,7 @@ export type LendingEnableFlowParamsList = {
       | ScreenName.SignTransactionSummary
       | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
+      | ScreenName.EditTransactionMethodSelection
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
