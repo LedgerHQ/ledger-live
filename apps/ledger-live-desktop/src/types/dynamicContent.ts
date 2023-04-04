@@ -3,6 +3,11 @@ export enum LocationContentCard {
   NotificationCenter = "notification_center",
 }
 
+export enum Platform {
+  Mobile = "mobile",
+  Desktop = "desktop",
+}
+
 export type ContentCard = {
   id: string;
   location: LocationContentCard;

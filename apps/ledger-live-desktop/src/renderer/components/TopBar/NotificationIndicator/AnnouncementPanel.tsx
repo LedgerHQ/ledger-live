@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useMemo, useState } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { InView } from "react-intersection-observer";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
@@ -14,11 +14,7 @@ import Text from "~/renderer/components/Text";
 import { useDeepLinkHandler } from "~/renderer/hooks/useDeeplinking";
 import { closeInformationCenter } from "~/renderer/actions/UI";
 import useDateTimeFormat from "~/renderer/hooks/useDateTimeFormat";
-import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
-import { LocationContentCard, NotificationContentCard } from "~/types/dynamicContent";
-import * as braze from "@braze/web-sdk";
-import { setNotificationsCards } from "~/renderer/actions/dynamicContent";
-import { track } from "~/renderer/analytics/segment";
+import { useNotifications } from "~/renderer/hooks/useNotifications";
 
 const DateRowContainer = styled.div`
   padding: 4px 16px;
@@ -245,92 +241,21 @@ const Separator = styled.div`
   background-color: ${({ theme }) => theme.colors.palette.text.shade10};
 `;
 
-function startOfDayTime(date: Date): number {
-  const startOfDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  return startOfDate.getTime();
-}
-
-export const groupNotifications = (
-  notifs: NotificationContentCard[],
-): {
-  day: Date | null | undefined;
-  data: NotificationContentCard[];
-}[] => {
-  // first group by published_at or if theres a priority set
-  const announcementsByDayOrPriority: Record<string, NotificationContentCard[]> = notifs.reduce(
-    (sum, notif: NotificationContentCard) => {
-      // group by publication date or if priority set in a group 0
-      const k = startOfDayTime(notif.createdAt);
-
-      return { ...sum, [`${k}`]: [...(sum[k] || []), notif] };
-    },
-    {},
-  );
-  // map over the keyed groups and sort them by priority and date
-  return Object.keys(announcementsByDayOrPriority)
-    .filter(
-      key => announcementsByDayOrPriority[key] && announcementsByDayOrPriority[key].length > 0, // filter out potential empty groups
-    )
-    .map(key => Number(key)) // map every string to a number for sort evaluation
-    .sort((a, b) => {
-      const aa = a === 0 ? Infinity : a; // sort out by timestamp key while keeping priority set announcements on top
-
-      const bb = b === 0 ? Infinity : b; // this can work because a and b cannot be equal to 0 at same time
-
-      return bb - aa;
-    })
-    .map(date => ({
-      day: date === 0 ? null : new Date(date),
-      // format Day if available
-      data: announcementsByDayOrPriority[`${date}`],
-    }));
-};
-
 export function AnnouncementPanel() {
-  const dispatch = useDispatch();
-  const cachedNotifications = braze
-    .getCachedContentCards()
-    .cards.filter(
-      card => card.extras?.plarform === "desktop" && card.extras?.location === LocationContentCard,
-    );
-  const notificationsCards = useSelector(notificationsContentCardSelector);
+  const {
+    orderedNotificationsCards,
+    logNotificationImpression,
+    groupNotifications,
+    onClickNotif,
+  } = useNotifications();
 
-  const orderedNotificationsCards = useMemo(
-    () =>
-      (notificationsCards ?? []).sort(
-        (notif: NotificationContentCard, nt: NotificationContentCard) =>
-          nt.createdAt.getDate() - notif.createdAt.getDate(),
-      ),
-    [notificationsCards],
-  );
-
-  const logCardImpression = useCallback(
-    (cardId: string) => {
-      const card = orderedNotificationsCards.find(n => n.id === cardId);
-
-      const currentCard = cachedNotifications.find(card => card.id === cardId);
-      braze.logContentCardImpressions(currentCard ? [currentCard] : []);
-
-      const cards = orderedNotificationsCards.map(n => {
-        if (card && n.id === card.id) {
-          return { ...n, viewed: true };
-        } else {
-          return n;
-        }
-      });
-
-      dispatch(setNotificationsCards(cards));
-    },
-    [orderedNotificationsCards, cachedNotifications, dispatch],
-  );
-
-  const timeoutByUUIDn = useRef({});
+  const timeoutByUUID = useRef({});
   const handleInViewNotif = useCallback(
     (visible, uuid) => {
-      const timeouts = timeoutByUUIDn.current;
+      const timeouts = timeoutByUUID.current;
       if (orderedNotificationsCards.find(n => !n.viewed) && visible && !timeouts[uuid]) {
         timeouts[uuid] = setTimeout(() => {
-          logCardImpression(uuid);
+          logNotificationImpression(uuid);
           delete timeouts[uuid];
         }, 1000);
       }
@@ -339,19 +264,10 @@ export function AnnouncementPanel() {
         delete timeouts[uuid];
       }
     },
-    [logCardImpression, orderedNotificationsCards],
+    [logNotificationImpression, orderedNotificationsCards],
   );
 
-  const onClickNotif = useCallback((card: NotificationContentCard) => {
-    track("contentcard_clicked", {
-      contentcard: card.title,
-      link: card.path || card.url,
-      campaign: card.id,
-      page: "notification_center",
-    });
-  }, []);
-
-  if (!notificationsCards) {
+  if (!orderedNotificationsCards) {
     return (
       <PanelContainer>
         <Text
@@ -379,7 +295,7 @@ export function AnnouncementPanel() {
   return (
     <ScrollArea hideScrollbar>
       <Box py="32px">
-        {groupNotifications(notificationsCards ?? []).map((group, index) => (
+        {groupNotifications(orderedNotificationsCards).map((group, index) => (
           <React.Fragment key={index}>
             {group.day ? <DateRow date={group.day} /> : null}
             {group.data.map(({ title, description, path, url, viewed, id, cta }, index) => (
