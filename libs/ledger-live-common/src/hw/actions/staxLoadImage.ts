@@ -145,13 +145,13 @@ const reducer = (state: State, e: Event): State => {
 const implementations = {
   // in this paradigm, we know that deviceSubject is reflecting the device events
   // so we just trust deviceSubject to reflect the device context (switch between apps, dashboard,...)
-  event: ({ deviceSubject, loadImage, language }) =>
+  event: ({ deviceSubject, loadImage, hexImage, padImage }) =>
     deviceSubject.pipe(
       debounceTime(1000),
-      switchMap((d) => loadImage(d, language))
+      switchMap((d) => loadImage(d, hexImage, padImage))
     ),
   // in this paradigm, we can't observe directly the device, so we have to poll it
-  polling: ({ deviceSubject, loadImage, language }) =>
+  polling: ({ deviceSubject, loadImage, hexImage, padImage }) =>
     new Observable((o) => {
       const POLLING = 2000;
       const INIT_DEBOUNCE = 5000;
@@ -189,7 +189,7 @@ const implementations = {
         }
 
         log("actions-load-stax-image-event/polling", "polling loop");
-        connectSub = loadImage(pollingOnDevice, language)
+        connectSub = loadImage(pollingOnDevice, hexImage, padImage)
           .pipe(
             timeout(DEVICE_POLLING_TIMEOUT),
             catchError((err) => {
@@ -288,7 +288,7 @@ const implementations = {
 export const createAction = (
   loadImageExec: (arg0: LoadImageRequest) => Observable<LoadImageEvent>
 ): LoadImageAction => {
-  const loadImage = (device, hexImage: string) => {
+  const loadImage = (device, hexImage: string, padImage?: boolean) => {
     return concat(
       of({
         type: "deviceChange",
@@ -299,6 +299,7 @@ export const createAction = (
         : loadImageExec({
             deviceId: device.deviceId,
             hexImage,
+            padImage,
           }).pipe(
             catchError((error: Error) =>
               of({
@@ -312,7 +313,8 @@ export const createAction = (
 
   const useHook = (
     device: Device | null | undefined,
-    hexImage: string
+    hexImage: string,
+    padImage?: boolean
   ): State => {
     const [state, setState] = useState(() => getInitialState(device));
     const deviceSubject = useReplaySubject(device);
@@ -323,7 +325,8 @@ export const createAction = (
       const impl = implementations[currentMode]({
         deviceSubject,
         loadImage,
-        language: hexImage,
+        hexImage,
+        padImage,
       });
 
       const sub = impl
@@ -350,7 +353,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [deviceSubject, hexImage, state.imageLoaded]);
+    }, [deviceSubject, hexImage, padImage, state.imageLoaded]);
 
     return {
       ...state,
