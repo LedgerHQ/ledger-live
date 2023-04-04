@@ -699,7 +699,13 @@
       "title" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
     },
     "CardanoMinAmountError" : {
-      "title" : "最小可发送数额为 {{amount}} ADA"
+      "title" : "至少需要 {{amount}} 个 ADA"
+    },
+    "AvalancheInvalidDateTimeError" : {
+      "title" : "所选权益质押结束日期无效"
+    },
+    "AvalancheMinimumAmountError" : {
+      "title" : "最低数额为 25 AVAX"
     },
     "CardanoNotEnoughFunds" : {
       "title" : "请确保您的资金足够支付费用"
@@ -2704,6 +2710,10 @@
           "title" : "允许实验性应用程序",
           "description" : "显示并允许打开实验性标记的平台应用程序。"
         },
+        "debugApps" : {
+          "title" : "允许调试应用程序",
+          "description" : "显示并允许打开调试标记的平台应用程序。"
+        },
         "staggingUrl" : {
           "title" : "“学习”页面的模拟环境网址",
           "description" : "使用“学习”页面的模拟环境网址。"
@@ -3412,7 +3422,12 @@
       "scan" : "扫描二维码",
       "enterAddress" : "输入地址",
       "input" : "输入地址",
-      "verifyAddress" : "请验证该地址与接收方所提供的一致。"
+      "verifyAddress" : "请验证该地址与接收方所提供的一致。",
+      "domainService" : {
+        "reverse" : "此地址关联了 {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "什么是以太坊域名服务？"
+      }
     },
     "amount" : {
       "available" : "可用总额",
@@ -5365,6 +5380,69 @@
       "delegatedTo" : "委托给",
       "started" : {
         "description" : "您可以将 SOL 资产委托给验证者，从而赚取奖励。"
+      }
+    }
+  },
+  "avalanchepchain" : {
+    "delegation" : {
+      "delegationEarn" : "您可以通过委托资产赚取 AVAX 奖励。",
+      "info" : "委托机制如何运作",
+      "iDelegate" : "我委托",
+      "until" : "直到",
+      "validatorRemainingStake" : "可用",
+      "validator" : "节点 ID",
+      "startTime" : "开始时间",
+      "endTime" : "结束时间",
+      "notEnoughToDelegate" : "您必须在 P 链上至少有 25 个可用 AVAX 才能成为委托人。",
+      "stepperHeader" : {
+        "starter" : "赚取奖励",
+        "validator" : "委托资产",
+        "amount" : "要委托的数额",
+        "endDate" : "委托结束日期",
+        "summary" : "概要",
+        "verification" : "验证",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "可用总额",
+            "maxLabel" : "最大值"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您的资产已经成功委托。",
+              "text" : "交易一经网络确认，您的账户余额就会更新。"
+            }
+          },
+          "starter" : {
+            "description" : "委托 AVAX 可安全赚取奖励，时刻掌控您的资产。",
+            "steps" : {
+              "0" : "您保有对已委托资产的所有权",
+              "1" : "使用您的 Ledger 设备进行委托",
+              "2" : "至少需要 25 AVAX 才能进行权益质押",
+              "3" : "AVAX 必须至少委托 2 周"
+            },
+            "cta" : "继续"
+          },
+          "endDate" : "本次委托的结束日期必须在 {{minEndDate}} 至 {{maxEndDate}} 之间。"
+        }
+      }
+    },
+    "info" : {
+      "available" : {
+        "title" : "可用 AVAX",
+        "description" : "该数额可自由支配。"
+      },
+      "delegated" : {
+        "title" : "已质押 AVAX",
+        "description" : "质押给验证者的数额。"
+      },
+      "delegationUnavailable" : {
+        "title" : "委托不可用",
+        "description" : "您的账户中没有足够的可用余额来开始新的委托。"
       }
     }
   },
