@@ -10,10 +10,16 @@ runs:
     # ⚠️ We have issues with the runners and proto,
     # so for the moment we're not using it at all in the CI.
     - uses: pnpm/action-setup@v2
+      if: inputs.pnpm_dest != ''
       # if: ${{ runner.os == 'Windows' }}
       with:
         version: 8.1
         dest: ${{ inputs.pnpm_dest }}
+    - uses: pnpm/action-setup@v2
+      if: inputs.pnpm_dest == ''
+      # if: ${{ runner.os == 'Windows' }}
+      with:
+        version: 8.1
     - uses: actions/setup-node@v3
       # if: ${{ runner.os == 'Windows' }}
       with:
