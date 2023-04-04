@@ -2,7 +2,7 @@ publisher:
   name: Ledger SAS
   address: 7hmxf1enboeg7fxWLrMvKRGi9r1NbDG8j7i7MWtAmLLk
   website: https://www.ledger.com/pages/ledger-live
-  email: team-live@ledger.fr
+  email: live-release-support@ledger.fr
   media:
     - purpose: icon
       uri: ./media/playstore-icon.png
