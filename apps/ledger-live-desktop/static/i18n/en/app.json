@@ -119,7 +119,6 @@
       "syncing": "Synchronizing...",
       "upToDate": "Synchronized",
       "outdated": "Paused",
-      "needsMigration": "Click to update account",
       "error": "Synchronization error",
       "refresh": "Refresh",
       "devTools": "Dev tools"
@@ -1620,42 +1619,6 @@
     "hideSubAccounts": "Hide subaccounts ({{tokenCount}})",
     "countTooltip": "1 subaccount",
     "countTooltip_plural": "{{count}} subaccounts"
-  },
-  "migrateAccounts": {
-    "overview": {
-      "title": "Ledger Live accounts update",
-      "successTitle": "Accounts updated successfully",
-      "successDescPlu": "Your {{assets}} accounts are now updated and ready to use",
-      "successDesc": "Your {{assets}} account is now updated and ready to use",
-      "mobileTitle": "Export accounts to mobile",
-      "mobileDesc": "Click the button below to export your updated accounts to the Ledger Live mobile app.",
-      "mobileCTA": "Export to mobile",
-      "description": "New features in Ledger Live require an update of your accounts.",
-      "currency": "1 {{currency}} account needs to be updated:",
-      "currency_plural": "{{count}} {{currency}} accounts need to be updated:",
-      "footer": "You need your Ledger Device to complete the update",
-      "pendingDevices": "1 account could not be updated. Please connect the device associated to the account below",
-      "pendingDevices_plural": "{{totalMigratableAccounts}} accounts could not be updated. Please connect the device associated to the account below",
-      "doItLaterBtn": "Do it later"
-    },
-    "progress": {
-      "finished": {
-        "title": "{{currencyName}} update completed",
-        "description": ""
-      },
-      "scanning": {
-        "title": "{{currencyName}} update in progress...",
-        "description": "Please wait for your accounts to be updated"
-      },
-      "finished-empty": {
-        "title": "{{currencyName}} update incomplete",
-        "description": "No {{currencyName}} accounts to update"
-      }
-    },
-    "cta": {
-      "startUpdate": "Start update",
-      "nextCurrency": "Continue with {{currency}} update"
-    }
   },
   "addAccounts": {
     "title": "Add accounts",

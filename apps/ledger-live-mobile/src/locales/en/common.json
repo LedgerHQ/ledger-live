@@ -2742,46 +2742,6 @@
       "later": "Maybe later"
     }
   },
-  "migrateAccounts": {
-    "banner": "Ledger Live accounts update",
-    "overview": {
-      "headerTitle": "Account update",
-      "title": "Ledger Live accounts update",
-      "subtitle": "New features in Ledger Live means your accounts need to be updated",
-      "notice": "{{accountCount}} account could not be updated. Please connect the device associated to the account below.",
-      "notice_plural": "{{accountCount}} accounts could not be updated. Please connect the device associated to the accounts below.",
-      "currency": "1 {{currency}} account needs to be updated",
-      "currency_plural": "{{count}} {{currency}} accounts need to be updated",
-      "start": "Start update",
-      "continue": "Continue update"
-    },
-    "progress": {
-      "headerTitle": "Updating accounts",
-      "pending": {
-        "title": "{{currency}} update in progress",
-        "subtitle": "Please wait for your account to be updated."
-      },
-      "notice": {
-        "title": "{{currency}} update incomplete",
-        "subtitle": "No {{currency}} accounts could be updated using this device.",
-        "cta": "Continue",
-        "ctaNextCurrency": "Continue with {{currency}}"
-      },
-      "done": {
-        "title": "{{currency}} update complete",
-        "subtitle": "Congratulations, your {{currency}} accounts were updated successfully.",
-        "cta": "Continue",
-        "ctaNextCurrency": "Continue with {{currency}}",
-        "ctaDone": "Done"
-      },
-      "error": {
-        "cta": "Retry"
-      }
-    },
-    "connectDevice": {
-      "headerTitle": "Connect device"
-    }
-  },
   "transfer": {
     "recipient": {
       "input": "Enter address"

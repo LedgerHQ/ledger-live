@@ -21,7 +21,6 @@ import type {
 import isEqual from "lodash/isEqual";
 import {
   addAccounts,
-  canBeMigrated,
   isAccountEmpty,
   flattenAccounts,
   getAccountCurrency,
@@ -168,9 +167,6 @@ export const shallowAccountsSelector = shallowAccountsSelectorCreator(
   a => a,
 );
 
-export const migratableAccountsSelector = (s: State): Account[] =>
-  s.accounts.active.filter(canBeMigrated);
-
 export const flattenAccountsSelector = createSelector(
   accountsSelector,
   flattenAccounts,
@@ -197,10 +193,6 @@ export const areAccountsEmptySelector = createSelector(
   accounts => accounts.every(isAccountEmpty),
 );
 
-export const someAccountsNeedMigrationSelector = createSelector(
-  accountsSelector,
-  accounts => accounts.some(canBeMigrated),
-);
 export const currenciesSelector = createSelector(accountsSelector, accounts =>
   uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort((a, b) =>
     a.name.localeCompare(b.name),
