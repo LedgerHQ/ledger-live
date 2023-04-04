@@ -23,8 +23,6 @@ import MODAL_TERM_OF_USE_UPDATE from "./TermOfUseUpdate";
 import MODAL_EXCHANGE_CRYPTO_DEVICE from "./ExchangeDeviceConfirm";
 import MODAL_SELL_CRYPTO_DEVICE from "./SellDeviceConfirm";
 import MODAL_SWAP_RESET_KYC from "./Swap/ResetKYC";
-import MODAL_WALLETCONNECT_PASTE_LINK from "./WalletConnectPasteLink";
-import MODAL_WALLETCONNECT_DEEPLINK from "./WalletConnectDeeplink";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
 import MODAL_CONNECT_DEVICE from "./ConnectDevice";
@@ -46,8 +44,6 @@ const modals: Modals = {
   MODAL_DISABLE_PASSWORD,
   MODAL_ADD_ACCOUNTS,
   MODAL_RECEIVE,
-  MODAL_WALLETCONNECT_PASTE_LINK,
-  MODAL_WALLETCONNECT_DEEPLINK,
   MODAL_SEND,
   MODAL_SIGN_MESSAGE,
   MODAL_SIGN_TRANSACTION,
