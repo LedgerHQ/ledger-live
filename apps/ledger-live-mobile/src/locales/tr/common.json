@@ -12,7 +12,7 @@
     "gotit" : "Anladım",
     "continue" : "Devam",
     "retry" : "Tekrar dene",
-    "backTo" : "Back to {{to}}",
+    "backTo" : "{{to}} sayfasına dön",
     "done" : "Tamam",
     "sortBy" : "Sıralama türü",
     "signOut" : "Oturumu kapat",
@@ -699,7 +699,13 @@
       "title" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
     },
     "CardanoMinAmountError" : {
-      "title" : "En az {{amount}} ADA gönderilebilir"
+      "title" : "En az {{amount}} ADA gerekli"
+    },
+    "AvalancheInvalidDateTimeError" : {
+      "title" : "Seçilen staking bitiş tarihi geçersiz"
+    },
+    "AvalancheMinimumAmountError" : {
+      "title" : "Minimum tutar 25 AVAX'tır"
     },
     "CardanoNotEnoughFunds" : {
       "title" : "Lütfen ücretleri ödemeye yetecek kadar fonunuz olduğundan emin olun"
@@ -2704,6 +2710,10 @@
           "title" : "Deneysel uygulamalara izin ver",
           "description" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
         },
+        "debugApps" : {
+          "title" : "Hata ayıklama uygulamalarına izin ver",
+          "description" : "Hata ayıklama etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
+        },
         "staggingUrl" : {
           "title" : "Test ortamı URL'sini öğrenin",
           "description" : "Öğrenin sayfası için test ortamı URL'sini kullanın."
@@ -2890,7 +2900,7 @@
       "title" : "Satın Al / Sat"
     },
     "stake" : {
-      "title" : "Stake",
+      "title" : "Stake edin",
       "description" : "Elinizdeki kriptoları artırın."
     },
     "swap" : {
@@ -3412,7 +3422,12 @@
       "scan" : "QR kodunu tarayın",
       "enterAddress" : "Adresi girin",
       "input" : "Adresi girin",
-      "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın."
+      "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın.",
+      "domainService" : {
+        "reverse" : "This address is linked to {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "What's an Ethereum Name Service ?"
+      }
     },
     "amount" : {
       "available" : "Toplam mevcut",
@@ -5368,6 +5383,69 @@
       }
     }
   },
+  "avalanchepchain" : {
+    "delegation" : {
+      "delegationEarn" : "Varlıklarınızın yetkisini devrederek AVAX ödülleri kazanabilirsiniz.",
+      "info" : "Yetki Devri nasıl çalışır?",
+      "iDelegate" : "Yetkisi devredilecek:",
+      "until" : "Bitiş tarihi:",
+      "validatorRemainingStake" : "Mevcut",
+      "validator" : "Node Kimliği",
+      "startTime" : "Başlangıç Zamanı",
+      "endTime" : "Bitiş Zamanı",
+      "notEnoughToDelegate" : "Bir yetki devreden olmak için P zincirinde en az 25 AVAX'ınızın olması gerekmektedir.",
+      "stepperHeader" : {
+        "starter" : "Ödüller kazanın",
+        "validator" : "Varlıklarınızla yetki devredin",
+        "amount" : "Yetkisi devredilecek tutar",
+        "endDate" : "Yetki devri bitiş tarihi",
+        "summary" : "Özet",
+        "verification" : "Doğrulama",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Toplam mevcut",
+            "maxLabel" : "Maks."
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızla başarıyla yetki devrettiniz.",
+              "text" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek."
+            }
+          },
+          "starter" : {
+            "description" : "AVAX'larınızı yetki devretmek için kullanarak hem güvenle ödül kazanın hem de varlıklarınızın kontrolünü sağlamaya devam edin.",
+            "steps" : {
+              "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
+              "1" : "Ledger cihazınızı kullanarak yetki devredin.",
+              "2" : "Stake etmek için en az 25 AVAX gereklidir",
+              "3" : "AVAX varlığının yetkisi en az 2 haftalığına devredilmelidir"
+            },
+            "cta" : "Devam"
+          },
+          "endDate" : "Bu yetki devrinin bitiş tarihi {{minEndDate}} ila {{maxEndDate}} tarihleri arasında olmalıdır."
+        }
+      }
+    },
+    "info" : {
+      "available" : {
+        "title" : "Mevcut AVAX",
+        "description" : "Bu tutar, kullanabileceğiniz fondur."
+      },
+      "delegated" : {
+        "title" : "Stake edilen AVAX",
+        "description" : "Doğrulayıcılara stake edilen miktar."
+      },
+      "delegationUnavailable" : {
+        "title" : "Yetki devri yapılamıyor",
+        "description" : "Yeni bir yetkili seçmek için hesabınızda yeterli bakiye yok."
+      }
+    }
+  },
   "near" : {
     "info" : {
       "available" : {
@@ -6121,7 +6199,7 @@
           "title" : "Yeni",
           "desc" : "Gizli Kurtarma İfadenizi kullanmadan cüzdanınıza yeniden erişin.",
           "actions" : {
-            "learnMore" : "Bunun bana ne yararı var?",
+            "learnMore" : "Bunun bana yararı nedir?",
             "alreadySubscribed" : "Zaten giriş yaptınız mı? <LinkAccount>Aboneliğimi görüntüle</LinkAccount>"
           }
         }
