@@ -1,12 +1,10 @@
-// @flow
 import React, { useCallback, useState, useRef, memo, useEffect } from "react";
 import debounce from "lodash/debounce";
+import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
 import styled from "styled-components";
-
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 
-const ScrollContainer: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const ScrollContainer = styled(Box).attrs(p => ({
   vertical: true,
   pl: p.theme.overflow.trackSize,
   mb: -40,
@@ -15,14 +13,14 @@ const ScrollContainer: ThemedComponent<{}> = styled(Box).attrs(p => ({
 `;
 
 type ScrollLoadingListProps = {
-  data: Array<*>,
-  renderItem: (*, index: number) => React$Node,
-  noResultPlaceholder: ?React$Node,
-  scrollEndThreshold?: number,
-  bufferSize?: number,
-  style?: *,
-  fetchPoolsFromNextPage: () => Promise<void>,
-  search: string,
+  data: Array<StakePool>;
+  renderItem: (a: StakePool, index: number) => React.ReactNode;
+  noResultPlaceholder: React.ReactNode | undefined | null;
+  scrollEndThreshold?: number;
+  bufferSize?: number;
+  style?: any;
+  fetchPoolsFromNextPage: () => void;
+  search: string;
 };
 
 const ScrollLoadingList = ({
@@ -35,9 +33,8 @@ const ScrollLoadingList = ({
   fetchPoolsFromNextPage,
   search,
 }: ScrollLoadingListProps) => {
-  const scrollRef = useRef();
+  const scrollRef = useRef<HTMLInputElement>();
   const [scrollOffset, setScrollOffset] = useState(bufferSize);
-
   useEffect(() => {
     // $FlowFixMe
     if (search !== "") {
@@ -45,6 +42,7 @@ const ScrollLoadingList = ({
     } else {
       setScrollOffset(data.length - 20);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, scrollRef, bufferSize]);
 
   const handleScroll = useCallback(async () => {
@@ -65,10 +63,11 @@ const ScrollLoadingList = ({
     bufferSize,
     scrollEndThreshold,
   ]);
-
   return (
     <ScrollContainer ref={scrollRef} onScroll={debounce(handleScroll, 50)} style={style}>
-      {data.slice(0, scrollOffset).map(renderItem)}
+      {data.length > bufferSize
+        ? data.slice(0, scrollOffset).map(renderItem)
+        : data.map(renderItem)}
       {data.length <= 0 && noResultPlaceholder}
     </ScrollContainer>
   );

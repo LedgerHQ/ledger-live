@@ -1,70 +1,61 @@
-// @flow
 import React, { useState, useCallback, useEffect } from "react";
-import type { TFunction } from "react-i18next";
-
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ScrollLoadingList from "../ScrollLoadingList";
-import { Trans } from "react-i18next";
+import { Trans, TFunction } from "react-i18next";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "./ValidatorRow";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { Account } from "@ledgerhq/types-live";
-import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { Account } from "@ledgerhq/types-live";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
-
 import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/getPools";
-
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
+import * as CardanoTypes from "@ledgerhq/live-common/families/cardano/types";
 
 type Props = {
-  t: TFunction,
-  account: Account,
-  status: TransactionStatus,
-  delegation: StakePool,
-  onChangeValidator: ({ address: string }) => void,
-  selectedPoolId: string,
+  t: TFunction;
+  account: Account;
+  status: TransactionStatus;
+  delegation?: CardanoTypes.CardanoDelegation;
+  onChangeValidator: (a: StakePool) => void;
+  selectedPoolId: string;
 };
 
-const ValidatorField = ({
-  account,
-  status,
-  t,
-  delegation,
-  onChangeValidator,
-  selectedPoolId,
-}: Props) => {
-  const [ledgerPools, setLedgerPools] = useState([]);
+const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId }: Props) => {
+  const [ledgerPools, setLedgerPools] = useState<Array<StakePool>>([]);
   const unit = getAccountUnit(account);
   const [showAll, setShowAll] = useState(
     LEDGER_POOL_IDS.length === 0 ||
-      (LEDGER_POOL_IDS.length === 1 && delegation.poolId === LEDGER_POOL_IDS[0]),
+      (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
   );
-
   const { pools, searchQuery, setSearchQuery, onScrollEndReached } = useCardanoFamilyPools(
     account.currency,
   );
-
   const poolIdsToFilterFromAllPools = [...LEDGER_POOL_IDS];
-  if (delegation.poolId) {
-    poolIdsToFilterFromAllPools.push(delegation.poolId);
+  if (delegation?.poolId) {
+    poolIdsToFilterFromAllPools.push(delegation?.poolId);
   }
-
   useEffect(() => {
     if (LEDGER_POOL_IDS.length) {
-      fetchPoolDetails(account.currency, LEDGER_POOL_IDS).then(apiRes => {
-        setLedgerPools(apiRes.pools);
-      });
+      fetchPoolDetails(account.currency, LEDGER_POOL_IDS).then(
+        (apiRes: { pools: Array<StakePool> }) => {
+          const filteredLedgerPools = apiRes.pools.filter(
+            pool => pool.poolId !== delegation?.poolId,
+          );
+          if (filteredLedgerPools.length) {
+            setLedgerPools(filteredLedgerPools);
+            onChangeValidator(filteredLedgerPools[0]);
+          }
+        },
+      );
     }
   }, [account]);
-
   const onSearch = useCallback(evt => setSearchQuery(evt.target.value), [setSearchQuery]);
-
   const renderItem = (validator: StakePool, validatorIdx: number) => {
     return (
       <ValidatorRow
@@ -72,7 +63,7 @@ const ValidatorField = ({
         key={validatorIdx + validator.poolId}
         pool={validator}
         unit={unit}
-        active={selectedPoolId === validator.poolId || validator.poolId === delegation.poolId}
+        active={selectedPoolId === validator.poolId || validator.poolId === delegation?.poolId}
         onClick={onChangeValidator}
       ></ValidatorRow>
     );
@@ -88,7 +79,11 @@ const ValidatorField = ({
                 ? pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))
                 : ledgerPools
             }
-            style={{ flex: showAll ? "1 0 256px" : "1 0 64px", marginBottom: 0, paddingLeft: 0 }}
+            style={{
+              flex: showAll ? "1 0 256px" : "1 0 64px",
+              marginBottom: 0,
+              paddingLeft: 0,
+            }}
             renderItem={renderItem}
             noResultPlaceholder={null}
             fetchPoolsFromNextPage={onScrollEndReached}
@@ -113,7 +108,9 @@ const ValidatorsFieldContainer: ThemedComponent<{}> = styled(Box)`
   border-radius: 4px;
 `;
 
-const SeeAllButton: ThemedComponent<{ expanded: boolean }> = styled.div`
+const SeeAllButton: ThemedComponent<{
+  expanded: boolean;
+}> = styled.div`
   display: flex;
   color: ${p => p.theme.colors.wallet};
   align-items: center;

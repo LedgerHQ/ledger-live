@@ -1,6 +1,4 @@
-// @flow
-import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
-
+import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
 import React from "react";
 import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";

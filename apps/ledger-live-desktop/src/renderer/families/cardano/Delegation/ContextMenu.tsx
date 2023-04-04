@@ -1,9 +1,8 @@
-// @flow
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import type { AccountLike, Account } from "@ledgerhq/types-live";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -19,7 +18,6 @@ const Container = styled.div`
   width: 24px;
   height: 24px;
 `;
-
 const Item = styled(DropDownItem)`
   width: 160px;
   cursor: pointer;
@@ -27,15 +25,13 @@ const Item = styled(DropDownItem)`
   justify-content: flex-start;
   align-items: center;
 `;
-
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
+  account: AccountLike;
+  parentAccount: Account | undefined | null;
 };
 
 const ContextMenu = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
-
   const items = [
     {
       key: "redelegate",
@@ -83,16 +79,15 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
         ),
     },
   ];
-
   const renderItem = ({
     item,
   }: {
     item: {
-      key: string,
-      label: React$Node,
-      icon: React$Node,
-      onClick: () => void,
-    },
+      key: string;
+      label: React.ReactNode;
+      icon: React.ReactNode;
+      onClick: () => void;
+    };
   }) => {
     return (
       <Item horizontal flow={2} onClick={item.onClick}>
@@ -103,11 +98,19 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
       </Item>
     );
   };
-
   return (
     <DropDownSelector items={items} renderItem={renderItem}>
       {() => (
-        <Container horizontal small outlineGrey flow={1} style={{ width: 34, padding: 0 }}>
+        <Container
+          horizontal
+          small
+          outlineGrey
+          flow={1}
+          style={{
+            width: 34,
+            padding: 0,
+          }}
+        >
           <Box horizontal flow={1} alignItems="center" justifyContent="center">
             <IconDots size={14} />
           </Box>

@@ -1,23 +1,23 @@
-// @flow
-
 import React from "react";
 import styled from "styled-components";
 import { getAccountUnit, shortAddressPreview } from "@ledgerhq/live-common/account/index";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import ContextMenu from "./ContextMenu";
 
 type Props = {
-  delegation: CardanoDelegation,
-  account: AccountLike,
-  parentAccount: ?Account,
+  delegation: CardanoDelegation;
+  account: AccountLike;
+  parentAccount: Account | undefined | null;
 };
 
-const Wrapper: ThemedComponent<{ isPending: boolean }> = styled.div`
+const Wrapper: ThemedComponent<{
+  isPending: boolean;
+}> = styled.div`
   display: flex;
   flex-direction: row;
   padding: 16px 20px;
@@ -47,16 +47,13 @@ const Value: ThemedComponent<{}> = styled.div`
 
 const Row = ({ account, parentAccount, delegation }: Props) => {
   const unit = getAccountUnit(account);
-
   let name = "";
   if (delegation && delegation.poolId) {
     name = delegation.ticker
       ? delegation.ticker + " - " + delegation.name
       : shortAddressPreview(delegation.poolId);
   }
-
   const totalStaked = account.balance.plus(delegation.rewards);
-
   return (
     <Wrapper>
       <Value>
