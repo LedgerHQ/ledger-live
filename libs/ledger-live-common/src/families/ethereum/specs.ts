@@ -7,7 +7,6 @@ import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec, MutationSpec } from "../../bot/types";
 import { EIP1559ShouldBeUsed, getGasLimit } from "./transaction";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { avalancheSpeculosDeviceAction } from "./speculos-deviceActions-avalanche";
 
