@@ -17,7 +17,6 @@ import Earn from "./screens/earn";
 import Swap2 from "~/renderer/screens/exchange/Swap2";
 import USBTroubleshooting from "~/renderer/screens/USBTroubleshooting";
 import Account from "~/renderer/screens/account";
-import WalletConnect from "~/renderer/screens/WalletConnect";
 import Asset from "~/renderer/screens/asset";
 import PlatformCatalog from "~/renderer/screens/platform";
 import PlatformApp from "~/renderer/screens/platform/App";
@@ -197,9 +196,6 @@ export default function Default() {
               ) : (
                 <Route>
                   <Switch>
-                    <Route exact path="/walletconnect">
-                      <WalletConnect />
-                    </Route>
                     <Route>
                       <IsNewVersion />
                       <IsSystemLanguageAvailable />
