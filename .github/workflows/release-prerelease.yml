@@ -44,19 +44,6 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version:
-      #       3.1.2 # Not needed with a .ruby-version file
-      #       # runs 'bundle install' and caches installed gems automatically
-      # - name: Cache LLM pods
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       apps/ledger-live-mobile/ios/Pods
-      #       ~/Library/Caches/CocoaPods
-      #       ~/.cocoapods
-      #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
       - uses: ./tools/actions/get-package-infos
         id: desktop-version
         with:
@@ -81,6 +68,24 @@ jobs:
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
+      - name: commit (from release branch)
+        if: ${{ startsWith(github.ref_name, 'release') }}
+        env:
+          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
+          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
+        run: |
+          git add . &&
+          git commit -m ":rocket: release prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
+          echo ""
+      - name: commit (from hotfix branch)
+        if: ${{ startsWith(github.ref_name, 'hotfix') }}
+        env:
+          LLD: LLD(${{ steps.post-desktop-version.outputs.version }})
+          LLM: LLM(${{ steps.post-mobile-version.outputs.version }})
+        run: |
+          git add . &&
+          git commit -m ":fire: hotfix prerelease [${{ env.LLD }}, ${{ env.LLM }}]" ||
+          echo ""
       - name: commit (from ${{ inputs.ref }} branch) workflow dispatch
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
