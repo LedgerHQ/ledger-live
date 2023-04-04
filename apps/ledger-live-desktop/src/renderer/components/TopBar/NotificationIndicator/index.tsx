@@ -20,7 +20,7 @@ export function NotificationIndicator() {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const onClickNotificatioNcenter = useCallback(() => {
+  const onClickNotificationCenter = useCallback(() => {
     track("button_clicked", {
       button: "Notification Center",
       page: history.location.pathname,
@@ -38,7 +38,7 @@ export function NotificationIndicator() {
         <ItemContainer
           data-test-id="topbar-notification-button"
           isInteractive
-          onClick={onClickNotificatioNcenter}
+          onClick={onClickNotificationCenter}
         >
           <IconBell size={16} count={totalNotifCount} />
         </ItemContainer>
