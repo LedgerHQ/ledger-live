@@ -54,6 +54,9 @@ jobs:
           pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
           cd apps/ledger-live-mobile
           node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./lint.json'))"
+      - name: check for dead code
+        run: cd apps/ledger-live-mobile && npx unimported
+        shell: bash
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - uses: actions/upload-artifact@v3
