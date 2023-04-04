@@ -1,19 +1,33 @@
 import Tooltip from "~/renderer/components/Tooltip";
-import React from "react";
+import React, { useCallback } from "react";
 import { ItemContainer } from "../shared";
 import IconBell from "~/renderer/icons/Bell";
-import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useTranslation } from "react-i18next";
 import { InformationDrawer } from "./InformationDrawer";
 import { useDispatch, useSelector } from "react-redux";
 import { informationCenterStateSelector } from "~/renderer/reducers/UI";
 import { openInformationCenter, closeInformationCenter } from "~/renderer/actions/UI";
+import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
+import { track } from "~/renderer/analytics/segment";
+import { useHistory } from "react-router";
+
 export function NotificationIndicator() {
   const { t } = useTranslation();
-  const { allIds, seenIds } = useAnnouncements();
-  const totalNotifCount = allIds.length - seenIds.length;
+  const notificationsCards = useSelector(notificationsContentCardSelector);
+
+  const totalNotifCount = notificationsCards?.filter(n => !n.viewed).length || 0;
   const { isOpen } = useSelector(informationCenterStateSelector);
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  const onClickNotificatioNcenter = useCallback(() => {
+    track("button_clicked", {
+      button: "Notification Center",
+      page: history.location.pathname,
+    });
+    dispatch(openInformationCenter());
+  }, [dispatch, history.location.pathname]);
+
   return (
     <>
       <InformationDrawer
@@ -24,9 +38,7 @@ export function NotificationIndicator() {
         <ItemContainer
           data-test-id="topbar-notification-button"
           isInteractive
-          onClick={() => {
-            dispatch(openInformationCenter());
-          }}
+          onClick={onClickNotificatioNcenter}
         >
           <IconBell size={16} count={totalNotifCount} />
         </ItemContainer>

@@ -14,3 +14,8 @@ export type ContentCard = {
 };
 
 export type PortfolioContentCard = ContentCard;
+export type NotificationContentCard = ContentCard & {
+  createdAt: Date;
+  cta: string;
+  viewed: boolean;
+};
