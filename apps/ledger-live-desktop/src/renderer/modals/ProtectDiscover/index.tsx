@@ -1,5 +1,3 @@
-// @flow
-
 import React from "react";
 import styled from "@ledgerhq/react-ui/components/styled";
 import Modal from "~/renderer/components/Modal";

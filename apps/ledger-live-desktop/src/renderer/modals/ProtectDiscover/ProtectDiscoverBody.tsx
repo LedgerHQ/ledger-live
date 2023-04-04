@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Flex, Button as BaseButton, Text } from "@ledgerhq/react-ui";
