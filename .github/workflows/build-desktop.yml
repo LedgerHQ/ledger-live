@@ -141,6 +141,8 @@ jobs:
           git config user.name "live-github-bot[bot]"
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:

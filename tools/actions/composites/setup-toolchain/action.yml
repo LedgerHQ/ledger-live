@@ -1,11 +1,22 @@
 name: "Setup Toolchain"
 description: "Setup the toolchain for an action"
+inputs:
+  pnpm_dest:
+    description: "the location where to install pnpm"
+    required: false
 runs:
   using: "composite"
   steps:
     # ⚠️ We have issues with the runners and proto,
     # so for the moment we're not using it at all in the CI.
     - uses: pnpm/action-setup@v2
+      if: inputs.pnpm_dest != ''
+      # if: ${{ runner.os == 'Windows' }}
+      with:
+        version: 8.1
+        dest: ${{ inputs.pnpm_dest }}
+    - uses: pnpm/action-setup@v2
+      if: inputs.pnpm_dest == ''
       # if: ${{ runner.os == 'Windows' }}
       with:
         version: 8.1

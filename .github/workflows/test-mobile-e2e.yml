@@ -47,6 +47,8 @@ jobs:
           base: ${{ inputs.base_ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
       - name: Install applesimutils
         run: |
           brew update
