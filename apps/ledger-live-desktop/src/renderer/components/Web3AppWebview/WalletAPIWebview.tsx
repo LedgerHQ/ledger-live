@@ -5,10 +5,16 @@ import React, { forwardRef, RefObject, useCallback, useEffect, useMemo } from "r
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { useWalletAPIServer, useConfig, UiHook } from "@ledgerhq/live-common/wallet-api/react";
+
+import {
+  useWalletAPIServer,
+  useConfig,
+  UiHook,
+  ExchangeType,
+} from "@ledgerhq/live-common/wallet-api/react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import { getEnv } from "@ledgerhq/live-common/env";
@@ -129,6 +135,33 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
             appName,
             onResult: onSuccess,
             onCancel,
+          }),
+        );
+      },
+      "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
+        dispatch(
+          openModal("MODAL_PLATFORM_EXCHANGE_START", {
+            exchangeType: ExchangeType[exchangeType],
+            onResult: (nonce: string) => {
+              onSuccess(nonce);
+            },
+            onCancel: (error: Error) => {
+              onCancel(error);
+            },
+          }),
+        );
+      },
+      "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+        dispatch(
+          openModal("MODAL_PLATFORM_EXCHANGE_COMPLETE", {
+            ...exchangeParams,
+            onResult: (operation: Operation) => {
+              onSuccess(operation.hash);
+            },
+            onCancel: (error: Error) => {
+              console.error(error);
+              onCancel(error);
+            },
           }),
         );
       },

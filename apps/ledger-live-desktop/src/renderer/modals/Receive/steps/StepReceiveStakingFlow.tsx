@@ -140,8 +140,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
       flow: "stake",
       currency: account?.currency?.name,
       provider: action?.provider?.name || "Ledger",
-      modal: "receive",
-      account,
+      modal: "receive"
     };
   }, [account, action?.provider?.name]);
 

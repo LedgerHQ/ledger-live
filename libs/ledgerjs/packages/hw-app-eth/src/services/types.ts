@@ -1,3 +1,9 @@
+import { DomainServiceResolution as DomainDescriptor } from "@ledgerhq/domain-service/types";
+import {
+  signAddressResolution,
+  signDomainResolution,
+} from "@ledgerhq/domain-service/signers/index";
+
 export type LedgerEthTransactionResolution = {
   // device serialized data that contains ERC20 data (hex format)
   erc20Tokens: Array<string>;
@@ -7,9 +13,12 @@ export type LedgerEthTransactionResolution = {
   externalPlugin: Array<{ payload: string; signature: string }>;
   // device serialized data that contains plugin data (hex format)
   plugin: Array<string>;
+  // device serialized data that contain trusted names data (hex format)
+  domains: DomainDescriptor[];
 };
 
 export type LoadConfig = {
+  // Backend service responsible for signed NFT APDUS
   nftExplorerBaseURL?: string | null;
   // example of payload https://cdn.live.ledger.com/plugins/ethereum/1.json
   // fetch against an api (base url is an api that hosts /plugins/ethereum/${chainId}.json )
@@ -32,6 +41,8 @@ export type ResolutionConfig = {
   externalPlugins?: boolean;
   // ERC20 resolution service (to clear sign erc20 transfers & other actions)
   erc20?: boolean;
+  // List of trusted names (ENS for now) to clear sign
+  domains?: DomainDescriptor[];
 };
 
 export type LedgerEthTransactionService = {
@@ -40,4 +51,6 @@ export type LedgerEthTransactionService = {
     loadConfig: LoadConfig,
     resolutionConfig: ResolutionConfig
   ) => Promise<LedgerEthTransactionResolution>;
+  signDomainResolution: typeof signDomainResolution;
+  signAddressResolution: typeof signAddressResolution;
 };
