@@ -214,6 +214,7 @@
     "stars" : "Favori hesaplar",
     "accounts" : "Hesaplar",
     "manager" : "My Ledger",
+    "earn" : "Kazan",
     "exchange" : "Satın Al / Sat",
     "swap" : "Takas et",
     "lend" : "Borç ver",
@@ -225,15 +226,10 @@
     "tooltip" : "Hesabı yıldızla"
   },
   "bridge" : {
-    "modalTitle" : "Cihaz Köprüsünü Aç",
-    "openHeader" : "WebSocket üzerinden Cihaz hesaplarınızı gösterin",
-    "openDescription" : "Köprü açmanız, tüm hesaplarınızı üçüncü taraf uygulamalar tarafından görünür hale getirir.",
-    "openedHeader" : "{{appName}} köprüsü açıldı",
-    "openedDescription" : "Üçüncü taraf web uygulamasında {{appName}} hesabınıza WebSocket üzerinden artık erişebilirsiniz.",
-    "completeHeader" : "Köprü oturumu tamamlandı",
-    "completeDescription" : "WebSocket köprüsü kapatıldı.",
-    "openButton" : "Aç",
-    "disconnectButton" : "Bağlantıyı Kes"
+    "modalTitle" : "Cihaz Köprüsü",
+    "openHeader" : "Cihaz Köprüsü artık mevcut değil",
+    "openDescription" : "Ledger Live yerine WebHID'yi kullanmak için lütfen tarayıcınızın cüzdan uzantılarını yapılandırın.",
+    "closeButton" : "Kapat"
   },
   "swap2" : {
     "title" : "Takas edin",
@@ -1218,9 +1214,13 @@
         "description" : "PIN Kodunuz 4 ila 8 rakam uzunluğunda olabilir",
         "text" : "{{deviceName}} cihazınıza ve PIN Kodunuza erişimi olan herkes tüm kripto ve NFT varlıklarınıza erişebilir."
       },
-      "recoveryContent" : {
-        "title" : "Kurtarma ifadesi",
-        "content" : "Gizli kurtarma ifadeniz hakkında daha fazla bilgi için aşağıdaki videolara dokunun"
+      "seedContent" : {
+        "title" : "Gizli Kurtarma İfadesi",
+        "choiceNewOrRestore" : "Sizin için en uygun olan kurulum seçeneğini belirleyin.",
+        "newSeed" : "Gizli kurtarma ifadeniz hakkında daha fazla bilgi için aşağıdaki videolara dokunun",
+        "choiceRestoreDirectOrRecover" : "Yer tutucu: Doğrudan geri yüklemeyi seçin veya Recover'ı kullanın",
+        "recoverSeed" : "Yer tutucu: Recover",
+        "restoreSeed" : "Kurtarma işlemini yaparken varlıklarınızın güvenliğini garantilemek için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesini kullandığınızdan emin olun.\n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın."
       },
       "softwareCheckContent" : {
         "title" : "Yazılım kontrolü",
