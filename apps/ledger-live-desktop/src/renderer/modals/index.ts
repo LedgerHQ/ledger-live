@@ -1,4 +1,5 @@
 import generated from "../generated/modals";
+
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
 import MODAL_PASSWORD from "./PasswordModal";
@@ -9,11 +10,8 @@ import MODAL_SEND from "./Send";
 import MODAL_SIGN_MESSAGE from "./SignMessage";
 import MODAL_SIGN_TRANSACTION from "./SignTransaction";
 import MODAL_NO_FUNDS_STAKE from "./NoFundsStake";
-import MODAL_UPDATE_FIRMWARE from "./UpdateFirmwareModal";
 import MODAL_MIGRATE_ACCOUNTS from "./MigrateAccounts";
 import MODAL_EXPORT_ACCOUNTS from "./ExportAccounts";
-import MODAL_TECHNICAL_DATA from "./TechnicalData";
-import MODAL_SHARE_ANALYTICS from "./ShareAnalytics";
 import MODAL_SETTINGS_ACCOUNT from "./SettingsAccount";
 import MODAL_RELEASE_NOTES from "./ReleaseNotes";
 import MODAL_TROUBLESHOOT_NETWORK from "./TroubleshootNetwork";
@@ -21,16 +19,12 @@ import MODAL_SYSTEM_LANGUAGE_AVAILABLE from "./SystemLanguageAvailable";
 import MODAL_START_STAKE from "./StartStake";
 import MODAL_TERM_OF_USE_UPDATE from "./TermOfUseUpdate";
 import MODAL_EXCHANGE_CRYPTO_DEVICE from "./ExchangeDeviceConfirm";
-import MODAL_SELL_CRYPTO_DEVICE from "./SellDeviceConfirm";
 import MODAL_SWAP_RESET_KYC from "./Swap/ResetKYC";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
 import MODAL_CONNECT_DEVICE from "./ConnectDevice";
-
 import MODAL_LOTTIE_DEBUGGER from "./LottieDebugger";
 import MODAL_STORYLY_DEBUGGER from "./StorylyDebugger";
-import MODAL_RECOVERY_SEED_WARNING from "./RecoverySeedWarning";
-
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 
@@ -48,11 +42,8 @@ const modals: Modals = {
   MODAL_SIGN_MESSAGE,
   MODAL_SIGN_TRANSACTION,
   MODAL_NO_FUNDS_STAKE,
-  MODAL_UPDATE_FIRMWARE,
   MODAL_MIGRATE_ACCOUNTS,
   MODAL_EXPORT_ACCOUNTS,
-  MODAL_TECHNICAL_DATA,
-  MODAL_SHARE_ANALYTICS,
   MODAL_SETTINGS_ACCOUNT,
   MODAL_RELEASE_NOTES,
   MODAL_TROUBLESHOOT_NETWORK,
@@ -61,11 +52,9 @@ const modals: Modals = {
   MODAL_BLACKLIST_TOKEN,
   MODAL_HIDE_NFT_COLLECTION,
   MODAL_EXCHANGE_CRYPTO_DEVICE,
-  MODAL_SELL_CRYPTO_DEVICE,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_STORYLY_DEBUGGER,
   MODAL_START_STAKE,
-  MODAL_RECOVERY_SEED_WARNING,
   // Swap
   MODAL_SWAP_RESET_KYC,
   // Platform
