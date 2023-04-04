@@ -20,11 +20,7 @@ const buildOptimisticOperation = async (
   const type = "OUT";
   const subAccountId = transaction.subAccountId;
   const operation: Operation = {
-    id: encodeOperationId(
-      transaction.subAccountId ? transaction.subAccountId : account.id,
-      "",
-      type
-    ),
+    id: encodeOperationId(account.id, "", type),
     hash: "",
     type: subAccountId ? "NONE" : type,
     value: subAccountId ? new BigNumber(0) : BigNumber(transaction.amount),

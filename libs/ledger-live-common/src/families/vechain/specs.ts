@@ -15,8 +15,10 @@ const VeChain: AppSpec<Transaction> = {
   name: "Vechain",
   currency: getCryptoCurrencyById("vechain"),
   appQuery: {
-    model: DeviceModelId.nanoSP,
-    appName: "VeChain",
+    model: DeviceModelId.nanoS,
+    appName: "Vechain",
+    appVersion: "1.0.7",
+    firmware: "1.0.3",
   },
   genericDeviceAction: deviceAction.acceptTransaction,
   mutations: [
@@ -31,13 +33,9 @@ const VeChain: AppSpec<Transaction> = {
       }: TransactionArg<Transaction>): TransactionRes<Transaction> => {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
-
         const transaction = bridge.createTransaction(account);
-
         const amount = maxSpendable.div(2).integerValue();
-
         //checkSendableToEmptyAccount(amount, sibling);
-
         const updates = [{ amount }, { recipient }];
         return {
           transaction,

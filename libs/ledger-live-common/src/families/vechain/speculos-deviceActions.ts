@@ -1,38 +1,19 @@
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow, SpeculosButton } from "../../bot/specs";
-
-const expectedAmount = ({ account, status }) =>
-  formatCurrencyUnit(account.unit, status.amount, {
-    disableRounding: true,
-  }) + " MCN";
 
 const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
-      title: "Starting Balance",
+      title: "Review",
       button: SpeculosButton.RIGHT,
-      expectedValue: expectedAmount,
     },
     {
-      title: "Send",
+      title: "Amount",
       button: SpeculosButton.RIGHT,
-      expectedValue: expectedAmount,
     },
-    {
-      title: "Fee",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ account, status }) =>
-        formatCurrencyUnit(account.unit, status.estimatedFees, {
-          disableRounding: true,
-        }) + " XLM",
-    },
-    {
-      title: "Destination",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.recipient,
-    },
+    { title: "Address", button: SpeculosButton.RIGHT },
+    { title: "MaxFee", button: SpeculosButton.RIGHT },
     {
       title: "Accept",
       button: SpeculosButton.BOTH,

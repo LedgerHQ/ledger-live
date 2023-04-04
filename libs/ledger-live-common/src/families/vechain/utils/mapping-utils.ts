@@ -2,6 +2,7 @@ import vip180 from "../contracts/abis/VIP180";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { EventLog, TransferLog } from "../api/types";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 // TODO: Currently hardcoding the fee to 0
 export const mapVetTransfersToOperations = (
@@ -11,7 +12,11 @@ export const mapVetTransfersToOperations = (
 ): Operation[] => {
   return txs.map((tx) => {
     return {
-      id: tx.meta.txID,
+      id: encodeOperationId(
+        accountId,
+        tx.meta.txID,
+        tx.recipient === addr.toLowerCase() ? "IN" : "OUT"
+      ),
       hash: tx.meta.txID,
       type: tx.recipient === addr.toLowerCase() ? "IN" : "OUT",
       value: new BigNumber(tx.amount),
