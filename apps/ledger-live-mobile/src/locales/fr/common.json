@@ -168,9 +168,6 @@
       "title" : "Les récompenses sont inférieures aux frais estimés pour les demander.",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Vous ne pouvez pas diminuer le montant approuvé sur un dépôt actif."
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Une erreur est survenue (Erreur #1).",
       "description" : "Enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
@@ -2128,8 +2125,6 @@
       "OPT_IN" : "Activé",
       "OPT_OUT" : "Désactivé",
       "CLOSE_ACCOUNT" : "Compte fermé",
-      "SUPPLY" : "Déposé",
-      "REDEEM" : "Retiré",
       "APPROVE" : "Activé",
       "BOND" : "Lié",
       "UNBOND" : "Délié",
@@ -2704,6 +2699,10 @@
           "title" : "Autoriser les Apps Expérimentales",
           "description" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\"."
         },
+        "debugApps" : {
+          "title" : "Autoriser les Apps Debug",
+          "description" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\"."
+        },
         "staggingUrl" : {
           "title" : "Activer l’URL de test de la page Apprendre",
           "description" : "Utilisez l’URL de test (staging) de la page Apprendre."
@@ -2739,46 +2738,6 @@
       "desc" : "Ne manquez plus rien sur Ledger Live, les produits Ledger, le marché, et recevez des recommandations personnalisées. Vous pouvez vous désinscrire à tout moment dans les Paramètres.",
       "allow" : "Autoriser les notifications",
       "later" : "Pas maintenant"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Mise à jour des comptes Ledger Live",
-    "overview" : {
-      "headerTitle" : "Mise à jour du compte",
-      "title" : "Mise à jour des comptes Ledger Live",
-      "subtitle" : "Mettez vos comptes à jour pour bénéficier des nouvelles fonctionnalités de Ledger Live.",
-      "notice" : "Impossible de mettre à jour {{accountCount}} compte. Veuillez connecter l’appareil associé au compte ci-dessous.",
-      "notice_plural" : "Impossible de mettre à jour {{accountCount}} comptes. Veuillez connecter l’appareil associé aux comptes ci-dessous.",
-      "currency" : "Mise à jour nécessaire pour 1 compte {{currency}}",
-      "currency_plural" : "Mise à jour nécessaire pour {{count}} comptes {{currency}}",
-      "start" : "Démarrer la mise à jour",
-      "continue" : "Continuer la mise à jour"
-    },
-    "progress" : {
-      "headerTitle" : "Mise à jour des comptes",
-      "pending" : {
-        "title" : "Mise à jour de {{currency}} en cours",
-        "subtitle" : "Patientez pendant la mise à jour de votre compte."
-      },
-      "notice" : {
-        "title" : "Mise à jour de {{currency}} incomplète",
-        "subtitle" : "Mise à jour des comptes {{currency}} impossible sur cet appareil.",
-        "cta" : "Continuer",
-        "ctaNextCurrency" : "Continuer avec {{currency}}"
-      },
-      "done" : {
-        "title" : "Mise à jour de {{currency}} terminée",
-        "subtitle" : "Vos comptes {{currency}} ont bien été mis à jour.",
-        "cta" : "Continuer",
-        "ctaNextCurrency" : "Continuer avec {{currency}}",
-        "ctaDone" : "Terminé"
-      },
-      "error" : {
-        "cta" : "Réessayer"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "Connecter votre appareil"
     }
   },
   "transfer" : {
@@ -3412,7 +3371,12 @@
       "scan" : "Scanner le code QR",
       "enterAddress" : "Entrer l’adresse",
       "input" : "Entrer l’adresse",
-      "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire."
+      "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire.",
+      "domainService" : {
+        "reverse" : "Cette adresse est associée à {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "Qu’est-ce qu’un Ethereum Name Service (ENS) ?"
+      }
     },
     "amount" : {
       "available" : "Total disponible",
