@@ -519,7 +519,6 @@ export enum NavigatorName {
   ImportAccounts = "ImportAccounts",
   Manager = "ManagerNavigator",
   ManagerStack = "ManagerStack",
-  MigrateAccountsFlow = "MigrateAccountsFlow",
   NftNavigator = "NftNavigator",
   Onboarding = "Onboarding",
   OnboardingCarefulWarning = "OnboardingCarefulWarning",
