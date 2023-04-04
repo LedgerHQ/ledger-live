@@ -5,6 +5,8 @@ tasks:
   build:
     deps:
       - ^:build
+    inputs:
+      - src/**/*
     options:
       cache: false
     platform: node
