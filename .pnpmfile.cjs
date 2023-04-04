@@ -219,7 +219,7 @@ function readPackage(pkg, context) {
       }),
       addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
-      addPeerDependencies("styled-components", { "react-native": "*" }),
+      // addPeerDependencies("styled-components", { "react-native": "*" }),
       addPeerDependencies("use-latest-callback", { react: "*" }),
       addPeerDependencies("rn-range-slider", {
         react: "*",
