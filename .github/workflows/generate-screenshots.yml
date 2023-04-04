@@ -180,6 +180,7 @@ jobs:
           skip_python: true
           skip_ruby: true
           install_playwright: true
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
       - name: Checkout PR
         if: ${{ inputs.number != null && inputs.ref == null }}
         run: gh pr checkout ${{ inputs.number }}

@@ -1,5 +1,9 @@
 name: "Setup Toolchain"
 description: "Setup the toolchain for an action"
+inputs:
+  pnpm_dest:
+    description: "the location where to install pnpm"
+    required: false
 runs:
   using: "composite"
   steps:
@@ -9,6 +13,7 @@ runs:
       # if: ${{ runner.os == 'Windows' }}
       with:
         version: 8.1
+        dest: ${{ inputs.pnpm_dest }}
     - uses: actions/setup-node@v3
       # if: ${{ runner.os == 'Windows' }}
       with:
