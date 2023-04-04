@@ -70,7 +70,13 @@ const Step0Welcome: React.FC<
           resizeMode={"contain"}
         />
         <Flex px={7}>
-          <Text variant="h4" fontWeight="semiBold" mt={8} textAlign="center">
+          <Text
+            variant="h4"
+            fontWeight="semiBold"
+            mt={8}
+            textAlign="center"
+            testID="custom-image-welcome-title"
+          >
             {t("customImage.landingPage.title")}
           </Text>
         </Flex>
@@ -83,6 +89,7 @@ const Step0Welcome: React.FC<
             onPress={openModal}
             event="button_clicked"
             eventProperties={analyticsButtonEventProps}
+            testID="custom-image-choose-picture-button"
           >
             {t("customImage.landingPage.choosePicture")}
           </Button>

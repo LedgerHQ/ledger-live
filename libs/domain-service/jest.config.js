@@ -14,6 +14,11 @@ if (process.env.CI) {
 
 const defaultConfig = {
   preset: "ts-jest",
+  globals: {
+    "ts-jest": {
+      tsconfig: "./src/__tests__/tsconfig.json",
+    },
+  },
   testEnvironment: "node",
   coverageDirectory: "./coverage/",
   coverageReporters: ["json", "lcov", "clover"],
@@ -34,10 +39,7 @@ module.exports = {
   projects: [
     {
       ...defaultConfig,
-      testPathIgnorePatterns: [
-        ...testPathIgnorePatterns,
-        ".react.(test|spec).tsx",
-      ],
+      testPathIgnorePatterns: [...testPathIgnorePatterns, ".(test|spec).tsx"],
     },
     {
       ...defaultConfig,

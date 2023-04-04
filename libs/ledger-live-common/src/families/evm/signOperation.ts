@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import { Observable } from "rxjs";
 import Eth, { ledgerService } from "@ledgerhq/hw-app-eth";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { transactionToEthersTransaction } from "./adapters";
 import { Transaction as EvmTransaction } from "./types";
@@ -81,6 +82,15 @@ export const signOperation: AccountBridge<EvmTransaction>["signOperation"] = ({
 
           // Instanciate Eth app bindings
           const eth = new Eth(transport);
+          // Configure type of resolutions necessary for the clear signing
+          const resolutionConfig: ResolutionConfig = {
+            externalPlugins: true,
+            erc20: true,
+          };
+          // Add potential domains to clear sign
+          if (transaction.recipientDomain?.type === "forward") {
+            resolutionConfig.domains = [transaction.recipientDomain];
+          }
           // Look for resolutions for external plugins and ERC20
           const resolution = await ledgerService.resolveTransaction(
             serializedTxHexString,

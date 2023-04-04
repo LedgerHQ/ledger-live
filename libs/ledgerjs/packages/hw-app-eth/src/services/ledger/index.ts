@@ -1,14 +1,17 @@
 // This implements the resolution of a Transaction using Ledger's own API
 import { log } from "@ledgerhq/logs";
 import { Interface } from "@ethersproject/abi";
-
+import {
+  signDomainResolution,
+  signAddressResolution,
+} from "@ledgerhq/domain-service/signers/index";
 import {
   LedgerEthTransactionResolution,
   LedgerEthTransactionService,
   LoadConfig,
 } from "../types";
-import { loadInfosForContractMethod } from "./contracts";
 import { byContractAddressAndChainId, findERC20SignaturesInfo } from "./erc20";
+import { loadInfosForContractMethod } from "./contracts";
 import { getNFTInfo, loadNftPlugin } from "./nfts";
 import {
   decodeTxInfo,
@@ -17,7 +20,7 @@ import {
   mergeResolutions,
 } from "../../utils";
 
-type potentialResolutions = {
+type PotentialResolutions = {
   token: boolean | undefined;
   nft: boolean | undefined;
   externalPlugins: boolean | undefined;
@@ -34,7 +37,7 @@ const getAdditionalDataForContract = async (
   contractAddress: string,
   chainIdTruncated: number,
   loadConfig: LoadConfig,
-  shouldResolve: potentialResolutions
+  shouldResolve: PotentialResolutions
 ): Promise<Pick<LedgerEthTransactionResolution, "nfts" | "erc20Tokens">> => {
   const resolution: Pick<
     LedgerEthTransactionResolution,
@@ -108,13 +111,14 @@ const loadNanoAppPlugins = async (
   decodedTx,
   chainIdTruncated: number,
   loadConfig: LoadConfig,
-  shouldResolve: potentialResolutions
+  shouldResolve: PotentialResolutions
 ): Promise<LedgerEthTransactionResolution> => {
   let resolution: LedgerEthTransactionResolution = {
     externalPlugin: [],
     plugin: [],
     nfts: [],
     erc20Tokens: [],
+    domains: [],
   };
 
   if (shouldResolve.nft) {
@@ -177,7 +181,7 @@ const loadNanoAppPlugins = async (
               token: true, // enforcing resolution of tokens for external plugins that need info on assets (e.g. for a swap)
             }
           );
-          resolution = mergeResolutions(resolution, externalPluginResolution);
+          resolution = mergeResolutions([resolution, externalPluginResolution]);
         }
       }
     } else {
@@ -188,25 +192,31 @@ const loadNanoAppPlugins = async (
   return resolution;
 };
 
-const ledgerService: LedgerEthTransactionService = {
-  resolveTransaction: async (rawTxHex, loadConfig, resolutionConfig) => {
+/**
+ * @ignore for external documentation
+ *
+ * In charge of collecting the different APDUs necessary for clear signing
+ * a transaction based on a specified configuration.
+ */
+const resolveTransaction: LedgerEthTransactionService["resolveTransaction"] =
+  async (rawTxHex, loadConfig, resolutionConfig) => {
     const rawTx = Buffer.from(rawTxHex, "hex");
     const { decodedTx, chainIdTruncated } = decodeTxInfo(rawTx);
+    const { domains } = resolutionConfig;
 
     const contractAddress = decodedTx.to;
     const selector =
       decodedTx.data.length >= 10 && decodedTx.data.substring(0, 10);
 
-    let pluginsResolution: Partial<LedgerEthTransactionResolution> = {};
-    let contractResolution: Partial<LedgerEthTransactionResolution> = {};
+    const resolutions: Partial<LedgerEthTransactionResolution>[] = [];
     if (selector) {
-      const shouldResolve: potentialResolutions = {
+      const shouldResolve: PotentialResolutions = {
         token: resolutionConfig.erc20 && tokenSelectors.includes(selector),
         nft: resolutionConfig.nft && nftSelectors.includes(selector),
         externalPlugins: resolutionConfig.externalPlugins,
       };
 
-      pluginsResolution = await loadNanoAppPlugins(
+      const pluginsResolution = await loadNanoAppPlugins(
         contractAddress,
         selector,
         decodedTx,
@@ -214,17 +224,34 @@ const ledgerService: LedgerEthTransactionService = {
         loadConfig,
         shouldResolve
       );
+      if (pluginsResolution) {
+        resolutions.push(pluginsResolution);
+      }
 
-      contractResolution = await getAdditionalDataForContract(
+      const contractResolution = await getAdditionalDataForContract(
         contractAddress,
         chainIdTruncated,
         loadConfig,
         shouldResolve
       );
+      if (contractResolution) {
+        resolutions.push(contractResolution);
+      }
     }
 
-    return mergeResolutions(pluginsResolution, contractResolution);
-  },
-};
+    // Passthrough to be accessible to the Domains module
+    if (domains) {
+      const domainResolutions: Partial<LedgerEthTransactionResolution> = {
+        domains,
+      };
+      resolutions.push(domainResolutions);
+    }
 
-export default ledgerService;
+    return mergeResolutions(resolutions);
+  };
+
+export default {
+  resolveTransaction,
+  signDomainResolution,
+  signAddressResolution,
+} as LedgerEthTransactionService;

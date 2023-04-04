@@ -4,6 +4,10 @@ import { fontFamilies } from "./theme";
 
 export const rgba = (c: string, a: number): string => Color(c).alpha(a).rgb().toString();
 
+export const hex = (color: string): string => Color(color).hex().toString();
+
+export const getAlpha = (color: string): number => Color(color).alpha();
+
 export const darken = (c: string, a: number): string => Color(c).darken(a).toString();
 
 export const lighten = (c: string, a: number): string => Color(c).lighten(a).toString();

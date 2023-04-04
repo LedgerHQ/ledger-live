@@ -71,9 +71,8 @@ import {
   FramedImageWithLottieWithContext,
 } from "../CustomImage/FramedImageWithLottie";
 import ModalLock from "../ModalLock";
-
-const confirmLockscreen = require("../animations/stax/customimage/confirmLockscreen.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
-const allowConnection = require("../animations/stax/customimage/allowConnection.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
+import confirmLockscreen from "../../animations/stax/customimage/confirmLockscreen.json";
+import allowConnection from "../../animations/stax/customimage/allowConnection.json";
 
 const Wrapper = styled(Flex).attrs({
   flex: 1,

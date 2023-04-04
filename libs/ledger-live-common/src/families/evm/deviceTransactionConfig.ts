@@ -1,3 +1,4 @@
+import { validateDomain } from "@ledgerhq/domain-service/utils/index";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { DeviceTransactionField } from "../../transaction";
 import { Transaction as EvmTransaction } from "./types";
@@ -20,6 +21,7 @@ function getDeviceTransactionConfig({
   const mainAccount = getMainAccount(account, parentAccount);
   const { mode } = transaction;
   const fields: Array<DeviceTransactionField> = [];
+  const hasValidDomain = validateDomain(transaction.recipientDomain?.domain);
 
   switch (mode) {
     default:
@@ -29,11 +31,17 @@ function getDeviceTransactionConfig({
           type: "amount",
           label: "Amount",
         },
-        {
-          type: "address",
-          label: "Address",
-          address: transaction.recipient,
-        },
+        transaction.recipientDomain && hasValidDomain
+          ? {
+              type: "text",
+              label: "Domain",
+              value: transaction.recipientDomain.domain,
+            }
+          : {
+              type: "address",
+              label: "Address",
+              address: transaction.recipient,
+            },
         {
           type: "text",
           label: "Network",

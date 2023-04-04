@@ -257,6 +257,7 @@ jobs:
           skip_python: true
           skip_ruby: true
           install_playwright: true
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
       - name: Run playwright tests
         id: tests
         run: pnpm desktop test:playwright

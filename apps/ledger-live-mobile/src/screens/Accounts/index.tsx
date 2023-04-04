@@ -142,7 +142,7 @@ function Accounts({ navigation, route }: NavigationProps) {
           keyExtractor={(i: AccountLike) => i.id}
           ListHeaderComponent={
             <Flex mt={3} mb={3}>
-              <Text variant="h4">
+              <Text testID="accounts-list-title" variant="h4">
                 {params?.currencyTicker
                   ? t("accounts.cryptoAccountsTitle", {
                       currencyTicker: params?.currencyTicker,
