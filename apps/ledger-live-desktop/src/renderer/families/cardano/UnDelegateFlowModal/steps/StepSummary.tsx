@@ -106,7 +106,7 @@ export function StepSummaryFooter({ transitionTo, status, bridgePending, transac
     <>
       <Box horizontal>
         <Button
-          id="delegate-continue-button"
+          id="undelegate-continue-button"
           disabled={!canNext}
           primary
           onClick={() => transitionTo("connectDevice")}

@@ -34,7 +34,7 @@ function StepConfirmation({
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Delegation Cardano" name="Step Confirmed" />
+        <TrackPage category="Undelegation Cardano" name="Step Confirmed" />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
           title={<Trans i18nKey="cardano.unDelegation.flow.steps.confirmation.success.title" />}
@@ -46,7 +46,7 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Delegation Cardano" name="Step Confirmation Error" />
+        <TrackPage category="Undelegation Cardano" name="Step Confirmation Error" />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="cardano.unDelegation.flow.steps.confirmation.broadcastError" />}

@@ -10,7 +10,7 @@ const INITIAL_STATE: { stepId: StepId } = {
   stepId: "summary",
 };
 
-class DelegationModal extends PureComponent<
+class UndelegationModal extends PureComponent<
   {
     name: string;
   },
@@ -53,4 +53,4 @@ class DelegationModal extends PureComponent<
   }
 }
 
-export default DelegationModal;
+export default UndelegationModal;

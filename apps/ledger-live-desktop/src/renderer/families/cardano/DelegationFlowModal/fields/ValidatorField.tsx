@@ -15,13 +15,13 @@ import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/re
 import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/getPools";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
-import * as CardanoTypes from "@ledgerhq/live-common/families/cardano/types";
+import { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 
 type Props = {
   t: TFunction;
   account: Account;
   status: TransactionStatus;
-  delegation?: CardanoTypes.CardanoDelegation;
+  delegation?: CardanoDelegation;
   onChangeValidator: (a: StakePool) => void;
   selectedPoolId: string;
 };
@@ -31,7 +31,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   const unit = getAccountUnit(account);
   const [showAll, setShowAll] = useState(
     LEDGER_POOL_IDS.length === 0 ||
-      (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
+    (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
   );
   const { pools, searchQuery, setSearchQuery, onScrollEndReached } = useCardanoFamilyPools(
     account.currency,
