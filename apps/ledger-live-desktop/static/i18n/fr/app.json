@@ -84,6 +84,7 @@
     "save" : "Enregistrer",
     "lock" : "Verrouiller",
     "showMore" : "Afficher plus",
+    "backToMatchingURL" : "Retourner sur {{appName}}",
     "back" : "Retour",
     "adjustFees" : "Modifier les frais",
     "reset" : "Réinitialiser",
@@ -118,7 +119,6 @@
       "syncing" : "Synchronisation...",
       "upToDate" : "Synchronisé",
       "outdated" : "En pause",
-      "needsMigration" : "Cliquez pour mettre le compte à jour",
       "error" : "Erreur de synchronisation",
       "refresh" : "Actualiser",
       "devTools" : "Outils développeurs"
@@ -146,8 +146,6 @@
       "DELEGATE" : "Délégué",
       "REDELEGATE" : "Redélégué",
       "UNDELEGATE" : "Délégation interrompue",
-      "SUPPLY" : "Déposé",
-      "REDEEM" : "Retiré",
       "APPROVE" : "Approuvé",
       "VOTE" : "Voté",
       "FREEZE" : "Gelé",
@@ -214,6 +212,7 @@
     "stars" : "Comptes favoris",
     "accounts" : "Comptes",
     "manager" : "My Ledger",
+    "earn" : "Gagner",
     "exchange" : "Acheter / Vendre",
     "swap" : "Swap",
     "lend" : "Prêter",
@@ -225,15 +224,10 @@
     "tooltip" : "Ajouter aux favoris"
   },
   "bridge" : {
-    "modalTitle" : "Ouvrir pont de connexion (\"bridge\").",
-    "openHeader" : "Exposer les comptes de votre appareil via WebSocket",
-    "openDescription" : "Ouvrir un pont de connexion (\"bridge\") expose tous vos comptes à des applications tierces.",
-    "openedHeader" : "Pont de connexion (\"bridge\") {{appName}} ouvert",
-    "openedDescription" : "Vous pouvez maintenant accéder à votre compte {{appName}} sur une application web tierce via WebSocket.",
-    "completeHeader" : "Session terminée",
-    "completeDescription" : "Le pont de connexion WebSocket est maintenant fermé.",
-    "openButton" : "Ouvrir",
-    "disconnectButton" : "Déconnecter"
+    "modalTitle" : "Pont de connexion",
+    "openHeader" : "Le pont de connexion n’est plus disponible",
+    "openDescription" : "Veuillez configurer les extensions de wallet de votre navigateur pour utiliser WebHID au lieu de Ledger Live.",
+    "closeButton" : "Fermer"
   },
   "swap2" : {
     "title" : "Swap",
@@ -1218,9 +1212,13 @@
         "description" : "Choisissez un code PIN de 4 à 8 chiffres.",
         "text" : "Toute personne ayant accès à votre {{deviceName}} et à votre code PIN peut avoir accès à vos crypto-actifs."
       },
-      "recoveryContent" : {
-        "title" : "Phrase de récupération",
-        "content" : "Regardez les vidéos ci-dessous pour en savoir plus sur votre phrase secrète de récupération."
+      "seedContent" : {
+        "title" : "Phrase de récupération secrète",
+        "choiceNewOrRestore" : "Découvrez nos conseils de configuration.",
+        "newSeed" : "Regardez les vidéos ci-dessous pour en savoir plus sur votre phrase secrète de récupération.",
+        "choiceRestoreDirectOrRecover" : "Placeholder : Choisissez de restaurer directement ou d’utiliser Ledger Recover",
+        "recoverSeed" : "Placeholder : Ledger Recover",
+        "restoreSeed" : "Pour la récupération et pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}."
       },
       "softwareCheckContent" : {
         "title" : "Vérification du logiciel",
@@ -1620,42 +1618,6 @@
     "hideSubAccounts" : "Masquer les sous-comptes ({{tokenCount}})",
     "countTooltip" : "1 sous-compte",
     "countTooltip_plural" : "{{count}} sous-comptes"
-  },
-  "migrateAccounts" : {
-    "overview" : {
-      "title" : "Mise à jour des comptes Ledger Live",
-      "successTitle" : "Comptes bien mis à jour",
-      "successDescPlu" : "Vos comptes {{assets}} sont maintenant à jour et prêts à être utilisés.",
-      "successDesc" : "Votre compte {{assets}} est maintenant à jour et prêt à être utilisé.",
-      "mobileTitle" : "Exporter les comptes vers l’application mobile",
-      "mobileDesc" : "Appuyez sur le bouton ci-dessous pour exporter vos comptes mis à jour vers l’application Ledger Live pour le mobile.",
-      "mobileCTA" : "Exporter vers Ledger Live pour le mobile",
-      "description" : "Mettez vos comptes à jour pour bénéficier des nouvelles fonctionnalités de Ledger Live.",
-      "currency" : "Mise à jour nécessaire pour 1 compte {{currency}}",
-      "currency_plural" : "Mise à jour nécessaire pour {{count}} comptes {{currency}}",
-      "footer" : "Vous avez besoin de votre appareil Ledger pour terminer la mise à jour.",
-      "pendingDevices" : "Impossible de mettre à jour 1 compte. Veuillez connecter l’appareil associé au compte ci-dessous.",
-      "pendingDevices_plural" : "Impossible de mettre à jour {{totalMigratableAccounts}} comptes. Veuillez connecter l’appareil associé au compte ci-dessous.",
-      "doItLaterBtn" : "Plus tard"
-    },
-    "progress" : {
-      "finished" : {
-        "title" : "Mise à jour de {{currencyName}} terminée",
-        "description" : ""
-      },
-      "scanning" : {
-        "title" : "Mise à jour de {{currencyName}} en cours",
-        "description" : "Patientez pendant la mise à jour de vos comptes."
-      },
-      "finished-empty" : {
-        "title" : "Mise à jour de {{currencyName}} incomplète",
-        "description" : "Aucun compte {{currencyName}} à mettre à jour"
-      }
-    },
-    "cta" : {
-      "startUpdate" : "Démarrer la mise à jour",
-      "nextCurrency" : "Continuer la mise à jour de {{currency}}"
-    }
   },
   "addAccounts" : {
     "title" : "Ajouter des comptes",
@@ -2182,7 +2144,13 @@
     "steps" : {
       "recipient" : {
         "title" : "Bénéficiaire",
-        "nftRecipient" : "NFT à envoyer"
+        "nftRecipient" : "NFT à envoyer",
+        "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire.",
+        "namingService" : {
+          "resolve" : "Cet ENS est valide et est associé à l’adresse suivante :",
+          "supportLink" : "Qu’est-ce qu’un Ethereum Name Service (ENS) ?",
+          "reverse" : "Cette adresse est associée à {{domain}}"
+        }
       },
       "amount" : {
         "title" : "Montant",
@@ -4893,9 +4861,6 @@
       "title" : "Les récompenses sont inférieures aux frais estimés pour les demander.",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Vous ne pouvez pas diminuer le montant approuvé sur un dépôt actif."
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Une erreur est survenue (Erreur #1).",
       "description" : "Merci de contacter l’Assistance Ledger"
@@ -5737,8 +5702,10 @@
     "progress" : {
       "loading" : "Chargement...",
       "resolving" : "Installation des apps requises",
-      "progress" : "Installation des apps : {{progress}} %",
-      "disclaimer" : "Ajoutez ou supprimez des apps à tout moment depuis Ledger Live."
+      "progress" : "Restez dans Ledger Live pendant l’installation.",
+      "disclaimer" : "Ajoutez ou supprimez des apps à tout moment depuis Ledger Live.",
+      "skippedInfo" : "Certaines apps ne sont pas disponibles. Elles doivent encore être développées pour le {{ productName }}.",
+      "skipped" : "Pas encore disponible pour le {{ productName }}"
     },
     "cancelled" : {
       "title" : "Vous avez annulé l’installation de l’app sur votre {{productName}}",
