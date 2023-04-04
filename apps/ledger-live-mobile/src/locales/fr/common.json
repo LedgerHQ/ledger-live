@@ -699,7 +699,13 @@
       "title" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer."
     },
     "CardanoMinAmountError" : {
-      "title" : "Montant minimal pouvant être envoyé : {{amount}} ADA"
+      "title" : "Montant minimal d’ADA requis : {{amount}}"
+    },
+    "AvalancheInvalidDateTimeError" : {
+      "title" : "La date de fin de staking sélectionnée est invalide"
+    },
+    "AvalancheMinimumAmountError" : {
+      "title" : "Le montant minimum est de 25 AVAX"
     },
     "CardanoNotEnoughFunds" : {
       "title" : "Vérifiez que votre solde est suffisant pour couvrir les frais"
@@ -2704,6 +2710,10 @@
           "title" : "Autoriser les Apps Expérimentales",
           "description" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\"."
         },
+        "debugApps" : {
+          "title" : "Autoriser les Apps Debug",
+          "description" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\"."
+        },
         "staggingUrl" : {
           "title" : "Activer l’URL de test de la page Apprendre",
           "description" : "Utilisez l’URL de test (staging) de la page Apprendre."
@@ -3412,7 +3422,12 @@
       "scan" : "Scanner le code QR",
       "enterAddress" : "Entrer l’adresse",
       "input" : "Entrer l’adresse",
-      "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire."
+      "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire.",
+      "domainService" : {
+        "reverse" : "Cette adresse est associée à {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "Qu’est-ce qu’un Ethereum Name Service (ENS) ?"
+      }
     },
     "amount" : {
       "available" : "Total disponible",
@@ -5365,6 +5380,69 @@
       "delegatedTo" : "délégué à",
       "started" : {
         "description" : "Vous pouvez gagner des récompenses en déléguant vos SOL à un validateur."
+      }
+    }
+  },
+  "avalanchepchain" : {
+    "delegation" : {
+      "delegationEarn" : "Vous pouvez gagner des récompenses AVAX en déléguant vos actifs.",
+      "info" : "Fonctionnement de la délégation",
+      "iDelegate" : "Je délègue",
+      "until" : "jusqu’à",
+      "validatorRemainingStake" : "Disponible",
+      "validator" : "NodeID",
+      "startTime" : "Heure de début",
+      "endTime" : "Heure de fin",
+      "notEnoughToDelegate" : "Vous devez disposer d’au moins 25 AVAX sur la P-Chain pour déléguer.",
+      "stepperHeader" : {
+        "starter" : "Gagner des récompenses",
+        "validator" : "Déléguer des actifs",
+        "amount" : "Montant à déléguer",
+        "endDate" : "Date de fin de la délégation",
+        "summary" : "Récapitulatif",
+        "verification" : "Vérification",
+        "selectDevice" : "Sélectionner votre appareil",
+        "connectDevice" : "Connecter votre appareil",
+        "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "Total disponible",
+            "maxLabel" : "Max"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Actifs bien délégués",
+              "text" : "Le solde de votre compte sera mis à jour une fois que le réseau aura confirmé la transaction."
+            }
+          },
+          "starter" : {
+            "description" : "Déléguez vos AVAX pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
+            "steps" : {
+              "0" : "Vous gardez la propriété de vos actifs délégués.",
+              "1" : "Déléguez avec votre appareil Ledger.",
+              "2" : "Montant minimum de 25 AVAX requis pour staker.",
+              "3" : "Les AVAX doivent être délégués pour un minimum de 2 semaines."
+            },
+            "cta" : "Continuer"
+          },
+          "endDate" : "La date de fin de cette délégation doit se situer entre {{minEndDate}} et {{maxEndDate}}."
+        }
+      }
+    },
+    "info" : {
+      "available" : {
+        "title" : "AVAX disponibles",
+        "description" : "Ce montant est disponible."
+      },
+      "delegated" : {
+        "title" : "AVAX stakés",
+        "description" : "Montant staké auprès de validateurs."
+      },
+      "delegationUnavailable" : {
+        "title" : "Délégation indisponible",
+        "description" : "Solde du compte insuffisant pour démarrer une nouvelle délégation."
       }
     }
   },
