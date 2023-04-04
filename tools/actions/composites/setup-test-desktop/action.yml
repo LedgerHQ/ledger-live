@@ -41,6 +41,8 @@ runs:
         pnpm add -g node-gyp
       shell: bash
     - name: Install dependencies
+      env:
+        LANG: en_US.UTF-8
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-live-app" --unsafe-perm
       shell: bash
     - name: Install playwright dependencies
