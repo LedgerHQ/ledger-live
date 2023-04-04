@@ -12,7 +12,7 @@
     "gotit" : "알겠습니다",
     "continue" : "계속",
     "retry" : "다시 시도",
-    "backTo" : "Back to {{to}}",
+    "backTo" : "{{to}} 앱으로 돌아가기",
     "done" : "완료",
     "sortBy" : "정렬 기준",
     "signOut" : "로그아웃",
@@ -699,7 +699,13 @@
       "title" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
     },
     "CardanoMinAmountError" : {
-      "title" : "전송할 수 있는 최소 금액은 {{amount}} ADA입니다"
+      "title" : "최소 {{amount}} ADA 필요"
+    },
+    "AvalancheInvalidDateTimeError" : {
+      "title" : "선택한 스테이킹 종료 날짜가 유효하지 않습니다"
+    },
+    "AvalancheMinimumAmountError" : {
+      "title" : "최소 금액은 24 AVAX입니다"
     },
     "CardanoNotEnoughFunds" : {
       "title" : "수수료 지불에 필요한 충분한 자금이 있는지 반드시 확인해 주세요"
@@ -2704,6 +2710,10 @@
           "title" : "실험적 앱 허용",
           "description" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요."
         },
+        "debugApps" : {
+          "title" : "디버그 앱 허용",
+          "description" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요."
+        },
         "staggingUrl" : {
           "title" : "스테이징 URL에 대해 알아보기",
           "description" : "학습 페이지에서 스테이징 URL 사용하기"
@@ -3412,7 +3422,12 @@
       "scan" : "QR 코드 스캔",
       "enterAddress" : "주소 입력",
       "input" : "주소 입력",
-      "verifyAddress" : "주소가 수령인이 공유한 것과 일치하는지 확인하세요."
+      "verifyAddress" : "주소가 수령인이 공유한 것과 일치하는지 확인하세요.",
+      "domainService" : {
+        "reverse" : "This address is linked to {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "What's an Ethereum Name Service ?"
+      }
     },
     "amount" : {
       "available" : "총 이용 가능",
@@ -5365,6 +5380,69 @@
       "delegatedTo" : "다음에게 위임됨",
       "started" : {
         "description" : "SOL 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다."
+      }
+    }
+  },
+  "avalanchepchain" : {
+    "delegation" : {
+      "delegationEarn" : "자산을 위임하여 ATOM 보상을 받을 수 있습니다.",
+      "info" : "위임은 어떤 원리인가요?",
+      "iDelegate" : "위임",
+      "until" : "종료 시점",
+      "validatorRemainingStake" : "이용 가능",
+      "validator" : "노드ID",
+      "startTime" : "시작 시간",
+      "endTime" : "종료 시간",
+      "notEnoughToDelegate" : "위임자가 되려면 P 체인에 가용한 잔액이 25 AVAX 이상 있어야 합니다.",
+      "stepperHeader" : {
+        "starter" : "보상 받기",
+        "validator" : "자산 위임하기",
+        "amount" : "위임 금액",
+        "endDate" : "위임 종료 날짜",
+        "summary" : "요약",
+        "verification" : "인증",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "총 이용 가능",
+            "maxLabel" : "최대치"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 위임했습니다",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다."
+            }
+          },
+          "starter" : {
+            "description" : "ATOM을 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
+            "steps" : {
+              "0" : "위임된 자산의 소유권은 귀하가 갖습니다",
+              "1" : "Ledger 장치를 이용하여 위임하세요",
+              "2" : "스테이킹 최소 금액은 25 AVAX",
+              "3" : "AVAX 위임 기간은 최소 2주입니다."
+            },
+            "cta" : "계속"
+          },
+          "endDate" : "해당 위임이 종료되는 날짜는 {{minEndDate}}에서 {{maxEndDate}} 사이여야 합니다."
+        }
+      }
+    },
+    "info" : {
+      "available" : {
+        "title" : "이용 가능한 AVAX",
+        "description" : "가처분 금액입니다."
+      },
+      "delegated" : {
+        "title" : "스테이킹된 AVAX",
+        "description" : "검증인에게 스테이킹할 금액"
+      },
+      "delegationUnavailable" : {
+        "title" : "위임할 수 없습니다",
+        "description" : "계정에 이용 가능 잔액이 부족하여 새로운 위임을 시작할 수 없습니다."
       }
     }
   },
