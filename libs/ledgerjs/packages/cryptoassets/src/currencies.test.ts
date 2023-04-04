@@ -4,11 +4,7 @@ import {
   getFiatCurrencyByTicker,
   hasFiatCurrencyTicker,
 } from "./fiats";
-import {
-  listTokens,
-  findTokenById,
-  findTokenByAddressInCurrency,
-} from "./tokens";
+import { listTokens, findTokenByAddressInCurrency } from "./tokens";
 import {
   listCryptoCurrencies,
   hasCryptoCurrencyId,
