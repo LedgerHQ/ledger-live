@@ -117,6 +117,12 @@ export const experimentalFeatures: Feature[] = [
 export const developerFeatures: Feature[] = [
   {
     type: "toggle",
+    name: "PLATFORM_DEBUG",
+    title: i18n.t(i18nKeyDeveloper("debugApps", "title")),
+    description: i18n.t(i18nKeyDeveloper("debugApps", "description")),
+  },
+  {
+    type: "toggle",
     name: "PLATFORM_EXPERIMENTAL_APPS",
     title: i18n.t(i18nKeyDeveloper("experimentalApps", "title")),
     description: i18n.t(i18nKeyDeveloper("experimentalApps", "description")),

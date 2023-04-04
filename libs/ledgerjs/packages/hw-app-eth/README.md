@@ -49,6 +49,7 @@ For a smooth and quick integration:
     *   [signEIP712Message](#signeip712message)
         *   [Parameters](#parameters-6)
         *   [Examples](#examples-6)
+    *   [getChallenge](#getchallenge)
     *   [starkGetPublicKey](#starkgetpublickey)
         *   [Parameters](#parameters-7)
     *   [starkSignOrder](#starksignorder)
@@ -76,10 +77,20 @@ For a smooth and quick integration:
     *   [getEIP1024SharedSecret](#geteip1024sharedsecret)
         *   [Parameters](#parameters-18)
         *   [Examples](#examples-9)
+    *   [provideERC20TokenInformation](#provideerc20tokeninformation)
+        *   [Parameters](#parameters-19)
+    *   [setExternalPlugin](#setexternalplugin)
+        *   [Parameters](#parameters-20)
+    *   [setPlugin](#setplugin)
+        *   [Parameters](#parameters-21)
+    *   [provideNFTInformation](#providenftinformation)
+        *   [Parameters](#parameters-22)
+    *   [provideDomainName](#providedomainname)
+        *   [Parameters](#parameters-23)
 *   [loadInfosForContractMethod](#loadinfosforcontractmethod)
-    *   [Parameters](#parameters-19)
+    *   [Parameters](#parameters-24)
 *   [byContractAddressAndChainId](#bycontractaddressandchainid)
-    *   [Parameters](#parameters-20)
+    *   [Parameters](#parameters-25)
 *   [ResolutionConfig](#resolutionconfig)
     *   [Properties](#properties)
 
@@ -253,6 +264,12 @@ message: {contents: "Hello, Bob!"},
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)** 
+
+#### getChallenge
+
+Method returning a 4 bytes TLV challenge as an hexa string
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
 
 #### starkGetPublicKey
 
@@ -453,6 +470,57 @@ eth.getEIP1024SharedSecret("44'/60'/0'/0/0", "87020e80af6e07a6e4697f091eacadb9e7
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{sharedSecret: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** an object with a shared secret
 
+#### provideERC20TokenInformation
+
+provides a trusted description of an ERC 20 token to associate a contract address with a ticker and number of decimals.
+
+##### Parameters
+
+*   `data` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** stringified buffer of ERC20 signature
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** a boolean
+
+#### setExternalPlugin
+
+provides the name of a trusted binding of a plugin with a contract address and a supported method selector. This plugin will be called to interpret contract data in the following transaction signing command.
+
+##### Parameters
+
+*   `payload` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** external plugin data
+*   `signature` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** signature for the plugin
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** a boolean
+
+#### setPlugin
+
+provides the name of a trusted binding of a plugin with a contract address and a supported method selector. This plugin will be called to interpret contract data in the following transaction signing command.
+
+##### Parameters
+
+*   `data` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** stringified buffer of plugin signature
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** a boolean
+
+#### provideNFTInformation
+
+provides a trusted description of an NFT to associate a contract address with a collectionName.
+
+##### Parameters
+
+*   `data` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** stringified buffer of the NFT description
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** a boolean
+
+#### provideDomainName
+
+provides a domain name (like ENS) to be displayed during transactions in place of the address it is associated to. It shall be run just before a transaction involving the associated address that would be displayed on the device.
+
+##### Parameters
+
+*   `data` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** an stringied buffer of some TLV encoded data to represent the domain
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** a boolean
+
 ### loadInfosForContractMethod
 
 Retrieve the metadatas a given contract address and a method selector
@@ -483,10 +551,11 @@ Returns **ReturnType\<any>**
 Allows to configure precisely what the service need to resolve.
 for instance you can set nft:true if you need clear signing on NFTs. If you set it and it is not a NFT transaction, it should still work but will do a useless service resolution.
 
-Type: {nft: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, externalPlugins: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, erc20: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?}
+Type: {nft: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, externalPlugins: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, erc20: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, domains: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<DomainDescriptor>?}
 
 #### Properties
 
 *   `nft` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `externalPlugins` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `erc20` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+*   `domains` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<DomainDescriptor>?** 

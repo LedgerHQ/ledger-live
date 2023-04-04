@@ -45,6 +45,10 @@ import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamillyAccountGetXPubLogic,
   broadcastTransactionLogic,
+  startExchangeLogic,
+  completeExchangeLogic,
+  CompleteExchangeRequest,
+  CompleteExchangeUiRequest,
   receiveOnAccountLogic,
   signMessageLogic,
   signTransactionLogic,
@@ -172,6 +176,16 @@ export interface UiHook {
     onSuccess: (result: AppResult) => void;
     onCancel: () => void;
   }) => void;
+  "exchange.start": (params: {
+    exchangeType: "FUND" | "SELL" | "SWAP";
+    onSuccess: (nonce: string) => void;
+    onCancel: (error: Error) => void;
+  }) => void;
+  "exchange.complete": (params: {
+    exchangeParams: CompleteExchangeUiRequest;
+    onSuccess: (hash: string) => void;
+    onCancel: (error: Error) => void;
+  }) => void;
 }
 
 function usePermission(manifest: AppManifest): Permission {
@@ -294,6 +308,8 @@ export function useWalletAPIServer({
     "transaction.sign": uiTxSign,
     "transaction.broadcast": uiTxBroadcast,
     "device.transport": uiDeviceTransport,
+    "exchange.start": uiExchangeStart,
+    "exchange.complete": uiExchangeComplete,
   },
 }: {
   manifest: AppManifest;
@@ -647,6 +663,73 @@ export function useWalletAPIServer({
     });
   }, [accounts, manifest, server, tracking]);
 
+  useEffect(() => {
+    if (!uiExchangeStart) {
+      return;
+    }
+
+    server.setHandler("exchange.start", ({ exchangeType }) => {
+      return startExchangeLogic(
+        { manifest, accounts, tracking },
+        exchangeType,
+        (exchangeType: "SWAP" | "FUND" | "SELL") =>
+          new Promise((resolve, reject) =>
+            uiExchangeStart({
+              exchangeType,
+              onSuccess: (nonce: string) => {
+                tracking.startExchangeSuccess(manifest);
+                resolve(nonce);
+              },
+              onCancel: (error) => {
+                tracking.completeExchangeFail(manifest);
+                reject(error);
+              },
+            })
+          )
+      );
+    });
+  }, [uiExchangeStart, accounts, manifest, server, tracking]);
+
+  useEffect(() => {
+    if (!uiExchangeComplete) {
+      return;
+    }
+
+    server.setHandler("exchange.complete", (params) => {
+      // retrofit of the exchange params to fit the old platform spec
+      const request: CompleteExchangeRequest = {
+        provider: params.provider,
+        fromAccountId: params.fromAccount.id,
+        toAccountId:
+          params.exchangeType === "SWAP" ? params.toAccount.id : undefined,
+        transaction: params.transaction,
+        binaryPayload: params.binaryPayload.toString("hex"),
+        signature: params.signature.toString("hex"),
+        feesStrategy: params.feeStrategy,
+        exchangeType: ExchangeType[params.exchangeType],
+      };
+
+      return completeExchangeLogic(
+        { manifest, accounts, tracking },
+        request,
+        (request) =>
+          new Promise((resolve, reject) =>
+            uiExchangeComplete({
+              exchangeParams: request,
+              onSuccess: (hash: string) => {
+                tracking.completeExchangeSuccess(manifest);
+                resolve(hash);
+              },
+              onCancel: (error) => {
+                tracking.completeExchangeFail(manifest);
+                reject(error);
+              },
+            })
+          )
+      );
+    });
+  }, [uiExchangeComplete, accounts, manifest, server, tracking]);
+
   return {
     widgetLoaded,
     onMessage,
@@ -654,4 +737,10 @@ export function useWalletAPIServer({
     onReload,
     onLoadError,
   };
+}
+
+export enum ExchangeType {
+  SWAP = 0x00,
+  SELL = 0x01,
+  FUND = 0x02,
 }
