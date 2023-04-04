@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -14,12 +12,10 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import CounterValue from "~/renderer/components/CounterValue";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { StepProps } from "../types";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { StepProps } from "../types";
 
 const FromToWrapper: ThemedComponent<{}> = styled.div``;
-
 const Separator: ThemedComponent<{}> = styled.div`
   height: 1px;
   background: ${p => p.theme.colors.palette.text.shade20};
@@ -31,15 +27,12 @@ export default class StepSummary extends PureComponent<StepProps> {
   render() {
     const { account, parentAccount, transaction, status, error } = this.props;
     const { estimatedFees } = status;
-
     if (!account) return null;
     const mainAccount = getMainAccount(account, parentAccount);
     if (!transaction) return null;
     const accountUnit = getAccountUnit(mainAccount);
     const feesCurrency = getAccountCurrency(mainAccount);
-
     const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
-
     return (
       <Box flow={4} mx={40}>
         {error && <ErrorBanner error={error} />}
@@ -106,24 +99,14 @@ export default class StepSummary extends PureComponent<StepProps> {
     );
   }
 }
-
-export function StepSummaryFooter({
-  transitionTo,
-  account,
-  parentAccount,
-  onClose,
-  status,
-  bridgePending,
-  transaction,
-}: StepProps) {
+export function StepSummaryFooter({ transitionTo, status, bridgePending, transaction }: StepProps) {
   const { errors } = status;
   const canNext = !bridgePending && !errors.validators && transaction;
-
   return (
     <>
       <Box horizontal>
         <Button
-          id="delegate-continue-button"
+          id="undelegate-continue-button"
           disabled={!canNext}
           primary
           onClick={() => transitionTo("connectDevice")}

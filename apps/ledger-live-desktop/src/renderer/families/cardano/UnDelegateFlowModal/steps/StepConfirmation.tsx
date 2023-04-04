@@ -1,12 +1,9 @@
-// @flow
-
 import React from "react";
 import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
-
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -14,10 +11,11 @@ import RetryButton from "~/renderer/components/RetryButton";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
+import { StepProps } from "../types";
 
-import type { StepProps } from "../types";
-
-const Container: ThemedComponent<{ shouldSpace?: boolean }> = styled(Box).attrs(() => ({
+const Container: ThemedComponent<{
+  shouldSpace?: boolean;
+}> = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
@@ -26,18 +24,17 @@ const Container: ThemedComponent<{ shouldSpace?: boolean }> = styled(Box).attrs(
 `;
 
 function StepConfirmation({
-  account,
   t,
   optimisticOperation,
   error,
-  theme,
-  device,
   signed,
-}: StepProps & { theme: * }) {
+}: StepProps & {
+  theme: any;
+}) {
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Delegation Cardano" name="Step Confirmed" />
+        <TrackPage category="Undelegation Cardano" name="Step Confirmed" />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
           title={<Trans i18nKey="cardano.unDelegation.flow.steps.confirmation.success.title" />}
@@ -46,11 +43,10 @@ function StepConfirmation({
       </Container>
     );
   }
-
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Delegation Cardano" name="Step Confirmation Error" />
+        <TrackPage category="Undelegation Cardano" name="Step Confirmation Error" />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="cardano.unDelegation.flow.steps.confirmation.broadcastError" />}
@@ -60,21 +56,10 @@ function StepConfirmation({
       </Container>
     );
   }
-
   return null;
 }
 
-export function StepConfirmationFooter({
-  transitionTo,
-  account,
-  parentAccount,
-  onRetry,
-  error,
-  openModal,
-  onClose,
-  optimisticOperation,
-  transaction,
-}: StepProps) {
+export function StepConfirmationFooter({ onRetry, error, onClose }: StepProps) {
   return (
     <Box horizontal alignItems="right">
       <Button data-test-id="modal-close-button" ml={2} onClick={onClose}>

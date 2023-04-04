@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -14,12 +12,11 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import CounterValue from "~/renderer/components/CounterValue";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import type { StepProps } from "../types";
+import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { StepProps } from "../types";
 import CardanoLedgerPoolIcon from "../LedgerPoolIcon";
 
 const FromToWrapper: ThemedComponent<{}> = styled.div``;
-
 const Separator: ThemedComponent<{}> = styled.div`
   height: 1px;
   background: ${p => p.theme.colors.palette.text.shade20};
@@ -36,10 +33,8 @@ export default class StepSummary extends PureComponent<StepProps> {
     const { estimatedFees } = status;
     const feesUnit = getAccountUnit(mainAccount);
     const feesCurrency = getAccountCurrency(mainAccount);
-
     const showDeposit = !account.cardanoResources?.delegation?.status;
     const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
-
     return (
       <Box flow={4} mx={40}>
         <FromToWrapper>
@@ -140,17 +135,8 @@ export default class StepSummary extends PureComponent<StepProps> {
   }
 }
 
-export function StepSummaryFooter({
-  transitionTo,
-  account,
-  parentAccount,
-  onClose,
-  status,
-  bridgePending,
-  transaction,
-}: StepProps) {
+export function StepSummaryFooter({ transitionTo }: StepProps) {
   const canNext = true;
-
   return (
     <>
       <Box horizontal>
