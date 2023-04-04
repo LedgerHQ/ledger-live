@@ -10,7 +10,6 @@ import MODAL_SEND from "./Send";
 import MODAL_SIGN_MESSAGE from "./SignMessage";
 import MODAL_SIGN_TRANSACTION from "./SignTransaction";
 import MODAL_NO_FUNDS_STAKE from "./NoFundsStake";
-import MODAL_MIGRATE_ACCOUNTS from "./MigrateAccounts";
 import MODAL_EXPORT_ACCOUNTS from "./ExportAccounts";
 import MODAL_SETTINGS_ACCOUNT from "./SettingsAccount";
 import MODAL_RELEASE_NOTES from "./ReleaseNotes";
@@ -42,7 +41,6 @@ const modals: Modals = {
   MODAL_SIGN_MESSAGE,
   MODAL_SIGN_TRANSACTION,
   MODAL_NO_FUNDS_STAKE,
-  MODAL_MIGRATE_ACCOUNTS,
   MODAL_EXPORT_ACCOUNTS,
   MODAL_SETTINGS_ACCOUNT,
   MODAL_RELEASE_NOTES,

@@ -38,7 +38,6 @@ import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
-import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "../../screens/Analytics/Allocation";
@@ -415,11 +414,6 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.PasswordModifyFlow}
         component={PasswordModifyFlowNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.MigrateAccountsFlow}
-        component={MigrateAccountsFlowNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen

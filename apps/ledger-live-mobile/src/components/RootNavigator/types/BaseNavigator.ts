@@ -18,7 +18,6 @@ import { NavigatorName, ScreenName } from "../../../const";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";
-import type { MigrateAccountsNavigatorParamList } from "./MigrateAccountsFlowNavigator";
 import type { NftNavigatorParamList } from "./NftNavigator";
 import type { NotificationCenterNavigatorParamList } from "./NotificationCenterNavigator";
 import type { PasswordAddFlowParamList } from "./PasswordAddFlowNavigator";
@@ -252,9 +251,6 @@ export type BaseNavigatorStackParamList = {
     | undefined;
   [NavigatorName.PasswordModifyFlow]:
     | NavigatorScreenParams<PasswordModifyFlowParamList>
-    | undefined;
-  [NavigatorName.MigrateAccountsFlow]:
-    | NavigatorScreenParams<MigrateAccountsNavigatorParamList>
     | undefined;
   [NavigatorName.NotificationCenter]: NavigatorScreenParams<NotificationCenterNavigatorParamList>;
   [NavigatorName.NftNavigator]: NavigatorScreenParams<NftNavigatorParamList>;
