@@ -243,7 +243,7 @@ const Separator = styled.div`
 
 export function AnnouncementPanel() {
   const {
-    orderedNotificationsCards,
+    notificationsCards,
     logNotificationImpression,
     groupNotifications,
     onClickNotif,
@@ -253,7 +253,8 @@ export function AnnouncementPanel() {
   const handleInViewNotif = useCallback(
     (visible, uuid) => {
       const timeouts = timeoutByUUID.current;
-      if (orderedNotificationsCards.find(n => !n.viewed) && visible && !timeouts[uuid]) {
+
+      if (notificationsCards?.find(n => !n.viewed && n.id === uuid) && visible && !timeouts[uuid]) {
         timeouts[uuid] = setTimeout(() => {
           logNotificationImpression(uuid);
           delete timeouts[uuid];
@@ -264,10 +265,16 @@ export function AnnouncementPanel() {
         delete timeouts[uuid];
       }
     },
-    [logNotificationImpression, orderedNotificationsCards],
+    [logNotificationImpression, notificationsCards],
   );
 
-  if (!orderedNotificationsCards) {
+  const groups = useMemo(
+    () => groupNotifications(notificationsCards),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [notificationsCards],
+  );
+
+  if (!notificationsCards) {
     return (
       <PanelContainer>
         <Text
@@ -295,7 +302,7 @@ export function AnnouncementPanel() {
   return (
     <ScrollArea hideScrollbar>
       <Box py="32px">
-        {groupNotifications(orderedNotificationsCards).map((group, index) => (
+        {groups.map((group, index) => (
           <React.Fragment key={index}>
             {group.day ? <DateRow date={group.day} /> : null}
             {group.data.map(({ title, description, path, url, viewed, id, cta }, index) => (

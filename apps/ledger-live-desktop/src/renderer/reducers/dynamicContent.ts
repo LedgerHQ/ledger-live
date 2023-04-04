@@ -2,8 +2,8 @@ import { handleActions } from "redux-actions";
 import { NotificationContentCard, PortfolioContentCard } from "~/types/dynamicContent";
 
 export type DynamicContentState = {
-  portfolioCards?: PortfolioContentCard[];
-  notificationsCards?: NotificationContentCard[];
+  portfolioCards: PortfolioContentCard[];
+  notificationsCards: NotificationContentCard[];
 };
 
 const state: DynamicContentState = {

@@ -10,14 +10,6 @@ export function useNotifications() {
   const [cachedNotifications, setCachedNotifications] = useState<braze.Card[]>([]);
   const dispatch = useDispatch();
   const notificationsCards = useSelector(notificationsContentCardSelector);
-  const orderedNotificationsCards = useMemo(
-    () =>
-      (notificationsCards ?? []).sort(
-        (notif: NotificationContentCard, nt: NotificationContentCard) =>
-          nt.createdAt.getDate() - notif.createdAt.getDate(),
-      ),
-    [notificationsCards],
-  );
 
   useEffect(() => {
     const cards = braze
@@ -70,15 +62,12 @@ export function useNotifications() {
 
   const logNotificationImpression = useCallback(
     (cardId: string) => {
-      const card = orderedNotificationsCards.find(n => n.id === cardId);
-
       const currentCard = cachedNotifications.find(card => card.id === cardId);
-      console.log("cachedNotifications", cachedNotifications);
-      console.log("currentCard", currentCard);
+
       braze.logContentCardImpressions(currentCard ? [currentCard] : []);
 
-      const cards = orderedNotificationsCards.map(n => {
-        if (card && n.id === card.id) {
+      const cards = (notificationsCards ?? []).map(n => {
+        if (n.id === cardId) {
           return { ...n, viewed: true };
         } else {
           return n;
@@ -87,7 +76,7 @@ export function useNotifications() {
 
       dispatch(setNotificationsCards(cards));
     },
-    [orderedNotificationsCards, cachedNotifications, dispatch],
+    [notificationsCards, cachedNotifications, dispatch],
   );
 
   const onClickNotif = useCallback((card: NotificationContentCard) => {
@@ -104,7 +93,7 @@ export function useNotifications() {
     startOfDayTime,
     braze,
     cachedNotifications,
-    orderedNotificationsCards,
+    notificationsCards,
     logNotificationImpression,
     onClickNotif,
   };
