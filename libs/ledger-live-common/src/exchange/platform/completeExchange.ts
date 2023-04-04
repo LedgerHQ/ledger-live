@@ -10,7 +10,7 @@ import type {
 import completeExchangeSwap from "../swap/completeExchange";
 import completeExchangeTransfer from "./transfer/completeExchange";
 
-import { ExchangeTypes } from "../hw-app-exchange/Exchange";
+import { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
 
 type CompleteExchangeInput =
   | CompleteExchangeInputSell

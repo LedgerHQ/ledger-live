@@ -12,7 +12,7 @@ import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types"
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { getMessageProperties } from "~/renderer/modals/SignMessage/utils";
 import SignMessageConfirmField from "./SignMessageConfirmField";
-import Spinner from "~/renderer/components/BigSpinner.jsx";
+import Spinner from "~/renderer/components/BigSpinner";
 import useTheme from "~/renderer/hooks/useTheme";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";

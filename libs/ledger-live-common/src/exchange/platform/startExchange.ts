@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import { from } from "rxjs";
-import Exchange from "../hw-app-exchange/Exchange";
+import Exchange from "@ledgerhq/hw-app-exchange";
 import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import type { ExchangeRequestEvent } from "../../hw/actions/startExchange";

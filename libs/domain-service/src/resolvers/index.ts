@@ -8,6 +8,12 @@ import {
   getRegistriesForDomain,
 } from "../registries";
 
+if (typeof Promise.allSettled === "undefined") {
+  throw new Error(
+    "This lib requires Promise.allSettled in order to work. Please polyfill this method if needed."
+  );
+}
+
 /**
  * Get an array of addresses for a domain
  *
