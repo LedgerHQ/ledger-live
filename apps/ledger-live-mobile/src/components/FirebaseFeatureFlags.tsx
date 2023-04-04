@@ -1,5 +1,6 @@
 import React, { PropsWithChildren, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Platform } from "react-native";
 import isEqual from "lodash/isEqual";
 import semver from "semver";
 import remoteConfig from "@react-native-firebase/remote-config";
@@ -23,12 +24,17 @@ import {
 
 type Props = PropsWithChildren<unknown>;
 
+const appVersion =
+  Platform.OS === "ios"
+    ? `${VersionNumber.appVersion}-${VersionNumber.buildVersion}`
+    : VersionNumber.appVersion;
+
 const checkFeatureFlagVersion = (feature: Feature | undefined) => {
   if (
     feature &&
     feature.enabled &&
     feature.mobile_version &&
-    !semver.satisfies(VersionNumber.appVersion, feature.mobile_version, {
+    !semver.satisfies(appVersion, feature.mobile_version, {
       includePrerelease: true,
     })
   ) {
