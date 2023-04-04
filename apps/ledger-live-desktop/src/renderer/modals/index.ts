@@ -22,11 +22,6 @@ import MODAL_SWAP_RESET_KYC from "./Swap/ResetKYC";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
 import MODAL_CONNECT_DEVICE from "./ConnectDevice";
-<<<<<<< HEAD
-import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
-
-=======
->>>>>>> 51f6fd4e1a (chore: remove unused modals)
 import MODAL_LOTTIE_DEBUGGER from "./LottieDebugger";
 import MODAL_STORYLY_DEBUGGER from "./StorylyDebugger";
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
