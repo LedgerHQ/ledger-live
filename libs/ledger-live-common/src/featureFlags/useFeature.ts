@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useFeatureFlags } from "./provider";
 import { FeatureId, Feature } from "@ledgerhq/types-live";
 
-const useFeature = (key: FeatureId): Feature | null => {
+const useFeature = <T = any>(key: FeatureId): Feature<T> | null => {
   const featureFlags = useFeatureFlags();
   const value = useMemo(
     () => featureFlags.getFeature(key),

@@ -1,31 +1,35 @@
+import axios from "axios";
+import eip55 from "eip55";
 import { log } from "@ledgerhq/logs";
-import network from "@ledgerhq/live-common/network";
-import { SupportedRegistries } from "../types";
+import { DomainServiceResolution, SupportedRegistries } from "../types";
 import {
   getRegistries,
   getRegistriesForAddress,
   getRegistriesForDomain,
 } from "../registries";
 
-type DomainResolutionResponse = {
-  registry: SupportedRegistries;
-  address: string;
-};
+if (typeof Promise.allSettled === "undefined") {
+  throw new Error(
+    "This lib requires Promise.allSettled in order to work. Please polyfill this method if needed."
+  );
+}
 
 /**
  * Get an array of addresses for a domain
  *
  * @param {string} domain
- * @returns {Promise<DomainResolutionResponse[]>}
+ * @returns {Promise<DomainServiceResolution[]>}
  */
 export const resolveDomain = async (
   domain: string,
   registryName?: SupportedRegistries
-): Promise<DomainResolutionResponse[]> => {
+): Promise<DomainServiceResolution[]> => {
   const registries = await (async () => {
     if (registryName) {
       const registries = await getRegistries();
-      const registry = registries.find((r) => r.name === registryName);
+      const registry = registries.find(
+        (r) => r.name === registryName && r.patterns.forward.test(domain)
+      );
       return registry ? [registry] : [];
     }
     return getRegistriesForDomain(domain);
@@ -33,7 +37,7 @@ export const resolveDomain = async (
 
   const responses = Promise.allSettled(
     registries.map((registry) =>
-      network<string>({
+      axios.request<string>({
         method: "GET",
         url: registry.resolvers.forward.replace("{name}", domain),
       })
@@ -53,42 +57,59 @@ export const resolveDomain = async (
         return result;
       }
 
+      if (!promise.value.data) return result;
+
+      const checksummedAddress = (() => {
+        try {
+          return eip55.encode(promise.value.data);
+        } catch (e) {
+          return promise.value.data;
+        }
+      })();
+
       result.push({
         registry: registries[index].name,
-        address: promise.value.data,
+        address: checksummedAddress,
+        domain,
+        type: "forward",
       });
       return result;
-    }, [] as DomainResolutionResponse[])
+    }, [] as DomainServiceResolution[])
   );
-};
-
-type AddressResolutionResponse = {
-  registry: SupportedRegistries;
-  domain: string;
 };
 
 /**
  * Get an array of domains for an address
  *
  * @param {string} address
- * @returns {Promise<AddressResolutionResponse[]>}
+ * @returns {Promise<DomainServiceResolution[]>}
  */
 export const resolveAddress = async (
   address: string,
   registryName?: SupportedRegistries
-): Promise<AddressResolutionResponse[]> => {
+): Promise<DomainServiceResolution[]> => {
   const registries = await (async () => {
     if (registryName) {
       const registries = await getRegistries();
-      const registry = registries.find((r) => r.name === registryName);
+      const registry = registries.find(
+        (r) => r.name === registryName && r.patterns.reverse.test(address)
+      );
       return registry ? [registry] : [];
     }
     return getRegistriesForAddress(address);
   })();
 
+  const checksummedAddress = (() => {
+    try {
+      return eip55.encode(address);
+    } catch (e) {
+      return address;
+    }
+  })();
+
   const responses = Promise.allSettled(
     registries.map((registry) =>
-      network<string>({
+      axios.request<string>({
         method: "GET",
         url: registry.resolvers.reverse.replace("{address}", address),
       })
@@ -108,11 +129,15 @@ export const resolveAddress = async (
         return result;
       }
 
+      if (!promise.value.data) return result;
+
       result.push({
         registry: registries[index].name,
         domain: promise.value.data,
+        address: checksummedAddress,
+        type: "reverse",
       });
       return result;
-    }, [] as AddressResolutionResponse[])
+    }, [] as DomainServiceResolution[])
   );
 };

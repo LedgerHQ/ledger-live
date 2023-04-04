@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { from, Observable } from "rxjs";
+import { from } from "rxjs";
 import { timeout } from "rxjs/operators";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";

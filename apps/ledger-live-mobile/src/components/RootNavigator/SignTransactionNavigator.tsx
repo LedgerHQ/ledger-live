@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
+import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { ScreenName } from "../../const";
 import SignTransactionSummary from "../../screens/SendFunds/04-Summary";
 import SelectDevice from "../../screens/SelectDevice";
@@ -40,62 +41,64 @@ export default function SignTransactionNavigator() {
   });
 
   return (
-    <Stack.Navigator screenOptions={stackNavigationConfig}>
-      <Stack.Screen
-        name={ScreenName.SignTransactionSummary}
-        component={SignTransactionSummary}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("send.stepperHeader.summary")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "1",
-                totalSteps,
-              })}
-            />
-          ),
-        }}
-        listeners={listeners}
-      />
-      <Stack.Screen
-        name={ScreenName.SignTransactionSelectDevice}
-        component={SelectDevice}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("send.stepperHeader.selectDevice")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "2",
-                totalSteps,
-              })}
-            />
-          ),
-        }}
-        listeners={listeners}
-      />
-      <Stack.Screen
-        name={ScreenName.SignTransactionConnectDevice}
-        component={SignTransactionConnectDevice}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("send.stepperHeader.connectDevice")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "2",
-                totalSteps,
-              })}
-            />
-          ),
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.SignTransactionValidationError}
-        component={SignTransactionValidationError}
-        options={{
-          headerShown: false,
-        }}
-        listeners={listeners}
-      />
-    </Stack.Navigator>
+    <DomainServiceProvider>
+      <Stack.Navigator screenOptions={stackNavigationConfig}>
+        <Stack.Screen
+          name={ScreenName.SignTransactionSummary}
+          component={SignTransactionSummary}
+          options={{
+            headerTitle: () => (
+              <StepHeader
+                title={t("send.stepperHeader.summary")}
+                subtitle={t("send.stepperHeader.stepRange", {
+                  currentStep: "1",
+                  totalSteps,
+                })}
+              />
+            ),
+          }}
+          listeners={listeners}
+        />
+        <Stack.Screen
+          name={ScreenName.SignTransactionSelectDevice}
+          component={SelectDevice}
+          options={{
+            headerTitle: () => (
+              <StepHeader
+                title={t("send.stepperHeader.selectDevice")}
+                subtitle={t("send.stepperHeader.stepRange", {
+                  currentStep: "2",
+                  totalSteps,
+                })}
+              />
+            ),
+          }}
+          listeners={listeners}
+        />
+        <Stack.Screen
+          name={ScreenName.SignTransactionConnectDevice}
+          component={SignTransactionConnectDevice}
+          options={{
+            headerTitle: () => (
+              <StepHeader
+                title={t("send.stepperHeader.connectDevice")}
+                subtitle={t("send.stepperHeader.stepRange", {
+                  currentStep: "2",
+                  totalSteps,
+                })}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name={ScreenName.SignTransactionValidationError}
+          component={SignTransactionValidationError}
+          options={{
+            headerShown: false,
+          }}
+          listeners={listeners}
+        />
+      </Stack.Navigator>
+    </DomainServiceProvider>
   );
 }

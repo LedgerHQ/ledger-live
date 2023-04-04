@@ -1,5 +1,5 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { Flex, Link, SearchInput } from "@ledgerhq/native-ui";
+import { Flex, SearchInput } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { SearchBarValues } from "../types";
@@ -8,10 +8,11 @@ export function SearchBar({
   input,
   inputRef,
   onChange,
-  onCancel,
   onFocus,
-  isActive,
-}: Omit<SearchBarValues<LiveAppManifest>, "result" | "isSearching">) {
+}: Omit<
+  SearchBarValues<LiveAppManifest>,
+  "result" | "isSearching" | "isActive" | "onCancel"
+>) {
   const { t } = useTranslation();
 
   return (
@@ -34,12 +35,6 @@ export function SearchBar({
           placeholder={t("common.search")}
           onFocus={onFocus}
         />
-
-        {onCancel && isActive && (
-          <Flex marginLeft={6} justifyContent={"center"}>
-            <Link onPress={onCancel}>{t("common.cancel")}</Link>
-          </Flex>
-        )}
       </Flex>
     </>
   );

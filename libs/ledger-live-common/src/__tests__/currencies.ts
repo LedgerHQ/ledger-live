@@ -37,7 +37,13 @@ test("erc20 are all consistent with those on ledgerjs side", () => {
         throw new Error(token.name + " not available in ledgerjs data");
       }
 
-      expect(token.ticker.toLowerCase()).toBe(tokenData.ticker.toLowerCase());
+      // match crypto-assets convention for tickers: testnet tokens are prefixed with "t"
+      // https://github.com/LedgerHQ/crypto-assets/blob/d2fe1cf9a110614650191555b846a2e43eb67b8f/scripts/hsm/coin_parameters/coin_parameters.py#L163
+      const prefix = token.parentCurrency.isTestnetFor ? "t" : "";
+
+      expect(prefix + token.ticker.toLowerCase()).toBe(
+        tokenData.ticker.toLowerCase()
+      );
       expect(token.contractAddress.toLowerCase()).toBe(
         tokenData.contractAddress.toLowerCase()
       );

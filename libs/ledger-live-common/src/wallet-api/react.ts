@@ -1,4 +1,11 @@
-import { useMemo, useState, useEffect, useRef, useCallback } from "react";
+import {
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  RefObject,
+} from "react";
 import semver from "semver";
 import {
   Account,
@@ -38,6 +45,10 @@ import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamillyAccountGetXPubLogic,
   broadcastTransactionLogic,
+  startExchangeLogic,
+  completeExchangeLogic,
+  CompleteExchangeRequest,
+  CompleteExchangeUiRequest,
   receiveOnAccountLogic,
   signMessageLogic,
   signTransactionLogic,
@@ -53,51 +64,11 @@ import { MessageData } from "../hw/signMessage/types";
 import { TypedMessageData } from "../families/ethereum/types";
 import { Transaction } from "../generated/types";
 
-/**
- * TODO: we might want to use "searchParams.append" instead of "searchParams.set"
- * to handle duplicated query params (example: "?foo=bar&foo=baz")
- *
- * We can also use the stringify method of qs (https://github.com/ljharb/qs#stringifying)
- */
-export function useWalletAPIUrl(
-  manifest: AppManifest,
-  params: { background?: string; text?: string; loadDate?: Date },
-  inputs?: Record<string, string>
-): URL {
-  return useMemo(() => {
-    const url = new URL(manifest.url.toString());
-
-    if (inputs) {
-      for (const key in inputs) {
-        if (
-          Object.prototype.hasOwnProperty.call(inputs, key) &&
-          inputs[key] !== undefined
-        ) {
-          url.searchParams.set(key, inputs[key]);
-        }
-      }
-    }
-
-    if (params.background)
-      url.searchParams.set("backgroundColor", params.background);
-    if (params.text) url.searchParams.set("textColor", params.text);
-    if (params.loadDate) {
-      url.searchParams.set("loadDate", params.loadDate.valueOf().toString());
-    }
-
-    if (manifest.params) {
-      url.searchParams.set("params", JSON.stringify(manifest.params));
-    }
-
-    return url;
-  }, [
-    manifest.url,
-    manifest.params,
-    inputs,
-    params.background,
-    params.text,
-    params.loadDate,
-  ]);
+export function safeGetRefValue<T>(ref: RefObject<T>): T {
+  if (!ref.current) {
+    throw new Error("Ref objects doesn't have a current value");
+  }
+  return ref.current;
 }
 
 export function useWalletAPIAccounts(
@@ -204,6 +175,16 @@ export interface UiHook {
     appName: string | undefined;
     onSuccess: (result: AppResult) => void;
     onCancel: () => void;
+  }) => void;
+  "exchange.start": (params: {
+    exchangeType: "FUND" | "SELL" | "SWAP";
+    onSuccess: (nonce: string) => void;
+    onCancel: (error: Error) => void;
+  }) => void;
+  "exchange.complete": (params: {
+    exchangeParams: CompleteExchangeUiRequest;
+    onSuccess: (hash: string) => void;
+    onCancel: (error: Error) => void;
   }) => void;
 }
 
@@ -327,6 +308,8 @@ export function useWalletAPIServer({
     "transaction.sign": uiTxSign,
     "transaction.broadcast": uiTxBroadcast,
     "device.transport": uiDeviceTransport,
+    "exchange.start": uiExchangeStart,
+    "exchange.complete": uiExchangeComplete,
   },
 }: {
   manifest: AppManifest;
@@ -680,6 +663,73 @@ export function useWalletAPIServer({
     });
   }, [accounts, manifest, server, tracking]);
 
+  useEffect(() => {
+    if (!uiExchangeStart) {
+      return;
+    }
+
+    server.setHandler("exchange.start", ({ exchangeType }) => {
+      return startExchangeLogic(
+        { manifest, accounts, tracking },
+        exchangeType,
+        (exchangeType: "SWAP" | "FUND" | "SELL") =>
+          new Promise((resolve, reject) =>
+            uiExchangeStart({
+              exchangeType,
+              onSuccess: (nonce: string) => {
+                tracking.startExchangeSuccess(manifest);
+                resolve(nonce);
+              },
+              onCancel: (error) => {
+                tracking.completeExchangeFail(manifest);
+                reject(error);
+              },
+            })
+          )
+      );
+    });
+  }, [uiExchangeStart, accounts, manifest, server, tracking]);
+
+  useEffect(() => {
+    if (!uiExchangeComplete) {
+      return;
+    }
+
+    server.setHandler("exchange.complete", (params) => {
+      // retrofit of the exchange params to fit the old platform spec
+      const request: CompleteExchangeRequest = {
+        provider: params.provider,
+        fromAccountId: params.fromAccount.id,
+        toAccountId:
+          params.exchangeType === "SWAP" ? params.toAccount.id : undefined,
+        transaction: params.transaction,
+        binaryPayload: params.binaryPayload.toString("hex"),
+        signature: params.signature.toString("hex"),
+        feesStrategy: params.feeStrategy,
+        exchangeType: ExchangeType[params.exchangeType],
+      };
+
+      return completeExchangeLogic(
+        { manifest, accounts, tracking },
+        request,
+        (request) =>
+          new Promise((resolve, reject) =>
+            uiExchangeComplete({
+              exchangeParams: request,
+              onSuccess: (hash: string) => {
+                tracking.completeExchangeSuccess(manifest);
+                resolve(hash);
+              },
+              onCancel: (error) => {
+                tracking.completeExchangeFail(manifest);
+                reject(error);
+              },
+            })
+          )
+      );
+    });
+  }, [uiExchangeComplete, accounts, manifest, server, tracking]);
+
   return {
     widgetLoaded,
     onMessage,
@@ -687,4 +737,10 @@ export function useWalletAPIServer({
     onReload,
     onLoadError,
   };
+}
+
+export enum ExchangeType {
+  SWAP = 0x00,
+  SELL = 0x01,
+  FUND = 0x02,
 }

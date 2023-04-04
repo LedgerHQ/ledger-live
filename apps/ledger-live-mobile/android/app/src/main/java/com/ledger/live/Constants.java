@@ -7,4 +7,5 @@ public class Constants {
     public static final int REQUEST_BT_PERMISSIONS = 0;
     public static final int REQUEST_ENABLE_BT = 1;
     public static final int REQUEST_IMAGE = 2;
+    public static final int REQUEST_ENABLE_LOCATION = 3;
 }

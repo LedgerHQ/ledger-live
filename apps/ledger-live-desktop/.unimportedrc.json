@@ -1,0 +1,18 @@
+{
+  "entry": [
+    "src/index.js",
+    "src/renderer/index.js",
+    "src/preloader/index.ts",
+    "src/renderer/webworkers/workers/*.ts",
+    "src/swapConnectWebviewPreloader/index.ts",
+    "src/webviewPreloader/index.js"
+  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
+  "ignorePatterns": ["**/node_modules/**"],
+  "ignoreUnresolved": ["unzip-crx-3", "../../../../release-notes.json"],
+  "ignoreUnimported": ["**/*.test.*", "**/*.spec.*", "**/*.d.ts", "**/types.js", "**/types.*"],
+  "ignoreUnused": ["@types/semver", "rxjs7"],
+  "aliases": {
+    "~/*": ["./src/*"]
+  }
+}

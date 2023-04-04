@@ -3,7 +3,7 @@ const { electronPreloaderExternals } = require("esbuild-utils");
 
 module.exports = {
   ...common,
-  entryPoints: ["./src/preloader/index.js"],
+  entryPoints: ["./src/preloader/index.ts"],
   entryNames: "preloader.bundle",
   platform: "node",
   format: "cjs",

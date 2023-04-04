@@ -68,12 +68,7 @@ export default function NotificationCenter() {
     }));
 
     dispatch(setDynamicContentNotificationCards(cards));
-  }, [
-    orderedNotificationsCards,
-    dispatch,
-    setDynamicContentNotificationCards,
-    logImpressionCard,
-  ]);
+  }, [orderedNotificationsCards, dispatch, logImpressionCard]);
 
   const refreshNotifications = useCallback(async () => {
     setIsDynamicContentLoading(true);

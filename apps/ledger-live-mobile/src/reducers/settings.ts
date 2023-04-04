@@ -67,10 +67,11 @@ import type {
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
   DangerouslyOverrideStatePayload,
-  SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsLastSeenDeviceLanguagePayload,
   SettingsCompleteOnboardingPayload,
   SettingsSetDateFormatPayload,
+  SettingsSetDebugAppLevelDrawerOpenedPayload,
+  SettingsSetHasBeenUpsoldProtectPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -166,6 +167,7 @@ export const INITIAL_STATE: SettingsState = {
   featureFlagsBannerVisible: false,
   debugAppLevelDrawerOpened: false,
   dateFormat: "default",
+  hasBeenUpsoldProtect: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -213,7 +215,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     privacy: {
       ...state.privacy,
-      ...(action as Action<SettingsSetPrivacyPayload>).payload.privacy,
+      ...(action as Action<SettingsSetPrivacyPayload>).payload,
     },
   }),
 
@@ -222,7 +224,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     privacy: {
       ...state.privacy,
       biometricsEnabled: (action as Action<SettingsSetPrivacyBiometricsPayload>)
-        .payload.biometricsEnabled,
+        .payload,
     },
   }),
 
@@ -234,26 +236,23 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_SET_REPORT_ERRORS]: (state, action) => ({
     ...state,
     reportErrorsEnabled: (action as Action<SettingsSetReportErrorsPayload>)
-      .payload.reportErrorsEnabled,
+      .payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_ANALYTICS]: (state, action) => ({
     ...state,
-    analyticsEnabled: (action as Action<SettingsSetAnalyticsPayload>).payload
-      .analyticsEnabled,
+    analyticsEnabled: (action as Action<SettingsSetAnalyticsPayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_COUNTERVALUE]: (state, action) => ({
     ...state,
-    counterValue: (action as Action<SettingsSetCountervaluePayload>).payload
-      .counterValue,
+    counterValue: (action as Action<SettingsSetCountervaluePayload>).payload,
     counterValueExchange: null, // also reset the exchange
   }),
 
   [SettingsActionTypes.SETTINGS_SET_ORDER_ACCOUNTS]: (state, action) => ({
     ...state,
-    orderAccounts: (action as Action<SettingsSetOrderAccountsPayload>).payload
-      .orderAccounts,
+    orderAccounts: (action as Action<SettingsSetOrderAccountsPayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_PAIRS]: (state, action) => {
@@ -272,7 +271,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_SET_SELECTED_TIME_RANGE]: (state, action) => ({
     ...state,
     selectedTimeRange: (action as Action<SettingsSetSelectedTimeRangePayload>)
-      .payload.selectedTimeRange,
+      .payload,
   }),
 
   [SettingsActionTypes.SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW]: state => ({
@@ -290,23 +289,25 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     },
   }),
 
-  [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: (state, action) => ({
-    ...state,
-    hasCompletedOnboarding: (
-      action as Action<SettingsCompleteOnboardingPayload>
-    ).payload.hasCompletedOnboarding,
-  }),
+  [SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING]: (state, action) => {
+    const payload = (action as Action<SettingsCompleteOnboardingPayload>)
+      .payload;
+    return {
+      ...state,
+      hasCompletedOnboarding: payload === false ? payload : true,
+    };
+  },
 
   [SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME]: (state, action) => ({
     ...state,
     hasInstalledAnyApp: (action as Action<SettingsInstallAppFirstTimePayload>)
-      .payload.hasInstalledAnyApp,
+      .payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_READONLY_MODE]: (state, action) => ({
     ...state,
     readOnlyModeEnabled: (action as Action<SettingsSetReadOnlyModePayload>)
-      .payload.readOnlyModeEnabled,
+      .payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SWITCH_COUNTERVALUE_FIRST]: state => ({
@@ -321,7 +322,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     hideEmptyTokenAccounts: (
       action as Action<SettingsHideEmptyTokenAccountsPayload>
-    ).payload.hideEmptyTokenAccounts,
+    ).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT]: (
@@ -331,7 +332,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     filterTokenOperationsZeroAmount: (
       action as Action<SettingsFilterTokenOperationsZeroAmountPayload>
-    ).payload.filterTokenOperationsZeroAmount,
+    ).payload,
   }),
 
   [SettingsActionTypes.SHOW_TOKEN]: (state, action) => {
@@ -339,8 +340,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       blacklistedTokenIds: ids.filter(
-        id =>
-          id !== (action as Action<SettingsShowTokenPayload>).payload.tokenId,
+        id => id !== (action as Action<SettingsShowTokenPayload>).payload,
       ),
     };
   },
@@ -351,7 +351,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       ...state,
       blacklistedTokenIds: [
         ...ids,
-        (action as Action<SettingsBlacklistTokenPayload>).payload.tokenId,
+        (action as Action<SettingsBlacklistTokenPayload>).payload,
       ],
     };
   },
@@ -362,8 +362,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       ...state,
       hiddenNftCollections: [
         ...ids,
-        (action as Action<SettingsHideNftCollectionPayload>).payload
-          .collectionId,
+        (action as Action<SettingsHideNftCollectionPayload>).payload,
       ],
     };
   },
@@ -374,9 +373,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       ...state,
       hiddenNftCollections: ids.filter(
         id =>
-          id !==
-          (action as Action<SettingsUnhideNftCollectionPayload>).payload
-            .collectionId,
+          id !== (action as Action<SettingsUnhideNftCollectionPayload>).payload,
       ),
     };
   },
@@ -385,14 +382,14 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     dismissedBanners: [
       ...state.dismissedBanners,
-      (action as Action<SettingsDismissBannerPayload>).payload.bannerId,
+      (action as Action<SettingsDismissBannerPayload>).payload,
     ],
   }),
 
   [SettingsActionTypes.SETTINGS_SET_AVAILABLE_UPDATE]: (state, action) => ({
     ...state,
     hasAvailableUpdate: (action as Action<SettingsSetAvailableUpdatePayload>)
-      .payload.hasAvailableUpdate,
+      .payload,
   }),
 
   [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
@@ -405,12 +402,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SETTINGS_SET_THEME]: (state, action) => ({
     ...state,
-    theme: (action as Action<SettingsSetThemePayload>).payload.theme,
+    theme: (action as Action<SettingsSetThemePayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_OS_THEME]: (state, action) => ({
     ...state,
-    osTheme: (action as Action<SettingsSetOsThemePayload>).payload.osTheme,
+    osTheme: (action as Action<SettingsSetOsThemePayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS]: (
@@ -420,24 +417,23 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     dismissedDynamicCards: (
       action as Action<SettingsSetDismissedDynamicCardsPayload>
-    ).payload.dismissedDynamicCards,
+    ).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_DISCREET_MODE]: (state, action) => ({
     ...state,
-    discreetMode: (action as Action<SettingsSetDiscreetModePayload>).payload
-      .discreetMode,
+    discreetMode: (action as Action<SettingsSetDiscreetModePayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_LANGUAGE]: (state, action) => ({
     ...state,
-    language: (action as Action<SettingsSetLanguagePayload>).payload.language,
+    language: (action as Action<SettingsSetLanguagePayload>).payload,
     languageIsSetByUser: true,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_LOCALE]: (state, action) => ({
     ...state,
-    locale: (action as Action<SettingsSetLocalePayload>).payload.locale,
+    locale: (action as Action<SettingsSetLocalePayload>).payload,
   }),
 
   [SettingsActionTypes.SET_SWAP_SELECTABLE_CURRENCIES]: (state, action) => ({
@@ -446,7 +442,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       ...state.swap,
       selectableCurrencies: (
         action as Action<SettingsSetSwapSelectableCurrenciesPayload>
-      ).payload.selectableCurrencies,
+      ).payload,
     },
   }),
 
@@ -476,8 +472,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       acceptedProviders: [
         ...new Set([
           ...(state.swap?.acceptedProviders || []),
-          (action as Action<SettingsAcceptSwapProviderPayload>).payload
-            .acceptedProvider,
+          (action as Action<SettingsAcceptSwapProviderPayload>).payload,
         ]),
       ],
     },
@@ -487,7 +482,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     lastSeenDevice: {
       ...(state.lastSeenDevice || {}),
-      ...(action as Action<SettingsLastSeenDeviceInfoPayload>).payload.dmi,
+      ...(action as Action<SettingsLastSeenDeviceInfoPayload>).payload,
     },
   }),
 
@@ -499,7 +494,8 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
         ...state.lastSeenDevice,
         deviceInfo: {
           ...state.lastSeenDevice.deviceInfo,
-          ...(action as Action<SettingsLastSeenDeviceLanguagePayload>).payload,
+          languageId: (action as Action<SettingsLastSeenDeviceLanguagePayload>)
+            .payload,
         },
       },
     };
@@ -509,8 +505,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     starredMarketCoins: [
       ...state.starredMarketCoins,
-      (action as Action<SettingsAddStarredMarketcoinsPayload>).payload
-        .starredMarketCoin,
+      (action as Action<SettingsAddStarredMarketcoinsPayload>).payload,
     ],
   }),
 
@@ -519,8 +514,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     starredMarketCoins: state.starredMarketCoins.filter(
       id =>
         id !==
-        (action as Action<SettingsRemoveStarredMarketcoinsPayload>).payload
-          .starredMarketCoin,
+        (action as Action<SettingsRemoveStarredMarketcoinsPayload>).payload,
     ),
   }),
 
@@ -534,21 +528,20 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     lastConnectedDevice: (
       action as Action<SettingsSetLastConnectedDevicePayload>
-    ).payload.lastConnectedDevice,
+    ).payload,
   }),
 
   [SettingsActionTypes.SET_HAS_ORDERED_NANO]: (state, action) => ({
     ...state,
-    hasOrderedNano: (action as Action<SettingsSetHasOrderedNanoPayload>).payload
-      .hasOrderedNano,
+    hasOrderedNano: (action as Action<SettingsSetHasOrderedNanoPayload>)
+      .payload,
   }),
 
   [SettingsActionTypes.SET_MARKET_REQUEST_PARAMS]: (state, action) => ({
     ...state,
     marketRequestParams: {
       ...state.marketRequestParams,
-      ...(action as Action<SettingsSetMarketRequestParamsPayload>).payload
-        .marketRequestParams,
+      ...(action as Action<SettingsSetMarketRequestParamsPayload>).payload,
     },
   }),
 
@@ -556,8 +549,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     marketCounterCurrency: (
       action as Action<SettingsSetMarketCounterCurrencyPayload>
-    ).payload.marketCounterCurrency,
+    ).payload,
   }),
+
   [SettingsActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS]: (
     state,
     action,
@@ -565,27 +559,27 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     marketFilterByStarredAccounts: (
       action as Action<SettingsSetMarketFilterByStarredAccountsPayload>
-    ).payload.marketFilterByStarredAccounts,
+    ).payload,
   }),
+
   [SettingsActionTypes.SET_SENSITIVE_ANALYTICS]: (state, action) => ({
     ...state,
     sensitiveAnalytics: (action as Action<SettingsSetSensitiveAnalyticsPayload>)
-      .payload.sensitiveAnalytics,
+      .payload,
   }),
 
   [SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE]: (state, action) => ({
     ...state,
     firstConnectHasDeviceUpdated: (
       action as Action<SettingsSetFirstConnectHasDeviceUpdatedPayload>
-    ).payload.firstConnectHasDeviceUpdated,
+    ).payload,
   }),
 
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({
     ...state,
     notifications: {
       ...state.notifications,
-      ...(action as Action<SettingsSetNotificationsPayload>).payload
-        .notifications,
+      ...(action as Action<SettingsSetNotificationsPayload>).payload,
     },
   }),
 
@@ -606,25 +600,24 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     walletTabNavigatorLastVisitedTab: (
       action as Action<SettingsSetWalletTabNavigatorLastVisitedTabPayload>
-    ).payload.walletTabNavigatorLastVisitedTab,
+    ).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_DATE_FORMAT]: (state, action) => ({
     ...state,
-    dateFormat: (action as Action<SettingsSetDateFormatPayload>).payload
-      .dateFormat,
+    dateFormat: (action as Action<SettingsSetDateFormatPayload>).payload,
   }),
 
   [SettingsActionTypes.SET_STATUS_CENTER]: (state, action) => ({
     ...state,
     displayStatusCenter: (action as Action<SettingsSetStatusCenterPayload>)
-      .payload.displayStatusCenter,
+      .payload,
   }),
 
   [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
-    const {
-      payload: { id, value },
-    } = action as Action<SettingsSetOverriddenFeatureFlagPlayload>;
+    const { id, value } = (
+      action as Action<SettingsSetOverriddenFeatureFlagPlayload>
+    ).payload;
     return {
       ...state,
       overriddenFeatureFlags: {
@@ -633,33 +626,34 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       },
     };
   },
-  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAGS]: (state, action) => {
-    const {
-      payload: { overriddenFeatureFlags },
-    } = action as Action<SettingsSetOverriddenFeatureFlagsPlayload>;
-    return {
-      ...state,
-      overriddenFeatureFlags,
-    };
-  },
-  [SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE]: (state, action) => {
-    const {
-      payload: { featureFlagsBannerVisible },
-    } = action as Action<SettingsSetFeatureFlagsBannerVisiblePayload>;
-    return {
-      ...state,
-      featureFlagsBannerVisible,
-    };
-  },
-  [SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED]: (state, action) => {
-    const {
-      payload: { debugAppLevelDrawerOpened },
-    } = action as Action<SettingsSetDebugAppLevelDrawerOpenedPayload>;
-    return {
-      ...state,
-      debugAppLevelDrawerOpened,
-    };
-  },
+
+  [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAGS]: (state, action) => ({
+    ...state,
+    overriddenFeatureFlags: (
+      action as Action<SettingsSetOverriddenFeatureFlagsPlayload>
+    ).payload,
+  }),
+
+  [SettingsActionTypes.SET_FEATURE_FLAGS_BANNER_VISIBLE]: (state, action) => ({
+    ...state,
+    featureFlagsBannerVisible: (
+      action as Action<SettingsSetFeatureFlagsBannerVisiblePayload>
+    ).payload,
+  }),
+
+  [SettingsActionTypes.SET_DEBUG_APP_LEVEL_DRAWER_OPENED]: (state, action) => ({
+    ...state,
+    debugAppLevelDrawerOpened: (
+      action as Action<SettingsSetDebugAppLevelDrawerOpenedPayload>
+    ).payload,
+  }),
+
+  [SettingsActionTypes.SET_HAS_BEEN_UPSOLD_PROTECT]: (state, action) => ({
+    ...state,
+    hasBeenUpsoldProtect: (
+      action as Action<SettingsSetHasBeenUpsoldProtectPayload>
+    ).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -878,3 +872,5 @@ export const featureFlagsBannerVisibleSelector = (state: State) =>
   state.settings.featureFlagsBannerVisible;
 export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
+export const hasBeenUpsoldProtectSelector = (state: State) =>
+  state.settings.hasBeenUpsoldProtect;

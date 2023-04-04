@@ -23,24 +23,22 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
     action,
   ) => ({
     ...state,
-    walletCards: (action as Action<DynamicContentSetWalletCardsPayload>).payload
-      .walletCards,
+    walletCards: (action as Action<DynamicContentSetWalletCardsPayload>)
+      .payload,
   }),
   [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_ASSET_CARDS]: (
     state,
     action,
   ) => ({
     ...state,
-    assetsCards: (action as Action<DynamicContentSetAssetCardsPayload>).payload
-      .assetsCards,
+    assetsCards: (action as Action<DynamicContentSetAssetCardsPayload>).payload,
   }),
   [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_LEARN_CARDS]: (
     state,
     action,
   ) => ({
     ...state,
-    learnCards: (action as Action<DynamicContentSetLearnCardsPayload>).payload
-      .learnCards,
+    learnCards: (action as Action<DynamicContentSetLearnCardsPayload>).payload,
   }),
   [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS]: (
     state,
@@ -49,7 +47,7 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
     ...state,
     notificationCards: (
       action as Action<DynamicContentSetNotificationCardsPayload>
-    ).payload.notificationCards,
+    ).payload,
   }),
 };
 

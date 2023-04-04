@@ -1,7 +1,8 @@
+import axios from "axios";
 import { log } from "@ledgerhq/logs";
-import network from "@ledgerhq/live-common/network";
 import { SupportedRegistries } from "../types";
 import { getRegistries } from "../registries";
+import { validateDomain } from "../utils";
 
 /**
  * Get an APDU to sign a domain resolution on the nano
@@ -16,6 +17,11 @@ export const signDomainResolution = async (
   registryName: SupportedRegistries,
   challenge: string
 ): Promise<string | null> => {
+  if (!validateDomain(domain)) {
+    throw new Error(
+      `Domains with more than 255 caracters or with unicode are not supported on the nano. Domain: ${domain}`
+    );
+  }
   const registries = await getRegistries();
   const registry = registries.find((r) => r.name === registryName);
   if (!registry) return null;
@@ -24,10 +30,11 @@ export const signDomainResolution = async (
     .replace("{name}", domain)
     .replace("{challenge}", challenge);
 
-  return network<{ payload: string }>({
-    method: "GET",
-    url,
-  })
+  return axios
+    .request<{ payload: string }>({
+      method: "GET",
+      url,
+    })
     .then(({ data }) => data.payload)
     .catch((error) => {
       if (error.status !== 404) {
@@ -61,10 +68,11 @@ export const signAddressResolution = async (
     .replace("{address}", address)
     .replace("{challenge}", challenge);
 
-  return network<{ payload: string }>({
-    method: "GET",
-    url,
-  })
+  return axios
+    .request<{ payload: string }>({
+      method: "GET",
+      url,
+    })
     .then(({ data }) => data.payload)
     .catch((error) => {
       if (error.status !== 404) {

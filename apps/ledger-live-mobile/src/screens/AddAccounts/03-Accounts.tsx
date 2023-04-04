@@ -16,7 +16,7 @@ import {
   isAccountEmpty,
   groupAddAccounts,
 } from "@ledgerhq/live-common/account/index";
-import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/addAccounts";
+import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/index";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans } from "react-i18next";
@@ -24,7 +24,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
-import type { DerivationMode } from "@ledgerhq/live-common/derivation";
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useTheme } from "@react-navigation/native";
 import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
@@ -459,6 +459,7 @@ function AddAccountsAccounts({
       )}
       <GenericErrorBottomModal
         error={error}
+        onClose={onCancel}
         onModalHide={onModalHide}
         footerButtons={
           <>

@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
@@ -8,11 +7,12 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { NanoDisplayedInfoFor712 } from "~/renderer/modals/SignMessage/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
+// eslint-disable-next-line no-restricted-imports
 import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { getMessageProperties } from "~/renderer/modals/SignMessage/utils";
 import SignMessageConfirmField from "./SignMessageConfirmField";
-import Spinner from "~/renderer/components/BigSpinner.jsx";
+import Spinner from "~/renderer/components/BigSpinner";
 import useTheme from "~/renderer/hooks/useTheme";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";

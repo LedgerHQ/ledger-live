@@ -130,7 +130,11 @@ const getExchangeRates: GetExchangeRates = async (
     };
 
     if (tradeMethod === "fixed") {
-      return { ...out, rateId };
+      return {
+        ...out,
+        payoutNetworkFees: magnitudeAwarePayoutNetworkFees,
+        rateId,
+      };
     } else {
       return {
         ...out,

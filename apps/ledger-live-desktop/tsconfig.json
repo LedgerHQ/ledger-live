@@ -15,9 +15,13 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "sourceMap": true,
-    "rootDir": "."
+    "rootDir": ".",
+    "paths": {
+      "~/*": ["src/*"],
+      "tests/*": ["./tests/*"]
+    }
   },
-  "include": ["tests", "**/*.d.ts"],
+  "include": ["src"],
   "files": ["package.json", "release-notes.json"],
   "exclude": [
     "node_modules",

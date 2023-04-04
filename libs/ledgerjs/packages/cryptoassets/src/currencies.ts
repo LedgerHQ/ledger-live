@@ -3472,7 +3472,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       baseChain: "mainnet",
       chainId: 19,
       networkId: 19,
-      rpc: "https://songbird.towolabs.com/rpc",
+      rpc: "https://songbird-api.flare.network/ext/C/rpc",
       explorer: {
         uri: "https://songbird-explorer.flare.network",
         type: "blockscout",

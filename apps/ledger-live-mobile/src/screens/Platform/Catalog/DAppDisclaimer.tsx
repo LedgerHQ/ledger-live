@@ -70,14 +70,14 @@ const DAppDisclaimer = ({
         mb={10}
       >
         <IconBox iconSize={28} boxSize={40} Icon={LedgerIcon} />
-        {icon && (
+        {icon ? (
           <>
             <IconsSeparator />
             <Flex mx={2}>
               <AppIcon size={40} icon={icon} />
             </Flex>
           </>
-        )}
+        ) : null}
       </Flex>
 
       <Text
