@@ -84,6 +84,7 @@
     "save" : "Сохранить",
     "lock" : "Заблокировать",
     "showMore" : "Показать больше",
+    "backToMatchingURL" : "Вернуться в {{appName}}",
     "back" : "Назад",
     "adjustFees" : "Изменить комиссию",
     "reset" : "Сбросить",
@@ -118,7 +119,6 @@
       "syncing" : "Синхронизируем...",
       "upToDate" : "Синхронизировано",
       "outdated" : "Приостановлено",
-      "needsMigration" : "Нажмите, чтобы обновить счёт",
       "error" : "Ошибка синхронизации",
       "refresh" : "Обновить",
       "devTools" : "Разработчикам"
@@ -146,8 +146,6 @@
       "DELEGATE" : "Делегировано",
       "REDELEGATE" : "Переделегировано",
       "UNDELEGATE" : "Отозвано",
-      "SUPPLY" : "Депонировано",
-      "REDEEM" : "Выведено",
       "APPROVE" : "Подтверждено",
       "VOTE" : "Проголосовано",
       "FREEZE" : "Заморожено",
@@ -214,6 +212,7 @@
     "stars" : "Избранные счета",
     "accounts" : "Счета",
     "manager" : "Мой Ledger",
+    "earn" : "Приумножить",
     "exchange" : "Покупка/Продажа",
     "swap" : "Обмен",
     "lend" : "Кредитование",
@@ -225,15 +224,10 @@
     "tooltip" : "В избранное"
   },
   "bridge" : {
-    "modalTitle" : "Откройте Device Bridge",
-    "openHeader" : "Открывайте доступ к счетам на устройстве через WebSocket",
-    "openDescription" : "Открытие моста даёт сторонним приложениям доступ ко всем вашим счетам.",
-    "openedHeader" : "Мост для {{appName}} открыт",
-    "openedDescription" : "Теперь вы можете использовать свой счёт {{appName}} в стороннем веб-приложении через WebSocket.",
-    "completeHeader" : "Сеанс моста завершён",
-    "completeDescription" : "Мост WebSocket закрыт.",
-    "openButton" : "Открыть",
-    "disconnectButton" : "Отключить"
+    "modalTitle" : "Device Bridge",
+    "openHeader" : "Device Bridge больше недоступен",
+    "openDescription" : "Настройте браузерное расширение кошелька для использования WebHID вместо Ledger Live.",
+    "closeButton" : "Закрыть"
   },
   "swap2" : {
     "title" : "Обмен",
@@ -1218,9 +1212,13 @@
         "description" : "ПИН-код может содержать от 4 до 8 цифр",
         "text" : "Любой человек с доступом к вашему {{deviceName}} и ПИН-коду сможет заполучить ваши криптовалюты и NFT."
       },
-      "recoveryContent" : {
-        "title" : "Фраза восстановления",
-        "content" : "Нажмите по видео ниже, чтобы узнать больше об уникальной фразе восстановления и её важности"
+      "seedContent" : {
+        "title" : "Секретная фраза восстановления",
+        "choiceNewOrRestore" : "Выберите подходящий вариант настройки.",
+        "newSeed" : "Нажмите по видео ниже, чтобы узнать больше об уникальной фразе восстановления и её важности",
+        "choiceRestoreDirectOrRecover" : "Заглушка — выберите прямое восстановление или воспользуйтесь Ledger Recover",
+        "recoverSeed" : "Заглушка: Ledger Recover",
+        "restoreSeed" : "Для безопасности криптоактивов при восстановлении используйте секретную мнемоническую фразу, которая была создана устройством Ledger.\n\nНет фразы восстановления? Воспользуйтесь {{productName}} для создания новой фразы."
       },
       "softwareCheckContent" : {
         "title" : "Проверка ПО",
@@ -1423,7 +1421,7 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Покупка/Продажа",
-        "description" : "Покупайте и продавайте с операторами, которым можно доверять"
+        "description" : "Покупайте и продавайте с проверенными операторами"
       },
       "swap" : {
         "title" : "Обмен",
@@ -1620,42 +1618,6 @@
     "hideSubAccounts" : "Скрыть субсчета ({{tokenCount}})",
     "countTooltip" : "1 субсчёт",
     "countTooltip_plural" : "Субсчетов: {{count}}"
-  },
-  "migrateAccounts" : {
-    "overview" : {
-      "title" : "Доступно обновление счетов в Ledger Live",
-      "successTitle" : "Счета успешно обновлены",
-      "successDescPlu" : "Ваши счета {{assets}} обновлены и готовы к использованию",
-      "successDesc" : "Ваши счета {{assets}} обновлены и готовы к использованию",
-      "mobileTitle" : "Экспорт счетов в мобильное приложение",
-      "mobileDesc" : "Нажмите кнопку ниже, чтобы экспортировать обновлённые счета в мобильное приложение Ledger Live.",
-      "mobileCTA" : "Экспорт в моб. приложение",
-      "description" : "Для активации новых возможностей Ledger Live необходимо обновить счета.",
-      "currency" : "Необходимо обновить 1 счёт {{currency}}:",
-      "currency_plural" : "Необходимо обновить {{count}} счета(-ов) {{currency}}:",
-      "footer" : "Для обновления вам потребуется устройство Ledger",
-      "pendingDevices" : "Невозможно обновить 1 счёт. Пожалуйста, подключите устройство, связанное с нижеприведённым счётом",
-      "pendingDevices_plural" : "Невозможно обновить {{totalMigratableAccounts}} счёта(-ов). Пожалуйста, подключите устройство, связанное с нижеприведёнными счетами.",
-      "doItLaterBtn" : "Не сейчас"
-    },
-    "progress" : {
-      "finished" : {
-        "title" : "Обновление {{currencyName}} завершено",
-        "description" : ""
-      },
-      "scanning" : {
-        "title" : "{{currencyName}} обновляется...",
-        "description" : "Выполняется обновление счёта. Пожалуйста, подождите"
-      },
-      "finished-empty" : {
-        "title" : "Обновление {{currencyName}} не завершено",
-        "description" : "Нет счетов {{currencyName}} для обновления"
-      }
-    },
-    "cta" : {
-      "startUpdate" : "Начать обновление",
-      "nextCurrency" : "Продолжить обновление {{currency}}"
-    }
   },
   "addAccounts" : {
     "title" : "Добавление счёта",
@@ -2182,7 +2144,13 @@
     "steps" : {
       "recipient" : {
         "title" : "Получатель",
-        "nftRecipient" : "NFT для отправки"
+        "nftRecipient" : "NFT для отправки",
+        "verifyAddress" : "Убедитесь, что адрес совпадает с адресом, предоставленным получателем.",
+        "namingService" : {
+          "resolve" : "Это актуальный ENS, связанный со следующим адресом:",
+          "supportLink" : "Что такое Ethereum Name Service?",
+          "reverse" : "Этот адрес привязан к {{domain}}"
+        }
       },
       "amount" : {
         "title" : "Сумма",
@@ -4893,9 +4861,6 @@
       "title" : "Размер комиссии превышает размер вознаграждения",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Вы не можете уменьшить подтверждённую сумму, пока у вас имеется активная транзакция пополнения."
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Что-то пошло не так (ошибка №1)",
       "description" : "Обратитесь в Поддержку"
@@ -5737,8 +5702,10 @@
     "progress" : {
       "loading" : "Загружаем...",
       "resolving" : "Устраняем зависимости приложения...",
-      "progress" : "Установка приложений: {{progress}}%",
-      "disclaimer" : "Добавляйте или удаляйте приложения в любое время с помощью Ledger Live."
+      "progress" : "Не выходите из Ledger Live во время установки.",
+      "disclaimer" : "Добавляйте или удаляйте приложения в любое время с помощью Ledger Live.",
+      "skippedInfo" : "Некоторые приложения сейчас недоступны. Пока нет версии для {{ productName }}.",
+      "skipped" : "Пока недоступно для {{ productName }}"
     },
     "cancelled" : {
       "title" : "Установка приложения на {{productName}} отменена",
