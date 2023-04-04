@@ -73,7 +73,9 @@ import type { SolanaDelegationFlowParamList } from "../../../families/solana/Del
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
-import { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
+import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
+import type { StakeNavigatorParamList } from "./StakeNavigator";
+import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 
 type TradeParams = {
   type: "onRamp" | "offRamp";
@@ -116,6 +118,13 @@ export type BaseNavigatorStackParamList = {
     defaultAccountId?: string;
     defaultCurrencyId?: string;
     defaultTicker?: string;
+  };
+  [ScreenName.Recover]: {
+    platform?: string;
+    name?: string;
+    source?: string;
+    redirectTo?: string;
+    callback?: string;
   };
   [ScreenName.LearnWebView]: {
     uri?: string;
@@ -322,4 +331,8 @@ export type BaseNavigatorStackParamList = {
     onSuccess: (result: AppResult) => void;
     onClose: () => void;
   };
+  [NavigatorName.NoFundsFlow]: NavigatorScreenParams<NoFundsNavigatorParamList>;
+  [NavigatorName.StakeFlow]: NavigatorScreenParams<StakeNavigatorParamList>;
+
+  [ScreenName.RedirectToOnboardingRecoverFlow]: undefined;
 };

@@ -1,7 +1,7 @@
 import fetch from "isomorphic-unfetch";
 import * as core from "@actions/core";
 import * as fs from "fs";
-import * as FormData from "form-data";
+import FormData from "form-data";
 import * as path from "path";
 
 function handleErrors(response) {

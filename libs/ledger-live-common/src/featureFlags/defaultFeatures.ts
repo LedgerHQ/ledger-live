@@ -23,49 +23,10 @@ export const defaultFeatures: DefaultFeatures = {
   currencyAvalancheCChain: {
     enabled: false,
   },
-  currencyOsmosis: {
-    enabled: false,
-  },
-  currencyFantom: {
-    enabled: false,
-  },
-  currencyMoonbeam: {
-    enabled: false,
-  },
-  currencyCronos: {
-    enabled: false,
-  },
-  currencyNear: {
-    enabled: false,
-  },
-  currencySongbird: {
-    enabled: false,
-  },
-  currencyFlare: {
-    enabled: false,
-  },
-  currencyOsmosisMobile: {
-    enabled: false,
-  },
-  currencyFantomMobile: {
-    enabled: false,
-  },
-  currencyMoonbeamMobile: {
-    enabled: false,
-  },
-  currencyCronosMobile: {
-    enabled: false,
-  },
-  currencySongbirdMobile: {
-    enabled: false,
-  },
-  currencyFlareMobile: {
-    enabled: false,
-  },
   deviceInitialApps: {
     enabled: false,
     params: {
-      apps: ["Boilerplate", "Boilerplate_2", "Boilerplate_3"],
+      apps: ["Bitcoin", "Ethereum", "Polygon"],
     },
   },
   disableNftSend: {
@@ -76,6 +37,12 @@ export const defaultFeatures: DefaultFeatures = {
   },
   disableNftRaribleOpensea: {
     enabled: false,
+  },
+  domainInputResolution: {
+    enabled: false,
+    params: {
+      supportedCurrencyIds: ["ethereum"],
+    },
   },
   ratingsPrompt: {
     enabled: false,
@@ -198,11 +165,39 @@ export const defaultFeatures: DefaultFeatures = {
   },
   protectServicesMobile: {
     enabled: false,
+    params: {
+      onboardingRestore: {
+        restoreInfoDrawer: {
+          enabled: true,
+          manualStepsURI:
+            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          supportLinkURI:
+            "http://chat.abhishekpriyam.com/sprinklrlivechatv2.php?appId=63453067138a3f453db323b4_app_300078397&env=prod3",
+        },
+        postOnboardingURI: `ledgerlive://recover/protect-simu?redirectTo=restore`,
+      },
+      managerStatesData: {
+        NEW: {
+          learnMoreURI: `ledgerlive://recover/protect-simu?redirectTo=upsell`,
+          alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login`,
+        },
+      },
+      login: {
+        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+      },
+      protectId: "protect-simu",
+    },
   },
   protectServicesDiscoverDesktop: {
     enabled: false,
   },
   newsfeedPage: {
     enabled: false,
+  },
+  discover: {
+    enabled: false,
+    params: {
+      version: "1",
+    },
   },
 };

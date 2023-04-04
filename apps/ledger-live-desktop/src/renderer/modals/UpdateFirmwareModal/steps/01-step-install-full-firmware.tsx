@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
+import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import manager from "@ledgerhq/live-common/manager/index";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
@@ -37,7 +37,7 @@ const Title = styled(Box).attrs(() => ({
   mb: 3,
 }))``;
 
-const Identifier = styled(Box).attrs(p => ({
+const Identifier = styled(Box).attrs(() => ({
   bg: "palette.background.default",
   borderRadius: 1,
   color: "palette.text.shade100",
@@ -173,10 +173,7 @@ const StepFullFirmwareInstall = ({
 
     const sub = (getEnv("MOCK")
       ? mockedEventEmitter()
-      : command("firmwarePrepare")({
-          deviceId: device ? device.deviceId : "",
-          firmware,
-        })
+      : firmwareUpdatePrepare(device ? device.deviceId : "", firmware)
     ).subscribe({
       next: ({ progress, displayedOnDevice: displayed }) => {
         setProgress(progress);

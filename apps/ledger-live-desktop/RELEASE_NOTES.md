@@ -1,3 +1,7 @@
+# 2.55.0
+
+This release includes performance improvements and minor bug fixes. 
+
 # 2.54.0
 
 ### 🚀 Features

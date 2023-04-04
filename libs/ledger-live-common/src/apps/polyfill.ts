@@ -17,6 +17,8 @@ export const whitelistDependencies = [
   "Bitcoin",
   "Bitcoin Test",
   "Zcash",
+  "Avalanche",
+  "Avalanche Test",
 ];
 
 export function declareDep(name: string, dep: string): void {
@@ -39,6 +41,7 @@ export function declareDep(name: string, dep: string): void {
   ["Alkemi", "Ethereum"],
   ["Angle", "Ethereum"],
   ["APWine", "Ethereum"],
+  ["ArtBlocks", "Ethereum"],
   ["ARTIS sigma1", "Ethereum"],
   ["cBridge", "Ethereum"],
   ["Cometh", "Ethereum"],
@@ -46,6 +49,7 @@ export function declareDep(name: string, dep: string): void {
   ["DODO", "Ethereum"],
   ["EnergyWebChain", "Ethereum"],
   ["Euler", "Ethereum"],
+  ["Harvest", "Ethereum"],
   ["Kiln", "Ethereum"],
   ["kUSD", "Ethereum"],
   ["Lido", "Ethereum"],

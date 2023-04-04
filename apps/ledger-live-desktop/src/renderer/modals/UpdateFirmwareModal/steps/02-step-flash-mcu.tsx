@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { timeout } from "rxjs/operators";
-import { Subscriber } from "rxjs";
+import { Subscriber, from } from "rxjs";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
-import { command } from "~/renderer/commands";
+import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
+import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import FlashMCU from "~/renderer/components/FlashMCU";
@@ -74,7 +76,13 @@ const StepFlashMcu = ({
     let sub: null | Subscriber<DeviceInfo>;
 
     if (isMcuUpdateFinished) {
-      sub = (getEnv("MOCK") ? mockedEventEmitter() : command("waitForDeviceInfo")({ deviceId: "" }))
+      sub = (getEnv("MOCK")
+        ? mockedEventEmitter()
+        : withDevicePolling("")(
+            transport => from(getDeviceInfo(transport)),
+            () => true,
+          )
+      )
         .pipe(timeout(5 * 60 * 1000))
         .subscribe({
           next: setUpdatedDeviceInfo,
@@ -116,7 +124,7 @@ const StepFlashMcu = ({
 
     const sub = (getEnv("MOCK")
       ? mockedEventEmitter()
-      : command("firmwareMain")(firmware)
+      : firmwareUpdateMain("", firmware)
     ).subscribe({
       next: ({ progress, installing }: { progress: number; installing: string }) => {
         setProgress(progress);

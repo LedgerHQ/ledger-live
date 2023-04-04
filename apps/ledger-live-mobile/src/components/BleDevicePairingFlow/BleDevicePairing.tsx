@@ -14,6 +14,7 @@ import {
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
+import { TrackScreen } from "../../analytics";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -72,6 +73,7 @@ const BleDevicePairing = ({
   if (isPaired) {
     content = (
       <>
+        <TrackScreen category="BT pairing successful" />
         <Flex
           alignItems="center"
           justifyContent="center"
@@ -118,6 +120,7 @@ const BleDevicePairing = ({
     }
     content = (
       <Flex>
+        <TrackScreen category="BT failed to pair" />
         <Flex flex={1} alignItems="center" justifyContent="center">
           <Flex alignItems="center" justifyContent="center" mb={8}>
             <CircledCrossSolidMedium color={colors.error.c80} size={56} />

@@ -9,7 +9,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
 import { Flex } from "@ledgerhq/native-ui";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
+import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 
 type Props = {
   onPress: () => void;

@@ -25,5 +25,4 @@ export type ManagerNavigatorStackParamList = {
     updateModalOpened?: boolean;
     tab: ManagerTab;
   };
-  [ScreenName.ProtectLogin]: undefined;
 };

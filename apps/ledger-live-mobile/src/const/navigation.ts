@@ -38,8 +38,10 @@ export enum ScreenName {
   DebugEnv = "DebugEnv",
   DebugExport = "DebugExport",
   DebugFeatureFlags = "DebugFeatureFlags",
+  DebugInstallSetOfApps = "DebugInstallSetOfApps",
   DebugFeatures = "DebugFeatures",
   DebugFetchCustomImage = "DebugFetchCustomImage",
+  DebugFirmwareUpdate = "DebugFirmwareUpdate",
   DebugGenerators = "DebugGenerators",
   DebugHttpTransport = "DebugHttpTransport",
   DebugInformation = "DebugInformation",
@@ -50,6 +52,8 @@ export enum ScreenName {
   DebugVideos = "DebugVideos",
   DebugMockGenerateAccounts = "DebugMockGenerateAccounts",
   DebugNetwork = "DebugNetwork",
+  DebugPlayground = "DebugPlayground",
+  DebugBluetoothAndLocationServices = "DebugBluetoothAndLocationServices",
   DebugSettings = "DebugSettings",
   DebugStore = "DebugStore",
   DebugStoryly = "DebugStoryly",
@@ -110,7 +114,6 @@ export enum ScreenName {
   PasswordRemove = "PasswordRemove",
   Portfolio = "Wallet",
   PortfolioOperationHistory = "PortfolioOperationHistory",
-  ProtectLogin = "ProtectLogin",
   ProviderList = "ProviderList",
   ProviderView = "ProviderView",
   PurchaseDevice = "PurchaseDevice",
@@ -123,6 +126,7 @@ export enum ScreenName {
   ReceiveSelectCrypto = "ReceiveSelectCrypto",
   ReceiveVerificationConfirmation = "ReceiveVerificationConfirmation",
   ReceiveVerifyAddress = "ReceiveVerifyAddress",
+  Recover = "Recover",
   RegionSettings = "RegionSettings",
   RepairDevice = "RepairDevice",
   Resources = "Resources",
@@ -418,7 +422,6 @@ export enum ScreenName {
   OnboardingImportSelectAccount = "OnboardingImportSelectAccount",
   OnboardingQuiz = "OnboardingQuiz",
   OnboardingQuizFinal = "OnboardingQuizFinal",
-  OnboardingFinish = "OnboardingFinish",
   OnboardingLanguageModal = "OnboardingLanguageModal",
   OnboardingModalSetupNewDevice = "OnboardingModalSetupNewDevice",
   OnboardingModalSetupSteps = "OnboardingModalSetupSteps",
@@ -508,6 +511,10 @@ export enum ScreenName {
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
   WalletNftGallery = "WalletNftGallery",
+  NoFunds = "NoFunds",
+  Stake = "Stake",
+
+  RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
 }
 export enum NavigatorName {
   // Stack
@@ -565,6 +572,8 @@ export enum NavigatorName {
   LendingEnableFlow = "LendingEnableFlow",
   LendingSupplyFlow = "LendingSupplyFlow",
   LendingWithdrawFlow = "LendingWithdrawFlow",
+  NoFundsFlow = "NoFundsFlow",
+  StakeFlow = "StakeFlow",
 
   SignTransaction = "SignTransaction",
   RequestAccount = "RequestAccount",

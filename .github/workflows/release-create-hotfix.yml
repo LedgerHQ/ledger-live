@@ -21,17 +21,17 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - name: create hotfix branch
         run: |
           git checkout -b hotfix
       - uses: pnpm/action-setup@v2
         with:
-          version: latest
+          version: 7.30.0
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.15.0
           cache: pnpm
           cache-dependency-path: "**/pnpm-lock.yaml"
       - name: install dependencies

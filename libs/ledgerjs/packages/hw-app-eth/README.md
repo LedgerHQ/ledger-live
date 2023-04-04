@@ -36,47 +36,50 @@ For a smooth and quick integration:
     *   [signTransaction](#signtransaction)
         *   [Parameters](#parameters-2)
         *   [Examples](#examples-2)
-    *   [getAppConfiguration](#getappconfiguration)
-    *   [signPersonalMessage](#signpersonalmessage)
+    *   [clearSignTransaction](#clearsigntransaction)
         *   [Parameters](#parameters-3)
         *   [Examples](#examples-3)
-    *   [signEIP712HashedMessage](#signeip712hashedmessage)
+    *   [getAppConfiguration](#getappconfiguration)
+    *   [signPersonalMessage](#signpersonalmessage)
         *   [Parameters](#parameters-4)
         *   [Examples](#examples-4)
-    *   [signEIP712Message](#signeip712message)
+    *   [signEIP712HashedMessage](#signeip712hashedmessage)
         *   [Parameters](#parameters-5)
         *   [Examples](#examples-5)
-    *   [starkGetPublicKey](#starkgetpublickey)
+    *   [signEIP712Message](#signeip712message)
         *   [Parameters](#parameters-6)
-    *   [starkSignOrder](#starksignorder)
-        *   [Parameters](#parameters-7)
-    *   [starkSignOrder_v2](#starksignorder_v2)
-        *   [Parameters](#parameters-8)
-    *   [starkSignTransfer](#starksigntransfer)
-        *   [Parameters](#parameters-9)
-    *   [starkSignTransfer_v2](#starksigntransfer_v2)
-        *   [Parameters](#parameters-10)
-    *   [starkProvideQuantum](#starkprovidequantum)
-        *   [Parameters](#parameters-11)
-    *   [starkProvideQuantum_v2](#starkprovidequantum_v2)
-        *   [Parameters](#parameters-12)
-    *   [starkUnsafeSign](#starkunsafesign)
-        *   [Parameters](#parameters-13)
-    *   [eth2GetPublicKey](#eth2getpublickey)
-        *   [Parameters](#parameters-14)
         *   [Examples](#examples-6)
-    *   [eth2SetWithdrawalIndex](#eth2setwithdrawalindex)
+    *   [starkGetPublicKey](#starkgetpublickey)
+        *   [Parameters](#parameters-7)
+    *   [starkSignOrder](#starksignorder)
+        *   [Parameters](#parameters-8)
+    *   [starkSignOrder_v2](#starksignorder_v2)
+        *   [Parameters](#parameters-9)
+    *   [starkSignTransfer](#starksigntransfer)
+        *   [Parameters](#parameters-10)
+    *   [starkSignTransfer_v2](#starksigntransfer_v2)
+        *   [Parameters](#parameters-11)
+    *   [starkProvideQuantum](#starkprovidequantum)
+        *   [Parameters](#parameters-12)
+    *   [starkProvideQuantum_v2](#starkprovidequantum_v2)
+        *   [Parameters](#parameters-13)
+    *   [starkUnsafeSign](#starkunsafesign)
+        *   [Parameters](#parameters-14)
+    *   [eth2GetPublicKey](#eth2getpublickey)
         *   [Parameters](#parameters-15)
-    *   [getEIP1024PublicEncryptionKey](#geteip1024publicencryptionkey)
-        *   [Parameters](#parameters-16)
         *   [Examples](#examples-7)
-    *   [getEIP1024SharedSecret](#geteip1024sharedsecret)
+    *   [eth2SetWithdrawalIndex](#eth2setwithdrawalindex)
+        *   [Parameters](#parameters-16)
+    *   [getEIP1024PublicEncryptionKey](#geteip1024publicencryptionkey)
         *   [Parameters](#parameters-17)
         *   [Examples](#examples-8)
+    *   [getEIP1024SharedSecret](#geteip1024sharedsecret)
+        *   [Parameters](#parameters-18)
+        *   [Examples](#examples-9)
 *   [loadInfosForContractMethod](#loadinfosforcontractmethod)
-    *   [Parameters](#parameters-18)
-*   [byContractAddressAndChainId](#bycontractaddressandchainid)
     *   [Parameters](#parameters-19)
+*   [byContractAddressAndChainId](#bycontractaddressandchainid)
+    *   [Parameters](#parameters-20)
 *   [ResolutionConfig](#resolutionconfig)
     *   [Properties](#properties)
 
@@ -136,6 +139,27 @@ console.log(result);
 ```
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), v: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
+
+#### clearSignTransaction
+
+Helper to get resolution and signature of a transaction in a single method
+
+##### Parameters
+
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** : the BIP32 path to sign the transaction on
+*   `rawTxHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** : the raw ethereum transaction in hexadecimal to sign
+*   `resolutionConfig` **[ResolutionConfig](#resolutionconfig)** : configuration about what should be clear signed in the transaction
+*   `throwOnError`  : optional parameter to determine if a failing resolution of the transaction should throw an error or not (optional, default `false`)
+
+##### Examples
+
+```javascript
+const tx = "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
+const result = eth.clearSignTransaction("44'/60'/0'/0/0", tx, { erc20: true, externalPlugins: true, nft: true});
+console.log(result);
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), v: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>** 
 
 #### getAppConfiguration
 

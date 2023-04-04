@@ -13,6 +13,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { track, TrackScreen } from "../../analytics";
 import { accountScreenSelector } from "../../reducers/accounts";
 import PreventNativeBack from "../../components/PreventNativeBack";
@@ -143,6 +144,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
     <>
       <PreventNativeBack />
       <SkipLock />
+      <SyncSkipUnderPriority priority={100} />
       {error ? (
         <>
           <TrackScreen category="Receive" name="Address Verification Denied" />

@@ -43,26 +43,6 @@ function readPackage(pkg, context) {
   process(
     [
       /*
-        Adding jest and co. as dev. dependencies for /ledgerjs/* sub-packages.
-        This is done this way because these packages are not hoisted hence unaccessible otherwise.
-        Furthermore it makes these packages self-contained which eases the CI process.
-      */
-      addDevDependencies(
-        /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|swift-bridge.*|types-.*)$/,
-        {
-          jest: "^28.1.1",
-          "ts-jest": "^28.0.5",
-          "ts-node": "^10.4.0",
-          "@types/node": "*",
-          "@types/jest": "*",
-          "source-map-support": "*",
-          typescript: "^4",
-          documentation: "13.2.4",
-          rimraf: "*",
-        },
-        { silent: true }
-      ),
-      /*
         Fix the unmet peer dep on rxjs for the wallet-api-server
         Because we're still using rxjs v6 everywhere
         We only added rxjs v7 as an alias on rxjs7
@@ -210,6 +190,17 @@ function readPackage(pkg, context) {
       }),
       addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
+      addPeerDependencies("styled-components", { "react-native": "*" }),
+      addPeerDependencies("use-latest-callback", { react: "*" }),
+      addPeerDependencies("rn-range-slider", {
+        react: "*",
+        "react-native": "*",
+        "prop-types": "*",
+      }),
+      addPeerDependencies("react-native-animatable", {
+        react: "*",
+        "react-native": "*",
+      }),
       // "dmg-builder" is required to build .dmg electron apps on macs,
       // but is not declared as such by app-builder-lib.
       // I'm not adding it as a dependency because if I did,

@@ -19,8 +19,8 @@ module.exports = {
   mainFields: ["browser", "module", "main"],
   external: [...nodeExternals, ...electronRendererExternals],
   resolveExtensions: process.env.V3
-    ? [".v3.tsx", ".v3.ts", ".v3.jsx", ".v3.js", ".tsx", ".ts", ".jsx", ".js", ".json"]
-    : [".jsx", ".js", ".v3.tsx", ".v3.ts", ".v3.jsx", ".v3.js", ".tsx", ".ts", ".json"],
+    ? [".v3.tsx", ".v3.ts", ".tsx", ".ts", ".js", ".jsx", ".json"]
+    : [".tsx", ".ts", ".v3.tsx", ".v3.ts", ".js", ".jsx", ".json"],
   plugins: [
     ...common.plugins,
     AliasPlugin({

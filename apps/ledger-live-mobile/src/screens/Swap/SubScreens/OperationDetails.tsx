@@ -29,7 +29,7 @@ import TooltipLabel from "../../../components/TooltipLabel";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 import { urls } from "../../../config/urls";
 import ExternalLink from "../../../icons/ExternalLink";
-import FormatDate from "../../../components/FormatDate";
+import FormatDate from "../../../components/DateFormat/FormatDate";
 import { SwapStatusIndicator, getStatusColor } from "../SwapStatusIndicator";
 import Footer from "../../OperationDetails/Footer";
 import { OperationDetailsParamList } from "../types";

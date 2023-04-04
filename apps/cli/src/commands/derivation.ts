@@ -4,7 +4,7 @@ import {
   getDerivationModesForCurrency,
   runDerivationScheme,
   getDerivationScheme,
-} from "@ledgerhq/live-common/derivation";
+} from "@ledgerhq/coin-framework/derivation";
 import { setEnv, getEnv } from "@ledgerhq/live-common/env";
 import { getAccountPlaceholderName } from "@ledgerhq/live-common/account/index";
 export default {
