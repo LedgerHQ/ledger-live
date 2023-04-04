@@ -48,6 +48,7 @@ import {
 } from "../../reducers/accounts";
 import PortfolioAssets from "./PortfolioAssets";
 import { internetReachable } from "../../logic/internetReachable";
+import { useLearnMoreURI } from "../../hooks/recoverFeatureFlag";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -71,14 +72,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
   const protectFeature = useFeature("protectServicesMobile");
-  const recoverUpsellURL =
-    protectFeature?.params?.onboardingRestore?.postOnboardingURI;
+  const recoverUpsellURL = useLearnMoreURI();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const openProtectUpsell = async () => {
       const internetConnected = await internetReachable();
-      if (internetConnected && recoverUpsellURL) {
+      if (internetConnected && recoverUpsellURL && protectFeature?.enabled) {
         Linking.openURL(recoverUpsellURL);
       }
     };
@@ -86,7 +86,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       openProtectUpsell();
       dispatch(setHasBeenUpsoldProtect(true));
     }
-  }, [hasBeenUpsoldProtect, lastConnectedDevice, recoverUpsellURL, dispatch]);
+  }, [
+    hasBeenUpsoldProtect,
+    lastConnectedDevice,
+    recoverUpsellURL,
+    dispatch,
+    protectFeature?.enabled,
+  ]);
 
   const openAddModal = useCallback(() => {
     track("button_clicked", {

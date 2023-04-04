@@ -1,12 +1,18 @@
+import axios from "axios";
 import eip55 from "eip55";
 import { log } from "@ledgerhq/logs";
-import network from "@ledgerhq/live-common/network";
 import { DomainServiceResolution, SupportedRegistries } from "../types";
 import {
   getRegistries,
   getRegistriesForAddress,
   getRegistriesForDomain,
 } from "../registries";
+
+if (typeof Promise.allSettled === "undefined") {
+  throw new Error(
+    "This lib requires Promise.allSettled in order to work. Please polyfill this method if needed."
+  );
+}
 
 /**
  * Get an array of addresses for a domain
@@ -31,7 +37,7 @@ export const resolveDomain = async (
 
   const responses = Promise.allSettled(
     registries.map((registry) =>
-      network<string>({
+      axios.request<string>({
         method: "GET",
         url: registry.resolvers.forward.replace("{name}", domain),
       })
@@ -65,6 +71,7 @@ export const resolveDomain = async (
         registry: registries[index].name,
         address: checksummedAddress,
         domain,
+        type: "forward",
       });
       return result;
     }, [] as DomainServiceResolution[])
@@ -102,7 +109,7 @@ export const resolveAddress = async (
 
   const responses = Promise.allSettled(
     registries.map((registry) =>
-      network<string>({
+      axios.request<string>({
         method: "GET",
         url: registry.resolvers.reverse.replace("{address}", address),
       })
@@ -128,6 +135,7 @@ export const resolveAddress = async (
         registry: registries[index].name,
         domain: promise.value.data,
         address: checksummedAddress,
+        type: "reverse",
       });
       return result;
     }, [] as DomainServiceResolution[])

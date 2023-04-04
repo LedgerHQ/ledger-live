@@ -6,6 +6,7 @@ import {
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import {
   useCallback,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -45,6 +46,10 @@ export function useWebviewState(
   }, [manifest, inputs]);
 
   const [state, setState] = useState<WebviewState>(initialWebviewState);
+
+  useEffect(() => {
+    setURI(initialURL);
+  }, [initialURL]);
 
   const [currentURI, setURI] = useState(initialURL);
   const { theme } = useTheme();

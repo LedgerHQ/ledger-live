@@ -14,9 +14,8 @@ function NewProtectState({ params }: { params: Record<string, string> }) {
   }, [learnMoreURI]);
 
   const onAlreadySubscribe = useCallback(() => {
-    Linking.canOpenURL(alreadySubscribedURI).then(() =>
-      Linking.openURL(alreadySubscribedURI),
-    );
+    const url = `${alreadySubscribedURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [alreadySubscribedURI]);
 
   const onPressInAlreadySubscribed = useCallback((e: GestureResponderEvent) => {

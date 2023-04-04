@@ -2,7 +2,11 @@
 import { BigNumber } from "bignumber.js";
 import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import type { PolkadotPreloadData, PolkadotValidator } from "./types";
+import type {
+  PolkadotPreloadData,
+  PolkadotStakingProgress,
+  PolkadotValidator,
+} from "./types";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "./api";
 
@@ -101,7 +105,10 @@ export const getPreloadStrategy = () => ({
   preloadMaxAge: PRELOAD_MAX_AGE,
 });
 
-const shouldRefreshValidators = (previousState, currentState) => {
+const shouldRefreshValidators = (
+  previousState: PolkadotStakingProgress | undefined,
+  currentState: PolkadotStakingProgress
+) => {
   return !previousState || currentState.activeEra !== previousState.activeEra;
 };
 

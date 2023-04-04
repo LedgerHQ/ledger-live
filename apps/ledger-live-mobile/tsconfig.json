@@ -16,7 +16,7 @@
     "target": "esnext",
     "incremental": true
   },
-  "include": ["src/**/*", "e2e/**/*", "**/*.d.ts"],
+  "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
   "exclude": [
     "node_modules",
     "babel.config.js",

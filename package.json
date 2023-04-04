@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
-  "packageManager": "pnpm@7.30.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -109,7 +108,7 @@
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
     "rimraf": "^4.1.2",
-    "turbo": "^1.7.2",
+    "turbo": "^1.8.8",
     "zx": "^7.1.1"
   },
   "pnpm": {
@@ -131,7 +130,8 @@
       "react-native-image-crop-tools@1.6.2": "patches/react-native-image-crop-tools@1.6.2.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
       "react-native-os@1.2.6": "patches/react-native-os@1.2.6.patch",
-      "react-native-tcp@4.0.0": "patches/react-native-tcp@4.0.0.patch"
+      "react-native-tcp@4.0.0": "patches/react-native-tcp@4.0.0.patch",
+      "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch"
     }
   }
 }

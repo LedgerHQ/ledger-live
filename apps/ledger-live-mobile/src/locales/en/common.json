@@ -2706,6 +2706,10 @@
           "title": "Allow experimental apps",
           "description": "Display and allow opening experimental tagged platform apps."
         },
+        "debugApps": {
+          "title": "Allow debug apps",
+          "description": "Display and allow opening debug tagged platform apps."
+        },
         "staggingUrl": {
           "title": "Learn staging URL",
           "description": "Use the staging URL for the Learn page."
@@ -3414,7 +3418,12 @@
       "scan": "Scan QR code",
       "enterAddress": "Enter address",
       "input": "Enter address",
-      "verifyAddress": "Please verify the address matches the one shared by the recipient."
+      "verifyAddress": "Please verify the address matches the one shared by the recipient.",
+      "domainService": {
+        "reverse": "This address is linked to {{domain}}",
+        "forward": "This is a valid ENS address",
+        "supportLink": "What's an Ethereum Name Service ?"
+      }
     },
     "amount": {
       "available": "Total available",
@@ -6124,7 +6133,6 @@
     "title": "Services",
     "subTitle": "Manage your Ledger services",
     "protect": {
-      "title": "Protect",
       "status": {
         "new": {
           "title": "New",
@@ -6132,45 +6140,6 @@
           "actions": {
             "learnMore": "How does it benefit me?",
             "alreadySubscribed": "Already logged in? <LinkAccount>View my subscription</LinkAccount>"
-          }
-        },
-        "confirmIdentity": {
-          "title": "Action required",
-          "desc": "Confirm your identity and complete all tasks to protect your recovery phrase.",
-          "actions": {
-            "confirmNow": "Confirm now",
-            "viewDetails": "View details"
-          }
-        },
-        "addPayment": {
-          "title": "Action required",
-          "desc": "Add a payment details and complete all tasks to protect your recovery phrase.",
-          "actions": {
-            "addNow": "Add now",
-            "viewDetails": "View details"
-          }
-        },
-        "paymentRejected": {
-          "title": "Payment rejected",
-          "desc": "Your $5 payment was unsuccessful. Please edit your payment details.",
-          "actions": {
-            "editNow": "Edit now",
-            "viewDetails": "View details"
-          }
-        },
-        "subscriptionCanceled": {
-          "title": "Subscription canceled",
-          "desc": "Your subscription ended after 3 months of non payment.",
-          "actions": {
-            "contactLedgerSupport": "Contact Ledger Support",
-            "viewDetails": "View details"
-          }
-        },
-        "active": {
-          "title": "Active",
-          "desc": "Your recovery phrase is protected",
-          "actions": {
-            "viewDetails": "View details"
           }
         }
       }

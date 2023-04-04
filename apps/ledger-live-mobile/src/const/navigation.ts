@@ -114,7 +114,6 @@ export enum ScreenName {
   PasswordRemove = "PasswordRemove",
   Portfolio = "Wallet",
   PortfolioOperationHistory = "PortfolioOperationHistory",
-  ProtectLogin = "ProtectLogin",
   ProviderList = "ProviderList",
   ProviderView = "ProviderView",
   PurchaseDevice = "PurchaseDevice",
@@ -127,6 +126,7 @@ export enum ScreenName {
   ReceiveSelectCrypto = "ReceiveSelectCrypto",
   ReceiveVerificationConfirmation = "ReceiveVerificationConfirmation",
   ReceiveVerifyAddress = "ReceiveVerifyAddress",
+  Recover = "Recover",
   RegionSettings = "RegionSettings",
   RepairDevice = "RepairDevice",
   Resources = "Resources",
@@ -513,6 +513,8 @@ export enum ScreenName {
   WalletNftGallery = "WalletNftGallery",
   NoFunds = "NoFunds",
   Stake = "Stake",
+
+  RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
 }
 export enum NavigatorName {
   // Stack

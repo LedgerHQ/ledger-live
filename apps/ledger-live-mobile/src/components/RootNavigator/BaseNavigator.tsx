@@ -86,6 +86,8 @@ import DeviceConnect from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
+import { RecoverPlayer } from "../../screens/Protect/Player";
+import { RedirectToOnboardingRecoverFlowScreen } from "../../screens/Protect/RedirectToOnboardingRecoverFlow";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -182,6 +184,14 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.PlatformApp}
         component={LiveApp}
+        options={{
+          headerStyle: styles.headerNoShadow,
+        }}
+        {...noNanoBuyNanoWallScreenOptions}
+      />
+      <Stack.Screen
+        name={ScreenName.Recover}
+        component={RecoverPlayer}
         options={{
           headerStyle: styles.headerNoShadow,
         }}
@@ -588,6 +598,11 @@ export default function BaseNavigator() {
             }
           },
         })}
+      />
+      <Stack.Screen
+        name={ScreenName.RedirectToOnboardingRecoverFlow}
+        options={{ headerShown: false }}
+        component={RedirectToOnboardingRecoverFlowScreen}
       />
       <Stack.Screen
         name={NavigatorName.NoFundsFlow}
