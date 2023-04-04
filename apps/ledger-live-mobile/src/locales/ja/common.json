@@ -699,7 +699,13 @@
       "title" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
     },
     "CardanoMinAmountError" : {
-      "title" : "送付可能な最低金額は、{{amount}} ADAです"
+      "title" : "最低{{amount}} ADA以上必要"
+    },
+    "AvalancheInvalidDateTimeError" : {
+      "title" : "無効なステーキング終了日が選択されました"
+    },
+    "AvalancheMinimumAmountError" : {
+      "title" : "最低数量は25AVAXです"
     },
     "CardanoNotEnoughFunds" : {
       "title" : "お支払いに十分な資金があることをご確認ください"
@@ -2704,6 +2710,10 @@
           "title" : "試験的なアプリを許可する",
           "description" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する"
         },
+        "debugApps" : {
+          "title" : "デバッグアプリを許可する",
+          "description" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。"
+        },
         "staggingUrl" : {
           "title" : "学習ステージングのURL",
           "description" : "ステージングURLを学習ページに使用する。"
@@ -3412,7 +3422,12 @@
       "scan" : "QRコードをスキャン",
       "enterAddress" : "アドレスを入力",
       "input" : "アドレスを入力",
-      "verifyAddress" : "アドレスが、受取人から共有されたものと一致しているかご確認ください。"
+      "verifyAddress" : "アドレスが、受取人から共有されたものと一致しているかご確認ください。",
+      "domainService" : {
+        "reverse" : "This address is linked to {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "What's an Ethereum Name Service ?"
+      }
     },
     "amount" : {
       "available" : "合計利用可能額",
@@ -5365,6 +5380,69 @@
       "delegatedTo" : "デリゲート先：",
       "started" : {
         "description" : "SOL資産をバリデーターにデリゲートすることで報酬を得ることができます。"
+      }
+    }
+  },
+  "avalanchepchain" : {
+    "delegation" : {
+      "delegationEarn" : "資産をデリゲートし、AVAXで報酬を獲得できます。",
+      "info" : "デリゲートの仕組み",
+      "iDelegate" : "デリゲートする",
+      "until" : "終了日：",
+      "validatorRemainingStake" : "利用可能",
+      "validator" : "NodeID",
+      "startTime" : "開始時間",
+      "endTime" : "終了時間",
+      "notEnoughToDelegate" : "デリゲーターになるには、Pチェーンで少なくとも25AVAXが利用可能である必要があります。",
+      "stepperHeader" : {
+        "starter" : "報酬を獲得する",
+        "validator" : "資産をデリゲートする",
+        "amount" : "デリゲート数量",
+        "endDate" : "デリゲート終了日",
+        "summary" : "概要",
+        "verification" : "認証",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "available" : "合計利用可能額",
+            "maxLabel" : "最大"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産が正常にデリゲートされました。",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。"
+            }
+          },
+          "starter" : {
+            "description" : "資産を管理しながら、AVAXをデリゲートして報酬を獲得しましょう。",
+            "steps" : {
+              "0" : "デリゲートされた資産の所有権を保持する",
+              "1" : "Ledgerデバイスを使ってデリゲートしましょう",
+              "2" : "ステーキングするには最低25AVAXが必要です",
+              "3" : "AVAXは最低2週間デリゲートする必要があります"
+            },
+            "cta" : "続行"
+          },
+          "endDate" : "このデリゲートの終了日は{{minEndDate}}から{{maxEndDate}}の間でなければなりません。"
+        }
+      }
+    },
+    "info" : {
+      "available" : {
+        "title" : "利用可能なAVAX",
+        "description" : "これは利用可能額です。"
+      },
+      "delegated" : {
+        "title" : "ステーキングされたAVAX",
+        "description" : "バリデーターにステーキングされた数量。"
+      },
+      "delegationUnavailable" : {
+        "title" : "デリゲート不可",
+        "description" : "アカウントの利用可能残高が不足しているため、新たなデリゲートを開始できません。"
       }
     }
   },
