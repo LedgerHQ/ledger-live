@@ -21,7 +21,6 @@ import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeat
 import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
-import WalletConnectProvider from "./screens/WalletConnect/Provider";
 import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementProviderWrapper";
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
@@ -71,17 +70,15 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: any }) => {
                     <AnnouncementProviderWrapper>
                       <Router>
                         <PostOnboardingProviderWrapped>
-                          <WalletConnectProvider>
-                            <PlatformAppProviderWrapper>
-                              <DrawerProvider>
-                                <NftMetadataProvider>
-                                  <MarketDataProvider>
-                                    <Default />
-                                  </MarketDataProvider>
-                                </NftMetadataProvider>
-                              </DrawerProvider>
-                            </PlatformAppProviderWrapper>
-                          </WalletConnectProvider>
+                          <PlatformAppProviderWrapper>
+                            <DrawerProvider>
+                              <NftMetadataProvider>
+                                <MarketDataProvider>
+                                  <Default />
+                                </MarketDataProvider>
+                              </NftMetadataProvider>
+                            </DrawerProvider>
+                          </PlatformAppProviderWrapper>
                         </PostOnboardingProviderWrapped>
                       </Router>
                     </AnnouncementProviderWrapper>

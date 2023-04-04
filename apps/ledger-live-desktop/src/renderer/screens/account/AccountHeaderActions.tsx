@@ -81,13 +81,6 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
   const history = useHistory();
-  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
-  const onWalletConnect = useCallback(() => {
-    setTrackingSource("account header actions");
-    openModal("MODAL_WALLETCONNECT_PASTE_LINK", {
-      account,
-    });
-  }, [openModal, account]);
   const onWalletConnectLiveApp = useCallback(() => {
     setTrackingSource("account header actions");
     const params = {
@@ -110,9 +103,7 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
       </Tooltip>
       {["ethereum", "bsc", "polygon"].includes(currency.id) ? (
         <Tooltip content={t("walletconnect.titleAccount")}>
-          <ButtonSettings
-            onClick={walletConnectLiveApp?.enabled ? onWalletConnectLiveApp : onWalletConnect}
-          >
+          <ButtonSettings onClick={onWalletConnectLiveApp}>
             <Box justifyContent="center">
               <IconWalletConnect size={14} />
             </Box>
