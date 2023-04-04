@@ -168,9 +168,6 @@
       "title" : "奖励少于领取奖金的估算费用。",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "您不能在有活动存款时减少已批准的金额。"
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "出了点问题 (Error #1)",
       "description" : "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
@@ -2128,8 +2125,6 @@
       "OPT_IN" : "选择加入",
       "OPT_OUT" : "选择退出",
       "CLOSE_ACCOUNT" : "关闭账户",
-      "SUPPLY" : "已存入",
-      "REDEEM" : "已提取",
       "APPROVE" : "已启用",
       "BOND" : "绑定",
       "UNBOND" : "解绑",
@@ -2704,6 +2699,10 @@
           "title" : "允许实验性应用程序",
           "description" : "显示并允许打开实验性标记的平台应用程序。"
         },
+        "debugApps" : {
+          "title" : "允许调试应用程序",
+          "description" : "显示并允许打开调试标记的平台应用程序。"
+        },
         "staggingUrl" : {
           "title" : "“学习”页面的模拟环境网址",
           "description" : "使用“学习”页面的模拟环境网址。"
@@ -2739,46 +2738,6 @@
       "desc" : "获取关于 Ledger Live、Ledger 产品、市场的最新资讯以及个性化推荐。在设置中随时选择停用",
       "allow" : "允许通知",
       "later" : "以后再说"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Ledger Live 账户更新",
-    "overview" : {
-      "headerTitle" : "账户更新",
-      "title" : "Ledger Live 账户更新",
-      "subtitle" : "一旦 Ledger Live 推出新功能，就意味着您的账户需要更新",
-      "notice" : "{{accountCount}} 账户无法更新。请连接与下方账户关联的设备。",
-      "notice_plural" : "{{accountCount}} 账户无法更新。请连接与下方账户关联的设备。",
-      "currency" : "1 个 {{currency}} 账户需要更新",
-      "currency_plural" : "{{count}} 个 {{currency}} 账户需要更新",
-      "start" : "开始更新",
-      "continue" : "继续更新"
-    },
-    "progress" : {
-      "headerTitle" : "账户更新中",
-      "pending" : {
-        "title" : "{{currency}} 正在更新",
-        "subtitle" : "请等待您的账户完成更新。"
-      },
-      "notice" : {
-        "title" : "{{currency}} 更新未完成",
-        "subtitle" : "使用该设备，无法为 {{currency}} 账户更新。",
-        "cta" : "继续",
-        "ctaNextCurrency" : "继续使用 {{currency}}"
-      },
-      "done" : {
-        "title" : "{{currency}} 更新完成",
-        "subtitle" : "恭喜，您的 {{currency}} 账户已成功更新。",
-        "cta" : "继续",
-        "ctaNextCurrency" : "继续使用 {{currency}}",
-        "ctaDone" : "完成"
-      },
-      "error" : {
-        "cta" : "重试"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "连接设备"
     }
   },
   "transfer" : {
@@ -3412,7 +3371,12 @@
       "scan" : "扫描二维码",
       "enterAddress" : "输入地址",
       "input" : "输入地址",
-      "verifyAddress" : "请验证该地址与接收方所提供的一致。"
+      "verifyAddress" : "请验证该地址与接收方所提供的一致。",
+      "domainService" : {
+        "reverse" : "此地址关联了 {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "什么是以太坊域名服务？"
+      }
     },
     "amount" : {
       "available" : "可用总额",
