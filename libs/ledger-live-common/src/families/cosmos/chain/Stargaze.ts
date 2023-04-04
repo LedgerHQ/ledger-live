@@ -4,7 +4,7 @@ class Stargaze extends CosmosBase {
   lcd: string;
   stakingDocUrl: string;
   unbondingPeriod: number;
-  ledgerValidator: string;
+  ledgerValidator!: string;
   validatorOperatorAddressPrefix: string;
   constructor() {
     super();
@@ -14,7 +14,6 @@ class Stargaze extends CosmosBase {
     this.defaultGas = 100000;
     this.unbondingPeriod = 28;
     this.validatorOperatorAddressPrefix = "starsvaloper";
-    this.ledgerValidator = "";
   }
 }
 

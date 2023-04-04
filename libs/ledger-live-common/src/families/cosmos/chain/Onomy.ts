@@ -15,14 +15,6 @@ class Onomy extends CosmosBase {
     this.unbondingPeriod = 28;
     this.validatorOperatorAddressPrefix = "onomyvaloper";
     this.ledgerValidator = "";
-    this.gas = {
-      delegate: 190000,
-      send: 87500,
-      undelegate: 250000,
-      redelegate: 300000,
-      claimReward: 300000,
-      claimRewardCompound: 400000,
-    };
   }
 }
 

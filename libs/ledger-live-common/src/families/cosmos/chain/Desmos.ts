@@ -1,11 +1,11 @@
 import CosmosBase from "./cosmosBase";
 
 class Desmos extends CosmosBase {
-  lcd: string;
   stakingDocUrl: string;
   unbondingPeriod: number;
-  ledgerValidator: string;
   validatorOperatorAddressPrefix: string;
+  lcd: string;
+  ledgerValidator!: string;
   constructor() {
     super();
     this.lcd = "https://lcd-axelar.whispernode.com:443";
@@ -14,15 +14,6 @@ class Desmos extends CosmosBase {
     this.defaultGas = 100000;
     this.unbondingPeriod = 21;
     this.validatorOperatorAddressPrefix = "axelarvaloper";
-    this.ledgerValidator = "";
-    this.gas = {
-      delegate: 190000,
-      send: 87500,
-      undelegate: 250000,
-      redelegate: 300000,
-      claimReward: 300000,
-      claimRewardCompound: 400000,
-    };
   }
 }
 
