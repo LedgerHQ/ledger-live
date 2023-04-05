@@ -84,6 +84,7 @@
     "save" : "حفظ",
     "lock" : "إقفال",
     "showMore" : "عرض المزيد",
+    "backToMatchingURL" : "عودة إلى {{appName}}",
     "back" : "عودة",
     "adjustFees" : "تعديل الرسوم",
     "reset" : "إعادة تعيين",
@@ -214,26 +215,23 @@
     "stars" : "الحسابات المفضلة",
     "accounts" : "الحسابات",
     "manager" : "My Ledger",
+    "earn" : "اكسب",
     "exchange" : "شراء / بيع",
     "swap" : "مبادلة",
     "lend" : "إقراض",
     "catalog" : "Discover",
-    "market" : "السوق"
+    "market" : "السوق",
+    "protect" : "Recover"
   },
   "stars" : {
     "placeholder" : "قم بتفضيل حساب لعرضه هنا.",
     "tooltip" : "تفضيل حساب"
   },
   "bridge" : {
-    "modalTitle" : "فتح جسر (bridge) الجهاز",
-    "openHeader" : "اكشف حسابات جهازك من خلال WebSocket",
-    "openDescription" : "فتح جسر (bridge) يكشف جميع حساباتك لتطبيقات الطرف الثالث.",
-    "openedHeader" : "تم فتح جسر {{appName}}",
-    "openedDescription" : "يمكنك الآن الوصول إلى حسابك {{appName}} على تطبيق ويب طرف ثالث من خلال WebSocket.",
-    "completeHeader" : "تم إكمال جلسة الجسر",
-    "completeDescription" : "جسر websocket مُغلق الآن.",
-    "openButton" : "فتح",
-    "disconnectButton" : "قطع الاتصال"
+    "modalTitle" : "جسر الجهاز",
+    "openHeader" : "جسر الجهاز لم يعد متاحاً",
+    "openDescription" : "يُرجى تكوين ملحقات محافظ متصفحك لاستخدام WebHID بدلاً من Ledger Live.",
+    "closeButton" : "إغلاق"
   },
   "swap2" : {
     "title" : "مبادلة",
@@ -1218,9 +1216,13 @@
         "description" : "كود PIN خاصتك يمكن أن يتراوح طوله بين 4 إلى 8 أرقام",
         "text" : "أي شخص لديه وصول إلى {{deviceName}} وكود PIN خاصتك يمكنه أيضاً الوصول إلى جميع أصولك المشفرة ورموزك غير القابلة للاستبدال (NFT)."
       },
-      "recoveryContent" : {
-        "title" : "عبارة الاسترداد",
-        "content" : "انقر على مقاطع الفيديو أدناه لتعلُم المزيد عن عبارة الاسترداد السرية خاصتك"
+      "seedContent" : {
+        "title" : "عبارة الاسترداد السرية",
+        "choiceNewOrRestore" : "اختر خيار الإعداد الأكثر ملائمة لك.",
+        "newSeed" : "انقر على مقاطع الفيديو أدناه لتعلُم المزيد عن عبارة الاسترداد السرية خاصتك",
+        "choiceRestoreDirectOrRecover" : "Placeholder - اختيار استعادة مباشرة أو استخدم استرداد",
+        "recoverSeed" : "Placeholder: استرداد",
+        "restoreSeed" : "للاسترداد، تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.\n\nليس لديك واحد؟ استخدم جهاز ك{{productName}} لإنشاء عبارة جديدة."
       },
       "softwareCheckContent" : {
         "title" : "التحقق من البرامج",
@@ -2182,7 +2184,13 @@
     "steps" : {
       "recipient" : {
         "title" : "المستلم",
-        "nftRecipient" : "NFT المراد إرسالها"
+        "nftRecipient" : "NFT المراد إرسالها",
+        "verifyAddress" : "يرجى التأكد أن العنوان متطابق مع العنوان الذي شاركه المستلم.",
+        "namingService" : {
+          "resolve" : "هذه ENS صالحة مربوطة بالعنوان التالي:",
+          "supportLink" : "ما هي Ethereum Name Service (خدمة أسماء إيثريوم)؟",
+          "reverse" : "هذا العنوان مربوط بـ {{domain}}"
+        }
       },
       "amount" : {
         "title" : "المبلغ",
@@ -3509,6 +3517,70 @@
       },
       "providerTitle" : "اكسب مع {{provider}}",
       "providerLink" : "تعرف على المزيد عن {{provider}}"
+    }
+  },
+  "avalanchepchain" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "تعمل بواسطة Figment",
+        "moreInfo" : "مزيد من المعلومات",
+        "drawerTitle" : "تعمل بواسطة Figment",
+        "title" : "رمز AVAX متاح الآن في Ledger Live",
+        "description" : "يمكنك الآن بدء إدارة رموزك AVAX وتأمينها من خلال Ledger Live.",
+        "website" : "تعمل بواسطة Figment"
+      }
+    },
+    "stakedBalance" : "التكديس",
+    "stakedBalanceTooltip" : "المبلغ المُكدَّس إلى مدققين.",
+    "delegation" : {
+      "header" : "التفويضات",
+      "add" : "إضافة",
+      "commission" : "العمولة",
+      "validator" : "مُعرِّف العُقدة",
+      "startTime" : "وقت البدء",
+      "endTime" : "وقت الانتهاء",
+      "stakeAmount" : "تكديس",
+      "emptyState" : {
+        "description" : "يمكنك كسب مكافآت AVAX عن طريق تفويض أصولك.",
+        "info" : "كيف يعمل التفويض",
+        "delegation" : "اكسب المكافآت"
+      },
+      "notEnoughToDelegate" : "يجب أن يكون لديك على الأقل 25 AVAX متاحة على سلسلة P لتصبح مُفوِّضاً.",
+      "validatorStake" : "حصة المدقق",
+      "validatorRemainingStake" : "متاح",
+      "flow" : {
+        "title" : "تفويض",
+        "steps" : {
+          "starter" : {
+            "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك AVAX إلى مدقق.",
+            "bullet" : ["أنت تحتفظ بملكية الأصول المفوضة", "قم بالتفويض باستخدام جهازك Ledger", "مطلوب 25 AVAX بحد أدنى للتكديس", "يجب تفويض AVAX لمدة أسبوعين بحد أدنى"]
+          },
+          "amount" : {
+            "title" : "المبلغ"
+          },
+          "validator" : {
+            "title" : "المدققون",
+            "ledgerByFigmentTC" : "شروط وأحكام Ledger by Figment"
+          },
+          "endDate" : {
+            "title" : "تاريخ الانتهاء",
+            "text" : "اختر وقتاً لينتهي فيه هذا التفويض. تاريخ انتهاء هذا التفويض يجب أن يكون بين {{minEndDate}} و {{maxEndDate}}.",
+            "label" : "تاريخ انتهاء التفويض"
+          },
+          "connectDevice" : {
+            "title" : "الجهاز"
+          },
+          "confirmation" : {
+            "title" : "تأكيد",
+            "success" : {
+              "title" : "لقد قمت بتفويض أصولك بنجاح",
+              "text" : "سيتم تحديث رصيد حسابك عندما تقوم سلسلة الكتل بتأكيد المعاملة.",
+              "cta" : "رؤية التفاصيل"
+            },
+            "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
+          }
+        }
+      }
     }
   },
   "near" : {
@@ -5554,6 +5626,9 @@
     "StellarBurnAddressError" : {
       "title" : "حدثت مشكلة أثناء محاولة إضافة حساب Stellar"
     },
+    "AvalancheMinimumAmountError" : {
+      "title" : "الحد الأدنى للمبلغ هو 25 AVAX"
+    },
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     },
@@ -5737,8 +5812,10 @@
     "progress" : {
       "loading" : "جاري التحميل ...",
       "resolving" : "حل التبعيات",
-      "progress" : "تثبيت التطبيقات %{{progress}}",
-      "disclaimer" : "قم بإضافة أو حذف التطبيقات في أي وقت من Ledger Live."
+      "progress" : "لا تُغلق Ledger Live بينما يتم تثبيت التطبيقات.",
+      "disclaimer" : "قم بإضافة أو حذف التطبيقات في أي وقت من Ledger Live.",
+      "skippedInfo" : "بعض التطبيقات غير متاحة. لم يتم تطويرها بعد لـ {{ productName }}.",
+      "skipped" : "ليست متاحة بعد لـ {{ productName }}"
     },
     "cancelled" : {
       "title" : "تم إلغاء تثبيت التطبيق على {{productName}}",
@@ -5751,5 +5828,11 @@
       "subtitle" : "قم بإلغاء قفل {{productName}} خاصتك وابدأ التثبيت مرة أخرى.",
       "installCTA" : "إعادة بدء التثبيت"
     }
+  },
+  "discoverProtect" : {
+    "title" : "Recover your keys using\nyour identity",
+    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
+    "cta" : "Why should I subscribe?",
+    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
   }
 }
