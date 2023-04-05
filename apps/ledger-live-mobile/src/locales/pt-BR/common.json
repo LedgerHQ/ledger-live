@@ -2704,6 +2704,10 @@
           "title" : "Permitir aplicativos experimentais",
           "description" : "Exibir e permitir a abertura de aplicativos classificados como experimentais na plataforma"
         },
+        "debugApps" : {
+          "title" : "Permitir debug de aplicativos",
+          "description" : "Exibe e permite a abertura de aplicativos da plataforma marcados como debug"
+        },
         "staggingUrl" : {
           "title" : "Staging URL da página Aprender",
           "description" : "Use a staging URL da página Aprender."
@@ -3412,7 +3416,12 @@
       "scan" : "Escanear QR Code",
       "enterAddress" : "Digite o endereço",
       "input" : "Digite o endereço",
-      "verifyAddress" : "Verifique se o endereço corresponde ao endereço compartilhado pelo destinatário."
+      "verifyAddress" : "Verifique se o endereço corresponde ao endereço compartilhado pelo destinatário.",
+      "domainService" : {
+        "reverse" : "This address is linked to {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "What's an Ethereum Name Service ?"
+      }
     },
     "amount" : {
       "available" : "Total Disponível",
@@ -3484,6 +3493,29 @@
         "title" : "Quantia máxima a ser gasta",
         "description" : "A quantia máxima a ser gasta é o saldo total em uma conta que está disponível para enviar em uma transação."
       }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "Acelerar ou Cancelar",
+    "previousFeesInfo" : "Taxa de rede atual = {{amount}} ETH",
+    "header" : "Editar Transação",
+    "learnMore" : "Quero saber mais.",
+    "panel" : {
+      "stuckMessage" : "A sua transação de \"envio\" mais recente está travada. Acelere a transação com uma taxa de rede maior ou a cancele.",
+      "speedupMessage" : "A transação está em andamento. Você pode acelerá-la com uma taxa de rede maior ou cancelá-la."
+    },
+    "speedUp" : {
+      "title" : "Acelerar",
+      "description" : "Reenviar a transação com uma taxa de rede maior."
+    },
+    "cancel" : {
+      "title" : "Cancelar",
+      "description" : "Enviando 0 {{ticker}} para seu próprio endereço. Para garantir o cancelamento, a taxa de rede é de 30% a mais do que a taxa da transação a ser cancelada."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Você não tem a opção de cancelar a transação porque não há fundos suficientes em sua conta.",
+      "notEnoughFundsToSpeedup" : "Você não tem a opção de acelerar a transação porque não há fundos suficientes em sua conta.",
+      "notlowestNonceToSpeedup" : "O recurso de aceleração não está disponível. Sua transação está pendente porque uma transação anterior está presa. Você pode esperar até que ela seja confirmada, acelerá-la ou cancelá-la."
     }
   },
   "requestAccount" : {
