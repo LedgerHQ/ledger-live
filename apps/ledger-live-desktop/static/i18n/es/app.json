@@ -84,6 +84,7 @@
     "save" : "Guardar",
     "lock" : "Bloquear",
     "showMore" : "Ver más",
+    "backToMatchingURL" : "Volver a {{appName}}",
     "back" : "Atrás",
     "adjustFees" : "Ajustar tarifas",
     "reset" : "Restablecer",
@@ -214,26 +215,23 @@
     "stars" : "Cuentas destacadas",
     "accounts" : "Cuentas",
     "manager" : "Mi Ledger",
+    "earn" : "Gana",
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
     "lend" : "Prestar",
     "catalog" : "Discover",
-    "market" : "Mercado"
+    "market" : "Mercado",
+    "protect" : "Recover"
   },
   "stars" : {
     "placeholder" : "Tus cuentas favoritas aparecerán aquí.",
     "tooltip" : "Destacar cuenta"
   },
   "bridge" : {
-    "modalTitle" : "Abrir puente de dispositivo",
-    "openHeader" : "Expón tus cuentas del dispositivo a través de WebSocket",
-    "openDescription" : "Abrir un puente expone todas tus cuentas a aplicaciones de terceros.",
-    "openedHeader" : "Puente {{appName}} abierto",
-    "openedDescription" : "Ahora puedes acceder a tu cuenta de {{appName}} en una aplicación web de terceros a través de WebSocket.",
-    "completeHeader" : "Sesión de puente finalizada",
-    "completeDescription" : "El puente WebSocket está ahora cerrado",
-    "openButton" : "Abrir",
-    "disconnectButton" : "Desconectar"
+    "modalTitle" : "Puente de dispositivo",
+    "openHeader" : "El puente de dispositivo ya no está disponible",
+    "openDescription" : "Configura las extensiones de billetera de tu navegador para utilizar WebHID en lugar de Ledger Live.",
+    "closeButton" : "Cerrar"
   },
   "swap2" : {
     "title" : "Permutar",
@@ -1218,9 +1216,13 @@
         "description" : "El PIN puede tener entre 4 y 8 dígitos",
         "text" : "Cualquier persona que tenga acceso a tu {{deviceName}} y a tu PIN también podrá acceder a todos tus activos cripto y NFT."
       },
-      "recoveryContent" : {
-        "title" : "Frase de recuperación",
-        "content" : "Consulta los siguientes videos para obtener más información sobre tu Frase de recuperación"
+      "seedContent" : {
+        "title" : "Frase de recuperación secreta",
+        "choiceNewOrRestore" : "Elige la opción de configuración que mejor se ajuste a tus necesidades.",
+        "newSeed" : "Consulta los siguientes videos para obtener más información sobre tu Frase de recuperación",
+        "choiceRestoreDirectOrRecover" : "Marcador de posición: elige la restauración directa o usa Recover.",
+        "recoverSeed" : "Marcador de posición: Recover",
+        "restoreSeed" : "Para garantizar la seguridad de tus activos, utiliza una Frase de recuperación secreta generada por un Ledger.\n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva."
       },
       "softwareCheckContent" : {
         "title" : "Comprobación de software",
@@ -2182,7 +2184,13 @@
     "steps" : {
       "recipient" : {
         "title" : "Receptor",
-        "nftRecipient" : "NFT a enviar"
+        "nftRecipient" : "NFT a enviar",
+        "verifyAddress" : "Verifica que la dirección coincida con la dirección del receptor.",
+        "namingService" : {
+          "resolve" : "Este es un ENS válido enlazado con la dirección siguiente:",
+          "supportLink" : "¿Qué es un Servicio de Nombre de Ethereum?",
+          "reverse" : "Esta dirección está enlazada con {{domain}}"
+        }
       },
       "amount" : {
         "title" : "Importe",
@@ -3509,6 +3517,70 @@
       },
       "providerTitle" : "Gana con {{provider}}",
       "providerLink" : "Aprende más sobre {{provider}}"
+    }
+  },
+  "avalanchepchain" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Con tecnología de Figment",
+        "moreInfo" : "Más información",
+        "drawerTitle" : "Con tecnología de Figment",
+        "title" : "El token AVAX ya está disponible en Ledger Live",
+        "description" : "Ahora puedes gestionar tus tokens AVAX y protegerlos con Ledger Live.",
+        "website" : "Con tecnología de Figment"
+      }
+    },
+    "stakedBalance" : "Puesta en participación",
+    "stakedBalanceTooltip" : "Cantidad puesta en participación con validadores.",
+    "delegation" : {
+      "header" : "Delegaciones",
+      "add" : "Agregar",
+      "commission" : "Comisión",
+      "validator" : "ID de nodo",
+      "startTime" : "Fecha de inicio",
+      "endTime" : "Fecha de finalización",
+      "stakeAmount" : "Poner en participación",
+      "emptyState" : {
+        "description" : "Puedes recibir recompensas de AVAX delegando tu activos.",
+        "info" : "Cómo funciona la delegación",
+        "delegation" : "Ganar recompensas"
+      },
+      "notEnoughToDelegate" : "Para convertirte en delegador, debes tener al menos 25 AVAX disponibles en la P-Chain.",
+      "validatorStake" : "Puesta en participación con validadores",
+      "validatorRemainingStake" : "Disponible",
+      "flow" : {
+        "title" : "Delegar",
+        "steps" : {
+          "starter" : {
+            "description" : "Puedes recibir recompensas delegando tus activos AVAX a un validador.",
+            "bullet" : ["Conservas la propiedad de los activos delegados", "Delegar utilizando tu dispositivo Ledger", "Hay un mínimo de puesta en participación de 25 AVAX", "Los AVAX deben delegarse durante un mínimo de 2 semanas"]
+          },
+          "amount" : {
+            "title" : "Importe"
+          },
+          "validator" : {
+            "title" : "Validadores",
+            "ledgerByFigmentTC" : "Términos y condiciones de Ledger by Figment"
+          },
+          "endDate" : {
+            "title" : "Fecha de finalización",
+            "text" : "Selecciona la fecha de finalización de la delegación. La fecha de finalización de la delegación debe estar comprendida entre el {{minEndDate}} y el {{maxEndDate}}.",
+            "label" : "Fecha de finalización de la delegación"
+          },
+          "connectDevice" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmación",
+            "success" : {
+              "title" : "Has delegado tus activos con éxito",
+              "text" : "El saldo de tu cuenta se actualizará cuando la cadena de bloques confirme la transacción.",
+              "cta" : "Ver detalles"
+            },
+            "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y revisa el historial de transacciones antes de intentarlo de nuevo."
+          }
+        }
+      }
     }
   },
   "near" : {
@@ -5554,6 +5626,9 @@
     "StellarBurnAddressError" : {
       "title" : "Se ha producido un problema al intentar agregar una cuenta de Stellar"
     },
+    "AvalancheMinimumAmountError" : {
+      "title" : "La cantidad mínima es de 25 AVAX"
+    },
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
     },
@@ -5737,8 +5812,10 @@
     "progress" : {
       "loading" : "Cargando...",
       "resolving" : "Resolviendo dependencias",
-      "progress" : "Instalando aplicaciones: {{progress}}%",
-      "disclaimer" : "Agrega o elimina aplicaciones en cualquier momento desde Ledger Live."
+      "progress" : "No cierres Ledger Live mientras se instalan las aplicaciones.",
+      "disclaimer" : "Agrega o elimina aplicaciones en cualquier momento desde Ledger Live.",
+      "skippedInfo" : "Algunas aplicaciones no están disponibles. Todavía tienen que desarrollarse para {{ productName }}.",
+      "skipped" : "Todavía no está disponible para {{ productName }}."
     },
     "cancelled" : {
       "title" : "Se ha cancelado la instalación de aplicaciones en {{productName}}",
@@ -5751,5 +5828,11 @@
       "subtitle" : "Desbloquea tu {{productName}} y reinicia la instalación.",
       "installCTA" : "Reiniciar instalación"
     }
+  },
+  "discoverProtect" : {
+    "title" : "Recover your keys using\nyour identity",
+    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
+    "cta" : "Why should I subscribe?",
+    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
   }
 }
