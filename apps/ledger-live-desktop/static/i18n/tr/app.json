@@ -84,6 +84,7 @@
     "save" : "Kaydet",
     "lock" : "Kilitle",
     "showMore" : "Daha fazla göster",
+    "backToMatchingURL" : "{{appName}} sayfasına dön",
     "back" : "Geri",
     "adjustFees" : "Ücretleri ayarlayın",
     "reset" : "Sıfırla",
@@ -214,26 +215,23 @@
     "stars" : "Favori hesaplar",
     "accounts" : "Hesaplar",
     "manager" : "My Ledger",
+    "earn" : "Kazan",
     "exchange" : "Satın Al / Sat",
     "swap" : "Takas et",
     "lend" : "Borç ver",
     "catalog" : "Keşfet",
-    "market" : "Piyasa"
+    "market" : "Piyasa",
+    "protect" : "Recover"
   },
   "stars" : {
     "placeholder" : "Favori hesaplarınızı yıldızlayarak burada görüntüleyebilirsiniz.",
     "tooltip" : "Hesabı yıldızla"
   },
   "bridge" : {
-    "modalTitle" : "Cihaz Köprüsünü Aç",
-    "openHeader" : "WebSocket üzerinden Cihaz hesaplarınızı gösterin",
-    "openDescription" : "Köprü açmanız, tüm hesaplarınızı üçüncü taraf uygulamalar tarafından görünür hale getirir.",
-    "openedHeader" : "{{appName}} köprüsü açıldı",
-    "openedDescription" : "Üçüncü taraf web uygulamasında {{appName}} hesabınıza WebSocket üzerinden artık erişebilirsiniz.",
-    "completeHeader" : "Köprü oturumu tamamlandı",
-    "completeDescription" : "WebSocket köprüsü kapatıldı.",
-    "openButton" : "Aç",
-    "disconnectButton" : "Bağlantıyı Kes"
+    "modalTitle" : "Cihaz Köprüsü",
+    "openHeader" : "Cihaz Köprüsü artık mevcut değil",
+    "openDescription" : "Ledger Live yerine WebHID'yi kullanmak için lütfen tarayıcınızın cüzdan uzantılarını yapılandırın.",
+    "closeButton" : "Kapat"
   },
   "swap2" : {
     "title" : "Takas edin",
@@ -1218,9 +1216,13 @@
         "description" : "PIN Kodunuz 4 ila 8 rakam uzunluğunda olabilir",
         "text" : "{{deviceName}} cihazınıza ve PIN Kodunuza erişimi olan herkes tüm kripto ve NFT varlıklarınıza erişebilir."
       },
-      "recoveryContent" : {
-        "title" : "Kurtarma ifadesi",
-        "content" : "Gizli kurtarma ifadeniz hakkında daha fazla bilgi için aşağıdaki videolara dokunun"
+      "seedContent" : {
+        "title" : "Gizli Kurtarma İfadesi",
+        "choiceNewOrRestore" : "Sizin için en uygun olan kurulum seçeneğini belirleyin.",
+        "newSeed" : "Gizli kurtarma ifadeniz hakkında daha fazla bilgi için aşağıdaki videolara dokunun",
+        "choiceRestoreDirectOrRecover" : "Yer tutucu: Doğrudan geri yüklemeyi seçin veya Recover'ı kullanın",
+        "recoverSeed" : "Yer tutucu: Recover",
+        "restoreSeed" : "Kurtarma işlemini yaparken varlıklarınızın güvenliğini garantilemek için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesini kullandığınızdan emin olun.\n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın."
       },
       "softwareCheckContent" : {
         "title" : "Yazılım kontrolü",
@@ -2182,7 +2184,13 @@
     "steps" : {
       "recipient" : {
         "title" : "Alıcı",
-        "nftRecipient" : "Gönderilecek NFT"
+        "nftRecipient" : "Gönderilecek NFT",
+        "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın.",
+        "namingService" : {
+          "resolve" : "Bu, aşağıdaki adrese bağlı olan geçerli bir ENS'dir:",
+          "supportLink" : "Ethereum Name Service nedir?",
+          "reverse" : "Bu adres {{domain}} ile bağlı"
+        }
       },
       "amount" : {
         "title" : "Tutar",
@@ -5737,8 +5745,10 @@
     "progress" : {
       "loading" : "Yükleniyor...",
       "resolving" : "Gereksinimler çözülüyor",
-      "progress" : "Uygulamalar yükleniyor %{{progress}}",
-      "disclaimer" : "Ledger Live üzerinden uygulamaları istediğiniz zaman ekleyip kaldırabilirsiniz."
+      "progress" : "Uygulamalar yüklenirken Ledger Live'dan ayrılmayın.",
+      "disclaimer" : "Ledger Live üzerinden uygulamaları istediğiniz zaman ekleyip kaldırabilirsiniz.",
+      "skippedInfo" : "Bazı uygulamalar mevcut değil. Henüz {{ productName }} için geliştirilmediler.",
+      "skipped" : "Henüz {{ productName }} ile kullanılamıyor"
     },
     "cancelled" : {
       "title" : "Uygulama kurulumu, {{productName}} cihazında iptal edildi",
@@ -5751,5 +5761,11 @@
       "subtitle" : "{{productName}} cihazınızın kilidini açın ve kurulumu yeniden başlatın.",
       "installCTA" : "Kurulumu yeniden başlat"
     }
+  },
+  "discoverProtect" : {
+    "title" : "Recover your keys using\nyour identity",
+    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
+    "cta" : "Why should I subscribe?",
+    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
   }
 }
