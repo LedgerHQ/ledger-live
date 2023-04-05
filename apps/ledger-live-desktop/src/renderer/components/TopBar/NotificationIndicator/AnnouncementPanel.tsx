@@ -15,6 +15,7 @@ import { useDeepLinkHandler } from "~/renderer/hooks/useDeeplinking";
 import { closeInformationCenter } from "~/renderer/actions/UI";
 import useDateTimeFormat from "~/renderer/hooks/useDateTimeFormat";
 import { useNotifications } from "~/renderer/hooks/useNotifications";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 const DateRowContainer = styled.div`
   padding: 4px 16px;
@@ -276,6 +277,7 @@ export function AnnouncementPanel() {
   if (!notificationsCards) {
     return (
       <PanelContainer>
+        <TrackPage category="Notification Center" name="notification_center_news" />
         <Text
           color="palette.text.shade100"
           ff="Inter|SemiBold"
@@ -300,6 +302,7 @@ export function AnnouncementPanel() {
   }
   return (
     <ScrollArea hideScrollbar>
+      <TrackPage category="Notification Center" name="notification_center_news" />
       <Box py="32px">
         {groups.map((group, index) => (
           <React.Fragment key={index}>
