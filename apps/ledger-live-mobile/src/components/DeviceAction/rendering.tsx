@@ -36,6 +36,8 @@ import {
   getMainAccount,
   getAccountName,
   getAccountCurrency,
+  getFeesCurrency,
+  getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -329,10 +331,12 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.fees")}>
             <Text>
               <CurrencyUnitValue
-                unit={getAccountUnit(
-                  getMainAccount(
-                    exchange.fromAccount,
-                    exchange.fromParentAccount,
+                unit={getFeesUnit(
+                  getFeesCurrency(
+                    getMainAccount(
+                      exchange.fromAccount,
+                      exchange.fromParentAccount,
+                    ),
                   ),
                 )}
                 value={new BigNumber(estimatedFees || 0)}
