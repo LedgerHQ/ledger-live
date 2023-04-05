@@ -59,7 +59,15 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: commonGetInputs,
+    getInputs: (
+      payload: GetInputsPayload,
+      metadata?: PullRequestMetadata,
+      localRef?: string,
+      draft?: boolean
+    ) => {
+      const common = commonGetInputs(payload, metadata, localRef);
+      return { ...common, draft };
+    },
   },
   "build-desktop-external.yml": {
     checkRunName: "@Desktop • Build App (external)",
@@ -69,7 +77,15 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: commonGetInputs,
+    getInputs: (
+      payload: GetInputsPayload,
+      metadata?: PullRequestMetadata,
+      localRef?: string,
+      draft?: boolean
+    ) => {
+      const common = commonGetInputs(payload, metadata, localRef);
+      return { ...common, draft };
+    },
   },
   "test-desktop.yml": {
     checkRunName: "@Desktop • Test App",

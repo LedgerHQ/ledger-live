@@ -311,6 +311,16 @@ export function orchestrator(app: Probot) {
               )}`
             );
 
+            let draft = false;
+            if (typeof metadata?.number == "number") {
+              const { data } = await octokit.pulls.get({
+                owner,
+                repo,
+                pull_number: metadata?.number,
+              });
+              draft = data?.draft || false;
+            }
+
             // Trigger the associated workflow.
             // This will trigger the workflow_run.requested event,
             // which will create/recreate the check run and update the watcher.
@@ -322,7 +332,8 @@ export function orchestrator(app: Probot) {
               inputs: workflow.getInputs(
                 payload,
                 metadata,
-                isFork ? localRef : undefined
+                isFork ? localRef : undefined,
+                draft
               ),
             });
             context.log.info(
