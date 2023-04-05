@@ -2704,6 +2704,10 @@
           "title" : "Autoriser les Apps Expérimentales",
           "description" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\"."
         },
+        "debugApps" : {
+          "title" : "Autoriser les Apps Debug",
+          "description" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\"."
+        },
         "staggingUrl" : {
           "title" : "Activer l’URL de test de la page Apprendre",
           "description" : "Utilisez l’URL de test (staging) de la page Apprendre."
@@ -3412,7 +3416,12 @@
       "scan" : "Scanner le code QR",
       "enterAddress" : "Entrer l’adresse",
       "input" : "Entrer l’adresse",
-      "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire."
+      "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire.",
+      "domainService" : {
+        "reverse" : "Cette adresse est associée à {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "Qu’est-ce qu’un Ethereum Name Service (ENS) ?"
+      }
     },
     "amount" : {
       "available" : "Total disponible",
@@ -3484,6 +3493,29 @@
         "title" : "Montant maximal à dépenser",
         "description" : "Le montant maximal à dépenser est le solde total dans un compte qui est disponible pour effectuer une transaction."
       }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "Accélérer ou annuler",
+    "previousFeesInfo" : "Frais de réseau actuels = {{amount}} ETH",
+    "header" : "Modifier la transaction",
+    "learnMore" : "En savoir plus",
+    "panel" : {
+      "stuckMessage" : "Votre dernière transaction sortante est bloquée. Accélérez-la en augmentant les frais de réseau, ou annulez-la.",
+      "speedupMessage" : "Votre transaction est en cours. Vous pouvez l’accélérer en augmentant les frais de réseau, ou l’annuler."
+    },
+    "speedUp" : {
+      "title" : "Accélérer",
+      "description" : "Renvoyez votre transaction avec des frais de réseau plus élevés."
+    },
+    "cancel" : {
+      "title" : "Annuler",
+      "description" : "Envoyez 0 {{ticker}} à votre propre adresse. Les frais de réseau doivent être 30 % plus élevés que les frais de la transaction à annuler."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Vous ne pouvez pas annuler la transaction car vous ne disposez pas d’assez de fonds sur votre compte.",
+      "notEnoughFundsToSpeedup" : "Vous ne pouvez pas accélérer la transaction car vous ne disposez pas d’assez de fonds sur votre compte.",
+      "notlowestNonceToSpeedup" : "La fonctionnalité permettant d’accélérer la transaction n’est pas disponible. Votre transaction est en attente parce qu’une transaction antérieure est bloquée. Vous pouvez attendre qu’elle soit confirmée, l’accélérer ou l’annuler."
     }
   },
   "requestAccount" : {
