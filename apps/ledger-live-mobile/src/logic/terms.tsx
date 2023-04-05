@@ -93,23 +93,27 @@ export const AcceptedTermsContextProvider: React.FC<{
 }> = ({ children }) => {
   const [accepted, setAccepted] = useState(true);
 
-  const unAccept = useCallback(() => {
-    return unAcceptTerms()
-      .then(() => {
-        setAccepted(false);
-        return true;
-      })
-      .catch(() => false);
-  }, []);
+  const unAccept = useCallback(
+    () =>
+      unAcceptTerms()
+        .then(() => {
+          setAccepted(false);
+          return true;
+        })
+        .catch(() => false),
+    [],
+  );
 
-  const accept = useCallback(() => {
-    return acceptTerms()
-      .then(() => {
-        setAccepted(true);
-        return true;
-      })
-      .catch(() => false);
-  }, []);
+  const accept = useCallback(
+    () =>
+      acceptTerms()
+        .then(() => {
+          setAccepted(true);
+          return true;
+        })
+        .catch(() => false),
+    [],
+  );
 
   useEffect(() => {
     isAcceptedTerms().then(setAccepted);
