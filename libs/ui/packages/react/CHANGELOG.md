@@ -1,5 +1,16 @@
 # @ledgerhq/react-ui
 
+## 0.12.1-next.0
+
+### Patch Changes
+
+- [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - fix to Tag component
+
+- [#3065](https://github.com/LedgerHQ/ledger-live/pull/3065) [`acea4bb16d`](https://github.com/LedgerHQ/ledger-live/commit/acea4bb16d5f5b5e509735b3c78d13034f801af9) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Display RGBA color value in storybook
+
+- Updated dependencies [[`acea4bb16d`](https://github.com/LedgerHQ/ledger-live/commit/acea4bb16d5f5b5e509735b3c78d13034f801af9)]:
+  - @ledgerhq/ui-shared@0.1.11-next.0
+
 ## 0.12.0
 
 ### Minor Changes
