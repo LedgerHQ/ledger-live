@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../const";
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
@@ -18,6 +19,7 @@ import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import { BaseOnboardingNavigatorParamList } from "./types/BaseOnboardingNavigator";
 import { RootComposite, StackNavigatorProps } from "./types/helpers";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
+import { LiveApp } from "../../screens/Platform";
 
 const hitSlop = {
   bottom: 10,
@@ -120,6 +122,20 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={NavigatorName.PasswordModifyFlow}
         component={PasswordModifyFlowNavigator}
+      />
+      <Stack.Screen
+        name={ScreenName.PlatformApp}
+        component={LiveApp}
+        options={({ route }) => ({
+          headerBackImage: () => (
+            <Flex pl="16px">
+              <Icons.CloseMedium color="neutral.c100" size="20px" />
+            </Flex>
+          ),
+          headerStyle: styles.headerNoShadow,
+          title: route.params.name,
+          headerShown: true,
+        })}
       />
     </Stack.Navigator>
   );

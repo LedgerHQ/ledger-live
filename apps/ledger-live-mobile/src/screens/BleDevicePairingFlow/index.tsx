@@ -1,6 +1,7 @@
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import React, { useCallback, useEffect } from "react";
 import { has as hasFromPath, set as setFromPath } from "lodash";
+import { useSelector } from "react-redux";
 import { BackHandler } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
@@ -12,6 +13,7 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import DeviceSetupView from "../../components/DeviceSetupView";
+import { hasCompletedOnboardingSelector } from "../../reducers/settings";
 
 export type Props = RootComposite<
   StackNavigatorProps<
@@ -134,14 +136,20 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
     [navigateInput, navigation, navigationType, pathToDeviceParam],
   );
 
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+
   const handleGoBackFromScanning = useCallback(() => {
-    const routes = navigation.getState().routes;
-
-    const isNavigationFromDeeplink =
-      routes[routes.length - 1]?.params === undefined;
-
-    if (!isNavigationFromDeeplink) {
+    if (navigation.canGoBack()) {
       navigation.goBack();
+    } else if (hasCompletedOnboarding) {
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: NavigatorName.Main,
+          },
+        ],
+      });
     } else {
       navigation.reset({
         index: 0,
@@ -160,7 +168,7 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
         ],
       });
     }
-  }, [navigation]);
+  }, [navigation, hasCompletedOnboarding]);
 
   // Handles back button, necessary when the user comes from the deep link
   useEffect(() => {

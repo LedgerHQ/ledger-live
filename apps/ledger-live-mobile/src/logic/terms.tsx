@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useLocale } from "../context/Locale";
@@ -27,7 +27,7 @@ function isAcceptedVersionUpToDate(
   }
 }
 
-export async function isAcceptedTerms() {
+async function isAcceptedTerms() {
   const acceptedTermsVersion = await AsyncStorage.getItem(
     "acceptedTermsVersion",
   );
@@ -54,7 +54,7 @@ export async function isAcceptedLendingTerms() {
   );
 }
 
-export async function unAcceptTerms() {
+async function unAcceptTerms() {
   await AsyncStorage.removeItem("acceptedTermsVersion");
 }
 
@@ -75,24 +75,53 @@ export function useLocalizedTermsUrl() {
   return (urls.terms as Record<string, string>)[locale] || urls.terms.en;
 }
 
-export const useTermsAccept = () => {
+type AcceptedTermsContextValue = {
+  accepted: boolean;
+  accept: () => Promise<boolean>;
+  unAccept: () => Promise<boolean>;
+};
+
+export const AcceptedTermsContext =
+  React.createContext<AcceptedTermsContextValue>({
+    accepted: false,
+    accept: () => Promise.resolve(false),
+    unAccept: () => Promise.resolve(false),
+  });
+
+export const AcceptedTermsContextProvider: React.FC<{
+  children?: React.ReactNode | null | undefined;
+}> = ({ children }) => {
   const [accepted, setAccepted] = useState(true);
 
   const unAccept = useCallback(() => {
-    unAcceptTerms().then(() => {
-      setAccepted(false);
-    });
+    return unAcceptTerms()
+      .then(() => {
+        setAccepted(false);
+        return true;
+      })
+      .catch(() => false);
   }, []);
 
   const accept = useCallback(() => {
-    acceptTerms().then(() => {
-      setAccepted(true);
-    });
+    return acceptTerms()
+      .then(() => {
+        setAccepted(true);
+        return true;
+      })
+      .catch(() => false);
   }, []);
 
   useEffect(() => {
     isAcceptedTerms().then(setAccepted);
   }, []);
+  return (
+    <AcceptedTermsContext.Provider value={{ accepted, accept, unAccept }}>
+      {children}
+    </AcceptedTermsContext.Provider>
+  );
+};
 
-  return [accepted, accept, unAccept] as const;
+export const useTermsAccept = () => {
+  const { accepted, accept, unAccept } = useContext(AcceptedTermsContext);
+  return [accepted, accept, unAccept];
 };
