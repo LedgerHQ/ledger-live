@@ -1,7 +1,17 @@
 {
-  "entry": ["index.js"],
-  "extensions": [".ts", ".js", ".jsx", ".tsx", ".d.ts"],
-  "ignorePatterns": ["**/node_modules/**"],
+  "entry": [
+    "index.js"
+  ],
+  "extensions": [
+    ".ts",
+    ".js",
+    ".jsx",
+    ".tsx",
+    ".d.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**"
+  ],
   "ignoreUnresolved": [],
   "ignoreUnimported": [
     "**/*.test.*",
@@ -30,6 +40,7 @@
     "react-native-os",
     "react-native-randombytes",
     "react-native-tcp",
+    "react-native-tcp-socket",
     "react-native-udp",
     "rxjs-compat"
   ]
