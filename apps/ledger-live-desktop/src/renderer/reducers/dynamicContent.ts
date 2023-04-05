@@ -3,7 +3,7 @@ import { handleActions } from "redux-actions";
 import type { PortfolioContentCard } from "~/types/dynamicContent";
 
 export type DynamicContentState = {
-  portfolioCards?: PortfolioContentCard[],
+  portfolioCards: PortfolioContentCard[],
 };
 
 const state: DynamicContentState = {
