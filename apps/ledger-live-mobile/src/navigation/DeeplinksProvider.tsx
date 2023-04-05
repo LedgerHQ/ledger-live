@@ -22,7 +22,6 @@ import { AcceptedTermsContext } from "../logic/terms";
 import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
-import { protectLiveAppIds } from "../logic/recover/shared";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -429,12 +428,12 @@ export const DeeplinksProvider = ({
 
           if ((hostname === "discover" || hostname === "recover") && platform) {
             const whitelistLiveAppsAccessibleInNonOnboardedLL: LiveAppManifest["id"][] =
-              recoverManifests
+              recoverManifests;
             if (
               !hasCompletedOnboarding &&
               !whitelistLiveAppsAccessibleInNonOnboardedLL.includes(platform)
             )
-              return;
+              return undefined;
             /**
              * Upstream validation of "ledgerlive://discover/:platform":
              *  - checking that a manifest exists
