@@ -11,7 +11,7 @@ const currencies = ["BTC", "LTC", "ETH", "ATOM", "XTZ", "XRP"];
 
 test.describe.parallel("Accounts", () => {
   for (const currency of currencies) {
-    test(`[${currency}] Add account`, async ({ page }) => {
+    test(`[${currency}] Add account @smoke`, async ({ page }) => {
       const portfolioPage = new PortfolioPage(page);
       const addAccountModal = new AddAccountModal(page);
       const deviceAction = new DeviceAction(page);
