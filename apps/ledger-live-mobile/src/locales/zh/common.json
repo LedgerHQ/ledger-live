@@ -2704,6 +2704,10 @@
           "title" : "允许实验性应用程序",
           "description" : "显示并允许打开实验性标记的平台应用程序。"
         },
+        "debugApps" : {
+          "title" : "允许调试应用程序",
+          "description" : "显示并允许打开调试标记的平台应用程序。"
+        },
         "staggingUrl" : {
           "title" : "“学习”页面的模拟环境网址",
           "description" : "使用“学习”页面的模拟环境网址。"
@@ -3412,7 +3416,12 @@
       "scan" : "扫描二维码",
       "enterAddress" : "输入地址",
       "input" : "输入地址",
-      "verifyAddress" : "请验证该地址与接收方所提供的一致。"
+      "verifyAddress" : "请验证该地址与接收方所提供的一致。",
+      "domainService" : {
+        "reverse" : "此地址关联了 {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "什么是以太坊域名服务？"
+      }
     },
     "amount" : {
       "available" : "可用总额",
@@ -3484,6 +3493,29 @@
         "title" : "最大可支出数额",
         "description" : "最大可支出数额指的是一个账户可通过一个交易发送的总余额。"
       }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "加速或取消",
+    "previousFeesInfo" : "当前网络费用 = {{amount}} 以太币",
+    "header" : "编辑交易",
+    "learnMore" : "我想进一步了解",
+    "panel" : {
+      "stuckMessage" : "您最近的一次“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+      "speedupMessage" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。"
+    },
+    "speedUp" : {
+      "title" : "加快速度",
+      "description" : "使用较高的网络费用重新提交交易。"
+    },
+    "cancel" : {
+      "title" : "取消",
+      "description" : "发送 0 {{ticker}} 到您自己的地址。为确保取消交易，网络费用比将要取消的交易费用高 30%。"
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "无法取消交易，因为您的账户中没有足够的资金。",
+      "notEnoughFundsToSpeedup" : "无法使用加速交易，因为您的账户中没有足够的资金。",
+      "notlowestNonceToSpeedup" : "无法使用加速功能。您的交易有待处理，因为之前的交易已停滞。您可以等待确认交易，加速交易和取消交易。"
     }
   },
   "requestAccount" : {
