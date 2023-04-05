@@ -2704,6 +2704,10 @@
           "title" : "Experimentelle Apps erlauben",
           "description" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben."
         },
+        "debugApps" : {
+          "title" : "Allow debug apps",
+          "description" : "Display and allow opening debug tagged platform apps."
+        },
         "staggingUrl" : {
           "title" : "Lernen Sie die Staging-URL",
           "description" : "Verwenden Sie die Staging-URL für die Lern-Website."
@@ -3412,7 +3416,12 @@
       "scan" : "QR-Code scannen",
       "enterAddress" : "Adresse eingeben",
       "input" : "Adresse eingeben",
-      "verifyAddress" : "Bitte überprüfen Sie, ob die Adresse mit der des Empfängers übereinstimmt."
+      "verifyAddress" : "Bitte überprüfen Sie, ob die Adresse mit der des Empfängers übereinstimmt.",
+      "domainService" : {
+        "reverse" : "Diese Adresse ist verknüpft mit {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "Was ist ein „Ethereum Name Service“?"
+      }
     },
     "amount" : {
       "available" : "Insgesamt verfügbar",
@@ -3484,6 +3493,29 @@
         "title" : "Maximal ausgabefähiger Betrag",
         "description" : "Der maximal ausgabefähige Betrag ist das gesamte Guthaben auf einem Konto, das zum Senden in einer Transaktion zur Verfügung steht."
       }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "Beschleunigen oder Abbrechen",
+    "previousFeesInfo" : "Aktuelle Netzwerkgebühr = {{amount}} ETH",
+    "header" : "Transaktion bearbeiten",
+    "learnMore" : "Ich möchte mehr erfahren",
+    "panel" : {
+      "stuckMessage" : "Ihre zuletzt „gesendete“ Transaktion ist stecken geblieben. Sie können die Transaktion mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+      "speedupMessage" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen."
+    },
+    "speedUp" : {
+      "title" : "Beschleunigen",
+      "description" : "Reichen Sie die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
+    },
+    "cancel" : {
+      "title" : "Abbrechen",
+      "description" : "Sendet 0 {{ticker}} an Ihre eigene Adresse. Um die Stornierung zu gewährleisten, ist die Netzwerkgebühr 30 % höher als die Gebühr für die zu stornierende Transaktion."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Die Stornierung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+      "notEnoughFundsToSpeedup" : "Die Beschleunigung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+      "notlowestNonceToSpeedup" : "Die Funktion „Speed up“ (Beschleunigen) ist nicht verfügbar. Ihre Transaktion ist ausstehend, da eine vorherige Transaktion stecken geblieben ist. Sie können auf die Bestätigung der Transaktion warten, die Transaktion beschleunigen oder sie stornieren."
     }
   },
   "requestAccount" : {
