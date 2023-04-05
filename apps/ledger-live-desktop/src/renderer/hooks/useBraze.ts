@@ -7,6 +7,7 @@ import {
   LocationContentCard,
   PortfolioContentCard,
   NotificationContentCard,
+  Platform,
 } from "~/types/dynamicContent";
 import { useDispatch } from "react-redux";
 import { setNotificationsCards, setPortfolioCards } from "../actions/dynamicContent";
@@ -19,7 +20,7 @@ const getPortfolioCards = (elem: braze.ContentCards) =>
       card.extras?.location === LocationContentCard.Portfolio,
   );
 const getDesktopCards = (elem: braze.ContentCards) =>
-  elem.cards.filter(card => card.extras?.platform === "desktop");
+  elem.cards.filter(card => card.extras?.platform === Platform.Desktop);
 
 export const filterByPage = (array: braze.Card[], page: LocationContentCard) =>
   array.filter(card => card.extras?.location === page);

@@ -178,11 +178,10 @@ function Article({
   utmCampaign,
   isRead,
 }: ArticleProps) {
-  const [isSeen] = useState(isRead);
   const levelTheme = getLevelTheme(level);
   const { Icon, defaultIconColor } = getIcon(icon);
   return (
-    <ArticleRootContainer isRead={isSeen}>
+    <ArticleRootContainer isRead={isRead}>
       <ArticleContainer
         bg={levelTheme.background}
         py={levelTheme.padding}
@@ -223,7 +222,7 @@ function Article({
           ) : null}
         </ArticleRightColumnContainer>
       </ArticleContainer>
-      {isSeen ? null : <UnReadNotifBadge />}
+      {isRead ? null : <UnReadNotifBadge />}
     </ArticleRootContainer>
   );
 }
@@ -238,7 +237,7 @@ const Separator = styled.div`
   margin: 25px 0px;
   width: 100%;
   height: 1px;
-  background-color: ${({ theme }) => theme.colors.palette.text.shade10};
+  background-color: ${({ theme }) => theme.colors.neutral.c40};
 `;
 
 export function AnnouncementPanel() {
@@ -254,11 +253,11 @@ export function AnnouncementPanel() {
     (visible, uuid) => {
       const timeouts = timeoutByUUID.current;
 
-      if (notificationsCards?.find(n => !n.viewed && n.id === uuid) && visible && !timeouts[uuid]) {
+      if (notificationsCards.find(n => !n.viewed && n.id === uuid) && visible && !timeouts[uuid]) {
         timeouts[uuid] = setTimeout(() => {
           logNotificationImpression(uuid);
           delete timeouts[uuid];
-        }, 1000);
+        }, 2000);
       }
       if (!visible && timeouts[uuid]) {
         clearTimeout(timeouts[uuid]);
@@ -316,8 +315,8 @@ export function AnnouncementPanel() {
                     title={title}
                     text={description}
                     isRead={viewed}
-                    level={""}
-                    icon={""}
+                    level={"info"}
+                    icon={"info"}
                     link={{
                       label: cta,
                       href: url || path || "https://ledger.com",
