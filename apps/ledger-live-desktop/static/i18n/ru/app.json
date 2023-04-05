@@ -84,6 +84,7 @@
     "save" : "Сохранить",
     "lock" : "Заблокировать",
     "showMore" : "Показать больше",
+    "backToMatchingURL" : "Вернуться в {{appName}}",
     "back" : "Назад",
     "adjustFees" : "Изменить комиссию",
     "reset" : "Сбросить",
@@ -214,26 +215,23 @@
     "stars" : "Избранные счета",
     "accounts" : "Счета",
     "manager" : "Мой Ledger",
+    "earn" : "Приумножить",
     "exchange" : "Покупка/Продажа",
     "swap" : "Обмен",
     "lend" : "Кредитование",
     "catalog" : "Исследуйте",
-    "market" : "Рынок"
+    "market" : "Рынок",
+    "protect" : "Recover"
   },
   "stars" : {
     "placeholder" : "Выделите счёт, чтобы он отобразился здесь.",
     "tooltip" : "В избранное"
   },
   "bridge" : {
-    "modalTitle" : "Откройте Device Bridge",
-    "openHeader" : "Открывайте доступ к счетам на устройстве через WebSocket",
-    "openDescription" : "Открытие моста даёт сторонним приложениям доступ ко всем вашим счетам.",
-    "openedHeader" : "Мост для {{appName}} открыт",
-    "openedDescription" : "Теперь вы можете использовать свой счёт {{appName}} в стороннем веб-приложении через WebSocket.",
-    "completeHeader" : "Сеанс моста завершён",
-    "completeDescription" : "Мост WebSocket закрыт.",
-    "openButton" : "Открыть",
-    "disconnectButton" : "Отключить"
+    "modalTitle" : "Device Bridge",
+    "openHeader" : "Device Bridge больше недоступен",
+    "openDescription" : "Настройте браузерное расширение кошелька для использования WebHID вместо Ledger Live.",
+    "closeButton" : "Закрыть"
   },
   "swap2" : {
     "title" : "Обмен",
@@ -1218,9 +1216,13 @@
         "description" : "ПИН-код может содержать от 4 до 8 цифр",
         "text" : "Любой человек с доступом к вашему {{deviceName}} и ПИН-коду сможет заполучить ваши криптовалюты и NFT."
       },
-      "recoveryContent" : {
-        "title" : "Фраза восстановления",
-        "content" : "Нажмите по видео ниже, чтобы узнать больше об уникальной фразе восстановления и её важности"
+      "seedContent" : {
+        "title" : "Секретная фраза восстановления",
+        "choiceNewOrRestore" : "Выберите подходящий вариант настройки.",
+        "newSeed" : "Нажмите по видео ниже, чтобы узнать больше об уникальной фразе восстановления и её важности",
+        "choiceRestoreDirectOrRecover" : "Заглушка — выберите прямое восстановление или воспользуйтесь Ledger Recover",
+        "recoverSeed" : "Заглушка: Ledger Recover",
+        "restoreSeed" : "Для безопасности криптоактивов при восстановлении используйте секретную мнемоническую фразу, которая была создана устройством Ledger.\n\nНет фразы восстановления? Воспользуйтесь {{productName}} для создания новой фразы."
       },
       "softwareCheckContent" : {
         "title" : "Проверка ПО",
@@ -1423,7 +1425,7 @@
     "featuredButtons" : {
       "buySell" : {
         "title" : "Покупка/Продажа",
-        "description" : "Покупайте и продавайте с операторами, которым можно доверять"
+        "description" : "Покупайте и продавайте с проверенными операторами"
       },
       "swap" : {
         "title" : "Обмен",
@@ -2182,7 +2184,13 @@
     "steps" : {
       "recipient" : {
         "title" : "Получатель",
-        "nftRecipient" : "NFT для отправки"
+        "nftRecipient" : "NFT для отправки",
+        "verifyAddress" : "Убедитесь, что адрес совпадает с адресом, предоставленным получателем.",
+        "namingService" : {
+          "resolve" : "Это актуальный ENS, связанный со следующим адресом:",
+          "supportLink" : "Что такое Ethereum Name Service?",
+          "reverse" : "Этот адрес привязан к {{domain}}"
+        }
       },
       "amount" : {
         "title" : "Сумма",
@@ -2517,7 +2525,7 @@
         "voteExisting" : "Управление голосами"
       },
       "manageTP" : "Управление активами",
-      "warnEarnRewards" : "У вас должно быть не менее {{amount}}, чтобы начать получать вознаграждения",
+      "warnEarnRewards" : "У вас должно быть не менее {{amount}}, чтобы получать вознаграждения",
       "claimRewards" : "Получение вознаграждения",
       "nextRewardsDate" : "Вознаграждения можно получить {{date}}",
       "claimAvailableRewards" : "Получить {{amount}}",
@@ -2560,7 +2568,7 @@
         "steps" : {
           "vote" : {
             "title" : "Передать голоса",
-            "description" : "Отдайте голоса за одного или нескольких Суперпредставителей, чтобы начать получать вознаграждения.",
+            "description" : "Отдайте голоса за одного или нескольких Суперпредставителей, чтобы получать вознаграждения.",
             "footer" : {
               "doNotShowAgain" : "Больше не показывать",
               "next" : "Отдать голоса"
@@ -3072,7 +3080,7 @@
       "header" : "Вознаграждение",
       "tooltip" : "Вознаграждения в токенах Algorand распределяются регулярно и запрашиваются автоматически при совершении транзакции.",
       "cta" : "Получить вознаграждения",
-      "rewardsDisabledTooltip" : "У вас нет вознаграждений. Вознаграждения в Algorand начисляются автоматически при совершении транзакции. Получите токены ALGO, чтобы начать получать вознаграждения.",
+      "rewardsDisabledTooltip" : "У вас нет вознаграждений. Вознаграждения в Algorand начисляются автоматически при совершении транзакции. Получите токены ALGO, чтобы получать вознаграждения.",
       "flow" : {
         "title" : "Получение вознаграждений",
         "steps" : {
@@ -3509,6 +3517,70 @@
       },
       "providerTitle" : "Получайте вознаграждения с {{provider}}",
       "providerLink" : "Подробнее о {{provider}}"
+    }
+  },
+  "avalanchepchain" : {
+    "account" : {
+      "subHeader" : {
+        "cardTitle" : "Powered by Figment",
+        "moreInfo" : "Подробнее",
+        "drawerTitle" : "Powered by Figment",
+        "title" : "Токен AVAX теперь доступен в Ledger Live",
+        "description" : "Теперь вы можете управлять своими токенами AVAX и хранить их в Ledger Live.",
+        "website" : "Powered by Figment"
+      }
+    },
+    "stakedBalance" : "Стейкинг",
+    "stakedBalanceTooltip" : "Сумма в стейкинге с валидаторами.",
+    "delegation" : {
+      "header" : "Назначения",
+      "add" : "Дополнить",
+      "commission" : "Комиссия",
+      "validator" : "ID ноды",
+      "startTime" : "Начало стейкинга",
+      "endTime" : "Конец стейкинга",
+      "stakeAmount" : "Стейкинг",
+      "emptyState" : {
+        "description" : "Вы можете получать вознаграждения в токенах AVAX, делегируя активы.",
+        "info" : "Как работает делегирование",
+        "delegation" : "Получить вознаграждения"
+      },
+      "notEnoughToDelegate" : "Для делегирования требуется не менее 25 AVAX, доступных в цепочке P-Chain.",
+      "validatorStake" : "Доля валидатора",
+      "validatorRemainingStake" : "Доступно",
+      "flow" : {
+        "title" : "Делегировать",
+        "steps" : {
+          "starter" : {
+            "description" : "Вы можете получать вознаграждения, делегируя AVAX валидатору.",
+            "bullet" : ["Делегированные активы остаются в вашей собственности", "Делегируйте прямо на устройстве Ledger", "Для стейкинга необходимо не менее 25 AVAX", "AVAX делегируются как минимум на две недели"]
+          },
+          "amount" : {
+            "title" : "Сумма"
+          },
+          "validator" : {
+            "title" : "Валидаторы",
+            "ledgerByFigmentTC" : "Положения и условия Ledger by Figment"
+          },
+          "endDate" : {
+            "title" : "Дата окончания",
+            "text" : "Выберите время окончания делегирования. Дата окончания должна быть в пределах от {{minEndDate}} и до {{maxEndDate}}.",
+            "label" : "Дата окончания делегирования"
+          },
+          "connectDevice" : {
+            "title" : "Устройство"
+          },
+          "confirmation" : {
+            "title" : "Подтверждение",
+            "success" : {
+              "title" : "Вы успешно делегировали активы",
+              "text" : "Баланс обновится после подтверждения транзакции в блокчейне.",
+              "cta" : "Подробнее"
+            },
+            "broadcastError" : "Возможно, ваша транзакция не прошла. Пожалуйста, подождите немного и проверьте историю транзакций, прежде чем повторить попытку."
+          }
+        }
+      }
     }
   },
   "near" : {
@@ -5554,6 +5626,9 @@
     "StellarBurnAddressError" : {
       "title" : "При попытке добавления счёта Stellar возникла проблема"
     },
+    "AvalancheMinimumAmountError" : {
+      "title" : "Минимальная сумма — 25 AVAX"
+    },
     "HederaAddAccountError" : {
       "title" : "Не удалось добавить счёт. Пожалуйста, попробуйте ещё раз."
     },
@@ -5737,8 +5812,10 @@
     "progress" : {
       "loading" : "Загружаем...",
       "resolving" : "Устраняем зависимости приложения...",
-      "progress" : "Установка приложений: {{progress}}%",
-      "disclaimer" : "Добавляйте или удаляйте приложения в любое время с помощью Ledger Live."
+      "progress" : "Не выходите из Ledger Live во время установки.",
+      "disclaimer" : "Добавляйте или удаляйте приложения в любое время с помощью Ledger Live.",
+      "skippedInfo" : "Некоторые приложения сейчас недоступны. Пока нет версии для {{ productName }}.",
+      "skipped" : "Пока недоступно для {{ productName }}"
     },
     "cancelled" : {
       "title" : "Установка приложения на {{productName}} отменена",
@@ -5751,5 +5828,11 @@
       "subtitle" : "Разблокируйте {{productName}} и повторите попытку установки.",
       "installCTA" : "Повторить установку"
     }
+  },
+  "discoverProtect" : {
+    "title" : "Recover your keys using\nyour identity",
+    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
+    "cta" : "Why should I subscribe?",
+    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
   }
 }
