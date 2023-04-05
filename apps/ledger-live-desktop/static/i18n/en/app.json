@@ -4393,7 +4393,13 @@
               "title": "Select ‘Restore using Ledger Recover’"
             },
             "help": {
-              "iDontSee": "I don’t see ‘Restore using Ledger Recover’"
+              "iDontSee": "I don’t see ‘Restore using Ledger Recover’",
+              "modal": {
+                "title": "The OS on your Ledger Nano X needs to be updated",
+                "subtitle": " You can try updating the OS or contact Ledger support for assistance.",
+                "learnHowToUpdate": "Learn how to update",
+                "contactLedgerSupport": "Contact ledger support"
+              }
             }
           },
           "existingRecoveryPhrase": {
