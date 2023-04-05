@@ -148,7 +148,7 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
-          if [[ ${{ inputs.draft }} ]]; then
+          if [[ ${{ inputs.draft }} == true ]]; then
             pnpm desktop test:playwright --grep @smoke
           else
             pnpm desktop test:playwright
@@ -214,7 +214,7 @@ jobs:
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
-          if [[ ${{ inputs.draft }} ]]; then
+          if [[ ${{ inputs.draft }} == true ]]; then
             xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright --grep @smoke
           else
             xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
@@ -278,7 +278,7 @@ jobs:
       - name: Run playwright tests
         id: tests
         run: |
-          if [[ ${{ inputs.draft }} ]]; then
+          if [[ ${{ inputs.draft }} == true ]]; then
             pnpm desktop test:playwright --grep @smoke
           else
             pnpm desktop test:playwright
