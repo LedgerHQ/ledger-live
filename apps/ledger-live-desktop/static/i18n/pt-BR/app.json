@@ -84,6 +84,7 @@
     "save" : "Salvar",
     "lock" : "Bloquear",
     "showMore" : "Mostrar Mais",
+    "backToMatchingURL" : "De volta a {{appName}}",
     "back" : "Voltar",
     "adjustFees" : "Ajustar Taxas",
     "reset" : "Redefinir",
@@ -214,26 +215,23 @@
     "stars" : "Contas Favoritas",
     "accounts" : "Contas",
     "manager" : "Minha Ledger",
+    "earn" : "Ganhar",
     "exchange" : "Comprar / Vender",
     "swap" : "Trocar",
     "lend" : "Emprestar",
     "catalog" : "Explorar",
-    "market" : "Mercado"
+    "market" : "Mercado",
+    "protect" : "Recover"
   },
   "stars" : {
     "placeholder" : "Veja suas contas favoritas aqui",
     "tooltip" : "Favoritar Conta"
   },
   "bridge" : {
-    "modalTitle" : "Abrir ponte do dispositivo",
-    "openHeader" : "Exponha as contas do seu dispositivo através do WebSocket",
-    "openDescription" : "A abertura de uma ponte irá expor todas suas contas a aplicativos de terceiros.",
-    "openedHeader" : "Ponte de {{appName}} aberta",
-    "openedDescription" : "Agora você pode acessar sua conta {{appName}} em aplicativos web de terceiros através do WebSocket.",
-    "completeHeader" : "Sessão de ponte concluída",
-    "completeDescription" : "A ponte websocket agora está fechada.",
-    "openButton" : "Abrir",
-    "disconnectButton" : "Desconectar"
+    "modalTitle" : "Ponte do Dispositivo",
+    "openHeader" : "A ponte do dispositivo não está mais disponível",
+    "openDescription" : "Configure as extensões de carteira em seu navegador para usar o WebHID em vez do Ledger Live.",
+    "closeButton" : "Fechar"
   },
   "swap2" : {
     "title" : "Trocar",
@@ -1218,9 +1216,13 @@
         "description" : "Seu PIN pode conter de 4 a 8 dígitos",
         "text" : "Qualquer pessoa com acesso à sua {{deviceName}} e ao seu PIN pode também acessar todos os seus criptoativos e NFTs."
       },
-      "recoveryContent" : {
-        "title" : "Frase de recuperação",
-        "content" : "Toque nos vídeos abaixo para saber mais sobre a sua frase de recuperação secreta"
+      "seedContent" : {
+        "title" : "Frase de Recuperação Secreta",
+        "choiceNewOrRestore" : "Escolha a opção de configuração que mais sirva a você.",
+        "newSeed" : "Toque nos vídeos abaixo para saber mais sobre a sua frase de recuperação secreta",
+        "choiceRestoreDirectOrRecover" : "Placeholder - escolha restaurar diretamente ou usar o Recover",
+        "recoverSeed" : "Placeholder: Recover",
+        "restoreSeed" : "Para a recuperação, certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir a segurança de seus ativos.\n\nNão tem um? Use sua {{productName}} para gerar uma nova Frase."
       },
       "softwareCheckContent" : {
         "title" : "Verificação de software",
@@ -2182,7 +2184,13 @@
     "steps" : {
       "recipient" : {
         "title" : "Destinatário",
-        "nftRecipient" : "NFT para enviar"
+        "nftRecipient" : "NFT para enviar",
+        "verifyAddress" : "Verifique se o endereço corresponde ao endereço compartilhado pelo destinatário.",
+        "namingService" : {
+          "resolve" : "Este é um ENS válido, vinculado ao seguinte endereço:",
+          "supportLink" : "O que é Ethereum Name Service (ENS)?",
+          "reverse" : "Este endereço está vinculado a {{domain}}"
+        }
       },
       "amount" : {
         "title" : "Quantia",
@@ -5737,8 +5745,10 @@
     "progress" : {
       "loading" : "Carregando...",
       "resolving" : "Resolvendo dependências",
-      "progress" : "Instalando aplicativos {{progress}}%",
-      "disclaimer" : "Adicione ou remova aplicativos a qualquer hora com o Ledger Live."
+      "progress" : "Permaneça no Ledger Live enquanto os aplicativos estão sendo instalados.",
+      "disclaimer" : "Adicione ou remova aplicativos a qualquer hora com o Ledger Live.",
+      "skippedInfo" : "Alguns aplicativos não estão disponíveis. Eles ainda serão desenvolvidos para {{ productName }}.",
+      "skipped" : "Ainda indisponíveis para {{ productName }}"
     },
     "cancelled" : {
       "title" : "A instalação do aplicativo foi cancelada na {{productName}}",
@@ -5751,5 +5761,11 @@
       "subtitle" : "Desbloqueie sua {{productName}} e reinicie a instalação.",
       "installCTA" : "Reiniciar a instalação"
     }
+  },
+  "discoverProtect" : {
+    "title" : "Recover your keys using\nyour identity",
+    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
+    "cta" : "Why should I subscribe?",
+    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
   }
 }
