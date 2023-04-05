@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useMemo, useState } from "react";
+import React, { useCallback, useRef, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { InView } from "react-intersection-observer";
