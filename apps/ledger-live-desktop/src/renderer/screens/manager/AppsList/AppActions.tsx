@@ -106,7 +106,7 @@ const AppActions: React$ComponentType<Props> = React.memo(
           history.push("/platform");
           break;
         case "app":
-          openURL(app?.supportURL || urls.appSupport[name] || urls.appSupport.default);
+          openURL(app?.supportURL || urls.appSupport);
           break;
         case "tool":
           openURL(urls.managerAppLearnMore);
@@ -115,7 +115,7 @@ const AppActions: React$ComponentType<Props> = React.memo(
           history.push("/swap");
           break;
       }
-    }, [type, history, app.supportURL, name]);
+    }, [type, history, app?.supportURL]);
     const updating = useMemo(() => updateAllQueue.includes(name), [updateAllQueue, name]);
     const installing = useMemo(() => installQueue.includes(name), [installQueue, name]);
     const uninstalling = useMemo(() => uninstallQueue.includes(name), [uninstallQueue, name]);
