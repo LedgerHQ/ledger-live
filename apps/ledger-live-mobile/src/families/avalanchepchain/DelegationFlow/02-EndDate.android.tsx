@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -22,6 +22,7 @@ import {
   YEAR,
   getReadableDate,
 } from "@ledgerhq/live-common/families/avalanchepchain/utils";
+import moment from "moment";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -33,6 +34,8 @@ import { getFirstStatusError } from "../../helpers";
 import { localeSelector } from "../../../reducers/settings";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { AvalancheDelegationFlowParamList } from "./types";
+import Touchable from "../../../components/Touchable";
+import Selectable from "../../celo/components/Selectable";
 
 type Props = StackNavigatorProps<
   AvalancheDelegationFlowParamList,
@@ -43,6 +46,8 @@ export default function DelegationEndDate({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const locale = useSelector(localeSelector);
+  const [showTime, setShowTime] = useState(false);
+  const [showDate, setShowDate] = useState(false);
 
   invariant(account?.type === "Account", "must be account");
 
@@ -70,6 +75,8 @@ export default function DelegationEndDate({ navigation, route }: Props) {
         }),
       );
     }
+    setShowDate(false);
+    setShowTime(false);
   };
 
   const onContinue = () => {
@@ -93,6 +100,23 @@ export default function DelegationEndDate({ navigation, route }: Props) {
 
   const readableMinEndDate = getReadableDate(unixMinEndDate, locale);
   const readableMaxEndDate = getReadableDate(unixMaxEndDate, locale);
+  const readableSelectedDate = moment(
+    (transaction.endTime?.toNumber() || 0) * 1000,
+  )
+    .locale(locale)
+    .format("ll");
+  const readableSelectedTime = moment(
+    (transaction.endTime?.toNumber() || 0) * 1000,
+  )
+    .locale(locale)
+    .format("LT");
+
+  const onChangeDate = () => {
+    setShowDate(true);
+  };
+  const onChangeTime = () => {
+    setShowTime(true);
+  };
 
   return (
     <>
@@ -105,22 +129,33 @@ export default function DelegationEndDate({ navigation, route }: Props) {
             <View style={[styles.root, { backgroundColor: colors.background }]}>
               <View style={styles.wrapper}>
                 <View style={styles.datePickers}>
-                  <DateTimePicker
-                    mode="date"
-                    value={
-                      new Date((transaction.endTime?.toNumber() || 0) * 1000)
-                    }
-                    onChange={onChange}
-                    style={styles.datePicker}
-                  />
-                  <DateTimePicker
-                    mode="time"
-                    value={
-                      new Date((transaction.endTime?.toNumber() || 0) * 1000)
-                    }
-                    onChange={onChange}
-                    style={styles.datePicker}
-                  />
+                  <Touchable onPress={onChangeDate}>
+                    <Selectable name={readableSelectedDate} />
+                  </Touchable>
+
+                  <Touchable onPress={onChangeTime}>
+                    <Selectable name={readableSelectedTime} />
+                  </Touchable>
+                  {showDate && (
+                    <DateTimePicker
+                      mode="date"
+                      value={
+                        new Date((transaction.endTime?.toNumber() || 0) * 1000)
+                      }
+                      onChange={onChange}
+                      style={styles.datePicker}
+                    />
+                  )}
+                  {showTime && (
+                    <DateTimePicker
+                      mode="time"
+                      value={
+                        new Date((transaction.endTime?.toNumber() || 0) * 1000)
+                      }
+                      onChange={onChange}
+                      style={styles.datePicker}
+                    />
+                  )}
                 </View>
                 <LText semiBold style={styles.subText} color="grey">
                   <Trans
