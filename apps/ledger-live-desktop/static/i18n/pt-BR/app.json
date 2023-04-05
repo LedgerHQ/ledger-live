@@ -214,6 +214,7 @@
     "stars" : "Contas Favoritas",
     "accounts" : "Contas",
     "manager" : "Minha Ledger",
+    "earn" : "Ganhar",
     "exchange" : "Comprar / Vender",
     "swap" : "Trocar",
     "lend" : "Emprestar",
@@ -225,15 +226,10 @@
     "tooltip" : "Favoritar Conta"
   },
   "bridge" : {
-    "modalTitle" : "Abrir ponte do dispositivo",
-    "openHeader" : "Exponha as contas do seu dispositivo através do WebSocket",
-    "openDescription" : "A abertura de uma ponte irá expor todas suas contas a aplicativos de terceiros.",
-    "openedHeader" : "Ponte de {{appName}} aberta",
-    "openedDescription" : "Agora você pode acessar sua conta {{appName}} em aplicativos web de terceiros através do WebSocket.",
-    "completeHeader" : "Sessão de ponte concluída",
-    "completeDescription" : "A ponte websocket agora está fechada.",
-    "openButton" : "Abrir",
-    "disconnectButton" : "Desconectar"
+    "modalTitle" : "Ponte do Dispositivo",
+    "openHeader" : "A ponte do dispositivo não está mais disponível",
+    "openDescription" : "Configure as extensões de carteira em seu navegador para usar o WebHID em vez do Ledger Live.",
+    "closeButton" : "Fechar"
   },
   "swap2" : {
     "title" : "Trocar",
@@ -823,11 +819,15 @@
         "linkText" : "O que é redelegação e quanto tempo ela leva?",
         "solana" : {
           "title" : "Você sabia?",
-          "description" : "A Ledger oferece uma taxa de comissão menor do que seu validador. Este processo pode levar até 4 dias."
+          "description" : "A Ledger oferece uma taxa de comissão menor do que o seu validador. Este processo pode levar até 4 dias."
         },
         "near" : {
           "title" : "Você sabia?",
           "description" : "A Ledger oferece uma taxa de comissão menor do que o seu validador. Este processo pode levar até 65 horas."
+        },
+        "elrond" : {
+          "title" : "Você sabia?",
+          "description" : "A Ledger oferece uma taxa de comissão menor do que o seu validador. Este processo pode levar até 10 dias."
         }
       },
       "delegation" : {
@@ -849,6 +849,9 @@
         },
         "near" : {
           "description" : "Faça staking de NEAR com o validador Ledger by Figment. As suas moedas continuam sendo suas, suportadas pela segurança absoluta da Ledger."
+        },
+        "elrond" : {
+          "description" : "Faça staking de ELROND com o validador Ledger by Figment. As suas moedas continuam sendo suas, suportadas pela segurança absoluta da Ledger."
         }
       }
     }
@@ -1839,7 +1842,7 @@
       "used" : "Usado",
       "firmwareAvailable" : "O firmware está desatualizado:",
       "firmwareUpToDate" : "O firmware está atualizado:",
-      "genuine" : "O dispositivo é autêntico",
+      "genuine" : "Seu dispositivo é autêntico",
       "incomplete" : "Alguns aplicativos não foram reconhecidos. Desinstale-os e depois os reinstale."
     },
     "applist" : {
@@ -2261,6 +2264,13 @@
     },
     "switchButton" : "Alterar para {{language}}",
     "no" : "Eu prefiro não"
+  },
+  "deviceRename" : {
+    "title" : "Renomear {{ productName }}",
+    "chooseName" : "Escolha um nome",
+    "placeholder" : "Antônio Stax",
+    "remainingCharacters" : "{{ remainingCharacters }} caracteres restantes",
+    "renamed" : "O nome da {{ productName }} foi alterado para \n“{{ name }}” "
   },
   "deviceLocalization" : {
     "language" : "Idioma",
@@ -3786,6 +3796,9 @@
       "catalogRampServerDesc" : "Alternar entre vários provedores de negociação",
       "enablePlatformDevTools" : "Habilitar ferramentas de desenvolvedor da plataforma",
       "enablePlatformDevToolsDesc" : "Habilitar a abertura da janela de ferramentas de desenvolvedor de aplicativos da plataforma",
+      "customLockScreen" : "Ativos personalizados para a tela de bloqueio",
+      "customLockScreenDesc" : "Depurar ativos gráficos personalizados da tela de bloqueio",
+      "customLockScreenCTA" : "Iniciar",
       "featureFlagsTitle" : "Marcadores definidos usados no Ledger Live",
       "featureFlagsDesc" : "Valores sobrepostos serão redefinidos se o aplicativo for reexecutado. Apenas strings JSON válidas serão aceitas.",
       "featureFlagsEdit" : "Editar",
@@ -3850,10 +3863,6 @@
         "experimentalCurrencies" : {
           "title" : "Integrações Experimentais",
           "description" : "Use as integrações experimentais de criptoativos disponíveis."
-        },
-        "experimentalExecutionOnRenderer" : {
-          "title" : "Rede experimental",
-          "description" : "Use a rede experimental para otimizar sua experiência no Ledger Live com a sua VPN. Ative apensas se a sua VPN atual estiver causando erros de sistema."
         },
         "experimentalLanguages" : {
           "title" : "Teste de tradução",
@@ -4207,6 +4216,10 @@
           "3" : {
             "title" : "Restaurar sua frase em um novo dispositivo",
             "description" : "Use uma frase de recuperação e restaure suas chaves privadas em uma nova Ledger Nano!"
+          },
+          "4" : {
+            "title" : "Restaurar usando o Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4352,6 +4365,25 @@
             "help" : {
               "help" : "Preciso de ajuda",
               "descr" : "Não sabe o que fazer agora? Peça ajuda para encerrar esta etapa."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Selecione \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)",
+            "1" : {
+              "title" : "Selecione \"Restore\" (Restaurar)",
+              "descr" : "Pressione ambos os botões simultaneamente para selecionar."
+            },
+            "2" : {
+              "title" : "Selecione \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)"
+            },
+            "help" : {
+              "iDontSee" : "Não vejo \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)",
+              "modal" : {
+                "title" : "O sistema operacional em sua Ledger Nano X precisa ser atualizado",
+                "subtitle" : " Tente atualizar o sistema operacional ou entre em contato com o Suporte Ledger para assistência.",
+                "learnHowToUpdate" : "Aprenda como atualizar",
+                "contactLedgerSupport" : "Fale com o Suporte Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5668,6 +5700,7 @@
   },
   "customImage" : {
     "title" : "Tela de bloqueio personalizada",
+    "managerCTA" : "Imagem da tela de bloqueio",
     "steps" : {
       "choose" : {
         "stepLabel" : "Escolha uma imagem",
