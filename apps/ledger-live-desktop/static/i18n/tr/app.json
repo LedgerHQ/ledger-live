@@ -214,6 +214,7 @@
     "stars" : "Favori hesaplar",
     "accounts" : "Hesaplar",
     "manager" : "My Ledger",
+    "earn" : "Kazan",
     "exchange" : "Satın Al / Sat",
     "swap" : "Takas et",
     "lend" : "Borç ver",
@@ -225,15 +226,10 @@
     "tooltip" : "Hesabı yıldızla"
   },
   "bridge" : {
-    "modalTitle" : "Cihaz Köprüsünü Aç",
-    "openHeader" : "WebSocket üzerinden Cihaz hesaplarınızı gösterin",
-    "openDescription" : "Köprü açmanız, tüm hesaplarınızı üçüncü taraf uygulamalar tarafından görünür hale getirir.",
-    "openedHeader" : "{{appName}} köprüsü açıldı",
-    "openedDescription" : "Üçüncü taraf web uygulamasında {{appName}} hesabınıza WebSocket üzerinden artık erişebilirsiniz.",
-    "completeHeader" : "Köprü oturumu tamamlandı",
-    "completeDescription" : "WebSocket köprüsü kapatıldı.",
-    "openButton" : "Aç",
-    "disconnectButton" : "Bağlantıyı Kes"
+    "modalTitle" : "Cihaz Köprüsü",
+    "openHeader" : "Cihaz Köprüsü artık mevcut değil",
+    "openDescription" : "Ledger Live yerine WebHID'yi kullanmak için lütfen tarayıcınızın cüzdan uzantılarını yapılandırın.",
+    "closeButton" : "Kapat"
   },
   "swap2" : {
     "title" : "Takas edin",
@@ -828,6 +824,10 @@
         "near" : {
           "title" : "Bunu biliyor muydunuz?",
           "description" : "Ledger, doğrulayıcınızdan daha düşük bir komisyon oranı sunuyor. Bu işlem 65 saate kadar sürebilir."
+        },
+        "elrond" : {
+          "title" : "Bunu biliyor muydunuz?",
+          "description" : "Ledger, doğrulayıcınızdan daha düşük bir komisyon oranı sunuyor. Bu işlem 10 güne kadar sürebilir."
         }
       },
       "delegation" : {
@@ -849,6 +849,9 @@
         },
         "near" : {
           "description" : "NEAR varlıklarınızı Ledger üzerinden Figment doğrulayıcısı ile stake edin. Coin'leriniz, Ledger'ın taviz vermeyen güvenliği kapsamında size ait olmaya devam eder."
+        },
+        "elrond" : {
+          "description" : "ELROND'unuzu Ledger by Figment doğrulayıcısı ile stake edin. Coin'leriniz, Ledger'ın taviz vermeyen güvenliği kapsamında size ait olmaya devam eder."
         }
       }
     }
@@ -1839,7 +1842,7 @@
       "used" : "Kullanılan",
       "firmwareAvailable" : "Yazılım sürümü eski:",
       "firmwareUpToDate" : "Yazılım sürümü güncel:",
-      "genuine" : "Cihaz orijinal",
+      "genuine" : "Cihazınız orijinal",
       "incomplete" : "Bazı uygulamalar tanınmadı. Lütfen bunları kaldırın ve yeniden yükleyin."
     },
     "applist" : {
@@ -2261,6 +2264,13 @@
     },
     "switchButton" : "{{language}} diline geç",
     "no" : "Şimdilik kalsın"
+  },
+  "deviceRename" : {
+    "title" : "{{ productName }} adını değiştirin",
+    "chooseName" : "Bir ad girin",
+    "placeholder" : "Tony'nin Stax'i",
+    "remainingCharacters" : "{{ remainingCharacters }} karakter kaldı",
+    "renamed" : "{{ productName }} adını \n“{{ name }}” olarak değiştirdiniz "
   },
   "deviceLocalization" : {
     "language" : "Dil",
@@ -3786,6 +3796,9 @@
       "catalogRampServerDesc" : "Farklı alım satım sağlayıcıları arasında geçiş yapın",
       "enablePlatformDevTools" : "Platform geliştirme araçlarını etkinleştirin",
       "enablePlatformDevToolsDesc" : "Platform uygulama geliştirme araçları penceresini açmayı etkinleştirin",
+      "customLockScreen" : "Özel kilitli ekran varlıkları",
+      "customLockScreenDesc" : "Özel kilitli ekran grafik varlıklarında hata ayıklayın",
+      "customLockScreenCTA" : "Başlat",
       "featureFlagsTitle" : "Ledger Live'da kullanılan tanımlı özellik bayrakları",
       "featureFlagsDesc" : "Uygulama yeniden başlatılırsa geçersiz bırakılan değerler sıfırlanacaktır. Sadece geçerli JSON dizeleri kabul edilecektir.",
       "featureFlagsEdit" : "Düzenle",
@@ -3850,10 +3863,6 @@
         "experimentalCurrencies" : {
           "title" : "Deneysel entegrasyonlar",
           "description" : "Mevcut deneysel kripto varlık entegrasyonlarını kullanın."
-        },
-        "experimentalExecutionOnRenderer" : {
-          "title" : "Deneysel ağ iletişimleri",
-          "description" : "VPN ile Ledger Live kullanımını en iyi hâle getirmek için deneysel ağ iletişimlerini kullanın. Bu özelliği sadece kullandığınız VPN, sistem hatalarına neden olursa etkinleştirin."
         },
         "experimentalLanguages" : {
           "title" : "Çeviri testi",
@@ -4045,7 +4054,7 @@
       "tr" : "Türkçe",
       "ja" : "Japonca",
       "ko" : "Korece",
-      "pt" : "Portekizce"
+      "pt" : "Portekizce (Brezilya)"
     }
   },
   "theme" : {
@@ -4207,6 +4216,10 @@
           "3" : {
             "title" : "Kurtarma ifadenizi yeni bir cihazda geri yükleyin",
             "description" : "Özel anahtarlarınızı yeni bir Nano üzerinde geri yüklemek için mevcut bir kurtarma ifadesini kullanın!"
+          },
+          "4" : {
+            "title" : "Ledger Recover kullanarak geri yükleyin",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4352,6 +4365,25 @@
             "help" : {
               "help" : "Yardım gerekli",
               "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "“Restore using Ledger Recover” (Ledger Recover kullanarak geri yükle) seçimini yapın",
+            "1" : {
+              "title" : "“Restore” seçimini yapın",
+              "descr" : "Seçmek için iki tuşa aynı anda basın."
+            },
+            "2" : {
+              "title" : "“Restore using Ledger Recover” seçimini yapın"
+            },
+            "help" : {
+              "iDontSee" : "“Restore using Ledger Recover” seçeneği yok",
+              "modal" : {
+                "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
+                "subtitle" : " İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
+                "learnHowToUpdate" : "Güncelleme yönergeleri",
+                "contactLedgerSupport" : "Ledger Destek ile iletişime geçin"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5668,6 +5700,7 @@
   },
   "customImage" : {
     "title" : "Özel kilitli ekran",
+    "managerCTA" : "Kilit ekranı resmi",
     "steps" : {
       "choose" : {
         "stepLabel" : "Bir görüntü seçin",
