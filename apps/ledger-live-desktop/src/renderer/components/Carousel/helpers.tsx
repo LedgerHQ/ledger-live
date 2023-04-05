@@ -73,7 +73,7 @@ const referralProgramSlide = {
 
 export const useDefaultSlides = () => {
   const referralProgramConfig = useFeature("referralProgramDesktopBanner");
-  const portfolioCards = useSelector(portfolioContentCardSelector) || [];
+  const portfolioCards = useSelector(portfolioContentCardSelector);
 
   const slides = useMemo(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {

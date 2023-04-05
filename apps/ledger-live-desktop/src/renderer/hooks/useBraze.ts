@@ -53,8 +53,8 @@ export async function useBraze() {
     braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
       allowUserSuppliedJavascript: true,
-      enableLogging: true,
       enableHtmlInAppMessages: true,
+      enableLogging: __DEV__,
     });
     if (user) {
       braze.changeUser(user.id);
@@ -71,13 +71,10 @@ export async function useBraze() {
 
     braze.requestContentCardsRefresh();
 
-    braze.subscribeToContentCardsUpdates(function(cards) {
-      // cards have been updated
-      console.log("CARDS HAVE BEEN UPDATED", cards);
-
+    braze.subscribeToContentCardsUpdates(cards => {
       const desktopCards = getDesktopCards(cards);
 
-      const portfolioCards = filterByPage(desktopCards, LocationContentCard.Portfolio).map(card =>
+      const portfolioCards = filterByPage(desktopCards, LocationContentCard.Portfolio,).map(card =>
         mapAsPortfolioContentCard(card as ClassicCard),
       );
 
@@ -85,6 +82,7 @@ export async function useBraze() {
         desktopCards,
         LocationContentCard.NotificationCenter,
       ).map(card => mapAsNotificationContentCard(card as ClassicCard));
+
 
       dispatch(setPortfolioCards(portfolioCards));
       dispatch(setNotificationsCards(notificationsCards));
