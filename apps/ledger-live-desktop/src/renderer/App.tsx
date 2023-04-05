@@ -101,7 +101,6 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: any }) => {
   );
 };
 const App = ({ store, initialCountervalues }: Props) => {
-  useBraze();
   return (
     <LiveStyleSheetManager>
       <Provider store={store}>

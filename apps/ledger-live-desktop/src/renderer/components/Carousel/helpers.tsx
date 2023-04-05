@@ -51,7 +51,6 @@ const referralProgramSlide = {
   id: "referralProgram",
   title: <Trans i18nKey={`banners.referralProgram.title`} />,
   description: <Trans i18nKey={`banners.referralProgram.description`} />,
-  // image: ,
   imgs: [
     {
       source: ReferralProgramBgImage,
@@ -82,7 +81,7 @@ export const useDefaultSlides = () => {
     } else {
       return portfolioCards;
     }
-  }, [referralProgramConfig]);
+  }, [referralProgramConfig, portfolioCards]);
 
   return useMemo(
     () =>

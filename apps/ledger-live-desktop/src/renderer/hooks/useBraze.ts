@@ -9,7 +9,7 @@ import { setPortfolioCards } from "../actions/dynamicContent";
 import getUser from "~/helpers/user";
 
 const getPortfolioCards = (elem: braze.ContentCards) =>
-  elem.cards.filter(card => card.extras?.platform === "desktop");
+  elem.cards.filter(card => card.extras?.platform === "desktop" && card.extras?.location === LocationContentCard.Portfolio);
 
 export const mapAsPortfolioContentCard = (card: Card) =>
   ({
