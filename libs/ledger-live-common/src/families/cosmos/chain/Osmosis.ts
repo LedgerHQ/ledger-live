@@ -15,9 +15,6 @@ class Osmosis extends CosmosBase {
       "https://support.ledger.com/hc/en-us/articles/6235986236957-Earn-Osmosis-OSMO-staking-rewards-in-Ledger-Live?docs=true";
     this.minimalTransactionAmount = new BigNumber(10);
     this.validatorOperatorAddressPrefix = "osmovaloper";
-    CosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.push(
-      this.ledgerValidator
-    );
   }
 }
 

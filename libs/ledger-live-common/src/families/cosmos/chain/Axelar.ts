@@ -9,7 +9,6 @@ class Axelar extends CosmosBase {
   lcd!: string;
   constructor() {
     super();
-    this.lcd = "https://lcd-axelar.whispernode.com:443";
     this.stakingDocUrl =
       "https://support.ledger.com/hc/en-us/articles/6235986236957-Earn-Osmosis-OSMO-staking-rewards-in-Ledger-Live?docs=true";
     this.defaultGas = 100000;

@@ -31,7 +31,8 @@ const currencyBridge: CurrencyBridge = {
   preload: async (currency: CryptoCurrency) => {
     const config = await fetchCurrencyConfiguration(currency);
     const cosmosValidatorsManager = new CosmosValidatorsManager(
-      getCryptoCurrencyById(currency.id)
+      getCryptoCurrencyById(currency.id),
+      { endPoint: config.lcd }
     );
     const validators = await cosmosValidatorsManager.getValidators();
     setCosmosPreloadData(currency.id, {
@@ -56,7 +57,7 @@ const currencyBridge: CurrencyBridge = {
       return;
     const relatedImpl = cryptoFactory(currency.id);
     relatedImpl.ledgerValidator = data.config.ledgerValidator;
-    // relatedImpl.lcd = data.config.lcd;
+    relatedImpl.lcd = data.config.lcd;
     const cosmosValidatorsManager = new CosmosValidatorsManager(
       getCryptoCurrencyById(currency.id)
     );
