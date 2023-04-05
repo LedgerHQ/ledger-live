@@ -108,7 +108,7 @@ export default function DelegationEndDate({ navigation, route }: Props) {
                   <DateTimePicker
                     mode="date"
                     value={
-                      new Date(transaction.endTime?.toNumber() || 0 * 1000)
+                      new Date((transaction.endTime?.toNumber() || 0) * 1000)
                     }
                     onChange={onChange}
                     style={styles.datePicker}
@@ -116,7 +116,7 @@ export default function DelegationEndDate({ navigation, route }: Props) {
                   <DateTimePicker
                     mode="time"
                     value={
-                      new Date(transaction.endTime?.toNumber() || 0 * 1000)
+                      new Date((transaction.endTime?.toNumber() || 0) * 1000)
                     }
                     onChange={onChange}
                     style={styles.datePicker}
