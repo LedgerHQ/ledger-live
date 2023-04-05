@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 import { Flex, Alert } from "@ledgerhq/native-ui";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 import Button from "../../../components/Button";
+import Restore from "../../../components/DeviceAction/InstallSetOfApps/Restore";
 
 export default function DebugPlayground() {
   return (
@@ -18,6 +19,12 @@ export default function DebugPlayground() {
           event={""}
           onPress={undefined}
           title={"Action"}
+        />
+        <Restore
+          deviceName={"Ledger Stax"}
+          lastSeenDeviceName={"Ledger Nano"}
+          onConfirm={() => {}}
+          onReject={() => {}}
         />
       </Flex>
     </NavigationScrollView>
