@@ -26,6 +26,7 @@ runs:
         node-version: 18
         cache: pnpm
         cache-dependency-path: "**/pnpm-lock.yaml"
+        registry-url: "https://registry.npmjs.org"
     ## Using the proto toolchain manager:
     # - name: Setup proto
     #   if: ${{ runner.os != 'Windows' }}
