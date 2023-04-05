@@ -3,13 +3,17 @@ import * as braze from "@braze/web-sdk";
 import { Card } from "@braze/web-sdk";
 
 import { getBrazeConfig } from "~/braze-setup";
-import { LocationContentCard, PortfolioContentCard, ContentCard } from "~/types/dynamicContent";
+import { LocationContentCard, PortfolioContentCard } from "~/types/dynamicContent";
 import { useDispatch } from "react-redux";
 import { setPortfolioCards } from "../actions/dynamicContent";
 import getUser from "~/helpers/user";
 
 const getPortfolioCards = (elem: braze.ContentCards) =>
-  elem.cards.filter(card => card.extras?.platform === "desktop" && card.extras?.location === LocationContentCard.Portfolio);
+  elem.cards.filter(
+    card =>
+      card.extras?.platform === "desktop" &&
+      card.extras?.location === LocationContentCard.Portfolio,
+  );
 
 export const mapAsPortfolioContentCard = (card: Card) =>
   ({
@@ -31,7 +35,7 @@ export async function useBraze() {
     braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
       allowUserSuppliedJavascript: true,
-      enableLogging: true,
+      enableLogging: __DEV__,
     });
     if (user) {
       braze.changeUser(user.id);
@@ -47,10 +51,7 @@ export async function useBraze() {
     );
 
     braze.requestContentCardsRefresh();
-    braze.subscribeToContentCardsUpdates(function(cards) {
-      // cards have been updated
-      console.log("CARDS HAVE BEEN UPDATED", cards);
-
+    braze.subscribeToContentCardsUpdates(cards => {
       const portfolioCards = getPortfolioCards(cards).map(card => mapAsPortfolioContentCard(card));
 
       dispatch(setPortfolioCards(portfolioCards));
@@ -58,9 +59,9 @@ export async function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch])
-  
+  }, [dispatch]);
+
   useEffect(() => {
-    initBraze()
+    initBraze();
   }, [initBraze]);
 }
