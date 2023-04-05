@@ -1,5 +1,11 @@
 # @ledgerhq/ui-shared
 
+## 0.1.11-recover-beta.0
+
+### Patch Changes
+
+- [#3065](https://github.com/LedgerHQ/ledger-live/pull/3065) [`acea4bb16d`](https://github.com/LedgerHQ/ledger-live/commit/acea4bb16d5f5b5e509735b3c78d13034f801af9) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Update colors hsla
+
 ## 0.1.10
 
 ### Patch Changes

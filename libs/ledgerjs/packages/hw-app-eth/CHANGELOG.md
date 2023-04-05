@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-eth
 
+## 6.33.0-recover-beta.0
+
+### Minor Changes
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+### Patch Changes
+
+- Updated dependencies [[`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/cryptoassets@9.3.0-recover-beta.0
+  - @ledgerhq/domain-service@1.0.0-recover-beta.0
+
 ## 6.32.2
 
 ### Patch Changes

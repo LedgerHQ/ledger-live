@@ -1,5 +1,14 @@
 # @ledgerhq/native-ui
 
+## 0.17.1-recover-beta.0
+
+### Patch Changes
+
+- [#3065](https://github.com/LedgerHQ/ledger-live/pull/3065) [`acea4bb16d`](https://github.com/LedgerHQ/ledger-live/commit/acea4bb16d5f5b5e509735b3c78d13034f801af9) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Display RGBA color value in storybook
+
+- Updated dependencies [[`acea4bb16d`](https://github.com/LedgerHQ/ledger-live/commit/acea4bb16d5f5b5e509735b3c78d13034f801af9)]:
+  - @ledgerhq/ui-shared@0.1.11-recover-beta.0
+
 ## 0.17.0
 
 ### Minor Changes

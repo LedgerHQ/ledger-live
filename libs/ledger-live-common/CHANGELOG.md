@@ -1,5 +1,33 @@
 # @ledgerhq/live-common
 
+## 29.3.0-recover-beta.0
+
+### Minor Changes
+
+- [#3016](https://github.com/LedgerHQ/ledger-live/pull/3016) [`5fa3f57e08`](https://github.com/LedgerHQ/ledger-live/commit/5fa3f57e08676481d18bdf7fc2406ac1184b1a9a) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - feat: ledger recover feature flag
+
+* [#3122](https://github.com/LedgerHQ/ledger-live/pull/3122) [`282cad03fb`](https://github.com/LedgerHQ/ledger-live/commit/282cad03fb733cc71e767b641c53ee2d469b8295) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update plugins deps
+
+- [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - add protectServicesDiscoverDesktop feature flag
+
+* [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+### Patch Changes
+
+- [#3081](https://github.com/LedgerHQ/ledger-live/pull/3081) [`64ee0b2e03`](https://github.com/LedgerHQ/ledger-live/commit/64ee0b2e032187f5b742f594390a5b30d3850751) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add missing conversion from string to number in Cosmos API response
+
+* [#3103](https://github.com/LedgerHQ/ledger-live/pull/3103) [`fb65760778`](https://github.com/LedgerHQ/ledger-live/commit/fb6576077854fb21541350a9f7c1cb528fba6e6d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Update minimum Polkadot app version to 20.9370.0
+
+- [#3093](https://github.com/LedgerHQ/ledger-live/pull/3093) [`a62be79a56`](https://github.com/LedgerHQ/ledger-live/commit/a62be79a56e7aaaf7712fe006d357e3517f1c4b9) Thanks [@lvndry](https://github.com/lvndry)! - ethereum fetchAllTransaction method uses `from_height` query parameter
+
+- Updated dependencies [[`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/cryptoassets@9.3.0-recover-beta.0
+  - @ledgerhq/hw-app-eth@6.33.0-recover-beta.0
+  - @ledgerhq/domain-service@1.0.0-recover-beta.0
+  - @ledgerhq/coin-framework@0.2.2-recover-beta.0
+  - @ledgerhq/coin-polkadot@0.1.1-recover-beta.0
+  - @ledgerhq/live-portfolio@0.0.2-recover-beta.0
+
 ## 29.2.0
 
 ### Minor Changes

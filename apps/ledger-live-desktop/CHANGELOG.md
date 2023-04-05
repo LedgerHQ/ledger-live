@@ -1,5 +1,31 @@
 # ledger-live-desktop
 
+## 2.57.0-recover-beta.0
+
+### Minor Changes
+
+- [#2891](https://github.com/LedgerHQ/ledger-live/pull/2891) [`04ad7f2de3`](https://github.com/LedgerHQ/ledger-live/commit/04ad7f2de35c5e5e3025f4db81815542af3816f8) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Refactored Webviews;
+  Added WebPTXPlayer;
+
+* [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Add discover Protect modal on sidebar menu
+
+- [#3113](https://github.com/LedgerHQ/ledger-live/pull/3113) [`e486e56723`](https://github.com/LedgerHQ/ledger-live/commit/e486e56723c2e6fe6d299f53b38cb4b03a3ee3ea) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - remove currency under feature flag that has been release
+
+* [#3127](https://github.com/LedgerHQ/ledger-live/pull/3127) [`772e0e6042`](https://github.com/LedgerHQ/ledger-live/commit/772e0e6042b052788f307bb5fb89cf0d6ff4978a) Thanks [@cpellizzari-ledger](https://github.com/cpellizzari-ledger)! - Remove account data from stake button clicked event
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+### Patch Changes
+
+- [#3116](https://github.com/LedgerHQ/ledger-live/pull/3116) [`37b05b991d`](https://github.com/LedgerHQ/ledger-live/commit/37b05b991db519073a92ad5f4e7784006e8517d4) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Fixed a regression on LLD live-app sdk exchange app; backported exchange app from live-app-sdk to wallet-api; added "allow debug apps" in LLM developers menu
+
+- Updated dependencies [[`5fa3f57e08`](https://github.com/LedgerHQ/ledger-live/commit/5fa3f57e08676481d18bdf7fc2406ac1184b1a9a), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`64ee0b2e03`](https://github.com/LedgerHQ/ledger-live/commit/64ee0b2e032187f5b742f594390a5b30d3850751), [`fb65760778`](https://github.com/LedgerHQ/ledger-live/commit/fb6576077854fb21541350a9f7c1cb528fba6e6d), [`a62be79a56`](https://github.com/LedgerHQ/ledger-live/commit/a62be79a56e7aaaf7712fe006d357e3517f1c4b9), [`282cad03fb`](https://github.com/LedgerHQ/ledger-live/commit/282cad03fb733cc71e767b641c53ee2d469b8295), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`acea4bb16d`](https://github.com/LedgerHQ/ledger-live/commit/acea4bb16d5f5b5e509735b3c78d13034f801af9), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/live-common@29.3.0-recover-beta.0
+  - @ledgerhq/react-ui@0.12.1-recover-beta.0
+  - @ledgerhq/types-live@6.32.0-recover-beta.0
+  - @ledgerhq/domain-service@1.0.0-recover-beta.0
+  - @ledgerhq/coin-framework@0.2.2-recover-beta.0
+
 ## 2.56.0
 
 ### Minor Changes

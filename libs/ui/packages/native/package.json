@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.17.0",
+  "version": "0.17.1-recover-beta.0",
   "description": "Ledger Live - Mobile UI",
   "repository": {
     "type": "git",

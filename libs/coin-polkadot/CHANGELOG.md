@@ -1,5 +1,15 @@
 # @ledgerhq/coin-polkadot
 
+## 0.1.1-recover-beta.0
+
+### Patch Changes
+
+- Updated dependencies [[`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/cryptoassets@9.3.0-recover-beta.0
+  - @ledgerhq/types-live@6.32.0-recover-beta.0
+  - @ledgerhq/coin-framework@0.2.2-recover-beta.0
+  - @ledgerhq/live-portfolio@0.0.2-recover-beta.0
+
 ## 0.1.0
 
 ### Minor Changes
