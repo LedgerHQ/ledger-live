@@ -333,11 +333,11 @@ const linkingOptions = {
 const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
   ...linkingOptions,
   config: {
+    initialRouteName: NavigatorName.BaseOnboarding,
     screens: !acceptedTermsOfUse
       ? {}
       : {
           [NavigatorName.Base]: {
-            initialRouteName: NavigatorName.Main,
             screens: {
               [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
               [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
@@ -347,17 +347,6 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
                */
               [ScreenName.PlatformApp]: "discover/:platform",
               [ScreenName.Recover]: "recover/:platform",
-            },
-          },
-          [NavigatorName.BaseOnboarding]: {
-            initialRouteName: NavigatorName.Onboarding,
-            screens: {
-              [NavigatorName.SyncOnboarding]: {
-                screens: {
-                  [ScreenName.SyncOnboardingCompanion]:
-                    "sync-onboarding-companion",
-                },
-              },
             },
           },
         },
