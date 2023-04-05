@@ -120,17 +120,17 @@ const listApps = (
         listCryptoCurrencies(isDevMode, true)
       );
 
-      const installedAppsPromise = installedAppHashesPromise.then((hashes) =>
-        hashes.length
-          ? ManagerAPI.getAppsByHash(
-              hashes
-                .filter(
-                  ({ hash_code_data }) => hash_code_data !== emptyHashData
-                )
-                .map(({ hash }) => hash)
-            )
-          : []
-      );
+      const installedAppsPromise = installedAppHashesPromise.then((hashes) => {
+        // Empty HashData can come from apps that are not real apps (such as langauge packs)
+        // or custom applications that have been sideloaded.
+        const filteredHashes = hashes
+          .filter(({ hash_code_data }) => hash_code_data !== emptyHashData)
+          .map(({ hash }) => hash);
+
+        return filteredHashes.length
+          ? ManagerAPI.getAppsByHash(filteredHashes)
+          : [];
+      });
 
       const [
         installedList,
