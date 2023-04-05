@@ -17,7 +17,13 @@ const Container = styled(Flex).attrs({
 
 const CatalogBanner = () => (
   <Container>
-    <Text variant="h3" fontWeight="semiBold" color="constant.black" mb="8px">
+    <Text
+      variant="h3"
+      fontWeight="semiBold"
+      color="constant.black"
+      mb="8px"
+      testID="discover-banner"
+    >
       <Trans i18nKey="platform.catalog.banner.title" />
     </Text>
     <Text variant="body" color="constant.black" pr={50}>

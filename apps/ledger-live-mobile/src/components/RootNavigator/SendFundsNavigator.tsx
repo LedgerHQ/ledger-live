@@ -39,6 +39,7 @@ export default function SendFundsNavigator() {
           options={{
             headerTitle: () => (
               <StepHeader
+                testID="send-header-step1-title"
                 title={t("send.stepperHeader.selectAccount")}
                 subtitle={t("send.stepperHeader.stepRange", {
                   currentStep: "1",

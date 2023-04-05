@@ -16,12 +16,17 @@ inputs:
   install_playwright:
     description: "install playwright"
     required: false
+  pnpm_dest:
+    description: "the location where to install pnpm"
+    required: false
 
 runs:
   using: "composite"
   steps:
     - name: Setup the toolchain
       uses: ./tools/actions/composites/setup-toolchain
+      with:
+        pnpm_dest: ${{ inputs.pnpm_dest }}
     - uses: actions/setup-python@v4
       if: ${{ !inputs.skip_python }}
       with:
@@ -36,6 +41,8 @@ runs:
         pnpm add -g node-gyp
       shell: bash
     - name: Install dependencies
+      env:
+        LANG: en_US.UTF-8
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-live-app" --unsafe-perm
       shell: bash
     - name: Install playwright dependencies
