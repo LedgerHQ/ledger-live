@@ -341,16 +341,17 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
             screens: {
               [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
               [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
-            },
-          },
-          [NavigatorName.BaseOnboarding]: {
-            initialRouteName: NavigatorName.Onboarding,
-            screens: {
               /**
                * @params ?platform: string
                * ie: "ledgerlive://discover/protect?theme=light" will open the catalog and the protect dapp with a light theme as parameter
                */
               [ScreenName.PlatformApp]: "discover/:platform",
+              [ScreenName.Recover]: "recover/:platform",
+            },
+          },
+          [NavigatorName.BaseOnboarding]: {
+            initialRouteName: NavigatorName.Onboarding,
+            screens: {
               [NavigatorName.SyncOnboarding]: {
                 screens: {
                   [ScreenName.SyncOnboardingCompanion]:

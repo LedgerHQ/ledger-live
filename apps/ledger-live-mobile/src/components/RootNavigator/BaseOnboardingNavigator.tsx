@@ -20,6 +20,7 @@ import { BaseOnboardingNavigatorParamList } from "./types/BaseOnboardingNavigato
 import { RootComposite, StackNavigatorProps } from "./types/helpers";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { LiveApp } from "../../screens/Platform";
+import { RecoverPlayer } from "../../screens/Protect/Player";
 
 const hitSlop = {
   bottom: 10,
@@ -122,20 +123,6 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={NavigatorName.PasswordModifyFlow}
         component={PasswordModifyFlowNavigator}
-      />
-      <Stack.Screen
-        name={ScreenName.PlatformApp}
-        component={LiveApp}
-        options={({ route }) => ({
-          headerBackImage: () => (
-            <Flex pl="16px">
-              <Icons.CloseMedium color="neutral.c100" size="20px" />
-            </Flex>
-          ),
-          headerStyle: styles.headerNoShadow,
-          title: route.params.name,
-          headerShown: true,
-        })}
       />
     </Stack.Navigator>
   );

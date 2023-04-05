@@ -26,14 +26,4 @@ export type BaseOnboardingNavigatorParamList = {
   [NavigatorName.PasswordAddFlow]: NavigatorScreenParams<PasswordAddFlowParamList>;
   [NavigatorName.PasswordModifyFlow]: NavigatorScreenParams<PasswordModifyFlowParamList>;
   [NavigatorName.SyncOnboarding]: NavigatorScreenParams<SyncOnboardingStackParamList>;
-  [ScreenName.PlatformApp]: {
-    platform?: string;
-    name?: string;
-    mode?: string;
-    currency?: string;
-    account?: string;
-    defaultAccountId?: string;
-    defaultCurrencyId?: string;
-    defaultTicker?: string;
-  };
 };
