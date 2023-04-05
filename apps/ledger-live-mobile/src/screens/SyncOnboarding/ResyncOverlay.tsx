@@ -70,7 +70,7 @@ const ResyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
           rowGap={4}
         >
           <Flex mr={4}>
-            <Icons.WarningSolidMedium color="warning.c80" size={20} />
+            <Icons.WarningSolidMedium color="warning.c40" size={20} />
           </Flex>
           <Text
             variant="body"

@@ -41,7 +41,7 @@ const GenericInformationalView: React.FC<Props> = ({
       <Flex alignItems="center" justifyContent="center" flexGrow={1}>
         <Box mb={7}>
           <Flex
-            backgroundColor={"neutral.c100a005"}
+            backgroundColor={"opacityDefault.c05"}
             height={64}
             width={64}
             borderRadius={999}

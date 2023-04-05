@@ -112,7 +112,7 @@ const EditDeviceName: React.FC<Props> = ({
           >
             <BoxedIcon
               Icon={Icons.CheckAloneMedium}
-              iconColor="success.c100"
+              iconColor="success.c50"
               size={64}
               iconSize={24}
             />

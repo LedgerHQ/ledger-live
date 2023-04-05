@@ -31,7 +31,7 @@ const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boole
   if (isLastItem && status === "completed") {
     return theme.colors.success.c30;
   } else if (isLastItem && status === "active") {
-    return theme.colors.success.c100;
+    return theme.colors.success.c50;
   } else if (status === "completed") {
     return theme.colors.primary.c20;
   } else if (status === "active") {
@@ -71,7 +71,7 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
               item.status === "inactive"
                 ? "neutral.c80"
                 : isLastItem
-                ? "success.c100"
+                ? "success.c50"
                 : "primary.c90"
             }
           >
