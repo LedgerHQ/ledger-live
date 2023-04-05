@@ -4,6 +4,10 @@ import {
   UpdateFirmwareActionState,
   initialState,
 } from "../actions/updateFirmware";
+import { throttle } from "rxjs/operators";
+import { interval } from "rxjs";
+
+const STATE_UPDATE_THROTTLE = 500;
 
 export type UseUpdateFirmwareArgs = {
   updateFirmwareAction?: typeof defaultUpdateFirmwareAction;
@@ -32,9 +36,11 @@ export const useUpdateFirmware = ({
     if (nonce > 0) {
       const sub = updateFirmwareAction({
         deviceId,
-      }).subscribe({
-        next: (state) => setUpdateState(state),
-      });
+      })
+        .pipe(throttle((_) => interval(STATE_UPDATE_THROTTLE)))
+        .subscribe({
+          next: (state) => setUpdateState(state),
+        });
 
       return () => {
         sub.unsubscribe();
