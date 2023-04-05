@@ -196,7 +196,9 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-manager-event", e.type, e)),
-          debounce((e: Event) => ("replaceable" in e ? interval(100) : EMPTY)),
+          debounce((e: Event) =>
+            "replaceable" in e && e.replaceable ? interval(100) : EMPTY
+          ),
           scan(reducer, getInitialState())
         )
         .subscribe(setState);
