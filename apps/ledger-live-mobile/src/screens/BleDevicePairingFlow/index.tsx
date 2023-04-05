@@ -1,8 +1,6 @@
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { has as hasFromPath, set as setFromPath } from "lodash";
-import { useSelector } from "react-redux";
-import { BackHandler } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 import { useIncrementOnNavigationFocusState } from "../../helpers/useIncrementOnNavigationFocusState";
@@ -13,7 +11,6 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import DeviceSetupView from "../../components/DeviceSetupView";
-import { hasCompletedOnboardingSelector } from "../../reducers/settings";
 
 export type Props = RootComposite<
   StackNavigatorProps<
