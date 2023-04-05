@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useContext } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useLocale } from "../context/Locale";
@@ -119,9 +119,4 @@ export const AcceptedTermsContextProvider: React.FC<{
       {children}
     </AcceptedTermsContext.Provider>
   );
-};
-
-export const useTermsAccept = () => {
-  const { accepted, accept, unAccept } = useContext(AcceptedTermsContext);
-  return [accepted, accept, unAccept];
 };
