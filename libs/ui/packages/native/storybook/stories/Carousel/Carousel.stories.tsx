@@ -111,7 +111,7 @@ const WithProps = (): JSX.Element => {
       slideIndicatorContainerProps={{
         p: 4,
         style: { borderRadius: 20 },
-        backgroundColor: theme.colors.error.c100,
+        backgroundColor: theme.colors.error.c50,
       }}
     >
       <Item label="primary" />

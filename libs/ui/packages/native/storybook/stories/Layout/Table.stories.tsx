@@ -30,7 +30,7 @@ const TopLeft = () => {
       <Text color={neutral.c100} variant="body" fontWeight="semiBold" mr={2}>
         {text("topLeftText", "Bitcoin 1", "content")}
       </Text>
-      <Icons.CircledCheckRegular size={12.5} color={success.c100} />
+      <Icons.CircledCheckRegular size={12.5} color={success.c50} />
     </FlexBox>
   );
 };

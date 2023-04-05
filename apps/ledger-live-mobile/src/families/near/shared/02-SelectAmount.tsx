@@ -174,10 +174,10 @@ function StakingAmount({ navigation, route }: Props) {
             >
               {remaining.isZero() && (
                 <View style={styles.labelContainer}>
-                  <Check size={16} color={colors.success.c100} />
+                  <Check size={16} color={colors.success.c50} />
                   <LText
                     style={[styles.assetsRemaining]}
-                    color={colors.success.c100}
+                    color={colors.success.c50}
                   >
                     <Trans
                       i18nKey={`near.staking.flow.steps.amount.allAssetsUsed`}

@@ -122,10 +122,10 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
 
             {error ? (
               <Flex alignItems={"center"} flexDirection={"row"} mt={1}>
-                <Icons.WarningMedium color="error.c100" size={16} />
+                <Icons.WarningMedium color="error.c50" size={16} />
                 <Text
                   variant="small"
-                  color="error.c100"
+                  color="error.c50"
                   ml={2}
                   numberOfLines={2}
                 >

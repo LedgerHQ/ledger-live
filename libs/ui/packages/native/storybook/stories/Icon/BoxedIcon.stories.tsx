@@ -20,18 +20,18 @@ const BoxedIconStory = () => {
       <BoxedIcon
         Icon={Icons.HandshakeMedium}
         Badge={Icons.CircledCheckSolidMedium}
-        iconColor="success.c100"
+        iconColor="success.c50"
         borderColor="success.c40"
-        badgeColor="success.c100"
+        badgeColor="success.c50"
         variant={variant}
       />
       <Box height={20} />
       <BoxedIcon
         Icon={Icons.HandshakeMedium}
         Badge={Icons.CircledCrossSolidMedium}
-        iconColor="error.c100"
+        iconColor="error.c50"
         borderColor="error.c40"
-        badgeColor="error.c100"
+        badgeColor="error.c50"
         variant={variant}
       />
       <Box height={20} />

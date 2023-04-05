@@ -78,21 +78,21 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
     `,
   error: {
     outline: `
-      border-color: ${p.theme.colors.error.c100};
-      color: ${p.theme.colors.error.c100};
+      border-color: ${p.theme.colors.error.c50};
+      color: ${p.theme.colors.error.c50};
       background-color: transparent;
       &:hover {
-        background-color: ${rgba(p.theme.colors.error.c100, 0.02)};
+        background-color: ${rgba(p.theme.colors.error.c50, 0.02)};
       }
       &:active {
-        background-color: ${rgba(p.theme.colors.error.c100, 0.05)};
+        background-color: ${rgba(p.theme.colors.error.c50, 0.05)};
       }
     `,
     filled: `
       color: ${p.theme.colors.neutral.c00};
-      background-color: ${p.theme.colors.error.c100};
+      background-color: ${p.theme.colors.error.c50};
       &:hover {
-        background-color: ${p.theme.colors.error.c80};
+        background-color: ${p.theme.colors.error.c40};
       }
     `,
   },

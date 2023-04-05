@@ -41,11 +41,11 @@ const alertColors = {
   },
   warning: {
     backgroundColor: "warning.c30",
-    color: "warning.c100",
+    color: "warning.c50",
   },
   error: {
     backgroundColor: "error.c30",
-    color: "error.c100",
+    color: "error.c50",
   },
 };
 
