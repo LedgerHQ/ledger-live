@@ -1,22 +1,9 @@
 import { BigNumber } from "bignumber.js";
 import {
-  toBitcoinResourcesRaw,
-  fromBitcoinResourcesRaw,
-} from "../families/bitcoin/serialization";
-import {
-  toPolkadotResourcesRaw,
-  fromPolkadotResourcesRaw,
-} from "@ledgerhq/coin-polkadot/serialization";
-import {
-  toCryptoOrgResourcesRaw,
-  fromCryptoOrgResourcesRaw,
-} from "../families/crypto_org/serialization";
-import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
 } from "../currencies";
-import { inferFamilyFromAccountId } from "./index";
 import accountByFamily from "../generated/account";
 import { isAccountEmpty } from "./helpers";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
@@ -24,10 +11,7 @@ import {
   emptyHistoryCache,
   generateHistoryFromOperations,
 } from "@ledgerhq/coin-framework/account/balanceHistoryCache";
-import {
-  fromCardanoResourceRaw,
-  toCardanoResourceRaw,
-} from "../families/cardano/serialization";
+import { inferFamilyFromAccountId } from "@ledgerhq/coin-framework/account/index";
 
 import type {
   Account,
@@ -51,21 +35,7 @@ import {
   toOperationRaw as commonToOperationRaw,
   fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
-import { BitcoinAccount, BitcoinAccountRaw } from "../families/bitcoin/types";
-import {
-  PolkadotAccount,
-  PolkadotAccountRaw,
-} from "@ledgerhq/coin-polkadot/types";
-import {
-  CryptoOrgAccount,
-  CryptoOrgAccountRaw,
-} from "../families/crypto_org/types";
 import { getAccountBridge } from "../bridge";
-
-export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
-export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
-export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
-export { toCardanoResourceRaw, fromCardanoResourceRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -456,30 +426,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   }
 
   switch (res.currency.family) {
-    case "bitcoin": {
-      const bitcoinResourcesRaw = (rawAccount as BitcoinAccountRaw)
-        .bitcoinResources;
-      if (bitcoinResourcesRaw)
-        (res as BitcoinAccount).bitcoinResources =
-          fromBitcoinResourcesRaw(bitcoinResourcesRaw);
-      break;
-    }
-    case "polkadot": {
-      const polkadotResourcesRaw = (rawAccount as PolkadotAccountRaw)
-        .polkadotResources;
-      if (polkadotResourcesRaw)
-        (res as PolkadotAccount).polkadotResources =
-          fromPolkadotResourcesRaw(polkadotResourcesRaw);
-      break;
-    }
-    case "crypto_org": {
-      const cryptoOrgResourcesRaw = (rawAccount as CryptoOrgAccountRaw)
-        .cryptoOrgResources;
-      if (cryptoOrgResourcesRaw)
-        (res as CryptoOrgAccount).cryptoOrgResources =
-          fromCryptoOrgResourcesRaw(cryptoOrgResourcesRaw);
-      break;
-    }
     default: {
       const bridge = getAccountBridge(res);
       const assignFromAccountRaw = bridge.assignFromAccountRaw;
@@ -567,32 +513,6 @@ export function toAccountRaw(account: Account): AccountRaw {
   }
 
   switch (account.currency.family) {
-    case "bitcoin": {
-      const bitcoinAccount = account as BitcoinAccount;
-      if (bitcoinAccount.bitcoinResources) {
-        (res as BitcoinAccountRaw).bitcoinResources = toBitcoinResourcesRaw(
-          bitcoinAccount.bitcoinResources
-        );
-      }
-      break;
-    }
-    case "polkadot": {
-      const polkadotAccount = account as PolkadotAccount;
-      if (polkadotAccount.polkadotResources) {
-        (res as PolkadotAccountRaw).polkadotResources = toPolkadotResourcesRaw(
-          polkadotAccount.polkadotResources
-        );
-      }
-      break;
-    }
-    case "crypto_org": {
-      const crytpoOrgAccount = account as CryptoOrgAccount;
-      if (crytpoOrgAccount.cryptoOrgResources) {
-        (res as CryptoOrgAccountRaw).cryptoOrgResources =
-          toCryptoOrgResourcesRaw(crytpoOrgAccount.cryptoOrgResources);
-      }
-      break;
-    }
     default: {
       const bridge = getAccountBridge(account);
       const assignToAccountRaw = bridge.assignToAccountRaw;

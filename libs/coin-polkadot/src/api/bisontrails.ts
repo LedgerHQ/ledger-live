@@ -1,8 +1,8 @@
-import network from "@ledgerhq/coin-framework/network";
+import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import querystring from "querystring";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getEnv } from "@ledgerhq/coin-framework/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { getOperationType } from "./common";
 import type { OperationType, Operation } from "@ledgerhq/types-live";
 import { isValidAddress } from "../address";
@@ -38,9 +38,9 @@ const getAccountOperationUrl = (
     startAt,
   })}`;
 
-const getWithdrawUnbondedAmount = (extrinsic) => {
+const getWithdrawUnbondedAmount = (extrinsic: any) => {
   return (
-    extrinsic?.staking?.eventStaking.reduce((acc, curr) => {
+    extrinsic?.staking?.eventStaking.reduce((acc: any, curr: any) => {
       return curr.method === "Withdrawn"
         ? new BigNumber(acc).plus(curr.value)
         : new BigNumber(0);
@@ -48,7 +48,7 @@ const getWithdrawUnbondedAmount = (extrinsic) => {
   );
 };
 
-const getController = (_extrinsic) => {
+const getController = (_extrinsic: any) => {
   // TODO: ask BisonTrails to provide the info
   return "";
 };
@@ -126,7 +126,7 @@ const getExtra = (type: OperationType, extrinsic: any): Record<string, any> => {
       extra = {
         ...extra,
         validators:
-          extrinsic.staking?.validators?.reduce((acc, current) => {
+          extrinsic.staking?.validators?.reduce((acc: any, current: any) => {
             return [...acc, current.address];
           }, []) ?? [],
       };
@@ -144,7 +144,7 @@ const getExtra = (type: OperationType, extrinsic: any): Record<string, any> => {
  *
  * @returns {BigNumber}
  */
-const getValue = (extrinsic, type: OperationType): BigNumber => {
+const getValue = (extrinsic: any, type: OperationType): BigNumber => {
   if (!extrinsic.isSuccess) {
     return type === "IN"
       ? new BigNumber(0)
@@ -178,7 +178,7 @@ const getValue = (extrinsic, type: OperationType): BigNumber => {
 const extrinsicToOperation = (
   addr: string,
   accountId: string,
-  extrinsic
+  extrinsic: any
 ): Partial<Operation> | null => {
   let type = getOperationType(extrinsic.section, extrinsic.method);
 
@@ -226,7 +226,7 @@ const extrinsicToOperation = (
 const rewardToOperation = (
   addr: string,
   accountId: string,
-  reward
+  reward: any
 ): Partial<Operation> => {
   const hash = reward.extrinsicHash;
   const type = "REWARD_PAYOUT";
@@ -257,7 +257,7 @@ const rewardToOperation = (
 const slashToOperation = (
   addr: string,
   accountId: string,
-  slash
+  slash: any
 ): Partial<Operation> => {
   const hash = `${slash.blockNumber}`;
   const type = "SLASH";
@@ -286,44 +286,46 @@ const slashToOperation = (
  *
  * @param {Operation[]} prevOperations
  */
-const fetchOperationList = async (
-  accountId: string,
-  addr: string,
-  startAt: number,
-  offset = 0,
-  prevOperations: Operation[] = []
-) => {
-  const { data } = await network({
-    method: "GET",
-    url: getAccountOperationUrl(addr, offset, startAt),
-  });
-  const operations = data.extrinsics.map((extrinsic) =>
-    extrinsicToOperation(addr, accountId, extrinsic)
-  );
-  const rewards = data.rewards.map((reward) =>
-    rewardToOperation(addr, accountId, reward)
-  );
-  const slashes = data.slashes.map((slash) =>
-    slashToOperation(addr, accountId, slash)
-  );
-  const mergedOp = [...prevOperations, ...operations, ...rewards, ...slashes];
+const fetchOperationList =
+  (network: NetworkRequestCall) =>
+  async (
+    accountId: string,
+    addr: string,
+    startAt: number,
+    offset = 0,
+    prevOperations: Operation[] = []
+  ): Promise<Operation[]> => {
+    const { data } = await network({
+      method: "GET",
+      url: getAccountOperationUrl(addr, offset, startAt),
+    });
+    const operations = data.extrinsics.map((extrinsic: any) =>
+      extrinsicToOperation(addr, accountId, extrinsic)
+    );
+    const rewards = data.rewards.map((reward: any) =>
+      rewardToOperation(addr, accountId, reward)
+    );
+    const slashes = data.slashes.map((slash: any) =>
+      slashToOperation(addr, accountId, slash)
+    );
+    const mergedOp = [...prevOperations, ...operations, ...rewards, ...slashes];
 
-  if (
-    operations.length < LIMIT &&
-    rewards.length < LIMIT &&
-    slashes.length < LIMIT
-  ) {
-    return mergedOp.filter(Boolean).sort((a, b) => b.date - a.date);
-  }
+    if (
+      operations.length < LIMIT &&
+      rewards.length < LIMIT &&
+      slashes.length < LIMIT
+    ) {
+      return mergedOp.filter(Boolean).sort((a, b) => b.date - a.date);
+    }
 
-  return await fetchOperationList(
-    accountId,
-    addr,
-    startAt,
-    offset + LIMIT,
-    mergedOp
-  );
-};
+    return await fetchOperationList(network)(
+      accountId,
+      addr,
+      startAt,
+      offset + LIMIT,
+      mergedOp
+    );
+  };
 
 /**
  * Fetch all operations for a single account from indexer
@@ -334,10 +336,8 @@ const fetchOperationList = async (
  *
  * @return {Operation[]}
  */
-export const getOperations = async (
-  accountId: string,
-  addr: string,
-  startAt = 0
-) => {
-  return await fetchOperationList(accountId, addr, startAt);
-};
+export const getOperations =
+  (network: NetworkRequestCall) =>
+  async (accountId: string, addr: string, startAt = 0) => {
+    return await fetchOperationList(network)(accountId, addr, startAt);
+  };

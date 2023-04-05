@@ -2,8 +2,8 @@ import React, { useCallback, memo } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import styled, { useTheme } from "styled-components";
-import { Flex, Text, Icon, Box } from "@ledgerhq/react-ui";
+import styled, { CSSProperties, useTheme } from "styled-components";
+import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
@@ -44,7 +44,7 @@ const EllipsisText = styled(Text)`
 type Props = {
   currency: CurrencyData;
   counterCurrency: string;
-  style: any;
+  style: CSSProperties;
   loading: boolean;
   locale: string;
   isStarred: boolean;
@@ -76,9 +76,7 @@ function MarketRowItem({
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
-  const startStakeFlow = useStakeFlow({
-    currencies: currency?.internalCurrency ? [currency.internalCurrency.id] : undefined,
-  });
+  const startStakeFlow = useStakeFlow();
 
   const openAddAccounts = useCallback(() => {
     if (currency)
@@ -183,10 +181,12 @@ function MarketRowItem({
         page: "Page Market",
         ...stakeDefaultTrack,
       });
-      startStakeFlow();
+      startStakeFlow({
+        currencies: currency?.internalCurrency ? [currency.internalCurrency.id] : undefined,
+      });
       setTrackingSource("Page Market");
     },
-    [currency?.ticker, startStakeFlow],
+    [currency?.internalCurrency, currency?.ticker, startStakeFlow],
   );
 
   const onStarClick = useCallback(

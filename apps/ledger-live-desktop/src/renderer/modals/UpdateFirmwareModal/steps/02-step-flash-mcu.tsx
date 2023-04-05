@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { timeout } from "rxjs/operators";
-import { Subscriber, from, Observable } from "rxjs";
+import { Subscriber, from } from "rxjs";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";

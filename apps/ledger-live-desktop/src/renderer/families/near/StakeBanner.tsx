@@ -11,7 +11,7 @@ import { getAccountBannerState as getNearBannerState } from "@ledgerhq/live-comm
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 
-export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
+const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
@@ -48,7 +48,7 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
       page: "Page Account",
       button: "delegate",
       redelegate,
-      token: "NEAR",
+      currency: "NEAR",
     });
     if (redelegate) {
       dispatch(
@@ -80,3 +80,5 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
     />
   );
 };
+
+export default StakeBanner;

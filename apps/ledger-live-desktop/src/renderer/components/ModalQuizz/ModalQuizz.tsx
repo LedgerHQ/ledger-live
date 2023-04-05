@@ -85,14 +85,12 @@ export type Props = {
   onClose: () => void;
   onLose: () => void;
   onWin: () => void;
-  isOpen: boolean;
   dismissable?: boolean;
 };
 
 const ModalQuizz: React.FunctionComponent<Props> = ({
   title,
   steps,
-  isOpen,
   onClose,
   onLose,
   onWin,
@@ -199,8 +197,8 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
 
   const rightSideBgColor = userMadeAChoice
     ? isCorrectChoice
-      ? "success.c100"
-      : "error.c100"
+      ? "success.c50"
+      : "error.c50"
     : "primary.c60";
 
   const AsideRight = (

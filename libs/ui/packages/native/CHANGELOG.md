@@ -1,5 +1,59 @@
 # @ledgerhq/native-ui
 
+## 0.17.0
+
+### Minor Changes
+
+- [#2843](https://github.com/LedgerHQ/ledger-live/pull/2843) [`61848df7ef`](https://github.com/LedgerHQ/ledger-live/commit/61848df7eff1abfef330585ca96b1688c858c637) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Fix metro config (forced dependencies)
+  ContinueOnDevice: new UI item to indicate the user to continue on the device
+  Divider: add a `text` prop to display some text in the middle of the divider
+  VerticalTimeline: new appearance (colors, fonts, dashed lines, icon sizes)
+  VerticalTimeline: make it scrollable (no need to wrap it in a ScrollView)
+  VerticalTimeline: add auto scrolling to active item
+  VerticalTimeline: add `header?: React.ReactNode | null` prop
+  VerticalTimeline: expose `BodyText` and `SubtitleText` components
+  Storybook - VerticalTimeline: more exhaustive examples
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#2843](https://github.com/LedgerHQ/ledger-live/pull/2843) [`61848df7ef`](https://github.com/LedgerHQ/ledger-live/commit/61848df7eff1abfef330585ca96b1688c858c637) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Fix metro config (forced dependencies)
+  ContinueOnDevice: new UI item to indicate the user to continue on the device
+  Divider: add a `text` prop to display some text in the middle of the divider
+  VerticalTimeline: new appearance (colors, fonts, dashed lines, icon sizes)
+  VerticalTimeline: make it scrollable (no need to wrap it in a ScrollView)
+  VerticalTimeline: add auto scrolling to active item
+  VerticalTimeline: add `header?: React.ReactNode | null` prop
+  VerticalTimeline: expose `BodyText` and `SubtitleText` components
+  Storybook - VerticalTimeline: more exhaustive examples
+
+## 0.16.0
+
+### Minor Changes
+
+- [#2713](https://github.com/LedgerHQ/ledger-live/pull/2713) [`0840cfeab8`](https://github.com/LedgerHQ/ledger-live/commit/0840cfeab8d7d3a75def5de22285b913ad049d5a) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new VerticalStepper component to Natie UI, similar to the VerticalTimeline but featuring a new design and nesting capabilities
+
+### Patch Changes
+
+- [#2733](https://github.com/LedgerHQ/ledger-live/pull/2733) [`0272d44dff`](https://github.com/LedgerHQ/ledger-live/commit/0272d44dff11e356858f666b962b65025d2029eb) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Remove cycle dependencies
+
+- Updated dependencies [[`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5)]:
+  - @ledgerhq/icons-ui@0.3.5
+
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#2713](https://github.com/LedgerHQ/ledger-live/pull/2713) [`0840cfeab8`](https://github.com/LedgerHQ/ledger-live/commit/0840cfeab8d7d3a75def5de22285b913ad049d5a) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new VerticalStepper component to Natie UI, similar to the VerticalTimeline but featuring a new design and nesting capabilities
+
+### Patch Changes
+
+- [#2733](https://github.com/LedgerHQ/ledger-live/pull/2733) [`0272d44dff`](https://github.com/LedgerHQ/ledger-live/commit/0272d44dff11e356858f666b962b65025d2029eb) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Remove cycle dependencies
+
+- Updated dependencies [[`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5)]:
+  - @ledgerhq/icons-ui@0.3.5-next.0
+
 ## 0.15.1
 
 ### Patch Changes

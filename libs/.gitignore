@@ -1,0 +1,33 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+dbdata
+tmp
+
+.yalc
+yalc.lock
+
+# dependencies
+node_modules/
+
+# testing
+coverage
+
+# build
+lib
+lib-es
+
+# misc
+.DS_Store
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.vscode
+
+# git mergetool
+*.orig
+
+flow-coverage
+
+# Jetbrains
+.idea

@@ -1,15 +1,15 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
+import { toAccountRaw } from "./serialization";
 import {
-  toAccountRaw,
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
-} from ".";
+} from "@ledgerhq/coin-framework/account/index";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
-import { getTagDerivationMode } from "../derivation";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import byFamily from "../generated/account";
 import { nftsByCollections } from "../nft";
 import type { Unit } from "@ledgerhq/types-cryptoassets";

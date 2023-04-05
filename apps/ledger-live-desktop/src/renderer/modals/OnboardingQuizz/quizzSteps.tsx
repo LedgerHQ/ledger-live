@@ -1,6 +1,5 @@
 import React from "react";
 import { TFunction } from "react-i18next";
-import { Icons } from "@ledgerhq/react-ui";
 
 import Illustration from "~/renderer/components/Illustration";
 

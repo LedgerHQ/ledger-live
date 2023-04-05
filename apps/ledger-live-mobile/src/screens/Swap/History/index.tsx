@@ -64,7 +64,12 @@ const History = () => {
       if (!cancelled) {
         updatedAccounts.filter(Boolean).forEach(account => {
           if (account)
-            dispatch(updateAccountWithUpdater(account.id, _ => account));
+            dispatch(
+              updateAccountWithUpdater({
+                accountId: account.id,
+                updater: _ => account,
+              }),
+            );
         });
       }
       setIsRefreshing(false);

@@ -52,6 +52,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [
             "0455534443a0b86991c6218b36c1d19d4a2e9eb0ce3606eb4800000006000000013045022100b2e358726e4e6a6752cf344017c0e9d45b9a904120758d45f61b2804f9ad5299022015161ef28d8c4481bd9432c13562def9cce688bcfec896ef244c9a213f106cdd",
           ],
@@ -84,6 +85,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [
             "0455534443a0b86991c6218b36c1d19d4a2e9eb0ce3606eb4800000006000000013045022100b2e358726e4e6a6752cf344017c0e9d45b9a904120758d45f61b2804f9ad5299022015161ef28d8c4481bd9432c13562def9cce688bcfec896ef244c9a213f106cdd",
           ],
@@ -116,6 +118,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [],
           externalPlugin: [],
@@ -146,6 +149,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [],
           externalPlugin: [],
@@ -207,6 +211,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [nftAPDU],
           externalPlugin: [],
@@ -243,6 +248,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [nftAPDU],
           externalPlugin: [],
@@ -276,6 +282,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [nftAPDU],
           externalPlugin: [],
@@ -309,6 +316,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [nftAPDU],
           externalPlugin: [],
@@ -345,6 +353,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [nftAPDU],
           externalPlugin: [],
@@ -378,6 +387,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [],
           externalPlugin: [],
@@ -411,6 +421,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [],
           externalPlugin: [],
@@ -475,6 +486,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [nftAPDU],
           externalPlugin: [],
@@ -508,6 +520,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [nftAPDU],
           externalPlugin: [],
@@ -544,6 +557,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [nftAPDU],
           externalPlugin: [],
@@ -577,6 +591,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [],
           externalPlugin: [],
@@ -610,6 +625,7 @@ describe("Ledger Service", () => {
         );
 
         expect(resolution).toEqual({
+          domains: [],
           erc20Tokens: [],
           nfts: [],
           externalPlugin: [],
@@ -649,6 +665,7 @@ describe("Ledger Service", () => {
           );
 
           expect(resolution).toEqual({
+            domains: [],
             erc20Tokens: [
               "054d415449437d1afa7b718fb893db30a3abc0cfc608aacfebb000000012000000013044022000d8fa7b6e409a0dc55723ba975179e7d1181d1fc78fccbece4e5a264814366a02203927d84a710c8892d02f7386ad20147c75fba4bdd486b0256ecd005770a7ca5b",
               "034441496b175474e89094c44da98b954eedeac495271d0f00000012000000013045022100b3aa979633284eb0f55459099333ab92cf06fdd58dc90e9c070000c8e968864c02207b10ec7d6609f51dda53d083a6e165a0abf3a77e13250e6f260772809b49aff5",
@@ -697,6 +714,7 @@ describe("Ledger Service", () => {
           );
 
           expect(resolution).toEqual({
+            domains: [],
             erc20Tokens: [
               "054d415449437d1afa7b718fb893db30a3abc0cfc608aacfebb000000012000000013044022000d8fa7b6e409a0dc55723ba975179e7d1181d1fc78fccbece4e5a264814366a02203927d84a710c8892d02f7386ad20147c75fba4bdd486b0256ecd005770a7ca5b",
             ],

@@ -49,6 +49,7 @@ const FilteredSearchBar = <T,>({
           onChange={onChange}
           placeholder={t("common.search")}
           placeholderTextColor={colors.neutral.c70}
+          testID="common-search-field"
         />
       </Flex>
       <Search

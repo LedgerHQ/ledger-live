@@ -1,5 +1,261 @@
 # @ledgerhq/live-common
 
+## 29.2.0
+
+### Minor Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`842eaacf83`](https://github.com/LedgerHQ/ledger-live/commit/842eaacf839776956435d12dda8bf6d8b386a784) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - feat: ledger recover feature flag
+
+- [#2296](https://github.com/LedgerHQ/ledger-live/pull/2296) [`3b5bd4f8e3`](https://github.com/LedgerHQ/ledger-live/commit/3b5bd4f8e32333eca7eb8c22d9a6cfda22c766f9) Thanks [@Sheng-Long](https://github.com/Sheng-Long)! - Updated Hedera fee estimate and get usd price if possible for estimate.
+
+- [#2252](https://github.com/LedgerHQ/ledger-live/pull/2252) [`496df9da72`](https://github.com/LedgerHQ/ledger-live/commit/496df9da7216d792d74c7cc22be68fb30415325c) Thanks [@Sheng-Long](https://github.com/Sheng-Long)! - Second Hedera Client created for balance specific queries
+
+- [#2784](https://github.com/LedgerHQ/ledger-live/pull/2784) [`9b22d499f2`](https://github.com/LedgerHQ/ledger-live/commit/9b22d499f2d0e62d78dbe178808d5fa392d22dda) Thanks [@konoart](https://github.com/konoart)! - Fix minimum amount requirement for Solana accounts to be considered rent exempted after transfering and staking
+
+- [#2327](https://github.com/LedgerHQ/ledger-live/pull/2327) [`76a2f02f03`](https://github.com/LedgerHQ/ledger-live/commit/76a2f02f03863ab01fcdf136bd436c62fb8f526e) Thanks [@RamyEB](https://github.com/RamyEB)! - Add Discover v2 UI behind feature flag
+
+- [#2844](https://github.com/LedgerHQ/ledger-live/pull/2844) [`b2a94b9081`](https://github.com/LedgerHQ/ledger-live/commit/b2a94b908103cbee9473319cc3706876d7ce2a19) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - polkadot serialization coin mod part 2
+
+### Patch Changes
+
+- [#2976](https://github.com/LedgerHQ/ledger-live/pull/2976) [`8340016ef0`](https://github.com/LedgerHQ/ledger-live/commit/8340016ef051927a6701c731ac16842b7caf7023) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove serialization logic polkadot
+
+- [#2680](https://github.com/LedgerHQ/ledger-live/pull/2680) [`c60e8c4b86`](https://github.com/LedgerHQ/ledger-live/commit/c60e8c4b862177e5adab2bc5eeb74313a5c2b2a9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove bitcoin specific logic outside of its family package
+
+- [#3002](https://github.com/LedgerHQ/ledger-live/pull/3002) [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support 5102 status on language pack installation (full device)
+
+- [#3030](https://github.com/LedgerHQ/ledger-live/pull/3030) [`9d15eb2e2f`](https://github.com/LedgerHQ/ledger-live/commit/9d15eb2e2f6b72bf796b12daa88736b03873857b) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix wrong amount displayed for Amount to receive
+
+- [#2949](https://github.com/LedgerHQ/ledger-live/pull/2949) [`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - modified the getdeviceinfo command to support another status code
+
+- [#2664](https://github.com/LedgerHQ/ledger-live/pull/2664) [`9f55124458`](https://github.com/LedgerHQ/ledger-live/commit/9f551244584c20638e1eec2d984dd725fe2688f6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove cryptoorg coin specific logic outside of its family folder
+
+- [#2814](https://github.com/LedgerHQ/ledger-live/pull/2814) [`81a0cbb8ee`](https://github.com/LedgerHQ/ledger-live/commit/81a0cbb8ee0583bdec083c6de0797510a3bf8be3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Expose listedApps flag from connectApp for better UX on inline install apps
+
+- [#2975](https://github.com/LedgerHQ/ledger-live/pull/2975) [`a1e097d391`](https://github.com/LedgerHQ/ledger-live/commit/a1e097d391644fe1a7dd51ca49cf7b51667e4625) Thanks [@gre](https://github.com/gre)! - chore: slow rate for account incremental sync and countervalues
+
+- [#2956](https://github.com/LedgerHQ/ledger-live/pull/2956) [`6abe8dd35b`](https://github.com/LedgerHQ/ledger-live/commit/6abe8dd35b103253650f93080b105286afbac4c2) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: handle new restore onboarding steps
+
+  2 new steps: SetupChoiceRestore and RecoverRestore
+
+- [#2911](https://github.com/LedgerHQ/ledger-live/pull/2911) [`fb464093d8`](https://github.com/LedgerHQ/ledger-live/commit/fb464093d85b9e1f73fa761fb7439ee5fb0804d9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve getOnboardingStatePolling logic attempting to fix disconnect bug
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: re-work of the transport error mapping HwTransportErrorType
+
+  And updating functions and hooks using them
+
+- [#2559](https://github.com/LedgerHQ/ledger-live/pull/2559) [`ae211bda45`](https://github.com/LedgerHQ/ledger-live/commit/ae211bda45192e1575c6c7656dfad68c7dd93ffe) Thanks [@vlad-anger](https://github.com/vlad-anger)! - Crypto Icons - Add support for Ghostmarket tokens icons
+
+- [#2928](https://github.com/LedgerHQ/ledger-live/pull/2928) [`4772a234f7`](https://github.com/LedgerHQ/ledger-live/commit/4772a234f7d35e0c925837eacc194a20bdc49a7c) Thanks [@juan-cortes](https://github.com/juan-cortes)! - chore: reset correctly error in useGenuineCheck.ts
+
+- Updated dependencies [[`c6a88dd5ab`](https://github.com/LedgerHQ/ledger-live/commit/c6a88dd5abae2b85c3c085ea65e81f89950ecdd4), [`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`f364721cd9`](https://github.com/LedgerHQ/ledger-live/commit/f364721cd9c1681141b62cd807796e0a0a45efe4), [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472), [`0ca89a8067`](https://github.com/LedgerHQ/ledger-live/commit/0ca89a80678743e9462aaf977448e759924a56b2), [`9bb21e26a8`](https://github.com/LedgerHQ/ledger-live/commit/9bb21e26a88a2db7093a3d5cc75ab03d12b25ffb), [`a1e097d391`](https://github.com/LedgerHQ/ledger-live/commit/a1e097d391644fe1a7dd51ca49cf7b51667e4625), [`170f608de3`](https://github.com/LedgerHQ/ledger-live/commit/170f608de311f320795793b4606b063a3ce96def), [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b), [`76a2f02f03`](https://github.com/LedgerHQ/ledger-live/commit/76a2f02f03863ab01fcdf136bd436c62fb8f526e), [`b2a94b9081`](https://github.com/LedgerHQ/ledger-live/commit/b2a94b908103cbee9473319cc3706876d7ce2a19)]:
+  - @ledgerhq/coin-framework@0.2.1
+  - @ledgerhq/errors@6.12.4
+  - @ledgerhq/cryptoassets@9.2.0
+  - @ledgerhq/coin-polkadot@0.1.0
+  - @ledgerhq/devices@8.0.1
+  - @ledgerhq/hw-app-algorand@6.27.13
+  - @ledgerhq/hw-app-cosmos@6.27.13
+  - @ledgerhq/hw-app-eth@6.32.2
+  - @ledgerhq/hw-app-near@6.27.8
+  - @ledgerhq/hw-app-polkadot@6.27.13
+  - @ledgerhq/hw-app-solana@7.0.7
+  - @ledgerhq/hw-app-trx@6.27.13
+  - @ledgerhq/hw-transport@6.28.2
+  - @ledgerhq/hw-transport-node-speculos@6.27.13
+  - @ledgerhq/hw-app-btc@10.0.1
+  - @ledgerhq/hw-app-str@6.27.13
+  - @ledgerhq/hw-app-tezos@6.27.13
+  - @ledgerhq/hw-app-xrp@6.27.13
+  - @ledgerhq/hw-transport-mocker@6.27.13
+
+## 29.2.0-next.1
+
+### Minor Changes
+
+- [#3063](https://github.com/LedgerHQ/ledger-live/pull/3063) [`842eaacf83`](https://github.com/LedgerHQ/ledger-live/commit/842eaacf839776956435d12dda8bf6d8b386a784) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - feat: ledger recover feature flag
+
+## 29.2.0-next.0
+
+### Minor Changes
+
+- [#2296](https://github.com/LedgerHQ/ledger-live/pull/2296) [`3b5bd4f8e3`](https://github.com/LedgerHQ/ledger-live/commit/3b5bd4f8e32333eca7eb8c22d9a6cfda22c766f9) Thanks [@Sheng-Long](https://github.com/Sheng-Long)! - Updated Hedera fee estimate and get usd price if possible for estimate.
+
+- [#2252](https://github.com/LedgerHQ/ledger-live/pull/2252) [`496df9da72`](https://github.com/LedgerHQ/ledger-live/commit/496df9da7216d792d74c7cc22be68fb30415325c) Thanks [@Sheng-Long](https://github.com/Sheng-Long)! - Second Hedera Client created for balance specific queries
+
+- [#2784](https://github.com/LedgerHQ/ledger-live/pull/2784) [`9b22d499f2`](https://github.com/LedgerHQ/ledger-live/commit/9b22d499f2d0e62d78dbe178808d5fa392d22dda) Thanks [@konoart](https://github.com/konoart)! - Fix minimum amount requirement for Solana accounts to be considered rent exempted after transfering and staking
+
+- [#2327](https://github.com/LedgerHQ/ledger-live/pull/2327) [`76a2f02f03`](https://github.com/LedgerHQ/ledger-live/commit/76a2f02f03863ab01fcdf136bd436c62fb8f526e) Thanks [@RamyEB](https://github.com/RamyEB)! - Add Discover v2 UI behind feature flag
+
+- [#2844](https://github.com/LedgerHQ/ledger-live/pull/2844) [`b2a94b9081`](https://github.com/LedgerHQ/ledger-live/commit/b2a94b908103cbee9473319cc3706876d7ce2a19) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - polkadot serialization coin mod part 2
+
+### Patch Changes
+
+- [#2976](https://github.com/LedgerHQ/ledger-live/pull/2976) [`8340016ef0`](https://github.com/LedgerHQ/ledger-live/commit/8340016ef051927a6701c731ac16842b7caf7023) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove serialization logic polkadot
+
+- [#2680](https://github.com/LedgerHQ/ledger-live/pull/2680) [`c60e8c4b86`](https://github.com/LedgerHQ/ledger-live/commit/c60e8c4b862177e5adab2bc5eeb74313a5c2b2a9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove bitcoin specific logic outside of its family package
+
+- [#3002](https://github.com/LedgerHQ/ledger-live/pull/3002) [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Support 5102 status on language pack installation (full device)
+
+- [#3030](https://github.com/LedgerHQ/ledger-live/pull/3030) [`9d15eb2e2f`](https://github.com/LedgerHQ/ledger-live/commit/9d15eb2e2f6b72bf796b12daa88736b03873857b) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix wrong amount displayed for Amount to receive
+
+- [#2949](https://github.com/LedgerHQ/ledger-live/pull/2949) [`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - modified the getdeviceinfo command to support another status code
+
+- [#2664](https://github.com/LedgerHQ/ledger-live/pull/2664) [`9f55124458`](https://github.com/LedgerHQ/ledger-live/commit/9f551244584c20638e1eec2d984dd725fe2688f6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove cryptoorg coin specific logic outside of its family folder
+
+- [#2814](https://github.com/LedgerHQ/ledger-live/pull/2814) [`81a0cbb8ee`](https://github.com/LedgerHQ/ledger-live/commit/81a0cbb8ee0583bdec083c6de0797510a3bf8be3) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Expose listedApps flag from connectApp for better UX on inline install apps
+
+- [#2975](https://github.com/LedgerHQ/ledger-live/pull/2975) [`a1e097d391`](https://github.com/LedgerHQ/ledger-live/commit/a1e097d391644fe1a7dd51ca49cf7b51667e4625) Thanks [@gre](https://github.com/gre)! - chore: slow rate for account incremental sync and countervalues
+
+- [#2956](https://github.com/LedgerHQ/ledger-live/pull/2956) [`6abe8dd35b`](https://github.com/LedgerHQ/ledger-live/commit/6abe8dd35b103253650f93080b105286afbac4c2) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: handle new restore onboarding steps
+
+  2 new steps: SetupChoiceRestore and RecoverRestore
+
+- [#2911](https://github.com/LedgerHQ/ledger-live/pull/2911) [`fb464093d8`](https://github.com/LedgerHQ/ledger-live/commit/fb464093d85b9e1f73fa761fb7439ee5fb0804d9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve getOnboardingStatePolling logic attempting to fix disconnect bug
+
+- [#2912](https://github.com/LedgerHQ/ledger-live/pull/2912) [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: re-work of the transport error mapping HwTransportErrorType
+
+  And updating functions and hooks using them
+
+- [#2559](https://github.com/LedgerHQ/ledger-live/pull/2559) [`ae211bda45`](https://github.com/LedgerHQ/ledger-live/commit/ae211bda45192e1575c6c7656dfad68c7dd93ffe) Thanks [@vlad-anger](https://github.com/vlad-anger)! - Crypto Icons - Add support for Ghostmarket tokens icons
+
+- [#2928](https://github.com/LedgerHQ/ledger-live/pull/2928) [`4772a234f7`](https://github.com/LedgerHQ/ledger-live/commit/4772a234f7d35e0c925837eacc194a20bdc49a7c) Thanks [@juan-cortes](https://github.com/juan-cortes)! - chore: reset correctly error in useGenuineCheck.ts
+
+- Updated dependencies [[`c6a88dd5ab`](https://github.com/LedgerHQ/ledger-live/commit/c6a88dd5abae2b85c3c085ea65e81f89950ecdd4), [`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`f364721cd9`](https://github.com/LedgerHQ/ledger-live/commit/f364721cd9c1681141b62cd807796e0a0a45efe4), [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472), [`0ca89a8067`](https://github.com/LedgerHQ/ledger-live/commit/0ca89a80678743e9462aaf977448e759924a56b2), [`9bb21e26a8`](https://github.com/LedgerHQ/ledger-live/commit/9bb21e26a88a2db7093a3d5cc75ab03d12b25ffb), [`a1e097d391`](https://github.com/LedgerHQ/ledger-live/commit/a1e097d391644fe1a7dd51ca49cf7b51667e4625), [`170f608de3`](https://github.com/LedgerHQ/ledger-live/commit/170f608de311f320795793b4606b063a3ce96def), [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b), [`76a2f02f03`](https://github.com/LedgerHQ/ledger-live/commit/76a2f02f03863ab01fcdf136bd436c62fb8f526e), [`b2a94b9081`](https://github.com/LedgerHQ/ledger-live/commit/b2a94b908103cbee9473319cc3706876d7ce2a19)]:
+  - @ledgerhq/coin-framework@0.2.1-next.0
+  - @ledgerhq/errors@6.12.4-next.0
+  - @ledgerhq/cryptoassets@9.2.0-next.0
+  - @ledgerhq/coin-polkadot@0.1.0-next.0
+  - @ledgerhq/devices@8.0.1-next.0
+  - @ledgerhq/hw-app-algorand@6.27.13-next.0
+  - @ledgerhq/hw-app-cosmos@6.27.13-next.0
+  - @ledgerhq/hw-app-eth@6.32.2-next.0
+  - @ledgerhq/hw-app-near@6.27.8-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.13-next.0
+  - @ledgerhq/hw-app-solana@7.0.7-next.0
+  - @ledgerhq/hw-app-trx@6.27.13-next.0
+  - @ledgerhq/hw-transport@6.28.2-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.13-next.0
+  - @ledgerhq/hw-app-btc@10.0.1-next.0
+  - @ledgerhq/hw-app-str@6.27.13-next.0
+  - @ledgerhq/hw-app-tezos@6.27.13-next.0
+  - @ledgerhq/hw-app-xrp@6.27.13-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.13-next.0
+
+## 29.1.0
+
+### Minor Changes
+
+- [#2618](https://github.com/LedgerHQ/ledger-live/pull/2618) [`9ec0582d2a`](https://github.com/LedgerHQ/ledger-live/commit/9ec0582d2ae8ee57884531d4d104a3724735a2c2) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add token for pagination eth explorers tx
+
+- [#2744](https://github.com/LedgerHQ/ledger-live/pull/2744) [`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for address poisoning filtering
+
+### Patch Changes
+
+- [#2693](https://github.com/LedgerHQ/ledger-live/pull/2693) [`3460d0908b`](https://github.com/LedgerHQ/ledger-live/commit/3460d0908b6a4fb0f1ff280545cc37644166b06b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Gas limit error when above available balance fix
+
+- [#2516](https://github.com/LedgerHQ/ledger-live/pull/2516) [`47e3ef84ba`](https://github.com/LedgerHQ/ledger-live/commit/47e3ef84bad0e93d6f1d8f921b3fb2aa04240065) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove tezos coin specific logic outside of its folder
+
+- [#2652](https://github.com/LedgerHQ/ledger-live/pull/2652) [`897f42df13`](https://github.com/LedgerHQ/ledger-live/commit/897f42df1389768f66882172341be600e09f1791) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Get device name when accessing the manager
+
+- [#2908](https://github.com/LedgerHQ/ledger-live/pull/2908) [`b947934b68`](https://github.com/LedgerHQ/ledger-live/commit/b947934b68f351f81e3f7f8031bfe52743948fe6) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix btc integration test
+
+- [#2526](https://github.com/LedgerHQ/ledger-live/pull/2526) [`24bc5674d2`](https://github.com/LedgerHQ/ledger-live/commit/24bc5674d28009a032bb421e20f7a480b0557e29) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove celo coin specific logic outside of its folder
+
+- [#2740](https://github.com/LedgerHQ/ledger-live/pull/2740) [`fbc7c4c83a`](https://github.com/LedgerHQ/ledger-live/commit/fbc7c4c83a4e84618cf18a4c8d108396fa7cda7a) Thanks [@Justkant](https://github.com/Justkant)! - fix(DeviceConnect): remove onError handler
+
+  The error is already handled by the UI in `DeviceActionModal`
+  Also adds a correct title to this screen and fixes the `SafeAreaView`
+
+- [#2737](https://github.com/LedgerHQ/ledger-live/pull/2737) [`ab0781e7cb`](https://github.com/LedgerHQ/ledger-live/commit/ab0781e7cb0ab191519a4860ccc6c7f6a472b500) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Disable intall for elrond
+
+- [#2854](https://github.com/LedgerHQ/ledger-live/pull/2854) [`a87ee27900`](https://github.com/LedgerHQ/ledger-live/commit/a87ee27900ec062bccc0e4cf453b4d2112f83ada) Thanks [@lvndry](https://github.com/lvndry)! - Remove useless dependencies for Avalanche app
+
+- [#2639](https://github.com/LedgerHQ/ledger-live/pull/2639) [`ebe618881d`](https://github.com/LedgerHQ/ledger-live/commit/ebe618881d9e9c7159d7a9fe135e18b0cb2fde8f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - remove zcash outdated package
+
+- [#2779](https://github.com/LedgerHQ/ledger-live/pull/2779) [`297d6cc4a0`](https://github.com/LedgerHQ/ledger-live/commit/297d6cc4a03444fce5272f192accc96fb7f26cef) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - add edit transaction helper and env variable
+
+- [#2609](https://github.com/LedgerHQ/ledger-live/pull/2609) [`ef5835035b`](https://github.com/LedgerHQ/ledger-live/commit/ef5835035b93bb06f9cfbbb9da74ec2b2a53c5a7) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove elrond specific logic outside of elrond family folder
+
+- [#2584](https://github.com/LedgerHQ/ledger-live/pull/2584) [`f2968d5706`](https://github.com/LedgerHQ/ledger-live/commit/f2968d57065bd0b5219f97029887a2f61390ac27) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove solana coin specific logic outside of its folder
+
+- [#2791](https://github.com/LedgerHQ/ledger-live/pull/2791) [`684c10d10a`](https://github.com/LedgerHQ/ledger-live/commit/684c10d10a51337e22b838e3ae6465721477c4de) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Blacklist Security Key app from version check on live-common
+
+- [#2681](https://github.com/LedgerHQ/ledger-live/pull/2681) [`0f99b5dc44`](https://github.com/LedgerHQ/ledger-live/commit/0f99b5dc44f0e4f44e4199e80d40fb1bc5a88853) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove cosmos coin specific logic outside of its family folder
+
+- [#2787](https://github.com/LedgerHQ/ledger-live/pull/2787) [`0207d76b15`](https://github.com/LedgerHQ/ledger-live/commit/0207d76b15dca7128aea720b1663c58a12f42967) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Enable Localization flags for stax
+
+- [#2561](https://github.com/LedgerHQ/ledger-live/pull/2561) [`7daaa8f750`](https://github.com/LedgerHQ/ledger-live/commit/7daaa8f75029927459b8132befcd6a20b3ef8e17) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove tron coin specific logic outside of its folder
+
+- [#2924](https://github.com/LedgerHQ/ledger-live/pull/2924) [`01a33f58ba`](https://github.com/LedgerHQ/ledger-live/commit/01a33f58ba6c5518045546e8f38be3f05fc2a935) Thanks [@Justkant](https://github.com/Justkant)! - fix: requestAccount currencies
+
+- [#2788](https://github.com/LedgerHQ/ledger-live/pull/2788) [`f7f38ae801`](https://github.com/LedgerHQ/ledger-live/commit/f7f38ae801c7f78c04cf776e7fdab63d7cfb77d4) Thanks [@Justkant](https://github.com/Justkant)! - fix: filter outside SelectAccountAndCurrencyDrawer [LIVE-5865]
+
+- [#2827](https://github.com/LedgerHQ/ledger-live/pull/2827) [`16cad60fb0`](https://github.com/LedgerHQ/ledger-live/commit/16cad60fb0d21752fae5e3db6d0100ef5396e0a4) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Solana - set max validators to 1000, set cache duration to 15min
+
+- Updated dependencies [[`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba), [`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840), [`0bf82a2b6c`](https://github.com/LedgerHQ/ledger-live/commit/0bf82a2b6cd1d0cac102cc6e142ad8d1ea098497), [`297d6cc4a0`](https://github.com/LedgerHQ/ledger-live/commit/297d6cc4a03444fce5272f192accc96fb7f26cef)]:
+  - @ledgerhq/coin-framework@0.2.0
+  - @ledgerhq/cryptoassets@9.1.0
+  - @ledgerhq/hw-app-eth@6.32.1
+  - @ledgerhq/coin-polkadot@0.0.3
+
+## 29.1.0-next.0
+
+### Minor Changes
+
+- [#2618](https://github.com/LedgerHQ/ledger-live/pull/2618) [`9ec0582d2a`](https://github.com/LedgerHQ/ledger-live/commit/9ec0582d2ae8ee57884531d4d104a3724735a2c2) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add token for pagination eth explorers tx
+
+- [#2744](https://github.com/LedgerHQ/ledger-live/pull/2744) [`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for address poisoning filtering
+
+### Patch Changes
+
+- [#2693](https://github.com/LedgerHQ/ledger-live/pull/2693) [`3460d0908b`](https://github.com/LedgerHQ/ledger-live/commit/3460d0908b6a4fb0f1ff280545cc37644166b06b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Gas limit error when above available balance fix
+
+- [#2516](https://github.com/LedgerHQ/ledger-live/pull/2516) [`47e3ef84ba`](https://github.com/LedgerHQ/ledger-live/commit/47e3ef84bad0e93d6f1d8f921b3fb2aa04240065) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove tezos coin specific logic outside of its folder
+
+- [#2652](https://github.com/LedgerHQ/ledger-live/pull/2652) [`897f42df13`](https://github.com/LedgerHQ/ledger-live/commit/897f42df1389768f66882172341be600e09f1791) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Get device name when accessing the manager
+
+- [#2908](https://github.com/LedgerHQ/ledger-live/pull/2908) [`b947934b68`](https://github.com/LedgerHQ/ledger-live/commit/b947934b68f351f81e3f7f8031bfe52743948fe6) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix btc integration test
+
+- [#2526](https://github.com/LedgerHQ/ledger-live/pull/2526) [`24bc5674d2`](https://github.com/LedgerHQ/ledger-live/commit/24bc5674d28009a032bb421e20f7a480b0557e29) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove celo coin specific logic outside of its folder
+
+- [#2740](https://github.com/LedgerHQ/ledger-live/pull/2740) [`fbc7c4c83a`](https://github.com/LedgerHQ/ledger-live/commit/fbc7c4c83a4e84618cf18a4c8d108396fa7cda7a) Thanks [@Justkant](https://github.com/Justkant)! - fix(DeviceConnect): remove onError handler
+
+  The error is already handled by the UI in `DeviceActionModal`
+  Also adds a correct title to this screen and fixes the `SafeAreaView`
+
+- [#2737](https://github.com/LedgerHQ/ledger-live/pull/2737) [`ab0781e7cb`](https://github.com/LedgerHQ/ledger-live/commit/ab0781e7cb0ab191519a4860ccc6c7f6a472b500) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Disable intall for elrond
+
+- [#2854](https://github.com/LedgerHQ/ledger-live/pull/2854) [`a87ee27900`](https://github.com/LedgerHQ/ledger-live/commit/a87ee27900ec062bccc0e4cf453b4d2112f83ada) Thanks [@lvndry](https://github.com/lvndry)! - Remove useless dependencies for Avalanche app
+
+- [#2639](https://github.com/LedgerHQ/ledger-live/pull/2639) [`ebe618881d`](https://github.com/LedgerHQ/ledger-live/commit/ebe618881d9e9c7159d7a9fe135e18b0cb2fde8f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - remove zcash outdated package
+
+- [#2779](https://github.com/LedgerHQ/ledger-live/pull/2779) [`297d6cc4a0`](https://github.com/LedgerHQ/ledger-live/commit/297d6cc4a03444fce5272f192accc96fb7f26cef) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - add edit transaction helper and env variable
+
+- [#2609](https://github.com/LedgerHQ/ledger-live/pull/2609) [`ef5835035b`](https://github.com/LedgerHQ/ledger-live/commit/ef5835035b93bb06f9cfbbb9da74ec2b2a53c5a7) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove elrond specific logic outside of elrond family folder
+
+- [#2584](https://github.com/LedgerHQ/ledger-live/pull/2584) [`f2968d5706`](https://github.com/LedgerHQ/ledger-live/commit/f2968d57065bd0b5219f97029887a2f61390ac27) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove solana coin specific logic outside of its folder
+
+- [#2791](https://github.com/LedgerHQ/ledger-live/pull/2791) [`684c10d10a`](https://github.com/LedgerHQ/ledger-live/commit/684c10d10a51337e22b838e3ae6465721477c4de) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Blacklist Security Key app from version check on live-common
+
+- [#2681](https://github.com/LedgerHQ/ledger-live/pull/2681) [`0f99b5dc44`](https://github.com/LedgerHQ/ledger-live/commit/0f99b5dc44f0e4f44e4199e80d40fb1bc5a88853) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove cosmos coin specific logic outside of its family folder
+
+- [#2787](https://github.com/LedgerHQ/ledger-live/pull/2787) [`0207d76b15`](https://github.com/LedgerHQ/ledger-live/commit/0207d76b15dca7128aea720b1663c58a12f42967) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Enable Localization flags for stax
+
+- [#2561](https://github.com/LedgerHQ/ledger-live/pull/2561) [`7daaa8f750`](https://github.com/LedgerHQ/ledger-live/commit/7daaa8f75029927459b8132befcd6a20b3ef8e17) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Remove tron coin specific logic outside of its folder
+
+- [#2924](https://github.com/LedgerHQ/ledger-live/pull/2924) [`01a33f58ba`](https://github.com/LedgerHQ/ledger-live/commit/01a33f58ba6c5518045546e8f38be3f05fc2a935) Thanks [@Justkant](https://github.com/Justkant)! - fix: requestAccount currencies
+
+- [#2788](https://github.com/LedgerHQ/ledger-live/pull/2788) [`f7f38ae801`](https://github.com/LedgerHQ/ledger-live/commit/f7f38ae801c7f78c04cf776e7fdab63d7cfb77d4) Thanks [@Justkant](https://github.com/Justkant)! - fix: filter outside SelectAccountAndCurrencyDrawer [LIVE-5865]
+
+- [#2827](https://github.com/LedgerHQ/ledger-live/pull/2827) [`16cad60fb0`](https://github.com/LedgerHQ/ledger-live/commit/16cad60fb0d21752fae5e3db6d0100ef5396e0a4) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Solana - set max validators to 1000, set cache duration to 15min
+
+- Updated dependencies [[`bc3af8a918`](https://github.com/LedgerHQ/ledger-live/commit/bc3af8a91819eaa653f76db6333508111963fdba), [`900ef4f528`](https://github.com/LedgerHQ/ledger-live/commit/900ef4f528c3b2359d666fbb76073978d5f9c840), [`0bf82a2b6c`](https://github.com/LedgerHQ/ledger-live/commit/0bf82a2b6cd1d0cac102cc6e142ad8d1ea098497), [`297d6cc4a0`](https://github.com/LedgerHQ/ledger-live/commit/297d6cc4a03444fce5272f192accc96fb7f26cef)]:
+  - @ledgerhq/coin-framework@0.2.0-next.0
+  - @ledgerhq/cryptoassets@9.1.0-next.0
+  - @ledgerhq/hw-app-eth@6.32.1-next.0
+  - @ledgerhq/coin-polkadot@0.0.3-next.0
+
 ## 29.0.0
 
 ### Major Changes

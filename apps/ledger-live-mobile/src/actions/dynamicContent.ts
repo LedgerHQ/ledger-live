@@ -20,10 +20,7 @@ const setDynamicContentWalletCardsAction =
 
 export const setDynamicContentWalletCards = (
   walletCards: WalletContentCard[],
-) =>
-  setDynamicContentWalletCardsAction({
-    walletCards,
-  });
+) => setDynamicContentWalletCardsAction(walletCards);
 
 const setDynamicContentAssetsCardsAction =
   createAction<DynamicContentSetAssetCardsPayload>(
@@ -31,9 +28,7 @@ const setDynamicContentAssetsCardsAction =
   );
 
 export const setDynamicContentAssetsCards = (assetsCards: AssetContentCard[]) =>
-  setDynamicContentAssetsCardsAction({
-    assetsCards,
-  });
+  setDynamicContentAssetsCardsAction(assetsCards);
 
 const setDynamicContentLearnCardsAction =
   createAction<DynamicContentSetLearnCardsPayload>(
@@ -41,9 +36,7 @@ const setDynamicContentLearnCardsAction =
   );
 
 export const setDynamicContentLearnCards = (learnCards: LearnContentCard[]) =>
-  setDynamicContentLearnCardsAction({
-    learnCards,
-  });
+  setDynamicContentLearnCardsAction(learnCards);
 
 const setDynamicContentNotificationCardsAction =
   createAction<DynamicContentSetNotificationCardsPayload>(
@@ -52,7 +45,4 @@ const setDynamicContentNotificationCardsAction =
 
 export const setDynamicContentNotificationCards = (
   notificationCards: NotificationContentCard[],
-) =>
-  setDynamicContentNotificationCardsAction({
-    notificationCards,
-  });
+) => setDynamicContentNotificationCardsAction(notificationCards);

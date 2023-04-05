@@ -1,4 +1,4 @@
-import React, { ComponentType, memo } from "react";
+import React, { ComponentType, useMemo, memo } from "react";
 import {
   getCryptoCurrencyIcon,
   getTokenCurrencyIcon,
@@ -9,19 +9,23 @@ import {
   Currency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Text, ensureContrast } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 
-import { useCurrencyColor } from "../helpers/getCurrencyColor";
+import {
+  getCurrencyColor,
+  useCurrencyColor,
+} from "../helpers/getCurrencyColor";
 
-const DefaultWrapper = styled(Flex)`
+const DefaultWrapper = styled(Flex)<{ disabled?: boolean }>`
   height: ${p => p.size}px;
   width: ${p => p.size}px;
   align-items: center;
   justify-content: center;
+  opacity: ${p => (p.disabled ? 0.6 : 1)};
 `;
 
-const CircleWrapper = styled(Flex)`
+const CircleWrapper = styled(Flex)<{ disabled?: boolean }>`
   border-radius: 9999px;
   border: 1px solid transparent;
   background: ${p => p.color};
@@ -29,6 +33,7 @@ const CircleWrapper = styled(Flex)`
   width: ${p => p.size}px;
   align-items: center;
   justify-content: center;
+  opacity: ${p => (p.disabled ? 0.6 : 1)};
 `;
 
 type IconProps = {
@@ -62,13 +67,26 @@ type Props = {
   radius?: number;
   bg?: string;
   circle?: boolean;
+  disabled?: boolean;
 };
 
-const CurrencyIcon = ({ size, currency, circle, color, radius, bg }: Props) => {
+const CurrencyIcon = ({
+  size,
+  currency,
+  circle,
+  color,
+  radius,
+  bg,
+  disabled,
+}: Props) => {
   const { colors } = useTheme();
+  const bgColor = useMemo(
+    () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
+    [colors, currency],
+  );
   const currencyColor = useCurrencyColor(currency, colors.background.main);
-
   const overrideColor = color || currencyColor;
+  const iconSize = size * 0.625;
 
   if (currency.type === "FiatCurrency") {
     return null;
@@ -78,15 +96,20 @@ const CurrencyIcon = ({ size, currency, circle, color, radius, bg }: Props) => {
 
   if (circle) {
     return (
-      <CircleWrapper size={size} color={bg || colors.background.main}>
-        <IconComponent size={size} color={overrideColor} />
+      <CircleWrapper size={size} color={bg || bgColor} disabled={disabled}>
+        <IconComponent size={iconSize} color={overrideColor} />
       </CircleWrapper>
     );
   }
 
   return (
-    <DefaultWrapper size={size} borderRadius={radius} bg={bg}>
-      <IconComponent size={size} color={overrideColor} />
+    <DefaultWrapper
+      size={size}
+      borderRadius={radius}
+      bg={bg}
+      disabled={disabled}
+    >
+      <IconComponent size={iconSize} color={overrideColor} />
     </DefaultWrapper>
   );
 };

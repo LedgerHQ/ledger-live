@@ -155,7 +155,9 @@ export type API = {
     high: BigNumber;
     next_base: BigNumber;
   }>;
-  getBlockByHash: (blockHash: string) => Promise<BlockByHashOutput | undefined>;
+  getBlockByHash: (
+    blockHash: string | null | undefined
+  ) => Promise<BlockByHashOutput | undefined>;
 };
 
 export const apiForCurrency = (currency: CryptoCurrency): API => {
@@ -180,7 +182,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         noinput: true,
       };
       if (blockHeight) {
-        query.block_height = blockHeight;
+        query.from_height = blockHeight;
         query.order = "descending";
       }
       if (token) {
@@ -302,7 +304,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         return data
           .map((m: any) => {
             if (!m || typeof m !== "object") return;
-            const { spender, value } = m;
+            const { spender, count: value } = m;
             if (typeof spender !== "string" || typeof value !== "string")
               return;
             return {

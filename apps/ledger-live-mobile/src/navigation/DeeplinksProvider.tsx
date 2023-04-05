@@ -61,7 +61,30 @@ function isInvalidWalletConnectLink(url: string) {
   }
   return true;
 }
+
+const recoverManifests = [
+  "protect",
+  "protect-simu",
+  "protect-staging",
+  "protect-preprod",
+  "protect-prod",
+  "protect-sec",
+  "protect-sit",
+];
+
 function getProxyURL(url: string) {
+  const uri = new URL(url);
+  const { hostname, pathname } = uri;
+  const platform = pathname.split("/")[1];
+
+  if (
+    hostname === "discover" &&
+    platform &&
+    recoverManifests.includes(platform)
+  ) {
+    return url.replace("://discover", "://recover");
+  }
+
   if (isWalletConnectUrl(url)) {
     return `ledgerlive://wc?uri=${encodeURIComponent(url)}`;
   }
@@ -105,6 +128,8 @@ const linkingOptions = {
 
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
+          [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
+
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -129,6 +154,7 @@ const linkingOptions = {
            * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
            */
           [ScreenName.PlatformApp]: "discover/:platform",
+          [ScreenName.Recover]: "recover/:platform",
           [NavigatorName.Main]: {
             initialRouteName: ScreenName.Portfolio,
             screens: {
@@ -386,7 +412,7 @@ export const DeeplinksProvider = ({
           const { hostname, pathname } = url;
           const platform = pathname.split("/")[1];
 
-          if (hostname === "discover" && platform) {
+          if ((hostname === "discover" || hostname === "recover") && platform) {
             /**
              * Upstream validation of "ledgerlive://discover/:platform":
              *  - checking that a manifest exists

@@ -1,11 +1,11 @@
 const testPathIgnorePatterns = ["lib/", "lib-es/"];
 
-let testRegex = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
+let testRegex = ".(test|spec).[jt]sx?$";
 if (process.env.IGNORE_INTEGRATION_TESTS) {
-  testPathIgnorePatterns.push(".*\\.integration\\.test\\.[tj]s");
+  testPathIgnorePatterns.push(".integration.(test|spec).[tj]sx?$");
 }
 if (process.env.ONLY_INTEGRATION_TESTS) {
-  testRegex = "(/__tests__/.*|(\\.|/)integration\\.(test|spec))\\.[jt]sx?$";
+  testRegex = ".integration.(test|spec).[jt]sx?$";
 }
 const reporters = ["default"];
 if (process.env.CI) {
@@ -14,6 +14,11 @@ if (process.env.CI) {
 
 const defaultConfig = {
   preset: "ts-jest",
+  globals: {
+    "ts-jest": {
+      tsconfig: "./src/__tests__/tsconfig.json",
+    },
+  },
   testEnvironment: "node",
   coverageDirectory: "./coverage/",
   coverageReporters: ["json", "lcov", "clover"],
@@ -22,28 +27,25 @@ const defaultConfig = {
   coveragePathIgnorePatterns: ["src/__tests__"],
   modulePathIgnorePatterns: [
     "<rootDir>/benchmark/.*",
-    "<rootDir>/cli/.yalc/.*"
+    "<rootDir>/cli/.yalc/.*",
   ],
   testPathIgnorePatterns,
   testRegex,
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
-  moduleDirectories: ["node_modules"]
+  moduleDirectories: ["node_modules"],
 };
 
 module.exports = {
   projects: [
     {
       ...defaultConfig,
-      testPathIgnorePatterns: [
-        ...testPathIgnorePatterns,
-        "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx"
-      ]
+      testPathIgnorePatterns: [...testPathIgnorePatterns, ".(test|spec).tsx"],
     },
     {
       ...defaultConfig,
       displayName: "dom",
       testEnvironment: "jsdom",
-      testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx"
-    }
-  ]
+      testRegex: ".react.(test|spec).tsx",
+    },
+  ],
 };
