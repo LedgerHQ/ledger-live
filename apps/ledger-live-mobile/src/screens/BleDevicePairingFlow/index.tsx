@@ -136,52 +136,8 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
     [navigateInput, navigation, navigationType, pathToDeviceParam],
   );
 
-  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-
-  const handleGoBackFromScanning = useCallback(() => {
-    if (navigation.canGoBack()) {
-      navigation.goBack();
-    } else if (hasCompletedOnboarding) {
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: NavigatorName.Main,
-          },
-        ],
-      });
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            // @ts-expect-error is fixed in a future screen
-            name: NavigatorName.BaseOnboarding,
-            state: {
-              routes: [
-                {
-                  name: ScreenName.OnboardingWelcome,
-                },
-              ],
-            },
-          },
-        ],
-      });
-    }
-  }, [navigation, hasCompletedOnboarding]);
-
-  // Handles back button, necessary when the user comes from the deep link
-  useEffect(() => {
-    const listener = BackHandler.addEventListener("hardwareBackPress", () => {
-      handleGoBackFromScanning();
-      return true;
-    });
-
-    return () => listener.remove();
-  }, [handleGoBackFromScanning]);
-
   return (
-    <DeviceSetupView hasBackButton onBack={handleGoBackFromScanning}>
+    <DeviceSetupView hasBackButton>
       <Flex px={6} flex={1}>
         <BleDevicePairingFlowComponent
           key={keyToReset}
