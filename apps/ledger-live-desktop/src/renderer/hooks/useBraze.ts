@@ -13,12 +13,6 @@ import { useDispatch } from "react-redux";
 import { setNotificationsCards, setPortfolioCards } from "../actions/dynamicContent";
 import getUser from "~/helpers/user";
 
-const getPortfolioCards = (elem: braze.ContentCards) =>
-  elem.cards.filter(
-    card =>
-      card.extras?.platform === "desktop" &&
-      card.extras?.location === LocationContentCard.Portfolio,
-  );
 const getDesktopCards = (elem: braze.ContentCards) =>
   elem.cards.filter(card => card.extras?.platform === Platform.Desktop);
 
@@ -90,9 +84,6 @@ export async function useBraze() {
         desktopCards,
         LocationContentCard.NotificationCenter,
       ).map(card => mapAsNotificationContentCard(card as ClassicCard));
-
-      console.log("notificationsCards", notificationsCards);
-      console.log("portfolioCards", portfolioCards);
 
       dispatch(setPortfolioCards(portfolioCards));
       dispatch(setNotificationsCards(notificationsCards));
