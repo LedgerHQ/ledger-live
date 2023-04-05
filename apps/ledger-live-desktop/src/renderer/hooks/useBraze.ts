@@ -74,7 +74,7 @@ export async function useBraze() {
     braze.subscribeToContentCardsUpdates(cards => {
       const desktopCards = getDesktopCards(cards);
 
-      const portfolioCards = filterByPage(desktopCards, LocationContentCard.Portfolio,).map(card =>
+      const portfolioCards = filterByPage(desktopCards, LocationContentCard.Portfolio).map(card =>
         mapAsPortfolioContentCard(card as ClassicCard),
       );
 
@@ -82,7 +82,6 @@ export async function useBraze() {
         desktopCards,
         LocationContentCard.NotificationCenter,
       ).map(card => mapAsNotificationContentCard(card as ClassicCard));
-
 
       dispatch(setPortfolioCards(portfolioCards));
       dispatch(setNotificationsCards(notificationsCards));
