@@ -30,18 +30,18 @@ const EllipsedText = styled(Text)`
 `;
 
 type Img = {
-  source: string,
-  transform: [number, number, number, number],
-  size: { width: number, height: number },
+  source: string;
+  transform: [number, number, number, number];
+  size: { width: number; height: number };
 };
 type Props = {
-  id: string,
-  url?: string,
-  path?: string,
-  title: string,
-  description: string,
-  imgs?: Img[],
-  image?: string,
+  id: string;
+  url?: string;
+  path?: string;
+  title: string;
+  description: string;
+  imgs?: Img[];
+  image?: string;
 };
 
 const Slide = ({ id, url, path, title, description, image, imgs }: Props) => {
@@ -82,7 +82,7 @@ const Slide = ({ id, url, path, title, description, image, imgs }: Props) => {
       campaign: id,
       page: "Portfolio",
     });
-  }, [history, path, url]);
+  }, [history, id, path, title, url]);
 
   // After initial slide-in animation, set the offset to zero
   useEffect(() => {
@@ -107,17 +107,19 @@ const Slide = ({ id, url, path, title, description, image, imgs }: Props) => {
           {description}
         </EllipsedText>
       </Box>
-      {imgs && (<IllustrationWrapper>
-        {imgs.map(({ source, transform, size }, i) => (
-          <Layer
-            key={i}
-            style={getTransform.apply(null, transform)}
-            image={source}
-            width={size.width}
-            height={size.height}
-          />
-        ))}
-      </IllustrationWrapper>)}
+      {imgs && (
+        <IllustrationWrapper>
+          {imgs.map(({ source, transform, size }, i) => (
+            <Layer
+              key={i}
+              style={getTransform.apply(null, transform)}
+              image={source}
+              width={size.width}
+              height={size.height}
+            />
+          ))}
+        </IllustrationWrapper>
+      )}
       {image && (
         <Box mr={8}>
           <Image resource={image} alt="" width={180} height={180} />
