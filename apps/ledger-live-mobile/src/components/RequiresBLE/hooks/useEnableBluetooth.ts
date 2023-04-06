@@ -13,7 +13,7 @@ type AndroidError = {
 };
 
 export enum BluetoothPromptResult {
-  BLE_UNKWOWN_STATE = "BLE_UNKWOWN_STATE",
+  BLE_UNKNOWN_STATE = "BLE_UNKNOWN_STATE",
   BLE_CAN_BE_ENABLED = "BLE_CAN_BE_ENABLED",
   BLE_CANNOT_BE_ENABLED = "BLE_CANNOT_BE_ENABLED",
 }
@@ -22,7 +22,7 @@ export enum BluetoothPromptResult {
  * Hook returning a callback that checks the bluetooth services state and requests (if necessary) the user to enable them
  *
  * Works for both iOS and Android.
- * But on iOS the prompt will return an undefined value, which will result in a BLE_UNKWOWN_STATE.
+ * But on iOS the prompt will return an undefined value, which will result in a BLE_UNKNOWN_STATE.
  *
  * If you want to enable the bluetooth services directly and/or keep track of the bluetooth services state,
  * use useEnableBluetooth defined below.
@@ -33,7 +33,7 @@ export function usePromptEnableBluetoothCallback() {
       const result = await NativeModules.BluetoothHelperModule.prompt();
 
       if (result === undefined) {
-        return BluetoothPromptResult.BLE_UNKWOWN_STATE;
+        return BluetoothPromptResult.BLE_UNKNOWN_STATE;
       }
 
       const resultAsInt = parseInt(result, 10);
@@ -102,7 +102,7 @@ export function useEnableBluetooth(
   const checkAndRequestAgain = useCallback(async () => {
     if (!isHookEnabled) return;
 
-    // We actually can't do anything with the result, as on iOS it will always be BLE_UNKWOWN_STATE
+    // We actually can't do anything with the result, as on iOS it will always be BLE_UNKNOWN_STATE
     await promptBluetoothCallback();
   }, [isHookEnabled, promptBluetoothCallback]);
 
