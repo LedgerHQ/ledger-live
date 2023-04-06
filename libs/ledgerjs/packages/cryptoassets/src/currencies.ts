@@ -1539,11 +1539,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         name: "Injective",
         code: "INJ",
-        magnitude: 6,
+        magnitude: 18,
       },
       {
         name: "Micro-Injective",
-        code: "uinj",
+        code: "inj",
         magnitude: 0,
       },
     ],
@@ -2064,7 +2064,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         name: "Onomy",
         code: "NOM",
-        magnitude: 9,
+        magnitude: 18,
       },
       {
         name: "Micro-Onomy",
@@ -2587,14 +2587,14 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  secret_network: {
+  secret_test_hehe: {
     type: "CryptoCurrency",
-    id: "secret_network",
+    id: "secret_test_hehe",
     coinType: CoinType.ATOM,
     name: "SecretNetwork",
     managerAppName: "Cosmos",
     ticker: "SCRT",
-    scheme: "secret_network",
+    scheme: "secret_test_hehe",
     color: "#a3b0bd",
     family: "cosmos",
     units: [

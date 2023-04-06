@@ -6,6 +6,8 @@ class SecretNetwork extends CosmosBase {
   unbondingPeriod: number;
   ledgerValidator!: string;
   validatorOperatorAddressPrefix: string;
+  prefix: string;
+
   constructor() {
     super();
     this.lcd = "https://secret-4.api.trivium.network:1317";
@@ -14,6 +16,7 @@ class SecretNetwork extends CosmosBase {
     this.defaultGas = 100000;
     this.unbondingPeriod = 28;
     this.validatorOperatorAddressPrefix = "secretvaloper";
+    this.prefix = "secret";
   }
 }
 

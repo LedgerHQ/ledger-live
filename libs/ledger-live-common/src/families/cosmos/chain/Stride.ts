@@ -6,6 +6,8 @@ class Stride extends CosmosBase {
   unbondingPeriod: number;
   ledgerValidator!: string;
   validatorOperatorAddressPrefix: string;
+  prefix: string;
+
   constructor() {
     super();
     this.stakingDocUrl =
@@ -13,6 +15,7 @@ class Stride extends CosmosBase {
     this.defaultGas = 100000;
     this.unbondingPeriod = 28;
     this.validatorOperatorAddressPrefix = "stridevaloper";
+    this.prefix = "stride";
   }
 }
 

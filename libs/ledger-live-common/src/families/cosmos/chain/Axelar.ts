@@ -4,6 +4,7 @@ class Axelar extends CosmosBase {
   stakingDocUrl: string;
   unbondingPeriod: number;
   validatorOperatorAddressPrefix: string;
+  prefix: string;
   // Provided by coin config
   ledgerValidator!: string;
   lcd!: string;
@@ -14,6 +15,7 @@ class Axelar extends CosmosBase {
     this.defaultGas = 100000;
     this.unbondingPeriod = 21;
     this.validatorOperatorAddressPrefix = "axelarvaloper";
+    this.prefix = "axelar";
   }
 }
 

@@ -20,7 +20,15 @@ export class CosmosAPI {
     currency: CryptoCurrency
   ): Promise<any> => {
     try {
-      const [
+      const balances = await this.getAllBalances(address, currency);
+      const blockHeight = await this.getHeight();
+      const txs = await this.getTransactions(address);
+      const delegations = await this.getDelegations(address, currency);
+      const redelegations = await this.getRedelegations(address);
+      const unbondings = await this.getUnbondings(address);
+      const withdrawAddress = await this.getWithdrawAddress(address);
+
+      /*const [
         balances,
         blockHeight,
         txs,
@@ -36,7 +44,7 @@ export class CosmosAPI {
         this.getRedelegations(address),
         this.getUnbondings(address),
         this.getWithdrawAddress(address),
-      ]);
+      ]);*/
 
       return {
         balances,

@@ -215,11 +215,12 @@ export class CosmosTransactionStatusManager {
       } catch (e) {
         isValid = false;
       }
-      isValid =
-        isValid &&
-        t.recipient.startsWith(
-          findCryptoCurrencyById(a.currency.name.toLowerCase())?.id ?? ""
-        );
+      const currency = findCryptoCurrencyById(a.currency.name.toLowerCase());
+      let prefix = "";
+      if (currency) {
+        prefix = cryptoFactory(currency.id as string).prefix;
+      }
+      isValid = isValid && t.recipient.startsWith(prefix);
       if (!isValid) {
         errors.recipient = new InvalidAddress(undefined, {
           currencyName: a.currency.name,
