@@ -12,7 +12,7 @@
     "gotit" : "Anladım",
     "continue" : "Devam",
     "retry" : "Tekrar dene",
-    "backTo" : "Back to {{to}}",
+    "backTo" : "{{to}} sayfasına dön",
     "done" : "Tamam",
     "sortBy" : "Sıralama türü",
     "signOut" : "Oturumu kapat",
@@ -167,9 +167,6 @@
     "ClaimRewardsFeesWarning" : {
       "title" : "Ödül miktarı, ödülü almak için gereken tahmini ağ ücretlerinden daha az.",
       "description" : ""
-    },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Aktif fonlama işlemi sırasında onaylanan tutarı azaltamazsınız."
     },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Bir hata oluştu (Error #1)",
@@ -2128,8 +2125,6 @@
       "OPT_IN" : "Onaylama",
       "OPT_OUT" : "Reddetme",
       "CLOSE_ACCOUNT" : "Hesabı kapama",
-      "SUPPLY" : "Fonlandı",
-      "REDEEM" : "Çekildi",
       "APPROVE" : "Etkin",
       "BOND" : "Bağlama",
       "UNBOND" : "Çözme",
@@ -2704,6 +2699,10 @@
           "title" : "Deneysel uygulamalara izin ver",
           "description" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
         },
+        "debugApps" : {
+          "title" : "Hata ayıklama uygulamalarına izin ver",
+          "description" : "Hata ayıklama etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
+        },
         "staggingUrl" : {
           "title" : "Test ortamı URL'sini öğrenin",
           "description" : "Öğrenin sayfası için test ortamı URL'sini kullanın."
@@ -2739,46 +2738,6 @@
       "desc" : "Ledger Live, Ledger ürünleri ve piyasalar hakkındaki son haberleri ve kişiye özel öneriler alın. Ayarları değiştirerek istediğiniz zaman abonelikten çıkabilirsiniz",
       "allow" : "Bildirimlere izin ver",
       "later" : "Belki sonra"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Ledger Live hesap güncellemesi",
-    "overview" : {
-      "headerTitle" : "Hesap güncellemesi",
-      "title" : "Ledger Live hesap güncellemesi",
-      "subtitle" : "Ledger Live'daki yeni özellikler, hesaplarınızın güncellenmesi gerektiği anlamına gelir",
-      "notice" : "{{accountCount}} hesap güncellenemedi. Lütfen aşağıdaki hesapla ilişkili cihazı bağlayın",
-      "notice_plural" : "{{accountCount}} hesap güncellenemedi. Lütfen aşağıdaki hesaplarla ilişkili cihazı bağlayın.",
-      "currency" : "1 {{currency}} hesabının güncellenmesi gerekiyor:",
-      "currency_plural" : "{{count}} {{currency}} hesabının güncellenmesi gerekiyor:",
-      "start" : "Güncellemeyi başlat",
-      "continue" : "Güncellemeye devam et"
-    },
-    "progress" : {
-      "headerTitle" : "Hesaplar güncelleniyor",
-      "pending" : {
-        "title" : "{{currency}} güncellemesi devam ediyor",
-        "subtitle" : "Lütfen hesaplarınızın güncellenmesini bekleyin"
-      },
-      "notice" : {
-        "title" : "{{currency}} güncellemesi tamamlanmadı",
-        "subtitle" : "Bu cihaz ile güncellenebilen bir {{currency}} hesabı yok.",
-        "cta" : "Devam",
-        "ctaNextCurrency" : "{{currency}} ile devam et"
-      },
-      "done" : {
-        "title" : "{{currency}} güncellemesi tamamlandı",
-        "subtitle" : "Tebrikler, {{currency}} hesaplarınız başarıyla güncellendi.",
-        "cta" : "Devam",
-        "ctaNextCurrency" : "{{currency}} ile devam et",
-        "ctaDone" : "Tamam"
-      },
-      "error" : {
-        "cta" : "Tekrar dene"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "Cihazı bağlayın"
     }
   },
   "transfer" : {
@@ -2890,7 +2849,7 @@
       "title" : "Satın Al / Sat"
     },
     "stake" : {
-      "title" : "Stake",
+      "title" : "Stake edin",
       "description" : "Elinizdeki kriptoları artırın."
     },
     "swap" : {
@@ -3412,7 +3371,12 @@
       "scan" : "QR kodunu tarayın",
       "enterAddress" : "Adresi girin",
       "input" : "Adresi girin",
-      "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın."
+      "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın.",
+      "domainService" : {
+        "reverse" : "This address is linked to {{domain}}",
+        "forward" : "This is a valid ENS address",
+        "supportLink" : "What's an Ethereum Name Service ?"
+      }
     },
     "amount" : {
       "available" : "Toplam mevcut",
@@ -6121,7 +6085,7 @@
           "title" : "Yeni",
           "desc" : "Gizli Kurtarma İfadenizi kullanmadan cüzdanınıza yeniden erişin.",
           "actions" : {
-            "learnMore" : "Bunun bana ne yararı var?",
+            "learnMore" : "Bunun bana yararı nedir?",
             "alreadySubscribed" : "Zaten giriş yaptınız mı? <LinkAccount>Aboneliğimi görüntüle</LinkAccount>"
           }
         }
