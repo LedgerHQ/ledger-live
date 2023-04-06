@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from "axios";
 import axios, { AxiosInstance } from "axios";
 import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
-import genericPool, { Pool } from "generic-pool";
+// import genericPool, { Pool } from "generic-pool";
 import { Address, Block, TX } from "../storage/types";
 import { IExplorer } from "./types";
 import { errorInterceptor } from "../../../../network";
@@ -15,8 +15,7 @@ type ExplorerParams = {
 };
 
 class BitcoinLikeExplorer implements IExplorer {
-  client: Pool<{ client: AxiosInstance }>;
-  underlyingClient: AxiosInstance;
+  client: AxiosInstance;
   disableBatchSize = false;
 
   constructor({
@@ -48,10 +47,10 @@ class BitcoinLikeExplorer implements IExplorer {
       });
     }
 
-    const client = axios.create(clientParams);
-    this.underlyingClient = client;
+    this.client = axios.create(clientParams);
+
     // 3 retries per request
-    axiosRetry(client, {
+    axiosRetry(this.client, {
       retries: 3,
       retryCondition: (e) =>
         isNetworkOrIdempotentRequestError(e) ||
@@ -60,51 +59,33 @@ class BitcoinLikeExplorer implements IExplorer {
           (!e.response ||
             (e.response.status >= 400 && e.response.status <= 499))),
     });
-    // max 20 requests
-    this.client = genericPool.createPool(
-      {
-        create: () => Promise.resolve({ client }),
-        destroy: () => Promise.resolve(),
-      },
-      { max: 20 }
-    );
 
     if (disableBatchSize) {
       this.disableBatchSize = disableBatchSize;
     }
 
     // Logging
-    client.interceptors.response.use(undefined, errorInterceptor);
+    this.client.interceptors.response.use(undefined, errorInterceptor);
   }
 
   async broadcast(tx: string): Promise<{ data: { result: string } }> {
     const url = "/tx/send";
-    const client = await this.client.acquire();
-    const res = await client.client.post(url, { tx });
-    await this.client.release(client);
+    const res = await this.client.post(url, { tx });
     return res;
   }
 
   async getTxHex(txId: string): Promise<string> {
     const url = `/tx/${txId}/hex`;
-
     // TODO add a test for failure (at the sync level)
-    const client = await this.client.acquire();
     const res: { transaction_hash: string; hex: string } = (
-      await client.client.get(url)
+      await this.client.get(url)
     ).data;
-    await this.client.release(client);
-
     return res.hex;
   }
 
   async getCurrentBlock(): Promise<Block | null> {
     const url = `/block/current`;
-
-    const client = await this.client.acquire();
-    const res: any = (await client.client.get(url)).data;
-    await this.client.release(client);
-
+    const res: any = (await this.client.get(url)).data;
     if (!res) {
       return null;
     }
@@ -120,9 +101,7 @@ class BitcoinLikeExplorer implements IExplorer {
 
   async getBlockByHeight(height: number): Promise<Block | null> {
     const url = `/block/${height}`;
-    const client = await this.client.acquire();
-    const res: any = (await client.client.get(url)).data;
-    await this.client.release(client);
+    const res: any = (await this.client.get(url)).data;
 
     if (!res[0]) {
       return null;
@@ -139,17 +118,13 @@ class BitcoinLikeExplorer implements IExplorer {
   async getFees(): Promise<{ [key: string]: number }> {
     const url = `/fees`;
     // TODO add a test for failure (at the sync level)
-    const client = await this.client.acquire();
-    const response = await client.client.get(url);
+    const response = await this.client.get(url);
     const fees = response.data;
-    await this.client.release(client);
     return fees;
   }
 
   async getRelayFee(): Promise<number> {
-    const client = await this.client.acquire();
-    const fees = (await client.client.get(`/network`)).data;
-    await this.client.release(client);
+    const fees = (await this.client.get(`/network`)).data;
     return parseFloat(fees["relay_fee"]);
   }
 
@@ -165,11 +140,9 @@ class BitcoinLikeExplorer implements IExplorer {
   async fetchTxs(address: Address, params: ExplorerParams): Promise<TX[]> {
     const url = `/address/${address.address}/txs`;
     // TODO add a test for failure (at the sync level)
-    const client = await this.client.acquire();
-    const response = await client.client.get(url, {
+    const response = await this.client.get(url, {
       params,
     });
-    await this.client.release(client);
     const pendingTxs = await this.fetchPendingTxs(address, params);
     Array.prototype.push.apply(response.data.data, pendingTxs);
     return response.data.data;
@@ -180,11 +153,9 @@ class BitcoinLikeExplorer implements IExplorer {
     params: ExplorerParams
   ): Promise<TX[]> {
     const url = `/address/${address.address}/txs/pending`;
-    const client = await this.client.acquire();
-    const response = await client.client.get(url, {
+    const response = await this.client.get(url, {
       params,
     });
-    await this.client.release(client);
     return response.data;
   }
 

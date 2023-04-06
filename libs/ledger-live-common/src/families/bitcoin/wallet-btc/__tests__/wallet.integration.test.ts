@@ -139,7 +139,7 @@ describe("testing wallet", () => {
   });
 
   it("should throw during sync if there is an error in explorer", async () => {
-    const client = account.xpub.explorer.underlyingClient;
+    const client = account.xpub.explorer.client;
     // eslint-disable-next-line no-underscore-dangle
     const _get = client.get;
     client.get = async () => {
