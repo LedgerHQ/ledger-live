@@ -4,6 +4,7 @@ require("@electron/remote/main").initialize();
 /* eslint-disable import/first */
 import "./setup";
 import { app, Menu, ipcMain, session, webContents, shell } from "electron";
+import Store from "electron-store";
 import menu from "./menu";
 import {
   createMainWindow,
@@ -16,6 +17,9 @@ import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
+
+Store.initRenderer();
+
 const gotLock = app.requestSingleInstanceLock();
 const userDataDirectory = resolveUserDataDirectory();
 if (!gotLock) {
