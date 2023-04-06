@@ -3,15 +3,15 @@ import { useNavigation } from "@react-navigation/native";
 import { Button, Divider, Flex, Switch, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { ChevronBottomMedium } from "@ledgerhq/native-ui/assets/icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useSetNavigationHeader } from "../../../../hooks/useSetNavigationHeader";
 import { ScreenName } from "../../../../const";
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 import TextInput from "../../../../components/TextInput";
-import HeaderLeftBack from "../../../../components/HeaderLeftBack";
-import HeaderRightClose from "../../../../components/HeaderRightClose";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { NavigationHeaderBackButton } from "../../../../components/NavigationHeaderBackButton";
+import { NavigationHeaderCloseButton } from "../../../../components/NavigationHeaderCloseButton";
 
 export default function DebugSetHeaderBis() {
   const navigation =
@@ -28,11 +28,11 @@ export default function DebugSetHeaderBis() {
   useSetNavigationHeader({
     headerShown: true,
     title,
-    headerLeft: isLeftBackArrowDisplayed ? () => <HeaderLeftBack /> : null,
+    headerLeft: isLeftBackArrowDisplayed
+      ? () => <NavigationHeaderBackButton />
+      : null,
     headerRight: isRightCloseDisplayed
-      ? () => (
-          <HeaderRightClose color={colors.neutral.c100} preferDismiss={true} />
-        )
+      ? () => <NavigationHeaderCloseButton color={colors.neutral.c100} />
       : null,
     header: isFullHeaderOverriddenDisplayed
       ? () => (
@@ -57,7 +57,7 @@ export default function DebugSetHeaderBis() {
                     Still Nothing
                   </Button>
                 </Flex>
-                <HeaderRightClose
+                <NavigationHeaderCloseButtonAdvanced
                   color={colors.neutral.c100}
                   preferDismiss={true}
                 />

@@ -19,7 +19,7 @@ import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigati
 import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";
 import LocationDisabled from "../RequiresLocation/LocationDisabled";
 import { useSetNavigationHeader } from "../../hooks/useSetNavigationHeader";
-import HeaderLeftBack from "../HeaderLeftBack";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 const CANT_SEE_DEVICE_TIMEOUT = 5000;
@@ -55,7 +55,7 @@ const BleDevicesScanning = ({
   useSetNavigationHeader({
     headerShown: !onGoBack ? true : undefined,
     headerLeft: onGoBack
-      ? () => <HeaderLeftBack onBackPress={onGoBack} />
+      ? () => <NavigationHeaderBackButton onPress={onGoBack} />
       : null,
     headerRight: null,
   });

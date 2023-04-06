@@ -14,7 +14,7 @@ import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
 import { TrackScreen } from "../../analytics";
 import { useSetNavigationHeader } from "../../hooks/useSetNavigationHeader";
-import HeaderRightClose from "../HeaderRightClose";
+import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -70,9 +70,7 @@ const BleDevicePairing = ({
 
   useSetNavigationHeader({
     headerShown: true,
-    headerRight: () => (
-      <HeaderRightClose onClose={handleClose} skipNavigation={true} />
-    ),
+    headerRight: () => <NavigationHeaderCloseButton onPress={handleClose} />,
     headerLeft: null,
   });
 

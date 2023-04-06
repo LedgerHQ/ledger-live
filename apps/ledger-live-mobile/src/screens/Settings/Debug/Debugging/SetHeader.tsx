@@ -10,8 +10,8 @@ import { ScreenName } from "../../../../const";
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 import TextInput from "../../../../components/TextInput";
-import HeaderLeftBack from "../../../../components/HeaderLeftBack";
-import HeaderRightClose from "../../../../components/HeaderRightClose";
+import { NavigationHeaderBackButton } from "../../../../components/NavigationHeaderBackButton";
+import { NavigationHeaderCloseButton } from "../../../../components/NavigationHeaderCloseButton";
 
 export default function DebugSetHeader() {
   const navigation =
@@ -28,11 +28,11 @@ export default function DebugSetHeader() {
   useSetNavigationHeader({
     headerShown: true,
     title,
-    headerLeft: isLeftBackArrowDisplayed ? () => <HeaderLeftBack /> : null,
+    headerLeft: isLeftBackArrowDisplayed
+      ? () => <NavigationHeaderBackButton />
+      : null,
     headerRight: isRightCloseDisplayed
-      ? () => (
-          <HeaderRightClose color={colors.neutral.c100} preferDismiss={true} />
-        )
+      ? () => <NavigationHeaderCloseButton color={colors.neutral.c100} />
       : null,
     header: isFullHeaderOverriddenDisplayed
       ? () => (
@@ -57,10 +57,7 @@ export default function DebugSetHeader() {
                     Nothing
                   </Button>
                 </Flex>
-                <HeaderRightClose
-                  color={colors.neutral.c100}
-                  preferDismiss={true}
-                />
+                <NavigationHeaderCloseButton color={colors.neutral.c100} />
               </Flex>
             </SafeAreaView>
           </>

@@ -19,10 +19,10 @@ export type Args = {
  * @param headerShown true (default): header is displayed, false: header is not displayed
  * @param title string displayed as the title of the header.
  * @param headerLeft function returning a ReactElement displayed on the left of the header.
- *   `components/HeaderLeftBack` should be used for basic back arrow.
+ *   `components/NavigationHeaderBackButton` should be used for basic back arrow.
  *   Set to `undefined` in order to reset to the default headerLeft, or `null` to display nothing.
  * @param headerRight function returning a ReactElement displayed on the right of the header.
- *   `components/HeaderRightClose.tsx` should be used for basic close button.
+ *   `components/NavigationHeaderCloseButton` should be used for basic close button.
  *   Set to `undefined` in order to reset to the default headerRight, or `null` to display nothing.
  * @param header function returning a ReactElement displayed as the entire header.
  *  It overrides every other params.

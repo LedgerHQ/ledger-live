@@ -1,6 +1,6 @@
 import React from "react";
 import { DefaultTheme } from "styled-components/native";
-import HeaderRightClose from "../components/HeaderRightClose";
+import { NavigationHeaderCloseButtonAdvanced } from "../components/NavigationHeaderCloseButton";
 import HeaderTitle, {
   Props as HeaderTitleProps,
 } from "../components/HeaderTitle";
@@ -42,7 +42,7 @@ export const getStackNavigatorConfig = (
     color: (c as ColorV3).neutral?.c100 || (c as ColorV2).darkBlue,
   },
   headerRight: closable
-    ? () => <HeaderRightClose onClose={onClose} />
+    ? () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
     : undefined,
 });
 export type StackNavigatorConfig = ReturnType<typeof getStackNavigatorConfig>;
