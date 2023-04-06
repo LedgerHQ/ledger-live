@@ -211,7 +211,7 @@ export const useDefaultSlides = () => {
 
   return useMemo(
     () =>
-      map(getEnv("PLAYWRIGHT_RUN") ? [exchangeSlide, swapSlide] : slides, (slide: Props) => ({
+      map(getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : slides, (slide: Props) => ({
         id: slide.name,
         // eslint-disable-next-line react/display-name
         Component: () => <Slide {...slide} />,
