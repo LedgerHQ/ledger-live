@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.12.1-next.0
+
+### Patch Changes
+
+- [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - fix to Tag component
+
 ## 0.12.0
 
 ### Minor Changes

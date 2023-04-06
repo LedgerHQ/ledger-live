@@ -1,5 +1,47 @@
 # @ledgerhq/live-common
 
+## 29.3.0-next.0
+
+### Minor Changes
+
+- [#3016](https://github.com/LedgerHQ/ledger-live/pull/3016) [`5fa3f57e08`](https://github.com/LedgerHQ/ledger-live/commit/5fa3f57e08676481d18bdf7fc2406ac1184b1a9a) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - feat: ledger recover feature flag
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+- [#3122](https://github.com/LedgerHQ/ledger-live/pull/3122) [`282cad03fb`](https://github.com/LedgerHQ/ledger-live/commit/282cad03fb733cc71e767b641c53ee2d469b8295) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update plugins deps
+
+- [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - add protectServicesDiscoverDesktop feature flag
+
+- [#2861](https://github.com/LedgerHQ/ledger-live/pull/2861) [`0941844a56`](https://github.com/LedgerHQ/ledger-live/commit/0941844a560b5b7b066fb1ffbec1dde7111c083a) Thanks [@cksanders](https://github.com/cksanders)! - - Update Kotlin version
+
+  - Updated `wallet-api-server` and `wallet-api-core` version
+  - Add Next storage & remove obsolete `AsyncStorage_db_size_in_MB`
+  - Added wallet api storage support
+  - Add stable & tested LLD storage support
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset the migrate accounts old mecanism
+
+### Patch Changes
+
+- [#2950](https://github.com/LedgerHQ/ledger-live/pull/2950) [`c59bee8935`](https://github.com/LedgerHQ/ledger-live/commit/c59bee89357bb29097fb97ca67ece845630d982a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Estimate gas using simulate endpoint instead of hardcoded value
+
+- [#3081](https://github.com/LedgerHQ/ledger-live/pull/3081) [`64ee0b2e03`](https://github.com/LedgerHQ/ledger-live/commit/64ee0b2e032187f5b742f594390a5b30d3850751) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add missing conversion from string to number in Cosmos API response
+
+- [#3103](https://github.com/LedgerHQ/ledger-live/pull/3103) [`fb65760778`](https://github.com/LedgerHQ/ledger-live/commit/fb6576077854fb21541350a9f7c1cb528fba6e6d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Update minimum Polkadot app version to 20.9370.0
+
+- [#3093](https://github.com/LedgerHQ/ledger-live/pull/3093) [`a62be79a56`](https://github.com/LedgerHQ/ledger-live/commit/a62be79a56e7aaaf7712fe006d357e3517f1c4b9) Thanks [@lvndry](https://github.com/lvndry)! - ethereum fetchAllTransaction method uses `from_height` query parameter
+
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/cryptoassets@9.3.0-next.0
+  - @ledgerhq/coin-framework@0.3.0-next.0
+  - @ledgerhq/live-env@0.1.0-next.0
+  - @ledgerhq/hw-app-eth@6.33.0-next.0
+  - @ledgerhq/domain-service@1.0.0-next.0
+  - @ledgerhq/coin-polkadot@0.1.1-next.0
+  - @ledgerhq/live-portfolio@0.0.2-next.0
+
 ## 29.2.0
 
 ### Minor Changes
