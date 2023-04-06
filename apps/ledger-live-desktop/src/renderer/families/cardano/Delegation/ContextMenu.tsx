@@ -69,7 +69,7 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
       ),
       onClick: () =>
         dispatch(
-          openModal("MODAL_CARDANO_UN_DELEGATE", {
+          openModal("MODAL_CARDANO_UNDELEGATE", {
             parentAccount,
             account,
             eventType: "undelegate",
