@@ -168,9 +168,6 @@
       "title" : "Las recompensas son inferiores a las tarifas estimadas para reclamarlas.",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "No es posible reducir el importe aprobado mientras tengas un depósito activo."
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Se ha producido un error (Error 1)",
       "description" : "Guarda tus registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
@@ -2128,8 +2125,6 @@
       "OPT_IN" : "Adherir",
       "OPT_OUT" : "No adherir",
       "CLOSE_ACCOUNT" : "Cerrar cuenta",
-      "SUPPLY" : "Depositado",
-      "REDEEM" : "Retirado",
       "APPROVE" : "Habilitado",
       "BOND" : "Vincular",
       "UNBOND" : "Desvincular",
@@ -2704,6 +2699,10 @@
           "title" : "Permitir aplicaciones experimentales",
           "description" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales."
         },
+        "debugApps" : {
+          "title" : "Permitir aplicaciones de depuración",
+          "description" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como de depuración."
+        },
         "staggingUrl" : {
           "title" : "URL de ensayo de la página Learn",
           "description" : "Usa la URL de ensayo para la página Learn."
@@ -2739,46 +2738,6 @@
       "desc" : "Recibe recomendaciones personalizadas y las últimas novedades sobre Ledger Live, los productos Ledger y el mercado. Puedes cancelar la suscripción en cualquier momento desde los ajustes.",
       "allow" : "Permitir notificaciones",
       "later" : "Quizás más tarde"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Actualización de cuentas de Ledger Live",
-    "overview" : {
-      "headerTitle" : "Actualización de cuenta",
-      "title" : "Actualización de cuentas de Ledger Live",
-      "subtitle" : "Si hay nuevas funciones de Ledger Live, eso significa que debes actualizar tus cuentas.",
-      "notice" : "No fue posible actualizar {{accountCount}} cuenta. Conecta el dispositivo asociado a la cuenta siguiente.",
-      "notice_plural" : "No fue posible actualizar {{accountCount}} cuentas. Conecta el dispositivo asociado a las cuentas siguientes.",
-      "currency" : "Es necesario actualizar 1 cuenta de {{currency}}",
-      "currency_plural" : "Es necesario actualizar {{count}} cuentas de {{currency}}",
-      "start" : "Iniciar actualización",
-      "continue" : "Continuar con la actualización"
-    },
-    "progress" : {
-      "headerTitle" : "Actualizando cuentas",
-      "pending" : {
-        "title" : "Actualización de {{currency}} en curso",
-        "subtitle" : "Espera a que se actualice tu cuenta."
-      },
-      "notice" : {
-        "title" : "Actualización de {{currency}} incompleta",
-        "subtitle" : "No fue posible actualizar cuentas de {{currency}} mediante este dispositivo.",
-        "cta" : "Continuar",
-        "ctaNextCurrency" : "Continuar con {{currency}}"
-      },
-      "done" : {
-        "title" : "Actualización de {{currency}} completa",
-        "subtitle" : "¡Enhorabuena! Tus cuentas de {{currency}} se han actualizado correctamente.",
-        "cta" : "Continuar",
-        "ctaNextCurrency" : "Continuar con {{currency}}",
-        "ctaDone" : "Listo"
-      },
-      "error" : {
-        "cta" : "Reintentar"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "Conectar dispositivo"
     }
   },
   "transfer" : {
@@ -3412,7 +3371,12 @@
       "scan" : "Escanear código QR",
       "enterAddress" : "Ingresar dirección",
       "input" : "Ingresar dirección",
-      "verifyAddress" : "Verifica que la dirección coincida con la dirección del receptor."
+      "verifyAddress" : "Verifica que la dirección coincida con la dirección del receptor.",
+      "domainService" : {
+        "reverse" : "Esta dirección está enlazada con {{domain}}",
+        "forward" : "Este es una dirección de ENS válida",
+        "supportLink" : "¿Qué es un Servicio de Nombre de Ethereum?"
+      }
     },
     "amount" : {
       "available" : "Total disponible",
@@ -5914,7 +5878,7 @@
       "noCurrencySearchResultsFor" : "Lo sentimos, no hemos encontrado ninguna divisa para <0>{{search}}</0>. Por favor, intenta de nuevo con otra palabra clave.",
       "noSearchResults" : "Lo sentimos, no hemos encontrado ningún resultado.",
       "retrySearchKeyword" : "Por favor, intenta de nuevo con otra palabra clave.",
-      "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
+      "retrySearchKeywordAndUrl" : "Intenta realizar la búsqueda con otra palabra clave o abre <Link>{{search}}</Link> de Ledger Live.",
       "retrySearchParams" : "Por favor, intenta de nuevo con otros parámetros.",
       "trackFavAssets" : "Sigue a tus favoritas",
       "clickOnStarIcon" : "Al hacer clic en el ícono de la estrella junto a un activo se añadirá automáticamente a tus destacados.",
