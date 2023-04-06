@@ -16,6 +16,7 @@ import { closeInformationCenter } from "~/renderer/actions/UI";
 import useDateTimeFormat from "~/renderer/hooks/useDateTimeFormat";
 import { useNotifications } from "~/renderer/hooks/useNotifications";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { urls } from "~/config/urls";
 
 const DateRowContainer = styled.div`
   padding: 4px 16px;
@@ -322,7 +323,7 @@ export function AnnouncementPanel() {
                     icon={"info"}
                     link={{
                       label: cta,
-                      href: url || path || "https://ledger.com",
+                      href: url || path || urls.ledger,
                     }}
                   />
                 </InView>
