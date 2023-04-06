@@ -45,9 +45,9 @@ test.describe.parallel("Accounts", () => {
       await test.step(`[${currency}] Done`, async () => {
         await addAccountModal.done();
         await layout.totalBalance.waitFor({ state: "visible" });
-        // await expect
-        //   .soft(page)
-        //   .toHaveScreenshot(`${currency}-complete.png`, { mask: [page.locator("canvas")] });
+        await expect
+          .soft(page)
+          .toHaveScreenshot(`${currency}-complete.png`, { mask: [page.locator("canvas")] });
       });
     });
   }
