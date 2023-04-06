@@ -86,7 +86,7 @@ const referralProgramSlide = {
 
 const exchangeSlide = {
   path: "/exchange",
-  name: "buyCrypto",
+  id: "buyCrypto",
   title: <Trans i18nKey={`banners.buyCrypto.title`} />,
   description: <Trans i18nKey={`banners.buyCrypto.description`} />,
   imgs: [
@@ -134,7 +134,7 @@ const exchangeSlide = {
 };
 const swapSlide = {
   path: "/swap",
-  name: "swap",
+  id: "swap",
   title: <Trans i18nKey={`banners.swap.title`} />,
   description: <Trans i18nKey={`banners.swap.description`} />,
   imgs: [
