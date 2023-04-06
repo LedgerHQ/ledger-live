@@ -1,0 +1,24 @@
+{
+  "assets": {
+    "./media/playstore-icon.png": {
+      "path": "./media/playstore-icon.png",
+      "sha256": "nOGOgXgEp7+M5Ewt6Br61fznKZlnrMAb6+HpI/6gr7E=",
+      "uri": "https://arweave.net/ovCxVk36HwFBdQi7mnFR5oFI6yO5RYm6q3wsD0ZOQ4s"
+    },
+    "media/playstore-icon.png": {
+      "path": "media/playstore-icon.png",
+      "sha256": "nOGOgXgEp7+M5Ewt6Br61fznKZlnrMAb6+HpI/6gr7E=",
+      "uri": "https://arweave.net/LiND2BvZHr2cl3S4gRunTQ0uOM5DL2G5kbDc6PC65Q8"
+    },
+    "./media/splash.webp": {
+      "path": "./media/splash.webp",
+      "sha256": "sT2TNzpW6E+CGPJDozDHp99zFQAVjApte7g8z1F3+GA=",
+      "uri": "https://arweave.net/F5C9n1UvVkHQxOTHlg0_7t7FYCsLTdXK7CZWi1Pgo5Q"
+    },
+    "../../android/app/build/outputs/apk/stagingRelease/app-arm64-v8a-stagingRelease.apk": {
+      "path": "../../android/app/build/outputs/apk/stagingRelease/app-arm64-v8a-stagingRelease.apk",
+      "sha256": "4UMBmEBUT24YYfxm9EavYeM+CXEsEh87N7bjD5gFKYk=",
+      "uri": "https://arweave.net/SPwXQ5LNlIkbGoNJQfwYn_OzmTPwsEX-bpg7lXrAJ0M"
+    }
+  }
+}

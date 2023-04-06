@@ -32,6 +32,7 @@
     "android:apk": "bundle exec fastlane android apk --env android.staging",
     "preandroid:ci:playstore": "bundle install",
     "android:ci:playstore": "bundle exec fastlane android ci_playstore --env android.release",
+    "android:ci:build": "bundle exec fastlane android ci_build --env android.release",
     "android:ci:pre": "bundle exec fastlane android ci_playstore --env android.prerelease",
     "android:ci:recover": "bundle exec fastlane android ci_recover --env android.prerelease",
     "preandroid:ci:nightly": "bundle install",
