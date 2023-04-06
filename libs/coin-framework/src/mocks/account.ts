@@ -3,7 +3,6 @@ import { BigNumber } from "bignumber.js";
 import {
   listCryptoCurrencies,
   listTokensForCryptoCurrency,
-  findCompoundToken,
 } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
 import {
@@ -417,18 +416,10 @@ export function genAccount(
         opts.tokenIds?.includes(id)
     );
     const tokensFromOpts = all.filter((t) => opts.tokenIds?.includes(t.id));
-    const compoundReadyTokens = all.filter(findCompoundToken);
-    const notCompoundReadyTokens = all.filter((a) => !findCompoundToken(a));
 
     // [ explicit token from opts ] > compoundReady > rest
     const tokens = tokensFromOpts
-      .concat(compoundReadyTokens)
-      .concat(
-        // from random index
-        notCompoundReadyTokens.slice(
-          rng.nextInt(Math.floor(notCompoundReadyTokens.length / 2))
-        )
-      )
+      .concat(all)
       .slice(0, Math.max(tokenCount, opts.tokenIds?.length || 0));
     account.subAccounts = tokens.map((token, i) =>
       genTokenAccount(i, account, token)

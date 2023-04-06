@@ -12,12 +12,9 @@ import {
   BaseComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
 import { ScreenName } from "../../const";
 
 const options = {
@@ -27,9 +24,6 @@ const options = {
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
-    | LendingEnableFlowParamsList
-    | LendingSupplyFlowNavigatorParamList
-    | LendingWithdrawFlowNavigatorParamList
     | SendFundsNavigatorStackParamList
     | SignTransactionNavigatorParamList
     | SwapNavigatorParamList,

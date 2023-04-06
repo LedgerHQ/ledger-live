@@ -142,8 +142,6 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/360020095874-Cardano-ADA-?docs=true",
     default: "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?docs=true",
   },
-  migrateAccounts:
-    "https://support.ledger.com/hc/en-us/articles/360025322153-Wrong-private-keys-for-account?support=true",
   coinControl:
     "https://support.ledger.com/hc/en-us/articles/360015996580?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=send_coincontrol",
   githubIssues:
@@ -271,10 +269,6 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
     OperatingSystemOutdated: "https://support.ledger.com/hc/articles/8083692639901?support=true",
   },
-  compound:
-    "https://support.ledger.com/hc/en-us/articles/360017215099?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=compound",
-  compoundTnC:
-    "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=compoundTnC",
   approvedOperation:
     "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true",
   cryptoOrg: {
