@@ -117,7 +117,7 @@ function OnboardingStepDeviceSelection() {
             key={device.id}
             event="Onboarding Device - Selection"
             eventProperties={{ id: device.id }}
-            testID={`Onboarding Device - Selection|${device.id}`}
+            testID={`onboarding-device-selection-${device.id}`}
             title={getProductName(device.id)}
             titleProps={{ variant: "large", fontWeight: "semiBold" }}
             onPress={() => next(device.id)}

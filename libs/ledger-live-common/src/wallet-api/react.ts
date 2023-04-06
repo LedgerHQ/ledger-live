@@ -153,6 +153,8 @@ export interface UiHook {
     onError: (error: Error) => void;
     onCancel: () => void;
   }) => void;
+  "storage.get": WalletHandlers["storage.get"];
+  "storage.set": WalletHandlers["storage.set"];
   "transaction.sign": (params: {
     account: AccountLike;
     parentAccount: Account | undefined;
@@ -305,6 +307,8 @@ export function useWalletAPIServer({
     "account.request": uiAccountRequest,
     "account.receive": uiAccountReceive,
     "message.sign": uiMessageSign,
+    "storage.get": uiStorageGet,
+    "storage.set": uiStorageSet,
     "transaction.sign": uiTxSign,
     "transaction.broadcast": uiTxBroadcast,
     "device.transport": uiDeviceTransport,
@@ -459,6 +463,18 @@ export function useWalletAPIServer({
       )
     );
   }, [accounts, manifest, server, tracking, uiMessageSign]);
+
+  useEffect(() => {
+    if (!uiStorageGet) return;
+
+    server.setHandler("storage.get", uiStorageGet);
+  }, [server, uiStorageGet]);
+
+  useEffect(() => {
+    if (!uiStorageSet) return;
+
+    server.setHandler("storage.set", uiStorageSet);
+  }, [server, uiStorageSet]);
 
   useEffect(() => {
     if (!uiTxSign) return;

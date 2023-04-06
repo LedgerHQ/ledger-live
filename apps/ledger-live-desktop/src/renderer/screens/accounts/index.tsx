@@ -6,7 +6,6 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { Redirect } from "react-router";
-import { TopBannerContainer } from "~/renderer/screens/dashboard";
 import {
   useFlattenSortAccounts,
   useRefreshAccountsOrderingEffect,
@@ -16,7 +15,7 @@ import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import AccountList from "./AccountList";
 import AccountsHeader from "./AccountsHeader";
-import MigrationBanner from "~/renderer/modals/MigrateAccounts/Banner";
+
 export default function AccountsPage() {
   const mode = useSelector(accountsViewModeSelector);
   const range = useSelector(selectedTimeRangeSelector);
@@ -52,9 +51,6 @@ export default function AccountsPage() {
         starredAccountsLength={starredAccounts.length}
         mode={mode}
       />
-      <TopBannerContainer>
-        <MigrationBanner />
-      </TopBannerContainer>
       <AccountsHeader />
       <AccountList onAccountClick={onAccountClick} accounts={accounts} range={range} mode={mode} />
     </Box>

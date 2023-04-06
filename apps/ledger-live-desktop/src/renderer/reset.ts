@@ -7,6 +7,7 @@ import { delay } from "@ledgerhq/live-common/promise";
 import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import { resetAll, cleanCache } from "~/renderer/storage";
+import { resetStore } from "~/renderer/store";
 import { cleanAccountsCache } from "~/renderer/actions/accounts";
 import { disable as disableDBMiddleware } from "./middlewares/db";
 import { clearBridgeCache } from "./bridge/cache";
@@ -31,6 +32,7 @@ export async function hardReset() {
   log("clear-cache", "hardReset()");
   disableDBMiddleware();
   resetAll();
+  resetStore();
   window.localStorage.clear();
 }
 export function useHardReset() {
