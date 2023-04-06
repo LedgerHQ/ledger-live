@@ -1,12 +1,12 @@
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getDerivationModesForCurrency } from "@ledgerhq/coin-framework/derivation";
-import { listCryptoCurrencies, setSupportedCurrencies } from "./currencies";
+import { listCryptoCurrencies, setSupportedCurrencies } from "../currencies";
 import {
   accountDataToAccount,
   accountToAccountData,
   encode,
   decode,
-} from "./cross";
+} from "../cross";
 import { Account } from "@ledgerhq/types-live";
 
 setSupportedCurrencies(["ethereum", "ethereum_classic"]);
