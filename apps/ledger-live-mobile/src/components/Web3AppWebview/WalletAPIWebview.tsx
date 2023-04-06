@@ -35,6 +35,7 @@ import { analyticsEnabledSelector } from "../../reducers/settings";
 import getOrCreateUser from "../../user";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
+import deviceStorage from "../../logic/storeWrapper";
 
 const wallet = {
   name: "ledger-live-mobile",
@@ -100,6 +101,12 @@ function useUiHook(): Partial<UiHook> {
           },
           onClose: onCancel,
         });
+      },
+      "storage.get": async ({ key, storeId }) => {
+        return (await deviceStorage.get(`${storeId}-${key}`)) as string;
+      },
+      "storage.set": ({ key, value, storeId }) => {
+        deviceStorage.save(`${storeId}-${key}`, value);
       },
       "transaction.sign": ({
         account,

@@ -4,6 +4,13 @@ import { getMaxEstimatedBalance } from "./logic";
 import { CacheRes, makeLRUCache } from "../../cache";
 import type { Account } from "@ledgerhq/types-live";
 import cryptoFactory from "./chain/chain";
+import { CosmosAPI } from "./api/Cosmos";
+import {
+  buildUnsignedPayloadTransaction,
+  postBuildUnsignedPayloadTransaction,
+} from "./js-buildTransaction";
+import { getEnv } from "../../env";
+import { log } from "@ledgerhq/logs";
 
 export const calculateFees: CacheRes<
   Array<{
@@ -39,13 +46,53 @@ export const calculateFees: CacheRes<
 const getEstimatedFees = async (
   account: CosmosAccount,
   transaction: Transaction
-): Promise<any> => {
+): Promise<{ estimatedFees: BigNumber; estimatedGas: BigNumber }> => {
   const cosmosCurrency = cryptoFactory(account.currency.id);
   let estimatedGas = new BigNumber(cosmosCurrency.defaultGas);
-  if (cosmosCurrency.gas[transaction.mode]) {
-    estimatedGas = new BigNumber(cosmosCurrency.gas[transaction.mode]);
+
+  const cosmosAPI = new CosmosAPI(account.currency.id);
+  const unsignedPayload: { typeUrl: string; value: any }[] =
+    await buildUnsignedPayloadTransaction(account, transaction);
+
+  if (unsignedPayload && unsignedPayload.length > 0) {
+    const signature = new Uint8Array(
+      Buffer.from(account.seedIdentifier, "hex")
+    );
+
+    // see https://github.com/cosmos/cosmjs/blob/main/packages/proto-signing/src/pubkey.spec.ts
+    const prefix = new Uint8Array([10, 33]);
+
+    const pubkey = {
+      typeUrl: "/cosmos.crypto.secp256k1.PubKey",
+      value: new Uint8Array([...prefix, ...signature]),
+    };
+
+    const tx_bytes = await postBuildUnsignedPayloadTransaction(
+      account,
+      transaction,
+      pubkey,
+      unsignedPayload,
+      signature
+    );
+    try {
+      const gasUsed = await cosmosAPI.simulate(tx_bytes);
+      estimatedGas = gasUsed
+        .multipliedBy(new BigNumber(getEnv("COSMOS_GAS_AMPLIFIER")))
+        .integerValue();
+    } catch (e) {
+      log(
+        "cosmos/simulate",
+        "failed to estimate gas usage during tx simulation",
+        {
+          e,
+        }
+      );
+    }
   }
-  const estimatedFees = estimatedGas.times(cosmosCurrency.minGasprice);
+
+  const estimatedFees = estimatedGas
+    .times(cosmosCurrency.minGasprice)
+    .integerValue();
   return { estimatedFees, estimatedGas };
 };
 

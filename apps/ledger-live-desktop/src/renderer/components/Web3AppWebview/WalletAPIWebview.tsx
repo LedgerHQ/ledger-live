@@ -31,6 +31,7 @@ import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
 import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { useWebviewState } from "./helpers";
+import { getStoreValue, setStoreValue } from "~/renderer/store";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 const tracking = trackingWrapper(track);
@@ -84,6 +85,12 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
             onClose: onCancel,
           }),
         );
+      },
+      "storage.get": ({ key, storeId }) => {
+        return getStoreValue(key, storeId);
+      },
+      "storage.set": ({ key, value, storeId }) => {
+        setStoreValue(key, value, storeId);
       },
       "transaction.sign": ({
         account,
