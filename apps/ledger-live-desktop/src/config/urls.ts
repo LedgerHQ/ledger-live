@@ -13,6 +13,7 @@ export const supportLinkByTokenType = {
     "https://support.ledger.com/hc/en-us/articles/4404389453841-Receive-crypto-assets?utm_medium=self_referral&utm_content=receive_account_flow",
 };
 export const urls = {
+  ledger: "https://www.ledger.com",
   liveHome:
     "https://www.ledger.com/pages/ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=home",
   social: {

@@ -1,21 +1,25 @@
 import { useEffect, useCallback } from "react";
 import * as braze from "@braze/web-sdk";
-import { Card } from "@braze/web-sdk";
+import { ClassicCard } from "@braze/web-sdk";
 
 import { getBrazeConfig } from "~/braze-setup";
-import { LocationContentCard, PortfolioContentCard } from "~/types/dynamicContent";
+import {
+  LocationContentCard,
+  PortfolioContentCard,
+  NotificationContentCard,
+  Platform,
+} from "~/types/dynamicContent";
 import { useDispatch } from "react-redux";
-import { setPortfolioCards } from "../actions/dynamicContent";
+import { setNotificationsCards, setPortfolioCards } from "../actions/dynamicContent";
 import getUser from "~/helpers/user";
 
-const getPortfolioCards = (elem: braze.ContentCards) =>
-  elem.cards.filter(
-    card =>
-      card.extras?.platform === "desktop" &&
-      card.extras?.location === LocationContentCard.Portfolio,
-  );
+const getDesktopCards = (elem: braze.ContentCards) =>
+  elem.cards.filter(card => card.extras?.platform === Platform.Desktop);
 
-export const mapAsPortfolioContentCard = (card: Card) =>
+export const filterByPage = (array: braze.Card[], page: LocationContentCard) =>
+  array.filter(card => card.extras?.location === page);
+
+export const mapAsPortfolioContentCard = (card: ClassicCard) =>
   ({
     id: card.id,
     title: card.extras?.title,
@@ -26,15 +30,30 @@ export const mapAsPortfolioContentCard = (card: Card) =>
     path: card.extras?.path,
   } as PortfolioContentCard);
 
+export const mapAsNotificationContentCard = (card: ClassicCard) =>
+  ({
+    id: card.id,
+    title: card.extras?.title,
+    description: card.extras?.description,
+    location: LocationContentCard.NotificationCenter,
+    url: card.extras?.url,
+    path: card.extras?.path,
+    cta: card.extras?.cta,
+    createdAt: card.created,
+    viewed: card.viewed,
+  } as NotificationContentCard);
+
 export async function useBraze() {
   const dispatch = useDispatch();
 
   const initBraze = useCallback(async () => {
     const user = await getUser();
     const brazeConfig = getBrazeConfig();
+
     braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
       allowUserSuppliedJavascript: true,
+      enableHtmlInAppMessages: true,
       enableLogging: __DEV__,
     });
     if (user) {
@@ -51,10 +70,21 @@ export async function useBraze() {
     );
 
     braze.requestContentCardsRefresh();
+
     braze.subscribeToContentCardsUpdates(cards => {
-      const portfolioCards = getPortfolioCards(cards).map(card => mapAsPortfolioContentCard(card));
+      const desktopCards = getDesktopCards(cards);
+
+      const portfolioCards = filterByPage(desktopCards, LocationContentCard.Portfolio).map(card =>
+        mapAsPortfolioContentCard(card as ClassicCard),
+      );
+
+      const notificationsCards = filterByPage(
+        desktopCards,
+        LocationContentCard.NotificationCenter,
+      ).map(card => mapAsNotificationContentCard(card as ClassicCard));
 
       dispatch(setPortfolioCards(portfolioCards));
+      dispatch(setNotificationsCards(notificationsCards));
     });
 
     braze.automaticallyShowInAppMessages();

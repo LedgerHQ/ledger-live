@@ -1,22 +1,30 @@
-
 import { handleActions } from "redux-actions";
-import type { PortfolioContentCard } from "~/types/dynamicContent";
+import { NotificationContentCard, PortfolioContentCard } from "~/types/dynamicContent";
 
 export type DynamicContentState = {
-  portfolioCards: PortfolioContentCard[],
+  portfolioCards: PortfolioContentCard[];
+  notificationsCards: NotificationContentCard[];
 };
 
 const state: DynamicContentState = {
   portfolioCards: [],
+  notificationsCards: [],
 };
 
 const handlers = {
   DYNAMIC_CONTENT_SET_PORTFOLIO_CARDS: (
-    state:DynamicContentState,
+    state: DynamicContentState,
     { payload }: { payload: PortfolioContentCard[] },
   ) => ({
     ...state,
     portfolioCards: payload,
+  }),
+  DYNAMIC_CONTENT_SET_NOTIFICATIONS_CARDS: (
+    state: DynamicContentState,
+    { payload }: { payload: NotificationContentCard[] },
+  ) => ({
+    ...state,
+    notificationsCards: payload,
   }),
 };
 
@@ -24,6 +32,9 @@ const handlers = {
 
 export const portfolioContentCardSelector = (state: { dynamicContent: DynamicContentState }) =>
   state.dynamicContent.portfolioCards;
+
+export const notificationsContentCardSelector = (state: { dynamicContent: DynamicContentState }) =>
+  state.dynamicContent.notificationsCards;
 
 // Exporting reducer
 
