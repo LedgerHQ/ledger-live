@@ -29,6 +29,7 @@ import MODAL_WALLETCONNECT_DEEPLINK from "./WalletConnectDeeplink";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
 import MODAL_CONNECT_DEVICE from "./ConnectDevice";
+import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
 
 import MODAL_LOTTIE_DEBUGGER from "./LottieDebugger";
 import MODAL_STORYLY_DEBUGGER from "./StorylyDebugger";
@@ -82,6 +83,7 @@ const modals: Modals = {
   MODAL_STORYLY_DEBUGGER,
   MODAL_START_STAKE,
   MODAL_RECOVERY_SEED_WARNING,
+  MODAL_PROTECT_DISCOVER,
   // Lending
   MODAL_LEND_MANAGE,
   MODAL_LEND_ENABLE_INFO,
