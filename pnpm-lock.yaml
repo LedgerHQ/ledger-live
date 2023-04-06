@@ -2140,9 +2140,6 @@ importers:
       expect:
         specifier: ^27.4.6
         version: 27.5.1
-      generic-pool:
-        specifier: ^3.8.2
-        version: 3.8.2
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -32879,11 +32876,6 @@ packages:
       strip-ansi: 6.0.1
       wide-align: 1.1.5
     dev: true
-
-  /generic-pool@3.8.2:
-    resolution: {integrity: sha512-nGToKy6p3PAbYQ7p1UlWl6vSPwfwU6TMSWK7TTu+WUY4ZjyZQGniGGt2oNVvyNSpyZYSB43zMXVLcBm08MTMkg==}
-    engines: {node: '>= 4'}
-    dev: false
 
   /gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
