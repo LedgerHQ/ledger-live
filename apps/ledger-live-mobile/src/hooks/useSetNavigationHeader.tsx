@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import { navigationRef } from "../rootnavigation";
@@ -9,6 +9,14 @@ export type Args = {
   headerLeft?: (() => React.ReactElement) | null;
   headerRight?: (() => React.ReactElement) | null;
   header?: () => React.ReactElement;
+};
+
+type InitialHeaderOptions = {
+  headerShown: boolean;
+  headerTitle: (() => React.ReactElement) | null;
+  headerLeft: (() => React.ReactElement) | null;
+  headerRight: (() => React.ReactElement) | null;
+  title: string;
 };
 
 /**
@@ -38,7 +46,10 @@ export const useSetNavigationHeader = ({
 }: Args) => {
   const navigation = useNavigation();
 
-  const initialHeaderOptions = useMemo(() => {
+  const [initialHeaderOptions, setInitialHeaderOptions] =
+    useState<null | InitialHeaderOptions>(null);
+
+  useEffect(() => {
     const {
       headerShown: initialHeaderShown,
       headerTitle: initialHeaderTitle,
@@ -49,24 +60,60 @@ export const useSetNavigationHeader = ({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       navigationRef.current?.getCurrentOptions() as any;
 
-    return {
+    const currentOptions: InitialHeaderOptions = {
       headerShown: initialHeaderShown,
       headerTitle: initialHeaderTitle,
       headerLeft: initialHeaderLeft,
       headerRight: initialHeaderRight,
       title: initialTitle,
     };
+
+    console.log(
+      `🧠🔮 useEffect -> currentOptions: ${JSON.stringify(currentOptions)}`,
+    );
+
+    setInitialHeaderOptions(currentOptions);
   }, []);
 
   // Resets to initial header options/settings.
   // No need to reset on react-navigation navigate because the new screen that we navigate to
   // always defines a (default) header that is going to overwrite this.
   useEffect(() => {
-    return () => navigation.setOptions(initialHeaderOptions);
+    // Does not do anything until the initial options are set
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    if (!initialHeaderOptions) return () => {};
+
+    console.log(
+      `🧠🔥 useEffect -> starting with initialHeaderOptions: ${JSON.stringify(
+        initialHeaderOptions,
+      )}`,
+    );
+
+    return () => {
+      navigation.setOptions(initialHeaderOptions);
+      console.log(
+        `🧠🧼 useEffect -> setOptions to initialHeaderOptions ! ${JSON.stringify(
+          initialHeaderOptions,
+        )}`,
+      );
+
+      // // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // const currentOptions = navigationRef.current?.getCurrentOptions() as any;
+      // console.log(
+      //   `Just after: 🧼: currentOptions: ${JSON.stringify({
+      //     headerShown: currentOptions?.headerShown,
+      //     headerLeft: currentOptions?.headerLeft,
+      //     headerRight: currentOptions?.headerRight,
+      //   })}`,
+      // );
+    };
   }, [initialHeaderOptions, navigation]);
 
   // Updates header on dynamic changes
   useEffect(() => {
+    // Does not do anything until the initial options are set
+    if (!initialHeaderOptions) return;
+
     // header overrides every other params
     if (header !== undefined) {
       navigation.setOptions({
