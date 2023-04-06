@@ -6,6 +6,7 @@ class Persistence extends CosmosBase {
   validatorOperatorAddressPrefix: string;
   lcd!: string;
   ledgerValidator!: string;
+  prefix: string;
 
   constructor() {
     super();
@@ -14,6 +15,7 @@ class Persistence extends CosmosBase {
     this.defaultGas = 100000;
     this.unbondingPeriod = 28;
     this.validatorOperatorAddressPrefix = "persistencevaloper";
+    this.prefix = "persistence";
   }
 }
 

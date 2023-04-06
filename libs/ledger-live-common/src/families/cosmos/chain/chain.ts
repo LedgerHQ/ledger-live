@@ -73,7 +73,7 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
       cosmosChainParams[currencyId] = new Quicksilver();
     }
     return cosmosChainParams[currencyId];
-  } else if (currencyId === "secret_network") {
+  } else if (currencyId === "secret_test_hehe") {
     if (!cosmosChainParams[currencyId]) {
       cosmosChainParams[currencyId] = new SecretNetwork();
     }

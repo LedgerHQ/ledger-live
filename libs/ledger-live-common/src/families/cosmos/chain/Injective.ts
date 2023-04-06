@@ -6,6 +6,7 @@ class Injective extends CosmosBase {
   unbondingPeriod: number;
   ledgerValidator!: string;
   validatorOperatorAddressPrefix: string;
+  prefix: string;
   constructor() {
     super();
     this.stakingDocUrl =
@@ -13,6 +14,7 @@ class Injective extends CosmosBase {
     this.defaultGas = 100000;
     this.unbondingPeriod = 21;
     this.validatorOperatorAddressPrefix = "injvaloper";
+    this.prefix = "inj";
   }
 }
 

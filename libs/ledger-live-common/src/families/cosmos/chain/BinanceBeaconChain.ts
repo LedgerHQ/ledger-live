@@ -4,6 +4,7 @@ class BinanceBeaconChain extends CosmosBase {
   stakingDocUrl: string;
   unbondingPeriod: number;
   validatorOperatorAddressPrefix: string;
+  prefix: string;
   // Provided by coin config
   lcd!: string;
   ledgerValidator!: string;
@@ -14,6 +15,7 @@ class BinanceBeaconChain extends CosmosBase {
     this.defaultGas = 100000;
     this.unbondingPeriod = 21;
     this.validatorOperatorAddressPrefix = "bnbvaloper";
+    this.prefix = "bnb";
   }
 }
 

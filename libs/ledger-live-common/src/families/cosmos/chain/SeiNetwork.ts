@@ -6,6 +6,8 @@ class SeiNetwork extends CosmosBase {
   stakingDocUrl: string;
   unbondingPeriod: number;
   validatorOperatorAddressPrefix: string;
+  prefix: string;
+
   constructor() {
     super();
     this.stakingDocUrl =
@@ -13,6 +15,7 @@ class SeiNetwork extends CosmosBase {
     this.defaultGas = 100000;
     this.unbondingPeriod = 28;
     this.validatorOperatorAddressPrefix = "seivaloper";
+    this.prefix = "sei";
   }
 }
 

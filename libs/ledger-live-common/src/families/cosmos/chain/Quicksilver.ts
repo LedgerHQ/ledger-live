@@ -6,6 +6,8 @@ class Quicksilver extends CosmosBase {
   unbondingPeriod: number;
   ledgerValidator!: string;
   validatorOperatorAddressPrefix: string;
+  prefix: string;
+
   constructor() {
     super();
     this.stakingDocUrl =
@@ -13,6 +15,7 @@ class Quicksilver extends CosmosBase {
     this.defaultGas = 100000;
     this.unbondingPeriod = 21;
     this.validatorOperatorAddressPrefix = "quickvaloper";
+    this.prefix = "quick";
   }
 }
 
