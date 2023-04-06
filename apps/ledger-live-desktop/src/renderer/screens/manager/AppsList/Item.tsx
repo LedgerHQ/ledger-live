@@ -1,11 +1,10 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { getCryptoCurrencyById, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
-import { App, FeatureId } from "@ledgerhq/types-live";
+import { App } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import ByteSize from "~/renderer/components/ByteSize";
 import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -14,7 +13,6 @@ import IconCheckFull from "~/renderer/icons/CheckFull";
 import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
-import { formatCurrencyIdToFeatureKey } from "~/renderer/components/FirebaseRemoteConfig";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const AppRow = styled.div`
@@ -84,10 +82,6 @@ const Item = ({
     app.name,
     state.apps,
   ]);
-
-  const ffKey = currencyId ? formatCurrencyIdToFeatureKey(currencyId) : "";
-  const feature = useFeature(ffKey as FeatureId);
-  const currencyFlagEnabled = !feature || feature.enabled;
 
   const bytes = useMemo(
     () =>

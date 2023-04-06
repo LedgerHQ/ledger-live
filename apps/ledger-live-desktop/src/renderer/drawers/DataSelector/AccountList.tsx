@@ -69,7 +69,7 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
                 marginLeft: 12,
               }}
             >
-              {t("addAccounts.cta.add")}
+              {t("addAccounts.title")}
             </Text>
           </Box>
         </RowInnerContainer>

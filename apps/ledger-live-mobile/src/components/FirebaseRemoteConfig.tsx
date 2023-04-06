@@ -1,15 +1,11 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
 import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
-import { reduce, snakeCase, startCase } from "lodash";
+import { reduce, snakeCase } from "lodash";
 import { DefaultFeatures } from "@ledgerhq/types-live";
 
 export const formatToFirebaseFeatureId = (id: string) =>
   `feature_${snakeCase(id)}`;
-
-export const formatCurrencyIdToFeatureKey = (id: string) => {
-  return `currency${startCase(id).replace(/\s/g, "")}`;
-};
 
 // Firebase SDK treat JSON values as strings
 const formatDefaultFeatures = (config: DefaultFeatures) =>
