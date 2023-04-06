@@ -13,6 +13,7 @@ import IconCheckFull from "~/renderer/icons/CheckFull";
 import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
+
 const AppRow = styled.div`
   display: flex;
   flex-direction: row;
@@ -21,6 +22,7 @@ const AppRow = styled.div`
   padding: 20px;
   font-size: 12px;
 `;
+
 const AppName = styled.div`
   flex: 1;
   flex-direction: column;
@@ -31,6 +33,7 @@ const AppName = styled.div`
     display: block;
   }
 `;
+
 type Props = {
   optimisticState: State;
   state: State;
@@ -44,8 +47,9 @@ type Props = {
   setAppInstallDep?: (a: any) => void;
   setAppUninstallDep?: (a: any) => void;
   addAccount?: (a: any) => void;
-}; // eslint-disable-next-line react/display-name
-const Item: React$ComponentType<Props> = ({
+};
+
+const Item = ({
   optimisticState,
   state,
   app,
@@ -76,14 +80,16 @@ const Item: React$ComponentType<Props> = ({
     app.name,
     state.apps,
   ]);
+
   const bytes = useMemo(
     () =>
       (onlyUpdate && availableApp?.bytes) ||
       ((installed && installed.blocks) || 0) * deviceModel.getBlockSize(deviceInfo.version) ||
       app.bytes ||
       0,
-    [app.bytes, availableApp.bytes, deviceInfo.version, deviceModel, installed, onlyUpdate],
+    [app.bytes, availableApp?.bytes, deviceInfo.version, deviceModel, installed, onlyUpdate],
   );
+
   return (
     <AppRow id={`managerAppsList-${name}`}>
       <Box flex="0.7" horizontal>
@@ -102,7 +108,6 @@ const Item: React$ComponentType<Props> = ({
             •{" "}
             <ByteSize
               value={bytes}
-              formatFunction={Math.ceil}
               deviceModel={deviceModel}
               firmwareVersion={deviceInfo.version}
             />
@@ -130,6 +135,7 @@ const Item: React$ComponentType<Props> = ({
           </>
         ) : null}
       </Box>
+
       <AppActions
         state={state}
         app={app}
@@ -148,4 +154,5 @@ const Item: React$ComponentType<Props> = ({
     </AppRow>
   );
 };
+
 export default memo<Props>(Item);

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useAppInstallNeedsDeps, useAppUninstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useHistory } from "react-router-dom";
-import { App } from "@ledgerhq/types-live";
+import { App, FeatureId } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
@@ -19,11 +19,13 @@ import IconCheck from "~/renderer/icons/Check";
 import IconTrash from "~/renderer/icons/Trash";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { formatCurrencyIdToFeatureKey } from "~/renderer/components/FirebaseRemoteConfig";
 const ExternalLinkIconContainer = styled.span`
   display: inline-flex;
   margin-left: 4px;
 `;
-const AppActionsWrapper = styled.div`
+const AppActionsWrapper = styled.div<{ right: boolean }>`
   display: flex;
   min-width: 300px;
   padding-left: 10px;
@@ -33,6 +35,7 @@ const AppActionsWrapper = styled.div`
     margin-right: 10px;
   }
 `;
+
 const SuccessInstall = styled.div`
   color: ${p => p.theme.colors.positiveGreen};
   display: flex;
@@ -43,6 +46,7 @@ const SuccessInstall = styled.div`
     padding-right: 5px;
   }
 `;
+
 type Props = {
   state: State;
   app: App;
@@ -57,8 +61,10 @@ type Props = {
   setAppUninstallDep?: (a: any) => void;
   isLiveSupported: boolean;
   addAccount?: () => void;
-}; // eslint-disable-next-line react/display-name
-const AppActions: React$ComponentType<Props> = React.memo(
+};
+
+// eslint-disable-next-line react/display-name
+const AppActions = React.memo(
   ({
     state,
     app,
@@ -74,7 +80,11 @@ const AppActions: React$ComponentType<Props> = React.memo(
     isLiveSupported,
     addAccount,
   }: Props) => {
-    const { name, type } = app;
+    const { name, type, currencyId } = app;
+
+    const ffKey = currencyId ? formatCurrencyIdToFeatureKey(currencyId) : "";
+    const feature = useFeature(ffKey as FeatureId);
+
     const history = useHistory();
     const { installedAvailable, installQueue, uninstallQueue, updateAllQueue } = state;
 
@@ -164,7 +174,7 @@ const AppActions: React$ComponentType<Props> = React.memo(
             isCurrent={installQueue.length > 0 && installQueue[0] === name}
             uninstalling={uninstalling}
           />
-        ) : showActions ? (
+        ) : showActions && (!feature || feature.enabled) ? (
           <>
             {installed ? (
               type === "app" && isLiveSupported ? (
