@@ -31,7 +31,6 @@ import { mustUpgrade } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
 import manager from "../manager";
 import { LockedDeviceEvent } from "./actions/types";
-import { DeviceModelId } from "@ledgerhq/devices";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -209,7 +208,7 @@ const attemptToQuitApp = (
       });
 
 const derivationLogic = (
-  transport,
+  transport: Transport,
   {
     requiresDerivation: { currencyId, ...derivationRest },
     appAndVersion,
@@ -304,7 +303,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
           appName,
           dependencies,
           requireLatestFirmware,
-        }: any) =>
+        }: ConnectAppRequest): Observable<ConnectAppEvent> =>
           defer(() => from(getAppAndVersion(transport))).pipe(
             concatMap((appAndVersion): Observable<ConnectAppEvent> => {
               timeoutSub.unsubscribe();
@@ -356,7 +355,12 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
 
                             if (isLatest) {
                               o.next({ type: "latest-firmware-resolved" });
-                              return innerSub({ appName, dependencies }); // NB without the fw version check
+                              return innerSub({
+                                appName,
+                                dependencies,
+                                allowPartialDependencies,
+                                // requireLatestFirmware // Resolved!.
+                              });
                             } else {
                               return throwError(
                                 new LatestFirmwareVersionRequired(
@@ -389,7 +393,9 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                       });
                       return innerSub({
                         appName,
-                      }); // NB without deps
+                        allowPartialDependencies,
+                        // dependencies // Resolved!
+                      });
                     },
                     allowPartialDependencies,
                   });
@@ -409,20 +415,18 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
               }
 
               const appNeedsUpgrade = mustUpgrade(
-                DeviceModelId.stax, // FIXME dont let me merge this.
                 appAndVersion.name,
                 appAndVersion.version
               );
               if (appNeedsUpgrade) {
-                // We need to quit the app first, then we need to get the device information to see if an
-                // app update that fulfills the minimum is available on this provider for this device version.
+                // quit app, check provider's app update for device's minimum requirements.
                 o.next({
                   type: "has-outdated-app",
                   outdatedApp: appAndVersion,
                 });
               }
 
-              // in order to check the fw version, install deps, or check app update availability, we need dashboard
+              // need dashboard to check firmware, install dependencies, or verify app update
               if (
                 dependencies?.length ||
                 requireLatestFirmware ||
@@ -489,6 +493,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
           appName,
           dependencies,
           requireLatestFirmware,
+          allowPartialDependencies,
         }).subscribe(o);
 
         return () => {

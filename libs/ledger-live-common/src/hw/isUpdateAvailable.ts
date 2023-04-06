@@ -58,11 +58,7 @@ const isUpdateAvailable = async (
 
   return (
     !!appAvailableInProvider &&
-    !mustUpgrade(
-      deviceModel?.id as DeviceModelId,
-      appAvailableInProvider.name,
-      appAvailableInProvider.version
-    )
+    !mustUpgrade(appAvailableInProvider.name, appAvailableInProvider.version)
   );
 };
 

@@ -103,7 +103,7 @@ const pollingImplementation: Implementation = <
       let shouldStopPolling = false;
       let connectSub: Subscription;
       let loopTimeout: NodeJS.Timeout | null;
-      let firstRound: boolean = true;
+      let firstRound = true;
 
       let currentDevice: Device;
       const deviceSubjectSub = deviceSubject.subscribe((device) => {

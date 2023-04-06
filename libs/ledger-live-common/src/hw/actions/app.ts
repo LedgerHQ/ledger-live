@@ -405,7 +405,7 @@ const reducer = (state: State, e: Event): State => {
         listedApps: state.listedApps,
         displayUpgradeWarning:
           state.device && e.app
-            ? shouldUpgrade(state.device.modelId, e.app.name, e.app.version)
+            ? shouldUpgrade(e.app.name, e.app.version)
             : false,
       };
   }
