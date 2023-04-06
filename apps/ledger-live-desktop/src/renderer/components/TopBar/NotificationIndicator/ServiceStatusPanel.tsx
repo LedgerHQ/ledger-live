@@ -13,6 +13,7 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { urls } from "~/config/urls";
+import TrackPage from "~/renderer/analytics/TrackPage";
 const IncidentContainer = styled(Box)`
   width: 100%;
   display: flex;
@@ -142,6 +143,7 @@ export function ServiceStatusPanel() {
   });
   return (
     <PanelContainer>
+      <TrackPage category="Notification Center" name="notification_center_status" />
       {incidents.length > 0 ? <StatusNotOkHeader incidents={incidents} /> : <StatusOkHeader />}
     </PanelContainer>
   );
