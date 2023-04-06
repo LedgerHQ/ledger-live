@@ -19,6 +19,7 @@ import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { WebviewState, WebviewAPI } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { track } from "~/renderer/analytics/segment";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -123,12 +124,31 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
   }, [webviewAPIRef]);
 
   const onBackToMatchingURL = useCallback(async () => {
+    const currentHostname = new URL(webviewState.url).hostname;
     const webview = safeGetRefValue(webviewAPIRef);
     const url = safeGetRefValue(lastMatchingURL);
+    const urlParams = new URLSearchParams(url);
+    const flowName = urlParams.get("liveAppFlow");
+
+    track("button_clicked", {
+      button: "back to liveapp",
+      provider: currentHostname,
+      flow: flowName,
+    });
 
     await webview.loadURL(url);
     webview.clearHistory();
-  }, [webviewAPIRef]);
+  }, [webviewAPIRef, webviewState.url]);
+
+  const getButtonLabel = useCallback(() => {
+    if (manifest.id === "multibuy") {
+      const url = safeGetRefValue(lastMatchingURL);
+      const urlParams = new URLSearchParams(url);
+      const flowName = urlParams.get("liveAppFlow");
+      if (flowName === "compare_providers") return "Quote";
+    }
+    return manifest.name;
+  }, [manifest]);
 
   const handleReload = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -150,7 +170,7 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
         <ItemContainer isInteractive onClick={onBackToMatchingURL}>
           <ArrowRight flipped size={16} />
           <ItemContent>
-            <Trans i18nKey="common.backToMatchingURL" values={{ appName: manifest.name }} />
+            <Trans i18nKey="common.backToMatchingURL" values={{ appName: getButtonLabel() }} />
           </ItemContent>
         </ItemContainer>
       ) : null}

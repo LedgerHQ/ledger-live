@@ -31,12 +31,19 @@ import {
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import HeaderRightClose from "../HeaderRightClose";
+import { track } from "../../analytics";
 
 type BackToWhitelistedDomainProps = {
   manifest: AppManifest;
+  webviewURL: string;
+  lastMatchingURL: string;
 };
 
-function BackToWhitelistedDomain({ manifest }: BackToWhitelistedDomainProps) {
+function BackToWhitelistedDomain({
+  manifest,
+  webviewURL,
+  lastMatchingURL,
+}: BackToWhitelistedDomainProps) {
   const { t } = useTranslation();
   const navigation =
     useNavigation<
@@ -45,13 +52,37 @@ function BackToWhitelistedDomain({ manifest }: BackToWhitelistedDomainProps) {
       >
     >();
 
+  const getButtonLabel = () => {
+    if (manifest.id === "multibuy") {
+      const urlParams = new URLSearchParams(lastMatchingURL);
+      const flowName = urlParams.get("liveAppFlow");
+      if (flowName === "compare_providers") return "Quote";
+    }
+
+    return manifest.name;
+  };
+
+  const handleBackClick = () => {
+    const currentHostname = new URL(webviewURL).hostname;
+    const urlParams = new URLSearchParams(lastMatchingURL);
+    const flowName = urlParams.get("liveAppFlow");
+
+    track("button_clicked", {
+      button: "back to liveapp",
+      provider: currentHostname,
+      flow: flowName,
+    });
+
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.headerLeft}>
-      <TouchableOpacity onPress={navigation.goBack}>
+      <TouchableOpacity onPress={handleBackClick}>
         <Flex alignItems="center" flexDirection="row" height={40}>
           <Icon name="ChevronLeft" color="neutral.c100" size={30} />
           <Text fontWeight="semiBold" fontSize={16} color="neutral.c100">
-            {t("common.backTo", { to: manifest.name })}
+            {t("common.backTo", { to: getButtonLabel() })}
           </Text>
         </Flex>
       </TouchableOpacity>
@@ -149,7 +180,11 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
       headerRight: () => <HeaderRight />,
       headerLeft: () =>
         isWhitelistedDomain ? null : (
-          <BackToWhitelistedDomain manifest={manifest} />
+          <BackToWhitelistedDomain
+            manifest={manifest}
+            webviewURL={webviewState.url}
+            lastMatchingURL={lastMatchingURL}
+          />
         ),
       headerTitle: () => null,
     });
