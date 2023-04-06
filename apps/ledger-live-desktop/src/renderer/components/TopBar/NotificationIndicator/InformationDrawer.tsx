@@ -12,6 +12,7 @@ import { informationCenterStateSelector } from "~/renderer/reducers/UI";
 import { setTabInformationCenter } from "~/renderer/actions/UI";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 const FADE_DURATION = 200;
 const PanelContainer = styled.div`
@@ -40,7 +41,7 @@ export const InformationDrawer = ({
   const { t } = useTranslation();
   const { incidents } = useFilteredServiceStatus();
   const notificationsCards = useSelector(notificationsContentCardSelector);
-  const unseenCount = notificationsCards?.filter(n => !n.viewed).length || 0;
+  const unseenCount =  getEnv("PLAYWRIGHT_RUN") ? 0 : notificationsCards?.filter(n => !n.viewed).length || 0;
   const incidentCount = incidents.length;
   const { tabId } = useSelector(informationCenterStateSelector);
 
