@@ -19,7 +19,6 @@ import {
   getAccountSpendableBalance,
   getAccountUnit,
   getFeesCurrency,
-  getFeesUnit,
 } from ".";
 import {
   isAccountEmpty,
