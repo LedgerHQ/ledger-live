@@ -16,7 +16,10 @@ import { knownDevicesSelector } from "../../reducers/ble";
 import Touchable from "../Touchable";
 import Item from "./Item";
 import { saveBleDeviceName } from "../../actions/ble";
-import { setHasConnectedDevice } from "../../actions/appstate";
+import {
+  setHasConnectedDevice,
+  updateMainNavigatorVisibility,
+} from "../../actions/appstate";
 import {
   setLastConnectedDevice,
   setReadOnlyMode,
@@ -109,6 +112,8 @@ export default function SelectDevice({
 
   const handleOnSelect = useCallback(
     (device: Device) => {
+      dispatch(updateMainNavigatorVisibility(true));
+
       const { modelId, wired, deviceId } = device;
       track("Device selection", {
         modelId,
@@ -243,14 +248,25 @@ export default function SelectDevice({
   const onAddNewPress = useCallback(() => setIsAddNewDrawerOpen(true), []);
 
   const openBlePairingFlow = useCallback(() => {
+    // When starting the ble pairing flow, the tab bottom bar is not displayed
+    dispatch(updateMainNavigatorVisibility(false));
     setIsAddNewDrawerOpen(false);
     setIsPairingDevices(true);
-  }, []);
+  }, [dispatch]);
+
+  useEffect(() => {
+    return () => {
+      // Makes sure that on go back/unmount the visibility of the bottom tab bar is reset
+      dispatch(updateMainNavigatorVisibility(true));
+    };
+  }, [dispatch]);
 
   const closeBlePairingFlow = useCallback(() => {
+    // When coming back from the pairing, the visibility of the bottom tab bar is reset
+    dispatch(updateMainNavigatorVisibility(true));
     setIsPairingDevices(false);
     setIsAddNewDrawerOpen(false);
-  }, []);
+  }, [dispatch]);
 
   const onSetUpNewDevice = useCallback(() => {
     setIsAddNewDrawerOpen(false);
