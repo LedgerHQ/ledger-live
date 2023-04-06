@@ -10,12 +10,13 @@ import { openInformationCenter, closeInformationCenter } from "~/renderer/action
 import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { track } from "~/renderer/analytics/segment";
 import { useHistory } from "react-router";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 export function NotificationIndicator() {
   const { t } = useTranslation();
   const notificationsCards = useSelector(notificationsContentCardSelector);
 
-  const totalNotifCount = notificationsCards?.filter(n => !n.viewed).length || 0;
+  const totalNotifCount = getEnv("PLAYWRIGHT_RUN") ? 0 : notificationsCards?.filter(n => !n.viewed).length || 0;
   const { isOpen } = useSelector(informationCenterStateSelector);
   const dispatch = useDispatch();
   const history = useHistory();
