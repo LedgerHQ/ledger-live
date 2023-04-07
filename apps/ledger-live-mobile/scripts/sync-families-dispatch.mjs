@@ -23,8 +23,6 @@ const targets = [
   "AccountHeader",
   "AccountBodyHeader",
   "AccountSubHeader",
-  "SendAmountFields",
-  "screens",
   "SendRowsCustom",
   "SendRowsFee",
   "AccountBalanceSummaryFooter",

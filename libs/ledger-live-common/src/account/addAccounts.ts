@@ -1,9 +1,6 @@
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import uniqWith from "lodash/uniqWith";
-import {
-  findAccountMigration,
-  validateNameEdition,
-} from "@ledgerhq/coin-framework/account/index";
+import { validateNameEdition } from "@ledgerhq/coin-framework/account/index";
 import { clearAccount } from "./helpers";
 // Reference all possible support link
 // For now we have only one, but we can union type in future
@@ -48,28 +45,9 @@ export function groupAddAccounts(
   const importedAccounts: Account[] = [];
   const importableAccounts: Account[] = [];
   const creatableAccounts: Account[] = [];
-  const migrateAccounts: Account[] = [];
   let alreadyEmptyAccount: Account | null = null;
   const scannedAccountsWithoutMigrate = [...scannedAccounts];
-  existingAccounts.forEach((existingAccount) => {
-    const migrate = findAccountMigration(
-      existingAccount,
-      scannedAccountsWithoutMigrate
-    );
 
-    if (migrate) {
-      migrateAccounts.push({ ...migrate, name: existingAccount.name });
-      const index = scannedAccountsWithoutMigrate.indexOf(migrate);
-
-      if (index !== -1) {
-        scannedAccountsWithoutMigrate[index] =
-          scannedAccountsWithoutMigrate[
-            scannedAccountsWithoutMigrate.length - 1
-          ];
-        scannedAccountsWithoutMigrate.pop();
-      }
-    }
-  });
   scannedAccountsWithoutMigrate.forEach((acc) => {
     const existingAccount = existingAccounts.find((a) =>
       sameAccountIdentity(a, acc)
@@ -100,15 +78,6 @@ export function groupAddAccounts(
       selectable: true,
       defaultSelected: true,
       data: importableAccounts,
-    });
-  }
-
-  if (migrateAccounts.length) {
-    sections.push({
-      id: "migrate",
-      selectable: true,
-      defaultSelected: true,
-      data: migrateAccounts,
     });
   }
 
@@ -157,29 +126,6 @@ const preserveUserData = (update: Account, existing: Account): Account => ({
   name: existing.name,
 });
 
-export function migrateAccounts({
-  scannedAccounts,
-  existingAccounts,
-}: {
-  scannedAccounts: Account[];
-  existingAccounts: Account[];
-}): Account[] {
-  // subset of scannedAccounts that exists to not add them but just do migration part
-  const subset: Account[] = [];
-  existingAccounts.forEach((existing) => {
-    const migration = findAccountMigration(existing, scannedAccounts);
-
-    if (migration && !subset.some((a) => a.id === migration.id)) {
-      subset.push(migration);
-    }
-  });
-  return addAccounts({
-    scannedAccounts: subset,
-    existingAccounts,
-    selectedIds: subset.map((a) => a.id),
-    renamings: {},
-  });
-}
 export function addAccounts({
   scannedAccounts,
   existingAccounts,
@@ -189,36 +135,21 @@ export function addAccounts({
   const newAccounts: Account[] = [];
   // scanned accounts that was selected
   const selected = scannedAccounts.filter((a) => selectedIds.includes(a.id));
-  // we'll search for potential migration and append to newAccounts
   existingAccounts.forEach((existing) => {
-    const migration = findAccountMigration(existing, selected);
+    // we'll try to find an updated version of the existing account as opportunity to refresh the operations
+    const update = selected.find((a) => sameAccountIdentity(a, existing));
 
-    if (migration) {
-      if (!newAccounts.some((a) => a.id === migration.id)) {
-        newAccounts.push(preserveUserData(migration, existing));
-        const index = selected.indexOf(migration);
+    if (update) {
+      // preserve existing name
+      let acc = preserveUserData(update, existing);
 
-        if (index !== -1) {
-          selected[index] = selected[selected.length - 1];
-          selected.pop();
-        }
+      if (update.id !== existing.id) {
+        acc = clearAccount(acc);
       }
+
+      newAccounts.push(acc);
     } else {
-      // we'll try to find an updated version of the existing account as opportunity to refresh the operations
-      const update = selected.find((a) => sameAccountIdentity(a, existing));
-
-      if (update) {
-        // preserve existing name
-        let acc = preserveUserData(update, existing);
-
-        if (update.id !== existing.id) {
-          acc = clearAccount(acc);
-        }
-
-        newAccounts.push(acc);
-      } else {
-        newAccounts.push(existing);
-      }
+      newAccounts.push(existing);
     }
   });
   // append the new accounts

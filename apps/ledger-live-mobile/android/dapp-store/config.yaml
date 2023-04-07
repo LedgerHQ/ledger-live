@@ -1,0 +1,139 @@
+publisher:
+  name: Ledger SAS
+  address: 7hmxf1enboeg7fxWLrMvKRGi9r1NbDG8j7i7MWtAmLLk
+  website: https://www.ledger.com/pages/ledger-live
+  email: live-release-support@ledger.fr
+  media:
+    - purpose: icon
+      uri: ./media/playstore-icon.png
+app:
+  address: 7SE1D8eUsS3yAExzStukTwDDXzcC1xCh2nYX5CFzsMsT
+  name: Ledger Live
+  android_package: com.ledger.live
+  urls:
+    license_url: https://shop.ledger.com/pages/ledger-live-terms-of-use
+    copyright_url: https://shop.ledger.com/pages/ledger-live-terms-of-use
+    privacy_policy_url: https://www.ledger.com/privacy-policy
+    website: https://ledger.com
+  media:
+    - purpose: icon
+      uri: media/playstore-icon.png
+release:
+  address: ""
+  catalog:
+    en-US:
+      name: "Ledger Live: Crypto & NFT App"
+      short_description: Ledger Live Mobile 3.16.0
+      long_description: >-
+        From the company that produced the world's most secure crypto hardware
+        device comes the world's most accessible and complete Web3 wallet:
+        Ledger Live. It offers everything the crypto newbie or crypto native
+        could ever need, all in one place.
+
+
+        Ledger Live lets newcomers and crypto pros follow the market, manage and
+        grow their DeFi portfolio, and support their favorite NFT maker by
+        showing off their collection.
+
+
+        Here's everything you can do through Ledger Live:
+
+
+        BUY CRYPTO
+
+        Buy crypto through Ledger Live with our partners*.
+
+        You can buy Bitcoin (BTC), Ethereum (ETH), Tether (USDT), Polkadot
+        (DOT), Aave (AAVE) and more than 40 other crypto, by Credit Card or Bank
+        Transfers, with the currency of your choice.
+
+        Once bought, your crypto will immediately be sent to the safety of your
+        hardware wallet.
+
+        You can also sell Bitcoin through Ledger Live.
+
+
+        SWAP CRYPTO
+
+        Exchange one crypto for another through Ledger Live with our partners*,
+        in a secure and fast environment. You can swap more than 5000 different
+        coins & tokens on our application, including Bitcoin, Ethereum, BNB,
+        Tether, Dogecoin, Litecoin.
+
+
+        ACCESS DEFI APPS & SERVICES
+
+        Easily grow your ETH with our partner Lido, stake DOT, ATOM, XTZ**,
+        manage your DeFi portfolio with Zerion, access DEXs aggregators like
+        ParaSwap and 1inch. All that from the safe ecosystem of Ledger Live.
+
+
+        MANAGE NFTs
+
+        Easily collect, visualize and send your Ethereum NFTs secured by your
+        hardware wallet.
+
+
+        CHECK CRYPTO MARKET PRICES
+
+        Get a crypto market watchlist directly in your Ledger Live app: price,
+        volume, market cap, dominance, supply. Everything you need to build your
+        portfolio.
+
+
+        PAY USING YOUR CRYPTO
+
+        Order your CL Card, powered by Ledger on the app and pay with your
+        crypto whenever you want. The card is built to be compatible with your
+        Ledger wallet.
+
+
+        List of crypto supported:
+
+        Bitcoin (BTC), Ethereum (ETH), Binance Coin (BNB), Ripple (XRP), Bitcoin
+        Cash (BCH), Litecoin (LTC), Tezos (XTZ), Stellar (XLM), Polkadot (DOT),
+        Tron (TRX), Polygon (MATIC), Ethereum Classic (ETC), Dash (DASH), Cosmos
+        (ATOM), Elrond (EGLD), Zcash (ZEC), Dogecoin (DOGE), Digibyte (DGB),
+        Bitcoin Gold (BTG), Decred (DCR), Qtum (QTUM), Algorand (ALGO), Komodo
+        (KMD), Horizen (ZEN), PivX (PIVX), Peercoin (PPC), Vertcoin (VTC),
+        Viacoin (VIA), Stakenet (XSN), ERC-20 and BEP-20 tokens.
+
+
+
+        COMPATIBILITY
+
+        Ledger Live mobile application is fully compatible with the Ledger Nano
+        X via Bluetooth connection and with the Ledger Nano S and S Plus using
+        an OTG kit
+
+
+        *Buy, swap, lend, and other crypto transaction services are provided by
+        third-party partners. Ledger provides no advice or recommendations on
+        use of these third-party services.
+
+
+        **Rewards are not guaranteed. Ledger provides no advice or
+        recommendations on use of staking services.
+      new_in_version: >-
+        Features You can now manage 100+ tokens on Cronos, Fantom, and Moonbeam
+        networks with Ledger Live.
+
+        Ledger Live will no longer display zero-amount transactions in the
+        transaction history. If you want to view zero-amount transactions,
+        navigate to Settings -> Accounts -> Zero-amount transactions and flip
+        the toggle switch to the on position.
+
+        Discover section now features NewsFeed that will keep you up-to-date
+        with the latest crypto news and events.
+
+        Fixes This release includes minor fixes.
+      saga_features: ""
+  media:
+    - purpose: screenshot
+      uri: ./media/splash.webp
+  files:
+    - purpose: install
+      uri: ../app/build/outputs/apk/release/app-arm64-v8a-release.apk
+solana_mobile_dapp_publisher_portal:
+  google_store_package: com.ledger.live
+  testing_instructions: ""

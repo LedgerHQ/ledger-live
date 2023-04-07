@@ -5,7 +5,6 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   flattenAccounts,
   clearAccount,
-  canBeMigrated,
   getAccountCurrency,
   isUpToDateAccount,
   nestedSortAccounts,
@@ -17,7 +16,7 @@ import isEqual from "lodash/isEqual";
 import logger from "../logger";
 import accountModel from "./../../helpers/accountModel";
 import { State } from ".";
-import useCompoundAccountEnabled from "../screens/lend/useCompoundAccountEnabled";
+
 import { hiddenNftCollectionsSelector } from "./settings";
 export type AccountsState = Account[];
 const state: AccountsState = [];
@@ -177,12 +176,6 @@ export const hasAccountsSelector: OutputSelector<State, void, boolean> = createS
   shallowAccountsSelector,
   accounts => accounts.length > 0,
 );
-export const someAccountsNeedMigrationSelector: OutputSelector<
-  State,
-  void,
-  boolean
-> = createSelector(accountsSelector, accounts => accounts.some(canBeMigrated));
-
 // TODO: FIX RETURN TYPE
 export const currenciesSelector: OutputSelector<
   State,
@@ -234,7 +227,7 @@ export const getAccountById: OutputSelector<
 > = createSelector(accountsSelector, accounts => (accountId: string) =>
   accounts.find(a => a.id === accountId),
 );
-export const migratableAccountsSelector = (s: any): Account[] => s.accounts.filter(canBeMigrated);
+
 export const starredAccountsSelector: OutputSelector<
   State,
   void,
@@ -250,13 +243,7 @@ export const isStarredAccountSelector = (
     accountId: string;
   },
 ): boolean => flattenAccounts(s.accounts).some(a => a.id === accountId && a.starred);
-export const accountNeedsMigrationSelector: OutputSelector<
-  State,
-  {
-    accountId: string;
-  },
-  boolean
-> = createSelector(accountSelector, account => (account ? canBeMigrated(account) : false));
+
 export const isUpToDateAccountSelector: OutputSelector<
   State,
   {
@@ -264,13 +251,6 @@ export const isUpToDateAccountSelector: OutputSelector<
   },
   boolean
 > = createSelector(accountSelector, isUpToDateAccount);
-export const hasLendEnabledAccountsSelector: OutputSelector<
-  State,
-  void,
-  boolean
-> = createSelector(shallowAccountsSelector, accounts =>
-  flattenAccounts(accounts).some(accounts => useCompoundAccountEnabled(accounts)),
-);
 export const getAllNFTs: OutputSelector<State, {}, NFT[]> = createSelector(
   accountsSelector,
   accounts => accounts.flatMap(account => account.nfts).filter(Boolean),

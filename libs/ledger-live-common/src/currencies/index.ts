@@ -18,7 +18,6 @@ import {
   findTokenById,
   findTokenByAddress,
   hasTokenId,
-  findCompoundToken,
   getAbandonSeedAddress,
   getTokenById,
   addTokens,
@@ -87,7 +86,6 @@ export {
   sanitizeValueString,
   getCurrencyColor,
   ColorableCurrency,
-  findCompoundToken,
   listTokens,
   addTokens,
 };

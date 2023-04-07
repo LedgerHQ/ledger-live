@@ -17,7 +17,6 @@ import globalSyncRefreshControl from "../../components/globalSyncRefreshControl"
 import TrackScreen from "../../analytics/TrackScreen";
 
 import AccountRow from "./AccountRow";
-import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
@@ -156,7 +155,6 @@ function Accounts({ navigation, route }: NavigationProps) {
             paddingBottom: TAB_BAR_SAFE_HEIGHT,
           }}
         />
-        <MigrateAccountsBanner />
         <TokenContextualModal
           onClose={() => setAccount(undefined)}
           isOpened={!!account}
