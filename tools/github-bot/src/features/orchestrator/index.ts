@@ -304,12 +304,6 @@ export function orchestrator(app: Probot) {
             const workflowRef =
               metadata?.head_branch ||
               payload.workflow_run.pull_requests[0]?.head.ref;
-            const workflowInputs = workflow.getInputs(payload, metadata);
-            context.log.info(
-              `[Orchestrator](workflow_run.completed) Dispatching workflow ${fileName} on ref ${workflowRef} with inputs ${JSON.stringify(
-                workflowInputs
-              )}`
-            );
 
             let draft = false;
             if (typeof metadata?.number == "number") {
@@ -321,6 +315,19 @@ export function orchestrator(app: Probot) {
               draft = data?.draft || false;
             }
 
+            const inputs = workflow.getInputs(
+              payload,
+              metadata,
+              isFork ? localRef : undefined,
+              draft
+            );
+
+            context.log.info(
+              `[Orchestrator](workflow_run.completed) Dispatching workflow ${fileName} on ref ${workflowRef} with inputs ${JSON.stringify(
+                inputs
+              )}`
+            );
+
             // Trigger the associated workflow.
             // This will trigger the workflow_run.requested event,
             // which will create/recreate the check run and update the watcher.
@@ -329,12 +336,7 @@ export function orchestrator(app: Probot) {
               repo,
               workflow_id: fileName,
               ref: isFork ? localRef : workflowRef,
-              inputs: workflow.getInputs(
-                payload,
-                metadata,
-                isFork ? localRef : undefined,
-                draft
-              ),
+              inputs,
             });
             context.log.info(
               `[Orchestrator](workflow_run.completed) Dispatched workflow run response @status ${response.status}`
