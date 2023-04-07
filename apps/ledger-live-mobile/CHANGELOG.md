@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.19.0-next.1
+
+### Patch Changes
+
+- [#3177](https://github.com/LedgerHQ/ledger-live/pull/3177) [`193d69d72c`](https://github.com/LedgerHQ/ledger-live/commit/193d69d72c9887f020d8d01b24773ccaf84a77c9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - drop tron staking for LLM
+
 ## 3.19.0-next.0
 
 ### Minor Changes
