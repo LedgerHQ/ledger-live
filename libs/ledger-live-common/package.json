@@ -2,7 +2,6 @@
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
   "version": "29.2.0",
-  "packageManager": "pnpm@7.30.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"

@@ -21,7 +21,6 @@ import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeat
 import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
-import WalletConnectProvider from "./screens/WalletConnect/Provider";
 import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementProviderWrapper";
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
@@ -31,6 +30,7 @@ import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrap
 
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
+import { useBraze } from "./hooks/useBraze";
 const reloadApp = event => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
     window.api.reloadRenderer();
@@ -42,6 +42,9 @@ type Props = {
 };
 const InnerApp = ({ initialCountervalues }: { initialCountervalues: any }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
+
+  useBraze();
+
   useEffect(() => {
     const reload = e => {
       if (reloadEnabled) {
@@ -71,17 +74,15 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: any }) => {
                     <AnnouncementProviderWrapper>
                       <Router>
                         <PostOnboardingProviderWrapped>
-                          <WalletConnectProvider>
-                            <PlatformAppProviderWrapper>
-                              <DrawerProvider>
-                                <NftMetadataProvider>
-                                  <MarketDataProvider>
-                                    <Default />
-                                  </MarketDataProvider>
-                                </NftMetadataProvider>
-                              </DrawerProvider>
-                            </PlatformAppProviderWrapper>
-                          </WalletConnectProvider>
+                          <PlatformAppProviderWrapper>
+                            <DrawerProvider>
+                              <NftMetadataProvider>
+                                <MarketDataProvider>
+                                  <Default />
+                                </MarketDataProvider>
+                              </NftMetadataProvider>
+                            </DrawerProvider>
+                          </PlatformAppProviderWrapper>
                         </PostOnboardingProviderWrapped>
                       </Router>
                     </AnnouncementProviderWrapper>

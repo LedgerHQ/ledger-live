@@ -159,7 +159,7 @@ export default function BaseModal({
     <ReactNativeModal
       {...backDropProps}
       {...rest}
-      isVisible={isOpen}
+      isVisible={!!isOpen}
       deviceWidth={width}
       deviceHeight={height}
       useNativeDriver

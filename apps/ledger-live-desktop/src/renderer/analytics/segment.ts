@@ -51,6 +51,7 @@ const extraProperties = store => {
   return {
     appVersion: __APP_VERSION__,
     language,
+    appLanguage: language, // Needed for braze
     region,
     environment: process.env.SEGMENT_TEST ? "test" : __DEV__ ? "development" : "production",
     systemLanguage: systemLocale.language,

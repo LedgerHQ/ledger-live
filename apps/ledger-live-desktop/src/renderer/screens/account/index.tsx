@@ -4,7 +4,6 @@ import { connect, useSelector } from "react-redux";
 import { withTranslation, TFunction } from "react-i18next";
 import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { findCompoundToken } from "@ledgerhq/live-common/currencies/index";
 import { isNFTActive } from "@ledgerhq/live-common/nft/support";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
@@ -35,8 +34,6 @@ import AccountHeader from "./AccountHeader";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
-import CompoundBodyHeader from "~/renderer/screens/lend/Account/AccountBodyHeader";
-import useCompoundAccountEnabled from "~/renderer/screens/lend/useCompoundAccountEnabled";
 import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 const mapStateToProps = (
@@ -91,7 +88,6 @@ const AccountPage = ({
     ? perFamilyAccountSubHeader[mainAccount.currency.family]
     : null;
   const bgColor = useTheme("colors.palette.background.paper");
-  const isCompoundEnabled = useCompoundAccountEnabled(account, parentAccount);
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
@@ -110,7 +106,6 @@ const AccountPage = ({
   if (!account || !mainAccount) {
     return <Redirect to="/accounts" />;
   }
-  const ctoken = account.type === "TokenAccount" ? findCompoundToken(account.token) : null;
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency, bgColor);
   return (
@@ -158,16 +153,11 @@ const AccountPage = ({
               chartColor={color}
               countervalueFirst={countervalueFirst}
               setCountervalueFirst={setCountervalueFirst}
-              isCompoundEnabled={isCompoundEnabled}
-              ctoken={ctoken}
             />
           </Box>
           <AccountStakeBanner account={account} />
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
-          ) : null}
-          {isCompoundEnabled && account.type === "TokenAccount" && parentAccount ? (
-            <CompoundBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
           {account.type === "Account" && isNFTActive(account.currency) ? (
             <Collections account={account} />

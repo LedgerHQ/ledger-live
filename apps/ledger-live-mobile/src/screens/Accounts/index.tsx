@@ -17,7 +17,6 @@ import globalSyncRefreshControl from "../../components/globalSyncRefreshControl"
 import TrackScreen from "../../analytics/TrackScreen";
 
 import AccountRow from "./AccountRow";
-import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
@@ -142,7 +141,7 @@ function Accounts({ navigation, route }: NavigationProps) {
           keyExtractor={(i: AccountLike) => i.id}
           ListHeaderComponent={
             <Flex mt={3} mb={3}>
-              <Text variant="h4">
+              <Text testID="accounts-list-title" variant="h4">
                 {params?.currencyTicker
                   ? t("accounts.cryptoAccountsTitle", {
                       currencyTicker: params?.currencyTicker,
@@ -156,7 +155,6 @@ function Accounts({ navigation, route }: NavigationProps) {
             paddingBottom: TAB_BAR_SAFE_HEIGHT,
           }}
         />
-        <MigrateAccountsBanner />
         <TokenContextualModal
           onClose={() => setAccount(undefined)}
           isOpened={!!account}

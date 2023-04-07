@@ -28,12 +28,12 @@ function ServicesWidget() {
   const alreadySubscribedURI = useAlreadySubscribedURI();
 
   const onCardPress = useCallback(() => {
-    if (learnMoreURI) {
-      Linking.canOpenURL(learnMoreURI).then(() =>
-        Linking.openURL(learnMoreURI),
+    if (alreadySubscribedURI) {
+      Linking.canOpenURL(alreadySubscribedURI).then(() =>
+        Linking.openURL(alreadySubscribedURI),
       );
     }
-  }, [learnMoreURI]);
+  }, [alreadySubscribedURI]);
 
   return servicesConfig?.enabled && learnMoreURI && alreadySubscribedURI ? (
     <>

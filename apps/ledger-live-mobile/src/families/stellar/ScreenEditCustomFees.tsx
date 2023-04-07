@@ -25,9 +25,6 @@ import {
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../../const";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 const options = {
@@ -42,18 +39,6 @@ type NavigationProps = BaseComposite<
     >
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
-      ScreenName.StellarEditCustomFees
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.StellarEditCustomFees
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.StellarEditCustomFees
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
       ScreenName.StellarEditCustomFees
     >
   | StackNavigatorProps<
