@@ -33,7 +33,7 @@ type Props = {
   used: number;
   onClick: () => void;
 };
-const Footer = ({ total, used, onClick }: Props) => {
+const Footer = ({ total, used }: Props) => {
   const discreet = useDiscreetMode();
   const percentVotesUsed = Math.floor(100 * (used / total)) / 100;
   if (percentVotesUsed >= 1) return null;
@@ -54,7 +54,7 @@ const Footer = ({ total, used, onClick }: Props) => {
         </Text>
       </Box>
       <Box flex="1" />
-      <Button primary onClick={onClick}>
+      <Button primary disabled={true}>
         <Trans i18nKey="tron.voting.remainingVotes.button" />
       </Button>
     </Box>
