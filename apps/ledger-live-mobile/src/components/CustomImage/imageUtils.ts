@@ -62,6 +62,10 @@ export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null
 export function extractImageUrlFromNftMetadata(
   nftMetadata?: NFTMetadata,
 ): string | null {
+  if (nftMetadata?.staxImage) {
+    return nftMetadata?.staxImage;
+  }
+
   const nftMediaTypes = nftMetadata ? getMetadataMediaTypes(nftMetadata) : null;
   const nftMediaSize = nftMediaTypes
     ? (["big", "preview"] as NFTMediaSize[]).find(

@@ -19,6 +19,7 @@ export const textVariants = [
   "small",
   "subtitle",
   "tiny",
+  "tinyAlpha",
 ] as const;
 
 export type TextVariants = typeof textVariants[number];
@@ -48,6 +49,7 @@ fontSizes.paragraphLineHeight = fontSizes.paragraph;
 fontSizes.largeLineHeight = fontSizes.large;
 fontSizes.h4 = fontSizes.h2;
 fontSizes.h5 = fontSizes.h3;
+fontSizes.tinyAlpha = fontSizes.tiny;
 
 export const radii = [0, 4, 8];
 export const zIndexes = [-1, 0, 1, 9, 10, 90, 100, 900, 1000];
