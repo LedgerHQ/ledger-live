@@ -47,7 +47,7 @@ function CardanoPoolRow({ pool, active, onClick, unit, currency, disabled }: Pro
   const poolCost = formatCurrencyUnit(unit, new BigNumber(pool.cost), formatConfig);
   return (
     <StyledValidatorRow
-      onClick={disabled ? () => {} : onClick}
+      onClick={disabled ? undefined : onClick}
       disabled={disabled}
       key={pool.poolId}
       validator={{

@@ -31,7 +31,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   const unit = getAccountUnit(account);
   const [showAll, setShowAll] = useState(
     LEDGER_POOL_IDS.length === 0 ||
-    (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
+      (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
   );
   const { pools, searchQuery, setSearchQuery, onScrollEndReached } = useCardanoFamilyPools(
     account.currency,
