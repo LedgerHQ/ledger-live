@@ -18,6 +18,7 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import useTheme from "~/renderer/hooks/useTheme";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 const Container: ThemedComponent<{ selectable: boolean; pb: number }> = styled(Box)`
   flex: 1;
@@ -53,10 +54,18 @@ const DEFAULT_MULTIBUY_APP_ID = "multibuy";
 const LiveAppExchange = ({ appId }: { appId: string }) => {
   const { state: urlParams } = useLocation();
   const locale = useSelector(languageSelector);
+
+  const mockManifest: LiveAppManifest | undefined = process.env.MOCK_REMOTE_LIVE_MANIFEST
+    ? JSON.parse(process.env.MOCK_REMOTE_LIVE_MANIFEST)[0]
+    : null;
+
+  console.log("mock manifest", mockManifest);
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
-  const manifest = localManifest || remoteManifest;
+  const manifest = localManifest || mockManifest || remoteManifest;
   const themeType = useTheme("colors.palette.type");
+
+  console.log("manifest used!: ", { manifest });
   return (
     <Card
       grow

@@ -122,6 +122,7 @@ tests/artifacts/*
 !tests/artifacts/.gitkeep
 tests/utils/dummy-live-app/build
 tests/utils/dummy-wallet-app/build
+tests/utils/dummy-ptx-app/build
 
 # Yalc
 .yalc
