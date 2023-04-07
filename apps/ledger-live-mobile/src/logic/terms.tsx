@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useLocale } from "../context/Locale";
@@ -118,8 +118,14 @@ export const AcceptedTermsContextProvider: React.FC<{
   useEffect(() => {
     isAcceptedTerms().then(setAccepted);
   }, []);
+
+  const value = useMemo(
+    () => ({ accepted, accept, unAccept }),
+    [accept, accepted, unAccept],
+  );
+
   return (
-    <AcceptedTermsContext.Provider value={{ accepted, accept, unAccept }}>
+    <AcceptedTermsContext.Provider value={value}>
       {children}
     </AcceptedTermsContext.Provider>
   );
