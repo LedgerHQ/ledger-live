@@ -325,10 +325,15 @@ export const SyncOnboarding = ({
   }, [isDesyncDrawerOpen]);
 
   useEffect(() => {
+    // When the device is seeded, there are 2 cases before triggering the software check step:
+    // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
+    // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
     if (
       deviceOnboardingState?.isOnboarded &&
-      deviceOnboardingState?.currentOnboardingStep ===
-        DeviceOnboardingStep.Ready
+      [
+        DeviceOnboardingStep.Ready,
+        DeviceOnboardingStep.WelcomeScreen1,
+      ].includes(deviceOnboardingState?.currentOnboardingStep)
     ) {
       setCompanionStepKey(CompanionStepKey.SoftwareCheck);
       return;
