@@ -16,34 +16,26 @@ export type Props = {
   isLastItem?: boolean;
 };
 
-const getContainerBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (isLastItem && status === "completed") {
-    return theme.colors.success.c30;
-  } else if (status === "completed") {
-    return theme.colors.primary.c20;
-  } else if (status === "active") {
+const getContainerBackground = (theme: Theme, status: ItemStatus) => {
+  if (status === "active") {
     return theme.colors.neutral.c20;
   }
-  return theme.colors.neutral.c30;
+  return "transparent";
 };
 
 const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (isLastItem && status === "completed") {
-    return theme.colors.success.c30;
-  } else if (isLastItem && status === "active") {
+  if (isLastItem && status === "active") {
     return theme.colors.success.c50;
-  } else if (status === "completed") {
-    return theme.colors.primary.c20;
   } else if (status === "active") {
-    return theme.colors.primary.c80;
+    return theme.colors.neutral.c40;
   }
-  return theme.colors.neutral.c30;
+  return "transparent";
 };
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   flex: 1;
   border-radius: ${(p) => p.theme.radii[2]}px;
-  background: ${(p) => getContainerBackground(p.theme, p.status, p.isLastItem)};
+  background: ${(p) => getContainerBackground(p.theme, p.status)};
   border: 1px solid ${(p) => getContainerBorder(p.theme, p.status, p.isLastItem)};
   padding: 20px 16px;
 `;
