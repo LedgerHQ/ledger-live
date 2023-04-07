@@ -29,7 +29,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ github.ref_name }}
-          base_ref: ${{ inputs.base_ref }}
+          base: ${{ inputs.base_ref }}
       - name: set git user
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
@@ -98,7 +98,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ github.ref_name }}
-          base_ref: ${{ inputs.base_ref }}
+          base: ${{ inputs.base_ref }}
       - name: set git user
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
