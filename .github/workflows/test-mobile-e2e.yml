@@ -176,10 +176,7 @@ jobs:
           java-version: "11"
           cache: "gradle"
       - name: setup Android SDK
-        uses: android-actions/setup-android@v2.0.8
-      # - name: export HOME env
-      #   run: |
-      #     echo "HOME=/root" >> $GITHUB_ENV
+        uses: android-actions/setup-android@v2.0.10
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
