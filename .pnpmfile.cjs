@@ -124,7 +124,7 @@ function readPackage(pkg, context) {
       addPeerDependencies("metro-config", {
         "metro-transform-worker": "*",
       }),
-      addDependencies("metro-transform-worker", {
+      addPeerDependencies("metro-transform-worker", {
         "metro-minify-terser": "*",
       }),
       /* Expo packages… */
