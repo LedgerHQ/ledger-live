@@ -12,7 +12,8 @@
     "src/__mocks__/*",
     "src/**/*.android.*",
     "src/**/*.ios.*",
-    "src/components/RootNavigator/types.ts"
+    "src/components/RootNavigator/types.ts",
+    "src/logic/keyboardVisible.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/react-native-passcode-auth",
