@@ -18,7 +18,7 @@ on:
         required: true
       base_ref:
         description: The base branch to merge the head into when checking out the code
-        required: true
+        required: false
       draft:
         description: true if the PR is in draft
         required: false
