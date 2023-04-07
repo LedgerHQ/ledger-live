@@ -2,9 +2,11 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
-  getAccountCurrency,
   getAccountName,
+  getAccountCurrency,
   getAccountUnit,
+  getFeesCurrency,
+  getFeesUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -59,8 +61,8 @@ export default class StepSummary extends PureComponent<StepProps> {
     const { estimatedFees, amount, totalSpent, warnings, txInputs } = status;
     const feeTooHigh = warnings.feeTooHigh;
     const currency = getAccountCurrency(account);
-    const feesUnit = getAccountUnit(mainAccount);
-    const feesCurrency = getAccountCurrency(mainAccount);
+    const feesCurrency = getFeesCurrency(mainAccount);
+    const feesUnit = getFeesUnit(feesCurrency);
     const unit = getAccountUnit(account);
     const utxoLag = txInputs ? txInputs.length >= WARN_FROM_UTXO_COUNT : null;
     const hasNonEmptySubAccounts =
