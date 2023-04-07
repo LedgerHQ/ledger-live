@@ -195,7 +195,7 @@ jobs:
         timeout-minutes: 60
         with:
           api-level: 31
-          arch: x86_64
+          arch: arm64-v8a
           target: default
           avd-name: "Pixel_5_API_31"
           force-avd-creation: true
@@ -215,7 +215,7 @@ jobs:
           HOME: "/root"
         with:
           api-level: 31
-          arch: x86_64
+          arch: arm64-v8a
           target: default
           avd-name: "Pixel_5_API_31"
           force-avd-creation: false
@@ -230,7 +230,7 @@ jobs:
       #     pnpm mobile e2e:test -c android.emu.release --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --cleanup --headless
       - name: Close the emulator
         run: |
-          killall qemu-system-x86_64-headless
+          killall qemu-system-arm64-v8a-headless
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v2
