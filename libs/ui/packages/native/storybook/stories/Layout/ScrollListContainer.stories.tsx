@@ -1,14 +1,17 @@
 import React from "react";
 import { action } from "@storybook/addon-actions";
-import { boolean } from "@storybook/addon-knobs";
-import { storiesOf } from "../storiesOf";
 import ScrollListContainer from "../../../src/components/Layout/ScrollListContainer";
 import Text from "../../../src/components/Text";
 import Flex from "../../../src/components/Layout/Flex";
 
-const ScrollListContainerStory = () => (
+export default {
+  title: "Layout/ScrollListContainer",
+  component: ScrollListContainer,
+};
+
+export const ScrollListContainerStory = (args: typeof ScrollListContainerStoryArgs) => (
   <Flex flex={1} width="100%">
-    <ScrollListContainer horizontal={boolean("Horizontal", false)} onScroll={action("scroll")}>
+    <ScrollListContainer horizontal={args.horizontal} onScroll={action("scroll")}>
       {Array(20)
         .fill(0)
         .map((_, i) => (
@@ -19,5 +22,8 @@ const ScrollListContainerStory = () => (
     </ScrollListContainer>
   </Flex>
 );
-
-storiesOf((story) => story("Layout", module).add("ScrollListContainer", ScrollListContainerStory));
+ScrollListContainerStory.storyName = "ScrollListContainer";
+const ScrollListContainerStoryArgs = {
+  horizontal: false,
+};
+ScrollListContainerStory.args = ScrollListContainerStoryArgs;

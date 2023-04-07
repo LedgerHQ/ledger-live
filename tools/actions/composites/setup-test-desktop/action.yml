@@ -60,12 +60,12 @@ runs:
         server-token: "yolo"
         cleanup-cache-folder: "true"
     - name: Build dependencies
-      env:
-        GOGC: 75
       run: |
         pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       shell: bash
     - name: Build desktop testing
+      env:
+        GOMEMLIMIT: 5GiB
       if: ${{ !inputs.skip_builds }}
       run: |
         pnpm desktop build:testing

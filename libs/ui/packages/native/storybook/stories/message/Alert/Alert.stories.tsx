@@ -1,17 +1,26 @@
 import React from "react";
-import { text } from "@storybook/addon-knobs";
-import { storiesOf } from "../../storiesOf";
-import { select, boolean } from "@storybook/addon-knobs";
-import { Alert, Flex } from "../../../../src/";
+import { Alert, Flex } from "../../../../src/components";
 
-const AlertSample = () => (
+export default {
+  title: "Messages/Alert",
+  component: Alert,
+  argTypes: {
+    type: {
+      options: ["info", "warning", "error", undefined],
+      control: { type: "select" },
+    },
+  },
+};
+
+export const AlertSample = (args: typeof AlertSampleArgs) => (
   <Flex p={20} width={1}>
-    <Alert
-      type={select("type", ["info", "warning", "error", undefined], undefined)}
-      title={text("title", "Label")}
-      showIcon={boolean("showIcon", true)}
-    />
+    <Alert type={args.type} title={args.title} showIcon={args.showIcon} />
   </Flex>
 );
-
-storiesOf((story) => story("Messages", module).add("Alert", AlertSample));
+AlertSample.storyName = "Alert";
+const AlertSampleArgs = {
+  type: undefined,
+  title: "Label",
+  showIcon: true,
+};
+AlertSample.args = AlertSampleArgs;

@@ -1,0 +1,13 @@
+diff --git a/android/build.gradle b/android/build.gradle
+index 4366d927d700afb868fa2650635407d580f3d39c..a7405eb4bcc537dc1275e4e84596c3a93c03925b 100644
+--- a/android/build.gradle
++++ b/android/build.gradle
+@@ -3,7 +3,7 @@ def safeExtGet(prop, fallback) {
+ }
+ 
+ buildscript {
+-    ext.kotlin_version = '1.6.10'
++    ext.kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : '1.6.10'
+     repositories {
+         google()
+         mavenCentral()

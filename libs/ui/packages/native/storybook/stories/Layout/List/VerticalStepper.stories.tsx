@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { storiesOf } from "../../storiesOf";
-import { Flex, VerticalStepper, Text, Switch, Divider } from "../../../../src";
+import { Flex, VerticalStepper, Text, Switch, Divider } from "../../../../src/components";
 
 const { ItemStatus } = VerticalStepper;
 
@@ -54,7 +53,7 @@ const defaultItems = [
   },
 ];
 
-const VerticalStepperStory = () => {
+export const VerticalStepperStory = () => {
   const [items, setItems] = useState(defaultItems);
   const [animate, setAnimate] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -99,7 +98,4 @@ const VerticalStepperStory = () => {
     </Flex>
   );
 };
-
-storiesOf((story) =>
-  story("Layout/List", module).add("VerticalStepper", () => <VerticalStepperStory />),
-);
+VerticalStepperStory.storyName = "VerticalStepper";
