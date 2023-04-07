@@ -1,7 +1,6 @@
 import { CosmosAccount, Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { getMaxEstimatedBalance } from "./logic";
-import { CacheRes, makeLRUCache } from "../../cache";
 import type { Account } from "@ledgerhq/types-live";
 import cryptoFactory from "./chain/chain";
 import { CosmosAPI } from "./api/Cosmos";
@@ -12,36 +11,15 @@ import {
 import { getEnv } from "../../env";
 import { log } from "@ledgerhq/logs";
 
-export const calculateFees: CacheRes<
-  Array<{
-    account: Account;
-    transaction: Transaction;
-  }>,
-  {
-    estimatedFees: BigNumber;
-    estimatedGas: BigNumber;
-  }
-> = makeLRUCache(
-  async ({
-    account,
-    transaction,
-  }): Promise<{
-    estimatedFees: BigNumber;
-    estimatedGas: BigNumber;
-  }> => {
-    return await getEstimatedFees(account as CosmosAccount, transaction);
-  },
-  ({ account, transaction }) =>
-    `${account.id}_${account.currency.id}_${transaction.amount.toString()}_${
-      transaction.recipient
-    }_${String(transaction.useAllAmount)}_${transaction.mode}_${
-      transaction.validators
-        ? transaction.validators.map((v) => v.address).join("-")
-        : ""
-    }_${transaction.memo ? transaction.memo.toString() : ""}_${
-      transaction.sourceValidator ? transaction.sourceValidator : ""
-    }`
-);
+export const calculateFees = async ({
+  account,
+  transaction,
+}): Promise<{
+  estimatedFees: BigNumber;
+  estimatedGas: BigNumber;
+}> => {
+  return await getEstimatedFees(account as CosmosAccount, transaction);
+};
 
 const getEstimatedFees = async (
   account: CosmosAccount,
@@ -78,7 +56,7 @@ const getEstimatedFees = async (
       const gasUsed = await cosmosAPI.simulate(tx_bytes);
       estimatedGas = gasUsed
         .multipliedBy(new BigNumber(getEnv("COSMOS_GAS_AMPLIFIER")))
-        .integerValue();
+        .integerValue(BigNumber.ROUND_CEIL);
     } catch (e) {
       log(
         "cosmos/simulate",
@@ -92,7 +70,8 @@ const getEstimatedFees = async (
 
   const estimatedFees = estimatedGas
     .times(cosmosCurrency.minGasprice)
-    .integerValue();
+    .integerValue(BigNumber.ROUND_CEIL);
+
   return { estimatedFees, estimatedGas };
 };
 

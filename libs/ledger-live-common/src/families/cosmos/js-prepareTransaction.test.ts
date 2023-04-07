@@ -18,9 +18,8 @@ const transaction = {
 } as unknown as Transaction;
 
 describe("calculateFees", () => {
-  afterEach(() => {
-    calculateFees.reset();
-  });
+  // TODO: add test that checks that gas/fee estimation is higher than simulate call response
+
   it("should calculate fees for a transaction", async () => {
     const { estimatedFees, estimatedGas } = await calculateFees({
       account,
@@ -28,18 +27,5 @@ describe("calculateFees", () => {
     });
     expect(estimatedFees.gt(0)).toEqual(true);
     expect(estimatedGas.gt(0)).toEqual(true);
-  });
-
-  it("should return cached result for the same inputs", async () => {
-    const { estimatedFees: fees1, estimatedGas: gas1 } = await calculateFees({
-      account,
-      transaction,
-    });
-    const { estimatedFees: fees2, estimatedGas: gas2 } = await calculateFees({
-      account,
-      transaction,
-    });
-    expect(fees1).toEqual(fees2);
-    expect(gas1).toEqual(gas2);
   });
 });
