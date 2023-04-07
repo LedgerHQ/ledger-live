@@ -7,6 +7,7 @@ inputs:
   upgrade_npm:
     description: "should update npm (windows support)"
     required: false
+
 runs:
   using: "composite"
   steps:
@@ -31,7 +32,7 @@ runs:
         cache-dependency-path: "**/pnpm-lock.yaml"
         registry-url: "https://registry.npmjs.org"
     - name: upgrade npm
-      if: inputs.upgrade_npm
+      if: inputs.upgrade_npm == 'true'
       run: |
         npm i -g npm
       shell: bash
