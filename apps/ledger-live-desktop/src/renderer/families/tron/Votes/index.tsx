@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import invariant from "invariant";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { Account } from "@ledgerhq/types-live";
@@ -9,14 +9,12 @@ import {
   getLastVotedDate,
   formatVotes,
   getNextRewardDate,
-  MIN_TRANSACTION_AMOUNT,
 } from "@ledgerhq/live-common/families/tron/react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { openModal } from "~/renderer/actions/modals";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
@@ -44,7 +42,6 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 const Delegation = ({ account }: Props) => {
-  const dispatch = useDispatch();
   const locale = useSelector(localeSelector);
   const superRepresentatives = useTronSuperRepresentatives();
   const lastVoteDate = getLastVotedDate(account);
@@ -53,13 +50,7 @@ const Delegation = ({ account }: Props) => {
   ]);
   const unit = getAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
-  const formattedMinAmount = formatCurrencyUnit(unit, BigNumber(MIN_TRANSACTION_AMOUNT), {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-    locale,
-  });
-  const { tronResources, spendableBalance } = account;
+  const { tronResources } = account;
   invariant(tronResources, "tron account expected");
   const { votes, tronPower, unwithdrawnReward } = tronResources;
   const discreet = useDiscreetMode();
@@ -72,24 +63,6 @@ const Delegation = ({ account }: Props) => {
   });
   const formattedVotes = formatVotes(votes, superRepresentatives);
   const totalVotesUsed = votes.reduce((sum, { voteCount }) => sum + voteCount, 0);
-  const onDelegate = useCallback(
-    () =>
-      dispatch(
-        openModal(votes.length > 0 ? "MODAL_TRON_VOTE" : "MODAL_TRON_VOTE_INFO", {
-          account,
-        }),
-      ),
-    [account, dispatch, votes],
-  );
-  const onEarnRewards = useCallback(
-    () =>
-      dispatch(
-        openModal("MODAL_TRON_REWARDS_INFO", {
-          account,
-        }),
-      ),
-    [account, dispatch],
-  );
   const hasVotes = formattedVotes.length > 0;
   const hasRewards = unwithdrawnReward.gt(0);
   const nextRewardDate = getNextRewardDate(account);
@@ -98,8 +71,6 @@ const Delegation = ({ account }: Props) => {
     [nextRewardDate],
   );
   const canClaimRewards = hasRewards && !formattedNextRewardDate;
-  const earnRewardDisabled =
-    tronPower === 0 && (!spendableBalance || !spendableBalance.gte(MIN_TRANSACTION_AMOUNT));
   return (
     <TableContainer mb={6}>
       <TableHeader
@@ -109,7 +80,7 @@ const Delegation = ({ account }: Props) => {
         }}
       >
         {tronPower > 0 && formattedVotes.length > 0 ? (
-          <Button small color="palette.primary.main" onClick={onDelegate} mr={2}>
+          <Button small color="palette.primary.main" disabled={true} mr={2}>
             <Box horizontal flow={1} alignItems="center">
               <Vote size={12} />
               <Box>
@@ -139,19 +110,7 @@ const Delegation = ({ account }: Props) => {
               ) : null
             }
           >
-            <Button
-              disabled={!canClaimRewards}
-              color="palette.primary.main"
-              small
-              onClick={() => {
-                dispatch(
-                  openModal("MODAL_TRON_CLAIM_REWARDS", {
-                    account,
-                    reward: unwithdrawnReward,
-                  }),
-                );
-              }}
-            >
+            <Button disabled={true} color="palette.primary.main" small>
               <Box horizontal flow={1} alignItems="center">
                 <ClaimRewards size={12} />
                 <Box>
@@ -197,7 +156,7 @@ const Delegation = ({ account }: Props) => {
               explorerView={explorerView}
             />
           ))}
-          <Footer total={tronPower} used={totalVotesUsed} onClick={onDelegate} />
+          <Footer total={tronPower} used={totalVotesUsed} onClick={() => undefined} />
         </>
       ) : (
         <Wrapper horizontal>
@@ -226,34 +185,16 @@ const Delegation = ({ account }: Props) => {
             </Box>
           </Box>
           <Box>
-            <ToolTip
-              content={
-                earnRewardDisabled ? (
+            <Button primary small disabled={true}>
+              <Box horizontal flow={1} alignItems="center">
+                <IconChartLine size={12} />
+                <Box>
                   <Trans
-                    i18nKey="tron.voting.warnEarnRewards"
-                    values={{
-                      amount: formattedMinAmount,
-                    }}
+                    i18nKey={tronPower > 0 ? "tron.voting.emptyState.vote" : "delegation.title"}
                   />
-                ) : null
-              }
-            >
-              <Button
-                primary
-                small
-                disabled={earnRewardDisabled}
-                onClick={tronPower > 0 ? onDelegate : onEarnRewards}
-              >
-                <Box horizontal flow={1} alignItems="center">
-                  <IconChartLine size={12} />
-                  <Box>
-                    <Trans
-                      i18nKey={tronPower > 0 ? "tron.voting.emptyState.vote" : "delegation.title"}
-                    />
-                  </Box>
                 </Box>
-              </Button>
-            </ToolTip>
+              </Box>
+            </Button>
           </Box>
         </Wrapper>
       )}
