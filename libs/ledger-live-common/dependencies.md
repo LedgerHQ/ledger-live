@@ -86,7 +86,6 @@ yarn upgrade-interactive -i --latest
 | invariant                                   | generic helper                                                    | monthly                                                              |
 | isomorphic-ws                               | WebSocket helper                                                  | monthly                                                              |
 | json-rpc-2.0                                | Ethereum coin integration                                         | monthly                                                              |
-| leb128                                      | Filecoin coin integration                                         | monthly                                                              |
 | lodash                                      | generic helper                                                    | monthly                                                              |
 | long                                        | Osmosis coin integration                                          | monthly                                                              |
 | lru-cache                                   | generic helper                                                    | monthly                                                              |
