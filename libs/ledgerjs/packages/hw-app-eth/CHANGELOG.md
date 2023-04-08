@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-eth
 
+## 6.33.0-nightly.0
+
+### Minor Changes
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+### Patch Changes
+
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/cryptoassets@9.3.0-nightly.0
+  - @ledgerhq/domain-service@1.0.0-nightly.0
+
 ## 6.32.2
 
 ### Patch Changes

@@ -1,5 +1,41 @@
 # @ledgerhq/live-common
 
+## 29.3.0-nightly.0
+
+### Minor Changes
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+- [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - add protectServicesDiscoverDesktop feature flag
+
+- [#2861](https://github.com/LedgerHQ/ledger-live/pull/2861) [`0941844a56`](https://github.com/LedgerHQ/ledger-live/commit/0941844a560b5b7b066fb1ffbec1dde7111c083a) Thanks [@cksanders](https://github.com/cksanders)! - - Update Kotlin version
+
+  - Updated `wallet-api-server` and `wallet-api-core` version
+  - Add Next storage & remove obsolete `AsyncStorage_db_size_in_MB`
+  - Added wallet api storage support
+  - Add stable & tested LLD storage support
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset the migrate accounts old mecanism
+
+### Patch Changes
+
+- [#3174](https://github.com/LedgerHQ/ledger-live/pull/3174) [`29badd80d0`](https://github.com/LedgerHQ/ledger-live/commit/29badd80d062f76139ba3a056df22277858021bd) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove dead code of unsupported neo family
+
+- [#2950](https://github.com/LedgerHQ/ledger-live/pull/2950) [`c59bee8935`](https://github.com/LedgerHQ/ledger-live/commit/c59bee89357bb29097fb97ca67ece845630d982a) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - Estimate gas using simulate endpoint instead of hardcoded value
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/cryptoassets@9.3.0-nightly.0
+  - @ledgerhq/coin-framework@0.3.0-nightly.0
+  - @ledgerhq/live-env@0.1.0-nightly.0
+  - @ledgerhq/hw-app-eth@6.33.0-nightly.0
+  - @ledgerhq/domain-service@1.0.0-nightly.0
+  - @ledgerhq/coin-polkadot@0.1.1-nightly.0
+  - @ledgerhq/live-portfolio@0.0.2-nightly.0
+
 ## 29.2.0
 
 ### Minor Changes

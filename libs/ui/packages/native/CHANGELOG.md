@@ -1,5 +1,19 @@
 # @ledgerhq/native-ui
 
+## 0.18.0-nightly.0
+
+### Minor Changes
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+### Patch Changes
+
+- [#2888](https://github.com/LedgerHQ/ledger-live/pull/2888) [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27) Thanks [@elbywan](https://github.com/elbywan)! - Upgrade dependencies
+
+- Updated dependencies [[`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27)]:
+  - @ledgerhq/crypto-icons-ui@0.2.2-nightly.0
+  - @ledgerhq/icons-ui@0.3.6-nightly.0
+
 ## 0.17.0
 
 ### Minor Changes

@@ -1,5 +1,44 @@
 # live-mobile
 
+## 3.19.0-nightly.0
+
+### Minor Changes
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+- [#2861](https://github.com/LedgerHQ/ledger-live/pull/2861) [`0941844a56`](https://github.com/LedgerHQ/ledger-live/commit/0941844a560b5b7b066fb1ffbec1dde7111c083a) Thanks [@cksanders](https://github.com/cksanders)! - - Update Kotlin version
+
+  - Updated `wallet-api-server` and `wallet-api-core` version
+  - Add Next storage & remove obsolete `AsyncStorage_db_size_in_MB`
+  - Added wallet api storage support
+  - Add stable & tested LLD storage support
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset the migrate accounts old mecanism
+
+### Patch Changes
+
+- [#3120](https://github.com/LedgerHQ/ledger-live/pull/3120) [`76f4c19ce6`](https://github.com/LedgerHQ/ledger-live/commit/76f4c19ce67f2cf42c1b00add069b49863b7fe94) Thanks [@RamyEB](https://github.com/RamyEB)! - Remove the cancel button and make the top left arrow return user to Browse Web3.
+
+- [#2888](https://github.com/LedgerHQ/ledger-live/pull/2888) [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27) Thanks [@elbywan](https://github.com/elbywan)! - Upgrade react-native (to 0.71) as well as other dependencies
+
+- [#3116](https://github.com/LedgerHQ/ledger-live/pull/3116) [`37b05b991d`](https://github.com/LedgerHQ/ledger-live/commit/37b05b991db519073a92ad5f4e7784006e8517d4) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Fixed a regression on LLD live-app sdk exchange app; backported exchange app from live-app-sdk to wallet-api; added "allow debug apps" in LLM developers menu
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- [#3094](https://github.com/LedgerHQ/ledger-live/pull/3094) [`ebeb0ea7a3`](https://github.com/LedgerHQ/ledger-live/commit/ebeb0ea7a3bff80cd90721ff59681c5fbf788206) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - drop tron staking for LLM
+
+- [#3161](https://github.com/LedgerHQ/ledger-live/pull/3161) [`c6e6fc7269`](https://github.com/LedgerHQ/ledger-live/commit/c6e6fc72696d4d35105e2316c5d7e2d3bad5acae) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: correctly trigger software checks during sync onboarding on new firmware versions
+
+- Updated dependencies [[`29badd80d0`](https://github.com/LedgerHQ/ledger-live/commit/29badd80d062f76139ba3a056df22277858021bd), [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`c59bee8935`](https://github.com/LedgerHQ/ledger-live/commit/c59bee89357bb29097fb97ca67ece845630d982a), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`0941844a56`](https://github.com/LedgerHQ/ledger-live/commit/0941844a560b5b7b066fb1ffbec1dde7111c083a), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4), [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/live-common@29.3.0-nightly.0
+  - @ledgerhq/types-cryptoassets@7.1.0-nightly.0
+  - @ledgerhq/types-live@6.32.0-nightly.0
+  - @ledgerhq/native-ui@0.18.0-nightly.0
+  - @ledgerhq/coin-framework@0.3.0-nightly.0
+  - @ledgerhq/domain-service@1.0.0-nightly.0
+
 ## 3.18.0
 
 ### Minor Changes

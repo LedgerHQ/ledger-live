@@ -1,5 +1,17 @@
 # @ledgerhq/domain-service
 
+## 1.0.0-nightly.0
+
+### Major Changes
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix registries, move from live-common/network to plain axios, add domain validation and TLV validation tools. Feature complete for v1.0.0
+
+### Patch Changes
+
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/cryptoassets@9.3.0-nightly.0
+  - @ledgerhq/types-live@6.32.0-nightly.0
+
 ## 0.2.1
 
 ### Patch Changes

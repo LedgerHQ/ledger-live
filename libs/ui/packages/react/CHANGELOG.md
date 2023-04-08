@@ -1,5 +1,15 @@
 # @ledgerhq/react-ui
 
+## 0.12.1-nightly.0
+
+### Patch Changes
+
+- [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - fix to Tag component
+
+- Updated dependencies [[`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27)]:
+  - @ledgerhq/crypto-icons-ui@0.2.2-nightly.0
+  - @ledgerhq/icons-ui@0.3.6-nightly.0
+
 ## 0.12.0
 
 ### Minor Changes

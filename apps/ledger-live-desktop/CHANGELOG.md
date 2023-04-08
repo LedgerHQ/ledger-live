@@ -1,5 +1,52 @@
 # ledger-live-desktop
 
+## 2.57.0-nightly.0
+
+### Minor Changes
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+- [#2970](https://github.com/LedgerHQ/ledger-live/pull/2970) [`d79ffde19c`](https://github.com/LedgerHQ/ledger-live/commit/d79ffde19c8cbedefd657a206525256a9f2c22b6) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Integration of Braze SDK
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Remove dead code of WalletConnect v1
+
+- [#3139](https://github.com/LedgerHQ/ledger-live/pull/3139) [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Add discover Protect modal on sidebar menu
+
+- [#3127](https://github.com/LedgerHQ/ledger-live/pull/3127) [`772e0e6042`](https://github.com/LedgerHQ/ledger-live/commit/772e0e6042b052788f307bb5fb89cf0d6ff4978a) Thanks [@cpellizzari-ledger](https://github.com/cpellizzari-ledger)! - Remove account data from stake button clicked event
+
+- [#2861](https://github.com/LedgerHQ/ledger-live/pull/2861) [`0941844a56`](https://github.com/LedgerHQ/ledger-live/commit/0941844a560b5b7b066fb1ffbec1dde7111c083a) Thanks [@cksanders](https://github.com/cksanders)! - - Update Kotlin version
+
+  - Updated `wallet-api-server` and `wallet-api-core` version
+  - Add Next storage & remove obsolete `AsyncStorage_db_size_in_MB`
+  - Added wallet api storage support
+  - Add stable & tested LLD storage support
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset the migrate accounts old mecanism
+
+- [#2970](https://github.com/LedgerHQ/ledger-live/pull/2970) [`6c3ab9335a`](https://github.com/LedgerHQ/ledger-live/commit/6c3ab9335a0be298a557f8f0f2cbdc0e1371b685) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Add Notifications content card with Braze
+
+- [#2970](https://github.com/LedgerHQ/ledger-live/pull/2970) [`6c3ab9335a`](https://github.com/LedgerHQ/ledger-live/commit/6c3ab9335a0be298a557f8f0f2cbdc0e1371b685) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Add Portfolio Content cards with braze
+
+### Patch Changes
+
+- [#3094](https://github.com/LedgerHQ/ledger-live/pull/3094) [`ebeb0ea7a3`](https://github.com/LedgerHQ/ledger-live/commit/ebeb0ea7a3bff80cd90721ff59681c5fbf788206) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - drop tron staking for LLD
+
+- [#3116](https://github.com/LedgerHQ/ledger-live/pull/3116) [`37b05b991d`](https://github.com/LedgerHQ/ledger-live/commit/37b05b991db519073a92ad5f4e7784006e8517d4) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Fixed a regression on LLD live-app sdk exchange app; backported exchange app from live-app-sdk to wallet-api; added "allow debug apps" in LLM developers menu
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- [#3161](https://github.com/LedgerHQ/ledger-live/pull/3161) [`c6e6fc7269`](https://github.com/LedgerHQ/ledger-live/commit/c6e6fc72696d4d35105e2316c5d7e2d3bad5acae) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: correctly trigger software checks during sync onboarding on new firmware versions
+
+- Updated dependencies [[`29badd80d0`](https://github.com/LedgerHQ/ledger-live/commit/29badd80d062f76139ba3a056df22277858021bd), [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`c59bee8935`](https://github.com/LedgerHQ/ledger-live/commit/c59bee89357bb29097fb97ca67ece845630d982a), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`0941844a56`](https://github.com/LedgerHQ/ledger-live/commit/0941844a560b5b7b066fb1ffbec1dde7111c083a), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4), [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/live-common@29.3.0-nightly.0
+  - @ledgerhq/types-cryptoassets@7.1.0-nightly.0
+  - @ledgerhq/types-live@6.32.0-nightly.0
+  - @ledgerhq/coin-framework@0.3.0-nightly.0
+  - @ledgerhq/react-ui@0.12.1-nightly.0
+  - @ledgerhq/domain-service@1.0.0-nightly.0
+
 ## 2.56.0
 
 ### Minor Changes
