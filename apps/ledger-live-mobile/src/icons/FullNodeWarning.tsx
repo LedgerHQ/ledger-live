@@ -1,5 +1,5 @@
 import React from "react";
-import Svg, { Mask, Path, G, EMaskUnits } from "react-native-svg";
+import Svg, { Mask, Path, G } from "react-native-svg";
 
 type Props = {
   size?: number;
@@ -16,7 +16,7 @@ const FullNodeWarning = ({
   <Svg width={size} height={size} fill="none">
     <Mask
       id="a"
-      maskUnits={"userSpaceOnUse" as EMaskUnits.USER_SPACE_ON_USE}
+      maskUnits={"userSpaceOnUse" as const}
       x={2}
       y={-2}
       width={size + 2}

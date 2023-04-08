@@ -2491,6 +2491,8 @@
       },
       "manageTP": "Manage assets",
       "warnEarnRewards": "You need at least {{amount}} to start earning rewards",
+      "warnDisableStaking": "Not available",
+      "warnDisableStakingMessage": "Staking feature for Tron is currently unavailable",
       "claimRewards": "Claim rewards",
       "nextRewardsDate": "Rewards can be claimed {{date}}",
       "claimAvailableRewards": "Claim {{amount}}",

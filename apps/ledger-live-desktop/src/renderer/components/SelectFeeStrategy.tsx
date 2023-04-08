@@ -9,11 +9,7 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, FeeStrategy } from "@ledgerhq/types-live";
 type OnClickType = {
   amount: BigNumber;
@@ -74,8 +70,8 @@ const SelectFeeStrategy = ({
   suffixPerByte,
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const accountUnit = getAccountUnit(mainAccount);
-  const feesCurrency = getAccountCurrency(mainAccount);
+  const feesCurrency = getFeesCurrency(mainAccount);
+  const feesUnit = getFeesUnit(feesCurrency);
   const { t } = useTranslation();
   strategies = mapStrategies ? strategies.map(mapStrategies) : strategies;
   return (
@@ -134,12 +130,12 @@ const SelectFeeStrategy = ({
                 fontSize={3}
                 fontWeight="600"
                 val={amount}
-                unit={s.unit ?? accountUnit}
+                unit={s.unit ?? feesUnit}
                 showCode={!suffixPerByte}
                 suffix={
                   suffixPerByte
                     ? ` ${t("send.steps.details.unitPerByte", {
-                        unit: s.unit ? s.unit.code : accountUnit.code,
+                        unit: s.unit ? s.unit.code : feesUnit.code,
                       })}`
                     : ""
                 }

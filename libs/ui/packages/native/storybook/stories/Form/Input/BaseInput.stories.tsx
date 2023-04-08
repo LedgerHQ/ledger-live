@@ -1,5 +1,3 @@
-import { storiesOf } from "../../storiesOf";
-import { boolean, text } from "@storybook/addon-knobs";
 import React, { useState } from "react";
 import Button from "../../../../src/components/cta/Button";
 import Input, {
@@ -10,7 +8,12 @@ import Input, {
 import Flex from "../../../../src/components/Layout/Flex";
 import Text from "../../../../src/components/Text";
 
-const BaseInputStory = () => {
+export default {
+  title: "Form/Input/BaseInput",
+  component: Input,
+};
+
+export const BaseInputStory = (args: typeof BaseInputStoryArgs) => {
   const [value, setValue] = useState("");
 
   const onChange = (value: string) => setValue(value);
@@ -20,13 +23,19 @@ const BaseInputStory = () => {
       value={value}
       onChange={onChange}
       placeholder={"Placeholder"}
-      disabled={boolean("disabled", false)}
-      error={text("error", "")}
+      disabled={args.disabled}
+      error={args.error}
     />
   );
 };
+BaseInputStory.storyName = "BaseInput";
+const BaseInputStoryArgs = {
+  disabled: false,
+  error: "",
+};
+BaseInputStory.args = BaseInputStoryArgs;
 
-const BaseInputRenderSideExempleStory = () => {
+export const BaseInputRenderSideExempleStory = () => {
   const [value, setValue] = useState("test@ledger.fr");
   const [disabled, setDisabled] = useState(false);
   const [error, setError] = React.useState<string | undefined>();
@@ -60,6 +69,7 @@ const BaseInputRenderSideExempleStory = () => {
     />
   );
 };
+BaseInputRenderSideExempleStory.storyName = "BaseInput (render side)";
 
 function serialize(value: string) {
   return value.split("").join(".");
@@ -69,7 +79,7 @@ function deserialize(value: string) {
   return value.replace(/\./g, "");
 }
 
-const CustomSerializer = (): JSX.Element => {
+export const CustomSerializer = (): JSX.Element => {
   const [value, setValue] = React.useState("");
 
   return (
@@ -88,10 +98,4 @@ const CustomSerializer = (): JSX.Element => {
     </>
   );
 };
-
-storiesOf((story) =>
-  story("Form/Input/BaseInput", module)
-    .add("BaseInput", BaseInputStory)
-    .add("RenderSideExemple", BaseInputRenderSideExempleStory)
-    .add("Custom Serializer", CustomSerializer),
-);
+CustomSerializer.storyName = "BaseInput (custom serializer)";

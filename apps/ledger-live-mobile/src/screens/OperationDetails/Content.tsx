@@ -16,6 +16,8 @@ import {
   getAccountCurrency,
   getAccountUnit,
   getAccountName,
+  getFeesCurrency,
+  getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import {
   getOperationAmountNumber,
@@ -116,8 +118,8 @@ export default function Content({
   const currency = getAccountCurrency(account);
   const isToken = currency.type === "TokenCurrency";
   const unit = getAccountUnit(account);
-  const parentUnit = getAccountUnit(mainAccount);
-  const parentCurrency = getAccountCurrency(mainAccount);
+  const feeCurrency = getFeesCurrency(mainAccount);
+  const feeUnit = getFeesUnit(feeCurrency);
   const amount = getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
   const confirmationsString = getOperationConfirmationDisplayableNumber(
@@ -388,7 +390,7 @@ export default function Content({
               <LText style={sectionStyles.value} semiBold>
                 <CurrencyUnitValue
                   showCode
-                  unit={parentUnit}
+                  unit={feeUnit}
                   value={operation.fee}
                 />
               </LText>
@@ -401,7 +403,7 @@ export default function Content({
                   disableRounding={true}
                   date={operation.date}
                   subMagnitude={1}
-                  currency={parentCurrency}
+                  currency={feeCurrency}
                   value={operation.fee}
                 />
               </LText>

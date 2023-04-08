@@ -137,6 +137,8 @@ jobs:
         id: setup-test-desktop
         with:
           install_playwright: true
+          install_node_gyp: true
+          upgrade_npm: true
       - name: Checkout PR
         if: ${{ inputs.number != null && inputs.ref == null }}
         run: gh pr checkout ${{ inputs.number }}

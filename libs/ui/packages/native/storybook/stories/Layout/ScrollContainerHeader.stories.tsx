@@ -1,7 +1,5 @@
 import React from "react";
-import { storiesOf } from "../storiesOf";
 import { action } from "@storybook/addon-actions";
-import { boolean } from "@storybook/addon-knobs";
 import ScrollContainerHeader from "../../../src/components/Layout/ScrollContainerHeader";
 import Button, { ButtonProps } from "../../../src/components/cta/Button";
 import Text from "../../../src/components/Text";
@@ -9,6 +7,11 @@ import Flex from "../../../src/components/Layout/Flex";
 import Badge from "../../../src/components/tags/Badge";
 import { Icons } from "../../../src/assets";
 import ScrollContainer from "../../../src/components/Layout/ScrollContainer";
+
+export default {
+  title: "Layout/ScrollContainerHeader",
+  component: ScrollContainerHeader,
+};
 
 const TopRightSection = ({ debug }: { debug: boolean }) => {
   return (
@@ -33,15 +36,17 @@ const BottomSection = ({ debug }: { debug: boolean }) => {
   );
 };
 
-const ScrollContainerHeaderStory = () => {
-  const topLeftSection = boolean("TopLeftSection", true);
-  const topRightSection = boolean("TopRightSection", true);
-  const bottomSection = boolean("BottomSection", true);
-  const topMiddleSection = boolean("Different TopMiddleSection", false);
-  const stickyHeaderIndices = boolean("StickyHeaderIndex", false);
-  const debug = boolean("Debug", false);
+export const ScrollContainerHeaderStory = (args: typeof ScrollContainerHeaderStoryArgs) => {
+  const {
+    topLeftSection,
+    topRightSection,
+    bottomSection,
+    topMiddleSection,
+    stickyHeaderIndices,
+    debug,
+  } = args;
   return (
-    <Flex flex={1}>
+    <Flex flex={1} width="100%">
       <ScrollContainerHeader
         width="100%"
         border={debug ? "1px solid red" : "none"}
@@ -93,7 +98,13 @@ const ScrollContainerHeaderStory = () => {
     </Flex>
   );
 };
-
-storiesOf((story) =>
-  story("Layout", module).add("ScrollContainerHeader", ScrollContainerHeaderStory),
-);
+ScrollContainerHeaderStory.storyName = "ScrollContainerHeader";
+const ScrollContainerHeaderStoryArgs = {
+  topLeftSection: true,
+  topRightSection: true,
+  bottomSection: true,
+  topMiddleSection: false,
+  stickyHeaderIndices: false,
+  debug: false,
+};
+ScrollContainerHeaderStory.args = ScrollContainerHeaderStoryArgs;

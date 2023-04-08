@@ -7,6 +7,7 @@ import { StyleProvider } from "../../../src/styles/StyleProvider";
 export const Main = styled.View`
   flex: 1;
   width: 100%;
+  padding: 5%;
   justify-content: center;
   align-items: center;
   background-color: ${(p) => p.theme.colors.background.main};

@@ -65,7 +65,6 @@ const hardcodedMarketcap = [
   "tezos",
   "iota",
   "ethereum/erc20/link_chainlink",
-  "neo",
   "ethereum/erc20/makerdao",
   "ethereum/erc20/usd__coin",
   "ontology",
