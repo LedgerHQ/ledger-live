@@ -1,4 +1,4 @@
-This document allows to track, explain and maintain the dependencies we have defined in package.json.
+This document allows to track, ex.json.plain and maintain the dependencies we have defined in package
 
 You can see at any point in time what libraries are upgradable using:
 
@@ -9,7 +9,7 @@ yarn upgrade-interactive -i --latest
 ### Direct Dependencies
 
 | library name (what).                        | description of its usage (why)                                    | ideal frequency of update (when) / status                            |
-| ------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------- |
+|---------------------------------------------| ----------------------------------------------------------------- | -------------------------------------------------------------------- |
 | @celo/contractkit                           | Celo coin integration                                             | monthly                                                              |
 | @celo/wallet-base                           | Celo coin integration                                             | monthly                                                              |
 | @celo/wallet-ledger                         | Celo coin integration                                             | monthly                                                              |
@@ -57,11 +57,11 @@ yarn upgrade-interactive -i --latest
 | @walletconnect/client                       | Wallet connect feature                                            | monthly                                                              |
 | @xstate/react                               | used for some components                                          | TBD DEPRECATE?                                                       |
 | @zondax/ledger-filecoin                     | Filecoin coin integration                                         | monthly                                                              |
+| @zondax/izari-filecoin                      | Filecoin coin integration                                         | monthly                                                              |
 | algosdk                                     | Algorand coin integration                                         | monthly                                                              |
 | async                                       | ???                                                               | UNCLEAR IF USED                                                      |
 | axios                                       | network                                                           | monthly                                                              |
 | axios-retry                                 | network                                                           | monthly                                                              |
-| base32-decode                               | Filecoin coin integration                                         | monthly                                                              |
 | bchaddrjs                                   | Bitcoin coin integration                                          | monthly                                                              |
 | bech32                                      | Bitcoin coin integration                                          | BLOCKED? TBD                                                         |
 | bignumber.js                                | many parts involving amounts                                      | monthly                                                              |

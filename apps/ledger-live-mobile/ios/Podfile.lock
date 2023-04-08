@@ -2,19 +2,19 @@ PODS:
   - Adjust (4.33.3):
     - Adjust/Core (= 4.33.3)
   - Adjust/Core (4.33.3)
-  - Appboy-iOS-SDK (4.5.1):
-    - Appboy-iOS-SDK/UI (= 4.5.1)
-  - Appboy-iOS-SDK/ContentCards (4.5.1):
+  - Appboy-iOS-SDK (4.5.4):
+    - Appboy-iOS-SDK/UI (= 4.5.4)
+  - Appboy-iOS-SDK/ContentCards (4.5.4):
     - Appboy-iOS-SDK/Core
     - SDWebImage (< 6, >= 5.8.2)
-  - Appboy-iOS-SDK/Core (4.5.1)
-  - Appboy-iOS-SDK/InAppMessage (4.5.1):
+  - Appboy-iOS-SDK/Core (4.5.4)
+  - Appboy-iOS-SDK/InAppMessage (4.5.4):
     - Appboy-iOS-SDK/Core
     - SDWebImage (< 6, >= 5.8.2)
-  - Appboy-iOS-SDK/NewsFeed (4.5.1):
+  - Appboy-iOS-SDK/NewsFeed (4.5.4):
     - Appboy-iOS-SDK/Core
     - SDWebImage (< 6, >= 5.8.2)
-  - Appboy-iOS-SDK/UI (4.5.1):
+  - Appboy-iOS-SDK/UI (4.5.4):
     - Appboy-iOS-SDK/ContentCards
     - Appboy-iOS-SDK/Core
     - Appboy-iOS-SDK/InAppMessage
@@ -1039,7 +1039,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Adjust: 41d0d5c031409aebe7fb1f5703ff0d3306133439
-  Appboy-iOS-SDK: 93f8c7e0820a79b4ef5367fae32406f03a30ca97
+  Appboy-iOS-SDK: 2fc5b290fe1caa85718b811a19b303d45caea975
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54

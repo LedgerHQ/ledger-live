@@ -27,7 +27,7 @@ import { close } from "../../../hw";
 import { toCBOR } from "./utils/serializer";
 import { calculateEstimatedFees, getPath, isError } from "../utils";
 import { log } from "@ledgerhq/logs";
-import { getAddressRaw, validateAddress } from "./utils/addresses";
+import { validateAddress } from "./utils/addresses";
 import { encodeOperationId, patchOperationWithHash } from "../../../operation";
 import { withDevice } from "../../../hw/deviceAccess";
 
@@ -244,11 +244,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             transaction = { ...transaction, amount };
 
             // Serialize tx
-            const serializedTx = toCBOR(
-              getAddressRaw(address),
-              getAddressRaw(recipient),
-              transaction
-            );
+            const serializedTx = toCBOR(account, transaction);
 
             log(
               "debug",
