@@ -37,6 +37,8 @@ src/data/icons/reactNative
 src/data/flags/react
 src/data/flags/reactNative
 
+src/families/*/hw-app-*/lib*
+
 cli/tests/*/output
 cli/tests/tmp
 .env

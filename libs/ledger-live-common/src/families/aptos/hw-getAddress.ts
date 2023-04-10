@@ -1,4 +1,4 @@
-import Aptos from "../../../../ledgerjs/packages/hw-app-aptos";
+import Aptos from "./hw-app-aptos";
 import type { Resolver } from "../../hw/getAddress/types";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
@@ -8,7 +8,7 @@ const resolver: Resolver = async (transport, { path, verify }) => {
 
   return {
     address: r.address,
-    publicKey: r.publicKey.toString(), // TODO: check by Vlad
+    publicKey: r.publicKey.toString("hex"),
     path,
   };
 };

@@ -155,6 +155,9 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "REDEEM":
     case "SLASH":
     case "LOCK":
+    case "ADD_LIQUIDITY":
+    case "CREATE_ACCOUNT":
+    case "CUSTOM_CALL":
       return op.value.negated();
 
     case "FREEZE":

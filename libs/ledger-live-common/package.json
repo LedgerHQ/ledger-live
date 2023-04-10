@@ -130,6 +130,7 @@
     "@hashgraph/sdk": "^2.10.1",
     "@keplr-wallet/cosmos": "^0.9.16",
     "@keplr-wallet/proto-types": "^0.10.4",
+    "@noble/hashes": "^1.1.7",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-polkadot": "workspace:^",
     "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",

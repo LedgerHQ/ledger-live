@@ -1,4 +1,5 @@
 import algorand from "../families/algorand/transaction";
+import aptos from "../families/aptos/transaction";
 import bitcoin from "../families/bitcoin/transaction";
 import cardano from "../families/cardano/transaction";
 import celo from "../families/celo/transaction";
@@ -20,6 +21,7 @@ import polkadot from "@ledgerhq/coin-polkadot/transaction";
 
 export default {
   algorand,
+  aptos,
   bitcoin,
   cardano,
   celo,

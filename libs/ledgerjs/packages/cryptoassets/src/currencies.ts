@@ -88,14 +88,14 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   aptos: {
     type: "CryptoCurrency",
     id: "aptos",
-    coinType: 637, // The slip-0044 coin type if registered
+    coinType: CoinType.APTOS,
     name: "Aptos",
-    managerAppName: "Aptos", // name of the embedded app in manager case-sensitive
+    managerAppName: "Aptos",
     ticker: "APT",
-    countervalueTicker: "APT", // depending on the counter value api
+    countervalueTicker: "APT",
     scheme: "aptos",
-    color: "#E6007A", // color to be display on live-desktop and mobile
-    family: "aptos", // folder name in the live-common / desktop and mobile
+    color: "#231F20",
+    family: "aptos",
     units: [
       {
         name: "APT",
@@ -105,8 +105,36 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        address: "https://explorer.aptoslabs.com/account/$address", // url for exploring an address
-        tx: "https://explorer.aptoslabs.com/txn/$hash", // url for exploring a transaction
+        address:
+          "https://explorer.aptoslabs.com/account/$address?network=testnet", // TODO: change to mainnet before release
+        tx: "https://explorer.aptoslabs.com/txn/$hash?network=testnet", // TODO: change to mainnet before release
+      },
+    ],
+  },
+  aptos_testnet: {
+    type: "CryptoCurrency",
+    id: "aptos_testnet",
+    coinType: CoinType.APTOS,
+    name: "Aptos (Testnet)",
+    managerAppName: "Aptos",
+    ticker: "APT",
+    countervalueTicker: "APT",
+    scheme: "aptos_testnet",
+    color: "#231F20",
+    family: "aptos",
+    isTestnetFor: "aptos",
+    units: [
+      {
+        name: "APT",
+        code: "APT",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        address:
+          "https://explorer.aptoslabs.com/account/$address?network=testnet",
+        tx: "https://explorer.aptoslabs.com/txn/$hash?network=testnet",
       },
     ],
   },

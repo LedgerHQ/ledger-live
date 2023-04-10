@@ -173,7 +173,10 @@
       "REGISTER": "Registered",
       "STAKE": "Staked",
       "UNSTAKE": "Unstaked",
-      "WITHDRAW_UNSTAKED": "Withdrawn"
+      "WITHDRAW_UNSTAKED": "Withdrawn",
+      "ADD_LIQUIDITY": "Add liquidity",
+      "CREATE_ACCOUNT": "Create account",
+      "CUSTOM_CALL": "Custom call"
     }
   },
   "byteSize": {
@@ -1766,7 +1769,8 @@
       "withdrawUnbondedAmount": "Withdrawn Amount",
       "palletMethod": "Method",
       "transferAmount": "Transfer Amount",
-      "validatorsCount": "Validators ({{number}})"
+      "validatorsCount": "Validators ({{number}})",
+      "entryFunction": "Function"
     }
   },
   "operationList": {

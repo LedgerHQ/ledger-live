@@ -126,7 +126,8 @@ export type CryptoCurrencyId =
   | "songbird"
   | "moonbeam"
   | "near"
-  | "aptos";
+  | "aptos"
+  | "aptos_testnet";
 
 /**
  *

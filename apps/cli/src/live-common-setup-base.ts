@@ -58,6 +58,8 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "aptos",
+  "aptos_testnet",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

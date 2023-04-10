@@ -28,11 +28,11 @@ interface AddressData {
 }
 
 export default class Aptos {
-  readonly transport: Transport;
+  transport: Transport;
 
   constructor(transport: Transport, scrambleKey = "aptos") {
     this.transport = transport;
-    this.transport.decorateAppAPIMethods(
+    transport.decorateAppAPIMethods(
       this,
       ["getVersion", "getAddress"],
       scrambleKey

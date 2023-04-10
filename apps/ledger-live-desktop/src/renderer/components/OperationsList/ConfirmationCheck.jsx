@@ -24,6 +24,9 @@ import IconSupply from "~/renderer/icons/Supply";
 import IconWithdraw from "~/renderer/icons/Withdraw";
 import IconLink from "~/renderer/icons/LinkIcon";
 import IconCoins from "~/renderer/icons/Coins";
+import IconCustomCall from "~/renderer/icons/CustomCall";
+import IconAddLiquidity from "~/renderer/icons/AddLiquidity";
+import IconAccountCircle from "~/renderer/icons/AccountCircle";
 
 import Freeze from "~/renderer/icons/Freeze";
 import Unfreeze from "~/renderer/icons/Unfreeze";
@@ -131,6 +134,9 @@ const iconsComponent = {
   STAKE: IconDelegate,
   UNSTAKE: IconUndelegate,
   WITHDRAW_UNSTAKED: IconCoins,
+  ADD_LIQUIDITY: IconAddLiquidity,
+  CUSTOM_CALL: IconCustomCall,
+  CREATE_ACCOUNT: () => <IconAccountCircle size={16} />,
 };
 
 class ConfirmationCheck extends PureComponent<{
