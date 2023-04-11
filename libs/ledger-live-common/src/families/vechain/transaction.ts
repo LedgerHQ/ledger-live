@@ -10,7 +10,7 @@ import {
   fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon,
-} from "../../transaction/common";
+} from "@ledgerhq/coin-framework/transaction/common";
 
 export const formatTransaction = (t: Transaction): string => {
   return "";

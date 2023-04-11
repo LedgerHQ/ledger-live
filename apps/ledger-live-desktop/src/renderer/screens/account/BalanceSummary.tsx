@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
-import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
+import { useBalanceHistoryWithCountervalue, usePortfolio } from "~/renderer/actions/portfolio";
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -13,6 +13,10 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountBalanceSummaryHeader from "./AccountBalanceSummaryHeader";
 import perFamilyAccountBalanceSummaryFooter from "~/renderer/generated/AccountBalanceSummaryFooter";
 import FormattedDate from "~/renderer/components/FormattedDate";
+
+import NoGraphWarning from "~/renderer/families/vechain/NoGraphWarning";
+import PlaceholderChart from "~/renderer/components/PlaceholderChart";
+
 type Props = {
   chartColor: string;
   account: AccountLike;
@@ -29,6 +33,7 @@ export default function AccountBalanceSummary({
   mainAccount,
   parentAccount,
 }: Props) {
+  const portfolio = usePortfolio();
   const [range] = useTimeRange();
   const counterValue = useSelector(counterValueCurrencySelector);
   const {
@@ -107,23 +112,35 @@ export default function AccountBalanceSummary({
       </Box>
 
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={5}>
-        <Chart
-          magnitude={chartMagnitude}
-          color={chartColor}
-          // TODO we need to make Date non optional in live-common
-          data={history}
-          height={200}
-          tickXScale={range}
-          valueKey={displayCountervalue ? "countervalue" : "value"}
-          renderTickY={
-            discreetMode
-              ? () => ""
-              : displayCountervalue
-              ? renderTickYCounterValue
-              : renderTickYCryptoValue
-          }
-          renderTooltip={renderTooltip}
-        />
+        {account.type === "TokenAccount" && account.token.id === "vechain/vtho" ? (
+          <>
+            <NoGraphWarning />
+            <PlaceholderChart
+              magnitude={counterValue.units[0].magnitude}
+              chartId="prova"
+              data={portfolio.balanceHistory}
+              tickXScale={range}
+            />
+          </>
+        ) : (
+          <Chart
+            magnitude={chartMagnitude}
+            color={chartColor}
+            // TODO we need to make Date non optional in live-common
+            data={history}
+            height={200}
+            tickXScale={range}
+            valueKey={displayCountervalue ? "countervalue" : "value"}
+            renderTickY={
+              discreetMode
+                ? () => ""
+                : displayCountervalue
+                ? renderTickYCounterValue
+                : renderTickYCryptoValue
+            }
+            renderTooltip={renderTooltip}
+          />
+        )}
       </Box>
       {AccountBalanceSummaryFooter && (
         <AccountBalanceSummaryFooter
