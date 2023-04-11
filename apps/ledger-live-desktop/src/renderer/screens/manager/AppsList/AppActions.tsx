@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useAppInstallNeedsDeps, useAppUninstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useHistory } from "react-router-dom";
-import { App, FeatureId } from "@ledgerhq/types-live";
+import { App } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
@@ -19,12 +19,12 @@ import IconCheck from "~/renderer/icons/Check";
 import IconTrash from "~/renderer/icons/Trash";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { formatCurrencyIdToFeatureKey } from "~/renderer/components/FirebaseRemoteConfig";
+
 const ExternalLinkIconContainer = styled.span`
   display: inline-flex;
   margin-left: 4px;
 `;
+
 const AppActionsWrapper = styled.div<{ right: boolean }>`
   display: flex;
   min-width: 300px;
@@ -61,6 +61,7 @@ type Props = {
   setAppUninstallDep?: (a: any) => void;
   isLiveSupported: boolean;
   addAccount?: () => void;
+  featureFlagActivated: boolean;
 };
 
 // eslint-disable-next-line react/display-name
@@ -79,11 +80,9 @@ const AppActions = React.memo(
     setAppUninstallDep,
     isLiveSupported,
     addAccount,
+    featureFlagActivated,
   }: Props) => {
     const { name, type, currencyId } = app;
-
-    const ffKey = currencyId ? formatCurrencyIdToFeatureKey(currencyId) : "";
-    const feature = useFeature(ffKey as FeatureId);
 
     const history = useHistory();
     const { installedAvailable, installQueue, uninstallQueue, updateAllQueue } = state;
@@ -174,7 +173,7 @@ const AppActions = React.memo(
             isCurrent={installQueue.length > 0 && installQueue[0] === name}
             uninstalling={uninstalling}
           />
-        ) : showActions && (!feature || feature.enabled) ? (
+        ) : showActions && featureFlagActivated ? (
           <>
             {installed ? (
               type === "app" && isLiveSupported ? (
