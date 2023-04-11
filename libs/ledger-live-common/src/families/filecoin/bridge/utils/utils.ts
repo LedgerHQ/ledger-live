@@ -41,15 +41,18 @@ export const processTxs = (
   for (const txId in txsById) {
     const { Fee: feeTx, Send: sendTx } = txsById[txId];
 
-    if( !sendTx ) {
-      if (feeTx){
-        log("warn", `feeTx [${feeTx.hash}] found without a sendTx linked to it.`);
+    if (!sendTx) {
+      if (feeTx) {
+        log(
+          "warn",
+          `feeTx [${feeTx.hash}] found without a sendTx linked to it.`
+        );
       }
 
       continue;
     }
 
-    if (feeTx){
+    if (feeTx) {
       sendTx.fee = feeTx.amount;
     }
 
