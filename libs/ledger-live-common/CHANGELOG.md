@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 29.3.0-next.1
+
+### Patch Changes
+
+- [#3172](https://github.com/LedgerHQ/ledger-live/pull/3172) [`a1e3f90e7f`](https://github.com/LedgerHQ/ledger-live/commit/a1e3f90e7f34303ab779e90c0e48642348d79280) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix cosmos fees by simulation
+
 ## 29.3.0-next.0
 
 ### Minor Changes
