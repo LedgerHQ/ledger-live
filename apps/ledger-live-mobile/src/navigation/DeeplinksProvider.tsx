@@ -415,7 +415,6 @@ export const DeeplinksProvider = ({
           const url = new URL(`ledgerlive://${path}`);
           const { hostname, pathname } = url;
           const platform = pathname.split("/")[1];
-
           if ((hostname === "discover" || hostname === "recover") && platform) {
             const whitelistLiveAppsAccessibleInNonOnboardedLL: LiveAppManifest["id"][] =
               recoverManifests;
@@ -424,6 +423,7 @@ export const DeeplinksProvider = ({
               !whitelistLiveAppsAccessibleInNonOnboardedLL.includes(platform)
             )
               return undefined;
+
             /**
              * Upstream validation of "ledgerlive://discover/:platform":
              *  - checking that a manifest exists

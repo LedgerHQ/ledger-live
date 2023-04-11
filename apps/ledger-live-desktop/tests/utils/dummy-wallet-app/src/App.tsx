@@ -144,6 +144,26 @@ const App = () => {
     transport.current = undefined;
   };
 
+  const searchParams = new URL((window.location as unknown) as string).searchParams;
+  const pairStaxURL = searchParams.get("pairStaxURL");
+  const resumeSyncOnboardingURL = searchParams.get("resumeSyncOnboardingURL");
+
+  const pairStax = () => {
+    window.alert(`opening link: ${pairStaxURL}`);
+    pairStaxURL && window.open(pairStaxURL);
+  };
+
+  const resumeSyncOnboarding = () => {
+    window.alert(`opening link: ${resumeSyncOnboardingURL}`);
+    resumeSyncOnboardingURL && window.open(resumeSyncOnboardingURL);
+  };
+
+  // const completeSyncOnboarding = () => {
+  //   const link = searchParams.get("completeSyncOnboardingURL");
+  //   window.alert(`opening link: ${link}`);
+  //   link && window.open(link);
+  // };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -184,6 +204,15 @@ const App = () => {
           <button onClick={closeTransport} data-test-id="get-eth-transport-button">
             closeTransport
           </button>
+        </div>
+        <div className="button-container">
+          <button onClick={pairStax}>pair stax</button>
+          {
+            <button disabled={!resumeSyncOnboardingURL} onClick={resumeSyncOnboarding}>
+              resume sync onboarding
+            </button>
+          }
+          {/* <button onClick={completeSyncOnboarding}>sync onboarding success</button> */}
         </div>
         <pre className="output-container">{output ? prettyJSON(output) : ""}</pre>
       </header>

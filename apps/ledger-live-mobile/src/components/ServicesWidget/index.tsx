@@ -7,6 +7,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import NewProtectState from "./Protect/NewProtectState";
 import { ServicesConfig } from "./types";
 import Touchable from "../Touchable";
+import { getDummyAppURL } from "./linking";
 
 import LedgerRecoverLogoLight from "../../images/ledger_recover_light.png";
 import LedgerRecoverLogoDark from "../../images/ledger_recover_dark.png";
@@ -27,6 +28,10 @@ function ServicesWidget() {
   const learnMoreURI = useLearnMoreURI();
   const alreadySubscribedURI = useAlreadySubscribedURI();
 
+  const openDummyApp = useCallback(() => {
+    Linking.openURL(getDummyAppURL());
+  }, []);
+
   const onCardPress = useCallback(() => {
     if (alreadySubscribedURI) {
       Linking.canOpenURL(alreadySubscribedURI).then(() =>
@@ -40,7 +45,7 @@ function ServicesWidget() {
       <Text mt={10} fontWeight="semiBold" variant="h5" mb={6}>
         {t("servicesWidget.title")}
       </Text>
-      <Touchable onPress={onCardPress}>
+      <Touchable onPress={openDummyApp}>
         <Flex bg="neutral.c30" borderRadius={8} mb={13} overflow="hidden">
           <Image
             source={LedgerRecoverCardTopImage}

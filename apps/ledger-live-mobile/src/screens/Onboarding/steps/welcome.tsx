@@ -25,6 +25,7 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 
 import videoSources from "../../../../assets/videos";
+import { getDummyAppURL } from "../../../components/ServicesWidget/linking";
 
 const absoluteStyle = {
   position: "absolute" as const,
@@ -221,6 +222,26 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
             mb={7}
           >
             {t("onboarding.stepWelcome.start")}
+          </Button>
+          <Button
+            type="main"
+            onPress={() => {
+              acceptTerms().then(() => {
+                Linking.openURL(getDummyAppURL());
+              });
+            }}
+          >
+            open Recover app (dummy)
+          </Button>
+          <Button
+            type="main"
+            onPress={() => {
+              acceptTerms().then(() => {
+                Linking.openURL("ledgerlive://discover/paraswap");
+              });
+            }}
+          >
+            open not whitelisted live app
           </Button>
           <Text variant="small" textAlign="center" color="neutral.c100">
             {t("onboarding.stepWelcome.terms")}

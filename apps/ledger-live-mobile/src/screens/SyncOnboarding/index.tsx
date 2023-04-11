@@ -24,9 +24,9 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { useDispatch } from "react-redux";
 import { CompositeScreenProps } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Linking } from "react-native";
 import { addKnownDevice } from "../../actions/ble";
 import { NavigatorName, ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
@@ -51,6 +51,9 @@ import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
 import Stories from "../../components/StorylyStories";
 import { TrackScreen, track } from "../../analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
+import { CompanionStepKey } from "./types";
+import Button from "../../components/wrappedUi/Button";
+import { getDummyAppURL } from "../../components/ServicesWidget/linking";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -86,17 +89,6 @@ const readyRedirectDelayMs = 2500;
 
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
 
-// Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
-enum CompanionStepKey {
-  Paired = 0,
-  Pin,
-  Seed,
-  SoftwareCheck,
-  Apps,
-  Ready,
-  Exit,
-}
-
 const ContinueOnDeviceWithAnim: React.FC<{
   deviceModelId: DeviceModelId;
   text: string;
@@ -119,7 +111,17 @@ export const SyncOnboarding = ({
   const { t } = useTranslation();
   const dispatchRedux = useDispatch();
   const deviceInitialApps = useFeature("deviceInitialApps");
-  const { device } = route.params;
+  const {
+    device: deviceFromParams,
+    deviceJsonURIComponent,
+    initialStepKey,
+  } = route.params;
+
+  const device =
+    deviceFromParams ||
+    JSON.parse(decodeURIComponent(deviceJsonURIComponent || ""));
+
+  console.log("sync onboarding initial params", route.params);
 
   const productName =
     getDeviceModel(device.modelId).productName || device.modelId;
@@ -129,7 +131,7 @@ export const SyncOnboarding = ({
     deviceInitialApps?.params?.apps || fallbackDefaultAppsToInstall;
 
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
-    CompanionStepKey.Paired,
+    initialStepKey || CompanionStepKey.Paired,
   );
   const [seedPathStatus, setSeedPathStatus] = useState<
     | "choice_new_or_restore"
@@ -406,6 +408,11 @@ export const SyncOnboarding = ({
     }
   }, [deviceOnboardingState]);
 
+  const startRecoverApp = useCallback(() => {
+    setStopPolling(true);
+    Linking.openURL(getDummyAppURL(device));
+  }, [device]);
+
   useEffect(() => {
     if (companionStepKey >= CompanionStepKey.SoftwareCheck) {
       setStopPolling(true);
@@ -524,7 +531,14 @@ export const SyncOnboarding = ({
                   {t("syncOnboarding.seedStep.restoreSeed", { productName })}
                 </BodyText>
               ) : seedPathStatus === "recover_seed" ? (
-                <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
+                <>
+                  <BodyText>
+                    {t("syncOnboarding.seedStep.recoverSeed")}
+                  </BodyText>
+                  <Button type="main" onPress={startRecoverApp}>
+                    Restore with recover
+                  </Button>
+                </>
               ) : (
                 <Flex>
                   <BodyText>
@@ -595,12 +609,13 @@ export const SyncOnboarding = ({
       productName,
       seedPathStatus,
       deviceInitialApps?.enabled,
+      startRecoverApp,
       device,
       handleSoftwareCheckComplete,
+      shouldRestoreApps,
       handleInstallAppsComplete,
       initialAppsToInstall,
       companionStepKey,
-      shouldRestoreApps,
     ],
   );
 
