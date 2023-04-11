@@ -11,9 +11,10 @@ import { dismissBanner } from "~/renderer/actions/settings";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { platformAppDrawerStateSelector } from "~/renderer/reducers/UI";
 import Text from "../Text";
-import AppDetails from "../Platform/AppDetails";
+import { AppDetails } from "../Platform/AppDetails";
 import ExternalLink from "../ExternalLink/index";
 import LiveAppDisclaimer from "./LiveAppDisclaimer";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -21,7 +22,20 @@ const Divider = styled(Box)`
 
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
-  const { isOpen, payload } = useSelector(platformAppDrawerStateSelector);
+  // @ts-expect-error how to type payload?
+  const {
+    isOpen,
+    payload,
+  }: {
+    isOpen: boolean;
+    payload: {
+      title: string;
+      type: string;
+      manifest: AppManifest;
+      disclaimerId: string;
+      next: () => void;
+    };
+  } = useSelector(platformAppDrawerStateSelector);
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
