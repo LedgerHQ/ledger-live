@@ -19,7 +19,7 @@ let continueTest = false;
 test.beforeAll(async ({ request }) => {
   // Check that dummy app in tests/utils/dummy-app-build has been started successfully
   try {
-    const port = await server.start("dummy-ptx-app/build");
+    const port = await server.start("dummy-ptx-app/public");
     const response = await request.get(`http://localhost:${port}`);
     if (response.ok() && port) {
       continueTest = true;
@@ -47,7 +47,6 @@ test("Buy / Sell", async ({ page }) => {
   const layout = new Layout(page);
 
   await test.step("Navigate to Buy app", async () => {
-    // await page.pause();
     await layout.goToBuyCrypto();
     await expect.soft(page).toHaveScreenshot("buy-app-opened.png");
   });

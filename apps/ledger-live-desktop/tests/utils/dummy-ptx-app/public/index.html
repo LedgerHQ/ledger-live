@@ -2,14 +2,45 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Ledger Live App created using create-react-app" />
-    <title>Ledger Live App</title>
+    <title>Ledger Live PTX Test App</title>
+    <style>
+      body {
+        background-color: #676a6e;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        font-family: 'Courier New', Courier, monospace;
+      }
+
+      #query-param-list {
+        background-color: #b8b8b9;
+        text-align: start;
+      }
+    </style>
   </head>
 
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+      <div className="App">
+        <header className="App-header">
+          <img src="ledger-logo.png" className="App-logo" alt="logo" />
+          <h3>🤑 Ledger Live PTX Dummy Test App 💰</h3>
+          <p>App for testing navigation and query parameters for PTX apps in Automated tests</p>
+          <ol id="query-param-list"></ul>
+        </header>
+      </div>
+    </div>
+
+    <script>
+      const searchParams = new URLSearchParams(window.location.search);
+
+      const queryParamsList = document.getElementById("query-param-list");
+
+      for (const [key, value] of searchParams.entries()) {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${key}: ${value}`;
+        queryParamsList.appendChild(listItem);
+      }
+    </script>
   </body>
 </html>

@@ -66,7 +66,7 @@ export const dummyLiveAppManifest = (port: number) => [
 export const dummyBuyAppManifest = (port: number) => [
   {
     id: "multibuy",
-    name: "Dummy Buy / Sell",
+    name: "Dummy Buy / Sell App",
     private: false,
     url: `http://localhost:${port}`,
     homepageUrl: "https://developers.ledger.com/",
