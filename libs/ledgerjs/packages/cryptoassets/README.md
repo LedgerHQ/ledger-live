@@ -49,6 +49,7 @@ There are two modes of usage of this library.
 *   [getFiatCurrencyByTicker](#getfiatcurrencybyticker)
     *   [Parameters](#parameters-13)
 *   [listFiatCurrencies](#listfiatcurrencies)
+*   [clearAllList](#clearalllist)
 *   [listTokens](#listtokens)
     *   [Parameters](#parameters-14)
 *   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
@@ -196,6 +197,10 @@ Returns **FiatCurrency**
 ### listFiatCurrencies
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<FiatCurrency>** 
+
+### clearAllList
+
+Clear all lists above for test simplicity
 
 ### listTokens
 
