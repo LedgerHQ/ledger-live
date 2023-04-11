@@ -54,7 +54,8 @@ function BackToWhitelistedDomain({
 
   const getButtonLabel = () => {
     if (manifest.id === "multibuy" && lastMatchingURL) {
-      const urlParams = new URLSearchParams(lastMatchingURL);
+      const url = new URL(lastMatchingURL);
+      const urlParams = new URLSearchParams(url.searchParams);
       const flowName = urlParams.get("liveAppFlow");
       if (flowName === "compare_providers") return "Quote";
     }
@@ -63,15 +64,18 @@ function BackToWhitelistedDomain({
   };
 
   const handleBackClick = () => {
-    const currentHostname = new URL(webviewURL).hostname;
-    const urlParams = lastMatchingURL && new URLSearchParams(lastMatchingURL);
-    const flowName = urlParams && urlParams.get("liveAppFlow");
+    if (manifest.id === "multibuy" && lastMatchingURL) {
+      const currentHostname = new URL(webviewURL).hostname;
+      const url = new URL(lastMatchingURL);
+      const urlParams = new URLSearchParams(url.searchParams);
+      const flowName = urlParams.get("liveAppFlow")!;
 
-    track("button_clicked", {
-      button: "back to liveapp",
-      provider: currentHostname,
-      flow: flowName,
-    });
+      track("button_clicked", {
+        button: "back to liveapp",
+        provider: currentHostname,
+        flow: flowName,
+      });
+    }
 
     navigation.goBack();
   };

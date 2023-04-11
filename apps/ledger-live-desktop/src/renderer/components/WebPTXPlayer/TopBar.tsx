@@ -126,8 +126,9 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
   const onBackToMatchingURL = useCallback(async () => {
     const currentHostname = new URL(webviewState.url).hostname;
     const webview = safeGetRefValue(webviewAPIRef);
-    const url = safeGetRefValue(lastMatchingURL);
-    const urlParams = new URLSearchParams(url);
+    const safeUrl = safeGetRefValue(lastMatchingURL);
+    const url = new URL(safeUrl);
+    const urlParams = new URLSearchParams(url.searchParams);
     const flowName = urlParams.get("liveAppFlow");
 
     track("button_clicked", {
@@ -136,14 +137,15 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
       flow: flowName,
     });
 
-    await webview.loadURL(url);
+    await webview.loadURL(safeUrl);
     webview.clearHistory();
   }, [webviewAPIRef, webviewState.url]);
 
   const getButtonLabel = useCallback(() => {
     if (manifest.id === "multibuy") {
-      const url = safeGetRefValue(lastMatchingURL);
-      const urlParams = new URLSearchParams(url);
+      const safeUrl = safeGetRefValue(lastMatchingURL);
+      const url = new URL(safeUrl);
+      const urlParams = new URLSearchParams(url.searchParams);
       const flowName = urlParams.get("liveAppFlow");
       if (flowName === "compare_providers") return "Quote";
     }
