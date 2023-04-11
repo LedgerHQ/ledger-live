@@ -23,30 +23,40 @@ class BitcoinLikeStorage implements IStorage {
   // returning unordered tx within the same block)
   spentUtxos: { [key: string]: Input[] } = {};
 
-  getLastTx(txFilter: {
+  hasTx(txFilter: { account: number; index: number }): boolean {
+    const index = `${txFilter.account}-${txFilter.index}`;
+    return this.accountIndex[index] && this.accountIndex[index].length > 0;
+  }
+
+  hasPendingTx(txFilter: { account: number; index: number }): boolean {
+    const index = `${txFilter.account}-${txFilter.index}`;
+    return (
+      this.accountIndex[index] &&
+      this.accountIndex[index].map((i) => this.txs[i]).some((tx) => !tx.block)
+    );
+  }
+
+  getLastConfirmedTxBlockheightAndHash(txFilter: {
     account: number;
     index: number;
-    confirmed?: boolean;
-  }): TX | undefined {
+  }): [number, string] {
     if (
       typeof this.accountIndex[`${txFilter.account}-${txFilter.index}`] ===
       "undefined"
     ) {
-      return undefined;
+      return [0, ""];
     }
-    const tx: TX | undefined = findLast(
-      this.accountIndex[`${txFilter.account}-${txFilter.index}`].map(
-        (i) => this.txs[i]
-      ),
-      (t) => {
-        return (
-          typeof txFilter.confirmed === "undefined" ||
-          (txFilter.confirmed && !!t.block) ||
-          (!txFilter.confirmed && !t.block)
-        );
-      }
-    );
-    return tx;
+    let blockheight = 0;
+    let blockhash = "";
+    this.accountIndex[`${txFilter.account}-${txFilter.index}`]
+      .map((i) => this.txs[i])
+      .forEach((tx) => {
+        if (!!tx.block && tx.block.height > blockheight) {
+          blockheight = tx.block.height;
+          blockhash = tx.block.hash;
+        }
+      });
+    return [blockheight, blockhash];
   }
 
   getLastUnconfirmedTx(): TX | undefined {

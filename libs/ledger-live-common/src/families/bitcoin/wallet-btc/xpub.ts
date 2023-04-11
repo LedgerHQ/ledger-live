@@ -29,6 +29,9 @@ class Xpub {
 
   GAP = 20;
 
+  // when the difference between current blockheight and the blockheight in the storage is larger than this value, we ignore reorg
+  nbBlockIgnoreReorg = 2000;
+
   // need to be bigger than the number of tx from the same address that can be in the same block
   txsSyncArraySize = 1000;
 
@@ -54,7 +57,11 @@ class Xpub {
     this.freshAddressIndex = 0;
   }
 
-  async syncAddress(account: number, index: number): Promise<boolean> {
+  async syncAddress(
+    account: number,
+    index: number,
+    currentBlockHeight
+  ): Promise<boolean> {
     const address = await this.crypto.getAddress(
       this.derivationMode,
       this.xpub,
@@ -67,14 +74,10 @@ class Xpub {
       address
     );
 
-    // TODO handle eventual reorg case using lastBlock
-    // TODO perf: bad : looping in the tx array
-    await this.checkAddressReorg(account, index);
+    await this.checkAddressReorg(account, index, currentBlockHeight);
 
     // in case pendings have changed we clean them out
-    // TODO perf : bad : looping in the tx array
-    const hasPendings = !!this.storage.getLastTx({
-      confirmed: false,
+    const hasPendings = this.storage.hasPendingTx({
       account,
       index,
     });
@@ -82,28 +85,37 @@ class Xpub {
       this.storage.removePendingTxs({ account, index });
     }
     await this.fetchHydrateAndStoreNewTxs(address, account, index);
-    const lastTx = this.storage.getLastTx({
+    const hasTx = this.storage.hasTx({
       account,
       index,
     });
-    if (account === 0 && lastTx) {
+    if (account === 0 && hasTx) {
       this.freshAddressIndex = Math.max(this.freshAddressIndex, index + 1);
     }
 
-    return !!lastTx;
+    return hasTx;
   }
 
-  async checkAddressesBlock(account: number, index: number): Promise<boolean> {
+  async checkAddressesBlock(
+    account: number,
+    index: number,
+    currentBlockHeight: number
+  ): Promise<boolean> {
     const addressesResults = await Promise.all(
-      range(this.GAP).map((_, key) => this.syncAddress(account, index + key))
+      range(this.GAP).map((_, key) =>
+        this.syncAddress(account, index + key, currentBlockHeight)
+      )
     );
     return some(addressesResults, (lastTx) => !!lastTx);
   }
 
-  async syncAccount(account: number): Promise<number> {
+  async syncAccount(
+    account: number,
+    currentBlockHeight: number
+  ): Promise<number> {
     let index = 0;
     // eslint-disable-next-line no-await-in-loop
-    while (await this.checkAddressesBlock(account, index)) {
+    while (await this.checkAddressesBlock(account, index, currentBlockHeight)) {
       index += this.GAP;
     }
     return index;
@@ -113,8 +125,13 @@ class Xpub {
   async sync(): Promise<number> {
     this.freshAddressIndex = 0;
     let account = 0;
+    const currentBlockHeight =
+      (await this.explorer.getCurrentBlock())?.height ?? 0;
     // eslint-disable-next-line no-await-in-loop
-    while (account < 2 && (await this.syncAccount(account))) {
+    while (
+      account < 2 &&
+      (await this.syncAccount(account, currentBlockHeight))
+    ) {
       // account=0 for receive address; account=1 for change address. No need to handle account>1
       account += 1;
     }
@@ -339,41 +356,52 @@ class Xpub {
     let txs: TX[] = [];
     let inserted = 0;
     do {
-      const lastTx = this.storage.getLastTx({
-        account,
-        index,
-        confirmed: true,
-      });
+      const lastTxBlockheight =
+        this.storage.getLastConfirmedTxBlockheightAndHash({
+          account,
+          index,
+        })[0];
 
       txs = await this.explorer.getAddressTxsSinceLastTxBlock(
         this.txsSyncArraySize,
         { address, account, index },
-        lastTx
+        lastTxBlockheight,
+        false
       );
-      if (pendingTxs.length === 0) {
-        pendingTxs = txs.filter((tx) => !tx.block);
-      }
-      inserted += this.storage.appendTxs(txs.filter((tx) => tx.block)); // only insert not pending tx
-    } while (txs.length - pendingTxs.length >= this.txsSyncArraySize); // check whether page is full, if not, it is the last page
+      inserted += this.storage.appendTxs(txs); // only insert not pending tx
+    } while (txs.length >= this.txsSyncArraySize); // check whether page is full, if not, it is the last page
+    pendingTxs = await this.explorer.getAddressTxsSinceLastTxBlock(
+      this.txsSyncArraySize,
+      { address, account, index },
+      0,
+      true
+    );
     inserted += this.storage.appendTxs(pendingTxs);
     return inserted;
   }
 
-  async checkAddressReorg(account: number, index: number): Promise<void> {
-    const lastTx = this.storage.getLastTx({
-      account,
-      index,
-      confirmed: true,
-    });
+  async checkAddressReorg(
+    account: number,
+    index: number,
+    currentBlockHeight: number
+  ): Promise<void> {
+    const [lastTxBlockheight, lastTxBlockhash] =
+      this.storage.getLastConfirmedTxBlockheightAndHash({
+        account,
+        index,
+      });
 
-    if (!lastTx) {
+    if (
+      !lastTxBlockheight ||
+      currentBlockHeight - lastTxBlockheight > this.nbBlockIgnoreReorg
+    ) {
       return;
     }
 
-    const block = await this.explorer.getBlockByHeight(lastTx.block.height);
+    const block = await this.explorer.getBlockByHeight(lastTxBlockheight);
 
     // all good the block is valid
-    if (block && block.hash === lastTx.block.hash) {
+    if (block && block.hash === lastTxBlockhash) {
       return;
     }
 

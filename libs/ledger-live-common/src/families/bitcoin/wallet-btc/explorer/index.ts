@@ -139,12 +139,9 @@ class BitcoinLikeExplorer implements IExplorer {
 
   async fetchTxs(address: Address, params: ExplorerParams): Promise<TX[]> {
     const url = `/address/${address.address}/txs`;
-    // TODO add a test for failure (at the sync level)
     const response = await this.client.get(url, {
       params,
     });
-    const pendingTxs = await this.fetchPendingTxs(address, params);
-    Array.prototype.push.apply(response.data.data, pendingTxs);
     return response.data.data;
   }
 
@@ -205,16 +202,19 @@ class BitcoinLikeExplorer implements IExplorer {
   async getAddressTxsSinceLastTxBlock(
     batchSize: number,
     address: Address,
-    lastTx: TX | undefined
+    lastTxBlockheight: number,
+    pending: boolean
   ): Promise<TX[]> {
     const params: ExplorerParams = {
       batch_size: !this.disableBatchSize ? batchSize : undefined,
     };
-    if (lastTx) {
-      params.from_height = lastTx.block.height;
+    if (!pending) {
+      params.from_height = lastTxBlockheight;
       params.order = "ascending";
     }
-    const txs = await this.fetchTxs(address, params);
+    const txs = pending
+      ? await this.fetchPendingTxs(address, params)
+      : await this.fetchTxs(address, params);
 
     const hydratedTxs: TX[] = [];
 

@@ -14,6 +14,7 @@ export interface IExplorer {
   getAddressTxsSinceLastTxBlock(
     batchSize: number,
     address: Address,
-    lastTx: TX | undefined
+    lastTxBlockheight: number,
+    pending: boolean
   ): Promise<TX[]>;
 }
