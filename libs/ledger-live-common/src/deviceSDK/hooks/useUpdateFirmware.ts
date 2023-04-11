@@ -4,8 +4,7 @@ import {
   UpdateFirmwareActionState,
   initialState,
 } from "../actions/updateFirmware";
-import { throttle } from "rxjs/operators";
-import { interval } from "rxjs";
+import { bufferTime, filter, map } from "rxjs/operators";
 
 const STATE_UPDATE_THROTTLE = 500;
 
@@ -37,7 +36,13 @@ export const useUpdateFirmware = ({
       const sub = updateFirmwareAction({
         deviceId,
       })
-        .pipe(throttle((_) => interval(STATE_UPDATE_THROTTLE)))
+        .pipe(
+          // in order to correctly throttle the events without losing any important events
+          // we need to buffer them according to the throttle time and always return the latest event from the buffer
+          bufferTime(STATE_UPDATE_THROTTLE),
+          map((events) => events[events.length - 1]),
+          filter((e) => e !== undefined),
+        )
         .subscribe({
           next: (state) => setUpdateState(state),
         });
