@@ -1,15 +1,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
+import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 
 export function CatalogSection({
-  categories,
-  selected,
-  setSelected,
+  categories: { categories, selected, setSelected },
 }: {
-  categories: string[];
-  selected: string;
-  setSelected: (value: string) => void;
+  categories: Pick<Categories, "categories" | "selected" | "setSelected">;
 }) {
   const { t } = useTranslation();
 

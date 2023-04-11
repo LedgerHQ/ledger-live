@@ -30,6 +30,7 @@ export type TranslatableString = {
 export type AppPlatform = "ios" | "android" | "desktop";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
+
 export type Visibility = "complete" | "searchable" | "deep";
 
 export type AppPermission = {
@@ -61,3 +62,12 @@ export type ConvertToLiveTransaction<
   T extends WalletAPITransaction,
   U extends Transaction
 > = (tx: T) => Partial<U>;
+
+export interface DiscoverDB {
+  recentlyUsed: RecentlyUsed[];
+}
+
+export interface RecentlyUsed {
+  id: string;
+  usedAt: string;
+}
