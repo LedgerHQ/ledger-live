@@ -299,7 +299,7 @@ export default function Tutorial({ useCase }: Props) {
           },
           userChosePinCodeHimself,
         },
-        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase],
+        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase, UseCase.recover],
         canContinue: userChosePinCodeHimself,
         next: () => {
           if (useCase === UseCase.setupDevice) {
@@ -320,7 +320,7 @@ export default function Tutorial({ useCase }: Props) {
       {
         id: ScreenId.pinCodeHowTo,
         component: PinCodeHowTo,
-        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase],
+        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase, UseCase.recover],
         next: () => {
           if (useCase === UseCase.setupDevice) {
             track("Onboarding - Pin code step 2");
@@ -508,7 +508,7 @@ export default function Tutorial({ useCase }: Props) {
         useCases: [UseCase.recover],
         next: () => {
           // TODO in next ticket
-          console.log("next");
+          history.push(`${path}/${ScreenId.pinCode}`);
         },
         previous: () => history.push("/onboarding/select-use-case"),
       },
@@ -641,6 +641,11 @@ export default function Tutorial({ useCase }: Props) {
     history.push(targetPath);
   }
 
+  function handleNextInDrawerDeeplink(closeCurrentDrawer: (bool) => void, targetPath: string) {
+    closeCurrentDrawer(false);
+    openURL(targetPath);
+  }
+
   return (
     <>
       <QuizzPopin isOpen={quizzOpen} onWin={quizSucceeds} onLose={quizFails} onClose={quizFails} />
@@ -649,12 +654,17 @@ export default function Tutorial({ useCase }: Props) {
           `
           <PinHelp
             handleNextInDrawer={() =>
-              handleNextInDrawer(
-                setHelpPinCode,
-                useCase === UseCase.setupDevice
-                  ? `${path}/${ScreenId.newRecoveryPhrase}`
-                  : `${path}/${ScreenId.existingRecoveryPhrase}`,
-              )
+              useCase === UseCase.recover
+                ? handleNextInDrawerDeeplink(
+                    setHelpPinCode,
+                    "ledgerlive://recover/protect-simu?redirectTo=restore",
+                  )
+                : handleNextInDrawer(
+                    setHelpPinCode,
+                    useCase === UseCase.setupDevice
+                      ? `${path}/${ScreenId.newRecoveryPhrase}`
+                      : `${path}/${ScreenId.existingRecoveryPhrase}`,
+                  )
             }
           />
         </Flex>
