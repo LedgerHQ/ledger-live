@@ -84,6 +84,7 @@
     "save" : "Ledger Nano S를",
     "lock" : "잠금",
     "showMore" : "자세히 표시",
+    "backToMatchingURL" : "{{appName}} 앱으로 돌아가기",
     "back" : "뒤로",
     "adjustFees" : "수수료 조정",
     "reset" : "재설정",
@@ -118,7 +119,6 @@
       "syncing" : "동기화 중...",
       "upToDate" : "동기화됨",
       "outdated" : "일시 중지됨",
-      "needsMigration" : "클릭하여 계정 업데이트",
       "error" : "동기화 오류",
       "refresh" : "새로고침",
       "devTools" : "개발자 도구"
@@ -146,8 +146,6 @@
       "DELEGATE" : "위임됨",
       "REDELEGATE" : "재위임됨",
       "UNDELEGATE" : "위임 해제됨",
-      "SUPPLY" : "예치됨",
-      "REDEEM" : "출금됨",
       "APPROVE" : "승인됨",
       "VOTE" : "투표 완료",
       "FREEZE" : "동결됨",
@@ -214,26 +212,23 @@
     "stars" : "즐겨찾는 계정",
     "accounts" : "계정",
     "manager" : "내 Ledger",
+    "earn" : "수익",
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
     "lend" : "대출",
     "catalog" : "탐색",
-    "market" : "마켓"
+    "market" : "마켓",
+    "protect" : "Recover"
   },
   "stars" : {
     "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
     "tooltip" : "계정 즐겨찾기"
   },
   "bridge" : {
-    "modalTitle" : "장치 브릿지 열기",
-    "openHeader" : "Websocket을 통해 장치 계정 노출하기",
-    "openDescription" : "브릿지를 열면 귀하의 모든 계정이 타사 애플리케이션에 노출됩니다.",
-    "openedHeader" : "{{appName}} 브릿지 열림",
-    "openedDescription" : "이제 타사 WebSocket을 통해 웹 애플리케이션의 {{appName}} 계정에 접근할 수 있습니다.",
-    "completeHeader" : "브릿지 세션 완료",
-    "completeDescription" : "이제 WebSocket 브릿지가 마감되었습니다.",
-    "openButton" : "열기",
-    "disconnectButton" : "연결 해제"
+    "modalTitle" : "장치 브릿지(Device Bridge)",
+    "openHeader" : "장치 브릿지는 더 이상 사용할 수 없습니다",
+    "openDescription" : "브라우저 지갑 확장 프로그램에서 Ledger Live 대신 WebHID를 사용하도록 구성하세요.",
+    "closeButton" : "종료"
   },
   "swap2" : {
     "title" : "스왑",
@@ -1218,9 +1213,13 @@
         "description" : "PIN은 4~8자리입니다.",
         "text" : "{{deviceName}} 및 PIN에 액세스할 수 있으면 누구나 사용자가 가진 모든 암호화폐와 NFT 자산에 액세스할 수 있습니다."
       },
-      "recoveryContent" : {
-        "title" : "복구 문구",
-        "content" : "아래 영상을 탭하여 비밀 복구 문구에 대해 자세히 알아보세요"
+      "seedContent" : {
+        "title" : "비밀 복구 문구",
+        "choiceNewOrRestore" : "가장 적합한 설정 옵션을 선택하세요.",
+        "newSeed" : "아래 영상을 탭하여 비밀 복구 문구에 대해 자세히 알아보세요",
+        "choiceRestoreDirectOrRecover" : "자리 표시자 - 직접 복원 선택 또는 복구 사용",
+        "recoverSeed" : "자리 표시자: 복구",
+        "restoreSeed" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요."
       },
       "softwareCheckContent" : {
         "title" : "소프트웨어 점검",
@@ -1620,42 +1619,6 @@
     "hideSubAccounts" : "부계정 숨기기 ({{tokenCount}})",
     "countTooltip" : "1개의 부계정",
     "countTooltip_plural" : "{{count}} 부계정"
-  },
-  "migrateAccounts" : {
-    "overview" : {
-      "title" : "Ledger Live 계정 업데이트",
-      "successTitle" : "계정이 업데이트되었습니다",
-      "successDescPlu" : "사용자의 {{assets}} 계정이 이제 업데이트되어 바로 사용할 수 있습니다",
-      "successDesc" : "사용자의 {{assets}} 계정이 이제 업데이트되어 바로 사용할 수 있니다",
-      "mobileTitle" : "모바일로 계정 내보내기",
-      "mobileDesc" : "아래 버튼을 클릭해 업데이트된 계정을 Ledger Live 모바일 앱으로 내보내기하세요.",
-      "mobileCTA" : "모바일로 내보내기",
-      "description" : "Ledger Live의 새로운 기능을 이용하려면 업데이트가 필요합니다.",
-      "currency" : "1개의 {{currency}} 계정을 업데이트해야 합니다.",
-      "currency_plural" : "{{currency}} 계정 {{count}}개를 업데이트해야 합니다.",
-      "footer" : "업데이트를 완료하려면 Ledger 장치가 필요합니다",
-      "pendingDevices" : "1개의 계정을 업데이트할 수 없습니다. 아래 계정과 연계된 장치를 연결하세요",
-      "pendingDevices_plural" : "{{totalMigratableAccounts}} 계정을 업데이트할 수 없습니다. 아래 계정과 연계된 장치를 연결하세요",
-      "doItLaterBtn" : "나중에 다시 해주세요"
-    },
-    "progress" : {
-      "finished" : {
-        "title" : "{{currencyName}} 업데이트 완료됨",
-        "description" : ""
-      },
-      "scanning" : {
-        "title" : "{{currencyName}} 업데이트 진행 중...",
-        "description" : "계정이 업데이트될 때까지 기다려주세요"
-      },
-      "finished-empty" : {
-        "title" : "{{currencyName}} 업데이트 미완료",
-        "description" : "업데이트할 {{currencyName}} 계정 없음"
-      }
-    },
-    "cta" : {
-      "startUpdate" : "업데이트 시작",
-      "nextCurrency" : "{{currency}} 업데이트를 계속하세요"
-    }
   },
   "addAccounts" : {
     "title" : "계정 추가",
@@ -2182,7 +2145,13 @@
     "steps" : {
       "recipient" : {
         "title" : "수령인",
-        "nftRecipient" : "보낼 NFT"
+        "nftRecipient" : "보낼 NFT",
+        "verifyAddress" : "주소가 수령인이 공유한 것과 일치하는지 확인하세요.",
+        "namingService" : {
+          "resolve" : "이는 다음 주소에 연결된 유효한 ENS입니다.",
+          "supportLink" : "이더리움 네임 서비스란?",
+          "reverse" : "이 주소는 {{domain}}에 연결되어 있습니다."
+        }
       },
       "amount" : {
         "title" : "금액",
@@ -2518,6 +2487,8 @@
       },
       "manageTP" : "자산 관리",
       "warnEarnRewards" : "보상 수령을 시작하시려면 {{amount}} 이상이 필요합니다",
+      "warnDisableStaking" : "Not available",
+      "warnDisableStakingMessage" : "Staking feature for Tron is currently unavailable",
       "claimRewards" : "보상 수령",
       "nextRewardsDate" : "보상 수령일은 {{date}}입니다",
       "claimAvailableRewards" : "{{amount}} 수령",
@@ -3819,6 +3790,8 @@
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
       "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다.",
+      "enableStagingNftMetadataService" : "Staging NFT metadata service",
+      "enableStagingNftMetadataServiceDesc" : "Enable the staging NFT metadata service and reset the NFT cache",
       "openOnboardingAppInstallDebug" : "온보딩 앱 설치 디버그 화면 열기",
       "openOnboardingAppInstallDebugDesc" : "동기화 온보딩 앱 설치 단계의 구성 요소가 있는 화면을 엽니다."
     },
@@ -4220,6 +4193,10 @@
           "3" : {
             "title" : "새 장치에서 복구 문구를 복원하세요",
             "description" : "기존 복구 문구를 사용하여 새 Nano에서 개인 키를 복구하세요!"
+          },
+          "4" : {
+            "title" : "Ledger Recover를 이용한 복구",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4365,6 +4342,25 @@
             "help" : {
               "help" : "도움 요청",
               "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "\"Ledger Recover로 복구\"를 선택합니다.",
+            "1" : {
+              "title" : "'복구'를 선택합니다",
+              "descr" : "두 버튼을 동시에 눌러 선택하세요."
+            },
+            "2" : {
+              "title" : "\"Ledger Recover로 복구\"를 선택합니다."
+            },
+            "help" : {
+              "iDontSee" : "'Ledger Recover로 복구' 메뉴가 보이지 않습니다.",
+              "modal" : {
+                "title" : "Ledger Nano X의 OS를 업데이트해야 합니다.",
+                "subtitle" : " OS를 업데이트하거나 Ledger 지원 부서로 문의해주세요.",
+                "learnHowToUpdate" : "업데이트 방법 알아보기",
+                "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -4892,9 +4888,6 @@
     "ClaimRewardsFeesWarning" : {
       "title" : "추정된 수수료보다 수령하는 보상액이 적습니다",
       "description" : ""
-    },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "활성 예치금이 있을 때는 승인된 금액을 낮출 수 없습니다."
     },
     "CosmosBroadcastCodeInternal" : {
       "title" : "문제가 발생했습니다(오류 #1)",
@@ -5737,8 +5730,10 @@
     "progress" : {
       "loading" : "로딩 중...",
       "resolving" : "의존성 해결",
-      "progress" : "앱 설치 중 {{progress}}%",
-      "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요."
+      "progress" : "앱을 설치하는 동안 Ledger Live를 종료하지 마세요.",
+      "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요.",
+      "skippedInfo" : "일부 앱은 이용할 수 없습니다. 아직 {{ productName }}용으로 개발되지 않았습니다.",
+      "skipped" : "아직 {{ productName }}에서 이용할 수 없습니다"
     },
     "cancelled" : {
       "title" : "{{productName}}에서 앱 설치가 취소되었습니다",
@@ -5751,5 +5746,11 @@
       "subtitle" : "{{productName}}의 잠금을 해제하고 설치를 다시 시작하세요.",
       "installCTA" : "설치 재시작"
     }
+  },
+  "discoverProtect" : {
+    "title" : "Recover your keys using\nyour identity",
+    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
+    "cta" : "Why should I subscribe?",
+    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
   }
 }
