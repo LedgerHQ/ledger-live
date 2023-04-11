@@ -1190,6 +1190,7 @@
       "start": "Get started",
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}",
+      "recoverSigninCTA": "Sign in for Ledger Recover",
       "terms": "By tapping “Get Started” you consent and agree to our",
       "termsLink": "Terms of Service",
       "privacyLink": "Privacy Policy",

@@ -9,6 +9,7 @@ import { Linking, StyleSheet } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
@@ -25,6 +26,7 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 
 import videoSources from "../../../../assets/videos";
+import { useWelcomeScreenRecoverSigninLink } from "../../../logic/recover/linking";
 
 const absoluteStyle = {
   position: "absolute" as const,
@@ -122,6 +124,9 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     ? videoSources.welcomeScreenStax
     : videoSources.welcomeScreen;
 
+  const recoverSigninLink = useWelcomeScreenRecoverSigninLink();
+  console.log("recoverSigninLink", recoverSigninLink);
+
   return (
     <ForceTheme selectedPalette={"dark"}>
       <Flex flex={1} position="relative" bg="constant.purple">
@@ -218,11 +223,27 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
             event="Onboarding - Start"
             onPress={next}
             mt={0}
-            mb={7}
           >
             {t("onboarding.stepWelcome.start")}
           </Button>
-          <Text variant="small" textAlign="center" color="neutral.c100">
+          <FeatureToggle feature="protectServicesMobile">
+            {recoverSigninLink ? (
+              <Button
+                mt={4}
+                type="main"
+                size="large"
+                outline
+                onPress={() => {
+                  acceptTerms().then(() => {
+                    Linking.openURL(recoverSigninLink);
+                  });
+                }}
+              >
+                {t("onboarding.stepWelcome.recoverSigninCTA")}
+              </Button>
+            ) : null}
+          </FeatureToggle>
+          <Text mt={7} variant="small" textAlign="center" color="neutral.c100">
             {t("onboarding.stepWelcome.terms")}
           </Text>
           <Flex
