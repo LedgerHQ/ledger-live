@@ -3,9 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "redux";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import {
+  PortfolioRange,
+  DeviceModelInfo,
+  FeatureId,
+  Feature,
+  DeviceInfo,
+} from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { DeviceModelInfo, FeatureId, Feature } from "@ledgerhq/types-live";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import {
   SettingsState as Settings,
@@ -236,7 +241,7 @@ type SetExchangePairs = (
 ) => any;
 export const setExchangePairsAction: SetExchangePairs = pairs => ({
   type: "SETTINGS_SET_PAIRS",
-  pairs,
+  payload: pairs,
 });
 export const dismissBanner = (bannerKey: string) => ({
   type: "SETTINGS_DISMISS_BANNER",
@@ -265,7 +270,7 @@ export const setLastSeenDevice = ({ deviceInfo }: { deviceInfo: DeviceInfo }) =>
     deviceInfo,
   },
 });
-export const setDeepLinkUrl = (url?: string | null) => ({
+export const setDeepLinkUrl = (url: string) => ({
   type: "SET_DEEPLINK_URL",
   payload: url,
 });
@@ -310,9 +315,11 @@ export const setOverriddenFeatureFlag = (key: FeatureId, value: Feature | undefi
     value,
   },
 });
-export const setOverriddenFeatureFlags = (overriddenFeatureFlags: {
-  [key: FeatureId]: Feature;
-}) => ({
+export const setOverriddenFeatureFlags = (
+  overriddenFeatureFlags: {
+    [key in FeatureId]: Feature;
+  },
+) => ({
   type: "SET_OVERRIDDEN_FEATURE_FLAGS",
   payload: {
     overriddenFeatureFlags,

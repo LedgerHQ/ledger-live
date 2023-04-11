@@ -87,7 +87,7 @@ async function init() {
     }
   });
   let deepLinkUrl; // Nb In some cases `fetchSettings` runs after this, voiding the deep link.
-  ipcRenderer.once("deep-linking", (event, url) => {
+  ipcRenderer.once("deep-linking", (_, url: string) => {
     store.dispatch(setDeepLinkUrl(url));
     deepLinkUrl = url;
   });
