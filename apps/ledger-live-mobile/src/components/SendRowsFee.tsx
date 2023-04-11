@@ -11,9 +11,6 @@ import perFamily from "../generated/SendRowsFee";
 import type { StackNavigatorProps } from "./RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
-import type { LendingEnableFlowParamsList } from "./RootNavigator/types/LendingEnableFlowNavigator";
-import type { LendingSupplyFlowNavigatorParamList } from "./RootNavigator/types/LendingSupplyFlowNavigator";
-import type { LendingWithdrawFlowNavigatorParamList } from "./RootNavigator/types/LendingWithdrawFlowNavigator";
 import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
 import { ScreenName } from "../const";
@@ -33,18 +30,6 @@ type Props = {
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>

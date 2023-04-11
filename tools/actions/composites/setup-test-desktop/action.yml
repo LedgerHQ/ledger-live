@@ -19,6 +19,9 @@ inputs:
   pnpm_dest:
     description: "the location where to install pnpm"
     required: false
+  upgrade_npm:
+    description: "should ugrade npm (windows support)"
+    required: false
 
 runs:
   using: "composite"
@@ -27,6 +30,7 @@ runs:
       uses: ./tools/actions/composites/setup-toolchain
       with:
         pnpm_dest: ${{ inputs.pnpm_dest }}
+        upgrade_npm: ${{ inputs.upgrade_npm }}
     - uses: actions/setup-python@v4
       if: ${{ !inputs.skip_python }}
       with:
@@ -56,12 +60,12 @@ runs:
         server-token: "yolo"
         cleanup-cache-folder: "true"
     - name: Build dependencies
-      env:
-        GOGC: 75
       run: |
         pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       shell: bash
     - name: Build desktop testing
+      env:
+        GOMEMLIMIT: 5GiB
       if: ${{ !inputs.skip_builds }}
       run: |
         pnpm desktop build:testing

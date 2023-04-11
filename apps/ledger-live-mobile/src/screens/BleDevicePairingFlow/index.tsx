@@ -1,7 +1,6 @@
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { has as hasFromPath, set as setFromPath } from "lodash";
-import { BackHandler } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "../../const";
 import { useIncrementOnNavigationFocusState } from "../../helpers/useIncrementOnNavigationFocusState";
@@ -134,46 +133,8 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
     [navigateInput, navigation, navigationType, pathToDeviceParam],
   );
 
-  const handleGoBackFromScanning = useCallback(() => {
-    const routes = navigation.getState().routes;
-
-    const isNavigationFromDeeplink =
-      routes[routes.length - 1]?.params === undefined;
-
-    if (!isNavigationFromDeeplink) {
-      navigation.goBack();
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            // @ts-expect-error is fixed in a future screen
-            name: NavigatorName.BaseOnboarding,
-            state: {
-              routes: [
-                {
-                  name: ScreenName.OnboardingWelcome,
-                },
-              ],
-            },
-          },
-        ],
-      });
-    }
-  }, [navigation]);
-
-  // Handles back button, necessary when the user comes from the deep link
-  useEffect(() => {
-    const listener = BackHandler.addEventListener("hardwareBackPress", () => {
-      handleGoBackFromScanning();
-      return true;
-    });
-
-    return () => listener.remove();
-  }, [handleGoBackFromScanning]);
-
   return (
-    <DeviceSetupView hasBackButton onBack={handleGoBackFromScanning}>
+    <DeviceSetupView hasBackButton>
       <Flex px={6} flex={1}>
         <BleDevicePairingFlowComponent
           key={keyToReset}

@@ -72,6 +72,8 @@ import type {
   SettingsSetDateFormatPayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsSetHasBeenUpsoldProtectPayload,
+  SettingsSetHasSeenStaxEnabledNftsPopupPayload,
+  SettingsSetCustomImageTypePayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -123,6 +125,7 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   theme: "system",
   osTheme: undefined,
+  customImageType: null,
   customImageBackup: undefined,
   lastSeenCustomImage: {
     size: 0,
@@ -140,6 +143,14 @@ export const INITIAL_STATE: SettingsState = {
     KYC: {},
   },
   lastSeenDevice: null,
+  knownDeviceModelIds: {
+    blue: false,
+    nanoS: false,
+    nanoSP: false,
+    nanoX: false,
+    stax: false,
+  },
+  hasSeenStaxEnabledNftsPopup: false,
   starredMarketCoins: [],
   lastConnectedDevice: null,
   marketRequestParams: {
@@ -484,6 +495,27 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       ...(state.lastSeenDevice || {}),
       ...(action as Action<SettingsLastSeenDeviceInfoPayload>).payload,
     },
+    knownDeviceModelIds: {
+      ...state.knownDeviceModelIds,
+      [(action as Action<SettingsLastSeenDeviceInfoPayload>).payload.modelId]:
+        true,
+    },
+  }),
+
+  [SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE]: (state, action) => ({
+    ...state,
+    customImageType: (action as Action<SettingsSetCustomImageTypePayload>)
+      .payload.customImageType,
+  }),
+
+  [SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    hasSeenStaxEnabledNftsPopup: (
+      action as Action<SettingsSetHasSeenStaxEnabledNftsPopupPayload>
+    ).payload.hasSeenStaxEnabledNftsPopup,
   }),
 
   [SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID]: (state, action) => {
@@ -529,6 +561,11 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     lastConnectedDevice: (
       action as Action<SettingsSetLastConnectedDevicePayload>
     ).payload,
+    knownDeviceModelIds: {
+      ...state.knownDeviceModelIds,
+      [(action as Action<SettingsSetLastConnectedDevicePayload>).payload
+        .modelId]: true,
+    },
   }),
 
   [SettingsActionTypes.SET_HAS_ORDERED_NANO]: (state, action) => ({
@@ -827,6 +864,12 @@ export const lastSeenDeviceSelector = (state: State) => {
   }
   return state.settings.lastSeenDevice;
 };
+export const knownDeviceModelIdsSelector = (state: State) =>
+  state.settings.knownDeviceModelIds;
+export const hasSeenStaxEnabledNftsPopupSelector = (state: State) =>
+  state.settings.hasSeenStaxEnabledNftsPopup;
+export const customImageTypeSelector = (state: State) =>
+  state.settings.customImageType;
 export const starredMarketCoinsSelector = (state: State) =>
   state.settings.starredMarketCoins;
 export const lastConnectedDeviceSelector = (state: State) => {

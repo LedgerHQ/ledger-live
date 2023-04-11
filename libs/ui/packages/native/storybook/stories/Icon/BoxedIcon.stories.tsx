@@ -1,6 +1,5 @@
-import { storiesOf } from "../storiesOf";
 import React from "react";
-import { select } from "@storybook/addon-knobs";
+import { ComponentStory } from "@storybook/react-native";
 
 import Flex from "../../../src/components/Layout/Flex";
 import Box from "../../../src/components/Layout/Box";
@@ -8,14 +7,24 @@ import { Icons } from "../../../src/assets";
 import BoxedIcon from "../../../src/components/Icon/BoxedIcon";
 import Text from "../../../src/components/Text";
 
-const BoxedIconStory = () => {
-  const variant = select("variant", ["square", "circle"], "square");
+export default {
+  title: "Icon/BoxedIcon",
+  component: BoxedIcon,
+  argTypes: {
+    variant: {
+      options: ["square", "circle"],
+      control: { type: "select" },
+    },
+  },
+};
+
+export const BoxedIconStory: ComponentStory<typeof BoxedIcon> = (
+  args: typeof BoxedIconStoryArgs,
+) => {
+  const variant = args.variant;
   return (
     <Flex flexDirection="column" alignItems="center">
-      <BoxedIcon
-        Icon={Icons.HandshakeMedium}
-        variant={select("variant", ["square", "circle"], "square")}
-      />
+      <BoxedIcon Icon={Icons.HandshakeMedium} variant={variant} />
       <Box height={20} />
       <BoxedIcon
         Icon={Icons.HandshakeMedium}
@@ -55,5 +64,8 @@ const BoxedIconStory = () => {
     </Flex>
   );
 };
-
-storiesOf((story) => story("Icon", module).add("BoxedIcon", BoxedIconStory));
+BoxedIconStory.storyName = "BoxedIcon";
+const BoxedIconStoryArgs = {
+  variant: "square" as const,
+};
+BoxedIconStory.args = BoxedIconStoryArgs;

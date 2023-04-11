@@ -62,6 +62,8 @@ jobs:
           bundler-cache: true
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          upgrade_npm: ${{ matrix.os == 'windows-latest' }}
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:

@@ -21,7 +21,7 @@ const NftImageViewer = ({ route }: Props) => {
         mediaFormat={params.mediaFormat}
         status={params?.status}
         resizeMode="contain"
-        transaprency={true}
+        transparency={true}
       />
     </View>
   );

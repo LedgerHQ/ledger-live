@@ -20,7 +20,7 @@ Array [
     "index": 0,
     "name": "Algorand 1",
     "nfts": undefined,
-    "operationsCount": 131,
+    "operationsCount": 132,
     "pendingOperations": Array [],
     "seedIdentifier": "c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4",
     "starred": false,
@@ -33,7 +33,6 @@ Array [
   },
   Object {
     "approvals": undefined,
-    "compoundBalance": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+312769",
     "operationsCount": 11,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -45,7 +44,6 @@ Array [
   },
   Object {
     "approvals": undefined,
-    "compoundBalance": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+438828",
     "operationsCount": 0,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -57,7 +55,6 @@ Array [
   },
   Object {
     "approvals": undefined,
-    "compoundBalance": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+438837",
     "operationsCount": 0,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -69,7 +66,6 @@ Array [
   },
   Object {
     "approvals": undefined,
-    "compoundBalance": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+2757561",
     "operationsCount": 0,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -81,7 +77,6 @@ Array [
   },
   Object {
     "approvals": undefined,
-    "compoundBalance": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+27165954",
     "operationsCount": 0,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -93,7 +88,6 @@ Array [
   },
   Object {
     "approvals": undefined,
-    "compoundBalance": undefined,
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:+137594422",
     "operationsCount": 0,
     "parentId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
@@ -192,7 +186,6 @@ Array [
   },
   Object {
     "approvals": undefined,
-    "compoundBalance": undefined,
     "id": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:+312769",
     "operationsCount": 8,
     "parentId": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
@@ -861,6 +854,31 @@ Array [
       "tokenId": undefined,
       "type": "IN",
       "value": "34000000",
+    },
+    Object {
+      "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
+      "blockHash": undefined,
+      "blockHeight": 26958775,
+      "contract": undefined,
+      "extra": Object {
+        "assetId": undefined,
+        "memo": undefined,
+        "rewards": "0",
+      },
+      "fee": "1000",
+      "hash": "7UVVRC3GOQAYH36MGBIKX3VR6533NWRTGI555MT5VDPZLSSD43HQ",
+      "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:-7UVVRC3GOQAYH36MGBIKX3VR6533NWRTGI555MT5VDPZLSSD43HQ-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
+      ],
+      "senders": Array [
+        "VMZTCZV2IDQAVZBB4BZNZHCN62U654SYK7AJ5J4U73AWOM5DHITWQ3QU7Q",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "1000",
     },
     Object {
       "accountId": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",

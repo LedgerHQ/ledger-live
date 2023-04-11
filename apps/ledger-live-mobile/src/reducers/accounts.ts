@@ -18,14 +18,9 @@ import type {
   CryptoOrTokenCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
-import {
-  makeCompoundSummaryForAccount,
-  getAccountCapabilities,
-} from "@ledgerhq/live-common/compound/logic";
 import isEqual from "lodash/isEqual";
 import {
   addAccounts,
-  canBeMigrated,
   isAccountEmpty,
   flattenAccounts,
   getAccountCurrency,
@@ -172,9 +167,6 @@ export const shallowAccountsSelector = shallowAccountsSelectorCreator(
   a => a,
 );
 
-export const migratableAccountsSelector = (s: State): Account[] =>
-  s.accounts.active.filter(canBeMigrated);
-
 export const flattenAccountsSelector = createSelector(
   accountsSelector,
   flattenAccounts,
@@ -201,10 +193,6 @@ export const areAccountsEmptySelector = createSelector(
   accounts => accounts.every(isAccountEmpty),
 );
 
-export const someAccountsNeedMigrationSelector = createSelector(
-  accountsSelector,
-  accounts => accounts.some(canBeMigrated),
-);
 export const currenciesSelector = createSelector(accountsSelector, accounts =>
   uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort((a, b) =>
     a.name.localeCompare(b.name),
@@ -407,21 +395,6 @@ export const subAccountByCurrencyOrderedScreenSelector =
       currency,
     });
   };
-export const hasLendEnabledAccountsSelector = createSelector(
-  flattenAccountsSelector,
-  accounts =>
-    accounts.some(account => {
-      if (!account || account.type !== "TokenAccount") return false;
-      // check if account already has lending enabled
-      const summary =
-        account.type === "TokenAccount" &&
-        makeCompoundSummaryForAccount(account, undefined);
-      const capabilities = summary
-        ? account.type === "TokenAccount" && getAccountCapabilities(account)
-        : null;
-      return !!capabilities;
-    }),
-);
 
 function accountHasPositiveBalance(account: AccountLike) {
   return Boolean(account.balance?.gt(0));

@@ -97,7 +97,7 @@ const GenericInformationalView: React.FC<Props> = ({
           onPress={onPrimaryButtonPress}
           event={primaryButtonEvent}
         >
-          <Text variant="body" color="neutral.00" fontSize={5}>
+          <Text variant="body" color="neutral.c00" fontSize={5}>
             {primaryButtonLabel}
           </Text>
         </Button>

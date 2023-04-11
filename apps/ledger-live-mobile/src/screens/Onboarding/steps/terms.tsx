@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -10,7 +10,7 @@ import Touchable from "../../../components/Touchable";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import { setAnalytics } from "../../../actions/settings";
-import { useTermsAccept } from "../../../logic/terms";
+import { AcceptedTermsContext } from "../../../logic/terms";
 import { useLocale } from "../../../context/Locale";
 import { urls } from "../../../config/urls";
 import OnboardingView from "../OnboardingView";
@@ -58,7 +58,7 @@ type NavigationProp = StackNavigatorNavigation<
 function OnboardingStepTerms() {
   const { locale = "en" } = useLocale();
   const dispatch = useDispatch();
-  const [, setAccepted] = useTermsAccept();
+  const { accept: setAccepted } = useContext(AcceptedTermsContext);
   const [toggle, setToggle] = useState(false);
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslation();
