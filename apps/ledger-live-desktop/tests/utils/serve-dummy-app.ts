@@ -4,8 +4,6 @@ import path from "path";
 
 let dummyAppPath: string;
 
-// maybe make into a class?
-
 export const server = http.createServer((request, response) => {
   // You pass two more arguments for config and middleware
   // More details here: https://github.com/vercel/serve-handler#options
@@ -17,13 +15,10 @@ export const server = http.createServer((request, response) => {
 export const start = (appPath: string, port = 0): Promise<number> => {
   dummyAppPath = appPath;
 
-  console.log({ dummyAppPath });
-
   return new Promise((resolve, reject) => {
     server
       .listen(port, "localhost")
       .once("listening", () => {
-        console.log("listening at: ", server.address());
         resolve((server.address() as any).port as number);
       })
       .once("error", error => {

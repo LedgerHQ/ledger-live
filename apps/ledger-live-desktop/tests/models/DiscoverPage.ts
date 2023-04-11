@@ -114,26 +114,20 @@ export class DiscoverPage {
   }
 
   async textIsPresent(textToCheck: string) {
-    return waitFor(
-      async () => {
-        const result: boolean = await this.page.evaluate(textToCheck => {
-          const webview = document.querySelector("webview");
-          return (webview as any)
-            .executeJavaScript(
-              `(function() {
+    const result: boolean = await this.page.evaluate(textToCheck => {
+      const webview = document.querySelector("webview");
+      return (webview as any)
+        .executeJavaScript(
+          `(function() {
         return document.querySelector('*').innerHTML;
       })();
     `,
-            )
-            .then((text: string) => {
-              return text.includes(textToCheck);
-            });
-        }, textToCheck);
+        )
+        .then((text: string) => {
+          return text.includes(textToCheck);
+        });
+    }, textToCheck);
 
-        return result;
-      },
-      100,
-      5000,
-    );
+    return result;
   }
 }

@@ -55,9 +55,8 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const { state: urlParams } = useLocation();
   const locale = useSelector(languageSelector);
 
-  const mockManifest: LiveAppManifest | undefined = process.env.MOCK_REMOTE_LIVE_MANIFEST
-    ? JSON.parse(process.env.MOCK_REMOTE_LIVE_MANIFEST)[0]
-    : null;
+  const mockManifest: LiveAppManifest | undefined =
+    process.env.MOCK_REMOTE_LIVE_MANIFEST && JSON.parse(process.env.MOCK_REMOTE_LIVE_MANIFEST)[0];
 
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
