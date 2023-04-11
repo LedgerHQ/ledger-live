@@ -40,28 +40,30 @@ const defaultTokenListOptions: TokensListOptions = {
   withDelisted: false,
 };
 function createTokenHash(token: TokenCurrency) {
-  return token ? `${token.id}-${token.contractAddress}-${token.delisted}-${token.disableCountervalue}` : ``
+  return token
+    ? `${token.id}-${token.contractAddress}-${token.delisted}-${token.disableCountervalue}`
+    : "";
 }
 
 const cleanObject = (obj: any) => {
-  for (var key in obj) {
+  for (const key in obj) {
     // this check can be safely omitted in modern JS engines
     // if (obj.hasOwnProperty(key))
     delete obj[key];
   }
-}
+};
 /**
  * Clear all lists above for test simplicity
  */
 export function clearAllList() {
-  tokensArray.length = 0
-  tokensArrayWithDelisted.length = 0
-  cleanObject(tokensByCryptoCurrency)
-  cleanObject(tokensByCryptoCurrencyWithDelisted)
-  cleanObject(tokensById)
-  cleanObject(tokensByTicker)
-  cleanObject(tokensByAddress)
-  cleanObject(tokensByCurrencyAddress)
+  tokensArray.length = 0;
+  tokensArrayWithDelisted.length = 0;
+  cleanObject(tokensByCryptoCurrency);
+  cleanObject(tokensByCryptoCurrencyWithDelisted);
+  cleanObject(tokensById);
+  cleanObject(tokensByTicker);
+  cleanObject(tokensByAddress);
+  cleanObject(tokensByCurrencyAddress);
   tokenListHashes.clear();
 }
 
@@ -168,7 +170,9 @@ function comparePriority(a: TokenCurrency, b: TokenCurrency) {
 
 function removeElemFromArray(array: TokenCurrency[], token: TokenCurrency) {
   if (array && array.length > 0) {
-    const index = array.findIndex(currentToken => currentToken && token.id === currentToken.id);
+    const index = array.findIndex(
+      (currentToken) => currentToken && token.id === currentToken.id
+    );
     if (index === -1) return array;
     return array.splice(index, 1);
   }
@@ -186,14 +190,20 @@ export function addTokens(list: TokenCurrency[]): void {
     tokenListHashes.delete(createTokenHash(tokensById[id]));
     delete tokensById[id];
     if (tokensByCurrencyAddress)
-      tokenListHashes.delete(createTokenHash(tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract]));
+      tokenListHashes.delete(
+        createTokenHash(
+          tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract]
+        )
+      );
     delete tokensByAddress[lowCaseContract];
-    delete tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract]
+    delete tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract];
     removeElemFromArray(tokensArray, token);
     removeElemFromArray(tokensArrayWithDelisted, token);
     removeElemFromArray(tokensByCryptoCurrency[parentCurrency.id], token);
-    removeElemFromArray(tokensByCryptoCurrencyWithDelisted[parentCurrency.id], token);
-
+    removeElemFromArray(
+      tokensByCryptoCurrencyWithDelisted[parentCurrency.id],
+      token
+    );
 
     if (!token.delisted) tokensArray.push(token);
     tokensArrayWithDelisted.push(token);
