@@ -335,4 +335,5 @@ const AppActions = React.memo(
     );
   },
 );
+
 export default memo<Props>(AppActions);
