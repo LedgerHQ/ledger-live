@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
+import { from } from "rxjs";
 import { timeout } from "rxjs/operators";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { command } from "~/renderer/commands";
+import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
+import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { StepProps } from "..";
@@ -42,7 +44,10 @@ const StepUpdating = ({
   useEffect(() => {
     const sub = (getEnv("MOCK")
       ? mockedEventEmitter()
-      : command("waitForDeviceInfo")({ deviceId: "" })
+      : withDevicePolling("")(
+          transport => from(getDeviceInfo(transport)),
+          () => true,
+        )
     )
       .pipe(timeout(5 * 60 * 1000))
       .subscribe({

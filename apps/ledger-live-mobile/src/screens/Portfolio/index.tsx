@@ -1,18 +1,23 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { ListRenderItemInfo } from "react-native";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { ListRenderItemInfo, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useRefreshAccountsOrdering } from "../../actions/general";
-import { discreetModeSelector } from "../../reducers/settings";
+import {
+  discreetModeSelector,
+  hasBeenUpsoldProtectSelector,
+  lastConnectedDeviceSelector,
+} from "../../reducers/settings";
+import { setHasBeenUpsoldProtect } from "../../actions/settings";
 
 import Carousel from "../../components/Carousel";
 import TrackScreen from "../../analytics/TrackScreen";
-import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
@@ -41,6 +46,8 @@ import {
   hasTokenAccountsNotBlackListedWithPositiveBalanceSelector,
 } from "../../reducers/accounts";
 import PortfolioAssets from "./PortfolioAssets";
+import { internetReachable } from "../../logic/internetReachable";
+import { useLearnMoreURI } from "../../hooks/recoverFeatureFlag";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -58,9 +65,33 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const { t } = useTranslation();
 
   const discreetMode = useSelector(discreetModeSelector);
+  const hasBeenUpsoldProtect = useSelector(hasBeenUpsoldProtectSelector);
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
+  const protectFeature = useFeature("protectServicesMobile");
+  const recoverUpsellURL = useLearnMoreURI();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const openProtectUpsell = async () => {
+      const internetConnected = await internetReachable();
+      if (internetConnected && recoverUpsellURL && protectFeature?.enabled) {
+        Linking.openURL(recoverUpsellURL);
+      }
+    };
+    if (!hasBeenUpsoldProtect && lastConnectedDevice?.modelId === "nanoX") {
+      openProtectUpsell();
+      dispatch(setHasBeenUpsoldProtect(true));
+    }
+  }, [
+    hasBeenUpsoldProtect,
+    lastConnectedDevice,
+    recoverUpsellURL,
+    dispatch,
+    protectFeature?.enabled,
+  ]);
 
   const openAddModal = useCallback(() => {
     track("button_clicked", {
@@ -168,7 +199,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         showsVerticalScrollIndicator={false}
         testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyAccount"}
       />
-      <MigrateAccountsBanner />
       <AddAccountsModal
         navigation={navigation as unknown as BaseNavigation}
         isOpened={isAddModalOpened}

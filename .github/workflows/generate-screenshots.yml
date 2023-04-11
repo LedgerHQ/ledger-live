@@ -101,7 +101,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
@@ -137,6 +137,8 @@ jobs:
         id: setup-test-desktop
         with:
           install_playwright: true
+          install_node_gyp: true
+          upgrade_npm: true
       - name: Checkout PR
         if: ${{ inputs.number != null && inputs.ref == null }}
         run: gh pr checkout ${{ inputs.number }}
@@ -144,7 +146,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
@@ -180,6 +182,7 @@ jobs:
           skip_python: true
           skip_ruby: true
           install_playwright: true
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
       - name: Checkout PR
         if: ${{ inputs.number != null && inputs.ref == null }}
         run: gh pr checkout ${{ inputs.number }}
@@ -187,7 +190,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots

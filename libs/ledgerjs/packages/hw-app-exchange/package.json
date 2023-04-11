@@ -1,0 +1,53 @@
+{
+  "name": "@ledgerhq/hw-app-exchange",
+  "version": "0.1.0",
+  "description": "Ledger Hardware Wallet Cosmos Application API",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "NanoS",
+    "Blue",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-app-exchange",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/Exchange.js",
+  "module": "lib-es/Exchange.js",
+  "types": "lib/Exchange.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
+    "bignumber.js": "^9.1.0",
+    "invariant": "^2.2.2"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.3",
+    "documentation": "13.2.4",
+    "jest": "^28.1.1",
+    "ts-jest": "^28.0.5",
+    "ts-node": "^10.4.0",
+    "typescript": "^4"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  }
+}

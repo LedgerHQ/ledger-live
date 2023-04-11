@@ -10,7 +10,7 @@ export class PortfolioPage {
   readonly buySellEntryButton: Locator;
   readonly swapEntryButton: Locator;
   readonly stakeEntryButton: Locator;
-  readonly assetRow: Function;
+  readonly assetRow: (currency: string) => Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -22,8 +22,7 @@ export class PortfolioPage {
     this.buySellEntryButton = page.locator("data-test-id=buy-sell-entry-button");
     this.swapEntryButton = page.locator("data-test-id=swap-entry-button");
     this.stakeEntryButton = page.locator("data-test-id=stake-entry-button");
-    this.assetRow = (currency: string) =>
-      page.locator(`data-test-id=asset-row-${currency.toLowerCase()}`);
+    this.assetRow = currency => page.locator(`data-test-id=asset-row-${currency.toLowerCase()}`);
   }
 
   async openAddAccountModal() {

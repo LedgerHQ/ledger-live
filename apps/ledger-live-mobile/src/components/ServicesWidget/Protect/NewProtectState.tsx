@@ -1,9 +1,8 @@
-import { Tag, Text } from "@ledgerhq/native-ui";
+import { Button, Tag, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { GestureResponderEvent, Linking } from "react-native";
 import { urls } from "../../../config/urls";
-import Button from "../../Button";
 
 function NewProtectState({ params }: { params: Record<string, string> }) {
   const { t } = useTranslation();
@@ -15,29 +14,40 @@ function NewProtectState({ params }: { params: Record<string, string> }) {
   }, [learnMoreURI]);
 
   const onAlreadySubscribe = useCallback(() => {
-    Linking.canOpenURL(alreadySubscribedURI).then(() =>
-      Linking.openURL(alreadySubscribedURI),
-    );
+    const url = `${alreadySubscribedURI}&source=${urls.recoverSources.myLedger}`;
+    Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [alreadySubscribedURI]);
 
-  const onPressInAlreadySubscribed = useCallback((e: GestureResponderEvent) => {
+  const onPressInLearnMore = useCallback((e: GestureResponderEvent) => {
     e.stopPropagation();
   }, []);
 
   return (
     <>
-      <Button type="main" outline={false} onPress={onLearnMore} mb={6}>
+      <Button
+        type="main"
+        outline={false}
+        size={"small"}
+        onPressIn={onPressInLearnMore}
+        onPress={onLearnMore}
+        mb={6}
+      >
         {t(`servicesWidget.protect.status.new.actions.learnMore`)}
       </Button>
-      <Text variant="body" color="neutral.c100" mb={6}>
+      <Text
+        variant="paragraph"
+        fontWeight={"semiBold"}
+        color="neutral.c100"
+        textAlign={"center"}
+      >
         <Trans
           i18nKey="servicesWidget.protect.status.new.actions.alreadySubscribed"
           components={{
             LinkAccount: (
               <Text
-                variant="body"
+                variant="paragraph"
+                fontWeight="semiBold"
                 color="neutral.c100"
-                onPressIn={onPressInAlreadySubscribed}
                 onPress={onAlreadySubscribe}
                 style={{ textDecorationLine: "underline" }}
               >
@@ -60,6 +70,7 @@ const StateTag = () => {
       textColor="neutral.c90"
       ellipsizeMode="tail"
       size="medium"
+      uppercase={false}
     >
       {t(`servicesWidget.protect.status.new.title`)}
     </Tag>

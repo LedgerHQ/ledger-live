@@ -3,7 +3,7 @@ import { Page, Locator } from "@playwright/test";
 export class AccountsPage {
   readonly page: Page;
   readonly addAccountButton: Locator;
-  readonly accountComponent: Function;
+  readonly accountComponent: (accountName: string) => Locator;
 
   constructor(page: Page) {
     this.page = page;

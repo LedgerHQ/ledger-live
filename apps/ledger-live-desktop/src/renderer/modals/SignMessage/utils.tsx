@@ -1,9 +1,13 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+// TODO move the specific parts to each family!
+// eslint-disable-next-line no-restricted-imports
 import {
   isEIP712Message,
   getNanoDisplayedInfosFor712,
 } from "@ledgerhq/live-common/families/ethereum/hw-signMessage";
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
+// TODO move the specific parts to each family!
+// eslint-disable-next-line no-restricted-imports
 import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
 import { NanoDisplayedInfoFor712 } from "./types";
 import { getEnv } from "@ledgerhq/live-common/env";

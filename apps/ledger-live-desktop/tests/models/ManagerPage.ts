@@ -8,10 +8,10 @@ export class ManagerPage {
   readonly catalogAppsTab: Locator;
   readonly updateAllButton: Locator;
   readonly updateAllProgressBar: Locator;
-  readonly changeLanguageOption: Function;
-  readonly appProgressBar: Function;
-  readonly installAppButton: Function;
-  readonly uninstallAppButton: Function;
+  readonly changeLanguageOption: (language: string) => Locator;
+  readonly appProgressBar: (currency: string) => Locator;
+  readonly installAppButton: (currency: string) => Locator;
+  readonly uninstallAppButton: (currency: string) => Locator;
   readonly uninstallAllAppsButton: Locator;
   readonly confirmButton: Locator;
   readonly installedAppEmptyState: Locator;
@@ -25,13 +25,13 @@ export class ManagerPage {
     this.catalogAppsTab = page.locator("data-test-id=manager-app-catalog-tab");
     this.updateAllButton = page.locator("data-test-id=manager-update-all-apps-button");
     this.updateAllProgressBar = page.locator("data-test-id=manager-update-all-progress-bar");
-    this.changeLanguageOption = (language: string): Locator =>
+    this.changeLanguageOption = language =>
       page.locator(`data-test-id=manager-language-option-${language}`);
-    this.appProgressBar = (currency: string): Locator =>
+    this.appProgressBar = currency =>
       page.locator(`data-test-id=manager-${currency}-app-progress-bar`);
-    this.installAppButton = (currency: string): Locator =>
+    this.installAppButton = currency =>
       page.locator(`data-test-id=manager-install-${currency}-app-button`);
-    this.uninstallAppButton = (currency: string): Locator =>
+    this.uninstallAppButton = currency =>
       page.locator(`data-test-id=manager-uninstall-${currency}-app-button`);
     this.uninstallAllAppsButton = page.locator("data-test-id=manager-uninstall-all-apps-button");
     this.confirmButton = page.locator("data-test-id=modal-confirm-button");
@@ -72,6 +72,10 @@ export class ManagerPage {
     await this.uninstallAllAppsButton.click();
     await this.confirmButton.click();
     await this.installedAppEmptyState.waitFor({ state: "visible" });
+  }
+
+  async waitForFirmwareUpdateButton() {
+    await this.firmwareUpdateButton.waitFor({ state: "visible" });
   }
 
   async openFirmwareUpdateModal() {

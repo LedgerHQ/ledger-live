@@ -38,7 +38,7 @@ export const languageLabels: { [key in Locale]: string } = {
   nl: "Nederlands",
   no: "Norsk",
   pl: "polski",
-  pt: "português",
+  pt: "Português (Brasil)",
   ru: "Русский",
   sr: "српски",
   sv: "svenska",
@@ -142,7 +142,7 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
         minWidth={260}
         isSearchable={false}
         onChange={handleChangeLanguage}
-        renderSelected={(item: any) => item && item.name}
+        renderSelected={(item: { name: unknown } | undefined) => item && item.name}
         value={currentLanguage}
         options={languages}
       />

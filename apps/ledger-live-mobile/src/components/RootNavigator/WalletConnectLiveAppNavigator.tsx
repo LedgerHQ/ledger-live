@@ -10,7 +10,7 @@ import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
 
-import PlatformApp from "../../screens/Platform/App";
+import { LiveApp } from "../../screens/Platform";
 import { uriSelector } from "../../reducers/walletconnect";
 import { setWallectConnectUri } from "../../actions/walletconnect";
 import { WalletConnectLiveAppNavigatorParamList } from "./types/WalletConnectLiveAppNavigator";
@@ -55,7 +55,7 @@ export default function WalletConnectLiveAppNavigator() {
     <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen name={ScreenName.WalletConnectScan} options={options}>
         {_props => (
-          <PlatformApp
+          <LiveApp
             {..._props}
             // @ts-expect-error What are you expecting when spreading 3 times in a row?
             {...routeParams}
@@ -76,7 +76,7 @@ export default function WalletConnectLiveAppNavigator() {
         options={options}
       >
         {_props => (
-          <PlatformApp
+          <LiveApp
             {..._props}
             // @ts-expect-error What are you expecting when spreading 3 times in a row?
             {...routeParams}
@@ -93,7 +93,7 @@ export default function WalletConnectLiveAppNavigator() {
       </Stack.Screen>
       <Stack.Screen name={ScreenName.WalletConnectConnect} options={options}>
         {_props => (
-          <PlatformApp
+          <LiveApp
             {..._props}
             // @ts-expect-error What are you expecting when spreading 3 times in a row?
             {...routeParams}

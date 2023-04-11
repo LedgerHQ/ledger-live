@@ -18,7 +18,7 @@ export const languages = {
   nl: "Nederlands",
   no: "Norsk",
   pl: "Polski",
-  pt: "Português",
+  pt: "Português (Brasil)",
   ru: "Русский",
   sr: "Cрпски",
   sv: "Svenska",

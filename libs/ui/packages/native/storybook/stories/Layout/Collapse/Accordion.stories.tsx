@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { storiesOf } from "../../storiesOf";
-import { text } from "@storybook/addon-knobs";
 import { Text, View } from "react-native";
 
 import Accordion from "../../../../src/components/Layout/Collapse/Accordion";
 
-const AccordionStory = () => {
+export default {
+  title: "Layout/Collapse/Accordion",
+  component: Accordion,
+};
+
+export const AccordionStory = (args: typeof AccordionStoryArgs) => {
   const [collapsed, setCollapsed] = useState(true);
 
   const handleChange = () => setCollapsed((prev) => !prev);
@@ -19,11 +22,7 @@ const AccordionStory = () => {
         voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
         cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       </Text>
-      <Accordion
-        collapsed={collapsed}
-        title={text("title", "Show 2 tokens")}
-        onPress={handleChange}
-      >
+      <Accordion collapsed={collapsed} title={args.title} onPress={handleChange}>
         <View style={{ height: 300, backgroundColor: "blue" }} />
       </Accordion>
       <Text>
@@ -36,5 +35,8 @@ const AccordionStory = () => {
     </View>
   );
 };
-
-storiesOf((story) => story("Layout", module).add("Collapse/Accordion", () => <AccordionStory />));
+AccordionStory.storyName = "Accordion";
+const AccordionStoryArgs = {
+  title: "Show 2 tokens",
+};
+AccordionStory.args = AccordionStoryArgs;

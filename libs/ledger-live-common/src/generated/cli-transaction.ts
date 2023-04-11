@@ -14,8 +14,10 @@ import solana from "../families/solana/cli-transaction";
 import stellar from "../families/stellar/cli-transaction";
 import tezos from "../families/tezos/cli-transaction";
 import tron from "../families/tron/cli-transaction";
+import { makeLRUCache } from "../cache";
+import network from "../network";
 import vechain from "../families/vechain/cli-transaction";
-import polkadot from "@ledgerhq/coin-polkadot/cli-transaction";
+import polkadotCreateCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
 
 export default {
   algorand,
@@ -35,5 +37,5 @@ export default {
   tezos,
   tron,
   vechain,
-  polkadot,
+  polkadot: polkadotCreateCliTools(network, makeLRUCache),
 };

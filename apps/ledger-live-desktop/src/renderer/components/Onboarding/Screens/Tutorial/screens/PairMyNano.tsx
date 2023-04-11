@@ -16,7 +16,7 @@ export function PairMyNano() {
 
 PairMyNano.Illustration = <IllustrationContainer width="240px" height="245px" src={geniuneCheck} />;
 
-const Footer = (props: any) => {
+const Footer = (props: unknown) => {
   const { t } = useTranslation();
   return (
     <AsideFooter {...props} text={t("onboarding.screens.tutorial.screens.pairMyNano.help.descr")} />

@@ -25,7 +25,6 @@ import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
 
 import OnboardingPairNew from "../../screens/Onboarding/steps/pairNew";
 import OnboardingImportAccounts from "../../screens/Onboarding/steps/importAccounts";
-import OnboardingFinish from "../../screens/Onboarding/steps/finish";
 import OnboardingPreQuizModal from "../../screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
 import OnboardingQuiz from "../../screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "../../screens/Onboarding/OnboardingQuizFinal";
@@ -295,15 +294,6 @@ export default function OnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.OnboardingImportAccounts}
         component={OnboardingImportAccounts}
-      />
-
-      <Stack.Screen
-        name={ScreenName.OnboardingFinish}
-        component={OnboardingFinish}
-        options={{
-          cardStyleInterpolator:
-            CardStyleInterpolators.forFadeFromBottomAndroid,
-        }}
       />
 
       <Stack.Screen

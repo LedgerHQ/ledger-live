@@ -18,7 +18,6 @@ import {
   findTokenById,
   findTokenByAddress,
   hasTokenId,
-  findCompoundToken,
   getAbandonSeedAddress,
   getTokenById,
   addTokens,
@@ -43,6 +42,9 @@ import {
   currenciesByMarketcap,
   useCurrenciesByMarketcap,
 } from "./sortByMarketcap";
+
+export * from "@ledgerhq/coin-framework/currencies/BigNumberToLocaleString";
+export * from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 export * from "@ledgerhq/coin-framework/currencies/support";
 export * from "./helpers";
 
@@ -84,7 +86,6 @@ export {
   sanitizeValueString,
   getCurrencyColor,
   ColorableCurrency,
-  findCompoundToken,
   listTokens,
   addTokens,
 };

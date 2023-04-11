@@ -36,16 +36,10 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.since_branch }}
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - name: Install dependencies
-        run: pnpm i --filter="!./apps/**" --frozen-lockfile
+        run: pnpm i --filter="!./apps/**"
       - name: run doc
         run: pnpm doc:ljs
       - name: get diff
@@ -68,16 +62,10 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.since_branch }}
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - name: Install dependencies
-        run: pnpm i --frozen-lockfile
+        run: pnpm i
       - name: build cli
         run: pnpm build:cli
       - name: test cli
@@ -114,14 +102,8 @@ jobs:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.since_branch }}
           fetch-depth: 0
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
@@ -155,11 +137,13 @@ jobs:
           path: |
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
-      - name: Test coverage
-        run: npx codecov -F test
-        env:
-          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+      - uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          flags: test
       - uses: actions/github-script@v6
+        if: always()
         with:
           script: |
             const fs = require("fs");

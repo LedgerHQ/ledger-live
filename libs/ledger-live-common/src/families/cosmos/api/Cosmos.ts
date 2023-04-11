@@ -93,7 +93,7 @@ export class CosmosAPI {
       url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/blocks/latest`,
     });
 
-    return data.block.header.height;
+    return parseInt(data.block.header.height);
   };
 
   getAllBalances = async (
@@ -269,5 +269,26 @@ export class CosmosAPI {
     }
 
     return patchOperationWithHash(operation, data.tx_response.txhash);
+  };
+
+  /** Simulate a transaction on the node to get a precise estimation of gas used */
+  simulate = async (tx_bytes: number[]): Promise<BigNumber> => {
+    try {
+      const { data } = await network({
+        method: "POST",
+        url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/simulate`,
+        data: {
+          tx_bytes,
+        },
+      });
+
+      if (data && data.gas_info && data.gas_info.gas_used) {
+        return new BigNumber(data.gas_info.gas_used);
+      } else {
+        throw new Error("No gas used returned from lcd");
+      }
+    } catch (e) {
+      throw new Error("Tx simulation failed");
+    }
   };
 }

@@ -46,7 +46,7 @@ exports[`finalMarkdownReport sample 1`] = `
 | Songbird | [🙏](https://songbird-explorer.flare.network/address/0x932E8214E25AceC996aD7d195339AF5139625065/transactions) | ❌ |
 | Flare | ❌ | ⚠️ |
 | Filecoin | ⚠️ | [🙏](https://filfox.info/en/address/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) |
-| Hedera | [🙏](https://v2.explorer.kabuto.sh/id/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) | ❌ |
+| Hedera | [🙏](https://hashscan.io/mainnet/account/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) | ❌ |
 | NEAR | ❌ | [🙏](https://explorer.near.org/accounts/rnmiQggEzwTHNqwJFpqYGgqt1rM7K5qPhw) |
 | XRP | [🙏](https://bithomp.com/explorer/rnmiQggEzwTHNqwJFpqYGgqt1rM7K5qPhw) | [🙏](https://bithomp.com/explorer/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) |
 | Solana | [🙏](https://explorer.solana.com/address/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) | ❌ |

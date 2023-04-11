@@ -5,6 +5,7 @@ import {
   deviceInfo210lo5,
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
+import { AppOp } from "@ledgerhq/live-common/apps/types";
 
 const mockListAppsResult = (...params) => {
   // Nb Should move this polyfill to live-common eventually.
@@ -14,10 +15,6 @@ const mockListAppsResult = (...params) => {
   });
   return result;
 };
-
-// fromTransactionRaw doesn't work as expected but I'm not sure why it produces the following error:
-// page.evaluate: ReferenceError: _transaction is not defined
-// import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 
 export class DeviceAction {
   readonly page: Page;
@@ -139,6 +136,48 @@ export class DeviceAction {
     });
   }
 
+  async installSetOfAppsMocked(
+    progress: number,
+    itemProgress: number,
+    currentAppOp: AppOp,
+    installQueue: string[],
+  ) {
+    await this.page.evaluate(
+      args => {
+        const [progress, itemProgress, currentAppOp, installQueue] = args;
+
+        (window as any).mock.events.mockDeviceEvent({
+          type: "inline-install",
+          progress: progress,
+          itemProgress: itemProgress,
+          currentAppOp: currentAppOp,
+          installQueue: installQueue,
+        });
+      },
+      [progress, itemProgress, currentAppOp, installQueue],
+    );
+  }
+
+  async resolveDependenciesMocked(installQueue: string[]) {
+    await this.page.evaluate(
+      args => {
+        const [installQueue] = args;
+
+        (window as any).mock.events.mockDeviceEvent({
+          type: "listed-apps",
+          installQueue: installQueue,
+        });
+      },
+      [installQueue],
+    );
+  }
+
+  async mockOpened() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "opened" });
+    });
+  }
+
   async completeLanguageInstallation() {
     await this.page.evaluate(() => {
       (window as any).mock.events.mockDeviceEvent({ type: "languageInstalled" });
@@ -189,32 +228,34 @@ export class DeviceAction {
 
   async confirmSwap() {
     await this.page.evaluate(() => {
-      // Transaction taken from original test here (and not using fromRawTransaction)
-      // https://github.com/LedgerHQ/ledger-live-desktop/blob/7a7ae3218f941dea5b9cdb2637acaa026b4f4a10/tests/specs/swap.spec.js
-      (window as any).mock.events.mockDeviceEvent(
+      const mock = (window as any).mock;
+      const transaction = mock.fromTransactionRaw({
+        family: "bitcoin",
+        recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
+        amount: "12",
+        feePerByte: "1",
+        networkInfo: {
+          family: "bitcoin",
+          feeItems: {
+            items: [
+              { key: "0", speed: "high", feePerByte: "3" },
+              { key: "1", speed: "standard", feePerByte: "2" },
+              { key: "2", speed: "low", feePerByte: "1" },
+            ],
+            defaultFeePerByte: "1",
+          },
+        },
+        rbf: false,
+        utxoStrategy: {
+          strategy: 0,
+          excludeUTXOs: [],
+        },
+      });
+      mock.events.mockDeviceEvent(
         {
           type: "init-swap-result",
           initSwapResult: {
-            transaction: {
-              amount: { s: 1, e: 0, c: [1] },
-              recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
-              rbf: false,
-              utxoStrategy: { strategy: 0, excludeUTXOs: [] },
-              family: "bitcoin",
-              feePerByte: { s: 1, e: 0, c: [1] },
-              networkInfo: {
-                family: "bitcoin",
-                feeItems: {
-                  items: [
-                    { key: "0", speed: "high", feePerByte: "3" },
-                    { key: "1", speed: "standard", feePerByte: "2" },
-                    { key: "2", speed: "low", feePerByte: "1" },
-                  ],
-                  defaultFeePerByte: 1,
-                },
-              },
-              feesStrategy: undefined,
-            },
+            transaction,
             swapId: "12345",
           },
         },

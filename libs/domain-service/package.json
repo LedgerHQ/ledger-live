@@ -1,0 +1,99 @@
+{
+  "name": "@ledgerhq/domain-service",
+  "description": "Ledger service responsible for domain handling",
+  "version": "0.2.1",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/domain-service",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*.json": [
+        "*.json"
+      ],
+      "*": [
+        "lib/*"
+      ],
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib/*.js": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib-es/*.js": "./lib-es/*.js",
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./*.js": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "lib-es",
+    "src"
+  ],
+  "scripts": {
+    "clean": "rm -rf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "cross-env TZ=America/New_York jest"
+  },
+  "dependencies": {
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "axios": "^1.3.4",
+    "eip55": "^2.1.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "12",
+    "@testing-library/react-hooks": "^4.0.1",
+    "@types/jest": "^28.1.3",
+    "@types/node": "^18.15.7",
+    "@types/testing-library__jest-dom": "^5.14.5",
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-typescript": "^3.0.0",
+    "eslint-formatter-pretty": "^3.0.1",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "jest": "^28.1.3",
+    "jest-environment-jsdom": "^28.1.3",
+    "prettier": "^2.8.1",
+    "react-test-renderer": "^17.0.2",
+    "ts-jest": "^28.0.8",
+    "typescript": "^4.9.5"
+  }
+}

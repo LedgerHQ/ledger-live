@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "downlevelIteration": true,
+    "resolveJsonModule": true,
+    "lib": ["es2020", "dom"],
+    "outDir": "lib",
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "jsx": "react",
+    "types": ["node"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/__tests__"]
+}
+

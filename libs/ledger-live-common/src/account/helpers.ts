@@ -8,9 +8,11 @@ import { TronAccount } from "../families/tron/types";
 import { CosmosAccount } from "../families/cosmos/types";
 import {
   getMainAccount,
+  getAccountName,
   getAccountCurrency,
   getAccountUnit,
-  getAccountName,
+  getFeesCurrency,
+  getFeesUnit,
   getAccountSpendableBalance,
   isAccountEmpty as commonIsAccountEmpty,
   areAllOperationsLoaded,
@@ -34,11 +36,14 @@ import {
   getParentAccount,
 } from "@ledgerhq/coin-framework/account/helpers";
 
+// FIXME Remove this redundant export and import all from coin-framework
 export {
   getMainAccount,
+  getAccountName,
   getAccountCurrency,
   getAccountUnit,
-  getAccountName,
+  getFeesCurrency,
+  getFeesUnit,
   getAccountSpendableBalance,
   areAllOperationsLoaded,
   isAccountBalanceSignificant,

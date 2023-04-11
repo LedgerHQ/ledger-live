@@ -50,7 +50,7 @@ const DeviceHowToAnimation = () => {
 
 DeviceHowTo.Illustration = <DeviceHowToAnimation />;
 
-const Footer = (props: any) => {
+const Footer = (props: unknown) => {
   const { t } = useTranslation();
   return (
     <AsideFooter

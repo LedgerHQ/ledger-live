@@ -8,16 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - name: Install dependencies
-        run: pnpm i --filter='!./apps/**' --frozen-lockfile
+        run: pnpm i --filter='!./apps/**'
 
       - name: generate super report
         uses: ./tools/actions/generate-bot-super-report

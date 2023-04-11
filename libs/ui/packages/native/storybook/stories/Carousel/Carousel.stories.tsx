@@ -1,9 +1,7 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
-import { number, boolean } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
-import { storiesOf } from "../storiesOf";
-import { Flex, Carousel, Text, Button } from "../../../src";
+import { Flex, Carousel, Text, Button } from "../../../src/components";
 import StoriesIndicator from "../../../src/components/Navigation/StoriesIndicator";
 
 const description = `
@@ -48,6 +46,11 @@ const Default = (): JSX.Element => {
 \`\`\`
 `;
 
+export default {
+  title: "Carousel",
+  component: Carousel,
+};
+
 const ChildContainer = styled(Flex).attrs({
   flex: 1,
   alignItems: "center",
@@ -62,7 +65,7 @@ const Item = ({ label }: { label: string }) => (
   </ChildContainer>
 );
 
-const Default = (): JSX.Element => {
+export const Default = (): JSX.Element => {
   return (
     <Carousel
       scrollViewProps={{
@@ -77,8 +80,17 @@ const Default = (): JSX.Element => {
     </Carousel>
   );
 };
+Default.storyName = "Carousel";
+Default.parameters = {
+  docs: {
+    title: "Default",
+    description: {
+      component: description,
+    },
+  },
+};
 
-const AutoDelay = (): JSX.Element => {
+export const AutoDelay = (): JSX.Element => {
   return (
     <Carousel
       autoDelay={2000}
@@ -96,8 +108,9 @@ const AutoDelay = (): JSX.Element => {
     </Carousel>
   );
 };
+AutoDelay.storyName = "Carousel (auto delay)";
 
-const WithProps = (): JSX.Element => {
+export const WithProps = (): JSX.Element => {
   const theme = useTheme();
   return (
     <Carousel
@@ -122,8 +135,9 @@ const WithProps = (): JSX.Element => {
     </Carousel>
   );
 };
+WithProps.storyName = "Carousel (with props)";
 
-const Controlled = (): JSX.Element => {
+export const Controlled = (): JSX.Element => {
   const [forceActiveIndex, setForceActiveIndex] = React.useState(2);
   const [carouselIndex, setCarouselIndex] = React.useState(2);
 
@@ -156,13 +170,14 @@ const Controlled = (): JSX.Element => {
     </>
   );
 };
+Controlled.storyName = "Carousel (controlled)";
 
-const CustomIndicator = (): JSX.Element => {
+export const CustomIndicator = (args: typeof CustomIndicatorArgs): JSX.Element => {
   return (
     <Carousel
-      scrollOnSidePress={boolean("scrollOnSidePress", true)}
-      autoDelay={number("autoDelay", 5000)}
-      restartAfterEnd={boolean("restartAfterEnd", false)}
+      scrollOnSidePress={args.scrollOnSidePress}
+      autoDelay={args.autoDelay}
+      restartAfterEnd={args.restartAfterEnd}
       IndicatorComponent={StoriesIndicator}
       onOverflow={action("onOverflow")}
       onChange={action("onChange")}
@@ -187,19 +202,10 @@ const CustomIndicator = (): JSX.Element => {
     </Carousel>
   );
 };
-
-storiesOf((story) =>
-  story("Carousel", module)
-    .add("Default", Default, {
-      docs: {
-        title: "Default",
-        description: {
-          component: description,
-        },
-      },
-    })
-    .add("AutoDelay", AutoDelay)
-    .add("WithProps", WithProps)
-    .add("Controlled", Controlled)
-    .add("CustomIndicator - Story", CustomIndicator),
-);
+CustomIndicator.storyName = "Carousel (custom indicator)";
+const CustomIndicatorArgs = {
+  scrollOnSidePress: true,
+  autoDelay: 5000,
+  restartAfterEnd: false,
+};
+CustomIndicator.args = CustomIndicatorArgs;

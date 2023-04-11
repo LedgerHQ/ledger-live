@@ -18,7 +18,7 @@ QuizFailure.Illustration = (
   <IllustrationContainer width="240px" height="245px" src={failureQuizz} />
 );
 
-const Footer = (props: any) => {
+const Footer = (props: unknown) => {
   const { t } = useTranslation();
   return (
     <AsideFooter

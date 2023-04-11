@@ -3,8 +3,7 @@ import {
   CurrencyNotSupported,
   UnavailableTezosOriginatedAccountReceive,
 } from "@ledgerhq/errors";
-import { getEnv } from "../env";
-import { decodeAccountId } from "./accountId";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   getAllDerivationModes,
   getDerivationModesForCurrency,
@@ -44,35 +43,7 @@ export const getReceiveFlowError = (
     return new UnavailableTezosOriginatedAccountReceive("");
   }
 };
-export function canBeMigrated(account: Account): boolean {
-  try {
-    const { version } = decodeAccountId(account.id);
 
-    if (getEnv("MOCK")) {
-      return version === "0";
-    }
-
-    return false;
-  } catch (e) {
-    return false;
-  }
-}
-// attempt to find an account in scanned accounts that satisfy a migration
-export function findAccountMigration(
-  account: Account,
-  scannedAccounts: Account[]
-): Account | null | undefined {
-  if (!canBeMigrated(account)) return;
-
-  if (getEnv("MOCK")) {
-    return scannedAccounts.find(
-      (a) =>
-        a.id !== account.id && // a migration assume an id changes
-        a.currency === account.currency &&
-        a.freshAddress === account.freshAddress
-    );
-  }
-}
 export function checkAccountSupported(
   account: Account
 ): Error | null | undefined {

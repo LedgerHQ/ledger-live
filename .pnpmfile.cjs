@@ -43,26 +43,6 @@ function readPackage(pkg, context) {
   process(
     [
       /*
-        Adding jest and co. as dev. dependencies for /ledgerjs/* sub-packages.
-        This is done this way because these packages are not hoisted hence unaccessible otherwise.
-        Furthermore it makes these packages self-contained which eases the CI process.
-      */
-      addDevDependencies(
-        /^@ledgerhq\/(hw-app.*|hw-transport.*|cryptoassets|devices|errors|logs|react-native-hid|react-native-hw-transport-ble|swift-bridge.*|types-.*)$/,
-        {
-          jest: "^28.1.1",
-          "ts-jest": "^28.0.5",
-          "ts-node": "^10.4.0",
-          "@types/node": "*",
-          "@types/jest": "*",
-          "source-map-support": "*",
-          typescript: "^4",
-          documentation: "13.2.4",
-          rimraf: "*",
-        },
-        { silent: true }
-      ),
-      /*
         Fix the unmet peer dep on rxjs for the wallet-api-server
         Because we're still using rxjs v6 everywhere
         We only added rxjs v7 as an alias on rxjs7
@@ -90,6 +70,12 @@ function readPackage(pkg, context) {
       addDependencies("@storybook/addon-knobs", {
         // Match the major version of the package
         "@storybook/client-api": major ? "" + major : "*",
+      }),
+      addPeerDependencies("@storybook/addon-ondevice-backgrounds", {
+        "@emotion/native": "*",
+      }),
+      addPeerDependencies("@storybook/addon-react-native-web", {
+        webpack: "*",
       }),
       /* @celo/* packages */
       addDependencies(/@celo\/(?!base)+/, { "@celo/base": `^${pkg.version}` }),
@@ -139,14 +125,25 @@ function readPackage(pkg, context) {
         "metro-transform-worker": "*",
       }),
       addPeerDependencies("metro-transform-worker", {
-        "metro-minify-uglify": "*",
+        "metro-minify-terser": "*",
       }),
       /* Expo packages… */
       addDependencies("@expo/webpack-config", {
         "resolve-from": "*",
         "fs-extra": "*",
+        tapable: "*",
+        "source-map": "*",
       }),
-      addDependencies("expo-cli", { "@expo/metro-config": "*" }),
+      addPeerDependencies("@expo/cli", {
+        glob: "*",
+        metro: "*",
+        "metro-core": "*",
+        "@expo/metro-config": "*",
+        minimatch: "*",
+      }),
+      addDependencies("@expo/cli", {
+        "find-yarn-workspace-root": "*",
+      }),
       addDependencies("@expo/metro-config", { glob: "*" }),
       addDependencies("@expo/dev-tools", { "@expo/spawn-async": "*" }),
       addDependencies("@expo/dev-server", {
@@ -154,9 +151,21 @@ function readPackage(pkg, context) {
         "@expo/spawn-async": "*",
         glob: "*",
       }),
+      addDependencies("expo-pwa", {
+        "@expo/config": "*",
+      }),
+      addPeerDependencies("expo-modules-core", {
+        "react-native": "*",
+      }),
+      addPeerDependencies("expo", {
+        "react-native": "*",
+        react: "*",
+      }),
       addPeerDependencies(/^expo-/, {
         "expo-modules-core": "*",
         "expo-constants": "*",
+        "react-native": "*",
+        react: "*",
       }),
       addPeerDependencies("expo-asset", {
         "expo-file-system": "*",
@@ -210,6 +219,17 @@ function readPackage(pkg, context) {
       }),
       addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
+      // addPeerDependencies("styled-components", { "react-native": "*" }),
+      addPeerDependencies("use-latest-callback", { react: "*" }),
+      addPeerDependencies("rn-range-slider", {
+        react: "*",
+        "react-native": "*",
+        "prop-types": "*",
+      }),
+      addPeerDependencies("react-native-animatable", {
+        react: "*",
+        "react-native": "*",
+      }),
       // "dmg-builder" is required to build .dmg electron apps on macs,
       // but is not declared as such by app-builder-lib.
       // I'm not adding it as a dependency because if I did,
@@ -222,6 +242,18 @@ function readPackage(pkg, context) {
       // Try to prevent pnpm-lock.yaml flakiness
       removeDependencies("follow-redirects", ["debug"], {
         kind: "peerDependencies",
+      }),
+      addDependencies("@shopify/react-native-performance", {
+        tslib: "*",
+      }),
+      addDependencies("@shopify/react-native-performance-navigation", {
+        tslib: "*",
+      }),
+      addPeerDependencies("react-native-easy-markdown", {
+        "prop-types": "*",
+      }),
+      addPeerDependencies("storyly-react-native", {
+        "prop-types": "*",
       }),
     ],
     pkg,

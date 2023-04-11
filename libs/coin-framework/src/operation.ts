@@ -1,6 +1,6 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "./env";
+import { getEnv } from "@ledgerhq/live-env";
 
 export function findOperationInAccount(
   { operations, pendingOperations }: AccountLike,
@@ -139,7 +139,6 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "IN":
     case "REWARD":
     case "REWARD_PAYOUT":
-    case "SUPPLY":
     case "WITHDRAW":
       return op.value;
 
@@ -152,7 +151,6 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "UNDELEGATE":
     case "OPT_IN":
     case "OPT_OUT":
-    case "REDEEM":
     case "SLASH":
     case "LOCK":
       return op.value.negated();

@@ -42,14 +42,12 @@ Ledger Live main types.
 *   [SignOperationFnSignature](#signoperationfnsignature)
 *   [CurrencyBridge](#currencybridge)
 *   [AccountBridge](#accountbridge)
-    *   [applyReconciliation](#applyreconciliation)
-        *   [Parameters](#parameters)
     *   [assignToAccountRaw](#assigntoaccountraw)
-        *   [Parameters](#parameters-1)
+        *   [Parameters](#parameters)
     *   [assignFromAccountRaw](#assignfromaccountraw)
-        *   [Parameters](#parameters-2)
+        *   [Parameters](#parameters-1)
     *   [initAccount](#initaccount)
-        *   [Parameters](#parameters-3)
+        *   [Parameters](#parameters-2)
 *   [CurrenciesData](#currenciesdata)
     *   [Properties](#properties-11)
 *   [DatasetTest](#datasettest)
@@ -201,7 +199,7 @@ Ledger Live main types.
 
 A token belongs to an Account and share the parent account address
 
-Type: {type: `"TokenAccount"`, id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), parentId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), token: TokenCurrency, balance: BigNumber, spendableBalance: BigNumber, compoundBalance: BigNumber?, creationDate: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), operationsCount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), operations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>, pendingOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>, starred: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), balanceHistoryCache: BalanceHistoryCache, swapHistory: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SwapOperation](#swapoperation)>, approvals: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{sender: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), value: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>?}
+Type: {type: `"TokenAccount"`, id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), parentId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), token: TokenCurrency, balance: BigNumber, spendableBalance: BigNumber, creationDate: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), operationsCount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), operations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>, pendingOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>, starred: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), balanceHistoryCache: BalanceHistoryCache, swapHistory: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SwapOperation](#swapoperation)>, approvals: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{sender: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), value: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>?}
 
 #### Properties
 
@@ -211,7 +209,6 @@ Type: {type: `"TokenAccount"`, id: [string](https://developer.mozilla.org/docs/W
 *   `token` **TokenCurrency** 
 *   `balance` **BigNumber** 
 *   `spendableBalance` **BigNumber** 
-*   `compoundBalance` **BigNumber?** 
 *   `creationDate` **[Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)** 
 *   `operationsCount` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 *   `operations` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>** 
@@ -266,7 +263,7 @@ const bitcoinAccount = account as BitcoinAccount;
 
 and that BitcoinAccount type would be part of a coin integration family specific indeed.
 
-Type: {type: `"Account"`, id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), seedIdentifier: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), xpub: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, derivationMode: [DerivationMode](#derivationmode), index: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), freshAddress: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), freshAddressPath: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), freshAddresses: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Address](#address)>, name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), starred: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), used: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), balance: BigNumber, spendableBalance: BigNumber, creationDate: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), blockHeight: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), currency: CryptoCurrency, unit: Unit, operationsCount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), operations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>, pendingOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>, lastSyncDate: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), endpointConfig: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, subAccounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SubAccount](#subaccount)>?, balanceHistoryCache: BalanceHistoryCache, swapHistory: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SwapOperation](#swapoperation)>, syncHash: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, nfts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[ProtoNFT](#protonft)>?}
+Type: {type: `"Account"`, id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), seedIdentifier: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), xpub: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, derivationMode: [DerivationMode](#derivationmode), index: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), freshAddress: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), freshAddressPath: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), freshAddresses: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Address](#address)>, name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), starred: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), used: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), balance: BigNumber, spendableBalance: BigNumber, creationDate: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), blockHeight: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), currency: CryptoCurrency, feesCurrency: (CryptoCurrency | TokenCurrency)?, unit: Unit, operationsCount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), operations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>, pendingOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>, lastSyncDate: [Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date), endpointConfig: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, subAccounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SubAccount](#subaccount)>?, balanceHistoryCache: BalanceHistoryCache, swapHistory: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SwapOperation](#swapoperation)>, syncHash: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, nfts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[ProtoNFT](#protonft)>?}
 
 #### Properties
 
@@ -287,6 +284,7 @@ Type: {type: `"Account"`, id: [string](https://developer.mozilla.org/docs/Web/Ja
 *   `creationDate` **[Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)** 
 *   `blockHeight` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 *   `currency` **CryptoCurrency** 
+*   `feesCurrency` **(CryptoCurrency | TokenCurrency)?** 
 *   `unit` **Unit** 
 *   `operationsCount` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
 *   `operations` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Operation](#operation)>** 
@@ -319,7 +317,7 @@ Type: ([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 ### TokenAccountRaw
 
-Type: {type: `"TokenAccountRaw"`, id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), starred: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, parentId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), tokenId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), creationDate: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, operationsCount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, operations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>, pendingOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>, balance: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), spendableBalance: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, compoundBalance: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, balanceHistoryCache: BalanceHistoryCache?, swapHistory: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SwapOperationRaw](#swapoperationraw)>?, approvals: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{sender: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), value: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>?}
+Type: {type: `"TokenAccountRaw"`, id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), starred: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, parentId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), tokenId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), creationDate: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, operationsCount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, operations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>, pendingOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>, balance: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), spendableBalance: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, balanceHistoryCache: BalanceHistoryCache?, swapHistory: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SwapOperationRaw](#swapoperationraw)>?, approvals: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{sender: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), value: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>?}
 
 #### Properties
 
@@ -334,7 +332,6 @@ Type: {type: `"TokenAccountRaw"`, id: [string](https://developer.mozilla.org/doc
 *   `pendingOperations` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>** 
 *   `balance` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `spendableBalance` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
-*   `compoundBalance` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 *   `balanceHistoryCache` **BalanceHistoryCache?** 
 *   `swapHistory` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SwapOperationRaw](#swapoperationraw)>?** 
 *   `approvals` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<{sender: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), value: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>?** 
@@ -362,7 +359,7 @@ Type: {type: `"ChildAccountRaw"`, id: [string](https://developer.mozilla.org/doc
 
 ### AccountRaw
 
-Type: {id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), seedIdentifier: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), xpub: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, derivationMode: [DerivationMode](#derivationmode), index: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), freshAddress: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), freshAddressPath: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), freshAddresses: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Address](#address)>, name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), starred: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, used: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, balance: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), spendableBalance: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, blockHeight: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), creationDate: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, operationsCount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, currencyId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), operations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>, pendingOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>, unitMagnitude: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), lastSyncDate: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), endpointConfig: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, subAccounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SubAccountRaw](#subaccountraw)>?, balanceHistoryCache: BalanceHistoryCache?, swapHistory: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SwapOperationRaw](#swapoperationraw)>?, syncHash: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, nfts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[ProtoNFTRaw](#protonftraw)>?}
+Type: {id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), seedIdentifier: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), xpub: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, derivationMode: [DerivationMode](#derivationmode), index: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), freshAddress: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), freshAddressPath: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), freshAddresses: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Address](#address)>, name: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), starred: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, used: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, balance: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), spendableBalance: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, blockHeight: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), creationDate: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, operationsCount: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?, currencyId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), feesCurrencyId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, operations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>, pendingOperations: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>, unitMagnitude: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), lastSyncDate: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), endpointConfig: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, subAccounts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SubAccountRaw](#subaccountraw)>?, balanceHistoryCache: BalanceHistoryCache?, swapHistory: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[SwapOperationRaw](#swapoperationraw)>?, syncHash: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, nfts: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[ProtoNFTRaw](#protonftraw)>?}
 
 #### Properties
 
@@ -383,6 +380,7 @@ Type: {id: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 *   `creationDate` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 *   `operationsCount` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
 *   `currencyId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `feesCurrencyId` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
 *   `operations` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>** 
 *   `pendingOperations` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[OperationRaw](#operationraw)>** 
 *   `unitMagnitude` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
@@ -466,21 +464,6 @@ Abstraction related to a currency
 
 Abstraction related to an account
 
-#### applyReconciliation
-
-This function applies the change from moving from "account" to an updated version ("updatedRow").
-It returns a boolean value indicating if something changed in the "next" Account that possibly gets mutated in-place.
-
-Type: function (account: [Account](#account), updatedRaw: [AccountRaw](#accountraw), next: [Account](#account)): [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
-
-##### Parameters
-
-*   `account` **[Account](#account)** The original account object.
-*   `updatedRaw` **[AccountRaw](#accountraw)** The updated version of the account in its serialized form.
-*   `next` **[Account](#account)** The updated account object.
-
-Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Indicates if something changed in the "next" account.
-
 #### assignToAccountRaw
 
 This function mutates the 'accountRaw' object in-place to add any extra fields that the coin may need to set.
@@ -549,14 +532,14 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Add others with union (e.g. "learn" | "market" | "foo")
 
-Type: (`"learn"` | `"brazePushNotifications"` | `"brazeLearn"` | `"llmNewDeviceSelection"` | `"llmUsbFirmwareUpdate"` | `"ratingsPrompt"` | `"counterValue"` | `"deviceLocalization"` | `"deviceInitialApps"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"currencyAvalancheCChain"` | `"currencyOsmosis"` | `"currencyOsmosisMobile"` | `"currencyFantom"` | `"currencyMoonbeam"` | `"currencyCronos"` | `"currencySongbird"` | `"currencyFlare"` | `"currencyNear"` | `"currencyFantomMobile"` | `"currencyMoonbeamMobile"` | `"currencyCronosMobile"` | `"currencySongbirdMobile"` | `"currencyFlareMobile"` | `"ptxSmartRoutingMobile"` | `"mockFeature"` | `"multibuyNavigation"` | `"syncOnboarding"` | `"walletConnectLiveApp"` | `"walletConnectEntryPoint"` | `"customImage"` | `"referralProgramDiscoverCard"` | `"referralProgramDesktopBanner"` | `"disableNftSend"` | `"disableNftLedgerMarket"` | `"disableNftRaribleOpensea"` | `"walletNftGallery"` | `"receiveStakingFlowConfigDesktop"` | `"ethStakingProviders"` | `"storyly"` | `"staxWelcomeScreen"` | `"postOnboardingClaimNft"` | `"postOnboardingAssetsTransfer"` | `"firebaseEnvironmentReadOnly"` | `"protectServicesMobile"` | `"swapShowDexQuotes"` | `"stakePrograms"` | `"portfolioExchangeBanner"` | `"objkt"` | `"stakeAccountBanner"` | `"newsfeedPage"`)
+Type: (`"learn"` | `"brazePushNotifications"` | `"brazeLearn"` | `"llmNewDeviceSelection"` | `"llmUsbFirmwareUpdate"` | `"ratingsPrompt"` | `"counterValue"` | `"deviceLocalization"` | `"deviceInitialApps"` | `"buyDeviceFromLive"` | `"ptxSmartRouting"` | `"ptxEarn"` | `"currencyAvalancheCChain"` | `"ptxSmartRoutingMobile"` | `"mockFeature"` | `"multibuyNavigation"` | `"syncOnboarding"` | `"walletConnectLiveApp"` | `"walletConnectEntryPoint"` | `"customImage"` | `"referralProgramDiscoverCard"` | `"referralProgramDesktopBanner"` | `"disableNftSend"` | `"disableNftLedgerMarket"` | `"disableNftRaribleOpensea"` | `"walletNftGallery"` | `"receiveStakingFlowConfigDesktop"` | `"ethStakingProviders"` | `"storyly"` | `"staxWelcomeScreen"` | `"postOnboardingClaimNft"` | `"postOnboardingAssetsTransfer"` | `"firebaseEnvironmentReadOnly"` | `"protectServicesMobile"` | `"swapShowDexQuotes"` | `"stakePrograms"` | `"portfolioExchangeBanner"` | `"objkt"` | `"stakeAccountBanner"` | `"newsfeedPage"` | `"domainInputResolution"` | `"discover"` | `"protectServicesDiscoverDesktop"`)
 
 ### Feature
 
 We use objects instead of direct booleans for potential future improvements
 like feature versioning etc
 
-Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentDesktopVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, mobile_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentMobileVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages_whitelisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, languages_blacklisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overriddenByEnv: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: any?}
+Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentDesktopVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, mobile_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentMobileVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages_whitelisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, languages_blacklisted: \[[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)]?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overriddenByEnv: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: T?}
 
 #### Properties
 
@@ -570,7 +553,7 @@ Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Refe
 *   `enabledOverriddenForCurrentLanguage` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `overridesRemote` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `overriddenByEnv` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
-*   `params` **any?** 
+*   `params` **T?** 
 
 #### enabled
 
@@ -666,7 +649,7 @@ Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Glob
 
 Additional params
 
-Type: any
+Type: T
 
 ### DefaultFeatures
 
@@ -993,7 +976,7 @@ Type: {ticker: [string](https://developer.mozilla.org/docs/Web/JavaScript/Refere
 
 ### OperationType
 
-Type: (`"IN"` | `"OUT"` | `"NONE"` | `"CREATE"` | `"REVEAL"` | `"DELEGATE"` | `"UNDELEGATE"` | `"REDELEGATE"` | `"REWARD"` | `"FEES"` | `"FREEZE"` | `"UNFREEZE"` | `"VOTE"` | `"REWARD_PAYOUT"` | `"BOND"` | `"UNBOND"` | `"WITHDRAW_UNBONDED"` | `"SET_CONTROLLER"` | `"SLASH"` | `"NOMINATE"` | `"CHILL"` | `"SUPPLY"` | `"REDEEM"` | `"APPROVE"` | `"OPT_IN"` | `"OPT_OUT"` | `"LOCK"` | `"UNLOCK"` | `"WITHDRAW"` | `"REVOKE"` | `"ACTIVATE"` | `"REGISTER"` | `"NFT_IN"` | `"NFT_OUT"` | `"STAKE"` | `"UNSTAKE"` | `"WITHDRAW_UNSTAKED"`)
+Type: (`"IN"` | `"OUT"` | `"NONE"` | `"CREATE"` | `"REVEAL"` | `"DELEGATE"` | `"UNDELEGATE"` | `"REDELEGATE"` | `"REWARD"` | `"FEES"` | `"FREEZE"` | `"UNFREEZE"` | `"VOTE"` | `"REWARD_PAYOUT"` | `"BOND"` | `"UNBOND"` | `"WITHDRAW_UNBONDED"` | `"SET_CONTROLLER"` | `"SLASH"` | `"NOMINATE"` | `"CHILL"` | `"APPROVE"` | `"OPT_IN"` | `"OPT_OUT"` | `"LOCK"` | `"UNLOCK"` | `"WITHDRAW"` | `"REVOKE"` | `"ACTIVATE"` | `"REGISTER"` | `"NFT_IN"` | `"NFT_OUT"` | `"STAKE"` | `"UNSTAKE"` | `"WITHDRAW_UNSTAKED"`)
 
 ### Operation
 
@@ -1429,24 +1412,26 @@ Type: ({type: `"device-streaming"`, progress: [number](https://developer.mozilla
 Transaction is a generic object that holds all state for all transactions
 there are generic fields and coin specific fields. That's why almost all fields are optionals
 
-Type: {amount: BigNumber, recipient: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), useAllAmount: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, subAccountId: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, feesStrategy: (`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?}
+Type: {amount: BigNumber, recipient: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), recipientDomain: DomainServiceResolution?, useAllAmount: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, subAccountId: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, feesStrategy: (`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?}
 
 #### Properties
 
 *   `amount` **BigNumber** 
 *   `recipient` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `recipientDomain` **DomainServiceResolution?** 
 *   `useAllAmount` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `subAccountId` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?** 
 *   `feesStrategy` **(`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?** 
 
 ### TransactionCommonRaw
 
-Type: {amount: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), recipient: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), useAllAmount: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, subAccountId: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, feesStrategy: (`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?}
+Type: {amount: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), recipient: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), recipientDomain: DomainServiceResolution?, useAllAmount: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, subAccountId: ([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?, feesStrategy: (`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?}
 
 #### Properties
 
 *   `amount` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 *   `recipient` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `recipientDomain` **DomainServiceResolution?** 
 *   `useAllAmount` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
 *   `subAccountId` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?** 
 *   `feesStrategy` **(`"slow"` | `"medium"` | `"fast"` | `"custom"` | null)?** 

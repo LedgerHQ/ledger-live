@@ -55,10 +55,6 @@ export class DiscoverPage {
     return await this.liveAppTitle.textContent();
   }
 
-  async waitForLiveAppToLoad() {
-    await this.liveAppLoadingSpinner.waitFor({ state: "detached" });
-  }
-
   async getAccountsList() {
     await this.clickWebviewElement("[data-test-id=get-all-accounts-button]");
   }

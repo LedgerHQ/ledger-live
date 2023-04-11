@@ -116,9 +116,10 @@ export type BlockByHashOutput = {
 export type API = {
   getTransactions: (
     address: string,
-    blockHeight: number | null | undefined,
-    batchSize?: number
-  ) => Promise<Tx[]>;
+    blockHeight?: number | null,
+    batchSize?: number,
+    token?: string
+  ) => Promise<{ txs: Tx[]; nextPageToken: string | undefined }>;
   getCurrentBlock: () => Promise<Block>;
   getAccountNonce: (address: string) => Promise<number>;
   broadcastTransaction: (signedTransaction: string) => Promise<string>;
@@ -154,7 +155,9 @@ export type API = {
     high: BigNumber;
     next_base: BigNumber;
   }>;
-  getBlockByHash: (blockHash: string) => Promise<BlockByHashOutput | undefined>;
+  getBlockByHash: (
+    blockHash: string | null | undefined
+  ) => Promise<BlockByHashOutput | undefined>;
 };
 
 export const apiForCurrency = (currency: CryptoCurrency): API => {
@@ -170,16 +173,20 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async getTransactions(
       address,
       blockHeight,
-      batchSize = 2000
-    ): Promise<Tx[]> {
+      batchSize = 2000,
+      token
+    ): Promise<{ txs: Tx[]; nextPageToken: string | undefined }> {
       const query: any = {
         batch_size: batchSize,
         filtering: true,
         noinput: true,
       };
       if (blockHeight) {
-        query.block_height = blockHeight;
+        query.from_height = blockHeight;
         query.order = "descending";
+      }
+      if (token) {
+        query.token = token;
       }
       const txData = await network({
         method: "GET",
@@ -188,7 +195,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
           query,
         }),
       });
-      return txData.data.data;
+      return { txs: txData.data.data, nextPageToken: txData.data.token };
     },
 
     async getCurrentBlock(): Promise<Block> {
@@ -297,7 +304,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         return data
           .map((m: any) => {
             if (!m || typeof m !== "object") return;
-            const { spender, value } = m;
+            const { spender, count: value } = m;
             if (typeof spender !== "string" || typeof value !== "string")
               return;
             return {
