@@ -1,5 +1,5 @@
 import { Page, Locator } from "@playwright/test";
-import { waitFor } from "tests/utils/waitFor";
+import { waitFor } from "../utils/waitFor";
 
 export class DiscoverPage {
   readonly page: Page;
@@ -114,20 +114,26 @@ export class DiscoverPage {
   }
 
   async textIsPresent(textToCheck: string) {
-    const result: boolean = await this.page.evaluate(textToCheck => {
-      const webview = document.querySelector("webview");
-      return (webview as any)
-        .executeJavaScript(
-          `(function() {
+    return waitFor(
+      async () => {
+        const result: boolean = await this.page.evaluate(textToCheck => {
+          const webview = document.querySelector("webview");
+          return (webview as any)
+            .executeJavaScript(
+              `(function() {
         return document.querySelector('*').innerHTML;
       })();
     `,
-        )
-        .then((text: string) => {
-          return text.includes(textToCheck);
-        });
-    }, textToCheck);
+            )
+            .then((text: string) => {
+              return text.includes(textToCheck);
+            });
+        }, textToCheck);
 
-    return result;
+        return result;
+      },
+      100,
+      5000,
+    );
   }
 }

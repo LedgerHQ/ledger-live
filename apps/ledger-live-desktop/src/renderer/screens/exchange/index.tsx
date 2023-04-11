@@ -59,13 +59,11 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
     ? JSON.parse(process.env.MOCK_REMOTE_LIVE_MANIFEST)[0]
     : null;
 
-  console.log("mock manifest", mockManifest);
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = localManifest || mockManifest || remoteManifest;
   const themeType = useTheme("colors.palette.type");
 
-  console.log("manifest used!: ", { manifest });
   return (
     <Card
       grow

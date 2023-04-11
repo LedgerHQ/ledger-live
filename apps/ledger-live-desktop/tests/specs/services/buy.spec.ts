@@ -1,7 +1,8 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { Layout } from "../../models/Layout";
 import * as server from "../../utils/serve-dummy-app";
+import { Layout } from "../../models/Layout";
+import { DiscoverPage } from "../../models/DiscoverPage";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
@@ -11,7 +12,6 @@ test.use({
       params: { liveAppId: "multibuy" },
     },
   },
-  env: { DEV_TOOLS: true },
 });
 
 let continueTest = false;
@@ -45,9 +45,12 @@ test("Buy / Sell", async ({ page }) => {
   if (!continueTest) return;
 
   const layout = new Layout(page);
+  const liveApp = new DiscoverPage(page);
 
-  await test.step("Navigate to Buy app", async () => {
+  await test.step("Navigate to Buy app from sidebar", async () => {
     await layout.goToBuyCrypto();
+    await expect(await liveApp.textIsPresent("theme: dark")).toBe(true);
+    await expect(await liveApp.textIsPresent("lang: en")).toBe(true);
     await expect.soft(page).toHaveScreenshot("buy-app-opened.png");
   });
 });
