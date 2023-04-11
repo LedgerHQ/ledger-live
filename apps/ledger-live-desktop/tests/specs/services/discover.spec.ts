@@ -7,7 +7,7 @@ import { Modal } from "../../models/Modal";
 import { DeviceAction } from "../../models/DeviceAction";
 import * as server from "../../utils/serve-dummy-app";
 
-test.use({ userdata: "1AccountBTC1AccountETH" });
+test.use({ userdata: "1AccountBTC1AccountETH", env: { DEV_TOOLS: true } });
 
 let continueTest = false;
 

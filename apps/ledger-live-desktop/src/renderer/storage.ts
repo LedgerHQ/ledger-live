@@ -1,5 +1,7 @@
 import { ipcRenderer } from "electron";
 import { getEnv } from "@ledgerhq/live-common/env";
+import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
+import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import accountModel from "~/helpers/accountModel";
 import memoize from "lodash/memoize";
 import debounce from "lodash/debounce";
@@ -28,10 +30,13 @@ import { settingsExportSelector } from "./reducers/settings";
 export type User = {
   id: string;
 };
+
 export type Countervalues = Record<string, CounterValuesStatus | RateMapRaw> & {
   status: CounterValuesStatus;
 };
+
 export type PostOnboarding = ReturnType<typeof hubStateSelector>;
+
 export type Settings = ReturnType<typeof settingsExportSelector>;
 
 // The types seen from the user side.
@@ -49,6 +54,7 @@ type DatabaseValues = {
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
   };
+  discover: DiscoverDB;
 };
 
 // Infers the type seen from the user side (non-raw).
@@ -69,10 +75,12 @@ type Transform<R, M> = {
     raws: Parameters<DataModel<R, M>["encode"]>[0][],
   ) => ReturnType<DataModel<R, M>["encode"]>[];
 };
+
 // A map of transformers.
 type Transforms = {
   accounts: Transform<AccountRaw, Account>;
 };
+
 const transforms: Transforms = {
   accounts: {
     get: raws => {
@@ -123,6 +131,7 @@ const debouncedSetKey = memoize(
     }, 1000),
   (ns: string, keyPath: string) => `${ns}:${keyPath}`,
 );
+
 export const setKey = <K extends keyof DatabaseValues, V = DatabaseValue<K>, Val extends V = V>(
   ns: string,
   keyPath: K,
@@ -136,6 +145,7 @@ export const hasEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
     ns,
     keyPath,
   });
+
 export const setEncryptionKey = (
   ns: string,
   keyPath: keyof DatabaseValues,
@@ -146,11 +156,13 @@ export const setEncryptionKey = (
     keyPath,
     encryptionKey,
   });
+
 export const removeEncryptionKey = (ns: string, keyPath: keyof DatabaseValues) =>
   ipcRenderer.invoke("removeEncryptionKey", {
     ns,
     keyPath,
   });
+
 export const isEncryptionKeyCorrect = (
   ns: string,
   keyPath: keyof DatabaseValues,
@@ -161,15 +173,21 @@ export const isEncryptionKeyCorrect = (
     keyPath,
     encryptionKey,
   });
+
 export const hasBeenDecrypted = (ns: string, keyPath: keyof DatabaseValues) =>
   ipcRenderer.invoke("hasBeenDecrypted", {
     ns,
     keyPath,
   });
+
 export const resetAll = () => ipcRenderer.invoke("resetAll");
+
 export const reload = () => ipcRenderer.invoke("reload");
+
 export const cleanCache = () => ipcRenderer.invoke("cleanCache");
+
 export const clearStorageData = () => ipcRenderer.invoke("clearStorageData");
+
 export const saveLSS = async (lssConfig: SatStackConfig) => {
   const configStub = {
     node: {
@@ -184,10 +202,12 @@ export const saveLSS = async (lssConfig: SatStackConfig) => {
   await ipcRenderer.invoke("generate-lss-config", stringifySatStackConfig(updated));
   setEnvOnAllThreads("SATSTACK", true);
 };
+
 export const removeLSS = async () => {
   await ipcRenderer.invoke("delete-lss-config");
   setEnvOnAllThreads("SATSTACK", false);
 };
+
 export const loadLSS = async (): Promise<SatStackConfig | undefined | null> => {
   try {
     const satStackConfigRaw = await ipcRenderer.invoke("load-lss-config");
@@ -199,3 +219,24 @@ export const loadLSS = async (): Promise<SatStackConfig | undefined | null> => {
     setEnvOnAllThreads("SATSTACK", false);
   }
 };
+
+export function useDB<
+  Selected,
+  K extends keyof DatabaseValues,
+  V = DatabaseValue<K>,
+  DV extends V = V
+>(
+  ns: string,
+  keyPath: K,
+  initialState: DV,
+  // @ts-expect-error State !== Selected
+  selector: (state: V) => Selected = state => state,
+) {
+  return useDBRaw<V, Selected>({
+    initialState,
+    getter: () => getKey(ns, keyPath, initialState),
+    // @ts-expect-error Todo: state doesn't fit
+    setter: state => setKey(ns, keyPath, state),
+    selector,
+  });
+}

@@ -4,7 +4,10 @@ import {
   ConvertToLiveTransaction,
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
-import { Transaction } from "./types";
+import { Transaction as EthereumTx } from "./types";
+import { Transaction as EvmTx } from "../evm/types";
+
+type Transaction = EthereumTx | EvmTx;
 
 const CAN_EDIT_FEES = true;
 
@@ -17,14 +20,9 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 > = (tx) => {
   const hasFeesProvided = areFeesProvided(tx);
 
-  const { gasLimit, ...restTx } = tx;
-
   const liveTx: Partial<Transaction> = {
-    ...restTx,
-    amount: tx.amount,
-    recipient: tx.recipient,
-    gasPrice: tx.gasPrice,
-    userGasLimit: gasLimit,
+    ...tx,
+    userGasLimit: tx.gasLimit,
   };
 
   return hasFeesProvided ? { ...liveTx, feesStrategy: "custom" } : liveTx;
