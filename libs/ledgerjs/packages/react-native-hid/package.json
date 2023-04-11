@@ -45,7 +45,6 @@
     "source-map-support": "^0.5.21",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.4.0",
-    "typescript": "^4",
     "yarn-add-no-save": "^1.0.3"
   },
   "peerDependencies": {

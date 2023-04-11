@@ -184,9 +184,6 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.7.0(@types/node@17.0.32)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
 
   apps/ledger-live-desktop:
     dependencies:
@@ -767,9 +764,6 @@ importers:
       react-scripts:
         specifier: 5.0.0
         version: 5.0.0(@babel/plugin-syntax-flow@7.21.4)(@babel/plugin-transform-react-jsx@7.18.10)(eslint@8.15.0)(react@17.0.2)(ts-node@10.9.1)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
     devDependencies:
       cross-env:
         specifier: ^7.0.3
@@ -816,9 +810,6 @@ importers:
       react-scripts:
         specifier: 5.0.0
         version: 5.0.0(@babel/plugin-syntax-flow@7.21.4)(@babel/plugin-transform-react-jsx@7.18.10)(eslint@8.15.0)(react@17.0.2)(ts-node@10.9.1)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
     devDependencies:
       cross-env:
         specifier: ^7.0.3
@@ -1469,9 +1460,6 @@ importers:
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
       ws:
         specifier: ^7.5.2
         version: 7.5.7
@@ -1590,9 +1578,6 @@ importers:
       ts-jest:
         specifier: ^28.0.5
         version: 28.0.8(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
 
   libs/coin-polkadot:
     dependencies:
@@ -1702,9 +1687,6 @@ importers:
       ts-jest:
         specifier: ^28.0.5
         version: 28.0.8(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
 
   libs/domain-service:
     dependencies:
@@ -1796,9 +1778,6 @@ importers:
       ts-jest:
         specifier: ^28.0.8
         version: 28.0.8(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
 
   libs/env:
     dependencies:
@@ -1848,9 +1827,6 @@ importers:
       ts-jest:
         specifier: ^28.0.5
         version: 28.0.8(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.9.4
-        version: 4.9.5
 
   libs/ledger-live-common:
     dependencies:
@@ -2407,9 +2383,6 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.7.0(@types/node@16.11.12)(source-map-support@0.5.21)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
       typescript-eslint-parser:
         specifier: ^22.0.0
         version: 22.0.0(eslint@7.32.0)(typescript@4.9.5)
@@ -2465,9 +2438,6 @@ importers:
       prettier:
         specifier: ^2.2.1
         version: 2.6.2
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
 
   libs/ledgerjs/flow-support:
     devDependencies:
@@ -2516,13 +2486,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/devices:
     dependencies:
@@ -2562,13 +2529,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/errors:
     devDependencies:
@@ -2592,13 +2556,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-algorand:
     dependencies:
@@ -2644,13 +2605,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-btc:
     dependencies:
@@ -2720,13 +2678,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-cosmos:
     dependencies:
@@ -2763,13 +2718,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-eth:
     dependencies:
@@ -2830,13 +2782,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-exchange:
     dependencies:
@@ -2874,9 +2823,6 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.9.1(@types/node@18.15.3)(typescript@4.9.5)
-      typescript:
-        specifier: ^4
-        version: 4.9.5
 
   libs/ledgerjs/packages/hw-app-helium:
     dependencies:
@@ -2937,13 +2883,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-near:
     dependencies:
@@ -2980,13 +2923,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.8(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.3)
+        version: 28.0.8(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.3)
-      typescript:
-        specifier: ^4
-        version: 4.9.3
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-polkadot:
     dependencies:
@@ -3023,13 +2963,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-solana:
     dependencies:
@@ -3075,13 +3012,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-str:
     dependencies:
@@ -3121,13 +3055,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-tezos:
     dependencies:
@@ -3167,13 +3098,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-trx:
     dependencies:
@@ -3207,13 +3135,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-app-xrp:
     dependencies:
@@ -3247,13 +3172,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport:
     dependencies:
@@ -3287,13 +3209,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport-http:
     dependencies:
@@ -3333,13 +3252,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport-mocker:
     dependencies:
@@ -3370,13 +3286,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport-node-ble:
     dependencies:
@@ -3422,13 +3335,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport-node-hid:
     dependencies:
@@ -3477,13 +3387,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport-node-hid-noevents:
     dependencies:
@@ -3526,13 +3433,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport-node-hid-singleton:
     dependencies:
@@ -3581,13 +3485,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport-node-speculos:
     dependencies:
@@ -3624,13 +3525,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport-node-speculos-http:
     dependencies:
@@ -3667,13 +3565,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport-web-ble:
     dependencies:
@@ -3716,13 +3611,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport-webhid:
     dependencies:
@@ -3762,13 +3654,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/hw-transport-webusb:
     dependencies:
@@ -3808,13 +3697,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/logs:
     devDependencies:
@@ -3838,13 +3724,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/react-native-hid:
     dependencies:
@@ -3890,13 +3773,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
       yarn-add-no-save:
         specifier: ^1.0.3
         version: 1.0.3
@@ -3948,13 +3828,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/swift-bridge-hw-app-eth:
     dependencies:
@@ -3989,9 +3866,6 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.9.1(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
-      typescript:
-        specifier: ^4
-        version: 4.9.5
 
   libs/ledgerjs/packages/swift-bridge-hw-app-solana:
     dependencies:
@@ -4026,9 +3900,6 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.9.1(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
-      typescript:
-        specifier: ^4
-        version: 4.9.5
 
   libs/ledgerjs/packages/swift-bridge-hw-transport-ble:
     dependencies:
@@ -4060,9 +3931,6 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.9.1(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
-      typescript:
-        specifier: ^4
-        version: 4.9.5
 
   libs/ledgerjs/packages/types-cryptoassets:
     devDependencies:
@@ -4086,13 +3954,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/types-devices:
     devDependencies:
@@ -4116,13 +3981,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/ledgerjs/packages/types-live:
     dependencies:
@@ -4159,13 +4021,10 @@ importers:
         version: 0.5.21
       ts-jest:
         specifier: ^28.0.5
-        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4)
+        version: 28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
       ts-node:
         specifier: ^10.4.0
-        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
-      typescript:
-        specifier: ^4
-        version: 4.6.4
+        version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
 
   libs/live-portfolio:
     dependencies:
@@ -4212,9 +4071,6 @@ importers:
       ts-jest:
         specifier: ^28.0.5
         version: 28.0.8(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.9.4
-        version: 4.9.5
 
   libs/promise:
     dependencies:
@@ -4258,9 +4114,6 @@ importers:
       ts-jest:
         specifier: ^28.0.5
         version: 28.0.8(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.9.4
-        version: 4.9.5
 
   libs/ui:
     devDependencies:
@@ -4343,9 +4196,6 @@ importers:
       tiny-glob:
         specifier: ^0.2.9
         version: 0.2.9
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
 
   libs/ui/packages/icons:
     dependencies:
@@ -4401,9 +4251,6 @@ importers:
       tiny-glob:
         specifier: ^0.2.9
         version: 0.2.9
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
 
   libs/ui/packages/native:
     dependencies:
@@ -4714,9 +4561,6 @@ importers:
       stylelint-processor-styled-components:
         specifier: ^1.10.0
         version: 1.10.0
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
       util:
         specifier: ^0.12.5
         version: 0.12.5
@@ -4889,9 +4733,6 @@ importers:
       tiny-glob:
         specifier: ^0.2.9
         version: 0.2.9
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
       webpack:
         specifier: '*'
         version: 5.72.1(esbuild@0.17.14)
@@ -4904,18 +4745,12 @@ importers:
       tiny-glob:
         specifier: ^0.2.9
         version: 0.2.9
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
 
   tools/actions:
     devDependencies:
       '@types/node':
         specifier: ^17.0.31
         version: 17.0.32
-      typescript:
-        specifier: ~4.6.4
-        version: 4.6.4
 
   tools/actions/change-product-name:
     devDependencies:
@@ -5281,9 +5116,6 @@ importers:
       ts-jest:
         specifier: ^28.0.5
         version: 28.0.7(@babel/core@7.21.0)(jest@28.1.0)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
 
   tools/metro-extra-config:
     dependencies:
@@ -38815,7 +38647,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4)
+      ts-node: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -55011,40 +54843,6 @@ packages:
       yargs-parser: 21.1.1
     dev: true
 
-  /ts-jest@28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.6.4):
-    resolution: {integrity: sha512-wWXCSmTwBVmdvWrOpYhal79bDpioDy4rTT+0vyUnE3ZzM7LOAAGG9NXwzkEL/a516rQEgnMmS/WKP9jBPCVJyA==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    hasBin: true
-    peerDependencies:
-      '@babel/core': '>=7.0.0-beta.0 <8'
-      '@jest/types': ^28.0.0
-      babel-jest: ^28.0.0
-      esbuild: '*'
-      jest: ^28.0.0
-      typescript: '>=4.3'
-    peerDependenciesMeta:
-      '@babel/core':
-        optional: true
-      '@jest/types':
-        optional: true
-      babel-jest:
-        optional: true
-      esbuild:
-        optional: true
-    dependencies:
-      '@babel/core': 7.21.0
-      bs-logger: 0.2.6
-      fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
-      jest-util: 28.1.3
-      json5: 2.2.1
-      lodash.memoize: 4.1.2
-      make-error: 1.3.6
-      semver: 7.3.7
-      typescript: 4.6.4
-      yargs-parser: 21.1.1
-    dev: true
-
   /ts-jest@28.0.7(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5):
     resolution: {integrity: sha512-wWXCSmTwBVmdvWrOpYhal79bDpioDy4rTT+0vyUnE3ZzM7LOAAGG9NXwzkEL/a516rQEgnMmS/WKP9jBPCVJyA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -55149,40 +54947,6 @@ packages:
       yargs-parser: 21.1.1
     dev: true
 
-  /ts-jest@28.0.8(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.3):
-    resolution: {integrity: sha512-5FaG0lXmRPzApix8oFG8RKjAz4ehtm8yMKOTy5HX3fY6W8kmvOrmcY0hKDElW52FJov+clhUbrKAqofnj4mXTg==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    hasBin: true
-    peerDependencies:
-      '@babel/core': '>=7.0.0-beta.0 <8'
-      '@jest/types': ^28.0.0
-      babel-jest: ^28.0.0
-      esbuild: '*'
-      jest: ^28.0.0
-      typescript: '>=4.3'
-    peerDependenciesMeta:
-      '@babel/core':
-        optional: true
-      '@jest/types':
-        optional: true
-      babel-jest:
-        optional: true
-      esbuild:
-        optional: true
-    dependencies:
-      '@babel/core': 7.21.0
-      bs-logger: 0.2.6
-      fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3(@types/node@18.15.3)(ts-node@10.7.0)
-      jest-util: 28.1.3
-      json5: 2.2.1
-      lodash.memoize: 4.1.2
-      make-error: 1.3.6
-      semver: 7.3.7
-      typescript: 4.9.3
-      yargs-parser: 21.1.1
-    dev: true
-
   /ts-jest@28.0.8(@babel/core@7.21.0)(jest@28.1.3)(typescript@4.9.5):
     resolution: {integrity: sha512-5FaG0lXmRPzApix8oFG8RKjAz4ehtm8yMKOTy5HX3fY6W8kmvOrmcY0hKDElW52FJov+clhUbrKAqofnj4mXTg==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -55283,7 +55047,7 @@ packages:
       - source-map-support
     dev: true
 
-  /ts-node@10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.6.4):
+  /ts-node@10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5):
     resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
     hasBin: true
     peerDependencies:
@@ -55309,40 +55073,7 @@ packages:
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.6.4
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    transitivePeerDependencies:
-      - source-map-support
-    dev: true
-
-  /ts-node@10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.3):
-    resolution: {integrity: sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.7.0(source-map-support@0.5.21)
-      '@tsconfig/node10': 1.0.8
-      '@tsconfig/node12': 1.0.9
-      '@tsconfig/node14': 1.0.1
-      '@tsconfig/node16': 1.0.2
-      '@types/node': 18.15.3
-      acorn: 8.7.1
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 4.9.3
+      typescript: 4.9.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     transitivePeerDependencies:
@@ -55833,18 +55564,6 @@ packages:
       lodash.unescape: 4.0.1
       semver: 5.5.0
       typescript: 4.9.5
-    dev: true
-
-  /typescript@4.6.4:
-    resolution: {integrity: sha512-9ia/jWHIEbo49HfjrLGfKbZSuWo9iTMwXO+Ca3pRsSpbsMbc7/IU8NKdCZVRRBafVPGnoJeFL76ZOAA84I9fEg==}
-    engines: {node: '>=4.2.0'}
-    hasBin: true
-    dev: true
-
-  /typescript@4.9.3:
-    resolution: {integrity: sha512-CIfGzTelbKNEnLpLdGFgdyKhG23CKdKgQPOBc+OUNrkJ2vr+KSzsSV5kq5iWhEQbok+quxgGzrAtGWCyU7tHnA==}
-    engines: {node: '>=4.2.0'}
-    hasBin: true
     dev: true
 
   /typescript@4.9.5:
