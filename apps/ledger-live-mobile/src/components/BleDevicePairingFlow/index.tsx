@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import RequiresBLE from "../RequiresBLE";
@@ -8,11 +8,16 @@ import { addKnownDevice } from "../../actions/ble";
 import type { BleDevicesScanningProps } from "./BleDevicesScanning";
 import type { BleDevicePairingProps } from "./BleDevicePairing";
 import { track } from "../../analytics";
+import { useSetNavigationHeader } from "../../hooks/useSetNavigationHeader";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
+
+const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
 export type BleDevicePairingFlowProps = {
   filterByDeviceModelId?: BleDevicesScanningProps["filterByDeviceModelId"];
   areKnownDevicesDisplayed?: BleDevicesScanningProps["areKnownDevicesDisplayed"];
-  onGoBackFromScanning?: BleDevicesScanningProps["onGoBack"];
+  onGoBackFromScanning?: () => void;
   onPairingSuccess: BleDevicePairingProps["onPaired"];
   onPairingSuccessAddToKnownDevices?: boolean;
 };
@@ -44,6 +49,7 @@ const BleDevicePairingFlow = ({
     useState<PairingFlowStep>("scanning");
 
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
+  const [isPaired, setIsPaired] = useState(false);
 
   const onDeviceSelect = useCallback(
     (item: Device) => {
@@ -62,6 +68,9 @@ const BleDevicePairingFlow = ({
 
   const onPaired = useCallback(
     (device: Device) => {
+      // Handled in a useEffect to display the success state to the user
+      setIsPaired(true);
+
       if (onPairingSuccessAddToKnownDevices) {
         dispatchRedux(
           addKnownDevice({
@@ -71,22 +80,65 @@ const BleDevicePairingFlow = ({
           }),
         );
       }
-
-      // Cannot reset the states so it ends up in the scanning step because this would display the scanning component
-      // before calling onPairingSuccess
-      setDeviceToPair(null);
-      setPairingFlowStep("done");
-
-      onPairingSuccess(device);
     },
-    [dispatchRedux, onPairingSuccess, onPairingSuccessAddToKnownDevices],
+    [dispatchRedux, onPairingSuccessAddToKnownDevices],
   );
 
+  useEffect(() => {
+    let timeout: null | ReturnType<typeof setTimeout>;
+
+    if (isPaired && deviceToPair) {
+      // Timeout to display the success to the user
+      timeout = setTimeout(() => {
+        setDeviceToPair(null);
+        setIsPaired(false);
+        // "done": does not reset the state to "scanning" because it would display
+        // the scanning component before calling onPairingSuccess
+        setPairingFlowStep("done");
+
+        onPairingSuccess(deviceToPair);
+      }, TIMEOUT_AFTER_PAIRED_MS);
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [deviceToPair, isPaired, onPairingSuccess]);
+
   const onRetryPairingFlow = useCallback(() => {
-    track("button_clicked", { button: "Try BT pairing again" });
-    setDeviceToPair(null);
-    setPairingFlowStep("scanning");
-  }, [setDeviceToPair, setPairingFlowStep]);
+    if (!isPaired) {
+      track("button_clicked", { button: "Try BT pairing again" });
+      setDeviceToPair(null);
+      setPairingFlowStep("scanning");
+    }
+  }, [isPaired]);
+
+  // Sets dynamically the header for the scanning and pairing steps
+  let headerShown;
+  let headerRight;
+  let headerLeft;
+
+  if (pairingFlowStep === "scanning" && onGoBackFromScanning) {
+    headerShown = true;
+    headerRight = null;
+    headerLeft = () => (
+      <NavigationHeaderBackButton onPress={onGoBackFromScanning} />
+    );
+  } else if (pairingFlowStep === "pairing") {
+    headerShown = true;
+    headerRight = () => (
+      <NavigationHeaderCloseButton onPress={onRetryPairingFlow} />
+    );
+    headerLeft = null;
+  }
+
+  useSetNavigationHeader({
+    headerShown,
+    headerRight,
+    headerLeft,
+  });
 
   return (
     <RequiresBLE>
@@ -101,7 +153,6 @@ const BleDevicePairingFlow = ({
           filterByDeviceModelId={filterByDeviceModelId}
           areKnownDevicesDisplayed={areKnownDevicesDisplayed}
           onDeviceSelect={onDeviceSelect}
-          onGoBack={onGoBackFromScanning}
         />
       ) : null}
     </RequiresBLE>

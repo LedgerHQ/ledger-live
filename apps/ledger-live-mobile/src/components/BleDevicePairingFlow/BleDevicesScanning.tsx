@@ -18,15 +18,12 @@ import { TrackScreen, track } from "../../analytics";
 import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
 import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";
 import LocationDisabled from "../RequiresLocation/LocationDisabled";
-import { useSetNavigationHeader } from "../../hooks/useSetNavigationHeader";
-import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 const CANT_SEE_DEVICE_TIMEOUT = 5000;
 
 export type BleDevicesScanningProps = {
   onDeviceSelect: (item: Device) => void;
-  onGoBack?: () => void;
   filterByDeviceModelId?: FilterByDeviceModelId;
   areKnownDevicesDisplayed?: boolean;
 };
@@ -41,24 +38,14 @@ export type BleDevicesScanningProps = {
  * @param onDeviceSelect Function called when the user selects a scanned device
  * @param filterByDeviceModelId The only model of the devices that will be scanned
  * @param areKnownDevicesDisplayed Choose to display seen devices that are already known by LLM
- * @param onGoBack If this function is set, a back arrow is displayed that calls this function if pressed
  */
 const BleDevicesScanning = ({
   onDeviceSelect,
   filterByDeviceModelId = null,
   areKnownDevicesDisplayed,
-  onGoBack,
 }: BleDevicesScanningProps) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
-
-  useSetNavigationHeader({
-    headerShown: !onGoBack ? true : undefined,
-    headerLeft: onGoBack
-      ? () => <NavigationHeaderBackButton onPress={onGoBack} />
-      : null,
-    headerRight: null,
-  });
 
   const productName = filterByDeviceModelId
     ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
