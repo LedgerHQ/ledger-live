@@ -3,6 +3,11 @@ import { expect } from "@playwright/test";
 import * as server from "../../utils/serve-dummy-app";
 import { Layout } from "../../models/Layout";
 import { DiscoverPage } from "../../models/DiscoverPage";
+import { PortfolioPage } from "../../models/PortfolioPage";
+import { AssetPage } from "../../models/AssetPage";
+import { AccountsPage } from "../../models/AccountsPage";
+import { AccountPage } from "../../models/AccountPage";
+import { MarketPage } from "../../models/MarketPage";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
@@ -11,7 +16,9 @@ test.use({
       enabled: true,
       params: { liveAppId: "multibuy" },
     },
+    portfolioExchangeBanner: { enabled: true },
   },
+  env: { DEV_TOOLS: true },
 });
 
 let continueTest = false;
@@ -46,11 +53,71 @@ test("Buy / Sell", async ({ page }) => {
 
   const layout = new Layout(page);
   const liveApp = new DiscoverPage(page);
+  const portfolioPage = new PortfolioPage(page);
+  const assetPage = new AssetPage(page);
+  const accountPage = new AccountPage(page);
+  const accountsPage = new AccountsPage(page);
+  const marketPage = new MarketPage(page);
 
-  await test.step("Navigate to Buy app from sidebar", async () => {
-    await layout.goToBuyCrypto();
+  await test.step("Navigate to Buy app from portfolio banner", async () => {
+    await portfolioPage.startBuyFlow();
     await expect(await liveApp.textIsPresent("theme: dark")).toBe(true);
     await expect(await liveApp.textIsPresent("lang: en")).toBe(true);
     await expect.soft(page).toHaveScreenshot("buy-app-opened.png");
   });
+
+  await test.step("Navigate to Buy app from market", async () => {
+    await layout.goToMarket();
+    await marketPage.openBuyPage("usdt");
+    await expect(await liveApp.textIsPresent("theme: dark")).toBe(true);
+    await expect(await liveApp.textIsPresent("currency: ethereum/erc20/usd_tether__erc20_")).toBe(
+      true,
+    );
+    await expect(await liveApp.textIsPresent("mode: buy")).toBe(true);
+    await expect(await liveApp.textIsPresent("lang: en")).toBe(true);
+  });
+
+  await test.step("Navigate to Buy app from asset", async () => {
+    await layout.goToPortfolio();
+    await portfolioPage.navigateToAsset("ethereum");
+    await assetPage.startBuyFlow();
+
+    await expect(await liveApp.textIsPresent("theme: dark")).toBe(true);
+    await expect(await liveApp.textIsPresent("lang: en")).toBe(true);
+    await expect(await liveApp.textIsPresent("currency: ethereum")).toBe(true);
+    await expect(await liveApp.textIsPresent("mode: buy")).toBe(true);
+  });
+
+  await test.step("Navigate to Buy app from account", async () => {
+    await layout.goToAccounts();
+    await accountsPage.navigateToAccountByName("Bitcoin 1 (legacy)");
+    await accountPage.navigateToBuy();
+
+    await expect(await liveApp.textIsPresent("theme: dark")).toBe(true);
+    await expect(await liveApp.textIsPresent("currency: bitcoin")).toBe(true);
+    await expect(await liveApp.textIsPresent("account: mock:1:bitcoin:true_bitcoin_0:")).toBe(true);
+    await expect(await liveApp.textIsPresent("lang: en")).toBe(true);
+    await expect(await liveApp.textIsPresent("mode: buy")).toBe(true);
+  });
+
+  await test.step("Navigate to Buy app from account", async () => {
+    await layout.goToAccounts();
+    await accountsPage.navigateToAccountByName("Bitcoin 1 (legacy)");
+    await accountPage.navigateToSell();
+
+    await expect(await liveApp.textIsPresent("theme: dark")).toBe(true);
+    await expect(await liveApp.textIsPresent("currency: bitcoin")).toBe(true);
+    await expect(await liveApp.textIsPresent("account: mock:1:bitcoin:true_bitcoin_0:")).toBe(true);
+    await expect(await liveApp.textIsPresent("lang: en")).toBe(true);
+    await expect(await liveApp.textIsPresent("mode: sell")).toBe(true);
+  });
+
+  await test.step(
+    "Navigate to Buy app from sidebar with light theme and French Language",
+    async () => {
+      await layout.goToBuyCrypto();
+      await expect(await liveApp.textIsPresent("theme: dark")).toBe(true);
+      await expect(await liveApp.textIsPresent("lang: en")).toBe(true);
+    },
+  );
 });
