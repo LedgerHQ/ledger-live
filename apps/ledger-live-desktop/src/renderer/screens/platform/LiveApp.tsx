@@ -7,6 +7,7 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+
 type Props = {
   match: {
     params: {
@@ -27,14 +28,13 @@ type Props = {
     customDappUrl?: string;
   };
 };
-export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
+
+export function LiveApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
   const { params: internalParams, search } = location;
   const { state: urlParams, customDappUrl } = useLocation() as ReturnType<typeof useLocation> &
     Props["location"] & {
-      state: {
-        [key: string]: string;
-      };
+      state: Record<string, string>;
     };
   const appId = propsAppId || match.params?.appId;
   const returnTo = useMemo(() => {
@@ -53,12 +53,11 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   let manifest = localManifest || remoteManifest;
-  if (customDappUrl) {
+  if (customDappUrl && manifest) {
     manifest = {
       ...manifest,
       params: {
         // manifest.params is supposed to be a string[] in the common types
-        // @ts-expect-error TODO: investigate because common types seem to be wrong
         ...manifest.params,
         // @ts-expect-error Same here, params should be a Record<string, ?> but it's a string[]
         dappUrl: customDappUrl,

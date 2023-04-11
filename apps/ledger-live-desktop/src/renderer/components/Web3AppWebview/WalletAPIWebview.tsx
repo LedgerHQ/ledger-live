@@ -193,7 +193,6 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
         const webview = webviewRef.current;
         if (webview) {
           const origin = new URL(webview.src).origin;
-          // @ts-expect-error Electron webview type issue
           webview.contentWindow?.postMessage(message, origin);
         }
       },
@@ -300,7 +299,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            * seem to be set
            */
           style={webviewStyle}
-          preload={`file://${remote.app.dirname}/webviewPreloader.bundle.js`}
+          preload={`file://${remote.app.getAppPath()}/webviewPreloader.bundle.js`}
           /**
            * There seems to be an issue between Electron webview and react
            * Hence, the normal `allowpopups` prop does not work and we need to

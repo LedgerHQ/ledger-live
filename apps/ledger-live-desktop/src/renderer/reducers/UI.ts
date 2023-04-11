@@ -8,14 +8,16 @@ export type PlatformAppDrawerInfo = {
   manifest?: LiveAppManifest | null;
   title: string;
 };
+
 export type PlatformAppDrawerDisclaimer = {
   type: "DAPP_DISCLAIMER";
   manifest?: LiveAppManifest | null;
-  disclaimerId: string;
   title: string;
   next: () => void;
 };
-export type PlatformAppDrawers = PlatformAppDrawerInfo | PlatformAppDrawerDisclaimer;
+
+export type PlatformAppDrawers = PlatformAppDrawerInfo & PlatformAppDrawerDisclaimer;
+
 export type UIState = {
   informationCenter: {
     isOpen: boolean;
@@ -26,6 +28,7 @@ export type UIState = {
     payload?: PlatformAppDrawers | null;
   };
 };
+
 const initialState: UIState = {
   informationCenter: {
     isOpen: false,
@@ -36,6 +39,7 @@ const initialState: UIState = {
     payload: undefined,
   },
 };
+
 type OpenPayload = {
   tabId?: string;
 };

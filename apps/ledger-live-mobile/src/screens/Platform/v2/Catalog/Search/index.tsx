@@ -4,14 +4,15 @@ import { useTheme } from "styled-components/native";
 import * as Animatable from "react-native-animatable";
 import { Flex, Text, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { HTTP_REGEX } from "@ledgerhq/live-common/wallet-api/constants";
 import ArrowLeft from "../../../../../icons/ArrowLeft";
 import { TAB_BAR_SAFE_HEIGHT } from "../../../../../components/TabBar/TabBarSafeAreaView";
 import { Layout } from "../Layout";
-import { SearchBarValues } from "../types";
 import Illustration from "../../../../../images/illustration/Illustration";
 import { ManifestList } from "../ManifestList";
 import { SearchBar } from "./SearchBar";
+import { Disclaimer } from "../../hooks";
+import { Search as SearchType } from "../../types";
 
 export * from "./SearchBar";
 
@@ -22,38 +23,18 @@ const noResultIllustration = {
 
 const AnimatedView = Animatable.View;
 
-const httpRegex = new RegExp(
-  /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi,
-);
-
-type Props = {
-  manifests: LiveAppManifest[];
-  recentlyUsed: LiveAppManifest[];
+interface Props {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   listTitle?: React.ReactNode;
-  backAction?: () => void;
-  onSelect: (manifest: LiveAppManifest) => void;
-} & Omit<SearchBarValues<LiveAppManifest>, "onCancel">;
+  disclaimer: Pick<Disclaimer, "onSelect">;
+  search: SearchType;
+}
 
-export function Search({
-  manifests,
-  title,
-  onSelect,
-  input,
-  inputRef,
-  result,
-  isSearching,
-  backAction,
-  onChange,
-  onFocus,
-}: Props) {
+export function Search({ title, disclaimer, search }: Props) {
+  const { input, result, isSearching } = search;
   const { colors } = useTheme();
   const { t } = useTranslation();
-
-  const isSearchBarEmpty = input === "";
-
-  const isResultFound = !isSearchBarEmpty && result?.length !== 0;
 
   const noResultFoundComponent = (
     <Flex flexDirection={"column"} padding={4} marginTop={100}>
@@ -65,12 +46,12 @@ export function Search({
         />
       </Flex>
       <Text textAlign="center" variant="h4" my={3}>
-        {t("market.warnings.notFound")}
+        {t("browseWeb3.catalog.warnings.notFound")}
       </Text>
       <Text textAlign="center" variant="body" color="neutral.c70">
-        {input.match(httpRegex) ? (
+        {input.match(HTTP_REGEX) ? (
           <Trans
-            i18nKey="market.warnings.retrySearchKeywordAndUrl"
+            i18nKey="browseWeb3.catalog.warnings.retrySearchKeywordAndUrl"
             values={{
               search: input,
             }}
@@ -80,17 +61,18 @@ export function Search({
                   style={{ textDecorationLine: "underline" }}
                   onPress={() => Linking.openURL("http://" + input)}
                 >
-                  {"eiihirer"}
+                  {""}
                 </Text>
               ),
             }}
           />
         ) : (
-          t("market.warnings.retrySearchKeyword")
+          t("browseWeb3.category.warnings.retrySearchKeyword")
         )}
       </Text>
     </Flex>
   );
+
   return (
     <>
       <Layout
@@ -105,19 +87,12 @@ export function Search({
               top: 10,
             }}
             style={{ paddingVertical: 16 }}
-            onPress={backAction}
+            onPress={search.onCancel}
           >
             <ArrowLeft size={18} color={colors.neutral.c100} />
           </TouchableOpacity>
         }
-        searchContent={
-          <SearchBar
-            input={input}
-            inputRef={inputRef}
-            onChange={onChange}
-            onFocus={onFocus}
-          />
-        }
+        searchContent={<SearchBar search={search} />}
         bodyContent={
           isSearching ? (
             <Flex marginTop={100}>
@@ -126,10 +101,11 @@ export function Search({
           ) : (
             <AnimatedView animation="fadeInUp" delay={50} duration={300}>
               <Flex paddingTop={4} paddingBottom={TAB_BAR_SAFE_HEIGHT + 50}>
-                {isSearchBarEmpty ? (
-                  <ManifestList onSelect={onSelect} manifests={manifests} />
-                ) : isResultFound ? (
-                  <ManifestList onSelect={onSelect} manifests={result} />
+                {result.length ? (
+                  <ManifestList
+                    manifests={result}
+                    onSelect={disclaimer.onSelect}
+                  />
                 ) : (
                   noResultFoundComponent
                 )}
