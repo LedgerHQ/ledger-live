@@ -1,4 +1,4 @@
-This document allows to track, ex.json.plain and maintain the dependencies we have defined in package
+This document allows to track, explain and maintain the dependencies we have defined in package.json
 
 You can see at any point in time what libraries are upgradable using:
 
