@@ -36,7 +36,7 @@ import { track } from "../../analytics";
 type BackToWhitelistedDomainProps = {
   manifest: AppManifest;
   webviewURL: string;
-  lastMatchingURL: string;
+  lastMatchingURL: string | null;
 };
 
 function BackToWhitelistedDomain({
@@ -53,7 +53,7 @@ function BackToWhitelistedDomain({
     >();
 
   const getButtonLabel = () => {
-    if (manifest.id === "multibuy") {
+    if (manifest.id === "multibuy" && lastMatchingURL) {
       const urlParams = new URLSearchParams(lastMatchingURL);
       const flowName = urlParams.get("liveAppFlow");
       if (flowName === "compare_providers") return "Quote";
@@ -64,8 +64,8 @@ function BackToWhitelistedDomain({
 
   const handleBackClick = () => {
     const currentHostname = new URL(webviewURL).hostname;
-    const urlParams = new URLSearchParams(lastMatchingURL);
-    const flowName = urlParams.get("liveAppFlow");
+    const urlParams = lastMatchingURL && new URLSearchParams(lastMatchingURL);
+    const flowName = urlParams && urlParams.get("liveAppFlow");
 
     track("button_clicked", {
       button: "back to liveapp",
@@ -183,7 +183,7 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
           <BackToWhitelistedDomain
             manifest={manifest}
             webviewURL={webviewState.url}
-            lastMatchingURL={lastMatchingURL}
+            lastMatchingURL={lastMatchingURL.current}
           />
         ),
       headerTitle: () => null,
