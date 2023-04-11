@@ -7,6 +7,7 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+
 type Props = {
   match: {
     params: {
@@ -27,14 +28,13 @@ type Props = {
     customDappUrl?: string;
   };
 };
-export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
+
+export function LiveApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
   const { params: internalParams, search } = location;
   const { state: urlParams, customDappUrl } = useLocation() as ReturnType<typeof useLocation> &
     Props["location"] & {
-      state: {
-        [key: string]: string;
-      };
+      state: { returnTo: string };
     };
   const appId = propsAppId || match.params?.appId;
   const returnTo = useMemo(() => {
