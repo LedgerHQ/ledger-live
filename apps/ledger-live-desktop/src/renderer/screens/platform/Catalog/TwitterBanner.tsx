@@ -9,8 +9,10 @@ import { urls } from "~/config/urls";
 const Container = styled(Box).attrs(() => ({
   mb: 24,
 }))``;
+
 const twitterHashtag = "LedgerLiveApp";
-export default function TwitterBanner() {
+
+export function TwitterBanner() {
   const { t } = useTranslation();
   const url = useMemo(() => {
     const urlObj = new URL(urls.banners.twitterIntent);

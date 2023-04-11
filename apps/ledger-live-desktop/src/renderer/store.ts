@@ -6,15 +6,15 @@ const store = new ElectronStore({
   encryptionKey: "this_only_obfuscates",
 });
 
-export const getStoreValue = (key: string, storeId: string) => {
+export function getStoreValue<T>(key: string, storeId: string): T | undefined {
   const value = store.get(`${storeId}-${key}`);
-  return isEmpty(value) ? null : value;
-};
+  return isEmpty(value) ? undefined : (value as T);
+}
 
-export const setStoreValue = (key: string, value: unknown, storeId: string) => {
+export function setStoreValue<T>(key: string, value: T, storeId: string) {
   return store.set(`${storeId}-${key}`, value);
-};
+}
 
-export const resetStore = () => {
+export function resetStore() {
   return store.clear();
-};
+}

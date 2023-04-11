@@ -5755,9 +5755,9 @@
         "clearAll": "Clear All"
       },
       "branch": {
-        "soon": "coming soon",
-        "experimental": "experimental",
-        "debug": "debug"
+        "soon": "Coming soon",
+        "experimental": "Experimental",
+        "debug": "Debug"
       },
       "banner": {
         "title": "Discover our Live Catalog",
@@ -5774,6 +5774,11 @@
       "developerCTA": {
         "title": "For Developers",
         "description": "All the information you need to integrate your applications on Ledger Live."
+      },
+      "warnings": {
+        "notFound": "Not found",
+        "retrySearchKeyword": "Please retry the search with another keyword.",
+        "retrySearchKeywordAndUrl": "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live."
       }
     },
     "disclaimer": {
@@ -5889,13 +5894,10 @@
       "reload": "Reload",
       "noCryptosFound": "No coins found",
       "noCurrencyFound": "No currency found",
-      "noAppFound": "No app found",
-      "notFound": "Not found",
       "noSearchResultsFor": "Sorry, we did not find any coins for <0>{{search}}</0>. Please retry the search with another keyword.",
       "noCurrencySearchResultsFor": "Sorry, we did not find any currencies for <0>{{search}}</0>. Please retry the search with another keyword.",
       "noSearchResults": "Sorry, we did not find any search results.",
       "retrySearchKeyword": "Please retry the search with another keyword.",
-      "retrySearchKeywordAndUrl": "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
       "retrySearchParams": "Please retry the search with another parameters.",
       "trackFavAssets": "Track your favourite",
       "clickOnStarIcon": "Clicking on the star icon next to an asset will automatically add them to your favorites.",
