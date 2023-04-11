@@ -64,7 +64,13 @@ export const getOperations = async (
     data: JSON.stringify(query),
   });
 
-  return mapVetTransfersToOperations(data, accountId, addr);
+  const operations: Operation[] = await mapVetTransfersToOperations(
+    data,
+    accountId,
+    addr
+  );
+
+  return operations;
 };
 
 /**
@@ -109,7 +115,8 @@ export const getTokenOperations = async (
     data: JSON.stringify(query),
   });
 
-  return mapTokenTransfersToOperations(data, accountId, addr);
+  const operations = await mapTokenTransfersToOperations(data, accountId, addr);
+  return operations;
 };
 
 /**

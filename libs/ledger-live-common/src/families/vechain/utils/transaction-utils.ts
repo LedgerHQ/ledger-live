@@ -94,3 +94,19 @@ export const calculateFee = async (
     .plus(baseGasPrice)
     .times(gas);
 };
+
+/**
+ * Get fees paid for the transaction
+ * @param transactionId - the id of the transaction
+ * @return the fee paid in VTHO or 0
+ */
+export const getFees = async (transactionID: string): Promise<BigNumber> => {
+  const { data } = await network({
+    method: "GET",
+    url: `${BASE_URL}/transactions/${transactionID}/receipt`,
+    params: { id: transactionID },
+  });
+
+  if (!data || !data.gasUsed) return new BigNumber(0);
+  return new BigNumber(data.gasUsed).multipliedBy("10000000000000");
+};

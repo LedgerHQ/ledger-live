@@ -64,6 +64,7 @@ const getAccountShape: GetAccountShape = async (info) => {
     operationsCount: operations.length,
     operations: operations,
     blockHeight,
+    feesCurrency: getTokenById("vechain/vtho"),
     subAccounts: [
       {
         type: "TokenAccount" as const,

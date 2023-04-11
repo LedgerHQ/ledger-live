@@ -3,58 +3,65 @@ import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { EventLog, TransferLog } from "../api/types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { getFees } from "./transaction-utils";
 
 // TODO: Currently hardcoding the fee to 0
-export const mapVetTransfersToOperations = (
+export const mapVetTransfersToOperations = async (
   txs: TransferLog[],
   accountId: string,
   addr: string
-): Operation[] => {
-  return txs.map((tx) => {
-    return {
-      id: encodeOperationId(
+): Promise<Operation[]> => {
+  return Promise.all(
+    txs.map(async (tx) => {
+      const fees = await getFees(tx.meta.txID);
+      return {
+        id: encodeOperationId(
+          accountId,
+          tx.meta.txID,
+          tx.recipient === addr.toLowerCase() ? "IN" : "OUT"
+        ),
+        hash: tx.meta.txID,
+        type: tx.recipient === addr.toLowerCase() ? "IN" : "OUT",
+        value: new BigNumber(tx.amount),
+        fee: new BigNumber(fees),
+        senders: [tx.sender],
+        recipients: [tx.recipient],
+        blockHeight: tx.meta.blockNumber,
+        blockHash: tx.meta.blockID,
         accountId,
-        tx.meta.txID,
-        tx.recipient === addr.toLowerCase() ? "IN" : "OUT"
-      ),
-      hash: tx.meta.txID,
-      type: tx.recipient === addr.toLowerCase() ? "IN" : "OUT",
-      value: new BigNumber(tx.amount),
-      fee: new BigNumber(0),
-      senders: [tx.sender],
-      recipients: [tx.recipient],
-      blockHeight: tx.meta.blockNumber,
-      blockHash: tx.meta.blockID,
-      accountId,
-      date: new Date(tx.meta.blockTimestamp * 1000),
-      extra: {},
-    };
-  });
+        date: new Date(tx.meta.blockTimestamp * 1000),
+        extra: {},
+      };
+    })
+  );
 };
 
 // TODO: Currently hardcoding the fee to 0
-export const mapTokenTransfersToOperations = (
+export const mapTokenTransfersToOperations = async (
   evnts: EventLog[],
   accountId: string,
   addr: string
-): Operation[] => {
-  return evnts.map((evnt) => {
-    const decoded = vip180.TransferEvent.decode(evnt.data, evnt.topics);
-    return {
-      id: evnt.meta.txID,
-      hash: evnt.meta.txID,
-      type: decoded.to === addr.toLowerCase() ? "IN" : "OUT",
-      value: new BigNumber(decoded.value),
-      fee: new BigNumber(0),
-      senders: [decoded.from],
-      recipients: [decoded.to],
-      blockHeight: evnt.meta.blockNumber,
-      blockHash: evnt.meta.blockID,
-      accountId,
-      date: new Date(evnt.meta.blockTimestamp * 1000),
-      extra: {},
-    };
-  });
+): Promise<Operation[]> => {
+  return Promise.all(
+    evnts.map(async (evnt) => {
+      const decoded = vip180.TransferEvent.decode(evnt.data, evnt.topics);
+      const fees = await getFees(evnt.meta.txID);
+      return {
+        id: evnt.meta.txID,
+        hash: evnt.meta.txID,
+        type: decoded.to === addr.toLowerCase() ? "IN" : "OUT",
+        value: new BigNumber(decoded.value),
+        fee: fees,
+        senders: [decoded.from],
+        recipients: [decoded.to],
+        blockHeight: evnt.meta.blockNumber,
+        blockHash: evnt.meta.blockID,
+        accountId,
+        date: new Date(evnt.meta.blockTimestamp * 1000),
+        extra: {},
+      };
+    })
+  );
 };
 
 /**
