@@ -22,6 +22,7 @@ import {
   transportListenUnsubscribeChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
+import { Messages } from "./types";
 process.on("exit", () => {
   console.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
@@ -29,10 +30,11 @@ process.on("exit", () => {
 });
 process.title = "Ledger Live Internal";
 process.on("uncaughtException", err => {
-  process.send({
-    type: "uncaughtException",
-    error: serializeError(err),
-  });
+  process.send &&
+    process.send({
+      type: "uncaughtException",
+      error: serializeError(err),
+    });
   // FIXME we should ideally do this:
   // process.exit(1)
   // but for now, until we kill all exceptions:
@@ -49,7 +51,8 @@ if (INITIAL_SENTRY_TAGS) {
   const parsed = JSON.parse(INITIAL_SENTRY_TAGS);
   if (parsed) setTags(parsed);
 }
-process.on("message", m => {
+
+process.on("message", (m: Messages) => {
   switch (m.type) {
     case transportOpenChannel:
       transportOpen(m);
@@ -91,6 +94,7 @@ process.on("message", m => {
       break;
     }
     default:
+      // @ts-expect-error just in case we pass a wrong type
       log("error", `internal thread: '${m.type}' event not supported`);
   }
 });
