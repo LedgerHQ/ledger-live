@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, Route } from "react-router-dom";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -15,8 +15,65 @@ import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import EnableStagingNftMetadataServiceToggle from "./EnableStagingNftMetadataServiceToggle";
+import { addTokens } from "@ledgerhq/coin-framework/currencies";
+import { Button } from "@ledgerhq/react-ui";
+import { getCryptoCurrencyById } from "@ledgerhq/coin-framework/currencies";
+
+function convertERC20([
+  parentCurrencyId,
+  token,
+  ticker,
+  magnitude,
+  name,
+  ledgerSignature,
+  contractAddress,
+  disableCountervalue,
+  delisted,
+  countervalueTicker,
+]: any): any {
+  const parentCurrency = getCryptoCurrencyById(parentCurrencyId);
+  return {
+    type: "TokenCurrency",
+    id: parentCurrencyId + "/erc20/" + token,
+    ledgerSignature,
+    contractAddress,
+    parentCurrency,
+    tokenType: "erc20",
+    name,
+    ticker,
+    delisted,
+    disableCountervalue: !!parentCurrency.isTestnetFor || !!disableCountervalue,
+    countervalueTicker,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude,
+      },
+    ],
+  };
+}
+
 const Default = () => {
   const { t } = useTranslation();
+  const test = useCallback(() => {
+    addTokens(
+      [
+        [
+          "ethereum",
+          "kiba_inu",
+          "KIBA",
+          18,
+          "Kiba Inu",
+          "3045022100baa979e8461d439b324416dff31f277663b51fa36e5e60005933292d5151f32502200528872863ce6b55009387bd2c5b6556b907193e27f506236149634a97518822",
+          "0x005D1123878Fc55fbd56b54C73963b234a64af3c",
+          true,
+          true,
+        ],
+        ,
+      ].map(convertERC20),
+    );
+  }, [addTokens, convertERC20]);
   return (
     <Body>
       <Row title={t("settings.developer.debugApps")} desc={t("settings.developer.debugAppsDesc")}>
@@ -66,6 +123,9 @@ const Default = () => {
         desc={t("settings.developer.openOnboardingAppInstallDebugDesc")}
       >
         <OnboardingAppInstallDebugButton />
+      </Row>
+      <Row title={"delist specific token"} desc={"addToken test"}>
+        <Button onClick={() => test()}>Bonjour</Button>
       </Row>
     </Body>
   );

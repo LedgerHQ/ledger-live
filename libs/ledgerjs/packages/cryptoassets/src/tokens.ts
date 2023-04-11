@@ -22,6 +22,7 @@ const tokensById: Record<string, TokenCurrency> = {};
 const tokensByTicker: Record<string, TokenCurrency> = {};
 const tokensByAddress: Record<string, TokenCurrency> = {};
 const tokensByCurrencyAddress: Record<string, TokenCurrency> = {};
+const tokenListHashes = new Set();
 addTokens(erc20tokens.map(convertERC20));
 addTokens(polygonTokens.map(convertERC20));
 addTokens(trc10tokens.map(convertTRONTokens("trc10")));
@@ -38,6 +39,31 @@ type TokensListOptions = {
 const defaultTokenListOptions: TokensListOptions = {
   withDelisted: false,
 };
+function createTokenHash(token: TokenCurrency) {
+  return token ? `${token.id}-${token.contractAddress}-${token.delisted}-${token.disableCountervalue}` : ``
+}
+
+const cleanObject = (obj: any) => {
+  for (var key in obj) {
+    // this check can be safely omitted in modern JS engines
+    // if (obj.hasOwnProperty(key))
+    delete obj[key];
+  }
+}
+/**
+ * Clear all lists above for test simplicity
+ */
+export function clearAllList() {
+  tokensArray.length = 0
+  tokensArrayWithDelisted.length = 0
+  cleanObject(tokensByCryptoCurrency)
+  cleanObject(tokensByCryptoCurrencyWithDelisted)
+  cleanObject(tokensById)
+  cleanObject(tokensByTicker)
+  cleanObject(tokensByAddress)
+  cleanObject(tokensByCurrencyAddress)
+  tokenListHashes.clear();
+}
 
 /**
  *
@@ -140,9 +166,35 @@ function comparePriority(a: TokenCurrency, b: TokenCurrency) {
   return Number(!!b.disableCountervalue) - Number(!!a.disableCountervalue);
 }
 
+function removeElemFromArray(array: TokenCurrency[], token: TokenCurrency) {
+  if (array && array.length > 0) {
+    const index = array.findIndex(currentToken => currentToken && token.id === currentToken.id);
+    if (index === -1) return array;
+    return array.splice(index, 1);
+  }
+}
+
 export function addTokens(list: TokenCurrency[]): void {
   list.forEach((token) => {
-    if (tokensById[token.id]) return;
+    if (token === undefined) return;
+    const tokenHash = createTokenHash(token);
+    if (tokenListHashes.has(tokenHash)) return;
+
+    const { id, contractAddress, parentCurrency } = token;
+    const lowCaseContract = contractAddress.toLowerCase();
+
+    tokenListHashes.delete(createTokenHash(tokensById[id]));
+    delete tokensById[id];
+    if (tokensByCurrencyAddress)
+      tokenListHashes.delete(createTokenHash(tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract]));
+    delete tokensByAddress[lowCaseContract];
+    delete tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract]
+    removeElemFromArray(tokensArray, token);
+    removeElemFromArray(tokensArrayWithDelisted, token);
+    removeElemFromArray(tokensByCryptoCurrency[parentCurrency.id], token);
+    removeElemFromArray(tokensByCryptoCurrencyWithDelisted[parentCurrency.id], token);
+
+
     if (!token.delisted) tokensArray.push(token);
     tokensArrayWithDelisted.push(token);
     tokensById[token.id] = token;
@@ -154,9 +206,7 @@ export function addTokens(list: TokenCurrency[]): void {
       tokensByTicker[token.ticker] = token;
     }
 
-    const lowCaseContract = token.contractAddress.toLowerCase();
     tokensByAddress[lowCaseContract] = token;
-    const { parentCurrency } = token;
     tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract] = token;
 
     if (!(parentCurrency.id in tokensByCryptoCurrency)) {
