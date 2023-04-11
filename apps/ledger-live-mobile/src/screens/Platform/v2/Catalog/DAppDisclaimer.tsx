@@ -8,29 +8,24 @@ import {
   Icons,
   Button,
 } from "@ledgerhq/native-ui";
+import { Disclaimer } from "../hooks";
 import { AppIcon } from "../AppIcon";
 import LedgerIcon from "../../../../icons/Ledger";
 import QueuedDrawer from "../../../../components/QueuedDrawer";
 
-interface Props {
-  name?: string | null;
-  icon?: string | null;
-  isOpened: boolean;
-  isChecked: boolean;
-  onClose: () => void;
-  onContinue: () => void;
-  toggleCheck: () => void;
-}
-
 export function DAppDisclaimer({
-  name,
-  icon,
-  isOpened,
-  isChecked,
-  onClose,
-  onContinue,
-  toggleCheck,
-}: Props) {
+  disclaimer: {
+    name,
+    icon,
+    isChecked,
+    isOpened,
+    onClose,
+    toggleCheck,
+    onConfirm,
+  },
+}: {
+  disclaimer: Disclaimer;
+}) {
   const { t } = useTranslation();
 
   return (
@@ -97,7 +92,7 @@ export function DAppDisclaimer({
       </Flex>
 
       <Flex mt={8}>
-        <Button type="main" onPress={onContinue}>
+        <Button type="main" onPress={onConfirm}>
           {t("platform.disclaimer.CTA")}
         </Button>
       </Flex>

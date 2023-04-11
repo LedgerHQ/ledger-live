@@ -17,14 +17,9 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 > = (tx) => {
   const hasFeesProvided = areFeesProvided(tx);
 
-  const { gasLimit, ...restTx } = tx;
-
   const liveTx: Partial<Transaction> = {
-    ...restTx,
-    amount: tx.amount,
-    recipient: tx.recipient,
-    gasPrice: tx.gasPrice,
-    userGasLimit: gasLimit,
+    ...tx,
+    userGasLimit: tx.gasLimit,
   };
 
   return hasFeesProvided ? { ...liveTx, feesStrategy: "custom" } : liveTx;
