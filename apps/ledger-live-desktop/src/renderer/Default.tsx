@@ -18,8 +18,7 @@ import Swap2 from "~/renderer/screens/exchange/Swap2";
 import USBTroubleshooting from "~/renderer/screens/USBTroubleshooting";
 import Account from "~/renderer/screens/account";
 import Asset from "~/renderer/screens/asset";
-import PlatformCatalog from "~/renderer/screens/platform";
-import PlatformApp from "~/renderer/screens/platform/App";
+import { PlatformCatalog, LiveApp } from "~/renderer/screens/platform";
 import NFTGallery from "~/renderer/screens/nft/Gallery";
 import NFTCollection from "~/renderer/screens/nft/Gallery/Collection";
 import Box from "~/renderer/components/Box/Box";
@@ -60,23 +59,27 @@ import Learn from "~/renderer/screens/learn";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
 import SyncOnboarding from "./components/SyncOnboarding";
+import { useDiscoverDB } from "./screens/platform/v2/hooks";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
   throw new Error("CrashTestRendering");
 };
+
 const LetMainSendCrashTest = () => {
   useEffect(() => {
     ipcRenderer.send("mainCrashTest");
   }, []);
   return null;
 };
+
 const LetInternalSendCrashTest = () => {
   useEffect(() => {
     ipcRenderer.send("internalCrashTest");
   }, []);
   return null;
 };
+
 export const TopBannerContainer = styled.div`
   position: sticky;
   top: 0;
@@ -85,6 +88,7 @@ export const TopBannerContainer = styled.div`
     display: none;
   }
 `;
+
 const NightlyLayerR = () => {
   const children = [];
   const w = 200;
@@ -126,7 +130,9 @@ const NightlyLayerR = () => {
     </div>
   );
 };
+
 const NightlyLayer = React.memo(NightlyLayerR);
+
 export default function Default() {
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -135,6 +141,7 @@ export default function Default() {
   useDeeplink();
   useUSBTroubleshooting();
   useProviders(); // prefetch data from swap providers here
+  const discoverDB = useDiscoverDB();
 
   useEffect(() => {
     if (!hasCompletedOnboarding) {
@@ -213,8 +220,12 @@ export default function Default() {
                             <Route path="/card" component={Card} />
                             <Redirect from="/manager/reload" to="/manager" />
                             <Route path="/manager" component={Manager} />
-                            <Route path="/platform" component={PlatformCatalog} exact />
-                            <Route path="/platform/:appId?" component={PlatformApp} />
+                            <Route
+                              path="/platform"
+                              component={() => <PlatformCatalog db={discoverDB} />}
+                              exact
+                            />
+                            <Route path="/platform/:appId?" component={LiveApp} />
                             <Route path="/earn" component={Earn} />
                             <Route path="/exchange" component={Exchange} />
                             <Route

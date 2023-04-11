@@ -30,20 +30,24 @@ const reducer = (state: State, update: Partial<State>) => {
     ...update,
   };
 };
+
 const initialState: State = {
   Component: null,
   props: null,
   open: false,
   options: {},
 };
+
 export type ContextValue = {
   state: State;
   setDrawer: typeof setDrawer;
 };
+
 export const context: React.Context<ContextValue> = React.createContext<ContextValue>({
   state: initialState,
   setDrawer: () => null,
 });
+
 const DrawerProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const _setDrawer: typeof setDrawer = useCallback(
@@ -70,4 +74,5 @@ const DrawerProvider = ({ children }: { children: React.ReactNode }) => {
     </context.Provider>
   );
 };
+
 export default DrawerProvider;

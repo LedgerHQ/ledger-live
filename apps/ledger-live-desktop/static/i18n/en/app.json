@@ -25,10 +25,17 @@
     },
     "catalog": {
       "title": "Discover",
+      "section": {
+        "recentlyUsed": "Recently used",
+        "browse": "Browse"
+      },
+      "filter": {
+        "categories": "Categories"
+      },
       "branch": {
-        "soon": "coming soon",
-        "experimental": "experimental",
-        "debug": "debug"
+        "soon": "Coming soon",
+        "experimental": "Experimental",
+        "debug": "Debug"
       },
       "banner": {
         "title": "Discover our Live Apps Catalog",
@@ -47,6 +54,11 @@
         "title": "For Developers",
         "description": "All the information you need to integrate your applications on Ledger Live.",
         "button": "Go to portal"
+      },
+      "warnings": {
+        "notFound": "Not found",
+        "retrySearchKeyword": "Please retry the search with another keyword.",
+        "retrySearchKeywordAndUrl": "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live."
       }
     },
     "disclaimer": {
@@ -128,7 +140,8 @@
     "info": "Info",
     "connectDevice": "Connect your device",
     "add": "Add",
-    "or": "OR"
+    "or": "OR",
+    "clearAll": "Clear all"
   },
   "devices": {
     "nanoS": "Nano S",

@@ -7,10 +7,11 @@ import { dismissedBannersSelector } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { openPlatformAppDisclaimerDrawer } from "~/renderer/actions/UI";
-import AppCard from "~/renderer/components/Platform/AppCard";
-import CatalogBanner from "./CatalogBanner";
-import TwitterBanner from "./TwitterBanner";
+import { AppCard } from "~/renderer/components/Platform/AppCard";
+import { Banner } from "./Banner";
+import { TwitterBanner } from "./TwitterBanner";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
 const Grid = styled.div`
@@ -29,10 +30,10 @@ const GridItem = styled.div`
   }
 `;
 
-const Header = styled(Box).attrs(() => ({
+const Header = styled(Box).attrs({
   horizontal: true,
   paddingBottom: 32,
-}))``;
+})``;
 
 const Title = styled(Box).attrs(p => ({
   ff: "Inter|SemiBold",
@@ -40,7 +41,7 @@ const Title = styled(Box).attrs(p => ({
   color: p.theme.colors.palette.secondary.main,
 }))``;
 
-const PlatformCatalog = () => {
+export function Catalog() {
   const dispatch = useDispatch();
   const history = useHistory();
   const { state } = useRemoteLiveAppContext();
@@ -48,6 +49,7 @@ const PlatformCatalog = () => {
   const dismissedBanners = useSelector(dismissedBannersSelector);
   const isDismissed = dismissedBanners.includes(DAPP_DISCLAIMER_ID);
   const { t } = useTranslation();
+
   const handleClick = useCallback(
     manifest => {
       const openApp = () => history.push(`/platform/${manifest.id}`);
@@ -65,26 +67,22 @@ const PlatformCatalog = () => {
     },
     [history, isDismissed, dispatch],
   );
+
   return (
     <>
       <TrackPage category="Platform" name="Catalog" />
       <Header>
         <Title data-test-id="discover-title">{t("platform.catalog.title")}</Title>
       </Header>
-      <CatalogBanner />
+      <Banner />
       <TwitterBanner />
       <Grid>
         {manifests.map(manifest => (
           <GridItem key={manifest.id}>
-            <AppCard
-              id={`platform-catalog-app-${manifest.id}`}
-              manifest={manifest}
-              onClick={() => handleClick(manifest)}
-            />
+            <AppCard manifest={manifest} onClick={() => handleClick(manifest)} />
           </GridItem>
         ))}
       </Grid>
     </>
   );
-};
-export default PlatformCatalog;
+}
