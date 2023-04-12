@@ -3,7 +3,6 @@ import React, {
   useState,
   useCallback,
   useMemo,
-  useRef,
   MutableRefObject,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
