@@ -1,4 +1,11 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+  MutableRefObject,
+} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useLocale } from "../context/Locale";
@@ -58,8 +65,17 @@ async function unAcceptTerms() {
   await AsyncStorage.removeItem("acceptedTermsVersion");
 }
 
-export async function acceptTerms() {
+async function acceptTerms() {
   await AsyncStorage.setItem("acceptedTermsVersion", currentTermsRequired);
+}
+
+const acceptTermsAndUpdateStateRef: MutableRefObject<(() => void) | null> =
+  React.createRef();
+
+export function acceptTermsAndUpdateState() {
+  if (acceptTermsAndUpdateStateRef.current)
+    acceptTermsAndUpdateStateRef.current();
+  else acceptTerms();
 }
 
 export async function acceptLendingTerms() {
@@ -116,8 +132,13 @@ export const AcceptedTermsContextProvider: React.FC<{
   );
 
   useEffect(() => {
+    if (!acceptTermsAndUpdateStateRef.current)
+      acceptTermsAndUpdateStateRef.current = accept;
     isAcceptedTerms().then(setAccepted);
-  }, []);
+    return () => {
+      acceptTermsAndUpdateStateRef.current = null;
+    };
+  }, [accept]);
 
   const value = useMemo(
     () => ({ accepted, accept, unAccept }),
