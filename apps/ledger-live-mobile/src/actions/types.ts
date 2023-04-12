@@ -282,6 +282,7 @@ export enum SettingsActionTypes {
   SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
   SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
+  SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -403,6 +404,8 @@ export type SettingsSetHasBeenUpsoldProtectPayload =
 export type SettingsCompleteOnboardingPayload =
   | void
   | SettingsState["hasCompletedOnboarding"];
+export type SettingsSetGeneralTermsVersionAccepted =
+  SettingsState["generalTermsVersionAccepted"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -455,6 +458,7 @@ export type SettingsPayload =
   | SettingsSetFeatureFlagsBannerVisiblePayload
   | SettingsCompleteOnboardingPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload
+  | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload;
 
 // === WALLET CONNECT ACTIONS ===

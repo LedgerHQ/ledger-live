@@ -232,6 +232,7 @@ export type SettingsState = {
   debugAppLevelDrawerOpened: boolean;
   dateFormat: string;
   hasBeenUpsoldProtect: boolean;
+  generalTermsVersionAccepted?: string;
 };
 
 export type NotificationsSettings = {

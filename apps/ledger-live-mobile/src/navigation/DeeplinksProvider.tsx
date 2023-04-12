@@ -18,7 +18,7 @@ import { context as _wcContext } from "../screens/WalletConnect/Provider";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "../const";
 import { setWallectConnectUri } from "../actions/walletconnect";
-import { AcceptedTermsContext } from "../logic/terms";
+import { TermsContext } from "../logic/terms";
 import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
@@ -369,7 +369,7 @@ export const DeeplinksProvider = ({
   const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || emptyObject;
   // Can be either true, false or null, meaning we don't know yet
-  const { accepted: userAcceptedTerms } = useContext(AcceptedTermsContext);
+  const { accepted: userAcceptedTerms } = useContext(TermsContext);
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>

@@ -10,7 +10,7 @@ import Touchable from "../../../components/Touchable";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import { setAnalytics } from "../../../actions/settings";
-import { AcceptedTermsContext } from "../../../logic/terms";
+import { TermsContext } from "../../../logic/terms";
 import { useLocale } from "../../../context/Locale";
 import { urls } from "../../../config/urls";
 import OnboardingView from "../OnboardingView";
@@ -58,7 +58,7 @@ type NavigationProp = StackNavigatorNavigation<
 function OnboardingStepTerms() {
   const { locale = "en" } = useLocale();
   const dispatch = useDispatch();
-  const { accept: setAccepted } = useContext(AcceptedTermsContext);
+  const { accept: setAccepted } = useContext(TermsContext);
   const [toggle, setToggle] = useState(false);
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslation();
