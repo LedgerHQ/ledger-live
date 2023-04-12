@@ -315,7 +315,7 @@ function convertVechainToken([
     id: "vechain/vtho",
     contractAddress: contractAddress,
     parentCurrency: getCryptoCurrencyById("vechain"),
-    tokenType: "vip180",
+    tokenType: "erc20",
     name,
     ticker: abbr,
     disableCountervalue: !enableCountervalues,
