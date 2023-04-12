@@ -212,12 +212,15 @@ export function SwapForm({
   // Track errors
   useEffect(
     () => {
-      swapError &&
+      if (swapError) {
         trackSwapError(swapError, {
           sourcecurrency: swapTransaction.swap.from.currency?.name,
           provider,
         });
-      log("swap", "failed to fetch swaps", swapError);
+        // eslint-disable-next-line no-console
+        console.log("Swap Error", swapError);
+        log("swap", "failed to fetch swaps", swapError);
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [swapError],
