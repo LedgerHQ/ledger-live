@@ -137,7 +137,6 @@ function SelectAccount({ navigation, route }: Props) {
       },
     });
   }, [currency, navigation, onError, route.params]);
-
   const renderFooter = useCallback(
     () =>
       allowAddAccount ? (
@@ -160,7 +159,6 @@ function SelectAccount({ navigation, route }: Props) {
       ) : null,
     [allowAddAccount, currency.name, onAddAccount],
   );
-
   const renderList = useCallback(
     items => (
       <List items={items} renderItem={renderItem} renderFooter={renderFooter} />
@@ -177,7 +175,6 @@ function SelectAccount({ navigation, route }: Props) {
     ),
     [],
   );
-
   return (
     <SafeAreaView
       style={[
@@ -252,5 +249,4 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 });
-
 export default SelectAccount;
