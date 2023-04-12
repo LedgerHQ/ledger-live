@@ -19,12 +19,12 @@ const generalTermsVersionRequired = "2022-05-10";
  * */
 const LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY =
   "acceptedTermsVersion";
-async function loadLegacyAcceptedTermsVersion() {
+async function loadLegacyStorageAcceptedTermsVersion() {
   return AsyncStorage.getItem(
     LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY,
   );
 }
-async function eraseLegacyAcceptedTermsVersion() {
+async function eraseLegacyStorageAcceptedTermsVersion() {
   AsyncStorage.removeItem(LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY);
 }
 
@@ -81,10 +81,10 @@ export const GeneralTermsContextProvider: React.FC<{
 
   useEffect(() => {
     // migration of the "accepted version" data from legacy storage key to redux
-    loadLegacyAcceptedTermsVersion().then(res => {
+    loadLegacyStorageAcceptedTermsVersion().then(res => {
       if (res) {
         setGeneralTermsAcceptedVersion(res);
-        eraseLegacyAcceptedTermsVersion();
+        eraseLegacyStorageAcceptedTermsVersion();
       }
     });
   }, []);
