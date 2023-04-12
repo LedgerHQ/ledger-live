@@ -483,8 +483,8 @@ const MainSideBar = () => {
                 <FeatureToggle feature="protectServicesDiscoverDesktop">
                   <SideBarListItem
                     id={"send"}
-                    label={t("sidebar.protect")}
-                    icon={Icons.LockMedium}
+                    label={t("sidebar.recover")}
+                    icon={Icons.ShieldCheckMedium}
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleOpenProtectDiscoverModal}
