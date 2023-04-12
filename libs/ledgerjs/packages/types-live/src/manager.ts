@@ -247,6 +247,7 @@ export type ApplicationV2 = {
  *
  */
 export enum AppType {
+  app = "app", // NB Legacy from v1, drop after we default to v2.
   currency = "currency",
   plugin = "plugin",
   tool = "tool",
