@@ -35,9 +35,6 @@ import type {
 } from "../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
-import type { LendingEnableFlowParamsList } from "../components/RootNavigator/types/LendingEnableFlowNavigator";
-import type { LendingSupplyFlowNavigatorParamList } from "../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import type { LendingWithdrawFlowNavigatorParamList } from "../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import type { AlgorandClaimRewardsFlowParamList } from "../families/algorand/Rewards/ClaimRewardsFlow/type";
 import type { StellarAddAssetFlowParamList } from "../families/stellar/AddAssetFlow/types";
 
@@ -49,18 +46,6 @@ type Navigation =
   | StackNavigatorNavigation<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorNavigation<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorNavigation<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorNavigation<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
     >
   | StackNavigatorNavigation<
       AlgorandClaimRewardsFlowParamList,
@@ -79,18 +64,6 @@ type Route =
   | StackNavigatorRoute<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorRoute<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorRoute<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorRoute<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
     >
   | StackNavigatorRoute<
       AlgorandClaimRewardsFlowParamList,

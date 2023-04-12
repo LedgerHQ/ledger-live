@@ -14,8 +14,6 @@ import IconPlus from "~/renderer/icons/Plus";
 import IconEye from "~/renderer/icons/Eye";
 import IconFees from "~/renderer/icons/Fees";
 import IconTrash from "~/renderer/icons/Trash";
-import IconSupply from "~/renderer/icons/Supply";
-import IconWithdraw from "~/renderer/icons/Withdraw";
 import IconLink from "~/renderer/icons/LinkIcon";
 import IconCoins from "~/renderer/icons/Coins";
 import Freeze from "~/renderer/icons/Freeze";
@@ -98,8 +96,6 @@ const iconsComponent = {
   OPT_IN: IconPlus,
   OPT_OUT: IconTrash,
   CLOSE_ACCOUNT: IconTrash,
-  REDEEM: IconWithdraw,
-  SUPPLY: IconSupply,
   APPROVE: IconPlus,
   BOND: IconLink,
   UNBOND: IconUndelegate,

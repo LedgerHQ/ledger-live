@@ -8,8 +8,8 @@
 /* eslint-disable no-console */
 
 const path = require("path");
-const defaultSourceExts = require("metro-config/src/defaults/defaults")
-  .sourceExts;
+const defaultSourceExts =
+  require("metro-config/src/defaults/defaults").sourceExts;
 const { makeMetroConfig } = require("@rnx-kit/metro-config");
 const MetroSymlinksResolver = require("@rnx-kit/metro-resolver-symlinks");
 const resolve = require("metro-resolver").resolve;
@@ -32,7 +32,7 @@ function forceDependency(moduleName, filters, nodeModulesPaths) {
   return null;
 }
 
-module.exports = function(options = {}, config = {}) {
+module.exports = function (options = {}, config = {}) {
   const {
     // Root of the project
     projectRoot,
@@ -100,14 +100,13 @@ module.exports = function(options = {}, config = {}) {
     },
     resolver: {
       nodeModulesPaths,
-      resolveRequest: (context, realModuleName, platform, moduleName) => {
+      resolveRequest: (context, moduleName, platform) => {
         try {
           if (earlyResolver) {
             const earlyResolution = earlyResolver(
               context,
-              realModuleName,
-              platform,
-              moduleName
+              moduleName,
+              platform
             );
             if (earlyResolution) return earlyResolution;
           }
@@ -183,9 +182,7 @@ module.exports = function(options = {}, config = {}) {
             }
           }
 
-          delete context.resolveRequest;
-
-          return resolve(context, realModuleName, platform, moduleName);
+          return context.resolveRequest(context, moduleName, platform);
         }
       },
       sourceExts: [...defaultSourceExts, "cjs"],

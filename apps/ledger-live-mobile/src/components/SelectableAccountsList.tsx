@@ -222,8 +222,8 @@ const SelectableAccount = ({
 
   const renderLeftActions = useCallback(
     (
-      progress: Animated.AnimatedInterpolation,
-      dragX: Animated.AnimatedInterpolation,
+      progress: Animated.AnimatedInterpolation<number>,
+      dragX: Animated.AnimatedInterpolation<number>,
     ) => {
       const translateX = dragX.interpolate({
         inputRange: [0, 1000],

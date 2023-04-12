@@ -43,9 +43,6 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type Navigation = BaseComposite<
@@ -56,18 +53,6 @@ type Navigation = BaseComposite<
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >;
@@ -394,7 +379,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// FIXME: PROBABLY SOME TYPE OF StyleProp<ViewProp>
+// FIXME: PROBABLY SOME TYPE OF StyleProp<ViewStyle>
 class VerticalConnector extends Component<{
   style:
     | Record<string, string | number>

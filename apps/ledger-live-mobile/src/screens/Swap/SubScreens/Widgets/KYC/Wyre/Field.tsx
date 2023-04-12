@@ -2,8 +2,10 @@ import React from "react";
 import { StyleSheet, TextInput } from "react-native";
 import { useTranslation, Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import TextInputMask from "react-native-text-input-mask";
+import MaskInput from "react-native-mask-input";
 import LText from "../../../../../../components/LText";
+
+const DIGIT = /\d/;
 
 export function Field({
   field,
@@ -41,12 +43,29 @@ export function Field({
           maxLength={30}
         />
       ) : (
-        <TextInputMask
+        <MaskInput
           style={[styles.input, { color, borderColor }]}
           placeholderTextColor={colors.smoke}
           placeholder={t("transfer.swap.kyc.wyre.form.dateOfBirthPlaceholder")}
           onChangeText={onChange}
-          mask={"[0000]-[00]-[00]"}
+          mask={[
+            "[",
+            DIGIT,
+            DIGIT,
+            DIGIT,
+            DIGIT,
+            "]",
+            "-",
+            "[",
+            DIGIT,
+            DIGIT,
+            "]",
+            "-",
+            "[",
+            DIGIT,
+            DIGIT,
+            "]",
+          ]}
         />
       )}
       <LText color={"alert"}>

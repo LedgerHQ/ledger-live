@@ -7,11 +7,13 @@ import {
 } from "./converters";
 import type { TrackingAPI } from "./tracking";
 import { AppManifest, TranslatableString, WalletAPITransaction } from "./types";
-import { isTokenAccount, isAccount } from "../account/index";
+import { isTokenAccount, isAccount, getMainAccount } from "../account/index";
 import { Transaction } from "../generated/types";
 import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { TypedMessageData } from "../families/ethereum/types";
+import { getAccountBridge } from "../bridge";
+import { Exchange } from "../exchange/platform/types";
 
 export function translateContent(
   content: string | TranslatableString,
@@ -229,3 +231,137 @@ export const bitcoinFamillyAccountGetXPubLogic = (
   tracking.bitcoinFamillyAccountXpubSuccess(manifest);
   return Promise.resolve(account.xpub);
 };
+
+export function startExchangeLogic(
+  { manifest, tracking }: WalletAPIContext,
+  exchangeType: "SWAP" | "SELL" | "FUND",
+  uiNavigation: (exchangeType: "SWAP" | "SELL" | "FUND") => Promise<string>
+): Promise<string> {
+  tracking.startExchangeRequested(manifest);
+
+  return uiNavigation(exchangeType);
+}
+
+export type CompleteExchangeRequest = {
+  provider: string;
+  fromAccountId: string;
+  toAccountId?: string;
+  transaction: WalletAPITransaction;
+  binaryPayload: string;
+  signature: string;
+  feesStrategy: string;
+  exchangeType: number;
+};
+export type CompleteExchangeUiRequest = {
+  provider: string;
+  exchange: Exchange;
+  transaction: WalletAPITransaction;
+  binaryPayload: string;
+  signature: string;
+  feesStrategy: string;
+  exchangeType: number;
+};
+
+export function completeExchangeLogic(
+  { manifest, accounts, tracking }: WalletAPIContext,
+  {
+    provider,
+    fromAccountId,
+    toAccountId,
+    transaction,
+    binaryPayload,
+    signature,
+    feesStrategy,
+    exchangeType,
+  }: CompleteExchangeRequest,
+  uiNavigation: (request: CompleteExchangeUiRequest) => Promise<string>
+): Promise<string> {
+  tracking.completeExchangeRequested(manifest);
+
+  const realFromAccountId = getAccountIdFromWalletAccountId(fromAccountId);
+  if (!realFromAccountId) {
+    return Promise.reject(new Error(`accountId ${fromAccountId} unknown`));
+  }
+
+  // Nb get a hold of the actual accounts, and parent accounts
+  const fromAccount = accounts.find((a) => a.id === realFromAccountId);
+
+  let toAccount;
+
+  if (toAccountId) {
+    const realToAccountId = getAccountIdFromWalletAccountId(toAccountId);
+    if (!realToAccountId) {
+      return Promise.reject(new Error(`accountId ${toAccountId} unknown`));
+    }
+
+    toAccount = accounts.find((a) => a.id === realToAccountId);
+  }
+
+  if (!fromAccount) {
+    return Promise.reject();
+  }
+
+  if (exchangeType === 0x00 && !toAccount) {
+    // if we do a swap, a destination account must be provided
+    return Promise.reject();
+  }
+
+  const fromParentAccount = getParentAccount(fromAccount, accounts);
+  const toParentAccount = toAccount
+    ? getParentAccount(toAccount, accounts)
+    : undefined;
+  const exchange = {
+    fromAccount,
+    fromParentAccount,
+    toAccount,
+    toParentAccount,
+  };
+
+  const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
+  const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
+  const mainFromAccountFamily = mainFromAccount.currency.family;
+
+  if (transaction.family !== mainFromAccountFamily) {
+    return Promise.reject(
+      new Error(
+        `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${transaction.family}`
+      )
+    );
+  }
+
+  const { liveTx } = getWalletAPITransactionSignFlowInfos(transaction);
+
+  /**
+   * 'subAccountId' is used for ETH and it's ERC-20 tokens.
+   * This field is ignored for BTC
+   */
+  const subAccountId = fromParentAccount ? fromAccount.id : undefined;
+
+  const bridgeTx = accountBridge.createTransaction(mainFromAccount);
+  /**
+   * We append the `recipient` to the tx created from `createTransaction`
+   * to avoid having userGasLimit reset to null for ETH txs
+   * cf. libs/ledger-live-common/src/families/ethereum/updateTransaction.ts
+   */
+  const tx = accountBridge.updateTransaction(
+    {
+      ...bridgeTx,
+      recipient: liveTx.recipient,
+    },
+    {
+      ...liveTx,
+      feesStrategy,
+      subAccountId,
+    }
+  );
+
+  return uiNavigation({
+    provider,
+    exchange,
+    transaction: tx,
+    binaryPayload,
+    signature,
+    feesStrategy,
+    exchangeType,
+  });
+}

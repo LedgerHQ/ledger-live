@@ -6,6 +6,7 @@
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",

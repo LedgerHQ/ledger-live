@@ -17,10 +17,10 @@ function CurrencyGradient({ gradientColor }: { gradientColor: string }) {
     <Svg width={541} height={454} viewBox="0 0 541 454" fill="none">
       <Mask
         id="a"
+        // @ts-expect-error maskType is not in the type definition
         style={{
           maskType: "alpha",
         }}
-        // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
         maskUnits={"userSpaceOnUse" as const}
         x={0}
         y={0}

@@ -13,6 +13,7 @@ export const supportLinkByTokenType = {
     "https://support.ledger.com/hc/en-us/articles/4404389453841-Receive-crypto-assets?utm_medium=self_referral&utm_content=receive_account_flow",
 };
 export const urls = {
+  ledger: "https://www.ledger.com",
   liveHome:
     "https://www.ledger.com/pages/ledger-live?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=home",
   social: {
@@ -142,8 +143,6 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/360020095874-Cardano-ADA-?docs=true",
     default: "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?docs=true",
   },
-  migrateAccounts:
-    "https://support.ledger.com/hc/en-us/articles/360025322153-Wrong-private-keys-for-account?support=true",
   coinControl:
     "https://support.ledger.com/hc/en-us/articles/360015996580?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=send_coincontrol",
   githubIssues:
@@ -269,12 +268,9 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/6793501085981?support=true&utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_connect_manager",
     TronSendTrc20ToNewAccountForbidden:
       "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
+    TronStakingDisable: "https://support.ledger.com/hc/en-us/articles/9949980566173?support=true",
     OperatingSystemOutdated: "https://support.ledger.com/hc/articles/8083692639901?support=true",
   },
-  compound:
-    "https://support.ledger.com/hc/en-us/articles/360017215099?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=compound",
-  compoundTnC:
-    "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=compoundTnC",
   approvedOperation:
     "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true",
   cryptoOrg: {
@@ -305,4 +301,9 @@ export const urls = {
   ledgerByFigmentTC:
     "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
   ens: "https://support.ledger.com/hc/articles/9710787581469?docs=true",
+  ledgerLiveMobile: {
+    storeLink: "https://r354.adj.st/?adj_t=t2esmlk&adj_campaign=Ledger_Live",
+    appStore: "https://apps.apple.com/app/id1361671700",
+    playStore: "https://play.google.com/store/apps/details?id=com.ledger.live",
+  },
 };

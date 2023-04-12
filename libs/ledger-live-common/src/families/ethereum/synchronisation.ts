@@ -18,11 +18,10 @@ import { encodeAccountId } from "../../account";
 import type {
   Operation,
   TokenAccount,
-  Account,
   SubAccount,
+  Account,
 } from "@ledgerhq/types-live";
 import { API, apiForCurrency, Block, Tx } from "../../api/Ethereum";
-import { digestTokenAccounts, prepareTokenAccounts } from "./modules";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeNftId, isNFTActive, nftsFromOperations } from "../../nft";
 import { encodeOperationId, encodeSubOperationId } from "../../operation";
@@ -170,9 +169,7 @@ export const getAccountShape: GetAccountShape = async (
       };
     })
     .filter(Boolean);
-  tokenAccounts = await prepareTokenAccounts(currency, tokenAccounts, address);
   tokenAccounts = await loadERC20Balances(tokenAccounts, address, api);
-  tokenAccounts = await digestTokenAccounts(currency, tokenAccounts, address);
   const subAccounts = reconciliateSubAccounts(tokenAccounts, initialAccount);
   // has sub accounts have changed, we need to relink the subOperations
   newOps = newOps.map((o) => ({

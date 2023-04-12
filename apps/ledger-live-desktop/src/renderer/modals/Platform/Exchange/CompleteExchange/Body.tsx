@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toExchangeRaw } from "@ledgerhq/live-common/exchange/platform/serialization";
 import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
-import { toTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -32,19 +30,16 @@ const Body = ({
   };
   onClose: () => void;
 }) => {
-  const { onResult, onCancel } = data;
-  const { fromAccount: account, fromParentAccount: parentAccount } = data.exchange;
+  const { onResult, onCancel, ...exchangeParams } = data;
+
+  const { fromAccount: account, fromParentAccount: parentAccount } = exchangeParams.exchange;
   let tokenCurrency;
   if (account.type === "TokenAccount") tokenCurrency = account.token;
   const request = {
-    ...data,
-    exchange: toExchangeRaw(data.exchange),
-    transaction: toTransactionRaw(data.transaction),
+    ...exchangeParams,
   };
-  const broadcast = useBroadcast({
-    account,
-    parentAccount,
-  });
+
+  const broadcast = useBroadcast({ account, parentAccount });
   const [transaction, setTransaction] = useState();
   const [signedOperation, setSignedOperation] = useState();
   const [error, setError] = useState();

@@ -31,15 +31,8 @@ jobs:
       - name: merge develop
         run: |
           git merge origin/develop -X theirs
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 7.30.0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.15.0
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-          registry-url: "https://registry.npmjs.org"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version:
@@ -54,7 +47,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
       - name: build libs
         run: pnpm run build:libs
       - name: versioning

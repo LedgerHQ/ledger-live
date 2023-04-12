@@ -415,7 +415,11 @@ platform :android do
   desc "private: build the app apk for the specified build `type`. Defaults to `Release`"
   private_lane :build do |options|
     type = options.fetch(:type, "Release")
-    task = options[:apk] ? "assemble" : "bundle"
+    tasks =
+      options[:apk_and_aab] ? ["assemble", "bundle"] :
+      options[:apk] ? ["assemble"] :
+      ["bundle"]
+    tasks = tasks.map { |task| task + type }
     if(options[:ci])
       sh(
           <<-SHELL
@@ -427,15 +431,13 @@ platform :android do
     gradle(task: "clean", project_dir: 'android/')
     if (options[:local])
       gradle(
-        task: task,
-        build_type: type,
+        tasks: tasks,
         print_command: false,
         project_dir: 'android/'
       )
     else
       gradle(
-        task: task,
-        build_type: type,
+        tasks: tasks,
         print_command: false,
         properties: {
           "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
@@ -454,13 +456,15 @@ platform :android do
       upload_to_play_store(
         track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
         package_name: 'com.ledger.live',
-        json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
+        json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"],
+        skip_upload_apk: true
       )
     else
       upload_to_play_store(
         track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
         package_name: "com.ledger.live",
         json_key: ENV["ANDROID_SERVICE_KEY_PATH"],
+        skip_upload_apk: true
       )
     end
   end
@@ -488,12 +492,13 @@ platform :android do
     )
   end
 
-  desc "build APK and send to Google Play Store"
+  desc "build APKs + AAB and send the AAB to the Google Play Store "
   lane :ci_playstore do
     prepare_android_internal
     build(
       type: "Release",
-      ci: true
+      ci: true,
+      apk_and_aab: true
     )
     upload(ci: true)
   end
@@ -521,6 +526,14 @@ platform :android do
     upload(
       recover: true,
       ci: true
+    )
+  end
+
+  lane :ci_build do
+    build(
+      type: "Release",
+      ci: true,
+      apk: true
     )
   end
 

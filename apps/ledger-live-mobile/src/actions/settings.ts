@@ -60,7 +60,10 @@ import {
   SettingsCompleteOnboardingPayload,
   SettingsSetDateFormatPayload,
   SettingsSetHasBeenUpsoldProtectPayload,
+  SettingsSetHasSeenStaxEnabledNftsPopupPayload,
+  SettingsSetCustomImageTypePayload,
 } from "./types";
+import { ImageType } from "../components/CustomImage/types";
 
 export const setPrivacy = createAction<SettingsSetPrivacyPayload>(
   SettingsActionTypes.SETTINGS_SET_PRIVACY,
@@ -194,6 +197,13 @@ export const setLastSeenDeviceLanguageId =
   createAction<SettingsLastSeenDeviceLanguagePayload>(
     SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID,
   );
+const setHasSeenStaxEnabledNftsPopupAction =
+  createAction<SettingsSetHasSeenStaxEnabledNftsPopupPayload>(
+    SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP,
+  );
+export const setHasSeenStaxEnabledNftsPopup = (
+  hasSeenStaxEnabledNftsPopup: boolean,
+) => setHasSeenStaxEnabledNftsPopupAction({ hasSeenStaxEnabledNftsPopup });
 export const addStarredMarketCoins =
   createAction<SettingsAddStarredMarketcoinsPayload>(
     SettingsActionTypes.ADD_STARRED_MARKET_COINS,
@@ -210,6 +220,12 @@ export const setCustomImageBackup =
   createAction<SettingsSetCustomImageBackupPayload>(
     SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP,
   );
+const setCustomImageTypeAction =
+  createAction<SettingsSetCustomImageTypePayload>(
+    SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE,
+  );
+export const setCustomImageType = (imageType: ImageType) =>
+  setCustomImageTypeAction({ customImageType: imageType });
 export const setHasOrderedNano = createAction<SettingsSetHasOrderedNanoPayload>(
   SettingsActionTypes.SET_HAS_ORDERED_NANO,
 );

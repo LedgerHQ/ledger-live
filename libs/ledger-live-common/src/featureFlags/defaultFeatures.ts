@@ -197,4 +197,7 @@ export const defaultFeatures: DefaultFeatures = {
       version: "1",
     },
   },
+  protectServicesDiscoverDesktop: {
+    enabled: false,
+  },
 };

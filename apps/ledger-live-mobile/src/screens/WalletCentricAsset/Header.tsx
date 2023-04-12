@@ -70,7 +70,12 @@ function Header({
       }
       centerBeforeScrollElement={
         <Flex flexDirection={"row"} alignItems={"center"}>
-          <Text variant={"large"} fontWeight={"semiBold"} numberOfLines={1}>
+          <Text
+            variant={"large"}
+            fontWeight={"semiBold"}
+            numberOfLines={1}
+            testID={`accounts-title-${currency.name}`}
+          >
             {t("asset.title", { assetName: currency.name })}
           </Text>
         </Flex>

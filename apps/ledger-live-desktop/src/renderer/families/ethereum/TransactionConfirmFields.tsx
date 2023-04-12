@@ -12,8 +12,6 @@ const Warning = ({
 }) => {
   invariant(transaction.family === "ethereum", "ethereum transaction");
   switch (transaction.mode) {
-    case "compound.withdraw":
-    case "compound.supply":
     case "erc20.approve":
       return (
         <WarnBox>

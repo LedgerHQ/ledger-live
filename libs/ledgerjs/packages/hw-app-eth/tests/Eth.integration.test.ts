@@ -1,19 +1,25 @@
+import axios from "axios";
 import {
   openTransportReplayer,
   RecordStore,
 } from "@ledgerhq/hw-transport-mocker";
 import Eth, { ledgerService } from "../src/Eth";
-import { TokenInfo } from "../src/services/ledger/erc20";
 import { BigNumber } from "bignumber.js";
 import { byContractAddressAndChainId } from "../src/services/ledger/erc20";
 import paraswapJSON from "./paraswap.json";
+import { ResolutionConfig } from "../src/services/types";
 
-async function signTxWithResolution(eth, path, tx) {
+async function signTxWithResolution(
+  eth: Eth,
+  path: string,
+  tx: string,
+  resolutionConfig?: ResolutionConfig
+) {
   const resolution = await ledgerService
     .resolveTransaction(
       tx,
       {},
-      { externalPlugins: true, erc20: true, nft: true }
+      resolutionConfig || { externalPlugins: true, erc20: true, nft: true }
     )
     .catch((e) => {
       console.warn(
@@ -311,6 +317,186 @@ test("signTransactionChunkedLimitBigVRS", async () => {
   });
 });
 
+test("signTransaction coin with domain", async () => {
+  jest.spyOn(axios, "request").mockImplementationOnce(async ({ url }) => {
+    if (url?.includes("dev.0xkvn.eth?challenge=0x10126b3d")) {
+      return {
+        data: {
+          payload:
+            "010103020101130103140101120410126b3d21013c200d6465762e30786b766e2e65746822146cbcd73cd8e8a42844662f0a0e76d7f79afd933d15483046022100c8046e9e13a3cb682db70ec5082d9ea9600070ad747433d1088d02102484d1fa022100d77a34953dd7a86d688a9b90f099643b88b18e922b026f7e4fd8db9ab8121a8b",
+        },
+      };
+    }
+  });
+
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+    => e020000000
+    <= 10126b3d9000
+    => e0220100860084010103020101130103140101120410126b3d21013c200d6465762e30786b766e2e65746822146cbcd73cd8e8a42844662f0a0e76d7f79afd933d15483046022100c8046e9e13a3cb682db70ec5082d9ea9600070ad747433d1088d02102484d1fa022100d77a34953dd7a86d688a9b90f099643b88b18e922b026f7e4fd8db9ab8121a8b
+    <= 9000
+    => e004000047058000002c8000003c80000000000000000000000002f001468417d784008509051957f0825208946cbcd73cd8e8a42844662f0a0e76d7f79afd933d8801667275be10d51880c0
+    <= 00cc0e89a27605a67b3bcb72512c6a48f2b65c7721f9a0dc2591a2a773e1a6d37a149b7a9dce84b9b457300b1b15d1eaa09858e70b6979031cf489c6c0c4507eb29000
+    `)
+  );
+  const eth = new Eth(transport);
+  const result = await signTxWithResolution(
+    eth,
+    "44'/60'/0'/0/0",
+    "02f001468417d784008509051957f0825208946cbcd73cd8e8a42844662f0a0e76d7f79afd933d8801667275be10d51880c0",
+    {
+      erc20: true,
+      nft: true,
+      externalPlugins: true,
+      domains: [
+        {
+          registry: "ens",
+          address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          domain: "dev.0xkvn.eth",
+          type: "forward",
+        },
+      ],
+    }
+  );
+
+  expect(result).toEqual({
+    r: "cc0e89a27605a67b3bcb72512c6a48f2b65c7721f9a0dc2591a2a773e1a6d37a",
+    s: "149b7a9dce84b9b457300b1b15d1eaa09858e70b6979031cf489c6c0c4507eb2",
+    v: "00",
+  });
+});
+
+test("signTransaction erc20 with domain", async () => {
+  jest.spyOn(axios, "request").mockImplementationOnce(async ({ url }) => {
+    if (url?.includes("dev.0xkvn.eth?challenge=0x1dad95c4")) {
+      return {
+        data: {
+          payload:
+            "01010302010113010314010112041dad95c421013c200930786b766e2e6574682214b0b5b0106d69fe64545a60a68c014f7570d3f86115463044022075f4fffb553cb615a6adcecac60ce57f72b5ed76a73b18ca99e8914529efaea70220031df5f609e06d26d1f4b55605f483977e08406528c4ceab729d010d52725dd2",
+        },
+      };
+    }
+  });
+
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+    => e020000000
+    <= 1dad95c49000
+    => e022010080007e01010302010113010314010112041dad95c421013c200930786b766e2e6574682214b0b5b0106d69fe64545a60a68c014f7570d3f86115463044022075f4fffb553cb615a6adcecac60ce57f72b5ed76a73b18ca99e8914529efaea70220031df5f609e06d26d1f4b55605f483977e08406528c4ceab729d010d52725dd2
+    <= 9000
+    => e00a000068054d415449437d1afa7b718fb893db30a3abc0cfc608aacfebb000000012000000013044022000d8fa7b6e409a0dc55723ba975179e7d1181d1fc78fccbece4e5a264814366a02203927d84a710c8892d02f7386ad20147c75fba4bdd486b0256ecd005770a7ca5b
+    <= 9000
+    => e004000085058000002c8000003c80000000000000000000000002f86d0146841dcd650085086a18cd7882fd50947d1afa7b718fb893db30a3abc0cfc608aacfebb080b844a9059cbb000000000000000000000000b0b5b0106d69fe64545a60a68c014f7570d3f8610000000000000000000000000000000000000000000000029784d963dbc85a1ec0
+    <= 0030c7d7899a892c9370dc43aa15d309805f52319c32daf22406a42ff32ec6013b746d9409a45b70c6e511d9802cc477cebfd7128140ac649371e988f33f3a85559000
+    `)
+  );
+  const eth = new Eth(transport);
+  const result = await signTxWithResolution(
+    eth,
+    "44'/60'/0'/0/0",
+    "02f86d0146841dcd650085086a18cd7882fd50947d1afa7b718fb893db30a3abc0cfc608aacfebb080b844a9059cbb000000000000000000000000b0b5b0106d69fe64545a60a68c014f7570d3f8610000000000000000000000000000000000000000000000029784d963dbc85a1ec0",
+    {
+      erc20: true,
+      nft: true,
+      externalPlugins: true,
+      domains: [
+        {
+          registry: "ens",
+          address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          domain: "dev.0xkvn.eth",
+          type: "forward",
+        },
+      ],
+    }
+  );
+
+  expect(result).toEqual({
+    r: "30c7d7899a892c9370dc43aa15d309805f52319c32daf22406a42ff32ec6013b",
+    s: "746d9409a45b70c6e511d9802cc477cebfd7128140ac649371e988f33f3a8555",
+    v: "00",
+  });
+});
+
+test("signTransaction NFT with domain", async () => {
+  jest.spyOn(axios, "request").mockImplementationOnce(async ({ url }) => {
+    if (url?.includes("dev.0xkvn.eth?challenge=0xa8a8b649")) {
+      return {
+        data: {
+          payload:
+            "0101030201011301031401011204a8a8b64921013c200930786b766e2e6574682214b0b5b0106d69fe64545a60a68c014f7570d3f86115473045022100dc88dd13819497be8202dbdeddaefd68a1f64ad08855e2f35fc178625a06a7f1022023cdc8ca14233ee4778c81cd26d82e2a5ce27021f8c3cb51bb7d1125313a8cf5",
+        },
+      };
+    }
+  });
+  jest.spyOn(axios, "get").mockImplementation(async (url) => {
+    if (
+      url?.includes(
+        "0x60f80121c31a0d46b5279700f9df786054aa5ee5/plugin-selector/0xb88d4fde"
+      )
+    ) {
+      return {
+        data: {
+          payload:
+            "01010645524337323160f80121c31a0d46b5279700f9df786054aa5ee5b88d4fde0000000000000001020147304502206224f90b61a09033d06ee1bd2045fb1f2edd26d479890d253229f3c2a1952aef0221008258bbde083cff7eab1e5b3e9dacccbdcf31232cc45740cb510f7aef00ec766e",
+        },
+      };
+    } else if (
+      url?.includes(
+        "/ethereum/1/contracts/0x60f80121c31a0d46b5279700f9df786054aa5ee5"
+      )
+    ) {
+      return {
+        data: {
+          payload:
+            "01010752617269626c6560f80121c31a0d46b5279700f9df786054aa5ee5000000000000000101014630440220587a77c4f5e7cc012e4e5e52548790a87c4eb20321249f3ef61e4018b107beeb02206ec8f371023bc15311c4637eb7ba7153fb9e47f1bb7b30db285f4bf9adaa2454",
+        },
+      };
+    }
+  });
+
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+    => e020000000
+    <= a8a8b6499000
+    => e022010081007f0101030201011301031401011204a8a8b64921013c200930786b766e2e6574682214b0b5b0106d69fe64545a60a68c014f7570d3f86115473045022100dc88dd13819497be8202dbdeddaefd68a1f64ad08855e2f35fc178625a06a7f1022023cdc8ca14233ee4778c81cd26d82e2a5ce27021f8c3cb51bb7d1125313a8cf5
+    <= 9000
+    => e01600007301010645524337323160f80121c31a0d46b5279700f9df786054aa5ee5b88d4fde0000000000000001020147304502206224f90b61a09033d06ee1bd2045fb1f2edd26d479890d253229f3c2a1952aef0221008258bbde083cff7eab1e5b3e9dacccbdcf31232cc45740cb510f7aef00ec766e
+    <= 9000
+    => e01400006f01010752617269626c6560f80121c31a0d46b5279700f9df786054aa5ee5000000000000000101014630440220587a77c4f5e7cc012e4e5e52548790a87c4eb20321249f3ef61e4018b107beeb02206ec8f371023bc15311c4637eb7ba7153fb9e47f1bb7b30db285f4bf9adaa2454
+    <= 9000
+    => e004000096058000002c8000003c80000000000000000000000002f8ee0146841ad27480850912e4364a83023c549460f80121c31a0d46b5279700f9df786054aa5ee580b8c4b88d4fde0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d000000000000000000000000b0b5b0106d69fe64545a60a68c014f7570d3f8610000000000000000000000000000000000
+    <= 9000
+    => e004800070000000000000000000000000112999000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000043078303000000000000000000000000000000000000000000000000000000000c0
+    <= 01d82878b966f8e6fd94b76c942a7735e4668377f9030285aa2177bf77e59a39347f7908439d2968a8cdb261eae4498dbbf6c5808dc4974fc304486b373001a4349000
+    `)
+  );
+  const eth = new Eth(transport);
+  const result = await signTxWithResolution(
+    eth,
+    "44'/60'/0'/0/0",
+    "02f8ee0146841ad27480850912e4364a83023c549460f80121c31a0d46b5279700f9df786054aa5ee580b8c4b88d4fde0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d000000000000000000000000b0b5b0106d69fe64545a60a68c014f7570d3f8610000000000000000000000000000000000000000000000000000000000112999000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000043078303000000000000000000000000000000000000000000000000000000000c0",
+    {
+      erc20: true,
+      nft: true,
+      externalPlugins: true,
+      domains: [
+        {
+          registry: "ens",
+          address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+          domain: "dev.0xkvn.eth",
+          type: "forward",
+        },
+      ],
+    }
+  );
+  jest.clearAllMocks();
+  expect(result).toEqual({
+    r: "d82878b966f8e6fd94b76c942a7735e4668377f9030285aa2177bf77e59a3934",
+    s: "7f7908439d2968a8cdb261eae4498dbbf6c5808dc4974fc304486b373001a434",
+    v: "01",
+  });
+});
+
 test("signPersonalMessage", async () => {
   const transport = await openTransportReplayer(
     RecordStore.fromString(`
@@ -367,8 +553,10 @@ test("provideERC20TokenInformation", async () => {
   const zrxInfo = byContractAddressAndChainId(
     "0xe41d2489571d322189246dafa5ebde1f4699f498",
     1
+  )!;
+  const result = await eth.provideERC20TokenInformation(
+    zrxInfo.data.toString("hex")
   );
-  const result = await eth.provideERC20TokenInformation(zrxInfo as TokenInfo);
   expect(result).toEqual(true);
 });
 
@@ -462,13 +650,13 @@ test("starkSignOrderTokens", async () => {
   const tokenInfo1 = byContractAddressAndChainId(
     "0xe41d2489571d322189246dafa5ebde1f4699f498",
     1
-  );
-  await eth.provideERC20TokenInformation(tokenInfo1 as TokenInfo);
+  )!;
+  await eth.provideERC20TokenInformation(tokenInfo1.data.toString("hex"));
   const tokenInfo2 = byContractAddressAndChainId(
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
     1
-  );
-  await eth.provideERC20TokenInformation(tokenInfo2 as TokenInfo);
+  )!;
+  await eth.provideERC20TokenInformation(tokenInfo2.data.toString("hex"));
   const result = await eth.starkSignOrder(
     "21323'/0",
     "e41d2489571d322189246dafa5ebde1f4699f498",
@@ -503,13 +691,13 @@ test("starkSignOrderTokens_v2", async () => {
   const tokenInfo1 = byContractAddressAndChainId(
     "0xe41d2489571d322189246dafa5ebde1f4699f498",
     1
-  );
-  await eth.provideERC20TokenInformation(tokenInfo1 as TokenInfo);
+  )!;
+  await eth.provideERC20TokenInformation(tokenInfo1.data.toString("hex"));
   const tokenInfo2 = byContractAddressAndChainId(
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
     1
-  );
-  await eth.provideERC20TokenInformation(tokenInfo2 as TokenInfo);
+  )!;
+  await eth.provideERC20TokenInformation(tokenInfo2.data.toString("hex"));
   const result = await eth.starkSignOrder_v2(
     "21323'/0",
     "e41d2489571d322189246dafa5ebde1f4699f498",
@@ -652,8 +840,8 @@ test("starkDepositToken", async () => {
   const tokenInfo = byContractAddressAndChainId(
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
     1
-  );
-  await eth.provideERC20TokenInformation(tokenInfo as TokenInfo);
+  )!;
+  await eth.provideERC20TokenInformation(tokenInfo.data.toString("hex"));
   await eth.starkProvideQuantum(
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
     new BigNumber(1)
@@ -706,8 +894,8 @@ test("starkWithdrawToken", async () => {
   const tokenInfo = byContractAddressAndChainId(
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
     1
-  );
-  await eth.provideERC20TokenInformation(tokenInfo as TokenInfo);
+  )!;
+  await eth.provideERC20TokenInformation(tokenInfo.data.toString("hex"));
   await eth.starkProvideQuantum(
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
     new BigNumber(1)
@@ -846,8 +1034,8 @@ test("starkEscapeTokens", async () => {
   const tokenInfo = byContractAddressAndChainId(
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
     1
-  );
-  await eth.provideERC20TokenInformation(tokenInfo as TokenInfo);
+  )!;
+  await eth.provideERC20TokenInformation(tokenInfo.data.toString("hex"));
   await eth.starkProvideQuantum(
     "0xdac17f958d2ee523a2206206994597c13d831ec7",
     new BigNumber(1)

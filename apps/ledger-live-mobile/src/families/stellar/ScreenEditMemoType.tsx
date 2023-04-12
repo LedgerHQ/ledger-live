@@ -15,9 +15,6 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 const items = StellarMemoType.map(type => ({
@@ -32,18 +29,6 @@ type NavigationProps = BaseComposite<
     >
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
-      ScreenName.StellarEditMemoType
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.StellarEditMemoType
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.StellarEditMemoType
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
       ScreenName.StellarEditMemoType
     >
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.StellarEditMemoType>

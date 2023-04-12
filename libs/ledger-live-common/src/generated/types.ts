@@ -46,10 +46,6 @@ import { Transaction as nearTransaction } from "../families/near/types";
 import { TransactionRaw as nearTransactionRaw } from "../families/near/types";
 import { TransactionStatus as nearTransactionStatus } from "../families/near/types";
 import { TransactionStatusRaw as nearTransactionStatusRaw } from "../families/near/types";
-import { Transaction as neoTransaction } from "../families/neo/types";
-import { TransactionRaw as neoTransactionRaw } from "../families/neo/types";
-import { TransactionStatus as neoTransactionStatus } from "../families/neo/types";
-import { TransactionStatusRaw as neoTransactionStatusRaw } from "../families/neo/types";
 import { Transaction as polkadotTransaction } from "@ledgerhq/coin-polkadot/types";
 import { TransactionRaw as polkadotTransactionRaw } from "@ledgerhq/coin-polkadot/types";
 import { TransactionStatus as polkadotTransactionStatus } from "@ledgerhq/coin-polkadot/types";
@@ -88,7 +84,6 @@ export type Transaction =
   | filecoinTransaction
   | hederaTransaction
   | nearTransaction
-  | neoTransaction
   | polkadotTransaction
   | rippleTransaction
   | solanaTransaction
@@ -109,7 +104,6 @@ export type TransactionRaw =
   | filecoinTransactionRaw
   | hederaTransactionRaw
   | nearTransactionRaw
-  | neoTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
   | solanaTransactionRaw
@@ -130,7 +124,6 @@ export type TransactionStatus =
   | filecoinTransactionStatus
   | hederaTransactionStatus
   | nearTransactionStatus
-  | neoTransactionStatus
   | polkadotTransactionStatus
   | rippleTransactionStatus
   | solanaTransactionStatus
@@ -151,7 +144,6 @@ export type TransactionStatusRaw =
   | filecoinTransactionStatusRaw
   | hederaTransactionStatusRaw
   | nearTransactionStatusRaw
-  | neoTransactionStatusRaw
   | polkadotTransactionStatusRaw
   | rippleTransactionStatusRaw
   | solanaTransactionStatusRaw
