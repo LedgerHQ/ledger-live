@@ -124,7 +124,7 @@ const Default = () => {
         <OnboardingAppInstallDebugButton />
       </Row>
       <Row title={"delist specific token"} desc={"addToken test"}>
-        <Button onClick={() => test()}>Bonjour</Button>
+        <Button onClick={() => test()}>Add Token</Button>
       </Row>
     </Body>
   );

@@ -39,31 +39,35 @@ type TokensListOptions = {
 const defaultTokenListOptions: TokensListOptions = {
   withDelisted: false,
 };
-function createTokenHash(token: TokenCurrency) {
+export function createTokenHash(token: TokenCurrency): string {
   return token
-    ? `${token.id}-${token.contractAddress}-${token.delisted}-${token.disableCountervalue}`
+    ? `${token.id}${token.contractAddress}${token.delisted}${token.disableCountervalue}${token.ticker}${token.countervalueTicker}${token.ledgerSignature}`
     : "";
 }
 
-const cleanObject = (obj: any) => {
+/**
+ * Only for jest purpose, clean object to be empty
+ * @param obj
+ */
+const __clearObject = (
+  obj: Record<string, TokenCurrency | TokenCurrency[]>
+): void => {
   for (const key in obj) {
-    // this check can be safely omitted in modern JS engines
-    // if (obj.hasOwnProperty(key))
     delete obj[key];
   }
 };
 /**
- * Clear all lists above for test simplicity
+ * Only for jest purpose, clear all the init list
  */
-export function clearAllList() {
+export function __clearAllLists(): void {
   tokensArray.length = 0;
   tokensArrayWithDelisted.length = 0;
-  cleanObject(tokensByCryptoCurrency);
-  cleanObject(tokensByCryptoCurrencyWithDelisted);
-  cleanObject(tokensById);
-  cleanObject(tokensByTicker);
-  cleanObject(tokensByAddress);
-  cleanObject(tokensByCurrencyAddress);
+  __clearObject(tokensByCryptoCurrency);
+  __clearObject(tokensByCryptoCurrencyWithDelisted);
+  __clearObject(tokensById);
+  __clearObject(tokensByTicker);
+  __clearObject(tokensByAddress);
+  __clearObject(tokensByCurrencyAddress);
   tokenListHashes.clear();
 }
 
@@ -178,36 +182,51 @@ function removeElemFromArray(array: TokenCurrency[], token: TokenCurrency) {
   }
 }
 
+function cleanTokenArray(
+  array: Record<string, TokenCurrency>,
+  stringIndex: string
+) {
+  tokenListHashes.delete(array[stringIndex]);
+  delete array[stringIndex];
+}
+
+/**
+ * Delete previous token entry to all array
+ * @param token
+ */
+function cleanExistingTokenInArray(token: TokenCurrency) {
+  const { id, contractAddress, parentCurrency, ticker } = token;
+  const lowCaseContract = contractAddress.toLowerCase();
+
+  cleanTokenArray(tokensById, id);
+  cleanTokenArray(
+    tokensByCurrencyAddress,
+    parentCurrency.id + ":" + lowCaseContract
+  );
+  cleanTokenArray(tokensByAddress, lowCaseContract);
+  cleanTokenArray(tokensByTicker, ticker);
+  removeElemFromArray(tokensArray, token);
+  removeElemFromArray(tokensArrayWithDelisted, token);
+  removeElemFromArray(tokensByCryptoCurrency[parentCurrency.id], token);
+  removeElemFromArray(
+    tokensByCryptoCurrencyWithDelisted[parentCurrency.id],
+    token
+  );
+}
+
 export function addTokens(list: TokenCurrency[]): void {
   list.forEach((token) => {
-    if (token === undefined) return;
+    if (!token) return;
     const tokenHash = createTokenHash(token);
     if (tokenListHashes.has(tokenHash)) return;
 
     const { id, contractAddress, parentCurrency } = token;
     const lowCaseContract = contractAddress.toLowerCase();
-
-    tokenListHashes.delete(createTokenHash(tokensById[id]));
-    delete tokensById[id];
-    if (tokensByCurrencyAddress)
-      tokenListHashes.delete(
-        createTokenHash(
-          tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract]
-        )
-      );
-    delete tokensByAddress[lowCaseContract];
-    delete tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract];
-    removeElemFromArray(tokensArray, token);
-    removeElemFromArray(tokensArrayWithDelisted, token);
-    removeElemFromArray(tokensByCryptoCurrency[parentCurrency.id], token);
-    removeElemFromArray(
-      tokensByCryptoCurrencyWithDelisted[parentCurrency.id],
-      token
-    );
+    cleanExistingTokenInArray(token);
 
     if (!token.delisted) tokensArray.push(token);
     tokensArrayWithDelisted.push(token);
-    tokensById[token.id] = token;
+    tokensById[id] = token;
 
     if (
       !tokensByTicker[token.ticker] ||
@@ -229,6 +248,8 @@ export function addTokens(list: TokenCurrency[]): void {
 
     if (!token.delisted) tokensByCryptoCurrency[parentCurrency.id].push(token);
     tokensByCryptoCurrencyWithDelisted[parentCurrency.id].push(token);
+
+    tokenListHashes.add(tokenHash);
   });
 }
 

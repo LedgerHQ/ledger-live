@@ -3,9 +3,10 @@ import {
   addTokens,
   convertERC20,
   listTokens,
-  clearAllList,
+  __clearAllLists,
   findTokenById,
   listTokensForCryptoCurrency,
+  createTokenHash,
 } from "./tokens";
 import { ERC20Token } from "./types";
 
@@ -60,7 +61,7 @@ const ethereumCurrency = getCryptoCurrencyById("ethereum");
 
 describe("tokens", () => {
   beforeEach(() => {
-    clearAllList();
+    __clearAllLists();
   });
   describe("addTokens", () => {
     it("Should list token to be empty", () => {
@@ -76,6 +77,32 @@ describe("tokens", () => {
         listTokensForCryptoCurrency(ethereumCurrency, { withDelisted: true })
           .length
       ).toBe(4);
+    });
+
+    it("Add token and readd the same token shouldn't delete anything", () => {
+      addTokens(initMainToken.map(convertERC20));
+      const changeToken: ERC20Token[] = [
+        [
+          "ethereum",
+          "kiba_inu",
+          "KIBA",
+          18,
+          "Kiba Inu",
+          "3045022100baa979e8461d439b324416dff31f277663b51fa36e5e60005933292d5151f32502200528872863ce6b55009387bd2c5b6556b907193e27f506236149634a97518822",
+          "0x005D1123878Fc55fbd56b54C73963b234a64af3c",
+          false,
+          false,
+        ],
+      ];
+      const tokenHash = createTokenHash(convertERC20(changeToken[0]));
+      const existingToken = listTokens().find((t) => t.ticker === "KIBA");
+      if (!existingToken) throw new Error("Should not be empty");
+      expect(tokenHash).toBe(createTokenHash(existingToken));
+
+      addTokens(changeToken.map(convertERC20));
+      const tokenAfterChange = listTokens().find((t) => t.ticker === "KIBA");
+      if (!tokenAfterChange) throw new Error("Should not be empty");
+      expect(tokenHash).toBe(createTokenHash(tokenAfterChange));
     });
 
     it("Add tokens normally and then delist one token", () => {
