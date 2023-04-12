@@ -9,7 +9,7 @@
     "start": "next start",
     "serve": "next start -p 8080",
     "lint": "next lint",
-    "clean:full": "npx rimraf .next node_modules"
+    "clean:full": "npx rimraf .next node_modules public"
   },
   "dependencies": {
     "@ledgerhq/react-ui": "*",
