@@ -250,7 +250,14 @@ const FirmwareUpdateBanner = () => {
           <Button
             type="main"
             outline={false}
-            onPress={onExperimentalFirmwareUpdate}
+            onPress={
+              newFwUpdateUxFeatureFlag?.enabled
+                ? onExperimentalFirmwareUpdate
+                : () => {
+                  setShowBatteryWarningDrawer(false);
+                  setShowUnsupportedUpdateDrawer(true);
+                }
+            }
             mt={8}
             alignSelf="stretch"
           >
