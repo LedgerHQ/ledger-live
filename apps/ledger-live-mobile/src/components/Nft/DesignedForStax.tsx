@@ -21,7 +21,7 @@ const LedgerLogo = ({
 } & DesignedForStaxTextProps) => {
   return (
     <Flex px={size === "small" ? 1 : 2}>
-      <Icons.LedgerLogoRegular
+      <Icons.LedgerLogoMedium
         size={size === "medium" ? 24 : size === "large" ? 36 : 16}
         color={hideBackground ? "neutral.c100" : "constant.white"}
       />
