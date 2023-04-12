@@ -1,157 +1,104 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  useMemo,
-  MutableRefObject,
-} from "react";
+import React, { useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useLocale } from "../context/Locale";
 import { urls } from "../config/urls";
-
-/**
- * NB: this implementation is not great, we should have just implemented this
- * with the settings reducer. It would make everything much simpler. No
- * context provider needed, no weird exposition of refs.
- * Feel free to refactor and handle the migration.
- * */
+import { store } from "../context/LedgerStore";
+import { generalTermsVersionAcceptedSelector } from "../reducers/settings";
+import { setGeneralTermsVersionAccepted } from "../actions/settings";
 
 const generalTermsVersionRequired = "2022-05-10";
-const ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY = "acceptedTermsVersion";
 
-function isAcceptedVersionUpToDate(
-  acceptedVersion: string,
-  currentVersion: string,
-) {
+/**
+ * Legacy storage data: we used to save the accepted version directly in
+ * AsyncStorage. Now we use the state.settings part of Redux.
+ * Do not write anything new at this storage key.
+ * The migration of that data is done in the `GeneralTermsContextProvider`
+ * component below.
+ * */
+const LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY =
+  "acceptedTermsVersion";
+async function loadLegacyAcceptedTermsVersion() {
+  return AsyncStorage.getItem(
+    LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY,
+  );
+}
+async function eraseLegacyAcceptedTermsVersion() {
+  AsyncStorage.removeItem(LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY);
+}
+
+function isAcceptedVersionUpToDate({
+  acceptedVersion,
+  requiredVersion,
+}: {
+  acceptedVersion?: string;
+  requiredVersion: string;
+}) {
   if (!acceptedVersion) {
     return false;
   }
-
   try {
     const acceptedTermsVersion = new Date(acceptedVersion);
-    const currentTermsVersion = new Date(currentVersion);
-
+    const currentTermsVersion = new Date(requiredVersion);
     return acceptedTermsVersion >= currentTermsVersion;
   } catch (error) {
     console.error(`Failed to parse terms version's dates: ${error}`);
-
     return false;
   }
 }
 
-async function isAcceptedTerms(
-  storageKey: string,
-  termsRequiredVersion: string,
-) {
-  const acceptedTermsVersion = await AsyncStorage.getItem(storageKey);
-  if (!acceptedTermsVersion) {
-    return false;
-  }
-  return isAcceptedVersionUpToDate(acceptedTermsVersion, termsRequiredVersion);
+async function unacceptGeneralTerms() {
+  store.dispatch(setGeneralTermsVersionAccepted(undefined));
 }
 
-async function isAcceptedGeneralTerms() {
-  return isAcceptedTerms(
-    ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY,
-    generalTermsVersionRequired,
-  );
+async function setGeneralTermsAcceptedVersion(acceptedVersion: string) {
+  store.dispatch(setGeneralTermsVersionAccepted(acceptedVersion));
 }
 
-async function setGeneralTermsNotAccepted() {
-  await AsyncStorage.removeItem(ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY);
-}
-
-async function setGeneralTermsLastVersionAccepted() {
-  await AsyncStorage.setItem(
-    ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY,
-    generalTermsVersionRequired,
-  );
-}
-
-/**
- * This is used to expose a method that updates the internal state of
- * `AcceptedTermsContextProvider`.
- * It's a needed workaround as this functionality needs to be accessed outside
- * of the React scope. (Needed for the e2e bridge).
- */
-const acceptGeneralTermsAndUpdateStateRef: MutableRefObject<
-  (() => void) | null
-> = React.createRef();
-
-export function acceptGeneralTermsAndUpdateState() {
-  if (acceptGeneralTermsAndUpdateStateRef.current) {
-    /**
-     * This condition means the `AcceptedTermsContextProvider` is mounted.
-     * This call will update the state in the `AcceptedTermsContextProvider`.
-     * */
-    acceptGeneralTermsAndUpdateStateRef.current();
-  } else {
-    /**
-     * If the `AcceptedTermsContextProvider` is not mounted yet, then we just
-     * change the value in storage.
-     * When `AcceptedTermsContextProvider` mounts, it will pick up this value and
-     * update its state.
-     * */
-    setGeneralTermsLastVersionAccepted();
-  }
+export async function acceptGeneralTermsLastVersion() {
+  setGeneralTermsAcceptedVersion(generalTermsVersionRequired);
 }
 
 type TermsContextValue = {
   accepted: boolean;
-  accept: () => Promise<boolean>;
-  unAccept: () => Promise<boolean>;
+  accept: () => void;
+  unAccept: () => void;
 };
 
 export const TermsContext = React.createContext<TermsContextValue>({
   accepted: false,
-  accept: () => Promise.resolve(false),
-  unAccept: () => Promise.resolve(false),
+  accept: acceptGeneralTermsLastVersion,
+  unAccept: unacceptGeneralTerms,
 });
 
 export const GeneralTermsContextProvider: React.FC<{
   children?: React.ReactNode | null | undefined;
 }> = ({ children }) => {
-  const [accepted, setAccepted] = useState(true);
-
-  const unAccept = useCallback(
-    () =>
-      setGeneralTermsNotAccepted()
-        .then(() => {
-          setAccepted(false);
-          return true;
-        })
-        .catch(() => false),
-    [],
-  );
-
-  const accept = useCallback(
-    () =>
-      setGeneralTermsLastVersionAccepted()
-        .then(() => {
-          setAccepted(true);
-          return true;
-        })
-        .catch(() => false),
-    [],
+  const generalTermsVersionAccepted = useSelector(
+    generalTermsVersionAcceptedSelector,
   );
 
   useEffect(() => {
-    if (!acceptGeneralTermsAndUpdateStateRef.current)
-      /**
-       * Expose the accept method to the wild world so that the state of this
-       * component can be updated from outside of the React scope.
-       * */
-      acceptGeneralTermsAndUpdateStateRef.current = accept;
-    isAcceptedGeneralTerms().then(setAccepted);
-    return () => {
-      acceptGeneralTermsAndUpdateStateRef.current = null;
-    };
-  }, [accept]);
+    // migration of the "accepted version" data from legacy storage key to redux
+    loadLegacyAcceptedTermsVersion().then(res => {
+      if (res) {
+        setGeneralTermsAcceptedVersion(res);
+        eraseLegacyAcceptedTermsVersion();
+      }
+    });
+  }, []);
 
   const value = useMemo(
-    () => ({ accepted, accept, unAccept }),
-    [accept, accepted, unAccept],
+    () => ({
+      accepted: isAcceptedVersionUpToDate({
+        acceptedVersion: generalTermsVersionAccepted,
+        requiredVersion: generalTermsVersionRequired,
+      }),
+      accept: acceptGeneralTermsLastVersion,
+      unAccept: unacceptGeneralTerms,
+    }),
+    [generalTermsVersionAccepted],
   );
 
   return (
