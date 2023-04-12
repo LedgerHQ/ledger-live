@@ -220,7 +220,7 @@
     "lend": "Lend",
     "catalog": "Discover",
     "market": "Market",
-    "protect": "Recover"
+    "recover": "Ledger Recover"
   },
   "stars": {
     "placeholder": "Star an account to display it here.",
