@@ -69,6 +69,7 @@ export const BuyActionDefault = ({ onClick }: { onClick: () => void }) => {
       onClick={onClick}
       iconComponent={<IconExchange size={14} />}
       labelComponent={<Trans i18nKey="accounts.contextMenu.buy" />}
+      accountActionsTestId={"buy-button"}
     />
   );
 };
@@ -78,6 +79,7 @@ export const SellActionDefault = ({ onClick }: { onClick: () => void }) => {
       onClick={onClick}
       iconComponent={<IconSell size={14} />}
       labelComponent={<Trans i18nKey="accounts.contextMenu.sell" />}
+      accountActionsTestId={"sell-button"}
     />
   );
 };
