@@ -706,11 +706,11 @@ DEPENDENCIES:
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.21.0_@babel+preset-env@7.17.10_metro-resolver@0.76.0_metro-_45bugrpbusvyszmca3id4feh4e/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
   - "EXBarCodeScanner (from `../../../node_modules/.pnpm/expo-barcode-scanner@12.3.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-barcode-scanner/ios`)"
   - "EXCamera (from `../../../node_modules/.pnpm/expo-camera@13.2.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-camera/ios`)"
-  - "EXFileSystem (from `../../../node_modules/.pnpm/expo-file-system@15.2.2_expo-constants@14.2.1_expo-modules-core@1.2.6_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-file-system/ios`)"
+  - "EXFileSystem (from `../../../node_modules/.pnpm/expo-file-system@15.2.2_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-file-system/ios`)"
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@4.1.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-image-loader/ios`)"
-  - "Expo (from `../../../node_modules/.pnpm/expo@48.0.9_@babel+core@7.21.0_@expo+metro-config@0.7.1_glob@7.2.0_metro-core@0.76.0_metro@0._zxsk3k7d4zaxil72tqi53j35si/node_modules/expo`)"
+  - "Expo (from `../../../node_modules/.pnpm/expo@48.0.9_@babel+core@7.21.0_metro@0.76.0_react-native@0.71.6_react@18.0.0/node_modules/expo`)"
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@11.1.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-image-manipulator/ios`)"
-  - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@1.2.2_expo-constants@14.2.1_react-native@0.71.6_react@18.0.0/node_modules/expo-modules-core`)"
+  - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@1.2.2_react-native@0.71.6_react@18.0.0/node_modules/expo-modules-core`)"
   - "FBLazyVector (from `../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.21.0_@babel+preset-env@7.17.10_metro-resolver@0.76.0_metro-_45bugrpbusvyszmca3id4feh4e/node_modules/react-native/Libraries/FBLazyVector`)"
   - "FBReactNativeSpec (from `../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.21.0_@babel+preset-env@7.17.10_metro-resolver@0.76.0_metro-_45bugrpbusvyszmca3id4feh4e/node_modules/react-native/React/FBReactNativeSpec`)"
   - Flipper (= 0.125.0)
@@ -867,15 +867,15 @@ EXTERNAL SOURCES:
   EXCamera:
     :path: "../../../node_modules/.pnpm/expo-camera@13.2.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-camera/ios"
   EXFileSystem:
-    :path: "../../../node_modules/.pnpm/expo-file-system@15.2.2_expo-constants@14.2.1_expo-modules-core@1.2.6_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-file-system/ios"
+    :path: "../../../node_modules/.pnpm/expo-file-system@15.2.2_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-file-system/ios"
   EXImageLoader:
     :path: "../../../node_modules/.pnpm/expo-image-loader@4.1.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-image-loader/ios"
   Expo:
-    :path: "../../../node_modules/.pnpm/expo@48.0.9_@babel+core@7.21.0_@expo+metro-config@0.7.1_glob@7.2.0_metro-core@0.76.0_metro@0._zxsk3k7d4zaxil72tqi53j35si/node_modules/expo"
+    :path: "../../../node_modules/.pnpm/expo@48.0.9_@babel+core@7.21.0_metro@0.76.0_react-native@0.71.6_react@18.0.0/node_modules/expo"
   ExpoImageManipulator:
     :path: "../../../node_modules/.pnpm/expo-image-manipulator@11.1.1_expo-modules-core@1.2.2_expo@48.0.9_react-native@0.71.6_react@18.0.0/node_modules/expo-image-manipulator/ios"
   ExpoModulesCore:
-    :path: "../../../node_modules/.pnpm/expo-modules-core@1.2.2_expo-constants@14.2.1_react-native@0.71.6_react@18.0.0/node_modules/expo-modules-core"
+    :path: "../../../node_modules/.pnpm/expo-modules-core@1.2.2_react-native@0.71.6_react@18.0.0/node_modules/expo-modules-core"
   FBLazyVector:
     :path: "../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.21.0_@babel+preset-env@7.17.10_metro-resolver@0.76.0_metro-_45bugrpbusvyszmca3id4feh4e/node_modules/react-native/Libraries/FBLazyVector"
   FBReactNativeSpec:
