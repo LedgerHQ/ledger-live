@@ -29,9 +29,6 @@ class Xpub {
 
   GAP = 20;
 
-  // when the difference between current blockheight and the blockheight in the storage is larger than this value, we ignore reorg
-  nbBlockIgnoreReorg = 2000;
-
   // need to be bigger than the number of tx from the same address that can be in the same block
   txsSyncArraySize = 1000;
 
@@ -60,7 +57,7 @@ class Xpub {
   async syncAddress(
     account: number,
     index: number,
-    currentBlockHeight
+    needReorg: boolean
   ): Promise<boolean> {
     const address = await this.crypto.getAddress(
       this.derivationMode,
@@ -73,9 +70,9 @@ class Xpub {
       `${this.crypto.network.name}-${this.derivationMode}-${this.xpub}-${account}-${index}`,
       address
     );
-
-    await this.checkAddressReorg(account, index, currentBlockHeight);
-
+    if (needReorg) {
+      await this.checkAddressReorg(account, index);
+    }
     // in case pendings have changed we clean them out
     const hasPendings = this.storage.hasPendingTx({
       account,
@@ -99,23 +96,20 @@ class Xpub {
   async checkAddressesBlock(
     account: number,
     index: number,
-    currentBlockHeight: number
+    needReorg: boolean
   ): Promise<boolean> {
     const addressesResults = await Promise.all(
       range(this.GAP).map((_, key) =>
-        this.syncAddress(account, index + key, currentBlockHeight)
+        this.syncAddress(account, index + key, needReorg)
       )
     );
     return some(addressesResults, (lastTx) => !!lastTx);
   }
 
-  async syncAccount(
-    account: number,
-    currentBlockHeight: number
-  ): Promise<number> {
+  async syncAccount(account: number, needReorg: boolean): Promise<number> {
     let index = 0;
     // eslint-disable-next-line no-await-in-loop
-    while (await this.checkAddressesBlock(account, index, currentBlockHeight)) {
+    while (await this.checkAddressesBlock(account, index, needReorg)) {
       index += this.GAP;
     }
     return index;
@@ -125,21 +119,19 @@ class Xpub {
   async sync(): Promise<number> {
     this.freshAddressIndex = 0;
     let account = 0;
-    /*
-    const [highestBlockHeight, highestBlockHash] = this.storage.getHighestBlockHeightAndHash();
-    const highestBlock = await this.explorer.getBlockByHeight(highestBlockHeight);
-    let needReorg = true;
-    if (highestBlock?.hash === highestBlockHash) {
-      needReorg = false;
-    }*/
-
-    const currentBlockHeight =
-      (await this.explorer.getCurrentBlock())?.height ?? 0;
+    const [highestBlockHeight, highestBlockHash] =
+      this.storage.getHighestBlockHeightAndHash();
+    let needReorg = highestBlockHeight > 0;
+    if (needReorg) {
+      const highestBlock = await this.explorer.getBlockByHeight(
+        highestBlockHeight
+      );
+      if (highestBlock?.hash === highestBlockHash) {
+        needReorg = false;
+      }
+    }
     // eslint-disable-next-line no-await-in-loop
-    while (
-      account < 2 &&
-      (await this.syncAccount(account, currentBlockHeight))
-    ) {
+    while (account < 2 && (await this.syncAccount(account, needReorg))) {
       // account=0 for receive address; account=1 for change address. No need to handle account>1
       account += 1;
     }
@@ -388,21 +380,14 @@ class Xpub {
     return inserted;
   }
 
-  async checkAddressReorg(
-    account: number,
-    index: number,
-    currentBlockHeight: number
-  ): Promise<void> {
+  async checkAddressReorg(account: number, index: number): Promise<void> {
     const [lastTxBlockheight, lastTxBlockhash] =
       this.storage.getLastConfirmedTxBlockheightAndHash({
         account,
         index,
       });
 
-    if (
-      !lastTxBlockheight ||
-      currentBlockHeight - lastTxBlockheight > this.nbBlockIgnoreReorg
-    ) {
+    if (!lastTxBlockheight) {
       return;
     }
 
