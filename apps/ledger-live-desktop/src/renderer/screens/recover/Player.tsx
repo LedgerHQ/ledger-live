@@ -6,10 +6,22 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/provider
 import { languageSelector } from "~/renderer/reducers/settings";
 import WebRecoverPlayer from "~/renderer/components/WebRecoverPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
+import styled from "styled-components";
 
 export type RecoverComponentParams = {
   appId: string;
 };
+
+const FullscreenWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 20;
+`;
 
 export default function RecoverPlayer({ match }: RouteComponentProps<RecoverComponentParams>) {
   const { params } = match;
@@ -20,13 +32,15 @@ export default function RecoverPlayer({ match }: RouteComponentProps<RecoverComp
   const theme = useTheme("colors.palette.type");
 
   return manifest ? (
-    <WebRecoverPlayer
-      manifest={manifest}
-      inputs={{
-        theme,
-        lang: locale,
-        ...params,
-      }}
-    />
+    <FullscreenWrapper>
+      <WebRecoverPlayer
+        manifest={manifest}
+        inputs={{
+          theme,
+          lang: locale,
+          ...params,
+        }}
+      />
+    </FullscreenWrapper>
   ) : null; // TODO: display an error component instead of `null`
 }
