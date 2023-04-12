@@ -17,7 +17,7 @@ import { urls } from "../config/urls";
  * Feel free to refactor and handle the migration.
  * */
 
-const currentGeneralTermsRequired = "2022-05-10";
+const generalTermsVersionRequired = "2022-05-10";
 const ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY = "acceptedTermsVersion";
 
 function isAcceptedVersionUpToDate(
@@ -54,7 +54,7 @@ async function isAcceptedTerms(
 async function isAcceptedGeneralTerms() {
   return isAcceptedTerms(
     ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY,
-    currentGeneralTermsRequired,
+    generalTermsVersionRequired,
   );
 }
 
@@ -65,7 +65,7 @@ async function setGeneralTermsNotAccepted() {
 async function setGeneralTermsLastVersionAccepted() {
   await AsyncStorage.setItem(
     ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY,
-    currentGeneralTermsRequired,
+    generalTermsVersionRequired,
   );
 }
 
