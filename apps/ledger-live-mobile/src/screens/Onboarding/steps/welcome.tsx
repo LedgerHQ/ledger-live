@@ -12,7 +12,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import { urls } from "../../../config/urls";
-import { AcceptedTermsContext } from "../../../logic/terms";
+import { TermsContext } from "../../../logic/terms";
 import { setAnalytics } from "../../../actions/settings";
 import useIsAppInBackground from "../../../components/useIsAppInBackground";
 import InvertTheme from "../../../components/theme/InvertTheme";
@@ -48,7 +48,7 @@ type NavigationProps = BaseComposite<
 function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { accept: acceptTerms } = useContext(AcceptedTermsContext);
+  const { accept: acceptTerms } = useContext(TermsContext);
 
   const onLanguageSelect = useCallback(
     () => navigation.navigate(ScreenName.OnboardingLanguage),
