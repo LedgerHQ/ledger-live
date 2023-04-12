@@ -35,6 +35,17 @@ class BitcoinLikeStorage implements IStorage {
       this.accountIndex[index].map((i) => this.txs[i]).some((tx) => !tx.block)
     );
   }
+  getHighestBlockHeightAndHash(): [number, string] {
+    let height = 0;
+    let hash = "";
+    this.txs.forEach((tx) => {
+      if (!!tx.block && tx.block.height > height) {
+        height = tx.block.height;
+        hash = tx.block.hash;
+      }
+    });
+    return [height, hash];
+  }
 
   getLastConfirmedTxBlockheightAndHash(txFilter: {
     account: number;

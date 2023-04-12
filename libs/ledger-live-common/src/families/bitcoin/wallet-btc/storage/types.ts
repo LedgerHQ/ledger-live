@@ -51,6 +51,7 @@ export interface IStorage {
   hasTx(txFilter: { account: number; index: number }): boolean;
   hasPendingTx(txFilter: { account: number; index: number }): boolean;
   getLastUnconfirmedTx(): TX | undefined;
+  getHighestBlockHeightAndHash(): [number, string];
   getTx(address: string, txId: string): TX | undefined;
   getUniquesAddresses(addressesFilter: {
     account?: number;

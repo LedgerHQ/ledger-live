@@ -125,6 +125,14 @@ class Xpub {
   async sync(): Promise<number> {
     this.freshAddressIndex = 0;
     let account = 0;
+    /*
+    const [highestBlockHeight, highestBlockHash] = this.storage.getHighestBlockHeightAndHash();
+    const highestBlock = await this.explorer.getBlockByHeight(highestBlockHeight);
+    let needReorg = true;
+    if (highestBlock?.hash === highestBlockHash) {
+      needReorg = false;
+    }*/
+
     const currentBlockHeight =
       (await this.explorer.getCurrentBlock())?.height ?? 0;
     // eslint-disable-next-line no-await-in-loop
