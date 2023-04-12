@@ -1,7 +1,8 @@
 import BigNumber from "bignumber.js";
 import { CosmosAccount, Transaction } from "./types";
-
-import { calculateFees } from "./js-prepareTransaction";
+import { getEstimatedFees } from "./js-prepareTransaction";
+import network from "../../network";
+jest.mock("../../network");
 
 const account = {
   id: "accountId",
@@ -17,29 +18,35 @@ const transaction = {
   useAllAmount: false,
 } as unknown as Transaction;
 
-describe("calculateFees", () => {
-  afterEach(() => {
-    calculateFees.reset();
-  });
-  it("should calculate fees for a transaction", async () => {
-    const { estimatedFees, estimatedGas } = await calculateFees({
-      account,
-      transaction,
+describe("getEstimatedFees", () => {
+  it("should return gas higher than estimate", async () => {
+    const gasSimulationMock = 42000;
+    // @ts-expect-error method is mocked
+    network.mockResolvedValue({
+      data: {
+        gas_info: {
+          gas_used: gasSimulationMock,
+        },
+      },
     });
-    expect(estimatedFees.gt(0)).toEqual(true);
-    expect(estimatedGas.gt(0)).toEqual(true);
+    const { estimatedGas } = await getEstimatedFees(account, transaction);
+    expect(estimatedGas.gt(new BigNumber(gasSimulationMock))).toEqual(true);
   });
 
-  it("should return cached result for the same inputs", async () => {
-    const { estimatedFees: fees1, estimatedGas: gas1 } = await calculateFees({
-      account,
-      transaction,
+  it("should calculate fees for a transaction", async () => {
+    // @ts-expect-error method is mocked
+    network.mockResolvedValue({
+      data: {
+        gas_info: {
+          gas_used: 42000,
+        },
+      },
     });
-    const { estimatedFees: fees2, estimatedGas: gas2 } = await calculateFees({
+    const { estimatedFees, estimatedGas } = await getEstimatedFees(
       account,
-      transaction,
-    });
-    expect(fees1).toEqual(fees2);
-    expect(gas1).toEqual(gas2);
+      transaction
+    );
+    expect(estimatedFees.gt(0)).toEqual(true);
+    expect(estimatedGas.gt(0)).toEqual(true);
   });
 });
