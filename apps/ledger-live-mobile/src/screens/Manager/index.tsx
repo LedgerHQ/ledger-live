@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import {
   useIsFocused,
@@ -51,6 +51,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
   const [chosenDevice, setChosenDevice] = useState<Device | null>();
   const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
@@ -95,6 +96,14 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     setDevice(params?.device);
   }, [params]);
 
+  const onOverridingHeader = useCallback((needToOverride: boolean) => {
+    if (needToOverride) {
+      setIsHeaderOverridden(true);
+    } else {
+      setIsHeaderOverridden(false);
+    }
+  }, []);
+
   const insets = useSafeAreaInsets();
 
   if (!isFocused) return null;
@@ -102,11 +111,13 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   return (
     <Flex flex={1} pt={(isExperimental ? ExperimentalHeaderHeight : 0) + 70}>
       <TrackScreen category="Manager" name="ChooseDevice" />
-      <Flex px={16} mb={8}>
-        <Text fontWeight="semiBold" variant="h4" testID="manager-title">
-          <Trans i18nKey="manager.title" />
-        </Text>
-      </Flex>
+      {!isHeaderOverridden ? (
+        <Flex px={16} mb={8}>
+          <Text fontWeight="semiBold" variant="h4" testID="manager-title">
+            <Trans i18nKey="manager.title" />
+          </Text>
+        </Flex>
+      ) : null}
 
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex flex={1} px={16} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
@@ -114,6 +125,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
             onSelect={onSelectDevice}
             stopBleScanning={!!device}
             displayServicesWidget
+            onOverridingHeader={onOverridingHeader}
           />
         </Flex>
       ) : (

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ScrollView, Linking, TouchableOpacity } from "react-native";
+import { ScrollView, Linking } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { HwTransportErrorType } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
@@ -166,11 +165,6 @@ const BleDevicesScanning = ({
       <TrackScreen
         category={`Looking for ${productName ?? "device"} Bluetooth`}
       />
-      {onGoBack && (
-        <TouchableOpacity onPress={onGoBack}>
-          <ArrowLeftMedium size={24} />
-        </TouchableOpacity>
-      )}
       <Flex flex={1} px={4}>
         <Flex height={180} alignItems="center" justifyContent="center">
           <Animation source={lottie} />

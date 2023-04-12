@@ -54,12 +54,20 @@ type Props = {
   // to communicate to a device via BLE.
   stopBleScanning?: boolean;
   displayServicesWidget?: boolean;
+  /**
+   * SelectDevice component can need to override the current header (during the bluetooth pairing flow)
+   * Any screen rendering this component (or a parent component rendering this component)
+   * and displaying a react-navigation header should react to this
+   * callback by updating its react-navigation options `headerShown` to false.
+   */
+  onOverridingHeader?: (needToOverride: boolean) => void;
 };
 
 export default function SelectDevice({
   onSelect,
   stopBleScanning,
   displayServicesWidget,
+  onOverridingHeader,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -294,6 +302,7 @@ export default function SelectDevice({
             onPairingSuccess={handleOnSelect}
             onGoBackFromScanning={closeBlePairingFlow}
             onPairingSuccessAddToKnownDevices
+            onOverridingHeader={onOverridingHeader}
           />
         ) : (
           <>
