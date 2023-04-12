@@ -39,12 +39,22 @@ export class DeviceAction {
 
   async genuineCheck(appDesc = "Bitcoin", installedDesc = "Bitcoin") {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo);
+    const modelId = DeviceModelId.nanoX;
 
     await this.page.evaluate(
       args => {
-        const [deviceInfo, result] = args;
+        const [deviceInfo, result, modelId] = args;
 
         (window as any).mock.events.mockDeviceEvent(
+          {
+            type: "deviceChange",
+            device: {
+              deviceId: "",
+              deviceName: "Some name",
+              modelId,
+            },
+            replaceable: false,
+          },
           {
             type: "listingApps",
             deviceInfo,
@@ -56,7 +66,7 @@ export class DeviceAction {
           { type: "complete" },
         );
       },
-      [deviceInfo, result],
+      [deviceInfo, result, modelId],
     );
 
     await this.loader.waitFor({ state: "hidden" });
@@ -68,12 +78,22 @@ export class DeviceAction {
     deviceModelId?: DeviceModelId,
   ) {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo, deviceModelId);
+    const modelId = DeviceModelId.nanoX;
 
     await this.page.evaluate(
       args => {
-        const [deviceInfo, result] = args;
+        const [deviceInfo, result, modelId] = args;
 
         (window as any).mock.events.mockDeviceEvent(
+          {
+            type: "deviceChange",
+            device: {
+              deviceId: "",
+              deviceName: "Some name",
+              modelId,
+            },
+            replaceable: false,
+          },
           {
             type: "listingApps",
             deviceInfo,
@@ -85,7 +105,7 @@ export class DeviceAction {
           { type: "complete" },
         );
       },
-      [deviceInfo, result],
+      [deviceInfo, result, modelId],
     );
 
     await this.loader.waitFor({ state: "hidden" });
@@ -96,12 +116,22 @@ export class DeviceAction {
     installedDesc = "Bitcoin,Litecoin,Ethereum (outdated)",
   ) {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo210lo5);
+    const modelId = DeviceModelId.nanoX;
 
     await this.page.evaluate(
       args => {
-        const [deviceInfo210lo5, result] = args;
+        const [deviceInfo210lo5, result, modelId] = args;
 
         (window as any).mock.events.mockDeviceEvent(
+          {
+            type: "deviceChange",
+            device: {
+              deviceId: "",
+              deviceName: "Some name",
+              modelId,
+            },
+            replaceable: false,
+          },
           {
             type: "listingApps",
             deviceInfo: deviceInfo210lo5,
@@ -113,7 +143,7 @@ export class DeviceAction {
           { type: "complete" },
         );
       },
-      [deviceInfo210lo5, result],
+      [deviceInfo210lo5, result, modelId],
     );
 
     await this.loader.waitFor({ state: "hidden" });
