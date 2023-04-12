@@ -60,6 +60,7 @@ import Learn from "~/renderer/screens/learn";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
 import SyncOnboarding from "./components/SyncOnboarding";
+import RecoverPlayer from "~/renderer/screens/recover/Player";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -232,6 +233,9 @@ export default function Default() {
                             <Route path="/swap" component={Swap2} />
                             <Route path="/market/:currencyId" component={MarketCoinScreen} />
                             <Route path="/market" component={Market} />
+                            <FeatureToggle feature="protectServicesDesktop">
+                              <Route path="/recover/:appId" component={RecoverPlayer} />
+                            </FeatureToggle>
                             <FeatureToggle feature="learn">
                               <Route path="/learn" component={Learn} />
                             </FeatureToggle>
