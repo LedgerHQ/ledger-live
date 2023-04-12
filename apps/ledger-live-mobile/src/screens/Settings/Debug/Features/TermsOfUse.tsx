@@ -2,10 +2,10 @@ import { Button, Text } from "@ledgerhq/native-ui";
 import React, { useContext, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import CheckTermOfUseUpdate from "../../../../components/CheckTermOfUseUpdate";
-import { AcceptedTermsContext } from "../../../../logic/terms";
+import { TermsContext } from "../../../../logic/terms";
 
 export default function DebugTermsOfUse() {
-  const { unAccept } = useContext(AcceptedTermsContext);
+  const { unAccept } = useContext(TermsContext);
   useEffect(() => {
     unAccept();
   }, [unAccept]);

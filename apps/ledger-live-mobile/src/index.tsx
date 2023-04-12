@@ -76,7 +76,7 @@ import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
 import AdjustProvider from "./components/AdjustProvider";
 import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
-import { AcceptedTermsContextProvider } from "./logic/terms";
+import { GeneralTermsContextProvider } from "./logic/terms";
 import HookDynamicContentCards from "./dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 import PerformanceConsole from "./components/PerformanceConsole";
@@ -241,11 +241,11 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <StyleProvider selectedPalette={resolvedTheme}>
-      <AcceptedTermsContextProvider>
+      <GeneralTermsContextProvider>
         <DeeplinksProvider resolvedTheme={resolvedTheme}>
           {children}
         </DeeplinksProvider>
-      </AcceptedTermsContextProvider>
+      </GeneralTermsContextProvider>
     </StyleProvider>
   );
 };

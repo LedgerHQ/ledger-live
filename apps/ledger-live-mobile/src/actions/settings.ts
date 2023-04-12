@@ -62,6 +62,7 @@ import {
   SettingsSetHasBeenUpsoldProtectPayload,
   SettingsSetHasSeenStaxEnabledNftsPopupPayload,
   SettingsSetCustomImageTypePayload,
+  SettingsSetGeneralTermsVersionAccepted,
 } from "./types";
 import { ImageType } from "../components/CustomImage/types";
 
@@ -286,6 +287,11 @@ export const dangerouslyOverrideState =
 export const setHasBeenUpsoldProtect =
   createAction<SettingsSetHasBeenUpsoldProtectPayload>(
     SettingsActionTypes.SET_HAS_BEEN_UPSOLD_PROTECT,
+  );
+
+export const setGeneralTermsVersionAccepted =
+  createAction<SettingsSetGeneralTermsVersionAccepted>(
+    SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED,
   );
 
 type PortfolioRangeOption = {
