@@ -56,15 +56,6 @@ function init(_DBPath: string) {
 }
 
 /**
- * Register a transformation for a given namespace and keyPath
- * it will be used when reading/writing from/to file
- */
-function registerTransform(ns: string, keyPath: string, transform: Transform) {
-  if (!transforms[ns]) transforms[ns] = {};
-  transforms[ns][keyPath] = transform;
-}
-
-/**
  * Load a namespace, using <file>.json
  */
 async function load(ns: string): Promise<unknown> {
@@ -275,18 +266,13 @@ export default {
   init,
   reload,
   load,
-  registerTransform,
   setEncryptionKey,
   removeEncryptionKey,
   isEncryptionKeyCorrect,
   hasEncryptionKey,
   setKey,
   getKey,
-  getNamespace,
-  setNamespace,
   hasBeenDecrypted,
-  save,
   cleanCache,
   resetAll,
-  getDBPath,
 };

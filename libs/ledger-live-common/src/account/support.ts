@@ -5,18 +5,10 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   shouldShowNewAccount,
   getReceiveFlowError,
-  canBeMigrated,
-  findAccountMigration,
   checkAccountSupported,
 } from "@ledgerhq/coin-framework/account/support";
 
-export {
-  shouldShowNewAccount,
-  getReceiveFlowError,
-  canBeMigrated,
-  findAccountMigration,
-  checkAccountSupported,
-};
+export { shouldShowNewAccount, getReceiveFlowError, checkAccountSupported };
 
 export function canSend(
   account: AccountLike,

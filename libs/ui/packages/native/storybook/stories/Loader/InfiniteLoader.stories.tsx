@@ -1,7 +1,5 @@
 import React from "react";
-import { storiesOf } from "../storiesOf";
-import { Flex, InfiniteLoader } from "../../../src";
-import { color, number } from "@storybook/addon-knobs";
+import { Flex, InfiniteLoader } from "../../../src/components";
 
 const description = `
 ### Spinner Component
@@ -21,19 +19,27 @@ import { InfiniteLoader } from "@ledgerhq/native-ui"
 \`\`\`
 `;
 
-const InfiniteLoaderSample = () => (
-  <Flex flex={1} flexDirection={"row"}>
-    <InfiniteLoader size={number("length", 38)} color={color("color", "primary.c50")} />
-  </Flex>
-);
-
-storiesOf((story) =>
-  story("Loader", module).add("InfiniteLoader", InfiniteLoaderSample, {
+export default {
+  title: "Loader/InfiniteLoader",
+  component: InfiniteLoader,
+  parameters: {
     docs: {
       title: "Selectable List",
       description: {
         component: description,
       },
     },
-  }),
+  },
+};
+
+export const InfiniteLoaderSample = (args: typeof InfiniteLoaderSampleArgs) => (
+  <Flex flex={1} flexDirection={"row"}>
+    <InfiniteLoader size={args.size} color={args.color} />
+  </Flex>
 );
+InfiniteLoaderSample.storyName = "InfiniteLoader";
+const InfiniteLoaderSampleArgs = {
+  size: 38,
+  color: "primary.c50",
+};
+InfiniteLoaderSample.args = InfiniteLoaderSampleArgs;

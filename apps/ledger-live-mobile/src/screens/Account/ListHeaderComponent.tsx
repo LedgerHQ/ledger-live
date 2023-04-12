@@ -11,7 +11,6 @@ import {
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 import { TFunction } from "react-i18next";
@@ -24,8 +23,6 @@ import Header from "./Header";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
 import NftCollectionsList from "./NftCollectionsList";
-import CompoundSummary from "../Lending/Account/CompoundSummary";
-import CompoundAccountBodyHeader from "../Lending/Account/AccountBodyHeader";
 import perFamilyAccountHeader from "../../generated/AccountHeader";
 import perFamilyAccountSubHeader from "../../generated/AccountSubHeader";
 import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
@@ -51,7 +48,6 @@ type Props = {
   counterValueCurrency: Currency;
   onAccountPress: () => void;
   onSwitchAccountCurrency: () => void;
-  compoundSummary?: CompoundAccountSummary;
   onAccountCardLayout: (event: LayoutChangeEvent) => void;
   colors: ColorPalette;
   secondaryActions: ActionButtonEvent[];
@@ -79,7 +75,6 @@ export function getListHeaderComponents({
   counterValueCurrency,
   onAccountPress,
   onSwitchAccountCurrency,
-  compoundSummary,
   onAccountCardLayout,
   colors,
   secondaryActions,
@@ -166,7 +161,6 @@ export function getListHeaderComponents({
       ...(!empty &&
       (AccountHeaderRendered ||
         AccountBalanceSummaryFooterRendered ||
-        (compoundSummary && account.type === "TokenAccount") ||
         secondaryActions.length > 0)
         ? [
             <SectionContainer>
@@ -182,15 +176,6 @@ export function getListHeaderComponents({
                 )}
                 {AccountBalanceSummaryFooterRendered && (
                   <Box mb={6}>{AccountBalanceSummaryFooterRendered}</Box>
-                )}
-                {compoundSummary && account.type === "TokenAccount" && (
-                  <Box>
-                    <CompoundSummary
-                      key="compoundSummary"
-                      account={account}
-                      compoundSummary={compoundSummary}
-                    />
-                  </Box>
                 )}
                 <FabAccountActions
                   account={account}
@@ -219,20 +204,6 @@ export function getListHeaderComponents({
         ? [
             <SectionContainer px={6}>
               <NftCollectionsList account={account} />
-            </SectionContainer>,
-          ]
-        : []),
-      ...(compoundSummary &&
-      account &&
-      account.type === "TokenAccount" &&
-      parentAccount
-        ? [
-            <SectionContainer px={6}>
-              <CompoundAccountBodyHeader
-                account={account}
-                parentAccount={parentAccount}
-                compoundSummary={compoundSummary}
-              />
             </SectionContainer>,
           ]
         : []),

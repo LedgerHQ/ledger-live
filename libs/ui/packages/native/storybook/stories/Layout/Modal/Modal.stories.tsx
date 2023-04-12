@@ -1,43 +1,59 @@
 import React, { useState, useCallback } from "react";
-import { storiesOf } from "../../storiesOf";
-import { text, button, boolean } from "@storybook/addon-knobs";
+import { Button } from "react-native";
 import { action } from "@storybook/addon-actions";
-import { Alert, BaseModal, IconBox, Icons } from "../../../../src";
+import { ComponentStory } from "@storybook/react-native";
+import { Alert, BaseModal, IconBox } from "../../../../src/components";
+import { Icons } from "../../../../src/assets";
 
-const makeModalStory = ({ noHeaderProps = false }) =>
-  function ModalStory() {
-    const [isOpen, setIsOpen] = useState(true);
+export default {
+  title: "Layout/Modal",
+  component: BaseModal,
+};
 
-    const openModal = useCallback(() => {
-      setIsOpen(true);
-    }, []);
+const Template = (args: typeof BaseStoryArgs & typeof WithoutHeaderStoryArgs) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-    button("Open modal", openModal);
+  const openModal = useCallback(() => {
+    setIsOpen(true);
+  }, []);
 
-    return (
+  return (
+    <>
+      <Button onPress={openModal} title="Open Modal" />
       <BaseModal
         isOpen={isOpen}
         onClose={() => {
           action("onClose")();
           setIsOpen(false);
         }}
-        {...(noHeaderProps
+        {...(args.noHeader
           ? {}
           : {
-              title: text("title", "title"),
-              description: text("description", "Description"),
-              subtitle: text("subtitle", "Subtitle"),
+              ...args,
               Icon: <IconBox Icon={Icons.TrashMedium} />,
             })}
-        noCloseButton={boolean("noCloseButton", false)}
+        noCloseButton={args.noCloseButton}
       >
         <Alert type="info" showIcon={false} title="Example children (Alert component)" />
       </BaseModal>
-    );
-  };
+    </>
+  );
+};
 
-storiesOf((story) =>
-  story("Layout/Modal", module)
-    .add("BaseModal", makeModalStory({ noHeaderProps: false }))
-    .add("BaseModal without header props", makeModalStory({ noHeaderProps: true })),
-);
+export const BaseStory: ComponentStory<typeof BaseModal> = Template.bind({});
+BaseStory.storyName = "BaseModal";
+const BaseStoryArgs = {
+  noHeader: false,
+  title: "title",
+  description: "Description",
+  subtitle: "Subtitle",
+  noCloseButton: false,
+};
+BaseStory.args = BaseStoryArgs;
+export const WithoutHeaderStory: ComponentStory<typeof BaseModal> = Template.bind({});
+WithoutHeaderStory.storyName = "BaseModal (no header)";
+const WithoutHeaderStoryArgs = {
+  noHeader: true,
+  noCloseButton: false,
+};
+WithoutHeaderStory.args = WithoutHeaderStoryArgs;

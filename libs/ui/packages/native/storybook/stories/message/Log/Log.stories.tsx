@@ -1,14 +1,20 @@
 import React from "react";
-import { text } from "@storybook/addon-knobs";
-import { storiesOf } from "../../storiesOf";
-import { Log, Flex } from "../../../../src/";
+import { Log, Flex } from "../../../../src/components";
 
-const LogSample = () => {
+export default {
+  title: "Messages/Log",
+  component: Log,
+};
+
+export const LogSample = (args: typeof LogSampleArgs) => {
   return (
     <Flex>
-      <Log>{text("children text", "some text")}</Log>
+      <Log>{args.children}</Log>
     </Flex>
   );
 };
-
-storiesOf((story) => story("Messages", module).add("Log", LogSample));
+LogSample.storyName = "Log";
+const LogSampleArgs = {
+  children: "some text",
+};
+LogSample.args = LogSampleArgs;

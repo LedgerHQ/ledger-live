@@ -28,8 +28,6 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         button: SpeculosButton.RIGHT,
         expectedValue: ({ transaction }) => {
           if (transaction.mode === "erc20.approve") return "Approve";
-          if (transaction.mode === "compound.supply") return "Lend Assets";
-          if (transaction.mode === "compound.withdraw") return "Redeem Assets";
           return "";
         },
       },
@@ -49,21 +47,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
             return "Unlimited " + a.token.ticker;
           }
 
-          const amount =
-            a &&
-            a.compoundBalance &&
-            transaction.mode === "compound.withdraw" &&
-            transaction.useAllAmount
-              ? a.compoundBalance
-              : status.amount;
-
-          if (
-            a &&
-            transaction.mode === "compound.withdraw" &&
-            transaction.useAllAmount
-          ) {
-            return formatDeviceAmount(a.compoundBalance, amount);
-          }
+          const amount = status.amount;
 
           if (a) {
             return formatDeviceAmount(a.token, amount);

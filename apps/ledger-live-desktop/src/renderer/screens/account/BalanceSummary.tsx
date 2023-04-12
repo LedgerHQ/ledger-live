@@ -4,7 +4,6 @@ import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio"
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTimeRange } from "~/renderer/actions/settings";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/renderer/reducers/settings";
@@ -12,7 +11,6 @@ import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountBalanceSummaryHeader from "./AccountBalanceSummaryHeader";
-import AccountLendingFooter from "~/renderer/screens/lend/Account/AccountBalanceSummaryFooter";
 import perFamilyAccountBalanceSummaryFooter from "~/renderer/generated/AccountBalanceSummaryFooter";
 import FormattedDate from "~/renderer/components/FormattedDate";
 type Props = {
@@ -22,8 +20,6 @@ type Props = {
   countervalueFirst: boolean;
   setCountervalueFirst: (a: boolean) => void;
   mainAccount: Account | undefined | null;
-  isCompoundEnabled?: boolean;
-  ctoken: TokenCurrency | undefined | null;
 };
 export default function AccountBalanceSummary({
   account,
@@ -31,9 +27,7 @@ export default function AccountBalanceSummary({
   chartColor,
   setCountervalueFirst,
   mainAccount,
-  isCompoundEnabled,
   parentAccount,
-  ctoken,
 }: Props) {
   const [range] = useTimeRange();
   const counterValue = useSelector(counterValueCurrencySelector);
@@ -136,15 +130,6 @@ export default function AccountBalanceSummary({
           account={account}
           counterValue={counterValue}
           discreetMode={discreetMode}
-        />
-      )}
-      {isCompoundEnabled && account.type === "TokenAccount" && parentAccount && ctoken && (
-        <AccountLendingFooter
-          account={account}
-          parentAccount={parentAccount}
-          countervalue={counterValue}
-          discreetMode={discreetMode}
-          ctoken={ctoken}
         />
       )}
     </Card>

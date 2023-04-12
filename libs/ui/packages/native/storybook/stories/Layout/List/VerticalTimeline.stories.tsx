@@ -1,7 +1,19 @@
+import { ComponentStory } from "@storybook/react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
-import { storiesOf } from "../../storiesOf";
-import { Flex, VerticalTimeline, Button, Switch, Divider, ContinueOnDevice } from "../../../../src";
+import {
+  Flex,
+  VerticalTimeline,
+  Button,
+  Switch,
+  Divider,
+  ContinueOnDevice,
+} from "../../../../src/components";
+
+export default {
+  title: "Layout/List/VerticalTimeline",
+  component: VerticalTimeline,
+};
 
 const { BodyText, SubtitleText, ItemStatus } = VerticalTimeline;
 
@@ -87,7 +99,7 @@ const defaultItems = [
   },
 ];
 
-const VerticalTimelineStory = () => {
+export const VerticalTimelineStory: ComponentStory<typeof VerticalTimeline> = () => {
   const [items, setItems] = useState(defaultItems);
   const [animate, setAnimate] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -132,6 +144,7 @@ const VerticalTimelineStory = () => {
     </Flex>
   );
 };
+VerticalTimelineStory.storyName = "VerticalTimeline";
 
 const DynamicHeightComponent = () => {
   const [height, setHeight] = useState(100);
@@ -149,7 +162,3 @@ const DynamicHeightComponent = () => {
     </View>
   );
 };
-
-storiesOf((story) =>
-  story("Layout/List", module).add("VerticalTimeline", () => <VerticalTimelineStory />),
-);

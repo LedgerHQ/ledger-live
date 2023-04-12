@@ -1,49 +1,72 @@
-import { storiesOf } from "../../storiesOf";
-import { select, boolean, text } from "@storybook/addon-knobs";
-import { action } from "@storybook/addon-actions";
 import React from "react";
+import { action } from "@storybook/addon-actions";
 import Button, { PromisableButton } from "../../../../src/components/cta/Button";
 import Info from "../../../../src/icons/Info";
+import { ComponentMeta, ComponentStory } from "@storybook/react-native";
 import { IconType } from "src/components/Icon/type";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const iconOptions = {
-  Info,
-  None: undefined,
-};
-const iconSelect = (): IconType =>
-  iconOptions[select("Icon", ["Info", "None"], "None")] as IconType;
-const iconName = () => text("Icon Name", "Info");
+export default {
+  title: "CTA/Button",
+  component: Button,
+  argTypes: {
+    type: {
+      options: ["main", "error", "shade", "color", undefined],
+      control: { type: "select" },
+    },
+    size: {
+      options: ["small", "medium", "large", undefined],
+      control: { type: "select" },
+    },
+    iconPosition: {
+      options: ["right", "left"],
+      control: { type: "select" },
+    },
+    Icon: {
+      options: ["Info", "None"],
+      control: { type: "select" },
+    },
+  },
+} as ComponentMeta<typeof Button>;
 
-const Regular = (): JSX.Element => (
+export const Regular: ComponentStory<typeof Button> = (args: typeof RegularArgs) => (
   <Button
-    type={select("type", ["main", "error", "shade", "color", undefined], "main")}
-    size={select("size", ["small", "medium", "large", undefined], undefined)}
-    iconPosition={select("iconPosition", ["right", "left"], "right")}
-    Icon={iconSelect()}
-    iconName={iconName()}
-    disabled={boolean("disabled", false)}
-    pending={boolean("pending", false)}
-    displayContentWhenPending={boolean("displayContentWhenPending", false)}
-    outline={boolean("outline", false)}
+    {...args}
+    Icon={args.Icon === "Info" ? (Info as IconType) : undefined}
     onPress={action("onPress")}
   >
-    {text("label", "Ledger")}
+    {args.label}
   </Button>
 );
-const Promisable = (): JSX.Element => (
+const RegularArgs = {
+  type: "main" as const,
+  size: undefined,
+  iconPosition: "right" as const,
+  Icon: "Info",
+  iconName: "Info",
+  disabled: false,
+  pending: false,
+  displayContentWhenPending: false,
+  outline: false,
+  label: "Ledger",
+};
+Regular.args = RegularArgs;
+
+export const Promisable: ComponentStory<typeof Button> = (args: any) => (
   <PromisableButton
-    type={select("type", ["main", "shade", "error", "color", "default", undefined], undefined)}
-    iconPosition={select("iconPosition", ["right", "left"], "right")}
-    Icon={iconSelect()}
-    disabled={boolean("disabled", false)}
+    {...args}
+    Icon={args.Icon === "Info" ? Info : undefined}
     onPress={async () => await delay(3000)}
   >
-    {text("label", "Ledger")}
+    {args.label}
   </PromisableButton>
 );
-
-storiesOf((story) =>
-  story("CTA/Button", module).add("Regular", Regular).add("PromisableButton", Promisable),
-);
+const PromisableArgs = {
+  type: undefined,
+  iconPosition: "right",
+  Icon: "None",
+  disabled: false,
+  label: "Ledger",
+};
+Promisable.args = PromisableArgs;

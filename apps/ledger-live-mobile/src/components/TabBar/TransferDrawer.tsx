@@ -13,7 +13,6 @@ import { NavigatorName, ScreenName } from "../../const";
 import {
   accountsCountSelector,
   areAccountsEmptySelector,
-  hasLendEnabledAccountsSelector,
 } from "../../reducers/accounts";
 import {
   hasOrderedNanoSelector,
@@ -48,7 +47,6 @@ export default function TransferDrawer({
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accountsCount: number = useSelector(accountsCountSelector);
-  const lendingEnabled = useSelector(hasLendEnabledAccountsSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   const areAccountsEmpty = useSelector(areAccountsEmptySelector);
 
@@ -115,13 +113,6 @@ export default function TransferDrawer({
   const onSell = useCallback(
     () =>
       onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeSell }),
-    [onNavigate],
-  );
-  const onLending = useCallback(
-    () =>
-      onNavigate(NavigatorName.Lending, {
-        screen: ScreenName.LendingDashboard,
-      }),
     [onNavigate],
   );
 
@@ -227,26 +218,6 @@ export default function TransferDrawer({
             Icon: Icons.WalletConnectMedium,
             onPress: onWalletConnect,
             disabled: readOnlyModeEnabled,
-          },
-        ]
-      : []),
-    ...(lendingEnabled
-      ? [
-          {
-            eventProperties: {
-              button: "transfer_lending",
-              page,
-              drawer: "trade",
-            },
-            title: t("transfer.lending.titleTransferTab"),
-            description: t("transfer.lending.descriptionTransferTab"),
-            tag: t("common.popular"),
-            Icon: Icons.LendMedium,
-            onPress:
-              accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-                ? onLending
-                : null,
-            disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
           },
         ]
       : []),

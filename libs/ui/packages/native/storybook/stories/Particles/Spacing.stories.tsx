@@ -1,12 +1,17 @@
 import React from "react";
 import { View, ScrollView } from "react-native";
-import { storiesOf } from "../storiesOf";
 import { useTheme } from "styled-components/native";
 
 import Text from "../../../src/components/Text";
 import Flex from "../../../src/components/Layout/Flex";
+import Box from "../../../src/components/Layout/Box";
 
-const SpacingStory = () => {
+export default {
+  title: "Particles/Spacing",
+  component: Flex,
+};
+
+export const SpacingStory = () => {
   const theme = useTheme();
   const [, ...space] = theme.space;
 
@@ -17,12 +22,16 @@ const SpacingStory = () => {
     >
       {space.map((value, index) => (
         <Flex mb={4} width="90%" key={value}>
-          <Text variant="small" color={theme.colors.neutral.c100}>
-            {value}
-            <Text ml={4} variant="small" color="neutral.c70">
-              space[{index + 1}]
+          <Flex flexDirection="row">
+            <Text variant="small" color={theme.colors.neutral.c100}>
+              {value}
             </Text>
-          </Text>
+            <Box ml={2}>
+              <Text variant="small" color="neutral.c70">
+                space[{index + 1}]
+              </Text>
+            </Box>
+          </Flex>
           <View
             style={{
               height: value,
@@ -34,5 +43,4 @@ const SpacingStory = () => {
     </ScrollView>
   );
 };
-
-storiesOf((story) => story("Particles", module).add("Spacing", SpacingStory));
+SpacingStory.storyName = "Spacing";

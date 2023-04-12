@@ -6,12 +6,13 @@ import TabBar from "~/renderer/components/TabBar";
 import { AnnouncementPanel } from "~/renderer/components/TopBar/NotificationIndicator/AnnouncementPanel";
 import { ServiceStatusPanel } from "~/renderer/components/TopBar/NotificationIndicator/ServiceStatusPanel";
 import { useTranslation } from "react-i18next";
-import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { CSSTransition } from "react-transition-group";
 import { useSelector, useDispatch } from "react-redux";
 import { informationCenterStateSelector } from "~/renderer/reducers/UI";
 import { setTabInformationCenter } from "~/renderer/actions/UI";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
+import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
+
 const FADE_DURATION = 200;
 const PanelContainer = styled.div`
   display: flex;
@@ -37,11 +38,12 @@ export const InformationDrawer = ({
   onRequestClose: () => void;
 }) => {
   const { t } = useTranslation();
-  const { allIds, seenIds } = useAnnouncements();
   const { incidents } = useFilteredServiceStatus();
-  const unseenCount = allIds.length - seenIds.length;
+  const notificationsCards = useSelector(notificationsContentCardSelector);
+  const unseenCount =  notificationsCards?.filter(n => !n.viewed).length || 0;
   const incidentCount = incidents.length;
   const { tabId } = useSelector(informationCenterStateSelector);
+
   const dispatch = useDispatch();
   const tabs = useMemo(
     () => [
