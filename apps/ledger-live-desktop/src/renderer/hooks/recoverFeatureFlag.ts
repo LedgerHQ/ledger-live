@@ -1,8 +1,10 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useReplacedURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 
+const featureName = "protectServicesDesktop";
+
 export function usePostOnboardingURI(): string | undefined {
-  const servicesConfig = useFeature("protectServicesMobile");
+  const servicesConfig = useFeature(featureName);
 
   const uri = servicesConfig?.params?.onboardingRestore?.postOnboardingURI;
   const id = servicesConfig?.params?.protectId;
@@ -11,19 +13,18 @@ export function usePostOnboardingURI(): string | undefined {
 }
 
 export function useLearnMoreURI(): string | undefined {
-  const servicesConfig = useFeature("protectServicesMobile");
+  const servicesConfig = useFeature(featureName);
 
-  const uri = servicesConfig?.params?.managerStatesData?.NEW?.learnMoreURI;
+  const uri = servicesConfig?.params?.onboardingCompleted?.learnMoreURI;
   const id = servicesConfig?.params?.protectId;
 
   return useReplacedURI(uri, id);
 }
 
 export function useAlreadySubscribedURI(): string | undefined {
-  const servicesConfig = useFeature("protectServicesMobile");
+  const servicesConfig = useFeature(featureName);
 
-  const uri =
-    servicesConfig?.params?.managerStatesData?.NEW?.alreadySubscribedURI;
+  const uri = servicesConfig?.params?.onboardingCompleted?.alreadySubscribedURI;
   const id = servicesConfig?.params?.protectId;
 
   return useReplacedURI(uri, id);
