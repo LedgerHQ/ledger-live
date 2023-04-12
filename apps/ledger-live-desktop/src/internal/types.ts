@@ -48,6 +48,6 @@ export type MessagesMap = {
   setEnv: { env: { name: string; value: unknown } };
 };
 
-export type Messages = {
+export type Message = {
   [K in keyof MessagesMap]: { type: K } & MessagesMap[K];
 }[keyof MessagesMap];

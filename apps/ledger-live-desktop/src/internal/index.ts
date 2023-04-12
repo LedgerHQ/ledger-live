@@ -22,7 +22,7 @@ import {
   transportListenUnsubscribeChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
-import { Messages } from "./types";
+import { Message } from "./types";
 process.on("exit", () => {
   console.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
@@ -52,7 +52,7 @@ if (INITIAL_SENTRY_TAGS) {
   if (parsed) setTags(parsed);
 }
 
-process.on("message", (m: Messages) => {
+process.on("message", (m: Message) => {
   switch (m.type) {
     case transportOpenChannel:
       transportOpen(m);
