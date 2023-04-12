@@ -106,6 +106,7 @@ const AppActions: React$ComponentType<Props> = React.memo(
         case AppType.plugin:
           history.push("/platform");
           break;
+        case AppType.app:
         case AppType.currency:
           openURL(app?.supportURL || urls.appSupport);
           break;

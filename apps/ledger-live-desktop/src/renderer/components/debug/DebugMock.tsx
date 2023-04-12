@@ -16,13 +16,15 @@ import { toggleMockIncident } from "../../../../tests/mocks/serviceStatusHelpers
 import useInterval from "~/renderer/hooks/useInterval";
 import Box from "~/renderer/components/Box";
 import { Item, MockContainer, EllipsesText, MockedGlobalStyle } from "./shared";
+import { AppType } from "@ledgerhq/types-live/lib/manager";
+
 const mockListAppsResult = (...params) => {
   // Nb Should move this polyfill to live-common eventually.
   const result = innerMockListAppResult(...params);
   Object.keys(result?.appByName).forEach(key => {
     result.appByName[key] = {
       ...result.appByName[key],
-      type: "app",
+      type: AppType.currency,
     };
   });
   return result;
