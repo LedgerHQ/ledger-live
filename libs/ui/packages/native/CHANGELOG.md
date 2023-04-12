@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.18.0-nightly.1
+
+### Patch Changes
+
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a variant of the tiny text style with Alpha font family
+
 ## 0.18.0-nightly.0
 
 ### Minor Changes

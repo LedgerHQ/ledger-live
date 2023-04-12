@@ -1,5 +1,18 @@
 # @ledgerhq/live-common
 
+## 29.3.0-nightly.1
+
+### Patch Changes
+
+- [#3180](https://github.com/LedgerHQ/ledger-live/pull/3180) [`992351d66d`](https://github.com/LedgerHQ/ledger-live/commit/992351d66d44d978f069b3aa13f9baf23f9b4482) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix cosmos fees by simulation
+
+- Updated dependencies [[`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253)]:
+  - @ledgerhq/coin-framework@0.3.0-nightly.1
+  - @ledgerhq/coin-polkadot@0.1.1-nightly.1
+  - @ledgerhq/domain-service@1.0.0-nightly.1
+  - @ledgerhq/live-portfolio@0.0.2-nightly.1
+  - @ledgerhq/hw-app-eth@6.33.0-nightly.1
+
 ## 29.3.0-nightly.0
 
 ### Minor Changes

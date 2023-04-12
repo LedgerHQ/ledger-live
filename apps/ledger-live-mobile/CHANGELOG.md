@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.19.0-nightly.1
+
+### Minor Changes
+
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add support for Stax enabled NFTs by highlighting them to the user in the gallery and overriding the lockscreen edition with the special Stax metadata image
+
+### Patch Changes
+
+- [#3014](https://github.com/LedgerHQ/ledger-live/pull/3014) [`579161ff68`](https://github.com/LedgerHQ/ledger-live/commit/579161ff68361e2b66cecfafc5cd35f05edb4451) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add possibility to deeplink to whitelisted live apps in a non-onboarded LLM
+
+- [#3040](https://github.com/LedgerHQ/ledger-live/pull/3040) [`269b1c1027`](https://github.com/LedgerHQ/ledger-live/commit/269b1c1027d29b24df06bb6b5fa64c7403602090) Thanks [@sarneijim](https://github.com/sarneijim)! - Add stake flow to asset page
+
+- Updated dependencies [[`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`992351d66d`](https://github.com/LedgerHQ/ledger-live/commit/992351d66d44d978f069b3aa13f9baf23f9b4482), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253)]:
+  - @ledgerhq/coin-framework@0.3.0-nightly.1
+  - @ledgerhq/live-common@29.3.0-nightly.1
+  - @ledgerhq/native-ui@0.18.0-nightly.1
+  - @ledgerhq/types-live@6.32.0-nightly.1
+  - @ledgerhq/domain-service@1.0.0-nightly.1
+
 ## 3.19.0-nightly.0
 
 ### Minor Changes

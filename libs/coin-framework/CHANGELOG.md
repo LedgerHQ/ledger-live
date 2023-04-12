@@ -1,5 +1,15 @@
 # @ledgerhq/coin-framework
 
+## 0.3.0-nightly.1
+
+### Patch Changes
+
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add Stax-enabled NFTs in the mock fixtures
+
+- Updated dependencies [[`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253)]:
+  - @ledgerhq/types-live@6.32.0-nightly.1
+  - @ledgerhq/live-portfolio@0.0.2-nightly.1
+
 ## 0.3.0-nightly.0
 
 ### Minor Changes
