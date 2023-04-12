@@ -128,6 +128,7 @@ const NightlyLayerR = () => {
   );
 };
 const NightlyLayer = React.memo(NightlyLayerR);
+
 export default function Default() {
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -201,6 +202,11 @@ export default function Default() {
                           height: "100%",
                         }}
                       >
+                        <FeatureToggle feature="protectServicesDesktop">
+                          <Switch>
+                            <Route path="/recover/:appId" component={RecoverPlayer} />
+                          </Switch>
+                        </FeatureToggle>
                         <MainSideBar />
                         <Page>
                           <TopBannerContainer>
@@ -233,9 +239,6 @@ export default function Default() {
                             <Route path="/swap" component={Swap2} />
                             <Route path="/market/:currencyId" component={MarketCoinScreen} />
                             <Route path="/market" component={Market} />
-                            <FeatureToggle feature="protectServicesDesktop">
-                              <Route path="/recover/:appId" component={RecoverPlayer} />
-                            </FeatureToggle>
                             <FeatureToggle feature="learn">
                               <Route path="/learn" component={Learn} />
                             </FeatureToggle>
