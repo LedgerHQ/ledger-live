@@ -71,7 +71,10 @@ function BackToWhitelistedDomain({
       const flowName = urlParams.get("liveAppFlow")!;
 
       track("button_clicked", {
-        button: "back to liveapp",
+        button:
+          flowName === "compare_providers"
+            ? "back to quote"
+            : "back to liveapp",
         provider: currentHostname,
         flow: flowName,
       });
