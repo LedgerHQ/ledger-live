@@ -20,6 +20,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
 
   return {
+    networkInfo: true,
     ...tr,
     ...common,
   };

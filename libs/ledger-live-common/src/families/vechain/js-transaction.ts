@@ -39,6 +39,7 @@ export const createTransaction = (): Transaction => ({
   estimatedFees: BigNumber(0),
   recipient: "",
   useAllAmount: false,
+  networkInfo: true,
 });
 
 /**
