@@ -37,6 +37,7 @@ type Props = {
       SendFundsNavigatorStackParamList,
       ScreenName.SendSummary
     >
+  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary

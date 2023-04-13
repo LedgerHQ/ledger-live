@@ -9,6 +9,7 @@ import type { SendFundsNavigatorStackParamList } from "../../components/RootNavi
 import { ScreenName } from "../../const";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import { EditTransactionParamList } from "../ethereum/editTransactionNavigatorParamsList";
 
 type Props = {
   account: AccountLike;
@@ -20,6 +21,7 @@ type Props = {
       SendFundsNavigatorStackParamList,
       ScreenName.SendSummary
     >
+  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
@@ -27,6 +29,7 @@ type Props = {
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
+
 export default function StellarSendRowsFee({ account, ...props }: Props) {
   return <StellarFeeRow {...props} account={account} />;
 }
