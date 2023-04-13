@@ -49,21 +49,25 @@ There are two modes of usage of this library.
 *   [getFiatCurrencyByTicker](#getfiatcurrencybyticker)
     *   [Parameters](#parameters-13)
 *   [listFiatCurrencies](#listfiatcurrencies)
-*   [clearAllList](#clearalllist)
-*   [listTokens](#listtokens)
+*   [\__clearObject](#\__clearobject)
     *   [Parameters](#parameters-14)
-*   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
+*   [\__clearAllLists](#\__clearalllists)
+*   [listTokens](#listtokens)
     *   [Parameters](#parameters-15)
-*   [listTokenTypesForCryptoCurrency](#listtokentypesforcryptocurrency)
+*   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
     *   [Parameters](#parameters-16)
-*   [findTokenByTicker](#findtokenbyticker)
+*   [listTokenTypesForCryptoCurrency](#listtokentypesforcryptocurrency)
     *   [Parameters](#parameters-17)
-*   [findTokenById](#findtokenbyid)
+*   [findTokenByTicker](#findtokenbyticker)
     *   [Parameters](#parameters-18)
-*   [hasTokenId](#hastokenid)
+*   [findTokenById](#findtokenbyid)
     *   [Parameters](#parameters-19)
-*   [getTokenById](#gettokenbyid)
+*   [hasTokenId](#hastokenid)
     *   [Parameters](#parameters-20)
+*   [getTokenById](#gettokenbyid)
+    *   [Parameters](#parameters-21)
+*   [cleanExistingTokenInArray](#cleanexistingtokeninarray)
+    *   [Parameters](#parameters-22)
 
 ### abandonSeedAddresses
 
@@ -198,9 +202,21 @@ Returns **FiatCurrency**
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<FiatCurrency>** 
 
-### clearAllList
+### \__clearObject
 
-Clear all lists above for test simplicity
+Only for jest purpose, clean object to be empty
+
+#### Parameters
+
+*   `obj` **Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), (TokenCurrency | [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<TokenCurrency>)>** 
+
+Returns **void** 
+
+### \__clearAllLists
+
+Only for jest purpose, clear all the init list
+
+Returns **void** 
 
 ### listTokens
 
@@ -258,6 +274,14 @@ Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 *   `id` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
 
 Returns **TokenCurrency** 
+
+### cleanExistingTokenInArray
+
+Delete previous token entry to all array
+
+#### Parameters
+
+*   `token` **TokenCurrency** 
 
 ## Maintainance notes
 
