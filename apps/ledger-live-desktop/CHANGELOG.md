@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.57.0-next.3
+
+### Patch Changes
+
+- [#3172](https://github.com/LedgerHQ/ledger-live/pull/3172) [`65107b68f0`](https://github.com/LedgerHQ/ledger-live/commit/65107b68f0cb221f1ee787aa7d140540bbbfbc46) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Remove extra track data swap/stake/receive
+
 ## 2.57.0-next.2
 
 ### Patch Changes
