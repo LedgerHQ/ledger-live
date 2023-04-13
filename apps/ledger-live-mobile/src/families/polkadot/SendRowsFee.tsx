@@ -22,12 +22,14 @@ import { ScreenName } from "../../const";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 import { PolkadotBondFlowParamList } from "./BondFlow/types";
+import { EditTransactionParamList } from "../ethereum/editTransactionNavigatorParamsList";
 
 type Navigation = CompositeScreenProps<
   | StackNavigatorProps<
       SendFundsNavigatorStackParamList,
       ScreenName.SendSummary
     >
+  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary

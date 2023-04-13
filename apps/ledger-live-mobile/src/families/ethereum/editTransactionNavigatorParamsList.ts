@@ -17,15 +17,6 @@ export type EditTransactionParamList = {
     account: AccountLike;
     parentAccount: Account | undefined | null;
   };
-  [ScreenName.EthereumCustomFees]: {
-    accountId: string;
-    parentId?: string;
-    transaction: EthereumTransaction;
-    currentNavigation: ScreenName.EditTransactionMethodSelection;
-    nextNavigation: ScreenName.SendSelectDevice;
-    transactionRaw?: TransactionRaw;
-    setTransaction: (transaction: Transaction) => void;
-  };
   [ScreenName.SendSummary]: {
     accountId: string;
     parentId?: string;
@@ -33,15 +24,22 @@ export type EditTransactionParamList = {
     transaction: Transaction;
     transactionRaw?: TransactionRaw;
     operation?: Operation;
-    currentNavigation:
-      | ScreenName.EditTransactionMethodSelection
-      | ScreenName.SendSummary;
+    currentNavigation: ScreenName.EditTransactionMethodSelection;
     nextNavigation:
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice;
     overrideAmountLabel?: string;
     hideTotal?: boolean;
     appName?: string;
+  };
+  [ScreenName.EthereumCustomFees]: {
+    accountId: string;
+    parentId?: string;
+    transaction: EthereumTransaction;
+    currentNavigation: ScreenName.SendSummary;
+    nextNavigation: ScreenName.SendSelectDevice;
+    transactionRaw?: TransactionRaw;
+    setTransaction: (transaction: Transaction) => void;
   };
   [ScreenName.SendSelectDevice]: {
     accountId: string;
@@ -78,4 +76,6 @@ export type EditTransactionParamList = {
         accountId?: string;
         parentId?: string;
       };
+  [ScreenName.StellarEditCustomFees]: undefined;
+  [ScreenName.BitcoinEditCustomFees]: undefined;
 };
