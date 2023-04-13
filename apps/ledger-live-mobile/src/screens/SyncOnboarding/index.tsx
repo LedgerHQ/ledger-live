@@ -191,42 +191,6 @@ export const SyncOnboarding = ({
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
 
-  const goBackToPairingFlow = useCallback(() => {
-    const navigateInput: NavigateInput<
-      RootStackParamList,
-      NavigatorName.BaseOnboarding
-    > = {
-      name: NavigatorName.BaseOnboarding,
-      params: {
-        screen: NavigatorName.SyncOnboarding,
-        params: {
-          screen: ScreenName.SyncOnboardingCompanion,
-          params: {
-            // @ts-expect-error BleDevicePairingFlow will set this param
-            device: null,
-          },
-        },
-      },
-    };
-
-    // On pairing success, navigate to the Sync Onboarding Companion
-    // Replace to avoid going back to this screen on return from the pairing flow
-    navigation.navigate(NavigatorName.Base, {
-      screen: ScreenName.BleDevicePairingFlow,
-      params: {
-        // TODO: For now, don't do that because stax shows up as nanoX
-        // filterByDeviceModelId: device.modelId,
-        areKnownDevicesDisplayed: true,
-        onSuccessAddToKnownDevices: false,
-        onSuccessNavigateToConfig: {
-          navigationType: "navigate",
-          navigateInput,
-          pathToDeviceParam: "params.params.params.device",
-        },
-      },
-    });
-  }, [navigation]);
-
   const {
     onboardingState: deviceOnboardingState,
     allowedError,
@@ -261,8 +225,8 @@ export const SyncOnboarding = ({
 
   const handleDesyncClose = useCallback(() => {
     setDesyncDrawerOpen(false);
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
+    navigation.goBack();
+  }, [navigation]);
 
   const handleDeviceReady = useCallback(() => {
     // Adds the device to the list of known devices
@@ -282,8 +246,8 @@ export const SyncOnboarding = ({
   }, [device, dispatchRedux, navigation]);
 
   const handleClose = useCallback(() => {
-    readyRedirectTimerRef.current ? handleDeviceReady() : goBackToPairingFlow();
-  }, [goBackToPairingFlow, handleDeviceReady]);
+    readyRedirectTimerRef.current ? handleDeviceReady() : navigation.goBack();
+  }, [navigation, handleDeviceReady]);
 
   useEffect(() => {
     if (!fatalError) {
