@@ -18,7 +18,7 @@ const BulletItem = ({ textKey }: { textKey: string }) => {
   const { t } = useTranslation();
   return (
     <Flex flexDirection="row" mb={6} alignItems="center">
-      <Icons.CircledCheckSolidRegular color="primary.c80" />
+      <Icons.CircledCheckSolidMedium color="primary.c80" />
       <Text ml={4}>{t(textKey)}</Text>
     </Flex>
   );
