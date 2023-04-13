@@ -8,7 +8,7 @@ export const formatToFirebaseFeatureId = (id: string) =>
   `feature_${snakeCase(id)}`;
 
 export const formatCurrencyIdToFeatureKey = (id: string) => {
-  return `currency${startCase(id)}`;
+  return `currency${startCase(id).replace(/\s/g, "")}`;
 };
 
 // Firebase SDK treat JSON values as strings
