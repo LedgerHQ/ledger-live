@@ -13,7 +13,6 @@ import {
   Operation,
 } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { CompoundAccountSummary } from "@ledgerhq/live-common/compound/types";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/live-common/nft/index";
 import { TFunction } from "react-i18next";
