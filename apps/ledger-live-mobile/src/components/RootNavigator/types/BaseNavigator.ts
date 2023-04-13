@@ -176,6 +176,7 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.BleDevicePairingFlow]: {
     filterByDeviceModelId?: DeviceModelId;
     areKnownDevicesDisplayed?: boolean;
+    areKnownDevicesPairable?: boolean;
     onSuccessAddToKnownDevices?: boolean;
     onSuccessNavigateToConfig: {
       navigateInput: NavigateInput;

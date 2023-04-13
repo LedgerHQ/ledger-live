@@ -84,6 +84,7 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
   const {
     filterByDeviceModelId = undefined,
     areKnownDevicesDisplayed = true,
+    areKnownDevicesPairable = false,
     onSuccessAddToKnownDevices = false,
     onSuccessNavigateToConfig = defaultNavigationParams.successNavigateToConfig,
   } = params;
@@ -140,6 +141,7 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
           key={keyToReset}
           filterByDeviceModelId={filterByDeviceModelId}
           areKnownDevicesDisplayed={areKnownDevicesDisplayed}
+          areKnownDevicesPairable={areKnownDevicesPairable}
           onPairingSuccess={onPairingSuccess}
           onPairingSuccessAddToKnownDevices={onSuccessAddToKnownDevices}
         />
