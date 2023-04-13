@@ -34,8 +34,6 @@ type Props = {
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
     >
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;

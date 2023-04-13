@@ -15,7 +15,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { WarningLight } from "@ledgerhq/native-ui/assets/icons";
+import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
 import { isEqual } from "lodash";
 import { getEnv } from "@ledgerhq/live-common/env";
@@ -162,7 +162,7 @@ function OperationRow({
     isEditableOperation(account, operation) &&
     operation.date.getTime() <=
       new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT") ? (
-      <WarningLight />
+      <WarningMedium />
     ) : (
       <SpinnerContainer>
         <InfiniteLoader size={10} />
