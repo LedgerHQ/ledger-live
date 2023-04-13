@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.4.0-nightly.1
+
+### Minor Changes
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
 ## 0.3.6-nightly.0
 
 ### Patch Changes

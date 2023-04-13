@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 29.3.0-nightly.2
+
+### Patch Changes
+
+- [#3182](https://github.com/LedgerHQ/ledger-live/pull/3182) [`9fec3a9b3a`](https://github.com/LedgerHQ/ledger-live/commit/9fec3a9b3a26bfce6ef7fdc4afb83e4f3c04cb69) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - bump wallet-api deps
+
 ## 29.3.0-nightly.1
 
 ### Patch Changes

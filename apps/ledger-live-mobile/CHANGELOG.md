@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.19.0-nightly.2
+
+### Patch Changes
+
+- [#3165](https://github.com/LedgerHQ/ledger-live/pull/3165) [`447ed160e5`](https://github.com/LedgerHQ/ledger-live/commit/447ed160e5394bba07d1b1470b4d83d4e82f898f) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Use backend provided support url for apps when available
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+- Updated dependencies [[`9fec3a9b3a`](https://github.com/LedgerHQ/ledger-live/commit/9fec3a9b3a26bfce6ef7fdc4afb83e4f3c04cb69), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5)]:
+  - @ledgerhq/live-common@29.3.0-nightly.2
+  - @ledgerhq/native-ui@0.18.0-nightly.2
+
 ## 3.19.0-nightly.1
 
 ### Minor Changes
