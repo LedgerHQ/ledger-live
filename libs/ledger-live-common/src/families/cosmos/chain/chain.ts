@@ -15,6 +15,7 @@ import Stargaze from "./Stargaze";
 import Stride from "./Stride";
 import Umee from "./Umee";
 import BinanceBeaconChain from "./BinanceBeaconChain";
+import Evmos from "./Evmos";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
@@ -51,6 +52,11 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
   } else if (currencyId === "injective") {
     if (!cosmosChainParams[currencyId]) {
       cosmosChainParams[currencyId] = new Injective();
+    }
+    return cosmosChainParams[currencyId];
+  } else if (currencyId === "evmos") {
+    if (!cosmosChainParams[currencyId]) {
+      cosmosChainParams[currencyId] = new Evmos();
     }
     return cosmosChainParams[currencyId];
   } else if (currencyId === "nyx") {

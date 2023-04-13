@@ -29,6 +29,9 @@ export const defaultFeatures: DefaultFeatures = {
   currencyInjective: {
     enabled: true,
   },
+  currencyEvmos: {
+    enabled: true,
+  },
   currencyOnomy: {
     enabled: true,
   },

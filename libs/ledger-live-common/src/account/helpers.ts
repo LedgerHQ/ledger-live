@@ -110,6 +110,7 @@ export const getVotesCount = (
       return (mainAccount as TronAccount)?.tronResources?.votes.length || 0;
     case "axelar":
     case "injective":
+    case "evmos":
     case "onomy":
     case "quicksilver":
     case "stride":
