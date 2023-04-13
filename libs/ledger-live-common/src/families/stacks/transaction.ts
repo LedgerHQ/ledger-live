@@ -9,7 +9,7 @@ import {
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "../../transaction/common";
+} from "@ledgerhq/coin-framework/transaction/common";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 
@@ -34,7 +34,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
 
   // validate if network is valid
-  if(!StacksNetwork[ tr.network ]){
+  if (!StacksNetwork[tr.network]) {
     throw new Error(`network ${tr.network} not valid`);
   }
 
