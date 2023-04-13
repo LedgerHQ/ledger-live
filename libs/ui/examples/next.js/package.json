@@ -9,16 +9,13 @@
     "start": "next start",
     "serve": "next start -p 8080",
     "lint": "next lint",
-    "clean:full": "npx rimraf .next node_modules"
+    "clean:full": "npx rimraf .next node_modules public"
   },
   "dependencies": {
-    "@ledgerhq/react-ui": "^0.7.6",
-    "next": "^12.0.3",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "@ledgerhq/react-ui": "*",
+    "next": "13.2.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "styled-components": "^5.3.3"
-  },
-  "devDependencies": {
-    "babel-plugin-styled-components": "^1.13.3"
   }
 }

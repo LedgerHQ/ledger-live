@@ -5,8 +5,7 @@ import { fontSize, border, BordersProps, compose } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
 import { rgba } from "../../../styles/helpers";
-import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
-import IconComponent from "../../asorted/Icon";
+import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomMedium";
 
 export type ButtonVariants = "main" | "shade" | "error" | "color" | "neutral";
 export type IconPosition = "right" | "left";
@@ -25,7 +24,6 @@ interface BaseProps extends BaseStyledProps, BordersProps {
 }
 
 export interface ButtonProps extends BaseProps, React.RefAttributes<HTMLButtonElement> {
-  iconName?: string;
   Icon?: React.ComponentType<{ size: number; color?: string }>;
   children?: React.ReactNode;
   onClick?: (event: React.SyntheticEvent<HTMLButtonElement>) => void;
@@ -228,24 +226,11 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
 const ContentContainer = styled.div``;
 
 const Button = (
-  {
-    Icon,
-    iconPosition = "right",
-    iconSize = 16,
-    children,
-    onClick,
-    iconName,
-    ...props
-  }: ButtonProps,
+  { Icon, iconPosition = "right", iconSize = 16, children, onClick, ...props }: ButtonProps,
   ref?: React.ForwardedRef<HTMLButtonElement>,
 ): React.ReactElement => {
   const iconNodeSize = iconSize || fontSizes[props.fontSize ?? 4];
-  const IconNode = useMemo(
-    () =>
-      (iconName && <IconComponent name={iconName} size={iconNodeSize} />) ||
-      (Icon && <Icon size={iconNodeSize} />),
-    [iconName, iconNodeSize, Icon],
-  );
+  const IconNode = useMemo(() => Icon && <Icon size={iconNodeSize} />, [iconNodeSize, Icon]);
 
   return (
     <Base {...props} ref={ref} iconButton={!(Icon == null) && !children} onClick={onClick}>
