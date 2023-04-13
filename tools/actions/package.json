@@ -3,6 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "devDependencies": {
-    "@types/node": "^17.0.31"
+    "@types/node": "^18.15.11"
   }
 }

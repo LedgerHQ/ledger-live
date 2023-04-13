@@ -1,25 +1,12 @@
 {
+  "extends": "../tsconfig",
   "compilerOptions": {
-    "composite": true,
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "module": "es2020",
-    "jsx": "react",
-    "lib": ["es6", "dom"],
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "strict": true,
-    "target": "esnext",
     "baseUrl": ".",
+    "rootDir": ".",
     "paths": {
       "~/*": ["./*"]
     },
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "outDir": "tests/tests-out",
-    "rootDir": "."
+    "outDir": "tests/tests-out"
   },
   "include": ["./**/*"],
   "references": [{ "path": "../" }]

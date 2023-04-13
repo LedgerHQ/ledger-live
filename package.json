@@ -57,6 +57,7 @@
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
     "common-tools": "pnpm --filter live-common-tools",
+    "live-env": "pnpm --filter live-env",
     "utils": "pnpm --filter live-utils",
     "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",

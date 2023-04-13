@@ -1,20 +1,12 @@
 {
+  "extends": "../../tsconfig.base",
   "compilerOptions": {
     "composite": true,
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
     "module": "es2020",
     "jsx": "react",
     "lib": ["es6", "dom"],
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "strict": true,
-    "target": "esnext",
+
     "baseUrl": ".",
-    "skipLibCheck": true,
-    "sourceMap": true,
     "rootDir": ".",
     "paths": {
       "~/*": ["src/*"],

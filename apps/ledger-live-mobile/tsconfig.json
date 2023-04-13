@@ -1,20 +1,17 @@
 {
+  "extends": ["@tsconfig/react-native/tsconfig.json", "../../tsconfig.base"],
   "compilerOptions": {
     "allowJs": false,
-    "allowSyntheticDefaultImports": true,
     "checkJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
+    "incremental": true,
     "jsx": "react-native",
     "lib": ["es2017"],
-    "types": ["jest", "@testing-library/jest-native/extend-expect"],
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
     "noEmit": true,
-    "strict": true,
-    "target": "esnext",
-    "incremental": true
+    "types": [
+      "react-native",
+      "jest",
+      "@testing-library/jest-native/extend-expect"
+    ]
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
   "exclude": [
