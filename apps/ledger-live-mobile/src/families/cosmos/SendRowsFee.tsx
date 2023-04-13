@@ -21,6 +21,7 @@ import type { SendFundsNavigatorStackParamList } from "../../components/RootNavi
 import { ScreenName } from "../../const";
 import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import { EditTransactionParamList } from "../ethereum/editTransactionNavigatorParamsList";
 
 type Props = {
   account: AccountLike;
@@ -31,6 +32,7 @@ type Props = {
       SendFundsNavigatorStackParamList,
       ScreenName.SendSummary
     >
+  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
