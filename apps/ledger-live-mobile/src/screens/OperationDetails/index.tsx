@@ -114,7 +114,6 @@ function OperationDetails({ route }: NavigatorProps) {
             operation={operation}
             currency={currency}
             mainAccount={mainAccount}
-            mainAccountCurrency={mainAccountCurrency}
             disableAllLinks={route.params?.disableAllLinks}
           />
         </View>
