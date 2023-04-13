@@ -1,7 +1,6 @@
 import type { AxiosRequestConfig } from "axios";
 import axios, { AxiosInstance } from "axios";
 import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
-// import genericPool, { Pool } from "generic-pool";
 import { Address, Block, TX } from "../storage/types";
 import { IExplorer } from "./types";
 import { errorInterceptor } from "../../../../network";
@@ -33,20 +32,6 @@ class BitcoinLikeExplorer implements IExplorer {
           ? forcedExplorerURI
           : blockchainBaseURL(cryptoCurrency),
     };
-
-    // not react native
-    if (
-      !(typeof navigator !== "undefined" && navigator.product === "ReactNative")
-    ) {
-      // eslint-disable-next-line global-require,@typescript-eslint/no-var-requires
-      const https = require("https");
-      // uses max 20 keep alive request in parallel
-      clientParams.httpsAgent = new https.Agent({
-        keepAlive: true,
-        maxSockets: 20,
-      });
-    }
-
     this.client = axios.create(clientParams);
 
     // 3 retries per request
