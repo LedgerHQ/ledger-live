@@ -84,6 +84,7 @@
     "save" : "保存",
     "lock" : "ロック",
     "showMore" : "さらに表示",
+    "backToMatchingURL" : "{{appName}}に戻る",
     "back" : "戻る",
     "adjustFees" : "手数料を調整する",
     "reset" : "リセット",
@@ -118,7 +119,6 @@
       "syncing" : "同期中...",
       "upToDate" : "同期済み",
       "outdated" : "中断",
-      "needsMigration" : "クリックしてアカウントをアップデート",
       "error" : "同期エラー",
       "refresh" : "更新",
       "devTools" : "開発ツール"
@@ -146,8 +146,6 @@
       "DELEGATE" : "デリゲート",
       "REDELEGATE" : "再デリゲート済み",
       "UNDELEGATE" : "デリゲート解除済み",
-      "SUPPLY" : "デポジット済み",
-      "REDEEM" : "引き出し済み",
       "APPROVE" : "承認済み",
       "VOTE" : "投票済み",
       "FREEZE" : "凍結中",
@@ -214,26 +212,23 @@
     "stars" : "お気に入りアカウント",
     "accounts" : "アカウント",
     "manager" : "My Ledger",
+    "earn" : "報酬獲得",
     "exchange" : "購入/売却",
     "swap" : "スワップ",
     "lend" : "レンディング",
     "catalog" : "Discover",
-    "market" : "マーケット"
+    "market" : "マーケット",
+    "protect" : "Recover"
   },
   "stars" : {
     "placeholder" : "お気に入りに登録したアカウントは、こちらに表示されます。",
     "tooltip" : "お気に入りアカウント"
   },
   "bridge" : {
-    "modalTitle" : "デバイスブリッジを開く",
-    "openHeader" : "WebSocket経由でデバイスアカウントを公開する",
-    "openDescription" : "ブリッジを開くと、すべてのアカウントがサードパーティのアプリケーションに公開されます。",
-    "openedHeader" : "{{appName}}ブリッジ開通済み",
-    "openedDescription" : "これにより、WebSocketからサードパーティのWebアプリケーション上の{{appName}}アカウントにアクセスできるようになりました。",
-    "completeHeader" : "ブリッジセッション完了済み",
-    "completeDescription" : "WebSocketが閉鎖されました。",
-    "openButton" : "開く",
-    "disconnectButton" : "接続を切断"
+    "modalTitle" : "デバイスブリッジ",
+    "openHeader" : "デバイスブリッジはご利用いただけません",
+    "openDescription" : "Ledger Liveの代わりにWebHIDを使用するよう、ブラウザのウォレット拡張機能を構成してください。",
+    "closeButton" : "閉じる"
   },
   "swap2" : {
     "title" : "スワップ",
@@ -1218,9 +1213,13 @@
         "description" : "PINコードの長さは4～8桁で設定可能です",
         "text" : "お客様の{{deviceName}}とPINコードにアクセスできる人は誰でも、お客様の暗号資産とNFT資産すべてにアクセスできます。"
       },
-      "recoveryContent" : {
-        "title" : "リカバリーフレーズ",
-        "content" : "下の動画をタップして、秘密のリカバリーフレーズを詳しく学ぶ"
+      "seedContent" : {
+        "title" : "秘密のリカバリーフレーズ",
+        "choiceNewOrRestore" : "最適な設定オプションを選択してください。",
+        "newSeed" : "下の動画をタップして、秘密のリカバリーフレーズを詳しく学ぶ",
+        "choiceRestoreDirectOrRecover" : "Placeholder－直接復元を選択するか、Recoverを使用する",
+        "recoverSeed" : "Placeholder：Recover",
+        "restoreSeed" : "リカバリーには、資産の安全性を保証するため、必ずLedgerが生成した秘密のリカバリーフレーズを使用してください。\n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
       },
       "softwareCheckContent" : {
         "title" : "ソフトウェアのチェック",
@@ -1620,42 +1619,6 @@
     "hideSubAccounts" : "サブアカウントを非表示 ({{tokenCount}})",
     "countTooltip" : "1 サブアカウント",
     "countTooltip_plural" : "{{count}} サブアカウント"
-  },
-  "migrateAccounts" : {
-    "overview" : {
-      "title" : "Ledger Liveアカウントのアップデート",
-      "successTitle" : "アカウントが正常にアップデートされました。",
-      "successDescPlu" : "{{assets}} アカウントがアップデートされ、使用可能になりました。",
-      "successDesc" : "{{assets}}アカウントが更新され、使用できるようになりました。",
-      "mobileTitle" : "アカウントをモバイルにエクスポート",
-      "mobileDesc" : "下のボタンをクリックして、アップデートされたアカウントをLedger Live Mobileアプリにエクスポートする。",
-      "mobileCTA" : "モバイルへエクスポート",
-      "description" : "Ledger Liveの新機能を利用するには、アカウントのアップデートが必要です。",
-      "currency" : "アップデートが必要な1件の{{currency}} アカウント：",
-      "currency_plural" : "アップデートが必要な{{count}} 件の{{currency}} アカウント：",
-      "footer" : "アップデートの完了には、Ledgerデバイスが必要です。",
-      "pendingDevices" : "1件のアカウントをアップデートできませんでした。下記のアカウントと連携しているデバイスを接続してください。",
-      "pendingDevices_plural" : "{{totalMigratableAccounts}} アカウントをアップデートできませんでした。下記のアカウント連携しているデバイスを接続してください。",
-      "doItLaterBtn" : "後で行う"
-    },
-    "progress" : {
-      "finished" : {
-        "title" : "{{currencyName}} アップデート完了",
-        "description" : ""
-      },
-      "scanning" : {
-        "title" : "{{currencyName}} アップデート中...",
-        "description" : "アカウントがアップデートされるまでお待ちください。"
-      },
-      "finished-empty" : {
-        "title" : "{{currencyName}} アップデート未完了",
-        "description" : "アップデートする{{currencyName}}アカウントがありません。"
-      }
-    },
-    "cta" : {
-      "startUpdate" : "アップデートを開始",
-      "nextCurrency" : "{{currency}}アップデートを続行"
-    }
   },
   "addAccounts" : {
     "title" : "アカウントを追加",
@@ -2182,7 +2145,13 @@
     "steps" : {
       "recipient" : {
         "title" : "受取人",
-        "nftRecipient" : "送付するNFT"
+        "nftRecipient" : "送付するNFT",
+        "verifyAddress" : "アドレスが、受取人から共有されたものと一致しているかご確認ください。",
+        "namingService" : {
+          "resolve" : "これは、次のアドレスにリンクされている有効なENSです。",
+          "supportLink" : "イーサリアム・ネーム・サービスとは？",
+          "reverse" : "このアドレスは{{domain}}にリンクされています"
+        }
       },
       "amount" : {
         "title" : "数量",
@@ -2518,6 +2487,8 @@
       },
       "manageTP" : "資産管理",
       "warnEarnRewards" : "報酬の獲得を開始するには、少なくとも{{amount}}が必要です",
+      "warnDisableStaking" : "利用不可",
+      "warnDisableStakingMessage" : "Tronのステーキング機能は現在ご利用いただけません",
       "claimRewards" : "報酬獲得を申請",
       "nextRewardsDate" : "報酬は{{date}}に請求できます",
       "claimAvailableRewards" : "{{amount}}を申請",
@@ -3819,6 +3790,8 @@
       "runLocalAppOpenButton" : "開く",
       "enableLearnStagingUrl" : "学習ページのステージングURL",
       "enableLearnStagingUrlDesc" : "学習ページのステージングURLを有効にする。",
+      "enableStagingNftMetadataService" : "Staging NFT metadata service",
+      "enableStagingNftMetadataServiceDesc" : "Enable the staging NFT metadata service and reset the NFT cache",
       "openOnboardingAppInstallDebug" : "オンボーディングアプリのインストールデバッグ画面を開く",
       "openOnboardingAppInstallDebugDesc" : "同期オンボーディングアプリのインストール手順の構成要素で画面を開きます"
     },
@@ -4893,9 +4866,6 @@
       "title" : "報酬額が、申請に必要な推定手数料を下回っています。",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "アクティブなデポジットがある間は、承認額を減らすことはできません。"
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "問題が発生しました（エラー#1）",
       "description" : "Ledgerサポートにご連絡ください"
@@ -5737,8 +5707,10 @@
     "progress" : {
       "loading" : "読み込み中...",
       "resolving" : "依存関係を解決しています",
-      "progress" : "アプリのインストール中{{progress}}%",
-      "disclaimer" : "Ledger Liveからいつでもアプリを追加または削除できます。"
+      "progress" : "アプリのインストール中でもLedger Liveをお使いいただけます。",
+      "disclaimer" : "Ledger Liveからいつでもアプリを追加または削除できます。",
+      "skippedInfo" : "一部のアプリはご利用いただけません。{{ productName }}は今後開発予定です。",
+      "skipped" : "{{ productName }}は現在はご利用いただけません。"
     },
     "cancelled" : {
       "title" : "{{productName}}でアプリのインストールがキャンセルされました",
@@ -5751,5 +5723,11 @@
       "subtitle" : "{{productName}}のロックを解除し、インストールを再開してください。",
       "installCTA" : "インストールを再開"
     }
+  },
+  "discoverProtect" : {
+    "title" : "Recover your keys using\nyour identity",
+    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
+    "cta" : "Why should I subscribe?",
+    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
   }
 }
