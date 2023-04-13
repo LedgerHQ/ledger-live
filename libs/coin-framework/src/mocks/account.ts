@@ -65,7 +65,6 @@ const hardcodedMarketcap = [
   "tezos",
   "iota",
   "ethereum/erc20/link_chainlink",
-  "neo",
   "ethereum/erc20/makerdao",
   "ethereum/erc20/usd__coin",
   "ontology",
@@ -391,7 +390,8 @@ export function genAccount(
     ...(withNft && {
       nfts: Array(10)
         .fill(null)
-        .map(() => createFixtureNFT(accountId, currency)),
+        // The index === 0 ensure at least one NFT is a Stax NFT if the currency is Ethereum
+        .map((_, index) => createFixtureNFT(accountId, currency, index === 0)),
     }),
   };
 

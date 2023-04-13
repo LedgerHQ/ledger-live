@@ -202,13 +202,13 @@ export default function AssetBalanceSummaryHeader({
           </Wrapper>
         </BalanceTotal>
         {availableOnBuy && (
-          <Button data-test-id="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
+          <Button buttonTestId="asset-page-buy-button" variant="color" mr={1} onClick={onBuy}>
             {t("accounts.contextMenu.buy")}
           </Button>
         )}
 
         {availableOnSwap && (
-          <Button data-test-id="portfolio-swap-button" variant="color" mr={1} onClick={onSwap}>
+          <Button buttonTestId="asset-page-swap-button" variant="color" mr={1} onClick={onSwap}>
             {t("accounts.contextMenu.swap")}
           </Button>
         )}

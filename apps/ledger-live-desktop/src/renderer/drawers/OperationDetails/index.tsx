@@ -10,6 +10,8 @@ import {
   findSubAccountById,
   getAccountCurrency,
   getAccountUnit,
+  getFeesCurrency,
+  getFeesUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
@@ -218,6 +220,10 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
       ? currency.parentCurrency.name
       : currency.name
     : undefined;
+
+  const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
+  const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
+
   return (
     <Box flow={3} px={20} mt={20}>
       <TrackPage
@@ -367,19 +373,14 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
                       />
                     </Box>
                   ) : null}
-                  <FormattedVal
-                    unit={mainAccount.unit}
-                    showCode
-                    val={fee}
-                    color="palette.text.shade80"
-                  />
+                  <FormattedVal unit={feesUnit} showCode val={fee} color="palette.text.shade80" />
                 </Box>
                 <Box horizontal justifyContent="flex-end">
                   <CounterValue
                     color="palette.text.shade60"
                     date={date}
                     fontSize={3}
-                    currency={mainAccount.currency}
+                    currency={feesCurrency}
                     value={fee}
                     subMagnitude={1}
                     style={{

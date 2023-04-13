@@ -11,8 +11,8 @@ import {
 import { useTranslation } from "react-i18next";
 import {
   getMainAccount,
-  getAccountUnit,
-  getAccountCurrency,
+  getFeesCurrency,
+  getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import type { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
@@ -63,8 +63,8 @@ export default function SelectFeesStrategy({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const mainAccount = getMainAccount(account, parentAccount);
-  const currency = getAccountCurrency(mainAccount);
-  const unit = getAccountUnit(mainAccount);
+  const currency = getFeesCurrency(mainAccount);
+  const unit = getFeesUnit(currency);
   const { feesStrategy } = transaction;
   const [isNetworkFeeHelpOpened, setNetworkFeeHelpOpened] = useState(false);
   const toggleNetworkFeeHelpModal = useCallback(

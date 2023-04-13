@@ -139,6 +139,7 @@ jobs:
         with:
           install_node_gyp: true
           install_playwright: true
+          upgrade_npm: true
       - name: Run playwright tests
         id: tests
         run: pnpm desktop test:playwright

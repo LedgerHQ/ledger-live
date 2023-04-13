@@ -4985,6 +4985,7 @@
       "header": "Votes ({{total}})",
       "Amount": "Amount",
       "noRewards": "No rewards available",
+      "warnDisableStakingMessage": "Staking feature for Tron is currently unavailable",
       "votes": {
         "title": "Votes",
         "description": "Cast your votes for one or more Representatives to start earning rewards.",
@@ -5986,6 +5987,13 @@
       "allNft": "All NFT",
       "addNew": "Add new"
     },
+    "designedForStax": {
+      "title": "<0>Designed for</0><1>Ledger</1><2>Stax</2>",
+      "drawer": {
+        "description": "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E Ink Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
+        "cta": "Got it"
+      }
+    },
     "viewer": {
       "properties": "Properties",
       "description": "Description",
@@ -6060,7 +6068,7 @@
     },
     "confirmCrop": "Confirm crop",
     "confirmContrast": "Confirm contrast",
-    "nftEntryPointButtonLabel": "Set as Ledger Stax lockscreen picture",
+    "nftEntryPointButtonLabel": "Set as Ledger Stax lock screen",
     "customImage": "Custom picture",
     "doThisLater": "Maybe later",
     "preview": {
@@ -6109,7 +6117,7 @@
         "title": "Customize the lock screen",
         "titleCompleted": "Lock screen customized",
         "description": "Choose any NFT or picture to set as the lock screen of your Ledger Stax.",
-        "popupLabel": "Lockscreen set"
+        "popupLabel": "Lock screen set"
       },
       "claimNft": {
         "title": "Claim the Infinity NFT",

@@ -2557,6 +2557,8 @@
       },
       "manageTP": "Manage assets",
       "warnEarnRewards": "You need at least {{amount}} to start earning rewards",
+      "warnDisableStaking": "Not available",
+      "warnDisableStakingMessage": "Staking feature for Tron is currently unavailable",
       "claimRewards": "Claim rewards",
       "nextRewardsDate": "Rewards can be claimed {{date}}",
       "claimAvailableRewards": "Claim {{amount}}",
@@ -3870,6 +3872,8 @@
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
+      "enableStagingNftMetadataService": "Staging NFT metadata service",
+      "enableStagingNftMetadataServiceDesc": "Enable the staging NFT metadata service and reset the NFT cache",
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
       "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },

@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useEffect, useState } from "react";
+import React, { useContext, useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Linking, Platform } from "react-native";
 import SplashScreen from "react-native-splash-screen";
@@ -18,7 +18,7 @@ import { context as _wcContext } from "../screens/WalletConnect/Provider";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "../const";
 import { setWallectConnectUri } from "../actions/walletconnect";
-import { isAcceptedTerms } from "../logic/terms";
+import { TermsContext } from "../logic/terms";
 import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
@@ -333,14 +333,20 @@ const linkingOptions = {
 const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
   ...linkingOptions,
   config: {
+    initialRouteName: NavigatorName.BaseOnboarding,
     screens: !acceptedTermsOfUse
       ? {}
       : {
           [NavigatorName.Base]: {
-            initialRouteName: NavigatorName.Main,
             screens: {
               [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
               [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
+              /**
+               * @params ?platform: string
+               * ie: "ledgerlive://discover/protect?theme=light" will open the catalog and the protect dapp with a light theme as parameter
+               */
+              [ScreenName.PlatformApp]: "discover/:platform",
+              [ScreenName.Recover]: "recover/:platform",
             },
           },
         },
@@ -363,9 +369,7 @@ export const DeeplinksProvider = ({
   const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || emptyObject;
   // Can be either true, false or null, meaning we don't know yet
-  const [userAcceptedTerms, setUserAcceptedTerms] = useState<boolean | null>(
-    null,
-  );
+  const { accepted: userAcceptedTerms } = useContext(TermsContext);
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
@@ -413,6 +417,13 @@ export const DeeplinksProvider = ({
           const platform = pathname.split("/")[1];
 
           if ((hostname === "discover" || hostname === "recover") && platform) {
+            const whitelistLiveAppsAccessibleInNonOnboardedLL: LiveAppManifest["id"][] =
+              recoverManifests;
+            if (
+              !hasCompletedOnboarding &&
+              !whitelistLiveAppsAccessibleInNonOnboardedLL.includes(platform)
+            )
+              return undefined;
             /**
              * Upstream validation of "ledgerlive://discover/:platform":
              *  - checking that a manifest exists
@@ -468,11 +479,6 @@ export const DeeplinksProvider = ({
     },
     [],
   );
-
-  useEffect(() => {
-    const loadTerms = async () => setUserAcceptedTerms(await isAcceptedTerms());
-    loadTerms();
-  }, []);
 
   useFlipper(navigationRef);
 

@@ -1,8 +1,7 @@
 import React from "react";
-import { storiesOf } from "../../storiesOf";
-import { List } from "../../../../src";
+import { ComponentStory } from "@storybook/react-native";
+import { List } from "../../../../src/components";
 import { Icons } from "../../../../src/assets";
-import { select } from "@storybook/addon-knobs";
 
 const description = `
 This is a simple bullet list component with fixed layout (text and description), that allows any kind of bullet point.
@@ -14,7 +13,24 @@ It serves as base for the different kind of lists.
 This components also accepts various props to style the items (see baseStyled).
 `;
 
-const ListStory = () => {
+export default {
+  title: "Layout/List",
+  component: List,
+  argTypes: {
+    alignItems: {
+      options: ["flex-start", "flex-end", "center", "baseline", "stretch"],
+      control: { type: "select" },
+    },
+  },
+  docs: {
+    title: "Default",
+    description: {
+      component: description,
+    },
+  },
+};
+
+export const Default: ComponentStory<typeof List> = (args: typeof DefaultArgs) => {
   return (
     <List
       items={[
@@ -33,19 +49,19 @@ const ListStory = () => {
         },
       ]}
       itemContainerProps={{
-        alignItems: select(
-          "Align items",
-          ["flex-start", "flex-end", "center", "baseline", "stretch"],
-          "center",
-          "Layout",
-        ),
+        alignItems: args.alignItems,
       }}
     />
   );
 };
+Default.storyName = "List";
+const DefaultArgs = {
+  alignItems: undefined,
+};
+Default.args = DefaultArgs;
 
-const CustomListStory = () => {
-  const Check = <Icons.CheckAloneMedium size={20} color={"#6EC85C"} />;
+const Check = <Icons.CheckAloneMedium size={20} color={"#6EC85C"} />;
+export const Bullets: ComponentStory<typeof List> = (args: typeof BulletArgs) => {
   return (
     <List
       items={[
@@ -67,26 +83,13 @@ const CustomListStory = () => {
         },
       ]}
       itemContainerProps={{
-        alignItems: select(
-          "Align items",
-          ["flex-start", "flex-end", "center", "baseline", "stretch"],
-          undefined,
-          "Layout",
-        ),
+        alignItems: args.alignItems,
       }}
     />
   );
 };
-
-storiesOf((story) =>
-  story("Layout/List", module)
-    .add("List", () => <ListStory />, {
-      docs: {
-        title: "Default",
-        description: {
-          component: description,
-        },
-      },
-    })
-    .add("Custom bullet list", () => <CustomListStory />),
-);
+Bullets.storyName = "List (custom bullets)";
+const BulletArgs = {
+  alignItems: undefined,
+};
+Bullets.args = BulletArgs;

@@ -138,11 +138,7 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error",
   troubleshootingCrash:
     "https://support.ledger.com/hc/en-us/articles/360012598060?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error",
-  appSupport: {
-    "Cardano ADA":
-      "https://support.ledger.com/hc/en-us/articles/360020095874-Cardano-ADA-?docs=true",
-    default: "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?docs=true",
-  },
+  appSupport: "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?docs=true",
   coinControl:
     "https://support.ledger.com/hc/en-us/articles/360015996580?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=send_coincontrol",
   githubIssues:
@@ -269,6 +265,7 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/6793501085981?support=true&utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_connect_manager",
     TronSendTrc20ToNewAccountForbidden:
       "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
+    TronStakingDisable: "https://support.ledger.com/hc/en-us/articles/9949980566173?support=true",
     OperatingSystemOutdated: "https://support.ledger.com/hc/articles/8083692639901?support=true",
   },
   approvedOperation:

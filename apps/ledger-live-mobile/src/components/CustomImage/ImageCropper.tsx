@@ -84,7 +84,6 @@ const ImageCropper = React.forwardRef<CropView, Props>((props, ref) => {
         onImageCrop={handleImageCrop}
         keepAspectRatio
         aspectRatio={aspectRatio}
-        scaleType={1}
       />
       {withButton && (
         <Button type="main" onPress={handleSave}>

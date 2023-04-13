@@ -1,19 +1,39 @@
 import React from "react";
-import { boolean, select, text } from "@storybook/addon-knobs";
 
 import Tag from "../../../src/components/tags/Tag";
-import { storiesOf } from "../storiesOf";
 import { Icons } from "../../../src/assets";
 
-const TagSample = () => (
+export default {
+  title: "Tag/Tag",
+  component: Tag,
+};
+
+export const TagSample = (args: typeof TagSampleArgs) => (
   <Tag
-    type={select("type", ["color", "shade", "warning"], "shade")}
-    size={select("size", ["small", "medium"], "small")}
-    Icon={boolean("icon", false) ? Icons.CircledCheckSolidMedium : undefined}
-    uppercase={boolean("uppercase", false)}
+    type={args.type}
+    size={args.size}
+    Icon={args.icon ? Icons.CircledCheckSolidMedium : undefined}
+    uppercase={args.uppercase}
   >
-    {text("children", "Label")}
+    {args.children}
   </Tag>
 );
-
-storiesOf((story) => story("Tag", module).add("Tag", TagSample));
+TagSample.storyName = "Tag";
+const TagSampleArgs = {
+  type: "shade" as const,
+  size: "small" as const,
+  icon: false,
+  uppercase: false,
+  children: "Label",
+};
+TagSample.args = TagSampleArgs;
+TagSample.argTypes = {
+  type: {
+    options: ["color", "shade", "warning"],
+    control: { type: "select" },
+  },
+  size: {
+    options: ["small", "medium"],
+    control: { type: "select" },
+  },
+};

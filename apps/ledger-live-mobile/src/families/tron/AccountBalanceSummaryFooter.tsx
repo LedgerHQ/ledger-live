@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import {
   getCryptoCurrencyById,
   toLocaleString,
@@ -19,6 +19,8 @@ import EnergyIcon from "../../icons/Energy";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
 import { localeSelector } from "../../reducers/settings";
+import Alert from "../../components/Alert";
+import { urls } from "../../config/urls";
 
 type Props = {
   account: Account;
@@ -50,6 +52,9 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   );
   return (
     <>
+      <Alert type="warning" learnMoreUrl={urls.TronStakingDisable}>
+        <Trans i18nKey="tron.voting.warnDisableStakingMessage" />
+      </Alert>
       <InfoModal
         isOpened={!!infoName}
         onClose={onCloseModal}
