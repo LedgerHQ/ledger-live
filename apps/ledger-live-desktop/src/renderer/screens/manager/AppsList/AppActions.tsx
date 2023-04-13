@@ -135,10 +135,10 @@ const AppActions = React.memo(
       [installQueue.length, installed, uninstallQueue.length],
     );
 
-    const showLearnMore = type === AppType.tool || (type === AppType.currency && !isLiveSupported);
+    const isCurrencyApp = type === AppType.app || type === AppType.currency;
+    const showLearnMore = type === AppType.tool || (isCurrencyApp && !isLiveSupported);
     const hasSpecificAction =
-      [AppType.swap, AppType.plugin].includes(type) ||
-      (type === AppType.currency && isLiveSupported);
+      [AppType.swap, AppType.plugin].includes(type) || (isCurrencyApp && isLiveSupported);
     const hasTwoCTAS = showLearnMore || installed;
     return (
       <AppActionsWrapper right={!hasTwoCTAS}>
@@ -180,7 +180,7 @@ const AppActions = React.memo(
         ) : showActions ? (
           <>
             {installed && featureFlagActivated ? (
-              type === AppType.currency && isLiveSupported ? (
+              isCurrencyApp && isLiveSupported ? (
                 <Tooltip
                   content={
                     canAddAccount ? (
