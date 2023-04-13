@@ -33,32 +33,12 @@ type Props = {
       SendFundsNavigatorStackParamList,
       ScreenName.SendSummary
     >
-  | StackNavigatorProps<
-      EthereumEditTransactionParamList,
-      ScreenName.SendSummary
-    >
+  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
       ScreenName.SignTransactionSummary
     >
-<<<<<<< HEAD
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
-=======
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableSummary
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplySummary
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawSummary
-    >
-  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
-  | StackNavigatorProps<EditTransactionParamList, ScreenName.SendSummary>,
->>>>>>> a325e08846 (rename edit tx navigator)
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
