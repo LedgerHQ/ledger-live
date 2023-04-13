@@ -1,32 +1,36 @@
-import { getAccountName, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import React, { useCallback, useRef, useState } from "react";
-import { Trans } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import styled from "styled-components";
-import { urls } from "~/config/urls";
-import { track } from "~/renderer/analytics/segment";
+import React, { useEffect, useRef, useCallback, useState } from "react";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { getMainAccount, getAccountName } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import Alert from "~/renderer/components/Alert";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import { DisconnectedDevice } from "@ledgerhq/errors";
+import { Trans } from "react-i18next";
+import styled from "styled-components";
+import useTheme from "~/renderer/hooks/useTheme";
+import { urls } from "~/config/urls";
+import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
+import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import LinkShowQRCode from "~/renderer/components/LinkShowQRCode";
+import ReadOnlyAddressField from "~/renderer/components/ReadOnlyAddressField";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import LinkShowQRCode from "~/renderer/components/LinkShowQRCode";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
+import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
+import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
+import { AccountLike } from "@ledgerhq/types-live";
+import { track } from "~/renderer/analytics/segment";
 import Modal from "~/renderer/components/Modal";
+import Alert from "~/renderer/components/Alert";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
-import ReadOnlyAddressField from "~/renderer/components/ReadOnlyAddressField";
-import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
-import SuccessDisplay from "~/renderer/components/SuccessDisplay";
-import Text from "~/renderer/components/Text";
-import useTheme from "~/renderer/hooks/useTheme";
-import { openURL } from "~/renderer/linking";
+import { getEnv } from "@ledgerhq/live-common/env";
+import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
 import { StepProps } from "~/renderer/modals/Receive/Body";
 import { LOCAL_STORAGE_KEY_PREFIX } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
 
@@ -89,7 +93,15 @@ const Receive1ShareAddress = ({
     </>
   );
 };
-const Receive2Device = ({ name, device }: { onVerify: () => void; name: string; device: any }) => {
+const Receive2Device = ({
+  onVerify,
+  name,
+  device,
+}: {
+  onVerify: () => void;
+  name: string;
+  device: any;
+}) => {
   const type = useTheme("colors.palette.type");
   return (
     <>
@@ -146,7 +158,7 @@ const StepReceiveFunds = (props: StepProps) => {
     eventType,
     currencyName,
   } = props;
-  const history = useHistory();
+  const dispatch = useDispatch();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
@@ -156,6 +168,32 @@ const StepReceiveFunds = (props: StepProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const hideQRCodeModal = useCallback(() => setModalVisible(false), [setModalVisible]);
   const showQRCodeModal = useCallback(() => setModalVisible(true), [setModalVisible]);
+  const confirmAddress = useCallback(async () => {
+    try {
+      if (getEnv("MOCK")) {
+        setTimeout(() => {
+          onChangeAddressVerified(true);
+          transitionTo("receive");
+        }, 3000);
+      } else {
+        if (!device) {
+          throw new DisconnectedDevice();
+        }
+        await getAccountBridge(mainAccount)
+          .receive(mainAccount, {
+            deviceId: device.deviceId,
+            verify: true,
+          })
+          .toPromise();
+        onChangeAddressVerified(true);
+        hideQRCodeModal();
+        transitionTo("receive");
+      }
+    } catch (err) {
+      onChangeAddressVerified(false, err);
+      hideQRCodeModal();
+    }
+  }, [device, mainAccount, transitionTo, onChangeAddressVerified, hideQRCodeModal]);
   const onVerify = useCallback(() => {
     // if device has changed since the beginning, we need to re-entry device
     if (device !== initialDevice.current || !isAddressVerified) {
@@ -180,25 +218,22 @@ const StepReceiveFunds = (props: StepProps) => {
           .join("/"),
         currency: currencyName,
         modal: "receive",
-        account: name,
+        account,
       });
       transitionTo("stakingFlow");
-      history.push({
-        pathname: `/account/${account.id}`,
-      });
     } else {
       onClose();
     }
   }, [
     account,
     currencyName,
-    history,
+    dispatch,
     onClose,
-    name,
     receiveStakingFlowConfig?.enabled,
     receiveStakingFlowConfig?.params,
     transitionTo,
   ]);
+
   return (
     <>
       <Box px={2}>
@@ -245,10 +280,17 @@ const StepReceiveFunds = (props: StepProps) => {
               address={address}
               showQRCodeModal={showQRCodeModal}
             />
-            {mainAccount.operationsCount === 0 ? (
+            {mainAccount.currency.id === "dash" ? (
               <AlertBoxContainer>
-                <Alert type="warning" learnMoreUrl={urls.errors.TronSendTrc20ToNewAccountForbidden}>
-                  <Trans i18nKey="tron.receive.newAddressTRC20" />
+                <Alert type="warning">
+                  <Trans i18nKey="currentAddress.dashStakingWarning" />
+                </Alert>
+              </AlertBoxContainer>
+            ) : null}
+            {mainAccount.derivationMode === "taproot" ? (
+              <AlertBoxContainer>
+                <Alert type="warning">
+                  <Trans i18nKey="currentAddress.taprootWarning" />
                 </Alert>
               </AlertBoxContainer>
             ) : null}
@@ -276,10 +318,17 @@ const StepReceiveFunds = (props: StepProps) => {
               address={address}
               showQRCodeModal={showQRCodeModal}
             />
-            {mainAccount.operationsCount === 0 ? (
+            {mainAccount.currency.id === "dash" ? (
               <AlertBoxContainer>
-                <Alert type="warning" learnMoreUrl={urls.errors.TronSendTrc20ToNewAccountForbidden}>
-                  <Trans i18nKey="tron.receive.newAddressTRC20" />
+                <Alert type="warning">
+                  <Trans i18nKey="currentAddress.dashStakingWarning" />
+                </Alert>
+              </AlertBoxContainer>
+            ) : null}
+            {mainAccount.derivationMode === "taproot" ? (
+              <AlertBoxContainer>
+                <Alert type="warning">
+                  <Trans i18nKey="currentAddress.taprootWarning" />
                 </Alert>
               </AlertBoxContainer>
             ) : null}
