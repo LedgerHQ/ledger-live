@@ -28,7 +28,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "../../actions/ble";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
@@ -41,10 +41,7 @@ import {
   setReadOnlyMode,
 } from "../../actions/settings";
 import DeviceSetupView from "../../components/DeviceSetupView";
-import {
-  BaseNavigatorStackParamList,
-  NavigateInput,
-} from "../../components/RootNavigator/types/BaseNavigator";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
