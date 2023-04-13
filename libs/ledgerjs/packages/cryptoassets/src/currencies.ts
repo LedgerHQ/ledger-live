@@ -1528,7 +1528,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   injective: {
     type: "CryptoCurrency",
     id: "injective",
-    coinType: CoinType.ATOM,
+    coinType: 60,
     name: "Injective",
     managerAppName: "Cosmos",
     ticker: "INJ",
@@ -1551,6 +1551,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://www.mintscan.io/injective/txs/$hash",
         address: "https://www.mintscan.io/injective/validators/$address",
+      },
+    ],
+  },
+  evmos: {
+    type: "CryptoCurrency",
+    id: "evmos",
+    coinType: 60,
+    name: "Evmos",
+    managerAppName: "Cosmos",
+    ticker: "EVMOS",
+    scheme: "evmos",
+    color: "#0bd",
+    family: "cosmos",
+    units: [
+      {
+        name: "Evmos",
+        code: "EVMOS",
+        magnitude: 18,
+      },
+      {
+        name: "Micro-Evmos",
+        code: "uevmos",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/evmos/txs/$hash",
+        address: "https://www.mintscan.io/evmos/validators/$address",
       },
     ],
   },

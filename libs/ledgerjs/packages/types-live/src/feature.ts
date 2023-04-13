@@ -15,6 +15,7 @@ export type FeatureId =
   | "currencyAvalancheCChain"
   | "currencyAxelar"
   | "currencyInjective"
+  | "currencyEvmos"
   | "currencyOnomy"
   | "currencyQuicksilver"
   | "currencyStride"

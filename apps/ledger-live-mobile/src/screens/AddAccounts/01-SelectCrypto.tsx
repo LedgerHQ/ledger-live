@@ -52,8 +52,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const devMode = useEnv("MANAGER_DEV_MODE");
   const { filterCurrencyIds = [], currency } = route.params || {};
 
-  const osmo = useFeature("currencyOsmosisMobile");
-  const axelar = useFeature("currencyAxelarMobile");
+  const axelar = useFeature("currencyAxelar");
+  const evmos = useFeature("currencyEvmos");
   const injective = useFeature("currencyInjective");
   const onomy = useFeature("currencyOnomy");
   const quicksilver = useFeature("currencyQuicksilver");
@@ -72,6 +72,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     () => ({
       axelar,
       injective,
+      evmos,
       onomy,
       quicksilver,
       stride,

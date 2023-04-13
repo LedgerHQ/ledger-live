@@ -30,6 +30,7 @@ const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const axelar = useFeature("currencyAxelar");
   const injective = useFeature("currencyInjective");
+  const evmos = useFeature("currencyEvmos");
   const onomy = useFeature("currencyOnomy");
   const quicksilver = useFeature("currencyQuicksilver");
   const stride = useFeature("currencyStride");
@@ -41,12 +42,12 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const desmos = useFeature("currencyDesmos");
   const umee = useFeature("currencyUmee");
   const binanceBeaconChain = useFeature("currencyBinanceBeaconChain");
-  const osmo = useFeature("currencyOsmosis");
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const featureFlaggedCurrencies = useMemo(
     () => ({
       axelar,
       injective,
+      evmos,
       onomy,
       quicksilver,
       stride,
@@ -58,7 +59,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       desmos,
       umee,
       binanceBeaconChain,
-      osmo,
       avalanche_c_chain: avaxCChain,
     }),
     [avaxCChain],

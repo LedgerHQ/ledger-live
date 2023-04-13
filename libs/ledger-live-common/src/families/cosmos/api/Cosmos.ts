@@ -291,7 +291,11 @@ export class CosmosAPI {
       });
 
       if (data && data.gas_info && data.gas_info.gas_used) {
+        //if (data.gas_info.gas_wanted) {
+        //return new BigNumber(data.gas_info.gas_wanted);
+        //} else {
         return new BigNumber(data.gas_info.gas_used);
+        //}
       } else {
         throw new Error("No gas used returned from lcd");
       }

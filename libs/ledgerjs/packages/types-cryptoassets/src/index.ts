@@ -56,6 +56,7 @@ export type CryptoCurrencyId =
   | "icon"
   | "icp"
   | "injective"
+  | "evmos"
   | "iota"
   | "juno"
   | "iov"

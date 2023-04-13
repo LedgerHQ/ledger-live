@@ -8,6 +8,7 @@ setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "axelar",
   "injective",
+  "evmos",
   "onomy",
   "quicksilver",
   "stride",
