@@ -21,7 +21,7 @@ import {
 } from "@ledgerhq/types-live";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
-import { withDevice } from "../../hw/deviceAccess";
+import { withDevice, withDevicePromise } from "../../hw/deviceAccess";
 type Bridge<T extends TransactionCommon> = {
   currencyBridge: CurrencyBridge;
   accountBridge: AccountBridge<T>;
@@ -32,9 +32,9 @@ import { createBridges as evmCreateBridges } from "@ledgerhq/coin-evm/bridge/js"
 import { Transaction as Polkadot } from "@ledgerhq/coin-polkadot/types";
 import * as polkadotSigner from "@ledgerhq/hw-app-polkadot";
 const polkadot = async (): Promise<Bridge<Polkadot>> => {
-  const signer = await withDevice("")((transport) =>
+  const signer = await withDevicePromise("", (transport) =>
     of(new polkadotSigner.default(transport))
-  ).toPromise();
+  );
   return polkadotCreateBridges(signer, network, makeLRUCache);
 };
 

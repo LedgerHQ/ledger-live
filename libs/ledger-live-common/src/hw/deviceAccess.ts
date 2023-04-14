@@ -1,4 +1,4 @@
-import { Observable, throwError, timer } from "rxjs";
+import { Observable, throwError, timer, from } from "rxjs";
 import { retryWhen, mergeMap, catchError } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
 import {
@@ -176,6 +176,11 @@ export const withDevice =
         if (sub) sub.unsubscribe();
       };
     });
+
+export const withDevicePromise = <T>(
+  deviceId: string,
+  fn: (transport: Transport) => Observable<T>
+): Promise<T> => withDevice(deviceId)((transport) => fn(transport)).toPromise();
 
 export const genericCanRetryOnError = (err: unknown): boolean => {
   if (err instanceof WrongAppForCurrency) return false;

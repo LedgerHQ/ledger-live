@@ -91,7 +91,7 @@ function genCoinFrameworkTarget(targetFile) {
     imports += `} from "@ledgerhq/types-live";\n`;
     imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
     imports += `import network from "@ledgerhq/live-network/network";\n`;
-    imports += `import { withDevice } from "../../hw/deviceAccess";\n`;
+    imports += `import { withDevice, withDevicePromise } from "../../hw/deviceAccess";\n`;
     imports += `type Bridge<T extends TransactionCommon> = {\n`;
     imports += `  currencyBridge: CurrencyBridge;\n`;
     imports += `  accountBridge: AccountBridge<T>;\n`;
@@ -104,7 +104,7 @@ function genCoinFrameworkTarget(targetFile) {
     imports += `  Result,\n`;
     imports += `  GetAddressOptions,\n`;
     imports += `} from "@ledgerhq/coin-framework/derivation";\n`;
-    imports += `import { withDevice } from "../hw/deviceAccess";\n`;
+    imports += `import { withDevicePromise } from "../hw/deviceAccess";\n`;
   }
 
   // Behavior for coin family with their own package
@@ -131,9 +131,9 @@ function genCoinFrameworkTarget(targetFile) {
       imports += `import { Transaction as ${transactionClazz} } from "@ledgerhq/coin-${family}/types";\n`;
       imports += `import * as ${signer} from "@ledgerhq/hw-app-${family}";\n`;
       imports += `const ${family} = async (): Promise<Bridge<${transactionClazz}>> => {\n`;
-      imports += `  const signer = await withDevice("")((transport) =>\n`;
+      imports += `  const signer = await withDevicePromise("", (transport) =>\n`;
       imports += `    of(new ${signer}.default(transport))\n`;
-      imports += `  ).toPromise();\n`;
+      imports += `  );\n`;
       imports += `  return ${bridgeFn}(signer, network, makeLRUCache);\n`;
       imports += `};\n`;
       exprts += `\n  ${family},`;
@@ -150,9 +150,9 @@ function genCoinFrameworkTarget(targetFile) {
       imports += `  transport: Transport,\n`;
       imports += `  opts: GetAddressOptions\n`;
       imports += `): Promise<Result> => {\n`;
-      imports += `  const signer = await withDevice("")((transport: Transport) =>\n`;
+      imports += `  const signer = await withDevicePromise("", (transport: Transport) =>\n`;
       imports += `    of(new ${family}Signer.default(transport))\n`;
-      imports += `  ).toPromise();\n`;
+      imports += `  );\n`;
       imports += `  return ${family}Resolver(signer)(opts);\n`;
       imports += `};\n`;
       exprts += `\n  ${family},`;

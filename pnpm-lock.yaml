@@ -1651,6 +1651,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -1736,9 +1739,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
-      '@ledgerhq/hw-transport':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/live-app-sdk':
         specifier: ^0.8.1
         version: 0.8.1

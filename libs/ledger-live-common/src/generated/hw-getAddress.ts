@@ -21,16 +21,16 @@ import type {
   Result,
   GetAddressOptions,
 } from "@ledgerhq/coin-framework/derivation";
-import { withDevice } from "../hw/deviceAccess";
+import { withDevicePromise } from "../hw/deviceAccess";
 import * as polkadotSigner from "@ledgerhq/hw-app-polkadot";
 import polkadotResolver from "@ledgerhq/coin-polkadot/hw-getAddress";
 const polkadot = async (
   transport: Transport,
   opts: GetAddressOptions
 ): Promise<Result> => {
-  const signer = await withDevice("")((transport: Transport) =>
+  const signer = await withDevicePromise("", (transport: Transport) =>
     of(new polkadotSigner.default(transport))
-  ).toPromise();
+  );
   return polkadotResolver(signer)(opts);
 };
 

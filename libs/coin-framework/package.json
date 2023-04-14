@@ -55,6 +55,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-portfolio": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
