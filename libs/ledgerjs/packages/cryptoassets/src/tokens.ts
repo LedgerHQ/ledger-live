@@ -221,8 +221,9 @@ export function addTokens(list: TokenCurrency[]): void {
     if (tokenListHashes.has(tokenHash)) return;
 
     /**
-     * We clean all the reference of existing token in case if the hash doesn't match with existing one
-     * Like this we can update any change from token coming from Dynamic CAL
+     * We clean all the reference of an existing token, if an hash doesn't  match.
+     * Like this we can update any change from a already added token coming from Dynamic CAL 
+     * and maintain it up to date without having to release a new version of LLD or LLM
      */
     removeTokenFromAllLists(token);
     const { id, contractAddress, parentCurrency, delisted, ticker } = token;
