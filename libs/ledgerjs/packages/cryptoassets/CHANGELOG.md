@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.3.0-nightly.1
+
+### Minor Changes
+
+- [#3207](https://github.com/LedgerHQ/ledger-live/pull/3207) [`3242a0a794`](https://github.com/LedgerHQ/ledger-live/commit/3242a0a7948c20fb0100ce3cc73e55e338534d32) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
 ## 9.3.0-nightly.0
 
 ### Minor Changes

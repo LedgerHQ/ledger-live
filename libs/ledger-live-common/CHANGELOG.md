@@ -1,5 +1,18 @@
 # @ledgerhq/live-common
 
+## 29.3.0-nightly.3
+
+### Patch Changes
+
+- [#3169](https://github.com/LedgerHQ/ledger-live/pull/3169) [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow for model and version dependent max name length
+
+- Updated dependencies [[`3242a0a794`](https://github.com/LedgerHQ/ledger-live/commit/3242a0a7948c20fb0100ce3cc73e55e338534d32)]:
+  - @ledgerhq/cryptoassets@9.3.0-nightly.1
+  - @ledgerhq/coin-framework@0.3.0-nightly.2
+  - @ledgerhq/coin-polkadot@0.1.1-nightly.2
+  - @ledgerhq/domain-service@1.0.0-nightly.2
+  - @ledgerhq/hw-app-eth@6.33.0-nightly.2
+
 ## 29.3.0-nightly.2
 
 ### Patch Changes

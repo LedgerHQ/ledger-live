@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.57.0-nightly.3
+
+### Patch Changes
+
+- [#3196](https://github.com/LedgerHQ/ledger-live/pull/3196) [`79bebafabb`](https://github.com/LedgerHQ/ledger-live/commit/79bebafabb9aa92ac9130d792011bf2b52843923) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove extra track data swap/stake/receive
+
+- [#3163](https://github.com/LedgerHQ/ledger-live/pull/3163) [`ee06b4ed83`](https://github.com/LedgerHQ/ledger-live/commit/ee06b4ed834a66dcd70dd198f73a8ae05edf8a55) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Locked device retry button, uses v3 styles now
+
+- [#3169](https://github.com/LedgerHQ/ledger-live/pull/3169) [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow for model and version dependent max name length
+
+- Updated dependencies [[`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9)]:
+  - @ledgerhq/live-common@29.3.0-nightly.3
+  - @ledgerhq/coin-framework@0.3.0-nightly.2
+  - @ledgerhq/domain-service@1.0.0-nightly.2
+
 ## 2.57.0-nightly.2
 
 ### Patch Changes

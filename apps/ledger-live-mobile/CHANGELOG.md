@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.19.0-nightly.3
+
+### Patch Changes
+
+- [#3169](https://github.com/LedgerHQ/ledger-live/pull/3169) [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow for model and version dependent max name length
+
+- [#3115](https://github.com/LedgerHQ/ledger-live/pull/3115) [`9b1a77ffa1`](https://github.com/LedgerHQ/ledger-live/commit/9b1a77ffa1974f6b9d09bb4c277c576dd5d7234e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implement support of Adjust universal links on iOS
+
+- Updated dependencies [[`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9)]:
+  - @ledgerhq/live-common@29.3.0-nightly.3
+  - @ledgerhq/coin-framework@0.3.0-nightly.2
+  - @ledgerhq/domain-service@1.0.0-nightly.2
+
 ## 3.19.0-nightly.2
 
 ### Patch Changes
