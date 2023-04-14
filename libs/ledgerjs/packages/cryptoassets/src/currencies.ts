@@ -1572,7 +1572,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
       {
         name: "Micro-Evmos",
-        code: "uevmos",
+        code: "aevmos",
         magnitude: 0,
       },
     ],
