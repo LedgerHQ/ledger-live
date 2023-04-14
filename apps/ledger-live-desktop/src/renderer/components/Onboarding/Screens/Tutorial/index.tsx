@@ -46,6 +46,7 @@ import { UseCase } from "../../index";
 
 import { track } from "~/renderer/analytics/segment";
 import { RecoverHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverHowTo";
+import { RecoverPinCodeHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverPinCodeHowTo";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -310,6 +311,8 @@ export default function Tutorial({ useCase }: Props) {
         previous: () => {
           if (useCase === UseCase.setupDevice) {
             history.push(`${path}/${ScreenId.deviceHowTo}`);
+          } else if (useCase === UseCase.recover) {
+            history.push(`${path}/${ScreenId.recoverHowTo}`);
           }
           // useCase === UseCase.recoveryPhrase
           else {
@@ -319,7 +322,7 @@ export default function Tutorial({ useCase }: Props) {
       },
       {
         id: ScreenId.pinCodeHowTo,
-        component: PinCodeHowTo,
+        component: useCase === UseCase.recover ? RecoverPinCodeHowTo : PinCodeHowTo,
         useCases: [UseCase.setupDevice, UseCase.recoveryPhrase, UseCase.recover],
         next: () => {
           if (useCase === UseCase.setupDevice) {
