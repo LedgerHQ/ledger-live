@@ -147,6 +147,7 @@
     "@octokit/rest": "^18.12.0",
     "@playwright/test": "1.31.2",
     "@sentry/cli": "^2.13.0",
+    "@sentry/types": "^7.47.0",
     "@storybook/addon-actions": "^6.3.12",
     "@storybook/addon-essentials": "^6.3.12",
     "@storybook/addon-links": "^6.3.12",
