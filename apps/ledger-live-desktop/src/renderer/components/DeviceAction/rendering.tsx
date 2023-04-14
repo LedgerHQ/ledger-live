@@ -525,9 +525,9 @@ export const renderLockedDeviceError = ({
       </ErrorDescription>
       <ButtonContainer>
         {onRetry ? (
-          <Button primary onClick={onRetry}>
+          <ButtonV3 variant="main" onClick={onRetry}>
             {t("common.retry")}
-          </Button>
+          </ButtonV3>
         ) : null}
       </ButtonContainer>
     </Wrapper>

@@ -117,7 +117,7 @@ function PostWelcomeSelection({ route }: NavigationProps) {
   const setupLedger = useCallback(() => {
     dispatch(setReadOnlyMode(false));
     navigation.navigate(ScreenName.OnboardingDeviceSelection);
-  }, [navigation]);
+  }, [dispatch, navigation]);
 
   const buyLedger = useCallback(() => {
     (
@@ -151,7 +151,7 @@ function PostWelcomeSelection({ route }: NavigationProps) {
   const handleBack = useCallback(() => {
     dispatch(setReadOnlyMode(true));
     navigation.goBack();
-  }, []);
+  }, [dispatch, navigation]);
 
   return (
     <DeviceSetupView hasBackButton onBack={handleBack}>
