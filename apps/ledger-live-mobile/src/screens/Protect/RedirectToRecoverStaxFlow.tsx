@@ -1,55 +1,68 @@
-import React, { useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useCallback, useEffect } from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Flex } from "@ledgerhq/native-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Linking } from "react-native";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import {
   RootComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import { useNavigationInterceptor } from "../Onboarding/onboardingContext";
+import BleDevicePairingFlow from "../../components/BleDevicePairingFlow";
+import DeviceSetupView from "../../components/DeviceSetupView";
+import { useIncrementOnNavigationFocusState } from "../../helpers/useIncrementOnNavigationFocusState";
+import { usePostOnboardingURI } from "../../hooks/recoverFeatureFlag";
+import { ServicesConfig } from "../../components/ServicesWidget/types";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<
     BaseNavigatorStackParamList,
-    ScreenName.RedirectToOnboardingRecoverFlow
+    ScreenName.RedirectToRecoverStaxFlow
   >
 >;
 
-export function RedirectToRecoverStaxFlowScreen() {
-  const { replace } = useNavigation<NavigationProps["navigation"]>();
+export function RedirectToRecoverStaxFlowScreen({
+  navigation,
+}: NavigationProps) {
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
+  const recoverRestoreFlowURI = usePostOnboardingURI();
+  const recoverConfig: ServicesConfig | null = useFeature(
+    "protectServicesMobile",
+  );
 
   useEffect(() => {
     setShowWelcome(false);
     setFirstTimeOnboarding(false);
-    replace(NavigatorName.Base, {
-      screen: ScreenName.BleDevicePairingFlow,
-      params: {
-        filterByDeviceModelId: DeviceModelId.stax,
-        areKnownDevicesDisplayed: true,
-        onSuccessAddToKnownDevices: false,
-        isRecoverFlow: true,
-        // `onSuccessNavigateToConfig` will never be used when `isRecoverFlow: true`
-        onSuccessNavigateToConfig: {
-          navigationType: "push",
-          navigateInput: {
-            name: NavigatorName.BaseOnboarding,
-            params: {
-              screen: NavigatorName.SyncOnboarding,
-              params: {
-                screen: ScreenName.SyncOnboardingCompanion,
-                params: {
-                  device: null,
-                },
-              },
-            },
-          },
-          pathToDeviceParam: "params.params.params.device",
-        },
-      },
-    });
-  }, [replace, setFirstTimeOnboarding, setShowWelcome]);
+  }, [setFirstTimeOnboarding, setShowWelcome]);
 
-  return <></>;
+  // Makes sure the pairing components are reset when navigating back to this screen
+  const keyToReset =
+    useIncrementOnNavigationFocusState<NavigationProps["navigation"]>(
+      navigation,
+    );
+
+  const onPairingSuccess = useCallback(() => {
+    if (recoverConfig?.enabled && recoverRestoreFlowURI) {
+      Linking.canOpenURL(recoverRestoreFlowURI).then(canOpen => {
+        if (canOpen) Linking.openURL(recoverRestoreFlowURI);
+      });
+    }
+  }, [recoverConfig?.enabled, recoverRestoreFlowURI]);
+
+  return (
+    <DeviceSetupView hasBackButton>
+      <Flex px={6} flex={1}>
+        <BleDevicePairingFlow
+          key={keyToReset}
+          filterByDeviceModelId={DeviceModelId.stax}
+          areKnownDevicesDisplayed={true}
+          areKnownDevicesPairable={false}
+          onPairingSuccess={onPairingSuccess}
+          onPairingSuccessAddToKnownDevices={false}
+        />
+      </Flex>
+    </DeviceSetupView>
+  );
 }
