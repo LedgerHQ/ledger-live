@@ -161,6 +161,7 @@ const linkingOptions = {
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
           [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
+          [ScreenName.RedirectToRecoverStaxFlow]: "recover-restore-stax-flow",
 
           [NavigatorName.PostOnboarding]: {
             screens: {

@@ -178,6 +178,7 @@ export type BaseNavigatorStackParamList = {
     areKnownDevicesDisplayed?: boolean;
     areKnownDevicesPairable?: boolean;
     onSuccessAddToKnownDevices?: boolean;
+    isRecoverFlow?: boolean;
     onSuccessNavigateToConfig: {
       navigateInput: NavigateInput;
       pathToDeviceParam: PathToDeviceParam;
@@ -328,4 +329,5 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.StakeFlow]: NavigatorScreenParams<StakeNavigatorParamList>;
 
   [ScreenName.RedirectToOnboardingRecoverFlow]: undefined;
+  [ScreenName.RedirectToRecoverStaxFlow]: undefined;
 };
