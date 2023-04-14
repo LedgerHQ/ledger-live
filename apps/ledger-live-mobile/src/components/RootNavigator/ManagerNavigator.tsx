@@ -10,7 +10,7 @@ import {
   hasAvailableUpdateSelector,
   lastSeenDeviceSelector,
 } from "../../reducers/settings";
-import Manager from "../../screens/Manager";
+import Manager, { managerHeaderOptions } from "../../screens/Manager";
 import ManagerMain from "../../screens/Manager/Manager";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
@@ -62,7 +62,7 @@ export default function ManagerNavigator() {
         name={ScreenName.Manager}
         component={Manager}
         options={{
-          headerShown: false,
+          ...managerHeaderOptions,
           gestureEnabled: false,
         }}
       />

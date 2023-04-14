@@ -40,8 +40,7 @@ export type BleDevicePairingFlowProps = {
    * Any screen consuming this component (directly or indirectly, this prop should be passed along by any intermediary component)
    * should react to a request from this component to set or to clean its header.
    */
-  // TODO: optional for now but should be mandatory
-  requestToSetHeaderOptions?: (request: SetHeaderOptionsRequest) => void;
+  requestToSetHeaderOptions: (request: SetHeaderOptionsRequest) => void;
 };
 
 // A "done" state to avoid having the BLE scanning on the device that we just paired
@@ -143,8 +142,6 @@ const BleDevicePairingFlow = ({
 
   // Requests consumer component to override the header
   useEffect(() => {
-    if (!requestToSetHeaderOptions) return () => undefined;
-
     if (pairingFlowStep === "scanning") {
       requestToSetHeaderOptions({
         type: "set",

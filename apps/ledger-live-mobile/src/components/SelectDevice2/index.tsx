@@ -63,8 +63,7 @@ type Props = {
    * Any screen consuming this component (directly or indirectly, this prop should be passed along by any intermediary component)
    * should react to a request from this component to set or to clean its header.
    */
-  // TODO: optional for now but should be mandatory
-  requestToSetHeaderOptions?: (request: SetHeaderOptionsRequest) => void;
+  requestToSetHeaderOptions: (request: SetHeaderOptionsRequest) => void;
 };
 
 export default function SelectDevice({

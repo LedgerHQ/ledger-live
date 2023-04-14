@@ -26,6 +26,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import {
   BaseComposite,
+  ReactNavigationHeaderOptions,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
@@ -43,6 +44,10 @@ type NavigationProps = BaseComposite<
 >;
 
 type Props = NavigationProps;
+
+export const managerHeaderOptions: ReactNavigationHeaderOptions = {
+  headerShown: false,
+};
 
 type ChooseDeviceProps = Props & {
   isFocused: boolean;
@@ -113,7 +118,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         navigation.setOptions({
           headerLeft: () => null,
           headerRight: () => null,
-          headerShown: false,
+          ...managerHeaderOptions,
         });
         setIsHeaderOverridden(false);
       }
