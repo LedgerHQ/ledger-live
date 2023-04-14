@@ -31,10 +31,8 @@ export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type TransactionInfo = {
-  estimatedFees: BigNumber;
   isTokenAccount: boolean;
   amount: BigNumber;
-  totalSpent: BigNumber;
   balance: BigNumber;
   spendableBalance: BigNumber;
   tokenAccount?: TokenAccount;

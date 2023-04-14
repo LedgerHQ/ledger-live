@@ -9,6 +9,7 @@ import {
 import { Transaction } from "./types";
 import { Transaction as ThorTransaction } from "thor-devkit";
 import {
+  calculateFee,
   estimateGas,
   generateNonce,
   getBlockRef,
@@ -66,8 +67,10 @@ export const prepareTransaction = async (
   account: Account,
   transaction: Transaction
 ): Promise<Transaction> => {
-  const { amount, isTokenAccount, estimatedFees } =
-    await calculateTransactionInfo(account, transaction);
+  const { amount, isTokenAccount } = await calculateTransactionInfo(
+    account,
+    transaction
+  );
 
   const blockRef = await getBlockRef();
 
@@ -85,12 +88,17 @@ export const prepareTransaction = async (
     body: { ...transaction.body, clauses: clauses },
   });
 
+  const estimatedFees = await calculateFee(
+    new BigNumber(gas),
+    transaction.body.gasPriceCoef
+  );
+
   const body = { ...transaction.body, gas, blockRef, clauses };
 
   return { ...transaction, body, amount, estimatedFees };
 };
 
-const calculateClausesVtho = async (
+export const calculateClausesVtho = async (
   transaction: Transaction,
   amount: BigNumber
 ): Promise<ThorTransaction.Clause[]> => {
