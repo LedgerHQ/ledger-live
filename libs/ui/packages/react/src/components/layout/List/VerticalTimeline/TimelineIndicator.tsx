@@ -49,8 +49,8 @@ const getIconBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) =
 
 const CenterCircle = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   border-radius: 9999px;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   background: ${(p) => getIconBackground(p.theme, p.status, p.isLastItem)};
   border: 2px solid ${(p) => getIconBorder(p.theme, p.status, p.isLastItem)};
   align-items: center;
@@ -69,7 +69,7 @@ export type Props = FlexProps & {
 
 const topSegmentDefaultHeight = 20;
 
-export default function TimelineIndicator({ status, isFirstItem, isLastItem, ...props }: Props) {
+function TimelineIndicator({ status, isFirstItem, isLastItem, ...props }: Props) {
   const { colors } = useTheme();
 
   return (
@@ -89,7 +89,7 @@ export default function TimelineIndicator({ status, isFirstItem, isLastItem, ...
           <IconWrapper>
             <CircledCheckSolidMedium
               color={isLastItem ? colors.success.c50 : colors.primary.c80}
-              size={24}
+              size={20}
             />
           </IconWrapper>
         )}
@@ -98,5 +98,7 @@ export default function TimelineIndicator({ status, isFirstItem, isLastItem, ...
     </Flex>
   );
 }
+
+export default React.memo(TimelineIndicator);
 
 TimelineIndicator.topSegmentDefaultHeight = topSegmentDefaultHeight;

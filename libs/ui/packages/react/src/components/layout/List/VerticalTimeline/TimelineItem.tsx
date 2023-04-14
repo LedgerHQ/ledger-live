@@ -14,6 +14,7 @@ export type Props = {
   item: Item;
   isFirstItem?: boolean;
   isLastItem?: boolean;
+  onClick: () => void;
 };
 
 const getContainerBackground = (theme: Theme, status: ItemStatus) => {
@@ -44,11 +45,11 @@ const TimelineIndicatorContentHeader = styled(Flex)`
   justify-content: space-between;
 `;
 
-export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
+function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
   const { colors } = useTheme();
 
   return (
-    <Flex flexDirection="row">
+    <Flex flexDirection="row" onClick={onClick}>
       <TimelineIndicator
         status={item.status}
         isFirstItem={isFirstItem}
@@ -59,12 +60,13 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
         <TimelineIndicatorContentHeader>
           <Text
             variant="body"
+            fontWeight="semiBold"
             color={
               item.status === "inactive"
-                ? "neutral.c80"
+                ? "neutral.c70"
                 : isLastItem
                 ? "success.c50"
-                : "primary.c90"
+                : "primary.c80"
             }
           >
             {item.title}
@@ -88,3 +90,5 @@ export default function TimelineItem({ item, isFirstItem, isLastItem }: Props) {
     </Flex>
   );
 }
+
+export default React.memo(TimelineItem);

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Flex from "../../Flex";
+import { Switch } from "../../../form";
 import VerticalTimeline from ".";
 
 const description = `
@@ -96,18 +97,24 @@ const defaultItems = [
 ];
 
 const Template = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [autoAnimate, setAutoAnimate] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(1);
 
   useEffect(() => {
-    setTimeout(() => {
-      if (currentIndex === defaultItems.length) {
-        setCurrentIndex(0);
-        return;
-      }
-      setCurrentIndex(currentIndex + 1);
-      setItems(newItems);
-    }, 1000);
-  }, [items, currentIndex]);
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    if (autoAnimate) {
+      timeout = setTimeout(() => {
+        if (currentIndex === defaultItems.length) {
+          setCurrentIndex(0);
+          return;
+        }
+        setCurrentIndex(currentIndex + 1);
+      }, 1000);
+    }
+    return () => {
+      timeout && clearTimeout(timeout);
+    };
+  }, [autoAnimate, currentIndex]);
 
   const items = useMemo(
     () =>
@@ -119,8 +126,17 @@ const Template = () => {
   );
 
   return (
-    <Flex width={300}>
-      <VerticalTimeline steps={items as any} />
+    <Flex flexDirection="column">
+      <Switch
+        name="Auto animate"
+        label="Auto animate steps"
+        checked={autoAnimate}
+        onChange={() => setAutoAnimate(!autoAnimate)}
+      />
+
+      <Flex width={300}>
+        <VerticalTimeline steps={items} onClickIndex={(index) => setCurrentIndex(index)} />
+      </Flex>
     </Flex>
   );
 };
