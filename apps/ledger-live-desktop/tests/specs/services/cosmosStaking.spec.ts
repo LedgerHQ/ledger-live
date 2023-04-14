@@ -7,12 +7,12 @@ import { Layout } from "tests/models/Layout";
 import { AccountPage } from "tests/models/AccountPage";
 
 test.use({
-  userdata: "cosmosOsmosisStakingAccounts",
+  userdata: "cosmosStakingAccounts",
   featureFlags: {
     stakePrograms: {
       enabled: true,
       params: {
-        list: ["ethereum", "solana", "tezos", "polkadot", "tron", "cosmos", "osmo", "celo", "near"],
+        list: ["ethereum", "cosmos", "osmo"],
       },
     },
     portfolioExchangeBanner: {
@@ -28,7 +28,6 @@ test.use({
       },
     },
   },
-  env: { MOCK: undefined },
 });
 
 test("Cosmos staking flows via portfolio. Check stake flow modals and stake banner", async ({
