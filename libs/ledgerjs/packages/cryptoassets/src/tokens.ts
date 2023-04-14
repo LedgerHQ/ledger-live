@@ -220,6 +220,10 @@ export function addTokens(list: TokenCurrency[]): void {
     const tokenHash = createTokenHash(token);
     if (tokenListHashes.has(tokenHash)) return;
 
+    /**
+     * We clean all the reference of existing token in case if the hash doesn't match with existing one
+     * Like this we can update any change from token coming from Dynamic CAL
+     */
     removeTokenFromAllLists(token);
     const { id, contractAddress, parentCurrency, delisted, ticker } = token;
     const lowCaseContract = contractAddress.toLowerCase();
