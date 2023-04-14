@@ -74,6 +74,7 @@ import type {
   SettingsSetHasBeenUpsoldProtectPayload,
   SettingsSetHasSeenStaxEnabledNftsPopupPayload,
   SettingsSetCustomImageTypePayload,
+  SettingsSetGeneralTermsVersionAccepted,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -691,6 +692,15 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       action as Action<SettingsSetHasBeenUpsoldProtectPayload>
     ).payload,
   }),
+  [SettingsActionTypes.SET_GENERAL_TERMS_VERSION_ACCEPTED]: (
+    state,
+    action,
+  ) => ({
+    ...state,
+    generalTermsVersionAccepted: (
+      action as Action<SettingsSetGeneralTermsVersionAccepted>
+    ).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(
@@ -917,3 +927,5 @@ export const debugAppLevelDrawerOpenedSelector = (state: State) =>
   state.settings.debugAppLevelDrawerOpened;
 export const hasBeenUpsoldProtectSelector = (state: State) =>
   state.settings.hasBeenUpsoldProtect;
+export const generalTermsVersionAcceptedSelector = (state: State) =>
+  state.settings.generalTermsVersionAccepted;

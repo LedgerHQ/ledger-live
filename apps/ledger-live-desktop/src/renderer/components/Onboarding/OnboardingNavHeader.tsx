@@ -33,7 +33,7 @@ interface Props {
 export default function OnboardingNavHeader({ onClickPrevious }: Props) {
   const { t } = useTranslation();
   const left = (
-    <Button iconPosition="left" Icon={Icons.ArrowLeftRegular} onClick={onClickPrevious}>
+    <Button iconPosition="left" Icon={Icons.ArrowLeftMedium} onClick={onClickPrevious}>
       {t("common.previous")}
     </Button>
   );
