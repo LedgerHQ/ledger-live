@@ -2,10 +2,14 @@ import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import React, { useCallback } from "react";
 import { has as hasFromPath, set as setFromPath } from "lodash";
 import { Flex } from "@ledgerhq/native-ui";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigatorName, ScreenName } from "../../const";
 import { useIncrementOnNavigationFocusState } from "../../helpers/useIncrementOnNavigationFocusState";
-import BleDevicePairingFlowComponent from "../../components/BleDevicePairingFlow/index";
+import BleDevicePairingFlowComponent, {
+  SetHeaderOptionsRequest,
+} from "../../components/BleDevicePairingFlow/index";
 import {
+  ReactNavigationHeaderOptions,
   RootComposite,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
@@ -18,6 +22,10 @@ export type Props = RootComposite<
     ScreenName.BleDevicePairingFlow
   >
 >;
+
+export const bleDevicePairingFlowHeaderOptions: ReactNavigationHeaderOptions = {
+  headerShown: false,
+};
 
 // Necessary when the pairing flow is opened from a deeplink without any params
 // Shouldn't be relied upon for other usages
@@ -134,8 +142,29 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
     [navigateInput, navigation, navigationType, pathToDeviceParam],
   );
 
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        navigation.setOptions({
+          headerShown: true,
+          headerLeft: request.options.headerLeft,
+          headerRight: request.options.headerRight,
+          title: "",
+        });
+      } else {
+        // Sets back the header to its initial values set for this screen
+        navigation.setOptions({
+          headerLeft: () => null,
+          headerRight: () => null,
+          ...bleDevicePairingFlowHeaderOptions,
+        });
+      }
+    },
+    [navigation],
+  );
+
   return (
-    <DeviceSetupView hasBackButton>
+    <SafeAreaView style={{ flex: 1 }}>
       <Flex px={6} flex={1}>
         <BleDevicePairingFlowComponent
           key={keyToReset}
@@ -144,8 +173,9 @@ export const BleDevicePairingFlow = ({ navigation, route }: Props) => {
           areKnownDevicesPairable={areKnownDevicesPairable}
           onPairingSuccess={onPairingSuccess}
           onPairingSuccessAddToKnownDevices={onSuccessAddToKnownDevices}
+          requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
       </Flex>
-    </DeviceSetupView>
+    </SafeAreaView>
   );
 };
