@@ -12,7 +12,7 @@
     "gotit" : "Anladım",
     "continue" : "Devam",
     "retry" : "Tekrar dene",
-    "backTo" : "Back to {{to}}",
+    "backTo" : "{{to}} sayfasına dön",
     "done" : "Tamam",
     "sortBy" : "Sıralama türü",
     "signOut" : "Oturumu kapat",
@@ -167,9 +167,6 @@
     "ClaimRewardsFeesWarning" : {
       "title" : "Ödül miktarı, ödülü almak için gereken tahmini ağ ücretlerinden daha az.",
       "description" : ""
-    },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Aktif fonlama işlemi sırasında onaylanan tutarı azaltamazsınız."
     },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Bir hata oluştu (Error #1)",
@@ -2128,8 +2125,6 @@
       "OPT_IN" : "Onaylama",
       "OPT_OUT" : "Reddetme",
       "CLOSE_ACCOUNT" : "Hesabı kapama",
-      "SUPPLY" : "Fonlandı",
-      "REDEEM" : "Çekildi",
       "APPROVE" : "Etkin",
       "BOND" : "Bağlama",
       "UNBOND" : "Çözme",
@@ -2704,6 +2699,10 @@
           "title" : "Deneysel uygulamalara izin ver",
           "description" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
         },
+        "debugApps" : {
+          "title" : "Hata ayıklama uygulamalarına izin ver",
+          "description" : "Hata ayıklama etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
+        },
         "staggingUrl" : {
           "title" : "Test ortamı URL'sini öğrenin",
           "description" : "Öğrenin sayfası için test ortamı URL'sini kullanın."
@@ -2739,46 +2738,6 @@
       "desc" : "Ledger Live, Ledger ürünleri ve piyasalar hakkındaki son haberleri ve kişiye özel öneriler alın. Ayarları değiştirerek istediğiniz zaman abonelikten çıkabilirsiniz",
       "allow" : "Bildirimlere izin ver",
       "later" : "Belki sonra"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Ledger Live hesap güncellemesi",
-    "overview" : {
-      "headerTitle" : "Hesap güncellemesi",
-      "title" : "Ledger Live hesap güncellemesi",
-      "subtitle" : "Ledger Live'daki yeni özellikler, hesaplarınızın güncellenmesi gerektiği anlamına gelir",
-      "notice" : "{{accountCount}} hesap güncellenemedi. Lütfen aşağıdaki hesapla ilişkili cihazı bağlayın",
-      "notice_plural" : "{{accountCount}} hesap güncellenemedi. Lütfen aşağıdaki hesaplarla ilişkili cihazı bağlayın.",
-      "currency" : "1 {{currency}} hesabının güncellenmesi gerekiyor:",
-      "currency_plural" : "{{count}} {{currency}} hesabının güncellenmesi gerekiyor:",
-      "start" : "Güncellemeyi başlat",
-      "continue" : "Güncellemeye devam et"
-    },
-    "progress" : {
-      "headerTitle" : "Hesaplar güncelleniyor",
-      "pending" : {
-        "title" : "{{currency}} güncellemesi devam ediyor",
-        "subtitle" : "Lütfen hesaplarınızın güncellenmesini bekleyin"
-      },
-      "notice" : {
-        "title" : "{{currency}} güncellemesi tamamlanmadı",
-        "subtitle" : "Bu cihaz ile güncellenebilen bir {{currency}} hesabı yok.",
-        "cta" : "Devam",
-        "ctaNextCurrency" : "{{currency}} ile devam et"
-      },
-      "done" : {
-        "title" : "{{currency}} güncellemesi tamamlandı",
-        "subtitle" : "Tebrikler, {{currency}} hesaplarınız başarıyla güncellendi.",
-        "cta" : "Devam",
-        "ctaNextCurrency" : "{{currency}} ile devam et",
-        "ctaDone" : "Tamam"
-      },
-      "error" : {
-        "cta" : "Tekrar dene"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "Cihazı bağlayın"
     }
   },
   "transfer" : {
@@ -2890,7 +2849,7 @@
       "title" : "Satın Al / Sat"
     },
     "stake" : {
-      "title" : "Stake",
+      "title" : "Stake edin",
       "description" : "Elinizdeki kriptoları artırın."
     },
     "swap" : {
@@ -3412,7 +3371,12 @@
       "scan" : "QR kodunu tarayın",
       "enterAddress" : "Adresi girin",
       "input" : "Adresi girin",
-      "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın."
+      "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın.",
+      "domainService" : {
+        "reverse" : "Bu adres {{domain}} ile bağlı",
+        "forward" : "Bu geçerli bir ENS adresidir",
+        "supportLink" : "Ethereum Name Service nedir?"
+      }
     },
     "amount" : {
       "available" : "Toplam mevcut",
@@ -3484,6 +3448,29 @@
         "title" : "Maksimum harcanabilir tutar",
         "description" : "Maksimum harcanabilir tutar, bir hesapta bulunan ve bir işlemde gönderilebilecek olan toplam bakiye miktarıdır."
       }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "Hızlandırın ya da İptal Edin",
+    "previousFeesInfo" : "Mevcut ağ ücreti = {{amount}} ETH",
+    "header" : "İşlemi Düzenleyin",
+    "learnMore" : "Daha fazla bilgi almak istiyorum",
+    "panel" : {
+      "stuckMessage" : "En son başlattığınız gönderme işlemi takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin.",
+      "speedupMessage" : "İşleminiz devam ediyor. Daha yüksek bir ağ ücretiyle hızlandırabilir ya da işlemi iptal edebilirsiniz."
+    },
+    "speedUp" : {
+      "title" : "Hızlandırın",
+      "description" : "İşlemi daha yüksek bir ağ ücretiyle yeniden gönderin."
+    },
+    "cancel" : {
+      "title" : "İptal et",
+      "description" : "Sizin adresinize 0 {{ticker}} gönderiliyor. İptal edildiğinden emin olmak için ağ ücreti, iptal edilecek işlemin ücretinden %30 daha yüksek olacaktır."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Hesabınızda yeterince fon olmadığı için işlem iptal edilemiyor.",
+      "notEnoughFundsToSpeedup" : "Hesabınızda yeterince fon olmadığı için işlem hızlandırılamıyor.",
+      "notlowestNonceToSpeedup" : "Hızlandırma özelliği kullanılamıyor. Önceki bir işlem takıldığı için işleminiz beklemede. Onaylanmasını bekleyebilir, hızlandırabilir veya iptal edebilirsiniz."
     }
   },
   "requestAccount" : {
@@ -4941,6 +4928,7 @@
       "header" : "Oylar ({{total}})",
       "Amount" : "Tutar",
       "noRewards" : "Ödül yok",
+      "warnDisableStakingMessage" : "Şu anda Tron için staking özelliği kullanılamıyor",
       "votes" : {
         "title" : "Oylar",
         "description" : "Ödül kazanmaya başlamak için bir veya daha fazla Temsilciye oy verin.",
@@ -5914,7 +5902,7 @@
       "noCurrencySearchResultsFor" : "Üzgünüz, <0>{{search}}</0> araması için bir para bulamadık. Lütfen aramayı başka bir anahtar kelime ile yeniden deneyin.",
       "noSearchResults" : "Üzgünüz, herhangi bir arama sonucu bulamadık.",
       "retrySearchKeyword" : "Lütfen aramayı başka bir anahtar kelime ile yeniden deneyin.",
-      "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
+      "retrySearchKeywordAndUrl" : "Lütfen başka bir anahtar kelimeyle yeniden aramayı deneyin ya da <Link>{{search}}</Link> hedefini Ledger Live'ın dışında açın.",
       "retrySearchParams" : "Lütfen aramayı farklı bir değişkenle yeniden deneyin.",
       "trackFavAssets" : "Favorilerinizi takip edin",
       "clickOnStarIcon" : "Bir varlığın yanındaki yıldız simgesine tıklamak onu otomatik bir şekilde favori varlıklarınız arasına ekler.",
@@ -5933,6 +5921,13 @@
     "gallery" : {
       "allNft" : "Tüm NFT'ler",
       "addNew" : "Yeni ekle"
+    },
+    "designedForStax" : {
+      "title" : "<1>Ledger</1><2>Stax</2><0>için tasarlandı</0>",
+      "drawer" : {
+        "description" : "Bu NFT, Ledger Stax'in E Ink Ekranı için özel olarak tasarlanmış ek bir resim içermektedir.\n\nBu resim, bu NFT'yi kilitli ekran olarak ayarladığınızda kullanılacaktır.",
+        "cta" : "Anladım"
+      }
     },
     "viewer" : {
       "properties" : "Özellikler",
@@ -6008,7 +6003,7 @@
     },
     "confirmCrop" : "Kırpmayı onayla",
     "confirmContrast" : "Zıtlığı onayla",
-    "nftEntryPointButtonLabel" : "Ledger Stax kilit ekranı resmi olarak belirle",
+    "nftEntryPointButtonLabel" : "Set as Ledger Stax lock screen",
     "customImage" : "Özel resim",
     "doThisLater" : "Belki sonra",
     "preview" : {
@@ -6057,7 +6052,7 @@
         "title" : "Kilit ekranını kişiselleştirin",
         "titleCompleted" : "Kilit ekranı kişiselleştirildi",
         "description" : "Ledger Stax cihazınızın kilit ekranında gösterilmesini istediğiniz NFT'yi ya da resmi seçin.",
-        "popupLabel" : "Kilit ekranı belirlendi"
+        "popupLabel" : "Lock screen set"
       },
       "claimNft" : {
         "title" : "Infinity NFT’sini alın",
@@ -6121,7 +6116,7 @@
           "title" : "Yeni",
           "desc" : "Gizli Kurtarma İfadenizi kullanmadan cüzdanınıza yeniden erişin.",
           "actions" : {
-            "learnMore" : "Bunun bana ne yararı var?",
+            "learnMore" : "Bunun bana yararı nedir?",
             "alreadySubscribed" : "Zaten giriş yaptınız mı? <LinkAccount>Aboneliğimi görüntüle</LinkAccount>"
           }
         }
