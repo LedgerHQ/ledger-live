@@ -21,7 +21,7 @@ export type Props = BaseStyledProps & {
 
 export default function VerticalTimeline({ steps, onClickIndex, ...props }: Props) {
   return (
-    <Flex {...props} flexDirection="column">
+    <Flex {...props} flexDirection="column" flex={1}>
       {steps?.map((step, index) => (
         <TimelineItem
           key={step.title}

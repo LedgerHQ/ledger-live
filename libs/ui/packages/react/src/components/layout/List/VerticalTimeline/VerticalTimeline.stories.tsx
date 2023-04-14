@@ -126,7 +126,7 @@ const Template = () => {
   );
 
   return (
-    <Flex flexDirection="column">
+    <Flex flexDirection="column" flex={1} alignItems="center">
       <Switch
         name="Auto animate"
         label="Auto animate steps"
@@ -134,7 +134,7 @@ const Template = () => {
         onChange={() => setAutoAnimate(!autoAnimate)}
       />
 
-      <Flex width={300}>
+      <Flex width={300} mt={10}>
         <VerticalTimeline steps={items} onClickIndex={(index) => setCurrentIndex(index)} />
       </Flex>
     </Flex>

@@ -49,7 +49,7 @@ function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
   const { colors } = useTheme();
 
   return (
-    <Flex flexDirection="row" onClick={onClick}>
+    <Flex flexDirection="row" onClick={onClick} flex={1}>
       <TimelineIndicator
         status={item.status}
         isFirstItem={isFirstItem}
