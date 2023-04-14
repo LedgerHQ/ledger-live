@@ -3674,6 +3674,7 @@
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
     "allowManagerPermission": "Allow {{wording}} on your {{productName}}",
+    "allowRemoveCustomLockscreen": "Confirm removal of image on your Ledger Stax",
     "loading": "Loading...",
     "turnOnAndUnlockDevice": "Turn on and unlock your device",
     "connectAndUnlockDevice": "Connect and unlock your device",
@@ -5974,9 +5975,11 @@
     "drawer": {
       "options": {
         "uploadFromPhone": "Choose from my picture gallery",
-        "selectFromNFTGallery": "Choose from NFT gallery"
+        "selectFromNFTGallery": "Choose from NFT gallery",
+        "remove": "Remove current picture"
       }
     },
+    "toastRemove": "Lock screen picture removed",
     "cropImage": "Crop picture",
     "chooseConstrast": "Choose contrast",
     "uploadAnotherImage": "Upload another image",
