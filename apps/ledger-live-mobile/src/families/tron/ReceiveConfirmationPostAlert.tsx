@@ -8,7 +8,7 @@ type Props = {
   mainAccount: Account;
 };
 
-export default function ReceiveConfirmationAlertPost({ mainAccount }: Props) {
+export default function ReceiveConfirmationPostAlert({ mainAccount }: Props) {
   return (
     <>
       {mainAccount.operationsCount === 0 ? (

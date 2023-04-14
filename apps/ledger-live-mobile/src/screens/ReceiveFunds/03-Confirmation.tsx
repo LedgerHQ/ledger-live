@@ -30,7 +30,7 @@ import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import byFamily from "../../generated/Confirmation";
-import byFamilyPostAlert from "../../generated/PostConfirmationAlert";
+import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
 
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import {
