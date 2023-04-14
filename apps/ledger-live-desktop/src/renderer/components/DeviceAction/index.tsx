@@ -17,7 +17,12 @@ import AutoRepair from "~/renderer/components/AutoRepair";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
 import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
 import useTheme from "~/renderer/hooks/useTheme";
-import { ManagerNotEnoughSpaceError, UpdateYourApp, TransportStatusError } from "@ledgerhq/errors";
+import {
+  ManagerNotEnoughSpaceError,
+  UpdateYourApp,
+  TransportStatusError,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import {
   InstallingApp,
   renderAllowManager,
@@ -35,6 +40,7 @@ import {
   renderSecureTransferDeviceConfirmation,
   renderAllowLanguageInstallation,
   renderInstallingLanguage,
+  renderAllowRemoveCustomLockscreen,
   renderLockedDeviceError,
   RenderDeviceNotOnboardedError,
 } from "./rendering";
@@ -81,6 +87,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
     error,
     isLoading,
     allowManagerRequestedWording,
+    imageRemoveRequested,
     requestQuitApp,
     deviceInfo,
     latestFirmware,
@@ -183,6 +190,21 @@ export const DeviceActionDefaultRendering = <R, H, P>({
 
   if (languageInstallationRequested) {
     return renderAllowLanguageInstallation({ modelId, type, t });
+  }
+
+  if (imageRemoveRequested) {
+    if (error) {
+      if (error instanceof UserRefusedOnDevice) {
+        return renderError({
+          t,
+          error,
+          onRetry,
+          info: true,
+        });
+      }
+    } else {
+      return renderAllowRemoveCustomLockscreen({ modelId, type });
+    }
   }
 
   if (listingApps) {
