@@ -31,13 +31,17 @@ import {
 import { ManagerNavigatorStackParamList } from "../RootNavigator/types/ManagerNavigator";
 import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
 import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryPointCard";
-import BleDevicePairingFlow from "../BleDevicePairingFlow";
+import BleDevicePairingFlow, {
+  SetHeaderOptionsRequest,
+} from "../BleDevicePairingFlow";
 import BuyDeviceCTA from "../BuyDeviceCTA";
 import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
 import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBluetooth";
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import ServicesWidget from "../ServicesWidget";
+
+export type { SetHeaderOptionsRequest };
 
 type Navigation = BaseComposite<
   CompositeScreenProps<
@@ -55,19 +59,19 @@ type Props = {
   stopBleScanning?: boolean;
   displayServicesWidget?: boolean;
   /**
-   * SelectDevice component can need to override the current header (during the bluetooth pairing flow)
-   * Any screen rendering this component (or a parent component rendering this component)
-   * and displaying a react-navigation header should react to this
-   * callback by updating its react-navigation options `headerShown` to false.
+   * SelectDevice component can sometimes need to override the current header (during the bluetooth pairing flow for ex).
+   * Any screen consuming this component (directly or indirectly, this prop should be passed along by any intermediary component)
+   * should react to a request from this component to set or to clean its header.
    */
-  onOverridingHeader?: (needToOverride: boolean) => void;
+  // TODO: optional for now but should be mandatory
+  requestToSetHeaderOptions?: (request: SetHeaderOptionsRequest) => void;
 };
 
 export default function SelectDevice({
   onSelect,
   stopBleScanning,
   displayServicesWidget,
-  onOverridingHeader,
+  requestToSetHeaderOptions,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -302,7 +306,7 @@ export default function SelectDevice({
             onPairingSuccess={handleOnSelect}
             onGoBackFromScanning={closeBlePairingFlow}
             onPairingSuccessAddToKnownDevices
-            onOverridingHeader={onOverridingHeader}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
           />
         ) : (
           <>

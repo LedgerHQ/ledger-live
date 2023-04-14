@@ -1,9 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { TouchableOpacity } from "react-native";
-import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import RequiresBLE from "../RequiresBLE";
 import BleDevicesScanning from "./BleDevicesScanning";
@@ -13,6 +10,23 @@ import type { BleDevicesScanningProps } from "./BleDevicesScanning";
 import type { BleDevicePairingProps } from "./BleDevicePairing";
 import { track } from "../../analytics";
 import { HeaderBackButton } from "../HeaderBackButton";
+import { HeaderCloseButton } from "../HeaderCloseButton";
+
+const TIMEOUT_AFTER_PAIRED_MS = 2000;
+
+// This could become a more generic way to make it possible for components to set (and clean)
+// the associated screen header, while letting the responsibility to the screen to manage its header
+export type SetHeaderOptionsRequest =
+  | {
+      type: "set";
+      options: {
+        headerLeft: () => React.ReactElement | null;
+        headerRight: () => React.ReactElement | null;
+      };
+    }
+  | {
+      type: "clean";
+    };
 
 export type BleDevicePairingFlowProps = {
   filterByDeviceModelId?: BleDevicesScanningProps["filterByDeviceModelId"];
@@ -22,12 +36,12 @@ export type BleDevicePairingFlowProps = {
   onPairingSuccess: BleDevicePairingProps["onPaired"];
   onPairingSuccessAddToKnownDevices?: boolean;
   /**
-   * SelectDevice component can need to override the current header (during the bluetooth pairing flow)
-   * Any screen rendering this component (or a parent component rendering this component)
-   * and displaying a react-navigation header should react to this
-   * callback by updating its react-navigation options `headerShown` to false.
+   * BleDevicePairingFlow component needs to be able to update the current (screen) header.
+   * Any screen consuming this component (directly or indirectly, this prop should be passed along by any intermediary component)
+   * should react to a request from this component to set or to clean its header.
    */
-  onOverridingHeader?: (needToOverride: boolean) => void;
+  // TODO: optional for now but should be mandatory
+  requestToSetHeaderOptions?: (request: SetHeaderOptionsRequest) => void;
 };
 
 // A "done" state to avoid having the BLE scanning on the device that we just paired
@@ -51,7 +65,7 @@ const BleDevicePairingFlow = ({
   onGoBackFromScanning,
   onPairingSuccess,
   onPairingSuccessAddToKnownDevices = false,
-  onOverridingHeader,
+  requestToSetHeaderOptions,
 }: BleDevicePairingFlowProps) => {
   const dispatchRedux = useDispatch();
 
@@ -59,6 +73,7 @@ const BleDevicePairingFlow = ({
     useState<PairingFlowStep>("scanning");
 
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
+  const [isPaired, setIsPaired] = useState(false);
 
   const onDeviceSelect = useCallback(
     (item: Device) => {
@@ -77,6 +92,10 @@ const BleDevicePairingFlow = ({
 
   const onPaired = useCallback(
     (device: Device) => {
+      // The rest of the "on paired" logic is handled in a useEffect + timeout below in order
+      // to display the success state to the user but still save the info that a device has been paired
+      setIsPaired(true);
+
       if (onPairingSuccessAddToKnownDevices) {
         dispatchRedux(
           addKnownDevice({
@@ -86,73 +105,110 @@ const BleDevicePairingFlow = ({
           }),
         );
       }
-
-      // Cannot reset the states so it ends up in the scanning step because this would display the scanning component
-      // before calling onPairingSuccess
-      setDeviceToPair(null);
-      setPairingFlowStep("done");
-
-      onPairingSuccess(device);
     },
-    [dispatchRedux, onPairingSuccess, onPairingSuccessAddToKnownDevices],
+    [dispatchRedux, onPairingSuccessAddToKnownDevices],
   );
 
-  const onRetryPairingFlow = useCallback(() => {
-    track("button_clicked", { button: "Try BT pairing again" });
-    setDeviceToPair(null);
-    setPairingFlowStep("scanning");
-  }, [setDeviceToPair, setPairingFlowStep]);
-
-  // Notifies parent component that BleDevicesPairingFlow needs to override the header
   useEffect(() => {
-    if (!onOverridingHeader) return () => undefined;
+    let timeout: null | ReturnType<typeof setTimeout>;
 
-    if (pairingFlowStep === "scanning" || pairingFlowStep === "pairing") {
-      onOverridingHeader(true);
-    } else {
-      onOverridingHeader(false);
+    if (isPaired && deviceToPair) {
+      // Timeout to display the success to the user
+      timeout = setTimeout(() => {
+        setDeviceToPair(null);
+        setIsPaired(false);
+        // "done": does not reset the state to "scanning" because it would display
+        // the scanning component before calling onPairingSuccess
+        setPairingFlowStep("done");
+
+        onPairingSuccess(deviceToPair);
+      }, TIMEOUT_AFTER_PAIRED_MS);
     }
 
     return () => {
-      onOverridingHeader(false);
+      if (timeout) {
+        clearTimeout(timeout);
+      }
     };
-  }, [onOverridingHeader, pairingFlowStep]);
+  }, [deviceToPair, isPaired, onPairingSuccess]);
+
+  const onRetryPairingFlow = useCallback(() => {
+    // If a device has been paired, we let the pairing flow end
+    if (!isPaired) {
+      track("button_clicked", { button: "Try BT pairing again" });
+      setDeviceToPair(null);
+      setPairingFlowStep("scanning");
+    }
+  }, [isPaired]);
+
+  // Requests consumer component to override the header
+  useEffect(() => {
+    if (!requestToSetHeaderOptions) return () => undefined;
+
+    if (pairingFlowStep === "scanning") {
+      requestToSetHeaderOptions({
+        type: "set",
+        options: {
+          headerLeft: () => <HeaderBackButton onPress={onGoBackFromScanning} />,
+          headerRight: () => null,
+        },
+      });
+    } else if (pairingFlowStep === "pairing") {
+      if (!isPaired) {
+        requestToSetHeaderOptions({
+          type: "set",
+          options: {
+            headerLeft: () => null,
+            headerRight: () => (
+              <HeaderCloseButton onPress={onRetryPairingFlow} />
+            ),
+          },
+        });
+      } else {
+        // If a device is paired, we still want to display the success component without the screen own header
+        // but without any close or back button.
+        requestToSetHeaderOptions({
+          type: "set",
+          options: {
+            headerLeft: () => null,
+            headerRight: () => null,
+          },
+        });
+      }
+    } else {
+      requestToSetHeaderOptions({ type: "clean" });
+    }
+
+    return () => {
+      // Sending a "clean" request here all the time does not seem to create a UI glitch between each change
+      requestToSetHeaderOptions({ type: "clean" });
+    };
+  }, [
+    isPaired,
+    onGoBackFromScanning,
+    onRetryPairingFlow,
+    pairingFlowStep,
+    requestToSetHeaderOptions,
+  ]);
 
   return (
-    <>
-      <Flex flexDirection="row" justifyContent="space-between">
-        {pairingFlowStep === "scanning" && onGoBackFromScanning && (
-          <HeaderBackButton
-            onPress={onGoBackFromScanning}
-            isScreenHeader={false}
-          />
-        )}
-
-        {pairingFlowStep === "pairing" && (
-          <TouchableOpacity onPress={onRetryPairingFlow}>
-            <CloseMedium size={24} />
-          </TouchableOpacity>
-        )}
-      </Flex>
-
-      <RequiresBLE>
-        {pairingFlowStep === "pairing" && deviceToPair !== null ? (
-          <BleDevicePairing
-            deviceToPair={deviceToPair}
-            onPaired={onPaired}
-            onRetry={onRetryPairingFlow}
-          />
-        ) : pairingFlowStep === "scanning" ? (
-          <BleDevicesScanning
-            filterByDeviceModelId={filterByDeviceModelId}
-            areKnownDevicesDisplayed={areKnownDevicesDisplayed}
-            areKnownDevicesPairable={areKnownDevicesPairable}
-            onDeviceSelect={onDeviceSelect}
-            onGoBack={onGoBackFromScanning}
-          />
-        ) : null}
-      </RequiresBLE>
-    </>
+    <RequiresBLE>
+      {pairingFlowStep === "pairing" && deviceToPair !== null ? (
+        <BleDevicePairing
+          deviceToPair={deviceToPair}
+          onPaired={onPaired}
+          onRetry={onRetryPairingFlow}
+        />
+      ) : pairingFlowStep === "scanning" ? (
+        <BleDevicesScanning
+          filterByDeviceModelId={filterByDeviceModelId}
+          areKnownDevicesDisplayed={areKnownDevicesDisplayed}
+          areKnownDevicesPairable={areKnownDevicesPairable}
+          onDeviceSelect={onDeviceSelect}
+          onGoBack={onGoBackFromScanning}
+        />
+      ) : null}
+    </RequiresBLE>
   );
 };
 

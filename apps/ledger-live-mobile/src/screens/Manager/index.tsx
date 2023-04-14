@@ -15,7 +15,9 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenName } from "../../const";
-import SelectDevice2 from "../../components/SelectDevice2";
+import SelectDevice2, {
+  SetHeaderOptionsRequest,
+} from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
 import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -96,13 +98,28 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     setDevice(params?.device);
   }, [params]);
 
-  const onOverridingHeader = useCallback((needToOverride: boolean) => {
-    if (needToOverride) {
-      setIsHeaderOverridden(true);
-    } else {
-      setIsHeaderOverridden(false);
-    }
-  }, []);
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        navigation.setOptions({
+          headerShown: true,
+          headerLeft: request.options.headerLeft,
+          headerRight: request.options.headerRight,
+          title: "",
+        });
+        setIsHeaderOverridden(true);
+      } else {
+        // Sets back the header to its initial values set for this screen
+        navigation.setOptions({
+          headerLeft: () => null,
+          headerRight: () => null,
+          headerShown: false,
+        });
+        setIsHeaderOverridden(false);
+      }
+    },
+    [navigation],
+  );
 
   const insets = useSafeAreaInsets();
 
@@ -125,7 +142,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
             onSelect={onSelectDevice}
             stopBleScanning={!!device}
             displayServicesWidget
-            onOverridingHeader={onOverridingHeader}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
           />
         </Flex>
       ) : (
