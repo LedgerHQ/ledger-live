@@ -1,4 +1,9 @@
-import type { Operation, AccountLike, Account } from "@ledgerhq/types-live";
+import type {
+  Operation,
+  AccountLike,
+  Account,
+  DeviceInfo,
+} from "@ledgerhq/types-live";
 import type {
   NavigatorScreenParams,
   ParamListBase,
@@ -151,6 +156,7 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.EditDeviceName]: {
     device: Device;
     deviceName: string;
+    deviceInfo: DeviceInfo;
   };
   [ScreenName.MarketCurrencySelect]: undefined;
   [ScreenName.PortfolioOperationHistory]: undefined;
@@ -170,6 +176,7 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.BleDevicePairingFlow]: {
     filterByDeviceModelId?: DeviceModelId;
     areKnownDevicesDisplayed?: boolean;
+    areKnownDevicesPairable?: boolean;
     onSuccessAddToKnownDevices?: boolean;
     onSuccessNavigateToConfig: {
       navigateInput: NavigateInput;

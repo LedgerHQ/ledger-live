@@ -18,7 +18,7 @@ import { context as _wcContext } from "../screens/WalletConnect/Provider";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "../const";
 import { setWallectConnectUri } from "../actions/walletconnect";
-import { AcceptedTermsContext } from "../logic/terms";
+import { TermsContext } from "../logic/terms";
 import { Writeable } from "../types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "../analytics";
@@ -108,7 +108,39 @@ const linkingOptions = {
       : null;
   },
 
-  prefixes: ["ledgerlive://", "https://ledger.com"],
+  prefixes: [
+    "ledgerlive://",
+    "https://ledger.com",
+    /**
+     * Adjust universal links attached to iOS Bundle ID com.ledger.live
+     * (local debug, prod & nightly builds)
+     * (https://r354.adj.st/.well-known/apple-app-site-association)
+     * (https://ledger.go.link/.well-known/apple-app-site-association)
+     *
+     * to use these universal links, add this query parameter to the URL: adj_t=r1guxhk
+     *  */
+    "https://r354.adj.st",
+    "https://ledger.go.link",
+    /**
+     * Adjust universal links attached to iOS Bundle ID com.ledger.live.debug
+     * (https://a4wc.adj.st/.well-known/apple-app-site-association)
+     * (https://ledger-debug.go.link/.well-known/apple-app-site-association)
+     *
+     * to use these universal links, add this query parameter to the URL: adj_t=f1vrzvp
+     *  */
+    "https://a4wc.adj.st",
+    "https://ledger-debug.go.link",
+    /**
+     * Adjust universal links attached to iOS Bundle ID com.ledger.live.dev
+     * (staging builds)
+     * (https://fvsc.adj.st/.well-known/apple-app-site-association)
+     * (https://ledger-staging.go.link/.well-known/apple-app-site-association)
+     *
+     * to use these universal links, add this query parameter to the URL: adj_t=p72sbdr
+     *  */
+    "https://fvsc.adj.st",
+    "https://ledger-staging.go.link",
+  ],
   config: {
     screens: {
       [NavigatorName.Base]: {
@@ -369,7 +401,7 @@ export const DeeplinksProvider = ({
   const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || emptyObject;
   // Can be either true, false or null, meaning we don't know yet
-  const { accepted: userAcceptedTerms } = useContext(AcceptedTermsContext);
+  const { accepted: userAcceptedTerms } = useContext(TermsContext);
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>

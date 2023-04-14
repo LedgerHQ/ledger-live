@@ -35,7 +35,7 @@ const InfoButton = ({ target }: { target: Metadata["drawer"] }) => {
   if (target)
     return (
       <Button
-        Icon={Icons.InfoRegular}
+        Icon={Icons.InfoMedium}
         onPress={() =>
           navigation.navigate(target.route, { screen: target.screen })
         }

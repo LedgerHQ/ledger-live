@@ -62,7 +62,7 @@ const StepLeftSide = ({
             data-test-id={dataTestId}
             disabled={continueDisabled}
             variant="main"
-            Icon={Icons.ArrowRightRegular}
+            Icon={Icons.ArrowRightMedium}
             onClick={onClickContinue}
           >
             {continueLabel}
