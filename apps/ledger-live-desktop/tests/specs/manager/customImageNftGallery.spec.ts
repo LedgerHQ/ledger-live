@@ -36,7 +36,7 @@ test("Custom image (with populated NFT gallery)", async ({ page }) => {
 
   await test.step("Access manager", async () => {
     await layout.goToManager();
-    await deviceAction.accessManager("", "", DeviceModelId.stax);
+    await deviceAction.accessManager("Bitcoin", "Bitcoin", DeviceModelId.stax);
     await managerPage.customImageButton.waitFor({ state: "visible" });
   });
 
