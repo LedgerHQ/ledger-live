@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 29.3.0-nightly.4
+
+### Minor Changes
+
+- [#3187](https://github.com/LedgerHQ/ledger-live/pull/3187) [`87d08d6d1c`](https://github.com/LedgerHQ/ledger-live/commit/87d08d6d1c6111b7f5fb15f3e1bbe85658686e4a) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Fixes error messaging when retrieving swap rates
+
+### Patch Changes
+
+- [#3184](https://github.com/LedgerHQ/ledger-live/pull/3184) [`42233141e8`](https://github.com/LedgerHQ/ledger-live/commit/42233141e853f2e9752268e5fa711416d460e0e3) Thanks [@PorlyBe](https://github.com/PorlyBe)! - Crypto Icons - Add support for VERSE token icon
+
 ## 29.3.0-nightly.3
 
 ### Patch Changes
