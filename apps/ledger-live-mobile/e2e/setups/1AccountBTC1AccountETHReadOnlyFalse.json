@@ -35,6 +35,7 @@
       "dismissedDynamicCards": [],
       "hasAcceptedSwapKYC": false,
       "lastSeenDevice": null,
+      "readOnlyModeEnabled": false,
       "blacklistedTokenIds": [],
       "swapAcceptedProviderIds": [],
       "deepLinkUrl": null,
