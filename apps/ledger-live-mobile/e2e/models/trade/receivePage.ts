@@ -1,6 +1,7 @@
 import { currencyParam, getElementById, openDeeplink } from "../../helpers";
 
-let baseLink: string = "receive";
+const baseLink = "receive";
+let link: string;
 
 export default class ReceivePage {
   getStep1HeaderTitle = () => getElementById("receive-header-step1-title");
@@ -12,9 +13,7 @@ export default class ReceivePage {
   }
 
   async receiveViaDeeplink(currencyLong?: string) {
-    let link = currencyLong
-      ? baseLink + currencyParam + currencyLong
-      : baseLink;
+    link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
 
     await openDeeplink(link);
   }

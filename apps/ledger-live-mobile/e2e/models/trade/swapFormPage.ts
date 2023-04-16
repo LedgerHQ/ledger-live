@@ -1,16 +1,16 @@
 import { getElementById, openDeeplink } from "../../helpers";
-import { expect } from "detox";
 
-let baseLink: string = "swap";
+const baseLink = "swap";
 
 export default class SwapFormPage {
   swapFormTab = () => getElementById("swap-form-tab");
+  swapHistoryTab = () => getElementById("swap-history-tab");
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
   }
 
-  async expectSwapFormPage() {
-    await expect(this.swapFormTab());
-  }
+  // async expectSwapFormPage() {
+  //   await expect(this.swapFormTab());
+  // }
 }
