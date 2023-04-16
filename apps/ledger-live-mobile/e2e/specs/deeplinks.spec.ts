@@ -21,13 +21,12 @@ let sendPage: SendPage;
 let swapFormPage: SwapFormPage;
 let receivePage: ReceivePage;
 
-let ethereumShort: string = "eth";
-let bitcoinShort: string = "btc";
-let ethereumLong: string = "Ethereum";
-let bitcoinLong: string = "Bitcoin";
+const ethereumLong = "Ethereum";
+const bitcoinLong = "Bitcoin";
 
-let deviceName = "Nano X de David";
-let mercuryoDL: string = "Mercuryo";
+const deviceName = "Nano X de David";
+const mercuryoDL = "Mercuryo";
+
 const discoverApps = [
   { name: "MoonPay", url: " https://www.moonpay.com/" },
   { name: "Ramp", url: " https://ramp.network/buy" },
