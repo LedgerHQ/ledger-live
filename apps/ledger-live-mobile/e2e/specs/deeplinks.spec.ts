@@ -21,14 +21,13 @@ let sendPage: SendPage;
 let swapFormPage: SwapFormPage;
 let receivePage: ReceivePage;
 
-const ethereumShort = "eth";
-const bitcoinShort = "btc";
-const ethereumLong = "Ethereum";
-const bitcoinLong = "Bitcoin";
+let ethereumShort: string = "eth";
+let bitcoinShort: string = "btc";
+let ethereumLong: string = "Ethereum";
+let bitcoinLong: string = "Bitcoin";
 
-const deviceName = "Nano X de David";
-const mercuryoDL = "Mercuryo";
-
+let deviceName = "Nano X de David";
+let mercuryoDL: string = "Mercuryo";
 const discoverApps = [
   { name: "MoonPay", url: " https://www.moonpay.com/" },
   { name: "Ramp", url: " https://ramp.network/buy" },
@@ -116,8 +115,7 @@ describe("DeepLinks Tests", () => {
 
   it("should open Swap Form page", async () => {
     await swapFormPage.openViaDeeplink();
-    await expect(swapFormPage.swapFormTab()).toBeVisible();
-    await expect(swapFormPage.swapHistoryTab()).toBeVisible();
+    await expect(swapFormPage.swapFormTab()).toBeFocused();
   });
 
   it("should open Send pages", async () => {

@@ -11,6 +11,7 @@ interface Props {
   subTitle: string;
   onPress: () => void;
   disabled?: boolean;
+  selectorTestId?: string;
 }
 
 export function Selector({
@@ -19,6 +20,7 @@ export function Selector({
   subTitle,
   onPress,
   disabled = false,
+  selectorTestId,
 }: Props) {
   const { t } = useTranslation();
 
@@ -35,7 +37,11 @@ export function Selector({
   );
 
   return (
-    <TouchableOpacity onPress={onPress} disabled={disabled}>
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={disabled}
+      testID={selectorTestId}
+    >
       <Flex
         flexDirection="row"
         alignItems="center"

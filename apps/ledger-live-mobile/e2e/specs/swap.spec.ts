@@ -17,4 +17,9 @@ describe("Swap", () => {
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToSwapFromTransferMenu();
   });
+
+  it("should be able to select a different source account ", async () => {
+    await swapPage.openSourceAccountSelector();
+    await swapPage.selectSourceAccount("Bitcoin 1 (legacy)");
+  });
 });
