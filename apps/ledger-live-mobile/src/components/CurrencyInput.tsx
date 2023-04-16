@@ -75,6 +75,7 @@ type Props = {
   colors: Theme["colors"];
   dynamicFontRatio?: number;
   locale: string;
+  inputTestId?: string;
 };
 type State = {
   isFocused: boolean;
@@ -183,6 +184,7 @@ class CurrencyInput extends PureComponent<Props, State> {
       colors,
       dynamicFontRatio = 0.75,
       locale,
+      inputTestId,
     } = this.props;
     const { displayValue } = this.state;
     // calculating an approximative font size
@@ -246,6 +248,7 @@ class CurrencyInput extends PureComponent<Props, State> {
           placeholderTextColor={editable ? colors.darkBlue : colors.grey}
           keyboardType="numeric"
           blurOnSubmit
+          testID={inputTestId}
         />
         {renderRight}
       </View>

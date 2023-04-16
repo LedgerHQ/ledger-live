@@ -115,7 +115,7 @@ describe("DeepLinks Tests", () => {
 
   it("should open Swap Form page", async () => {
     await swapFormPage.openViaDeeplink();
-    await expect(swapFormPage.swapFormTab()).toBeFocused();
+    await swapFormPage.expectSwapFormPage();
   });
 
   it("should open Send pages", async () => {

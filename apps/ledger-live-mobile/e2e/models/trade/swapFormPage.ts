@@ -3,6 +3,7 @@ import {
   openDeeplink,
   tapByElement,
   tapByText,
+  typeTextByElement,
 } from "../../helpers";
 
 const baseLink = "swap";
@@ -11,6 +12,7 @@ export default class SwapFormPage {
   swapFormTab = () => getElementById("swap-form-tab");
   swapHistoryTab = () => getElementById("swap-history-tab");
   swapSourceSelector = () => getElementById("swap-source-selector");
+  swapSourceInputTextbox = () => getElementById("swap-source-amount-textbox");
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
@@ -30,5 +32,9 @@ export default class SwapFormPage {
 
   async selectSourceAccount(accountText: string) {
     await tapByText(accountText);
+  }
+
+  async enterSourceAmount(amount: string) {
+    await typeTextByElement(this.swapSourceInputTextbox(), amount);
   }
 }
