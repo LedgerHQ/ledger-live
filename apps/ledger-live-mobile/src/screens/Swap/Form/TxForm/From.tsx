@@ -118,6 +118,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
               onChange={swapTx.setFromAmount}
               onFocus={onFocus}
               error={swapError}
+              inputTestId="swap-source-amount-textbox"
             />
           </Flex>
         </Flex>
