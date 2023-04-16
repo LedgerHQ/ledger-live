@@ -41,7 +41,7 @@ export default function SwapFormNavigator() {
         options={{
           title: t("exchange.buy.tabTitle"),
           tabBarLabel: (props: TabLabelProps) => (
-            <Text variant="body" fontWeight="semiBold" {...props}>
+            <Text variant="body" fontWeight="semiBold" textTestId="swap-history-tab" {...props}>
               {t("transfer.swap.history.tab")}
             </Text>
           ),

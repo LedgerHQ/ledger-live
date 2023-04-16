@@ -436,7 +436,12 @@ export function SwapForm({
           <Flex paddingY={4}>
             <Max swapTx={swapTransaction} />
 
-            <Button type="main" disabled={!isSwapReady} onPress={onSubmit}>
+            <Button
+              type="main"
+              disabled={!isSwapReady}
+              onPress={onSubmit}
+              buttonTestId="exchange-button"
+            >
               {t("transfer.swap2.form.cta")}
             </Button>
           </Flex>

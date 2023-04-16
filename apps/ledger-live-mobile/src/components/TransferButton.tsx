@@ -16,6 +16,7 @@ type Props = {
   eventProperties?: Parameters<typeof track>[1];
   style?: StyleProp<ViewStyle>;
   rightArrow?: boolean;
+  transferTestId?: string;
 };
 
 export default function TransferButton({
@@ -29,6 +30,7 @@ export default function TransferButton({
   eventProperties,
   style,
   rightArrow = false,
+  transferTestId,
 }: Props) {
   const handlePress = useCallback(() => {
     if (onPress) onPress();
@@ -36,7 +38,12 @@ export default function TransferButton({
   }, [onPress, event, eventProperties]);
 
   return (
-    <TouchableOpacity disabled={disabled} onPress={handlePress} style={[style]}>
+    <TouchableOpacity
+      disabled={disabled}
+      onPress={handlePress}
+      style={[style]}
+      testID={transferTestId}
+    >
       <Flex flexDirection="row" justifyContent="flex-start" alignItems="center">
         <BoxedIcon
           Icon={Icon}

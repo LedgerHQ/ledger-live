@@ -29,6 +29,7 @@ type ButtonItem = {
   event?: string;
   eventProperties?: Parameters<typeof track>[1];
   style?: StyleProp<ViewStyle>;
+  transferTestId?: string;
 };
 
 export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
@@ -186,6 +187,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       Icon: Icons.BuyCryptoMedium,
       onPress: accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty ? onSwap : null,
       disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
+      transferTestId: "swap-transfer-button",
     },
 
     ...(walletConnectEntryPoint?.enabled
@@ -243,7 +245,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       <ScrollView alwaysBounceVertical={false} style={{ width: "100%" }}>
         {buttonsList.map((button, index) => (
           <Box mb={index === buttonsList.length - 1 ? 0 : 8} key={button.title}>
-            <TransferButton {...button} />
+            <TransferButton {...button} transferTestId={button.transferTestId} />
           </Box>
         ))}
       </ScrollView>
