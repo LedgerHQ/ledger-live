@@ -75,7 +75,7 @@ test("Cosmos staking flows via portfolio. Check stake flow modals and stake bann
         .soft(modal.container)
         .toHaveScreenshot("earn-redelegate-staking-cosmos-account-modal.png");
       await modal.continue();
-      await expect(modal.title).toHaveText("Redelegate assets"); // Network fees are flaky and causing failures. Just verifying the right modal has loaded for now
+      await expect(modal.content).toHaveScreenshot("redelegate-cosmos-content.png"); // Network fees are flaky and causing failures. Just verifying the modal content, not the footer
       await modal.close();
     },
   );
