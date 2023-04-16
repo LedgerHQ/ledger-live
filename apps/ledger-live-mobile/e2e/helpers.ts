@@ -2,11 +2,11 @@ import { by, device, element, waitFor } from "detox";
 import { Direction } from "react-native-modal";
 
 const DEFAULT_TIMEOUT = 60000;
-const BASE_DEEPLINK: string = "ledgerlive://";
-export const currencyParam: string = "?currency=";
-export const recipientParam: string = "&recipient=";
-export const amountParam: string = "&amount=";
-export const accountIdParam: string = "?accountId=";
+const BASE_DEEPLINK = "ledgerlive://";
+export const currencyParam = "?currency=";
+export const recipientParam = "&recipient=";
+export const amountParam = "&amount=";
+export const accountIdParam = "?accountId=";
 
 export function waitForElementByID(elementId: string, timeout?: number) {
   return waitFor(element(by.id(elementId)))
@@ -93,5 +93,5 @@ export async function openDeeplink(link?: string) {
 }
 
 export async function isAndroid() {
-  return device.getPlatform() == "android";
+  return device.getPlatform() === "android";
 }

@@ -1,16 +1,34 @@
-import { getElementById, openDeeplink } from "../../helpers";
+import {
+  getElementById,
+  openDeeplink,
+  tapByElement,
+  tapByText,
+} from "../../helpers";
 
 const baseLink = "swap";
 
 export default class SwapFormPage {
   swapFormTab = () => getElementById("swap-form-tab");
   swapHistoryTab = () => getElementById("swap-history-tab");
+  swapSourceSelector = () => getElementById("swap-source-selector");
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
   }
 
-  // async expectSwapFormPage() {
-  //   await expect(this.swapFormTab());
-  // }
+  async navigateToSwapForm() {
+    await tapByElement(this.swapFormTab());
+  }
+
+  async navigateToSwapHistory() {
+    await tapByElement(this.swapHistoryTab());
+  }
+
+  async openSourceAccountSelector() {
+    await tapByElement(this.swapSourceSelector());
+  }
+
+  async selectSourceAccount(accountText: string) {
+    await tapByText(accountText);
+  }
 }

@@ -105,6 +105,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
               title={name}
               subTitle={balance}
               onPress={onPress}
+              selectorTestId="swap-source-selector"
             />
           </Flex>
 
