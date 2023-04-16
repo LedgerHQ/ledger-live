@@ -5,13 +5,13 @@ import {
 } from "../../helpers";
 import { expect } from "detox";
 
-let baseLink: string = "discover/";
+const baseLink = "discover/";
 
 export default class DiscoveryPage {
   getDicoveryBanner = () => getElementById("discover-banner");
   waitForSelectCrypto = () => waitForElementByText("Select crypto");
 
-  async openViaDeeplink(discoverApps: string = "") {
+  async openViaDeeplink(discoverApps = "") {
     await openDeeplink(baseLink + discoverApps);
   }
 
