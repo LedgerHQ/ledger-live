@@ -1,7 +1,7 @@
 import { getElementById, openDeeplink } from "../../helpers";
 import { expect } from "detox";
 
-let baseLink: string = "custom-image";
+const baseLink = "custom-image";
 
 export default class CustomLockscreenPage {
   welcomeCustomImageTitle = () => getElementById("custom-image-welcome-title");
