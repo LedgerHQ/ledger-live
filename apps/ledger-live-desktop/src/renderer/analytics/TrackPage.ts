@@ -1,6 +1,6 @@
 import { memo, useEffect } from "react";
 import { page } from "./segment";
-let source;
+let source: string | undefined | null;
 export const setTrackingSource = (s?: string) => {
   source = s;
 };

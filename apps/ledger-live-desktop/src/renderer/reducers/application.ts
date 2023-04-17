@@ -32,7 +32,7 @@ const state: ApplicationState = {
 };
 
 type HandlersPayloads = {
-  APPLICATION_SET_DATA: ApplicationState;
+  APPLICATION_SET_DATA: Partial<ApplicationState>;
 };
 type ApplicationHandlers<PreciseKey = true> = Handlers<
   ApplicationState,

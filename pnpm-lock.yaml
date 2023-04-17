@@ -524,6 +524,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.4.3
         version: 14.4.3(@testing-library/dom@9.0.1)
+      '@types/color':
+        specifier: ^3.0.3
+        version: 3.0.3
       '@types/invariant':
         specifier: ^2.2.35
         version: 2.2.35
@@ -539,6 +542,12 @@ importers:
       '@types/react-dom':
         specifier: ^17
         version: 17.0.16(@types/react@17.0.53)
+      '@types/react-lottie':
+        specifier: ^1.2.6
+        version: 1.2.6(@types/react@17.0.53)
+      '@types/react-motion':
+        specifier: ^0.0.33
+        version: 0.0.33(@types/react@17.0.53)
       '@types/react-redux':
         specifier: ^7.1.24
         version: 7.1.24(@types/react@17.0.53)
@@ -551,6 +560,9 @@ importers:
       '@types/react-select':
         specifier: ^4
         version: 4.0.18(@types/react@17.0.53)
+      '@types/react-transition-group':
+        specifier: ^4.4.2
+        version: 4.4.4(@types/react@17.0.53)
       '@types/redux-actions':
         specifier: ^2.6.2
         version: 2.6.2
@@ -22488,6 +22500,28 @@ packages:
 
   /@types/react-is@17.0.3(@types/react@17.0.53):
     resolution: {integrity: sha512-aBTIWg1emtu95bLTLx0cpkxwGW3ueZv71nE2YFBpL8k/z5czEW8yYpOo8Dp+UUAFAtKwNaOsh/ioSeQnWlZcfw==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@types/react': 17.0.53
+    dev: true
+
+  /@types/react-lottie@1.2.6(@types/react@17.0.53):
+    resolution: {integrity: sha512-fvGJHD7SeUdVESHo7f7erRnXkTWaa/6Mo5TB+R0/ieSftKoFspA4sMlF2qMH6BljXI7ehFJbBtrD5bzDxPCkGg==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@types/react': 17.0.53
+    dev: true
+
+  /@types/react-motion@0.0.33(@types/react@17.0.53):
+    resolution: {integrity: sha512-R9grd4EwdDBcKKq7Zhszd8ukyy2BLKN6ooNI0V39nUl/sui+m7VI94cdebYemBteoPHmO7J7BZk+cIf+Xnk4TA==}
     peerDependencies:
       '@types/react': '*'
     peerDependenciesMeta:

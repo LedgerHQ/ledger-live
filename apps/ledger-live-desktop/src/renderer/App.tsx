@@ -31,22 +31,23 @@ import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrap
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
-const reloadApp = event => {
+import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
-    window.api.reloadRenderer();
+    window.api?.reloadRenderer();
   }
 };
 type Props = {
-  store: Store<State, any>;
-  initialCountervalues: any;
+  store: Store<State>;
+  initialCountervalues: CounterValuesStateRaw;
 };
-const InnerApp = ({ initialCountervalues }: { initialCountervalues: any }) => {
+const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
   useBraze();
 
   useEffect(() => {
-    const reload = e => {
+    const reload = (e: KeyboardEvent) => {
       if (reloadEnabled) {
         reloadApp(e);
       }

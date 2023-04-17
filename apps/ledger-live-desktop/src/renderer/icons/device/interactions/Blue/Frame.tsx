@@ -2,17 +2,16 @@ import React from "react";
 import styled from "styled-components";
 import useTheme from "~/renderer/hooks/useTheme";
 import colors from "../colors";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const FrameSVG: ThemedComponent<{}> = styled.svg`
+const FrameSVG = styled.svg`
   overflow: visible;
 `;
 type Props = {
-  children: any;
-  overlay: any;
+  children: React.ReactNode;
+  overlay: React.ReactNode;
   error?: boolean;
 };
 const BlueFrame = ({ children, overlay, error }: Props) => {
-  const type = useTheme("colors.palette.type");
+  const type = useTheme("colors.palette.type") as keyof typeof colors;
   return (
     <FrameSVG width="118" height="144">
       <defs />
@@ -28,7 +27,6 @@ const BlueFrame = ({ children, overlay, error }: Props) => {
           y="1"
           fill={error ? colors[type].errorFrame : colors[type].frame}
           stroke={colors[type].stroke}
-          strokeLinejoin="square"
           strokeWidth="2"
           rx="6"
         />

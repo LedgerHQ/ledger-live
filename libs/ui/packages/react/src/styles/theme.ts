@@ -1,4 +1,4 @@
-import { keyframes, css, DefaultTheme } from "styled-components";
+import { keyframes, css, Font } from "styled-components";
 import { palettes, ColorPalette } from "@ledgerhq/ui-shared";
 
 export type screensBreakpoints = "sm" | "md" | "lg" | "xl" | "xxl";
@@ -229,55 +229,49 @@ const overflow = {
   trackSize: 12,
 };
 
-declare module "styled-components" {
-  export interface Font {
-    weight: number;
-    style: string;
-  }
-  export interface DefaultTheme {
-    theme: "dark" | "light";
-    animations: typeof animations;
-    transition: typeof transition;
-    overflow: typeof overflow;
-    sizes: {
-      topBarHeight: number;
-      sideBarWidth: number;
-      drawer: {
-        side: {
-          big: {
-            width: number;
-          };
-          small: {
-            width: number;
-          };
+interface DefaultTheme {
+  theme: "dark" | "light";
+  animations: typeof animations;
+  transition: typeof transition;
+  overflow: typeof overflow;
+  sizes: {
+    topBarHeight: number;
+    sideBarWidth: number;
+    drawer: {
+      side: {
+        big: {
+          width: number;
         };
-        popin: {
-          min: {
-            height: number;
-            width: number;
-          };
-          max: {
-            height: number;
-            width: number;
-          };
+        small: {
+          width: number;
+        };
+      };
+      popin: {
+        min: {
+          height: number;
+          width: number;
+        };
+        max: {
+          height: number;
+          width: number;
         };
       };
     };
-    radii: number[];
-    fontFamilies: Record<string, Record<string, Font>>;
-    fontSizes: number[];
-    space: number[];
-    shadows: string[];
-    colors: ColorPalette & {
-      /**
-       * @deprecated Do not use the .palette prefix anymore!
-       */
-      palette: ColorPalette;
-    };
-    fontWeights: Record<string, string>;
-    breakpoints: Record<screensBreakpoints, string>;
-    zIndexes: number[];
-  }
+  };
+  radii: number[];
+  fontFamilies: Record<string, Record<string, Font>>;
+  fontSizes: number[];
+  space: number[];
+  shadows: string[];
+  colors: ColorPalette & {
+    /**
+     * @deprecated Do not use the .palette prefix anymore!
+     */
+    palette: ColorPalette;
+  };
+  fontWeights: Record<string, string>;
+  breakpoints: Record<screensBreakpoints, string>;
+  zIndexes: number[];
 }
 
 const theme: DefaultTheme = {

@@ -1,6 +1,6 @@
 import "@ledgerhq/react-ui/assets/fonts";
 import React, { useMemo } from "react";
-import { ThemeProvider, StyledComponent } from "styled-components";
+import { ThemeProvider, StyledComponent, DefaultTheme } from "styled-components";
 import defaultTheme, { Theme } from "./theme";
 import palettes from "./palettes";
 import { GlobalStyle } from "./global";
@@ -14,12 +14,14 @@ type Props = {
   children: React.ReactNode;
   selectedPalette: "light" | "dark";
 };
-export type ThemedComponent<T> = StyledComponent<T, Theme, any>;
+
 const StyleProvider = ({ children, selectedPalette }: Props) => {
   // V2 palettes are not typed in TS so we need to explicity type them as any
+  // eslint-disable-next-line
   const palettesAny: any = palettes;
   const v3SelectedPalettes = selectedPalette === "light" ? "light" : "dark";
-  const theme: Theme = useMemo(
+  // @ts-expect-error This is a hack to get the v2 palette in the v3 theme
+  const theme: DefaultTheme = useMemo(
     () => ({
       ...V3dDfaultTheme,
       ...defaultTheme,
@@ -41,9 +43,9 @@ const StyleProvider = ({ children, selectedPalette }: Props) => {
     </ThemeProvider>
   );
 };
-export const withV2StyleProvider = (Component: React.ComponentType) => {
-  const WrappedComponent = props => {
-    const selectedPalette = useSelector(themeSelector) || "light";
+export const withV2StyleProvider = <T,>(Component: React.ComponentType<T>) => {
+  const WrappedComponent = (props: T & { children?: React.ReactNode }) => {
+    const selectedPalette = (useSelector(themeSelector) || "light") as "light" | "dark";
     return (
       <StyleProvider selectedPalette={selectedPalette}>
         <Component {...props} />

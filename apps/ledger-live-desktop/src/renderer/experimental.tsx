@@ -30,7 +30,7 @@ export const experimentalFeatures: Feature[] = [
   ...(experimentalCurrencies.length
     ? [
         {
-          type: "toggle",
+          type: "toggle" as const,
           name: "EXPERIMENTAL_CURRENCIES",
           title: <Trans i18nKey="settings.experimental.features.experimentalCurrencies.title" />,
           description: (
@@ -142,7 +142,7 @@ export const setLocalStorageEnv = (key: EnvName, val: string) => {
 if (window.localStorage.getItem(lsKeyVersion) !== __APP_VERSION__) {
   const existing = getLocalStorageEnvs();
   // we replace all existing ones by clearing those who are gone
-  const restoredEnvs = {};
+  const restoredEnvs: Record<string, unknown> = {};
   experimentalFeatures
     .filter(e => !e.shadow && e.name in existing && setEnvOnAllThreads(e.name, existing[e.name]))
     .forEach(e => {

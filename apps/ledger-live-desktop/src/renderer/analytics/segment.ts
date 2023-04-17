@@ -13,7 +13,7 @@ import {
   languageSelector,
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
-import { idsToLanguage } from "@ledgerhq/types-live";
+import { AccountLike, idsToLanguage } from "@ledgerhq/types-live";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "../reducers/accounts";
 import {
@@ -22,13 +22,14 @@ import {
   INFINITY_PASS_COLLECTION_CONTRACT,
 } from "@ledgerhq/live-common/nft/helpers";
 
+import createStore from "../createStore";
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const os = require("os");
 const osType = os.type();
 const osVersion = os.release();
 const sessionId = uuid();
-const getContext = _store => ({
+const getContext = () => ({
   ip: "0.0.0.0",
   page: {
     path: "/",
@@ -38,7 +39,10 @@ const getContext = _store => ({
     url: "",
   },
 });
-const extraProperties = store => {
+
+type ReduxStore = ReturnType<typeof createStore>;
+
+const extraProperties = (store: ReduxStore) => {
   const state: State = store.getState();
   const language = languageSelector(state);
   const region = (localeSelector(state).split("-")[1] || "").toUpperCase() || null;
@@ -95,7 +99,7 @@ const extraProperties = store => {
     ...deviceInfo,
   };
 };
-let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
+let storeInstance: ReduxStore | null | undefined; // is the redux store. it's also used as a flag to know if analytics is on or off.
 
 function getAnalytics() {
   const { analytics } = window;
@@ -104,7 +108,7 @@ function getAnalytics() {
   }
   return analytics;
 }
-export const start = async (store: any) => {
+export const start = async (store: ReduxStore) => {
   if (!user || (!process.env.SEGMENT_TEST && (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")))) return;
   const { id } = await user();
   storeInstance = store;
@@ -112,7 +116,7 @@ export const start = async (store: any) => {
   if (!analytics) return;
   logger.analyticsStart(id, extraProperties(store));
   analytics.identify(id, extraProperties(store), {
-    context: getContext(store),
+    context: getContext(),
   });
 };
 export const stop = () => {
@@ -126,11 +130,11 @@ export const trackSubject = new ReplaySubject<{
   event: string;
   properties: object | undefined | null;
 }>(10);
-function sendTrack(event, properties: object | undefined | null, storeInstance: any) {
+function sendTrack(event: string, properties: object | undefined | null) {
   const analytics = getAnalytics();
   if (!analytics) return;
   analytics.track(event, properties, {
-    context: getContext(storeInstance),
+    context: getContext(),
   });
   trackSubject.next({
     event,
@@ -138,15 +142,17 @@ function sendTrack(event, properties: object | undefined | null, storeInstance: 
   });
 }
 
-const confidentialityFilter = (properties?: object | null) => {
+const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
   const { account, parentAccount } = properties || {};
   const filterAccount = account
-    ? { account: typeof account === "object" ? getAccountName(account) : account }
+    ? { account: typeof account === "object" ? getAccountName(account as AccountLike) : account }
     : {};
   const filterParentAccount = parentAccount
     ? {
         parentAccount:
-          typeof parentAccount === "object" ? getAccountName(parentAccount) : parentAccount,
+          typeof parentAccount === "object"
+            ? getAccountName(parentAccount as AccountLike)
+            : parentAccount,
       }
     : {};
   return {
@@ -156,7 +162,11 @@ const confidentialityFilter = (properties?: object | null) => {
   };
 };
 
-export const track = (event: string, properties?: object | null, mandatory?: boolean | null) => {
+export const track = (
+  event: string,
+  properties?: Record<string, unknown> | null,
+  mandatory?: boolean | null,
+) => {
   if (!storeInstance || (!mandatory && !shareAnalyticsSelector(storeInstance.getState()))) {
     return;
   }
@@ -165,7 +175,7 @@ export const track = (event: string, properties?: object | null, mandatory?: boo
     ...confidentialityFilter(properties),
   };
   logger.analyticsTrack(event, fullProperties);
-  sendTrack(event, fullProperties, storeInstance);
+  sendTrack(event, fullProperties);
 };
 export const page = (category: string, name?: string | null, properties?: object | null) => {
   if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) {
@@ -176,5 +186,5 @@ export const page = (category: string, name?: string | null, properties?: object
     ...properties,
   };
   logger.analyticsPage(category, name, fullProperties);
-  sendTrack(`Page ${category + (name ? ` ${name}` : "")}`, fullProperties, storeInstance);
+  sendTrack(`Page ${category + (name ? ` ${name}` : "")}`, fullProperties);
 };

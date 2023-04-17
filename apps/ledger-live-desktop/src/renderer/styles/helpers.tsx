@@ -21,7 +21,9 @@ export const mix = (c: string, b: string, a: number) =>
     .toString();
 export const ff = (v: string) => {
   const [font, type = "Regular"] = v.split("|");
+  // @ts-expect-error let's assume that font is a key of fontFamilies
   const { style, weight } = fontFamilies[font][type];
+  // @ts-expect-error let's assume that font is a key of fontFamilies
   const fallback = fontFamilies[font].fallback || "Arial";
   return {
     fontFamily: `${font}, ${fallback}`,

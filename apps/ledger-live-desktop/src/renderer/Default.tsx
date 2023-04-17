@@ -39,7 +39,6 @@ import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWra
 import DebugUpdater from "~/renderer/components/debug/DebugUpdater";
 import DebugTheme from "~/renderer/components/debug/DebugTheme";
 import DebugFirmwareUpdater from "~/renderer/components/debug/DebugFirmwareUpdater";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Page from "~/renderer/components/Page";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
@@ -82,7 +81,7 @@ const LetInternalSendCrashTest = () => {
   }, []);
   return null;
 };
-export const TopBannerContainer: ThemedComponent<{}> = styled.div`
+export const TopBannerContainer = styled.div`
   position: sticky;
   top: 0;
   z-index: 19;
@@ -133,21 +132,14 @@ const NightlyLayerR = () => {
 };
 const NightlyLayer = React.memo(NightlyLayerR);
 export default function Default() {
-  const location = useLocation();
-  const ref: React$ElementRef<any> = useRef();
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
   useProviders(); // prefetch data from swap providers here
 
-  // every time location changes, scroll back up
-  useEffect(() => {
-    if (ref && ref.current) {
-      ref.current.scrollTo(0, 0);
-    }
-  }, [location]);
   useEffect(() => {
     if (!hasCompletedOnboarding) {
       history.push("/onboarding");
