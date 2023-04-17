@@ -4,8 +4,9 @@ import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { reduce, snakeCase, startCase } from "lodash";
 import { DefaultFeatures } from "@ledgerhq/types-live";
 
-export const formatToFirebaseFeatureId = (id: string) =>
-  `feature_${snakeCase(id)}`;
+export const formatToFirebaseFeatureId = (id: string) => {
+  return `feature_${snakeCase(id)}`;
+};
 
 export const formatCurrencyIdToFeatureKey = (id: string) => {
   return `currency${startCase(id).replace(/\s/g, "")}`;

@@ -99,12 +99,12 @@ export const isOldestEditableOperation = (
 ): boolean => {
   return (
     isEditableOperation(account, operation) &&
-    account.pendingOperations.some((pendingOperation) => {
+    account.pendingOperations.every((pendingOperation) => {
       return (
         operation.transactionSequenceNumber &&
         pendingOperation.transactionSequenceNumber &&
-        pendingOperation.transactionSequenceNumber <
-          operation.transactionSequenceNumber
+        operation.transactionSequenceNumber <=
+          pendingOperation.transactionSequenceNumber
       );
     })
   );
