@@ -86,8 +86,10 @@ export const validateAmount = (
 
   const isTokenTransaction = account?.type === "TokenAccount";
   const isSmartContractInteraction = isTokenTransaction || transaction.data; // if the transaction is a smart contract interaction, it's normal that transaction has no amount
-  const canHaveZeroAmount =
-    isSmartContractInteraction && totalSpent.isGreaterThan(0);
+  const transactionHasFees =
+    legacyTransactionHasFees(transaction as EvmTransactionLegacy) ||
+    eip1559TransactionHasFees(transaction as EvmTransactionEIP1559);
+  const canHaveZeroAmount = isSmartContractInteraction && transactionHasFees;
 
   // if no amount or 0
   if (
