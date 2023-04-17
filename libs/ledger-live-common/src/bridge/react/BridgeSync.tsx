@@ -245,8 +245,7 @@ function useSyncQueue({
             }
 
             if (error && error.name !== "NetworkDown") {
-              // trackEnd("SyncError");
-              console.log("SYNC ERROR")
+              trackEnd("SyncError");
             }
 
             setAccountSyncState(accountId, {
