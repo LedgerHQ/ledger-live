@@ -42,10 +42,11 @@ export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
 /**
  * List of properties of a sub account that can be updated when 2 "identical" accounts are found
  */
-const updatableSubAccountProperties = [
+const updatableSubAccountProperties: { name: string; isOps: boolean }[] = [
   { name: "balance", isOps: false },
   { name: "spendableBalance", isOps: false },
   { name: "balanceHistoryCache", isOps: false },
+  { name: "swapHistory", isOps: false },
   { name: "operations", isOps: true },
   { name: "pendingOperations", isOps: true },
 ];
