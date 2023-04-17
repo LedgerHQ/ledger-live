@@ -173,9 +173,9 @@ const AppActions = React.memo(
             isCurrent={installQueue.length > 0 && installQueue[0] === name}
             uninstalling={uninstalling}
           />
-        ) : showActions && featureFlagActivated ? (
+        ) : showActions ? (
           <>
-            {installed ? (
+            {installed && featureFlagActivated ? (
               type === "app" && isLiveSupported ? (
                 <Tooltip
                   content={
