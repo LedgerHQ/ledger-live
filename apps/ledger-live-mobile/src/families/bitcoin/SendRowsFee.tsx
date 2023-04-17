@@ -95,6 +95,7 @@ export default function BitcoinSendRowsFee({
     transaction,
     satPerByte,
   ]);
+
   return (
     <SelectFeesStrategy
       {...props}
