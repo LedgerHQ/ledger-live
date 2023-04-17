@@ -168,9 +168,6 @@
       "title" : "Die Prämien sind kleiner als die geschätzten Gebühren, die anfallen, um sie zu beanspruchen.",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Sie können den freigegebenen Betrag nicht reduzieren, während Sie eine aktive Einzahlung haben."
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Etwas ist schief gelaufen (Fehler 1)",
       "description" : "Bitte speichern Sie Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
@@ -2128,8 +2125,6 @@
       "OPT_IN" : "Zustimmen",
       "OPT_OUT" : "Ablehnen",
       "CLOSE_ACCOUNT" : "Konto schließen",
-      "SUPPLY" : "Hinterlegt",
-      "REDEEM" : "Ausgezahlt",
       "APPROVE" : "Aktiviert",
       "BOND" : "Binden",
       "UNBOND" : "Ungebunden",
@@ -2704,6 +2699,10 @@
           "title" : "Experimentelle Apps erlauben",
           "description" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben."
         },
+        "debugApps" : {
+          "title" : "Erlauben von Debug-Apps",
+          "description" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben."
+        },
         "staggingUrl" : {
           "title" : "Lernen Sie die Staging-URL",
           "description" : "Verwenden Sie die Staging-URL für die Lern-Website."
@@ -2739,46 +2738,6 @@
       "desc" : "Erhalten Sie die neuesten Updates zu Ledger Live, Ledger-Produkten, dem Markt und personalisierte Empfehlungen. Sie können sich jederzeit in den Einstellungen wieder abmelden",
       "allow" : "Benachrichtigungen zulassen",
       "later" : "Vielleicht später"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Ledger Live-Konten Update",
-    "overview" : {
-      "headerTitle" : "Update für Konto",
-      "title" : "Ledger Live-Konten Update",
-      "subtitle" : "Neue Funktionen in Ledger Live bedeuten, dass Ihre Konten aktualisiert werden müssen",
-      "notice" : "{{accountCount}} Konto konnte nicht aktualisiert werden. Bitte verbinden Sie das mit dem nachstehenden Konto verbundene Gerät.",
-      "notice_plural" : "{{accountCount}} Konten konnten nicht aktualisiert werden. Bitte verbinden Sie das mit den nachstehenden Konten verbundene Gerät.",
-      "currency" : "1 {{currency}}-Konto muss aktualisiert werden",
-      "currency_plural" : "{{count}} {{currency}} Konten müssen aktualisiert werden",
-      "start" : "Update starten",
-      "continue" : "Update fortsetzen"
-    },
-    "progress" : {
-      "headerTitle" : "Konten aktualisieren",
-      "pending" : {
-        "title" : "{{currency}} Update in Arbeit",
-        "subtitle" : "Bitte warten Sie, bis Ihr Konto aktualisiert wird."
-      },
-      "notice" : {
-        "title" : "{{currency}} Aktualisierung unvollständig",
-        "subtitle" : "Mit diesem Gerät konnten keine {{currency}}-Konten aktualisiert werden.",
-        "cta" : "Weiter",
-        "ctaNextCurrency" : "Weiter mit {{currency}}"
-      },
-      "done" : {
-        "title" : "{{currency}} Update abgeschlossen",
-        "subtitle" : "Glückwunsch, Ihre {{currency}}-Konten wurden erfolgreich aktualisiert.",
-        "cta" : "Weiter",
-        "ctaNextCurrency" : "Weiter mit {{currency}}",
-        "ctaDone" : "Fertig"
-      },
-      "error" : {
-        "cta" : "Wiederholen"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "Verbundenes Gerät"
     }
   },
   "transfer" : {
@@ -3412,7 +3371,12 @@
       "scan" : "QR-Code scannen",
       "enterAddress" : "Adresse eingeben",
       "input" : "Adresse eingeben",
-      "verifyAddress" : "Bitte überprüfen Sie, ob die Adresse mit der des Empfängers übereinstimmt."
+      "verifyAddress" : "Bitte überprüfen Sie, ob die Adresse mit der des Empfängers übereinstimmt.",
+      "domainService" : {
+        "reverse" : "Diese Adresse ist verknüpft mit {{domain}}",
+        "forward" : "Dies ist eine gültige ENS-Adresse",
+        "supportLink" : "Was ist ein „Ethereum Name Service“?"
+      }
     },
     "amount" : {
       "available" : "Insgesamt verfügbar",
@@ -4941,6 +4905,7 @@
       "header" : "Abstimmungen ({{total}})",
       "Amount" : "Betrag",
       "noRewards" : "Keine Prämien verfügbar",
+      "warnDisableStakingMessage" : "Die Staking-Funktion für Tron ist derzeit nicht verfügbar",
       "votes" : {
         "title" : "Abstimmungen",
         "description" : "Geben Sie Ihre Stimme für einen oder mehrere Repräsentanten ab und beginnen Sie mit dem Verdienen von Prämien.",
@@ -5914,7 +5879,7 @@
       "noCurrencySearchResultsFor" : "Leider haben wir keine Coins für <0>{{search}}</0> gefunden. Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
       "noSearchResults" : "Sorry, wir haben keine Suchergebnisse gefunden.",
       "retrySearchKeyword" : "Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
-      "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
+      "retrySearchKeywordAndUrl" : "Bitte wiederholen Sie die Suche mit einem anderen Suchbegriff oder öffnen Sie <Link>{{search}}</Link> außerhalb von Ledger Live.",
       "retrySearchParams" : "Bitte versuchen Sie die Suche mit anderen Parametern erneut.",
       "trackFavAssets" : "Verfolgen Sie Ihre Favoriten",
       "clickOnStarIcon" : "Klicken Sie auf das Sternsymbol neben einem Wert, um ihn zu Ihren Favoriten hinzuzufügen.",
