@@ -3790,6 +3790,8 @@
       "runLocalAppOpenButton" : "فتح",
       "enableLearnStagingUrl" : "الرابط المرحلي (staging URL) للصفحة التعليمية",
       "enableLearnStagingUrlDesc" : "تمكين الرابط المرحلي (staging URL) للصفحة التعليمية.",
+      "enableStagingNftMetadataService" : "Staging NFT metadata service",
+      "enableStagingNftMetadataServiceDesc" : "Enable the staging NFT metadata service and reset the NFT cache",
       "openOnboardingAppInstallDebug" : "افتح شاشة تصحيح الأخطاء المتعلقة بتثبيت تطبيقات التهيئة",
       "openOnboardingAppInstallDebugDesc" : "افتح شاشة بالمكونات من خطوة تثبيت تطبيق مزامنة التهيئة"
     },
