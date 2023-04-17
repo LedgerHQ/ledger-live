@@ -218,7 +218,7 @@
     "lend" : "借出",
     "catalog" : "发现",
     "market" : "市场",
-    "protect" : "Recover"
+    "protect" : "恢复"
   },
   "stars" : {
     "placeholder" : "星标账户以在此显示。",
@@ -5723,9 +5723,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "利用您的身份\n恢复您的密钥",
+    "description" : "您的秘密恢复短语并非总在身边。\n专用于 Ledger Nano X 的测试发布。2023 年 5 月 31 日前免费订阅",
+    "cta" : "为什么要订阅？",
+    "downloadLLM" : "使用 Ledger Live 手机应用程序订阅 <purple>Ledger Recover</purple>"
   }
 }
