@@ -16,6 +16,7 @@ export type EvmTransactionBase = TransactionCommon & {
   chainId: number;
   data?: Buffer | null;
   type?: number;
+  additionalFees?: BigNumber;
 };
 
 export type EvmTransactionLegacy = EvmTransactionBase & {
@@ -40,6 +41,7 @@ export type EvmTransactionBaseRaw = TransactionCommonRaw & {
   chainId: number;
   data?: string | null;
   type?: number;
+  additionalFees?: string;
 };
 
 export type EvmTransactionLegacyRaw = EvmTransactionBaseRaw & {

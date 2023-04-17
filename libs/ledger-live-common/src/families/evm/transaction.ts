@@ -1,9 +1,6 @@
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "../../currencies";
-import { getAccountUnit } from "../../account";
-import ERC20ABI from "./abis/erc20.abi.json";
 import {
   formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
@@ -11,6 +8,10 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/transaction/common";
+import { transactionToEthersTransaction } from "./adapters";
+import { formatCurrencyUnit } from "../../currencies";
+import { getAccountUnit } from "../../account";
+import ERC20ABI from "./abis/erc20.abi.json";
 import type {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -75,6 +76,10 @@ export const fromTransactionRaw = (
     tx.maxPriorityFeePerGas = new BigNumber(rawTx.maxPriorityFeePerGas);
   }
 
+  if (rawTx.additionalFees) {
+    tx.additionalFees = new BigNumber(rawTx.additionalFees);
+  }
+
   return tx as EvmTransaction;
 };
 
@@ -108,6 +113,10 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
 
   if (tx.maxPriorityFeePerGas) {
     txRaw.maxPriorityFeePerGas = tx.maxPriorityFeePerGas.toFixed();
+  }
+
+  if (tx.additionalFees) {
+    txRaw.additionalFees = tx.additionalFees.toFixed();
   }
 
   return txRaw as EvmTransactionRaw;
