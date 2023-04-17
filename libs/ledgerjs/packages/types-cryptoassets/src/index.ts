@@ -97,7 +97,7 @@ export type CryptoCurrencyId =
   | "rise"
   | "reosc"
   | "resistance"
-  | "secret_test_hehe"
+  | "secret_network"
   | "sei_network"
   | "solana"
   | "stakenet"
