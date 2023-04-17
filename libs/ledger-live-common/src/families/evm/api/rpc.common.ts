@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { FeeData, FeeHistory, Transaction as EvmTransaction } from "../types";
+import { GasEstimationError, InsufficientFunds } from "../errors";
 import { transactionToEthersTransaction } from "../adapters";
 import { GasEstimationError } from "../errors";
 import ERC20Abi from "../abis/erc20.abi.json";
@@ -215,9 +216,21 @@ export const broadcastTransaction = (
   currency: CryptoCurrency,
   signedTxHex: string
 ): Promise<ethers.providers.TransactionResponse> =>
-  withApi(currency, async (api) => {
-    return api.sendTransaction(signedTxHex);
-  });
+  withApi(
+    currency,
+    async (api) => {
+      try {
+        return await api.sendTransaction(signedTxHex);
+      } catch (e) {
+        if ((e as Error & { code: string }).code === "INSUFFICIENT_FUNDS") {
+          log("error", "EVM Family: Wrong estimation of fees", e);
+          throw new InsufficientFunds();
+        }
+        throw e;
+      }
+    },
+    0
+  );
 
 /**
  * Get the informations about a block by block height
