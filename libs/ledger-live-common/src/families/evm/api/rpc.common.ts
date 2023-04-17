@@ -166,21 +166,30 @@ export const getGasEstimation = (
 export const getFeesEstimation = (currency: CryptoCurrency): Promise<FeeData> =>
   withApi(currency, async (api) => {
     const block = await api.getBlock("latest");
-    const supports1559 = Boolean(block.baseFeePerGas);
+    const currencySupports1559 = Boolean(block.baseFeePerGas);
+
     const feeData = await (async () => {
-      if (supports1559) {
+      if (currencySupports1559) {
         const feeHistory: FeeHistory = await api.send("eth_feeHistory", [
           "0x5", // Fetching the history for 5 blocks
           "latest", // from the latest block
           [50], // 50% percentile sample
         ]);
         // Taking the average priority fee used on the last 5 blocks
-        const maxPriorityFeePerGas = feeHistory.reward
+        const maxPriorityFeeAverage = feeHistory.reward
           .reduce(
             (acc, [curr]) => acc.plus(new BigNumber(curr)),
             new BigNumber(0)
           )
           .dividedToIntegerBy(feeHistory.reward.length);
+
+        // A maxPriorityFeePerGas too low might make a transaction stuck forever
+        // As a safety measure, if maxPriorityFeePerGas is zero
+        // we enforce a 1 Gwei value
+        const maxPriorityFeePerGas = maxPriorityFeeAverage.isZero()
+          ? new BigNumber(1e9) // 1 Gwei
+          : maxPriorityFeeAverage;
+
         const nextBaseFee = new BigNumber(
           feeHistory.baseFeePerGas[feeHistory.baseFeePerGas.length - 1]
         );

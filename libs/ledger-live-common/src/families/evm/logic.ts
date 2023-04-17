@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import {
   Transaction as EvmTransaction,
