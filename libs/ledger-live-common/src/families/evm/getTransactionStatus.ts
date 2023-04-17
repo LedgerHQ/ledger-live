@@ -134,18 +134,15 @@ export const validateGas = (
  * Validate a transaction and get all possibles errors and warnings about it
  */
 export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransactionStatus"] =
-  (account, tx) => {
+  async (account, tx) => {
     const subAccount = findSubAccountById(account, tx.subAccountId || "");
     const isTokenTransaction = subAccount?.type === "TokenAccount";
-    const gasLimit = tx.gasLimit;
+    const { gasLimit, additionalFees, amount } = tx;
     const estimatedFees = getEstimatedFees(tx);
-    const amount = (() => {
-      if (isTokenTransaction) {
-        return tx.useAllAmount ? subAccount.balance : tx.amount;
-      }
-      return tx.useAllAmount ? account.balance.minus(estimatedFees) : tx.amount;
-    })();
-    const totalSpent = isTokenTransaction ? amount : amount.plus(estimatedFees);
+    const totalFees = estimatedFees.plus(additionalFees || 0);
+    const totalSpent = isTokenTransaction
+      ? tx.amount
+      : tx.amount.plus(totalFees);
 
     // Recipient related errors and warnings
     const [recipientErr, recipientWarn] = validateRecipient(account, tx);
@@ -156,7 +153,7 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
       totalSpent
     );
     // Gas related errors and warnings
-    const [gasErr, gasWarn] = validateGas(account, tx, gasLimit, estimatedFees);
+    const [gasErr, gasWarn] = validateGas(account, tx, gasLimit, totalFees);
 
     const errors: ValidationIssues = {
       ...recipientErr,
@@ -169,13 +166,13 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
       ...amountWarn,
     };
 
-    return Promise.resolve({
+    return {
       errors,
       warnings,
       estimatedFees,
       amount,
       totalSpent,
-    });
+    };
   };
 
 export default getTransactionStatus;
