@@ -168,9 +168,6 @@
       "title" : "奖励少于领取奖金的估算费用。",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "您不能在有活动存款时减少已批准的金额。"
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "出了点问题 (Error #1)",
       "description" : "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
@@ -2128,8 +2125,6 @@
       "OPT_IN" : "选择加入",
       "OPT_OUT" : "选择退出",
       "CLOSE_ACCOUNT" : "关闭账户",
-      "SUPPLY" : "已存入",
-      "REDEEM" : "已提取",
       "APPROVE" : "已启用",
       "BOND" : "绑定",
       "UNBOND" : "解绑",
@@ -2704,6 +2699,10 @@
           "title" : "允许实验性应用程序",
           "description" : "显示并允许打开实验性标记的平台应用程序。"
         },
+        "debugApps" : {
+          "title" : "允许调试应用程序",
+          "description" : "显示并允许打开调试标记的平台应用程序。"
+        },
         "staggingUrl" : {
           "title" : "“学习”页面的模拟环境网址",
           "description" : "使用“学习”页面的模拟环境网址。"
@@ -2739,46 +2738,6 @@
       "desc" : "获取关于 Ledger Live、Ledger 产品、市场的最新资讯以及个性化推荐。在设置中随时选择停用",
       "allow" : "允许通知",
       "later" : "以后再说"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Ledger Live 账户更新",
-    "overview" : {
-      "headerTitle" : "账户更新",
-      "title" : "Ledger Live 账户更新",
-      "subtitle" : "一旦 Ledger Live 推出新功能，就意味着您的账户需要更新",
-      "notice" : "{{accountCount}} 账户无法更新。请连接与下方账户关联的设备。",
-      "notice_plural" : "{{accountCount}} 账户无法更新。请连接与下方账户关联的设备。",
-      "currency" : "1 个 {{currency}} 账户需要更新",
-      "currency_plural" : "{{count}} 个 {{currency}} 账户需要更新",
-      "start" : "开始更新",
-      "continue" : "继续更新"
-    },
-    "progress" : {
-      "headerTitle" : "账户更新中",
-      "pending" : {
-        "title" : "{{currency}} 正在更新",
-        "subtitle" : "请等待您的账户完成更新。"
-      },
-      "notice" : {
-        "title" : "{{currency}} 更新未完成",
-        "subtitle" : "使用该设备，无法为 {{currency}} 账户更新。",
-        "cta" : "继续",
-        "ctaNextCurrency" : "继续使用 {{currency}}"
-      },
-      "done" : {
-        "title" : "{{currency}} 更新完成",
-        "subtitle" : "恭喜，您的 {{currency}} 账户已成功更新。",
-        "cta" : "继续",
-        "ctaNextCurrency" : "继续使用 {{currency}}",
-        "ctaDone" : "完成"
-      },
-      "error" : {
-        "cta" : "重试"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "连接设备"
     }
   },
   "transfer" : {
@@ -3412,7 +3371,12 @@
       "scan" : "扫描二维码",
       "enterAddress" : "输入地址",
       "input" : "输入地址",
-      "verifyAddress" : "请验证该地址与接收方所提供的一致。"
+      "verifyAddress" : "请验证该地址与接收方所提供的一致。",
+      "domainService" : {
+        "reverse" : "此地址关联了 {{domain}}",
+        "forward" : "这是有效的 ENS 地址",
+        "supportLink" : "什么是以太坊域名服务？"
+      }
     },
     "amount" : {
       "available" : "可用总额",
@@ -3484,6 +3448,29 @@
         "title" : "最大可支出数额",
         "description" : "最大可支出数额指的是一个账户可通过一个交易发送的总余额。"
       }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "加速或取消",
+    "previousFeesInfo" : "当前网络费用 = {{amount}} 以太币",
+    "header" : "编辑交易",
+    "learnMore" : "我想进一步了解",
+    "panel" : {
+      "stuckMessage" : "您最近的一次“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+      "speedupMessage" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。"
+    },
+    "speedUp" : {
+      "title" : "加快速度",
+      "description" : "使用较高的网络费用重新提交交易。"
+    },
+    "cancel" : {
+      "title" : "取消",
+      "description" : "发送 0 {{ticker}} 到您自己的地址。为确保取消交易，网络费用比将要取消的交易费用高 30%。"
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "无法取消交易，因为您的账户中没有足够的资金。",
+      "notEnoughFundsToSpeedup" : "无法使用加速交易，因为您的账户中没有足够的资金。",
+      "notlowestNonceToSpeedup" : "无法使用加速功能。您的交易有待处理，因为之前的交易已停滞。您可以等待确认交易，加速交易和取消交易。"
     }
   },
   "requestAccount" : {
@@ -4941,6 +4928,7 @@
       "header" : "票数 ({{total}})",
       "Amount" : "数额",
       "noRewards" : "没有奖励可用",
+      "warnDisableStakingMessage" : "波场权益质押功能目前无法使用",
       "votes" : {
         "title" : "选票",
         "description" : "将您的选票投给一名或多名代表，从而开始赚取奖励。",
@@ -5914,7 +5902,7 @@
       "noCurrencySearchResultsFor" : "对不起，我们没有为<0>{{search}}</0>找到任何货币。请用另一个关键词重新进行搜索。",
       "noSearchResults" : "对不起，我们没有找到任何搜索结果。",
       "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
-      "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
+      "retrySearchKeywordAndUrl" : "请使用其他关键字重试搜索或在 Ledger Live 外打开 <Link>{{search}}</Link>。",
       "retrySearchParams" : "请用其他参数重新进行搜索。",
       "trackFavAssets" : "追踪您最喜爱的",
       "clickOnStarIcon" : "点击资产旁边的星形图标将自动把它们添加到您的收藏夹。",
@@ -5933,6 +5921,13 @@
     "gallery" : {
       "allNft" : "所有 NFT",
       "addNew" : "添加新的"
+    },
+    "designedForStax" : {
+      "title" : "<0>专为</0> <1>Ledger</1> <2>Stax</2> 设计",
+      "drawer" : {
+        "description" : "此 NFT 包含 NFT 的附加图片，专为 Ledger Stax 的 E Ink 屏幕设计。\n\n当您将此 NFT 设置为锁屏时，将使用此图片。",
+        "cta" : "知道了"
+      }
     },
     "viewer" : {
       "properties" : "属性",
@@ -6008,7 +6003,7 @@
     },
     "confirmCrop" : "确认剪裁",
     "confirmContrast" : "确认对比",
-    "nftEntryPointButtonLabel" : "设置为 Ledger Stax 锁屏图片",
+    "nftEntryPointButtonLabel" : "设置为 Ledger Stax 锁屏",
     "customImage" : "自定义图片",
     "doThisLater" : "以后再说",
     "preview" : {
