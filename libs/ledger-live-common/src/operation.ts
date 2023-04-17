@@ -97,13 +97,15 @@ export const isOldestEditableOperation = (
   operation: Operation,
   account: AccountLike
 ): boolean => {
-  return account.pendingOperations.some((pendingOperation) => {
-    return (
-      isEditableOperation(account, pendingOperation) &&
-      operation.transactionSequenceNumber &&
-      pendingOperation.transactionSequenceNumber &&
-      pendingOperation.transactionSequenceNumber <
-        operation.transactionSequenceNumber
-    );
-  });
+  return (
+    isEditableOperation(account, operation) &&
+    account.pendingOperations.some((pendingOperation) => {
+      return (
+        operation.transactionSequenceNumber &&
+        pendingOperation.transactionSequenceNumber &&
+        pendingOperation.transactionSequenceNumber <
+          operation.transactionSequenceNumber
+      );
+    })
+  );
 };
