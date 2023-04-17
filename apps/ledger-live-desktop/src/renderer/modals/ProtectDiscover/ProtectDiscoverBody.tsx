@@ -15,7 +15,7 @@ import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 
 type Props = {
-  onClose: () => void,
+  onClose: () => void;
 };
 
 const StyledImgLink = styled("a").attrs(() => ({}))`

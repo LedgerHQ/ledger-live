@@ -87,21 +87,19 @@ async function init() {
     }
   });
   let deepLinkUrl; // Nb In some cases `fetchSettings` runs after this, voiding the deep link.
-  ipcRenderer.once("deep-linking", (event, url) => {
+  ipcRenderer.once("deep-linking", (_, url: string) => {
     store.dispatch(setDeepLinkUrl(url));
     deepLinkUrl = url;
   });
-  const initialSettings = await getKey("app", "settings", {});
-  store.dispatch(
-    fetchSettings(
-      deepLinkUrl
-        ? {
-            ...initialSettings,
-            deepLinkUrl,
-          }
-        : initialSettings,
-    ),
-  );
+  const initialSettings = (await getKey("app", "settings")) || {};
+  fetchSettings(
+    deepLinkUrl
+      ? {
+          ...initialSettings,
+          deepLinkUrl,
+        }
+      : initialSettings,
+  )(store.dispatch);
   const state = store.getState();
   const language = languageSelector(state);
   const locale = localeSelector(state);
