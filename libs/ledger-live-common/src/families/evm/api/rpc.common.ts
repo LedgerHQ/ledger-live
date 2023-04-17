@@ -3,10 +3,12 @@ import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import OptimismGasPriceOracleAbi from "../abis/optimismGasPriceOracle.abi.json";
 import { FeeData, FeeHistory, Transaction as EvmTransaction } from "../types";
 import { GasEstimationError, InsufficientFunds } from "../errors";
 import { transactionToEthersTransaction } from "../adapters";
-import { GasEstimationError } from "../errors";
+import { getSerializedTransaction } from "../transaction";
+import { makeLRUCache } from "../../../cache";
 import ERC20Abi from "../abis/erc20.abi.json";
 import { delay } from "../../../promise";
 import { log } from "@ledgerhq/logs";
@@ -265,6 +267,51 @@ export const getSubAccount: (
       };
     });
 
+/**
+ * ⚠️ Blockchain specific
+ *
+ * For a layer 2 like Optimism, additional fees are needed in order to
+ * take into account layer 1 settlement estimated cost.
+ * This gas price is served through a smart contract oracle.
+ *
+ * @see https://help.optimism.io/hc/en-us/articles/4411895794715-How-do-transaction-fees-on-Optimism-work-
+ */
+export const getOptimismAdditionalFees = makeLRUCache<
+  [CryptoCurrency, EvmTransaction],
+  BigNumber
+>(
+  async (currency, transaction) =>
+    withApi(currency, async (api) => {
+      if (!["optimism", "optimism_goerli"].includes(currency.id)) {
+        return new BigNumber(0);
+      }
+
+      const optimismGasOracle = new ethers.Contract(
+        // contract address provided here
+        // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
+        "0x420000000000000000000000000000000000000F",
+        OptimismGasPriceOracleAbi,
+        api
+      );
+      // Fake signature is added to get the best approximation possible for the gas on L1
+      const serializedTransaction = getSerializedTransaction(transaction, {
+        r: "0xffffffffffffffffffffffffffffffffffffffff",
+        s: "0xffffffffffffffffffffffffffffffffffffffff",
+        v: 0,
+      });
+      const additionalL1Fees = await optimismGasOracle.getL1Fee(
+        serializedTransaction
+      );
+      return new BigNumber(additionalL1Fees.toString());
+    }),
+  (currency, transaction) =>
+    "getOptimismL1BaseFee_" +
+    currency.id +
+    "_" +
+    getSerializedTransaction(transaction),
+  { ttl: 15 * 1000 } // preventing rate limit by caching this for at least 15sec
+);
+
 export default {
   DEFAULT_RETRIES_RPC_METHODS,
   RPC_TIMEOUT,
@@ -277,4 +324,5 @@ export default {
   getFeesEstimation,
   broadcastTransaction,
   getBlock,
+  getOptimismAdditionalFees,
 };
