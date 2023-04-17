@@ -1,8 +1,11 @@
-import { storiesOf } from "../storiesOf";
 import React from "react";
 import { Icons } from "../../../src/assets";
-import IconBox from "../../../src/components/Icon/IconBox";
+import { IconBox } from "../../../src/components";
 
-const IconBoxSample = () => <IconBox Icon={Icons.InfoMedium} />;
+export default {
+  title: "Icon/IconBox",
+  component: IconBox,
+};
 
-storiesOf((story) => story("Icon", module).add("IconBox", IconBoxSample));
+export const IconBoxSample = () => <IconBox Icon={Icons.InfoMedium} />;
+IconBoxSample.storyName = "IconBox";

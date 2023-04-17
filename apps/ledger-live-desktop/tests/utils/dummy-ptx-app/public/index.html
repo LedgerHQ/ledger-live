@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Ledger Live PTX Test App</title>
+    <style>
+      body {
+        background-color: #676a6e;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        font-family: 'Courier New', Courier, monospace;
+      }
+
+      #query-param-list {
+        background-color: #b8b8b9;
+        text-align: start;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root">
+      <div className="App">
+        <header className="App-header">
+          <img src="ledger-logo.png" className="App-logo" alt="logo" />
+          <h3>🤑 Ledger Live PTX Dummy Test App 💰</h3>
+          <p>App for testing navigation and query parameters for PTX apps in Automated tests</p>
+          <ol id="query-param-list"></ul>
+        </header>
+      </div>
+    </div>
+
+    <script>
+      const searchParams = new URLSearchParams(window.location.search);
+
+      const queryParamsList = document.getElementById("query-param-list");
+
+      for (const [key, value] of searchParams.entries()) {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${key}: ${value}`;
+        queryParamsList.appendChild(listItem);
+      }
+    </script>
+  </body>
+</html>

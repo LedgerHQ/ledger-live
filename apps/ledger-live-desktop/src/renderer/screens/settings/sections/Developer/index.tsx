@@ -14,6 +14,7 @@ import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
+import EnableStagingNftMetadataServiceToggle from "./EnableStagingNftMetadataServiceToggle";
 const Default = () => {
   const { t } = useTranslation();
   return (
@@ -53,6 +54,12 @@ const Default = () => {
         desc={t("settings.developer.enableLearnStagingUrlDesc")}
       >
         <EnableLearnPageStagingUrlToggle />
+      </Row>
+      <Row
+        title={t("settings.developer.enableStagingNftMetadataService")}
+        desc={t("settings.developer.enableStagingNftMetadataServiceDesc")}
+      >
+        <EnableStagingNftMetadataServiceToggle />
       </Row>
       <Row
         title={t("settings.developer.openOnboardingAppInstallDebug")}

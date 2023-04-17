@@ -33,6 +33,8 @@ import {
   readOnlyModeEnabledSelector,
   hasOrderedNanoSelector,
   notificationsSelector,
+  knownDeviceModelIdsSelector,
+  customImageTypeSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -65,6 +67,8 @@ const extraProperties = async (store: AppStore) => {
   const systemLanguage = sensitiveAnalytics
     ? null
     : RNLocalize.getLocales()[0]?.languageTag;
+  const knownDeviceModelIds = knownDeviceModelIdsSelector(state);
+  const customImageType = customImageTypeSelector(state);
   const language = sensitiveAnalytics ? null : languageSelector(state);
   const region = sensitiveAnalytics ? null : localeSelector(state);
   const devices = knownDevicesSelector(state);
@@ -150,6 +154,8 @@ const extraProperties = async (store: AppStore) => {
     hasGenesisPass,
     hasInfinityPass,
     appTimeToInteractiveMilliseconds: appStartupTime,
+    staxDeviceUser: knownDeviceModelIds.stax,
+    staxLockscreen: customImageType || "none",
   };
 };
 

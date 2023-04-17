@@ -10,7 +10,6 @@ import evm from "../../families/evm/bridge/js";
 import filecoin from "../../families/filecoin/bridge/js";
 import hedera from "../../families/hedera/bridge/js";
 import near from "../../families/near/bridge/js";
-import neo from "../../families/neo/bridge/js";
 import ripple from "../../families/ripple/bridge/js";
 import solana from "../../families/solana/bridge/js";
 import stellar from "../../families/stellar/bridge/js";
@@ -34,7 +33,6 @@ export default {
   filecoin,
   hedera,
   near,
-  neo,
   ripple,
   solana,
   stellar,

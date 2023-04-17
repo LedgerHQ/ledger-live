@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
   },
 });
 
-// FIXME: PROBABLY SOME TYPE OF StyleProp<ViewProp>
+// FIXME: PROBABLY SOME TYPE OF StyleProp<ViewStyle>
 class VerticalConnector extends Component<{
   style:
     | Record<string, string | number>

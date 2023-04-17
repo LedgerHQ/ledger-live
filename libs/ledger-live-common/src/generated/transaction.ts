@@ -10,7 +10,6 @@ import evm from "../families/evm/transaction";
 import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
 import near from "../families/near/transaction";
-import neo from "../families/neo/transaction";
 import ripple from "../families/ripple/transaction";
 import solana from "../families/solana/transaction";
 import stellar from "../families/stellar/transaction";
@@ -31,7 +30,6 @@ export default {
   filecoin,
   hedera,
   near,
-  neo,
   ripple,
   solana,
   stellar,

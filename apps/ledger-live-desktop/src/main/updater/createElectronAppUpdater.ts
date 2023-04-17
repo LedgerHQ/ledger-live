@@ -6,7 +6,9 @@ import network from "@ledgerhq/live-common/network";
 import { fsReadFile } from "~/helpers/fs";
 import createAppUpdater from "./createAppUpdater";
 import pubKey from "./ledger-pubkey";
-export default async ({ feedURL, info }: { feedURL: string; info: object }) => {
+import { UpdateDownloadedEvent } from "@ledgerhq/electron-updater";
+
+export default async ({ feedURL, info }: { feedURL: string; info: UpdateDownloadedEvent }) => {
   const { version: updateVersion, path: filename, downloadedFile: filePath } = info;
   const hashFileURL = `${feedURL}/ledger-live-desktop-${updateVersion}.sha512sum`;
   const hashSigFileURL = `${feedURL}/ledger-live-desktop-${updateVersion}.sha512sum.sig`;
@@ -17,7 +19,9 @@ export default async ({ feedURL, info }: { feedURL: string; info: object }) => {
     getHashFile: () => getDistantFileContent(hashFileURL),
     getHashFileSignature: () => getDistantFileContent(hashSigFileURL, true),
     getNextKey: (fingerprint?: string | null) =>
-      fingerprint ? getDistantFileContent(`${keysURL}/${fingerprint}.pem`) : pubKey,
+      fingerprint
+        ? getDistantFileContent(`${keysURL}/${fingerprint}.pem`)
+        : Promise.resolve(pubKey),
     getNextKeySignature: async (fingerprint: string) =>
       getDistantFileContent(`${keysURL}/${fingerprint}.pem.sig`, true),
   });
@@ -43,7 +47,7 @@ export function sha512sumPath(path: string): Promise<string> {
   });
 }
 async function getDistantFileContent(url: string, binary = false) {
-  const query: object = {
+  const query: { method: string; url: string; responseType?: string } = {
     method: "GET",
     url,
   };
@@ -51,6 +55,7 @@ async function getDistantFileContent(url: string, binary = false) {
     query.responseType = "arraybuffer";
   }
   try {
+    // @ts-expect-error axios versions mismatch, so types mismatch…
     const res = await network(query);
     return res.data;
   } catch (err) {

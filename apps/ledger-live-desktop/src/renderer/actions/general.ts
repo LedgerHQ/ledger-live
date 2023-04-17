@@ -1,7 +1,6 @@
 import { useMemo, useCallback, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { OutputSelector, createSelector } from "reselect";
-import { Account } from "@ledgerhq/types-live";
+import { createSelector } from "reselect";
 // TODO make a generic way to implement this for each family
 // eslint-disable-next-line no-restricted-imports
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/bakers";
@@ -17,7 +16,6 @@ import {
 } from "@ledgerhq/live-common/countervalues/react";
 import { TrackingPair } from "@ledgerhq/live-common/countervalues/types";
 import { useDistribution as useDistributionRaw } from "@ledgerhq/live-common/portfolio/v2/react";
-import { State } from "~/renderer/reducers";
 import { accountsSelector, activeAccountsSelector } from "~/renderer/reducers/accounts";
 import { osDarkModeSelector } from "~/renderer/reducers/application";
 import {
@@ -26,7 +24,9 @@ import {
   userThemeSelector,
 } from "~/renderer/reducers/settings";
 import { BehaviorSubject } from "rxjs";
-const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject([]);
+const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject(
+  [] as TrackingPair[],
+);
 
 // provide redux states via custom hook wrapper
 
@@ -58,11 +58,7 @@ export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
     options,
   ]);
 }
-export const delegatableAccountsSelector: OutputSelector<
-  State,
-  void,
-  Account[]
-> = createSelector(activeAccountsSelector, accounts =>
+export const delegatableAccountsSelector = createSelector(activeAccountsSelector, accounts =>
   accounts.filter(acc => acc.currency.family === "tezos" && !isAccountDelegating(acc)),
 );
 export function useRefreshAccountsOrdering() {
@@ -101,7 +97,7 @@ export function useRefreshAccountsOrderingEffect({
     };
   }, [onMount, onUnmount, refreshAccountsOrdering]);
 }
-export const themeSelector: OutputSelector<State, void, string> = createSelector(
+export const themeSelector = createSelector(
   osDarkModeSelector,
   userThemeSelector,
   (osDark, theme) => theme || (osDark ? "dark" : "light"),
@@ -122,7 +118,7 @@ export function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
     extraSessionTrackingPairsChanges.next(value.concat(trackingPair));
 }
 export function useExtraSessionTrackingPair() {
-  const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState([]);
+  const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState([] as TrackingPair[]);
   useEffect(() => {
     const sub = extraSessionTrackingPairsChanges.subscribe(setExtraSessionTrackingPair);
     return () => sub && sub.unsubscribe();

@@ -1,9 +1,19 @@
 import React from "react";
-import { storiesOf } from "../../storiesOf";
-import { TipList } from "../../../../src";
-import { select } from "@storybook/addon-knobs";
+import { ComponentStory } from "@storybook/react-native";
+import { TipList } from "../../../../src/components";
 
-const TipListStory = () => {
+export default {
+  title: "Layout/List/Tip",
+  component: TipList,
+  argTypes: {
+    alignItems: {
+      options: ["flex-start", "flex-end", "center", "baseline", "stretch"],
+      control: { type: "select" },
+    },
+  },
+};
+
+export const Default: ComponentStory<typeof TipList> = (args: typeof DefaultArgs) => {
   return (
     <TipList
       items={[
@@ -33,15 +43,13 @@ const TipListStory = () => {
         },
       ]}
       itemContainerProps={{
-        alignItems: select(
-          "Align items",
-          ["flex-start", "flex-end", "center", "baseline", "stretch"],
-          "center",
-          "Layout",
-        ),
+        alignItems: args.alignItems,
       }}
     />
   );
 };
-
-storiesOf((story) => story("Layout/List", module).add("TipList", () => <TipListStory />));
+Default.storyName = "TipList";
+const DefaultArgs = {
+  alignItems: "center",
+};
+Default.args = DefaultArgs;

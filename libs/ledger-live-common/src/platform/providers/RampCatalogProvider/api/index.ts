@@ -34,6 +34,7 @@ export function getProviderURL(value: string): string {
 const api = {
   fetchRampCatalog: async (provider: string): Promise<RampCatalog> => {
     if (getEnv("MOCK")) {
+      // TODO: replace this mock on playwright runs with controlled data
       return mockData as RampCatalog;
     }
 
