@@ -10,8 +10,8 @@ import {
   etherscanOperationToOperation,
 } from "../adapters";
 
-export const DEFAULT_RETRIES_API = 5;
 export const ETHERSCAN_TIMEOUT = 5000; // 5 seconds between 2 calls
+export const DEFAULT_RETRIES_API = 8;
 
 async function fetchWithRetries<T>(
   params: AxiosRequestConfig,
@@ -75,8 +75,8 @@ export const getLastCoinOperations = makeLRUCache<
       .map((tx) => etherscanOperationToOperation(accountId, tx))
       .filter(Boolean) as Operation[];
   },
-  (currency, address, accountId) => accountId,
-  { ttl: 6 * 1000 }
+  (currency, address, accountId, fromBlock) => accountId + fromBlock,
+  { ttl: 5 * 1000 }
 );
 
 /**
@@ -114,8 +114,8 @@ export const getLastTokenOperations = makeLRUCache<
       operation: Operation;
     }[];
   },
-  (currency, address, accountId) => accountId,
-  { ttl: 6 * 1000 }
+  (currency, address, accountId, fromBlock) => accountId + fromBlock,
+  { ttl: 5 * 1000 }
 );
 
 export default {
