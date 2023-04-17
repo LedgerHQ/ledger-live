@@ -102,6 +102,7 @@ const reducer = (state: State, e: Event): State => {
         progress: e.progress,
       };
   }
+  return state; // Nb Needed until e2e tests are better handled.
 };
 
 export const createAction = (

@@ -39,7 +39,7 @@ export class DeviceAction {
 
   async genuineCheck(appDesc = "Bitcoin", installedDesc = "Bitcoin") {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo);
-    const modelId = DeviceModelId.nanoX;
+    const modelId = DeviceModelId.nanoS;
 
     await this.page.evaluate(
       args => {
@@ -78,7 +78,7 @@ export class DeviceAction {
     deviceModelId?: DeviceModelId,
   ) {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo, deviceModelId);
-    const modelId = DeviceModelId.nanoX;
+    const modelId = DeviceModelId.nanoS;
 
     await this.page.evaluate(
       args => {
@@ -116,7 +116,7 @@ export class DeviceAction {
     installedDesc = "Bitcoin,Litecoin,Ethereum (outdated)",
   ) {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo210lo5);
-    const modelId = DeviceModelId.nanoX;
+    const modelId = DeviceModelId.nanoS;
 
     await this.page.evaluate(
       args => {
