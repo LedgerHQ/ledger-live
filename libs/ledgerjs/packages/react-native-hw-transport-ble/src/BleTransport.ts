@@ -377,10 +377,6 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     return open(device, false);
   }
 
-  // Nb If this priority request is executed on an unpaired device and we refuse the pairing
-  // it throws an internal crash from BleManager. In order to avoid that, only request the
-  // priority after we know we are paired. Leveraging the inferMTU success here.
-  await transport.requestConnectionPriority("High");
   return transport;
 }
 

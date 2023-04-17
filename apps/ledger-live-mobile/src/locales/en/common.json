@@ -473,8 +473,8 @@
       "description": "Please try again."
     },
     "PeerRemovedPairing": {
-      "title": "You need to remove '{{ deviceName }}' from your phone's Bluetooth devices",
-      "description": "Your {{ productName }} changed its Bluetooth configuration. Remove it from your phone settings, then come back to Ledger Live and try pairing again."
+      "title": "Your {{ productName }} needs to be paired again.",
+      "description": "Go to your phone's Bluetooth settings and forget your {{ productName }}. Then come back in Ledger Live and try again."
     },
     "SelectExchangesLoadError": {
       "title": "Unable to load",
