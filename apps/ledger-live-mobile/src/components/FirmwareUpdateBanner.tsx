@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Platform } from "react-native";
+import { Platform, Linking } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
@@ -30,6 +30,7 @@ import {
 import Button from "./Button";
 import QueuedDrawer from "./QueuedDrawer";
 import InvertTheme from "./theme/InvertTheme";
+import { urls } from "../config/urls";
 
 const FirmwareUpdateBanner = () => {
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
@@ -124,9 +125,15 @@ const FirmwareUpdateBanner = () => {
   const showBanner = Boolean(latestFirmware);
   const version = latestFirmware?.final?.name ?? "";
 
-  const onCloseUsbWarningDrawer = () => {
+  const onCloseUsbWarningDrawer = useCallback(() => {
     setShowUnsupportedUpdateDrawer(false);
-  };
+  }, []);
+
+  const onOpenReleaseNotes = useCallback(() => {
+    if (lastConnectedDevice) {
+      Linking.openURL(urls.fwUpdateReleaseNotes[lastConnectedDevice?.modelId])
+    }
+  }, []);
 
   const isUsbFwVersionUpdateSupported =
     lastSeenDevice &&
@@ -195,14 +202,14 @@ const FirmwareUpdateBanner = () => {
         </Flex>
         <InvertTheme>
           <Flex flexDirection="row" flex={1}>
-            {/* <Button
+            <Button
               flex={1}
               outline
               event="FirmwareUpdateBannerClick"
               type="main"
               title={t("common.learnMore")}
-              onPress={() => console.log("TODO: implement learn more click")}
-            /> */}
+              onPress={onOpenReleaseNotes}
+            />
             <Button
               ml={3}
               flex={1}
