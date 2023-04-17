@@ -1,8 +1,8 @@
 import { device } from "detox";
-import * as bridge from "./bridge/server";
+import * as serverBridge from "./bridge/server";
 
 beforeAll(async () => {
-  bridge.init();
+  serverBridge.init();
 
   await device.reverseTcpPort(8081);
   await device.reverseTcpPort(8099);
@@ -16,5 +16,5 @@ beforeAll(async () => {
 }, 350000);
 
 afterAll(async () => {
-  bridge.close();
+  serverBridge.close();
 });

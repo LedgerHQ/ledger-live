@@ -5,12 +5,14 @@ import { NavigatorName } from "../../src/const";
 
 let wss: Server;
 
-export function init(port = 8099) {
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+export function init(port = 8099, onConnection = () => {}) {
   wss = new Server({ port });
   log(`Start listening on localhost:${port}`);
 
   wss.on("connection", ws => {
     log(`Connection`);
+    onConnection();
     ws.on("message", onMessage);
   });
 }
@@ -28,7 +30,13 @@ export async function loadConfig(
   }
 
   const f = fs.readFileSync(
-    path.resolve("e2e", "setups", `${fileName}.json`),
+    path.resolve(
+      "apps",
+      "ledger-live-mobile",
+      "e2e",
+      "setups",
+      `${fileName}.json`,
+    ),
     "utf8",
   );
 

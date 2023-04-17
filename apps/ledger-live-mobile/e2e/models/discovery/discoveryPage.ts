@@ -1,9 +1,9 @@
+import { expect } from "detox";
 import {
   getElementById,
   openDeeplink,
   waitForElementByText,
 } from "../../helpers";
-import { expect } from "detox";
 
 const baseLink = "discover/";
 

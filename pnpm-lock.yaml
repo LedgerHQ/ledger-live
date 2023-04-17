@@ -1385,6 +1385,9 @@ importers:
       detox:
         specifier: ^20.6.0
         version: 20.6.0(jest@28.1.3)(metro@0.76.0)
+      detox-recorder:
+        specifier: ^1.0.151
+        version: 1.0.151
       eslint:
         specifier: 7.32.0
         version: 7.32.0
@@ -1429,7 +1432,7 @@ importers:
         version: 0.11.0
       jest:
         specifier: ^28.1.3
-        version: 28.1.3(metro@0.76.0)
+        version: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
       jest-circus:
         specifier: ^28.1.1
         version: 28.1.3(metro@0.76.0)
@@ -1493,6 +1496,9 @@ importers:
       ts-jest:
         specifier: ^28.0.8
         version: 28.0.8(@babel/core@7.21.0)(babel-jest@28.1.3)(jest@28.1.3)(typescript@4.9.5)
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.1(typescript@4.9.5)
       tslib:
         specifier: ^2.5.0
         version: 2.5.0
@@ -13592,7 +13598,7 @@ packages:
       - ts-node
     dev: true
 
-  /@jest/core@28.1.3(metro@0.76.0):
+  /@jest/core@28.1.3(metro@0.76.0)(ts-node@10.9.1):
     resolution: {integrity: sha512-CIKBrlaKOzA7YG19BEqCw3SLIsEwjZkeJzf5bdooVnW4bH5cktqe3JX+G2YV1aK5vP8N9na1IGWFzYaTp6k6NA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     peerDependencies:
@@ -13613,7 +13619,7 @@ packages:
       exit: 0.1.2
       graceful-fs: 4.2.10
       jest-changed-files: 28.1.3
-      jest-config: 28.1.3(@types/node@18.15.11)(metro@0.76.0)
+      jest-config: 28.1.3(@types/node@18.15.11)(metro@0.76.0)(ts-node@10.9.1)
       jest-haste-map: 28.1.3(metro@0.76.0)
       jest-message-util: 28.1.3
       jest-regex-util: 28.0.2
@@ -15449,7 +15455,7 @@ packages:
       '@babel/runtime': 7.20.13
       '@polkadot/ui-shared': 2.11.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
+      '@polkadot/util-crypto': 10.3.1
       react: 18.0.0
       react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-svg: 12.5.1(react-native@0.71.6)(react@18.0.0)
@@ -21732,7 +21738,7 @@ packages:
       jest:
         optional: true
     dependencies:
-      jest: 28.1.3(metro@0.76.0)
+      jest: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
       pretty-format: 29.5.0
       react: 18.0.0
       react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
@@ -26311,7 +26317,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
+      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -30500,6 +30506,11 @@ packages:
       defined: 1.0.0
       minimist: 1.2.8
 
+  /detox-recorder@1.0.151:
+    resolution: {integrity: sha512-a4ZPo7AR5XJJiLy8Xqml8YXxrIz6R7RKfiGmG9u5MBxG2I+w+yGJTj7ZhYDfoi5StpUD+dKHTCdvycZTOQ84Cw==}
+    requiresBuild: true
+    dev: true
+
   /detox@20.6.0(jest@28.1.3)(metro@0.76.0):
     resolution: {integrity: sha512-89YxptnkvyQazN2I8EDRkH8tWqiOvqsGXZCZwUKP5lsulBSTJka7SS5Fd8AnQGUd5vPs+tTqO+zb0FgCRcV/Tg==}
     engines: {node: '>=14.5.0'}
@@ -30524,7 +30535,7 @@ packages:
       funpermaproxy: 1.1.0
       glob: 8.0.3
       ini: 1.3.8
-      jest: 28.1.3(metro@0.76.0)
+      jest: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
       jest-circus: 28.1.3(metro@0.76.0)
       jest-environment-node: 29.3.1
       json-cycle: 1.3.0
@@ -32736,7 +32747,7 @@ packages:
         optional: true
     dependencies:
       eslint: 7.32.0
-      jest: 28.1.3(metro@0.76.0)
+      jest: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
     dev: true
 
   /eslint-plugin-jest@22.4.1(eslint@8.15.0):
@@ -34178,6 +34189,40 @@ packages:
       url-parse: 1.5.10
     transitivePeerDependencies:
       - expo
+    dev: true
+
+  /expo-asset@8.9.1(expo-file-system@15.2.2)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-ugavxA7Scn96TBdeTYQA6xtHktnk0o/0xk7nFkxJKoH/t2cZDFSB05X0BI2/LDZY4iE6xTPOYw4C4mmourWfuA==}
+    peerDependencies:
+      expo-file-system: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-file-system:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      blueimp-md5: 2.19.0
+      expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-file-system: 15.2.2(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
+      invariant: 2.2.4
+      md5-file: 3.2.3
+      path-browserify: 1.0.1
+      react: 18.0.0
+      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      url-parse: 1.5.10
+    transitivePeerDependencies:
+      - expo
+      - supports-color
 
   /expo-barcode-scanner@12.3.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-aJ/MJVikSESKUwMUTIsURGJTMgAuiFhcAj0NxH0WiezhG7cJE4iIzbuk/+Ns5xpQT8y5Zc8Ulhj02qSW8+kxDQ==}
@@ -34437,7 +34482,7 @@ packages:
         optional: true
     dependencies:
       expo: 48.0.9(@babel/core@7.21.0)(metro@0.76.0)(react-native@0.71.6)(react@18.0.0)
-      expo-asset: 8.9.1(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-asset: 8.9.1(expo-file-system@15.2.2)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       fontfaceobserver: 2.1.0
@@ -34770,7 +34815,7 @@ packages:
       babel-preset-expo: 9.3.2(@babel/core@7.21.0)
       cross-spawn: 6.0.5
       expo-application: 5.1.1(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
-      expo-asset: 8.9.1(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-asset: 8.9.1(expo-file-system@15.2.2)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-file-system: 15.2.2(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-font: 11.1.1(expo-asset@8.9.1)(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
@@ -39089,7 +39134,7 @@ packages:
       - ts-node
     dev: true
 
-  /jest-cli@28.1.3(metro@0.76.0):
+  /jest-cli@28.1.3(metro@0.76.0)(ts-node@10.9.1):
     resolution: {integrity: sha512-roY3kvrv57Azn1yPgdTebPAXvdR2xfezaKKYzVxZ6It/5NCxzJym6tUI5P1zkdWhfUYkxEI9uZWcQdaFLo8mJQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
@@ -39099,14 +39144,14 @@ packages:
       node-notifier:
         optional: true
     dependencies:
-      '@jest/core': 28.1.3(metro@0.76.0)
+      '@jest/core': 28.1.3(metro@0.76.0)(ts-node@10.9.1)
       '@jest/test-result': 28.1.3
       '@jest/types': 28.1.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.10
       import-local: 3.1.0
-      jest-config: 28.1.3(metro@0.76.0)
+      jest-config: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
       jest-util: 28.1.3
       jest-validate: 28.1.3
       prompts: 2.4.2
@@ -39305,7 +39350,7 @@ packages:
       - supports-color
     dev: true
 
-  /jest-config@28.1.3(@types/node@18.15.11)(metro@0.76.0):
+  /jest-config@28.1.3(@types/node@18.15.11)(metro@0.76.0)(ts-node@10.9.1):
     resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     peerDependencies:
@@ -39340,6 +39385,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
+      ts-node: 10.9.1(typescript@4.9.5)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -39549,7 +39595,7 @@ packages:
       - supports-color
     dev: true
 
-  /jest-config@28.1.3(metro@0.76.0):
+  /jest-config@28.1.3(metro@0.76.0)(ts-node@10.9.1):
     resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     peerDependencies:
@@ -39583,6 +39629,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
+      ts-node: 10.9.1(typescript@4.9.5)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -41298,7 +41345,7 @@ packages:
       - ts-node
     dev: true
 
-  /jest@28.1.3(metro@0.76.0):
+  /jest@28.1.3(metro@0.76.0)(ts-node@10.9.1):
     resolution: {integrity: sha512-N4GT5on8UkZgH0O5LUavMRV1EDEhNTL0KEfRmDIeZHSV7p2XgLoY9t9VDUgL6o+yfdgYHVxuz81G8oB9VG5uyA==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     hasBin: true
@@ -41308,10 +41355,10 @@ packages:
       node-notifier:
         optional: true
     dependencies:
-      '@jest/core': 28.1.3(metro@0.76.0)
+      '@jest/core': 28.1.3(metro@0.76.0)(ts-node@10.9.1)
       '@jest/types': 28.1.3
       import-local: 3.1.0
-      jest-cli: 28.1.3(metro@0.76.0)
+      jest-cli: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -43866,7 +43913,7 @@ packages:
       metro-cache: 0.76.0
       metro-core: 0.76.0
       metro-runtime: 0.76.0
-      metro-transform-worker: 0.76.0
+      metro-transform-worker: 0.76.0(metro-minify-terser@0.76.0)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -54215,7 +54262,6 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-system@5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}
@@ -55540,7 +55586,7 @@ packages:
       babel-jest: 28.1.3(@babel/core@7.21.0)(metro@0.76.0)
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3(metro@0.76.0)
+      jest: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
       jest-util: 28.1.3
       json5: 2.2.1
       lodash.memoize: 4.1.2
@@ -55768,6 +55814,38 @@ packages:
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
       '@types/node': 18.15.3
+      acorn: 8.8.2
+      acorn-walk: 8.2.0
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      typescript: 4.9.5
+      v8-compile-cache-lib: 3.0.1
+      yn: 3.1.1
+    transitivePeerDependencies:
+      - source-map-support
+    dev: true
+
+  /ts-node@10.9.1(typescript@4.9.5):
+    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.50'
+      '@swc/wasm': '>=1.2.50'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@cspotcode/source-map-support': 0.8.1
+      '@tsconfig/node10': 1.0.8
+      '@tsconfig/node12': 1.0.9
+      '@tsconfig/node14': 1.0.1
+      '@tsconfig/node16': 1.0.2
       acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3

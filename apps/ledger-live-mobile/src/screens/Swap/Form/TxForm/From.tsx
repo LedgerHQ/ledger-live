@@ -124,7 +124,7 @@ export function From({ swapTx, provider, swapError, isSendMaxLoading }: Props) {
         </Flex>
 
         <Text color="error.c50" textAlign="right" variant="tiny">
-          {swapError ? <TranslatedError error={swapError} /> : ""}
+          {swapError ? <TranslatedError error={swapError} /> : null}
         </Text>
       </Flex>
     </Flex>

@@ -1,4 +1,5 @@
 import {
+  clearTextByElement,
   getElementById,
   openDeeplink,
   tapByElement,
@@ -12,6 +13,7 @@ export default class SwapFormPage {
   swapFormTab = () => getElementById("swap-form-tab");
   swapHistoryTab = () => getElementById("swap-history-tab");
   swapSourceSelector = () => getElementById("swap-source-selector");
+  swapDestinationSelector = () => getElementById("swap-destination-selector");
   swapSourceInputTextbox = () => getElementById("swap-source-amount-textbox");
 
   async openViaDeeplink() {
@@ -30,11 +32,16 @@ export default class SwapFormPage {
     await tapByElement(this.swapSourceSelector());
   }
 
-  async selectSourceAccount(accountText: string) {
+  async openDestinationAccountSelector() {
+    await tapByElement(this.swapDestinationSelector());
+  }
+
+  async selectAccount(accountText: string) {
     await tapByText(accountText);
   }
 
   async enterSourceAmount(amount: string) {
+    await clearTextByElement(this.swapSourceInputTextbox());
     await typeTextByElement(this.swapSourceInputTextbox(), amount);
   }
 }
