@@ -15,7 +15,7 @@ setSupportedCurrencies([
   "persistence",
   "stargaze",
   "nyx",
-  "secret_test_hehe",
+  "secret_network",
   "sei_network",
   "desmos",
   "umee",

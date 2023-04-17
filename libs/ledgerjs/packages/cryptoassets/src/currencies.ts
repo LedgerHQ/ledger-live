@@ -2616,14 +2616,14 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [],
   },
-  secret_test_hehe: {
+  secret_network: {
     type: "CryptoCurrency",
-    id: "secret_test_hehe",
+    id: "secret_network",
     coinType: CoinType.ATOM,
     name: "SecretNetwork",
     managerAppName: "Cosmos",
     ticker: "SCRT",
-    scheme: "secret_test_hehe",
+    scheme: "secret_network",
     color: "#a3b0bd",
     family: "cosmos",
     units: [

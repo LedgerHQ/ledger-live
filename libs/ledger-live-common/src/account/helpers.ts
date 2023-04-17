@@ -117,7 +117,7 @@ export const getVotesCount = (
     case "persistence":
     case "stargaze":
     case "nyx":
-    case "secret_test_hehe":
+    case "secret_network":
     case "sei_network":
     case "desmos":
     case "umee":
