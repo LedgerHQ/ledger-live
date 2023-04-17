@@ -147,6 +147,10 @@ export function useEnableBluetooth(
     bluetoothServicesState = "unknown";
   }
 
+  if (__DEV__) {
+    bluetoothServicesState = "enabled";
+  }
+
   return {
     checkAndRequestAgain,
     bluetoothServicesState,
