@@ -265,15 +265,6 @@ const FirmwareUpdateBanner = () => {
           >
             {t("common.continue")}
           </Button>
-          <Button
-            type="default"
-            outline={false}
-            // TODO: implement learn more button for stax low battery
-            mt={6}
-            alignSelf="stretch"
-          >
-            {t("common.learnMore")}
-          </Button>
         </Flex>
       </QueuedDrawer>
     </Flex>
