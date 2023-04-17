@@ -7,16 +7,32 @@ import { FeeData, FeeHistory, Transaction as EvmTransaction } from "../types";
 import { transactionToEthersTransaction } from "../adapters";
 import { GasEstimationError } from "../errors";
 import ERC20Abi from "../abis/erc20.abi.json";
+import { delay } from "../../../promise";
 import { log } from "@ledgerhq/logs";
 
-export const DEFAULT_RETRIES_RPC_METHODS = 2;
+export const RPC_TIMEOUT = 5000; // wait 5 sec after a fail
+export const DEFAULT_RETRIES_RPC_METHODS = 3;
+
+/**
+ * Cache for RPC providers to avoid recreating the connection on every usage of `withApi`
+ * Without this, ethers will create a new provider and use the `eth_chainId` RPC call
+ * at instanciation which could result in rate limits being reached
+ * on some specific nodes (E.g. the main Optimism RPC)
+ */
+const PROVIDERS_BY_RPC: Record<string, ethers.providers.StaticJsonRpcProvider> =
+  {};
 
 /**
  * Connects to RPC Node
+ *
+ * ⚠️ Make sure to always use a `StaticJsonRpcProvider` and not a `JsonRpcProvider`
+ * because the latter will use a `eth_chainId` before every request in order
+ * to check if the node used changed (as per EIP-1193 standard)
+ * @see https://github.com/ethers-io/ethers.js/issues/901
  */
 export async function withApi<T>(
   currency: CryptoCurrency,
-  execute: (api: ethers.providers.JsonRpcProvider) => Promise<T>,
+  execute: (api: ethers.providers.StaticJsonRpcProvider) => Promise<T>,
   retries = DEFAULT_RETRIES_RPC_METHODS
 ): Promise<T> {
   if (!currency?.ethereumLikeInfo?.rpc) {
@@ -24,12 +40,19 @@ export async function withApi<T>(
   }
 
   try {
-    const provider = new ethers.providers.JsonRpcProvider(
-      currency?.ethereumLikeInfo?.rpc
-    );
+    if (!PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc]) {
+      PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc] =
+        new ethers.providers.StaticJsonRpcProvider(
+          currency.ethereumLikeInfo.rpc
+        );
+    }
+
+    const provider = PROVIDERS_BY_RPC[currency.ethereumLikeInfo.rpc];
     return await execute(provider);
   } catch (e) {
     if (retries) {
+      // wait the RPC timeout before trying again
+      await delay(RPC_TIMEOUT);
       // decrement with prefix here or it won't work
       return withApi<T>(currency, execute, --retries);
     }
@@ -231,6 +254,7 @@ export const getSubAccount: (
 
 export default {
   DEFAULT_RETRIES_RPC_METHODS,
+  RPC_TIMEOUT,
   withApi,
   getBalanceAndBlock,
   getTransaction,
