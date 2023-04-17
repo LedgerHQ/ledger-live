@@ -1,4 +1,5 @@
 import {
+  clearTextByElement,
   getElementById,
   openDeeplink,
   tapByElement,
@@ -35,6 +36,7 @@ export default class SwapFormPage {
   }
 
   async enterSourceAmount(amount: string) {
+    await clearTextByElement(this.swapSourceInputTextbox());
     await typeTextByElement(this.swapSourceInputTextbox(), amount);
   }
 }

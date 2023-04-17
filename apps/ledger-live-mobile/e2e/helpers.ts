@@ -63,6 +63,10 @@ export async function typeTextByElement(
   await elem.typeText(text);
 }
 
+export async function clearTextByElement(elem: Detox.IndexableNativeElement) {
+  return elem.clearText();
+}
+
 export async function scrollToText(
   text: string,
   scrollViewId: string,
