@@ -30,7 +30,13 @@ export async function loadConfig(
   }
 
   const f = fs.readFileSync(
-    path.resolve("e2e", "setups", `${fileName}.json`),
+    path.resolve(
+      "apps",
+      "ledger-live-mobile",
+      "e2e",
+      "setups",
+      `${fileName}.json`,
+    ),
     "utf8",
   );
 
