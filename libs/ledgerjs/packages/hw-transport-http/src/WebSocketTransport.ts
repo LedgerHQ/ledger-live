@@ -109,7 +109,7 @@ export default class WebSocketTransport extends Transport {
         reject(e);
       }
     });
-    return new WebSocketTransport(exchangeMethods);
+    return new this(exchangeMethods);
   }
 
   hook: any;

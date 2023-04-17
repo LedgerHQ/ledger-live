@@ -18,6 +18,7 @@ import {
   filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,
   SettingsState,
+  VaultSigner,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 export type SaveSettings = (
@@ -331,4 +332,9 @@ export const setFeatureFlagsButtonVisible = (featureFlagsButtonVisible: boolean)
   payload: {
     featureFlagsButtonVisible,
   },
+});
+
+export const setVaultSigner = (payload: VaultSigner) => ({
+  type: "SET_VAULT_SIGNER",
+  payload,
 });

@@ -17,6 +17,9 @@ setEnvOnAllThreads("USER_ID", getUserId());
 // This defines our IPC Transport that will proxy to an internal process (we shouldn't use node-hid on renderer)
 registerTransportModule({
   id: "ipc",
-  open: id => retry(() => IPCTransport.open(id)),
+  open: (id: string) => {
+    if (id !== "ipc") return;
+    return retry(() => IPCTransport.open(id));
+  },
   disconnect: () => Promise.resolve(),
 });
