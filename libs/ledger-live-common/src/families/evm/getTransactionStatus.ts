@@ -7,6 +7,7 @@ import {
   AmountRequired,
   NotEnoughBalance,
   GasLessThanEstimate,
+  PriorityFeeTooLow,
 } from "@ledgerhq/errors";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
@@ -27,7 +28,8 @@ type ValidatedTransactionFields =
   | "recipient"
   | "gasLimit"
   | "gasPrice"
-  | "amount";
+  | "amount"
+  | "maxPriorityFee";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 // This regex will not work with Starknet since addresses are 65 caracters long after the 0x
@@ -119,12 +121,16 @@ export const validateGas = (
       eip1559TransactionHasFees(tx as EvmTransactionEIP1559)
     )
   ) {
-    errors.gasPrice = new FeeNotLoaded(); // "Could not load fee rates"
+    errors.gasPrice = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
+  } else if (gasLimit.isZero()) {
+    errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
   } else if (gasLimit.isLessThan(21000)) {
     // minimum gas for a tx is 21000
     errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
   } else if (tx.recipient && estimatedFees.gt(account.balance)) {
     errors.gasPrice = new NotEnoughGas(); // "The parent account balance is insufficient for network fees"
+  } else if (tx.maxPriorityFeePerGas && tx.maxPriorityFeePerGas.isZero()) {
+    errors.maxPriorityFee = new PriorityFeeTooLow();
   }
 
   return [errors, warnings];
