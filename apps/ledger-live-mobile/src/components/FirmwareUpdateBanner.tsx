@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Platform } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
@@ -162,16 +162,14 @@ const FirmwareUpdateBanner = () => {
     staxBattery,
   ]);
 
-  const onContinueWithLowBattery = useMemo(
-    () =>
-      newFwUpdateUxFeatureFlag?.enabled
-        ? onExperimentalFirmwareUpdate
-        : () => {
-            setShowBatteryWarningDrawer(false);
-            setShowUnsupportedUpdateDrawer(true);
-          },
-    [newFwUpdateUxFeatureFlag?.enabled, onExperimentalFirmwareUpdate],
-  );
+  const onContinueWithLowBattery = useCallback(() => {
+    if (newFwUpdateUxFeatureFlag?.enabled) {
+      onExperimentalFirmwareUpdate();
+    } else {
+      setShowBatteryWarningDrawer(false);
+      setShowUnsupportedUpdateDrawer(true);
+    }
+  }, [newFwUpdateUxFeatureFlag?.enabled, onExperimentalFirmwareUpdate]);
 
   const deviceName = lastConnectedDevice
     ? getDeviceModel(lastConnectedDevice.modelId).productName
