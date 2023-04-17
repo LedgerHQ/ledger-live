@@ -16,6 +16,7 @@ class Axelar extends CosmosBase {
     this.unbondingPeriod = 21;
     this.validatorOperatorAddressPrefix = "axelarvaloper";
     this.prefix = "axelar";
+    this.minGasprice = 0.007;
   }
 }
 
