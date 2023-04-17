@@ -13,6 +13,7 @@ setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
+  "axelar",
   "bitcoin",
   "ethereum",
   "bsc",
