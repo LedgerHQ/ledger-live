@@ -158,6 +158,21 @@ export const getTypedTransaction = (
   } as EvmTransactionLegacy;
 };
 
+/**
+ * Serialize a Ledger Live transaction into an hex string
+ */
+export const getSerializedTransaction = (
+  tx: EvmTransaction,
+  signature?: Partial<ethers.Signature>
+): string => {
+  const unsignedEthersTransaction = transactionToEthersTransaction(tx);
+
+  return ethers.utils.serializeTransaction(
+    unsignedEthersTransaction,
+    signature as ethers.Signature
+  );
+};
+
 export default {
   formatTransaction,
   fromTransactionRaw,
@@ -165,4 +180,5 @@ export default {
   toTransactionStatusRaw,
   formatTransactionStatus,
   fromTransactionStatusRaw,
+  getSerializedTransaction,
 };

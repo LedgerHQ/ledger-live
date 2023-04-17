@@ -1,33 +1,11 @@
-import {
-  Account,
-  AccountBridge,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
-import { ethers } from "ethers";
 import { Observable } from "rxjs";
 import Eth, { ledgerService } from "@ledgerhq/hw-app-eth";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { prepareForSignOperation } from "./prepareTransaction";
-import { transactionToEthersTransaction } from "./adapters";
+import { getSerializedTransaction } from "./transaction";
 import { Transaction as EvmTransaction } from "./types";
 import { withDevice } from "../../hw/deviceAccess";
-
-/**
- * Serialize a Ledger Live transaction into an hex string
- */
-export const getSerializedTransaction = (
-  account: Account,
-  tx: EvmTransaction,
-  signature?: Partial<ethers.Signature>
-): string => {
-  const unsignedEthersTransaction = transactionToEthersTransaction(tx);
-
-  return ethers.utils.serializeTransaction(
-    unsignedEthersTransaction,
-    signature as ethers.Signature
-  );
-};
 
 /**
  * Transforms the ECDSA signature paremeter v hexadecimal string received
@@ -112,7 +90,6 @@ export const signOperation: AccountBridge<EvmTransaction>["signOperation"] = ({
           const { chainId = 0 } = account.currency.ethereumLikeInfo || {};
           // Create a new serialized tx with the signature now
           const signature = await getSerializedTransaction(
-            account,
             preparedTransaction,
             {
               r: "0x" + sig.r,
