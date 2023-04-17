@@ -36,11 +36,8 @@ if (getEnv("DEVICE_PROXY_URL")) {
         maxRetry: 4,
       }),
     disconnect: () => Promise.resolve(),
-    setAllowAutoDisconnect: (transport, _, allow) => {
-      return Promise.resolve(
-        (transport as TransportNodeHidSingleton).setAllowAutoDisconnect(allow),
-      );
-    },
+    setAllowAutoDisconnect: async (transport, _, allow) =>
+      (transport as TransportNodeHidSingleton).setAllowAutoDisconnect(allow),
   });
 }
 export function unsubscribeSetup() {
