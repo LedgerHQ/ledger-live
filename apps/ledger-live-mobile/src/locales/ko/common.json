@@ -12,7 +12,7 @@
     "gotit" : "알겠습니다",
     "continue" : "계속",
     "retry" : "다시 시도",
-    "backTo" : "Back to {{to}}",
+    "backTo" : "{{to}} 앱으로 돌아가기",
     "done" : "완료",
     "sortBy" : "정렬 기준",
     "signOut" : "로그아웃",
@@ -167,9 +167,6 @@
     "ClaimRewardsFeesWarning" : {
       "title" : "추정된 수수료보다 수령하는 보상액이 적습니다.",
       "description" : ""
-    },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "활성 예치금이 있을 때는 승인된 금액을 낮출 수 없습니다."
     },
     "CosmosBroadcastCodeInternal" : {
       "title" : "문제가 발생했습니다(오류 #1)",
@@ -2128,8 +2125,6 @@
       "OPT_IN" : "참여",
       "OPT_OUT" : "참여하지 않음",
       "CLOSE_ACCOUNT" : "계정 닫기",
-      "SUPPLY" : "예치됨",
-      "REDEEM" : "출금됨",
       "APPROVE" : "활성화됨",
       "BOND" : "본딩",
       "UNBOND" : "언본딩",
@@ -2704,6 +2699,10 @@
           "title" : "실험적 앱 허용",
           "description" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요."
         },
+        "debugApps" : {
+          "title" : "디버그 앱 허용",
+          "description" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요."
+        },
         "staggingUrl" : {
           "title" : "스테이징 URL에 대해 알아보기",
           "description" : "학습 페이지에서 스테이징 URL 사용하기"
@@ -2739,46 +2738,6 @@
       "desc" : "Ledger Live, Ledger 제품, 맞춤형 제안 및 시장에 대한 최신 업데이트를 받아보세요. 해제는 언제든지 가능합니다.",
       "allow" : "알림 허용",
       "later" : "다음에 결정하기"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Ledger Live 계정 업데이트",
-    "overview" : {
-      "headerTitle" : "계정 업데이트",
-      "title" : "Ledger Live 계정 업데이트",
-      "subtitle" : "Ledger Live의 새로운 기능을 사용하려면 사용자 계정을 업데이트해야 합니다.",
-      "notice" : "{{accountCount}}개의 계정을 업데이트할 수 없습니다. 아래 계정과 연계된 장치를 연결하세요.",
-      "notice_plural" : "{{accountCount}}개의 계정을 업데이트할 수 없습니다. 아래 계정과 연계된 장치를 연결하세요.",
-      "currency" : "1 {{currency}} 계정을 업데이트해야 합니다.",
-      "currency_plural" : "{{currency}} 계정 {{count}}개를 업데이트해야 합니다",
-      "start" : "업데이트 시작",
-      "continue" : "업데이트 계속하기"
-    },
-    "progress" : {
-      "headerTitle" : "계정 업데이트 중",
-      "pending" : {
-        "title" : "{{currency}} 업데이트 진행 중",
-        "subtitle" : "계정이 업데이트될 때까지 기다려주세요."
-      },
-      "notice" : {
-        "title" : "{{currency}} 업데이트 미완료",
-        "subtitle" : "이 장치로 업데이트할 수 있는 {{currency}} 계정이 없습니다.",
-        "cta" : "계속",
-        "ctaNextCurrency" : "{{currency}}로 계속"
-      },
-      "done" : {
-        "title" : "{{currency}} 업데이트 완료",
-        "subtitle" : "축하합니다. 귀하의 {{currency}} 계정이 업데이트되었습니다.",
-        "cta" : "계속",
-        "ctaNextCurrency" : "{{currency}}로 계속",
-        "ctaDone" : "완료"
-      },
-      "error" : {
-        "cta" : "다시 시도"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "장치 연결"
     }
   },
   "transfer" : {
@@ -3412,7 +3371,12 @@
       "scan" : "QR 코드 스캔",
       "enterAddress" : "주소 입력",
       "input" : "주소 입력",
-      "verifyAddress" : "주소가 수령인이 공유한 것과 일치하는지 확인하세요."
+      "verifyAddress" : "주소가 수령인이 공유한 것과 일치하는지 확인하세요.",
+      "domainService" : {
+        "reverse" : "이 주소는 {{domain}}에 연결되어 있습니다",
+        "forward" : "유효한 ENS 주소",
+        "supportLink" : "이더리움 네임 서비스란?"
+      }
     },
     "amount" : {
       "available" : "총 이용 가능",
@@ -3484,6 +3448,29 @@
         "title" : "최대 사용 가능 금액",
         "description" : "최대 사용 가능 금액은 한 트랜잭션에 보낼 수 있는 계정의 총 잔금입니다."
       }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "속도 올리기 또는 취소",
+    "previousFeesInfo" : "현재 네트워크 수수료 = {{amount}} ETH",
+    "header" : "트랜잭션 수정",
+    "learnMore" : "더 자세히 알고 싶어요",
+    "panel" : {
+      "stuckMessage" : "가장 최근 실행한 '전송' 트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+      "speedupMessage" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다."
+    },
+    "speedUp" : {
+      "title" : "스피드 업",
+      "description" : "네트워크 수수료를 높여 트랜잭션을 다시 제출하세요."
+    },
+    "cancel" : {
+      "title" : "취소",
+      "description" : "0의 {{ticker}}를 본인 주소로 전송하기 취소를 담보하기 위해 네트워크 수수료는 취소하려는 트랜잭션 수수료보다 30% 더 높습니다."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "계정에 충분한 자금이 없기 때문에 트랜잭션을 취소할 수 없습니다.",
+      "notEnoughFundsToSpeedup" : "계정에 충분한 자금이 없기 때문에 트랜잭션 속도를 높일 수 없습니다.",
+      "notlowestNonceToSpeedup" : "속도 향상 기능을 사용할 수 없습니다. 이전 트랜잭션이 중단되어 현재 트랜잭션이 보류 중입니다. 확인될 때까지 기다렸다가 속도를 높이거나 취소할 수 있습니다."
     }
   },
   "requestAccount" : {
@@ -4941,6 +4928,7 @@
       "header" : "투표 ({{total}})",
       "Amount" : "금액",
       "noRewards" : "이용 가능한 보상이 없습니다",
+      "warnDisableStakingMessage" : "트론 스테이킹 기능은 현재 사용할 수 없습니다",
       "votes" : {
         "title" : "투표",
         "description" : "투표로 1인 이상의 대표를 선출하고 보상으로 소득을 올려보세요.",
@@ -5914,7 +5902,7 @@
       "noCurrencySearchResultsFor" : "죄송합니다. <0>{{search}}</0>에 대한 통화를 찾지 못했습니다. 다른 키워드로 검색을 다시 시도해 주세요.",
       "noSearchResults" : "죄송합니다. 검색 결과를 찾지 못했습니다.",
       "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
-      "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
+      "retrySearchKeywordAndUrl" : "다른 키워드로 검색을 다시 시도하거나 Ledger Live 외부에서 <Link>{{search}}</Link>을 열어 주세요.",
       "retrySearchParams" : "다른 매개변수로 검색을 다시 시도해 주세요.",
       "trackFavAssets" : "즐겨찾기를 찾아보세요",
       "clickOnStarIcon" : "자산 옆에 있는 별 아이콘을 클릭하면 자산이 자동으로 즐겨찾기에 추가됩니다.",
@@ -5933,6 +5921,13 @@
     "gallery" : {
       "allNft" : "모든 NFT",
       "addNew" : "새로 추가"
+    },
+    "designedForStax" : {
+      "title" : "<0>Ledger</0><1>Stax</1>을 위한 <2>디자인</2>",
+      "drawer" : {
+        "description" : "이 NFT에는 Ledger Stax의 E 잉크 스크린에 맞게 특별히 디자인한 추가 NFT 이미지가 포함되어 있습니다.\n\n해당 NFT를 잠금 화면으로 설정하면 이 이미지가 사용됩니다.",
+        "cta" : "알겠습니다"
+      }
     },
     "viewer" : {
       "properties" : "속성",
@@ -6008,7 +6003,7 @@
     },
     "confirmCrop" : "크롭한 이미지를 확인하세요",
     "confirmContrast" : "대비를 확인하세요",
-    "nftEntryPointButtonLabel" : "Ledger Stax 잠금화면 사진으로 설정하세요",
+    "nftEntryPointButtonLabel" : "Ledger Stax 잠금화면으로 설정하세요",
     "customImage" : "커스텀 사진",
     "doThisLater" : "다음에 결정하기",
     "preview" : {
