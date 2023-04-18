@@ -5,6 +5,11 @@ import { Web3AppWebview } from "../Web3AppWebview";
 import Box from "../Box";
 import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
+import { TopBar } from "./TopBar";
+
+type RecoverWebviewProps = WebviewProps & {
+  onClose: () => void;
+};
 
 export const Container = styled.div`
   display: flex;
@@ -19,13 +24,23 @@ export const Wrapper = styled(Box).attrs(() => ({
   position: relative;
 `;
 
-export default function WebRecoverPlayer({ manifest, inputs }: WebviewProps) {
+const recoverIdsShowTopBar = ["protect-simu", "protect-staging"];
+
+export default function WebRecoverPlayer({ manifest, inputs, onClose }: RecoverWebviewProps) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
-  const [, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
   return (
     <Container>
       <Wrapper>
+        {recoverIdsShowTopBar.includes(manifest.id) ? (
+          <TopBar
+            manifest={manifest}
+            webviewAPIRef={webviewAPIRef}
+            webviewState={webviewState}
+            onClose={onClose}
+          />
+        ) : null}
         <Web3AppWebview
           manifest={manifest}
           inputs={inputs}

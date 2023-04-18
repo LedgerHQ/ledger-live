@@ -316,7 +316,7 @@ const MainSideBar = () => {
     dispatch(openModal("MODAL_RECEIVE"));
   }, [dispatch, maybeRedirectToAccounts]);
 
-  const handleOpenProtectDiscoverModal = useCallback(() => {
+  const handleClickRecover = useCallback(() => {
     track("button_clicked", {
       button: "Protect",
     });
@@ -475,14 +475,14 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                   disabled={isCardDisabled}
                 />
-                <FeatureToggle feature="protectServicesDiscoverDesktop">
+                <FeatureToggle feature="protectServicesDesktop">
                   <SideBarListItem
                     id={"send"}
                     label={t("sidebar.recover")}
                     icon={Icons.ShieldCheckMedium}
                     iconSize={20}
                     iconActiveColor="wallet"
-                    onClick={handleOpenProtectDiscoverModal}
+                    onClick={handleClickRecover}
                     collapsed={secondAnim}
                   />
                 </FeatureToggle>

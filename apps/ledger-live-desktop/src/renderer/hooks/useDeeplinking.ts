@@ -227,7 +227,11 @@ export function useDeepLinkHandler() {
           break;
         }
         case "discover":
-          navigate(`/platform/${path ?? ""}`, query);
+          if (path.includes("protect")) {
+            navigate(`/recover/${path}`, undefined, search);
+          } else {
+            navigate(`/platform/${path ?? ""}`, query);
+          }
           break;
         case "wc": {
           setTrackingSource("deeplink");
@@ -237,6 +241,9 @@ export function useDeepLinkHandler() {
         }
         case "market":
           navigate(`/market`);
+          break;
+        case "recover":
+          navigate(`/recover/${path}`, undefined, search);
           break;
         case "portfolio":
         default:
