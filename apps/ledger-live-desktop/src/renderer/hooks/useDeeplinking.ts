@@ -80,9 +80,10 @@ export function useDeepLinkHandler() {
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
       const [url, path] = fullUrl.split("/");
       switch (url) {
-        case "accounts":
-          if (query.address && typeof query.address === "string") {
-            const account = accounts.find(acc => acc.freshAddress === query.address);
+        case "accounts": {
+          const { address } = query;
+          if (address && typeof address === "string") {
+            const account = accounts.find(acc => acc.freshAddress === address);
             if (account) {
               navigate(`/account/${account.id}`);
               break;
@@ -90,6 +91,7 @@ export function useDeepLinkHandler() {
           }
           navigate("/accounts");
           break;
+        }
         case "buy":
           navigate("/exchange");
           break;
