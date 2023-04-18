@@ -168,9 +168,6 @@
       "title" : "Las recompensas son inferiores a las tarifas estimadas para reclamarlas.",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "No es posible reducir el importe aprobado mientras tengas un depósito activo."
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Se ha producido un error (Error 1)",
       "description" : "Guarda tus registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
@@ -2128,8 +2125,6 @@
       "OPT_IN" : "Adherir",
       "OPT_OUT" : "No adherir",
       "CLOSE_ACCOUNT" : "Cerrar cuenta",
-      "SUPPLY" : "Depositado",
-      "REDEEM" : "Retirado",
       "APPROVE" : "Habilitado",
       "BOND" : "Vincular",
       "UNBOND" : "Desvincular",
@@ -2704,6 +2699,10 @@
           "title" : "Permitir aplicaciones experimentales",
           "description" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales."
         },
+        "debugApps" : {
+          "title" : "Permitir aplicaciones de depuración",
+          "description" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como de depuración."
+        },
         "staggingUrl" : {
           "title" : "URL de ensayo de la página Learn",
           "description" : "Usa la URL de ensayo para la página Learn."
@@ -2739,46 +2738,6 @@
       "desc" : "Recibe recomendaciones personalizadas y las últimas novedades sobre Ledger Live, los productos Ledger y el mercado. Puedes cancelar la suscripción en cualquier momento desde los ajustes.",
       "allow" : "Permitir notificaciones",
       "later" : "Quizás más tarde"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Actualización de cuentas de Ledger Live",
-    "overview" : {
-      "headerTitle" : "Actualización de cuenta",
-      "title" : "Actualización de cuentas de Ledger Live",
-      "subtitle" : "Si hay nuevas funciones de Ledger Live, eso significa que debes actualizar tus cuentas.",
-      "notice" : "No fue posible actualizar {{accountCount}} cuenta. Conecta el dispositivo asociado a la cuenta siguiente.",
-      "notice_plural" : "No fue posible actualizar {{accountCount}} cuentas. Conecta el dispositivo asociado a las cuentas siguientes.",
-      "currency" : "Es necesario actualizar 1 cuenta de {{currency}}",
-      "currency_plural" : "Es necesario actualizar {{count}} cuentas de {{currency}}",
-      "start" : "Iniciar actualización",
-      "continue" : "Continuar con la actualización"
-    },
-    "progress" : {
-      "headerTitle" : "Actualizando cuentas",
-      "pending" : {
-        "title" : "Actualización de {{currency}} en curso",
-        "subtitle" : "Espera a que se actualice tu cuenta."
-      },
-      "notice" : {
-        "title" : "Actualización de {{currency}} incompleta",
-        "subtitle" : "No fue posible actualizar cuentas de {{currency}} mediante este dispositivo.",
-        "cta" : "Continuar",
-        "ctaNextCurrency" : "Continuar con {{currency}}"
-      },
-      "done" : {
-        "title" : "Actualización de {{currency}} completa",
-        "subtitle" : "¡Enhorabuena! Tus cuentas de {{currency}} se han actualizado correctamente.",
-        "cta" : "Continuar",
-        "ctaNextCurrency" : "Continuar con {{currency}}",
-        "ctaDone" : "Listo"
-      },
-      "error" : {
-        "cta" : "Reintentar"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "Conectar dispositivo"
     }
   },
   "transfer" : {
@@ -3412,7 +3371,12 @@
       "scan" : "Escanear código QR",
       "enterAddress" : "Ingresar dirección",
       "input" : "Ingresar dirección",
-      "verifyAddress" : "Verifica que la dirección coincida con la dirección del receptor."
+      "verifyAddress" : "Verifica que la dirección coincida con la dirección del receptor.",
+      "domainService" : {
+        "reverse" : "Esta dirección está enlazada con {{domain}}",
+        "forward" : "Este es una dirección de ENS válida",
+        "supportLink" : "¿Qué es un Servicio de Nombre de Ethereum?"
+      }
     },
     "amount" : {
       "available" : "Total disponible",
@@ -3692,6 +3656,7 @@
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
     "allowManagerPermission" : "Permite {{wording}} en tu {{productName}}",
+    "allowSecureConnection" : "Permitir una conexión segura con Ledger",
     "loading" : "Cargando...",
     "turnOnAndUnlockDevice" : "Enciende y desbloquea tu dispositivo",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
@@ -4043,16 +4008,30 @@
   },
   "FirmwareUpdate" : {
     "title" : "Actualizar firmware",
+    "updateDevice" : "Actualizar {{deviceName}}",
     "preparing" : "Preparando la actualización de firmware. No desconectes ni dejes entrar en suspensión a tu dispositivo. Te informaremos del progreso",
     "confirmIdentifierText" : "Comprueba que el identificador de tu dispositivo coincida con el identificador a continuación. Confirma e introduce tu código PIN, si así lo indica la aplicación.",
     "pleaseReinstallApps" : "Vuelve a instalar las aplicaciones en tu dispositivo.",
     "pleaseConfirmUpdate" : "Confirma la actualización en tu dispositivo",
+    "pleaseConfirmUpdateOnYourDevice" : "Confirmar instalación en {{deviceName}}",
     "finishUpdate" : "Finaliza la actualización en tu {{deviceName}}",
     "identifierTitle" : "Identificador:",
     "pleaseWaitDownload" : "Espera a que se descargue el instalador",
+    "doNotLeaveLedgerLive" : "No cierres la aplicación Ledger Live hasta que finalice la actualización.",
     "preparingDevice" : "Preparando tu dispositivo",
     "pleaseWaitUpdate" : "Espera a que finalice la actualización",
     "waitForFirmwareUpdate" : "Espera a que finalice la actualización de firmware en tu dispositivo",
+    "waitForInstallationToFinish" : "Espera a que finalice la instalación en {{deviceName}}",
+    "staxBatteryLow" : "Ledger Stax no tiene suficiente batería para realizar la actualización",
+    "staxBatteryLowDescription" : "Para actualizar el SO, tu dispositivo Ledger debe estar, como mínimo, al 50% de carga, o en carga.",
+    "updateCancelled" : "Se ha cancelado la actualización en {{deviceName}}",
+    "updateCancelledDescription" : "Se ha rechazado la instalación de la actualización del SO {{newFirmwareVersion}} en {{deviceName}}. Si se trata de un error, vuelve a iniciar la actualización",
+    "updateNotYetComplete" : "La actualización no ha finalizado todavía",
+    "updateNotYetCompleteDescription" : "Si interrumpes la actualización, es posible que no puedas restaurar correctamente las aplicaciones, el idioma y la imagen de pantalla de bloqueo.",
+    "restartUpdate" : "Reiniciar actualización de SO",
+    "quitUpdate" : "Cerrar actualización",
+    "continueUpdate" : "Continuar con la actualización",
+    "unlockDeviceToComplete" : "Desbloquear {{deviceName}} para finalizar la instalación",
     "unlockDeviceWithPin" : "Desbloquea tu dispositivo con el PIN",
     "reinstallApps" : "Vuelve a instalar las aplicaciones.",
     "currentVersionNumber" : "Versión actual",
@@ -4074,7 +4053,20 @@
       "flash-bootloader" : "Actualizando Bootloader",
       "flash" : "Flashing a tu dispositivo",
       "preparing" : "Preparando actualización",
-      "firmware" : "Descargando actualización"
+      "firmware" : "Descargando actualización",
+      "prepareUpdate" : {
+        "titleActive" : "Preparando actualización para instalar",
+        "description" : "Transfiriendo el paquete de actualización a {{deviceName}}"
+      },
+      "installUpdate" : {
+        "titleInactive" : "Instalar actualización",
+        "titleActive" : "Instalando actualización",
+        "description" : "{{deviceName}} se reiniciará varias veces.\n\nUna vez que finalice la instalación en {{deviceName}}, desbloquea el dispositivo para finalizar la instalación"
+      },
+      "restoreSettings" : {
+        "titleInactive" : "Restaurar aplicaciones y ajustes",
+        "description" : "Los ajustes y las aplicaciones de cadena de bloques se restaurarán."
+      }
     },
     "newVersion" : "Actualización {{version}} disponible para {{deviceName}}",
     "drawerUpdate" : {
@@ -4082,6 +4074,12 @@
       "description" : "Actualiza tu firmware Ledger Nano conectándolo a la aplicación Ledger Live Desktop",
       "pleaseConnectUsbTitle" : "Es necesario un cable USB",
       "pleaseConnectUsbDescription" : "Para iniciar la actualización del firmware, conecta tu {{deviceName}} a tu teléfono mediante un cable USB."
+    },
+    "errors" : {
+      "TimeoutError" : {
+        "title" : "Tiempo de actualización agotado",
+        "description" : "No ha sido posible finalizar la actualización porque hemos perdido la conexión con {{deviceName}}"
+      }
     }
   },
   "firmwareUpdateRequired" : {
@@ -4941,6 +4939,7 @@
       "header" : "Votos ({{total}})",
       "Amount" : "Importe",
       "noRewards" : "No hay recompensas disponibles",
+      "warnDisableStakingMessage" : "La función de puesta en participación no está disponible actualmente para Tron",
       "votes" : {
         "title" : "Votos",
         "description" : "Vota a uno o más representantes para comenzar a recibir recompensas.",
@@ -5914,7 +5913,7 @@
       "noCurrencySearchResultsFor" : "Lo sentimos, no hemos encontrado ninguna divisa para <0>{{search}}</0>. Por favor, intenta de nuevo con otra palabra clave.",
       "noSearchResults" : "Lo sentimos, no hemos encontrado ningún resultado.",
       "retrySearchKeyword" : "Por favor, intenta de nuevo con otra palabra clave.",
-      "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
+      "retrySearchKeywordAndUrl" : "Intenta realizar la búsqueda con otra palabra clave o abre <Link>{{search}}</Link> de Ledger Live.",
       "retrySearchParams" : "Por favor, intenta de nuevo con otros parámetros.",
       "trackFavAssets" : "Sigue a tus favoritas",
       "clickOnStarIcon" : "Al hacer clic en el ícono de la estrella junto a un activo se añadirá automáticamente a tus destacados.",
@@ -5933,6 +5932,13 @@
     "gallery" : {
       "allNft" : "Todos los NFTs",
       "addNew" : "Agregar nueva"
+    },
+    "designedForStax" : {
+      "title" : "<0>Diseñado para</0><1>Ledger</1><2>Stax</2>",
+      "drawer" : {
+        "description" : "Este NFT contiene una imagen adicional del NFT, diseñada específicamente para la pantalla de E Ink del Ledger Stax.\n\nEsta imagen se utilizará cuando definas este NFT como tu pantalla de bloqueo.",
+        "cta" : "Entendido"
+      }
     },
     "viewer" : {
       "properties" : "Propiedades",
@@ -6008,7 +6014,7 @@
     },
     "confirmCrop" : "Confirmar recorte",
     "confirmContrast" : "Confirmar contraste",
-    "nftEntryPointButtonLabel" : "Establecer como imagen de la pantalla de bloqueo del Ledger Stax",
+    "nftEntryPointButtonLabel" : "Definir como pantalla de bloqueo del Ledger Stax",
     "customImage" : "Imagen personalizada",
     "doThisLater" : "Quizás más tarde",
     "preview" : {
