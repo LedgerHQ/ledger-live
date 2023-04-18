@@ -168,9 +168,6 @@
       "title" : "Les récompenses sont inférieures aux frais estimés pour les demander.",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Vous ne pouvez pas diminuer le montant approuvé sur un dépôt actif."
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Une erreur est survenue (Erreur #1).",
       "description" : "Enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
@@ -2128,8 +2125,6 @@
       "OPT_IN" : "Activé",
       "OPT_OUT" : "Désactivé",
       "CLOSE_ACCOUNT" : "Compte fermé",
-      "SUPPLY" : "Déposé",
-      "REDEEM" : "Retiré",
       "APPROVE" : "Activé",
       "BOND" : "Lié",
       "UNBOND" : "Délié",
@@ -2704,6 +2699,10 @@
           "title" : "Autoriser les Apps Expérimentales",
           "description" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\"."
         },
+        "debugApps" : {
+          "title" : "Autoriser les Apps Debug",
+          "description" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\"."
+        },
         "staggingUrl" : {
           "title" : "Activer l’URL de test de la page Apprendre",
           "description" : "Utilisez l’URL de test (staging) de la page Apprendre."
@@ -2739,46 +2738,6 @@
       "desc" : "Ne manquez plus rien sur Ledger Live, les produits Ledger, le marché, et recevez des recommandations personnalisées. Vous pouvez vous désinscrire à tout moment dans les Paramètres.",
       "allow" : "Autoriser les notifications",
       "later" : "Pas maintenant"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Mise à jour des comptes Ledger Live",
-    "overview" : {
-      "headerTitle" : "Mise à jour du compte",
-      "title" : "Mise à jour des comptes Ledger Live",
-      "subtitle" : "Mettez vos comptes à jour pour bénéficier des nouvelles fonctionnalités de Ledger Live.",
-      "notice" : "Impossible de mettre à jour {{accountCount}} compte. Veuillez connecter l’appareil associé au compte ci-dessous.",
-      "notice_plural" : "Impossible de mettre à jour {{accountCount}} comptes. Veuillez connecter l’appareil associé aux comptes ci-dessous.",
-      "currency" : "Mise à jour nécessaire pour 1 compte {{currency}}",
-      "currency_plural" : "Mise à jour nécessaire pour {{count}} comptes {{currency}}",
-      "start" : "Démarrer la mise à jour",
-      "continue" : "Continuer la mise à jour"
-    },
-    "progress" : {
-      "headerTitle" : "Mise à jour des comptes",
-      "pending" : {
-        "title" : "Mise à jour de {{currency}} en cours",
-        "subtitle" : "Patientez pendant la mise à jour de votre compte."
-      },
-      "notice" : {
-        "title" : "Mise à jour de {{currency}} incomplète",
-        "subtitle" : "Mise à jour des comptes {{currency}} impossible sur cet appareil.",
-        "cta" : "Continuer",
-        "ctaNextCurrency" : "Continuer avec {{currency}}"
-      },
-      "done" : {
-        "title" : "Mise à jour de {{currency}} terminée",
-        "subtitle" : "Vos comptes {{currency}} ont bien été mis à jour.",
-        "cta" : "Continuer",
-        "ctaNextCurrency" : "Continuer avec {{currency}}",
-        "ctaDone" : "Terminé"
-      },
-      "error" : {
-        "cta" : "Réessayer"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "Connecter votre appareil"
     }
   },
   "transfer" : {
@@ -3412,7 +3371,12 @@
       "scan" : "Scanner le code QR",
       "enterAddress" : "Entrer l’adresse",
       "input" : "Entrer l’adresse",
-      "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire."
+      "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire.",
+      "domainService" : {
+        "reverse" : "Cette adresse est associée à {{domain}}",
+        "forward" : "Adresse ENS valide",
+        "supportLink" : "Qu’est-ce qu’un Ethereum Name Service (ENS) ?"
+      }
     },
     "amount" : {
       "available" : "Total disponible",
@@ -3692,6 +3656,7 @@
     "allowAppPermission" : "Ouvrez l’app {{wording}} sur votre appareil",
     "allowAppPermissionSubtitleToken" : "pour gérer vos tokens {{token}}",
     "allowManagerPermission" : "Autorisez {{wording}} sur votre {{productName}}.",
+    "allowSecureConnection" : "Autorisez la connexion sécurisée avec Ledger",
     "loading" : "Chargement...",
     "turnOnAndUnlockDevice" : "Allumez et déverrouillez votre appareil.",
     "connectAndUnlockDevice" : "Connectez et déverrouillez votre appareil.",
@@ -4043,16 +4008,30 @@
   },
   "FirmwareUpdate" : {
     "title" : "Mettre à jour le micrologiciel",
+    "updateDevice" : "Mettez à jour votre {{deviceName}}",
     "preparing" : "Préparation de la mise à jour du micrologiciel... Veuillez garder votre appareil allumé et connecté. Nous vous informerons de la progression de la mise à jour.",
     "confirmIdentifierText" : "Vérifiez que l’identifiant sur votre appareil est le même que l’identifiant affiché ci-dessous. Confirmez et saisissez votre code PIN si demandé.",
     "pleaseReinstallApps" : "Veuillez réinstaller les apps sur votre appareil.",
     "pleaseConfirmUpdate" : "Confirmez la mise à jour sur votre appareil",
+    "pleaseConfirmUpdateOnYourDevice" : "Confirmez l’installation sur votre {{deviceName}}",
     "finishUpdate" : "Terminez la mise à jour sur votre {{deviceName}}",
     "identifierTitle" : "Identifiant :",
     "pleaseWaitDownload" : "Patientez pendant le téléchargement du programme d’installation",
+    "doNotLeaveLedgerLive" : "Ne quittez pas l’application Ledger Live avant la fin de la mise à jour.",
     "preparingDevice" : "Préparation de votre appareil",
     "pleaseWaitUpdate" : "Merci d’attendre que la mise à jour soit terminée.",
     "waitForFirmwareUpdate" : "Attendez la fin de la mise à jour du micrologiciel sur votre appareil",
+    "waitForInstallationToFinish" : "Attendez la fin de l’installation sur votre {{deviceName}}",
+    "staxBatteryLow" : "Batterie de votre Ledger Stax trop faible pour la mise à jour",
+    "staxBatteryLowDescription" : "Pour mettre à jour le système d’exploitation, votre Ledger doit disposer d’au moins 50 % de batterie ou être en charge.",
+    "updateCancelled" : "Mise à jour annulée sur votre {{deviceName}}",
+    "updateCancelledDescription" : "L’installation de la mise à jour du système d’exploitation {{newFirmwareVersion}} a été refusée sur votre {{deviceName}}. S’il s’agit d’une erreur, veuillez relancer la mise à jour.",
+    "updateNotYetComplete" : "La mise à jour n’est pas encore terminée",
+    "updateNotYetCompleteDescription" : "Si vous interrompez la mise à jour, vos apps, la langue et l’image de votre écran de verrouillage peuvent ne pas être restaurées correctement.",
+    "restartUpdate" : "Relancer la mise à jour",
+    "quitUpdate" : "Quitter la mise à jour",
+    "continueUpdate" : "Continuer la mise à jour",
+    "unlockDeviceToComplete" : "Déverrouillez votre {{deviceName}} pour terminer l’installation",
     "unlockDeviceWithPin" : "Déverrouillez votre appareil avec votre code PIN",
     "reinstallApps" : "Réinstaller les apps",
     "currentVersionNumber" : "Version actuelle",
@@ -4074,7 +4053,20 @@
       "flash-bootloader" : "Mise à jour du Bootloader",
       "flash" : "Mise à jour du micrologiciel de votre appareil",
       "preparing" : "Préparation de la mise à jour",
-      "firmware" : "Téléchargement de la mise à jour"
+      "firmware" : "Téléchargement de la mise à jour",
+      "prepareUpdate" : {
+        "titleActive" : "Préparation de l’installation de la mise à jour",
+        "description" : "Transfert du package de mise à jour vers votre {{deviceName}}"
+      },
+      "installUpdate" : {
+        "titleInactive" : "Installer la mise à jour",
+        "titleActive" : "Installation de la mise à jour",
+        "description" : "Votre {{deviceName}} redémarrera plusieurs fois.\n\nUne fois la mise à jour installée sur votre {{deviceName}}, déverrouillez votre appareil pour terminer le processus."
+      },
+      "restoreSettings" : {
+        "titleInactive" : "Restaurer les apps et les paramètres",
+        "description" : "Vos paramètres et vos apps blockchain seront restaurés."
+      }
     },
     "newVersion" : "Nouvelle version {{version}} disponible pour votre {{deviceName}}",
     "drawerUpdate" : {
@@ -4082,6 +4074,12 @@
       "description" : "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live pour l’ordinateur",
       "pleaseConnectUsbTitle" : "Câble USB nécessaire",
       "pleaseConnectUsbDescription" : "Connectez votre {{deviceName}} à votre téléphone avec un câble USB pour lancer la mise à jour du micrologiciel."
+    },
+    "errors" : {
+      "TimeoutError" : {
+        "title" : "Délai écoulé",
+        "description" : "La connexion avec votre {{deviceName}} a été perdue. La mise à jour n’a pas pu être terminée."
+      }
     }
   },
   "firmwareUpdateRequired" : {
@@ -4941,6 +4939,7 @@
       "header" : "Votes ({{total}})",
       "Amount" : "Montant",
       "noRewards" : "Aucune récompense disponible",
+      "warnDisableStakingMessage" : "Le staking sur Tron n’est actuellement pas disponible",
       "votes" : {
         "title" : "Votes",
         "description" : "Votez pour un ou plusieurs représentants pour commencer à gagner des récompenses.",
@@ -5914,7 +5913,7 @@
       "noCurrencySearchResultsFor" : "Nous n’avons pas trouvé de monnaies correspondant à <0>{{search}}</0>. Veuillez réessayer avec un autre mot-clé.",
       "noSearchResults" : "Nous n’avons trouvé aucun résultat.",
       "retrySearchKeyword" : "Veuillez réessayer avec un autre mot-clé.",
-      "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
+      "retrySearchKeywordAndUrl" : "Veuillez réessayer avec un autre mot-clé ou ouvrez <Link>{{search}}</Link> en dehors de Ledger Live.",
       "retrySearchParams" : "Veuillez réessayer avec des paramètres différents.",
       "trackFavAssets" : "Surveillez vos favoris",
       "clickOnStarIcon" : "Cliquez sur l’étoile à côté d’un actif pour l’ajouter à vos favoris.",
@@ -5933,6 +5932,13 @@
     "gallery" : {
       "allNft" : "Tous les NFT",
       "addNew" : "Ajouter"
+    },
+    "designedForStax" : {
+      "title" : "<0>Conçu pour le</0><1>Ledger</1><2>Stax</2>",
+      "drawer" : {
+        "description" : "Ce NFT contient une image supplémentaire qui a été spécialement conçue pour l’écran E Ink du Ledger Stax.\n\nCette image est utilisée si vous affichez ce NFT sur l’écran de verrouillage.",
+        "cta" : "Compris"
+      }
     },
     "viewer" : {
       "properties" : "Attributs",
@@ -6008,7 +6014,7 @@
     },
     "confirmCrop" : "Confirmer le recadrage",
     "confirmContrast" : "Confirmer le contraste",
-    "nftEntryPointButtonLabel" : "Définir comme image sur votre Ledger Stax",
+    "nftEntryPointButtonLabel" : "Afficher sur l’écran du Ledger Stax",
     "customImage" : "Image personnalisée",
     "doThisLater" : "Pas maintenant",
     "preview" : {
