@@ -56,7 +56,7 @@
     "documentation": "13.2.4",
     "ethers": "^5.6.9",
     "jest": "^28.1.1",
-    "rimraf": "^4.1.2",
+    "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
     "ts-jest": "^28.0.5",
     "ts-node": "^10.4.0"
