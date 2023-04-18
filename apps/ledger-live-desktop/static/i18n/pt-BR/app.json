@@ -1874,7 +1874,7 @@
         "plugin" : "Ir para o aplicativo",
         "swap" : "Trocar",
         "tool" : "Saiba Mais",
-        "app" : "Saiba Mais"
+        "currency" : "Saiba mais"
       },
       "uninstall" : {
         "title" : "Desinstalar Todos",
@@ -3790,6 +3790,8 @@
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "Staging URL da página Aprender",
       "enableLearnStagingUrlDesc" : "Habilite a staging URL da página Aprender.",
+      "enableStagingNftMetadataService" : "Staging NFT metadata service",
+      "enableStagingNftMetadataServiceDesc" : "Enable the staging NFT metadata service and reset the NFT cache",
       "openOnboardingAppInstallDebug" : "Abrir a tela inicial de debug da instalação do aplicativo",
       "openOnboardingAppInstallDebugDesc" : "Abra uma tela com os componentes da etapa de instalação do aplicativo de sincronização inicial"
     },
@@ -3846,6 +3848,10 @@
         "managerDevMode" : {
           "title" : "Modo Desenvolvedor",
           "description" : "Mostrar aplicativos testnet e de desenvolvedor em Minha Ledger."
+        },
+        "listAppsV2" : {
+          "title" : "Lista de aplicativos experimentais para Minha Ledger",
+          "description" : "Melhoria de desempenho no acesso à Minha Ledger e fluxos inline."
         },
         "scanForInvalidPaths" : {
           "title" : "Pesquisa de contas ampliada",
@@ -5723,9 +5729,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "Recupere suas chaves usando\nsua identidade",
+    "description" : "Sua Frase de Recuperação Secreta nem sempre estará ao seu alcance.\nLançamento piloto exclusivo para a Ledger Nano X. Inscreva-se gratuitamente até 31 de maio de 2023",
+    "cta" : "Por que devo me inscrever?",
+    "downloadLLM" : "Inscreva-se no <purple>Ledger Recover</purple> usando o aplicativo Ledger Live mobile"
   }
 }
