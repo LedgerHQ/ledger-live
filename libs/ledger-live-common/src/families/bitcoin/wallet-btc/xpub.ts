@@ -116,9 +116,8 @@ class Xpub {
   }
 
   // TODO : test fail case + incremental
-  async sync(): Promise<number> {
+  async sync(): Promise<void> {
     this.freshAddressIndex = 0;
-    let account = 0;
     const [highestBlockHeight, highestBlockHash] =
       this.storage.getHighestBlockHeightAndHash();
     let needReorg = highestBlockHeight > 0;
@@ -130,18 +129,16 @@ class Xpub {
         needReorg = false;
       }
     }
-    // eslint-disable-next-line no-await-in-loop
-    while (account < 2 && (await this.syncAccount(account, needReorg))) {
-      // account=0 for receive address; account=1 for change address. No need to handle account>1
-      account += 1;
-    }
+    await Promise.all([
+      this.syncAccount(0, needReorg), // for receive addresses
+      this.syncAccount(1, needReorg), // for change addresses
+    ]);
     this.freshAddress = await this.crypto.getAddress(
       this.derivationMode,
       this.xpub,
       0,
       this.freshAddressIndex
     );
-    return account;
   }
 
   async getXpubBalance(): Promise<BigNumber> {
@@ -361,22 +358,33 @@ class Xpub {
           account,
           index,
         })[0];
-
-      txs = await this.explorer.getAddressTxsSinceLastTxBlock(
-        this.txsSyncArraySize,
-        { address, account, index },
-        lastTxBlockheight,
-        false
-      );
-      inserted += this.storage.appendTxs(txs); // only insert not pending tx
+      if (pendingTxs.length > 0) {
+        txs = await this.explorer.getAddressTxsSinceLastTxBlock(
+          this.txsSyncArraySize,
+          { address, account, index },
+          lastTxBlockheight,
+          false
+        );
+        inserted += this.storage.appendTxs(txs); // insert not pending tx
+      } else {
+        [pendingTxs, txs] = await Promise.all([
+          this.explorer.getAddressTxsSinceLastTxBlock(
+            this.txsSyncArraySize,
+            { address, account, index },
+            0,
+            true
+          ),
+          this.explorer.getAddressTxsSinceLastTxBlock(
+            this.txsSyncArraySize,
+            { address, account, index },
+            lastTxBlockheight,
+            false
+          ),
+        ]);
+        inserted += this.storage.appendTxs(txs); // insert not pending tx
+      }
     } while (txs.length >= this.txsSyncArraySize); // check whether page is full, if not, it is the last page
-    pendingTxs = await this.explorer.getAddressTxsSinceLastTxBlock(
-      this.txsSyncArraySize,
-      { address, account, index },
-      0,
-      true
-    );
-    inserted += this.storage.appendTxs(pendingTxs);
+    inserted += this.storage.appendTxs(pendingTxs); // insert pending tx
     return inserted;
   }
 

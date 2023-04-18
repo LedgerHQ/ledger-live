@@ -1,9 +1,6 @@
-import type { AxiosRequestConfig } from "axios";
-import axios, { AxiosInstance } from "axios";
-import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
 import { Address, Block, TX } from "../storage/types";
+import network from "../../../../network";
 import { IExplorer } from "./types";
-import { errorInterceptor } from "../../../../network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { blockchainBaseURL } from "../../../../api/Ledger";
 
@@ -14,108 +11,92 @@ type ExplorerParams = {
 };
 
 class BitcoinLikeExplorer implements IExplorer {
-  client: AxiosInstance;
-  disableBatchSize = false;
-
+  baseUrl: string;
   constructor({
     cryptoCurrency,
-    disableBatchSize,
     forcedExplorerURI,
   }: {
     cryptoCurrency: CryptoCurrency;
-    disableBatchSize?: boolean;
     forcedExplorerURI?: string;
   }) {
-    const clientParams: AxiosRequestConfig = {
-      baseURL:
-        forcedExplorerURI != null
-          ? forcedExplorerURI
-          : blockchainBaseURL(cryptoCurrency),
-    };
-    this.client = axios.create(clientParams);
-
-    // 3 retries per request
-    axiosRetry(this.client, {
-      retries: 3,
-      retryCondition: (e) =>
-        isNetworkOrIdempotentRequestError(e) ||
-        // workaround for explorers v3 that sometimes returns 4xx instead of 5xx
-        (e.code !== "ECONNABORTED" &&
-          (!e.response ||
-            (e.response.status >= 400 && e.response.status <= 499))),
-    });
-
-    if (disableBatchSize) {
-      this.disableBatchSize = disableBatchSize;
-    }
-
-    // Logging
-    this.client.interceptors.response.use(undefined, errorInterceptor);
+    this.baseUrl =
+      forcedExplorerURI != null
+        ? forcedExplorerURI
+        : blockchainBaseURL(cryptoCurrency);
   }
 
   async broadcast(tx: string): Promise<{ data: { result: string } }> {
-    const url = "/tx/send";
-    const res = await this.client.post(url, { tx });
+    const url = `${this.baseUrl}/tx/send`;
+    const res = await network({
+      method: "POST",
+      url,
+      data: { tx },
+    });
     return res;
   }
 
   async getTxHex(txId: string): Promise<string> {
-    const url = `/tx/${txId}/hex`;
     // TODO add a test for failure (at the sync level)
-    const res: { transaction_hash: string; hex: string } = (
-      await this.client.get(url)
-    ).data;
-    return res.hex;
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/tx/${txId}/hex`,
+    });
+    return data.hex;
   }
 
   async getCurrentBlock(): Promise<Block | null> {
-    const url = `/block/current`;
-    const res: any = (await this.client.get(url)).data;
-    if (!res) {
+    const url = `${this.baseUrl}/block/current`;
+    const { data } = await network({
+      method: "GET",
+      url,
+    });
+    if (!data) {
       return null;
     }
-
     const block: Block = {
-      height: res.height,
-      hash: res.hash,
-      time: res.time,
+      height: data.height,
+      hash: data.hash,
+      time: data.time,
     };
-
     return block;
   }
 
   async getBlockByHeight(height: number): Promise<Block | null> {
-    const url = `/block/${height}`;
-    const res: any = (await this.client.get(url)).data;
-
-    if (!res[0]) {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/block/${height}`,
+    });
+    if (!data[0]) {
       return null;
     }
-
     const block: Block = {
-      height: res[0].height,
-      hash: res[0].hash,
-      time: res[0].time,
+      height: data[0].height,
+      hash: data[0].hash,
+      time: data[0].time,
     };
     return block;
   }
 
   async getFees(): Promise<{ [key: string]: number }> {
-    const url = `/fees`;
     // TODO add a test for failure (at the sync level)
-    const response = await this.client.get(url);
-    const fees = response.data;
-    return fees;
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/fees`,
+    });
+    return data;
   }
 
   async getRelayFee(): Promise<number> {
-    const fees = (await this.client.get(`/network`)).data;
-    return parseFloat(fees["relay_fee"]);
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/network`,
+    });
+    return parseFloat(data["relay_fee"]);
   }
 
   async getPendings(address: Address, nbMax = 1000) {
     const params: ExplorerParams = {
-      batch_size: !this.disableBatchSize ? nbMax : undefined,
+      batch_size: nbMax,
     };
     const pendingsTxs = await this.fetchPendingTxs(address, params);
     pendingsTxs.forEach((tx) => this.hydrateTx(address, tx));
@@ -123,22 +104,24 @@ class BitcoinLikeExplorer implements IExplorer {
   }
 
   async fetchTxs(address: Address, params: ExplorerParams): Promise<TX[]> {
-    const url = `/address/${address.address}/txs`;
-    const response = await this.client.get(url, {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/address/${address.address}/txs`,
       params,
     });
-    return response.data.data;
+    return data.data;
   }
 
   async fetchPendingTxs(
     address: Address,
     params: ExplorerParams
   ): Promise<TX[]> {
-    const url = `/address/${address.address}/txs/pending`;
-    const response = await this.client.get(url, {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/address/${address.address}/txs/pending`,
       params,
     });
-    return response.data;
+    return data;
   }
 
   hydrateTx(address: Address, tx: TX): void {
@@ -191,7 +174,7 @@ class BitcoinLikeExplorer implements IExplorer {
     pending: boolean
   ): Promise<TX[]> {
     const params: ExplorerParams = {
-      batch_size: !this.disableBatchSize ? batchSize : undefined,
+      batch_size: batchSize,
     };
     if (!pending) {
       params.from_height = lastTxBlockheight;

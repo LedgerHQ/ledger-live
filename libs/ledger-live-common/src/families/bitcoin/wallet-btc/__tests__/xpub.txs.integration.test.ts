@@ -24,7 +24,6 @@ describe.skip("testing xpub legacy transactions", () => {
   const explorer = new BitcoinLikeExplorer({
     cryptoCurrency: getCryptoCurrencyById("bitcoin"),
     forcedExplorerURI: "http://localhost:20000/blockchain/v3",
-    disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
 
   const crypto = new Crypto({
@@ -304,7 +303,6 @@ describe.skip("Build transactions", () => {
   const explorer = new BitcoinLikeExplorer({
     forcedExplorerURI: "http://localhost:20000/blockchain/v3",
     cryptoCurrency: getCryptoCurrencyById("bitcoin"),
-    disableBatchSize: true,
   });
 
   const crypto = new Crypto({

@@ -14,7 +14,6 @@ describe("testing dogecoin transactions", () => {
   const wallet = new BitcoinLikeWallet();
   const explorer = new BitcoinLikeExplorer({
     cryptoCurrency: getCryptoCurrencyById("dogecoin"),
-    disableBatchSize: true,
   });
 
   const network = coininfo.dogecoin.main.toBitcoinJS();
