@@ -33,15 +33,18 @@ export type InstallLanguageEvent =
       type: "languageInstalled";
     };
 
-export type InstallLanguageRequest = {
+export type InstallLanguageRequest = { language: Language };
+export type Input = {
   deviceId: string;
-  language: Language;
+  request: InstallLanguageRequest;
 };
 
 export default function installLanguage({
   deviceId,
-  language,
-}: InstallLanguageRequest): Observable<InstallLanguageEvent> {
+  request,
+}: Input): Observable<InstallLanguageEvent> {
+  const { language } = request;
+
   const sub = withDevice(deviceId)(
     (transport) =>
       new Observable((subscriber) => {

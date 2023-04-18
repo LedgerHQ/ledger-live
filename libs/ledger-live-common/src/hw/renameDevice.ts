@@ -15,15 +15,18 @@ export type RenameDeviceEvent =
       name: string;
     };
 
-export type RenameDeviceRequest = {
+export type RenameDeviceRequest = { name: string };
+export type Input = {
   deviceId: string;
-  name: string; // New device name
+  request: RenameDeviceRequest;
 };
 
 export default function renameDevice({
   deviceId,
-  name,
-}: RenameDeviceRequest): Observable<RenameDeviceEvent> {
+  request,
+}: Input): Observable<RenameDeviceEvent> {
+  const { name } = request;
+
   const sub = withDevice(deviceId)(
     (transport) =>
       new Observable((o) => {

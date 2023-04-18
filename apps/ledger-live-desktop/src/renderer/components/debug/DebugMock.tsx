@@ -9,6 +9,7 @@ import {
   deviceInfo210lo5,
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
+import { AppType } from "@ledgerhq/types-live";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 import { addMockAnnouncement } from "../../../../tests/mocks/notificationsHelpers";
@@ -16,7 +17,6 @@ import { toggleMockIncident } from "../../../../tests/mocks/serviceStatusHelpers
 import useInterval from "~/renderer/hooks/useInterval";
 import Box from "~/renderer/components/Box";
 import { Item, MockContainer, EllipsesText, MockedGlobalStyle } from "./shared";
-import { AppType } from "@ledgerhq/types-live/lib/manager";
 
 const mockListAppsResult = (...params) => {
   // Nb Should move this polyfill to live-common eventually.
