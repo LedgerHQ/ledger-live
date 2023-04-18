@@ -43,7 +43,7 @@ const NotificationsButton = () => {
       <Notifications
         size={24}
         color={colors.neutral.c100}
-        dotColor={colors.error.c80}
+        dotColor={colors.error.c40}
         isOn={notificationsCount > 0}
       />
     </Touchable>

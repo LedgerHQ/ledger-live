@@ -21,7 +21,7 @@ function DeleteAccountModal({ isOpen, onRequestClose, deleteAccount }: Props) {
       isRequestingToBeOpened={isOpen}
       onClose={onRequestClose}
       Icon={InfoMedium}
-      iconColor={"error.c100"}
+      iconColor={"error.c50"}
       title={t("account.settings.delete.confirmationTitle")}
     >
       <Text variant={"paragraph"} color={"neutral.c100"}>

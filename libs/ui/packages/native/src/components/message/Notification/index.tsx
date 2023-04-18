@@ -52,17 +52,17 @@ const variantProps: Record<
     padding: 6,
   },
   success: {
-    bg: "success.c100",
+    bg: "success.c50",
     color: "neutral.c00",
     padding: 6,
   },
   warning: {
-    bg: "warning.c100",
+    bg: "warning.c50",
     color: "neutral.c00",
     padding: 6,
   },
   error: {
-    bg: "error.c100",
+    bg: "error.c50",
     color: "neutral.c00",
     padding: 6,
   },

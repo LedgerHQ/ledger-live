@@ -76,7 +76,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           </Tag>
         ) : null}
         {completed ? (
-          <Icons.CheckAloneMedium color="success.c100" size={16} />
+          <Icons.CheckAloneMedium color="success.c50" size={16} />
         ) : (
           <Icons.ChevronRightMedium color="neutral.c100" size={16} />
         )}

@@ -1,4 +1,4 @@
-name: "Dynamic cal importer ERC20"
+name: "Dynamic cal importer ERC20 - [Staging]"
 on:
   schedule:
     - cron: 0 7 * * *
@@ -32,10 +32,19 @@ jobs:
         shell: bash
       - name: run script
         run: |
-          mkdir cal
+          shopt -s globstar
+          out=$PWD/cal
+          mkdir $out
           node libs/ledgerjs/script/crypto-assets-importer/index.js $PWD/crypto-assets true
-          mv libs/ledgerjs/packages/cryptoassets/src/data/**.json cal
-      - name: Deploy json to s3 PRD
-        run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-prd/cryptoassets --delete --acl public-read
-      - name: Cache invalidate PRD
-        run: aws cloudfront create-invalidation --distribution-id E53IORS7MW883 --paths "/cryptoassets/*" --debug
+          cd libs/ledgerjs/packages/cryptoassets/src/data
+          cp -vf --parents **/*.json $out
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ASSETS_RUNNER_ROLE_STG }}
+          aws-region: eu-west-1
+          role-duration-seconds: 3600
+      - name: Deploy json to s3 STG
+        run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-stg/cryptoassets --delete --acl public-read
+      - name: Cache invalidate STG
+        run: aws cloudfront create-invalidation --distribution-id E2NGFIXS9QJTH --paths "/cryptoassets/*" --debug
