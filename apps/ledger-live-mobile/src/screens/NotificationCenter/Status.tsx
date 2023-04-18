@@ -9,6 +9,8 @@ import styled, { useTheme } from "styled-components/native";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { urls } from "../../config/urls";
 import { track, TrackScreen } from "../../analytics";
+import { useSelector } from "react-redux";
+import { accountsSelector } from "../../reducers/accounts";
 
 type Props = {
   isOpened: boolean;
@@ -19,7 +21,10 @@ const DATA_TRACKING_DRAWER_NAME = "Notification Center Status";
 
 export default function StatusCenter({ onClose, isOpened }: Props) {
   const { t } = useTranslation();
-  const { incidents } = useFilteredServiceStatus();
+  const accounts = useSelector(accountsSelector);
+  const { incidents } = useFilteredServiceStatus({
+    tickers: accounts.map(account => account.currency.ticker),
+  });
   const { colors } = useTheme();
 
   const openSupportLink = useCallback(() => {
