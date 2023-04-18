@@ -218,7 +218,7 @@
     "lend" : "借出",
     "catalog" : "发现",
     "market" : "市场",
-    "protect" : "Recover"
+    "protect" : "恢复"
   },
   "stars" : {
     "placeholder" : "星标账户以在此显示。",
@@ -1874,7 +1874,7 @@
         "plugin" : "前往应用程序",
         "swap" : "互换",
         "tool" : "了解更多",
-        "app" : "了解更多"
+        "currency" : "了解更多"
       },
       "uninstall" : {
         "title" : "卸载全部",
@@ -3790,6 +3790,8 @@
       "runLocalAppOpenButton" : "打开",
       "enableLearnStagingUrl" : "学习页面的模拟环境 URL 网页地址",
       "enableLearnStagingUrlDesc" : "启用学习页面的模拟环境 URL 网址。",
+      "enableStagingNftMetadataService" : "Staging NFT metadata service",
+      "enableStagingNftMetadataServiceDesc" : "Enable the staging NFT metadata service and reset the NFT cache",
       "openOnboardingAppInstallDebug" : "打开入门应用程序安装调试界面",
       "openOnboardingAppInstallDebugDesc" : "打开一个界面，其中包含同步入门应用程序安装步骤中的组件"
     },
@@ -3846,6 +3848,10 @@
         "managerDevMode" : {
           "title" : "开发者模式",
           "description" : "在 My Ledger（我的 Ledger）中显示开发者和测试网应用程序。"
+        },
+        "listAppsV2" : {
+          "title" : "我的 Ledger 的实验性应用程序列表",
+          "description" : "我的 Ledger 访问和内部流程的性能改进。"
         },
         "scanForInvalidPaths" : {
           "title" : "扩展的账户搜索",
@@ -5723,9 +5729,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "利用您的身份\n恢复您的密钥",
+    "description" : "您的秘密恢复短语并非总在身边。\n专用于 Ledger Nano X 的测试发布。2023 年 5 月 31 日前免费订阅",
+    "cta" : "为什么要订阅？",
+    "downloadLLM" : "使用 Ledger Live 手机应用程序订阅 <purple>Ledger Recover</purple>"
   }
 }
