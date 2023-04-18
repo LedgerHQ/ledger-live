@@ -3,6 +3,7 @@ import { Divider, Flex, Icons, Log, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   cancelAnimation,
   interpolate,
@@ -28,7 +29,6 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
-import DeviceSetupView from "../../components/DeviceSetupView";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 import { track, TrackScreen } from "../../analytics";
 import Link from "../../components/wrappedUi/Link";
@@ -167,8 +167,10 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
     deviceModelId || DeviceModelId.nanoX,
   )?.productName;
 
+  const safeAreaInsets = useSafeAreaInsets();
+
   return (
-    <DeviceSetupView hasCloseButton>
+    <>
       <TrackScreen
         key={allDone.toString()}
         category={
@@ -177,7 +179,13 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
             : "Post-onboarding hub"
         }
       />
-      <Flex px={6} py={7} justifyContent="space-between" flex={1}>
+      <Flex
+        px={6}
+        py={7}
+        justifyContent="space-between"
+        flex={1}
+        paddingBottom={safeAreaInsets.bottom}
+      >
         <Text variant="h1Inter" fontWeight="semiBold" mb={8}>
           {allDone
             ? t("postOnboarding.hub.allDoneTitle", {
@@ -226,7 +234,7 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
           </AnimatedFlex>
         </AnimatedFlex>
       )}
-    </DeviceSetupView>
+    </>
   );
 };
 
