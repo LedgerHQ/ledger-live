@@ -84,6 +84,7 @@
     "save" : "Guardar",
     "lock" : "Bloquear",
     "showMore" : "Ver más",
+    "backToMatchingURL" : "Volver a {{appName}}",
     "back" : "Atrás",
     "adjustFees" : "Ajustar tarifas",
     "reset" : "Restablecer",
@@ -118,7 +119,6 @@
       "syncing" : "Sincronizando...",
       "upToDate" : "Sincronizado",
       "outdated" : "En pausa",
-      "needsMigration" : "Haz clic para actualizar la cuenta",
       "error" : "Error de sincronización",
       "refresh" : "Actualizar",
       "devTools" : "Herramientas para desarrolladores"
@@ -146,8 +146,6 @@
       "DELEGATE" : "Delegado",
       "REDELEGATE" : "Redelegado",
       "UNDELEGATE" : "Desdelegado",
-      "SUPPLY" : "Depositado",
-      "REDEEM" : "Retirado",
       "APPROVE" : "Aprobado",
       "VOTE" : "Votado",
       "FREEZE" : "Inmovilizado",
@@ -214,26 +212,23 @@
     "stars" : "Cuentas destacadas",
     "accounts" : "Cuentas",
     "manager" : "Mi Ledger",
+    "earn" : "Gana",
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
     "lend" : "Prestar",
     "catalog" : "Discover",
-    "market" : "Mercado"
+    "market" : "Mercado",
+    "protect" : "Recover"
   },
   "stars" : {
     "placeholder" : "Tus cuentas favoritas aparecerán aquí.",
     "tooltip" : "Destacar cuenta"
   },
   "bridge" : {
-    "modalTitle" : "Abrir puente de dispositivo",
-    "openHeader" : "Expón tus cuentas del dispositivo a través de WebSocket",
-    "openDescription" : "Abrir un puente expone todas tus cuentas a aplicaciones de terceros.",
-    "openedHeader" : "Puente {{appName}} abierto",
-    "openedDescription" : "Ahora puedes acceder a tu cuenta de {{appName}} en una aplicación web de terceros a través de WebSocket.",
-    "completeHeader" : "Sesión de puente finalizada",
-    "completeDescription" : "El puente WebSocket está ahora cerrado",
-    "openButton" : "Abrir",
-    "disconnectButton" : "Desconectar"
+    "modalTitle" : "Puente de dispositivo",
+    "openHeader" : "El puente de dispositivo ya no está disponible",
+    "openDescription" : "Configura las extensiones de billetera de tu navegador para utilizar WebHID en lugar de Ledger Live.",
+    "closeButton" : "Cerrar"
   },
   "swap2" : {
     "title" : "Permutar",
@@ -1218,9 +1213,13 @@
         "description" : "El PIN puede tener entre 4 y 8 dígitos",
         "text" : "Cualquier persona que tenga acceso a tu {{deviceName}} y a tu PIN también podrá acceder a todos tus activos cripto y NFT."
       },
-      "recoveryContent" : {
-        "title" : "Frase de recuperación",
-        "content" : "Consulta los siguientes videos para obtener más información sobre tu Frase de recuperación"
+      "seedContent" : {
+        "title" : "Frase de recuperación secreta",
+        "choiceNewOrRestore" : "Elige la opción de configuración que mejor se ajuste a tus necesidades.",
+        "newSeed" : "Consulta los siguientes videos para obtener más información sobre tu Frase de recuperación",
+        "choiceRestoreDirectOrRecover" : "Marcador de posición: elige la restauración directa o usa Recover.",
+        "recoverSeed" : "Marcador de posición: Recover",
+        "restoreSeed" : "Para garantizar la seguridad de tus activos, utiliza una Frase de recuperación secreta generada por un Ledger.\n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva."
       },
       "softwareCheckContent" : {
         "title" : "Comprobación de software",
@@ -1621,42 +1620,6 @@
     "countTooltip" : "1 subcuenta",
     "countTooltip_plural" : "{{count}} subcuentas"
   },
-  "migrateAccounts" : {
-    "overview" : {
-      "title" : "Actualización de cuentas de Ledger Live",
-      "successTitle" : "Cuentas actualizadas con éxito",
-      "successDescPlu" : "Tus cuentas de {{assets}} están ahora actualizadas y listas para ser usadas",
-      "successDesc" : "Tu cuenta de {{assets}} está ahora actualizada y lista para ser usada",
-      "mobileTitle" : "Exportar cuentas a Mobile",
-      "mobileDesc" : "Haz clic en el botón que se muestra a continuación para exportar tus cuentas actualizadas a la aplicación Ledger Live Mobile.",
-      "mobileCTA" : "Exportar a Mobile",
-      "description" : "Las nuevas funciones de Ledger Live requieren una actualización de tus cuentas.",
-      "currency" : "Es necesario actualizar 1 cuenta de {{currency}}:",
-      "currency_plural" : "Es necesario actualizar {{count}} cuentas de {{currency}}:",
-      "footer" : "Necesitas tu dispositivo Ledger para completar la actualización",
-      "pendingDevices" : "No fue posible actualizar una cuenta. Conecta el dispositivo asociado a la cuenta que se muestra a continuación",
-      "pendingDevices_plural" : "No fue posible actualizar {{totalMigratableAccounts}} cuentas. Conecta el dispositivo que está asociado a la cuenta siguiente",
-      "doItLaterBtn" : "Recordar después"
-    },
-    "progress" : {
-      "finished" : {
-        "title" : "Actualización de {{currencyName}} finalizada",
-        "description" : ""
-      },
-      "scanning" : {
-        "title" : "Actualización de {{currencyName}} en curso...",
-        "description" : "Espera a que se actualicen tus cuentas"
-      },
-      "finished-empty" : {
-        "title" : "Actualización de {{currencyName}} incompleta",
-        "description" : "No hay cuentas de {{currencyName}} que actualizar"
-      }
-    },
-    "cta" : {
-      "startUpdate" : "Iniciar actualización",
-      "nextCurrency" : "Continuar con la actualización de {{currency}}"
-    }
-  },
   "addAccounts" : {
     "title" : "Agregar cuentas",
     "breadcrumb" : {
@@ -1911,7 +1874,7 @@
         "plugin" : "Ir a la aplicación",
         "swap" : "Permutar",
         "tool" : "Más información",
-        "app" : "Más información"
+        "currency" : "Más información"
       },
       "uninstall" : {
         "title" : "Desinstalar todas",
@@ -2182,7 +2145,13 @@
     "steps" : {
       "recipient" : {
         "title" : "Receptor",
-        "nftRecipient" : "NFT a enviar"
+        "nftRecipient" : "NFT a enviar",
+        "verifyAddress" : "Verifica que la dirección coincida con la dirección del receptor.",
+        "namingService" : {
+          "resolve" : "Este es un ENS válido enlazado con la dirección siguiente:",
+          "supportLink" : "¿Qué es un Servicio de Nombre de Ethereum?",
+          "reverse" : "Esta dirección está enlazada con {{domain}}"
+        }
       },
       "amount" : {
         "title" : "Importe",
@@ -2518,6 +2487,8 @@
       },
       "manageTP" : "Administrar activos",
       "warnEarnRewards" : "Necesitas al menos {{amount}} para empezar a recibir recompensas",
+      "warnDisableStaking" : "No disponible",
+      "warnDisableStakingMessage" : "La función de puesta en participación no está disponible actualmente para Tron",
       "claimRewards" : "Reclamar recompensas",
       "nextRewardsDate" : "Puedes reclamar recompensas el {{date}}",
       "claimAvailableRewards" : "Reclamar {{amount}}",
@@ -3819,6 +3790,8 @@
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "URL de ensayo de la página Learn",
       "enableLearnStagingUrlDesc" : "Activar el URL de ensayo de la página Learn.",
+      "enableStagingNftMetadataService" : "Servicio de metadatos de NFT de prueba",
+      "enableStagingNftMetadataServiceDesc" : "Activa el servicio de metadatos de NFT de prueba y restablece la caché de NFT",
       "openOnboardingAppInstallDebug" : "Abre la pantalla de depuración de la instalación de aplicaciones iniciales",
       "openOnboardingAppInstallDebugDesc" : "Abre una pantalla con los componentes del paso de sincronización de la instalación de aplicaciones iniciales"
     },
@@ -3875,6 +3848,10 @@
         "managerDevMode" : {
           "title" : "Modo de desarrollador",
           "description" : "Mostrar aplicaciones de desarrollador y testnet en Mi Ledger."
+        },
+        "listAppsV2" : {
+          "title" : "Aplicaciones experimentales de lista para Mi Ledger",
+          "description" : "Mejora de rendimiento en el acceso y los flujos en línea de Mi Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "Búsqueda de cuenta extendida",
@@ -4893,9 +4870,6 @@
       "title" : "Las recompensas son inferiores a las tarifas estimadas para reclamarlas",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "No es posible reducir el importe aprobado mientras tengas un depósito activo."
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Se ha producido un error (Error 1)",
       "description" : "Ponte en contacto con el Soporte de Ledger"
@@ -5737,8 +5711,10 @@
     "progress" : {
       "loading" : "Cargando...",
       "resolving" : "Resolviendo dependencias",
-      "progress" : "Instalando aplicaciones: {{progress}}%",
-      "disclaimer" : "Agrega o elimina aplicaciones en cualquier momento desde Ledger Live."
+      "progress" : "No cierres Ledger Live mientras se instalan las aplicaciones.",
+      "disclaimer" : "Agrega o elimina aplicaciones en cualquier momento desde Ledger Live.",
+      "skippedInfo" : "Algunas aplicaciones no están disponibles. Todavía tienen que desarrollarse para {{ productName }}.",
+      "skipped" : "Todavía no está disponible para {{ productName }}."
     },
     "cancelled" : {
       "title" : "Se ha cancelado la instalación de aplicaciones en {{productName}}",
@@ -5751,5 +5727,11 @@
       "subtitle" : "Desbloquea tu {{productName}} y reinicia la instalación.",
       "installCTA" : "Reiniciar instalación"
     }
+  },
+  "discoverProtect" : {
+    "title" : "Recupera tus claves\ncon tu identidad",
+    "description" : "No siempre tendrás a mano tu Frase de recuperación secreta.\nLanzamiento inicial exclusivo para el Ledger Nano X. Suscríbete gratis hasta el 31 de mayo de 2023.",
+    "cta" : "¿Por qué debería suscribirme?",
+    "downloadLLM" : "Suscríbete a <purple>Ledger Recover</purple> desde la aplicación Ledger Live Mobile"
   }
 }
