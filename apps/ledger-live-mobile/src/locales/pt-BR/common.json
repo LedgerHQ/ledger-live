@@ -168,9 +168,6 @@
       "title" : "As recompensas são menores do que as taxas estimadas para resgatá-las.",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Você não pode reduzir a quantia aprovado enquanto tiver um depósito ativo."
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Algo deu errado (Erro nº 1)",
       "description" : "Salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
@@ -2128,8 +2125,6 @@
       "OPT_IN" : "Aderir",
       "OPT_OUT" : "Não aderir",
       "CLOSE_ACCOUNT" : "Fechar conta",
-      "SUPPLY" : "Depositado",
-      "REDEEM" : "Sacado",
       "APPROVE" : "Habilitado",
       "BOND" : "Vincular",
       "UNBOND" : "Desvincular",
@@ -2690,6 +2685,10 @@
           "title" : "API de Exploradores Experimentais",
           "description" : "Experimente uma versão futura dos exploradores de blockchain da Ledger. Alterar essa configuração poderá afetar o saldo e a sincronização da conta, bem como o recurso de enviar."
         },
+        "experimentalListAppsV2" : {
+          "title" : "Lista de aplicativos experimentais para Minha Ledger",
+          "description" : "Melhoria de desempenho no acesso à Minha Ledger e fluxos inline."
+        },
         "experimentalCountervalues" : {
           "title" : "API de Contravalores Experimentais",
           "description" : "Isso pode fazer com que os contravalores incorretos sejam exibidos nas suas contas."
@@ -2703,6 +2702,10 @@
         "experimentalApps" : {
           "title" : "Permitir aplicativos experimentais",
           "description" : "Exibir e permitir a abertura de aplicativos classificados como experimentais na plataforma"
+        },
+        "debugApps" : {
+          "title" : "Permitir debug de aplicativos",
+          "description" : "Exibe e permite a abertura de aplicativos da plataforma marcados como debug"
         },
         "staggingUrl" : {
           "title" : "Staging URL da página Aprender",
@@ -2739,46 +2742,6 @@
       "desc" : "Receba as últimas atualizações sobre o Ledger Live, os produtos da Ledger, o mercado e as recomendações personalizadas. Cancele a qualquer momento nas configurações",
       "allow" : "Permitir Notificações",
       "later" : "Talvez mais tarde"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Atualização de contas do Ledger Live",
-    "overview" : {
-      "headerTitle" : "Atualização de conta",
-      "title" : "Atualização de contas do Ledger Live",
-      "subtitle" : "Novos recursos no Ledger Live significam que suas contas precisam ser atualizadas",
-      "notice" : "{{accountCount}} conta não pôde ser atualizada. Conecte o dispositivo associado à conta abaixo.",
-      "notice_plural" : "{{accountCount}} contas não puderam ser atualizadas. Favor conectar o dispositivo associado às contas abaixo.",
-      "currency" : "1 conta de {{currency}} precisa ser atualizada",
-      "currency_plural" : "{{count}} contas de {{currency}} precisam ser atualizadas",
-      "start" : "Iniciar atualização",
-      "continue" : "Continuar Atualização"
-    },
-    "progress" : {
-      "headerTitle" : "Atualizando contas",
-      "pending" : {
-        "title" : "Atualização de {{currency}} em andamento",
-        "subtitle" : "Aguarda a atualização das contas"
-      },
-      "notice" : {
-        "title" : "Atualização de {{currency}} incompleta",
-        "subtitle" : "Nenhuma conta {{currency}} pode ser atualizada usando este dispositivo.",
-        "cta" : "Continuar",
-        "ctaNextCurrency" : "Continuar com {{currency}}"
-      },
-      "done" : {
-        "title" : "Atualização de {{currency}} concluída",
-        "subtitle" : "Parabéns, suas contas de {{currency}} foram atualizadas com sucesso.",
-        "cta" : "Continuar",
-        "ctaNextCurrency" : "Continuar com {{currency}}",
-        "ctaDone" : "Feito"
-      },
-      "error" : {
-        "cta" : "Tentar Novamente"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "Conectar dispositivo"
     }
   },
   "transfer" : {
@@ -3412,7 +3375,12 @@
       "scan" : "Escanear QR Code",
       "enterAddress" : "Digite o endereço",
       "input" : "Digite o endereço",
-      "verifyAddress" : "Verifique se o endereço corresponde ao endereço compartilhado pelo destinatário."
+      "verifyAddress" : "Verifique se o endereço corresponde ao endereço compartilhado pelo destinatário.",
+      "domainService" : {
+        "reverse" : "Este endereço está vinculado a {{domain}}",
+        "forward" : "Este é um endereço ENS válido",
+        "supportLink" : "O que é Ethereum Name Service?"
+      }
     },
     "amount" : {
       "available" : "Total Disponível",
@@ -4941,6 +4909,7 @@
       "header" : "Votos ({{total}})",
       "Amount" : "Quantia",
       "noRewards" : "Nenhuma recompensa disponível",
+      "warnDisableStakingMessage" : "O recurso de staking de Tron está indisponível no momento",
       "votes" : {
         "title" : "Votos",
         "description" : "Dê seu voto para que um ou mais representantes comecem a receber recompensas.",
@@ -5914,7 +5883,7 @@
       "noCurrencySearchResultsFor" : "Desculpe, não encontramos nenhuma moeda para <0>{{search}}</0>. Tente pesquisar novamente usando outra palavra-chave.",
       "noSearchResults" : "Desculpe, não encontramos nenhum resultado de busca.",
       "retrySearchKeyword" : "Tente pesquisar novamente usando outra palavra-chave.",
-      "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
+      "retrySearchKeywordAndUrl" : "Tente pesquisar novamente com outra palavra-chave ou abra <Link>{{search}}</Link> fora do Ledger Live.",
       "retrySearchParams" : "Tente pesquisar novamente usando outros parâmetros.",
       "trackFavAssets" : "Acompanhe seus favoritos",
       "clickOnStarIcon" : "Selecione o ícone de estrela ao lado de um ativo para adicioná-lo automaticamente aos seus favoritos.",
@@ -5933,6 +5902,13 @@
     "gallery" : {
       "allNft" : "Todos os NFT",
       "addNew" : "Adicionar Novo"
+    },
+    "designedForStax" : {
+      "title" : "<0>Projetado para</0><1>Ledger</1><2>Stax</2>",
+      "drawer" : {
+        "description" : "Este NFT contém uma imagem adicional do NFT, especificamente projetada para a Tela E Ink da Ledger Stax.\n\nEsta imagem será usada quando você definir este NFT como sua tela de bloqueio.",
+        "cta" : "Entendi"
+      }
     },
     "viewer" : {
       "properties" : "Propriedades",
@@ -6008,7 +5984,7 @@
     },
     "confirmCrop" : "Confirmar corte",
     "confirmContrast" : "Confirmar contraste",
-    "nftEntryPointButtonLabel" : "Definir como imagem na tela de bloqueio da Ledger Stax",
+    "nftEntryPointButtonLabel" : "Set as Ledger Stax lock screen",
     "customImage" : "Imagem personalizada",
     "doThisLater" : "Talvez mais tarde",
     "preview" : {
@@ -6057,7 +6033,7 @@
         "title" : "Personalize a tela de bloqueio",
         "titleCompleted" : "Tela de bloqueio personalizada",
         "description" : "Escolha qualquer NFT ou imagem para definir como a tela de bloqueio de sua Ledger Stax.",
-        "popupLabel" : "Tela de bloqueio definida"
+        "popupLabel" : "Lock screen set"
       },
       "claimNft" : {
         "title" : "Resgate o NFT Infinity",
