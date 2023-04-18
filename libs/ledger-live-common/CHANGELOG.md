@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 29.3.0-nightly.5
+
+### Minor Changes
+
+- [#3142](https://github.com/LedgerHQ/ledger-live/pull/3142) [`147af2b5e6`](https://github.com/LedgerHQ/ledger-live/commit/147af2b5e674a7020f101a081135c2b187356060) Thanks [@grsoares21](https://github.com/grsoares21)! - Make stax image padding optional on Stax Load image device action
+
+### Patch Changes
+
+- [#3223](https://github.com/LedgerHQ/ledger-live/pull/3223) [`530909c036`](https://github.com/LedgerHQ/ledger-live/commit/530909c0368d03aea1e5d0638adb027fa00ab897) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix btc integration test
+
 ## 29.3.0-nightly.4
 
 ### Minor Changes

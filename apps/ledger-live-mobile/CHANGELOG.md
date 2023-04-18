@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.19.0-nightly.5
+
+### Minor Changes
+
+- [#3225](https://github.com/LedgerHQ/ledger-live/pull/3225) [`4b3c21c473`](https://github.com/LedgerHQ/ledger-live/commit/4b3c21c473a4f3183c3d3eb849e4c49f96ff81a9) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Added additional data to the ratings typeform
+
+### Patch Changes
+
+- [#3200](https://github.com/LedgerHQ/ledger-live/pull/3200) [`9b387741db`](https://github.com/LedgerHQ/ledger-live/commit/9b387741db3c075fd48a5a122222d920155cf894) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: enable debug proxy device to bypass bluetooth requirement
+
+- Updated dependencies [[`530909c036`](https://github.com/LedgerHQ/ledger-live/commit/530909c0368d03aea1e5d0638adb027fa00ab897), [`147af2b5e6`](https://github.com/LedgerHQ/ledger-live/commit/147af2b5e674a7020f101a081135c2b187356060)]:
+  - @ledgerhq/live-common@29.3.0-nightly.5
+
 ## 3.19.0-nightly.4
 
 ### Patch Changes
