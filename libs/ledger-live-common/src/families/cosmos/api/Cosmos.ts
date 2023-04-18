@@ -18,17 +18,17 @@ export class CosmosAPI {
   getAccountInfo = async (
     address: string,
     currency: CryptoCurrency
-  ): Promise<any> => {
+  ): Promise<{
+    balances: BigNumber;
+    blockHeight: number;
+    txs: any;
+    delegations: any;
+    redelegations: any;
+    unbondings: any;
+    withdrawAddress: any;
+  }> => {
     try {
-      const balances = await this.getAllBalances(address, currency);
-      const blockHeight = await this.getHeight();
-      const txs = await this.getTransactions(address);
-      const delegations = await this.getDelegations(address, currency);
-      const redelegations = await this.getRedelegations(address);
-      const unbondings = await this.getUnbondings(address);
-      const withdrawAddress = await this.getWithdrawAddress(address);
-
-      /*const [
+      const [
         balances,
         blockHeight,
         txs,
@@ -44,7 +44,7 @@ export class CosmosAPI {
         this.getRedelegations(address),
         this.getUnbondings(address),
         this.getWithdrawAddress(address),
-      ]);*/
+      ]);
 
       return {
         balances,
@@ -55,8 +55,10 @@ export class CosmosAPI {
         unbondings,
         withdrawAddress,
       };
-    } catch (e: any) {
-      throw new Error(`"Error during cosmos synchronization: "${e.message}`);
+    } catch (e) {
+      throw new Error(
+        `"Error during cosmos synchronization: "${(e as Error).message}`
+      );
     }
   };
 
