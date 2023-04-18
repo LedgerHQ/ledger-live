@@ -46,6 +46,9 @@ export const errorInterceptor = (error: AxiosError<any>): AxiosError<any> => {
 };
 
 axios.interceptors.response.use(undefined, errorInterceptor);
+// eslint-disable-next-line global-require,@typescript-eslint/no-var-requires
+const https = require("https");
+axios.defaults.httpsAgent = new https.Agent({ keepAlive: true });
 
 const makeError = (
   msg: string,
