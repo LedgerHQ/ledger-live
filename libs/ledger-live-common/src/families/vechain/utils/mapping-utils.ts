@@ -5,7 +5,6 @@ import { EventLog, TransferLog } from "../api/types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getFees } from "./transaction-utils";
 
-// TODO: Currently hardcoding the fee to 0
 export const mapVetTransfersToOperations = async (
   txs: TransferLog[],
   accountId: string,
@@ -36,7 +35,6 @@ export const mapVetTransfersToOperations = async (
   );
 };
 
-// TODO: Currently hardcoding the fee to 0
 export const mapTokenTransfersToOperations = async (
   evnts: EventLog[],
   accountId: string,
@@ -47,7 +45,11 @@ export const mapTokenTransfersToOperations = async (
       const decoded = vip180.TransferEvent.decode(evnt.data, evnt.topics);
       const fees = await getFees(evnt.meta.txID);
       return {
-        id: evnt.meta.txID,
+        id: encodeOperationId(
+          accountId,
+          evnt.meta.txID,
+          decoded.to === addr.toLowerCase() ? "IN" : "OUT"
+        ),
         hash: evnt.meta.txID,
         type: decoded.to === addr.toLowerCase() ? "IN" : "OUT",
         value: new BigNumber(decoded.value),
