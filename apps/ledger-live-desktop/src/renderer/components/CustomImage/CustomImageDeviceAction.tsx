@@ -110,7 +110,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
             error,
             device: device ?? undefined,
             ...(isRefusedOnStaxError
-              ? { Icon: Icons.CircledAlertMedium, iconColor: "warning.c100" }
+              ? { Icon: Icons.CircledAlertMedium, iconColor: "warning.c50" }
               : {}),
           })}
           <Button size="large" variant="main" outline={false} onClick={handleRetry}>

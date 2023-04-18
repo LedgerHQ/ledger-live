@@ -93,7 +93,7 @@ export default function OnboardingQuizItem({
               key={i}
               onPress={() => {
                 setSelectedAnswer(answer);
-                setBg(answer.correct ? "success.c100" : "error.c100");
+                setBg(answer.correct ? "success.c50" : "error.c50");
               }}
               mt={6}
             >

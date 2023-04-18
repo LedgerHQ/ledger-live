@@ -162,7 +162,7 @@ const DeviceCard = ({
             </Text>
           </Flex>
           <Flex flexDirection={"row"} alignItems={"center"} mt={2} mb={3}>
-            <CircledCheckSolidMedium size={18} color={"palette.success.c80"} />
+            <CircledCheckSolidMedium size={18} color={"palette.success.c40"} />
             <Text
               variant={"body"}
               fontWeight={"medium"}
