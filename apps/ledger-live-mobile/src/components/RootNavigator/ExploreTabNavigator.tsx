@@ -37,7 +37,7 @@ export default function ExploreTabNavigator() {
 
   return (
     <ExploreTab.Navigator
-      initialRouteName={ScreenName.Learn}
+      initialRouteName={ScreenName.Newsfeed}
       backBehavior={"history"}
       tabBar={
         isNewsfeedAvailable && isLearnAvailable
@@ -47,6 +47,15 @@ export default function ExploreTabNavigator() {
       style={{ backgroundColor: "transparent" }}
       sceneContainerStyle={{ backgroundColor: "transparent" }}
     >
+      {isNewsfeedAvailable && (
+        <ExploreTab.Screen
+          name={ScreenName.Newsfeed}
+          component={NewsfeedPage}
+          options={{
+            title: t("newsfeed.title"),
+          }}
+        />
+      )}
       {isLearnAvailable && (
         <ExploreTab.Screen
           name={ScreenName.Learn}
@@ -58,16 +67,6 @@ export default function ExploreTabNavigator() {
             headerLeft: () => <BackButton navigation={navigation} />,
             headerRight: () => null,
           })}
-        />
-      )}
-
-      {isNewsfeedAvailable && (
-        <ExploreTab.Screen
-          name={ScreenName.Newsfeed}
-          component={NewsfeedPage}
-          options={{
-            title: t("newsfeed.title"),
-          }}
         />
       )}
     </ExploreTab.Navigator>
