@@ -1,7 +1,7 @@
 import "../../../__tests__/test-helpers/setup";
 
 import { fail } from "assert";
-import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712";
+import type { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712";
 import testEIP712Message from "@ledgerhq/hw-app-eth/tests/fixtures/messages/0.json";
 import { createFixtureCryptoCurrency } from "../../../mock/fixtures/cryptoCurrencies";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/errors";
