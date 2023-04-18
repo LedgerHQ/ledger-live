@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Icons, Alert } from "@ledgerhq/native-ui";
+import { Icons, Alert, Flex, Divider } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../../components/SettingsRow";
 import { ScreenName } from "../../../../const";
 
@@ -34,7 +34,9 @@ export default function Configuration() {
         iconLeft={<Icons.MobileMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugEnv)}
       />
-      <Alert type={"info"} title={"Quick toggles for common settings."} />
+      <Flex p={6}>
+        <Alert type={"info"} title={"Quick toggles for common settings."} />
+      </Flex>
       <ResetOnboardingStateRow />
       <ReadOnlyModeRow />
       <HasOrderedNanoRow />
