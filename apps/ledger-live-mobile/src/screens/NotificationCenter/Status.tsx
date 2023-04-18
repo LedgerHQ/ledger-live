@@ -6,10 +6,10 @@ import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 
 import styled, { useTheme } from "styled-components/native";
 
+import { useSelector } from "react-redux";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import { urls } from "../../config/urls";
 import { track, TrackScreen } from "../../analytics";
-import { useSelector } from "react-redux";
 import { accountsSelector } from "../../reducers/accounts";
 
 type Props = {

@@ -31,13 +31,16 @@ export default function NotificationCenterNavigator() {
     [colors],
   );
   const accounts = useSelector(accountsSelector);
-  console.log("TICKERS", accounts.map(account => account.currency.ticker));
+  console.log(
+    "TICKERS",
+    accounts.map(account => account.currency.ticker),
+  );
   const { incidents: fullIncidents } = useFilteredServiceStatus();
   const { incidents } = useFilteredServiceStatus({
     tickers: accounts.map(account => account.currency.ticker),
   });
-  console.log("ALL INCIDENTS", fullIncidents)
-  console.log("INCIDENTS", incidents)
+  console.log("ALL INCIDENTS", fullIncidents);
+  console.log("INCIDENTS", incidents);
 
   const goToNotificationsSettings = useCallback(() => {
     track("button_clicked", {
