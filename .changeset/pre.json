@@ -80,5 +80,37 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "beige-singers-jog",
+    "brave-hats-think",
+    "bright-rabbits-decide",
+    "brown-cheetahs-bathe",
+    "chatty-humans-search",
+    "curvy-wombats-guess",
+    "few-ads-heal",
+    "fifty-oranges-help",
+    "forty-trainers-attack",
+    "fresh-penguins-refuse",
+    "happy-bananas-collect",
+    "heavy-bananas-wash",
+    "heavy-berries-smash",
+    "little-elephants-rescue",
+    "lucky-colts-hide",
+    "modern-fans-switch",
+    "new-dogs-visit",
+    "nice-timers-reflect",
+    "ninety-cows-stare",
+    "orange-walls-promise",
+    "purple-parents-shake",
+    "rich-masks-exercise",
+    "rotten-wombats-rescue",
+    "rude-guests-drum",
+    "seven-pears-poke",
+    "short-dogs-decide",
+    "stale-windows-bow",
+    "sweet-otters-pretend",
+    "ten-olives-reply",
+    "twelve-crews-swim",
+    "twenty-beans-itch"
+  ]
 }

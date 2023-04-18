@@ -1,5 +1,19 @@
 # @ledgerhq/react-ui
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`9eaf095ff6`](https://github.com/LedgerHQ/ledger-live/commit/9eaf095ff6c6214b27f5c37c9c73564f95564fba) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Various performance and documentation improvements :- Updated documentation regarding fonts loading to prevent fonts flickering- Updated package.json to fix path issues on certain consumers- Updated minimal working examples (NextJS)- Removed Icon component from Button component to avoid embarking all icons when using button
+
+### Patch Changes
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+- Updated dependencies [[`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5)]:
+  - @ledgerhq/crypto-icons-ui@0.2.2-next.0
+  - @ledgerhq/icons-ui@0.4.0-next.0
+
 ## 0.12.1
 
 ### Patch Changes
