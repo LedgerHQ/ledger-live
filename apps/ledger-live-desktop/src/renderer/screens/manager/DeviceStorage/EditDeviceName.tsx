@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Button, Flex, Divider, Text, Input, Icons, BoxedIcon } from "@ledgerhq/react-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
@@ -9,16 +9,18 @@ import Box from "~/renderer/components/Box";
 import { getDeviceModel } from "@ledgerhq/devices";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
+import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLength";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import styled from "styled-components";
+import { DeviceInfo } from "@ledgerhq/types-live";
 
 const action = createAction(renameDevice);
-const MAX_DEVICE_NAME = 20;
 
 type Props = {
   onClose: () => void;
   deviceName: string;
+  deviceInfo: DeviceInfo;
   onSetName: (name: string) => void;
   device: Device;
 };
@@ -29,10 +31,25 @@ const TextEllipsis = styled.div`
   text-overflow: ellipsis;
 `;
 
-const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, device }: Props) => {
+const EditDeviceName: React.FC<Props> = ({
+  onClose,
+  deviceName,
+  deviceInfo,
+  onSetName,
+  device,
+}: Props) => {
   const { t } = useTranslation();
+  const maxDeviceName = useMemo(
+    () =>
+      getDeviceNameMaxLength({
+        deviceModelId: device.modelId,
+        version: deviceInfo.version,
+      }),
+    [device.modelId, deviceInfo.version],
+  );
+
   const productName = device ? getDeviceModel(device.modelId).productName : null;
-  const [name, setName] = useState<string>(deviceName);
+  const [name, setName] = useState<string>(deviceName.slice(0, maxDeviceName));
   const [completed, setCompleted] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined | null>(null);
   const [running, setRunning] = useState(false);
@@ -43,16 +60,19 @@ const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, devic
     setRunning(false);
   }, [onClose]);
 
-  const onChangeText = useCallback((name: string) => {
-    // eslint-disable-next-line no-control-regex
-    const invalidCharacters = name.replace(/[\x00-\x7F]*/g, "");
-    const maybeError = invalidCharacters
-      ? new DeviceNameInvalid("", { invalidCharacters })
-      : undefined;
+  const onChangeText = useCallback(
+    (name: string) => {
+      // eslint-disable-next-line no-control-regex
+      const invalidCharacters = name.replace(/[\x00-\x7F]*/g, "");
+      const maybeError = invalidCharacters
+        ? new DeviceNameInvalid("", { invalidCharacters })
+        : undefined;
 
-    setError(maybeError);
-    setName(name.slice(0, MAX_DEVICE_NAME));
-  }, []);
+      setError(maybeError);
+      setName(name.slice(0, maxDeviceName));
+    },
+    [maxDeviceName],
+  );
 
   const onSubmit = useCallback(async () => {
     setRunning(true);
@@ -69,7 +89,7 @@ const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, devic
     onSetName(name);
   }, [onSetName, name]);
 
-  const remainingCharacters = MAX_DEVICE_NAME - name.length;
+  const remainingCharacters = maxDeviceName - name.length;
 
   return (
     <Flex
@@ -92,7 +112,7 @@ const EditDeviceName: React.FC<Props> = ({ onClose, deviceName, onSetName, devic
           >
             <BoxedIcon
               Icon={Icons.CheckAloneMedium}
-              iconColor="success.c100"
+              iconColor="success.c50"
               size={64}
               iconSize={24}
             />

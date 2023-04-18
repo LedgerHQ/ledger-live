@@ -7,11 +7,13 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { TouchableOpacity } from "react-native";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import { deviceNameByDeviceIdSelectorCreator } from "../../../reducers/ble";
 import { ScreenName } from "../../../const";
 
 type Props = {
   device: Device;
+  deviceInfo: DeviceInfo;
   initialDeviceName?: string | null;
   disabled: boolean;
 };
@@ -23,10 +25,11 @@ const hitSlop = {
   top: 8,
 };
 
-export default function DeviceNameRow({
+export default function DeviceName({
   device,
   initialDeviceName,
   disabled,
+  deviceInfo,
 }: Props) {
   const navigation = useNavigation();
   const savedName = useSelector(
@@ -41,8 +44,9 @@ export default function DeviceNameRow({
       navigation.navigate(ScreenName.EditDeviceName, {
         device,
         deviceName: savedName,
+        deviceInfo,
       }),
-    [device, savedName, navigation],
+    [navigation, device, savedName, deviceInfo],
   );
 
   const displayedName = savedName || initialDeviceName || productName;

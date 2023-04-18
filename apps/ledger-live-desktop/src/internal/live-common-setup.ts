@@ -31,14 +31,13 @@ if (getEnv("DEVICE_PROXY_URL")) {
 } else {
   registerTransportModule({
     id: "hid",
-    open: devicePath =>
+    open: () =>
       retry(() => TransportNodeHidSingleton.open(), {
         maxRetry: 4,
       }),
     disconnect: () => Promise.resolve(),
-    setAllowAutoDisconnect: (transport, _, allow) => {
-      transport.setAllowAutoDisconnect(allow);
-    },
+    setAllowAutoDisconnect: async (transport, _, allow) =>
+      (transport as TransportNodeHidSingleton).setAllowAutoDisconnect(allow),
   });
 }
 export function unsubscribeSetup() {

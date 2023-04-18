@@ -5,7 +5,7 @@ import { Subject } from "rxjs";
 import { store } from "../../src/context/LedgerStore";
 import { importSettings } from "../../src/actions/settings";
 import { setAccounts } from "../../src/actions/accounts";
-import { acceptTerms } from "../../src/logic/terms";
+import { acceptGeneralTermsLastVersion } from "../../src/logic/terms";
 import accountModel from "../../src/logic/accountModel";
 import { navigate } from "../../src/rootnavigation";
 
@@ -44,7 +44,7 @@ async function onMessage(event: { data: unknown }) {
       });
       break;
     case "acceptTerms":
-      acceptTerms();
+      acceptGeneralTermsLastVersion();
       break;
     case "importAccounts": {
       store.dispatch(setAccounts(msg.payload.map(accountModel.decode)));

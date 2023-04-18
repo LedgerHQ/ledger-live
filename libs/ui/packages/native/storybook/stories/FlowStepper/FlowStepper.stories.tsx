@@ -1,7 +1,5 @@
 import React from "react";
 import { Animated, ScrollView, StyleSheet, ImageSourcePropType, Platform } from "react-native";
-import { number } from "@storybook/addon-knobs";
-import { storiesOf } from "../storiesOf";
 import { RenderTransitionProps } from "../../../src/components/Navigation/FlowStepper";
 import {
   FlowStepper,
@@ -9,10 +7,10 @@ import {
   Button,
   Text,
   Transitions,
-  Icons,
   Toggle,
   NumberInput,
-} from "../../../src";
+} from "../../../src/components";
+import { Icons } from "../../../src/assets";
 
 const description = `
 ### A customizable flow layout.
@@ -257,6 +255,11 @@ const renderTransition = ({
 
 `;
 
+export default {
+  title: "Navigation/FlowStepper",
+  component: FlowStepper,
+};
+
 /* Helpers */
 
 const transitionStyles = [StyleSheet.absoluteFill, { flex: 1 }];
@@ -381,7 +384,7 @@ const BodyItem = ({ title, onNext }: { title: string; onNext?: () => void }): JS
   </Flex>
 );
 
-const Demo = (): JSX.Element => {
+export const Demo = (): JSX.Element => {
   const [index, setIndex] = React.useState(0);
   return (
     <Flex flex={1} width="100%">
@@ -405,6 +408,14 @@ const Demo = (): JSX.Element => {
       </FlowStepper>
     </Flex>
   );
+};
+Demo.storyName = "Flow Stepper Demo";
+Demo.parameters = {
+  docs: {
+    description: {
+      component: description,
+    },
+  },
 };
 
 /* Minimal example */
@@ -439,10 +450,10 @@ const Header = ({ activeIndex }: { activeIndex: number }) => {
   );
 };
 
-const Minimal = (): JSX.Element => {
+export const Minimal = (args: typeof MinimalArgs): JSX.Element => {
   return (
     <Flex width="90%" flex={0.9}>
-      <FlowStepper activeIndex={number("index", 0)} header={Header}>
+      <FlowStepper activeIndex={args.index} header={Header}>
         <Item label="primary" />
         <Item label="neutral" />
         <Item label="success" />
@@ -452,10 +463,22 @@ const Minimal = (): JSX.Element => {
     </Flex>
   );
 };
+Minimal.storyName = "Flow Stepper (minimal)";
+const MinimalArgs = {
+  index: 0,
+};
+Minimal.args = MinimalArgs;
+Minimal.parameters = {
+  docs: {
+    description: {
+      story: `A minimal story.`,
+    },
+  },
+};
 
 /* Transition Preset Example */
 
-const TransitionPreset = (): JSX.Element => {
+export const TransitionPreset = (): JSX.Element => {
   const [index, setIndex] = React.useState(1);
   const [duration, setDuration] = React.useState(500);
   const [transitionPresetIndex, setTransitionPresetIndex] = React.useState(0);
@@ -531,6 +554,14 @@ const TransitionPreset = (): JSX.Element => {
       </Flex>
     </Flex>
   );
+};
+TransitionPreset.storyName = "Flow Stepper (transition preset)";
+TransitionPreset.parameters = {
+  docs: {
+    description: {
+      story: `A story that demonstrates how to use transition presets.`,
+    },
+  },
 };
 
 /* Custom Transition Example */
@@ -693,7 +724,7 @@ function TransitionComponent({ status, duration, style, children }: RenderTransi
   );
 }
 
-const CustomTransition = (): JSX.Element => {
+export const CustomTransition = (): JSX.Element => {
   const [index, setIndex] = React.useState(1);
 
   return (
@@ -725,35 +756,11 @@ const CustomTransition = (): JSX.Element => {
     </Flex>
   );
 };
-
-storiesOf((story) =>
-  story("Navigation/FlowStepper", module)
-    .add("Demo", Demo, {
-      docs: {
-        description: {
-          component: description,
-        },
-      },
-    })
-    .add("Minimal", Minimal, {
-      docs: {
-        description: {
-          story: `A minimal story.`,
-        },
-      },
-    })
-    .add("TransitionPreset", TransitionPreset, {
-      docs: {
-        description: {
-          story: `A story that demonstrates how to use transition presets.`,
-        },
-      },
-    })
-    .add("CustomTransition", CustomTransition, {
-      docs: {
-        description: {
-          story: customTransitionDescription,
-        },
-      },
-    }),
-);
+CustomTransition.storyName = "Flow Stepper (custom transition)";
+CustomTransition.parameters = {
+  docs: {
+    description: {
+      story: customTransitionDescription,
+    },
+  },
+};

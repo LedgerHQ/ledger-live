@@ -1,14 +1,18 @@
-import { View } from "react-native";
-import { storiesOf } from "../storiesOf";
 import React from "react";
+import { View } from "react-native";
+import { ComponentStory } from "@storybook/react-native";
 import { CryptoIcons } from "../../../src/assets";
 import { BTC, ETH, DOT } from "../../../src/assets/cryptoIcons";
 import { useTheme } from "styled-components/native";
 import * as cryptoIcons from "@ledgerhq/crypto-icons-ui/native";
-import { number, select, color, boolean, text } from "@storybook/addon-knobs";
 import CryptoIcon from "../../../src/components/Icon/CryptoIcon";
 
-const IconSample = () => (
+export default {
+  title: "Icon/CryptoIcon",
+  component: CryptoIcon,
+};
+
+export const IconSample = () => (
   <View>
     <BTC />
     <ETH />
@@ -22,17 +26,20 @@ const IconSample = () => (
     <CryptoIcons.DOGE></CryptoIcons.DOGE>
   </View>
 );
+IconSample.storyName = "Crypto Icons";
 
-const SingleCryptoIcon = () => {
+export const SingleCryptoIcon: ComponentStory<typeof CryptoIcon> = (
+  args: typeof SingleCryptoIconArgs,
+) => {
   const theme = useTheme();
-  const name = select("name", Object.keys(cryptoIcons), "BTC") as keyof typeof cryptoIcons;
-  const size = number("size", 128);
-  const colorValue = color("color", theme.colors.primary.c100);
+  const name = args.name;
+  const size = args.size;
+  const colorValue = args.color ?? theme.colors.primary.c100;
 
-  const disabled = boolean("disabled", false);
-  const circleIcon = boolean("circleIcon", false);
+  const disabled = args.disabled;
+  const circleIcon = args.circleIcon;
 
-  const tokenIcon = text("tokenIcon", "");
+  const tokenIcon = args.tokenIcon;
 
   return (
     <CryptoIcon
@@ -45,7 +52,19 @@ const SingleCryptoIcon = () => {
     />
   );
 };
-
-storiesOf((story) =>
-  story("Icon", module).add("Crypto Icons", IconSample).add("Single Crypto Icon", SingleCryptoIcon),
-);
+SingleCryptoIcon.storyName = "Single Crypto Icon";
+const SingleCryptoIconArgs = {
+  name: "BTC",
+  size: 128,
+  color: undefined,
+  disabled: false,
+  circleIcon: false,
+  tokenIcon: "",
+};
+SingleCryptoIcon.args = SingleCryptoIconArgs;
+SingleCryptoIcon.argTypes = {
+  name: {
+    options: Object.keys(cryptoIcons),
+    control: { type: "select" },
+  },
+};

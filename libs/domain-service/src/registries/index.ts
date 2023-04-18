@@ -11,9 +11,9 @@ const REGISTRIES: Registry[] = [
     },
     signatures: {
       forward:
-        "https://nft.api.live.ledger.com/v1/names/ens/forward/{name}?=challenge={challenge}",
+        "https://nft.api.live.ledger.com/v1/names/ens/forward/{name}?challenge={challenge}",
       reverse:
-        "https://nft.api.live.ledger.com/v1/names/ens/reverse/{address}?=challenge={challenge}",
+        "https://nft.api.live.ledger.com/v1/names/ens/reverse/{address}?challenge={challenge}",
     },
     patterns: {
       forward: new RegExp(".eth$"),

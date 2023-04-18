@@ -119,7 +119,6 @@
       "syncing": "Synchronizing...",
       "upToDate": "Synchronized",
       "outdated": "Paused",
-      "needsMigration": "Click to update account",
       "error": "Synchronization error",
       "refresh": "Refresh",
       "devTools": "Dev tools"
@@ -147,8 +146,6 @@
       "DELEGATE": "Delegated",
       "REDELEGATE": "Redelegated",
       "UNDELEGATE": "Undelegated",
-      "SUPPLY": "Deposited",
-      "REDEEM": "Withdrawn",
       "APPROVE": "Approved",
       "VOTE": "Voted",
       "FREEZE": "Frozen",
@@ -220,7 +217,8 @@
     "swap": "Swap",
     "lend": "Lend",
     "catalog": "Discover",
-    "market": "Market"
+    "market": "Market",
+    "protect": "Recover"
   },
   "stars": {
     "placeholder": "Star an account to display it here.",
@@ -1622,42 +1620,6 @@
     "countTooltip": "1 subaccount",
     "countTooltip_plural": "{{count}} subaccounts"
   },
-  "migrateAccounts": {
-    "overview": {
-      "title": "Ledger Live accounts update",
-      "successTitle": "Accounts updated successfully",
-      "successDescPlu": "Your {{assets}} accounts are now updated and ready to use",
-      "successDesc": "Your {{assets}} account is now updated and ready to use",
-      "mobileTitle": "Export accounts to mobile",
-      "mobileDesc": "Click the button below to export your updated accounts to the Ledger Live mobile app.",
-      "mobileCTA": "Export to mobile",
-      "description": "New features in Ledger Live require an update of your accounts.",
-      "currency": "1 {{currency}} account needs to be updated:",
-      "currency_plural": "{{count}} {{currency}} accounts need to be updated:",
-      "footer": "You need your Ledger Device to complete the update",
-      "pendingDevices": "1 account could not be updated. Please connect the device associated to the account below",
-      "pendingDevices_plural": "{{totalMigratableAccounts}} accounts could not be updated. Please connect the device associated to the account below",
-      "doItLaterBtn": "Do it later"
-    },
-    "progress": {
-      "finished": {
-        "title": "{{currencyName}} update completed",
-        "description": ""
-      },
-      "scanning": {
-        "title": "{{currencyName}} update in progress...",
-        "description": "Please wait for your accounts to be updated"
-      },
-      "finished-empty": {
-        "title": "{{currencyName}} update incomplete",
-        "description": "No {{currencyName}} accounts to update"
-      }
-    },
-    "cta": {
-      "startUpdate": "Start update",
-      "nextCurrency": "Continue with {{currency}} update"
-    }
-  },
   "addAccounts": {
     "title": "Add accounts",
     "breadcrumb": {
@@ -2529,6 +2491,8 @@
       },
       "manageTP": "Manage assets",
       "warnEarnRewards": "You need at least {{amount}} to start earning rewards",
+      "warnDisableStaking": "Not available",
+      "warnDisableStakingMessage": "Staking feature for Tron is currently unavailable",
       "claimRewards": "Claim rewards",
       "nextRewardsDate": "Rewards can be claimed {{date}}",
       "claimAvailableRewards": "Claim {{amount}}",
@@ -3842,6 +3806,8 @@
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
+      "enableStagingNftMetadataService": "Staging NFT metadata service",
+      "enableStagingNftMetadataServiceDesc": "Enable the staging NFT metadata service and reset the NFT cache",
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
       "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
@@ -4919,9 +4885,6 @@
       "title": "The rewards are smaller than the estimated fees to claim them",
       "description": ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError": {
-      "title": "You cannot reduce the amount approved while having an active deposit."
-    },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",
       "description": "Please contact Ledger Support"
@@ -5779,5 +5742,11 @@
       "subtitle": "Unlock your {{productName}} and restart the installation.",
       "installCTA": "Restart installation"
     }
+  },
+  "discoverProtect": {
+    "title": "Recover your keys using\nyour identity",
+    "description": "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
+    "cta": "Why should I subscribe?",
+    "downloadLLM": "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
   }
 }

@@ -3,7 +3,6 @@
     "name": "uilib",
     "slug": "uilib",
     "version": "1.0.0",
-    "entryPoint": "index.js",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {

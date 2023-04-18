@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import {
   getCryptoCurrencyById,
+  findCryptoCurrencyById,
   getTokenById,
   findTokenById,
 } from "../currencies";
@@ -132,7 +133,6 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     creationDate,
     balance,
     spendableBalance,
-    compoundBalance,
     balanceHistoryCache,
     swapHistory,
     approvals,
@@ -151,9 +151,6 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     spendableBalance: spendableBalance
       ? new BigNumber(spendableBalance)
       : new BigNumber(balance),
-    compoundBalance: compoundBalance
-      ? new BigNumber(compoundBalance)
-      : undefined,
     creationDate: new Date(creationDate || Date.now()),
     operationsCount:
       raw.operationsCount || (operations && operations.length) || 0,
@@ -177,7 +174,6 @@ export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
     pendingOperations,
     balance,
     spendableBalance,
-    compoundBalance,
     balanceHistoryCache,
     swapHistory,
     approvals,
@@ -190,7 +186,6 @@ export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
     tokenId: token.id,
     balance: balance.toString(),
     spendableBalance: spendableBalance.toString(),
-    compoundBalance: compoundBalance ? compoundBalance.toString() : undefined,
     balanceHistoryCache,
     creationDate: ta.creationDate.toISOString(),
     operationsCount,
@@ -334,6 +329,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     blockHeight,
     endpointConfig,
     currencyId,
+    feesCurrencyId,
     unitMagnitude,
     operations,
     operationsCount,
@@ -363,6 +359,11 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
       })
       .filter(Boolean);
   const currency = getCryptoCurrencyById(currencyId);
+  const feesCurrency =
+    (feesCurrencyId &&
+      (findCryptoCurrencyById(feesCurrencyId) ||
+        findTokenById(feesCurrencyId))) ||
+    undefined;
   const unit =
     currency.units.find((u) => u.magnitude === unitMagnitude) ||
     currency.units[0];
@@ -398,6 +399,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     pendingOperations: (pendingOperations || []).map(convertOperation),
     unit,
     currency,
+    feesCurrency,
     lastSyncDate: new Date(lastSyncDate || 0),
     swapHistory: [],
     syncHash,
@@ -456,6 +458,7 @@ export function toAccountRaw(account: Account): AccountRaw {
     freshAddresses,
     blockHeight,
     currency,
+    feesCurrency,
     creationDate,
     operationsCount,
     operations,
@@ -489,6 +492,7 @@ export function toAccountRaw(account: Account): AccountRaw {
     operations: (operations || []).map((o) => toOperationRaw(o)),
     pendingOperations: (pendingOperations || []).map((o) => toOperationRaw(o)),
     currencyId: currency.id,
+    feesCurrencyId: feesCurrency?.id,
     unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),
     balance: balance.toFixed(),

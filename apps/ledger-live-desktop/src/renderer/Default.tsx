@@ -17,9 +17,7 @@ import Earn from "./screens/earn";
 import Swap2 from "~/renderer/screens/exchange/Swap2";
 import USBTroubleshooting from "~/renderer/screens/USBTroubleshooting";
 import Account from "~/renderer/screens/account";
-import WalletConnect from "~/renderer/screens/WalletConnect";
 import Asset from "~/renderer/screens/asset";
-import Lend from "~/renderer/screens/lend";
 import PlatformCatalog from "~/renderer/screens/platform";
 import PlatformApp from "~/renderer/screens/platform/App";
 import NFTGallery from "~/renderer/screens/nft/Gallery";
@@ -178,8 +176,8 @@ export default function Default() {
               <DisableTransactionBroadcastWarning />
             ) : null}
             <Switch>
-              <Route path="/onboarding" render={props => <Onboarding {...props} />} />
-              <Route path="/sync-onboarding" render={props => <SyncOnboarding {...props} />} />
+              <Route path="/onboarding" component={Onboarding} />
+              <Route path="/sync-onboarding" component={SyncOnboarding} />
               <Route
                 path="/post-onboarding"
                 render={() => (
@@ -194,13 +192,10 @@ export default function Default() {
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
               </Route>
               {!hasCompletedOnboarding ? (
-                <Route path="/settings" render={props => <WelcomeScreenSettings {...props} />} />
+                <Route path="/settings" component={WelcomeScreenSettings} />
               ) : (
                 <Route>
                   <Switch>
-                    <Route exact path="/walletconnect">
-                      <WalletConnect />
-                    </Route>
                     <Route>
                       <IsNewVersion />
                       <IsSystemLanguageAvailable />
@@ -224,51 +219,33 @@ export default function Default() {
                             <FirmwareUpdateBanner />
                           </TopBannerContainer>
                           <Switch>
-                            <Route path="/" exact render={props => <Dashboard {...props} />} />
-                            <Route path="/settings" render={props => <Settings {...props} />} />
-                            <Route path="/accounts" render={props => <Accounts {...props} />} />
-                            <Route path="/card" render={props => <Card {...props} />} />
+                            <Route path="/" exact component={Dashboard} />
+                            <Route path="/settings" component={Settings} />
+                            <Route path="/accounts" component={Accounts} />
+                            <Route path="/card" component={Card} />
                             <Redirect from="/manager/reload" to="/manager" />
-                            <Route path="/manager" render={props => <Manager {...props} />} />
-                            <Route
-                              path="/platform"
-                              render={(props: any) => <PlatformCatalog {...props} />}
-                              exact
-                            />
-                            <Route
-                              path="/platform/:appId?"
-                              render={(props: any) => <PlatformApp {...props} />}
-                            />
-                            <Route path="/lend" render={props => <Lend {...props} />} />
-                            <Route path="/earn" render={props => <Earn {...props} />} />
-                            <Route path="/exchange" render={(props: any) => <Exchange />} />
+                            <Route path="/manager" component={Manager} />
+                            <Route path="/platform" component={PlatformCatalog} exact />
+                            <Route path="/platform/:appId?" component={PlatformApp} />
+                            <Route path="/earn" component={Earn} />
+                            <Route path="/exchange" component={Exchange} />
                             <Route
                               exact
                               path="/account/:id/nft-collection"
-                              render={props => <NFTGallery {...props} />}
+                              component={NFTGallery}
                             />
                             <Route
                               path="/account/:id/nft-collection/:collectionAddress?"
-                              render={props => <NFTCollection {...props} />}
+                              component={NFTCollection}
                             />
-                            <Route
-                              path="/account/:parentId/:id"
-                              render={props => <Account {...props} />}
-                            />
-                            <Route path="/account/:id" render={props => <Account {...props} />} />
-                            <Route
-                              path="/asset/:assetId+"
-                              render={(props: any) => <Asset {...props} />}
-                            />
-                            <Route path="/swap" render={props => <Swap2 {...props} />} />
-
-                            <Route
-                              path="/market/:currencyId"
-                              render={props => <MarketCoinScreen {...props} />}
-                            />
-                            <Route path="/market" render={props => <Market {...props} />} />
+                            <Route path="/account/:parentId/:id" component={Account} />
+                            <Route path="/account/:id" component={Account} />
+                            <Route path="/asset/:assetId+" component={Asset} />
+                            <Route path="/swap" component={Swap2} />
+                            <Route path="/market/:currencyId" component={MarketCoinScreen} />
+                            <Route path="/market" component={Market} />
                             <FeatureToggle feature="learn">
-                              <Route path="/learn" render={props => <Learn {...props} />} />
+                              <Route path="/learn" component={Learn} />
                             </FeatureToggle>
                           </Switch>
                         </Page>

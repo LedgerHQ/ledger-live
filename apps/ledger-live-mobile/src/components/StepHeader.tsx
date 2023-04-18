@@ -6,12 +6,19 @@ import { scrollToTop } from "../navigation/utils";
 type Props = {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
+  testID?: string;
 };
 
-export default function StepHeader({ title, subtitle }: Props) {
+export default function StepHeader({ title, subtitle, testID }: Props) {
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
-      <Flex flexDirection={"column"} justifyContent={"center"} flex={1} py={3}>
+      <Flex
+        flexDirection={"column"}
+        justifyContent={"center"}
+        flex={1}
+        py={3}
+        testID={testID}
+      >
         {subtitle && (
           <Text
             variant={"paragraph"}

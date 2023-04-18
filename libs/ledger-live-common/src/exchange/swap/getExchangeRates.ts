@@ -155,6 +155,7 @@ const inferError = (
     errorCode?: number;
     errorMessage?: string;
     status?: string;
+    provider: string;
   }
 ): Error | CustomMinOrMaxError | undefined => {
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
@@ -164,14 +165,17 @@ const inferError = (
     maxAmountFrom,
     errorCode,
     errorMessage,
+    provider,
     status,
   } = responseData;
+  const isDex = getProviderConfig(provider).type === "DEX";
 
   // DEX quotes are out of limits error. We do not know if it is a low or high limit, neither the amount.
   if (
     (!minAmountFrom || !maxAmountFrom) &&
     status === "error" &&
-    errorCode !== 300
+    errorCode !== 300 &&
+    isDex
   ) {
     return new SwapExchangeRateAmountTooLowOrTooHigh(undefined, {
       message: "",

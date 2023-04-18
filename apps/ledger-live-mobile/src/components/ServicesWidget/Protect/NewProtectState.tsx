@@ -18,7 +18,7 @@ function NewProtectState({ params }: { params: Record<string, string> }) {
     Linking.canOpenURL(url).then(() => Linking.openURL(url));
   }, [alreadySubscribedURI]);
 
-  const onPressInAlreadySubscribed = useCallback((e: GestureResponderEvent) => {
+  const onPressInLearnMore = useCallback((e: GestureResponderEvent) => {
     e.stopPropagation();
   }, []);
 
@@ -28,6 +28,7 @@ function NewProtectState({ params }: { params: Record<string, string> }) {
         type="main"
         outline={false}
         size={"small"}
+        onPressIn={onPressInLearnMore}
         onPress={onLearnMore}
         mb={6}
       >
@@ -47,7 +48,6 @@ function NewProtectState({ params }: { params: Record<string, string> }) {
                 variant="paragraph"
                 fontWeight="semiBold"
                 color="neutral.c100"
-                onPressIn={onPressInAlreadySubscribed}
                 onPress={onAlreadySubscribe}
                 style={{ textDecorationLine: "underline" }}
               >

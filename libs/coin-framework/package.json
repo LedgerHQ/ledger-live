@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -90,7 +90,7 @@
     "prettier": "^2.8.1",
     "timemachine": "^0.3.2",
     "ts-jest": "^28.0.5",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.5"
   },
   "scripts": {
     "clean": "rm -rf lib lib-es",

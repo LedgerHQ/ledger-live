@@ -36,16 +36,10 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.since_branch }}
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 7.30.0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.15.0
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - name: Install dependencies
-        run: pnpm i --filter="!./apps/**" --frozen-lockfile
+        run: pnpm i --filter="!./apps/**"
       - name: run doc
         run: pnpm doc:ljs
       - name: get diff
@@ -68,16 +62,10 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.since_branch }}
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 7.30.0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.15.0
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - name: Install dependencies
-        run: pnpm i --frozen-lockfile
+        run: pnpm i
       - name: build cli
         run: pnpm build:cli
       - name: test cli
@@ -114,14 +102,8 @@ jobs:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.since_branch }}
           fetch-depth: 0
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 7.30.0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.15.0
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"

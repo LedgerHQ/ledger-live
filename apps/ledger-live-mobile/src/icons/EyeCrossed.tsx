@@ -6,7 +6,6 @@ export default ({ size, color }: { size: number; color?: string }) => (
     <Mask
       id="mask0EyeCrossed"
       mask-type="alpha"
-      // @ts-expect-error Bindings issue - EMaskUnits.USER_SPACE_ON_USE will not work.
       maskUnits={"userSpaceOnUse" as const}
       x="-1"
       y="0"

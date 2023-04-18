@@ -19,11 +19,13 @@ import IconCheck from "~/renderer/icons/Check";
 import IconTrash from "~/renderer/icons/Trash";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
+
 const ExternalLinkIconContainer = styled.span`
   display: inline-flex;
   margin-left: 4px;
 `;
-const AppActionsWrapper = styled.div`
+
+const AppActionsWrapper = styled.div<{ right: boolean }>`
   display: flex;
   min-width: 300px;
   padding-left: 10px;
@@ -33,6 +35,7 @@ const AppActionsWrapper = styled.div`
     margin-right: 10px;
   }
 `;
+
 const SuccessInstall = styled.div`
   color: ${p => p.theme.colors.positiveGreen};
   display: flex;
@@ -43,6 +46,7 @@ const SuccessInstall = styled.div`
     padding-right: 5px;
   }
 `;
+
 type Props = {
   state: State;
   app: App;
@@ -57,8 +61,11 @@ type Props = {
   setAppUninstallDep?: (a: any) => void;
   isLiveSupported: boolean;
   addAccount?: () => void;
-}; // eslint-disable-next-line react/display-name
-const AppActions: React$ComponentType<Props> = React.memo(
+  featureFlagActivated: boolean;
+};
+
+// eslint-disable-next-line react/display-name
+const AppActions = React.memo(
   ({
     state,
     app,
@@ -73,8 +80,10 @@ const AppActions: React$ComponentType<Props> = React.memo(
     setAppUninstallDep,
     isLiveSupported,
     addAccount,
+    featureFlagActivated,
   }: Props) => {
-    const { name, type } = app;
+    const { name, type, currencyId } = app;
+
     const history = useHistory();
     const { installedAvailable, installQueue, uninstallQueue, updateAllQueue } = state;
 
@@ -106,7 +115,7 @@ const AppActions: React$ComponentType<Props> = React.memo(
           history.push("/platform");
           break;
         case "app":
-          openURL(urls.appSupport[name] || urls.appSupport.default);
+          openURL(app?.supportURL || urls.appSupport);
           break;
         case "tool":
           openURL(urls.managerAppLearnMore);
@@ -115,7 +124,7 @@ const AppActions: React$ComponentType<Props> = React.memo(
           history.push("/swap");
           break;
       }
-    }, [name, type, history]);
+    }, [type, history, app?.supportURL]);
     const updating = useMemo(() => updateAllQueue.includes(name), [updateAllQueue, name]);
     const installing = useMemo(() => installQueue.includes(name), [installQueue, name]);
     const uninstalling = useMemo(() => uninstallQueue.includes(name), [uninstallQueue, name]);
@@ -166,7 +175,7 @@ const AppActions: React$ComponentType<Props> = React.memo(
           />
         ) : showActions ? (
           <>
-            {installed ? (
+            {installed && featureFlagActivated ? (
               type === "app" && isLiveSupported ? (
                 <Tooltip
                   content={

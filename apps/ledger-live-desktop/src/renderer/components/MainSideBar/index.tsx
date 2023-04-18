@@ -8,11 +8,7 @@ import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Icons } from "@ledgerhq/react-ui";
-import {
-  accountsSelector,
-  starredAccountsSelector,
-  hasLendEnabledAccountsSelector,
-} from "~/renderer/reducers/accounts";
+import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   sidebarCollapsedSelector,
   lastSeenDeviceSelector,
@@ -28,14 +24,12 @@ import { darken, rgba } from "~/renderer/styles/helpers";
 import IconCard from "~/renderer/icons/Card";
 import IconManager from "~/renderer/icons/Manager";
 import IconWallet from "~/renderer/icons/Wallet";
-import IconPortfolio from "~/renderer/icons/Portfolio";
 import IconApps from "~/renderer/icons/Apps";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
 import IconExchange from "~/renderer/icons/Exchange";
 import IconEarn from "~/renderer/icons/Growth";
 import IconChevron from "~/renderer/icons/ChevronRightSmall";
-import IconLending from "~/renderer/icons/Graph";
 import IconExperimental from "~/renderer/icons/Experimental";
 import IconSwap from "~/renderer/icons/Swap";
 import IconMarket from "~/renderer/icons/ChartLine";
@@ -49,6 +43,8 @@ import useEnv from "~/renderer/hooks/useEnv";
 import { CARD_APP_ID } from "~/renderer/screens/card";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
+import { track } from "~/renderer/analytics/segment";
+
 const MAIN_SIDEBAR_WIDTH = 230;
 const TagText = styled.div.attrs(p => ({
   style: {
@@ -232,7 +228,6 @@ const MainSideBar = () => {
   const hasStarredAccounts = useSelector(starredAccountsSelector).length > 0;
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
   const firstTimeLend = useSelector(state => state.settings.firstTimeLend);
-  const lendingEnabled = useSelector(hasLendEnabledAccountsSelector);
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -273,12 +268,6 @@ const MainSideBar = () => {
   const handleClickEarn = useCallback(() => {
     push("/earn");
   }, [push]);
-  const handleClickLend = useCallback(() => {
-    if (firstTimeLend) {
-      dispatch(setFirstTimeLend());
-    }
-    push("/lend");
-  }, [push, firstTimeLend, dispatch]);
   const handleClickSwap = useCallback(() => {
     push("/swap");
   }, [push]);
@@ -293,6 +282,14 @@ const MainSideBar = () => {
     maybeRedirectToAccounts();
     dispatch(openModal("MODAL_RECEIVE"));
   }, [dispatch, maybeRedirectToAccounts]);
+
+  const handleOpenProtectDiscoverModal = useCallback(() => {
+    track("button_clicked", {
+      button: "Protect",
+    });
+    dispatch(openModal("MODAL_PROTECT_DISCOVER"));
+  }, [dispatch]);
+
   return (
     <Transition
       in={!collapsed}
@@ -320,7 +317,8 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"dashboard"}
                   label={t("dashboard.title")}
-                  icon={IconPortfolio}
+                  icon={Icons.HouseMedium}
+                  iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickDashboard}
                   isActive={location.pathname === "/"}
@@ -416,19 +414,6 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
-                {lendingEnabled && (
-                  <SideBarListItem
-                    id={"lend"}
-                    label={t("sidebar.lend")}
-                    icon={IconLending}
-                    iconActiveColor="wallet"
-                    onClick={handleClickLend}
-                    isActive={location.pathname === "/lend"}
-                    disabled={noAccounts}
-                    collapsed={secondAnim}
-                    NotifComponent={firstTimeLend ? <Dot collapsed={collapsed} /> : null}
-                  />
-                )}
                 <SideBarListItem
                   id={"card"}
                   label={t("sidebar.card")}
@@ -439,6 +424,17 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                   disabled={isCardDisabled}
                 />
+                <FeatureToggle feature="protectServicesDiscoverDesktop">
+                  <SideBarListItem
+                    id={"send"}
+                    label={t("sidebar.protect")}
+                    icon={Icons.LockMedium}
+                    iconSize={20}
+                    iconActiveColor="wallet"
+                    onClick={handleOpenProtectDiscoverModal}
+                    collapsed={secondAnim}
+                  />
+                </FeatureToggle>
                 <SideBarListItem
                   id={"manager"}
                   label={t("sidebar.manager")}

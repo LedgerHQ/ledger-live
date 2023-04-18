@@ -64,12 +64,11 @@ jobs:
           repository: LedgerHQ/coin-apps
           token: ${{ secrets.GH_PAT }}
           path: coin-apps
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 7.30.0
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - name: install and build
         run: |
-          pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
+          pnpm i --filter="live-cli..." --filter="ledger-live"
           pnpm build:llc
         shell: bash
       - name: portfolio

@@ -18,10 +18,10 @@ const basePaths = {
   $USER_DATA: configDir,
   ".": homeDir,
 };
-function filepathReplace(path: string) {
+function filepathReplace(path: string): string {
   if (!path || path.startsWith("app://")) return path;
-  const replaced = Object.keys(basePaths).reduce((path, name) => {
-    const p = basePaths[name];
+  const replaced = (Object.keys(basePaths) as (keyof typeof basePaths)[]).reduce((path, name) => {
+    const p: string = basePaths[name];
     return path
       .replace(p, name) // normal replace of the path
       .replace(encodeURI(p.replace(/\\/g, "/")), name); // replace of the URI version of the path (that are in file:///)
@@ -32,7 +32,10 @@ function filepathReplace(path: string) {
   }
   return replaced;
 }
-function filepathRecursiveReplacer(obj: unknown, seen: Array<any>) {
+
+export type ReplacerArgument = Record<string, unknown>;
+
+function filepathRecursiveReplacer(obj: ReplacerArgument, seen: Array<ReplacerArgument>) {
   if (obj && typeof obj === "object") {
     seen.push(obj);
     if (Array.isArray(obj)) {
@@ -53,11 +56,11 @@ function filepathRecursiveReplacer(obj: unknown, seen: Array<any>) {
         // eslint-disable-next-line no-prototype-builtins
         if (typeof obj.hasOwnProperty === "function" && obj.hasOwnProperty(k)) {
           const value = obj[k];
-          if (seen.indexOf(value) !== -1) return;
+          if (seen.indexOf(value as ReplacerArgument) !== -1) return;
           if (typeof value === "string") {
             obj[k] = filepathReplace(value);
           } else {
-            filepathRecursiveReplacer(obj[k], seen);
+            filepathRecursiveReplacer(obj[k] as ReplacerArgument, seen);
           }
         }
       }
@@ -66,5 +69,5 @@ function filepathRecursiveReplacer(obj: unknown, seen: Array<any>) {
 }
 export default {
   filepath: filepathReplace,
-  filepathRecursiveReplacer: (obj: unknown) => filepathRecursiveReplacer(obj, []),
+  filepathRecursiveReplacer: (obj: ReplacerArgument) => filepathRecursiveReplacer(obj, []),
 };

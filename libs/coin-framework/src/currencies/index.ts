@@ -20,7 +20,6 @@ import {
   findTokenById,
   findTokenByAddress,
   hasTokenId,
-  findCompoundToken,
   getAbandonSeedAddress,
   getTokenById,
   addTokens,
@@ -72,7 +71,6 @@ export {
   decodeURIScheme,
   valueFromUnit,
   sanitizeValueString,
-  findCompoundToken,
   listTokens,
   addTokens,
 };

@@ -32,7 +32,12 @@ export default function SwapFormNavigator() {
         options={{
           title: t("transfer.swap.form.tab"),
           tabBarLabel: (props: TabLabelProps) => (
-            <Text variant="body" fontWeight="semiBold" {...props}>
+            <Text
+              variant="body"
+              fontWeight="semiBold"
+              {...props}
+              testID="swap-form-tab"
+            >
               {t("transfer.swap.form.tab")}
             </Text>
           ),
