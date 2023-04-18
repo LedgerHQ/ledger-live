@@ -1,17 +1,21 @@
 import React from "react";
-import { text } from "@storybook/addon-knobs";
-import { storiesOf } from "../../storiesOf";
+import { ComponentStory } from "@storybook/react-native";
 import Tooltip from "../../../../src/components/Layout/Modals/Tooltip";
 import Text from "../../../../src/components/Text";
 import { Icons } from "../../../../src/assets";
 
-const TooltipStory = () => {
+export default {
+  title: "Layout/Modal/Tooltip",
+  component: Tooltip,
+};
+
+export const Default: ComponentStory<typeof Tooltip> = (args: typeof DefaultArgs) => {
   return (
     <Tooltip
-      title={text("title", "title")}
-      description={text("description", "Description")}
-      subtitle={text("subtitle", "Subtitle")}
-      Icon={Icons.WarningLight}
+      title={args.title}
+      description={args.description}
+      subtitle={args.subtitle}
+      Icon={Icons.WarningMedium}
       tooltipContent={
         <>
           <Text>Tooltip323</Text>
@@ -23,5 +27,10 @@ const TooltipStory = () => {
     </Tooltip>
   );
 };
-
-storiesOf((story) => story("Layout/Modal", module).add("Tooltip", TooltipStory));
+Default.storyName = "Tooltip";
+const DefaultArgs = {
+  title: "title",
+  description: "Description",
+  subtitle: "Subtitle",
+};
+Default.args = DefaultArgs;

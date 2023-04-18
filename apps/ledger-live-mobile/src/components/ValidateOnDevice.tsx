@@ -10,6 +10,8 @@ import {
 import {
   getMainAccount,
   getAccountUnit,
+  getFeesCurrency,
+  getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
@@ -66,7 +68,8 @@ function FeesField({
 }: FieldComponentProps) {
   const mainAccount = getMainAccount(account, parentAccount);
   const { estimatedFees } = status;
-  const feesUnit = getAccountUnit(mainAccount);
+  const currency = getFeesCurrency(mainAccount);
+  const feesUnit = getFeesUnit(currency);
   return (
     <DataRowUnitValue
       label={field.label}

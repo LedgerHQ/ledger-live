@@ -139,6 +139,7 @@ const DeviceCard = ({
         >
           <DeviceName
             device={device}
+            deviceInfo={deviceInfo}
             initialDeviceName={initialDeviceName}
             disabled={pendingInstalls}
           />

@@ -6,14 +6,14 @@ This simple card implementation component allows to display specific content for
 ## Usage
 
 
-### Import  
+### Import
 \`\`\`ts
 
 import { FullBackgroundCard } from "@ledgerhq/native-ui"
 \`\`\`
 
 
-### Props 
+### Props
 \`\`\`ts
 type Props = {
   variant?: "purple" | "red";
@@ -28,7 +28,7 @@ Use the tag <bold>YourText</bold> in description if you want to highlight some t
 
 \`\`\`
 
-### Integration 
+### Integration
 
 \`\`\`ts
 
@@ -52,14 +52,14 @@ This simple card implementation component allows to display specific content for
 ## Usage
 
 
-### Import  
+### Import
 \`\`\`ts
 
 import { SideImageCard } from "@ledgerhq/native-ui"
 \`\`\`
 
 
-### Props 
+### Props
 \`\`\`ts
 type CardProps = TouchableOpacityProps & {
   tag?: string;
@@ -73,7 +73,7 @@ Use the tag <bold>YourText</bold> in title if you want to highlight some text in
 
 \`\`\`
 
-### Integration 
+### Integration
 
 \`\`\`ts
 
@@ -81,13 +81,13 @@ const MyCard = (): JSX.Element => {
 const onPress = ()=> console.log("PRESS")
 const onPressDismiss = ()=> console.log("DISMISS")
   return (
-    <SideImageCard 
-      tag="Promo" 
-      title="Announcement for promotion" 
+    <SideImageCard
+      tag="Promo"
+      title="Announcement for promotion"
       cta="Click"
       onPress={onPress}
       onPressDismiss={onPressDismiss}
-      imageUrl="https://www.cointribune.com/app/uploads/2020/12/LEDGER-Nano-X.jpg?nowebp" 
+      imageUrl="https://www.cointribune.com/app/uploads/2020/12/LEDGER-Nano-X.jpg?nowebp"
     />
   );
 };
@@ -102,14 +102,14 @@ This simple card implementation component allows to display specific content for
 ## Usage
 
 
-### Import  
+### Import
 \`\`\`ts
 
 import { InformativeCard } from "@ledgerhq/native-ui"
 \`\`\`
 
 
-### Props 
+### Props
 \`\`\`ts
 type CardProps = TouchableOpacityProps & {
   tag?: string;
@@ -120,16 +120,16 @@ type CardProps = TouchableOpacityProps & {
 
 \`\`\`
 
-### Integration 
+### Integration
 
 \`\`\`ts
 
 const MyCard = (): JSX.Element => {
   return (
     <InformativeCard
-      tag="Article" 
-      title="Learn how to stake?" 
-      imageUrl="https://www.cointribune.com/app/uploads/2020/12/LEDGER-Nano-X.jpg?nowebp" 
+      tag="Article"
+      title="Learn how to stake?"
+      imageUrl="https://www.cointribune.com/app/uploads/2020/12/LEDGER-Nano-X.jpg?nowebp"
     />
   );
 };
@@ -144,14 +144,14 @@ This simple card implementation component allows to display specific content for
 ## Usage
 
 
-### Import  
+### Import
 \`\`\`ts
 
 import { NotificationCard } from "@ledgerhq/native-ui"
 \`\`\`
 
 
-### Props 
+### Props
 \`\`\`ts
 type CardProps = {
   tag?: string;
@@ -165,7 +165,7 @@ type CardProps = {
 };
 \`\`\`
 
-### Integration 
+### Integration
 
 \`\`\`ts
 
@@ -174,9 +174,9 @@ const onPress = ()=> console.log("PRESS")
 const onPressDismiss = ()=> console.log("DISMISS")
   return (
     <NotificationCard
-      tag="Promo" 
-      title="Announcement" 
-      description="Announcement for promotion" 
+      tag="Promo"
+      title="Announcement"
+      description="Announcement for promotion"
       time={1669736575}
       viewed={false}
     />

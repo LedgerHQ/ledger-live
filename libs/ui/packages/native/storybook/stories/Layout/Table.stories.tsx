@@ -1,12 +1,15 @@
 import React from "react";
 import { View } from "react-native";
-import { storiesOf } from "../storiesOf";
 import { useTheme } from "styled-components/native";
-import { radios, text, boolean } from "@storybook/addon-knobs";
 import FlexBox from "../../../src/components/Layout/Flex";
 import Row from "../../../src/components/Layout/Table/Row";
 import Text from "../../../src/components/Text";
 import { Icons } from "../../../src/assets";
+
+export default {
+  title: "Layout/Table/Row",
+  component: Row,
+};
 
 const Icon = (props: { size?: number }): React.ReactElement => (
   <View
@@ -19,72 +22,76 @@ const Icon = (props: { size?: number }): React.ReactElement => (
   />
 );
 
-const TopLeft = () => {
+const TopLeft = ({ text }: { text: string | undefined }) => {
   const {
-    colors: {
-      palette: { neutral, success },
-    },
+    colors: { neutral, success },
   } = useTheme();
   return (
     <FlexBox flexDirection="row" flexShrink={1} alignItems="center">
       <Text color={neutral.c100} variant="body" fontWeight="semiBold" mr={2}>
-        {text("topLeftText", "Bitcoin 1", "content")}
+        {text}
       </Text>
-      <Icons.CircledCheckRegular size={12.5} color={success.c100} />
+      <Icons.CircledCheckMedium size={12.5} color={success.c100} />
     </FlexBox>
   );
 };
-const BottomLeft = () => {
+const BottomLeft = ({ text }: { text: string | undefined }) => {
   const { colors } = useTheme();
   return (
     <Text variant="body" color={colors.neutral.c70}>
-      {text("bottomLeftText", "Native Segwit", "content")}
+      {text}
     </Text>
   );
 };
 
-const TopRight = () => {
+const TopRight = ({ text }: { text: string | undefined }) => {
   const { colors } = useTheme();
   return (
     <Text color={colors.neutral.c100} variant="body" fontWeight="semiBold">
-      {text("topRightText", "1.23456 BTC", "content")}
+      {text}
     </Text>
   );
 };
 
-const BottomRight = () => {
+const BottomRight = ({ text }: { text: string | undefined }) => {
   const { colors } = useTheme();
   return (
     <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70}>
-      {text("bottomRightText", "$74,590.81", "content")}
+      {text}
     </Text>
   );
 };
 
-const ARow = () => {
-  const [hasTopLeft, hasBottomLeft, hasTopRight, hasBottomRight, hasIcon] = [
-    "TopLeft",
-    "BottomLeft",
-    "TopRight",
-    "BottomRight",
-    "Icon",
-  ].map((item) => radios(item, { [item]: 1, null: null }, 1, "props"));
+const ARow = (args: typeof DefaultArgs) => {
+  const { hasTopLeft, hasBottomLeft, hasTopRight, hasBottomRight, hasIcon } = args;
   return (
     <Row
       Icon={hasIcon ? Icon : undefined}
-      topLeft={hasTopLeft && <TopLeft />}
-      bottomLeft={hasBottomLeft && <BottomLeft />}
-      topRight={hasTopRight && <TopRight />}
-      bottomRight={hasBottomRight && <BottomRight />}
-      iconBorder={boolean("iconBorder", false, "props")}
+      topLeft={hasTopLeft && <TopLeft text={args.topLeftText} />}
+      bottomLeft={hasBottomLeft && <BottomLeft text={args.bottomLeftText} />}
+      topRight={hasTopRight && <TopRight text={args.topRightText} />}
+      bottomRight={hasBottomRight && <BottomRight text={args.bottomRightText} />}
+      iconBorder={args.iconBorder}
     />
   );
 };
 
-storiesOf((story) =>
-  story("Layout", module).add("Table/Row", () => (
-    <FlexBox flexDirection="column" width={"100%"}>
-      <ARow />
-    </FlexBox>
-  )),
+export const Default = (args: typeof DefaultArgs) => (
+  <FlexBox flexDirection="column" width={"100%"}>
+    <ARow {...args} />
+  </FlexBox>
 );
+Default.storyName = "Row";
+const DefaultArgs = {
+  topLeftText: "Bitcoin 1",
+  bottomLeftText: "Native Segwit",
+  topRightText: "1.23456 BTC",
+  bottomRightText: "$74,590.81",
+  hasTopLeft: true,
+  hasBottomLeft: true,
+  hasTopRight: true,
+  hasBottomRight: true,
+  hasIcon: true,
+  iconBorder: false,
+};
+Default.args = DefaultArgs;

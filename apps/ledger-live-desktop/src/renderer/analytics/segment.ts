@@ -14,6 +14,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
 import { idsToLanguage } from "@ledgerhq/types-live";
+import { getAccountName } from "@ledgerhq/live-common/account/index";
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const os = require("os");
@@ -51,6 +52,7 @@ const extraProperties = store => {
   return {
     appVersion: __APP_VERSION__,
     language,
+    appLanguage: language, // Needed for braze
     region,
     environment: process.env.SEGMENT_TEST ? "test" : __DEV__ ? "development" : "production",
     systemLanguage: systemLocale.language,
@@ -104,13 +106,32 @@ function sendTrack(event, properties: object | undefined | null, storeInstance: 
     properties,
   });
 }
+
+const confidentialityFilter = (properties?: object | null) => {
+  const { account, parentAccount } = properties || {};
+  const filterAccount = account
+    ? { account: typeof account === "object" ? getAccountName(account) : account }
+    : {};
+  const filterParentAccount = parentAccount
+    ? {
+        parentAccount:
+          typeof parentAccount === "object" ? getAccountName(parentAccount) : parentAccount,
+      }
+    : {};
+  return {
+    ...properties,
+    ...filterAccount,
+    ...filterParentAccount,
+  };
+};
+
 export const track = (event: string, properties?: object | null, mandatory?: boolean | null) => {
   if (!storeInstance || (!mandatory && !shareAnalyticsSelector(storeInstance.getState()))) {
     return;
   }
   const fullProperties = {
     ...extraProperties(storeInstance),
-    ...properties,
+    ...confidentialityFilter(properties),
   };
   logger.analyticsTrack(event, fullProperties);
   sendTrack(event, fullProperties, storeInstance);

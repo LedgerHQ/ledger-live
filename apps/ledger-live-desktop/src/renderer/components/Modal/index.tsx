@@ -118,7 +118,7 @@ type Props = {
   onBeforeOpen?: (a: { data: any }) => any;
   // eslint-disable-line
   backdropColor: boolean | undefined | null;
-  bodyStyle?: any,
+  bodyStyle?: any;
 };
 class Modal extends PureComponent<
   Props,

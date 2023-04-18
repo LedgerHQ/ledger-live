@@ -12,7 +12,7 @@ const FirmwareUpdatedStep = ({ onReinstallApps }: Props) => {
   return (
     <Flex alignItems="center">
       <Track event="FirmwareUpdateFinished" onMount />
-      <Icons.CircledCheckSolidLight size={56} color="success.c100" />
+      <Icons.CircledCheckSolidMedium size={56} color="success.c100" />
       <Flex my={7}>
         <Log>{t("FirmwareUpdate.success")}</Log>
       </Flex>

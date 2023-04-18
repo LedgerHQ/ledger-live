@@ -17,7 +17,8 @@ type Props = {
   mediaFormat: NFTMediaSize;
   resizeMode?: FastImageProps["resizeMode"] & VideoProperties["resizeMode"];
   colors: Theme["colors"];
-  transaprency?: boolean;
+  transparency?: boolean;
+  children?: React.ReactNode | null;
 };
 
 type State = {

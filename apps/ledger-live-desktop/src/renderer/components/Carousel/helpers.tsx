@@ -3,13 +3,10 @@ import map from "lodash/map";
 import { Trans } from "react-i18next";
 import { getEnv } from "@ledgerhq/live-common/env";
 import Slide from "./Slide";
-import { urls } from "~/config/urls";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import LedgerAcademyBgImage from "./banners/LedgerAcademy/images/bg.png";
-import LedgerAcademyCardImage from "./banners/LedgerAcademy/images/card.png";
-import LedgerAcademyCoinImage from "./banners/LedgerAcademy/images/coin.png";
-import LedgerAcademyHatImage from "./banners/LedgerAcademy/images/hat.png";
-import LedgerAcademyNanoImage from "./banners/LedgerAcademy/images/nano.png";
+
+import ReferralProgramBgImage from "./banners/ReferralProgram/images/bg.png";
+import ReferralProgramCoinImage from "./banners/ReferralProgram/images/coin.png";
 import BuyCryptoBgImage from "./banners/BuyCrypto/images/bg.png";
 import BuyCryptoCartImage from "./banners/BuyCrypto/images/cart.png";
 import BuyCryptoCoinImage from "./banners/BuyCrypto/images/coin.png";
@@ -22,10 +19,10 @@ import SwapLoopImage from "./banners/Swap/images/loop.png";
 import SwapSmallCoin1Image from "./banners/Swap/images/smallcoin1.png";
 import SwapSmallCoin2Image from "./banners/Swap/images/smallcoin2.png";
 import SwapSmallCoin3Image from "./banners/Swap/images/smallcoin3.png";
-import BackupPackBgImage from "./banners/BackupPack/images/bg.png";
-import BackupPackNanosImage from "./banners/BackupPack/images/nanos.png";
-import ReferralProgramBgImage from "./banners/ReferralProgram/images/bg.png";
-import ReferralProgramCoinImage from "./banners/ReferralProgram/images/coin.png";
+
+import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
+import { useSelector } from "react-redux";
+
 export const getTransitions = (transition: "slide" | "flip", reverse = false) => {
   const mult = reverse ? -1 : 1;
   return {
@@ -42,11 +39,7 @@ export const getTransitions = (transition: "slide" | "flip", reverse = false) =>
         opacity: 1,
         transform: `rotateX(${-180 * mult}deg)`,
       },
-      config: {
-        mass: 20,
-        tension: 200,
-        friction: 100,
-      },
+      config: { mass: 20, tension: 200, friction: 100 },
     },
     slide: {
       from: {
@@ -66,8 +59,9 @@ export const getTransitions = (transition: "slide" | "flip", reverse = false) =>
     },
   }[transition];
 };
+
 const referralProgramSlide = {
-  name: "referralProgram",
+  id: "referralProgram",
   title: <Trans i18nKey={`banners.referralProgram.title`} />,
   description: <Trans i18nKey={`banners.referralProgram.description`} />,
   imgs: [
@@ -89,231 +83,141 @@ const referralProgramSlide = {
     },
   ],
 };
-const SLIDES = [
-  {
-    url: urls.banners.ledgerAcademy,
-    name: "ledgerAcademy",
-    title: <Trans i18nKey={`banners.ledgerAcademy.title`} />,
-    description: <Trans i18nKey={`banners.ledgerAcademy.description`} />,
-    imgs: [
-      {
-        source: LedgerAcademyBgImage,
-        transform: [0, 60, 5, 60],
-        size: {
-          width: 160,
-          height: 160,
-        },
+
+const exchangeSlide = {
+  path: "/exchange",
+  id: "buyCrypto",
+  title: <Trans i18nKey={`banners.buyCrypto.title`} />,
+  description: <Trans i18nKey={`banners.buyCrypto.description`} />,
+  imgs: [
+    {
+      source: BuyCryptoBgImage,
+      transform: [-10, 60, -8, 60],
+      size: {
+        width: 180,
+        height: 180,
       },
-      {
-        source: LedgerAcademyCardImage,
-        transform: [65, 50, 20, 50],
-        size: {
-          width: 109,
-          height: 109,
-        },
+    },
+    {
+      source: BuyCryptoCartImage,
+      transform: [20, 40, 7, 40],
+      size: {
+        width: 131,
+        height: 130,
       },
-      {
-        source: LedgerAcademyCoinImage,
-        transform: [-15, 20, 25, 20],
-        size: {
-          width: 28,
-          height: 67,
-        },
+    },
+    {
+      source: BuyCryptoCoinImage,
+      transform: [53, 30, 53, 30],
+      size: {
+        width: 151,
+        height: 21,
       },
-      {
-        source: LedgerAcademyHatImage,
-        transform: [10, 30, 0, 30],
-        size: {
-          width: 110,
-          height: 112,
-        },
+    },
+    {
+      source: BuyCryptoCoin2Image,
+      transform: [58, 25, 20, 25],
+      size: {
+        width: 151,
+        height: 17,
       },
-      {
-        source: LedgerAcademyNanoImage,
-        transform: [75, 25, 8, 25],
-        size: {
-          width: 50,
-          height: 27,
-        },
+    },
+    {
+      source: BuyCryptoCoin3Image,
+      transform: [29, 20, 33, 20],
+      size: {
+        width: 151,
+        height: 24,
       },
-    ],
-  },
-  {
-    path: "/exchange",
-    name: "buyCrypto",
-    title: <Trans i18nKey={`banners.buyCrypto.title`} />,
-    description: <Trans i18nKey={`banners.buyCrypto.description`} />,
-    imgs: [
-      {
-        source: BuyCryptoBgImage,
-        transform: [-10, 60, -8, 60],
-        size: {
-          width: 180,
-          height: 180,
-        },
+    },
+  ],
+};
+const swapSlide = {
+  path: "/swap",
+  id: "swap",
+  title: <Trans i18nKey={`banners.swap.title`} />,
+  description: <Trans i18nKey={`banners.swap.description`} />,
+  imgs: [
+    {
+      source: SwapBgImage,
+      transform: [0, 60, 5, 60],
+      size: {
+        width: 180,
+        height: 180,
       },
-      {
-        source: BuyCryptoCartImage,
-        transform: [20, 40, 7, 40],
-        size: {
-          width: 131,
-          height: 130,
-        },
+    },
+    {
+      source: SwapCoin1Image,
+      transform: [37, 25, 24, 25],
+      size: {
+        width: 48,
+        height: 55,
       },
-      {
-        source: BuyCryptoCoinImage,
-        transform: [53, 30, 53, 30],
-        size: {
-          width: 151,
-          height: 21,
-        },
+    },
+    {
+      source: SwapCoin2Image,
+      transform: [115, 25, 28, 25],
+      size: {
+        width: 50,
+        height: 53,
       },
-      {
-        source: BuyCryptoCoin2Image,
-        transform: [58, 25, 20, 25],
-        size: {
-          width: 151,
-          height: 17,
-        },
+    },
+    {
+      source: SwapLoopImage,
+      transform: [20, 35, 5, 35],
+      size: {
+        width: 160,
+        height: 99,
       },
-      {
-        source: BuyCryptoCoin3Image,
-        transform: [29, 20, 33, 20],
-        size: {
-          width: 151,
-          height: 24,
-        },
+    },
+    {
+      source: SwapSmallCoin1Image,
+      transform: [115, 15, 35, 15],
+      size: {
+        width: 18,
+        height: 14,
       },
-    ],
-  },
-  {
-    path: "/swap",
-    name: "swap",
-    title: <Trans i18nKey={`banners.swap.title`} />,
-    description: <Trans i18nKey={`banners.swap.description`} />,
-    imgs: [
-      {
-        source: SwapBgImage,
-        transform: [0, 60, 5, 60],
-        size: {
-          width: 180,
-          height: 180,
-        },
+    },
+    {
+      source: SwapSmallCoin2Image,
+      transform: [88, 20, 65, 20],
+      size: {
+        width: 4,
+        height: 5,
       },
-      {
-        source: SwapCoin1Image,
-        transform: [37, 25, 24, 25],
-        size: {
-          width: 48,
-          height: 55,
-        },
+    },
+    {
+      source: SwapSmallCoin3Image,
+      transform: [78, 17, 32, 17],
+      size: {
+        width: 10,
+        height: 13,
       },
-      {
-        source: SwapCoin2Image,
-        transform: [115, 25, 28, 25],
-        size: {
-          width: 50,
-          height: 53,
-        },
-      },
-      {
-        source: SwapLoopImage,
-        transform: [20, 35, 5, 35],
-        size: {
-          width: 160,
-          height: 99,
-        },
-      },
-      {
-        source: SwapSmallCoin1Image,
-        transform: [115, 15, 35, 15],
-        size: {
-          width: 18,
-          height: 14,
-        },
-      },
-      {
-        source: SwapSmallCoin2Image,
-        transform: [88, 20, 65, 20],
-        size: {
-          width: 4,
-          height: 5,
-        },
-      },
-      {
-        source: SwapSmallCoin3Image,
-        transform: [78, 17, 32, 17],
-        size: {
-          width: 10,
-          height: 13,
-        },
-      },
-    ],
-  },
-  {
-    url: urls.banners.familyPack,
-    name: "familyPack",
-    title: <Trans i18nKey={`banners.familyPack.title`} />,
-    description: <Trans i18nKey={`banners.familyPack.description`} />,
-    imgs: [
-      {
-        source: BackupPackBgImage,
-        transform: [20, 60, 5, 60],
-        size: {
-          width: 150,
-          height: 150,
-        },
-      },
-      {
-        source: BackupPackNanosImage,
-        transform: [-55, 13, 5, 15],
-        size: {
-          width: 162,
-          height: 167,
-        },
-      },
-      {
-        source: BackupPackNanosImage,
-        transform: [0, 15, 5, 15],
-        size: {
-          width: 162,
-          height: 167,
-        },
-      },
-      {
-        source: BackupPackNanosImage,
-        transform: [55, 17, 5, 15],
-        size: {
-          width: 162,
-          height: 167,
-        },
-      },
-    ],
-  },
-];
+    },
+  ],
+};
+
 export const useDefaultSlides = () => {
   const referralProgramConfig = useFeature("referralProgramDesktopBanner");
+  const portfolioCards = useSelector(portfolioContentCardSelector);
+
   const slides = useMemo(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       return [
-        {
-          ...referralProgramSlide,
-          path: referralProgramConfig?.params?.path,
-        },
-        ...SLIDES,
+        { ...referralProgramSlide, path: referralProgramConfig?.params?.path },
+        ...portfolioCards,
       ];
     } else {
-      return SLIDES;
+      return portfolioCards;
     }
-  }, [referralProgramConfig]);
+  }, [referralProgramConfig, portfolioCards]);
+
   return useMemo(
     () =>
-      map(getEnv("PLAYWRIGHT_RUN") ? [SLIDES[2], SLIDES[1]] : slides, (slide: Props) => ({
+      map(getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : slides, (slide: Props) => ({
         id: slide.name,
         // eslint-disable-next-line react/display-name
         Component: () => <Slide {...slide} />,
-        start: slide.start,
-        end: slide.end,
       })),
     [slides],
   );

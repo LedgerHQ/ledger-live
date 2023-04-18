@@ -456,13 +456,15 @@ platform :android do
       upload_to_play_store(
         track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
         package_name: 'com.ledger.live',
-        json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
+        json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"],
+        skip_upload_apk: true
       )
     else
       upload_to_play_store(
         track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
         package_name: "com.ledger.live",
         json_key: ENV["ANDROID_SERVICE_KEY_PATH"],
+        skip_upload_apk: true
       )
     end
   end

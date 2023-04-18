@@ -2,9 +2,9 @@ import { createStore, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 import logger from "~/renderer/middlewares/logger";
 import analytics from "~/renderer/middlewares/analytics";
-import reducers from "~/renderer/reducers";
+import reducers, { State } from "~/renderer/reducers";
 type Props = {
-  state?: object;
+  state?: State;
   dbMiddleware?: Function;
 };
 export default ({ state, dbMiddleware }: Props) => {

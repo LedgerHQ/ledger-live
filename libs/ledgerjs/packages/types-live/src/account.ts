@@ -144,6 +144,8 @@ export type Account = {
   // ------------------------------------- Specific account fields
   // currency of this account
   currency: CryptoCurrency;
+  // Some blockchains may use a different currency than the main one to pay fees
+  feesCurrency?: CryptoCurrency | TokenCurrency;
   // user preferred unit to use. unit is coming from currency.units. You can assume currency.units.indexOf(unit) will work. (make sure to preserve reference)
   unit: Unit;
   // The total number of operations (operations[] can be partial)
@@ -263,6 +265,7 @@ export type AccountRaw = {
   // this is optional for backward compat
   // ------------------------------------- Specific raw fields
   currencyId: string;
+  feesCurrencyId?: string;
   operations: OperationRaw[];
   pendingOperations: OperationRaw[];
   unitMagnitude: number;

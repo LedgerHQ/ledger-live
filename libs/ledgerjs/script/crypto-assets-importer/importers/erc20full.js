@@ -110,6 +110,7 @@ module.exports = {
   boolean,
   boolean,
   string?,
+  string?
 ];
 const tokens: ERC20Token[] = [
 ${data
