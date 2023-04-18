@@ -10,6 +10,7 @@ Array [
     },
     "currencyId": "cosmos",
     "derivationMode": "",
+    "feesCurrencyId": undefined,
     "freshAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
     "freshAddressPath": "44'/118'/0'/0/0",
     "freshAddresses": Array [
@@ -40,6 +41,7 @@ Array [
     },
     "currencyId": "cosmos",
     "derivationMode": "",
+    "feesCurrencyId": undefined,
     "freshAddress": "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
     "freshAddressPath": "44'/118'/1'/0/0",
     "freshAddresses": Array [
@@ -70,6 +72,7 @@ Array [
     },
     "currencyId": "cosmos",
     "derivationMode": "",
+    "feesCurrencyId": undefined,
     "freshAddress": "cosmos1cgc696ay2pg6d4gcejek2y8la66j7e5y3c7kyw",
     "freshAddressPath": "44'/118'/2'/0/0",
     "freshAddresses": Array [
@@ -100,6 +103,7 @@ Array [
     },
     "currencyId": "cosmos",
     "derivationMode": "",
+    "feesCurrencyId": undefined,
     "freshAddress": "cosmos14tg4vsd0q745fxhzn329pkx0krqtszcxyzl5ku",
     "freshAddressPath": "44'/118'/3'/0/0",
     "freshAddresses": Array [
@@ -130,6 +134,7 @@ Array [
     },
     "currencyId": "cosmos",
     "derivationMode": "",
+    "feesCurrencyId": undefined,
     "freshAddress": "cosmos18q6ad294dw5wf7nueq7ctleehxh9fgt8dcecr9",
     "freshAddressPath": "44'/118'/4'/0/0",
     "freshAddresses": Array [
@@ -3174,6 +3179,7 @@ Array [
     },
     "currencyId": "osmo",
     "derivationMode": "",
+    "feesCurrencyId": undefined,
     "freshAddress": "osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw",
     "freshAddressPath": "44'/118'/0'/0/0",
     "freshAddresses": Array [
@@ -3204,6 +3210,7 @@ Array [
     },
     "currencyId": "osmo",
     "derivationMode": "",
+    "feesCurrencyId": undefined,
     "freshAddress": "osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y",
     "freshAddressPath": "44'/118'/1'/0/0",
     "freshAddresses": Array [

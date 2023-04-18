@@ -10,6 +10,38 @@ import {
 } from "./js-buildTransaction";
 import { getEnv } from "../../env";
 import { log } from "@ledgerhq/logs";
+import { CacheRes, makeLRUCache } from "../../cache";
+
+export const calculateFees: CacheRes<
+  Array<{
+    account: Account;
+    transaction: Transaction;
+  }>,
+  {
+    estimatedFees: BigNumber;
+    estimatedGas: BigNumber;
+  }
+> = makeLRUCache(
+  async ({
+    account,
+    transaction,
+  }): Promise<{
+    estimatedFees: BigNumber;
+    estimatedGas: BigNumber;
+  }> => {
+    return await getEstimatedFees(account as CosmosAccount, transaction);
+  },
+  ({ account, transaction }) =>
+    `${account.id}_${account.currency.id}_${transaction.amount.toString()}_${transaction.recipient
+    }_${String(transaction.useAllAmount)}_${transaction.mode}_${transaction.validators
+      ? transaction.validators.map((v) => v.address).join("-")
+      : ""
+    }_${transaction.memo ? transaction.memo.toString() : ""}_${transaction.sourceValidator ? transaction.sourceValidator : ""
+    }`,
+    {
+      ttl: 1000 * 30, // 30 sec
+    }
+);
 
 export const getEstimatedFees = async (
   account: CosmosAccount,
@@ -76,16 +108,16 @@ export const prepareTransaction = async (
     memo = "Ledger Live";
   }
 
-  const { estimatedFees, estimatedGas } = await getEstimatedFees(
-    account as CosmosAccount,
-    {
+  const { estimatedFees, estimatedGas } = await calculateFees({
+    account,
+    transaction: {
       ...transaction,
       amount: transaction.useAllAmount
         ? account.spendableBalance.minus(new BigNumber(2500))
         : amount,
       memo,
     }
-  );
+  });
 
   if (transaction.useAllAmount) {
     amount = getMaxEstimatedBalance(account as CosmosAccount, estimatedFees);
