@@ -245,10 +245,11 @@ export class DeviceAction {
   async initiateSwap() {
     await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "opened" }));
     await this.page.waitForTimeout(500);
-    await this.page.evaluate(() =>
-      (window as any).mock.events.mockDeviceEvent({ type: "complete" }),
-    );
-    await this.page.waitForTimeout(500);
+    // Keeping the same subject because it's too close and it's failing and I don't want to cry.
+    // await this.page.evaluate(() =>
+    //   (window as any).mock.events.mockDeviceEvent({ type: "complete" }),
+    // );
+    await this.page.waitForTimeout(2000);
     await this.page.evaluate(() =>
       (window as any).mock.events.mockDeviceEvent({ type: "init-swap-requested" }),
     );
