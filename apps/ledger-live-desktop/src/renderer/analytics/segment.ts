@@ -15,6 +15,13 @@ import {
 import { State } from "~/renderer/reducers";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
+import { accountsSelector } from "../reducers/accounts";
+import {
+  GENESIS_PASS_COLLECTION_CONTRACT,
+  hasNftInAccounts,
+  INFINITY_PASS_COLLECTION_CONTRACT,
+} from "@ledgerhq/live-common/nft/helpers";
+
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const os = require("os");
@@ -37,6 +44,7 @@ const extraProperties = store => {
   const region = (localeSelector(state).split("-")[1] || "").toUpperCase() || null;
   const systemLocale = getParsedSystemLocale();
   const device = lastSeenDeviceSelector(state);
+  const accounts = accountsSelector(state);
   const deviceInfo = device
     ? {
         modelId: device.modelId,
@@ -49,6 +57,25 @@ const extraProperties = store => {
       }
     : {};
   const sidebarCollapsed = sidebarCollapsedSelector(state);
+
+  const accountsWithFunds = accounts
+    ? [
+        ...new Set(
+          accounts
+            .filter(account => account?.balance.isGreaterThan(0))
+            .map(account => account?.currency?.ticker),
+        ),
+      ]
+    : [];
+  const blockchainsWithNftsOwned = accounts
+    ? [
+        ...new Set(
+          accounts.filter(account => account.nfts?.length).map(account => account.currency.ticker),
+        ),
+      ]
+    : [];
+  const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
+  const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
   return {
     appVersion: __APP_VERSION__,
     language,
@@ -61,6 +88,10 @@ const extraProperties = store => {
     osVersion,
     sessionId,
     sidebarCollapsed,
+    accountsWithFunds,
+    blockchainsWithNftsOwned,
+    hasGenesisPass,
+    hasInfinityPass,
     ...deviceInfo,
   };
 };
