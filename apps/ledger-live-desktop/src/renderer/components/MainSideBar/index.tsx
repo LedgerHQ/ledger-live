@@ -6,7 +6,7 @@ import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Icons } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
@@ -227,6 +227,8 @@ const MainSideBar = () => {
   const noAccounts = useSelector(accountsSelector).length === 0;
   const hasStarredAccounts = useSelector(starredAccountsSelector).length > 0;
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
+
+  const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -270,6 +272,11 @@ const MainSideBar = () => {
   const handleClickSwap = useCallback(() => {
     push("/swap");
   }, [push]);
+  const handleClickRefer = useCallback(() => {
+    if (referralProgramConfig?.enabled && referralProgramConfig?.params.path) {
+      push(referralProgramConfig?.params.path);
+    }
+  }, [push, referralProgramConfig]);
   const maybeRedirectToAccounts = useCallback(() => {
     return location.pathname === "/manager" && push("/accounts");
   }, [location.pathname, push]);
@@ -413,6 +420,17 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
+                <FeatureToggle feature="referralProgramDesktopSidebar">
+                  <SideBarListItem
+                    id={"refer"}
+                    label={t("sidebar.refer")}
+                    icon={IconSwap}
+                    iconActiveColor="wallet"
+                    onClick={handleClickRefer}
+                    isActive={location.pathname.startsWith("/refer")}
+                    collapsed={secondAnim}
+                  />
+                </FeatureToggle>
                 <SideBarListItem
                   id={"card"}
                   label={t("sidebar.card")}

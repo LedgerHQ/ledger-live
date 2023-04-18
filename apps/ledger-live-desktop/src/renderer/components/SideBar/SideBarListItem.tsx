@@ -15,7 +15,6 @@ export type Props = {
   NotifComponent?: React.ReactNode;
   isActive?: boolean;
   onClick?: (a: void) => void;
-  isActive?: boolean;
   collapsed?: boolean;
   id: string;
 };
