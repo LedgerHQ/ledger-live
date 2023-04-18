@@ -4,8 +4,10 @@ import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
 import { makeAccount, makeOperation, makeTokenAccount } from "../testUtils";
+import * as RPC_API from "../api/rpc.common";
 import {
   eip1559TransactionHasFees,
+  getAdditionalLayer2Fees,
   getEstimatedFees,
   getSyncHash,
   legacyTransactionHasFees,
@@ -133,6 +135,33 @@ describe("EVM Family", () => {
         };
 
         expect(getEstimatedFees(tx as any)).toEqual(new BigNumber(0));
+      });
+    });
+
+    describe("getAdditionalLayer2Fees", () => {
+      const optimism = getCryptoCurrencyById("optimism");
+      const ethereum = getCryptoCurrencyById("ethereum");
+
+      beforeEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it("should try to get additionalFees for a valid layer 2", async () => {
+        const spy = jest
+          .spyOn(RPC_API, "getOptimismAdditionalFees")
+          .mockImplementation(jest.fn());
+
+        await getAdditionalLayer2Fees(optimism, {} as any);
+        expect(spy).toBeCalled();
+      });
+
+      it("should not try to get additionalFees for an invalid layer 2", async () => {
+        const spy = jest
+          .spyOn(RPC_API, "getOptimismAdditionalFees")
+          .mockImplementation(jest.fn());
+
+        await getAdditionalLayer2Fees(ethereum, {} as any);
+        expect(spy).not.toBeCalled();
       });
     });
 
