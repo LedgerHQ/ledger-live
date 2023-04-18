@@ -124,7 +124,7 @@ class Xpub {
       0,
       this.freshAddressIndex
     );
-    return 1;
+    return 3;
   }
 
   async getXpubBalance(): Promise<BigNumber> {
