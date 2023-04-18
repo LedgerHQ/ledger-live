@@ -51,9 +51,7 @@ export class CosmosTransactionStatusManager {
       t.validators.some(
         (v) =>
           !v.address ||
-          !v.address.includes(
-            cryptoFactory(a.currency.id).validatorOperatorAddressPrefix
-          )
+          !v.address.includes(cryptoFactory(a.currency.id).validatorPrefix)
       ) ||
       t.validators.length === 0
     )
@@ -148,9 +146,7 @@ export class CosmosTransactionStatusManager {
       t.validators.some(
         (v) =>
           !v.address ||
-          !v.address.includes(
-            cryptoFactory(a.currency.id).validatorOperatorAddressPrefix
-          )
+          !v.address.includes(cryptoFactory(a.currency.id).validatorPrefix)
       ) ||
       t.validators.length === 0
     )
