@@ -65,5 +65,5 @@ describe("testing estimateMaxSpendable", () => {
       []
     );
     expect(maxSpendable.toNumber()).toEqual(0);
-  }, 60000);
+  }, 120000);
 });
