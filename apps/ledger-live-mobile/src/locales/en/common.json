@@ -3484,7 +3484,7 @@
     "header": "Edit Transaction",
     "learnMore": "I want to learn more",
     "panel": {
-      "stuckMessage": "Your most recent 'send' transactions is stuck. Speed up the transaction with a higher network fee, or cancel it.",
+      "stuckMessage": "This 'send' transaction is stuck. Speed up the transaction with a higher network fee, or cancel it.",
       "speedupMessage": "Your transaction is ongoing. You can speed it up with a higher network fee or cancel it."
     },
     "speedUp": {
