@@ -19,7 +19,7 @@ type AlertType =
   | "danger"
   | "update";
 
-type IconType = React.ComponentType<{ size: number; color: string }>;
+type IconType = React.ComponentType<{ size?: number; color?: string }>;
 
 type Props = {
   id?: string;

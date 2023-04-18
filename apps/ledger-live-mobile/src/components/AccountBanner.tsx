@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Flex, Text } from "@ledgerhq/native-ui";
+import { Alert, Flex } from "@ledgerhq/native-ui";
 import Button from "./wrappedUi/Button";
 
 type Props = {

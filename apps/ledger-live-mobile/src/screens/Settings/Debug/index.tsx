@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from "react";
-import { Icons, Alert as AlertBox, Flex, Divider } from "@ledgerhq/native-ui";
+import { Icons, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
 import { Alert, TouchableWithoutFeedback, View } from "react-native";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/provider";
 import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Icons, Alert, Flex, Divider } from "@ledgerhq/native-ui";
+import { Icons, Alert, Flex } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../../components/SettingsRow";
 import { ScreenName } from "../../../../const";
 
