@@ -107,6 +107,6 @@ export const getFees = async (transactionID: string): Promise<BigNumber> => {
     params: { id: transactionID },
   });
 
-  if (!data || !data.gasUsed) return new BigNumber(0);
-  return new BigNumber(data.gasUsed).multipliedBy("10000000000000");
+  if (!data || !data.paid) return new BigNumber(0);
+  return new BigNumber(data.paid);
 };
