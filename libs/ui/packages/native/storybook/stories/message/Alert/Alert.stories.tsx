@@ -9,6 +9,9 @@ export default {
       options: ["info", "secondary", "success", "warning", "error", undefined],
       control: { type: "select" },
     },
+    title: {
+      type: "text",
+    },
   },
 };
 

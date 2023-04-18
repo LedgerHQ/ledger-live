@@ -83,13 +83,7 @@ const AlertUnderlinedText = styled(AlertBodyText)`
   text-decoration-line: underline;
 `;
 
-export default function Alert({
-  type = "info",
-  Icon,
-  title,
-  showIcon = true,
-  children,
-}: AlertProps): JSX.Element {
+function Alert({ type = "info", Icon, title, showIcon = true, children }: AlertProps): JSX.Element {
   const theme = useTheme();
   const textColor = "neutral.c100";
   const IconComponent = Icon ?? icons[type];
@@ -112,3 +106,5 @@ export default function Alert({
 
 Alert.BodyText = AlertBodyText;
 Alert.UnderlinedText = AlertUnderlinedText;
+
+export default Alert;
