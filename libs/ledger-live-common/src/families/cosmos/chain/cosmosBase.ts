@@ -5,7 +5,7 @@ abstract class cosmosBase {
   abstract stakingDocUrl: string;
   abstract unbondingPeriod: number;
   abstract ledgerValidator: string;
-  abstract validatorOperatorAddressPrefix: string;
+  abstract validatorPrefix: string;
   abstract prefix: string;
   defaultGas = 100000;
   minGasprice = 0.0025;

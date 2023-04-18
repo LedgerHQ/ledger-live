@@ -19,93 +19,69 @@ import Evmos from "./Evmos";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
-  if (currencyId === "osmosis" || currencyId === "osmo") {
-    if (!cosmosChainParams["osmo"]) {
-      cosmosChainParams["osmo"] = new Osmosis();
+  const initialized =
+    currencyId === "osmosis" || currencyId === "osmo"
+      ? cosmosChainParams["osmo"] != null
+      : cosmosChainParams[currencyId] != null;
+  if (!initialized) {
+    switch (true) {
+      case currencyId === "osmosis" || currencyId === "osmo":
+        cosmosChainParams["osmo"] = new Osmosis();
+        return cosmosChainParams["osmo"];
+      case currencyId === "cosmos":
+        cosmosChainParams[currencyId] = new Cosmos();
+        break;
+      case currencyId === "juno":
+        cosmosChainParams[currencyId] = new Juno();
+        break;
+      case currencyId === "axelar":
+        cosmosChainParams[currencyId] = new Axelar();
+        break;
+      case currencyId === "binance_beacon_chain":
+        cosmosChainParams[currencyId] = new BinanceBeaconChain();
+        break;
+      case currencyId === "desmos":
+        cosmosChainParams[currencyId] = new Desmos();
+        break;
+      case currencyId === "injective":
+        cosmosChainParams[currencyId] = new Injective();
+        break;
+      case currencyId === "evmos":
+        cosmosChainParams[currencyId] = new Evmos();
+        break;
+      case currencyId === "nyx":
+        cosmosChainParams[currencyId] = new Nyx();
+        break;
+      case currencyId === "onomy":
+        cosmosChainParams[currencyId] = new Onomy();
+        break;
+      case currencyId === "persistence":
+        cosmosChainParams[currencyId] = new Persistence();
+        break;
+      case currencyId === "quicksilver":
+        cosmosChainParams[currencyId] = new Quicksilver();
+        break;
+      case currencyId === "secret_network":
+        cosmosChainParams[currencyId] = new SecretNetwork();
+        break;
+      case currencyId === "sei_network":
+        cosmosChainParams[currencyId] = new SeiNetwork();
+        break;
+      case currencyId === "stargaze":
+        cosmosChainParams[currencyId] = new Stargaze();
+        break;
+      case currencyId === "stride":
+        cosmosChainParams[currencyId] = new Stride();
+        break;
+      case currencyId === "umee":
+        cosmosChainParams[currencyId] = new Umee();
+        break;
     }
-    return cosmosChainParams["osmo"];
-  } else if (currencyId === "cosmos") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Cosmos();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "juno") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Juno();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "axelar") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Axelar();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "binance_beacon_chain") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new BinanceBeaconChain();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "desmos") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Desmos();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "injective") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Injective();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "evmos") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Evmos();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "nyx") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Nyx();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "onomy") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Onomy();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "persistence") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Persistence();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "quicksilver") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Quicksilver();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "secret_network") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new SecretNetwork();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "sei_network") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new SeiNetwork();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "stargaze") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Stargaze();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "stride") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Stride();
-    }
-    return cosmosChainParams[currencyId];
-  } else if (currencyId === "umee") {
-    if (!cosmosChainParams[currencyId]) {
-      cosmosChainParams[currencyId] = new Umee();
-    }
-    return cosmosChainParams[currencyId];
-  } else {
+  }
+  if (!cosmosChainParams[currencyId]) {
     throw new Error(`${currencyId} is not supported`);
   }
+  return cosmosChainParams[currencyId];
+
   // TODO: Currently, all cosmos currencies included setSupportedCurrencies must be supported here. We are working on a new way to support/enable new currencies
 }

@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 class Osmosis extends CosmosBase {
   stakingDocUrl: string;
   unbondingPeriod: number;
-  validatorOperatorAddressPrefix: string;
+  validatorPrefix: string;
   prefix: string;
   // Provided by coin config
   lcd!: string;
@@ -16,7 +16,8 @@ class Osmosis extends CosmosBase {
     this.stakingDocUrl =
       "https://support.ledger.com/hc/en-us/articles/6235986236957-Earn-Osmosis-OSMO-staking-rewards-in-Ledger-Live?docs=true";
     this.minimalTransactionAmount = new BigNumber(10);
-    this.validatorOperatorAddressPrefix = "osmovaloper";
+    this.validatorPrefix = `${this.prefix}valoper`;
+    this.minGasprice = 0.025;
   }
 }
 
