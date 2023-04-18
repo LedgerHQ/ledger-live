@@ -2,7 +2,7 @@ import {
   ServiceStatusApi,
   ServiceStatusSummary,
   Incident,
-} from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
+} from "@ledgerhq/live-common/notifications/ServiceStatusProvider/types";
 const statuses = {
   page: {
     id: "767c5rcj7z12",
@@ -538,7 +538,7 @@ const statuses = {
       only_show_if_degraded: false,
     },
   ],
-  incidents: [],
+  incidents: [] as Incident[],
   scheduled_maintenances: [],
   status: {
     indicator: "none",
@@ -571,6 +571,7 @@ const mockedIncidents: Incident[] = [
     components: [
       {
         name: "Bitcoin - Btc",
+        id: "",
       },
     ],
   },
@@ -622,11 +623,12 @@ const mockedIncidents: Incident[] = [
     components: [
       {
         name: "Ethereum - Eth",
+        id: "",
       },
     ],
   },
 ];
-export function toggleMockIncident(bool = true) {
+export function toggleMockIncident() {
   statuses.incidents = statuses.incidents.length > 0 ? [] : mockedIncidents;
 }
 export function resetIncidents() {
@@ -638,6 +640,7 @@ async function fetchStatusSummary(): Promise<ServiceStatusSummary> {
 const api: ServiceStatusApi = {
   fetchStatusSummary,
 };
+// @ts-expect-error this seems to be a hack to expose the api for testing
 window.serviceStatusApi = {
   ...api,
   toggleMockIncident,

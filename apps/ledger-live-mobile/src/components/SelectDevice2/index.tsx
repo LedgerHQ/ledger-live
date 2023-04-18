@@ -109,14 +109,14 @@ export default function SelectDevice({
 
   const handleOnSelect = useCallback(
     (device: Device) => {
-      const { modelId, wired } = device;
+      const { modelId, wired, deviceId } = device;
       track("Device selection", {
         modelId,
         connectionType: wired ? "USB" : "BLE",
       });
 
-      // If not wired, bluetooth is required
-      if (!wired) {
+      // If neither wired nor proxy-debug device, bluetooth is required
+      if (!wired && !deviceId.includes("httpdebug")) {
         if (!isBleRequired) {
           setLastSelectedDeviceBeforeRequireBluetoothCheck(device);
           setIsBleRequired(true);
