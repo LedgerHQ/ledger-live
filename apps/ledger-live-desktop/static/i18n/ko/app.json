@@ -218,7 +218,7 @@
     "lend" : "대출",
     "catalog" : "탐색",
     "market" : "마켓",
-    "protect" : "Recover"
+    "protect" : "복구"
   },
   "stars" : {
     "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
@@ -1874,7 +1874,7 @@
         "plugin" : "앱으로 이동",
         "swap" : "스왑",
         "tool" : "자세히 알아보기",
-        "app" : "자세히 알아보기"
+        "currency" : "자세히 알아보기"
       },
       "uninstall" : {
         "title" : "모두 제거",
@@ -3790,6 +3790,8 @@
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
       "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다.",
+      "enableStagingNftMetadataService" : "NFT 메타데이터 서비스 스테이징",
+      "enableStagingNftMetadataServiceDesc" : "NFT 메타데이터 서비스 스테이징 활성화 및 NFT 캐시 재설정",
       "openOnboardingAppInstallDebug" : "온보딩 앱 설치 디버그 화면 열기",
       "openOnboardingAppInstallDebugDesc" : "동기화 온보딩 앱 설치 단계의 구성 요소가 있는 화면을 엽니다."
     },
@@ -3846,6 +3848,10 @@
         "managerDevMode" : {
           "title" : "개발자 모드",
           "description" : "내 Ledger에서 개발자 및 테스트넷 앱을 보여줍니다."
+        },
+        "listAppsV2" : {
+          "title" : "My Ledger용 실험 앱 목록",
+          "description" : "My Ledger 액세스와 즉각 처리 흐름을 개선합니다."
         },
         "scanForInvalidPaths" : {
           "title" : "확장 계정 검색",
@@ -5723,9 +5729,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "신원 확인을 통해\n 키 복구하기",
+    "description" : "비밀 복구 문구가 항상 사용자의 손이 닿는 곳에 있는 것은 아닙니다.\nLedger Nano X 전용 소프트 런칭. 2023년 5월 31일까지 무료 구독",
+    "cta" : "구독이 왜 필요한가요?",
+    "downloadLLM" : "Ledger Live 모바일 앱으로 <purple>Ledger Recover</purple> 구독"
   }
 }
