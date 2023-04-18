@@ -84,6 +84,7 @@
     "save" : "Speichern",
     "lock" : "Sperren",
     "showMore" : "Mehr anzeigen",
+    "backToMatchingURL" : "Zurück zu {{appName}}",
     "back" : "Zurück",
     "adjustFees" : "Gebühren anpassen",
     "reset" : "Zurücksetzen",
@@ -118,7 +119,6 @@
       "syncing" : "Synchronisiere...",
       "upToDate" : "Synchronisiert",
       "outdated" : "Pausiert",
-      "needsMigration" : "Klicken, um Konto zu aktualisieren",
       "error" : "Synchronisierungsfehler",
       "refresh" : "Neu laden",
       "devTools" : "Entwicklertools"
@@ -146,8 +146,6 @@
       "DELEGATE" : "Delegiert",
       "REDELEGATE" : "Erneut delegiert",
       "UNDELEGATE" : "Nicht delegiert",
-      "SUPPLY" : "Hinterlegt",
-      "REDEEM" : "Ausgezahlt",
       "APPROVE" : "Genehmigt",
       "VOTE" : "Abgestimmt",
       "FREEZE" : "Eingefroren",
@@ -214,26 +212,23 @@
     "stars" : "Favoritenliste",
     "accounts" : "Konten",
     "manager" : "My Ledger",
+    "earn" : "Verdienen",
     "exchange" : "Kaufen / Verkaufen",
     "swap" : "Umtauschen",
     "lend" : "Leihen",
     "catalog" : "Entdecken",
-    "market" : "Markt"
+    "market" : "Markt",
+    "protect" : "Recover"
   },
   "stars" : {
     "placeholder" : "Geben Sie einem Konto einen Stern, um es hier anzuzeigen.",
     "tooltip" : "Konto favorisieren"
   },
   "bridge" : {
-    "modalTitle" : "Öffne Gerätebrücke (device bridge)",
-    "openHeader" : "Geben Sie Ihre Gerätekonten über WebSocket ein",
-    "openDescription" : "Wenn Sie eine Verbindung (bridge) öffnen, setzen Sie alle Ihre Konten Drittanwendungen aus.",
-    "openedHeader" : "{{appName}} Verbindung (bridge) geöffnet",
-    "openedDescription" : "Sie können nun über WebSocket auf Ihr {{appName}} -Konto in Webanwendunden von Drittanbietern zugreifen.",
-    "completeHeader" : "Sitzung abgeschlossen",
-    "completeDescription" : "Die WebSocket Verbindung (bridge) ist nun geschlossen.",
-    "openButton" : "Öffnen",
-    "disconnectButton" : "Trennen"
+    "modalTitle" : "Geräteverbindung",
+    "openHeader" : "Geräteverbindung ist nicht mehr verfügbar",
+    "openDescription" : "Bitte konfigurieren Sie Ihre Browser-Wallet-Erweiterungen so, dass sie WebHID anstelle von Ledger Live verwenden.",
+    "closeButton" : "Schließen"
   },
   "swap2" : {
     "title" : "Umtauschen",
@@ -1218,9 +1213,13 @@
         "description" : "Ihre PIN kann 4 bis 8 Ziffern lang sein",
         "text" : "Jeder mit Zugriff auf Ihren {{deviceName}} und Ihre PIN kann auch auf alle Ihre Kryptowährungs- und NFT-Werte zugreifen."
       },
-      "recoveryContent" : {
-        "title" : "Wiederherstellungsphrase",
-        "content" : "Tippen Sie auf die Videos unten, um mehr über Ihre geheime Wiederherstellungsphrase zu erfahren"
+      "seedContent" : {
+        "title" : "Geheime Wiederherstellungsphrase",
+        "choiceNewOrRestore" : "Wählen Sie eine Einrichtungsoption, die Ihnen am besten gefällt.",
+        "newSeed" : "Tippen Sie auf die Videos unten, um mehr über Ihre geheime Wiederherstellungsphrase zu erfahren",
+        "choiceRestoreDirectOrRecover" : "Platzhalter – wählen Sie direkte Wiederherstellung oder verwenden Sie „Recover“ (Wiederherstellung)",
+        "recoverSeed" : "Platzhalter: „Recover“ (Wiederherstellung)",
+        "restoreSeed" : "Stellen Sie sicher, dass Sie für die Wiederherstellung eine geheime Wiederherstellungsphrase verwenden, die von einem Ledger-Gerät generiert wird, um die Sicherheit Ihrer Vermögenswerte zu gewährleisten.\n\nSie haben keine? Verwenden Sie Ihr {{productName}}, um eine neue Phrase zu generieren."
       },
       "softwareCheckContent" : {
         "title" : "Prüfung der Software",
@@ -1621,42 +1620,6 @@
     "countTooltip" : "1 Unterkonto",
     "countTooltip_plural" : "{{count}} Unterkonten"
   },
-  "migrateAccounts" : {
-    "overview" : {
-      "title" : "Ledger Live-Konten Update",
-      "successTitle" : "Konten erfolgreich aktualisiert",
-      "successDescPlu" : "Ihr {{assets}}-Konto ist nun aktualisiert und einsatzbereit",
-      "successDesc" : "Ihr {{assets}}-Konto ist nun aktualisiert und einsatzbereit",
-      "mobileTitle" : "Konten zu Mobile exportieren",
-      "mobileDesc" : "Klicken Sie auf die Schaltfläche unten, um Ihre aktualisierten Konten in die Ledger Live Mobile App zu exportieren.",
-      "mobileCTA" : "Exportieren zu Mobile",
-      "description" : "Neue Funktionen in Ledger Live erfordern eine Aktualisierung Ihrer Konten.",
-      "currency" : "1 {{currency}}-Konto muss aktualisiert werden:",
-      "currency_plural" : "{{count}} {{currency}} Konten müssen aktualisiert werden:",
-      "footer" : "Sie benötigen Ihr Ledger Gerät, um das Update abzuschließen",
-      "pendingDevices" : "1 Konto konnte nicht aktualisiert werden. Bitte schließen Sie das mit dem nachstehenden Konto verbundene Gerät an",
-      "pendingDevices_plural" : "{{totalMigratableAccounts}} Konten konnten nicht aktualisiert werden. Bitte verbinden Sie das mit dem nachstehenden Konto verbundene Gerät",
-      "doItLaterBtn" : "Später erledigen"
-    },
-    "progress" : {
-      "finished" : {
-        "title" : "{{currencyName}} Aktualisierung abgeschlossen",
-        "description" : ""
-      },
-      "scanning" : {
-        "title" : "{{currencyName}} Aktualisierung wird durchgeführt ...",
-        "description" : "Bitte warten Sie, bis Ihre Konten aktualisiert sind"
-      },
-      "finished-empty" : {
-        "title" : "{{currencyName}} Aktualisierung unvollständig",
-        "description" : "Keine {{currencyName}}-Konten zu aktualisieren"
-      }
-    },
-    "cta" : {
-      "startUpdate" : "Update starten",
-      "nextCurrency" : "Weiter mit {{currency}} Update"
-    }
-  },
   "addAccounts" : {
     "title" : "Konten hinzufügen",
     "breadcrumb" : {
@@ -1911,7 +1874,7 @@
         "plugin" : "Zur App gehen",
         "swap" : "Umtauschen",
         "tool" : "Weitere Informationen",
-        "app" : "Weitere Informationen"
+        "currency" : "Weitere Informationen"
       },
       "uninstall" : {
         "title" : "Alle deinstallieren",
@@ -2182,7 +2145,13 @@
     "steps" : {
       "recipient" : {
         "title" : "Empfänger",
-        "nftRecipient" : "Zu sendende NFT"
+        "nftRecipient" : "Zu sendende NFT",
+        "verifyAddress" : "Bitte überprüfen Sie, ob die Adresse mit der des Empfängers übereinstimmt.",
+        "namingService" : {
+          "resolve" : "Dies ist ein gültiger ENS, der mit der folgenden Adresse verknüpft ist:",
+          "supportLink" : "Was ist ein „Ethereum Name Service“?",
+          "reverse" : "Diese Adresse ist verknüpft mit {{domain}}"
+        }
       },
       "amount" : {
         "title" : "Betrag",
@@ -2518,6 +2487,8 @@
       },
       "manageTP" : "Vermögenswerte verwalten",
       "warnEarnRewards" : "Sie benötigen mindestens {{amount}}, um Prämien zu erhalten",
+      "warnDisableStaking" : "Nicht verfügbar",
+      "warnDisableStakingMessage" : "Die Staking-Funktion für Tron ist derzeit nicht verfügbar",
       "claimRewards" : "Prämien beanspruchen",
       "nextRewardsDate" : "Prämien können beansprucht werden am {{date}}",
       "claimAvailableRewards" : "Anspruch {{amount}}",
@@ -3819,6 +3790,8 @@
       "runLocalAppOpenButton" : "offen",
       "enableLearnStagingUrl" : "Staging-URL für Lernen-Seite",
       "enableLearnStagingUrlDesc" : "Aktivieren Sie die Staging-URL für die Lernen-Seite.",
+      "enableStagingNftMetadataService" : "Staging-NFT-Metadatendienst",
+      "enableStagingNftMetadataServiceDesc" : "Aktivieren Sie den Staging-NFT-Metadatendienst und setzen Sie den NFT-Cache zurück",
       "openOnboardingAppInstallDebug" : "Bildschirm zum Installieren der Debug-Anwendung der Onboarding-App öffnen",
       "openOnboardingAppInstallDebugDesc" : "Öffnen Sie einen Bildschirm mit den Komponenten aus dem Installationsschritt der Sync-Onboarding-App"
     },
@@ -3875,6 +3848,10 @@
         "managerDevMode" : {
           "title" : "Entwicklermodus",
           "description" : "Zeigen Sie Entwickler- und Testnet-Apps in My Ledger an."
+        },
+        "listAppsV2" : {
+          "title" : "Experimentelle Apps-Liste für My Ledger",
+          "description" : "Leistungsverbesserung für den Zugriff auf My Ledger und Inline-Flows."
         },
         "scanForInvalidPaths" : {
           "title" : "Erweiterte Kontosuche",
@@ -4893,9 +4870,6 @@
       "title" : "Die Prämien sind kleiner als die geschätzten Gebühren, die anfallen, um diese zu beanspruchen",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Sie können den freigegebenen Betrag nicht reduzieren, während Sie eine aktive Einzahlung haben."
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Etwas ist schief gelaufen (Fehler 1)",
       "description" : "Bitte kontaktieren Sie den Ledger-Support"
@@ -5737,8 +5711,10 @@
     "progress" : {
       "loading" : "Lade Daten...",
       "resolving" : "Auflösen von Abhängigkeiten",
-      "progress" : "Installieren von Apps {{progress}} %",
-      "disclaimer" : "Sie können jederzeit Apps aus Ledger Live hinzufügen oder entfernen."
+      "progress" : "Bleiben Sie auf Ledger Live, während die Apps installiert werden.",
+      "disclaimer" : "Sie können jederzeit Apps aus Ledger Live hinzufügen oder entfernen.",
+      "skippedInfo" : "Einige Apps sind nicht verfügbar. Sie müssen noch entwickelt werden für {{ productName }}.",
+      "skipped" : "Noch nicht verfügbar für {{ productName }}"
     },
     "cancelled" : {
       "title" : "Die Installation der App wurde auf {{productName}} abgebrochen",
@@ -5751,5 +5727,11 @@
       "subtitle" : "Geben Sie Ihren {{productName}} frei und starten Sie die Installation neu.",
       "installCTA" : "Installation neu starten"
     }
+  },
+  "discoverProtect" : {
+    "title" : "Stellen Sie Ihre Schlüssel\nmithilfe Ihrer Identität wieder her",
+    "description" : "Ihre geheime Wiederherstellungsphrase wird nicht immer in Reichweite sein.\nSoft Launch exklusiv für Ledger Nano X. Kostenloses Abonnement bis 31. Mai 2023",
+    "cta" : "Warum sollte ich abonnieren?",
+    "downloadLLM" : "Abonnieren Sie <purple>Ledger Recover</purple> über die Ledger Live Mobile-App"
   }
 }
