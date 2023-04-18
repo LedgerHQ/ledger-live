@@ -1874,7 +1874,7 @@
         "plugin" : "Перейти в приложение",
         "swap" : "Обмен",
         "tool" : "Подробнее",
-        "app" : "Подробнее"
+        "currency" : "Подробнее"
       },
       "uninstall" : {
         "title" : "Удалить все",
@@ -3790,6 +3790,8 @@
       "runLocalAppOpenButton" : "Открыть",
       "enableLearnStagingUrl" : "Промежуточный URL страницы Образование",
       "enableLearnStagingUrlDesc" : "Включить промежуточный URL-адрес для страницы Образование.",
+      "enableStagingNftMetadataService" : "Служба метаданных NFT на стейджинге",
+      "enableStagingNftMetadataServiceDesc" : "Активируйте службу метаданных NFT на стейджинге и сбросьте кэш этих токенов.",
       "openOnboardingAppInstallDebug" : "Запуск приложения настройки с экраном отладки",
       "openOnboardingAppInstallDebugDesc" : "Открыть экран с компонентами из шага синхронизации приложения настройки."
     },
@@ -3846,6 +3848,10 @@
         "managerDevMode" : {
           "title" : "Режим разработчика",
           "description" : "Показывать приложения от разработчиков и из тестнета во вкладке «Мой Ledger»."
+        },
+        "listAppsV2" : {
+          "title" : "Экспериментальный список приложений для вкладки «Мой Ledger»",
+          "description" : "Оптимизация встроенных потоков и доступа к вкладке «Мой Ledger»."
         },
         "scanForInvalidPaths" : {
           "title" : "Расширенный поиск по счетам",
