@@ -1,6 +1,8 @@
 /** ⚠️ keep this order of import. @see https://docs.ethers.io/v5/cookbook/react-native/#cookbook-reactnative ⚠️ */
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
+import { delay } from "@ledgerhq/live-promise";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import OptimismGasPriceOracleAbi from "../abis/optimismGasPriceOracle.abi.json";
@@ -10,8 +12,6 @@ import { transactionToEthersTransaction } from "../adapters";
 import { getSerializedTransaction } from "../transaction";
 import { makeLRUCache } from "../../../cache";
 import ERC20Abi from "../abis/erc20.abi.json";
-import { delay } from "../../../promise";
-import { log } from "@ledgerhq/logs";
 
 export const RPC_TIMEOUT = 5000; // wait 5 sec after a fail
 export const DEFAULT_RETRIES_RPC_METHODS = 3;
@@ -141,9 +141,7 @@ export const getGasEstimation = (
   transaction: EvmTransaction
 ): Promise<BigNumber> =>
   withApi(account.currency, async (api) => {
-    const { to, value, data } = transactionToEthersTransaction(
-      transaction
-    ) as ethers.providers.TransactionRequest;
+    const { to, value, data } = transactionToEthersTransaction(transaction);
 
     try {
       const gasEtimation = await api.estimateGas({
