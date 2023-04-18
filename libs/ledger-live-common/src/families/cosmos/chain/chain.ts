@@ -24,62 +24,62 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
       ? cosmosChainParams["osmo"] != null
       : cosmosChainParams[currencyId] != null;
   if (!initialized) {
-    switch (true) {
-      case currencyId === "osmosis" || currencyId === "osmo":
+    switch (currencyId) {
+      case "osmo":
+      case "osmosis":
         cosmosChainParams["osmo"] = new Osmosis();
         return cosmosChainParams["osmo"];
-      case currencyId === "cosmos":
+      case "cosmos":
         cosmosChainParams[currencyId] = new Cosmos();
         break;
-      case currencyId === "juno":
+      case "juno":
         cosmosChainParams[currencyId] = new Juno();
         break;
-      case currencyId === "axelar":
+      case "axelar":
         cosmosChainParams[currencyId] = new Axelar();
         break;
-      case currencyId === "binance_beacon_chain":
+      case "binance_beacon_chain":
         cosmosChainParams[currencyId] = new BinanceBeaconChain();
         break;
-      case currencyId === "desmos":
+      case "desmos":
         cosmosChainParams[currencyId] = new Desmos();
         break;
-      case currencyId === "injective":
+      case "injective":
         cosmosChainParams[currencyId] = new Injective();
         break;
-      case currencyId === "evmos":
+      case "evmos":
         cosmosChainParams[currencyId] = new Evmos();
         break;
-      case currencyId === "nyx":
+      case "nyx":
         cosmosChainParams[currencyId] = new Nyx();
         break;
-      case currencyId === "onomy":
+      case "onomy":
         cosmosChainParams[currencyId] = new Onomy();
         break;
-      case currencyId === "persistence":
+      case "persistence":
         cosmosChainParams[currencyId] = new Persistence();
         break;
-      case currencyId === "quicksilver":
+      case "quicksilver":
         cosmosChainParams[currencyId] = new Quicksilver();
         break;
-      case currencyId === "secret_network":
+      case "secret_network":
         cosmosChainParams[currencyId] = new SecretNetwork();
         break;
-      case currencyId === "sei_network":
+      case "sei_network":
         cosmosChainParams[currencyId] = new SeiNetwork();
         break;
-      case currencyId === "stargaze":
+      case "stargaze":
         cosmosChainParams[currencyId] = new Stargaze();
         break;
-      case currencyId === "stride":
+      case "stride":
         cosmosChainParams[currencyId] = new Stride();
         break;
-      case currencyId === "umee":
+      case "umee":
         cosmosChainParams[currencyId] = new Umee();
         break;
+      default:
+        throw new Error(`${currencyId} is not supported`);
     }
-  }
-  if (!cosmosChainParams[currencyId]) {
-    throw new Error(`${currencyId} is not supported`);
   }
   return cosmosChainParams[currencyId];
 
