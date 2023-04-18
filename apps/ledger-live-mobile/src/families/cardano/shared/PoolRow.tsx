@@ -2,13 +2,13 @@ import BigNumber from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { Text } from "@ledgerhq/native-ui";
+import { AccountLike } from "@ledgerhq/types-live";
 import Touchable from "../../../components/Touchable";
 import PoolImage from "./PoolImage";
-import { Text } from "@ledgerhq/native-ui";
 
 const PoolRow = ({
   onPress,
@@ -29,7 +29,11 @@ const PoolRow = ({
     alwaysShowSign: false,
     showCode: true,
   };
-  const poolCost = formatCurrencyUnit(unit, new BigNumber(pool.cost), formatConfig);
+  const poolCost = formatCurrencyUnit(
+    unit,
+    new BigNumber(pool.cost),
+    formatConfig,
+  );
 
   return (
     <Touchable
@@ -40,16 +44,9 @@ const PoolRow = ({
       onPress={onPressT}
     >
       <View style={styles.pool}>
-        <PoolImage
-          size={32}
-          name={pool.name ?? pool.poolId}
-        />
+        <PoolImage size={32} name={pool.name ?? pool.poolId} />
         <View style={styles.poolBody}>
-          <Text
-            numberOfLines={1}
-            fontWeight="semiBold"
-            style={styles.poolName}
-          >
+          <Text numberOfLines={1} fontWeight="semiBold" style={styles.poolName}>
             {`${pool.ticker} - ${pool.name}`}
           </Text>
           <Text
@@ -60,8 +57,7 @@ const PoolRow = ({
             <Trans i18nKey="cardano.delegation.commission" />{" "}
             <Text>{pool.margin} %</Text>
             {"   "}
-            <Trans i18nKey="cardano.delegation.cost" />{" "}
-            <Text>{poolCost}</Text>
+            <Trans i18nKey="cardano.delegation.cost" /> <Text>{poolCost}</Text>
           </Text>
         </View>
       </View>

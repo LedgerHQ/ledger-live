@@ -1,23 +1,21 @@
-import BigNumber from "bignumber.js";
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
-import { Currency } from "@ledgerhq/live-common/types/index";
 import type { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
+import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
 import PoolImage from "../shared/PoolImage";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import { Unit } from "@ledgerhq/types-cryptoassets";
 
 type Props = {
   delegation: CardanoDelegation;
   currency: Currency;
-  unit: Unit,
+  unit: Unit;
   onPress: (delegation: CardanoDelegation) => void;
   isLast?: boolean;
 };

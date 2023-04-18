@@ -11,16 +11,13 @@ import { accountScreenSelector } from "../../../reducers/accounts";
 import PoolHead from "../shared/PoolHead";
 import PoolRow from "../shared/PoolRow";
 import SelectPoolSearchBox from "../shared/SearchBox";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { CardanoDelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  accountId: string;
-  pool?: StakePool;
-};
+type Props = StackNavigatorProps<
+  CardanoDelegationFlowParamList,
+  ScreenName.CardanoDelegationPoolSelect
+>;
 
 export default function SelectPool({ navigation, route }: Props) {
   const { colors } = useTheme();

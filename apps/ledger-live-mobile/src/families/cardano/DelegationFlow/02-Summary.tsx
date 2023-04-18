@@ -23,11 +23,18 @@ import {
   formatCurrencyUnit,
   getCurrencyColor,
 } from "@ledgerhq/live-common/currencies/index";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
-import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
-import type { CardanoDelegation, Transaction } from "@ledgerhq/live-common/families/cardano/types";
+import type {
+  APIGetPoolsDetail,
+  StakePool,
+} from "@ledgerhq/live-common/families/cardano/api/api-types";
+import type {
+  CardanoAccount,
+  CardanoDelegation,
+} from "@ledgerhq/live-common/families/cardano/types";
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/getPools";
+import { Text } from "@ledgerhq/native-ui";
+import { AccountLike } from "@ledgerhq/types-live";
 import Button from "../../../components/Button";
 import Skeleton from "../../../components/Skeleton";
 import Circle from "../../../components/Circle";
@@ -41,18 +48,13 @@ import { ScreenName } from "../../../const";
 import ArrowRight from "../../../icons/ArrowRight";
 import { TrackScreen } from "../../../analytics";
 import { rgba } from "../../../colors";
-import { Text } from "@ledgerhq/native-ui";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { CardanoDelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  pool: StakePool;
-  transaction?: Transaction;
-  fromSelectAmount: boolean;
-};
+type Props = StackNavigatorProps<
+  CardanoDelegationFlowParamList,
+  ScreenName.CardanoDelegationSummary
+>;
 
 export default function DelegationSummary({ navigation, route }: Props) {
   const { pool } = route.params;
@@ -60,26 +62,29 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account must be defined");
 
-  const { cardanoResources } = account;
-  const currentDelegation: CardanoDelegation = cardanoResources.delegation;
+  const { cardanoResources } = account as CardanoAccount;
+  const currentDelegation = cardanoResources.delegation;
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);  
+  const bridge = getAccountBridge(account, undefined);
 
-  const [isFetchingPoolDetails, setIsFetchingPoolDetails] = useState(true);
-  const [ledgerPools, setLedgerPools] = useState([]);
+  const [isFetchingPoolDetails, setIsFetchingPoolDetails] = useState(false);
+  const [ledgerPools, setLedgerPools] = useState<Array<StakePool>>([]);
 
-  useEffect(()=>{
-    if (LEDGER_POOL_IDS.includes(currentDelegation?.poolId)) {
+  useEffect(() => {
+    if (LEDGER_POOL_IDS.includes(currentDelegation?.poolId ?? "")) {
       setIsFetchingPoolDetails(false);
       return;
     }
 
-    fetchPoolDetails(account.currency, LEDGER_POOL_IDS).then((apiRes:any)=> {
-      setLedgerPools(apiRes.pools);
-    }).finally(() => {
-      setIsFetchingPoolDetails(false);
-    });
-  },[]);
+    if (account.type === "Account")
+      fetchPoolDetails(account.currency, LEDGER_POOL_IDS)
+        .then((apiRes: APIGetPoolsDetail) => {
+          setLedgerPools(apiRes.pools);
+        })
+        .finally(() => {
+          setIsFetchingPoolDetails(false);
+        });
+  }, []);
 
   const chosenPool = useMemo(() => {
     if (pool !== undefined) {
@@ -134,13 +139,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
           poolId: chosenPool.poolId,
         }),
       );
-  }, [
-    route.params,
-    updateTransaction,
-    bridge,
-    setTransaction,
-    chosenPool,
-  ]);
+  }, [route.params, updateTransaction, bridge, setTransaction, chosenPool]);
 
   const onChangePool = useCallback(() => {
     navigation.navigate(ScreenName.CardanoDelegationPoolSelect, {
@@ -155,7 +154,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.CardanoDelegationSelectDevice, {
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      parentId: parentAccount?.id || undefined,
       transaction,
       status,
     });
@@ -180,7 +179,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
             currentDelegation={currentDelegation}
             onChangePool={onChangePool}
             isFetchingPoolDetails={isFetchingPoolDetails}
-            chosenPool={chosenPool}
+            chosenPool={chosenPool ?? undefined}
             account={account}
           />
         </View>
@@ -192,7 +191,14 @@ export default function DelegationSummary({ navigation, route }: Props) {
           title={<Trans i18nKey="common.continue" />}
           containerStyle={styles.continueButton}
           onPress={onContinue}
-          disabled={bridgePending || !!bridgeError || hasErrors || !chosenPool || (currentDelegation && currentDelegation.poolId === chosenPool.poolId)}
+          disabled={
+            bridgePending ||
+            !!bridgeError ||
+            hasErrors ||
+            !chosenPool ||
+            (currentDelegation &&
+              currentDelegation.poolId === chosenPool.poolId)
+          }
           pending={bridgePending}
         />
       </View>
@@ -254,14 +260,14 @@ const styles = StyleSheet.create({
   summarySection: {
     flexDirection: "column",
     alignItems: "flex-start",
-    width:"100%"
+    width: "100%",
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingVertical: 5,
-    width: "100%"
+    width: "100%",
   },
   labelText: {
     paddingRight: 8,
@@ -275,7 +281,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
 function SummaryWords({
   chosenPool,
   account,
@@ -285,8 +290,8 @@ function SummaryWords({
 }: {
   chosenPool?: StakePool;
   account: AccountLike;
-  currentDelegation: CardanoDelegation;
-  isFetchingPoolDetails: boolean,
+  currentDelegation?: CardanoDelegation;
+  isFetchingPoolDetails: boolean;
   onChangePool: () => void;
 }) {
   const unit = getAccountUnit(account);
@@ -324,7 +329,7 @@ function SummaryWords({
     inputRange: [0, 1],
     outputRange: ["0deg", "30deg"],
   });
-  
+
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -332,41 +337,42 @@ function SummaryWords({
   };
 
   const toDelegationPoolData = useMemo(() => {
-    return chosenPool? [
-      {
-        label: t('cardano.delegation.cost'),
-        Component: (
-          <LText
-            numberOfLines={1}
-            semiBold
-            ellipsizeMode="middle"
-            style={[styles.valueText]}
-          >
-            {formatCurrencyUnit(unit, new BigNumber(chosenPool?.cost || new BigNumber(0)), formatConfig)}
-          </LText>
-        ),
-      },
-      {
-        label: t('cardano.delegation.commission'),
-        Component: (
-          <LText
-            semiBold
-            ellipsizeMode="middle"
-            style={[styles.valueText]}
-          >
-            {chosenPool?.margin +" %"}
-          </LText>
-        ),
-      },
-    ]:[];
-      
+    return chosenPool
+      ? [
+          {
+            label: t("cardano.delegation.cost"),
+            Component: (
+              <LText
+                numberOfLines={1}
+                semiBold
+                ellipsizeMode="middle"
+                style={[styles.valueText]}
+              >
+                {formatCurrencyUnit(
+                  unit,
+                  new BigNumber(chosenPool?.cost || new BigNumber(0)),
+                  formatConfig,
+                )}
+              </LText>
+            ),
+          },
+          {
+            label: t("cardano.delegation.commission"),
+            Component: (
+              <LText semiBold ellipsizeMode="middle" style={[styles.valueText]}>
+                {chosenPool?.margin + " %"}
+              </LText>
+            ),
+          },
+        ]
+      : [];
   }, [chosenPool]);
-  
+
   return (
     <>
       <View style={styles.summarySection}>
-        {currentDelegation && currentDelegation.poolId &&
-          <View style={[{flexDirection:'column', marginBottom:30}]}>
+        {currentDelegation && currentDelegation.poolId && (
+          <View style={[{ flexDirection: "column", marginBottom: 30 }]}>
             <View>
               <Text
                 numberOfLines={1}
@@ -377,26 +383,35 @@ function SummaryWords({
                 <Trans i18nKey={`cardano.delegation.delegatingFrom`} />
               </Text>
             </View>
-            <View style={[{flexDirection:"row", alignItems:"center", marginTop:15, minWidth:'100%'}]}>
+            <View
+              style={[
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 15,
+                  minWidth: "100%",
+                },
+              ]}
+            >
               <Circle
                 size={50}
                 style={[
                   styles.poolCircle,
-                  { borderColor: colors.primary,  borderStyle: "solid",},
+                  { borderColor: colors.primary, borderStyle: "solid" },
                 ]}
               >
                 <PoolImage
-                  size={ LEDGER_POOL_IDS.includes(currentDelegation?.poolId) ? 40: 50}
-                  isLedger={
+                  size={
                     LEDGER_POOL_IDS.includes(currentDelegation?.poolId)
+                      ? 40
+                      : 50
                   }
-                  name={
-                    currentDelegation?.name ?? currentDelegation?.poolId
-                  }
+                  isLedger={LEDGER_POOL_IDS.includes(currentDelegation?.poolId)}
+                  name={currentDelegation?.name ?? currentDelegation?.poolId}
                 />
               </Circle>
               <Text
-                style={[{marginLeft:15, flex:1, flexGrow:1}]}
+                style={[{ marginLeft: 15, flex: 1, flexGrow: 1 }]}
                 numberOfLines={1}
                 fontWeight={"semiBold"}
                 ellipsizeMode="tail"
@@ -406,8 +421,8 @@ function SummaryWords({
               </Text>
             </View>
           </View>
-        }
-        <View style={[{flexDirection:'column', marginBottom:10,}]}>
+        )}
+        <View style={[{ flexDirection: "column", marginBottom: 10 }]}>
           <View>
             <Text
               numberOfLines={1}
@@ -418,73 +433,94 @@ function SummaryWords({
               <Trans i18nKey={`cardano.delegation.delegatingTo`} />
             </Text>
           </View>
-            
-          
-          {
-            isFetchingPoolDetails ?
-              <Skeleton loading={true} animated={true} style={{marginTop:10,height:70, minWidth:'100%', borderRadius:5}} /> :
-              <Touchable
-                event="DelegationFlowSummaryChangeCircleBtn"
-                onPress={onChangePool}
-              >
-                <View style={[{flexDirection:"row", alignItems:"center", marginTop:15, minWidth:'100%'}]}>
-                  <Circle
-                    size={50}
-                    style={[
-                      styles.poolCircle,
-                      { borderColor: colors.primary },
-                    ]}
-                  >
-                    <Animated.View
-                      style={{
-                        transform: [
-                          {
-                            rotate,
-                          },
-                        ],
-                      }}
-                    >
-                      {
-                        chosenPool ?
-                        <PoolImage
-                          size={LEDGER_POOL_IDS.includes(chosenPool?.poolId)? 40: 50}
-                          isLedger={
-                            LEDGER_POOL_IDS.includes(chosenPool?.poolId)
-                          }
-                          name={
-                            chosenPool?.name ?? chosenPool?.poolId
-                          }
-                        /> : 
-                        <PoolImage
-                          size={50}
-                          isLedger={false}
-                          name={' '}
-                        />
-                      }
-                    </Animated.View>  
-                    <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
-                      <Icon size={13} name="edit-2" />
-                    </Circle>
-                  </Circle>
-                  <Text
-                    style={[{marginLeft:15,flex:1, flexGrow:1}]}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    fontWeight={"semiBold"}
-                    fontSize={18}
-                  >
 
-                    {chosenPool ? `${chosenPool?.ticker} - ${chosenPool?.name}`: t("cardano.delegation.selectPool")}
-                  </Text>
-                  <View style={{flexDirection: "row", alignItems: "center", marginLeft:10}}>
-                    <LText style={{fontSize: 14}} color="live">
-                      {chosenPool ? t("cardano.delegation.change"): t("cardano.delegation.select")}
-                    </LText>
-                    <ArrowRight color={colors.live} size={14} />
-                  </View>
+          {isFetchingPoolDetails ? (
+            <Skeleton
+              loading={true}
+              animated={true}
+              style={{
+                marginTop: 10,
+                height: 70,
+                minWidth: "100%",
+                borderRadius: 5,
+              }}
+            />
+          ) : (
+            <Touchable
+              event="DelegationFlowSummaryChangeCircleBtn"
+              onPress={onChangePool}
+            >
+              <View
+                style={[
+                  {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginTop: 15,
+                    minWidth: "100%",
+                  },
+                ]}
+              >
+                <Circle
+                  size={50}
+                  style={[styles.poolCircle, { borderColor: colors.primary }]}
+                >
+                  <Animated.View
+                    style={{
+                      transform: [
+                        {
+                          rotate,
+                        },
+                      ],
+                    }}
+                  >
+                    {chosenPool ? (
+                      <PoolImage
+                        size={
+                          LEDGER_POOL_IDS.includes(chosenPool?.poolId) ? 40 : 50
+                        }
+                        isLedger={LEDGER_POOL_IDS.includes(chosenPool?.poolId)}
+                        name={chosenPool?.name ?? chosenPool?.poolId}
+                      />
+                    ) : (
+                      <PoolImage size={50} isLedger={false} name={" "} />
+                    )}
+                  </Animated.View>
+                  <Circle
+                    style={styles.changeDelegator}
+                    bg={colors.primary}
+                    size={26}
+                  >
+                    <Icon size={13} name="edit-2" />
+                  </Circle>
+                </Circle>
+                <Text
+                  style={[{ marginLeft: 15, flex: 1, flexGrow: 1 }]}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  fontWeight={"semiBold"}
+                  fontSize={18}
+                >
+                  {chosenPool
+                    ? `${chosenPool?.ticker} - ${chosenPool?.name}`
+                    : t("cardano.delegation.selectPool")}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginLeft: 10,
+                  }}
+                >
+                  <LText style={{ fontSize: 14 }} color="live">
+                    {chosenPool
+                      ? t("cardano.delegation.change")
+                      : t("cardano.delegation.select")}
+                  </LText>
+                  <ArrowRight color={colors.live} size={14} />
                 </View>
-              </Touchable>
-          }
+              </View>
+            </Touchable>
+          )}
         </View>
         {toDelegationPoolData.map((field, i) => (
           <DataField
@@ -493,7 +529,16 @@ function SummaryWords({
             isLast={i === toDelegationPoolData.length - 1}
           />
         ))}
-        <View style={[{borderBottomWidth: 1, borderBottomColor: colors.lightFog, width:'100%', marginVertical:10}]}></View>
+        <View
+          style={[
+            {
+              borderBottomWidth: 1,
+              borderBottomColor: colors.lightFog,
+              width: "100%",
+              marginVertical: 10,
+            },
+          ]}
+        />
         <DataField
           label={t("cardano.delegation.networkFees")}
           Component={
@@ -507,8 +552,7 @@ function SummaryWords({
             </LText>
           }
         />
-        {
-          !(currentDelegation && currentDelegation.poolId)?
+        {!(currentDelegation && currentDelegation.poolId) ? (
           <DataField
             label={t("cardano.delegation.stakeKeyRegistrationDeposit")}
             Component={
@@ -522,8 +566,9 @@ function SummaryWords({
               </LText>
             }
           />
-          :<></>
-        }
+        ) : (
+          <></>
+        )}
       </View>
     </>
   );
@@ -549,23 +594,15 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
 };
 
 type FieldType = {
-  label: ReactNode,
-  Component: ReactNode,
+  label: ReactNode;
+  Component: ReactNode;
 };
 
 function DataField({ label, Component }: FieldType) {
-  const { colors } = useTheme();
   return (
-    <View
-      style={styles.row}
-    >
+    <View style={styles.row}>
       <View>
-        <LText
-          numberOfLines={1}
-          medium
-          style={styles.labelText}
-          color="smoke"
-        >
+        <LText numberOfLines={1} medium style={styles.labelText} color="smoke">
           {label}
         </LText>
       </View>

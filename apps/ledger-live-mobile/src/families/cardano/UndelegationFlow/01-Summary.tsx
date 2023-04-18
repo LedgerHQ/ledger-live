@@ -16,13 +16,13 @@ import {
   formatCurrencyUnit,
   getCurrencyColor,
 } from "@ledgerhq/live-common/currencies/index";
-import { AccountLike } from "@ledgerhq/live-common/types/index";
 import type {
+  CardanoAccount,
   CardanoDelegation,
-  Transaction,
 } from "@ledgerhq/live-common/families/cardano/types";
+import { Text } from "@ledgerhq/native-ui";
+import { AccountLike } from "@ledgerhq/types-live";
 import Button from "../../../components/Button";
-import Skeleton from "../../../components/Skeleton";
 import Circle from "../../../components/Circle";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
@@ -31,24 +31,21 @@ import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import { rgba } from "../../../colors";
-import { Text } from "@ledgerhq/native-ui";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { CardanoUndelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: { params: RouteParams };
-};
-
-type RouteParams = {
-  transaction?: Transaction;
-};
+type Props = StackNavigatorProps<
+  CardanoUndelegationFlowParamList,
+  ScreenName.CardanoUndelegationSummary
+>;
 
 export default function UndelegationSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account must be defined");
 
-  const { cardanoResources } = account;
-  const currentDelegation: CardanoDelegation = cardanoResources.delegation;
+  const { cardanoResources } = account as CardanoAccount;
+  const currentDelegation = cardanoResources.delegation as CardanoDelegation;
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, undefined);
 
@@ -76,7 +73,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.CardanoUndelegationSelectDevice, {
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      parentId: parentAccount?.id || undefined,
       transaction,
       status,
     });
@@ -188,7 +185,6 @@ const styles = StyleSheet.create({
 
 function SummaryWords({
   account,
-  currentDelegation,
 }: {
   account: AccountLike;
   currentDelegation: CardanoDelegation;
@@ -218,7 +214,7 @@ function SummaryWords({
               marginVertical: 10,
             },
           ]}
-        ></View>
+        />
         <DataField
           label={t("cardano.delegation.networkFees")}
           Component={
@@ -276,7 +272,6 @@ type FieldType = {
 };
 
 function DataField({ label, Component }: FieldType) {
-  const { colors } = useTheme();
   return (
     <View style={styles.row}>
       <View>

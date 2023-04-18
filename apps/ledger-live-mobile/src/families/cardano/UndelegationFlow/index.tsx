@@ -31,7 +31,7 @@ function UndelegationFlow() {
       <Stack.Screen
         name={ScreenName.CardanoUndelegationSummary}
         component={UndelegationSummary}
-        options={({ route }) => ({
+        options={() => ({
           headerTitle: () => (
             <StepHeader title={t("cardano.undelegation.undelegate")} />
           ),
