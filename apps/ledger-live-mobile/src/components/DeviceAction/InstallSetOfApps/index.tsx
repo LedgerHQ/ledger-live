@@ -15,6 +15,7 @@ import {
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { TrackScreen, track } from "../../../analytics";
 import { DeviceActionDefaultRendering } from "..";
 import QueuedDrawer from "../../QueuedDrawer";
@@ -30,6 +31,7 @@ type Props = {
   device: Device;
   onResult: (done: boolean) => void;
   onError?: (error: Error) => void;
+  debugLastSeenDeviceModelId?: DeviceModelId;
 };
 
 const action = createAction(connectApp);
@@ -48,6 +50,7 @@ const InstallSetOfApps = ({
   onResult,
   onError,
   remountMe,
+  debugLastSeenDeviceModelId,
 }: Props & { remountMe: () => void }) => {
   const { t } = useTranslation();
   const [userConfirmed, setUserConfirmed] = useState(false);
@@ -55,11 +58,10 @@ const InstallSetOfApps = ({
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
     lastSeenDeviceSelector,
   );
-  const lastDeviceProductName = lastSeenDevice?.modelId
-    ? getDeviceModel(lastSeenDevice?.modelId).productName
-    : lastSeenDevice?.modelId;
+  const lastSeenDeviceModelId =
+    debugLastSeenDeviceModelId || lastSeenDevice?.modelId;
 
-  const shouldRestoreApps = restore && !!lastSeenDevice;
+  const shouldRestoreApps = restore && !!lastSeenDeviceModelId;
 
   const dependenciesToInstall = useMemo(() => {
     if (shouldRestoreApps && lastSeenDevice) {
@@ -202,7 +204,8 @@ const InstallSetOfApps = ({
       <TrackScreen category="Restore Applications Start" />
       <Restore
         deviceName={productName}
-        lastSeenDeviceName={lastDeviceProductName}
+        deviceModelId={selectedDevice.modelId}
+        lastSeenDeviceModelId={lastSeenDeviceModelId}
         onConfirm={() => {
           track("button_clicked", { button: "Restore applications" });
           setUserConfirmed(true);

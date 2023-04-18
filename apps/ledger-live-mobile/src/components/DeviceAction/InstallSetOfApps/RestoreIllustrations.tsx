@@ -1,3 +1,4 @@
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useTheme } from "@react-navigation/native";
 
 import NanoToNanoDark from "./assets/dark/NanoToNano";
@@ -30,13 +31,16 @@ const restoreIllustrations = {
 };
 
 type Props = {
-  deviceName?: string;
-  lastSeenDeviceName?: string;
+  deviceModelId?: DeviceModelId;
+  lastSeenDeviceModelId?: DeviceModelId;
 };
 
-const RestoreIllustrations = ({ deviceName, lastSeenDeviceName }: Props) => {
-  const isFromStax = lastSeenDeviceName?.indexOf("Stax") !== -1 && true;
-  const isToStax = deviceName?.indexOf("Stax") !== -1 && true;
+const RestoreIllustrations = ({
+  deviceModelId,
+  lastSeenDeviceModelId,
+}: Props) => {
+  const isFromStax = lastSeenDeviceModelId === DeviceModelId.stax;
+  const isToStax = deviceModelId === DeviceModelId.stax;
 
   const { dark } = useTheme();
   const selectedTheme = dark ? "dark" : "light";

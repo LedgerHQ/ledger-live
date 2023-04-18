@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import RestoreIllustrations from "./RestoreIllustrations";
 
@@ -8,21 +9,23 @@ type Props = {
   onConfirm: () => void;
   onReject: () => void;
   deviceName?: string;
-  lastSeenDeviceName?: string;
+  deviceModelId?: DeviceModelId;
+  lastSeenDeviceModelId?: DeviceModelId;
 };
 
 const Restore = ({
   onConfirm,
   onReject,
   deviceName,
-  lastSeenDeviceName,
+  deviceModelId,
+  lastSeenDeviceModelId,
 }: Props) => {
   return (
     <Flex>
       <Flex alignItems="center" mb={7} mt={3}>
         <RestoreIllustrations
-          lastSeenDeviceName={lastSeenDeviceName}
-          deviceName={deviceName}
+          lastSeenDeviceModelId={lastSeenDeviceModelId}
+          deviceModelId={deviceModelId}
         />
       </Flex>
       <Text variant="h5" fontWeight="bold" textAlign="center">

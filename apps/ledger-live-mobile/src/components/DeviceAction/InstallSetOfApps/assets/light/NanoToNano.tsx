@@ -1,78 +1,87 @@
 import * as React from "react";
-import Svg, { G, Path, Circle, Mask } from "react-native-svg";
+import Svg, { Path } from "react-native-svg";
 
 const NanoToNano = (
-  <Svg width={283} height={144} viewBox="0 0 283 144" fill="none">
-    <Mask
-      id="a"
-      style={{
-        maskType: "alpha",
-      }}
-      maskUnits="userSpaceOnUse"
-      x={62}
-      y={32}
-      width={19}
-      height={43}
-    >
-      <Path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M81 32H62v42.5a9.5 9.5 0 0119 0V32z"
-        fill="#D9D9D9"
-      />
-    </Mask>
-    <G mask="url(#a)">
-      <Path
-        d="M65 40a3 3 0 013-3h7a3 3 0 013 3v65a2 2 0 01-2 2h-9a2 2 0 01-2-2V40z"
-        stroke="#fff"
-      />
-    </G>
+  <Svg width={283} height={144} fill="none">
     <Path
-      d="M66 75.5a5.5 5.5 0 015.5-5.5v0a5.5 5.5 0 015.5 5.5v30.775c0 .4-.325.725-.725.725h-9.55a.725.725 0 01-.725-.725V75.5z"
-      fill="#fff"
-      stroke="#fff"
-      strokeWidth={3}
+      fill="#000"
+      fillRule="evenodd"
+      d="M65.5 40a2.5 2.5 0 0 1 2.5-2.5h7a2.5 2.5 0 0 1 2.5 2.5v27.134c.356.29.69.606 1 .943V40a3.5 3.5 0 0 0-3.5-3.5h-7a3.5 3.5 0 0 0-3.5 3.5v28.077c.31-.337.644-.653 1-.943V40Z"
+      clipRule="evenodd"
     />
-    <Circle cx={71.5} cy={75} r={3} fill="#fff" stroke="#000" />
-    <Circle cx={71.5} cy={43.75} r={2.75} stroke="#fff" />
-    <Circle opacity={0.2} cx={114} cy={72} r={3} fill="#BBB0FF" />
-    <Circle opacity={0.4} cx={128} cy={72} r={3} fill="#BBB0FF" />
-    <Circle opacity={0.6} cx={142} cy={72} r={3} fill="#BBB0FF" />
-    <Circle opacity={0.8} cx={156} cy={72} r={3} fill="#BBB0FF" />
-    <Circle cx={170} cy={72} r={3} fill="#BBB0FF" />
-    <Mask
-      id="b"
-      style={{
-        maskType: "alpha",
-      }}
-      maskUnits="userSpaceOnUse"
-      x={204}
-      y={32}
-      width={19}
-      height={43}
-    >
-      <Path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M223 32h-19v42.5a9.5 9.5 0 019.5-9.5 9.5 9.5 0 019.5 9.5V32z"
-        fill="#D9D9D9"
-      />
-    </Mask>
-    <G mask="url(#b)">
-      <Path
-        d="M207 40a3 3 0 013-3h7a3 3 0 013 3v65a2 2 0 01-2 2h-9a2 2 0 01-2-2V40z"
-        stroke="#fff"
-      />
-    </G>
     <Path
-      d="M208 75.5a5.5 5.5 0 015.5-5.5v0a5.5 5.5 0 015.5 5.5v30.775c0 .4-.325.725-.725.725h-9.55a.726.726 0 01-.725-.725V75.5z"
-      fill="#fff"
-      stroke="#fff"
-      strokeWidth={3}
+      fill="#000"
+      d="M66 75.5a5.5 5.5 0 1 1 11 0v30.775c0 .4-.325.725-.725.725h-9.55a.725.725 0 0 1-.725-.725V75.5Z"
     />
-    <Circle cx={213.5} cy={75} r={3} fill="#fff" stroke="#000" />
-    <Circle cx={213.5} cy={43.75} r={2.75} stroke="#fff" />
+    <Path
+      fill="#000"
+      fillRule="evenodd"
+      d="M71.5 71.5a4 4 0 0 0-4 4v30h8v-30a4 4 0 0 0-4-4Zm-7 4a7 7 0 1 1 14 0v30.775a2.225 2.225 0 0 1-2.225 2.225h-9.55a2.225 2.225 0 0 1-2.225-2.225V75.5Z"
+      clipRule="evenodd"
+    />
+    <Path fill="#000" d="M71.5 78a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+    <Path
+      fill="#fff"
+      fillRule="evenodd"
+      d="M71.5 72.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM68 75a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0Z"
+      clipRule="evenodd"
+    />
+    <Path
+      fill="#000"
+      fillRule="evenodd"
+      d="M71.5 41.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm-3.25 2.25a3.25 3.25 0 1 1 6.5 0 3.25 3.25 0 0 1-6.5 0Z"
+      clipRule="evenodd"
+    />
+    <Path
+      fill="#7469C9"
+      d="M114 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+      opacity={0.2}
+    />
+    <Path
+      fill="#7469C9"
+      d="M128 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+      opacity={0.4}
+    />
+    <Path
+      fill="#7469C9"
+      d="M142 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+      opacity={0.6}
+    />
+    <Path
+      fill="#7469C9"
+      d="M156 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+      opacity={0.8}
+    />
+    <Path fill="#7469C9" d="M170 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+    <Path
+      fill="#000"
+      fillRule="evenodd"
+      d="M207.5 40a2.5 2.5 0 0 1 2.5-2.5h7a2.5 2.5 0 0 1 2.5 2.5v27.134c.356.29.69.605 1 .943V40a3.5 3.5 0 0 0-3.5-3.5h-7a3.5 3.5 0 0 0-3.5 3.5v28.077c.31-.338.644-.653 1-.943V40Z"
+      clipRule="evenodd"
+    />
+    <Path
+      fill="#000"
+      d="M208 75.5a5.5 5.5 0 1 1 11 0v30.775c0 .4-.325.725-.725.725h-9.55a.726.726 0 0 1-.725-.725V75.5Z"
+    />
+    <Path
+      fill="#000"
+      fillRule="evenodd"
+      d="M213.5 71.5a4 4 0 0 0-4 4v30h8v-30a4 4 0 0 0-4-4Zm-7 4a7 7 0 1 1 14 0v30.775a2.226 2.226 0 0 1-2.225 2.225h-9.55a2.226 2.226 0 0 1-2.225-2.225V75.5Z"
+      clipRule="evenodd"
+    />
+    <Path fill="#000" d="M213.5 78a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+    <Path
+      fill="#fff"
+      fillRule="evenodd"
+      d="M213.5 72.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM210 75a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0Z"
+      clipRule="evenodd"
+    />
+    <Path
+      fill="#000"
+      fillRule="evenodd"
+      d="M213.5 41.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm-3.25 2.25a3.25 3.25 0 1 1 6.5 0 3.25 3.25 0 0 1-6.5 0Z"
+      clipRule="evenodd"
+    />
   </Svg>
 );
-
 export default NanoToNano;
