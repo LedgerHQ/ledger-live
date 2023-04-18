@@ -1874,7 +1874,7 @@
         "plugin" : "Ir a la aplicación",
         "swap" : "Permutar",
         "tool" : "Más información",
-        "app" : "Más información"
+        "currency" : "Más información"
       },
       "uninstall" : {
         "title" : "Desinstalar todas",
@@ -3790,6 +3790,8 @@
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "URL de ensayo de la página Learn",
       "enableLearnStagingUrlDesc" : "Activar el URL de ensayo de la página Learn.",
+      "enableStagingNftMetadataService" : "Servicio de metadatos de NFT de prueba",
+      "enableStagingNftMetadataServiceDesc" : "Activa el servicio de metadatos de NFT de prueba y restablece la caché de NFT",
       "openOnboardingAppInstallDebug" : "Abre la pantalla de depuración de la instalación de aplicaciones iniciales",
       "openOnboardingAppInstallDebugDesc" : "Abre una pantalla con los componentes del paso de sincronización de la instalación de aplicaciones iniciales"
     },
@@ -3846,6 +3848,10 @@
         "managerDevMode" : {
           "title" : "Modo de desarrollador",
           "description" : "Mostrar aplicaciones de desarrollador y testnet en Mi Ledger."
+        },
+        "listAppsV2" : {
+          "title" : "Aplicaciones experimentales de lista para Mi Ledger",
+          "description" : "Mejora de rendimiento en el acceso y los flujos en línea de Mi Ledger."
         },
         "scanForInvalidPaths" : {
           "title" : "Búsqueda de cuenta extendida",
