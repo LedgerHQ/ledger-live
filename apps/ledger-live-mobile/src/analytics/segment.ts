@@ -18,6 +18,11 @@ import { snakeCase } from "lodash";
 import { useCallback } from "react";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import {
+  hasNftInAccounts,
+  GENESIS_PASS_COLLECTION_CONTRACT,
+  INFINITY_PASS_COLLECTION_CONTRACT,
+} from "@ledgerhq/live-common/nft/helpers";
+import {
   getAndroidArchitecture,
   getAndroidVersionCode,
 } from "../logic/cleanBuildVersion";
@@ -46,11 +51,6 @@ import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
 import { Maybe } from "../types/helpers";
-import {
-  GENESIS_PASS_COLLECTION_CONTRACT,
-  INFINITY_PASS_COLLECTION_CONTRACT,
-  hasNftInAccounts,
-} from "../helpers/nfts";
 import { appStartupTime } from "../StartupTimeMarker";
 
 let sessionId = uuid();

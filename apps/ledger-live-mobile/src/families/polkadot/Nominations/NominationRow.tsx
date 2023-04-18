@@ -66,7 +66,7 @@ export default function NominationRow({
 
           <View style={styles.statusWrapper}>
             {status === "active" && (
-              <LText color={colors.success.c100} numberOfLines={1}>
+              <LText color={colors.success.c50} numberOfLines={1}>
                 {t("polkadot.nomination.active")}
               </LText>
             )}
@@ -81,7 +81,7 @@ export default function NominationRow({
               </LText>
             )}
             {!status && (
-              <LText color={colors.warning.c100} numberOfLines={1}>
+              <LText color={colors.warning.c50} numberOfLines={1}>
                 {t("polkadot.nomination.notValidator")}
               </LText>
             )}

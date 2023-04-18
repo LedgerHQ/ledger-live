@@ -93,7 +93,7 @@ const getIconBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolea
 
 const getIconBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
   if (isLastItem) {
-    return theme.colors.success.c100;
+    return theme.colors.success.c50;
   } else if (status === "inactive") {
     return theme.colors.neutral.c50;
   }
@@ -136,7 +136,7 @@ export default function TimelineIndicator({
       <CenterCircle status={status} isLastItem={isLastItem}>
         {status === "completed" && (
           <CircledCheckSolidMedium
-            color={isLastItem ? colors.success.c100 : colors.primary.c80}
+            color={isLastItem ? colors.success.c50 : colors.primary.c80}
             size={20}
           />
         )}

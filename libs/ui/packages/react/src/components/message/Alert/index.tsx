@@ -61,12 +61,12 @@ const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) =
     case "warning":
       return {
         background: theme.colors.warning.c30,
-        color: theme.colors.warning.c100,
+        color: theme.colors.warning.c50,
       };
     case "error":
       return {
         background: theme.colors.error.c30,
-        color: theme.colors.error.c100,
+        color: theme.colors.error.c50,
       };
     case "info":
     default:
