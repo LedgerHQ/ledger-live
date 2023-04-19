@@ -79,7 +79,9 @@ import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import DeviceConnect from "../../screens/DeviceConnect";
+import DeviceConnect, {
+  deviceConnectHeaderOptions,
+} from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
@@ -545,8 +547,7 @@ export default function BaseNavigator() {
         name={ScreenName.DeviceConnect}
         component={DeviceConnect}
         options={{
-          title: t("deviceConnect.title"),
-          headerRight: () => null,
+          ...deviceConnectHeaderOptions(t),
         }}
         listeners={({ route }) => ({
           beforeRemove: () => {
