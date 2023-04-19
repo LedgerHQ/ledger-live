@@ -1,12 +1,11 @@
-// @flow
-
 import invariant from "invariant";
 import React from "react";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import Text from "~/renderer/components/Text";
-import type { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
+import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
+import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 
@@ -61,8 +60,8 @@ const StacksMemoField = ({
   transaction,
   field,
 }: {
-  transaction: Transaction,
-  field: DeviceTransactionField,
+  transaction: Transaction;
+  field: DeviceTransactionField;
 }) => {
   invariant(transaction.family === "stacks", "stacks transaction");
 

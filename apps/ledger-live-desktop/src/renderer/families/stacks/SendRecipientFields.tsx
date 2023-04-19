@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { Trans, withTranslation } from "react-i18next";
 import MemoValueField from "./MemoValueField";
@@ -6,7 +5,7 @@ import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 
-const Root = (props: *) => {
+const Root = (props: any) => {
   return (
     <Box flow={1}>
       <Box mb={10}>

@@ -1,11 +1,9 @@
-// @flow
-
 import React, { useCallback } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Input from "~/renderer/components/Input";
 import invariant from "invariant";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Account } from "@ledgerhq/types-live";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { useTranslation } from "react-i18next";
 
 const MemoValueField = ({
@@ -14,11 +12,11 @@ const MemoValueField = ({
   transaction,
   status,
 }: {
-  onChange: string => void,
-  account: Account,
-  transaction: Transaction,
+  onChange: (a: string) => void;
+  account: Account;
+  transaction: Transaction;
 
-  status: TransactionStatus,
+  status: TransactionStatus;
 }) => {
   invariant(transaction.family === "stacks", "MemoField: stacks family expected");
 
@@ -43,7 +41,6 @@ const MemoValueField = ({
       value={transaction.memo}
       placeholder={t("families.stacks.memoPlaceholder")}
       onChange={onMemoValueChange}
-      spellCheck="false"
     />
   );
 };
