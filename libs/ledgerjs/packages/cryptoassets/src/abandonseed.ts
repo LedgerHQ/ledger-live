@@ -65,6 +65,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   songbird: "0x0000000000000000000000000000000000000000",
   flare: "0x0000000000000000000000000000000000000000",
   near: "4e7de0a21d8a20f970c86b6edf407906d7ba9e205979c3268270eef80a286e2d",
+  desmos: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  umee: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
 };
 
 /**

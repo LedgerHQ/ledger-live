@@ -1,0 +1,208 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`desmos currency bridge scanAccounts desmos seed 1 1`] = `
+Array [
+  Object {
+    "balance": "9998421",
+    "cosmosResources": Object {
+      "delegatedBalance": "50000",
+      "delegations": Array [
+        Object {
+          "amount": "50000",
+          "pendingRewards": "21",
+          "status": "bonded",
+          "validatorAddress": "desmosvaloper1tknem46cl5mlxkpqmls2nct38rtkvyq7cmdtcc",
+        },
+      ],
+      "pendingRewardsBalance": "21",
+      "redelegations": Array [
+        Object {
+          "amount": "50000",
+          "completionDate": "Tue May 02 2023 10:17:18 GMT-0400 (Eastern Daylight Time)",
+          "validatorDstAddress": "desmosvaloper19du9hugzezkd47g4pttgjvu6ggc3nvnzx3qsv8",
+          "validatorSrcAddress": "desmosvaloper1tknem46cl5mlxkpqmls2nct38rtkvyq7cmdtcc",
+        },
+      ],
+      "unbondingBalance": "50000",
+      "unbondings": Array [
+        Object {
+          "amount": "50000",
+          "completionDate": "Tue May 02 2023 10:28:54 GMT-0400 (Eastern Daylight Time)",
+          "validatorAddress": "desmosvaloper19du9hugzezkd47g4pttgjvu6ggc3nvnzx3qsv8",
+        },
+      ],
+      "withdrawAddress": "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
+    },
+    "currencyId": "desmos",
+    "derivationMode": "",
+    "feesCurrencyId": undefined,
+    "freshAddress": "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
+        "derivationPath": "44'/118'/0'/0/0",
+      },
+    ],
+    "id": "js:2:desmos:desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3:",
+    "index": 0,
+    "name": "Desmos 1",
+    "nfts": undefined,
+    "operationsCount": 4,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "9898421",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": true,
+    "xpub": "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
+  },
+  Object {
+    "balance": "0",
+    "cosmosResources": Object {
+      "delegatedBalance": "0",
+      "delegations": Array [],
+      "pendingRewardsBalance": "0",
+      "redelegations": Array [],
+      "unbondingBalance": "0",
+      "unbondings": Array [],
+      "withdrawAddress": "desmos1v2mp0m7k96dm9qv60fkspcqlzpkzrwneka7amk",
+    },
+    "currencyId": "desmos",
+    "derivationMode": "",
+    "feesCurrencyId": undefined,
+    "freshAddress": "desmos1v2mp0m7k96dm9qv60fkspcqlzpkzrwneka7amk",
+    "freshAddressPath": "44'/118'/1'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "desmos1v2mp0m7k96dm9qv60fkspcqlzpkzrwneka7amk",
+        "derivationPath": "44'/118'/1'/0/0",
+      },
+    ],
+    "id": "js:2:desmos:desmos1v2mp0m7k96dm9qv60fkspcqlzpkzrwneka7amk:",
+    "index": 1,
+    "name": "Desmos 2",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": false,
+    "xpub": "desmos1v2mp0m7k96dm9qv60fkspcqlzpkzrwneka7amk",
+  },
+]
+`;
+
+exports[`desmos currency bridge scanAccounts desmos seed 1 2`] = `
+Array [
+  Array [
+    Object {
+      "accountId": "js:2:desmos:desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3:",
+      "blockHash": null,
+      "blockHeight": "8160759",
+      "contract": undefined,
+      "extra": Object {
+        "sourceValidator": "desmosvaloper1tknem46cl5mlxkpqmls2nct38rtkvyq7cmdtcc",
+        "validators": Array [
+          Object {
+            "address": "desmosvaloper19du9hugzezkd47g4pttgjvu6ggc3nvnzx3qsv8",
+            "amount": "50000",
+          },
+        ],
+      },
+      "fee": "702",
+      "hash": "33B3C9A97D6796E58E9293E34DBAF66AE1ACD9A5DF28FC30590AC55A47DE9DA8",
+      "id": "js:2:desmos:desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3:-33B3C9A97D6796E58E9293E34DBAF66AE1ACD9A5DF28FC30590AC55A47DE9DA8-REDELEGATE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 1,
+      "type": "REDELEGATE",
+      "value": "702",
+    },
+    Object {
+      "accountId": "js:2:desmos:desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3:",
+      "blockHash": null,
+      "blockHeight": "8160873",
+      "contract": undefined,
+      "extra": Object {
+        "validators": Array [
+          Object {
+            "address": "desmosvaloper19du9hugzezkd47g4pttgjvu6ggc3nvnzx3qsv8",
+            "amount": "50000",
+          },
+        ],
+      },
+      "fee": "463",
+      "hash": "491C77BC8B751122F7B2F7DC16F9773DB486EC1BE4B253D327F9E8317EA81F6B",
+      "id": "js:2:desmos:desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3:-491C77BC8B751122F7B2F7DC16F9773DB486EC1BE4B253D327F9E8317EA81F6B-UNDELEGATE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 2,
+      "type": "UNDELEGATE",
+      "value": "463",
+    },
+    Object {
+      "accountId": "js:2:desmos:desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3:",
+      "blockHash": null,
+      "blockHeight": "8160730",
+      "contract": undefined,
+      "extra": Object {
+        "validators": Array [
+          Object {
+            "address": "desmosvaloper1tknem46cl5mlxkpqmls2nct38rtkvyq7cmdtcc",
+            "amount": "100000",
+          },
+        ],
+      },
+      "fee": "414",
+      "hash": "7C73A2E7E8009EA2F836C489D84A42955277A524F38491D54896F75B0A88D781",
+      "id": "js:2:desmos:desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3:-7C73A2E7E8009EA2F836C489D84A42955277A524F38491D54896F75B0A88D781-DELEGATE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 0,
+      "type": "DELEGATE",
+      "value": "414",
+    },
+    Object {
+      "accountId": "js:2:desmos:desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3:",
+      "blockHash": null,
+      "blockHeight": "8160428",
+      "contract": undefined,
+      "extra": Object {
+        "validators": Array [],
+      },
+      "fee": "3233",
+      "hash": "C6D027DB72528EEE7CA465929B2CE6AA5AA399DDCFAC5C3D537EFE9C6F546C3F",
+      "id": "js:2:desmos:desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3:-C6D027DB72528EEE7CA465929B2CE6AA5AA399DDCFAC5C3D537EFE9C6F546C3F-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
+      ],
+      "senders": Array [
+        "desmos103h9fdkgm7ucccujyunck5lfejrvthd7r6284a",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "transactionSequenceNumber": 0,
+      "type": "IN",
+      "value": "10000000",
+    },
+  ],
+  Array [],
+]
+`;
