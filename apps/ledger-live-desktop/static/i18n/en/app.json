@@ -5762,7 +5762,7 @@
     },
     "stake": {
       "stepperHeader": {
-        "stake": "Stake",
+        "stake": "Delegate",
         "changeStake": "Change Stake",
         "stopStake": "Stop Stake",
         "summary": "Summary",
@@ -5774,8 +5774,15 @@
       },
       "flow": {
         "stake": {
+          "nodeTitle": "Node account staking",
+          "nodeSubtitle": "Earn daily rewards by delegating your Hedera holdings to a Node",
+          "accountTitle": "User account staking",
+          "accountSubtitle": "Giveaway your daily rewards by delegating Hedera holdings to an account",
+          "howItWorks": "How Hedera staking works",
           "to": "Stake To",
           "declineRewards": "Do not receive rewards",
+          "nodesLabel": "Nodes · Reward rate 6.5%",
+          "stakedLabel": "Total staked / Status",
           "nodeList": {
             "loading": "Loading node list ...",
             "nodeNotFound": "No node found."
@@ -5785,7 +5792,17 @@
           "confirmation": "Are you sure you would like to stop staking your account?"
         },
         "summary": {
-          "receiveRewards": "Receive Rewards?"
+          "receiveRewards": "Receive Rewards?",
+          "type": "STAKING TYPE",
+          "fees": "TOTAL FEES (INC)",
+          "amount": "AMOUNT TO STAKE",
+          "nodeType": "Node account staking",
+          "userType": "User account staking",
+          "node": "NODE",
+          "user": "ACCOUNT ID",
+          "userWarning": "When delegating to an account, the rewards will be credited to them rather than to you.",
+          "howItWorks": "How Hedera account staking works",
+          "stakeHedera": "Stake Hedera"
         },
         "success": {
           "title": "Transaction sent",

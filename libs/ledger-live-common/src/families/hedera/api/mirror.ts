@@ -169,7 +169,7 @@ export async function getAccountInfo(accountId: string): Promise<AccountInfo> {
 export async function getNodeList(): Promise<Node[]> {
   const nodeList: Node[] = [];
   let r = await fetch("/api/v1/network/nodes");
-  nodeList.push(r.data.nodes);
+  nodeList.push(...r.data.nodes);
 
   while (r.data.links.next) {
     r = await fetch(r.data.links.next);

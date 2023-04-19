@@ -13,7 +13,7 @@ import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { STAKE_METHOD, STAKE_TYPE } from "@ledgerhq/live-common/families/hedera/types";
 
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
@@ -23,7 +23,7 @@ import Stepper from "~/renderer/components/Stepper";
 
 import StepStakingInfo, { StepStakingInfoFooter } from "./steps/StepStakingInfo";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
-import StepConnectDevice from "./steps/StepConnectDevice";
+import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepSuccess, { StepSuccessFooter } from "./steps/StepSuccess";
 
 import type { TFunction } from "react-i18next";
@@ -33,25 +33,26 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Option } from "~/renderer/components/Select";
 import type { StepId, StepProps, St } from "./types";
 
-type OwnProps = {|
-  stepId: StepId,
-  onChangeStepId: StepId => void,
+type OwnProps = {
+  stepId: StepId;
+  onClose: () => void;
+  onChangeStepId: (a: StepId) => void;
   params: {
     account: Account,
     stakeType: StakeType,
     nodeListOptions: Option[],
-  },
-  name: string,
-|};
+  };
+  name: string;
+};
 
-type StateProps = {|
-  t: TFunction,
-  device: ?Device,
+type StateProps = {
+  t: TFunction;
+  device: Device | undefined | null;
   accounts: Account[],
-  device: ?Device,
-  closeModal: string => void,
-  openModal: string => void,
-|};
+  device: Device | undefined | null;
+  closeModal: (a: string) => void;
+  openModal: (a: string) => void;
+};
 
 type Props = OwnProps & StateProps;
 
@@ -72,7 +73,7 @@ const steps: Array<St> = [
   {
     id: "connectDevice",
     label: <Trans i18nKey="hedera.stake.stepperHeader.connectDevice" />,
-    component: StepConnectDevice,
+    component: GenericStepConnectDevice,
     onBack: ({ transitionTo }: StepProps) => transitionTo("summary"),
   },
   {
@@ -106,6 +107,10 @@ const Body = ({
   const [optimisticOperation, setOptimisticOperation] = useState(null);
   const [transactionError, setTransactionError] = useState(null);
   const [signed, setSigned] = useState(false);
+  const [continueClicked, setContinueClicked] = useState(false,);
+  const [stakeMethod, setStakeMethod] = useState(
+    STAKE_METHOD.NODE,
+  );
 
   const {
     transaction,
@@ -127,7 +132,7 @@ const Body = ({
 
     let transaction = bridge.updateTransaction(t, {
       mode: "stake",
-      staked: { ...t.staked, stakeMethod: STAKE_METHOD.NODE, stakeType },
+      staked: { ...t.staked, stakeMethod: STAKE_METHOD.UNSELECTED, stakeType },
     });
 
     // account should have staking info in its `hederaResources`; set and update into `transaction`
@@ -200,6 +205,8 @@ const Body = ({
     warning,
     status,
     optimisticOperation,
+    continueClicked,
+    setContinueClicked,
     openModal,
     setSigned,
     onChangeTransaction: setTransaction,
@@ -211,6 +218,8 @@ const Body = ({
     nodeListOptions: params.nodeListOptions,
     stakeType: params.stakeType,
     name,
+    stakeMethod,
+    setStakeMethod,
   };
 
   return (

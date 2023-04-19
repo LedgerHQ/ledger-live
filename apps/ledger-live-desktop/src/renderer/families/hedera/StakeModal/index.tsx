@@ -20,7 +20,7 @@ const INITIAL_STATE = {
   nodeListOptions: [],
 };
 
-class StopStakingModal extends PureComponent<{ name: string }, State> {
+class StakeModal extends PureComponent<{ name: string }, State> {
   state = INITIAL_STATE;
 
   handleReset = () => this.setState(INITIAL_STATE);
@@ -30,9 +30,11 @@ class StopStakingModal extends PureComponent<{ name: string }, State> {
   async componentDidMount() {
     // fetch list of stake-able nodes
     const nodeList = (await getNodeList()).map(node => ({
+      description: node.description,
       label: node.node_account_id,
       value: node.node_id,
-      data: node.node_id,
+      stake: node.stake,
+      rewarding: node.stake > node.min_stake
     }));
 
     this.setState({ nodeListOptions: nodeList });
@@ -65,4 +67,4 @@ class StopStakingModal extends PureComponent<{ name: string }, State> {
   }
 }
 
-export default StopStakingModal;
+export default StakeModal;

@@ -40,7 +40,7 @@ function StepSuccess({
   device,
   signed,
   stakeType,
-}: StepProps & { theme: * }) {
+}: StepProps & { theme: any }) {
   if (optimisticOperation) {
     return (
       <Container>

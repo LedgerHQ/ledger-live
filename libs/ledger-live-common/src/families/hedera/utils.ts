@@ -21,6 +21,20 @@ export async function getEstimatedFees(): Promise<BigNumber> {
   }
 }
 
+export async function getHederaUsd(): Promise<Number> {
+  try {
+    const { data } = await network({
+      method: "GET",
+      url: "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd",
+    });
+
+    return data[0];
+  } catch {
+    // as of 2023-04-19
+    return 0.063404
+  }
+}
+
 export async function calculateAmount({
   account,
   transaction,

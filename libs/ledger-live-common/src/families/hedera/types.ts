@@ -47,10 +47,11 @@ export const STAKE_TYPE = {
   STOP: "stop",
 };
 
-export type StakeMethod = "node" | "account";
+export type StakeMethod = "node" | "account" | "unselected";
 export const STAKE_METHOD = {
   NODE: "node",
   ACCOUNT: "account",
+  UNSELECTED: "unselected",
 };
 
 // `HederaResources | HederaResourcesRaw` is in the `HederaAccount` (i.e., `Account`) type

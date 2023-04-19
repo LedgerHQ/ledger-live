@@ -16,12 +16,12 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import logger from "~/logger/logger";
+import logger from "~/renderer/logger";
 
 import Stepper from "~/renderer/components/Stepper";
 
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import StepConnectDevice from "../StakeModal/steps/StepConnectDevice";
+import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepSuccess, { StepSuccessFooter } from "../StakeModal/steps/StepSuccess";
 
 import type { TFunction } from "react-i18next";
@@ -31,24 +31,24 @@ import type { StakeType } from "@ledgerhq/live-common/families/hedera/types";
 import type { StepId, St } from "./types";
 import type { StepProps } from "../StakeModal/types";
 
-type OwnProps = {|
+type OwnProps = {
   stepId: StepId,
-  onChangeStepId: StepId => void,
+  onChangeStepId: (a: StepId) => void,
   params: {
     account: Account,
     stakeType: StakeType,
   },
   name: string,
-|};
+};
 
-type StateProps = {|
+type StateProps = {
   t: TFunction,
-  device: ?Device,
+  device: Device | undefined | null,
   accounts: Account[],
-  device: ?Device,
-  closeModal: string => void,
-  openModal: string => void,
-|};
+  device: Device | undefined | null,
+  closeModal: (a: string) => void,
+  openModal: (a: string) => void,
+};
 
 type Props = OwnProps & StateProps;
 
@@ -62,7 +62,7 @@ const steps: Array<St> = [
   {
     id: "connectDevice",
     label: <Trans i18nKey="hedera.stake.stepperHeader.connectDevice" />,
-    component: StepConnectDevice,
+    component: GenericStepConnectDevice,
     onBack: ({ transitionTo }: StepProps) => transitionTo("confirmation"),
   },
   {

@@ -8,3 +8,6 @@ node_modules
 .eslintcache
 tsconfig.tsbuildinfo
 rce
+
+# React Component Preview
+previewConfig.json

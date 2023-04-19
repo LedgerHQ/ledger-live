@@ -12,8 +12,8 @@ import { openModal } from "~/renderer/actions/modals";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
+  account: AccountLike;
+  parentAccount: Account | undefined | null;
 };
 
 const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) => {
@@ -58,25 +58,37 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
   }, [dispatch, mainAccount]);
 
   const stakeAction = {
-    key: "Stake",
+    key: "stake",
     onClick: onStake,
     icon: IconCoins,
     label: t("hedera.stake.stepperHeader.stake"),
-    disabled: !allOpsConfirmed,
+    event: "button_clicked",
+    eventProperties: {
+      button: "stake",
+    },
+    // disabled: !allOpsConfirmed,
   };
   const changeStakedToAction = {
     key: "ChangeStakedTo",
     onClick: onChangeStakedTo,
     icon: IconCoins,
     label: t("hedera.stake.stepperHeader.changeStake"),
-    disabled: !allOpsConfirmed,
+    event: "button_clicked",
+    eventProperties: {
+      button: "changeStake",
+    },
+    // disabled: !allOpsConfirmed,
   };
   const stopStakingAction = {
     key: "StopStaking",
     onClick: onStopStaking,
     icon: IconCoins,
     label: t("hedera.stake.stepperHeader.stopStake"),
-    disabled: !allOpsConfirmed,
+    event: "button_clicked",
+    eventProperties: {
+      button: "stopStake",
+    },
+    // disabled: !allOpsConfirmed,
   };
 
   // array containing which buttons to show depending on account's staking status
@@ -84,6 +96,8 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
 
   // if account is already staking to a node or account id,
   // show `Change Staked To and `Stop Staking` buttons
+  console.log("stake method: " + hederaResources.staked.stakeMethod);
+
   if (hederaResources?.staked?.stakeMethod != null) {
     actionList.push(changeStakedToAction, stopStakingAction);
   } else {
@@ -91,7 +105,7 @@ const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) 
     actionList.push(stakeAction);
   }
 
-  if (parentAccount) return null;
+  // if (parentAccount) return null;
 
   return actionList;
 };
