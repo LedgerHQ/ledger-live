@@ -4,6 +4,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import Fuse from "fuse.js";
+import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../../components/TabBar/TabBarSafeAreaView";
@@ -33,14 +34,19 @@ export function Catalog() {
   const { t } = useTranslation();
   const title = t("browseWeb3.catalog.title");
 
+  const manifests = useManifests();
+
+  const manifestsWithCompleteVisibilityOnly = manifests.filter(
+    manifest => manifest.visibility === "complete",
+  );
+
   const {
     manifestsByCategories,
-    manifests,
     categories,
     selected,
     setSelected,
     initialSelectedState,
-  } = useCategories();
+  } = useCategories(manifestsWithCompleteVisibilityOnly);
 
   const recentlyUsed = useRecentlyUsed(manifests);
 
@@ -106,7 +112,7 @@ export function Catalog() {
 
       {isActive ? (
         <Search
-          manifests={manifests}
+          manifests={manifestsWithCompleteVisibilityOnly}
           recentlyUsed={recentlyUsed.data}
           title={title}
           input={input}
