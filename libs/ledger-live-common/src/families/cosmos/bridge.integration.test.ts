@@ -18,8 +18,6 @@ const dataset: DatasetTest<Transaction> = {
     //nyx,
     //secret_network,
     //sei_network,
-    //desmos,
-    //umee,
     //binance_beacon_chain,
     cosmos,
     osmosis,

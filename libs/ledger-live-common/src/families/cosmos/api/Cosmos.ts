@@ -91,10 +91,10 @@ export class CosmosAPI {
   getChainId = async (): Promise<string> => {
     const { data } = await network({
       method: "GET",
-      url: `${this.defaultEndpoint}/node_info`,
+      url: `${this.defaultEndpoint}/cosmos/base/tendermint/v1beta1/node_info`,
     });
 
-    return data.node_info.network;
+    return data.default_node_info.network;
   };
 
   getHeight = async (): Promise<number> => {

@@ -1,5 +1,5 @@
-import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
-import type { CosmosAccount, CosmosAccountRaw, Transaction } from "../types";
+import { CurrenciesData } from "@ledgerhq/types-live";
+import type { CosmosAccountRaw, Transaction } from "../types";
 
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreOperationFields: ["gas"],
