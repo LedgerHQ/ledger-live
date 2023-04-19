@@ -1,15 +1,15 @@
 import { AnchorMode } from "@stacks/transactions";
-import BN from "bn.js";
+import BigNumber from "bignumber.js";
 
 import {
   BroadcastArg0,
   Operation,
   TransactionCommon,
-  TransactionCommonRaw,
+  TransactionCommonRaw
 } from "@ledgerhq/types-live";
 import {
   TransactionStatusCommon,
-  TransactionStatusCommonRaw,
+  TransactionStatusCommonRaw
 } from "@ledgerhq/types-live";
 
 import { StacksNetwork } from "./bridge/utils/types";
@@ -25,8 +25,8 @@ export type NetworkInfoRaw = {
 
 export type Transaction = TransactionCommon & {
   family: FamilyType;
-  fee?: BN;
-  nonce?: BN;
+  fee?: BigNumber;
+  nonce?: BigNumber;
   memo?: string;
   network: keyof typeof StacksNetwork;
   anchorMode: AnchorMode;

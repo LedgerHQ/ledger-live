@@ -31,7 +31,7 @@ function getDeviceTransactionConfig(input: {
   fields.push({
     type: "stacks.extendedAmount",
     label: "Fees",
-    value: input.transaction.fee,
+    value: input.transaction.fee ? input.transaction.fee : new BigNumber(0),
   });
   fields.push({
     type: "address",
@@ -41,7 +41,7 @@ function getDeviceTransactionConfig(input: {
   fields.push({
     type: "text",
     label: "Nonce",
-    value: input.transaction.nonce.toFixed(),
+    value: input.transaction.nonce ? input.transaction.nonce.toFixed() : "0",
   });
   fields.push({
     type: "stacks.memo",
