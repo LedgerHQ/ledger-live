@@ -9,7 +9,7 @@ yarn upgrade-interactive -i --latest
 ### Direct Dependencies
 
 | library name (what).                        | description of its usage (why)                                    | ideal frequency of update (when) / status                            |
-| ------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------- |
+|---------------------------------------------|-------------------------------------------------------------------| -------------------------------------------------------------------- |
 | @celo/contractkit                           | Celo coin integration                                             | monthly                                                              |
 | @celo/wallet-base                           | Celo coin integration                                             | monthly                                                              |
 | @celo/wallet-ledger                         | Celo coin integration                                             | monthly                                                              |
@@ -49,6 +49,8 @@ yarn upgrade-interactive -i --latest
 | @polkadot/wasm-crypto                       | Polkadot coin integration                                         | **BLOCKED BY LLM (ticket missing)**                                  |
 | @solana/spl-token                           | Solana coin integration                                           | monthly                                                              |
 | @solana/web3.js                             | Solana coin integration                                           | **BLOCKED BY LLM because of BigInt in RN (ticket missing)**          |
+| @stacks/network                             | Stacks coin integration                                           | monthly                                                              |
+| @stacks/transactions                        | Stacks coin integration                                           | monthly                                                              |
 | @taquito/ledger-signer                      | Tezos coin integration                                            | monthly                                                              |
 | @taquito/taquito                            | Tezos coin integration                                            | monthly                                                              |
 | @taquito/utils                              | Tezos coin integration                                            | monthly                                                              |
@@ -57,6 +59,7 @@ yarn upgrade-interactive -i --latest
 | @walletconnect/client                       | Wallet connect feature                                            | monthly                                                              |
 | @xstate/react                               | used for some components                                          | TBD DEPRECATE?                                                       |
 | @zondax/ledger-filecoin                     | Filecoin coin integration                                         | monthly                                                              |
+| @zondax/ledger-stacks                       | Stacks coin integration                                           | monthly                                                              |
 | algosdk                                     | Algorand coin integration                                         | monthly                                                              |
 | async                                       | ???                                                               | UNCLEAR IF USED                                                      |
 | axios                                       | network                                                           | monthly                                                              |
@@ -70,6 +73,7 @@ yarn upgrade-interactive -i --latest
 | bip39                                       | needed for bot                                                    | monthly                                                              |
 | bitcoinjs-lib                               | Bitcoin coin integration                                          | **ticket missing**: apparently blocking LLM                          |
 | blake-hash                                  | Bitcoin coin integration                                          | monthly                                                              |
+| bn.js                                       | Stacks coin integration                                           | monthly                                                              |
 | bs58                                        | Bitcoin coin integration                                          | monthly                                                              |
 | bs58check                                   | Bitcoin coin integration                                          | monthly                                                              |
 | buffer                                      | many parts for bytes ops                                          | monthly                                                              |
@@ -77,6 +81,7 @@ yarn upgrade-interactive -i --latest
 | cbor                                        | Filecoin coin integration                                         | monthly                                                              |
 | coininfo                                    | Bitcoin coin integration                                          | monthly                                                              |
 | crypto-js                                   | NEO coin integration                                              | monthly                                                              |
+| c32check                                    | Stacks coin integration                                           | monthly                                                              |
 | eip55                                       | Ethereum coin integration                                         | monthly                                                              |
 | eth-sig-util                                | Ethereum coin integration                                         | monthly                                                              |
 | ethereumjs-abi                              | Ethereum coin integration                                         | monthly                                                              |

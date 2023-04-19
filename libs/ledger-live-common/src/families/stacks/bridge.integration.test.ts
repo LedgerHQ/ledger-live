@@ -16,7 +16,6 @@ import { testBridge } from "../../__tests__/test-helpers/bridge";
 const SEED_IDENTIFIER = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";
 const ACCOUNT_1 = "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const stacks: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [],
   scanAccounts: [
@@ -34,7 +33,6 @@ const stacks: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
-      FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: `js:2:stacks:${SEED_IDENTIFIER}:`,
         seedIdentifier: SEED_IDENTIFIER,

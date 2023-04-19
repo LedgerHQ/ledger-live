@@ -1,7 +1,6 @@
 import { ResponseAddress } from "@zondax/ledger-stacks";
 import { isValidBase64, isValidHex } from "../filecoin/utils";
 
-// TODO Filecoin - Use the new package @zondax/ledger-utils instead
 export const isNoErrorReturnCode = (code: number) => code === 0x9000;
 
 export const getPath = (path: string) =>
