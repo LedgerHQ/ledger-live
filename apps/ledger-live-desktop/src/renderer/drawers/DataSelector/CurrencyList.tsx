@@ -6,13 +6,12 @@ import styled from "styled-components";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { RowContainer, RowInnerContainer, CurrencyLabel } from "./shared";
 type Props = {
   currencies: Currency[];
   onCurrencySelect: (currency: Currency) => void;
 };
-const CurrencyListContainer: ThemedComponent<{}> = styled.div`
+const CurrencyListContainer = styled.div`
   flex: 1 1 auto;
   width: 100%;
 `;
@@ -21,7 +20,9 @@ const CustomListContainer = styled.div`
     display: none;
   }
 `;
-const outerElementType = forwardRef((props, ref) => <CustomListContainer ref={ref} {...props} />);
+const outerElementType = forwardRef((props, ref: React.Ref<HTMLDivElement>) => (
+  <CustomListContainer ref={ref} {...props} />
+));
 outerElementType.displayName = "outerElementType";
 export function CurrencyList({ currencies, onCurrencySelect }: Props) {
   return (
@@ -84,7 +85,7 @@ export function CurrencyList({ currencies, onCurrencySelect }: Props) {
                         {currency.ticker}
                       </Text>
                     </Box>
-                    {currency.parentCurrency ? (
+                    {currency.type === "TokenCurrency" && currency.parentCurrency ? (
                       <Box horizontal alignItems="center" marginLeft="12px">
                         <CurrencyLabel>{currency.parentCurrency.name}</CurrencyLabel>
                       </Box>

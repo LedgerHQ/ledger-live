@@ -3,14 +3,13 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Step from "./Step";
-const Container: ThemedComponent<{}> = styled(Box)`
+const Container = styled(Box)`
   position: sticky;
   top: -20px;
   z-index: 2;
 `;
-const Wrapper: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   justifyContent: "center",

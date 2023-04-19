@@ -43,16 +43,15 @@ import { openURL } from "~/renderer/linking";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { getStatusColor } from "~/renderer/screens/exchange/Swap2/History/OperationRow";
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 const Value = styled(Box).attrs(() => ({
   fontSize: 4,
   color: "palette.text.shade50",
   ff: "Inter|Medium",
-}))`
+}))<{ status?: string }>`
   flex: 1;
   ${p => (p.status ? `color:${getStatusColor(p.status, p.theme)};` : "")}
 `;
-const Status: ThemedComponent<{}> = styled.div`
+const Status = styled.div<{ status: string }>`
   height: 36px;
   width: 36px;
   display: flex;
@@ -66,7 +65,7 @@ const Status: ThemedComponent<{}> = styled.div`
     color: ${p => getStatusColor(p.status, p.theme)};
   }
 `;
-const WrapperClock: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const WrapperClock = styled(Box).attrs(() => ({
   bg: "palette.background.paper",
   color: "palette.text.shade60",
 }))`
@@ -76,7 +75,7 @@ const WrapperClock: ThemedComponent<{}> = styled(Box).attrs(() => ({
   right: -2px;
   padding: 3px;
 `;
-const SelectableTextWrapper: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const SelectableTextWrapper = styled(Box).attrs(p => ({
   ff: "Inter",
   color: p.color || "palette.text.shade80",
   fontSize: 4,
@@ -215,7 +214,9 @@ const SwapOperationDetails = ({
         <OpDetailsData>
           <LinkWithExternalIcon
             fontSize={12}
-            onClick={() => openURL(urls.swap.providers[provider]?.main)}
+            onClick={() =>
+              openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main)
+            }
           >
             {getProviderName(provider)}
           </LinkWithExternalIcon>
@@ -347,7 +348,7 @@ const SwapOperationDetails = ({
               unit={toUnit}
               showCode
               val={toAmount}
-              fotSize={6}
+              fontSize={6}
               disableRounding
               color={"palette.text.shade50"}
             />

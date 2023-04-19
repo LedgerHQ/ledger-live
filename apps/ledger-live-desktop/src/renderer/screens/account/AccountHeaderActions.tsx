@@ -25,7 +25,6 @@ import IconAccountSettings from "~/renderer/icons/AccountSettings";
 import IconWalletConnect from "~/renderer/icons/WalletConnect";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { track } from "~/renderer/analytics/segment";
 import {
   ActionDefault,
@@ -279,7 +278,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     event?: string;
     eventProperties?: object;
     icon:
-      | React$ComponentType<{
+      | React.ComponentType<{
           size: number;
         }>
       | ((a: { size: number }) => React$Element<any>);
@@ -317,11 +316,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     </Box>
   );
 };
-const ConnectedAccountHeaderActions: React$ComponentType<OwnProps> = compose(
+const ConnectedAccountHeaderActions: React.ComponentType<OwnProps> = compose(
   connect(null, mapDispatchToProps),
   withTranslation(),
 )(AccountHeaderActions);
-export const AccountHeaderSettingsButton: React$ComponentType<OwnProps> = compose(
+export const AccountHeaderSettingsButton: React.ComponentType<OwnProps> = compose(
   connect(null, mapDispatchToProps),
   withTranslation(),
 )(AccountHeaderSettingsButtonComponent);

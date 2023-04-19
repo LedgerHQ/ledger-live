@@ -319,6 +319,6 @@ export const RawSelectAccount = ({
     />
   );
 };
-export const SelectAccount: React$ComponentType<Props> = withTranslation()(RawSelectAccount);
-const m: React$ComponentType<OwnProps> = connect(mapStateToProps)(SelectAccount);
+export const SelectAccount: React.ComponentType<Props> = withTranslation()(RawSelectAccount);
+const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(SelectAccount);
 export default m;

@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { ExplorerView } from "@ledgerhq/types-cryptoassets";
 import { openURL } from "~/renderer/linking";
 import Ellipsis from "~/renderer/components/Ellipsis";

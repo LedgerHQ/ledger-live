@@ -8,7 +8,6 @@ import Box from "~/renderer/components/Box";
 import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrencyIcon";
 import useTheme from "~/renderer/hooks/useTheme";
 import ensureContrast from "~/renderer/ensureContrast";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Spinner from "./Spinner";
 const CryptoIconWrapper: ThemedComponent<{
   cryptoColor: string;
@@ -29,7 +28,7 @@ const CryptoIconWrapper: ThemedComponent<{
     top: -6px;
   }
 `;
-const SpinnerWrapper: ThemedComponent<{}> = styled.div`
+const SpinnerWrapper = styled.div`
   background: ${p => p.theme.colors.palette.background.paper};
   border-radius: 100%;
   padding: 2px;

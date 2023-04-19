@@ -12,7 +12,6 @@ const excluded = [
   "src/renderer/screens",
   "src/renderer/modals",
   "src/renderer/families",
-  "src/renderer/drawers",
 ].map(p => path.resolve(projectDirectory, p));
 
 function compile() {

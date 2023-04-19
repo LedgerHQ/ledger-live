@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { NearMappedStakingPosition } from "@ledgerhq/live-common/families/near/types";
 import { Account } from "@ledgerhq/live-common/types/index";
 import { canUnstake, canWithdraw } from "@ledgerhq/live-common/families/near/logic";
@@ -37,7 +36,7 @@ const Column: ThemedComponent<{
     `
       : ``}
 `;
-const Ellipsis: ThemedComponent<{}> = styled.div`
+const Ellipsis = styled.div`
   flex: 1;
   display: block;
   overflow: hidden;

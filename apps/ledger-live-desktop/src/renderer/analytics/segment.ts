@@ -21,7 +21,6 @@ import {
   hasNftInAccounts,
   INFINITY_PASS_COLLECTION_CONTRACT,
 } from "@ledgerhq/live-common/nft/helpers";
-
 import createStore from "../createStore";
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires

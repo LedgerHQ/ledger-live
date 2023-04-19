@@ -311,7 +311,7 @@ class AddAccounts extends PureComponent<Props, State> {
     );
   }
 }
-const m: React$ComponentType<{}> = compose(
+const m: React.ComponentType<{}> = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(AddAccounts);

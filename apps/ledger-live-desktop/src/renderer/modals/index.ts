@@ -1,5 +1,4 @@
 import generated from "../generated/modals";
-
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
 import MODAL_PASSWORD from "./PasswordModal";

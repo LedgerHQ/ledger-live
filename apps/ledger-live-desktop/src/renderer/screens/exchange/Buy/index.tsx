@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { getAccountCurrency, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import SelectAccountAndCurrency from "~/renderer/components/SelectAccountAndCurrency";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { DProps } from "~/renderer/screens/exchange";
@@ -13,7 +12,7 @@ import { useRampCatalogCurrencies } from "../hooks";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { currenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import BigSpinner from "~/renderer/components/BigSpinner";
-const BuyContainer: ThemedComponent<{}> = styled.div`
+const BuyContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;

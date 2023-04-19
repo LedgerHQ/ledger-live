@@ -14,9 +14,7 @@ import { UpdaterProvider } from "~/renderer/components/Updater/UpdaterContext";
 import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import { RemoteConfigProvider } from "~/renderer/components/RemoteConfig";
-
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
-
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
@@ -25,9 +23,7 @@ import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementP
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
-
 import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrapper";
-
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";

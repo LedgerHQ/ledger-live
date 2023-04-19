@@ -93,6 +93,13 @@ const linksPerCurrency = {
     },
   ],
 };
+
+type CurrencyLink = ReturnType<
+  typeof linksPerCurrency[keyof typeof linksPerCurrency]
+> extends Array<infer T>
+  ? Exclude<T, "">
+  : never;
+
 export default (
   account: Account,
   nft: ProtoNFT,
@@ -161,10 +168,10 @@ export default (
   const customImageEnabled = useFeature("customImage")?.enabled;
   const links = useMemo(() => {
     const metadataLinks =
-      linksPerCurrency?.[account.currency.id as keyof typeof linksPerCurrency]?.(
+      (linksPerCurrency[account.currency.id as keyof typeof linksPerCurrency]?.(
         t,
         metadata?.links,
-      ).filter((x: unknown) => x) || [];
+      ).filter(x => !!x) as CurrencyLink[]) || [];
     return [
       ...metadataLinks,
       ...(customImageEnabled && customImageUri ? [customImage] : []),

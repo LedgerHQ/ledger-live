@@ -5,11 +5,13 @@ const mimeTypesMap = {
 };
 const mimeTypesCategories = Object.keys(mimeTypesMap) as (keyof typeof mimeTypesMap)[];
 export const getMetadataMediaType = (
-  metadata: NFTMetadata,
+  metadata: NFTMetadata | undefined | null,
   mediaFormat: keyof NFTMedias = "preview",
-): keyof typeof mimeTypesMap | void => {
+): keyof typeof mimeTypesMap | undefined => {
   const { mediaType } = metadata?.medias?.[mediaFormat] || {};
-  return mimeTypesCategories.find(type => mimeTypesMap[type].includes(mediaType));
+  return mimeTypesCategories.find(type =>
+    mimeTypesMap[type].includes(mediaType as keyof typeof mimeTypesMap),
+  );
 };
 export const getMetadataMediaTypes = (metadata: NFTMetadata) => {
   const sizes: Array<NFTMediaSize> = ["preview", "big", "original"];

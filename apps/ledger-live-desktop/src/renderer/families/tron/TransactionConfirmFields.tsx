@@ -4,14 +4,13 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 import Text from "~/renderer/components/Text";
 import WarnBox from "~/renderer/components/WarnBox";
 import Box from "~/renderer/components/Box";
 import { OperationDetailsVotes } from "./operationDetails";
-const Info: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
   mt: 6,

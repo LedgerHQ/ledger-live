@@ -3,7 +3,6 @@ import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";

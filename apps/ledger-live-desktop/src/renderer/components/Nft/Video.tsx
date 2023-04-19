@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Skeleton from "./Skeleton";
 const Wrapper: ThemedComponent<{
   full?: boolean;

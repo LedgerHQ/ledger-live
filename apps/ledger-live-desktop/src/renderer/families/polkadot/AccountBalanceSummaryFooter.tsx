@@ -7,7 +7,6 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";

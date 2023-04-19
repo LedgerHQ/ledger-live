@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Modal from "~/renderer/components/Modal";
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import useEnv from "~/renderer/hooks/useEnv";
 import FullNodeBody from "./FullNodeBody";
 

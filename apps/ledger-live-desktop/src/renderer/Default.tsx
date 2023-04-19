@@ -30,7 +30,6 @@ import IsUnlocked from "~/renderer/components/IsUnlocked";
 import AppRegionDrag from "~/renderer/components/AppRegionDrag";
 import IsNewVersion from "~/renderer/components/IsNewVersion";
 import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAvailable";
-
 import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
 import MainSideBar from "~/renderer/components/MainSideBar";
@@ -55,11 +54,8 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Onboarding from "~/renderer/components/Onboarding";
 import PostOnboardingScreen from "~/renderer/components/PostOnboardingScreen";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
-
 import Market from "~/renderer/screens/market";
-
 import MarketCoinScreen from "~/renderer/screens/market/MarketCoinScreen";
-
 import Learn from "~/renderer/screens/learn";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";

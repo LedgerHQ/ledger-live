@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
@@ -10,7 +9,7 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";
 import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
-const ValidatorsSection: ThemedComponent<{}> = styled(Box)`
+const ValidatorsSection = styled(Box)`
   width: 100%;
   height: 100%;
   padding-bottom: ${p => p.theme.space[6]}px;

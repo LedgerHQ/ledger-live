@@ -5,8 +5,8 @@ import Alert from "~/renderer/components/Alert";
 import Text from "~/renderer/components/Text";
 import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Container: ThemedComponent<{}> = styled(Box).attrs(p => ({
+
+const Container = styled(Box).attrs(p => ({
   mb: 24,
 }))``;
 const twitterHashtag = "LedgerLiveApp";

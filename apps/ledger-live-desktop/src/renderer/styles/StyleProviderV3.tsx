@@ -3,7 +3,6 @@ import React, { useMemo } from "react";
 import { DefaultTheme, StyledComponent, ThemeProvider, useTheme } from "styled-components";
 import defaultTheme, { Theme } from "./theme";
 import v2Palettes from "./palettes";
-
 import {
   GlobalStyle,
   defaultTheme as v3DefaultTheme,
