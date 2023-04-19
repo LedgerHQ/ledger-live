@@ -1,5 +1,4 @@
 import CosmosBase from "./cosmosBase";
-import { getEnv } from "../../../env";
 
 class Cosmos extends CosmosBase {
   stakingDocUrl: string;

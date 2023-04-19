@@ -15,7 +15,7 @@ class Umee extends CosmosBase {
     this.unbondingPeriod = 28;
     this.prefix = "umee";
     this.validatorPrefix = `${this.prefix}valoper`;
-    this.minGasprice = 0.06;
+    this.minGasprice = 0.1;
   }
 }
 
