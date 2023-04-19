@@ -81,21 +81,18 @@ const DebugStoryly = () => {
                 {languages[locale]}
               </Link>
             </Flex>
-            <Alert
-              renderContent={({ textColor }) => (
-                <Flex flexShrink={1}>
-                  {appLanguageParagraphs.map((text, index, arr) => (
-                    <Text
-                      key={index}
-                      color={textColor}
-                      mb={index === arr.length - 1 ? 0 : 4}
-                    >
-                      {text}
-                    </Text>
-                  ))}
-                </Flex>
-              )}
-            />
+            <Alert>
+              <Flex flexShrink={1}>
+                {appLanguageParagraphs.map((text, index, arr) => (
+                  <Alert.BodyText
+                    key={index}
+                    mb={index === arr.length - 1 ? 0 : 4}
+                  >
+                    {text}
+                  </Alert.BodyText>
+                ))}
+              </Flex>
+            </Alert>
           </Flex>
           <Divider />
           <Text variant="h5">Stories options</Text>
