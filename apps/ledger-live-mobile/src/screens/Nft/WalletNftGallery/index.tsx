@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Flex } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
 import { isEqual } from "lodash";
