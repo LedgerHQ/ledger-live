@@ -34,7 +34,6 @@ const fetch = async <T>(path: string) => {
   // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
   const { data } = rawResponse as AxiosResponse<T>;
 
-  log("http", url);
   return data;
 };
 
@@ -53,7 +52,6 @@ const send = async <T>(path: string, data: Record<string, any>) => {
   // We force data to this way as network func is not using generics. Changing that func will generate errors in other implementations
   const { data: responseData } = rawResponse as AxiosResponse<T>;
 
-  log("http", url);
   return responseData;
 };
 
@@ -72,7 +70,6 @@ const sendRaw = async <T>(path: string, data: Buffer) => {
   // We force data to this way as network func is not using generics. Changing that func will generate errors in other implementations
   const { data: responseData } = rawResponse as AxiosResponse<T>;
 
-  log("http", url);
   return responseData;
 };
 

@@ -7,7 +7,6 @@ const signMessage: SignMessage = async (
   transport,
   { path, message }
 ): Promise<Result> => {
-  //log("debug", "start signMessage process");
 
   const blockstack = new BlockstackApp(transport);
 

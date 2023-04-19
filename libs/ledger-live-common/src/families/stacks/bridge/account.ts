@@ -50,8 +50,6 @@ import { validateAddress } from "./utils/addresses";
 const receive = makeAccountBridgeReceive();
 
 const createTransaction = (): Transaction => {
-  // log("debug", "[createTransaction] creating base tx");
-
   return {
     family: "stacks",
     recipient: "",
@@ -63,8 +61,6 @@ const createTransaction = (): Transaction => {
 };
 
 const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
-  // log("debug", "[updateTransaction] patching tx");
-
   return { ...t, ...patch };
 };
 
@@ -73,14 +69,10 @@ const sync = makeSync({ getAccountShape });
 const broadcast: BroadcastFnSignature = async ({
   signedOperation: { operation, signature }
 }) => {
-  // log("debug", "[broadcast] start fn");
-
   const tx = await getTxToBroadcast(operation, signature);
 
   const hash = await broadcastTx(tx);
   const result = patchOperationWithHash(operation, hash);
-
-  // log("debug", "[broadcast] finish fn");
 
   return result;
 };
@@ -89,8 +81,6 @@ const getTransactionStatus = async (
   a: Account,
   t: Transaction
 ): Promise<TransactionStatus> => {
-  // log("debug", "[getTransactionStatus] start fn");
-
   const errors: TransactionStatus["errors"] = {};
   const warnings: TransactionStatus["warnings"] = {};
 
@@ -113,8 +103,6 @@ const getTransactionStatus = async (
 
   if (amount.lte(0)) errors.amount = new AmountRequired();
   if (totalSpent.gt(a.spendableBalance)) errors.amount = new NotEnoughBalance();
-
-  // log("debug", "[getTransactionStatus] finish fn");
 
   return {
     errors,
@@ -144,15 +132,11 @@ const prepareTransaction = async (
   a: Account,
   t: Transaction
 ): Promise<Transaction> => {
-  // log("debug", "[prepareTransaction] start fn");
-
   const { id: accountID } = a;
   const { recipient } = t;
   const { xpubOrAddress: xpub } = decodeAccountId(accountID);
 
   if (xpub && recipient && validateAddress(recipient).isValid) {
-    // log("debug", "[prepareTransaction] fetching estimated fees");
-
     const network = StacksNetwork[t.network] || new StacksMainnet();
 
     // Check if recipient is valid
@@ -183,8 +167,6 @@ const prepareTransaction = async (
     t.nonce = new BigNumber(nonce.toString());
   }
 
-  // log("debug", "[prepareTransaction] finish fn");
-
   return t;
 };
 
@@ -197,8 +179,6 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
     transport =>
       new Observable(o => {
         async function main() {
-          // log("debug", "[signOperation] start fn");
-
           const { id: accountId, balance } = account;
           const { address, derivationPath } = getAddress(account);
           const { xpubOrAddress: xpub } = decodeAccountId(accountId);
@@ -214,12 +194,10 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           let { amount, nonce } = transaction;
 
           if (!xpub) {
-            log("debug", `signOperation missingData --> xpub=${xpub} `);
             throw new InvalidAddress();
           }
 
           if (!fee) {
-            log("debug", `signOperation missingData --> fee=${fee} `);
             throw new FeeNotLoaded();
           }
 
@@ -247,14 +225,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
             const tx = await makeUnsignedSTXTokenTransfer(options);
 
-            log("debug", `[signOperation] unsigned tx: [${tx}]`);
-
             const serializedTx = tx.serialize();
-
-            log(
-              "debug",
-              `[signOperation] serialized tx: [${serializedTx.toString("hex")}]`
-            );
 
             // Sign by device
             const result = await blockstack.sign(
@@ -290,7 +261,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
                 xpub,
                 network,
                 anchorMode,
-                signatureType: 1,
+                signatureType: 1
               }
             };
 
@@ -304,8 +275,6 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             });
           } finally {
             close(transport, deviceId);
-
-            // log("debug", "[signOperation] finish fn");
           }
         }
 
