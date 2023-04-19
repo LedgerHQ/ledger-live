@@ -1,33 +1,28 @@
 # @ledgerhq/coin-polkadot
 
-## 0.1.1-nightly.2
+## 0.1.1
 
 ### Patch Changes
 
-- Updated dependencies [[`3242a0a794`](https://github.com/LedgerHQ/ledger-live/commit/3242a0a7948c20fb0100ce3cc73e55e338534d32)]:
-  - @ledgerhq/cryptoassets@9.3.0-nightly.1
-  - @ledgerhq/coin-framework@0.3.0-nightly.2
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/types-cryptoassets@7.1.0
+  - @ledgerhq/cryptoassets@9.3.0
+  - @ledgerhq/types-live@6.32.0
+  - @ledgerhq/coin-framework@0.3.0
+  - @ledgerhq/live-env@0.1.0
+  - @ledgerhq/live-portfolio@0.0.2
 
-## 0.1.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253)]:
-  - @ledgerhq/coin-framework@0.3.0-nightly.1
-  - @ledgerhq/types-live@6.32.0-nightly.1
-  - @ledgerhq/live-portfolio@0.0.2-nightly.1
-
-## 0.1.1-nightly.0
+## 0.1.1-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
-  - @ledgerhq/types-cryptoassets@7.1.0-nightly.0
-  - @ledgerhq/cryptoassets@9.3.0-nightly.0
-  - @ledgerhq/types-live@6.32.0-nightly.0
-  - @ledgerhq/coin-framework@0.3.0-nightly.0
-  - @ledgerhq/live-env@0.1.0-nightly.0
-  - @ledgerhq/live-portfolio@0.0.2-nightly.0
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/types-cryptoassets@7.1.0-next.0
+  - @ledgerhq/cryptoassets@9.3.0-next.0
+  - @ledgerhq/types-live@6.32.0-next.0
+  - @ledgerhq/coin-framework@0.3.0-next.0
+  - @ledgerhq/live-env@0.1.0-next.0
+  - @ledgerhq/live-portfolio@0.0.2-next.0
 
 ## 0.1.0
 

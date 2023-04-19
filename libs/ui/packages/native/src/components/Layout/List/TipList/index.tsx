@@ -17,9 +17,9 @@ export default function TipList({ items, ...props }: TipListProps): React.ReactE
       items.map((item) => ({
         ...item,
         bullet: item.isPositive ? (
-          <Check size={20} color={"success.c100"} />
+          <Check size={20} color={"success.c50"} />
         ) : (
-          <Close size={20} color={"error.c100"} />
+          <Close size={20} color={"error.c50"} />
         ),
       })),
     [items],

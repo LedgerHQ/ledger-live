@@ -2,8 +2,9 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useAppInstallNeedsDeps, useAppUninstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useHistory } from "react-router-dom";
-import { App } from "@ledgerhq/types-live";
+import { AppType } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
+
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";
@@ -19,11 +20,13 @@ import IconCheck from "~/renderer/icons/Check";
 import IconTrash from "~/renderer/icons/Trash";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
+
 const ExternalLinkIconContainer = styled.span`
   display: inline-flex;
   margin-left: 4px;
 `;
-const AppActionsWrapper = styled.div`
+
+const AppActionsWrapper = styled.div<{ right: boolean }>`
   display: flex;
   min-width: 300px;
   padding-left: 10px;
@@ -33,6 +36,7 @@ const AppActionsWrapper = styled.div`
     margin-right: 10px;
   }
 `;
+
 const SuccessInstall = styled.div`
   color: ${p => p.theme.colors.positiveGreen};
   display: flex;
@@ -43,6 +47,7 @@ const SuccessInstall = styled.div`
     padding-right: 5px;
   }
 `;
+
 type Props = {
   state: State;
   app: App;
@@ -57,8 +62,11 @@ type Props = {
   setAppUninstallDep?: (a: any) => void;
   isLiveSupported: boolean;
   addAccount?: () => void;
-}; // eslint-disable-next-line react/display-name
-const AppActions: React$ComponentType<Props> = React.memo(
+  featureFlagActivated: boolean;
+};
+
+// eslint-disable-next-line react/display-name
+const AppActions = React.memo(
   ({
     state,
     app,
@@ -73,8 +81,10 @@ const AppActions: React$ComponentType<Props> = React.memo(
     setAppUninstallDep,
     isLiveSupported,
     addAccount,
+    featureFlagActivated,
   }: Props) => {
-    const { name, type } = app;
+    const { name, type, currencyId } = app;
+
     const history = useHistory();
     const { installedAvailable, installQueue, uninstallQueue, updateAllQueue } = state;
 
@@ -102,16 +112,17 @@ const AppActions: React$ComponentType<Props> = React.memo(
     }, [addAccount]);
     const onNavigateTo = useCallback(() => {
       switch (type) {
-        case "plugin":
+        case AppType.plugin:
           history.push("/platform");
           break;
-        case "app":
+        case AppType.app:
+        case AppType.currency:
           openURL(app?.supportURL || urls.appSupport);
           break;
-        case "tool":
+        case AppType.tool:
           openURL(urls.managerAppLearnMore);
           break;
-        case "swap":
+        case AppType.swap:
           history.push("/swap");
           break;
       }
@@ -123,9 +134,11 @@ const AppActions: React$ComponentType<Props> = React.memo(
       () => installed && installQueue.length <= 0 && uninstallQueue.length <= 0,
       [installQueue.length, installed, uninstallQueue.length],
     );
-    const showLearnMore = type === "tool" || (type === "app" && !isLiveSupported);
+
+    const isCurrencyApp = type === AppType.app || type === AppType.currency;
+    const showLearnMore = type === AppType.tool || (isCurrencyApp && !isLiveSupported);
     const hasSpecificAction =
-      ["swap", "plugin"].includes(type) || (type === "app" && isLiveSupported);
+      [AppType.swap, AppType.plugin].includes(type) || (isCurrencyApp && isLiveSupported);
     const hasTwoCTAS = showLearnMore || installed;
     return (
       <AppActionsWrapper right={!hasTwoCTAS}>
@@ -166,8 +179,8 @@ const AppActions: React$ComponentType<Props> = React.memo(
           />
         ) : showActions ? (
           <>
-            {installed ? (
-              type === "app" && isLiveSupported ? (
+            {installed && featureFlagActivated ? (
+              isCurrencyApp && isLiveSupported ? (
                 <Tooltip
                   content={
                     canAddAccount ? (

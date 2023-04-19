@@ -55,6 +55,8 @@ const EditDeviceName: React.FC<Props> = ({
   const [running, setRunning] = useState(false);
   const disableButton = running || (!completed && (deviceName === name || !name.trim() || error));
 
+  const request = useMemo(() => ({ name }), [name]);
+
   const onCloseDrawer = useCallback(() => {
     onClose();
     setRunning(false);
@@ -112,7 +114,7 @@ const EditDeviceName: React.FC<Props> = ({
           >
             <BoxedIcon
               Icon={Icons.CheckAloneMedium}
-              iconColor="success.c100"
+              iconColor="success.c50"
               size={64}
               iconSize={24}
             />
@@ -136,7 +138,7 @@ const EditDeviceName: React.FC<Props> = ({
           <Flex flex={1} alignItems="center" justifyContent="center" p={2}>
             <DeviceAction
               device={device}
-              request={name}
+              request={request}
               action={action}
               onClose={onClose}
               onResult={onSuccess}

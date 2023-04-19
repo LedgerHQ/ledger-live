@@ -218,7 +218,7 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
           />
           <AnimatedFlex style={doneContentStyle}>
             <Flex flexDirection="column" alignItems="center" p={8}>
-              <Icons.CircledCheckSolidMedium color="success.c100" size={54} />
+              <Icons.CircledCheckSolidMedium color="success.c50" size={54} />
               <Flex height={83} />
               <Log>{t("postOnboarding.hub.done")}</Log>
               <Flex height={100} />
