@@ -4,14 +4,13 @@ import { StacksMainnet } from "@stacks/network";
 import { BigNumber } from "bignumber.js";
 import BN from "bn.js";
 import { Observable } from "rxjs";
-import { log } from "@ledgerhq/logs";
 import {
   AmountRequired,
   FeeNotLoaded,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  RecipientRequired
+  RecipientRequired,
 } from "@ledgerhq/errors";
 import {
   AddressVersion,
@@ -19,7 +18,7 @@ import {
   AnchorMode,
   UnsignedTokenTransferOptions,
   estimateTransfer,
-  makeUnsignedSTXTokenTransfer
+  makeUnsignedSTXTokenTransfer,
 } from "@stacks/transactions";
 import { getNonce, txidFromData } from "@stacks/transactions";
 
@@ -31,7 +30,7 @@ import {
   BroadcastFnSignature,
   Operation,
   SignOperationEvent,
-  SignOperationFnSignature
+  SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 
 import { StacksNetwork } from "./utils/types";
@@ -56,7 +55,7 @@ const createTransaction = (): Transaction => {
     amount: new BigNumber(0),
     network: "mainnet",
     anchorMode: AnchorMode.Any,
-    useAllAmount: false
+    useAllAmount: false,
   };
 };
 
@@ -67,7 +66,7 @@ const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
 const sync = makeSync({ getAccountShape });
 
 const broadcast: BroadcastFnSignature = async ({
-  signedOperation: { operation, signature }
+  signedOperation: { operation, signature },
 }) => {
   const tx = await getTxToBroadcast(operation, signature);
 
@@ -89,12 +88,15 @@ const getTransactionStatus = async (
   const { recipient, useAllAmount, fee } = t;
   let { amount } = t;
 
-  if (!recipient) errors.recipient = new RecipientRequired();
-  else if (!validateAddress(recipient).isValid)
+  if (!recipient) {
+    errors.recipient = new RecipientRequired();
+  } else if (!validateAddress(recipient).isValid) {
     errors.recipient = new InvalidAddress();
-  else if (address === recipient)
+  } else if (address === recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  else if (!fee || fee.eq(0)) errors.gas = new FeeNotLoaded();
+  } else if (!fee || fee.eq(0)) {
+    errors.gas = new FeeNotLoaded();
+  }
 
   const estimatedFees = fee || new BigNumber(0);
 
@@ -109,13 +111,13 @@ const getTransactionStatus = async (
     warnings,
     estimatedFees,
     amount,
-    totalSpent
+    totalSpent,
   };
 };
 
 const estimateMaxSpendable = async ({
   account,
-  parentAccount
+  parentAccount,
 }: {
   account: AccountLike;
   parentAccount?: Account | null | undefined;
@@ -146,7 +148,7 @@ const prepareTransaction = async (
       memo: t.memo,
       network,
       publicKey: xpub,
-      amount: new BN(t.amount.toFixed())
+      amount: new BN(t.amount.toFixed()),
     };
 
     const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -173,24 +175,18 @@ const prepareTransaction = async (
 const signOperation: SignOperationFnSignature<Transaction> = ({
   account,
   deviceId,
-  transaction
+  transaction,
 }): Observable<SignOperationEvent> =>
   withDevice(deviceId)(
-    transport =>
-      new Observable(o => {
+    (transport) =>
+      new Observable((o) => {
         async function main() {
           const { id: accountId, balance } = account;
           const { address, derivationPath } = getAddress(account);
           const { xpubOrAddress: xpub } = decodeAccountId(accountId);
 
-          const {
-            recipient,
-            fee,
-            useAllAmount,
-            anchorMode,
-            network,
-            memo
-          } = transaction;
+          const { recipient, fee, useAllAmount, anchorMode, network, memo } =
+            transaction;
           let { amount, nonce } = transaction;
 
           if (!xpub) {
@@ -205,82 +201,78 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
           const blockstack = new BlockstackApp(transport);
 
-          try {
-            o.next({
-              type: "device-signature-requested"
-            });
+          o.next({
+            type: "device-signature-requested",
+          });
 
-            if (useAllAmount) amount = balance.minus(fee);
+          if (useAllAmount) amount = balance.minus(fee);
 
-            const options: UnsignedTokenTransferOptions = {
-              amount: new BN(amount.toFixed()),
-              recipient,
-              anchorMode,
-              network: StacksNetwork[network],
+          const options: UnsignedTokenTransferOptions = {
+            amount: new BN(amount.toFixed()),
+            recipient,
+            anchorMode,
+            network: StacksNetwork[network],
+            memo,
+            publicKey: xpub,
+            fee: new BN(fee.toFixed()),
+            nonce: new BN(nonce.toFixed()),
+          };
+
+          const tx = await makeUnsignedSTXTokenTransfer(options);
+
+          const serializedTx = tx.serialize();
+
+          // Sign by device
+          const result = await blockstack.sign(
+            getPath(derivationPath),
+            serializedTx
+          );
+          isError(result);
+
+          o.next({
+            type: "device-signature-granted",
+          });
+
+          const txHash = "";
+
+          // build signature on the correct format
+          const signature = `${result.signatureVRS.toString("hex")}`;
+
+          const operation: Operation = {
+            id: encodeOperationId(accountId, txHash, "OUT"),
+            hash: txHash,
+            type: "OUT",
+            senders: [address],
+            recipients: [recipient],
+            accountId,
+            value: amount.plus(fee),
+            fee,
+            blockHash: null,
+            blockHeight: null,
+            date: new Date(),
+            extra: {
+              nonce,
               memo,
-              publicKey: xpub,
-              fee: new BN(fee.toFixed()),
-              nonce: new BN(nonce.toFixed())
-            };
+              xpub,
+              network,
+              anchorMode,
+              signatureType: 1,
+            },
+          };
 
-            const tx = await makeUnsignedSTXTokenTransfer(options);
-
-            const serializedTx = tx.serialize();
-
-            // Sign by device
-            const result = await blockstack.sign(
-              getPath(derivationPath),
-              serializedTx
-            );
-            isError(result);
-
-            o.next({
-              type: "device-signature-granted"
-            });
-
-            const txHash = "";
-
-            // build signature on the correct format
-            const signature = `${result.signatureVRS.toString("hex")}`;
-
-            const operation: Operation = {
-              id: encodeOperationId(accountId, txHash, "OUT"),
-              hash: txHash,
-              type: "OUT",
-              senders: [address],
-              recipients: [recipient],
-              accountId,
-              value: amount.plus(fee),
-              fee,
-              blockHash: null,
-              blockHeight: null,
-              date: new Date(),
-              extra: {
-                nonce,
-                memo,
-                xpub,
-                network,
-                anchorMode,
-                signatureType: 1
-              }
-            };
-
-            o.next({
-              type: "signed",
-              signedOperation: {
-                operation,
-                signature,
-                expirationDate: null
-              }
-            });
-          } finally {
-            close(transport, deviceId);
-          }
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature,
+              expirationDate: null,
+            },
+          });
         }
 
         main().then(
           () => o.complete(),
-          e => o.error(e)
+          (e) => o.error(e)
         );
       })
   );
@@ -294,5 +286,5 @@ export const accountBridge: AccountBridge<Transaction> = {
   signOperation,
   sync,
   receive,
-  broadcast
+  broadcast,
 };
