@@ -20,7 +20,9 @@ import DebugExport from "../../screens/Settings/Debug/Features/ExportAccounts";
 import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 import DebugFeatures from "../../screens/Settings/Debug/Features";
 import DebugFetchCustomImage from "../../screens/Settings/Debug/Features/FetchCustomImage";
-import DebugFirmwareUpdate from "../../screens/Settings/Debug/Features/FirmwareUpdate";
+import DebugFirmwareUpdate, {
+  debugFirmwareUpdateHeaderOptions,
+} from "../../screens/Settings/Debug/Features/FirmwareUpdate";
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "../../screens/Settings/Debug/Information";
@@ -384,7 +386,7 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugFirmwareUpdate}
         component={DebugFirmwareUpdate}
         options={{
-          title: "Debug FirmwareUpdate",
+          ...debugFirmwareUpdateHeaderOptions(t),
         }}
       />
       <Stack.Screen
