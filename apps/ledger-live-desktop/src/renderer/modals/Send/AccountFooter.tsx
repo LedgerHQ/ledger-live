@@ -19,13 +19,13 @@ type Props = {
   status: TransactionStatus;
 };
 const AccountFooter = ({ account, parentAccount, status }: Props) => {
-  const currency = getAccountCurrency(account);
+  // const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
   return (
     <>
-      <CurrencyCircleIcon size={40} currency={currency} />
+      <CurrencyCircleIcon size={40} currency={feesCurrency} />
       <Box grow>
         <Label
           fontSize={3}
