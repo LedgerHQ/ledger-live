@@ -1,5 +1,25 @@
 # @ledgerhq/live-common
 
+## 29.4.0-nightly.0
+
+### Minor Changes
+
+- [#3105](https://github.com/LedgerHQ/ledger-live/pull/3105) [`5d7bd8c68e`](https://github.com/LedgerHQ/ledger-live/commit/5d7bd8c68ee33507ff065c05965e1a8c387a4fae) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Refactor device action implementations unifying the logic
+
+### Patch Changes
+
+- [#3227](https://github.com/LedgerHQ/ledger-live/pull/3227) [`f11d282bde`](https://github.com/LedgerHQ/ledger-live/commit/f11d282bded679dfcbb0bbffe88055d55995e03f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add helper for Segment event/properties
+
+- [#3097](https://github.com/LedgerHQ/ledger-live/pull/3097) [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce a new manager API for listApps, which should bring memory and time improvements.
+
+- Updated dependencies [[`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678)]:
+  - @ledgerhq/live-env@0.1.1-nightly.0
+  - @ledgerhq/coin-framework@0.3.1-nightly.0
+  - @ledgerhq/coin-polkadot@0.1.2-nightly.0
+  - @ledgerhq/domain-service@1.0.1-nightly.0
+  - @ledgerhq/live-portfolio@0.0.3-nightly.0
+  - @ledgerhq/hw-app-eth@6.33.1-nightly.0
+
 ## 29.3.0
 
 ### Minor Changes

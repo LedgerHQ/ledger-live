@@ -1,5 +1,12 @@
 # @ledgerhq/react-ui
 
+## 0.12.2-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`c8920896d7`](https://github.com/LedgerHQ/ledger-live/commit/c8920896d7c96cab88f95ce705dc55aac5b345bc)]:
+  - @ledgerhq/ui-shared@0.2.0-nightly.0
+
 ## 0.12.1
 
 ### Patch Changes

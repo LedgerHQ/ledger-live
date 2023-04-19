@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-eth
 
+## 6.33.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/domain-service@1.0.1-nightly.0
+
 ## 6.33.0
 
 ### Minor Changes

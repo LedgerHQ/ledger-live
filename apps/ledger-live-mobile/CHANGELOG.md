@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.19.1-nightly.0
+
+### Patch Changes
+
+- [#3247](https://github.com/LedgerHQ/ledger-live/pull/3247) [`cf66e6cc32`](https://github.com/LedgerHQ/ledger-live/commit/cf66e6cc3207b6daabb497f12dba20eaf9c17ffd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Swap NewsFeed Tab with Learn Tab in Discover section
+
+- [#3105](https://github.com/LedgerHQ/ledger-live/pull/3105) [`5d7bd8c68e`](https://github.com/LedgerHQ/ledger-live/commit/5d7bd8c68ee33507ff065c05965e1a8c387a4fae) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Refactor device action implementations unifying the logic
+
+- [#3097](https://github.com/LedgerHQ/ledger-live/pull/3097) [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce a new manager API for listApps, which should bring memory and time improvements.
+
+- Updated dependencies [[`f11d282bde`](https://github.com/LedgerHQ/ledger-live/commit/f11d282bded679dfcbb0bbffe88055d55995e03f), [`5d7bd8c68e`](https://github.com/LedgerHQ/ledger-live/commit/5d7bd8c68ee33507ff065c05965e1a8c387a4fae), [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678)]:
+  - @ledgerhq/live-common@29.4.0-nightly.0
+  - @ledgerhq/types-live@6.32.1-nightly.0
+  - @ledgerhq/native-ui@0.18.1-nightly.0
+  - @ledgerhq/coin-framework@0.3.1-nightly.0
+  - @ledgerhq/domain-service@1.0.1-nightly.0
+
 ## 3.19.0
 
 ### Minor Changes
