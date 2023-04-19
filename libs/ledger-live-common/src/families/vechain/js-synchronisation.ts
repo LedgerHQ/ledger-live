@@ -12,8 +12,8 @@ import {
   getTokenOperations,
 } from "./api";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
-import { Operation } from "@ledgerhq/types-live";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+// import { Operation } from "@ledgerhq/types-live";
+// import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 const getAccountShape: GetAccountShape = async (info) => {
   const { initialAccount, currency, derivationMode } = info;
@@ -52,23 +52,23 @@ const getAccountShape: GetAccountShape = async (info) => {
   );
 
   //Generate type "NONE" operations on main account for each token operation to run bot tests
-  VTHOoperations.forEach((operation) => {
-    const op: Operation = {
-      id: encodeOperationId(accountId, operation.hash, "NONE" as const),
-      hash: "",
-      type: "NONE",
-      value: new BigNumber(0),
-      fee: new BigNumber(0),
-      senders: [],
-      recipients: [],
-      blockHash: "",
-      blockHeight: 0,
-      accountId,
-      date: operation.date,
-      extra: {},
-    };
-    newOperations.push(op);
-  });
+  // VTHOoperations.forEach((operation) => {
+  //   const op: Operation = {
+  //     id: encodeOperationId(accountId, operation.hash, "NONE" as const),
+  //     hash: "",
+  //     type: "NONE",
+  //     value: new BigNumber(0),
+  //     fee: new BigNumber(0),
+  //     senders: [],
+  //     recipients: [],
+  //     blockHash: "",
+  //     blockHeight: 0,
+  //     accountId,
+  //     date: operation.date,
+  //     extra: {},
+  //   };
+  //   newOperations.push(op);
+  // });
 
   const operations = mergeOps(oldOperations, newOperations);
 

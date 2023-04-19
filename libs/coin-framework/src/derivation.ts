@@ -203,7 +203,6 @@ const modes = Object.freeze({
   },
   vechain: {
     overridesDerivation: "44'/818'/0'/0/<account>",
-    mandatoryEmptyAccountSkip: 3, //activate if running bot tests and send VET and VTHO to each account
   },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
