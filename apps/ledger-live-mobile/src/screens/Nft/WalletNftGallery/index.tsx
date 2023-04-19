@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@ledgerhq/native-ui";
+import { Box, Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
 import { isEqual } from "lodash";
@@ -16,22 +16,20 @@ const WalletNftGallery = () => {
   const hasNFTs = nftsOrdered.length > 0;
 
   return (
-    <>
-      <Box>
-        {hasNFTs ? (
-          <NftList data={nftsOrdered} />
-        ) : (
-          <CollapsibleHeaderScrollView
-            contentContainerStyle={{
-              paddingTop: 0,
-              marginHorizontal: space[6],
-            }}
-          >
-            <NftGalleryEmptyState />
-          </CollapsibleHeaderScrollView>
-        )}
-      </Box>
-    </>
+    <Flex flex={1}>
+      {hasNFTs ? (
+        <NftList data={nftsOrdered} />
+      ) : (
+        <CollapsibleHeaderScrollView
+          contentContainerStyle={{
+            paddingTop: 0,
+            marginHorizontal: space[6],
+          }}
+        >
+          <NftGalleryEmptyState />
+        </CollapsibleHeaderScrollView>
+      )}
+    </Flex>
   );
 };
 
