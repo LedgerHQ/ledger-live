@@ -4,6 +4,7 @@ import { $Shape } from "utility-types";
 import {
   DEFAULT_GAS_COEFFICIENT,
   HEX_PREFIX,
+  MAINNET_CHAIN_TAG,
   TESTNET_CHAIN_TAG,
 } from "./constants";
 import { Transaction } from "./types";
@@ -18,30 +19,39 @@ import { VTHO_ADDRESS } from "./contracts/constants";
 import VIP180 from "./contracts/abis/VIP180";
 import { calculateTransactionInfo } from "./utils/calculateTransactionInfo";
 import { isValid } from "./utils/address-utils";
+import { getEnv } from "@ledgerhq/live-env";
 /**
  * Create an empty VET or VTHO transaction
  *
  * @returns {Transaction}
  */
-export const createTransaction = (): Transaction => ({
-  family: "vechain",
-  body: {
-    chainTag: TESTNET_CHAIN_TAG,
-    // placeholder, if "empty" returns error on send modal open
-    blockRef: "0x0000000000000000",
-    expiration: 18,
-    clauses: [],
-    gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
-    gas: "0",
-    dependsOn: null,
-    nonce: generateNonce(),
-  },
-  amount: BigNumber(0),
-  estimatedFees: BigNumber(0),
-  recipient: "",
-  useAllAmount: false,
-  networkInfo: true,
-});
+export const createTransaction = (): Transaction => {
+  const BASE_URL = getEnv("API_VECHAIN_THOREST");
+
+  const chainTag = BASE_URL.includes("mainnet")
+    ? MAINNET_CHAIN_TAG
+    : TESTNET_CHAIN_TAG;
+
+  return {
+    family: "vechain",
+    body: {
+      chainTag,
+      // placeholder, if "empty" returns error on send modal open
+      blockRef: "0x0000000000000000",
+      expiration: 18,
+      clauses: [],
+      gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
+      gas: "0",
+      dependsOn: null,
+      nonce: generateNonce(),
+    },
+    amount: BigNumber(0),
+    estimatedFees: BigNumber(0),
+    recipient: "",
+    useAllAmount: false,
+    networkInfo: true,
+  };
+};
 
 /**
  * Apply patch to a transaction

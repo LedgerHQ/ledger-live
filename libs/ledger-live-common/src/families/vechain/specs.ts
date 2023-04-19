@@ -147,7 +147,11 @@ const vechain: AppSpec<Transaction> = {
         transaction.useAllAmount = true;
         transaction.subAccountId = account.subAccounts[0].id;
         const amount = account.subAccounts[0].spendableBalance.integerValue();
-        const updates = [{ amount }, { recipient }];
+        const updates = [
+          { amount },
+          { recipient },
+          { subAccountId: account.subAccounts[0].id },
+        ];
         return {
           transaction,
           updates,
