@@ -65,7 +65,7 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
 
   const isPairingStatus = status === "pairing";
   const isGenuineCheckStatus = status === "genuinecheck";
-  const url = (isPairingStatus && urls.errors.PairingFailed) || undefined;
+  const url = isPairingStatus ? urls.errors.PairingFailed : undefined;
 
   const outerError = isPairingStatus
     ? new PairingFailed()
