@@ -8,6 +8,7 @@ import {
   AmountRequired,
   FeeNotLoaded,
   InvalidAddress,
+  InvalidNonce,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
@@ -134,8 +135,8 @@ const prepareTransaction = async (
   a: Account,
   t: Transaction
 ): Promise<Transaction> => {
-  const { id: accountID } = a;
-  const { recipient } = t;
+  const { id: accountID, balance } = a;
+  const { recipient, useAllAmount } = t;
   const { xpubOrAddress: xpub } = decodeAccountId(accountID);
 
   if (xpub && recipient && validateAddress(recipient).isValid) {
@@ -167,6 +168,8 @@ const prepareTransaction = async (
 
     t.fee = new BigNumber(fee.toString());
     t.nonce = new BigNumber(nonce.toString());
+
+    if (useAllAmount) t.amount = balance.minus(t.fee);
   }
 
   return t;
@@ -181,13 +184,12 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
     (transport) =>
       new Observable((o) => {
         async function main() {
-          const { id: accountId, balance } = account;
+          const { id: accountId } = account;
           const { address, derivationPath } = getAddress(account);
           const { xpubOrAddress: xpub } = decodeAccountId(accountId);
 
-          const { recipient, fee, useAllAmount, anchorMode, network, memo } =
+          const { recipient, fee, anchorMode, network, memo, amount, nonce } =
             transaction;
-          let { amount, nonce } = transaction;
 
           if (!xpub) {
             throw new InvalidAddress();
@@ -197,15 +199,15 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             throw new FeeNotLoaded();
           }
 
-          if (!nonce) nonce = new BigNumber(0);
+          if (!nonce) {
+            throw new InvalidNonce();
+          }
 
           const blockstack = new BlockstackApp(transport);
 
           o.next({
             type: "device-signature-requested",
           });
-
-          if (useAllAmount) amount = balance.minus(fee);
 
           const options: UnsignedTokenTransferOptions = {
             amount: new BN(amount.toFixed()),

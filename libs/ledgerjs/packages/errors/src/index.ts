@@ -3,14 +3,14 @@ import {
   deserializeError,
   createCustomErrorClass,
   addCustomErrorDeserializer,
-  LedgerErrorConstructor,
+  LedgerErrorConstructor
 } from "./helpers";
 
 export {
   serializeError,
   deserializeError,
   createCustomErrorClass,
-  addCustomErrorDeserializer,
+  addCustomErrorDeserializer
 };
 
 export const AccountNameRequiredError = createCustomErrorClass(
@@ -76,8 +76,10 @@ export const FirmwareNotRecognized = createCustomErrorClass(
 export const HardResetFail = createCustomErrorClass("HardResetFail");
 export const InvalidXRPTag = createCustomErrorClass("InvalidXRPTag");
 export const InvalidAddress = createCustomErrorClass("InvalidAddress");
-export const InvalidAddressBecauseDestinationIsAlsoSource =
-  createCustomErrorClass("InvalidAddressBecauseDestinationIsAlsoSource");
+export const InvalidNonce = createCustomErrorClass("InvalidNonce");
+export const InvalidAddressBecauseDestinationIsAlsoSource = createCustomErrorClass(
+  "InvalidAddressBecauseDestinationIsAlsoSource"
+);
 export const LatestMCUInstalledError = createCustomErrorClass(
   "LatestMCUInstalledError"
 );
@@ -125,8 +127,9 @@ export const NotEnoughBalanceInParentAccount = createCustomErrorClass(
 export const NotEnoughSpendableBalance = createCustomErrorClass(
   "NotEnoughSpendableBalance"
 );
-export const NotEnoughBalanceBecauseDestinationNotCreated =
-  createCustomErrorClass("NotEnoughBalanceBecauseDestinationNotCreated");
+export const NotEnoughBalanceBecauseDestinationNotCreated = createCustomErrorClass(
+  "NotEnoughBalanceBecauseDestinationNotCreated"
+);
 export const NoAccessToCamera = createCustomErrorClass("NoAccessToCamera");
 export const NotEnoughGas = createCustomErrorClass("NotEnoughGas");
 export const NotSupportedLegacyAddress = createCustomErrorClass(
@@ -141,10 +144,12 @@ export const PriorityFeeHigherThanMaxFee = createCustomErrorClass(
   "PriorityFeeHigherThanMaxFee"
 );
 export const MaxFeeTooLow = createCustomErrorClass("MaxFeeTooLow");
-export const PasswordsDontMatchError =
-  createCustomErrorClass("PasswordsDontMatch");
-export const PasswordIncorrectError =
-  createCustomErrorClass("PasswordIncorrect");
+export const PasswordsDontMatchError = createCustomErrorClass(
+  "PasswordsDontMatch"
+);
+export const PasswordIncorrectError = createCustomErrorClass(
+  "PasswordIncorrect"
+);
 export const RecommendSubAccountsToEmpty = createCustomErrorClass(
   "RecommendSubAccountsToEmpty"
 );
@@ -230,8 +235,9 @@ export const FirmwareOrAppUpdateRequired = createCustomErrorClass(
 );
 
 // Bitcoin family
-export const OpReturnDataSizeLimit =
-  createCustomErrorClass("OpReturnSizeLimit");
+export const OpReturnDataSizeLimit = createCustomErrorClass(
+  "OpReturnSizeLimit"
+);
 export const DustLimit = createCustomErrorClass("DustLimit");
 
 // Language
@@ -249,7 +255,7 @@ export enum HwTransportErrorType {
   Unknown = "Unknown",
   LocationServicesDisabled = "LocationServicesDisabled",
   LocationServicesUnauthorized = "LocationServicesUnauthorized",
-  BluetoothScanStartFailed = "BluetoothScanStartFailed",
+  BluetoothScanStartFailed = "BluetoothScanStartFailed"
 }
 
 /**
@@ -290,7 +296,7 @@ export class TransportError extends Error {
 
 addCustomErrorDeserializer(
   "TransportError",
-  (e) => new TransportError(e.message, e.id)
+  e => new TransportError(e.message, e.id)
 );
 
 export const StatusCodes = {
@@ -332,7 +338,7 @@ export const StatusCodes = {
   TECHNICAL_PROBLEM: 0x6f00,
   UNKNOWN_APDU: 0x6d02,
   USER_REFUSED_ON_DEVICE: 0x5501,
-  NOT_ENOUGH_SPACE: 0x5102,
+  NOT_ENOUGH_SPACE: 0x5102
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {
@@ -364,7 +370,7 @@ export function getAltStatusMessage(code: number): string | undefined | null {
  */
 export function TransportStatusError(statusCode: number): void {
   const statusText =
-    Object.keys(StatusCodes).find((k) => StatusCodes[k] === statusCode) ||
+    Object.keys(StatusCodes).find(k => StatusCodes[k] === statusCode) ||
     "UNKNOWN_ERROR";
   const smsg = getAltStatusMessage(statusCode) || statusText;
   const statusCodeStr = statusCode.toString(16);
@@ -385,5 +391,5 @@ TransportStatusError.prototype = new Error();
 
 addCustomErrorDeserializer(
   "TransportStatusError",
-  (e) => new TransportStatusError(e.statusCode)
+  e => new TransportStatusError(e.statusCode)
 );
