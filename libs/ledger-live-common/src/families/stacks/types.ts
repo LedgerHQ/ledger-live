@@ -5,11 +5,11 @@ import {
   BroadcastArg0,
   Operation,
   TransactionCommon,
-  TransactionCommonRaw
+  TransactionCommonRaw,
 } from "@ledgerhq/types-live";
 import {
   TransactionStatusCommon,
-  TransactionStatusCommonRaw
+  TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
 import { StacksNetwork } from "./bridge/utils/types";

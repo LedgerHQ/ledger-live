@@ -2,7 +2,7 @@ import { StacksMainnet, StacksTestnet } from "@stacks/network";
 
 export const StacksNetwork = {
   mainnet: new StacksMainnet(),
-  testnet: new StacksTestnet()
+  testnet: new StacksTestnet(),
 };
 
 export interface EstimatedFeesRequest {

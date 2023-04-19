@@ -4,17 +4,16 @@ import type { DeviceTransactionField } from "../../transaction";
 import type { Transaction, TransactionStatus } from "./types";
 
 export type ExtraDeviceTransactionField =
-    {
-    type: "stacks.memo";
-    label: string;
-    value: string;
-  }
-    | {
-  type: "stacks.extendedAmount";
-  label: string;
-  value: BigNumber;
-};
-
+  | {
+      type: "stacks.memo";
+      label: string;
+      value: string;
+    }
+  | {
+      type: "stacks.extendedAmount";
+      label: string;
+      value: BigNumber;
+    };
 
 function getDeviceTransactionConfig(input: {
   account: AccountLike;

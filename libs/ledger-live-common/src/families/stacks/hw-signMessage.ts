@@ -7,7 +7,6 @@ const signMessage: SignMessage = async (
   transport,
   { path, message }
 ): Promise<Result> => {
-
   const blockstack = new BlockstackApp(transport);
 
   if (!message) throw new Error(`Message cannot be empty`);

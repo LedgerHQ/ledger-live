@@ -6,7 +6,6 @@ import type { Resolver } from "../../hw/getAddress/types";
 import { getPath, isError } from "./utils";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
-
   const blockstack = new BlockstackApp(transport);
 
   const r = verify
