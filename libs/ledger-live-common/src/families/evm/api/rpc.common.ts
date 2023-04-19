@@ -293,6 +293,22 @@ export const getOptimismAdditionalFees = makeLRUCache<
         return new BigNumber(0);
       }
 
+      // Fake signature is added to get the best approximation possible for the gas on L1
+      const serializedTransaction = (() => {
+        try {
+          return getSerializedTransaction(transaction, {
+            r: "0xffffffffffffffffffffffffffffffffffffffff",
+            s: "0xffffffffffffffffffffffffffffffffffffffff",
+            v: 0,
+          });
+        } catch (e) {
+          return null;
+        }
+      })();
+      if (!serializedTransaction) {
+        return new BigNumber(0);
+      }
+
       const optimismGasOracle = new ethers.Contract(
         // contract address provided here
         // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
@@ -300,22 +316,22 @@ export const getOptimismAdditionalFees = makeLRUCache<
         OptimismGasPriceOracleAbi,
         api
       );
-      // Fake signature is added to get the best approximation possible for the gas on L1
-      const serializedTransaction = getSerializedTransaction(transaction, {
-        r: "0xffffffffffffffffffffffffffffffffffffffff",
-        s: "0xffffffffffffffffffffffffffffffffffffffff",
-        v: 0,
-      });
       const additionalL1Fees = await optimismGasOracle.getL1Fee(
         serializedTransaction
       );
       return new BigNumber(additionalL1Fees.toString());
     }),
-  (currency, transaction) =>
-    "getOptimismL1BaseFee_" +
-    currency.id +
-    "_" +
-    getSerializedTransaction(transaction),
+  (currency, transaction) => {
+    const serializedTransaction = (() => {
+      try {
+        return getSerializedTransaction(transaction);
+      } catch (e) {
+        return null;
+      }
+    })();
+
+    return "getOptimismL1BaseFee_" + currency.id + "_" + serializedTransaction;
+  },
   { ttl: 15 * 1000 } // preventing rate limit by caching this for at least 15sec
 );
 

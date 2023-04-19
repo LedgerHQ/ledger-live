@@ -507,5 +507,26 @@ describe("EVM Family", () => {
         )
       ).toEqual(new BigNumber(0));
     });
+
+    it("should return 0 if the transaction is invalid", async () => {
+      expect(
+        await RPC_API.getOptimismAdditionalFees(
+          fakeCurrency as CryptoCurrency,
+          {
+            mode: "send",
+            family: "evm",
+            recipient: "", // no recipient for example
+            maxFeePerGas: new BigNumber("0x777159126"),
+            maxPriorityFeePerGas: new BigNumber("0x10c388d00"),
+            amount: new BigNumber("0x38d7ea4c68000"),
+            gasLimit: new BigNumber(0),
+            data: Buffer.from(""),
+            type: 2,
+            chainId: 1,
+            nonce: 52,
+          } as EvmTransaction
+        )
+      ).toEqual(new BigNumber(0));
+    });
   });
 });
