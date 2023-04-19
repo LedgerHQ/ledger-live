@@ -99,7 +99,7 @@ export function useDeepLinkHandler() {
           break;
         }
         case "buy":
-          navigate("/exchange");
+          navigate("/exchange", undefined, search);
           break;
         case "earn": {
           navigate("/earn", undefined, search);
