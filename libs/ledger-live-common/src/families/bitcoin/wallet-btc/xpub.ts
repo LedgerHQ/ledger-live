@@ -69,7 +69,7 @@ class Xpub {
 
     // TODO handle eventual reorg case using lastBlock
     // TODO perf: bad : looping in the tx array
-    await this.checkAddressReorg(account, index);
+    // await this.checkAddressReorg(account, index);
 
     // in case pendings have changed we clean them out
     // TODO perf : bad : looping in the tx array
