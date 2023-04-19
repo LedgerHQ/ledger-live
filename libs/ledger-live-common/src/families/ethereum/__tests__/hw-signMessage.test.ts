@@ -31,6 +31,7 @@ const signEIP712Message = jest.fn(() =>
 // We only need to mock the defaut class returned
 jest.mock("@ledgerhq/hw-app-eth", () => {
   return {
+    __esModule: true,
     ...jest.requireActual("@ledgerhq/hw-app-eth"),
     default: class {
       signPersonalMessage = signPersonalMessage;

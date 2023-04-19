@@ -8,6 +8,7 @@
     "noImplicitThis": false,
     "module": "commonjs",
     "lib": ["DOM", "ES2017"],
-    "target": "ES3"
+    "isolatedModules": false,
+    "target": "ES6"
   }
 }
