@@ -310,9 +310,6 @@ importers:
       prando:
         specifier: ^5.1.2
         version: 5.1.2
-      prop-types:
-        specifier: ^15.8.1
-        version: 15.8.1
       qrcode:
         specifier: ^1.4.4
         version: 1.5.0
@@ -342,7 +339,7 @@ importers:
         version: 1.2.0-beta.3(eslint@7.32.0)(react@17.0.2)
       react-lottie:
         specifier: ^1.2.3
-        version: 1.2.3(prop-types@15.8.1)(react@17.0.2)
+        version: 1.2.3(react@17.0.2)
       react-markdown:
         specifier: ^4.3.0
         version: 4.3.1(react@17.0.2)
@@ -350,8 +347,8 @@ importers:
         specifier: ^0.5.2
         version: 0.5.2(react@17.0.2)
       react-prismazoom:
-        specifier: ^3.0.0
-        version: 3.0.3(prop-types@15.8.1)(react-dom@17.0.2)(react@17.0.2)
+        specifier: ^3.3.3
+        version: 3.3.3(react-dom@17.0.2)(react@17.0.2)
       react-redux:
         specifier: ^7.2.9
         version: 7.2.9(@types/react@17.0.53)(react@17.0.2)
@@ -563,6 +560,12 @@ importers:
       '@types/react-transition-group':
         specifier: ^4.4.2
         version: 4.4.4(@types/react@17.0.53)
+      '@types/react-virtualized-auto-sizer':
+        specifier: ^1.0.1
+        version: 1.0.1(@types/react@17.0.53)
+      '@types/react-window':
+        specifier: ^1.8.5
+        version: 1.8.5(@types/react@17.0.53)
       '@types/redux-actions':
         specifier: ^2.6.2
         version: 2.6.2
@@ -575,6 +578,9 @@ importers:
       '@types/styled-components':
         specifier: ^5.1.25
         version: 5.1.25(@types/react@17.0.53)
+      '@types/styled-system':
+        specifier: ^5.1.16
+        version: 5.1.16
       '@types/trust__keyto':
         specifier: ^1.0.0
         version: 1.0.0
@@ -22725,6 +22731,17 @@ packages:
     dependencies:
       '@types/react': 17.0.53
 
+  /@types/react-virtualized-auto-sizer@1.0.1(@types/react@17.0.53):
+    resolution: {integrity: sha512-GH8sAnBEM5GV9LTeiz56r4ZhMOUSrP43tAQNSRVxNexDjcNKLCEtnxusAItg1owFUFE6k0NslV26gqVClVvong==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@types/react': 17.0.53
+    dev: true
+
   /@types/react-window@1.8.5(@types/react@17.0.53):
     resolution: {integrity: sha512-V9q3CvhC9Jk9bWBOysPGaWy/Z0lxYcTXLtLipkt2cnRj1JOSFNF7wqGpkScSXMgBwC+fnVRg/7shwgddBG5ICw==}
     peerDependencies:
@@ -22734,7 +22751,6 @@ packages:
         optional: true
     dependencies:
       '@types/react': 17.0.53
-    dev: false
 
   /@types/react@17.0.53:
     resolution: {integrity: sha512-1yIpQR2zdYu1Z/dc1OxC+MA6GR240u3gcnP4l6mvj/PJiVaqHsQPmWttsvHsfnhfPbU2FuGmo0wSITPygjBmsw==}
@@ -22839,6 +22855,12 @@ packages:
     resolution: {integrity: sha512-1uls4wipZn8FtYFZ7upRVFDoEeOXTQTs2zuyOZPn02T6rjIxtvj2P2lG5qsxXHhKuKsu3thveCZrtaeLE/ibLg==}
     dependencies:
       csstype: 3.0.11
+
+  /@types/styled-system@5.1.16:
+    resolution: {integrity: sha512-+dyGs2n2o6QStsexh87NeaRmXYnKOnEe7iOEkcYOwKwI5a1gFL0+Mt/hZKi+4KD1qDMkLkGb0lpDrffb/vSkDQ==}
+    dependencies:
+      csstype: 3.0.11
+    dev: true
 
   /@types/tapable@1.0.8:
     resolution: {integrity: sha512-ipixuVrh2OdNmauvtT51o3d8z12p6LtFW9in7U79der/kwejjdNchQC5UMn5u/KxNoM7VHHOs/l8KS8uHxhODQ==}
@@ -49965,7 +49987,7 @@ packages:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
     dev: false
 
-  /react-lottie@1.2.3(prop-types@15.8.1)(react@17.0.2):
+  /react-lottie@1.2.3(react@17.0.2):
     resolution: {integrity: sha512-qLCERxUr8M+4mm1LU0Ruxw5Y5Fn/OmYkGfnA+JDM/dZb3oKwVAJCjwnjkj9TMHtzR2U6sMEUD3ZZ1RaHagM7kA==}
     engines: {npm: ^3.0.0}
     peerDependencies:
@@ -49977,7 +49999,6 @@ packages:
     dependencies:
       babel-runtime: 6.26.0
       lottie-web: 5.9.4
-      prop-types: 15.8.1
       react: 17.0.2
     dev: false
 
@@ -50764,14 +50785,12 @@ packages:
       warning: 4.0.3
     dev: true
 
-  /react-prismazoom@3.0.3(prop-types@15.8.1)(react-dom@17.0.2)(react@17.0.2):
-    resolution: {integrity: sha512-bqZyTIl3mYGqUNUn/8znHhkaV5w8tBjw/DbAIk5M44K8IAHIB1dkqel579iiG37FIu5YYzoXkeebyVlHE/quaQ==}
+  /react-prismazoom@3.3.3(react-dom@17.0.2)(react@17.0.2):
+    resolution: {integrity: sha512-DSeKL+szKcFsKDcLCAXlsomY21V1jLxJhCg9HUtGOt+LJOJ6Z51cyCvEGPuqvwqik+V3izZDLrCnShAjea82rA==}
     peerDependencies:
-      prop-types: ^15.6
-      react: ^16.3 || ^17 || ^18
-      react-dom: ^16.3 || ^17 || ^18
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
     dependencies:
-      prop-types: 15.8.1
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
     optionalDependencies:
