@@ -36,14 +36,8 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.base_ref }}
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
@@ -60,6 +54,9 @@ jobs:
           pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
           cd apps/ledger-live-mobile
           node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./lint.json'))"
+      - name: check for dead code
+        run: cd apps/ledger-live-mobile && npx unimported
+        shell: bash
       - name: Run code checkers
         run: pnpm typecheck --filter="live-mobile" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - uses: actions/upload-artifact@v3

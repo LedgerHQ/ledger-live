@@ -9,13 +9,16 @@ import {
 import { RebootContext } from "../../../../context/Reboot";
 import { knownDevicesSelector } from "../../../../reducers/ble";
 import { removeKnownDevices } from "../../../../actions/ble";
+import { TermsContext } from "../../../../logic/terms";
 
 export default function ResetOnboardingStateRow() {
   const dispatch = useDispatch();
   const reboot = useContext(RebootContext);
+  const termsContext = useContext(TermsContext);
   const knownDevices = useSelector(knownDevicesSelector);
   return (
     <SettingsRow
+      hasBorderTop
       title="Reset onboarding state"
       desc="Sets the app as if the onboarding was never completed"
       onPress={() => {
@@ -23,6 +26,7 @@ export default function ResetOnboardingStateRow() {
         dispatch(setHasOrderedNano(false));
         dispatch(completeOnboarding(false));
         dispatch(removeKnownDevices(knownDevices.map(d => d.id)));
+        termsContext.unAccept();
         requestAnimationFrame(() => {
           reboot();
         });

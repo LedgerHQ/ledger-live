@@ -6,6 +6,7 @@ import { Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName, NavigatorName } from "../../../const";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
@@ -18,6 +19,7 @@ import DeviceSetupView from "../../../components/DeviceSetupView";
 import { RootStackParamList } from "../../../components/RootNavigator/types/RootNavigator";
 import { NavigateInput } from "../../../components/RootNavigator/types/BaseNavigator";
 import ChoiceCard from "./ChoiceCard";
+import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 
 const nanoX = {
   source: require("../../../../assets/images/devices/NanoXCropped.png"),
@@ -53,6 +55,7 @@ function OnboardingStepDeviceSelection() {
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslation();
   const syncOnboarding = useFeature("syncOnboarding" as const);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const devices = useMemo(() => {
     if (syncOnboarding?.enabled) {
@@ -88,6 +91,7 @@ function OnboardingStepDeviceSelection() {
         params: {
           filterByDeviceModelId: DeviceModelId.stax,
           areKnownDevicesDisplayed: true,
+          areKnownDevicesPairable: !hasCompletedOnboarding,
           onSuccessAddToKnownDevices: false,
           onSuccessNavigateToConfig: {
             // navigation.push on success because it could not correctly
@@ -117,7 +121,7 @@ function OnboardingStepDeviceSelection() {
             key={device.id}
             event="Onboarding Device - Selection"
             eventProperties={{ id: device.id }}
-            testID={`Onboarding Device - Selection|${device.id}`}
+            testID={`onboarding-device-selection-${device.id}`}
             title={getProductName(device.id)}
             titleProps={{ variant: "large", fontWeight: "semiBold" }}
             onPress={() => next(device.id)}

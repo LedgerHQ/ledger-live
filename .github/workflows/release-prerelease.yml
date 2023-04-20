@@ -42,28 +42,8 @@ jobs:
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
-          registry-url: "https://registry.npmjs.org"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version:
-      #       3.1.2 # Not needed with a .ruby-version file
-      #       # runs 'bundle install' and caches installed gems automatically
-      # - name: Cache LLM pods
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       apps/ledger-live-mobile/ios/Pods
-      #       ~/Library/Caches/CocoaPods
-      #       ~/.cocoapods
-      #     key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/get-package-infos
         id: desktop-version
         with:
@@ -73,7 +53,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" --frozen-lockfile
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
       - name: build libs
         run: pnpm run build:libs
       - name: versioning

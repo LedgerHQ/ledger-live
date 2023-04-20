@@ -41,7 +41,7 @@ const GenericInformationalView: React.FC<Props> = ({
       <Flex alignItems="center" justifyContent="center" flexGrow={1}>
         <Box mb={7}>
           <Flex
-            backgroundColor={"neutral.c100a005"}
+            backgroundColor={"opacityDefault.c05"}
             height={64}
             width={64}
             borderRadius={999}
@@ -97,7 +97,7 @@ const GenericInformationalView: React.FC<Props> = ({
           onPress={onPrimaryButtonPress}
           event={primaryButtonEvent}
         >
-          <Text variant="body" color="neutral.00" fontSize={5}>
+          <Text variant="body" color="neutral.c00" fontSize={5}>
             {primaryButtonLabel}
           </Text>
         </Button>

@@ -18,7 +18,6 @@ import { setHasBeenUpsoldProtect } from "../../actions/settings";
 
 import Carousel from "../../components/Carousel";
 import TrackScreen from "../../analytics/TrackScreen";
-import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
@@ -48,6 +47,7 @@ import {
 } from "../../reducers/accounts";
 import PortfolioAssets from "./PortfolioAssets";
 import { internetReachable } from "../../logic/internetReachable";
+import { useLearnMoreURI } from "../../hooks/recoverFeatureFlag";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -71,14 +71,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
   const protectFeature = useFeature("protectServicesMobile");
-  const recoverUpsellURL =
-    protectFeature?.params?.onboardingRestore?.postOnboardingURI;
+  const recoverUpsellURL = useLearnMoreURI();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const openProtectUpsell = async () => {
       const internetConnected = await internetReachable();
-      if (internetConnected && recoverUpsellURL) {
+      if (internetConnected && recoverUpsellURL && protectFeature?.enabled) {
         Linking.openURL(recoverUpsellURL);
       }
     };
@@ -86,7 +85,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       openProtectUpsell();
       dispatch(setHasBeenUpsoldProtect(true));
     }
-  }, [hasBeenUpsoldProtect, lastConnectedDevice, recoverUpsellURL, dispatch]);
+  }, [
+    hasBeenUpsoldProtect,
+    lastConnectedDevice,
+    recoverUpsellURL,
+    dispatch,
+    protectFeature?.enabled,
+  ]);
 
   const openAddModal = useCallback(() => {
     track("button_clicked", {
@@ -194,7 +199,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         showsVerticalScrollIndicator={false}
         testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyAccount"}
       />
-      <MigrateAccountsBanner />
       <AddAccountsModal
         navigation={navigation as unknown as BaseNavigation}
         isOpened={isAddModalOpened}

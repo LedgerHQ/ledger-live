@@ -112,14 +112,14 @@ const DeviceAppStorage = ({
         <Flex flexDirection={"row"} alignItems={"center"}>
           {shouldWarnMemory && (
             <Box mr={2}>
-              <WarningMedium color={"palette.warning.c60"} size={14} />
+              <WarningMedium color={"palette.warning.c30"} size={14} />
             </Box>
           )}
           {isDeviceFull ? (
             <Text
               variant={"small"}
               fontWeight={"medium"}
-              color={"palette.warning.c60"}
+              color={"palette.warning.c30"}
             >
               <Trans i18nKey="manager.storage.noFreeSpace" />
             </Text>

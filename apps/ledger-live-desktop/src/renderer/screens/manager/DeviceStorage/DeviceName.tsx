@@ -54,9 +54,10 @@ const DeviceName: React.FC<Props> = ({
       device,
       onSetName: onSuccess,
       deviceName: name,
+      deviceInfo,
     });
     track("Page Manager RenameDeviceEntered");
-  }, [device, name, onSuccess]);
+  }, [device, deviceInfo, name, onSuccess]);
 
   return (
     <Flex alignItems="center">

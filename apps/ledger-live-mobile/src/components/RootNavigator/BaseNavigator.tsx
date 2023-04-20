@@ -38,13 +38,7 @@ import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
-import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
-import LendingNavigator from "./LendingNavigator";
-import LendingInfoNavigator from "./LendingInfoNavigator";
-import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
-import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
-import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "../../screens/Analytics/Allocation";
 import AnalyticsOperations from "../../screens/Analytics/Operations";
@@ -86,6 +80,8 @@ import DeviceConnect from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
+import { RecoverPlayer } from "../../screens/Protect/Player";
+import { RedirectToOnboardingRecoverFlowScreen } from "../../screens/Protect/RedirectToOnboardingRecoverFlow";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -188,6 +184,14 @@ export default function BaseNavigator() {
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
+        name={ScreenName.Recover}
+        component={RecoverPlayer}
+        options={{
+          headerStyle: styles.headerNoShadow,
+        }}
+        {...noNanoBuyNanoWallScreenOptions}
+      />
+      <Stack.Screen
         name={ScreenName.LearnWebView}
         component={LearnWebView}
         options={{ headerShown: false }}
@@ -216,36 +220,6 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.Swap}
         component={SwapNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.Lending}
-        component={LendingNavigator}
-        options={{
-          ...stackNavigationConfig,
-          headerStyle: styles.headerNoShadow,
-          headerLeft: () => null,
-          title: t("transfer.lending.title"),
-        }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingInfo}
-        component={LendingInfoNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingEnableFlow}
-        component={LendingEnableFlowNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingSupplyFlow}
-        component={LendingSupplyFlowNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingWithdrawFlow}
-        component={LendingWithdrawFlowNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -443,11 +417,6 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={NavigatorName.MigrateAccountsFlow}
-        component={MigrateAccountsFlowNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
         name={ScreenName.AnalyticsAllocation}
         component={AnalyticsAllocation}
         options={{
@@ -588,6 +557,11 @@ export default function BaseNavigator() {
             }
           },
         })}
+      />
+      <Stack.Screen
+        name={ScreenName.RedirectToOnboardingRecoverFlow}
+        options={{ headerShown: false }}
+        component={RedirectToOnboardingRecoverFlowScreen}
       />
       <Stack.Screen
         name={NavigatorName.NoFundsFlow}

@@ -130,7 +130,12 @@ function ReceiveSelectAccount({
         currency={currency.name}
       />
       <Flex p={6}>
-        <LText fontSize="32px" fontFamily="InterMedium" semiBold>
+        <LText
+          fontSize="32px"
+          fontFamily="InterMedium"
+          semiBold
+          testID="receive-header-step2-title"
+        >
           {t("transfer.receive.selectAccount.title")}
         </LText>
         <LText variant="body" color="neutral.c70">
@@ -140,6 +145,7 @@ function ReceiveSelectAccount({
         </LText>
       </Flex>
       <FlatList
+        testID="receive-header-step2-accounts"
         data={aggregatedAccounts}
         renderItem={renderItem}
         keyExtractor={keyExtractor}

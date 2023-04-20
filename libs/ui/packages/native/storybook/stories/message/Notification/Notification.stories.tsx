@@ -1,48 +1,72 @@
-import { storiesOf } from "../../storiesOf";
-import { number, select, text, color, boolean } from "@storybook/addon-knobs";
 import React from "react";
+import { action } from "@storybook/addon-actions";
+import { ComponentStory } from "@storybook/react-native";
 import { Icons } from "../../../../src/assets";
 import Notification from "../../../../src/components/message/Notification";
-import { action } from "@storybook/addon-actions";
 import FlexBox from "../../../../src/components/Layout/Flex";
 
-const NotificationSample = () => (
+export default {
+  title: "Messages/Notification",
+  component: Notification,
+};
+
+export const NotificationSample: ComponentStory<typeof Notification> = (
+  args: typeof NotificationSampleArgs,
+) => (
   <FlexBox p={20} width={"100%"}>
     <Notification
       Icon={Icons.InfoMedium}
-      variant={select(
-        "variant",
-        ["primary", "secondary", "success", "error", "warning", "neutral", "plain"],
-        "primary",
-      )}
-      title={text("title", "Title about Security information which could be on 2 lines maximum")}
-      numberOfLines={number("numberOfLines", 9, { min: 1, max: 10 })}
+      variant={args.variant}
+      title={args.title}
+      numberOfLines={args.numberOfLines}
       onClose={action("onClose")}
     />
   </FlexBox>
 );
+NotificationSample.storyName = "Notification";
+const NotificationSampleArgs = {
+  variant: "primary",
+  title: "Title about Security information which could be on 2 lines maximum",
+  numberOfLines: 9,
+};
+NotificationSample.args = NotificationSampleArgs;
+NotificationSample.argTypes = {
+  variant: {
+    options: ["primary", "secondary", "success", "error", "warning", "neutral", "plain"],
+    control: { type: "select" },
+  },
+};
 
-const NotificationNews = () => (
+export const NotificationNews: ComponentStory<typeof Notification> = (
+  args: typeof NotificationNewsArgs,
+) => (
   <FlexBox p={20} width={"100%"}>
     <Notification
-      Icon={boolean("showIcon", true) ? Icons.InfoMedium : undefined}
-      variant={select(
-        "variant",
-        ["primary", "secondary", "success", "error", "warning", "neutral", "plain"],
-        "primary",
-      )}
-      title={text("title", "Status")}
-      subtitle={text("subtitle", "Message")}
-      numberOfLines={number("numberOfLines", 9, { min: 1, max: 10 })}
-      linkText={text("linkText", "Learn more")}
+      Icon={args.showIcon ? Icons.InfoMedium : undefined}
+      variant={args.variant}
+      title={args.title}
+      subtitle={args.subtitle}
+      numberOfLines={args.numberOfLines}
+      linkText={args.linkText}
       onLinkPress={action("onLinkPress")}
-      iconColor={color("iconColor", "")}
+      iconColor={args.iconColor}
     />
   </FlexBox>
 );
-
-storiesOf((story) =>
-  story("Messages/Notification", module)
-    .add("Notification", NotificationSample)
-    .add("News", NotificationNews),
-);
+NotificationNews.storyName = "News";
+const NotificationNewsArgs = {
+  showIcon: true,
+  variant: "primary",
+  title: "Status",
+  subtitle: "Message",
+  numberOfLines: 9,
+  linkText: "Learn more",
+  iconColor: "",
+};
+NotificationNews.args = NotificationNewsArgs;
+NotificationNews.argTypes = {
+  variant: {
+    options: ["primary", "secondary", "success", "error", "warning", "neutral", "plain"],
+    control: { type: "select" },
+  },
+};

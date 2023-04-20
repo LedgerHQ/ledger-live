@@ -28,7 +28,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "../../actions/ble";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay from "./ResyncOverlay";
@@ -41,10 +41,7 @@ import {
   setReadOnlyMode,
 } from "../../actions/settings";
 import DeviceSetupView from "../../components/DeviceSetupView";
-import {
-  BaseNavigatorStackParamList,
-  NavigateInput,
-} from "../../components/RootNavigator/types/BaseNavigator";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
@@ -191,42 +188,6 @@ export const SyncOnboarding = ({
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
 
-  const goBackToPairingFlow = useCallback(() => {
-    const navigateInput: NavigateInput<
-      RootStackParamList,
-      NavigatorName.BaseOnboarding
-    > = {
-      name: NavigatorName.BaseOnboarding,
-      params: {
-        screen: NavigatorName.SyncOnboarding,
-        params: {
-          screen: ScreenName.SyncOnboardingCompanion,
-          params: {
-            // @ts-expect-error BleDevicePairingFlow will set this param
-            device: null,
-          },
-        },
-      },
-    };
-
-    // On pairing success, navigate to the Sync Onboarding Companion
-    // Replace to avoid going back to this screen on return from the pairing flow
-    navigation.navigate(NavigatorName.Base, {
-      screen: ScreenName.BleDevicePairingFlow,
-      params: {
-        // TODO: For now, don't do that because stax shows up as nanoX
-        // filterByDeviceModelId: device.modelId,
-        areKnownDevicesDisplayed: true,
-        onSuccessAddToKnownDevices: false,
-        onSuccessNavigateToConfig: {
-          navigationType: "navigate",
-          navigateInput,
-          pathToDeviceParam: "params.params.params.device",
-        },
-      },
-    });
-  }, [navigation]);
-
   const {
     onboardingState: deviceOnboardingState,
     allowedError,
@@ -261,8 +222,8 @@ export const SyncOnboarding = ({
 
   const handleDesyncClose = useCallback(() => {
     setDesyncDrawerOpen(false);
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
+    navigation.goBack();
+  }, [navigation]);
 
   const handleDeviceReady = useCallback(() => {
     // Adds the device to the list of known devices
@@ -282,8 +243,8 @@ export const SyncOnboarding = ({
   }, [device, dispatchRedux, navigation]);
 
   const handleClose = useCallback(() => {
-    readyRedirectTimerRef.current ? handleDeviceReady() : goBackToPairingFlow();
-  }, [goBackToPairingFlow, handleDeviceReady]);
+    readyRedirectTimerRef.current ? handleDeviceReady() : navigation.goBack();
+  }, [navigation, handleDeviceReady]);
 
   useEffect(() => {
     if (!fatalError) {
@@ -325,10 +286,15 @@ export const SyncOnboarding = ({
   }, [isDesyncDrawerOpen]);
 
   useEffect(() => {
+    // When the device is seeded, there are 2 cases before triggering the software check step:
+    // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
+    // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
     if (
       deviceOnboardingState?.isOnboarded &&
-      deviceOnboardingState?.currentOnboardingStep ===
-        DeviceOnboardingStep.Ready
+      [
+        DeviceOnboardingStep.Ready,
+        DeviceOnboardingStep.WelcomeScreen1,
+      ].includes(deviceOnboardingState?.currentOnboardingStep)
     ) {
       setCompanionStepKey(CompanionStepKey.SoftwareCheck);
       return;

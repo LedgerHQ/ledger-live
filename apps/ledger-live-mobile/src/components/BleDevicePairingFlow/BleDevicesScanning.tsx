@@ -28,6 +28,7 @@ export type BleDevicesScanningProps = {
   onGoBack?: () => void;
   filterByDeviceModelId?: FilterByDeviceModelId;
   areKnownDevicesDisplayed?: boolean;
+  areKnownDevicesPairable?: boolean;
 };
 
 /**
@@ -40,12 +41,14 @@ export type BleDevicesScanningProps = {
  * @param onDeviceSelect Function called when the user selects a scanned device
  * @param filterByDeviceModelId The only model of the devices that will be scanned
  * @param areKnownDevicesDisplayed Choose to display seen devices that are already known by LLM
+ * @param areKnownDevicesPairable Display already known devices in the same way as unknown devices, allowing to connect to them.
  * @param onGoBack If this function is set, a back arrow is displayed that calls this function if pressed
  */
 const BleDevicesScanning = ({
   onDeviceSelect,
   filterByDeviceModelId = null,
   areKnownDevicesDisplayed,
+  areKnownDevicesPairable,
   onGoBack,
 }: BleDevicesScanningProps) => {
   const { t } = useTranslation();
@@ -221,6 +224,7 @@ const BleDevicesScanning = ({
                     onSelect={() => onWrappedDeviceSelect(deviceMeta)}
                     key={deviceMeta.deviceId}
                     deviceMeta={deviceMeta}
+                    areKnownDevicesPairable={areKnownDevicesPairable}
                   />
                 ))}
             </Flex>

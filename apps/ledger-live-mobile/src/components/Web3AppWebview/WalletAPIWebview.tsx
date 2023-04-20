@@ -12,16 +12,19 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 import VersionNumber from "react-native-version-number";
 import { WebView as RNWebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
-import { SignedOperation } from "@ledgerhq/types-live";
+import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   safeGetRefValue,
+  ExchangeType,
   UiHook,
   useConfig,
   useWalletAPIServer,
 } from "@ledgerhq/live-common/wallet-api/react";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import BigNumber from "bignumber.js";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { NavigatorName, ScreenName } from "../../const";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { track } from "../../analytics/segment";
@@ -32,6 +35,7 @@ import { analyticsEnabledSelector } from "../../reducers/settings";
 import getOrCreateUser from "../../user";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
+import deviceStorage from "../../logic/storeWrapper";
 
 const wallet = {
   name: "ledger-live-mobile",
@@ -41,6 +45,7 @@ const tracking = trackingWrapper(track);
 
 function useUiHook(): Partial<UiHook> {
   const navigation = useNavigation();
+  const [device, setDevice] = useState<Device>();
 
   return useMemo(
     () => ({
@@ -97,6 +102,12 @@ function useUiHook(): Partial<UiHook> {
           onClose: onCancel,
         });
       },
+      "storage.get": async ({ key, storeId }) => {
+        return (await deviceStorage.get(`${storeId}-${key}`)) as string;
+      },
+      "storage.set": ({ key, value, storeId }) => {
+        deviceStorage.save(`${storeId}-${key}`, value);
+      },
       "transaction.sign": ({
         account,
         parentAccount,
@@ -150,8 +161,69 @@ function useUiHook(): Partial<UiHook> {
           onClose: onCancel,
         });
       },
+      "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
+        navigation.navigate(NavigatorName.PlatformExchange, {
+          screen: ScreenName.PlatformStartExchange,
+          params: {
+            request: {
+              exchangeType: ExchangeType[exchangeType],
+            },
+            onResult: (result: {
+              startExchangeResult?: string;
+              startExchangeError?: Error;
+              device?: Device;
+            }) => {
+              if (result.startExchangeError) {
+                onCancel(result.startExchangeError);
+              }
+
+              if (result.startExchangeResult) {
+                setDevice(result.device);
+                onSuccess(result.startExchangeResult);
+              }
+
+              const n =
+                navigation.getParent<
+                  StackNavigatorNavigation<BaseNavigatorStackParamList>
+                >() || navigation;
+              n.pop();
+            },
+          },
+        });
+      },
+      "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+        navigation.navigate(NavigatorName.PlatformExchange, {
+          screen: ScreenName.PlatformCompleteExchange,
+          params: {
+            request: {
+              exchangeType: exchangeParams.exchangeType,
+              provider: exchangeParams.provider,
+              exchange: exchangeParams.exchange,
+              transaction: exchangeParams.transaction as Transaction,
+              binaryPayload: exchangeParams.binaryPayload,
+              signature: exchangeParams.signature,
+              feesStrategy: exchangeParams.feesStrategy,
+            },
+            device,
+            onResult: (result: { operation?: Operation; error?: Error }) => {
+              if (result.error) {
+                onCancel(result.error);
+              }
+              if (result.operation) {
+                onSuccess(result.operation.id);
+              }
+              setDevice(undefined);
+              const n =
+                navigation.getParent<
+                  StackNavigatorNavigation<BaseNavigatorStackParamList>
+                >() || navigation;
+              n.pop();
+            },
+          },
+        });
+      },
     }),
-    [navigation],
+    [navigation, device],
   );
 }
 
@@ -210,7 +282,7 @@ function useWebView(
   }, [webviewRef]);
 
   const { onMessage: onMessageRaw, onLoadError } = useWalletAPIServer({
-    manifest,
+    manifest: manifest as AppManifest,
     accounts,
     tracking,
     config,
@@ -242,10 +314,18 @@ function renderLoading() {
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, onStateChange }, ref) => {
+  (
+    {
+      manifest,
+      inputs = {},
+      onStateChange,
+      allowsBackForwardNavigationGestures = true,
+    },
+    ref,
+  ) => {
     const { webviewProps, webviewState, webviewRef } = useWebviewState(
       {
-        manifest,
+        manifest: manifest as AppManifest,
         inputs,
       },
       ref,
@@ -270,7 +350,9 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         ref={webviewRef}
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}
-        allowsBackForwardNavigationGestures
+        allowsBackForwardNavigationGestures={
+          allowsBackForwardNavigationGestures
+        }
         showsVerticalScrollIndicator={false}
         renderLoading={renderLoading}
         originWhitelist={manifest.domains}

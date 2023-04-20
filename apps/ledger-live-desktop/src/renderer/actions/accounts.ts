@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 
 import { Account, SubAccount } from "@ledgerhq/types-live";
-import { AccountComparator } from "@ledgerhq/live-common/account/ordering";
+import { AccountComparator } from "@ledgerhq/live-common/account/index";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { getKey } from "~/renderer/storage";
 
@@ -70,10 +70,7 @@ export const toggleStarAction = (id: string, parentId?: string): UpdateAccountAc
       updater: (account: Account) => {
         if (parentId && account.subAccounts) {
           const subAccounts: SubAccount[] = account.subAccounts.map(sa =>
-            sa.id === id
-              ? // $FlowFixMe
-                { ...sa, starred: !sa.starred }
-              : sa,
+            sa.id === id ? { ...sa, starred: !sa.starred } : sa,
           );
           return { ...account, subAccounts };
         }

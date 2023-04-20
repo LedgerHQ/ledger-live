@@ -137,7 +137,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
   }, [error, onError]);
 
   useEffect(() => {
-    if (deviceInfo) {
+    if (deviceInfo && device) {
       const lastSeenDevice = {
         modelId: device.modelId,
         deviceInfo,

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "0.0.3",
+  "version": "0.1.1",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
@@ -67,7 +67,9 @@
     "rxjs": "^6.6.7"
   },
   "devDependencies": {
+    "@types/invariant": "^2.2.2",
     "@types/jest": "^29.2.4",
+    "@types/lodash": "^4.14.191",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "eslint": "^7.32.0",
@@ -79,7 +81,7 @@
     "jest": "^28.1.1",
     "prettier": "^2.8.1",
     "ts-jest": "^28.0.5",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.5"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

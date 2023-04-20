@@ -43,13 +43,11 @@ test.describe.parallel("Swap", () => {
     const ethereumAccountName = "Ethereum 2";
 
     await page.route("https://swap.ledger.com/v4/providers**", async route => {
-      console.log("Mocking provider HTTP response");
       const mockProvidersResponse = getProvidersMock();
       route.fulfill({ body: mockProvidersResponse });
     });
 
     await page.route("https://swap.ledger.com/v4/rate**", async route => {
-      console.log("Mocking rate HTTP response");
       const mockRatesResponse = getBitcoinToDogecoinRatesMock();
       route.fulfill({ body: mockRatesResponse });
     });
@@ -96,13 +94,11 @@ test.describe.parallel("Swap", () => {
     const layout = new Layout(page);
 
     await page.route("https://swap.ledger.com/v4/providers**", async route => {
-      console.log("Mocking provider HTTP response");
       const mockProvidersResponse = getProvidersMock();
       route.fulfill({ body: mockProvidersResponse });
     });
 
     await page.route("https://swap.ledger.com/v4/rate**", async route => {
-      console.log("Mocking rate HTTP response");
       const mockRatesResponse = getEthereumToTetherRatesMock();
       route.fulfill({ body: mockRatesResponse });
     });
@@ -153,13 +149,11 @@ test.describe.parallel("Swap", () => {
     let detailsSwapId: string;
 
     await page.route("https://swap.ledger.com/v4/providers**", async route => {
-      console.log("Mocking providers HTTP response");
       const mockProvidersResponse = getProvidersMock();
       route.fulfill({ body: mockProvidersResponse });
     });
 
     await page.route("https://swap.ledger.com/v4/rate**", async route => {
-      console.log("Mocking rate HTTP response");
       const mockRatesResponse = getBitcoinToEthereumRatesMock();
       route.fulfill({ body: mockRatesResponse });
     });

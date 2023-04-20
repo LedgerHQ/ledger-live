@@ -39,7 +39,7 @@ export function Notifications(args: Props & { active: boolean }): JSX.Element {
 
   const warningBadge = (
     <Notification.Badge
-      color="warning.c100"
+      color="warning.c50"
       backgroundColor="warning.c10"
       icon={<Icon name="Warning" size={24} />}
       active={args.active}

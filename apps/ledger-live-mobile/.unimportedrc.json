@@ -1,0 +1,47 @@
+{
+  "entry": [
+    "index.js"
+  ],
+  "extensions": [
+    ".ts",
+    ".js",
+    ".jsx",
+    ".tsx",
+    ".d.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnimported": [
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/*.d.ts",
+    "src/__test__/*",
+    "src/__tests__/*",
+    "src/__mocks__/*",
+    "src/**/*.android.*",
+    "src/**/*.ios.*",
+    "src/components/RootNavigator/types.ts",
+    "src/logic/keyboardVisible.ts"
+  ],
+  "ignoreUnused": [
+    "@ledgerhq/react-native-passcode-auth",
+    "@react-native-masked-view/masked-view",
+    "@segment/sovran-react-native",
+    "expo-file-system",
+    "expo-image-loader",
+    "expo-modules-autolinking",
+    "expo-modules-core",
+    "prop-types",
+    "react-native-codegen",
+    "react-native-level-fs",
+    "react-native-navigation-bar-color",
+    "react-native-os",
+    "react-native-randombytes",
+    "react-native-tcp",
+    "react-native-tcp-socket",
+    "react-native-udp",
+    "rxjs-compat"
+  ]
+}

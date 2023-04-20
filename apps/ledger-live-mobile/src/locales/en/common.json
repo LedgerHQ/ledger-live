@@ -168,9 +168,6 @@
       "title": "The rewards are smaller than the estimated fees to claim them.",
       "description": ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError": {
-      "title": "You cannot reduce the amount approved while having an active deposit."
-    },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",
       "description": "Please save your logs using the button below and provide them to Ledger Support."
@@ -2130,8 +2127,6 @@
       "OPT_IN": "Opt in",
       "OPT_OUT": "Opt out",
       "CLOSE_ACCOUNT": "Close account",
-      "SUPPLY": "Deposited",
-      "REDEEM": "Withdrawn",
       "APPROVE": "Enabled",
       "BOND": "Bond",
       "UNBOND": "Unbond",
@@ -2692,6 +2687,10 @@
           "title": "Experimental Explorers API",
           "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature."
         },
+        "experimentalListAppsV2": {
+          "title": "Experimental list apps for My Ledger",
+          "description": "Performance improvement for My Ledger access and inline flows."
+        },
         "experimentalCountervalues": {
           "title": "Experimental countervalues API",
           "description": "This may cause the countervalues displayed for your accounts to become incorrect."
@@ -2705,6 +2704,10 @@
         "experimentalApps": {
           "title": "Allow experimental apps",
           "description": "Display and allow opening experimental tagged platform apps."
+        },
+        "debugApps": {
+          "title": "Allow debug apps",
+          "description": "Display and allow opening debug tagged platform apps."
         },
         "staggingUrl": {
           "title": "Learn staging URL",
@@ -2741,46 +2744,6 @@
       "desc": "Get the latest updates on Ledger Live, Ledger products, the market, and personalised recommendations. Opt-out anytime in the settings",
       "allow": "Allow notifications",
       "later": "Maybe later"
-    }
-  },
-  "migrateAccounts": {
-    "banner": "Ledger Live accounts update",
-    "overview": {
-      "headerTitle": "Account update",
-      "title": "Ledger Live accounts update",
-      "subtitle": "New features in Ledger Live means your accounts need to be updated",
-      "notice": "{{accountCount}} account could not be updated. Please connect the device associated to the account below.",
-      "notice_plural": "{{accountCount}} accounts could not be updated. Please connect the device associated to the accounts below.",
-      "currency": "1 {{currency}} account needs to be updated",
-      "currency_plural": "{{count}} {{currency}} accounts need to be updated",
-      "start": "Start update",
-      "continue": "Continue update"
-    },
-    "progress": {
-      "headerTitle": "Updating accounts",
-      "pending": {
-        "title": "{{currency}} update in progress",
-        "subtitle": "Please wait for your account to be updated."
-      },
-      "notice": {
-        "title": "{{currency}} update incomplete",
-        "subtitle": "No {{currency}} accounts could be updated using this device.",
-        "cta": "Continue",
-        "ctaNextCurrency": "Continue with {{currency}}"
-      },
-      "done": {
-        "title": "{{currency}} update complete",
-        "subtitle": "Congratulations, your {{currency}} accounts were updated successfully.",
-        "cta": "Continue",
-        "ctaNextCurrency": "Continue with {{currency}}",
-        "ctaDone": "Done"
-      },
-      "error": {
-        "cta": "Retry"
-      }
-    },
-    "connectDevice": {
-      "headerTitle": "Connect device"
     }
   },
   "transfer": {
@@ -3414,7 +3377,12 @@
       "scan": "Scan QR code",
       "enterAddress": "Enter address",
       "input": "Enter address",
-      "verifyAddress": "Please verify the address matches the one shared by the recipient."
+      "verifyAddress": "Please verify the address matches the one shared by the recipient.",
+      "domainService": {
+        "reverse": "This address is linked to {{domain}}",
+        "forward": "This is a valid ENS address",
+        "supportLink": "What's an Ethereum Name Service ?"
+      }
     },
     "amount": {
       "available": "Total available",
@@ -4941,6 +4909,7 @@
       "header": "Votes ({{total}})",
       "Amount": "Amount",
       "noRewards": "No rewards available",
+      "warnDisableStakingMessage": "Staking feature for Tron is currently unavailable",
       "votes": {
         "title": "Votes",
         "description": "Cast your votes for one or more Representatives to start earning rewards.",
@@ -5942,6 +5911,13 @@
       "allNft": "All NFT",
       "addNew": "Add new"
     },
+    "designedForStax": {
+      "title": "<0>Designed for</0><1>Ledger</1><2>Stax</2>",
+      "drawer": {
+        "description": "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E Ink Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
+        "cta": "Got it"
+      }
+    },
     "viewer": {
       "properties": "Properties",
       "description": "Description",
@@ -6016,7 +5992,7 @@
     },
     "confirmCrop": "Confirm crop",
     "confirmContrast": "Confirm contrast",
-    "nftEntryPointButtonLabel": "Set as Ledger Stax lockscreen picture",
+    "nftEntryPointButtonLabel": "Set as Ledger Stax lock screen",
     "customImage": "Custom picture",
     "doThisLater": "Maybe later",
     "preview": {
@@ -6065,7 +6041,7 @@
         "title": "Customize the lock screen",
         "titleCompleted": "Lock screen customized",
         "description": "Choose any NFT or picture to set as the lock screen of your Ledger Stax.",
-        "popupLabel": "Lockscreen set"
+        "popupLabel": "Lock screen set"
       },
       "claimNft": {
         "title": "Claim the Infinity NFT",
@@ -6124,7 +6100,6 @@
     "title": "Services",
     "subTitle": "Manage your Ledger services",
     "protect": {
-      "title": "Protect",
       "status": {
         "new": {
           "title": "New",
@@ -6132,45 +6107,6 @@
           "actions": {
             "learnMore": "How does it benefit me?",
             "alreadySubscribed": "Already logged in? <LinkAccount>View my subscription</LinkAccount>"
-          }
-        },
-        "confirmIdentity": {
-          "title": "Action required",
-          "desc": "Confirm your identity and complete all tasks to protect your recovery phrase.",
-          "actions": {
-            "confirmNow": "Confirm now",
-            "viewDetails": "View details"
-          }
-        },
-        "addPayment": {
-          "title": "Action required",
-          "desc": "Add a payment details and complete all tasks to protect your recovery phrase.",
-          "actions": {
-            "addNow": "Add now",
-            "viewDetails": "View details"
-          }
-        },
-        "paymentRejected": {
-          "title": "Payment rejected",
-          "desc": "Your $5 payment was unsuccessful. Please edit your payment details.",
-          "actions": {
-            "editNow": "Edit now",
-            "viewDetails": "View details"
-          }
-        },
-        "subscriptionCanceled": {
-          "title": "Subscription canceled",
-          "desc": "Your subscription ended after 3 months of non payment.",
-          "actions": {
-            "contactLedgerSupport": "Contact Ledger Support",
-            "viewDetails": "View details"
-          }
-        },
-        "active": {
-          "title": "Active",
-          "desc": "Your recovery phrase is protected",
-          "actions": {
-            "viewDetails": "View details"
           }
         }
       }

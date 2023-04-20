@@ -1,10 +1,20 @@
 import React from "react";
-import { storiesOf } from "../../storiesOf";
-import { IconBoxList } from "../../../../src";
+import { ComponentStory } from "@storybook/react-native";
+import { IconBoxList } from "../../../../src/components";
 import { Icons } from "../../../../src/assets";
-import { select } from "@storybook/addon-knobs";
 
-const IconBoxListStory = () => {
+export default {
+  title: "Layout/List/IconBox",
+  component: IconBoxList,
+  argTypes: {
+    alignItems: {
+      options: ["flex-start", "flex-end", "center", "baseline", "stretch"],
+      control: { type: "select" },
+    },
+  },
+};
+
+export const Default: ComponentStory<typeof IconBoxList> = (args: typeof DefaultArgs) => {
   return (
     <IconBoxList
       items={[
@@ -25,16 +35,12 @@ const IconBoxListStory = () => {
           Icon: Icons.TrophyMedium,
         },
       ]}
-      itemContainerProps={{
-        alignItems: select(
-          "Align items",
-          ["flex-start", "flex-end", "center", "baseline", "stretch"],
-          "center",
-          "Layout",
-        ),
-      }}
+      itemContainerProps={{ alignItems: args.alignItems }}
     />
   );
 };
-
-storiesOf((story) => story("Layout/List", module).add("IconBoxList", () => <IconBoxListStory />));
+Default.storyName = "IconBoxList";
+const DefaultArgs = {
+  alignItems: "center",
+};
+Default.args = DefaultArgs;

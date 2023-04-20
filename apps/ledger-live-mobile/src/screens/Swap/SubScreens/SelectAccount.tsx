@@ -170,7 +170,7 @@ export function SelectAccount({
               >
                 <BoxedIcon
                   size={24}
-                  Icon={<Icons.PlusRegular size={14} color={colors.primary} />}
+                  Icon={<Icons.PlusMedium size={14} color={colors.primary} />}
                   variant="circle"
                   backgroundColor="primary.c20"
                   borderColor="transparent"

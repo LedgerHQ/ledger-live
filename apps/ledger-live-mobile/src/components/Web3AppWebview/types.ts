@@ -4,6 +4,7 @@ export type WebviewProps = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string>;
   onStateChange?: (webviewState: WebviewState) => void;
+  allowsBackForwardNavigationGestures?: boolean;
 };
 
 export type WebviewState = {

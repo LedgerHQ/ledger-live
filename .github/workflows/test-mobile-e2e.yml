@@ -45,15 +45,10 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.base_ref }}
-      - uses: pnpm/action-setup@v2
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
         with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
       - name: Install applesimutils
         run: |
           brew update
@@ -84,7 +79,7 @@ jobs:
       - name: Test iOS app
         id: detox
         run: |
-          pnpm mobile e2e:test -c ios.sim.release --record-logs all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles --cleanup --headless
+          pnpm mobile e2e:test -c ios.sim.release --record-logs all --take-screenshots all --detectOpenHandles --cleanup --headless
       - name: Delete iOS simulator
         if: always()
         run: |
@@ -132,7 +127,7 @@ jobs:
   #         ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
   #     - uses: pnpm/action-setup@v2
   #       with:
-  #         version: latest
+  #         version: 8.1
   #     - uses: actions/setup-node@v3
   #       with:
   #         node-version: 18

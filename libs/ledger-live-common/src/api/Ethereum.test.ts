@@ -76,7 +76,7 @@ describe("apiForCurrency", () => {
         );
         const formatUrlInput: URL.UrlObject = urlFormatSpy.mock.lastCall[0];
         expect(
-          (formatUrlInput.query as ParsedUrlQueryInput).block_height
+          (formatUrlInput.query as ParsedUrlQueryInput).from_height
         ).toEqual(blockHeightMock);
       });
     });

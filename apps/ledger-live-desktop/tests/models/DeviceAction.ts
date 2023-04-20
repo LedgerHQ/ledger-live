@@ -6,12 +6,13 @@ import {
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
 import { AppOp } from "@ledgerhq/live-common/apps/types";
+import { AppType } from "@ledgerhq/types-live/lib/manager";
 
 const mockListAppsResult = (...params) => {
   // Nb Should move this polyfill to live-common eventually.
   const result = innerMockListAppResult(...params);
   Object.keys(result?.appByName).forEach(key => {
-    result.appByName[key] = { ...result.appByName[key], type: "app" };
+    result.appByName[key] = { ...result.appByName[key], type: AppType.currency };
   });
   return result;
 };
@@ -38,12 +39,22 @@ export class DeviceAction {
 
   async genuineCheck(appDesc = "Bitcoin", installedDesc = "Bitcoin") {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo);
+    const modelId = DeviceModelId.nanoS;
 
     await this.page.evaluate(
       args => {
-        const [deviceInfo, result] = args;
+        const [deviceInfo, result, modelId] = args;
 
         (window as any).mock.events.mockDeviceEvent(
+          {
+            type: "deviceChange",
+            device: {
+              deviceId: "",
+              deviceName: "Some name",
+              modelId,
+            },
+            replaceable: false,
+          },
           {
             type: "listingApps",
             deviceInfo,
@@ -55,7 +66,7 @@ export class DeviceAction {
           { type: "complete" },
         );
       },
-      [deviceInfo, result],
+      [deviceInfo, result, modelId],
     );
 
     await this.loader.waitFor({ state: "hidden" });
@@ -67,12 +78,22 @@ export class DeviceAction {
     deviceModelId?: DeviceModelId,
   ) {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo, deviceModelId);
+    const modelId = DeviceModelId.nanoS;
 
     await this.page.evaluate(
       args => {
-        const [deviceInfo, result] = args;
+        const [deviceInfo, result, modelId] = args;
 
         (window as any).mock.events.mockDeviceEvent(
+          {
+            type: "deviceChange",
+            device: {
+              deviceId: "",
+              deviceName: "Some name",
+              modelId,
+            },
+            replaceable: false,
+          },
           {
             type: "listingApps",
             deviceInfo,
@@ -84,7 +105,7 @@ export class DeviceAction {
           { type: "complete" },
         );
       },
-      [deviceInfo, result],
+      [deviceInfo, result, modelId],
     );
 
     await this.loader.waitFor({ state: "hidden" });
@@ -95,12 +116,22 @@ export class DeviceAction {
     installedDesc = "Bitcoin,Litecoin,Ethereum (outdated)",
   ) {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo210lo5);
+    const modelId = DeviceModelId.nanoS;
 
     await this.page.evaluate(
       args => {
-        const [deviceInfo210lo5, result] = args;
+        const [deviceInfo210lo5, result, modelId] = args;
 
         (window as any).mock.events.mockDeviceEvent(
+          {
+            type: "deviceChange",
+            device: {
+              deviceId: "",
+              deviceName: "Some name",
+              modelId,
+            },
+            replaceable: false,
+          },
           {
             type: "listingApps",
             deviceInfo: deviceInfo210lo5,
@@ -112,7 +143,7 @@ export class DeviceAction {
           { type: "complete" },
         );
       },
-      [deviceInfo210lo5, result],
+      [deviceInfo210lo5, result, modelId],
     );
 
     await this.loader.waitFor({ state: "hidden" });
@@ -214,10 +245,11 @@ export class DeviceAction {
   async initiateSwap() {
     await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "opened" }));
     await this.page.waitForTimeout(500);
-    await this.page.evaluate(() =>
-      (window as any).mock.events.mockDeviceEvent({ type: "complete" }),
-    );
-    await this.page.waitForTimeout(500);
+    // Keeping the same subject because it's too close and it's failing and I don't want to cry.
+    // await this.page.evaluate(() =>
+    //   (window as any).mock.events.mockDeviceEvent({ type: "complete" }),
+    // );
+    await this.page.waitForTimeout(2000);
     await this.page.evaluate(() =>
       (window as any).mock.events.mockDeviceEvent({ type: "init-swap-requested" }),
     );

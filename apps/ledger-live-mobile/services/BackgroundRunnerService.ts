@@ -28,8 +28,8 @@ const BackgroundRunnerService = async ({
   deviceId: string;
   firmwareSerializedJson: string;
 }) => {
-  const emitEvent = (e: FwUpdateBackgroundEvent) =>
-    store.dispatch(addBackgroundEvent(e));
+  const emitEvent = (event: FwUpdateBackgroundEvent) =>
+    store.dispatch(addBackgroundEvent({ event }));
   const latestFirmware = JSON.parse(firmwareSerializedJson) as
     | FirmwareUpdateContext
     | null

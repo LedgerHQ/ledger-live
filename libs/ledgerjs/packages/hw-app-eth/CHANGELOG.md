@@ -1,5 +1,49 @@
 # @ledgerhq/hw-app-eth
 
+## 6.33.0
+
+### Minor Changes
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+### Patch Changes
+
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/cryptoassets@9.3.0
+  - @ledgerhq/domain-service@1.0.0
+
+## 6.33.0-next.0
+
+### Minor Changes
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+### Patch Changes
+
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/cryptoassets@9.3.0-next.0
+  - @ledgerhq/domain-service@1.0.0-next.0
+
+## 6.32.2
+
+### Patch Changes
+
+- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`f364721cd9`](https://github.com/LedgerHQ/ledger-live/commit/f364721cd9c1681141b62cd807796e0a0a45efe4), [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472), [`0ca89a8067`](https://github.com/LedgerHQ/ledger-live/commit/0ca89a80678743e9462aaf977448e759924a56b2), [`9bb21e26a8`](https://github.com/LedgerHQ/ledger-live/commit/9bb21e26a88a2db7093a3d5cc75ab03d12b25ffb), [`170f608de3`](https://github.com/LedgerHQ/ledger-live/commit/170f608de311f320795793b4606b063a3ce96def), [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b)]:
+  - @ledgerhq/errors@6.12.4
+  - @ledgerhq/cryptoassets@9.2.0
+  - @ledgerhq/hw-transport@6.28.2
+  - @ledgerhq/hw-transport-mocker@6.27.13
+
+## 6.32.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1d0b2d19eb`](https://github.com/LedgerHQ/ledger-live/commit/1d0b2d19ebc5acd058930b842c6d37f8daf2a5a3), [`f364721cd9`](https://github.com/LedgerHQ/ledger-live/commit/f364721cd9c1681141b62cd807796e0a0a45efe4), [`ef945b05c0`](https://github.com/LedgerHQ/ledger-live/commit/ef945b05c01a791281687abb28e639e1bcc4e472), [`0ca89a8067`](https://github.com/LedgerHQ/ledger-live/commit/0ca89a80678743e9462aaf977448e759924a56b2), [`9bb21e26a8`](https://github.com/LedgerHQ/ledger-live/commit/9bb21e26a88a2db7093a3d5cc75ab03d12b25ffb), [`170f608de3`](https://github.com/LedgerHQ/ledger-live/commit/170f608de311f320795793b4606b063a3ce96def), [`5fa68510b4`](https://github.com/LedgerHQ/ledger-live/commit/5fa68510b49334cfd80c30793dfe68900f1b9b3b)]:
+  - @ledgerhq/errors@6.12.4-next.0
+  - @ledgerhq/cryptoassets@9.2.0-next.0
+  - @ledgerhq/hw-transport@6.28.2-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.13-next.0
+
 ## 6.32.1
 
 ### Patch Changes

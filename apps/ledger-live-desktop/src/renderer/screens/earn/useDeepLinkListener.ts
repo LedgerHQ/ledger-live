@@ -1,6 +1,9 @@
+import { openModal } from "~/renderer/actions/modals";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import useStakeFlow from "~/renderer/screens/stake";
 import { useHistory, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 /**
  * Valid URLs that this hook will listen for and handle:
@@ -11,6 +14,8 @@ export const useDeepLinkListener = () => {
   const startStakeFlow = useStakeFlow();
   const location = useLocation();
   const history = useHistory();
+  const accounts = useSelector(accountsSelector);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -24,6 +29,22 @@ export const useDeepLinkListener = () => {
       case "stake":
         startStakeFlow({ shouldRedirect: false });
         break;
+      case "stake-account": {
+        const accountId = queryParams.get("accountId");
+        if (accountId) {
+          const account = accounts.find(acc => acc.id === accountId);
+          if (account) {
+            dispatch(
+              openModal("MODAL_START_STAKE", {
+                account,
+                parentAccount: undefined,
+              }),
+            );
+          }
+        }
+        queryParams.delete("accountId");
+        break;
+      }
       case "get-funds": {
         const currencyId = queryParams.get("currencyId");
         if (currencyId) {
@@ -43,5 +64,5 @@ export const useDeepLinkListener = () => {
     history.replace({
       search: queryParams.toString(),
     });
-  }, [history, location.search, startStakeFlow]);
+  }, [accounts, dispatch, history, location.search, startStakeFlow]);
 };

@@ -19,24 +19,24 @@ concurrency:
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
-  typecheck:
-    name: "Ledger Live Desktop TypeCheck"
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      CI_OS: ubuntu-latest
-    runs-on: ubuntu-latest
-    steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
-        with:
-          ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_builds: true
-      - name: Run code checkers
-        run: pnpm desktop test:codecheck
+  # typecheck:
+  #   name: "Ledger Live Desktop TypeCheck"
+  #   env:
+  #     NODE_OPTIONS: "--max-old-space-size=7168"
+  #     FORCE_COLOR: 3
+  #     CI_OS: ubuntu-latest
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+  #       with:
+  #         ref: ${{ github.ref_name }}
+  #         base: ${{ inputs.base_ref }}
+  #     - uses: ./tools/actions/composites/setup-test-desktop
+  #       id: setup-test-desktop
+  #       with:
+  #         skip_builds: true
+  #     - name: Run code checkers
+  #       run: pnpm desktop test:codecheck
 
   unit-tests:
     name: "Ledger Live Desktop Unit Tests"
@@ -195,6 +195,7 @@ jobs:
         with:
           install_node_gyp: true
           install_playwright: true
+          upgrade_npm: true
       - name: Run playwright tests
         id: tests
         run: pnpm desktop test:playwright
@@ -231,8 +232,13 @@ jobs:
           path: apps/ledger-live-desktop/allure-results
 
   report:
-    needs:
-      [typecheck, unit-tests, e2e-tests-linux, e2e-tests-mac, e2e-tests-windows]
+    needs: [
+        # typecheck,
+        unit-tests,
+        e2e-tests-linux,
+        e2e-tests-mac,
+        e2e-tests-windows,
+      ]
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
@@ -304,10 +310,12 @@ jobs:
               },
             };
 
+            /*
             const typecheck = {
               pass: ${{ needs.typecheck.result == 'success' }},
               status: "${{ needs.typecheck.result }}",
             };
+            */
 
             const unitTests = {
               pass: ${{ needs.unit-tests.result == 'success' }},
@@ -330,8 +338,8 @@ jobs:
             };
 
             let summary = `### TypeCheck
-            ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
-              - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
+
+            DISABLED (ts migration in progress)
 
             ### Unit Tests (Jest)
             ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
