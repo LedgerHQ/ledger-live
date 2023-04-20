@@ -3,6 +3,7 @@ import Flex from "../../Flex";
 import { Switch } from "../../../form";
 import { Text, Divider } from "../../../asorted";
 import Button from "../../../cta/Button";
+import ContinueOnDevice from "../../../message/ContinueOnDevice";
 import VerticalTimeline from ".";
 
 const description = `
@@ -61,8 +62,6 @@ export default {
 };
 
 const { BodyText, SubtitleText } = VerticalTimeline;
-
-const ContinueOnDevice = (args: any) => null;
 
 const defaultItems = [
   {
