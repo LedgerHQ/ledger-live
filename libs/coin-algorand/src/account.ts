@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { getAccountUnit } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
+import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { AlgorandResources, AlgorandAccount } from "./types";
 import type { Operation } from "@ledgerhq/types-live";

@@ -88,9 +88,9 @@ export const SourceHasMultiSign = createCustomErrorClass("SourceHasMultiSign");
 export const CosmosRedelegationInProgress = createCustomErrorClass(
   "CosmosRedelegationInProgress"
 );
-export const ClaimRewardsFeesWarning = createCustomErrorClass(
-  "ClaimRewardsFeesWarning"
-);
+// export const ClaimRewardsFeesWarning = createCustomErrorClass(
+//   "ClaimRewardsFeesWarning"
+// );
 export const CosmosDelegateAllFundsWarning = createCustomErrorClass(
   "CosmosDelegateAllFundsWarning"
 );
@@ -211,9 +211,9 @@ export const NotImplementedError = createCustomErrorClass(
 export const ValidationError = createCustomErrorClass("ValidationError");
 export const AccessDeniedError = createCustomErrorClass("AccessDeniedError");
 
-export const AlgorandASANotOptInInRecipient = createCustomErrorClass(
-  "AlgorandASANotOptInInRecipient"
-);
+// export const AlgorandASANotOptInInRecipient = createCustomErrorClass(
+//   "AlgorandASANotOptInInRecipient"
+// );
 
 export const OutdatedApp = createCustomErrorClass("OutdatedApp");
 
@@ -223,8 +223,10 @@ export const BluetoothNotSupportedError = createCustomErrorClass(
 
 export const EConnResetError = createCustomErrorClass("EConnReset");
 
+export { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
 export * from "@ledgerhq/coin-framework/errors";
 export * from "@ledgerhq/coin-polkadot/errors";
+export * from "@ledgerhq/coin-algorand/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";

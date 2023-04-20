@@ -1,11 +1,10 @@
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { Transaction } from "../../generated/types";
-import { getAccountCurrency } from "../../account";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { extractTokenId } from "./tokens";
 import type { Account } from "@ledgerhq/types-live";
 import type { AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
-import type { AlgorandAccount } from "./types";
+import type { AlgorandAccount, Transaction } from "./types";
 
 const options = [
   {
@@ -48,7 +47,7 @@ function inferAccounts(
     return accounts;
   }
 
-  return opts.token.map((token) => {
+  return opts.token.map((token?: string) => {
     const subAccounts = account.subAccounts || [];
 
     if (token) {
