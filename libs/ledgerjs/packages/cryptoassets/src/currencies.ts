@@ -2103,8 +2103,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://www.mintscan.io/onomy/txs/$hash",
-        address: "https://www.mintscan.io/onomy/validators/$address",
+        tx: "https://www.mintscan.io/onomy-protocol/txs/$hash",
+        address: "https://www.mintscan.io/onomy-protocl/validators/$address",
       },
     ],
   },
