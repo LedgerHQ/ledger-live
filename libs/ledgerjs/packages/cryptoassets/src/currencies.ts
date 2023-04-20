@@ -2475,7 +2475,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     managerAppName: "Cosmos",
     ticker: "QCK",
     scheme: "quicksilver",
-    color: "#e91179",
+    color: "#9b9b9b",
     family: "cosmos",
     units: [
       {
