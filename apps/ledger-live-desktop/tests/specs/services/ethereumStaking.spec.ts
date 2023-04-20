@@ -2,14 +2,14 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Drawer } from "../../models/Drawer";
 import { Modal } from "../../models/Modal";
-import { PortfolioPage } from "tests/models/PortfolioPage";
-import { DiscoverPage } from "tests/models/DiscoverPage";
-import { MarketPage } from "tests/models/MarketPage";
-import { Layout } from "tests/models/Layout";
-import { MarketCoinPage } from "tests/models/MarketCoinPage";
-import { AssetPage } from "tests/models/AssetPage";
-import { AccountsPage } from "tests/models/AccountsPage";
-import { AccountPage } from "tests/models/AccountPage";
+import { PortfolioPage } from "../../models/PortfolioPage";
+import { DiscoverPage } from "../../models/DiscoverPage";
+import { MarketPage } from "../../models/MarketPage";
+import { Layout } from "../../models/Layout";
+import { MarketCoinPage } from "../../models/MarketCoinPage";
+import { AssetPage } from "../../models/AssetPage";
+import { AccountsPage } from "../../models/AccountsPage";
+import { AccountPage } from "../../models/AccountPage";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",

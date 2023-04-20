@@ -3,8 +3,16 @@ import test from "../../fixtures/common";
 import { MarketPage } from "../../models/MarketPage";
 import { Layout } from "../../models/Layout";
 import { MarketCoinPage } from "../../models/MarketCoinPage";
+import { getProvidersMock } from "../services/services-api-mocks/getProviders.mock";
 
 test.use({ userdata: "skip-onboarding" });
+
+test.beforeAll(async ({ page }) => {
+  await page.route("https://swap.ledger.com/v4/providers**", async route => {
+    const mockProvidersResponse = getProvidersMock();
+    route.fulfill({ body: mockProvidersResponse });
+  });
+});
 
 test("Market", async ({ page }) => {
   const marketPage = new MarketPage(page);
