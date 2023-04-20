@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Icons } from "@ledgerhq/react-ui";
+import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   sidebarCollapsedSelector,
@@ -77,6 +77,12 @@ const Tag = styled(Link)`
     border-color: ${p => p.theme.colors.wallet};
   }
 `;
+
+const CustomTag = styled(TagComponent)`
+  border-radius: 6px;
+  padding: 2px 6px 2px 6px;
+`;
+
 const collapserSize = 24;
 const collapsedWidth = 15 * 4 + 16; // 15 * 4 margins + 16 icon size
 
@@ -242,41 +248,62 @@ const MainSideBar = () => {
     },
     [history, location.pathname],
   );
+
+  const trackEntry = useCallback(
+    (entry: string) => {
+      track("menuentry_clicked", {
+        entry,
+        page: history.location.pathname,
+      });
+    },
+    [history.location.pathname],
+  );
   const handleClickCard = useCallback(() => {
     push("/card");
-  }, [push]);
+    trackEntry("card");
+  }, [push, trackEntry]);
   const handleClickLearn = useCallback(() => {
     push("/learn");
-  }, [push]);
+    trackEntry("learn");
+  }, [push, trackEntry]);
   const handleClickDashboard = useCallback(() => {
     push("/");
-  }, [push]);
+    trackEntry("/");
+  }, [push, trackEntry]);
   const handleClickMarket = useCallback(() => {
     push("/market");
-  }, [push]);
+    trackEntry("market");
+  }, [push, trackEntry]);
   const handleClickManager = useCallback(() => {
     push("/manager");
-  }, [push]);
+    trackEntry("manager");
+  }, [push, trackEntry]);
   const handleClickAccounts = useCallback(() => {
     push("/accounts");
-  }, [push]);
+    trackEntry("accounts");
+  }, [push, trackEntry]);
   const handleClickCatalog = useCallback(() => {
     push("/platform");
-  }, [push]);
+    trackEntry("platform");
+  }, [push, trackEntry]);
   const handleClickExchange = useCallback(() => {
     push("/exchange");
-  }, [push]);
+    trackEntry("exchange");
+  }, [push, trackEntry]);
   const handleClickEarn = useCallback(() => {
     push("/earn");
-  }, [push]);
+    trackEntry("earn");
+  }, [push, trackEntry]);
   const handleClickSwap = useCallback(() => {
     push("/swap");
-  }, [push]);
+    trackEntry("swap");
+  }, [push, trackEntry]);
   const handleClickRefer = useCallback(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params.path) {
       push(referralProgramConfig?.params.path);
+      trackEntry("refer-a-friend");
     }
-  }, [push, referralProgramConfig]);
+  }, [push, referralProgramConfig, trackEntry]);
   const maybeRedirectToAccounts = useCallback(() => {
     return location.pathname === "/manager" && push("/accounts");
   }, [location.pathname, push]);
@@ -424,11 +451,18 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id={"refer"}
                     label={t("sidebar.refer")}
-                    icon={IconSwap}
+                    icon={Icons.GiftMedium}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
                     isActive={location.pathname.startsWith("/refer")}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      referralProgramConfig?.params.isNew ? (
+                        <CustomTag active type="plain" size="small">
+                          {t("common.new")}
+                        </CustomTag>
+                      ) : null
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem

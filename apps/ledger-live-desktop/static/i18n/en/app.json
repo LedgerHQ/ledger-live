@@ -59,6 +59,7 @@
   },
   "common": {
     "never": "Never",
+    "new": "New",
     "apply": "Apply",
     "done": "Done",
     "confirm": "Confirm",
