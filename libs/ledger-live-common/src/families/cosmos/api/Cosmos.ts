@@ -175,9 +175,10 @@ export class CosmosAPI {
       for (const d of delegations) {
         if (r.validator_address === d.validatorAddress) {
           for (const reward of r.reward) {
-            d.pendingRewards = d.pendingRewards.plus(
-              new BigNumber(reward.amount).integerValue()
-            );
+            if (reward.denom === currency.units[1].code)
+              d.pendingRewards = d.pendingRewards.plus(
+                new BigNumber(reward.amount).integerValue(BigNumber.ROUND_CEIL)
+              );
           }
         }
       }
