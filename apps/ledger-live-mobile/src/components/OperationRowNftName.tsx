@@ -13,7 +13,6 @@ import {
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { useTranslation } from "react-i18next";
 import Skeleton from "./Skeleton";
 
@@ -37,7 +36,7 @@ const OperationRowNftName = ({
     operation.contract,
     operation.tokenId,
     currency.id,
-  ) as NFTResource & { metadata: NFTMetadata };
+  );
 
   return (
     <View style={style}>
@@ -48,7 +47,7 @@ const OperationRowNftName = ({
           variant="body"
           fontWeight="semiBold"
         >
-          {metadata?.nftName || "-"}
+          {(metadata as Partial<NFTMetadata>)?.nftName || "-"}
         </Text>
       </Skeleton>
       <Text
