@@ -8,41 +8,32 @@ import { Theme } from "src/styles/theme";
 
 const linesWidth = 2;
 
-const TopSegment = styled(Flex)<{ status: ItemStatus; hidden?: boolean }>`
-  border-left-width: ${(p) => (p.hidden ? 0 : linesWidth)}px;
-  border-right-width: 0;
-  border-style: dashed;
-  border-color: ${(p) =>
-    p.status === "inactive" ? p.theme.colors.neutral.c50 : p.theme.colors.primary.c80};
-  background: ${(p) => p.status !== "inactive" && p.theme.colors.primary.c80};
-`;
-
 const BottomSegment = styled(Flex)<{ status: ItemStatus; hidden?: boolean }>`
   flex: 1;
   border-left-width: ${(p) => (p.hidden ? 0 : linesWidth)}px;
   border-right-width: 0;
   border-style: dashed;
   border-color: ${(p) =>
-    p.status === "completed" ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c50};
+    p.status === "completed" ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c40};
   background: ${(p) => p.status === "completed" && p.theme.colors.primary.c80};
 `;
 
 const getIconBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (status === "completed") {
+  if (isLastItem) {
+    if (status === "inactive") return theme.colors.success.c10;
     return "transparent";
-  } else if (isLastItem) {
-    return theme.colors.success.c10;
   } else if (status === "active") {
     return theme.colors.neutral.c40;
+  } else {
+    return "transparent";
   }
-  return theme.colors.background.main;
 };
 
 const getIconBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
   if (isLastItem) {
-    return theme.colors.success.c50;
+    return theme.colors.success.c70;
   } else if (status === "inactive") {
-    return theme.colors.neutral.c50;
+    return theme.colors.neutral.c40;
   }
   return theme.colors.primary.c80;
 };
@@ -67,23 +58,20 @@ export type Props = FlexProps & {
   isLastItem?: boolean;
 };
 
-const topSegmentDefaultHeight = 20;
+const topSegmentDefaultHeight = 23;
 
-function TimelineIndicator({ status, isFirstItem, isLastItem, ...props }: Props) {
+const Container = styled(Flex)`
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: ${-topSegmentDefaultHeight}px;
+  padding-top: ${topSegmentDefaultHeight}px;
+`;
+
+function TimelineIndicator({ status, isLastItem, ...props }: Props) {
   const { colors } = useTheme();
 
   return (
-    <Flex
-      flexDirection="column"
-      alignItems="center"
-      {...props}
-      marginBottom={status === "completed" || isLastItem ? 0 : -topSegmentDefaultHeight / 2}
-    >
-      {status === "active" || status === "completed" ? (
-        <TopSegment height={topSegmentDefaultHeight} status={status} hidden={isFirstItem} />
-      ) : (
-        <Flex height={topSegmentDefaultHeight} />
-      )}
+    <Container {...props}>
       <CenterCircle status={status} isLastItem={isLastItem}>
         {status === "completed" && (
           <IconWrapper>
@@ -95,7 +83,7 @@ function TimelineIndicator({ status, isFirstItem, isLastItem, ...props }: Props)
         )}
       </CenterCircle>
       {isLastItem ? null : <BottomSegment status={status} />}
-    </Flex>
+    </Container>
   );
 }
 

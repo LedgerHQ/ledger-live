@@ -17,20 +17,26 @@ export type Props = {
   onClick: () => void;
 };
 
+const DEBUG_BOXES = false;
+
 const getContainerBackground = (theme: Theme, status: ItemStatus) => {
-  if (status === "active") {
+  if (status === "completed") {
+    return DEBUG_BOXES ? "lightgreen" : "transparent";
+  } else if (status === "active") {
     return theme.colors.neutral.c20;
   }
-  return "transparent";
+  return DEBUG_BOXES ? "lightgreen" : "transparent";
 };
 
 const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (isLastItem && status === "active") {
+  if (status === "completed") {
+    return DEBUG_BOXES ? "lightcoral" : "transparent";
+  } else if (isLastItem && status === "active") {
     return theme.colors.success.c50;
   } else if (status === "active") {
     return theme.colors.neutral.c40;
   }
-  return "transparent";
+  return DEBUG_BOXES ? "lightcoral" : "transparent";
 };
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
@@ -43,6 +49,7 @@ const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
 
 const TimelineIndicatorContentHeader = styled(Flex)`
   justify-content: space-between;
+  align-items: center;
 `;
 
 function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
@@ -57,16 +64,16 @@ function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
         mr={4}
       />
       <Container status={item.status} isLastItem={isLastItem} mb={4} flexDirection="column">
-        <TimelineIndicatorContentHeader>
+        <TimelineIndicatorContentHeader height="20px">
           <Text
             variant="body"
-            fontWeight="semiBold"
+            fontWeight={item.status === "active" ? "semiBold" : "medium"}
             color={
-              item.status === "inactive"
-                ? "neutral.c70"
-                : isLastItem
-                ? "success.c50"
-                : "primary.c80"
+              item.status !== "inactive" && isLastItem
+                ? "success.c70"
+                : item.status === "active"
+                ? "primary.c80"
+                : "neutral.c70"
             }
           >
             {item.title}

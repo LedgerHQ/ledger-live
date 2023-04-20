@@ -24,7 +24,7 @@ export default function VerticalTimeline({ steps, onClickIndex, ...props }: Prop
     <Flex {...props} flexDirection="column" flex={1}>
       {steps?.map((step, index) => (
         <TimelineItem
-          key={step.title}
+          key={index}
           item={step}
           isFirstItem={index === 0}
           isLastItem={index === steps.length - 1}
