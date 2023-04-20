@@ -58,9 +58,9 @@ export function RedirectToRecoverStaxFlowScreen({
           key={keyToReset}
           filterByDeviceModelId={DeviceModelId.stax}
           areKnownDevicesDisplayed={true}
-          areKnownDevicesPairable={false}
+          areKnownDevicesPairable={true}
           onPairingSuccess={onPairingSuccess}
-          onPairingSuccessAddToKnownDevices={false}
+          onPairingSuccessAddToKnownDevices={true}
         />
       </Flex>
     </DeviceSetupView>
