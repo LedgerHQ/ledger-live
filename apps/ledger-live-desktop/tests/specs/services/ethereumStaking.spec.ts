@@ -10,6 +10,7 @@ import { MarketCoinPage } from "../../models/MarketCoinPage";
 import { AssetPage } from "../../models/AssetPage";
 import { AccountsPage } from "../../models/AccountsPage";
 import { AccountPage } from "../../models/AccountPage";
+import { getProvidersMock } from "./services-api-mocks/getProviders.mock";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
@@ -46,6 +47,11 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
   const layout = new Layout(page);
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
+
+  await page.route("https://swap.ledger.com/v4/providers**", async route => {
+    const mockProvidersResponse = getProvidersMock();
+    route.fulfill({ body: mockProvidersResponse });
+  });
 
   await test.step("Entry buttons load with feature flag enabled", async () => {
     await expect.soft(page).toHaveScreenshot("portfolio-entry-buttons.png");
