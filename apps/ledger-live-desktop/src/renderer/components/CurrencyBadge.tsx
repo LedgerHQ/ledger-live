@@ -9,14 +9,19 @@ import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrency
 import useTheme from "~/renderer/hooks/useTheme";
 import ensureContrast from "~/renderer/ensureContrast";
 import Spinner from "./Spinner";
-const CryptoIconWrapper: ThemedComponent<{
+import { BoxProps } from "./Box/Box";
+
+type CryptoIconWrapperProps = {
   cryptoColor: string;
-}> = styled(Box).attrs(p => ({
+  borderRadius?: string;
+} & BoxProps;
+
+const CryptoIconWrapper = styled(Box).attrs<CryptoIconWrapperProps>(p => ({
   alignItems: "center",
   justifyContent: "center",
   bg: rgba(p.cryptoColor, 0.15),
   color: p.cryptoColor,
-}))`
+}))<CryptoIconWrapperProps>`
   border-radius: ${p => p.borderRadius || "50%"};
   width: ${p => p.size || 40}px;
   height: ${p => p.size || 40}px;
@@ -66,7 +71,7 @@ export function CurrencyCircleIcon({
   }
   const Icon = getCryptoCurrencyIcon(currency);
   return (
-    <CryptoIconWrapper size={size} showCheckmark={showCheckmark} cryptoColor={cryptoColor}>
+    <CryptoIconWrapper size={size} cryptoColor={cryptoColor}>
       {Icon && <Icon size={size * 0.6} />}
       {showCheckmark && (
         <div>

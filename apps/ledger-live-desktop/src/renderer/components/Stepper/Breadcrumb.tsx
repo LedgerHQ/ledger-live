@@ -3,6 +3,7 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
+import { BoxProps } from "../Box/Box";
 import Step from "./Step";
 const Container = styled(Box)`
   position: sticky;
@@ -66,7 +67,7 @@ type Props = {
   items: Array<object>;
   stepsDisabled: Array<number>;
   stepsErrors: Array<number>;
-};
+} & BoxProps;
 class Breadcrumb extends PureComponent<Props> {
   static defaultProps = {
     stepsDisabled: [],

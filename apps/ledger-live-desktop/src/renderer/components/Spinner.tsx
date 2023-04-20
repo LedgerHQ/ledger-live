@@ -11,10 +11,13 @@ const rotate = keyframes`
     transform: rotate(360deg);
   }
 `;
-export const Rotating: ThemedComponent<{
+
+export type RotatingProps = {
   size: number;
   isRotating?: boolean;
-}> = styled(Box)`
+};
+
+export const Rotating = styled(Box)<RotatingProps>`
   width: ${p => p.size}px;
   height: ${p => p.size}px;
   animation: ${p =>
@@ -25,7 +28,12 @@ export const Rotating: ThemedComponent<{
         `};
   transition: 100ms linear transform;
 `;
-export default function Spinner({ size, ...props }: { size: number; isRotating?: boolean }) {
+
+export type SpinnerProps = {
+  size: number;
+} & React.ComponentProps<typeof Rotating>;
+
+export default function Spinner({ size, ...props }: SpinnerProps) {
   return (
     <Rotating size={size} data-test-id="loading-spinner" {...props}>
       <IconLoader size={size} />

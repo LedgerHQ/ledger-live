@@ -36,7 +36,7 @@ type Props = {
 };
 const ModalContent: React.ComponentType<Props> = React.forwardRef(function ModalContent(
   { children, noScroll }: Props,
-  containerRef: React$ElementRef<any>,
+  containerRef: React.Ref<any>,
 ) {
   const [isScrollable, setScrollable] = useState(false);
   const onHeightUpdate = useCallback(() => {

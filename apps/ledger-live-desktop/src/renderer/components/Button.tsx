@@ -9,7 +9,6 @@ import {
   ColorProps,
   FontSizeProps,
   FontWeightProps,
-  FontFamilyProps,
 } from "styled-system";
 import noop from "lodash/noop";
 import get from "lodash/get";

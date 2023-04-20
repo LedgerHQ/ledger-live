@@ -17,7 +17,7 @@ type Props = {
 };
 const RepairDeviceButton: React.ComponentType<Props> = React.forwardRef(function RepairDevice(
   { onRepair, onClose, buttonProps, Component, disableDescription }: Props,
-  ref: React$ElementRef<any>,
+  ref: React.Ref<any>,
 ) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
