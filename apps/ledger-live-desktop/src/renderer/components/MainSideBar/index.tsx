@@ -454,7 +454,7 @@ const MainSideBar = () => {
                     icon={Icons.GiftMedium}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
-                    isActive={location.pathname.startsWith("/refer")}
+                    isActive={location.pathname.startsWith(referralProgramConfig?.params.path)}
                     collapsed={secondAnim}
                     NotifComponent={
                       referralProgramConfig?.params.isNew ? (
