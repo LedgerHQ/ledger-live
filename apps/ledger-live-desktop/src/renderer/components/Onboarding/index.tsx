@@ -2,7 +2,6 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import React, { useEffect, useState, createContext } from "react";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
-
 import { Flex } from "@ledgerhq/react-ui";
 
 // screens
@@ -10,7 +9,6 @@ import { Welcome } from "~/renderer/components/Onboarding/Screens/Welcome";
 import { SelectDevice } from "~/renderer/components/Onboarding/Screens/SelectDevice";
 import { SelectUseCase } from "~/renderer/components/Onboarding/Screens/SelectUseCase";
 import Tutorial from "~/renderer/components/Onboarding/Screens/Tutorial";
-
 import styled from "styled-components";
 import { Pedagogy } from "~/renderer/components/Onboarding/Pedagogy";
 import RecoveryWarning from "~/renderer/components/Onboarding/Help/RecoveryWarning";

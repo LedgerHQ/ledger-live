@@ -1,4 +1,3 @@
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import styled, { createGlobalStyle } from "styled-components";
 import Text from "~/renderer/components/Text";
 import { rgba } from "~/renderer/styles/helpers";
@@ -9,14 +8,14 @@ const MockedGlobalStyle = createGlobalStyle`
     animation: none !important;
   }
 `;
-const Item: ThemedComponent<{}> = styled(Text)`
+const Item = styled(Text)`
   color: white;
   padding: 5px;
   background: ${p => p.theme.colors.alertRed};
   opacity: 0.9;
 `;
-const MockContainer: ThemedComponent<{}> = styled.div``;
-const EllipsesText: ThemedComponent<{}> = styled(Text).attrs({
+const MockContainer = styled.div``;
+const EllipsesText = styled(Text).attrs({
   ff: "Inter|Regular",
   color: "palette.text.shade100",
   fontSize: 3,
@@ -27,7 +26,7 @@ const EllipsesText: ThemedComponent<{}> = styled(Text).attrs({
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-const DebugWrapper: ThemedComponent<{}> = styled.div`
+const DebugWrapper = styled.div`
   &:empty {
     display: none;
   }

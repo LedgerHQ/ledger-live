@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import styled, { keyframes, css } from "styled-components";
 import { color } from "styled-system";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 const infiniteAnimation = keyframes`
   0% {
@@ -25,7 +24,7 @@ const fillInAnimation = keyframes`
     transform: translate3d(0);
   }
 `;
-const Bar: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Bar = styled(Box).attrs(() => ({
   borderRadius: "2.5px",
 }))`
   height: 5px;

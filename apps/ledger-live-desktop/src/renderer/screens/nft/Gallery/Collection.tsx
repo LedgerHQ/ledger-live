@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { openModal } from "~/renderer/actions/modals";
 import styled from "styled-components";
 import useOnScreen from "../useOnScreen";
@@ -20,14 +19,14 @@ import OperationsList from "~/renderer/components/OperationsList";
 import CollectionName from "~/renderer/components/Nft/CollectionName";
 import GridListToggle from "./GridListToggle";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
-const SpinnerContainer: ThemedComponent<{}> = styled.div`
+const SpinnerContainer = styled.div`
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: center;
   padding: 20px;
 `;
-const SpinnerBackground: ThemedComponent<{}> = styled.div`
+const SpinnerBackground = styled.div`
   background: ${p => p.theme.colors.palette.background.paper};
   border-radius: 100%;
   padding: 2px;

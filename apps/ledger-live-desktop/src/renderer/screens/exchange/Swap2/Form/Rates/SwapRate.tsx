@@ -4,7 +4,6 @@ import { Text } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { ExchangeRate, SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   getProviderName,
   isRegistrationRequired,
@@ -20,10 +19,10 @@ export type Props = {
   fromCurrency?: SwapSelectorStateType["currency"];
   toCurrency?: SwapSelectorStateType["currency"];
 };
-const SecondaryText: ThemedComponent<{}> = styled(Text)`
+const SecondaryText = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
-const StyledCounterValue: ThemedComponent<{}> = styled(CounterValue)`
+const StyledCounterValue = styled(CounterValue)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
 function SwapRate({ value = {}, selected, onSelect, fromCurrency, toCurrency }: Props) {

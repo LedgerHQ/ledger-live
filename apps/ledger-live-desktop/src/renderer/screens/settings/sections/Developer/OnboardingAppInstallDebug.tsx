@@ -3,7 +3,6 @@ import { Button, Flex, Input, SelectInput, Text, VerticalTimeline } from "@ledge
 import { useSelector } from "react-redux";
 import { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/devices";
-
 import ButtonV2 from "~/renderer/components/Button";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import OnboardingAppInstallStep from "~/renderer/components/OnboardingAppInstall";

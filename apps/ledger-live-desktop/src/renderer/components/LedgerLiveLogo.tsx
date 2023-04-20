@@ -1,6 +1,5 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 type Props = {
   icon: any;

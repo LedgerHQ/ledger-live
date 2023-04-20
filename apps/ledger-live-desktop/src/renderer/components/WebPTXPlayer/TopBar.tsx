@@ -1,19 +1,13 @@
 import React, { RefObject, useCallback, useEffect, useRef, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-
 import Box, { Tabbable } from "~/renderer/components/Box";
-
 import ArrowRight from "~/renderer/icons/ArrowRight";
 import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-
 import { useSelector } from "react-redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { WebviewState, WebviewAPI } from "../Web3AppWebview/types";

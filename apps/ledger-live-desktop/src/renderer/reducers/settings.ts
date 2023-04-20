@@ -184,7 +184,7 @@ type HandlersPayloads = {
     latestFirmware: any;
   };
   LAST_SEEN_DEVICE: DeviceModelInfo;
-  SET_DEEPLINK_URL: string;
+  SET_DEEPLINK_URL: string | null | undefined;
   SET_FIRST_TIME_LEND: never;
   SET_SWAP_SELECTABLE_CURRENCIES: string[];
   SET_SWAP_KYC: {
@@ -492,14 +492,16 @@ export const counterValueCurrencySelector = createSelector(
 export const countervalueFirstSelector = createSelector(storeSelector, s => s.countervalueFirst);
 export const developerModeSelector = (state: State): boolean => state.settings.developerMode;
 export const lastUsedVersionSelector = (state: State): string => state.settings.lastUsedVersion;
-export const userThemeSelector = (state: State): string | undefined | null => {
+export const userThemeSelector = (state: State): "dark" | "light" | undefined | null => {
   const savedVal = state.settings.theme;
-  return ["dark", "light"].includes(savedVal as string) ? savedVal : "dark";
+  return ["dark", "light"].includes(savedVal as string) ? (savedVal as "dark" | "light") : "dark";
 };
+
 type LanguageAndUseSystemLanguage = {
   language: string;
   useSystemLanguage: boolean;
 };
+
 const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLanguage => {
   const { language } = state.settings;
   if (language && getLanguages().includes(language as Locale)) {

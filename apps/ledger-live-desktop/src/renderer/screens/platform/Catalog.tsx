@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { openPlatformAppDisclaimerDrawer } from "~/renderer/actions/UI";
@@ -27,11 +26,11 @@ const GridItem = styled.div`
     height: 100%;
   }
 `;
-const Header: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const Header = styled(Box).attrs(p => ({
   horizontal: true,
   paddingBottom: 32,
 }))``;
-const Title: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const Title = styled(Box).attrs(p => ({
   ff: "Inter|SemiBold",
   fontSize: 7,
   color: p.theme.colors.palette.secondary.main,

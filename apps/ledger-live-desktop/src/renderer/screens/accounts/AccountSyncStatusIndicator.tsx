@@ -150,5 +150,5 @@ const AccountSyncStatusIndicator = ({ accountId, account, isUpToDateAccount }: P
   }
   return <StatusQueued onClick={onClick} />;
 };
-const m: React$ComponentType<OwnProps> = connect(mapStateToProps)(AccountSyncStatusIndicator);
+const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(AccountSyncStatusIndicator);
 export default m;

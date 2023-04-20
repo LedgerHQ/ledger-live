@@ -2,7 +2,6 @@ import React from "react";
 import styled, { withTheme } from "styled-components";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import RetryButton from "~/renderer/components/RetryButton";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";

@@ -114,7 +114,7 @@ class QRCodeExporter extends PureComponent<
     );
   }
 }
-const ConnectedQRCodeExporter: React$ComponentType<OwnProps> = connect(mapStateToProps)(
+const ConnectedQRCodeExporter: React.ComponentType<OwnProps> = connect(mapStateToProps)(
   QRCodeExporter,
 );
 export default ConnectedQRCodeExporter;

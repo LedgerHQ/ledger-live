@@ -350,8 +350,8 @@ importers:
         specifier: ^0.5.2
         version: 0.5.2(react@17.0.2)
       react-prismazoom:
-        specifier: ^3.0.0
-        version: 3.0.3(prop-types@15.8.1)(react-dom@17.0.2)(react@17.0.2)
+        specifier: ^3.3.3
+        version: 3.3.3(react-dom@17.0.2)(react@17.0.2)
       react-redux:
         specifier: ^7.2.9
         version: 7.2.9(@types/react@17.0.53)(react@17.0.2)
@@ -524,6 +524,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.4.3
         version: 14.4.3(@testing-library/dom@9.0.1)
+      '@types/color':
+        specifier: ^3.0.3
+        version: 3.0.3
       '@types/invariant':
         specifier: ^2.2.35
         version: 2.2.35
@@ -539,6 +542,12 @@ importers:
       '@types/react-dom':
         specifier: ^17
         version: 17.0.16(@types/react@17.0.53)
+      '@types/react-lottie':
+        specifier: ^1.2.6
+        version: 1.2.6(@types/react@17.0.53)
+      '@types/react-motion':
+        specifier: ^0.0.33
+        version: 0.0.33(@types/react@17.0.53)
       '@types/react-redux':
         specifier: ^7.1.24
         version: 7.1.24(@types/react@17.0.53)
@@ -551,6 +560,15 @@ importers:
       '@types/react-select':
         specifier: ^4
         version: 4.0.18(@types/react@17.0.53)
+      '@types/react-transition-group':
+        specifier: ^4.4.2
+        version: 4.4.4(@types/react@17.0.53)
+      '@types/react-virtualized-auto-sizer':
+        specifier: ^1.0.1
+        version: 1.0.1(@types/react@17.0.53)
+      '@types/react-window':
+        specifier: ^1.8.5
+        version: 1.8.5(@types/react@17.0.53)
       '@types/redux-actions':
         specifier: ^2.6.2
         version: 2.6.2
@@ -563,6 +581,9 @@ importers:
       '@types/styled-components':
         specifier: ^5.1.25
         version: 5.1.25(@types/react@17.0.53)
+      '@types/styled-system':
+        specifier: ^5.1.16
+        version: 5.1.16
       '@types/trust__keyto':
         specifier: ^1.0.0
         version: 1.0.0
@@ -22497,6 +22518,28 @@ packages:
       '@types/react': 17.0.53
     dev: true
 
+  /@types/react-lottie@1.2.6(@types/react@17.0.53):
+    resolution: {integrity: sha512-fvGJHD7SeUdVESHo7f7erRnXkTWaa/6Mo5TB+R0/ieSftKoFspA4sMlF2qMH6BljXI7ehFJbBtrD5bzDxPCkGg==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@types/react': 17.0.53
+    dev: true
+
+  /@types/react-motion@0.0.33(@types/react@17.0.53):
+    resolution: {integrity: sha512-R9grd4EwdDBcKKq7Zhszd8ukyy2BLKN6ooNI0V39nUl/sui+m7VI94cdebYemBteoPHmO7J7BZk+cIf+Xnk4TA==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@types/react': 17.0.53
+    dev: true
+
   /@types/react-native-extra-dimensions-android@1.2.0:
     resolution: {integrity: sha512-9lUeO0P/yXBPlR8KjIKttqLXy/zRS0a6tofiCooDRcT2YXWkhVAoXZv7y/5opzUdCORk6eSMkfMRLbRjs8v5Uw==}
     dev: true
@@ -22691,6 +22734,17 @@ packages:
     dependencies:
       '@types/react': 17.0.53
 
+  /@types/react-virtualized-auto-sizer@1.0.1(@types/react@17.0.53):
+    resolution: {integrity: sha512-GH8sAnBEM5GV9LTeiz56r4ZhMOUSrP43tAQNSRVxNexDjcNKLCEtnxusAItg1owFUFE6k0NslV26gqVClVvong==}
+    peerDependencies:
+      '@types/react': '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@types/react': 17.0.53
+    dev: true
+
   /@types/react-window@1.8.5(@types/react@17.0.53):
     resolution: {integrity: sha512-V9q3CvhC9Jk9bWBOysPGaWy/Z0lxYcTXLtLipkt2cnRj1JOSFNF7wqGpkScSXMgBwC+fnVRg/7shwgddBG5ICw==}
     peerDependencies:
@@ -22700,7 +22754,6 @@ packages:
         optional: true
     dependencies:
       '@types/react': 17.0.53
-    dev: false
 
   /@types/react@17.0.53:
     resolution: {integrity: sha512-1yIpQR2zdYu1Z/dc1OxC+MA6GR240u3gcnP4l6mvj/PJiVaqHsQPmWttsvHsfnhfPbU2FuGmo0wSITPygjBmsw==}
@@ -22805,6 +22858,12 @@ packages:
     resolution: {integrity: sha512-1uls4wipZn8FtYFZ7upRVFDoEeOXTQTs2zuyOZPn02T6rjIxtvj2P2lG5qsxXHhKuKsu3thveCZrtaeLE/ibLg==}
     dependencies:
       csstype: 3.0.11
+
+  /@types/styled-system@5.1.16:
+    resolution: {integrity: sha512-+dyGs2n2o6QStsexh87NeaRmXYnKOnEe7iOEkcYOwKwI5a1gFL0+Mt/hZKi+4KD1qDMkLkGb0lpDrffb/vSkDQ==}
+    dependencies:
+      csstype: 3.0.11
+    dev: true
 
   /@types/tapable@1.0.8:
     resolution: {integrity: sha512-ipixuVrh2OdNmauvtT51o3d8z12p6LtFW9in7U79der/kwejjdNchQC5UMn5u/KxNoM7VHHOs/l8KS8uHxhODQ==}
@@ -50730,14 +50789,12 @@ packages:
       warning: 4.0.3
     dev: true
 
-  /react-prismazoom@3.0.3(prop-types@15.8.1)(react-dom@17.0.2)(react@17.0.2):
-    resolution: {integrity: sha512-bqZyTIl3mYGqUNUn/8znHhkaV5w8tBjw/DbAIk5M44K8IAHIB1dkqel579iiG37FIu5YYzoXkeebyVlHE/quaQ==}
+  /react-prismazoom@3.3.3(react-dom@17.0.2)(react@17.0.2):
+    resolution: {integrity: sha512-DSeKL+szKcFsKDcLCAXlsomY21V1jLxJhCg9HUtGOt+LJOJ6Z51cyCvEGPuqvwqik+V3izZDLrCnShAjea82rA==}
     peerDependencies:
-      prop-types: ^15.6
-      react: ^16.3 || ^17 || ^18
-      react-dom: ^16.3 || ^17 || ^18
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
     dependencies:
-      prop-types: 15.8.1
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
     optionalDependencies:

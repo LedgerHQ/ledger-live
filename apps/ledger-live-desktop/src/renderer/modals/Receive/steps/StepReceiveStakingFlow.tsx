@@ -1,13 +1,10 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-
 import { Flex, Text, Icons, Link } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-
 import { StepProps } from "../Body";
 import StakingIllustration from "../assets/StakingIllustration";
-
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";

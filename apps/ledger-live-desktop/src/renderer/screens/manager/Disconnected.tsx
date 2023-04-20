@@ -5,7 +5,6 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import { from } from "rxjs";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   Wrapper,
   Title,

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
-interface Props {
+export interface Props {
   name: string;
 }
 const UndelegationModal = (props: Props) => {

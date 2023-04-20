@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Account } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { darken } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import CheckBox from "~/renderer/components/CheckBox";
 import CryptoCurrencyIconWithCount from "~/renderer/components/CryptoCurrencyIconWithCount";

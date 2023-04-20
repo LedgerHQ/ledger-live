@@ -1,9 +1,7 @@
 import React, { Component, KeyboardEvent } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { isGlobalTabEnabled } from "~/config/global-tab";
 import { rgba } from "~/renderer/styles/helpers";
-
 import Box from "./Box";
 
 const KEY_ENTER = 13;

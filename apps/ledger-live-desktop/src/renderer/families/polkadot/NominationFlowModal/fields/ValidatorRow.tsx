@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, memo } from "react";
 import styled, { css } from "styled-components";
 import { Trans } from "react-i18next";
 import { Polkadot as PolkadotIdenticon } from "@polkadot/react-identicon/icons";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";

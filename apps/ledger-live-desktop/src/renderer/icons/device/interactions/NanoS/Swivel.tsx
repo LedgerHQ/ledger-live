@@ -10,7 +10,7 @@ type Props = {
   angle: number;
 };
 const NanoSSwivel = ({ angle, ...props }: Props) => {
-  const type = useTheme("colors.palette.type");
+  const type = useTheme("colors.palette.type") as keyof typeof colors;
   return (
     <Motion
       defaultStyle={{
@@ -35,7 +35,6 @@ const NanoSSwivel = ({ angle, ...props }: Props) => {
                 <use xlinkHref="#bbbb" />
                 <path
                   stroke={colors[type].stroke}
-                  strokeLinejoin="square"
                   strokeWidth="2"
                   d="M218 3H110c-11.045695 0-20 8.954305-20 20s8.954305 20 20 20h108c.552285 0 1-.4477153 1-1V4c0-.55228475-.447715-1-1-1zm-108 9c6.075132 0 11 4.9248678 11 11s-4.924868 11-11 11-11-4.9248678-11-11 4.924868-11 11-11z"
                 />
