@@ -4,20 +4,22 @@ import Flex, { FlexBoxProps } from "../../layout/Flex";
 import Text from "../../asorted/Text";
 
 const DividerBase = styled(Flex).attrs<FlexBoxProps>((p: FlexBoxProps) => ({
-  my: p.my || 4,
+  my: p.my || 0,
   height: 1,
   backgroundColor: "neutral.c40",
 }))``;
 
-const Divider: React.FC<FlexBoxProps & { text?: string }> = (props) => {
+export type Props = FlexBoxProps & { text?: string };
+
+const Divider: React.FC<Props> = (props) => {
   if (!props.text) return <DividerBase {...props} />;
   return (
     <Flex {...props} flexDirection="row" alignItems="center">
-      <DividerBase flex={1} />
+      <DividerBase my={6} flex={1} />
       <Text variant="bodyLineHeight" color="neutral.c60" mx={6}>
         {props.text}
       </Text>
-      <DividerBase flex={1} />
+      <DividerBase my={6} flex={1} />
     </Flex>
   );
 };
