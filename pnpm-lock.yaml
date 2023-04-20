@@ -310,6 +310,9 @@ importers:
       prando:
         specifier: ^5.1.2
         version: 5.1.2
+      prop-types:
+        specifier: ^15.8.1
+        version: 15.8.1
       qrcode:
         specifier: ^1.4.4
         version: 1.5.0
@@ -339,7 +342,7 @@ importers:
         version: 1.2.0-beta.3(eslint@7.32.0)(react@17.0.2)
       react-lottie:
         specifier: ^1.2.3
-        version: 1.2.3(react@17.0.2)
+        version: 1.2.3(prop-types@15.8.1)(react@17.0.2)
       react-markdown:
         specifier: ^4.3.0
         version: 4.3.1(react@17.0.2)
@@ -49987,7 +49990,7 @@ packages:
     resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
     dev: false
 
-  /react-lottie@1.2.3(react@17.0.2):
+  /react-lottie@1.2.3(prop-types@15.8.1)(react@17.0.2):
     resolution: {integrity: sha512-qLCERxUr8M+4mm1LU0Ruxw5Y5Fn/OmYkGfnA+JDM/dZb3oKwVAJCjwnjkj9TMHtzR2U6sMEUD3ZZ1RaHagM7kA==}
     engines: {npm: ^3.0.0}
     peerDependencies:
@@ -49999,6 +50002,7 @@ packages:
     dependencies:
       babel-runtime: 6.26.0
       lottie-web: 5.9.4
+      prop-types: 15.8.1
       react: 17.0.2
     dev: false
 
