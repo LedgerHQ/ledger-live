@@ -1,3 +1,5 @@
+// TODO: update path by moving mockHelpers to coin-framework
+
 import { BigNumber } from "bignumber.js";
 import {
   NotEnoughBalance,
@@ -18,7 +20,7 @@ import {
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
-import { getMainAccount } from "../../../account";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index"; // "../../../account";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 import { initAccount } from "../initAccount";

@@ -1,5 +1,5 @@
 import Algorand from "@ledgerhq/hw-app-algorand";
-import type { Resolver } from "../../hw/getAddress/types";
+import type { Resolver } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
   const algorand = new Algorand(transport);

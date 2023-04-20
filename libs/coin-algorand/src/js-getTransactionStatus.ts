@@ -14,10 +14,10 @@ import {
   InvalidAddress,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
-import {
-  ClaimRewardsFeesWarning,
-  AlgorandASANotOptInInRecipient,
-} from "../../errors";
+
+import { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
+import { AlgorandASANotOptInInRecipient } from "./errors";
+
 import type { Transaction, AlgorandAccount } from "./types";
 import { extractTokenId } from "./tokens";
 import {

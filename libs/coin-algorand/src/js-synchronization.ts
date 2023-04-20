@@ -1,14 +1,23 @@
+// FIXME: fix call to makeScanAccounts (dependency injection?)
+
 import { BigNumber } from "bignumber.js";
-import { findTokenById, listTokensForCryptoCurrency } from "../../currencies";
+import {
+  findTokenById,
+  listTokensForCryptoCurrency,
+} from "@ledgerhq/coin-framework/currencies/index";
 import {
   encodeAccountId,
   emptyHistoryCache,
   inferSubOperations,
-} from "../../account";
-import { encodeOperationId } from "../../operation";
-import { promiseAllBatched } from "../../promise";
-import type { GetAccountShape } from "../../bridge/jsHelpers";
-import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
+} from "@ledgerhq/coin-framework/account/index";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { promiseAllBatched } from "@ledgerhq/coin-framework/promise";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  makeSync,
+  makeScanAccounts,
+  mergeOps,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 import {
   AlgoTransaction,
@@ -379,7 +388,7 @@ async function buildSubAccounts({
   const { blacklistedTokenIds = [] } = syncConfig;
   if (listTokensForCryptoCurrency(currency).length === 0) return undefined;
   const tokenAccounts: TokenAccount[] = [];
-  const existingAccountByTicker = {}; // used for fast lookup
+  const existingAccountByTicker: { [ticker: string]: TokenAccount } = {}; // used for fast lookup
   const existingAccountTickers: string[] = []; // used to keep track of ordering
 
   if (initialAccount && initialAccount.subAccounts) {

@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import network from "../../../network";
 import {
   AlgoTransaction,
