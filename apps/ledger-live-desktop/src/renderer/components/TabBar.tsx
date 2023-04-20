@@ -1,6 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Base } from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 const Tab = styled(Base)`

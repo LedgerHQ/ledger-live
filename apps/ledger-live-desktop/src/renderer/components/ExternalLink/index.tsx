@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import Box from "../Box";
 import ExternalLinkIcon from "../../icons/ExternalLink";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Container: ThemedComponent<{}> = styled(Box).attrs(p => ({
+
+const Container = styled(Box).attrs(p => ({
   cursor: "pointer",
   horizontal: true,
 }))`

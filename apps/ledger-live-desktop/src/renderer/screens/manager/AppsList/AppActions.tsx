@@ -4,7 +4,6 @@ import manager from "@ledgerhq/live-common/manager/index";
 import { useHistory } from "react-router-dom";
 import { AppType } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
-
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";

@@ -11,7 +11,6 @@ import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContext
 import Text from "~/renderer/components/Text";
 import TokenRow from "~/renderer/components/TokenRow";
 import AngleDown from "~/renderer/icons/AngleDown";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { matchesSearch } from "../AccountList";
 import AccountSyncStatusIndicator from "../AccountSyncStatusIndicator";
 import Balance from "./Balance";
@@ -22,7 +21,7 @@ import Star from "~/renderer/components/Stars/Star";
 import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
 import perFamilyTokenList from "~/renderer/generated/TokenList";
-const Row: ThemedComponent<{}> = styled(Box)`
+const Row = styled(Box)`
   background: ${p => p.theme.colors.palette.background.paper};
   border-radius: 4px;
   border: 1px solid transparent;
@@ -69,7 +68,7 @@ const TokenContent = styled.div`
 const TokenContentWrapper = styled.div`
   position: relative;
 `;
-const TokenBarIndicator: ThemedComponent<{}> = styled.div`
+const TokenBarIndicator = styled.div`
   width: 15px;
   border-left: 1px solid ${p => p.theme.colors.palette.divider};
   z-index: 2;
@@ -326,5 +325,5 @@ class AccountRowItem extends PureComponent<Props, State> {
 const mapStateToProps = createStructuredSelector({
   hideEmptyTokenAccounts: hideEmptyTokenAccountsSelector,
 });
-const ConnectedAccountRowItem: React$ComponentType<{}> = connect(mapStateToProps)(AccountRowItem);
+const ConnectedAccountRowItem: React.ComponentType<{}> = connect(mapStateToProps)(AccountRowItem);
 export default ConnectedAccountRowItem;

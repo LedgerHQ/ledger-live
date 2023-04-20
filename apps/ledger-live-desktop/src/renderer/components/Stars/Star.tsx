@@ -6,7 +6,6 @@ import { isStarredAccountSelector } from "~/renderer/reducers/accounts";
 import { rgba } from "~/renderer/styles/helpers";
 import starAnim from "~/renderer/images/starAnim.png";
 import starAnim2 from "~/renderer/images/starAnim2.png";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Transition } from "react-transition-group";
 import { track } from "~/renderer/analytics/segment";
@@ -73,7 +72,7 @@ const ButtonWrapper: ThemedComponent<{
       p.filled ? p.theme.colors.starYellow : p.theme.colors.palette.text.shade100};
   }
 `;
-const FloatingWrapper: ThemedComponent<{}> = styled.div``;
+const FloatingWrapper = styled.div``;
 
 // NB negative margin to allow the burst to overflow
 const StarWrapper: ThemedComponent<{

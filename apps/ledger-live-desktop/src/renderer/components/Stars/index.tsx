@@ -2,7 +2,6 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Hide from "~/renderer/components/MainSideBar/Hide";
 import Text from "~/renderer/components/Text";
@@ -12,11 +11,11 @@ import emptyBookmarksDark from "~/renderer/images/dark-empty-bookmarks.png";
 import emptyBookmarksLight from "~/renderer/images/light-empty-bookmarks.png";
 import Item from "./Item";
 import { starredAccountsSelector } from "~/renderer/reducers/accounts";
-const Container: ThemedComponent<{}> = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const Placeholder: ThemedComponent<{}> = styled.div`
+const Placeholder = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

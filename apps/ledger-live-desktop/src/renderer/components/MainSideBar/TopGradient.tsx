@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const TopGradientBox: ThemedComponent<{}> = styled.div`
+
+const TopGradientBox = styled.div`
   width: 100%;
   height: 80px;
   position: absolute;

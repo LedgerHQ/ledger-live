@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import Text from "~/renderer/components/Text";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -37,12 +36,12 @@ const assetMap = {
   sepa: sepaLogo,
   visa: visaLogo,
 };
-const Container: ThemedComponent<{}> = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 40px 0px;
 `;
-const ProviderCardContainer: ThemedComponent<{}> = styled.div`
+const ProviderCardContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -63,11 +62,11 @@ const ProviderCardContainer: ThemedComponent<{}> = styled.div`
     opacity: 0.7;
   }
 `;
-const ProviderCardTopContainer: ThemedComponent<{}> = styled.div`
+const ProviderCardTopContainer = styled.div`
   display: flex;
   justify-content: center;
 `;
-const ChevronContainer: ThemedComponent<{}> = styled.div`
+const ChevronContainer = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;
@@ -77,7 +76,7 @@ const ChevronContainer: ThemedComponent<{}> = styled.div`
   align-items: center;
   color: ${p => p.theme.colors.palette.text.shade100};
 `;
-const PaymentSystemListContainer: ThemedComponent<{}> = styled.div`
+const PaymentSystemListContainer = styled.div`
   display: inline-flex;
   margin-top: 16px;
   gap: 6px;
@@ -85,14 +84,14 @@ const PaymentSystemListContainer: ThemedComponent<{}> = styled.div`
   flex-wrap: wrap;
   pointer-events: none;
 `;
-const PaymentSystemContainer: ThemedComponent<{}> = styled.div`
+const PaymentSystemContainer = styled.div`
   display: flex;
   border: 1px solid ${p => p.theme.colors.palette.text.shade30};
   text-transform: uppercase;
   padding: 6px;
   border-radius: 4px;
 `;
-const PaymentSystemLogo: ThemedComponent<{}> = styled.img``;
+const PaymentSystemLogo = styled.img``;
 type ProviderCardProps = {
   provider: RampLiveAppCatalogEntry;
   onClick: () => void;

@@ -1,11 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { rgba } from "~/renderer/styles/helpers";
 import IconHelp from "~/renderer/icons/Help";
 import Box from "./Box";
 import Label from "./Label";
-const Wrapper: ThemedComponent<{}> = styled(Label).attrs(() => ({
+const Wrapper = styled(Label).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "wallet",
   fontSize: 4,
@@ -23,7 +22,7 @@ type Props = {
   label?: React.ReactNode;
   children?: React.ReactNode;
   iconSize?: number;
-  Icon?: React$ComponentType<any>;
+  Icon?: React.ComponentType<any>;
   style?: any;
 }; // can add more dynamic options if needed
 export function LinkHelp({ onClick, label, children, iconSize = 12, Icon, style }: Props) {

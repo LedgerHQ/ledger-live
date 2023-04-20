@@ -9,7 +9,6 @@ import Box from "~/renderer/components/Box";
 import Card from "~/renderer/components/Box/Card";
 import TabBar from "~/renderer/components/TabBar";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import OnRamp from "./Buy";
 import { useExchangeProvider } from "./hooks";
 import OffRamp from "./Sell";

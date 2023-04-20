@@ -2,11 +2,10 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import IconExternal from "~/renderer/icons/ExternalLink";
 
 export const ContextMenuContext = React.createContext({});
-export const withContextMenuContext = (ComponentToDecorate: React$ComponentType<any>) => {
+export const withContextMenuContext = (ComponentToDecorate: React.ComponentType<any>) => {
   const WrappedContextMenu = (props: any) => (
     <ContextMenuContext.Consumer>
       {context => <ComponentToDecorate {...props} context={context} />}
@@ -16,7 +15,7 @@ export const withContextMenuContext = (ComponentToDecorate: React$ComponentType<
 };
 export type ContextMenuItemType = {
   label: string;
-  Icon?: React$ComponentType<any>;
+  Icon?: React.ComponentType<any>;
   callback: (a: any) => any;
   dontTranslateLabel?: boolean;
   id?: string;
@@ -31,7 +30,7 @@ type State = {
   x: number;
   y: number;
 };
-const Separator: ThemedComponent<{}> = styled.div`
+const Separator = styled.div`
   background-color: ${p => p.theme.colors.palette.divider};
   height: 1px;
   margin-top: 8px;
@@ -51,7 +50,7 @@ const ContextMenuContainer: ThemedComponent<{
   background-color: ${p => p.theme.colors.palette.background.paper};
   padding: 10px;
 `;
-const ContextMenuItemContainer: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const ContextMenuItemContainer = styled(Box).attrs(p => ({
   ff: "Inter",
   color: p.disabled
     ? "palette.text.shade50"

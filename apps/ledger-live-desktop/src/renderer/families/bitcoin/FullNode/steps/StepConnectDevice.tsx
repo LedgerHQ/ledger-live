@@ -15,7 +15,6 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { FullNodeSteps, ConnectionStatus, CheckWrapper, connectionStatus } from "..";
-
 import IconCheck from "~/renderer/icons/Check";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const StepConnectDevice = ({

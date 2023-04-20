@@ -5,13 +5,13 @@ import { USBTroubleshootingIndexSelector } from "~/renderer/reducers/settings";
 import { setUSBTroubleshootingIndex } from "~/renderer/actions/settings";
 import { setTrackingSource } from "../analytics/TrackPage";
 function useUSBTroubleshooting() {
-  const lastLocation = useRef(null);
+  const lastLocation = useRef<string | null>(null);
   const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
   const USBTroubleshootingIndex = useSelector(USBTroubleshootingIndexSelector);
   useEffect(() => {
-    if (!lastLocation) lastLocation.current = location.pathname;
+    if (!lastLocation.current) lastLocation.current = location.pathname;
     if (
       USBTroubleshootingIndex !== undefined &&
       USBTroubleshootingIndex !== null &&

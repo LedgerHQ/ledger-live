@@ -8,7 +8,6 @@ import nanoS2 from "~/renderer/images/nanoS2.v3.svg";
 import nanoXDark from "~/renderer/images/nanoXDark.v3.svg";
 import nanoSDark from "~/renderer/images/nanoSDark.v3.svg";
 import nanoS2Dark from "~/renderer/images/nanoS2Dark.v3.svg";
-
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { DeviceModelId } from "@ledgerhq/devices";
 

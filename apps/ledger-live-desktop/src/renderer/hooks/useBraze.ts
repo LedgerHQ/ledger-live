@@ -1,7 +1,6 @@
 import { useEffect, useCallback } from "react";
 import * as braze from "@braze/web-sdk";
 import { ClassicCard } from "@braze/web-sdk";
-
 import { getBrazeConfig } from "~/braze-setup";
 import {
   LocationContentCard,

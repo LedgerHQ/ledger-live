@@ -15,7 +15,7 @@ import Space from "~/renderer/components/Space";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import Button from "~/renderer/components/Button";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   error: Error;
   withoutAppData?: boolean;
@@ -169,7 +169,7 @@ const ErrContainer = styled.pre`
   cursor: text;
   user-select: text;
 `;
-export const IconWrapperCircle: ThemedComponent<{}> = styled(Box)`
+export const IconWrapperCircle = styled(Box)`
   width: 50px;
   height: 50px;
   border-radius: 50%;

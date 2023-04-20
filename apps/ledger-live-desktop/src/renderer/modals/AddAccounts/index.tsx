@@ -28,7 +28,7 @@ type Props = {
   replaceAccounts: (a: Account[]) => void;
   blacklistedTokenIds?: string[];
   currency: (CryptoCurrency | undefined | null) | (TokenCurrency | undefined | null);
-  flow?: string;
+  flow?: string | null;
   onClose?: () => void;
   preventSkippingCurrencySelection: boolean | undefined | null;
 };
@@ -59,7 +59,7 @@ export type StepProps = {
   flow?: string;
 };
 type St = Step<StepId, StepProps>;
-const createSteps = (skipChooseCurrencyStep): St[] => {
+const createSteps = (skipChooseCurrencyStep?: boolean | null): St[] => {
   // the back button is not needed when we skip "chooseCurrency" step because the back button brings user to "chooseCurrency" step
   const onBack = skipChooseCurrencyStep
     ? null
@@ -104,12 +104,12 @@ const createSteps = (skipChooseCurrencyStep): St[] => {
   if (skipChooseCurrencyStep) {
     steps.shift();
   }
-  return steps;
+  return steps as St[];
 };
 type State = {
   stepId: StepId;
   scanStatus: ScanStatus | string;
-  currency: CryptoCurrency | undefined | null;
+  currency: CryptoCurrency | TokenCurrency | undefined | null;
   scannedAccounts: Account[];
   checkedAccountsIds: string[];
   editedNames: {
@@ -127,7 +127,7 @@ const mapDispatchToProps = {
   replaceAccounts,
   closeModal,
 };
-const INITIAL_STATE = {
+const INITIAL_STATE: State = {
   stepId: "chooseCurrency",
   currency: null,
   scannedAccounts: [],
@@ -163,7 +163,7 @@ class AddAccounts extends PureComponent<Props, State> {
       currency,
     });
 
-  handleSetScanStatus = (scanStatus: string, err: Error | undefined | null = null) => {
+  handleSetScanStatus = (scanStatus: ScanStatus, err: Error | undefined | null = null) => {
     if (err) {
       logger.critical(err);
     }
@@ -189,18 +189,12 @@ class AddAccounts extends PureComponent<Props, State> {
     checkedAccountsIds: string[];
     scannedAccounts: Account[];
   }) => {
-    this.setState({
-      ...(checkedAccountsIds
-        ? {
-            checkedAccountsIds,
-          }
-        : {}),
-      ...(scannedAccounts
-        ? {
-            scannedAccounts,
-          }
-        : {}),
-    });
+    if (checkedAccountsIds) {
+      this.setState({ checkedAccountsIds });
+    }
+    if (scannedAccounts) {
+      this.setState({ scannedAccounts });
+    }
   };
 
   handleResetScanState = () => {
@@ -212,7 +206,7 @@ class AddAccounts extends PureComponent<Props, State> {
     });
   };
 
-  handleBeforeOpen = ({ data }) => {
+  handleBeforeOpen = ({ data }: { data: { currency?: CryptoCurrency } }) => {
     const { currency } = this.state;
     if (!currency) {
       if (data && data.currency) {
@@ -277,7 +271,6 @@ class AddAccounts extends PureComponent<Props, State> {
       <Modal
         centered
         name="MODAL_ADD_ACCOUNTS"
-        refocusWhenChange={stepId}
         onHide={() =>
           this.setState({
             ...INITIAL_STATE,
@@ -288,16 +281,18 @@ class AddAccounts extends PureComponent<Props, State> {
         render={({ onClose }) => {
           const handleCloseModal = () => {
             this.props.onClose?.();
-            onClose();
+            onClose && onClose();
           };
           return (
             <Stepper
               key={reset} // THIS IS A HACK because stepper is not controllable. FIXME
               title={title}
               stepId={stepId}
+              // @ts-expect-error This is complicated to type properly…
               onStepChange={this.handleStepChange}
               onClose={handleCloseModal}
               onCloseModal={handleCloseModal}
+              // @ts-expect-error This is complicated to type properly…
               steps={this.STEPS}
               errorSteps={errorSteps}
               {...stepperProps}
@@ -311,8 +306,8 @@ class AddAccounts extends PureComponent<Props, State> {
     );
   }
 }
-const m: React$ComponentType<{}> = compose(
+const m = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
-)(AddAccounts);
+)(AddAccounts) as typeof AddAccounts;
 export default m;

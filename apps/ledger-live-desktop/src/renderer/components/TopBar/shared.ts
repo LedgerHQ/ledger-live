@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Tabbable } from "~/renderer/components/Box";
 export const ItemContainer: ThemedComponent<{
   "data-e2e"?: string;

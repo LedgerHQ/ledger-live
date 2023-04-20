@@ -2,8 +2,8 @@ import React, { useReducer, useEffect } from "react";
 import { map } from "rxjs/operators";
 import styled, { keyframes } from "styled-components";
 import { trackSubject } from "~/renderer/analytics/segment";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Root: ThemedComponent<{}> = styled.div`
+
+const Root = styled.div`
   position: fixed;
   z-index: 9999999999;
   top: 0;
@@ -12,7 +12,7 @@ const Root: ThemedComponent<{}> = styled.div`
   height: 100%;
   pointer-events: none;
 `;
-const Container: ThemedComponent<{}> = styled.div`
+const Container = styled.div`
   position: fixed;
   bottom: 10px;
   right: 10px;
@@ -31,7 +31,7 @@ const fadeaway = keyframes`
     opacity: 0;
   }
 `;
-const Row: ThemedComponent<{}> = styled.div`
+const Row = styled.div`
   font-size: 10px;
   display: flex;
   flex-direction: row;
@@ -42,11 +42,11 @@ const Row: ThemedComponent<{}> = styled.div`
   animation-iteration-count: 1;
   opacity: 0;
 `;
-const Event: ThemedComponent<{}> = styled.div`
+const Event = styled.div`
   font-size: 10px;
   font-weight: bold;
 `;
-const Property: ThemedComponent<{}> = styled.div`
+const Property = styled.div`
   font-size: 8px;
   flex: 1;
   margin-right: 10px;

@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   getAccountCurrency,
   getAccountUnit,
@@ -14,7 +13,7 @@ import Box from "~/renderer/components/Box";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrencyIcon";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-const ParentCryptoCurrencyIconWrapper: ThemedComponent<{}> = styled.div`
+const ParentCryptoCurrencyIconWrapper = styled.div`
   width: 20px;
 `;
 const ItemWrapper: ThemedComponent<{

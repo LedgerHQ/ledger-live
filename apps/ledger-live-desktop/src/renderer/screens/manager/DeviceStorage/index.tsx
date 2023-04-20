@@ -9,7 +9,6 @@ import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Icons } from "@ledgerhq/react-ui";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import ByteSize from "~/renderer/components/ByteSize";
 import { rgba } from "~/renderer/styles/helpers";
 import Text from "~/renderer/components/Text";
@@ -51,7 +50,7 @@ const illustrations = {
     dark: blue,
   },
 };
-export const DeviceIllustration: ThemedComponent<{}> = styled.img.attrs(p => ({
+export const DeviceIllustration = styled.img.attrs(p => ({
   src:
     illustrations[process.env.OVERRIDE_MODEL_ID || p.deviceModel.id][
       p.theme.colors.palette.type || "light"
@@ -183,7 +182,7 @@ const FreeInfo = styled.div`
   justify-content: flex-end;
   color: ${p => (p.danger ? p.theme.colors.warning : p.theme.colors.palette.text.shade100)};
 `;
-const TooltipContentWrapper: ThemedComponent<{}> = styled.div`
+const TooltipContentWrapper = styled.div`
   & > :nth-child(1) {
     color: ${p => rgba(p.theme.colors.palette.background.paper, 0.7)};
     text-align: center;

@@ -10,12 +10,11 @@ import Text from "~/renderer/components/Text";
 import Spinner from "~/renderer/components/Spinner";
 import Button from "~/renderer/components/Button";
 import { from } from "rxjs";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import IconCheckFull from "~/renderer/icons/CheckFull";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import Animation from "~/renderer/animations";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
-const Wrapper: ThemedComponent<{}> = styled(Box)`
+const Wrapper = styled(Box)`
   align-items: center;
   justify-content: center;
   margin-top: 12px;

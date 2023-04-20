@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { Flex, Text, Icons, Link, ProviderIcon, Icon, Tag as TagCore } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import styled from "styled-components";
 
 export const Container: ThemedComponent = styled(Flex)`

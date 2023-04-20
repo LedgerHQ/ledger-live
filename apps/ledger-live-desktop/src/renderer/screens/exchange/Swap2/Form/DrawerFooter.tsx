@@ -7,9 +7,8 @@ import Box from "~/renderer/components/Box/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Separator } from "./Separator";
-const Terms: ThemedComponent<{}> = styled(Text).attrs({
+const Terms = styled(Text).attrs({
   ff: "Inter|SemiBold",
   color: "palette.text.shade60",
   fontSize: 13,

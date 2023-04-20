@@ -1,5 +1,4 @@
 import { expect } from "@playwright/test";
-
 import test from "../../fixtures/common";
 import { InstallSetOfApps } from "../../models/InstallSetOfAppsPage";
 import { SettingsPage } from "../../models/SettingsPage";

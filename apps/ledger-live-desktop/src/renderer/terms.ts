@@ -5,7 +5,7 @@ import { urls } from "~/config/urls";
 import logger from "~/renderer/logger";
 const currentTermsRequired = "2022-05-10";
 const currentLendingTermsRequired = "2020-11-10";
-function isAcceptedVersionUpToDate(acceptedVersion, currentVersion) {
+function isAcceptedVersionUpToDate(acceptedVersion: string | null, currentVersion: string) {
   if (!acceptedVersion) {
     return false;
   }
@@ -39,9 +39,11 @@ export function acceptLendingTerms() {
 
 /* This hook dynamically returns correct url based on user language */
 export const useDynamicUrl = (key: string): string => {
+  // @ts-expect-error this is untypable
   const [url, setUrl] = useState(urls[key].en);
   const language = useSelector(languageSelector);
   useEffect(() => {
+    // @ts-expect-error this is untypable
     setUrl(urls[key][language] || urls[key].en);
   }, [key, language]);
   return url;

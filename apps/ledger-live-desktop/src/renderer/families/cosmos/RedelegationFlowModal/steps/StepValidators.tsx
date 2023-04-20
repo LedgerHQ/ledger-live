@@ -5,7 +5,6 @@ import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { StepProps } from "../types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";

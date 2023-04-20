@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import Text from "~/renderer/components/Text";
 import { Trans } from "react-i18next";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Wrapper: ThemedComponent<{}> = styled.div`
+
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 16px 20px;

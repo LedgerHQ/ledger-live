@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-
 import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
 import { getEnv } from "@ledgerhq/live-common/env";
