@@ -1,5 +1,5 @@
 import { handleActions } from "redux-actions";
-import { createSelector, OutputSelector, InputSelector as Selector } from "reselect";
+import { createSelector } from "reselect";
 import {
   findCurrencyByTicker,
   getCryptoCurrencyById,
@@ -7,62 +7,17 @@ import {
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { DeviceModelInfo, FeatureId, Feature } from "@ledgerhq/types-live";
+import { DeviceModelInfo, FeatureId, Feature, PortfolioRange } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import { getEnv } from "@ledgerhq/live-common/env";
-import { getLanguages, defaultLocaleForLanguage } from "~/config/languages";
+import { getLanguages, defaultLocaleForLanguage, Locale } from "~/config/languages";
 import { State } from ".";
-import regionsByKey from "../screens/settings/sections/General/regions.json";
+import regionsByKey from "~/renderer/screens/settings/sections/General/regions.json";
 import { getSystemLocale } from "~/helpers/systemLocale";
-export type CurrencySettings = {
-  confirmationsNb: number;
-};
-export type CurrenciesSettings = {
-  [id: string]: CurrencySettings;
-};
-type ConfirmationDefaults = {
-  confirmationsNb:
-    | {
-        min: number;
-        def: number;
-        max: number;
-      }
-    | undefined
-    | null;
-};
-export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
-  let confirmationsNb;
-  if (c.type === "CryptoCurrency") {
-    const { blockAvgTime } = c;
-    if (blockAvgTime) {
-      const def = Math.ceil((30 * 60) / blockAvgTime); // 30 min approx validation
-      confirmationsNb = {
-        min: 1,
-        def,
-        max: 3 * def,
-      };
-    }
-  }
-  return {
-    confirmationsNb,
-  };
-};
-const bitcoin = getCryptoCurrencyById("bitcoin");
-const ethereum = getCryptoCurrencyById("ethereum");
-export const possibleIntermediaries = [bitcoin, ethereum];
-export const timeRangeDaysByKey = {
-  day: 1,
-  week: 7,
-  month: 30,
-  year: 365,
-  all: -1,
-};
-export type LangAndRegion = {
-  language: string;
-  region: string | undefined | null;
-  useSystem: boolean;
-};
+import { Handlers } from "./types";
+
+/* Initial state */
+
 export type SettingsState = {
   loaded: boolean;
   // is the settings loaded from db (it not we don't save them)
@@ -96,6 +51,7 @@ export type SettingsState = {
   nftsViewMode: "grid" | "list";
   showAccountsHelperBanner: boolean;
   hideEmptyTokenAccounts: boolean;
+  filterTokenOperationsZeroAmount: boolean;
   sidebarCollapsed: boolean;
   discreetMode: boolean;
   carouselVisibility: number;
@@ -118,7 +74,7 @@ export type SettingsState = {
   USBTroubleshootingIndex?: number;
   enableLearnPageStagingUrl?: boolean;
   swap: {
-    hasAcceptedIPSharing: false;
+    hasAcceptedIPSharing: boolean;
     selectableCurrencies: string[];
     acceptedProviders: string[];
     KYC: {
@@ -130,16 +86,11 @@ export type SettingsState = {
   };
   starredMarketCoins: string[];
   overriddenFeatureFlags: {
-    [key: FeatureId]: Feature;
+    [key in FeatureId]: Feature;
   };
   featureFlagsButtonVisible: boolean;
 };
-const defaultsForCurrency: (a: Currency) => CurrencySettings = crypto => {
-  const defaults = currencySettingsDefaults(crypto);
-  return {
-    confirmationsNb: defaults.confirmationsNb ? defaults.confirmationsNb.def : 0,
-  };
-};
+
 const DEFAULT_LANGUAGE_LOCALE = "en";
 export const getInitialLanguageLocale = (fallbackLocale: string = DEFAULT_LANGUAGE_LOCALE) => {
   const detectedLanguage = getSystemLocale() || fallbackLocale;
@@ -148,8 +99,12 @@ export const getInitialLanguageLocale = (fallbackLocale: string = DEFAULT_LANGUA
 const DEFAULT_LOCALE = "en-US";
 export const getInitialLocale = () => {
   const initialLanguageLocale = getInitialLanguageLocale();
-  return defaultLocaleForLanguage[initialLanguageLocale] || DEFAULT_LOCALE;
+  return (
+    defaultLocaleForLanguage[initialLanguageLocale as keyof typeof defaultLocaleForLanguage] ||
+    DEFAULT_LOCALE
+  );
 };
+
 const INITIAL_STATE: SettingsState = {
   hasCompletedOnboarding: false,
   counterValue: "USD",
@@ -176,7 +131,7 @@ const INITIAL_STATE: SettingsState = {
   filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
   sidebarCollapsed: false,
   discreetMode: false,
-  preferredDeviceModel: "nanoS",
+  preferredDeviceModel: DeviceModelId.nanoS,
   hasInstalledApps: true,
   carouselVisibility: 0,
   lastSeenDevice: null,
@@ -205,38 +160,65 @@ const INITIAL_STATE: SettingsState = {
     KYC: {},
   },
   starredMarketCoins: [],
-  overriddenFeatureFlags: {},
+  overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
   featureFlagsButtonVisible: false,
 };
-const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
-export type SupportedCoutervaluesData = {
-  value: string;
-  label: string;
-  currency: Currency;
+
+/* Handlers */
+
+type HandlersPayloads = {
+  SETTINGS_SET_PAIRS: Array<{
+    from: Currency;
+    to: Currency;
+    exchange: string;
+  }>;
+  SAVE_SETTINGS: Partial<SettingsState>;
+  FETCH_SETTINGS: Partial<SettingsState>;
+  SETTINGS_DISMISS_BANNER: string;
+  SHOW_TOKEN: string;
+  BLACKLIST_TOKEN: string;
+  UNHIDE_NFT_COLLECTION: string;
+  HIDE_NFT_COLLECTION: string;
+  LAST_SEEN_DEVICE_INFO: {
+    lastSeenDevice: DeviceModelInfo;
+    latestFirmware: any;
+  };
+  LAST_SEEN_DEVICE: DeviceModelInfo;
+  SET_DEEPLINK_URL: string;
+  SET_FIRST_TIME_LEND: never;
+  SET_SWAP_SELECTABLE_CURRENCIES: string[];
+  SET_SWAP_KYC: {
+    provider: string;
+    id?: string;
+    status?: string;
+  };
+  SET_SWAP_ACCEPTED_IP_SHARING: boolean;
+  ACCEPT_SWAP_PROVIDER: string;
+  DEBUG_TICK: never;
+  ADD_STARRED_MARKET_COINS: string;
+  REMOVE_STARRED_MARKET_COINS: string;
+  RESET_SWAP_LOGIN_AND_KYC_DATA: never;
+  SET_LAST_SEEN_CUSTOM_IMAGE: {
+    imageSize: number;
+    imageHash: string;
+  };
+  SET_OVERRIDDEN_FEATURE_FLAG: {
+    key: FeatureId;
+    value: Feature;
+  };
+  SET_OVERRIDDEN_FEATURE_FLAGS: {
+    overriddenFeatureFlags: {
+      [key in FeatureId]: Feature;
+    };
+  };
+  SET_FEATURE_FLAGS_BUTTON_VISIBLE: {
+    featureFlagsButtonVisible: boolean;
+  };
 };
-export const supportedCountervalues: SupportedCoutervaluesData[] = [
-  ...listSupportedFiats(),
-  ...possibleIntermediaries,
-]
-  .map(currency => ({
-    value: currency.ticker,
-    label: `${currency.name} - ${currency.ticker}`,
-    currency,
-  }))
-  .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
-const handlers: object = {
-  SETTINGS_SET_PAIRS: (
-    state: SettingsState,
-    {
-      pairs,
-    }: {
-      pairs: Array<{
-        from: Currency;
-        to: Currency;
-        exchange: string;
-      }>;
-    },
-  ) => {
+type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
+
+const handlers: SettingsHandlers = {
+  SETTINGS_SET_PAIRS: (state, { payload: pairs }) => {
     const copy = {
       ...state,
     };
@@ -248,30 +230,18 @@ const handlers: object = {
     }
     return copy;
   },
-  SAVE_SETTINGS: (
-    state: SettingsState,
-    {
-      payload,
-    }: {
-      payload: Partial<SettingsState>;
-    },
-  ) => {
+  SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
-    const changed = Object.keys(payload).some(key => payload[key] !== state[key]);
+    const changed = (Object.keys(payload) as (keyof typeof payload)[]).some(
+      key => payload[key] !== state[key],
+    );
     if (!changed) return state;
     return {
       ...state,
       ...payload,
     };
   },
-  FETCH_SETTINGS: (
-    state: SettingsState,
-    {
-      payload: settings,
-    }: {
-      payload: Partial<SettingsState>;
-    },
-  ) => {
+  FETCH_SETTINGS: (state, { payload: settings }) => {
     if (
       settings.counterValue &&
       !supportedCountervalues.find(({ currency }) => currency.ticker === settings.counterValue)
@@ -284,85 +254,68 @@ const handlers: object = {
       loaded: true,
     };
   },
-  SETTINGS_DISMISS_BANNER: (state: SettingsState, { payload: bannerId }) => ({
+  SETTINGS_DISMISS_BANNER: (state, { payload: bannerId }) => ({
     ...state,
     dismissedBanners: [...state.dismissedBanners, bannerId],
   }),
-  SHOW_TOKEN: (state: SettingsState, { payload: tokenId }) => {
+  SHOW_TOKEN: (state, { payload: tokenId }) => {
     const ids = state.blacklistedTokenIds;
     return {
       ...state,
       blacklistedTokenIds: ids.filter(id => id !== tokenId),
     };
   },
-  BLACKLIST_TOKEN: (state: SettingsState, { payload: tokenId }) => {
+  BLACKLIST_TOKEN: (state, { payload: tokenId }) => {
     const ids = state.blacklistedTokenIds;
     return {
       ...state,
       blacklistedTokenIds: [...ids, tokenId],
     };
   },
-  UNHIDE_NFT_COLLECTION: (state: SettingsState, { payload: collectionId }) => {
+  UNHIDE_NFT_COLLECTION: (state, { payload: collectionId }) => {
     const ids = state.hiddenNftCollections;
     return {
       ...state,
       hiddenNftCollections: ids.filter(id => id !== collectionId),
     };
   },
-  HIDE_NFT_COLLECTION: (state: SettingsState, { payload: collectionId }) => {
+  HIDE_NFT_COLLECTION: (state, { payload: collectionId }) => {
     const collections = state.hiddenNftCollections;
     return {
       ...state,
       hiddenNftCollections: [...collections, collectionId],
     };
   },
-  LAST_SEEN_DEVICE_INFO: (
-    state: SettingsState,
-    {
-      payload,
-    }: {
-      payload: {
-        lastSeenDevice: DeviceModelInfo;
-        latestFirmware: any;
-      };
-    },
-  ) => ({
+  LAST_SEEN_DEVICE_INFO: (state, { payload }) => ({
     ...state,
     lastSeenDevice: Object.assign({}, state.lastSeenDevice, payload.lastSeenDevice),
     latestFirmware: payload.latestFirmware,
   }),
-  LAST_SEEN_DEVICE: (
-    state: SettingsState,
-    {
-      payload,
-    }: {
-      payload: {
-        deviceInfo: DeviceInfo;
-      };
-    },
-  ) => ({
+  LAST_SEEN_DEVICE: (state, { payload }) => ({
     ...state,
-    lastSeenDevice: {
-      ...state.lastSeenDevice,
-      deviceInfo: payload.deviceInfo,
-    },
+    lastSeenDevice: state.lastSeenDevice
+      ? {
+          ...state.lastSeenDevice,
+          deviceInfo: payload.deviceInfo,
+        }
+      : undefined,
   }),
-  SET_DEEPLINK_URL: (state: SettingsState, { payload: deepLinkUrl }) => ({
+  SET_DEEPLINK_URL: (state, { payload: deepLinkUrl }) => ({
     ...state,
     deepLinkUrl,
   }),
-  SET_FIRST_TIME_LEND: (state: SettingsState) => ({
+  SET_FIRST_TIME_LEND: state => ({
     ...state,
     firstTimeLend: false,
   }),
-  SET_SWAP_SELECTABLE_CURRENCIES: (state: SettingsState, { payload }) => ({
+  SET_SWAP_SELECTABLE_CURRENCIES: (state, { payload }) => ({
     ...state,
     swap: {
       ...state.swap,
       selectableCurrencies: payload,
     },
   }),
-  SET_SWAP_KYC: (state: SettingsState, { payload }) => {
+  SET_SWAP_KYC: (state, { payload }) => {
     const { provider, id, status } = payload;
     const KYC = {
       ...state.swap.KYC,
@@ -441,6 +394,86 @@ const handlers: object = {
     featureFlagsButtonVisible: payload.featureFlagsButtonVisible,
   }),
 };
+export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
+  (handlers as unknown) as SettingsHandlers<false>,
+  INITIAL_STATE,
+);
+
+const pairHash = (from: Currency, to: Currency) => `${from.ticker}_${to.ticker}`;
+
+/* Selectors */
+
+export type CurrencySettings = {
+  confirmationsNb: number;
+};
+export type CurrenciesSettings = {
+  [id: string]: CurrencySettings;
+};
+type ConfirmationDefaults = {
+  confirmationsNb:
+    | {
+        min: number;
+        def: number;
+        max: number;
+      }
+    | undefined
+    | null;
+};
+
+export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
+  let confirmationsNb;
+  if (c.type === "CryptoCurrency") {
+    const { blockAvgTime } = c;
+    if (blockAvgTime) {
+      const def = Math.ceil((30 * 60) / blockAvgTime); // 30 min approx validation
+      confirmationsNb = {
+        min: 1,
+        def,
+        max: 3 * def,
+      };
+    }
+  }
+  return {
+    confirmationsNb,
+  };
+};
+const bitcoin = getCryptoCurrencyById("bitcoin");
+const ethereum = getCryptoCurrencyById("ethereum");
+export const possibleIntermediaries = [bitcoin, ethereum];
+export const timeRangeDaysByKey = {
+  day: 1,
+  week: 7,
+  month: 30,
+  year: 365,
+  all: -1,
+};
+export type LangAndRegion = {
+  language: string;
+  region: string | undefined | null;
+  useSystem: boolean;
+};
+const defaultsForCurrency: (a: Currency) => CurrencySettings = crypto => {
+  const defaults = currencySettingsDefaults(crypto);
+  return {
+    confirmationsNb: defaults.confirmationsNb ? defaults.confirmationsNb.def : 0,
+  };
+};
+
+export type SupportedCoutervaluesData = {
+  value: string;
+  label: string;
+  currency: Currency;
+};
+export const supportedCountervalues: SupportedCoutervaluesData[] = [
+  ...listSupportedFiats(),
+  ...possibleIntermediaries,
+]
+  .map(currency => ({
+    value: currency.ticker,
+    label: `${currency.name} - ${currency.ticker}`,
+    currency,
+  }))
+  .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
 
 // TODO refactor selectors to *Selector naming convention
 
@@ -456,15 +489,12 @@ export const counterValueCurrencySelector = createSelector(
   storeSelector,
   counterValueCurrencyLocalSelector,
 );
-export const countervalueFirstSelector: OutputSelector<State, void, boolean> = createSelector(
-  storeSelector,
-  s => s.countervalueFirst,
-);
+export const countervalueFirstSelector = createSelector(storeSelector, s => s.countervalueFirst);
 export const developerModeSelector = (state: State): boolean => state.settings.developerMode;
 export const lastUsedVersionSelector = (state: State): string => state.settings.lastUsedVersion;
 export const userThemeSelector = (state: State): string | undefined | null => {
   const savedVal = state.settings.theme;
-  return ["dark", "light"].includes(savedVal) ? savedVal : "dark";
+  return ["dark", "light"].includes(savedVal as string) ? savedVal : "dark";
 };
 type LanguageAndUseSystemLanguage = {
   language: string;
@@ -472,7 +502,7 @@ type LanguageAndUseSystemLanguage = {
 };
 const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLanguage => {
   const { language } = state.settings;
-  if (language && getLanguages().includes(language)) {
+  if (language && getLanguages().includes(language as Locale)) {
     return {
       language,
       useSystemLanguage: false,
@@ -486,11 +516,8 @@ const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLan
 };
 
 /** Use this for translations */
-export const languageSelector: OutputSelector<State, string, string> = createSelector(
-  languageAndUseSystemLangSelector,
-  o => o.language,
-);
-export const useSystemLanguageSelector: OutputSelector<State, boolean, boolean> = createSelector(
+export const languageSelector = createSelector(languageAndUseSystemLangSelector, o => o.language);
+export const useSystemLanguageSelector = createSelector(
   languageAndUseSystemLangSelector,
   o => o.useSystemLanguage,
 );
@@ -525,7 +552,7 @@ const localeFallbackToLanguageSelector = (
 };
 
 /** Use this for number and dates formatting. */
-export const localeSelector: OutputSelector<State, void, string> = createSelector(
+export const localeSelector = createSelector(
   localeFallbackToLanguageSelector,
   o => o.locale || getInitialLocale(),
 );
@@ -542,17 +569,12 @@ export const currencySettingsLocaleSelector = (
   };
   return val;
 };
-type CSS = Selector<
-  any,
-  {
-    currency: CryptoCurrency;
-  },
-  CurrencySettings
->;
-export const currencyPropExtractor = (_: any, { currency }: any) => currency;
+
+export const currencyPropExtractor = (_: State, { currency }: { currency: CryptoCurrency }) =>
+  currency;
 
 // TODO: drop (bad perf implication)
-export const currencySettingsSelector: CSS = createSelector(
+export const currencySettingsSelector = createSelector(
   storeSelector,
   currencyPropExtractor,
   currencySettingsLocaleSelector,
@@ -621,6 +643,7 @@ export const filterTokenOperationsZeroAmountSelector = (state: State) =>
 export const lastSeenDeviceSelector = (state: State) => {
   // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
   // to be removed in a while.
+  // @ts-expect-error TODO: time to remove this maybe?
   if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
     return {
       ...state.settings.lastSeenDevice,
@@ -632,16 +655,16 @@ export const lastSeenDeviceSelector = (state: State) => {
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
 export const swapHasAcceptedIPSharingSelector = (state: State) =>
   state.settings.swap.hasAcceptedIPSharing;
-export const swapSelectableCurrenciesSelector = (state: object) =>
+export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
-export const swapKYCSelector = (state: object) => state.settings.swap.KYC;
-export const showClearCacheBannerSelector = (state: object) => state.settings.showClearCacheBanner;
-export const exportSettingsSelector: OutputSelector<State, void, any> = createSelector(
+export const swapKYCSelector = (state: State) => state.settings.swap.KYC;
+export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
+export const exportSettingsSelector = createSelector(
   counterValueCurrencySelector,
-  state => state.settings.currenciesSettings,
-  state => state.settings.pairExchanges,
+  (state: State) => state.settings.currenciesSettings,
+  (state: State) => state.settings.pairExchanges,
   developerModeSelector,
   blacklistedTokenIdsSelector,
   (
@@ -663,4 +686,3 @@ export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsButtonVisibleSelector = (state: State) =>
   state.settings.featureFlagsButtonVisible;
-export default handleActions(handlers, INITIAL_STATE);

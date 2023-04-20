@@ -64,6 +64,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const [completed, setCompleted] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined | null>(null);
   const [running, setRunning] = useState(false);
+  const request = useMemo(() => ({ name }), [name]);
 
   const onChangeText = useCallback((name: string) => {
     // Nb mobile devices tend to use U+2018 for single quote, not supported
@@ -135,10 +136,10 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
 
             {error ? (
               <Flex alignItems={"center"} flexDirection={"row"} mt={1}>
-                <Icons.WarningMedium color="error.c100" size={16} />
+                <Icons.WarningMedium color="error.c50" size={16} />
                 <Text
                   variant="small"
-                  color="error.c100"
+                  color="error.c50"
                   ml={2}
                   numberOfLines={2}
                 >
@@ -162,7 +163,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
           {running ? (
             <DeviceActionModal
               device={device}
-              request={name}
+              request={request}
               action={action}
               onClose={onClose}
               onResult={onSuccess}

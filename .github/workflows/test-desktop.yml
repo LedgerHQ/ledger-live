@@ -25,24 +25,24 @@ concurrency:
   cancel-in-progress: ${{ github.ref_name != 'develop' }}
 
 jobs:
-  # typecheck:
-  #   name: "Ledger Live Desktop TypeCheck"
-  #   env:
-  #     NODE_OPTIONS: "--max-old-space-size=7168"
-  #     FORCE_COLOR: 3
-  #     CI_OS: ubuntu-latest
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
-  #       with:
-  #         ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
-  #         base: ${{ inputs.base_ref }}
-  #     - uses: ./tools/actions/composites/setup-test-desktop
-  #       id: setup-test-desktop
-  #       with:
-  #         skip_builds: true
-  #     - name: Run code checkers
-  #       run: pnpm desktop test:codecheck
+  typecheck:
+    name: "Ledger Live Desktop TypeCheck"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-latest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          base: ${{ inputs.base_ref }}
+      - uses: ./tools/actions/composites/setup-test-desktop
+        id: setup-test-desktop
+        with:
+          skip_builds: true
+      - name: Run code checkers
+        run: pnpm desktop test:codecheck
 
   deadcodecheck:
     name: "Desktop deadcode check"
@@ -295,8 +295,9 @@ jobs:
           path: apps/ledger-live-desktop/allure-results
 
   report:
-    needs: [
-        # typecheck,
+    needs:
+      [
+        typecheck,
         deadcodecheck,
         unit-tests,
         e2e-tests-linux,
@@ -374,10 +375,10 @@ jobs:
               },
             };
 
-            // const typecheck = {
-            //   pass: ${{ needs.typecheck.result == 'success' }},
-            //   status: "${{ needs.typecheck.result }}",
-            // };
+            const typecheck = {
+              pass: ${{ needs.typecheck.result == 'success' }},
+              status: "${{ needs.typecheck.result }}",
+            };
 
             const unitTests = {
               pass: ${{ needs.unit-tests.result == 'success' }},
@@ -405,7 +406,8 @@ jobs:
 
             let summary = `### TypeCheck
 
-            DISABLED (ts migration in progress)
+            ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
+              - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
 
             ### Dead Code Check
             ${deadcodecheck.pass ? "Dead code checks are fine" : "Unfortunately, dead code checks did not pass. Try \`npx unimported\` in apps/ledger-live-desktop"}

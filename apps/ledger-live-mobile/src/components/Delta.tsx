@@ -55,8 +55,8 @@ function Delta({
   const [color, ArrowIcon, sign] =
     delta !== 0
       ? delta > 0
-        ? ["success.c100", ArrowEvolutionUpMedium, "+"]
-        : ["error.c100", ArrowEvolutionDownMedium, "-"]
+        ? ["success.c50", ArrowEvolutionUpMedium, "+"]
+        : ["error.c50", ArrowEvolutionDownMedium, "-"]
       : ["neutral.c70", () => null, ""];
 
   if (

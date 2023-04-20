@@ -197,8 +197,8 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
 
   const rightSideBgColor = userMadeAChoice
     ? isCorrectChoice
-      ? "success.c100"
-      : "error.c100"
+      ? "success.c50"
+      : "error.c50"
     : "primary.c60";
 
   const AsideRight = (

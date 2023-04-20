@@ -1874,7 +1874,7 @@
         "plugin": "Go to app",
         "swap": "Swap",
         "tool": "Learn more",
-        "app": "Learn more"
+        "currency": "Learn more"
       },
       "uninstall": {
         "title": "Uninstall all",
@@ -3864,6 +3864,10 @@
         "managerDevMode": {
           "title": "Developer mode",
           "description": "Show developer and testnet apps in My Ledger."
+        },
+        "listAppsV2": {
+          "title": "Experimental list apps for My Ledger",
+          "description": "Performance improvement for My Ledger access and inline flows."
         },
         "scanForInvalidPaths": {
           "title": "Extended account search",

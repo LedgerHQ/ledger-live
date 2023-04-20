@@ -112,6 +112,8 @@ const Slide = ({ id, url, path, title, description, image, imgs }: Props) => {
           {imgs.map(({ source, transform, size }, i) => (
             <Layer
               key={i}
+              // TODO: why is the .apply needed?
+              // eslint-disable-next-line
               style={getTransform.apply(null, transform)}
               image={source}
               width={size.width}

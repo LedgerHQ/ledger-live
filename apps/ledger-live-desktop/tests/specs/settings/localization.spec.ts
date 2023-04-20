@@ -2,8 +2,8 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { SettingsPage } from "../../models/SettingsPage";
 import { Layout } from "../../models/Layout";
-import { DeviceAction } from "tests/models/DeviceAction";
-import { LanguageInstallation } from "tests/models/LanguageInstallation";
+import { DeviceAction } from "../../models/DeviceAction";
+import { LanguageInstallation } from "../../models/LanguageInstallation";
 import { languagePacksData } from "./data";
 
 test.use({ userdata: "skip-onboarding" });

@@ -101,8 +101,8 @@ export function Onboarding() {
         <CSSTransition in appear key={path} timeout={DURATION} classNames="page-switch">
           <ScreenContainer>
             <Switch>
-              <Route exact path={path} render={props => <Welcome {...props} />} />
-              <Route path={`${path}/welcome`} render={props => <Welcome {...props} />} />
+              <Route exact path={path} component={Welcome} />
+              <Route path={`${path}/welcome`} component={Welcome} />
               <Route path={`${path}/select-device`} component={SelectDevice} />
               <Route path={`${path}/sync`} component={SyncOnboarding} />
               <Route

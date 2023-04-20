@@ -36,8 +36,8 @@ const Swap2 = () => {
       <Body>
         <SwapNavbar />
         <Main>
-          <Route path="/swap" render={props => <SwapForm {...props} />} exact />
-          <Route path="/swap/history" render={props => <SwapHistory {...props} />} exact />
+          <Route path="/swap" component={SwapForm} exact />
+          <Route path="/swap/history" component={SwapHistory} exact />
         </Main>
       </Body>
     </>

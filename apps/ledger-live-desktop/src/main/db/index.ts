@@ -8,12 +8,13 @@ import { NoDBPathGiven, DBWrongPassword } from "@ledgerhq/errors";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
 import { fsUnlink } from "~/helpers/fs";
-const debounce = (fn: (a: any) => any, ms: number) => {
-  let timeout;
-  let resolveRefs = [];
-  let rejectRefs = [];
-  return (...args: any) => {
-    const promise: Promise<any> = new Promise((resolve, reject) => {
+
+const debounce = <T, R>(fn: (...args: T[]) => R, ms: number) => {
+  let timeout: NodeJS.Timeout | undefined;
+  let resolveRefs: Array<(value: R | PromiseLike<R>) => void> = [];
+  let rejectRefs: Array<(error: unknown) => void> = [];
+  return (...args: T[]) => {
+    const promise: Promise<R> = new Promise((resolve, reject) => {
       resolveRefs.push(resolve);
       rejectRefs.push(reject);
     });
@@ -33,14 +34,10 @@ const debounce = (fn: (a: any) => any, ms: number) => {
     return promise;
   };
 };
-type Transform = {
-  get: (a: any) => any;
-  set: (a: any) => any;
-};
-let DBPath = null;
-let memoryNamespaces = {};
-let encryptionKeys = {};
-let transforms = {};
+
+let DBPath: string | null = null;
+let memoryNamespaces: Record<string, Record<string, unknown> | null | undefined> = {};
+let encryptionKeys: Record<string, Record<string, string> | null | undefined> = {};
 const DEBOUNCE_MS =
   process.env.NODE_ENV === "test" || getEnv("PLAYWRIGHT_RUN") || getEnv("MOCK") ? 16 : 500;
 const save = debounce(saveToDisk, DEBOUNCE_MS);
@@ -52,7 +49,6 @@ function init(_DBPath: string) {
   DBPath = _DBPath;
   memoryNamespaces = {};
   encryptionKeys = {};
-  transforms = {};
 }
 
 /**
@@ -65,21 +61,8 @@ async function load(ns: string): Promise<unknown> {
     const fileContent = await readFile(filePath);
     const { data } = JSON.parse(fileContent.toString());
     memoryNamespaces[ns] = data;
-
-    // transform fields
-    for (const keyPath in transforms[ns]) {
-      if (transforms[ns].hasOwnProperty(keyPath)) {
-        const transform = transforms[ns][keyPath];
-        const val = get(memoryNamespaces[ns], keyPath);
-
-        // if value is string, it's encrypted, so we don't want to transform
-        if (typeof val === "string") continue; // eslint-disable-line no-continue
-
-        set(memoryNamespaces[ns], keyPath, transform.get(val));
-      }
-    }
   } catch (err) {
-    if (err.code === "ENOENT") {
+    if ((err as { code?: string })?.code === "ENOENT") {
       memoryNamespaces[ns] = {};
       await save(ns);
     } else {
@@ -108,9 +91,9 @@ async function reload() {
  * This will decrypt the keyPath at this moment, and will be used
  * in `save` to encrypt it back
  */
-async function setEncryptionKey(ns: string, keyPath: string, encryptionKey: string): Promise<any> {
+async function setEncryptionKey(ns: string, keyPath: string, encryptionKey: string): Promise<void> {
   if (!encryptionKeys[ns]) encryptionKeys[ns] = {};
-  encryptionKeys[ns][keyPath] = encryptionKey;
+  encryptionKeys[ns]![keyPath] = encryptionKey;
   const val = await getKey(ns, keyPath, null);
 
   // no need to decode if already decoded
@@ -126,14 +109,8 @@ async function setEncryptionKey(ns: string, keyPath: string, encryptionKey: stri
       decrypted = decrypted.data;
     }
 
-    // apply transform if needed
-    const transform = get(transforms, `${ns}.${keyPath}`);
-    if (transform) {
-      decrypted = transform.get(decrypted);
-    }
-
     // only set decrypted data in memory
-    set(memoryNamespaces[ns], keyPath, decrypted);
+    set(memoryNamespaces[ns]!, keyPath, decrypted);
     return save(ns);
   } catch (err) {
     log("db", "setEncryptionKey failure: " + String(err));
@@ -149,29 +126,33 @@ async function removeEncryptionKey(ns: string, keyPath: string) {
 /**
  * Set a key in the given namespace
  */
-async function setKey(ns: string, keyPath: string, value: any): Promise<any> {
+async function setKey<K>(ns: string, keyPath: string, value: K): Promise<void> {
   await ensureNSLoaded(ns);
-  set(memoryNamespaces[ns], keyPath, value);
+  set(memoryNamespaces[ns]!, keyPath, value);
   return save(ns);
 }
 
 /**
  * Get a key in the given namespace
  */
-async function getKey(ns: string, keyPath: string, defaultValue?: any): Promise<any> {
+async function getKey<V>(
+  ns: string,
+  keyPath: string,
+  defaultValue?: V,
+): Promise<V | Record<string, V> | undefined> {
   await ensureNSLoaded(ns);
-  if (!keyPath) return memoryNamespaces[ns] || defaultValue;
-  return get(memoryNamespaces[ns], keyPath, defaultValue);
+  if (!keyPath) return (memoryNamespaces[ns] as Record<string, V>) || defaultValue;
+  return get(memoryNamespaces[ns], keyPath, defaultValue) as V;
 }
 
 /**
  * Get whole namespace
  */
-async function getNamespace(ns: string, defaultValue?: any) {
+async function getNamespace(ns: string, defaultValue?: unknown) {
   await ensureNSLoaded(ns);
   return memoryNamespaces[ns] || defaultValue;
 }
-async function setNamespace(ns: string, value: any) {
+async function setNamespace(ns: string, value: unknown) {
   set(memoryNamespaces, ns, value);
   return save(ns);
 }
@@ -203,30 +184,18 @@ async function saveToDisk(ns: string) {
   // cloning because we are mutating the obj
   const clone = cloneDeep(memoryNamespaces[ns]);
 
-  // transform fields
-  if (transforms[ns]) {
-    for (const keyPath in transforms[ns]) {
-      if (transforms[ns].hasOwnProperty(keyPath)) {
-        const transform = transforms[ns][keyPath];
-        const val = get(clone, keyPath);
-        // we don't want to transform encrypted fields (that have not being decrypted yet)
-        if (!val || typeof val === "string") continue; // eslint-disable-line no-continue
-        set(clone, keyPath, transform.set(val));
-      }
-    }
-  }
-
   // encrypt fields
-  if (encryptionKeys[ns]) {
-    for (const keyPath in encryptionKeys[ns]) {
-      if (encryptionKeys[ns].hasOwnProperty(keyPath)) {
-        const encryptionKey = encryptionKeys[ns][keyPath];
+  const namespacedEncryptionKeys = encryptionKeys[ns];
+  if (namespacedEncryptionKeys) {
+    for (const keyPath in namespacedEncryptionKeys) {
+      if (namespacedEncryptionKeys.hasOwnProperty(keyPath)) {
+        const encryptionKey = namespacedEncryptionKeys[keyPath];
         if (!encryptionKey) continue; // eslint-disable-line no-continue
         const val = get(clone, keyPath);
         if (!val) continue; // eslint-disable-line no-continue
         // eslint-disable-next-line node/no-deprecated-api
         const encrypted = encryptData(JSON.stringify(val), encryptionKey);
-        set(clone, keyPath, encrypted);
+        set(clone as object, keyPath, encrypted);
       }
     }
   }
@@ -246,14 +215,14 @@ async function resetAll() {
 }
 function isEncryptionKeyCorrect(ns: string, keyPath: string, encryptionKey: string) {
   try {
-    return encryptionKeys[ns][keyPath] === encryptionKey;
+    return encryptionKeys[ns]![keyPath] === encryptionKey;
   } catch (err) {
     return false;
   }
 }
 function hasEncryptionKey(ns: string, keyPath: string) {
   try {
-    return !!encryptionKeys[ns][keyPath];
+    return !!encryptionKeys[ns]![keyPath];
   } catch (err) {
     return false;
   }
