@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.58.0-nightly.1
+
+### Minor Changes
+
+- [#2953](https://github.com/LedgerHQ/ledger-live/pull/2953) [`baa687a281`](https://github.com/LedgerHQ/ledger-live/commit/baa687a281b5f75cacd06b05b5438807874fa152) Thanks [@RamyEB](https://github.com/RamyEB)! - refacto type and name of platform field
+
+### Patch Changes
+
+- Updated dependencies [[`ec9426b354`](https://github.com/LedgerHQ/ledger-live/commit/ec9426b354156eb9362a74649a1f887a3aef7f8d), [`baa687a281`](https://github.com/LedgerHQ/ledger-live/commit/baa687a281b5f75cacd06b05b5438807874fa152)]:
+  - @ledgerhq/live-common@29.4.0-nightly.1
+
 ## 2.57.1-nightly.0
 
 ### Patch Changes

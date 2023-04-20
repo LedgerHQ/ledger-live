@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.19.0-nightly.1
+
+### Minor Changes
+
+- [#3253](https://github.com/LedgerHQ/ledger-live/pull/3253) [`f1ed1d3bdd`](https://github.com/LedgerHQ/ledger-live/commit/f1ed1d3bddf25ad74cf04b8767ca2170fdbf75c8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Alert component: new design, new types "secondary" and "success", removed renderContent prop
+
 ## 0.18.1-nightly.0
 
 ### Patch Changes

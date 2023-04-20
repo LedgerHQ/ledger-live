@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.19.1-nightly.1
+
+### Patch Changes
+
+- [#3253](https://github.com/LedgerHQ/ledger-live/pull/3253) [`f1ed1d3bdd`](https://github.com/LedgerHQ/ledger-live/commit/f1ed1d3bddf25ad74cf04b8767ca2170fdbf75c8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Udpate Alert component with new design
+
+- Updated dependencies [[`f1ed1d3bdd`](https://github.com/LedgerHQ/ledger-live/commit/f1ed1d3bddf25ad74cf04b8767ca2170fdbf75c8), [`ec9426b354`](https://github.com/LedgerHQ/ledger-live/commit/ec9426b354156eb9362a74649a1f887a3aef7f8d), [`baa687a281`](https://github.com/LedgerHQ/ledger-live/commit/baa687a281b5f75cacd06b05b5438807874fa152)]:
+  - @ledgerhq/native-ui@0.19.0-nightly.1
+  - @ledgerhq/live-common@29.4.0-nightly.1
+
 ## 3.19.1-nightly.0
 
 ### Patch Changes
