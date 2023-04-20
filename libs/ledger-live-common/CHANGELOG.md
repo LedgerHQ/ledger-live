@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 29.4.0-next.1
+
+### Minor Changes
+
+- [#3239](https://github.com/LedgerHQ/ledger-live/pull/3239) [`5059c9584c`](https://github.com/LedgerHQ/ledger-live/commit/5059c9584ca70208a67e9d49025422d395637878) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix incremental sync order for Ethereum family to prevent fetching operations before a block instead of after a block
+
 ## 29.4.0-next.0
 
 ### Minor Changes
