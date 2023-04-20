@@ -12,13 +12,12 @@ import type {
 } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
-import Eth from "@ledgerhq/hw-app-eth";
+import Eth, { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
 import { BigNumber } from "bignumber.js";
 import { mergeMap } from "rxjs/operators";
 import { Observable, from, of } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
-import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
+import type { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { apiForCurrency } from "../../api/Ethereum";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
