@@ -10,11 +10,13 @@ class Nyx extends CosmosBase {
   ledgerValidator!: string;
   constructor() {
     super();
+    this.lcd = "https://api.nyx.nodes.guru";
     this.stakingDocUrl =
       "https://support.ledger.com/hc/en-us/articles/9604704817821?support=true";
     this.unbondingPeriod = 28;
-    this.prefix = "nyx";
+    this.prefix = "n";
     this.validatorPrefix = `${this.prefix}valoper`;
+    this.minGasprice = 0.25;
   }
 }
 
