@@ -14,9 +14,7 @@ export const SyncNewAccounts = ({ priority }: { priority: number }) => {
         type: "SYNC_SOME_ACCOUNTS",
         accountIds,
         priority,
-        // TODO: reason was missing here - but the types require it
-        // so I'm adding it as a falsy empty string
-        reason: "",
+        reason: "sync-new-accounts",
       });
     }
   }, [ids, sync, priority]);
