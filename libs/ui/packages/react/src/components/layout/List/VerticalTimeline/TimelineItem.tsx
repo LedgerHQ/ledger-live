@@ -14,7 +14,7 @@ export type Props = {
   item: Item;
   isFirstItem?: boolean;
   isLastItem?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 const DEBUG_BOXES = false;

@@ -12,11 +12,11 @@ export type Item = {
   title: string;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
   estimatedTime?: number;
-  onClickIndex?: (index: number) => void;
 };
 
 export type Props = BaseStyledProps & {
   steps?: Item[];
+  onClickIndex?: (index: number) => void;
 };
 
 export default function VerticalTimeline({ steps, onClickIndex, ...props }: Props) {
@@ -28,7 +28,7 @@ export default function VerticalTimeline({ steps, onClickIndex, ...props }: Prop
           item={step}
           isFirstItem={index === 0}
           isLastItem={index === steps.length - 1}
-          onClick={() => onClickIndex(index)}
+          onClick={onClickIndex ? () => onClickIndex(index) : undefined}
         />
       ))}
     </Flex>

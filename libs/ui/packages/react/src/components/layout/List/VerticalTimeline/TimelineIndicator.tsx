@@ -40,8 +40,7 @@ const getIconBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) =
 
 const CenterCircle = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   border-radius: 9999px;
-  width: 12px;
-  height: 12px;
+  width: 100%;
   background: ${(p) => getIconBackground(p.theme, p.status, p.isLastItem)};
   border: 2px solid ${(p) => getIconBorder(p.theme, p.status, p.isLastItem)};
   align-items: center;
@@ -49,7 +48,8 @@ const CenterCircle = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
 `;
 
 const IconWrapper = styled(Flex)`
-  flex: none;
+  height: 16px;
+  width: 16px;
 `;
 
 export type Props = FlexProps & {
@@ -72,16 +72,18 @@ function TimelineIndicator({ status, isLastItem, ...props }: Props) {
 
   return (
     <Container {...props}>
-      <CenterCircle status={status} isLastItem={isLastItem}>
-        {status === "completed" && (
-          <IconWrapper>
-            <CircledCheckSolidMedium
-              color={isLastItem ? colors.success.c50 : colors.primary.c80}
-              size={20}
-            />
-          </IconWrapper>
-        )}
-      </CenterCircle>
+      <IconWrapper>
+        <CenterCircle status={status} isLastItem={isLastItem}>
+          {status === "completed" && (
+            <Flex position="absolute">
+              <CircledCheckSolidMedium
+                color={isLastItem ? colors.success.c70 : colors.primary.c80}
+                size={20}
+              />
+            </Flex>
+          )}
+        </CenterCircle>
+      </IconWrapper>
       {isLastItem ? null : <BottomSegment status={status} />}
     </Container>
   );
