@@ -380,6 +380,8 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
                */
               [ScreenName.PlatformApp]: "discover/:platform",
               [ScreenName.Recover]: "recover/:platform",
+              [ScreenName.RedirectToRecoverStaxFlow]:
+                "recover-restore-stax-flow",
             },
           },
         },
