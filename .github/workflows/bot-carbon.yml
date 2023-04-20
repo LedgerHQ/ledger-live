@@ -62,7 +62,7 @@ jobs:
       - name: Retrieving coin apps
         uses: actions/checkout@v3
         with:
-          ref: ledger-live-bot
+          ref: generated/ledger-live-bot
           repository: LedgerHQ/coin-apps
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
