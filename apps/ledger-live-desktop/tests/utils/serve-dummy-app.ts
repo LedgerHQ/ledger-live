@@ -35,7 +35,7 @@ export const dummyLiveAppManifest = (port: number) => [
     url: `http://localhost:${port}`,
     homepageUrl: "https://developers.ledger.com/",
     icon: "",
-    platform: "all",
+    platforms: ["ios", "android", "desktop"],
     apiVersion: "^1.0.0 || ~0.0.1",
     manifestVersion: "1",
     branch: "stable",

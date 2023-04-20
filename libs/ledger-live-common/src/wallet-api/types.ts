@@ -26,13 +26,9 @@ export type TranslatableString = {
   [locale: string]: string;
 };
 
-export type AppPlatform =
-  | "desktop" // == windows || mac || linux
-  | "mobile" // == android || ios
-  | "all";
+export type AppPlatform = "ios" | "android" | "desktop";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
-
 export type AppPermission = {
   method: string;
   params?: any;
@@ -41,25 +37,26 @@ export type AppPermission = {
 // TODO update to the new manifest types from wallet-api when released
 export type AppManifest = {
   id: string;
+  author?: string;
   private?: boolean;
   name: string;
   url: string | URL;
+  params?: string[];
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;
-  platform: AppPlatform;
+  platforms: AppPlatform[];
   apiVersion: string;
   manifestVersion: string;
   branch: AppBranch;
-  params?: string[];
+  permissions: AppPermission[];
+  domains: string[];
   categories: string[];
   currencies: string[] | "*";
   content: {
     shortDescription: TranslatableString;
     description: TranslatableString;
   };
-  permissions: AppPermission[];
-  domains: string[];
 };
 
 export type WalletAPISignedTransaction = SignedOperation;
