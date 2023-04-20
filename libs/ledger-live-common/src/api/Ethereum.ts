@@ -183,7 +183,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       };
       if (blockHeight) {
         query.from_height = blockHeight;
-        query.order = "descending";
+        query.order = "ascending"; // Needed to make sure we get transactions after the block height and not before. Order is still descending in the end
       }
       if (token) {
         query.token = token;
