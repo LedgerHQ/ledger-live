@@ -1,13 +1,16 @@
 import React from "react";
-import { Flex, Text, InfiniteLoader, FlexBoxProps, Icons } from "@ledgerhq/react-ui";
+import {
+  Flex,
+  Text,
+  InfiniteLoader,
+  FlexBoxProps,
+  VerticalTimeline,
+  Icons,
+} from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 
-export const StepText = styled(Text).attrs({
-  color: "neutral.c90",
-  variant: "body",
-  fontWeight: "medium",
-})``;
+export const StepText = VerticalTimeline.BodyText;
 
 export const BorderFlex = styled(Flex)`
   background-color: ${p => p.theme.colors.palette.neutral.c30};
