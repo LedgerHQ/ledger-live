@@ -2,17 +2,17 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Drawer } from "../../models/Drawer";
 import { Modal } from "../../models/Modal";
-import { PortfolioPage } from "tests/models/PortfolioPage";
-import { Layout } from "tests/models/Layout";
-import { AccountPage } from "tests/models/AccountPage";
+import { PortfolioPage } from "../../models/PortfolioPage";
+import { Layout } from "../../models/Layout";
+import { AccountPage } from "../../models/AccountPage";
 
 test.use({
-  userdata: "cosmosOsmosisStakingAccounts",
+  userdata: "cosmosStakingAccounts",
   featureFlags: {
     stakePrograms: {
       enabled: true,
       params: {
-        list: ["ethereum", "solana", "tezos", "polkadot", "tron", "cosmos", "osmo", "celo", "near"],
+        list: ["ethereum", "cosmos", "osmo"],
       },
     },
     portfolioExchangeBanner: {
@@ -28,7 +28,6 @@ test.use({
       },
     },
   },
-  env: { MOCK: undefined },
 });
 
 test("Cosmos staking flows via portfolio. Check stake flow modals and stake banner", async ({
@@ -39,14 +38,6 @@ test("Cosmos staking flows via portfolio. Check stake flow modals and stake bann
   const modal = new Modal(page);
   const accountPage = new AccountPage(page);
   const layout = new Layout(page);
-
-  // I know... I'm sorry. Running this test on the standard GH actions Windows machines causes a race condition to happen when navigating between Cosmos delegation banners.
-  // When it's fixed we can turn these tests on for Windows
-  // https://ledgerhq.atlassian.net/browse/LIVE-6716
-  if (process.platform === "win32") {
-    console.log("SKIPPING COSMOS STAKING TESTS FOR WINDOWS");
-    return;
-  }
 
   await test.step(
     "access stake cosmos from portfolio page with an account that isn't staking",
@@ -84,7 +75,7 @@ test("Cosmos staking flows via portfolio. Check stake flow modals and stake bann
         .soft(modal.container)
         .toHaveScreenshot("earn-redelegate-staking-cosmos-account-modal.png");
       await modal.continue();
-      await expect.soft(modal.container).toHaveScreenshot("redelegate-cosmos-account-modal.png");
+      await expect(modal.content).toHaveScreenshot("redelegate-cosmos-content.png"); // Network fees are flaky and causing failures. Just verifying the modal content, not the footer
       await modal.close();
     },
   );

@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { TextInput } from "react-native";
@@ -29,9 +28,9 @@ export function useCategories() {
   };
 }
 
-function useCategoriesRaw(manifests: LiveAppManifest[]): {
+function useCategoriesRaw(manifests: AppManifest[]): {
   categories: string[];
-  manifestsByCategories: Map<string, LiveAppManifest[]>;
+  manifestsByCategories: Map<string, AppManifest[]>;
 } {
   const manifestsByCategories = useMemo(() => {
     const res = manifests.reduce((res, m) => {
@@ -58,8 +57,8 @@ function useCategoriesRaw(manifests: LiveAppManifest[]): {
 }
 
 export function useDeeplinkEffect(
-  manifests: LiveAppManifest[],
-  openApp: (manifest: LiveAppManifest) => void,
+  manifests: AppManifest[],
+  openApp: (manifest: AppManifest) => void,
 ) {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();
@@ -89,11 +88,11 @@ export function useDisclaimer(
   const isReadOnly = useSelector(readOnlyModeEnabledSelector);
   const [isDismissed, dismiss] = useBanner(DAPP_DISCLAIMER_ID);
 
-  const [manifest, setManifest] = useState<LiveAppManifest>();
+  const [manifest, setManifest] = useState<AppManifest>();
   const [isChecked, setIsChecked] = useState(false);
 
   const openApp = useCallback(
-    (manifest: LiveAppManifest) => {
+    (manifest: AppManifest) => {
       navigation.navigate(ScreenName.PlatformApp, {
         ...params,
         platform: manifest.id,
@@ -235,19 +234,19 @@ function usePlatformState<T>(
   return [result, setState];
 }
 
-export function useRecentlyUsed(manifests: LiveAppManifest[]) {
+export function useRecentlyUsed(manifests: AppManifest[]) {
   const [ids, setState] = usePlatformState(state => state.recentlyUsed);
 
   const data = useMemo(
     () =>
       ids
         .map(id => manifests.find(m => m.id === id))
-        .filter(m => m !== undefined) as LiveAppManifest[],
+        .filter(m => m !== undefined) as AppManifest[],
     [ids, manifests],
   );
 
   const append = useCallback(
-    (manifest: LiveAppManifest) => {
+    (manifest: AppManifest) => {
       setState(state => {
         const index = state.recentlyUsed.findIndex(id => id === manifest.id);
 

@@ -2,7 +2,11 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountUnit,
+  getAccountCurrency,
+  getAccountName,
+} from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import { fromSelector } from "~/renderer/actions/swap";
 import InputCurrency from "~/renderer/components/InputCurrency";
@@ -96,11 +100,12 @@ function FromRow({
     });
   const setAccountAndTrack = account => {
     updateSelectedRate();
+    const name = account ? getAccountName(account) : undefined;
     track("button_clicked", {
       button: "New source account",
       page: "Page Swap Form",
       ...swapDefaultTrack,
-      account: account,
+      account: name,
     });
     setFromAccount(account);
   };

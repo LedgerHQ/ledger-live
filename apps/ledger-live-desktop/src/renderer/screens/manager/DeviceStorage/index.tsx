@@ -357,7 +357,7 @@ const DeviceStorage = ({
                   {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
                 </Text>
                 <Flex ml={2} flexDirection="row">
-                  <Icons.CircledCheckSolidMedium size={22} color="success.c100" />
+                  <Icons.CircledCheckSolidMedium size={22} color="success.c50" />
                   <Text ff="Inter|SemiBold" color="palette.text.shade80" ml={1} fontSize={4}>
                     <Trans i18nKey="manager.deviceStorage.genuine" />
                   </Text>

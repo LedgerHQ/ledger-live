@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleProp, StyleSheet, View, ViewProps } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import LText from "../../components/LText";
 
@@ -36,7 +36,7 @@ export default function Section({
 type FieldWrapperProps = {
   onPress?: () => void;
   children?: React.ReactNode;
-  style?: StyleProp<ViewProps>;
+  style?: StyleProp<ViewStyle>;
 };
 
 function SectionWrapper({ onPress, children, style }: FieldWrapperProps) {

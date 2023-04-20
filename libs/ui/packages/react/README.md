@@ -35,6 +35,8 @@ npm i react react-dom
 
 ## Usage
 
+**ℹ️ Minimal working examples for ***Next.js*** and ***React.js*** can be found in the root of the UI package.**
+
 ### Provider
 
 Before using the library components, the style provider must be imported and rendered once to provide the components with the right context.
@@ -71,6 +73,13 @@ function Hello() {
 
 Ledger fonts can be either imported or added manually to your project.
 
+>⚠️ Importing the fonts relies on Styled Components global providers.
+Each re-render of the global provider (IE when changing the theme) will result in an update of the global styles, thus forcing the browser to refresh fonts.
+To avoid this issue, it is recommended to use the [manual approach](#manual-approach).
+If you still prefer the automatic approach, make sure to limit any state change and rerender within the global style provider
+
+#### Automatic Approach
+
 After picking a method add the `fontsPath` property to the `StyleProvider` component to automatically generate
 `@font-face` blocks and register the `Inter` and `Alpha` font families.
 
@@ -79,7 +88,7 @@ After picking a method add the `fontsPath` property to the `StyleProvider` compo
 <StyleProvider fontsPath="assets/fonts">
 ```
 
-#### Import
+##### Import
 
 Using the import requires you to use a bundler to export and save the files to the target folder.
 
@@ -99,7 +108,7 @@ With webpack 5 the rule below will process the font files and save them in the `
 },
 ```
 
-#### Scoped Imports
+##### Scoped Imports
 
 If you are using a loader that saves the fonts with custom names (for instance when using `create-react-app`), you can use the `fontMappings` prop to map the font names.
 
@@ -134,7 +143,7 @@ const fontMappings = (name) => fontMap[name].substring(1);
 <StyleProvider fontPath="path/to/fonts" fontMappings={fontMappings}>
 ```
 
-#### Manually
+#### Manual Approach
 
 The `.woff2` font files are located in the `src/assets/fonts` folder.
 You can host them yourself, use a CDN (see below) or process them with a bundler by importing them.
@@ -193,3 +202,18 @@ ReactDOM.render(<Root />, document.getElementById("react-root"));
 ### Contributing
 
 Check the [contributing guide here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ui/packages/react/CONTRIBUTING.md).
+
+#### Adding fonts
+
+To add fonts to ReactUI, you must add your font to the `assets/fonts` folder.
+
+Then the `package.json`of the repository needs to be updated by adding your font path to the export rule. This will ensure that the font is made available for all the consumers (React, node, NextJS...)
+```json
+    "exports": {
+      [...]
+      "./assets/fonts/HMAlphaMono-Medium.woff2": "./lib/assets/fonts/HMAlphaMono-Medium.woff2",
+      [...]
+  },
+```
+
+You can than add the path to your font to `assets/fonts.ts` file. That file is then proceded by default as the font path. Make sure to update this document and the minimal working examples for users that install the fonts manually.

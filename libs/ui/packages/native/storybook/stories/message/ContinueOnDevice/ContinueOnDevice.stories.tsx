@@ -1,19 +1,25 @@
 import React from "react";
-import { text } from "@storybook/addon-knobs";
-import { storiesOf } from "../../storiesOf";
-import { ContinueOnDevice, Flex } from "../../../../src/";
+import { ContinueOnDevice, Flex } from "../../../../src/components";
 
-const ContinueOnDeviceSample = () => {
+export default {
+  title: "Messages/ContinueOnDevice",
+  component: ContinueOnDevice,
+};
+
+export const ContinueOnDeviceSample = (args: typeof ContinueOnDeviceSampleArgs) => {
   return (
     <Flex flex={1} alignSelf="center" justifyContent="center" p={6} alignItems="center">
       <ContinueOnDevice
         Icon={({ size }) => (
           <Flex height={size} width={size} borderRadius={size} bg="neutral.c40" />
         )}
-        text={text("children text", "Continue on Nano")}
+        text={args.childrenText}
       />
     </Flex>
   );
 };
-
-storiesOf((story) => story("Messages", module).add("ContinueOnDevice", ContinueOnDeviceSample));
+ContinueOnDeviceSample.storyName = "ContinueOnDevice";
+const ContinueOnDeviceSampleArgs = {
+  childrenText: "Continue on Nano",
+};
+ContinueOnDeviceSample.args = ContinueOnDeviceSampleArgs;

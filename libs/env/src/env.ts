@@ -86,6 +86,11 @@ const envDefinitions: Record<
     parser: stringParser,
     desc: "Node endpoint for celo",
   },
+  COSMOS_GAS_AMPLIFIER: {
+    def: 1.2,
+    parser: intParser,
+    desc: "Cosmos gas estimate multiplier",
+  },
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://cosmoshub4.coin.ledger.com",
     parser: stringParser,
@@ -152,7 +157,7 @@ const envDefinitions: Record<
     desc: "Static fee for Stellar account",
   },
   API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger-stg.com",
+    def: "https://osmosis.coin.ledger.com/lcd",
     parser: stringParser,
     desc: "Endpoint for Osmosis Node",
   },
@@ -230,11 +235,6 @@ const envDefinitions: Record<
     def: "",
     parser: stringParser,
     desc: "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
-  },
-  COMPOUND_API: {
-    def: "https://api.compound.finance",
-    parser: stringParser,
-    desc: "location of the compound API",
   },
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
@@ -445,6 +445,11 @@ const envDefinitions: Record<
     def: false,
     parser: boolParser,
     desc: "enable sending to KT accounts. Not tested.",
+  },
+  LIST_APPS_V2: {
+    def: false,
+    parser: boolParser,
+    desc: "use new version of list apps for My Ledger",
   },
   MANAGER_API_BASE: {
     def: "https://manager.api.live.ledger.com/api",

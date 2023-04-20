@@ -11,17 +11,26 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "../../const";
 import perFamilyAccountActions from "../../generated/accountActions";
 import logger from "../../logger";
+import type {
+  StackNavigatorProps,
+  BaseComposite,
+} from "../RootNavigator/types/helpers";
+import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";
 
-const StakeFlow = () => {
+type Props = BaseComposite<
+  StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>
+>;
+
+const StakeFlow = ({ route }: Props) => {
   const featureFlag = useFeature("stakePrograms");
-  const list = featureFlag?.params?.list;
+  const currencies = route?.params?.currencies || featureFlag?.params?.list;
   const navigation =
     useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
-      currencies: list || [],
+      currencies: currencies || [],
     });
-  }, [list]);
+  }, [currencies]);
 
   const onSuccess = useCallback(
     (account: Account, parentAccount?: Account) => {
@@ -76,15 +85,27 @@ const StakeFlow = () => {
   };
 
   const requestAccount = useCallback(() => {
-    navigation.replace(NavigatorName.RequestAccount, {
-      screen: ScreenName.RequestAccountsSelectCrypto,
-      params: {
-        currencies: cryptoCurrencies,
-        allowAddAccount: true,
-        onSuccess,
-      },
-      onError,
-    });
+    if (cryptoCurrencies.length === 1) {
+      // Navigate to the second screen when there is only one currency
+      navigation.replace(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectAccount,
+        params: {
+          currency: cryptoCurrencies[0],
+          onSuccess,
+        },
+        onError,
+      });
+    } else {
+      navigation.replace(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectCrypto,
+        params: {
+          currencies: cryptoCurrencies,
+          allowAddAccount: true,
+          onSuccess,
+        },
+        onError,
+      });
+    }
   }, [cryptoCurrencies, navigation, onSuccess]);
 
   useLayoutEffect(() => {

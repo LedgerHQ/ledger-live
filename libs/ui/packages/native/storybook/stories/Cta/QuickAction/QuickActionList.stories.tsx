@@ -11,9 +11,13 @@ import React from "react";
 import Box from "../../../../src/components/Layout/Box";
 import { QuickActionButtonProps } from "../../../../src/components/cta/QuickAction/QuickActionButton";
 import QuickActionList from "../../../../src/components/cta/QuickAction/QuickActionList";
-import { storiesOf } from "../../storiesOf";
 
-const List = (): JSX.Element => {
+export default {
+  title: "CTA/QuickAction/List",
+  component: QuickActionList,
+};
+
+export const List = (): JSX.Element => {
   const data: QuickActionButtonProps[] = [
     {
       Icon: PlusMedium,
@@ -55,5 +59,4 @@ const List = (): JSX.Element => {
     </Box>
   );
 };
-
-storiesOf((story) => story("CTA/QuickAction", module).add("List", List));
+List.storyName = "QuickActionList";

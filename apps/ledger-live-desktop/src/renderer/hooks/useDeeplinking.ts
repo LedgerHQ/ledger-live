@@ -7,12 +7,12 @@ import {
   parseCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { deepLinkUrlSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
 import { setDeepLinkUrl } from "~/renderer/actions/settings";
 import { setTrackingSource } from "../analytics/TrackPage";
+
 const getAccountsOrSubAccountsByCurrency = (currency, accounts) => {
   const predicateFn = account => getAccountCurrency(account).id === currency.id;
   if (currency.type === "TokenCurrency") {
@@ -33,7 +33,6 @@ export function useDeepLinkHandler() {
   const accounts = useSelector(accountsSelector);
   const location = useLocation();
   const history = useHistory();
-  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const navigate = useCallback(
     (pathname: string, state?: any, search?: string) => {
       const hasNewPathname = pathname !== location.pathname;
@@ -81,9 +80,18 @@ export function useDeepLinkHandler() {
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
       const [url, path] = fullUrl.split("/");
       switch (url) {
-        case "accounts":
+        case "accounts": {
+          const { address } = query;
+          if (address && typeof address === "string") {
+            const account = accounts.find(acc => acc.freshAddress === address);
+            if (account) {
+              navigate(`/account/${account.id}`);
+              break;
+            }
+          }
           navigate("/accounts");
           break;
+        }
         case "buy":
           navigate("/exchange");
           break;
@@ -209,16 +217,8 @@ export function useDeepLinkHandler() {
           break;
         case "wc": {
           setTrackingSource("deeplink");
-          if (walletConnectLiveApp?.enabled) {
-            navigate("/platform/ledger-wallet-connect", query);
-          } else {
-            const { uri } = query;
-            dispatch(
-              openModal("MODAL_WALLETCONNECT_DEEPLINK", {
-                link: uri,
-              }),
-            );
-          }
+          navigate("/platform/ledger-wallet-connect", query);
+
           break;
         }
         case "market":
@@ -230,7 +230,7 @@ export function useDeepLinkHandler() {
           break;
       }
     },
-    [accounts, dispatch, navigate, walletConnectLiveApp?.enabled],
+    [accounts, dispatch, navigate],
   );
   return {
     handler,

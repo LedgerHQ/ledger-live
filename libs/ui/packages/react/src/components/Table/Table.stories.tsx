@@ -139,7 +139,7 @@ const columns = [
   Table.Columns.icon({
     props: (elt) => ({
       name: elt.synchronized ? "CircledCheck" : "Clock",
-      color: elt.synchronized ? "success.c100" : "neutral.c80",
+      color: elt.synchronized ? "success.c50" : "neutral.c80",
     }),
   }),
 ]

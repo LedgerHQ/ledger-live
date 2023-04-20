@@ -74,7 +74,7 @@ export class SettingsPage {
   }
 
   async changeTheme() {
-    await this.themeSelector.click();
+    await this.themeSelector.click(); // TODO: make this dynamic
     await this.themeChoiceLight.click();
   }
 

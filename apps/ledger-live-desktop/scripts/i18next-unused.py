@@ -34,7 +34,6 @@ dynamicKeys = {
     '^(lend.account.)\w+': rep,
     '^(lend.enable.steps.)\w+': rep,
     '^(manager.modal.steps.)[\w-]+': rep,
-    '^(migrateAccounts.progress.)[\w-]+': rep,
     '^(onboarding.alerts.)\w+': rep,
     '^(onboarding.pedagogy.screens.)\w+': rep,
     '^(onboarding.quizz.questions.)\w+': rep,

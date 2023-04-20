@@ -14,6 +14,7 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Button from "~/renderer/components/ButtonV3";
 import CheckBox from "~/renderer/components/CheckBox";
 import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
+import { getAccountName } from "@ledgerhq/live-common/account/index";
 
 export const LOCAL_STORAGE_KEY_PREFIX = "receive_staking_";
 
@@ -140,7 +141,8 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
       flow: "stake",
       currency: account?.currency?.name,
       provider: action?.provider?.name || "Ledger",
-      modal: "receive"
+      modal: "receive",
+      account: getAccountName(account),
     };
   }, [account, action?.provider?.name]);
 

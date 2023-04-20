@@ -47,6 +47,8 @@ jobs:
           base: ${{ inputs.base_ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
       - name: Install applesimutils
         run: |
           brew update
@@ -77,7 +79,7 @@ jobs:
       - name: Test iOS app
         id: detox
         run: |
-          pnpm mobile e2e:test -c ios.sim.release --record-logs all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles --cleanup --headless
+          pnpm mobile e2e:test -c ios.sim.release --record-logs all --take-screenshots all --detectOpenHandles --cleanup --headless
       - name: Delete iOS simulator
         if: always()
         run: |

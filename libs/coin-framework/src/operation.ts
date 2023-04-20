@@ -139,7 +139,6 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "IN":
     case "REWARD":
     case "REWARD_PAYOUT":
-    case "SUPPLY":
     case "WITHDRAW":
       return op.value;
 
@@ -152,7 +151,6 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "UNDELEGATE":
     case "OPT_IN":
     case "OPT_OUT":
-    case "REDEEM":
     case "SLASH":
     case "LOCK":
       return op.value.negated();

@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react";
 import { StyleSheet, View } from "react-native";
-import { BarCodeScanningResult, Camera } from "expo-camera";
+import { BarCodeScanningResult, Camera, CameraType } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -44,7 +44,7 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
       <StyledStatusBar barStyle="light-content" />
       <Camera
         style={styles.camera}
-        type={Camera.Constants.Type.back}
+        type={CameraType.back}
         ratio="16:9"
         onBarCodeScanned={({ data }: BarCodeScanningResult) => onResult(data)}
         barCodeScannerSettings={{

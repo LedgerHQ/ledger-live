@@ -24,8 +24,6 @@ const iconsComponent = {
   OPT_IN: Icons.PlusMedium,
   OPT_OUT: Icons.TrashMedium,
   CLOSE_ACCOUNT: Icons.TrashMedium,
-  REDEEM: Icons.MinusMedium,
-  SUPPLY: Icons.ArrowRightMedium,
   APPROVE: Icons.PlusMedium,
   BOND: Icons.LinkMedium,
   UNBOND: Icons.LinkNoneMedium,
@@ -71,11 +69,11 @@ const OperationStatusIcon = ({
       : Icons.HistoryMedium);
   const borderColor = failed ? "error.c40" : "neutral.c40";
   const iconColor = failed
-    ? "error.c100"
+    ? "error.c50"
     : confirmed
     ? "neutral.c100"
     : "neutral.c50";
-  const badgeColor = failed ? "error.c100" : "neutral.c70";
+  const badgeColor = failed ? "error.c50" : "neutral.c70";
   return (
     <BoxedIcon
       Icon={Icon}

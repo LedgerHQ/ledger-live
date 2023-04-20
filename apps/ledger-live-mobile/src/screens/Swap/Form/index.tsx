@@ -29,6 +29,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { log } from "@ledgerhq/logs";
 import { shallowAccountsSelector } from "../../../reducers/accounts";
 import {
   swapAcceptedProvidersSelector,
@@ -211,11 +212,15 @@ export function SwapForm({
   // Track errors
   useEffect(
     () => {
-      swapError &&
+      if (swapError) {
         trackSwapError(swapError, {
           sourcecurrency: swapTransaction.swap.from.currency?.name,
           provider,
         });
+        // eslint-disable-next-line no-console
+        console.log("Swap Error", swapError);
+        log("swap", "failed to fetch swaps", swapError);
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [swapError],

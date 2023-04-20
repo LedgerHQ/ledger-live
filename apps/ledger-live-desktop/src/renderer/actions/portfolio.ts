@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import {
   usePortfolio as usePortfolioRaw,
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueRaw,

@@ -1,5 +1,5 @@
 import { Page, Locator } from "@playwright/test";
-import { waitFor } from "tests/utils/waitFor";
+import { waitFor } from "../utils/waitFor";
 
 export class DiscoverPage {
   readonly page: Page;
@@ -53,10 +53,6 @@ export class DiscoverPage {
 
   async getLiveAppTitle() {
     return await this.liveAppTitle.textContent();
-  }
-
-  async waitForLiveAppToLoad() {
-    await this.liveAppLoadingSpinner.waitFor({ state: "detached" });
   }
 
   async getAccountsList() {
