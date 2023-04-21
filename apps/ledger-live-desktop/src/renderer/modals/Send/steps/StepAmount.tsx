@@ -35,7 +35,9 @@ const StepAmount = (props: StepProps) => {
     walletConnectProxy,
   } = props;
   const allNfts = useSelector(getAllNFTs);
-  const nft = allNfts?.find(nft => nft.tokenId === transaction?.tokenIds?.[0]);
+  const nft = allNfts?.find(
+    nft => transaction && "tokenIds" in transaction && nft?.tokenId === transaction.tokenIds?.[0],
+  );
   if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   return (
@@ -63,7 +65,7 @@ const StepAmount = (props: StepProps) => {
               <Box mb={2}>
                 <Label>{t("send.steps.amount.nftQuantity")}</Label>
                 <Input
-                  value={transaction?.quantities[0]}
+                  value={("quantities" in transaction && transaction.quantities?.[0]) || undefined}
                   onChange={onChangeQuantities}
                   error={status?.errors?.amount}
                 />

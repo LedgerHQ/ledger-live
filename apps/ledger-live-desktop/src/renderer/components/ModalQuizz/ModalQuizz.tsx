@@ -41,7 +41,7 @@ export type QuizzStep = {
   /**
    * Default illustration to display on the right
    */
-  Illustration?: React.ReactNode;
+  Illustration?: (props: { size?: number }) => JSX.Element;
   /**
    * generic explanation to display on any answer
    */
@@ -49,7 +49,7 @@ export type QuizzStep = {
   /**
    * Illustration to display on the right in case of a correct answer
    */
-  CorrectAnswerIllustration?: React.ReactNode;
+  CorrectAnswerIllustration?: (props: { size?: number }) => JSX.Element;
   /**
    * generic title to display in case the user picks a correct answer
    */
@@ -62,7 +62,7 @@ export type QuizzStep = {
   /**
    * Illustration to display on the right in case of an incorrect answer
    */
-  IncorrectAnswerIllustration?: React.ReactNode;
+  IncorrectAnswerIllustration?: (props: { size?: number }) => JSX.Element;
   /**
    * generic title to display in case the user picks an incorrect answer
    */

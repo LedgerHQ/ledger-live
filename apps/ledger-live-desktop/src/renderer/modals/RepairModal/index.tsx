@@ -21,7 +21,7 @@ const Container = styled(Box).attrs(() => ({
   fontSize: 4,
   color: "palette.text.shade100",
 }))``;
-const ChoiceBox = styled.div`
+const ChoiceBox = styled.div<{ selected?: boolean }>`
   display: flex;
   flex-direction: row;
   border-radius: 4px;
@@ -106,7 +106,7 @@ type Props = {
   renderIcon?: Function;
   confirmText?: string;
   cancelText?: string;
-  onReject: Function;
+  onReject: (_?: { needHelp?: boolean }) => void;
   repair: (a?: string | null) => any;
   t: TFunction;
   isLoading?: boolean;
@@ -118,7 +118,7 @@ type Props = {
   enableSomethingElseChoice?: boolean;
 };
 type State = {
-  selectedOption: ChoiceOption | null;
+  selectedOption: ChoiceOption | null | undefined;
   availableRepairChoices: Array<ChoiceOption>;
 };
 class RepairModal extends PureComponent<Props, State> {
@@ -138,7 +138,7 @@ class RepairModal extends PureComponent<Props, State> {
     };
   }
 
-  onSelectOption = selectedOption => {
+  onSelectOption = (selectedOption: ChoiceOption | null | undefined) => {
     this.setState({
       selectedOption,
     });

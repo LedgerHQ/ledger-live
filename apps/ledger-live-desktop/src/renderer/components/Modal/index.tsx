@@ -117,7 +117,7 @@ const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) =>
 `;
 export type RenderProps<Data> = {
   onClose?: (() => void) | undefined;
-  data?: Data;
+  data: Data;
 };
 type Props<Data> = {
   isOpened?: boolean;
@@ -236,7 +236,7 @@ class Modal<Data> extends PureComponent<
     } = this.props;
     const renderProps: RenderProps<Data> = {
       onClose,
-      data,
+      data: data as Data,
     };
     const modal = (
       <Transition

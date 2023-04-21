@@ -162,12 +162,13 @@ const setup = (
 ) => {
   return render(
     <ThemeProvider
+      // @ts-expect-error let's assume that the theme is correct
       theme={{ ...defaultTheme, colors: { ...defaultTheme.colors, palette: palettes.dark } }}
     >
       <DomainServiceProvider>
         <RecipientField
           account={account}
-          transaction={{ ...baseMockTransaction, ...mockTransaction }}
+          transaction={{ ...baseMockTransaction, ...mockTransaction } as Transaction}
           t={any => any.toString()}
           onChangeTransaction={mockedOnChangeTransaction}
           status={{ ...baseMockStatus, ...mockStatus }}

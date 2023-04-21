@@ -1,6 +1,12 @@
 import { TFunction } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountBridge,
+  AccountLike,
+  Operation,
+  TransactionCommon,
+} from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
@@ -20,7 +26,7 @@ export type StepProps = {
   closeModal: (a: void) => void;
   openModal: (b: string, a: any) => void;
   onChangeAccount: (b?: AccountLike | null, a?: Account | null) => void;
-  onChangeTransaction: (a: Transaction) => void;
+  onChangeTransaction: (a: AccountBridge<TransactionCommon>) => void;
   onTransactionError: (a: Error) => void;
   onOperationBroadcasted: (a: Operation) => void;
   onRetry: (a: void) => void;

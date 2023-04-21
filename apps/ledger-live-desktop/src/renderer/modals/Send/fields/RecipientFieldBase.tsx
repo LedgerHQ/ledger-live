@@ -17,9 +17,9 @@ type Props = {
   initValue?: string;
   resetInitValue?: () => void;
   value: string | undefined;
-  onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => Promise<void>;
   placeholderTranslationKey: string;
   hideError: boolean;
+  onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => Promise<void>;
 };
 
 const RecipientFieldBase = ({

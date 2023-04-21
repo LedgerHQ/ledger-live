@@ -4,12 +4,14 @@ import styled from "styled-components";
 import noop from "lodash/noop";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { RecipientRequired } from "@ledgerhq/errors";
 import { radii } from "~/renderer/styles/theme";
 import QRCodeCameraPickerCanvas from "~/renderer/components/QRCodeCameraPickerCanvas";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import { track } from "~/renderer/analytics/segment";
 import IconQrCode from "~/renderer/icons/QrCode";
+
 const Right = styled(Box).attrs(() => ({
   bg: "palette.background.default",
   px: 3,
@@ -39,18 +41,12 @@ type Props = {
   placeholder: string;
   autoFocus: boolean | undefined;
   readOnly: boolean | undefined;
-  error: RecipientRequired | null;
+  error: typeof RecipientRequired | null;
   warning: Error;
   value: string;
   id: string;
   // return false if it can't be changed (invalid info)
-  onChange: (
-    b: string,
-    a?: {
-      amount?: BigNumber;
-      currency?: CryptoCurrency;
-    } | null,
-  ) => Promise<boolean | undefined | null>;
+  onChange: (b: string, a?: Record<string, CryptoCurrency> | undefined) => Promise<unknown>;
   withQrCode: boolean;
 };
 type State = {
@@ -83,6 +79,7 @@ class RecipientAddress extends PureComponent<Props, State> {
     Object.assign(rest, {
       fromQRCode: true,
     });
+    // @ts-expect-error TODO: what the heck? onChange is supposed to return a Promise!!
     if (this.props.onChange(address, rest) !== false) {
       this.setState({
         qrReaderOpened: false,
@@ -106,7 +103,7 @@ class RecipientAddress extends PureComponent<Props, State> {
         )}
       </Right>
     ) : null;
-    const preOnChange = text => onChange((text && text.replace(/\s/g, "")) || "");
+    const preOnChange = (text: string) => onChange((text && text.replace(/\s/g, "")) || "");
     return (
       <Box relative justifyContent="center">
         <Input

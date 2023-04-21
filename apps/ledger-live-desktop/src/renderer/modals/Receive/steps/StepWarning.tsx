@@ -6,7 +6,7 @@ const StepWarning = (props: StepProps) => {
   const { account, parentAccount } = props;
   const mainAccount = account && getMainAccount(account, parentAccount);
   if (!mainAccount) return null;
-  const module = byFamily[mainAccount.currency.family];
+  const module = byFamily[mainAccount.currency.family as keyof typeof byFamily];
   if (!module) return null;
   const Comp = module.component;
   return <Comp {...props} />;
@@ -15,7 +15,7 @@ export const StepWarningFooter = (props: StepProps) => {
   const { account, parentAccount } = props;
   const mainAccount = account && getMainAccount(account, parentAccount);
   if (!mainAccount) return null;
-  const module = byFamily[mainAccount.currency.family];
+  const module = byFamily[mainAccount.currency.family as keyof typeof byFamily];
   if (!module) return null;
   const Comp = module.footer;
   return <Comp {...props} />;
