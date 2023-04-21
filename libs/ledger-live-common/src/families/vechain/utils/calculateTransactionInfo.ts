@@ -1,4 +1,4 @@
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { Transaction, TransactionInfo } from "../types";
 import { calculateFee, estimateGas } from "./transaction-utils";
@@ -47,19 +47,19 @@ export const calculateTransactionInfo = async (
 };
 
 export const calculateMaxFeesToken = async (
-  account: Account,
+  account: AccountLike,
   transaction: Transaction
 ): Promise<BigNumber> => {
+  const accountTmp =
+    account.type === "Account" ? account?.subAccounts?.[0] : account;
+
   if (
     transaction.subAccountId &&
     transaction.recipient &&
     isValid(transaction.recipient) &&
-    account?.subAccounts?.[0]
+    accountTmp
   ) {
-    const clauses = await calculateClausesVtho(
-      transaction,
-      account.subAccounts[0].balance
-    );
+    const clauses = await calculateClausesVtho(transaction, accountTmp.balance);
     const gas = await estimateGas({
       ...transaction,
       body: { ...transaction.body, clauses: clauses },

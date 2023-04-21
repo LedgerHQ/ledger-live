@@ -16,7 +16,7 @@ import getTransactionStatus from "../js-getTransactionStatus";
 import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
 import BigNumber from "bignumber.js";
-import { calculateFee } from "../utils/transaction-utils";
+import { calculateMaxFeesToken } from "../utils/calculateTransactionInfo";
 
 const receive: AccountBridge<Transaction>["receive"] =
   makeAccountBridgeReceive();
@@ -39,13 +39,8 @@ const estimateMaxSpendable = async (inputs: {
     return account.balance;
   }
   if (transaction) {
-    const estimatedFees = await calculateFee(
-      BigNumber(transaction.body.gas),
-      transaction.body.gasPriceCoef
-    );
-    return Promise.resolve(
-      BigNumber.max(0, account.balance.minus(estimatedFees))
-    );
+    const maxTokenFees = await calculateMaxFeesToken(account, transaction);
+    return account.balance.minus(maxTokenFees);
   } else {
     return account.balance;
   }
