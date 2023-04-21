@@ -1,3 +1,30 @@
+import { PromiseResult } from "../types";
+
+/**
+ * Needed polyfill for Promise.allSettled as it doesn't exist on RN.
+ */
+export const allSettled = <T>(
+  promises: Promise<T>[]
+): Promise<PromiseResult<T>[]> => {
+  return Promise.all(
+    promises.map((p) => {
+      return p
+        .then((value) => {
+          return {
+            status: "fulfilled" as const,
+            value,
+          };
+        })
+        .catch((reason: unknown) => {
+          return {
+            status: "rejected" as const,
+            reason,
+          };
+        });
+    })
+  );
+};
+
 /**
  * Helper to know in advance if a domain is compatible with the nano
  *
