@@ -11,7 +11,9 @@ import ReceiveConnectDevice from "../../screens/ReceiveFunds/03a-ConnectDevice";
 import ReceiveVerifyAddress from "../../screens/ReceiveFunds/03b-VerifyAddress";
 import ReceiveSelectCrypto from "../../screens/ReceiveFunds/01-SelectCrypto";
 
-import ReceiveAddAccountSelectDevice from "../../screens/ReceiveFunds/02-AddAccountSelectDevice";
+import ReceiveAddAccountSelectDevice, {
+  addAccountsSelectDeviceHeaderOptions,
+} from "../../screens/ReceiveFunds/02-AddAccountSelectDevice";
 import ReceiveSelectAccount from "../../screens/ReceiveFunds/02-SelectAccount";
 import ReceiveAddAccount from "../../screens/ReceiveFunds/02-AddAccount";
 
@@ -106,6 +108,7 @@ export default function ReceiveFundsNavigator() {
               title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
+          ...addAccountsSelectDeviceHeaderOptions(onClose),
         }}
       />
 
