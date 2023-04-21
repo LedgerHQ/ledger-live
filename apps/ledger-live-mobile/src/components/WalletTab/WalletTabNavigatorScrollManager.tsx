@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useEffect, useRef } from "react";
 import { Animated, FlatList, ScrollView } from "react-native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
-const tabBarHeight = 74;
+const tabBarHeight = 56;
 const headerHeight = 48;
 const headerHeightWithTabNavigatorDisabled = 64;
 
