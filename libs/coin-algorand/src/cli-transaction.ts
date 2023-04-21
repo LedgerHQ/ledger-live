@@ -1,9 +1,12 @@
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import type {
+  Account,
+  AccountLike,
+  AccountLikeArray,
+} from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { extractTokenId } from "./tokens";
-import type { Account } from "@ledgerhq/types-live";
-import type { AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import type { AlgorandAccount, Transaction } from "./types";
 
 const options = [

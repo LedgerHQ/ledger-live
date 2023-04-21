@@ -1,4 +1,3 @@
-import type { BigNumber } from "bignumber.js";
 import type {
   Account,
   AccountRaw,
@@ -9,6 +8,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import type { BigNumber } from "bignumber.js";
 
 export const AlgorandOperationTypeEnum = {
   PAYMENT: 0,

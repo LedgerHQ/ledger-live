@@ -1,17 +1,17 @@
+import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import {
+  findTokenById,
+  formatCurrencyUnit,
+} from "@ledgerhq/coin-framework/currencies/index";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike } from "@ledgerhq/types-live";
+import { extractTokenId } from "./tokens";
 import type {
   AlgorandTransaction,
   Transaction,
   TransactionStatus,
 } from "./types";
-import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
-import {
-  formatCurrencyUnit,
-  findTokenById,
-} from "@ledgerhq/coin-framework/currencies/index";
-import { extractTokenId } from "./tokens";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike } from "@ledgerhq/types-live";
 
 export type ExtraDeviceTransactionField = {
   type: "polkadot.validators";

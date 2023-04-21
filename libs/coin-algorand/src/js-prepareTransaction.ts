@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
-import type { AlgorandAccount, Transaction } from "./types";
-import { getEstimatedFees } from "./js-getFeesForTransaction";
-import { estimateMaxSpendable } from "./js-estimateMaxSpendable";
 import { AlgorandAPI } from "./api";
+import { estimateMaxSpendable } from "./js-estimateMaxSpendable";
+import { getEstimatedFees } from "./js-getFeesForTransaction";
+import type { AlgorandAccount, Transaction } from "./types";
 
 /**
  * Calculate fees for the current transaction

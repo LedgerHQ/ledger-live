@@ -2,9 +2,9 @@ import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { AlgoAccount, AlgoTransactionParams } from "./algodv2.types";
 
 import {
+  broadcastTransaction as sidecardBroadcastTransaction,
   getAccount as sidecardGetAccount,
   getTransactionParams as sidecardGetTransactionParams,
-  broadcastTransaction as sidecardBroadcastTransaction,
 } from "./algodv2";
 
 import { getAccountTransactions as sidecardGetAccountTransactions } from "./indexer";

@@ -1,18 +1,18 @@
 import { encode as msgpackEncode } from "algo-msgpack-with-bigint";
 import type {
+  EncodedSignedTransaction as AlgoSignedTransactionPayload,
   Transaction as AlgoTransaction,
   EncodedTransaction as AlgoTransactionPayload,
-  EncodedSignedTransaction as AlgoSignedTransactionPayload,
 } from "algosdk";
 import {
-  makePaymentTxnWithSuggestedParams,
   makeAssetTransferTxnWithSuggestedParams,
+  makePaymentTxnWithSuggestedParams,
 } from "algosdk";
 
-import type { Transaction } from "./types";
 import type { Account } from "@ledgerhq/types-live";
-import { extractTokenId } from "./tokens";
 import { AlgorandAPI } from "./api";
+import { extractTokenId } from "./tokens";
+import type { Transaction } from "./types";
 
 export const buildTransactionPayload =
   (algorandAPI: AlgorandAPI) =>

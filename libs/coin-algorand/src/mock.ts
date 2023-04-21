@@ -1,7 +1,7 @@
-import Prando from "prando";
-import { BigNumber } from "bignumber.js";
-import { genHex, genAddress } from "@ledgerhq/coin-framework/mocks/helpers";
+import { genAddress, genHex } from "@ledgerhq/coin-framework/mocks/helpers";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import Prando from "prando";
 import type { AlgorandAccount } from "./types";
 
 function setAlgorandResources(account: Account): Account {

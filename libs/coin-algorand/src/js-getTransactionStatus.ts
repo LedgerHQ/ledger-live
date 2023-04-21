@@ -1,32 +1,32 @@
-import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
 import { isValidAddress } from "algosdk";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 
 import {
-  RecipientRequired,
   AmountRequired,
-  InvalidAddressBecauseDestinationIsAlsoSource,
-  NotEnoughBalance,
   FeeNotLoaded,
   FeeTooHigh,
+  InvalidAddress,
+  InvalidAddressBecauseDestinationIsAlsoSource,
+  NotEnoughBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughBalanceInParentAccount,
-  InvalidAddress,
+  RecipientRequired,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 
 import { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
 import { AlgorandASANotOptInInRecipient } from "./errors";
 
-import type { Transaction, AlgorandAccount } from "./types";
-import { extractTokenId } from "./tokens";
+import { AlgorandAPI } from "./api";
 import {
   ALGORAND_MAX_MEMO_SIZE,
-  recipientHasAsset,
-  isAmountValid,
   computeAlgoMaxSpendable,
+  isAmountValid,
+  recipientHasAsset,
 } from "./logic";
-import { AlgorandAPI } from "./api";
+import { extractTokenId } from "./tokens";
+import type { AlgorandAccount, Transaction } from "./types";
 
 /*
  * Here are the list of the differents things we check

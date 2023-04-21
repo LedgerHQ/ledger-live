@@ -1,12 +1,12 @@
-import { BigNumber } from "bignumber.js";
+import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { getEnv } from "@ledgerhq/live-env";
+import { BigNumber } from "bignumber.js";
 import {
+  AlgoAssetTransferInfo,
+  AlgoPaymentInfo,
   AlgoTransaction,
   AlgoTransactionDetails,
-  AlgoPaymentInfo,
-  AlgoAssetTransferInfo,
 } from "./indexer.types";
-import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 
 const LIMIT = 100; // Max nb of transactions per request
 

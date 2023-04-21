@@ -1,11 +1,3 @@
-import expect from "expect";
-import invariant from "invariant";
-import type { AlgorandAccount, AlgorandTransaction } from "./types";
-import {
-  listTokensForCryptoCurrency,
-  getCryptoCurrencyById,
-  parseCurrencyUnit,
-} from "@ledgerhq/coin-framework/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/coin-framework/account/index";
 import {
   botTest,
@@ -13,12 +5,20 @@ import {
   pickSiblings,
 } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { BigNumber } from "bignumber.js";
-import sample from "lodash/sample";
-import { extractTokenId } from "./tokens";
+import {
+  getCryptoCurrencyById,
+  listTokensForCryptoCurrency,
+  parseCurrencyUnit,
+} from "@ledgerhq/coin-framework/currencies/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import expect from "expect";
+import invariant from "invariant";
+import sample from "lodash/sample";
 import { acceptTransaction } from "./speculos-deviceActions";
+import { extractTokenId } from "./tokens";
+import type { AlgorandAccount, AlgorandTransaction } from "./types";
 
 const currency = getCryptoCurrencyById("algorand");
 // Minimum balance required for a new non-ASA account

@@ -1,11 +1,11 @@
+import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type {
-  AlgorandResourcesRaw,
-  AlgorandResources,
   AlgorandAccount,
   AlgorandAccountRaw,
+  AlgorandResources,
+  AlgorandResourcesRaw,
 } from "./types";
-import type { Account, AccountRaw } from "@ledgerhq/types-live";
 
 function toResourcesRaw(r: AlgorandResources): AlgorandResourcesRaw {
   const { rewards, nbAssets } = r;

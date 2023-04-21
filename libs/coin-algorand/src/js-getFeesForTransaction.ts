@@ -1,8 +1,8 @@
-import { BigNumber } from "bignumber.js";
-import type { Transaction } from "./types";
 import type { Account } from "@ledgerhq/types-live";
-import { buildTransactionPayload, encodeToSign } from "./buildTransaction";
+import { BigNumber } from "bignumber.js";
 import { AlgorandAPI } from "./api";
+import { buildTransactionPayload, encodeToSign } from "./buildTransaction";
+import type { Transaction } from "./types";
 
 // This is only true for a single signature. If we ever support different type of signatures
 // (e.g multi signatures), we will have to add the correct corresponding number of bytes.

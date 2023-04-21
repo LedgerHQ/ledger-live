@@ -1,5 +1,5 @@
-import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import type { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { AlgorandAPI } from "./api";
 
 /**
