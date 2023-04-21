@@ -1,5 +1,14 @@
 # live-common-tools
 
+## 0.3.1-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23)]:
+  - @ledgerhq/domain-service@1.0.1-next.1
+  - @ledgerhq/live-common@29.4.0-next.2
+  - @ledgerhq/hw-app-eth@6.33.1-next.1
+
 ## 0.3.1-next.1
 
 ### Patch Changes

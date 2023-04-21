@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-eth
 
+## 6.33.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23)]:
+  - @ledgerhq/domain-service@1.0.1-next.1
+
 ## 6.33.1-next.0
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.20.0-next.2
+
+### Minor Changes
+
+- [#3270](https://github.com/LedgerHQ/ledger-live/pull/3270) [`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removed Promise.allSettled polyfill as it wasn't correctly shimmed on some devices
+
+### Patch Changes
+
+- Updated dependencies [[`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23)]:
+  - @ledgerhq/domain-service@1.0.1-next.1
+  - @ledgerhq/live-common@29.4.0-next.2
+
 ## 3.20.0-next.1
 
 ### Patch Changes

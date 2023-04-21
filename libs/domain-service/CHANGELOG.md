@@ -1,5 +1,11 @@
 # @ledgerhq/domain-service
 
+## 1.0.1-next.1
+
+### Patch Changes
+
+- [#3270](https://github.com/LedgerHQ/ledger-live/pull/3270) [`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove error thrown on missing Promise.allSettled and replaced it with an homemade implementation of the feature
+
 ## 1.0.1-next.0
 
 ### Patch Changes
