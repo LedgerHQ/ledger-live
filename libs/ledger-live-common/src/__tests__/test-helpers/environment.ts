@@ -13,8 +13,6 @@ setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "avalanche_c_chain",
   "axelar",
-  "injective",
-  "evmos",
   "onomy",
   "quicksilver",
   "stride",

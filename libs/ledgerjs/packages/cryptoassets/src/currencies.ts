@@ -1525,64 +1525,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  injective: {
-    type: "CryptoCurrency",
-    id: "injective",
-    coinType: 60,
-    name: "Injective",
-    managerAppName: "Cosmos",
-    ticker: "INJ",
-    scheme: "injective",
-    color: "#0bd",
-    family: "cosmos",
-    units: [
-      {
-        name: "Injective",
-        code: "INJ",
-        magnitude: 18,
-      },
-      {
-        name: "Micro-Injective",
-        code: "inj",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://www.mintscan.io/injective/txs/$hash",
-        address: "https://www.mintscan.io/injective/validators/$address",
-      },
-    ],
-  },
-  evmos: {
-    type: "CryptoCurrency",
-    id: "evmos",
-    coinType: 60,
-    name: "Evmos",
-    managerAppName: "Cosmos",
-    ticker: "EVMOS",
-    scheme: "evmos",
-    color: "#0bd",
-    family: "cosmos",
-    units: [
-      {
-        name: "Evmos",
-        code: "EVMOS",
-        magnitude: 18,
-      },
-      {
-        name: "Micro-Evmos",
-        code: "aevmos",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://www.mintscan.io/evmos/txs/$hash",
-        address: "https://www.mintscan.io/evmos/validators/$address",
-      },
-    ],
-  },
   iota: {
     type: "CryptoCurrency",
     id: "iota",
@@ -2056,19 +1998,19 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     coinType: CoinType.ATOM,
     name: "Nyx",
     managerAppName: "Cosmos",
-    ticker: "NYM",
+    ticker: "NYX",
     scheme: "nyx",
     color: "#5f82c8",
     family: "cosmos",
     units: [
       {
         name: "Nyx",
-        code: "NYM",
+        code: "NYX",
         magnitude: 6,
       },
       {
         name: "Micro-Nyx",
-        code: "unym",
+        code: "unyx",
         magnitude: 0,
       },
     ],
@@ -2912,35 +2854,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://www.mintscan.io/osmosis/txs/$hash",
         address: "https://www.mintscan.io/osmosis/validators/$address",
-      },
-    ],
-  },
-  juno: {
-    type: "CryptoCurrency",
-    id: "juno",
-    coinType: CoinType.ATOM,
-    name: "Juno",
-    managerAppName: "Cosmos",
-    ticker: "JUNO",
-    scheme: "juno",
-    color: "#493c9b",
-    family: "cosmos",
-    units: [
-      {
-        name: "Juno",
-        code: "JUNO",
-        magnitude: 6,
-      },
-      {
-        name: "Micro-JUNO",
-        code: "ujuno",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://www.mintscan.io/juno/txs/$hash",
-        address: "https://www.mintscan.io/juno/validators/$address",
       },
     ],
   },
