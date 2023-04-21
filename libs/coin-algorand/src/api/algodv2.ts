@@ -1,12 +1,12 @@
-import { BigNumber } from "bignumber.js";
+import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { getEnv } from "@ledgerhq/live-env";
+import { BigNumber } from "bignumber.js";
 import {
   AlgoAccount,
   AlgoAsset,
-  AlgoTransactionParams,
   AlgoTransactionBroadcastResponse,
+  AlgoTransactionParams,
 } from "./algodv2.types";
-import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 
 const BASE_URL = getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
 const NODE_URL = `${BASE_URL}/ps2/v2`;

@@ -1,13 +1,13 @@
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import type { AlgorandTransaction } from "./types";
-import { findTokenById } from "@ledgerhq/coin-framework/currencies/index";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
 } from "@ledgerhq/coin-framework/bot/specs";
-import { extractTokenId, addPrefixToken } from "./tokens";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import { findTokenById } from "@ledgerhq/coin-framework/currencies/index";
 import { displayTokenValue } from "./deviceTransactionConfig";
+import { addPrefixToken, extractTokenId } from "./tokens";
+import type { AlgorandTransaction } from "./types";
 
 export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
   deviceActionFlow({

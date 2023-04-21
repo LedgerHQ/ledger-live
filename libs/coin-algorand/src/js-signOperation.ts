@@ -1,22 +1,22 @@
-import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
+import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import Algorand from "@ledgerhq/hw-app-algorand";
-import type { Transaction } from "./types";
-import {
-  buildTransactionPayload,
-  encodeToSign,
-  encodeToBroadcast,
-} from "./buildTransaction";
 import type {
   Account,
   Operation,
-  SignedOperation,
   SignOperationEvent,
+  SignOperationFnSignature,
+  SignedOperation,
 } from "@ledgerhq/types-live";
-import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { SignOperationFnSignature } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { Observable } from "rxjs";
 import { AlgorandAPI } from "./api";
+import {
+  buildTransactionPayload,
+  encodeToBroadcast,
+  encodeToSign,
+} from "./buildTransaction";
+import type { Transaction } from "./types";
 
 /**
  * Sign Transaction with Ledger hardware

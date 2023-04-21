@@ -7,19 +7,19 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 
-import { makeGetAccountShape } from "../js-synchronization";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { AlgorandAPI } from "../api";
+import getAddress from "../hw-getAddress";
+import { initAccount } from "../initAccount";
+import { broadcast } from "../js-broadcast";
 import createTransaction from "../js-createTransaction";
-import prepareTransaction from "../js-prepareTransaction";
 import { estimateMaxSpendable } from "../js-estimateMaxSpendable";
 import { getTransactionStatus } from "../js-getTransactionStatus";
+import prepareTransaction from "../js-prepareTransaction";
 import { buildSignOperation } from "../js-signOperation";
-import { broadcast } from "../js-broadcast";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
-import { initAccount } from "../initAccount";
+import { makeGetAccountShape } from "../js-synchronization";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import type { Transaction } from "../types";
-import getAddress from "../hw-getAddress";
-import { AlgorandAPI } from "../api";
 
 const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
   ...t,

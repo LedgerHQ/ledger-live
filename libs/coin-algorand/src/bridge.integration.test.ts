@@ -1,12 +1,12 @@
-import { BigNumber } from "bignumber.js";
 import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
+import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import { AlgorandASANotOptInInRecipient } from "./errors";
 import type { AlgorandTransaction, Transaction } from "./types";
-import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 
 const algorand: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [

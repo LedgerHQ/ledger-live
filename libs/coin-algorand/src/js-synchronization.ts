@@ -1,30 +1,29 @@
-import { BigNumber } from "bignumber.js";
+import {
+  emptyHistoryCache,
+  encodeAccountId,
+  inferSubOperations,
+} from "@ledgerhq/coin-framework/account/index";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   findTokenById,
   listTokensForCryptoCurrency,
 } from "@ledgerhq/coin-framework/currencies/index";
-import {
-  encodeAccountId,
-  emptyHistoryCache,
-  inferSubOperations,
-} from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { promiseAllBatched } from "@ledgerhq/coin-framework/promise";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { BigNumber } from "bignumber.js";
 
 import type {
-  AlgoTransaction,
-  AlgoPaymentInfo,
-  AlgoAssetTransferInfo,
   AlgoAsset,
+  AlgoAssetTransferInfo,
+  AlgoPaymentInfo,
+  AlgoTransaction,
   AlgorandAPI,
 } from "./api";
 
 import { AlgoTransactionType } from "./api";
 
-import { addPrefixToken, extractTokenId } from "./tokens";
-import { computeAlgoMaxSpendable } from "./logic";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   Operation,
@@ -32,7 +31,8 @@ import type {
   SyncConfig,
   TokenAccount,
 } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { computeAlgoMaxSpendable } from "./logic";
+import { addPrefixToken, extractTokenId } from "./tokens";
 
 const getASAOperationAmount = (
   transaction: AlgoTransaction,
