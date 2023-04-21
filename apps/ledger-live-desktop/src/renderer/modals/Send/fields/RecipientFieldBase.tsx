@@ -7,6 +7,7 @@ import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import RecipientAddress from "~/renderer/components/RecipientAddress";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 
 type Props = {
   account: Account;
@@ -17,22 +18,13 @@ type Props = {
   initValue?: string;
   resetInitValue?: () => void;
   value: string | undefined;
-  placeholderTranslationKey: string;
-  hideError: boolean;
-  onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => Promise<void>;
+  onChange: (
+    recipient: string,
+    maybeExtra?: Record<string, CryptoCurrency> | undefined,
+  ) => Promise<unknown>;
 };
 
-const RecipientFieldBase = ({
-  t,
-  account,
-  autoFocus,
-  status,
-  label,
-  value,
-  onChange,
-  placeholderTranslationKey,
-  hideError,
-}: Props) => {
+const RecipientFieldBase = ({ t, account, autoFocus, status, label, value, onChange }: Props) => {
   const { recipient: recipientError } = status.errors;
   const { recipient: recipientWarning } = status.warnings;
 
@@ -42,11 +34,11 @@ const RecipientFieldBase = ({
         <span>{label || t("send.steps.details.recipientAddress")}</span>
       </Label>
       <RecipientAddress
-        placeholder={t(placeholderTranslationKey, { currencyName: account.currency.name })}
+        placeholder={t("RecipientField.placeholder", { currencyName: account.currency.name })}
         autoFocus={autoFocus}
         withQrCode={!status.recipientIsReadOnly}
         readOnly={status.recipientIsReadOnly}
-        error={hideError || recipientError instanceof RecipientRequired ? null : recipientError}
+        error={recipientError instanceof RecipientRequired ? null : recipientError}
         warning={recipientWarning}
         value={value}
         onChange={onChange}
@@ -54,11 +46,6 @@ const RecipientFieldBase = ({
       />
     </Box>
   );
-};
-
-RecipientFieldBase.defaultProps = {
-  placeholderTranslationKey: "RecipientField.placeholder",
-  hideError: false,
 };
 
 export default memo(RecipientFieldBase);
