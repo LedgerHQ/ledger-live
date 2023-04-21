@@ -1,63 +1,75 @@
 import React, { PureComponent } from "react";
-import ReactSelect, { components } from "react-select";
+import ReactSelect, {
+  components,
+  GroupTypeBase,
+  MenuListComponentProps,
+  OptionTypeBase,
+  Props as ReactSelectProps,
+  StylesConfig,
+  ValueType,
+} from "react-select";
 import AsyncReactSelect from "react-select/async";
 import { withTranslation } from "react-i18next";
 import { FixedSizeList as List } from "react-window";
-import styled, { withTheme } from "styled-components";
-import { CreateStylesReturnType } from "~/renderer/components/Select/createStyles";
+import styled, { withTheme, DefaultTheme } from "styled-components";
 import debounce from "lodash/debounce";
 import createStyles from "./createStyles";
 import createRenderers from "./createRenderers";
-export type Option = {
-  value: "string";
-  label: "string";
-  data: any;
-};
-export type Props = {
-  // required
-  value: Option | undefined | null;
-  options: Option[];
-  onChange: (a?: Option | null) => void;
-  theme: any;
+import { ThemeConfig } from "react-select/src/theme";
+
+export type Props<
+  OptionType extends OptionTypeBase = { label: string; value: string },
+  IsMulti extends boolean = false,
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+> = {
+  theme: DefaultTheme;
+  onChange: (a?: ValueType<OptionType, IsMulti> | null) => void;
   // custom renders
-  renderOption: (a: Option) => Node;
-  renderValue: (a: Option) => Node;
+  renderOption: (a: OptionType) => Node;
+  renderValue: (a: OptionType) => Node;
   // optional
   async: boolean;
-  placeholder: string;
-  isClearable: boolean;
-  isDisabled: boolean;
   isRight: boolean;
   isLeft: boolean;
-  isLoading: boolean;
-  isSearchable: boolean;
   small: boolean;
   width: number;
   minWidth: number;
-  autoFocus: boolean;
   virtual: boolean;
   rowHeight: number;
   disableOptionPadding?: boolean;
   error: Error | undefined | null;
   // NB at least a different rendering for now
-  stylesMap: (a: CreateStylesReturnType) => CreateStylesReturnType;
+  stylesMap: (a: ThemeConfig) => StylesConfig<OptionType, IsMulti, GroupType>;
   extraRenderers?: {
-    [x: string]: (props: any) => React$ElementType;
+    [x: string]: (props: any) => React.ReactNode;
   };
   // Allows overriding react-select components. See: https://react-select.com/components
   disabledTooltipText?: string;
   selectDataTestId?: string;
-};
+} & ReactSelectProps<OptionType, IsMulti, GroupType>;
+
 const Row = styled.div`
   max-width: 100%;
 `;
-class MenuList extends PureComponent<any, any> {
-  state = {
+class MenuList<
+  OptionType extends OptionTypeBase,
+  IsMulti extends boolean,
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+> extends PureComponent<
+  MenuListComponentProps<OptionType, IsMulti, GroupType> & Props<OptionType, IsMulti, GroupType>
+> {
+  state: {
+    children: OptionType[] | null;
+    currentIndex: number;
+  } = {
     children: null,
     currentIndex: 0,
   };
 
-  static getDerivedStateFromProps({ children }, state) {
+  static getDerivedStateFromProps(
+    { children }: { children: React.ReactNode },
+    state: { children: React.ReactNode },
+  ) {
     if (children !== state.children) {
       const currentIndex = Array.isArray(children)
         ? Math.max(
@@ -88,7 +100,7 @@ class MenuList extends PureComponent<any, any> {
     }
   };
 
-  list = React.createRef();
+  list = React.createRef<List>();
   render() {
     const {
       options,
@@ -103,6 +115,7 @@ class MenuList extends PureComponent<any, any> {
     const initialOffset = options.indexOf(value) * rowHeight;
     const minHeight = Math.min(...[maxHeight, rowHeight * children.length]);
     if (!children.length && noOptionsMessage) {
+      // @ts-expect-error ts says innerProps is missing but I'm not sure adding it is a good idea
       return <components.NoOptionsMessage {...this.props} />;
     }
     children.length &&
@@ -135,7 +148,11 @@ class MenuList extends PureComponent<any, any> {
     );
   }
 }
-class Select extends PureComponent<Props> {
+class Select<
+  OptionType extends OptionTypeBase = { label: string; value: string },
+  IsMulti extends boolean = false,
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+> extends PureComponent<Props<OptionType, IsMulti, GroupType>> {
   componentDidMount() {
     if (this.ref && this.props.autoFocus) {
       this.timeout = requestAnimationFrame(() => this.ref.focus());
@@ -160,7 +177,10 @@ class Select extends PureComponent<Props> {
     },
   );
 
-  handleChange = (value, { action }) => {
+  handleChange: ReactSelectProps<OptionType, IsMulti, GroupType>["onChange"] = (
+    value,
+    { action },
+  ) => {
     const { onChange } = this.props;
     if (action === "select-option") {
       onChange(value);
@@ -199,16 +219,19 @@ class Select extends PureComponent<Props> {
       selectDataTestId,
       ...props
     } = this.props;
-    const Comp = async ? AsyncReactSelect : ReactSelect;
-    let styles = createStyles(theme, {
-      width,
-      minWidth,
-      small,
-      isRight,
-      isLeft,
-      error,
-      rowHeight,
-    });
+    const Comp = (async ? AsyncReactSelect : ReactSelect) as typeof ReactSelect;
+    let styles =
+      theme &&
+      createStyles(theme, {
+        width,
+        minWidth,
+        small,
+        isRight,
+        isLeft,
+        error,
+        rowHeight,
+      });
+    // @ts-expect-error Typing styles is not that important - it will go away when we upgrade to the latest version of react-select
     styles = stylesMap ? stylesMap(styles) : styles;
     return (
       <Comp
@@ -222,7 +245,8 @@ class Select extends PureComponent<Props> {
         components={
           virtual
             ? {
-                MenuList,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                MenuList: MenuList as any,
                 ...createRenderers({
                   renderOption,
                   renderValue,
@@ -242,6 +266,7 @@ class Select extends PureComponent<Props> {
                 ...(extraRenderers || {}),
               }
         }
+        // @ts-expect-error Typing styles is not that important - it will go away when we upgrade to the latest version of react-select
         styles={styles}
         placeholder={placeholder}
         isDisabled={isDisabled}
@@ -261,4 +286,4 @@ class Select extends PureComponent<Props> {
     );
   }
 }
-export default withTranslation()(withTheme(Select));
+export default (withTranslation()(withTheme(Select)) as unknown) as typeof Select;

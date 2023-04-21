@@ -1,13 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { components } from "react-select";
+import { components, GroupTypeBase, OptionTypeBase } from "react-select";
 import Box from "~/renderer/components/Box";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import IconCheck from "~/renderer/icons/Check";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import IconCross from "~/renderer/icons/Cross";
 import { useTranslation } from "react-i18next";
-import { Option } from ".";
 import SearchIcon from "~/renderer/icons/Search";
 import { Props as SelectProps } from "~/renderer/components/Select";
 import { rgba } from "~/renderer/styles/helpers";
@@ -17,14 +16,18 @@ const InputWrapper = styled(Box)`
     color: ${p => p.theme.colors.palette.text.shade30};
   }
 `;
-export default ({
+export default <
+  OptionType extends OptionTypeBase = { label: string; value: string },
+  IsMulti extends boolean = false,
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+>({
   renderOption,
   renderValue,
   selectProps,
 }: {
-  renderOption: (a: Option) => Node;
-  renderValue: (a: Option) => Node;
-  selectProps: SelectProps;
+  renderOption: (a: OptionType) => Node;
+  renderValue: (a: OptionType) => Node;
+  selectProps: SelectProps<OptionType, IsMulti, GroupType>;
 }) => ({
   ...STYLES_OVERRIDE,
   Option: function Option(props: OptionProps) {

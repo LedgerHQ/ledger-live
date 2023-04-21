@@ -19,7 +19,7 @@ const RenderRightWrapper = styled(Box)`
     flex: 1;
   }
 `;
-export const Container: ThemedComponent<any> = styled(Box).attrs(() => ({
+export const Container = styled(Box).attrs(() => ({
   horizontal: true,
 }))`
   background: ${p =>
@@ -71,7 +71,7 @@ export const Container: ThemedComponent<any> = styled(Box).attrs(() => ({
       border-color: var(--status-color);
     }`}
 `;
-export const ErrorContainer: ThemedComponent<any> = styled(Box)`
+export const ErrorContainer = styled(Box)`
   margin-top: 0px;
   font-size: 12px;
   width: 100%;
@@ -152,7 +152,7 @@ type Props = {
   hideErrorMessage?: boolean;
   value?: string;
   placeholder?: string;
-};
+} & React.ComponentProps<typeof Base>;
 const Input = React.forwardRef(function Input(
   {
     renderLeft = null,

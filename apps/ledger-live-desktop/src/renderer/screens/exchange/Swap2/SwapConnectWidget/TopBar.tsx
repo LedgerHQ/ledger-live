@@ -85,7 +85,7 @@ const ItemContent = styled(Box).attrs(() => ({
   font-size: 14px;
   line-height: 20px;
 `;
-export const Separator: ThemedComponent<any> = styled.div`
+export const Separator = styled.div`
   margin-right: 16px;
   height: 15px;
   width: 1px;

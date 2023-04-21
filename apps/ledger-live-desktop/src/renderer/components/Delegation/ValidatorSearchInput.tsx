@@ -21,7 +21,7 @@ const SearchContainer = styled(Box).attrs(() => ({
     font-size: 13px;
   }
 `;
-const Placeholder: ThemedComponent<any> = styled(Box).attrs(() => ({
+const Placeholder = styled(Box).attrs(() => ({
   vertical: true,
   alignItems: "center",
   justifyContent: "center",

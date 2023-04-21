@@ -8,7 +8,7 @@ import Text from "~/renderer/components/Text";
 import ExternalLink from "~/renderer/icons/ExternalLink";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import { colors } from "~/renderer/styles/theme";
-export const IconContainer: ThemedComponent<any> = styled.div`
+export const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;

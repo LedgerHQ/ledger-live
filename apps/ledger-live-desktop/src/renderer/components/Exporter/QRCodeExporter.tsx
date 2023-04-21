@@ -25,7 +25,7 @@ type OwnProps = {
 };
 type Props = OwnProps & {
   accounts: any;
-  settings: any;
+  settings?: any;
 };
 class QRCodeExporter extends PureComponent<
   Props,
@@ -114,7 +114,7 @@ class QRCodeExporter extends PureComponent<
     );
   }
 }
-const ConnectedQRCodeExporter: React.ComponentType<OwnProps> = connect(mapStateToProps)(
+const ConnectedQRCodeExporter: React.ComponentType<Props> = connect(mapStateToProps)(
   QRCodeExporter,
 );
 export default ConnectedQRCodeExporter;

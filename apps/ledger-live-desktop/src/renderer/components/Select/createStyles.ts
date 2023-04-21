@@ -1,31 +1,18 @@
+import { GroupTypeBase, OptionTypeBase, StylesConfig } from "react-select";
+import { DefaultTheme } from "styled-components";
 import { ff } from "~/renderer/styles/helpers";
-export type CreateStylesReturnType = {
-  container: (styles: object) => object;
-  control: (
-    styles: object,
-    a: {
-      isFocused: boolean;
-    },
-  ) => object;
-  indicatorSeparator: (styles: object) => object;
-  input: (styles: object) => object;
-  menu: (styles: object) => object;
-  menuList: (styles: object) => object;
-  menuPortal: (styles: object) => object;
-  noOptionsMessage: (styles: object) => object;
-  option: (
-    styles: object,
-    a: {
-      isFocused: boolean;
-      isSelected: boolean;
-      isDisabled: boolean;
-    },
-  ) => object;
-  singleValue: (styles: object) => object;
-  valueContainer: (styles: object) => object;
-};
-export default (
-  theme: any,
+export type CreateStylesReturnType<
+  OptionType extends OptionTypeBase,
+  IsMulti extends boolean,
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+> = StylesConfig<OptionType, IsMulti, GroupType>;
+
+export default <
+  OptionType extends OptionTypeBase,
+  IsMulti extends boolean,
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+>(
+  theme: DefaultTheme,
   {
     width,
     minWidth,
@@ -43,8 +30,8 @@ export default (
     error: Error | undefined | null;
     rowHeight: number;
   },
-): CreateStylesReturnType => ({
-  control: (styles: object, { isFocused }: object) => ({
+): StylesConfig<OptionType, IsMulti, GroupType> => ({
+  control: (styles, { isFocused }) => ({
     ...styles,
     width,
     minWidth,
@@ -61,7 +48,7 @@ export default (
         }
       : {}),
   }),
-  valueContainer: (styles: object) => ({
+  valueContainer: styles => ({
     ...styles,
     paddingLeft: 15,
     color: theme.colors.palette.text.shade100,
@@ -71,19 +58,19 @@ export default (
     ...styles,
     overflow: "visible",
   }),
-  input: (styles: object) => ({
+  input: styles => ({
     ...styles,
     color: theme.colors.palette.text.shade80,
   }),
-  indicatorSeparator: (styles: object) => ({
+  indicatorSeparator: styles => ({
     ...styles,
     background: "none",
   }),
-  noOptionsMessage: (styles: object) => ({
+  noOptionsMessage: styles => ({
     ...styles,
     fontSize: small ? 12 : 13,
   }),
-  option: (styles: object, { isFocused, isSelected, isDisabled }: object) => ({
+  option: (styles, { isFocused, isSelected, isDisabled }) => ({
     ...styles,
     ...(isSelected ? ff("Inter|SemiBold") : ff("Inter|Regular")),
     fontSize: small ? 12 : 13,
@@ -94,21 +81,21 @@ export default (
     height: rowHeight,
     padding: small ? "8px 15px" : "10px 15px",
     cursor: isDisabled ? "not-allowed" : "default",
-    backgroundColor: isFocused ? theme.colors.palette.background.default : null,
+    backgroundColor: isFocused ? theme.colors.palette.background.default : undefined,
     // NB hover doesn't trigger isFocused since we disabled the onMouseMove/onMouseOver
     ":hover:not(:active)": {
-      backgroundColor: !isDisabled ? theme.colors.palette.background.default : null,
-      color: !isDisabled ? theme.colors.palette.text.shade100 : null,
+      backgroundColor: !isDisabled ? theme.colors.palette.background.default : undefined,
+      color: !isDisabled ? theme.colors.palette.text.shade100 : undefined,
     },
     ":hover:active": {
-      color: !isDisabled ? theme.colors.palette.text.shade100 : null,
+      color: !isDisabled ? theme.colors.palette.text.shade100 : undefined,
     },
     ":active": {
       ...styles[":active"],
-      backgroundColor: isDisabled ? null : theme.colors.palette.text.shade10,
+      backgroundColor: isDisabled ? undefined : theme.colors.palette.text.shade10,
     },
   }),
-  menu: (styles: object) => ({
+  menu: styles => ({
     ...styles,
     border: `1px solid ${theme.colors.palette.divider}`,
     boxShadow: "rgba(0, 0, 0, 0.05) 0 2px 2px",
@@ -116,19 +103,19 @@ export default (
     "--track-color": theme.colors.palette.text.shade30,
     borderRadius: 3,
   }),
-  menuList: (styles: object) => ({
+  menuList: styles => ({
     ...styles,
     background: theme.colors.palette.background.paper,
   }),
-  menuPortal: (styles: object) => ({
+  menuPortal: styles => ({
     ...styles,
     zIndex: 101,
   }),
-  container: (styles: object) => ({
+  container: styles => ({
     ...styles,
     fontSize: small ? 12 : 13,
   }),
-  placeholder: (styles: object) => ({
+  placeholder: styles => ({
     ...styles,
     whiteSpace: "nowrap",
     hyphens: "none",

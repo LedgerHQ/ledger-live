@@ -6,11 +6,11 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ToolTip from "./Tooltip";
 import InfoCircle from "../icons/InfoCircle";
-const TableContainer: ThemedComponent<any> = styled(Card)`
+const TableContainer = styled(Card)`
   border-radius: 4px;
   overflow: hidden;
 `;
-const TableHeaderRow: ThemedComponent<any> = styled(Box).attrs(() => ({
+const TableHeaderRow = styled(Box).attrs(() => ({
   flex: 1,
   py: 3,
   px: 4,
@@ -28,7 +28,7 @@ export const HeaderWrapper = styled.div`
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
   background-color: ${p => rgba(p.theme.colors.palette.secondary.main, 0.02)};
 `;
-const TableHeaderTitle: ThemedComponent<any> = styled(Text).attrs(() => ({
+const TableHeaderTitle = styled(Text).attrs(() => ({
   color: "palette.text.shade100",
   ff: "Inter|Medium",
 }))`

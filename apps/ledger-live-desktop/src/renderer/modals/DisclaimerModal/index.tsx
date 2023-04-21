@@ -47,22 +47,19 @@ class DisclaimerModal extends PureComponent<Props, State> {
   };
 
   onSeedReady = () =>
-    this.setState(state => ({
+    this.setState((state: typeof this.state) => ({
       seedReady: !state.seedReady,
     }));
 
   render(): React.ReactNode {
     const { status, firmware, modelId, t, goToNextStep } = this.props;
     const { seedReady } = this.state;
-    const supportURL = urls.updateDeviceFirmware[modelId] || "";
-    const dontHaveSeedURL = urls.lostPinOrSeed[modelId] || "";
+    const supportURL =
+      urls.updateDeviceFirmware[modelId as keyof typeof urls.updateDeviceFirmware] || "";
+    const dontHaveSeedURL = urls.lostPinOrSeed[modelId as keyof typeof urls.lostPinOrSeed] || "";
     return (
       <Modal isOpened={status === "disclaimer"} backdropColor centered onClose={this.onClose}>
         <ModalBody
-          grow
-          alignItems="center"
-          justifyContent="center"
-          mt={3}
           title={t("manager.firmware.update")}
           render={() => (
             <Box alignItems="center">
@@ -91,12 +88,7 @@ class DisclaimerModal extends PureComponent<Props, State> {
                 >
                   {t("manager.firmware.followTheGuide")}
                 </Text>
-                <IconChevronRight
-                  size={14}
-                  style={{
-                    marginLeft: 4,
-                  }}
-                />
+                <IconChevronRight size={14} />
               </FakeLink>
               <Alert
                 type="primary"
