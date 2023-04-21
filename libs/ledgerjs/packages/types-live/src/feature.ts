@@ -14,8 +14,6 @@ export type FeatureId =
   | "ptxEarn"
   | "currencyAvalancheCChain"
   | "currencyAxelar"
-  | "currencyInjective"
-  | "currencyEvmos"
   | "currencyOnomy"
   | "currencyQuicksilver"
   | "currencyStride"

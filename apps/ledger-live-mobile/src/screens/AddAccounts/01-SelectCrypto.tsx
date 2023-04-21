@@ -53,8 +53,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { filterCurrencyIds = [], currency } = route.params || {};
 
   const axelar = useFeature("currencyAxelar");
-  const evmos = useFeature("currencyEvmos");
-  const injective = useFeature("currencyInjective");
   const onomy = useFeature("currencyOnomy");
   const quicksilver = useFeature("currencyQuicksilver");
   const stride = useFeature("currencyStride");
@@ -71,8 +69,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const featureFlaggedCurrencies = useMemo(
     () => ({
       axelar,
-      injective,
-      evmos,
       onomy,
       quicksilver,
       stride,

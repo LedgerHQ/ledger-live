@@ -1,10 +1,8 @@
 import CosmosBase from "./cosmosBase";
 import Cosmos from "./Cosmos";
-import Juno from "./Juno";
 import Osmosis from "./Osmosis";
 import Axelar from "./Axelar";
 import Desmos from "./Desmos";
-import Injective from "./Injective";
 import Nyx from "./Nyx";
 import Onomy from "./Onomy";
 import Persistence from "./Persistence";
@@ -15,7 +13,6 @@ import Stargaze from "./Stargaze";
 import Stride from "./Stride";
 import Umee from "./Umee";
 import BinanceBeaconChain from "./BinanceBeaconChain";
-import Evmos from "./Evmos";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
@@ -32,9 +29,6 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
       case "cosmos":
         cosmosChainParams[currencyId] = new Cosmos();
         break;
-      case "juno":
-        cosmosChainParams[currencyId] = new Juno();
-        break;
       case "axelar":
         cosmosChainParams[currencyId] = new Axelar();
         break;
@@ -43,12 +37,6 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "desmos":
         cosmosChainParams[currencyId] = new Desmos();
-        break;
-      case "injective":
-        cosmosChainParams[currencyId] = new Injective();
-        break;
-      case "evmos":
-        cosmosChainParams[currencyId] = new Evmos();
         break;
       case "nyx":
         cosmosChainParams[currencyId] = new Nyx();

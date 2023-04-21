@@ -26,12 +26,6 @@ export const defaultFeatures: DefaultFeatures = {
   currencyAxelar: {
     enabled: true,
   },
-  currencyInjective: {
-    enabled: true,
-  },
-  currencyEvmos: {
-    enabled: true,
-  },
   currencyOnomy: {
     enabled: true,
   },

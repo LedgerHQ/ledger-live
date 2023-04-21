@@ -9,7 +9,6 @@ const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     // axelar,
-    //injective,
     //onomy,
     //quicksilver,
     //stride,

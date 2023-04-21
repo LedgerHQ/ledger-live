@@ -29,8 +29,6 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const axelar = useFeature("currencyAxelar");
-  const injective = useFeature("currencyInjective");
-  const evmos = useFeature("currencyEvmos");
   const onomy = useFeature("currencyOnomy");
   const quicksilver = useFeature("currencyQuicksilver");
   const stride = useFeature("currencyStride");
@@ -46,8 +44,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const featureFlaggedCurrencies = useMemo(
     () => ({
       axelar,
-      injective,
-      evmos,
       onomy,
       quicksilver,
       stride,
