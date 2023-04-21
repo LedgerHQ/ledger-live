@@ -1,16 +1,23 @@
 import expect from "expect";
 import invariant from "invariant";
 import type { AlgorandAccount, AlgorandTransaction } from "./types";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { isAccountEmpty } from "../../account";
-import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
-import type { AppSpec } from "../../bot/types";
+import {
+  listTokensForCryptoCurrency,
+  getCryptoCurrencyById,
+  parseCurrencyUnit,
+} from "@ledgerhq/coin-framework/currencies/index";
+import { isAccountEmpty } from "@ledgerhq/coin-framework/account/index";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/coin-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { BigNumber } from "bignumber.js";
 import sample from "lodash/sample";
-import { listTokensForCryptoCurrency } from "../../currencies";
 import { extractTokenId } from "./tokens";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { acceptTransaction } from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("algorand");
@@ -20,7 +27,10 @@ const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
 // Ensure that, when the recipient corresponds to an empty account,
 // the amount to send is greater or equal to the required minimum
 // balance for such a recipient
-const checkSendableToEmptyAccount = (amount, recipient) => {
+const checkSendableToEmptyAccount = (
+  amount: BigNumber,
+  recipient: AccountLike
+) => {
   if (isAccountEmpty(recipient) && amount.lte(minBalanceNewAccount)) {
     invariant(
       amount.gt(minBalanceNewAccount),
@@ -30,7 +40,7 @@ const checkSendableToEmptyAccount = (amount, recipient) => {
 };
 
 // Get list of ASAs associated with the account
-const getAssetsWithBalance = (account) => {
+const getAssetsWithBalance = (account: Account): SubAccount[] => {
   return account.subAccounts
     ? account.subAccounts.filter(
         (a) => a.type === "TokenAccount" && a.balance.gt(0)
@@ -38,7 +48,10 @@ const getAssetsWithBalance = (account) => {
     : [];
 };
 
-const pickSiblingsOptedIn = (siblings: Account[], assetId: string) => {
+const pickSiblingsOptedIn = (
+  siblings: Account[],
+  assetId: string
+): Account | undefined => {
   return sample(
     siblings.filter((a) => {
       return a.subAccounts?.some(
@@ -51,8 +64,10 @@ const pickSiblingsOptedIn = (siblings: Account[], assetId: string) => {
 // TODO: rework to perform _difference_ between
 // array of valid ASAs and array of ASAs currently
 // being opted-in by an account
-const getRandomAssetId = (account) => {
-  const optedInASA = account.subAccounts?.reduce((old, current) => {
+
+const getRandomAssetId = (account: Account): string | undefined => {
+  // FIXME: properly type reduce function and optedInASA
+  const optedInASA = account.subAccounts?.reduce((old: any, current: any) => {
     if (current.type === "TokenAccount") {
       return [...old, current.token.id];
     }
