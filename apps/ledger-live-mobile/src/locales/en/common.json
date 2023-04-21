@@ -5421,7 +5421,11 @@
             },
             "cta": "Continue"
           },
-          "endDate": "The end date for this delegation must be between {{minEndDate}} and {{maxEndDate}}."
+          "endDate": {
+            "range": "The end date for this delegation must be between {{minEndDate}} and {{maxEndDate}}.",
+            "selectEndDate": "Select end date",
+            "selectEndTime": "Select end time"
+          }
         }
       }
     },

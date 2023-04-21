@@ -116,7 +116,7 @@ export default function DelegationEndDate({ navigation, route }: Props) {
                 </View>
                 <LText semiBold style={styles.subText} color="grey">
                   <Trans
-                    i18nKey={`avalanchepchain.delegation.flow.steps.endDate`}
+                    i18nKey={`avalanchepchain.delegation.flow.steps.endDate.range`}
                     values={{
                       minEndDate: readableMinEndDate,
                       maxEndDate: readableMaxEndDate,
