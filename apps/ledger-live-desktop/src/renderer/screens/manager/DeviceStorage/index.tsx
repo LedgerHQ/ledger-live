@@ -248,7 +248,7 @@ export const StorageBar = ({
   <StorageBarWrapper installing={jobInProgress}>
     {!isIncomplete && (
       <TransitionGroup component={StorageBarGraph}>
-        {distribution.apps.map(({ name, currency, bytes, blocks }, index) => (
+        {distribution.apps.map(({ name, currency, bytes, blocks }) => (
           <Transition
             timeout={{
               appear: 333,

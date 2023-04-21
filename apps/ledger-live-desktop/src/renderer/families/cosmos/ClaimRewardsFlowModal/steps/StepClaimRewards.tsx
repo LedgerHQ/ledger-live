@@ -20,8 +20,6 @@ export default function StepClaimRewards({
   parentAccount,
   onUpdateTransaction,
   transaction,
-  status,
-  bridgePending,
   warning,
   error,
   t,
@@ -104,7 +102,6 @@ export function StepClaimRewardsFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;

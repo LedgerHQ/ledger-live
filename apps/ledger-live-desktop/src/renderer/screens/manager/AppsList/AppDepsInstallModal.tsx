@@ -36,11 +36,10 @@ const LinkIconWrapper = styled.div`
 type Props = {
   app?: App;
   dependencies?: App[];
-  appList: App[];
   dispatch: (a: Action) => void;
   onClose: () => void;
 };
-const AppDepsInstallModal = ({ app, dependencies, appList, dispatch, onClose }: Props) => {
+const AppDepsInstallModal = ({ app, dependencies, dispatch, onClose }: Props) => {
   const onConfirm = useCallback(() => {
     if (app && app.name)
       dispatch({

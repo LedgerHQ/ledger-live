@@ -146,18 +146,6 @@ async function getKey<V>(
 }
 
 /**
- * Get whole namespace
- */
-async function getNamespace(ns: string, defaultValue?: unknown) {
-  await ensureNSLoaded(ns);
-  return memoryNamespaces[ns] || defaultValue;
-}
-async function setNamespace(ns: string, value: unknown) {
-  set(memoryNamespaces, ns, value);
-  return save(ns);
-}
-
-/**
  * Check if a key has been decrypted
  *
  * /!\ it consider encrypted if it's string and can't JSON.parse, so
@@ -227,10 +215,7 @@ function hasEncryptionKey(ns: string, keyPath: string) {
     return false;
   }
 }
-function getDBPath() {
-  if (!DBPath) throw new Error("Trying to get db path but it is not initialized");
-  return DBPath;
-}
+
 export default {
   init,
   reload,

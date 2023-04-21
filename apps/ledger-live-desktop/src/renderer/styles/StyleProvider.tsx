@@ -1,7 +1,7 @@
 import "@ledgerhq/react-ui/assets/fonts";
 import React, { useMemo } from "react";
-import { ThemeProvider, StyledComponent, DefaultTheme } from "styled-components";
-import defaultTheme, { Theme } from "./theme";
+import { ThemeProvider, DefaultTheme } from "styled-components";
+import defaultTheme from "./theme";
 import palettes from "./palettes";
 import { GlobalStyle } from "./global";
 import {

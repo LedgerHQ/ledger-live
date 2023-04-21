@@ -56,11 +56,9 @@ type OperationDetailsDelegationProps = {
   validators: CosmosValidatorItem[];
 };
 export const OperationDetailsDelegation = ({
-  discreet,
   unit,
   currency,
   delegations,
-  account,
   isTransactionField,
   validators,
 }: OperationDetailsDelegationProps) => {

@@ -6,7 +6,7 @@ import Text from "~/renderer/components/Text";
 import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 
-const Container = styled(Box).attrs(p => ({
+const Container = styled(Box).attrs(() => ({
   mb: 24,
 }))``;
 const twitterHashtag = "LedgerLiveApp";

@@ -39,8 +39,6 @@ type Props = {
   allCurrencies: Array<TokenCurrency | CryptoCurrency>;
   defaultCurrencyId?: string | null;
   defaultAccountId?: string | null;
-  allowAddAccount?: boolean;
-  allowedCurrencies?: string[];
   confirmCb?: (a: Account) => void;
   flow?: string;
 };
@@ -54,8 +52,6 @@ const SelectAccountAndCurrency = ({
   allCurrencies,
   defaultCurrencyId,
   defaultAccountId,
-  allowAddAccount,
-  allowedCurrencies,
   confirmCb,
   flow,
 }: Props) => {

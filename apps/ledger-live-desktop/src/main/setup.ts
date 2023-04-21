@@ -63,7 +63,7 @@ ipcMain.handle(
 );
 ipcMain.handle(
   "delete-lss-config",
-  async (event): Promise<boolean> => {
+  async (): Promise<boolean> => {
     const userDataDirectory = resolveUserDataDirectory();
     const filePath = path.resolve(userDataDirectory, lssFileName);
     if (filePath) {
@@ -76,7 +76,7 @@ ipcMain.handle(
 );
 ipcMain.handle(
   "load-lss-config",
-  async (event): Promise<string | undefined | null> => {
+  async (): Promise<string | undefined | null> => {
     try {
       const userDataDirectory = resolveUserDataDirectory();
       const filePath = path.resolve(userDataDirectory, lssFileName);

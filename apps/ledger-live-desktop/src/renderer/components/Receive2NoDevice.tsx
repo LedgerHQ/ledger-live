@@ -5,11 +5,9 @@ import Button from "~/renderer/components/Button";
 const Receive2NoDevice = ({
   onVerify,
   onContinue,
-  name,
 }: {
   onVerify: Function;
   onContinue?: Function;
-  name: string;
 }) => {
   return (
     <>

@@ -42,18 +42,13 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
   const ptxSmartRouting = useFeature("ptxSmartRouting");
 
   // eslint-disable-next-line no-unused-vars
-  const [availableOnBuy, availableOnSell] = useMemo(() => {
+  const availableOnBuy = useMemo(() => {
     if (!rampCatalog.value) {
-      return [false, false];
+      return false;
     }
     const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
-    const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.offRamp,
-    );
-    return [
-      allBuyableCryptoCurrencyIds.includes(currency.id),
-      allSellableCryptoCurrencyIds.includes(currency.id),
-    ];
+
+    return allBuyableCryptoCurrencyIds.includes(currency.id);
   }, [rampCatalog.value, currency.id]);
   const hasTokens =
     mainAccount.subAccounts &&

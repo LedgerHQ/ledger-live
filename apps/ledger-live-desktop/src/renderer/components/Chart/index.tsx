@@ -71,7 +71,6 @@ export default function Chart({
   renderTooltip,
   valueKey = "value",
   suggestedMin,
-  suggestedMax,
 }: Props) {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);

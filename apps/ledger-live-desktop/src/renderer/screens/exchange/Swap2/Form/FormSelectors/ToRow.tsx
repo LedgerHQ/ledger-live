@@ -51,12 +51,9 @@ const InputCurrencyContainer = styled(Box)`
 `;
 function ToRow({
   toCurrency,
-  setToAccount,
   setToCurrency,
   toAmount,
   fromAccount,
-  provider,
-  toAccount,
   loadingRates,
   updateSelectedRate,
 }: Props) {

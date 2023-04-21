@@ -28,7 +28,6 @@ const Container: ThemedComponent<{
   min-height: 220px;
 `;
 const StepConfirmation = ({
-  account,
   t,
   optimisticOperation,
   error,

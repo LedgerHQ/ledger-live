@@ -28,7 +28,7 @@ type SwapFormSummaryProps = {
   kycStatus?: KYCStatus;
   provider?: string;
 };
-const SwapFormSummary = ({ swapTransaction, kycStatus, provider }: SwapFormSummaryProps) => {
+const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) => {
   const {
     transaction,
     status,
