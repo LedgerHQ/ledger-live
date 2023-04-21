@@ -30,7 +30,7 @@ export default function StepDelegation({
   const selectPool = (stakePool: StakePool) => {
     setSelectedPool(stakePool);
     const bridge: AccountBridge<CardanoTransaction> = getAccountBridge(account, parentAccount);
-    onUpdateTransaction(tx => {
+    onUpdateTransaction(() => {
       const updatedTransaction = bridge.updateTransaction(transaction as CardanoTransaction, {
         mode: "delegate",
         poolId: stakePool.poolId,

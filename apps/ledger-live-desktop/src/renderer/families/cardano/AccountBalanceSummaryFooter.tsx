@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -11,6 +12,7 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
+
 const Wrapper: ThemedComponent<any> = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
@@ -46,11 +48,12 @@ const AmountValue = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
 }))``;
+
 type Props = {
-  account: any;
-  countervalue: any;
+  account: CardanoAccount;
 };
-const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
+
+const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const { spendableBalance: _spendableBalance } = account;

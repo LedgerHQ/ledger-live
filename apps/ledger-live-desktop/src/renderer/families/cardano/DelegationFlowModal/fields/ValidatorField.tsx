@@ -54,7 +54,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
         },
       );
     }
-  }, [account]);
+  }, [account, delegation?.poolId, onChangeValidator]);
   const onSearch = useCallback(evt => setSearchQuery(evt.target.value), [setSearchQuery]);
   const renderItem = (validator: StakePool, validatorIdx: number) => {
     return (

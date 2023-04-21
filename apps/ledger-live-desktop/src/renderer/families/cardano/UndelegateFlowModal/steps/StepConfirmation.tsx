@@ -23,14 +23,7 @@ const Container: ThemedComponent<{
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
-function StepConfirmation({
-  t,
-  optimisticOperation,
-  error,
-  signed,
-}: StepProps & {
-  theme: any;
-}) {
+function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) {
   if (optimisticOperation) {
     return (
       <Container>
