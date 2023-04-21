@@ -1,9 +1,8 @@
-import React, { useCallback, useState, useMemo , ElementProps } from "react";
+import React, { useCallback, useState, useMemo, ElementProps } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import {
-  getAccountCurrency,
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
@@ -32,8 +31,7 @@ import DelegationRow from "./Row";
 import PoolImage from "../shared/PoolImage";
 
 type Props = {
-  account: Account,
-  parentAccount: Account,
+  account: Account;
 };
 
 type DelegationDrawerProps = ElementProps<typeof DelegationDrawer>;
@@ -46,7 +44,6 @@ function Delegations({ account }: Props) {
   const mainAccount = getMainAccount(account, undefined);
 
   const unit = getAccountUnit(account);
-  const currency = getAccountCurrency(account);
   const navigation = useNavigation();
 
   const { cardanoResources } = account;
@@ -60,11 +57,11 @@ function Delegations({ account }: Props) {
       screen,
       params,
     }: {
-      route: typeof NavigatorName | typeof ScreenName,
-      screen?: typeof ScreenName,
-      params?: { [key: string]: any },
+      route: typeof NavigatorName | typeof ScreenName;
+      screen?: typeof ScreenName;
+      params?: { [key: string]: unknown };
     }) => {
-      setDelegation();
+      setDelegation(undefined);
       navigation.navigate(route, {
         screen,
         params: { ...params, accountId: account.id },
@@ -99,7 +96,7 @@ function Delegations({ account }: Props) {
   }, [onNavigate, delegation, account]);
 
   const onCloseDrawer = useCallback(() => {
-    setDelegation();
+    setDelegation(undefined);
   }, []);
 
   const onOpenExplorer = useCallback(
@@ -205,13 +202,8 @@ function Delegations({ account }: Props) {
       {
         label: t("delegation.actions.redelegate"),
         Icon: (props: IconProps) => (
-          <Circle
-            {...props}
-            bg={colors.fog}
-          >
-            <RedelegateIcon
-              color={undefined}
-            />
+          <Circle {...props} bg={colors.fog}>
+            <RedelegateIcon color={undefined} />
           </Circle>
         ),
         disabled: false,
@@ -221,12 +213,7 @@ function Delegations({ account }: Props) {
       {
         label: t("delegation.actions.undelegate"),
         Icon: (props: IconProps) => (
-          <Circle
-            {...props}
-            bg={
-              rgba(colors.alert, 0.2)
-            }
-          >
+          <Circle {...props} bg={rgba(colors.alert, 0.2)}>
             <UndelegateIcon />
           </Circle>
         ),
@@ -235,7 +222,7 @@ function Delegations({ account }: Props) {
         event: "DelegationActionUndelegate",
       },
     ];
-  }, [delegation, account, t, onRedelegate, onUndelegate, colors.lightFog, colors.fog, colors.grey, colors.yellow, colors.alert]);
+  }, [t, onRedelegate, onUndelegate, colors.alert, colors.fog]);
 
   return (
     <View style={styles.root}>
@@ -245,12 +232,8 @@ function Delegations({ account }: Props) {
         account={account}
         ValidatorImage={({ size }) => (
           <PoolImage
-            isLedger={LEDGER_POOL_IDS.includes(delegation?.poolId)}
-            name={
-              delegation?.name ??
-              delegation?.poolId ??
-              ""
-            }
+            isLedger={LEDGER_POOL_IDS.includes(delegation?.poolId || "")}
+            name={delegation?.name ?? delegation?.poolId ?? ""}
             size={size}
           />
         )}
@@ -261,15 +244,8 @@ function Delegations({ account }: Props) {
 
       {d && d.poolId ? (
         <View style={styles.wrapper}>
-          <AccountSectionLabel
-            name={t("account.delegation.sectionLabel")}
-          />
-          <View
-            key={d.poolId}
-            style={[
-              styles.delegationsWrapper,
-            ]}
-          >
+          <AccountSectionLabel name={t("account.delegation.sectionLabel")} />
+          <View key={d.poolId} style={[styles.delegationsWrapper]}>
             <DelegationRow
               delegation={d}
               unit={unit}

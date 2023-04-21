@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import LText from "../../../components/LText";
@@ -13,15 +13,16 @@ import EarnDark from "../../../images/illustration/Dark/_003.png";
 import { urls } from "../../../config/urls";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
+import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { CardanoDelegationFlowParamList } from "./types";
 
-type Props = {
-  navigation: any;
-  route: any;
-};
+type Props = StackNavigatorProps<
+  CardanoDelegationFlowParamList,
+  ScreenName.CardanoDelegationStarted
+>;
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.CardanoDelegationSummary, {
       ...route.params,

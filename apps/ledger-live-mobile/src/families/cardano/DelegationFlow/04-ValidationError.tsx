@@ -6,25 +6,30 @@ import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
 import { urls } from "../../../config/urls";
+import {
+  BaseComposite,
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "../../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { CardanoDelegationFlowParamList } from "./types";
+import { ScreenName } from "../../../const";
 
 const forceInset = { bottom: "always" };
 
-type RouteParams = {
-  accountId: string,
-  deviceId: string,
-  transaction: any,
-  error: Error,
-};
-
-type Props = {
-  navigation: any,
-  route: { params: RouteParams },
-};
+type Props = BaseComposite<
+  StackNavigatorProps<
+    CardanoDelegationFlowParamList,
+    ScreenName.CardanoDelegationValidationError
+  >
+>;
 
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation.getParent().pop();
+    navigation
+      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
+      .pop();
   }, [navigation]);
 
   const contactUs = useCallback(() => {
