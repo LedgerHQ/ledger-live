@@ -3,6 +3,7 @@ import { Trans, withTranslation } from "react-i18next";
 import MemoValueField from "./MemoValueField";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
+
 const Root = (props: any) => {
   return (
     <Box flow={1}>
@@ -21,6 +22,7 @@ const Root = (props: any) => {
     </Box>
   );
 };
+
 export default {
   component: withTranslation()(Root),
   fields: ["memo"],

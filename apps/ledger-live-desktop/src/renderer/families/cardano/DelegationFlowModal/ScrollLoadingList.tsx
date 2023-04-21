@@ -2,6 +2,7 @@ import React, { useCallback, useState, useRef, memo, useEffect } from "react";
 import debounce from "lodash/debounce";
 import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
 import styled from "styled-components";
+import { StyleProp, ViewStyle } from "react-native";
 import Box from "~/renderer/components/Box";
 
 const ScrollContainer = styled(Box).attrs(p => ({
@@ -18,7 +19,7 @@ type ScrollLoadingListProps = {
   noResultPlaceholder: React.ReactNode | undefined | null;
   scrollEndThreshold?: number;
   bufferSize?: number;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
   fetchPoolsFromNextPage: () => void;
   search: string;
 };
