@@ -457,34 +457,31 @@ const generateGenericCosmosTest = (
   };
 };
 
-
 const cosmos = {
-  ...generateGenericCosmosTest("cosmos")
-}
+  ...generateGenericCosmosTest("cosmos"),
+};
 
 const osmosis = {
   ...generateGenericCosmosTest("osmosis", {
     testTimeout: 8 * 60 * 1000,
-  })
-}
+  }),
+};
 
 const desmos = {
   ...generateGenericCosmosTest("desmos", {
     testTimeout: 8 * 60 * 1000,
-  })
-}
+  }),
+};
 
 const umee = {
   ...generateGenericCosmosTest("umee", {
     testTimeout: 8 * 60 * 1000,
-  })
-}
-
-
+  }),
+};
 
 export default {
   cosmos,
   osmosis,
   desmos,
-  umee
+  umee,
 };

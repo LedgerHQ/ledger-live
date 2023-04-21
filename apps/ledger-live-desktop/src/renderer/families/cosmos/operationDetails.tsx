@@ -114,8 +114,8 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
   const currency = getAccountCurrency(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyName);
+  const currencyId = account.currency.id.toLowerCase();
+  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

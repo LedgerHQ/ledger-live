@@ -16,9 +16,9 @@ const ValidatorsSection: ThemedComponent<{}> = styled(Box)`
   padding-bottom: ${p => p.theme.space[6]}px;
 `;
 export default function ValidatorField({ account, transaction, t, onChange }: any) {
-  const currencyName = account.currency.name.toLowerCase();
+  const currencyId = account.currency.id.toLowerCase();
   const [search, setSearch] = useState("");
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName, search);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
   const { cosmosResources } = account;
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
   invariant(cosmosResources, "cosmosResources required");

@@ -39,8 +39,8 @@ function StepConfirmation({
 }: StepProps & {
   theme: any;
 }) {
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators } = useCosmosFamilyPreloadData(currencyName);
+  const currencyId = account.currency.id;
+  const { validators } = useCosmosFamilyPreloadData(currencyId);
   const locale = useSelector(localeSelector);
   if (optimisticOperation) {
     const unit = account && getAccountUnit(account);
