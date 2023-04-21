@@ -52,7 +52,10 @@ import VerifyAccount from "../../screens/VerifyAccount";
 import { LiveApp } from "../../screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
 import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
-import { BleDevicePairingFlow } from "../../screens/BleDevicePairingFlow/index";
+import {
+  BleDevicePairingFlow,
+  bleDevicePairingFlowHeaderOptions,
+} from "../../screens/BleDevicePairingFlow/index";
 import ProviderList from "../../screens/Exchange/ProviderList";
 import ProviderView from "../../screens/Exchange/ProviderView";
 import ScreenHeader from "../../screens/Exchange/ScreenHeader";
@@ -532,12 +535,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.BleDevicePairingFlow}
         component={BleDevicePairingFlow}
-        options={{
-          headerShown: true,
-          headerLeft: () => <NavigationHeaderBackButton />,
-          headerTitle: () => null,
-          headerRight: () => null,
-        }}
+        options={{ ...bleDevicePairingFlowHeaderOptions }}
       />
       <Stack.Screen
         name={NavigatorName.PostOnboarding}
