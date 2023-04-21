@@ -1,11 +1,11 @@
-import type { DeviceAction } from "../../bot/types";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { AlgorandTransaction } from "./types";
-import { findTokenById } from "../../currencies";
+import { findTokenById } from "@ledgerhq/coin-framework/currencies/index";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "../../bot/specs";
+} from "@ledgerhq/coin-framework/bot/specs";
 import { extractTokenId, addPrefixToken } from "./tokens";
 import { displayTokenValue } from "./deviceTransactionConfig";
 
