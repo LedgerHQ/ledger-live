@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.19.1-nightly.2
+
+### Patch Changes
+
+- [#3258](https://github.com/LedgerHQ/ledger-live/pull/3258) [`2bb99cc244`](https://github.com/LedgerHQ/ledger-live/commit/2bb99cc244dc4ecbcf140beed2f1ababf49f6438) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - LLM - Fix Unable to Hide NFT collection on Detail Drawer
+
 ## 3.19.1-nightly.1
 
 ### Patch Changes
