@@ -1,7 +1,8 @@
 /* eslint-disable consistent-return */
 
 import { setKey } from "~/renderer/storage";
-import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
+import { actionTypePrefix as postOnboardingActionTypePrefix } from "@ledgerhq/live-common/postOnboarding/actions;
 import { accountsSelector } from "./../reducers/accounts";
 import { settingsExportSelector, areSettingsLoaded } from "./../reducers/settings";
 let DB_MIDDLEWARE_ENABLED = true;
@@ -21,10 +22,10 @@ export default (store: any) => (next: any) => (action: any) => {
     const state = store.getState();
     setKey("app", "accounts", accountsSelector(state));
     // ^ TODO ultimately we'll do same for accounts to drop DB: pattern
-  } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("POST_ONBOARDING")) {
+  } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith(postOnboardingActionTypePrefix)) {
     next(action);
     const state = store.getState();
-    setKey("app", "postOnboarding", hubStateSelector(state));
+    setKey("app", "postOnboarding", postOnboardingSelector(state));
   } else {
     const oldState = store.getState();
     const res = next(action);
