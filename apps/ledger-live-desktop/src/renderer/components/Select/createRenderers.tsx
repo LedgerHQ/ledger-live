@@ -25,8 +25,8 @@ export default <
   renderValue,
   selectProps,
 }: {
-  renderOption: (a: OptionType) => Node;
-  renderValue: (a: OptionType) => Node;
+  renderOption: (a: { data: OptionType }) => React.ReactNode;
+  renderValue: (a: { data: OptionType }) => React.ReactNode;
   selectProps: SelectProps<OptionType, IsMulti, GroupType>;
 }) => ({
   ...STYLES_OVERRIDE,
@@ -116,7 +116,7 @@ const STYLES_OVERRIDE = {
 const InformativeContainer = styled(Box).attrs(() => ({
   alignItems: "center",
   justifyContent: "center",
-}))`
+}))<{ disabled?: boolean }>`
   position: absolute;
   top: 0;
   right: 0;

@@ -12,10 +12,11 @@ import Button from "~/renderer/components/ButtonV3";
 import CheckBox from "~/renderer/components/CheckBox";
 import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
+import { Account } from "@ledgerhq/types-live";
 
 export const LOCAL_STORAGE_KEY_PREFIX = "receive_staking_";
 
-export const CheckBoxContainer = styled(Flex)`
+export const CheckBoxContainer: typeof Flex = styled(Flex)`
   & > div {
     column-gap: 15px;
   }
@@ -39,14 +40,19 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   const [description, setDescription] = useState<string>("");
   const { account, parentAccount } = props;
 
-  const id = account.currency.id;
-  const supportLink = receiveStakingFlowConfig?.params[id]?.supportLink;
-  const manage = perFamilyManageActions[account.currency.family];
-  const familyManageActions = manage && manage({ account, parentAccount });
+  const id = account && "currency" in account ? account.currency?.id : undefined;
+  const supportLink = id ? receiveStakingFlowConfig?.params[id]?.supportLink : undefined;
+  const manage =
+    account && "currency" in account
+      ? perFamilyManageActions[account.currency.family as keyof typeof perFamilyManageActions]
+      : undefined;
+  const familyManageActions =
+    account && manage ? manage({ account: account as Account, parentAccount }) : undefined;
 
   useEffect(() => {
     const manageList =
       familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
+    // @ts-expect-error ts seems to have issues with union of arrays of different types
     const newAction = manageList && manageList.find(item => item.key === "Stake");
     const newTitle = t(`receive.steps.staking.${id}.title`);
     const newDescription = t(`receive.steps.staking.${id}.description`);
@@ -83,7 +89,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
 
   const onChange = useCallback(() => {
     const value = !doNotShowAgain;
-    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`, value);
+    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`, "" + value);
     setDoNotShowAgain(value);
     track("button_clicked", {
       button: "not_show",
@@ -113,45 +119,57 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   );
 };
 
+type Manage = ReturnType<typeof perFamilyManageActions[keyof typeof perFamilyManageActions]>;
 export const StepReceiveStakingFooter = (props: StepProps) => {
   const { t } = useTranslation();
-  const [action, setAction] = useState({});
+  const [action, setAction] = useState<Manage>({} as Manage);
   const { account, parentAccount, closeModal } = props;
-  const manage = perFamilyManageActions[account.currency.family];
-  const familyManageActions = manage && manage({ account, parentAccount });
+  const manage =
+    account &&
+    "currency" in account &&
+    perFamilyManageActions[account.currency.family as keyof typeof perFamilyManageActions];
+  const familyManageActions =
+    manage && account && manage({ account: account as Account, parentAccount });
 
   useEffect(() => {
     const manageList =
       familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
+    // @ts-expect-error ts seems to have issues with union of arrays of different types
     const newAction = manageList && manageList.find(item => item.key === "Stake");
     if (JSON.stringify(newAction) !== JSON.stringify(action)) {
       setAction(newAction);
     }
   }, [action, familyManageActions]);
 
-  const getTrackProperties = useCallback(() => {
-    return {
-      page: window.location.hash
-        .split("/")
-        .filter(e => e !== "#")
-        .join("/"),
-      flow: "stake",
-      currency: account?.currency?.name,
-      provider: action?.provider?.name || "Ledger",
-      modal: "receive",
-      account: getAccountName(account),
-    };
-  }, [account, action?.provider?.name]);
+  const getTrackProperties = useCallback(
+    () => {
+      return {
+        page: window.location.hash
+          .split("/")
+          .filter(e => e !== "#")
+          .join("/"),
+        flow: "stake",
+        currency: account && "currency" in account ? account?.currency?.name : undefined,
+        // @ts-expect-error this is a valid check
+        provider: (action && "provider" in action && action?.provider?.name) || "Ledger",
+        modal: "receive",
+        account: account && getAccountName(account),
+      };
+    },
+    // @ts-expect-error this is a valid check
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [account, action?.provider?.name],
+  );
 
   const onStake = useCallback(() => {
-    if (action?.onClick) {
+    if (action && "onClick" in action && action?.onClick) {
       track("button_clicked", {
         button: "stake",
         ...getTrackProperties(),
       });
 
       closeModal();
-      action.onClick();
+      (action.onClick as () => void)();
     } else {
       closeModal();
     }
@@ -170,6 +188,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
       <Button onClick={onCloseModal}>{t("receive.steps.staking.footer.dismiss")}</Button>
       <Button variant="color" onClick={onStake}>
         {t("receive.steps.staking.footer.stake", {
+          // @ts-expect-error this is a valid check
           provider: action?.provider?.name ? action?.provider?.name : "Ledger",
         })}
       </Button>

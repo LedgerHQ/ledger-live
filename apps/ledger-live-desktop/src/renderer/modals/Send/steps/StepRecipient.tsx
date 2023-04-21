@@ -12,6 +12,7 @@ import SendRecipientFields, { getFields } from "../SendRecipientFields";
 import RecipientField from "../fields/RecipientField";
 import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
+import { Account } from "@ledgerhq/types-live";
 const StepRecipient = ({
   t,
   account,
@@ -76,7 +77,6 @@ const StepRecipient = ({
             account={mainAccount}
             transaction={transaction}
             onChangeTransaction={onChangeTransaction}
-            bridgePending={bridgePending}
             t={t}
             initValue={maybeRecipient}
             resetInitValue={onResetMaybeRecipient}

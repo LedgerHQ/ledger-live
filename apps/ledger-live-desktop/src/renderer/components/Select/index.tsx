@@ -11,7 +11,7 @@ import ReactSelect, {
 import AsyncReactSelect from "react-select/async";
 import { withTranslation } from "react-i18next";
 import { FixedSizeList as List } from "react-window";
-import styled, { withTheme, DefaultTheme } from "styled-components";
+import styled, { withTheme } from "styled-components";
 import debounce from "lodash/debounce";
 import createStyles from "./createStyles";
 import createRenderers from "./createRenderers";
@@ -22,31 +22,30 @@ export type Props<
   IsMulti extends boolean = false,
   GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
 > = {
-  theme: DefaultTheme;
   onChange: (a?: ValueType<OptionType, IsMulti> | null) => void;
   // custom renders
-  renderOption: (a: OptionType) => Node;
-  renderValue: (a: OptionType) => Node;
+  renderOption: (a: { data: OptionType }) => React.ReactNode;
+  renderValue: (a: { data: OptionType }) => React.ReactNode;
   // optional
-  async: boolean;
-  isRight: boolean;
-  isLeft: boolean;
-  small: boolean;
-  width: number;
-  minWidth: number;
-  virtual: boolean;
-  rowHeight: number;
+  async?: boolean;
+  isRight?: boolean;
+  isLeft?: boolean;
+  small?: boolean;
+  width?: number;
+  minWidth?: number;
+  virtual?: boolean;
+  rowHeight?: number;
   disableOptionPadding?: boolean;
-  error: Error | undefined | null;
+  error?: Error | undefined | null;
   // NB at least a different rendering for now
-  stylesMap: (a: ThemeConfig) => StylesConfig<OptionType, IsMulti, GroupType>;
+  stylesMap?: (a: ThemeConfig) => StylesConfig<OptionType, IsMulti, GroupType>;
   extraRenderers?: {
     [x: string]: (props: any) => React.ReactNode;
   };
   // Allows overriding react-select components. See: https://react-select.com/components
   disabledTooltipText?: string;
   selectDataTestId?: string;
-} & ReactSelectProps<OptionType, IsMulti, GroupType>;
+} & Omit<ReactSelectProps<OptionType, IsMulti, GroupType>, "theme">;
 
 const Row = styled.div`
   max-width: 100%;
@@ -231,7 +230,6 @@ class Select<
         error,
         rowHeight,
       });
-    // @ts-expect-error Typing styles is not that important - it will go away when we upgrade to the latest version of react-select
     styles = stylesMap ? stylesMap(styles) : styles;
     return (
       <Comp
@@ -252,8 +250,6 @@ class Select<
                   renderValue,
                   selectProps: this.props,
                 }),
-                // Flow is unhappy because extraRenderers keys can "theoretically" conflict.
-
                 ...(extraRenderers || {}),
               }
             : {
@@ -262,11 +258,9 @@ class Select<
                   renderValue,
                   selectProps: this.props,
                 }),
-
                 ...(extraRenderers || {}),
               }
         }
-        // @ts-expect-error Typing styles is not that important - it will go away when we upgrade to the latest version of react-select
         styles={styles}
         placeholder={placeholder}
         isDisabled={isDisabled}
@@ -286,4 +280,4 @@ class Select<
     );
   }
 }
-export default (withTranslation()(withTheme(Select)) as unknown) as typeof Select;
+export default (withTranslation()(withTheme(Select as any)) as unknown) as typeof Select;

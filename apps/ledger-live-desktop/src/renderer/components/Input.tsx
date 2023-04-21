@@ -135,11 +135,11 @@ const Base = styled.input.attrs(() => ({
 `;
 type Props = {
   keepEvent?: boolean;
-  onBlur: (a: SyntheticInputEvent<HTMLInputElement>) => void;
+  onBlur?: (a: React.FocusEvent<HTMLInputElement>) => void;
   onChange?: Function;
-  onEnter?: (a: SyntheticKeyboardEvent<HTMLInputElement>) => any;
-  onEsc?: (a: SyntheticKeyboardEvent<HTMLInputElement>) => void;
-  onFocus: (a: SyntheticInputEvent<HTMLInputElement>) => void;
+  onEnter?: (a: React.KeyboardEvent<HTMLInputElement>) => any;
+  onEsc?: (a: React.KeyboardEvent<HTMLInputElement>) => void;
+  onFocus: (a: React.FocusEvent<HTMLInputElement>) => void;
   renderLeft?: any;
   renderRight?: any;
   containerProps?: object;
@@ -153,7 +153,7 @@ type Props = {
   value?: string;
   placeholder?: string;
 } & React.ComponentProps<typeof Base>;
-const Input = React.forwardRef(function Input(
+const Input = function Input(
   {
     renderLeft = null,
     renderRight = null,
@@ -178,7 +178,7 @@ const Input = React.forwardRef(function Input(
 ) {
   const [isFocus, setFocus] = useState(false);
   const handleChange = useCallback(
-    (e: SyntheticInputEvent<HTMLInputElement>) => {
+    (e: React.SyntheticEvent<HTMLInputElement>) => {
       if (onChange) {
         onChange(keepEvent ? e : e.target.value);
       }
@@ -186,7 +186,7 @@ const Input = React.forwardRef(function Input(
     [onChange, keepEvent],
   );
   const handleKeyDown = useCallback(
-    (e: SyntheticKeyboardEvent<HTMLInputElement>) => {
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
       // handle enter key
       if (e.which === 13 && onEnter) {
         onEnter(e);
@@ -202,7 +202,7 @@ const Input = React.forwardRef(function Input(
     }
   }, [inputRef]);
   const handleFocus = useCallback(
-    (e: SyntheticInputEvent<HTMLInputElement>) => {
+    (e: React.FocusEvent<HTMLInputElement>) => {
       setFocus(true);
       if (onFocus) {
         onFocus(e);
@@ -211,7 +211,7 @@ const Input = React.forwardRef(function Input(
     [onFocus],
   );
   const handleBlur = useCallback(
-    (e: SyntheticInputEvent<HTMLInputElement>) => {
+    (e: React.FocusEvent<HTMLInputElement>) => {
       setFocus(false);
       if (onBlur) {
         onBlur(e);
@@ -268,5 +268,5 @@ const Input = React.forwardRef(function Input(
       {renderRight ? <RenderRightWrapper>{renderRight}</RenderRightWrapper> : null}
     </Container>
   );
-});
-export default Input;
+};
+export default React.forwardRef(Input) as typeof Input;

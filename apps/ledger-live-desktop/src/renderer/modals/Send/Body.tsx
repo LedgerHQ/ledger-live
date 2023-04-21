@@ -27,25 +27,28 @@ import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import { St, StepId } from "./types";
+
+export type Data = {
+  account: AccountLike | undefined | null;
+  parentAccount: Account | undefined | null;
+  startWithWarning?: boolean;
+  recipient?: string;
+  amount?: BigNumber;
+  disableBacks?: string[];
+  isNFTSend?: boolean;
+  walletConnectProxy?: boolean;
+  nftId?: string;
+  nftCollection?: string;
+  transaction?: Transaction;
+  onConfirmationHandler: Function;
+  onFailHandler: Function;
+};
+
 type OwnProps = {
   stepId: StepId;
   onChangeStepId: (a: StepId) => void;
-  onClose: () => void;
-  params: {
-    account: AccountLike | undefined | null;
-    parentAccount: Account | undefined | null;
-    startWithWarning?: boolean;
-    recipient?: string;
-    amount?: BigNumber;
-    disableBacks?: string[];
-    isNFTSend?: boolean;
-    walletConnectProxy?: boolean;
-    nftId?: string;
-    nftCollection?: string;
-    transaction?: Transaction;
-    onConfirmationHandler: Function;
-    onFailHandler: Function;
-  };
+  onClose?: () => void | undefined;
+  params: Data;
 };
 type StateProps = {
   t: TFunction;
@@ -56,7 +59,7 @@ type StateProps = {
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
 type Props = {} & OwnProps & StateProps;
-const createSteps = (disableBacks = []): St[] => [
+const createSteps = (disableBacks: string[] = []): St[] => [
   {
     id: "warning",
     excludeFromBreadcrumb: true,
@@ -164,8 +167,8 @@ const Body = ({
     const stepId = params && params.startWithWarning ? "warning" : null;
     if (stepId) onChangeStepId(stepId);
   }, [onChangeStepId, params]);
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const currency = account ? getAccountCurrency(account) : undefined;
   const currencyName = currency ? currency.name : undefined;
@@ -182,11 +185,11 @@ const Body = ({
   );
   const handleChangeNFT = useCallback(
     nextNft => {
-      setAccount(account);
-      const bridge = getAccountBridge(account);
+      setAccount(account as AccountLike, undefined);
+      const bridge = account && getAccountBridge(account);
       const standard = nextNft.standard.toLowerCase();
       setTransaction(
-        bridge.updateTransaction(transaction, {
+        bridge?.updateTransaction(transaction, {
           tokenIds: [nextNft.tokenId],
           quantities: [BigNumber(1)],
           collection: nextNft.contract,
@@ -198,11 +201,15 @@ const Body = ({
   );
   const handleChangeQuantities = useCallback(
     nextQuantity => {
-      const bridge = getAccountBridge(account);
+      const bridge = account && getAccountBridge(account);
       const cleanQuantity = BigNumber(nextQuantity.replace(/\D/g, "") || 0);
-      if (!transaction.quantities[0].eq(cleanQuantity)) {
+      if (
+        !transaction ||
+        !("quantities" in transaction) ||
+        !transaction.quantities?.[0]?.eq(cleanQuantity)
+      ) {
         setTransaction(
-          bridge.updateTransaction(transaction, {
+          bridge?.updateTransaction(transaction, {
             quantities: [BigNumber(cleanQuantity)],
           }),
         );
@@ -295,8 +302,8 @@ const Body = ({
     </Stepper>
   );
 };
-const m: React.ComponentType<OwnProps> = compose(
+const m = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
-)(Body);
+)(Body) as React.ComponentType<OwnProps>;
 export default m;

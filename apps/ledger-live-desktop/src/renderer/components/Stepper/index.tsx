@@ -25,7 +25,7 @@ type OwnProps<T, StepProps> = {
   onStepChange: (a: Step<T, StepProps>) => void;
   steps: Step<T, StepProps>[];
   hideBreadcrumb?: boolean;
-  onClose: (a: void) => void;
+  onClose?: (a: void) => void;
   disabledSteps?: number[];
   errorSteps?: number[];
   error?: Error | null;

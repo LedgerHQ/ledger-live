@@ -8,11 +8,17 @@ import {
   lineHeight,
   letterSpacing,
   system,
+  FontWeightProps,
+  LineHeightProps,
+  FontSizeProps,
+  ColorProps,
+  SpaceProps,
+  TextAlignProps,
+  LetterSpacingProps,
 } from "styled-system";
 import fontFamily from "~/renderer/styles/styled/fontFamily";
 const uppercase = system({
   uppercase: {
-    prop: "uppercase",
     property: "textTransform",
     transform: value => (value ? "uppercase" : "none"),
   },
@@ -20,17 +26,24 @@ const uppercase = system({
 const textTransform = system({
   textTransform: true,
 });
-const Text: ThemedComponent<{
+
+export type TextProps = {
+  capitalize?: boolean;
+  ff?: string;
   fontFamily?: string;
-  fontSize?: number | string;
   textAlign?: string;
   color?: string;
-  fontWeight?: string;
-  mt?: number | string;
-  mb?: number | string;
   align?: "DEPRECATED: USE textAlign INSTEAD";
   lineHeight?: string;
-}> = styled.span`
+} & FontSizeProps &
+  FontWeightProps &
+  LineHeightProps &
+  ColorProps &
+  SpaceProps &
+  TextAlignProps &
+  LetterSpacingProps;
+
+const Text = styled.span<TextProps>`
   ${uppercase};
   ${p => (p.capitalize ? `text-transform: capitalize;` : "")};
   ${lineHeight};
