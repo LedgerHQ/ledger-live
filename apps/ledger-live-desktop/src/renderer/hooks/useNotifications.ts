@@ -34,7 +34,7 @@ export function useNotifications() {
     data: NotificationContentCard[];
   }[] => {
     const notifsByDay: Record<string, NotificationContentCard[]> = notifs.reduce(
-      (sum, notif: NotificationContentCard) => {
+      (sum: Record<string, NotificationContentCard[]>, notif: NotificationContentCard) => {
         // group by publication date
         const k = startOfDayTime(notif.createdAt);
 

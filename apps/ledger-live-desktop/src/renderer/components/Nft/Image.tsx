@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import Skeleton from "./Skeleton";
 import Placeholder from "./Placeholder";

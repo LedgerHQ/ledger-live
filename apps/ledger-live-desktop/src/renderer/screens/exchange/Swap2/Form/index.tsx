@@ -53,9 +53,8 @@ import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import usePageState from "./hooks/usePageState";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { getCustomDappUrl } from "./utils";
-const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
+const Wrapper = styled(Box).attrs({
   p: 20,
   mt: 12,
 })`

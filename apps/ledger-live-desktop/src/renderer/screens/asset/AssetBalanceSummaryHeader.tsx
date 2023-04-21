@@ -15,7 +15,6 @@ import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
-
 import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";

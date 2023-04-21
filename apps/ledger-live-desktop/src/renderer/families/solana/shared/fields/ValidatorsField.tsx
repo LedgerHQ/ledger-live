@@ -14,7 +14,6 @@ import ValidatorSearchInput, {
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import ValidatorRow from "../components/ValidatorRow";
 type Props = {
   t: TFunction;
@@ -84,7 +83,7 @@ const ValidatorField = ({ t, account, onChangeValidator, chosenVoteAccAddr, stat
     </>
   );
 };
-const ValidatorsFieldContainer: ThemedComponent<{}> = styled(Box)`
+const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
 `;

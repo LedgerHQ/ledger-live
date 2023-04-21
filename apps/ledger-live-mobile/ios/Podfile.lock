@@ -801,7 +801,7 @@ DEPENDENCIES:
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.5.11_react-native@0.71.6_react@18.0.0/node_modules/react-native-fast-image`)"
   - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@14.11.1_react-native@0.71.6_react@18.0.0/node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@14.11.1_@react-native-firebase+app@14.11.1/node_modules/@react-native-firebase/messaging`)"
-  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.11.1_@react-native-firebase+analytics@14.11.1_@react-native-firebase+app@14.11.1/node_modules/@react-native-firebase/remote-config`)"
+  - "RNFBRemoteConfig (from `../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.11.1_@react-native-firebase+app@14.11.1/node_modules/@react-native-firebase/remote-config`)"
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.9.0_react-native@0.71.6_react@18.0.0/node_modules/react-native-gesture-handler`)"
   - "RNInAppBrowser (from `../../../node_modules/.pnpm/react-native-inappbrowser-reborn@3.7.0_react-native@0.71.6/node_modules/react-native-inappbrowser-reborn`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
@@ -1007,7 +1007,7 @@ EXTERNAL SOURCES:
   RNFBMessaging:
     :path: "../../../node_modules/.pnpm/@react-native-firebase+messaging@14.11.1_@react-native-firebase+app@14.11.1/node_modules/@react-native-firebase/messaging"
   RNFBRemoteConfig:
-    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.11.1_@react-native-firebase+analytics@14.11.1_@react-native-firebase+app@14.11.1/node_modules/@react-native-firebase/remote-config"
+    :path: "../../../node_modules/.pnpm/@react-native-firebase+remote-config@14.11.1_@react-native-firebase+app@14.11.1/node_modules/@react-native-firebase/remote-config"
   RNGestureHandler:
     :path: "../../../node_modules/.pnpm/react-native-gesture-handler@2.9.0_react-native@0.71.6_react@18.0.0/node_modules/react-native-gesture-handler"
   RNInAppBrowser:

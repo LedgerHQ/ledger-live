@@ -5,8 +5,8 @@ import styled from "styled-components";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import IconPlus from "~/renderer/icons/Plus";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const AddAccountButton: ThemedComponent<{}> = styled.div`
+
+const AddAccountButton = styled.div`
   border: 1px dashed rgba(153, 153, 153, 0.3);
   cursor: pointer;
   border-radius: 4px;

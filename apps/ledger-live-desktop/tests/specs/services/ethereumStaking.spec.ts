@@ -2,14 +2,15 @@ import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Drawer } from "../../models/Drawer";
 import { Modal } from "../../models/Modal";
-import { PortfolioPage } from "tests/models/PortfolioPage";
-import { DiscoverPage } from "tests/models/DiscoverPage";
-import { MarketPage } from "tests/models/MarketPage";
-import { Layout } from "tests/models/Layout";
-import { MarketCoinPage } from "tests/models/MarketCoinPage";
-import { AssetPage } from "tests/models/AssetPage";
-import { AccountsPage } from "tests/models/AccountsPage";
-import { AccountPage } from "tests/models/AccountPage";
+import { PortfolioPage } from "../../models/PortfolioPage";
+import { DiscoverPage } from "../../models/DiscoverPage";
+import { MarketPage } from "../../models/MarketPage";
+import { Layout } from "../../models/Layout";
+import { MarketCoinPage } from "../../models/MarketCoinPage";
+import { AssetPage } from "../../models/AssetPage";
+import { AccountsPage } from "../../models/AccountsPage";
+import { AccountPage } from "../../models/AccountPage";
+import { getProvidersMock } from "./services-api-mocks/getProviders.mock";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
@@ -46,6 +47,11 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
   const layout = new Layout(page);
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
+
+  await page.route("https://swap.ledger.com/v4/providers**", async route => {
+    const mockProvidersResponse = getProvidersMock();
+    route.fulfill({ body: mockProvidersResponse });
+  });
 
   await test.step("Entry buttons load with feature flag enabled", async () => {
     await expect.soft(page).toHaveScreenshot("portfolio-entry-buttons.png");

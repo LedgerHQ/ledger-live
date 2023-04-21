@@ -9,9 +9,7 @@ import { urls } from "~/config/urls";
 import { acceptTerms } from "~/renderer/terms";
 import { Text, Button, Logos, Icons, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
 import { saveSettings } from "~/renderer/actions/settings";
-
 import BuyNanoX from "./assets/buyNanoX.webm";
-
 import { hasCompletedOnboardingSelector, languageSelector } from "~/renderer/reducers/settings";
 
 const StyledLink = styled(Text)`

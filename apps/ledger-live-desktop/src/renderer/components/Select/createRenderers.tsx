@@ -9,11 +9,10 @@ import IconCross from "~/renderer/icons/Cross";
 import { useTranslation } from "react-i18next";
 import { Option } from ".";
 import SearchIcon from "~/renderer/icons/Search";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Props as SelectProps } from "~/renderer/components/Select";
 import { rgba } from "~/renderer/styles/helpers";
 type OptionProps = any;
-const InputWrapper: ThemedComponent<{}> = styled(Box)`
+const InputWrapper = styled(Box)`
   & input::placeholder {
     color: ${p => p.theme.colors.palette.text.shade30};
   }

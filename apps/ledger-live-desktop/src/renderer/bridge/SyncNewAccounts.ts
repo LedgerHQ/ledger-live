@@ -14,6 +14,7 @@ export const SyncNewAccounts = ({ priority }: { priority: number }) => {
         type: "SYNC_SOME_ACCOUNTS",
         accountIds,
         priority,
+        reason: "sync-new-accounts",
       });
     }
   }, [ids, sync, priority]);

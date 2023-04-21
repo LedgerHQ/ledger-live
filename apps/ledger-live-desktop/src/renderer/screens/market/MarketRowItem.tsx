@@ -20,7 +20,6 @@ import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/ut
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import useStakeFlow from "~/renderer/screens/stake/index";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const CryptoCurrencyIconWrapper = styled.div`

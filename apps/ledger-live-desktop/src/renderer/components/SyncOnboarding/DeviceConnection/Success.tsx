@@ -4,7 +4,6 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useHistory } from "react-router-dom";
-
 import DeviceIllustration from "../../DeviceIllustration";
 import OnboardingNavHeader from "../../Onboarding/OnboardingNavHeader";
 

@@ -6,7 +6,6 @@ import Box from "~/renderer/components/Box";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import Row from "./Row";
 import Header from "./Header";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { useDistribution } from "~/renderer/actions/general";
 import TableContainer, { TableHeader } from "../TableContainer";
 export default function AssetDistribution() {

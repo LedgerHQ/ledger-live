@@ -17,7 +17,6 @@ import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import perFamilyTokenList from "~/renderer/generated/TokenList";
 import { useTimeRange } from "~/renderer/actions/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
@@ -159,7 +158,7 @@ function ReceiveButton(props: { onClick: () => void }) {
     </Button>
   );
 }
-const EmptyState: ThemedComponent<{}> = styled.div`
+const EmptyState = styled.div`
   padding: 15px 20px;
   border-radius: 4px;
   display: flex;
@@ -172,7 +171,7 @@ const EmptyState: ThemedComponent<{}> = styled.div`
     align-self: center;
   }
 `;
-const Placeholder: ThemedComponent<{}> = styled.div`
+const Placeholder = styled.div`
   flex-direction: column;
   display: flex;
   padding-right: 50px;

@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
-
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 

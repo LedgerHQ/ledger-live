@@ -5,7 +5,6 @@ import Text from "~/renderer/components/Text";
 import { Rotating } from "~/renderer/components/Spinner";
 import IconBlueSpinner from "~/renderer/icons/BlueSpinner";
 import Tooltip from "~/renderer/components/Tooltip";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import styled from "styled-components";
 import { colors } from "~/renderer/styles/theme";
 import useEnv from "~/renderer/hooks/useEnv";

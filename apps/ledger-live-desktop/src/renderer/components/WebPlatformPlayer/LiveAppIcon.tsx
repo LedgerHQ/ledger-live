@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import styled, { css } from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   size: number;
   disabled?: boolean;

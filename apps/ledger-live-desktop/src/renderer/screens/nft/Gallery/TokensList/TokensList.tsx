@@ -1,6 +1,5 @@
 import React, { memo } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Account, NFT } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import { useSelector } from "react-redux";

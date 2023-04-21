@@ -6,7 +6,6 @@ import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-
 import ByteSize from "~/renderer/components/ByteSize";
 import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";

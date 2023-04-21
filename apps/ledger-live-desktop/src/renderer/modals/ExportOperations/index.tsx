@@ -213,7 +213,7 @@ const Title = styled(Box).attrs(() => ({
 }))`
   text-align: center;
 `;
-const ConnectedExportOperations: React$ComponentType<OwnProps> = connect(
+const ConnectedExportOperations: React.ComponentType<OwnProps> = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(ExportOperations);

@@ -1,5 +1,4 @@
 import generated from "../generated/modals";
-
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
 import MODAL_PASSWORD from "./PasswordModal";
@@ -28,7 +27,7 @@ import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
 
-type ModalComponent = unknown; // FIXME determine the common ground to modals
+type ModalComponent = React.ComponentType<any>; // FIXME determine the common ground to modals
 type Modals = Record<string, ModalComponent>;
 
 const modals: Modals = {
