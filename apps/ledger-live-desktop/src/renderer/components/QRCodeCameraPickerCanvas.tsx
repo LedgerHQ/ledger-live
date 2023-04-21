@@ -6,7 +6,7 @@ import logger from "~/renderer/logger";
 import IconCameraError from "~/renderer/icons/CameraError";
 import IconCross from "~/renderer/icons/Cross";
 import TranslatedError from "./TranslatedError";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 const CameraWrapper: ThemedComponent<{
   width: number;
   height: number;

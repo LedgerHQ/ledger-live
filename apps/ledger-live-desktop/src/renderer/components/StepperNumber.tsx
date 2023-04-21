@@ -1,10 +1,9 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import debounce from "lodash/debounce";
 import noop from "lodash/noop";
 import Box from "~/renderer/components/Box";
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   horizontal: true,
   flow: 1,
   alignItems: "center",

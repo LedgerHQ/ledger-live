@@ -35,7 +35,7 @@ export type FieldComponentProps = {
   status: TransactionStatus;
   field: DeviceTransactionField;
 };
-export type FieldComponent = React$ComponentType<FieldComponentProps>;
+export type FieldComponent = React.ComponentType<FieldComponentProps>;
 const AmountField = ({ account, status: { amount }, field }: FieldComponentProps) => (
   <TransactionConfirmField label={field.label}>
     <FormattedVal

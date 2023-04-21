@@ -35,7 +35,6 @@ const currency1 = getCryptoCurrencyById("ethereum"); // chain id 1
 
 jest.mock("../../../network");
 jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
-  // @ts-expect-error ES6
   get tokens() {
     return {
       1: [usdcDefinition],

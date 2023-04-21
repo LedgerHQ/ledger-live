@@ -13,7 +13,6 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Price from "~/renderer/components/Price";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import Swap from "~/renderer/icons/Swap";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";
 type Props = {
   isAvailable: boolean;
@@ -138,12 +137,12 @@ export default function AccountBalanceSummaryHeader({
     </Box>
   );
 }
-const Wrapper: ThemedComponent<{}> = styled(Box)`
+const Wrapper = styled(Box)`
   display: flex;
   align-items: center;
   flex-direction: row;
 `;
-const SwapButton: ThemedComponent<{}> = styled(Tabbable).attrs(() => ({
+const SwapButton = styled(Tabbable).attrs(() => ({
   color: "palette.text.shade100",
   ff: "Inter",
   fontSize: 7,

@@ -40,7 +40,7 @@ import moment from "moment";
 import useTheme from "~/renderer/hooks/useTheme";
 import Tooltip from "./Tooltip";
 import { Data } from "./types";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 export type Props = {
   data: Data;
   magnitude: number;
@@ -54,7 +54,7 @@ export type Props = {
   suggestedMin?: number;
   suggestedMax?: number;
 };
-const ChartContainer: ThemedComponent<{}> = styled.div.attrs(({ height }) => ({
+const ChartContainer = styled.div.attrs(({ height }) => ({
   style: {
     height,
   },

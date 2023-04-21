@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import AccountCard from "../AccountGridItem";
 import AccountCardPlaceholder from "../AccountGridItem/Placeholder";
 type Props = {
@@ -48,7 +47,7 @@ export default function GridBody({
     </GridBox>
   );
 }
-const GridBox: ThemedComponent<{}> = styled(Box)`
+const GridBox = styled(Box)`
   margin-top: 18px;
   display: grid;
   grid-gap: 18px;

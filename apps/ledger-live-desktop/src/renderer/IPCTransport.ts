@@ -1,5 +1,3 @@
-// TODO port this file to .ts
-
 import { ipcRenderer } from "electron";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
@@ -14,11 +12,16 @@ import {
   transportExchangeChannel,
   transportOpenChannel,
 } from "~/config/transportChannels";
-const rendererRequest = (channel, data) => {
+import { Observer } from "rxjs";
+import { DescriptorEvent } from "@ledgerhq/types-devices";
+const rendererRequest = (channel: string, data: unknown) => {
   return new Promise((resolve, reject) => {
     const requestId = uuidv4();
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
-    const handler = (event, message) => {
+    const handler = (
+      _event: Electron.IpcRendererEvent,
+      message: { error?: unknown; data: unknown },
+    ) => {
       if (message.error) {
         reject(deserializeError(message.error));
       } else {
@@ -36,11 +39,14 @@ const rendererRequest = (channel, data) => {
 export class IPCTransport extends Transport {
   static isSupported = (): Promise<boolean> => Promise.resolve(typeof ipcRenderer === "function");
   // this transport is not discoverable
-  static list = (): any => Promise.resolve([]);
-  static listen = observer => {
+  static list = (): Promise<unknown[]> => Promise.resolve([]);
+  static listen = (observer: Observer<DescriptorEvent<string>>) => {
     const requestId = uuidv4();
     const replyChannel = `${transportListenChannel}_RESPONSE_${requestId}`;
-    const handler = (event, message) => {
+    const handler = (
+      _event: Electron.IpcRendererEvent,
+      message: { error?: unknown; data: DescriptorEvent<string> },
+    ) => {
       if (message.error) {
         observer.error(deserializeError(message.error));
       } else {
@@ -87,21 +93,24 @@ export class IPCTransport extends Transport {
       apduHex,
     });
     log("apdu", "<= " + responseHex);
-    return Buffer.from(responseHex, "hex");
+    return Buffer.from(responseHex as string, "hex");
   }
 
-  exchangeBulk(apdus: Buffer[], observer: Observer<Buffer>): Subscription {
+  exchangeBulk(apdus: Buffer[], observer: Observer<Buffer>) {
     const apdusHex = apdus.map(apdu => apdu.toString("hex"));
     log("apdu-info", "bulk of " + apdusHex.length + " apdus");
     const requestId = uuidv4();
     const replyChannel = `${transportExchangeBulkChannel}_RESPONSE_${requestId}`;
-    const handler = (event, message) => {
+    const handler = (
+      _event: Electron.IpcRendererEvent,
+      message: { error?: unknown; data: unknown },
+    ) => {
       if (message.error) {
         observer.error(deserializeError(message.error));
       } else {
         const { data } = message;
         if (data) {
-          observer.next(Buffer.from(data, "hex"));
+          observer.next(Buffer.from(data as string, "hex"));
         } else {
           observer.complete();
         }
@@ -135,6 +144,8 @@ export class IPCTransport extends Transport {
   close(): Promise<void> {
     return rendererRequest(transportCloseChannel, {
       descriptor: this.id,
+    }).then(() => {
+      /* close() must return a Promise<void> */
     });
   }
 }

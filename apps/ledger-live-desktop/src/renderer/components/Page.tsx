@@ -3,11 +3,11 @@ import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import AngleUp from "~/renderer/icons/AngleUp";
 import TopBar from "~/renderer/components/TopBar";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   children: any;
 };
-const PageContainer: ThemedComponent<{}> = styled.div`
+const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -15,7 +15,7 @@ const PageContainer: ThemedComponent<{}> = styled.div`
 `;
 export const getPagePaddingLeft = (p: any) => p.theme.space[6];
 export const getPagePaddingRight = (p: any) => p.theme.space[6] - p.theme.overflow.trackSize;
-const PageScroller: ThemedComponent<{}> = styled.div`
+const PageScroller = styled.div`
   padding: ${p => p.theme.space[3]}px ${p => getPagePaddingLeft(p)}px;
   padding-right: ${p => getPagePaddingRight(p)}px;
   ${p => p.theme.overflow.y};
@@ -23,7 +23,7 @@ const PageScroller: ThemedComponent<{}> = styled.div`
   flex-direction: column;
   flex: 1;
 `;
-const PageScrollerContainer: ThemedComponent<{}> = styled.div`
+const PageScrollerContainer = styled.div`
   overflow: hidden;
   position: relative;
   display: flex;

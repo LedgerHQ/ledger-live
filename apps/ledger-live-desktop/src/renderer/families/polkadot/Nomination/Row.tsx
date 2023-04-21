@@ -5,7 +5,6 @@ import moment from "moment";
 import { Polkadot as PolkadotIdenticon } from "@polkadot/react-identicon/icons";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   PolkadotValidator,
   PolkadotNomination,
@@ -57,13 +56,13 @@ const ValidatorName: ThemedComponent<any> = styled(TableLine).attrs(p => ({
     opacity: 1;
   }
 `;
-const Ellipsis: ThemedComponent<{}> = styled.div`
+const Ellipsis = styled.div`
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-const StatusLabel: ThemedComponent<{}> = styled.div`
+const StatusLabel = styled.div`
   flex: 1;
   display: block;
   margin-left: 8px;

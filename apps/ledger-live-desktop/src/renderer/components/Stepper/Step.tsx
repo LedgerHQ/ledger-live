@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import IconCheck from "~/renderer/icons/Check";
 import IconCross from "~/renderer/icons/Cross";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Status = "next" | "active" | "valid" | "error" | "disable";
 const RADIUS = 18;
 const Wrapper: ThemedComponent<{

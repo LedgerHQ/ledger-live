@@ -6,36 +6,51 @@ export const isSnowTime = () => {
   const now = new Date();
   return process.env.SNOW_EVENT || (now.getMonth() === 11 && now.getDate() > 21);
 };
-function randomBetween(min, max, round) {
+function randomBetween(min: number, max: number, round = false) {
   const num = Math.random() * (max - min + 1) + min;
   if (round) {
     return Math.floor(num);
   }
   return num;
 }
-function Flake(x, y) {
-  const maxWeight = 5;
-  const maxSpeed = 3;
-  this.x = x;
-  this.y = y;
-  this.r = randomBetween(0, 1);
-  this.a = randomBetween(0, Math.PI);
-  this.aStep = 0.01;
-  this.weight = randomBetween(2, maxWeight);
-  this.alpha = this.weight / maxWeight / 2;
-  this.speed = (this.weight / maxWeight) * maxSpeed;
-  this.update = () => {
-    this.x += Math.cos(this.a) * this.r;
-    this.a += this.aStep;
-    this.y += this.speed;
-  };
+
+class Flake {
+  x: number;
+  y: number;
+  r: number;
+  a: number;
+  aStep: number;
+  weight: number;
+  alpha: number;
+  speed: number;
+  update: () => void;
+
+  constructor(x: number, y: number) {
+    const maxWeight = 5;
+    const maxSpeed = 3;
+    this.x = x;
+    this.y = y;
+    this.r = randomBetween(0, 1);
+    this.a = randomBetween(0, Math.PI);
+    this.aStep = 0.01;
+    this.weight = randomBetween(2, maxWeight);
+    this.alpha = this.weight / maxWeight / 2;
+    this.speed = (this.weight / maxWeight) * maxSpeed;
+    this.update = () => {
+      this.x += Math.cos(this.a) * this.r;
+      this.a += this.aStep;
+      this.y += this.speed;
+    };
+  }
 }
+
 type Props = {
   numFlakes: number;
 };
+
 const Snow = ({ numFlakes }: Props) => {
-  const canvasRef = useRef();
-  const containerRef = useRef();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [dimension, setDimension] = useState({
     width: 0,
     height: 0,
@@ -46,7 +61,7 @@ const Snow = ({ numFlakes }: Props) => {
       setDimension(containerRef.current.getBoundingClientRect());
     };
     const ro = new ResizeObserver(throttle(updateDimension, 250));
-    ro.observe(containerRef.current);
+    containerRef.current && ro.observe(containerRef.current);
     updateDimension();
     return () => {
       ro.disconnect();
@@ -65,15 +80,17 @@ const Snow = ({ numFlakes }: Props) => {
       canvas.width = width;
       canvas.height = height;
     }
-    let loopId;
+    let loopId: number | undefined;
     const updateFlakes = () => {
-      ctx.clearRect(0, 0, width, height);
+      ctx?.clearRect(0, 0, width, height);
       each(flakes, flake => {
         flake.update();
-        ctx.beginPath();
-        ctx.arc(flake.x, flake.y, flake.weight, 0, 2 * Math.PI, false);
-        ctx.fillStyle = `rgba(255, 255, 255, ${flake.alpha})`;
-        ctx.fill();
+        if (ctx) {
+          ctx.beginPath();
+          ctx.arc(flake.x, flake.y, flake.weight, 0, 2 * Math.PI, false);
+          ctx.fillStyle = `rgba(255, 255, 255, ${flake.alpha})`;
+          ctx.fill();
+        }
         if (flake.y >= height) {
           flake.y = -flake.weight;
         }
@@ -82,7 +99,7 @@ const Snow = ({ numFlakes }: Props) => {
     };
     loopId = requestAnimationFrame(updateFlakes);
     return () => {
-      cancelAnimationFrame(loopId);
+      typeof loopId !== "undefined" && cancelAnimationFrame(loopId);
     };
   }, [dimension, numFlakes]);
   return (

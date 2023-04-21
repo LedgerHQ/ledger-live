@@ -6,7 +6,6 @@ import { DefaultFeatures } from "@ledgerhq/types-live";
 import reduce from "lodash/reduce";
 import snakeCase from "lodash/snakeCase";
 import startCase from "lodash/startCase";
-
 import { getFirebaseConfig } from "~/firebase-setup";
 
 export const FirebaseRemoteConfigContext = React.createContext<RemoteConfig | null>(null);

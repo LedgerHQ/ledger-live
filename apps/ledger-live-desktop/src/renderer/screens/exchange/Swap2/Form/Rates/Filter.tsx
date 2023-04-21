@@ -8,11 +8,11 @@ import { Icons } from "@ledgerhq/react-ui";
 type Props = {
   onClick: () => void;
 };
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({}))`
+const Container = styled(Box).attrs(() => ({}))`
   flex-direction: row;
   margin: 10px 0;
 `;
-export const Btn: ThemedComponent<{}> = styled(Button).attrs(p => {
+export const Btn = styled(Button).attrs(p => {
   return {
     key: p.key,
     primary: p.selected,

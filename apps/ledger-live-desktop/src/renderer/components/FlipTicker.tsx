@@ -5,8 +5,8 @@ import React, { PureComponent } from "react";
 import styled from "styled-components";
 import { Spring, animated } from "react-spring/renderprops";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+
+const Container = styled(Box).attrs(() => ({
   horizontal: true,
   relative: true,
 }))`

@@ -10,7 +10,7 @@ type ActionCreator<T> = (
 ) => ReturnType<ActionCreatorPlain<T>> & { payload: T };
 
 export const importPostOnboardingState: ActionCreator<{
-  newState: PostOnboardingState;
+  newState: Partial<PostOnboardingState>;
 }> = ({ newState }) => ({
   type: "POST_ONBOARDING_IMPORT_STATE",
   payload: { newState },

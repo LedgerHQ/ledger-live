@@ -12,15 +12,21 @@ import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { deepLinkUrlSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
 import { setDeepLinkUrl } from "~/renderer/actions/settings";
 import { setTrackingSource } from "../analytics/TrackPage";
+import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 
-const getAccountsOrSubAccountsByCurrency = (currency, accounts) => {
-  const predicateFn = account => getAccountCurrency(account).id === currency.id;
+const getAccountsOrSubAccountsByCurrency = (
+  currency: CryptoOrTokenCurrency,
+  accounts: Account[],
+) => {
+  const predicateFn = (account: SubAccount | Account) =>
+    getAccountCurrency(account).id === currency.id;
   if (currency.type === "TokenCurrency") {
     const tokenAccounts = accounts
       .filter(acc => acc.subAccounts && acc.subAccounts.length > 0)
       .map(acc => {
         // why you do this Flow
-        const found = acc.subAccounts.find(predicateFn);
+        const found = acc.subAccounts?.find(predicateFn);
         return found || null;
       })
       .filter(Boolean);
@@ -114,15 +120,15 @@ export function useDeepLinkHandler() {
         case "account": {
           const { currency } = query;
           if (!currency || typeof currency !== "string") return;
-          const c = findCryptoCurrencyByKeyword(currency.toUpperCase());
+          const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
           if (!c || c.type === "FiatCurrency") return;
           const found = getAccountsOrSubAccountsByCurrency(c, accounts || []);
           if (!found.length) return;
           const [chosen] = found;
-          if (chosen.type === "Account") {
+          if (chosen?.type === "Account") {
             navigate(`/account/${chosen.id}`);
           } else {
-            navigate(`/account/${chosen.parentId}/${chosen.id}`);
+            navigate(`/account/${chosen?.parentId}/${chosen?.id}`);
           }
           break;
         }
@@ -145,7 +151,7 @@ export function useDeepLinkHandler() {
           const { currency, recipient, amount } = query;
           if (!currency || typeof currency !== "string") return;
           if (url === "delegate" && currency !== "tezos") return;
-          const c = findCryptoCurrencyByKeyword(currency.toUpperCase());
+          const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
           if (!c || c.type === "FiatCurrency") {
             dispatch(
               openModal(modal, {
@@ -169,7 +175,7 @@ export function useDeepLinkHandler() {
           }
           const [chosen] = found;
           dispatch(closeAllModal());
-          if (chosen.type === "Account") {
+          if (chosen?.type === "Account") {
             dispatch(
               openModal(modal, {
                 account: chosen,
@@ -184,7 +190,7 @@ export function useDeepLinkHandler() {
             dispatch(
               openModal(modal, {
                 account: chosen,
-                parentAccount: accounts.find(acc => acc.id === chosen.parentId),
+                parentAccount: accounts.find(acc => acc.id === chosen?.parentId),
                 recipient,
                 amount:
                   amount && typeof amount === "string"
@@ -244,7 +250,9 @@ function useDeeplink() {
   useEffect(() => {
     // subscribe to deep-linking event
     ipcRenderer.on("deep-linking", handler);
-    return () => ipcRenderer.removeListener("deep-linking", handler);
+    return () => {
+      ipcRenderer.removeListener("deep-linking", handler);
+    };
   }, [handler]);
   useEffect(() => {
     if (openingDeepLink && loaded) {

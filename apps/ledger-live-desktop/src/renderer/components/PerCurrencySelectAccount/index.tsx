@@ -117,6 +117,6 @@ const RawSelectAccount = ({ accounts, value, onChange, t, ...props }: Props) => 
     />
   );
 };
-export const SelectAccount: React$ComponentType<OwnProps> = withTranslation()(RawSelectAccount);
-const m: React$ComponentType<OwnProps> = connect(mapStateToProps)(SelectAccount);
+export const SelectAccount: React.ComponentType<OwnProps> = withTranslation()(RawSelectAccount);
+const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(SelectAccount);
 export default m;

@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import NanoS from "./NanoS";
 import NanoX from "./NanoX";
 import Blue from "./Blue";
@@ -21,7 +20,7 @@ export type Props = {
   width?: number;
   error?: Error | null;
 };
-export const Wrapper: ThemedComponent<{}> = styled.div`
+export const Wrapper = styled.div`
   position: relative;
 `;
 const usbMap = {
@@ -39,7 +38,7 @@ const Interactions = ({ type = "nanoS", wire, screen, error, action, width }: Pr
   const props = {
     error: !!error,
     screen: error ? "fail" : screen,
-    usb: wire && usbMap[wire],
+    usb: wire && (usbMap[wire] as React.ComponentProps<typeof Device>["usb"]),
     leftHint: action === "left" || (type === "nanoX" && action === "accept"),
     rightHint: action === "accept",
     width,

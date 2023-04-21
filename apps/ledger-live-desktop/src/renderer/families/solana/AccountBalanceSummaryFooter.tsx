@@ -10,7 +10,6 @@ import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 const Wrapper: ThemedComponent<any> = styled(Box).attrs(() => ({
