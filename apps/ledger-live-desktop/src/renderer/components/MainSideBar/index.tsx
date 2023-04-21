@@ -250,8 +250,8 @@ const MainSideBar = () => {
   );
 
   const trackEntry = useCallback(
-    (entry: string) => {
-      track("menuentry_clicked", {
+    (entry: string, flagged = false) => {
+      track(flagged ? "menu_entry_click_flagged" : "menuentry_clicked", {
         entry,
         page: history.location.pathname,
       });
@@ -301,7 +301,7 @@ const MainSideBar = () => {
   const handleClickRefer = useCallback(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params.path) {
       push(referralProgramConfig?.params.path);
-      trackEntry("refer-a-friend");
+      trackEntry("refer-a-friend", referralProgramConfig?.params.isNew);
     }
   }, [push, referralProgramConfig, trackEntry]);
   const maybeRedirectToAccounts = useCallback(() => {
