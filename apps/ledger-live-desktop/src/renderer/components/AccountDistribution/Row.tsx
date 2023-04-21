@@ -55,7 +55,7 @@ export default function Row({
   const color = useCurrencyColor(currency, theme.colors.palette.background.paper);
   const displayName = getAccountName(account);
   const percentage = (Math.floor(distribution * 10000) / 100).toFixed(2);
-  const icon = <ParentCryptoCurrencyIcon currency={currency} size={16} />;
+  const icon = <ParentCryptoCurrencyIcon currency={currency} />;
   return (
     <AccountContextMenu account={account} parentAccount={parentAccount} withStar>
       <Wrapper onClick={() => onAccountClick(account)}>

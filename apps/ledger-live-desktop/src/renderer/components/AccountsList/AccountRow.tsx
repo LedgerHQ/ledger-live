@@ -25,12 +25,12 @@ type Props = {
   hideAmount?: boolean;
 };
 export default class AccountRow extends PureComponent<Props> {
-  handlePreventSubmit = (e: SyntheticEvent<any>) => {
+  handlePreventSubmit = (e: React.SyntheticEvent<HTMLInputElement>) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  handleKeyPress = (e: SyntheticEvent<HTMLInputElement>) => {
+  handleKeyPress = (e: React.SyntheticEvent<HTMLInputElement>) => {
     // this fixes a bug with the event propagating to the Tabbable
     e.stopPropagation();
   };
@@ -45,16 +45,16 @@ export default class AccountRow extends PureComponent<Props> {
     if (onEditName) onEditName(account, name);
   };
 
-  onClickInput = (e: SyntheticEvent<any>) => {
+  onClickInput = (e: React.SyntheticEvent<HTMLInputElement>) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  onFocus = (e: any) => {
+  onFocus = (e: React.MouseEvent<HTMLInputElement>) => {
     e.target.select();
   };
 
-  onBlur = (e: any) => {
+  onBlur = (e: React.MouseEvent<HTMLInputElement>) => {
     const { onEditName, account } = this.props;
     const { value } = e.target;
     if (!value && onEditName) {
@@ -149,15 +149,15 @@ export default class AccountRow extends PureComponent<Props> {
     );
   }
 }
-const AccountRowContainer: ThemedComponent<{
-  isDisabled?: boolean;
-}> = styled(Tabbable).attrs(() => ({
+const AccountRowContainer = styled(Tabbable).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   bg: "palette.background.default",
   px: 3,
   flow: 1,
-}))`
+}))<{
+  isDisabled?: boolean;
+}>`
   height: 48px;
   border-radius: 4px;
 
