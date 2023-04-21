@@ -2787,8 +2787,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     units: ethereumUnits("VET", "VET"),
     explorerViews: [
       {
-        tx: "https://explore-testnet.vechain.org/transactions/$hash",
-        address: "https://explore-testnet.vechain.org/accounts/$address",
+        tx: "https://explore.vechain.org/transactions/$hash",
+        address: "https://explore.vechain.org/accounts/$address",
       },
     ],
   },
