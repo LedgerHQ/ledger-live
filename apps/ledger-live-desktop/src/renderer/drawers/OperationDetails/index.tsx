@@ -75,10 +75,10 @@ const mapStateToProps = (
     operationId,
     accountId,
     parentId,
-  }: { operationId: string; accountId: string; parentId: string | undefined },
+  }: { operationId: string; accountId: string; parentId: string | undefined | null },
 ) => {
   const parentAccount: Account | undefined =
-    typeof parentId !== "undefined"
+    typeof parentId !== "undefined" && parentId !== null
       ? accountSelector(state, {
           accountId: parentId,
         })

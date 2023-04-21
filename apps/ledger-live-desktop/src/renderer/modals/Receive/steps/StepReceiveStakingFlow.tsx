@@ -15,7 +15,7 @@ import { getAccountName } from "@ledgerhq/live-common/account/index";
 
 export const LOCAL_STORAGE_KEY_PREFIX = "receive_staking_";
 
-export const CheckBoxContainer: ThemedComponent<{ state: string }> = styled(Flex)`
+export const CheckBoxContainer = styled(Flex)`
   & > div {
     column-gap: 15px;
   }

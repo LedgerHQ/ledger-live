@@ -14,16 +14,19 @@ import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker"
 import { closeModal } from "~/renderer/actions/modals";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
-const Result = ({
-  signedOperation,
-  device,
-}: {
-  signedOperation: SignedOperation | undefined | null;
-  device: Device;
-}) => {
-  if (!signedOperation) return null;
+const Result = (
+  props:
+    | {
+        signedOperation: SignedOperation | undefined | null;
+        device: Device;
+      }
+    | {
+        transactionSignError: Error;
+      },
+) => {
+  if (!("signedOperation" in props)) return null;
   return (
-    <StepProgress modelId={device.modelId}>
+    <StepProgress modelId={props.device.modelId}>
       <DeviceBlocker />
       <Trans i18nKey="send.steps.confirmation.pending.title" />
     </StepProgress>
@@ -57,7 +60,7 @@ export default function StepConnectDevice({
     account,
     parentAccount,
   });
-  const tokenCurrency = account && account.type === "TokenAccount" && account.token;
+  const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || undefined;
   if (!transaction || !account) return null;
   return (
     <DeviceAction
@@ -70,8 +73,9 @@ export default function StepConnectDevice({
         status,
       }}
       Result={Result}
-      onResult={({ signedOperation, transactionSignError }) => {
-        if (signedOperation) {
+      onResult={result => {
+        if ("signedOperation" in result) {
+          const { signedOperation } = result;
           setSigned(true);
           broadcast(signedOperation).then(
             operation => {
@@ -93,7 +97,8 @@ export default function StepConnectDevice({
               }
             },
           );
-        } else if (transactionSignError) {
+        } else if ("transactionSignError" in result) {
+          const { transactionSignError } = result;
           if (!onFailHandler) {
             onTransactionError(transactionSignError);
             transitionTo("confirmation");

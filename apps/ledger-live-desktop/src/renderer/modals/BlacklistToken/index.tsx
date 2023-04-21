@@ -8,7 +8,7 @@ const BlacklistTokenModal = () => (
     name="MODAL_BLACKLIST_TOKEN"
     centered
     render={({ data, onClose }: RenderProps<{ token: TokenCurrency }>) => (
-      <Body token={data!.token} onClose={onClose} />
+      <Body token={data.token} onClose={onClose} />
     )}
   />
 );

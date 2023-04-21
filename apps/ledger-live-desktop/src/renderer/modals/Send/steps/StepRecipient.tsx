@@ -46,12 +46,14 @@ const StepRecipient = ({
       {isNFTSend ? (
         <Box flow={1}>
           <Label>{t("send.steps.recipient.nftRecipient")}</Label>
-          <SelectNFT
-            onSelect={onChangeNFT}
-            maybeNFTId={maybeNFTId}
-            maybeNFTCollection={maybeNFTCollection}
-            account={account}
-          />
+          {account && (
+            <SelectNFT
+              onSelect={onChangeNFT}
+              maybeNFTId={maybeNFTId}
+              maybeNFTCollection={maybeNFTCollection}
+              account={account as Account}
+            />
+          )}
         </Box>
       ) : (
         <Box flow={1}>

@@ -15,7 +15,7 @@ import { createStructuredSelector } from "reselect";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import Select from "~/renderer/components/Select";
+import Select, { Props as SelectProps } from "~/renderer/components/Select";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import AccountTagDerivationMode from "./AccountTagDerivationMode";
@@ -216,7 +216,7 @@ type OwnProps = {
   placeholder?: string;
   showAddAccount?: boolean;
   disabledTooltipText?: string;
-};
+} & Omit<SelectProps, "onChange">;
 type Props = OwnProps & {
   accounts: Account[];
   small?: boolean;
