@@ -136,7 +136,6 @@ class AccountsList extends Component<
               <AccountRow
                 key={account.id}
                 account={account}
-                currency={currency}
                 autoFocusInput={i === 0 && autoFocusFirstInput}
                 isDisabled={!onToggleAccount || !checkedIds}
                 isChecked={!checkedIds || checkedIds.find(id => id === account.id) !== undefined}

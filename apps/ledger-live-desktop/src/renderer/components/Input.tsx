@@ -6,6 +6,7 @@ import fontFamily from "~/renderer/styles/styled/fontFamily";
 import Box from "~/renderer/components/Box";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import BigSpinner from "~/renderer/components/BigSpinner";
+import { BoxProps } from "./Box/Box";
 const RenderLeftWrapper = styled(Box)`
   align-items: center;
   justify-content: center;
@@ -19,9 +20,22 @@ const RenderRightWrapper = styled(Box)`
     flex: 1;
   }
 `;
+
+type InnerProps = {
+  noBorder?: boolean;
+  noBorderLeftRadius?: boolean;
+  noBoxShadow?: boolean;
+  isFocus?: boolean;
+  disabled?: boolean;
+  small?: boolean;
+  error?: Error | null | undefined;
+  warning?: Error | null | undefined;
+  editInPlace?: boolean;
+};
+
 export const Container = styled(Box).attrs(() => ({
   horizontal: true,
-}))`
+}))<InnerProps>`
   background: ${p =>
     p.disabled
       ? p.theme.colors.palette.background.default
@@ -71,16 +85,22 @@ export const Container = styled(Box).attrs(() => ({
       border-color: var(--status-color);
     }`}
 `;
-export const ErrorContainer = styled(Box)`
+
+type ErrorContainerInnerProps = {
+  hasError?: Error | boolean | null | undefined;
+};
+
+export const ErrorContainer: React.ComponentType<ErrorContainerInnerProps & BoxProps> = styled(Box)`
   margin-top: 0px;
   font-size: 12px;
   width: 100%;
   transition: all 0.4s ease-in-out;
   will-change: max-height;
-  max-height: ${p => (p.hasError ? 60 : 0)}px;
-  min-height: ${p => (p.hasError ? 20 : 0)}px;
+  max-height: ${(p: ErrorContainerInnerProps) => (p.hasError ? 60 : 0)}px;
+  min-height: ${(p: ErrorContainerInnerProps) => (p.hasError ? 20 : 0)}px;
   overflow: hidden;
 `;
+
 const ErrorDisplay = styled(Box)`
   color: ${p => p.theme.colors.pearl};
 `;
@@ -174,11 +194,11 @@ const Input = function Input(
     value,
     ...props
   }: Props,
-  inputRef,
+  inputRef: React.ForwardedRef<HTMLInputElement>,
 ) {
   const [isFocus, setFocus] = useState(false);
   const handleChange = useCallback(
-    (e: React.SyntheticEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       if (onChange) {
         onChange(keepEvent ? e : e.target.value);
       }
@@ -197,9 +217,7 @@ const Input = function Input(
     [onEnter, onEsc],
   );
   const handleClick = useCallback(() => {
-    if (inputRef && inputRef.current) {
-      inputRef.current.focus();
-    }
+    inputRef?.current?.focus();
   }, [inputRef]);
   const handleFocus = useCallback(
     (e: React.FocusEvent<HTMLInputElement>) => {
