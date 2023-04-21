@@ -57,7 +57,8 @@ export default class StepSummary extends PureComponent<StepProps> {
     if (!account) return null;
     const mainAccount = getMainAccount(account, parentAccount);
     if (!mainAccount || !transaction) return null;
-    const { estimatedFees, amount, totalSpent, warnings, txInputs } = status;
+    const { estimatedFees, amount, totalSpent, warnings } = status;
+    const txInputs = "txInputs" in status ? status.txInputs : undefined;
     const feeTooHigh = warnings.feeTooHigh;
     const currency = getAccountCurrency(account);
     const feesCurrency = getFeesCurrency(mainAccount);
@@ -68,7 +69,7 @@ export default class StepSummary extends PureComponent<StepProps> {
       account.type === "Account" &&
       (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
-    const memo = transaction.memo;
+    const memo = "memo" in transaction ? transaction.memo : undefined;
     return (
       <Box flow={4} mx={40}>
         <TrackPage

@@ -12,16 +12,19 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
-const Result = ({
-  signedOperation,
-  device,
-}: {
-  signedOperation: SignedOperation | undefined | null;
-  device: Device;
-}) => {
-  if (!signedOperation) return null;
+const Result = (
+  result:
+    | {
+        signedOperation: SignedOperation | undefined | null;
+        device: Device;
+      }
+    | {
+        transactionSignError: Error;
+      },
+) => {
+  if (!("signedOperation" in result) || !result.signedOperation) return null;
   return (
-    <StepProgress modelId={device.modelId}>
+    <StepProgress modelId={result.device.modelId}>
       <DeviceBlocker />
       <Trans i18nKey="send.steps.confirmation.pending.title" />
     </StepProgress>
@@ -50,7 +53,7 @@ export default function StepConnectDevice({
   dependencies?: AppRequest[];
   requireLatestFirmware?: boolean;
 }) {
-  const tokenCurrency = account && account.type === "TokenAccount" && account.token;
+  const tokenCurrency = account && account.type === "TokenAccount" ? account.token : undefined;
   if (!transaction || !account) return null;
   return (
     <DeviceAction
@@ -66,11 +69,11 @@ export default function StepConnectDevice({
         requireLatestFirmware,
       }}
       Result={Result}
-      onResult={({ signedOperation, transactionSignError }) => {
-        if (signedOperation) {
-          onTransactionSigned(signedOperation);
-        } else if (transactionSignError) {
-          onTransactionError(transactionSignError);
+      onResult={result => {
+        if ("signedOperation" in result) {
+          onTransactionSigned(result.signedOperation);
+        } else if ("transactionSignError" in result) {
+          onTransactionError(result.transactionSignError);
           transitionTo("confirmation");
         }
       }}

@@ -22,13 +22,13 @@ export default <
     error,
     rowHeight,
   }: {
-    width: number;
-    minWidth: number;
-    small: boolean;
-    isRight: boolean;
-    isLeft: boolean;
-    error: Error | undefined | null;
-    rowHeight: number;
+    width?: number;
+    minWidth?: number;
+    small?: boolean;
+    isRight?: boolean;
+    isLeft?: boolean;
+    error?: Error | undefined | null;
+    rowHeight?: number;
   },
 ): StylesConfig<OptionType, IsMulti, GroupType> => ({
   control: (styles, { isFocused }) => ({
