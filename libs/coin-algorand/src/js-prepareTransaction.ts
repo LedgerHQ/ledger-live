@@ -1,22 +1,15 @@
 import { BigNumber } from "bignumber.js";
-import type { Transaction } from "./types";
+import type { AlgorandAccount, Transaction } from "./types";
 import { getEstimatedFees } from "./js-getFeesForTransaction";
 import { estimateMaxSpendable } from "./js-estimateMaxSpendable";
-import type { Account } from "@ledgerhq/types-live";
 
-export const createTransaction = (): Transaction => ({
-  family: "algorand",
-  amount: new BigNumber(0),
-  fees: null,
-  recipient: "",
-  useAllAmount: false,
-  memo: null,
-  mode: "send",
-  assetId: null,
-});
-
-export const prepareTransaction = async (
-  account: Account,
+/**
+ * Calculate fees for the current transaction
+ * @param {PolkadotAccount} a
+ * @param {Transaction} t
+ */
+const prepareTransaction = async (
+  account: AlgorandAccount,
   transaction: Transaction
 ): Promise<Transaction> => {
   let recipient: string;
@@ -40,3 +33,5 @@ export const prepareTransaction = async (
 
   return { ...transaction, fees, amount, recipient };
 };
+
+export default prepareTransaction;
