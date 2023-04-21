@@ -37,7 +37,7 @@ export function useDeepLinkHandler() {
     (pathname: string, state?: any, search?: string) => {
       const hasNewPathname = pathname !== location.pathname;
       const hasNewSearch = typeof search === "string" && search !== location.search;
-      const hasNewState = JSON.stringify(state) !== JSON.stringify(location.state)
+      const hasNewState = JSON.stringify(state) !== JSON.stringify(location.state);
       if (hasNewPathname || hasNewSearch) {
         setTrackingSource("deeplink");
         history.push({
