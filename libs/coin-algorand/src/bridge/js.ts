@@ -1,12 +1,15 @@
-// FIXME: fix call to makeAccountBridgeReceive (dependency injection?)
-
-import { makeAccountBridgeReceive } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import type { AlgorandTransaction } from "../types";
-import { sync, scanAccounts } from "../js-synchronization";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
-  createTransaction,
-  prepareTransaction,
-} from "../js-prepareTransaction";
+  DeviceCommunication,
+  makeAccountBridgeReceive,
+  makeScanAccounts,
+  makeSync,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
+
+import { makeGetAccountShape } from "../js-synchronization";
+import createTransaction from "../js-createTransaction";
+import prepareTransaction from "../js-prepareTransaction";
 import { estimateMaxSpendable } from "../js-estimateMaxSpendable";
 import { getTransactionStatus } from "../js-getTransactionStatus";
 import { buildSignOperation } from "../js-signOperation";
@@ -15,40 +18,65 @@ import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 import { initAccount } from "../initAccount";
 import type { Transaction } from "../types";
-
-const receive = makeAccountBridgeReceive();
+import getAddress from "../hw-getAddress";
 
 const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
   ...t,
   ...patch,
 });
 
-const preload = async () => Promise.resolve({});
+export function buildCurrencyBridge(
+  deviceCommunication: DeviceCommunication,
+  network: NetworkRequestCall
+): CurrencyBridge {
+  const getAccountShape = makeGetAccountShape();
+  const scanAccounts = makeScanAccounts({
+    getAccountShape,
+    deviceCommunication,
+    getAddressFn: getAddress,
+  });
 
-const hydrate = () => {};
+  return {
+    preload: async () => Promise.resolve({}),
+    hydrate: () => {},
+    scanAccounts,
+  };
+}
 
-const currencyBridge: CurrencyBridge = {
-  preload,
-  hydrate,
-  scanAccounts,
-};
+export function buildAccountBridge(
+  deviceCommunication: DeviceCommunication,
+  network: NetworkRequestCall
+): AccountBridge<Transaction> {
+  const receive = makeAccountBridgeReceive(
+    getAddressWrapper(getAddress),
+    deviceCommunication
+  );
+  const signOperation = buildSignOperation(deviceCommunication);
+  const getAccountShape = makeGetAccountShape();
+  const sync = makeSync({ getAccountShape });
 
-const accountBridge: AccountBridge<AlgorandTransaction> = {
-  createTransaction,
-  updateTransaction,
-  prepareTransaction,
-  getTransactionStatus,
-  sync,
-  receive,
-  assignToAccountRaw,
-  assignFromAccountRaw,
-  initAccount,
-  signOperation,
-  broadcast,
-  estimateMaxSpendable,
-};
+  return {
+    createTransaction,
+    updateTransaction,
+    prepareTransaction,
+    getTransactionStatus,
+    sync,
+    receive,
+    assignToAccountRaw,
+    assignFromAccountRaw,
+    initAccount,
+    signOperation,
+    broadcast,
+    estimateMaxSpendable,
+  };
+}
 
-export default {
-  currencyBridge,
-  accountBridge,
-};
+export function createBridges(
+  deviceCommunication: DeviceCommunication,
+  network: NetworkRequestCall
+) {
+  return {
+    currencyBridge: buildCurrencyBridge(deviceCommunication, network),
+    accountBridge: buildAccountBridge(deviceCommunication, network),
+  };
+}

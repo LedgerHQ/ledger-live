@@ -3,7 +3,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { AlgorandTransaction, AlgorandAccount } from "./types";
 import { computeAlgoMaxSpendable } from "./logic";
-import { createTransaction } from "./js-prepareTransaction";
+import createTransaction from "./js-createTransaction";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { getEstimatedFees } from "./js-getFeesForTransaction";
 
