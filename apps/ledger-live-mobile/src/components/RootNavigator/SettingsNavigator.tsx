@@ -11,7 +11,7 @@ import DebugBenchmarkQRStream from "../../screens/Settings/Debug/Broken/Benchmar
 import DebugBLE from "../../screens/Settings/Debug/Connectivity/BLE";
 import DebugBLEBenchmark from "../../screens/Settings/Debug/Connectivity/BLEBenchmark";
 import DebugConfiguration from "../../screens/Settings/Debug/Configuration";
-import DebugConnectivity from "../../screens/Settings/Debug/Connectivity";
+import DebugConnectivity, { connectivityHeaderOptions } from "../../screens/Settings/Debug/Connectivity";
 import DebugCrash from "../../screens/Settings/Debug/Debugging/Crashes";
 import DebugCustomImageGraphics from "../../screens/Settings/Debug/Features/CustomImageGraphics";
 import DebugDebugging from "../../screens/Settings/Debug/Debugging";
@@ -233,7 +233,7 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugConnectivity}
         component={DebugConnectivity}
         options={{
-          title: "Connectivity",
+          ...connectivityHeaderOptions,
         }}
       />
       <Stack.Screen
