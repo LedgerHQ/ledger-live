@@ -13,13 +13,16 @@ import { promiseAllBatched } from "@ledgerhq/coin-framework/promise";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
-import {
+import type {
   AlgoTransaction,
   AlgoPaymentInfo,
   AlgoAssetTransferInfo,
   AlgoAsset,
+  AlgorandAPI,
 } from "./api";
-import { AlgoTransactionType, getAccount, getAccountTransactions } from "./api";
+
+import { AlgoTransactionType } from "./api";
+
 import { addPrefixToken, extractTokenId } from "./tokens";
 import { computeAlgoMaxSpendable } from "./logic";
 import type {
@@ -242,7 +245,7 @@ const mapTransactionToASAOperation = (
   };
 };
 
-export function makeGetAccountShape(): GetAccountShape {
+export function makeGetAccountShape(algorandAPI: AlgorandAPI): GetAccountShape {
   return async (info, syncConfig): Promise<Partial<Account>> => {
     const { address, initialAccount, currency, derivationMode } = info;
     const oldOperations = initialAccount?.operations || [];
@@ -257,9 +260,8 @@ export function makeGetAccountShape(): GetAccountShape {
       derivationMode,
     });
 
-    const { round, balance, pendingRewards, assets } = await getAccount(
-      address
-    );
+    const { round, balance, pendingRewards, assets } =
+      await algorandAPI.getAccount(address);
 
     const nbAssets = assets.length;
 
@@ -270,10 +272,8 @@ export function makeGetAccountShape(): GetAccountShape {
       mode: "send",
     });
 
-    const newTransactions: AlgoTransaction[] = await getAccountTransactions(
-      address,
-      startAt
-    );
+    const newTransactions: AlgoTransaction[] =
+      await algorandAPI.getAccountTransactions(address, startAt);
 
     const subAccounts = await buildSubAccounts({
       currency,

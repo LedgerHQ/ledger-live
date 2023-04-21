@@ -19,6 +19,7 @@ import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 import { initAccount } from "../initAccount";
 import type { Transaction } from "../types";
 import getAddress from "../hw-getAddress";
+import { AlgorandAPI } from "../api";
 
 const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
   ...t,
@@ -29,7 +30,9 @@ export function buildCurrencyBridge(
   deviceCommunication: DeviceCommunication,
   network: NetworkRequestCall
 ): CurrencyBridge {
-  const getAccountShape = makeGetAccountShape();
+  const algorandAPI = new AlgorandAPI(network);
+
+  const getAccountShape = makeGetAccountShape(algorandAPI);
   const scanAccounts = makeScanAccounts({
     getAccountShape,
     deviceCommunication,
@@ -47,27 +50,29 @@ export function buildAccountBridge(
   deviceCommunication: DeviceCommunication,
   network: NetworkRequestCall
 ): AccountBridge<Transaction> {
+  const algorandAPI = new AlgorandAPI(network);
+
   const receive = makeAccountBridgeReceive(
     getAddressWrapper(getAddress),
     deviceCommunication
   );
-  const signOperation = buildSignOperation(deviceCommunication);
-  const getAccountShape = makeGetAccountShape();
+  const signOperation = buildSignOperation(deviceCommunication, algorandAPI);
+  const getAccountShape = makeGetAccountShape(algorandAPI);
   const sync = makeSync({ getAccountShape });
 
   return {
     createTransaction,
     updateTransaction,
-    prepareTransaction,
-    getTransactionStatus,
+    prepareTransaction: prepareTransaction(algorandAPI),
+    getTransactionStatus: getTransactionStatus(algorandAPI),
     sync,
     receive,
     assignToAccountRaw,
     assignFromAccountRaw,
     initAccount,
     signOperation,
-    broadcast,
-    estimateMaxSpendable,
+    broadcast: broadcast(algorandAPI),
+    estimateMaxSpendable: estimateMaxSpendable(algorandAPI),
   };
 }
 
