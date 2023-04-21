@@ -60,7 +60,8 @@ setSupportedCurrencies([
   "flare",
   "near",
   "desmos",
-  "umee"
+  "umee",
+  "secret_network",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
