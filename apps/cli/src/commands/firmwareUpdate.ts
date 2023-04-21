@@ -6,7 +6,7 @@ import type {
   FirmwareUpdateContext,
 } from "@ledgerhq/types-live";
 import { UnknownMCU } from "@ledgerhq/errors";
-import ManagerAPI from "@ledgerhq/live-common/api/Manager";
+import ManagerAPI from "@ledgerhq/live-common/manager/api";
 import network from "@ledgerhq/live-common/network";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getProviderId } from "@ledgerhq/live-common/manager/provider";
