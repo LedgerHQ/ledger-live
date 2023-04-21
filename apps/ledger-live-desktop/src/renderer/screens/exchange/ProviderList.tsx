@@ -192,17 +192,10 @@ function ProviderView({ provider, onClose, trade, account, parentAccount }: Prov
 type ProviderListProps = {
   account: AccountLike;
   parentAccount?: Account | null;
-  onBack?: () => void;
   providers: RampCatalogEntry[];
   trade: TradeParams;
 };
-export function ProviderList({
-  account,
-  parentAccount,
-  onBack,
-  providers,
-  trade,
-}: ProviderListProps) {
+export function ProviderList({ account, parentAccount, providers, trade }: ProviderListProps) {
   const [selectedProvider, setSelectedProvider] = useState(null);
   const { t } = useTranslation();
   const filteredProviders = filterRampCatalogEntries(providers, {

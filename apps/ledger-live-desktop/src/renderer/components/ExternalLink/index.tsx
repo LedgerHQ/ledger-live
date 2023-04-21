@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Box from "../Box";
 import ExternalLinkIcon from "../../icons/ExternalLink";
 
-const Container = styled(Box).attrs(p => ({
+const Container = styled(Box).attrs(() => ({
   cursor: "pointer",
   horizontal: true,
 }))`

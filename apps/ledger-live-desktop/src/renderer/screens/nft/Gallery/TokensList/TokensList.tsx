@@ -18,7 +18,7 @@ const Container: ThemedComponent<{
   grid-gap: ${p => (p.mode === "list" ? 10 : 18)}px;
   grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
 `;
-const TokensList = ({ account, isLoading, nfts, onHideCollection }: Props) => {
+const TokensList = ({ account, nfts, onHideCollection }: Props) => {
   const nftsViewMode = useSelector(nftsViewModeSelector);
   return (
     <Container mb={20} mode={nftsViewMode}>

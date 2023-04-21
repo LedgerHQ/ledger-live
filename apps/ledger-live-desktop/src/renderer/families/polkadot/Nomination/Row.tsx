@@ -25,7 +25,7 @@ const Wrapper: ThemedComponent<any> = styled.div`
   justify-content: space-between;
   padding: 16px 20px;
 `;
-const Column: ThemedComponent<any> = styled(TableLine).attrs(p => ({
+const Column: ThemedComponent<any> = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade80",
   fontSize: 3,
@@ -38,7 +38,7 @@ const IconContainer: ThemedComponent<any> = styled.div`
   height: 24px;
   color: ${p => p.theme.colors.palette.primary.main};
 `;
-const ValidatorName: ThemedComponent<any> = styled(TableLine).attrs(p => ({
+const ValidatorName: ThemedComponent<any> = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
   fontSize: 3,

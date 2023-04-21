@@ -49,7 +49,6 @@ const Holder = styled.div`
 export function useDynamicRange({
   range,
   value,
-  defaultValue,
   onChange,
 }: {
   range: Range;

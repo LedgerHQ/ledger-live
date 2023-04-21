@@ -26,7 +26,7 @@ const GridItem = styled.div`
     height: 100%;
   }
 `;
-const Header = styled(Box).attrs(p => ({
+const Header = styled(Box).attrs(() => ({
   horizontal: true,
   paddingBottom: 32,
 }))``;

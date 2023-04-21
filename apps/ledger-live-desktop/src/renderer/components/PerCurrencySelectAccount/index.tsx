@@ -27,7 +27,7 @@ const defaultFilter = createFilter({
     return `${currency.ticker}|${currency.name}|${name}`;
   },
 });
-const filterOption = o => (candidate, input) => {
+const filterOption = () => (candidate, input) => {
   const selfMatches = defaultFilter(candidate, input);
   if (selfMatches) return [selfMatches, true];
   return [false, false];

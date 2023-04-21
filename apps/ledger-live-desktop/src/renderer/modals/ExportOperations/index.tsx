@@ -200,7 +200,7 @@ const IconWrapperCircle = styled(Box)`
   margin-bottom: 15px;
 `;
 const IconWrapper = styled(Box)`
-  color: ${_ => colors.positiveGreen};
+  color: ${() => colors.positiveGreen};
   align-self: center;
   margin-bottom: 15px;
 `;

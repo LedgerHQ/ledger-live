@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import { Trans } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/index";
-import { State, Action } from "@ledgerhq/live-common/apps/types";
+import { State } from "@ledgerhq/live-common/apps/types";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box/Box";
 import FadeInOutBox from "~/renderer/components/FadeInOutBox";
@@ -52,12 +52,10 @@ const Container = styled.div`
 `;
 type Props = {
   state: State;
-  dispatch: (a: Action) => void;
-  isIncomplete: boolean;
   addAccount: (a: any) => void;
   disabled: boolean;
 };
-const InstallSuccessBanner = ({ state, isIncomplete, dispatch, addAccount, disabled }: Props) => {
+const InstallSuccessBanner = ({ state, addAccount, disabled }: Props) => {
   const cardRef = useRef();
   const [hasBeenShown, setHasBeenShown] = useState(disabled);
   const { installQueue, uninstallQueue, recentlyInstalledApps, appByName, installed } = state;

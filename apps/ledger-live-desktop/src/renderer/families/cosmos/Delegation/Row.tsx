@@ -98,7 +98,6 @@ type Props = {
 export function Row({
   account,
   delegation: {
-    amount,
     validatorAddress,
     formattedAmount,
     pendingRewards,
@@ -216,7 +215,7 @@ export function Row({
           }}
           onChange={onSelect}
         >
-          {({ isOpen, value }) => (
+          {() => (
             <Box flex horizontal alignItems="center">
               <Trans i18nKey="common.manage" />
               <div

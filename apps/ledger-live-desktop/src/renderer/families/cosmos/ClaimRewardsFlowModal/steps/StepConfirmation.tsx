@@ -26,18 +26,7 @@ const Container: ThemedComponent<{
 }))`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
-function StepConfirmation({
-  account,
-  t,
-  optimisticOperation,
-  error,
-  theme,
-  device,
-  signed,
-  transaction,
-}: StepProps & {
-  theme: any;
-}) {
+function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
   const currencyName = account.currency.name.toLowerCase();
   const { validators } = useCosmosFamilyPreloadData(currencyName);
   const locale = useSelector(localeSelector);
@@ -101,12 +90,10 @@ function StepConfirmation({
   return null;
 }
 export function StepConfirmationFooter({
-  transitionTo,
   account,
   parentAccount,
   onRetry,
   error,
-  openModal,
   onClose,
   optimisticOperation,
 }: StepProps) {

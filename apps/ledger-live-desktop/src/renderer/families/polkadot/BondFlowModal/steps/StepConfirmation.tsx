@@ -47,18 +47,7 @@ const TooltipContent = () => (
     </Text>
   </Box>
 );
-function StepConfirmation({
-  account,
-  t,
-  optimisticOperation,
-  error,
-  theme,
-  device,
-  signed,
-  transaction,
-}: StepProps & {
-  theme: any;
-}) {
+function StepConfirmation({ account, t, optimisticOperation, error, signed }: StepProps) {
   const wasFirstBond = useRef(account && isFirstBond(account));
   if (optimisticOperation) {
     return (
@@ -91,8 +80,6 @@ function StepConfirmation({
   return null;
 }
 export function StepConfirmationFooter({
-  t,
-  transitionTo,
   account: initialAccount,
   onRetry,
   error,

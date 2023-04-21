@@ -36,19 +36,10 @@ const ListIcon = styled(Box)`
 type Props = {
   app?: App;
   dependents?: App[];
-  appList: App[];
-  installed: any;
   dispatch: (a: Action) => void;
   onClose: () => void;
 };
-const AppDepsUninstallModal = ({
-  app,
-  dependents,
-  appList,
-  installed,
-  dispatch,
-  onClose,
-}: Props) => {
+const AppDepsUninstallModal = ({ app, dependents, dispatch, onClose }: Props) => {
   const onConfirm = useCallback(() => {
     if (app && app.name)
       dispatch({

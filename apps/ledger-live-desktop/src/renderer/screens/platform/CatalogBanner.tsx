@@ -16,7 +16,7 @@ const Container = styled(Box).attrs(p => ({
   align-items: stretch;
   justify-content: space-between;
 `;
-const Title = styled(Box).attrs(p => ({
+const Title = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   fontSize: 5,
   horizontal: true,

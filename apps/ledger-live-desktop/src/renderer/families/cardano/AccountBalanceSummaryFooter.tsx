@@ -47,9 +47,8 @@ const AmountValue = styled(Text).attrs(() => ({
 }))``;
 type Props = {
   account: any;
-  countervalue: any;
 };
-const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
+const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const { spendableBalance: _spendableBalance } = account;
