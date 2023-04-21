@@ -1,9 +1,9 @@
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "../env";
-import network from "../network";
-import { parseCurrencyUnit, getCryptoCurrencyById } from "../currencies";
-import { retry } from "../promise";
-import { NEW_ACCOUNT_ERROR_MESSAGE } from "../families/ripple/bridge/js";
+import { getEnv } from "../../../env";
+import network from "../../../network";
+import { parseCurrencyUnit, getCryptoCurrencyById } from "../../../currencies";
+import { retry } from "../../../promise";
+import { NEW_ACCOUNT_ERROR_MESSAGE } from "../bridge/js";
 
 const defaultEndpoint = () => getEnv("API_RIPPLE_RPC");
 

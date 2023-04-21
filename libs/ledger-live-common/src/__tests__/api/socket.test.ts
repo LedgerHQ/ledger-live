@@ -5,7 +5,7 @@ import {
 import { toArray } from "rxjs/operators";
 import WS from "isomorphic-ws";
 import scenarios from "./test-helpers/scenarios";
-import { createDeviceSocket } from "../../api/socket";
+import { createDeviceSocket } from "../../socket";
 /**
  * Both ends of the exchange are mocked in this test file and we are merely testing
  * the logic that happens in-between.

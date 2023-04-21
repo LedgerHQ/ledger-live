@@ -2,12 +2,12 @@ import URL from "url";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
-import { EIP1559ShouldBeUsed } from "../families/ethereum/transaction";
-import network from "../network";
-import { blockchainBaseURL } from "./Ledger";
-import { FeeEstimationFailed } from "../errors";
-import { makeLRUCache } from "../cache";
-import { getEnv } from "../env";
+import { EIP1559ShouldBeUsed } from "../transaction";
+import network from "../../../network";
+import { blockchainBaseURL } from "../../../explorer";
+import { FeeEstimationFailed } from "../../../errors";
+import { makeLRUCache } from "../../../cache";
+import { getEnv } from "../../../env";
 import {
   NFTCollectionMetadataResponse,
   NFTMetadataResponse,

@@ -9,7 +9,7 @@ import {
   ManagerNotEnoughSpaceError,
 } from "@ledgerhq/errors";
 
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "../manager/api";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import { Language, LanguagePackage } from "@ledgerhq/types-live";

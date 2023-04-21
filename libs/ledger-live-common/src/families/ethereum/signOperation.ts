@@ -19,7 +19,7 @@ import { Observable, from, of } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
-import { apiForCurrency } from "../../api/Ethereum";
+import { apiForCurrency } from "./api";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
 import { isNFTActive } from "../../nft";

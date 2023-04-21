@@ -13,7 +13,7 @@ import type {
   SuperRepresentativeData,
   TronResources,
   TronTransactionInfo,
-} from "../families/tron/types";
+} from "../types";
 import {
   decode58Check,
   encode58Check,
@@ -22,13 +22,13 @@ import {
   formatTrongridTrc20TxResponse,
   hexToAscii,
   defaultTronResources,
-} from "../families/tron/utils";
+} from "../utils";
 import { log } from "@ledgerhq/logs";
-import { TronTransactionExpired } from "../errors";
-import network from "../network";
-import { promiseAllBatched } from "../promise";
-import { makeLRUCache } from "../cache";
-import { getEnv } from "../env";
+import { TronTransactionExpired } from "../../../errors";
+import network from "../../../network";
+import { promiseAllBatched } from "../../../promise";
+import { makeLRUCache } from "../../../cache";
+import { getEnv } from "../../../env";
 import get from "lodash/get";
 import drop from "lodash/drop";
 import sumBy from "lodash/sumBy";
