@@ -20,7 +20,7 @@ import { CardanoDelegationFlowParamList } from "./types";
 type Props = BaseComposite<
   StackNavigatorProps<
     CardanoDelegationFlowParamList,
-    ScreenName.CosmosDelegationValidationSuccess
+    ScreenName.CardanoDelegationValidationSuccess
   >
 >;
 
