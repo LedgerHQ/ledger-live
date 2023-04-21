@@ -30,7 +30,7 @@ export const ItemContainer: ThemedComponent<{
     background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.1))};
   }
 `;
-export const Bar: ThemedComponent<any> = styled.div`
+export const Bar = styled.div`
   margin-left: 5px;
   margin-right: 5px;
   height: 15px;

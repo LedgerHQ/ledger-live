@@ -12,7 +12,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-const Wrapper: ThemedComponent<any> = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
   p: 5,

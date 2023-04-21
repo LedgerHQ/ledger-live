@@ -21,5 +21,5 @@ const Exporter = ({ accounts }: Props) => (
 const mapStateToProps = createStructuredSelector({
   accounts: (state, props) => props.accounts || activeAccountsSelector(state),
 });
-const ConnectedExporter: React.ComponentType<OwnProps> = connect(mapStateToProps)(Exporter);
+const ConnectedExporter: React.ComponentType<Props> = connect(mapStateToProps)(Exporter);
 export default ConnectedExporter;

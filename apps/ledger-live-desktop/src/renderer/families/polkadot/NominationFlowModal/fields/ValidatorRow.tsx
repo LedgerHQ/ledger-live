@@ -11,7 +11,7 @@ import Text from "~/renderer/components/Text";
 import CheckBox from "~/renderer/components/CheckBox";
 import Tooltip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
-const IconContainer: ThemedComponent<any> = styled.div`
+const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;

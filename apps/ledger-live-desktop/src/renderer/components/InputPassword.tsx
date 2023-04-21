@@ -40,7 +40,7 @@ type Props = {
   t: TFunction;
   value: string;
   withStrength?: boolean;
-};
+} & React.ComponentProps<typeof Input>;
 class InputPassword extends PureComponent<Props, State> {
   static defaultProps = {
     onChange: noop,

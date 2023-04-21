@@ -1,29 +1,30 @@
 import React, { PureComponent } from "react";
 import { createPortal } from "react-dom";
 import { connect } from "react-redux";
-import styled, { DefaultTheme } from "styled-components";
+import styled, { CSSProperties, DefaultTheme } from "styled-components";
 import noop from "lodash/noop";
 import { Transition, TransitionStatus } from "react-transition-group";
 import { closeModal } from "~/renderer/actions/modals";
 import { isModalOpened, getModalData } from "~/renderer/reducers/modals";
 import Snow, { isSnowTime } from "~/renderer/extra/Snow";
 import { State } from "~/renderer/reducers";
+import { Dispatch } from "redux";
 export { default as ModalBody } from "./ModalBody";
 const domNode = document.getElementById("modals");
-const mapStateToProps = (state: State, { name, isOpened, onBeforeOpen }: Props) => {
+const mapStateToProps = <Data,>(state: State, { name, isOpened, onBeforeOpen }: Props<Data>) => {
   const data = getModalData(state, name || "");
   const modalOpened = isOpened || (name && isModalOpened(state, name));
   if (onBeforeOpen && modalOpened) {
     onBeforeOpen({
       data,
-    });
+    } as { data: Data });
   }
   return {
     isOpened: !!modalOpened,
     data,
   };
 };
-const mapDispatchToProps = (dispatch: any, { name, onClose = noop }: Props): any => ({
+const mapDispatchToProps = <Data,>(dispatch: Dispatch, { name, onClose = noop }: Props<Data>) => ({
   onClose: name
     ? () => {
         dispatch(closeModal(name));
@@ -99,7 +100,7 @@ const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) =>
   style: {
     ...transitionsOpacity[state as keyof typeof transitionsOpacity],
     ...transitionsScale[state as keyof typeof transitionsScale],
-  },
+  } as CSSProperties,
 }))<{ state: TransitionStatus; width?: number }>`
   background: ${p => p.theme.colors.palette.background.paper};
   color: ${p => p.theme.colors.palette.text.shade80};
@@ -114,30 +115,30 @@ const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) =>
   opacity: 0;
   transition: all 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
 `;
-export type RenderProps = {
-  onClose?: (a: void) => void;
-  data: any;
+export type RenderProps<Data> = {
+  onClose?: (() => void) | undefined;
+  data?: Data;
 };
-type Props = {
+type Props<Data> = {
   isOpened?: boolean;
   children?: React.ReactNode;
   centered?: boolean;
-  onClose?: (a: void) => void;
-  onHide?: (a: void) => void;
-  render?: (a: RenderProps) => React.ReactNode;
-  data?: any;
+  onClose?: (() => void) | undefined;
+  onHide?: (() => void) | undefined;
+  render?: (a: RenderProps<Data>) => React.ReactNode;
+  data?: Data;
   preventBackdropClick?: boolean;
   width?: number;
   theme?: DefaultTheme;
   name?: string;
   // eslint-disable-line
-  onBeforeOpen?: (a: { data: any }) => any;
+  onBeforeOpen?: (a: { data: Data }) => void;
   // eslint-disable-line
   backdropColor?: boolean | undefined | null;
-  bodyStyle?: any;
+  bodyStyle?: CSSProperties;
 };
-class Modal extends PureComponent<
-  Props,
+class Modal<Data> extends PureComponent<
+  Props<Data>,
   {
     directlyClickedBackdrop: boolean;
   }
@@ -151,7 +152,7 @@ class Modal extends PureComponent<
     document.addEventListener("keydown", this.preventFocusEscape);
   }
 
-  componentDidUpdate({ isOpened, onHide }: Props) {
+  componentDidUpdate({ isOpened, onHide }: Props<Data>) {
     if (!isOpened && onHide) onHide();
   }
 
@@ -233,7 +234,7 @@ class Modal extends PureComponent<
       backdropColor,
       bodyStyle,
     } = this.props;
-    const renderProps = {
+    const renderProps: RenderProps<Data> = {
       onClose,
       data,
     };
@@ -286,4 +287,4 @@ class Modal extends PureComponent<
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Modal);
+export default (connect(mapStateToProps, mapDispatchToProps)(Modal) as unknown) as typeof Modal; // to preserve generics

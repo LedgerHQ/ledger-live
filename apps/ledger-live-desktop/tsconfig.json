@@ -21,9 +21,6 @@
     "src/renderer/styles/palettes/*.json",
     "src/renderer/animations/*/*.json",
     "src/renderer/screens/settings/sections/General/regions.json",
-    "src/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoS/**/*.json",
-    "src/renderer/components/Onboarding/Screens/Tutorial/assets/animations/nanoX/**/*.json",
-    "src/renderer/components/Onboarding/Screens/Tutorial/assets/animations/stax/**/*.json",
     "package.json",
     "release-notes.json"
   ]
