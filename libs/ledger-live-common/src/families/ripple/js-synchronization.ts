@@ -1,9 +1,5 @@
 import BigNumber from "bignumber.js";
-import {
-  getAccountInfo,
-  getServerInfo,
-  getTransactions,
-} from "../../api/Ripple";
+import { getAccountInfo, getServerInfo, getTransactions } from "./api";
 import {
   GetAccountShape,
   makeScanAccounts,

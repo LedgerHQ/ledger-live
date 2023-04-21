@@ -17,13 +17,13 @@ import Transport from "@ledgerhq/hw-transport";
 import { throwError, Observable } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { version as livecommonversion } from "../../package.json";
-import { createDeviceSocket } from "./socket";
+import { createDeviceSocket } from "../socket";
 import {
   createMockSocket,
   bulkSocketMock,
   secureChannelMock,
   resultMock,
-} from "./socket.mock";
+} from "../socket/socket.mock";
 import semver from "semver";
 import network from "../network";
 import { getEnv } from "../env";
@@ -45,8 +45,8 @@ import {
   SocketEvent,
   App,
 } from "@ledgerhq/types-live";
-import { getProviderId } from "../manager/provider";
 import { mapApplicationV2ToApp } from "../apps/polyfill";
+import { getProviderId } from "./provider";
 
 declare global {
   namespace NodeJS {

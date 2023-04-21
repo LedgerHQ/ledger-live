@@ -8,7 +8,7 @@ import {
   DustLimit,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
-import { getFeeItems } from "../../../api/FeesBitcoin";
+import { getFeeItems } from "../api";
 import {
   scanAccounts,
   signOperation,

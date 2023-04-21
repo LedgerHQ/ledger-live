@@ -1,4 +1,4 @@
-import { apiForCurrency, Tx } from "./Ethereum";
+import { apiForCurrency, Tx } from ".";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import URL from "url";
 import { ParsedUrlQueryInput } from "node:querystring";
