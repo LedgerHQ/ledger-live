@@ -12,12 +12,12 @@ test.use({
   featureFlags: { customImage: { enabled: true } },
 });
 
+let screenshotIndex = 0;
+
 test("PostOnboarding", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
   const layout = new Layout(page);
   const postOnboarding = new PostOnboarding(page);
-
-  let screenshotIndex = 0;
 
   /**
    * Allows to easily navigate between screenshots in their order of execution.
@@ -98,4 +98,44 @@ test("PostOnboarding", async ({ page }) => {
       },
     );
   });
+});
+
+test("PostOnboarding persistency", async ({ page }) => {
+  const settingsPage = new SettingsPage(page);
+  const layout = new Layout(page);
+  const postOnboarding = new PostOnboarding(page);
+
+  /**
+   * Allows to easily navigate between screenshots in their order of execution.
+   * Yes if we remove/add screenshots it will shift everything but that should
+   * happened rarely, and even then it will be more convenient to check that the
+   * screenshots are correct by examining them in order.
+   * */
+  function generateScreenshotPrefix() {
+    const prefix = `custom-image-${padStart(screenshotIndex.toString(), 3, "0")}-`;
+    screenshotIndex += 1;
+    return prefix;
+  }
+
+  await test.step("go to post onboarding screen", async () => {
+    await layout.goToSettings();
+    await settingsPage.goToExperimentalTab();
+    await postOnboarding.waitForLaunch();
+    await postOnboarding.navigateToPostOnboardingScreen();
+  });
+
+  await test.step('start and complete "claim" mocked action', async () => {
+    await postOnboarding.startClaimMock();
+    await postOnboarding.completeActionAndGoToHub();
+  });
+
+  // TODO: restart app
+
+  // TODO: go to post onboarding hub and check that action claim is completed (screenshot+logic)
+
+  // TODO: skip post onboarding & dismiss banner
+
+  // TODO: restart app
+
+  // TODO: check that banner is still dismissed (not there at all)
 });
