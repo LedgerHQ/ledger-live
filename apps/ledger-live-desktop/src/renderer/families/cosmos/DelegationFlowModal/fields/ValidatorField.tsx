@@ -24,8 +24,8 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   const [showAll, setShowAll] = useState(false);
   const [search, setSearch] = useState("");
   const unit = getAccountUnit(account);
-  const currencyName = account.currency.name.toLowerCase();
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName, search);
+  const currencyId = account.currency.id.toLowerCase();
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
   const chosenValidator = useMemo(() => {
     return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];

@@ -26,7 +26,7 @@ import useMemoOnce from "../../hooks/useMemoOnce";
 import cryptoFactory from "./chain/chain";
 
 export function useCosmosFamilyPreloadData(
-  currencyName: string
+  currencyId: string
 ): CosmosPreloadData {
   const getCurrent = getCurrentCosmosPreloadData;
   const getUpdates = getCosmosPreloadDataUpdates;
@@ -37,7 +37,7 @@ export function useCosmosFamilyPreloadData(
     return () => sub.unsubscribe();
   }, [getCurrent, getUpdates]);
   return (
-    state[currencyName === "osmosis" ? "osmo" : currencyName] ?? {
+    state[currencyId === "osmosis" ? "osmo" : currencyId] ?? {
       validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
     }
   );
@@ -47,8 +47,8 @@ export function useCosmosFamilyMappedDelegations(
   account: CosmosAccount,
   mode?: CosmosOperationMode
 ): CosmosMappedDelegation[] {
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators } = useCosmosFamilyPreloadData(currencyName);
+  const currencyId = account.currency.id.toLowerCase();
+  const { validators } = useCosmosFamilyPreloadData(currencyId);
 
   const delegations = account.cosmosResources?.delegations;
   invariant(delegations, "cosmos: delegations is required");
@@ -166,7 +166,7 @@ export function useMappedExtraOperationDetails({
   extra: CosmosExtraTxInfo;
 }): CosmosExtraTxInfo {
   const { validators } = useCosmosFamilyPreloadData(
-    account.currency.name.toLowerCase()
+    account.currency.id
   );
   const unit = getAccountUnit(account);
   return {
@@ -185,14 +185,14 @@ export function useMappedExtraOperationDetails({
 }
 
 export function useLedgerFirstShuffledValidatorsCosmosFamily(
-  currencyName: string,
+  currencyId: string,
   searchInput?: string
 ): CosmosValidatorItem[] {
   const data =
     getCurrentCosmosPreloadData()[
-      currencyName === "osmosis" ? "osmo" : currencyName
+      currencyId === "osmosis" ? "osmo" : currencyId
     ];
-  const ledgerValidatorAddress = cryptoFactory(currencyName).ledgerValidator;
+  const ledgerValidatorAddress = cryptoFactory(currencyId).ledgerValidator;
 
   return useMemo(() => {
     return reorderValidators(
