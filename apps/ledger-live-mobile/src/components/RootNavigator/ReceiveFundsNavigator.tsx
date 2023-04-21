@@ -3,11 +3,12 @@ import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { HeaderBackButton } from "@react-navigation/elements";
 import { NavigationProp, useRoute } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import ReceiveConfirmation from "../../screens/ReceiveFunds/03-Confirmation";
-import ReceiveConnectDevice from "../../screens/ReceiveFunds/03a-ConnectDevice";
+import ReceiveConnectDevice, {
+  connectDeviceHeaderOptions,
+} from "../../screens/ReceiveFunds/03a-ConnectDevice";
 import ReceiveVerifyAddress from "../../screens/ReceiveFunds/03b-VerifyAddress";
 import ReceiveSelectCrypto from "../../screens/ReceiveFunds/01-SelectCrypto";
 
@@ -137,9 +138,7 @@ export default function ReceiveFundsNavigator() {
               title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
-          headerLeft: () => (
-            <HeaderBackButton onPress={() => onConnectDeviceBack(navigation)} />
-          ),
+          ...connectDeviceHeaderOptions(() => onConnectDeviceBack(navigation)),
         })}
       />
       {/* Select / Connect Device */}
