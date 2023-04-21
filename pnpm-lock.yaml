@@ -30,8 +30,8 @@ importers:
   .:
     dependencies:
       '@moonrepo/cli':
-        specifier: ^1.0.3
-        version: 1.0.3
+        specifier: ^1.2.2
+        version: 1.2.2
     devDependencies:
       '@changesets/changelog-github':
         specifier: ^0.4.8
@@ -14847,8 +14847,8 @@ packages:
     resolution: {integrity: sha512-H1rQc1ZOHANWBvPcW+JpGwr+juXSxM8Q8YCkm3GhZd8REu1fHR3z99CErO1p9pkcfcxZnMdIZdIsXkOHY0NilA==}
     dev: true
 
-  /@moonrepo/cli@1.0.3:
-    resolution: {integrity: sha512-MVeF2SQEoSRfunh2dTrqWRBN+MOEr3pGLwpKgmgcwyPYi8Xu0UZ9WApHyLzr0uf70zNVQXiGOXMu+XDCCKUckw==}
+  /@moonrepo/cli@1.2.2:
+    resolution: {integrity: sha512-yyl7gIkpP97RN2gGdwEPo3PCSuoo01EWC9JRbtx317biAZURd9ySAH1V1xmsL0/+FOeVpBrngc10g5WhLGJe7g==}
     hasBin: true
     requiresBuild: true
     dependencies:
@@ -14861,7 +14861,6 @@ packages:
       '@moonrepo/core-macos-arm64': 1.2.2
       '@moonrepo/core-macos-x64': 1.2.2
       '@moonrepo/core-windows-x64-msvc': 1.2.2
-    dev: false
 
   /@moonrepo/core-linux-arm64-gnu@1.2.2:
     resolution: {integrity: sha512-GYj5C2YnlqxClKU+5k0z1/8an1dXKikY3axFPq1VZp4PxHduyTjwrVNn5UJt/6lDjjT+0LitjvyZn7qhpt0k5g==}
