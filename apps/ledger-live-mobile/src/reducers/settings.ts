@@ -62,7 +62,6 @@ import type {
   SettingsUpdateCurrencyPayload,
   SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetDismissedDynamicCardsPayload,
-  SettingsSetStatusCenterPayload,
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
@@ -646,12 +645,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     dateFormat: (action as Action<SettingsSetDateFormatPayload>).payload,
   }),
 
-  [SettingsActionTypes.SET_STATUS_CENTER]: (state, action) => ({
-    ...state,
-    displayStatusCenter: (action as Action<SettingsSetStatusCenterPayload>)
-      .payload,
-  }),
-
   [SettingsActionTypes.SET_OVERRIDDEN_FEATURE_FLAG]: (state, action) => {
     const { id, value } = (
       action as Action<SettingsSetOverriddenFeatureFlagPlayload>
@@ -917,8 +910,6 @@ export const notificationsSelector = (state: State) =>
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;
-export const statusCenterSelector = (state: State) =>
-  state.settings.displayStatusCenter;
 export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsBannerVisibleSelector = (state: State) =>

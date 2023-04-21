@@ -5729,7 +5729,7 @@
       }
     },
     "status": {
-      "title": "An issue might need your attention",
+      "title": "Status",
       "title_plural": "Some issues might need your attention",
       "desc": {
         "0": "They’re being investigated and will be resolved shortly.",
