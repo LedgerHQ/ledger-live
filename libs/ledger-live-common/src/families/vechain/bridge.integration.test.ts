@@ -3,7 +3,7 @@ import { testBridge } from "../../__tests__/test-helpers/bridge";
 import type { AccountRaw, DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { fromTransactionRaw } from "./transaction";
-import { DEFAULT_GAS_COEFFICIENT, TESTNET_CHAIN_TAG } from "./constants";
+import { DEFAULT_GAS_COEFFICIENT, MAINNET_CHAIN_TAG } from "./constants";
 import { vechain1 } from "./datasets/vechain";
 import { generateNonce } from "./utils/transaction-utils";
 import BigNumber from "bignumber.js";
@@ -29,30 +29,29 @@ const dataset: DatasetTest<Transaction> = {
         "balance",
         "spendableBalance",
         "estimateMaxSpendable",
-        "creationDate",
-        "blockRef",
       ],
-      FIXME_ignoreOperationFields: ["nonce"],
-      scanAccounts: [vechainScanAccounts1],
+      FIXME_ignoreOperationFields: ["nonce", "blockRef"], //non-deterministic
+      scanAccounts: vechainScanAccounts1,
       accounts: [
         {
-          implementations: ["mock", "js"],
+          raw: vechain1 as AccountRaw,
+          implementations: ["js"],
           transactions: [
             {
               name: "Send VET",
               transaction: fromTransactionRaw({
                 family: "vechain",
-                mode: "send_vet",
+                estimatedFees: new BigNumber(0),
                 recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
-                amount: "10000000000000000000",
+                amount: "1000000000000000000",
                 body: {
-                  chainTag: TESTNET_CHAIN_TAG,
+                  chainTag: MAINNET_CHAIN_TAG,
                   blockRef: "0x00634a0c856ec1db",
                   expiration: 18,
                   clauses: [
                     {
                       to: "0x17733CAb76d9A2112576443F21735789733B1ca3",
-                      value: "10000000000000000000",
+                      value: "1000000000000000000",
                       data: "0x",
                     },
                   ],
@@ -63,9 +62,9 @@ const dataset: DatasetTest<Transaction> = {
                 },
               }),
               expectedStatus: {
-                amount: new BigNumber("10000000000000000000"),
+                amount: new BigNumber("1000000000000000000"),
                 estimatedFees: new BigNumber("210000000000000000"),
-                totalSpent: new BigNumber("10000000000000000000"),
+                totalSpent: new BigNumber("1000000000000000000"),
                 errors: {},
                 warnings: {},
               },
@@ -74,11 +73,13 @@ const dataset: DatasetTest<Transaction> = {
               name: "Send VTHO",
               transaction: fromTransactionRaw({
                 family: "vechain",
-                mode: "send_vtho",
+                subAccountId:
+                  "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain+vechain%2Fvtho",
+                estimatedFees: new BigNumber("210000000000000000"),
                 recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
-                amount: "9000000000000000000",
+                amount: "1000000000000000000",
                 body: {
-                  chainTag: TESTNET_CHAIN_TAG,
+                  chainTag: MAINNET_CHAIN_TAG,
                   blockRef: "0x00634a0c856ec1db",
                   expiration: 18,
                   clauses: [
@@ -98,9 +99,9 @@ const dataset: DatasetTest<Transaction> = {
                 },
               }),
               expectedStatus: {
-                amount: new BigNumber("9000000000000000000"),
-                estimatedFees: new BigNumber("385030000000000000"),
-                totalSpent: new BigNumber("9000000000000000000"),
+                amount: new BigNumber("1000000000000000000"),
+                estimatedFees: new BigNumber("665180000000000000"),
+                totalSpent: new BigNumber("1665180000000000000"),
                 errors: {},
                 warnings: {},
               },
@@ -109,11 +110,11 @@ const dataset: DatasetTest<Transaction> = {
               name: "Amount required",
               transaction: fromTransactionRaw({
                 family: "vechain",
-                mode: "send_vet",
+                estimatedFees: new BigNumber(0),
                 recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
                 amount: "",
                 body: {
-                  chainTag: TESTNET_CHAIN_TAG,
+                  chainTag: MAINNET_CHAIN_TAG,
                   blockRef: "0x00634a0c856ec1db",
                   expiration: 18,
                   clauses: [{ to: "", value: 0, data: "0x" }],
@@ -134,17 +135,17 @@ const dataset: DatasetTest<Transaction> = {
               name: "VET balance not enough",
               transaction: fromTransactionRaw({
                 family: "vechain",
-                mode: "send_vet",
+                estimatedFees: new BigNumber(0),
                 recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
-                amount: "2000000000000000000000",
+                amount: "20000000000000000000",
                 body: {
-                  chainTag: TESTNET_CHAIN_TAG,
+                  chainTag: MAINNET_CHAIN_TAG,
                   blockRef: "0x00634a0c856ec1db",
                   expiration: 18,
                   clauses: [
                     {
                       to: "0x17733CAb76d9A2112576443F21735789733B1ca3",
-                      value: "2000000000000000000000",
+                      value: "20000000000000000000",
                       data: "0x",
                     },
                   ],
@@ -155,7 +156,7 @@ const dataset: DatasetTest<Transaction> = {
                 },
               }),
               expectedStatus: {
-                amount: new BigNumber("2000000000000000000000"),
+                amount: new BigNumber("20000000000000000000"),
                 errors: {
                   amount: new NotEnoughBalance(),
                 },
@@ -168,17 +169,19 @@ const dataset: DatasetTest<Transaction> = {
               name: "VTHO balance not enough",
               transaction: fromTransactionRaw({
                 family: "vechain",
-                mode: "send_vtho",
+                subAccountId:
+                  "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain+vechain%2Fvtho",
+                estimatedFees: new BigNumber(0),
                 recipient: "0x17733CAb76d9A2112576443F21735789733B1ca3",
-                amount: "2000000000000000000000",
+                amount: "20000000000000000000",
                 body: {
-                  chainTag: TESTNET_CHAIN_TAG,
+                  chainTag: MAINNET_CHAIN_TAG,
                   blockRef: "0x00634a0c856ec1db",
                   expiration: 18,
                   clauses: [
                     {
                       to: "0x17733CAb76d9A2112576443F21735789733B1ca3",
-                      value: "2000000000000000000000",
+                      value: "20000000000000000000",
                       data: "0x",
                     },
                   ],
@@ -189,7 +192,7 @@ const dataset: DatasetTest<Transaction> = {
                 },
               }),
               expectedStatus: {
-                amount: new BigNumber("2000000000000000000000"),
+                amount: new BigNumber("20000000000000000000"),
                 errors: {
                   amount: new NotEnoughBalance(),
                 },
@@ -199,10 +202,10 @@ const dataset: DatasetTest<Transaction> = {
               },
             },
           ],
-          raw: vechain1 as AccountRaw,
           FIXME_tests: [
-            "balance is sum of ops",
-            "empty transaction is equals to itself",
+            "balance is sum of ops", //the balance depends on VTHO and it's earned without operations
+            "empty transaction is equals to itself", //nonce is not deterministic
+            "pendingOperations are cleaned up", //the bot tests require operation on main account, detected as pending
           ],
         },
       ],

@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`vechain currency bridge scanAccounts vechain seed 1 1`] = `
+Array [
+  Object {
+    "currencyId": "vechain",
+    "derivationMode": "vechain",
+    "feesCurrencyId": "vechain/vtho",
+    "freshAddress": "0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02",
+    "freshAddressPath": "44'/818'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02",
+        "derivationPath": "44'/818'/0'/0/0",
+      },
+    ],
+    "id": "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain",
+    "index": 0,
+    "name": "Vechain 1",
+    "nfts": undefined,
+    "operationsCount": 1,
+    "pendingOperations": Array [],
+    "seedIdentifier": "0428594655d5b5c95bb2c284ae480caae57df83d5d51e53f3cad0de76c014fdd9c14d47fc40abc126bf41197021d3a2ea6895ce15e50bdf255769b65cd87aaaa7f",
+    "starred": false,
+    "subAccounts": Array [],
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 18,
+    "used": true,
+  },
+  Object {
+    "approvals": undefined,
+    "id": "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain+vechain%2Fvtho",
+    "operationsCount": 1,
+    "parentId": "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain",
+    "pendingOperations": Array [],
+    "starred": false,
+    "swapHistory": Array [],
+    "tokenId": "vechain/vtho",
+    "type": "TokenAccountRaw",
+  },
+  Object {
+    "currencyId": "vechain",
+    "derivationMode": "vechain",
+    "feesCurrencyId": "vechain/vtho",
+    "freshAddress": "0x91425B8c5EBB822c1f60270DA3B2cB9337F8fAB8",
+    "freshAddressPath": "44'/818'/0'/0/1",
+    "freshAddresses": Array [
+      Object {
+        "address": "0x91425B8c5EBB822c1f60270DA3B2cB9337F8fAB8",
+        "derivationPath": "44'/818'/0'/0/1",
+      },
+    ],
+    "id": "js:2:vechain:0x91425B8c5EBB822c1f60270DA3B2cB9337F8fAB8:vechain",
+    "index": 1,
+    "name": "Vechain 2",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "0428594655d5b5c95bb2c284ae480caae57df83d5d51e53f3cad0de76c014fdd9c14d47fc40abc126bf41197021d3a2ea6895ce15e50bdf255769b65cd87aaaa7f",
+    "starred": false,
+    "subAccounts": Array [],
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 18,
+    "used": false,
+  },
+  Object {
+    "approvals": undefined,
+    "id": "js:2:vechain:0x91425B8c5EBB822c1f60270DA3B2cB9337F8fAB8:vechain+vechain%2Fvtho",
+    "operationsCount": 0,
+    "parentId": "js:2:vechain:0x91425B8c5EBB822c1f60270DA3B2cB9337F8fAB8:vechain",
+    "pendingOperations": Array [],
+    "starred": false,
+    "swapHistory": Array [],
+    "tokenId": "vechain/vtho",
+    "type": "TokenAccountRaw",
+  },
+]
+`;
+
+exports[`vechain currency bridge scanAccounts vechain seed 1 2`] = `
+Array [
+  Array [
+    Object {
+      "accountId": "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain",
+      "blockHash": "0x00e742f27e0dddaa6df6fc23fb39a24acb50d57dbbe114f64fb06ddfa4d358e8",
+      "blockHeight": 15155954,
+      "contract": undefined,
+      "extra": Object {},
+      "fee": "210000000000000000",
+      "hash": "0x901109642a6f56495bdd652cd7c9fb96ee476377b976551b46a05437567af58c",
+      "id": "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain-0x901109642a6f56495bdd652cd7c9fb96ee476377b976551b46a05437567af58c-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "0x82d984c42fc9d49e2d4cffdcad59301affca7e02",
+      ],
+      "senders": Array [
+        "0x79028e3d948bd5873ccf58a69089cac105832129",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "3000000000000000000",
+    },
+  ],
+  Array [
+    Object {
+      "accountId": "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain+vechain%2Fvtho",
+      "blockHash": "0x00e742f48ff7553a1b5276886ca7df27444cafa2086757393ce31ff68422a4b9",
+      "blockHeight": 15155956,
+      "contract": undefined,
+      "extra": Object {},
+      "fee": "365180000000000000",
+      "hash": "0xa3049ffd1af19c85659e76e50e733098df194ba9df7597e6c654d688c553488b",
+      "id": "js:2:vechain:0x82d984c42fC9d49E2d4CFFdcad59301AfFca7E02:vechain+vechain%2Fvtho-0xa3049ffd1af19c85659e76e50e733098df194ba9df7597e6c654d688c553488b-IN",
+      "operator": undefined,
+      "recipients": Array [
+        "0x82d984c42fc9d49e2d4cffdcad59301affca7e02",
+      ],
+      "senders": Array [
+        "0x79028e3d948bd5873ccf58a69089cac105832129",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "3000000000000000000",
+    },
+  ],
+  Array [],
+  Array [],
+]
+`;
