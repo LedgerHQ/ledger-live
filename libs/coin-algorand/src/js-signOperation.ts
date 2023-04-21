@@ -16,12 +16,16 @@ import type {
 } from "@ledgerhq/types-live";
 import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { SignOperationFnSignature } from "@ledgerhq/types-live";
+import { AlgorandAPI } from "./api";
 
 /**
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (withDevice: DeviceCommunication): SignOperationFnSignature<Transaction> =>
+  (
+    withDevice: DeviceCommunication,
+    algorandAPI: AlgorandAPI
+  ): SignOperationFnSignature<Transaction> =>
   ({
     account,
     transaction,
@@ -41,7 +45,10 @@ export const buildSignOperation =
               throw new FeeNotLoaded();
             }
 
-            const algoTx = await buildTransactionPayload(account, transaction);
+            const algoTx = await buildTransactionPayload(algorandAPI)(
+              account,
+              transaction
+            );
 
             const toSign = encodeToSign(algoTx);
 

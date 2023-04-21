@@ -1,12 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
-import network from "../../../network";
 import {
   AlgoTransaction,
   AlgoTransactionDetails,
   AlgoPaymentInfo,
   AlgoAssetTransferInfo,
 } from "./indexer.types";
+import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 
 const LIMIT = 100; // Max nb of transactions per request
 
@@ -16,34 +16,33 @@ const INDEXER_URL = `${BASE_URL}/idx2/v2`;
 const fullUrl = (route: string): string =>
   `${INDEXER_URL}${route}?limit=${LIMIT}`;
 
-export const getAccountTransactions = async (
-  address: string,
-  startAt?: number
-): Promise<AlgoTransaction[]> => {
-  const url = fullUrl(`/accounts/${address}/transactions`);
+export const getAccountTransactions =
+  (network: NetworkRequestCall) =>
+  async (address: string, startAt?: number): Promise<AlgoTransaction[]> => {
+    const url = fullUrl(`/accounts/${address}/transactions`);
 
-  let nextToken: string | undefined;
-  let newRawTxs: any[] = [];
-  const mergedTxs: AlgoTransaction[] = [];
-  do {
-    let nextUrl: string = url;
-    if (startAt) {
-      nextUrl = nextUrl.concat(`&min-round=${startAt}`);
-    }
-    if (nextToken) {
-      nextUrl = nextUrl.concat(`&next=${nextToken}`);
-    }
-    const { data }: { data: { transactions: any[] } } = await network({
-      method: "GET",
-      url: nextUrl,
-    });
-    nextToken = data["next-token"];
-    newRawTxs = data.transactions;
-    newRawTxs.map(parseRawTransaction).forEach((tx) => mergedTxs.push(tx));
-  } while (newRawTxs.length >= LIMIT);
+    let nextToken: string | undefined;
+    let newRawTxs: any[] = [];
+    const mergedTxs: AlgoTransaction[] = [];
+    do {
+      let nextUrl: string = url;
+      if (startAt) {
+        nextUrl = nextUrl.concat(`&min-round=${startAt}`);
+      }
+      if (nextToken) {
+        nextUrl = nextUrl.concat(`&next=${nextToken}`);
+      }
+      const { data }: { data: { transactions: any[] } } = await network({
+        method: "GET",
+        url: nextUrl,
+      });
+      nextToken = data["next-token"];
+      newRawTxs = data.transactions;
+      newRawTxs.map(parseRawTransaction).forEach((tx) => mergedTxs.push(tx));
+    } while (newRawTxs.length >= LIMIT);
 
-  return mergedTxs;
-};
+    return mergedTxs;
+  };
 
 const parseRawTransaction = (tx: any): AlgoTransaction => {
   let details: AlgoTransactionDetails | undefined = undefined;
