@@ -52,6 +52,7 @@ import { TezosDelegationFlowParamList } from "../families/tezos/DelegationFlow/t
 import { TronVoteFlowParamList } from "../families/tron/VoteFlow/types";
 import { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
 import { SignMessageNavigatorStackParamList } from "../components/RootNavigator/types/SignMessageNavigator";
+import { HederaStakeFlowParamList } from "../families/hedera/StakeFlows/types";
 
 const action = createAction(connectApp);
 type Props =
@@ -152,6 +153,10 @@ type Props =
   | StackNavigatorProps<
       ElrondWithdrawFlowParamList,
       ScreenName.ElrondWithdrawConnectDevice
+    >
+  | StackNavigatorProps<
+      HederaStakeFlowParamList,
+      ScreenName.HederaStakeConnectDevice
     >
   | StackNavigatorProps<
       NearStakingFlowParamList,

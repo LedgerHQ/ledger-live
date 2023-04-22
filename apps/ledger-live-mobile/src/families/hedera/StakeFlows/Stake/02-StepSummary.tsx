@@ -12,18 +12,15 @@ import type {
   Transaction,
   HederaAccount,
 } from "@ledgerhq/live-common/families/hedera/types";
+import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import { HederaStakeFlowParamList } from "../types";
 
-type RouteParams = {
-  account: HederaAccount;
-  transaction: Transaction;
-};
+// type RouteParams = {
+//   account: HederaAccount;
+//   transaction: Transaction;
+// };
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+type Props = StackNavigatorProps<HederaStakeFlowParamList, ScreenName.HederaStakeSummary>;
 
 function StepSummary({ navigation, route }: Props) {
   const {

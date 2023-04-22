@@ -31,26 +31,29 @@ import type {
   StakeMethod,
   StakeType,
 } from "@ledgerhq/live-common/families/hedera/types";
-import type { Node, NodeList } from "../types";
+import type { HederaStakeFlowParamList, Node, NodeList } from "../types";
+import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
 
 type RouteParams = {
   transaction: Transaction;
   stakeType: StakeType;
 };
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+// type Props = {
+//   navigation: any;
+//   route: {
+//     params: RouteParams;
+//   };
+// };
+
+type Props = StackNavigatorProps<HederaStakeFlowParamList, ScreenName.HederaStakeInfo>;
 
 function StepStakingInfo({ navigation, route }: Props) {
-  const {
-    params: { stakeType },
-  } = route;
+  // const {
+  //   params: { stakeType },
+  // } = route;
   const { colors } = useTheme();
-  const { account }: { account: HederaAccount } = useSelector(
+  const { account } = useSelector(
     accountScreenSelector(route),
   );
   invariant(account, "account required");

@@ -15,6 +15,7 @@ import ConnectDevice from "../../../../screens/ConnectDevice";
 import SelectDevice from "../../../../screens/SelectDevice";
 import ValidationError from "../../../../screens/SendFunds/07-ValidationError";
 import ValidationSuccess from "../../../../screens/SendFunds/07-ValidationSuccess";
+import { HederaStakeFlowParamList } from "../types";
 
 const totalSteps = "3";
 
@@ -35,7 +36,7 @@ function StakeFlow() {
     >
       {/* Staking Information Form */}
       <Stack.Screen
-        name={ScreenName.HederaStakeForm}
+        name={ScreenName.HederaStakeInfo}
         component={StepStakingInfo}
         options={{
           headerTitle: () => (
@@ -157,4 +158,4 @@ const options = {
 
 export { StakeFlow as component, options };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<HederaStakeFlowParamList>();

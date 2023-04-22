@@ -10,7 +10,8 @@ import { ScreenName } from "../../../../const";
 
 import FilteredSearchBar from "../../../../components/FilteredSearchBar";
 
-import type { Node, NodeList } from "../types";
+import type { HederaStakeFlowParamList, Node, NodeList } from "../types";
+import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
 
 const StyledRectButton = styled(RectButton)`
   flex-direction: row;
@@ -19,17 +20,12 @@ const StyledRectButton = styled(RectButton)`
   padding: 30px 16px;
 `;
 
-type RouteParams = {
-  nodeList: NodeList;
-  onChange: (node: Node) => void;
-};
+// type RouteParams = {
+//   nodeList: NodeList;
+//   onChange: (node: Node) => void;
+// };
 
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+type Props = StackNavigatorProps<HederaStakeFlowParamList, ScreenName.HederaStakeNodeList>;
 
 function NodeListScreen({ navigation, route }: Props) {
   const {

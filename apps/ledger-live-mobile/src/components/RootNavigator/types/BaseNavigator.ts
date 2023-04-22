@@ -74,6 +74,7 @@ import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/type
 import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
+import type { HederaStakeFlowParamList } from "../../../families/hedera/StakeFlows/types";
 
 type TradeParams = {
   type: "onRamp" | "offRamp";
@@ -325,6 +326,9 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosRedelegationFlow]: NavigatorScreenParams<CosmosRedelegationFlowParamList>;
   [NavigatorName.CosmosUndelegationFlow]: NavigatorScreenParams<CosmosUndelegationFlowParamList>;
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
+
+  // Hedera
+  [NavigatorName.HederaStakeFlow]: NavigatorScreenParams<HederaStakeFlowParamList>;
 
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;
