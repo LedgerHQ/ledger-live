@@ -12,6 +12,8 @@ import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types"
 import ValidatorField from "../fields/ValidatorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import TranslatedError from "~/renderer/components/TranslatedError";
+import Text from "~/renderer/components/Text";
 
 export default function StepDelegation({
   account,
@@ -66,10 +68,20 @@ export function StepDelegationFooter({
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;
-  const canNext = !bridgePending && !errors.validators && transaction;
+  const canNext = !bridgePending && !errors.amount && transaction;
+  const displayError = errors.amount?.message === "CardanoNotEnoughFunds" ? errors.amount : "";
   return (
-    <>
-      <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+    <Box horizontal alignItems="center" flow={2} grow>
+      {displayError ? (
+        <Box grow>
+          <Text fontSize={13} color="alertRed">
+            <TranslatedError error={displayError} field="title" />
+          </Text>
+        </Box>
+      ) : (
+        <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+      )}
+
       <Box horizontal>
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />
@@ -83,6 +95,6 @@ export function StepDelegationFooter({
           <Trans i18nKey="common.continue" />
         </Button>
       </Box>
-    </>
+    </Box>
   );
 }

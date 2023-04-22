@@ -34,8 +34,8 @@ const Delegation = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { cardanoResources } = account;
-  invariant(cardanoResources, "cardano account expected");
-  const { delegation } = cardanoResources;
+  invariant(account.type === "Account" ? cardanoResources : true, "cardano account expected");
+  const delegation = cardanoResources?.delegation;
   return account.type !== "Account" ? null : (
     <TableContainer mb={6}>
       <TableHeader
