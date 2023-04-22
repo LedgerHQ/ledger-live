@@ -4,6 +4,7 @@ import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types"
 import styled from "styled-components";
 import { StyleProp, ViewStyle } from "react-native";
 import Box from "~/renderer/components/Box";
+import BigSpinner from "~/renderer/components/BigSpinner";
 
 const ScrollContainer = styled(Box).attrs(p => ({
   vertical: true,
@@ -22,6 +23,7 @@ type ScrollLoadingListProps = {
   style?: StyleProp<ViewStyle>;
   fetchPoolsFromNextPage: () => void;
   search: string;
+  isPaginating: boolean;
 };
 
 const ScrollLoadingList = ({
@@ -33,6 +35,7 @@ const ScrollLoadingList = ({
   style,
   fetchPoolsFromNextPage,
   search,
+  isPaginating,
 }: ScrollLoadingListProps) => {
   const scrollRef = useRef<HTMLInputElement>();
   const [scrollOffset, setScrollOffset] = useState(bufferSize);
@@ -69,6 +72,11 @@ const ScrollLoadingList = ({
       {data.length > bufferSize
         ? data.slice(0, scrollOffset).map(renderItem)
         : data.map(renderItem)}
+      {isPaginating ? (
+        <Box flex={1} alignItems="center" justifyContent="center">
+          <BigSpinner size={50} />
+        </Box>
+      ) : null}
       {data.length <= 0 && noResultPlaceholder}
     </ScrollContainer>
   );

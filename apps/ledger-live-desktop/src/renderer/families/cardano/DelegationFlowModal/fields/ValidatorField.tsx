@@ -32,7 +32,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
   const unit = getAccountUnit(account);
   const [showAll, setShowAll] = useState(
     LEDGER_POOL_IDS.length === 0 ||
-    (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
+      (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
   );
   const [ledgerPoolsLoading, setLedgerPoolsLoading] = useState(false);
   const {
@@ -41,6 +41,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
     setSearchQuery,
     onScrollEndReached,
     isSearching,
+    isPaginating,
   } = useCardanoFamilyPools(account.currency);
   const poolIdsToFilterFromAllPools = [...LEDGER_POOL_IDS];
   if (delegation?.poolId) {
@@ -101,6 +102,7 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
               noResultPlaceholder={null}
               fetchPoolsFromNextPage={onScrollEndReached}
               search={searchQuery}
+              isPaginating={isPaginating}
             />
           )}
         </Box>
