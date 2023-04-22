@@ -9,23 +9,15 @@ export function useCardanoFamilyPools(currency: CryptoCurrency): {
   setSearchQuery: (query: string) => void;
   onScrollEndReached: () => void;
   isSearching: boolean;
+  isPaginating: boolean;
 } {
   const [pools, setPools] = useState([] as Array<StakePool>);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [isPaginating, setIsPaginating] = useState(false);
   const limit = 100;
   const pageNo = useRef(1);
   const isPaginationDisabled = useRef(false);
-
-  const loadPage = () => {
-    fetchPoolList(currency, searchQuery, pageNo.current, limit).then(
-      (apiRes: APIGetPoolList) => {
-        setPools((currentPools) => {
-          return [...currentPools, ...apiRes.pools];
-        });
-      }
-    );
-  };
 
   useEffect(() => {
     isPaginationDisabled.current = false;
@@ -54,8 +46,18 @@ export function useCardanoFamilyPools(currency: CryptoCurrency): {
 
   const onScrollEndReached = () => {
     if (isPaginationDisabled.current) return;
+    setIsPaginating(true);
     pageNo.current++;
-    loadPage();
+
+    fetchPoolList(currency, searchQuery, pageNo.current, limit)
+      .then((apiRes: APIGetPoolList) => {
+        setPools((currentPools) => {
+          return [...currentPools, ...apiRes.pools];
+        });
+      })
+      .finally(() => {
+        setIsPaginating(false);
+      });
   };
 
   return {
@@ -64,5 +66,6 @@ export function useCardanoFamilyPools(currency: CryptoCurrency): {
     setSearchQuery,
     onScrollEndReached,
     isSearching,
+    isPaginating,
   };
 }

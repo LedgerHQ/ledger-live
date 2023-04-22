@@ -33,6 +33,7 @@ export default function SelectPool({ navigation, route }: Props) {
     setSearchQuery,
     onScrollEndReached,
     isSearching,
+    isPaginating,
   } = useCardanoFamilyPools(account.currency);
 
   const onItemPress = useCallback(
@@ -70,10 +71,11 @@ export default function SelectPool({ navigation, route }: Props) {
           data={pools}
           renderItem={renderItem}
           extraData={{}}
-          onEndReachedThreshold={1}
+          onEndReachedThreshold={0.5}
           onEndReached={onScrollEndReached}
         />
       )}
+      {isPaginating && pools.length ? poolSkeletons() : <></>}
     </SafeAreaView>
   );
 }
