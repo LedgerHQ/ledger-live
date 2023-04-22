@@ -112,8 +112,9 @@ async function getSendTransactionStatus(
         e.message.toLowerCase() === "not enough tokens"
       ) {
         errors.amount = new CardanoNotEnoughFunds();
+      } else {
+        throw e;
       }
-      throw e;
     }
   }
 
@@ -137,11 +138,24 @@ async function getDelegateTransactionStatus(
     errors.fees = new FeeNotLoaded();
   }
 
+  const estimatedFees = t.fees || new BigNumber(0);
+
   if (!t.poolId || !isHexString(t.poolId) || t.poolId.length !== 56) {
     errors.poolId = new CardanoInvalidPoolId();
+  } else {
+    try {
+      await buildTransaction(a, t);
+    } catch (e: any) {
+      if (
+        e.message.toLowerCase() === "not enough ada" ||
+        e.message.toLowerCase() === "not enough tokens"
+      ) {
+        errors.amount = new CardanoNotEnoughFunds();
+      } else {
+        throw e;
+      }
+    }
   }
-
-  const estimatedFees = t.fees || new BigNumber(0);
 
   return Promise.resolve({
     errors,
@@ -165,6 +179,19 @@ async function getUndelegateTransactionStatus(
 
   if (!cardanoResources.delegation?.status) {
     throw new Error("StakeKey is not registered");
+  }
+
+  try {
+    await buildTransaction(a, t);
+  } catch (e: any) {
+    if (
+      e.message.toLowerCase() === "not enough ada" ||
+      e.message.toLowerCase() === "not enough tokens"
+    ) {
+      errors.amount = new CardanoNotEnoughFunds();
+    } else {
+      throw e;
+    }
   }
 
   return Promise.resolve({
