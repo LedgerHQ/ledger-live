@@ -33,10 +33,12 @@ const Wrapper = styled(Box).attrs(() => ({
 const Delegation = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+
+  if (account.type !== "Account") return null;
   const { cardanoResources } = account;
-  invariant(account.type === "Account" ? cardanoResources : true, "cardano account expected");
-  const delegation = cardanoResources?.delegation;
-  return account.type !== "Account" ? null : (
+  invariant(cardanoResources, "cardano account expected");
+  const delegation = cardanoResources.delegation;
+  return (
     <TableContainer mb={6}>
       <TableHeader
         title={t("delegation.header")}

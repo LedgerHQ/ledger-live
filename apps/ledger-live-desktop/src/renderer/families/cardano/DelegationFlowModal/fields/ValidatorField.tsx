@@ -83,8 +83,8 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
       <ValidatorsFieldContainer>
         <Box p={1}>
           {(showAll && isSearching) || (!showAll && ledgerPoolsLoading) ? (
-            <Box flex={1} alignItems="center" justifyContent="center">
-              <BigSpinner size={50} />
+            <Box flex={1} py={3} alignItems="center" justifyContent="center">
+              <BigSpinner size={35} />
             </Box>
           ) : (
             <ScrollLoadingList

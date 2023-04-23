@@ -73,8 +73,8 @@ const ScrollLoadingList = ({
         ? data.slice(0, scrollOffset).map(renderItem)
         : data.map(renderItem)}
       {isPaginating ? (
-        <Box flex={1} alignItems="center" justifyContent="center">
-          <BigSpinner size={50} />
+        <Box flex={1} py={4} alignItems="center" justifyContent="center">
+          <BigSpinner size={30} />
         </Box>
       ) : null}
       {data.length <= 0 && noResultPlaceholder}
