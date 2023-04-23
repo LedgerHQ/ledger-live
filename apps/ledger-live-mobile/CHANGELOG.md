@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.19.1-nightly.3
+
+### Patch Changes
+
+- [#3118](https://github.com/LedgerHQ/ledger-live/pull/3118) [`45288a1d80`](https://github.com/LedgerHQ/ledger-live/commit/45288a1d808866debff3f51c0382cbf71fac4c35) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - feat: refactor/homogenise headers
+
+  Homogenize headers in navigators and in the main screens accessible from the Main navigator tab bar
+  Prevent blocking state due to already paired device in Stax onboarding
+
+- Updated dependencies [[`45288a1d80`](https://github.com/LedgerHQ/ledger-live/commit/45288a1d808866debff3f51c0382cbf71fac4c35)]:
+  - @ledgerhq/native-ui@0.19.0-nightly.2
+
 ## 3.19.1-nightly.2
 
 ### Patch Changes

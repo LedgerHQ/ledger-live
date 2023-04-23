@@ -92,6 +92,7 @@
     "@ledgerhq/hw-app-exchange": "0.1.0"
   },
   "changesets": [
+    "afraid-candles-build",
     "beige-singers-jog",
     "brave-hats-think",
     "bright-rabbits-decide",
