@@ -16,6 +16,7 @@ import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/get
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 import { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
+import BigSpinner from "~/renderer/components/BigSpinner";
 
 type Props = {
   t: TFunction;
@@ -33,17 +34,25 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
     LEDGER_POOL_IDS.length === 0 ||
       (LEDGER_POOL_IDS.length === 1 && delegation?.poolId === LEDGER_POOL_IDS[0]),
   );
-  const { pools, searchQuery, setSearchQuery, onScrollEndReached } = useCardanoFamilyPools(
-    account.currency,
-  );
+  const [ledgerPoolsLoading, setLedgerPoolsLoading] = useState(false);
+  const {
+    pools,
+    searchQuery,
+    setSearchQuery,
+    onScrollEndReached,
+    isSearching,
+    isPaginating,
+  } = useCardanoFamilyPools(account.currency);
   const poolIdsToFilterFromAllPools = [...LEDGER_POOL_IDS];
   if (delegation?.poolId) {
     poolIdsToFilterFromAllPools.push(delegation?.poolId);
   }
   useEffect(() => {
     if (LEDGER_POOL_IDS.length) {
+      setLedgerPoolsLoading(true);
       fetchPoolDetails(account.currency, LEDGER_POOL_IDS).then(
         (apiRes: { pools: Array<StakePool> }) => {
+          setLedgerPoolsLoading(false);
           const filteredLedgerPools = apiRes.pools.filter(
             pool => pool.poolId !== delegation?.poolId,
           );
@@ -73,22 +82,29 @@ const ValidatorField = ({ account, delegation, onChangeValidator, selectedPoolId
       {showAll && <ValidatorSearchInput noMargin={true} search={searchQuery} onSearch={onSearch} />}
       <ValidatorsFieldContainer>
         <Box p={1}>
-          <ScrollLoadingList
-            data={
-              showAll
-                ? pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))
-                : ledgerPools
-            }
-            style={{
-              flex: showAll ? "1 0 256px" : "1 0 64px",
-              marginBottom: 0,
-              paddingLeft: 0,
-            }}
-            renderItem={renderItem}
-            noResultPlaceholder={null}
-            fetchPoolsFromNextPage={onScrollEndReached}
-            search={searchQuery}
-          />
+          {(showAll && isSearching) || (!showAll && ledgerPoolsLoading) ? (
+            <Box flex={1} alignItems="center" justifyContent="center">
+              <BigSpinner size={50} />
+            </Box>
+          ) : (
+            <ScrollLoadingList
+              data={
+                showAll
+                  ? pools.filter(p => !poolIdsToFilterFromAllPools.includes(p.poolId))
+                  : ledgerPools
+              }
+              style={{
+                flex: showAll ? "1 0 256px" : "1 0 64px",
+                marginBottom: 0,
+                paddingLeft: 0,
+              }}
+              renderItem={renderItem}
+              noResultPlaceholder={null}
+              fetchPoolsFromNextPage={onScrollEndReached}
+              search={searchQuery}
+              isPaginating={isPaginating}
+            />
+          )}
         </Box>
         {LEDGER_POOL_IDS.length ? (
           <SeeAllButton expanded={showAll} onClick={() => setShowAll(shown => !shown)}>
