@@ -22,7 +22,6 @@ type Props = {
   withActivityColor?: string;
   withIcon?: boolean;
   withEquality?: boolean;
-  date?: Date;
   color?: string;
   fontSize?: number;
   fontWeight?: number;
@@ -35,7 +34,6 @@ export default function Price({
   from,
   to,
   unit,
-  date,
   withActivityCurrencyColor,
   withActivityColor,
   withEquality,

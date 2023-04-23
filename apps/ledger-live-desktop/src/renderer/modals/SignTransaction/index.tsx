@@ -8,7 +8,7 @@ type Props = {
   canEditFees: boolean;
   error?: Error;
 };
-const SignTransactionModal = ({ stepId, canEditFees, error }: Props) => {
+const SignTransactionModal = ({ stepId }: Props) => {
   const [state, setState] = useState({
     stepId: stepId || "summary",
     error: undefined,

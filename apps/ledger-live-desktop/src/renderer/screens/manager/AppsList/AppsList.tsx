@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { Trans, TFunction } from "react-i18next";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
-import { DeviceInfo } from "@ledgerhq/types-live";
-import { State, Action, AppsDistribution } from "@ledgerhq/live-common/apps/types";
+import { State, Action } from "@ledgerhq/live-common/apps/types";
 import { currenciesSelector } from "~/renderer/reducers/accounts";
 import UpdateAllApps from "./UpdateAllApps";
 import Placeholder from "./Placeholder";
@@ -52,7 +51,6 @@ const FilterHeader = styled.div`
   z-index: 1;
 `;
 type Props = {
-  deviceInfo: DeviceInfo;
   optimisticState: State;
   state: State;
   dispatch: (a: Action) => void;
@@ -60,10 +58,8 @@ type Props = {
   setAppInstallDep: (a: any) => void;
   setAppUninstallDep: (a: any) => void;
   t: TFunction;
-  distribution: AppsDistribution;
 };
 const AppsList = ({
-  deviceInfo,
   optimisticState,
   state,
   dispatch,
@@ -71,7 +67,6 @@ const AppsList = ({
   setAppInstallDep,
   setAppUninstallDep,
   t,
-  distribution,
 }: Props) => {
   const { push } = useHistory();
   const { search } = useLocation();
@@ -86,7 +81,7 @@ const AppsList = ({
   });
   const [activeTab, setActiveTab] = useState(0);
   const onTextChange = useCallback(
-    (evt: SyntheticInputEvent<HTMLInputElement>, v) => setQuery(evt.target.value),
+    (evt: SyntheticInputEvent<HTMLInputElement>) => setQuery(evt.target.value),
     [setQuery],
   );
 

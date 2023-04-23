@@ -194,7 +194,7 @@ export const CosmosSourceValidatorField = ({
     </TransactionConfirmField>
   ) : null;
 };
-const CosmosMemoField = ({ account, parentAccount, transaction, field }: FieldComponentProps) => {
+const CosmosMemoField = ({ transaction, field }: FieldComponentProps) => {
   invariant(transaction.family === "cosmos", "cosmos transaction");
   const { memo } = transaction;
   return memo ? (

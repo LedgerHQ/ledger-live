@@ -29,7 +29,7 @@ const AddressText = styled(Text).attrs(() => ({
   text-align: right;
   max-width: 50%;
 `;
-const TronResourceField = ({ account, parentAccount, transaction, field }: FieldComponentProps) => {
+const TronResourceField = ({ field }: FieldComponentProps) => {
   invariant(field.type === "tron.resource", "TronResourceField invalid");
   return (
     <TransactionConfirmField label={field.label}>

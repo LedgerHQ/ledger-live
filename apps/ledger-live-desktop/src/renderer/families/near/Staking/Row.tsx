@@ -79,7 +79,6 @@ type Props = {
   onExternalLink: (address: string) => void;
 };
 export function Row({
-  account,
   stakingPosition: {
     validatorId,
     staked,
@@ -156,7 +155,7 @@ export function Row({
       </Column>
       <Column>
         <DropDown items={dropDownItems} renderItem={ManageDropDownItem} onChange={onSelect}>
-          {({ isOpen, value }) => (
+          {() => (
             <Box flex horizontal alignItems="center">
               <Trans i18nKey="common.manage" />
               <div

@@ -121,7 +121,7 @@ export function Toast({
     },
     [callback, id, onDismiss],
   );
-  return transitions.map(({ key, item, props }) => (
+  return transitions.map(({ key, props }) => (
     <Wrapper key={key} style={props} onClick={onClick}>
       <Content>
         <IconContainer color={defaultIconColor}>

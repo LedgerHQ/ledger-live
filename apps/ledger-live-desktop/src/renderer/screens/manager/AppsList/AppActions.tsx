@@ -82,7 +82,7 @@ const AppActions = React.memo(
     addAccount,
     featureFlagActivated,
   }: Props) => {
-    const { name, type, currencyId } = app;
+    const { name, type } = app;
 
     const history = useHistory();
     const { installedAvailable, installQueue, uninstallQueue, updateAllQueue } = state;

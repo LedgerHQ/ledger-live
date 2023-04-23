@@ -145,7 +145,7 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
       <Column>{formatAmount(stake.withdrawable)}</Column>
       <Column>
         <DropDown items={stakeActions} renderItem={ManageDropDownItem} onChange={onSelect}>
-          {({ isOpen, value }) => {
+          {() => {
             return (
               <Box flex horizontal alignItems="center">
                 <Trans i18nKey="common.manage" />

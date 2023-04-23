@@ -86,7 +86,7 @@ const Slide = ({ id, url, path, title, description, image, imgs }: Props) => {
 
   // After initial slide-in animation, set the offset to zero
   useEffect(() => {
-    setTimeout(_ => {
+    setTimeout(() => {
       set({ xy: [0, 0] });
     }, 400);
   }, [set]);

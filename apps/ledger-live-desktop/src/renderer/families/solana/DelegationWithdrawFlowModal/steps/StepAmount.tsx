@@ -10,14 +10,7 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import ErrorDisplay from "../../shared/components/ErrorDisplay";
 import AmountField from "../fields/AmountField";
 import { StepProps } from "../types";
-export default function StepAmount({
-  account,
-  transaction,
-  bridgePending,
-  onUpdateTransaction,
-  status,
-  error,
-}: StepProps) {
+export default function StepAmount({ account, transaction, status, error }: StepProps) {
   const { t } = useTranslation();
   return (
     <Box flow={1}>
@@ -36,7 +29,6 @@ export function StepAmountFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   const { t } = useTranslation();
   invariant(account, "account required");

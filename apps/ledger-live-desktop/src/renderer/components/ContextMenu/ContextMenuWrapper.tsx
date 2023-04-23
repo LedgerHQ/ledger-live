@@ -120,7 +120,7 @@ class ContextMenuWrapper extends PureComponent<Props, State> {
   };
 
   setContainerRef = (ref: any) => (this.containerRef = ref);
-  renderItem = (item: ContextMenuItemType, index: number) => {
+  renderItem = (item: ContextMenuItemType) => {
     const { dontTranslateLabel, callback, label, Icon, id } = item;
     if (item.type === "separator") {
       return <Separator key={id} />;

@@ -53,7 +53,6 @@ export default function StepValidators({
   transaction,
   status,
   error,
-  bridgePending,
   t,
   transitionTo,
 }: StepProps) {
@@ -73,7 +72,7 @@ export default function StepValidators({
     [bridge, onUpdateTransaction],
   );
   const updateSourceValidator = useCallback(
-    ({ validatorAddress: sourceValidator, ...r }) => {
+    ({ validatorAddress: sourceValidator }) => {
       const source = account.cosmosResources?.delegations.find(
         d => d.validatorAddress === sourceValidator,
       );
@@ -197,7 +196,6 @@ export function StepValidatorsFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;
