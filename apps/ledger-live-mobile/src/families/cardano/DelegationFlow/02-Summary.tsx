@@ -33,8 +33,9 @@ import type {
 } from "@ledgerhq/live-common/families/cardano/types";
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 import { fetchPoolDetails } from "@ledgerhq/live-common/families/cardano/api/getPools";
-import { Text } from "@ledgerhq/native-ui";
+import { Box, Text } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
+import { TransactionStatus } from "@ledgerhq/live-common/families/cardano/types";
 import Button from "../../../components/Button";
 import Skeleton from "../../../components/Skeleton";
 import Circle from "../../../components/Circle";
@@ -50,6 +51,7 @@ import { TrackScreen } from "../../../analytics";
 import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";
+import TranslatedError from "../../../components/TranslatedError";
 
 type Props = StackNavigatorProps<
   CardanoDelegationFlowParamList,
@@ -160,15 +162,18 @@ export default function DelegationSummary({ navigation, route }: Props) {
     });
   }, [status, account, parentAccount, navigation, transaction]);
 
-  const hasErrors = Object.keys(status.errors).length > 0;
+  const displayError = useMemo(() => {
+    return status.errors.amount?.message === "CardanoNotEnoughFunds"
+      ? status.errors.amount
+      : "";
+  }, [status]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="Summary" />
-
       <View style={styles.body}>
         <View style={styles.delegatingAccount}>
-          <Circle size={64} bg={rgba(color, 0.2)}>
+          <Circle size={50} bg={rgba(color, 0.2)}>
             <CurrencyIcon size={32} currency={currency} />
           </Circle>
           <AccountBalanceTag account={account} />
@@ -181,10 +186,20 @@ export default function DelegationSummary({ navigation, route }: Props) {
             isFetchingPoolDetails={isFetchingPoolDetails}
             chosenPool={chosenPool ?? undefined}
             account={account}
+            status={status}
           />
         </View>
       </View>
       <View style={styles.footer}>
+        {displayError ? (
+          <Box grow>
+            <Text fontSize={13} color="red">
+              <TranslatedError error={displayError} field="title" />
+            </Text>
+          </Box>
+        ) : (
+          <></>
+        )}
         <Button
           event="SummaryContinue"
           type="primary"
@@ -192,9 +207,9 @@ export default function DelegationSummary({ navigation, route }: Props) {
           containerStyle={styles.continueButton}
           onPress={onContinue}
           disabled={
+            displayError ||
             bridgePending ||
             !!bridgeError ||
-            hasErrors ||
             !chosenPool ||
             (currentDelegation &&
               currentDelegation.poolId === chosenPool.poolId)
@@ -287,12 +302,14 @@ function SummaryWords({
   currentDelegation,
   isFetchingPoolDetails,
   onChangePool,
+  status,
 }: {
   chosenPool?: StakePool;
-  account: AccountLike;
+  account: CardanoAccount;
   currentDelegation?: CardanoDelegation;
   isFetchingPoolDetails: boolean;
   onChangePool: () => void;
+  status: TransactionStatus;
 }) {
   const unit = getAccountUnit(account);
   const { t } = useTranslation();
@@ -548,7 +565,11 @@ function SummaryWords({
               ellipsizeMode="middle"
               style={[styles.valueText]}
             >
-              {formatCurrencyUnit(unit, new BigNumber(170000), formatConfig)}
+              {formatCurrencyUnit(
+                unit,
+                new BigNumber(status.estimatedFees),
+                formatConfig,
+              )}
             </LText>
           }
         />
@@ -562,7 +583,13 @@ function SummaryWords({
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
               >
-                {formatCurrencyUnit(unit, new BigNumber(2000000), formatConfig)}
+                {formatCurrencyUnit(
+                  unit,
+                  new BigNumber(
+                    account.cardanoResources.protocolParams.stakeKeyDeposit,
+                  ),
+                  formatConfig,
+                )}
               </LText>
             }
           />

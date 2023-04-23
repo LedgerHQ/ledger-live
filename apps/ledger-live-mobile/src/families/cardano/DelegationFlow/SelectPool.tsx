@@ -13,6 +13,7 @@ import PoolRow from "../shared/PoolRow";
 import SelectPoolSearchBox from "../shared/SearchBox";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";
+import Skeleton from "../../../components/Skeleton";
 
 type Props = StackNavigatorProps<
   CardanoDelegationFlowParamList,
@@ -26,8 +27,14 @@ export default function SelectPool({ navigation, route }: Props) {
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
 
-  const { pools, searchQuery, setSearchQuery, onScrollEndReached } =
-    useCardanoFamilyPools(account.currency);
+  const {
+    pools,
+    searchQuery,
+    setSearchQuery,
+    onScrollEndReached,
+    isSearching,
+    isPaginating,
+  } = useCardanoFamilyPools(account.currency);
 
   const onItemPress = useCallback(
     (pool: StakePool) => {
@@ -56,17 +63,41 @@ export default function SelectPool({ navigation, route }: Props) {
       <View style={styles.header}>
         <PoolHead />
       </View>
-      <FlatList
-        contentContainerStyle={styles.list}
-        data={pools}
-        renderItem={renderItem}
-        extraData={{}}
-        onEndReachedThreshold={1}
-        onEndReached={onScrollEndReached}
-      />
+      {isSearching ? (
+        poolSkeletons()
+      ) : (
+        <FlatList
+          contentContainerStyle={styles.list}
+          data={pools}
+          renderItem={renderItem}
+          extraData={{}}
+          onEndReachedThreshold={0.5}
+          onEndReached={onScrollEndReached}
+        />
+      )}
+      {isPaginating && pools.length ? poolSkeletons() : <></>}
     </SafeAreaView>
   );
 }
+
+const poolSkeletons = () => {
+  return (
+    <View>
+      {[...Array(3)].map(() => (
+        <Skeleton
+          loading={true}
+          animated={true}
+          style={{
+            marginTop: 10,
+            marginHorizontal: 10,
+            height: 55,
+            borderRadius: 5,
+          }}
+        />
+      ))}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   root: {
