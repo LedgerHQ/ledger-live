@@ -17,7 +17,6 @@ import tezos from "../families/tezos/specs";
 import tron from "../families/tron/specs";
 import zilliqa from "../families/zilliqa/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
-import zilliqa from "../families/zilliqa/specs";
 
 export default {
   algorand,
@@ -39,5 +38,4 @@ export default {
   tron,
   zilliqa,
   polkadot,
-  zilliqa,
 };
