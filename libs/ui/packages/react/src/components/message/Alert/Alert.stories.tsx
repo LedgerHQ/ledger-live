@@ -10,7 +10,7 @@ export default {
   component: Alert,
   argTypes: {
     type: {
-      options: ["info", "warning", "error"],
+      options: ["info", "secondary", "success", "warning", "error"],
       control: {
         type: "radio",
       },
