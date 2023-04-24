@@ -642,14 +642,14 @@ export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
-export const lastSeenDeviceSelector = (state: State) => {
+export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | undefined => {
   // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
   // to be removed in a while.
   // @ts-expect-error TODO: time to remove this maybe?
   if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
     return {
       ...state.settings.lastSeenDevice,
-      modelId: "stax",
+      modelId: DeviceModelId.stax,
     };
   }
   return state.settings.lastSeenDevice;
