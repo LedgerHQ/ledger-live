@@ -50,11 +50,11 @@ export default class AccountRow extends PureComponent<Props> {
     e.stopPropagation();
   };
 
-  onFocus = (e: React.MouseEvent<HTMLInputElement>) => {
+  onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     e.target.select();
   };
 
-  onBlur = (e: React.MouseEvent<HTMLInputElement>) => {
+  onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { onEditName, account } = this.props;
     const { value } = e.target;
     if (!value && onEditName) {
@@ -64,7 +64,7 @@ export default class AccountRow extends PureComponent<Props> {
   };
 
   _input = null;
-  overflowStyles = {
+  overflowStyles: React.CSSProperties = {
     textOverflow: "ellipsis",
     overflow: "hidden",
     whiteSpace: "nowrap",
@@ -87,7 +87,7 @@ export default class AccountRow extends PureComponent<Props> {
       <AccountRowContainer
         className="account-row"
         isDisabled={isDisabled}
-        onClick={isDisabled ? null : this.onToggleAccount}
+        onClick={isDisabled ? undefined : this.onToggleAccount}
       >
         <CryptoCurrencyIconWithCount currency={account.currency} count={tokenCount} withTooltip />
         <Box

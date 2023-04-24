@@ -16,7 +16,7 @@ import Box from "~/renderer/components/Box";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import IconDots from "~/renderer/icons/Dots";
-import Bar from "~/renderer/components/AssetDistribution/Bar";
+import Bar from "~/renderer/screens/dashboard/AssetDistribution/Bar";
 import ToolTip from "~/renderer/components/Tooltip";
 import useTheme from "~/renderer/hooks/useTheme";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -54,7 +54,7 @@ export default function Row({
     account.type !== "Account" ? accounts.find(a => a.id === account.parentId) : null;
   const color = useCurrencyColor(currency, theme.colors.palette.background.paper);
   const displayName = getAccountName(account);
-  const percentage = (Math.floor(distribution * 10000) / 100).toFixed(2);
+  const percentage = Math.floor(distribution * 10000) / 100;
   const icon = <ParentCryptoCurrencyIcon currency={currency} />;
   return (
     <AccountContextMenu account={account} parentAccount={parentAccount} withStar>
@@ -80,7 +80,7 @@ export default function Row({
               <Text ff="Inter" color="palette.text.shade100" fontSize={3}>
                 {`${percentage}%`}
               </Text>
-              <Bar progress={isVisible ? percentage : "0"} progressColor={color} />
+              <Bar progress={isVisible ? percentage : 0} progressColor={color} />
             </>
           )}
         </Distribution>

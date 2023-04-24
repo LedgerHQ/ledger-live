@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Text from "~/renderer/components/Text";
 import { Trans } from "react-i18next";
 import { rgba } from "~/renderer/styles/helpers";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;

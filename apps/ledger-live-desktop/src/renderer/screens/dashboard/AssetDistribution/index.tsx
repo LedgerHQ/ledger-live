@@ -7,7 +7,8 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import Row from "./Row";
 import Header from "./Header";
 import { useDistribution } from "~/renderer/actions/general";
-import TableContainer, { TableHeader } from "../TableContainer";
+import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
+
 export default function AssetDistribution() {
   const distribution = useDistribution();
   const cardRef = useRef(null);
@@ -71,9 +72,9 @@ export default function AssetDistribution() {
     </TableContainer>
   ) : null;
 }
-const SeeAllButton: ThemedComponent<{
+const SeeAllButton = styled.div<{
   expanded: boolean;
-}> = styled.div`
+}>`
   margin-top: 15px;
   display: flex;
   color: ${p => p.theme.colors.wallet};

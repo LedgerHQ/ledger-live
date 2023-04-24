@@ -16,7 +16,7 @@ import styled from "styled-components";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import OperationsList from "~/renderer/components/OperationsList";
 import Carousel from "~/renderer/components/Carousel";
-import AssetDistribution from "~/renderer/components/AssetDistribution";
+import AssetDistribution from "./AssetDistribution";
 import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { saveSettings, useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";

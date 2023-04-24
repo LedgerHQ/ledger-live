@@ -130,7 +130,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
               {`${percentageWording}%`}
             </Text>
             <Bar
-              progress={!getEnv("PLAYWRIGHT_RUN") && isVisible ? percentage.toString() : "0"}
+              progress={!getEnv("PLAYWRIGHT_RUN") && isVisible ? percentage : 0}
               progressColor={color}
             />
           </>
