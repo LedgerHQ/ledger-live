@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { Trans, TFunction } from "react-i18next";
+import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -28,13 +28,11 @@ const TextSeparator = styled.span`
   border-color: ${p => p.theme.colors.palette.text.shade20};
 `;
 type Props = {
-  t: TFunction;
   account: Account | undefined | null;
   parentAccount: Account | undefined | null;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;
   onChangeTransaction: (a: Transaction) => void;
-  bridgePending: boolean;
 };
 const AmountField = ({
   account,
@@ -42,8 +40,6 @@ const AmountField = ({
   onChangeTransaction,
   transaction,
   status,
-  bridgePending,
-  t,
 }: Props) => {
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);

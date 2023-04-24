@@ -18,7 +18,6 @@ export default function StepDelegation({
   onUpdateTransaction,
   transaction,
   status,
-  bridgePending,
   error,
   t,
 }: StepProps) {

@@ -46,7 +46,7 @@ const SwapResetKYC = () => {
     <Modal
       name="MODAL_SWAP_RESET_KYC"
       centered
-      render={({ data, onClose }) => (
+      render={({ onClose }) => (
         <ModalBody
           onClose={onClose}
           render={() => (

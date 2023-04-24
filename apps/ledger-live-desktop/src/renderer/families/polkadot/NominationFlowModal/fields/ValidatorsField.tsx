@@ -37,7 +37,7 @@ import Alert from "~/renderer/components/Alert";
 
 // Specific Validator Row
 import ValidatorRow from "./ValidatorRow";
-const DrawerWrapper = styled(Box).attrs(p => ({
+const DrawerWrapper = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   px: 3,
@@ -64,7 +64,7 @@ const NominationError = styled(Box).attrs(p => ({
   border-top-left-radius: ${radii[1]}px;
   border-top-right-radius: ${radii[1]}px;
 `;
-const MaybeChillLink = styled(Label).attrs(p => ({
+const MaybeChillLink = styled(Label).attrs(() => ({
   ff: "Inter|Medium",
 }))`
   display: inline-flex;
@@ -96,11 +96,9 @@ type Props = {
   onGoToChill: Function;
 };
 const ValidatorField = ({
-  t,
   account,
   onChangeNominations,
   status,
-  bridgePending,
   validators,
   nominations,
   onGoToChill,

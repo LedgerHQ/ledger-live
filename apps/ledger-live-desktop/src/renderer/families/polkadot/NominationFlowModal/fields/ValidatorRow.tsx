@@ -130,7 +130,6 @@ type ValidatorRowProps = {
   isSelected: boolean;
   disabled?: boolean;
   maxNominatorRewardedPerValidator: number;
-  onClick?: (a: any) => void;
   onUpdateVote?: (b: string, a: boolean) => void;
   onExternalLink: (address: string) => void;
   style?: any;
@@ -143,7 +142,6 @@ const ValidatorRow = ({
   maxNominatorRewardedPerValidator,
   onUpdateVote,
   onExternalLink,
-  onClick = () => null,
   style,
 }: ValidatorRowProps) => {
   const {
@@ -165,12 +163,9 @@ const ValidatorRow = ({
     },
     [onExternalLink, address],
   );
-  const onToggle = useCallback(
-    e => {
-      onUpdateVote && (!disabled || isSelected) && onUpdateVote(address, !isSelected);
-    },
-    [onUpdateVote, address, disabled, isSelected],
-  );
+  const onToggle = useCallback(() => {
+    onUpdateVote && (!disabled || isSelected) && onUpdateVote(address, !isSelected);
+  }, [onUpdateVote, address, disabled, isSelected]);
   const formattedCommission = useMemo(
     () => (commissionBN ? `${commissionBN.multipliedBy(100).toFixed(2)} %` : "-"),
     [commissionBN],

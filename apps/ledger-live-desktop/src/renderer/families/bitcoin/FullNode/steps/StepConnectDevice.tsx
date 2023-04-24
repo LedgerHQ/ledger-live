@@ -18,12 +18,10 @@ import { FullNodeSteps, ConnectionStatus, CheckWrapper, connectionStatus } from 
 import IconCheck from "~/renderer/icons/Check";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const StepConnectDevice = ({
-  onStepChange,
   setScannedDescriptors,
   numberOfAccountsToScan,
   setError,
 }: {
-  onStepChange: (a: FullNodeSteps) => void;
   setScannedDescriptors: (a: any) => void;
   numberOfAccountsToScan: number;
   setError: (a: Error) => void;

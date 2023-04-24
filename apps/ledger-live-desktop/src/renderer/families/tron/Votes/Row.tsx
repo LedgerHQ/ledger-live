@@ -46,16 +46,7 @@ const IconContainer = styled.div`
   color: ${p =>
     p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
 `;
-const Row = ({
-  validator,
-  address,
-  amount,
-  isSR,
-  duration,
-  percentTP,
-  currency,
-  explorerView,
-}: Props) => {
+const Row = ({ validator, address, amount, isSR, duration, percentTP, explorerView }: Props) => {
   const srURL = explorerView && getAddressExplorer(explorerView, address);
   const openSR = useCallback(() => {
     if (srURL) openURL(srURL);

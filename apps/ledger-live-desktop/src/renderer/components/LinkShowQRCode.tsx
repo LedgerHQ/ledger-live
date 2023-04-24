@@ -26,7 +26,7 @@ type Props = {
   address: string;
   onClick: () => void;
 };
-export function LinkShowQRCode({ address, onClick }: Props) {
+export function LinkShowQRCode({ onClick }: Props) {
   const { t } = useTranslation();
   return (
     <Wrapper onClick={onClick}>

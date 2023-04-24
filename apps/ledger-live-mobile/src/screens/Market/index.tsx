@@ -25,6 +25,7 @@ import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   marketFilterByStarredAccountsSelector,
   starredMarketCoinsSelector,
@@ -38,9 +39,7 @@ import { track } from "../../analytics";
 import TrackScreen from "../../analytics/TrackScreen";
 import { useProviders } from "../Swap/Form/index";
 import Illustration from "../../images/illustration/Illustration";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
 import {
   setMarketFilterByStarredAccounts,
   setMarketRequestParams,
@@ -497,23 +496,22 @@ export default function Market({ navigation }: NavigationProps) {
     }, [setScreen, setSource]),
   );
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <TabBarSafeAreaView
-      style={{
-        backgroundColor: colors.background.main,
-      }}
+    <Flex
+      /**
+       * NB: not using SafeAreaView because it flickers during navigation
+       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
+       */
+      flex={1}
+      mt={insets.top}
+      bg="background.main"
     >
-      <Flex px={6} pt={6}>
-        <Flex
-          height={48}
-          flexDirection="row"
-          justifyContent="flex-start"
-          alignItems="center"
-        >
-          <Text variant="h1" lineHeight="40px">
-            {t("market.title")}
-          </Text>
-        </Flex>
+      <Flex px={6}>
+        <Text my={3} variant="h4" fontWeight="semiBold">
+          {t("market.title")}
+        </Text>
         <SearchHeader search={search} refresh={refresh} />
         <BottomSection navigation={navigation} />
       </Flex>
@@ -541,6 +539,6 @@ export default function Market({ navigation }: NavigationProps) {
           />
         }
       />
-    </TabBarSafeAreaView>
+    </Flex>
   );
 }

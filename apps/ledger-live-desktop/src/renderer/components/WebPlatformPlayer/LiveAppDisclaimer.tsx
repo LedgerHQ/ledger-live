@@ -12,7 +12,7 @@ import Box from "~/renderer/components/Box";
 type Props = {
   manifest: LiveAppManifest;
 };
-const Head = styled(Box).attrs(p => ({
+const Head = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   justifyContent: "center",
@@ -31,7 +31,7 @@ const Dashes = styled.div`
       1,
     )}' stroke-opacity='0.5' stroke-width='2' stroke-linecap='round' stroke-dasharray='2 6'/%3E%3C/svg%3E%0A");
 `;
-const Title = styled(Text).attrs(p => ({
+const Title = styled(Text).attrs(() => ({
   mb: 12,
   fontSize: 22,
   textAlign: "center",
@@ -44,7 +44,7 @@ const Description = styled(Text).attrs(p => ({
   textAlign: "center",
   fontSize: 14,
 }))``;
-const BlueInfoContainer = styled(Box).attrs(p => ({
+const BlueInfoContainer = styled(Box).attrs(() => ({
   flex: 1,
   p: 12,
   horizontal: true,
@@ -53,7 +53,7 @@ const BlueInfoContainer = styled(Box).attrs(p => ({
 }))`
   background-color: ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
 `;
-const InfoIconContainer = styled(Box).attrs(p => ({
+const InfoIconContainer = styled(Box).attrs(() => ({
   mr: "6px",
 }))``;
 const InfoText = styled(Text).attrs(p => ({

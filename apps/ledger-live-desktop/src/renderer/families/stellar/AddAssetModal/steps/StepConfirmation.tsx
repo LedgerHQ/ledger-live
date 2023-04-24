@@ -22,15 +22,7 @@ const Container: ThemedComponent<{
 }))`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
-function StepConfirmation({
-  account,
-  t,
-  optimisticOperation,
-  error,
-  device,
-  signed,
-  transaction,
-}: StepProps) {
+function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
   const options = account && listTokensForCryptoCurrency(account.currency);
   const token = useMemo(
     () => transaction && options && options.find(({ id }) => id === transaction.assetId),
@@ -86,12 +78,10 @@ function StepConfirmation({
   return null;
 }
 export function StepConfirmationFooter({
-  transitionTo,
   account,
   parentAccount,
   onRetry,
   error,
-  openModal,
   onClose,
   optimisticOperation,
 }: StepProps) {

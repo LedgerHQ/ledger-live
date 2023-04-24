@@ -5,7 +5,7 @@ import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { Animated } from "react-native";
 import { useSelector } from "react-redux";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { track } from "../../analytics";
 import { rgba } from "../../colors";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
@@ -101,7 +101,7 @@ function Tab({
 
 const MemoTab = memo(Tab);
 
-const AnimatedSafeArea = Animated.createAnimatedComponent(SafeAreaView);
+const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
 function WalletTabNavigatorTabBar({
   state,
@@ -129,6 +129,8 @@ function WalletTabNavigatorTabBar({
     extrapolate: "clamp",
   });
 
+  const insets = useSafeAreaInsets();
+
   return (
     <>
       <WalletTabBackgroundGradient
@@ -137,16 +139,15 @@ function WalletTabNavigatorTabBar({
           readOnlyModeEnabled && hasNoAccounts ? colors.neutral.c30 : undefined
         }
       />
-      <AnimatedSafeArea
+      <AnimatedFlex
         style={{
-          top: 0,
+          top: insets.top,
           zIndex: 1,
           position: "absolute",
           transform: [{ translateY: y }],
           width: "100%",
           height: tabBarHeight,
         }}
-        mode={"margin"}
       >
         <Animated.View
           style={{
@@ -158,7 +159,7 @@ function WalletTabNavigatorTabBar({
             opacity,
           }}
         />
-        <Flex flex={1} px={6} pb={4} justifyContent={"flex-end"}>
+        <Flex px={6} py={4} justifyContent={"flex-end"}>
           <Flex flexDirection={"row"}>
             {state.routes.map((route, index) => {
               const { options } = descriptors[route.key];
@@ -177,7 +178,7 @@ function WalletTabNavigatorTabBar({
             })}
           </Flex>
         </Flex>
-      </AnimatedSafeArea>
+      </AnimatedFlex>
     </>
   );
 }

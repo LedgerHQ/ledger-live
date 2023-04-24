@@ -48,7 +48,7 @@ export const IconWrapper: ThemedComponent<{
 
   filter: ${p => (p.disabled ? "grayscale(100%)" : "")};
 `;
-const LiveAppIcon = ({ size, disabled, icon, name }: Props) => {
+const LiveAppIcon = ({ size, icon, name }: Props) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const handleImageLoad = useCallback(() => {
     setImageLoaded(true);

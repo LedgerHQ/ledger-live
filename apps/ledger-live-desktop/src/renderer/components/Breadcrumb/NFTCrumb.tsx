@@ -62,15 +62,12 @@ const NFTCrumb = () => {
     },
     [account.id, history],
   );
-  const onSeeAll = useCallback(
-    item => {
-      setTrackingSource("NFT breadcrumb");
-      history.push({
-        pathname: `/account/${account.id}/nft-collection`,
-      });
-    },
-    [account.id, history],
-  );
+  const onSeeAll = useCallback(() => {
+    setTrackingSource("NFT breadcrumb");
+    history.push({
+      pathname: `/account/${account.id}/nft-collection`,
+    });
+  }, [account.id, history]);
   return (
     <>
       <TextLink>

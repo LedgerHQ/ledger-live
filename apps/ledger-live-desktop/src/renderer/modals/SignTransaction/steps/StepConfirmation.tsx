@@ -16,15 +16,7 @@ const Container: ThemedComponent<{
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
   min-height: 220px;
 `;
-function StepConfirmation({
-  account,
-  t,
-  error,
-  theme,
-  device,
-}: StepProps & {
-  theme: any;
-}) {
+function StepConfirmation({ account, error }: StepProps) {
   const currency = account && getAccountCurrency(account);
   const currencyName = currency?.name ?? "";
   if (error) {
@@ -41,16 +33,7 @@ function StepConfirmation({
   }
   return null;
 }
-export function StepConfirmationFooter({
-  t,
-  transitionTo,
-  account,
-  parentAccount,
-  onRetry,
-  error,
-  openModal,
-  closeModal,
-}: StepProps) {
+export function StepConfirmationFooter({ transitionTo, onRetry, error }: StepProps) {
   return (
     <>
       {error ? (

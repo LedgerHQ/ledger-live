@@ -70,7 +70,7 @@ export const BulletRowIcon = styled(Box).attrs(() => ({
   padding: 0px;
   padding-top: 2px;
 `;
-const Container = styled(Box).attrs(p => ({
+const Container = styled(Box).attrs(() => ({
   cursor: "pointer",
   horizontal: true,
 }))`
