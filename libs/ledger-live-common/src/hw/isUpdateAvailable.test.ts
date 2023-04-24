@@ -40,7 +40,7 @@ describe("isUpdateAvailable tests", () => {
   // to cover.
   scenarios.forEach(({ name, deviceInfo, outdatedApp, expectedResult }) => {
     it(name, async () => {
-      jest.mock("../api/Manager");
+      jest.mock("../manager/api");
       // I don't know how to avoid the internal API calls to the Manager API.
       const result = await isUpdateAvailable(
         deviceInfo,

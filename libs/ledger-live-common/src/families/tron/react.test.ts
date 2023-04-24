@@ -16,7 +16,7 @@ import {
   mockAccountNoReward,
   mockAccountNoVote,
 } from "./data.mock";
-jest.mock("../../api/Tron");
+jest.mock("./api");
 import superRepresentatives from "./api/superRepresentativesData";
 test("Tron SuperRepresentatives hook - useTronSuperRepresentatives - Expect super representatives list", async () => {
   const { result } = renderHook(() => useTronSuperRepresentatives());
