@@ -205,7 +205,7 @@ const dataset: DatasetTest<Transaction> = {
           FIXME_tests: [
             "balance is sum of ops", //the balance depends on VTHO and it's earned without operations
             "empty transaction is equals to itself", //nonce is not deterministic
-            "pendingOperations are cleaned up", //the bot tests require operation on main account, detected as pending
+            "ref stability on empty transaction", //blockref is not deterministic
           ],
         },
       ],
