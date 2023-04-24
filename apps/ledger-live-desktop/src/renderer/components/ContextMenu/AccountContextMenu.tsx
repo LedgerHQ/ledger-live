@@ -22,7 +22,7 @@ type Props = {
   account: AccountLike;
   parentAccount?: Account | null;
   leftClick?: boolean;
-  children: any;
+  children: React.ReactNode;
   withStar?: boolean;
 };
 export default function AccountContextMenu({

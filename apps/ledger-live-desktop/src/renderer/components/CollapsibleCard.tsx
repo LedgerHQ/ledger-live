@@ -1,15 +1,17 @@
 import React, { useState, useCallback, useEffect } from "react";
 import styled from "styled-components";
-import { Transition } from "react-transition-group";
+import { Transition, TransitionStatus } from "react-transition-group";
 import { RawCard, RawCardProps } from "~/renderer/components/Box/Card";
 import ChevronRight from "../icons/ChevronRightSmall";
-const Container: ThemedComponent<{
-  timing: number;
-} & RawCardProps> = styled(RawCard)`
+const Container = styled(RawCard)<
+  {
+    timing: number;
+  } & RawCardProps
+>`
   height: auto;
   transition: all ${p => p.timing}ms ease-in;
 `;
-const HeaderContainer = styled.div`
+const HeaderContainer = styled.div<{ chevronVisible: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -22,7 +24,7 @@ const HeaderContainer = styled.div`
     flex: 1;
   }
 `;
-const transitionStyles = {
+const transitionStyles: Record<TransitionStatus, React.CSSProperties> = {
   entering: {
     opacity: 0,
     maxHeight: 0,
@@ -43,12 +45,14 @@ const transitionStyles = {
     maxHeight: 0,
     overflow: "hidden",
   },
+  unmounted: {},
 };
-const ChildrenContainer = styled.div.attrs(p => ({
+
+const ChildrenContainer = styled.div.attrs<{ state: TransitionStatus }>(p => ({
   style: {
     ...transitionStyles[p.state],
   },
-}))`
+}))<{ timing: number; state: TransitionStatus }>`
   transition: all ${p => p.timing}ms ease-out;
   transform-origin: top;
   height: auto;
@@ -58,11 +62,12 @@ const ChildrenContainer = styled.div.attrs(p => ({
     height: 0px;
   }
 `;
-const Chevron = styled.div.attrs(p => ({
+
+const Chevron = styled.div.attrs<{ open: boolean | null | undefined }>(p => ({
   style: {
     transform: `translateY(-50%) rotate(${p.open ? "90deg" : "0deg"})`,
   },
-}))`
+}))<{ timing: number; open: boolean | null | undefined }>`
   width: 18px;
   height: 18px;
   padding: 11px;
