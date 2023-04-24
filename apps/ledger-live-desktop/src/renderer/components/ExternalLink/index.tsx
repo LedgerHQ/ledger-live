@@ -23,7 +23,7 @@ const ExternalLinkIconContainer = styled.span`
   margin-left: 4px;
 `;
 type Props = {
-  label: any;
+  label: React.ReactNode;
   isInternal: boolean;
   onClick: () => void;
 };

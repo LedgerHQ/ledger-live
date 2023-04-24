@@ -7,10 +7,11 @@ type Props = {
   icon?: string;
   name: string;
 };
-export const IconWrapper: ThemedComponent<{
+export const IconWrapper = styled.div<{
   size: number;
   disabled?: boolean;
-}> = styled.div`
+  loaded: boolean;
+}>`
   font-size: ${p => p.size / 2}px;
   font-family: "Inter";
   font-weight: bold;

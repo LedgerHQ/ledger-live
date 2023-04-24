@@ -9,26 +9,19 @@ import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import { dismissBanner } from "~/renderer/actions/settings";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
-import {
-  PlatformAppDrawers as AppDrawerPayload,
-  platformAppDrawerStateSelector,
-} from "~/renderer/reducers/UI";
+import { platformAppDrawerStateSelector } from "~/renderer/reducers/UI";
 import Text from "../Text";
 import AppDetails from "../Platform/AppDetails";
 import ExternalLink from "../ExternalLink/index";
 import LiveAppDisclaimer from "./LiveAppDisclaimer";
+
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
 `;
+
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
-  const {
-    isOpen,
-    payload,
-  }: {
-    isOpen: boolean;
-    payload: AppDrawerPayload;
-  } = useSelector(platformAppDrawerStateSelector);
+  const { isOpen, payload } = useSelector(platformAppDrawerStateSelector);
   const { manifest, type, title, disclaimerId, next } = payload ?? {};
   const { t } = useTranslation();
   const dispatch = useDispatch();

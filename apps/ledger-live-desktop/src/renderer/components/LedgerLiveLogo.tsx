@@ -3,8 +3,11 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 
 type Props = {
-  icon: any;
+  icon: React.ReactNode;
+  width?: number;
+  height?: number;
 };
+
 class LedgerLiveLogo extends PureComponent<Props> {
   render() {
     const { icon, ...p } = this.props;
