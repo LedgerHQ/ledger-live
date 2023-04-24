@@ -1,5 +1,4 @@
-import { ThemedComponent } from "~/renderer/styles/StyleProviderV3";
-import styled, { DefaultTheme, ThemeProps } from "styled-components";
+import styled from "styled-components";
 import { Box } from "@ledgerhq/react-ui";
 
 type Props = {
@@ -9,15 +8,12 @@ type Props = {
   height?: number;
 };
 
-const defineStyleFromTheme = (lightAsset: string, darkAsset: string) => (
-  p: ThemeProps<DefaultTheme>,
-) => (p.theme.colors.palette.type === "light" ? lightAsset : darkAsset);
-
-const Illustration: ThemedComponent<Props> = styled(Box).attrs((p: Props) => ({
+const Illustration = styled(Box).attrs<Props>(p => ({
   width: `${p.size}px`,
   height: p.height ? `${p.height}px` : `${p.size}px`,
 }))<Props>`
-  background: url('${(p: Props) => defineStyleFromTheme(p.lightSource, p.darkSource)(p)}');
+  background: url('${p =>
+    p.theme.colors.palette.type === "light" ? p.lightSource : p.darkSource}');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
