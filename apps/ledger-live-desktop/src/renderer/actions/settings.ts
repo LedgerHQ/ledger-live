@@ -34,11 +34,11 @@ export const setCountervalueFirst = (countervalueFirst: boolean) =>
   saveSettings({
     countervalueFirst,
   });
-export const setAccountsViewMode = (accountsViewMode: any) =>
+export const setAccountsViewMode = (accountsViewMode: "list" | "card" | undefined) =>
   saveSettings({
     accountsViewMode,
   });
-export const setNftsViewMode = (nftsViewMode: any) =>
+export const setNftsViewMode = (nftsViewMode: "list" | "grid" | undefined) =>
   saveSettings({
     nftsViewMode,
   });
@@ -233,13 +233,20 @@ export const fetchSettings: FetchSettings = (settings: SettingsState) => dispatc
     payload: settings,
   });
 };
+
+type ExchangePairs = Array<{
+  from: Currency;
+  to: Currency;
+  exchange: string | undefined | null;
+}>;
+
 type SetExchangePairs = (
-  a: Array<{
-    from: Currency;
-    to: Currency;
-    exchange: string | undefined | null;
-  }>,
-) => any;
+  a: ExchangePairs,
+) => {
+  type: "SETTINGS_SET_PAIRS";
+  payload: ExchangePairs;
+};
+
 export const setExchangePairsAction: SetExchangePairs = pairs => ({
   type: "SETTINGS_SET_PAIRS",
   payload: pairs,
@@ -257,7 +264,7 @@ export const setLastSeenDeviceInfo = ({
   latestFirmware,
 }: {
   lastSeenDevice: DeviceModelInfo;
-  latestFirmware: any;
+  latestFirmware: unknown;
 }) => ({
   type: "LAST_SEEN_DEVICE_INFO",
   payload: {
@@ -317,9 +324,11 @@ export const setOverriddenFeatureFlag = (key: FeatureId, value: Feature | undefi
   },
 });
 export const setOverriddenFeatureFlags = (
-  overriddenFeatureFlags: {
-    [key in FeatureId]: Feature;
-  },
+  overriddenFeatureFlags: Partial<
+    {
+      [key in FeatureId]: Feature;
+    }
+  >,
 ) => ({
   type: "SET_OVERRIDDEN_FEATURE_FLAGS",
   payload: {

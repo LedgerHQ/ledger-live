@@ -26,7 +26,7 @@ export type SettingsState = {
   preferredDeviceModel: DeviceModelId;
   hasInstalledApps: boolean;
   lastSeenDevice: DeviceModelInfo | undefined | null;
-  latestFirmware: any;
+  latestFirmware: unknown;
   language: string | undefined | null;
   theme: string | undefined | null;
   /** DEPRECATED, use field `locale` instead */
