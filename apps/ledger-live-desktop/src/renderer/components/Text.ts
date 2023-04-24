@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import {
   fontSize,
@@ -18,32 +17,36 @@ import {
   LetterSpacingProps,
 } from "styled-system";
 import fontFamily from "~/renderer/styles/styled/fontFamily";
-
 const uppercase = system({
   uppercase: {
     property: "textTransform",
     transform: value => (value ? "uppercase" : "none"),
   },
 });
-
 const textTransform = system({
   textTransform: true,
 });
 
 export type TextProps = {
-  style?: Object;
+  uppercase?: boolean;
+  capitalize?: boolean;
   ff?: string;
-  fontSize?: number | string;
+  fontFamily?: string;
   textAlign?: string;
   color?: string;
-  fontWeight?: string;
-  mt?: number | string;
-  mb?: number | string;
+  align?: "DEPRECATED: USE textAlign INSTEAD";
   lineHeight?: string;
-};
+} & FontSizeProps &
+  FontWeightProps &
+  LineHeightProps &
+  ColorProps &
+  SpaceProps &
+  TextAlignProps &
+  LetterSpacingProps;
 
-const Text: React.ComponentType<TextProps> = styled.span`
+const Text = styled.span<TextProps>`
   ${uppercase};
+  ${p => (p.capitalize ? `text-transform: capitalize;` : "")};
   ${lineHeight};
   ${fontFamily};
   ${fontSize};
@@ -54,5 +57,4 @@ const Text: React.ComponentType<TextProps> = styled.span`
   ${letterSpacing};
   ${textTransform};
 `;
-
 export default Text;
