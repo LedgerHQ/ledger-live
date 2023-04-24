@@ -63,7 +63,7 @@ const ProgressBarWrapper = styled.div`
   display: none;
 `;
 
-const Bullets = styled.div`
+const Bullets = styled.div<{ index: number }>`
   position: absolute;
   bottom: 16px;
   left: 0;

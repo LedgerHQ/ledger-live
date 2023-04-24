@@ -8,7 +8,7 @@ export type RawCardProps = BoxProps & {
   color?: string;
 };
 
-export const RawCard: React.ComponentType<RawCardProps> = styled(Box).attrs((p: RawCardProps) => ({
+export const RawCard = styled(Box).attrs<RawCardProps>(p => ({
   bg: p.bg || "palette.background.paper",
   boxShadow: 0,
   borderRadius: 1,
