@@ -2,7 +2,7 @@
 
 import { setKey } from "~/renderer/storage";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { actionTypePrefix as postOnboardingActionTypePrefix } from "@ledgerhq/live-common/postOnboarding/actions;
+import { actionTypePrefix as postOnboardingActionTypePrefix } from "@ledgerhq/live-common/postOnboarding/actions";
 import { accountsSelector } from "./../reducers/accounts";
 import { settingsExportSelector, areSettingsLoaded } from "./../reducers/settings";
 let DB_MIDDLEWARE_ENABLED = true;
