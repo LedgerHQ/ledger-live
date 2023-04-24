@@ -6,7 +6,7 @@ import React, { forwardRef, useCallback, useEffect, useMemo, useState } from "re
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import {
   receiveOnAccountLogic,
@@ -80,7 +80,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
                   account,
                   parentAccount,
-                  onResult: (_account: Account, _parentAccount: Account) => {
+                  onResult: () => {
                     tracking.platformReceiveSuccess(manifest);
                     resolve(accountAddress);
                   },
@@ -286,7 +286,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       const webview = webviewRef.current;
       if (webview) {
         const origin = new URL(webview.src).origin;
-        webview.contentWindow.postMessage(JSON.stringify(request), origin);
+        // @ts-expect-error issue in Electron type of Webview?
+        webview.contentWindow?.postMessage(JSON.stringify(request), origin);
       }
 
       return Promise.resolve();

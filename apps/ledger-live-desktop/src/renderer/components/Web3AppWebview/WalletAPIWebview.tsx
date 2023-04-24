@@ -193,7 +193,8 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
         const webview = webviewRef.current;
         if (webview) {
           const origin = new URL(webview.src).origin;
-          webview.contentWindow.postMessage(message, origin);
+          // @ts-expect-error Electron webview type issue
+          webview.contentWindow?.postMessage(message, origin);
         }
       },
     };
