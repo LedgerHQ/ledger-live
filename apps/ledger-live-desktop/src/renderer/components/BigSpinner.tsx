@@ -11,10 +11,10 @@ const rotate = keyframes`
     transform: rotate(360deg);
   }
 `;
-export const Rotating: ThemedComponent<{
+export const Rotating = styled(Box)<{
   size: number;
   isRotating?: boolean;
-}> = styled(Box)`
+}>`
   width: ${p => p.size}px;
   height: ${p => p.size}px;
   animation: ${p =>
