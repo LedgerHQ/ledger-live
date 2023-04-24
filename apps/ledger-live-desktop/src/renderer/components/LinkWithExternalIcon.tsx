@@ -2,7 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import externalLink from "~/renderer/images/external-link.svg";
 import Label from "./Label";
-const Wrapper = styled(Label).attrs(props => ({
+const Wrapper = styled(Label).attrs<{
+  fontSize: number;
+}>(props => ({
   ff: "Inter|SemiBold",
   color: props.color,
   fontSize: props.fontSize,
@@ -31,10 +33,10 @@ const Wrapper = styled(Label).attrs(props => ({
   }
 `;
 type Props = {
-  onClick: (() => void) | undefined | null;
+  onClick: React.MouseEventHandler<HTMLLabelElement> | undefined;
   label?: React.ReactNode;
   children?: React.ReactNode;
-  style?: any;
+  style?: React.CSSProperties;
   fontSize?: number;
   color?: string;
 }; // can add more dynamic options if needed

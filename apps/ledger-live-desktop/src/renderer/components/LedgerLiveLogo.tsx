@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
+
 type Props = {
   icon: any;
 };
@@ -14,14 +15,14 @@ class LedgerLiveLogo extends PureComponent<Props> {
     );
   }
 }
-const LiveLogoContainer: ThemedComponent<{
-  width?: number;
-  height?: number;
-}> = styled(Box).attrs(() => ({
+const LiveLogoContainer = styled(Box).attrs(() => ({
   borderRadius: "4px",
   alignItems: "center",
   justifyContent: "center",
-}))`
+}))<{
+  width?: number;
+  height?: number;
+}>`
   color: ${p => p.theme.colors.palette.secondary.main};
   background-color: ${p => p.theme.colors.palette.primary.contrastText};
   box-shadow: 0 2px 24px 0 #00000014;
