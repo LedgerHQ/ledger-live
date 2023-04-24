@@ -70,6 +70,10 @@ import { Transaction as tronTransaction } from "../families/tron/types";
 import { TransactionRaw as tronTransactionRaw } from "../families/tron/types";
 import { TransactionStatus as tronTransactionStatus } from "../families/tron/types";
 import { TransactionStatusRaw as tronTransactionStatusRaw } from "../families/tron/types";
+import { Transaction as zilliqaTransaction } from "../families/zilliqa/types";
+import { TransactionRaw as zilliqaTransactionRaw } from "../families/zilliqa/types";
+import { TransactionStatus as zilliqaTransactionStatus } from "../families/zilliqa/types";
+import { TransactionStatusRaw as zilliqaTransactionStatusRaw } from "../families/zilliqa/types";
 
 export type Transaction =
   | algorandTransaction
@@ -89,7 +93,8 @@ export type Transaction =
   | solanaTransaction
   | stellarTransaction
   | tezosTransaction
-  | tronTransaction;
+  | tronTransaction
+  | zilliqaTransaction;
 
 export type TransactionRaw =
   | algorandTransactionRaw
@@ -109,7 +114,8 @@ export type TransactionRaw =
   | solanaTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
-  | tronTransactionRaw;
+  | tronTransactionRaw
+  | zilliqaTransactionRaw;
 
 export type TransactionStatus =
   | algorandTransactionStatus
@@ -129,7 +135,8 @@ export type TransactionStatus =
   | solanaTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
-  | tronTransactionStatus;
+  | tronTransactionStatus
+  | zilliqaTransactionStatus;
 
 export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
@@ -149,4 +156,5 @@ export type TransactionStatusRaw =
   | solanaTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
-  | tronTransactionStatusRaw;
+  | tronTransactionStatusRaw
+  | zilliqaTransactionStatusRaw;

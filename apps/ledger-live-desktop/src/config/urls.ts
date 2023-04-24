@@ -275,6 +275,9 @@ export const urls = {
   elrond: {
     website: "https://elrond.com",
   },
+  zilliqa: {
+    website: "https://zilliqa.com",
+  },
   figment: {
     website: "https://www.figment.io",
   },

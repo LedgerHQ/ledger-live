@@ -91,6 +91,16 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
   },
+  API_ZILLIQA_INDEXER_API_ENDPOINT: {
+    def: "https://zilliqa.coin.ledger.com/indexer/v1/zilliqa/",
+    parser: stringParser,
+    desc: "Indexer endpoint for Zilliqa",
+  },
+  API_ZILLIQA_NODE: {
+    def: "https://zilliqa.coin.ledger.com/node/",
+    parser: stringParser,
+    desc: "Node endpoint for Zilliqa",
+  },
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://cosmoshub4.coin.ledger.com",
     parser: stringParser,
