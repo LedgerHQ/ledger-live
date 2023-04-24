@@ -8,6 +8,7 @@ import {
   Logos,
   ProgressBar,
 } from "@ledgerhq/react-ui";
+import { Direction } from "@ledgerhq/react-ui/components/layout/Drawer/index";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
@@ -109,7 +110,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   const locale = useSelector(languageSelector) || "en";
 
   const handleHelp = useCallback(() => {
-    openURL(urls.faq[locale in urls.faq ? locale : "en"]);
+    openURL(urls.faq[locale in urls.faq ? (locale as keyof typeof urls.faq) : "en"]);
   }, [locale]);
 
   const { t } = useTranslation();
@@ -637,7 +638,7 @@ export default function Tutorial({ useCase }: Props) {
     history.push(`${path}/quiz-failure`);
   }, [history, path]);
 
-  function handleNextInDrawer(closeCurrentDrawer: (bool) => void, targetPath: string) {
+  function handleNextInDrawer(closeCurrentDrawer: (bool: boolean) => void, targetPath: string) {
     closeCurrentDrawer(false);
     history.push(targetPath);
   }
@@ -650,7 +651,7 @@ export default function Tutorial({ useCase }: Props) {
   return (
     <>
       <QuizzPopin isOpen={quizzOpen} onWin={quizSucceeds} onLose={quizFails} onClose={quizFails} />
-      <Drawer isOpen={helpPinCode} onClose={() => setHelpPinCode(false)} direction="left">
+      <Drawer isOpen={helpPinCode} onClose={() => setHelpPinCode(false)} direction={Direction.Left}>
         <Flex px={40} height="100%">
           `
           <PinHelp
@@ -673,7 +674,7 @@ export default function Tutorial({ useCase }: Props) {
       <Drawer
         isOpen={helpRecoveryPhrase}
         onClose={() => setHelpRecoveryPhrase(false)}
-        direction="left"
+        direction={Direction.Left}
       >
         <Flex px={40} height="100%">
           <RecoverySeed
@@ -691,7 +692,7 @@ export default function Tutorial({ useCase }: Props) {
       <Drawer
         isOpen={helpHideRecoveryPhrase}
         onClose={() => setHelpHideRecoveryPhrase(false)}
-        direction="left"
+        direction={Direction.Left}
       >
         <Flex px={40} height="100%">
           <HideRecoverySeed
@@ -708,7 +709,7 @@ export default function Tutorial({ useCase }: Props) {
       <Drawer
         isOpen={helpRecoveryPhraseWarning}
         onClose={() => setHelpRecoveryPhraseWarning(false)}
-        direction="left"
+        direction={Direction.Left}
       >
         <Flex px={40}>
           <RecoveryWarning />
