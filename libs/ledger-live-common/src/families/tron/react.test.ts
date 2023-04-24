@@ -16,7 +16,7 @@ import {
   mockAccountNoReward,
   mockAccountNoVote,
 } from "./data.mock";
-import superRepresentatives from "./api/superRepresentativesData";
+import superRepresentatives from "./api/superRepresentativesData.mock";
 
 jest.mock("./api", () => {
   return {

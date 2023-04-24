@@ -7,9 +7,9 @@ import invariant from "invariant";
 import network from "../../../network";
 import { FeeEstimationFailed } from "@ledgerhq/errors";
 
-export type Fees = Record<string, number>;
+type Fees = Record<string, number>;
 
-export const getEstimatedFees: (currency: CryptoCurrency) => Promise<Fees> =
+const getEstimatedFees: (currency: CryptoCurrency) => Promise<Fees> =
   makeLRUCache(
     async (currency) => {
       const baseURL = blockchainBaseURL(currency);
