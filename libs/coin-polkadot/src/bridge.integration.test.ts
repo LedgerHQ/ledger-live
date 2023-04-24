@@ -691,11 +691,6 @@ export const dataset: DatasetTest<Transaction> = {
   },
 };
 
-// Disconnect all api clients that could be open.
-afterAll(async () => {
-  await disconnect();
-});
-
 describe("canUnbond", () => {
   test("can unbond", () => {
     const account: Partial<PolkadotAccount> = {
