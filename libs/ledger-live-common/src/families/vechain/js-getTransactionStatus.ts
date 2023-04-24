@@ -38,7 +38,7 @@ const getTransactionStatus = async (
 
   if (!recipient) {
     errors.recipient = new RecipientRequired();
-  } else if (freshAddress === recipient) {
+  } else if (freshAddress.toLowerCase() === recipient.toLowerCase()) {
     warnings.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!isValid(recipient)) {
     errors.recipient = new InvalidAddress("", {
