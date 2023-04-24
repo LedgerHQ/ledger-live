@@ -1,10 +1,9 @@
 import { SwapTransactionType, KYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import SectionFees from "./SectionFees";
 import SectionTarget from "./SectionTarget";
-const Form: ThemedComponent<{}> = styled.section.attrs(({ ready }) => ({
+const Form = styled.section.attrs(({ ready }) => ({
   style: ready
     ? {
         opacity: 1,
@@ -29,7 +28,7 @@ type SwapFormSummaryProps = {
   kycStatus?: KYCStatus;
   provider?: string;
 };
-const SwapFormSummary = ({ swapTransaction, kycStatus, provider }: SwapFormSummaryProps) => {
+const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) => {
   const {
     transaction,
     status,

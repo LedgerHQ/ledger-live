@@ -33,6 +33,7 @@ import {
   LanguagePackage,
   LanguagePackageResponse,
   Application,
+  ApplicationV2,
   ApplicationVersion,
   Category,
   DeviceInfo,
@@ -42,8 +43,10 @@ import {
   McuVersion,
   OsuFirmware,
   SocketEvent,
+  App,
 } from "@ledgerhq/types-live";
 import { getProviderId } from "../manager/provider";
+import { mapApplicationV2ToApp } from "../apps/polyfill";
 
 declare global {
   namespace NodeJS {
@@ -68,6 +71,7 @@ const remapSocketError = (context?: string) =>
           e.statusCode.toString(16)
         : (e as Error).message.slice((e as Error).message.length - 4);
 
+    // TODO use StatusCode instead of this.
     switch (status) {
       case "6a80":
       case "6a81":
@@ -129,6 +133,45 @@ const applicationsByDevice: (params: {
   (p) =>
     `${p.provider}_${p.current_se_firmware_final_version}_${p.device_version}`
 );
+
+/**
+ * Return a list of App that are available for a given firmware version on a provider.
+ * Prevents the call to ManagerAPI.listApps which includes all versions of all apps and
+ * was causing slower access to the manager.
+ */
+const catalogForDevice: (params: {
+  provider: number;
+  targetId: number | string;
+  firmwareVersion: string;
+}) => Promise<Array<App>> = makeLRUCache(
+  async (params) => {
+    const { provider, targetId, firmwareVersion } = params;
+    const {
+      data,
+    }: {
+      data: Array<ApplicationV2>;
+    } = await network({
+      method: "GET",
+      url: URL.format({
+        pathname: `${getEnv("MANAGER_API_BASE")}/v2/apps/by-target`,
+        query: {
+          livecommonversion,
+          provider,
+          target_id: targetId,
+          firmware_version_name: firmwareVersion,
+        },
+      }),
+    });
+
+    if (!data || !Array.isArray(data)) {
+      throw new NetworkDown("");
+    }
+
+    return data.map(mapApplicationV2ToApp);
+  },
+  (_) => ""
+);
+
 const listApps: () => Promise<Array<Application>> = makeLRUCache(
   async () => {
     const { data } = await network({
@@ -163,7 +206,6 @@ const listCategories = async (): Promise<Array<Category>> => {
   return r.data;
 };
 
-// TODO: correctly type the endpoint answer
 const getMcus: () => Promise<any> = makeLRUCache(
   async () => {
     const { data } = await network({
@@ -292,6 +334,7 @@ const getLatestFirmware: (arg0: {
   (a) =>
     `${a.current_se_firmware_final_version}_${a.device_version}_${a.provider}`
 );
+
 const getCurrentOSU: (input: {
   version: string;
   deviceId: string | number;
@@ -366,6 +409,38 @@ const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> =
     },
     (id) => String(id)
   );
+
+/**
+ * Given an array of hashes that we can obtain by either listInstalledApps in this same
+ * API (a websocket connection to a scriptrunner) or via direct apdus using hw/listApps.ts
+ * retrieve all the information needed from the backend for those applications.
+ */
+const getAppsByHash: (hashes: string[]) => Promise<Array<App>> = makeLRUCache(
+  async (hashes) => {
+    const {
+      data,
+    }: {
+      data: Array<ApplicationV2>;
+    } = await network({
+      method: "POST",
+      url: URL.format({
+        pathname: `${getEnv("MANAGER_API_BASE")}/v2/apps/hash`,
+        query: {
+          livecommonversion,
+        },
+      }),
+      data: hashes,
+    });
+
+    if (!data || !Array.isArray(data)) {
+      throw new NetworkDown("");
+    }
+
+    return data.map(mapApplicationV2ToApp);
+  },
+  (hashes) => String(hashes)
+);
+
 const getDeviceVersion: (
   targetId: string | number,
   provider: number
@@ -596,12 +671,14 @@ function retrieveMcuVersion(
 
 const API = {
   applicationsByDevice,
+  catalogForDevice,
   listApps,
   listInstalledApps,
   listCategories,
   getMcus,
   getLanguagePackagesForDevice,
   getLatestFirmware,
+  getAppsByHash,
   getCurrentOSU,
   compatibleMCUForDeviceInfo,
   findBestMCU,

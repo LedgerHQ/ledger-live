@@ -21,9 +21,19 @@ declare namespace Electron {
 }
 
 interface Window {
+  __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
+
   api?: {
     appLoaded: () => void;
     reloadRenderer: () => void;
     openWindow: (id: number) => void;
   };
+
+  // for debugging purposes
+  // eslint-disable-next-line
+  ledger: any;
+
+  // used for the analytics, initialized in the index.html
+  // eslint-disable-next-line
+  analytics: any;
 }

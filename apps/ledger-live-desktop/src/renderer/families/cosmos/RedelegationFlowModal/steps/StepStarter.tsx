@@ -18,15 +18,7 @@ const RewardImg = styled.img.attrs(() => ({
   width: 130px;
   height: auto;
 `;
-export default function StepStarter({
-  account,
-  parentAccount,
-  onUpdateTransaction,
-  transaction,
-  status,
-  bridgePending,
-  t,
-}: StepProps) {
+export default function StepStarter({ account, transaction }: StepProps) {
   invariant(account && account.cosmosResources && transaction, "account and transaction required");
   return (
     <Box flow={4}>
@@ -57,15 +49,7 @@ export default function StepStarter({
     </Box>
   );
 }
-export function StepStarterFooter({
-  transitionTo,
-  account,
-  parentAccount,
-  onClose,
-  status,
-  bridgePending,
-  transaction,
-}: StepProps) {
+export function StepStarterFooter({ transitionTo, account, onClose }: StepProps) {
   invariant(account, "account required");
   return (
     <>

@@ -9,7 +9,7 @@ export function clearBridgeCache() {
       global.localStorage.removeItem(k);
     });
 }
-function currencyCacheId(currency) {
+function currencyCacheId(currency: CryptoCurrency) {
   return `bridgeproxypreload_${currency.id}`;
 }
 export function listCachedCurrencyIds() {

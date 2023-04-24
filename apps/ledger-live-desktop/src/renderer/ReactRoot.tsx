@@ -23,12 +23,12 @@ class ReactRoot extends Component<Props, State> {
   }
 
   render() {
-    const { store, language, initialCountervalues } = this.props;
+    const { store, initialCountervalues } = this.props;
     const { error } = this.state;
     return error ? (
       String(error)
     ) : (
-      <App store={store} language={language} initialCountervalues={initialCountervalues} />
+      <App store={store} initialCountervalues={initialCountervalues} />
     );
   }
 }

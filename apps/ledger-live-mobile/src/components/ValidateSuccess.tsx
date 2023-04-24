@@ -29,7 +29,7 @@ function ValidateSuccess({
   primaryButton,
   secondaryButton,
   icon = Icons.CheckAloneMedium,
-  iconColor = "success.c100",
+  iconColor = "success.c50",
   iconBoxSize = 64,
   iconSize = 24,
   info,

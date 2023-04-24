@@ -1,7 +1,6 @@
 import React from "react";
 import styled, { css, keyframes } from "styled-components";
 import useTheme from "~/renderer/hooks/useTheme";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Text from "~/renderer/components/Text";
 import { lighten } from "~/renderer/styles/helpers";
 const STROKE_WIDTH = 4;

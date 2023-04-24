@@ -1,9 +1,17 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
-import { space, fontSize, fontWeight, color } from "styled-system";
+import {
+  space,
+  fontSize,
+  fontWeight,
+  color,
+  SpaceProps,
+  ColorProps,
+  FontSizeProps,
+  FontWeightProps,
+} from "styled-system";
 import noop from "lodash/noop";
 import get from "lodash/get";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { track } from "~/renderer/analytics/segment";
 import { isGlobalTabEnabled } from "~/config/global-tab";
 import { darken, lighten, rgba } from "~/renderer/styles/helpers";
@@ -248,14 +256,23 @@ const ChildrenWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
-export const Base: ThemedComponent<any> = styled.button.attrs(p => ({
+
+type BaseProps = {
+  fontSize?: number;
+  small?: boolean;
+} & SpaceProps &
+  ColorProps &
+  FontSizeProps &
+  FontWeightProps;
+
+export const Base = styled.button.attrs<BaseProps>(p => ({
   ff: "Inter|SemiBold",
   fontSize: p.fontSize || (!p.small ? 4 : 3),
   px: p.px ? p.px : !p.small ? 4 : 3,
   py: !p.small ? 2 : 0,
   color: p.color || p.theme.colors.palette.text.shade60,
   bg: "transparent",
-}))`
+}))<BaseProps & { ff?: string }>`
   ${space};
   ${color};
   ${fontSize};
@@ -307,7 +324,8 @@ export type Props = {
   mr?: number;
   mx?: number;
   innerRef?: any;
-};
+  style?: React.CSSProperties;
+} & React.ComponentProps<typeof Base>;
 class ButtonInner extends PureComponent<
   Props,
   {
@@ -372,7 +390,7 @@ class ButtonInner extends PureComponent<
     );
   }
 }
-const Button: React$ComponentType<Props> = React.forwardRef((props, ref) => (
+const Button: React.ComponentType<Props> = React.forwardRef((props, ref) => (
   <ButtonInner {...props} innerRef={ref} />
 ));
 export default Button;

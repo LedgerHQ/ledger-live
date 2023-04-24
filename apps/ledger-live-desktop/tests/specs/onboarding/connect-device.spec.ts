@@ -1,5 +1,4 @@
 import { expect } from "@playwright/test";
-
 import test from "../../fixtures/common";
 import { OnboardingPage } from "../../models/OnboardingPage";
 

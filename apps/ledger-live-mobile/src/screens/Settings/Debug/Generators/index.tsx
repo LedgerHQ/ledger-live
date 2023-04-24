@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import config from "react-native-config";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { Alert as Confirmation } from "react-native";
-import { Alert, Icons } from "@ledgerhq/native-ui";
+import { Alert, Flex, Icons } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import GenerateMockAccountsNft from "./GenerateMockAccountsNFTs";
@@ -97,11 +97,14 @@ export default function Generators() {
         title="Import .env BRIDGESTREAM_DATA"
         dataStr={config.BRIDGESTREAM_DATA}
       />
-      <Alert
-        type="error"
-        title="The rows below perform destructive operations and should only be used if you know exactly what you're doing."
-      />
+      <Flex p={6}>
+        <Alert
+          type="error"
+          title="The rows below perform destructive operations and should only be used if you know exactly what you're doing."
+        />
+      </Flex>
       <SettingsRow
+        hasBorderTop
         title="Refresh?"
         desc="You may want to reload the app after wiping data"
         iconLeft={<Icons.RefreshMedium size={24} color="black" />}

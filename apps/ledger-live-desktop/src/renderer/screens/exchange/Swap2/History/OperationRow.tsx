@@ -22,7 +22,7 @@ import IconArrowRight from "~/renderer/icons/ArrowRight";
 import IconClock from "~/renderer/icons/Clock";
 import IconSwap from "~/renderer/icons/Swap";
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 export const getStatusColor = (status: string, theme: any) => {
   if (isSwapOperationPending(status)) {
     return status === "hold" ? theme.colors.orange : theme.colors.wallet;
@@ -35,7 +35,7 @@ export const getStatusColor = (status: string, theme: any) => {
   }
   return theme.colors.palette.shade50;
 };
-const Status: ThemedComponent<{}> = styled.div`
+const Status = styled.div`
   height: 24px;
   width: 24px;
   display: flex;
@@ -48,7 +48,7 @@ const Status: ThemedComponent<{}> = styled.div`
     color: ${p => getStatusColor(p.status, p.theme)};
   }
 `;
-const WrapperClock: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const WrapperClock = styled(Box).attrs(() => ({
   bg: "palette.background.paper",
   color: "palette.text.shade60",
 }))`
@@ -58,7 +58,7 @@ const WrapperClock: ThemedComponent<{}> = styled(Box).attrs(() => ({
   right: -4px;
   padding: 1px;
 `;
-const Row: ThemedComponent<{}> = styled(Box)`
+const Row = styled(Box)`
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
   height: 68px;
   opacity: ${p => (p.isOptimistic || !p.toExists ? 0.5 : 1)};

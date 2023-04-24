@@ -4,22 +4,22 @@ import { useTranslation } from "react-i18next";
 
 const statusThemeMap = {
   pending: {
-    color: "warning.c100",
+    color: "warning.c50",
     backgroundColor: "warning.c10",
     icon: "Clock",
   },
   approved: {
-    color: "success.c100",
+    color: "success.c50",
     backgroundColor: "success.c10",
     icon: "CircledCheck",
   },
   closed: {
-    color: "error.c100",
+    color: "error.c50",
     backgroundColor: "error.c10",
     icon: "Info",
   },
   upgradeRequired: {
-    color: "warning.c100",
+    color: "warning.c50",
     backgroundColor: "warning.c10",
     icon: "Clock",
   },

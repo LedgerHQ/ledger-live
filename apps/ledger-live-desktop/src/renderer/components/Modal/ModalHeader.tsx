@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Tabbable from "~/renderer/components/Box/Tabbable";

@@ -9,7 +9,6 @@ import { TokenShowMoreIndicator, IconAngleDown } from "~/renderer/screens/accoun
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { supportLinkByTokenType } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import { track } from "~/renderer/analytics/segment";
@@ -21,7 +20,7 @@ import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import Row from "./Row";
 const INCREMENT = 5;
-const EmptyState: ThemedComponent<{}> = styled.div`
+const EmptyState = styled.div`
   padding: 15px 20px;
   border-radius: 4px;
   display: flex;
@@ -34,7 +33,7 @@ const EmptyState: ThemedComponent<{}> = styled.div`
     align-self: center;
   }
 `;
-const Placeholder: ThemedComponent<{}> = styled.div`
+const Placeholder = styled.div`
   flex-direction: column;
   display: flex;
   padding-right: 50px;

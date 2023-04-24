@@ -17,7 +17,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { isNavigationLocked } from "~/renderer/reducers/application";
 import { openModal } from "~/renderer/actions/modals";
-import { setFirstTimeLend, setSidebarCollapsed } from "~/renderer/actions/settings";
+import { setSidebarCollapsed } from "~/renderer/actions/settings";
 import useExperimental from "~/renderer/hooks/useExperimental";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { darken, rgba } from "~/renderer/styles/helpers";
@@ -227,7 +227,6 @@ const MainSideBar = () => {
   const noAccounts = useSelector(accountsSelector).length === 0;
   const hasStarredAccounts = useSelector(starredAccountsSelector).length > 0;
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
-  const firstTimeLend = useSelector(state => state.settings.firstTimeLend);
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);

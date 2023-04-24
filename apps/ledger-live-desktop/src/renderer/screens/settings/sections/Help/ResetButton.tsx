@@ -10,7 +10,6 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Alert from "~/renderer/components/Alert";
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { useActionModal } from "./logic";
 export default function ResetButton() {
   const { t } = useTranslation();

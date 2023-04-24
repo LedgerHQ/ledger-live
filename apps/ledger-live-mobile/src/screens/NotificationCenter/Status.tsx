@@ -56,7 +56,7 @@ export default function StatusCenter({ onClose, isOpened }: Props) {
       />
 
       <Flex
-        backgroundColor={colors.neutral.c100a005}
+        backgroundColor={colors.opacityDefault.c05}
         borderRadius={50}
         width={64}
         height={64}

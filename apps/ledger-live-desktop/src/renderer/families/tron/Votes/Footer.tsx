@@ -1,19 +1,18 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box/Box";
 import Button from "~/renderer/components/Button";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
-export const Wrapper: ThemedComponent<{}> = styled.div`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 16px 20px;
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
 `;
-export const TableLine: ThemedComponent<{}> = styled(Text).attrs(() => ({
+export const TableLine = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade60",
   fontSize: 3,

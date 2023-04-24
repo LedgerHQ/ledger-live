@@ -11,9 +11,8 @@ import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { iconByProviderName } from "../utils";
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
   alignItems: "center",
@@ -22,7 +21,7 @@ const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
   background-color: ${p => p.theme.colors.palette.background.paper};
   border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
 `;
-const TitleContainer: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const TitleContainer = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
   alignItems: "center",
@@ -36,7 +35,7 @@ const TitleContainer: ThemedComponent<{}> = styled(Box).attrs(() => ({
     margin-left: 8px;
   }
 `;
-const RightContainer: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const RightContainer = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
   alignItems: "center",
@@ -80,7 +79,7 @@ const ItemContainer: ThemedComponent<{
     background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.1))};
   }
 `;
-const ItemContent: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const ItemContent = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
 }))`
   font-size: 14px;

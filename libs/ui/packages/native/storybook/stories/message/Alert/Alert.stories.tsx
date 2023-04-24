@@ -6,8 +6,11 @@ export default {
   component: Alert,
   argTypes: {
     type: {
-      options: ["info", "warning", "error", undefined],
+      options: ["info", "secondary", "success", "warning", "error", undefined],
       control: { type: "select" },
+    },
+    title: {
+      type: "text",
     },
   },
 };

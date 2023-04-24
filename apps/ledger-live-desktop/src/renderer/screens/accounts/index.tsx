@@ -12,7 +12,6 @@ import {
 } from "~/renderer/actions/general";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/reducers/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import AccountList from "./AccountList";
 import AccountsHeader from "./AccountsHeader";
 
@@ -56,7 +55,7 @@ export default function AccountsPage() {
     </Box>
   );
 }
-export const GenericBox: ThemedComponent<{}> = styled(Box)`
+export const GenericBox = styled(Box)`
   background: ${p => p.theme.colors.palette.background.paper};
   flex: 1;
   padding: 10px 20px;

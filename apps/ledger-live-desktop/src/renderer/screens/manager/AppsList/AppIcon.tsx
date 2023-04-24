@@ -47,9 +47,8 @@ const IconContainer = styled.div`
 `;
 type Props = {
   app: App;
-  theme: any;
 };
-function AppIcon({ app, theme }: Props) {
+function AppIcon({ app }: Props) {
   const { currencyId, icon } = app;
   const [loading, setLoading] = useState(true);
   const onLoad = useCallback(() => setLoading(false), []);

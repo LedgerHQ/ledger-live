@@ -67,7 +67,7 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => 
         >
           <Flex flex={1} mr={3} alignItems="center">
             <Box
-              bg={allEnabled ? "success.c100" : someEnabled ? "palette.warning.c100" : "error.c100"}
+              bg={allEnabled ? "success.c50" : someEnabled ? "palette.warning.c50" : "error.c50"}
               height={10}
               width={10}
               mr={2}
