@@ -30,7 +30,6 @@ const dataset: DatasetTest<Transaction> = {
         "spendableBalance",
         "estimateMaxSpendable",
       ],
-      FIXME_ignoreOperationFields: ["nonce", "blockRef"], //non-deterministic
       scanAccounts: vechainScanAccounts1,
       accounts: [
         {
@@ -205,7 +204,8 @@ const dataset: DatasetTest<Transaction> = {
           FIXME_tests: [
             "balance is sum of ops", //the balance depends on VTHO and it's earned without operations
             "empty transaction is equals to itself", //nonce is not deterministic
-            "ref stability on empty transaction", //blockref is not deterministic
+            "ref stability on self transaction", //blockref is not deterministic
+            "can be run in parallel and all yield same results", //blockref is not deterministic
           ],
         },
       ],
