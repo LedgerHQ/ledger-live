@@ -109,7 +109,9 @@ export default class WebSocketTransport extends Transport {
         reject(e);
       }
     });
-    return new WebSocketTransport(exchangeMethods);
+    // import to return new this(..) and not WebSocketTransport because
+    // WebSocketTransport can be extended, and is extended by VaultTransport
+    return new this(exchangeMethods);
   }
 
   hook: any;

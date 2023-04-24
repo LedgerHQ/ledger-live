@@ -5,6 +5,7 @@ import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
+import VaultSignerTransport from "~/renderer/components/VaultSignerTransport";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
 import { SyncNewAccounts } from "~/renderer/bridge/SyncNewAccounts";
 import Dashboard from "~/renderer/screens/dashboard";
@@ -51,6 +52,7 @@ import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
+import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import Onboarding from "~/renderer/components/Onboarding";
 import PostOnboardingScreen from "~/renderer/components/PostOnboardingScreen";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
@@ -146,6 +148,7 @@ export default function Default() {
       <TriggerAppReady />
       <ExportLogsButton hookToShortcut />
       <TrackAppStart />
+      <VaultSignerTransport />
       <Idler />
       {process.platform === "darwin" ? <AppRegionDrag /> : null}
 
@@ -205,6 +208,7 @@ export default function Default() {
                           <TopBannerContainer>
                             <UpdateBanner />
                             <FirmwareUpdateBanner />
+                            <VaultSignerBanner />
                           </TopBannerContainer>
                           <Switch>
                             <Route path="/" exact component={Dashboard} />

@@ -634,6 +634,26 @@
   "postOnboardingDebugger": {
     "buttonTitle": "Test"
   },
+  "vaultSigner": {
+    "modal": {
+      "title": "Connect Vault",
+      "info": "Link your Ledger Vault workspace accounts and create transactions from Ledger Live by completing fields below. Locate info at Settings > External wallet signer.",
+      "info_link": "Learn more",
+      "host": {
+        "title": "URL Endpoint",
+        "placeholder": "ws://localhost:3030"
+      },
+      "workspace": {
+        "title": "Workspace name",
+        "placeholder": "workspace"
+      },
+      "token": {
+        "title": "Operator API Token",
+        "placeholder": "Token"
+      },
+      "submit": "Connect"
+    }
+  },
   "fullNode": {
     "status": "Status",
     "connect": "Connect",
@@ -1368,6 +1388,10 @@
     "referralProgram": {
       "title": "Refer and earn $10",
       "description": "Successfully refer a friend and you both earn $10 worth of Bitcoin."
+    },
+    "vaultSigner": {
+      "title": "Vault signer mode",
+      "link": "Vault Help Center"
     }
   },
   "signmessage": {
@@ -3907,6 +3931,10 @@
         "1559DeactivateGate": {
           "title": "Deactivate EIP1559 minimum priority fee gate",
           "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
+        },
+        "vaultSigner": {
+          "title": "Vault Signer",
+          "description": "Use Ledger Vault as a signer with your operator API token"
         },
         "1559CustomPriorityLowerGate": {
           "title": "Custom priority fee gate",

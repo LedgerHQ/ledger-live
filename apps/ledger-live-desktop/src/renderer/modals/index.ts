@@ -26,6 +26,7 @@ import MODAL_STORYLY_DEBUGGER from "./StorylyDebugger";
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
+import MODAL_VAULT_SIGNER from "./VaultSigner";
 
 type ModalComponent = React.ComponentType<any>; // FIXME determine the common ground to modals
 type Modals = Record<string, ModalComponent>;
@@ -60,6 +61,9 @@ const modals: Modals = {
   MODAL_PLATFORM_EXCHANGE_START,
   MODAL_PLATFORM_EXCHANGE_COMPLETE,
   MODAL_CONNECT_DEVICE,
+
+  // Vault,
+  MODAL_VAULT_SIGNER,
 
   // NB We have dettached modals such as the repair modal,
   // in the meantime, we can rely on this to add the backdrop

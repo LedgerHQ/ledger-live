@@ -1,6 +1,9 @@
 import HttpTransport from "./HttpTransport";
 import WebSocketTransport from "./WebSocketTransport";
 import Transport from "@ledgerhq/hw-transport";
+
+export { default as VaultTransport } from "./VaultTransport";
+
 import type {
   Observer,
   DescriptorEvent,
