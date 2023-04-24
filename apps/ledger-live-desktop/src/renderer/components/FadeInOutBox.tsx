@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Transition } from "react-transition-group";
+import { Transition, TransitionStatus } from "react-transition-group";
 import Box from "./Box/Box";
 const transitions = {
   entering: {
@@ -30,27 +30,25 @@ const transitions = {
     margin: 0,
     display: "none",
   },
+  unmounted: {},
 };
-const FadeInOutBox = styled(Box).attrs(p => ({
+
+const FadeInOutBox = styled(Box).attrs<{
+  state: TransitionStatus;
+}>(p => ({
   style: transitions[p.state],
-}))`
+}))<{ timing: number; state: TransitionStatus }>`
   opacity: 0;
   height: auto;
   transition: all ${p => p.timing}ms ease-in-out;
 `;
+
 type Props = {
   children: React.ReactNode;
   timing?: number;
   in?: boolean;
-  unmountOnExit?: boolean;
 };
-const UpdateAllApps = ({
-  timing = 400,
-  unmountOnExit = true,
-  children,
-  in: _in,
-  ...rest
-}: Props) => {
+const UpdateAllApps = ({ timing = 400, children, in: _in, ...rest }: Props) => {
   return (
     <Transition
       in={_in}

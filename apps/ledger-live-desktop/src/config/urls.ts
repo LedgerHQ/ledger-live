@@ -12,6 +12,23 @@ export const supportLinkByTokenType = {
   nfts:
     "https://support.ledger.com/hc/en-us/articles/4404389453841-Receive-crypto-assets?utm_medium=self_referral&utm_content=receive_account_flow",
 };
+
+const urlsErrors: Record<string, string> = {
+  CantOpenDevice:
+    "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_cantopendevice",
+  WrongDeviceForAccount:
+    "https://support.ledger.com/hc/en-us/articles/360025322153-Wrong-private-keys-for-account?support=true",
+  SyncError:
+    "https://support.ledger.com/hc/en-us/articles/360012207759-Solve-a-synchronization-error?support=true",
+  ServiceStatusWarning: "https://status.ledger.com",
+  EConnReset:
+    "https://support.ledger.com/hc/en-us/articles/6793501085981?support=true&utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_connect_manager",
+  TronSendTrc20ToNewAccountForbidden:
+    "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
+  TronStakingDisable: "https://support.ledger.com/hc/en-us/articles/9949980566173?support=true",
+  OperatingSystemOutdated: "https://support.ledger.com/hc/articles/8083692639901?support=true",
+};
+
 export const urls = {
   ledger: "https://www.ledger.com",
   liveHome:
@@ -252,21 +269,7 @@ export const urls = {
       "https://developers.ledger.com?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=catalog",
   },
   // Errors
-  errors: {
-    CantOpenDevice:
-      "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_cantopendevice",
-    WrongDeviceForAccount:
-      "https://support.ledger.com/hc/en-us/articles/360025322153-Wrong-private-keys-for-account?support=true",
-    SyncError:
-      "https://support.ledger.com/hc/en-us/articles/360012207759-Solve-a-synchronization-error?support=true",
-    ServiceStatusWarning: "https://status.ledger.com",
-    EConnReset:
-      "https://support.ledger.com/hc/en-us/articles/6793501085981?support=true&utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_connect_manager",
-    TronSendTrc20ToNewAccountForbidden:
-      "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
-    TronStakingDisable: "https://support.ledger.com/hc/en-us/articles/9949980566173?support=true",
-    OperatingSystemOutdated: "https://support.ledger.com/hc/articles/8083692639901?support=true",
-  },
+  errors: urlsErrors,
   approvedOperation:
     "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true",
   cryptoOrg: {

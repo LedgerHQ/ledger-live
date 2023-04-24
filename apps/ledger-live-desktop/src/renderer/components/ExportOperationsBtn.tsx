@@ -19,7 +19,7 @@ const mapStateToProps = createStructuredSelector({
 });
 class ExportOperationsBtn extends Component<{
   t: TFunction;
-  openModal: (b: string, a: any) => void;
+  openModal: (b: string) => void;
   primary?: boolean;
   accounts: Account[];
 }> {

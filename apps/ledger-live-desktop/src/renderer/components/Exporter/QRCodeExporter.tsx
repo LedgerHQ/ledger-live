@@ -8,10 +8,12 @@ import { encode } from "@ledgerhq/live-common/cross";
 import { activeAccountsSelector } from "~/renderer/reducers/accounts";
 import { exportSettingsSelector } from "~/renderer/reducers/settings";
 import QRCode from "~/renderer/components/QRCode";
+
 const mapStateToProps = createStructuredSelector({
   accounts: (state, props) => props.accounts || activeAccountsSelector(state),
   settings: exportSettingsSelector,
 });
+
 const QRCodeContainer = styled.div`
   position: relative;
   padding: 12px;
@@ -39,8 +41,8 @@ class QRCodeExporter extends PureComponent<
     size: 460,
   };
 
-  constructor(props) {
-    super();
+  constructor(props: Props) {
+    super(props);
     const { accounts, settings } = props;
     const data = encode({
       accounts,
@@ -62,7 +64,7 @@ class QRCodeExporter extends PureComponent<
   };
 
   componentDidMount() {
-    const nextFrame = ({ frame, framesRendered }) => {
+    const nextFrame = ({ frame, framesRendered }: { frame: number; framesRendered: number }) => {
       frame = (frame + 1) % this.chunks.length;
       framesRendered = Math.min(Math.max(framesRendered, frame + 1), this.chunks.length);
       return {
@@ -70,8 +72,8 @@ class QRCodeExporter extends PureComponent<
         framesRendered,
       };
     };
-    let lastT;
-    const loop = t => {
+    let lastT: number | undefined;
+    const loop = (t: number) => {
       this._raf = requestAnimationFrame(loop);
       if (!lastT) lastT = t;
       if ((t - lastT) * this.state.fps < 1000) return;
@@ -82,11 +84,11 @@ class QRCodeExporter extends PureComponent<
   }
 
   componentWillUnmount() {
-    cancelAnimationFrame(this._raf);
+    if (this._raf) cancelAnimationFrame(this._raf);
   }
 
   chunks: string[];
-  _raf: any;
+  _raf: number | undefined;
   render() {
     const { frame, framesRendered } = this.state;
     const { size } = this.props;
