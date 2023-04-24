@@ -381,18 +381,20 @@ const LottieDebugger = ({ name }: { name: string }) => {
                 </Button>
               </Box>
               <Box>
-                {/* @ts-expect-error The select typings assume that the value (Option type) is an object, not a string… */}
                 <Select
                   isSearchable={false}
-                  onChange={({ value }: { value: AnimationKey }) => {
-                    setModelId(DeviceModelId.nanoS);
-                    setKey(value as AnimationKey);
+                  onChange={option => {
+                    if (option) {
+                      setModelId(DeviceModelId.nanoS);
+                      setKey(option.value as AnimationKey);
+                    }
                   }}
                   value={key}
                   options={allKeys.map(k => ({
                     label: k,
                     value: k,
                   }))}
+                  // @ts-expect-error TODO: Shouldn't this be {data: { label }} instead?
                   renderOption={({ label }) => label}
                   renderValue={({ data: { label } }) => label}
                 />

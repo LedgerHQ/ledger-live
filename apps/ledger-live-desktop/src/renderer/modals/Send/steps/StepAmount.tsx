@@ -65,7 +65,10 @@ const StepAmount = (props: StepProps) => {
               <Box mb={2}>
                 <Label>{t("send.steps.amount.nftQuantity")}</Label>
                 <Input
-                  value={("quantities" in transaction && transaction.quantities?.[0]) || undefined}
+                  value={
+                    ("quantities" in transaction && transaction.quantities?.[0]?.toString()) ||
+                    undefined
+                  }
                   onChange={onChangeQuantities}
                   error={status?.errors?.amount}
                 />

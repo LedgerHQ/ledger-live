@@ -44,7 +44,7 @@ type Props<R, H, P> = {
   overridesPreferredDeviceModel?: DeviceModelId;
   Result?: React.ComponentType<P>;
   onResult?: (_: P) => void;
-  onError?: () => void;
+  onError?: (e: Error) => void;
   action: Action<R, H, P>;
   request: R;
   status?: H;

@@ -5,7 +5,7 @@ import zxcvbn from "zxcvbn";
 import debounce from "lodash/debounce";
 import noop from "lodash/noop";
 import Box from "~/renderer/components/Box";
-import Input from "~/renderer/components/Input";
+import Input, { Props as InputProps } from "~/renderer/components/Input";
 import IconEye from "~/renderer/icons/Eye";
 import IconEyeOff from "~/renderer/icons/EyeOff";
 const InputRight = styled(Box).attrs(() => ({
@@ -40,7 +40,7 @@ type Props = {
   t: TFunction;
   value: string;
   withStrength?: boolean;
-} & React.ComponentProps<typeof Input>;
+} & InputProps;
 class InputPassword extends PureComponent<Props, State> {
   static defaultProps = {
     onChange: noop,

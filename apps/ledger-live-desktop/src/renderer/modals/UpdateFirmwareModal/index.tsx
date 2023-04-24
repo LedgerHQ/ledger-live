@@ -216,7 +216,6 @@ const UpdateModal = ({
       backdropColor
       onHide={handleReset}
       isOpened={status === "install"}
-      refocusWhenChange={stateStepId}
       preventBackdropClick={!["finish", "resetDevice"].includes(stepId) && !error}
       render={() => (
         <Stepper

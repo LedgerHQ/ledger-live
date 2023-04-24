@@ -159,7 +159,7 @@ type Props = {
   onChange?: Function;
   onEnter?: (a: React.KeyboardEvent<HTMLInputElement>) => any;
   onEsc?: (a: React.KeyboardEvent<HTMLInputElement>) => void;
-  onFocus: (a: React.FocusEvent<HTMLInputElement>) => void;
+  onFocus?: (a: React.FocusEvent<HTMLInputElement>) => void;
   renderLeft?: any;
   renderRight?: any;
   containerProps?: object;

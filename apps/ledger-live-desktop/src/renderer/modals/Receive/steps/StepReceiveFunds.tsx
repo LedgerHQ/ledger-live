@@ -183,7 +183,7 @@ const StepReceiveFunds = (props: StepProps) => {
         transitionTo("receive");
       }
     } catch (err) {
-      onChangeAddressVerified(false, err);
+      onChangeAddressVerified(false, err as Error);
       hideQRCodeModal();
     }
   }, [device, mainAccount, transitionTo, onChangeAddressVerified, hideQRCodeModal]);
@@ -196,7 +196,7 @@ const StepReceiveFunds = (props: StepProps) => {
     onResetSkip();
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
   const onFinishReceiveFlow = useCallback(() => {
-    const id = account?.currency?.id;
+    const id = mainAccount?.currency?.id;
     const dismissModal = global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`) === "true";
     if (
       !dismissModal &&
@@ -231,6 +231,7 @@ const StepReceiveFunds = (props: StepProps) => {
     }
   }, [
     account,
+    mainAccount?.currency?.id,
     currencyName,
     dispatch,
     name,
@@ -248,7 +249,7 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [isAddressVerified, confirmAddress]);
 
   // custom family UI for StepReceiveFunds
-  const CustomStepReceiveFunds = byFamily[mainAccount.currency.family];
+  const CustomStepReceiveFunds = byFamily[mainAccount.currency.family as keyof typeof byFamily];
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
   }
@@ -313,7 +314,6 @@ const StepReceiveFunds = (props: StepProps) => {
             <Receive2NoDevice
               onVerify={onVerify}
               onContinue={() => onChangeAddressVerified(true)}
-              name={name}
             />
           </>
         ) : device ? (
@@ -327,7 +327,7 @@ const StepReceiveFunds = (props: StepProps) => {
             />
             {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
             <Separator />
-            <Receive2Device device={device} onVerify={onVerify} name={name} />
+            <Receive2Device device={device} name={name} />
           </>
         ) : null // should not happen
         }
