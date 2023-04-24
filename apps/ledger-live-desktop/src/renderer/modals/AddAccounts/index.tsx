@@ -288,11 +288,9 @@ class AddAccounts extends PureComponent<Props, State> {
               key={reset} // THIS IS A HACK because stepper is not controllable. FIXME
               title={title}
               stepId={stepId}
-              // @ts-expect-error This is complicated to type properly…
               onStepChange={this.handleStepChange}
               onClose={handleCloseModal}
               onCloseModal={handleCloseModal}
-              // @ts-expect-error This is complicated to type properly…
               steps={this.STEPS}
               errorSteps={errorSteps}
               {...stepperProps}

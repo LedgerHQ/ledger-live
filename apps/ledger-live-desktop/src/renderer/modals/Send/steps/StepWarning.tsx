@@ -8,7 +8,7 @@ const StepWarning = (props: StepProps) => {
   if (!mainAccount) return null;
   const module = byFamily[mainAccount.currency.family as keyof typeof byFamily];
   if (!module) return null;
-  const Comp = module.component;
+  const Comp = module.component as React.ComponentType<StepProps>;
   return <Comp {...props} />;
 };
 export const StepWarningFooter = (props: StepProps) => {

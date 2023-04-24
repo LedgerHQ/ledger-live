@@ -599,6 +599,9 @@ importers:
       '@types/write-file-atomic':
         specifier: ^4.0.0
         version: 4.0.0
+      '@types/zxcvbn':
+        specifier: ^4.4.1
+        version: 4.4.1
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.57.0
         version: 5.57.0(@typescript-eslint/parser@5.57.0)(eslint@7.32.0)(typescript@4.9.5)
@@ -15392,7 +15395,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
+      '@polkadot/util-crypto': 10.3.1
     dev: false
 
   /@polkadot/networks@10.3.1:
@@ -22961,6 +22964,10 @@ packages:
     dependencies:
       '@types/node': 18.15.11
     optional: true
+
+  /@types/zxcvbn@4.4.1:
+    resolution: {integrity: sha512-3NoqvZC2W5gAC5DZbTpCeJ251vGQmgcWIHQJGq2J240HY6ErQ9aWKkwfoKJlHLx+A83WPNTZ9+3cd2ILxbvr1w==}
+    dev: true
 
   /@typescript-eslint/eslint-plugin@2.34.0(@typescript-eslint/parser@2.34.0)(eslint@6.8.0)(typescript@4.9.5):
     resolution: {integrity: sha512-4zY3Z88rEE99+CNvTbXSyovv2z9PNOVffTWD2W8QF5s2prBQtwN2zadqERcrHpcR7O/+KMI3fcTAmUUhK/iQcQ==}

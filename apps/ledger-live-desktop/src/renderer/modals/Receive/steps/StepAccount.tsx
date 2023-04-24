@@ -100,7 +100,7 @@ export default function StepAccount({
     mainAccount?.currency.name === "Ethereum"
       ? mainAccount.currency.name
       : tokenTypes.map(tt => tt.toUpperCase()).join("/");
-  const url = supportLinkByTokenType[tokenTypes[0]];
+  const url = supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType];
   return (
     <Box flow={1}>
       <TrackPage category={`Receive Flow${eventType ? ` (${eventType})` : ""}`} name="Step 1" />

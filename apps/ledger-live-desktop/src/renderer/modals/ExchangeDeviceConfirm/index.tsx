@@ -252,7 +252,7 @@ const StepConnectDeviceFooter = ({ data, onClose, onSkipDevice }: PropsFooter) =
     </Box>
   ) : (
     <Box alignItems="center" shrink flow={2}>
-      <Receive2NoDevice name={name} onVerify={onVerify} onContinue={nextStep} />
+      <Receive2NoDevice onVerify={onVerify} onContinue={nextStep} />
     </Box>
   );
 };
