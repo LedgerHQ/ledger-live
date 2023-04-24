@@ -36,9 +36,9 @@ export function Catalog() {
 
   const manifests = useManifests();
 
-  const manifestsWithCompleteVisibilityOnly = manifests.filter(
-    manifest => manifest.visibility === "complete",
-  );
+  const manifestsWithCompleteVisibilityOnly = useManifests({
+    visibility: "complete",
+  });
 
   const {
     manifestsByCategories,

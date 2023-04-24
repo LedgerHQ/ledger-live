@@ -7,7 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import { LiveAppRegistry } from "./types";
-import { LiveAppManifest, Loadable } from "../../types";
+import { LiveAppManifest, Loadable, Visibility } from "../../types";
 
 import api from "./api";
 import { FilterParams } from "../../filters";
@@ -70,8 +70,14 @@ export function useRemoteLiveAppContext(): LiveAppContextType {
   return useContext(liveAppContext);
 }
 
-export function useManifests(): LiveAppManifest[] {
-  return useRemoteLiveAppContext().state?.value?.liveAppFiltered ?? [];
+export function useManifests({
+  visibility,
+}: {
+  visibility?: Visibility;
+}): LiveAppManifest[] {
+  return (useRemoteLiveAppContext().state?.value?.liveAppFiltered ?? []).filter(
+    (manifest) => (visibility ? manifest.visibility === visibility : true)
+  );
 }
 
 export function RemoteLiveAppProvider({
