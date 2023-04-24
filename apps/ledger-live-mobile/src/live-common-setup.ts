@@ -74,6 +74,7 @@ setSupportedCurrencies([
   "ethereum_ropsten",
   "ethereum_goerli",
   "elrond",
+  "zilliqa",
   "hedera",
   "cardano",
   "osmosis",

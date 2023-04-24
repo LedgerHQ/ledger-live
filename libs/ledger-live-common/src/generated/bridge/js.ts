@@ -15,6 +15,7 @@ import solana from "../../families/solana/bridge/js";
 import stellar from "../../families/stellar/bridge/js";
 import tezos from "../../families/tezos/bridge/js";
 import tron from "../../families/tron/bridge/js";
+import zilliqa from "../../families/zilliqa/bridge/js";
 import { makeLRUCache } from "../../cache";
 import network from "../../network";
 import { withDevice } from "../../hw/deviceAccess";
@@ -38,5 +39,6 @@ export default {
   stellar,
   tezos,
   tron,
+  zilliqa,
   polkadot: polkadotCreateBridges(withDevice, network, makeLRUCache),
 };

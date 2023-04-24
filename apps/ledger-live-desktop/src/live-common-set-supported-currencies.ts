@@ -71,4 +71,5 @@ setSupportedCurrencies([
   "moonriver",
   "velas_evm",
   "syscoin",
+  "zilliqa",
 ]);

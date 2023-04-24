@@ -91,7 +91,17 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
   },
-  API_RIPPLE_RPC: {
+  API_ZILLIQA_INDEXER_API_ENDPOINT: {
+    def: "https://zilliqa.coin.ledger.com/indexer/v1/zilliqa/",
+    parser: stringParser,
+    desc: "Indexer endpoint for Zilliqa",
+  },
+  API_ZILLIQA_NODE: {
+    def: "https://zilliqa.coin.ledger.com/node/",
+    parser: stringParser,
+    desc: "Node endpoint for Zilliqa",
+  },
+ API_RIPPLE_RPC: {
     parser: stringParser,
     def: "https://xrplcluster.com/ledgerlive",
     desc: "XRP Ledger full history open JSON-RPC endpoint",

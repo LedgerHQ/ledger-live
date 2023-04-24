@@ -62,6 +62,7 @@
 | Viacoin | VIA | YES | viacoin |
 | XRP | XRP | YES | ripple |
 | Zcash | ZEC | YES | zcash |
+| Zilliqa | ZIL | YES | zilliqa |
 | Aion | AION | NO | aion |
 | Akroma | AKA | NO | akroma |
 | Ark | ARK | NO | ark |
@@ -130,7 +131,6 @@
 | Waves | WAVES | NO | waves |
 | ZClassic | ZCL | NO | zclassic |
 | ZCoin | XZC | NO | zcoin |
-| Zilliqa | ZIL | NO | zilliqa |
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
