@@ -2,7 +2,8 @@ import React from "react";
 import { Trans } from "react-i18next";
 import {
   getAccountCurrency,
-  getAccountUnit,
+  getFeesCurrency,
+  getFeesUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -20,8 +21,8 @@ type Props = {
 const AccountFooter = ({ account, parentAccount, status }: Props) => {
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
-  const accountUnit = getAccountUnit(mainAccount);
-  const feesCurrency = getAccountCurrency(mainAccount);
+  const feesCurrency = getFeesCurrency(mainAccount);
+  const feesUnit = getFeesUnit(feesCurrency);
   return (
     <>
       <CurrencyCircleIcon size={40} currency={currency} />
@@ -34,7 +35,7 @@ const AccountFooter = ({ account, parentAccount, status }: Props) => {
         >
           <Trans i18nKey="send.footer.estimatedFees" />
         </Label>
-        {accountUnit && (
+        {feesUnit && (
           <>
             <FormattedVal
               style={{
@@ -43,7 +44,7 @@ const AccountFooter = ({ account, parentAccount, status }: Props) => {
               }}
               color="palette.text.shade100"
               val={status.estimatedFees}
-              unit={accountUnit}
+              unit={feesUnit}
               showCode
               alwaysShowValue
             />

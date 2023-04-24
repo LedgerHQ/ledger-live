@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-node-hid-singleton",
-  "version": "6.28.9",
+  "version": "6.28.10",
   "description": "Ledger Hardware Wallet Node implementation of the communication layer, using node-hid and node-usb",
   "keywords": [
     "Ledger",
@@ -52,10 +52,9 @@
     "@types/node": "^18.15.3",
     "documentation": "13.2.4",
     "jest": "^28.1.1",
-    "rimraf": "^4.1.2",
+    "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
     "ts-jest": "^28.0.5",
-    "ts-node": "^10.4.0",
-    "typescript": "^4"
+    "ts-node": "^10.4.0"
   }
 }

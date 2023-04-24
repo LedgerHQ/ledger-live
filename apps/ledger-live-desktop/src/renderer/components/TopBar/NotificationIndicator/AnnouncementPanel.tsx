@@ -1,11 +1,8 @@
-import React, { useCallback, useRef, useMemo, useState } from "react";
+import React, { useCallback, useRef, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { InView } from "react-intersection-observer";
-import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
-import { groupAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/helpers";
 import { useDispatch } from "react-redux";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -16,6 +13,10 @@ import Text from "~/renderer/components/Text";
 import { useDeepLinkHandler } from "~/renderer/hooks/useDeeplinking";
 import { closeInformationCenter } from "~/renderer/actions/UI";
 import useDateTimeFormat from "~/renderer/hooks/useDateTimeFormat";
+import { useNotifications } from "~/renderer/hooks/useNotifications";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { urls } from "~/config/urls";
+
 const DateRowContainer = styled.div`
   padding: 4px 16px;
   background-color: ${({ theme }) => theme.colors.palette.background.default};
@@ -178,11 +179,10 @@ function Article({
   utmCampaign,
   isRead,
 }: ArticleProps) {
-  const [isSeen] = useState(isRead);
   const levelTheme = getLevelTheme(level);
   const { Icon, defaultIconColor } = getIcon(icon);
   return (
-    <ArticleRootContainer isRead={isSeen}>
+    <ArticleRootContainer isRead={isRead}>
       <ArticleContainer
         bg={levelTheme.background}
         py={levelTheme.padding}
@@ -223,7 +223,7 @@ function Article({
           ) : null}
         </ArticleRightColumnContainer>
       </ArticleContainer>
-      {isSeen ? null : <UnReadNotifBadge />}
+      {isRead ? null : <UnReadNotifBadge />}
     </ArticleRootContainer>
   );
 }
@@ -238,34 +238,46 @@ const Separator = styled.div`
   margin: 25px 0px;
   width: 100%;
   height: 1px;
-  background-color: ${({ theme }) => theme.colors.palette.text.shade10};
+  background-color: ${({ theme }) => theme.colors.neutral.c40};
 `;
+
 export function AnnouncementPanel() {
-  const { cache, setAsSeen, seenIds, allIds } = useAnnouncements();
-  const groupedAnnouncements = useMemo(() => groupAnnouncements(allIds.map(uuid => cache[uuid])), [
-    cache,
-    allIds,
-  ]);
+  const {
+    notificationsCards,
+    logNotificationImpression,
+    groupNotifications,
+    onClickNotif,
+  } = useNotifications();
+
   const timeoutByUUID = useRef({});
-  const handleInView = useCallback(
+  const handleInViewNotif = useCallback(
     (visible, uuid) => {
       const timeouts = timeoutByUUID.current;
-      if (!seenIds.includes(uuid) && visible && !timeouts[uuid]) {
+
+      if (notificationsCards.find(n => !n.viewed && n.id === uuid) && visible && !timeouts[uuid]) {
         timeouts[uuid] = setTimeout(() => {
-          setAsSeen(uuid);
+          logNotificationImpression(uuid);
           delete timeouts[uuid];
-        }, 1000);
+        }, 2000);
       }
       if (!visible && timeouts[uuid]) {
         clearTimeout(timeouts[uuid]);
         delete timeouts[uuid];
       }
     },
-    [seenIds, setAsSeen],
+    [logNotificationImpression, notificationsCards],
   );
-  if (!groupedAnnouncements.length) {
+
+  const groups = useMemo(
+    () => groupNotifications(notificationsCards),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [notificationsCards],
+  );
+
+  if (!notificationsCards) {
     return (
       <PanelContainer>
+        <TrackPage category="Notification Center" name="notification_center_news" />
         <Text
           color="palette.text.shade100"
           ff="Inter|SemiBold"
@@ -290,22 +302,28 @@ export function AnnouncementPanel() {
   }
   return (
     <ScrollArea hideScrollbar>
+      <TrackPage category="Notification Center" name="notification_center_news" />
       <Box py="32px">
-        {groupedAnnouncements.map((group, index) => (
+        {groups.map((group, index) => (
           <React.Fragment key={index}>
             {group.day ? <DateRow date={group.day} /> : null}
-            {group.data.map(({ level, icon, content, uuid, utm_campaign: utmCampaign }, index) => (
-              <React.Fragment key={uuid}>
-                <InView as="div" onChange={visible => handleInView(visible, uuid)}>
+            {group.data.map(({ title, description, path, url, viewed, id, cta }, index) => (
+              <React.Fragment key={id}>
+                <InView
+                  as="div"
+                  onChange={visible => handleInViewNotif(visible, id)}
+                  onClick={() => onClickNotif(group.data[index])}
+                >
                   <Article
-                    level={level}
-                    icon={icon}
-                    title={content.title}
-                    text={content.text}
-                    link={content.link}
-                    uuid={uuid}
-                    utmCampaign={utmCampaign}
-                    isRead={seenIds.includes(uuid)}
+                    title={title}
+                    text={description}
+                    isRead={viewed}
+                    level={"info"}
+                    icon={"info"}
+                    link={{
+                      label: cta,
+                      href: url || path || urls.ledger,
+                    }}
                   />
                 </InView>
                 {index < group.data.length - 1 ? <Separator /> : null}

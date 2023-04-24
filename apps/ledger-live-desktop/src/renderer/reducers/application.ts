@@ -2,6 +2,7 @@ import { handleActions } from "redux-actions";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import { getLanguages } from "~/config/languages";
 import { LangAndRegion } from "~/renderer/reducers/settings";
+import { Handlers } from "./types";
 export type ApplicationState = {
   isLocked?: boolean;
   hasPassword?: boolean;
@@ -29,15 +30,18 @@ const state: ApplicationState = {
     alwaysShowSkeletons: false,
   },
 };
-const handlers = {
-  APPLICATION_SET_DATA: (
-    state,
-    {
-      payload,
-    }: {
-      payload: ApplicationState;
-    },
-  ) => ({
+
+type HandlersPayloads = {
+  APPLICATION_SET_DATA: Partial<ApplicationState>;
+};
+type ApplicationHandlers<PreciseKey = true> = Handlers<
+  ApplicationState,
+  HandlersPayloads,
+  PreciseKey
+>;
+
+const handlers: ApplicationHandlers = {
+  APPLICATION_SET_DATA: (state, { payload }) => ({
     ...state,
     ...payload,
   }),
@@ -64,4 +68,7 @@ export const isNavigationLocked = (state: { application: ApplicationState }) =>
 
 // Exporting reducer
 
-export default handleActions(handlers, state);
+export default handleActions<ApplicationState, HandlersPayloads[keyof HandlersPayloads]>(
+  (handlers as unknown) as ApplicationHandlers<false>,
+  state,
+);

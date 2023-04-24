@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   height: number;
   progress: string;

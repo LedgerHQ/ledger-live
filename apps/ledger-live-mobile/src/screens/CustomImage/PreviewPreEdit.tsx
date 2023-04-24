@@ -45,6 +45,7 @@ import useCenteredImage, {
 } from "../../components/CustomImage/useCenteredImage";
 import Button from "../../components/wrappedUi/Button";
 import { TrackScreen } from "../../analytics";
+import Link from "../../components/wrappedUi/Link";
 
 const DEFAULT_CONTRAST = 1;
 
@@ -67,7 +68,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
   const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
-  const { isPictureFromGallery, device } = params;
+  const { isPictureFromGallery, device, isStaxEnabled } = params;
 
   const isNftMetadata = "nftMetadataParams" in params;
   const isImageUrl = "imageUrl" in params;
@@ -89,6 +90,13 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { status, metadata } = nftMetadata as NFTResource & {
     metadata: NFTMetadata;
   };
+
+  const isStaxEnabledImage = !!isStaxEnabled || !!metadata?.staxImage;
+  const imageType = isStaxEnabledImage
+    ? "staxEnabledImage"
+    : isNftMetadata
+    ? "originalNFTImage"
+    : "customImage";
 
   const nftImageUri = extractImageUrlFromNftMetadata(metadata);
 
@@ -192,10 +200,11 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         rawData: data,
         previewData: processorPreviewImage,
         device,
+        imageType,
       });
       setRawResultLoading(false);
     },
-    [navigation, setRawResultLoading, processorPreviewImage, device],
+    [navigation, setRawResultLoading, processorPreviewImage, device, imageType],
   );
 
   const handlePreviewImageError = useCallback(
@@ -264,9 +273,10 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
       params: {
         device,
         baseImageFile: loadedImage,
+        imageType,
       },
     });
-  }, [navigation, device, loadedImage]);
+  }, [navigation, device, loadedImage, imageType]);
 
   if (!loadedImage || !loadedImage.imageFileUri) {
     return (
@@ -313,12 +323,12 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
               />
             </Flex>
           </Flex>
-          <Flex px={8}>
+          <Flex pb={8} px={8}>
             <Button
               type="main"
               size="large"
               outline
-              mb={4}
+              mb={7}
               disabled={previewLoading}
               pending={rawResultLoading}
               onPress={requestRawResult}
@@ -328,16 +338,15 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
             >
               {t("customImage.preview.setPicture")}
             </Button>
-            <Button
+            <Link
               size="large"
-              mb={8}
               onPress={handleEditPicture}
-              disabled={previewLoading}
+              disabled={previewLoading || isStaxEnabledImage}
               event="button_clicked"
               eventProperties={analyticsEditEventProps}
             >
               {t("customImage.preview.editPicture")}
-            </Button>
+            </Link>
           </Flex>
         </Flex>
       )}

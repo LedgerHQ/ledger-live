@@ -9,6 +9,7 @@ import { stakeDefaultTrack } from "./constants";
 import { track, page } from "~/renderer/analytics/segment";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
+import { getAccountName } from "@ledgerhq/live-common/account/index";
 
 type Props = {
   currencies?: string[];
@@ -42,8 +43,8 @@ const useStakeFlow = () => {
               button: "asset",
               page: history.location.pathname,
               currency: account?.currency?.family,
-              account,
-              parentAccount,
+              account: account ? getAccountName(account) : undefined,
+              parentAccount: parentAccount ? getAccountName(parentAccount) : undefined,
               drawer: "Select Account And Currency Drawer",
             });
             setDrawer();

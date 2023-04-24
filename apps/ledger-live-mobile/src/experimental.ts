@@ -64,6 +64,12 @@ export const experimentalFeatures: Feature[] = [
     description: i18n.t(i18nKey("developerMode", "description")),
   },
   {
+    type: "toggle",
+    name: "LIST_APPS_V2",
+    title: i18n.t(i18nKey("experimentalListAppsV2", "title")),
+    description: i18n.t(i18nKey("experimentalListAppsV2", "description")),
+  },
+  {
     type: "integer",
     name: "FORCE_PROVIDER",
     title: i18n.t(i18nKey("managerProvider", "title")),
@@ -115,6 +121,12 @@ export const experimentalFeatures: Feature[] = [
 ] as Feature[];
 
 export const developerFeatures: Feature[] = [
+  {
+    type: "toggle",
+    name: "PLATFORM_DEBUG",
+    title: i18n.t(i18nKeyDeveloper("debugApps", "title")),
+    description: i18n.t(i18nKeyDeveloper("debugApps", "description")),
+  },
   {
     type: "toggle",
     name: "PLATFORM_EXPERIMENTAL_APPS",

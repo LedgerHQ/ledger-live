@@ -1,6 +1,6 @@
 import React, { PureComponent, useCallback, useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { useBridgeSync, useAccountSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -14,18 +14,13 @@ import IconSyncServer from "~/renderer/icons/SyncServer";
 import IconPending from "~/renderer/icons/Clock";
 import IconError from "~/renderer/icons/Error";
 import IconLoader from "~/renderer/icons/Loader";
-import IconWarning from "~/renderer/icons/TriangleWarning";
-import {
-  accountNeedsMigrationSelector,
-  isUpToDateAccountSelector,
-} from "~/renderer/reducers/accounts";
+import { isUpToDateAccountSelector } from "~/renderer/reducers/accounts";
 import { colors } from "~/renderer/styles/theme";
-import { openModal } from "~/renderer/actions/modals";
 import useEnv from "~/renderer/hooks/useEnv";
 const mapStateToProps = createStructuredSelector({
   isUpToDateAccount: isUpToDateAccountSelector,
-  needsMigration: accountNeedsMigrationSelector,
 });
+
 class StatusQueued extends PureComponent<{
   onClick: (a: any) => void;
 }> {
@@ -101,37 +96,15 @@ class StatusError extends PureComponent<{
     );
   }
 }
-const StatusNeedsMigration = React.memo<{}>(function StatusNeedsMigration() {
-  const dispatch = useDispatch();
-  const openMigrateAccountsModal = useCallback(
-    (e: MouseEvent) => {
-      e.stopPropagation();
-      dispatch(openModal("MODAL_MIGRATE_ACCOUNTS"));
-    },
-    [dispatch],
-  );
-  return (
-    <Tooltip content={<Trans i18nKey="common.sync.needsMigration" />}>
-      <Box onClick={openMigrateAccountsModal}>
-        <IconWarning onClick={openMigrateAccountsModal} color={colors.orange} size={16} />
-      </Box>
-    </Tooltip>
-  );
-});
+
 type OwnProps = {
   accountId: string;
   account: AccountLike;
 };
 type Props = OwnProps & {
   isUpToDateAccount: boolean;
-  needsMigration: boolean;
 };
-const AccountSyncStatusIndicator = ({
-  accountId,
-  account,
-  isUpToDateAccount,
-  needsMigration,
-}: Props) => {
+const AccountSyncStatusIndicator = ({ accountId, account, isUpToDateAccount }: Props) => {
   const { pending, error } = useAccountSyncState({
     accountId,
   });
@@ -162,9 +135,7 @@ const AccountSyncStatusIndicator = ({
   useEffect(() => {
     clearTimeout(timeout.current);
   }, []);
-  if (needsMigration) {
-    return <StatusNeedsMigration onClick={onClick} />;
-  }
+
   // We optimistically will show things are up to date even if it's actually synchronizing
   // in order to "debounce" the UI and don't make it blinks each time a sync happens
   // only when user did the account we will show the true state
@@ -179,5 +150,5 @@ const AccountSyncStatusIndicator = ({
   }
   return <StatusQueued onClick={onClick} />;
 };
-const m: React$ComponentType<OwnProps> = connect(mapStateToProps)(AccountSyncStatusIndicator);
+const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(AccountSyncStatusIndicator);
 export default m;

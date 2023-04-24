@@ -2,9 +2,9 @@ import React from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { alwaysShowSkeletonsSelector } from "~/renderer/reducers/application";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { layout, space } from "styled-system";
+import { State } from "~/renderer/reducers";
 type OwnProps = {
   width?: number;
   minHeight?: number;
@@ -17,7 +17,7 @@ type OwnProps = {
 type Props = {
   alwaysShowSkeletons: boolean;
 } & OwnProps;
-const Wrapper: ThemedComponent<{}> = styled.div`
+const Wrapper = styled.div`
   ${layout};
   ${space};
   ${p => (p.full ? "aspect-ratio: 1; height: auto;" : "")}
@@ -25,7 +25,7 @@ const Wrapper: ThemedComponent<{}> = styled.div`
   align-items: center;
   display: grid;
 `;
-const Item: ThemedComponent<{}> = styled.div.attrs(({ state }) => ({
+const Item = styled.div.attrs(({ state }) => ({
   style: transitionStyles[state],
 }))`
   display: block;
@@ -97,7 +97,7 @@ const transitionStyles = {
     opacity: 0,
   },
 };
-const mapStateToProps = state => ({
+const mapStateToProps = (state: State) => ({
   alwaysShowSkeletons: alwaysShowSkeletonsSelector(state),
 });
 class Skeleton extends React.PureComponent<Props> {
@@ -128,4 +128,4 @@ class Skeleton extends React.PureComponent<Props> {
     );
   }
 }
-export default connect(mapStateToProps)(Skeleton) as React$ComponentType<OwnProps>;
+export default connect(mapStateToProps)(Skeleton) as React.ComponentType<OwnProps>;

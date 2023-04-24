@@ -4,15 +4,13 @@ import React from "react";
 export type Props = {
   name: string;
   size?: number;
-  weight?: "Regular" | "Thin" | "Light" | "Medium" | "UltraLight";
+  weight?: "Medium";
   color?: string;
 };
 
 export const iconNames = Array.from(
   Object.keys(icons).reduce((set, rawKey) => {
-    const key = rawKey
-      .replace(/(.+)(Regular|Light|UltraLight|Thin|Medium)+$/g, "$1")
-      .replace(/(.+)(Ultra)+$/g, "$1");
+    const key = rawKey.replace(/(.+)(Medium)+$/g, "$1");
     if (!set.has(key)) set.add(key);
     return set;
   }, new Set<string>()),

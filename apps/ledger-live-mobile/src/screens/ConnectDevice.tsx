@@ -18,9 +18,6 @@ import { TrackScreen } from "../analytics";
 import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../const";
 import type { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
-import type { LendingEnableFlowParamsList } from "../components/RootNavigator/types/LendingEnableFlowNavigator";
-import type { LendingSupplyFlowNavigatorParamList } from "../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import type { LendingWithdrawFlowNavigatorParamList } from "../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import type { ClaimRewardsNavigatorParamList } from "../components/RootNavigator/types/ClaimRewardsNavigator";
 import type { FreezeNavigatorParamList } from "../components/RootNavigator/types/FreezeNavigator";
 import type { UnfreezeNavigatorParamList } from "../components/RootNavigator/types/UnfreezeNavigator";
@@ -61,18 +58,6 @@ type Props =
   | StackNavigatorProps<
       SendFundsNavigatorStackParamList,
       ScreenName.SendConnectDevice
-    >
-  | StackNavigatorProps<
-      LendingEnableFlowParamsList,
-      ScreenName.LendingEnableConnectDevice
-    >
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.LendingSupplyConnectDevice
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
-      ScreenName.LendingWithdrawConnectDevice
     >
   | StackNavigatorProps<
       ClaimRewardsNavigatorParamList,

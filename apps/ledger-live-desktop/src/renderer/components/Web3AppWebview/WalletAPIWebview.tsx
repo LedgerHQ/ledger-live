@@ -4,15 +4,18 @@ import * as remote from "@electron/remote";
 import React, { forwardRef, RefObject, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { useWalletAPIServer, useConfig, UiHook } from "@ledgerhq/live-common/wallet-api/react";
+import {
+  useWalletAPIServer,
+  useConfig,
+  UiHook,
+  ExchangeType,
+} from "@ledgerhq/live-common/wallet-api/react";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import { getEnv } from "@ledgerhq/live-common/env";
-
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { flattenAccountsSelector } from "../../reducers/accounts";
@@ -25,6 +28,7 @@ import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
 import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { useWebviewState } from "./helpers";
+import { getStoreValue, setStoreValue } from "~/renderer/store";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 const tracking = trackingWrapper(track);
@@ -79,6 +83,12 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
           }),
         );
       },
+      "storage.get": ({ key, storeId }) => {
+        return getStoreValue(key, storeId);
+      },
+      "storage.set": ({ key, value, storeId }) => {
+        setStoreValue(key, value, storeId);
+      },
       "transaction.sign": ({
         account,
         parentAccount,
@@ -129,6 +139,33 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
             appName,
             onResult: onSuccess,
             onCancel,
+          }),
+        );
+      },
+      "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
+        dispatch(
+          openModal("MODAL_PLATFORM_EXCHANGE_START", {
+            exchangeType: ExchangeType[exchangeType],
+            onResult: (nonce: string) => {
+              onSuccess(nonce);
+            },
+            onCancel: (error: Error) => {
+              onCancel(error);
+            },
+          }),
+        );
+      },
+      "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+        dispatch(
+          openModal("MODAL_PLATFORM_EXCHANGE_COMPLETE", {
+            ...exchangeParams,
+            onResult: (operation: Operation) => {
+              onSuccess(operation.hash);
+            },
+            onCancel: (error: Error) => {
+              console.error(error);
+              onCancel(error);
+            },
           }),
         );
       },
@@ -276,7 +313,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         />
         {!widgetLoaded ? (
           <Loader>
-            <BigSpinner data-test-id="live-app-loading-spinner" size={50} />
+            <BigSpinner size={50} />
           </Loader>
         ) : null}
       </>

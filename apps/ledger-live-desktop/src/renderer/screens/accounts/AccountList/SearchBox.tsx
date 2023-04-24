@@ -3,14 +3,14 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import SearchIcon from "~/renderer/icons/Search";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   onTextChange: (evt: SyntheticInputEvent<HTMLInputElement>) => void;
   search?: string;
   placeholder?: any;
   autoFocus?: boolean;
 };
-const SearchInput: ThemedComponent<{}> = styled.input`
+const SearchInput = styled.input`
   border: none;
   background: transparent;
   outline: none;

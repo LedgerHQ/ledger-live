@@ -28,7 +28,7 @@ const appLoaded = () => {
 const reloadRenderer = () => ipcRenderer.invoke("reloadRenderer");
 
 // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-const openWindow = id => ipcRenderer.send("webview-dom-ready", id);
+const openWindow = (id: number) => ipcRenderer.send("webview-dom-ready", id);
 window.api = {
   appLoaded,
   reloadRenderer,
@@ -39,12 +39,12 @@ window.api = {
  * This param "theme" that we are using is set in the main thread,
  * in the main/window-lifecycle.js function loadWindow()
  */
-const theme = new URLSearchParams(window.location.search).get("theme");
+const theme = new URLSearchParams(window.location.search).get("theme") as "dark" | "light" | "null";
 const osTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 const palette = palettes[theme && theme !== "null" ? theme : osTheme] || palettes.dark;
 remote.getCurrentWindow().setBackgroundColor(palette.background.default);
 window.addEventListener("DOMContentLoaded", () => {
-  const imgNode = (document.getElementById("loading-logo") as any) as HTMLImageElement;
+  const imgNode = (document.getElementById("loading-logo") as unknown) as HTMLImageElement;
   const loaderContainer = document.getElementById("loader-container");
   if (imgNode && loaderContainer) {
     imgNode.src = logo;

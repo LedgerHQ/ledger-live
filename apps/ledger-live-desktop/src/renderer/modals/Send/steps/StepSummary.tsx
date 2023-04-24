@@ -2,9 +2,11 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
-  getAccountCurrency,
   getAccountName,
+  getAccountCurrency,
   getAccountUnit,
+  getFeesCurrency,
+  getFeesUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -22,11 +24,10 @@ import { rgba } from "~/renderer/styles/helpers";
 import CounterValue from "~/renderer/components/CounterValue";
 import Alert from "~/renderer/components/Alert";
 import NFTSummary from "~/renderer/screens/nft/Send/Summary";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-const FromToWrapper: ThemedComponent<{}> = styled.div``;
-const Circle: ThemedComponent<{}> = styled.div`
+const FromToWrapper = styled.div``;
+const Circle = styled.div`
   height: 32px;
   width: 32px;
   border-radius: 32px;
@@ -37,13 +38,13 @@ const Circle: ThemedComponent<{}> = styled.div`
   justify-content: center;
   margin-right: 12px;
 `;
-const VerticalSeparator: ThemedComponent<{}> = styled.div`
+const VerticalSeparator = styled.div`
   height: 18px;
   background: ${p => p.theme.colors.palette.text.shade20};
   width: 1px;
   margin: 1px 0px 0px 15px;
 `;
-const Separator: ThemedComponent<{}> = styled.div`
+const Separator = styled.div`
   height: 1px;
   background: ${p => p.theme.colors.palette.text.shade20};
   width: 100%;
@@ -59,8 +60,8 @@ export default class StepSummary extends PureComponent<StepProps> {
     const { estimatedFees, amount, totalSpent, warnings, txInputs } = status;
     const feeTooHigh = warnings.feeTooHigh;
     const currency = getAccountCurrency(account);
-    const feesUnit = getAccountUnit(mainAccount);
-    const feesCurrency = getAccountCurrency(mainAccount);
+    const feesCurrency = getFeesCurrency(mainAccount);
+    const feesUnit = getFeesUnit(feesCurrency);
     const unit = getAccountUnit(account);
     const utxoLag = txInputs ? txInputs.length >= WARN_FROM_UTXO_COUNT : null;
     const hasNonEmptySubAccounts =

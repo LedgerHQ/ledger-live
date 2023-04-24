@@ -1,7 +1,6 @@
 import React from "react";
 import noop from "lodash/noop";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Tabbable } from "~/renderer/components/Box";
 const Base: ThemedComponent<{
   forceBgColor?: string;

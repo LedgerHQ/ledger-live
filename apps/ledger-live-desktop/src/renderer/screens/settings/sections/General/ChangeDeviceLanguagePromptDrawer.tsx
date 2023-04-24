@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-
 import { Flex, Drawer, Button, Divider } from "@ledgerhq/react-ui";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
 import { useDispatch, useSelector } from "react-redux";

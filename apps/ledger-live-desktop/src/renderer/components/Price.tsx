@@ -11,7 +11,6 @@ import useTheme from "~/renderer/hooks/useTheme";
 import Box from "~/renderer/components/Box";
 import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
 import IconActivity from "~/renderer/icons/Activity";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { NoCountervaluePlaceholder } from "./CounterValue";
 type Props = {
   unit?: Unit;
@@ -23,7 +22,6 @@ type Props = {
   withActivityColor?: string;
   withIcon?: boolean;
   withEquality?: boolean;
-  date?: Date;
   color?: string;
   fontSize?: number;
   fontWeight?: number;
@@ -36,7 +34,6 @@ export default function Price({
   from,
   to,
   unit,
-  date,
   withActivityCurrencyColor,
   withActivityColor,
   withEquality,
@@ -110,7 +107,7 @@ export default function Price({
     </PriceWrapper>
   );
 }
-const PriceWrapper: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const PriceWrapper = styled(Box).attrs(() => ({
   ff: "Inter",
   horizontal: true,
 }))`

@@ -1,10 +1,14 @@
 import React from "react";
-import { storiesOf } from "../storiesOf";
 import Text from "../../../src/components/Text";
 import Flex from "../../../src/components/Layout/Flex";
 import Divider from "../../../src/components/Layout/Divider";
 
-const DividerStory = () => {
+export default {
+  title: "Layout/Divider",
+  component: Divider,
+};
+
+export const DividerStory = () => {
   return (
     <Flex px={10}>
       <Text variant="h1">Lorem Ipsum</Text>
@@ -22,5 +26,4 @@ const DividerStory = () => {
     </Flex>
   );
 };
-
-storiesOf((story) => story("Layout/Divider", module).add("Divider", () => <DividerStory />));
+DividerStory.storyName = "Divider";

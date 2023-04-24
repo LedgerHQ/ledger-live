@@ -33,7 +33,6 @@ import getDeviceRunningMode from "./commands/getDeviceRunningMode";
 import getTransactionStatus from "./commands/getTransactionStatus";
 import i18n from "./commands/i18n";
 import liveData from "./commands/liveData";
-import makeCompoundSummary from "./commands/makeCompoundSummary";
 import managerListApps from "./commands/managerListApps";
 import portfolio from "./commands/portfolio";
 import proxy from "./commands/proxy";
@@ -94,7 +93,6 @@ export default {
   getTransactionStatus,
   i18n,
   liveData,
-  makeCompoundSummary,
   managerListApps,
   portfolio,
   proxy,

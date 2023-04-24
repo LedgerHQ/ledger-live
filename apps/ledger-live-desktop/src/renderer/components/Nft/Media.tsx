@@ -1,5 +1,5 @@
 import React from "react";
-import { NFTMetadata, NFTMediaSizes } from "@ledgerhq/types-live";
+import { NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
 import { getMetadataMediaType } from "~/helpers/nft";
 import Placeholder from "./Placeholder";
 import Image from "./Image";
@@ -7,7 +7,7 @@ import Video from "./Video";
 type Props = {
   metadata: NFTMetadata;
   tokenId: string;
-  mediaFormat?: NFTMediaSizes;
+  mediaFormat?: keyof NFTMedias;
   full?: boolean;
   size?: number;
   maxHeight?: number;

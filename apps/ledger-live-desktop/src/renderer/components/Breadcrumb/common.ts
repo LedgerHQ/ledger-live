@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import Text from "~/renderer/components/Text";
 import { Base } from "~/renderer/components/Button";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-export const Separator: ThemedComponent<{}> = styled.div`
+
+export const Separator = styled.div`
   &::after {
     content: "/";
     font-size: 13px;
@@ -60,7 +60,7 @@ export const TextLink: ThemedComponent<{
     margin-right: 7px;
   }
 `;
-export const AngleDown: ThemedComponent<{}> = styled.div`
+export const AngleDown = styled.div`
   width: 16px;
   height: 16px;
   border-radius: 20px;
@@ -71,7 +71,7 @@ export const AngleDown: ThemedComponent<{}> = styled.div`
     background: ${p => p.theme.colors.palette.divider};
   }
 `;
-export const Check: ThemedComponent<{}> = styled.div`
+export const Check = styled.div`
   color: ${p => p.theme.colors.wallet};
   align-items: center;
   display: flex;

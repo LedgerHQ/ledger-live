@@ -89,15 +89,7 @@ const Receive1ShareAddress = ({
     </>
   );
 };
-const Receive2Device = ({
-  onVerify,
-  name,
-  device,
-}: {
-  onVerify: () => void;
-  name: string;
-  device: any;
-}) => {
+const Receive2Device = ({ name, device }: { onVerify: () => void; name: string; device: any }) => {
   const type = useTheme("colors.palette.type");
   return (
     <>
@@ -188,7 +180,7 @@ const StepReceiveFunds = (props: StepProps) => {
           .join("/"),
         currency: currencyName,
         modal: "receive",
-        account,
+        account: name,
       });
       transitionTo("stakingFlow");
       history.push({
@@ -202,6 +194,7 @@ const StepReceiveFunds = (props: StepProps) => {
     currencyName,
     history,
     onClose,
+    name,
     receiveStakingFlowConfig?.enabled,
     receiveStakingFlowConfig?.params,
     transitionTo,

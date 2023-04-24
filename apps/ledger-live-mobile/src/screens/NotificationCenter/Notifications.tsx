@@ -150,8 +150,8 @@ export default function NotificationCenter() {
 
   // ----- Render functions --------
   const renderRightActions = (
-    _progress: Animated.AnimatedInterpolation,
-    dragX: Animated.AnimatedInterpolation,
+    _progress: Animated.AnimatedInterpolation<string | number>,
+    dragX: Animated.AnimatedInterpolation<string | number>,
     item: NotificationContentCard,
   ) => {
     const scale = dragX.interpolate({

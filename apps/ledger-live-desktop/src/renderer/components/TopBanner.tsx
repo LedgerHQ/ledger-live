@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
 import { dismissBanner } from "~/renderer/actions/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { radii } from "~/renderer/styles/theme";
 import IconCross from "~/renderer/icons/Cross";
 import Box from "~/renderer/components/Box";
@@ -12,7 +11,7 @@ const IconContainer = styled.div`
   display: flex;
   align-items: center;
 `;
-const Container: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const Container = styled(Box).attrs(p => ({
   horizontal: true,
   alignItems: "center",
   py: "8px",
@@ -28,7 +27,7 @@ const Container: ThemedComponent<{}> = styled(Box).attrs(p => ({
 const RightContainer = styled.div`
   margin-left: auto;
 `;
-export const FakeLink: ThemedComponent<{}> = styled.span`
+export const FakeLink = styled.span`
   color: ${p => p.theme.colors.palette.primary.contrastText};
   text-decoration: underline;
   cursor: pointer;
@@ -50,7 +49,7 @@ const CloseContainer = styled(Box).attrs(() => ({
   }
 `;
 export type Content = {
-  Icon?: React$ComponentType<any>;
+  Icon?: React.ComponentType<any>;
   message: React.ReactNode;
   right?: React.ReactNode;
 };

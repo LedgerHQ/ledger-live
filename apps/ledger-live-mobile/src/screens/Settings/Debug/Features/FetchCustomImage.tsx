@@ -44,10 +44,9 @@ export default function DebugFetchCustomImage() {
 
   // TODO move all the logic here onto its own thing
   // when we implement the screens of the flow.
-  const status = deviceAction.useHook(
-    action === "fetch" ? device : undefined,
-    currentBackup.current,
-  );
+  const status = deviceAction.useHook(action === "fetch" ? device : undefined, {
+    backupHash: currentBackup.current,
+  });
 
   const onReset = useCallback(() => {
     setDevice(null);

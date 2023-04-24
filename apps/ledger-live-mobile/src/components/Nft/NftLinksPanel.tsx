@@ -143,11 +143,12 @@ const NftLinksPanel = ({
       screen: ScreenName.CustomImagePreviewPreEdit,
       params: {
         imageUrl: customImageUri,
+        isStaxEnabled: !!nftMetadata?.staxImage,
         device: null,
       },
     });
     onClose && onClose();
-  }, [navigation, onClose, customImageUri]);
+  }, [navigation, onClose, customImageUri, nftMetadata?.staxImage]);
 
   const content = useMemo(() => {
     const topSection = [
@@ -280,22 +281,24 @@ const NftLinksPanel = ({
   };
 
   return (
-    <QueuedDrawer
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background.drawer,
-        },
-      ]}
-      isRequestingToBeOpened={isOpen}
-      onClose={onClose}
-    >
-      <TrackScreen
-        category="NFT settings"
-        refreshSource={false}
-        type="drawer"
-      />
-      {content}
+    <>
+      <QueuedDrawer
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background.drawer,
+          },
+        ]}
+        isRequestingToBeOpened={isOpen && !bottomHideCollectionOpen}
+        onClose={onClose}
+      >
+        <TrackScreen
+          category="NFT settings"
+          refreshSource={false}
+          type="drawer"
+        />
+        {content}
+      </QueuedDrawer>
       <HideNftDrawer
         nftContract={nftContract}
         nftId={nftId}
@@ -303,7 +306,7 @@ const NftLinksPanel = ({
         isOpened={bottomHideCollectionOpen}
         onClose={closeHideModal}
       />
-    </QueuedDrawer>
+    </>
   );
 };
 

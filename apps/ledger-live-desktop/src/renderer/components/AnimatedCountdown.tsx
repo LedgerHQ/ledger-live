@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const WrappedSvg: ThemedComponent<{}> = styled.svg`
+
+const WrappedSvg = styled.svg`
   transform: rotate(-90deg);
   border-radius: 50%;
   background-clip: padding-box;

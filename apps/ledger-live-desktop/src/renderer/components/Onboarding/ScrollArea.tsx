@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 const ScrollAreaContainer: ThemedComponent<any> = styled.div`
   height: 100%;
   width: 100%;

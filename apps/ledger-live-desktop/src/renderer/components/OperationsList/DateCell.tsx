@@ -8,8 +8,7 @@ import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
 import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
 import { getEnv } from "@ledgerhq/live-common/env";
-
-const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Cell = styled(Box).attrs(() => ({
   px: 3,
   horizontal: false,
 }))`
