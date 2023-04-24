@@ -157,12 +157,16 @@ export function useFilterTokenOperationsZeroAmount() {
   );
   return [value, setter];
 }
-type PortfolioRangeOption = {
+export type PortfolioRangeOption = {
   key: PortfolioRange;
   value: string;
   label: string;
 };
-export function useTimeRange() {
+export function useTimeRange(): [
+  PortfolioRange,
+  (range: PortfolioRangeOption | PortfolioRange) => void,
+  PortfolioRangeOption[],
+] {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const val = useSelector(selectedTimeRangeSelector);
@@ -181,6 +185,7 @@ export function useTimeRange() {
   }));
   return [val, setter, options];
 }
+
 export const setShowClearCacheBanner = (showClearCacheBanner: boolean) =>
   saveSettings({
     showClearCacheBanner,
