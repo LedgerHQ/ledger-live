@@ -88,6 +88,9 @@ export const NoMarginWrapper = styled.div`
   margin-left: -20px;
   margin-right: -20px;
 `;
+/**
+ * @deprecated Bar being deprecated, this can be reworked to simpler code.
+ */
 export const B = styled(Bar).attrs(() => ({
   color: "palette.divider",
   size: 1,
