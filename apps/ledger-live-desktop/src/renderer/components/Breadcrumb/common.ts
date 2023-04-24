@@ -10,9 +10,9 @@ export const Separator = styled.div`
     padding: 0 15px;
   }
 `;
-export const Item: ThemedComponent<{
+export const Item = styled.div<{
   isActive?: boolean;
-}> = styled.div`
+}>`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -33,9 +33,9 @@ export const Item: ThemedComponent<{
     border-radius: 4px;
   }
 `;
-export const TextLink: ThemedComponent<{
+export const TextLink = styled.div<{
   shrink?: boolean;
-}> = styled.div`
+}>`
   font-family: 'Inter';
   font-size: 12px;
   align-items: center;
