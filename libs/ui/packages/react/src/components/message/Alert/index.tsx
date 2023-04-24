@@ -11,7 +11,6 @@ import CircledCrossSolidMedium from "@ledgerhq/icons-ui/react/CircledCrossSolidM
 type AlertType = "info" | "secondary" | "success" | "warning" | "error";
 
 type RenderProps = (props: {
-  color: string;
   textProps: { variant?: TextVariants; fontWeight?: string };
 }) => JSX.Element;
 

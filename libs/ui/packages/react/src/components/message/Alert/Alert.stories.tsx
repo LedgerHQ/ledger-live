@@ -39,14 +39,13 @@ export const WithContent = (args: AlertProps) => {
     <Alert
       {...args}
       containerProps={{ pr: 7 }}
-      renderContent={({ color, textProps }) => (
+      renderContent={({ textProps }) => (
         <>
           <Text color="inherit" {...textProps}>
             Your xpub is privacy-sensitive data. Use with caution, especially when disclosing to
             third parties.
           </Text>
           <Link
-            color={color}
             textProps={textProps}
             alwaysUnderline
             size={"small" as any}
