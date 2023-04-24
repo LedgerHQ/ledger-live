@@ -50,7 +50,7 @@ export function DeviceSelector({ onClick }: DeviceSelectorProps) {
           id={`device-${id}`}
           key={id}
           label={getDeviceModel(id as DeviceModelId).productName}
-          Illu={<DeviceIllustration deviceId={id} />}
+          Illu={<DeviceIllustration deviceId={id as DeviceModelId} />}
           onClick={() => enabled && onClick(id as DeviceModelId)}
           isFirst={index === 0}
           isLast={index === arr.length - 1}
