@@ -1,4 +1,3 @@
-import { disconnect } from "./api";
 import { BigNumber } from "bignumber.js";
 import { canUnbond, MAX_UNLOCKINGS } from "./logic";
 import {
