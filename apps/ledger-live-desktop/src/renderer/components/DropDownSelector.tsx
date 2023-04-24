@@ -2,9 +2,13 @@ import Tippy from "@tippyjs/react";
 import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-export const DropDownItem: ThemedComponent<{
+
+type DropDownItemProps = {
   isActive: boolean;
-}> = styled(Box).attrs(p => ({
+  disabled?: boolean;
+};
+
+export const DropDownItem = styled(Box).attrs<DropDownItemProps>(p => ({
   borderRadius: 1,
   justifyContent: "center",
   ff: "Inter|SemiBold",
@@ -16,7 +20,7 @@ export const DropDownItem: ThemedComponent<{
     ? "palette.text.shade100"
     : "palette.text.shade60",
   bg: p.isActive && !p.disabled ? "palette.background.default" : "",
-}))`
+}))<DropDownItemProps>`
   height: 40px;
   white-space: nowrap;
   cursor: pointer;
@@ -121,7 +125,7 @@ const DropDownSelector = ({
       placement="bottom-start"
       interactive
       arrow={false}
-      content={<DropContainer border>{items.map(renderOption)}</DropContainer>}
+      content={<DropContainer>{items.map(renderOption)}</DropContainer>}
     >
       <ButtonContainer id={buttonId} onClick={() => setOpen(!isOpen)}>
         {children({

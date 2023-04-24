@@ -1,9 +1,8 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, ValueChange } from "@ledgerhq/types-live";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { ValueChange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
@@ -14,13 +13,14 @@ import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 type BalanceSinceProps = {
   valueChange: ValueChange;
   totalBalance: number;
   isAvailable: boolean;
 };
 type BalanceTotalProps = {
-  children?: any;
+  children?: React.ReactNode;
   unit?: Unit;
   isAvailable: boolean;
   totalBalance: number;
