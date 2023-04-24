@@ -1,19 +1,23 @@
 import React, { useState, useCallback, memo, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Prompt, useHistory } from "react-router-dom";
+import { Prompt, PromptProps, useHistory } from "react-router-dom";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { setNavigationLock } from "~/renderer/actions/application";
+
 type Props = {
   /** set to tru if navigation should be locked */
   when: boolean;
   /** just lock navigation without prompt modal */
   noModal?: boolean;
   /** callback function on location to filter out block navigation according to this param */
-  shouldBlockNavigation?: any;
+  shouldBlockNavigation?: PromptProps["message"];
   /** confirm modal analytics name */
   analyticsName?: string;
 };
+
+type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
+
 const NavigationGuard = ({
   when,
   noModal,
@@ -22,7 +26,7 @@ const NavigationGuard = ({
   ...confirmModalProps
 }: Props) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [lastLocation, setLastLocation] = useState(null);
+  const [lastLocation, setLastLocation] = useState<Location | null>(null);
   const [confirmedNavigation, setConfirmedNavigation] = useState(false);
   const history = useHistory();
   const dispatch = useDispatch();
@@ -53,8 +57,13 @@ const NavigationGuard = ({
 
   /** handles blocked location update */
   const handleBlockedNavigation = useCallback(
-    nextLocation => {
-      if (!confirmedNavigation && shouldBlockNavigation(nextLocation)) {
+    (nextLocation: Location) => {
+      if (
+        !confirmedNavigation &&
+        typeof shouldBlockNavigation === "function" &&
+        // @ts-expect-error TODO: seems fishy, shouldBlockNavigation expects an action as 2nd argument according to the bindings
+        shouldBlockNavigation(nextLocation)
+      ) {
         /** if navigation is locked show modal */
         showModal(nextLocation);
         return false;
@@ -92,7 +101,6 @@ const NavigationGuard = ({
           {...confirmModalProps}
           analyticsName={analyticsName}
           isOpened={modalVisible}
-          onCancel={closeModal}
           onReject={handleConfirmNavigationClick}
           onConfirm={closeModal}
         />
