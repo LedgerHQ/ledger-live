@@ -62,7 +62,7 @@ export const broadcastTransactionLogic = (
     signedTransaction,
     async (
       account: AccountLike,
-      parentAccount: Account | null,
+      parentAccount: Account | undefined,
       signedOperation: SignedOperation,
     ): Promise<string> => {
       const bridge = getAccountBridge(account, parentAccount);
@@ -98,7 +98,11 @@ export const broadcastTransactionLogic = (
         icon: "info",
         callback: () => {
           tracking.platformBroadcastOperationDetailsClick(manifest);
-          setDrawer(OperationDetails, {
+          setDrawer<{
+            operationId: string;
+            accountId: string;
+            parentId: string | undefined | null;
+          }>(OperationDetails, {
             operationId: optimisticOperation.id,
             accountId: account.id,
             parentId: parentAccount?.id,
