@@ -47,7 +47,8 @@ const getTransactionStatus = async (
   }
 
   if (!amount.gt(0)) {
-    errors.amount = new AmountRequired();
+    if (!transaction.useAllAmount) errors.amount = new AmountRequired();
+    else errors.amount = new NotEnoughBalance();
   } else {
     if (amount.gt(spendableBalance)) {
       errors.amount = new NotEnoughBalance();
