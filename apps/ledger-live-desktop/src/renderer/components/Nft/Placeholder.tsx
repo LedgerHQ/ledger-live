@@ -3,12 +3,15 @@ import styled from "styled-components";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { centerEllipsis } from "~/renderer/styles/helpers";
 import Fallback from "~/renderer/images/nftFallback.jpg";
+
 type Props = {
   metadata: NFTMetadata;
   tokenId: string;
   full?: boolean;
 }; // TODO Figure out if we really need this once we know who creates/processes the media.
-const StyledPlaceholder: ThemedComponent<Props> = styled.div`
+
+const StyledPlaceholder = styled.div<Props>`
+  ${/* @ts-expect-error This code is 'kinda working as expected' but ultimately fucked up. */ ""}
   --hue: ${p => (p?.tokenId || "abcdefg").substr(-8) % 360};
   background-image: url('${Fallback}');
   background-size: contain;

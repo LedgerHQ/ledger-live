@@ -9,6 +9,7 @@ declare const __static: string;
 
 declare module "*.svg";
 declare module "*.png";
+declare module "*.jpg";
 
 declare namespace Electron {
   interface BrowserWindow {
