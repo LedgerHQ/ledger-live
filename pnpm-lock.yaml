@@ -244,6 +244,9 @@ importers:
       '@ledgerhq/hw-transport-node-hid-singleton':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-hid-singleton
+      '@ledgerhq/hw-transport-vault':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/hw-transport-vault
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
@@ -3587,6 +3590,52 @@ importers:
         specifier: ^10.4.0
         version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@5.1.3)
 
+  libs/ledgerjs/packages/hw-transport-vault:
+    dependencies:
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../hw-transport
+      '@ledgerhq/hw-transport-http':
+        specifier: workspace:^
+        version: link:../hw-transport-http
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../logs
+      axios:
+        specifier: ^0.26.1
+        version: 0.26.1
+      ws:
+        specifier: ^7.5.2
+        version: 7.5.3
+    devDependencies:
+      '@types/jest':
+        specifier: ^29.5.0
+        version: 29.5.1
+      '@types/node':
+        specifier: ^18.15.3
+        version: 18.15.11
+      documentation:
+        specifier: 13.2.4
+        version: 13.2.4
+      jest:
+        specifier: ^28.1.1
+        version: 28.1.3(@types/node@18.15.11)(ts-node@10.7.0)
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      source-map-support:
+        specifier: ^0.5.21
+        version: 0.5.21
+      ts-jest:
+        specifier: ^28.0.5
+        version: 28.0.8(jest@28.1.3)(typescript@5.1.3)
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.7.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@5.1.3)
+
   libs/ledgerjs/packages/hw-transport-web-ble:
     dependencies:
       '@ledgerhq/devices':
@@ -5375,6 +5424,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/highlight': 7.22.5
+    dev: true
 
   /@babel/code-frame@7.21.4:
     resolution: {integrity: sha512-LYvhNKfwWSPpocw8GI7gpK2nq3HSDuEPC/uSYaALSJu9xjsalaaYFOq0Pwt5KmVqwEbZlDu81aLXwBOmD/Fv9g==}
@@ -6364,13 +6414,6 @@ packages:
     dependencies:
       '@babel/types': 7.22.5
     dev: true
-
-  /@babel/parser@7.17.10:
-    resolution: {integrity: sha512-n2Q6i+fnJqzOaq2VkdXxy2TCPCWQZHiCo0XqmrCvDWcZQKRyZzYi4Z0yxlBuN0w+r2ZHmre+Q087DSrw3pbJDQ==}
-    engines: {node: '>=6.0.0'}
-    hasBin: true
-    dependencies:
-      '@babel/types': 7.22.5
 
   /@babel/parser@7.18.11:
     resolution: {integrity: sha512-9JKn5vN+hDt0Hdqn1PiJ2guflwP+B6Ga8qbDuoF0PzzVhrzsKIJo8yGqVk6CmMHiMei9w1C1Bp9IMJSIK+HPIQ==}
@@ -11006,23 +11049,6 @@ packages:
       '@babel/parser': 7.22.5
       '@babel/types': 7.22.5
 
-  /@babel/traverse@7.17.10:
-    resolution: {integrity: sha512-VmbrTHQteIdUUQNTb+zE12SHS/xQVIShmBPhlNP12hD5poF2pbITW1Z4172d03HegaQWhLffdkRJYtAzp0AGcw==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/code-frame': 7.22.5
-      '@babel/generator': 7.22.5
-      '@babel/helper-environment-visitor': 7.22.5
-      '@babel/helper-function-name': 7.22.5
-      '@babel/helper-hoist-variables': 7.22.5
-      '@babel/helper-split-export-declaration': 7.22.5
-      '@babel/parser': 7.22.5
-      '@babel/types': 7.22.5
-      debug: 4.3.4
-      globals: 11.12.0
-    transitivePeerDependencies:
-      - supports-color
-
   /@babel/traverse@7.17.10(supports-color@5.5.0):
     resolution: {integrity: sha512-VmbrTHQteIdUUQNTb+zE12SHS/xQVIShmBPhlNP12hD5poF2pbITW1Z4172d03HegaQWhLffdkRJYtAzp0AGcw==}
     engines: {node: '>=6.9.0'}
@@ -11043,24 +11069,6 @@ packages:
 
   /@babel/traverse@7.18.11:
     resolution: {integrity: sha512-TG9PiM2R/cWCAy6BPJKeHzNbu4lPzOSZpeMfeNErskGpTJx6trEvFaVCbDvpcxwy49BKWmEPwiW8mrysNiDvIQ==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/code-frame': 7.22.5
-      '@babel/generator': 7.22.5
-      '@babel/helper-environment-visitor': 7.22.5
-      '@babel/helper-function-name': 7.22.5
-      '@babel/helper-hoist-variables': 7.22.5
-      '@babel/helper-split-export-declaration': 7.22.5
-      '@babel/parser': 7.22.5
-      '@babel/types': 7.22.5
-      debug: 4.3.4
-      globals: 11.12.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /@babel/traverse@7.20.13:
-    resolution: {integrity: sha512-kMJXfF0T6DIS9E8cgdLCSAL+cuCK+YEZHWiLK0SXpTo8YRj5lpJu3CDNKiIBCne4m9hhTIqUg6SYTAI39tAiVQ==}
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/code-frame': 7.22.5
@@ -11127,13 +11135,6 @@ packages:
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
-
-  /@babel/types@7.17.10:
-    resolution: {integrity: sha512-9O26jG0mBYfGkUYCYZRnBwbVLd1UZOICEr2Em6InB6jVfsAv1GKgwXHmrSg+WFWDmeKTA6vyTZiN8tCSM5Oo3A==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/helper-validator-identifier': 7.22.5
-      to-fast-properties: 2.0.0
 
   /@babel/types@7.20.7:
     resolution: {integrity: sha512-69OnhBxSSgK0OzTJai4kyPDiKTIe3j+ctaHdIGVbRahTLAT7L3R9oeXHC2aVSuGYt3cVnoAMDmOCgJ2yaiLMvg==}
@@ -23488,6 +23489,13 @@ packages:
       pretty-format: 29.5.0
     dev: true
 
+  /@types/jest@29.5.1:
+    resolution: {integrity: sha512-tEuVcHrpaixS36w7hpsfLBLpjtMRJUE09/MHXn923LOVojDwyC14cWcfc0rDs0VEfUyYmt/+iX1kxxp+gZMcaQ==}
+    dependencies:
+      expect: 29.5.0
+      pretty-format: 29.5.0
+    dev: true
+
   /@types/jest@29.5.2:
     resolution: {integrity: sha512-mSoZVJF5YzGVCk+FsDxzDuH7s+SCkzrgKZzf0Z0T2WudhBUPoF6ktoTPC4R0ZoCPCV5xUvuU6ias5NvxcBcMMg==}
     dependencies:
@@ -26443,10 +26451,10 @@ packages:
     peerDependencies:
       eslint: '>= 4.12.1'
     dependencies:
-      '@babel/code-frame': 7.18.6
-      '@babel/parser': 7.17.10
-      '@babel/traverse': 7.17.10
-      '@babel/types': 7.17.10
+      '@babel/code-frame': 7.22.5
+      '@babel/parser': 7.22.5
+      '@babel/traverse': 7.22.5
+      '@babel/types': 7.22.5
       eslint: 6.8.0
       eslint-visitor-keys: 1.3.0
       resolve: 1.22.1
@@ -31519,8 +31527,8 @@ packages:
       '@babel/core': 7.12.3
       '@babel/generator': 7.12.1
       '@babel/parser': 7.12.3
-      '@babel/traverse': 7.20.13
-      '@babel/types': 7.20.7
+      '@babel/traverse': 7.22.5
+      '@babel/types': 7.22.5
       ansi-html: 0.0.7
       babelify: 10.0.0(@babel/core@7.12.3)
       chalk: 2.4.2
@@ -55585,7 +55593,7 @@ packages:
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
       '@types/node': 17.0.32
-      acorn: 8.7.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
@@ -55618,7 +55626,7 @@ packages:
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
       '@types/node': 18.15.11
-      acorn: 8.7.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
@@ -55651,7 +55659,7 @@ packages:
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
       '@types/node': 18.15.3
-      acorn: 8.7.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
