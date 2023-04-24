@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import styled, { css } from "styled-components";
+import styled, { css, DefaultTheme, ThemedStyledProps } from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { colors } from "~/renderer/styles/theme";
 import { openURL } from "~/renderer/linking";
@@ -17,6 +17,8 @@ import CrossCircle from "../icons/CrossCircle";
 import LightBulb from "../icons/LightBulb";
 import Twitter from "../icons/Twitter";
 import ExternalLink from "./ExternalLink";
+import { BoxProps } from "./Box/Box";
+
 const getIcon = (type: AlertType) => {
   switch (type) {
     case "primary":
@@ -43,7 +45,10 @@ const getIcon = (type: AlertType) => {
       return null;
   }
 };
-const getStyle = p => {
+
+type ContainerProps = { small: boolean | undefined; type: AlertType };
+
+const getStyle = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) => {
   switch (p.type) {
     case "primary":
     case "hint":
@@ -121,11 +126,11 @@ const getStyle = p => {
 };
 const LeftContent = styled(Box)``;
 const RightContent = styled(Box)``;
-const Container = styled(Box).attrs(props => ({
+const Container = styled(Box).attrs<{ small: boolean | undefined }>(props => ({
   horizontal: true,
   flex: 1,
   fontSize: props.small ? 3 : 4,
-}))`
+}))<ContainerProps>`
   border-radius: 4px;
   align-items: center;
 
@@ -196,6 +201,7 @@ type AlertType =
   | "danger"
   | "update"
   | "twitter";
+
 type Props = {
   type?: AlertType;
   children: React.ReactNode;
@@ -203,6 +209,8 @@ type Props = {
   learnMoreLabel?: React.ReactNode;
   learnMoreIsInternal?: boolean;
   learnMoreOnRight?: boolean;
+  learnMoreUrl?: string | null;
+  // if bannerId is provided, the banner is dismissable
   bannerId?: string;
   left?: React.ReactNode;
   right?: React.ReactNode;
@@ -210,7 +218,8 @@ type Props = {
   horizontal?: boolean;
   noIcon?: boolean;
   small?: boolean;
-} & Box.propTypes;
+} & BoxProps;
+
 export default function Alert({
   children: description,
   onLearnMore,
@@ -239,7 +248,7 @@ export default function Alert({
     [onLearnMore, learnMoreUrl],
   );
   const onDismiss = useCallback(() => {
-    dispatch(dismissBanner(bannerId));
+    if (bannerId) dispatch(dismissBanner(bannerId));
   }, [bannerId, dispatch]);
   const learnMore = hasLearnMore && (
     <Text ff="Inter|SemiBold">

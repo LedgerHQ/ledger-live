@@ -9,7 +9,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
-import AccountDistribution from "~/renderer/components/AccountDistribution";
+import AccountDistribution from "./AccountDistribution";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import BalanceSummary from "./BalanceSummary";
 import {
