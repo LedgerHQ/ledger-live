@@ -2,24 +2,33 @@ import React from "react";
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import Box, { Tabbable } from "~/renderer/components/Box";
-export type Item = {
+
+export type Item<V> = {
   label: string;
   key: string;
-  value?: any;
+  value?: V;
 };
-type Props = {
-  items: Array<Item>;
+
+type Props<V, I extends Item<V>> = {
+  items: Array<I>;
   activeKey: string;
-  onChange: (a: Item) => void;
+  onChange: (a: I) => void;
   bordered?: boolean;
 };
-const Container: ThemedComponent<{
+
+const Container = styled(Box).attrs(() => ({
+  horizontal: true,
+}))<{
   bordered?: boolean;
   isActive?: boolean;
-}> = styled(Box).attrs(() => ({
-  horizontal: true,
-}))``;
-const Pill = styled(Tabbable).attrs(p => ({
+}>``;
+
+type PillProps = {
+  isActive: boolean;
+  bordered?: boolean;
+};
+
+const Pill = styled(Tabbable).attrs<PillProps>(p => ({
   ff: p.bordered ? "Inter|Bold" : "Inter|SemiBold",
   color: p.isActive ? "wallet" : "palette.text.shade60",
   bg: p.isActive ? rgba(p.theme.colors.wallet, 0.1) : "",
@@ -28,7 +37,7 @@ const Pill = styled(Tabbable).attrs(p => ({
   borderRadius: 1,
   alignItems: "center",
   justifyContent: "center",
-}))`
+}))<PillProps>`
   border: ${p => (p.bordered ? "1px solid" : "none")};
   border-color: ${p => (p.isActive ? p.theme.colors.wallet : p.theme.colors.palette.divider)};
   height: 28px;
@@ -45,7 +54,7 @@ const Pill = styled(Tabbable).attrs(p => ({
     background-color: ${p => (p.isActive ? "" : rgba(p.theme.colors.palette.text.shade100, 0.02))};
   }
 `;
-function Pills(props: Props) {
+function Pills<V, I extends Item<V>>(props: Props<V, I>) {
   const { items, activeKey, onChange, bordered, ...p } = props;
   return (
     <Container {...p} flow={1}>

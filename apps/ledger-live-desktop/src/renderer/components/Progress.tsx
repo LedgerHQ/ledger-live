@@ -1,7 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import styled, { keyframes, css } from "styled-components";
 import { color } from "styled-system";
 import Box from "~/renderer/components/Box";
+
 const infiniteAnimation = keyframes`
   0% {
     transform: translateX(-80%) scaleX(0.2);
@@ -13,6 +14,7 @@ const infiniteAnimation = keyframes`
     transform: translateX(80%) scaleX(0.2);
   }
 `;
+
 const fillInAnimation = keyframes`
   0% {
     transform: translate3d(-110%, 0, 0);
@@ -24,6 +26,7 @@ const fillInAnimation = keyframes`
     transform: translate3d(0);
   }
 `;
+
 const Bar = styled(Box).attrs(() => ({
   borderRadius: "2.5px",
 }))`
@@ -34,10 +37,13 @@ const Bar = styled(Box).attrs(() => ({
   overflow: hidden;
   ${color}
 `;
-const Progression: ThemedComponent<{
+
+const Progression = styled(Bar).attrs<{
   infinite?: boolean;
-}> = styled(Bar).attrs(p =>
-  !isNaN(p.progress) && p.progress
+  timing: number;
+  progress?: number;
+}>(p =>
+  p.progress && !isNaN(p.progress)
     ? {
         style: {
           transform: `scaleX(${p.progress})`,
@@ -53,36 +59,35 @@ const Progression: ThemedComponent<{
         }
     `,
       },
-)`
+)<{
+  infinite?: boolean;
+  timing: number;
+  progress?: number;
+}>`
   position: absolute;
   top: 0;
   left: 0;
-  transform-origin: ${p => p.transformOrigin};
-  animation: ${p => p.animation};
   will-change: transform;
 `;
+
 type Props = {
   infinite?: boolean;
   timing?: number;
   color?: string;
   progress?: number;
 };
-type State = {};
-class Progress extends Component<Props, State> {
-  static defaultProps = {
-    infinite: false,
-    timing: 2500,
-    color: "wallet",
-    progress: undefined,
-  };
 
-  render() {
-    const { infinite, color, timing, progress } = this.props;
-    return (
-      <Bar color="palette.divider">
-        <Progression infinite={infinite} bg={color} timing={timing} progress={progress} />
-      </Bar>
-    );
-  }
-}
+const Progress = ({
+  infinite = false,
+  timing = 2500,
+  color = "wallet",
+  progress = undefined,
+}: Props) => {
+  return (
+    <Bar color="palette.divider">
+      <Progression infinite={infinite} bg={color} timing={timing} progress={progress} />
+    </Bar>
+  );
+};
+
 export default Progress;

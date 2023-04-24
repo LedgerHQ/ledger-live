@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { Switch, Route, RouterHistory, Match, Location } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
-import { Item } from "~/renderer/components/Pills";
 import Box from "~/renderer/components/Box";
 import TabBar from "~/renderer/components/TabBar";
 import { SettingsSection as Section } from "./SettingsSection";
@@ -15,7 +14,8 @@ import SectionAbout from "./sections/About";
 import SectionHelp from "./sections/Help";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { developerModeSelector } from "../../reducers/settings";
-const getItems = (t: (a: string) => string, devMode?: boolean): Item[] => {
+
+const getItems = (t: (a: string) => string, devMode?: boolean) => {
   const items = [
     {
       key: "display",
