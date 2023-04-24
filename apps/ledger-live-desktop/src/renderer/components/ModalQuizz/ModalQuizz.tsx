@@ -214,7 +214,7 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
   const style = { "max-width": width, width: width, height: height };
 
   return (
-    <Popin isOpen onClose={onClose} style={style} p={0} position="relative">
+    <Popin isOpen style={style} p={0} position="relative">
       {!started && StartScreen ? (
         colors.palette.type === "dark" ? (
           <InvertThemeV3>

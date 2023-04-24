@@ -23,7 +23,7 @@ type Props = {
   label?: React.ReactNode;
   children?: React.ReactNode;
   iconSize?: number;
-  Icon?: React.ComponentType;
+  Icon?: React.ComponentType<{ size?: number }>;
   style?: React.CSSProperties;
 }; // can add more dynamic options if needed
 export function LinkHelp({ onClick, label, children, iconSize = 12, Icon, style }: Props) {
