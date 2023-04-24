@@ -82,10 +82,11 @@ export const prepareTransaction = async (
     transaction
   );
 
-  const blockRef = await getBlockRef();
+  let blockRef = "";
 
   let clauses: Array<ThorTransaction.Clause> = [];
   if (transaction.recipient && isValid(transaction.recipient)) {
+    blockRef = await getBlockRef();
     if (isTokenAccount) {
       clauses = await calculateClausesVtho(transaction, amount);
     } else {
