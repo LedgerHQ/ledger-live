@@ -311,7 +311,7 @@ export const Base = styled.button.attrs<BaseProps>(p => ({
   }
 `;
 export type Props = {
-  children?: any;
+  children?: React.ReactNode;
   icon?: boolean;
   primary?: boolean;
   inverted?: boolean;
@@ -330,7 +330,7 @@ export type Props = {
   eventProperties?: Record<string, unknown>;
   mr?: number;
   mx?: number;
-  innerRef?: any;
+  innerRef?: React.ForwardedRef<HTMLButtonElement>;
   style?: React.CSSProperties;
 } & React.ComponentProps<typeof Base>;
 class ButtonInner extends PureComponent<
@@ -397,7 +397,7 @@ class ButtonInner extends PureComponent<
     );
   }
 }
-const Button: React.ComponentType<Props> = React.forwardRef((props, ref) => (
+const Button = React.forwardRef<HTMLButtonElement, Props>((props, ref) => (
   <ButtonInner {...props} innerRef={ref} />
 ));
 export default Button;
