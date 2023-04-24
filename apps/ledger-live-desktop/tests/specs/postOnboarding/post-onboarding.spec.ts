@@ -4,6 +4,7 @@ import { expect } from "@playwright/test";
 import { SettingsPage } from "../../models/SettingsPage";
 import { Layout } from "../../models/Layout";
 import { PostOnboarding } from "../../models/PostOnboarding";
+import { PortfolioPage } from "../../models/PortfolioPage";
 import padStart from "lodash/padStart";
 
 test.use({
@@ -14,7 +15,7 @@ test.use({
 
 let screenshotIndex = 0;
 
-test("PostOnboarding", async ({ page }) => {
+test("PostOnboarding state logic", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
   const layout = new Layout(page);
   const postOnboarding = new PostOnboarding(page);
@@ -35,7 +36,7 @@ test("PostOnboarding", async ({ page }) => {
     await layout.goToSettings();
     await settingsPage.goToExperimentalTab();
     await postOnboarding.waitForLaunch();
-    await postOnboarding.navigateToPostOnboardingScreen();
+    await postOnboarding.startNewMockPostOnboarding();
     await expect(page).toHaveScreenshot(`${generateScreenshotPrefix()}postonboarding-screen.png`);
   });
 
@@ -98,44 +99,4 @@ test("PostOnboarding", async ({ page }) => {
       },
     );
   });
-});
-
-test("PostOnboarding persistency", async ({ page }) => {
-  const settingsPage = new SettingsPage(page);
-  const layout = new Layout(page);
-  const postOnboarding = new PostOnboarding(page);
-
-  /**
-   * Allows to easily navigate between screenshots in their order of execution.
-   * Yes if we remove/add screenshots it will shift everything but that should
-   * happened rarely, and even then it will be more convenient to check that the
-   * screenshots are correct by examining them in order.
-   * */
-  function generateScreenshotPrefix() {
-    const prefix = `custom-image-${padStart(screenshotIndex.toString(), 3, "0")}-`;
-    screenshotIndex += 1;
-    return prefix;
-  }
-
-  await test.step("go to post onboarding screen", async () => {
-    await layout.goToSettings();
-    await settingsPage.goToExperimentalTab();
-    await postOnboarding.waitForLaunch();
-    await postOnboarding.navigateToPostOnboardingScreen();
-  });
-
-  await test.step('start and complete "claim" mocked action', async () => {
-    await postOnboarding.startClaimMock();
-    await postOnboarding.completeActionAndGoToHub();
-  });
-
-  // TODO: restart app
-
-  // TODO: go to post onboarding hub and check that action claim is completed (screenshot+logic)
-
-  // TODO: skip post onboarding & dismiss banner
-
-  // TODO: restart app
-
-  // TODO: check that banner is still dismissed (not there at all)
 });
