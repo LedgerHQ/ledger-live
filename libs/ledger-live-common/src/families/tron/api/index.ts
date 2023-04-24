@@ -143,6 +143,7 @@ export const createTronTransaction = async (
     return preparedTransaction;
   }
 };
+
 export const broadcastTron = async (
   trxTransaction: SendTransactionDataSuccess
 ) => {
@@ -157,6 +158,7 @@ export const broadcastTron = async (
 
   return result;
 };
+
 export async function fetchTronAccount(addr: string) {
   try {
     const data = await fetch(`${getBaseApiUrl()}/v1/accounts/${addr}`);
@@ -165,6 +167,7 @@ export async function fetchTronAccount(addr: string) {
     return [];
   }
 }
+
 export async function fetchCurrentBlockHeight() {
   const data = await fetch(`${getBaseApiUrl()}/wallet/getnowblock`);
   return data.block_header.raw_data.number;
