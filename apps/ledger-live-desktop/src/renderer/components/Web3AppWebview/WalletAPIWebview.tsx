@@ -4,7 +4,7 @@ import * as remote from "@electron/remote";
 import React, { forwardRef, RefObject, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import {
@@ -45,7 +45,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
           SelectAccountAndCurrencyDrawer,
           {
             currencies,
-            onAccountSelected: (account: Account, parentAccount: Account | undefined) => {
+            onAccountSelected: (account: AccountLike, parentAccount: Account | undefined) => {
               setDrawer();
               onSuccess(account, parentAccount);
             },
@@ -84,7 +84,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
         );
       },
       "storage.get": ({ key, storeId }) => {
-        return getStoreValue(key, storeId);
+        return getStoreValue(key, storeId) as string | undefined;
       },
       "storage.set": ({ key, value, storeId }) => {
         setStoreValue(key, value, storeId);
