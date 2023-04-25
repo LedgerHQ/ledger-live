@@ -19,6 +19,11 @@ export interface Props {
   progress?: number;
 
   /**
+   * Whether to make it infinite, with spinning and whatnot.
+   */
+  infinite?: boolean;
+
+  /**
    * Whether to display the progress, defaults to true.
    */
   showPercentage?: boolean;
@@ -75,6 +80,20 @@ const StyledProgressLoaderContainer = styled.div`
   display: flex;
   position: absolute;
 `;
+const StyledSpinningContainer = styled.div`
+  animation: rotation 1s infinite linear;
+  display: flex;
+  alignItems: center;
+  justifyContent: center;
+  @keyframes rotation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
 
 function ProgressCircleSvg({
   radius,
@@ -120,6 +139,7 @@ export default function ProgressLoader({
   stroke = 6,
   progress = 0,
   showPercentage = true,
+  infinite,
   textColor,
   frontStrokeColor,
   frontStrokeLinecap,
@@ -132,14 +152,27 @@ export default function ProgressLoader({
           {progress}%
         </StyledCenteredText>
       )}
-      <ProgressCircleSvg
-        radius={radius}
-        stroke={stroke}
-        progress={progress}
-        frontStrokeColor={frontStrokeColor}
-        frontStrokeLinecap={frontStrokeLinecap}
-        backgroundStrokeColor={backgroundStrokeColor}
-      />
+      {infinite ? (
+        <StyledSpinningContainer>
+          <ProgressCircleSvg
+            radius={radius}
+            stroke={stroke}
+            progress={25}
+            frontStrokeColor={frontStrokeColor}
+            frontStrokeLinecap={frontStrokeLinecap}
+            backgroundStrokeColor={backgroundStrokeColor}
+          />
+        </StyledSpinningContainer>
+      ) : (
+        <ProgressCircleSvg
+          radius={radius}
+          stroke={stroke}
+          progress={progress}
+          frontStrokeColor={frontStrokeColor}
+          frontStrokeLinecap={frontStrokeLinecap}
+          backgroundStrokeColor={backgroundStrokeColor}
+        />
+      )}
     </StyledProgressLoaderContainer>
   );
 }
