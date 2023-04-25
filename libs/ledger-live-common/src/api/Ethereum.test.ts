@@ -60,11 +60,12 @@ describe("apiForCurrency", () => {
     });
 
     describe("when blockHeight is defined", () => {
-      it("should use descending order", async () => {
+      // ↓ this is necessary in order to get transactions after the block height and not before. Order is still descending in the end
+      it("should use ascending order", async () => {
         await apiForCurrency(currencyMock).getTransactions(addressMock, 9000);
         const formatUrlInput: URL.UrlObject = urlFormatSpy.mock.lastCall[0];
         expect((formatUrlInput.query as ParsedUrlQueryInput).order).toEqual(
-          "descending"
+          "ascending"
         );
       });
 
@@ -78,6 +79,10 @@ describe("apiForCurrency", () => {
         expect(
           (formatUrlInput.query as ParsedUrlQueryInput).from_height
         ).toEqual(blockHeightMock);
+        // ↓ this is necessary in order to get transactions after the block height and not before. Order is still descending in the end
+        expect((formatUrlInput.query as ParsedUrlQueryInput).order).toEqual(
+          "ascending"
+        );
       });
     });
 
