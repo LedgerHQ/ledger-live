@@ -101,7 +101,7 @@ export function StepConfirmationFooter({
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
+                parentId: (parentAccount && parentAccount.id) || undefined,
               });
             }
           }}
