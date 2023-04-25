@@ -15,7 +15,7 @@ export const Notes = styled(Box).attrs(() => ({
   }
 
   p {
-    margin: 1em 0;
+    margin: 2em 0;
     text-align: justify;
   }
 
@@ -124,11 +124,16 @@ export const Notes = styled(Box).attrs(() => ({
   input[type="Switch"] {
     margin-right: 0.5em;
   }
+
+  strong {
+    font-weight: 700;
+  }
 `;
 export const Terms = Notes;
 type Props = {
   children: any;
 };
+
 export default class Markdown extends PureComponent<Props> {
   componentDidMount() {
     if (this.parent) {
