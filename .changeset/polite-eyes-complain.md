@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/react-ui": patch
+"@ledgerhq/react-ui": minor
 ---
 
-Update alert component
+Update alert component. Add new secondary and sucess types. Change border-radius, colors and other css details.
