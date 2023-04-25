@@ -107,7 +107,9 @@ export class OperationsList extends PureComponent<Props, State> {
           withSubAccounts,
           filterOperation,
         });
-    const all = flattenAccounts(accounts || []).concat([account, parentAccount].filter(Boolean));
+    const all = flattenAccounts(accounts || []).concat(
+      [account, parentAccount as AccountLike].filter(Boolean),
+    );
     const accountsMap = keyBy(all, "id");
     return (
       <>
@@ -145,7 +147,6 @@ export class OperationsList extends PureComponent<Props, State> {
                   }
                   return (
                     <OperationC
-                      compact
                       operation={operation}
                       account={account}
                       parentAccount={parentAccount}

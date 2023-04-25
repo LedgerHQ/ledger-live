@@ -18,7 +18,7 @@ export const RawCard = styled(Box).attrs<RawCardProps>(p => ({
 export type CardProps = {
   title?: React.ReactNode;
   children?: React.ReactNode;
-} & RawCardProps;
+} & React.ComponentProps<typeof RawCard>;
 
 const Card = ({ title, ...props }: CardProps) => {
   if (title) {
