@@ -1759,7 +1759,8 @@
     "loading": "Loading...",
     "connectAndUnlockDevice": "Connect and unlock your device",
     "unlockDevice": "Unlock your device",
-    "unlockDeviceAfterFirmwareUpdate": "Wait for the firmware to update and unlock your device with your PIN",
+    "unlockDeviceAfterFirmwareUpdateStep1": "Wait for installation to finish on your {{productName}}",
+    "unlockDeviceAfterFirmwareUpdateStep2": "Unlock {{productName}} to complete installation",
     "quitApp": "Quit the application on your device",
     "appNotInstalledTitle": "Missing required app",
     "appNotInstalledTitle_plural": "Missing required apps",
@@ -1824,8 +1825,7 @@
       "installed": "Apps",
       "capacity": "Capacity",
       "used": "Used",
-      "firmwareAvailable": "Firmware is outdated:",
-      "firmwareUpToDate": "Firmware is up to date:",
+      "OSVersion": "OS version",
       "genuine": "Your device is Genuine",
       "incomplete": "Some apps were not recognized. Please uninstall, then reinstall them."
     },
@@ -1918,7 +1918,7 @@
       "dontHaveSeed": "Don't have your recovery phrase? ",
       "followTheGuide": "Follow our step by step update guide",
       "removeApps": "Uninstall all apps before updating",
-      "update": "Firmware update",
+      "update": "Update {{productName}}",
       "updateBtn": "Update firmware",
       "banner": {
         "warning": "Update Firmware to {{latestFirmware}} is available",
@@ -1933,12 +1933,18 @@
       "contactSupport": "Contact support",
       "deprecated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
       "prepareSeed": "Ensure your 24-word recovery phrase is written down on the Recovery sheet and it is available, as a precaution.",
-      "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>.",
-      "downloadingUpdateDesc": "Please wait for the update installer to be downloaded"
+      "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>."
     },
     "modal": {
+      "title": "Update {{productName}}",
       "steps": {
-        "downloadingUpdate": "Downloading update",
+        "preparingUpdate": "Preparing update",
+        "trasnferringUpdate": "Transferring update to {{productName}}",
+        "prepare": "Prepare update",
+        "install": "Install update",
+        "restore": "Restore settings",
+        "apps": "Restore apps",
+
         "updateMCU": "Firmware update",
         "updating": "Firmware update",
         "reset": "Prepare device",
@@ -1949,9 +1955,8 @@
         "flash": "Preparing your device..."
       },
       "confirmIdentifier": "Verify the identifier",
-      "confirmIdentifierText": "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
+      "confirmIdentifierText": "Confirm install on {{productName}}",
       "identifier": "Identifier",
-      "preparation": "Preparation",
       "newFirmware": "New firmware {{version}}",
       "confirmUpdate": "Please confirm the update on your device",
       "mcuTitle": "Finalize update",
@@ -1961,10 +1966,10 @@
       "mcuSecondNanoX": "Press and hold the left button until <1><0>{{bootloaderOption}}</0></1> appears. Press both buttons to confirm and reconnect your device.",
       "mcuBlueFirst": "Press and hold the side button for 10 seconds to turn off the device. Release the button.",
       "mcuBlueSecond": "Press and hold the button for at least 5 seconds until the Boot Options are displayed. Tap Bootloader Mode",
-      "successTitle": "Firmware updated",
+      "successTitle": "OS update success.",
       "successTextApps": "Please re-install the apps on your device",
       "successTextNoApps": "You can now install apps on your device",
-      "sucessCTAApps": "Re-install apps",
+      "sucessCTAApps": "Reinstall apps",
       "SuccessCTANoApps": "Install apps",
       "cancelReinstallCTA": "Install update",
       "resetSteps": {
@@ -2271,10 +2276,9 @@
   },
   "deviceLocalization": {
     "language": "Language",
-    "deviceLanguage": "Language",
+    "deviceLanguage": "Change device language",
     "changeLanguage": "Change language",
     "changeDeviceLanguage": "Change your device language?",
-    "chooseLanguage": "Choose a language for your {{deviceName}}.",
     "changeDeviceLanguagePrompt": {
       "title": "{{language}} is also available for your {{deviceName}}",
       "description": "Would you like to change its language to {{language}}?"
@@ -5648,11 +5652,11 @@
       "description": "Please try again with another image"
     },
     "ImageCommitRefusedOnDevice": {
-      "title": "Image commit refused on device (TODO: final wording)",
+      "title": "Lock screen cancelled on Ledger Stax",
       "description": "If this image wasn't the right fit, you can try again with another image."
     },
     "ImageLoadRefusedOnDevice": {
-      "title": "Image load refused on device (TODO: final wording)",
+      "title": "Lock screen cancelled on Ledger Stax",
       "description": "If this image wasn't the right fit, you can try again with another image."
     },
     "NearNewAccountWarning": {
@@ -5767,7 +5771,7 @@
       "description": "By customizing the screen",
       "actionCompletedPopupLabel": "Device personalized"
     },
-    "customImageSet": "Lockscreen set",
+    "customImageSet": "Lock screen set",
     "finishCTA": "Finish"
   },
   "onboardingAppInstall": {
