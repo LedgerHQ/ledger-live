@@ -2,26 +2,29 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { DeviceModelId } from "@ledgerhq/devices";
-import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
-import manager from "@ledgerhq/live-common/manager/index";
+import { Flex, ProgressLoader, Icons } from "@ledgerhq/react-ui";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
+
+import staxFetchImage, { FetchImageEvent } from "@ledgerhq/live-common/hw/staxFetchImage";
+import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
+
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
-import getCleanVersion from "~/renderer/screens/manager/FirmwareUpdate/getCleanVersion";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import ProgressCircle from "~/renderer/components/ProgressCircle";
 import Interactions from "~/renderer/icons/device/interactions";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { StepProps } from "../";
 import { getEnv } from "@ledgerhq/live-common/env";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { AnimationWrapper } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
+import { EMPTY, concat } from "rxjs";
+import { map, tap } from "rxjs/operators";
+import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -31,10 +34,21 @@ const Container = styled(Box).attrs(() => ({
 }))``;
 
 const Title = styled(Box).attrs(() => ({
-  ff: "Inter|Regular",
+  ff: "Inter|SemiBold",
   fontSize: 5,
-  mb: 3,
+  mb: 2,
 }))``;
+
+const HighlightVersion = styled(Text).attrs(() => ({
+  backgroundColor: "neutral.c30",
+  color: "palette.text.shade100",
+  ff: "Inter|SemiBold",
+  variant: "subtitle",
+  p: 1,
+  mx: 3,
+}))`
+  border-radius: 4px;
+`;
 
 const Identifier = styled(Box).attrs(() => ({
   bg: "palette.background.default",
@@ -60,49 +74,48 @@ const Body = ({
   deviceModelId,
   firmware,
   deviceInfo,
+  step,
 }: {
   displayedOnDevice: boolean;
   progress: number;
   deviceModelId: DeviceModelId;
   firmware: FirmwareUpdateContext;
   deviceInfo: DeviceInfo;
+  step: string;
 }) => {
   const { t } = useTranslation();
   const type = useTheme("colors.palette.type");
-
+  const deviceModel = getDeviceModel(deviceModelId);
   const isBlue = deviceModelId === "blue";
+  const from = deviceInfo.version;
+  const to = firmware?.final.name;
+  const normalProgress = (progress || 0) * 100;
 
   if (!displayedOnDevice) {
     return (
-      <>
-        <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade80">
-          {t("manager.firmware.downloadingUpdateDesc")}
-        </Text>
-        <Box my={5}>
-          <ProgressCircle progress={progress} size={56} />
-        </Box>
-      </>
+      <Box my={5} alignItems="center">
+        <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
+          <ProgressLoader
+            stroke={8}
+            infinite={!normalProgress}
+            progress={normalProgress}
+            showPercentage={false}
+          />
+        </Flex>
+        <Title>
+          {step !== "transfer" // TODO clean this up
+            ? t("manager.modal.steps.preparingUpdate")
+            : t("manager.modal.steps.trasnferringUpdate", { productName: deviceModel.productName })}
+        </Title>
+      </Box>
     );
   }
 
-  if (displayedOnDevice && firmware.osu.hash) {
+  if (displayedOnDevice) {
     return (
       <>
-        <Track event={"FirmwareUpdateConfirmIdentifierDisplayed"} onMount />
-        <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade80">
-          {t("manager.modal.confirmIdentifierText")}
-        </Text>
-        <Box mx={7} mt={5} mb={isBlue ? 0 : 5}>
-          <Text ff="Inter|SemiBold" textAlign="center" color="palette.text.shade80">
-            {t("manager.modal.identifier")}
-          </Text>
-          <Identifier>
-            {firmware.osu &&
-              manager
-                .formatHashName(firmware.osu.hash, deviceModelId, deviceInfo)
-                .map((hash, i) => <span key={`${i}-${hash}`}>{hash}</span>)}
-          </Identifier>
-        </Box>
+        <Track event={"FirmwareUpdateConfirmNewFirwmare"} onMount />
+        <DeviceBlocker />
         {isBlue ? (
           <Box mt={4}>
             <Interactions
@@ -118,6 +131,16 @@ const Body = ({
             <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
           </AnimationWrapper>
         )}
+
+        <Flex flexDirection="row" alignItems="center" my={2}>
+          <HighlightVersion>{`V ${from}`}</HighlightVersion>
+          <Icons.ArrowRightMedium size={14} />
+          <HighlightVersion>{`V ${to}`}</HighlightVersion>
+        </Flex>
+
+        <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade100">
+          {t("manager.modal.confirmIdentifierText", { productName: deviceModel.productName })}
+        </Text>
       </>
     );
   }
@@ -126,7 +149,7 @@ const Body = ({
     <>
       <Track event={"FirmwareUpdateConfirmNewFirwmare"} onMount />
       <Box mx={7} mt={5} mb={isBlue ? 0 : 5}>
-        <Text ff="Inter|SemiBold" textAlign="center" color="palette.text.shade80">
+        <Text ff="Inter|SemiBold" textAlign="center" color="palette.text.shade100">
           {t("manager.modal.confirmUpdate")}
         </Text>
       </Box>
@@ -157,33 +180,71 @@ const StepFullFirmwareInstall = ({
   deviceInfo,
   transitionTo,
   setError,
+  setCLSBackup,
 }: Props) => {
   const { t } = useTranslation();
   const device = useSelector(getCurrentDevice);
   const [progress, setProgress] = useState(0);
+  const [step, setStep] = useState("");
   const [displayedOnDevice, setDisplayedOnDevice] = useState(false);
 
-  // didMount effect
   useEffect(() => {
     if (!firmware.osu) {
       transitionTo("finish");
       return;
     }
+    // This whole flow is still not a device action. The step originally would only send
+    // the firmware update payload to the device whereas now we are backing up the CLS too
+    // but only for stax.
+    const deviceId = device ? device.deviceId : "";
+    const maybeCLSBackup =
+      deviceModelId === DeviceModelId.stax
+        ? staxFetchImage({ deviceId, request: { allowedEmpty: true } })
+        : EMPTY;
 
-    const sub = (getEnv("MOCK")
-      ? mockedEventEmitter()
-      : firmwareUpdatePrepare(device ? device.deviceId : "", firmware)
-    ).subscribe({
-      next: ({ progress, displayedOnDevice: displayed }) => {
+    // Allow for multiple preparation flows in this paradigm.
+    const task = concat(
+      maybeCLSBackup.pipe(
+        tap((e: FetchImageEvent) => {
+          // bubble up this image to the main component and keep it in memory
+          if (e.type === "imageFetched") {
+            setCLSBackup(e.hexImage);
+          }
+        }),
+        map(props => ({
+          ...props,
+          step: "CLS",
+        })),
+      ),
+      firmwareUpdatePrepare(deviceId, firmware).pipe(
+        map(({ progress }: { progress: number }) => ({
+          progress,
+          step: "transfer",
+          displayed: progress >= 0.99, // Some paths never reach 1, I'm not touching that.
+        })),
+      ),
+    );
+
+    const sub = (getEnv("MOCK") ? mockedEventEmitter() : task).subscribe({
+      next: ({
+        progress,
+        displayed,
+        step,
+      }: {
+        progress: number;
+        displayed?: boolean;
+        step: string;
+      }) => {
         setProgress(progress);
-        setDisplayedOnDevice(displayed);
+        setDisplayedOnDevice(!!displayed);
+        setStep(step);
       },
       complete: () => {
         transitionTo(
           firmware.shouldFlashMCU || hasFinalFirmware(firmware.final) ? "updateMCU" : "updating",
         );
       },
-      error: error => {
+      error: (error: Error) => {
         setError(error);
         transitionTo("finish");
       },
@@ -199,13 +260,6 @@ const StepFullFirmwareInstall = ({
 
   return (
     <Container data-test-id="firmware-update-download-progress">
-      <Title>
-        {!displayedOnDevice
-          ? t("manager.modal.steps.downloadingUpdate")
-          : hasHash
-          ? t("manager.modal.confirmIdentifier")
-          : t("manager.modal.newFirmware", { version: getCleanVersion(firmware.final.name) })}
-      </Title>
       <TrackPage category="Manager" name="InstallFirmware" />
       <Body
         deviceModelId={deviceModelId}
@@ -213,6 +267,7 @@ const StepFullFirmwareInstall = ({
         displayedOnDevice={displayedOnDevice}
         firmware={firmware}
         progress={progress}
+        step={step}
       />
     </Container>
   );
