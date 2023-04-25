@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { useDebounce } from "@ledgerhq/live-common//hooks/useDebounce";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import BigNumber from "bignumber.js";
 
-type Props = {
+type Props<T extends TransactionCommon> = {
   account: AccountLike;
-  transaction: Transaction;
+  transaction: T;
   parentAccount: Account | undefined | null;
   prefix?: string;
   showAllDigits?: boolean;
   disableRounding?: boolean;
 };
 
-const SpendableAmount = ({
+const SpendableAmount = <T extends TransactionCommon>({
   account,
   parentAccount,
   transaction,
   prefix,
   showAllDigits,
   disableRounding,
-}: Props) => {
+}: Props<T>) => {
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {

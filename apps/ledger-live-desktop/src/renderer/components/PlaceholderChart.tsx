@@ -2,25 +2,25 @@ import React, { Component } from "react";
 import { BigNumber } from "bignumber.js";
 import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Chart from "~/renderer/components/Chart";
-import { withTheme } from "styled-components";
+import { DefaultTheme, withTheme } from "styled-components";
+
 type Props = {
-  chartId: string;
   data: Array<any>;
   tickXScale: PortfolioRange;
-  theme: any;
+  theme: DefaultTheme;
   magnitude: number;
 };
+
 class PlaceholderChart extends Component<Props> {
   shouldComponentUpdate(next: Props) {
     return next.tickXScale !== this.props.tickXScale;
   }
 
   render() {
-    const { chartId, data, tickXScale, theme } = this.props;
+    const { data, tickXScale, theme } = this.props;
     const themeType = theme.colors.palette.type;
     return (
       <Chart
-        id={chartId}
         color={themeType === "dark" ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)"}
         data={data.map(i => ({
           ...i,

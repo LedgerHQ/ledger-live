@@ -5,7 +5,7 @@ import Box from "~/renderer/components/Box";
 import SearchIcon from "~/renderer/icons/Search";
 
 type Props = {
-  onTextChange: (evt: SyntheticInputEvent<HTMLInputElement>) => void;
+  onTextChange: (evt: React.SyntheticEvent<HTMLInputElement>) => void;
   search?: string;
   placeholder?: any;
   autoFocus?: boolean;
@@ -25,15 +25,18 @@ const SearchInput = styled.input`
     font-weight: 500;
   }
 `;
-const SearchIconContainer: ThemedComponent<{
+const SearchIconContainer = styled(Box).attrs<{
   focused?: boolean;
-}> = styled(Box).attrs(p => ({
+}>(p => ({
   style: {
     color: p.focused ? p.theme.colors.palette.text.shade100 : p.theme.colors.palette.text.shade40,
   },
-}))`
+}))<{
+  focused?: boolean;
+}>`
   justify-content: center;
 `;
+
 const SearchBox = forwardRef(function Search(
   { onTextChange, search, placeholder, autoFocus, ...p }: Props,
   ref,
