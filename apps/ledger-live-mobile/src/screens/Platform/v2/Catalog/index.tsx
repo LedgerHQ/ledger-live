@@ -34,11 +34,17 @@ export function Catalog() {
   const { t } = useTranslation();
   const title = t("browseWeb3.catalog.title");
 
-  const manifests = useManifests();
+  const manifestsWithSearchableVisibilityOnly = useManifests({
+    visibility: "searchable",
+  });
 
   const manifestsWithCompleteVisibilityOnly = useManifests({
     visibility: "complete",
   });
+
+  const manifests = manifestsWithSearchableVisibilityOnly.concat(
+    manifestsWithCompleteVisibilityOnly,
+  );
 
   const {
     manifestsByCategories,
