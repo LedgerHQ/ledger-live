@@ -1,24 +1,25 @@
 // TODO makeMockBridge need to be exploded into families (bridge/mock) with utility code shared.
-import Prando from "prando";
-import { Observable, of } from "rxjs";
-import { BigNumber } from "bignumber.js";
-import { SyncError } from "@ledgerhq/errors";
 import { genOperation } from "@ledgerhq/coin-framework/mocks/account";
-import { genAccount } from "../mock/account";
-import { getOperationAmountNumber } from "../operation";
-import { validateNameEdition } from "../account";
-import { delay } from "../promise";
-import { getEnv } from "../env";
-import perFamilyMock from "../generated/mock";
+import { SyncError } from "@ledgerhq/errors";
 import {
   Account,
   AccountBridge,
   CurrencyBridge,
   Operation,
 } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import Prando from "prando";
+import { Observable, of } from "rxjs";
+import { validateNameEdition } from "../account";
+import { getEnv } from "../env";
+import perFamilyMock from "../generated/mock";
+import { genAccount } from "../mock/account";
+import { getOperationAmountNumber } from "../operation";
+import { delay } from "../promise";
 const MOCK_DATA_SEED = getEnv("MOCK") || "MOCK";
 const broadcasted: Record<string, Operation[]> = {};
 const syncTimeouts = {};
+
 export const sync: AccountBridge<any>["sync"] = (initialAccount) =>
   new Observable((o) => {
     const accountId = initialAccount.id;
