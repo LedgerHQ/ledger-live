@@ -1924,9 +1924,6 @@ importers:
       '@babel/preset-react':
         specifier: ^7.13.13
         version: 7.16.7(@babel/core@7.21.0)
-      '@babel/preset-typescript':
-        specifier: ^7.15.0
-        version: 7.16.7(@babel/core@7.21.0)
       '@babel/runtime':
         specifier: ^7.12.5
         version: 7.17.9
