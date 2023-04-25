@@ -7,23 +7,29 @@ import {
   InvalidAddress,
   FeeTooHigh,
 } from "@ledgerhq/errors";
-import type { AlgorandTransaction, Transaction } from "../types";
+import type {
+  AlgorandTransaction,
+  Transaction,
+} from "@ledgerhq/coin-algorand/types";
 import type {
   Account,
   AccountBridge,
   CurrencyBridge,
 } from "@ledgerhq/types-live";
 import {
+  makeAccountBridgeReceive,
   scanAccounts,
   signOperation,
   broadcast,
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index"; // "../../../account";
-import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
-import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
-import { initAccount } from "../initAccount";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import {
+  assignToAccountRaw,
+  assignFromAccountRaw,
+} from "@ledgerhq/coin-algorand/serialization";
+import { initAccount } from "@ledgerhq/coin-algorand/initAccount";
 
 const receive = makeAccountBridgeReceive();
 
