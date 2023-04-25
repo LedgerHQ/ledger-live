@@ -19,12 +19,8 @@ type Props = {
 
 const PenIcon = styled.div`
   display: flex;
-  border-radius: 999px;
-  background: ${p => p.theme.colors.blueTransparentBackground};
   align-items: center;
   justify-content: center;
-  height: 32px;
-  width: 32px;
   cursor: pointer;
 `;
 
@@ -68,7 +64,7 @@ const DeviceName: React.FC<Props> = ({
           </Text>
           {editSupported ? (
             <PenIcon>
-              <Icons.PenMedium color="primary.c90" size={17} />
+              <Icons.PenMedium color="neutral.c100" size={17} />
             </PenIcon>
           ) : null}
         </Flex>

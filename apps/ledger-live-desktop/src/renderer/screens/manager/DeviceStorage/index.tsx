@@ -7,8 +7,8 @@ import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
-import { Flex, Icons } from "@ledgerhq/react-ui";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { Flex } from "@ledgerhq/react-ui";
 import ByteSize from "~/renderer/components/ByteSize";
 import { rgba } from "~/renderer/styles/helpers";
 import Text from "~/renderer/components/Text";
@@ -28,6 +28,7 @@ import blue from "~/renderer/images/devices/blue.png";
 import CustomImageManagerButton from "./CustomImageManagerButton";
 import DeviceLanguage from "./DeviceLanguage";
 import DeviceName from "./DeviceName";
+import Certificate from "~/renderer/icons/Certificate";
 const illustrations = {
   nanoS: {
     light: nanoS,
@@ -71,11 +72,33 @@ const Separator = styled.div`
   background: ${p => p.theme.colors.neutral.c40};
   width: 100%;
 `;
+
+const CheckMarkColor = styled.div`
+  color: ${p => p.theme.colors.background.drawer};
+`;
+
+const VerticalSeparator = styled.div`
+  height: 18px;
+  background: ${p => p.theme.colors.neutral.c40};
+  width: 1px;
+  margin: 1px 24px 0px 24px;
+`;
 const HighlightVersion = styled.span`
   padding: 4px 6px;
-  color: ${p => p.theme.colors.primary.c80};
-  background: ${p => p.theme.colors.blueTransparentBackground};
-  border-radius: 4px;
+  color: ${p => p.theme.colors.neutral.c100};
+  position: relative;
+  &:before {
+    content: " ";
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.1;
+    background: ${p => p.theme.colors.neutral.c100};
+    border-radius: 4px;
+  }
 `;
 const Info = styled.div`
   font-family: Inter;
@@ -314,7 +337,6 @@ const DeviceStorage = ({
 }: Props) => {
   const shouldWarn = distribution.shouldWarnMemory || isIncomplete;
   const firmwareOutdated = manager.firmwareUnsupported(deviceModel.id, deviceInfo) || firmware;
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
   return (
     <Card p={20} mb={4} data-test-id="device-storage-card">
       <Flex flexDirection="row">
@@ -337,26 +359,21 @@ const DeviceStorage = ({
             </Box>
             <Flex justifyContent="space-between" alignItems="center" mt={1}>
               <Flex flexDirection="row">
-                <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-                  {firmwareOutdated ? (
+                <Text ff="Inter|Medium" color="palette.text.shade70" fontSize={4}>
+                  {
                     <Trans
-                      i18nKey="manager.deviceStorage.firmwareAvailable"
+                      i18nKey="manager.deviceStorage.OSVersion"
                       values={{
                         version: deviceInfo.version,
                       }}
                     />
-                  ) : (
-                    <Trans
-                      i18nKey="manager.deviceStorage.firmwareUpToDate"
-                      values={{
-                        version: deviceInfo.version,
-                      }}
-                    />
-                  )}{" "}
+                  }{" "}
                   {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
                 </Text>
-                <Flex ml={2} flexDirection="row">
-                  <Icons.CircledCheckSolidMedium size={22} color="success.c50" />
+                <Flex ml={2} flexDirection="row" justifyItems="center">
+                  <CheckMarkColor>
+                    <Certificate />
+                  </CheckMarkColor>
                   <Text ff="Inter|SemiBold" color="palette.text.shade80" ml={1} fontSize={4}>
                     <Trans i18nKey="manager.deviceStorage.genuine" />
                   </Text>
@@ -447,18 +464,22 @@ const DeviceStorage = ({
             rowGap={3}
             mt={4}
           >
-            {deviceModel.id === DeviceModelId.stax ? (
-              <FeatureToggle feature="customImage">
-                <CustomImageManagerButton />
-              </FeatureToggle>
-            ) : null}
-            {deviceInfo.languageId !== undefined && deviceLocalizationFeatureFlag?.enabled && (
+            {deviceInfo.languageId !== undefined && (
               <DeviceLanguage
                 deviceInfo={deviceInfo}
                 device={device}
                 onRefreshDeviceInfo={onRefreshDeviceInfo}
               />
             )}
+
+            {deviceModel.id === DeviceModelId.stax ? (
+              <>
+                {deviceInfo.languageId !== undefined && <VerticalSeparator />}
+                <FeatureToggle feature="customImage">
+                  <CustomImageManagerButton />
+                </FeatureToggle>
+              </>
+            ) : null}
           </Flex>
         </Flex>
       </Flex>
