@@ -2045,11 +2045,17 @@ importers:
         version: 7.16.7(@babel/core@7.22.5)
 =======
         version: 7.16.7(@babel/core@7.21.0)
+<<<<<<< HEAD
       '@babel/preset-typescript':
         specifier: ^7.15.0
         version: 7.16.7(@babel/core@7.21.0)
 >>>>>>> 59457351d4 (update feature flag doc)
+<<<<<<< HEAD
 >>>>>>> e0e3ef97b2 (update feature flag doc)
+=======
+=======
+>>>>>>> 006643ae0d (remove babel-typescript)
+>>>>>>> f40a4169b9 (remove babel-typescript)
       '@babel/runtime':
         specifier: ^7.12.5
         version: 7.17.9
