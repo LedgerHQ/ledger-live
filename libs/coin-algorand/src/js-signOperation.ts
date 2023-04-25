@@ -38,7 +38,7 @@ export const buildSignOperation =
     withDevice(deviceId)(
       (transport) =>
         new Observable((o) => {
-          let cancelled: boolean = false;
+          let cancelled = false;
 
           async function main() {
             if (!transaction.fees) {
