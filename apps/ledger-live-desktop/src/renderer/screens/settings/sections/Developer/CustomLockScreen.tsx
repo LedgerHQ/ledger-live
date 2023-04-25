@@ -17,7 +17,6 @@ const CustomLockScreen = () => {
   }, [history]);
 
   const [percentage, setPercentage] = useState<number>(0);
-  const [scale, setScale] = useState<number>(0);
 
   const fixedPercentage = percentage === 99 ? 100 : percentage; // Nb there's a bug in the slider
   return (
@@ -33,7 +32,6 @@ const CustomLockScreen = () => {
           <FramedImage
             source={source}
             loadingProgress={0}
-            scale={scale}
             background={
               <Animation animation={getDeviceAnimation("stax", "light", "allowManager", true)} />
             }
@@ -43,7 +41,6 @@ const CustomLockScreen = () => {
           <FramedImage
             source={source}
             loadingProgress={1}
-            scale={scale}
             background={
               <Animation
                 animation={getDeviceAnimation("stax", "light", "confirmLockscreen", true)}
@@ -51,11 +48,7 @@ const CustomLockScreen = () => {
             }
           />
         </Flex>
-        <FramedImage
-          source={source}
-          loadingProgress={+(fixedPercentage / 100).toFixed(2)}
-          scale={scale}
-        />
+        <FramedImage source={source} loadingProgress={+(fixedPercentage / 100).toFixed(2)} />
       </Box>
       <Slider
         value={percentage}
@@ -64,11 +57,12 @@ const CustomLockScreen = () => {
         }}
         steps={100}
       />
-      <Box horizontal>
+      {/* Murdered the scaling concept until it's done to all lotties, sorry. */}
+      {/* <Box horizontal>
+        <Button onClick={() => setScale(0.8)}>{"x0.8"}</Button>
         <Button onClick={() => setScale(1)}>{"x1"}</Button>
-        <Button onClick={() => setScale(1.5)}>{"x1.5"}</Button>
         <Button onClick={() => setScale(2)}>{"x2"}</Button>
-      </Box>
+      </Box> */}
     </Box>
   );
 };
