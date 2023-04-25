@@ -389,6 +389,7 @@ const LottieDebugger = ({ name }: { name: string }) => {
                       setKey(option.value as AnimationKey);
                     }
                   }}
+                  // @ts-expect-error react-select bindings expect an object as a value
                   value={key}
                   options={allKeys.map(k => ({
                     label: k,
