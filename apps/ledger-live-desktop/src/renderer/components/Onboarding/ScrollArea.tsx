@@ -1,13 +1,17 @@
 import React, { useCallback, useState } from "react";
 import styled, { keyframes } from "styled-components";
 
-const ScrollAreaContainer = styled.div`
+const ScrollAreaContainer = styled.div<{
+  isInsideDrawer?: boolean;
+}>`
   height: 100%;
   width: 100%;
   overflow-y: hidden;
   padding-bottom: ${({ isInsideDrawer }) => (isInsideDrawer ? "80px" : "0px")};
 `;
-const ScrollableContentContainer = styled.div`
+const ScrollableContentContainer = styled.div<{
+  hideScrollbar?: boolean;
+}>`
   height: 100%;
   width: 100%;
   overflow-y: auto;
@@ -24,11 +28,15 @@ const ScrollHintAnimation = keyframes`
     transform: translateY(10px);
   }
 `;
-const ScrollHint = styled.div.attrs(({ visible }) => ({
+const ScrollHint = styled.div.attrs<{
+  visible?: boolean;
+}>(({ visible }) => ({
   style: {
     opacity: visible ? 1 : 0,
   },
-}))`
+}))<{
+  visible?: boolean;
+}>`
   width: 30px;
   height: 50px;
   border-radius: 25px;
