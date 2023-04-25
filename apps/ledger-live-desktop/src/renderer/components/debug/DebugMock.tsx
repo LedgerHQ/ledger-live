@@ -463,7 +463,7 @@ const DebugMock = () => {
       {expanded ? (
         <>
           {queue.length ? (
-            <Box vertical px={1}>
+            <Box px={1}>
               <Text
                 color="palette.text.shade100"
                 ff="Inter|SemiBold"
@@ -494,7 +494,7 @@ const DebugMock = () => {
             </Box>
           ) : null}
           {history.length ? (
-            <Box vertical px={1}>
+            <Box px={1}>
               <Text
                 color="palette.text.shade100"
                 ff="Inter|SemiBold"
@@ -514,7 +514,7 @@ const DebugMock = () => {
             </Box>
           ) : null}
           {/* Events here are supposed to be generic and not for a specific flow */}
-          <Box vertical px={1}>
+          <Box px={1}>
             <Text
               color="palette.text.shade100"
               ff="Inter|SemiBold"
@@ -539,7 +539,7 @@ const DebugMock = () => {
                 ))
               : null}
           </Box>
-          <Box vertical px={1}>
+          <Box px={1}>
             <Text
               color="palette.text.shade100"
               ff="Inter|SemiBold"
@@ -564,7 +564,7 @@ const DebugMock = () => {
                 ))
               : null}
           </Box>
-          <Box vertical px={1}>
+          <Box px={1}>
             <Text
               color="palette.text.shade100"
               ff="Inter|SemiBold"
@@ -589,7 +589,7 @@ const DebugMock = () => {
                 ))
               : null}
           </Box>
-          <Box vertical px={1}>
+          <Box px={1}>
             <Text
               color="palette.text.shade100"
               ff="Inter|SemiBold"

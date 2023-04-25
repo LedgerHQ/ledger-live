@@ -101,7 +101,7 @@ function ReadOnlyAddressField({ address, allowCopy = true }: Props) {
     address.substr(-LINE_MINLENGTH),
   ];
   return (
-    <Box vertical>
+    <Box>
       {clibboardChanged ? (
         <ClipboardSuspicious>
           <Trans i18nKey="common.addressCopiedSuspicious" />

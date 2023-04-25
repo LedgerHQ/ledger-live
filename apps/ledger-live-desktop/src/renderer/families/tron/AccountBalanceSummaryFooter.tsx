@@ -20,7 +20,6 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 const BalanceDetail = styled(Box).attrs(() => ({
   flex: 1.25,
-  vertical: true,
   alignItems: "start",
 }))`
   &:nth-child(n + 3) {

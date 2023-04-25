@@ -8,6 +8,7 @@ import Box from "~/renderer/components/Box";
 import Input, { Props as InputProps } from "~/renderer/components/Input";
 import IconEye from "~/renderer/icons/Eye";
 import IconEyeOff from "~/renderer/icons/EyeOff";
+
 const InputRight = styled(Box).attrs(() => ({
   color: "palette.text.shade60",
   justifyContent: "center",
@@ -17,39 +18,55 @@ const InputRight = styled(Box).attrs(() => ({
     color: ${p => p.theme.colors.palette.text.shade80};
   }
 `;
-const Strength = styled(Box).attrs(() => ({
-  bg: p => (p.activated ? (p.warning ? "alertRed" : "positiveGreen") : "palette.divider"),
+
+const Strength = styled(Box).attrs<{
+  activated: boolean;
+  warning: boolean;
+}>(p => ({
+  bg: p.activated ? (p.warning ? "alertRed" : "positiveGreen") : "palette.divider",
   grow: true,
-}))`
+}))<{
+  activated: boolean;
+  warning: boolean;
+}>`
   border-radius: 13px;
   height: 4px;
 `;
-const Warning = styled(Box).attrs(() => ({
+
+type WarningProps = {
+  passwordStrength: zxcvbn.ZXCVBNScore;
+};
+
+const Warning = styled(Box).attrs<WarningProps>(p => ({
   alignItems: "flex-end",
-  color: p => (p.passwordStrength <= 1 ? "alertRed" : "positiveGreen"),
+  color: p.passwordStrength <= 1 ? "alertRed" : "positiveGreen",
   ff: "Inter|SemiBold",
   fontSize: 3,
-}))``;
+}))<WarningProps>``;
+
 const getPasswordStrength = (v: string) => zxcvbn(v).score;
+
 type State = {
   inputType: "text" | "password";
-  passwordStrength: number;
+  passwordStrength: zxcvbn.ZXCVBNScore;
 };
+
 type Props = {
   onChange: Function;
   t: TFunction;
   value: string;
   withStrength?: boolean;
 } & InputProps;
+
 class InputPassword extends PureComponent<Props, State> {
   static defaultProps = {
     onChange: noop,
     value: "",
   };
 
-  state = {
-    passwordStrength: getPasswordStrength(this.props.value),
+  state: State = {
     inputType: "password",
+    passwordStrength: getPasswordStrength(this.props.value),
   };
 
   componentWillUnmount() {

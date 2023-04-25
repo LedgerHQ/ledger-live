@@ -8,7 +8,7 @@ const rootDirectory = path.resolve(__dirname, "..", "..", "..");
 const projectDirectory = path.resolve(__dirname, "..");
 
 const excluded = [
-  "src/renderer/components",
+  //"src/renderer/components",
   "src/renderer/screens",
   "src/renderer/families",
 ].map(p => path.resolve(projectDirectory, p));

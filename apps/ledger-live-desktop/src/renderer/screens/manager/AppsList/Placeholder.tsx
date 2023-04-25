@@ -121,7 +121,7 @@ const Placeholder = ({ query, addAccount, dispatch, installed, apps }: Props) =>
       </Box>
     </Box>
   ) : (
-    <Box vertical py={6} flex alignContent="center">
+    <Box py={6} flex alignContent="center">
       <Box mb={4} horizontal color="palette.text.shade30" justifyContent="center">
         <NoResults />
       </Box>
