@@ -4,7 +4,7 @@ import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import zipWith from "lodash/zipWith";
 import { getAccountCurrency } from "../../account";
-import { getTronSuperRepresentativeData } from "../../api/Tron";
+import { getTronSuperRepresentativeData } from "./api";
 import type { Transaction as TronTransaction, TronAccount } from "./types";
 import type { Transaction } from "../../generated/types";
 import type { SuperRepresentativeData, Vote } from "./types";

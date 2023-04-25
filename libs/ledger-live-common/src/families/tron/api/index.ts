@@ -13,7 +13,7 @@ import type {
   SuperRepresentativeData,
   TronResources,
   TronTransactionInfo,
-} from "../families/tron/types";
+} from "../types";
 import {
   decode58Check,
   encode58Check,
@@ -22,13 +22,13 @@ import {
   formatTrongridTrc20TxResponse,
   hexToAscii,
   defaultTronResources,
-} from "../families/tron/utils";
+} from "../utils";
 import { log } from "@ledgerhq/logs";
-import { TronTransactionExpired } from "../errors";
-import network from "../network";
-import { promiseAllBatched } from "../promise";
-import { makeLRUCache } from "../cache";
-import { getEnv } from "../env";
+import { TronTransactionExpired } from "../../../errors";
+import network from "../../../network";
+import { promiseAllBatched } from "../../../promise";
+import { makeLRUCache } from "../../../cache";
+import { getEnv } from "../../../env";
 import get from "lodash/get";
 import drop from "lodash/drop";
 import sumBy from "lodash/sumBy";
@@ -143,6 +143,7 @@ export const createTronTransaction = async (
     return preparedTransaction;
   }
 };
+
 export const broadcastTron = async (
   trxTransaction: SendTransactionDataSuccess
 ) => {
@@ -157,6 +158,7 @@ export const broadcastTron = async (
 
   return result;
 };
+
 export async function fetchTronAccount(addr: string) {
   try {
     const data = await fetch(`${getBaseApiUrl()}/v1/accounts/${addr}`);
@@ -165,6 +167,7 @@ export async function fetchTronAccount(addr: string) {
     return [];
   }
 }
+
 export async function fetchCurrentBlockHeight() {
   const data = await fetch(`${getBaseApiUrl()}/wallet/getnowblock`);
   return data.block_header.raw_data.number;
@@ -272,6 +275,7 @@ export async function fetchTronAccountTxs(
   ).sort((a, b) => b.date.getTime() - a.date.getTime());
   return txInfos;
 }
+
 export const getContractUserEnergyRatioConsumption = async (
   address: string
 ): Promise<number> => {
@@ -282,6 +286,7 @@ export const getContractUserEnergyRatioConsumption = async (
   }
   return 0;
 };
+
 export const fetchTronContract = async (
   addr: string
 ): Promise<Record<string, any> | undefined> => {
@@ -294,6 +299,7 @@ export const fetchTronContract = async (
     return undefined;
   }
 };
+
 export const getTronAccountNetwork = async (
   address: string
 ): Promise<NetworkInfo> => {
@@ -320,6 +326,7 @@ export const getTronAccountNetwork = async (
     energyLimit: new BigNumber(EnergyLimit),
   };
 };
+
 export const validateAddress = async (address: string): Promise<boolean> => {
   try {
     const result = await post(`${getBaseApiUrl()}/wallet/validateaddress`, {
@@ -334,6 +341,7 @@ export const validateAddress = async (address: string): Promise<boolean> => {
     return false;
   }
 };
+
 // cache for account names (name is unchanged over time)
 const accountNamesCache = makeLRUCache(
   async (addr: string): Promise<string | null | undefined> =>
@@ -344,6 +352,7 @@ const accountNamesCache = makeLRUCache(
     ttl: 180 * 60 * 1000, // 3hours
   }
 );
+
 // cache for super representative brokerages (brokerage is unchanged over time)
 const srBrokeragesCache = makeLRUCache(
   async (addr: string): Promise<number> => getBrokerage(addr),
@@ -353,6 +362,7 @@ const srBrokeragesCache = makeLRUCache(
     ttl: 180 * 60 * 1000, // 3hours
   }
 );
+
 export const getAccountName = async (
   addr: string
 ): Promise<string | null | undefined> => {
@@ -364,6 +374,7 @@ export const getAccountName = async (
 
   return accountName;
 };
+
 export const getBrokerage = async (addr: string): Promise<number> => {
   const { brokerage } = await fetch(
     `${getBaseApiUrl()}/wallet/getBrokerage?address=${encodeURIComponent(addr)}`
@@ -372,6 +383,7 @@ export const getBrokerage = async (addr: string): Promise<number> => {
 
   return brokerage;
 };
+
 const superRepresentativesCache = makeLRUCache(
   async (): Promise<SuperRepresentative[]> => {
     const superRepresentatives = await fetchSuperRepresentatives();
@@ -387,11 +399,13 @@ const superRepresentativesCache = makeLRUCache(
     ttl: 60 * 60 * 1000, // 1hour
   }
 );
+
 export const getTronSuperRepresentatives = async (): Promise<
   SuperRepresentative[]
 > => {
   return await superRepresentativesCache();
 };
+
 export const hydrateSuperRepresentatives = (list: SuperRepresentative[]) => {
   log(
     "tron/superRepresentatives",
@@ -431,6 +445,7 @@ export const getNextVotingDate = async (): Promise<Date> => {
   );
   return new Date(num);
 };
+
 export const getTronSuperRepresentativeData = async (
   max: number | null | undefined
 ): Promise<SuperRepresentativeData> => {
@@ -442,6 +457,7 @@ export const getTronSuperRepresentativeData = async (
     nextVotingDate,
   };
 };
+
 export const voteTronSuperRepresentatives = async (
   a: Account,
   t: Transaction
@@ -455,6 +471,7 @@ export const voteTronSuperRepresentatives = async (
   };
   return await post(`${getBaseApiUrl()}/wallet/votewitnessaccount`, payload);
 };
+
 export const extractBandwidthInfo = (
   networkInfo: NetworkInfo | null | undefined
 ): BandwidthInfo => {
@@ -588,6 +605,7 @@ export const getUnwithdrawnReward = async (
     return Promise.resolve(new BigNumber(0));
   }
 };
+
 export const claimRewardTronTransaction = async (
   account: Account
 ): Promise<SendTransactionDataSuccess> => {

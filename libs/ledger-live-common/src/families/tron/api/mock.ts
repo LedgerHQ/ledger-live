@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 
-import type { SuperRepresentative } from "../../families/tron/types";
-import superRepresentatives from "./superRepresentativesData";
+import type { SuperRepresentative } from "../types";
+import superRepresentatives from "./superRepresentativesData.mock";
 
 export const getTronSuperRepresentatives = (): Promise<
   SuperRepresentative[]
