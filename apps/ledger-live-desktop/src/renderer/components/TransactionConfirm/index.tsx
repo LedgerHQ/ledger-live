@@ -91,9 +91,7 @@ const TextField = ({ field }: FieldComponentProps) => {
     </TransactionConfirmField>
   );
 };
-const commonFieldComponents: {
-  [_: any]: FieldComponent;
-} = {
+const commonFieldComponents: Record<string, FieldComponent> = {
   amount: AmountField,
   fees: FeesField,
   address: AddressField,
@@ -125,26 +123,30 @@ const TransactionConfirm = ({ t, device, account, parentAccount, transaction, st
   const mainAccount = getMainAccount(account, parentAccount);
   const type = useTheme("colors.palette.type");
   if (!device) return null;
-  const r = transactionConfirmFieldsPerFamily[mainAccount.currency.family];
-  const fieldComponents = {
+  const r =
+    transactionConfirmFieldsPerFamily[
+      mainAccount.currency.family as keyof typeof transactionConfirmFieldsPerFamily
+    ];
+  const fieldComponents: Record<string, FieldComponent> = {
     ...commonFieldComponents,
-    ...(r && r.fieldComponents),
+    ...(r && "fieldComponents" in r && r.fieldComponents),
   };
-  const Warning = r && r.warning;
-  const Title = r && r.title;
-  const Footer = r && r.footer;
+  const Warning = r && "warning" in r && r.warning;
+  const Title = r && "title" in r && r.title;
+  const Footer = r && "footer" in r && r.footer;
   const fields = getDeviceTransactionConfig({
     account,
     parentAccount,
     transaction,
     status,
   });
-  const key = transaction.mode || "send";
+  const key = ("mode" in transaction && transaction.mode) || "send";
   const recipientWording = t(`TransactionConfirm.recipientWording.${key}`);
   return (
     <Container>
       {Warning ? (
         <Warning
+          // @ts-expect-error it seems like "account" is a non-existing prop?
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}
@@ -163,6 +165,7 @@ const TransactionConfirm = ({ t, device, account, parentAccount, transaction, st
       )}
       {Title ? (
         <Title
+          // @ts-expect-error it seems like "account" is a non-existing prop?
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}
