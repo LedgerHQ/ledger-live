@@ -49,8 +49,8 @@ const getIdsFromTuple = (accountTuple: AccountTuple) => ({
 export type UseCurrencyAccountSelectReturnType = {
   availableAccounts: Array<AccountTuple>;
   currency: (CryptoCurrency | undefined | null) | TokenCurrency;
-  account: (Account | undefined | null) | any;
-  subAccount: (SubAccount | undefined | null) | any;
+  account: Account | undefined | null;
+  subAccount: SubAccount | undefined | null;
   setAccount: (account?: Account | null, subAccount?: SubAccount | null) => void;
   setCurrency: (currency?: (CryptoCurrency | TokenCurrency) | null) => void;
 };
@@ -67,7 +67,10 @@ export function useCurrencyAccountSelect({
   defaultAccountId: string | undefined | null;
   hideEmpty?: boolean | null;
 }): UseCurrencyAccountSelectReturnType {
-  const [state, setState] = useState(() => {
+  const [state, setState] = useState<{
+    currency: CryptoCurrency | TokenCurrency | null | undefined;
+    accountId: string | null | undefined;
+  }>(() => {
     const currency = defaultCurrencyId
       ? allCurrencies.find(currency => currency.id === defaultCurrencyId)
       : allCurrencies.length > 0

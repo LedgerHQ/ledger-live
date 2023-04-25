@@ -11,7 +11,7 @@ import ReactSelect, {
 import AsyncReactSelect from "react-select/async";
 import { withTranslation } from "react-i18next";
 import { FixedSizeList as List } from "react-window";
-import styled, { withTheme } from "styled-components";
+import styled, { DefaultTheme, withTheme } from "styled-components";
 import debounce from "lodash/debounce";
 import createStyles from "./createStyles";
 import createRenderers from "./createRenderers";
@@ -45,7 +45,8 @@ export type Props<
   // Allows overriding react-select components. See: https://react-select.com/components
   disabledTooltipText?: string;
   selectDataTestId?: string;
-} & Omit<ReactSelectProps<OptionType, IsMulti, GroupType>, "theme">;
+  theme?: DefaultTheme;
+} & ReactSelectProps<OptionType, IsMulti, GroupType>;
 
 const Row = styled.div`
   max-width: 100%;
@@ -230,6 +231,7 @@ class Select<
         error,
         rowHeight,
       });
+    // @ts-expect-error This is complicated to get it right
     styles = stylesMap ? stylesMap(styles) : styles;
     return (
       <Comp
@@ -261,6 +263,7 @@ class Select<
                 ...(extraRenderers || {}),
               }
         }
+        // @ts-expect-error This is complicated to get it right
         styles={styles}
         placeholder={placeholder}
         isDisabled={isDisabled}
@@ -280,4 +283,4 @@ class Select<
     );
   }
 }
-export default (withTranslation()(withTheme(Select as any)) as unknown) as typeof Select;
+export default (withTranslation()(withTheme(Select)) as unknown) as typeof Select;
