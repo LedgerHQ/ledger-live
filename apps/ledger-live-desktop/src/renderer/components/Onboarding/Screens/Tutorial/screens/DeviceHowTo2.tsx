@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Bullet, Title, Column, AnimationContainer, AsideFooter } from "../shared";
-
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { OnboardingContext } from "../../../index";

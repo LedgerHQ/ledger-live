@@ -6,7 +6,6 @@ import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
 import Box from "~/renderer/components/Box";
 import { handleMessageEvent, handleNewWindowEvent } from "./utils";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TopBar from "./TopBar";
 type Message =
   | {
@@ -16,20 +15,20 @@ type Message =
   | {
       type: "closeWidget";
     };
-const Container: ThemedComponent<{}> = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
 `;
 
-const CustomWebview: ThemedComponent<{}> = styled("webview")`
+const CustomWebview = styled("webview")`
   border: none;
   width: 100%;
   flex: 1;
   transition: opacity 200ms ease-out;
 `;
-const Wrapper: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   flex: 1,
 }))`
   position: relative;

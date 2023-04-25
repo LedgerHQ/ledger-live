@@ -59,6 +59,7 @@
   },
   "common": {
     "never": "Never",
+    "new": "New",
     "apply": "Apply",
     "done": "Done",
     "confirm": "Confirm",
@@ -119,7 +120,6 @@
       "syncing": "Synchronizing...",
       "upToDate": "Synchronized",
       "outdated": "Paused",
-      "needsMigration": "Click to update account",
       "error": "Synchronization error",
       "refresh": "Refresh",
       "devTools": "Dev tools"
@@ -147,8 +147,6 @@
       "DELEGATE": "Delegated",
       "REDELEGATE": "Redelegated",
       "UNDELEGATE": "Undelegated",
-      "SUPPLY": "Deposited",
-      "REDEEM": "Withdrawn",
       "APPROVE": "Approved",
       "VOTE": "Voted",
       "FREEZE": "Frozen",
@@ -218,6 +216,7 @@
     "earn": "Earn",
     "exchange": "Buy / Sell",
     "swap": "Swap",
+    "refer": "Refer a friend",
     "lend": "Lend",
     "catalog": "Discover",
     "market": "Market",
@@ -1623,42 +1622,6 @@
     "countTooltip": "1 subaccount",
     "countTooltip_plural": "{{count}} subaccounts"
   },
-  "migrateAccounts": {
-    "overview": {
-      "title": "Ledger Live accounts update",
-      "successTitle": "Accounts updated successfully",
-      "successDescPlu": "Your {{assets}} accounts are now updated and ready to use",
-      "successDesc": "Your {{assets}} account is now updated and ready to use",
-      "mobileTitle": "Export accounts to mobile",
-      "mobileDesc": "Click the button below to export your updated accounts to the Ledger Live mobile app.",
-      "mobileCTA": "Export to mobile",
-      "description": "New features in Ledger Live require an update of your accounts.",
-      "currency": "1 {{currency}} account needs to be updated:",
-      "currency_plural": "{{count}} {{currency}} accounts need to be updated:",
-      "footer": "You need your Ledger Device to complete the update",
-      "pendingDevices": "1 account could not be updated. Please connect the device associated to the account below",
-      "pendingDevices_plural": "{{totalMigratableAccounts}} accounts could not be updated. Please connect the device associated to the account below",
-      "doItLaterBtn": "Do it later"
-    },
-    "progress": {
-      "finished": {
-        "title": "{{currencyName}} update completed",
-        "description": ""
-      },
-      "scanning": {
-        "title": "{{currencyName}} update in progress...",
-        "description": "Please wait for your accounts to be updated"
-      },
-      "finished-empty": {
-        "title": "{{currencyName}} update incomplete",
-        "description": "No {{currencyName}} accounts to update"
-      }
-    },
-    "cta": {
-      "startUpdate": "Start update",
-      "nextCurrency": "Continue with {{currency}} update"
-    }
-  },
   "addAccounts": {
     "title": "Add accounts",
     "breadcrumb": {
@@ -1913,7 +1876,7 @@
         "plugin": "Go to app",
         "swap": "Swap",
         "tool": "Learn more",
-        "app": "Learn more"
+        "currency": "Learn more"
       },
       "uninstall": {
         "title": "Uninstall all",
@@ -2530,6 +2493,8 @@
       },
       "manageTP": "Manage assets",
       "warnEarnRewards": "You need at least {{amount}} to start earning rewards",
+      "warnDisableStaking": "Not available",
+      "warnDisableStakingMessage": "Staking feature for Tron is currently unavailable",
       "claimRewards": "Claim rewards",
       "nextRewardsDate": "Rewards can be claimed {{date}}",
       "claimAvailableRewards": "Claim {{amount}}",
@@ -3912,6 +3877,8 @@
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
+      "enableStagingNftMetadataService": "Staging NFT metadata service",
+      "enableStagingNftMetadataServiceDesc": "Enable the staging NFT metadata service and reset the NFT cache",
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
       "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
@@ -3968,6 +3935,10 @@
         "managerDevMode": {
           "title": "Developer mode",
           "description": "Show developer and testnet apps in My Ledger."
+        },
+        "listAppsV2": {
+          "title": "Experimental list apps for My Ledger",
+          "description": "Performance improvement for My Ledger access and inline flows."
         },
         "scanForInvalidPaths": {
           "title": "Extended account search",
@@ -4988,9 +4959,6 @@
     "ClaimRewardsFeesWarning": {
       "title": "The rewards are smaller than the estimated fees to claim them",
       "description": ""
-    },
-    "CompoundLowerAllowanceOfActiveAccountError": {
-      "title": "You cannot reduce the amount approved while having an active deposit."
     },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",

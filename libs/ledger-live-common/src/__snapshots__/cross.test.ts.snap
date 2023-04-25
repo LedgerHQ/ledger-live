@@ -4,7 +4,7 @@ exports[`encode/decode 1`] = `
 Object {
   "accounts": Array [
     Object {
-      "balance": "12967737976259358331",
+      "balance": "2783634036435046199",
       "currencyId": "ethereum",
       "derivationMode": "",
       "freshAddress": "0xF882CE5EF3E667AAFF592AE27793E0CF40356D1E",
@@ -14,7 +14,7 @@ Object {
       "seedIdentifier": "mock",
     },
     Object {
-      "balance": "2614205810671014878",
+      "balance": "3106219206424351094",
       "currencyId": "ethereum",
       "derivationMode": "",
       "freshAddress": "0x22FF1149E5C7585F99647784C2D2A8D6415979F3",

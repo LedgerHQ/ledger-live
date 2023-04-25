@@ -32,11 +32,11 @@ export default function EarnRewardsInfoModal({
     <Modal
       name={name}
       centered
-      render={({ onClose, data }) => (
+      render={({ onClose }) => (
         <ModalBody
           title={<Trans i18nKey="delegation.earnRewards" />}
           onClose={onClose}
-          render={onClose => (
+          render={() => (
             <Box flow={4} mx={4}>
               <TrackPage category="Delegation Flow" name="Step Starter" />
               <Box flow={1} alignItems="center">

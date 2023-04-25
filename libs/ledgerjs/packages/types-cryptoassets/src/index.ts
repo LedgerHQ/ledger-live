@@ -178,8 +178,6 @@ export type TokenCurrency = CurrencyCommon & {
   parentCurrency: CryptoCurrency;
   // the type of token in the blockchain it belongs. e.g. 'erc20'
   tokenType: string;
-  // indicates this is a compound token and it's "parent" erc20 have this id
-  compoundFor?: string;
 };
 
 /**

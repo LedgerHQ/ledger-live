@@ -26,6 +26,7 @@ import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack"
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const avaxCChain = useFeature("currencyAvalancheCChain");
@@ -39,7 +40,9 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
     [avaxCChain, avaxPChain],
   );
   const currencies = useMemo(() => {
-    const currencies = listSupportedCurrencies().concat(listSupportedTokens());
+    const currencies = (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(
+      listSupportedTokens(),
+    );
     const deactivatedCurrencies = Object.entries(featureFlaggedCurrencies)
       .filter(([, feature]) => !feature?.enabled)
       .map(([name]) => name);
@@ -47,7 +50,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   }, [featureFlaggedCurrencies]);
   const url =
     currency && currency.type === "TokenCurrency"
-      ? supportLinkByTokenType[currency.tokenType]
+      ? supportLinkByTokenType[currency.tokenType as keyof typeof supportLinkByTokenType]
       : null;
   return (
     <>
@@ -141,7 +144,7 @@ export const StepChooseCurrencyFooter = ({
   return (
     <>
       <TrackPage category="AddAccounts" name="Step1" />
-      {currency && <CurrencyBadge mr="auto" currency={currency} />}
+      {currency && <CurrencyBadge currency={currency} />}
       {isToken ? (
         <Box horizontal>
           {parentCurrency ? (

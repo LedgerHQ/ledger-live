@@ -224,7 +224,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   } = status;
 
   useEffect(() => {
-    if (deviceInfo) {
+    if (deviceInfo && device) {
       dispatch(
         setLastSeenDeviceInfo({
           modelId: device!.modelId,
@@ -454,7 +454,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         onRetry,
         colors,
         theme,
-        iconColor: palette.neutral.c100a01,
+        iconColor: palette.opacityDefault.c10,
         Icon: () => (
           <Icons.WarningSolidMedium size={28} color={colors.warning} />
         ),

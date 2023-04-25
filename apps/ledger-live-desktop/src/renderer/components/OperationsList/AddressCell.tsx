@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import styled from "styled-components";
 import { Operation } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 export const SplitAddress = ({
   value,
   color,
@@ -37,13 +37,13 @@ export const SplitAddress = ({
 export const Address = ({ value }: { value: string }) => (
   <SplitAddress value={value} color="palette.text.shade80" ff="Inter" fontSize={3} />
 );
-const Left: ThemedComponent<{}> = styled.div`
+const Left = styled.div`
   overflow: hidden;
   white-space: nowrap;
   font-kerning: none;
   letter-spacing: 0px;
 `;
-const Right: ThemedComponent<{}> = styled.div`
+const Right = styled.div`
   display: inline-block;
   flex-shrink: 1;
   direction: rtl;

@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import { getAccountBannerState as getElrondBannerState } from "@ledgerhq/live-common/families/elrond/banner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import React from "react";

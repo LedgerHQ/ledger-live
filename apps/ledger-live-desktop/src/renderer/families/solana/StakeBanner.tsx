@@ -1,7 +1,6 @@
 import { Account } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";

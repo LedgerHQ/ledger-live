@@ -6,6 +6,7 @@ import { Icons } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "../../../const";
 import {
   readOnlyModeEnabledSelector,
@@ -26,6 +27,7 @@ const iconSwap = Icons.BuyCryptoMedium;
 const iconReceive = Icons.ArrowBottomMedium;
 const iconSend = Icons.ArrowTopMedium;
 const iconAddAccount = Icons.WalletMedium;
+const iconStake = Icons.ClaimRewardsMedium;
 
 export default function useAssetActions({
   currency,
@@ -75,6 +77,10 @@ export default function useAssetActions({
     return [onRampProviders.length > 0, offRampProviders.length > 0];
   }, [rampCatalog.value, currency]);
 
+  const featureFlag = useFeature("stakePrograms");
+  const stakeFlagEnabled = featureFlag?.enabled;
+  const listFlag = featureFlag?.params?.list;
+  const canBeStaken = stakeFlagEnabled && listFlag.includes(currency?.id);
   const canSend = useMemo(() => currency?.id !== "avalanchepchain", [currency]);
   const canReceive = useMemo(
     () => currency?.id !== "avalanchepchain",
@@ -151,6 +157,28 @@ export default function useAssetActions({
                   },
                 ]
               : []),
+            ...(canBeStaken
+              ? [
+                  {
+                    label: t("transfer.stake.title"),
+                    Icon: iconStake,
+                    event: "button_clicked",
+                    eventProperties: {
+                      source: "asset screen",
+                      button: "stake",
+                      currency: currency?.id?.toUpperCase(),
+                      flow: "stake",
+                    },
+                    navigationParams: [
+                      NavigatorName.StakeFlow,
+                      {
+                        screen: ScreenName.Stake,
+                        params: { currencies: [currency?.id] },
+                      },
+                    ] as const,
+                  },
+                ]
+              : []),
             ...(canReceive
               ? [
                   {
@@ -187,7 +215,6 @@ export default function useAssetActions({
                             },
                           },
                     ] as const,
-                    disabled: !canReceive,
                   },
                 ]
               : []),
@@ -215,7 +242,7 @@ export default function useAssetActions({
                             params: { selectedCurrency: currency },
                           },
                     ] as const,
-                    disabled: areAccountsBalanceEmpty || !canSend,
+                    disabled: areAccountsBalanceEmpty,
                     modalOnDisabledClick: {
                       component: ZeroBalanceDisabledModalContent,
                     },
@@ -251,13 +278,14 @@ export default function useAssetActions({
       availableOnSwap,
       canBeBought,
       canBeSold,
-      canReceive,
-      canSend,
+      canBeStaken,
       currency,
       defaultAccount,
       hasAccounts,
       hasMultipleAccounts,
       readOnlyModeEnabled,
+      canReceive,
+      canSend,
       t,
     ],
   );

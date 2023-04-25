@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import moment from "moment";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
@@ -45,7 +44,7 @@ export const Column: ThemedComponent<{
     `
       : ``}
 `;
-export const Ellipsis: ThemedComponent<{}> = styled.div`
+export const Ellipsis = styled.div`
   flex: 1;
   display: block;
   overflow: hidden;
@@ -99,7 +98,6 @@ type Props = {
 export function Row({
   account,
   delegation: {
-    amount,
     validatorAddress,
     formattedAmount,
     pendingRewards,
@@ -217,7 +215,7 @@ export function Row({
           }}
           onChange={onSelect}
         >
-          {({ isOpen, value }) => (
+          {() => (
             <Box flex horizontal alignItems="center">
               <Trans i18nKey="common.manage" />
               <div

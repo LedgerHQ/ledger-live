@@ -10,7 +10,6 @@ import {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
-import DeviceSetupView from "../../components/DeviceSetupView";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -53,7 +52,7 @@ const PostOnboardingMockActionScreen = ({
   }, [complete, navigateToHub]);
 
   return (
-    <DeviceSetupView hasBackButton>
+    <>
       <Flex p={6}>
         <Text>
           This is a mock screen for the post onboarding action:{"\n"}
@@ -66,7 +65,7 @@ const PostOnboardingMockActionScreen = ({
           Complete action & go back to onboarding hub
         </Button>
       </Flex>
-    </DeviceSetupView>
+    </>
   );
 };
 

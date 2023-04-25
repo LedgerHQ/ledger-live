@@ -16,7 +16,7 @@ const addPackageResolutions = `
 const rollbackPackageResolutions = `
   pnpm json -I -f ./examples/${exampleName}/package.json -e 'delete this.pnpm'
 `;
-const prepareExample = `npm run clean:full && npm i --no-package-lock && npm run build`;
+const prepareExample = `npm run clean:full && npm i --no-package-lock --legacy-peer-deps && npm run build`;
 const runTest = `pnpm concurrently -s=first -k "pnpm --dir examples/${exampleName} serve" "playwright test ${
   UPDATE_SNAPSHOTS ? "--update-snapshots" : ""
 }"`;

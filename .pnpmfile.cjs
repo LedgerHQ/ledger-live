@@ -71,6 +71,12 @@ function readPackage(pkg, context) {
         // Match the major version of the package
         "@storybook/client-api": major ? "" + major : "*",
       }),
+      addPeerDependencies("@storybook/addon-ondevice-backgrounds", {
+        "@emotion/native": "*",
+      }),
+      addPeerDependencies("@storybook/addon-react-native-web", {
+        webpack: "*",
+      }),
       /* @celo/* packages */
       addDependencies(/@celo\/(?!base)+/, { "@celo/base": `^${pkg.version}` }),
       addDependencies("@celo/connect", {
@@ -122,14 +128,25 @@ function readPackage(pkg, context) {
         "metro-transform-worker": "*",
       }),
       addPeerDependencies("metro-transform-worker", {
-        "metro-minify-uglify": "*",
+        "metro-minify-terser": "*",
       }),
       /* Expo packages… */
       addDependencies("@expo/webpack-config", {
         "resolve-from": "*",
         "fs-extra": "*",
+        tapable: "*",
+        "source-map": "*",
       }),
-      addDependencies("expo-cli", { "@expo/metro-config": "*" }),
+      addPeerDependencies("@expo/cli", {
+        glob: "*",
+        metro: "*",
+        "metro-core": "*",
+        "@expo/metro-config": "*",
+        minimatch: "*",
+      }),
+      addDependencies("@expo/cli", {
+        "find-yarn-workspace-root": "*",
+      }),
       addDependencies("@expo/metro-config", { glob: "*" }),
       addDependencies("@expo/dev-tools", { "@expo/spawn-async": "*" }),
       addDependencies("@expo/dev-server", {
@@ -137,9 +154,21 @@ function readPackage(pkg, context) {
         "@expo/spawn-async": "*",
         glob: "*",
       }),
+      addDependencies("expo-pwa", {
+        "@expo/config": "*",
+      }),
+      addPeerDependencies("expo-modules-core", {
+        "react-native": "*",
+      }),
+      addPeerDependencies("expo", {
+        "react-native": "*",
+        react: "*",
+      }),
       addPeerDependencies(/^expo-/, {
         "expo-modules-core": "*",
         "expo-constants": "*",
+        "react-native": "*",
+        react: "*",
       }),
       addPeerDependencies("expo-asset", {
         "expo-file-system": "*",
@@ -193,7 +222,7 @@ function readPackage(pkg, context) {
       }),
       addDependencies("@actions/cache", { "@azure/abort-controller": "*" }),
       addDependencies("rn-fetch-blob", { lodash: "*" }),
-      addPeerDependencies("styled-components", { "react-native": "*" }),
+      // addPeerDependencies("styled-components", { "react-native": "*" }),
       addPeerDependencies("use-latest-callback", { react: "*" }),
       addPeerDependencies("rn-range-slider", {
         react: "*",
@@ -216,6 +245,18 @@ function readPackage(pkg, context) {
       // Try to prevent pnpm-lock.yaml flakiness
       removeDependencies("follow-redirects", ["debug"], {
         kind: "peerDependencies",
+      }),
+      addDependencies("@shopify/react-native-performance", {
+        tslib: "*",
+      }),
+      addDependencies("@shopify/react-native-performance-navigation", {
+        tslib: "*",
+      }),
+      addPeerDependencies("react-native-easy-markdown", {
+        "prop-types": "*",
+      }),
+      addPeerDependencies("storyly-react-native", {
+        "prop-types": "*",
       }),
     ],
     pkg,

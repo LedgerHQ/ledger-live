@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { OperationType } from "@ledgerhq/types-live";
 import { rgba, mix } from "~/renderer/styles/helpers";
 import { TFunction } from "react-i18next";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import IconClock from "~/renderer/icons/Clock";
 import IconReceive from "~/renderer/icons/Receive";
 import IconDelegate from "~/renderer/icons/Delegate";
@@ -14,8 +13,6 @@ import IconPlus from "~/renderer/icons/Plus";
 import IconEye from "~/renderer/icons/Eye";
 import IconFees from "~/renderer/icons/Fees";
 import IconTrash from "~/renderer/icons/Trash";
-import IconSupply from "~/renderer/icons/Supply";
-import IconWithdraw from "~/renderer/icons/Withdraw";
 import IconLink from "~/renderer/icons/LinkIcon";
 import IconCoins from "~/renderer/icons/Coins";
 import Freeze from "~/renderer/icons/Freeze";
@@ -69,7 +66,7 @@ export const Container: ThemedComponent<{
   height: 24px;
   width: 24px;
 `;
-const WrapperClock: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const WrapperClock = styled(Box).attrs(() => ({
   bg: "palette.background.paper",
   color: "palette.text.shade60",
 }))`
@@ -98,8 +95,6 @@ const iconsComponent = {
   OPT_IN: IconPlus,
   OPT_OUT: IconTrash,
   CLOSE_ACCOUNT: IconTrash,
-  REDEEM: IconWithdraw,
-  SUPPLY: IconSupply,
   APPROVE: IconPlus,
   BOND: IconLink,
   UNBOND: IconUndelegate,
@@ -126,6 +121,7 @@ class ConfirmationCheck extends PureComponent<{
   type: OperationType;
   withTooltip?: boolean;
   hasFailed?: boolean;
+  style?: React.CSSProperties;
 }> {
   static defaultProps = {
     withTooltip: true,

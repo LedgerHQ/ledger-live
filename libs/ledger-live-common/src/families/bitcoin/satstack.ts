@@ -211,19 +211,24 @@ export function editSatStackConfig(
 export type SatStackStatus =
   | {
       type: "satstack-outdated";
+      progress?: undefined;
     }
   | {
       type: "satstack-disconnected";
+      progress?: undefined;
     }
   | {
       type: "node-disconnected";
+      progress?: undefined;
     }
   | {
       type: "invalid-chain";
       found: string;
+      progress?: undefined;
     }
   | {
       type: "initializing";
+      progress?: undefined;
     }
   | {
       type: "syncing";
@@ -235,6 +240,7 @@ export type SatStackStatus =
     } // progress percentage from 0 to 1
   | {
       type: "ready";
+      progress?: undefined;
     };
 export function isSatStackEnabled(): boolean {
   return Boolean(getEnv("SATSTACK"));

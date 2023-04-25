@@ -1,5 +1,7 @@
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 
+export type ImageType = "staxEnabledImage" | "originalNFTImage" | "customImage";
+
 export type ImageDimensions = {
   /** pixel height of the image */
   height: number;

@@ -5,25 +5,11 @@ import eip55 from "eip55";
 import { BigNumber } from "bignumber.js";
 import type { ModeModule } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
-import {
-  findTokenByAddressInCurrency,
-  convertERC20,
-  ERC20Token,
-} from "@ledgerhq/cryptoassets";
+import { convertERC20, ERC20Token } from "@ledgerhq/cryptoassets";
 import { inferTokenAccount } from "../transaction";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "../../../account";
+import { getAccountCurrency } from "../../../account";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  findTokenById,
-  formatCurrencyUnit,
-  addTokens,
-} from "../../../currencies";
-import { getAccountCapabilities } from "../../../compound/logic";
-import { CompoundLowerAllowanceOfActiveAccountError } from "../../../errors";
+import { addTokens } from "../../../currencies";
 import { DeviceTransactionField } from "../../../transaction";
 import { getEnv } from "../../../env";
 import { log } from "@ledgerhq/logs";
@@ -34,18 +20,11 @@ import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 
 const infinite = new BigNumber(2).pow(256).minus(1);
 
-function contractField(transaction, currency) {
-  const recipientToken = findTokenByAddressInCurrency(
-    transaction.recipient,
-    currency.id
-  );
-  const maybeCompoundToken = findTokenById(recipientToken?.compoundFor || "");
+function contractField(transaction) {
   return {
     type: "text",
-    label: maybeCompoundToken ? "Contract" : "Address",
-    value: maybeCompoundToken
-      ? "Compound " + maybeCompoundToken.ticker
-      : transaction.recipient,
+    label: "Address",
+    value: transaction.recipient,
   };
 }
 
@@ -60,32 +39,9 @@ export type Modes = "erc20.approve";
  */
 const erc20approve: ModeModule = {
   fillTransactionStatus(a, t, result) {
-    const subAccount = inferTokenAccount(a, t);
-    const { status, enabledAmount } =
-      (subAccount && getAccountCapabilities(subAccount)) || {};
-
     if (!t.useAllAmount) {
       if (t.amount.eq(0)) {
         result.errors.amount = new AmountRequired();
-      } else if (
-        subAccount &&
-        status &&
-        enabledAmount &&
-        ["EARNING", "SUPPLYING"].includes(status) &&
-        t.amount.lt(enabledAmount)
-      ) {
-        const unit = getAccountUnit(subAccount);
-        // if account curently supplied we can't lower the initial amount enabled just augment it
-        result.errors.amount = new CompoundLowerAllowanceOfActiveAccountError(
-          undefined,
-          {
-            minimumAmount: formatCurrencyUnit(unit, enabledAmount, {
-              disableRounding: true,
-              useGrouping: false,
-              showCode: true,
-            }),
-          }
-        );
       }
     }
 
@@ -120,7 +76,7 @@ const erc20approve: ModeModule = {
     };
   },
 
-  fillDeviceTransactionConfig({ transaction, account, parentAccount }, fields) {
+  fillDeviceTransactionConfig({ transaction, account }, fields) {
     fields.push({
       type: "text",
       label: "Type",
@@ -141,12 +97,7 @@ const erc20approve: ModeModule = {
       });
     }
 
-    fields.push(
-      contractField(
-        transaction,
-        getMainAccount(account, parentAccount).currency
-      ) as DeviceTransactionField
-    );
+    fields.push(contractField(transaction) as DeviceTransactionField);
   },
 
   fillOptimisticOperation(_account, _transaction, operation) {

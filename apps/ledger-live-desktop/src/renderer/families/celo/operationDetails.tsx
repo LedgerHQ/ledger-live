@@ -1,5 +1,5 @@
 import React from "react";
-import { Currency, Operation, Account } from "@ledgerhq/types-live";
+import { Operation, Account } from "@ledgerhq/types-live";
 import {
   OpDetailsTitle,
   OpDetailsSection,
@@ -16,6 +16,8 @@ import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-commo
 import { openURL } from "~/renderer/linking";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { fallbackValidatorGroup } from "@ledgerhq/live-common/families/celo/logic";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+
 const redirectAddress = (currency: Currency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
   if (url) openURL(url);

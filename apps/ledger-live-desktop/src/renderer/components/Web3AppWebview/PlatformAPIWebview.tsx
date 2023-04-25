@@ -5,7 +5,6 @@ import { JSONRPCRequest } from "json-rpc-2.0";
 import React, { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
@@ -28,11 +27,9 @@ import {
   useListPlatformCurrencies,
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
-
 import { openModal } from "../../actions/modals";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
-
 import { track } from "~/renderer/analytics/segment";
 import {
   requestAccountLogic,
@@ -392,7 +389,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         />
         {!widgetLoaded ? (
           <Loader>
-            <BigSpinner data-test-id="live-app-loading-spinner" size={50} />
+            <BigSpinner size={50} />
           </Loader>
         ) : null}
       </>

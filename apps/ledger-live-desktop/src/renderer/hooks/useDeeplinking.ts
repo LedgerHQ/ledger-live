@@ -7,20 +7,26 @@ import {
   parseCurrencyUnit,
 } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { deepLinkUrlSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
 import { setDeepLinkUrl } from "~/renderer/actions/settings";
 import { setTrackingSource } from "../analytics/TrackPage";
-const getAccountsOrSubAccountsByCurrency = (currency, accounts) => {
-  const predicateFn = account => getAccountCurrency(account).id === currency.id;
+import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { Account, SubAccount } from "@ledgerhq/types-live";
+
+const getAccountsOrSubAccountsByCurrency = (
+  currency: CryptoOrTokenCurrency,
+  accounts: Account[],
+) => {
+  const predicateFn = (account: SubAccount | Account) =>
+    getAccountCurrency(account).id === currency.id;
   if (currency.type === "TokenCurrency") {
     const tokenAccounts = accounts
       .filter(acc => acc.subAccounts && acc.subAccounts.length > 0)
       .map(acc => {
         // why you do this Flow
-        const found = acc.subAccounts.find(predicateFn);
+        const found = acc.subAccounts?.find(predicateFn);
         return found || null;
       })
       .filter(Boolean);
@@ -33,14 +39,21 @@ export function useDeepLinkHandler() {
   const accounts = useSelector(accountsSelector);
   const location = useLocation();
   const history = useHistory();
-  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const navigate = useCallback(
     (pathname: string, state?: any, search?: string) => {
       const hasNewPathname = pathname !== location.pathname;
       const hasNewSearch = typeof search === "string" && search !== location.search;
+      const hasNewState = JSON.stringify(state) !== JSON.stringify(location.state);
       if (hasNewPathname || hasNewSearch) {
         setTrackingSource("deeplink");
         history.push({
+          pathname,
+          state,
+          search,
+        });
+      } else if (!hasNewPathname && hasNewState) {
+        setTrackingSource("deeplink");
+        history.replace({
           pathname,
           state,
           search,
@@ -81,11 +94,20 @@ export function useDeepLinkHandler() {
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
       const [url, path] = fullUrl.split("/");
       switch (url) {
-        case "accounts":
+        case "accounts": {
+          const { address } = query;
+          if (address && typeof address === "string") {
+            const account = accounts.find(acc => acc.freshAddress === address);
+            if (account) {
+              navigate(`/account/${account.id}`);
+              break;
+            }
+          }
           navigate("/accounts");
           break;
+        }
         case "buy":
-          navigate("/exchange");
+          navigate("/exchange", undefined, search);
           break;
         case "earn": {
           navigate("/earn", undefined, search);
@@ -106,15 +128,15 @@ export function useDeepLinkHandler() {
         case "account": {
           const { currency } = query;
           if (!currency || typeof currency !== "string") return;
-          const c = findCryptoCurrencyByKeyword(currency.toUpperCase());
+          const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
           if (!c || c.type === "FiatCurrency") return;
           const found = getAccountsOrSubAccountsByCurrency(c, accounts || []);
           if (!found.length) return;
           const [chosen] = found;
-          if (chosen.type === "Account") {
+          if (chosen?.type === "Account") {
             navigate(`/account/${chosen.id}`);
           } else {
-            navigate(`/account/${chosen.parentId}/${chosen.id}`);
+            navigate(`/account/${chosen?.parentId}/${chosen?.id}`);
           }
           break;
         }
@@ -137,7 +159,7 @@ export function useDeepLinkHandler() {
           const { currency, recipient, amount } = query;
           if (!currency || typeof currency !== "string") return;
           if (url === "delegate" && currency !== "tezos") return;
-          const c = findCryptoCurrencyByKeyword(currency.toUpperCase());
+          const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
           if (!c || c.type === "FiatCurrency") {
             dispatch(
               openModal(modal, {
@@ -161,7 +183,7 @@ export function useDeepLinkHandler() {
           }
           const [chosen] = found;
           dispatch(closeAllModal());
-          if (chosen.type === "Account") {
+          if (chosen?.type === "Account") {
             dispatch(
               openModal(modal, {
                 account: chosen,
@@ -176,7 +198,7 @@ export function useDeepLinkHandler() {
             dispatch(
               openModal(modal, {
                 account: chosen,
-                parentAccount: accounts.find(acc => acc.id === chosen.parentId),
+                parentAccount: accounts.find(acc => acc.id === chosen?.parentId),
                 recipient,
                 amount:
                   amount && typeof amount === "string"
@@ -209,16 +231,8 @@ export function useDeepLinkHandler() {
           break;
         case "wc": {
           setTrackingSource("deeplink");
-          if (walletConnectLiveApp?.enabled) {
-            navigate("/platform/ledger-wallet-connect", query);
-          } else {
-            const { uri } = query;
-            dispatch(
-              openModal("MODAL_WALLETCONNECT_DEEPLINK", {
-                link: uri,
-              }),
-            );
-          }
+          navigate("/platform/ledger-wallet-connect", query);
+
           break;
         }
         case "market":
@@ -230,7 +244,7 @@ export function useDeepLinkHandler() {
           break;
       }
     },
-    [accounts, dispatch, navigate, walletConnectLiveApp?.enabled],
+    [accounts, dispatch, navigate],
   );
   return {
     handler,
@@ -244,7 +258,9 @@ function useDeeplink() {
   useEffect(() => {
     // subscribe to deep-linking event
     ipcRenderer.on("deep-linking", handler);
-    return () => ipcRenderer.removeListener("deep-linking", handler);
+    return () => {
+      ipcRenderer.removeListener("deep-linking", handler);
+    };
   }, [handler]);
   useEffect(() => {
     if (openingDeepLink && loaded) {

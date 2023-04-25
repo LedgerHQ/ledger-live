@@ -9,13 +9,13 @@ import { centerEllipsis } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import Text from "~/renderer/components/Text";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   OpDetailsTitle,
   OpDetailsData,
   OpDetailsSection,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import Ellipsis from "~/renderer/components/Ellipsis";
+
 type OperationDetailsExtraProps = {
   extra: {
     [key: string]: string;
@@ -23,13 +23,9 @@ type OperationDetailsExtraProps = {
   type: string;
   account: AccountLike | undefined | null;
 };
-const OperationDetailsExtra = ({ extra, type }: OperationDetailsExtraProps) => {
+const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
   const entries = toPairs(extra);
-
-  return (type === "REDEEM" || type === "SUPPLY"
-    ? entries.filter(([key]) => !["compoundValue", "rate"].includes(key))
-    : entries
-  ).map(([key, value]) => (
+  const jsx = entries.map(([key, value]) => (
     <OpDetailsSection key={key}>
       <OpDetailsTitle>
         <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
@@ -39,11 +35,12 @@ const OperationDetailsExtra = ({ extra, type }: OperationDetailsExtraProps) => {
       </OpDetailsData>
     </OpDetailsSection>
   ));
+  return <>{jsx}</>;
 };
 type Props = {
   operation: Operation;
 };
-const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Cell = styled(Box).attrs(() => ({
   horizontal: false,
   alignItems: "flex-end",
 }))`

@@ -57,6 +57,7 @@
     "mobile": "pnpm --filter live-mobile",
     "common": "pnpm --filter live-common",
     "common-tools": "pnpm --filter live-common-tools",
+    "live-env": "pnpm --filter live-env",
     "utils": "pnpm --filter live-utils",
     "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",
@@ -107,31 +108,23 @@
     "create-release-hash": "workspace:*",
     "migrate-branch": "workspace:*",
     "pnpm-utils": "workspace:*",
-    "rimraf": "^4.1.2",
-    "turbo": "^1.8.8",
-    "zx": "^7.1.1"
+    "rimraf": "^4.4.1",
+    "turbo": "^1.9.3",
+    "typescript": "^4.9.5",
+    "zx": "^7.2.1"
   },
   "pnpm": {
     "overrides": {
       "stellar-base>sodium-native": "^3.2.1",
-      "metro": "^0.67.0",
-      "metro-config": "^0.67.0",
-      "metro-core": "^0.67.0",
-      "metro-react-native-babel-transformer": "^0.67.0",
-      "metro-resolver": "^0.67.0",
-      "metro-runtime": "^0.67.0",
-      "metro-transform-worker": "^0.67.0",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*"
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
       "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch",
-      "react-native-image-crop-tools@1.6.2": "patches/react-native-image-crop-tools@1.6.2.patch",
       "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
-      "react-native-os@1.2.6": "patches/react-native-os@1.2.6.patch",
-      "react-native-tcp@4.0.0": "patches/react-native-tcp@4.0.0.patch",
       "avalanche@3.15.5": "patches/avalanche@3.15.5.patch",
+      "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch"
     }
   }

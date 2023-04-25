@@ -1,24 +1,19 @@
 import React, { RefObject, useCallback, useEffect, useRef, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-
 import Box, { Tabbable } from "~/renderer/components/Box";
-
 import ArrowRight from "~/renderer/icons/ArrowRight";
 import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-
 import { useSelector } from "react-redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { WebviewState, WebviewAPI } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { track } from "~/renderer/analytics/segment";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -123,12 +118,33 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
   }, [webviewAPIRef]);
 
   const onBackToMatchingURL = useCallback(async () => {
+    const currentHostname = new URL(webviewState.url).hostname;
     const webview = safeGetRefValue(webviewAPIRef);
-    const url = safeGetRefValue(lastMatchingURL);
+    const safeUrl = safeGetRefValue(lastMatchingURL);
+    const url = new URL(safeUrl);
+    const urlParams = new URLSearchParams(url.searchParams);
+    const flowName = urlParams.get("liveAppFlow");
 
-    await webview.loadURL(url);
+    track("button_clicked", {
+      button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
+      provider: currentHostname,
+      flow: flowName,
+    });
+
+    await webview.loadURL(safeUrl);
     webview.clearHistory();
-  }, [webviewAPIRef]);
+  }, [webviewAPIRef, webviewState.url]);
+
+  const getButtonLabel = useCallback(() => {
+    if (manifest.id === "multibuy") {
+      const safeUrl = safeGetRefValue(lastMatchingURL);
+      const url = new URL(safeUrl);
+      const urlParams = new URLSearchParams(url.searchParams);
+      const flowName = urlParams.get("liveAppFlow");
+      if (flowName === "compare_providers") return "Quote";
+    }
+    return manifest.name;
+  }, [manifest, lastMatchingURL]);
 
   const handleReload = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -150,7 +166,7 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
         <ItemContainer isInteractive onClick={onBackToMatchingURL}>
           <ArrowRight flipped size={16} />
           <ItemContent>
-            <Trans i18nKey="common.backToMatchingURL" values={{ appName: manifest.name }} />
+            <Trans i18nKey="common.backToMatchingURL" values={{ appName: getButtonLabel() }} />
           </ItemContent>
         </ItemContainer>
       ) : null}

@@ -5,6 +5,7 @@ import {
 } from "@react-navigation/stack";
 import BuyDeviceNavigator from "../components/RootNavigator/BuyDeviceNavigator";
 import {
+  hasCompletedOnboardingSelector,
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
 } from "../reducers/settings";
@@ -22,8 +23,8 @@ export const useNoNanoBuyNanoWallScreenOptions = ():
   | object => {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-
-  if (!readOnlyModeEnabled) return {};
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  if (!hasCompletedOnboarding || !readOnlyModeEnabled) return {};
   if (hasOrderedNano) {
     return {
       component: PostBuyDeviceSetupNanoWallScreen,

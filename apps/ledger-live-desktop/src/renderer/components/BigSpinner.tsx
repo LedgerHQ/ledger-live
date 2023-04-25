@@ -2,7 +2,7 @@ import React from "react";
 import styled, { keyframes, css } from "styled-components";
 import Box from "~/renderer/components/Box";
 import IconBigSpinner from "~/renderer/icons/BigSpinner";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 const rotate = keyframes`
   0% {
     transform: rotate(0deg);
@@ -27,7 +27,7 @@ export const Rotating: ThemedComponent<{
 `;
 export default function BigSpinner({ size, ...props }: { size: number; isRotating?: boolean }) {
   return (
-    <Rotating size={size} data-test-id="loading-spinner" {...props}>
+    <Rotating size={size} data-test-id="big-loading-spinner" {...props}>
       <IconBigSpinner size={size} />
     </Rotating>
   );

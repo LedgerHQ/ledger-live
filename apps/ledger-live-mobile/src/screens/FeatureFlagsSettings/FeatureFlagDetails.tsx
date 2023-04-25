@@ -8,14 +8,14 @@ import styled from "styled-components/native";
 import FeatureFlagEdit from "./FeatureFlagEdit";
 
 export const TagEnabled = styled(Tag).attrs({
-  bg: "success.c100",
+  bg: "success.c50",
   uppercase: false,
   type: "color",
   mr: 2,
 })``;
 
 export const TagDisabled = styled(Tag).attrs({
-  bg: "error.c100",
+  bg: "error.c50",
   uppercase: false,
   type: "color",
   mr: 2,

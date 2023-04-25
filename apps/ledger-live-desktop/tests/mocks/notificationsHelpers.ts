@@ -128,6 +128,7 @@ async function fetchAnnouncements(): Promise<RawAnnouncement[]> {
 const api: AnnouncementsApi = {
   fetchAnnouncements,
 };
+// @ts-expect-error this seems to be exposed for testing purposes
 window.announcementsApi = {
   ...api,
   resetAnnouncements,

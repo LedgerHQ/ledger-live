@@ -3,7 +3,6 @@ import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -24,12 +23,9 @@ const Container: ThemedComponent<{
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 function StepConfirmation({
-  account,
   t,
   optimisticOperation,
   error,
-  theme,
-  device,
   signed,
 }: StepProps & {
   theme: any;
@@ -66,12 +62,10 @@ function StepConfirmation({
   return null;
 }
 export function StepConfirmationFooter({
-  transitionTo,
   account,
   parentAccount,
   onRetry,
   error,
-  openModal,
   onClose,
   optimisticOperation,
   transaction,

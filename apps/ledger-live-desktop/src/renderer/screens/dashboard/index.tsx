@@ -13,12 +13,10 @@ import {
 } from "~/renderer/reducers/settings";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import OperationsList from "~/renderer/components/OperationsList";
 import Carousel from "~/renderer/components/Carousel";
 import AssetDistribution from "~/renderer/components/AssetDistribution";
-import MigrationBanner from "~/renderer/modals/MigrateAccounts/Banner";
 import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { saveSettings, useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
@@ -33,7 +31,7 @@ import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/Pos
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
 
 // This forces only one visible top banner at a time
-export const TopBannerContainer: ThemedComponent<{}> = styled.div`
+export const TopBannerContainer = styled.div`
   z-index: 19;
 
   & > *:not(:first-child) {
@@ -96,7 +94,6 @@ export default function DashboardPage() {
   return (
     <>
       <TopBannerContainer>
-        <MigrationBanner />
         <ClearCacheBanner />
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>

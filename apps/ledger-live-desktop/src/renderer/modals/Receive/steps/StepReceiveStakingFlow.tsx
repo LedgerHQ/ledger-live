@@ -1,19 +1,17 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-
 import { Flex, Text, Icons, Link } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-
 import { StepProps } from "../Body";
 import StakingIllustration from "../assets/StakingIllustration";
-
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Button from "~/renderer/components/ButtonV3";
 import CheckBox from "~/renderer/components/CheckBox";
 import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
+import { getAccountName } from "@ledgerhq/live-common/account/index";
 
 export const LOCAL_STORAGE_KEY_PREFIX = "receive_staking_";
 
@@ -140,7 +138,8 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
       flow: "stake",
       currency: account?.currency?.name,
       provider: action?.provider?.name || "Ledger",
-      modal: "receive"
+      modal: "receive",
+      account: getAccountName(account),
     };
   }, [account, action?.provider?.name]);
 

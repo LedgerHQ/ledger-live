@@ -18,7 +18,6 @@ import { setHasBeenUpsoldProtect } from "../../actions/settings";
 
 import Carousel from "../../components/Carousel";
 import TrackScreen from "../../analytics/TrackScreen";
-import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
@@ -200,7 +199,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         showsVerticalScrollIndicator={false}
         testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyAccount"}
       />
-      <MigrateAccountsBanner />
       <AddAccountsModal
         navigation={navigation as unknown as BaseNavigation}
         isOpened={isAddModalOpened}

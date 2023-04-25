@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 export const PlaceholderLine: ThemedComponent<{
   dark?: boolean;
   width: number;

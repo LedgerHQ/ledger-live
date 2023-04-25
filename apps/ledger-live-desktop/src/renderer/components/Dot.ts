@@ -1,6 +1,6 @@
 import styled, { keyframes, css } from "styled-components";
 import { colors } from "~/renderer/styles/theme";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 const collapseAnim = keyframes`
   0% {
     opacity: 0;
