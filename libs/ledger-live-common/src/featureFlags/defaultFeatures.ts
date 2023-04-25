@@ -10,9 +10,6 @@ export const defaultFeatures: DefaultFeatures = {
   brazeLearn: {
     enabled: false,
   },
-  deviceLocalization: {
-    enabled: false,
-  },
   buyDeviceFromLive: {
     enabled: false,
     params: {
