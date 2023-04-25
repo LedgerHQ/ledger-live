@@ -47,7 +47,7 @@ export const WithContent = (args: AlertProps) => {
           <Link
             textProps={textProps}
             alwaysUnderline
-            size={"small" as string}
+            size={"small" as "small" | "medium" | "large"}
             Icon={Icons.ExternalLinkMedium}
           >
             <Alert.UnderlinedText>Learn more</Alert.UnderlinedText>

@@ -11,7 +11,7 @@ import CircledCrossSolidMedium from "@ledgerhq/icons-ui/react/CircledCrossSolidM
 type AlertType = "info" | "secondary" | "success" | "warning" | "error";
 
 type RenderProps = (props: {
-  textProps: { variant?: TextVariants; fontWeight?: string };
+  textProps: { variant?: TextVariants; fontWeight?: string; lineHeight?: string };
 }) => JSX.Element;
 
 export interface AlertProps {
@@ -24,12 +24,12 @@ export interface AlertProps {
    */
   title?: string;
   /**
-   * Method for rendering additional content under the title. `{ color: string; textProps: { variant?: TextVariants; fontWeight?: string } }` is passed as props to easily style text elements.
+   * Method for rendering additional content under the title. `{ color: string; textProps: { variant?: TextVariants; fontWeight?: string; lineHeight?: number } }` is passed as props to easily style text elements.
    */
   renderContent?: RenderProps;
 
   /**
-   * Method for rendering additional content to the right. `{ color: string; textProps: { variant?: TextVariants; fontWeight?: string } }` is passed as props to easily style text elements.
+   * Method for rendering additional content to the right. `{ color: string; textProps: { variant?: TextVariants; fontWeight?: string; lineHeight?: number } }` is passed as props to easily style text elements.
    */
   renderRight?: RenderProps;
 
@@ -115,7 +115,7 @@ function Alert({
 }: AlertProps): JSX.Element {
   const theme = useTheme();
   const { iconColor, background } = getColors({ theme, type });
-  const textProps: { variant?: TextVariants; fontWeight?: string } = {
+  const textProps: { variant?: TextVariants; fontWeight?: string; lineHeight?: string } = {
     variant: "bodyLineHeight",
     fontWeight: "semiBold",
     lineHeight: "1.5",
