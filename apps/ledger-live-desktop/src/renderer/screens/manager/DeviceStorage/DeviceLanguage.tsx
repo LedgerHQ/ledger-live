@@ -40,7 +40,6 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device, onRefreshDeviceIn
 
   return (
     <Flex alignItems="center">
-      <Icons.LanguageMedium color="neutral.c80" size={24} />
       <Flex ml={1} mr={5}>
         <Text color="neutral.c80" variant="bodyLineHeight" fontSize={4}>
           {t("deviceLocalization.language")}
