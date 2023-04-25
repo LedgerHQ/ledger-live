@@ -45,17 +45,17 @@ export interface AlertProps {
 }
 
 const StyledIconContainer = styled.div`
-  margin-right: 12px;
+  margin-right: 8px;
   display: flex;
   align-items: center;
 `;
 
 const icons = {
-  info: <InfoAltFillMedium size={20} />,
-  secondary: <InfoAltFillMedium size={20} />,
-  success: <CircledCheckSolidMedium size={20} />,
-  warning: <WarningSolidMedium size={20} />,
-  error: <CircledCrossSolidMedium size={20} />,
+  info: <InfoAltFillMedium size={24} />,
+  secondary: <InfoAltFillMedium size={24} />,
+  success: <CircledCheckSolidMedium size={24} />,
+  warning: <WarningSolidMedium size={24} />,
+  error: <CircledCrossSolidMedium size={24} />,
 };
 
 const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) => {
@@ -90,11 +90,22 @@ const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) =
 };
 
 const StyledAlertContainer = styled(Flex)<{ background?: string; color?: string }>`
-  border-radius: ${(p) => `${p.theme.radii[1]}px`};
-  align-items: center;
+  border-radius: ${(p) => `${p.theme.radii[2]}px`};
+  align-items: start;
 `;
 
-export default function Alert({
+const AlertBodyText = styled(Text).attrs({
+  flexShrink: 1,
+  variant: "bodyLineHeight",
+  fontWeight: "semiBold",
+  lineHeight: "1.5",
+})``;
+
+const AlertUnderlinedText = styled(AlertBodyText)`
+  text-decoration-line: underline;
+`;
+
+function Alert({
   type = "info",
   title,
   showIcon = true,
@@ -105,8 +116,9 @@ export default function Alert({
   const theme = useTheme();
   const { iconColor, background } = getColors({ theme, type });
   const textProps: { variant?: TextVariants; fontWeight?: string } = {
-    variant: "paragraph",
-    fontWeight: "medium",
+    variant: "bodyLineHeight",
+    fontWeight: "semiBold",
+    lineHeight: "1.5",
   };
   const textColor = "neutral.c100";
   return (
@@ -129,7 +141,12 @@ export default function Alert({
         )}
         {renderContent && renderContent({ textProps })}
       </Flex>
-      <Flex>{renderRight && renderRight({ textProps })}</Flex>
+      <Flex alignSelf="center">{renderRight && renderRight({ textProps })}</Flex>
     </StyledAlertContainer>
   );
 }
+
+Alert.BodyText = AlertBodyText;
+Alert.UnderlinedText = AlertUnderlinedText;
+
+export default Alert;

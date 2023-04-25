@@ -1,7 +1,6 @@
 import React from "react";
 import Alert, { AlertProps } from "./index";
 import Link from "../../cta/Link";
-import Text from "../../asorted/Text";
 import Button from "../../cta/Button";
 import { Icons } from "../../../../src/assets";
 
@@ -41,17 +40,17 @@ export const WithContent = (args: AlertProps) => {
       containerProps={{ pr: 7 }}
       renderContent={({ textProps }) => (
         <>
-          <Text color="inherit" {...textProps}>
+          <Alert.BodyText>
             Your xpub is privacy-sensitive data. Use with caution, especially when disclosing to
             third parties.
-          </Text>
+          </Alert.BodyText>
           <Link
             textProps={textProps}
             alwaysUnderline
-            size={"small" as any}
+            size={"small" as string}
             Icon={Icons.ExternalLinkMedium}
           >
-            And a learn more link
+            <Alert.UnderlinedText>Learn more</Alert.UnderlinedText>
           </Link>
         </>
       )}
