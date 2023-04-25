@@ -49,7 +49,7 @@ const levelThemes = {
     padding: undefined,
   },
 };
-const getLevelTheme = (levelName: string) => {
+const getLevelTheme = (levelName: keyof typeof levelThemes) => {
   const levelData = levelThemes[levelName];
   if (levelData) {
     return levelData;
@@ -91,7 +91,7 @@ function DateRow({ date }: DateRowProps) {
     </DateRowContainer>
   );
 }
-const ArticleRootContainer = styled.div`
+const ArticleRootContainer = styled.div<{ isRead?: boolean }>`
   padding-left: ${p => (p.isRead ? 0 : 16)}px;
   position: relative;
 `;
@@ -106,10 +106,10 @@ const ArticleRightColumnContainer = styled.div`
   flex: 1;
 `;
 type ArticleProps = {
-  level: string;
-  icon: string;
-  title: string;
-  text: string;
+  level: keyof typeof levelThemes;
+  icon: keyof typeof icons;
+  title: React.ReactNode;
+  text: React.ReactNode;
   link?: {
     label?: string;
     href: string;
@@ -127,7 +127,7 @@ const icons = {
     Icon: InfoCircle,
   },
 };
-const getIcon = (iconName: string) => {
+const getIcon = (iconName: keyof typeof icons) => {
   const iconData = icons[iconName];
   if (iconData) {
     return iconData;
@@ -249,9 +249,9 @@ export function AnnouncementPanel() {
     onClickNotif,
   } = useNotifications();
 
-  const timeoutByUUID = useRef({});
+  const timeoutByUUID = useRef<Record<string, NodeJS.Timeout>>({});
   const handleInViewNotif = useCallback(
-    (visible, uuid) => {
+    (visible: boolean, uuid: keyof typeof timeoutByUUID.current) => {
       const timeouts = timeoutByUUID.current;
 
       if (notificationsCards.find(n => !n.viewed && n.id === uuid) && visible && !timeouts[uuid]) {
