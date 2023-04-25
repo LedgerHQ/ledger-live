@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React from "react";
+import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { StepProps } from "../types";
@@ -31,14 +31,20 @@ export default function StepDelegation({
       return bridge.updateTransaction(transaction, {
         validators: [
           {
-            address: address,
+            address,
             amount: BigNumber(0),
           },
         ],
       });
     });
   };
-  const chosenVoteAccAddr = transaction.validators[0]?.address || "";
+  const chosenVoteAccAddr =
+    transaction.validators[0]?.address || delegations[0].validatorAddress || "";
+
+  useEffect(() => {
+    updateValidator({ address: chosenVoteAccAddr });
+  }, []);
+
   return (
     <Box flow={1}>
       <TrackPage category="Delegation Flow" name="Step Validator" />
