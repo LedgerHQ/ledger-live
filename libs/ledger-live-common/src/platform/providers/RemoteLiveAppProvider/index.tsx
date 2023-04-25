@@ -79,7 +79,7 @@ export function useManifests(
     return liveAppFiltered;
   }
   return liveAppFiltered.filter((manifest) =>
-    Object.keys(options).every(([key, value]) => manifest[key] === value)
+    Object.keys(options).some((key) => manifest[key] === options[key])
   );
 }
 
