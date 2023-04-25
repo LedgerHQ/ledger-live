@@ -3,7 +3,6 @@ import { Button, Flex, Icons, Radio, Divider, Text } from "@ledgerhq/react-ui";
 import { DeviceInfo, Language } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
-import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTranslation } from "react-i18next";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
@@ -22,13 +21,15 @@ type Props = {
 const DeviceLanguageInstallation: React.FC<Props> = ({
   onClose,
   deviceInfo,
-  device,
   onError,
   currentLanguage,
   onSuccess,
 }: Props) => {
   const { availableLanguages } = useAvailableLanguagesForDevice(deviceInfo);
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(currentLanguage);
+  const [nonce, setNonce] = useState(0);
+  const [error, setError] = useState<Error | null>(null);
+
   const { t } = useTranslation();
 
   const sortedAvailableLanguages = useMemo(
@@ -61,36 +62,45 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
     track("Page Manager LanguageInstallTriggered", { selectedLanguage });
   }, [setInstalling, selectedLanguage]);
 
-  const deviceName = getDeviceModel(device.modelId).productName;
+  const onWrappedError = useCallback(
+    error => {
+      setError(error);
+      onError(error);
+    },
+    [onError],
+  );
+
+  const onRetry = useCallback(() => {
+    setError(null);
+    setNonce(nonce => nonce + 1);
+  }, []);
 
   return (
     <Flex
       flexDirection="column"
       rowGap={5}
+      key={nonce}
       height="100%"
       overflowY="hidden"
       width="100%"
       flex={1}
       data-test-id="device-rename-container"
     >
-      <Flex p={3} flex={1}>
+      <Text alignSelf="center" variant="h5Inter" mb={12}>
+        {t("deviceLocalization.deviceLanguage")}
+      </Text>
+      <Flex px={12} flex={1}>
         {installing ? (
           <ChangeDeviceLanguageAction
             onSuccess={() => {
               onSuccess(selectedLanguage);
               setInstalled(true);
             }}
-            onError={onError}
+            onError={onWrappedError}
             language={selectedLanguage}
           />
         ) : (
-          <Flex px={3} flexGrow={1} flexDirection="column">
-            <Text alignSelf="center" variant="h3Inter" mb={3}>
-              {t("deviceLocalization.deviceLanguage")}
-            </Text>
-            <Text textAlign="center" mb={10} variant="body" color="neutral.c70">
-              {t("deviceLocalization.chooseLanguage", { deviceName })}
-            </Text>
+          <Flex flexGrow={1} flexDirection="column">
             <Radio
               currentValue={selectedLanguage}
               onChange={onChange}
@@ -124,23 +134,43 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
           </Flex>
         )}
       </Flex>
-      {(!installing || installed) && (
-        <Flex flexDirection="column" rowGap={8} flex={0}>
-          <Divider />
-          <Flex alignSelf="end" px={12} pb={8}>
-            <Button
-              data-test-id={
-                installed ? "close-language-installation-button" : "install-language-button"
-              }
-              variant="main"
-              onClick={installed ? onCloseDrawer : onInstall}
-              disabled={!installing && currentLanguage === selectedLanguage}
-            >
-              {installed ? t(`common.close`) : t(`deviceLocalization.changeLanguage`)}
-            </Button>
+
+      {!installing || (installing && error) || installed ? (
+        <Flex flexDirection="column" alignSelf="stretch">
+          <Divider variant="light" />
+          <Flex
+            px={12}
+            alignSelf="stretch"
+            flexDirection="row"
+            justifyContent="space-between"
+            pt={4}
+            pb={1}
+          >
+            <Flex flex={1} />
+            {error ? (
+              <Button
+                data-test-id="retry-language-installation-button"
+                variant="main"
+                onClick={onRetry}
+                disabled={!installing && currentLanguage === selectedLanguage}
+              >
+                {t(`common.retry`)}
+              </Button>
+            ) : !error ? (
+              <Button
+                data-test-id={
+                  installed ? "close-language-installation-button" : "install-language-button"
+                }
+                variant="main"
+                onClick={installed ? onCloseDrawer : onInstall}
+                disabled={!installing && currentLanguage === selectedLanguage}
+              >
+                {installed ? t(`common.close`) : t(`deviceLocalization.changeLanguage`)}
+              </Button>
+            ) : null}
           </Flex>
         </Flex>
-      )}
+      ) : null}
     </Flex>
   );
 };
