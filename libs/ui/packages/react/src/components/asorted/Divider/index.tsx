@@ -3,13 +3,16 @@ import styled from "styled-components";
 import Flex, { FlexBoxProps } from "../../layout/Flex";
 import Text from "../../asorted/Text";
 
+export type Props = FlexBoxProps & { text?: string };
 const DividerBase = styled(Flex).attrs<FlexBoxProps>((p: FlexBoxProps) => ({
   my: p.my || 0,
   height: 1,
   backgroundColor: "neutral.c40",
-}))``;
-
-export type Props = FlexBoxProps & { text?: string };
+}))`
+  &[data-variant="light"] {
+    background: ${(p) => p.theme.colors.neutral.c30};
+  }
+`;
 
 const Divider: React.FC<Props> = (props) => {
   if (!props.text) return <DividerBase {...props} />;
