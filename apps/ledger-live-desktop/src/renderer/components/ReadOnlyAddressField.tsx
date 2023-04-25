@@ -15,7 +15,9 @@ const Address = styled(Box).attrs(() => ({
   px: 4,
   py: 3,
   relative: true,
-}))`
+}))<{
+  allowCopy: boolean;
+}>`
   border: ${p => `1px solid ${p.theme.colors.palette.divider}`};
   ${p =>
     p.allowCopy
@@ -76,7 +78,7 @@ type Props = {
 function ReadOnlyAddressField({ address, allowCopy = true }: Props) {
   const [copyFeedback, setCopyFeedback] = useState(false);
   const [clibboardChanged, setClipboardChanged] = useState(false);
-  const copyTimeout = useRef();
+  const copyTimeout = useRef<NodeJS.Timeout | undefined>();
   const onCopy = useCallback(() => {
     clipboard.writeText(address);
     setCopyFeedback(true);

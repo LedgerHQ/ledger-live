@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
 import qrcode from "qrcode";
+
 type Props = {
   data: string;
   errorCorrectionLevel: string;
@@ -19,7 +20,8 @@ class QRCode extends PureComponent<Props> {
     this.drawQRCode();
   }
 
-  canvas: any = React.createRef();
+  canvas: React.RefObject<HTMLCanvasElement> = React.createRef();
+
   drawQRCode() {
     const { data, size, errorCorrectionLevel } = this.props;
     const { current } = this.canvas;

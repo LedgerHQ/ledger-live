@@ -1,4 +1,3 @@
-import { BigNumber } from "bignumber.js";
 import React, { PureComponent } from "react";
 import styled from "styled-components";
 import noop from "lodash/noop";

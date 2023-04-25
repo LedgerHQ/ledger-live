@@ -7,10 +7,10 @@ import IconCameraError from "~/renderer/icons/CameraError";
 import IconCross from "~/renderer/icons/Cross";
 import TranslatedError from "./TranslatedError";
 
-const CameraWrapper: ThemedComponent<{
+const CameraWrapper = styled.div<{
   width: number;
   height: number;
-}> = styled.div`
+}>`
   width: ${p => p.width}px;
   height: ${p => p.height}px;
   padding: 12px 0px;
@@ -41,7 +41,11 @@ const CameraWrapper: ThemedComponent<{
     }
   }
 `;
-const Camera = styled.canvas`
+const Camera = styled.canvas<{
+  width: number;
+  height: number;
+  dpr: number;
+}>`
   width: ${p => p.width / p.dpr}px;
   height: ${p => p.height / p.dpr}px;
   position: absolute;
@@ -50,7 +54,11 @@ const Camera = styled.canvas`
   filter: brightness(80%) blur(6px);
   transform: scaleX(-1);
 `;
-const Overlay = styled.canvas`
+const Overlay = styled.canvas<{
+  width: number;
+  height: number;
+  dpr: number;
+}>`
   width: ${p => p.width / p.dpr}px;
   height: ${p => p.height / p.dpr}px;
   position: absolute;
@@ -90,11 +98,14 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
     dpr: window.devicePixelRatio || 1,
   };
 
-  state = {};
+  state = {
+    error: null,
+  };
+
   componentDidMount() {
-    let getUserMedia;
+    let getUserMedia: ((opts: MediaStreamConstraints) => Promise<MediaStream>) | undefined;
     let sum = 0;
-    const onkeyup = (e: any) => {
+    const onkeyup = (e: KeyboardEvent) => {
       sum += e.which;
       if (sum === 439 && this.canvasSecond) {
         this.canvasSecond.style.filter = "hue-rotate(90deg)";
@@ -107,11 +118,13 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
     const { navigator } = window;
     if (navigator.mediaDevices) {
       const mediaDevices = navigator.mediaDevices;
-      getUserMedia = opts => mediaDevices.getUserMedia(opts);
+      getUserMedia = (opts: MediaStreamConstraints) => mediaDevices.getUserMedia(opts);
     } else {
+      // @ts-expect-error navigator unclear type
       const f = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
       if (f) {
-        getUserMedia = opts => new Promise((res, rej) => f.call(navigator, opts, res, rej));
+        getUserMedia = (opts: MediaStreamConstraints) =>
+          new Promise((res, rej) => f.call(navigator, opts, res, rej));
       }
     }
     if (!getUserMedia) {
@@ -129,7 +142,7 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
           this.setState({
             error: null,
           });
-          let video = document.createElement("video");
+          let video: HTMLVideoElement | null = document.createElement("video");
           video.setAttribute("playsinline", "true");
           video.setAttribute("autoplay", "true");
           video.srcObject = stream;
@@ -149,7 +162,7 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
               logger.error(e);
             }
             let lastCheck = 0;
-            let raf;
+            let raf: number | undefined;
             const loop = (t: number) => {
               raf = requestAnimationFrame(loop);
               const { ctxMain, ctxSecond } = this;
@@ -210,7 +223,9 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
               }
             };
             raf = requestAnimationFrame(loop);
-            this.unsubscribes.push(() => cancelAnimationFrame(raf));
+            this.unsubscribes.push(() => {
+              if (raf !== undefined) cancelAnimationFrame(raf);
+            });
           };
         })
         .catch(e => {

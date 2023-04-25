@@ -9,6 +9,7 @@ import { getNFTById } from "~/renderer/reducers/accounts";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { State } from "~/renderer/reducers";
 
 const Wrapper = styled(Flex).attrs({
   backgroundColor: "neutral.c30",
@@ -59,15 +60,17 @@ type Props = {
 };
 
 const NftItem = ({ id, onItemClick, selected, testId, index }: Props) => {
-  const nft = useSelector(state => getNFTById(state, { nftId: id }));
-  const { status, metadata } = useNftMetadata(nft.contract, nft.tokenId, nft.currencyId);
-  const { nftName } = metadata || {};
+  const nft = useSelector((state: State) => getNFTById(state, { nftId: id }));
+  const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
+  const nftName = metadata?.nftName;
   const show = status === "loading";
   const isGrid = true;
 
   const handleClick = useCallback(() => {
     onItemClick(id, metadata);
   }, [metadata, id, onItemClick]);
+
+  if (!nft) return null;
 
   return (
     <Wrapper
