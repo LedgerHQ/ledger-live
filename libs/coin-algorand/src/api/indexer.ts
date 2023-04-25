@@ -36,6 +36,10 @@ export const getAccountTransactions =
         method: "GET",
         url: nextUrl,
       });
+
+      // FIXME: what is the correct type? Properly type response from api above (data)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       nextToken = data["next-token"];
       newRawTxs = data.transactions;
       newRawTxs.map(parseRawTransaction).forEach((tx) => mergedTxs.push(tx));
