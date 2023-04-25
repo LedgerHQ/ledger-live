@@ -56,7 +56,7 @@ const DebugUpdater = () => {
                   ff={"Inter|Medium"}
                   color="palette.text.shade100"
                   fontSize={3}
-                  onClick={() => setStatus(s)}
+                  onClick={() => setStatus?.(s)}
                 >
                   {s}
                 </Text>

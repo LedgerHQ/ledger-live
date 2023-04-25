@@ -157,7 +157,7 @@ export type Props = {
   keepEvent?: boolean;
   onBlur?: (a: React.FocusEvent<HTMLInputElement>) => void;
   onChange?: Function;
-  onEnter?: (a: React.KeyboardEvent<HTMLInputElement>) => any;
+  onEnter?: (a: React.KeyboardEvent<HTMLInputElement>) => void;
   onEsc?: (a: React.KeyboardEvent<HTMLInputElement>) => void;
   onFocus?: (a: React.FocusEvent<HTMLInputElement>) => void;
   renderLeft?: React.ReactNode;
@@ -194,7 +194,7 @@ const Input = function Input(
     value,
     ...props
   }: Props,
-  inputRef: React.Ref<HTMLInputElement>,
+  inputRef: React.ForwardedRef<HTMLInputElement> | null,
 ) {
   const [isFocus, setFocus] = useState(false);
 
@@ -220,7 +220,7 @@ const Input = function Input(
   );
 
   const handleClick = useCallback(() => {
-    inputRef?.current?.focus();
+    inputRef && "current" in inputRef && inputRef.current?.focus();
   }, [inputRef]);
 
   const handleFocus = useCallback(

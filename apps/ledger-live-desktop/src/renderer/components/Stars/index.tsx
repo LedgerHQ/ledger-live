@@ -45,7 +45,6 @@ const Stars = ({ pathname, collapsed }: Props) => {
           flip={!collapsed}
         >
           <Item
-            className="bookmarked-account"
             index={i}
             key={account.id}
             account={account}

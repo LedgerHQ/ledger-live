@@ -6,7 +6,7 @@ type Props = {
   icon: React.ReactNode;
   width?: number;
   height?: number;
-};
+} & React.ComponentProps<typeof LiveLogoContainer>;
 
 class LedgerLiveLogo extends PureComponent<Props> {
   render() {
