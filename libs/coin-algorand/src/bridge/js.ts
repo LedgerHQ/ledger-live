@@ -76,9 +76,14 @@ export function buildAccountBridge(
   };
 }
 
+/**
+ * FIXME: an unsued cacheFn is passed to createBridges because of how the
+ * libs/ledger-live-common/scripts/sync-families-dispatch.mjs script works.
+ */
 export function createBridges(
   deviceCommunication: DeviceCommunication,
-  network: NetworkRequestCall
+  network: NetworkRequestCall,
+  _cacheFn: unknown
 ) {
   return {
     currencyBridge: buildCurrencyBridge(deviceCommunication, network),

@@ -1,4 +1,3 @@
-import algorand from "../families/algorand/deviceTransactionConfig";
 import bitcoin from "../families/bitcoin/deviceTransactionConfig";
 import cardano from "../families/cardano/deviceTransactionConfig";
 import celo from "../families/celo/deviceTransactionConfig";
@@ -16,9 +15,9 @@ import stellar from "../families/stellar/deviceTransactionConfig";
 import tezos from "../families/tezos/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
+import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 
 export default {
-  algorand,
   bitcoin,
   cardano,
   celo,
@@ -36,6 +35,7 @@ export default {
   tezos,
   tron,
   polkadot,
+  algorand,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";
