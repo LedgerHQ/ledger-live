@@ -406,7 +406,7 @@ export const getDeviceAnimation = (
   theme: Theme["theme"],
   key: AnimationKey,
   noBox?: boolean,
-) => {
+): object | null => {
   const animationModelId = (process.env.OVERRIDE_MODEL_ID as DeviceModelId) || modelId;
 
   // Handles the case where OVERRIDE_MODEL_ID is incorrect
