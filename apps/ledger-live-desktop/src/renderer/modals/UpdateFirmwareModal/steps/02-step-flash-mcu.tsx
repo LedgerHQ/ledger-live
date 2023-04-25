@@ -5,7 +5,6 @@ import { Subscriber, from } from "rxjs";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
@@ -24,12 +23,6 @@ const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
   color: "palette.text.shade100",
-}))``;
-
-const Title = styled(Box).attrs(() => ({
-  ff: "Inter|Regular",
-  fontSize: 5,
-  mb: 3,
 }))``;
 
 type BodyProps = {
@@ -68,7 +61,6 @@ const StepFlashMcu = ({
   const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
 
   const [isMcuUpdateFinished, setIsMcuUpdateFinished] = useState<boolean>(false);
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
   // Gets the updated device info from the command waitForDeviceInfo
   // after a successful MCU update
@@ -88,9 +80,7 @@ const StepFlashMcu = ({
           next: setUpdatedDeviceInfo,
           complete: () => {
             const shouldGoToLanguageStep =
-              firmware &&
-              isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
-              deviceLocalizationFeatureFlag?.enabled;
+              firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
             transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
           },
           error: (error: Error) => {
@@ -105,15 +95,7 @@ const StepFlashMcu = ({
         sub.unsubscribe();
       }
     };
-  }, [
-    deviceLocalizationFeatureFlag?.enabled,
-    deviceModelId,
-    firmware,
-    isMcuUpdateFinished,
-    setError,
-    setUpdatedDeviceInfo,
-    transitionTo,
-  ]);
+  }, [deviceModelId, firmware, isMcuUpdateFinished, setError, setUpdatedDeviceInfo, transitionTo]);
 
   // Updates the MCU
   useEffect(() => {
@@ -170,7 +152,6 @@ const StepFlashMcu = ({
 
   return (
     <Container data-test-id="firmware-update-flash-mcu-progress">
-      <Title>{installing ? "" : t("manager.modal.mcuTitle")}</Title>
       <TrackPage category="Manager" name="FlashMCU" />
       <Body
         deviceModelId={deviceModelId}
