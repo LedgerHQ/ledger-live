@@ -33,7 +33,11 @@ module.exports = async (inputFolder, outputFolder) => {
   const chains = await Promise.all(
     chainNames.map(async (chainName) => {
       const chainPath = path.join(definitionTokensPath, chainName);
-      const tokenStandardName = await getTokenStandardFolderName(chainPath);
+      const tokenStandardName = await getTokenStandardFolderName(
+        chainPath
+      ).catch(() => null);
+      // removing unsupported currencies/standards
+      if (!tokenStandardName) return;
 
       const definitionPath = path.join(chainPath, tokenStandardName);
       const signaturePath = path.join(
@@ -58,7 +62,7 @@ module.exports = async (inputFolder, outputFolder) => {
         signaturePath,
       };
     })
-  );
+  ).then((list) => list.filter(Boolean));
 
   // Creating each file for each chain id
   chains.forEach((chain) => erc20Importer(chain, outputFolder));
