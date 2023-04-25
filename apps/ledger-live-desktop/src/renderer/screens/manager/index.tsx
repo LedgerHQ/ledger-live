@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useContext } from "react";
 import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import Dashboard from "~/renderer/screens/manager/Dashboard";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -12,16 +12,22 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import Disconnected from "./Disconnected";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
 import { useDispatch } from "react-redux";
+import { context } from "~/renderer/drawers/Provider";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 const Manager = () => {
   const [appsToRestore, setRestoreApps] = useState();
+  const { setDrawer } = useContext(context);
   const [result, setResult] = useState(null);
   const [hasReset, setHasReset] = useState(false);
-  const onReset = useCallback((apps, firmwareUpdateOpened) => {
-    setRestoreApps(apps);
-    setResult(null);
-    if (!firmwareUpdateOpened) setHasReset(true);
-  }, []);
+  const onReset = useCallback(
+    (apps, firmwareUpdateOpened) => {
+      setRestoreApps(apps);
+      setResult(null);
+      setDrawer(); // Nb prevent zombie flows.
+      if (!firmwareUpdateOpened) setHasReset(true);
+    },
+    [setDrawer],
+  );
   const dispatch = useDispatch();
   const refreshDeviceInfo = useCallback(() => {
     if (result?.device) {
