@@ -1,8 +1,9 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import Button from "~/renderer/components/Button";
+import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { openModal } from "../actions/modals";
+
 type Props = ButtonProps & {
   icon?: boolean;
   inverted?: boolean;
@@ -20,12 +21,14 @@ type Props = ButtonProps & {
   small?: boolean;
   title?: React.ReactNode;
 };
+
 const TroubleshootNetworkBtn = ({ primary = true, small = true, title, ...rest }: Props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const troubleshootNetwork = useCallback(async () => {
-    dispatch(openModal("MODAL_TROUBLESHOOT_NETWORK"));
+    dispatch(openModal("MODAL_TROUBLESHOOT_NETWORK", null));
   }, [dispatch]);
+
   const text = title || t("settings.troubleshootNetwork.btn");
   return (
     <Button
