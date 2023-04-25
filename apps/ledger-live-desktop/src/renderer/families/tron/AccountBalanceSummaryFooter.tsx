@@ -5,7 +5,6 @@ import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
@@ -50,7 +49,7 @@ type Props = {
   account: any;
   countervalue: any;
 };
-const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
+const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   if (!account.tronResources) return null;

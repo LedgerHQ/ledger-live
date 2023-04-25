@@ -16,7 +16,6 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import isEqual from "lodash/isEqual";
 import logger from "../logger";
 import { State } from ".";
-
 import { hiddenNftCollectionsSelector } from "./settings";
 import { Handlers } from "./types";
 export type AccountsState = Account[];

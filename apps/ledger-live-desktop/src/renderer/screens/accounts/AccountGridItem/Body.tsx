@@ -55,5 +55,5 @@ function Body({ account, range }: Props) {
     </Box>
   );
 }
-const MemoedBody: React$ComponentType<Props> = React.memo(Body);
+const MemoedBody: React.ComponentType<Props> = React.memo(Body);
 export default MemoedBody;

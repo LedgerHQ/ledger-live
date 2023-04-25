@@ -7,7 +7,7 @@ import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 const renderItem = ({
-  data: { validatorAddress, validator, formattedPendingRewards, status },
+  data: { validatorAddress, validator, formattedPendingRewards },
 }: {
   data: CosmosMappedDelegation;
 }) => {

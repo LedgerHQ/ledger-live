@@ -2,9 +2,8 @@ import React from "react";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import { useTranslation } from "react-i18next";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import styled from "styled-components";
-const Wrapper: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   justifyContent: "center",
   alignItems: "center",
 }))`

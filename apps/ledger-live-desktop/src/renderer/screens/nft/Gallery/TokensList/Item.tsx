@@ -3,7 +3,6 @@ import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { Account } from "@ledgerhq/types-live";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { getNFTById } from "~/renderer/reducers/accounts";
 import Box, { Card } from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -15,7 +14,7 @@ import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import NFTContextMenu from "~/renderer/components/ContextMenu/NFTContextMenu";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
-const Wrapper: ThemedComponent<{}> = styled(Card)`
+const Wrapper = styled(Card)`
   &.disabled {
     pointer-events: none;
   }
@@ -31,7 +30,7 @@ const Wrapper: ThemedComponent<{}> = styled(Card)`
     background: ${p => p.theme.colors.palette.action.hover};
   }
 `;
-const Dots: ThemedComponent<{}> = styled.div`
+const Dots = styled.div`
   justify-content: flex-end;
   display: flex;
   align-items: center;
@@ -42,7 +41,7 @@ const Dots: ThemedComponent<{}> = styled.div`
     color: ${p => p.theme.colors.palette.text.shade40};
   }
 `;
-const TitleContainer: ThemedComponent<{}> = styled(Text)`
+const TitleContainer = styled(Text)`
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

@@ -1,6 +1,5 @@
 import React, { memo } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Account, NFT } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import { useSelector } from "react-redux";
@@ -19,7 +18,7 @@ const Container: ThemedComponent<{
   grid-gap: ${p => (p.mode === "list" ? 10 : 18)}px;
   grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
 `;
-const TokensList = ({ account, isLoading, nfts, onHideCollection }: Props) => {
+const TokensList = ({ account, nfts, onHideCollection }: Props) => {
   const nftsViewMode = useSelector(nftsViewModeSelector);
   return (
     <Container mb={20} mode={nftsViewMode}>

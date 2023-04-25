@@ -12,8 +12,8 @@ import Box from "~/renderer/components/Box";
 import useTheme from "~/renderer/hooks/useTheme";
 import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrencyIcon";
 import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const OptionContainer: ThemedComponent<{}> = styled.div`
+
+const OptionContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -32,21 +32,21 @@ const AccountRowContainer: ThemedComponent<{
   flex-grow: 1;
   justify-content: space-between;
 `;
-const NestingIndicator: ThemedComponent<{}> = styled.div`
+const NestingIndicator = styled.div`
   padding-right: 16px;
   border-left: ${p => p.theme.colors.palette.text.shade40} 1px solid;
   margin-left: 6px;
 `;
-const Left: ThemedComponent<{}> = styled.div`
+const Left = styled.div`
   display: flex;
   flex-direction: row;
   flex: 1;
 `;
-const Right: ThemedComponent<{}> = styled.div`
+const Right = styled.div`
   display: flex;
   flex-direction: row;
 `;
-const IconContainer: ThemedComponent<{}> = styled.div`
+const IconContainer = styled.div`
   padding-right: 6px;
 `;
 function AccountRow({

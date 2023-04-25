@@ -24,6 +24,9 @@ const appManifestNotFoundError = new Error("App not found"); // FIXME move this 
 export function BuyAndSellScreen({ route }: Props) {
   const { theme } = useTheme();
   const { platform: appId, ...params } = route.params || {};
+  const searchParams = route.path
+    ? new URL("ledgerlive://" + route.path).searchParams
+    : new URLSearchParams();
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
@@ -39,6 +42,7 @@ export function BuyAndSellScreen({ route }: Props) {
           theme,
           lang: locale,
           ...params,
+          ...Object.fromEntries(searchParams.entries()),
         }}
       />
     </>

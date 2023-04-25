@@ -4,7 +4,7 @@ import { expect } from "@playwright/test";
 import { SettingsPage } from "../../models/SettingsPage";
 import { Layout } from "../../models/Layout";
 import { PostOnboarding } from "../../models/PostOnboarding";
-import { padStart } from "lodash";
+import padStart from "lodash/padStart";
 
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel", // to have a non empty portfolio page and potentially detect layout issues with the post onboarding banner

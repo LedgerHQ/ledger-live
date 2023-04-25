@@ -224,7 +224,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   } = status;
 
   useEffect(() => {
-    if (deviceInfo) {
+    if (deviceInfo && device) {
       dispatch(
         setLastSeenDeviceInfo({
           modelId: device!.modelId,

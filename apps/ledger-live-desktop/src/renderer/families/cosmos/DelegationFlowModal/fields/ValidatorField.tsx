@@ -8,7 +8,6 @@ import Text from "~/renderer/components/Text";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Account } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { CosmosDelegation, CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
@@ -21,14 +20,7 @@ type Props = {
   onChangeValidator: (a: { address: string }) => void;
   chosenVoteAccAddr: string;
 };
-const ValidatorField = ({
-  account,
-  status,
-  t,
-  delegations,
-  onChangeValidator,
-  chosenVoteAccAddr,
-}: Props) => {
+const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
   const [showAll, setShowAll] = useState(false);
   const [search, setSearch] = useState("");
   const unit = getAccountUnit(account);
@@ -38,7 +30,7 @@ const ValidatorField = ({
   const chosenValidator = useMemo(() => {
     return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];
   }, [validators, chosenVoteAccAddr]);
-  const renderItem = (validator: CosmosValidatorItem, validatorIdx: number) => {
+  const renderItem = (validator: CosmosValidatorItem) => {
     return (
       <ValidatorRow
         currency={account.currency}
@@ -76,7 +68,7 @@ const ValidatorField = ({
     </>
   );
 };
-const ValidatorsFieldContainer: ThemedComponent<{}> = styled(Box)`
+const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
 `;

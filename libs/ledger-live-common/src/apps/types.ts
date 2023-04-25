@@ -32,6 +32,46 @@ export type ListAppsEvent =
   | {
       type: "allow-manager-requested";
     };
+export type InlineAppInstallEvent =
+  | {
+      type: "device-permission-requested";
+      wording: string;
+    }
+  | {
+      type: "listing-apps";
+    }
+  | {
+      type: "listed-apps";
+      installQueue: string[];
+    }
+  | {
+      type: "device-permission-granted";
+    }
+  | {
+      type: "app-not-installed";
+      appName: string;
+      appNames: string[];
+    }
+  | {
+      type: "some-apps-skipped";
+      skippedAppOps: SkippedAppOp[];
+    }
+  | {
+      type: "inline-install";
+      progress: number;
+      itemProgress: number;
+      currentAppOp: AppOp;
+      installQueue: string[];
+    };
+
+export type ListAppResponse = Array<{
+  name: string;
+  hash: string;
+  hash_code_data: string; // To match HSM response.
+  blocks?: number;
+  flags?: number;
+}>;
+
 export type ListAppsResult = {
   appByName: Record<string, App>;
   appsListNames: string[];
@@ -138,6 +178,7 @@ export type RunnerEvent =
       type: "runSuccess";
       appOp: AppOp;
     };
+
 export type AppData = {
   currency: CryptoCurrency | null | undefined;
   name: string;

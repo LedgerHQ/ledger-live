@@ -27,7 +27,6 @@ export default function AccountBalanceSummary({
   chartColor,
   setCountervalueFirst,
   mainAccount,
-  parentAccount,
 }: Props) {
   const [range] = useTimeRange();
   const counterValue = useSelector(counterValueCurrencySelector);

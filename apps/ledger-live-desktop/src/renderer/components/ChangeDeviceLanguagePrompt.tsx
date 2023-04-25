@@ -1,7 +1,6 @@
 import React from "react";
 import { withV3StyleProvider } from "../styles/StyleProviderV3";
 import { Flex, Text, Button, Divider } from "@ledgerhq/react-ui";
-
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
 import DeviceIllustration from "./DeviceIllustration";

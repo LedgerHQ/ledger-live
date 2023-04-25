@@ -100,10 +100,17 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   if (!isFocused) return null;
 
   return (
-    <Flex flex={1} pt={(isExperimental ? ExperimentalHeaderHeight : 0) + 70}>
+    <Flex
+      /**
+       * NB: not using SafeAreaView because it flickers during navigation
+       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
+       */
+      flex={1}
+      pt={insets.top + (isExperimental ? ExperimentalHeaderHeight : 0)}
+    >
       <TrackScreen category="Manager" name="ChooseDevice" />
       <Flex px={16} mb={8}>
-        <Text fontWeight="semiBold" variant="h4" testID="manager-title">
+        <Text mt={3} fontWeight="semiBold" variant="h4" testID="manager-title">
           <Trans i18nKey="manager.title" />
         </Text>
       </Flex>

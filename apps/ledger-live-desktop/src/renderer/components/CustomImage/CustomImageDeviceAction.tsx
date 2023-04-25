@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { setLastSeenCustomImage, clearLastSeenCustomImage } from "~/renderer/actions/settings";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -48,7 +48,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   } = props;
   const type: Theme["theme"] = useTheme("colors.palette.type");
   const device = getEnv("MOCK") ? mockedDevice : props.device;
-  const commandRequest = hexImage;
+  const commandRequest = useMemo(() => ({ hexImage }), [hexImage]);
 
   const { t } = useTranslation();
   const dispatch = useDispatch();

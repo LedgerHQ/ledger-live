@@ -6,10 +6,9 @@ import { Operation } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { colors } from "~/renderer/styles/theme";
 import perFamilyOperationDetails from "~/renderer/generated/operationDetails";
-const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Cell = styled(Box).attrs(() => ({
   px: 4,
   horizontal: false,
   alignItems: "flex-end",

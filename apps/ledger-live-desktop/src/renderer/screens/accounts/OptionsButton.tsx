@@ -16,8 +16,8 @@ import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import IconSend from "~/renderer/icons/Send";
 import { openModal } from "~/renderer/actions/modals";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Separator: ThemedComponent<{}> = styled.div`
+
+const Separator = styled.div`
   background-color: ${p => p.theme.colors.palette.divider};
   height: 1px;
   margin-top: 8px;

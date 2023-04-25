@@ -16,7 +16,7 @@ import Image from "~/renderer/components/Image";
 import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   currency: CryptoCurrency;
   validator: ValidatorAppValidator;

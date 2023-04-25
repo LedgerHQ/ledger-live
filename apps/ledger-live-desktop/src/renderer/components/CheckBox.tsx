@@ -1,10 +1,9 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Text } from "@ledgerhq/react-ui";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Check from "~/renderer/icons/Check";
 import { Tabbable } from "~/renderer/components/Box";
-const Container: ThemedComponent<{}> = styled.div`
+const Container = styled.div`
   display: inline-flex;
   column-gap: ${p => p.theme.space[5]}px;
   align-items: center;

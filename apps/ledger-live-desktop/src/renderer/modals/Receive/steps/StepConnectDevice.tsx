@@ -34,14 +34,7 @@ export default function StepConnectDevice({
     </>
   );
 }
-export function StepConnectDeviceFooter({
-  t,
-  transitionTo,
-  onSkipConfirm,
-  device,
-  eventType,
-  currencyName,
-}: StepProps) {
+export function StepConnectDeviceFooter({ t, onSkipConfirm, eventType, currencyName }: StepProps) {
   return (
     <Box horizontal flow={2}>
       <TrackPage

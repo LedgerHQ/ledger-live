@@ -5,7 +5,7 @@ import { from } from "rxjs";
 import invariant from "invariant";
 import Btc from "@ledgerhq/hw-app-btc";
 import network from "@ledgerhq/live-common/network";
-import { findCurrencyExplorer } from "@ledgerhq/live-common/api/Ledger";
+import { findCurrencyExplorer } from "@ledgerhq/live-common/explorer";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const command = async (transport, currencyId, hash) => {

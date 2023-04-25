@@ -83,7 +83,6 @@ function FromRow({
   isMaxEnabled,
   toggleMax,
   fromAmountError,
-  provider,
   isSendMaxLoading,
   updateSelectedRate,
 }: Props) {

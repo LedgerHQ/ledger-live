@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Card } from "~/renderer/components/Box";
 import { useDispatch, useSelector } from "react-redux";
 import { nftsViewModeSelector } from "~/renderer/reducers/settings";

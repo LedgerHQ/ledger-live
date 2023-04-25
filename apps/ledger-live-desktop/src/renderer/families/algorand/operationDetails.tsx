@@ -8,7 +8,6 @@ import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Operation, Account } from "@ledgerhq/types-live";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   OpDetailsTitle,
   OpDetailsData,
@@ -34,7 +33,7 @@ const Spacer = styled(Box)`
   flex: 1 0 0%;
   transition all .2s ease-in-out;
 `;
-const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Cell = styled(Box).attrs(() => ({
   pl: 4,
   horizontal: true,
   alignItems: "center",
@@ -56,7 +55,7 @@ type OperationDetailsExtraProps = {
   type: string;
   account: Account;
 };
-const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps) => {
+const OperationDetailsExtra = ({ extra, account }: OperationDetailsExtraProps) => {
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
   return (
@@ -173,7 +172,7 @@ type ConfirmationCellProps = {
   hasFailed: boolean;
   t: TFunction;
   withTooltip: boolean;
-  style?: any;
+  style?: React.CSSProperties;
 };
 const ConfirmationCell = ({
   operation,

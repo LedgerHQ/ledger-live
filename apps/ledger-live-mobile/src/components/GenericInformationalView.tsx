@@ -94,12 +94,11 @@ const GenericInformationalView: React.FC<Props> = ({
       <Flex mt={8} mb={9} flexDirection="column">
         <Button
           type="main"
+          size="large"
           onPress={onPrimaryButtonPress}
           event={primaryButtonEvent}
         >
-          <Text variant="body" color="neutral.c00" fontSize={5}>
-            {primaryButtonLabel}
-          </Text>
+          {primaryButtonLabel}
         </Button>
       </Flex>
     </Flex>

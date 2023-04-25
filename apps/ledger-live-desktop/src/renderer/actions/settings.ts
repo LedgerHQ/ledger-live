@@ -271,7 +271,7 @@ export const setLastSeenDevice = ({ deviceInfo }: { deviceInfo: DeviceInfo }) =>
     deviceInfo,
   },
 });
-export const setDeepLinkUrl = (url: string) => ({
+export const setDeepLinkUrl = (url?: string | null) => ({
   type: "SET_DEEPLINK_URL",
   payload: url,
 });

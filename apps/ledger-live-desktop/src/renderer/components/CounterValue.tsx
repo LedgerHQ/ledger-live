@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import FormattedVal from "~/renderer/components/FormattedVal";
+import FormattedVal, { OwnProps as FormattedValProps } from "~/renderer/components/FormattedVal";
 import ToolTip from "./Tooltip";
 import { Trans } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -26,7 +26,7 @@ type Props = {
   placeholderStyle?: {
     [key: string]: string | number;
   };
-};
+} & Partial<FormattedValProps>;
 export const NoCountervaluePlaceholder = ({
   placeholder,
   style = {},

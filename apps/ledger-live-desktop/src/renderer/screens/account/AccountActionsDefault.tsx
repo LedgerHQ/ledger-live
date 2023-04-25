@@ -5,7 +5,6 @@ import IconSend from "~/renderer/icons/Send";
 import IconSwap from "~/renderer/icons/Swap";
 import IconExchange from "~/renderer/icons/Exchange";
 import IconSell from "~/renderer/icons/Plus";
-
 import Button from "~/renderer/components/ButtonV3";
 import { Flex } from "@ledgerhq/react-ui";
 type Props = {
