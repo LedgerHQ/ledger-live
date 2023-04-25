@@ -1,14 +1,8 @@
 import React from "react";
-import {
-  Flex,
-  Text,
-  InfiniteLoader,
-  FlexBoxProps,
-  VerticalTimeline,
-  Icons,
-} from "@ledgerhq/react-ui";
+import { Flex, Text, InfiniteLoader, VerticalTimeline, Icons } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 import InfoCircle from "~/renderer/icons/InfoCircle";
+import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex";
 
 export const StepText = styled(VerticalTimeline.BodyText)`
   white-space: pre-wrap;
