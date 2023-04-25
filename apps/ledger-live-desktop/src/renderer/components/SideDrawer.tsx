@@ -12,6 +12,7 @@ import { Base as Button } from "./Button";
 import Box from "./Box/Box";
 import { createPortal } from "react-dom";
 import { modalsStateSelector } from "~/renderer/reducers/modals";
+import { useDeviceBlocked } from "./DeviceAction/DeviceBlocker";
 const TouchButton = styled.button`
   border: none;
   background-color: rgba(0, 0, 0, 0);
@@ -122,6 +123,7 @@ export type DrawerProps = {
   forceDisableFocusTrap?: boolean;
 };
 const domNode = document.getElementById("modals");
+
 export function SideDrawer({
   children,
   isOpen = false,
@@ -133,14 +135,22 @@ export function SideDrawer({
   forceDisableFocusTrap = false,
   ...props
 }: DrawerProps) {
+  const deviceBlocked = useDeviceBlocked();
+
   const onKeyPress = useCallback(
     e => {
-      if (isOpen && !preventBackdropClick && e.key === "Escape" && onRequestClose) {
+      if (
+        isOpen &&
+        !preventBackdropClick &&
+        e.key === "Escape" &&
+        onRequestClose &&
+        !deviceBlocked
+      ) {
         e.preventDefault();
         onRequestClose(e);
       }
     },
-    [onRequestClose, isOpen, preventBackdropClick],
+    [isOpen, preventBackdropClick, onRequestClose, deviceBlocked],
   );
   useEffect(() => {
     window.addEventListener("keydown", onKeyPress, false);
@@ -234,7 +244,7 @@ export function SideDrawer({
                       </Text>
                     )}
 
-                    {onRequestClose ? (
+                    {onRequestClose && !deviceBlocked ? (
                       <TouchButton onClick={onRequestClose} data-test-id="drawer-close-button">
                         <IconCross size={16} />
                       </TouchButton>
@@ -247,7 +257,7 @@ export function SideDrawer({
               </DrawerContent>
               <DrawerBackdrop
                 state={state}
-                onClick={preventBackdropClick ? undefined : onRequestClose}
+                onClick={preventBackdropClick || deviceBlocked ? undefined : onRequestClose}
                 data-test-id="drawer-overlay"
               />
             </DrawerContainer>
