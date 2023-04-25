@@ -59,6 +59,7 @@
   },
   "common": {
     "never": "Never",
+    "new": "New",
     "apply": "Apply",
     "done": "Done",
     "confirm": "Confirm",
@@ -215,6 +216,7 @@
     "earn": "Earn",
     "exchange": "Buy / Sell",
     "swap": "Swap",
+    "refer": "Refer a friend",
     "lend": "Lend",
     "catalog": "Discover",
     "market": "Market",
