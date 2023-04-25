@@ -10,15 +10,16 @@ import Delta from "~/renderer/screens/accounts/AccountRowItem/Delta";
 import Countervalue from "~/renderer/screens/accounts/AccountRowItem/Countervalue";
 import Star from "~/renderer/components/Stars/Star";
 import { TableRow } from "./TableContainer";
+
 type Props = {
   account: AccountLike;
   nested?: boolean;
   disableRounding?: boolean;
-  index: number;
   parentAccount: Account;
   onClick: (b: AccountLike, a: Account) => void;
   range: PortfolioRange;
 };
+
 const NestedRow = styled(Box)`
   flex: 1;
   font-weight: 600;
@@ -37,6 +38,7 @@ const NestedRow = styled(Box)`
     background: ${p => p.theme.colors.palette.action.hover};
   }
 `;
+
 class TokenRow extends PureComponent<Props> {
   onClick = () => {
     const { account, parentAccount, onClick } = this.props;
@@ -44,12 +46,12 @@ class TokenRow extends PureComponent<Props> {
   };
 
   render() {
-    const { account, range, index, nested, disableRounding } = this.props;
+    const { account, range, nested, disableRounding } = this.props;
     const currency = getAccountCurrency(account);
     const unit = currency.units[0];
     const Row = nested ? NestedRow : TableRow;
     return (
-      <Row className="token-row" index={index} onClick={this.onClick} tabIndex="-1">
+      <Row className="token-row" onClick={this.onClick} tabIndex={-1}>
         <Header nested={nested} account={account} />
         <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
         <Countervalue account={account} currency={currency} range={range} />
