@@ -24,6 +24,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 type Props = {
   device?: Device | null | undefined;
   hexImage: string;
+  padImage?: boolean;
   source: HTMLImageElement["src"];
   onStart?: () => void;
   onResult?: () => void;
@@ -45,10 +46,11 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     remountMe,
     onTryAnotherImage,
     blockNavigation,
+    padImage,
   } = props;
   const type: Theme["theme"] = useTheme("colors.palette.type");
   const device = getEnv("MOCK") ? mockedDevice : props.device;
-  const commandRequest = useMemo(() => ({ hexImage }), [hexImage]);
+  const commandRequest = useMemo(() => ({ hexImage, padImage }), [hexImage, padImage]);
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
