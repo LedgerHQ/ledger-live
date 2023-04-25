@@ -2,7 +2,6 @@ import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   allLanguages,
   prodStableLanguages,
@@ -61,9 +60,6 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
 
   const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<boolean>(false);
 
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
-  // TODO: reactivate this feature flag once QA is done
-
   const { availableLanguages: availableDeviceLanguages } = useAvailableLanguagesForDevice(
     lastSeenDevice?.deviceInfo,
   );
@@ -108,7 +104,6 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
         langAvailableOnDevice &&
         deviceLanguageId !== undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        deviceLocalizationFeatureFlag?.enabled &&
         !disableLanguagePrompt
       ) {
         track("Page LiveLanguageChange DeviceLanguagePrompt", {
@@ -122,7 +117,6 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
     [
       lastSeenDevice?.deviceInfo.languageId,
       availableDeviceLanguages,
-      deviceLocalizationFeatureFlag?.enabled,
       disableLanguagePrompt,
       dispatch,
     ],
