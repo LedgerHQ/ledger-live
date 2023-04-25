@@ -1,5 +1,6 @@
 import { ipcRenderer, IpcRendererEvent } from "electron";
 import React, { Component } from "react";
+
 export type UpdateStatus =
   | "idle"
   | "checking-for-update"
@@ -11,29 +12,34 @@ export type UpdateStatus =
   | "check-success"
   | "downloading-update"
   | "error";
+
 export type UpdaterContextType = {
   status: UpdateStatus;
   downloadProgress: number;
   version: string | undefined | null;
-  quitAndInstall: () => Promise<void>;
-  downloadUpdate: () => Promise<void>;
+  quitAndInstall: () => void;
+  downloadUpdate: () => void;
   setStatus: (a: UpdateStatus) => void;
   error: Error | undefined | null;
 };
+
 export type MaybeUpdateContextType = UpdaterContextType | undefined | null;
+
 type UpdaterProviderProps = {
-  children: any;
+  children: React.ReactNode;
 };
+
 type UpdaterProviderState = {
   status: UpdateStatus;
   downloadProgress: number;
   version?: string;
   error: Error | undefined | null;
 };
+
 export const UpdaterContext = React.createContext<MaybeUpdateContextType>(null);
 class Provider extends Component<UpdaterProviderProps, UpdaterProviderState> {
-  constructor() {
-    super();
+  constructor(props: UpdaterProviderProps) {
+    super(props);
     ipcRenderer.on("updater", this.listener);
     if (!__DEV__) {
       ipcRenderer.send("updater", "init");
@@ -51,7 +57,7 @@ class Provider extends Component<UpdaterProviderProps, UpdaterProviderState> {
   }
 
   listener = (
-    e: IpcRendererEvent,
+    _e: IpcRendererEvent,
     args: {
       status: UpdateStatus;
       payload?: {
@@ -108,8 +114,8 @@ class Provider extends Component<UpdaterProviderProps, UpdaterProviderState> {
     return <UpdaterContext.Provider value={value}>{this.props.children}</UpdaterContext.Provider>;
   }
 }
-export const withUpdaterContext = (ComponentToDecorate: React.ComponentType<any>) => {
-  const WrappedUpdater = (props: any) => (
+export const withUpdaterContext = <Props,>(ComponentToDecorate: React.ComponentType<Props>) => {
+  const WrappedUpdater = (props: Props) => (
     <UpdaterContext.Consumer>
       {context => <ComponentToDecorate {...props} context={context} />}
     </UpdaterContext.Consumer>
