@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { log } from "@ledgerhq/logs";
@@ -8,10 +8,10 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import Button from "~/renderer/components/Button";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import CheckCircle from "~/renderer/icons/CheckCircle";
 import { StepProps } from "../";
+import { context } from "~/renderer/drawers/Provider";
+import { BoxedIcon, Button, Icons } from "@ledgerhq/react-ui";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -46,15 +46,11 @@ const StepConfirmation = ({ error, appsToBeReinstalled }: StepProps) => {
   return (
     <Container data-test-id="firmware-update-done">
       <TrackPage category="Manager" name="FirmwareConfirmation" />
-      <Box mx={7} color="positiveGreen" my={4}>
-        <CheckCircle size={44} />
-      </Box>
-      <Title>{t("manager.modal.successTitle")}</Title>
+      <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c50" size={64} iconSize={24} />
+      <Title mt={9}>{t("manager.modal.successTitle")}</Title>
       <Box mt={2} mb={5}>
         <Text ff="Inter|Regular" fontSize={4} color="palette.text.shade80">
-          {appsToBeReinstalled
-            ? t("manager.modal.successTextApps")
-            : t("manager.modal.successTextNoApps")}
+          {t("manager.modal.successTextNoApps")}
         </Text>
       </Box>
       <Box mx={7} />
@@ -70,27 +66,25 @@ export const StepConfirmFooter = ({
 }: StepProps) => {
   const { t } = useTranslation();
   const history = useHistory();
+  const { setDrawer } = useContext(context);
 
   const onCloseReload = useCallback(() => {
     onCloseModal();
     if (error instanceof UserRefusedFirmwareUpdate) {
       history.push("/manager/reload");
+      setDrawer();
     }
-  }, [error, history, onCloseModal]);
+  }, [error, history, onCloseModal, setDrawer]);
 
   if (error) {
     const isUserRefusedFirmwareUpdate = error instanceof UserRefusedFirmwareUpdate;
     return (
       <>
-        <Button
-          id="firmware-update-completed-close-button"
-          primary={!isUserRefusedFirmwareUpdate}
-          onClick={onCloseReload}
-        >
+        <Button variant={!isUserRefusedFirmwareUpdate ? "main" : undefined} onClick={onCloseReload}>
           {t("common.close")}
         </Button>
         {isUserRefusedFirmwareUpdate ? (
-          <Button id="firmware-update-completed-restart-button" primary onClick={() => onRetry()}>
+          <Button variant="main" onClick={() => onRetry()}>
             {t("manager.modal.cancelReinstallCTA")}
           </Button>
         ) : null}
@@ -101,17 +95,8 @@ export const StepConfirmFooter = ({
   return (
     <>
       <Track event={"FirmwareUpdatedClose"} onUnmount />
-      <Button id="firmware-update-completed-close-button" onClick={() => onCloseModal()}>
-        {t("common.close")}
-      </Button>
-      <Button
-        id="firmware-update-completed-reinstall-button"
-        primary
-        onClick={() => onCloseModal(appsToBeReinstalled)}
-      >
-        {appsToBeReinstalled
-          ? t("manager.modal.sucessCTAApps")
-          : t("manager.modal.SuccessCTANoApps")}
+      <Button variant="main" onClick={() => onCloseModal(appsToBeReinstalled)}>
+        {t("manager.modal.SuccessCTANoApps")}
       </Button>
     </>
   );

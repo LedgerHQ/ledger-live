@@ -3,7 +3,6 @@ import { from } from "rxjs";
 import { timeout } from "rxjs/operators";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -39,8 +38,6 @@ const StepUpdating = ({
   transitionTo,
   setUpdatedDeviceInfo,
 }: Props) => {
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
-
   useEffect(() => {
     const sub = (getEnv("MOCK")
       ? mockedEventEmitter()
@@ -54,9 +51,7 @@ const StepUpdating = ({
         next: setUpdatedDeviceInfo,
         complete: () => {
           const shouldGoToLanguageStep =
-            firmware &&
-            isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
-            deviceLocalizationFeatureFlag?.enabled;
+            firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
           transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
         },
         error: (error: Error) => {
@@ -70,14 +65,7 @@ const StepUpdating = ({
         sub.unsubscribe();
       }
     };
-  }, [
-    setError,
-    transitionTo,
-    firmware,
-    deviceModelId,
-    setUpdatedDeviceInfo,
-    deviceLocalizationFeatureFlag?.enabled,
-  ]);
+  }, [setError, transitionTo, firmware, deviceModelId, setUpdatedDeviceInfo]);
 
   return (
     <Container>
