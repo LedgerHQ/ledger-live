@@ -197,7 +197,6 @@
     "@babel/core": "^7.21.0",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@babel/plugin-transform-named-capturing-groups-regex": "^7.16.8",
-    "@babel/preset-typescript": "^7.15.0",
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-react": "^7.13.13",
     "@babel/runtime": "^7.12.5",
