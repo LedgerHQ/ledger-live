@@ -58,7 +58,7 @@ export default function NotificationCenterNavigator() {
           title: t("notificationCenter.news.title"),
           headerRight: () => (
             <Flex flexDirection="row">
-              {incidents.length === 0 && (
+              {incidents.length > 0 && (
                 <TouchableOpacity
                   style={{ marginRight: space[6] }}
                   onPress={goToStatusCenter}
