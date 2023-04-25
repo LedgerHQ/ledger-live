@@ -1,12 +1,10 @@
 import React, { memo, useMemo } from "react";
-
 import { Trans } from "react-i18next";
 import { useDomain } from "@ledgerhq/domain-service/index";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-
 import Ellipsis from "~/renderer/components/Ellipsis";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";

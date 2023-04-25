@@ -89,15 +89,7 @@ const Receive1ShareAddress = ({
     </>
   );
 };
-const Receive2Device = ({
-  onVerify,
-  name,
-  device,
-}: {
-  onVerify: () => void;
-  name: string;
-  device: any;
-}) => {
+const Receive2Device = ({ name, device }: { onVerify: () => void; name: string; device: any }) => {
   const type = useTheme("colors.palette.type");
   return (
     <>

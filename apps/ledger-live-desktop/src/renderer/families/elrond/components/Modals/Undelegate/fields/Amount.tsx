@@ -69,7 +69,7 @@ const ErrorDisplay = styled(Box)`
 const WarningDisplay = styled(Box)`
   color: ${p => p.theme.colors.warning};
 `;
-interface Props {
+export interface Props {
   amount: BigNumber;
   initialAmount: BigNumber;
   account: Account;

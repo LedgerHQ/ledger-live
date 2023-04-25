@@ -17,15 +17,15 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import GridListToggle from "./GridListToggle";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const SpinnerContainer: ThemedComponent<{}> = styled.div`
+
+const SpinnerContainer = styled.div`
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: center;
   padding: 20px;
 `;
-const SpinnerBackground: ThemedComponent<{}> = styled.div`
+const SpinnerBackground = styled.div`
   background: ${p => p.theme.colors.palette.background.paper};
   border-radius: 100%;
   padding: 2px;
@@ -36,7 +36,7 @@ const SpinnerBackground: ThemedComponent<{}> = styled.div`
   justify-content: center;
   border: 2px solid ${p => p.theme.colors.palette.background.paper};
 `;
-const ClickableCollectionName: ThemedComponent<{}> = styled(Box)`
+const ClickableCollectionName = styled(Box)`
   &:hover {
     cursor: pointer;
   }

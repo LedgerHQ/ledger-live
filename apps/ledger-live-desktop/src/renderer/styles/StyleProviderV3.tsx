@@ -1,9 +1,8 @@
 import "@ledgerhq/react-ui/assets/fonts";
 import React, { useMemo } from "react";
-import { StyledComponent, ThemeProvider, useTheme } from "styled-components";
-import defaultTheme, { Theme } from "./theme";
+import { DefaultTheme, ThemeProvider, useTheme } from "styled-components";
+import defaultTheme from "./theme";
 import v2Palettes from "./palettes";
-
 import {
   GlobalStyle,
   defaultTheme as v3DefaultTheme,
@@ -15,10 +14,9 @@ type Props = {
   selectedPalette: "light" | "dark";
 };
 
-export type ThemedComponent<T> = StyledComponent<T, Theme, unknown>;
-
 const StyleProviderV3 = ({ children, selectedPalette }: Props) => {
-  const theme: Theme = useMemo(
+  // @ts-expect-error This is a hack to get the v2 palette in the v3 theme
+  const theme: DefaultTheme = useMemo(
     () => ({
       ...defaultTheme,
       ...v3DefaultTheme,
@@ -42,7 +40,7 @@ const StyleProviderV3 = ({ children, selectedPalette }: Props) => {
 };
 
 export const withV3StyleProvider = <T,>(Component: React.ComponentType<T>) => {
-  const WrappedComponent = (props: T) => {
+  const WrappedComponent = (props: T & { children?: React.ReactNode }) => {
     const theme = useTheme();
 
     return (

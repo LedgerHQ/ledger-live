@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { supportedCountervalues, SupportedCoutervaluesData } from "~/renderer/reducers/settings";
-
 import Dropdown from "./DropDown";
 import Track from "~/renderer/analytics/Track";
 import { useTranslation } from "react-i18next";

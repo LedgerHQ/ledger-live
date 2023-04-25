@@ -24,11 +24,10 @@ import { rgba } from "~/renderer/styles/helpers";
 import CounterValue from "~/renderer/components/CounterValue";
 import Alert from "~/renderer/components/Alert";
 import NFTSummary from "~/renderer/screens/nft/Send/Summary";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-const FromToWrapper: ThemedComponent<{}> = styled.div``;
-const Circle: ThemedComponent<{}> = styled.div`
+const FromToWrapper = styled.div``;
+const Circle = styled.div`
   height: 32px;
   width: 32px;
   border-radius: 32px;
@@ -39,13 +38,13 @@ const Circle: ThemedComponent<{}> = styled.div`
   justify-content: center;
   margin-right: 12px;
 `;
-const VerticalSeparator: ThemedComponent<{}> = styled.div`
+const VerticalSeparator = styled.div`
   height: 18px;
   background: ${p => p.theme.colors.palette.text.shade20};
   width: 1px;
   margin: 1px 0px 0px 15px;
 `;
-const Separator: ThemedComponent<{}> = styled.div`
+const Separator = styled.div`
   height: 1px;
   background: ${p => p.theme.colors.palette.text.shade20};
   width: 100%;

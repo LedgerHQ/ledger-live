@@ -138,7 +138,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [fromAccount, fromParentAccount, result?.operation],
   );
-  const closeDrawer = useCallback(_ => setDrawer(), []);
+  const closeDrawer = useCallback(() => setDrawer(), []);
   if (error) {
     return (
       <Box height="100%" justifyContent="space-between">

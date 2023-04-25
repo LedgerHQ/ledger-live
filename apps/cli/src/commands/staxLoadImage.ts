@@ -15,7 +15,7 @@ const exec = async (opts: staxLoadImageJobOpts) => {
   const hexImage = fs.readFileSync(fileInput, "utf-8");
 
   await new Promise<void>((resolve) =>
-      staxLoadImage({ deviceId, hexImage }).subscribe(
+      staxLoadImage({ deviceId, request: { hexImage } }).subscribe(
         (x) => console.log(x),
         (e) => {
           console.error(e);

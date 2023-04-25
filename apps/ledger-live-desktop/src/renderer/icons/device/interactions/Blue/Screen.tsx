@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import useTheme from "~/renderer/hooks/useTheme";
 import colors from "../colors";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const ScreenSVG: ThemedComponent<{}> = styled.svg`
+
+const ScreenSVG = styled.svg`
   overflow: visible;
 
   #Blue-screen {
@@ -14,7 +14,8 @@ const ScreenSVG: ThemedComponent<{}> = styled.svg`
     transition: opacity 200ms;
   }
 `;
-const getScreens = color => ({
+
+const getScreens = (color: string) => ({
   home: (
     <g transform="translate(13, 48)">
       <defs />
@@ -68,9 +69,9 @@ type Props = {
   display?: string;
   active?: boolean;
   error?: boolean;
-};
+} & React.ComponentProps<typeof ScreenSVG>;
 const BlueScreen = ({ active, display, error, ...props }: Props) => {
-  const type = useTheme("colors.palette.type");
+  const type = useTheme("colors.palette.type") as keyof typeof colors;
   const screens = getScreens(error ? "#EA2E49" : colors[type].screenColor);
   return (
     <ScreenSVG {...props} width="83" height="111">
@@ -88,7 +89,7 @@ const BlueScreen = ({ active, display, error, ...props }: Props) => {
           rx="2"
         />
         <g id="Blue-screen-content" opacity={active ? 1 : 0}>
-          {display ? screens[display] : null}
+          {display ? screens[display as keyof typeof screens] : null}
         </g>
       </g>
     </ScreenSVG>

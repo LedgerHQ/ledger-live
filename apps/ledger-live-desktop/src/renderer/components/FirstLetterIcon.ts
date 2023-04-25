@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { color, margin } from "styled-system";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 const isEmoji = label =>
   /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(
     label.substring(0, 2),

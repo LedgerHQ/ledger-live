@@ -14,7 +14,6 @@ import lightEmptyStateAccount from "~/renderer/images/light-empty-state-account.
 import darkEmptyStateAccount from "~/renderer/images/dark-empty-state-account.svg";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import styled from "styled-components";
 import { withRouter } from "react-router-dom";
@@ -43,18 +42,13 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
   const ptxSmartRouting = useFeature("ptxSmartRouting");
 
   // eslint-disable-next-line no-unused-vars
-  const [availableOnBuy, availableOnSell] = useMemo(() => {
+  const availableOnBuy = useMemo(() => {
     if (!rampCatalog.value) {
-      return [false, false];
+      return false;
     }
     const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
-    const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.offRamp,
-    );
-    return [
-      allBuyableCryptoCurrencyIds.includes(currency.id),
-      allSellableCryptoCurrencyIds.includes(currency.id),
-    ];
+
+    return allBuyableCryptoCurrencyIds.includes(currency.id);
   }, [rampCatalog.value, currency.id]);
   const hasTokens =
     mainAccount.subAccounts &&
@@ -154,18 +148,18 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
     </Box>
   );
 }
-const Title: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Title = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 6,
   color: "palette.text.shade100",
 }))``;
-const Description: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Description = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 4,
   color: "palette.text.shade80",
   textAlign: "center",
 }))``;
-const ConnectedEmptyStateAccount: React$ComponentType<OwnProps> = compose(
+const ConnectedEmptyStateAccount: React.ComponentType<OwnProps> = compose(
   connect(null, mapDispatchToProps),
   withRouter,
   withTranslation(),

@@ -200,7 +200,7 @@ const IconWrapperCircle = styled(Box)`
   margin-bottom: 15px;
 `;
 const IconWrapper = styled(Box)`
-  color: ${_ => colors.positiveGreen};
+  color: ${() => colors.positiveGreen};
   align-self: center;
   margin-bottom: 15px;
 `;
@@ -213,7 +213,7 @@ const Title = styled(Box).attrs(() => ({
 }))`
   text-align: center;
 `;
-const ConnectedExportOperations: React$ComponentType<OwnProps> = connect(
+const ConnectedExportOperations: React.ComponentType<OwnProps> = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(ExportOperations);

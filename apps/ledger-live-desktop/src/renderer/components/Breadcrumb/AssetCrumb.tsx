@@ -92,7 +92,7 @@ export default function AssetCrumb() {
         renderItem={renderItem}
         onChange={onAccountSelected}
       >
-        {({ isOpen, value }) =>
+        {({ isOpen }) =>
           activeItem ? (
             <TextLink>
               <CryptoCurrencyIcon size={14} currency={activeItem.currency} />

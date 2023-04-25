@@ -52,10 +52,7 @@ const StepAmount = ({
   parentAccount,
   onChangeTransaction,
   transaction,
-  status,
   error,
-  bridgePending,
-  t,
 }: StepProps) => {
   invariant(
     account && transaction && account.celoResources && account.celoResources.pendingWithdrawals,

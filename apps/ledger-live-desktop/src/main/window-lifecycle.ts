@@ -1,5 +1,5 @@
 import "./setup";
-import { BrowserWindow, screen, shell, app } from "electron";
+import { BrowserWindow, screen, app } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL } from "url";
@@ -118,13 +118,6 @@ export async function createMainWindow(
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
-  // @ts-expect-error Removed in Electron 22. See: https://www.electronjs.org/docs/latest/breaking-changes#removed-webcontents-new-window-event
-  mainWindow.webContents.on("new-window", (event, url) => {
-    const parsedUrl = new URL(url);
-    if (parsedUrl.protocol === "https:" || parsedUrl.protocol === "http:") {
-      event.preventDefault();
-      shell.openExternal(url);
-    }
-  });
+
   return mainWindow;
 }

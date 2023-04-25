@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { rgba } from "~/renderer/styles/helpers";
 import Card from "~/renderer/components/Box/Card";
 import Box from "~/renderer/components/Box";
@@ -22,7 +21,7 @@ const TableHeaderRow: ThemedComponent<any> = styled(Box).attrs(() => ({
 }))`
   border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
 `;
-export const HeaderWrapper: ThemedComponent<{}> = styled.div`
+export const HeaderWrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 10px 20px;
@@ -35,7 +34,7 @@ const TableHeaderTitle: ThemedComponent<any> = styled(Text).attrs(() => ({
 }))`
   font-size: 14px;
 `;
-export const TableRow: ThemedComponent<{}> = styled(Box)`
+export const TableRow = styled(Box)`
   align-items: center;
   flex-direction: row;
   color: #abadb6;

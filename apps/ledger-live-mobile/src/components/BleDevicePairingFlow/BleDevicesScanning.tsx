@@ -207,9 +207,13 @@ const BleDevicesScanning = ({
                   deviceName: `${item.deviceName}`,
                   wired: false,
                   modelId: item.deviceModel.id,
-                  isAlreadyKnown: Boolean(
-                    knownDeviceIds.some(deviceId => deviceId === item.deviceId),
-                  ),
+                  isAlreadyKnown:
+                    !areKnownDevicesPairable &&
+                    Boolean(
+                      knownDeviceIds.some(
+                        deviceId => deviceId === item.deviceId,
+                      ),
+                    ),
                 }))
                 // unknown devices go first, already known devices go last
                 .sort((a, b) =>

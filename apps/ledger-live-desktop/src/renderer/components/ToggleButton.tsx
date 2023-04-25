@@ -2,13 +2,13 @@ import React from "react";
 import styled from "styled-components";
 import { ThemedComponent } from "../styles/StyleProvider";
 import Text from "./Text";
-const MainContainer: ThemedComponent<{}> = styled.div`
+const MainContainer = styled.div`
   display: block;
   width: auto;
   height: 32px;
   position: relative;
 `;
-const Container: ThemedComponent<{}> = styled.div`
+const Container = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: start;
@@ -20,7 +20,7 @@ const Container: ThemedComponent<{}> = styled.div`
   border-radius: 32px;
   overflow: hidden;
 `;
-const IndicatorContainer: ThemedComponent<{}> = styled.div`
+const IndicatorContainer = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: start;
@@ -54,7 +54,7 @@ const Label = styled(Text).attrs(p => ({
 }))`
   transition: color 100ms 100ms ease-out;
 `;
-const OptionButton: ThemedComponent<{}> = styled.button`
+const OptionButton = styled.button`
   flex: 1;
   background-color: transparent;
   border: none;

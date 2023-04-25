@@ -7,7 +7,6 @@ import {
   useNftCollectionMetadata,
 } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 import { SettingsSection as Section, SettingsSectionRow as Row } from "../../SettingsSection";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 import IconCross from "~/renderer/icons/Cross";
@@ -133,7 +132,7 @@ export default function HiddenNftCollections() {
     </Section>
   );
 }
-const IconContainer: ThemedComponent<{}> = styled.div`
+const IconContainer = styled.div`
   color: ${p => p.theme.colors.palette.text.shade60};
   text-align: center;
   &:hover {
@@ -141,7 +140,7 @@ const IconContainer: ThemedComponent<{}> = styled.div`
     color: ${p => p.theme.colors.palette.text.shade40};
   }
 `;
-const HiddenNftCollectionRowContainer: ThemedComponent<{}> = styled(Box).attrs({
+const HiddenNftCollectionRowContainer = styled(Box).attrs({
   alignItems: "center",
   horizontal: true,
   flow: 1,
@@ -153,7 +152,7 @@ const HiddenNftCollectionRowContainer: ThemedComponent<{}> = styled(Box).attrs({
   }
   padding: 14px 6px;
 `;
-const Body: ThemedComponent<{}> = styled(Box)`
+const Body = styled(Box)`
   &:not(:empty) {
     padding: 0 20px;
   }

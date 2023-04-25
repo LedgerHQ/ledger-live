@@ -73,11 +73,11 @@ const Container = styled.div`
   }
 
   &[data-variant="success"] {
-    --ll-checkbox-color: ${(props) => props.theme.colors.success.c100};
+    --ll-checkbox-color: ${(props) => props.theme.colors.success.c50};
   }
 
   &[data-variant="error"] {
-    --ll-checkbox-color: ${(props) => props.theme.colors.error.c100};
+    --ll-checkbox-color: ${(props) => props.theme.colors.error.c50};
   }
 
   &[data-disabled="true"] {

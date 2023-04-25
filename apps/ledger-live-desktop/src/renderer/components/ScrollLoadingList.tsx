@@ -1,9 +1,8 @@
 import React, { useCallback, useState, useRef, memo, useEffect } from "react";
 import debounce from "lodash/debounce";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
-const ScrollContainer: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const ScrollContainer = styled(Box).attrs(p => ({
   vertical: true,
   pl: p.theme.overflow.trackSize,
   mb: -40,

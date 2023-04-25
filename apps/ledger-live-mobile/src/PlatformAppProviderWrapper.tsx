@@ -4,12 +4,14 @@ import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/L
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
+import { Platform } from "react-native";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
 };
 
 const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
+const PLATFORM = Platform.OS === "ios" ? "ios" : "android";
 
 export default function PlatformAppProviderWrapper({
   children,
@@ -31,7 +33,7 @@ export default function PlatformAppProviderWrapper({
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
       parameters={{
         version: getPlatformVersion(),
-        platform: "mobile",
+        platform: PLATFORM,
         private: false,
         allowDebugApps: isDebugAppEnabled,
         allowExperimentalApps: isExperimentalAppEnabled,

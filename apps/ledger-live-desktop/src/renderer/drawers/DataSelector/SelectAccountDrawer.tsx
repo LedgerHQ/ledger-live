@@ -4,8 +4,9 @@ import { useTranslation } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Text from "~/renderer/components/Text";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { AccountList } from "./AccountList";
+import { Observable } from "rxjs7";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 const AccountSelectorDrawerContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -21,7 +22,7 @@ const SelectorContent = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const HeaderContainer: ThemedComponent<any> = styled.div`
+const HeaderContainer = styled.div`
   padding: 40px 0px 32px 0px;
   flex: 0 1 auto;
   width: 100%;

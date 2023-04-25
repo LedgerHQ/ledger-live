@@ -29,7 +29,7 @@ type Props = {
   updateSelection: () => void;
   countdown: boolean;
 };
-const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
+const TableHeader = styled(Box).attrs({
   horizontal: true,
   alignItems: "center",
   ff: "Inter|SemiBold",

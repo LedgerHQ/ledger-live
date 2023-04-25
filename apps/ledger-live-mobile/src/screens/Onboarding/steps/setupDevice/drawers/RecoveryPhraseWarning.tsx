@@ -27,7 +27,7 @@ const OnboardingRecoveryPhraseWarning = () => {
       <ScrollContainer flex={1}>
         <ModalHeader
           Icon={Icons.WarningMedium}
-          iconColor={"warning.c100"}
+          iconColor={"warning.c50"}
           title={t(
             "onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.title",
           )}

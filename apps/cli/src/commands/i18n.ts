@@ -21,7 +21,7 @@ const exec = async (opts: i18nJobOps) => {
 
   if (install) {
     await new Promise<void>((p) =>
-      installLanguage({ deviceId, language}).subscribe(
+      installLanguage({ deviceId, request: { language }}).subscribe(
         (x) => console.log(x),
         (e) => {
           console.error(e);

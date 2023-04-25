@@ -181,7 +181,7 @@ const Body = (props: Props) => {
     </Stepper>
   );
 };
-const C: React$ComponentType<OwnProps> = compose(
+const C: React.ComponentType<OwnProps> = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);

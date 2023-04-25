@@ -7,12 +7,11 @@ import {
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Account, NFTWithMetadata } from "@ledgerhq/types-live";
 import NFTCollectionContextMenu from "~/renderer/components/ContextMenu/NFTCollectionContextMenu";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
-const Container: ThemedComponent<{}> = styled(Box)`
+const Container = styled(Box)`
   &.disabled {
     pointer-events: none;
   }

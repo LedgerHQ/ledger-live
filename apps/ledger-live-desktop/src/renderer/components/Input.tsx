@@ -5,13 +5,12 @@ import noop from "lodash/noop";
 import fontFamily from "~/renderer/styles/styled/fontFamily";
 import Box from "~/renderer/components/Box";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import BigSpinner from "~/renderer/components/BigSpinner";
-const RenderLeftWrapper: ThemedComponent<{}> = styled(Box)`
+const RenderLeftWrapper = styled(Box)`
   align-items: center;
   justify-content: center;
 `;
-const RenderRightWrapper: ThemedComponent<{}> = styled(Box)`
+const RenderRightWrapper = styled(Box)`
   margin-left: -10px;
   display: flex;
   align-items: center;
@@ -102,7 +101,7 @@ const LoadingDisplay = styled(Box)`
   border-radius: 4px;
   padding-right: 10px;
 `;
-export const BaseContainer: ThemedComponent<{}> = styled(Box)``;
+export const BaseContainer = styled(Box)``;
 const Base = styled.input.attrs(() => ({
   fontSize: 4,
 }))`
