@@ -8,6 +8,9 @@ import { reconstructImage } from "~/renderer/components/CustomImage/TestImage";
 type Props = Partial<StepProps> & { onDone: () => void };
 const CLS = ({ onDone, CLSBackup }: Props) => {
   const device = useSelector(getCurrentDevice);
+  const onVoid = () => {
+    // Stay happy CustomImageDeviceAction.
+  };
 
   useEffect(() => {
     if (!CLSBackup) onDone();
@@ -21,8 +24,8 @@ const CLS = ({ onDone, CLSBackup }: Props) => {
       padImage={false}
       onResult={onDone}
       onSkip={onDone}
-      onTryAnotherImage={() => {}}
-      blockNavigation={() => {}}
+      onTryAnotherImage={onVoid}
+      blockNavigation={onVoid}
     />
   ) : null;
 };
