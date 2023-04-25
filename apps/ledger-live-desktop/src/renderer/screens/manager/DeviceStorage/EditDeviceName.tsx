@@ -103,7 +103,16 @@ const EditDeviceName: React.FC<Props> = ({
       flex={1}
       data-test-id="device-rename-container"
     >
-      <Flex flex={1} flexDirection="column" justifyContent="space-between" overflowY="hidden">
+      <Text alignSelf="center" variant="h5Inter" mb={3}>
+        {t("deviceRename.title", { productName })}
+      </Text>
+      <Flex
+        flex={1}
+        px={12}
+        flexDirection="column"
+        justifyContent="space-between"
+        overflowY="hidden"
+      >
         {completed ? (
           <Flex
             flex={1}
@@ -114,18 +123,11 @@ const EditDeviceName: React.FC<Props> = ({
           >
             <BoxedIcon
               Icon={Icons.CheckAloneMedium}
-              iconColor="success.c50"
+              iconColor="success.c60"
               size={64}
               iconSize={24}
             />
-            <Text
-              variant="large"
-              alignSelf="stretch"
-              mx={16}
-              mt={10}
-              textAlign="center"
-              fontSize={22}
-            >
+            <Text variant="large" alignSelf="stretch" mt={9} textAlign="center">
               <TextEllipsis>
                 {t("deviceRename.renamed", {
                   productName,
@@ -135,7 +137,7 @@ const EditDeviceName: React.FC<Props> = ({
             </Text>
           </Flex>
         ) : running ? (
-          <Flex flex={1} alignItems="center" justifyContent="center" p={2}>
+          <Flex flex={1} alignItems="center" justifyContent="center">
             <DeviceAction
               request={request}
               action={action}
@@ -146,11 +148,8 @@ const EditDeviceName: React.FC<Props> = ({
             />
           </Flex>
         ) : (
-          <Flex px={5} flexDirection="column">
-            <Text alignSelf="center" variant="h3Inter" mb={3}>
-              {t("deviceRename.title", { productName })}
-            </Text>
-            <Box flow={1} mb={5} p={5}>
+          <Flex flexDirection="column">
+            <Box flow={1} mb={5}>
               <Label mb={10} htmlFor="currentDeviceName">
                 {t("deviceRename.chooseName")}
               </Label>
@@ -180,6 +179,28 @@ const EditDeviceName: React.FC<Props> = ({
           </Flex>
         )}
       </Flex>
+      {(!running || completed) && (
+        <Flex flexDirection="column" alignSelf="stretch">
+          <Divider variant="light" />
+          <Flex
+            px={12}
+            alignSelf="stretch"
+            flexDirection="row"
+            justifyContent="space-between"
+            pt={4}
+            pb={1}
+          >
+            <Flex flex={1} />
+            <Button
+              variant="main"
+              onClick={completed ? onCloseDrawer : onSubmit}
+              disabled={disableButton}
+            >
+              {completed ? t(`common.close`) : t(`common.continue`)}
+            </Button>
+          </Flex>
+        </Flex>
+      )}
     </Flex>
   );
 };
