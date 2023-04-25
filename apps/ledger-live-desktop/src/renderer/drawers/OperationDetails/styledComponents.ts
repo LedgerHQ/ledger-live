@@ -118,7 +118,7 @@ export const HashContainer = styled.div`
   height: 30px;
   line-height: 30px;
 `;
-export const OpDetailsSideButton = styled(Box).attrs(p => ({
+export const OpDetailsSideButton = styled(Box).attrs(() => ({
   horizontal: true,
   justifyContent: "flex-end",
   alignItems: "center",

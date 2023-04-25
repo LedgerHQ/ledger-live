@@ -55,7 +55,7 @@ type OperationDetailsExtraProps = {
   type: string;
   account: Account;
 };
-const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps) => {
+const OperationDetailsExtra = ({ extra, account }: OperationDetailsExtraProps) => {
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
   return (

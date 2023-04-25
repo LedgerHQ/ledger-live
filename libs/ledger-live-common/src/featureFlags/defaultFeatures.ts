@@ -203,4 +203,11 @@ export const defaultFeatures: DefaultFeatures = {
   protectServicesDiscoverDesktop: {
     enabled: false,
   },
+  referralProgramDesktopSidebar: {
+    enabled: false,
+    params: {
+      path: "/discover/refer-a-friend",
+      isNew: true,
+    },
+  },
 };

@@ -4,7 +4,7 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import memoize from "lodash/memoize";
 import { createAction } from "redux-actions";
-import { OutputSelector, createSelector } from "reselect";
+import { createSelector } from "reselect";
 import { State } from "~/renderer/reducers";
 import { SwapStateType } from "~/renderer/reducers/swap";
 import { Pair } from "@ledgerhq/live-common/exchange/swap/types";

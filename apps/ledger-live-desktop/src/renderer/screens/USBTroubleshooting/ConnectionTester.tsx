@@ -36,7 +36,7 @@ const ConnectionTester = ({ onExit, onDone }: { onExit: () => void; onDone: () =
     if (currentDevice) {
       // Nb if we haven't detected a device at all, there's no point in running the command
       sub = withDevice("")(transport => from(getAppAndVersion(transport))).subscribe({
-        next: e => {
+        next: () => {
           onDone();
           setConnectionStatus(1);
         },

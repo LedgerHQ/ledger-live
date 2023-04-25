@@ -1,5 +1,78 @@
 # ledger-live-desktop
 
+## 2.57.1
+
+### Patch Changes
+
+- [#3094](https://github.com/LedgerHQ/ledger-live/pull/3094) [`ebeb0ea7a3`](https://github.com/LedgerHQ/ledger-live/commit/ebeb0ea7a3bff80cd90721ff59681c5fbf788206) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - drop tron staking for LLD
+
+- [#3196](https://github.com/LedgerHQ/ledger-live/pull/3196) [`79bebafabb`](https://github.com/LedgerHQ/ledger-live/commit/79bebafabb9aa92ac9130d792011bf2b52843923) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove extra track data swap/stake/receive
+
+- [#3163](https://github.com/LedgerHQ/ledger-live/pull/3163) [`ee06b4ed83`](https://github.com/LedgerHQ/ledger-live/commit/ee06b4ed834a66dcd70dd198f73a8ae05edf8a55) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Locked device retry button, uses v3 styles now
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- [#3221](https://github.com/LedgerHQ/ledger-live/pull/3221) [`7174d38215`](https://github.com/LedgerHQ/ledger-live/commit/7174d38215369e98967f6eb14173393fc025061d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add stake account deeplink
+
+- [#3169](https://github.com/LedgerHQ/ledger-live/pull/3169) [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow for model and version dependent max name length
+
+- [#3165](https://github.com/LedgerHQ/ledger-live/pull/3165) [`447ed160e5`](https://github.com/LedgerHQ/ledger-live/commit/447ed160e5394bba07d1b1470b4d83d4e82f898f) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Use backend provided support url for apps when available
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+- [#3161](https://github.com/LedgerHQ/ledger-live/pull/3161) [`c6e6fc7269`](https://github.com/LedgerHQ/ledger-live/commit/c6e6fc72696d4d35105e2316c5d7e2d3bad5acae) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: correctly trigger software checks during sync onboarding on new firmware versions
+
+- Updated dependencies [[`9fec3a9b3a`](https://github.com/LedgerHQ/ledger-live/commit/9fec3a9b3a26bfce6ef7fdc4afb83e4f3c04cb69), [`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23), [`530909c036`](https://github.com/LedgerHQ/ledger-live/commit/530909c0368d03aea1e5d0638adb027fa00ab897), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`29badd80d0`](https://github.com/LedgerHQ/ledger-live/commit/29badd80d062f76139ba3a056df22277858021bd), [`992351d66d`](https://github.com/LedgerHQ/ledger-live/commit/992351d66d44d978f069b3aa13f9baf23f9b4482), [`147af2b5e6`](https://github.com/LedgerHQ/ledger-live/commit/147af2b5e674a7020f101a081135c2b187356060), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5), [`9eaf095ff6`](https://github.com/LedgerHQ/ledger-live/commit/9eaf095ff6c6214b27f5c37c9c73564f95564fba), [`42233141e8`](https://github.com/LedgerHQ/ledger-live/commit/42233141e853f2e9752268e5fa711416d460e0e3), [`5059c9584c`](https://github.com/LedgerHQ/ledger-live/commit/5059c9584ca70208a67e9d49025422d395637878), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`87d08d6d1c`](https://github.com/LedgerHQ/ledger-live/commit/87d08d6d1c6111b7f5fb15f3e1bbe85658686e4a)]:
+  - @ledgerhq/live-common@29.4.0
+  - @ledgerhq/domain-service@1.0.1
+  - @ledgerhq/coin-framework@0.3.1
+  - @ledgerhq/types-live@6.32.1
+  - @ledgerhq/react-ui@0.13.0
+
+## 2.57.1-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23)]:
+  - @ledgerhq/domain-service@1.0.1-next.1
+  - @ledgerhq/live-common@29.4.0-next.2
+
+## 2.57.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`5059c9584c`](https://github.com/LedgerHQ/ledger-live/commit/5059c9584ca70208a67e9d49025422d395637878)]:
+  - @ledgerhq/live-common@29.4.0-next.1
+
+## 2.57.1-next.0
+
+### Patch Changes
+
+- [#3094](https://github.com/LedgerHQ/ledger-live/pull/3094) [`ebeb0ea7a3`](https://github.com/LedgerHQ/ledger-live/commit/ebeb0ea7a3bff80cd90721ff59681c5fbf788206) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - drop tron staking for LLD
+
+- [#3196](https://github.com/LedgerHQ/ledger-live/pull/3196) [`79bebafabb`](https://github.com/LedgerHQ/ledger-live/commit/79bebafabb9aa92ac9130d792011bf2b52843923) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove extra track data swap/stake/receive
+
+- [#3163](https://github.com/LedgerHQ/ledger-live/pull/3163) [`ee06b4ed83`](https://github.com/LedgerHQ/ledger-live/commit/ee06b4ed834a66dcd70dd198f73a8ae05edf8a55) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Locked device retry button, uses v3 styles now
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- [#3221](https://github.com/LedgerHQ/ledger-live/pull/3221) [`7174d38215`](https://github.com/LedgerHQ/ledger-live/commit/7174d38215369e98967f6eb14173393fc025061d) Thanks [@sarneijim](https://github.com/sarneijim)! - Add stake account deeplink
+
+- [#3169](https://github.com/LedgerHQ/ledger-live/pull/3169) [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow for model and version dependent max name length
+
+- [#3165](https://github.com/LedgerHQ/ledger-live/pull/3165) [`447ed160e5`](https://github.com/LedgerHQ/ledger-live/commit/447ed160e5394bba07d1b1470b4d83d4e82f898f) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Use backend provided support url for apps when available
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+- [#3161](https://github.com/LedgerHQ/ledger-live/pull/3161) [`c6e6fc7269`](https://github.com/LedgerHQ/ledger-live/commit/c6e6fc72696d4d35105e2316c5d7e2d3bad5acae) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: correctly trigger software checks during sync onboarding on new firmware versions
+
+- Updated dependencies [[`9fec3a9b3a`](https://github.com/LedgerHQ/ledger-live/commit/9fec3a9b3a26bfce6ef7fdc4afb83e4f3c04cb69), [`530909c036`](https://github.com/LedgerHQ/ledger-live/commit/530909c0368d03aea1e5d0638adb027fa00ab897), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`29badd80d0`](https://github.com/LedgerHQ/ledger-live/commit/29badd80d062f76139ba3a056df22277858021bd), [`992351d66d`](https://github.com/LedgerHQ/ledger-live/commit/992351d66d44d978f069b3aa13f9baf23f9b4482), [`147af2b5e6`](https://github.com/LedgerHQ/ledger-live/commit/147af2b5e674a7020f101a081135c2b187356060), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5), [`9eaf095ff6`](https://github.com/LedgerHQ/ledger-live/commit/9eaf095ff6c6214b27f5c37c9c73564f95564fba), [`42233141e8`](https://github.com/LedgerHQ/ledger-live/commit/42233141e853f2e9752268e5fa711416d460e0e3), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`87d08d6d1c`](https://github.com/LedgerHQ/ledger-live/commit/87d08d6d1c6111b7f5fb15f3e1bbe85658686e4a)]:
+  - @ledgerhq/live-common@29.4.0-next.0
+  - @ledgerhq/coin-framework@0.3.1-next.0
+  - @ledgerhq/types-live@6.32.1-next.0
+  - @ledgerhq/react-ui@0.13.0-next.0
+  - @ledgerhq/domain-service@1.0.1-next.0
+
 ## 2.57.0
 
 ### Minor Changes

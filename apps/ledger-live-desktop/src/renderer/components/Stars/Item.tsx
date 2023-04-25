@@ -47,7 +47,7 @@ type Props = {
   pathname: string;
   collapsed?: boolean;
 };
-const Item = ({ account, index, pathname, collapsed }: Props) => {
+const Item = ({ account, pathname, collapsed }: Props) => {
   const history = useHistory();
   const active = pathname.endsWith(account.id);
   const onAccountClick = useCallback(() => {

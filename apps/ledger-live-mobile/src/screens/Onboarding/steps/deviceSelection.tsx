@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { Image } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { useSelector } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName, NavigatorName } from "../../../const";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
@@ -15,7 +15,6 @@ import {
   RootNavigationComposite,
   StackNavigatorNavigation,
 } from "../../../components/RootNavigator/types/helpers";
-import DeviceSetupView from "../../../components/DeviceSetupView";
 import { RootStackParamList } from "../../../components/RootNavigator/types/RootNavigator";
 import { NavigateInput } from "../../../components/RootNavigator/types/BaseNavigator";
 import ChoiceCard from "./ChoiceCard";
@@ -110,38 +109,36 @@ function OnboardingStepDeviceSelection() {
   };
 
   return (
-    <DeviceSetupView hasBackButton>
-      <ScrollListContainer flex={1} mx={6}>
-        <TrackScreen category="Onboarding" name="SelectDevice" />
-        <Text variant="h4" mb={7} fontWeight="semiBold">
-          {t("syncOnboarding.deviceSelection.title")}
-        </Text>
-        {devices.map(device => (
-          <ChoiceCard
-            key={device.id}
-            event="Onboarding Device - Selection"
-            eventProperties={{ id: device.id }}
-            testID={`onboarding-device-selection-${device.id}`}
-            title={getProductName(device.id)}
-            titleProps={{ variant: "large", fontWeight: "semiBold" }}
-            onPress={() => next(device.id)}
-            labelBadge={t("syncOnboarding.deviceSelection.setupTime", {
-              time: device.setupTime / 60000,
-            })}
-            Image={
-              <Image
-                source={device.source}
-                resizeMode="contain"
-                style={{
-                  height: "100%",
-                  width: 140,
-                }}
-              />
-            }
-          />
-        ))}
-      </ScrollListContainer>
-    </DeviceSetupView>
+    <ScrollListContainer flex={1} mx={6} mt={7}>
+      <TrackScreen category="Onboarding" name="SelectDevice" />
+      <Text variant="h4" mb={7} fontWeight="semiBold">
+        {t("syncOnboarding.deviceSelection.title")}
+      </Text>
+      {devices.map(device => (
+        <ChoiceCard
+          key={device.id}
+          event="Onboarding Device - Selection"
+          eventProperties={{ id: device.id }}
+          testID={`onboarding-device-selection-${device.id}`}
+          title={getProductName(device.id)}
+          titleProps={{ variant: "large", fontWeight: "semiBold" }}
+          onPress={() => next(device.id)}
+          labelBadge={t("syncOnboarding.deviceSelection.setupTime", {
+            time: device.setupTime / 60000,
+          })}
+          Image={
+            <Image
+              source={device.source}
+              resizeMode="contain"
+              style={{
+                height: "100%",
+                width: 140,
+              }}
+            />
+          }
+        />
+      ))}
+    </ScrollListContainer>
   );
 }
 

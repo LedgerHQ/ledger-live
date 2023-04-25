@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/errors";
 import type { ModeModule, Transaction } from "../types";
 import type { Account } from "@ledgerhq/types-live";
-import { apiForCurrency } from "../../../api/Ethereum";
+import { apiForCurrency } from "../api";
 
 const NotOwnedNft = createCustomErrorClass("NotOwnedNft");
 

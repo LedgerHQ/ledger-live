@@ -21,7 +21,7 @@ import getLedgerIndex, {
   getServerInfo,
   parseAPIValue,
   submit,
-} from "../../../api/Ripple";
+} from "../api";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
 import signTransaction from "../../../hw/signTransaction";

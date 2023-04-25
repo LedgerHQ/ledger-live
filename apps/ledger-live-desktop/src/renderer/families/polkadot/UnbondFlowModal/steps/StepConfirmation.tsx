@@ -22,18 +22,7 @@ const Container: ThemedComponent<{
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
   min-height: 220px;
 `;
-function StepConfirmation({
-  account,
-  t,
-  optimisticOperation,
-  error,
-  theme,
-  device,
-  signed,
-  transaction,
-}: StepProps & {
-  theme: any;
-}) {
+function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) {
   if (optimisticOperation) {
     return (
       <Container>
@@ -61,15 +50,12 @@ function StepConfirmation({
   return null;
 }
 export function StepConfirmationFooter({
-  transitionTo,
   account,
   parentAccount,
   onRetry,
   error,
-  openModal,
   onClose,
   optimisticOperation,
-  transaction,
 }: StepProps) {
   return (
     <Box horizontal alignItems="right">

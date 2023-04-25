@@ -43,9 +43,17 @@ export function useDeepLinkHandler() {
     (pathname: string, state?: any, search?: string) => {
       const hasNewPathname = pathname !== location.pathname;
       const hasNewSearch = typeof search === "string" && search !== location.search;
+      const hasNewState = JSON.stringify(state) !== JSON.stringify(location.state);
       if (hasNewPathname || hasNewSearch) {
         setTrackingSource("deeplink");
         history.push({
+          pathname,
+          state,
+          search,
+        });
+      } else if (!hasNewPathname && hasNewState) {
+        setTrackingSource("deeplink");
+        history.replace({
           pathname,
           state,
           search,
@@ -99,7 +107,7 @@ export function useDeepLinkHandler() {
           break;
         }
         case "buy":
-          navigate("/exchange");
+          navigate("/exchange", undefined, search);
           break;
         case "earn": {
           navigate("/earn", undefined, search);

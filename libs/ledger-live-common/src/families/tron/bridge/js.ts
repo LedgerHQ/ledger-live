@@ -82,7 +82,7 @@ import {
   voteTronSuperRepresentatives,
   fetchCurrentBlockHeight,
   getContractUserEnergyRatioConsumption,
-} from "../../../api/Tron";
+} from "../api";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import type { AccountShapeInfo } from "../../../bridge/jsHelpers";

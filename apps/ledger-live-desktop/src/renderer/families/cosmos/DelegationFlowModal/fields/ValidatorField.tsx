@@ -20,14 +20,7 @@ type Props = {
   onChangeValidator: (a: { address: string }) => void;
   chosenVoteAccAddr: string;
 };
-const ValidatorField = ({
-  account,
-  status,
-  t,
-  delegations,
-  onChangeValidator,
-  chosenVoteAccAddr,
-}: Props) => {
+const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
   const [showAll, setShowAll] = useState(false);
   const [search, setSearch] = useState("");
   const unit = getAccountUnit(account);
@@ -37,7 +30,7 @@ const ValidatorField = ({
   const chosenValidator = useMemo(() => {
     return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];
   }, [validators, chosenVoteAccAddr]);
-  const renderItem = (validator: CosmosValidatorItem, validatorIdx: number) => {
+  const renderItem = (validator: CosmosValidatorItem) => {
     return (
       <ValidatorRow
         currency={account.currency}

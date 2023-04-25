@@ -21,7 +21,6 @@ export default function StepConfirmation({
   account,
   optimisticOperation,
   error,
-  device,
   signed,
   transaction,
 }: StepProps) {
@@ -99,7 +98,6 @@ export function StepConfirmationFooter({
   error,
   onClose,
   onRetry,
-  openModal,
   optimisticOperation,
 }: StepProps) {
   const { t } = useTranslation();

@@ -7,7 +7,7 @@ import AppDetails, { IconContainer } from "./AppDetails";
 const Container: ThemedComponent<{
   isActive?: boolean;
   disabled?: boolean;
-}> = styled(Tabbable).attrs(p => ({
+}> = styled(Tabbable).attrs(() => ({
   flex: 1,
   flexDirection: "column",
   alignItems: "center",

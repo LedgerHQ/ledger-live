@@ -22,7 +22,7 @@ const HeaderContainer = styled(Box)`
   flex-direction: row;
   align-items: center;
 `;
-export const IconContainer = styled(Box).attrs(p => ({
+export const IconContainer = styled(Box).attrs(() => ({
   mr: 2,
 }))`
   user-select: none;

@@ -42,8 +42,6 @@ const AmountField = ({
   onChangeTransaction,
   transaction,
   status,
-  bridgePending,
-  t,
 }: Props) => {
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);

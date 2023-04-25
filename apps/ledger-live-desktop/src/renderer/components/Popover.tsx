@@ -54,7 +54,7 @@ const transitionsClipPath = {
   entering: (pos: string) => ({
     clipPath: clipPaths[pos],
   }),
-  entered: (pos: string) => ({
+  entered: () => ({
     clipPath: "inset(-10px -10px -10px -10px)",
   }),
   exiting: (pos: string) => ({
