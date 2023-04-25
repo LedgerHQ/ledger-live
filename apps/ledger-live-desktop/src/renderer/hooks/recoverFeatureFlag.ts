@@ -12,10 +12,10 @@ export function usePostOnboardingURI(): string | undefined {
   return useReplacedURI(uri, id);
 }
 
-export function useLearnMoreURI(): string | undefined {
+export function useUpsellURI(): string | undefined {
   const servicesConfig = useFeature(featureName);
 
-  const uri = servicesConfig?.params?.onboardingCompleted?.learnMoreURI;
+  const uri = servicesConfig?.params?.onboardingCompleted?.upsellURI;
   const id = servicesConfig?.params?.protectId;
 
   return useReplacedURI(uri, id);
