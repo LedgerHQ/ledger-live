@@ -16,15 +16,17 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 const ParentCryptoCurrencyIconWrapper = styled.div`
   width: 20px;
 `;
-const ItemWrapper: ThemedComponent<{
+const ItemWrapper = styled.div.attrs<{
   active: boolean;
-}> = styled.div.attrs(p => ({
+}>(p => ({
   style: {
     backgroundColor: p.active
       ? p.theme.colors.palette.action.hover
       : p.theme.colors.palette.background.paper,
   },
-}))`
+}))<{
+  active: boolean;
+}>`
   flex: 1;
   align-items: center;
   display: flex;
