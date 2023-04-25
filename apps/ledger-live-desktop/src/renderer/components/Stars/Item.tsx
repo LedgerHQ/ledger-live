@@ -63,17 +63,9 @@ const Item = ({ account, pathname, collapsed }: Props) => {
   }, [account, history]);
   const unit = getAccountUnit(account);
   return (
-    <ItemWrapper
-      className="bookmarked-account-item"
-      collapsed={collapsed}
-      active={active}
-      onClick={onAccountClick}
-    >
+    <ItemWrapper className="bookmarked-account-item" active={active} onClick={onAccountClick}>
       <Box horizontal ff="Inter|SemiBold" flex={1} flow={3} alignItems="center">
-        <ParentCryptoCurrencyIconWrapper
-          collapsed={collapsed}
-          isToken={account.type === "TokenAccount"}
-        >
+        <ParentCryptoCurrencyIconWrapper>
           <ParentCryptoCurrencyIcon inactive={!active} currency={getAccountCurrency(account)} />
         </ParentCryptoCurrencyIconWrapper>
         <Box flex={1}>

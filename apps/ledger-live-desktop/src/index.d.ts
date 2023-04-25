@@ -38,4 +38,8 @@ interface Window {
   // used for the analytics, initialized in the index.html
   // eslint-disable-next-line
   analytics: any;
+
+  // for mocking purposes apparently?
+  // eslint-disable-next-line
+  mock: any;
 }
