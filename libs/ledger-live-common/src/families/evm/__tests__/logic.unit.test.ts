@@ -45,7 +45,7 @@ describe("EVM Family", () => {
 
       it("should return false for legacy tx with wrong fees", () => {
         const tx: Partial<EvmTransactionEIP1559> = {
-          type: 0,
+          type: 2,
           maxFeePerGas: new BigNumber(100),
           maxPriorityFeePerGas: new BigNumber(100),
         };
@@ -82,7 +82,7 @@ describe("EVM Family", () => {
       });
 
       it("should return false for 1559 tx with wrong fees", () => {
-        const tx: Partial<EvmTransactionLegacy | EvmTransactionEIP1559> = {
+        const tx: unknown = {
           type: 2,
           gasPrice: new BigNumber(100),
         };

@@ -57,7 +57,7 @@ export const fromTransactionRaw = (
     nonce: rawTx.nonce,
     gasLimit: new BigNumber(rawTx.gasLimit),
     feesStrategy: rawTx.feesStrategy,
-    type: Number(rawTx.type), // if rawTx.type is undefined, transaction will be considered legacy and therefore type 0
+    type: rawTx.type ?? 0, // if rawTx.type is undefined, transaction will be considered legacy and therefore type 0
   };
 
   if (rawTx.data) {

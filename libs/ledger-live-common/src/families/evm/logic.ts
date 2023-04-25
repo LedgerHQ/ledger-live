@@ -28,15 +28,9 @@ export const eip1559TransactionHasFees = (tx: EvmTransactionEIP1559): boolean =>
  */
 export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
   if (tx.type !== 2) {
-    return (
-      (tx as EvmTransactionLegacy).gasPrice?.multipliedBy(tx.gasLimit) ||
-      new BigNumber(0)
-    );
+    return tx.gasPrice?.multipliedBy(tx.gasLimit) || new BigNumber(0);
   }
-  return (
-    (tx as EvmTransactionEIP1559).maxFeePerGas?.multipliedBy(tx.gasLimit) ||
-    new BigNumber(0)
-  );
+  return tx.maxFeePerGas?.multipliedBy(tx.gasLimit) || new BigNumber(0);
 };
 
 /**
