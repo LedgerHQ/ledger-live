@@ -39,6 +39,7 @@ export type FetchImageEvent =
 
 export type FetchImageRequest = {
   backupHash?: string; // When provided, will skip the backup if it matches the hash.
+  allowedEmpty: boolean; // Complete instead of throwing if empty.
 };
 
 export type Input = {
@@ -50,7 +51,7 @@ export default function fetchImage({
   deviceId,
   request,
 }: Input): Observable<FetchImageEvent> {
-  const { backupHash } = request;
+  const { backupHash, allowedEmpty = false } = request;
 
   const sub = withDevice(deviceId)(
     (transport) =>
@@ -70,7 +71,12 @@ export default function fetchImage({
               subscriber.next({ type: "currentImageHash", imgHash });
               // We don't have an image to backup
               if (imgHash === "") {
-                return subscriber.error(new ImageDoesNotExistOnDevice());
+                if (allowedEmpty) {
+                  subscriber.complete();
+                  return;
+                } else {
+                  return subscriber.error(new ImageDoesNotExistOnDevice());
+                }
               } else if (backupHash === imgHash) {
                 subscriber.next({ type: "imageAlreadyBackedUp" });
                 subscriber.complete();

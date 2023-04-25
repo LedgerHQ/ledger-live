@@ -210,7 +210,7 @@ const CustomImage: React.FC<Props> = props => {
       flex={1}
       data-test-id="custom-image-container"
     >
-      <Text alignSelf="center" variant="h3Inter">
+      <Text alignSelf="center" variant="h5Inter">
         {t("customImage.title")}
       </Text>
       {!transferDone ? (
@@ -291,22 +291,14 @@ const CustomImage: React.FC<Props> = props => {
         >
           <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
             <BoxedIcon
+              Icon={Icons.CheckAloneMedium}
+              iconColor="success.c60"
               size={64}
               iconSize={24}
-              Icon={Icons.CheckAloneMedium}
-              iconColor="success.c20"
             />
-            <Flex flexDirection="row" flexShrink={0}>
-              <Log
-                extraTextProps={{
-                  variant: "h5",
-                }}
-                mt={12}
-                width={201}
-              >
-                {t("customImage.customImageSet")}
-              </Log>
-            </Flex>
+            <Text variant="large" alignSelf="stretch" mt={9} textAlign="center">
+              {t("customImage.customImageSet")}
+            </Text>
           </Flex>
         </StepContainer>
       )}
