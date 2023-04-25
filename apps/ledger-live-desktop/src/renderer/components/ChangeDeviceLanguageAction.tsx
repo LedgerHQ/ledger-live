@@ -22,8 +22,8 @@ const DeviceLanguageInstalled = ({ language }: { language: Language }) => {
       justifyContent="center"
       data-test-id="language-installed"
     >
-      <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c50" size={64} iconSize={24} />
-      <Text variant="large" alignSelf="stretch" mx={16} mt={10} textAlign="center" fontSize={24}>
+      <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c60" size={64} iconSize={24} />
+      <Text variant="large" alignSelf="stretch" mt={9} textAlign="center">
         {t("deviceLocalization.languageInstalled", {
           language: t(`deviceLocalization.languages.${language}`),
         })}
