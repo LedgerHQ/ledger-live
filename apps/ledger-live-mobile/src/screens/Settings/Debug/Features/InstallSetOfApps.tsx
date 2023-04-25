@@ -1,11 +1,19 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { Button, Flex, VerticalTimeline } from "@ledgerhq/native-ui";
+import {
+  Button,
+  Flex,
+  SelectableList,
+  Switch,
+  Text,
+  VerticalTimeline,
+} from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
 import InstallSetOfApps from "../../../../components/DeviceAction/InstallSetOfApps";
 import SelectDevice from "../../../../components/SelectDevice";
@@ -40,8 +48,49 @@ export default function DebugMultiAppInstall() {
     setOnCompleted(true);
   }, []);
 
+  const [selectedLastSeenDevice, setSelectedLastSeenDevice] = useState(
+    DeviceModelId.stax,
+  );
+
+  const [restoreMode, setRestoreMode] = useState(false);
+
+  const possibleDevices = [
+    {
+      id: DeviceModelId.stax,
+      name: DeviceModelId.stax,
+    },
+    {
+      id: DeviceModelId.nanoX,
+      name: DeviceModelId.nanoX,
+    },
+  ];
+
   return (
     <NavigationScrollView>
+      <Flex px={8}>
+        <Switch
+          checked={restoreMode}
+          onChange={setRestoreMode}
+          label="Restore mode"
+        />
+        {restoreMode && (
+          <>
+            <Text py={6}>Select last model id</Text>
+            <SelectableList
+              currentValue={selectedLastSeenDevice}
+              onChange={setSelectedLastSeenDevice}
+            >
+              {possibleDevices.map(device => {
+                return (
+                  <SelectableList.Element key={device.id} value={device.id}>
+                    {device.name}
+                  </SelectableList.Element>
+                );
+              })}
+            </SelectableList>
+          </>
+        )}
+      </Flex>
       <View style={[styles.root, { backgroundColor: colors.background }]}>
         {device ? (
           <VerticalTimeline
@@ -67,11 +116,13 @@ export default function DebugMultiAppInstall() {
                     renderBody: (isDisplayed: boolean) =>
                       isDisplayed ? (
                         <InstallSetOfApps
+                          restore={restoreMode}
                           key={nonce}
                           device={device}
                           onResult={onComplete}
                           onError={onReset}
                           dependencies={list}
+                          debugLastSeenDeviceModelId={selectedLastSeenDevice}
                         />
                       ) : (
                         <View
