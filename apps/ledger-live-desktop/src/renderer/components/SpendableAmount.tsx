@@ -5,6 +5,8 @@ import { useDebounce } from "@ledgerhq/live-common//hooks/useDebounce";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import FormattedVal from "~/renderer/components/FormattedVal";
+import BigNumber from "bignumber.js";
+
 type Props = {
   account: AccountLike;
   transaction: Transaction;
@@ -13,6 +15,7 @@ type Props = {
   showAllDigits?: boolean;
   disableRounding?: boolean;
 };
+
 const SpendableAmount = ({
   account,
   parentAccount,
@@ -21,7 +24,7 @@ const SpendableAmount = ({
   showAllDigits,
   disableRounding,
 }: Props) => {
-  const [maxSpendable, setMaxSpendable] = useState(null);
+  const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
     if (!account) return;

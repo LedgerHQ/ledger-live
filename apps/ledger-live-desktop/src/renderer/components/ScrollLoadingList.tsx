@@ -8,23 +8,23 @@ const ScrollContainer = styled(Box).attrs(p => ({
 }))`
   ${p => p.theme.overflow.yAuto};
 `;
-type ScrollLoadingListProps = {
-  data: Array<any>;
-  renderItem: (a: any, index: number) => React.ReactNode;
+type ScrollLoadingListProps<D> = {
+  data: Array<D>;
+  renderItem: (a: D, index: number) => React.ReactNode;
   noResultPlaceholder: React.ReactNode | undefined | null;
   scrollEndThreshold?: number;
   bufferSize?: number;
-  style?: any;
+  style?: React.CSSProperties;
 };
-const ScrollLoadingList = ({
+function ScrollLoadingList<D>({
   data,
   renderItem,
   noResultPlaceholder,
   scrollEndThreshold = 200,
   bufferSize = 20,
   style,
-}: ScrollLoadingListProps) => {
-  const scrollRef = useRef();
+}: ScrollLoadingListProps<D>) {
+  const scrollRef = useRef<HTMLDivElement | undefined>();
   const [scrollOffset, setScrollOffset] = useState(bufferSize);
 
   /**
@@ -54,5 +54,5 @@ const ScrollLoadingList = ({
       {data.length <= 0 && noResultPlaceholder}
     </ScrollContainer>
   );
-};
-export default memo<ScrollLoadingListProps>(ScrollLoadingList);
+}
+export default memo<ScrollLoadingListProps<unknown>>(ScrollLoadingList);
