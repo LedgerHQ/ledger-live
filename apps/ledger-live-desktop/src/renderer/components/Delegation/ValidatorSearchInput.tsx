@@ -22,7 +22,6 @@ const SearchContainer = styled(Box).attrs(() => ({
   }
 `;
 const Placeholder = styled(Box).attrs(() => ({
-  vertical: true,
   alignItems: "center",
   justifyContent: "center",
   borderRadius: 4,

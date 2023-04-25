@@ -21,7 +21,6 @@ export const IconContainer = styled.div`
     p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
 `;
 const InfoContainer = styled(Box).attrs(() => ({
-  vertical: true,
   ml: 2,
   flex: 1,
 }))``;

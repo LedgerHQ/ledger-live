@@ -2,22 +2,25 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import repairFw from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { useDispatch } from "react-redux";
-import Button from "~/renderer/components/Button";
+import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
 import logger from "~/renderer/logger";
 import { useHistory } from "react-router-dom";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { openModal, closeModal } from "~/renderer/actions/modals";
+import { Subscription } from "rxjs";
+
 type Props = {
-  buttonProps?: any;
+  buttonProps?: ButtonProps;
   disableDescription?: boolean;
   onRepair?: (a: boolean) => void;
   onClose?: (a: { needHelp?: boolean }) => void;
-  Component?: any;
+  Component?: React.ComponentType<{ onClick: () => void }>;
 };
+
 const RepairDeviceButton: React.ComponentType<Props> = React.forwardRef(function RepairDevice(
   { onRepair, onClose, buttonProps, Component, disableDescription }: Props,
-  ref: React.Ref<any>,
+  ref: React.Ref<HTMLButtonElement>,
 ) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -25,8 +28,8 @@ const RepairDeviceButton: React.ComponentType<Props> = React.forwardRef(function
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [progress, setProgress] = useState(0);
-  const timeout = useRef(null);
-  const sub = useRef(null);
+  const timeout = useRef<NodeJS.Timeout | null>(null);
+  const sub = useRef<Subscription | null>(null);
   const history = useHistory();
   useEffect(() => {
     return () => {
@@ -40,11 +43,11 @@ const RepairDeviceButton: React.ComponentType<Props> = React.forwardRef(function
     setError(null);
     // NB due to the fact that this modal is not part of the modals layer, we need to dispatch the open modal
     // event to have the backdrop layer added. I'm not refactoring the modal because of fear.
-    dispatch(openModal("MODAL_STUB"));
+    dispatch(openModal("MODAL_STUB", null));
     setOpened(true);
   }, [dispatch]);
   const close = useCallback(
-    ({ needHelp }: { needHelp?: boolean }) => {
+    ({ needHelp }: { needHelp?: boolean } = {}) => {
       if (sub && sub.current) sub.current.unsubscribe();
       if (timeout && timeout.current) clearTimeout(timeout.current);
       if (onRepair) {
@@ -83,7 +86,7 @@ const RepairDeviceButton: React.ComponentType<Props> = React.forwardRef(function
           setProgress(0);
         },
         complete: () => {
-          if (timeout) clearTimeout(timeout.current);
+          if (timeout.current) clearTimeout(timeout.current);
           setOpened(false);
           setIsLoading(false);
           setProgress(0);
@@ -112,7 +115,6 @@ const RepairDeviceButton: React.ComponentType<Props> = React.forwardRef(function
         cancellable
         analyticsName="RepairDevice"
         isOpened={opened}
-        onClose={close}
         onReject={close}
         repair={repair}
         isLoading={isLoading}

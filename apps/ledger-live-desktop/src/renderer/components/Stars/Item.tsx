@@ -76,7 +76,7 @@ const Item = ({ account, pathname, collapsed }: Props) => {
         >
           <ParentCryptoCurrencyIcon inactive={!active} currency={getAccountCurrency(account)} />
         </ParentCryptoCurrencyIconWrapper>
-        <Box vertical flex={1}>
+        <Box flex={1}>
           <Hide visible={!collapsed}>
             <Ellipsis>{getAccountName(account)}</Ellipsis>
             <FormattedVal

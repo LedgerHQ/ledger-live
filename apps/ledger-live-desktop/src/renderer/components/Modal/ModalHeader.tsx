@@ -6,9 +6,7 @@ import Text from "~/renderer/components/Text";
 import Tabbable from "~/renderer/components/Box/Tabbable";
 import IconCross from "~/renderer/icons/Cross";
 import IconAngleLeft from "~/renderer/icons/AngleLeft";
-const TitleContainer = styled(Box).attrs(() => ({
-  vertical: true,
-}))<{
+const TitleContainer = styled(Box)<{
   color?: string;
   right?: boolean;
 }>`

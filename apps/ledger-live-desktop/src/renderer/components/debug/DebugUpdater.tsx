@@ -47,7 +47,7 @@ const DebugUpdater = () => {
           {expanded ? "updater [ - ]" : "u"}
         </Item>
         {expanded ? (
-          <Box vertical>
+          <Box>
             {statusToDebug.map((s, i) => (
               <Box horizontal key={i}>
                 <Text
@@ -62,7 +62,7 @@ const DebugUpdater = () => {
                 </Text>
               </Box>
             ))}
-            <Box vertical>
+            <Box>
               <Box horizontal>
                 <Text
                   mx={1}

@@ -153,15 +153,15 @@ const Base = styled.input.attrs(() => ({
     }
   }
 `;
-type Props = {
+export type Props = {
   keepEvent?: boolean;
   onBlur?: (a: React.FocusEvent<HTMLInputElement>) => void;
   onChange?: Function;
   onEnter?: (a: React.KeyboardEvent<HTMLInputElement>) => any;
   onEsc?: (a: React.KeyboardEvent<HTMLInputElement>) => void;
   onFocus?: (a: React.FocusEvent<HTMLInputElement>) => void;
-  renderLeft?: any;
-  renderRight?: any;
+  renderLeft?: React.ReactNode;
+  renderRight?: React.ReactNode;
   containerProps?: object;
   loading?: boolean;
   error?: Error | null;
@@ -194,9 +194,10 @@ const Input = function Input(
     value,
     ...props
   }: Props,
-  inputRef: React.ForwardedRef<HTMLInputElement>,
+  inputRef: React.Ref<HTMLInputElement>,
 ) {
   const [isFocus, setFocus] = useState(false);
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (onChange) {
@@ -205,6 +206,7 @@ const Input = function Input(
     },
     [onChange, keepEvent],
   );
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       // handle enter key
@@ -216,9 +218,11 @@ const Input = function Input(
     },
     [onEnter, onEsc],
   );
+
   const handleClick = useCallback(() => {
     inputRef?.current?.focus();
   }, [inputRef]);
+
   const handleFocus = useCallback(
     (e: React.FocusEvent<HTMLInputElement>) => {
       setFocus(true);

@@ -8,11 +8,27 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { formatCurrencyUnit, sanitizeValueString } from "@ledgerhq/live-common/currencies/index";
 import noop from "lodash/noop";
 import Box from "~/renderer/components/Box";
-import Input from "~/renderer/components/Input";
+import Input, { Props as InputProps } from "~/renderer/components/Input";
 import Select from "~/renderer/components/Select";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-const unitGetOptionValue = unit => unit.magnitude;
-function format(unit: Unit, value: BigNumber, { locale, isFocused, showAllDigits, subMagnitude }) {
+
+const unitGetOptionValue = (unit: Unit) => unit.magnitude;
+
+function format(
+  unit: Unit,
+  value: BigNumber,
+  {
+    locale,
+    isFocused,
+    showAllDigits,
+    subMagnitude,
+  }: {
+    locale: string;
+    isFocused: boolean;
+    showAllDigits?: boolean;
+    subMagnitude?: number;
+  },
+) {
   return formatCurrencyUnit(unit, value, {
     locale,
     useGrouping: !isFocused,
@@ -21,20 +37,23 @@ function format(unit: Unit, value: BigNumber, { locale, isFocused, showAllDigits
     subMagnitude: value.isLessThan(1) ? subMagnitude : 0,
   });
 }
+
 const Currencies = styled(Box)`
   top: -1px;
   right: -1px;
   width: 100px;
 `;
-function stopPropagation(e) {
+
+function stopPropagation(e: React.SyntheticEvent) {
   e.stopPropagation();
 }
+
 type OwnProps = {
   onChangeFocus?: (a: boolean) => void;
   onChange: (b: BigNumber, a: Unit) => void;
   // FIXME Unit shouldn't be provided (this is not "standard" onChange)
   onChangeUnit?: (a: Unit) => void;
-  renderRight: any;
+  renderRight?: React.ReactNode;
   defaultUnit?: Unit;
   unit?: Unit;
   units?: Unit[];
@@ -46,6 +65,7 @@ type OwnProps = {
   autoFocus?: boolean;
   decimals?: number;
 };
+
 type Props = {
   unit: Unit;
   units: Unit[];
@@ -55,7 +75,9 @@ type Props = {
   forwardedRef: ElementRef<any> | undefined | null;
   placeholder?: string;
   loading: boolean;
-} & OwnProps;
+} & OwnProps &
+  InputProps;
+
 type State = {
   isFocused: boolean;
   displayValue: string;
@@ -167,12 +189,14 @@ class InputCurrency extends PureComponent<Props, State> {
     });
   };
 
-  renderOption = item => item.data.code;
-  renderValue = item => item.data.code;
+  renderOption = (item: { data: Unit }) => item.data.code;
+
+  renderValue = (item: { data: Unit }) => item.data.code;
+
   renderListUnits = () => {
     const { units, onChangeUnit, unit } = this.props;
     const { isFocused } = this.state;
-    const avoidEmptyValue = value => value && onChangeUnit(value);
+    const avoidEmptyValue = (value?: Unit | null) => value && onChangeUnit(value);
     if (units.length <= 1) {
       return null;
     }

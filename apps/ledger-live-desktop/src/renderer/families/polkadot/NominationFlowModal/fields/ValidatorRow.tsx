@@ -20,7 +20,6 @@ const IconContainer = styled.div`
   color: ${p => p.theme.colors.palette.text.shade60};
 `;
 const InfoContainer = styled(Box).attrs(() => ({
-  vertical: true,
   ml: 2,
   flexShrink: 0,
   mr: "auto",

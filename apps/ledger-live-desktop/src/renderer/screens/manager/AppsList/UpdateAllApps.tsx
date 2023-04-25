@@ -85,7 +85,7 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
   const updateHeader =
     updateAllQueue.length > 0 ? (
       <>
-        <Box vertical data-test-id="manager-update-all-progress-bar">
+        <Box data-test-id="manager-update-all-progress-bar">
           <Text ff="Inter|SemiBold" fontSize={5} color="palette.primary.main">
             <Trans
               i18nKey="manager.applist.updatable.progressTitle"
@@ -100,7 +100,7 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
           </Text>
         </Box>
         <Box flex={1} />
-        <Box vertical alignItems="flex-end">
+        <Box alignItems="flex-end">
           <Box
             flex="0 0 auto"
             horizontal

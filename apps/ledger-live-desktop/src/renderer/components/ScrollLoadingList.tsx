@@ -3,7 +3,6 @@ import debounce from "lodash/debounce";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 const ScrollContainer = styled(Box).attrs(p => ({
-  vertical: true,
   pl: p.theme.overflow.trackSize,
   mb: -40,
 }))`
