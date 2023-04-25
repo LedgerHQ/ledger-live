@@ -71,7 +71,7 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
 
   if (!device) return null;
 
-  let fields = [];
+  let fields: DeviceTransactionField[] = [];
   if (inferredNanoFields?.fields && Array.isArray(inferredNanoFields.fields)) {
     fields = inferredNanoFields.fields.map(field => ({
       ...field,

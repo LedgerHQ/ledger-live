@@ -5,6 +5,7 @@ import Box from "~/renderer/components/Box";
 import SearchBox from "~/renderer/screens/accounts/AccountList/SearchBox";
 import ExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import Text from "~/renderer/components/Text";
+
 const SearchContainer = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -12,7 +13,9 @@ const SearchContainer = styled(Box).attrs(() => ({
   py: 2,
   px: 3,
   borderRadius: 4,
-}))`
+}))<{
+  noMargin: boolean;
+}>`
   margin: 0 ${p => (p.noMargin === true ? "0px" : p.theme.overflow.trackSize)}px;
   border: 1px solid ${p => p.theme.colors.palette.divider};
 
@@ -34,7 +37,7 @@ const Placeholder = styled(Box).attrs(() => ({
   margin-right: ${p => p.theme.overflow.trackSize}px;
 `;
 type ValidatorSearchInputProps = {
-  onSearch: (evt: SyntheticInputEvent<HTMLInputElement>) => void;
+  onSearch: (evt: React.SyntheticEvent<HTMLInputElement>) => void;
   search?: string;
   noMargin: boolean;
 };
