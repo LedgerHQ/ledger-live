@@ -13,7 +13,6 @@ const CustomImageManagerButton: React.FC<Record<string, never>> = () => {
   }, []);
   return (
     <Flex flexDirection="row" columnGap={3} alignItems="center">
-      <UFO />
       <Text color="neutral.c80" variant="bodyLineHeight" fontSize={4}>
         {t("customImage.managerCTA")}
       </Text>
