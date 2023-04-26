@@ -7,7 +7,13 @@ import {
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { DeviceModelInfo, FeatureId, Feature, PortfolioRange } from "@ledgerhq/types-live";
+import {
+  DeviceModelInfo,
+  FeatureId,
+  Feature,
+  PortfolioRange,
+  FirmwareUpdateContext,
+} from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getLanguages, defaultLocaleForLanguage, Locale } from "~/config/languages";
@@ -26,7 +32,7 @@ export type SettingsState = {
   preferredDeviceModel: DeviceModelId;
   hasInstalledApps: boolean;
   lastSeenDevice: DeviceModelInfo | undefined | null;
-  latestFirmware: unknown;
+  latestFirmware: FirmwareUpdateContext | null;
   language: string | undefined | null;
   theme: string | undefined | null;
   /** DEPRECATED, use field `locale` instead */

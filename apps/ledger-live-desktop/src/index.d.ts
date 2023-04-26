@@ -12,6 +12,15 @@ declare module "*.png";
 declare module "*.jpg";
 declare module "*.webm";
 
+type ReplaySubject = import("rxjs").ReplaySubject;
+type ListAppResult = import("@ledgerhq/live-common/apps/types").ListAppsResult;
+type TransactionRaw = import("@ledgerhq/live-common/generated/types").TransactionRaw;
+type Transaction = import("@ledgerhq/live-common/generated/types").Transaction;
+
+interface RawEvents {
+  [key: string]: RawEvents | RawEvents[];
+}
+
 declare namespace Electron {
   interface BrowserWindow {
     name?: string;
@@ -41,5 +50,25 @@ interface Window {
 
   // for mocking purposes apparently?
   // eslint-disable-next-line
-  mock: any;
+  mock: {
+    fromTransactionRaw: (rawTransaction: TransactionRaw) => Transaction;
+    events: {
+      test: number;
+      queue: Record<string, unknown>[];
+      history: Record<string, unknown>[];
+      subject: ReplaySubject;
+      parseRawEvents: (rawEvents: RawEvents, maybeKey?: string) => unknown;
+      emitter: any;
+      mockDeviceEvent: (...args: RawEvents[]) => void;
+      exposed: {
+        mockListAppsResult: (
+          appDesc: string,
+          installedDesc: string,
+          deviceInfo: import("@ledgerhq/types-live").DeviceInfo,
+          deviceModelId?: import("@ledgerhq/types-devices").DeviceModelId,
+        ) => ListAppResult;
+        deviceInfo155: any;
+      };
+    };
+  };
 }
