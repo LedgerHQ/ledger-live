@@ -1939,7 +1939,7 @@
       "title": "Update {{productName}}",
       "steps": {
         "preparingUpdate": "Preparing update",
-        "trasnferringUpdate": "Transferring update to {{productName}}",
+        "transferringUpdate": "Transferring update to {{productName}}",
         "prepare": "Prepare update",
         "install": "Install update",
         "restore": "Restore settings",
