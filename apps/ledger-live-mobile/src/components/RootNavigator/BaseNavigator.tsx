@@ -537,7 +537,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.BleDevicePairingFlow}
         component={BleDevicePairingFlow}
-        options={{ ...bleDevicePairingFlowHeaderOptions }}
+        options={bleDevicePairingFlowHeaderOptions}
       />
       <Stack.Screen
         name={NavigatorName.PostOnboarding}
@@ -547,9 +547,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.DeviceConnect}
         component={DeviceConnect}
-        options={{
-          ...deviceConnectHeaderOptions(t),
-        }}
+        options={useMemo(() => deviceConnectHeaderOptions(t), [t])}
         listeners={({ route }) => ({
           beforeRemove: () => {
             const onClose =

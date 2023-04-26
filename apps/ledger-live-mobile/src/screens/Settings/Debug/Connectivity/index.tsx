@@ -37,11 +37,7 @@ export default function Connectivity() {
         });
       } else {
         // Sets back the header to its initial values set for this screen
-        navigation.setOptions({
-          headerLeft: () => null,
-          headerRight: () => null,
-          ...connectivityHeaderOptions,
-        });
+        navigation.setOptions(connectivityHeaderOptions);
       }
     },
     [navigation],

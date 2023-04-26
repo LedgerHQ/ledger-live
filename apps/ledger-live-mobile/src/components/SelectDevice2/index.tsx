@@ -3,7 +3,11 @@ import { Platform } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
-import { CompositeScreenProps, useNavigation } from "@react-navigation/native";
+import {
+  CompositeScreenProps,
+  useNavigation,
+  useIsFocused,
+} from "@react-navigation/native";
 import { Text, Flex, Icons, Box, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
@@ -76,6 +80,7 @@ export default function SelectDevice({
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   const [isAddNewDrawerOpen, setIsAddNewDrawerOpen] = useState<boolean>(false);
   const [isPairingDevices, setIsPairingDevices] = useState<boolean>(false);
@@ -265,12 +270,22 @@ export default function SelectDevice({
     setIsPairingDevices(true);
   }, [dispatch]);
 
+  // Makes sure that on go back/unmount the visibility of the bottom tab bar is reset
   useEffect(() => {
     return () => {
-      // Makes sure that on go back/unmount the visibility of the bottom tab bar is reset
       dispatch(updateMainNavigatorVisibility(true));
     };
   }, [dispatch]);
+
+  // Makes sure that when loosing (screen) focus, the visibility of the bottom tab bar is reset
+  useEffect(() => {
+    return () => {
+      // Just before cleaning, the associated screen had focus
+      if (isFocused) {
+        dispatch(updateMainNavigatorVisibility(true));
+      }
+    };
+  }, [dispatch, isFocused]);
 
   const closeBlePairingFlow = useCallback(() => {
     // When coming back from the pairing, the visibility of the bottom tab bar is reset

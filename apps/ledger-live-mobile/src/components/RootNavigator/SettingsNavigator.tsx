@@ -236,9 +236,7 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugConnectivity}
         component={DebugConnectivity}
-        options={{
-          ...connectivityHeaderOptions,
-        }}
+        options={connectivityHeaderOptions}
       />
       <Stack.Screen
         name={ScreenName.DebugFeatures}
@@ -382,16 +380,12 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugFetchCustomImage}
         component={DebugFetchCustomImage}
-        options={{
-          ...debugFetchCustomImageHeaderOptions,
-        }}
+        options={debugFetchCustomImageHeaderOptions}
       />
       <Stack.Screen
         name={ScreenName.DebugFirmwareUpdate}
         component={DebugFirmwareUpdate}
-        options={{
-          ...debugFirmwareUpdateHeaderOptions(t),
-        }}
+        options={useMemo(() => debugFirmwareUpdateHeaderOptions(t), [t])}
       />
       <Stack.Screen
         name={ScreenName.DebugCustomImageGraphics}

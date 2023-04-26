@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
@@ -57,6 +57,16 @@ export function Connect({
     },
     [navigation],
   );
+
+  // Cleaning any updates to the parent's header from requestToSetHeaderOptions on unmount to be safe
+  useEffect(() => {
+    return () => {
+      // Sets back the left part of the header to its initial values
+      navigation.getParent()?.setOptions({
+        headerLeft: () => null,
+      });
+    };
+  }, [navigation]);
 
   return (
     <Flex padding={4}>
