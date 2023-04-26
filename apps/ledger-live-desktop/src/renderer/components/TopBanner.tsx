@@ -27,13 +27,15 @@ const Container = styled(Box).attrs(p => ({
 const RightContainer = styled.div`
   margin-left: auto;
 `;
-export const FakeLink = styled.span`
+
+export const FakeLink = styled.span<{ disabled?: boolean }>`
   color: ${p => p.theme.colors.palette.primary.contrastText};
   text-decoration: underline;
   cursor: pointer;
   pointer-events: ${p => (p.disabled ? "none" : "auto")};
   opacity: ${p => (p.disabled ? "0.6" : "1")};
 `;
+
 const CloseContainer = styled(Box).attrs(() => ({
   color: "palette.primary.contrastText",
 }))`
