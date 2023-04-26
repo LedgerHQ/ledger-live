@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { Button, Flex, Icons, Radio, Divider, Text } from "@ledgerhq/react-ui";
+import { Button, Flex, Icons, Radio, Divider, Text, InfiniteLoader } from "@ledgerhq/react-ui";
 import { DeviceInfo, Language } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
@@ -90,47 +90,55 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
         {t("deviceLocalization.deviceLanguage")}
       </Text>
       <Flex px={12} flex={1}>
-        {installing ? (
-          <ChangeDeviceLanguageAction
-            onSuccess={() => {
-              onSuccess(selectedLanguage);
-              setInstalled(true);
-            }}
-            onError={onWrappedError}
-            language={selectedLanguage}
-          />
+        {availableLanguages?.length ? (
+          installing ? (
+            <ChangeDeviceLanguageAction
+              onSuccess={() => {
+                onSuccess(selectedLanguage);
+                setInstalled(true);
+              }}
+              onError={onWrappedError}
+              language={selectedLanguage}
+            />
+          ) : (
+            <Flex flexGrow={1} flexDirection="column">
+              <Radio
+                currentValue={selectedLanguage}
+                onChange={onChange}
+                name="LanguageSelection"
+                containerProps={{ flexDirection: "column", rowGap: "1rem", flex: 1 }}
+              >
+                {sortedAvailableLanguages.map(language => (
+                  <Radio.ListElement
+                    containerProps={{
+                      flex: 1,
+                      padding: 0,
+                    }}
+                    label={({ checked }: { checked: boolean }) => (
+                      <Flex flex={1} justifyContent="space-between">
+                        <Radio.ListElement.Label
+                          checked={checked}
+                          data-test-id={`manager-language-option-${language}`}
+                        >
+                          {t(`deviceLocalization.languages.${language}`)}
+                        </Radio.ListElement.Label>
+                        {currentLanguage === language && (
+                          <Icons.CircledCheckSolidMedium color="primary.c80" size={24} />
+                        )}
+                      </Flex>
+                    )}
+                    value={language}
+                    key={language}
+                  />
+                ))}
+              </Radio>
+            </Flex>
+          )
         ) : (
-          <Flex flexGrow={1} flexDirection="column">
-            <Radio
-              currentValue={selectedLanguage}
-              onChange={onChange}
-              name="LanguageSelection"
-              containerProps={{ flexDirection: "column", rowGap: "1rem", flex: 1 }}
-            >
-              {sortedAvailableLanguages.map(language => (
-                <Radio.ListElement
-                  containerProps={{
-                    flex: 1,
-                    padding: 0,
-                  }}
-                  label={({ checked }: { checked: boolean }) => (
-                    <Flex flex={1} justifyContent="space-between">
-                      <Radio.ListElement.Label
-                        checked={checked}
-                        data-test-id={`manager-language-option-${language}`}
-                      >
-                        {t(`deviceLocalization.languages.${language}`)}
-                      </Radio.ListElement.Label>
-                      {currentLanguage === language && (
-                        <Icons.CircledCheckSolidMedium color="primary.c80" size={24} />
-                      )}
-                    </Flex>
-                  )}
-                  value={language}
-                  key={language}
-                />
-              ))}
-            </Radio>
+          <Flex flexGrow={1} flexDirection="column" alignItems="center">
+            <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
+              <InfiniteLoader size={58} />
+            </Flex>
           </Flex>
         )}
       </Flex>
@@ -156,7 +164,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
               >
                 {t(`common.retry`)}
               </Button>
-            ) : !error ? (
+            ) : (
               <Button
                 data-test-id={
                   installed ? "close-language-installation-button" : "install-language-button"
@@ -167,7 +175,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
               >
                 {installed ? t(`common.close`) : t(`deviceLocalization.changeLanguage`)}
               </Button>
-            ) : null}
+            )}
           </Flex>
         </Flex>
       ) : null}
