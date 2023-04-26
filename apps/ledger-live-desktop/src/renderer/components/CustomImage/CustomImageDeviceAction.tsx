@@ -130,7 +130,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
             </Button>
           ) : null}
           {isRefusedOnStaxError ? (
-            <Button size="large" variant="main" outline onClick={onSkip}>
+            <Button size="large" onClick={onSkip}>
               {t("customImage.steps.transfer.doThisLater")}
             </Button>
           ) : null}
