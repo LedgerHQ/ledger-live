@@ -9,7 +9,6 @@ import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import ByteSize from "~/renderer/components/ByteSize";
 import { rgba } from "~/renderer/styles/helpers";
 import Tooltip from "~/renderer/components/Tooltip";
@@ -485,4 +484,4 @@ const DeviceStorage = ({
     </Card>
   );
 };
-export default memo<Props>(withV3StyleProvider(DeviceStorage));
+export default memo<Props>(DeviceStorage);
