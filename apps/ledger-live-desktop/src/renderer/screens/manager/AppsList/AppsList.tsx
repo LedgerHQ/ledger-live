@@ -22,6 +22,7 @@ import InstallSuccessBanner from "./InstallSuccessBanner";
 import SearchBox from "../../accounts/AccountList/SearchBox";
 import { App } from "@ledgerhq/types-live";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
+import NoResults from "~/renderer/icons/NoResults";
 
 // sticky top bar with extra width to cover card boxshadow underneath
 export const StickyTabBar = styled.div`
@@ -174,7 +175,10 @@ const AppsList = ({
       )}
       <Card mt={0}>
         {isDeviceTab && !installedApps.length ? (
-          <Box py={8} data-test-id="manager-no-apps-empty-state">
+          <Box pb={6} pt={8} data-test-id="manager-no-apps-empty-state">
+            <Box mb={4} mt={5} horizontal color="palette.text.shade30" justifyContent="center">
+              <NoResults />
+            </Box>
             <Text textAlign="center" ff="Inter|SemiBold" fontSize={6}>
               <Trans i18nKey="manager.applist.placeholderNoAppsInstalled" />
             </Text>
