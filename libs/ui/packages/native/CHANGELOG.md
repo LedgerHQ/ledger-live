@@ -1,26 +1,32 @@
 # @ledgerhq/native-ui
 
-## 0.19.0-nightly.2
+## 0.18.1
 
 ### Patch Changes
 
-- [#3118](https://github.com/LedgerHQ/ledger-live/pull/3118) [`45288a1d80`](https://github.com/LedgerHQ/ledger-live/commit/45288a1d808866debff3f51c0382cbf71fac4c35) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - feat: refactor/homogenise headers
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a variant of the tiny text style with Alpha font family
 
-  Homogenize headers in navigators and in the main screens accessible from the Main navigator tab bar
-  Prevent blocking state due to already paired device in Stax onboarding
+- [#2888](https://github.com/LedgerHQ/ledger-live/pull/2888) [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27) Thanks [@elbywan](https://github.com/elbywan)! - Upgrade dependencies
 
-## 0.19.0-nightly.1
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
 
-### Minor Changes
+- Updated dependencies [[`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5)]:
+  - @ledgerhq/crypto-icons-ui@0.2.2
+  - @ledgerhq/icons-ui@0.4.0
 
-- [#3253](https://github.com/LedgerHQ/ledger-live/pull/3253) [`f1ed1d3bdd`](https://github.com/LedgerHQ/ledger-live/commit/f1ed1d3bddf25ad74cf04b8767ca2170fdbf75c8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Alert component: new design, new types "secondary" and "success", removed renderContent prop
-
-## 0.18.1-nightly.0
+## 0.18.1-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`c8920896d7`](https://github.com/LedgerHQ/ledger-live/commit/c8920896d7c96cab88f95ce705dc55aac5b345bc)]:
-  - @ledgerhq/ui-shared@0.2.0-nightly.0
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a variant of the tiny text style with Alpha font family
+
+- [#2888](https://github.com/LedgerHQ/ledger-live/pull/2888) [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27) Thanks [@elbywan](https://github.com/elbywan)! - Upgrade dependencies
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+- Updated dependencies [[`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5)]:
+  - @ledgerhq/crypto-icons-ui@0.2.2-next.0
+  - @ledgerhq/icons-ui@0.4.0-next.0
 
 ## 0.18.0
 
