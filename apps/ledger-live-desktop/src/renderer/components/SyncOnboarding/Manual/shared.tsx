@@ -10,7 +10,9 @@ import {
 import styled, { useTheme } from "styled-components";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 
-export const StepText = VerticalTimeline.BodyText;
+export const StepText = styled(VerticalTimeline.BodyText)`
+  white-space: pre-wrap;
+`;
 
 export const BorderFlex = styled(Flex)`
   background-color: ${p => p.theme.colors.palette.neutral.c30};

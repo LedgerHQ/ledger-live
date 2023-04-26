@@ -20,9 +20,10 @@ import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
 import { StepText } from "./shared";
 import Header from "./Header";
-import Animation from "~/renderer/animations";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
+import ContinueOnStax from "./ContinueOnStax";
+import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -112,7 +113,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         key: StepKey.Paired,
         status: "active",
         title: t("syncOnboarding.manual.pairedContent.title", {
-          deviceName: productName,
+          deviceName,
         }),
         renderBody: () => (
           <Flex flexDirection="column">
@@ -126,6 +127,10 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
                 deviceName: productName,
               })}
             </StepText>
+            <ContinueOnDeviceWithAnim
+              deviceModelId={deviceModelId}
+              text={t("syncOnboarding.manual.pairedContent.continueOnDevice", { productName })}
+            />
           </Flex>
         ),
       },
@@ -141,16 +146,20 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
                 deviceName: productName,
               })}
             </StepText>
+            <ContinueOnDeviceWithAnim
+              deviceModelId={deviceModelId}
+              text={t("syncOnboarding.manual.pinContent.continueOnDevice", { productName })}
+            />
           </Flex>
         ),
-        estimatedTime: 120,
       },
       {
         key: StepKey.Seed,
         status: "inactive",
         title: t("syncOnboarding.manual.seedContent.title"),
-        renderBody: () => <SeedStep seedPathStatus={seedPathStatus} />,
-        estimatedTime: 300,
+        renderBody: () => (
+          <SeedStep seedPathStatus={seedPathStatus} deviceModelId={deviceModelId} />
+        ),
       },
       {
         key: StepKey.SoftwareCheck,
