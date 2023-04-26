@@ -180,7 +180,7 @@ const Circle = styled(Flex)`
   height: 40px;
   width: 40px;
   border-radius: 40px;
-  background: ${p => p.theme.colors.neutral.c20};
+  background: ${p => p.theme.colors.opacityDefault.c10};
   align-items: center;
   justify-content: center;
 `;
@@ -773,7 +773,7 @@ export const renderConnectYourDevice = ({
   </Wrapper>
 );
 
-export const renderFirmwareUpdating = ({
+const renderFirmwareUpdatingBase = ({
   modelId,
   type,
 }: {
@@ -788,8 +788,8 @@ export const renderFirmwareUpdating = ({
     <Footer>
       <Flex alignItems="flex-start" flexDirection="column">
         <Flex alignItems="center">
-          <Circle mr={2}>
-            <Text fontWeight="semiBold" color="palette.text.shade100" fontSize="14px">
+          <Circle mr={6}>
+            <Text color="palette.text.shade100" variant="body">
               {"1"}
             </Text>
           </Circle>
@@ -800,9 +800,9 @@ export const renderFirmwareUpdating = ({
             />
           </Title>
         </Flex>
-        <Flex alignItems="center" mt={3}>
-          <Circle mr={2}>
-            <Text fontWeight="semiBold" color="palette.text.shade100" fontSize="14px">
+        <Flex alignItems="center" mt={6}>
+          <Circle mr={6}>
+            <Text color="palette.text.shade100" variant="body">
               {"2"}
             </Text>
           </Circle>
@@ -817,6 +817,8 @@ export const renderFirmwareUpdating = ({
     </Footer>
   </Wrapper>
 );
+
+export const renderFirmwareUpdating = withV3StyleProvider(renderFirmwareUpdatingBase);
 
 export const renderSwapDeviceConfirmation = ({
   modelId,
