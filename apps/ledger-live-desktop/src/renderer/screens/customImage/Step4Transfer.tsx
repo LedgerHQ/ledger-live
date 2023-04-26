@@ -49,7 +49,7 @@ const StepTransfer: React.FC<Props> = props => {
 
   return (
     <StepContainer
-      key={nonce}
+      key={`${nonce}_customImage`}
       footer={
         <StepFooter
           previousStep={Step.chooseContrast}
