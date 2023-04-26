@@ -59,7 +59,7 @@ const FirmwareUpdate = (props: Props) => {
   const isDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
 
   const onDrawerClose = useCallback(() => {
-    onReset(installed || []);
+    onReset((installed || []).map(({ name }) => name));
   }, [installed, onReset]);
 
   const onShowDisclaimer = useCallback(() => {
