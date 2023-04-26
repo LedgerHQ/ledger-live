@@ -8,10 +8,10 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
-import { Flex } from "@ledgerhq/react-ui";
+import { Flex, Text } from "@ledgerhq/react-ui";
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import ByteSize from "~/renderer/components/ByteSize";
 import { rgba } from "~/renderer/styles/helpers";
-import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
 import Card from "~/renderer/components/Box/Card";
 import Box from "~/renderer/components/Box";
@@ -80,7 +80,7 @@ const Separator = styled.div`
   width: 100%;
 `;
 
-const CheckMarkColor = styled.div`
+const CheckMarkColor = styled(Flex)`
   color: ${p => p.theme.colors.background.drawer};
 `;
 
@@ -361,8 +361,8 @@ const DeviceStorage = ({
               />
             </Box>
             <Flex justifyContent="space-between" alignItems="center" mt={1}>
-              <Flex flexDirection="row">
-                <Text ff="Inter|Medium" color="palette.text.shade70" fontSize={4}>
+              <Flex flexDirection="row" alignItems="center">
+                <Text variant="h5Inter" fontSize={4} color="neutral.c70">
                   {
                     <Trans
                       i18nKey="manager.deviceStorage.OSVersion"
@@ -373,11 +373,11 @@ const DeviceStorage = ({
                   }{" "}
                   {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
                 </Text>
-                <Flex ml={2} flexDirection="row" justifyItems="center">
-                  <CheckMarkColor>
+                <Flex ml={2} flexDirection="row" justifyItems="center" alignItems="center">
+                  <CheckMarkColor alignItems="center">
                     <Certificate />
                   </CheckMarkColor>
-                  <Text ff="Inter|SemiBold" color="palette.text.shade80" ml={1} fontSize={4}>
+                  <Text variant="h5Inter" fontSize={4} color="neutral.c70" ml={1}>
                     <Trans i18nKey="manager.deviceStorage.genuine" />
                   </Text>
                 </Flex>
@@ -386,10 +386,10 @@ const DeviceStorage = ({
             <Separator />
             <Info>
               <div>
-                <Text fontSize={4}>
+                <Text variant="h5Inter" fontSize={4} color="neutral.c70">
                   <Trans i18nKey="manager.deviceStorage.used" />
                 </Text>
-                <Text color="palette.text.shade100" ff="Inter|Bold" fontSize={4}>
+                <Text variant="h5Inter" fontSize={4} color="neutral.c100" fontWeight="semiBold">
                   <ByteSize
                     deviceModel={deviceModel}
                     value={distribution.totalAppsBytes}
@@ -398,10 +398,10 @@ const DeviceStorage = ({
                 </Text>
               </div>
               <div>
-                <Text fontSize={4}>
+                <Text variant="h5Inter" fontSize={4} color="neutral.c70">
                   <Trans i18nKey="manager.deviceStorage.capacity" />
                 </Text>
-                <Text color="palette.text.shade100" ff="Inter|Bold" fontSize={4}>
+                <Text variant="h5Inter" fontSize={4} color="neutral.c100" fontWeight="semiBold">
                   <ByteSize
                     deviceModel={deviceModel}
                     value={distribution.appsSpaceBytes}
@@ -410,17 +410,17 @@ const DeviceStorage = ({
                 </Text>
               </div>
               <div>
-                <Text fontSize={4}>
+                <Text variant="h5Inter" fontSize={4} color="neutral.c70">
                   <Trans i18nKey="manager.deviceStorage.installed" />
                 </Text>
-                <Text color="palette.text.shade100" ff="Inter|Bold" fontSize={4}>
+                <Text variant="h5Inter" fontSize={4} color="neutral.c100" fontWeight="semiBold">
                   {!isIncomplete ? distribution.apps.length : "—"}
                 </Text>
               </div>
               <FreeInfo danger={shouldWarn}>
                 {shouldWarn ? <IconTriangleWarning /> : ""}{" "}
                 <Box paddingLeft={1}>
-                  <Text ff="Inter|SemiBold" fontSize={3}>
+                  <Text variant="h5Inter" fontSize={4} color="neutral.c100" fontWeight="semiBold">
                     {isIncomplete ? (
                       <Trans i18nKey="manager.deviceStorage.incomplete" />
                     ) : distribution.freeSpaceBytes > 0 ? (
@@ -485,4 +485,4 @@ const DeviceStorage = ({
     </Card>
   );
 };
-export default memo<Props>(DeviceStorage);
+export default memo<Props>(withV3StyleProvider(DeviceStorage));
