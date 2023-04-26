@@ -429,6 +429,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       onRetry,
       withExportLogs: true,
       device: device ?? undefined,
+      inlineRetry,
     });
   }
 
