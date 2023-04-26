@@ -52,10 +52,18 @@ const EditDeviceName: React.FC<Props> = ({
   const [name, setName] = useState<string>(deviceName.slice(0, maxDeviceName));
   const [completed, setCompleted] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined | null>(null);
+  const [actionError, setActionError] = useState<Error | undefined | null>(null);
   const [running, setRunning] = useState(false);
+  const [nonce, setNonce] = useState(0);
+
   const disableButton = running || (!completed && (deviceName === name || !name.trim() || error));
 
   const request = useMemo(() => ({ name }), [name]);
+  const onRetry = useCallback(() => {
+    setError(null);
+    setActionError(null);
+    setNonce(nonce => nonce + 1);
+  }, []);
 
   const onCloseDrawer = useCallback(() => {
     onClose?.();
@@ -96,6 +104,7 @@ const EditDeviceName: React.FC<Props> = ({
   return (
     <Flex
       flexDirection="column"
+      key={nonce}
       rowGap={5}
       height="100%"
       overflowY="hidden"
@@ -141,10 +150,9 @@ const EditDeviceName: React.FC<Props> = ({
             <DeviceAction
               request={request}
               action={action}
+              inlineRetry={false}
               onResult={onSuccess}
-              // @ts-expect-error TODO: device and onClose are not expected as props - is it safe to remove?
-              device={device}
-              onClose={onClose}
+              onError={(error: Error) => setActionError(error)}
             />
           </Flex>
         ) : (
@@ -179,9 +187,9 @@ const EditDeviceName: React.FC<Props> = ({
           </Flex>
         )}
       </Flex>
-      {(!running || completed) && (
+      {!running || (running && actionError) || completed ? (
         <Flex flexDirection="column" alignSelf="stretch">
-          <Divider variant="light" />
+          <Divider />
           <Flex
             px={12}
             alignSelf="stretch"
@@ -191,16 +199,27 @@ const EditDeviceName: React.FC<Props> = ({
             pb={1}
           >
             <Flex flex={1} />
-            <Button
-              variant="main"
-              onClick={completed ? onCloseDrawer : onSubmit}
-              disabled={disableButton}
-            >
-              {completed ? t(`common.close`) : t(`common.continue`)}
-            </Button>
+            {actionError ? (
+              <Button
+                data-test-id="retry-device-rename-button"
+                variant="main"
+                onClick={onRetry}
+                disabled={!running}
+              >
+                {t(`common.retry`)}
+              </Button>
+            ) : (
+              <Button
+                variant="main"
+                onClick={completed ? onCloseDrawer : onSubmit}
+                disabled={!!disableButton}
+              >
+                {completed ? t(`common.close`) : t(`common.continue`)}
+              </Button>
+            )}
           </Flex>
         </Flex>
-      )}
+      ) : null}
     </Flex>
   );
 };
