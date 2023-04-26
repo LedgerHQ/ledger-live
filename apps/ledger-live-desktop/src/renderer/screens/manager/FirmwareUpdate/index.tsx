@@ -15,7 +15,6 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import { FakeLink } from "~/renderer/components/TopBanner";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
-import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 
 type Props = {
   deviceInfo: DeviceInfo;
@@ -51,12 +50,17 @@ const FirmwareUpdate = (props: Props) => {
     installed,
     firmware,
     error,
+    onReset,
   } = props;
   const { setDrawer } = useContext(context);
   const stepId = initialStepId(props);
   const modal = deviceInfo.isOSU ? "install" : props.openFirmwareUpdate ? "disclaimer" : "closed";
   const deviceSpecs = getDeviceModel(device.modelId);
   const isDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
+
+  const onDrawerClose = useCallback(() => {
+    onReset(installed || []);
+  }, [installed, onReset]);
 
   const onShowDisclaimer = useCallback(() => {
     if (!firmware) return;
@@ -76,6 +80,7 @@ const FirmwareUpdate = (props: Props) => {
           deviceInfo,
           device.modelId,
         ),
+        onDrawerClose,
         status: modal,
         stepId: stepId,
         installed: installed,

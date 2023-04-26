@@ -59,7 +59,7 @@ const StepConfirmation = ({ error, appsToBeReinstalled }: StepProps) => {
 };
 
 export const StepConfirmFooter = ({
-  onCloseModal,
+  onDrawerClose,
   error,
   appsToBeReinstalled,
   onRetry,
@@ -69,12 +69,12 @@ export const StepConfirmFooter = ({
   const { setDrawer } = useContext(context);
 
   const onCloseReload = useCallback(() => {
-    onCloseModal();
+    onDrawerClose();
     if (error instanceof UserRefusedFirmwareUpdate) {
       history.push("/manager/reload");
       setDrawer();
     }
-  }, [error, history, onCloseModal, setDrawer]);
+  }, [error, history, onDrawerClose, setDrawer]);
 
   if (error) {
     const isUserRefusedFirmwareUpdate = error instanceof UserRefusedFirmwareUpdate;
@@ -84,7 +84,7 @@ export const StepConfirmFooter = ({
           {t("common.close")}
         </Button>
         {isUserRefusedFirmwareUpdate ? (
-          <Button variant="main" onClick={() => onRetry()}>
+          <Button variant="main" ml={4} onClick={() => onRetry()}>
             {t("manager.modal.cancelReinstallCTA")}
           </Button>
         ) : null}
@@ -95,7 +95,7 @@ export const StepConfirmFooter = ({
   return (
     <>
       <Track event={"FirmwareUpdatedClose"} onUnmount />
-      <Button variant="main" onClick={() => onCloseModal(appsToBeReinstalled)}>
+      <Button variant="main" onClick={() => onDrawerClose(appsToBeReinstalled)}>
         {t("manager.modal.SuccessCTANoApps")}
       </Button>
     </>
