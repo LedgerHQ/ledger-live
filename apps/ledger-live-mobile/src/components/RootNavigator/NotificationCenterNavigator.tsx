@@ -86,7 +86,7 @@ export default function NotificationCenterNavigator() {
         name={ScreenName.NotificationCenterStatus}
         component={StatusCenter}
         options={{
-          title: t("notificationCenter.status.title"),
+          title: t("notificationCenter.status.header"),
         }}
       />
     </Stack.Navigator>

@@ -11,18 +11,19 @@ import { TrackScreen } from "../../analytics";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
 
 const DATA_TRACKING_DRAWER_NAME = "Notification Center Status";
-const Container = styled(SettingsNavigationScrollView)``;
-const IncidentBox = styled(Flex)`
-  height: 62px;
+const Container = styled(SettingsNavigationScrollView)`
+  padding-left: ${p => p.theme.space[7]}px;
+  padding-right: ${p => p.theme.space[7]}px;
 `;
+const IncidentBox = styled(Flex)``;
 export default function StatusCenter() {
   const { incidents } = useFilteredServiceStatus();
-  const { colors } = useTheme();
+  const { colors, space } = useTheme();
 
   const ListItem = (incident: Incident) => {
     return (
       <IncidentBox flexDirection="row">
-        <Box>
+        <Box mr={3} pt={1}>
           <Icons.WarningSolidMedium
             color={
               incident.impact === "critical"
@@ -33,7 +34,7 @@ export default function StatusCenter() {
           />
         </Box>
         <Flex flexDirection="column" justifyContent="space-between">
-          <Text variant="body" fontWeight="medium" color="neutral.c100">
+          <Text variant="body" fontWeight="medium" color="neutral.c100" mb={3}>
             {incident.name}
           </Text>
           {incident.incident_updates?.length && (
@@ -56,8 +57,10 @@ export default function StatusCenter() {
 
       <FlatList
         data={incidents}
+        contentContainerStyle={{ flex: 1 }}
         keyExtractor={(incident: Incident) => incident.id}
         renderItem={elem => ListItem(elem.item)}
+        ItemSeparatorComponent={() => <Box height={space[7]} />}
       />
     </Container>
   );
