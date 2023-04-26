@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.58.0-nightly.0
+
+### Minor Changes
+
+- [#3206](https://github.com/LedgerHQ/ledger-live/pull/3206) [`bb220c6a93`](https://github.com/LedgerHQ/ledger-live/commit/bb220c6a93d6526b51f6e5f01f0b82aa0cbf5c18) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add warning banner on dash receive flow
+
+### Patch Changes
+
+- [#3244](https://github.com/LedgerHQ/ledger-live/pull/3244) [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new Entry for referal program in SideBar (LLD)
+
+- Updated dependencies [[`07fc266a10`](https://github.com/LedgerHQ/ledger-live/commit/07fc266a10479f77044e36b9347b9a97e42f0566), [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e), [`d67f7480f7`](https://github.com/LedgerHQ/ledger-live/commit/d67f7480f767ffceab82a43c37089948315a3fc4), [`500797488b`](https://github.com/LedgerHQ/ledger-live/commit/500797488b0604d2a8a7ac844429b691f4bc6234), [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e)]:
+  - @ledgerhq/live-common@29.4.1-nightly.0
+  - @ledgerhq/react-ui@0.14.0-nightly.0
+  - @ledgerhq/types-live@6.32.2-nightly.0
+  - @ledgerhq/coin-framework@0.3.2-nightly.0
+  - @ledgerhq/domain-service@1.0.2-nightly.0
+
 ## 2.57.1
 
 ### Patch Changes

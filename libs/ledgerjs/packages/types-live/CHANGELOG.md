@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.32.2-nightly.0
+
+### Patch Changes
+
+- [#3244](https://github.com/LedgerHQ/ledger-live/pull/3244) [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new FF
+
 ## 6.32.1
 
 ### Patch Changes

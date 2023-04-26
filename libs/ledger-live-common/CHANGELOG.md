@@ -1,5 +1,22 @@
 # @ledgerhq/live-common
 
+## 29.4.1-nightly.0
+
+### Patch Changes
+
+- [#3271](https://github.com/LedgerHQ/ledger-live/pull/3271) [`07fc266a10`](https://github.com/LedgerHQ/ledger-live/commit/07fc266a10479f77044e36b9347b9a97e42f0566) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix regression in the stax load image introduced by device action rework
+
+- [#3244](https://github.com/LedgerHQ/ledger-live/pull/3244) [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new FF
+
+- [#3280](https://github.com/LedgerHQ/ledger-live/pull/3280) [`d67f7480f7`](https://github.com/LedgerHQ/ledger-live/commit/d67f7480f767ffceab82a43c37089948315a3fc4) Thanks [@lvndry](https://github.com/lvndry)! - Delete api folder in live-common
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.3.2-nightly.0
+  - @ledgerhq/coin-polkadot@0.1.3-nightly.0
+  - @ledgerhq/domain-service@1.0.2-nightly.0
+  - @ledgerhq/live-portfolio@0.0.4-nightly.0
+  - @ledgerhq/hw-app-eth@6.33.2-nightly.0
+
 ## 29.4.0
 
 ### Minor Changes

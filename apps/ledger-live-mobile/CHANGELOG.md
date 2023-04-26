@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.21.0-nightly.0
+
+### Minor Changes
+
+- [#3206](https://github.com/LedgerHQ/ledger-live/pull/3206) [`bb220c6a93`](https://github.com/LedgerHQ/ledger-live/commit/bb220c6a93d6526b51f6e5f01f0b82aa0cbf5c18) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Add warning banner on dash receive flow
+
+### Patch Changes
+
+- [#3278](https://github.com/LedgerHQ/ledger-live/pull/3278) [`34e2621b9f`](https://github.com/LedgerHQ/ledger-live/commit/34e2621b9f24f6058e3f9c87219f978c40db3304) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Fixed LLM account staking tracking events from account pages
+
+- Updated dependencies [[`07fc266a10`](https://github.com/LedgerHQ/ledger-live/commit/07fc266a10479f77044e36b9347b9a97e42f0566), [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e), [`d67f7480f7`](https://github.com/LedgerHQ/ledger-live/commit/d67f7480f767ffceab82a43c37089948315a3fc4), [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e)]:
+  - @ledgerhq/live-common@29.4.1-nightly.0
+  - @ledgerhq/types-live@6.32.2-nightly.0
+  - @ledgerhq/coin-framework@0.3.2-nightly.0
+  - @ledgerhq/domain-service@1.0.2-nightly.0
+
 ## 3.20.0
 
 ### Minor Changes

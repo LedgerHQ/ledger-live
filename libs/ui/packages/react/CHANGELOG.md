@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.14.0-nightly.0
+
+### Minor Changes
+
+- [#3286](https://github.com/LedgerHQ/ledger-live/pull/3286) [`500797488b`](https://github.com/LedgerHQ/ledger-live/commit/500797488b0604d2a8a7ac844429b691f4bc6234) Thanks [@sarneijim](https://github.com/sarneijim)! - Update alert component. Add new secondary and sucess types. Change border-radius, colors and other css details.
+
 ## 0.13.0
 
 ### Minor Changes
