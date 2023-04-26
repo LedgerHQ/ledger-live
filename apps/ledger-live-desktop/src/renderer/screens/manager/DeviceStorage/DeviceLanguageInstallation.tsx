@@ -134,7 +134,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
             </Flex>
           )
         ) : (
-          <Flex flexGrow={1} flexDirection="column" alignItems="center">
+          <Flex flexGrow={1} flexDirection="column" justifyContent="center" alignItems="center">
             <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
               <InfiniteLoader size={58} />
             </Flex>

@@ -89,7 +89,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     if (error instanceof ImageCommitRefusedOnDevice) {
       dispatch(clearLastSeenCustomImage());
     }
-    onError(error);
+    onError && onError(error);
   }, [dispatch, error, onError]);
 
   const shouldNavBeBlocked = !!validDevice && !isError;
