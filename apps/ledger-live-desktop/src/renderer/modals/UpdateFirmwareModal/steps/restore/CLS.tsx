@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StepProps } from "../..";
 import CustomImageDeviceAction from "~/renderer/components/CustomImage/CustomImageDeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -9,6 +9,8 @@ import { track } from "~/renderer/analytics/segment";
 type Props = Partial<StepProps> & { onDone: () => void };
 const CLS = ({ onDone, CLSBackup }: Props) => {
   const device = useSelector(getCurrentDevice);
+  const [error, setError] = useState<Error | null>(null);
+
   const onVoid = () => {
     // Stay happy CustomImageDeviceAction.
   };
@@ -16,6 +18,18 @@ const CLS = ({ onDone, CLSBackup }: Props) => {
   useEffect(() => {
     if (!CLSBackup) onDone();
   }, [CLSBackup, onDone]);
+
+  useEffect(() => {
+    // Nb Error cases in the recovery flow are acknowledged but still continue
+    // the restore flow.
+    const timer = setTimeout(() => {
+      track("Page Manager CLSRestoreError", {
+        error,
+      });
+      onDone();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [error, onDone]);
 
   return CLSBackup ? (
     <CustomImageDeviceAction
@@ -27,12 +41,7 @@ const CLS = ({ onDone, CLSBackup }: Props) => {
       padImage={false}
       onResult={onDone}
       onSkip={onDone}
-      onError={(error: Error) => {
-        track("Page Manager CLSRestoreError", {
-          error,
-        });
-        setTimeout(onDone, 3000); // Nb Maybe something cleaner?
-      }}
+      onError={setError}
       onTryAnotherImage={onVoid}
       blockNavigation={onVoid}
     />
