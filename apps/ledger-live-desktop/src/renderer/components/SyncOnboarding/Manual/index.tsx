@@ -177,7 +177,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       {
         key: StepKey.Applications,
         status: "inactive",
-        title: "Nano applications",
+        title: t("syncOnboarding.manual.installApplications.title"),
         renderBody: () => (
           <OnboardingAppInstallStep
             device={device}
@@ -190,12 +190,14 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       {
         key: StepKey.Ready,
         status: "inactive",
-        title: "Nano is ready",
+        title: t("syncOnboarding.manual.endOfSetup.title"),
       },
     ],
     [
       t,
+      deviceName,
       productName,
+      deviceModelId,
       seedPathStatus,
       lastKnownDeviceModelId,
       handleSoftwareCheckComplete,

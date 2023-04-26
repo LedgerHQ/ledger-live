@@ -1251,10 +1251,13 @@
         }
       },
       "installApplications": {
-        "title": "We recommend downloading a default set of apps. You can download more later",
+        "title": "Install blockchain apps",
         "install": "Install",
         "skip": "I'll do that later",
         "info": "Apps on {{deviceName}} are used to approve transactions. You can add or remove them at any time."
+      },
+      "endOfSetup": {
+        "title": "End of setup"
       },
       "genuineCheckModal": {
         "title": "Authenticity Check",
