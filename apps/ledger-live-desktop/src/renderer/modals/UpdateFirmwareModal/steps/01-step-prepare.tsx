@@ -6,9 +6,9 @@ import { Flex, ProgressLoader, Icons } from "@ledgerhq/react-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-
 import staxFetchImage, { FetchImageEvent } from "@ledgerhq/live-common/hw/staxFetchImage";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
+import { getEnv } from "@ledgerhq/live-common/env";
 
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -17,7 +17,6 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Interactions from "~/renderer/icons/device/interactions";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { getEnv } from "@ledgerhq/live-common/env";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { AnimationWrapper, Title } from "~/renderer/components/DeviceAction/rendering";
@@ -25,6 +24,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { EMPTY, concat } from "rxjs";
 import { map, tap } from "rxjs/operators";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
+import { StepProps } from "..";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -157,8 +157,6 @@ const Body = ({
   );
 };
 
-type Props = any;
-
 const StepFullFirmwareInstall = ({
   firmware,
   deviceModelId,
@@ -166,7 +164,7 @@ const StepFullFirmwareInstall = ({
   transitionTo,
   setError,
   setCLSBackup,
-}: Props) => {
+}: StepProps) => {
   const { t } = useTranslation();
   const device = useSelector(getCurrentDevice);
   const [progress, setProgress] = useState(0);
