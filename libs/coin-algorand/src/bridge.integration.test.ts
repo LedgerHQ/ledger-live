@@ -294,6 +294,12 @@ export const dataset: DatasetTest<AlgorandTransaction> = {
   },
 };
 
+describe("Algorand bridge", () => {
+  test.todo(
+    "This is an empty test to make jest command pass. Remove it once there is a real test."
+  );
+});
+
 /**
  * NOTE: if tests are added to this file,
  * like done in libs/coin-polkadot/src/bridge.integration.test.ts for example,
