@@ -1826,7 +1826,7 @@
       "capacity": "Capacity",
       "used": "Used",
       "OSVersion": "OS version",
-      "genuine": "Your device is Genuine",
+      "genuine": "Device is genuine",
       "incomplete": "Some apps were not recognized. Please uninstall, then reinstall them."
     },
     "applist": {
