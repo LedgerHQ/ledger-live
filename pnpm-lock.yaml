@@ -6,6 +6,9 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
 
 patchedDependencies:
+  asyncstorage-down@4.2.0:
+    hash: 2npkndps6fxdasqj3xzcrnnfbe
+    path: patches/asyncstorage-down@4.2.0.patch
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
@@ -966,7 +969,7 @@ importers:
         version: 3.0.0(@babel/runtime@7.17.9)(@react-navigation/core@6.4.6)(@react-navigation/native@6.0.13)(@react-navigation/stack@6.3.1)(@shopify/react-native-performance@4.1.2)(react-native@0.71.6)(react@18.0.0)
       asyncstorage-down:
         specifier: ^4.2.0
-        version: 4.2.0
+        version: 4.2.0(patch_hash=2npkndps6fxdasqj3xzcrnnfbe)(@react-native-async-storage/async-storage@1.17.11)
       bignumber.js:
         specifier: ^9.1.0
         version: 9.1.0
@@ -15458,9 +15461,12 @@ packages:
       webpack: 4.46.0
     dev: true
 
-  /@polkadot/keyring@10.3.1:
+  /@polkadot/keyring@10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1):
     resolution: {integrity: sha512-xBkUtyQ766NVS1ccSYbQssWpxAhSf0uwkw9Amj8TFhu++pnZcVm+EmM2VczWqgOkmWepO7MGRjEXeOIw1YUGiw==}
     engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': 10.3.1
+      '@polkadot/util-crypto': 10.3.1
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
@@ -15485,7 +15491,7 @@ packages:
       styled-components: '*'
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1
+      '@polkadot/keyring': 10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/ui-settings': 2.11.1
       '@polkadot/ui-shared': 2.11.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/util': 10.3.1
@@ -15560,7 +15566,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1
+      '@polkadot/keyring': 10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/types-augment': 9.8.1
       '@polkadot/types-codec': 9.8.1
       '@polkadot/types-create': 9.8.1
@@ -25562,15 +25568,22 @@ packages:
   /asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
 
-  /asyncstorage-down@4.2.0:
+  /asyncstorage-down@4.2.0(patch_hash=2npkndps6fxdasqj3xzcrnnfbe)(@react-native-async-storage/async-storage@1.17.11):
     resolution: {integrity: sha512-xTljBjicpnxsoA7yEs6duXFXWEZC0V1Q/PeKcUM7Cd2k2W1XPGfyBY1kPXBxTqR++u6ZuDa5egnU8/E/WkJv4Q==}
+    peerDependencies:
+      '@react-native-async-storage/async-storage': '*'
+    peerDependenciesMeta:
+      '@react-native-async-storage/async-storage':
+        optional: true
     dependencies:
+      '@react-native-async-storage/async-storage': 1.17.11(react-native@0.71.6)
       abstract-leveldown: 2.6.1
       argsarray: 0.0.1
       d64: 1.0.0
       ltgt: 2.2.1
       tiny-queue: 0.2.0
     dev: false
+    patched: true
 
   /at-least-node@1.0.0:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
@@ -26320,7 +26333,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
+      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -36223,7 +36236,7 @@ packages:
     resolution: {integrity: sha512-oWb1Z6mkHIskLzEJ/XWX0srkpkTQ7vaopMQkyaEIoq0fmtFVxOthb8cCxeT+p3ynTdkk/RZwbgG4brR5BeWECw==}
     engines: {node: '>= 4.0'}
     os: [darwin]
-    deprecated: fsevents 1 will break on node v14+ and could be using insecure binaries. Upgrade to fsevents 2.
+    deprecated: The v1 package contains DANGEROUS / INSECURE binaries. Upgrade to safe fsevents v2
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
@@ -50289,7 +50302,7 @@ packages:
     peerDependencies:
       asyncstorage-down: '>=3.0.0 <5.0.0'
     dependencies:
-      asyncstorage-down: 4.2.0
+      asyncstorage-down: 4.2.0(patch_hash=2npkndps6fxdasqj3xzcrnnfbe)(@react-native-async-storage/async-storage@1.17.11)
       level-filesystem: 1.2.0
       levelup: 0.18.6
     dev: false
@@ -54412,7 +54425,6 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-system@5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}
