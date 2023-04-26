@@ -20,7 +20,7 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { getEnv } from "@ledgerhq/live-common/env";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { AnimationWrapper } from "~/renderer/components/DeviceAction/rendering";
+import { AnimationWrapper, Title } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 import { EMPTY, concat } from "rxjs";
 import { map, tap } from "rxjs/operators";
@@ -31,12 +31,6 @@ const Container = styled(Box).attrs(() => ({
   fontSize: 4,
   color: "palette.text.shade100",
   px: 7,
-}))``;
-
-const Title = styled(Box).attrs(() => ({
-  ff: "Inter|SemiBold",
-  fontSize: 5,
-  mb: 2,
 }))``;
 
 const HighlightVersion = styled(Text).attrs(() => ({
@@ -50,24 +44,6 @@ const HighlightVersion = styled(Text).attrs(() => ({
   border-radius: 4px;
 `;
 
-const Identifier = styled(Box).attrs(() => ({
-  bg: "palette.background.default",
-  borderRadius: 1,
-  color: "palette.text.shade100",
-  ff: "Inter|SemiBold",
-  fontSize: 4,
-  mt: 2,
-  px: 4,
-  py: 3,
-}))`
-  border: 1px dashed ${p => p.theme.colors.palette.divider};
-  cursor: text;
-  user-select: text;
-  min-width: 325px;
-  text-align: center;
-  word-break: break-all;
-`;
-
 const Body = ({
   displayedOnDevice,
   progress,
@@ -75,6 +51,7 @@ const Body = ({
   firmware,
   deviceInfo,
   step,
+  hasHash,
 }: {
   displayedOnDevice: boolean;
   progress: number;
@@ -82,6 +59,7 @@ const Body = ({
   firmware: FirmwareUpdateContext;
   deviceInfo: DeviceInfo;
   step: string;
+  hasHash?: boolean;
 }) => {
   const { t } = useTranslation();
   const type = useTheme("colors.palette.type");
@@ -90,6 +68,7 @@ const Body = ({
   const from = deviceInfo.version;
   const to = firmware?.final.name;
   const normalProgress = (progress || 0) * 100;
+  const maybeHash = firmware?.osu?.hash;
 
   if (!displayedOnDevice) {
     return (
@@ -103,9 +82,9 @@ const Body = ({
           />
         </Flex>
         <Title>
-          {step !== "transfer" // TODO clean this up
+          {step !== "transfer"
             ? t("manager.modal.steps.preparingUpdate")
-            : t("manager.modal.steps.trasnferringUpdate", { productName: deviceModel.productName })}
+            : t("manager.modal.steps.transferringUpdate", { productName: deviceModel.productName })}
         </Title>
       </Box>
     );
@@ -133,9 +112,15 @@ const Body = ({
         )}
 
         <Flex flexDirection="row" alignItems="center" my={2}>
-          <HighlightVersion>{`V ${from}`}</HighlightVersion>
-          <Icons.ArrowRightMedium size={14} />
-          <HighlightVersion>{`V ${to}`}</HighlightVersion>
+          {hasHash ? (
+            <HighlightVersion>{maybeHash}</HighlightVersion>
+          ) : (
+            <>
+              <HighlightVersion>{`V ${from}`}</HighlightVersion>
+              <Icons.ArrowRightMedium size={14} />
+              <HighlightVersion>{`V ${to}`}</HighlightVersion>
+            </>
+          )}
         </Flex>
 
         <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade100">
@@ -172,7 +157,7 @@ const Body = ({
   );
 };
 
-type Props = StepProps;
+type Props = any;
 
 const StepFullFirmwareInstall = ({
   firmware,
@@ -257,6 +242,9 @@ const StepFullFirmwareInstall = ({
   }, []);
 
   const hasHash = !!firmware?.osu?.hash;
+  if (firmware?.osu?.hash) {
+    firmware.osu.hash = "7815696ecbf1c96e6894b779456d330e";
+  }
 
   return (
     <Container data-test-id="firmware-update-download-progress">
@@ -264,6 +252,7 @@ const StepFullFirmwareInstall = ({
       <Body
         deviceModelId={deviceModelId}
         deviceInfo={deviceInfo}
+        hasHash={hasHash}
         displayedOnDevice={displayedOnDevice}
         firmware={firmware}
         progress={progress}
