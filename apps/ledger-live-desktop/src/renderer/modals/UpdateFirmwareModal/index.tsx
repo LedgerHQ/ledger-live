@@ -22,7 +22,7 @@ type MaybeError = Error | undefined | null;
 export type StepProps = {
   firmware?: FirmwareUpdateContext;
   appsToBeReinstalled: boolean;
-  onCloseModal: (proceedToAppReinstall?: boolean) => void;
+  onDrawerClose: (reinstall?: boolean) => void;
   error?: Error;
   setError: (e: Error) => void;
   CLSBackup?: string;
@@ -48,7 +48,7 @@ type Step = TypedStep<StepId, StepProps>;
 type Props = {
   withResetStep: boolean;
   withAppsToReinstall: boolean;
-  onClose: (proceedToAppReinstall?: boolean) => void;
+  onDrawerClose: (reinstall?: boolean) => void;
   firmware?: FirmwareUpdateContext;
   stepId: StepId;
   error?: Error | null;
@@ -65,7 +65,7 @@ const UpdateModal = ({
   withResetStep,
   withAppsToReinstall,
   error,
-  onClose,
+  onDrawerClose,
   firmware,
   ...props
 }: Props) => {
@@ -167,7 +167,7 @@ const UpdateModal = ({
 
   const additionalProps = {
     ...props,
-    onCloseModal: onClose,
+    onDrawerClose,
     onRetry: handleReset,
 
     setError,
@@ -252,4 +252,5 @@ const UpdateModal = ({
     </Flex>
   );
 };
+
 export default withV3StyleProvider(UpdateModal);
