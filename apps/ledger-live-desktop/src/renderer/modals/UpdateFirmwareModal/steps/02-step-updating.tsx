@@ -5,14 +5,14 @@ import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
+import { getEnv } from "@ledgerhq/live-common/env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import { StepProps } from "..";
-import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { renderFirmwareUpdating } from "~/renderer/components/DeviceAction/rendering";
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import useTheme from "~/renderer/hooks/useTheme";
+import { StepProps } from "..";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -29,15 +29,13 @@ export const Body = ({ modelId }: BodyProps) => {
   return renderFirmwareUpdating({ modelId, type });
 };
 
-type Props = StepProps;
-
 const StepUpdating = ({
   firmware,
   deviceModelId,
   setError,
   transitionTo,
   setUpdatedDeviceInfo,
-}: Props) => {
+}: StepProps) => {
   useEffect(() => {
     const sub = (getEnv("MOCK")
       ? mockedEventEmitter()

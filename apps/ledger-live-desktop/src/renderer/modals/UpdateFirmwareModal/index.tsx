@@ -6,7 +6,6 @@ import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import logger from "~/renderer/logger";
-import { Step as TypedStep } from "~/renderer/components/Stepper";
 import StepResetDevice, { StepResetFooter } from "./steps/00-step-reset-device";
 import StepPrepare from "./steps/01-step-prepare";
 import StepFlashMcu from "./steps/02-step-flash-mcu";
@@ -23,7 +22,7 @@ export type StepProps = {
   firmware?: FirmwareUpdateContext;
   appsToBeReinstalled: boolean;
   onDrawerClose: (reinstall?: boolean) => void;
-  error?: Error;
+  error?: Error | null | undefined;
   setError: (e: Error) => void;
   CLSBackup?: string;
   deviceModelId: DeviceModelId;
@@ -43,20 +42,25 @@ export type StepId =
   | "resetDevice"
   | "deviceLanguage";
 
-type Step = TypedStep<StepId, StepProps>;
-
 type Props = {
   withResetStep: boolean;
   withAppsToReinstall: boolean;
   onDrawerClose: (reinstall?: boolean) => void;
   firmware?: FirmwareUpdateContext;
   stepId: StepId;
-  error?: Error | null;
+  error?: Error | null | undefined;
   deviceModelId: DeviceModelId;
   deviceInfo: DeviceInfo;
   setFirmwareUpdateOpened: (isOpen: boolean) => void;
   // This is bad practice but it seems to be needed since we spread additional props in the stepper and down below…
   [key: string]: unknown;
+};
+
+type Step = {
+  id: StepId;
+  label: string;
+  component: React.FunctionComponent<StepProps>;
+  footer?: React.FunctionComponent<StepProps>;
 };
 
 const UpdateModal = ({
@@ -175,11 +179,13 @@ const UpdateModal = ({
     setUpdatedDeviceInfo,
 
     appsToBeReinstalled: withAppsToReinstall,
+    transitionTo: setStateStepId,
     CLSBackup,
     deviceModelId,
     error: err,
     firmware,
     updatedDeviceInfo,
+    t,
   };
 
   const deviceModel = getDeviceModel(deviceModelId);
@@ -226,7 +232,7 @@ const UpdateModal = ({
                   overflowY="hidden"
                   px={12}
                 >
-                  <step.component {...additionalProps} transitionTo={setStateStepId} />
+                  <step.component {...additionalProps} />
                 </Flex>
                 {step.footer ? (
                   <Flex flexDirection="column" alignSelf="stretch">
@@ -240,7 +246,7 @@ const UpdateModal = ({
                       pb={1}
                     >
                       <Flex flex={1} />
-                      <step.footer {...additionalProps} transitionTo={setStateStepId} />
+                      <step.footer {...additionalProps} />
                     </Flex>
                   </Flex>
                 ) : null}
