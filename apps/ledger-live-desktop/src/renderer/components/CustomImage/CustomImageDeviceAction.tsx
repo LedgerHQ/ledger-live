@@ -27,7 +27,7 @@ type Props = {
   padImage?: boolean;
   source: HTMLImageElement["src"];
   inlineRetry?: boolean;
-  restore?: boolean;
+  restore: boolean;
   onError?: (arg0: Error) => void;
   onStart?: () => void;
   onResult?: () => void;

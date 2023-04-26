@@ -15,6 +15,7 @@ import {
   SwapGenericAPIError,
   DeviceNotOnboarded,
   NoSuchAppOnProvider,
+  LanguageInstallRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
 
 export type ErrorIconProps = {
@@ -29,17 +30,17 @@ const ErrorIcon = ({ error, size = 44 }: ErrorIconProps) => {
     return <InfoCircle size={size} />;
   }
 
-  if (error instanceof UserRefusedFirmwareUpdate) {
-    return <Warning size={size} />;
-  }
-
   if (
+    error instanceof UserRefusedFirmwareUpdate ||
     error instanceof UserRefusedAllowManager ||
     error instanceof UserRefusedOnDevice ||
     error instanceof UserRefusedAddress ||
-    error instanceof SwapGenericAPIError ||
-    error instanceof NoSuchAppOnProvider
+    error instanceof LanguageInstallRefusedOnDevice
   ) {
+    return <Warning size={size} />;
+  }
+
+  if (error instanceof SwapGenericAPIError || error instanceof NoSuchAppOnProvider) {
     return <CrossCircle size={size} />;
   }
 
