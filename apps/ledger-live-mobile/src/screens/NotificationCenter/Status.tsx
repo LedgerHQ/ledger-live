@@ -25,7 +25,7 @@ export default function StatusCenter() {
         <Box>
           <Icons.WarningSolidMedium
             color={
-              incident.impact === "Critical"
+              incident.impact === "critical"
                 ? colors.error.c60
                 : colors.warning.c70
             }
