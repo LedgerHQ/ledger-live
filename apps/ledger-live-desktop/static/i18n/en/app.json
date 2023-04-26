@@ -5756,9 +5756,11 @@
         "stepLabel": "Transfer",
         "uploadAnotherImage": "Upload another image",
         "allowPreview": "Allow lock screen picture to load on your {{productName}}",
+        "allowConfirmPreview": "Allow lock screen picture restoration on {{productName}}",
         "loadingPicture": "Loading...",
         "imageLoaded": "Image loaded on {{productName}}",
         "confirmPicture": "Like what you see?\nKeep it!",
+        "confirmRestorePicture": "Confirm restoration of the lock screen picture",
         "doThisLater": "Maybe later"
       }
     },
