@@ -16,6 +16,7 @@ const Language = ({ updatedDeviceInfo, deviceInfo: oldDeviceInfo, onDone }: Prop
   const [isLanguagePromptOpen, setIsLanguagePromptOpen] = useState<boolean>(false);
   const [languageToInstall, setLanguageToInstall] = useState<LanguageType>("english");
   const [installingLanguage, setInstallingLanguage] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   const currentLocale = useSelector(languageSelector) as Locale;
 
@@ -33,6 +34,18 @@ const Language = ({ updatedDeviceInfo, deviceInfo: oldDeviceInfo, onDone }: Prop
     setLanguageToInstall(language);
     setInstallingLanguage(true);
   }, []);
+
+  useEffect(() => {
+    // Nb Error cases in the recovery flow are acknowledged but still continue
+    // the restore flow. Consider refactoring this to not repeat the other usage.
+    const timer = setTimeout(() => {
+      track("Page Manager FwUpdateLanguageInstallError", {
+        error,
+      });
+      onDone();
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [error, onDone]);
 
   useEffect(() => {
     if (newLanguagesLoaded && oldLanguagesLoaded) {
@@ -79,12 +92,7 @@ const Language = ({ updatedDeviceInfo, deviceInfo: oldDeviceInfo, onDone }: Prop
       {installingLanguage ? (
         <ChangeDeviceLanguageAction
           language={languageToInstall}
-          onError={(error: Error) => {
-            track("Page Manager FwUpdateLanguageInstallError", {
-              error,
-            });
-            setTimeout(onDone, 3000); // Nb Maybe something cleaner?
-          }}
+          onError={setError}
           onSuccess={() => {
             track("Page Manager FwUpdateLanguageInstalled", {
               selectedLanguage: languageToInstall,
