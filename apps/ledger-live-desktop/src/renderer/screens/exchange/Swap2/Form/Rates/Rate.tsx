@@ -2,10 +2,9 @@ import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Text } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { iconByProviderName } from "../../utils";
-const ProviderContainer: ThemedComponent<{}> = styled(Box).attrs({
+const ProviderContainer = styled(Box).attrs({
   horizontal: true,
   alignItems: "center",
   ff: "Inter|SemiBold",
@@ -25,7 +24,7 @@ const ProviderContainer: ThemedComponent<{}> = styled(Box).attrs({
       box-shadow: 0px 0px 2px 1px ${p.theme.colors.palette.divider};
     }`}
 `;
-const SecondaryText: ThemedComponent<{}> = styled(Text)`
+const SecondaryText = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
 export type Props = {

@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 import styled from "styled-components";
 import { useSpring, animated, interpolate } from "react-spring";
 import useTheme from "~/renderer/hooks/useTheme";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Theme } from "~/renderer/styles/theme";
 const TooltipContainer: ThemedComponent<{
   opacity: number;

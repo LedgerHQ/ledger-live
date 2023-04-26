@@ -1,6 +1,5 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import useTheme from "~/renderer/hooks/useTheme";
 import colors from "./colors";
 const plugAnim = keyframes`
@@ -24,7 +23,7 @@ const plugAnim = keyframes`
       opacity: 0;
   }
 `;
-const USBCableSvg: ThemedComponent<{}> = styled.svg`
+const USBCableSvg = styled.svg`
   overflow: visible;
 
   .cable-plug-hint {
@@ -45,7 +44,7 @@ const USBCableSvg: ThemedComponent<{}> = styled.svg`
     transition: cubic-bezier(0.82, 0.38, 0, 1) 2200ms;
   }
 `;
-const classByState = {
+export const classByState = {
   plugHint: "cable-plug-hint",
   plugged: "cable-plugged",
   unplugHint: "cable-unplug-hint",
@@ -53,11 +52,11 @@ const classByState = {
 };
 type Props = {
   active?: boolean;
-  state?: string;
+  state?: keyof typeof classByState;
   vertical?: boolean;
-};
+} & React.ComponentProps<typeof USBCableSvg>;
 const UsbCable = ({ active, state, vertical, ...props }: Props) => {
-  const type = useTheme("colors.palette.type");
+  const type = useTheme("colors.palette.type") as keyof typeof colors;
   return (
     <USBCableSvg {...props} width="126" height="23">
       <defs>

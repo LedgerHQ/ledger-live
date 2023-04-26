@@ -2687,6 +2687,10 @@
           "title": "Experimental Explorers API",
           "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature."
         },
+        "experimentalListAppsV2": {
+          "title": "Experimental list apps for My Ledger",
+          "description": "Performance improvement for My Ledger access and inline flows."
+        },
         "experimentalCountervalues": {
           "title": "Experimental countervalues API",
           "description": "This may cause the countervalues displayed for your accounts to become incorrect."
@@ -2731,7 +2735,12 @@
       "featureFlagsTabGroups": "Groups",
       "firebaseProject": "Firebase project targeted by this build:",
       "showBannerDesc": "Show banner when flags are overridden",
-      "bannerTitle": "Flags overridden locally"
+      "bannerTitle": "Flags overridden locally",
+      "features": {
+        "firmwareUpdate": {
+          "headerTitle": "Debug firmware update"
+        }
+      }
     }
   },
   "notifications": {
@@ -2800,7 +2809,8 @@
         "addressVerified": "Address verified",
         "verifyAddress": "Tap here to verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
-        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss."
+        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss.",
+        "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards"
       },
       "securityVerify": {
         "title": "For security we recommend verifying this address with your Ledger device.",

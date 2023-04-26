@@ -6,7 +6,7 @@ import { Trans } from "react-i18next";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Box from "~/renderer/components/Box/Box";
@@ -36,7 +36,6 @@ const Subtitle = styled(Text).attrs(() => ({
 type Props = {
   operation: Operation;
   account: AccountLike;
-  parentAccount: Account;
 };
 export default function AmountDetails({ operation, account }: Props) {
   const { date } = operation;
@@ -86,7 +85,6 @@ export default function AmountDetails({ operation, account }: Props) {
                 fontSize={4}
                 fontWeight={600}
                 val={val}
-                currency={currency}
                 unit={unit}
                 showCode
                 alwaysShowSign
@@ -117,7 +115,6 @@ export default function AmountDetails({ operation, account }: Props) {
                 fontSize={4}
                 fontWeight={600}
                 val={compareVal}
-                currency={currency}
                 unit={unit}
                 showCode
                 alwaysShowSign

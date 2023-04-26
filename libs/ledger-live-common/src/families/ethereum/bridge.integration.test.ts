@@ -3,7 +3,12 @@ import { testBridge } from "../../__tests__/test-helpers/bridge";
 
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import type { AccountRaw, DatasetTest } from "@ledgerhq/types-live";
+import type {
+  AccountRaw,
+  DatasetTest,
+  SubAccount,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import {
   FeeTooHigh,
   GasLessThanEstimate,
@@ -16,9 +21,15 @@ import ethereum_classic from "./datasets/ethereum_classic";
 import { syncAccount } from "../../__tests__/test-helpers/bridge";
 import { ethereum1 } from "./datasets/ethereum1";
 
-const expectedTokenAccount = (a) => {
-  invariant(a && a.type === "TokenAccount", "expected token account");
-  return a;
+const expectedTokenAccount = (
+  account: SubAccount | undefined
+): TokenAccount => {
+  invariant(
+    account && account.type === "TokenAccount",
+    "expected token account"
+  );
+
+  return account as TokenAccount;
 };
 
 const dataset: DatasetTest<Transaction> = {

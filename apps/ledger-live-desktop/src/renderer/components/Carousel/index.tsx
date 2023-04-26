@@ -9,13 +9,12 @@ import Button from "~/renderer/components/Button";
 import TimeBasedProgressBar from "~/renderer/components/Carousel/TimeBasedProgressBar";
 import IconCross from "~/renderer/icons/Cross";
 import { getTransitions, useDefaultSlides } from "~/renderer/components/Carousel/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { setCarouselVisibility } from "~/renderer/actions/settings";
 import { carouselVisibilitySelector } from "~/renderer/reducers/settings";
 import { Trans } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 
-const CarouselWrapper: ThemedComponent<{}> = styled(Card)`
+const CarouselWrapper = styled(Card)`
   position: relative;
   height: 100px;
   margin: 20px 0;
@@ -88,7 +87,7 @@ const Bullets = styled.div`
   }
 `;
 
-const Disclaimer: ThemedComponent<{}> = styled(Card)`
+const Disclaimer = styled(Card)`
   padding: 40px;
   height: 100px;
   margin: 20px 0;
@@ -124,7 +123,7 @@ const Slides = styled.div`
   }
 `;
 
-export const Label: ThemedComponent<{}> = styled(Text)`
+export const Label = styled(Text)`
   color: ${p => p.theme.colors.palette.text.shade100};
   margin-bottom: 8px;
   max-width: 404px;
@@ -132,7 +131,7 @@ export const Label: ThemedComponent<{}> = styled(Text)`
   letter-spacing: 0.1em;
 `;
 
-export const IllustrationWrapper: ThemedComponent<{}> = styled.div`
+export const IllustrationWrapper = styled.div`
   width: 257px;
   height: 100%;
   pointer-events: none;
@@ -141,7 +140,7 @@ export const IllustrationWrapper: ThemedComponent<{}> = styled.div`
   align-self: flex-end;
 `;
 
-export const Wrapper: ThemedComponent<{}> = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
   height: 100px;
   overflow: hidden;

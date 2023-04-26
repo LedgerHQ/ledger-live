@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import styled, { css } from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   size: number;
   disabled?: boolean;
@@ -48,7 +48,7 @@ export const IconWrapper: ThemedComponent<{
 
   filter: ${p => (p.disabled ? "grayscale(100%)" : "")};
 `;
-const LiveAppIcon = ({ size, disabled, icon, name }: Props) => {
+const LiveAppIcon = ({ size, icon, name }: Props) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const handleImageLoad = useCallback(() => {
     setImageLoaded(true);

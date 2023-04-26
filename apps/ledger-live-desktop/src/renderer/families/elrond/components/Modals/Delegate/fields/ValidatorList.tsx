@@ -13,8 +13,8 @@ import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const ValidatorsFieldContainer: ThemedComponent<{}> = styled(Box)`
+
+const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
 `;

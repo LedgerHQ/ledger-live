@@ -50,7 +50,7 @@ const exec = async (opts: staxFetchAndRestoreJobOpts) => {
 
     console.log("Restoring the image we backedup");
     await new Promise<void>((resolve) =>
-      staxLoadImage({ deviceId, hexImage: hexImageWithoutHeader }).subscribe(
+      staxLoadImage({ deviceId, request: { hexImage: hexImageWithoutHeader } }).subscribe(
         (x) => console.log(x),
         (e) => {
           console.error(e);

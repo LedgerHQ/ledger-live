@@ -1,5 +1,12 @@
 import React, { useRef, useCallback } from "react";
-import { LayoutChangeEvent, ScrollView, LayoutRectangle, View } from "react-native";
+import {
+  LayoutChangeEvent,
+  ScrollView,
+  LayoutRectangle,
+  View,
+  StyleProp,
+  ViewStyle,
+} from "react-native";
 
 import TimelineItem from "./TimelineItem";
 import Flex from "../../Flex";
@@ -17,6 +24,7 @@ export type Props = BaseStyledProps & {
    * Defaults to true.
    * */
   autoScroll?: boolean;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 };
 
 export default function VerticalTimeline({
@@ -25,6 +33,7 @@ export default function VerticalTimeline({
   setActiveIndex,
   header,
   autoScroll = true,
+  contentContainerStyle,
   ...props
 }: Props) {
   const scrollViewRef = useRef<ScrollView | null>(null);
@@ -41,7 +50,11 @@ export default function VerticalTimeline({
   }, []);
 
   return (
-    <ScrollView ref={scrollViewRef} onLayout={onStepsContainerLayout}>
+    <ScrollView
+      ref={scrollViewRef}
+      onLayout={onStepsContainerLayout}
+      contentContainerStyle={contentContainerStyle}
+    >
       {header}
       <Flex {...props} onLayout={onStepsContainerLayout} flexDirection="column">
         {steps?.map((step, index) => (

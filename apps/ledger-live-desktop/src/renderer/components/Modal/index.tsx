@@ -1,15 +1,16 @@
 import React, { PureComponent } from "react";
 import { createPortal } from "react-dom";
 import { connect } from "react-redux";
-import styled from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import noop from "lodash/noop";
-import { Transition } from "react-transition-group";
+import { Transition, TransitionStatus } from "react-transition-group";
 import { closeModal } from "~/renderer/actions/modals";
 import { isModalOpened, getModalData } from "~/renderer/reducers/modals";
 import Snow, { isSnowTime } from "~/renderer/extra/Snow";
+import { State } from "~/renderer/reducers";
 export { default as ModalBody } from "./ModalBody";
 const domNode = document.getElementById("modals");
-const mapStateToProps = (state, { name, isOpened, onBeforeOpen }: Props): any => {
+const mapStateToProps = (state: State, { name, isOpened, onBeforeOpen }: Props) => {
   const data = getModalData(state, name || "");
   const modalOpened = isOpened || (name && isModalOpened(state, name));
   if (onBeforeOpen && modalOpened) {
@@ -58,13 +59,28 @@ const transitionsScale = {
     transform: "scale(1.1)",
   },
 };
-const Container = styled.div.attrs(({ state, centered, isOpened }) => ({
-  style: {
-    ...transitionsOpacity[state],
-    justifyContent: centered ? "center" : "flex-start",
-    pointerEvents: isOpened ? "auto" : "none",
-  },
-}))`
+const Container = styled.div.attrs(
+  ({
+    state,
+    centered,
+    isOpened,
+  }: {
+    state: TransitionStatus;
+    centered?: boolean;
+    isOpened?: boolean;
+  }) => ({
+    style: {
+      ...transitionsOpacity[state as keyof typeof transitionsOpacity],
+      justifyContent: centered ? "center" : "flex-start",
+      pointerEvents: isOpened ? "auto" : "none",
+    },
+  }),
+)<{
+  state: TransitionStatus;
+  centered?: boolean;
+  isOpened?: boolean;
+  backdropColor?: boolean | null;
+}>`
   background-color: ${p => (p.backdropColor ? "rgba(0, 0, 0, 0.4)" : "rgba(0,0,0,0)")};
   opacity: 0;
   position: fixed;
@@ -79,12 +95,12 @@ const Container = styled.div.attrs(({ state, centered, isOpened }) => ({
   align-items: center;
   transition: opacity 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
 `;
-const BodyWrapper = styled.div.attrs(({ state, centered, isOpened }) => ({
+const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) => ({
   style: {
-    ...transitionsOpacity[state],
-    ...transitionsScale[state],
+    ...transitionsOpacity[state as keyof typeof transitionsOpacity],
+    ...transitionsScale[state as keyof typeof transitionsScale],
   },
-}))`
+}))<{ state: TransitionStatus; width?: number }>`
   background: ${p => p.theme.colors.palette.background.paper};
   color: ${p => p.theme.colors.palette.text.shade80};
   width: ${p => p.width || 500}px;
@@ -104,20 +120,20 @@ export type RenderProps = {
 };
 type Props = {
   isOpened?: boolean;
-  children?: any;
+  children?: React.ReactNode;
   centered?: boolean;
   onClose?: (a: void) => void;
   onHide?: (a: void) => void;
-  render?: (a: RenderProps) => any;
+  render?: (a: RenderProps) => React.ReactNode;
   data?: any;
   preventBackdropClick?: boolean;
   width?: number;
-  theme: any;
+  theme?: DefaultTheme;
   name?: string;
   // eslint-disable-line
   onBeforeOpen?: (a: { data: any }) => any;
   // eslint-disable-line
-  backdropColor: boolean | undefined | null;
+  backdropColor?: boolean | undefined | null;
   bodyStyle?: any;
 };
 class Modal extends PureComponent<
@@ -158,7 +174,9 @@ class Modal extends PureComponent<
         "input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), *[tabindex]";
       const modalWrapper = document.getElementById("modals");
       if (!modalWrapper || !(target instanceof window.HTMLElement)) return;
-      const focusableElements = modalWrapper.querySelectorAll(focusableQuery);
+      const focusableElements = modalWrapper.querySelectorAll(focusableQuery) as NodeListOf<
+        HTMLElement
+      >;
       if (!focusableElements.length) return;
       const firstFocusable = focusableElements[0];
       const lastFocusable = focusableElements[focusableElements.length - 1];
@@ -198,7 +216,7 @@ class Modal extends PureComponent<
     r && !r.contains(document.activeElement) && r.focus();
   };
 
-  swallowClick = (e: Event) => {
+  swallowClick = (e: React.UIEvent) => {
     e.preventDefault();
     e.stopPropagation();
   };
@@ -244,7 +262,7 @@ class Modal extends PureComponent<
             >
               {isSnowTime() ? <Snow numFlakes={100} /> : null}
               <BodyWrapper
-                tabIndex="0"
+                tabIndex={0}
                 ref={this.setFocus}
                 state={state}
                 width={width}

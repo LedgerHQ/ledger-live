@@ -14,7 +14,6 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Tooltip from "~/renderer/components/Tooltip";
 import Bar from "./Bar";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { localeSelector } from "~/renderer/reducers/settings";
 export type DistributionItem = {
@@ -28,7 +27,7 @@ type Props = {
   item: DistributionItem;
   isVisible: boolean;
 };
-const Wrapper: ThemedComponent<{}> = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -46,7 +45,7 @@ const Wrapper: ThemedComponent<{}> = styled.div`
     background: ${p => p.theme.colors.palette.background.default};
   }
 `;
-const Asset: ThemedComponent<{}> = styled.div`
+const Asset = styled.div`
   flex: 1;
   width: 20%;
   > :first-child {
@@ -56,7 +55,7 @@ const Asset: ThemedComponent<{}> = styled.div`
     margin-right: 8px;
   }
 `;
-const PriceSection: ThemedComponent<{}> = styled.div`
+const PriceSection = styled.div`
   width: 20%;
   text-align: left;
   > :first-child {
@@ -68,7 +67,7 @@ const PriceSection: ThemedComponent<{}> = styled.div`
     display: block;
   }
 `;
-const Distribution: ThemedComponent<{}> = styled.div`
+const Distribution = styled.div`
   width: 20%;
   text-align: right;
   > :first-child {
@@ -77,11 +76,11 @@ const Distribution: ThemedComponent<{}> = styled.div`
     text-align: right;
   }
 `;
-const Amount: ThemedComponent<{}> = styled.div`
+const Amount = styled.div`
   width: 25%;
   justify-content: flex-end;
 `;
-const Value: ThemedComponent<{}> = styled.div`
+const Value = styled.div`
   width: 15%;
   box-sizing: border-box;
   padding-left: 24px;

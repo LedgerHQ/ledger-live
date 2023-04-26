@@ -13,16 +13,17 @@ import FlipTicker from "~/renderer/components/FlipTicker";
 import IconBottom from "~/renderer/icons/ArrowDownRight";
 import IconTop from "~/renderer/icons/ArrowUpRight";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const T: ThemedComponent<{
-  color?: string;
-  inline?: boolean;
-  ff?: string;
-}> = styled(Box).attrs(p => ({
+import { BoxProps } from "./Box/Box";
+
+const T = styled(Box).attrs((p: { color?: string; inline?: boolean; ff?: string } & BoxProps) => ({
   ff: p.ff || "Inter|Medium",
   horizontal: true,
   color: p.color,
-}))`
+}))<{
+  color?: string;
+  inline?: boolean;
+  ff?: string;
+}>`
   white-space: pre;
   text-overflow: ellipsis;
   display: ${p => (p.inline ? "inline-block" : "block")};
@@ -36,7 +37,7 @@ const I = ({ color, children }: { color?: string; children: any }) => (
 I.defaultProps = {
   color: undefined,
 };
-type OwnProps = {
+export type OwnProps = {
   unit?: Unit;
   val: BigNumber | number;
   alwaysShowSign?: boolean;
@@ -47,7 +48,7 @@ type OwnProps = {
   disableRounding?: boolean;
   isPercent?: boolean;
   subMagnitude?: number;
-  prefix?: string;
+  prefix?: React.ReactNode;
   ellipsis?: boolean;
   suffix?: string;
   showAllDigits?: boolean;
@@ -55,7 +56,8 @@ type OwnProps = {
   // overrides discreet mode
   dynamicSignificantDigits?: number;
   staticSignificantDigits?: number;
-};
+  style?: React.CSSProperties;
+} & BoxProps;
 const mapStateToProps = createStructuredSelector({
   discreet: discreetModeSelector,
   locale: localeSelector,
@@ -91,7 +93,7 @@ function FormattedVal(props: Props) {
   invariant(val, "FormattedVal require a `val` prop. Received `undefined`");
   const isZero = val.isZero();
   const isNegative = val.isNegative() && !isZero;
-  let text = "";
+  let text: React.ReactNode = "";
   if (isPercent) {
     // FIXME move out the % feature of this component... totally unrelated to currency & annoying for flow type.
     text = `${alwaysShowSign ? (isNegative ? "- " : "+ ") : ""}${(isNegative
@@ -115,10 +117,10 @@ function FormattedVal(props: Props) {
       staticSignificantDigits,
     });
   }
-  if (prefix) text = prefix + text;
+  if (prefix && typeof prefix === "string") text = prefix + text;
   if (suffix) text += suffix;
   if (animateTicker) {
-    text = <FlipTicker value={text} />;
+    text = <FlipTicker value={text as string} />;
   } else if (ellipsis) {
     text = <Ellipsis>{text}</Ellipsis>;
   }
@@ -126,7 +128,7 @@ function FormattedVal(props: Props) {
     isNegative,
   });
   return (
-    <T {...p} color={color || marketColor} withIcon={withIcon}>
+    <T {...p} color={color || marketColor}>
       {withIcon ? (
         <Box horizontal alignItems="center">
           <Box mr={1}>
@@ -147,5 +149,5 @@ function FormattedVal(props: Props) {
 FormattedVal.defaultProps = {
   subMagnitude: 0,
 };
-const m: React$ComponentType<OwnProps> = connect(mapStateToProps)(FormattedVal);
+const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(FormattedVal);
 export default m;

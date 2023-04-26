@@ -3,8 +3,8 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box/Box";
 import { HeaderWrapper } from "~/renderer/components/TableContainer";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-export const TableLine: ThemedComponent<{}> = styled(Box).attrs(() => ({
+
+export const TableLine = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade60",
   horizontal: true,

@@ -134,7 +134,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
     );
   }
 }
-const RepairDeviceButtonOut: React$ComponentType<OwnProps> = compose(
+const RepairDeviceButtonOut: React.ComponentType<OwnProps> = compose(
   withTranslation(),
   withRouter,
 )(RepairDeviceButton);

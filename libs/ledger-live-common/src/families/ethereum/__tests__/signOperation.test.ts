@@ -25,6 +25,7 @@ const signTransaction = jest.fn(() => {
 
 jest.mock("@ledgerhq/hw-app-eth", () => {
   return {
+    __esModule: true,
     ...jest.requireActual("@ledgerhq/hw-app-eth"),
     default: class {
       signTransaction = signTransaction;

@@ -38,14 +38,20 @@ export type FetchImageEvent =
     };
 
 export type FetchImageRequest = {
-  deviceId: string;
   backupHash?: string; // When provided, will skip the backup if it matches the hash.
+};
+
+export type Input = {
+  deviceId: string;
+  request: FetchImageRequest;
 };
 
 export default function fetchImage({
   deviceId,
-  backupHash,
-}: FetchImageRequest): Observable<FetchImageEvent> {
+  request,
+}: Input): Observable<FetchImageEvent> {
+  const { backupHash } = request;
+
   const sub = withDevice(deviceId)(
     (transport) =>
       new Observable((subscriber) => {

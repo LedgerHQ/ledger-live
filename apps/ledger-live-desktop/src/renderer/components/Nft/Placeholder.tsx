@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { NFTMetadata } from "@ledgerhq/types-live";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { centerEllipsis } from "~/renderer/styles/helpers";
 import Fallback from "~/renderer/images/nftFallback.jpg";
 type Props = {

@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 type StepType = {
   icon: any;
@@ -23,7 +22,7 @@ const OptionRow = ({ step, ...p }: { step: StepType }) => {
     </Box>
   );
 };
-export const OptionRowDesc: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const OptionRowDesc = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 4,
   textAlign: "left",
@@ -31,7 +30,7 @@ export const OptionRowDesc: ThemedComponent<{}> = styled(Box).attrs(() => ({
   grow: true,
   pl: 2,
 }))``;
-export const IconOptionRow: ThemedComponent<{}> = styled(Box).attrs(p => ({
+export const IconOptionRow = styled(Box).attrs(p => ({
   ff: "Inter|Regular",
   fontSize: 14,
   color: p.color || "wallet",

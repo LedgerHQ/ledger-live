@@ -4,9 +4,8 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import illustration from "~/renderer/images/USBTroubleshooting/device.png";
-export const Illustration: ThemedComponent<{}> = styled.div`
+export const Illustration = styled.div`
   background-image: url('${p => p.image}');
   background-size: contain;
   background-position: center center;

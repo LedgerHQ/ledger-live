@@ -9,7 +9,6 @@ import {
   letterSpacing,
   system,
 } from "styled-system";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import fontFamily from "~/renderer/styles/styled/fontFamily";
 const uppercase = system({
   uppercase: {

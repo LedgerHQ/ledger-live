@@ -3,7 +3,6 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ArrowsUpDown from "~/renderer/icons/ArrowsUpDown";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { track } from "~/renderer/analytics/segment";
 import FromRow from "./FromRow";
 import ToRow from "./ToRow";
@@ -38,7 +37,7 @@ const RoundButton = styled(Button)`
   border-radius: 9999px;
   height: initial;
 `;
-const Main: ThemedComponent<{}> = styled.section`
+const Main = styled.section`
   display: flex;
   flex-direction: column;
   row-gap: 12px;

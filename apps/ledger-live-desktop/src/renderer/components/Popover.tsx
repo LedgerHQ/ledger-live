@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import styled from "styled-components";
 import { ThemedComponent } from "../styles/StyleProvider";
 import { Transition } from "react-transition-group";
-const Container: ThemedComponent<{}> = styled.button.attrs(() => ({
+const Container = styled.button.attrs(() => ({
   type: "button",
 }))`
   background-color: transparent;
@@ -54,7 +54,7 @@ const transitionsClipPath = {
   entering: (pos: string) => ({
     clipPath: clipPaths[pos],
   }),
-  entered: (pos: string) => ({
+  entered: () => ({
     clipPath: "inset(-10px -10px -10px -10px)",
   }),
   exiting: (pos: string) => ({
@@ -104,7 +104,7 @@ const ContentWrapper: ThemedComponent<{
     border-right: 0;
   }
 `;
-const ContentContainer: ThemedComponent<{}> = styled.div`
+const ContentContainer = styled.div`
   position: relative;
   width: 100%;
   ${p => p.theme.overflow.yAuto};

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { InView } from "react-intersection-observer";
 import { useDispatch } from "react-redux";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";

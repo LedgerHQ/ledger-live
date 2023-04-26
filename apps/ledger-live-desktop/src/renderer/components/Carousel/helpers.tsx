@@ -4,7 +4,6 @@ import { Trans } from "react-i18next";
 import { getEnv } from "@ledgerhq/live-common/env";
 import Slide from "./Slide";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-
 import ReferralProgramBgImage from "./banners/ReferralProgram/images/bg.png";
 import ReferralProgramCoinImage from "./banners/ReferralProgram/images/coin.png";
 import BuyCryptoBgImage from "./banners/BuyCrypto/images/bg.png";
@@ -19,7 +18,6 @@ import SwapLoopImage from "./banners/Swap/images/loop.png";
 import SwapSmallCoin1Image from "./banners/Swap/images/smallcoin1.png";
 import SwapSmallCoin2Image from "./banners/Swap/images/smallcoin2.png";
 import SwapSmallCoin3Image from "./banners/Swap/images/smallcoin3.png";
-
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { useSelector } from "react-redux";
 

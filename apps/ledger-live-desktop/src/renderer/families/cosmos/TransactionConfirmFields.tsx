@@ -3,7 +3,6 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
@@ -19,7 +18,7 @@ import {
   OpDetailsVoteData,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import FormattedVal from "~/renderer/components/FormattedVal";
-const Info: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
   mb: 4,
@@ -195,7 +194,7 @@ export const CosmosSourceValidatorField = ({
     </TransactionConfirmField>
   ) : null;
 };
-const CosmosMemoField = ({ account, parentAccount, transaction, field }: FieldComponentProps) => {
+const CosmosMemoField = ({ transaction, field }: FieldComponentProps) => {
   invariant(transaction.family === "cosmos", "cosmos transaction");
   const { memo } = transaction;
   return memo ? (

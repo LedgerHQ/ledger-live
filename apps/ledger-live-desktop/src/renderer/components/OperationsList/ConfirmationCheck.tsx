@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { OperationType } from "@ledgerhq/types-live";
 import { rgba, mix } from "~/renderer/styles/helpers";
 import { TFunction } from "react-i18next";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import IconClock from "~/renderer/icons/Clock";
 import IconReceive from "~/renderer/icons/Receive";
 import IconDelegate from "~/renderer/icons/Delegate";
@@ -67,7 +66,7 @@ export const Container: ThemedComponent<{
   height: 24px;
   width: 24px;
 `;
-const WrapperClock: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const WrapperClock = styled(Box).attrs(() => ({
   bg: "palette.background.paper",
   color: "palette.text.shade60",
 }))`
@@ -122,6 +121,7 @@ class ConfirmationCheck extends PureComponent<{
   type: OperationType;
   withTooltip?: boolean;
   hasFailed?: boolean;
+  style?: React.CSSProperties;
 }> {
   static defaultProps = {
     withTooltip: true,

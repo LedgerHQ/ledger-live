@@ -5,7 +5,6 @@ import moment from "moment";
 import { Polkadot as PolkadotIdenticon } from "@polkadot/react-identicon/icons";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   PolkadotValidator,
   PolkadotNomination,
@@ -26,7 +25,7 @@ const Wrapper: ThemedComponent<any> = styled.div`
   justify-content: space-between;
   padding: 16px 20px;
 `;
-const Column: ThemedComponent<any> = styled(TableLine).attrs(p => ({
+const Column: ThemedComponent<any> = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade80",
   fontSize: 3,
@@ -39,7 +38,7 @@ const IconContainer: ThemedComponent<any> = styled.div`
   height: 24px;
   color: ${p => p.theme.colors.palette.primary.main};
 `;
-const ValidatorName: ThemedComponent<any> = styled(TableLine).attrs(p => ({
+const ValidatorName: ThemedComponent<any> = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
   fontSize: 3,
@@ -57,13 +56,13 @@ const ValidatorName: ThemedComponent<any> = styled(TableLine).attrs(p => ({
     opacity: 1;
   }
 `;
-const Ellipsis: ThemedComponent<{}> = styled.div`
+const Ellipsis = styled.div`
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-const StatusLabel: ThemedComponent<{}> = styled.div`
+const StatusLabel = styled.div`
   flex: 1;
   display: block;
   margin-left: 8px;

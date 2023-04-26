@@ -19,7 +19,6 @@ import IconDots from "~/renderer/icons/Dots";
 import Bar from "~/renderer/components/AssetDistribution/Bar";
 import ToolTip from "~/renderer/components/Tooltip";
 import useTheme from "~/renderer/hooks/useTheme";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 export type AccountDistributionItem = {
   account: AccountLike;
@@ -123,7 +122,7 @@ export default function Row({
     </AccountContextMenu>
   );
 }
-const Wrapper: ThemedComponent<{}> = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -141,7 +140,7 @@ const Wrapper: ThemedComponent<{}> = styled.div`
     background: ${p => p.theme.colors.palette.background.default};
   }
 `;
-const AccountWrapper: ThemedComponent<{}> = styled.div`
+const AccountWrapper = styled.div`
   width: 25%;
   > :first-child {
     margin-right: 10px;
@@ -152,7 +151,7 @@ const AccountWrapper: ThemedComponent<{}> = styled.div`
     margin-right: 8px;
   }
 `;
-const Distribution: ThemedComponent<{}> = styled.div`
+const Distribution = styled.div`
   width: 25%;
   text-align: right;
   > :first-child {
@@ -161,19 +160,19 @@ const Distribution: ThemedComponent<{}> = styled.div`
     text-align: right;
   }
 `;
-const Amount: ThemedComponent<{}> = styled.div`
+const Amount = styled.div`
   width: 25%;
   text-align: right;
   justify-content: flex-end;
 `;
-const Value: ThemedComponent<{}> = styled.div`
+const Value = styled.div`
   width: 20%;
   box-sizing: border-box;
   padding-left: 8px;
   text-align: right;
   justify-content: flex-end;
 `;
-const Dots: ThemedComponent<{}> = styled.div`
+const Dots = styled.div`
   width: 5%;
   justify-content: flex-end;
   cursor: pointer;
