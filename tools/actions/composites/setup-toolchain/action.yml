@@ -59,10 +59,16 @@ runs:
     #     Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
     #     echo "Adding ${Home}\.proto\bin to GITHUB_PATH"
     #     echo "${Home}\.proto\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+    - name: Update proto (bash)
+      if: ${{ runner.os != 'Windows' }}
+      shell: bash
+      run: |
+        proto upgrade
     - name: Use proto (bash)
       if: ${{ runner.os != 'Windows' }}
       shell: bash
       run: |
+        proto --version
         proto use
         which node
         proto run node -- --version
