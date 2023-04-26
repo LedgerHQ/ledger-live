@@ -479,9 +479,23 @@ const umee = {
   }),
 };
 
+const persistence = {
+  ...generateGenericCosmosTest("persistence", {
+    testTimeout: 8 * 60 * 1000,
+  }),
+};
+
+const quicksilver = {
+  ...generateGenericCosmosTest("quicksilver", {
+    testTimeout: 8 * 60 * 1000,
+  }),
+};
+
 export default {
   cosmos,
   osmosis,
   desmos,
   umee,
+  persistence,
+  quicksilver
 };

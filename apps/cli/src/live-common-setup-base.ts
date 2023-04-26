@@ -62,6 +62,8 @@ setSupportedCurrencies([
   "desmos",
   "umee",
   "secret_network",
+  "quicksilver",
+  "persistence"
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
