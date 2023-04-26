@@ -1,7 +1,6 @@
 import { Flex, Alert, Divider, Button } from "@ledgerhq/react-ui";
 import React from "react";
 import { TFunction } from "react-i18next";
-import { t } from "xstate";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Markdown, { Notes } from "~/renderer/components/Markdown";
 
