@@ -18,6 +18,7 @@ const CLS = ({ onDone, CLSBackup }: Props) => {
 
   return CLSBackup ? (
     <CustomImageDeviceAction
+      restore
       device={device}
       hexImage={CLSBackup}
       source={reconstructImage({ hexData: CLSBackup, width: 400, height: 672 }).imageBase64DataUri}
