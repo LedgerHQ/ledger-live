@@ -29,7 +29,6 @@ const ManagerAppIconContainer = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 2;
   transition: opacity 0.2s ease-out;
   color: ${p => p.theme.colors.palette.text.shade20};
 `;
