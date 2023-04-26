@@ -3,7 +3,6 @@
 import React, { useCallback, useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import styled from "styled-components";
-import { ThemedComponent } from "../styles/StyleProvider";
 import { Transition } from "react-transition-group";
 const Container = styled.button.attrs(() => ({
   type: "button",
@@ -51,25 +50,25 @@ const clipPaths = {
   bottom: "inset(0 0 100% 0)",
 };
 const transitionsClipPath = {
-  entering: (pos: string) => ({
+  entering: (pos: keyof typeof clipPaths) => ({
     clipPath: clipPaths[pos],
   }),
   entered: () => ({
     clipPath: "inset(-10px -10px -10px -10px)",
   }),
-  exiting: (pos: string) => ({
+  exiting: (pos: keyof typeof clipPaths) => ({
     clipPath: clipPaths[pos],
   }),
-  exited: (pos: string) => ({
+  exited: (pos: keyof typeof clipPaths) => ({
     clipPath: clipPaths[pos],
   }),
 };
-const ContentWrapper: ThemedComponent<{
+const ContentWrapper = styled.div.attrs<{
   left: string | number;
   bottom: string | number;
-  position?: "top" | "bottom" | "left" | "right";
-  state: string;
-}> = styled.div.attrs(p => ({
+  position: "top" | "bottom" | "left" | "right";
+  state: keyof typeof transitionsOpacity;
+}>(p => ({
   style: {
     bottom: p.bottom,
     left: p.left,
@@ -77,7 +76,12 @@ const ContentWrapper: ThemedComponent<{
     ...transitionsClipPath[p.state](p.position),
     transform: transformStyle[p.position],
   },
-}))`
+}))<{
+  left: string | number;
+  bottom: string | number;
+  position: "top" | "bottom" | "left" | "right";
+  state: string;
+}>`
   display: flex;
   position: sticky;
   max-width: 400px;
@@ -115,7 +119,7 @@ type PopoverProps = {
   content: React.ReactNode;
 };
 const Popover = ({ position = "top", children, content }: PopoverProps) => {
-  const childrenContainer = useRef();
+  const childrenContainer = useRef<HTMLButtonElement>(null);
   const [posXY, setPosXY] = useState<{
     left: string | number;
     bottom: string | number;
@@ -134,7 +138,7 @@ const Popover = ({ position = "top", children, content }: PopoverProps) => {
         height,
         width,
       } = childrenContainer.current.getBoundingClientRect();
-      const pos = {
+      const pos: { bottom: number | string; left: number | string } = {
         bottom,
         left,
       };
@@ -191,12 +195,12 @@ type ContentProps = {
     left: string | number;
     bottom: string | number;
   };
-  position?: "top" | "bottom" | "left" | "right";
+  position: "top" | "bottom" | "left" | "right";
 };
 const Content = ({ content, state, posXY: { left, bottom }, position }: ContentProps) => {
   const C = (
     <ContentWrapper state={state} position={position} left={left} bottom={bottom}>
-      <ContentContainer position={position}>{content}</ContentContainer>
+      <ContentContainer>{content}</ContentContainer>
     </ContentWrapper>
   );
   return document.body && createPortal(C, document.body);

@@ -4,10 +4,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { rgba } from "~/renderer/styles/helpers";
 import { Tabbable } from "~/renderer/components/Box";
 import AppDetails, { IconContainer } from "./AppDetails";
-const Container: ThemedComponent<{
-  isActive?: boolean;
-  disabled?: boolean;
-}> = styled(Tabbable).attrs(() => ({
+const Container = styled(Tabbable).attrs(() => ({
   flex: 1,
   flexDirection: "column",
   alignItems: "center",
@@ -55,7 +52,7 @@ const AppCard = ({ manifest, onClick, ...rest }: Props) => {
     }
   }, [onClick, isDisabled]);
   return (
-    <Container {...rest} isInteractive={!!onClick} onClick={handleClick} disabled={isDisabled}>
+    <Container {...rest} onClick={handleClick} disabled={isDisabled}>
       <AppDetails manifest={manifest} />
     </Container>
   );
