@@ -1005,17 +1005,24 @@ const ImageLoadingGeneric = withV3StyleProvider(ImageLoadingGenericWithoutStyleP
 export const renderImageLoadRequested = ({
   t,
   device,
+  restore,
   type,
 }: {
   t: TFunction;
   device: Device;
+  restore: boolean;
   type: Theme["theme"];
 }) => {
   return (
     <ImageLoadingGeneric
-      title={t("customImage.steps.transfer.allowPreview", {
-        productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-      })}
+      title={t(
+        restore
+          ? "customImage.steps.transfer.allowConfirmPreview"
+          : "customImage.steps.transfer.allowPreview",
+        {
+          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+        },
+      )}
       progress={0}
       testId="device-action-image-load-requested"
     >
@@ -1060,18 +1067,25 @@ export const renderImageCommitRequested = ({
   t,
   device,
   source,
+  restore,
   type,
 }: {
   t: TFunction;
   device: Device;
   source?: string | undefined;
+  restore: boolean;
   type: Theme["theme"];
 }) => {
   return (
     <ImageLoadingGeneric
-      title={t("customImage.steps.transfer.confirmPicture", {
-        productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-      })}
+      title={t(
+        restore
+          ? "customImage.steps.transfer.confirmRestorePicture"
+          : "customImage.steps.transfer.confirmPicture",
+        {
+          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+        },
+      )}
       testId="device-action-image-commit-requested"
     >
       <DeviceBlocker />

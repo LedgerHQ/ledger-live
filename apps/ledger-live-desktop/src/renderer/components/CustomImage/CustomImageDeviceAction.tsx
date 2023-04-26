@@ -27,6 +27,7 @@ type Props = {
   padImage?: boolean;
   source: HTMLImageElement["src"];
   inlineRetry?: boolean;
+  restore?: boolean;
   onError?: (arg0: Error) => void;
   onStart?: () => void;
   onResult?: () => void;
@@ -51,6 +52,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     blockNavigation,
     padImage,
     inlineRetry = true,
+    restore,
   } = props;
   const type: Theme["theme"] = useTheme("colors.palette.type");
   const device = getEnv("MOCK") ? mockedDevice : props.device;
@@ -105,11 +107,11 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   return (
     <Flex flexDirection="column" flex={1} justifyContent="center">
       {imageLoadRequested && device ? (
-        renderImageLoadRequested({ t, device, type })
+        renderImageLoadRequested({ t, device, type, restore })
       ) : loadingImage && device ? (
         renderLoadingImage({ t, device, progress, source })
       ) : imageCommitRequested && device ? (
-        renderImageCommitRequested({ t, device, source, type })
+        renderImageCommitRequested({ t, device, source, type, restore })
       ) : isError ? (
         <Flex flexDirection="column" alignItems="center">
           {renderError({
