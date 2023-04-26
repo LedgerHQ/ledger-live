@@ -513,10 +513,12 @@ export const renderLockedDeviceError = ({
   t,
   device,
   onRetry,
+  inlineRetry,
 }: {
   t: TFunction;
   device?: Device;
   onRetry?: () => void;
+  inlineRetry;
 }) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
 
@@ -534,7 +536,7 @@ export const renderLockedDeviceError = ({
           : t("errors.LockedDeviceError.description")}
       </ErrorDescription>
       <ButtonContainer>
-        {onRetry ? (
+        {onRetry && inlineRetry ? (
           <ButtonV3 variant="main" onClick={onRetry}>
             {t("common.retry")}
           </ButtonV3>

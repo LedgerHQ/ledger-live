@@ -44,11 +44,12 @@ type Props<R, H, P> = {
   overridesPreferredDeviceModel?: DeviceModelId;
   Result?: React.ComponentType<P>;
   onResult?: (_: P) => void;
-  onError?: () => void;
+  onError?: (error: Error) => void;
   action: Action<R, H, P>;
   request: R;
   status?: H;
   payload?: P | null | undefined;
+  inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
   analyticsPropertyFlow?: string; // if there are some events to be sent, there will be a property "flow" with this value (e.g: "send"/"receive"/"add account" etc.)
 };
 
@@ -71,6 +72,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
   onResult,
   onError,
   overridesPreferredDeviceModel,
+  inlineRetry = true,
   analyticsPropertyFlow,
 }: DefaultRenderingProps<R, H, P>) => {
   const {
@@ -294,7 +296,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       });
     }
 
-    // workarround to catch ECONNRESET error and show better message
+    // workaround to catch ECONNRESET error and show better message
     if (error?.message?.includes("ECONNRESET")) {
       return renderError({
         error: new EConnResetError(),
@@ -314,7 +316,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
 
   // Renders an error as long as LLD is using the "event" implementation of device actions
   if (isLocked) {
-    return renderLockedDeviceError({ t, device, onRetry });
+    return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
   }
 
   if ((!isLoading && !device) || unresponsive) {
