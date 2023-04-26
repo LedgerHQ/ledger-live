@@ -15,10 +15,7 @@ import StepRestore from "./steps/02-step-restore";
 import StepUpdating from "./steps/02-step-updating";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import StepConfirmation, { StepConfirmFooter } from "./steps/03-step-confirmation";
-import { Alert, Button, Divider, Flex, FlowStepper, Text } from "@ledgerhq/react-ui";
-import TrackPage from "~/renderer/analytics/TrackPage";
-import Markdown, { Notes } from "~/renderer/components/Markdown";
-import { urls } from "~/config/urls";
+import { Divider, Flex, FlowStepper, Text } from "@ledgerhq/react-ui";
 import Disclaimer from "./Disclaimer";
 
 type MaybeError = Error | undefined | null;
@@ -26,7 +23,7 @@ type MaybeError = Error | undefined | null;
 export type StepProps = {
   firmware: FirmwareUpdateContext;
   appsToBeReinstalled: boolean;
-  onCloseModal: (proceedToAppReinstall?: boolean) => void;
+  onDrawerClose: (reinstall?: boolean) => void;
   error?: Error;
   setError: (e: Error) => void;
   CLSBackup?: string;
@@ -54,7 +51,7 @@ type Step = TypedStep<StepId, StepProps>;
 type Props = {
   withResetStep: boolean;
   withAppsToReinstall: boolean;
-  onClose: (proceedToAppReinstall?: boolean) => void;
+  onDrawerClose: (reinstall?: boolean) => void;
   firmware?: FirmwareUpdateContext;
   stepId: StepId;
   error?: Error;
@@ -68,7 +65,7 @@ const UpdateModal = ({
   withResetStep,
   withAppsToReinstall,
   error,
-  onClose,
+  onDrawerClose,
   firmware,
   ...props
 }: Props) => {
@@ -80,7 +77,6 @@ const UpdateModal = ({
   const [CLSBackup, setCLSBackup] = useState<string>();
   const [updatedDeviceInfo, setUpdatedDeviceInfo] = useState<DeviceInfo | undefined>(undefined);
   const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
-  const dontHaveSeedURL = urls.lostPinOrSeed[deviceModelId] || "";
 
   const createSteps = useCallback(
     ({ withResetStep }: { withResetStep: boolean }) => {
@@ -171,7 +167,7 @@ const UpdateModal = ({
 
   const additionalProps = {
     ...props,
-    onCloseModal: onClose,
+    onDrawerClose,
     onRetry: handleReset,
 
     setError,
@@ -256,4 +252,5 @@ const UpdateModal = ({
     </Flex>
   );
 };
+
 export default withV3StyleProvider(UpdateModal);
