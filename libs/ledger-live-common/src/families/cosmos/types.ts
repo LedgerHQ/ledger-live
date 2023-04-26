@@ -229,3 +229,8 @@ export type CosmosDistributionParams = {
   bonus_proposer_reward: string;
   withdraw_addr_enabled: boolean;
 };
+
+export type CosmosCurrencyConfig = {
+  lcd: string;
+  ledgerValidator: string;
+};

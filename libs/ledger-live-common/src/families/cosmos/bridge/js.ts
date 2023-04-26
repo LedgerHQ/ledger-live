@@ -5,7 +5,11 @@ import prepareTransaction from "../js-prepareTransaction";
 import signOperation from "../js-signOperation";
 import { sync, scanAccounts } from "../js-synchronisation";
 import updateTransaction from "../js-updateTransaction";
-import type { CosmosValidatorItem, Transaction } from "../types";
+import type {
+  CosmosCurrencyConfig,
+  CosmosValidatorItem,
+  Transaction,
+} from "../types";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import {
   asSafeCosmosPreloadData,
@@ -32,7 +36,7 @@ const currencyBridge: CurrencyBridge = {
     const config = await fetchCurrencyConfiguration(currency);
     const cosmosValidatorsManager = new CosmosValidatorsManager(
       getCryptoCurrencyById(currency.id),
-      { endPoint: config.lcd }
+      { endPoint: (config as unknown as CosmosCurrencyConfig).lcd }
     );
     const validators = await cosmosValidatorsManager.getValidators();
     setCosmosPreloadData(currency.id, {
@@ -44,7 +48,7 @@ const currencyBridge: CurrencyBridge = {
     });
   },
   hydrate: (
-    data: { validators?: CosmosValidatorItem[]; config: any },
+    data: { validators?: CosmosValidatorItem[]; config: CosmosCurrencyConfig },
     currency: CryptoCurrency
   ) => {
     if (!data || typeof data !== "object") return;
