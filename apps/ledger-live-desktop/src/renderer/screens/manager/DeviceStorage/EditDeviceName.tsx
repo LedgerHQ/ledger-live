@@ -104,7 +104,7 @@ const EditDeviceName: React.FC<Props> = ({
   return (
     <Flex
       flexDirection="column"
-      key={nonce}
+      key={`${nonce}_editDeviceName`}
       rowGap={5}
       height="100%"
       overflowY="hidden"

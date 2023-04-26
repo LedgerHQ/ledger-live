@@ -79,7 +79,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
     <Flex
       flexDirection="column"
       rowGap={5}
-      key={nonce}
+      key={`${nonce}_deviceRename`}
       height="100%"
       overflowY="hidden"
       width="100%"
