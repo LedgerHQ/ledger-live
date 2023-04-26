@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext } from "react";
 import { Trans } from "react-i18next";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -29,7 +29,13 @@ type Props = {
   openFirmwareUpdate?: boolean;
 };
 
-const initialStepId = ({ deviceInfo, device }): StepId =>
+const initialStepId = ({
+  deviceInfo,
+  device,
+}: {
+  deviceInfo: DeviceInfo;
+  device: Device;
+}): StepId =>
   deviceInfo.isOSU
     ? "updateMCU"
     : manager.firmwareUpdateNeedsLegacyBlueResetInstructions(deviceInfo, device.modelId)
@@ -68,7 +74,7 @@ const FirmwareUpdate = (props: Props) => {
       firmwareName: firmware.final.name,
     });
 
-    setFirmwareUpdateOpened(true); // Prevents manager from reacting to device changes?
+    setFirmwareUpdateOpened(true); // Prevents manager from reacting to device changes (?)
     setDrawer(
       UpdateModal,
       {
@@ -103,6 +109,7 @@ const FirmwareUpdate = (props: Props) => {
     firmware,
     installed,
     modal,
+    onDrawerClose,
     setDrawer,
     setFirmwareUpdateOpened,
     stepId,
