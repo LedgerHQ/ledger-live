@@ -168,12 +168,12 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
     specific &&
     "getURLWhatIsThis" in specific &&
     specific.getURLWhatIsThis &&
-    specific.getURLWhatIsThis(operation);
+    specific.getURLWhatIsThis({ op: operation, currencyId: mainAccount.currencyId });
   const urlFeesInfo =
     specific &&
     "getURLFeesInfo" in specific &&
     specific.getURLFeesInfo &&
-    specific.getURLFeesInfo(operation);
+    specific.getURLFeesInfo({ op: operation, currencyId: mainAccount.currencyId });
   const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
   const uniqueSenders = uniq(senders);
   const OpDetailsExtra =

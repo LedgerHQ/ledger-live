@@ -31,13 +31,25 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
-function getURLFeesInfo(op: Operation, currencyId: string): string | undefined | null {
-  if (op.fee.gt(200000)) {
+function getURLFeesInfo({
+  op,
+  currencyId,
+}: {
+  op: Operation;
+  currencyId?: string;
+}): string | undefined | null {
+  if (op.fee.gt(200000) && currencyId) {
     return cryptoFactory(currencyId).stakingDocUrl;
   }
 }
-function getURLWhatIsThis(op: Operation, currencyId: string): string | undefined | null {
-  if (op.type !== "IN" && op.type !== "OUT") {
+function getURLWhatIsThis({
+  op,
+  currencyId,
+}: {
+  op: Operation;
+  currencyId?: string;
+}): string | undefined | null {
+  if (op.type !== "IN" && op.type !== "OUT" && currencyId) {
     return cryptoFactory(currencyId).stakingDocUrl;
   }
 }
@@ -112,7 +124,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
   const currency = getAccountCurrency(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const currencyId = account.currency.id.toLowerCase();
+  const currencyId = account.currency.id;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const formatConfig = {
     disableRounding: true,
