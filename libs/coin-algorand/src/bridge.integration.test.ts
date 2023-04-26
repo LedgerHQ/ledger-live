@@ -293,3 +293,14 @@ export const dataset: DatasetTest<AlgorandTransaction> = {
     algorand,
   },
 };
+
+/**
+ * NOTE: if tests are added to this file,
+ * like done in libs/coin-polkadot/src/bridge.integration.test.ts for example,
+ * this file fill need to be imported in ledger-live-common
+ * libs/ledger-live-common/src/families/algorand/bridge.integration.test.ts
+ * like done for polkadot.
+ * cf.
+ * - libs/coin-polkadot/src/bridge.integration.test.ts
+ * - libs/ledger-live-common/src/families/polkadot/bridge.integration.test.ts
+ */
