@@ -714,7 +714,7 @@ export const renderError = ({
       </ButtonContainer>
     </Wrapper>
   );
-}
+};
 
 export const renderInWrongAppForAccount = ({
   t,
@@ -1039,6 +1039,7 @@ export const renderImageLoadRequested = ({
       })}
       testId="device-action-image-load-requested"
     >
+      <DeviceBlocker />
       <AnimationWrapper>
         <FramedImage
           background={
@@ -1093,6 +1094,7 @@ export const renderImageCommitRequested = ({
       })}
       testId="device-action-image-commit-requested"
     >
+      <DeviceBlocker />
       <AnimationWrapper>
         <FramedImage
           source={source}
