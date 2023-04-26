@@ -1,11 +1,12 @@
 import { Flex, Alert, Divider, Button } from "@ledgerhq/react-ui";
+import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import React from "react";
 import { TFunction } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Markdown, { Notes } from "~/renderer/components/Markdown";
 
 type Props = {
-  firmware: any;
+  firmware?: FirmwareUpdateContext;
   onContinue: () => void;
   t: TFunction;
 };
