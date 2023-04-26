@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StepProps } from "../..";
 import { idsToLanguage, Language as LanguageType, languageIds } from "@ledgerhq/types-live";
-import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
+import { Flex } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { track } from "~/renderer/analytics/segment";
-import BigSpinner from "~/renderer/components/BigSpinner";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
+import { renderLoading } from "~/renderer/components/DeviceAction/rendering";
 
 type Props = Partial<StepProps> & { onDone: () => void };
 
@@ -79,11 +79,12 @@ const Language = ({ updatedDeviceInfo, deviceInfo: oldDeviceInfo, onDone }: Prop
       {installingLanguage ? (
         <ChangeDeviceLanguageAction
           language={languageToInstall}
-          onError={(error: Error) =>
+          onError={(error: Error) => {
             track("Page Manager FwUpdateLanguageInstallError", {
               error,
-            })
-          }
+            });
+            setTimeout(onDone, 3000); // Nb Maybe something cleaner?
+          }}
           onSuccess={() => {
             track("Page Manager FwUpdateLanguageInstalled", {
               selectedLanguage: languageToInstall,
@@ -93,11 +94,7 @@ const Language = ({ updatedDeviceInfo, deviceInfo: oldDeviceInfo, onDone }: Prop
           }}
         />
       ) : (
-        !isLanguagePromptOpen && (
-          <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
-            <InfiniteLoader size={58} />
-          </Flex>
-        )
+        !isLanguagePromptOpen && renderLoading({})
       )}
     </Flex>
   );
