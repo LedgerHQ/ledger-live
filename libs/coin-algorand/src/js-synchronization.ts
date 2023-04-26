@@ -10,7 +10,7 @@ import {
   listTokensForCryptoCurrency,
 } from "@ledgerhq/coin-framework/currencies/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { promiseAllBatched } from "@ledgerhq/coin-framework/promise";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { BigNumber } from "bignumber.js";
 
 import type {
