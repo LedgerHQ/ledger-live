@@ -186,7 +186,7 @@ const UpdateModal = ({
 
   return (
     <Flex
-      key={nonce}
+      key={`${nonce}_fwUpdate`}
       flexDirection="column"
       rowGap={5}
       height="100%"
