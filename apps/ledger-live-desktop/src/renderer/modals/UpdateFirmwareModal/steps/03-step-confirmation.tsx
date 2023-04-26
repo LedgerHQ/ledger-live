@@ -96,7 +96,9 @@ export const StepConfirmFooter = ({
     <>
       <Track event={"FirmwareUpdatedClose"} onUnmount />
       <Button variant="main" onClick={() => onDrawerClose(appsToBeReinstalled)}>
-        {t("manager.modal.SuccessCTANoApps")}
+        {appsToBeReinstalled
+          ? t("manager.modal.sucessCTAApps")
+          : t("manager.modal.SuccessCTANoApps")}
       </Button>
     </>
   );
