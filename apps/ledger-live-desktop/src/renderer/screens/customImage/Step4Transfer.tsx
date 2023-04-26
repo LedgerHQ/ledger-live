@@ -20,6 +20,8 @@ const DEBUG = false;
 const StepTransfer: React.FC<Props> = props => {
   const { result, setStep, onError, onResult, onExit } = props;
   const [navigationBlocked, setNavigationBlocked] = useState(false);
+  const [error, setError] = useState(null);
+  const [nonce, setNonce] = useState(0);
   const { t } = useTranslation();
 
   const device = useSelector(getCurrentDevice);
@@ -36,14 +38,22 @@ const StepTransfer: React.FC<Props> = props => {
     setStep(Step.chooseImage);
   }, [setStep]);
 
+  const onRetry = useCallback(() => {
+    setError(null);
+    setNonce(nonce => nonce + 1);
+  }, []);
+
   return (
     <StepContainer
+      key={nonce}
       footer={
         <StepFooter
           previousStep={Step.chooseContrast}
           previousLabel={t("common.previous")}
           previousDisabled={navigationBlocked}
           setStep={setStep}
+          nextLabel={error ? t("common.retry") : "NO"}
+          onClickNext={error ? onRetry : undefined}
         />
       }
     >
@@ -53,7 +63,9 @@ const StepTransfer: React.FC<Props> = props => {
             device={device}
             hexImage={result?.rawResult.hexData}
             source={result?.previewResult.imageBase64DataUri}
+            inlineRetry={false}
             onResult={handleResult}
+            onError={setError}
             onSkip={handleExit}
             onTryAnotherImage={handleTryAnotherImage}
             blockNavigation={setNavigationBlocked}
