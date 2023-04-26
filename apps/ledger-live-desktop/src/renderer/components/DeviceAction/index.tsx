@@ -311,6 +311,7 @@ export const DeviceActionDefaultRendering = <R, H, P>({
       onRetry,
       withExportLogs: true,
       device: device ?? undefined,
+      inlineRetry,
     });
   }
 

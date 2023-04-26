@@ -611,6 +611,7 @@ export const renderError = ({
   requireFirmwareUpdate,
   withOnboardingCTA,
   device,
+  inlineRetry = true,
 }: {
   error: Error;
   t: TFunction;
@@ -625,11 +626,12 @@ export const renderError = ({
   requireFirmwareUpdate?: boolean;
   withOnboardingCTA?: boolean;
   device?: Device;
+  inlineRetry?: boolean;
 }) => {
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
   if (error instanceof LockedDeviceError) {
-    return renderLockedDeviceError({ t, onRetry, device });
+    return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
   } else if (error instanceof DeviceNotOnboarded) {
     return <RenderDeviceNotOnboardedError t={t} device={device} />;
   }
@@ -680,7 +682,7 @@ export const renderError = ({
             ) : null}
             {withOpenManager ? (
               <OpenManagerButton mt={0} ml={withExportLogs ? 4 : 0} />
-            ) : onRetry ? (
+            ) : onRetry && inlineRetry ? (
               <Button primary ml={withExportLogs ? 4 : 0} onClick={onRetry}>
                 {t("common.retry")}
               </Button>
