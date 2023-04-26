@@ -4,6 +4,7 @@ import CustomImageDeviceAction from "~/renderer/components/CustomImage/CustomIma
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSelector } from "react-redux";
 import { reconstructImage } from "~/renderer/components/CustomImage/TestImage";
+import { track } from "~/renderer/analytics/segment";
 
 type Props = Partial<StepProps> & { onDone: () => void };
 const CLS = ({ onDone, CLSBackup }: Props) => {
@@ -21,10 +22,17 @@ const CLS = ({ onDone, CLSBackup }: Props) => {
       restore
       device={device}
       hexImage={CLSBackup}
+      inlineRetry={false}
       source={reconstructImage({ hexData: CLSBackup, width: 400, height: 672 }).imageBase64DataUri}
       padImage={false}
       onResult={onDone}
       onSkip={onDone}
+      onError={(error: Error) => {
+        track("Page Manager CLSRestoreError", {
+          error,
+        });
+        setTimeout(onDone, 3000); // Nb Maybe something cleaner?
+      }}
       onTryAnotherImage={onVoid}
       blockNavigation={onVoid}
     />
