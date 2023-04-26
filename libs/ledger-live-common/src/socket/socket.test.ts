@@ -4,8 +4,8 @@ import {
 } from "@ledgerhq/hw-transport-mocker";
 import { toArray } from "rxjs/operators";
 import WS from "isomorphic-ws";
-import scenarios from "./test-helpers/scenarios";
-import { createDeviceSocket } from "../../api/socket";
+import scenarios from "./scenarios.mock";
+import { createDeviceSocket } from ".";
 /**
  * Both ends of the exchange are mocked in this test file and we are merely testing
  * the logic that happens in-between.

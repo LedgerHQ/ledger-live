@@ -3,7 +3,7 @@ import semver from "semver";
 import { useEnv } from "../env.react";
 import manager from ".";
 import { getProviderId } from "./provider";
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "./api";
 import type {
   DeviceModelInfo,
   DeviceInfo,

@@ -10,7 +10,7 @@
 import { DeviceInfo } from "@ledgerhq/types-live";
 import semver from "semver";
 import { getProviderId } from "../manager/provider";
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "../manager/api";
 import { AppAndVersion } from "./connectApp";
 import { mustUpgrade } from "../apps";
 

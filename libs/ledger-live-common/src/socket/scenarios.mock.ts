@@ -2,6 +2,7 @@ type Event =
   | [callback: string]
   | [callback: string, payload: string]
   | [callback: string, payload: string, eager: boolean]; // callback, payload, eager
+
 type Scenario = {
   describe: string; // Description of the test
   device: string; // RecordStore of apdu exchanges

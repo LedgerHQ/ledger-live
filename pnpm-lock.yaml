@@ -16,7 +16,7 @@ patchedDependencies:
     hash: p6wzwon3gzjcspjalwhmuroog4
     path: patches/react-native-image-crop-tools@1.6.4.patch
   react-native-video@5.2.0:
-    hash: lojvl6twgoj4rxeqeytmq4uduq
+    hash: sg53wxh6aay5ebqtsg3y2x6c6m
     path: patches/react-native-video@5.2.0.patch
   react-native-webview@11.26.1:
     hash: no3vzt46yoww4w2wn7ciytbsoy
@@ -1194,7 +1194,7 @@ importers:
         version: 0.3.6
       react-native-video:
         specifier: 5.2.0
-        version: 5.2.0(patch_hash=lojvl6twgoj4rxeqeytmq4uduq)
+        version: 5.2.0(patch_hash=sg53wxh6aay5ebqtsg3y2x6c6m)
       react-native-webview:
         specifier: ^11.26.1
         version: 11.26.1(patch_hash=no3vzt46yoww4w2wn7ciytbsoy)(react-native@0.71.6)(react@18.0.0)
@@ -51863,7 +51863,7 @@ packages:
     resolution: {integrity: sha512-TdyXiK90NiwmSbmAUlUBOV6WI1QGoqtvZZzI5zQY4fKl67B3ZrZn/h+Wy/OYIKKFMfePSiyfeIs8LtHGOZ/NgA==}
     dev: false
 
-  /react-native-video@5.2.0(patch_hash=lojvl6twgoj4rxeqeytmq4uduq):
+  /react-native-video@5.2.0(patch_hash=sg53wxh6aay5ebqtsg3y2x6c6m):
     resolution: {integrity: sha512-5SK1lxyzrCkZF+WuxUxLR1Pt65E0rsWB1w1GrGxSLdC9zWYBumcmuHl+wPJ7UQvznjaH2Ze7uU1R3arejI7+WQ==}
     dependencies:
       keymirror: 0.1.1

@@ -1,7 +1,34 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import type { FeeItems } from "../families/bitcoin/types";
-import { getEstimatedFees } from "./Fees";
+import type { FeeItems } from "../types";
+import { makeLRUCache } from "../../../cache";
+import { blockchainBaseURL } from "../../../explorer";
+import invariant from "invariant";
+import network from "../../../network";
+import { FeeEstimationFailed } from "@ledgerhq/errors";
+
+type Fees = Record<string, number>;
+
+const getEstimatedFees: (currency: CryptoCurrency) => Promise<Fees> =
+  makeLRUCache(
+    async (currency) => {
+      const baseURL = blockchainBaseURL(currency);
+      invariant(baseURL, `Fees for ${currency.id} are not supported`);
+      const { data, status } = await network({
+        method: "GET",
+        url: `${baseURL}/fees`,
+      });
+
+      if (data) {
+        return data;
+      }
+
+      throw new FeeEstimationFailed(`FeeEstimationFailed ${status}`, {
+        httpStatus: status,
+      });
+    },
+    (c) => c.id
+  );
 
 export const speeds = {
   "1": "fast",

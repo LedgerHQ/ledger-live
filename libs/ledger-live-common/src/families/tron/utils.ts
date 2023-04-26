@@ -2,7 +2,7 @@ import bs58check from "bs58check";
 import { BigNumber } from "bignumber.js";
 import get from "lodash/get";
 import { log } from "@ledgerhq/logs";
-import { extractBandwidthInfo } from "../../api/Tron";
+import { extractBandwidthInfo } from "./api";
 import type {
   Transaction,
   TronOperationMode,
