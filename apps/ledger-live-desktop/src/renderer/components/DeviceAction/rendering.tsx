@@ -127,11 +127,10 @@ export const Footer = styled.div`
 `;
 
 export const Title = styled(Text).attrs({
-  variant: "paragraph",
   fontWeight: "semiBold",
   color: "palette.text.shade100",
   textAlign: "center",
-  fontSize: 5,
+  fontSize: 6,
 })`
   white-space: pre-line;
 `;
@@ -976,8 +975,9 @@ const ImageLoadingGenericWithoutStyleProvider: React.FC<{
   children?: React.ReactNode | undefined;
   top?: React.ReactNode | undefined;
   bottom?: React.ReactNode | undefined;
+  pullDown?: boolean; // Nb hack to avoid jump in two line text.
   testId?: string;
-}> = ({ title, top, bottom, children, testId }) => {
+}> = ({ title, top, bottom, children, pullDown, testId }) => {
   return (
     <Flex
       flexDirection="column"
@@ -992,7 +992,7 @@ const ImageLoadingGenericWithoutStyleProvider: React.FC<{
       </Flex>
       <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
         {children}
-        <Title>{title}</Title>
+        <Title mb={pullDown ? "-24px" : undefined}>{title}</Title>
       </Flex>
       <Flex flex={1} flexDirection="column" alignItems={"center"}>
         {bottom}
@@ -1015,6 +1015,7 @@ export const renderImageLoadRequested = ({
 }) => {
   return (
     <ImageLoadingGeneric
+      restore={restore}
       title={t(
         restore
           ? "customImage.steps.transfer.allowConfirmPreview"
@@ -1077,6 +1078,7 @@ export const renderImageCommitRequested = ({
 }) => {
   return (
     <ImageLoadingGeneric
+      pullDown={!restore}
       title={t(
         restore
           ? "customImage.steps.transfer.confirmRestorePicture"
