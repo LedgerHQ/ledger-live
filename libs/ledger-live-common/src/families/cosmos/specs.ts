@@ -491,11 +491,18 @@ const quicksilver = {
   }),
 };
 
+const onomy = {
+  ...generateGenericCosmosTest("onomy", {
+    testTimeout: 8 * 60 * 1000,
+  }),
+};
+
 export default {
   cosmos,
   osmosis,
   desmos,
   umee,
   persistence,
-  quicksilver
+  quicksilver,
+  onomy,
 };
