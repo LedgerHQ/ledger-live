@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
+import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
@@ -368,7 +368,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
   }, [isTroubleshootingDrawerOpen]);
 
   return (
-    <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
+    <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
       <Header onClose={handleClose} onHelp={() => setHelpDrawerOpen(true)} />
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <TroubleshootingDrawer
@@ -376,24 +376,24 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         isOpen={isTroubleshootingDrawerOpen}
         onClose={handleTroubleshootingDrawerClose}
       />
-      <Flex flex={1} position="relative" overflow="hidden">
-        <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} productName={productName} />
-        <Flex flex={1} px="120px" py={0}>
-          <Flex flex={1} overflow="hidden" justifyContent="center" alignItems="center">
-            <Flex
-              flex={1}
-              flexDirection="column"
-              maxWidth="680px"
-              flexShrink={1}
-              overflowY="scroll"
-            >
-              <Text variant="h3Inter" fontSize="28px" fontWeight="semiBold" mb={8}>
-                {t("syncOnboarding.manual.title", { deviceName })}
-              </Text>
-              <VerticalTimeline flex={1} steps={steps} />
-            </Flex>
-          </Flex>
-        </Flex>
+      <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} productName={productName} />
+      <Flex
+        height="100%"
+        overflow="hidden"
+        maxWidth="680px"
+        flexDirection="column"
+        justifyContent="flex-start"
+        alignSelf="center"
+        overflowY="scroll"
+        flexGrow={0}
+        flexShrink={1}
+      >
+        <Text variant="h3Inter" fontSize="28px" fontWeight="semiBold" mb={8}>
+          {t("syncOnboarding.manual.title", { deviceName })}
+        </Text>
+        <Box>
+          <VerticalTimeline steps={steps} />
+        </Box>
       </Flex>
     </Flex>
   );
