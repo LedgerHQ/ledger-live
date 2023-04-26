@@ -15,7 +15,7 @@ import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import EnableStagingNftMetadataServiceToggle from "./EnableStagingNftMetadataServiceToggle";
-import { addTokens, getCryptoCurrencyById } from "@ledgerhq/coin-framework/currencies";
+import { addTokens, getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { Button } from "@ledgerhq/react-ui";
 
 function convertERC20([
