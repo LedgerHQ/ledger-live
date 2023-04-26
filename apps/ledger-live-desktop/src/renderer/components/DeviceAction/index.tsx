@@ -124,6 +124,7 @@ type InnerProps<P> = {
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
+  inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
 };
 
 type Props<H extends States, P> = InnerProps<P> & {
@@ -150,6 +151,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   onResult,
   onError,
   overridesPreferredDeviceModel,
+  inlineRetry = true,
   analyticsPropertyFlow,
 }: Props<H, P> & {
   request?: R;
@@ -388,7 +390,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       });
     }
 
-    // workarround to catch ECONNRESET error and show better message
+    // workaround to catch ECONNRESET error and show better message
     if (error?.message?.includes("ECONNRESET")) {
       return renderError({
         t,
@@ -409,7 +411,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
   // Renders an error as long as LLD is using the "event" implementation of device actions
   if (isLocked) {
-    return renderLockedDeviceError({ t, device, onRetry });
+    return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
   }
 
   if ((!isLoading && !device) || unresponsive) {
