@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.20.1
+
+### Patch Changes
+
+- [#3304](https://github.com/LedgerHQ/ledger-live/pull/3304) [`c20a0d4284`](https://github.com/LedgerHQ/ledger-live/commit/c20a0d4284ede962e42540cd9ab3e3399ca89d8f) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Patch `asyncstorage-down` to import AsyncStorage from `@react-native-async-storage/async-storage`
+
+  Ledger Live Mobile has been recently updated to 0.71. One side effect is that `AsyncStorage` was removed from the main `react-native` package and moved to `@react-native-async-storage/async-storage`.
+
+  LLM relies on an `fs` polyfill using `asyncstorage-down` under the hood, but the latter is now broken because it contains one hardcoded require call:
+
+  ```js
+  require("react-native").AsyncStorage;
+  ```
+
+  Patching `asyncstorage-down` to import `AsyncStorage` from the right package should solve the issue.
+
 ## 3.20.1-hotfix.0
 
 ### Patch Changes
