@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import CustomImage from "~/renderer/screens/customImage";
-import UFO from "~/renderer/icons/UFO";
 
 const CustomImageManagerButton: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
@@ -13,7 +12,7 @@ const CustomImageManagerButton: React.FC<Record<string, never>> = () => {
   }, []);
   return (
     <Flex flexDirection="row" columnGap={3} alignItems="center">
-      <Text color="neutral.c80" variant="bodyLineHeight" fontSize={4}>
+      <Text variant="h5Inter" fontSize={4} color="neutral.c70">
         {t("customImage.managerCTA")}
       </Text>
       <Link
