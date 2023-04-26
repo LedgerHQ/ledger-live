@@ -1,4 +1,6 @@
-import React, { useCallback, useState } from "react";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
+import React, { useCallback, useState, SyntheticEvent } from "react";
 import { getEnv } from "@ledgerhq/live-common/env";
 import Text from "~/renderer/components/Text";
 import { ReplaySubject } from "rxjs";
@@ -9,18 +11,28 @@ import {
   deviceInfo210lo5,
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
-import { AppType } from "@ledgerhq/types-live";
+import { AppType, DeviceInfo } from "@ledgerhq/types-live";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
+// @ts-ignore should move mocks inside project and import in tests
 import { addMockAnnouncement } from "../../../../tests/mocks/notificationsHelpers";
+// @ts-ignore should move mocks inside project and import in tests
 import { toggleMockIncident } from "../../../../tests/mocks/serviceStatusHelpers";
 import useInterval from "~/renderer/hooks/useInterval";
 import Box from "~/renderer/components/Box";
 import { Item, MockContainer, EllipsesText, MockedGlobalStyle } from "./shared";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { kill } from "process";
 
-const mockListAppsResult = (...params) => {
+const mockListAppsResult = (
+  appDesc: string,
+  installedDesc: string,
+  deviceInfo: DeviceInfo,
+  deviceModelId?: DeviceModelId,
+): ListAppsResult => {
   // Nb Should move this polyfill to live-common eventually.
-  const result = innerMockListAppResult(...params);
+  const result = innerMockListAppResult(appDesc, installedDesc, deviceInfo, deviceModelId);
   Object.keys(result?.appByName).forEach(key => {
     result.appByName[key] = {
       ...result.appByName[key],
@@ -262,27 +274,32 @@ const localizationEvents = [
     },
   },
 ];
+
+interface RawEvents {
+  [key: string]: RawEvents | RawEvents[];
+}
+
 if (getEnv("MOCK")) {
   window.mock = {
     fromTransactionRaw,
     events: {
       test: 0,
-      queue: [],
+      queue: [] as Record<string, unknown>[],
       history: [],
-      subject: new ReplaySubject<any>(),
+      subject: new ReplaySubject<unknown>(),
       get parseRawEvents() {
-        return (rawEvents, maybeKey): object => {
+        return (rawEvents: RawEvents | RawEvents[], maybeKey?: string): unknown => {
           if (rawEvents && typeof rawEvents === "object") {
             if (maybeKey === "error") {
-              return deserializeError(rawEvents);
+              return deserializeError(rawEvents) as Error;
             }
-            if (Array.isArray(rawEvents)) return rawEvents.map(this.parseRawEvents);
-            const event = {};
+            if (Array.isArray(rawEvents)) return rawEvents.map(rE => this.parseRawEvents(rE));
+            const event: Record<string, unknown> = {};
             // clone the object if and only if it is a basic object. to not convert BigNumber
             if (Object.getPrototypeOf(rawEvents) === Object.prototype) {
               for (const k in rawEvents) {
                 if (rawEvents.hasOwnProperty(k)) {
-                  event[k] = this.parseRawEvents(rawEvents[k], k);
+                  event[k] = this.parseRawEvents(rawEvents[k] as RawEvents, k);
                 }
               }
               return event;
@@ -298,14 +315,17 @@ if (getEnv("MOCK")) {
             this.queue.shift();
           }
           if (this.subject.isStopped) {
-            this.subject = new ReplaySubject<any>();
+            this.subject = new ReplaySubject<unknown>();
           }
           return this.subject;
         };
       },
       get mockDeviceEvent() {
-        return (...o: any[]) => {
-          for (const e of this.parseRawEvents(o)) this.queue.push(e);
+        return (...o: RawEvents[]) => {
+          const rE = this.parseRawEvents(o);
+          if (Array.isArray(rE)) {
+            for (const e of rE) this.queue.push(e);
+          }
         };
       },
       exposed: {
@@ -318,6 +338,7 @@ if (getEnv("MOCK")) {
     const { subject, queue, history } = window.mock.events;
     while (subject.observers.length && !subject.isStopped && queue.length) {
       const event = queue.shift();
+      if (!event) return;
       if (event.type === "complete") {
         subject.complete();
         window.mock.events.subject = new ReplaySubject<any>();
@@ -331,7 +352,7 @@ if (getEnv("MOCK")) {
     while (!subject.observers.length && queue.length && queue[0].type === "complete") {
       const event = queue.shift();
       subject.complete();
-      history.push(event);
+      history.push(event as Record<string, unknown>);
       window.mock.events.subject = new ReplaySubject<any>();
     }
     setTimeout(observerAwareEventLoop, 400);
@@ -408,10 +429,11 @@ const DebugMock = () => {
       liveCommonVersions: formatInputValue(notifLiveCommonVersions),
       languages: formatInputValue(notifLanguages),
     };
-    const formattedParams: any = Object.keys(params)
-      .filter(k => !!params[k] && params[k].length > 0)
+    const keys = Object.keys(params) as (keyof typeof params)[];
+    const formattedParams = keys
+      .filter(k => !!params[k] && params[k]!.length > 0)
       .reduce(
-        (sum, k: string) => ({
+        (sum, k) => ({
           ...sum,
           [k]: params[k],
         }),
@@ -446,18 +468,13 @@ const DebugMock = () => {
     notifLiveCommonVersions,
     updateCache,
   ]);
-  const setValue = useCallback(setter => evt => setter(evt.target.value), []);
+  const setValue = useCallback(setter => (evt: SyntheticEvent<>) => setter(evt.target.value), []);
   return (
-    <MockContainer id={nonce}>
+    <MockContainer id={`${nonce}`}>
       <Box>
-        <Item
-          id={nonce}
-          color="palette.text.shade100"
-          ff="Inter|Medium"
-          fontSize={3}
-          onClick={toggleExpanded}
-        >
-          {expanded ? "mock [ - ]" : "m"}
+        <Item id={`${nonce}`}>
+          color="palette.text.shade100" ff="Inter|Medium" fontSize={3}
+          onClick={toggleExpanded}>{expanded ? "mock [ - ]" : "m"}
         </Item>
       </Box>
       {expanded ? (

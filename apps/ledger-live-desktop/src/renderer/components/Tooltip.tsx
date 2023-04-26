@@ -2,14 +2,14 @@ import React from "react";
 import Tippy from "@tippyjs/react";
 import styled from "styled-components";
 import get from "lodash/get";
-import { followCursor as followCursorPlugin, roundArrow } from "tippy.js";
+import { followCursor as followCursorPlugin, roundArrow, Placement } from "tippy.js";
 import useTheme from "~/renderer/hooks/useTheme";
-const ContentContainer = styled.div.attrs(p => ({
+const ContentContainer = styled.div.attrs<{ bg: string }>(p => ({
   style: {
     background: p.bg,
     color: p.theme.colors.palette.background.paper,
   },
-}))`
+}))<{ bg: string }>`
   font-family: Inter, sans-serif;
   font-weight: 600;
   font-size: 10px;
@@ -34,31 +34,29 @@ type Props = {
   tooltipBg?: string;
   children?: React.ReactNode;
   content: React.ReactNode;
-  delay?: number;
+  delay?: number | null;
   followCursor?: boolean;
   enabled?: boolean;
-  placement?: string;
+  placement?: Placement;
   arrow?: boolean;
-  flip?: boolean;
   hideOnClick?: boolean;
   disableWrapper?: boolean;
-  containerStyle?: any;
+  containerStyle?: React.CSSProperties;
 };
 const ToolTip = ({
   followCursor,
   tooltipBg,
   children,
   content,
-  delay,
+  delay = null,
   enabled = true,
   disableWrapper = false,
   placement = "top",
   arrow = true,
-  flip = true,
   hideOnClick = true,
   containerStyle,
 }: Props) => {
-  const colors = useTheme("colors");
+  const colors = useTheme().colors;
   const bg = tooltipBg ? get(colors, tooltipBg, tooltipBg) : colors.palette.text.shade100;
   return (
     <Tippy
@@ -69,12 +67,11 @@ const ToolTip = ({
       followCursor={followCursor}
       disabled={!(!!content && enabled)}
       placement={placement}
-      flip={flip}
       hideOnClick={hideOnClick}
       className={`bg-${tooltipBg ? tooltipBg.replace(/\./g, "-") : "default"}`}
     >
       {disableWrapper ? (
-        children
+        <>{children}</>
       ) : (
         <ChildrenContainer style={containerStyle}>{children}</ChildrenContainer>
       )}
