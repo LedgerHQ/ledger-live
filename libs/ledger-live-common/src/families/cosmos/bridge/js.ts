@@ -21,7 +21,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
-import { fetchCurrencyConfiguration } from "../../../config";
+import { getCurrencyConfiguration } from "../../../config";
 import cryptoFactory from "../chain/chain";
 
 const receive = makeAccountBridgeReceive();
@@ -33,7 +33,7 @@ const getPreloadStrategy = (_currency) => ({
 const currencyBridge: CurrencyBridge = {
   getPreloadStrategy,
   preload: async (currency: CryptoCurrency) => {
-    const config = await fetchCurrencyConfiguration(currency);
+    const config = await getCurrencyConfiguration(currency);
     const cosmosValidatorsManager = new CosmosValidatorsManager(
       getCryptoCurrencyById(currency.id),
       { endPoint: (config as unknown as CosmosCurrencyConfig).lcd }
