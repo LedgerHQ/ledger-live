@@ -45,6 +45,7 @@ const CenterCircle = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   border: 2px solid ${(p) => getIconBorder(p.theme, p.status, p.isLastItem)};
   align-items: center;
   justify-content: center;
+  position: relative;
 `;
 
 const IconWrapper = styled(Flex)`
