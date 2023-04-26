@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import {
   useIsFocused,
@@ -15,7 +15,9 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenName } from "../../const";
-import SelectDevice2 from "../../components/SelectDevice2";
+import SelectDevice2, {
+  SetHeaderOptionsRequest,
+} from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
 import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -24,6 +26,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import {
   BaseComposite,
+  ReactNavigationHeaderOptions,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
@@ -42,6 +45,11 @@ type NavigationProps = BaseComposite<
 
 type Props = NavigationProps;
 
+// Defines here some of the header options for this screen to be able to reset back to them.
+export const managerHeaderOptions: ReactNavigationHeaderOptions = {
+  headerShown: false,
+};
+
 type ChooseDeviceProps = Props & {
   isFocused: boolean;
 };
@@ -51,6 +59,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
   const [chosenDevice, setChosenDevice] = useState<Device | null>();
   const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
@@ -95,6 +104,29 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     setDevice(params?.device);
   }, [params]);
 
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        navigation.setOptions({
+          headerShown: true,
+          headerLeft: request.options.headerLeft,
+          headerRight: request.options.headerRight,
+          title: "",
+        });
+        setIsHeaderOverridden(true);
+      } else {
+        // Sets back the header to its initial values set for this screen
+        navigation.setOptions({
+          headerLeft: () => null,
+          headerRight: () => null,
+          ...managerHeaderOptions,
+        });
+        setIsHeaderOverridden(false);
+      }
+    },
+    [navigation],
+  );
+
   const insets = useSafeAreaInsets();
 
   if (!isFocused) return null;
@@ -109,11 +141,18 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
       pt={insets.top + (isExperimental ? ExperimentalHeaderHeight : 0)}
     >
       <TrackScreen category="Manager" name="ChooseDevice" />
-      <Flex px={16} mb={8}>
-        <Text mt={3} fontWeight="semiBold" variant="h4" testID="manager-title">
-          <Trans i18nKey="manager.title" />
-        </Text>
-      </Flex>
+      {!isHeaderOverridden ? (
+        <Flex px={16} mb={8}>
+          <Text
+            mt={3}
+            fontWeight="semiBold"
+            variant="h4"
+            testID="manager-title"
+          >
+            <Trans i18nKey="manager.title" />
+          </Text>
+        </Flex>
+      ) : null}
 
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex flex={1} px={16} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
@@ -121,6 +160,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
             onSelect={onSelectDevice}
             stopBleScanning={!!device}
             displayServicesWidget
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
           />
         </Flex>
       ) : (
