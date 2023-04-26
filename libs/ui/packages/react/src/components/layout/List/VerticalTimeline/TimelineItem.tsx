@@ -17,26 +17,24 @@ export type Props = {
   onClick?: () => void;
 };
 
-const DEBUG_BOXES = false;
-
 const getContainerBackground = (theme: Theme, status: ItemStatus) => {
   if (status === "completed") {
-    return DEBUG_BOXES ? "lightgreen" : "transparent";
+    return "transparent";
   } else if (status === "active") {
     return theme.colors.neutral.c20;
   }
-  return DEBUG_BOXES ? "lightgreen" : "transparent";
+  return "transparent";
 };
 
 const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
   if (status === "completed") {
-    return DEBUG_BOXES ? "lightcoral" : "transparent";
+    return "transparent";
   } else if (isLastItem && status === "active") {
     return theme.colors.success.c50;
   } else if (status === "active") {
     return theme.colors.neutral.c40;
   }
-  return DEBUG_BOXES ? "lightcoral" : "transparent";
+  return "transparent";
 };
 
 const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
