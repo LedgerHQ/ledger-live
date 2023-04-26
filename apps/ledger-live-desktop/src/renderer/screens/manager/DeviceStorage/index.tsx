@@ -28,6 +28,7 @@ import CustomImageManagerButton from "./CustomImageManagerButton";
 import DeviceLanguage from "./DeviceLanguage";
 import DeviceName from "./DeviceName";
 import Certificate from "~/renderer/icons/Certificate";
+
 const illustrations = {
   nanoS: {
     light: nanoS,
@@ -70,10 +71,6 @@ const Separator = styled.div`
   margin: 20px 0px;
   background: ${p => p.theme.colors.neutral.c40};
   width: 100%;
-`;
-
-const CheckMarkColor = styled(Flex)`
-  color: ${p => p.theme.colors.background.drawer};
 `;
 
 const VerticalSeparator = styled.div`
@@ -370,9 +367,7 @@ const DeviceStorage = ({
                   {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
                 </Text>
                 <Flex ml={2} flexDirection="row" justifyItems="center" alignItems="center">
-                  <CheckMarkColor alignItems="center">
-                    <Certificate />
-                  </CheckMarkColor>
+                  <Certificate />
                   <Text variant="h5Inter" fontSize={4} color="neutral.c70" ml={1}>
                     <Trans i18nKey="manager.deviceStorage.genuine" />
                   </Text>
