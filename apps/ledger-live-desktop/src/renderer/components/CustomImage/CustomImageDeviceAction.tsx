@@ -26,6 +26,8 @@ type Props = {
   hexImage: string;
   padImage?: boolean;
   source: HTMLImageElement["src"];
+  inlineRetry?: boolean;
+  onError?: (arg0: Error) => void;
   onStart?: () => void;
   onResult?: () => void;
   onSkip?: () => void;
@@ -49,8 +51,10 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     source,
     remountMe,
     onTryAnotherImage,
+    onError,
     blockNavigation,
     padImage,
+    inlineRetry = true,
   } = props;
   const type: Theme["theme"] = useTheme("colors.palette.type");
   const device = getEnv("MOCK") ? mockedDevice : props.device;
@@ -88,7 +92,8 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     if (error instanceof ImageCommitRefusedOnDevice) {
       dispatch(clearLastSeenCustomImage());
     }
-  }, [dispatch, error]);
+    onError(error);
+  }, [dispatch, error, onError]);
 
   const shouldNavBeBlocked = !!validDevice && !isError;
   useEffect(() => {
@@ -118,15 +123,17 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
               ? { Icon: Icons.CircledAlertMedium, iconColor: "warning.c50" }
               : {}),
           })}
-          <Button size="large" variant="main" outline={false} onClick={handleRetry}>
-            {isRefusedOnStaxError
-              ? t("customImage.steps.transfer.uploadAnotherImage")
-              : t("common.retry")}
-          </Button>
+          {inlineRetry ? (
+            <Button size="large" variant="main" outline={false} onClick={handleRetry}>
+              {isRefusedOnStaxError
+                ? t("customImage.steps.transfer.uploadAnotherImage")
+                : t("common.retry")}
+            </Button>
+          ) : null}
           {isRefusedOnStaxError ? (
-            <Flex py={7}>
-              <Link onClick={onSkip}>{t("customImage.steps.transfer.doThisLater")}</Link>
-            </Flex>
+            <Button size="large" variant="main" outline onClick={onSkip}>
+              {t("customImage.steps.transfer.doThisLater")}
+            </Button>
           ) : null}
         </Flex>
       ) : (
