@@ -1019,6 +1019,7 @@ export const renderImageLoadRequested = ({
       progress={0}
       testId="device-action-image-load-requested"
     >
+      <DeviceBlocker />
       <AnimationWrapper modelId={device.modelId}>
         <FramedImage
           background={
@@ -1073,6 +1074,7 @@ export const renderImageCommitRequested = ({
       })}
       testId="device-action-image-commit-requested"
     >
+      <DeviceBlocker />
       <AnimationWrapper modelId={device.modelId}>
         <FramedImage
           source={source}
