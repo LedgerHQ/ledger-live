@@ -2147,7 +2147,7 @@
         "title" : "受取人",
         "nftRecipient" : "送付するNFT",
         "verifyAddress" : "アドレスが、受取人から共有されたものと一致しているかご確認ください。",
-        "namingService" : {
+        "domainService" : {
           "resolve" : "これは、次のアドレスにリンクされている有効なENSです。",
           "supportLink" : "イーサリアム・ネーム・サービスとは？",
           "reverse" : "このアドレスは{{domain}}にリンクされています"
