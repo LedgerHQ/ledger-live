@@ -6,6 +6,9 @@ overrides:
   remove-flow-types-loader>loader-utils: '*'
 
 patchedDependencies:
+  asyncstorage-down@4.2.0:
+    hash: 2npkndps6fxdasqj3xzcrnnfbe
+    path: patches/asyncstorage-down@4.2.0.patch
   avalanche@3.15.5:
     hash: qnpvrke4w43onsvbhvz2qcyeby
     path: patches/avalanche@3.15.5.patch
@@ -972,7 +975,7 @@ importers:
         version: 3.0.0(@babel/runtime@7.17.9)(@react-navigation/core@6.4.6)(@react-navigation/native@6.0.13)(@react-navigation/stack@6.3.1)(@shopify/react-native-performance@4.1.2)(react-native@0.71.6)(react@18.0.0)
       asyncstorage-down:
         specifier: ^4.2.0
-        version: 4.2.0
+        version: 4.2.0(patch_hash=2npkndps6fxdasqj3xzcrnnfbe)(@react-native-async-storage/async-storage@1.17.11)
       bignumber.js:
         specifier: ^9.1.0
         version: 9.1.0
@@ -26265,15 +26268,22 @@ packages:
   /asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
 
-  /asyncstorage-down@4.2.0:
+  /asyncstorage-down@4.2.0(patch_hash=2npkndps6fxdasqj3xzcrnnfbe)(@react-native-async-storage/async-storage@1.17.11):
     resolution: {integrity: sha512-xTljBjicpnxsoA7yEs6duXFXWEZC0V1Q/PeKcUM7Cd2k2W1XPGfyBY1kPXBxTqR++u6ZuDa5egnU8/E/WkJv4Q==}
+    peerDependencies:
+      '@react-native-async-storage/async-storage': '*'
+    peerDependenciesMeta:
+      '@react-native-async-storage/async-storage':
+        optional: true
     dependencies:
+      '@react-native-async-storage/async-storage': 1.17.11(react-native@0.71.6)
       abstract-leveldown: 2.6.1
       argsarray: 0.0.1
       d64: 1.0.0
       ltgt: 2.2.1
       tiny-queue: 0.2.0
     dev: false
+    patched: true
 
   /at-least-node@1.0.0:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
@@ -51605,7 +51615,7 @@ packages:
     peerDependencies:
       asyncstorage-down: '>=3.0.0 <5.0.0'
     dependencies:
-      asyncstorage-down: 4.2.0
+      asyncstorage-down: 4.2.0(patch_hash=2npkndps6fxdasqj3xzcrnnfbe)(@react-native-async-storage/async-storage@1.17.11)
       level-filesystem: 1.2.0
       levelup: 0.18.6
     dev: false

@@ -258,6 +258,9 @@ function readPackage(pkg, context) {
       addPeerDependencies("storyly-react-native", {
         "prop-types": "*",
       }),
+      addPeerDependencies("asyncstorage-down", {
+        "@react-native-async-storage/async-storage": "*",
+      }),
     ],
     pkg,
     context
