@@ -127,37 +127,21 @@ export function Catalog({ navigation }: Props) {
       ) : (
         <>
           <Layout
-            title={title}
-            listStickyElement={[3]}
-            topHeaderContent={
-              <TouchableOpacity
-                hitSlop={{
-                  bottom: 10,
-                  left: 24,
-                  right: 24,
-                  top: 10,
-                }}
-                style={{ paddingVertical: 16 }}
-                onPress={navigation.goBack}
-              >
-                <ArrowLeft size={18} color={colors.neutral.c100} />
-              </TouchableOpacity>
-            }
-            titleHeaderContent={
-              <Flex marginBottom={16}>
-                <Text fontWeight="bold" variant="h1Inter">
-                  {title}
-                </Text>
-                <Text variant="large">{t("browseWeb3.catalog.subtitle")}</Text>
-              </Flex>
-            }
+            listStickyElement={[2]}
             middleHeaderContent={
-              <SearchBar
-                input={input}
-                inputRef={inputRef}
-                onChange={onChange}
-                onFocus={onFocus}
-              />
+              <>
+                <Flex marginBottom={16}>
+                  <Text fontWeight="semiBold" variant="h4">
+                    {title}
+                  </Text>
+                </Flex>
+                <SearchBar
+                  input={input}
+                  inputRef={inputRef}
+                  onChange={onChange}
+                  onFocus={onFocus}
+                />
+              </>
             }
             disableStyleBottomHeader
             bottomHeaderContent={
