@@ -36,6 +36,7 @@ const Language = ({ updatedDeviceInfo, deviceInfo: oldDeviceInfo, onDone }: Prop
   }, []);
 
   useEffect(() => {
+    if (!error) return;
     // Nb Error cases in the recovery flow are acknowledged but still continue
     // the restore flow. Consider refactoring this to not repeat the other usage.
     const timer = setTimeout(() => {

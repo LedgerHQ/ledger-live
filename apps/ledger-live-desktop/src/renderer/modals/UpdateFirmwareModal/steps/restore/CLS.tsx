@@ -20,6 +20,7 @@ const CLS = ({ onDone, CLSBackup }: Props) => {
   }, [CLSBackup, onDone]);
 
   useEffect(() => {
+    if (!error) return;
     // Nb Error cases in the recovery flow are acknowledged but still continue
     // the restore flow.
     const timer = setTimeout(() => {
