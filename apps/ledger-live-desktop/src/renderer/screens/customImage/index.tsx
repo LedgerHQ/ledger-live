@@ -1,5 +1,5 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
-import { BoxedIcon, Flex, FlowStepper, Icons, InfiniteLoader, Log, Text } from "@ledgerhq/react-ui";
+import { BoxedIcon, Flex, FlowStepper, Icons, InfiniteLoader, Text } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";

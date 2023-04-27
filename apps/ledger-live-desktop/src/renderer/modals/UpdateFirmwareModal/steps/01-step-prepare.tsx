@@ -38,7 +38,8 @@ const HighlightVersion = styled(Text).attrs(() => ({
   color: "palette.text.shade100",
   ff: "Inter|SemiBold",
   variant: "subtitle",
-  p: 1,
+  px: 2,
+  py: 1,
   mx: 3,
 }))`
   border-radius: 4px;
@@ -165,7 +166,6 @@ const StepFullFirmwareInstall = ({
   setError,
   setCLSBackup,
 }: StepProps) => {
-  const { t } = useTranslation();
   const device = useSelector(getCurrentDevice);
   const [progress, setProgress] = useState(0);
   const [step, setStep] = useState("");

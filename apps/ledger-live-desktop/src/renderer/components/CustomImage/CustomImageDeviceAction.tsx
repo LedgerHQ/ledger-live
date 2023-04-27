@@ -7,7 +7,7 @@ import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { useTranslation } from "react-i18next";
-import { Theme, Flex, Icons, Link } from "@ledgerhq/react-ui";
+import { Theme, Flex, Icons } from "@ledgerhq/react-ui";
 import useTheme from "~/renderer/hooks/useTheme";
 import { DeviceActionDefaultRendering } from "../DeviceAction";
 import Button from "../ButtonV3";
