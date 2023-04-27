@@ -16,6 +16,7 @@ type ReplaySubject = import("rxjs").ReplaySubject;
 type ListAppResult = import("@ledgerhq/live-common/apps/types").ListAppsResult;
 type TransactionRaw = import("@ledgerhq/live-common/generated/types").TransactionRaw;
 type Transaction = import("@ledgerhq/live-common/generated/types").Transaction;
+type UpdateStatus = import("./main/updater/init").UpdateStatus;
 
 interface RawEvents {
   [key: string]: RawEvents | RawEvents[];
@@ -52,6 +53,10 @@ interface Window {
   // eslint-disable-next-line
   mock: {
     fromTransactionRaw: (rawTransaction: TransactionRaw) => Transaction;
+    updater?: {
+      setStatus?: (a: UpdateStatus) => void;
+      quitAndInstall?: () => void;
+    };
     events: {
       test: number;
       queue: Record<string, unknown>[];

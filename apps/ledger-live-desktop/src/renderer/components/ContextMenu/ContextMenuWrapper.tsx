@@ -25,8 +25,8 @@ export function withContextMenuContext<P>(
 
 export type ContextMenuItemType = {
   label: string;
-  Icon?: React.ComponentType<{ size: number }>;
-  callback: (a: React.MouseEvent<HTMLDivElement>) => void;
+  Icon?: React.ComponentType<{ size?: number }>;
+  callback?: (a: React.MouseEvent<HTMLDivElement>) => void;
   dontTranslateLabel?: boolean;
   id?: string;
   type?: string;
@@ -150,7 +150,7 @@ class ContextMenuWrapper extends PureComponent<Props, State> {
         key={id}
         id={id}
         onClick={e => {
-          callback(e);
+          if (callback) callback(e);
           this.hideContextMenu();
         }}
       >
