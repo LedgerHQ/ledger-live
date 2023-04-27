@@ -113,7 +113,7 @@ const DisappointedForm = ({ setStep }: Props) => {
     `&firmware_version=${lastDevice?.deviceInfo?.version}` +
     `&notifications_allowed=${notificationsAllowed}` +
     `&notifications_blacklisted=${notificationsBlacklisted}` +
-    `&done?${formUrlSplitted[1]}`;
+    `&done?${formUrlSplitted[1] || ''}`;
 
   return (
     <Flex flex={1} height={height * (4 / 5)}>
@@ -127,7 +127,7 @@ const DisappointedForm = ({ setStep }: Props) => {
       />
       <Flex flex={1} borderRadius={16} overflow="hidden">
         <StyledWebview
-          source={{ uri: formUrl }}
+          source={{ uri: encodeURI(formUrl) }}
           originWhitelist={["*"]}
           injectedJavaScript={injectedJavascript}
           onLoadEnd={onLoadEnd}
