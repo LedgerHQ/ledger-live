@@ -12,7 +12,7 @@ class Persistence extends CosmosBase {
     super();
     this.stakingDocUrl =
       "https://support.ledger.com/hc/en-us/articles/9604540043421?support=true";
-    this.unbondingPeriod = 28;
+    this.unbondingPeriod = 21;
     this.prefix = "persistence";
     this.validatorPrefix = `${this.prefix}valoper`;
     this.minGasprice = 0.025;

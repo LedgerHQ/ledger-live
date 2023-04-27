@@ -12,7 +12,7 @@ class Axelar extends CosmosBase {
     super();
     this.stakingDocUrl =
       "https://support.ledger.com/hc/en-us/articles/9603789661085?support=true";
-    this.unbondingPeriod = 21;
+    this.unbondingPeriod = 7;
     this.prefix = "axelar";
     this.validatorPrefix = `${this.prefix}valoper`;
     this.minGasprice = 0.007;
