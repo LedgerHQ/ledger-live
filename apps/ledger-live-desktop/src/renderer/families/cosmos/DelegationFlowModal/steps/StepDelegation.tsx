@@ -41,7 +41,7 @@ export default function StepDelegation({
         });
       });
     },
-    [onUpdateTransaction, getAccountBridge],
+    [onUpdateTransaction, account, transaction, parentAccount],
   );
   const chosenVoteAccAddr = transaction.validators[0]?.address || "";
 
