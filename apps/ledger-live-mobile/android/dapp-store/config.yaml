@@ -23,7 +23,7 @@ release:
   catalog:
     en-US:
       name: "Ledger Live: Crypto & NFT App"
-      short_description: Ledger Live Mobile 3.16.0
+      short_description: Ledger Live Mobile 3.20.0
       long_description: >-
         From the company that produced the world's most secure crypto hardware
         device comes the world's most accessible and complete Web3 wallet:
@@ -115,18 +115,12 @@ release:
         **Rewards are not guaranteed. Ledger provides no advice or
         recommendations on use of staking services.
       new_in_version: >-
-        Features You can now manage 100+ tokens on Cronos, Fantom, and Moonbeam
-        networks with Ledger Live.
-
-        Ledger Live will no longer display zero-amount transactions in the
-        transaction history. If you want to view zero-amount transactions,
-        navigate to Settings -> Accounts -> Zero-amount transactions and flip
-        the toggle switch to the on position.
-
-        Discover section now features NewsFeed that will keep you up-to-date
-        with the latest crypto news and events.
-
-        Fixes This release includes minor fixes.
+        Following the release of Stake 2.0, it's no longer possible to stake
+        TRON (TRX) through the Ledger Live app. However, you can still stake
+        TRX with your Ledger Nano and a compatible third-party wallet such
+        as TronScan.
+        We've tinkered with some buttons to allow you to quickly access
+        staking options.
       saga_features: ""
   media:
     - purpose: screenshot

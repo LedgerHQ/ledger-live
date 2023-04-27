@@ -85,7 +85,7 @@ const getMainActions = (props: getActionsType): getActionsReturnType => {
       event: "button_clicked",
       eventProperties: {
         button: "stake",
-        token: "ELROND",
+        currency: "ELROND",
         page: "Account Page",
       },
     },

@@ -39,6 +39,7 @@ import {
 import AssetDynamicContent from "./AssetDynamicContent";
 import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
+import { ReferralProgram } from "./referralProgram";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -117,6 +118,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           accountsAreEmpty={cryptoAccountsEmpty}
         />
       </Box>,
+      currency.ticker === "BTC" ? <ReferralProgram /> : null,
       <SectionContainer px={6} isFirst>
         <SectionTitle
           title={t("account.quickActions")}

@@ -17,7 +17,7 @@ import {
   currenciesByMarketcap,
   findCryptoCurrencyById,
 } from "../../currencies";
-import ManagerAPI from "../../api/Manager";
+import ManagerAPI from "../../manager/api";
 import { getEnv } from "../../env";
 
 import getDeviceName from "../../hw/getDeviceName";

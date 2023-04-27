@@ -52,7 +52,10 @@ import VerifyAccount from "../../screens/VerifyAccount";
 import { LiveApp } from "../../screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
 import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
-import { BleDevicePairingFlow } from "../../screens/BleDevicePairingFlow/index";
+import {
+  BleDevicePairingFlow,
+  bleDevicePairingFlowHeaderOptions,
+} from "../../screens/BleDevicePairingFlow/index";
 import ProviderList from "../../screens/Exchange/ProviderList";
 import ProviderView from "../../screens/Exchange/ProviderView";
 import ScreenHeader from "../../screens/Exchange/ScreenHeader";
@@ -72,7 +75,9 @@ import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import DeviceConnect from "../../screens/DeviceConnect";
+import DeviceConnect, {
+  deviceConnectHeaderOptions,
+} from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
@@ -532,12 +537,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.BleDevicePairingFlow}
         component={BleDevicePairingFlow}
-        options={{
-          headerShown: true,
-          headerLeft: () => <NavigationHeaderBackButton />,
-          headerTitle: () => null,
-          headerRight: () => null,
-        }}
+        options={bleDevicePairingFlowHeaderOptions}
       />
       <Stack.Screen
         name={NavigatorName.PostOnboarding}
@@ -547,10 +547,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.DeviceConnect}
         component={DeviceConnect}
-        options={{
-          title: t("deviceConnect.title"),
-          headerRight: () => null,
-        }}
+        options={useMemo(() => deviceConnectHeaderOptions(t), [t])}
         listeners={({ route }) => ({
           beforeRemove: () => {
             const onClose =
