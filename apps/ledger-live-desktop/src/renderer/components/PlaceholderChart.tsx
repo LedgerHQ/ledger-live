@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Chart from "~/renderer/components/Chart";
 import { DefaultTheme, withTheme } from "styled-components";
 import { Data, Item } from "./Chart/types";
+import { PortfolioRange } from "@ledgerhq/types-live";
 
 type Props = {
   data: Data;

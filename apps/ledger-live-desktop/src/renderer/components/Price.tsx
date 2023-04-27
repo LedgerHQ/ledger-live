@@ -12,6 +12,9 @@ import Box from "~/renderer/components/Box";
 import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
 import IconActivity from "~/renderer/icons/Activity";
 import { NoCountervaluePlaceholder } from "./CounterValue";
+
+type ColorKeys = keyof typeof colors;
+
 type Props = {
   unit?: Unit;
   rate?: BigNumber;
@@ -19,10 +22,10 @@ type Props = {
   from: Currency;
   to?: Currency;
   withActivityCurrencyColor?: boolean;
-  withActivityColor?: string;
+  withActivityColor?: ColorKeys;
   withIcon?: boolean;
   withEquality?: boolean;
-  color?: string;
+  color?: ColorKeys;
   fontSize?: number;
   fontWeight?: number;
   iconSize?: number;

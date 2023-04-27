@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 import Box from "~/renderer/components/Box";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
 import Header from "~/renderer/screens/accounts/AccountRowItem/Header";
