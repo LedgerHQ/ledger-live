@@ -271,9 +271,6 @@ importers:
       '@xstate/react':
         specifier: ^1.6.3
         version: 1.6.3(@types/react@17.0.53)(react@17.0.2)(xstate@4.32.0)
-      animated:
-        specifier: ^0.2.2
-        version: 0.2.2(react-dom@17.0.2)(react@17.0.2)
       bignumber.js:
         specifier: ^9.1.0
         version: 9.1.0
@@ -24953,18 +24950,6 @@ packages:
   /alphanum-sort@1.0.2:
     resolution: {integrity: sha1-l6ERlkmyEa0zaR2fn0hqjsn74KM=}
 
-  /animated@0.2.2(react-dom@17.0.2)(react@17.0.2):
-    resolution: {integrity: sha512-7pMzS0Sk2lA6/JT6he+apuy3GnDWUWVCurHMrpsbT9ugeLe80kpDQWjZQvkFiU9o7LsPGydPnoZpJsmt1HPPMA==}
-    peerDependencies:
-      react: '*'
-      react-dom: '*'
-    dependencies:
-      invariant: 2.2.4
-      normalize-css-color: 1.0.2
-      react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
-    dev: false
-
   /anser@1.4.10:
     resolution: {integrity: sha512-hCv9AqTQ8ycjpSd3upOJd7vFwW1JaoYQ7tpham03GJ1ca8/65rqn0RpaWpItOAd6ylW9wAw6luXYPJIyPFVOww==}
 
@@ -45666,6 +45651,7 @@ packages:
 
   /normalize-css-color@1.0.2:
     resolution: {integrity: sha512-jPJ/V7Cp1UytdidsPqviKEElFQJs22hUUgK5BOPHTwOonNCk7/2qOxhhqzEajmFrWJowADFfOFh1V+aWkRfy+w==}
+    dev: true
 
   /normalize-package-data@2.5.0:
     resolution: {integrity: sha512-/5CMN3T0R4XTj4DcGaexo+roZSdSFW/0AOOTROrjxzCG1wrWXEsGbRKevjlIL+ZDE4sZlJr5ED4YW0yqmkK+eA==}

@@ -70,7 +70,6 @@
     "@types/react-key-handler": "^1.2.0",
     "@types/semver": "^7.3.9",
     "@xstate/react": "^1.6.3",
-    "animated": "^0.2.2",
     "bignumber.js": "^9.1.0",
     "chart.js": "2.9.4",
     "color": "^3.1.3",

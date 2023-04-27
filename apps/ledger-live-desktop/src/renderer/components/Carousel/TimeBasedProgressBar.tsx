@@ -1,30 +1,37 @@
-import React, { useCallback, useMemo, useState, useEffect } from "react";
-import Animated from "animated/lib/targets/react-dom";
-import Easing from "animated/lib/Easing";
-import { delay } from "@ledgerhq/live-common/promise";
-const easing = Easing.linear();
+import React, { useCallback, useEffect, useState } from "react";
+import { useSpring, animated } from "react-spring";
+
+const easing = (t: number) => t; // linear easing function
+
 type Props = {
   duration: number;
   onComplete: () => void;
   paused?: boolean;
 };
+
 const TimeBasedProgressBar = ({ duration, onComplete, paused }: Props) => {
-  const [nonce, setNonce] = useState(1);
   const [outOfFocusPaused, setOutOfFocusPaused] = useState(false);
-  const progress = useMemo(() => {
-    if (nonce || paused) {
-      // NB we need this check.
-      return new Animated.Value(0);
-    }
-  }, [nonce, paused]);
+  const progress = useSpring<{ value: number }>({
+    from: { value: 0 },
+    to: { value: 1 },
+    config: { duration, easing },
+    delay: duration,
+    pause: paused || outOfFocusPaused,
+    onRest: () => {
+      if (!outOfFocusPaused) {
+        onComplete();
+      }
+    },
+  });
+
   const onWindowFocus = useCallback(() => {
     setOutOfFocusPaused(false);
-    setNonce(nonce + 1);
-  }, [nonce]);
+  }, []);
+
   const onWindowBlur = useCallback(() => {
     setOutOfFocusPaused(true);
-    setNonce(nonce + 1);
-  }, [nonce]);
+  }, []);
+
   useEffect(() => {
     window.addEventListener("focus", onWindowFocus);
     window.addEventListener("blur", onWindowBlur);
@@ -32,55 +39,24 @@ const TimeBasedProgressBar = ({ duration, onComplete, paused }: Props) => {
       window.removeEventListener("focus", onWindowFocus);
       window.removeEventListener("blur", onWindowBlur);
     };
-  });
-  useEffect(() => {
-    let cancelled = false;
-    if (paused) return;
-    async function scheduleDelayedAnimation() {
-      if (!paused && !cancelled) {
-        if (cancelled) return;
-        Animated.timing(progress, {
-          toValue: 1,
-          duration,
-          easing,
-        }).start();
-        await delay(duration);
-        if (cancelled || outOfFocusPaused) return;
-        onComplete();
-        setNonce(nonce + 1);
-      }
-    }
-    if (!cancelled) {
-      scheduleDelayedAnimation();
-    }
-    return () => {
-      cancelled = true;
-    };
-  }, [duration, nonce, onComplete, outOfFocusPaused, paused, progress]);
+  }, [onWindowFocus, onWindowBlur]);
+
   return (
-    <div
-      style={{
-        width: "100%",
-        height: 5,
-      }}
-    >
-      {paused || outOfFocusPaused ? null : (
-        <Animated.div
+    <div style={{ width: "100%", height: 5 }}>
+      {!paused && !outOfFocusPaused && (
+        <animated.div
           style={{
             height: 5,
             width: "100%",
             borderRadius: 4,
-            transform: [
-              {
-                scaleX: progress,
-              },
-            ],
-            transformOrigin: "left center",
             background: "#FFFFFF33",
+            transform: progress.value.interpolate((v: number) => `scaleX(${v})`),
+            transformOrigin: "left center",
           }}
         />
       )}
     </div>
   );
 };
+
 export default TimeBasedProgressBar;
