@@ -52,7 +52,7 @@ type State = {
 };
 
 type Props = {
-  onChange: Function;
+  onChange: (v: string) => void;
   t: TFunction;
   value: string;
   withStrength?: boolean;

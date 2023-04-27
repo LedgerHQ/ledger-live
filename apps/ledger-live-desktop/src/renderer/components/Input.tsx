@@ -157,17 +157,8 @@ const Base = styled.input.attrs(() => ({
   }
 `;
 
-export type OnChangeProps =
-  | {
-      keepEvent?: false;
-      onChange?: (a: string) => void;
-    }
-  | {
-      keepEvent: true;
-      onChange?: React.ChangeEventHandler<HTMLInputElement>;
-    };
-
-export type Props = OnChangeProps & {
+export type Props = {
+  onChange?: (a: string) => void;
   onBlur?: (a: React.FocusEvent<HTMLInputElement>) => void;
   onEnter?: (a: React.KeyboardEvent<HTMLInputElement>) => void;
   onEsc?: (a: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -185,7 +176,7 @@ export type Props = OnChangeProps & {
   value?: string;
   placeholder?: string;
   ff?: string;
-};
+} & React.ComponentProps<typeof Base>;
 
 const Input = function Input(
   {
@@ -199,7 +190,6 @@ const Input = function Input(
     warning,
     disabled,
     onChange,
-    keepEvent,
     onEnter,
     onEsc,
     onFocus = noop,
@@ -215,10 +205,10 @@ const Input = function Input(
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (onChange) {
-        keepEvent ? onChange(e) : onChange(e.target.value);
+        onChange(e.target.value);
       }
     },
-    [onChange, keepEvent],
+    [onChange],
   );
 
   const handleKeyDown = useCallback(
