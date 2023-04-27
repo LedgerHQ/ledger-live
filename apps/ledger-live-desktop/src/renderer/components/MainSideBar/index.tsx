@@ -21,18 +21,8 @@ import { setSidebarCollapsed } from "~/renderer/actions/settings";
 import useExperimental from "~/renderer/hooks/useExperimental";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { darken, rgba } from "~/renderer/styles/helpers";
-import IconCard from "~/renderer/icons/Card";
-import IconManager from "~/renderer/icons/Manager";
-import IconWallet from "~/renderer/icons/Wallet";
-import IconApps from "~/renderer/icons/Apps";
-import IconReceive from "~/renderer/icons/Receive";
-import IconSend from "~/renderer/icons/Send";
-import IconExchange from "~/renderer/icons/Exchange";
-import IconEarn from "~/renderer/icons/Growth";
 import IconChevron from "~/renderer/icons/ChevronRightSmall";
 import IconExperimental from "~/renderer/icons/Experimental";
-import IconSwap from "~/renderer/icons/Swap";
-import IconMarket from "~/renderer/icons/ChartLine";
 import { SideBarList, SideBarListItem } from "~/renderer/components/SideBar";
 import Box from "~/renderer/components/Box";
 import Space from "~/renderer/components/Space";
@@ -366,7 +356,8 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"market"}
                   label={t("sidebar.market")}
-                  icon={IconMarket}
+                  icon={Icons.GraphGrowMedium}
+                  iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickMarket}
                   isActive={location.pathname === "/market"}
@@ -376,7 +367,7 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id="learn"
                     label={t("sidebar.learn")}
-                    icon={Icons.GraduationMedium}
+                    icon={Icons.NewsMedium}
                     iconSize={20}
                     iconActiveColor="wallet"
                     isActive={location.pathname.startsWith("/learn")}
@@ -387,7 +378,8 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"accounts"}
                   label={t("sidebar.accounts")}
-                  icon={IconWallet}
+                  icon={Icons.WalletMedium}
+                  iconSize={20}
                   iconActiveColor="wallet"
                   isActive={location.pathname.startsWith("/account")}
                   onClick={handleClickAccounts}
@@ -397,7 +389,8 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"catalog"}
                   label={t("sidebar.catalog")}
-                  icon={IconApps}
+                  icon={Icons.PlanetMedium}
+                  iconSize={20}
                   iconActiveColor="wallet"
                   isActive={location.pathname.startsWith("/platform")}
                   onClick={handleClickCatalog}
@@ -406,7 +399,8 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"send"}
                   label={t("send.title")}
-                  icon={IconSend}
+                  icon={Icons.ArrowFromBottomMedium}
+                  iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleOpenSendModal}
                   disabled={noAccounts || navigationLocked}
@@ -415,7 +409,8 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"receive"}
                   label={t("receive.title")}
-                  icon={IconReceive}
+                  icon={Icons.ArrowToBottomMedium}
+                  iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleOpenReceiveModal}
                   disabled={noAccounts || navigationLocked}
@@ -425,7 +420,8 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id={"earn"}
                     label={t("sidebar.earn")}
-                    icon={IconEarn}
+                    icon={Icons.LendMedium}
+                    iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickEarn}
                     isActive={location.pathname === "/earn"}
@@ -435,7 +431,8 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"exchange"}
                   label={t("sidebar.exchange")}
-                  icon={IconExchange}
+                  icon={Icons.BuyCryptoAltMedium}
+                  iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickExchange}
                   isActive={location.pathname === "/exchange"}
@@ -445,7 +442,8 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"swap"}
                   label={t("sidebar.swap")}
-                  icon={IconSwap}
+                  icon={Icons.BuyCryptoMedium}
+                  iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickSwap}
                   isActive={location.pathname.startsWith("/swap")}
@@ -456,7 +454,8 @@ const MainSideBar = () => {
                   <SideBarListItem
                     id={"refer"}
                     label={t("sidebar.refer")}
-                    icon={Icons.GiftMedium}
+                    icon={Icons.GiftCardMedium}
+                    iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
                     isActive={location.pathname.startsWith(referralProgramConfig?.params.path)}
@@ -473,7 +472,8 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"card"}
                   label={t("sidebar.card")}
-                  icon={IconCard}
+                  icon={Icons.CardMedium}
+                  iconSize={20}
                   iconActiveColor="wallet"
                   isActive={location.pathname === "/card"}
                   onClick={handleClickCard}
@@ -494,7 +494,8 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"manager"}
                   label={t("sidebar.manager")}
-                  icon={IconManager}
+                  icon={Icons.NanoXFoldedMedium}
+                  iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickManager}
                   isActive={location.pathname === "/manager"}
