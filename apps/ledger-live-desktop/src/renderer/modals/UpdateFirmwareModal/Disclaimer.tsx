@@ -25,13 +25,11 @@ const Disclaimer = ({ firmware, onContinue, t }: Props) => (
       <TrackPage category="Manager" name="DisclaimerModal" />
       <Alert type="info" title={t("manager.firmware.prepareSeed")} />
       {firmware && firmware.osu ? (
-        <Flex overflow="scroll" flex={1}>
-          <div>
-            <Notes>
-              <Markdown>{firmware.osu.notes}</Markdown>
-            </Notes>
-          </div>
-        </Flex>
+        <div style={{ overflow: "scroll", flex: 1 }}>
+          <Notes>
+            <Markdown>{firmware.osu.notes}</Markdown>
+          </Notes>
+        </div>
       ) : null}
     </Flex>
     <Flex flexDirection="column" alignSelf="stretch">
