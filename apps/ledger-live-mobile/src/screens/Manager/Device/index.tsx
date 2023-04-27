@@ -100,8 +100,6 @@ const DeviceCard = ({
     }
   }, [dispatch, lastSeenCustomImage]);
 
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
-
   const openAppsModal = useCallback(() => {
     setAppsModalOpen(true);
   }, [setAppsModalOpen]);
@@ -119,9 +117,7 @@ const DeviceCard = ({
   );
 
   const showDeviceLanguage =
-    deviceLocalizationFeatureFlag?.enabled &&
-    isLocalizationSupported &&
-    deviceInfo.languageId !== undefined;
+    isLocalizationSupported && deviceInfo.languageId !== undefined;
 
   const hasCustomImage =
     useFeature("customImage")?.enabled && deviceModel.id === DeviceModelId.stax;
