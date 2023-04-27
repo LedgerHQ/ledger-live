@@ -57,7 +57,7 @@ interface Window {
       queue: Record<string, unknown>[];
       history: Record<string, unknown>[];
       subject: ReplaySubject;
-      parseRawEvents: (rawEvents: RawEvents, maybeKey?: string) => unknown;
+      parseRawEvents: (rawEvents: RawEvents | RawEvents[], maybeKey?: string) => unknown;
       emitter: any;
       mockDeviceEvent: (...args: RawEvents[]) => void;
       exposed: {

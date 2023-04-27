@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import React, { useCallback, useState, SyntheticEvent } from "react";
+import React, { useCallback, useState } from "react";
 import { getEnv } from "@ledgerhq/live-common/env";
 import Text from "~/renderer/components/Text";
 import { ReplaySubject } from "rxjs";
@@ -341,7 +341,7 @@ if (getEnv("MOCK")) {
       if (!event) return;
       if (event.type === "complete") {
         subject.complete();
-        window.mock.events.subject = new ReplaySubject<any>();
+        window.mock.events.subject = new ReplaySubject<unknown>();
       } else {
         subject.next(event);
       }
@@ -353,7 +353,7 @@ if (getEnv("MOCK")) {
       const event = queue.shift();
       subject.complete();
       history.push(event as Record<string, unknown>);
-      window.mock.events.subject = new ReplaySubject<any>();
+      window.mock.events.subject = new ReplaySubject<unknown>();
     }
     setTimeout(observerAwareEventLoop, 400);
   };
@@ -468,13 +468,22 @@ const DebugMock = () => {
     notifLiveCommonVersions,
     updateCache,
   ]);
-  const setValue = useCallback(setter => (evt: SyntheticEvent<>) => setter(evt.target.value), []);
+  const setValue = useCallback(
+    setter => (evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setter(evt.target.value),
+    [],
+  );
   return (
     <MockContainer id={`${nonce}`}>
       <Box>
-        <Item id={`${nonce}`}>
-          color="palette.text.shade100" ff="Inter|Medium" fontSize={3}
-          onClick={toggleExpanded}>{expanded ? "mock [ - ]" : "m"}
+        <Item
+          id={`${nonce}`}
+          color="palette.text.shade100"
+          ff="Inter|Medium"
+          fontSize={3}
+          onClick={toggleExpanded}
+        >
+          {expanded ? "mock [ - ]" : "m"}
         </Item>
       </Box>
       {expanded ? (
@@ -569,7 +578,6 @@ const DebugMock = () => {
             {expandedSwap
               ? swapEvents.map(({ name, event }, i) => (
                   <Text
-                    smx={1}
                     ff="Inter|Regular"
                     color="palette.text.shade100"
                     fontSize={3}
@@ -594,7 +602,6 @@ const DebugMock = () => {
             {expandedLocalization
               ? localizationEvents.map(({ name, event }, i) => (
                   <Text
-                    smx={1}
                     ff="Inter|Regular"
                     color="palette.text.shade100"
                     fontSize={3}
@@ -667,14 +674,11 @@ const DebugMock = () => {
                   onChange={setValue(setNotifLiveCommonVersions)}
                 />
                 <textarea
-                  type="text"
                   placeholder="override notif data as JSON"
-                  multiline
                   value={notifExtra}
                   onChange={setValue(setNotifExtra)}
                 />
                 <Text
-                  smx={1}
                   ff="Inter|Regular"
                   color="palette.text.shade100"
                   fontSize={3}
@@ -684,7 +688,6 @@ const DebugMock = () => {
                   {"↳ Mock notif"}
                 </Text>
                 <Text
-                  smx={1}
                   ff="Inter|Regular"
                   color="palette.text.shade100"
                   mb={2}
