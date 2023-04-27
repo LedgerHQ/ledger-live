@@ -14,7 +14,6 @@ const forcedDependencies = [
   "react-redux",
   "react-native",
   "react-native-svg",
-  "react-native-reanimated",
   "styled-components",
 ];
 

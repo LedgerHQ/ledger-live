@@ -633,7 +633,7 @@ PODS:
     - React-Core
   - RNLocalize (2.2.1):
     - React-Core
-  - RNReanimated (2.15.0):
+  - RNReanimated (3.1.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -806,7 +806,7 @@ DEPENDENCIES:
   - "RNInAppBrowser (from `../../../node_modules/.pnpm/react-native-inappbrowser-reborn@3.7.0_react-native@0.71.6/node_modules/react-native-inappbrowser-reborn`)"
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@7.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.1_react-native@0.71.6_react@18.0.0/node_modules/react-native-localize`)"
-  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@2.15.0_@babel+core@7.21.0_react-native@0.71.6_react@18.0.0/node_modules/react-native-reanimated`)"
+  - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@3.1.0_@babel+core@7.21.0_@babel+plugin-proposal-nullish-coalescing-op_b5ujqkpnd4y64zeftqbrbykuom/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@3.20.0_react-native@0.71.6_react@18.0.0/node_modules/react-native-screens`)"
   - "RNSentry (from `../../../node_modules/.pnpm/@sentry+react-native@5.3.0_react-native@0.71.6_react@18.0.0/node_modules/@sentry/react-native`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@7.9.0/node_modules/react-native-share`)"
@@ -1017,7 +1017,7 @@ EXTERNAL SOURCES:
   RNLocalize:
     :path: "../../../node_modules/.pnpm/react-native-localize@2.2.1_react-native@0.71.6_react@18.0.0/node_modules/react-native-localize"
   RNReanimated:
-    :path: "../../../node_modules/.pnpm/react-native-reanimated@2.15.0_@babel+core@7.21.0_react-native@0.71.6_react@18.0.0/node_modules/react-native-reanimated"
+    :path: "../../../node_modules/.pnpm/react-native-reanimated@3.1.0_@babel+core@7.21.0_@babel+plugin-proposal-nullish-coalescing-op_b5ujqkpnd4y64zeftqbrbykuom/node_modules/react-native-reanimated"
   RNScreens:
     :path: "../../../node_modules/.pnpm/react-native-screens@3.20.0_react-native@0.71.6_react@18.0.0/node_modules/react-native-screens"
   RNSentry:
@@ -1145,7 +1145,7 @@ SPEC CHECKSUMS:
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLocalize: cbcb55d0e19c78086ea4eea20e03fe8000bbbced
-  RNReanimated: 28d155027d72bb737ef82fb638e5dcc60a3ff141
+  RNReanimated: f076cb364e5f98772c1e3521237190710dd9070a
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSentry: 8363f1eff1c685a502e15080b5e2f447969897c5
   RNShare: be91a5c149585affb02c25b351bd07ba927c7006
