@@ -24,6 +24,7 @@ import Button from "~/renderer/components/Button";
 import Plus from "~/renderer/icons/Plus";
 import Text from "./Text";
 import { openModal } from "../actions/modals";
+
 const mapStateToProps = createStructuredSelector({
   accounts: shallowAccountsSelector,
 });

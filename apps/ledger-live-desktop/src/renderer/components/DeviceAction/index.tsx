@@ -49,6 +49,9 @@ import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
+// eslint-disable-next-line no-restricted-imports
+import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
+
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
 type PartialNullable<T> = {
@@ -69,7 +72,7 @@ type States = PartialNullable<{
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
   latestFirmware: unknown;
-  onRepairModal: () => void;
+  onRepairModal: (open: boolean) => void;
   requestOpenApp: string;
   allowOpeningRequestedWording: string;
   requiresAppInstallation: {
@@ -94,7 +97,7 @@ type States = PartialNullable<{
   initSwapResult: InitSwapResult | null;
   installingLanguage: boolean;
   languageInstallationRequested: boolean;
-  signMessageRequested: MessageData;
+  signMessageRequested: MessageData | TypedMessageData;
   allowOpeningGranted: boolean;
   completeExchangeStarted: boolean;
   completeExchangeResult: Transaction;
@@ -113,7 +116,7 @@ type States = PartialNullable<{
   imageCommitRequested: boolean;
 }>;
 
-type InnerProps<H extends States, P> = {
+type InnerProps<P> = {
   Result?: React.ComponentType<P>;
   onResult?: (_: NonNullable<P>) => void;
   onError?: (_: Error) => Promise<void> | void;
@@ -123,7 +126,7 @@ type InnerProps<H extends States, P> = {
   overridesPreferredDeviceModel?: DeviceModelId;
 };
 
-type Props<H extends States, P> = InnerProps<H, P> & {
+type Props<H extends States, P> = InnerProps<P> & {
   status: H;
   payload?: P | null;
 };
@@ -350,7 +353,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (!isLoading && error && onRetry) {
-    const e = error as any;
+    const e = error as unknown;
     if (
       e instanceof ManagerNotEnoughSpaceError ||
       e instanceof OutdatedApp ||
@@ -508,7 +511,7 @@ export default function DeviceAction<R, H extends States, P>({
   action,
   request,
   ...props
-}: InnerProps<H, P> & {
+}: InnerProps<P> & {
   action: Action<R, H, P>;
   request: R;
 }): JSX.Element {

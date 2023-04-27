@@ -253,7 +253,9 @@ const StepReceiveFunds = (props: StepProps) => {
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
   }
-  const CustomPostAlertReceiveFunds = byFamilyPostAlert[mainAccount.currency.family];
+
+  const CustomPostAlertReceiveFunds =
+    byFamilyPostAlert[mainAccount.currency.family as keyof typeof byFamilyPostAlert];
 
   return (
     <>

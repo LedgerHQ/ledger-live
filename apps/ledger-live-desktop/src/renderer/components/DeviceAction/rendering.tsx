@@ -700,7 +700,7 @@ export const renderConnectYourDevice = ({
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
-  onRepairModal: () => void;
+  onRepairModal: (open: boolean) => void;
   device: Device;
   unresponsive?: boolean | null;
 }) => (
