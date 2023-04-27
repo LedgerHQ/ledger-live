@@ -33,7 +33,7 @@ const Wrapper = styled(Label).attrs<{
   }
 `;
 type Props = {
-  onClick: React.MouseEventHandler<HTMLLabelElement> | undefined;
+  onClick?: React.MouseEventHandler<HTMLLabelElement>;
   label?: React.ReactNode;
   children?: React.ReactNode;
   style?: React.CSSProperties;

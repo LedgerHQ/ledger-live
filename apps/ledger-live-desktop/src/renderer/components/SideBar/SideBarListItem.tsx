@@ -48,7 +48,7 @@ class SideBarListItem extends PureComponent<Props> {
         </span>
       );
     return (
-      <Tooltip content={renderedLabel} enabled={!!collapsed} boundary="window" placement="right">
+      <Tooltip content={renderedLabel} enabled={!!collapsed} placement="right">
         <Container
           data-test-id={`drawer-${id}-button`}
           isActive={!disabled && isActive}

@@ -11,10 +11,12 @@ import emptyBookmarksDark from "~/renderer/images/dark-empty-bookmarks.png";
 import emptyBookmarksLight from "~/renderer/images/light-empty-bookmarks.png";
 import Item from "./Item";
 import { starredAccountsSelector } from "~/renderer/reducers/accounts";
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
 const Placeholder = styled.div`
   display: flex;
   flex-direction: column;
@@ -26,6 +28,7 @@ const Placeholder = styled.div`
     margin-bottom: 14px;
   }
 `;
+
 type Props = {
   pathname: string;
   collapsed: boolean;
@@ -40,9 +43,6 @@ const Stars = ({ pathname, collapsed }: Props) => {
           delay={collapsed ? 0 : 1200}
           key={account.id}
           placement={collapsed ? "right" : "top"}
-          boundary={collapsed ? "window" : undefined}
-          enabled
-          flip={!collapsed}
         >
           <Item
             index={i}

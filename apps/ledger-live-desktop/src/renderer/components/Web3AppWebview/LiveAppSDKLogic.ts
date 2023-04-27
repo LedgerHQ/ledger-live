@@ -102,6 +102,7 @@ export const broadcastTransactionLogic = (
             operationId: string;
             accountId: string;
             parentId: string | undefined | null;
+            // @ts-expect-error TODO: fix OperationDetails typing
           }>(OperationDetails, {
             operationId: optimisticOperation.id,
             accountId: account.id,

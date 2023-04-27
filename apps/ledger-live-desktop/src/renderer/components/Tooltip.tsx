@@ -30,6 +30,7 @@ export const defaultTippyOptions = {
   theme: "ledger",
   plugins: [followCursorPlugin],
 };
+
 type Props = {
   tooltipBg?: string;
   children?: React.ReactNode;
@@ -43,6 +44,7 @@ type Props = {
   disableWrapper?: boolean;
   containerStyle?: React.CSSProperties;
 };
+
 const ToolTip = ({
   followCursor,
   tooltipBg,
