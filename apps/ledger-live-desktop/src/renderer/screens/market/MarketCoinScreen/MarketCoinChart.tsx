@@ -198,7 +198,6 @@ function MarkeCoinChartComponent({
                   color={color}
                   data={data}
                   height={250}
-                  width="100%"
                   loading={loading}
                   tickXScale={scale}
                   renderTickY={value =>

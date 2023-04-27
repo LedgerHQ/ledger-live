@@ -11,6 +11,7 @@ import { useCurrencyPortfolio } from "~/renderer/actions/portfolio";
 import AssetBalanceSummaryHeader from "./AssetBalanceSummaryHeader";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import FormattedDate from "~/renderer/components/FormattedDate";
+import { Item } from "~/renderer/components/Chart/types";
 type Props = {
   counterValue: Currency;
   chartColor: string;
@@ -34,12 +35,12 @@ export default function BalanceSummary({
     },
   );
   const discreetMode = useSelector(discreetModeSelector);
-  const mapValueCounterValue = useCallback((d: any) => d.countervalue, []);
-  const mapValueCryptoValue = useCallback((d: any) => d.value, []);
+  const mapValueCounterValue = useCallback((d: Item) => d.countervalue, []);
+  const mapValueCryptoValue = useCallback((d: Item) => d.value, []);
   const displayCountervalue = countervalueFirst && countervalueAvailable;
   const chartMagnitude = displayCountervalue ? counterValue.units[0].magnitude : unit.magnitude;
   const renderTooltip = useCallback(
-    (d: any) => {
+    d => {
       const data = [
         {
           val: d.value,
@@ -65,11 +66,12 @@ export default function BalanceSummary({
     },
     [counterValue.units, countervalueAvailable, displayCountervalue, unit],
   );
-  const renderTickYCryptoValue = useCallback((val: number) => formatShort(unit, BigNumber(val)), [
-    unit,
-  ]);
+  const renderTickYCryptoValue = useCallback(
+    (val: number | string) => formatShort(unit, BigNumber(val)),
+    [unit],
+  );
   const renderTickYCounterValue = useCallback(
-    (val: number) => formatShort(counterValue.units[0], BigNumber(val)),
+    (val: number | string) => formatShort(counterValue.units[0], BigNumber(val)),
     [counterValue.units],
   );
   return (
@@ -96,7 +98,6 @@ export default function BalanceSummary({
           height={200}
           tickXScale={range}
           valueKey={displayCountervalue ? "countervalue" : "value"}
-          mapValue={displayCountervalue ? mapValueCounterValue : mapValueCryptoValue}
           renderTickY={
             discreetMode
               ? () => ""
@@ -104,7 +105,6 @@ export default function BalanceSummary({
               ? renderTickYCounterValue
               : renderTickYCryptoValue
           }
-          isInteractive
           renderTooltip={renderTooltip}
         />
       </Box>
