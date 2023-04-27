@@ -4,20 +4,18 @@ import type { Transaction } from "./types";
 import { DatasetTest } from "@ledgerhq/types-live";
 import cosmos from "./datasets/cosmos";
 import osmosis from "./datasets/osmosis";
+import axelar from "./datasets/axelar";
+import onomy from "./datasets/onomy";
+import quicksilver from "./datasets/quicksilver";
+import persistence from "./datasets/persistence";
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
-    // axelar,
-    //onomy,
-    //quicksilver,
-    //stride,
-    //persistence,
-    //stargaze,
-    //nyx,
-    //secret_network,
-    //sei_network,
-    //binance_beacon_chain,
+    axelar,
+    onomy,
+    quicksilver,
+    persistence,
     cosmos,
     osmosis,
   },
