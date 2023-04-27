@@ -1,17 +1,17 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { TFunction, Trans } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
+import { CosmosDelegation, CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Account } from "@ledgerhq/types-live";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { TFunction, Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
-import IconAngleDown from "~/renderer/icons/AngleDown";
-import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
-import { Account } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { CosmosDelegation, CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
+import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
+import Text from "~/renderer/components/Text";
+import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
+import IconAngleDown from "~/renderer/icons/AngleDown";
 type Props = {
   t: TFunction;
   account: Account;
@@ -33,7 +33,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
 
   useEffect(() => {
     onChangeValidator({ address: validators[0].validatorAddress });
-  }, [onChangeValidator]);
+  }, [onChangeValidator, validators]);
 
   const renderItem = (validator: CosmosValidatorItem) => {
     return (

@@ -1,17 +1,19 @@
-import invariant from "invariant";
-import React, { useEffect } from "react";
-import { Trans } from "react-i18next";
-import { BigNumber } from "bignumber.js";
-import { StepProps } from "../types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { AccountBridge } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import React, { useCallback, useEffect } from "react";
+import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import ValidatorField from "../fields/ValidatorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import ValidatorField from "../fields/ValidatorField";
+import { StepProps } from "../types";
+
 export default function StepDelegation({
   account,
   parentAccount,
@@ -25,19 +27,22 @@ export default function StepDelegation({
   const { cosmosResources } = account;
   invariant(cosmosResources, "cosmosResources required");
   const delegations = cosmosResources.delegations || [];
-  const updateValidator = ({ address }: { address: string }) => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
-    onUpdateTransaction(tx => {
-      return bridge.updateTransaction(transaction, {
-        validators: [
-          {
-            address,
-            amount: BigNumber(0),
-          },
-        ],
+  const updateValidator = useCallback(
+    ({ address }: { address: string }) => {
+      const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+      onUpdateTransaction(tx => {
+        return bridge.updateTransaction(transaction, {
+          validators: [
+            {
+              address,
+              amount: BigNumber(0),
+            },
+          ],
+        });
       });
-    });
-  };
+    },
+    [onUpdateTransaction, getAccountBridge],
+  );
   const chosenVoteAccAddr = transaction.validators[0]?.address || "";
 
   return (
