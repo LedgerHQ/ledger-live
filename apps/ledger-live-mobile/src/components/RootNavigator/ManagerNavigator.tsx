@@ -10,10 +10,9 @@ import {
   hasAvailableUpdateSelector,
   lastSeenDeviceSelector,
 } from "../../reducers/settings";
-import Manager from "../../screens/Manager";
+import Manager, { managerHeaderOptions } from "../../screens/Manager";
 import ManagerMain from "../../screens/Manager/Manager";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import styles from "../../navigation/styles";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { ManagerNavigatorStackParamList } from "./types/ManagerNavigator";
@@ -51,18 +50,13 @@ export default function ManagerNavigator() {
     <Stack.Navigator
       screenOptions={{
         ...stackNavConfig,
-        headerStyle: {
-          ...styles.header,
-          backgroundColor: colors.background.main,
-          borderBottomColor: colors.background.main,
-        },
       }}
     >
       <Stack.Screen
         name={ScreenName.Manager}
         component={Manager}
         options={{
-          headerShown: false,
+          ...managerHeaderOptions,
           gestureEnabled: false,
         }}
       />
