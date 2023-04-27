@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect } from "react";
-import { TouchableOpacity } from "react-native";
-import { useTheme } from "styled-components/native";
 import * as Animatable from "react-native-animatable";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import Fuse from "fuse.js";
-import ArrowLeft from "../../../../icons/ArrowLeft";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../../components/TabBar/TabBarSafeAreaView";
@@ -24,7 +21,6 @@ import { ManifestList } from "./ManifestList";
 import { RecentlyUsed } from "./RecentlyUsed";
 import { CatalogSection } from "./CatalogSection";
 import { DAppDisclaimer } from "./DAppDisclaimer";
-import { Props } from "../../Catalog";
 
 const AnimatedView = Animatable.View;
 
@@ -33,8 +29,7 @@ const options: Fuse.IFuseOptions<LiveAppManifest> = {
   threshold: 0.1,
 };
 
-export function Catalog({ navigation }: Props) {
-  const { colors } = useTheme();
+export function Catalog() {
   const { t } = useTranslation();
   const title = t("browseWeb3.catalog.title");
 
