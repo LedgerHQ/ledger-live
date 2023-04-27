@@ -2,34 +2,42 @@ import React, { useCallback, useMemo, useState, memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Fuse from "fuse.js";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import useEnv from "~/renderer/hooks/useEnv";
-import Select, { Option } from "~/renderer/components/Select";
+import Select from "~/renderer/components/Select";
 import { CreateStylesReturnType } from "~/renderer/components/Select/createStyles";
 import Box from "~/renderer/components/Box";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Text from "./Text";
-type Props<C extends Currency> = {
-  onChange: (a?: C | null) => void;
-  currencies: C[];
-  value?: C;
+import { ThemeConfig } from "react-select/src/theme";
+
+type CurrencyOption = Currency & {
+  value: Currency;
+  label: Currency["name"];
+  currency: Currency;
+  isDisabled: boolean;
+};
+
+type Props<Option extends CurrencyOption, IsMulti extends boolean = false> = {
+  onChange: (a?: Option | null) => void;
+  currencies: Option[];
+  value?: Option;
   placeholder?: string;
   autoFocus?: boolean;
   minWidth?: number;
   width?: number;
   rowHeight?: number;
-  isCurrencyDisabled?: (a: Currency) => boolean;
+  isCurrencyDisabled?: (a: Option) => boolean;
   isDisabled?: boolean;
   id?: string;
-  renderOptionOverride?: (option: Option) => any;
-  renderValueOverride?: (option: Option) => any;
-  stylesMap?: (a: CreateStylesReturnType) => CreateStylesReturnType;
+  renderValueOverride?: ({ data }: { data: Option }) => React.ReactNode;
+  stylesMap?: (a: ThemeConfig) => CreateStylesReturnType<Option, IsMulti>;
 };
-const getOptionValue = c => c.id;
+const getOptionValue = <C extends CurrencyOption>(c: C) => (c as CryptoOrTokenCurrency).id;
 
 // TODO: I removed the {...props} that was passed to Select. We might need to check out it doesnt break other stuff
-const SelectCurrency = <C extends Currency>({
+const SelectCurrency = <Option extends CurrencyOption>({
   onChange,
   value,
   placeholder,
@@ -38,13 +46,12 @@ const SelectCurrency = <C extends Currency>({
   minWidth,
   width,
   rowHeight = 47,
-  renderOptionOverride,
   renderValueOverride,
   isCurrencyDisabled,
   isDisabled,
   id,
   stylesMap,
-}: Props<C>) => {
+}: Props<Option>) => {
   const { t } = useTranslation();
   const devMode = useEnv("MANAGER_DEV_MODE");
   let c = currencies;
@@ -93,10 +100,10 @@ const SelectCurrency = <C extends Currency>({
       autoFocus={autoFocus}
       value={value}
       options={filteredOptions}
-      filterOption={false}
+      filterOption={null}
       getOptionValue={getOptionValue}
-      renderOption={renderOptionOverride || renderOption}
-      renderValue={renderValueOverride || renderOptionOverride || renderOption}
+      renderOption={renderOption}
+      renderValue={renderValueOverride || renderOption}
       onInputChange={v => setSearchInputValue(v)}
       inputValue={searchInputValue}
       placeholder={placeholder || t("common.selectCurrency")}
@@ -140,13 +147,15 @@ export function CurrencyOption({
   hideParentTag?: boolean;
   tagVariant?: "default" | "thin";
 }) {
-  const isParentTagDisplayed = !hideParentTag && currency.parentCurrency;
+  const isParentTagDisplayed = !hideParentTag && (currency as TokenCurrency).parentCurrency;
   const textContents = singleLineLayout ? (
     <>
       <Box grow ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
         {`${currency.name} (${currency.ticker})`}
       </Box>
-      {isParentTagDisplayed ? <CurrencyLabel>{currency.parentCurrency.name}</CurrencyLabel> : null}
+      {isParentTagDisplayed ? (
+        <CurrencyLabel>{(currency as TokenCurrency).parentCurrency.name}</CurrencyLabel>
+      ) : null}
     </>
   ) : (
     <>
@@ -158,13 +167,13 @@ export function CurrencyOption({
           <Text color="palette.text.shade40" ff="Inter|Medium" fontSize={3}>
             {currency.ticker}{" "}
             {isParentTagDisplayed && tagVariant === "thin"
-              ? `(${currency.parentCurrency.name})`
+              ? `(${(currency as TokenCurrency).parentCurrency.name})`
               : null}
           </Text>
         </Box>
       </OptionMultilineContainer>
       {isParentTagDisplayed && tagVariant === "default" ? (
-        <CurrencyLabel>{currency.parentCurrency.name}</CurrencyLabel>
+        <CurrencyLabel>{(currency as TokenCurrency).parentCurrency.name}</CurrencyLabel>
       ) : null}
     </>
   );
@@ -175,5 +184,7 @@ export function CurrencyOption({
     </Box>
   );
 }
-const renderOption = ({ data: currency }: Option) => <CurrencyOption currency={currency} />;
-export default memo<Props<any>>(SelectCurrency);
+const renderOption = <Option extends CurrencyOption>({ data }: { data: Option }) => (
+  <CurrencyOption currency={data.currency} />
+);
+export default memo<Props<CurrencyOption>>(SelectCurrency);
