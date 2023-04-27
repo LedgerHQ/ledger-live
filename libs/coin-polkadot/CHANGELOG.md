@@ -1,5 +1,25 @@
 # @ledgerhq/coin-polkadot
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`3242a0a794`](https://github.com/LedgerHQ/ledger-live/commit/3242a0a7948c20fb0100ce3cc73e55e338534d32), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253)]:
+  - @ledgerhq/coin-framework@0.3.1
+  - @ledgerhq/cryptoassets@9.4.0
+  - @ledgerhq/types-live@6.32.1
+  - @ledgerhq/live-portfolio@0.0.3
+
+## 0.1.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`3242a0a794`](https://github.com/LedgerHQ/ledger-live/commit/3242a0a7948c20fb0100ce3cc73e55e338534d32), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253)]:
+  - @ledgerhq/coin-framework@0.3.1-next.0
+  - @ledgerhq/cryptoassets@9.4.0-next.0
+  - @ledgerhq/types-live@6.32.1-next.0
+  - @ledgerhq/live-portfolio@0.0.3-next.0
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { apiForCurrency } from "../../api/Ethereum";
+import { apiForCurrency } from "./api";
 import { EIP1559ShouldBeUsed } from "./transaction";
 import { NetworkInfo, Transaction } from "./types";
 import { inferDynamicRange } from "../../range";

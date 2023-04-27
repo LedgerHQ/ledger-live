@@ -1,5 +1,4 @@
-import React, { ReactNode, useCallback, useEffect } from "react";
-import { TouchableOpacity } from "react-native";
+import React, { ReactNode, useEffect } from "react";
 import { useTheme } from "styled-components/native";
 import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevicePairing";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -9,14 +8,11 @@ import { Flex, InfiniteLoader, Text, Button } from "@ledgerhq/native-ui";
 import {
   CircledCheckSolidMedium,
   CircledCrossSolidMedium,
-  CloseMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
 import { TrackScreen } from "../../analytics";
-
-const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
 export type BleDevicePairingProps = {
   onPaired: (device: Device) => void;
@@ -53,20 +49,9 @@ const BleDevicePairing = ({
 
   useEffect(() => {
     if (isPaired) {
-      // To display the success to the user
-      setTimeout(() => {
-        onPaired(deviceToPair);
-      }, TIMEOUT_AFTER_PAIRED_MS);
+      onPaired(deviceToPair);
     }
   }, [isPaired, deviceToPair, onPaired]);
-
-  const handleClose = useCallback(() => {
-    if (isPaired) {
-      onPaired(deviceToPair);
-    } else {
-      onRetry();
-    }
-  }, [deviceToPair, isPaired, onPaired, onRetry]);
 
   let content: ReactNode;
 
@@ -162,11 +147,6 @@ const BleDevicePairing = ({
 
   return (
     <Flex flex={1}>
-      <Flex flexDirection="row" justifyContent="flex-end">
-        <TouchableOpacity onPress={handleClose}>
-          <CloseMedium size={24} />
-        </TouchableOpacity>
-      </Flex>
       <Flex flex={1} px={10} pt={36} alignItems="center">
         {content}
       </Flex>

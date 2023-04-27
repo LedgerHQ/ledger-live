@@ -11,10 +11,23 @@ import Touchable from "./Touchable";
 const emptyFunction = () => {};
 
 type Props = {
+  /**
+   * Function called when user presses on the close button.
+   * If undefined: default `navigation.popToTop` is used.
+   */
   onPress?: () => void;
+  /**
+   * Color of the close icon
+   */
   color?: string;
 };
 
+/**
+ * Close button that should be used as the close button on the react-navigation header.
+ *
+ * For more advanced configuration (for ex: a confirmation modal) and legacy usage,
+ * use `NavigationHeaderCloseButtonAdvanced` defined below.
+ */
 export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(
   ({ onPress, color }) => {
     const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
@@ -41,6 +54,12 @@ type AdvancedProps = {
   onClose?: () => void;
 };
 
+/**
+ * Close button that should be used as the close button on the right of the react-navigation header
+ * when advanced configuration is needed.
+ *
+ * Enables a confirmation modal, and some legacy configuration.
+ */
 export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> =
   React.memo(
     ({

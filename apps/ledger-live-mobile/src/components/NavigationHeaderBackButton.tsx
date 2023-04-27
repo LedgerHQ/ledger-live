@@ -4,6 +4,10 @@ import React from "react";
 import Touchable from "./Touchable";
 
 type Props = {
+  /**
+   * Function called when user presses on the back arrow.
+   * If undefined: default `navigation.goBack` is used.
+   */
   onPress?: () => void;
 };
 
@@ -13,6 +17,9 @@ export const NavigationHeaderBackImage = () => (
   </Flex>
 );
 
+/**
+ * Back arrow button that should be used as the back arrow on the left of the react-navigation header.
+ */
 export const NavigationHeaderBackButton: React.FC<Props> = React.memo(
   ({ onPress }) => {
     const navigation = useNavigation();

@@ -15,7 +15,7 @@ import { getCryptoCurrencyById } from "../../currencies";
 import network from "../../network";
 import type { AccountDescriptor } from "./descriptor";
 import { getEnv } from "../../env";
-import { getCurrencyExplorer } from "../../api/Ledger";
+import { getCurrencyExplorer } from "../../explorer";
 const minVersionMatch = ">=0.11.1";
 
 function isAcceptedVersion(version: string | null | undefined) {
