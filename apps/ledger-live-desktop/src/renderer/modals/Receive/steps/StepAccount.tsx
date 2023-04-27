@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency, CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   getAccountCurrency,
   getMainAccount,
@@ -76,9 +76,11 @@ const TokenSelection = ({
       <Label mt={30}>
         <Trans i18nKey="receive.steps.chooseAccount.token" />
       </Label>
-      {/* I just don't know how to please you anymore Flow */}
-      {/* $FlowFixMe */}
-      <SelectCurrency onChange={onChangeToken} currencies={tokens} value={token} />
+      <SelectCurrency
+        onChange={onChangeToken as (token?: CryptoOrTokenCurrency | null) => void}
+        currencies={tokens}
+        value={token}
+      />
     </>
   );
 };
