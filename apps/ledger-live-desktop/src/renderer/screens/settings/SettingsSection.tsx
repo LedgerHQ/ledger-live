@@ -97,7 +97,7 @@ export const SettingsSectionRow = ({
   title,
   desc,
   children = null,
-  onClick = null,
+  onClick = () => null,
   inset = false,
   contentContainerStyle,
   descContainerStyle,
