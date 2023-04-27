@@ -12,7 +12,7 @@ import Input, { Props as InputProps } from "~/renderer/components/Input";
 import Select from "~/renderer/components/Select";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 
-const unitGetOptionValue = (unit: Unit) => unit.magnitude;
+const unitGetOptionValue = (unit: Unit) => String(unit.magnitude);
 
 function format(
   unit: Unit,

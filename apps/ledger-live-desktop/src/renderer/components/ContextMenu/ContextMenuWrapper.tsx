@@ -25,7 +25,7 @@ export function withContextMenuContext<P>(
 
 export type ContextMenuItemType = {
   label: string;
-  Icon?: React.ComponentType<{ size?: number }>;
+  Icon?: React.ComponentType<{ size: number }> | React.ComponentType<{}>;
   callback?: (a: React.MouseEvent<HTMLDivElement>) => void;
   dontTranslateLabel?: boolean;
   id?: string;
