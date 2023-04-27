@@ -537,7 +537,7 @@ export const renderLockedDeviceError = ({
 }: {
   t: TFunction;
   device?: Device;
-  onRetry?: (() => void) | null;
+  onRetry?: () => void;
   inlineRetry?: boolean;
 }) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
@@ -636,7 +636,7 @@ export const renderError = ({
   error: Error | ErrorConstructor;
   t: TFunction;
   withOpenManager?: boolean;
-  onRetry?: (() => void) | null;
+  onRetry?: (() => void) | undefined;
   withExportLogs?: boolean;
   list?: boolean;
   supportLink?: string;
@@ -661,7 +661,7 @@ export const renderError = ({
       <BoxedIcon
         Icon={() => (
           <Logo info={info} warning={warning}>
-            <ErrorIcon size={20} error={error} />
+            <ErrorIcon size={24} error={error} />
           </Logo>
         )}
         size={64}
@@ -721,7 +721,7 @@ export const renderInWrongAppForAccount = ({
   accountName,
 }: {
   t: TFunction;
-  onRetry?: (() => void) | null;
+  onRetry?: (() => void) | undefined;
   accountName: string;
 }) =>
   renderError({
