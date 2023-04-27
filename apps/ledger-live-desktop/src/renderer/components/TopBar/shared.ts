@@ -1,21 +1,24 @@
 import styled from "styled-components";
 import { rgba } from "~/renderer/styles/helpers";
 import { Tabbable } from "~/renderer/components/Box";
-export const ItemContainer: ThemedComponent<{
+
+type ItemProps = {
   "data-e2e"?: string;
   isInteractive?: boolean;
   onClick?: () => void;
   disabled?: boolean;
-  children: React$Node;
+  children: React.ReactNode;
   justifyContent?: string;
-}> = styled(Tabbable).attrs(p => ({
+};
+
+export const ItemContainer = styled(Tabbable).attrs<ItemProps>(p => ({
   px: 3,
   ml: 0,
   alignItems: "center",
   cursor: p.disabled ? "not-allowed" : "default",
   horizontal: true,
   borderRadius: 1,
-}))`
+}))<ItemProps>`
   -webkit-app-region: no-drag;
   height: 40px;
   position: relative;
