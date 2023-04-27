@@ -23,6 +23,7 @@ export type FeatureId =
   | "referralProgramDiscoverCard"
   | "referralProgramDesktopBanner"
   | "referralProgramDesktopSidebar"
+  | "referralProgramMobile"
   | "disableNftSend"
   | "disableNftLedgerMarket"
   | "disableNftRaribleOpensea"

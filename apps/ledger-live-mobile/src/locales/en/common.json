@@ -2392,6 +2392,7 @@
     },
     "earn": "Earn",
     "quickActions": "Quick actions",
+    "referralProgram": "Refer a friend and get $10 of Bitcoin",
     "banner": {
       "redelegation": {
         "description": "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
@@ -6100,7 +6101,8 @@
       "media": {
         "tag": "{{count}} NFTs"
       }
-    }
+    },
+    "referralProgram":"$10"
   },
   "servicesWidget": {
     "title": "Services",
