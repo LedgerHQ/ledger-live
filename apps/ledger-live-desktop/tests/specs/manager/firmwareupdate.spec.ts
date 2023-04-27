@@ -7,6 +7,8 @@ import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "skip-onboarding" });
 
+// TODO Cover stax, figure out a good changelog and correct device info
+// this e2e is only testing the very old firmware update path.
 test("Firmware Update", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const firmwareUpdateModal = new FirmwareUpdateModal(page);
@@ -25,7 +27,6 @@ test("Firmware Update", async ({ page }) => {
   });
 
   await test.step("Firmware update changelog", async () => {
-    await firmwareUpdateModal.tickCheckbox();
     await expect.soft(firmwareUpdateModal.container).toHaveScreenshot("modal-checkbox.png");
   });
 
@@ -49,7 +50,8 @@ test("Firmware Update", async ({ page }) => {
   });
 
   await test.step("Modal is closed", async () => {
-    await firmwareUpdateModal.close();
+    // TODO rewrite this to fit a drawer model, not a modal one.
+    await firmwareUpdateModal.page.locator("data-test-id=drawer-close-button").click();
     await expect.soft(page).toHaveScreenshot("modal-closed.png");
   });
 });
