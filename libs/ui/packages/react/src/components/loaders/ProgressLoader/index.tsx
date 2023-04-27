@@ -83,8 +83,8 @@ const StyledProgressLoaderContainer = styled.div`
 const StyledSpinningContainer = styled.div`
   animation: rotation 1s infinite linear;
   display: flex;
-  alignItems: center;
-  justifyContent: center;
+  align-items: center;
+  justify-content: center;
   @keyframes rotation {
     from {
       transform: rotate(0deg);
