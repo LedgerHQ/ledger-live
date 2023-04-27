@@ -1,6 +1,5 @@
 import React from "react";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
-import Warning from "~/renderer/icons/TriangleWarning";
 import CrossCircle from "~/renderer/icons/CrossCircle";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import Lock from "~/renderer/icons/LockCircle";
@@ -10,6 +9,7 @@ import {
   UserRefusedOnDevice,
   UserRefusedAddress,
   ManagerDeviceLockedError,
+  UserRefusedDeviceNameChange,
 } from "@ledgerhq/errors";
 import {
   SwapGenericAPIError,
@@ -17,6 +17,7 @@ import {
   NoSuchAppOnProvider,
   LanguageInstallRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
+import { Icons } from "@ledgerhq/react-ui";
 export type ErrorIconProps = {
   error: Error;
   size?: number;
@@ -32,7 +33,8 @@ const ErrorIcon = ({ error, size = 44 }: ErrorIconProps) => {
     case error instanceof UserRefusedOnDevice:
     case error instanceof UserRefusedAddress:
     case error instanceof LanguageInstallRefusedOnDevice:
-      return <Warning size={size} />;
+    case error instanceof UserRefusedDeviceNameChange:
+      return <Icons.InfoMedium size={size} />;
     case error instanceof SwapGenericAPIError:
     case error instanceof NoSuchAppOnProvider:
       return <CrossCircle size={size} />;
