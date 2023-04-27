@@ -26,7 +26,7 @@ const Result = (
 ) => {
   if (!("signedOperation" in props)) return null;
   return (
-    <StepProgress modelId={props.device.modelId}>
+    <StepProgress>
       <DeviceBlocker />
       <Trans i18nKey="send.steps.confirmation.pending.title" />
     </StepProgress>

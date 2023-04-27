@@ -24,7 +24,7 @@ const Result = (
 ) => {
   if (!("signedOperation" in result) || !result.signedOperation) return null;
   return (
-    <StepProgress modelId={result.device.modelId}>
+    <StepProgress>
       <DeviceBlocker />
       <Trans i18nKey="send.steps.confirmation.pending.title" />
     </StepProgress>

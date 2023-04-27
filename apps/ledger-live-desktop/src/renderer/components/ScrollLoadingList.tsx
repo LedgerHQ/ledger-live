@@ -24,7 +24,7 @@ function ScrollLoadingList<D>({
   bufferSize = 20,
   style,
 }: ScrollLoadingListProps<D>) {
-  const scrollRef = useRef<HTMLDivElement | undefined>();
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const [scrollOffset, setScrollOffset] = useState(bufferSize);
 
   /**
@@ -32,7 +32,7 @@ function ScrollLoadingList<D>({
    * to the top position
    */
   useEffect(() => {
-    scrollRef.current.scrollTop = 0;
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
     setScrollOffset(bufferSize);
   }, [data, scrollRef, bufferSize]);
   const handleScroll = useCallback(() => {

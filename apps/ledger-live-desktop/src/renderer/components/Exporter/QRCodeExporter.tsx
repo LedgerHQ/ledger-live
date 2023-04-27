@@ -109,7 +109,7 @@ class QRCodeExporter extends PureComponent<
               opacity: i === frame ? 1 : 0,
             }}
           >
-            <QRCode data={chunk} size={Math.max(size - 24, 0)} errorCorrectionLevel="M" />
+            <QRCode data={chunk} size={Math.max(size - 24, 0)} />
           </div>
         ))}
       </QRCodeContainer>
