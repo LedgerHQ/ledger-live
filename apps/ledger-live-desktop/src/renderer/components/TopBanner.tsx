@@ -8,7 +8,7 @@ import IconCross from "~/renderer/icons/Cross";
 import Box from "~/renderer/components/Box";
 
 const IconContainer = styled.div`
-  margin-right: 15px;
+  margin-right: 12px;
   display: flex;
   align-items: center;
 `;
@@ -89,7 +89,7 @@ const TopBanner = ({ id, testId, content, status = "", dismissable = false, bann
     <Container status={status} id={id} data-test-id={testId}>
       {Icon && (
         <IconContainer>
-          <Icon size={16} />
+          <Icon size={18} />
         </IconContainer>
       )}
       {message}
