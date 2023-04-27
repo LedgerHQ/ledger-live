@@ -32,33 +32,17 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const axelar = useFeature("currencyAxelar");
   const onomy = useFeature("currencyOnomy");
   const quicksilver = useFeature("currencyQuicksilver");
-  const stride = useFeature("currencyStride");
   const persistence = useFeature("currencyPersistence");
-  const stargaze = useFeature("currencyStargaze");
-  const nyx = useFeature("currencyNyx");
-  const secretNetwork = useFeature("currencySecretNetwork");
-  const seiNetwork = useFeature("currencySeiNetwork");
-  const desmos = useFeature("currencyDesmos");
-  const umee = useFeature("currencyUmee");
-  const binanceBeaconChain = useFeature("currencyBinanceBeaconChain");
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const featureFlaggedCurrencies = useMemo(
     () => ({
       axelar,
       onomy,
       quicksilver,
-      stride,
       persistence,
-      stargaze,
-      nyx,
-      secretNetwork,
-      seiNetwork,
-      desmos,
-      umee,
-      binanceBeaconChain,
       avalanche_c_chain: avaxCChain,
     }),
-    [avaxCChain],
+    [avaxCChain, axelar, onomy, quicksilver, persistence],
   );
   const currencies = useMemo(() => {
     const currencies = (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(

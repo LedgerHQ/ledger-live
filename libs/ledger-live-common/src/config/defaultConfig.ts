@@ -6,6 +6,7 @@ const defaultConfig = {
       },
       cosmos: {
         lcd: "https://cosmoshub4.coin.ledger.com",
+        ledgerValidator: "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
       },
       desmos: {
         lcd: "https://desmos-api.ibs.team",

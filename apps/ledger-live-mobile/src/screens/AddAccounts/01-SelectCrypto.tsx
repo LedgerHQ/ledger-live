@@ -55,15 +55,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const axelar = useFeature("currencyAxelar");
   const onomy = useFeature("currencyOnomy");
   const quicksilver = useFeature("currencyQuicksilver");
-  const stride = useFeature("currencyStride");
   const persistence = useFeature("currencyPersistence");
-  const stargaze = useFeature("currencyStargaze");
-  const nyx = useFeature("currencyNyx");
-  const secretNetwork = useFeature("currencySecretNetwork");
-  const seiNetwork = useFeature("currencySeiNetwork");
-  const desmos = useFeature("currencyDesmos");
-  const umee = useFeature("currencyUmee");
-  const binanceBeaconChain = useFeature("currencyBinanceBeaconChain");
   const avaxCChain = useFeature("currencyAvalancheCChain");
 
   const featureFlaggedCurrencies = useMemo(
@@ -71,18 +63,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       axelar,
       onomy,
       quicksilver,
-      stride,
       persistence,
-      stargaze,
-      nyx,
-      secretNetwork,
-      seiNetwork,
-      desmos,
-      umee,
-      binanceBeaconChain,
       avalanche_c_chain: avaxCChain,
     }),
-    [avaxCChain],
+    [avaxCChain, axelar, onomy, quicksilver, persistence],
   );
 
   const cryptoCurrencies = useMemo(() => {
