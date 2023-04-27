@@ -8,8 +8,14 @@ import RemoveCustomImage from "./RemoveCustomImage";
 import { useSelector } from "react-redux";
 import { lastSeenCustomImageSelector } from "~/renderer/reducers/settings";
 
-const CustomImageManagerButton = () => {
+type Props = {
+  disabled?: boolean;
+};
+
+const CustomImageManagerButton = (props: Props) => {
   const { t } = useTranslation();
+  const { disabled } = props;
+
   const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
 
   const onAdd = useCallback(() => {
@@ -26,8 +32,9 @@ const CustomImageManagerButton = () => {
         {t("customImage.managerCTA")}
       </Text>
       <Link
-        onClick={onAdd}
+        onClick={disabled ? undefined : onAdd}
         Icon={Icons.ChevronRightMedium}
+        disabled={disabled}
         data-test-id="manager-custom-image-button"
       >
         {t("common.add")}

@@ -13,9 +13,15 @@ type Props = {
   deviceInfo: DeviceInfo & { languageId: number };
   onRefreshDeviceInfo: () => void;
   device: Device;
+  disabled?: boolean;
 };
 
-const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device, onRefreshDeviceInfo }: Props) => {
+const DeviceLanguage: React.FC<Props> = ({
+  deviceInfo,
+  device,
+  onRefreshDeviceInfo,
+  disabled,
+}: Props) => {
   const deviceLanguage = idsToLanguage[deviceInfo.languageId];
 
   const openLanguageInstallation = useCallback(() => {
@@ -47,8 +53,9 @@ const DeviceLanguage: React.FC<Props> = ({ deviceInfo, device, onRefreshDeviceIn
       </Flex>
       <Link
         type="main"
+        disabled={disabled}
         Icon={Icons.ChevronRightMedium}
-        onClick={openLanguageInstallation}
+        onClick={disabled ? undefined : openLanguageInstallation}
         data-test-id="manager-change-language-button"
       >
         {t(`deviceLocalization.languages.${deviceLanguage}`)}
