@@ -47,7 +47,6 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
-import AppInstallItem from "../OnboardingAppInstall/AppInstallItem";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
@@ -114,17 +113,19 @@ type States = PartialNullable<{
   imageCommitRequested: boolean;
 }>;
 
-type Props<H extends States, P> = {
+type InnerProps<H extends States, P> = {
   Result?: React.ComponentType<P>;
   onResult?: (_: NonNullable<P>) => void;
   onError?: (_: Error) => Promise<void> | void;
   renderOnResult?: (_: P) => JSX.Element | null;
-  status: H;
-  device: Device;
-  payload?: P | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
+};
+
+type Props<H extends States, P> = InnerProps<H, P> & {
+  status: H;
+  payload?: P | null;
 };
 
 class OnResult<P> extends Component<{ payload: P; onResult: (_: P) => void }> {
@@ -507,7 +508,7 @@ export default function DeviceAction<R, H extends States, P>({
   action,
   request,
   ...props
-}: Omit<Props<H, P>, "status"> & {
+}: InnerProps<H, P> & {
   action: Action<R, H, P>;
   request: R;
 }): JSX.Element {
