@@ -24,7 +24,7 @@ function HomePromotionalTag() {
       }
     >
       <Flex justifyContent="center" flexDirection="row" height="100%" alignItems="center">
-        <Icon name="GiftCard" size={13} color="primary.c80" />
+        <Icon name="GiftCard" size={18} color="primary.c80" />
         <Flex ml={4}>{t("banners.referralProgram.title")}</Flex>
       </Flex>
     </Tag>

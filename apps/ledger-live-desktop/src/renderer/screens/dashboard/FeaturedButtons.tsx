@@ -1,11 +1,8 @@
 import React, { useCallback } from "react";
-import { Grid } from "@ledgerhq/react-ui";
+import { Grid, Icons } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
-import Swap from "~/renderer/icons/Swap";
-import Exchange from "~/renderer/icons/Exchange";
-import Growth from "~/renderer/icons/Growth";
 import { useHistory } from "react-router-dom";
 import useStakeFlow from "~/renderer/screens/stake";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -53,14 +50,14 @@ const FeaturedButtons = () => {
   return (
     <ButtonGrid>
       <EntryButton
-        Icon={() => <Exchange />}
+        Icon={() => <Icons.BuyCryptoAltMedium size={18} />}
         title={t("dashboard.featuredButtons.buySell.title")}
         body={t("dashboard.featuredButtons.buySell.description")}
         onClick={handleClickExchange}
         entryButtonTestId="buy-sell-entry-button"
       />
       <EntryButton
-        Icon={() => <Swap />}
+        Icon={() => <Icons.BuyCryptoMedium size={18} />}
         title={t("dashboard.featuredButtons.swap.title")}
         body={t("dashboard.featuredButtons.swap.description")}
         label={t("dashboard.featuredButtons.swap.label")}
@@ -68,7 +65,7 @@ const FeaturedButtons = () => {
         entryButtonTestId="swap-entry-button"
       />
       <EntryButton
-        Icon={() => <Growth />}
+        Icon={() => <Icons.LendMedium size={18} />}
         disabled={stakeDisabled}
         title={t("dashboard.featuredButtons.earn.title")}
         body={t("dashboard.featuredButtons.earn.description")}
