@@ -108,7 +108,7 @@ class RecipientAddress extends PureComponent<Props, State> {
         <Input
           {...rest}
           error={(error as unknown) as Error}
-          spellCheck="false"
+          spellCheck={false}
           value={value}
           onChange={preOnChange}
           renderRight={renderRight}
