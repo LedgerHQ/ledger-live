@@ -15,6 +15,7 @@ type Props = {
   deviceName: string;
   onRefreshDeviceInfo: () => void;
   device: Device;
+  disabled?: boolean;
 };
 
 const PenIcon = styled.div`
@@ -28,6 +29,7 @@ const DeviceName: React.FC<Props> = ({
   deviceName,
   deviceInfo,
   device,
+  disabled,
   onRefreshDeviceInfo,
 }: Props) => {
   const model = identifyTargetId(deviceInfo.targetId as number);
@@ -57,14 +59,14 @@ const DeviceName: React.FC<Props> = ({
 
   return (
     <Flex alignItems="center">
-      <Flex onClick={openDeviceRename}>
+      <Flex onClick={!disabled ? openDeviceRename : undefined}>
         <Flex mb={2} alignItems="center">
           <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={6} mr={3}>
             {name || deviceInfo.version}
           </Text>
           {editSupported ? (
             <PenIcon>
-              <Icons.PenMedium color="neutral.c100" size={17} />
+              <Icons.PenMedium color={disabled ? "neutral.c50" : "neutral.c100"} size={17} />
             </PenIcon>
           ) : null}
         </Flex>

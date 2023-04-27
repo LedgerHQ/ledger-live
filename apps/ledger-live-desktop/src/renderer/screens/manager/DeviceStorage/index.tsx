@@ -6,7 +6,7 @@ import manager from "@ledgerhq/live-common/manager/index";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import ByteSize from "~/renderer/components/ByteSize";
@@ -28,6 +28,9 @@ import CustomImageManagerButton from "./CustomImageManagerButton";
 import DeviceLanguage from "./DeviceLanguage";
 import DeviceName from "./DeviceName";
 import Certificate from "~/renderer/icons/Certificate";
+import { Device } from "@ledgerhq/types-devices";
+import { isNavigationLocked } from "~/renderer/reducers/application";
+import { useSelector } from "react-redux";
 
 const illustrations = {
   nanoS: {
@@ -332,7 +335,9 @@ const DeviceStorage = ({
   firmware,
 }: Props) => {
   const shouldWarn = distribution.shouldWarnMemory || isIncomplete;
+  const navigationLocked = useSelector(isNavigationLocked);
   const firmwareOutdated = manager.firmwareUnsupported(deviceModel.id, deviceInfo) || firmware;
+
   return (
     <Card p={20} mb={4} data-test-id="device-storage-card">
       <Flex flexDirection="row">
@@ -351,6 +356,7 @@ const DeviceStorage = ({
                 deviceInfo={deviceInfo}
                 device={device}
                 onRefreshDeviceInfo={onRefreshDeviceInfo}
+                disabled={navigationLocked}
               />
             </Box>
             <Flex justifyContent="space-between" alignItems="center" mt={1}>
@@ -462,6 +468,7 @@ const DeviceStorage = ({
               <DeviceLanguage
                 deviceInfo={deviceInfo}
                 device={device}
+                disabled={navigationLocked}
                 onRefreshDeviceInfo={onRefreshDeviceInfo}
               />
             )}
@@ -470,7 +477,7 @@ const DeviceStorage = ({
               <>
                 {deviceInfo.languageId !== undefined && <VerticalSeparator />}
                 <FeatureToggle feature="customImage">
-                  <CustomImageManagerButton />
+                  <CustomImageManagerButton disabled={navigationLocked} />
                 </FeatureToggle>
               </>
             ) : null}
