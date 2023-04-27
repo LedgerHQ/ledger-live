@@ -3328,8 +3328,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://filfox.info/en/message/$hash",
-        address: "https://filfox.info/en/address/$address",
+        tx: "https://beryx.io/v1/explore/fil/mainnet/transactions/$hash",
+        address: "https://beryx.io/v1/explore/fil/mainnet/address/$address",
       },
     ],
   },
