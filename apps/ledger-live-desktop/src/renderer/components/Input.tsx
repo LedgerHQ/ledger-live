@@ -7,6 +7,9 @@ import Box from "~/renderer/components/Box";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import { BoxProps } from "./Box/Box";
+
+type InputError = Error | boolean | null | undefined;
+
 const RenderLeftWrapper = styled(Box)`
   align-items: center;
   justify-content: center;
@@ -28,8 +31,8 @@ type InnerProps = {
   isFocus?: boolean;
   disabled?: boolean;
   small?: boolean;
-  error?: Error | null | undefined;
-  warning?: Error | null | undefined;
+  error?: InputError;
+  warning?: InputError;
   editInPlace?: boolean;
 };
 
@@ -164,15 +167,16 @@ export type Props = {
   renderRight?: React.ReactNode;
   containerProps?: object;
   loading?: boolean;
-  error?: Error | null;
-  warning?: Error | null;
+  error?: InputError;
+  warning?: InputError;
   small?: boolean;
   editInPlace?: boolean;
   disabled?: boolean;
   hideErrorMessage?: boolean;
   value?: string;
   placeholder?: string;
-} & React.ComponentProps<typeof Base>;
+  ff?: string;
+};
 const Input = function Input(
   {
     renderLeft = null,
@@ -259,7 +263,7 @@ const Input = function Input(
           {...props}
           placeholder={loading ? "" : props.placeholder}
           value={loading ? "" : value}
-          small={small}
+          // small={small}
           disabled={disabled}
           ref={inputRef}
           onFocus={handleFocus}
@@ -271,13 +275,17 @@ const Input = function Input(
         <ErrorContainer hasError={!hideErrorMessage && (error || warning)}>
           {!hideErrorMessage ? (
             error ? (
-              <ErrorDisplay id="input-error" data-testid="input-error">
-                <TranslatedError error={error} />
-              </ErrorDisplay>
+              typeof error === "boolean" ? null : (
+                <ErrorDisplay id="input-error" data-testid="input-error">
+                  <TranslatedError error={error} />
+                </ErrorDisplay>
+              )
             ) : warning ? (
-              <WarningDisplay id="input-warning">
-                <TranslatedError error={warning} />
-              </WarningDisplay>
+              typeof warning === "boolean" ? null : (
+                <WarningDisplay id="input-warning">
+                  <TranslatedError error={warning} />
+                </WarningDisplay>
+              )
             ) : null
           ) : null}
         </ErrorContainer>

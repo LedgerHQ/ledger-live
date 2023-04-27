@@ -48,7 +48,7 @@ function stopPropagation(e: React.SyntheticEvent) {
   e.stopPropagation();
 }
 
-type OwnProps = {
+type OwnProps = Omit<InputProps, "value" | "onChange"> & {
   onChangeFocus?: (a: boolean) => void;
   onChange: (b: BigNumber, a: Unit) => void;
   // FIXME Unit shouldn't be provided (this is not "standard" onChange)
@@ -75,8 +75,7 @@ type Props = {
   forwardedRef: ElementRef<any> | undefined | null;
   placeholder?: string;
   loading: boolean;
-} & OwnProps &
-  InputProps;
+} & OwnProps;
 
 type State = {
   isFocused: boolean;

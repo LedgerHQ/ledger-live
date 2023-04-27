@@ -87,7 +87,7 @@ class RecipientAddress extends PureComponent<Props, State> {
   };
 
   render() {
-    const { onChange, withQrCode, value, ...rest } = this.props;
+    const { onChange, withQrCode, value, error, ...rest } = this.props;
     const { qrReaderOpened } = this.state;
     const renderRight = withQrCode ? (
       <Right onClick={this.handleClickQrCode}>
@@ -107,6 +107,7 @@ class RecipientAddress extends PureComponent<Props, State> {
       <Box relative justifyContent="center">
         <Input
           {...rest}
+          error={(error as unknown) as Error}
           spellCheck="false"
           value={value}
           onChange={preOnChange}
