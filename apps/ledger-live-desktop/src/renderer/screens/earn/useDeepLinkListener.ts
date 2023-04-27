@@ -38,6 +38,7 @@ export const useDeepLinkListener = () => {
               openModal("MODAL_START_STAKE", {
                 account,
                 parentAccount: undefined,
+                source: "Earn Dashboard",
               }),
             );
           }
