@@ -4,19 +4,29 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import IconExternal from "~/renderer/icons/ExternalLink";
 
-export const ContextMenuContext = React.createContext({});
-export const withContextMenuContext = (ComponentToDecorate: React.ComponentType<any>) => {
-  const WrappedContextMenu = (props: any) => (
+export type ContextType = {
+  showContextMenu: (event: MouseEvent, items: ContextMenuItemType[]) => void;
+};
+
+export const ContextMenuContext = React.createContext<ContextType>({
+  showContextMenu: () => undefined,
+});
+
+export function withContextMenuContext<P>(
+  ComponentToDecorate: React.ComponentType<P & { context: ContextType }>,
+): React.ComponentType<P> {
+  const WrappedContextMenu = (props: P) => (
     <ContextMenuContext.Consumer>
       {context => <ComponentToDecorate {...props} context={context} />}
     </ContextMenuContext.Consumer>
   );
   return WrappedContextMenu;
-};
+}
+
 export type ContextMenuItemType = {
   label: string;
-  Icon?: React.ComponentType<any>;
-  callback: (a: any) => any;
+  Icon?: React.ComponentType<{ size: number }>;
+  callback: (a: React.MouseEvent<HTMLDivElement>) => void;
   dontTranslateLabel?: boolean;
   id?: string;
   type?: string;
@@ -36,10 +46,10 @@ const Separator = styled.div`
   margin-top: 8px;
   margin-bottom: 8px;
 `;
-const ContextMenuContainer: ThemedComponent<{
+const ContextMenuContainer = styled(Box)<{
   x: number;
   y: number;
-}> = styled(Box)`
+}>`
   position: absolute;
   top: ${p => p.y}px;
   left: ${p => p.x}px;
@@ -50,7 +60,13 @@ const ContextMenuContainer: ThemedComponent<{
   background-color: ${p => p.theme.colors.palette.background.paper};
   padding: 10px;
 `;
-const ContextMenuItemContainer = styled(Box).attrs(p => ({
+
+type ContextMenuItemContainerProps = {
+  isActive?: boolean;
+  disabled?: boolean;
+};
+
+const ContextMenuItemContainer = styled(Box).attrs<ContextMenuItemContainerProps>(p => ({
   ff: "Inter",
   color: p.disabled
     ? "palette.text.shade50"
@@ -58,7 +74,7 @@ const ContextMenuItemContainer = styled(Box).attrs(p => ({
     ? "palette.text.shade100"
     : "palette.text.shade60",
   bg: p.isActive && !p.disabled ? "palette.background.default" : "",
-}))`
+}))<ContextMenuItemContainerProps>`
   padding: 8px 16px;
   text-align: center;
   flex-direction: row;
@@ -88,7 +104,7 @@ class ContextMenuWrapper extends PureComponent<Props, State> {
     y: 0,
   };
 
-  containerRef: any;
+  containerRef: HTMLDivElement | null = null;
   componentWillUnmount() {
     window.removeEventListener("click", this.hideContextMenu, true);
   }
@@ -107,8 +123,9 @@ class ContextMenuWrapper extends PureComponent<Props, State> {
     window.addEventListener("click", this.hideContextMenu, true);
   };
 
-  hideContextMenu = (evt?: PointerEvent) => {
+  hideContextMenu = (evt?: MouseEvent) => {
     // NB Allow opening the context menu on a different target if already open.
+    // @ts-expect-error FIXME rework this in a non deprecated way
     if (evt?.srcElement?.parentElement === this.containerRef) {
       return;
     }
@@ -119,7 +136,10 @@ class ContextMenuWrapper extends PureComponent<Props, State> {
     window.removeEventListener("click", this.hideContextMenu, true);
   };
 
-  setContainerRef = (ref: any) => (this.containerRef = ref);
+  setContainerRef = (ref: HTMLDivElement) => {
+    this.containerRef = ref;
+  };
+
   renderItem = (item: ContextMenuItemType) => {
     const { dontTranslateLabel, callback, label, Icon, id } = item;
     if (item.type === "separator") {
