@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { TFunction, Trans } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
@@ -30,6 +30,11 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   const chosenValidator = useMemo(() => {
     return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];
   }, [validators, chosenVoteAccAddr]);
+
+  useEffect(() => {
+    onChangeValidator({ address: validators[0].validatorAddress });
+  }, [onChangeValidator]);
+
   const renderItem = (validator: CosmosValidatorItem) => {
     return (
       <ValidatorRow

@@ -22,12 +22,17 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { urls } from "~/config/urls";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
-function getURLFeesInfo({ op }: { op: Operation, currencyId: string }): string | undefined | null {
+function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined | null {
   if (op.fee.gt(200000)) {
     return urls.polkadotFeesInfo;
   }
 }
-function getURLWhatIsThis({ op }: { op: Operation, currencyId: string }): string | undefined | null {
+function getURLWhatIsThis({
+  op,
+}: {
+  op: Operation;
+  currencyId: string;
+}): string | undefined | null {
   if (op.type !== "IN" && op.type !== "OUT") {
     return urls.stakingPolkadot;
   }

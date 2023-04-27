@@ -38,12 +38,7 @@ export default function StepDelegation({
       });
     });
   };
-  const chosenVoteAccAddr =
-    transaction.validators[0]?.address || delegations[0].validatorAddress || "";
-
-  useEffect(() => {
-    updateValidator({ address: chosenVoteAccAddr });
-  }, []);
+  const chosenVoteAccAddr = transaction.validators[0]?.address || "";
 
   return (
     <Box flow={1}>
