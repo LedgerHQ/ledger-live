@@ -4,6 +4,13 @@ import { patchOperationWithHash } from "../../../operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import cryptoFactory from "../chain/chain";
+import {
+  CosmosDelegation,
+  CosmosDelegationStatus,
+  CosmosTx,
+  CosmosRedelegation,
+  CosmosUnbonding,
+} from "../types";
 
 export class CosmosAPI {
   protected defaultEndpoint: string;
@@ -21,11 +28,11 @@ export class CosmosAPI {
   ): Promise<{
     balances: BigNumber;
     blockHeight: number;
-    txs: any;
-    delegations: any;
-    redelegations: any;
-    unbondings: any;
-    withdrawAddress: any;
+    txs: CosmosTx[];
+    delegations: CosmosDelegation[];
+    redelegations: CosmosRedelegation[];
+    unbondings: CosmosUnbonding[];
+    withdrawAddress: string;
   }> => {
     try {
       const [
@@ -128,8 +135,8 @@ export class CosmosAPI {
   getDelegations = async (
     address: string,
     currency: CryptoCurrency
-  ): Promise<any> => {
-    const delegations: Array<any> = [];
+  ): Promise<CosmosDelegation[]> => {
+    const delegations: Array<CosmosDelegation> = [];
 
     const { data: data1 } = await network({
       method: "GET",
@@ -162,7 +169,7 @@ export class CosmosAPI {
             ? new BigNumber(d.balance.amount)
             : new BigNumber(0),
         pendingRewards: new BigNumber(0),
-        status,
+        status: status as CosmosDelegationStatus,
       });
     }
 
@@ -187,8 +194,8 @@ export class CosmosAPI {
     return delegations;
   };
 
-  getRedelegations = async (address: string): Promise<any> => {
-    const redelegations: Array<any> = [];
+  getRedelegations = async (address: string): Promise<CosmosRedelegation[]> => {
+    const redelegations: Array<CosmosRedelegation> = [];
 
     const { data } = await network({
       method: "GET",
@@ -209,8 +216,8 @@ export class CosmosAPI {
     return redelegations;
   };
 
-  getUnbondings = async (address: string): Promise<any> => {
-    const unbondings: Array<any> = [];
+  getUnbondings = async (address: string): Promise<CosmosUnbonding[]> => {
+    const unbondings: Array<CosmosUnbonding> = [];
 
     const { data } = await network({
       method: "GET",
@@ -239,7 +246,7 @@ export class CosmosAPI {
     return data.withdraw_address;
   };
 
-  getTransactions = async (address: string): Promise<any> => {
+  getTransactions = async (address: string): Promise<CosmosTx[]> => {
     const receive = await network({
       method: "GET",
       url:
