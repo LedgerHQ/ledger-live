@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { Box } from "@ledgerhq/react-ui";
+// import { Box } from "@ledgerhq/react-ui";
+import Box from "./Box"; // NOTE: Speedrun glitch
 
 type Props = {
   lightSource: string;

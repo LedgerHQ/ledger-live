@@ -202,7 +202,7 @@ type AlertType =
   | "update"
   | "twitter";
 
-type Props = {
+type Props = BoxProps & {
   type?: AlertType;
   children: React.ReactNode;
   onLearnMore?: () => void;
@@ -218,7 +218,7 @@ type Props = {
   horizontal?: boolean;
   noIcon?: boolean;
   small?: boolean;
-} & BoxProps;
+};
 
 export default function Alert({
   children: description,
@@ -234,6 +234,8 @@ export default function Alert({
   left,
   title,
   small,
+  // eslint-disable-next-line
+  color,
   ...rest
 }: Props) {
   const { t } = useTranslation();
@@ -247,6 +249,7 @@ export default function Alert({
     () => (onLearnMore ? onLearnMore() : learnMoreUrl ? openURL(learnMoreUrl) : undefined),
     [onLearnMore, learnMoreUrl],
   );
+
   const onDismiss = useCallback(() => {
     if (bannerId) dispatch(dismissBanner(bannerId));
   }, [bannerId, dispatch]);
@@ -256,6 +259,18 @@ export default function Alert({
     </Text>
   );
   if (isDismissed) return null;
+  /**
+   * NOTE: Here we used to spread all props, yet there is a mismatch with the `color` prop
+   * we receive and the `color` props expected by Container.
+   * The `color` prop expected by Container seems to come from the TextColor types, yet the
+   * prop `color` we receive seems to work if we pass it to `backgroundColor` instead
+   *
+   * eg: <Container ... backgroundColor={color} />
+   *
+   * So ignoring the `color` prop for now
+   * Also I'm pretty confident the type now handles the display of the Alert
+   *
+   */
   return (
     <Container type={type} small={small} {...rest}>
       {left || (!noIcon && icon) ? <LeftContent>{left || icon}</LeftContent> : null}
