@@ -192,7 +192,7 @@ export function useLedgerFirstShuffledValidatorsCosmosFamily(
   return useMemo(() => {
     return reorderValidators(
       data?.validators ?? [],
-      ledgerValidatorAddress as string,
+      ledgerValidatorAddress,
       searchInput
     );
   }, [data, ledgerValidatorAddress, searchInput]);
@@ -200,7 +200,7 @@ export function useLedgerFirstShuffledValidatorsCosmosFamily(
 
 function reorderValidators(
   validators: CosmosValidatorItem[],
-  ledgerValidatorAddress: string,
+  ledgerValidatorAddress: string | undefined,
   searchInput?: string
 ): CosmosValidatorItem[] {
   const sortedValidators = validators
@@ -213,17 +213,19 @@ function reorderValidators(
     .sort((a, b) => b.tokens - a.tokens);
 
   // move Ledger validator to the first position
-  const ledgerValidator = sortedValidators.find(
-    (v) => v.validatorAddress === ledgerValidatorAddress
-  );
-
-  if (ledgerValidator) {
-    const sortedValidatorsLedgerFirst = sortedValidators.filter(
-      (v) => v.validatorAddress !== ledgerValidatorAddress
+  if (ledgerValidatorAddress) {
+    const ledgerValidator = sortedValidators.find(
+      (v) => v.validatorAddress === ledgerValidatorAddress
     );
-    sortedValidatorsLedgerFirst.unshift(ledgerValidator);
 
-    return sortedValidatorsLedgerFirst;
+    if (ledgerValidator) {
+      const sortedValidatorsLedgerFirst = sortedValidators.filter(
+        (v) => v.validatorAddress !== ledgerValidatorAddress
+      );
+      sortedValidatorsLedgerFirst.unshift(ledgerValidator);
+
+      return sortedValidatorsLedgerFirst;
+    }
   }
 
   return sortedValidators;
