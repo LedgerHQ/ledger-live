@@ -15,7 +15,6 @@ class Stride extends CosmosBase {
     this.unbondingPeriod = 28;
     this.prefix = "stride";
     this.validatorPrefix = `${this.prefix}valoper`;
-    this.minGasprice = 0;
   }
 }
 

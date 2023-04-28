@@ -15,7 +15,6 @@ class SecretNetwork extends CosmosBase {
     this.unbondingPeriod = 28;
     this.prefix = "secret";
     this.validatorPrefix = `${this.prefix}valoper`;
-    this.minGasprice = 0.25;
   }
 }
 

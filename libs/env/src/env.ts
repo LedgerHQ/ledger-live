@@ -716,7 +716,8 @@ const envDefinitions: Record<
     desc: "bucket S3 of the dynamic cryptoassets list",
   },
   CURRENCY_CONFIG_BASE_URL: {
-    def: "https://ledger-live-production-default-rtdb.europe-west1.firebasedatabase.app/",
+    // def: "https://ledger-live-production-default-rtdb.europe-west1.firebasedatabase.app/",
+    def: "https://coinconfig-poc-default-rtdb.europe-west1.firebasedatabase.app/",
     parser: stringParser,
     desc: "Currency config firebase url",
   },

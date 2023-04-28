@@ -15,7 +15,6 @@ class Nyx extends CosmosBase {
     this.unbondingPeriod = 28;
     this.prefix = "n";
     this.validatorPrefix = `${this.prefix}valoper`;
-    this.minGasprice = 0;
   }
 }
 

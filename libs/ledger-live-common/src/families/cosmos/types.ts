@@ -232,5 +232,6 @@ export type CosmosDistributionParams = {
 
 export type CosmosCurrencyConfig = {
   lcd: string;
-  ledgerValidator: string;
+  minGasPrice: number;
+  ledgerValidator?: string;
 };

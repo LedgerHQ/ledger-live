@@ -60,8 +60,9 @@ const currencyBridge: CurrencyBridge = {
     )
       return;
     const relatedImpl = cryptoFactory(currency.id);
-    relatedImpl.ledgerValidator = data.config.ledgerValidator;
     relatedImpl.lcd = data.config.lcd;
+    relatedImpl.minGasPrice = data.config.minGasPrice;
+    relatedImpl.ledgerValidator = data.config.ledgerValidator;
     const cosmosValidatorsManager = new CosmosValidatorsManager(
       getCryptoCurrencyById(currency.id)
     );

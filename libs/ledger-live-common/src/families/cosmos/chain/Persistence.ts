@@ -15,7 +15,6 @@ class Persistence extends CosmosBase {
     this.unbondingPeriod = 21;
     this.prefix = "persistence";
     this.validatorPrefix = `${this.prefix}valoper`;
-    this.minGasprice = 0.025;
   }
 }
 
