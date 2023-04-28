@@ -2,13 +2,27 @@ import {
   DisconnectedDevice,
   HwTransportError,
   HwTransportErrorType,
+  PairingFailed,
+  PeerRemovedPairing,
 } from "@ledgerhq/errors";
-import { BleError, BleErrorCode } from "react-native-ble-plx";
+import { BleATTErrorCode, BleError, BleErrorCode } from "react-native-ble-plx";
 
-export const remapError = (error: Error | null | undefined) => {
+type IOBleErrorRemap = Error | BleError | null | undefined;
+export const remapError = (error: IOBleErrorRemap): IOBleErrorRemap => {
   if (!error || !error.message) return error;
 
-  if (
+  if (error instanceof BleError) {
+    if (
+      error.iosErrorCode === BleATTErrorCode.UnlikelyError ||
+      error.reason === "Peer removed pairing information"
+    ) {
+      return new PeerRemovedPairing();
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore It's not documented but seems to match a refusal on Android pairing
+    } else if (error?.attErrorCode === 22) {
+      return new PairingFailed();
+    }
+  } else if (
     error.message.includes("was disconnected") ||
     error.message.includes("not found")
   ) {
