@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.20.2-nightly.1
+
+### Patch Changes
+
+- [#3300](https://github.com/LedgerHQ/ledger-live/pull/3300) [`e5420a5fcb`](https://github.com/LedgerHQ/ledger-live/commit/e5420a5fcb59e6e18f6a64aefcd8156989f21f5e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new entries for referral program
+
 ## 3.20.2-nightly.0
 
 ### Patch Changes
