@@ -3780,6 +3780,7 @@
         "title": "You are now a developer !",
         "text": "Welcome to wonderland"
       },
+      "userId": "User ID",
       "debugApps": "Allow debug apps",
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "experimentalApps": "Allow experimental apps",
