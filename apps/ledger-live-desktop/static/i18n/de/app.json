@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "Nie",
+    "new" : "Neu",
     "apply" : "Anwenden",
     "done" : "Fertig",
     "confirm" : "Bestätigen",
@@ -215,6 +216,7 @@
     "earn" : "Verdienen",
     "exchange" : "Kaufen / Verkaufen",
     "swap" : "Umtauschen",
+    "refer" : "Freunde werben",
     "lend" : "Leihen",
     "catalog" : "Entdecken",
     "market" : "Markt",
@@ -1441,7 +1443,8 @@
     "messageIfUnverified" : "Überprüfen Sie, ob die freigegebene Adresse genau mit der auf Ihrem Gerät übereinstimmt",
     "messageIfSkipped" : "Ihre {{name}} Adresse wurde auf Ihrem Ledger-Gerät nicht bestätigt. Bitte verifizieren Sie diese zur Sicherheit.",
     "showQrCode" : "QR-Code anzeigen",
-    "taprootWarning" : "Stellen Sie sicher, dass der Absender taproot unterstützt"
+    "taprootWarning" : "Stellen Sie sicher, dass der Absender taproot unterstützt",
+    "dashStakingWarning" : "Bitte stellen Sie sicher, dass Sie diese Adresse nicht für den Erhalt von Staking Belohnungen verwenden"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1877,7 @@
         "plugin" : "Zur App gehen",
         "swap" : "Umtauschen",
         "tool" : "Weitere Informationen",
-        "app" : "Weitere Informationen"
+        "currency" : "Weitere Informationen"
       },
       "uninstall" : {
         "title" : "Alle deinstallieren",
@@ -3761,6 +3764,7 @@
         "title" : "Sie sind jetzt ein Entwickler!",
         "text" : "Willkommen im Wunderland"
       },
+      "userId" : "Benutzer-ID",
       "debugApps" : "Erlauben von Debug-Apps",
       "debugAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
       "experimentalApps" : "Experimentelle Apps erlauben",
@@ -3790,6 +3794,8 @@
       "runLocalAppOpenButton" : "offen",
       "enableLearnStagingUrl" : "Staging-URL für Lernen-Seite",
       "enableLearnStagingUrlDesc" : "Aktivieren Sie die Staging-URL für die Lernen-Seite.",
+      "enableStagingNftMetadataService" : "Staging-NFT-Metadatendienst",
+      "enableStagingNftMetadataServiceDesc" : "Aktivieren Sie den Staging-NFT-Metadatendienst und setzen Sie den NFT-Cache zurück",
       "openOnboardingAppInstallDebug" : "Bildschirm zum Installieren der Debug-Anwendung der Onboarding-App öffnen",
       "openOnboardingAppInstallDebugDesc" : "Öffnen Sie einen Bildschirm mit den Komponenten aus dem Installationsschritt der Sync-Onboarding-App"
     },
@@ -3846,6 +3852,10 @@
         "managerDevMode" : {
           "title" : "Entwicklermodus",
           "description" : "Zeigen Sie Entwickler- und Testnet-Apps in My Ledger an."
+        },
+        "listAppsV2" : {
+          "title" : "Experimentelle Apps-Liste für My Ledger",
+          "description" : "Leistungsverbesserung für den Zugriff auf My Ledger und Inline-Flows."
         },
         "scanForInvalidPaths" : {
           "title" : "Erweiterte Kontosuche",
@@ -5723,9 +5733,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "Stellen Sie Ihre Schlüssel\nmithilfe Ihrer Identität wieder her",
+    "description" : "Ihre geheime Wiederherstellungsphrase wird nicht immer in Reichweite sein.\nSoft Launch exklusiv für Ledger Nano X. Kostenloses Abonnement bis 31. Mai 2023",
+    "cta" : "Warum sollte ich abonnieren?",
+    "downloadLLM" : "Abonnieren Sie <purple>Ledger Recover</purple> über die Ledger Live Mobile-App"
   }
 }
