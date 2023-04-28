@@ -7,6 +7,7 @@ import { Feature, isReadOnly } from "../../../experimental";
 import SettingsRow from "../../../components/SettingsRow";
 import FeatureSwitch from "./FeatureSwitch";
 import FeatureInteger from "./FeatureInteger";
+import FeatureFloat from "./FeatureFloat";
 
 type Props = {
   feature: Feature;
@@ -15,6 +16,7 @@ type Props = {
 const experimentalTypesMap = {
   toggle: FeatureSwitch,
   integer: FeatureInteger,
+  float: FeatureFloat,
 };
 
 const FeatureRowWithFeatureFlag = ({

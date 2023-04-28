@@ -3912,6 +3912,10 @@
         "1559CustomPriorityLowerGate": {
           "title": "Custom priority fee gate",
           "description": "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction"
+        },
+        "1559CustomBaseFeeMultiplier": {
+          "title": "Custom multiplier for the base fee",
+          "description": "Customize the multiplier used for the base fee composing the maxFeePerGas of the EIP1559 transaction"
         }
       }
     },

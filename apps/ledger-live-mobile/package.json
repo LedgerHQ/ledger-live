@@ -72,6 +72,7 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-native-hid": "workspace:^",
