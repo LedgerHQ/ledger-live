@@ -4,7 +4,7 @@ import semver from "semver";
 import { useDispatch, useSelector } from "react-redux";
 import { FeatureFlagsProvider } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
-import { getValue } from "firebase/remote-config";
+import { getAll, getValue } from "firebase/remote-config";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { formatToFirebaseFeatureId, useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
 import { overriddenFeatureFlagsSelector } from "../reducers/settings";
@@ -34,6 +34,32 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
 
   const localOverrides = useSelector(overriddenFeatureFlagsSelector);
   const dispatch = useDispatch();
+
+  const getAllFlags = () => {
+    if (remoteConfig) {
+      return getAll(remoteConfig);
+    }
+
+    return null;
+  };
+
+  const getAllCurrencyFlags = (): Record<string, Feature> | null => {
+    const allFlags = getAllFlags();
+
+    if (allFlags) {
+      const entries = Object.entries(allFlags)
+        .filter(([key]) => {
+          return key.includes("_currency_");
+        })
+        .map(([key, value]) => {
+          return [key, JSON.parse(value.asString())];
+        });
+
+      return Object.fromEntries(entries);
+    }
+
+    return {};
+  };
 
   const isFeature = (key: string): boolean => {
     if (!remoteConfig) {
@@ -117,6 +143,8 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
       overrideFeature={overrideFeature}
       resetFeature={resetFeature}
       resetFeatures={resetFeatures}
+      getAllFlags={getAllFlags}
+      getAllCurrencyFlags={getAllCurrencyFlags}
     >
       {children}
     </FeatureFlagsProvider>

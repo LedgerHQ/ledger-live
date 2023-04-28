@@ -5,7 +5,6 @@ import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { DefaultFeatures } from "@ledgerhq/types-live";
 import reduce from "lodash/reduce";
 import snakeCase from "lodash/snakeCase";
-import startCase from "lodash/startCase";
 
 import { getFirebaseConfig } from "~/firebase-setup";
 
@@ -14,10 +13,6 @@ export const FirebaseRemoteConfigContext = React.createContext<RemoteConfig | nu
 export const useFirebaseRemoteConfig = () => useContext(FirebaseRemoteConfigContext);
 
 export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
-
-export const formatCurrencyIdToFeatureKey = (id: string) => {
-  return `currency${startCase(id).replace(/\s/g, "")}`;
-};
 
 // Firebase SDK treat JSON values as strings
 const formatDefaultFeatures = (config: DefaultFeatures) =>
@@ -65,6 +60,7 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
       }
       setLoaded(true);
     };
+
     fetchConfig();
   }, [setConfig]);
 

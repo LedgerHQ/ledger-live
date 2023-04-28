@@ -15,6 +15,7 @@ jest.mock("./usePostOnboardingContext");
 jest.mock("../reducer");
 
 const mockedUseFeatureFlags = jest.mocked(useFeatureFlags);
+
 const mockedGetFeatureWithMockFeatureEnabled = (enabled) => ({
   isFeature: () => true,
   getFeature: (id) => {
@@ -24,6 +25,8 @@ const mockedGetFeatureWithMockFeatureEnabled = (enabled) => ({
   overrideFeature: () => {},
   resetFeature: () => {},
   resetFeatures: () => {},
+  getAllFlags: () => null,
+  getAllCurrencyFlags: () => ({}),
 });
 
 const mockedUsePostOnboardingContext = jest.mocked(usePostOnboardingContext);
