@@ -44,7 +44,7 @@ const Language = ({ updatedDeviceInfo, deviceInfo: oldDeviceInfo, onDone }: Prop
         error,
       });
       onDone();
-    }, 3000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, [error, onDone]);
 

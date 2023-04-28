@@ -28,7 +28,7 @@ const CLS = ({ onDone, CLSBackup }: Props) => {
         error,
       });
       onDone();
-    }, 3000);
+    }, 5000);
     return () => clearTimeout(timer);
   }, [error, onDone]);
 
