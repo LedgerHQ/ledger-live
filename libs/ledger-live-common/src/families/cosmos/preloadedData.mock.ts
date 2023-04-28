@@ -630,7 +630,7 @@ const data: CosmosPreloadData = {
       estimatedYearlyRewardsRate: 0,
     },
     {
-      validatorAddress: LEDGER_VALIDATOR_ADDRESS,
+      validatorAddress: LEDGER_VALIDATOR_ADDRESS as string,
       name: "Ledger",
       tokens: 1465639218435,
       votingPower: 0,

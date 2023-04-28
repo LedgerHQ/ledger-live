@@ -192,7 +192,7 @@ export function useLedgerFirstShuffledValidatorsCosmosFamily(
   return useMemo(() => {
     return reorderValidators(
       data?.validators ?? [],
-      ledgerValidatorAddress,
+      ledgerValidatorAddress as string,
       searchInput
     );
   }, [data, ledgerValidatorAddress, searchInput]);
