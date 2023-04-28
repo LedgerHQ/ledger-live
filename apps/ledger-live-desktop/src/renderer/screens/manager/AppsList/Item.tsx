@@ -1,11 +1,11 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { getCryptoCurrencyById, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
-import { App, FeatureId } from "@ledgerhq/types-live";
+import { App } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 
 import ByteSize from "~/renderer/components/ByteSize";
 import Text from "~/renderer/components/Text";
@@ -85,9 +85,19 @@ const Item = ({
     state.apps,
   ]);
 
-  const ffKey = currencyId ? formatCurrencyIdToFeatureKey(currencyId) : "";
-  const feature = useFeature(ffKey as FeatureId);
-  const currencyFlagEnabled = !feature || feature.enabled;
+  const { getAllCurrencyFlags } = useFeatureFlags();
+  const currencyFlags = getAllCurrencyFlags();
+
+  const flag = currencyId
+    ? Object.entries(currencyFlags || {}).find(([flagName]) => {
+        return flagName.includes(currencyId);
+      })
+    : undefined;
+
+  // when the flag doesn't exist it's equivalent to being enabled
+  // flag[0]: name of the feature flag
+  // flag[1]: { enabled: boolean }
+  const currencyFlagEnabled = !flag || flag[1].enabled;
 
   const bytes = useMemo(
     () =>

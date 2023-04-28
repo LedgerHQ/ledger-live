@@ -59,6 +59,7 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
       }
       setLoaded(true);
     };
+
     fetchConfig();
   }, [setConfig]);
 
