@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "なし",
+    "new" : "New",
     "apply" : "適用",
     "done" : "完了",
     "confirm" : "確認",
@@ -215,6 +216,7 @@
     "earn" : "報酬獲得",
     "exchange" : "購入/売却",
     "swap" : "スワップ",
+    "refer" : "ご友人紹介",
     "lend" : "レンディング",
     "catalog" : "Discover",
     "market" : "マーケット",
@@ -1441,7 +1443,8 @@
     "messageIfUnverified" : "共有アドレスが、お使いのデバイスのアドレスと完全に一致していることを確認してください。",
     "messageIfSkipped" : "{{name}} のアドレスが、Ledgerデバイスで確認できません。セキュリティを最適化するために、アドレスを確認してください。",
     "showQrCode" : "QRコードを表示",
-    "taprootWarning" : "送信者がタップルートをサポートしていることを確認する"
+    "taprootWarning" : "送信者がタップルートをサポートしていることを確認する",
+    "dashStakingWarning" : "このアドレスは、ステーキング報酬の受け取りに使用しないでください。"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1877,7 @@
         "plugin" : "アプリに移動",
         "swap" : "スワップ",
         "tool" : "詳細はこちら",
-        "app" : "詳細はこちら"
+        "currency" : "詳細はこちら"
       },
       "uninstall" : {
         "title" : "すべてアンインストール",
@@ -3761,6 +3764,7 @@
         "title" : "デベロッパーになりました！",
         "text" : "ワンダーランドへようこそ"
       },
+      "userId" : "User ID",
       "debugApps" : "デバッグアプリを許可する",
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
       "experimentalApps" : "試験的なアプリを許可する",
@@ -3790,6 +3794,8 @@
       "runLocalAppOpenButton" : "開く",
       "enableLearnStagingUrl" : "学習ページのステージングURL",
       "enableLearnStagingUrlDesc" : "学習ページのステージングURLを有効にする。",
+      "enableStagingNftMetadataService" : "NFTメタデータサービスの実装",
+      "enableStagingNftMetadataServiceDesc" : "NFTメタデータサービスの実装を有効化して、NFT Cacheをリセットする",
       "openOnboardingAppInstallDebug" : "オンボーディングアプリのインストールデバッグ画面を開く",
       "openOnboardingAppInstallDebugDesc" : "同期オンボーディングアプリのインストール手順の構成要素で画面を開きます"
     },
@@ -3846,6 +3852,10 @@
         "managerDevMode" : {
           "title" : "デベロッパーモード",
           "description" : "開発者用アプリとテストネットアプリをMy Ledgerに表示する。"
+        },
+        "listAppsV2" : {
+          "title" : "My Ledger用アプリの試験的リスト",
+          "description" : "My Ledgerアクセスとインラインフローのパフォーマンスの向上。"
         },
         "scanForInvalidPaths" : {
           "title" : "拡張アカウント検索",
@@ -5660,7 +5670,7 @@
         "chooseNft" : "NFTを選択",
         "selectNft" : "NFTを選択",
         "previousSelectNft" : "戻る",
-        "nftEmptyStateTitle" : "表示できるNFTはまだありません",
+        "nftEmptyStateTitle" : "表示できるNFTがありません",
         "nftEmptyStateDescription" : "NFTをウォレットに追加して始めます。"
       },
       "adjust" : {
@@ -5723,9 +5733,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "お客様のIDで\n鍵を復元",
+    "description" : "お客様の秘密のリカバリーフレーズは、常に手の届くところにあるとは限りません。\nLedger Nano X専用のソフトローンチ（試験的公開）が行われます。2023年5月31日まで無料でサブスクリプション契約が可能です。",
+    "cta" : "サブスクリプション契約のメリットとは？",
+    "downloadLLM" : "Ledger Live Mobileアプリを使用して<purple>Ledger Recover</purple>のサブスクリプション契約をする"
   }
 }
