@@ -10,7 +10,7 @@ import { modals } from "~/renderer/families/elrond/modals";
 import { openModal, closeModal } from "~/renderer/actions/modals";
 import { Account } from "@ledgerhq/types-live";
 import { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
-interface Props {
+export interface Props {
   name: string;
   account: Account;
   parentAccount?: Account;

@@ -5,7 +5,6 @@ import fontFamily from "~/renderer/styles/styled/fontFamily";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { AccountLike, Account } from "@ledgerhq/types-live";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   getDefaultExplorerView,
   getAccountContractExplorer,
@@ -139,7 +138,7 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
 };
-const AccountHeader: React$ComponentType<Props> = React.memo(function AccountHeader({
+const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHeader({
   account,
   parentAccount,
 }: Props) {

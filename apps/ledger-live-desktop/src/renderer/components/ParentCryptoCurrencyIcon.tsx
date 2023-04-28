@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import styled, { withTheme } from "styled-components";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Tooltip from "~/renderer/components/Tooltip";
 import Text from "~/renderer/components/Text";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";

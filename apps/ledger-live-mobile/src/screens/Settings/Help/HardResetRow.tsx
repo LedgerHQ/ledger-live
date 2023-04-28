@@ -24,7 +24,7 @@ export default function HardResetRow() {
       <SettingsRow
         event="HardResetRow"
         title={t("settings.help.hardReset")}
-        titleStyle={{ color: colors.error.c100 }}
+        titleStyle={{ color: colors.error.c50 }}
         desc={t("settings.help.hardResetDesc")}
         onPress={onPress}
         arrowRight
@@ -33,7 +33,7 @@ export default function HardResetRow() {
         isRequestingToBeOpened={isModalOpened}
         onClose={onRequestClose}
         Icon={InfoMedium}
-        iconColor={"error.c100"}
+        iconColor={"error.c50"}
         title={t("reset.title")}
         description={t("reset.description")}
       />

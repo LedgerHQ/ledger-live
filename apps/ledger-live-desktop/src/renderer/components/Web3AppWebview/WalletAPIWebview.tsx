@@ -4,11 +4,9 @@ import * as remote from "@electron/remote";
 import React, { forwardRef, RefObject, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-
 import { Account, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-
 import {
   useWalletAPIServer,
   useConfig,
@@ -18,7 +16,6 @@ import {
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import { getEnv } from "@ledgerhq/live-common/env";
-
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { flattenAccountsSelector } from "../../reducers/accounts";

@@ -1,18 +1,17 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import useTheme from "~/renderer/hooks/useTheme";
 import colors from "../colors";
-const FrameSVG: ThemedComponent<{}> = styled.svg`
+const FrameSVG = styled.svg`
   overflow: visible;
 `;
 type Props = {
-  children: any;
-  overlay: any;
+  children: React.ReactNode;
+  overlay: React.ReactNode;
   error?: boolean;
 };
 const NanoXFrame = ({ children, overlay, error }: Props) => {
-  const type = useTheme("colors.palette.type");
+  const type = useTheme("colors.palette.type") as keyof typeof colors;
   return (
     <FrameSVG width="156" height="42">
       <defs />
@@ -30,7 +29,7 @@ const NanoXFrame = ({ children, overlay, error }: Props) => {
           strokeWidth="2"
           rx="4"
         />
-        <circle cx="21" cy="21" r="10.5" stroke={colors[type].stroke} strokeLinejoin="square" />
+        <circle cx="21" cy="21" r="10.5" stroke={colors[type].stroke} />
         <circle
           cx="21"
           cy="21"

@@ -4,7 +4,6 @@ import { Trans } from "react-i18next";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { Account } from "@ledgerhq/types-live";
 import Checkbox from "~/renderer/components/CheckBox";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Icons, Alert } from "@ledgerhq/native-ui";
+import { Icons, Alert, Flex } from "@ledgerhq/native-ui";
 import SettingsRow from "../../../../components/SettingsRow";
 import { ScreenName } from "../../../../const";
 
@@ -14,6 +14,7 @@ import HasOrderedNanoRow from "./HasOrderedNanoRow";
 import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
 import ResetOnboardingStateRow from "./ResetOnboardingStateRow";
+import NftMetadataServiceRow from "./NftMetadataServiceRow";
 
 export default function Configuration() {
   const navigation =
@@ -33,12 +34,15 @@ export default function Configuration() {
         iconLeft={<Icons.MobileMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugEnv)}
       />
-      <Alert type={"info"} title={"Quick toggles for common settings."} />
+      <Flex p={6}>
+        <Alert type={"info"} title={"Quick toggles for common settings."} />
+      </Flex>
       <ResetOnboardingStateRow />
       <ReadOnlyModeRow />
       <HasOrderedNanoRow />
       <MockModeRow />
       <AnalyticsConsoleRow />
+      <NftMetadataServiceRow />
       <ThemeToggleRow />
       <SkipLock />
     </SettingsNavigationScrollView>

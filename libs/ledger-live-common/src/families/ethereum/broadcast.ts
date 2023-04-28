@@ -1,6 +1,6 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "../../operation";
-import { apiForCurrency } from "../../api/Ethereum";
+import { apiForCurrency } from "./api";
 import { Transaction } from "./types";
 
 const broadcast: AccountBridge<Transaction>["broadcast"] = async ({

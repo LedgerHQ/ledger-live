@@ -290,8 +290,8 @@ export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
             const appVersion = elf.slice(4, elf.length - 4);
             if (
               semver.valid(appVersion) &&
-              !shouldUpgrade(model, appName, appVersion) &&
-              !mustUpgrade(model, appName, appVersion)
+              !shouldUpgrade(appName, appVersion) &&
+              !mustUpgrade(appName, appVersion)
             ) {
               c.push({
                 path: p4,

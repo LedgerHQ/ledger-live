@@ -1,5 +1,4 @@
 import React from "react";
-
 import Modal from "~/renderer/components/Modal";
 import TermOfUseUpdateBody from "./TermOfUseUpdateBody";
 

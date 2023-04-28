@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import externalLink from "~/renderer/images/external-link.svg";
 import Label from "./Label";
-const Wrapper: ThemedComponent<{}> = styled(Label).attrs(props => ({
+const Wrapper = styled(Label).attrs(props => ({
   ff: "Inter|SemiBold",
   color: props.color,
   fontSize: props.fontSize,

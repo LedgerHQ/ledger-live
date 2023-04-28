@@ -4,7 +4,7 @@ import styled from "styled-components";
 import FlexBox, { FlexBoxProps } from "../Flex";
 import Divider, { Props as DividerProps } from "../../asorted/Divider";
 import Close from "@ledgerhq/icons-ui/react/CloseMedium";
-import ArrowLeft from "@ledgerhq/icons-ui/react/ArrowLeftRegular";
+import ArrowLeft from "@ledgerhq/icons-ui/react/ArrowLeftMedium";
 
 import TransitionSlide from "../../transitions/TransitionSlide";
 import TransitionInOut from "../../transitions/TransitionInOut";

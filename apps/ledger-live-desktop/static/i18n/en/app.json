@@ -59,6 +59,7 @@
   },
   "common": {
     "never": "Never",
+    "new": "New",
     "apply": "Apply",
     "done": "Done",
     "confirm": "Confirm",
@@ -215,6 +216,7 @@
     "earn": "Earn",
     "exchange": "Buy / Sell",
     "swap": "Swap",
+    "refer": "Refer a friend",
     "lend": "Lend",
     "catalog": "Discover",
     "market": "Market",
@@ -1441,7 +1443,8 @@
     "messageIfUnverified": "Verify that the shared address exactly matches the one on your device",
     "messageIfSkipped": "Your {{name}} address was not confirmed on your Ledger device. Please verify it for security.",
     "showQrCode": "Show QR Code",
-    "taprootWarning": "Make sure the sender supports taproot"
+    "taprootWarning": "Make sure the sender supports taproot",
+    "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards"
   },
   "emptyState": {
     "dashboard": {
@@ -1874,7 +1877,7 @@
         "plugin": "Go to app",
         "swap": "Swap",
         "tool": "Learn more",
-        "app": "Learn more"
+        "currency": "Learn more"
       },
       "uninstall": {
         "title": "Uninstall all",
@@ -3809,6 +3812,8 @@
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
+      "enableStagingNftMetadataService": "Staging NFT metadata service",
+      "enableStagingNftMetadataServiceDesc": "Enable the staging NFT metadata service and reset the NFT cache",
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
       "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
@@ -3865,6 +3870,10 @@
         "managerDevMode": {
           "title": "Developer mode",
           "description": "Show developer and testnet apps in My Ledger."
+        },
+        "listAppsV2": {
+          "title": "Experimental list apps for My Ledger",
+          "description": "Performance improvement for My Ledger access and inline flows."
         },
         "scanForInvalidPaths": {
           "title": "Extended account search",

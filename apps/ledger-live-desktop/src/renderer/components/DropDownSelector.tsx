@@ -1,7 +1,6 @@
 import Tippy from "@tippyjs/react";
 import React, { useState, useCallback } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 export const DropDownItem: ThemedComponent<{
   isActive: boolean;
@@ -26,7 +25,7 @@ export const DropDownItem: ThemedComponent<{
     background-color: ${p => !p.disabled && p.theme.colors.palette.background.default};
   }
 `;
-const DropContainer: ThemedComponent<{}> = styled.div`
+const DropContainer = styled.div`
   box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
   border: ${p => `1px solid ${p.theme.colors.palette.divider}`};
   max-height: 400px;

@@ -90,7 +90,7 @@ const Body = ({
       <EthStakeIllustration size={140} />
       <Flex flexDirection={"column"} mt={7} px={20} width="100%">
         <Flex flexDirection={"column"} width="100%">
-          {providers.map((item, i) => (
+          {providers.map(item => (
             <Flex key={item.id} width="100%" flexDirection={"column"}>
               <ProviderItem
                 id={item.liveAppId}

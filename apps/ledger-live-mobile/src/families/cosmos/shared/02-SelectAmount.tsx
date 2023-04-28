@@ -192,10 +192,10 @@ function DelegationAmount({ navigation, route }: Props) {
             >
               {error && !value.eq(0) && (
                 <View style={styles.labelContainer}>
-                  <Warning size={16} color={colors.error.c100} />
+                  <Warning size={16} color={colors.error.c50} />
                   <LText
                     style={[styles.assetsRemaining]}
-                    color={colors.error.c100}
+                    color={colors.error.c50}
                   >
                     <Trans
                       i18nKey={
@@ -223,10 +223,10 @@ function DelegationAmount({ navigation, route }: Props) {
               )}
               {max.isZero() && (
                 <View style={styles.labelContainer}>
-                  <Check size={16} color={colors.success.c100} />
+                  <Check size={16} color={colors.success.c50} />
                   <LText
                     style={[styles.assetsRemaining]}
-                    color={colors.success.c100}
+                    color={colors.success.c50}
                   >
                     <Trans
                       i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`}

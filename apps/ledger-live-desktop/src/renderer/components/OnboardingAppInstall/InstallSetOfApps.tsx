@@ -5,11 +5,9 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { getDeviceModel } from "@ledgerhq/devices";
-
 import { useTranslation } from "react-i18next";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-
 import AppInstallItem, { ItemState } from "./AppInstallItem";
 import AllowManagerModal from "./AllowManagerModal";
 import { getEnv } from "@ledgerhq/live-common/env";

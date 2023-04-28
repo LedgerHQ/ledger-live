@@ -13,7 +13,6 @@ import {
 } from "~/renderer/reducers/settings";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import OperationsList from "~/renderer/components/OperationsList";
 import Carousel from "~/renderer/components/Carousel";
@@ -32,7 +31,7 @@ import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/Pos
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
 
 // This forces only one visible top banner at a time
-export const TopBannerContainer: ThemedComponent<{}> = styled.div`
+export const TopBannerContainer = styled.div`
   z-index: 19;
 
   & > *:not(:first-child) {

@@ -63,7 +63,7 @@ export const urls = {
   delegation:
     "https://www.ledger.com/staking-tezos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=delegation_tezos",
   appSupport:
-    "https://support.ledger.com/hc/en-us/articles/360011454079-What-are-apps-and-accounts-?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=appsupport",
+    "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?utm_source=ledger_live_mobile&utm_medium=self_referral&docs=true",
   goToManager:
     "https://support.ledger.com/hc/en-us/articles/4404382258961-Install-uninstall-and-update-apps?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=gotomanager",
   addAccount:

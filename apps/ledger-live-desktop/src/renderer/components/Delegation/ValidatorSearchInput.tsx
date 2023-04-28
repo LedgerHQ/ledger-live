@@ -1,7 +1,6 @@
 import React, { memo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import SearchBox from "~/renderer/screens/accounts/AccountList/SearchBox";
 import ExclamationCircle from "~/renderer/icons/ExclamationCircle";

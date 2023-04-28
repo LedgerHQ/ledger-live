@@ -20,7 +20,7 @@ import { installFirmwareCommand } from "../commands/firmwareUpdate/installFirmwa
 import { flashMcuOrBootloaderCommand } from "../commands/firmwareUpdate/flashMcuOrBootloader";
 import { quitApp } from "../commands/quitApp";
 
-import ManagerAPI from "../../api/Manager";
+import ManagerAPI from "../../manager/api";
 
 import {
   SharedTaskEvent,

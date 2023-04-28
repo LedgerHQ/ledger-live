@@ -4,9 +4,8 @@ import React, { useCallback } from "react";
 import Box from "~/renderer/components/Box";
 import { setTheme } from "~/renderer/actions/settings";
 import { useDispatch } from "react-redux";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import styled from "styled-components";
-const Item: ThemedComponent<{}> = styled.div`
+const Item = styled.div`
   padding: 2px 13px;
   background: ${p => p.theme.colors.alertRed};
   opacity: 0.9;

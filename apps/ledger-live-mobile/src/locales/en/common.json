@@ -2397,6 +2397,7 @@
     },
     "earn": "Earn",
     "quickActions": "Quick actions",
+    "referralProgram": "Refer a friend and get $10 of Bitcoin",
     "banner": {
       "redelegation": {
         "description": "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
@@ -2692,6 +2693,10 @@
           "title": "Experimental Explorers API",
           "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature."
         },
+        "experimentalListAppsV2": {
+          "title": "Experimental list apps for My Ledger",
+          "description": "Performance improvement for My Ledger access and inline flows."
+        },
         "experimentalCountervalues": {
           "title": "Experimental countervalues API",
           "description": "This may cause the countervalues displayed for your accounts to become incorrect."
@@ -2736,7 +2741,12 @@
       "featureFlagsTabGroups": "Groups",
       "firebaseProject": "Firebase project targeted by this build:",
       "showBannerDesc": "Show banner when flags are overridden",
-      "bannerTitle": "Flags overridden locally"
+      "bannerTitle": "Flags overridden locally",
+      "features": {
+        "firmwareUpdate": {
+          "headerTitle": "Debug firmware update"
+        }
+      }
     }
   },
   "notifications": {
@@ -2805,7 +2815,8 @@
         "addressVerified": "Address verified",
         "verifyAddress": "Tap here to verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
-        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss."
+        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss.",
+        "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards"
       },
       "securityVerify": {
         "title": "For security we recommend verifying this address with your Ledger device.",
@@ -5917,6 +5928,13 @@
       "allNft": "All NFT",
       "addNew": "Add new"
     },
+    "designedForStax": {
+      "title": "<0>Designed for</0><1>Ledger</1><2>Stax</2>",
+      "drawer": {
+        "description": "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E Ink Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
+        "cta": "Got it"
+      }
+    },
     "viewer": {
       "properties": "Properties",
       "description": "Description",
@@ -5991,7 +6009,7 @@
     },
     "confirmCrop": "Confirm crop",
     "confirmContrast": "Confirm contrast",
-    "nftEntryPointButtonLabel": "Set as Ledger Stax lockscreen picture",
+    "nftEntryPointButtonLabel": "Set as Ledger Stax lock screen",
     "customImage": "Custom picture",
     "doThisLater": "Maybe later",
     "preview": {
@@ -6040,7 +6058,7 @@
         "title": "Customize the lock screen",
         "titleCompleted": "Lock screen customized",
         "description": "Choose any NFT or picture to set as the lock screen of your Ledger Stax.",
-        "popupLabel": "Lockscreen set"
+        "popupLabel": "Lock screen set"
       },
       "claimNft": {
         "title": "Claim the Infinity NFT",
@@ -6093,7 +6111,8 @@
       "media": {
         "tag": "{{count}} NFTs"
       }
-    }
+    },
+    "referralProgram":"$10"
   },
   "servicesWidget": {
     "title": "Services",

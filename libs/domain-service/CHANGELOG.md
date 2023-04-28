@@ -1,5 +1,53 @@
 # @ledgerhq/domain-service
 
+## 1.0.1
+
+### Patch Changes
+
+- [#3270](https://github.com/LedgerHQ/ledger-live/pull/3270) [`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove error thrown on missing Promise.allSettled and replaced it with an homemade implementation of the feature
+
+- Updated dependencies [[`3242a0a794`](https://github.com/LedgerHQ/ledger-live/commit/3242a0a7948c20fb0100ce3cc73e55e338534d32), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253)]:
+  - @ledgerhq/cryptoassets@9.4.0
+  - @ledgerhq/types-live@6.32.1
+
+## 1.0.1-next.1
+
+### Patch Changes
+
+- [#3270](https://github.com/LedgerHQ/ledger-live/pull/3270) [`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove error thrown on missing Promise.allSettled and replaced it with an homemade implementation of the feature
+
+## 1.0.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`3242a0a794`](https://github.com/LedgerHQ/ledger-live/commit/3242a0a7948c20fb0100ce3cc73e55e338534d32), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253)]:
+  - @ledgerhq/cryptoassets@9.4.0-next.0
+  - @ledgerhq/types-live@6.32.1-next.0
+
+## 1.0.0
+
+### Major Changes
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix registries, move from live-common/network to plain axios, add domain validation and TLV validation tools. Feature complete for v1.0.0
+
+### Patch Changes
+
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/cryptoassets@9.3.0
+  - @ledgerhq/types-live@6.32.0
+
+## 1.0.0-next.0
+
+### Major Changes
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix registries, move from live-common/network to plain axios, add domain validation and TLV validation tools. Feature complete for v1.0.0
+
+### Patch Changes
+
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/cryptoassets@9.3.0-next.0
+  - @ledgerhq/types-live@6.32.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

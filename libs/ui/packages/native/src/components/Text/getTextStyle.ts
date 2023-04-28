@@ -21,6 +21,7 @@ const bracketSizes: Record<TextVariants, number> = {
   small: 16,
   subtitle: 16,
   tiny: 16,
+  tinyAlpha: 16,
 };
 
 export function getBracketSize({ variant }: { variant?: TextVariants }): number {
@@ -97,6 +98,9 @@ export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
     },
     tiny: {
       fontFamily: "Inter",
+    },
+    tinyAlpha: {
+      fontFamily: "Alpha",
     },
   };
 }

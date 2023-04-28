@@ -3,7 +3,6 @@ import { Trans, useTranslation } from "react-i18next";
 import { Flex, Button as BaseButton, Text } from "@ledgerhq/react-ui";
 import styled from "@ledgerhq/react-ui/components/styled";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-
 import { ModalBody } from "~/renderer/components/Modal";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import GetItOnGooglePlayImage from "./images/get_it_on_google_play.png";
@@ -15,7 +14,7 @@ import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 
 type Props = {
-  onClose: () => void,
+  onClose: () => void;
 };
 
 const StyledImgLink = styled("a").attrs(() => ({}))`

@@ -34,6 +34,7 @@ export type NFTMetadata = {
   description: string | null;
   properties: Array<Record<"key" | "value", string>>;
   links: Record<NFTMetadataLinksProviders, string>;
+  staxImage?: string;
 };
 
 /**
@@ -91,6 +92,7 @@ export type NFTMetadataResponse = {
     description: string | null;
     properties: Array<Record<"key" | "value", string>>;
     links: Record<NFTMetadataLinksProviders, string>;
+    staxImage?: string;
   } | null;
 };
 

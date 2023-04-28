@@ -27,7 +27,7 @@ const ConnectTroubleshootingHelpButton = ({ buttonProps, textColor }: Props) => 
     </Button>
   );
 };
-const ConnectTroubleshootingHelpButtonOut: React$ComponentType<{}> = React.memo(
+const ConnectTroubleshootingHelpButtonOut: React.ComponentType<{}> = React.memo(
   ConnectTroubleshootingHelpButton,
 );
 export default ConnectTroubleshootingHelpButtonOut;

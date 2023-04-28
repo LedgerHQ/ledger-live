@@ -12,7 +12,6 @@ import { GradientHover } from "~/renderer/drawers/OperationDetails/styledCompone
 import IconCheck from "~/renderer/icons/Check";
 import IconClock from "~/renderer/icons/Clock";
 import { openURL } from "~/renderer/linking";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { colors } from "~/renderer/styles/theme";
 const IconWrapper = styled(Box)`
   background: ${colors.lightGreen};
@@ -30,7 +29,7 @@ const Pill = styled(Text)`
   background: ${p => p.theme.colors.palette.text.shade10};
   padding: 3px 6px;
 `;
-const SwapIdWrapper: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const SwapIdWrapper = styled(Box).attrs(p => ({
   ff: "Inter",
   color: p.color || "palette.text.shade80",
   fontSize: 4,
@@ -54,7 +53,7 @@ const SwapIdWrapper: ThemedComponent<{}> = styled(Box).attrs(p => ({
   }
 }
 `;
-const WrapperClock: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const WrapperClock = styled(Box).attrs(() => ({
   bg: "palette.background.paper",
   color: "palette.text.shade60",
 }))`

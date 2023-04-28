@@ -1,5 +1,5 @@
 import { Page, Locator } from "@playwright/test";
-import { waitFor } from "tests/utils/waitFor";
+import { waitFor } from "../utils/waitFor";
 
 export class DiscoverPage {
   readonly page: Page;

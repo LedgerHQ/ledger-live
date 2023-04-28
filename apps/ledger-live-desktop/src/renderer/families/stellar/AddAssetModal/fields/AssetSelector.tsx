@@ -34,7 +34,6 @@ const EllipsisMiddle = ({ children }: { children: string }) => {
 const renderItem = ({
   data: { id, name },
   isDisabled,
-  data,
 }: {
   data: TokenCurrency;
   isDisabled: boolean;

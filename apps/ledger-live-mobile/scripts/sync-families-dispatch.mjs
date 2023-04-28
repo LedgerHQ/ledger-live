@@ -28,6 +28,7 @@ const targets = [
   "AccountBalanceSummaryFooter",
   "SubAccountList",
   "Confirmation",
+  "ReceiveConfirmationPostAlert",
   "ConnectDevice",
   "NoAssociatedAccounts",
 ];

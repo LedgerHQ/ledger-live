@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { ExplorerView } from "@ledgerhq/types-cryptoassets";
 import { openURL } from "~/renderer/linking";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -47,16 +46,7 @@ const IconContainer = styled.div`
   color: ${p =>
     p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
 `;
-const Row = ({
-  validator,
-  address,
-  amount,
-  isSR,
-  duration,
-  percentTP,
-  currency,
-  explorerView,
-}: Props) => {
+const Row = ({ validator, address, amount, isSR, duration, percentTP, explorerView }: Props) => {
   const srURL = explorerView && getAddressExplorer(explorerView, address);
   const openSR = useCallback(() => {
     if (srURL) openURL(srURL);

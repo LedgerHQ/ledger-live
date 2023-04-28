@@ -118,7 +118,7 @@ export function useCurrencyAccountSelect({
     },
     [allAccounts, hideEmpty],
   );
-  const setAccount = useCallback((account?: Account | null, subAccount?: SubAccount | null) => {
+  const setAccount = useCallback((account?: Account | null) => {
     setState(currState => ({
       ...currState,
       accountId: account ? account.id : null,

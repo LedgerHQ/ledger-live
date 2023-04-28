@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Text from "~/renderer/components/Text";
 import Box from "./Box";
 export type RawCardProps = {
