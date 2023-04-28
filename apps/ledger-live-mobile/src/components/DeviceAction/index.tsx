@@ -349,7 +349,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         onRetry,
         colors,
         theme,
-        iconColor: palette.neutral.c100a01,
+        iconColor: palette.neutral.c20,
         Icon: () => (
           <Icons.InfoAltFillMedium size={28} color={palette.primary.c80} />
         ),
