@@ -1,5 +1,5 @@
 import type { Transaction } from "../types";
-import { sync, scanAccounts } from "../js-synchronisation";
+import { sync, scanAccounts, SignerFactory } from "../js-synchronisation";
 import createTransaction from "../js-createTransaction";
 import prepareTransaction from "../js-prepareTransaction";
 import getTransactionStatus from "../js-getTransactionStatus";
@@ -9,8 +9,13 @@ import broadcast from "../js-broadcast";
 import { calculateFees } from "./../cache";
 import { perCoinLogic } from "../logic";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import Transport from "@ledgerhq/hw-transport";
+import { withDevicePromise } from "../../../hw/deviceAccess";
+import Btc from "@ledgerhq/hw-app-btc";
+import { of } from "rxjs";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const receive = makeAccountBridgeReceive({
   injectGetAddressParams: account => {
@@ -34,8 +39,17 @@ const updateTransaction = (t, patch): any => {
   return updatedT;
 };
 
+const signerFactory: SignerFactory = (
+  deviceId: string,
+  crypto: CryptoCurrency
+): Promise<Btc> => {
+  return withDevicePromise(deviceId, (transport) =>
+    of(new Btc({ transport, currency: crypto.id }))
+  );
+};
+
 const currencyBridge: CurrencyBridge = {
-  scanAccounts,
+  scanAccounts: scanAccounts(signerFactory),
   preload: () => Promise.resolve({}),
   hydrate: () => {},
 };
@@ -47,7 +61,7 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   getTransactionStatus,
   receive,
-  sync,
+  sync: sync(signerFactory),
   signOperation,
   broadcast: async ({ account, signedOperation }) => {
     calculateFees.reset();

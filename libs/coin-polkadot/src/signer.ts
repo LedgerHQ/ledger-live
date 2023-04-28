@@ -4,6 +4,7 @@ type PolkadotAddress = {
   return_code: number;
 };
 
+export type SignerFactory = (deviceId: string) => Promise<PolkadotSigner>;
 export interface PolkadotSigner {
   getAddress(path: string, verify?: boolean): Promise<PolkadotAddress>;
   sign(

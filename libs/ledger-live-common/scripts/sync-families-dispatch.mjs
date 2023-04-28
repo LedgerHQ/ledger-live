@@ -98,13 +98,12 @@ function genCoinFrameworkTarget(targetFile) {
     imports += `};\n`;
   }
   if (targetFile === "hw-getAddress.ts") {
-    imports += `import { of } from "rxjs";\n`;
     imports += `import type Transport from "@ledgerhq/hw-transport";\n`;
     imports += `import type {\n`;
     imports += `  Result,\n`;
     imports += `  GetAddressOptions,\n`;
     imports += `} from "@ledgerhq/coin-framework/derivation";\n`;
-    imports += `import { withDevicePromise } from "../hw/deviceAccess";\n`;
+    imports += `import { Resolver } from "../hw/getAddress/types";\n`;
   }
 
   // Behavior for coin family with their own package
@@ -126,16 +125,16 @@ function genCoinFrameworkTarget(targetFile) {
     if (targetFile === "bridge/js.ts") {
       const bridgeFn = family + "CreateBridges";
       const signer = family + "Signer";
-      const transactionClazz = family[0].toUpperCase() + family.slice(1);
+      const capitalizeFamily = family[0].toUpperCase() + family.slice(1);
       imports += `import { createBridges as ${bridgeFn} } from "${targetImportPath}";\n`;
-      imports += `import { Transaction as ${transactionClazz} } from "@ledgerhq/coin-${family}/types";\n`;
+      imports += `import { SignerFactory as ${capitalizeFamily}SignerFactory } from "@ledgerhq/coin-polkadot/lib/signer";\n`;
       imports += `import * as ${signer} from "@ledgerhq/hw-app-${family}";\n`;
-      imports += `const ${family} = async (): Promise<Bridge<${transactionClazz}>> => {\n`;
-      imports += `  const signer = await withDevicePromise("", (transport) =>\n`;
+      imports += `const signerFactory: ${capitalizeFamily}SignerFactory = async (deviceId: string) => {\n`;
+      imports += `  return await withDevicePromise(deviceId, (transport) =>\n`;
       imports += `    of(new ${signer}.default(transport))\n`;
       imports += `  );\n`;
-      imports += `  return ${bridgeFn}(signer, network, makeLRUCache);\n`;
       imports += `};\n`;
+      imports += `const ${family} = ${bridgeFn}(signerFactory, network, makeLRUCache);\n`;
       exprts += `\n  ${family},`;
     }
     if (targetFile === "cli-transaction.ts") {
@@ -146,14 +145,13 @@ function genCoinFrameworkTarget(targetFile) {
     if (targetFile === "hw-getAddress.ts") {
       imports += `import * as ${family}Signer from "@ledgerhq/hw-app-${family}";\n`;
       imports += `import ${family}Resolver from "${targetImportPath}";\n`;
-      imports += `const ${family} = async (\n`;
+      imports += `const ${family}: Resolver = async (\n`;
       imports += `  transport: Transport,\n`;
       imports += `  opts: GetAddressOptions\n`;
       imports += `): Promise<Result> => {\n`;
-      imports += `  const signer = await withDevicePromise("", (transport: Transport) =>\n`;
-      imports += `    of(new ${family}Signer.default(transport))\n`;
-      imports += `  );\n`;
-      imports += `  return ${family}Resolver(signer)(opts);\n`;
+      imports += `  const signerFactory = (_: string) =>\n`;
+      imports += `    Promise.resolve(new polkadotSigner.default(transport));\n`;
+      imports += `  return ${family}Resolver(signerFactory)("", opts);\n`;
       imports += `};\n`;
       exprts += `\n  ${family},`;
     }

@@ -29,14 +29,14 @@ type Bridge<T extends TransactionCommon> = {
 import { createBridges as polkadotCreateBridges } from "@ledgerhq/coin-polkadot/bridge/js";
 import { createBridges as algorandCreateBridges } from "@ledgerhq/coin-algorand/bridge/js";
 import { createBridges as evmCreateBridges } from "@ledgerhq/coin-evm/bridge/js";
-import { Transaction as Polkadot } from "@ledgerhq/coin-polkadot/types";
+import { SignerFactory as PolkadotSignerFactory } from "@ledgerhq/coin-polkadot/lib/signer";
 import * as polkadotSigner from "@ledgerhq/hw-app-polkadot";
-const polkadot = async (): Promise<Bridge<Polkadot>> => {
-  const signer = await withDevicePromise("", (transport) =>
+const signerFactory: PolkadotSignerFactory = async (deviceId: string) => {
+  return await withDevicePromise(deviceId, (transport) =>
     of(new polkadotSigner.default(transport))
   );
-  return polkadotCreateBridges(signer, network, makeLRUCache);
 };
+const polkadot = polkadotCreateBridges(signerFactory, network, makeLRUCache);
 
 export default {
   bitcoin,

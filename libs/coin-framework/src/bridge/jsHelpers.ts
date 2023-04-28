@@ -74,6 +74,7 @@ export type AccountShapeInfo = {
   derivationPath: string;
   derivationMode: DerivationMode;
   rest?: any;
+  deviceId?: string;
 };
 
 export type GetAccountShape = (
@@ -259,7 +260,7 @@ export const makeSync =
       main();
     });
 
-const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
+const defaultIterateResultBuilder = (deviceId: string, getAddressFn: GetAddressFn) => () =>
   Promise.resolve(
     async ({
       index,
@@ -279,7 +280,7 @@ const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
       });
       let res = derivationsCache[freshAddressPath];
       if (!res) {
-        res = await getAddressWrapper(getAddressFn!)({
+        res = await getAddressWrapper(getAddressFn!)(deviceId, {
           currency,
           path: freshAddressPath,
           derivationMode,
@@ -300,8 +301,12 @@ export const makeScanAccounts =
     buildIterateResult?: IterateResultBuilder;
     getAddressFn: GetAddressFn;
   }): CurrencyBridge["scanAccounts"] =>
-  ({ currency, syncConfig }): Observable<ScanAccountEvent> =>
-    Observable.create((o: Observer<{ type: "discovered"; account: Account }>) => {
+  ({ currency, deviceId, syncConfig }): Observable<ScanAccountEvent> =>
+    new Observable((o: Observer<{ type: "discovered"; account: Account }>) => {
+      if (buildIterateResult === undefined) {
+        buildIterateResult = defaultIterateResultBuilder(deviceId, getAddressFn);
+      }
+
       let finished = false;
 
       const unsubscribe = () => {
@@ -328,6 +333,7 @@ export const makeScanAccounts =
             derivationPath: freshAddressPath,
             derivationMode,
             rest,
+            deviceId,
           },
           syncConfig,
         );
@@ -398,7 +404,9 @@ export const makeScanAccounts =
             account ? `Account with ${account.operations.length} txs` : "no account"
           }`,
         );
+
         if (!account) return;
+
         account.name = !account.used
           ? getNewAccountPlaceholderName({
               currency,
@@ -427,10 +435,6 @@ export const makeScanAccounts =
         return account;
       }
 
-      if (buildIterateResult === undefined) {
-        buildIterateResult = defaultIterateResultBuilder(getAddressFn);
-      }
-
       async function main() {
         try {
           const derivationModes = getDerivationModesForCurrency(currency);
@@ -443,7 +447,7 @@ export const makeScanAccounts =
 
             if (!result) {
               try {
-                result = await getAddressFn({
+                result = await getAddressFn(deviceId, {
                   currency,
                   path,
                   derivationMode,
@@ -460,6 +464,7 @@ export const makeScanAccounts =
             }
 
             if (!result) continue;
+
             const seedIdentifier = result.publicKey;
             let emptyCount = 0;
             const mandatoryEmptyAccountSkip = getMandatoryEmptyAccountSkip(derivationMode);
@@ -540,7 +545,7 @@ export function makeAccountBridgeReceive(
   address: string;
   path: string;
 }> {
-  return (account, { verify, freshAddressIndex }) => {
+  return (account, { verify, deviceId, freshAddressIndex }) => {
     let freshAddress: Address | undefined;
 
     if (freshAddressIndex !== undefined && freshAddressIndex !== null) {
@@ -559,7 +564,7 @@ export function makeAccountBridgeReceive(
       ...(injectGetAddressParams && injectGetAddressParams(account)),
     };
     return from(
-      getAddressFn(arg).then(r => {
+      getAddressFn(deviceId, arg).then(r => {
         const accountAddress = freshAddress ? freshAddress.address : account.freshAddress;
 
         if (r.address !== accountAddress) {

@@ -16,7 +16,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { buildTransaction } from "./js-buildTransaction";
 import { calculateAmount, getNonce, isFirstBond } from "./logic";
 import { PolkadotAPI } from "./api";
-import { PolkadotSigner } from "./signer";
+import { PolkadotSigner, SignerFactory } from "./signer";
 const MODE_TO_TYPE = {
   send: "OUT",
   bond: "BOND",
@@ -142,9 +142,10 @@ export const fakeSignExtrinsic = async (
  * Sign Transaction with Ledger hardware
  */
 const buildSignOperation =
-  (signer: PolkadotSigner, polkadotAPI: PolkadotAPI): SignOperationFnSignature<Transaction> =>
+  (signerFactory: SignerFactory, polkadotAPI: PolkadotAPI): SignOperationFnSignature<Transaction> =>
   ({
     account,
+    deviceId,
     transaction,
   }: {
     account: Account;
@@ -181,6 +182,7 @@ const buildSignOperation =
           .toU8a({
             method: true,
           });
+        const signer = await signerFactory(deviceId);
         // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
         const r = await signer.sign(account.freshAddressPath, payload as any);
         const signed = await signExtrinsic(unsigned, r.signature, registry);

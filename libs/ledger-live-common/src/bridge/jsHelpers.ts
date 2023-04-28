@@ -21,8 +21,10 @@ export {
   sameOp,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
-function getAddr(opts: GetAddressOptions): Promise<Result> {
-  return withDevice("")((transport: Transport) => from(getAddress(transport, opts))).toPromise();
+function getAddr(deviceId: string, opts: GetAddressOptions): Promise<Result> {
+  return withDevice(deviceId)((transport: Transport) =>
+    from(getAddress(transport, opts)),
+  ).toPromise();
 }
 
 export const makeScanAccounts = ({
