@@ -5,7 +5,7 @@ const defaultConfig = {
     cosmos: {
       axelar: {
         lcd: "https://axelar-api.polkachu.com",
-        minGasPrice: 0.01,
+        minGasPrice: 0.07,
       },
       cosmos: {
         lcd: "https://cosmoshub4.coin.ledger.com",
