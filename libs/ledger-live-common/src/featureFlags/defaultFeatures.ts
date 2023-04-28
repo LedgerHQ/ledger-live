@@ -207,4 +207,10 @@ export const defaultFeatures: DefaultFeatures = {
       isNew: true,
     },
   },
+  referralProgramMobile: {
+    enabled: false,
+    params: {
+      path: "/discover/refer-a-friend",
+    },
+  },
 };
