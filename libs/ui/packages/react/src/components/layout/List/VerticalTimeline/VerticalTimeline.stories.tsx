@@ -5,7 +5,7 @@ import { Text, Divider } from "../../../asorted";
 import Button from "../../../cta/Button";
 import ContinueOnDevice from "../../../message/ContinueOnDevice";
 import VerticalTimeline from ".";
-
+import type { Item } from ".";
 const description = `
 ### A Vertical Timeline
 
@@ -63,7 +63,7 @@ export default {
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
-const defaultItems = [
+const defaultItems: Item[] = [
   {
     status: "active",
     title: "step's {title} prop",
@@ -163,7 +163,7 @@ const Template = () => {
     };
   }, [autoAnimate, currentIndex]);
 
-  const items = useMemo(
+  const items: Item[] = useMemo(
     () =>
       defaultItems.map((item, index) => ({
         ...item,
