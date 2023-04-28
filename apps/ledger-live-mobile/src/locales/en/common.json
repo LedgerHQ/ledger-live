@@ -5730,22 +5730,7 @@
       }
     },
     "status": {
-      "title": "An issue might need your attention",
-      "title_plural": "Some issues might need your attention",
-      "desc": {
-        "0": "They’re being investigated and will be resolved shortly.",
-        "1": "If you’re affected by any of the issues, reach out to our <0>Customer Support</0>"
-      },
-      "cta": {
-        "ok": "Got it"
-      },
-      "ok": {
-        "title": "Ledger Live is up and running",
-        "desc": "<0>Having trouble? Go on our </0><1>help page</1>"
-      },
-      "error": {
-        "title": "Ledger Live is experiencing issues"
-      }
+      "header": "Status"
     }
   },
   "browseWeb3": {

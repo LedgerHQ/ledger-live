@@ -383,8 +383,6 @@ export type SettingsSetNotificationsPayload = Partial<
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
 export type SettingsSetDateFormatPayload = SettingsState["dateFormat"];
-export type SettingsSetStatusCenterPayload =
-  SettingsState["displayStatusCenter"];
 export type SettingsDangerouslyOverrideStatePayload = State;
 export type DangerouslyOverrideStatePayload = Partial<State>;
 export type SettingsSetOverriddenFeatureFlagPlayload = {
@@ -451,7 +449,6 @@ export type SettingsPayload =
   | SettingsSetFirstConnectHasDeviceUpdatedPayload
   | SettingsSetNotificationsPayload
   | SettingsDangerouslyOverrideStatePayload
-  | SettingsSetStatusCenterPayload
   | DangerouslyOverrideStatePayload
   | SettingsSetOverriddenFeatureFlagPlayload
   | SettingsSetOverriddenFeatureFlagsPlayload
