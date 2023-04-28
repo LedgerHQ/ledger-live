@@ -25,7 +25,6 @@ const mockedGetFeatureWithMockFeatureEnabled = (enabled) => ({
   overrideFeature: () => {},
   resetFeature: () => {},
   resetFeatures: () => {},
-  getAllFlags: () => null,
   getAllCurrencyFlags: () => ({}),
 });
 
