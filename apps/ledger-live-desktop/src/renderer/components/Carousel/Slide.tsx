@@ -38,13 +38,16 @@ type Props = ContentCard;
 
 const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide }: Props) => {
   const history = useHistory();
-  const [{ xy }, set] = useSpring(() => ({
+  const [{ xy }, set] = useSpring<{
+    xy: number[];
+    config: { mass: number; tension: number; friction: number };
+  }>(() => ({
     xy: [-120, -30],
     config: { mass: 10, tension: 550, friction: 140 },
   }));
-
   const getTransform = (offsetX: number, effectX: number, offsetY: number, effectY: number) => ({
     transform: xy.interpolate(
+      // @ts-expect-error react-spring types are broken
       (x, y) => `translate3d(${x / effectX + offsetX}px,${y / effectY + offsetY}px, 0)`,
     ),
   });
@@ -108,6 +111,7 @@ const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide 
           {imgs.map(({ source, transform, size }, i) => (
             <Layer
               key={i}
+              // @ts-expect-error react-spring types are broken
               style={getTransform(...transform)}
               image={source}
               width={size.width}

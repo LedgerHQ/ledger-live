@@ -11,7 +11,7 @@ type Props = {
 
 const TimeBasedProgressBar = ({ duration, onComplete, paused }: Props) => {
   const [outOfFocusPaused, setOutOfFocusPaused] = useState(false);
-  const progress = useSpring<{ value: number }>({
+  const progress = useSpring({
     from: { value: 0 },
     to: { value: 1 },
     config: { duration, easing },
@@ -50,6 +50,7 @@ const TimeBasedProgressBar = ({ duration, onComplete, paused }: Props) => {
             width: "100%",
             borderRadius: 4,
             background: "#FFFFFF33",
+            // @ts-expect-error react-spring types are broken
             transform: progress.value.interpolate((v: number) => `scaleX(${v})`),
             transformOrigin: "left center",
           }}

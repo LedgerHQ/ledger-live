@@ -5,25 +5,25 @@ import { Handlers } from "./types";
 
 export type PlatformAppDrawerInfo = {
   type: "DAPP_INFO";
-  manifest: LiveAppManifest | undefined | null;
+  manifest?: LiveAppManifest | null;
   title: string;
 };
 export type PlatformAppDrawerDisclaimer = {
   type: "DAPP_DISCLAIMER";
-  manifest: LiveAppManifest | undefined | null;
+  manifest?: LiveAppManifest | null;
   disclaimerId: string;
   title: string;
   next: () => void;
 };
-export type PlatformAppDrawers = PlatformAppDrawerInfo & PlatformAppDrawerDisclaimer;
+export type PlatformAppDrawers = PlatformAppDrawerInfo | PlatformAppDrawerDisclaimer;
 export type UIState = {
   informationCenter: {
     isOpen: boolean;
-    tabId: string | undefined;
+    tabId?: string;
   };
   platformAppDrawer: {
     isOpen: boolean;
-    payload: PlatformAppDrawers | undefined | null;
+    payload?: PlatformAppDrawers | null;
   };
 };
 const initialState: UIState = {
