@@ -173,7 +173,6 @@ export const INITIAL_STATE: SettingsState = {
     largeMoverCategory: true,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
-  displayStatusCenter: false,
   overriddenFeatureFlags: {},
   featureFlagsBannerVisible: false,
   debugAppLevelDrawerOpened: false,
