@@ -7,6 +7,7 @@ import {
   AmountRequired,
   NotEnoughBalance,
   GasLessThanEstimate,
+  PriorityFeeTooLow,
 } from "@ledgerhq/errors";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
@@ -27,7 +28,8 @@ type ValidatedTransactionFields =
   | "recipient"
   | "gasLimit"
   | "gasPrice"
-  | "amount";
+  | "amount"
+  | "maxPriorityFee";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 // This regex will not work with Starknet since addresses are 65 caracters long after the 0x
@@ -84,8 +86,10 @@ export const validateAmount = (
 
   const isTokenTransaction = account?.type === "TokenAccount";
   const isSmartContractInteraction = isTokenTransaction || transaction.data; // if the transaction is a smart contract interaction, it's normal that transaction has no amount
-  const canHaveZeroAmount =
-    isSmartContractInteraction && totalSpent.isGreaterThan(0);
+  const transactionHasFees =
+    legacyTransactionHasFees(transaction as EvmTransactionLegacy) ||
+    eip1559TransactionHasFees(transaction as EvmTransactionEIP1559);
+  const canHaveZeroAmount = isSmartContractInteraction && transactionHasFees;
 
   // if no amount or 0
   if (
@@ -119,12 +123,16 @@ export const validateGas = (
       eip1559TransactionHasFees(tx as EvmTransactionEIP1559)
     )
   ) {
-    errors.gasPrice = new FeeNotLoaded(); // "Could not load fee rates"
+    errors.gasPrice = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
+  } else if (gasLimit.isZero()) {
+    errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
   } else if (gasLimit.isLessThan(21000)) {
     // minimum gas for a tx is 21000
     errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
   } else if (tx.recipient && estimatedFees.gt(account.balance)) {
     errors.gasPrice = new NotEnoughGas(); // "The parent account balance is insufficient for network fees"
+  } else if (tx.maxPriorityFeePerGas && tx.maxPriorityFeePerGas.isZero()) {
+    errors.maxPriorityFee = new PriorityFeeTooLow();
   }
 
   return [errors, warnings];
@@ -134,18 +142,15 @@ export const validateGas = (
  * Validate a transaction and get all possibles errors and warnings about it
  */
 export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransactionStatus"] =
-  (account, tx) => {
+  async (account, tx) => {
     const subAccount = findSubAccountById(account, tx.subAccountId || "");
     const isTokenTransaction = subAccount?.type === "TokenAccount";
-    const gasLimit = tx.gasLimit;
+    const { gasLimit, additionalFees, amount } = tx;
     const estimatedFees = getEstimatedFees(tx);
-    const amount = (() => {
-      if (isTokenTransaction) {
-        return tx.useAllAmount ? subAccount.balance : tx.amount;
-      }
-      return tx.useAllAmount ? account.balance.minus(estimatedFees) : tx.amount;
-    })();
-    const totalSpent = isTokenTransaction ? amount : amount.plus(estimatedFees);
+    const totalFees = estimatedFees.plus(additionalFees || 0);
+    const totalSpent = isTokenTransaction
+      ? tx.amount
+      : tx.amount.plus(totalFees);
 
     // Recipient related errors and warnings
     const [recipientErr, recipientWarn] = validateRecipient(account, tx);
@@ -156,7 +161,7 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
       totalSpent
     );
     // Gas related errors and warnings
-    const [gasErr, gasWarn] = validateGas(account, tx, gasLimit, estimatedFees);
+    const [gasErr, gasWarn] = validateGas(account, tx, gasLimit, totalFees);
 
     const errors: ValidationIssues = {
       ...recipientErr,
@@ -169,13 +174,13 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
       ...amountWarn,
     };
 
-    return Promise.resolve({
+    return {
       errors,
       warnings,
       estimatedFees,
       amount,
       totalSpent,
-    });
+    };
   };
 
 export default getTransactionStatus;
