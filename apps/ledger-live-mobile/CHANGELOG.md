@@ -1,5 +1,31 @@
 # live-mobile
 
+## 3.21.0-nightly.2
+
+### Minor Changes
+
+- [#3315](https://github.com/LedgerHQ/ledger-live/pull/3315) [`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add env & exerimental feature for the base fee multiplier used to compose the maxFeePerGas of an EIP1559 transaction
+
+### Patch Changes
+
+- [#3311](https://github.com/LedgerHQ/ledger-live/pull/3311) [`a41832fe03`](https://github.com/LedgerHQ/ledger-live/commit/a41832fe03a20af2e4fc0897354d2718e728c26f) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fixed the disappointed typeform url on iOS
+
+- [#3296](https://github.com/LedgerHQ/ledger-live/pull/3296) [`0ce82b0f45`](https://github.com/LedgerHQ/ledger-live/commit/0ce82b0f453fa0f25359f22a1ff66f378e32a593) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - New UI for Status Center
+
+- [#3229](https://github.com/LedgerHQ/ledger-live/pull/3229) [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Better error handling for broken pairing on iOS
+
+- Updated dependencies [[`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d), [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472), [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472)]:
+  - @ledgerhq/live-common@29.5.0-nightly.1
+  - @ledgerhq/live-env@0.2.0-nightly.1
+  - @ledgerhq/react-native-hw-transport-ble@6.28.6-nightly.0
+  - @ledgerhq/errors@6.12.5-nightly.0
+  - @ledgerhq/coin-framework@0.3.2-nightly.1
+  - @ledgerhq/domain-service@1.0.2-nightly.1
+  - @ledgerhq/devices@8.0.2-nightly.0
+  - @ledgerhq/hw-transport@6.28.3-nightly.0
+  - @ledgerhq/hw-transport-http@6.27.14-nightly.0
+  - @ledgerhq/react-native-hid@6.29.2-nightly.0
+
 ## 3.20.2-nightly.1
 
 ### Patch Changes

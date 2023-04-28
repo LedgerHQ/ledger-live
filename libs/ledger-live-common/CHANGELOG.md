@@ -1,5 +1,38 @@
 # @ledgerhq/live-common
 
+## 29.5.0-nightly.1
+
+### Minor Changes
+
+- [#3315](https://github.com/LedgerHQ/ledger-live/pull/3315) [`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add env & exerimental feature for the base fee multiplier used to compose the maxFeePerGas of an EIP1559 transaction
+
+### Patch Changes
+
+- [#3229](https://github.com/LedgerHQ/ledger-live/pull/3229) [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added mising error for broken ble pairing
+
+- Updated dependencies [[`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d), [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472)]:
+  - @ledgerhq/live-env@0.2.0-nightly.1
+  - @ledgerhq/errors@6.12.5-nightly.0
+  - @ledgerhq/coin-framework@0.3.2-nightly.1
+  - @ledgerhq/coin-polkadot@0.1.3-nightly.1
+  - @ledgerhq/domain-service@1.0.2-nightly.1
+  - @ledgerhq/devices@8.0.2-nightly.0
+  - @ledgerhq/hw-app-algorand@6.27.14-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.27.14-nightly.0
+  - @ledgerhq/hw-app-eth@6.33.2-nightly.1
+  - @ledgerhq/hw-app-exchange@0.1.1-nightly.0
+  - @ledgerhq/hw-app-near@6.27.9-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.14-nightly.0
+  - @ledgerhq/hw-app-solana@7.0.8-nightly.0
+  - @ledgerhq/hw-app-trx@6.27.14-nightly.0
+  - @ledgerhq/hw-transport@6.28.3-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.14-nightly.0
+  - @ledgerhq/hw-app-btc@10.0.2-nightly.0
+  - @ledgerhq/hw-app-str@6.27.14-nightly.0
+  - @ledgerhq/hw-app-tezos@6.27.14-nightly.0
+  - @ledgerhq/hw-app-xrp@6.27.14-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.27.14-nightly.0
+
 ## 29.4.1-nightly.0
 
 ### Patch Changes
