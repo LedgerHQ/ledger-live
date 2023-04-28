@@ -16,7 +16,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { buildTransaction } from "./js-buildTransaction";
 import { calculateAmount, getNonce, isFirstBond } from "./logic";
 import { PolkadotAPI } from "./api";
-import { PolkadotSigner, SignerFactory } from "./signer";
+import { SignerFactory } from "./signer";
 const MODE_TO_TYPE = {
   send: "OUT",
   bond: "BOND",

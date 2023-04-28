@@ -7,7 +7,12 @@ import Ada from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { APITransaction } from "./api/api-types";
-import { CardanoAccount, CardanoOutput, PaymentCredential, Transaction } from "./types";
+import {
+  CardanoAccount,
+  CardanoOutput,
+  PaymentCredential,
+  Transaction,
+} from "./types";
 import {
   getAccountChange,
   getAccountStakeCredential,
@@ -24,7 +29,12 @@ import { getNetworkInfo } from "./api/getNetworkInfo";
 import uniqBy from "lodash/uniqBy";
 import postSyncPatch from "./postSyncPatch";
 import { getTransactions } from "./api/getTransactions";
-import type { AccountBridge, CurrencyBridge, Operation, TokenAccount } from "@ledgerhq/types-live";
+import type {
+  AccountBridge,
+  CurrencyBridge,
+  Operation,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
 import { listTokensForCryptoCurrency } from "../../currencies";

@@ -1,4 +1,4 @@
-import { Observable, throwError, timer, from } from "rxjs";
+import { Observable, throwError, timer } from "rxjs";
 import { retryWhen, mergeMap, catchError } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
 import {

@@ -25,7 +25,7 @@ import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { getPreloadStrategy, hydrate, preload } from "../preload";
 import type { Transaction } from "../types";
 import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
-import { PolkadotSigner, SignerFactory } from "../signer";
+import { SignerFactory } from "../signer";
 
 const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
   ...t,

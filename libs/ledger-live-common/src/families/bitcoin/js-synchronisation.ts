@@ -17,7 +17,12 @@ import { BitcoinAccount, BitcoinOutput, Transaction } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { mapTxToOperations } from "./logic";
-import { Account, AccountBridge, CurrencyBridge, Operation } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+  Operation,
+} from "@ledgerhq/types-live";
 import { decodeAccountId } from "../../account/index";
 import { startSpan } from "../../performance";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
