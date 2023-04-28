@@ -8,7 +8,7 @@ import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import NotificationCenter from "../../screens/NotificationCenter/Notifications";
 import { NavigatorName, ScreenName } from "../../const";
 import type { NotificationCenterNavigatorParamList } from "./types/NotificationCenterNavigator";
@@ -16,7 +16,6 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { track } from "../../analytics";
 import { setStatusCenter } from "../../actions/settings";
 import FullNodeWarning from "../../icons/FullNodeWarning";
-import { accountsSelector } from "../../reducers/accounts";
 
 const Stack = createStackNavigator<NotificationCenterNavigatorParamList>();
 
@@ -30,17 +29,7 @@ export default function NotificationCenterNavigator() {
     () => getStackNavigatorConfig(colors),
     [colors],
   );
-  const accounts = useSelector(accountsSelector);
-  console.log(
-    "TICKERS",
-    accounts.map(account => account.currency.ticker),
-  );
-  const { incidents: fullIncidents } = useFilteredServiceStatus();
-  const { incidents } = useFilteredServiceStatus({
-    tickers: accounts.map(account => account.currency.ticker),
-  });
-  console.log("ALL INCIDENTS", fullIncidents);
-  console.log("INCIDENTS", incidents);
+  const { incidents } = useFilteredServiceStatus();
 
   const goToNotificationsSettings = useCallback(() => {
     track("button_clicked", {
