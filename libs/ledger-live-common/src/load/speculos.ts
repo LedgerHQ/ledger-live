@@ -132,7 +132,7 @@ export async function createSpeculosDevice(
           )}/app_${appVersion}.elf`}`,
         ]
       : []),
-    // ...(sdk ? ["--sdk", sdk] : []),
+    ...(sdk ? ["--sdk", sdk] : []),
     "--display",
     "headless",
     "--vnc-password",
