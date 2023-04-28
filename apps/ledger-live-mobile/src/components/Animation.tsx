@@ -20,8 +20,11 @@ export default function Animation({
     />
   ) : null;
 }
+
+// A default width and height are needed
 const styles = StyleSheet.create({
   default: {
     width: 300,
+    height: 300,
   },
 });
