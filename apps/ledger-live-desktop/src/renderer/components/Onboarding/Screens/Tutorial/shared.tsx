@@ -18,7 +18,7 @@ export const AnimationContainer = styled(Flex)`
   overflow-x: clip;
   width: 324px;
   > * {
-    transform: scale(1.7);
+    transform: scale(1.3);
     margin-left: 70px;
   }
 `;
