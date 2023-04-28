@@ -35,21 +35,21 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
   const localOverrides = useSelector(overriddenFeatureFlagsSelector);
   const dispatch = useDispatch();
 
-  const getAllFlags = () => {
+  const getAllFlags = useCallback(() => {
     if (remoteConfig) {
       return getAll(remoteConfig);
     }
 
     return null;
-  };
+  }, [remoteConfig]);
 
-  const getAllCurrencyFlags = (): Record<string, Feature> | null => {
+  const getAllCurrencyFlags = useCallback((): Record<string, Feature> => {
     const allFlags = getAllFlags();
 
     if (allFlags) {
       const entries = Object.entries(allFlags)
         .filter(([key]) => {
-          return key.includes("_currency_");
+          return key.includes("feature_currency_");
         })
         .map(([key, value]) => {
           return [key, JSON.parse(value.asString())];
@@ -59,25 +59,28 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
     }
 
     return {};
-  };
+  }, [getAllFlags]);
 
-  const isFeature = (key: string): boolean => {
-    if (!remoteConfig) {
-      return false;
-    }
-
-    try {
-      const value = getValue(remoteConfig, formatToFirebaseFeatureId(key));
-
-      if (!value || !value.asString()) {
+  const isFeature = useCallback(
+    (key: string): boolean => {
+      if (!remoteConfig) {
         return false;
       }
-      return true;
-    } catch (error) {
-      console.error(`Failed to check if feature "${key}" exists`);
-      return false;
-    }
-  };
+
+      try {
+        const value = getValue(remoteConfig, formatToFirebaseFeatureId(key));
+
+        if (!value || !value.asString()) {
+          return false;
+        }
+        return true;
+      } catch (error) {
+        console.error(`Failed to check if feature "${key}" exists`);
+        return false;
+      }
+    },
+    [remoteConfig],
+  );
 
   const getFeature = useCallback(
     (key: FeatureId, allowOverride = true): Feature | null => {
