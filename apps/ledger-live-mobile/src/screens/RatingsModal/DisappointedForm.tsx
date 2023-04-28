@@ -113,7 +113,7 @@ const DisappointedForm = ({ setStep }: Props) => {
     `&firmware_version=${lastDevice?.deviceInfo?.version}` +
     `&notifications_allowed=${notificationsAllowed}` +
     `&notifications_blacklisted=${notificationsBlacklisted}` +
-    `&done?${formUrlSplitted[1] || ''}`;
+    `&done?${formUrlSplitted[1] || ""}`;
 
   return (
     <Flex flex={1} height={height * (4 / 5)}>
