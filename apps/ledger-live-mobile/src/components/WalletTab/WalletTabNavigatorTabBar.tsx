@@ -2,10 +2,12 @@ import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { useTheme } from "styled-components/native";
 import React, { memo, useCallback, useContext } from "react";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
-import { Box, Flex, Text } from "@ledgerhq/native-ui";
-import { Animated } from "react-native";
+import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Animated, Linking } from "react-native";
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { track } from "../../analytics";
 import { rgba } from "../../colors";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
@@ -18,6 +20,17 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   height: 32px;
   justify-content: center;
   margin-right: ${p => p.theme.space[4]}px;
+`;
+
+const StyledReferral = styled.TouchableOpacity`
+  height: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-radius: 200px;
+  width: 58px;
+  background-color: ${p => p.theme.colors.opacityDefault.c10};
 `;
 
 const StyledAnimatedView = styled(Animated.View)<BaseStyledProps>`
@@ -109,7 +122,10 @@ function WalletTabNavigatorTabBar({
   navigation,
   position,
 }: MaterialTopTabBarProps) {
+  const referralProgramMobile = useFeature("referralProgramMobile");
+  const { t } = useTranslation();
   const { colors } = useTheme();
+
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
 
@@ -130,6 +146,18 @@ function WalletTabNavigatorTabBar({
   });
 
   const insets = useSafeAreaInsets();
+
+  const accessReferralProgram = useCallback(() => {
+    const path = referralProgramMobile?.params.path;
+    if (referralProgramMobile?.enabled && path) {
+      Linking.canOpenURL(path).then(() => Linking.openURL(path));
+
+      track("button_clicked", {
+        button: "Referral program",
+        screen: ScreenName.Portfolio,
+      });
+    }
+  }, [referralProgramMobile]);
 
   return (
     <>
@@ -159,23 +187,39 @@ function WalletTabNavigatorTabBar({
             opacity,
           }}
         />
-        <Flex px={6} py={4} justifyContent={"flex-end"}>
-          <Flex flexDirection={"row"}>
-            {state.routes.map((route, index) => {
-              const { options } = descriptors[route.key];
+        <Flex px={6} py={2} justifyContent={"flex-end"}>
+          <Flex
+            flexDirection={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Flex flexDirection={"row"}>
+              {state.routes.map((route, index) => {
+                const { options } = descriptors[route.key];
 
-              return (
-                <MemoTab
-                  key={index}
-                  route={route}
-                  label={options.title}
-                  isActive={state.index === index}
-                  navigation={navigation}
-                  index={index}
-                  scrollX={position}
-                />
-              );
-            })}
+                return (
+                  <MemoTab
+                    key={index}
+                    route={route}
+                    label={options.title}
+                    isActive={state.index === index}
+                    navigation={navigation}
+                    index={index}
+                    scrollX={position}
+                  />
+                );
+              })}
+            </Flex>
+
+            {referralProgramMobile?.enabled &&
+              referralProgramMobile?.params?.path && (
+                <StyledReferral onPress={accessReferralProgram}>
+                  <Icons.GiftMedium />
+                  <Text ml={"6px"} variant="small" fontWeight="semiBold">
+                    {t("wallet.referralProgram")}
+                  </Text>
+                </StyledReferral>
+              )}
           </Flex>
         </Flex>
       </AnimatedFlex>
