@@ -10,8 +10,10 @@ import IconCoins from "~/renderer/icons/Coins";
 type Props = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
+  source?: string;
 };
-const AccountHeaderActions = ({ account, parentAccount }: Props) => {
+
+const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -31,6 +33,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       dispatch(
         openModal("MODAL_COSMOS_DELEGATE", {
           account,
+          source,
         }),
       );
     } else {
@@ -40,7 +43,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         }),
       );
     }
-  }, [account, earnRewardEnabled, hasDelegations, dispatch, parentAccount]);
+  }, [account, earnRewardEnabled, hasDelegations, dispatch, parentAccount, source]);
   if (parentAccount) return null;
   const disabledLabel = earnRewardEnabled ? "" : t("cosmos.delegation.minSafeWarning");
   return [
