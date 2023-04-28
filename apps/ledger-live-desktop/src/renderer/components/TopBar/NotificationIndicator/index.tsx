@@ -16,7 +16,9 @@ export function NotificationIndicator() {
   const { t } = useTranslation();
   const notificationsCards = useSelector(notificationsContentCardSelector);
 
-  const totalNotifCount = getEnv("PLAYWRIGHT_RUN") ? 0 : notificationsCards?.filter(n => !n.viewed).length || 0;
+  const totalNotifCount = getEnv("PLAYWRIGHT_RUN")
+    ? 0
+    : notificationsCards?.filter(n => !n.viewed).length || 0;
   const { isOpen } = useSelector(informationCenterStateSelector);
   const dispatch = useDispatch();
   const history = useHistory();

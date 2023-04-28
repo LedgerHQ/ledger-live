@@ -11,7 +11,7 @@ import {
 } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import ManagerAPI from "@ledgerhq/live-common/api/Manager";
+import ManagerAPI from "@ledgerhq/live-common/manager/api";
 import network from "@ledgerhq/live-common/network";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import uninstallApp from "@ledgerhq/live-common/hw/uninstallApp";

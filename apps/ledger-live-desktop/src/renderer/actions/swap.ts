@@ -1,35 +1,34 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { flattenAccounts } from "@ledgerhq/live-common/account/helpers";
-import { Transaction, UPDATE_PROVIDERS_TYPE } from "@ledgerhq/live-common/exchange/swap/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import memoize from "lodash/memoize";
 import { createAction } from "redux-actions";
-import { OutputSelector, createSelector } from "reselect";
+import { createSelector } from "reselect";
 import { State } from "~/renderer/reducers";
 import { SwapStateType } from "~/renderer/reducers/swap";
+import { Pair } from "@ledgerhq/live-common/exchange/swap/types";
+
+type UPDATE_PROVIDERS_TYPE = {
+  payload: SwapStateType["providers"];
+};
 
 /* ACTIONS */
 export const updateProvidersAction = createAction<UPDATE_PROVIDERS_TYPE["payload"]>(
   "SWAP/UPDATE_PROVIDERS",
 );
-export const updateTransactionAction = createAction<Transaction | undefined | null["payload"]>(
+export const updateTransactionAction = createAction<Transaction | undefined | null>(
   "SWAP/UPDATE_TRANSACTION",
 );
-export const updateRateAction = createAction<Transaction | undefined | null["exchangeRate"]>(
-  "SWAP/UPDATE_RATE",
-);
+export const updateRateAction = createAction<Transaction | undefined | null>("SWAP/UPDATE_RATE");
 export const resetSwapAction = createAction("SWAP/RESET_STATE");
 
 /* SELECTORS */
-export const providersSelector: OutputSelector<
-  State,
-  void,
-  SwapStateType["providers"]
-> = createSelector(
-  state => state.swap,
+export const providersSelector = createSelector(
+  (state: State) => state.swap,
   swap => swap.providers,
 );
-export const filterAvailableToAssets = (pairs, fromId?: string) => {
+export const filterAvailableToAssets = (pairs: Pair[] | null | undefined, fromId?: string) => {
   if (pairs === null || pairs === undefined) return null;
   const toAssets = [];
   for (const pair of pairs) {
@@ -39,7 +38,10 @@ export const filterAvailableToAssets = (pairs, fromId?: string) => {
   }
   return toAssets;
 };
-const filterAvailableFromAssets = (pairs, allAccounts) => {
+const filterAvailableFromAssets = (
+  pairs: Pair[] | undefined | null,
+  allAccounts: Account[],
+): (Account & { disabled: boolean })[] => {
   if (pairs === null || pairs === undefined) return [];
   return flattenAccounts(allAccounts).map(account => {
     const id = getAccountCurrency(account).id;
@@ -48,10 +50,10 @@ const filterAvailableFromAssets = (pairs, allAccounts) => {
       ...account,
       disabled: !isAccountAvailable,
     };
-  });
+  }) as (Account & { disabled: boolean })[];
 };
-export const toSelector: OutputSelector<State, void, any> = createSelector(
-  state => state.swap.pairs,
+export const toSelector = createSelector(
+  (state: State) => state.swap.pairs,
   pairs =>
     memoize((fromId?: "string") => {
       const filteredAssets = filterAvailableToAssets(pairs, fromId);
@@ -61,9 +63,9 @@ export const toSelector: OutputSelector<State, void, any> = createSelector(
 );
 
 // Put disabled accounts and subaccounts at the bottom of the list while preserving the parent/children position.
-export function sortAccountsByStatus(accounts: Account[]) {
-  let activeAccounts = [];
-  let disabledAccounts = [];
+export function sortAccountsByStatus(accounts: (Account & { disabled: boolean })[]) {
+  let activeAccounts: Account[] = [];
+  let disabledAccounts: Account[] = [];
   let subAccounts = [];
   let disabledSubAccounts = [];
 
@@ -95,35 +97,23 @@ export function sortAccountsByStatus(accounts: Account[]) {
   }
   return [...activeAccounts, ...disabledAccounts];
 }
-export const fromSelector: OutputSelector<State, void, any> = createSelector(
-  state => state.swap.pairs,
+export const fromSelector = createSelector(
+  (state: State) => state.swap.pairs,
   pairs =>
     memoize(
       (allAccounts: Array<Account>): Array<Account | TokenAccount> =>
         sortAccountsByStatus(filterAvailableFromAssets(pairs, allAccounts)),
     ),
 );
-export const transactionSelector: OutputSelector<
-  State,
-  void,
-  SwapStateType["transaction"]
-> = createSelector(
-  state => state.swap,
+export const transactionSelector = createSelector(
+  (state: State) => state.swap,
   swap => swap.transaction,
 );
-export const rateSelector: OutputSelector<
-  State,
-  void,
-  SwapStateType["exchangeRate"]
-> = createSelector(
-  state => state.swap,
+export const rateSelector = createSelector(
+  (state: State) => state.swap,
   swap => swap.exchangeRate,
 );
-export const rateExpirationSelector: OutputSelector<
-  State,
-  void,
-  SwapStateType["exchangeRateExpiration"]
-> = createSelector(
-  state => state.swap,
+export const rateExpirationSelector = createSelector(
+  (state: State) => state.swap,
   swap => swap.exchangeRateExpiration,
 );

@@ -2,28 +2,21 @@ import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
-
 import styled from "styled-components";
 import { UseCaseOption } from "./UseCaseOption";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { Separator } from "./Separator";
-
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
-
 import { track } from "~/renderer/analytics/segment";
-
 import { ScreenId } from "../Tutorial";
 import { OnboardingContext, UseCase } from "../../index";
-
 import connectNanoLight from "./assets/connectNanoLight.png";
 import restorePhraseLight from "./assets/restorePhraseLight.png";
 import setupNanoLight from "./assets/setupNanoLight.png";
-
 import connectNanoDark from "./assets/connectNanoDark.png";
 import restorePhraseDark from "./assets/restorePhraseDark.png";
 import setupNanoDark from "./assets/setupNanoDark.png";
-
 import Illustration from "~/renderer/components/Illustration";
 
 registerAssets([

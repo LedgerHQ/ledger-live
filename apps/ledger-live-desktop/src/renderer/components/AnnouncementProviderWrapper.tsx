@@ -53,7 +53,6 @@ const getOsPlatform = () => {
     case "darwin":
       return "mac";
     case "win32":
-    case "win64":
       return "windows";
     case "linux":
       return "linux";

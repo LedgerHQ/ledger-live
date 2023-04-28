@@ -9,7 +9,6 @@ import Box from "~/renderer/components/Box";
 import Card from "~/renderer/components/Box/Card";
 import TabBar from "~/renderer/components/TabBar";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import OnRamp from "./Buy";
 import { useExchangeProvider } from "./hooks";
 import OffRamp from "./Sell";
@@ -18,6 +17,7 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import useTheme from "~/renderer/hooks/useTheme";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 const Container: ThemedComponent<{ selectable: boolean; pb: number }> = styled(Box)`
   flex: 1;
@@ -51,12 +51,18 @@ const DEFAULT_MULTIBUY_APP_ID = "multibuy";
 
 // Exchange (Buy / Sell) as a live app screen
 const LiveAppExchange = ({ appId }: { appId: string }) => {
-  const { state: urlParams } = useLocation();
+  const { state: urlParams, search } = useLocation();
+  const searchParams = new URLSearchParams(search);
   const locale = useSelector(languageSelector);
+
+  const mockManifest: LiveAppManifest | undefined =
+    process.env.MOCK_REMOTE_LIVE_MANIFEST && JSON.parse(process.env.MOCK_REMOTE_LIVE_MANIFEST)[0];
+
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
-  const manifest = localManifest || remoteManifest;
+  const manifest = localManifest || mockManifest || remoteManifest;
   const themeType = useTheme("colors.palette.type");
+
   return (
     <Card
       grow
@@ -71,6 +77,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
             theme: themeType,
             ...urlParams,
             lang: locale,
+            ...Object.fromEntries(searchParams.entries()),
           }}
         />
       ) : null}

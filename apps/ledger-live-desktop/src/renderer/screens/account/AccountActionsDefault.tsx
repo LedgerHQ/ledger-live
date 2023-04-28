@@ -5,7 +5,6 @@ import IconSend from "~/renderer/icons/Send";
 import IconSwap from "~/renderer/icons/Swap";
 import IconExchange from "~/renderer/icons/Exchange";
 import IconSell from "~/renderer/icons/Plus";
-
 import Button from "~/renderer/components/ButtonV3";
 import { Flex } from "@ledgerhq/react-ui";
 type Props = {
@@ -69,6 +68,7 @@ export const BuyActionDefault = ({ onClick }: { onClick: () => void }) => {
       onClick={onClick}
       iconComponent={<IconExchange size={14} />}
       labelComponent={<Trans i18nKey="accounts.contextMenu.buy" />}
+      accountActionsTestId={"buy-button"}
     />
   );
 };
@@ -78,6 +78,7 @@ export const SellActionDefault = ({ onClick }: { onClick: () => void }) => {
       onClick={onClick}
       iconComponent={<IconSell size={14} />}
       labelComponent={<Trans i18nKey="accounts.contextMenu.sell" />}
+      accountActionsTestId={"sell-button"}
     />
   );
 };

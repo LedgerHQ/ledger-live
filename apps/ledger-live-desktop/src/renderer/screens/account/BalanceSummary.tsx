@@ -31,7 +31,6 @@ export default function AccountBalanceSummary({
   chartColor,
   setCountervalueFirst,
   mainAccount,
-  parentAccount,
 }: Props) {
   const portfolio = usePortfolio();
   const [range] = useTimeRange();

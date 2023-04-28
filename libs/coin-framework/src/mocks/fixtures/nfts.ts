@@ -307,6 +307,19 @@ export const NFTs = [
   },
 ];
 
+// Ethereum NFTs with the special "staxImage" metadata designed to fit the Ledger Stax screen
+export const NFTs_ETHEREUM_STAX_METADATA = [
+  {
+    id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0xf4ac11a8967bc88c9ce5acf886bce605c9db9d6e+8482",
+    tokenId: "8482",
+    amount: "1",
+    collection: {
+      contract: "0xf4ac11a8967bc88c9ce5acf886bce605c9db9d6e",
+      standard: "ERC721",
+    },
+  },
+];
+
 export const NFTs_POLYGON = [
   {
     id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0x68a0B29526f342de944BBd6bF61D9c644B96b771+7",
@@ -340,9 +353,15 @@ export const NFTs_POLYGON = [
 ];
 export function createFixtureNFT(
   accountId: string,
-  currency: CryptoCurrency = defaultEthCryptoFamily
+  currency: CryptoCurrency = defaultEthCryptoFamily,
+  useStaxNFTs?: boolean
 ): ProtoNFT {
-  const nfts = currency.id === "ethereum" ? NFTs : NFTs_POLYGON;
+  const nfts =
+    currency.id === "ethereum"
+      ? useStaxNFTs
+        ? NFTs_ETHEREUM_STAX_METADATA
+        : NFTs
+      : NFTs_POLYGON;
   const index = Math.floor(Math.random() * nfts.length);
 
   const nft = nfts[index];

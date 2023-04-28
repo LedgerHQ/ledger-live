@@ -2,7 +2,6 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import React, { useEffect, useState, createContext } from "react";
 import { Switch, Route, useRouteMatch } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
-
 import { Flex } from "@ledgerhq/react-ui";
 
 // screens
@@ -10,7 +9,6 @@ import { Welcome } from "~/renderer/components/Onboarding/Screens/Welcome";
 import { SelectDevice } from "~/renderer/components/Onboarding/Screens/SelectDevice";
 import { SelectUseCase } from "~/renderer/components/Onboarding/Screens/SelectUseCase";
 import Tutorial from "~/renderer/components/Onboarding/Screens/Tutorial";
-
 import styled from "styled-components";
 import { Pedagogy } from "~/renderer/components/Onboarding/Pedagogy";
 import RecoveryWarning from "~/renderer/components/Onboarding/Help/RecoveryWarning";
@@ -100,8 +98,8 @@ export function Onboarding() {
         <CSSTransition in appear key={path} timeout={DURATION} classNames="page-switch">
           <ScreenContainer>
             <Switch>
-              <Route exact path={path} render={props => <Welcome {...props} />} />
-              <Route path={`${path}/welcome`} render={props => <Welcome {...props} />} />
+              <Route exact path={path} component={Welcome} />
+              <Route path={`${path}/welcome`} component={Welcome} />
               <Route path={`${path}/select-device`} component={SelectDevice} />
               <Route path={`${path}/sync`} component={SyncOnboarding} />
               <Route

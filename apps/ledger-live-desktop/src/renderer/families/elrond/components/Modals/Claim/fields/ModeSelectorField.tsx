@@ -5,7 +5,7 @@ import ToggleButton from "~/renderer/components/ToggleButton";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import Text from "~/renderer/components/Text";
 import Popover from "~/renderer/components/Popover";
-interface Props {
+export interface Props {
   mode: string;
   onChange: (mode: string) => void;
 }

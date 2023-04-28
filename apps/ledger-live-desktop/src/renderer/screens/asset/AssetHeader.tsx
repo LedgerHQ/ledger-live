@@ -61,7 +61,7 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
 };
-const AssetHeader: React$ComponentType<Props> = React.memo(function AssetHeader({
+const AssetHeader: React.ComponentType<Props> = React.memo(function AssetHeader({
   account,
   parentAccount,
 }: Props) {

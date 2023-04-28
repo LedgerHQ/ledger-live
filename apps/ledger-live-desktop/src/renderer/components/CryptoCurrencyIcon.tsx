@@ -4,7 +4,7 @@ import { getCryptoCurrencyIcon, getTokenCurrencyIcon } from "@ledgerhq/live-comm
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import { mix } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   currency: Currency;
   circle?: boolean;
@@ -14,10 +14,10 @@ type Props = {
   theme: any;
   fallback?: React.ReactNode;
 }; // NB this is to avoid seeing the parent icon through
-export const TokenIconWrapper: ThemedComponent<{}> = styled.div`
+export const TokenIconWrapper = styled.div`
   border-radius: 4px;
 `;
-export const CircleWrapper: ThemedComponent<{}> = styled.div`
+export const CircleWrapper = styled.div`
   border-radius: 50%;
   border: 1px solid transparent;
   background: ${p => p.color};

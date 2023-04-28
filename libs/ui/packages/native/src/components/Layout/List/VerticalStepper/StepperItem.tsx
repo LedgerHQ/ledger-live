@@ -75,7 +75,7 @@ export default function StepperItem({
             justifyContent={nested ? "space-between" : "flex-start"}
           >
             <Flex width="28px" alignItems="center">
-              {item.status === "completed" && <CheckAloneMedium size={20} color="success.c100" />}
+              {item.status === "completed" && <CheckAloneMedium size={20} color="success.c50" />}
               {item.status === "active" && (
                 <ProgressLoader
                   progress={progress}

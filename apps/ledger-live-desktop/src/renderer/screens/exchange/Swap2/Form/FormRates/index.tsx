@@ -1,10 +1,9 @@
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import SectionRate from "./SectionRate";
 import { BigNumber } from "bignumber.js";
-const Form: ThemedComponent<{}> = styled.section`
+const Form = styled.section`
   display: grid;
   row-gap: 1.375rem;
   color: white;

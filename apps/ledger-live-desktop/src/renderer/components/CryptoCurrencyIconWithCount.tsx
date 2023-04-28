@@ -5,7 +5,6 @@ import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencie
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import Tooltip from "~/renderer/components/Tooltip";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import CryptoCurrencyIcon, { TokenIconWrapper, TokenIcon } from "./CryptoCurrencyIcon";
 type Props = {
   currency: Currency;

@@ -1,17 +1,23 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Dispatch } from "redux";
+import { Dispatch, Action } from "redux";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import {
+  PortfolioRange,
+  DeviceModelInfo,
+  FeatureId,
+  Feature,
+  DeviceInfo,
+} from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { DeviceModelInfo, FeatureId, Feature } from "@ledgerhq/types-live";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import {
   SettingsState as Settings,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,
+  SettingsState,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 export type SaveSettings = (
@@ -64,7 +70,7 @@ export const setShareAnalytics = (shareAnalytics: boolean) =>
   saveSettings({
     shareAnalytics,
   });
-export const setAutoLockTimeout = (autoLockTimeout: any) =>
+export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
     autoLockTimeout,
   });
@@ -220,8 +226,8 @@ export const unhideNftCollection = (collectionId: string) => ({
   type: "UNHIDE_NFT_COLLECTION",
   payload: collectionId,
 });
-type FetchSettings = (a: any) => (a: Dispatch<any>) => void;
-export const fetchSettings: FetchSettings = (settings: any) => dispatch => {
+type FetchSettings = (a: SettingsState) => (a: Dispatch<Action<"FETCH_SETTINGS">>) => void;
+export const fetchSettings: FetchSettings = (settings: SettingsState) => dispatch => {
   dispatch({
     type: "FETCH_SETTINGS",
     payload: settings,
@@ -236,7 +242,7 @@ type SetExchangePairs = (
 ) => any;
 export const setExchangePairsAction: SetExchangePairs = pairs => ({
   type: "SETTINGS_SET_PAIRS",
-  pairs,
+  payload: pairs,
 });
 export const dismissBanner = (bannerKey: string) => ({
   type: "SETTINGS_DISMISS_BANNER",
@@ -310,9 +316,11 @@ export const setOverriddenFeatureFlag = (key: FeatureId, value: Feature | undefi
     value,
   },
 });
-export const setOverriddenFeatureFlags = (overriddenFeatureFlags: {
-  [key: FeatureId]: Feature;
-}) => ({
+export const setOverriddenFeatureFlags = (
+  overriddenFeatureFlags: {
+    [key in FeatureId]: Feature;
+  },
+) => ({
   type: "SET_OVERRIDDEN_FEATURE_FLAGS",
   payload: {
     overriddenFeatureFlags,

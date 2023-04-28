@@ -260,10 +260,12 @@ export enum SettingsActionTypes {
   LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
+  SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP = "SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP",
   SET_LAST_SEEN_CUSTOM_IMAGE = "SET_LAST_SEEN_CUSTOM_IMAGE",
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_LAST_CONNECTED_DEVICE = "SET_LAST_CONNECTED_DEVICE",
+  SET_CUSTOM_IMAGE_TYPE = "SET_CUSTOM_IMAGE_TYPE",
   SET_CUSTOM_IMAGE_BACKUP = "SET_CUSTOM_IMAGE_BACKUP",
   SET_HAS_ORDERED_NANO = "SET_HAS_ORDERED_NANO",
   SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
@@ -280,6 +282,7 @@ export enum SettingsActionTypes {
   SET_FEATURE_FLAGS_BANNER_VISIBLE = "SET_FEATURE_FLAGS_BANNER_VISIBLE",
   SET_DEBUG_APP_LEVEL_DRAWER_OPENED = "SET_DEBUG_APP_LEVEL_DRAWER_OPENED",
   SET_HAS_BEEN_UPSOLD_PROTECT = "SET_HAS_BEEN_UPSOLD_PROTECT",
+  SET_GENERAL_TERMS_VERSION_ACCEPTED = "SET_GENERAL_TERMS_VERSION_ACCEPTED",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -349,10 +352,18 @@ export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<
   SettingsState["starredMarketCoins"]
 >;
 export type SettingsSetLastConnectedDevicePayload = Device;
+export type SettingsSetHasSeenStaxEnabledNftsPopupPayload = Pick<
+  SettingsState,
+  "hasSeenStaxEnabledNftsPopup"
+>;
 export type SettingsSetCustomImageBackupPayload = {
   hex: string;
   hash: string;
 };
+export type SettingsSetCustomImageTypePayload = Pick<
+  SettingsState,
+  "customImageType"
+>;
 export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
 export type SettingsSetMarketRequestParamsPayload =
   SettingsState["marketRequestParams"];
@@ -393,6 +404,8 @@ export type SettingsSetHasBeenUpsoldProtectPayload =
 export type SettingsCompleteOnboardingPayload =
   | void
   | SettingsState["hasCompletedOnboarding"];
+export type SettingsSetGeneralTermsVersionAccepted =
+  SettingsState["generalTermsVersionAccepted"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -445,6 +458,7 @@ export type SettingsPayload =
   | SettingsSetFeatureFlagsBannerVisiblePayload
   | SettingsCompleteOnboardingPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload
+  | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload;
 
 // === WALLET CONNECT ACTIONS ===

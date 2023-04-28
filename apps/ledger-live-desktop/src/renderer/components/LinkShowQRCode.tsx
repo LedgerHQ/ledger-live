@@ -1,11 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import IconQrCode from "~/renderer/icons/QrCode";
 import Label from "./Label";
 import { useTranslation } from "react-i18next";
 import { rgba } from "~/renderer/styles/helpers";
-const Wrapper: ThemedComponent<{}> = styled(Label).attrs(() => ({
+const Wrapper = styled(Label).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "wallet",
   fontSize: 4,
@@ -27,7 +26,7 @@ type Props = {
   address: string;
   onClick: () => void;
 };
-export function LinkShowQRCode({ address, onClick }: Props) {
+export function LinkShowQRCode({ onClick }: Props) {
   const { t } = useTranslation();
   return (
     <Wrapper onClick={onClick}>

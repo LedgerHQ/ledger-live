@@ -2,13 +2,12 @@ import React, { useCallback } from "react";
 import styled, { css } from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Tabbable } from "~/renderer/components/Box";
 import AppDetails, { IconContainer } from "./AppDetails";
 const Container: ThemedComponent<{
   isActive?: boolean;
   disabled?: boolean;
-}> = styled(Tabbable).attrs(p => ({
+}> = styled(Tabbable).attrs(() => ({
   flex: 1,
   flexDirection: "column",
   alignItems: "center",

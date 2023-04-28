@@ -1,4 +1,4 @@
-import { API } from "../../api/Ethereum";
+import { API } from "./api";
 import { fetchAllTransactions } from "./synchronisation";
 
 describe("fetchAllTransactions", () => {

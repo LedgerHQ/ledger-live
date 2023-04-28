@@ -5,7 +5,6 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import Text from "~/renderer/components/Text";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 type Props = {
@@ -40,16 +39,16 @@ const AccountSubHeaderDrawer = ({ isOpen, closeDrawer }: Props) => {
     </SideDrawer>
   );
 };
-export const Title: ThemedComponent<{}> = styled(Text)`
+export const Title = styled(Text)`
   font-style: normal;
   font-weight: 600;
   font-size: 22px;
   line-height: 27px;
 `;
-export const Divider: ThemedComponent<{}> = styled(Box)`
+export const Divider = styled(Box)`
   border: 1px solid #f5f5f5;
 `;
-export const Description: ThemedComponent<{}> = styled(Text)`
+export const Description = styled(Text)`
   font-size: 13px;
 `;
 export default AccountSubHeaderDrawer;

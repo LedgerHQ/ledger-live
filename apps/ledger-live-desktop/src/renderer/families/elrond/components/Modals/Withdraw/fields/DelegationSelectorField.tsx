@@ -16,7 +16,7 @@ type NoOptionsMessageCallbackType = {
 type EnhancedUnbonding = UnbondingType & {
   disabled: boolean;
 };
-interface Props {
+export interface Props {
   onChange: (validator: ElrondProvider) => void;
   onUpdateTransaction: (transaction: Transaction) => void;
   bridge: AccountBridge<Transaction>;

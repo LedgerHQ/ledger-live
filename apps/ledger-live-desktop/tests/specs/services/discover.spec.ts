@@ -14,12 +14,12 @@ let continueTest = false;
 test.beforeAll(async ({ request }) => {
   // Check that dummy app in tests/utils/dummy-app-build has been started successfully
   try {
-    const port = await server.start();
+    const port = await server.start("dummy-live-app/build");
     const response = await request.get(`http://localhost:${port}`);
     if (response.ok()) {
       continueTest = true;
       console.info(`========> Dummy test app successfully running on port ${port}! <=========`);
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(server.manifest(port));
+      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(server.dummyLiveAppManifest(port));
     } else {
       throw new Error("Ping response != 200, got: " + response.status);
     }

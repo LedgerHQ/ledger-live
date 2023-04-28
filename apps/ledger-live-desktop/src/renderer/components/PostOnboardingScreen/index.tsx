@@ -2,7 +2,6 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useAllPostOnboardingActionsCompleted } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-
 import PostOnboardingHubContent from "~/renderer/components/PostOnboardingHub/PostOnboardingHubContent";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 

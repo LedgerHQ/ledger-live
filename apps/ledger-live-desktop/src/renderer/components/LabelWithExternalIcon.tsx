@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Label from "~/renderer/components/Label";
 import Box from "~/renderer/components/Box";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 const LabelWrapper: ThemedComponent<{
   ff?: string;
   hoverColor: string;

@@ -1,5 +1,286 @@
 # live-mobile
 
+## 3.20.1
+
+### Patch Changes
+
+- [#3304](https://github.com/LedgerHQ/ledger-live/pull/3304) [`c20a0d4284`](https://github.com/LedgerHQ/ledger-live/commit/c20a0d4284ede962e42540cd9ab3e3399ca89d8f) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Patch `asyncstorage-down` to import AsyncStorage from `@react-native-async-storage/async-storage`
+
+  Ledger Live Mobile has been recently updated to 0.71. One side effect is that `AsyncStorage` was removed from the main `react-native` package and moved to `@react-native-async-storage/async-storage`.
+
+  LLM relies on an `fs` polyfill using `asyncstorage-down` under the hood, but the latter is now broken because it contains one hardcoded require call:
+
+  ```js
+  require("react-native").AsyncStorage;
+  ```
+
+  Patching `asyncstorage-down` to import `AsyncStorage` from the right package should solve the issue.
+
+## 3.20.1-hotfix.0
+
+### Patch Changes
+
+- [#3304](https://github.com/LedgerHQ/ledger-live/pull/3304) [`c20a0d4284`](https://github.com/LedgerHQ/ledger-live/commit/c20a0d4284ede962e42540cd9ab3e3399ca89d8f) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Patch `asyncstorage-down` to import AsyncStorage from `@react-native-async-storage/async-storage`
+
+  Ledger Live Mobile has been recently updated to 0.71. One side effect is that `AsyncStorage` was removed from the main `react-native` package and moved to `@react-native-async-storage/async-storage`.
+
+  LLM relies on an `fs` polyfill using `asyncstorage-down` under the hood, but the latter is now broken because it contains one hardcoded require call:
+
+  ```js
+  require("react-native").AsyncStorage;
+  ```
+
+  Patching `asyncstorage-down` to import `AsyncStorage` from the right package should solve the issue.
+
+## 3.20.0
+
+### Minor Changes
+
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add support for Stax enabled NFTs by highlighting them to the user in the gallery and overriding the lockscreen edition with the special Stax metadata image
+
+- [#3225](https://github.com/LedgerHQ/ledger-live/pull/3225) [`4b3c21c473`](https://github.com/LedgerHQ/ledger-live/commit/4b3c21c473a4f3183c3d3eb849e4c49f96ff81a9) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Added additional data to the ratings typeform
+
+- [#3270](https://github.com/LedgerHQ/ledger-live/pull/3270) [`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removed Promise.allSettled polyfill as it wasn't correctly shimmed on some devices
+
+### Patch Changes
+
+- [#3203](https://github.com/LedgerHQ/ledger-live/pull/3203) [`da25400ad8`](https://github.com/LedgerHQ/ledger-live/commit/da25400ad8fcf44cc6b0561d9319b25ed9ee64ab) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix the behavior of the close button in the sync onboarding
+
+- [#2888](https://github.com/LedgerHQ/ledger-live/pull/2888) [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27) Thanks [@elbywan](https://github.com/elbywan)! - Upgrade react-native (to 0.71) as well as other dependencies
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- [#3169](https://github.com/LedgerHQ/ledger-live/pull/3169) [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow for model and version dependent max name length
+
+- [#3014](https://github.com/LedgerHQ/ledger-live/pull/3014) [`579161ff68`](https://github.com/LedgerHQ/ledger-live/commit/579161ff68361e2b66cecfafc5cd35f05edb4451) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add possibility to deeplink to whitelisted live apps in a non-onboarded LLM
+
+- [#3094](https://github.com/LedgerHQ/ledger-live/pull/3094) [`ebeb0ea7a3`](https://github.com/LedgerHQ/ledger-live/commit/ebeb0ea7a3bff80cd90721ff59681c5fbf788206) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - drop tron staking for LLM
+
+- [#3165](https://github.com/LedgerHQ/ledger-live/pull/3165) [`447ed160e5`](https://github.com/LedgerHQ/ledger-live/commit/447ed160e5394bba07d1b1470b4d83d4e82f898f) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Use backend provided support url for apps when available
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+- [#3161](https://github.com/LedgerHQ/ledger-live/pull/3161) [`c6e6fc7269`](https://github.com/LedgerHQ/ledger-live/commit/c6e6fc72696d4d35105e2316c5d7e2d3bad5acae) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: correctly trigger software checks during sync onboarding on new firmware versions
+
+- [#3200](https://github.com/LedgerHQ/ledger-live/pull/3200) [`9b387741db`](https://github.com/LedgerHQ/ledger-live/commit/9b387741db3c075fd48a5a122222d920155cf894) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: enable debug proxy device to bypass bluetooth requirement
+
+- [#3115](https://github.com/LedgerHQ/ledger-live/pull/3115) [`9b1a77ffa1`](https://github.com/LedgerHQ/ledger-live/commit/9b1a77ffa1974f6b9d09bb4c277c576dd5d7234e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implement support of Adjust universal links on iOS
+
+- [#3040](https://github.com/LedgerHQ/ledger-live/pull/3040) [`269b1c1027`](https://github.com/LedgerHQ/ledger-live/commit/269b1c1027d29b24df06bb6b5fa64c7403602090) Thanks [@sarneijim](https://github.com/sarneijim)! - Add stake flow to asset page
+
+- Updated dependencies [[`9fec3a9b3a`](https://github.com/LedgerHQ/ledger-live/commit/9fec3a9b3a26bfce6ef7fdc4afb83e4f3c04cb69), [`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23), [`530909c036`](https://github.com/LedgerHQ/ledger-live/commit/530909c0368d03aea1e5d0638adb027fa00ab897), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`29badd80d0`](https://github.com/LedgerHQ/ledger-live/commit/29badd80d062f76139ba3a056df22277858021bd), [`992351d66d`](https://github.com/LedgerHQ/ledger-live/commit/992351d66d44d978f069b3aa13f9baf23f9b4482), [`147af2b5e6`](https://github.com/LedgerHQ/ledger-live/commit/147af2b5e674a7020f101a081135c2b187356060), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9), [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5), [`42233141e8`](https://github.com/LedgerHQ/ledger-live/commit/42233141e853f2e9752268e5fa711416d460e0e3), [`5059c9584c`](https://github.com/LedgerHQ/ledger-live/commit/5059c9584ca70208a67e9d49025422d395637878), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`87d08d6d1c`](https://github.com/LedgerHQ/ledger-live/commit/87d08d6d1c6111b7f5fb15f3e1bbe85658686e4a)]:
+  - @ledgerhq/live-common@29.4.0
+  - @ledgerhq/domain-service@1.0.1
+  - @ledgerhq/coin-framework@0.3.1
+  - @ledgerhq/native-ui@0.18.1
+  - @ledgerhq/types-live@6.32.1
+
+## 3.20.0-next.2
+
+### Minor Changes
+
+- [#3270](https://github.com/LedgerHQ/ledger-live/pull/3270) [`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removed Promise.allSettled polyfill as it wasn't correctly shimmed on some devices
+
+### Patch Changes
+
+- Updated dependencies [[`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23)]:
+  - @ledgerhq/domain-service@1.0.1-next.1
+  - @ledgerhq/live-common@29.4.0-next.2
+
+## 3.20.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`5059c9584c`](https://github.com/LedgerHQ/ledger-live/commit/5059c9584ca70208a67e9d49025422d395637878)]:
+  - @ledgerhq/live-common@29.4.0-next.1
+
+## 3.20.0-next.0
+
+### Minor Changes
+
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add support for Stax enabled NFTs by highlighting them to the user in the gallery and overriding the lockscreen edition with the special Stax metadata image
+
+- [#3225](https://github.com/LedgerHQ/ledger-live/pull/3225) [`4b3c21c473`](https://github.com/LedgerHQ/ledger-live/commit/4b3c21c473a4f3183c3d3eb849e4c49f96ff81a9) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Added additional data to the ratings typeform
+
+### Patch Changes
+
+- [#3203](https://github.com/LedgerHQ/ledger-live/pull/3203) [`da25400ad8`](https://github.com/LedgerHQ/ledger-live/commit/da25400ad8fcf44cc6b0561d9319b25ed9ee64ab) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix the behavior of the close button in the sync onboarding
+
+- [#2888](https://github.com/LedgerHQ/ledger-live/pull/2888) [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27) Thanks [@elbywan](https://github.com/elbywan)! - Upgrade react-native (to 0.71) as well as other dependencies
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- [#3169](https://github.com/LedgerHQ/ledger-live/pull/3169) [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow for model and version dependent max name length
+
+- [#3014](https://github.com/LedgerHQ/ledger-live/pull/3014) [`579161ff68`](https://github.com/LedgerHQ/ledger-live/commit/579161ff68361e2b66cecfafc5cd35f05edb4451) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add possibility to deeplink to whitelisted live apps in a non-onboarded LLM
+
+- [#3094](https://github.com/LedgerHQ/ledger-live/pull/3094) [`ebeb0ea7a3`](https://github.com/LedgerHQ/ledger-live/commit/ebeb0ea7a3bff80cd90721ff59681c5fbf788206) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - drop tron staking for LLM
+
+- [#3165](https://github.com/LedgerHQ/ledger-live/pull/3165) [`447ed160e5`](https://github.com/LedgerHQ/ledger-live/commit/447ed160e5394bba07d1b1470b4d83d4e82f898f) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Use backend provided support url for apps when available
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+- [#3161](https://github.com/LedgerHQ/ledger-live/pull/3161) [`c6e6fc7269`](https://github.com/LedgerHQ/ledger-live/commit/c6e6fc72696d4d35105e2316c5d7e2d3bad5acae) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: correctly trigger software checks during sync onboarding on new firmware versions
+
+- [#3200](https://github.com/LedgerHQ/ledger-live/pull/3200) [`9b387741db`](https://github.com/LedgerHQ/ledger-live/commit/9b387741db3c075fd48a5a122222d920155cf894) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: enable debug proxy device to bypass bluetooth requirement
+
+- [#3115](https://github.com/LedgerHQ/ledger-live/pull/3115) [`9b1a77ffa1`](https://github.com/LedgerHQ/ledger-live/commit/9b1a77ffa1974f6b9d09bb4c277c576dd5d7234e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implement support of Adjust universal links on iOS
+
+- [#3040](https://github.com/LedgerHQ/ledger-live/pull/3040) [`269b1c1027`](https://github.com/LedgerHQ/ledger-live/commit/269b1c1027d29b24df06bb6b5fa64c7403602090) Thanks [@sarneijim](https://github.com/sarneijim)! - Add stake flow to asset page
+
+- Updated dependencies [[`9fec3a9b3a`](https://github.com/LedgerHQ/ledger-live/commit/9fec3a9b3a26bfce6ef7fdc4afb83e4f3c04cb69), [`530909c036`](https://github.com/LedgerHQ/ledger-live/commit/530909c0368d03aea1e5d0638adb027fa00ab897), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`29badd80d0`](https://github.com/LedgerHQ/ledger-live/commit/29badd80d062f76139ba3a056df22277858021bd), [`992351d66d`](https://github.com/LedgerHQ/ledger-live/commit/992351d66d44d978f069b3aa13f9baf23f9b4482), [`147af2b5e6`](https://github.com/LedgerHQ/ledger-live/commit/147af2b5e674a7020f101a081135c2b187356060), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9), [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5), [`42233141e8`](https://github.com/LedgerHQ/ledger-live/commit/42233141e853f2e9752268e5fa711416d460e0e3), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`87d08d6d1c`](https://github.com/LedgerHQ/ledger-live/commit/87d08d6d1c6111b7f5fb15f3e1bbe85658686e4a)]:
+  - @ledgerhq/live-common@29.4.0-next.0
+  - @ledgerhq/coin-framework@0.3.1-next.0
+  - @ledgerhq/native-ui@0.18.1-next.0
+  - @ledgerhq/types-live@6.32.1-next.0
+  - @ledgerhq/domain-service@1.0.1-next.0
+
+## 3.19.0
+
+### Minor Changes
+
+- [#3016](https://github.com/LedgerHQ/ledger-live/pull/3016) [`5fa3f57e08`](https://github.com/LedgerHQ/ledger-live/commit/5fa3f57e08676481d18bdf7fc2406ac1184b1a9a) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - feat: ledger recover feature flag
+
+* [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+- [#2891](https://github.com/LedgerHQ/ledger-live/pull/2891) [`04ad7f2de3`](https://github.com/LedgerHQ/ledger-live/commit/04ad7f2de35c5e5e3025f4db81815542af3816f8) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Refactored Webviews;
+  Added WebPTXPlayer;
+
+* [#2969](https://github.com/LedgerHQ/ledger-live/pull/2969) [`44567eeb17`](https://github.com/LedgerHQ/ledger-live/commit/44567eeb17cb81b8a812d89316d3b66d67fe6aaf) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Domain service for LLM
+
+- [#2861](https://github.com/LedgerHQ/ledger-live/pull/2861) [`0941844a56`](https://github.com/LedgerHQ/ledger-live/commit/0941844a560b5b7b066fb1ffbec1dde7111c083a) Thanks [@cksanders](https://github.com/cksanders)! - - Update Kotlin version
+  - Updated `wallet-api-server` and `wallet-api-core` version
+  - Add Next storage & remove obsolete `AsyncStorage_db_size_in_MB`
+  - Added wallet api storage support
+  - Add stable & tested LLD storage support
+
+* [#3075](https://github.com/LedgerHQ/ledger-live/pull/3075) [`eed4dcb2bd`](https://github.com/LedgerHQ/ledger-live/commit/eed4dcb2bd5d5a615686f0082f81f39e8739d55b) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Recover WebView
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+* [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset the migrate accounts old mecanism
+
+- [#3113](https://github.com/LedgerHQ/ledger-live/pull/3113) [`e486e56723`](https://github.com/LedgerHQ/ledger-live/commit/e486e56723c2e6fe6d299f53b38cb4b03a3ee3ea) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - remove currency under feature flag that has been release
+
+### Patch Changes
+
+- [#3120](https://github.com/LedgerHQ/ledger-live/pull/3120) [`76f4c19ce6`](https://github.com/LedgerHQ/ledger-live/commit/76f4c19ce67f2cf42c1b00add069b49863b7fe94) Thanks [@RamyEB](https://github.com/RamyEB)! - Remove the cancel button and make the top left arrow return user to Browse Web3.
+
+* [#3111](https://github.com/LedgerHQ/ledger-live/pull/3111) [`e6e71dc909`](https://github.com/LedgerHQ/ledger-live/commit/e6e71dc909ff9382c7b1d1033ebdffde15ec847e) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix a bug on the firmware update making the app to be stuck in a single step of the update model while the device updated.
+
+- [#3077](https://github.com/LedgerHQ/ledger-live/pull/3077) [`11badbc999`](https://github.com/LedgerHQ/ledger-live/commit/11badbc9991e26b220bcbdab256b55aa4b295a0d) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Fixed upsell triggering even if feature flag is off
+
+* [#3104](https://github.com/LedgerHQ/ledger-live/pull/3104) [`1fdf8e7242`](https://github.com/LedgerHQ/ledger-live/commit/1fdf8e72427367e2082d6ecbbd8ae7b0bee45a7b) Thanks [@Justkant](https://github.com/Justkant)! - fix: recover deeplinks
+
+- [#3087](https://github.com/LedgerHQ/ledger-live/pull/3087) [`9c5be7fa63`](https://github.com/LedgerHQ/ledger-live/commit/9c5be7fa63f9bf793c97ea40c0dbc23b5bf56f86) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Small improvement to the logs viewer debug tool
+
+* [#3116](https://github.com/LedgerHQ/ledger-live/pull/3116) [`37b05b991d`](https://github.com/LedgerHQ/ledger-live/commit/37b05b991db519073a92ad5f4e7784006e8517d4) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Fixed a regression on LLD live-app sdk exchange app; backported exchange app from live-app-sdk to wallet-api; added "allow debug apps" in LLM developers menu
+
+- [#3177](https://github.com/LedgerHQ/ledger-live/pull/3177) [`193d69d72c`](https://github.com/LedgerHQ/ledger-live/commit/193d69d72c9887f020d8d01b24773ccaf84a77c9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - drop tron staking for LLM
+
+* [#3129](https://github.com/LedgerHQ/ledger-live/pull/3129) [`7d0f4855de`](https://github.com/LedgerHQ/ledger-live/commit/7d0f4855de5d6e0c08df9693c957dfa1f09a4bd1) Thanks [@Justkant](https://github.com/Justkant)! - fix: navigation.pop in DeviceConnect
+
+  As it can be used in the Onboarding base navigator now, if you pop by getting the parent, you will pop the BaseNavigator
+
+- [#3099](https://github.com/LedgerHQ/ledger-live/pull/3099) [`e29f7c7bda`](https://github.com/LedgerHQ/ledger-live/commit/e29f7c7bda0444e5d592bd873c894b043eb22417) Thanks [@Justkant](https://github.com/Justkant)! - fix: react-native-webview target="\_blank" on iOS
+
+  Also fix the html5 history.pushState navigation on android
+  More infos on both issues below:
+
+  - https://github.com/react-native-webview/react-native-webview/issues/2905
+  - https://github.com/react-native-webview/react-native-webview/issues/2667
+  - https://github.com/react-native-webview/react-native-webview/pull/2598
+
+* [#3096](https://github.com/LedgerHQ/ledger-live/pull/3096) [`9133f2fa1c`](https://github.com/LedgerHQ/ledger-live/commit/9133f2fa1cfb61a3f00101d33abebfbf3c86d723) Thanks [@RamyEB](https://github.com/RamyEB)! - Remove recently used from search page Discovery 2
+
+* Updated dependencies [[`5fa3f57e08`](https://github.com/LedgerHQ/ledger-live/commit/5fa3f57e08676481d18bdf7fc2406ac1184b1a9a), [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`a1e3f90e7f`](https://github.com/LedgerHQ/ledger-live/commit/a1e3f90e7f34303ab779e90c0e48642348d79280), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`c59bee8935`](https://github.com/LedgerHQ/ledger-live/commit/c59bee89357bb29097fb97ca67ece845630d982a), [`64ee0b2e03`](https://github.com/LedgerHQ/ledger-live/commit/64ee0b2e032187f5b742f594390a5b30d3850751), [`fb65760778`](https://github.com/LedgerHQ/ledger-live/commit/fb6576077854fb21541350a9f7c1cb528fba6e6d), [`a62be79a56`](https://github.com/LedgerHQ/ledger-live/commit/a62be79a56e7aaaf7712fe006d357e3517f1c4b9), [`282cad03fb`](https://github.com/LedgerHQ/ledger-live/commit/282cad03fb733cc71e767b641c53ee2d469b8295), [`5fa4697e8d`](https://github.com/LedgerHQ/ledger-live/commit/5fa4697e8d1cfd1dba0f942745d1bfc6984ae1c9), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`0941844a56`](https://github.com/LedgerHQ/ledger-live/commit/0941844a560b5b7b066fb1ffbec1dde7111c083a), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4), [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/live-common@29.3.0
+  - @ledgerhq/types-cryptoassets@7.1.0
+  - @ledgerhq/types-live@6.32.0
+  - @ledgerhq/native-ui@0.18.0
+  - @ledgerhq/coin-framework@0.3.0
+  - @ledgerhq/react-native-hw-transport-ble@6.28.5
+  - @ledgerhq/domain-service@1.0.0
+
+## 3.19.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`a1e3f90e7f`](https://github.com/LedgerHQ/ledger-live/commit/a1e3f90e7f34303ab779e90c0e48642348d79280)]:
+  - @ledgerhq/live-common@29.3.0-next.1
+
+## 3.19.0-next.1
+
+### Patch Changes
+
+- [#3177](https://github.com/LedgerHQ/ledger-live/pull/3177) [`193d69d72c`](https://github.com/LedgerHQ/ledger-live/commit/193d69d72c9887f020d8d01b24773ccaf84a77c9) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - drop tron staking for LLM
+
+## 3.19.0-next.0
+
+### Minor Changes
+
+- [#3016](https://github.com/LedgerHQ/ledger-live/pull/3016) [`5fa3f57e08`](https://github.com/LedgerHQ/ledger-live/commit/5fa3f57e08676481d18bdf7fc2406ac1184b1a9a) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - feat: ledger recover feature flag
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+- [#2891](https://github.com/LedgerHQ/ledger-live/pull/2891) [`04ad7f2de3`](https://github.com/LedgerHQ/ledger-live/commit/04ad7f2de35c5e5e3025f4db81815542af3816f8) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Refactored Webviews;
+  Added WebPTXPlayer;
+
+- [#2969](https://github.com/LedgerHQ/ledger-live/pull/2969) [`44567eeb17`](https://github.com/LedgerHQ/ledger-live/commit/44567eeb17cb81b8a812d89316d3b66d67fe6aaf) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Domain service for LLM
+
+- [#2861](https://github.com/LedgerHQ/ledger-live/pull/2861) [`0941844a56`](https://github.com/LedgerHQ/ledger-live/commit/0941844a560b5b7b066fb1ffbec1dde7111c083a) Thanks [@cksanders](https://github.com/cksanders)! - - Update Kotlin version
+
+  - Updated `wallet-api-server` and `wallet-api-core` version
+  - Add Next storage & remove obsolete `AsyncStorage_db_size_in_MB`
+  - Added wallet api storage support
+  - Add stable & tested LLD storage support
+
+- [#3075](https://github.com/LedgerHQ/ledger-live/pull/3075) [`eed4dcb2bd`](https://github.com/LedgerHQ/ledger-live/commit/eed4dcb2bd5d5a615686f0082f81f39e8739d55b) Thanks [@jules-grenier-ledger](https://github.com/jules-grenier-ledger)! - Recover WebView
+
+- [#3059](https://github.com/LedgerHQ/ledger-live/pull/3059) [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add domain support to Ledger Live apps and libs
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset the migrate accounts old mecanism
+
+- [#3113](https://github.com/LedgerHQ/ledger-live/pull/3113) [`e486e56723`](https://github.com/LedgerHQ/ledger-live/commit/e486e56723c2e6fe6d299f53b38cb4b03a3ee3ea) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - remove currency under feature flag that has been release
+
+### Patch Changes
+
+- [#3120](https://github.com/LedgerHQ/ledger-live/pull/3120) [`76f4c19ce6`](https://github.com/LedgerHQ/ledger-live/commit/76f4c19ce67f2cf42c1b00add069b49863b7fe94) Thanks [@RamyEB](https://github.com/RamyEB)! - Remove the cancel button and make the top left arrow return user to Browse Web3.
+
+- [#3111](https://github.com/LedgerHQ/ledger-live/pull/3111) [`e6e71dc909`](https://github.com/LedgerHQ/ledger-live/commit/e6e71dc909ff9382c7b1d1033ebdffde15ec847e) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix a bug on the firmware update making the app to be stuck in a single step of the update model while the device updated.
+
+- [#3077](https://github.com/LedgerHQ/ledger-live/pull/3077) [`11badbc999`](https://github.com/LedgerHQ/ledger-live/commit/11badbc9991e26b220bcbdab256b55aa4b295a0d) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Fixed upsell triggering even if feature flag is off
+
+- [#3104](https://github.com/LedgerHQ/ledger-live/pull/3104) [`1fdf8e7242`](https://github.com/LedgerHQ/ledger-live/commit/1fdf8e72427367e2082d6ecbbd8ae7b0bee45a7b) Thanks [@Justkant](https://github.com/Justkant)! - fix: recover deeplinks
+
+- [#3087](https://github.com/LedgerHQ/ledger-live/pull/3087) [`9c5be7fa63`](https://github.com/LedgerHQ/ledger-live/commit/9c5be7fa63f9bf793c97ea40c0dbc23b5bf56f86) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Small improvement to the logs viewer debug tool
+
+- [#3116](https://github.com/LedgerHQ/ledger-live/pull/3116) [`37b05b991d`](https://github.com/LedgerHQ/ledger-live/commit/37b05b991db519073a92ad5f4e7784006e8517d4) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Fixed a regression on LLD live-app sdk exchange app; backported exchange app from live-app-sdk to wallet-api; added "allow debug apps" in LLM developers menu
+
+- [#3129](https://github.com/LedgerHQ/ledger-live/pull/3129) [`7d0f4855de`](https://github.com/LedgerHQ/ledger-live/commit/7d0f4855de5d6e0c08df9693c957dfa1f09a4bd1) Thanks [@Justkant](https://github.com/Justkant)! - fix: navigation.pop in DeviceConnect
+
+  As it can be used in the Onboarding base navigator now, if you pop by getting the parent, you will pop the BaseNavigator
+
+- [#3099](https://github.com/LedgerHQ/ledger-live/pull/3099) [`e29f7c7bda`](https://github.com/LedgerHQ/ledger-live/commit/e29f7c7bda0444e5d592bd873c894b043eb22417) Thanks [@Justkant](https://github.com/Justkant)! - fix: react-native-webview target="\_blank" on iOS
+
+  Also fix the html5 history.pushState navigation on android
+  More infos on both issues below:
+
+  - https://github.com/react-native-webview/react-native-webview/issues/2905
+  - https://github.com/react-native-webview/react-native-webview/issues/2667
+  - https://github.com/react-native-webview/react-native-webview/pull/2598
+
+- [#3096](https://github.com/LedgerHQ/ledger-live/pull/3096) [`9133f2fa1c`](https://github.com/LedgerHQ/ledger-live/commit/9133f2fa1cfb61a3f00101d33abebfbf3c86d723) Thanks [@RamyEB](https://github.com/RamyEB)! - Remove recently used from search page Discovery 2
+
+- Updated dependencies [[`5fa3f57e08`](https://github.com/LedgerHQ/ledger-live/commit/5fa3f57e08676481d18bdf7fc2406ac1184b1a9a), [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`c59bee8935`](https://github.com/LedgerHQ/ledger-live/commit/c59bee89357bb29097fb97ca67ece845630d982a), [`64ee0b2e03`](https://github.com/LedgerHQ/ledger-live/commit/64ee0b2e032187f5b742f594390a5b30d3850751), [`fb65760778`](https://github.com/LedgerHQ/ledger-live/commit/fb6576077854fb21541350a9f7c1cb528fba6e6d), [`a62be79a56`](https://github.com/LedgerHQ/ledger-live/commit/a62be79a56e7aaaf7712fe006d357e3517f1c4b9), [`282cad03fb`](https://github.com/LedgerHQ/ledger-live/commit/282cad03fb733cc71e767b641c53ee2d469b8295), [`5fa4697e8d`](https://github.com/LedgerHQ/ledger-live/commit/5fa4697e8d1cfd1dba0f942745d1bfc6984ae1c9), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`0941844a56`](https://github.com/LedgerHQ/ledger-live/commit/0941844a560b5b7b066fb1ffbec1dde7111c083a), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4), [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/live-common@29.3.0-next.0
+  - @ledgerhq/types-cryptoassets@7.1.0-next.0
+  - @ledgerhq/types-live@6.32.0-next.0
+  - @ledgerhq/native-ui@0.18.0-next.0
+  - @ledgerhq/coin-framework@0.3.0-next.0
+  - @ledgerhq/react-native-hw-transport-ble@6.28.5-next.0
+  - @ledgerhq/domain-service@1.0.0-next.0
+
 ## 3.18.0
 
 ### Minor Changes

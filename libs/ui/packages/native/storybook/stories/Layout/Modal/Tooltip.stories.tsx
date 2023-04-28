@@ -15,7 +15,7 @@ export const Default: ComponentStory<typeof Tooltip> = (args: typeof DefaultArgs
       title={args.title}
       description={args.description}
       subtitle={args.subtitle}
-      Icon={Icons.WarningLight}
+      Icon={Icons.WarningMedium}
       tooltipContent={
         <>
           <Text>Tooltip323</Text>

@@ -7,7 +7,6 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import GridIcon from "~/renderer/icons/Grid";
 import ListIcon from "~/renderer/icons/List";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import AccountsOrder from "./Order";
 import AccountsRange from "./Range";
 function DisplayOptions() {

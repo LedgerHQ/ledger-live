@@ -29,7 +29,7 @@ export function Terms({
       isRequestingToBeOpened={isOpen}
       noCloseButton
       Icon={Icons.InfoMedium}
-      iconColor="warning.c100"
+      iconColor="warning.c50"
       title={t("transfer.swap2.form.disclaimer.title")}
       description={t("transfer.swap2.form.disclaimer.desc", {
         providerName: getProviderName(provider),

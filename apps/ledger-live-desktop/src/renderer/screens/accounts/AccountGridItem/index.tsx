@@ -6,7 +6,7 @@ import Box from "~/renderer/components/Box";
 import AccountCardHeader from "./Header";
 import AccountCardBody from "./Body";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   hidden?: boolean;
   account: TokenAccount | Account;
@@ -45,7 +45,7 @@ export default function AccountCard({
     </AccountContextMenu>
   );
 }
-const Card: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Card = styled(Box).attrs(() => ({
   bg: "palette.background.paper",
   p: 3,
   boxShadow: 0,

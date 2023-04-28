@@ -3686,8 +3686,8 @@ export const hasCryptoCurrencyId = (id: string): boolean =>
  *
  * @param {*} id
  */
-export function getCryptoCurrencyById(id: string): CryptoCurrency {
-  const currency = findCryptoCurrencyById(id);
+export function getCryptoCurrencyById(id: string | undefined): CryptoCurrency {
+  const currency = id && findCryptoCurrencyById(id);
 
   if (!currency) {
     throw new Error(`currency with id "${id}" not found`);

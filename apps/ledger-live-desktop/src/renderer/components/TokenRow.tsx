@@ -9,7 +9,6 @@ import Balance from "~/renderer/screens/accounts/AccountRowItem/Balance";
 import Delta from "~/renderer/screens/accounts/AccountRowItem/Delta";
 import Countervalue from "~/renderer/screens/accounts/AccountRowItem/Countervalue";
 import Star from "~/renderer/components/Stars/Star";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { TableRow } from "./TableContainer";
 type Props = {
   account: AccountLike;
@@ -20,7 +19,7 @@ type Props = {
   onClick: (b: AccountLike, a: Account) => void;
   range: PortfolioRange;
 };
-const NestedRow: ThemedComponent<{}> = styled(Box)`
+const NestedRow = styled(Box)`
   flex: 1;
   font-weight: 600;
   align-items: center;

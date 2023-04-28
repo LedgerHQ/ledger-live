@@ -1,4 +1,6 @@
 import os from "os";
+import * as SentryMainModule from "@sentry/electron/main";
+import { ElectronMainOptions } from "@sentry/electron/main";
 import pname from "./pname";
 import anonymizer from "./anonymizer";
 import "../env";
@@ -10,7 +12,7 @@ import { getOperatingSystemSupportStatus } from "~/support/os";
 // initially we will send errors (anonymized as we don't initially know "userId" neither)
 let shouldSendCallback = () => true;
 let productionBuildSampleRate = 1;
-let tracesSampleRate = 0.005;
+let tracesSampleRate = 0.0002;
 if (process.env.SENTRY_SAMPLE_RATE) {
   const v = parseFloat(process.env.SENTRY_SAMPLE_RATE);
   productionBuildSampleRate = v;
@@ -105,7 +107,7 @@ const ignoreErrors = [
   "Missing or invalid topic field", // wallet connect issue
 ];
 
-export function init(Sentry: any, opts: any) {
+export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMainOptions>) {
   if (!getOperatingSystemSupportStatus().supported) return false;
   if (!__SENTRY_URL__) return false;
   Sentry.init({
@@ -124,10 +126,10 @@ export function init(Sentry: any, opts: any) {
         process: process?.title || "",
       },
       user: {
-        ip_address: null,
+        ip_address: undefined,
       },
     },
-    beforeSend(data: any, hint: any) {
+    beforeSend(data, hint) {
       if (__DEV__)
         console.log("before-send", {
           data,
@@ -137,7 +139,7 @@ export function init(Sentry: any, opts: any) {
       if (typeof data !== "object" || !data) return data;
 
       delete data.server_name; // hides the user machine name
-      anonymizer.filepathRecursiveReplacer(data);
+      anonymizer.filepathRecursiveReplacer((data as unknown) as Record<string, unknown>);
       console.log("SENTRY REPORT", data);
       return data;
     },

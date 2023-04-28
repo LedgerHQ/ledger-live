@@ -27,7 +27,7 @@ const defaultFilter = createFilter({
     return `${currency.ticker}|${currency.name}|${name}`;
   },
 });
-const filterOption = o => (candidate, input) => {
+const filterOption = () => (candidate, input) => {
   const selfMatches = defaultFilter(candidate, input);
   if (selfMatches) return [selfMatches, true];
   return [false, false];
@@ -117,6 +117,6 @@ const RawSelectAccount = ({ accounts, value, onChange, t, ...props }: Props) => 
     />
   );
 };
-export const SelectAccount: React$ComponentType<OwnProps> = withTranslation()(RawSelectAccount);
-const m: React$ComponentType<OwnProps> = connect(mapStateToProps)(SelectAccount);
+export const SelectAccount: React.ComponentType<OwnProps> = withTranslation()(RawSelectAccount);
+const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(SelectAccount);
 export default m;

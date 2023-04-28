@@ -13,7 +13,8 @@ export const signMessage = async (
   let messageObj;
   let unsigned;
   try {
-    messageObj = JSON.parse(message);
+    if (message) messageObj = JSON.parse(message);
+    else messageObj = JSON.parse(rawMessage);
     unsigned = new ThorTransaction(messageObj);
   } catch (e) {
     console.error(e);

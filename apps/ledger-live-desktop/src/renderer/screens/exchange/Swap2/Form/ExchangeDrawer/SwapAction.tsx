@@ -111,7 +111,7 @@ export default function SwapAction({
         device: deviceRef,
         userId: providerKYC?.id,
       }}
-      onResult={({ initSwapResult, initSwapError, swapId, ...rest }) => {
+      onResult={({ initSwapResult, initSwapError, swapId }) => {
         if (initSwapError) {
           onError({
             error: initSwapError,

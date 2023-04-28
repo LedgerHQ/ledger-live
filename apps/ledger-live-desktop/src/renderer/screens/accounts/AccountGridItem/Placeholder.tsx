@@ -6,10 +6,9 @@ import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Image from "~/renderer/components/Image";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import lightEmptyAccountTile from "~/renderer/images/light-empty-account-tile.svg";
 import darkEmptyAccountTile from "~/renderer/images/dark-empty-account-tile.svg";
-const Wrapper: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   p: 4,
   flex: 1,
   alignItems: "center",

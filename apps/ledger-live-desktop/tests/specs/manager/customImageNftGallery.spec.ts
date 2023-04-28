@@ -5,7 +5,7 @@ import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../models/Layout";
 import { CustomImageDrawer } from "../../models/CustomImageDrawer";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { padStart } from "lodash";
+import padStart from "lodash/padStart";
 
 test.use({
   userdata: "2_accounts_eth_with_tokens_and_nft",

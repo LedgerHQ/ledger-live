@@ -1,98 +1,113 @@
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useMemo } from "react";
+import { useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useLocale } from "../context/Locale";
 import { urls } from "../config/urls";
+import { store } from "../context/LedgerStore";
+import { generalTermsVersionAcceptedSelector } from "../reducers/settings";
+import { setGeneralTermsVersionAccepted } from "../actions/settings";
 
-const currentTermsRequired = "2022-05-10";
-const currentLendingTermsRequired = "2020-11-10";
+const generalTermsVersionRequired = "2022-05-10";
 
-function isAcceptedVersionUpToDate(
-  acceptedVersion: string,
-  currentVersion: string,
-) {
+/**
+ * Legacy storage data: we used to save the accepted version directly in
+ * AsyncStorage. Now we use the state.settings part of Redux.
+ * Do not write anything new at this storage key.
+ * The migration of that data is done in the `GeneralTermsContextProvider`
+ * component below.
+ * */
+const LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY =
+  "acceptedTermsVersion";
+async function loadLegacyStorageAcceptedTermsVersion() {
+  return AsyncStorage.getItem(
+    LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY,
+  );
+}
+async function eraseLegacyStorageAcceptedTermsVersion() {
+  AsyncStorage.removeItem(LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY);
+}
+
+function isAcceptedVersionUpToDate({
+  acceptedVersion,
+  requiredVersion,
+}: {
+  acceptedVersion?: string;
+  requiredVersion: string;
+}) {
   if (!acceptedVersion) {
     return false;
   }
-
   try {
     const acceptedTermsVersion = new Date(acceptedVersion);
-    const currentTermsVersion = new Date(currentVersion);
-
+    const currentTermsVersion = new Date(requiredVersion);
     return acceptedTermsVersion >= currentTermsVersion;
   } catch (error) {
     console.error(`Failed to parse terms version's dates: ${error}`);
-
     return false;
   }
 }
 
-export async function isAcceptedTerms() {
-  const acceptedTermsVersion = await AsyncStorage.getItem(
-    "acceptedTermsVersion",
+async function unacceptGeneralTerms() {
+  store.dispatch(setGeneralTermsVersionAccepted(undefined));
+}
+
+async function setGeneralTermsAcceptedVersion(acceptedVersion: string) {
+  store.dispatch(setGeneralTermsVersionAccepted(acceptedVersion));
+}
+
+export async function acceptGeneralTermsLastVersion() {
+  setGeneralTermsAcceptedVersion(generalTermsVersionRequired);
+}
+
+type TermsContextValue = {
+  accepted: boolean;
+  accept: () => void;
+  unAccept: () => void;
+};
+
+export const TermsContext = React.createContext<TermsContextValue>({
+  accepted: false,
+  accept: acceptGeneralTermsLastVersion,
+  unAccept: unacceptGeneralTerms,
+});
+
+export const GeneralTermsContextProvider: React.FC<{
+  children?: React.ReactNode | null | undefined;
+}> = ({ children }) => {
+  const generalTermsVersionAccepted = useSelector(
+    generalTermsVersionAcceptedSelector,
   );
 
-  if (!acceptedTermsVersion) {
-    return false;
-  }
+  useEffect(() => {
+    // migration of the "accepted version" data from legacy storage key to redux
+    loadLegacyStorageAcceptedTermsVersion().then(res => {
+      if (res) {
+        setGeneralTermsAcceptedVersion(res);
+        eraseLegacyStorageAcceptedTermsVersion();
+      }
+    });
+  }, []);
 
-  return isAcceptedVersionUpToDate(acceptedTermsVersion, currentTermsRequired);
-}
-
-export async function isAcceptedLendingTerms() {
-  const acceptedLendingTermsVersion = await AsyncStorage.getItem(
-    "acceptedLendingTermsVersion",
+  const value = useMemo(
+    () => ({
+      accepted: isAcceptedVersionUpToDate({
+        acceptedVersion: generalTermsVersionAccepted,
+        requiredVersion: generalTermsVersionRequired,
+      }),
+      accept: acceptGeneralTermsLastVersion,
+      unAccept: unacceptGeneralTerms,
+    }),
+    [generalTermsVersionAccepted],
   );
 
-  if (!acceptedLendingTermsVersion) {
-    return false;
-  }
-
-  return isAcceptedVersionUpToDate(
-    acceptedLendingTermsVersion,
-    currentLendingTermsRequired,
+  return (
+    <TermsContext.Provider value={value}>{children}</TermsContext.Provider>
   );
-}
-
-export async function unAcceptTerms() {
-  await AsyncStorage.removeItem("acceptedTermsVersion");
-}
-
-export async function acceptTerms() {
-  await AsyncStorage.setItem("acceptedTermsVersion", currentTermsRequired);
-}
-
-export async function acceptLendingTerms() {
-  await AsyncStorage.setItem(
-    "acceptedLendingTermsVersion",
-    currentLendingTermsRequired,
-  );
-}
+};
 
 export function useLocalizedTermsUrl() {
   const { locale } = useLocale();
 
   return (urls.terms as Record<string, string>)[locale] || urls.terms.en;
 }
-
-export const useTermsAccept = () => {
-  const [accepted, setAccepted] = useState(true);
-
-  const unAccept = useCallback(() => {
-    unAcceptTerms().then(() => {
-      setAccepted(false);
-    });
-  }, []);
-
-  const accept = useCallback(() => {
-    acceptTerms().then(() => {
-      setAccepted(true);
-    });
-  }, []);
-
-  useEffect(() => {
-    isAcceptedTerms().then(setAccepted);
-  }, []);
-
-  return [accepted, accept, unAccept] as const;
-};

@@ -13,7 +13,7 @@ import {
 } from "@ledgerhq/coin-framework/transaction/common";
 
 export const formatTransaction = (t: Transaction): string => {
-  return "";
+  return t.estimatedFees.toString();
 };
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {

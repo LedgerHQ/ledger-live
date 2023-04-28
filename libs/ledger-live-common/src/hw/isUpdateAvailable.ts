@@ -8,10 +8,9 @@
  * app that fulfils the minimum version defined we are instead now throwing a fw update error.
  */
 import { DeviceInfo } from "@ledgerhq/types-live";
-import { identifyTargetId, DeviceModelId } from "@ledgerhq/devices";
 import semver from "semver";
 import { getProviderId } from "../manager/provider";
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "../manager/api";
 import { AppAndVersion } from "./connectApp";
 import { mustUpgrade } from "../apps";
 
@@ -20,8 +19,6 @@ const isUpdateAvailable = async (
   appAndVersion: AppAndVersion,
   checkMustUpdate = true
 ): Promise<boolean> => {
-  const deviceModel = identifyTargetId(deviceInfo.targetId as number);
-
   const deviceVersionP = ManagerAPI.getDeviceVersion(
     deviceInfo.targetId,
     getProviderId(deviceInfo)
@@ -58,11 +55,7 @@ const isUpdateAvailable = async (
 
   return (
     !!appAvailableInProvider &&
-    !mustUpgrade(
-      deviceModel?.id as DeviceModelId,
-      appAvailableInProvider.name,
-      appAvailableInProvider.version
-    )
+    !mustUpgrade(appAvailableInProvider.name, appAvailableInProvider.version)
   );
 };
 
