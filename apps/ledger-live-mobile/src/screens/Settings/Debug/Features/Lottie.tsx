@@ -47,7 +47,11 @@ const DebugLottie = () => {
   const [wired, setWired] = useState(false);
   const [key, setKey] = useState<string>("plugAndPinCode");
   const [keyModalVisible, setKeyModalVisible] = useState(false);
+
+  const [nonce, setNonce] = useState(0);
   const animation = useMemo(() => {
+    // Only updating the animation source does not trigger the animation to re-render and start
+    setNonce(nonce => nonce + 1);
     if (keys.includes(key)) {
       // Normal deviceAction animations
       return getDeviceAnimation({
@@ -68,6 +72,7 @@ const DebugLottie = () => {
 
     return null; // Onboarding animations
   }, [key, keys, modelId, onBoardingKeys, wired]);
+
   const animation2 = useMemo(() => {
     if (keys.includes(key)) {
       // Normal deviceAction animations
@@ -89,8 +94,10 @@ const DebugLottie = () => {
 
     return null; // Onboarding animations
   }, [key, keys, modelId, onBoardingKeys, wired]);
+
   const allKeys = [...keys, ...onBoardingKeys];
   const keyIndex = allKeys.findIndex(k => k === key);
+
   return (
     <SafeAreaView
       edges={edges}
@@ -100,6 +107,7 @@ const DebugLottie = () => {
           backgroundColor: colors.background,
         },
       ]}
+      key={nonce}
     >
       <LText secondary semiBold style={styles.title}>
         {!key ? "Select Animation" : `Showing '${key}'`}
