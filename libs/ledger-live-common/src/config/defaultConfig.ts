@@ -30,7 +30,7 @@ const defaultConfig = {
         minGasPrice: 0.025,
       },
       persistence: {
-        lcd: "https://rest.core.persistence.one",
+        lcd: "https://rest-persistence.architectnodes.com",
         minGasPrice: 0.025,
       },
       quicksilver: {
