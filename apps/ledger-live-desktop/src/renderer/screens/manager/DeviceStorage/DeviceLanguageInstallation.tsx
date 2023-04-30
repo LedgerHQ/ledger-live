@@ -125,7 +125,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
       </Flex>
       {(!installing || installed) && (
         <Flex flexDirection="column" rowGap={8} flex={0}>
-          <Divider variant="light" />
+          <Divider />
           <Flex alignSelf="end" px={12} pb={8}>
             <Button
               data-test-id={

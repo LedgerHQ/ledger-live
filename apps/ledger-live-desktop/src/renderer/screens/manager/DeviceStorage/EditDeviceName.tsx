@@ -166,7 +166,7 @@ const EditDeviceName: React.FC<Props> = ({
         )}
         {(!running || completed) && (
           <Flex flexDirection="column" rowGap={8}>
-            <Divider variant="light" />
+            <Divider />
             <Flex alignSelf="end" px={12} pb={8}>
               <Button
                 variant="main"
