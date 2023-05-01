@@ -4,13 +4,15 @@ import * as logic from "./logic";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 import data from "./preloadedData.mock";
 import cryptoFactory from "./chain/chain";
+import defaultConfig from "../../config/defaultConfig";
 import { BigNumber } from "bignumber.js";
 
 jest.mock("./js-prepareTransaction", () => ({
   calculateFees: jest.fn(() => Promise.resolve({})),
 }));
 
-const LEDGER_VALIDATOR_ADDRESS = cryptoFactory("cosmos").ledgerValidator;
+const LEDGER_VALIDATOR_ADDRESS =
+  defaultConfig.config.cosmos.cosmos.ledgerValidator;
 const ledgerValidator: CosmosValidatorItem | undefined = data.validators.find(
   (x) => x.validatorAddress === LEDGER_VALIDATOR_ADDRESS
 );
@@ -103,6 +105,13 @@ const validatorsMap = {
 };
 
 describe("cosmos/banner", () => {
+  beforeAll(() => {
+    // FIXME cryptoFactory should just be replaced with defaultConfig
+    const cosmos = cryptoFactory("cosmos");
+    cosmos.lcd = defaultConfig.config.cosmos.cosmos.lcd;
+    cosmos.minGasPrice = defaultConfig.config.cosmos.cosmos.minGasPrice;
+    cosmos.ledgerValidator = defaultConfig.config.cosmos.cosmos.ledgerValidator;
+  });
   describe("useCosmosFormattedDelegations", () => {
     afterEach(() => {
       jest.restoreAllMocks();
