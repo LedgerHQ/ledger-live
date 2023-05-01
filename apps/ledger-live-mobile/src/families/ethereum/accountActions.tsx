@@ -44,7 +44,7 @@ const getMainActions = ({
         event: "button_clicked",
         eventProperties: {
           button: "stake",
-          token: "ETH",
+          currency: "ETH",
           page: "Account Page",
         },
       },

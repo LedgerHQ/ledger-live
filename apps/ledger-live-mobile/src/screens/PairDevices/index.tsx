@@ -262,7 +262,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
   switch (status) {
     case "scanning":
       return (
-        <Scanning // $FlowFixMe
+        <Scanning
           onSelect={onSelect}
           onError={onError}
           onTimeout={onTimeout}

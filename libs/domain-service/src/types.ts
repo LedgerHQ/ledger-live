@@ -21,4 +21,16 @@ export type Registry = {
   coinTypes: CoinType[];
 };
 
+interface PromiseResolution<T> {
+  status: "fulfilled";
+  value: T;
+}
+interface PromiseRejection<E> {
+  status: "rejected";
+  reason: E;
+}
+export type PromiseResult<T, E = unknown> =
+  | PromiseResolution<T>
+  | PromiseRejection<E>;
+
 export { SupportedRegistries, DomainServiceResolution };

@@ -5,13 +5,7 @@ import {
   formatDeviceAmount,
   SpeculosButton,
 } from "../../bot/specs";
-
-function subAccount(subAccountId, account) {
-  const sub = (account.subAccounts || []).find((a) => a.id === subAccountId);
-  if (!sub || sub.type !== "TokenAccount")
-    throw new Error("expected sub account id " + String(subAccountId));
-  return sub;
-}
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 
 const maxFeesExpectedValue = ({ account, status }) =>
   formatDeviceAmount(account.currency, status.estimatedFees);
@@ -31,12 +25,13 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         title: "Amount",
         button: SpeculosButton.RIGHT,
         expectedValue: ({ account, status, transaction }) => {
-          const a = transaction.subAccountId
-            ? subAccount(transaction.subAccountId, account)
-            : null;
+          const subAccount = findSubAccountById(
+            account,
+            transaction.subAccountId || ""
+          );
 
-          if (a) {
-            return formatDeviceAmount(a.token, status.amount);
+          if (subAccount && subAccount.type === "TokenAccount") {
+            return formatDeviceAmount(subAccount.token, status.amount);
           }
 
           return formatDeviceAmount(account.currency, status.amount);

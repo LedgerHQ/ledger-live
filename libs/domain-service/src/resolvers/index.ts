@@ -1,18 +1,13 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import eip55 from "eip55";
 import { log } from "@ledgerhq/logs";
 import { DomainServiceResolution, SupportedRegistries } from "../types";
+import { allSettled } from "../utils";
 import {
   getRegistries,
   getRegistriesForAddress,
   getRegistriesForDomain,
 } from "../registries";
-
-if (typeof Promise.allSettled === "undefined") {
-  throw new Error(
-    "This lib requires Promise.allSettled in order to work. Please polyfill this method if needed."
-  );
-}
 
 /**
  * Get an array of addresses for a domain
@@ -35,7 +30,7 @@ export const resolveDomain = async (
     return getRegistriesForDomain(domain);
   })();
 
-  const responses = Promise.allSettled(
+  const responses = allSettled(
     registries.map((registry) =>
       axios.request<string>({
         method: "GET",
@@ -48,7 +43,10 @@ export const resolveDomain = async (
     promises.reduce((result, promise, index) => {
       if (promise.status !== "fulfilled") {
         // ignore 404 error
-        if (promise.reason.response.status !== 404) {
+        if (
+          promise.reason instanceof AxiosError &&
+          promise.reason.response?.status !== 404
+        ) {
           log("domain-service", "failed to resolve a domain", {
             domain,
             error: promise.reason,
@@ -107,7 +105,7 @@ export const resolveAddress = async (
     }
   })();
 
-  const responses = Promise.allSettled(
+  const responses = allSettled(
     registries.map((registry) =>
       axios.request<string>({
         method: "GET",
@@ -120,7 +118,10 @@ export const resolveAddress = async (
     promises.reduce((result, promise, index) => {
       if (promise.status !== "fulfilled") {
         // ignore 404 error
-        if (promise.reason.response.status !== 404) {
+        if (
+          promise.reason instanceof AxiosError &&
+          promise.reason.response?.status !== 404
+        ) {
           log("domain-service", "failed to resolve a address", {
             address,
             error: promise.reason,

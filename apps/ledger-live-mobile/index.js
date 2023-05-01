@@ -17,9 +17,6 @@ import "text-encoding-polyfill";
 // import all possible polyfills done by live-common for React Native. See in reactNative.ts for more details.
 import "@ledgerhq/live-common/reactNative";
 
-// add support for Promise.allSettled in RN. Shim is done after imports.
-import allSettled from "promise.allsettled";
-
 import { AppRegistry } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
@@ -33,9 +30,6 @@ import { getAllDivergedFlags } from "./src/components/FirebaseFeatureFlags";
 import { enabledExperimentalFeatures } from "./src/experimental";
 import { languageSelector } from "./src/reducers/settings";
 import { store } from "./src/context/LedgerStore";
-
-// @see "promise.allsettled" import
-allSettled.shim();
 
 if (__DEV__) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires, import/no-extraneous-dependencies
@@ -118,7 +112,7 @@ if (Config.SENTRY_DSN && (!__DEV__ || Config.FORCE_SENTRY) && !Config.MOCK) {
     // release: `com.ledger.live@${pkg.version}+${VersionNumber.buildVersion}`,
     // dist: String(VersionNumber.buildVersion),
     sampleRate: 1,
-    tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.005,
+    tracesSampleRate: Config.FORCE_SENTRY ? 1 : 0.0002,
     integrations: [
       new Sentry.ReactNativeTracing({
         routingInstrumentation,
