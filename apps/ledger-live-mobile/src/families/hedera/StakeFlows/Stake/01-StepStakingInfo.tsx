@@ -16,6 +16,7 @@ import {
   STAKE_TYPE,
 } from "@ledgerhq/live-common/families/hedera/types";
 
+import type { StakeMethod } from "@ledgerhq/live-common/families/hedera/types";
 import { ScreenName } from "../../../../const";
 import { accountScreenSelector } from "../../../../reducers/accounts";
 
@@ -26,18 +27,13 @@ import StakeToAccountInput from "../components/StakeToAccountInput";
 import StakeToNodeSelect from "../components/StakeToNodeSelect";
 import DeclineRewardsCheckBox from "../components/DeclineRewardsCheckBox";
 
-import type {
-  Transaction,
-  StakeMethod,
-  StakeType,
-} from "@ledgerhq/live-common/families/hedera/types";
 import type { HederaStakeFlowParamList, Node, NodeList } from "../types";
 import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
 
-type RouteParams = {
-  transaction: Transaction;
-  stakeType: StakeType;
-};
+// type RouteParams = {
+//   transaction: Transaction;
+//   stakeType: StakeType;
+// };
 
 // type Props = {
 //   navigation: any;
@@ -46,39 +42,46 @@ type RouteParams = {
 //   };
 // };
 
-type Props = StackNavigatorProps<HederaStakeFlowParamList, ScreenName.HederaStakeInfo>;
+type Props = StackNavigatorProps<
+  HederaStakeFlowParamList,
+  ScreenName.HederaStakeInfo
+>;
 
 function StepStakingInfo({ navigation, route }: Props) {
-  // const {
-  //   params: { stakeType },
-  // } = route;
+  const {
+    params: { stakeType },
+  } = route;
   const { colors } = useTheme();
-  const { account } = useSelector(
-    accountScreenSelector(route),
-  );
+  const { account } = useSelector(accountScreenSelector(route));
+  const hederaAccount = account as HederaAccount;
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, undefined);
   const bridge = getAccountBridge(account, undefined);
 
-  let { transaction, status, updateTransaction } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(mainAccount);
+  const { transaction, status, updateTransaction } = useBridgeTransaction(
+    () => {
+      const t = bridge.createTransaction(mainAccount);
 
-    let transaction = bridge.updateTransaction(t, {
-      mode: "stake",
-      staked: { ...t.staked, stakeMethod: STAKE_METHOD.NODE, stakeType },
-    });
-
-    // account should have staking info in its `hederaResources`; set and update into `transaction`
-    if (stakeType === STAKE_TYPE.CHANGE) {
-      transaction = bridge.updateTransaction(transaction, {
-        staked: { ...transaction.staked, ...account.hederaResources.staked },
+      let transaction = bridge.updateTransaction(t, {
+        mode: "stake",
+        staked: { ...t.staked, stakeMethod: STAKE_METHOD.NODE, stakeType },
       });
-    }
 
-    return {
-      transaction,
-    };
-  });
+      // account should have staking info in its `hederaResources`; set and update into `transaction`
+      if (stakeType === STAKE_TYPE.CHANGE) {
+        transaction = bridge.updateTransaction(transaction, {
+          staked: {
+            ...transaction.staked,
+            ...hederaAccount.hederaResources.staked,
+          },
+        });
+      }
+
+      return {
+        transaction,
+      };
+    },
+  );
 
   // check if there are any errors in `status`
   const error =
@@ -146,7 +149,7 @@ function StepStakingInfo({ navigation, route }: Props) {
         staked: {
           ...transaction.staked,
 
-          accountId: accountId,
+          accountId,
           stakeMethod: STAKE_METHOD.ACCOUNT,
         },
       }),
@@ -163,7 +166,7 @@ function StepStakingInfo({ navigation, route }: Props) {
         staked: {
           ...transaction.staked,
 
-          nodeId: nodeId,
+          nodeId,
           stakeMethod: STAKE_METHOD.NODE,
         },
       }),
@@ -232,7 +235,7 @@ function StepStakingInfo({ navigation, route }: Props) {
 
   const onNext = () => {
     navigation.navigate(ScreenName.HederaStakeSummary, {
-      account,
+      account: hederaAccount,
       transaction,
     });
   };
@@ -260,6 +263,7 @@ function StepStakingInfo({ navigation, route }: Props) {
               selected={stakeToNode}
               nodeList={nodeList}
               onChange={handleNodeIdChange}
+              navigation={navigation}
             />
           )
         ) : null}

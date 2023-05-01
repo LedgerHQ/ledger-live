@@ -2,9 +2,8 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 
-import ToggleButton from "../../../../components/ToggleButton";
-
 import type { StakeMethod } from "@ledgerhq/live-common/families/hedera/types";
+import ToggleButton from "../../../../components/ToggleButton";
 
 type Props = {
   value: string;
@@ -20,7 +19,7 @@ type Props = {
 const StakeMethodSelect = ({ value, options, onChange }: Props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Stake to</Text>
+      <Text style={styles.text}>{`Stake to`}</Text>
       <ToggleButton value={value} options={options} onChange={onChange} />
     </View>
   );

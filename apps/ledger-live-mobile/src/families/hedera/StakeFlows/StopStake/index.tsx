@@ -11,8 +11,9 @@ import StepHeader from "../../../../components/StepHeader";
 import StepConfirmation from "./01-StepConfirmation";
 import ConnectDevice from "../../../../screens/ConnectDevice";
 import SelectDevice from "../../../../screens/SelectDevice";
-import ValidationError from "../../../../screens/SendFunds/07-ValidationError";
-import ValidationSuccess from "../../../../screens/SendFunds/07-ValidationSuccess";
+import ValidationError from "../Stake/02-ValidationError";
+import ValidationSuccess from "../Stake/02-ValidationSuccess";
+import { HederaStakeFlowParamList } from "../types";
 
 const totalSteps = "3";
 
@@ -122,4 +123,4 @@ const options = {
 
 export { StakeFlow as component, options };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<HederaStakeFlowParamList>();

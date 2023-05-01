@@ -13,8 +13,8 @@ import NodeListScreen from "./01a-NodeListScreen";
 import StepSummary from "./02-StepSummary";
 import ConnectDevice from "../../../../screens/ConnectDevice";
 import SelectDevice from "../../../../screens/SelectDevice";
-import ValidationError from "../../../../screens/SendFunds/07-ValidationError";
-import ValidationSuccess from "../../../../screens/SendFunds/07-ValidationSuccess";
+import ValidationError from "./02-ValidationError";
+import ValidationSuccess from "./02-ValidationSuccess";
 import { HederaStakeFlowParamList } from "../types";
 
 const totalSteps = "3";

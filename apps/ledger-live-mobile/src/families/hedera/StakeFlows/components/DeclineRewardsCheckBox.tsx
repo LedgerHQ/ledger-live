@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   checkboxWrapper: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
   },
   checkbox: {
     marginRight: 6,

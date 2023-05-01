@@ -7,22 +7,27 @@ import { Text } from "@ledgerhq/native-ui";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-
 import { ScreenName } from "../../../../const";
 import { accountScreenSelector } from "../../../../reducers/accounts";
 import Button from "../../../../components/Button";
 
-import type { StakeType } from "@ledgerhq/live-common/families/hedera/types";
+import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import { HederaStakeFlowParamList } from "../types";
 
-type RouteParams = {
-  stakeType: StakeType;
-};
-type Props = {
-  navigation: any;
-  route: {
-    params: RouteParams;
-  };
-};
+// type RouteParams = {
+//   stakeType: StakeType;
+// };
+// type Props = {
+//   navigation: any;
+//   route: {
+//     params: RouteParams;
+//   };
+// };
+
+type Props = StackNavigatorProps<
+  HederaStakeFlowParamList,
+  ScreenName.HederaStakeStopConfirmation
+>;
 
 function StepConfirmation({ navigation, route }: Props) {
   const {
@@ -55,7 +60,7 @@ function StepConfirmation({ navigation, route }: Props) {
   }, [navigation]);
 
   const onNo = useCallback(() => {
-    navigation.getParent().pop();
+    navigation.getParent();
   }, [navigation]);
 
   return (
@@ -67,17 +72,13 @@ function StepConfirmation({ navigation, route }: Props) {
       <Button
         type="primary"
         outline={false}
-        title={
-          <Trans i18nKey="hedera.common.yes" />
-        }
+        title={<Trans i18nKey="hedera.common.yes" />}
         containerStyle={styles.yesButton}
         onPress={onYes}
       />
       <Button
         type="secondary"
-        title={
-          <Trans i18nKey="hedera.common.no" />
-        }
+        title={<Trans i18nKey="hedera.common.no" />}
         containerStyle={styles.noButton}
         onPress={onNo}
       />

@@ -4,7 +4,7 @@ import { Icons } from "@ledgerhq/native-ui";
 import {
   HederaAccount,
   STAKE_TYPE,
-} from "@ledgerhq/live-common/lib/families/hedera/types";
+} from "@ledgerhq/live-common/families/hedera/types";
 
 import { NavigatorName, ScreenName } from "../../const";
 

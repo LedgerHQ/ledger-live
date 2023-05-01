@@ -3,15 +3,10 @@ import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
-
 import { ScreenName } from "../../../../const";
 
 import Button from "../../../../components/Button";
 
-import type {
-  Transaction,
-  HederaAccount,
-} from "@ledgerhq/live-common/families/hedera/types";
 import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
 import { HederaStakeFlowParamList } from "../types";
 
@@ -20,7 +15,10 @@ import { HederaStakeFlowParamList } from "../types";
 //   transaction: Transaction;
 // };
 
-type Props = StackNavigatorProps<HederaStakeFlowParamList, ScreenName.HederaStakeSummary>;
+type Props = StackNavigatorProps<
+  HederaStakeFlowParamList,
+  ScreenName.HederaStakeSummary
+>;
 
 function StepSummary({ navigation, route }: Props) {
   const {

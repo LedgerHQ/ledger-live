@@ -1,18 +1,23 @@
-import { HederaAccount, StakeType, Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
+import {
+  HederaAccount,
+  StakeType,
+  Transaction,
+} from "@ledgerhq/live-common/families/hedera/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const/navigation";
 
 export type Node = {
-    data: number;
-    label: string;
-    value: number;
-  };
-  
+  data: number;
+  label: string;
+  value: number;
+};
+
 export type NodeList = Node[];
 
 export type HederaStakeFlowParamList = {
   [ScreenName.HederaStakeInfo]: {
+    account: HederaAccount;
     transaction: Transaction;
     stakeType: StakeType;
   };
@@ -57,4 +62,8 @@ export type HederaStakeFlowParamList = {
     transaction: Transaction;
     result: Operation;
   };
-}
+  [ScreenName.HederaStakeStopConfirmation]: {
+    account: HederaAccount;
+    stakeType: StakeType;
+  };
+};

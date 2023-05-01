@@ -25,7 +25,10 @@ const StyledRectButton = styled(RectButton)`
 //   onChange: (node: Node) => void;
 // };
 
-type Props = StackNavigatorProps<HederaStakeFlowParamList, ScreenName.HederaStakeNodeList>;
+type Props = StackNavigatorProps<
+  HederaStakeFlowParamList,
+  ScreenName.HederaStakeNodeList
+>;
 
 function NodeListScreen({ navigation, route }: Props) {
   const {

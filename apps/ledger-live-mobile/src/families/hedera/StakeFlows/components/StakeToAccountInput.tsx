@@ -1,39 +1,24 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { Text } from "@ledgerhq/native-ui";
+import Clipboard from "@react-native-community/clipboard";
 
-import ToggleButton from "../../../../components/ToggleButton";
-
-import type { StakeMethod } from "@ledgerhq/live-common/families/hedera/types";
+import RecipientInput from "../../../../components/RecipientInput";
 
 type Props = {
   value: string;
-  disabled?: boolean;
-  options: Array<{
-    value: string;
-    label: string | React.ReactNode;
-    disabled?: boolean;
-  }>;
-  onChange: (_: StakeMethod | string) => void;
+  onChange: (_: string) => void;
 };
 
-const StakeMethodSelect = ({ value, options, onChange }: Props) => {
+function StakeToAccountInput({ onChange, value }: Props) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Stake to</Text>
-      <ToggleButton value={value} options={options} onChange={onChange} />
-    </View>
+    <RecipientInput
+      onPaste={async () => {
+        const pastedText = await Clipboard.getString();
+        onChange(pastedText);
+      }}
+      onChangeText={onChange}
+      value={value}
+    />
   );
-};
+}
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    marginBottom: 48,
-  },
-  text: {
-    marginBottom: 6,
-  },
-});
-
-export default StakeMethodSelect;
+export default StakeToAccountInput;
