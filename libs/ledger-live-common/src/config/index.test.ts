@@ -10,7 +10,7 @@ describe("getCurrencyConfiguration", () => {
     id: "cosmos",
   } as CryptoCurrency;
 
-  let warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+  const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 
   afterEach(() => {
     getCurrencyConfiguration.reset();
