@@ -11,6 +11,8 @@ jest.mock("./js-prepareTransaction", () => ({
   calculateFees: jest.fn(() => Promise.resolve({})),
 }));
 
+jest.mock("./chain/chain");
+
 const LEDGER_VALIDATOR_ADDRESS =
   defaultConfig.config.cosmos.cosmos.ledgerValidator;
 const ledgerValidator: CosmosValidatorItem | undefined = data.validators.find(
@@ -113,6 +115,12 @@ describe("cosmos/banner", () => {
     cosmos.ledgerValidator = defaultConfig.config.cosmos.cosmos.ledgerValidator;
   });
   describe("useCosmosFormattedDelegations", () => {
+    beforeEach(() => {
+      // @ts-expect-error Ledger value come from config
+      cryptoFactory.mockReturnValue({
+        ledgerValidator: LEDGER_VALIDATOR_ADDRESS,
+      });
+    });
     afterEach(() => {
       jest.restoreAllMocks();
     });
