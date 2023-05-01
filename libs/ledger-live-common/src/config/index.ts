@@ -43,5 +43,5 @@ export const getCurrencyConfiguration = makeLRUCache(
     }
   },
   (currency) => currency.id,
-  { ttl: 1000 } // 30mn 30 * 60 * 1000
+  { ttl: 30 * 60 * 1000 } // 30mn
 );
