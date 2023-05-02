@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import { isGlobalTabEnabled } from "~/config/global-tab";
 import { rgba } from "~/renderer/styles/helpers";
-import Box, { BoxProps } from "./Box";
+import Box from "./Box";
 
 const KEY_ENTER = 13;
 const KEY_SPACE = 32;
@@ -30,7 +30,7 @@ export default class Tabbable extends Component<
     children?: React.ReactNode;
     className?: string;
     style?: React.CSSProperties;
-  } & Omit<BoxProps, "color">,
+  },
   { isFocused: boolean }
 > {
   state = {

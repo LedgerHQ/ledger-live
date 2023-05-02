@@ -5,7 +5,6 @@ import { getRegistriesForDomain } from "@ledgerhq/domain-service/registries/inde
 import { isLoaded, isError } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { TFunction } from "react-i18next";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { DomainErrorsView } from "./DomainErrorHandlers";
@@ -15,6 +14,7 @@ import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import { urls } from "~/config/urls";
+import { OnChangeExtra } from "~/renderer/components/RecipientAddress";
 
 type Props = {
   account: Account;
@@ -28,7 +28,7 @@ type Props = {
   resetInitValue?: () => void;
   value: string | string;
   bridge: AccountBridge<Transaction>;
-  onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => void;
+  onChange: (recipient: string, maybeExtra?: OnChangeExtra | null) => void;
 };
 
 const RecipientFieldDomainService = ({

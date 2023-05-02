@@ -10,6 +10,7 @@ import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import { track } from "~/renderer/analytics/segment";
 import IconQrCode from "~/renderer/icons/QrCode";
+import BigNumber from "bignumber.js";
 
 const Right = styled(Box).attrs(() => ({
   bg: "palette.background.default",
@@ -36,6 +37,14 @@ const BackgroundLayer = styled(Box)`
   height: 100%;
   z-index: 2;
 `;
+
+export type OnChangeExtra = {
+  currency?: CryptoCurrency;
+  amount?: BigNumber;
+  userGasLimit?: BigNumber;
+  gasPrice?: BigNumber;
+};
+
 type Props = {
   placeholder: string;
   autoFocus: boolean | undefined;
@@ -44,7 +53,7 @@ type Props = {
   warning: Error;
   value: string;
   id: string;
-  onChange: (b: string, a?: Record<string, CryptoCurrency> | undefined) => void;
+  onChange: (b: string, a?: OnChangeExtra | undefined) => void;
   withQrCode: boolean;
 };
 type State = {
