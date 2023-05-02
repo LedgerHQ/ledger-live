@@ -13,6 +13,7 @@ import { setShowClearCacheBanner } from "~/renderer/actions/settings";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import ExperimentalSwitch from "./ExperimentalSwitch";
 import ExperimentalInteger from "./ExperimentalInteger";
+import ExperimentalFloat from "./ExperimentalFloat";
 import FullNode from "~/renderer/screens/settings/sections/Accounts/FullNode";
 import LottieTester from "./LottieTester";
 import StorylyTester from "./StorylyTester";
@@ -20,6 +21,7 @@ import PostOnboardingHubTester from "./PostOnboardingHubTester";
 const experimentalTypesMap = {
   toggle: ExperimentalSwitch,
   integer: ExperimentalInteger,
+  float: ExperimentalFloat,
 };
 const ExperimentalFeatureRow = ({
   feature,

@@ -99,7 +99,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
             />
             {languageInstalled && (
               <Flex flexDirection="column" rowGap={8} alignSelf="stretch">
-                <Divider variant="light" />
+                <Divider />
                 <Flex alignSelf="end" pb={8} px={12}>
                   <Button
                     variant="main"

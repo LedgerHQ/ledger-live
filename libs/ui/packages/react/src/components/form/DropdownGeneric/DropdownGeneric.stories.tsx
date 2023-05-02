@@ -98,12 +98,12 @@ export const DropdownGeneric = (args: DropdownGenericProps): React.ReactNode => 
       {containerPropsPossibilities.map((containerProps) =>
         DropdownStoryTemplate({ ...args, containerProps }),
       )}
-      <Divider variant="light" />
+      <Divider />
       <Text variant="h5">Big content:</Text>
       {containerPropsPossibilities.map((containerProps) =>
         DropdownStoryTemplate({ ...args, big: true, containerProps }),
       )}
-      <Divider variant="light" />
+      <Divider />
       <Text variant="h5">Big content (max height on child)</Text>
       <Alert
         type="info"
