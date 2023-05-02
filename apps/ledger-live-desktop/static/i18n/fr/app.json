@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "Jamais",
+    "new" : "Nouveau",
     "apply" : "Appliquer",
     "done" : "Terminé",
     "confirm" : "Confirmer",
@@ -215,10 +216,11 @@
     "earn" : "Gagner",
     "exchange" : "Acheter / Vendre",
     "swap" : "Swap",
+    "refer" : "Parrainage",
     "lend" : "Prêter",
     "catalog" : "Discover",
     "market" : "Marché",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Mettez une étoile sur un compte pour l’afficher ici.",
@@ -1441,7 +1443,8 @@
     "messageIfUnverified" : "Merci de vérifier que l’adresse partagée est identique à celle sur votre appareil",
     "messageIfSkipped" : "Vous n’avez pas vérifié votre adresse {{name}} sur votre appareil Ledger. Vérifiez-la pour une sécurité optimale.",
     "showQrCode" : "Afficher le code QR",
-    "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot"
+    "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
+    "dashStakingWarning" : "N’utilisez pas cette adresse pour recevoir vos récompenses de staking."
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1877,7 @@
         "plugin" : "Accéder à l’application",
         "swap" : "Swap",
         "tool" : "En savoir plus",
-        "app" : "En savoir plus"
+        "currency" : "En savoir plus"
       },
       "uninstall" : {
         "title" : "Tout désinstaller",
@@ -3761,6 +3764,7 @@
         "title" : "Vous avez atteint le niveau Développeur !",
         "text" : "Bienvenue au pays des merveilles"
       },
+      "userId" : "Identifiant utilisateur",
       "debugApps" : "Autoriser les Apps Debug",
       "debugAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\".",
       "experimentalApps" : "Autoriser les Apps Expérimentales",
@@ -3790,6 +3794,8 @@
       "runLocalAppOpenButton" : "Ouvrir",
       "enableLearnStagingUrl" : "Activer l’URL de test de la page Apprendre",
       "enableLearnStagingUrlDesc" : "Activez l’URL de test de la page Apprendre.",
+      "enableStagingNftMetadataService" : "Mode test pour le service des métadonnées des NFT",
+      "enableStagingNftMetadataServiceDesc" : "Activez le mode test pour le service des métadonnées des NFT et réinitialisez le cache pour les NFT.",
       "openOnboardingAppInstallDebug" : "Ouvrir l’écran de débogage relatif à l’installation des apps (Onboarding)",
       "openOnboardingAppInstallDebugDesc" : "Ouvrez un écran contenant les composants de l’étape d’installation des apps (flux Sync Onboarding)."
     },
@@ -3847,6 +3853,10 @@
           "title" : "Mode développeur",
           "description" : "Affichez les applications développeurs et testnet dans My Ledger."
         },
+        "listAppsV2" : {
+          "title" : "Listage expérimental des apps pour My Ledger",
+          "description" : "Améliorez les performances de l’accès à My Ledger et des flux inline."
+        },
         "scanForInvalidPaths" : {
           "title" : "Recherche de compte étendue",
           "description" : "Recherchez des comptes ayant des chemins de dérivation erronés. Veuillez envoyer tout actif trouvé vers un compte classique."
@@ -3886,6 +3896,10 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "Définir un seuil minimal pour les frais de priorité",
           "description" : "Personnalisez le percentage de notre estimation des frais de priorité minimum autorisés pour une transaction avancée (EIP-1559)."
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "Coefficient personnalisé pour les frais de base",
+          "description" : "Personnalisez le coefficient multiplicateur des frais de base, qui composent les frais de gaz maximaux des transactions EIP-1559."
         }
       }
     },
@@ -5723,9 +5737,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "Récupérez vos clés en\nutilisant votre identité",
+    "description" : "Vous n’aurez pas toujours votre phrase de récupération secrète à portée de main.\nLancement en avant-première exclusivement pour le Ledger Nano X. Abonnez-vous gratuitement jusqu’au 31 mai 2023.",
+    "cta" : "Pourquoi devrais-je m’abonner ?",
+    "downloadLLM" : "Abonnez-vous à <purple>Ledger Recover</purple> via l’app Ledger Live pour le mobile."
   }
 }
