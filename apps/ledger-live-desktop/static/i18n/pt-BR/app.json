@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "Nunca",
+    "new" : "Novo",
     "apply" : "Aplicar",
     "done" : "Concluído",
     "confirm" : "Confirmar",
@@ -215,10 +216,11 @@
     "earn" : "Ganhar",
     "exchange" : "Comprar / Vender",
     "swap" : "Trocar",
+    "refer" : "Indique um amigo",
     "lend" : "Emprestar",
     "catalog" : "Explorar",
     "market" : "Mercado",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Veja suas contas favoritas aqui",
@@ -1441,7 +1443,8 @@
     "messageIfUnverified" : "Verifique se o endereço compartilhado corresponde exatamente ao exibido no seu dispositivo",
     "messageIfSkipped" : "Seu endereço {{name}} não foi confirmado no seu dispositivo Ledger. Verifique-o por segurança.",
     "showQrCode" : "Mostrar QR Code",
-    "taprootWarning" : "Certifique-se de que o remetente é compatível com taproot"
+    "taprootWarning" : "Certifique-se de que o remetente é compatível com taproot",
+    "dashStakingWarning" : "Certifique-se de não usar esse endereço para receber recompensas de staking"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1877,7 @@
         "plugin" : "Ir para o aplicativo",
         "swap" : "Trocar",
         "tool" : "Saiba Mais",
-        "app" : "Saiba Mais"
+        "currency" : "Saiba mais"
       },
       "uninstall" : {
         "title" : "Desinstalar Todos",
@@ -2864,7 +2867,7 @@
       "commission" : "Comissão",
       "totalStake" : "Aplicação Total",
       "claimRewards" : "Resgatar Recompensas",
-      "header" : "Delegação(ões)",
+      "header" : "Delegações",
       "noRewards" : "Nenhuma recompensa disponível",
       "delegate" : "Adicionar",
       "undelegate" : "Parar Delegação",
@@ -3761,6 +3764,7 @@
         "title" : "Agora você é um desenvolvedor!",
         "text" : "Boas-vindas ao país das maravilhas"
       },
+      "userId" : "ID do usuário",
       "debugApps" : "Permitir debug de aplicativos",
       "debugAppsDesc" : "Exibir e permitir a abertura de aplicativos da plataforma etiquetados como de debug",
       "experimentalApps" : "Permitir aplicativos experimentais",
@@ -3790,6 +3794,8 @@
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "Staging URL da página Aprender",
       "enableLearnStagingUrlDesc" : "Habilite a staging URL da página Aprender.",
+      "enableStagingNftMetadataService" : "Teste do serviço de metadados de NFTs",
+      "enableStagingNftMetadataServiceDesc" : "Habilite o teste do serviço de metadados de NFTs e redefina o cache de NFTs",
       "openOnboardingAppInstallDebug" : "Abrir a tela inicial de debug da instalação do aplicativo",
       "openOnboardingAppInstallDebugDesc" : "Abra uma tela com os componentes da etapa de instalação do aplicativo de sincronização inicial"
     },
@@ -3847,6 +3853,10 @@
           "title" : "Modo Desenvolvedor",
           "description" : "Mostrar aplicativos testnet e de desenvolvedor em Minha Ledger."
         },
+        "listAppsV2" : {
+          "title" : "Lista de aplicativos experimentais para Minha Ledger",
+          "description" : "Melhoria de desempenho no acesso à Minha Ledger e fluxos inline."
+        },
         "scanForInvalidPaths" : {
           "title" : "Pesquisa de contas ampliada",
           "description" : "Procure contas com caminhos de derivação incorretos. Envie os potenciais ativos encontrados para uma conta regular."
@@ -3886,6 +3896,10 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "Personalizar Taxa de Prioridade",
           "description" : "Defina uma porcentagem personalizada da nossa taxa de prioridade mínima estimada permitida para uma transação EIP1559 avançada"
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "Multiplicador personalizado para a taxa básica",
+          "description" : "Personalize o multiplicador usado para a taxa básica que compõe o maxFeePerGas da transação EIP1559"
         }
       }
     },
@@ -3992,7 +4006,7 @@
     "checking" : "Verificando Atualização...",
     "checkSuccess" : "Atualização pronta para instalação",
     "quitAndInstall" : "Instalar agora",
-    "updateAvailable" : "Atualização disponível para a versão {{version}} do Ledger Live",
+    "updateAvailable" : "Atualização para a versão {{version}} do Ledger Live disponível",
     "error" : "Erro durante a atualização. Baixe Novamente",
     "reDownload" : "Baixar Novamente",
     "nightlyWarning" : "Esta versão não pode ser atualizada automaticamente. Instale a versão mais recente manualmente",
@@ -5723,9 +5737,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "Recupere suas chaves usando\nsua identidade",
+    "description" : "Sua Frase de Recuperação Secreta nem sempre estará ao seu alcance.\nLançamento piloto exclusivo para a Ledger Nano X. Inscreva-se gratuitamente até 31 de maio de 2023",
+    "cta" : "Por que devo me inscrever?",
+    "downloadLLM" : "Inscreva-se no <purple>Ledger Recover</purple> usando o aplicativo Ledger Live mobile"
   }
 }
