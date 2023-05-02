@@ -10,9 +10,12 @@ type Props = {
   full?: boolean;
 }; // TODO Figure out if we really need this once we know who creates/processes the media.
 
+function randomHueForTokenId(tokenId: string) {
+  return parseInt(tokenId.substr(-8)) % 360;
+}
+
 const StyledPlaceholder = styled.div<Props>`
-  ${/* @ts-expect-error This code is 'kinda working as expected' but ultimately fucked up. */ ""}
-  --hue: ${p => (p?.tokenId || "abcdefg").substr(-8) % 360};
+  --hue: ${p => randomHueForTokenId(p.tokenId)};
   background-image: url('${Fallback}');
   background-size: contain;
   border-radius: 4px;
