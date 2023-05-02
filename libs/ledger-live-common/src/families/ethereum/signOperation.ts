@@ -18,7 +18,7 @@ import { mergeMap } from "rxjs/operators";
 import { Observable, from, of } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
-import { apiForCurrency } from "../../api/Ethereum";
+import { apiForCurrency } from "./api";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
 import { isNFTActive } from "../../nft";

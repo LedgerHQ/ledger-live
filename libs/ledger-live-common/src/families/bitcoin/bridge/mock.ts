@@ -8,7 +8,7 @@ import {
   DustLimit,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
-import { getFeeItems } from "../../../api/FeesBitcoin";
+import { getFeeItems } from "../api";
 import {
   scanAccounts,
   signOperation,
@@ -18,7 +18,11 @@ import {
 } from "../../../bridge/mockHelpers";
 import { getMainAccount } from "../../../account";
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountBridge,
+  CurrencyBridge,
+} from "@ledgerhq/types-live";
 import cryptoFactory from "../wallet-btc/crypto/factory";
 import { Currency } from "../wallet-btc";
 import { computeDustAmount } from "../wallet-btc/utils";
@@ -114,12 +118,15 @@ const getTransactionStatus = (account, t) => {
   });
 };
 
-const prepareTransaction = async (a, t): Promise<Transaction> => {
+const prepareTransaction = async (
+  account: Account,
+  transaction: Transaction
+): Promise<Transaction> => {
   // TODO it needs to set the fee if not in t as well
-  if (!t.networkInfo) {
-    const feeItems = await getFeeItems(a.currency);
+  if (!transaction.networkInfo) {
+    const feeItems = await getFeeItems(account.currency);
     return {
-      ...t,
+      ...transaction,
       networkInfo: {
         family: "bitcoin",
         feeItems,
@@ -127,7 +134,7 @@ const prepareTransaction = async (a, t): Promise<Transaction> => {
     };
   }
 
-  return t;
+  return transaction;
 };
 
 const accountBridge: AccountBridge<Transaction> = {

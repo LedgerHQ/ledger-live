@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.19.0",
+  "version": "3.20.1",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -72,6 +72,7 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-native-hid": "workspace:^",
@@ -127,7 +128,6 @@
     "moment": "^2.29.1",
     "node-libs-react-native": "^1.2.1",
     "prando": "^6.0.1",
-    "promise.allsettled": "^1.0.6",
     "prop-types": "^15.8.1",
     "qrloop": "^1.4.1",
     "react": "^18",

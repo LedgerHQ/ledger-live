@@ -23,6 +23,51 @@ export const defaultFeatures: DefaultFeatures = {
   currencyAvalancheCChain: {
     enabled: false,
   },
+  currencyOptimism: {
+    enabled: false,
+  },
+  currencyOptimismGoerli: {
+    enabled: false,
+  },
+  currencyArbitrum: {
+    enabled: false,
+  },
+  currencyArbitrumGoerli: {
+    enabled: false,
+  },
+  currencyRsk: {
+    enabled: false,
+  },
+  currencyBittorrent: {
+    enabled: false,
+  },
+  currencyKavaEvm: {
+    enabled: false,
+  },
+  currencyEvmosEvm: {
+    enabled: false,
+  },
+  currencyEnergyWeb: {
+    enabled: false,
+  },
+  currencyAstar: {
+    enabled: false,
+  },
+  currencyMetis: {
+    enabled: false,
+  },
+  currencyBoba: {
+    enabled: false,
+  },
+  currencyMoonriver: {
+    enabled: false,
+  },
+  currencyVelasEvm: {
+    enabled: false,
+  },
+  currencySyscoin: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {
@@ -202,5 +247,18 @@ export const defaultFeatures: DefaultFeatures = {
   },
   protectServicesDiscoverDesktop: {
     enabled: false,
+  },
+  referralProgramDesktopSidebar: {
+    enabled: false,
+    params: {
+      path: "/discover/refer-a-friend",
+      isNew: true,
+    },
+  },
+  referralProgramMobile: {
+    enabled: false,
+    params: {
+      path: "/discover/refer-a-friend",
+    },
   },
 };

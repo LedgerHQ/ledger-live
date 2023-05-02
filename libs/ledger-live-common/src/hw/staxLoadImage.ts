@@ -61,7 +61,7 @@ export default function loadImage({
   deviceId,
   request,
 }: Input): Observable<LoadImageEvent> {
-  const { hexImage, padImage } = request;
+  const { hexImage, padImage = true } = request;
 
   const sub = withDevice(deviceId)(
     (transport) =>

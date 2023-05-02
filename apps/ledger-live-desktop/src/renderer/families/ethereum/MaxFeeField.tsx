@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import invariant from "invariant";
 import BigNumber from "bignumber.js";
 import styled from "styled-components";
+import { getEnv } from "@ledgerhq/live-env";
 import { useTranslation } from "react-i18next";
 import {
   Transaction as EthereumTransaction,
@@ -77,8 +78,9 @@ const FeesField = ({ account, parentAccount, transaction, status, updateTransact
   const defaultMaxFeePerGas = useMemo(
     () =>
       transaction.networkInfo?.nextBaseFeePerGas
-        ?.times(2)
-        .plus(transaction?.maxPriorityFeePerGas || 0),
+        ?.times(getEnv("EIP1559_BASE_FEE_MULTIPLIER"))
+        .plus(transaction?.maxPriorityFeePerGas || 0)
+        .integerValue(),
     [transaction.maxPriorityFeePerGas, transaction.networkInfo?.nextBaseFeePerGas],
   );
 

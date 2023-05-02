@@ -1,5 +1,85 @@
 # @ledgerhq/live-common
 
+## 29.4.0
+
+### Minor Changes
+
+- [#3142](https://github.com/LedgerHQ/ledger-live/pull/3142) [`147af2b5e6`](https://github.com/LedgerHQ/ledger-live/commit/147af2b5e674a7020f101a081135c2b187356060) Thanks [@grsoares21](https://github.com/grsoares21)! - Make stax image padding optional on Stax Load image device action
+
+- [#3265](https://github.com/LedgerHQ/ledger-live/pull/3265) [`5059c9584c`](https://github.com/LedgerHQ/ledger-live/commit/5059c9584ca70208a67e9d49025422d395637878) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix incremental sync order for Ethereum family to prevent fetching operations before a block instead of after a block
+
+- [#3187](https://github.com/LedgerHQ/ledger-live/pull/3187) [`87d08d6d1c`](https://github.com/LedgerHQ/ledger-live/commit/87d08d6d1c6111b7f5fb15f3e1bbe85658686e4a) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Fixes error messaging when retrieving swap rates
+
+### Patch Changes
+
+- [#3182](https://github.com/LedgerHQ/ledger-live/pull/3182) [`9fec3a9b3a`](https://github.com/LedgerHQ/ledger-live/commit/9fec3a9b3a26bfce6ef7fdc4afb83e4f3c04cb69) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - bump wallet-api deps
+
+- [#3223](https://github.com/LedgerHQ/ledger-live/pull/3223) [`530909c036`](https://github.com/LedgerHQ/ledger-live/commit/530909c0368d03aea1e5d0638adb027fa00ab897) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix btc integration test
+
+- [#3174](https://github.com/LedgerHQ/ledger-live/pull/3174) [`29badd80d0`](https://github.com/LedgerHQ/ledger-live/commit/29badd80d062f76139ba3a056df22277858021bd) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove dead code of unsupported neo family
+
+- [#3180](https://github.com/LedgerHQ/ledger-live/pull/3180) [`992351d66d`](https://github.com/LedgerHQ/ledger-live/commit/992351d66d44d978f069b3aa13f9baf23f9b4482) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix cosmos fees by simulation
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- [#3169](https://github.com/LedgerHQ/ledger-live/pull/3169) [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow for model and version dependent max name length
+
+- [#3184](https://github.com/LedgerHQ/ledger-live/pull/3184) [`42233141e8`](https://github.com/LedgerHQ/ledger-live/commit/42233141e853f2e9752268e5fa711416d460e0e3) Thanks [@PorlyBe](https://github.com/PorlyBe)! - Crypto Icons - Add support for VERSE token icon
+
+- Updated dependencies [[`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`3242a0a794`](https://github.com/LedgerHQ/ledger-live/commit/3242a0a7948c20fb0100ce3cc73e55e338534d32), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d)]:
+  - @ledgerhq/domain-service@1.0.1
+  - @ledgerhq/coin-framework@0.3.1
+  - @ledgerhq/cryptoassets@9.4.0
+  - @ledgerhq/hw-app-eth@6.33.1
+  - @ledgerhq/coin-polkadot@0.1.2
+  - @ledgerhq/live-portfolio@0.0.3
+
+## 29.4.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`294f5685df`](https://github.com/LedgerHQ/ledger-live/commit/294f5685df6bb8e414bba5d2463f327aaf5d3d23)]:
+  - @ledgerhq/domain-service@1.0.1-next.1
+  - @ledgerhq/hw-app-eth@6.33.1-next.1
+
+## 29.4.0-next.1
+
+### Minor Changes
+
+- [#3239](https://github.com/LedgerHQ/ledger-live/pull/3239) [`5059c9584c`](https://github.com/LedgerHQ/ledger-live/commit/5059c9584ca70208a67e9d49025422d395637878) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix incremental sync order for Ethereum family to prevent fetching operations before a block instead of after a block
+
+## 29.4.0-next.0
+
+### Minor Changes
+
+- [#3142](https://github.com/LedgerHQ/ledger-live/pull/3142) [`147af2b5e6`](https://github.com/LedgerHQ/ledger-live/commit/147af2b5e674a7020f101a081135c2b187356060) Thanks [@grsoares21](https://github.com/grsoares21)! - Make stax image padding optional on Stax Load image device action
+
+- [#3187](https://github.com/LedgerHQ/ledger-live/pull/3187) [`87d08d6d1c`](https://github.com/LedgerHQ/ledger-live/commit/87d08d6d1c6111b7f5fb15f3e1bbe85658686e4a) Thanks [@cjordan-ledger](https://github.com/cjordan-ledger)! - Fixes error messaging when retrieving swap rates
+
+### Patch Changes
+
+- [#3182](https://github.com/LedgerHQ/ledger-live/pull/3182) [`9fec3a9b3a`](https://github.com/LedgerHQ/ledger-live/commit/9fec3a9b3a26bfce6ef7fdc4afb83e4f3c04cb69) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - bump wallet-api deps
+
+- [#3223](https://github.com/LedgerHQ/ledger-live/pull/3223) [`530909c036`](https://github.com/LedgerHQ/ledger-live/commit/530909c0368d03aea1e5d0638adb027fa00ab897) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix btc integration test
+
+- [#3174](https://github.com/LedgerHQ/ledger-live/pull/3174) [`29badd80d0`](https://github.com/LedgerHQ/ledger-live/commit/29badd80d062f76139ba3a056df22277858021bd) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove dead code of unsupported neo family
+
+- [#3180](https://github.com/LedgerHQ/ledger-live/pull/3180) [`992351d66d`](https://github.com/LedgerHQ/ledger-live/commit/992351d66d44d978f069b3aa13f9baf23f9b4482) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix cosmos fees by simulation
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- [#3169](https://github.com/LedgerHQ/ledger-live/pull/3169) [`c44d61c2b3`](https://github.com/LedgerHQ/ledger-live/commit/c44d61c2b3dc7b4de1041adab676351f8c05b8b9) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Allow for model and version dependent max name length
+
+- [#3184](https://github.com/LedgerHQ/ledger-live/pull/3184) [`42233141e8`](https://github.com/LedgerHQ/ledger-live/commit/42233141e853f2e9752268e5fa711416d460e0e3) Thanks [@PorlyBe](https://github.com/PorlyBe)! - Crypto Icons - Add support for VERSE token icon
+
+- Updated dependencies [[`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253), [`3242a0a794`](https://github.com/LedgerHQ/ledger-live/commit/3242a0a7948c20fb0100ce3cc73e55e338534d32), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d)]:
+  - @ledgerhq/coin-framework@0.3.1-next.0
+  - @ledgerhq/cryptoassets@9.4.0-next.0
+  - @ledgerhq/coin-polkadot@0.1.2-next.0
+  - @ledgerhq/domain-service@1.0.1-next.0
+  - @ledgerhq/hw-app-eth@6.33.1-next.0
+  - @ledgerhq/live-portfolio@0.0.3-next.0
+
 ## 29.3.0
 
 ### Minor Changes
