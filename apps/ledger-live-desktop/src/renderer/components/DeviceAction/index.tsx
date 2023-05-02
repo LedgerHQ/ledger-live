@@ -344,7 +344,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     });
   }
 
-  if (inWrongDeviceForAccount && onRetry) {
+  if (inWrongDeviceForAccount) {
     return renderInWrongAppForAccount({
       t,
       onRetry,
@@ -352,7 +352,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     });
   }
 
-  if (!isLoading && error && onRetry) {
+  if (!isLoading && error) {
     const e = error as unknown;
     if (
       e instanceof ManagerNotEnoughSpaceError ||
@@ -413,11 +413,11 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   // Renders an error as long as LLD is using the "event" implementation of device actions
-  if (isLocked && onRetry) {
+  if (isLocked) {
     return renderLockedDeviceError({ t, device, onRetry });
   }
 
-  if (((!isLoading && !device) || unresponsive) && onRepairModal) {
+  if ((!isLoading && !device) || unresponsive) {
     return renderConnectYourDevice({
       modelId,
       type,

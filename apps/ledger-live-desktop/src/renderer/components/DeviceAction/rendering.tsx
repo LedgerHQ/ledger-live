@@ -505,7 +505,7 @@ export const renderLockedDeviceError = ({
 }: {
   t: TFunction;
   device?: Device;
-  onRetry?: () => void;
+  onRetry?: (() => void) | null;
 }) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
 
@@ -602,7 +602,7 @@ export function renderError({
   error: any;
   t: TFunction;
   withOpenManager?: boolean;
-  onRetry?: () => void;
+  onRetry?: (() => void) | null;
   withExportLogs?: boolean;
   list?: boolean;
   supportLink?: string;
@@ -681,7 +681,7 @@ export const renderInWrongAppForAccount = ({
   accountName,
 }: {
   t: TFunction;
-  onRetry: () => void;
+  onRetry?: (() => void) | null;
   accountName: string;
 }) =>
   renderError({
@@ -700,7 +700,7 @@ export const renderConnectYourDevice = ({
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
-  onRepairModal: (open: boolean) => void;
+  onRepairModal?: ((open: boolean) => void) | null;
   device: Device;
   unresponsive?: boolean | null;
 }) => (
@@ -723,7 +723,7 @@ export const renderConnectYourDevice = ({
           }
         />
       </Title>
-      {!device ? (
+      {!device && onRepairModal ? (
         <TroubleshootingWrapper>
           <ConnectTroubleshooting onRepair={onRepairModal} />
         </TroubleshootingWrapper>
