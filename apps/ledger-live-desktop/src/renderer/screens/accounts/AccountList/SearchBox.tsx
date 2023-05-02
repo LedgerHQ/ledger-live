@@ -7,8 +7,9 @@ import SearchIcon from "~/renderer/icons/Search";
 type Props = {
   onTextChange: (evt: React.SyntheticEvent<HTMLInputElement>) => void;
   search?: string;
-  placeholder?: any;
+  placeholder?: string;
   autoFocus?: boolean;
+  id?: string;
 };
 const SearchInput = styled.input`
   border: none;
@@ -37,7 +38,7 @@ const SearchIconContainer = styled(Box).attrs<{
   justify-content: center;
 `;
 
-const SearchBox = forwardRef(function Search(
+const SearchBox = forwardRef<HTMLInputElement, Props>(function Search(
   { onTextChange, search, placeholder, autoFocus, ...p }: Props,
   ref,
 ) {

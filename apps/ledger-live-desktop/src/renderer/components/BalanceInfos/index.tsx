@@ -28,6 +28,8 @@ type BalanceTotalProps = {
   account?: AccountLike;
   withTransactionsPendingConfirmationWarning?: boolean;
   dynamicSignificantDigits?: number;
+  style?: React.CSSProperties;
+  onClick?: () => void;
 };
 type Props = {
   unit: Unit;

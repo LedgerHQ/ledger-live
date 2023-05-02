@@ -1,4 +1,4 @@
-import React, { Component, KeyboardEvent } from "react";
+import React, { Component } from "react";
 import styled from "styled-components";
 import { isGlobalTabEnabled } from "~/config/global-tab";
 import { rgba } from "~/renderer/styles/helpers";
@@ -25,6 +25,7 @@ export default class Tabbable extends Component<
     disabled?: boolean;
     unstyled?: boolean;
     onClick?: (arg: React.SyntheticEvent) => void;
+    onMouseDown?: (arg: React.SyntheticEvent) => void;
     selected?: boolean;
     children?: React.ReactNode;
     className?: string;
