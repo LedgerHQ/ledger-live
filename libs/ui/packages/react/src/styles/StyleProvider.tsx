@@ -3,6 +3,7 @@ import { ThemeProvider } from "styled-components";
 import { defaultTheme, GlobalStyle, GlobalStyleProps } from ".";
 import { ThemeNames, palettes } from "@ledgerhq/ui-shared";
 import { Theme } from "./theme";
+import "./override";
 
 interface Props extends GlobalStyleProps {
   children: React.ReactNode;

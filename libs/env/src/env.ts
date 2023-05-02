@@ -311,6 +311,11 @@ const envDefinitions: Record<
     parser: floatParser,
     desc: "minimum priority fee percents allowed compared to network conditions allowed when EIP1559_MINIMUM_FEES_GATE is activated",
   },
+  EIP1559_BASE_FEE_MULTIPLIER: {
+    def: 1.5,
+    parser: floatParser,
+    desc: "mutiplier for the base fee that is composing the maxFeePerGas property",
+  },
   ETHEREUM_GAS_LIMIT_AMPLIFIER: {
     def: 1.2,
     parser: floatParser,
@@ -445,6 +450,11 @@ const envDefinitions: Record<
     def: false,
     parser: boolParser,
     desc: "enable sending to KT accounts. Not tested.",
+  },
+  LIST_APPS_V2: {
+    def: false,
+    parser: boolParser,
+    desc: "use new version of list apps for My Ledger",
   },
   MANAGER_API_BASE: {
     def: "https://manager.api.live.ledger.com/api",

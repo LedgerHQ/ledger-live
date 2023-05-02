@@ -14,6 +14,10 @@ import {
   ContinueOnDevice,
   Divider,
 } from "@ledgerhq/native-ui";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
   OnboardingStep as DeviceOnboardingStep,
@@ -31,7 +35,7 @@ import { addKnownDevice } from "../../actions/ble";
 import { ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
-import ResyncOverlay from "./ResyncOverlay";
+import ResyncOverlay, { PlainOverlay } from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
 import SoftwareChecksStep from "./SoftwareChecksStep";
 import {
@@ -40,7 +44,6 @@ import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../actions/settings";
-import DeviceSetupView from "../../components/DeviceSetupView";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
@@ -48,6 +51,7 @@ import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
 import Stories from "../../components/StorylyStories";
 import { TrackScreen, track } from "../../analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
+import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -242,10 +246,6 @@ export const SyncOnboarding = ({
     navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
   }, [device, dispatchRedux, navigation]);
 
-  const handleClose = useCallback(() => {
-    readyRedirectTimerRef.current ? handleDeviceReady() : navigation.goBack();
-  }, [navigation, handleDeviceReady]);
-
   useEffect(() => {
     if (!fatalError) {
       return;
@@ -367,25 +367,37 @@ export const SyncOnboarding = ({
     }
   }, [deviceOnboardingState]);
 
+  const preventNavigation = useRef(false);
+
   useEffect(() => {
     if (companionStepKey >= CompanionStepKey.SoftwareCheck) {
       setStopPolling(true);
     }
 
     if (companionStepKey === CompanionStepKey.Exit) {
-      readyRedirectTimerRef.current = setTimeout(
-        handleDeviceReady,
-        readyRedirectDelayMs,
-      );
+      preventNavigation.current = true;
+      readyRedirectTimerRef.current = setTimeout(() => {
+        preventNavigation.current = false;
+        handleDeviceReady();
+      }, readyRedirectDelayMs);
     }
 
     return () => {
       if (readyRedirectTimerRef.current) {
+        preventNavigation.current = false;
         clearTimeout(readyRedirectTimerRef.current);
         readyRedirectTimerRef.current = null;
       }
     };
   }, [companionStepKey, handleDeviceReady]);
+
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", e => {
+        if (preventNavigation.current) e.preventDefault();
+      }),
+    [navigation],
+  );
 
   const companionSteps: Step[] = useMemo(
     () =>
@@ -565,13 +577,43 @@ export const SyncOnboarding = ({
     ],
   );
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      header: () => (
+        <>
+          <SafeAreaView edges={["top", "left", "right"]}>
+            <Flex
+              my={5}
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Flex ml={6}>
+                <LanguageSelect device={device} productName={productName} />
+              </Flex>
+              <NavigationHeaderCloseButton />
+            </Flex>
+          </SafeAreaView>
+          <PlainOverlay
+            isOpen={isDesyncOverlayOpen}
+            delay={resyncOverlayDisplayDelayMs}
+          />
+        </>
+      ),
+    });
+  }, [
+    device,
+    isDesyncOverlayOpen,
+    navigation,
+    productName,
+    resyncOverlayDisplayDelayMs,
+  ]);
+
+  const safeAreaInsets = useSafeAreaInsets();
+
   return (
-    <DeviceSetupView
-      onClose={handleClose}
-      renderLeft={() => (
-        <LanguageSelect device={device} productName={productName} />
-      )}
-    >
+    <>
       <HelpDrawer
         isOpen={isHelpDrawerOpen}
         onClose={() => setHelpDrawerOpen(false)}
@@ -592,6 +634,7 @@ export const SyncOnboarding = ({
           <VerticalTimeline
             steps={companionSteps}
             formatEstimatedTime={formatEstimatedTime}
+            contentContainerStyle={{ paddingBottom: safeAreaInsets.bottom }}
             header={
               <Flex mb={8} flexDirection="row" alignItems="center">
                 <Text variant="h4" fontWeight="semiBold">
@@ -611,6 +654,6 @@ export const SyncOnboarding = ({
           ) : null}
         </Flex>
       </Flex>
-    </DeviceSetupView>
+    </>
   );
 };

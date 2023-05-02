@@ -8,12 +8,12 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ExploreTabNavigatorStackParamList } from "./types/ExploreTabNavigator";
 import { ScreenName } from "../../const/navigation";
 import NewsfeedPage from "../../screens/Newsfeed";
-import { BackButton } from "../../screens/OperationDetails";
 import Learn from "../../screens/Learn/learn";
 import ExploreTabNavigatorTabBar from "../ExploreTab/ExploreTabNavigatorTabBar";
 import ExploreTabNavigatorTabBarDisabled from "../ExploreTab/ExploreTabNavigatorTabBarDisabled";
 import { useIsNewsfeedAvailable } from "../../hooks/newsfeed/useIsNewsfeedAvailable";
 import useDynamicContent from "../../dynamicContent/dynamicContent";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
 const ExploreTab =
   createMaterialTopTabNavigator<ExploreTabNavigatorStackParamList>();
@@ -60,11 +60,11 @@ export default function ExploreTabNavigator() {
         <ExploreTab.Screen
           name={ScreenName.Learn}
           component={Learn}
-          options={({ navigation }) => ({
+          options={() => ({
             title: t("discover.sections.learn.title"),
             headerShown: true,
             animationEnabled: false,
-            headerLeft: () => <BackButton navigation={navigation} />,
+            headerLeft: () => <NavigationHeaderBackButton />,
             headerRight: () => null,
           })}
         />

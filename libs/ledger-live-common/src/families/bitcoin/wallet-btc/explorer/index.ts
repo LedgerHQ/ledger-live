@@ -2,7 +2,7 @@ import { Address, Block, TX } from "../storage/types";
 import network from "../../../../network";
 import { IExplorer } from "./types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { blockchainBaseURL } from "../../../../api/Ledger";
+import { blockchainBaseURL } from "../../../../explorer";
 
 type ExplorerParams = {
   batch_size?: number;

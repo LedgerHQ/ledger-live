@@ -15,7 +15,6 @@ import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
-
 import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
@@ -77,19 +76,12 @@ export default function AssetBalanceSummaryHeader({
   const primaryKey = data[0].unit.code;
   const secondaryKey = data[1].unit.code;
   const rampCatalog = useRampCatalog();
-  // eslint-disable-next-line no-unused-vars
-  const [availableOnBuy, availableOnSell] = useMemo(() => {
+  const availableOnBuy = useMemo(() => {
     if (!rampCatalog.value) {
-      return [false, false];
+      return false;
     }
     const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
-    const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.offRamp,
-    );
-    return [
-      allBuyableCryptoCurrencyIds.includes(currency.id),
-      allSellableCryptoCurrencyIds.includes(currency.id),
-    ];
+    return allBuyableCryptoCurrencyIds.includes(currency.id);
   }, [rampCatalog.value, currency.id]);
   const { providers, storedProviders } = useProviders();
   const startStakeFlow = useStakeFlow();

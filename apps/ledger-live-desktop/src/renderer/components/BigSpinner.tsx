@@ -2,7 +2,7 @@ import React from "react";
 import styled, { keyframes, css } from "styled-components";
 import Box from "~/renderer/components/Box";
 import IconBigSpinner from "~/renderer/icons/BigSpinner";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 const rotate = keyframes`
   0% {
     transform: rotate(0deg);

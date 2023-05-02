@@ -5,7 +5,6 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import { useDispatch, useSelector } from "react-redux";
 import { Dropdown } from "@ledgerhq/react-ui";
 import { languageLabels } from "~/renderer/screens/settings/sections/General/LanguageSelect";
-
 import { prodStableLanguages } from "~/config/languages";
 
 const options = prodStableLanguages.map(value => ({

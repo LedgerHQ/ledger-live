@@ -5,7 +5,7 @@ import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../../package.json";
 import { getEnv } from "../../../env";
 import { log } from "@ledgerhq/logs";
-import { createDeviceSocket } from "../../../api/socket";
+import { createDeviceSocket } from "../../../socket";
 import { filter, map } from "rxjs/operators";
 
 export type FlashMcuOrBootloaderCommandRequest = {

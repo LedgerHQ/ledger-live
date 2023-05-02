@@ -7,7 +7,7 @@ import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   amount: BigNumber;
   validator: any;

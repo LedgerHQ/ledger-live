@@ -330,9 +330,6 @@ const fetchChainSpec = (network: NetworkRequestCall) => async () => {
   return data;
 };
 
-// Not relevant when not using websocket
-export const disconnect = () => {};
-
 /**
  * Returns true if ElectionStatus is Close.
  * If ElectionStatus is Open, some features must be disabled.

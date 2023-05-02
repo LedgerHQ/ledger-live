@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
+import { TFunction, useTranslation } from "react-i18next";
+import { Account, ProtoNFT, NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Icons } from "@ledgerhq/react-ui";
 import { openModal } from "~/renderer/actions/modals";
@@ -14,8 +14,9 @@ import { getMetadataMediaTypes } from "~/helpers/nft";
 import { setDrawer } from "../drawers/Provider";
 import CustomImage from "~/renderer/screens/customImage";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
+
 const linksPerCurrency = {
-  ethereum: (t, links) => [
+  ethereum: (t: TFunction, links: NFTMetadata["links"]) => [
     links?.opensea && {
       key: "opensea",
       id: "opensea",
@@ -53,7 +54,7 @@ const linksPerCurrency = {
       callback: () => openURL(links.explorer),
     },
   ],
-  polygon: (t, links, dispatch) => [
+  polygon: (t: TFunction, links: NFTMetadata["links"]) => [
     links?.opensea && {
       key: "opensea",
       id: "opensea",
@@ -92,6 +93,13 @@ const linksPerCurrency = {
     },
   ],
 };
+
+type CurrencyLink = ReturnType<
+  typeof linksPerCurrency[keyof typeof linksPerCurrency]
+> extends Array<infer T>
+  ? Exclude<T, "">
+  : never;
+
 export default (
   account: Account,
   nft: ProtoNFT,
@@ -126,7 +134,9 @@ export default (
       ? ["original", "big", "preview"].find(size => mediaTypes[size] === "image")
       : null;
     const customImageUri =
-      (mediaSizeForCustomImage && metadata?.medias?.[mediaSizeForCustomImage]?.uri) || null;
+      (mediaSizeForCustomImage &&
+        metadata?.medias?.[mediaSizeForCustomImage as keyof NFTMedias]?.uri) ||
+      null;
     return customImageUri;
   }, [metadata]);
   const customImage = useMemo(
@@ -158,7 +168,10 @@ export default (
   const customImageEnabled = useFeature("customImage")?.enabled;
   const links = useMemo(() => {
     const metadataLinks =
-      linksPerCurrency?.[account.currency.id]?.(t, metadata?.links).filter(x => x) || [];
+      (linksPerCurrency[account.currency.id as keyof typeof linksPerCurrency]?.(
+        t,
+        metadata?.links,
+      ).filter(x => !!x) as CurrencyLink[]) || [];
     return [
       ...metadataLinks,
       ...(customImageEnabled && customImageUri ? [customImage] : []),

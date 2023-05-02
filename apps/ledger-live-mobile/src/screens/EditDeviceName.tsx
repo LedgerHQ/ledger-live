@@ -64,6 +64,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const [completed, setCompleted] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined | null>(null);
   const [running, setRunning] = useState(false);
+  const request = useMemo(() => ({ name }), [name]);
 
   const onChangeText = useCallback((name: string) => {
     // Nb mobile devices tend to use U+2018 for single quote, not supported
@@ -162,7 +163,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
           {running ? (
             <DeviceActionModal
               device={device}
-              request={name}
+              request={request}
               action={action}
               onClose={onClose}
               onResult={onSuccess}

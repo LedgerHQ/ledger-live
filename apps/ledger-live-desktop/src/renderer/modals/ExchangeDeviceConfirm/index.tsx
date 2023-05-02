@@ -25,8 +25,8 @@ import Button from "~/renderer/components/Button";
 import Alert from "~/renderer/components/Alert";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-export const Separator: ThemedComponent<{}> = styled.div`
+
+export const Separator = styled.div`
   &::after {
     content: "";
     font-size: 13px;

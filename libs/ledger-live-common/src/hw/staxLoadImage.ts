@@ -42,17 +42,27 @@ export type LoadImageEvent =
       imageHash: string;
     };
 
+export type LoadimageResult = {
+  imageHash: string;
+  imageSize: number;
+};
+
 export type LoadImageRequest = {
-  deviceId: string;
-  hexImage: string;
+  hexImage: string; // When provided, will skip the backup if it matches the hash.
   padImage?: boolean;
+};
+
+export type Input = {
+  deviceId: string;
+  request: LoadImageRequest;
 };
 
 export default function loadImage({
   deviceId,
-  hexImage,
-  padImage = true,
-}: LoadImageRequest): Observable<LoadImageEvent> {
+  request,
+}: Input): Observable<LoadImageEvent> {
+  const { hexImage, padImage = true } = request;
+
   const sub = withDevice(deviceId)(
     (transport) =>
       new Observable((subscriber) => {
@@ -70,7 +80,7 @@ export default function loadImage({
               const imageData = await generateStaxImageFormat(
                 hexImage,
                 true,
-                padImage
+                !!padImage
               );
               const imageLength = imageData.length;
 

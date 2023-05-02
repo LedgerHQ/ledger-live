@@ -12,7 +12,7 @@ import type {
   NFTCollectionMetadataResponse,
   Account,
 } from "@ledgerhq/types-live";
-import { API, apiForCurrency } from "../api/Ethereum";
+import { API, apiForCurrency } from "../families/ethereum/api";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const nftsFromOperations = (ops: Operation[]): ProtoNFT[] => {

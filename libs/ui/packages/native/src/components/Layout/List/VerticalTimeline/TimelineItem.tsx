@@ -112,7 +112,7 @@ export default function TimelineItem({
           <Flex flexDirection="row" justifyContent="space-between">
             <Text
               variant="body"
-              fontWeight="semiBold"
+              fontWeight={status === "active" ? "semiBold" : "medium"}
               flexShrink={1}
               color={
                 item.status === "completed" && isLastItem

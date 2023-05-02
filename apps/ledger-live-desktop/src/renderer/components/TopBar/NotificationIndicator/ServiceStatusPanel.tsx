@@ -11,7 +11,6 @@ import { FakeLink } from "~/renderer/components/Link";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { urls } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 const IncidentContainer = styled(Box)`
@@ -128,7 +127,7 @@ function StatusNotOkHeader({ incidents }: { incidents: Incident[] }) {
     </ScrollArea>
   );
 }
-const PanelContainer: ThemedComponent<{}> = styled.div`
+const PanelContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

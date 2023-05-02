@@ -18,6 +18,7 @@ export default function ResetOnboardingStateRow() {
   const knownDevices = useSelector(knownDevicesSelector);
   return (
     <SettingsRow
+      hasBorderTop
       title="Reset onboarding state"
       desc="Sets the app as if the onboarding was never completed"
       onPress={() => {

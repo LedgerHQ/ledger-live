@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import {
   useIsFocused,
@@ -7,6 +7,7 @@ import {
 } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { BluetoothRequired } from "@ledgerhq/errors";
 
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { createAction, Result } from "@ledgerhq/live-common/hw/actions/manager";
@@ -15,7 +16,9 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenName } from "../../const";
-import SelectDevice2 from "../../components/SelectDevice2";
+import SelectDevice2, {
+  SetHeaderOptionsRequest,
+} from "../../components/SelectDevice2";
 import SelectDevice from "../../components/SelectDevice";
 import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -24,6 +27,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import {
   BaseComposite,
+  ReactNavigationHeaderOptions,
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
@@ -42,6 +46,11 @@ type NavigationProps = BaseComposite<
 
 type Props = NavigationProps;
 
+// Defines here some of the header options for this screen to be able to reset back to them.
+export const managerHeaderOptions: ReactNavigationHeaderOptions = {
+  headerShown: false,
+};
+
 type ChooseDeviceProps = Props & {
   isFocused: boolean;
 };
@@ -51,6 +60,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
   const [chosenDevice, setChosenDevice] = useState<Device | null>();
   const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
@@ -91,22 +101,69 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     setDevice(undefined);
   };
 
+  const onError = (error: Error) => {
+    // Both the old (SelectDevice) and new (SelectDevice2) device selection components handle the bluetooth requirements with a hook + bottom drawer.
+    // By setting back the device to `undefined` it gives back the responsibilities to those select components to check for the bluetooth requirements
+    // and avoids a duplicated error drawers/messages.
+    // The only drawback: the user has to select again their device once the bluetooth requirements are respected.
+    if (error instanceof BluetoothRequired) {
+      setDevice(undefined);
+    }
+  };
+
   useEffect(() => {
     setDevice(params?.device);
   }, [params]);
+
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        navigation.setOptions({
+          headerShown: true,
+          headerLeft: request.options.headerLeft,
+          headerRight: request.options.headerRight,
+          title: "",
+        });
+        setIsHeaderOverridden(true);
+      } else {
+        // Sets back the header to its initial values set for this screen
+        navigation.setOptions({
+          headerLeft: () => null,
+          headerRight: () => null,
+          ...managerHeaderOptions,
+        });
+        setIsHeaderOverridden(false);
+      }
+    },
+    [navigation],
+  );
 
   const insets = useSafeAreaInsets();
 
   if (!isFocused) return null;
 
   return (
-    <Flex flex={1} pt={(isExperimental ? ExperimentalHeaderHeight : 0) + 70}>
+    <Flex
+      /**
+       * NB: not using SafeAreaView because it flickers during navigation
+       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
+       */
+      flex={1}
+      pt={insets.top + (isExperimental ? ExperimentalHeaderHeight : 0)}
+    >
       <TrackScreen category="Manager" name="ChooseDevice" />
-      <Flex px={16} mb={8}>
-        <Text fontWeight="semiBold" variant="h4" testID="manager-title">
-          <Trans i18nKey="manager.title" />
-        </Text>
-      </Flex>
+      {!isHeaderOverridden ? (
+        <Flex px={16} mb={8}>
+          <Text
+            mt={3}
+            fontWeight="semiBold"
+            variant="h4"
+            testID="manager-title"
+          >
+            <Trans i18nKey="manager.title" />
+          </Text>
+        </Flex>
+      ) : null}
 
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex flex={1} px={16} pb={insets.bottom + TAB_BAR_SAFE_HEIGHT}>
@@ -114,6 +171,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
             onSelect={onSelectDevice}
             stopBleScanning={!!device}
             displayServicesWidget
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
           />
         </Flex>
       ) : (
@@ -144,6 +202,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         onModalHide={onModalHide}
         action={action}
         request={null}
+        onError={onError}
       />
     </Flex>
   );

@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import styled, { keyframes } from "styled-components";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 const scaleAnimation = keyframes`
   0% {
     opacity: 0;
@@ -18,7 +18,7 @@ const drawCircle = keyframes`
   }
   100% {
     stroke-dashoffset: 0;
-   
+
   }
 `;
 const drawCheck = keyframes`

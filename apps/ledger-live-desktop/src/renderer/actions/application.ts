@@ -1,4 +1,4 @@
-import { createAction } from "redux-actions";
+import { ActionFunction1, Action, createAction } from "redux-actions";
 
 export const unlock = createAction("APPLICATION_SET_DATA", () => ({
   isLocked: false,
@@ -17,7 +17,10 @@ export const setDismissedCarousel = createAction(
     dismissedCarousel,
   }),
 );
-export const setOSDarkMode = createAction("APPLICATION_SET_DATA", (osDarkMode?: boolean) => ({
+export const setOSDarkMode: ActionFunction1<
+  boolean | undefined,
+  Action<{ osDarkMode?: boolean }>
+> = createAction("APPLICATION_SET_DATA", (osDarkMode?: boolean) => ({
   osDarkMode,
 }));
 export const setNavigationLock = createAction(

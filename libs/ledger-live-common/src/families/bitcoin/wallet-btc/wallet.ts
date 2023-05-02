@@ -18,7 +18,7 @@ import * as utils from "./utils";
 import cryptoFactory from "./crypto/factory";
 import BitcoinLikeExplorer from "./explorer";
 import { TX, Address } from "./storage/types";
-import { blockchainBaseURL } from "../../../api/Ledger";
+import { blockchainBaseURL } from "../../../explorer";
 
 class BitcoinLikeWallet {
   explorers: { [currencyId: string]: IExplorer } = {};

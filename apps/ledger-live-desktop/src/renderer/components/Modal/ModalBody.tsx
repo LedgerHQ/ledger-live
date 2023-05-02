@@ -25,7 +25,7 @@ class ModalBody extends PureComponent<Props> {
     }
   }
 
-  _content: React$ElementRef<any> = React.createRef();
+  _content: React.Ref<any> = React.createRef();
   render() {
     const {
       onBack,

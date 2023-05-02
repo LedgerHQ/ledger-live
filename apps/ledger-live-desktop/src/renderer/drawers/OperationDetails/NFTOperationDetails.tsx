@@ -9,7 +9,7 @@ import {
   TextEllipsis,
   HashContainer,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
-import { Operation } from "@ledgerhq/types-live";
+import { NFTMetadata, Operation } from "@ledgerhq/types-live";
 import Media from "~/renderer/components/Nft/Media";
 import Box from "~/renderer/components/Box";
 import {
@@ -43,7 +43,7 @@ const NFTOperationDetails = ({ operation }: { operation: Operation }) => {
           <Box horizontal alignItems="center">
             <Skeleton width={24} minHeight={24} show={show}>
               <Media
-                metadata={nftMetadata}
+                metadata={nftMetadata as NFTMetadata}
                 tokenId={operation.tokenId}
                 size={24}
                 mediaFormat="preview"
@@ -59,7 +59,9 @@ const NFTOperationDetails = ({ operation }: { operation: Operation }) => {
           </Box>
           {!show ? (
             <GradientHover>
-              <CopyWithFeedback text={collectionMetadata?.tokenName} />
+              {collectionMetadata?.tokenName && (
+                <CopyWithFeedback text={collectionMetadata?.tokenName} />
+              )}
             </GradientHover>
           ) : null}
         </OpDetailsData>

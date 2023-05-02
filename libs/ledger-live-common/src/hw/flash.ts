@@ -2,7 +2,7 @@ import { log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import { Observable, from, of, concat, EMPTY } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "../manager/api";
 import { getProviderId } from "../manager/provider";
 import getDeviceInfo from "./getDeviceInfo";
 import type {

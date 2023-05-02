@@ -18,6 +18,7 @@ type Props = {
   onError?: (err: Error) => void;
 };
 
+const action = createAction(installLanguage);
 const ChangeDeviceLanguageAction: React.FC<Props> = ({
   device,
   language,
@@ -28,17 +29,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
 }) => {
   const showAlert = !device?.wired;
   const { t } = useTranslation();
-
-  const action = useMemo(
-    () =>
-      createAction(() =>
-        installLanguage({
-          deviceId: device?.deviceId ?? "",
-          language,
-        }),
-      ),
-    [language, device?.deviceId],
-  );
+  const request = useMemo(() => ({ language }), [language]);
 
   useEffect(() => {
     if (onStart && device) {
@@ -51,8 +42,7 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
       <Flex flexDirection="row" mb={showAlert ? "16px" : 0}>
         <DeviceAction
           action={action}
-          // FIXME: request should be a Language in theory :/
-          request={undefined}
+          request={request}
           device={device}
           onError={onError}
           renderOnResult={() => (

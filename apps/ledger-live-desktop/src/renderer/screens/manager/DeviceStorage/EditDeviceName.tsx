@@ -55,6 +55,8 @@ const EditDeviceName: React.FC<Props> = ({
   const [running, setRunning] = useState(false);
   const disableButton = running || (!completed && (deviceName === name || !name.trim() || error));
 
+  const request = useMemo(() => ({ name }), [name]);
+
   const onCloseDrawer = useCallback(() => {
     onClose();
     setRunning(false);
@@ -136,7 +138,7 @@ const EditDeviceName: React.FC<Props> = ({
           <Flex flex={1} alignItems="center" justifyContent="center" p={2}>
             <DeviceAction
               device={device}
-              request={name}
+              request={request}
               action={action}
               onClose={onClose}
               onResult={onSuccess}
@@ -164,7 +166,7 @@ const EditDeviceName: React.FC<Props> = ({
         )}
         {(!running || completed) && (
           <Flex flexDirection="column" rowGap={8}>
-            <Divider variant="light" />
+            <Divider />
             <Flex alignSelf="end" px={12} pb={8}>
               <Button
                 variant="main"
