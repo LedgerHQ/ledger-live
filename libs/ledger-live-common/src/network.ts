@@ -12,6 +12,10 @@ type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
 export const requestInterceptor = (
   request: AxiosRequestConfig
 ): ExtendedXHRConfig => {
+  if (!getEnv("ENABLE_NETWORK_LOGS")) {
+    return request;
+  }
+
   const { baseURL, url, method = "", data } = request;
   log("network", `${method} ${baseURL || ""}${url}`, { data });
 
@@ -30,6 +34,10 @@ export const responseInterceptor = (
     config: ExtendedXHRConfig;
   } & AxiosResponse<any>
 ) => {
+  if (!getEnv("ENABLE_NETWORK_LOGS")) {
+    return response;
+  }
+
   const { baseURL, url, method = "", metadata } = response.config;
   const { startTime = 0 } = metadata || {};
 
