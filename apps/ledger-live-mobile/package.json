@@ -3,9 +3,9 @@
   "version": "3.20.1",
   "private": true,
   "scripts": {
+    "start": "react-native start",
     "postinstall": "zx ./scripts/post.mjs",
     "pod": "cd ios && bundle exec pod install --repo-update",
-    "start": "react-native start",
     "ios": "react-native run-ios",
     "android": "react-native run-android --appIdSuffix=debug",
     "android:gradleClean": "cd android && ./gradlew clean",
