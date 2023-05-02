@@ -107,13 +107,6 @@ const validatorsMap = {
 };
 
 describe("cosmos/banner", () => {
-  beforeAll(() => {
-    // FIXME cryptoFactory should just be replaced with defaultConfig
-    const cosmos = cryptoFactory("cosmos");
-    cosmos.lcd = defaultConfig.config.cosmos.cosmos.lcd;
-    cosmos.minGasPrice = defaultConfig.config.cosmos.cosmos.minGasPrice;
-    cosmos.ledgerValidator = defaultConfig.config.cosmos.cosmos.ledgerValidator;
-  });
   describe("useCosmosFormattedDelegations", () => {
     beforeEach(() => {
       // @ts-expect-error Ledger value come from config
