@@ -29,7 +29,6 @@ export type CryptoCurrencyId =
   | "ellaism"
   | "dogecoin"
   | "digibyte"
-  | "energywebchain"
   | "eos"
   | "elastos"
   | "elrond"
@@ -120,12 +119,26 @@ export type CryptoCurrencyId =
   | "solana_devnet"
   | "filecoin"
   | "arbitrum"
+  | "arbitrum_goerli"
   | "cronos"
   | "fantom"
   | "flare"
   | "songbird"
   | "moonbeam"
-  | "near";
+  | "near"
+  | "rsk"
+  | "bittorrent"
+  | "kava_evm"
+  | "evmos_evm"
+  | "optimism"
+  | "optimism_goerli"
+  | "energy_web"
+  | "astar"
+  | "metis"
+  | "boba"
+  | "moonriver"
+  | "velas_evm"
+  | "syscoin";
 
 /**
  *

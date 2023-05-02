@@ -1,14 +1,18 @@
 import React from "react";
-import { Flex, Text, InfiniteLoader, FlexBoxProps, Icons } from "@ledgerhq/react-ui";
+import {
+  Flex,
+  Text,
+  InfiniteLoader,
+  FlexBoxProps,
+  VerticalTimeline,
+  Icons,
+} from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
-
 import InfoCircle from "~/renderer/icons/InfoCircle";
 
-export const StepText = styled(Text).attrs({
-  color: "neutral.c90",
-  variant: "body",
-  fontWeight: "medium",
-})``;
+export const StepText = styled(VerticalTimeline.BodyText)`
+  white-space: pre-wrap;
+`;
 
 export const BorderFlex = styled(Flex)`
   background-color: ${p => p.theme.colors.palette.neutral.c30};
@@ -74,11 +78,11 @@ export const Bullet = ({ status, bulletText, text, subText, ...props }: BulletPr
         {status === Status.active ? (
           <InfiniteLoader color="primary.c80" size={24} />
         ) : status === Status.completed ? (
-          <Icons.CircledCheckSolidMedium size={24} color="success.c60" />
+          <Icons.CircledCheckSolidMedium size={24} color="success.c30" />
         ) : status === Status.updateAvailable ? (
           <InfoCircle size={24} color={colors.constant.purple} />
         ) : status === Status.failed ? (
-          <Icons.CircledCrossSolidMedium size={24} color="error.c80" />
+          <Icons.CircledCrossSolidMedium size={24} color="error.c40" />
         ) : (
           <Text variant="body">{bulletText}</Text>
         )}

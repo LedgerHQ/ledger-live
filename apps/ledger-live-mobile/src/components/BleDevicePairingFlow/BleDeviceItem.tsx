@@ -12,10 +12,15 @@ export type RenderedDevice = Device & {
 
 type Props = {
   deviceMeta: RenderedDevice;
+  areKnownDevicesPairable?: boolean;
   onSelect: () => void;
 };
 
-const BleDeviceItem = ({ deviceMeta, onSelect }: Props) => {
+const BleDeviceItem = ({
+  deviceMeta,
+  onSelect,
+  areKnownDevicesPairable,
+}: Props) => {
   const { t } = useTranslation();
   const { deviceName, isAlreadyKnown } = deviceMeta;
 
@@ -29,7 +34,7 @@ const BleDeviceItem = ({ deviceMeta, onSelect }: Props) => {
     }
   }, [deviceMeta.modelId]);
 
-  if (isAlreadyKnown) {
+  if (isAlreadyKnown && !areKnownDevicesPairable) {
     return (
       <Flex mb={3} opacity="0.5">
         <Flex

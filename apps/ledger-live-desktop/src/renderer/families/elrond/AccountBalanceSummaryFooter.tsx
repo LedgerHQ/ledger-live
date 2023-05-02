@@ -17,7 +17,7 @@ import {
 } from "~/renderer/families/elrond/blocks/Summary";
 import { Account } from "@ledgerhq/live-common/types/index";
 import { UnbondingType, DelegationType } from "./types";
-interface Props {
+export interface Props {
   account: Account;
 }
 interface BalanceType {

@@ -176,7 +176,7 @@ const AccountPage = ({
     </Box>
   );
 };
-const ConnectedAccountPage: React$ComponentType<{}> = compose(
+const ConnectedAccountPage: React.ComponentType<{}> = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(AccountPage);

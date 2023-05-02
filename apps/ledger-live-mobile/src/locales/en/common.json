@@ -118,19 +118,9 @@
       "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
-    "FwUpdateBluetoothNotSupported": {
-      "title": "Firmware updates are only supported for wired connections"
-    },
-    "BtcUnmatchedApp": {
-      "title": "That's the wrong app",
-      "description": "Please open the {{managerAppName}} app on your device."
-    },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
       "description": "Your Ledger device must be unlocked and in range to use Bluetooth."
-    },
-    "CantScanQRCode": {
-      "title": "Could not scan this QR code: auto-verification not supported by this address."
     },
     "ConnectAppTimeout": {
       "title": "Sorry, no device found",
@@ -327,11 +317,13 @@
     },
     "ImageCommitRefusedOnDevice": {
       "title": "Lock screen cancelled on Ledger Stax",
-      "description": "If this image wasn't the right fit, you can try again with another image."
+      "description": "If this image wasn't the right fit, you can try again with another image.",
+      "primaryCTA": "Upload another picture"
     },
     "ImageLoadRefusedOnDevice": {
       "title": "Lock screen cancelled on Ledger Stax",
-      "description": "If this image wasn't the right fit, you can try again with another image."
+      "description": "If this image wasn't the right fit, you can try again with another image.",
+      "primaryCTA": "Upload another picture"
     },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
@@ -480,6 +472,10 @@
       "title": "Password does not match",
       "description": "Please try again."
     },
+    "PeerRemovedPairing": {
+      "title": "Your {{ productName }} needs to be paired again.",
+      "description": "Go to your phone's Bluetooth settings and forget your {{ productName }}. Then come back in Ledger Live and try again."
+    },
     "SelectExchangesLoadError": {
       "title": "Unable to load",
       "description": "Cannot load the exchanges."
@@ -556,7 +552,8 @@
     },
     "UpdateYourApp": {
       "title": "App update needed",
-      "description": "Please uninstall then reinstall the {{managerAppName}} app in the Manager."
+      "description": "Please uninstall then reinstall the {{managerAppName}} app in the Manager.",
+      "primaryCTA": "Open Manager"
     },
     "UserRefusedAllowManager": {
       "title": "Manager disabled on device",
@@ -675,7 +672,8 @@
     },
     "generic": {
       "title": "{{message}}",
-      "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support.",
+      "primaryCTA": "Retry"
     },
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
@@ -1840,7 +1838,8 @@
           "title": "Your device is locked",
           "subtitle": "Unlock your {{ productName }} and try again."
         },
-        "retryCta": "Try again"
+        "retryCta": "Retry",
+        "openSettingsCta": "Go to Bluetooth settings"
       }
     }
   },
@@ -2392,6 +2391,7 @@
     },
     "earn": "Earn",
     "quickActions": "Quick actions",
+    "referralProgram": "Refer a friend and get $10 of Bitcoin",
     "banner": {
       "redelegation": {
         "description": "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
@@ -2687,6 +2687,10 @@
           "title": "Experimental Explorers API",
           "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature."
         },
+        "experimentalListAppsV2": {
+          "title": "Experimental list apps for My Ledger",
+          "description": "Performance improvement for My Ledger access and inline flows."
+        },
         "experimentalCountervalues": {
           "title": "Experimental countervalues API",
           "description": "This may cause the countervalues displayed for your accounts to become incorrect."
@@ -2731,7 +2735,12 @@
       "featureFlagsTabGroups": "Groups",
       "firebaseProject": "Firebase project targeted by this build:",
       "showBannerDesc": "Show banner when flags are overridden",
-      "bannerTitle": "Flags overridden locally"
+      "bannerTitle": "Flags overridden locally",
+      "features": {
+        "firmwareUpdate": {
+          "headerTitle": "Debug firmware update"
+        }
+      }
     }
   },
   "notifications": {
@@ -2800,7 +2809,8 @@
         "addressVerified": "Address verified",
         "verifyAddress": "Tap here to verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
-        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss."
+        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss.",
+        "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards"
       },
       "securityVerify": {
         "title": "For security we recommend verifying this address with your Ledger device.",
@@ -5799,22 +5809,7 @@
       }
     },
     "status": {
-      "title": "An issue might need your attention",
-      "title_plural": "Some issues might need your attention",
-      "desc": {
-        "0": "They’re being investigated and will be resolved shortly.",
-        "1": "If you’re affected by any of the issues, reach out to our <0>Customer Support</0>"
-      },
-      "cta": {
-        "ok": "Got it"
-      },
-      "ok": {
-        "title": "Ledger Live is up and running",
-        "desc": "<0>Having trouble? Go on our </0><1>help page</1>"
-      },
-      "error": {
-        "title": "Ledger Live is experiencing issues"
-      }
+      "header": "Status"
     }
   },
   "browseWeb3": {
@@ -6170,7 +6165,8 @@
       "media": {
         "tag": "{{count}} NFTs"
       }
-    }
+    },
+    "referralProgram":"$10"
   },
   "servicesWidget": {
     "title": "Services",

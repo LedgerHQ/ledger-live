@@ -7,9 +7,8 @@ import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { getMarketColor } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import ConfirmationCheck from "./ConfirmationCheck";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import perFamilyOperationDetails from "~/renderer/generated/operationDetails";
-const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Cell = styled(Box).attrs(() => ({
   pl: 4,
   horizontal: true,
   alignItems: "center",

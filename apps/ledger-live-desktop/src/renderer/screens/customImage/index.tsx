@@ -294,7 +294,7 @@ const CustomImage: React.FC<Props> = props => {
               size={64}
               iconSize={24}
               Icon={Icons.CheckAloneMedium}
-              iconColor="success.c50"
+              iconColor="success.c20"
             />
             <Flex flexDirection="row" flexShrink={0}>
               <Log

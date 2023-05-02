@@ -22,7 +22,6 @@ import Spoiler from "~/renderer/components/Spoiler";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
 import Button from "~/renderer/components/Button";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 type State = {
   accountName: string | undefined | null;
@@ -269,7 +268,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     );
   }
 }
-const AdvancedLogsContainer: ThemedComponent<{}> = styled.div`
+const AdvancedLogsContainer = styled.div`
   border: 1px dashed ${p => p.theme.colors.palette.background.default};
   background-color: ${p => p.theme.colors.palette.background.default};
   color: ${p => p.theme.colors.palette.text.shade100};
@@ -284,12 +283,12 @@ const AdvancedLogsContainer: ThemedComponent<{}> = styled.div`
   ${p => p.theme.overflow.xy};
   user-select: text;
 `;
-const ConnectedAccountSettingRenderBody: React$ComponentType<{}> = compose(
+const ConnectedAccountSettingRenderBody: React.ComponentType<{}> = compose(
   connect(null, mapDispatchToProps),
   withTranslation(),
 )(AccountSettingRenderBody);
 export default ConnectedAccountSettingRenderBody;
-export const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const Container = styled(Box).attrs(() => ({
   flow: 2,
   horizontal: true,
   mb: 3,
@@ -298,7 +297,7 @@ export const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
   justify-content: space-between;
 `;
-export const OptionRowDesc: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const OptionRowDesc = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 3,
   textAlign: "left",
@@ -306,7 +305,7 @@ export const OptionRowDesc: ThemedComponent<{}> = styled(Box).attrs(() => ({
   color: "palette.text.shade60",
   shrink: 1,
 }))``;
-export const OptionRowTitle: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const OptionRowTitle = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
   fontSize: 4,

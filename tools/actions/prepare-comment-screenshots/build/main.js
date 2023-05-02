@@ -1,3 +1,4 @@
+"use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -31,33 +32,13 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
 
 // ../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/utils.js
 var require_utils = __commonJS({
-  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/utils.js"(exports2) {
+  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/utils.js"(exports) {
     "use strict";
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.toCommandProperties = exports2.toCommandValue = void 0;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.toCommandProperties = exports.toCommandValue = void 0;
     function toCommandValue(input) {
       if (input === null || input === void 0) {
         return "";
@@ -66,7 +47,7 @@ var require_utils = __commonJS({
       }
       return JSON.stringify(input);
     }
-    exports2.toCommandValue = toCommandValue;
+    exports.toCommandValue = toCommandValue;
     function toCommandProperties(annotationProperties) {
       if (!Object.keys(annotationProperties).length) {
         return {};
@@ -80,15 +61,15 @@ var require_utils = __commonJS({
         endColumn: annotationProperties.endColumn
       };
     }
-    exports2.toCommandProperties = toCommandProperties;
+    exports.toCommandProperties = toCommandProperties;
   }
 });
 
 // ../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/command.js
 var require_command = __commonJS({
-  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/command.js"(exports2) {
+  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/command.js"(exports) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -99,12 +80,12 @@ var require_command = __commonJS({
         k2 = k;
       o[k2] = m[k];
     });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar = exports2 && exports2.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -116,19 +97,19 @@ var require_command = __commonJS({
       __setModuleDefault(result, mod);
       return result;
     };
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.issue = exports2.issueCommand = void 0;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.issue = exports.issueCommand = void 0;
     var os = __importStar(require("os"));
     var utils_1 = require_utils();
     function issueCommand(command, properties, message) {
       const cmd = new Command(command, properties, message);
       process.stdout.write(cmd.toString() + os.EOL);
     }
-    exports2.issueCommand = issueCommand;
+    exports.issueCommand = issueCommand;
     function issue(name, message = "") {
       issueCommand(name, {}, message);
     }
-    exports2.issue = issue;
+    exports.issue = issue;
     var CMD_STRING = "::";
     var Command = class {
       constructor(command, properties, message) {
@@ -506,9 +487,9 @@ var init_esm_node = __esm({
 
 // ../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/file-command.js
 var require_file_command = __commonJS({
-  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/file-command.js"(exports2) {
+  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/file-command.js"(exports) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -519,12 +500,12 @@ var require_file_command = __commonJS({
         k2 = k;
       o[k2] = m[k];
     });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar = exports2 && exports2.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -536,8 +517,8 @@ var require_file_command = __commonJS({
       __setModuleDefault(result, mod);
       return result;
     };
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.prepareKeyValueMessage = exports2.issueFileCommand = void 0;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.prepareKeyValueMessage = exports.issueFileCommand = void 0;
     var fs2 = __importStar(require("fs"));
     var os = __importStar(require("os"));
     var uuid_1 = (init_esm_node(), __toCommonJS(esm_node_exports));
@@ -554,7 +535,7 @@ var require_file_command = __commonJS({
         encoding: "utf8"
       });
     }
-    exports2.issueFileCommand = issueFileCommand;
+    exports.issueFileCommand = issueFileCommand;
     function prepareKeyValueMessage(key, value) {
       const delimiter = `ghadelimiter_${uuid_1.v4()}`;
       const convertedValue = utils_1.toCommandValue(value);
@@ -566,16 +547,16 @@ var require_file_command = __commonJS({
       }
       return `${key}<<${delimiter}${os.EOL}${convertedValue}${os.EOL}${delimiter}`;
     }
-    exports2.prepareKeyValueMessage = prepareKeyValueMessage;
+    exports.prepareKeyValueMessage = prepareKeyValueMessage;
   }
 });
 
 // ../../../node_modules/.pnpm/@actions+http-client@2.0.1/node_modules/@actions/http-client/lib/proxy.js
 var require_proxy = __commonJS({
-  "../../../node_modules/.pnpm/@actions+http-client@2.0.1/node_modules/@actions/http-client/lib/proxy.js"(exports2) {
+  "../../../node_modules/.pnpm/@actions+http-client@2.0.1/node_modules/@actions/http-client/lib/proxy.js"(exports) {
     "use strict";
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.checkBypass = exports2.getProxyUrl = void 0;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.checkBypass = exports.getProxyUrl = void 0;
     function getProxyUrl(reqUrl) {
       const usingSsl = reqUrl.protocol === "https:";
       if (checkBypass(reqUrl)) {
@@ -594,7 +575,7 @@ var require_proxy = __commonJS({
         return void 0;
       }
     }
-    exports2.getProxyUrl = getProxyUrl;
+    exports.getProxyUrl = getProxyUrl;
     function checkBypass(reqUrl) {
       if (!reqUrl.hostname) {
         return false;
@@ -622,13 +603,13 @@ var require_proxy = __commonJS({
       }
       return false;
     }
-    exports2.checkBypass = checkBypass;
+    exports.checkBypass = checkBypass;
   }
 });
 
 // ../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/lib/tunnel.js
 var require_tunnel = __commonJS({
-  "../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/lib/tunnel.js"(exports2) {
+  "../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/lib/tunnel.js"(exports) {
     "use strict";
     var net = require("net");
     var tls = require("tls");
@@ -637,10 +618,10 @@ var require_tunnel = __commonJS({
     var events = require("events");
     var assert = require("assert");
     var util = require("util");
-    exports2.httpOverHttp = httpOverHttp;
-    exports2.httpsOverHttp = httpsOverHttp;
-    exports2.httpOverHttps = httpOverHttps;
-    exports2.httpsOverHttps = httpsOverHttps;
+    exports.httpOverHttp = httpOverHttp;
+    exports.httpsOverHttp = httpsOverHttp;
+    exports.httpOverHttps = httpOverHttps;
+    exports.httpsOverHttps = httpsOverHttps;
     function httpOverHttp(options) {
       var agent = new TunnelingAgent(options);
       agent.request = http.request;
@@ -852,22 +833,22 @@ var require_tunnel = __commonJS({
       debug = function() {
       };
     }
-    exports2.debug = debug;
+    exports.debug = debug;
   }
 });
 
 // ../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/index.js
 var require_tunnel2 = __commonJS({
-  "../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/index.js"(exports2, module2) {
+  "../../../node_modules/.pnpm/tunnel@0.0.6/node_modules/tunnel/index.js"(exports, module2) {
     module2.exports = require_tunnel();
   }
 });
 
 // ../../../node_modules/.pnpm/@actions+http-client@2.0.1/node_modules/@actions/http-client/lib/index.js
 var require_lib = __commonJS({
-  "../../../node_modules/.pnpm/@actions+http-client@2.0.1/node_modules/@actions/http-client/lib/index.js"(exports2) {
+  "../../../node_modules/.pnpm/@actions+http-client@2.0.1/node_modules/@actions/http-client/lib/index.js"(exports) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -878,12 +859,12 @@ var require_lib = __commonJS({
         k2 = k;
       o[k2] = m[k];
     });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar = exports2 && exports2.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -895,7 +876,7 @@ var require_lib = __commonJS({
       __setModuleDefault(result, mod);
       return result;
     };
-    var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve) {
           resolve(value);
@@ -922,8 +903,8 @@ var require_lib = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.HttpClient = exports2.isHttps = exports2.HttpClientResponse = exports2.HttpClientError = exports2.getProxyUrl = exports2.MediaTypes = exports2.Headers = exports2.HttpCodes = void 0;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.HttpClient = exports.isHttps = exports.HttpClientResponse = exports.HttpClientError = exports.getProxyUrl = exports.MediaTypes = exports.Headers = exports.HttpCodes = void 0;
     var http = __importStar(require("http"));
     var https = __importStar(require("https"));
     var pm = __importStar(require_proxy());
@@ -957,21 +938,21 @@ var require_lib = __commonJS({
       HttpCodes2[HttpCodes2["BadGateway"] = 502] = "BadGateway";
       HttpCodes2[HttpCodes2["ServiceUnavailable"] = 503] = "ServiceUnavailable";
       HttpCodes2[HttpCodes2["GatewayTimeout"] = 504] = "GatewayTimeout";
-    })(HttpCodes = exports2.HttpCodes || (exports2.HttpCodes = {}));
+    })(HttpCodes = exports.HttpCodes || (exports.HttpCodes = {}));
     var Headers;
     (function(Headers2) {
       Headers2["Accept"] = "accept";
       Headers2["ContentType"] = "content-type";
-    })(Headers = exports2.Headers || (exports2.Headers = {}));
+    })(Headers = exports.Headers || (exports.Headers = {}));
     var MediaTypes;
     (function(MediaTypes2) {
       MediaTypes2["ApplicationJson"] = "application/json";
-    })(MediaTypes = exports2.MediaTypes || (exports2.MediaTypes = {}));
+    })(MediaTypes = exports.MediaTypes || (exports.MediaTypes = {}));
     function getProxyUrl(serverUrl) {
       const proxyUrl = pm.getProxyUrl(new URL(serverUrl));
       return proxyUrl ? proxyUrl.href : "";
     }
-    exports2.getProxyUrl = getProxyUrl;
+    exports.getProxyUrl = getProxyUrl;
     var HttpRedirectCodes = [
       HttpCodes.MovedPermanently,
       HttpCodes.ResourceMoved,
@@ -995,7 +976,7 @@ var require_lib = __commonJS({
         Object.setPrototypeOf(this, HttpClientError.prototype);
       }
     };
-    exports2.HttpClientError = HttpClientError;
+    exports.HttpClientError = HttpClientError;
     var HttpClientResponse = class {
       constructor(message) {
         this.message = message;
@@ -1014,12 +995,12 @@ var require_lib = __commonJS({
         });
       }
     };
-    exports2.HttpClientResponse = HttpClientResponse;
+    exports.HttpClientResponse = HttpClientResponse;
     function isHttps(requestUrl) {
       const parsedUrl = new URL(requestUrl);
       return parsedUrl.protocol === "https:";
     }
-    exports2.isHttps = isHttps;
+    exports.isHttps = isHttps;
     var HttpClient = class {
       constructor(userAgent, handlers, requestOptions) {
         this._ignoreSslError = false;
@@ -1438,16 +1419,16 @@ var require_lib = __commonJS({
         });
       }
     };
-    exports2.HttpClient = HttpClient;
+    exports.HttpClient = HttpClient;
     var lowercaseKeys = (obj) => Object.keys(obj).reduce((c, k) => (c[k.toLowerCase()] = obj[k], c), {});
   }
 });
 
 // ../../../node_modules/.pnpm/@actions+http-client@2.0.1/node_modules/@actions/http-client/lib/auth.js
 var require_auth = __commonJS({
-  "../../../node_modules/.pnpm/@actions+http-client@2.0.1/node_modules/@actions/http-client/lib/auth.js"(exports2) {
+  "../../../node_modules/.pnpm/@actions+http-client@2.0.1/node_modules/@actions/http-client/lib/auth.js"(exports) {
     "use strict";
-    var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve) {
           resolve(value);
@@ -1474,8 +1455,8 @@ var require_auth = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.PersonalAccessTokenCredentialHandler = exports2.BearerCredentialHandler = exports2.BasicCredentialHandler = void 0;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.PersonalAccessTokenCredentialHandler = exports.BearerCredentialHandler = exports.BasicCredentialHandler = void 0;
     var BasicCredentialHandler = class {
       constructor(username, password) {
         this.username = username;
@@ -1497,7 +1478,7 @@ var require_auth = __commonJS({
         });
       }
     };
-    exports2.BasicCredentialHandler = BasicCredentialHandler;
+    exports.BasicCredentialHandler = BasicCredentialHandler;
     var BearerCredentialHandler = class {
       constructor(token) {
         this.token = token;
@@ -1520,7 +1501,7 @@ var require_auth = __commonJS({
         });
       }
     };
-    exports2.BearerCredentialHandler = BearerCredentialHandler;
+    exports.BearerCredentialHandler = BearerCredentialHandler;
     var PersonalAccessTokenCredentialHandler = class {
       constructor(token) {
         this.token = token;
@@ -1543,15 +1524,15 @@ var require_auth = __commonJS({
         });
       }
     };
-    exports2.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHandler;
+    exports.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHandler;
   }
 });
 
 // ../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/oidc-utils.js
 var require_oidc_utils = __commonJS({
-  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/oidc-utils.js"(exports2) {
+  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/oidc-utils.js"(exports) {
     "use strict";
-    var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve) {
           resolve(value);
@@ -1578,8 +1559,8 @@ var require_oidc_utils = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.OidcClient = void 0;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.OidcClient = void 0;
     var http_client_1 = require_lib();
     var auth_1 = require_auth();
     var core_1 = require_core();
@@ -1641,15 +1622,15 @@ var require_oidc_utils = __commonJS({
         });
       }
     };
-    exports2.OidcClient = OidcClient;
+    exports.OidcClient = OidcClient;
   }
 });
 
 // ../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/summary.js
 var require_summary = __commonJS({
-  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/summary.js"(exports2) {
+  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/summary.js"(exports) {
     "use strict";
-    var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve) {
           resolve(value);
@@ -1676,13 +1657,13 @@ var require_summary = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.summary = exports2.markdownSummary = exports2.SUMMARY_DOCS_URL = exports2.SUMMARY_ENV_VAR = void 0;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.summary = exports.markdownSummary = exports.SUMMARY_DOCS_URL = exports.SUMMARY_ENV_VAR = void 0;
     var os_1 = require("os");
     var fs_1 = require("fs");
     var { access, appendFile, writeFile } = fs_1.promises;
-    exports2.SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY";
-    exports2.SUMMARY_DOCS_URL = "https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary";
+    exports.SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY";
+    exports.SUMMARY_DOCS_URL = "https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary";
     var Summary = class {
       constructor() {
         this._buffer = "";
@@ -1698,9 +1679,9 @@ var require_summary = __commonJS({
           if (this._filePath) {
             return this._filePath;
           }
-          const pathFromEnv = process.env[exports2.SUMMARY_ENV_VAR];
+          const pathFromEnv = process.env[exports.SUMMARY_ENV_VAR];
           if (!pathFromEnv) {
-            throw new Error(`Unable to find environment variable for $${exports2.SUMMARY_ENV_VAR}. Check if your runtime environment supports job summaries.`);
+            throw new Error(`Unable to find environment variable for $${exports.SUMMARY_ENV_VAR}. Check if your runtime environment supports job summaries.`);
           }
           try {
             yield access(pathFromEnv, fs_1.constants.R_OK | fs_1.constants.W_OK);
@@ -1934,16 +1915,16 @@ var require_summary = __commonJS({
       }
     };
     var _summary = new Summary();
-    exports2.markdownSummary = _summary;
-    exports2.summary = _summary;
+    exports.markdownSummary = _summary;
+    exports.summary = _summary;
   }
 });
 
 // ../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/path-utils.js
 var require_path_utils = __commonJS({
-  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/path-utils.js"(exports2) {
+  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/path-utils.js"(exports) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -1954,12 +1935,12 @@ var require_path_utils = __commonJS({
         k2 = k;
       o[k2] = m[k];
     });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar = exports2 && exports2.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -1971,29 +1952,29 @@ var require_path_utils = __commonJS({
       __setModuleDefault(result, mod);
       return result;
     };
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.toPlatformPath = exports2.toWin32Path = exports2.toPosixPath = void 0;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.toPlatformPath = exports.toWin32Path = exports.toPosixPath = void 0;
     var path = __importStar(require("path"));
     function toPosixPath(pth) {
       return pth.replace(/[\\]/g, "/");
     }
-    exports2.toPosixPath = toPosixPath;
+    exports.toPosixPath = toPosixPath;
     function toWin32Path(pth) {
       return pth.replace(/[/]/g, "\\");
     }
-    exports2.toWin32Path = toWin32Path;
+    exports.toWin32Path = toWin32Path;
     function toPlatformPath(pth) {
       return pth.replace(/[/\\]/g, path.sep);
     }
-    exports2.toPlatformPath = toPlatformPath;
+    exports.toPlatformPath = toPlatformPath;
   }
 });
 
 // ../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/core.js
 var require_core = __commonJS({
-  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/core.js"(exports2) {
+  "../../../node_modules/.pnpm/@actions+core@1.10.0/node_modules/@actions/core/lib/core.js"(exports) {
     "use strict";
-    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+    var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0)
         k2 = k;
       Object.defineProperty(o, k2, { enumerable: true, get: function() {
@@ -2004,12 +1985,12 @@ var require_core = __commonJS({
         k2 = k;
       o[k2] = m[k];
     });
-    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
     } : function(o, v) {
       o["default"] = v;
     });
-    var __importStar = exports2 && exports2.__importStar || function(mod) {
+    var __importStar = exports && exports.__importStar || function(mod) {
       if (mod && mod.__esModule)
         return mod;
       var result = {};
@@ -2021,7 +2002,7 @@ var require_core = __commonJS({
       __setModuleDefault(result, mod);
       return result;
     };
-    var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve) {
           resolve(value);
@@ -2048,8 +2029,8 @@ var require_core = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.getIDToken = exports2.getState = exports2.saveState = exports2.group = exports2.endGroup = exports2.startGroup = exports2.info = exports2.notice = exports2.warning = exports2.error = exports2.debug = exports2.isDebug = exports2.setFailed = exports2.setCommandEcho = exports2.setOutput = exports2.getBooleanInput = exports2.getMultilineInput = exports2.getInput = exports2.addPath = exports2.setSecret = exports2.exportVariable = exports2.ExitCode = void 0;
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.getIDToken = exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
     var command_1 = require_command();
     var file_command_1 = require_file_command();
     var utils_1 = require_utils();
@@ -2060,7 +2041,7 @@ var require_core = __commonJS({
     (function(ExitCode2) {
       ExitCode2[ExitCode2["Success"] = 0] = "Success";
       ExitCode2[ExitCode2["Failure"] = 1] = "Failure";
-    })(ExitCode = exports2.ExitCode || (exports2.ExitCode = {}));
+    })(ExitCode = exports.ExitCode || (exports.ExitCode = {}));
     function exportVariable(name, val) {
       const convertedVal = utils_1.toCommandValue(val);
       process.env[name] = convertedVal;
@@ -2070,11 +2051,11 @@ var require_core = __commonJS({
       }
       command_1.issueCommand("set-env", { name }, convertedVal);
     }
-    exports2.exportVariable = exportVariable;
+    exports.exportVariable = exportVariable;
     function setSecret(secret) {
       command_1.issueCommand("add-mask", {}, secret);
     }
-    exports2.setSecret = setSecret;
+    exports.setSecret = setSecret;
     function addPath(inputPath) {
       const filePath = process.env["GITHUB_PATH"] || "";
       if (filePath) {
@@ -2084,7 +2065,7 @@ var require_core = __commonJS({
       }
       process.env["PATH"] = `${inputPath}${path.delimiter}${process.env["PATH"]}`;
     }
-    exports2.addPath = addPath;
+    exports.addPath = addPath;
     function getInput2(name, options) {
       const val = process.env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] || "";
       if (options && options.required && !val) {
@@ -2095,7 +2076,7 @@ var require_core = __commonJS({
       }
       return val.trim();
     }
-    exports2.getInput = getInput2;
+    exports.getInput = getInput2;
     function getMultilineInput(name, options) {
       const inputs = getInput2(name, options).split("\n").filter((x) => x !== "");
       if (options && options.trimWhitespace === false) {
@@ -2103,7 +2084,7 @@ var require_core = __commonJS({
       }
       return inputs.map((input) => input.trim());
     }
-    exports2.getMultilineInput = getMultilineInput;
+    exports.getMultilineInput = getMultilineInput;
     function getBooleanInput2(name, options) {
       const trueValue = ["true", "True", "TRUE"];
       const falseValue = ["false", "False", "FALSE"];
@@ -2115,7 +2096,7 @@ var require_core = __commonJS({
       throw new TypeError(`Input does not meet YAML 1.2 "Core Schema" specification: ${name}
 Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
     }
-    exports2.getBooleanInput = getBooleanInput2;
+    exports.getBooleanInput = getBooleanInput2;
     function setOutput2(name, value) {
       const filePath = process.env["GITHUB_OUTPUT"] || "";
       if (filePath) {
@@ -2124,48 +2105,48 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       process.stdout.write(os.EOL);
       command_1.issueCommand("set-output", { name }, utils_1.toCommandValue(value));
     }
-    exports2.setOutput = setOutput2;
+    exports.setOutput = setOutput2;
     function setCommandEcho(enabled) {
       command_1.issue("echo", enabled ? "on" : "off");
     }
-    exports2.setCommandEcho = setCommandEcho;
+    exports.setCommandEcho = setCommandEcho;
     function setFailed2(message) {
       process.exitCode = ExitCode.Failure;
       error(message);
     }
-    exports2.setFailed = setFailed2;
+    exports.setFailed = setFailed2;
     function isDebug() {
       return process.env["RUNNER_DEBUG"] === "1";
     }
-    exports2.isDebug = isDebug;
+    exports.isDebug = isDebug;
     function debug(message) {
       command_1.issueCommand("debug", {}, message);
     }
-    exports2.debug = debug;
+    exports.debug = debug;
     function error(message, properties = {}) {
       command_1.issueCommand("error", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
-    exports2.error = error;
+    exports.error = error;
     function warning(message, properties = {}) {
       command_1.issueCommand("warning", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
-    exports2.warning = warning;
+    exports.warning = warning;
     function notice(message, properties = {}) {
       command_1.issueCommand("notice", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
-    exports2.notice = notice;
+    exports.notice = notice;
     function info(message) {
       process.stdout.write(message + os.EOL);
     }
-    exports2.info = info;
+    exports.info = info;
     function startGroup(name) {
       command_1.issue("group", name);
     }
-    exports2.startGroup = startGroup;
+    exports.startGroup = startGroup;
     function endGroup() {
       command_1.issue("endgroup");
     }
-    exports2.endGroup = endGroup;
+    exports.endGroup = endGroup;
     function group(name, fn) {
       return __awaiter(this, void 0, void 0, function* () {
         startGroup(name);
@@ -2178,7 +2159,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
         return result;
       });
     }
-    exports2.group = group;
+    exports.group = group;
     function saveState(name, value) {
       const filePath = process.env["GITHUB_STATE"] || "";
       if (filePath) {
@@ -2186,33 +2167,33 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       }
       command_1.issueCommand("save-state", { name }, utils_1.toCommandValue(value));
     }
-    exports2.saveState = saveState;
+    exports.saveState = saveState;
     function getState(name) {
       return process.env[`STATE_${name}`] || "";
     }
-    exports2.getState = getState;
+    exports.getState = getState;
     function getIDToken(aud) {
       return __awaiter(this, void 0, void 0, function* () {
         return yield oidc_utils_1.OidcClient.getIDToken(aud);
       });
     }
-    exports2.getIDToken = getIDToken;
+    exports.getIDToken = getIDToken;
     var summary_1 = require_summary();
-    Object.defineProperty(exports2, "summary", { enumerable: true, get: function() {
+    Object.defineProperty(exports, "summary", { enumerable: true, get: function() {
       return summary_1.summary;
     } });
     var summary_2 = require_summary();
-    Object.defineProperty(exports2, "markdownSummary", { enumerable: true, get: function() {
+    Object.defineProperty(exports, "markdownSummary", { enumerable: true, get: function() {
       return summary_2.markdownSummary;
     } });
     var path_utils_1 = require_path_utils();
-    Object.defineProperty(exports2, "toPosixPath", { enumerable: true, get: function() {
+    Object.defineProperty(exports, "toPosixPath", { enumerable: true, get: function() {
       return path_utils_1.toPosixPath;
     } });
-    Object.defineProperty(exports2, "toWin32Path", { enumerable: true, get: function() {
+    Object.defineProperty(exports, "toWin32Path", { enumerable: true, get: function() {
       return path_utils_1.toWin32Path;
     } });
-    Object.defineProperty(exports2, "toPlatformPath", { enumerable: true, get: function() {
+    Object.defineProperty(exports, "toPlatformPath", { enumerable: true, get: function() {
       return path_utils_1.toPlatformPath;
     } });
   }
@@ -2221,8 +2202,8 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 // main.ts
 var core = __toESM(require_core());
 var import_fs = require("fs");
-var main = () => __async(exports, null, function* () {
-  const imagesObject = yield import_fs.promises.readFile(core.getInput("images"), "utf8");
+var main = async () => {
+  const imagesObject = await import_fs.promises.readFile(core.getInput("images"), "utf8");
   const actor = core.getInput("actor");
   const noActor = core.getBooleanInput("no-actor");
   const parsed = JSON.parse(imagesObject);
@@ -2267,5 +2248,5 @@ ${str}` : "There are no changes in the screenshots for this PR. If this is expec
 `;
   core.setOutput("body", str);
   core.setOutput("failed", hasFailed);
-});
+};
 main().catch((err) => core.setFailed(err));

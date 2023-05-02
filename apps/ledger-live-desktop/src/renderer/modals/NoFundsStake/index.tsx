@@ -14,6 +14,7 @@ import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import CoinsIcon from "./assets/CoinsIcon";
 import { page, track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 interface NoFundsStakeModalProps {
   account: AccountLike;
@@ -28,7 +29,7 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
   const rampCatalog = useRampCatalog();
   const { providers, storedProviders } = useProviders();
 
-  const onRampAvailableTickers = useMemo(() => {
+  const onRampAvailableTickers: string[] = useMemo(() => {
     if (!rampCatalog.value) {
       return [];
     }
@@ -43,7 +44,7 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
       : [];
   }, [providers, storedProviders]);
 
-  const currency = parentAccount?.currency || account.currency;
+  const currency: CryptoCurrency = parentAccount?.currency || account.currency;
   const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
   const availableOnSwap = useMemo(() => {
     return currency && swapAvailableIds.includes(currency.id);

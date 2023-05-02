@@ -126,7 +126,7 @@ const ManageModal = ({ name, account, ...rest }: Props) => {
       {...rest}
       name={name}
       centered
-      render={({ onClose, data }) => (
+      render={({ onClose }) => (
         <ModalBody
           onClose={onClose}
           onBack={undefined}

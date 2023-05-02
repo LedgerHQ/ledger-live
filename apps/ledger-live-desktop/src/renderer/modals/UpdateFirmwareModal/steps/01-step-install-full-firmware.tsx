@@ -18,7 +18,6 @@ import Interactions from "~/renderer/icons/device/interactions";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { StepProps } from "../";
 import { getEnv } from "@ledgerhq/live-common/env";
-
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { AnimationWrapper } from "~/renderer/components/DeviceAction/rendering";

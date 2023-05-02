@@ -11,10 +11,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../../const";
 import * as families from "../../families";
-import OperationDetails, {
-  BackButton,
-  CloseButton,
-} from "../../screens/OperationDetails";
+import OperationDetails from "../../screens/OperationDetails";
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
 import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
@@ -48,7 +45,6 @@ import Account from "../../screens/Account";
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import styles from "../../navigation/styles";
-import HeaderRightClose from "../HeaderRightClose";
 import StepHeader from "../StepHeader";
 import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
@@ -56,7 +52,10 @@ import VerifyAccount from "../../screens/VerifyAccount";
 import { LiveApp } from "../../screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
 import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
-import { BleDevicePairingFlow } from "../../screens/BleDevicePairingFlow/index";
+import {
+  BleDevicePairingFlow,
+  bleDevicePairingFlowHeaderOptions,
+} from "../../screens/BleDevicePairingFlow/index";
 import ProviderList from "../../screens/Exchange/ProviderList";
 import ProviderView from "../../screens/Exchange/ProviderView";
 import ScreenHeader from "../../screens/Exchange/ScreenHeader";
@@ -76,12 +75,19 @@ import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import DeviceConnect from "../../screens/DeviceConnect";
+import DeviceConnect, {
+  deviceConnectHeaderOptions,
+} from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "../../screens/Protect/Player";
 import { RedirectToOnboardingRecoverFlowScreen } from "../../screens/Protect/RedirectToOnboardingRecoverFlow";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import {
+  NavigationHeaderCloseButton,
+  NavigationHeaderCloseButtonAdvanced,
+} from "../NavigationHeaderCloseButton";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -199,13 +205,13 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.ExploreTab}
         component={ExploreTabNavigator}
-        options={({ navigation }) => ({
+        options={{
           headerShown: true,
           animationEnabled: false,
           headerTitle: t("discover.sections.news.title"),
-          headerLeft: () => <BackButton navigation={navigation} />,
+          headerLeft: () => <NavigationHeaderBackButton />,
           headerRight: () => null,
-        })}
+        }}
       />
       <Stack.Screen
         name={NavigatorName.SignMessage}
@@ -341,7 +347,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.OperationDetails}
         component={OperationDetails}
-        options={({ route, navigation }) => {
+        options={({ route }) => {
           if (route.params?.isSubOperation) {
             return {
               headerTitle: () => (
@@ -354,8 +360,8 @@ export default function BaseNavigator() {
                   }
                 />
               ),
-              headerLeft: () => <BackButton navigation={navigation} />,
-              headerRight: () => <CloseButton navigation={navigation} />,
+              headerLeft: () => <NavigationHeaderBackButton />,
+              headerRight: () => <NavigationHeaderCloseButton />,
             };
           }
 
@@ -370,7 +376,7 @@ export default function BaseNavigator() {
                 }
               />
             ),
-            headerLeft: () => <BackButton navigation={navigation} />,
+            headerLeft: () => <NavigationHeaderBackButton />,
             headerRight: () => null,
           };
         }}
@@ -464,7 +470,7 @@ export default function BaseNavigator() {
           ...TransparentHeaderNavigationOptions,
           title: t("send.scan.title"),
           headerRight: () => (
-            <HeaderRightClose
+            <NavigationHeaderCloseButtonAdvanced
               color={colors.constant.white}
               preferDismiss={false}
             />
@@ -531,9 +537,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.BleDevicePairingFlow}
         component={BleDevicePairingFlow}
-        options={{
-          headerShown: false,
-        }}
+        options={bleDevicePairingFlowHeaderOptions}
       />
       <Stack.Screen
         name={NavigatorName.PostOnboarding}
@@ -543,10 +547,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.DeviceConnect}
         component={DeviceConnect}
-        options={{
-          title: t("deviceConnect.title"),
-          headerRight: () => null,
-        }}
+        options={useMemo(() => deviceConnectHeaderOptions(t), [t])}
         listeners={({ route }) => ({
           beforeRemove: () => {
             const onClose =
@@ -568,7 +569,9 @@ export default function BaseNavigator() {
         component={NoFundsFlowNavigator}
         options={{
           ...TransparentHeaderNavigationOptions,
-          headerRight: () => <HeaderRightClose preferDismiss={false} />,
+          headerRight: () => (
+            <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />
+          ),
           headerLeft: () => null,
         }}
       />
@@ -577,7 +580,9 @@ export default function BaseNavigator() {
         component={StakeFlowNavigator}
         options={{
           ...TransparentHeaderNavigationOptions,
-          headerRight: () => <HeaderRightClose preferDismiss={false} />,
+          headerRight: () => (
+            <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />
+          ),
           headerLeft: () => null,
         }}
       />

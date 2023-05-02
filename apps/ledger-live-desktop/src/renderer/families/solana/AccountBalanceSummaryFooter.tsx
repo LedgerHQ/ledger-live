@@ -10,7 +10,6 @@ import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 const Wrapper: ThemedComponent<any> = styled(Box).attrs(() => ({
@@ -50,9 +49,8 @@ const AmountValue = styled(Text).attrs(() => ({
 }))``;
 type Props = {
   account: Account;
-  countervalue: any;
 };
-const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
+const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   if (!account.solanaResources) return null;

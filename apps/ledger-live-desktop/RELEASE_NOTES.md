@@ -1,3 +1,13 @@
+# 2.57.0
+
+### 🗑 Removed features
+
+Following the release of Stake 2.0, it's no longer possible to stake TRON (TRX) through the Ledger Live app. However, you can still stake TRX with your Ledger Nano and a compatible third-party wallet such as TronScan. [Learn more](https://support.ledger.com/hc/en-us/articles/9949980566173?support=true)
+
+### 🐛 Fixes
+
+We've squished some minor bugs and spruced up a few UI elements.
+
 # 2.55.0
 
 This release includes performance improvements and minor bug fixes. 

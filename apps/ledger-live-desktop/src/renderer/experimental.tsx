@@ -20,6 +20,11 @@ export type FeatureToggle =
       type: "integer";
       minValue?: number;
       maxValue?: number;
+    }
+  | {
+      type: "float";
+      minValue?: number;
+      maxValue?: number;
     };
 export type Feature = FeatureCommon & FeatureToggle;
 
@@ -30,7 +35,7 @@ export const experimentalFeatures: Feature[] = [
   ...(experimentalCurrencies.length
     ? [
         {
-          type: "toggle",
+          type: "toggle" as const,
           name: "EXPERIMENTAL_CURRENCIES",
           title: <Trans i18nKey="settings.experimental.features.experimentalCurrencies.title" />,
           description: (
@@ -54,6 +59,13 @@ export const experimentalFeatures: Feature[] = [
     name: "MANAGER_DEV_MODE",
     title: <Trans i18nKey="settings.experimental.features.managerDevMode.title" />,
     description: <Trans i18nKey="settings.experimental.features.managerDevMode.description" />,
+  },
+  {
+    type: "toggle",
+    name: "LIST_APPS_V2",
+    title: <Trans i18nKey="settings.experimental.features.listAppsV2.title" />,
+    description: <Trans i18nKey="settings.experimental.features.listAppsV2.description" />,
+    dirty: true,
   },
   {
     type: "toggle",
@@ -107,6 +119,16 @@ export const experimentalFeatures: Feature[] = [
     minValue: 0,
     maxValue: 1,
   },
+  {
+    type: "float",
+    name: "EIP1559_BASE_FEE_MULTIPLIER",
+    title: <Trans i18nKey="settings.experimental.features.1559CustomBaseFeeMultiplier.title" />,
+    description: (
+      <Trans i18nKey="settings.experimental.features.1559CustomBaseFeeMultiplier.description" />
+    ),
+    minValue: 0,
+    maxValue: 10,
+  },
 ];
 const lsKey = "experimentalFlags";
 const lsKeyVersion = `${lsKey}_llversion`;
@@ -135,7 +157,7 @@ export const setLocalStorageEnv = (key: EnvName, val: string) => {
 if (window.localStorage.getItem(lsKeyVersion) !== __APP_VERSION__) {
   const existing = getLocalStorageEnvs();
   // we replace all existing ones by clearing those who are gone
-  const restoredEnvs = {};
+  const restoredEnvs: Record<string, unknown> = {};
   experimentalFeatures
     .filter(e => !e.shadow && e.name in existing && setEnvOnAllThreads(e.name, existing[e.name]))
     .forEach(e => {

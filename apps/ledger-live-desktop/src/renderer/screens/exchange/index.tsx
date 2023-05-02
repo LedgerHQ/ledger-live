@@ -9,7 +9,6 @@ import Box from "~/renderer/components/Box";
 import Card from "~/renderer/components/Box/Card";
 import TabBar from "~/renderer/components/TabBar";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import OnRamp from "./Buy";
 import { useExchangeProvider } from "./hooks";
 import OffRamp from "./Sell";
@@ -52,7 +51,8 @@ const DEFAULT_MULTIBUY_APP_ID = "multibuy";
 
 // Exchange (Buy / Sell) as a live app screen
 const LiveAppExchange = ({ appId }: { appId: string }) => {
-  const { state: urlParams } = useLocation();
+  const { state: urlParams, search } = useLocation();
+  const searchParams = new URLSearchParams(search);
   const locale = useSelector(languageSelector);
 
   const mockManifest: LiveAppManifest | undefined =
@@ -77,6 +77,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
             theme: themeType,
             ...urlParams,
             lang: locale,
+            ...Object.fromEntries(searchParams.entries()),
           }}
         />
       ) : null}

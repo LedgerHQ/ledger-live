@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import Button from "~/renderer/components/Button";

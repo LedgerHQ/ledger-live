@@ -7,7 +7,7 @@ export default styled(Box).attrs(p => ({
   color: p.color || "wallet",
   horizontal: true,
   className: "fake-link",
-}))`
+}))<{ underline?: boolean; color?: string }>`
   align-items: center;
   display: inline-flex;
   text-decoration: ${p => (p.underline ? "underline" : "none")};

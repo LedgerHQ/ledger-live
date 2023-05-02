@@ -53,12 +53,59 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { filterCurrencyIds = [], currency } = route.params || {};
 
   const avaxCChain = useFeature("currencyAvalancheCChain");
+  const optimism = useFeature("currencyOptimism");
+  const optimismGoerli = useFeature("currencyOptimismGoerli");
+  const arbitrum = useFeature("currencyArbitrum");
+  const arbitrumGoerli = useFeature("currencyArbitrumGoerli");
+  const rsk = useFeature("currencyRsk");
+  const bittorrent = useFeature("currencyBittorrent");
+  const kavaEvm = useFeature("currencyKavaEvm");
+  const evmosEvm = useFeature("currencyEvmosEvm");
+  const energyWeb = useFeature("currencyEnergyWeb");
+  const astar = useFeature("currencyAstar");
+  const metis = useFeature("currencyMetis");
+  const boba = useFeature("currencyBoba");
+  const moonriver = useFeature("currencyMoonriver");
+  const velasEvm = useFeature("currencyVelasEvm");
+  const syscoin = useFeature("currencySyscoin");
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
       avalanche_c_chain: avaxCChain,
+      optimism,
+      optimism_goerli: optimismGoerli,
+      arbitrum,
+      arbitrum_goerli: arbitrumGoerli,
+      rsk,
+      bittorrent,
+      kava_evm: kavaEvm,
+      evmos_evm: evmosEvm,
+      energy_web: energyWeb,
+      astar,
+      metis,
+      boba,
+      moonriver,
+      velas_evm: velasEvm,
+      syscoin,
     }),
-    [avaxCChain],
+    [
+      avaxCChain,
+      optimism,
+      optimismGoerli,
+      arbitrum,
+      arbitrumGoerli,
+      rsk,
+      bittorrent,
+      kavaEvm,
+      evmosEvm,
+      energyWeb,
+      astar,
+      metis,
+      boba,
+      moonriver,
+      velasEvm,
+      syscoin,
+    ],
   );
 
   const cryptoCurrencies = useMemo(() => {

@@ -108,7 +108,7 @@ class Provider extends Component<UpdaterProviderProps, UpdaterProviderState> {
     return <UpdaterContext.Provider value={value}>{this.props.children}</UpdaterContext.Provider>;
   }
 }
-export const withUpdaterContext = (ComponentToDecorate: React$ComponentType<any>) => {
+export const withUpdaterContext = (ComponentToDecorate: React.ComponentType<any>) => {
   const WrappedUpdater = (props: any) => (
     <UpdaterContext.Consumer>
       {context => <ComponentToDecorate {...props} context={context} />}

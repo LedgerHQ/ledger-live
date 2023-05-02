@@ -30,6 +30,7 @@ import QRCode from "~/renderer/components/QRCode";
 import { getEnv } from "@ledgerhq/live-common/env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import byFamily from "~/renderer/generated/StepReceiveFunds";
+import byFamilyPostAlert from "~/renderer/generated/StepReceiveFundsPostAlert";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch } from "react-redux";
@@ -93,15 +94,7 @@ const Receive1ShareAddress = ({
     </>
   );
 };
-const Receive2Device = ({
-  onVerify,
-  name,
-  device,
-}: {
-  onVerify: () => void;
-  name: string;
-  device: any;
-}) => {
+const Receive2Device = ({ name, device }: { name: string; device: any }) => {
   const type = useTheme("colors.palette.type");
   return (
     <>
@@ -218,7 +211,7 @@ const StepReceiveFunds = (props: StepProps) => {
           .join("/"),
         currency: currencyName,
         modal: "receive",
-        account,
+        account: name,
       });
       if (receiveStakingFlowConfig?.params?.[id]?.direct) {
         dispatch(
@@ -240,6 +233,7 @@ const StepReceiveFunds = (props: StepProps) => {
     account,
     currencyName,
     dispatch,
+    name,
     onClose,
     receiveStakingFlowConfig?.enabled,
     receiveStakingFlowConfig?.params,
@@ -258,6 +252,8 @@ const StepReceiveFunds = (props: StepProps) => {
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
   }
+  const CustomPostAlertReceiveFunds = byFamilyPostAlert[mainAccount.currency.family];
+
   return (
     <>
       <Box px={2}>
@@ -304,13 +300,7 @@ const StepReceiveFunds = (props: StepProps) => {
               address={address}
               showQRCodeModal={showQRCodeModal}
             />
-            {mainAccount.derivationMode === "taproot" ? (
-              <AlertBoxContainer>
-                <Alert type="warning">
-                  <Trans i18nKey="currentAddress.taprootWarning" />
-                </Alert>
-              </AlertBoxContainer>
-            ) : null}
+            {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
             <Alert type="security" learnMoreUrl={urls.recipientAddressInfo} mt={4}>
               <Trans
                 i18nKey="currentAddress.messageIfSkipped"
@@ -335,13 +325,7 @@ const StepReceiveFunds = (props: StepProps) => {
               address={address}
               showQRCodeModal={showQRCodeModal}
             />
-            {mainAccount.derivationMode === "taproot" ? (
-              <AlertBoxContainer>
-                <Alert type="warning">
-                  <Trans i18nKey="currentAddress.taprootWarning" />
-                </Alert>
-              </AlertBoxContainer>
-            ) : null}
+            {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
             <Separator />
             <Receive2Device device={device} onVerify={onVerify} name={name} />
           </>

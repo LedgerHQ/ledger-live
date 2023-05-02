@@ -10,7 +10,7 @@ export type Props = {
   rates: RatesReducerState["value"];
   refreshTime: number;
 };
-const CountdownText: ThemedComponent<{}> = styled(Text)`
+const CountdownText = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
 export default function Countdown({ refreshTime, rates }: Props) {

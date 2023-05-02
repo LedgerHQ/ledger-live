@@ -37,10 +37,7 @@ export type Loadable<T> = {
   value: T | null;
 };
 
-export type AppPlatform =
-  | "desktop" // == windows || mac || linux
-  | "mobile" // == android || ios
-  | "all";
+export type AppPlatform = "ios" | "android" | "desktop";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
 
@@ -59,7 +56,7 @@ export type LiveAppManifest = {
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;
-  platform: AppPlatform;
+  platforms: AppPlatform[];
   apiVersion: string;
   manifestVersion: string;
   branch: AppBranch;

@@ -4,14 +4,13 @@ import Text from "~/renderer/components/Text";
 import FakeLink from "~/renderer/components/FakeLink";
 import IconCross from "~/renderer/icons/Cross";
 import { TimeBasedProgressBar } from "./TimeBasedProgressBar";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { animated, useTransition } from "react-spring";
 import { delay } from "@ledgerhq/live-common/promise";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import { useTranslation } from "react-i18next";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import Box from "~/renderer/components/Box";
-const Content: ThemedComponent<{}> = styled.div`
+const Content = styled.div`
   color: ${p => p.theme.colors.palette.background.paper};
   padding: 16px;
   display: flex;
@@ -30,7 +29,7 @@ const Wrapper: ThemedComponent<{
   width: 400px;
   box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.1);
 `;
-const DismissWrapper: ThemedComponent<{}> = styled.div`
+const DismissWrapper = styled.div`
   position: absolute;
   cursor: pointer;
   color: ${p => p.theme.colors.palette.background.paper};
@@ -122,7 +121,7 @@ export function Toast({
     },
     [callback, id, onDismiss],
   );
-  return transitions.map(({ key, item, props }) => (
+  return transitions.map(({ key, props }) => (
     <Wrapper key={key} style={props} onClick={onClick}>
       <Content>
         <IconContainer color={defaultIconColor}>

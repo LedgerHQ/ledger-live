@@ -83,7 +83,6 @@ export function StepAmountFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   const { t } = useTranslation();
   invariant(account, "account required");

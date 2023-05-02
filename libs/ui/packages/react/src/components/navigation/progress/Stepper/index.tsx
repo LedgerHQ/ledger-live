@@ -96,7 +96,7 @@ export const Item = {
 export const StepText = styled(Text)<{ state: StepState }>`
   color: ${(p) => {
     if (p.state === "errored") {
-      return p.theme.colors.error.c100;
+      return p.theme.colors.error.c50;
     }
     if (p.state === "disabled") {
       return p.theme.colors.neutral.c50;
@@ -139,7 +139,7 @@ const stepContentsByState = {
     </Item.Container>
   ),
   errored: (
-    <Item.Container color="error.c100" backgroundColor="warning.c30" borderRadius="8px">
+    <Item.Container color="error.c50" backgroundColor="warning.c30" borderRadius="8px">
       <Item.Errored />
     </Item.Container>
   ),

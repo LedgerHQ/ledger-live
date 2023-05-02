@@ -14,6 +14,10 @@ import {
   ContinueOnDevice,
   Divider,
 } from "@ledgerhq/native-ui";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import {
   OnboardingStep as DeviceOnboardingStep,
@@ -28,10 +32,10 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "../../actions/ble";
-import { NavigatorName, ScreenName } from "../../const";
+import { ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
-import ResyncOverlay from "./ResyncOverlay";
+import ResyncOverlay, { PlainOverlay } from "./ResyncOverlay";
 import LanguageSelect from "./LanguageSelect";
 import SoftwareChecksStep from "./SoftwareChecksStep";
 import {
@@ -40,17 +44,14 @@ import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../actions/settings";
-import DeviceSetupView from "../../components/DeviceSetupView";
-import {
-  BaseNavigatorStackParamList,
-  NavigateInput,
-} from "../../components/RootNavigator/types/BaseNavigator";
+import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
 import Stories from "../../components/StorylyStories";
 import { TrackScreen, track } from "../../analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
+import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -191,42 +192,6 @@ export const SyncOnboarding = ({
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
 
-  const goBackToPairingFlow = useCallback(() => {
-    const navigateInput: NavigateInput<
-      RootStackParamList,
-      NavigatorName.BaseOnboarding
-    > = {
-      name: NavigatorName.BaseOnboarding,
-      params: {
-        screen: NavigatorName.SyncOnboarding,
-        params: {
-          screen: ScreenName.SyncOnboardingCompanion,
-          params: {
-            // @ts-expect-error BleDevicePairingFlow will set this param
-            device: null,
-          },
-        },
-      },
-    };
-
-    // On pairing success, navigate to the Sync Onboarding Companion
-    // Replace to avoid going back to this screen on return from the pairing flow
-    navigation.navigate(NavigatorName.Base, {
-      screen: ScreenName.BleDevicePairingFlow,
-      params: {
-        // TODO: For now, don't do that because stax shows up as nanoX
-        // filterByDeviceModelId: device.modelId,
-        areKnownDevicesDisplayed: true,
-        onSuccessAddToKnownDevices: false,
-        onSuccessNavigateToConfig: {
-          navigationType: "navigate",
-          navigateInput,
-          pathToDeviceParam: "params.params.params.device",
-        },
-      },
-    });
-  }, [navigation]);
-
   const {
     onboardingState: deviceOnboardingState,
     allowedError,
@@ -261,8 +226,8 @@ export const SyncOnboarding = ({
 
   const handleDesyncClose = useCallback(() => {
     setDesyncDrawerOpen(false);
-    goBackToPairingFlow();
-  }, [goBackToPairingFlow]);
+    navigation.goBack();
+  }, [navigation]);
 
   const handleDeviceReady = useCallback(() => {
     // Adds the device to the list of known devices
@@ -280,10 +245,6 @@ export const SyncOnboarding = ({
 
     navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
   }, [device, dispatchRedux, navigation]);
-
-  const handleClose = useCallback(() => {
-    readyRedirectTimerRef.current ? handleDeviceReady() : goBackToPairingFlow();
-  }, [goBackToPairingFlow, handleDeviceReady]);
 
   useEffect(() => {
     if (!fatalError) {
@@ -406,25 +367,37 @@ export const SyncOnboarding = ({
     }
   }, [deviceOnboardingState]);
 
+  const preventNavigation = useRef(false);
+
   useEffect(() => {
     if (companionStepKey >= CompanionStepKey.SoftwareCheck) {
       setStopPolling(true);
     }
 
     if (companionStepKey === CompanionStepKey.Exit) {
-      readyRedirectTimerRef.current = setTimeout(
-        handleDeviceReady,
-        readyRedirectDelayMs,
-      );
+      preventNavigation.current = true;
+      readyRedirectTimerRef.current = setTimeout(() => {
+        preventNavigation.current = false;
+        handleDeviceReady();
+      }, readyRedirectDelayMs);
     }
 
     return () => {
       if (readyRedirectTimerRef.current) {
+        preventNavigation.current = false;
         clearTimeout(readyRedirectTimerRef.current);
         readyRedirectTimerRef.current = null;
       }
     };
   }, [companionStepKey, handleDeviceReady]);
+
+  useEffect(
+    () =>
+      navigation.addListener("beforeRemove", e => {
+        if (preventNavigation.current) e.preventDefault();
+      }),
+    [navigation],
+  );
 
   const companionSteps: Step[] = useMemo(
     () =>
@@ -604,13 +577,43 @@ export const SyncOnboarding = ({
     ],
   );
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      header: () => (
+        <>
+          <SafeAreaView edges={["top", "left", "right"]}>
+            <Flex
+              my={5}
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Flex ml={6}>
+                <LanguageSelect device={device} productName={productName} />
+              </Flex>
+              <NavigationHeaderCloseButton />
+            </Flex>
+          </SafeAreaView>
+          <PlainOverlay
+            isOpen={isDesyncOverlayOpen}
+            delay={resyncOverlayDisplayDelayMs}
+          />
+        </>
+      ),
+    });
+  }, [
+    device,
+    isDesyncOverlayOpen,
+    navigation,
+    productName,
+    resyncOverlayDisplayDelayMs,
+  ]);
+
+  const safeAreaInsets = useSafeAreaInsets();
+
   return (
-    <DeviceSetupView
-      onClose={handleClose}
-      renderLeft={() => (
-        <LanguageSelect device={device} productName={productName} />
-      )}
-    >
+    <>
       <HelpDrawer
         isOpen={isHelpDrawerOpen}
         onClose={() => setHelpDrawerOpen(false)}
@@ -631,6 +634,7 @@ export const SyncOnboarding = ({
           <VerticalTimeline
             steps={companionSteps}
             formatEstimatedTime={formatEstimatedTime}
+            contentContainerStyle={{ paddingBottom: safeAreaInsets.bottom }}
             header={
               <Flex mb={8} flexDirection="row" alignItems="center">
                 <Text variant="h4" fontWeight="semiBold">
@@ -650,6 +654,6 @@ export const SyncOnboarding = ({
           ) : null}
         </Flex>
       </Flex>
-    </DeviceSetupView>
+    </>
   );
 };

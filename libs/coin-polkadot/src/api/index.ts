@@ -55,9 +55,6 @@ import {
 import { TypeRegistry } from "@polkadot/types";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 
-// Used only for testing purpose.
-export { disconnect } from "./sidecar";
-
 type PaymentInfoParams = {
   a: PolkadotAccount;
   t: Transaction;

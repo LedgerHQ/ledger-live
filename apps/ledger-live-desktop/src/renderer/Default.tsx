@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { ipcRenderer } from "electron";
-import { Redirect, Route, Switch, useLocation, useHistory } from "react-router-dom";
+import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
@@ -30,7 +30,6 @@ import IsUnlocked from "~/renderer/components/IsUnlocked";
 import AppRegionDrag from "~/renderer/components/AppRegionDrag";
 import IsNewVersion from "~/renderer/components/IsNewVersion";
 import IsSystemLanguageAvailable from "~/renderer/components/IsSystemLanguageAvailable";
-
 import IsTermOfUseUpdated from "./components/IsTermOfUseUpdated";
 import KeyboardContent from "~/renderer/components/KeyboardContent";
 import MainSideBar from "~/renderer/components/MainSideBar";
@@ -39,7 +38,6 @@ import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWra
 import DebugUpdater from "~/renderer/components/debug/DebugUpdater";
 import DebugTheme from "~/renderer/components/debug/DebugTheme";
 import DebugFirmwareUpdater from "~/renderer/components/debug/DebugFirmwareUpdater";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Page from "~/renderer/components/Page";
 import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
@@ -56,11 +54,8 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Onboarding from "~/renderer/components/Onboarding";
 import PostOnboardingScreen from "~/renderer/components/PostOnboardingScreen";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
-
 import Market from "~/renderer/screens/market";
-
 import MarketCoinScreen from "~/renderer/screens/market/MarketCoinScreen";
-
 import Learn from "~/renderer/screens/learn";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
@@ -82,7 +77,7 @@ const LetInternalSendCrashTest = () => {
   }, []);
   return null;
 };
-export const TopBannerContainer: ThemedComponent<{}> = styled.div`
+export const TopBannerContainer = styled.div`
   position: sticky;
   top: 0;
   z-index: 19;
@@ -133,21 +128,14 @@ const NightlyLayerR = () => {
 };
 const NightlyLayer = React.memo(NightlyLayerR);
 export default function Default() {
-  const location = useLocation();
-  const ref: React$ElementRef<any> = useRef();
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
   useProviders(); // prefetch data from swap providers here
 
-  // every time location changes, scroll back up
-  useEffect(() => {
-    if (ref && ref.current) {
-      ref.current.scrollTo(0, 0);
-    }
-  }, [location]);
   useEffect(() => {
     if (!hasCompletedOnboarding) {
       history.push("/onboarding");
@@ -176,8 +164,8 @@ export default function Default() {
               <DisableTransactionBroadcastWarning />
             ) : null}
             <Switch>
-              <Route path="/onboarding" render={props => <Onboarding {...props} />} />
-              <Route path="/sync-onboarding" render={props => <SyncOnboarding {...props} />} />
+              <Route path="/onboarding" component={Onboarding} />
+              <Route path="/sync-onboarding" component={SyncOnboarding} />
               <Route
                 path="/post-onboarding"
                 render={() => (
@@ -192,7 +180,7 @@ export default function Default() {
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
               </Route>
               {!hasCompletedOnboarding ? (
-                <Route path="/settings" render={props => <WelcomeScreenSettings {...props} />} />
+                <Route path="/settings" component={WelcomeScreenSettings} />
               ) : (
                 <Route>
                   <Switch>
@@ -219,50 +207,33 @@ export default function Default() {
                             <FirmwareUpdateBanner />
                           </TopBannerContainer>
                           <Switch>
-                            <Route path="/" exact render={props => <Dashboard {...props} />} />
-                            <Route path="/settings" render={props => <Settings {...props} />} />
-                            <Route path="/accounts" render={props => <Accounts {...props} />} />
-                            <Route path="/card" render={props => <Card {...props} />} />
+                            <Route path="/" exact component={Dashboard} />
+                            <Route path="/settings" component={Settings} />
+                            <Route path="/accounts" component={Accounts} />
+                            <Route path="/card" component={Card} />
                             <Redirect from="/manager/reload" to="/manager" />
-                            <Route path="/manager" render={props => <Manager {...props} />} />
-                            <Route
-                              path="/platform"
-                              render={(props: any) => <PlatformCatalog {...props} />}
-                              exact
-                            />
-                            <Route
-                              path="/platform/:appId?"
-                              render={(props: any) => <PlatformApp {...props} />}
-                            />
-                            <Route path="/earn" render={props => <Earn {...props} />} />
-                            <Route path="/exchange" render={(props: any) => <Exchange />} />
+                            <Route path="/manager" component={Manager} />
+                            <Route path="/platform" component={PlatformCatalog} exact />
+                            <Route path="/platform/:appId?" component={PlatformApp} />
+                            <Route path="/earn" component={Earn} />
+                            <Route path="/exchange" component={Exchange} />
                             <Route
                               exact
                               path="/account/:id/nft-collection"
-                              render={props => <NFTGallery {...props} />}
+                              component={NFTGallery}
                             />
                             <Route
                               path="/account/:id/nft-collection/:collectionAddress?"
-                              render={props => <NFTCollection {...props} />}
+                              component={NFTCollection}
                             />
-                            <Route
-                              path="/account/:parentId/:id"
-                              render={props => <Account {...props} />}
-                            />
-                            <Route path="/account/:id" render={props => <Account {...props} />} />
-                            <Route
-                              path="/asset/:assetId+"
-                              render={(props: any) => <Asset {...props} />}
-                            />
-                            <Route path="/swap" render={props => <Swap2 {...props} />} />
-
-                            <Route
-                              path="/market/:currencyId"
-                              render={props => <MarketCoinScreen {...props} />}
-                            />
-                            <Route path="/market" render={props => <Market {...props} />} />
+                            <Route path="/account/:parentId/:id" component={Account} />
+                            <Route path="/account/:id" component={Account} />
+                            <Route path="/asset/:assetId+" component={Asset} />
+                            <Route path="/swap" component={Swap2} />
+                            <Route path="/market/:currencyId" component={MarketCoinScreen} />
+                            <Route path="/market" component={Market} />
                             <FeatureToggle feature="learn">
-                              <Route path="/learn" render={props => <Learn {...props} />} />
+                              <Route path="/learn" component={Learn} />
                             </FeatureToggle>
                           </Switch>
                         </Page>

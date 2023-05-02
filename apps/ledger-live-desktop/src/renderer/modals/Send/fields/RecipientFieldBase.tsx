@@ -3,7 +3,6 @@ import { RecipientRequired } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { TFunction } from "react-i18next";
-
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import RecipientAddress from "~/renderer/components/RecipientAddress";

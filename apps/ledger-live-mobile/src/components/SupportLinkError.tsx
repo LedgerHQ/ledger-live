@@ -19,7 +19,7 @@ const SupportLinkError = ({ error, type }: Props) => {
   }, [maybeLink]);
   if (!maybeLink) return null;
   return type === "alert" ? (
-    <LearnMoreLink color="alert" onPress={onOpen} />
+    <LearnMoreLink onPress={onOpen} />
   ) : (
     <ExternalLink
       onPress={onOpen}

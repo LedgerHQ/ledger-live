@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const HintSVG: ThemedComponent<{}> = styled.svg`
+const HintSVG = styled.svg`
   overflow: visible;
   #hint {
     transform: translate(0%, -100%);
@@ -11,7 +10,8 @@ const HintSVG: ThemedComponent<{}> = styled.svg`
 type Props = {
   active?: boolean;
   horizontal?: boolean;
-};
+} & React.ComponentProps<typeof HintSVG>;
+
 const Hint = ({ active, horizontal, ...props }: Props) => (
   <HintSVG {...props} width="12" height="72">
     <defs />

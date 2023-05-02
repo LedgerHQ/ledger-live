@@ -42,15 +42,27 @@ export type LoadImageEvent =
       imageHash: string;
     };
 
+export type LoadimageResult = {
+  imageHash: string;
+  imageSize: number;
+};
+
 export type LoadImageRequest = {
+  hexImage: string; // When provided, will skip the backup if it matches the hash.
+  padImage?: boolean;
+};
+
+export type Input = {
   deviceId: string;
-  hexImage: string;
+  request: LoadImageRequest;
 };
 
 export default function loadImage({
   deviceId,
-  hexImage,
-}: LoadImageRequest): Observable<LoadImageEvent> {
+  request,
+}: Input): Observable<LoadImageEvent> {
+  const { hexImage, padImage = true } = request;
+
   const sub = withDevice(deviceId)(
     (transport) =>
       new Observable((subscriber) => {
@@ -65,7 +77,11 @@ export default function loadImage({
             mergeMap(async () => {
               timeoutSub.unsubscribe();
 
-              const imageData = await generateStaxImageFormat(hexImage, true);
+              const imageData = await generateStaxImageFormat(
+                hexImage,
+                true,
+                !!padImage
+              );
               const imageLength = imageData.length;
 
               const imageSize = Buffer.alloc(4);
@@ -218,8 +234,9 @@ export default function loadImage({
 
 export const generateStaxImageFormat: (
   hexImage: string,
-  compressImage: boolean
-) => Promise<Buffer> = async (hexImage, compressImage) => {
+  compressImage: boolean,
+  padImage: boolean
+) => Promise<Buffer> = async (hexImage, compressImage, padImage) => {
   const width = 400;
   const height = 672;
   const bpp = 2; // value for 4 bits per pixel
@@ -233,7 +250,9 @@ export const generateStaxImageFormat: (
 
   // Nb Display image data is missing 2 pixels from each column.
   // padding every 670 characters with two fillers, should do the trick.
-  const paddedHexImage = hexImage.replace(/(.{670})/g, "$100");
+  const paddedHexImage = padImage
+    ? hexImage.replace(/(.{670})/g, "$100")
+    : hexImage;
   const imgData = Buffer.from(paddedHexImage, "hex");
 
   if (!compressImage) {

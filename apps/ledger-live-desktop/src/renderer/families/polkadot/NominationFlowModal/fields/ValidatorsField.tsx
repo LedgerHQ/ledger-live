@@ -22,7 +22,6 @@ import {
   PolkadotValidator,
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { PolkadotValidatorsRequired } from "@ledgerhq/live-common/families/polkadot/errors";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { radii } from "~/renderer/styles/theme";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
@@ -38,7 +37,7 @@ import Alert from "~/renderer/components/Alert";
 
 // Specific Validator Row
 import ValidatorRow from "./ValidatorRow";
-const DrawerWrapper: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const DrawerWrapper = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   px: 3,
@@ -48,7 +47,7 @@ const DrawerWrapper: ThemedComponent<{}> = styled(Box).attrs(p => ({
   left: 0;
   width: 100%;
 `;
-const NominationError: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const NominationError = styled(Box).attrs(p => ({
   flex: 1,
   horizontal: true,
   alignItems: "center",
@@ -65,7 +64,7 @@ const NominationError: ThemedComponent<{}> = styled(Box).attrs(p => ({
   border-top-left-radius: ${radii[1]}px;
   border-top-right-radius: ${radii[1]}px;
 `;
-const MaybeChillLink: ThemedComponent<{}> = styled(Label).attrs(p => ({
+const MaybeChillLink = styled(Label).attrs(() => ({
   ff: "Inter|Medium",
 }))`
   display: inline-flex;
@@ -76,7 +75,7 @@ const MaybeChillLink: ThemedComponent<{}> = styled(Label).attrs(p => ({
     cursor: pointer;
   }
 `;
-const SimpleList: ThemedComponent<{}> = styled.ul`
+const SimpleList = styled.ul`
   list-style: none;
 `;
 
@@ -97,11 +96,9 @@ type Props = {
   onGoToChill: Function;
 };
 const ValidatorField = ({
-  t,
   account,
   onChangeNominations,
   status,
-  bridgePending,
   validators,
   nominations,
   onGoToChill,

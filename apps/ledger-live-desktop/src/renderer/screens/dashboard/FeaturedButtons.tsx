@@ -31,19 +31,19 @@ const FeaturedButtons = () => {
   const startStakeFlow = useStakeFlow();
 
   const handleClickExchange = useCallback(() => {
-    track("button_clicked", { button: "buy", flow: "Buy" });
+    track("button_clicked", { button: "buy", flow: "Buy", page: "portfolio" });
 
     history.push("/exchange");
   }, [history]);
 
   const handleClickSwap = useCallback(() => {
-    track("button_clicked", { button: "swap", flow: "Swap" });
+    track("button_clicked", { button: "swap", flow: "Swap", page: "portfolio" });
 
     history.push("/swap");
   }, [history]);
 
   const handleClickStake = useCallback(() => {
-    track("button_clicked", { button: "stake", flow: "stake" });
+    track("button_clicked", { button: "stake", flow: "stake", page: "portfolio" });
 
     startStakeFlow();
   }, [startStakeFlow]);

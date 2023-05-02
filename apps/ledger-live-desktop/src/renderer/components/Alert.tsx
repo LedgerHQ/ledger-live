@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { css } from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { colors } from "~/renderer/styles/theme";
 import { openURL } from "~/renderer/linking";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
@@ -120,9 +119,9 @@ const getStyle = p => {
       };
   }
 };
-const LeftContent: ThemedComponent<{}> = styled(Box)``;
-const RightContent: ThemedComponent<{}> = styled(Box)``;
-const Container: ThemedComponent<{}> = styled(Box).attrs(props => ({
+const LeftContent = styled(Box)``;
+const RightContent = styled(Box)``;
+const Container = styled(Box).attrs(props => ({
   horizontal: true,
   flex: 1,
   fontSize: props.small ? 3 : 4,

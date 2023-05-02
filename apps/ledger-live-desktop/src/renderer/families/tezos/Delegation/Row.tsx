@@ -20,7 +20,6 @@ import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import BakerImage from "../BakerImage";
 import ContextMenu from "./ContextMenu";
 type Props = {
