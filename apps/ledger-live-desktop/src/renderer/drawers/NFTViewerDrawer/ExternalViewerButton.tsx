@@ -45,7 +45,6 @@ const renderItem = ({ item }: { item: Item }) => {
     <></>
   );
   return (
-    // @ts-expect-error isActive seems to be missing from the props?
     <Item id={`external-popout-${item.id}`} horizontal flow={2} onClick={item.callback}>
       <Box horizontal>
         {item.Icon ? <Box mr={2}>{Icon}</Box> : null}

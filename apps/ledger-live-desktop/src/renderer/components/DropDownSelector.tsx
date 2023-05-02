@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 
 type DropDownItemProps = {
-  isActive: boolean;
+  isActive?: boolean;
   disabled?: boolean;
 };
 

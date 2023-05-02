@@ -103,7 +103,6 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
   };
 
   componentDidMount() {
-    let getUserMedia: ((opts: MediaStreamConstraints) => Promise<MediaStream>) | undefined;
     let sum = 0;
     const onkeyup = (e: KeyboardEvent) => {
       sum += e.which;
@@ -116,17 +115,10 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
       if (document) document.removeEventListener("keyup", onkeyup);
     });
     const { navigator } = window;
-    if (navigator.mediaDevices) {
-      const mediaDevices = navigator.mediaDevices;
-      getUserMedia = (opts: MediaStreamConstraints) => mediaDevices.getUserMedia(opts);
-    } else {
-      // @ts-expect-error navigator unclear type
-      const f = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-      if (f) {
-        getUserMedia = (opts: MediaStreamConstraints) =>
-          new Promise((res, rej) => f.call(navigator, opts, res, rej));
-      }
-    }
+    const getUserMedia = navigator.mediaDevices
+      ? (opts: MediaStreamConstraints) => navigator.mediaDevices.getUserMedia(opts)
+      : null;
+
     if (!getUserMedia) {
       this.setState({
         error: new NoAccessToCamera(),

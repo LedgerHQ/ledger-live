@@ -334,8 +334,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       const id = webview.getWebContentsId();
 
       // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-      // @ts-expect-error: missing typings for api
-      window.api.openWindow(id);
+      window.api?.openWindow(id);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

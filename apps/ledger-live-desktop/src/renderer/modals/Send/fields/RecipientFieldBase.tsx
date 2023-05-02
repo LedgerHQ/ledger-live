@@ -7,7 +7,6 @@ import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import RecipientAddress from "~/renderer/components/RecipientAddress";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
 
 type Props = {
   account: Account;
@@ -18,10 +17,7 @@ type Props = {
   initValue?: string;
   resetInitValue?: () => void;
   value: string | undefined;
-  onChange: (
-    recipient: string,
-    maybeExtra?: Record<string, CryptoCurrency> | undefined,
-  ) => Promise<unknown>;
+  onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency> | undefined) => void;
 };
 
 const RecipientFieldBase = ({ t, account, autoFocus, status, label, value, onChange }: Props) => {

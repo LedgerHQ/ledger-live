@@ -44,8 +44,7 @@ type Props = {
   warning: Error;
   value: string;
   id: string;
-  // return false if it can't be changed (invalid info)
-  onChange: (b: string, a?: Record<string, CryptoCurrency> | undefined) => Promise<unknown>;
+  onChange: (b: string, a?: Record<string, CryptoCurrency> | undefined) => void;
   withQrCode: boolean;
 };
 type State = {
@@ -78,12 +77,10 @@ class RecipientAddress extends PureComponent<Props, State> {
     Object.assign(rest, {
       fromQRCode: true,
     });
-    // @ts-expect-error TODO: what the heck? onChange is supposed to return a Promise!!
-    if (this.props.onChange(address, rest) !== false) {
-      this.setState({
-        qrReaderOpened: false,
-      });
-    }
+    this.props.onChange(address, rest);
+    this.setState({
+      qrReaderOpened: false,
+    });
   };
 
   render() {

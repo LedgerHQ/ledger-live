@@ -28,7 +28,7 @@ type Props = {
   resetInitValue?: () => void;
   value: string | string;
   bridge: AccountBridge<Transaction>;
-  onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => Promise<void>;
+  onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => void;
 };
 
 const RecipientFieldDomainService = ({
