@@ -3450,6 +3450,29 @@
       }
     }
   },
+  "editTransaction" : {
+    "cta" : "Beschleunigen oder Abbrechen",
+    "previousFeesInfo" : "Aktuelle Netzwerkgebühr = {{amount}} ETH",
+    "header" : "Transaktion bearbeiten",
+    "learnMore" : "Ich möchte mehr erfahren",
+    "panel" : {
+      "stuckMessage" : "Diese „Senden\"-Transaktion ist stecken geblieben. Sie können die Transaktion mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+      "speedupMessage" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen."
+    },
+    "speedUp" : {
+      "title" : "Beschleunigen",
+      "description" : "Reichen Sie die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
+    },
+    "cancel" : {
+      "title" : "Abbrechen",
+      "description" : "Sendet 0 {{ticker}} an Ihre eigene Adresse. Um die Stornierung zu gewährleisten, ist die Netzwerkgebühr 30 % höher als die Gebühr für die zu stornierende Transaktion."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Die Stornierung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+      "notEnoughFundsToSpeedup" : "Die Beschleunigung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+      "notlowestNonceToSpeedup" : "Die Funktion „Speed up“ (Beschleunigen) ist nicht verfügbar. Ihre Transaktion ist ausstehend, da eine vorherige Transaktion stecken geblieben ist. Sie können auf die Bestätigung der Transaktion warten, die Transaktion beschleunigen oder sie stornieren."
+    }
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "Krypto auswählen",
