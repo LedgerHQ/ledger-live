@@ -31,12 +31,22 @@ import { urls } from "~/config/urls";
 import { Operation, Account } from "@ledgerhq/types-live";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
-const getURLFeesInfo = ({ op }: { op: Operation }): string | undefined | null => {
+const getURLFeesInfo = ({
+  op,
+}: {
+  op: Operation;
+  currencyId: string;
+}): string | undefined | null => {
   if (op.fee.gt(200000)) {
     return urls.elrondStaking;
   }
 };
-const getURLWhatIsThis = ({ op }: { op: Operation }): string | undefined | null => {
+const getURLWhatIsThis = ({
+  op,
+}: {
+  op: Operation;
+  currencyId: string;
+}): string | undefined | null => {
   if (op.type !== "IN" && op.type !== "OUT") {
     return urls.elrondStaking;
   }
