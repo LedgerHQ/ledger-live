@@ -36,6 +36,7 @@ import InstalledAppsModal from "../Modals/InstalledAppsModal";
 
 import DeviceLanguage from "./DeviceLanguage";
 import CustomLockScreen from "./CustomLockScreen";
+import ProviderWarning from "../ProviderWarning";
 
 const illustrations = {
   nanoS: NanoS,
@@ -205,6 +206,7 @@ const DeviceCard = ({
         deviceModel={deviceModel}
         deviceInfo={deviceInfo}
       />
+      <ProviderWarning />
       {appList.length > 0 && (
         <Flex mx={6} mb={6}>
           <Button size="small" type="color" onPress={openAppsModal}>
