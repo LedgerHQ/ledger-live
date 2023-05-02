@@ -3450,6 +3450,29 @@
       }
     }
   },
+  "editTransaction" : {
+    "cta" : "Acelerar o cancelar",
+    "previousFeesInfo" : "Tarifa de red actual = {{amount}} ETH",
+    "header" : "Editar transacción",
+    "learnMore" : "Quiero saber más",
+    "panel" : {
+      "stuckMessage" : "Esta transacción de envío se ha quedado atascada. Acelera la transacción con una tarifa de red más alta o cancélala.",
+      "speedupMessage" : "Tu transacción está en curso. Puedes acelerarla con una tarifa de red más alta o cancelarla."
+    },
+    "speedUp" : {
+      "title" : "Acelerar",
+      "description" : "Vuelve a enviar la transacción con una tarifa de red mayor."
+    },
+    "cancel" : {
+      "title" : "Cancelar",
+      "description" : "Enviando 0 {{ticker}} a tu propia dirección. Para garantizar la cancelación, la tarifa de red es un 30% más alta que la tarifa de la transacción que se pretende cancelar."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "La cancelación de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+      "notEnoughFundsToSpeedup" : "La aceleración de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+      "notlowestNonceToSpeedup" : "La función de aceleración no está disponible. Tu transacción está pendiente porque hay una transacción anterior atascada. Puedes esperar a que se confirme, acelerarla o cancelarla."
+    }
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "Seleccionar cripto",
