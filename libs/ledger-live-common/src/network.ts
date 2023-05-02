@@ -1,15 +1,54 @@
-import invariant from "invariant";
-import axios, { AxiosPromise } from "axios";
-import type { AxiosError, AxiosRequestConfig, Method } from "axios";
+import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { NetworkDown, LedgerAPI5xx, LedgerAPI4xx } from "@ledgerhq/errors";
+import type { AxiosError, AxiosRequestConfig, Method } from "axios";
+import axios, { AxiosPromise, AxiosResponse } from "axios";
+import invariant from "invariant";
+import { changes, getEnv } from "./env";
 import { retry } from "./promise";
-import { getEnv, changes } from "./env";
+
+type Metadata = { startTime: number };
+type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
+
+export const requestInterceptor = (
+  request: AxiosRequestConfig
+): ExtendedXHRConfig => {
+  const { baseURL, url, method = "", data } = request;
+  log("network", `${method} ${baseURL || ""}${url}`, { data });
+
+  // $FlowFixMe (LLD side)
+  const req: ExtendedXHRConfig = request;
+
+  req.metadata = {
+    startTime: Date.now(),
+  };
+
+  return req;
+};
+
+export const responseInterceptor = (
+  response: {
+    config: ExtendedXHRConfig;
+  } & AxiosResponse<any>
+) => {
+  const { baseURL, url, method = "", metadata } = response.config;
+  const { startTime = 0 } = metadata || {};
+
+  log(
+    "network-success",
+    `${response.status} ${method} ${baseURL || ""}${url} (${(
+      Date.now() - startTime
+    ).toFixed(0)}ms)`,
+    getEnv("DEBUG_HTTP_RESPONSE") ? { data: response.data } : undefined
+  );
+
+  return response;
+};
 
 export const errorInterceptor = (error: AxiosError<any>): AxiosError<any> => {
-  const config = error?.response?.config || null;
+  const config = error?.response?.config as ExtendedXHRConfig | null;
   if (!config) throw error;
-  const { baseURL, url, method = "" } = config;
+  const { baseURL, url, method = "", metadata } = config;
+  const { startTime = 0 } = metadata || {};
 
   let errorToThrow;
   if (error.response) {
@@ -34,18 +73,28 @@ export const errorInterceptor = (error: AxiosError<any>): AxiosError<any> => {
     }
     log(
       "network-error",
-      `${status} ${method} ${baseURL || ""}${url}: ${errorToThrow.message}`,
+      `${status} ${method} ${baseURL || ""}${url} (${(
+        Date.now() - startTime
+      ).toFixed(0)}ms): ${errorToThrow.message}`,
       getEnv("DEBUG_HTTP_RESPONSE") ? { data: data } : {}
     );
     throw errorToThrow;
   } else if (error.request) {
-    log("network-down", `DOWN ${method} ${baseURL || ""}${url}`);
+    log(
+      "network-down",
+      `DOWN ${method} ${baseURL || ""}${url} (${(
+        Date.now() - startTime
+      ).toFixed(0)}ms)`
+    );
     throw new NetworkDown();
   }
   throw error;
 };
 
-axios.interceptors.response.use(undefined, errorInterceptor);
+axios.interceptors.request.use(requestInterceptor);
+
+// $FlowFixMe LLD raise issues here
+axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
 const makeError = (
   msg: string,
