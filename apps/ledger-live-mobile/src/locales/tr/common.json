@@ -3450,6 +3450,29 @@
       }
     }
   },
+  "editTransaction" : {
+    "cta" : "Hızlandırın ya da İptal Edin",
+    "previousFeesInfo" : "Mevcut ağ ücreti = {{amount}} ETH",
+    "header" : "İşlemi Düzenleyin",
+    "learnMore" : "Daha fazla bilgi almak istiyorum",
+    "panel" : {
+      "stuckMessage" : "Bu \"gönder\" işlemi takıldı. İşlemi daha yüksek bir ağ ücretiyle hızlandırın veya iptal edin.",
+      "speedupMessage" : "İşleminiz devam ediyor. Daha yüksek bir ağ ücretiyle hızlandırabilir ya da işlemi iptal edebilirsiniz."
+    },
+    "speedUp" : {
+      "title" : "Hızlandırın",
+      "description" : "İşlemi daha yüksek bir ağ ücretiyle yeniden gönderin."
+    },
+    "cancel" : {
+      "title" : "İptal et",
+      "description" : "Sizin adresinize 0 {{ticker}} gönderiliyor. İptal edildiğinden emin olmak için ağ ücreti, iptal edilecek işlemin ücretinden %30 daha yüksek olacaktır."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Hesabınızda yeterince fon olmadığı için işlem iptal edilemiyor.",
+      "notEnoughFundsToSpeedup" : "Hesabınızda yeterince fon olmadığı için işlem hızlandırılamıyor.",
+      "notlowestNonceToSpeedup" : "Hızlandırma özelliği kullanılamıyor. Önceki bir işlem takıldığı için işleminiz beklemede. Onaylanmasını bekleyebilir, hızlandırabilir veya iptal edebilirsiniz."
+    }
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "Kripto seç",
