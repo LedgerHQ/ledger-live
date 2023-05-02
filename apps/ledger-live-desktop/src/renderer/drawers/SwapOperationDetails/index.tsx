@@ -105,7 +105,7 @@ const SwapOperationDetails = ({
   onClose,
 }: {
   mappedSwapOperation: MappedSwapOperation;
-  onClose: () => void;
+  onClose?: () => void;
 }) => {
   const {
     fromAccount,
@@ -140,7 +140,7 @@ const SwapOperationDetails = ({
       history.push({
         pathname: url,
       });
-      onClose();
+      onClose?.();
     },
     [accounts, history, onClose],
   );

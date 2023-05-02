@@ -55,7 +55,7 @@ const filterAvailableFromAssets = (
 export const toSelector = createSelector(
   (state: State) => state.swap.pairs,
   pairs =>
-    memoize((fromId?: "string") => {
+    memoize((fromId?: string) => {
       const filteredAssets = filterAvailableToAssets(pairs, fromId);
       const uniqueAssetList = [...new Set(filteredAssets)];
       return uniqueAssetList;
@@ -97,14 +97,6 @@ export function sortAccountsByStatus(accounts: (Account & { disabled: boolean })
   }
   return [...activeAccounts, ...disabledAccounts];
 }
-export const fromSelector = createSelector(
-  (state: State) => state.swap.pairs,
-  pairs =>
-    memoize(
-      (allAccounts: Array<Account>): Array<Account | TokenAccount> =>
-        sortAccountsByStatus(filterAvailableFromAssets(pairs, allAccounts)),
-    ),
-);
 export const transactionSelector = createSelector(
   (state: State) => state.swap,
   swap => swap.transaction,

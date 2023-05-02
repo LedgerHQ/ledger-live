@@ -36,6 +36,7 @@ export type TextProps = {
   color?: string;
   align?: "DEPRECATED: USE textAlign INSTEAD";
   lineHeight?: string;
+  textTransform?: string;
 } & FontSizeProps &
   FontWeightProps &
   LineHeightProps &

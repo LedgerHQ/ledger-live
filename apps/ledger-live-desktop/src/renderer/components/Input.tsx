@@ -93,7 +93,7 @@ type ErrorContainerInnerProps = {
   hasError?: Error | boolean | null | undefined;
 };
 
-export const ErrorContainer: React.ComponentType<ErrorContainerInnerProps & BoxProps> = styled(Box)`
+export const ErrorContainer = styled(Box)<ErrorContainerInnerProps & BoxProps>`
   margin-top: 0px;
   font-size: 12px;
   width: 100%;
