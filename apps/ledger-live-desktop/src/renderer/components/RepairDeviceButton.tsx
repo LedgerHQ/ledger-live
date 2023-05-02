@@ -18,7 +18,7 @@ type Props = {
   Component?: React.ComponentType<{ onClick: () => void }>;
 };
 
-const RepairDeviceButton: React.ComponentType<Props> = React.forwardRef(function RepairDevice(
+const RepairDeviceButton = React.forwardRef(function RepairDevice(
   { onRepair, onClose, buttonProps, Component, disableDescription }: Props,
   ref: React.Ref<HTMLButtonElement>,
 ) {
