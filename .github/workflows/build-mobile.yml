@@ -99,7 +99,9 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
         id: slug
-        run: echo "sha8=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: |
+          echo "$GITHUB_OUTPUT"
+          echo "sha8=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
       - name: make local version
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
