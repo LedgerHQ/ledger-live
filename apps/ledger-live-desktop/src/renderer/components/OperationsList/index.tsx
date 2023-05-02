@@ -9,7 +9,6 @@ import {
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay,
   flattenAccounts,
-  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import logger from "~/renderer/logger";
 import { openModal } from "~/renderer/actions/modals";
@@ -24,8 +23,6 @@ import OperationC from "./Operation";
 import TableContainer, { TableHeader } from "../TableContainer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import EditOperationPanel from "./EditOperationPanel";
-import { getEnv } from "@ledgerhq/live-common/env";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
 
 const ShowMore = styled(Box).attrs(() => ({
@@ -112,33 +109,10 @@ export class OperationsList extends PureComponent<Props, State> {
           withSubAccounts,
           filterOperation,
         });
-    // Scan all the transaction of the account to get the stuck transaction with lowest nonce if any
-    const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-    let stuckOperation = null;
-    if (account && mainAccount.currency.family === "ethereum") {
-      account.pendingOperations.forEach(operation => {
-        if (isEditableOperation(mainAccount, operation)) {
-          if (
-            (!stuckOperation ||
-              operation.transactionSequenceNumber < stuckOperation.transactionSequenceNumber) &&
-            new Date() - operation.date > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
-          ) {
-            stuckOperation = operation;
-          }
-        }
-      });
-    }
     const all = flattenAccounts(accounts || []).concat([account, parentAccount].filter(Boolean));
     const accountsMap = keyBy(all, "id");
     return (
       <>
-        {stuckOperation && (
-          <EditOperationPanel
-            operation={stuckOperation}
-            account={account}
-            parentAccount={parentAccount}
-          />
-        )}
         <TableContainer id="operation-list">
           {title && (
             <TableHeader

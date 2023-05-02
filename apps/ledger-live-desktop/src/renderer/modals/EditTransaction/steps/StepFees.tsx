@@ -7,6 +7,7 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
 import SendAmountFields from "../../Send/SendAmountFields";
+import logger from "~/renderer/logger";
 import { StepProps } from "../types";
 import { BigNumber } from "bignumber.js";
 // eslint-disable-next-line no-restricted-imports
@@ -34,6 +35,11 @@ const StepFees = (props: StepProps) => {
   const feeValue = new BigNumber(transactionRaw.userGasLimit || transactionRaw.estimatedGasLimit)
     .times(feePerGas)
     .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
+  // todo remove logger it after test
+  logger.error(`transactionRaw.maxFeePerGas: ${transactionRaw.maxFeePerGas}`);
+  logger.error(`transactionRaw.gasPrice: ${transactionRaw.gasPrice}`);
+  logger.error(`transactionRaw.maxPriorityFeePerGas: ${transactionRaw.maxPriorityFeePerGas}`);
+
   return (
     <Box flow={4}>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}

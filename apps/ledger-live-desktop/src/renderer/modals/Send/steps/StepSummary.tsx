@@ -26,6 +26,10 @@ import Alert from "~/renderer/components/Alert";
 import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+import { apiForCurrency } from "@ledgerhq/live-common/api/Ethereum";
+import ErrorBanner from "~/renderer/components/ErrorBanner";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
   height: 32px;
@@ -275,18 +279,41 @@ export default class StepSummary extends PureComponent<StepProps> {
   }
 }
 export class StepSummaryFooter extends PureComponent<StepProps> {
+  state = {
+    transactionHasBeenValidated: false,
+  };
+
   onNext = async () => {
     const { transitionTo } = this.props;
     transitionTo("device");
   };
 
+  componentDidMount() {
+    const { account, parentAccount, transaction } = this.props;
+    const mainAccount = getMainAccount(account, parentAccount);
+    if (!mainAccount) return;
+    if (mainAccount.currency.family !== "ethereum") return;
+    // In eth eth transaction flow, we need to check if the transaction has been already validated in the blockchain
+    apiForCurrency(mainAccount.currency)
+      .getAccountNonce(mainAccount.freshAddress)
+      .then(nonce => {
+        if (transaction.nonce < nonce) {
+          this.setState({ transactionHasBeenValidated: true });
+        }
+      });
+  }
+
   render() {
     const { account, status, bridgePending } = this.props;
     if (!account) return null;
     const { errors } = status;
-    const canNext = !bridgePending && !Object.keys(errors).length;
+    const canNext =
+      !bridgePending && !Object.keys(errors).length && !this.state.transactionHasBeenValidated;
     return (
       <>
+        {this.state.transactionHasBeenValidated ? (
+          <ErrorBanner error={new TransactionHasBeenValidatedError()} />
+        ) : null}
         <Button
           id={"send-summary-continue-button"}
           primary

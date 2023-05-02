@@ -3,7 +3,7 @@ import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";
-import { openModal } from "~/renderer/actions/modals";
+import { openModal, closeModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
@@ -18,6 +18,7 @@ const EditOperationPanel = (props: Props) => {
   const dispatch = useDispatch();
   const editEthTx = useFeature("editEthTx");
   const handleOpenEditModal = useCallback(() => {
+    dispatch(closeModal("MODAL_SEND"));
     dispatch(
       openModal("MODAL_EDIT_TRANSACTION", {
         account,

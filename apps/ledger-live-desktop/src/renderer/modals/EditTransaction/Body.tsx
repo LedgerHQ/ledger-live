@@ -199,6 +199,11 @@ const Body = ({
   const haveFundToSpeedup = mainAccount.balance.gt(
     feeValue.times(1.1).plus(account.type === "Account" ? params.transactionRaw.amount : 0),
   );
+  // todo remove logger it after test
+  logger.error(`main account address: ${mainAccount.freshAddress}`);
+  logger.error(`main account balance: ${mainAccount.balance.toNumber()}`);
+  logger.error(`feeValue: ${feeValue.toNumber()}`);
+
   let isOldestEditableOperation = true;
   account.pendingOperations.forEach(operation => {
     if (isEditableOperation(account, operation)) {
