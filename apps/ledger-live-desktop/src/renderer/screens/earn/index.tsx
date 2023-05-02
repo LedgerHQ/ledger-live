@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import Card from "~/renderer/components/Box/Card";
-import { languageSelector } from "~/renderer/reducers/settings";
+import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -12,6 +12,7 @@ const DEFAULT_EARN_APP_ID = "earn";
 
 const Earn = () => {
   const locale = useSelector(languageSelector);
+  const fiatCurrency = useSelector(counterValueCurrencySelector);
   const localManifest = useLocalLiveAppManifest(DEFAULT_EARN_APP_ID);
   const remoteManifest = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
   const manifest = localManifest || remoteManifest;
@@ -38,6 +39,7 @@ const Earn = () => {
           inputs={{
             theme: themeType,
             lang: locale,
+            currencyTicker: fiatCurrency.ticker,
           }}
         />
       ) : null}
