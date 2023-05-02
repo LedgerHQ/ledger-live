@@ -17,7 +17,8 @@ class Cosmos extends CosmosBase {
     this.prefix = "cosmos";
     this.validatorPrefix = this.prefix + "valoper";
     this.lcd = defaultConfig.config.cosmos.cosmos.lcd;
-    this.ledgerValidator = defaultConfig.config.cosmos.cosmos.ledgerValidator || "";
+    this.ledgerValidator =
+      defaultConfig.config.cosmos.cosmos.ledgerValidator || "";
   }
 }
 
