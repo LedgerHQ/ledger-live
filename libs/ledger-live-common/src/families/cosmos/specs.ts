@@ -497,7 +497,12 @@ const onomy = {
   }),
 };
 
+const axelar = {
+  ...generateGenericCosmosTest("axelar"),
+};
+
 export default {
+  axelar,
   cosmos,
   osmosis,
   desmos,
