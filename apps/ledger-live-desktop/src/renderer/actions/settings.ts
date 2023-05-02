@@ -121,7 +121,7 @@ export const setUSBTroubleshootingIndex = (USBTroubleshootingIndex?: number) =>
   saveSettings({
     USBTroubleshootingIndex,
   });
-export function useHideEmptyTokenAccounts() {
+export function useHideEmptyTokenAccounts(): [boolean, (hideEmptyTokenAccounts: boolean) => void] {
   const dispatch = useDispatch();
   const value = useSelector(hideEmptyTokenAccountsSelector);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
