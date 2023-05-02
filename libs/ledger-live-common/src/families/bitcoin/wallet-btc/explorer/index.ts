@@ -1,12 +1,16 @@
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AxiosRequestConfig } from "axios";
 import axios, { AxiosInstance } from "axios";
 import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
 import genericPool, { Pool } from "generic-pool";
+import { blockchainBaseURL } from "../../../../explorer";
+import {
+  errorInterceptor,
+  requestInterceptor,
+  responseInterceptor,
+} from "../../../../network";
 import { Address, Block, TX } from "../storage/types";
 import { IExplorer } from "./types";
-import { errorInterceptor } from "../../../../network";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { blockchainBaseURL } from "../../../../explorer";
 
 type ExplorerParams = {
   batch_size?: number;
@@ -74,7 +78,8 @@ class BitcoinLikeExplorer implements IExplorer {
     }
 
     // Logging
-    client.interceptors.response.use(undefined, errorInterceptor);
+    client.interceptors.request.use(requestInterceptor);
+    client.interceptors.response.use(responseInterceptor, errorInterceptor);
   }
 
   async broadcast(tx: string): Promise<{ data: { result: string } }> {
