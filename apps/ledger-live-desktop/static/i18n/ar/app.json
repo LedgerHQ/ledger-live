@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "أبداً",
+    "new" : "جديد",
     "apply" : "تقديم",
     "done" : "تم",
     "confirm" : "تأكيد",
@@ -215,10 +216,11 @@
     "earn" : "اكسب",
     "exchange" : "شراء / بيع",
     "swap" : "مبادلة",
+    "refer" : "ترشيح صديق",
     "lend" : "إقراض",
     "catalog" : "Discover",
     "market" : "السوق",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "قم بتفضيل حساب لعرضه هنا.",
@@ -1441,7 +1443,8 @@
     "messageIfUnverified" : "قم بتأكيد أن العنوان الذي تمت مشاركته يتطابق تماماً مع العنوان الموجود على جهازك",
     "messageIfSkipped" : "لم يتم تأكيد عنوانك {{name}} على جهازك Ledger. يرجى التحقق من ذلك للأمان.",
     "showQrCode" : "إظهار كود QR",
-    "taprootWarning" : "تأكد أن المُرسل يدعم taproot"
+    "taprootWarning" : "تأكد أن المُرسل يدعم taproot",
+    "dashStakingWarning" : "يُرجى التأكد من أنك لا تستخدم هذا العنوان لتلقي مكافآت التكديس"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1877,7 @@
         "plugin" : "انتقل إلى التطبيق",
         "swap" : "مبادلة",
         "tool" : "تعرّف على المزيد",
-        "app" : "تعرّف على المزيد"
+        "currency" : "تعرّف على المزيد"
       },
       "uninstall" : {
         "title" : "إلغاء تثبيت الكل",
@@ -3761,6 +3764,7 @@
         "title" : "أنت الآن مطوّر!",
         "text" : "مرحباً بك في بلاد العجائب"
       },
+      "userId" : "مُعرّف المستخدم",
       "debugApps" : "السماح لتطبيقات تصحيح الأخطاء",
       "debugAppsDesc" : "عرض تطبيقات المنصة لتصحيح الأخطاء والسماح بفتحها.",
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
@@ -3790,6 +3794,8 @@
       "runLocalAppOpenButton" : "فتح",
       "enableLearnStagingUrl" : "الرابط المرحلي (staging URL) للصفحة التعليمية",
       "enableLearnStagingUrlDesc" : "تمكين الرابط المرحلي (staging URL) للصفحة التعليمية.",
+      "enableStagingNftMetadataService" : "خدمة البيانات الوصفية المرحلية للرموز غير القابل للاستبدال",
+      "enableStagingNftMetadataServiceDesc" : "تمكين خدمة البيانات الوصفية المرحلية للرموز غير القابل للاستبدال وإعادة تعيين ذاكرة التخزين المؤقت للرموز غير القابل للاستبدال",
       "openOnboardingAppInstallDebug" : "افتح شاشة تصحيح الأخطاء المتعلقة بتثبيت تطبيقات التهيئة",
       "openOnboardingAppInstallDebugDesc" : "افتح شاشة بالمكونات من خطوة تثبيت تطبيق مزامنة التهيئة"
     },
@@ -3847,6 +3853,10 @@
           "title" : "وضع المطور",
           "description" : "اعرض تطبيقات المطور وتطبيقات الشبكة التجريبية (testnet) في My Ledger."
         },
+        "listAppsV2" : {
+          "title" : "الإدراج التجريبي للتطبيقات في My Ledger",
+          "description" : "تحسين الأداء لوصول My Ledger والتدفقات المُضمَّنة."
+        },
         "scanForInvalidPaths" : {
           "title" : "بحث موسع عن الحساب",
           "description" : "البحث عن الحسابات ذات مسارات اشتقاق غير صحيحة. يرجى إرسال الأصول التي يحتمل العثور عليها إلى حساب عادي."
@@ -3886,6 +3896,10 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "بوابة رسوم أولوية مخصصة",
           "description" : "خصِّص النسبة المئوية من الحد الأدنى لرسوم الأولوية المُقدَّرة لدينا المسموح بها لمعاملات EIP1559 المتقدمة"
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "مُضاعِف مخصص للرسوم الأساسية",
+          "description" : "قم بتخصيص المُضاعِف المستخدَم للرسوم الأساسية التي تتكون منها maxFeePerGas لمعاملة EIP1559"
         }
       }
     },
@@ -5723,9 +5737,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "استعِد مفاتيحك باستخدام\nهويّتك",
+    "description" : "عبارة الاسترداد السرية الخاصة بك لن تكون دائماً في متناول اليد.\nإطلاق تجريبي حصرياً لـ Ledger Nano X. اشترك مجاناً حتى 31 مايو 2023",
+    "cta" : "لماذا يجب أن اشترك؟",
+    "downloadLLM" : "اشترك في <purple>Ledger Recover</purple> باستخدام تطبيق Ledger Live للجوّال"
   }
 }
