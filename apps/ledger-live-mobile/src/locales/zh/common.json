@@ -3450,6 +3450,29 @@
       }
     }
   },
+  "editTransaction" : {
+    "cta" : "加速或取消",
+    "previousFeesInfo" : "当前网络费用 = {{amount}} 以太币",
+    "header" : "编辑交易",
+    "learnMore" : "我想进一步了解",
+    "panel" : {
+      "stuckMessage" : "此“发送”交易已停滞。使用较高的网络费用加速交易，或取消交易。",
+      "speedupMessage" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。"
+    },
+    "speedUp" : {
+      "title" : "加快速度",
+      "description" : "使用较高的网络费用重新提交交易。"
+    },
+    "cancel" : {
+      "title" : "取消",
+      "description" : "发送 0 {{ticker}} 到您自己的地址。为确保取消交易，网络费用比将要取消的交易费用高 30%。"
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "无法取消交易，因为您的账户中没有足够的资金。",
+      "notEnoughFundsToSpeedup" : "无法使用加速交易，因为您的账户中没有足够的资金。",
+      "notlowestNonceToSpeedup" : "无法使用加速功能。您的交易有待处理，因为之前的交易已停滞。您可以等待确认交易，加速交易和取消交易。"
+    }
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "选择加密货币",
