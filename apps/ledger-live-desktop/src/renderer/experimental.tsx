@@ -20,6 +20,11 @@ export type FeatureToggle =
       type: "integer";
       minValue?: number;
       maxValue?: number;
+    }
+  | {
+      type: "float";
+      minValue?: number;
+      maxValue?: number;
     };
 export type Feature = FeatureCommon & FeatureToggle;
 
@@ -113,6 +118,16 @@ export const experimentalFeatures: Feature[] = [
     ),
     minValue: 0,
     maxValue: 1,
+  },
+  {
+    type: "float",
+    name: "EIP1559_BASE_FEE_MULTIPLIER",
+    title: <Trans i18nKey="settings.experimental.features.1559CustomBaseFeeMultiplier.title" />,
+    description: (
+      <Trans i18nKey="settings.experimental.features.1559CustomBaseFeeMultiplier.description" />
+    ),
+    minValue: 0,
+    maxValue: 10,
   },
 ];
 const lsKey = "experimentalFlags";

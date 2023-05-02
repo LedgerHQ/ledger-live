@@ -960,28 +960,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  energywebchain: {
-    type: "CryptoCurrency",
-    id: "energywebchain",
-    coinType: CoinType.ENERGY_WEB_CHAIN,
-    name: "EnergyWebChain",
-    managerAppName: "EnergyWebChain",
-    ticker: "EWT",
-    scheme: "energywebchain",
-    color: "#000",
-    family: "ethereum",
-    ethereumLikeInfo: {
-      chainId: 246,
-    },
-    units: [
-      {
-        name: "EWT",
-        code: "EWT",
-        magnitude: 18,
-      },
-    ],
-    explorerViews: [],
-  },
   eos: {
     type: "CryptoCurrency",
     id: "eos",
@@ -1684,35 +1662,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     keywords: ["xmr", "monero"],
-  },
-  moonriver: {
-    type: "CryptoCurrency",
-    id: "moonriver",
-    coinType: CoinType.ETH,
-    name: "Moonriver",
-    managerAppName: "Moonriver",
-    ticker: "MOVR",
-    scheme: "moonriver",
-    color: "#F2A007",
-    family: "ethereum",
-    units: [
-      {
-        name: "MOVR",
-        code: "MOVR",
-        magnitude: 18,
-      },
-    ],
-    ethereumLikeInfo: {
-      chainId: 1285,
-    },
-    explorerViews: [
-      {
-        tx: "https://moonriver.moonscan.io/tx/$hash",
-        address: "https://moonriver.moonscan.io/address/$address",
-        token:
-          "https://moonriver.moonscan.io/token/$contractAddress?a=$address",
-      },
-    ],
   },
   musicoin: {
     type: "CryptoCurrency",
@@ -3333,13 +3282,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  // ethereum nanoapp currencies
+  // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
   arbitrum: {
     type: "CryptoCurrency",
     id: "arbitrum",
     coinType: CoinType.ETH,
     name: "Arbitrum",
-    managerAppName: "Arbitrum",
+    managerAppName: "Ethereum",
     ticker: "ETH",
     scheme: "arbitrum",
     color: "#28a0f0",
@@ -3360,6 +3309,37 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://arbiscan.io/tx/$hash",
         address: "https://arbiscan.io/address/$address",
         token: "https://arbiscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  arbitrum_goerli: {
+    type: "CryptoCurrency",
+    id: "arbitrum_goerli",
+    coinType: CoinType.ETH,
+    name: "Arbitrum Goerli",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "arbitrum_goerli",
+    color: "#00ff00",
+    family: "evm",
+    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    isTestnetFor: "arbitrum",
+    disableCountervalue: true,
+    ethereumLikeInfo: {
+      chainId: 421613,
+      networkId: 421613,
+      rpc: "https://goerli-rollup.arbitrum.io/rpc",
+      explorer: {
+        uri: "https://api-goerli.arbiscan.io/",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://goerli.arbiscan.io/tx/$hash",
+        address: "https://goerli.arbiscan.io/address/$address",
+        token: "https://goerli.arbiscan.io/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -3516,6 +3496,409 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://moonbeam.moonscan.io/tx/$hash",
         address: "https://moonbeam.moonscan.io/address/$address",
         token: "https://moonbeam.moonscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  rsk: {
+    type: "CryptoCurrency",
+    id: "rsk",
+    coinType: CoinType.ETH,
+    name: "RSK",
+    managerAppName: "Ethereum",
+    ticker: "RBTC",
+    scheme: "rsk",
+    color: "#FF931E",
+    family: "evm",
+    units: ethereumUnits("RBTC", "RBTC"),
+    ethereumLikeInfo: {
+      chainId: 30,
+      networkId: 30,
+      rpc: "https://public-node.rsk.co",
+      explorer: {
+        uri: "https://blockscout.com/rsk/mainnet",
+        type: "blockscout",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.rsk.co/tx/$hash",
+        address: "https://explorer.rsk.co/address/$address",
+        token: "https://explorer.rsk.co/address/$address",
+      },
+    ],
+  },
+  bittorrent: {
+    type: "CryptoCurrency",
+    id: "bittorrent",
+    coinType: CoinType.ETH,
+    name: "Bittorent Chain",
+    managerAppName: "Ethereum",
+    ticker: "BTT",
+    scheme: "btt",
+    color: "#000000",
+    family: "evm",
+    units: [
+      {
+        name: "BTT",
+        code: "BTT",
+        magnitude: 18,
+      },
+    ],
+    ethereumLikeInfo: {
+      chainId: 199,
+      networkId: 199,
+      rpc: "https://rpc.bt.io",
+      explorer: {
+        uri: "https://api.bttcscan.com",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://bttcscan.com/tx/$hash",
+        address: "https://bttcscan.com/address/$address",
+        token: "https://bttcscan.com/token/$address",
+      },
+    ],
+  },
+  kava_evm: {
+    type: "CryptoCurrency",
+    id: "kava_evm",
+    coinType: CoinType.ETH,
+    name: "Kava EVM",
+    managerAppName: "Ethereum",
+    ticker: "KAVA",
+    scheme: "kava_evm",
+    color: "#FF232F",
+    family: "evm",
+    units: [
+      {
+        name: "KAVA",
+        code: "KAVA",
+        magnitude: 18,
+      },
+    ],
+    ethereumLikeInfo: {
+      chainId: 2222,
+      networkId: 2222,
+      rpc: "https://evm2.kava.io",
+      explorer: {
+        uri: "https://explorer.kava.io",
+        type: "blockscout",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.kava.io/tx/$hash",
+        address: "https://explorer.kava.io/address/$address",
+        token: "https://explorer.kava.io/token/$address",
+      },
+    ],
+  },
+  evmos_evm: {
+    type: "CryptoCurrency",
+    id: "evmos_evm",
+    coinType: CoinType.ETH,
+    name: "Evmos EVM",
+    managerAppName: "Ethereum",
+    ticker: "EVMOS",
+    scheme: "evmos",
+    color: "#ED4E33",
+    family: "evm",
+    units: [
+      {
+        name: "EVMOS",
+        code: "EVMOS",
+        magnitude: 18,
+      },
+    ],
+    ethereumLikeInfo: {
+      chainId: 9001,
+      networkId: 9001,
+      rpc: "https://evmos-evm.publicnode.com",
+      explorer: {
+        uri: "https://blockscout.evmos.org",
+        type: "blockscout",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://blockscout.evmos.org/tx/$hash",
+        address: "https://blockscout.evmos.org/address/$address",
+        token: "https://blockscout.evmos.org/token/$address",
+      },
+    ],
+  },
+  optimism: {
+    type: "CryptoCurrency",
+    id: "optimism",
+    coinType: CoinType.ETH,
+    name: "Optimism",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "optimism",
+    color: "#FF0421",
+    family: "evm",
+    units: ethereumUnits("ether", "ETH"),
+    ethereumLikeInfo: {
+      chainId: 10,
+      networkId: 10,
+      rpc: "https://mainnet.optimism.io",
+      explorer: {
+        uri: "https://api-optimistic.etherscan.io",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://optimistic.etherscan.io/tx/$hash",
+        address: "https://optimistic.etherscan.io/address/$address",
+        token:
+          "https://optimistic.etherscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  optimism_goerli: {
+    type: "CryptoCurrency",
+    id: "optimism_goerli",
+    coinType: CoinType.ETH,
+    name: "Optimism Goerli",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "optimism_goerli",
+    color: "#00ff00",
+    family: "evm",
+    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    isTestnetFor: "optimism",
+    disableCountervalue: true,
+    ethereumLikeInfo: {
+      chainId: 420,
+      networkId: 420,
+      rpc: "https://goerli.optimism.io",
+      explorer: {
+        uri: "https://api-goerli-optimistic.etherscan.io/",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://goerli-optimism.etherscan.io/tx/$hash",
+        address: "https://goerli-optimism.etherscan.io/address/$address",
+        token:
+          "https://goerli-optimism.etherscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  energy_web: {
+    type: "CryptoCurrency",
+    id: "energy_web",
+    coinType: CoinType.ETH,
+    name: "Energy Web",
+    managerAppName: "Ethereum",
+    ticker: "EWT",
+    scheme: "energy_web",
+    color: "#A566FF",
+    family: "evm",
+    units: ethereumUnits("EWT", "EWT"),
+    ethereumLikeInfo: {
+      chainId: 246,
+      networkId: 246,
+      rpc: "https://rpc.energyweb.org",
+      explorer: {
+        uri: "https://explorer.energyweb.org",
+        type: "blockscout",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.energyweb.org/tx/$hash",
+        address: "https://explorer.energyweb.org/address/$address",
+        token:
+          "https://explorer.energyweb.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  astar: {
+    type: "CryptoCurrency",
+    id: "astar",
+    coinType: CoinType.ETH,
+    name: "Astar",
+    managerAppName: "Ethereum",
+    ticker: "ASTR",
+    scheme: "astar",
+    color: "#06E1FF",
+    family: "evm",
+    units: ethereumUnits("ASTR", "ASTR"),
+    ethereumLikeInfo: {
+      chainId: 592,
+      networkId: 592,
+      rpc: "https://evm.astar.network",
+      explorer: {
+        uri: "https://blockscout.com/astar",
+        type: "blockscout",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://blockscout.com/astar/tx/$hash",
+        address: "https://blockscout.com/astar/address/$address",
+        token: "https://blockscout.com/astar/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  metis: {
+    type: "CryptoCurrency",
+    id: "metis",
+    coinType: CoinType.ETH,
+    name: "Metis",
+    managerAppName: "Ethereum",
+    ticker: "METIS",
+    scheme: "metis",
+    color: "#00DACC",
+    family: "evm",
+    units: ethereumUnits("METIS", "METIS"),
+    ethereumLikeInfo: {
+      chainId: 1088,
+      networkId: 1088,
+      rpc: "https://andromeda.metis.io/?owner=1088",
+      explorer: {
+        uri: "https://andromeda-explorer.metis.io",
+        type: "blockscout",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://andromeda-explorer.metis.io/tx/$hash",
+        address: "https://andromeda-explorer.metis.io/address/$address",
+        token:
+          "https://andromeda-explorer.metis.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  boba: {
+    type: "CryptoCurrency",
+    id: "boba",
+    coinType: CoinType.ETH,
+    name: "Boba",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "boba",
+    color: "#CBFF00",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    ethereumLikeInfo: {
+      chainId: 288,
+      networkId: 288,
+      rpc: "https://mainnet.boba.network",
+      explorer: {
+        uri: "https://api.bobascan.com",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://bobascan.com/tx/$hash",
+        address: "https://bobascan.com/address/$address",
+        token: "https://bobascan.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  moonriver: {
+    type: "CryptoCurrency",
+    id: "moonriver",
+    coinType: CoinType.ETH,
+    name: "Moonriver",
+    managerAppName: "Ethereum",
+    ticker: "MOVR",
+    scheme: "moonriver",
+    color: "#F2B705",
+    family: "evm",
+    units: [
+      {
+        name: "MOVR",
+        code: "MOVR",
+        magnitude: 18,
+      },
+    ],
+    ethereumLikeInfo: {
+      chainId: 1285,
+      networkId: 1285,
+      rpc: "https://rpc.api.moonriver.moonbeam.network",
+      explorer: {
+        uri: "https://api-moonriver.moonscan.io",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://moonriver.moonscan.io/tx/$hash",
+        address: "https://moonriver.moonscan.io/address/$address",
+        token:
+          "https://moonriver.moonscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  velas_evm: {
+    type: "CryptoCurrency",
+    id: "velas_evm",
+    coinType: CoinType.ETH,
+    name: "Velas EVM",
+    managerAppName: "Ethereum",
+    ticker: "VLX",
+    scheme: "velas",
+    color: "#000000",
+    family: "evm",
+    units: [
+      {
+        name: "VLX",
+        code: "VLX",
+        magnitude: 18,
+      },
+    ],
+    ethereumLikeInfo: {
+      chainId: 106,
+      networkId: 106,
+      rpc: "https://evmexplorer.velas.com/rpc",
+      explorer: {
+        uri: "https://evmexplorer.velas.com",
+        type: "blockscout",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://evmexplorer.velas.com/tx/$hash",
+        address: "https://evmexplorer.velas.com/address/$address",
+        token:
+          "https://evmexplorer.velas.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  syscoin: {
+    type: "CryptoCurrency",
+    id: "syscoin",
+    coinType: CoinType.ETH,
+    name: "Syscoin",
+    managerAppName: "Ethereum",
+    ticker: "SYS",
+    scheme: "syscoin",
+    color: "#257DB8",
+    family: "evm",
+    units: ethereumUnits("SYS", "SYS"),
+    ethereumLikeInfo: {
+      chainId: 57,
+      networkId: 57,
+      rpc: "https://rpc.syscoin.org",
+      explorer: {
+        uri: "https://explorer.syscoin.org",
+        type: "blockscout",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.syscoin.org/tx/$hash",
+        address: "https://explorer.syscoin.org/address/$address",
+        token: "https://explorer.syscoin.org/token/$contractAddress?a=$address",
       },
     ],
   },

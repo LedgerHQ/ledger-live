@@ -12,7 +12,6 @@ import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import styles from "../../navigation/styles";
 import Question from "../../icons/Question";
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import { BaseOnboardingNavigatorParamList } from "./types/BaseOnboardingNavigator";
@@ -47,6 +46,7 @@ export const ErrorHeaderInfo = ({
       sceneInfoKey: "pairNewErrorInfoModalProps",
     });
   }, [navigation]);
+
   return route.params?.hasError ? (
     <TouchableOpacity
       style={{
@@ -92,18 +92,7 @@ export default function BaseOnboardingNavigator() {
           headerShown: false,
         }}
       />
-      <Stack.Screen
-        name={ScreenName.PairDevices}
-        component={PairDevices}
-        options={({ navigation, route }) => ({
-          title: "",
-          headerRight: () => (
-            <ErrorHeaderInfo route={route} navigation={navigation} />
-          ),
-          headerShown: true,
-          headerStyle: styles.headerNoShadow,
-        })}
-      />
+      <Stack.Screen name={ScreenName.PairDevices} component={PairDevices} />
       <Stack.Screen
         name={ScreenName.EditDeviceName}
         component={EditDeviceName}
