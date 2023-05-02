@@ -157,7 +157,7 @@ const envDefinitions: Record<
     desc: "Static fee for Stellar account",
   },
   API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/lcd",
+    def: "https://lcd.osmosis.zone",
     parser: stringParser,
     desc: "Endpoint for Osmosis Node",
   },
