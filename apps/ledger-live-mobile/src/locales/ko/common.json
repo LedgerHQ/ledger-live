@@ -3450,6 +3450,29 @@
       }
     }
   },
+  "editTransaction" : {
+    "cta" : "속도 올리기 또는 취소",
+    "previousFeesInfo" : "현재 네트워크 수수료 = {{amount}} ETH",
+    "header" : "트랜잭션 수정",
+    "learnMore" : "더 자세히 알고 싶어요",
+    "panel" : {
+      "stuckMessage" : "'전송' 트랜잭션이 멈춘 상태입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+      "speedupMessage" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다."
+    },
+    "speedUp" : {
+      "title" : "스피드 업",
+      "description" : "네트워크 수수료를 높여 트랜잭션을 다시 제출하세요."
+    },
+    "cancel" : {
+      "title" : "취소",
+      "description" : "0의 {{ticker}}를 본인 주소로 전송하기 취소를 담보하기 위해 네트워크 수수료는 취소하려는 트랜잭션 수수료보다 30% 더 높습니다."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "계정에 충분한 자금이 없기 때문에 트랜잭션을 취소할 수 없습니다.",
+      "notEnoughFundsToSpeedup" : "계정에 충분한 자금이 없기 때문에 트랜잭션 속도를 높일 수 없습니다.",
+      "notlowestNonceToSpeedup" : "속도 향상 기능을 사용할 수 없습니다. 이전 트랜잭션이 중단되어 현재 트랜잭션이 보류 중입니다. 확인될 때까지 기다렸다가 속도를 높이거나 취소할 수 있습니다."
+    }
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "암호화폐 선택",
