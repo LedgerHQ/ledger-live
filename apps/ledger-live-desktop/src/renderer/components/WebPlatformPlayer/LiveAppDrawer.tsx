@@ -22,7 +22,6 @@ const Divider = styled(Box)`
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
   const { isOpen, payload } = useSelector(platformAppDrawerStateSelector);
-  // const { manifest, type, title, disclaimerId, next } = payload || ({} as PlatformAppDrawers);
 
   const { t } = useTranslation();
   const dispatch = useDispatch();

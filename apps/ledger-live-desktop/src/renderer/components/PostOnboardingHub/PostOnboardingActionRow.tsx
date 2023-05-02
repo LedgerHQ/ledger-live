@@ -15,40 +15,14 @@ const ActionRowWrapper = styled(Flex)<{ completed: boolean }>`
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const { id, Icon, title, description, tagLabel, buttonLabelForAnalyticsEvent, completed } = props;
   const { t } = useTranslation();
-  // const history = useHistory();
 
   const handleStartAction = useCallback(() => {
-    /**
-     * WARNING:
-     * I have followed the PostOnboarding hell all the way up the the PostOnbardingProvider
-     * Here the props are a PostOnboardingAction + PostOnboardingState (which does not interest us)
-     * PostOnbardingAction extends a WithNavigationParams { navigationParams?: any[] } _please help me_
-     * Now, when you look at all the supposedly available PostOnboardingAction coming from the provider
-     * we get to ./apps/ledger-live-desktop/src/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped.tsx
-     * which provides the getPostOnboardingAction which can return any of these action
-     * ```
-     * - claimMock
-     * - migrateAssetsMock
-     * - personalizeMock
-     * - customImage
-     * ```
-     * which of those, none of them actually include a `navigationParams`
-     * cf: ./apps/ledger-live-desktop/src/renderer/components/PostOnboardingHub/logic/index.tsx
-     *
-     * Conclusion: since our typings are bad (navigationParams?: any[] oskour) and since history.push
-     * is a being a pain, I will comment it out for now as I'm pretty sure it will not break anything
-     * as it's the only way I have of fixing this for now.
-     */
-
-    // if ("navigationParams" in props && props.navigationParams) history.push(props.navigationParams);
-    // else
     if ("startAction" in props) {
       props.startAction();
       buttonLabelForAnalyticsEvent &&
         track("button_clicked", { button: buttonLabelForAnalyticsEvent });
     }
   }, [props, buttonLabelForAnalyticsEvent]);
-  // }, [props, history, buttonLabelForAnalyticsEvent]);
 
   return (
     <ActionRowWrapper

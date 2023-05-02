@@ -43,9 +43,6 @@ export const getTransitions = (transition: "slide" | "flip", reverse = false) =>
     },
     slide: {
       from: {
-        // NOTE: position absolute is causing a break in Carousel/index
-        // commenting it fixes the types issue but not sure we are not breaking anything...
-        // position: "absolute",
         opacity: 1,
         transform: `translate3d(${100 * mult}%,0,0)`,
       },
