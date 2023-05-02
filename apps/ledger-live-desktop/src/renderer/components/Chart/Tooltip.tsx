@@ -16,7 +16,7 @@ const TooltipContainer = styled.div.attrs<TooltipContainerProps>(({ opacity }) =
   },
 }))<TooltipContainerProps>`
   transform: translate3d(-50%, -100%, 0);
-  background: ${p => p.theme.colors.palette.background.main};
+  background: ${p => p.theme.colors.palette.background.paper};
   border: 1px solid ${p => p.theme.colors.palette.text.shade10};
   border-radius: 4px;
   width: 150px;
