@@ -129,6 +129,12 @@ export const experimentalFeatures: Feature[] = [
     minValue: 0,
     maxValue: 10,
   },
+  {
+    type: "toggle",
+    name: "ENABLE_NETWORK_LOGS",
+    title: <Trans i18nKey="settings.experimental.features.enableNetworkLogs.title" />,
+    description: <Trans i18nKey="settings.experimental.features.enableNetworkLogs.description" />,
+  },
 ];
 const lsKey = "experimentalFlags";
 const lsKeyVersion = `${lsKey}_llversion`;
