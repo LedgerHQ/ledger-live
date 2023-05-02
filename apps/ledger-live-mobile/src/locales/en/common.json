@@ -2698,6 +2698,10 @@
         "experimentalSwap": {
           "title": "New SWAP interface",
           "description": "Use the new experimental swap interface"
+        },
+        "experimentalEnableNetworkLogs": {
+          "title": "Enable network logs",
+          "description": "Enable network logs in the console (error logs are always enabled)"
         }
       },
       "developerFeatures": {
@@ -6086,7 +6090,7 @@
         "tag": "{{count}} NFTs"
       }
     },
-    "referralProgram":"$10"
+    "referralProgram": "$10"
   },
   "servicesWidget": {
     "title": "Services",
