@@ -15,6 +15,7 @@ import Quit from "~/renderer/icons/Quit";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import AppList from "./AppsList";
 import DeviceStorage from "../DeviceStorage/index";
+import ProviderWarning from "../ProviderWarning";
 import AppDepsInstallModal from "./AppDepsInstallModal";
 import AppDepsUnInstallModal from "./AppDepsUnInstallModal";
 import ErrorModal from "~/renderer/modals/ErrorModal/index";
@@ -184,6 +185,7 @@ const AppsList = ({
           isIncomplete={isIncomplete}
           firmware={firmware}
         />
+        <ProviderWarning />
         <AppList
           optimisticState={optimisticState}
           state={state}
