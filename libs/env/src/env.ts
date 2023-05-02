@@ -740,6 +740,11 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "Time after which an optimisc operation is considered stuck",
   },
+  ENABLE_NETWORK_LOGS: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable network request and responses logs. Errors are always logged",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
