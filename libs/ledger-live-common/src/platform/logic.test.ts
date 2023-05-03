@@ -683,7 +683,7 @@ function createAppManifest(id = "1"): LiveAppManifest {
     },
     permissions: [],
     domains: [],
-    visibility: "complete"
+    visibility: "complete",
   };
 }
 
