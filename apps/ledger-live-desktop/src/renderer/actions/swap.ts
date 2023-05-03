@@ -61,6 +61,14 @@ export const toSelector = createSelector(
       return uniqueAssetList;
     }),
 );
+export const fromSelector = createSelector(
+  (state: State) => state.swap.pairs,
+  pairs =>
+    memoize(
+      (allAccounts: Array<Account>): Array<Account | TokenAccount> =>
+        sortAccountsByStatus(filterAvailableFromAssets(pairs, allAccounts)),
+    ),
+);
 
 // Put disabled accounts and subaccounts at the bottom of the list while preserving the parent/children position.
 export function sortAccountsByStatus(accounts: (Account & { disabled: boolean })[]) {
