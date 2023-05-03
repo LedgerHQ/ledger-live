@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "Nunca",
+    "new" : "Nuevo",
     "apply" : "Aplicar",
     "done" : "Listo",
     "confirm" : "Confirmar",
@@ -126,7 +127,8 @@
     "exchange" : "Cambia",
     "info" : "Info",
     "connectDevice" : "Conecta tu dispositivo",
-    "add" : "Agregar"
+    "add" : "Agregar",
+    "or" : "O"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -215,6 +217,7 @@
     "earn" : "Gana",
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
+    "refer" : "Refer a friend",
     "lend" : "Prestar",
     "catalog" : "Discover",
     "market" : "Mercado",
@@ -1203,23 +1206,33 @@
     },
     "manual" : {
       "title" : "Configurar {{deviceName}}",
+      "continueOnDevice" : "Realiza esta acción en tu {{productName}}",
       "pairedContent" : {
         "title" : "Tu {{deviceName}} está conectado",
         "description" : "Continúa con la configuración en tu {{deviceName}}",
-        "text" : "Esta pantalla cambiará de forma dinámica para proporcionarte información pertinente mientras configuras tu {{deviceName}}."
+        "text" : "Esta pantalla cambiará de forma dinámica para proporcionarte información pertinente mientras configuras tu {{deviceName}}.",
+        "continueOnDevice" : "Toca {{productName}} para visualizar la siguiente pantalla."
       },
       "pinContent" : {
         "title" : "Define tu PIN",
         "description" : "El PIN puede tener entre 4 y 8 dígitos",
-        "text" : "Cualquier persona que tenga acceso a tu {{deviceName}} y a tu PIN también podrá acceder a todos tus activos cripto y NFT."
+        "text" : "Cualquier persona que tenga acceso a tu {{deviceName}} y a tu PIN también podrá acceder a todos tus activos cripto y NFT.",
+        "continueOnDevice" : "Define tu PIN en {{productName}}"
       },
       "seedContent" : {
         "title" : "Frase de recuperación secreta",
-        "choiceNewOrRestore" : "Elige la opción de configuración que mejor se ajuste a tus necesidades.",
-        "newSeed" : "Consulta los siguientes videos para obtener más información sobre tu Frase de recuperación",
-        "choiceRestoreDirectOrRecover" : "Marcador de posición: elige la restauración directa o usa Recover.",
         "recoverSeed" : "Marcador de posición: Recover",
-        "restoreSeed" : "Para garantizar la seguridad de tus activos, utiliza una Frase de recuperación secreta generada por un Ledger.\n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva."
+        "restoreSeed" : "Para garantizar la seguridad de tus activos, utiliza una Frase de recuperación secreta generada por un Ledger.\n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva.",
+        "selection" : "En {{productName}}, elige la opción de configuración que prefieras.",
+        "selectionContinueOnDevice" : "Toca una opción en {{productName}}",
+        "newSeedDescription" : "Puedes ver los siguientes videos para obtener más información sobre tus palabras secretas.",
+        "newSeedContinueOnDevice" : "Haz esto en tu {{productName}}",
+        "recovery" : "Para garantizar la seguridad de tus activos, utiliza una Frase de recuperación secreta generada por un Ledger.\n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva.",
+        "restoreChoiceContinueOnDevice" : "Elige una opción en tu {{productName}}",
+        "restoreChoiceSRPTitle" : "Restauración con la Frase de recuperación secreta",
+        "restoreChoiceSRPDescription" : "Asegúrate de utilizar una Frase generada por un Ledger para garantizar la seguridad de tus activos.",
+        "restoreChoiceRecoverTitle" : "Restaurar con Ledger Recover",
+        "restoreChoiceRecoverDescription" : "Para restaurar la copia de respaldo de tu Frase de recuperación, inicia sesión en tu sucripción y confirma tu identidad."
       },
       "softwareCheckContent" : {
         "title" : "Comprobación de software",
@@ -1238,10 +1251,13 @@
         }
       },
       "installApplications" : {
-        "title" : "Te recomendamos descargar un conjunto de aplicaciones por defecto. Puedes descargar otras más adelante",
+        "title" : "Instalar aplicaciones de la cadena de bloques",
         "install" : "Instalar",
         "skip" : "Recordar más adelante",
         "info" : "Las aplicaciones el {{deviceName}} se usan para aprobar transacciones. Puedes añadirlas o eliminarlas cuando quieras."
+      },
+      "endOfSetup" : {
+        "title" : "Fin de la configuración"
       },
       "genuineCheckModal" : {
         "title" : "Comprobación de autenticidad",
@@ -1441,7 +1457,8 @@
     "messageIfUnverified" : "Comprueba que la dirección compartida coincida exactamente con la de tu dispositivo",
     "messageIfSkipped" : "Tu dirección {{name}} no ha sido confirmada en tu dispositivo Ledger. Verifícala para mayor seguridad.",
     "showQrCode" : "Mostrar código QR",
-    "taprootWarning" : "Asegúrate de que el remitente soporta Taproot"
+    "taprootWarning" : "Asegúrate de que el remitente soporta Taproot",
+    "dashStakingWarning" : "Asegúrate de no utilizar esta dirección para recibir recompensas de participación"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1891,7 @@
         "plugin" : "Ir a la aplicación",
         "swap" : "Permutar",
         "tool" : "Más información",
-        "app" : "Más información"
+        "currency" : "Más información"
       },
       "uninstall" : {
         "title" : "Desinstalar todas",
@@ -3761,6 +3778,7 @@
         "title" : "¡Ahora eres un desarrollador!",
         "text" : "Bienvenido al País de las Maravillas"
       },
+      "userId" : "ID del usuario",
       "debugApps" : "Permitir aplicaciones de depuración",
       "debugAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como de depuración.",
       "experimentalApps" : "Permitir aplicaciones experimentales",
@@ -3790,6 +3808,8 @@
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "URL de ensayo de la página Learn",
       "enableLearnStagingUrlDesc" : "Activar el URL de ensayo de la página Learn.",
+      "enableStagingNftMetadataService" : "Servicio de metadatos de NFT de prueba",
+      "enableStagingNftMetadataServiceDesc" : "Activa el servicio de metadatos de NFT de prueba y restablece la caché de NFT",
       "openOnboardingAppInstallDebug" : "Abre la pantalla de depuración de la instalación de aplicaciones iniciales",
       "openOnboardingAppInstallDebugDesc" : "Abre una pantalla con los componentes del paso de sincronización de la instalación de aplicaciones iniciales"
     },
@@ -3847,6 +3867,10 @@
           "title" : "Modo de desarrollador",
           "description" : "Mostrar aplicaciones de desarrollador y testnet en Mi Ledger."
         },
+        "listAppsV2" : {
+          "title" : "Aplicaciones experimentales de lista para Mi Ledger",
+          "description" : "Mejora de rendimiento en el acceso y los flujos en línea de Mi Ledger."
+        },
         "scanForInvalidPaths" : {
           "title" : "Búsqueda de cuenta extendida",
           "description" : "Busca cuentas con rutas de derivación incorrectas. Envía los activos que encuentres a una cuenta normal."
@@ -3886,6 +3910,14 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "Umbral de tarifa de prioridad personalizada",
           "description" : "Personaliza el porcentaje de nuestra tarifa de prioridad mínima estimada permitida para una transacción EIP1559 avanzada."
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "Multiplicador personalizado para la tarifa base",
+          "description" : "Personaliza el multiplicador utilizado para la tarifa base que compone el maxFeePerGas de la transacción EIP1559"
+        },
+        "enableNetworkLogs" : {
+          "title" : "Enable network logs",
+          "description" : "Enable network logs in the console (error logs are always enabled)"
         }
       }
     },
@@ -5724,7 +5756,7 @@
   },
   "discoverProtect" : {
     "title" : "Recupera tus claves\ncon tu identidad",
-    "description" : "No siempre tendrás a mano tu Frase de recuperación secreta.\nLanzamiento inicial exclusivo para el Ledger Nano X. Suscríbete gratis hasta el 31 de mayo de 2023.",
+    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until June 30th 2023",
     "cta" : "¿Por qué debería suscribirme?",
     "downloadLLM" : "Suscríbete a <purple>Ledger Recover</purple> desde la aplicación Ledger Live Mobile"
   }
