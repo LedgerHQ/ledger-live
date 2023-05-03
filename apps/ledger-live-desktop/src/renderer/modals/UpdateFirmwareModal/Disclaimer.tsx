@@ -33,7 +33,7 @@ const Disclaimer = ({ firmware, onContinue, t }: Props) => (
       ) : null}
     </Flex>
     <Flex flexDirection="column" alignSelf="stretch">
-      <Divider variant="light" />
+      <Divider />
       <Flex
         px={12}
         alignSelf="stretch"

@@ -537,7 +537,7 @@ export const renderLockedDeviceError = ({
 }: {
   t: TFunction;
   device?: Device;
-  onRetry?: () => void;
+  onRetry?: (() => void) | null | undefined;
   inlineRetry?: boolean;
 }) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
@@ -636,7 +636,7 @@ export const renderError = ({
   error: Error | ErrorConstructor;
   t: TFunction;
   withOpenManager?: boolean;
-  onRetry?: (() => void) | undefined;
+  onRetry?: (() => void) | null | undefined;
   withExportLogs?: boolean;
   list?: boolean;
   supportLink?: string;
@@ -721,7 +721,7 @@ export const renderInWrongAppForAccount = ({
   accountName,
 }: {
   t: TFunction;
-  onRetry?: (() => void) | undefined;
+  onRetry?: (() => void) | null | undefined;
   accountName: string;
 }) =>
   renderError({
@@ -1036,7 +1036,6 @@ export const renderImageLoadRequested = ({
 }) => {
   return (
     <ImageLoadingGeneric
-      restore={restore}
       title={t(
         restore
           ? "customImage.steps.transfer.allowConfirmPreview"
@@ -1051,7 +1050,7 @@ export const renderImageLoadRequested = ({
       <AnimationWrapper>
         <FramedImage
           background={
-            <Animation animation={getDeviceAnimation(device.modelId, type, "allowManager", true)} />
+            <Animation animation={getDeviceAnimation(device.modelId, type, "allowManager")} />
           }
         />
       </AnimationWrapper>
@@ -1115,9 +1114,7 @@ export const renderImageCommitRequested = ({
         <FramedImage
           source={source}
           background={
-            <Animation
-              animation={getDeviceAnimation(device.modelId, type, "confirmLockscreen", true)}
-            />
+            <Animation animation={getDeviceAnimation(device.modelId, type, "confirmLockscreen")} />
           }
         />
       </AnimationWrapper>
