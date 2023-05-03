@@ -140,7 +140,10 @@ export function useHideEmptyTokenAccounts(): [boolean, (hideEmptyTokenAccounts: 
   );
   return [value, setter];
 }
-export function useFilterTokenOperationsZeroAmount() {
+export function useFilterTokenOperationsZeroAmount(): [
+  boolean,
+  (filterTokenOperationsZeroAmount: boolean) => void,
+] {
   const dispatch = useDispatch();
   const value = useSelector(filterTokenOperationsZeroAmountSelector);
   const setter = useCallback(
