@@ -102,10 +102,10 @@ const StepResetDevice = ({ deviceModelId }: StepProps) => {
   );
 };
 
-export function StepResetFooter({ transitionTo, t }: StepProps) {
+export function StepResetFooter({ transitionTo }: StepProps) {
   return (
     <Button primary onClick={() => transitionTo("idCheck")}>
-      {t("common.continue")}
+      <Trans i18nKey="common.continue" />
     </Button>
   );
 }
