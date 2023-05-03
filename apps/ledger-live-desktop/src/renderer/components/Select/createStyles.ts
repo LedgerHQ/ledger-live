@@ -1,9 +1,10 @@
 import { GroupTypeBase, OptionTypeBase, StylesConfig } from "react-select";
 import { DefaultTheme } from "styled-components";
 import { ff } from "~/renderer/styles/helpers";
+
 export type CreateStylesReturnType<
   OptionType extends OptionTypeBase,
-  IsMulti extends boolean,
+  IsMulti extends boolean = false,
   GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
 > = StylesConfig<OptionType, IsMulti, GroupType>;
 

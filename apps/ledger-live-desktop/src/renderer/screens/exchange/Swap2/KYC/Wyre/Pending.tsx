@@ -13,7 +13,7 @@ import IconClock from "~/renderer/icons/Clock";
 import Button from "~/renderer/components/Button";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-export const CircleWrapper = styled.div`
+export const CircleWrapper = styled.div<{ size: number | string }>`
   border-radius: 50%;
   border: 1px solid transparent;
   background: ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};

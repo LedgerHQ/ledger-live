@@ -30,7 +30,7 @@ type TransactionRequest = {
   parentAccount: Account | null | undefined;
   account: AccountLike;
   transaction: Transaction;
-  status: TransactionStatus;
+  status?: TransactionStatus;
   appName?: string;
   dependencies?: AppRequest[];
   requireLatestFirmware?: boolean;
@@ -103,8 +103,6 @@ const reducer = (state: State, e: Event): State => {
     case "device-streaming":
       return { ...state, deviceStreamingProgress: e.progress };
   }
-
-  return state;
 };
 
 export const createAction = (

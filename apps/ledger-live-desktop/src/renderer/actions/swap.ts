@@ -7,7 +7,7 @@ import { createAction } from "redux-actions";
 import { createSelector } from "reselect";
 import { State } from "~/renderer/reducers";
 import { SwapStateType } from "~/renderer/reducers/swap";
-import { Pair } from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, Pair } from "@ledgerhq/live-common/exchange/swap/types";
 
 type UPDATE_PROVIDERS_TYPE = {
   payload: SwapStateType["providers"];
@@ -20,7 +20,7 @@ export const updateProvidersAction = createAction<UPDATE_PROVIDERS_TYPE["payload
 export const updateTransactionAction = createAction<Transaction | undefined | null>(
   "SWAP/UPDATE_TRANSACTION",
 );
-export const updateRateAction = createAction<Transaction | undefined | null>("SWAP/UPDATE_RATE");
+export const updateRateAction = createAction<ExchangeRate | undefined | null>("SWAP/UPDATE_RATE");
 export const resetSwapAction = createAction("SWAP/RESET_STATE");
 
 /* SELECTORS */

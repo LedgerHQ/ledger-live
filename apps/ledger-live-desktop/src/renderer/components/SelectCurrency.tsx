@@ -32,7 +32,7 @@ type Props = {
   isDisabled?: boolean;
   id?: string;
   renderValueOverride?: ({ data }: { data: CurrencyOption }) => React.ReactNode;
-  stylesMap?: (a: ThemeConfig) => CreateStylesReturnType<CurrencyOption, false>;
+  stylesMap?: (a: ThemeConfig) => CreateStylesReturnType<CurrencyOption>;
   onMenuOpen?: () => void;
   small?: boolean;
 };

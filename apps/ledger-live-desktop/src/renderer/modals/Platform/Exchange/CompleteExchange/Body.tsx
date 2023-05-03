@@ -87,7 +87,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
                 key="sign"
                 action={sendAction}
                 // TODO: the proper team should investigate why the types mismatch
-                // @ts-expect-error This type is not compatible with the one expected by the action
                 request={{
                   tokenCurrency,
                   parentAccount,

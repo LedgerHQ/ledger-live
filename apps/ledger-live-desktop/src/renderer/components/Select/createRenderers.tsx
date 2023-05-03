@@ -25,8 +25,8 @@ export default <
   renderValue,
   selectProps,
 }: {
-  renderOption: (a: { data: OptionType }) => React.ReactNode;
-  renderValue: (a: { data: OptionType }) => React.ReactNode;
+  renderOption?: (a: { data: OptionType }) => React.ReactNode;
+  renderValue?: (a: { data: OptionType }) => React.ReactNode;
   selectProps: SelectProps<OptionType, IsMulti, GroupType>;
 }) => ({
   ...STYLES_OVERRIDE,

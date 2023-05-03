@@ -8,7 +8,7 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import { BoxProps } from "./Box/Box";
 
-type InputError = Error | boolean | null | undefined;
+export type InputError = Error | boolean | null | undefined;
 
 const RenderLeftWrapper = styled(Box)`
   align-items: center;

@@ -36,10 +36,7 @@ const ModalHeaderAction = styled(Tabbable).attrs(() => ({
   alignItems: "center",
   fontSize: 3,
   p: 3,
-}))<{
-  color?: string;
-  right?: boolean;
-}>`
+}))<{ right?: boolean }>`
   border-radius: 8px;
   color: ${p => p.color || p.theme.colors.palette.text.shade60};
   top: 0;
@@ -117,6 +114,7 @@ const ModalHeader = ({
         </TitleContainer>
       ) : null}
       {onClose ? (
+        // @ts-expect-error it is complicated to override styled-components prop types - right is supposed to be a string and inherited from Tabbable
         <ModalHeaderAction right onClick={onClose} data-test-id="modal-close-button">
           <IconCross size={16} />
         </ModalHeaderAction>

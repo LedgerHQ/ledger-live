@@ -66,7 +66,7 @@ export default function Price({
     : typeof rawCounterValue === "number"
     ? BigNumber(rawCounterValue)
     : rawCounterValue;
-  const bgColor = useTheme("colors.palette.background.paper");
+  const bgColor = useTheme().colors.palette.background.paper;
   const activityColor = useMemo(
     () =>
       withActivityColor

@@ -1,15 +1,15 @@
-import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import SectionRate from "./SectionRate";
 import { BigNumber } from "bignumber.js";
+import { SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
 const Form = styled.section`
   display: grid;
   row-gap: 1.375rem;
   color: white;
 `;
 type SwapFormProvidersProps = {
-  swap: SwapTransactionType;
+  swap: SwapDataType;
   provider?: string;
   refreshTime: number;
   countdown: boolean;

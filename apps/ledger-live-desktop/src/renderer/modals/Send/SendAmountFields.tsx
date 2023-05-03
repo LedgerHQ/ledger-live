@@ -1,12 +1,12 @@
 import React from "react";
-import { Account, AccountBridge, FeeStrategy, TransactionCommon } from "@ledgerhq/types-live";
+import { Account, FeeStrategy } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import byFamily from "~/renderer/generated/SendAmountFields";
 type Props = {
   account: Account;
   transaction: Transaction;
   status: TransactionStatus;
-  onChange: (a: AccountBridge<TransactionCommon>) => void;
+  onChange: (a: Transaction) => void;
   updateTransaction: (updater: any) => void;
   mapStrategies?: (
     a: FeeStrategy,
