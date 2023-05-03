@@ -91,11 +91,6 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
   },
-  API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://cosmoshub4.coin.ledger.com",
-    parser: stringParser,
-    desc: "Node endpoint for cosmos",
-  },
   API_RIPPLE_RPC: {
     parser: stringParser,
     def: "https://xrplcluster.com/ledgerlive",
@@ -315,6 +310,11 @@ const envDefinitions: Record<
     def: 0.85,
     parser: floatParser,
     desc: "minimum priority fee percents allowed compared to network conditions allowed when EIP1559_MINIMUM_FEES_GATE is activated",
+  },
+  EIP1559_BASE_FEE_MULTIPLIER: {
+    def: 1.5,
+    parser: floatParser,
+    desc: "mutiplier for the base fee that is composing the maxFeePerGas property",
   },
   ETHEREUM_GAS_LIMIT_AMPLIFIER: {
     def: 1.2,
@@ -724,6 +724,11 @@ const envDefinitions: Record<
     def: "https://cdn.live.ledger.com/cryptoassets",
     parser: stringParser,
     desc: "bucket S3 of the dynamic cryptoassets list",
+  },
+  CURRENCY_CONFIG_BASE_URL: {
+    def: "https://ledger-live-production-default-rtdb.europe-west1.firebasedatabase.app/",
+    parser: stringParser,
+    desc: "Currency config firebase url",
   },
   FEATURE_FLAGS: {
     def: "{}",

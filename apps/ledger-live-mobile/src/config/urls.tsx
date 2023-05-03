@@ -47,6 +47,8 @@ export const urls = {
   erc20:
     "https://support.ledger.com/hc/en-us/articles/4404389645329-Manage-ERC20-tokens?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_erc20",
   errors: {
+    PeerRemovedPairing:
+      "https://support.ledger.com/hc/en-us/articles/360025864773-Fix-Bluetooth-pairing-issues?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=pairing_failed",
     PairingFailed:
       "https://support.ledger.com/hc/en-us/articles/360025864773?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=pairing_failed",
     SyncError:
