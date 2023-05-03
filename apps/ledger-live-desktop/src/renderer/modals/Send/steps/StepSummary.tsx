@@ -26,7 +26,8 @@ import Alert from "~/renderer/components/Alert";
 import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { apiForCurrency } from "@ledgerhq/live-common/api/Ethereum";
+// eslint-disable-next-line no-restricted-imports
+import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 
@@ -290,8 +291,8 @@ export class StepSummaryFooter extends PureComponent<StepProps> {
 
   componentDidMount() {
     const { account, parentAccount, transaction } = this.props;
+    if (!account) return;
     const mainAccount = getMainAccount(account, parentAccount);
-    if (!mainAccount) return;
     if (mainAccount.currency.family !== "ethereum") return;
     // In eth eth transaction flow, we need to check if the transaction has been already validated in the blockchain
     apiForCurrency(mainAccount.currency)
