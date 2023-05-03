@@ -34,7 +34,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
 
   const sortedAvailableLanguages = useMemo(
     () =>
-      availableLanguages.sort((a, b) =>
+      (availableLanguages as string[]).sort((a, b) =>
         t(`deviceLocalization.languages.${a}`).localeCompare(
           t(`deviceLocalization.languages.${b}`),
         ),
@@ -145,7 +145,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
 
       {!installing || (installing && error) || installed ? (
         <Flex flexDirection="column" alignSelf="stretch">
-          <Divider variant="light" />
+          <Divider />
           <Flex
             px={12}
             alignSelf="stretch"

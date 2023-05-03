@@ -45,7 +45,8 @@ const StepTransfer: React.FC<Props> = props => {
   }, []);
 
   const isRefusedOnStaxError =
-    error instanceof ImageLoadRefusedOnDevice || error instanceof ImageCommitRefusedOnDevice;
+    error instanceof ImageLoadRefusedOnDevice ||
+    (error as unknown) instanceof ImageCommitRefusedOnDevice;
 
   return (
     <StepContainer

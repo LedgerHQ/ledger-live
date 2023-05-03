@@ -27,7 +27,7 @@ type Props = {
   padImage?: boolean;
   source: HTMLImageElement["src"];
   inlineRetry?: boolean;
-  restore: boolean;
+  restore?: boolean;
   onError?: (arg0: Error) => void;
   onStart?: () => void;
   onResult?: () => void;
@@ -56,7 +56,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     blockNavigation,
     padImage,
     inlineRetry = true,
-    restore,
+    restore = false,
   } = props;
   const type: Theme["theme"] = useTheme("colors.palette.type");
   const device = getEnv("MOCK") ? mockedDevice : props.device;
@@ -90,6 +90,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   const isRefusedOnStaxError = checkIfIsRefusedOnStaxError(error);
 
   useEffect(() => {
+    if (!error) return;
     // Once transferred the old image is wiped, we need to clear it from the data.
     if (error instanceof ImageCommitRefusedOnDevice) {
       dispatch(clearLastSeenCustomImage());
