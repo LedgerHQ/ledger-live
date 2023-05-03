@@ -221,28 +221,33 @@ export const useDefaultSlides = () => {
     [slidesData],
   );
 
-  const logSlideImpression = useCallback((index) => {
-    const slide = slidesData[index]
-    if (slide?.id) {
-      const currentCard = portfolioCards.find(card => card.id === slide.id);
+  const logSlideImpression = useCallback(
+    index => {
+      const slide = slidesData[index];
+      if (slide?.id) {
+        const currentCard = portfolioCards.find(card => card.id === slide.id);
 
-      if (currentCard) {
-        braze.logContentCardImpressions([currentCard.brazeCard]);
+        if (currentCard) {
+          braze.logContentCardImpressions([currentCard.brazeCard]);
+        }
       }
-    }
-  }, [portfolioCards, slidesData]);
+    },
+    [portfolioCards, slidesData],
+  );
 
-  const logSlideClick = useCallback((cardId) => {
+  const logSlideClick = useCallback(
+    cardId => {
       const currentCard = portfolioCards.find(card => card.id === cardId);
-      
+
       if (currentCard) {
         braze.logContentCardClick(currentCard.brazeCard);
       }
-  }, [portfolioCards]);
+    },
+    [portfolioCards],
+  );
 
   return {
     slides,
     logSlideImpression,
-  }
+  };
 };
-

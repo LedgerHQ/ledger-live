@@ -162,10 +162,7 @@ const Carousel = ({
   speed?: number;
   type?: "slide" | "flip";
 }) => {
-  const {
-    slides,
-    logSlideImpression,
-  } = useDefaultSlides();
+  const { slides, logSlideImpression } = useDefaultSlides();
   const [index, setIndex] = useState(0);
   const hidden = useSelector(carouselVisibilitySelector);
   const [paused, setPaused] = useState(false);
@@ -173,10 +170,10 @@ const Carousel = ({
   const [reverse, setReverse] = useState(false);
   const transitions = useTransition(index, p => p, getTransitions(type, reverse));
 
-  const changeVisibleSlide = useCallback((index) => {
-    setIndex(index)
-    logSlideImpression(index)
-  }, [])
+  const changeVisibleSlide = useCallback(index => {
+    setIndex(index);
+    logSlideImpression(index);
+  }, []);
 
   const dispatch = useDispatch();
   const onChooseSlide = useCallback(

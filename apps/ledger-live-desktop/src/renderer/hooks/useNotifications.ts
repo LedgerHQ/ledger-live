@@ -1,7 +1,12 @@
 import * as braze from "@braze/web-sdk";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { LocationContentCard, NotificationContentCard, Platform, ContentCard } from "~/types/dynamicContent";
+import {
+  LocationContentCard,
+  NotificationContentCard,
+  Platform,
+  ContentCard,
+} from "~/types/dynamicContent";
 import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { setNotificationsCards } from "~/renderer/actions/dynamicContent";
 import { track } from "../analytics/segment";
@@ -79,20 +84,23 @@ export function useNotifications() {
     [notificationsCards, cachedNotifications, dispatch],
   );
 
-  const onClickNotif = useCallback((card: ContentCard) => {
-    const currentCard = cachedNotifications.find(c => c.id === card.id);
+  const onClickNotif = useCallback(
+    (card: ContentCard) => {
+      const currentCard = cachedNotifications.find(c => c.id === card.id);
 
-    if (currentCard) {
-      braze.logContentCardClick(currentCard);
-    }
+      if (currentCard) {
+        braze.logContentCardClick(currentCard);
+      }
 
-    track("contentcard_clicked", {
-      contentcard: card.title,
-      link: card.path || card.url,
-      campaign: card.id,
-      page: "notification_center",
-    });
-  }, [cachedNotifications]);
+      track("contentcard_clicked", {
+        contentcard: card.title,
+        link: card.path || card.url,
+        campaign: card.id,
+        page: "notification_center",
+      });
+    },
+    [cachedNotifications],
+  );
 
   return {
     groupNotifications,

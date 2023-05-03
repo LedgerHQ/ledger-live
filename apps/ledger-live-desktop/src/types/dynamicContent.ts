@@ -18,7 +18,7 @@ export type ContentCard = {
   url?: string;
   path?: string;
   image?: string;
-  brazeCard: ClassicCard,
+  brazeCard: ClassicCard;
 };
 
 export type PortfolioContentCard = ContentCard;

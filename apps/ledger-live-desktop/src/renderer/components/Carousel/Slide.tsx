@@ -71,7 +71,7 @@ const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide 
 
   const onClick = useCallback(() => {
     if (onClickOnSlide) {
-      onClickOnSlide(id)
+      onClickOnSlide(id);
     }
     if (path) {
       history.push({ pathname: path, state: { source: "banner" } });
