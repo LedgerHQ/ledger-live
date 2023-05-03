@@ -42,9 +42,10 @@ type Props = {
   description: string;
   imgs?: Img[];
   image?: string;
+  onClickOnSlide?: (id: string) => void;
 };
 
-const Slide = ({ id, url, path, title, description, image, imgs }: Props) => {
+const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide }: Props) => {
   const history = useHistory();
   const [{ xy }, set] = useSpring(() => ({
     xy: [-120, -30],
@@ -69,6 +70,9 @@ const Slide = ({ id, url, path, title, description, image, imgs }: Props) => {
   const onMouseLeave = () => set({ xy: [0, 0] });
 
   const onClick = useCallback(() => {
+    if (onClickOnSlide) {
+      onClickOnSlide(id)
+    }
     if (path) {
       history.push({ pathname: path, state: { source: "banner" } });
       return;
@@ -82,7 +86,7 @@ const Slide = ({ id, url, path, title, description, image, imgs }: Props) => {
       campaign: id,
       page: "Portfolio",
     });
-  }, [history, id, path, title, url]);
+  }, [history, id, path, title, url, onClickOnSlide]);
 
   // After initial slide-in animation, set the offset to zero
   useEffect(() => {
