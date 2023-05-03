@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-portfolio",
-  "version": "0.0.3",
+  "version": "0.0.4-next.0",
   "description": "Ledger Live Date utilities",
   "keywords": [
     "Ledger"

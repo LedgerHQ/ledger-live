@@ -1,5 +1,16 @@
 # @ledgerhq/hw-app-eth
 
+## 6.33.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3), [`a0a4e2eb0e`](https://github.com/LedgerHQ/ledger-live/commit/a0a4e2eb0e84f5679ba5994f8d375054c8466c7e), [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472), [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949)]:
+  - @ledgerhq/cryptoassets@9.5.0-next.0
+  - @ledgerhq/domain-service@1.1.0-next.0
+  - @ledgerhq/errors@6.12.5-next.0
+  - @ledgerhq/hw-transport@6.28.3-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.14-next.0
+
 ## 6.33.1
 
 ### Patch Changes

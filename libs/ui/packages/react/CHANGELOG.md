@@ -1,5 +1,24 @@
 # @ledgerhq/react-ui
 
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#3176](https://github.com/LedgerHQ/ledger-live/pull/3176) [`9ca030c046`](https://github.com/LedgerHQ/ledger-live/commit/9ca030c0469f9ed1c8187d01f7f5927658ef662f) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - ContinueOnDevice: new UI item to indicate the user to continue on the device
+  Divider: add a `text` prop to display some text in the middle of the divider
+  Divider: remove the `variant` prop
+  VerticalTimeline: new appearance (colors, fonts, dashed lines, icon sizes)
+  VerticalTimeline: expose `BodyText` and `SubtitleText` components
+  Storybook - VerticalTimeline: more exhaustive examples
+
+- [#3286](https://github.com/LedgerHQ/ledger-live/pull/3286) [`500797488b`](https://github.com/LedgerHQ/ledger-live/commit/500797488b0604d2a8a7ac844429b691f4bc6234) Thanks [@sarneijim](https://github.com/sarneijim)! - Update alert component. Add new secondary and sucess types. Change border-radius, colors and other css details.
+
+### Patch Changes
+
+- Updated dependencies [[`c8920896d7`](https://github.com/LedgerHQ/ledger-live/commit/c8920896d7c96cab88f95ce705dc55aac5b345bc), [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949)]:
+  - @ledgerhq/ui-shared@0.2.0-next.0
+  - @ledgerhq/crypto-icons-ui@0.3.0-next.0
+
 ## 0.13.0
 
 ### Minor Changes
