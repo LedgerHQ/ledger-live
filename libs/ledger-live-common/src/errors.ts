@@ -88,9 +88,6 @@ export const SourceHasMultiSign = createCustomErrorClass("SourceHasMultiSign");
 export const CosmosRedelegationInProgress = createCustomErrorClass(
   "CosmosRedelegationInProgress"
 );
-// export const ClaimRewardsFeesWarning = createCustomErrorClass(
-//   "ClaimRewardsFeesWarning"
-// );
 export const CosmosDelegateAllFundsWarning = createCustomErrorClass(
   "CosmosDelegateAllFundsWarning"
 );
@@ -210,10 +207,6 @@ export const NotImplementedError = createCustomErrorClass(
 );
 export const ValidationError = createCustomErrorClass("ValidationError");
 export const AccessDeniedError = createCustomErrorClass("AccessDeniedError");
-
-// export const AlgorandASANotOptInInRecipient = createCustomErrorClass(
-//   "AlgorandASANotOptInInRecipient"
-// );
 
 export const OutdatedApp = createCustomErrorClass("OutdatedApp");
 
