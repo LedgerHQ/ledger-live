@@ -222,7 +222,7 @@ export const useDefaultSlides = () => {
   );
 
   const logSlideImpression = useCallback((index) => {
-    const slide = slides[index]
+    const slide = slidesData[index]
     if (slide?.id) {
       const currentCard = portfolioCards.find(card => card.id === slide.id);
 
@@ -230,18 +230,15 @@ export const useDefaultSlides = () => {
         braze.logContentCardImpressions([currentCard.brazeCard]);
       }
     }
-  }, [portfolioCards, slides]);
+  }, [portfolioCards, slidesData]);
 
-  const logSlideClick = useCallback((index) => {
-    const slide = slides[index]
-    if (slide?.id) {
-      const currentCard = portfolioCards.find(card => card.id === slide.id);
-
+  const logSlideClick = useCallback((cardId) => {
+      const currentCard = portfolioCards.find(card => card.id === cardId);
+      
       if (currentCard) {
         braze.logContentCardClick(currentCard.brazeCard);
       }
-    }
-  }, [portfolioCards, slides]);
+  }, [portfolioCards]);
 
   return {
     slides,
