@@ -141,7 +141,6 @@ const AccountPage = ({
         <AccountHeaderSettingsButton account={account} parentAccount={parentAccount} />
       </Box>
       <Box
-        bg={"red"}
         horizontal
         pb={3}
         flow={4}

@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency, Currency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -11,7 +10,9 @@ import { useCurrencyPortfolio } from "~/renderer/actions/portfolio";
 import AssetBalanceSummaryHeader from "./AssetBalanceSummaryHeader";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import FormattedDate from "~/renderer/components/FormattedDate";
-import { Item } from "~/renderer/components/Chart/types";
+import { Data, Item } from "~/renderer/components/Chart/types";
+import { PortfolioRange } from "@ledgerhq/types-live";
+
 type Props = {
   counterValue: Currency;
   chartColor: string;
@@ -94,7 +95,7 @@ export default function BalanceSummary({
           magnitude={chartMagnitude}
           color={chartColor}
           // TODO make date non optional
-          data={history}
+          data={history as Data}
           height={200}
           tickXScale={range}
           valueKey={displayCountervalue ? "countervalue" : "value"}
