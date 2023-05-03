@@ -19,7 +19,7 @@ export default function AssetDistribution() {
     if (!cardRef.current) {
       return;
     }
-    const callback = entries => {
+    const callback = (entries: { isIntersecting: boolean }[]) => {
       if (entries[0] && entries[0].isIntersecting) {
         setVisible(true);
       }

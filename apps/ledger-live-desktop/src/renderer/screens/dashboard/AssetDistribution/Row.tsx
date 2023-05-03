@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import styled from "styled-components";
@@ -16,17 +15,13 @@ import Tooltip from "~/renderer/components/Tooltip";
 import Bar from "./Bar";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { localeSelector } from "~/renderer/reducers/settings";
-export type DistributionItem = {
-  currency: CryptoCurrency | TokenCurrency;
-  distribution: number;
-  // % of the total (normalized in 0-1)
-  amount: number;
-  countervalue: number;
-}; // countervalue of the amount that was calculated based of the rate provided
+import { DistributionItem } from "@ledgerhq/types-live";
+
 type Props = {
   item: DistributionItem;
   isVisible: boolean;
 };
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -118,6 +113,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
       </Asset>
       <PriceSection>
         {distribution ? (
+          // @ts-expect-error Need to change "color" type in Component
           <Price from={currency} color="palette.text.shade80" fontSize={3} />
         ) : (
           <NoCountervaluePlaceholder />

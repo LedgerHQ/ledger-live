@@ -25,7 +25,7 @@ type Props = {
   withActivityColor?: ColorKeys;
   withIcon?: boolean;
   withEquality?: boolean;
-  color?: ColorKeys;
+  color?: ColorKeys; // TODO change type of this props
   fontSize?: number;
   fontWeight?: number;
   iconSize?: number;

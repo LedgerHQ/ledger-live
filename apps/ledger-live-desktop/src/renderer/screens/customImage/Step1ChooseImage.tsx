@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NFTMetadata } from "@ledgerhq/types-live";
+import { NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
 import { getMetadataMediaTypes } from "~/helpers/nft";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import ImportImage from "~/renderer/components/CustomImage/ImportImage";
@@ -32,7 +32,9 @@ const extractNftBase64 = (metadata: NFTMetadata) => {
     ? defaultMediaTypes.find(size => mediaTypes[size] === "image")
     : null;
   const customImageUri =
-    (mediaSizeForCustomImage && metadata?.medias?.[mediaSizeForCustomImage]?.uri) || null;
+    (mediaSizeForCustomImage &&
+      metadata?.medias?.[mediaSizeForCustomImage as keyof NFTMedias]?.uri) ||
+    null;
   return customImageUri;
 };
 
@@ -68,20 +70,22 @@ const StepChooseImage: React.FC<Props> = props => {
       setSelectedNftId(id);
       const uri = extractNftBase64(nftMetadata);
       const t1 = Date.now();
-      urlContentToDataUri(uri)
-        .then(res => {
-          /**
-           * virtual delay to ensure showing loading state at least 400ms so
-           * it doesn't look glitchy if it's too fast
-           */
-          setTimeout(() => {
-            if (!isMounted()) return;
-            setSelectedNftBase64({ imageBase64DataUri: res as string });
-          }, Math.max(0, 400 - (Date.now() - t1)));
-        })
-        .catch(() => {
-          onError(new ImageDownloadError());
-        });
+      if (uri) {
+        urlContentToDataUri(uri)
+          .then(res => {
+            /**
+             * virtual delay to ensure showing loading state at least 400ms so
+             * it doesn't look glitchy if it's too fast
+             */
+            setTimeout(() => {
+              if (!isMounted()) return;
+              setSelectedNftBase64({ imageBase64DataUri: res as string });
+            }, Math.max(0, 400 - (Date.now() - t1)));
+          })
+          .catch(() => {
+            onError(new ImageDownloadError());
+          });
+      }
     },
     [isMounted, onError, selectedNftId],
   );
