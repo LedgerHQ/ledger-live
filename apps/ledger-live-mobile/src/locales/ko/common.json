@@ -118,19 +118,9 @@
       "title" : "죄송하지만 블루투스가 비활성 상태입니다",
       "description" : "휴대폰 설정에서 블루투스를 활성화해주세요. ({{state}} 주)"
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "펌웨어 업데이트는 유선 연결로만 지원됩니다."
-    },
-    "BtcUnmatchedApp" : {
-      "title" : "올바르지 않은 앱입니다",
-      "description" : "귀하의 장치에서 {{managerAppName}} 앱을 열어주세요."
-    },
     "CantOpenDevice" : {
       "title" : "죄송하지만, 연결에 실패했습니다",
       "description" : "귀하의 Ledger 장치가 반드시 잠금 해제 상태로 블루투스 사용 가능 범위 내에 있어야 합니다."
-    },
-    "CantScanQRCode" : {
-      "title" : "이 QR 코드를 스캔할 수 없습니다. 자동 인증을 지원하지 않는 주소입니다."
     },
     "ConnectAppTimeout" : {
       "title" : "죄송하지만 발견된 장치가 없습니다.",
@@ -327,11 +317,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
-      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
+      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다.",
+      "primaryCTA" : "다른 사진을 업로드하세요"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
-      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
+      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다.",
+      "primaryCTA" : "다른 사진을 업로드하세요"
     },
     "InvalidAddress" : {
       "title" : "유효한 {{currencyName}} 주소가 아닙니다"
@@ -480,6 +472,10 @@
       "title" : "패스워드가 일치하지 않습니다",
       "description" : "다시 시도해 주세요."
     },
+    "PeerRemovedPairing" : {
+      "title" : "귀하의 {{ productName }} 장치를 다시 페어링해야 합니다.",
+      "description" : "휴대폰 블루투스 설정에서 {{ productName }} 장치를 지워주세요. 그런 다음 Ledger Live로 돌아와 다시 시도하세요."
+    },
     "SelectExchangesLoadError" : {
       "title" : "로드 불가능",
       "description" : "교환을 로드할 수 없습니다."
@@ -556,7 +552,8 @@
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트 필요",
-      "description" : "관리자에서 {{managerAppName}} 앱을 삭제하고 재설치하세요."
+      "description" : "관리자에서 {{managerAppName}} 앱을 삭제하고 재설치하세요.",
+      "primaryCTA" : "관리자 열기"
     },
     "UserRefusedAllowManager" : {
       "title" : "관리자가 장치에서 비활성 상태입니다",
@@ -675,7 +672,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
+      "description" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요.",
+      "primaryCTA" : "다시 시도"
     },
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
@@ -1840,7 +1838,8 @@
           "title" : "장치가 잠금 상태입니다",
           "subtitle" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
         },
-        "retryCta" : "다시 시도하세요"
+        "retryCta" : "다시 시도",
+        "openSettingsCta" : "블루투스 설정으로 이동하세요"
       }
     }
   },
@@ -2390,6 +2389,7 @@
     },
     "earn" : "수익",
     "quickActions" : "빠른 동작",
+    "referralProgram" : "친구에게 추천하고 $10 상당의 비트코인을 받으세요",
     "banner" : {
       "redelegation" : {
         "description" : "알고 계셨나요? Ledger 검증인의 스테이킹 수수료는 귀하의 현 검증인보다 저렴합니다.",
@@ -2685,6 +2685,10 @@
           "title" : "실험적 탐색기 API",
           "description" : "Ledger 블록체인 탐색기 새 버전을 사용해 보세요. 이 설정을 변경하면 계정 잔금과 동기화, 전송 기능이 영향을 받을 수 있습니다."
         },
+        "experimentalListAppsV2" : {
+          "title" : "My Ledger용 실험 앱 목록",
+          "description" : "My Ledger 액세스와 즉각 처리 흐름을 개선합니다."
+        },
         "experimentalCountervalues" : {
           "title" : "실험적 등가 API",
           "description" : "이로 인해 계정과 관련하여 올바른 등가 값이 표시되지 않을 수 있습니다."
@@ -2729,7 +2733,12 @@
       "featureFlagsTabGroups" : "그룹",
       "firebaseProject" : "이 빌드에서 대상으로 하는 Firebase 프로젝트:",
       "showBannerDesc" : "플래그 재정의 시 배너 표시",
-      "bannerTitle" : "플래그가 로컬로 재정의되었습니다"
+      "bannerTitle" : "플래그가 로컬로 재정의되었습니다",
+      "features" : {
+        "firmwareUpdate" : {
+          "headerTitle" : "디버그 펌웨어 업데이트"
+        }
+      }
     }
   },
   "notifications" : {
@@ -2798,7 +2807,8 @@
         "addressVerified" : "주소 인증",
         "verifyAddress" : "주소를 인증하려면 여기를 탭하세요",
         "adviceVerify" : "언제나 Ledger 장치로 주소를 인증할 것을 권장합니다.",
-        "sendWarning" : "이 주소로는 {{currencyName}} ({{currencyTicker}})만 보내주세요. 다른 코인을 보낼 경우 영구적인 손실로 이어질 수 있습니다."
+        "sendWarning" : "이 주소로는 {{currencyName}} ({{currencyTicker}})만 보내주세요. 다른 코인을 보낼 경우 영구적인 손실로 이어질 수 있습니다.",
+        "dashStakingWarning" : "스테이킹 보상 수령에 이 주소를 사용해서는 안됩니다"
       },
       "securityVerify" : {
         "title" : "확실한 보안을 위해 보유하신 Ledger 장치로 이 주소를 인증할 것을 권고드립니다.",
@@ -4606,7 +4616,8 @@
             "noResultsFound" : "<0>{{search}}</0>에 대한 검증인이 없습니다"
           },
           "amount" : {
-            "newRedelegatedBalance" : "거래 후 <0>{{name}}</0> 새 총계: <0>{{amount}}</0>"
+            "newRedelegatedBalance" : "거래 후 <0>{{name}}</0> 새 총계: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산"
           },
           "verification" : {
             "success" : {
@@ -5711,22 +5722,7 @@
       }
     },
     "status" : {
-      "title" : "사용자 주의가 필요한 문제일 수 있습니다",
-      "title_plural" : "일부 문제에 사용자의 주의가 필요할 수 있습니다",
-      "desc" : {
-        "0" : "문제를 조사 중이며 곧 해결될 것입니다",
-        "1" : "이러한 문제로 영향을 받은 경우 당사 <0>고객 지원팀</0>으로 문의주세요"
-      },
-      "cta" : {
-        "ok" : "알겠습니다"
-      },
-      "ok" : {
-        "title" : "Ledger Live가 실행 중입니다",
-        "desc" : "<0>문제가 있나요? </0><1>지원 페이지</1>로 이동"
-      },
-      "error" : {
-        "title" : "Ledger Live에 문제가 있습니다"
-      }
+      "header" : "상태"
     }
   },
   "browseWeb3" : {
@@ -6082,7 +6078,8 @@
       "media" : {
         "tag" : "{{count}}개의 NFT"
       }
-    }
+    },
+    "referralProgram" : "$10"
   },
   "servicesWidget" : {
     "title" : "서비스",
