@@ -1520,21 +1520,12 @@ importers:
       '@ledgerhq/hw-app-algorand':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-algorand
-      '@ledgerhq/live-app-sdk':
-        specifier: ^0.8.1
-        version: 0.8.1
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
-      '@ledgerhq/live-portfolio':
-        specifier: workspace:^
-        version: link:../live-portfolio
       '@ledgerhq/live-promise':
         specifier: workspace:^
         version: link:../promise
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/logs
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-cryptoassets
