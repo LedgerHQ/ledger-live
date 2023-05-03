@@ -302,12 +302,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
   }
 
-  if (
-    initSwapRequested &&
-    !initSwapResult &&
-    !initSwapError &&
-    typeof swapDefaultTrack === "string"
-  ) {
+  if (initSwapRequested && !initSwapResult && !initSwapError) {
     const { transaction, exchange, exchangeRate } = request as {
       transaction: Transaction;
       exchange: Exchange;
