@@ -4,7 +4,7 @@ export interface TX {
   account: number;
   index: number;
   received_at: string;
-  block: Block;
+  block: Block | null;
   address: string;
   inputs: Input[];
   outputs: Output[];

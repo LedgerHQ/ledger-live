@@ -50,6 +50,8 @@ axios.interceptors.response.use(undefined, errorInterceptor);
 if (
   !(typeof navigator !== "undefined" && navigator.product === "ReactNative")
 ) {
+  // the keepAlive is necessary when we make a lot of request in in parallel, especially for bitcoin sync. Otherwise, it may raise "connect ETIMEDOUT" error
+  // refer to https://stackoverflow.com/questions/63064393/getting-axios-error-connect-etimedout-when-making-high-volume-of-calls
   // eslint-disable-next-line global-require,@typescript-eslint/no-var-requires
   const https = require("https");
   axios.defaults.httpsAgent = new https.Agent({ keepAlive: true });

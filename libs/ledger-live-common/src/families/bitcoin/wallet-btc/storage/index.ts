@@ -25,7 +25,7 @@ class BitcoinLikeStorage implements IStorage {
 
   hasTx(txFilter: { account: number; index: number }): boolean {
     const index = `${txFilter.account}-${txFilter.index}`;
-    return this.accountIndex[index] && this.accountIndex[index].length > 0;
+    return !!this.accountIndex[index] && this.accountIndex[index].length > 0;
   }
 
   txsSize(): number {
@@ -35,7 +35,7 @@ class BitcoinLikeStorage implements IStorage {
   hasPendingTx(txFilter: { account: number; index: number }): boolean {
     const index = `${txFilter.account}-${txFilter.index}`;
     return (
-      this.accountIndex[index] &&
+      !!this.accountIndex[index] &&
       this.accountIndex[index].map((i) => this.txs[i]).some((tx) => !tx.block)
     );
   }

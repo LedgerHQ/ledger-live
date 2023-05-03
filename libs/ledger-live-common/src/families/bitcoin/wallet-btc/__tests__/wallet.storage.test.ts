@@ -4,6 +4,7 @@ describe("Unit tests for bitcoin storage", () => {
   let storage: BitcoinLikeStorage;
   beforeEach(() => {
     storage = new BitcoinLikeStorage();
+    // init with 2 confirmed txs and 1 unconfirmed tx in bitcoin storage
     storage.appendTxs([
       {
         id: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
@@ -112,11 +113,7 @@ describe("Unit tests for bitcoin storage", () => {
             rbf: false,
           },
         ],
-        block: {
-          hash: "305d4b8d4a6d6ecca0a3dd0216f8ecd090978ed346d1845883c8aa4529d72fc8",
-          height: 120,
-          time: "2021-07-28T13:34:38Z",
-        },
+        block: null,
         account: 0,
         index: 0,
         address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
@@ -125,17 +122,14 @@ describe("Unit tests for bitcoin storage", () => {
     ]);
   });
   it("testing add transaction data and remove transaction data", async () => {
+    // 1 pending txs and 2 confirmed txs
     expect(storage.txsSize()).toBe(3);
     storage.appendTxs([
       {
         id: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
         inputs: [],
         outputs: [],
-        block: {
-          hash: "73c565a6f226978df23480e440b27eb02f307855f50aa3bc72ebb586938f23e0",
-          height: 1,
-          time: "2021-07-28T13:34:17Z",
-        },
+        block: null,
         account: 0,
         index: 0,
         address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
@@ -144,7 +138,41 @@ describe("Unit tests for bitcoin storage", () => {
     ]);
     // same tx id, should not be added
     expect(storage.txsSize()).toBe(3);
+    // remove pending tx
+    storage.removePendingTxs({ account: 0, index: 0 });
+    expect(storage.txsSize()).toBe(2);
+    // remove all txs
     storage.removeTxs({ account: 0, index: 0 });
     expect(storage.txsSize()).toBe(0);
+  }, 30000);
+
+  it("testing fetch transaction data from bitcoin storage", async () => {
+    // 1 pending txs and 2 confirmed txs
+    expect(storage.getHighestBlockHeightAndHash()).toEqual([
+      120,
+      "305d4b8d4a6d6ecca0a3dd0216f8ecd090978ed346d1845883c8aa4529d72fc8",
+    ]);
+    expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(true);
+    expect(storage.hasTx({ account: 0, index: 0 })).toBe(true);
+    expect(storage.getLastUnconfirmedTx()).toBeDefined();
+    // remove pending tx
+    storage.removePendingTxs({ account: 0, index: 0 });
+    expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(false);
+    expect(storage.hasTx({ account: 0, index: 0 })).toBe(true);
+    expect(
+      storage.getLastConfirmedTxBlockheightAndHash({ account: 0, index: 0 })
+    ).toEqual([
+      120,
+      "305d4b8d4a6d6ecca0a3dd0216f8ecd090978ed346d1845883c8aa4529d72fc8",
+    ]);
+    expect(storage.getLastUnconfirmedTx()).toBeUndefined();
+    // remove all tx
+    storage.removeTxs({ account: 0, index: 0 });
+    expect(
+      storage.getLastConfirmedTxBlockheightAndHash({ account: 0, index: 0 })
+    ).toEqual([0, ""]);
+    expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(false);
+    expect(storage.hasTx({ account: 0, index: 0 })).toBe(false);
+    expect(storage.getHighestBlockHeightAndHash()).toEqual([0, ""]);
   }, 30000);
 });
