@@ -170,10 +170,13 @@ const Carousel = ({
   const [reverse, setReverse] = useState(false);
   const transitions = useTransition(index, p => p, getTransitions(type, reverse));
 
-  const changeVisibleSlide = useCallback(index => {
-    setIndex(index);
-    logSlideImpression(index);
-  }, [logSlideImpression]);
+  const changeVisibleSlide = useCallback(
+    index => {
+      setIndex(index);
+      logSlideImpression(index);
+    },
+    [logSlideImpression],
+  );
 
   const dispatch = useDispatch();
 
