@@ -769,7 +769,7 @@ export const renderSwapDeviceConfirmation = ({
   exchange: Exchange;
   amountExpectedTo?: string;
   estimatedFees?: string;
-  swapDefaultTrack: Record<string, string>;
+  swapDefaultTrack: Record<string, string | boolean>;
 }) => {
   const ProviderIcon = getProviderIcon(exchangeRate);
   const [sourceAccountName, sourceAccountCurrency] = [
