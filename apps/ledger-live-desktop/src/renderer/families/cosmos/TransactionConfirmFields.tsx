@@ -70,8 +70,8 @@ export const CosmosDelegateValidatorsField = ({
   invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   const unit = getAccountUnit(mainAccount);
   const { validators } = transaction;
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyName);
+  const currencyId = account.currency.id;
+  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const mappedValidators = mapDelegationInfo(validators || [], cosmosValidators, unit, transaction);
   return mappedValidators && mappedValidators.length > 0 ? (
     <Box vertical justifyContent="space-between" mb={2}>
@@ -112,8 +112,8 @@ export const CosmosValidatorNameField = ({
   invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   const mainAccount = getMainAccount(account, parentAccount);
   const { validators } = transaction;
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyName);
+  const currencyId = account.currency.id;
+  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const address = validators && validators.length > 0 ? validators[0].address : null;
   const formattedValidator = useMemo(
     () => (address ? cosmosValidators.find(v => v.validatorAddress === address) : null),
@@ -170,8 +170,8 @@ export const CosmosSourceValidatorField = ({
   invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   const mainAccount = getMainAccount(account, parentAccount);
   const { sourceValidator } = transaction;
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyName);
+  const currencyId = account.currency.id;
+  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const formattedValidator = useMemo(
     () => cosmosValidators.find(v => v.validatorAddress === sourceValidator),
     [cosmosValidators, sourceValidator],

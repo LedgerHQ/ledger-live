@@ -59,7 +59,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   } = cosmosResources;
   const unit = getAccountUnit(account);
   const formatConfig = {
-    disableRounding: true,
+    disableRounding: false,
     alwaysShowSign: false,
     showCode: true,
     discreet,
