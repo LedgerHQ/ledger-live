@@ -6,6 +6,10 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
+  "axelar",
+  "onomy",
+  "quicksilver",
+  "persistence",
   "avalanche_c_chain",
   "bitcoin",
   "ethereum",

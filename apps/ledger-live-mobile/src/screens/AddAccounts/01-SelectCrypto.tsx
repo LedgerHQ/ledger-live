@@ -52,6 +52,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const devMode = useEnv("MANAGER_DEV_MODE");
   const { filterCurrencyIds = [], currency } = route.params || {};
 
+  const axelar = useFeature("currencyAxelar");
+  const onomy = useFeature("currencyOnomy");
+  const quicksilver = useFeature("currencyQuicksilver");
+  const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
@@ -71,6 +75,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
+      axelar,
+      onomy,
+      quicksilver,
+      persistence,
       avalanche_c_chain: avaxCChain,
       optimism,
       optimism_goerli: optimismGoerli,
@@ -105,6 +113,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       moonriver,
       velasEvm,
       syscoin,
+      axelar,
+      onomy,
+      persistence,
+      quicksilver,
     ],
   );
 

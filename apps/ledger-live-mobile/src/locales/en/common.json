@@ -4626,7 +4626,8 @@
             "noResultsFound": "No validator found for <0>{{search}}</0>"
           },
           "amount": {
-            "newRedelegatedBalance": "New total for <0>{{name}}</0> after operation: <0>{{amount}}</0>"
+            "newRedelegatedBalance": "New total for <0>{{name}}</0> after operation: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used"
           },
           "verification": {
             "success": {

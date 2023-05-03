@@ -114,8 +114,8 @@ export default function StepValidators({
   const amount = useMemo(() => (selectedValidator ? selectedValidator.amount : BigNumber(0)), [
     selectedValidator,
   ]);
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators } = useCosmosFamilyPreloadData(currencyName);
+  const currencyId = account.currency.id;
+  const { validators } = useCosmosFamilyPreloadData(currencyId);
   const selectedValidatorData = useMemo(
     () =>
       transaction.validators && transaction.validators[0]
