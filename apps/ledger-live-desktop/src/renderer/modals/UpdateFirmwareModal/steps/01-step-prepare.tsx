@@ -108,7 +108,7 @@ const Body = ({
           </Box>
         ) : (
           <AnimationWrapper>
-            {deviceAnimation && <Animation animation={deviceAnimation} />}
+            <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
           </AnimationWrapper>
         )}
 
@@ -151,14 +151,14 @@ const Body = ({
         </Box>
       ) : (
         <AnimationWrapper>
-          {deviceAnimation && <Animation animation={deviceAnimation} />}
+          <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
         </AnimationWrapper>
       )}
     </>
   );
 };
 
-const StepFullFirmwareInstall = ({
+const StepPrepare = ({
   firmware,
   deviceModelId,
   deviceInfo,
@@ -172,6 +172,7 @@ const StepFullFirmwareInstall = ({
   const [displayedOnDevice, setDisplayedOnDevice] = useState(false);
 
   useEffect(() => {
+    if (!firmware) return;
     if (!firmware.osu) {
       transitionTo("finish");
       return;
@@ -194,7 +195,7 @@ const StepFullFirmwareInstall = ({
             setCLSBackup(e.hexImage);
           }
         }),
-        map(props => ({
+        map((props: FetchImageEvent) => ({
           ...props,
           step: "CLS",
         })),
@@ -240,9 +241,7 @@ const StepFullFirmwareInstall = ({
   }, []);
 
   const hasHash = !!firmware?.osu?.hash;
-  if (firmware?.osu?.hash) {
-    firmware.osu.hash = "7815696ecbf1c96e6894b779456d330e";
-  }
+  if (!firmware) return null;
 
   return (
     <Container data-test-id="firmware-update-download-progress">
@@ -260,4 +259,4 @@ const StepFullFirmwareInstall = ({
   );
 };
 
-export default StepFullFirmwareInstall;
+export default StepPrepare;

@@ -407,7 +407,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         error: new EConnResetError(),
         onRetry,
         withExportLogs: true,
-        t,
       });
     }
 
@@ -418,11 +417,11 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     // not handled here.
     if (
       error instanceof UserRefusedFirmwareUpdate ||
-      error instanceof UserRefusedAllowManager ||
-      error instanceof UserRefusedOnDevice ||
-      error instanceof UserRefusedAddress ||
-      error instanceof UserRefusedDeviceNameChange ||
-      error instanceof LanguageInstallRefusedOnDevice
+      (error as unknown) instanceof UserRefusedAllowManager ||
+      (error as unknown) instanceof UserRefusedOnDevice ||
+      (error as unknown) instanceof UserRefusedAddress ||
+      (error as unknown) instanceof UserRefusedDeviceNameChange ||
+      (error as unknown) instanceof LanguageInstallRefusedOnDevice
     ) {
       withExportLogs = false;
       warning = true;
