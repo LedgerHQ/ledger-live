@@ -45,18 +45,26 @@ export const deviceInfo210lo5: DeviceInfo = {
   version: "2.1.0-lo5",
 };
 
-export const deviceInfo202 = {
-  version: "2.0.2",
-  isBootloader: false,
-  isOSU: false,
-  managerAllowed: true,
+export const deviceInfo210 = {
+  version: "2.1.0",
   mcuVersion: "2.30",
-  pinValidated: true,
+  seVersion: "2.1.0",
+  mcuBlVersion: undefined,
+  majMin: "2.1",
   providerName: null,
-  majMin: "2.0",
   targetId: 855638020,
-  seVersion: "2.0.2",
+  hasDevFirmware: false,
   seTargetId: 855638020,
+  mcuTargetId: undefined,
+  isOSU: false,
+  isBootloader: false,
+  isRecoveryMode: false,
+  managerAllowed: true,
+  pinValidated: true,
+  onboarded: true,
+  bootloaderVersion: "1.16",
+  hardwareVersion: 0,
+  languageId: 0,
 };
 
 const firmware155: FinalFirmware = {

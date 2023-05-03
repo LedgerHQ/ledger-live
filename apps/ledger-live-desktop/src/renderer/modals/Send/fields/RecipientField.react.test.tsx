@@ -273,14 +273,44 @@ describe("RecipientField", () => {
         setup();
         const input = screen.getByRole("textbox");
 
-        await act(() => userEvent.type(input, "vitalik.notanamingservice"));
+        await act(() => userEvent.type(input, "vitalik.notadomainservice"));
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
-            recipient: "vitalik.notanamingservice",
+            recipient: "vitalik.notadomainservice",
             recipientDomain: undefined,
           }),
         );
+      });
+
+      it("should not change domain if domain is invalid", async () => {
+        setup();
+        const input = screen.getByRole("textbox");
+
+        await act(() => userEvent.type(input, "vitalik👋.eth"));
+        await waitFor(() => {
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "vitalik👋.eth",
+            recipientDomain: undefined,
+          });
+          expect(screen.getByTestId("domain-error-invalid-domain")).toBeInTheDocument();
+        });
+      });
+
+      it("should not change domain if domain has no resolution", async () => {
+        setup();
+        const input = screen.getByRole("textbox");
+
+        await act(() => userEvent.type(input, "anything-not-existing.eth"));
+        await waitFor(() => {
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "anything-not-existing.eth",
+            recipientDomain: undefined,
+          });
+          expect(screen.getByTestId("domain-error-no-resolution")).toBeInTheDocument();
+        });
       });
 
       it("should remove domain on input change", async () => {

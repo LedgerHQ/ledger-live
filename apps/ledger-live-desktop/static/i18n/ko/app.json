@@ -2147,7 +2147,7 @@
         "title" : "수령인",
         "nftRecipient" : "보낼 NFT",
         "verifyAddress" : "주소가 수령인이 공유한 것과 일치하는지 확인하세요.",
-        "namingService" : {
+        "domainService" : {
           "resolve" : "이는 다음 주소에 연결된 유효한 ENS입니다.",
           "supportLink" : "이더리움 네임 서비스란?",
           "reverse" : "이 주소는 {{domain}}에 연결되어 있습니다."

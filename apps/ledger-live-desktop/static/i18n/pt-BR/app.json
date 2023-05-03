@@ -2147,7 +2147,7 @@
         "title" : "Destinatário",
         "nftRecipient" : "NFT para enviar",
         "verifyAddress" : "Verifique se o endereço corresponde ao endereço compartilhado pelo destinatário.",
-        "namingService" : {
+        "domainService" : {
           "resolve" : "Este é um ENS válido, vinculado ao seguinte endereço:",
           "supportLink" : "O que é Ethereum Name Service (ENS)?",
           "reverse" : "Este endereço está vinculado a {{domain}}"
