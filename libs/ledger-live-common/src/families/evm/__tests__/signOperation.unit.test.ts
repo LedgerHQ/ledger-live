@@ -2,10 +2,7 @@ import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import signOperation, {
-  applyEIP155,
-  getSerializedTransaction,
-} from "../signOperation";
+import signOperation, { applyEIP155 } from "../signOperation";
 import { Transaction as EvmTransaction } from "../types";
 import * as Device from "../../../hw/deviceAccess";
 import { getEstimatedFees } from "../logic";
@@ -23,21 +20,6 @@ const account: Account = makeAccount(
   "0x7265a60acAeaf3A5E18E10BC1128e72F27B2e176", // trump.eth
   currency
 );
-
-const transactionLegacy: EvmTransaction = {
-  amount: new BigNumber(100),
-  useAllAmount: false,
-  subAccountId: "id",
-  recipient: "0x6775e49108cb77cda06Fc3BEF51bcD497602aD88", // obama.eth
-  feesStrategy: "custom",
-  family: "evm",
-  mode: "send",
-  nonce: 0,
-  gasLimit: new BigNumber(21000),
-  chainId: 1,
-  gasPrice: new BigNumber(100),
-  type: 0,
-};
 
 const transactionEIP1559: EvmTransaction = {
   amount: new BigNumber(100),
@@ -129,36 +111,6 @@ describe("EVM Family", () => {
             done();
           }
         });
-      });
-    });
-
-    describe("getSerializedTransaction", () => {
-      beforeAll(() => {
-        jest
-          .spyOn(rpcAPI, "getTransactionCount")
-          .mockImplementation(() => Promise.resolve(0));
-      });
-
-      it("should serialize a type 0 transaction", async () => {
-        const serializedTx = await getSerializedTransaction(
-          account,
-          transactionLegacy
-        );
-
-        expect(serializedTx).toBe(
-          "0xdf8064825208946775e49108cb77cda06fc3bef51bcd497602ad886480018080"
-        );
-      });
-
-      it("should serialize a type 2 transaction", async () => {
-        const serializedTx = await getSerializedTransaction(
-          account,
-          transactionEIP1559
-        );
-
-        expect(serializedTx).toBe(
-          "0x02df01806464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c0"
-        );
       });
     });
 

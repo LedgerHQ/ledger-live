@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, Route } from "react-router-dom";
+import user from "~/helpers/user";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
@@ -15,10 +16,21 @@ import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import EnableStagingNftMetadataServiceToggle from "./EnableStagingNftMetadataServiceToggle";
+
 const Default = () => {
   const { t } = useTranslation();
+  const [segmentId, setSegmentID] = useState("loading...");
+
+  useEffect(() => {
+    user().then(u => {
+      setSegmentID(u.id);
+    });
+  });
+
   return (
     <Body>
+      <Row title={t("settings.developer.userId")} desc={segmentId} />
+
       <Row title={t("settings.developer.debugApps")} desc={t("settings.developer.debugAppsDesc")}>
         <AllowDebugAppsToggle />
       </Row>
