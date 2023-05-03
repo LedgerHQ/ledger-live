@@ -1,5 +1,35 @@
 # live-mobile
 
+## 3.21.0-nightly.3
+
+### Minor Changes
+
+- [#3153](https://github.com/LedgerHQ/ledger-live/pull/3153) [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding support for new EVM chains, including Layer 2s like Optimism & Arbitrum
+
+- [#3313](https://github.com/LedgerHQ/ledger-live/pull/3313) [`0f819df4b5`](https://github.com/LedgerHQ/ledger-live/commit/0f819df4b52e396766d0988da7ed126506eb74d5) Thanks [@RamyEB](https://github.com/RamyEB)! - Delete menu from discover tab
+
+### Patch Changes
+
+- [#3301](https://github.com/LedgerHQ/ledger-live/pull/3301) [`3d4e20d950`](https://github.com/LedgerHQ/ledger-live/commit/3d4e20d95087b1976b8f28f467f95ec6ddc9c592) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: manager possible duplicated ble requirements error messages
+
+  In the Manager: both the old (SelectDevice) and new (SelectDevice2)
+  device selection components handle the bluetooth requirements with a hook
+
+  - bottom drawer.
+
+  The fix gives back the responsibilities to those select components to check for
+  the bluetooth requirements and avoids a duplicated error drawers/messages.
+
+  The only drawback: the user has to select again their device once the bluetooth
+  requirements are respected.
+
+- Updated dependencies [[`835bfbaa45`](https://github.com/LedgerHQ/ledger-live/commit/835bfbaa45f2bee5416b40a34ae0bf150d780e2c), [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3)]:
+  - @ledgerhq/types-live@6.33.0-nightly.1
+  - @ledgerhq/types-cryptoassets@7.2.0-nightly.0
+  - @ledgerhq/live-common@29.5.0-nightly.2
+  - @ledgerhq/coin-framework@0.3.2-nightly.2
+  - @ledgerhq/domain-service@1.0.2-nightly.2
+
 ## 3.21.0-nightly.2
 
 ### Minor Changes

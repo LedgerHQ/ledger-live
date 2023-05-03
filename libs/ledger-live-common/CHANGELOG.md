@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 29.5.0-nightly.2
+
+### Minor Changes
+
+- [#3153](https://github.com/LedgerHQ/ledger-live/pull/3153) [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding support for new EVM chains, including Layer 2s like Optimism & Arbitrum
+
+### Patch Changes
+
+- Updated dependencies [[`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3)]:
+  - @ledgerhq/cryptoassets@9.5.0-nightly.0
+  - @ledgerhq/coin-framework@0.3.2-nightly.2
+  - @ledgerhq/coin-polkadot@0.1.3-nightly.2
+  - @ledgerhq/domain-service@1.0.2-nightly.2
+  - @ledgerhq/live-portfolio@0.0.4-nightly.1
+  - @ledgerhq/hw-app-eth@6.33.2-nightly.2
+
 ## 29.5.0-nightly.1
 
 ### Minor Changes
