@@ -28,6 +28,10 @@ class BitcoinLikeStorage implements IStorage {
     return this.accountIndex[index] && this.accountIndex[index].length > 0;
   }
 
+  txsSize(): number {
+    return this.txs.length;
+  }
+
   hasPendingTx(txFilter: { account: number; index: number }): boolean {
     const index = `${txFilter.account}-${txFilter.index}`;
     return (
