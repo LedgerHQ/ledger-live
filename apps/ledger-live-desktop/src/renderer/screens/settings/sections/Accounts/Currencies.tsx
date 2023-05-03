@@ -44,7 +44,7 @@ export default function Currencies() {
       <Row
         title={t("settings.tabs.currencies")}
         desc={t("settings.currencies.desc")}
-        style={{
+        contentContainerStyle={{
           cursor: "pointer",
         }}
       >
@@ -61,7 +61,7 @@ export default function Currencies() {
       </Row>
       {currency && (
         <Body>
-          <CurrencyRows currency={currency} />
+          <CurrencyRows currency={currency as CryptoCurrency} />
         </Body>
       )}
     </Box>

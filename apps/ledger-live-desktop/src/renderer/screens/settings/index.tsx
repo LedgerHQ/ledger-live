@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Switch, Route, RouterHistory, Match, Location } from "react-router-dom";
+import { Switch, Route, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
@@ -52,13 +52,12 @@ const getItems = (t: (a: string) => string, devMode?: boolean) => {
   }
   return items;
 };
-type Props = {
-  history: RouterHistory;
-  location: Location;
-  match: Match;
-}; // Props are passed from the <Route /> component in <Default />
-const Settings = ({ history, location, match }: Props) => {
+// Props are passed from the <Route /> component in <Default />
+const Settings = () => {
   const { t } = useTranslation();
+  const history = useHistory();
+  const location = useLocation();
+  const match = useRouteMatch();
   const accounts = useSelector(shallowAccountsSelector);
   const accountsCount = accounts.length;
   const devMode = useSelector(developerModeSelector);
