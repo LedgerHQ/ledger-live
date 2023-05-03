@@ -50,15 +50,9 @@ class BitcoinLikeExplorer implements IExplorer {
       method: "GET",
       url,
     });
-    if (!data) {
-      return null;
-    }
-    const block: Block = {
-      height: data.height,
-      hash: data.hash,
-      time: data.time,
-    };
-    return block;
+    return data
+      ? { height: data.height, hash: data.hash, time: data.time }
+      : null;
   }
 
   async getBlockByHeight(height: number): Promise<Block | null> {
@@ -66,15 +60,9 @@ class BitcoinLikeExplorer implements IExplorer {
       method: "GET",
       url: `${this.baseUrl}/block/${height}`,
     });
-    if (!data[0]) {
-      return null;
-    }
-    const block: Block = {
-      height: data[0].height,
-      hash: data[0].hash,
-      time: data[0].time,
-    };
-    return block;
+    return data[0]
+      ? { height: data[0].height, hash: data[0].hash, time: data[0].time }
+      : null;
   }
 
   async getFees(): Promise<{ [key: string]: number }> {
@@ -167,20 +155,20 @@ class BitcoinLikeExplorer implements IExplorer {
     });
   }
 
-  async getAddressTxsSinceLastTxBlock(
+  async getTxsSinceBlockheight(
     batchSize: number,
     address: Address,
-    lastTxBlockheight: number,
-    pending: boolean
+    startingBlockheight: number,
+    isPending: boolean
   ): Promise<TX[]> {
     const params: ExplorerParams = {
       batch_size: batchSize,
     };
-    if (!pending) {
-      params.from_height = lastTxBlockheight;
+    if (!isPending) {
+      params.from_height = startingBlockheight;
       params.order = "ascending";
     }
-    const txs = pending
+    const txs = isPending
       ? await this.fetchPendingTxs(address, params)
       : await this.fetchTxs(address, params);
 

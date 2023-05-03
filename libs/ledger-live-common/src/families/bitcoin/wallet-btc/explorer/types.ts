@@ -10,10 +10,10 @@ export interface IExplorer {
   getCurrentBlock(): Promise<Block | null>;
   getBlockByHeight(height: number): Promise<Block | null>;
   getPendings(address: Address, nbMax?: number): Promise<TX[]>;
-  getAddressTxsSinceLastTxBlock(
+  getTxsSinceBlockheight(
     batchSize: number,
     address: Address,
-    lastTxBlockheight: number,
-    pending: boolean
+    startingBlockheight: number,
+    isPending: boolean
   ): Promise<TX[]>;
 }

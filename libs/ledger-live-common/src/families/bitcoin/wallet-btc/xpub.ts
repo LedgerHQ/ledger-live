@@ -359,7 +359,7 @@ class Xpub {
           index,
         })[0];
       if (pendingTxs.length > 0) {
-        txs = await this.explorer.getAddressTxsSinceLastTxBlock(
+        txs = await this.explorer.getTxsSinceBlockheight(
           this.txsSyncArraySize,
           { address, account, index },
           lastTxBlockheight,
@@ -368,13 +368,13 @@ class Xpub {
         inserted += this.storage.appendTxs(txs); // insert not pending tx
       } else {
         [pendingTxs, txs] = await Promise.all([
-          this.explorer.getAddressTxsSinceLastTxBlock(
+          this.explorer.getTxsSinceBlockheight(
             this.txsSyncArraySize,
             { address, account, index },
             0,
             true
           ),
-          this.explorer.getAddressTxsSinceLastTxBlock(
+          this.explorer.getTxsSinceBlockheight(
             this.txsSyncArraySize,
             { address, account, index },
             lastTxBlockheight,
