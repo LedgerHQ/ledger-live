@@ -5,7 +5,7 @@ import {
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
@@ -16,7 +16,7 @@ import ValidatorImage from "../shared/ValidatorImage";
 
 type Props = {
   delegation: CosmosMappedDelegation | CosmosMappedUnbonding;
-  currency: Currency;
+  currency: CryptoOrTokenCurrency;
   onPress: (_: CosmosMappedDelegation | CosmosMappedUnbonding) => void;
   isLast?: boolean;
 };
@@ -46,8 +46,7 @@ export default function DelegationRow({
         <ValidatorImage
           size={42}
           isLedger={
-            validatorAddress ===
-            cryptoFactory(currency.name.toLowerCase()).ledgerValidator
+            validatorAddress === cryptoFactory(currency.id).ledgerValidator
           }
           name={validator?.name ?? validatorAddress ?? ""}
         />
