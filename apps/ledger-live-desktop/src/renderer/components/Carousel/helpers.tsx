@@ -211,16 +211,6 @@ export const useDefaultSlides = () => {
     }
   }, [referralProgramConfig, portfolioCards]);
 
-  const slides = useMemo(
-    () =>
-      map(getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : slidesData, (slide: Props) => ({
-        id: slide.name,
-        // eslint-disable-next-line react/display-name
-        Component: () => <Slide {...slide} onClickOnSlide={logSlideClick} />,
-      })),
-    [slidesData],
-  );
-
   const logSlideImpression = useCallback(
     index => {
       const slide = slidesData[index];
@@ -244,6 +234,15 @@ export const useDefaultSlides = () => {
       }
     },
     [portfolioCards],
+  );
+  const slides = useMemo(
+    () =>
+      map(getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : slidesData, (slide: Props) => ({
+        id: slide.name,
+        // eslint-disable-next-line react/display-name
+        Component: () => <Slide {...slide} onClickOnSlide={logSlideClick} />,
+      })),
+    [slidesData, logSlideClick],
   );
 
   return {

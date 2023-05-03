@@ -173,15 +173,16 @@ const Carousel = ({
   const changeVisibleSlide = useCallback(index => {
     setIndex(index);
     logSlideImpression(index);
-  }, []);
+  }, [logSlideImpression]);
 
   const dispatch = useDispatch();
+
   const onChooseSlide = useCallback(
     newIndex => {
       setReverse(index > newIndex);
       changeVisibleSlide(newIndex);
     },
-    [index],
+    [index, changeVisibleSlide],
   );
 
   const onNext = useCallback(() => {
@@ -191,7 +192,7 @@ const Carousel = ({
       button: "next",
       page: "Portfolio",
     });
-  }, [index, slides.length]);
+  }, [index, slides.length, changeVisibleSlide]);
 
   const onPrev = useCallback(() => {
     setReverse(true);
@@ -200,7 +201,7 @@ const Carousel = ({
       button: "previous",
       page: "Portfolio",
     });
-  }, [index, slides.length]);
+  }, [index, slides.length, changeVisibleSlide]);
 
   const onDismiss = useCallback(() => {
     setWantToDismiss(true);
