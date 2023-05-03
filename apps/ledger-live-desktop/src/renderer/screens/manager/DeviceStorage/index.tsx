@@ -2,8 +2,7 @@ import React, { memo } from "react";
 import styled, { css, keyframes } from "styled-components";
 import { Trans } from "react-i18next";
 import { Transition, TransitionGroup } from "react-transition-group";
-import manager from "@ledgerhq/live-common/manager/index";
-import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
@@ -319,7 +318,6 @@ type Props = {
   installQueue: string[];
   uninstallQueue: string[];
   jobInProgress: boolean;
-  firmware: FirmwareUpdateContext | undefined | null;
 };
 const DeviceStorage = ({
   deviceModel,
@@ -332,11 +330,9 @@ const DeviceStorage = ({
   installQueue,
   uninstallQueue,
   jobInProgress,
-  firmware,
 }: Props) => {
   const shouldWarn = distribution.shouldWarnMemory || isIncomplete;
   const navigationLocked = useSelector(isNavigationLocked);
-  const firmwareOutdated = manager.firmwareUnsupported(deviceModel.id, deviceInfo) || firmware;
 
   return (
     <Card p={20} mb={4} data-test-id="device-storage-card">

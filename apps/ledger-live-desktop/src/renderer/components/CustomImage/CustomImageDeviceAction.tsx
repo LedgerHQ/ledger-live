@@ -87,6 +87,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     error instanceof ImageLoadRefusedOnDevice || error instanceof ImageCommitRefusedOnDevice;
 
   useEffect(() => {
+    if (!error) return;
     // Once transferred the old image is wiped, we need to clear it from the data.
     if (error instanceof ImageCommitRefusedOnDevice) {
       dispatch(clearLastSeenCustomImage());

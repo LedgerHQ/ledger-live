@@ -1015,7 +1015,6 @@ export const renderImageLoadRequested = ({
 }) => {
   return (
     <ImageLoadingGeneric
-      restore={restore}
       title={t(
         restore
           ? "customImage.steps.transfer.allowConfirmPreview"
@@ -1095,9 +1094,7 @@ export const renderImageCommitRequested = ({
         <FramedImage
           source={source}
           background={
-            <Animation
-              animation={getDeviceAnimation(device.modelId, type, "confirmLockscreen", true)}
-            />
+            <Animation animation={getDeviceAnimation(device.modelId, type, "confirmLockscreen")} />
           }
         />
       </AnimationWrapper>

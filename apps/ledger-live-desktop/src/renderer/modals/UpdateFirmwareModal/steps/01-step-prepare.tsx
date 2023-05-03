@@ -172,6 +172,7 @@ const StepFullFirmwareInstall = ({
   const [displayedOnDevice, setDisplayedOnDevice] = useState(false);
 
   useEffect(() => {
+    if (!firmware) return;
     if (!firmware.osu) {
       transitionTo("finish");
       return;
