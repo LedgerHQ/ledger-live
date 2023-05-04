@@ -7,6 +7,7 @@ setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "axelar",
+  "nyx",
   "onomy",
   "quicksilver",
   "persistence",

@@ -74,6 +74,7 @@ setSupportedCurrencies([
   "velas_evm",
   "syscoin",
   "axelar",
+  "nyx",
   "onomy",
   "persistence",
   "quicksilver",

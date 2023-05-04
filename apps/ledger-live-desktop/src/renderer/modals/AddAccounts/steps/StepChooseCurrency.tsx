@@ -30,6 +30,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const axelar = useFeature("currencyAxelar");
+  const nyx = useFeature("currencyNyx");
   const onomy = useFeature("currencyOnomy");
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
@@ -53,6 +54,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const featureFlaggedCurrencies = useMemo(
     () => ({
       axelar,
+      nyx,
       onomy,
       quicksilver,
       persistence,
@@ -91,6 +93,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       velasEvm,
       syscoin,
       axelar,
+      nyx,
       onomy,
       persistence,
       quicksilver,
