@@ -17,6 +17,8 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import GridListToggle from "./GridListToggle";
+import { State } from "~/renderer/reducers";
+import { ProtoNFT } from "@ledgerhq/types-live";
 
 const SpinnerContainer = styled.div`
   display: flex;
@@ -44,8 +46,8 @@ const ClickableCollectionName = styled(Box)`
 const Gallery = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { id } = useParams();
-  const account = useSelector(state =>
+  const { id } = useParams<{ id: string }>();
+  const account = useSelector((state: State) =>
     accountSelector(state, {
       accountId: id,
     }),
@@ -82,7 +84,7 @@ const Gallery = () => {
     },
     [account.id, history],
   );
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>(null);
   const isAtBottom = useOnScreen(ref);
   const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(1);
   useEffect(() => {
@@ -93,10 +95,10 @@ const Gallery = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAtBottom]);
   const [collectionsRender, isLoading] = useMemo(() => {
-    const collectionsRender = [];
+    const collectionsRender: JSX.Element[] = [];
     let isLoading = false;
     let displayedNFTs = 0;
-    collections.forEach(([contract, nfts]: [string, any]) => {
+    collections.forEach(([contract, nfts]: [string, ProtoNFT[]]) => {
       if (displayedNFTs > maxVisibleNFTs) return;
       collectionsRender.push(
         <div key={contract}>
@@ -120,7 +122,7 @@ const Gallery = () => {
       <TrackPage category="Page" name="NFT Gallery" />
       <Box horizontal alignItems="center" mb={6}>
         <Box flex={1}>
-          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={22} flex={1}>
+          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={22}>
             {t("NFT.gallery.title")}
           </Text>
         </Box>

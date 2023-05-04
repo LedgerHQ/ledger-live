@@ -19,6 +19,8 @@ import OperationsList from "~/renderer/components/OperationsList";
 import CollectionName from "~/renderer/components/Nft/CollectionName";
 import GridListToggle from "./GridListToggle";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
+import { State } from "~/renderer/reducers";
+import { NFT, Operation, ProtoNFT } from "@ledgerhq/types-live";
 const SpinnerContainer = styled.div`
   display: flex;
   flex: 1;
@@ -40,17 +42,17 @@ const SpinnerBackground = styled.div`
 const Collection = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { id, collectionAddress } = useParams();
-  const account = useSelector(state =>
+  const { id, collectionAddress } = useParams<{ collectionAddress: string; id: string }>();
+  const account = useSelector((state: State) =>
     accountSelector(state, {
       accountId: id,
     }),
   );
   const history = useHistory();
-  const nfts = useMemo(() => nftsByCollections(account.nfts, collectionAddress) || [], [
-    account.nfts,
-    collectionAddress,
-  ]);
+  const nfts = useMemo<(ProtoNFT | NFT)[]>(
+    () => (nftsByCollections(account.nfts, collectionAddress) as (ProtoNFT | NFT)[]) || [],
+    [account.nfts, collectionAddress],
+  );
   const [nft] = nfts;
   const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, account.currency.id);
   const show = useMemo(() => status === "loading", [status]);
@@ -68,10 +70,10 @@ const Collection = () => {
   }, [account.id, history]);
 
   // NB To be determined if this filter is good enough for what we expect.
-  const filterOperation = op =>
+  const filterOperation = (op: Operation) =>
     !!op.nftOperations?.length &&
     !!op.nftOperations.find(nftOp => nftOp?.contract === collectionAddress);
-  const ref = useRef();
+  const ref = useRef(null);
   const isAtBottom = useOnScreen(ref);
   const [maxVisibleNTFs, setMaxVisibleNFTs] = useState(1);
   useEffect(() => {
@@ -130,6 +132,7 @@ const Collection = () => {
         account={account}
         title={t("NFT.gallery.collection.operationList.header")}
         filterOperation={collectionAddress ? filterOperation : undefined}
+        t={t}
       />
     </>
   );
