@@ -2164,10 +2164,17 @@
         "title": "Recipient",
         "nftRecipient": "NFT to send",
         "verifyAddress": "Please verify the address matches the one shared by the recipient.",
-        "namingService": {
+        "domainService": {
           "resolve": "This is a valid ENS linked to the following address :",
           "supportLink": "What's an Ethereum Name Service ?",
-          "reverse": "This address is linked to {{domain}}"
+          "reverse": "This address is linked to {{domain}}",
+          "invalidDomain": {
+            "title": "Domain not supported",
+            "description": "Only ENS with less than 30 alphanumerical characters are currently supported."
+          },
+          "noResolution": {
+            "title": "No address found for this domain"
+          }
         }
       },
       "amount": {
@@ -4821,7 +4828,8 @@
     "votes": "Votes ({{count}})"
   },
   "RecipientField": {
-    "placeholder": "Enter {{currencyName}} address"
+    "placeholder": "Enter {{currencyName}} address",
+    "placeholderEns": "Enter {{currencyName}} address or ENS"
   },
   "Terms": {
     "title": "Terms of use",

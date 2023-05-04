@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import map from "lodash/map";
 import { Trans } from "react-i18next";
 import { getEnv } from "@ledgerhq/live-common/env";
@@ -20,6 +20,7 @@ import SwapSmallCoin2Image from "./banners/Swap/images/smallcoin2.png";
 import SwapSmallCoin3Image from "./banners/Swap/images/smallcoin3.png";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { useSelector } from "react-redux";
+import * as braze from "@braze/web-sdk";
 
 export const getTransitions = (transition: "slide" | "flip", reverse = false) => {
   const mult = reverse ? -1 : 1;
@@ -199,7 +200,7 @@ export const useDefaultSlides = () => {
   const referralProgramConfig = useFeature("referralProgramDesktopBanner");
   const portfolioCards = useSelector(portfolioContentCardSelector);
 
-  const slides = useMemo(() => {
+  const slidesData = useMemo(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       return [
         { ...referralProgramSlide, path: referralProgramConfig?.params?.path },
@@ -210,13 +211,42 @@ export const useDefaultSlides = () => {
     }
   }, [referralProgramConfig, portfolioCards]);
 
-  return useMemo(
+  const logSlideImpression = useCallback(
+    index => {
+      const slide = slidesData[index];
+      if (slide?.id) {
+        const currentCard = portfolioCards.find(card => card.id === slide.id);
+
+        if (currentCard) {
+          braze.logContentCardImpressions([currentCard.brazeCard]);
+        }
+      }
+    },
+    [portfolioCards, slidesData],
+  );
+
+  const logSlideClick = useCallback(
+    cardId => {
+      const currentCard = portfolioCards.find(card => card.id === cardId);
+
+      if (currentCard) {
+        braze.logContentCardClick(currentCard.brazeCard);
+      }
+    },
+    [portfolioCards],
+  );
+  const slides = useMemo(
     () =>
-      map(getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : slides, (slide: Props) => ({
+      map(getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : slidesData, (slide: Props) => ({
         id: slide.name,
         // eslint-disable-next-line react/display-name
-        Component: () => <Slide {...slide} />,
+        Component: () => <Slide {...slide} onClickOnSlide={logSlideClick} />,
       })),
-    [slides],
+    [slidesData, logSlideClick],
   );
+
+  return {
+    slides,
+    logSlideImpression,
+  };
 };
