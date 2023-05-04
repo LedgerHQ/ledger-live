@@ -266,7 +266,6 @@ const CurrencyRow = memo(function CurrencyRowItem({
       availableOnBuy={!!availableOnBuy}
       availableOnSwap={!!availableOnSwap}
       availableOnStake={availableOnStake}
-      range={range}
       style={{ ...style }}
     />
   );

@@ -183,7 +183,6 @@ export default function AssetBalanceSummaryHeader({
               from={currency}
               withActivityCurrencyColor
               withEquality
-              color="warmGrey"
               fontSize={6}
               iconSize={16}
             />
