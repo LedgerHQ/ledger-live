@@ -40,10 +40,13 @@ const Container = styled(Tabbable).attrs(() => ({
           }
         `}
 `;
+
 type Props = {
   manifest: LiveAppManifest;
   onClick: Function;
+  id?: string;
 };
+
 const AppCard = ({ manifest, onClick, ...rest }: Props) => {
   const isDisabled = manifest.branch === "soon";
   const handleClick = useCallback(() => {
