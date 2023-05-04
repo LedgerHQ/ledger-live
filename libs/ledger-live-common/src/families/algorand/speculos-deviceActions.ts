@@ -8,7 +8,7 @@ import {
 } from "../../bot/specs";
 import { extractTokenId, addPrefixToken } from "./tokens";
 import { displayTokenValue } from "./deviceTransactionConfig";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 
 export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
   deviceActionFlow({
