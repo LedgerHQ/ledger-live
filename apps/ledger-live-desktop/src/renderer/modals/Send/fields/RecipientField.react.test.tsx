@@ -295,6 +295,7 @@ describe("RecipientField", () => {
             recipient: "vitalik👋.eth",
             recipientDomain: undefined,
           });
+          // @ts-expect-error unclear why this is not working (@testing-library/jest-dom)
           expect(screen.getByTestId("domain-error-invalid-domain")).toBeInTheDocument();
         });
       });
@@ -310,6 +311,7 @@ describe("RecipientField", () => {
             recipient: "anything-not-existing.eth",
             recipientDomain: undefined,
           });
+          // @ts-expect-error unclear why this is not working (@testing-library/jest-dom)
           expect(screen.getByTestId("domain-error-no-resolution")).toBeInTheDocument();
         });
       });

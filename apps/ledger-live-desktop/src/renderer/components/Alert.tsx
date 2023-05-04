@@ -204,7 +204,7 @@ type AlertType =
 
 type Props = BoxProps & {
   type?: AlertType;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onLearnMore?: () => void;
   learnMoreLabel?: React.ReactNode;
   learnMoreIsInternal?: boolean;
