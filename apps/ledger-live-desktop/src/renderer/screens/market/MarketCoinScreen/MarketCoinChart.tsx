@@ -33,7 +33,9 @@ const transitionStyles = {
   exited: { opacity: 0 },
 };
 
-const FadeIn = styled.div.attrs<{ state: string }>(p => ({ style: transitionStyles[p.state] }))<{
+const FadeIn = styled.div.attrs<{ state: string }>(p => ({
+  style: transitionStyles[p.state as keyof typeof transitionStyles],
+}))<{
   state: string;
 }>`
   opacity: 0;
@@ -72,10 +74,10 @@ function Tooltip({
 }
 
 type Props = {
-  price: number;
-  priceChangePercentage: number;
-  chartData: Record<string, [number, number][]>;
-  chartRequestParams: { range: string; counterCurrency: string };
+  price?: number;
+  priceChangePercentage?: number;
+  chartData?: Record<string, [number, number][]>;
+  chartRequestParams: { range?: string | undefined; counterCurrency?: string | undefined };
   refreshChart: (params: { range: string }) => void;
   color?: string;
   t: TFunction;
@@ -99,10 +101,10 @@ function MarkeCoinChartComponent({
   supportedCounterCurrencies,
 }: Props) {
   const { range, counterCurrency } = chartRequestParams;
-  const { scale } = rangeDataTable[range];
-  const activeRangeIndex = ranges.indexOf(range);
-  const data = useMemo(() => {
-    return chartData?.[range]
+  const { scale } = (range && rangeDataTable[range]) || { scale: undefined };
+  const activeRangeIndex = (range && ranges.indexOf(range)) || -1;
+  const data: { date: Date; value: number }[] = useMemo(() => {
+    return range && chartData?.[range]
       ? chartData[range].map(([date, value]) => ({
           date: new Date(date),
           value,
@@ -125,7 +127,8 @@ function MarkeCoinChartComponent({
 
   const renderTooltip = useCallback(
     (data: { value: number; date: Date }) =>
-      !loading && (
+      !loading &&
+      counterCurrency && (
         <Tooltip data={data} counterCurrency={counterCurrency.toUpperCase()} locale={locale} />
       ),
     [counterCurrency, loading, locale],
@@ -198,14 +201,13 @@ function MarkeCoinChartComponent({
                   color={color}
                   data={data}
                   height={250}
-                  loading={loading}
                   tickXScale={scale}
                   renderTickY={value =>
                     counterValueFormatter({
-                      value,
+                      value: typeof value === "string" ? parseInt(value) : value,
                       shorten: String(value).length > 7,
                       locale,
-                    })
+                    }) || ""
                   }
                   renderTooltip={renderTooltip}
                   suggestedMin={suggestedMin}

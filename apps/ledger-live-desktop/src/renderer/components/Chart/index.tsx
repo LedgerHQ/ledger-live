@@ -45,7 +45,7 @@ export type Props = {
   data: Data;
   magnitude: number;
   height?: number;
-  tickXScale: string;
+  tickXScale?: string;
   color?: string;
   hideAxis?: boolean;
   renderTooltip?: (data: Item) => React.ReactNode;

@@ -175,6 +175,7 @@
     "@types/react-transition-group": "^4.4.2",
     "@types/react-virtualized-auto-sizer": "^1.0.1",
     "@types/react-window": "^1.8.5",
+    "@types/react-window-infinite-loader": "^1.0.6",
     "@types/redux-actions": "^2.6.2",
     "@types/secp256k1": "^4.0.3",
     "@types/serve-handler": "^6.1.1",
