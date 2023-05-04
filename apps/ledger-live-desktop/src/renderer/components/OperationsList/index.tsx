@@ -68,7 +68,7 @@ export class OperationsList extends PureComponent<Props, State> {
     setDrawer(OperationDetails, {
       operationId: operation.id,
       accountId: account.id,
-      parentId: parentAccount?.id,
+      parentId: parentAccount?.id as string | undefined | null,
     });
 
   // TODO: convert of async/await if fetching with the api

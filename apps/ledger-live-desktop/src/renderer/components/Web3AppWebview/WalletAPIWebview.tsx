@@ -128,7 +128,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
             setDrawer(OperationDetails, {
               operationId: optimisticOperation.id,
               accountId: account.id,
-              parentId: parentAccount?.id,
+              parentId: parentAccount?.id as string | undefined | null,
             });
           },
         });
