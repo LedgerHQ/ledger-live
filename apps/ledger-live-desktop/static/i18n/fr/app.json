@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "Jamais",
+    "new" : "Nouveau",
     "apply" : "Appliquer",
     "done" : "Terminé",
     "confirm" : "Confirmer",
@@ -126,7 +127,8 @@
     "exchange" : "Échanger",
     "info" : "Informations",
     "connectDevice" : "Connectez votre appareil",
-    "add" : "Ajouter"
+    "add" : "Ajouter",
+    "or" : "OU"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -215,6 +217,7 @@
     "earn" : "Gagner",
     "exchange" : "Acheter / Vendre",
     "swap" : "Swap",
+    "refer" : "Parrainage",
     "lend" : "Prêter",
     "catalog" : "Discover",
     "market" : "Marché",
@@ -1203,23 +1206,33 @@
     },
     "manual" : {
       "title" : "Configurez votre {{deviceName}}",
+      "continueOnDevice" : "Effectuez cette action sur votre {{productName}}.",
       "pairedContent" : {
         "title" : "Votre {{deviceName}} est connecté",
         "description" : "Poursuivez la configuration sur votre {{deviceName}}.",
-        "text" : "Cette page va évoluer pour vous guider à chaque étape de la configuration de votre {{deviceName}}."
+        "text" : "Cette page va évoluer pour vous guider à chaque étape de la configuration de votre {{deviceName}}.",
+        "continueOnDevice" : "Appuyez sur {{productName}} pour voir l’écran suivant."
       },
       "pinContent" : {
         "title" : "Définir votre code PIN",
         "description" : "Choisissez un code PIN de 4 à 8 chiffres.",
-        "text" : "Toute personne ayant accès à votre {{deviceName}} et à votre code PIN peut avoir accès à vos crypto-actifs."
+        "text" : "Toute personne ayant accès à votre {{deviceName}} et à votre code PIN peut avoir accès à vos crypto-actifs.",
+        "continueOnDevice" : "Définissez votre code PIN sur votre {{productName}}."
       },
       "seedContent" : {
         "title" : "Phrase de récupération secrète",
-        "choiceNewOrRestore" : "Découvrez nos conseils de configuration.",
-        "newSeed" : "Regardez les vidéos ci-dessous pour en savoir plus sur votre phrase secrète de récupération.",
-        "choiceRestoreDirectOrRecover" : "Placeholder : Choisissez de restaurer directement ou d’utiliser Ledger Recover",
         "recoverSeed" : "Placeholder : Ledger Recover",
-        "restoreSeed" : "Pour la récupération et pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}."
+        "restoreSeed" : "Pour la récupération et pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}.",
+        "selection" : "Sur votre {{productName}}, choisissez l’option de configuration qui vous convient.",
+        "selectionContinueOnDevice" : "Choisissez une option sur votre {{productName}}",
+        "newSeedDescription" : "Regardez les vidéos ci-dessous pour en savoir plus sur vos mots secrets.",
+        "newSeedContinueOnDevice" : "Faites-le sur votre {{productName}}",
+        "recovery" : "Pour la récupération et pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}.",
+        "restoreChoiceContinueOnDevice" : "Choisissez une option sur votre {{productName}}",
+        "restoreChoiceSRPTitle" : "Restaurer avec une phrase de récupération secrète",
+        "restoreChoiceSRPDescription" : "Pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.",
+        "restoreChoiceRecoverTitle" : "Restaurer avec Ledger Recover",
+        "restoreChoiceRecoverDescription" : "Restaurez la sauvegarde pour votre phrase de récupération en vous connectant à votre compte Ledger et en confirmant votre identité."
       },
       "softwareCheckContent" : {
         "title" : "Vérification du logiciel",
@@ -1238,10 +1251,13 @@
         }
       },
       "installApplications" : {
-        "title" : "Nous vous recommandons de télécharger une sélection d’applications par défaut. Vous pourrez en télécharger d’autres plus tard.",
+        "title" : "Installez des apps blockchain",
         "install" : "Installer",
         "skip" : "Plus tard",
         "info" : "Les apps sur votre {{deviceName}} vous permettent de valider vos opérations. Vous pouvez les ajouter ou supprimer à tout moment."
+      },
+      "endOfSetup" : {
+        "title" : "Configuration terminée"
       },
       "genuineCheckModal" : {
         "title" : "Vérification de l’authenticité",
@@ -1441,7 +1457,8 @@
     "messageIfUnverified" : "Merci de vérifier que l’adresse partagée est identique à celle sur votre appareil",
     "messageIfSkipped" : "Vous n’avez pas vérifié votre adresse {{name}} sur votre appareil Ledger. Vérifiez-la pour une sécurité optimale.",
     "showQrCode" : "Afficher le code QR",
-    "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot"
+    "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
+    "dashStakingWarning" : "N’utilisez pas cette adresse pour recevoir vos récompenses de staking."
   },
   "emptyState" : {
     "dashboard" : {
@@ -1742,7 +1759,8 @@
     "loading" : "Chargement...",
     "connectAndUnlockDevice" : "Connectez et déverrouillez votre appareil.",
     "unlockDevice" : "Déverrouillez votre appareil.",
-    "unlockDeviceAfterFirmwareUpdate" : "Patientez pendant la mise à jour du micrologiciel, puis déverrouillez votre Ledger avec votre code PIN.",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Attendez la fin de l’installation sur votre {{productName}}",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Déverrouillez votre {{productName}} pour terminer l’installation",
     "quitApp" : "Sortez de l’application sur votre appareil.",
     "appNotInstalledTitle" : "Application nécessaire manquante",
     "appNotInstalledTitle_plural" : "Applications nécessaires manquantes",
@@ -1807,8 +1825,7 @@
       "installed" : "Applications",
       "capacity" : "Capacité",
       "used" : "Utilisé",
-      "firmwareAvailable" : "Micrologiciel obsolète :",
-      "firmwareUpToDate" : "Le micrologiciel est à jour :",
+      "OSVersion" : "Système d’exploitation",
       "genuine" : "Votre Ledger est authentique.",
       "incomplete" : "Certaines applications n’ont pas été reconnues. Merci de les désinstaller puis les réinstaller."
     },
@@ -1874,7 +1891,7 @@
         "plugin" : "Accéder à l’application",
         "swap" : "Swap",
         "tool" : "En savoir plus",
-        "app" : "En savoir plus"
+        "currency" : "En savoir plus"
       },
       "uninstall" : {
         "title" : "Tout désinstaller",
@@ -1901,7 +1918,7 @@
       "dontHaveSeed" : "Vous n’avez pas votre phrase de récupération ? ",
       "followTheGuide" : "Laissez-vous guider",
       "removeApps" : "Désinstaller toutes les applications avant de mettre à jour",
-      "update" : "Mise à jour du micrologiciel",
+      "update" : "Mettez à jour votre {{productName}}",
       "updateBtn" : "Mettre à jour le micrologiciel",
       "banner" : {
         "warning" : "Mise à jour {{latestFirmware}} du micrologiciel disponible",
@@ -1916,12 +1933,17 @@
       "contactSupport" : "Contacter l’Assistance",
       "deprecated" : "La version du micrologiciel de l’appareil est trop ancienne pour être mise à jour. Contactez l’Assistance Ledger pour le remplacer.",
       "prepareSeed" : "Assurez-vous par précaution que votre phrase de récupération de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
-      "disclaimerTitle" : "Vous êtes sur le point d’installer la <1>version {{version}} du micrologiciel</1>.",
-      "downloadingUpdateDesc" : "Merci de patienter pendant le téléchargement du programme d’installation des mises à jour"
+      "disclaimerTitle" : "Vous êtes sur le point d’installer la <1>version {{version}} du micrologiciel</1>."
     },
     "modal" : {
+      "title" : "Mettez à jour votre {{productName}}",
       "steps" : {
-        "downloadingUpdate" : "Téléchargement de la mise à jour",
+        "preparingUpdate" : "Préparation de la mise à jour",
+        "transferringUpdate" : "Transfert de la mise à jour vers {{productName}}",
+        "prepare" : "Préparation de la mise à jour",
+        "install" : "Installation de la mise à jour",
+        "restore" : "Restauration des réglages",
+        "apps" : "Restauration des apps",
         "updateMCU" : "Mise à jour du micrologiciel",
         "updating" : "Mise à jour du micrologiciel",
         "reset" : "Préparation de l’appareil",
@@ -1932,9 +1954,8 @@
         "flash" : "Préparation de votre appareil..."
       },
       "confirmIdentifier" : "Vérifier l’identifiant",
-      "confirmIdentifierText" : "Vérifiez que l’identifiant sur votre appareil est le même que l’identifiant affiché ci-dessous. Confirmez et saisissez votre code PIN si demandé.",
+      "confirmIdentifierText" : "Confirmez l’installation sur votre {{productName}}.",
       "identifier" : "Identifiant",
-      "preparation" : "Préparation",
       "newFirmware" : "Nouveau micrologiciel {{version}}",
       "confirmUpdate" : "Confirmez la mise à jour sur votre appareil.",
       "mcuTitle" : "Terminer la mise à jour",
@@ -1944,10 +1965,10 @@
       "mcuSecondNanoX" : "Maintenez le bouton gauche enfoncé jusqu’à ce que <1><0>{{bootloaderOption}}</0></1> apparaisse. Appuyez sur les deux boutons pour confirmer et reconnecter votre appareil.",
       "mcuBlueFirst" : "Appuyez sur le bouton latéral pendant 10 secondes pour éteindre l’appareil. Relâchez le bouton.",
       "mcuBlueSecond" : "Faites un appui long sur le bouton pendant au moins 5 secondes jusqu’à ce que les options de Boot apparaissent. Sélectionnez le mode Bootloader.",
-      "successTitle" : "Micrologiciel mis à jour",
+      "successTitle" : "Le système d’exploitation a été mis à jour.",
       "successTextApps" : "Vous pouvez réinstaller vos applications sur votre appareil.",
       "successTextNoApps" : "Vous pouvez maintenant installer des applications sur votre appareil.",
-      "sucessCTAApps" : "Réinstaller des applications",
+      "sucessCTAApps" : "Réinstaller les apps",
       "SuccessCTANoApps" : "Installer des applications",
       "cancelReinstallCTA" : "Installer la mise à jour",
       "resetSteps" : {
@@ -2247,10 +2268,9 @@
   },
   "deviceLocalization" : {
     "language" : "Langue",
-    "deviceLanguage" : "Langue",
+    "deviceLanguage" : "Changer la langue de votre appareil",
     "changeLanguage" : "Changer la langue",
     "changeDeviceLanguage" : "Voulez-vous changer la langue de votre Ledger ?",
-    "chooseLanguage" : "Choisissez une langue pour votre {{deviceName}}.",
     "changeDeviceLanguagePrompt" : {
       "title" : "Vous pouvez utiliser votre {{deviceName}} en : {{language}}.",
       "description" : "Souhaitez-vous l’utiliser en {{language}} ?"
@@ -3761,6 +3781,7 @@
         "title" : "Vous avez atteint le niveau Développeur !",
         "text" : "Bienvenue au pays des merveilles"
       },
+      "userId" : "Identifiant utilisateur",
       "debugApps" : "Autoriser les Apps Debug",
       "debugAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\".",
       "experimentalApps" : "Autoriser les Apps Expérimentales",
@@ -3790,6 +3811,8 @@
       "runLocalAppOpenButton" : "Ouvrir",
       "enableLearnStagingUrl" : "Activer l’URL de test de la page Apprendre",
       "enableLearnStagingUrlDesc" : "Activez l’URL de test de la page Apprendre.",
+      "enableStagingNftMetadataService" : "Mode test pour le service des métadonnées des NFT",
+      "enableStagingNftMetadataServiceDesc" : "Activez le mode test pour le service des métadonnées des NFT et réinitialisez le cache pour les NFT.",
       "openOnboardingAppInstallDebug" : "Ouvrir l’écran de débogage relatif à l’installation des apps (Onboarding)",
       "openOnboardingAppInstallDebugDesc" : "Ouvrez un écran contenant les composants de l’étape d’installation des apps (flux Sync Onboarding)."
     },
@@ -3847,6 +3870,10 @@
           "title" : "Mode développeur",
           "description" : "Affichez les applications développeurs et testnet dans My Ledger."
         },
+        "listAppsV2" : {
+          "title" : "Listage expérimental des apps pour My Ledger",
+          "description" : "Améliorez les performances de l’accès à My Ledger et des flux inline."
+        },
         "scanForInvalidPaths" : {
           "title" : "Recherche de compte étendue",
           "description" : "Recherchez des comptes ayant des chemins de dérivation erronés. Veuillez envoyer tout actif trouvé vers un compte classique."
@@ -3886,6 +3913,10 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "Définir un seuil minimal pour les frais de priorité",
           "description" : "Personnalisez le percentage de notre estimation des frais de priorité minimum autorisés pour une transaction avancée (EIP-1559)."
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "Coefficient personnalisé pour les frais de base",
+          "description" : "Personnalisez le coefficient multiplicateur des frais de base, qui composent les frais de gaz maximaux des transactions EIP-1559."
         }
       }
     },
@@ -5566,11 +5597,11 @@
       "description" : "Veuillez réessayer avec une autre image."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Validation de l’image refusée sur votre Ledger (TODO: final wording)",
+      "title" : "Image refusée sur votre Ledger Stax",
       "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Chargement de l’image refusé sur votre Ledger (TODO: final wording)",
+      "title" : "Image refusée sur votre Ledger Stax",
       "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
     },
     "NearNewAccountWarning" : {
@@ -5674,9 +5705,11 @@
         "stepLabel" : "Transfert",
         "uploadAnotherImage" : "Télécharger une autre image",
         "allowPreview" : "Autorisez le chargement de l’image sur votre {{productName}}",
+        "allowConfirmPreview" : "Autorisez la restauration de l’écran de verrouillage sur votre{{productName}}.",
         "loadingPicture" : "Chargement...",
         "imageLoaded" : "Image chargée sur votre {{productName}}",
         "confirmPicture" : "C’est parfait ?\nValidez !",
+        "confirmRestorePicture" : "Confirmez la restauration de l’écran de verrouillage.",
         "doThisLater" : "Pas maintenant"
       }
     },
@@ -5723,9 +5756,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "Récupérez vos clés en\nutilisant votre identité",
+    "description" : "Vous n’aurez pas toujours votre phrase de récupération secrète à portée de main.\nLancement en avant-première exclusivement pour le Ledger Nano X. Abonnez-vous gratuitement jusqu’au 31 mai 2023.",
+    "cta" : "Pourquoi devrais-je m’abonner ?",
+    "downloadLLM" : "Abonnez-vous à <purple>Ledger Recover</purple> via l’app Ledger Live pour le mobile."
   }
 }
