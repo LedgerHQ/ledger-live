@@ -8,6 +8,7 @@ import {
 } from "../../bot/specs";
 import { extractTokenId, addPrefixToken } from "./tokens";
 import { displayTokenValue } from "./deviceTransactionConfig";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account";
 
 export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
   deviceActionFlow({
@@ -68,10 +69,22 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
       {
         title: "Amount",
         button: SpeculosButton.RIGHT,
-        expectedValue: ({ account, status, transaction }) =>
-          transaction.mode === "claimReward"
-            ? "0"
-            : formatDeviceAmount(account.currency, status.amount),
+        expectedValue: ({ account, status, transaction }) => {
+          if (transaction.mode === "claimReward") {
+            return "0";
+          }
+
+          const subAccount = findSubAccountById(
+            account,
+            transaction.subAccountId || ""
+          );
+
+          if (subAccount && subAccount.type === "TokenAccount") {
+            return formatDeviceAmount(subAccount.token, status.amount);
+          }
+
+          return formatDeviceAmount(account.currency, status.amount);
+        },
       },
       {
         title: "APPROVE",
