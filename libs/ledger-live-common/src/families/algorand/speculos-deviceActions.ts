@@ -76,7 +76,7 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
             case "optIn": {
               const token = findTokenById(transaction?.assetId || "");
               if (token) {
-                return formatDeviceAmount(token, status.amount);
+                return formatDeviceAmount(token, status.amount, { forceFloating: true});
               }
               break;
             }
