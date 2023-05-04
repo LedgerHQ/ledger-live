@@ -2390,6 +2390,7 @@
     },
     "earn" : "Verdienen",
     "quickActions" : "Schnellaktionen",
+    "referralProgram" : "Einen Freund empfehlen und $10 in Bitcoin erhalten",
     "banner" : {
       "redelegation" : {
         "description" : "Schon gewusst? Der Ledger-Validator erledigt das Staking zu einer günstigeren Provision als Ihr derzeitiger Validator.",
@@ -2685,6 +2686,10 @@
           "title" : "Experimentelle Explorer-API",
           "description" : "Probieren Sie eine kommende Version von Ledgers Blockchain-Explorern aus. Das Ändern dieser Einstellung kann den Kontostand und die Synchronisation sowie die Sendefunktion beeinflussen."
         },
+        "experimentalListAppsV2" : {
+          "title" : "Experimentelle Apps-Liste für My Ledger",
+          "description" : "Leistungsverbesserung für den Zugriff auf My Ledger und Inline-Flows."
+        },
         "experimentalCountervalues" : {
           "title" : "Experimentelle Gegenwerte API",
           "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
@@ -2729,7 +2734,12 @@
       "featureFlagsTabGroups" : "Gruppen",
       "firebaseProject" : "Firebase-Projekt, auf das diese Entwicklung abzielt",
       "showBannerDesc" : "Banner anzeigen, wenn Flags überschrieben werden",
-      "bannerTitle" : "Flags lokal überschrieben"
+      "bannerTitle" : "Flags lokal überschrieben",
+      "features" : {
+        "firmwareUpdate" : {
+          "headerTitle" : "Debug-Firmware-Update"
+        }
+      }
     }
   },
   "notifications" : {
@@ -2798,7 +2808,8 @@
         "addressVerified" : "Adresse verifizieren",
         "verifyAddress" : "Tippen Sie hier, um Ihre Adresse zu verifizieren",
         "adviceVerify" : "Wir empfehlen immer Ihre Adresse mit Ihrem Ledger Gerät zu verifizieren",
-        "sendWarning" : "Senden Sie nur {{currencyName}} ({{currencyTicker}}) an diese Adresse. Die Zusendung anderer Coins kann zu einem dauerhaften Verlust führen."
+        "sendWarning" : "Senden Sie nur {{currencyName}} ({{currencyTicker}}) an diese Adresse. Die Zusendung anderer Coins kann zu einem dauerhaften Verlust führen.",
+        "dashStakingWarning" : "Bitte stellen Sie sicher, dass Sie diese Adresse nicht für den Erhalt von Staking Belohnungen verwenden"
       },
       "securityVerify" : {
         "title" : "Zu Ihrer Sicherheit empfehlen wir, diese Adresse mit Ihrem Ledger-Gerät zu verifizieren.",
@@ -6082,7 +6093,8 @@
       "media" : {
         "tag" : "{{count}} NFTs"
       }
-    }
+    },
+    "referralProgram" : "10 USD"
   },
   "servicesWidget" : {
     "title" : "Services",
