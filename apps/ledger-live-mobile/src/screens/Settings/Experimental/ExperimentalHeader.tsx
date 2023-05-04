@@ -64,18 +64,14 @@ function ExperimentalHeader() {
   }));
 
   // Animated style updating the height depending on the opening animation state
-  const heightStyle = useAnimatedStyle(() => {
-    const value = interpolate(
+  const heightStyle = useAnimatedStyle(() => ({
+    height: interpolate(
       openState.value,
       [0, 1],
       [0, HEIGHT],
       Extrapolate.CLAMP,
-    );
-
-    return {
-      height: value,
-    };
-  });
+    ),
+  }));
 
   const onPressMock = useCallback(() => {
     rejections.next();
