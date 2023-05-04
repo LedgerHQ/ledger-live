@@ -29,6 +29,10 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
+  const axelar = useFeature("currencyAxelar");
+  const onomy = useFeature("currencyOnomy");
+  const quicksilver = useFeature("currencyQuicksilver");
+  const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
@@ -48,6 +52,10 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
 
   const featureFlaggedCurrencies = useMemo(
     () => ({
+      axelar,
+      onomy,
+      quicksilver,
+      persistence,
       avalanche_c_chain: avaxCChain,
       optimism,
       optimism_goerli: optimismGoerli,
@@ -82,6 +90,10 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       moonriver,
       velasEvm,
       syscoin,
+      axelar,
+      onomy,
+      persistence,
+      quicksilver,
     ],
   );
   const currencies = useMemo(() => {

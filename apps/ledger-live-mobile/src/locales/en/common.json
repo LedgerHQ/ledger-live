@@ -2753,7 +2753,8 @@
   },
   "transfer": {
     "recipient": {
-      "input": "Enter address"
+      "input": "Enter address",
+      "inputEns": "Enter address or ENS"
     },
     "send": {
       "title": "Send",
@@ -3387,7 +3388,14 @@
       "domainService": {
         "reverse": "This address is linked to {{domain}}",
         "forward": "This is a valid ENS address",
-        "supportLink": "What's an Ethereum Name Service ?"
+        "supportLink": "What's an Ethereum Name Service ?",
+        "invalidDomain": {
+          "title": "Domain not supported",
+          "description": "Only ENS with less than 30 alphanumerical characters are currently supported."
+        },
+        "noResolution": {
+          "title": "No address found for this domain"
+        }
       }
     },
     "amount": {
@@ -4616,7 +4624,8 @@
             "noResultsFound": "No validator found for <0>{{search}}</0>"
           },
           "amount": {
-            "newRedelegatedBalance": "New total for <0>{{name}}</0> after operation: <0>{{amount}}</0>"
+            "newRedelegatedBalance": "New total for <0>{{name}}</0> after operation: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used"
           },
           "verification": {
             "success": {

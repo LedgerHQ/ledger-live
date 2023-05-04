@@ -2147,7 +2147,7 @@
         "title" : "المستلم",
         "nftRecipient" : "NFT المراد إرسالها",
         "verifyAddress" : "يرجى التأكد أن العنوان متطابق مع العنوان الذي شاركه المستلم.",
-        "namingService" : {
+        "domainService" : {
           "resolve" : "هذه ENS صالحة مربوطة بالعنوان التالي:",
           "supportLink" : "ما هي Ethereum Name Service (خدمة أسماء إيثريوم)؟",
           "reverse" : "هذا العنوان مربوط بـ {{domain}}"
