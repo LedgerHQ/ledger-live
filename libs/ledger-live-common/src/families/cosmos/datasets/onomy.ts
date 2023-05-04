@@ -90,7 +90,7 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: () => ({
             errors: {},
             warnings: {},
-            amount: BigNumber("100000"),
+            amount: BigNumber("100000000000000000"),
           }),
         },
       ],
