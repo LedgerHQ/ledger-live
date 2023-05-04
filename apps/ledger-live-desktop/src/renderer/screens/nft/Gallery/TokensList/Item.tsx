@@ -62,7 +62,7 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
       nftId: id,
     }),
   );
-  const { status, metadata } = useNftMetadata(nft.contract, nft.tokenId, nft.currencyId);
+  const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
   const { nftName } = (metadata as NFTMetadata) || {};
   const show = useMemo(() => status === "loading", [status]);
   const isGrid = mode === "grid";
@@ -73,9 +73,9 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
       isOpen: true,
     });
   }, [id, account]);
-  const MaybeContext = ({ children }: any) =>
-    withContextMenu ? (
-      <NFTContextMenu key={id} nft={nft} account={account} metadata={metadata}>
+  const MaybeContext = ({ children }: { children: React.ReactNode }) =>
+    withContextMenu && nft && metadata ? (
+      <NFTContextMenu key={id} nft={nft} account={account} metadata={metadata as NFTMetadata}>
         {children}
       </NFTContextMenu>
     ) : (
@@ -93,8 +93,8 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
       >
         <Skeleton width={40} minHeight={40} full={isGrid} show={show}>
           <Media
-            metadata={metadata}
-            tokenId={nft.tokenId}
+            metadata={metadata as NFTMetadata}
+            tokenId={nft?.tokenId}
             size={40}
             full={isGrid}
             mediaFormat="preview"
@@ -116,11 +116,11 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
                 <Trans
                   i18nKey="NFT.gallery.tokensList.item.tokenId"
                   values={{
-                    tokenId: centerEllipsis(nft.tokenId),
+                    tokenId: centerEllipsis(nft?.tokenId),
                   }}
                 />
               </Text>
-              {nft.standard === "ERC1155" && isGrid && (
+              {nft?.standard === "ERC1155" && isGrid && (
                 <Text ff="Inter|Medium" color="palette.text.shade50" fontSize={3}>
                   {`x${nft.amount.toFixed()}`}
                 </Text>
@@ -130,23 +130,25 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
         </Box>
         {!isGrid ? (
           <>
-            {nft.standard === "ERC1155" && (
+            {nft?.standard === "ERC1155" && (
               <Text ff="Inter|Medium" color="palette.text.shade50" fontSize={3} mr={15}>
                 {`x${nft.amount.toFixed()}`}
               </Text>
             )}
-            <NFTContextMenu
-              key={id}
-              nft={nft}
-              account={account}
-              metadata={metadata}
-              leftClick={true}
-              onHideCollection={onHideCollection}
-            >
-              <Dots>
-                <IconDots size={20} />
-              </Dots>
-            </NFTContextMenu>
+            {nft && metadata && (
+              <NFTContextMenu
+                key={id}
+                nft={nft}
+                account={account}
+                metadata={metadata as NFTMetadata}
+                leftClick={true}
+                onHideCollection={onHideCollection}
+              >
+                <Dots>
+                  <IconDots size={20} />
+                </Dots>
+              </NFTContextMenu>
+            )}
           </>
         ) : null}
       </Wrapper>

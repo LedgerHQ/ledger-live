@@ -56,7 +56,7 @@ type Props = {
   uri: string;
   mediaType: string;
   metadata: NFTMetadata;
-  tokenId: string;
+  tokenId?: string;
   full?: boolean;
   size?: number;
   maxHeight?: number;

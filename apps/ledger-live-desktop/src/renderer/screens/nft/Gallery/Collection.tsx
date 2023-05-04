@@ -20,7 +20,7 @@ import CollectionName from "~/renderer/components/Nft/CollectionName";
 import GridListToggle from "./GridListToggle";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { State } from "~/renderer/reducers";
-import { NFT, Operation, ProtoNFT } from "@ledgerhq/types-live";
+import { NFT, NFTMetadata, Operation, ProtoNFT } from "@ledgerhq/types-live";
 const SpinnerContainer = styled.div`
   display: flex;
   flex: 1;
@@ -50,11 +50,11 @@ const Collection = () => {
   );
   const history = useHistory();
   const nfts = useMemo<(ProtoNFT | NFT)[]>(
-    () => (nftsByCollections(account.nfts, collectionAddress) as (ProtoNFT | NFT)[]) || [],
-    [account.nfts, collectionAddress],
+    () => (nftsByCollections(account?.nfts, collectionAddress) as (ProtoNFT | NFT)[]) || [],
+    [account?.nfts, collectionAddress],
   );
   const [nft] = nfts;
-  const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, account.currency.id);
+  const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, account?.currency.id);
   const show = useMemo(() => status === "loading", [status]);
   const onSend = useCallback(() => {
     dispatch(
@@ -66,8 +66,8 @@ const Collection = () => {
     );
   }, [collectionAddress, dispatch, account]);
   const onCollectionHide = useCallback(() => {
-    history.replace(`/account/${account.id}/`);
-  }, [account.id, history]);
+    history.replace(`/account/${account?.id}/`);
+  }, [account?.id, history]);
 
   // NB To be determined if this filter is good enough for what we expect.
   const filterOperation = (op: Operation) =>
@@ -88,14 +88,19 @@ const Collection = () => {
   // Should redirect to the account page if there is not NFT anymore in the page.
   useEffect(() => {
     if (slicedNfts.length <= 0) {
-      history.push(`/account/${account.id}/`);
+      history.push(`/account/${account?.id}/`);
     }
-  }, [account.id, history, slicedNfts.length]);
+  }, [account?.id, history, slicedNfts.length]);
   return (
     <>
       <Box horizontal alignItems="center" mb={6}>
         <Skeleton width={40} minHeight={40} show={show}>
-          <Media size={40} metadata={metadata} tokenId={nft?.tokenId} mediaFormat="preview" />
+          <Media
+            size={40}
+            metadata={metadata as NFTMetadata}
+            tokenId={nft?.tokenId}
+            mediaFormat="preview"
+          />
         </Skeleton>
         <Box flex={1} ml={3}>
           <Skeleton width={93} barHeight={6} minHeight={24} show={show}>
@@ -119,7 +124,9 @@ const Collection = () => {
         </Button>
       </Box>
       <GridListToggle />
-      <TokensList account={account} nfts={slicedNfts} onHideCollection={onCollectionHide} />
+      {account && (
+        <TokensList account={account} nfts={slicedNfts} onHideCollection={onCollectionHide} />
+      )}
       {nfts.length > maxVisibleNTFs && (
         <SpinnerContainer>
           <SpinnerBackground>

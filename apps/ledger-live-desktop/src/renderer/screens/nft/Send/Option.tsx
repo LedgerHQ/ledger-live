@@ -22,7 +22,12 @@ const Option = ({ data: { tokenId, amount, contract, standard, currencyId } }: O
   return (
     <Box horizontal>
       <Skeleton width={30} minHeight={30} show={show}>
-        <Media metadata={metadata} tokenId={tokenId} size={30} mediaFormat="preview" />
+        <Media
+          metadata={metadata as NFTMetadata}
+          tokenId={tokenId}
+          size={30}
+          mediaFormat="preview"
+        />
       </Skeleton>
       <Box horizontal alignItems="center" justifyContent="space-between" flex={1}>
         <Box ml={3}>

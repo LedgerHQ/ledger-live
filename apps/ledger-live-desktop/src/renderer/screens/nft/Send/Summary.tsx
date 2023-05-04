@@ -21,8 +21,8 @@ const Summary = ({ transaction }: Props) => {
   const [quantity] = transaction.quantities;
   // @ts-expect-error error from type in families
   const contract = transaction.collection;
-  const nft = allNfts.find(nft => nft.tokenId === tokenId && nft.contract === contract);
-  const { status, metadata } = useNftMetadata(nft.contract, nft.tokenId, nft.currencyId);
+  const nft = allNfts.find(nft => nft?.tokenId === tokenId && nft?.contract === contract);
+  const { status, metadata } = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
   const { nftName } = (metadata as NFTMetadata) || {};
   const show = useMemo(() => status === "loading", [status]);
   return (
@@ -41,16 +41,21 @@ const Summary = ({ transaction }: Props) => {
             <Skeleton width={42} minHeight={18} barHeight={6} show={show}>
               <Text ff="Inter|Medium" color="palette.text.shade60" fontSize={3}>
                 {"ID:"}
-                {centerEllipsis(nft.tokenId)}
+                {centerEllipsis(nft?.tokenId)}
               </Text>
             </Skeleton>
           </Box>
           <Skeleton width={48} minHeight={48} show={show}>
-            <Media metadata={metadata} tokenId={tokenId} size={48} mediaFormat="preview" />
+            <Media
+              metadata={metadata as NFTMetadata}
+              tokenId={tokenId}
+              size={48}
+              mediaFormat="preview"
+            />
           </Skeleton>
         </Box>
       </Box>
-      {nft.standard === "ERC1155" ? (
+      {nft?.standard === "ERC1155" ? (
         <Box horizontal justifyContent="space-between" mb={2}>
           <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
             <Trans i18nKey="send.steps.details.nftQuantity" />

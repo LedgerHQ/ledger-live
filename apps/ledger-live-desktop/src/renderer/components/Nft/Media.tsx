@@ -6,7 +6,7 @@ import Image from "./Image";
 import Video from "./Video";
 type Props = {
   metadata: NFTMetadata;
-  tokenId: string;
+  tokenId?: string;
   mediaFormat?: keyof NFTMedias;
   full?: boolean;
   size?: number;
@@ -14,7 +14,7 @@ type Props = {
   maxWidth?: number;
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
   square?: boolean;
-  onClick?: (e: Event) => void;
+  onClick?: (e: React.MouseEvent) => void;
 };
 type State = {
   useFallback: boolean;

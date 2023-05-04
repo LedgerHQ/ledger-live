@@ -6,15 +6,15 @@ import Fallback from "~/renderer/images/nftFallback.jpg";
 
 type Props = {
   metadata: NFTMetadata;
-  tokenId: string;
+  tokenId?: string;
   full?: boolean;
 }; // TODO Figure out if we really need this once we know who creates/processes the media.
 
-function randomHueForTokenId(tokenId: string) {
+function randomHueForTokenId(tokenId = "") {
   return parseInt(tokenId.substr(-8)) % 360;
 }
 
-const StyledPlaceholder = styled.div<Props>`
+const StyledPlaceholder = styled.div<{ tokenId?: string; full?: boolean; metadata?: NFTMetadata }>`
   --hue: ${p => randomHueForTokenId(p.tokenId)};
   background-image: url('${Fallback}');
   background-size: contain;
