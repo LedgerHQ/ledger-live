@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export function RecoverHowTo() {
   const theme = useTheme();
@@ -57,7 +58,7 @@ export function RecoverHowTo() {
         </Link>
       </Box>
       <Popin isOpen={isDrawerOpen} style={{ width: "480px", height: "unset" }}>
-        <Popin.Header onClose={() => setIsDrawerOpen(false)}></Popin.Header>
+        <Popin.Header onClose={() => setIsDrawerOpen(false)}>{null}</Popin.Header>
         <Popin.Body>
           <Text variant="h4Inter">
             <Trans i18nKey="onboarding.screens.tutorial.screens.recoverHowTo.help.modal.title" />
@@ -89,7 +90,13 @@ const PinCodeHowToAnimation = () => {
 
   return (
     <AnimationContainer>
-      <Animation animation={getDeviceAnimation(deviceModelId, "light", "recoverWithProtect")} />
+      <Animation
+        animation={getDeviceAnimation(
+          deviceModelId || DeviceModelId.nanoS,
+          "light",
+          "recoverWithProtect",
+        )}
+      />
     </AnimationContainer>
   );
 };

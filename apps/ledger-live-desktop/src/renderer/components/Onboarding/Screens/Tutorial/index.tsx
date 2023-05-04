@@ -643,7 +643,10 @@ export default function Tutorial({ useCase }: Props) {
     history.push(targetPath);
   }
 
-  function handleNextInDrawerDeeplink(closeCurrentDrawer: (bool) => void, targetPath: string) {
+  function handleNextInDrawerDeeplink(
+    closeCurrentDrawer: (bool: boolean) => void,
+    targetPath: string,
+  ) {
     closeCurrentDrawer(false);
     openURL(targetPath);
   }

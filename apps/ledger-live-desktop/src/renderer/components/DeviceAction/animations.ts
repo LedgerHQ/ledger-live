@@ -70,7 +70,9 @@ import NANO_X_DARK_firmwareUpdating from "~/renderer/animations/nanoX/2FirmwareU
 import NANO_X_LIGHT_installLoading from "~/renderer/animations/nanoX/8InstallLoading/light.json";
 // @ts-ignore
 import NANO_X_DARK_installLoading from "~/renderer/animations/nanoX/8InstallLoading/dark.json";
+// @ts-ignore
 import NANO_X_LIGHT_recoverWithProtect from "~/renderer/animations/nanoX/RecoverWithProtect/light.json";
+// @ts-ignore
 import NANO_X_DARK_recoverWithProtect from "~/renderer/animations/nanoX/RecoverWithProtect/dark.json";
 // NANO SP
 // @ts-ignore
@@ -200,6 +202,10 @@ const nanoS: DeviceAnimations = {
     light: STAX_confirmLockscreen,
     dark: STAX_confirmLockscreen,
   },
+  recoverWithProtect: {
+    light: NANO_X_LIGHT_recoverWithProtect,
+    dark: NANO_X_DARK_recoverWithProtect,
+  },
 };
 
 const nanoX: DeviceAnimations = {
@@ -290,6 +296,10 @@ const nanoSP: DeviceAnimations = {
     light: STAX_confirmLockscreen,
     dark: STAX_confirmLockscreen,
   },
+  recoverWithProtect: {
+    light: NANO_X_LIGHT_recoverWithProtect,
+    dark: NANO_X_DARK_recoverWithProtect,
+  },
 };
 
 const stax: DeviceAnimations = {
@@ -332,6 +342,10 @@ const stax: DeviceAnimations = {
   confirmLockscreen: {
     light: STAX_confirmLockscreen,
     dark: STAX_confirmLockscreen,
+  },
+  recoverWithProtect: {
+    light: NANO_X_LIGHT_recoverWithProtect,
+    dark: NANO_X_DARK_recoverWithProtect,
   },
 };
 
@@ -376,6 +390,10 @@ const blue: DeviceAnimations = {
   confirmLockscreen: {
     light: STAX_confirmLockscreen,
     dark: STAX_confirmLockscreen,
+  },
+  recoverWithProtect: {
+    light: NANO_X_LIGHT_recoverWithProtect,
+    dark: NANO_X_DARK_recoverWithProtect,
   },
 };
 
