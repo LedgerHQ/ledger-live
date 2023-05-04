@@ -2390,6 +2390,7 @@
     },
     "earn" : "Gana",
     "quickActions" : "Acciones rápidas",
+    "referralProgram" : "Recomiéndanos a un amigo y recibe $10 USD en Bitcoin",
     "banner" : {
       "redelegation" : {
         "description" : "Por si no lo sabías, el validador de Ledger pone en participación con una comisión inferior a la del validador que estás utilizando.",
@@ -2685,6 +2686,10 @@
           "title" : "API de Experimental Explorers",
           "description" : "Prueba la siguiente versión de los exploradores de cadena de bloques de Ledger. La modificación de esta configuración puede afectar el saldo de la cuenta y la sincronización, como así también la opción de envío."
         },
+        "experimentalListAppsV2" : {
+          "title" : "Aplicaciones experimentales de lista para Mi Ledger",
+          "description" : "Mejora de rendimiento en el acceso y los flujos en línea de Mi Ledger."
+        },
         "experimentalCountervalues" : {
           "title" : "API experimental de contrapartes",
           "description" : "Puede provocar que las contrapartes que se muestran de tus cuentas no sean las correctas."
@@ -2729,7 +2734,12 @@
       "featureFlagsTabGroups" : "Grupos",
       "firebaseProject" : "Proyecto de Firebase al que se refiere esta compilación:",
       "showBannerDesc" : "Mostrar banner cuando estén anuladas las señales de alarma",
-      "bannerTitle" : "Señales de alarma anuladas localmente"
+      "bannerTitle" : "Señales de alarma anuladas localmente",
+      "features" : {
+        "firmwareUpdate" : {
+          "headerTitle" : "Actualización del firmware de depuración"
+        }
+      }
     }
   },
   "notifications" : {
@@ -2798,7 +2808,8 @@
         "addressVerified" : "Dirección verificada",
         "verifyAddress" : "Toca aquí para verificar tu dirección",
         "adviceVerify" : "Siempre recomendamos verificar la dirección con el dispositivo Ledger.",
-        "sendWarning" : "Envía solamente {{currencyName}} ({{currencyTicker}}) a esta dirección. El envío de cualquier otra moneda puede suponer una pérdida permanente."
+        "sendWarning" : "Envía solamente {{currencyName}} ({{currencyTicker}}) a esta dirección. El envío de cualquier otra moneda puede suponer una pérdida permanente.",
+        "dashStakingWarning" : "Asegúrate de no utilizar esta dirección para recibir recompensas de participación"
       },
       "securityVerify" : {
         "title" : "Por motivos de seguridad, te recomendamos que verifiques esta dirección con tu dispositivo Ledger.",
@@ -6082,7 +6093,8 @@
       "media" : {
         "tag" : "{{count}} NFTs"
       }
-    }
+    },
+    "referralProgram" : "$10 USD"
   },
   "servicesWidget" : {
     "title" : "Servicios",
