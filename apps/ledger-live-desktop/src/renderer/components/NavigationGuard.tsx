@@ -14,7 +14,10 @@ type Props = {
   shouldBlockNavigation?: PromptProps["message"];
   /** confirm modal analytics name */
   analyticsName?: string;
-};
+} & Omit<
+  React.ComponentProps<typeof ConfirmModal>,
+  "analyticsName" | "isOpened" | "onReject" | "onConfirm"
+>;
 
 type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 

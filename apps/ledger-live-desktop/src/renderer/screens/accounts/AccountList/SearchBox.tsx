@@ -5,7 +5,7 @@ import Box from "~/renderer/components/Box";
 import SearchIcon from "~/renderer/icons/Search";
 
 type Props = {
-  onTextChange: (evt: React.SyntheticEvent<HTMLInputElement>) => void;
+  onTextChange: (evt: React.ChangeEvent<HTMLInputElement>) => void;
   search?: string;
   placeholder?: string;
   autoFocus?: boolean;
@@ -62,4 +62,4 @@ const SearchBox = forwardRef<HTMLInputElement, Props>(function Search(
     </>
   );
 });
-export default React.memo<Props>(SearchBox);
+export default React.memo(SearchBox) as typeof SearchBox; // to preserve the ref forwarding prop

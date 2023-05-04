@@ -47,7 +47,7 @@ type Props = {
   children: React.ReactNode;
   timing?: number;
   in?: boolean;
-};
+} & React.ComponentProps<typeof FadeInOutBox>;
 const UpdateAllApps = ({ timing = 400, children, in: _in, ...rest }: Props) => {
   return (
     <Transition

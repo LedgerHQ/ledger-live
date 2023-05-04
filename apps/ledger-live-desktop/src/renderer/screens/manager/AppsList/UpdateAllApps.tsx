@@ -53,7 +53,7 @@ type Props = {
 };
 const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete }: Props) => {
   const { search } = useLocation();
-  const [open, setIsOpen] = useState();
+  const [open, setIsOpen] = useState<boolean | undefined>();
   const { updateAllQueue } = state;
   useEffect(() => {
     const params = new URLSearchParams(search || "");

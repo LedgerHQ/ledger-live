@@ -18,6 +18,7 @@ import Box from "~/renderer/components/Box";
 import IconChevronRight from "~/renderer/icons/ChevronRight";
 import { ModalStatus } from "~/renderer/screens/manager/FirmwareUpdate/types";
 import getCleanVersion from "~/renderer/screens/manager/FirmwareUpdate/getCleanVersion";
+
 type Props = {
   t: TFunction;
   status: ModalStatus;
@@ -29,11 +30,16 @@ type Props = {
   onClose: () => void;
   modelId: DeviceModelId;
 };
-type State = any;
+
+type State = {
+  seedReady: boolean;
+};
+
 const NotesWrapper = styled(Box)`
   margin-top: 8px;
   position: relative;
 `;
+
 class DisclaimerModal extends PureComponent<Props, State> {
   state = {
     seedReady: false,
