@@ -53,12 +53,14 @@ export const useDefaultSlides = () => {
 
   const logSlideImpression = useCallback(
     index => {
-      const slide = portfolioCards[index];
-      if (slide?.id) {
-        const currentCard = cachedContentCards.find(card => card.id === slide.id);
+      if (portfolioCards && portfolioCards.length > index) {
+        const slide = portfolioCards[index];
+        if (slide?.id) {
+          const currentCard = cachedContentCards.find(card => card.id === slide.id);
 
-        if (currentCard) {
-          braze.logContentCardImpressions([currentCard]);
+          if (currentCard) {
+            braze.logContentCardImpressions([currentCard]);
+          }
         }
       }
     },
