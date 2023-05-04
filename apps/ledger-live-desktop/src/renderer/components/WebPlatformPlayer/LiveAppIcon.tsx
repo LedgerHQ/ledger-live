@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 type Props = {
   size: number;
   disabled?: boolean;
-  icon?: string;
+  icon?: string | null;
   name: string;
 };
 export const IconWrapper = styled.div<{

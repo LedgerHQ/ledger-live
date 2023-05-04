@@ -3,7 +3,7 @@ import FTXKYC from "./FTX";
 import WyreKYC from "./Wyre";
 
 // Component to display a partner KYC flow
-const KYC = ({ provider, onClose }: { provider?: string | undefined; onClose: Function }) => {
+const KYC = ({ provider, onClose }: { provider?: string | undefined; onClose: () => void }) => {
   switch (provider) {
     case "wyre":
       return <WyreKYC onClose={onClose} />;
