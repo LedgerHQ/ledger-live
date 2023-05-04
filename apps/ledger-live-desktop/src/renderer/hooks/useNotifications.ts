@@ -89,6 +89,10 @@ export function useNotifications() {
       const currentCard = cachedNotifications.find(c => c.id === card.id);
 
       if (currentCard) {
+        // For some reason braze won't log the click event if the card url is empty
+        // Setting it as the card id just to have a dummy non empty value
+        // @ts-ignore
+        currentCard.url = currentCard.id;
         braze.logContentCardClick(currentCard);
       }
 

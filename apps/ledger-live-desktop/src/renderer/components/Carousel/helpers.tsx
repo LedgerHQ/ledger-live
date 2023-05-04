@@ -1,9 +1,7 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import map from "lodash/map";
 import { Trans } from "react-i18next";
-import { getEnv } from "@ledgerhq/live-common/env";
 import Slide from "./Slide";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import ReferralProgramBgImage from "./banners/ReferralProgram/images/bg.png";
 import ReferralProgramCoinImage from "./banners/ReferralProgram/images/coin.png";
 import BuyCryptoBgImage from "./banners/BuyCrypto/images/bg.png";
@@ -197,52 +195,50 @@ const swapSlide = {
 };
 
 export const useDefaultSlides = () => {
-  const referralProgramConfig = useFeature("referralProgramDesktopBanner");
+  const [cachedContentCards, setCachedContentCards] = useState<braze.Card[]>([]);
   const portfolioCards = useSelector(portfolioContentCardSelector);
 
-  const slidesData = useMemo(() => {
-    if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
-      return [
-        { ...referralProgramSlide, path: referralProgramConfig?.params?.path },
-        ...portfolioCards,
-      ];
-    } else {
-      return portfolioCards;
-    }
-  }, [referralProgramConfig, portfolioCards]);
+  useEffect(() => {
+    const cards = braze.getCachedContentCards().cards;
+    setCachedContentCards(cards);
+  }, []);
 
   const logSlideImpression = useCallback(
     index => {
-      const slide = slidesData[index];
+      const slide = portfolioCards[index];
       if (slide?.id) {
-        const currentCard = portfolioCards.find(card => card.id === slide.id);
+        const currentCard = cachedContentCards.find(card => card.id === slide.id);
 
         if (currentCard) {
-          braze.logContentCardImpressions([currentCard.brazeCard]);
+          braze.logContentCardImpressions([currentCard]);
         }
       }
     },
-    [portfolioCards, slidesData],
+    [portfolioCards, cachedContentCards],
   );
 
   const logSlideClick = useCallback(
     cardId => {
-      const currentCard = portfolioCards.find(card => card.id === cardId);
+      const currentCard = cachedContentCards.find(card => card.id === cardId);
 
       if (currentCard) {
-        braze.logContentCardClick(currentCard.brazeCard);
+        // For some reason braze won't log the click event if the card url is empty
+        // Setting it as the card id just to have a dummy non empty value
+        // @ts-ignore
+        currentCard.url = currentCard.id;
+        braze.logContentCardClick(currentCard);
       }
     },
-    [portfolioCards],
+    [portfolioCards, cachedContentCards],
   );
   const slides = useMemo(
     () =>
-      map(getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : slidesData, (slide: Props) => ({
+    map(portfolioCards, (slide: Props) => ({
         id: slide.name,
         // eslint-disable-next-line react/display-name
         Component: () => <Slide {...slide} onClickOnSlide={logSlideClick} />,
       })),
-    [slidesData, logSlideClick],
+    [portfolioCards, logSlideClick],
   );
 
   return {
