@@ -2,7 +2,7 @@ import React, { useMemo, useCallback, memo } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import { Account } from "@ledgerhq/types-live";
+import { Account, NFTMetadata } from "@ledgerhq/types-live";
 import { getNFTById } from "~/renderer/reducers/accounts";
 import Box, { Card } from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -14,6 +14,7 @@ import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import NFTContextMenu from "~/renderer/components/ContextMenu/NFTContextMenu";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { State } from "~/renderer/reducers";
 const Wrapper = styled(Card)`
   &.disabled {
     pointer-events: none;
@@ -56,13 +57,13 @@ type Props = {
   onHideCollection?: () => void;
 };
 const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection }: Props) => {
-  const nft = useSelector(state =>
+  const nft = useSelector((state: State) =>
     getNFTById(state, {
       nftId: id,
     }),
   );
   const { status, metadata } = useNftMetadata(nft.contract, nft.tokenId, nft.currencyId);
-  const { nftName } = metadata || {};
+  const { nftName } = (metadata as NFTMetadata) || {};
   const show = useMemo(() => status === "loading", [status]);
   const isGrid = mode === "grid";
   const onItemClick = useCallback(() => {
