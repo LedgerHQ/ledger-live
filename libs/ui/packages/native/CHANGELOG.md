@@ -1,5 +1,22 @@
 # @ledgerhq/native-ui
 
+## 0.19.0-next.0
+
+### Minor Changes
+
+- [#3253](https://github.com/LedgerHQ/ledger-live/pull/3253) [`f1ed1d3bdd`](https://github.com/LedgerHQ/ledger-live/commit/f1ed1d3bddf25ad74cf04b8767ca2170fdbf75c8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Alert component: new design, new types "secondary" and "success", removed renderContent prop
+
+### Patch Changes
+
+- [#3118](https://github.com/LedgerHQ/ledger-live/pull/3118) [`45288a1d80`](https://github.com/LedgerHQ/ledger-live/commit/45288a1d808866debff3f51c0382cbf71fac4c35) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - feat: refactor/homogenise headers
+
+  Homogenize headers in navigators and in the main screens accessible from the Main navigator tab bar
+  Prevent blocking state due to already paired device in Stax onboarding
+
+- Updated dependencies [[`c8920896d7`](https://github.com/LedgerHQ/ledger-live/commit/c8920896d7c96cab88f95ce705dc55aac5b345bc), [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949)]:
+  - @ledgerhq/ui-shared@0.2.0-next.0
+  - @ledgerhq/crypto-icons-ui@0.3.0-next.0
+
 ## 0.18.1
 
 ### Patch Changes
