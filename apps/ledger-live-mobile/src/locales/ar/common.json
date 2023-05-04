@@ -2390,6 +2390,7 @@
     },
     "earn" : "اكسب",
     "quickActions" : "إجراءات سريعة",
+    "referralProgram" : "قم بترشيح صديق واحصل على 10$ من بيتكوين",
     "banner" : {
       "redelegation" : {
         "description" : "في حالة أنك لم تكن تعلم، مدقق Ledger يقوم بالتكديس بعمولة منخفضة عن المدقق الذي تستخدمه.",
@@ -2685,6 +2686,10 @@
           "title" : "API للمستكشفين التجريبيين",
           "description" : "جرب نسخة قادمة من متصفح سلسلة كتل Ledger. تغيير هذا الإعداد قد يؤثر على رصيد الحساب ومزامنته وكذلك ميزة الإرسال."
         },
+        "experimentalListAppsV2" : {
+          "title" : "الإدراج التجريبي للتطبيقات في My Ledger",
+          "description" : "تحسين الأداء لوصول My Ledger والتدفقات المُضمَّنة."
+        },
         "experimentalCountervalues" : {
           "title" : "API للقيم المقابلة التجريبية",
           "description" : "قد يتسبب هذا في أن تكون القيم المقابلة المعروضة لحساباتك غير صحيحة."
@@ -2729,7 +2734,12 @@
       "featureFlagsTabGroups" : "المجموعات",
       "firebaseProject" : "مشروع Firebase الذي يستهدفه هذا الإصدار:",
       "showBannerDesc" : "عرض الشريط عندما يتم تجاوز العلامات",
-      "bannerTitle" : "تم تجاوز العلامات محلياً"
+      "bannerTitle" : "تم تجاوز العلامات محلياً",
+      "features" : {
+        "firmwareUpdate" : {
+          "headerTitle" : "تصحيح أخطاء تحديث البرنامج الثابت"
+        }
+      }
     }
   },
   "notifications" : {
@@ -2798,7 +2808,8 @@
         "addressVerified" : "تم تأكيد العنوان",
         "verifyAddress" : "انقر هنا للتحقق من عنوانك",
         "adviceVerify" : "نوصي دائماً بالتحقق من عنوانك باستخدام جهازك Ledger",
-        "sendWarning" : "قم بإرسال فقط {{currencyName}} ({{currencyTicker}}) إلى هذا العنوان. إرسال أي عملات أخرى قد يُؤدي إلى فقدانها تماماً."
+        "sendWarning" : "قم بإرسال فقط {{currencyName}} ({{currencyTicker}}) إلى هذا العنوان. إرسال أي عملات أخرى قد يُؤدي إلى فقدانها تماماً.",
+        "dashStakingWarning" : "يُرجى التأكد من أنك لا تستخدم هذا العنوان لتلقي مكافآت التكديس"
       },
       "securityVerify" : {
         "title" : "لضمان الأمان، نوصي دائماً بالتحقق من هذا العنوان باستخدام جهازك Ledger.",
@@ -6082,7 +6093,8 @@
       "media" : {
         "tag" : "{{count}} رمز غير قابل للاستبدال"
       }
-    }
+    },
+    "referralProgram" : "$10"
   },
   "servicesWidget" : {
     "title" : "الخدمات",
