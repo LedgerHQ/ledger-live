@@ -6,6 +6,7 @@ import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
+import { NFTMetadata } from "@ledgerhq/types-live";
 type OptionProps = {
   data: {
     tokenId: string;
@@ -27,7 +28,7 @@ const Option = ({ data: { tokenId, amount, contract, standard, currencyId } }: O
         <Box ml={3}>
           <Skeleton width={142} minHeight={15} barHeight={8} show={show}>
             <Text ff="Inter|Medium" color="palette.text.shade100" fontSize={2}>
-              {metadata?.nftName || "-"}
+              {(metadata as NFTMetadata)?.nftName || "-"}
             </Text>
           </Skeleton>
           <Skeleton width={80} minHeight={15} barHeight={8} show={show}>
