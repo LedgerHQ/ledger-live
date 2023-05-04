@@ -1,5 +1,17 @@
 # @ledgerhq/domain-service
 
+## 1.1.0-nightly.3
+
+### Minor Changes
+
+- [#3312](https://github.com/LedgerHQ/ledger-live/pull/3312) [`a0a4e2eb0e`](https://github.com/LedgerHQ/ledger-live/commit/a0a4e2eb0e84f5679ba5994f8d375054c8466c7e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating domain validity regarding security measures on the nano app & Implementation of a better error system providing a better understanding at what went wrong
+
+### Patch Changes
+
+- Updated dependencies [[`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949)]:
+  - @ledgerhq/cryptoassets@9.5.0-nightly.1
+  - @ledgerhq/types-live@6.33.0-nightly.2
+
 ## 1.0.2-nightly.2
 
 ### Patch Changes

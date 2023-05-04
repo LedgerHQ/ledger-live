@@ -1,5 +1,12 @@
 # @ledgerhq/live-portfolio
 
+## 0.0.4-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949)]:
+  - @ledgerhq/types-live@6.33.0-nightly.2
+
 ## 0.0.4-nightly.1
 
 ### Patch Changes

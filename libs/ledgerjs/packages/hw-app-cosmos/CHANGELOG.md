@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-cosmos
 
+## 6.28.0-nightly.1
+
+### Minor Changes
+
+- [#2809](https://github.com/LedgerHQ/ledger-live/pull/2809) [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Quicksilver, Persistence, Onomy, Axelar to Cosmos family
+
 ## 6.27.14-nightly.0
 
 ### Patch Changes

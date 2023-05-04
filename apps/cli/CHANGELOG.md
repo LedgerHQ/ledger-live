@@ -1,5 +1,18 @@
 # @ledgerhq/live-cli
 
+## 22.8.0-nightly.3
+
+### Minor Changes
+
+- [#2809](https://github.com/LedgerHQ/ledger-live/pull/2809) [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Quicksilver, Persistence, Onomy, Axelar to Cosmos family
+
+### Patch Changes
+
+- Updated dependencies [[`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949)]:
+  - @ledgerhq/cryptoassets@9.5.0-nightly.1
+  - @ledgerhq/live-common@29.5.0-nightly.3
+  - @ledgerhq/coin-framework@0.3.2-nightly.3
+
 ## 22.8.0-nightly.2
 
 ### Minor Changes
