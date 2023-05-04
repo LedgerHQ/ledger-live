@@ -118,19 +118,9 @@
       "title" : "Bluetooth désactivé",
       "description" : "Activez le Bluetooth dans les paramètres de votre téléphone (état {{state}})."
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "Les mises à jour du micrologiciel sont uniquement prises en charge pour les connexions filaires."
-    },
-    "BtcUnmatchedApp" : {
-      "title" : "Mauvaise app",
-      "description" : "Ouvrez l’app {{managerAppName}} sur votre appareil."
-    },
     "CantOpenDevice" : {
       "title" : "Échec de la connexion",
       "description" : "Votre appareil Ledger doit être déverrouillé et à portée pour utiliser le Bluetooth."
-    },
-    "CantScanQRCode" : {
-      "title" : "Échec du scan de ce code QR. Cette adresse ne prend pas en charge la vérification automatique."
     },
     "ConnectAppTimeout" : {
       "title" : "Aucun appareil trouvé",
@@ -327,11 +317,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Image refusée sur votre Ledger Stax",
-      "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
+      "description" : "Si cette image ne vous plaît pas, choisissez une autre image.",
+      "primaryCTA" : "Télécharger une autre image"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Image refusée sur votre Ledger Stax",
-      "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
+      "description" : "Si cette image ne vous plaît pas, choisissez une autre image.",
+      "primaryCTA" : "Télécharger une autre image"
     },
     "InvalidAddress" : {
       "title" : "Adresse {{currencyName}} invalide"
@@ -480,6 +472,10 @@
       "title" : "Mots de passe non identiques",
       "description" : "Veuillez réessayer."
     },
+    "PeerRemovedPairing" : {
+      "title" : "Votre {{ productName }} doit être à nouveau appairé.",
+      "description" : "Accédez aux Paramètres Bluetooth de votre téléphone et dissociez votre {{ productName }}. Ensuite, revenez dans Ledger Live et réessayez."
+    },
     "SelectExchangesLoadError" : {
       "title" : "Chargement impossible",
       "description" : "Chargement des échanges impossible"
@@ -556,7 +552,8 @@
     },
     "UpdateYourApp" : {
       "title" : "Mise à jour de l’app nécessaire",
-      "description" : "Merci de désinstaller puis réinstaller l’app {{managerAppName}} dans le Gestionnaire."
+      "description" : "Merci de désinstaller puis réinstaller l’app {{managerAppName}} dans le Gestionnaire.",
+      "primaryCTA" : "Ouvrir My Ledger"
     },
     "UserRefusedAllowManager" : {
       "title" : "Gestionnaire désactivé sur l’appareil",
@@ -675,7 +672,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
+      "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger.",
+      "primaryCTA" : "Réessayer"
     },
     "SolanaAccountNotFunded" : {
       "title" : "Pas de fonds sur le compte"
@@ -1840,7 +1838,8 @@
           "title" : "Appareil verrouillé",
           "subtitle" : "Déverrouillez votre {{ productName }} et réessayez."
         },
-        "retryCta" : "Réessayer"
+        "retryCta" : "Réessayer",
+        "openSettingsCta" : "Accéder aux Paramètres Bluetooth"
       }
     }
   },
@@ -1920,7 +1919,7 @@
       "restoreChoiceSRPTitle" : "Restaurer avec une phrase de récupération secrète",
       "restoreChoiceSRPDescription" : "Pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.",
       "restoreChoiceRecoverTitle" : "Restaurer avec Ledger Recover",
-      "restoreChoiceRecoverDescription" : "Restaurez la sauvegarde de votre phrase de récupération en vous connectant à votre compte Ledger et en confirmant votre identité."
+      "restoreChoiceRecoverDescription" : "Restaurez la sauvegarde pour votre phrase de récupération en vous connectant à votre compte Ledger et en confirmant votre identité."
     },
     "softwareChecksSteps" : {
       "title" : "Vérifications du matériel et du logiciel",
@@ -2390,6 +2389,7 @@
     },
     "earn" : "Gagner",
     "quickActions" : "Raccourcis",
+    "referralProgram" : "Parrainez un ami et gagnez 10 $ US en bitcoins",
     "banner" : {
       "redelegation" : {
         "description" : "Bon à savoir : le validateur Ledger offre des frais de staking inférieurs à ceux prélevés par votre validateur actuel.",
@@ -2685,6 +2685,10 @@
           "title" : "API Explorateurs Expérimentales",
           "description" : "Testez une version en développement des explorateurs de blockchain de Ledger. Modifier ce paramètre peut affecter le solde des comptes, la synchronisation et la fonctionnalité Envoyer."
         },
+        "experimentalListAppsV2" : {
+          "title" : "Listage expérimental des apps pour My Ledger",
+          "description" : "Améliorez les performances de l’accès à My Ledger et des flux inline."
+        },
         "experimentalCountervalues" : {
           "title" : "API Devises de contrepartie expérimentales",
           "description" : "Avec cette fonctionnalité, les devises de contrepartie affichées dans vos comptes peuvent devenir incorrectes."
@@ -2729,7 +2733,12 @@
       "featureFlagsTabGroups" : "Groupes",
       "firebaseProject" : "Projet Firebase ciblé par ce build :",
       "showBannerDesc" : "Affichez une bannière lorsque les indicateurs sont remplacés.",
-      "bannerTitle" : "Indicateurs remplacés localement"
+      "bannerTitle" : "Indicateurs remplacés localement",
+      "features" : {
+        "firmwareUpdate" : {
+          "headerTitle" : "Debug de la mise à jour du micrologiciel"
+        }
+      }
     }
   },
   "notifications" : {
@@ -2742,7 +2751,8 @@
   },
   "transfer" : {
     "recipient" : {
-      "input" : "Entrer l’adresse"
+      "input" : "Entrer l’adresse",
+      "inputEns" : "Entrez une adresse ou un ENS"
     },
     "send" : {
       "title" : "Envoyer",
@@ -2798,7 +2808,8 @@
         "addressVerified" : "Adresse vérifiée",
         "verifyAddress" : "Appuyez ici pour vérifier votre adresse",
         "adviceVerify" : "Nous vous recommandons de toujours vérifier votre adresse avec votre appareil Ledger.",
-        "sendWarning" : "Envoyez uniquement des {{currencyName}} ({{currencyTicker}}) à cette adresse. Toute autre crypto risque d’être définitivement perdue."
+        "sendWarning" : "Envoyez uniquement des {{currencyName}} ({{currencyTicker}}) à cette adresse. Toute autre crypto risque d’être définitivement perdue.",
+        "dashStakingWarning" : "N’utilisez pas cette adresse pour recevoir vos récompenses de staking."
       },
       "securityVerify" : {
         "title" : "Pour une sécurité optimale, nous vous recommandons de vérifier cette adresse avec votre appareil Ledger.",
@@ -3375,7 +3386,14 @@
       "domainService" : {
         "reverse" : "Cette adresse est associée à {{domain}}",
         "forward" : "Adresse ENS valide",
-        "supportLink" : "Qu’est-ce qu’un Ethereum Name Service (ENS) ?"
+        "supportLink" : "Qu’est-ce qu’un Ethereum Name Service (ENS) ?",
+        "invalidDomain" : {
+          "title" : "Domaine non pris en charge",
+          "description" : "Seuls les ENS de moins de 30 caractères alphanumériques sont actuellement pris en charge."
+        },
+        "noResolution" : {
+          "title" : "Aucune adresse trouvée pour ce domaine"
+        }
       }
     },
     "amount" : {
@@ -4606,7 +4624,8 @@
             "noResultsFound" : "Aucun validateur trouvé pour <0>{{search}}</0>"
           },
           "amount" : {
-            "newRedelegatedBalance" : "Nouveau total pour <0>{{name}}</0> après l’opération : <0>{{amount}}</0>"
+            "newRedelegatedBalance" : "Nouveau total pour <0>{{name}}</0> après l’opération : <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tous les actifs sont utilisés."
           },
           "verification" : {
             "success" : {
@@ -5711,22 +5730,7 @@
       }
     },
     "status" : {
-      "title" : "Un problème pourrait nécessiter votre attention",
-      "title_plural" : "Des problèmes pourraient nécessiter votre attention",
-      "desc" : {
-        "0" : "Ils sont en cours d’examen et seront résolus sous peu.",
-        "1" : "Si vous rencontrez l’un de ces problèmes, contactez l’<0>Assistance Ledger</0>."
-      },
-      "cta" : {
-        "ok" : "Compris"
-      },
-      "ok" : {
-        "title" : "L’app Ledger Live fonctionne correctement.",
-        "desc" : "<0>Des difficultés ? Visitez notre </0><1>page d’aide</1>"
-      },
-      "error" : {
-        "title" : "L’app Ledger Live rencontre des problèmes."
-      }
+      "header" : "Statut"
     }
   },
   "browseWeb3" : {
@@ -6082,7 +6086,8 @@
       "media" : {
         "tag" : "{{count}} NFT"
       }
-    }
+    },
+    "referralProgram" : "10 $ US"
   },
   "servicesWidget" : {
     "title" : "Services",
