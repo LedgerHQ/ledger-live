@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "절대",
+    "new" : "신규",
     "apply" : "적용",
     "done" : "완료",
     "confirm" : "확인",
@@ -126,7 +127,8 @@
     "exchange" : "교환",
     "info" : "정보",
     "connectDevice" : "내 장치 연결하기",
-    "add" : "추가"
+    "add" : "추가",
+    "or" : "또는"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -215,10 +217,11 @@
     "earn" : "수익",
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
+    "refer" : "친구 추천",
     "lend" : "대출",
     "catalog" : "탐색",
     "market" : "마켓",
-    "protect" : "Recover"
+    "protect" : "복구"
   },
   "stars" : {
     "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
@@ -1203,23 +1206,33 @@
     },
     "manual" : {
       "title" : "{{deviceName}} 설정",
+      "continueOnDevice" : "{{productName}}에서 이 동작을 실행합니다",
       "pairedContent" : {
         "title" : "{{deviceName}} 장치가 연결되었습니다.",
         "description" : "{{deviceName}}에서 설정을 계속 진행하세요",
-        "text" : "이 화면은 {{deviceName}} 설정이 진행되는 동안 관련 정보 제공을 위해 동적으로 변경됩니다."
+        "text" : "이 화면은 {{deviceName}} 설정이 진행되는 동안 관련 정보 제공을 위해 동적으로 변경됩니다.",
+        "continueOnDevice" : "{{productName}}에서 탭하여 다음 화면을 확인하세요."
       },
       "pinContent" : {
         "title" : "PIN 설정",
         "description" : "PIN은 4~8자리입니다.",
-        "text" : "{{deviceName}} 및 PIN에 액세스할 수 있으면 누구나 사용자가 가진 모든 암호화폐와 NFT 자산에 액세스할 수 있습니다."
+        "text" : "{{deviceName}} 및 PIN에 액세스할 수 있으면 누구나 사용자가 가진 모든 암호화폐와 NFT 자산에 액세스할 수 있습니다.",
+        "continueOnDevice" : "{{productName}}에서 PIN을 설정하세요"
       },
       "seedContent" : {
         "title" : "비밀 복구 문구",
-        "choiceNewOrRestore" : "가장 적합한 설정 옵션을 선택하세요.",
-        "newSeed" : "아래 영상을 탭하여 비밀 복구 문구에 대해 자세히 알아보세요",
-        "choiceRestoreDirectOrRecover" : "자리 표시자 - 직접 복원 선택 또는 복구 사용",
         "recoverSeed" : "자리 표시자: 복구",
-        "restoreSeed" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요."
+        "restoreSeed" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
+        "selection" : "{{productName}}에서 가장 적합한 설정 옵션을 선택하세요.",
+        "selectionContinueOnDevice" : "{{productName}}에서 옵션을 탭하세요",
+        "newSeedDescription" : "아래 동영상에서 비밀번호 설정에 대해 알아보세요.",
+        "newSeedContinueOnDevice" : "{{productName}}에서 실행해보세요",
+        "recovery" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
+        "restoreChoiceContinueOnDevice" : "{{productName}}에서 옵션을 선택하세요",
+        "restoreChoiceSRPTitle" : "비밀 복구 문구를 사용해 복원하세요",
+        "restoreChoiceSRPDescription" : "LEDGER가 생성한 문구를 사용해 자산에 대한 확실한 보안을 보장받으세요.",
+        "restoreChoiceRecoverTitle" : "Ledger Recover를 이용한 복구",
+        "restoreChoiceRecoverDescription" : "Ledger 계정에 로그인하고 신원을 확인하여 복구 문구 백업을 복원하세요."
       },
       "softwareCheckContent" : {
         "title" : "소프트웨어 점검",
@@ -1238,10 +1251,13 @@
         }
       },
       "installApplications" : {
-        "title" : "기본 앱 세트 다운로드를 권장드립니다. 이후 추가로 다운로드할 수 있습니다",
+        "title" : "블록체인 앱 설치",
         "install" : "설치",
         "skip" : "나중에",
         "info" : "{{deviceName}}의 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
+      },
+      "endOfSetup" : {
+        "title" : "설정 종료"
       },
       "genuineCheckModal" : {
         "title" : "정품 확인",
@@ -1441,7 +1457,8 @@
     "messageIfUnverified" : "공유된 주소가 장치의 주소와 정확히 일치하는지 확인하세요.",
     "messageIfSkipped" : "귀하의 {{name}} 주소가 Ledger 장치에서 확인되지 않았습니다. 보안을 위해 주소를 인증하세요.",
     "showQrCode" : "QR 코드 보기",
-    "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요"
+    "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요",
+    "dashStakingWarning" : "스테이킹 보상 수령에 이 주소를 사용해서는 안됩니다"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1742,7 +1759,8 @@
     "loading" : "로딩...",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
     "unlockDevice" : "장치를 잠금 해제하세요",
-    "unlockDeviceAfterFirmwareUpdate" : "펌웨어 업데이트를 기다려 PIN으로 장치를 잠금 해제해 보세요",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "{{productName}}에 설치를 완료할 때까지 기다려주세요",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "{{productName}}의 잠금을 해제해 설치를 완료하세요",
     "quitApp" : "장치에서 앱을 중단하세요",
     "appNotInstalledTitle" : "필수 앱 없음",
     "appNotInstalledTitle_plural" : "필수 앱 없음",
@@ -1807,9 +1825,8 @@
       "installed" : "앱",
       "capacity" : "용량",
       "used" : "사용됨",
-      "firmwareAvailable" : "오래된 펌웨어:",
-      "firmwareUpToDate" : "펌웨어가 최신입니다:",
-      "genuine" : "귀하의 장치는 정품입니다",
+      "OSVersion" : "OS 버전",
+      "genuine" : "정품 장치입니다",
       "incomplete" : "일부 앱이 인식되지 않았습니다. 제거 후 다시 설치하세요."
     },
     "applist" : {
@@ -1874,7 +1891,7 @@
         "plugin" : "앱으로 이동",
         "swap" : "스왑",
         "tool" : "자세히 알아보기",
-        "app" : "자세히 알아보기"
+        "currency" : "자세히 알아보기"
       },
       "uninstall" : {
         "title" : "모두 제거",
@@ -1901,7 +1918,7 @@
       "dontHaveSeed" : "복구 문구가 없나요? ",
       "followTheGuide" : "단계별 업데이트 가이드를 따르세요",
       "removeApps" : "모든 앱을 삭제하고 업데이트하세요",
-      "update" : "펌웨어 업데이트",
+      "update" : "{{productName}} 업데이트",
       "updateBtn" : "펌웨어를 업데이트하세요",
       "banner" : {
         "warning" : "펌웨어 {{latestFirmware}}으로 업데이트하실 수 있습니다",
@@ -1916,12 +1933,17 @@
       "contactSupport" : "지원 부서 연락",
       "deprecated" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
       "prepareSeed" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용 가능한 상태로 준비해 두세요.",
-      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다.",
-      "downloadingUpdateDesc" : "업데이트 설치자가 다운로드될 때까지 기다려 주세요"
+      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다."
     },
     "modal" : {
+      "title" : "{{productName}} 업데이트",
       "steps" : {
-        "downloadingUpdate" : "업데이트 다운로드 중",
+        "preparingUpdate" : "업데이트 준비 중",
+        "transferringUpdate" : "{{productName}}에 업데이트 전송 중",
+        "prepare" : "업데이트 준비",
+        "install" : "업데이트 설치",
+        "restore" : "설정 복원",
+        "apps" : "앱 복원",
         "updateMCU" : "펌웨어 업데이트",
         "updating" : "펌웨어 업데이트",
         "reset" : "장치를 준비합니다",
@@ -1932,9 +1954,8 @@
         "flash" : "장치 준비 중..."
       },
       "confirmIdentifier" : "식별자 확인",
-      "confirmIdentifierText" : "장치의 식별자가 아래 식별자와 동일한지 확인하세요. 요청 받은 경우 PIN 코드를 확인하여 입력하세요",
+      "confirmIdentifierText" : "{{productName}}에 설치 확인",
       "identifier" : "식별자",
-      "preparation" : "준비",
       "newFirmware" : "새 펌웨어 {{version}}",
       "confirmUpdate" : "장치에서 업데이트를 확인하세요",
       "mcuTitle" : "업데이트 마무리",
@@ -1944,7 +1965,7 @@
       "mcuSecondNanoX" : "<1><0>{{bootloaderOption}}</0></1>이 표시될 때까지 왼쪽 버튼을 길게 누르세요. 버튼 두 개를 모두 눌러 장치를 확인하고 재연결하세요.",
       "mcuBlueFirst" : "측면 버튼을 10초간 길게 눌러 장치를 끄세요. 버튼에서 손을 떼세요.",
       "mcuBlueSecond" : "부팅 옵션이 표시될 때까지 버튼을 5초 이상 누르세요. Bootloader 모드 탭",
-      "successTitle" : "펌웨어 업데이트됨",
+      "successTitle" : "OS 업데이트 정상 완료.",
       "successTextApps" : "장치에 앱을 다시 설치하세요",
       "successTextNoApps" : "이제 장치에 앱을 설치할 수 있습니다",
       "sucessCTAApps" : "앱 재설치",
@@ -2247,10 +2268,9 @@
   },
   "deviceLocalization" : {
     "language" : "언어",
-    "deviceLanguage" : "언어",
+    "deviceLanguage" : "장치 언어 변경",
     "changeLanguage" : "언어 변경",
     "changeDeviceLanguage" : "장치 언어를 변경하시겠습니까?",
-    "chooseLanguage" : "{{deviceName}}의 언어를 선택하세요.",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{deviceName}}에서 {{language}}도 지원됩니다",
       "description" : "언어를 {{language}}로 변경하시겠습니까?"
@@ -3761,6 +3781,7 @@
         "title" : "개발자 등록이 완료되었습니다!",
         "text" : "환영합니다"
       },
+      "userId" : "사용자 ID",
       "debugApps" : "디버그 앱 허용",
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
       "experimentalApps" : "실험적 앱 허용",
@@ -3790,6 +3811,8 @@
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
       "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다.",
+      "enableStagingNftMetadataService" : "NFT 메타데이터 서비스 스테이징",
+      "enableStagingNftMetadataServiceDesc" : "NFT 메타데이터 서비스 스테이징 활성화 및 NFT 캐시 재설정",
       "openOnboardingAppInstallDebug" : "온보딩 앱 설치 디버그 화면 열기",
       "openOnboardingAppInstallDebugDesc" : "동기화 온보딩 앱 설치 단계의 구성 요소가 있는 화면을 엽니다."
     },
@@ -3847,6 +3870,10 @@
           "title" : "개발자 모드",
           "description" : "내 Ledger에서 개발자 및 테스트넷 앱을 보여줍니다."
         },
+        "listAppsV2" : {
+          "title" : "My Ledger용 실험 앱 목록",
+          "description" : "My Ledger 액세스와 즉각 처리 흐름을 개선합니다."
+        },
         "scanForInvalidPaths" : {
           "title" : "확장 계정 검색",
           "description" : "잘못된 파생 경로가 있는 계정을 스캔합니다. 잠재적으로 찾은 자산을 일반 계정으로 보내세요."
@@ -3886,6 +3913,10 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "개인 맞춤형 우선 수수료 게이트",
           "description" : "고급 EIP1559 트랜잭션에 대한 예상 최소 우선 수수료의 비율을 사용자 지정합니다."
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "기본 수수료에 대한 커스텀 멀티플라이어",
+          "description" : "EIP1559 트랜잭션 최대 가스비를 구성하는 기본 수수료에 이용되는 멀티플라이어를 커스터마이징합니다"
         }
       }
     },
@@ -5566,11 +5597,11 @@
       "description" : "다른 이미지로 다시 시도하세요"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "장치에서 이미지 커밋이 거부됨(할 일: 최종 문구)",
+      "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "장치에서 이미지 로드가 거부됨(할 일: 최종 문구)",
+      "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
     },
     "NearNewAccountWarning" : {
@@ -5674,9 +5705,11 @@
         "stepLabel" : "전송",
         "uploadAnotherImage" : "다른 이미지 업로드",
         "allowPreview" : "잠금 화면 사진이 {{productName}}에 로드되도록 허용하세요",
+        "allowConfirmPreview" : "{{productName}}에서 잠금 화면 이미지 복원 허용",
         "loadingPicture" : "로딩 중...",
         "imageLoaded" : "{{productName}}에서 로드한 이미지",
         "confirmPicture" : "마음에 드시나요?\n그러면 저장하세요!",
+        "confirmRestorePicture" : "잠금 화면 이미지 복원 확인",
         "doThisLater" : "다음에 결정하기"
       }
     },
@@ -5723,9 +5756,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "신원 확인을 통해\n 키 복구하기",
+    "description" : "비밀 복구 문구가 항상 사용자의 손이 닿는 곳에 있는 것은 아닙니다.\nLedger Nano X 전용 소프트 런칭. 2023년 5월 31일까지 무료 구독",
+    "cta" : "구독이 왜 필요한가요?",
+    "downloadLLM" : "Ledger Live 모바일 앱으로 <purple>Ledger Recover</purple> 구독"
   }
 }
