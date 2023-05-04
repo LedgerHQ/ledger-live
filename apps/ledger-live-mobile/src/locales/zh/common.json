@@ -2390,6 +2390,7 @@
     },
     "earn" : "赚取",
     "quickActions" : "快速操作",
+    "referralProgram" : "推荐好友即可获取价值 10 美元的比特币",
     "banner" : {
       "redelegation" : {
         "description" : "您知道吗？Ledger 验证器权益质押的佣金低于您目前使用的验证器。",
@@ -2685,6 +2686,10 @@
           "title" : "实验性浏览器 API 应用程序界面",
           "description" : "试用即将面世的新版 Ledger 区块链浏览器。更改此设置可能会影响账户余额和同步以及发送功能。"
         },
+        "experimentalListAppsV2" : {
+          "title" : "我的 Ledger 的实验性应用程序列表",
+          "description" : "我的 Ledger 访问和内部流程的性能改进。"
+        },
         "experimentalCountervalues" : {
           "title" : "实验性对价 API",
           "description" : "这可能会导致您的账户对价显示错误。"
@@ -2729,7 +2734,12 @@
       "featureFlagsTabGroups" : "分组",
       "firebaseProject" : "此版本支持的 Firebase 项目：",
       "showBannerDesc" : "标志被覆盖时显示横幅",
-      "bannerTitle" : "已本地覆盖的标志"
+      "bannerTitle" : "已本地覆盖的标志",
+      "features" : {
+        "firmwareUpdate" : {
+          "headerTitle" : "排除固件更新故障"
+        }
+      }
     }
   },
   "notifications" : {
@@ -2798,7 +2808,8 @@
         "addressVerified" : "地址已核实",
         "verifyAddress" : "点按此处核实您的地址",
         "adviceVerify" : "我们始终建议您使用 Ledger 设备核实地址",
-        "sendWarning" : "仅将 {{currencyName}} ({{currencyTicker}}) 发送到此地址。发送其他币种可能会导致永久丢失。"
+        "sendWarning" : "仅将 {{currencyName}} ({{currencyTicker}}) 发送到此地址。发送其他币种可能会导致永久丢失。",
+        "dashStakingWarning" : "请务必不要使用此地址接收权益质押奖励"
       },
       "securityVerify" : {
         "title" : "出于安全考虑，我们建议使用 Ledger 设备核实此地址。",
@@ -6082,7 +6093,8 @@
       "media" : {
         "tag" : "{{count}} 个 NFT"
       }
-    }
+    },
+    "referralProgram" : "10 美元"
   },
   "servicesWidget" : {
     "title" : "服务",
