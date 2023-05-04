@@ -2390,6 +2390,7 @@
     },
     "earn" : "수익",
     "quickActions" : "빠른 동작",
+    "referralProgram" : "친구에게 추천하고 $10 상당의 비트코인을 받으세요",
     "banner" : {
       "redelegation" : {
         "description" : "알고 계셨나요? Ledger 검증인의 스테이킹 수수료는 귀하의 현 검증인보다 저렴합니다.",
@@ -2685,6 +2686,10 @@
           "title" : "실험적 탐색기 API",
           "description" : "Ledger 블록체인 탐색기 새 버전을 사용해 보세요. 이 설정을 변경하면 계정 잔금과 동기화, 전송 기능이 영향을 받을 수 있습니다."
         },
+        "experimentalListAppsV2" : {
+          "title" : "My Ledger용 실험 앱 목록",
+          "description" : "My Ledger 액세스와 즉각 처리 흐름을 개선합니다."
+        },
         "experimentalCountervalues" : {
           "title" : "실험적 등가 API",
           "description" : "이로 인해 계정과 관련하여 올바른 등가 값이 표시되지 않을 수 있습니다."
@@ -2729,7 +2734,12 @@
       "featureFlagsTabGroups" : "그룹",
       "firebaseProject" : "이 빌드에서 대상으로 하는 Firebase 프로젝트:",
       "showBannerDesc" : "플래그 재정의 시 배너 표시",
-      "bannerTitle" : "플래그가 로컬로 재정의되었습니다"
+      "bannerTitle" : "플래그가 로컬로 재정의되었습니다",
+      "features" : {
+        "firmwareUpdate" : {
+          "headerTitle" : "디버그 펌웨어 업데이트"
+        }
+      }
     }
   },
   "notifications" : {
@@ -2798,7 +2808,8 @@
         "addressVerified" : "주소 인증",
         "verifyAddress" : "주소를 인증하려면 여기를 탭하세요",
         "adviceVerify" : "언제나 Ledger 장치로 주소를 인증할 것을 권장합니다.",
-        "sendWarning" : "이 주소로는 {{currencyName}} ({{currencyTicker}})만 보내주세요. 다른 코인을 보낼 경우 영구적인 손실로 이어질 수 있습니다."
+        "sendWarning" : "이 주소로는 {{currencyName}} ({{currencyTicker}})만 보내주세요. 다른 코인을 보낼 경우 영구적인 손실로 이어질 수 있습니다.",
+        "dashStakingWarning" : "스테이킹 보상 수령에 이 주소를 사용해서는 안됩니다"
       },
       "securityVerify" : {
         "title" : "확실한 보안을 위해 보유하신 Ledger 장치로 이 주소를 인증할 것을 권고드립니다.",
@@ -6082,7 +6093,8 @@
       "media" : {
         "tag" : "{{count}}개의 NFT"
       }
-    }
+    },
+    "referralProgram" : "$10"
   },
   "servicesWidget" : {
     "title" : "서비스",
