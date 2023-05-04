@@ -107,7 +107,7 @@ type Props = {
   confirmText?: string;
   cancelText?: string;
   onReject: (_?: { needHelp?: boolean }) => void;
-  repair: (a?: string | null) => any;
+  repair: (a?: string | null) => void;
   t: TFunction;
   isLoading?: boolean;
   analyticsName: string;
