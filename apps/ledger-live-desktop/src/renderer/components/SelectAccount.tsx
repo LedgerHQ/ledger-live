@@ -288,7 +288,7 @@ export const RawSelectAccount = ({
         );
         if (display) {
           result.push({
-            matched: match && "disabled" in option && !option.disabled,
+            matched: match && !isDisabledOption(option as any),
             account: option,
           });
         }
@@ -333,3 +333,11 @@ export const RawSelectAccount = ({
 export const SelectAccount = withTranslation()(RawSelectAccount);
 const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(SelectAccount);
 export default m;
+
+/**
+ * @deprecated we must completely remove this concept: account.disabled is not a thing!
+ */
+function isDisabledOption(option: { disabled?: boolean }): boolean {
+  if (!("disabled" in option)) return false;
+  return Boolean(option.disabled);
+}
