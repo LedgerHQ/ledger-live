@@ -4,13 +4,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { autoLockTimeoutSelector } from "~/renderer/reducers/settings";
 import { setAutoLockTimeout } from "~/renderer/actions/settings";
 import Select from "~/renderer/components/Select";
+
+type SelectOption = { value: number; label: string };
+
 const PasswordAutoLockSelect = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const autoLockTimeout = useSelector(autoLockTimeoutSelector);
+
+  const avoidEmptyValue = (timeout?: SelectOption | null) =>
+    timeout && handleChangeTimeout(timeout);
+
   const handleChangeTimeout = useCallback(
-    ({ value: timeoutKey }: { value: number }) => {
-      dispatch(setAutoLockTimeout(+timeoutKey));
+    (timeout?: SelectOption) => {
+      console.log(timeout);
+      dispatch(setAutoLockTimeout(+Number(timeout?.value)));
     },
     [dispatch],
   );
@@ -51,8 +59,8 @@ const PasswordAutoLockSelect = () => {
       small
       minWidth={260}
       isSearchable={false}
-      onChange={handleChangeTimeout}
-      renderSelected={item => item && item.name}
+      onChange={avoidEmptyValue}
+      renderSelected={(item: { name: string }) => item && item.name}
       value={currentTimeout}
       options={timeouts}
     />
