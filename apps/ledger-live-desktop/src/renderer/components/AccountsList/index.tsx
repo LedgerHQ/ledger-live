@@ -1,17 +1,16 @@
 import React, { Component } from "react";
 import { withTranslation, TFunction } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import FakeLink from "~/renderer/components/FakeLink";
 import { SpoilerIcon } from "~/renderer/components/Spoiler";
 import { openURL } from "~/renderer/linking";
 import AccountRow from "./AccountRow";
+
 class AccountsList extends Component<
   {
     accounts: Account[];
-    currency?: CryptoCurrency | TokenCurrency;
     checkedIds?: string[];
     editedNames: {
       [accountId: string]: string;
@@ -26,7 +25,7 @@ class AccountsList extends Component<
     collapsible?: boolean;
     hideAmount?: boolean;
     supportLink?: {
-      id: any;
+      id: string;
       url: string;
     };
     t: TFunction;
@@ -63,7 +62,6 @@ class AccountsList extends Component<
   render() {
     const {
       accounts,
-      currency,
       checkedIds,
       onToggleAccount,
       editedNames,
