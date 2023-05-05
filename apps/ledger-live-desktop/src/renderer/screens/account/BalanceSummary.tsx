@@ -15,8 +15,9 @@ import perFamilyAccountBalanceSummaryFooter from "~/renderer/generated/AccountBa
 import FormattedDate from "~/renderer/components/FormattedDate";
 import { Data } from "~/renderer/components/Chart/types";
 
-import NoGraphWarning from "~/renderer/families/vechain/NoGraphWarning";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
+import Alert from "~/renderer/components/Alert";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   chartColor: string;
@@ -34,6 +35,7 @@ export default function AccountBalanceSummary({
   setCountervalueFirst,
   mainAccount,
 }: Props) {
+  const { t } = useTranslation();
   const portfolio = usePortfolio();
   const [range] = useTimeRange();
   const counterValue = useSelector(counterValueCurrencySelector);
@@ -117,7 +119,9 @@ export default function AccountBalanceSummary({
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={5}>
         {account.type === "TokenAccount" && account.token.id === "vechain/vtho" ? (
           <>
-            <NoGraphWarning />
+            <Alert type="secondary" noIcon={false}>
+              <span>{t("vechain.noGraphWarning")}</span>
+            </Alert>
             <PlaceholderChart
               magnitude={counterValue.units[0].magnitude}
               data={portfolio.balanceHistory}

@@ -13,8 +13,10 @@ import FormattedDate from "~/renderer/components/FormattedDate";
 import { Data, Item } from "~/renderer/components/Chart/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
 
-import NoGraphWarning from "~/renderer/families/vechain/NoGraphWarning";
+// import NoGraphWarning from "~/renderer/families/vechain/NoGraphWarning";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
+import Alert from "~/renderer/components/Alert";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   counterValue: Currency;
@@ -32,6 +34,7 @@ export default function BalanceSummary({
   chartColor,
   currency,
 }: Props) {
+  const { t } = useTranslation();
   const portfolio = usePortfolio();
   const { history, countervalueAvailable, countervalueChange, cryptoChange } = useCurrencyPortfolio(
     {
@@ -97,7 +100,10 @@ export default function BalanceSummary({
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={6}>
         {currency.type === "TokenCurrency" && currency.id === "vechain/vtho" ? (
           <>
-            <NoGraphWarning />
+            {/* <NoGraphWarning /> */}
+            <Alert type="secondary" noIcon={false}>
+              <span>{t("vechain.noGraphWarning")}</span>
+            </Alert>
             <PlaceholderChart
               magnitude={counterValue.units[0].magnitude}
               data={portfolio.balanceHistory}
