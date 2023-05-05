@@ -302,4 +302,5 @@ export const urls = {
     appStore: "https://apps.apple.com/app/id1361671700",
     playStore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   },
+  howToUpdateNewLedger: "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",
 };

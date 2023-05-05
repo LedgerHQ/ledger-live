@@ -1,17 +1,17 @@
 import {
-  Flex,
   Aside,
-  Logos,
   Button,
-  Icons,
-  ProgressBar,
   Drawer,
+  Flex,
+  Icons,
   InfiniteLoader,
+  Logos,
+  ProgressBar,
 } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
-import { Switch, Route, useHistory, useLocation } from "react-router-dom";
+import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,6 +43,8 @@ import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboar
 import { saveSettings } from "~/renderer/actions/settings";
 import { UseCase } from "../../index";
 import { track } from "~/renderer/analytics/segment";
+import { RecoverHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverHowTo";
+import { RecoverPinCodeHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverPinCodeHowTo";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -182,6 +184,7 @@ export enum ScreenId {
   quizFailure = "quiz-failure",
   pairMyNano = "pair-my-nano",
   genuineCheck = "genuine-check",
+  recoverHowTo = "recover-how-to",
 }
 
 type ScreenComponent =
@@ -202,6 +205,7 @@ type ScreenComponent =
   | typeof QuizFailure
   | typeof PairMyNano
   | typeof GenuineCheck
+  | typeof RecoverHowTo
   | typeof Screen;
 
 interface IScreen {
@@ -294,7 +298,7 @@ export default function Tutorial({ useCase }: Props) {
           },
           userChosePinCodeHimself,
         },
-        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase],
+        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase, UseCase.recover],
         canContinue: userChosePinCodeHimself,
         next: () => {
           if (useCase === UseCase.setupDevice) {
@@ -305,6 +309,8 @@ export default function Tutorial({ useCase }: Props) {
         previous: () => {
           if (useCase === UseCase.setupDevice) {
             history.push(`${path}/${ScreenId.deviceHowTo}`);
+          } else if (useCase === UseCase.recover) {
+            history.push(`${path}/${ScreenId.recoverHowTo}`);
           }
           // useCase === UseCase.recoveryPhrase
           else {
@@ -314,8 +320,8 @@ export default function Tutorial({ useCase }: Props) {
       },
       {
         id: ScreenId.pinCodeHowTo,
-        component: PinCodeHowTo,
-        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase],
+        component: useCase === UseCase.recover ? RecoverPinCodeHowTo : PinCodeHowTo,
+        useCases: [UseCase.setupDevice, UseCase.recoveryPhrase, UseCase.recover],
         next: () => {
           if (useCase === UseCase.setupDevice) {
             track("Onboarding - Pin code step 2");
@@ -467,7 +473,7 @@ export default function Tutorial({ useCase }: Props) {
           history.push(`${path}/${ScreenId.genuineCheck}`);
         },
         previous: () => {
-          if (useCase === UseCase.connectDevice) {
+          if (useCase === UseCase.connectDevice || useCase === UseCase.recover) {
             history.push("/onboarding/select-use-case");
           } else if (useCase === UseCase.setupDevice) {
             history.push(`${path}/${ScreenId.hideRecoveryPhrase}`);
@@ -487,11 +493,25 @@ export default function Tutorial({ useCase }: Props) {
         },
         canContinue: !!connectedDevice,
         next: () => {
-          dispatch(saveSettings({ hasCompletedOnboarding: true }));
-          track("Onboarding - End");
-          setOnboardingDone(true);
+          if (useCase === UseCase.recover) {
+            history.push(`${path}/${ScreenId.recoverHowTo}`);
+          } else {
+            dispatch(saveSettings({ hasCompletedOnboarding: true }));
+            track("Onboarding - End");
+            setOnboardingDone(true);
+          }
         },
         previous: () => history.push(`${path}/${ScreenId.pairMyNano}`),
+      },
+      {
+        id: ScreenId.recoverHowTo,
+        component: RecoverHowTo,
+        useCases: [UseCase.recover],
+        next: () => {
+          // TODO in next ticket
+          history.push(`${path}/${ScreenId.pinCode}`);
+        },
+        previous: () => history.push("/onboarding/select-use-case"),
       },
     ],
     [
@@ -622,6 +642,11 @@ export default function Tutorial({ useCase }: Props) {
     history.push(targetPath);
   }
 
+  function handleNextInDrawerDeeplink(closeCurrentDrawer: (bool) => void, targetPath: string) {
+    closeCurrentDrawer(false);
+    openURL(targetPath);
+  }
+
   return (
     <>
       <QuizzPopin isOpen={quizzOpen} onWin={quizSucceeds} onLose={quizFails} onClose={quizFails} />
@@ -630,12 +655,17 @@ export default function Tutorial({ useCase }: Props) {
           `
           <PinHelp
             handleNextInDrawer={() =>
-              handleNextInDrawer(
-                setHelpPinCode,
-                useCase === UseCase.setupDevice
-                  ? `${path}/${ScreenId.newRecoveryPhrase}`
-                  : `${path}/${ScreenId.existingRecoveryPhrase}`,
-              )
+              useCase === UseCase.recover
+                ? handleNextInDrawerDeeplink(
+                    setHelpPinCode,
+                    "ledgerlive://recover/protect-simu?redirectTo=restore",
+                  )
+                : handleNextInDrawer(
+                    setHelpPinCode,
+                    useCase === UseCase.setupDevice
+                      ? `${path}/${ScreenId.newRecoveryPhrase}`
+                      : `${path}/${ScreenId.existingRecoveryPhrase}`,
+                  )
             }
           />
         </Flex>
@@ -690,7 +720,7 @@ export default function Tutorial({ useCase }: Props) {
         AsideFooter={CurrentScreen.Footer}
         continueDisabled={canContinue === false}
         ProgressBar={
-          useCase !== UseCase.connectDevice ? (
+          useCase !== UseCase.connectDevice && useCase !== UseCase.recover ? (
             <ProgressBar steps={progressSteps} currentIndex={screenStepIndex} />
           ) : (
             <></>

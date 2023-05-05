@@ -45,6 +45,7 @@ export enum UseCase {
   setupDevice = "setup-device",
   connectDevice = "connect-device",
   recoveryPhrase = "recovery-phrase",
+  recover = "recover",
 }
 
 type NullableDeviceModelId = DeviceModelId | null;
@@ -117,6 +118,7 @@ export function Onboarding() {
                   `${path}/${UseCase.setupDevice}`,
                   `${path}/${UseCase.connectDevice}`,
                   `${path}/${UseCase.recoveryPhrase}`,
+                  `${path}/${UseCase.recover}`,
                 ]}
                 render={props => useCase && <Tutorial {...props} useCase={useCase} />}
               />

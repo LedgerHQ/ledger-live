@@ -245,6 +245,9 @@ export const defaultFeatures: DefaultFeatures = {
       protectId: "protect-simu",
     },
   },
+  protectServicesDesktop: {
+    enabled: false,
+  },
   newsfeedPage: {
     enabled: false,
   },
