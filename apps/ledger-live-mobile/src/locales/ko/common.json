@@ -324,11 +324,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
-      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
+      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다.",
+      "primaryCTA" : "다른 사진을 업로드하세요"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
-      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
+      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다.",
+      "primaryCTA" : "다른 사진을 업로드하세요"
     },
     "InvalidAddress" : {
       "title" : "유효한 {{currencyName}} 주소가 아닙니다"
@@ -477,6 +479,10 @@
       "title" : "패스워드가 일치하지 않습니다",
       "description" : "다시 시도해 주세요."
     },
+    "PeerRemovedPairing" : {
+      "title" : "휴대폰의 블루투스 기기에서 '{{ deviceName }}' 장치를 삭제해야 합니다",
+      "description" : "{{ productName }}의 블루투스 구성이 변경되었습니다. 휴대폰 설정에서 해당 장치를 제거한 다음 Ledger Live로 돌아와 페어링을 다시 시도하세요."
+    },
     "SelectExchangesLoadError" : {
       "title" : "로드 불가능",
       "description" : "교환을 로드할 수 없습니다."
@@ -549,11 +555,12 @@
       "description" : "트랜잭션은 30초 이내에 서명을 완료해야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 20TRX를 지불할 수 있습니다."
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트 필요",
-      "description" : "관리자에서 {{managerAppName}} 앱을 삭제하고 재설치하세요."
+      "description" : "관리자에서 {{managerAppName}} 앱을 삭제하고 재설치하세요.",
+      "primaryCTA" : "관리자 열기"
     },
     "UserRefusedAllowManager" : {
       "title" : "관리자가 장치에서 비활성 상태입니다",
@@ -672,7 +679,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
+      "description" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요.",
+      "primaryCTA" : "다시 시도"
     },
     "SolanaAccountNotFunded" : {
       "title" : "자금이 입금되지 않은 계정"
@@ -1811,7 +1819,8 @@
           "title" : "장치가 잠금 상태입니다",
           "subtitle" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
         },
-        "retryCta" : "다시 시도하세요"
+        "retryCta" : "다시 시도",
+        "openSettingsCta" : "블루투스 설정으로 이동하세요"
       }
     }
   },
@@ -4455,19 +4464,44 @@
       "activatableVotes" : "현재 활성화할 수 있는 투표가 있습니다."
     }
   },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO 사용 가능"
+      },
+      "delegated" : {
+        "description" : "위임된 자산은 오스모시스(Osmosis) 투표에 사용됩니다. 이는 사용차의 총 투표 수입니다."
+      },
+      "undelegating" : {
+        "description" : "위임 해제 자산은 14일 후 타임락이 해제되면 사용 가능합니다."
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "OSMO를 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
+            "steps" : {
+              "1" : "위임 해제가 완료되려면 14일을 기다려야 합니다."
+            }
+          }
+        }
+      }
+    }
+  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "{{currencyTicker}} 이용 가능",
+        "title" : "ATOM 이용 가능",
         "description" : "가처분 금액입니다."
       },
       "delegated" : {
         "title" : "위임된 자산",
-        "description" : "위임된 자산은 {{currencyName}} 투표에 사용됩니다. 이는 사용차의 총 투표 수입니다."
+        "description" : "위임된 자산이 Cosmos(코스모스) 투표에 사용됩니다. 사용차의 총 투표 수입니다."
       },
       "undelegating" : {
         "title" : "위임 해제",
-        "description" : "위임 해제 자산은 {{numberOfDays}}일 후 타임락이 해제되면 사용 가능합니다."
+        "description" : "위임 해제 자산은 21일 후 타임락이 해제되면 사용 가능합니다."
       },
       "delegationUnavailable" : {
         "title" : "위임할 수 없습니다",
@@ -4475,7 +4509,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "자산을 위임하여 {{ticker}} 보상을 받을 수 있습니다.",
+      "delegationEarn" : "자산을 위임하여 ATOM 보상을 받을 수 있습니다.",
       "info" : "위임은 어떤 원리인가요?",
       "claimRewards" : "보상 수령",
       "claimAvailableRewards" : "{{amount}} 수령",
@@ -4503,10 +4537,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "{{ticker}}를 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
+            "description" : "ATOM을 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
             "steps" : {
               "0" : "위임된 자산은 귀하의 소유입니다.",
-              "1" : "위임 해제가 완료되려면 {{numberOfDays}}일을 기다려야 합니다.",
+              "1" : "위임 해제가 완료되려면 21일을 기다려야 합니다.",
               "2" : "Ledger 장치로 안전하게 위임하세요."
             },
             "warning" : {
@@ -5964,13 +5998,6 @@
       "nft" : "NFT"
     },
     "nftGallery" : {
-      "filters" : {
-        "selectAndHide" : "선택 및 숨기기",
-        "hide" : "{{count}}개의 컬렉션 숨기기",
-        "hide_plural" : "{{count}}개의 컬렉션 숨기기",
-        "alertHide" : "1개의 컬렉션을 숨겼습니다 설정으로 이동해 언제든지 숨김을 해제하고 다시 표시하세요",
-        "alertHide_plural" : "{{count}}개의 컬렉션을 숨겼습니다. 설정으로 이동해 언제든지 숨김을 해제하고 다시 표시하세요"
-      },
       "empty" : {
         "title" : "아직 표시할 NFT가 없습니다",
         "subtitle" : "첫 NFT를 받고 시작해 보세요.",
