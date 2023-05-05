@@ -42,7 +42,8 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
             ? extractTokenId(transaction.subAccountId)
             : "";
           const token = findTokenById(addPrefixToken(id));
-          return token ? displayTokenValue(token) : `#${id}`;
+          // 34 is max character displayable by nano.
+          return token ? displayTokenValue(token).substring(0, 34) : `#${id}`;
         },
       },
       {
