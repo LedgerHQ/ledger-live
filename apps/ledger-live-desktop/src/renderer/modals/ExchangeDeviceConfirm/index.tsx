@@ -219,8 +219,6 @@ const StepConnectDeviceFooter = ({ data, onClose, onSkipDevice }: PropsFooter) =
   const { t } = useTranslation();
   const [skipClicked, setSkipClicked] = useState(false);
   const { account, parentAccount, onResult, verifyAddress } = data;
-  const mainAccount = getMainAccount(account, parentAccount);
-  const name = getAccountName(mainAccount);
   const nextStep = useCallback(() => {
     onResult(account, parentAccount, true);
     onClose();

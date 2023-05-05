@@ -21,7 +21,7 @@ type Props = {
   analyticsName: string;
   cancellable?: boolean;
   centered?: boolean;
-  children?: any;
+  children?: React.ReactNode;
   narrow?: boolean;
   name?: string;
 };
