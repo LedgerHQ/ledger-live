@@ -171,8 +171,8 @@ const Carousel = ({
   const transitions = useTransition(index, p => p, getTransitions(type, reverse));
 
   useEffect(() => {
-    logSlideImpression(0)
-  }, [])
+    logSlideImpression(0);
+  }, []);
 
   const changeVisibleSlide = useCallback(
     index => {
