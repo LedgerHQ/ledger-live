@@ -1,16 +1,15 @@
 import React from "react";
 import { Grid } from "@ledgerhq/react-ui";
 import { DisclaimerRaw } from "@ledgerhq/live-common/wallet-api/react";
-import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { Search } from "@ledgerhq/live-common/hooks/useSearch";
 import { FullCard } from "../../Card";
 import { NoResult } from "./NoResult";
+import { Search } from "../../../hooks";
 
 export function Result({
   search,
   disclaimer,
 }: {
-  search: Pick<Search<AppManifest, undefined>, "result" | "input">;
+  search: Pick<Search, "result" | "input">;
   disclaimer: Pick<DisclaimerRaw, "onSelect">;
 }) {
   if (!search.result.length) {

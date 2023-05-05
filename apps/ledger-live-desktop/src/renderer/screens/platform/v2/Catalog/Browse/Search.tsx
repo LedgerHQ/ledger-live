@@ -1,13 +1,12 @@
 import React, { useMemo, useCallback } from "react";
 import { Flex, SearchInput, Text, SelectInput } from "@ledgerhq/react-ui";
-import { Search as SearchType } from "@ledgerhq/live-common/hooks/useSearch";
+import { Search as SearchType } from "../../hooks";
 import { Categories } from "@ledgerhq/live-common/wallet-api/react";
-import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useTranslation } from "react-i18next";
 
 export interface Props {
   categories: Pick<Categories, "categories" | "setSelected">;
-  search: Pick<SearchType<AppManifest, undefined>, "input" | "onChange">;
+  search: Pick<SearchType, "input" | "onChange">;
 }
 
 export function Search({ categories, search }: Props) {

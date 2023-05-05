@@ -1,12 +1,12 @@
 import Fuse from "fuse.js";
-import { LiveAppManifest } from "../platform/types";
+import { AppManifest } from "../wallet-api/types";
 
 export { FAMILIES as WALLET_API_FAMILIES } from "@ledgerhq/wallet-api-core";
 
 export const WALLET_API_VERSION = "2.0.0";
 
-export const BROWSE_SEARCH_OPTIONS: Fuse.IFuseOptions<LiveAppManifest> = {
-  keys: ["name"],
+export const BROWSE_SEARCH_OPTIONS: Fuse.IFuseOptions<AppManifest> = {
+  keys: ["name", "categories"],
   threshold: 0.1,
 };
 

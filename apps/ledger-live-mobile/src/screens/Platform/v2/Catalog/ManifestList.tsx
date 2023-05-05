@@ -1,28 +1,19 @@
-import React, { useMemo } from "react";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { Categories } from "@ledgerhq/live-common/wallet-api/react";
+import React from "react";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { AppCard } from "./AppCard";
 import { Disclaimer } from "../hooks";
 
 export function ManifestList({
-  categories,
-  disclaimer: { onSelect },
+  manifests,
+  onSelect,
 }: {
-  categories: Pick<Categories, "manifestsByCategories" | "selected">;
-  disclaimer: Pick<Disclaimer, "onSelect">;
+  manifests: AppManifest[];
+  onSelect: Disclaimer["onSelect"];
 }) {
-  const manifests = useMemo(
-    () => categories.manifestsByCategories.get(categories.selected) || [],
-    [categories],
-  );
   return (
     <>
-      {manifests.map((manifest: LiveAppManifest) => (
-        <AppCard
-          key={`${manifest.id}.${manifest.branch}`}
-          manifest={manifest}
-          onPress={onSelect}
-        />
+      {manifests.map(m => (
+        <AppCard key={`${m.id}.${m.branch}`} manifest={m} onPress={onSelect} />
       ))}
     </>
   );

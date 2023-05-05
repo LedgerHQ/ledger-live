@@ -1,10 +1,7 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React from "react";
 import * as Animatable from "react-native-animatable";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import Fuse from "fuse.js";
-import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../../components/TabBar/TabBarSafeAreaView";
@@ -31,12 +28,7 @@ export function Catalog() {
       <DAppDisclaimer disclaimer={disclaimer} />
 
       {search.isActive ? (
-        <Search
-          title={title}
-          categories={categories}
-          disclaimer={disclaimer}
-          search={search}
-        />
+        <Search title={title} disclaimer={disclaimer} search={search} />
       ) : (
         <>
           <Layout
@@ -64,8 +56,12 @@ export function Catalog() {
               <AnimatedView animation="fadeInUp" delay={50} duration={300}>
                 <Flex paddingTop={4} paddingBottom={TAB_BAR_SAFE_HEIGHT}>
                   <ManifestList
-                    categories={categories}
-                    disclaimer={disclaimer}
+                    manifests={
+                      categories.manifestsByCategories.get(
+                        categories.selected,
+                      ) ?? []
+                    }
+                    onSelect={disclaimer.onSelect}
                   />
                 </Flex>
               </AnimatedView>

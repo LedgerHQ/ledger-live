@@ -11,7 +11,7 @@ import {
   RecentlyUsedDB,
   DisclaimerRaw,
 } from "@ledgerhq/live-common/wallet-api/react";
-import { useSearch } from "@ledgerhq/live-common/hooks/useSearch";
+import { SearchRaw, useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { AppManifest, DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import { useDispatch, useSelector } from "react-redux";
 import { useDB } from "~/renderer/storage";
@@ -102,3 +102,5 @@ function useBanner(id: string): [boolean, () => void] {
 
   return [isDismissed, dismiss];
 }
+
+export type Search = SearchRaw<AppManifest>;

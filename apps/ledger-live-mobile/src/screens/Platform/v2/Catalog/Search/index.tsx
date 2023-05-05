@@ -5,7 +5,6 @@ import * as Animatable from "react-native-animatable";
 import { Flex, Text, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { HTTP_REGEX } from "@ledgerhq/live-common/wallet-api/constants";
-import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 import ArrowLeft from "../../../../../icons/ArrowLeft";
 import { TAB_BAR_SAFE_HEIGHT } from "../../../../../components/TabBar/TabBarSafeAreaView";
 import { Layout } from "../Layout";
@@ -28,19 +27,11 @@ interface Props {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   listTitle?: React.ReactNode;
-  backAction?: () => void;
-  categories: Pick<Categories, "manifests">;
   disclaimer: Pick<Disclaimer, "onSelect">;
   search: Omit<SearchType, "onCancel">;
 }
 
-export function Search({
-  title,
-  backAction,
-  categories: { manifests },
-  disclaimer: { onSelect },
-  search,
-}: Props) {
+export function Search({ title, disclaimer, search }: Props) {
   const { input, result, isSearching } = search;
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -81,6 +72,7 @@ export function Search({
       </Text>
     </Flex>
   );
+
   return (
     <>
       <Layout
@@ -95,7 +87,7 @@ export function Search({
               top: 10,
             }}
             style={{ paddingVertical: 16 }}
-            onPress={backAction}
+            onPress={search.onCancel}
           >
             <ArrowLeft size={18} color={colors.neutral.c100} />
           </TouchableOpacity>
@@ -110,7 +102,10 @@ export function Search({
             <AnimatedView animation="fadeInUp" delay={50} duration={300}>
               <Flex paddingTop={4} paddingBottom={TAB_BAR_SAFE_HEIGHT + 50}>
                 {result.length ? (
-                  <ManifestList onSelect={onSelect} manifests={manifests} />
+                  <ManifestList
+                    manifests={result}
+                    onSelect={disclaimer.onSelect}
+                  />
                 ) : (
                   noResultFoundComponent
                 )}

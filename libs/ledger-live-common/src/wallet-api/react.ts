@@ -779,13 +779,20 @@ export interface Categories {
 }
 
 export function useCategories(): Categories {
-  const manifests = useManifests();
-  const { categories, manifestsByCategories } = useCategoriesRaw(manifests);
+  const manifestsSearchable = useManifests({ visibility: "searchable" });
+  const manifestsCompleted = useManifests({ visibility: "complete" });
+  const { categories, manifestsByCategories } =
+    useCategoriesRaw(manifestsCompleted);
   const [selected, setSelected] = useState(DISCOVER_INITIAL_CATEGORY);
 
   const reset = useCallback(() => {
     setSelected(DISCOVER_INITIAL_CATEGORY);
   }, []);
+
+  const manifests = useMemo(
+    () => [...manifestsSearchable, ...manifestsCompleted],
+    [manifestsSearchable, manifestsCompleted]
+  );
 
   return {
     manifests,

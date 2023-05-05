@@ -37,7 +37,7 @@ export function useCatalog() {
 
   useEffect(() => {
     search.isActive && categories.reset();
-  }, [search, categories]);
+  }, [search.isActive, categories]);
 
   const disclaimer = useDisclaimer(recentlyUsed.append);
 

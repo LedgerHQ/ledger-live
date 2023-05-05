@@ -5,7 +5,6 @@ import { HTTP_REGEX } from "@ledgerhq/live-common/wallet-api/constants";
 import { Props as SearchProps } from "../Search";
 import { useTranslation, Trans } from "react-i18next";
 
-
 // TODO: Styling
 export function NoResult({ input }: Pick<SearchProps, "input">) {
   const { t } = useTranslation();

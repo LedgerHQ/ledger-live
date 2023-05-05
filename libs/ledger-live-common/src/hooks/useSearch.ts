@@ -22,7 +22,7 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
   const [isSearching, setIsSearching] = useState(false);
 
   const [result, setResult] = useState(list);
-  const fuse = useMemo(() => new Fuse(list, options), [list, options]);
+  const fuse = useRef(new Fuse(list, options));
 
   const onChange = useCallback((value: string) => {
     if (value.length !== 0) {
@@ -33,15 +33,15 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
   }, []);
 
   useEffect(() => {
-    if (debouncedInput) {
+    if (debouncedInput && fuse.current) {
       setIsSearching(true);
-      setResult(fuse.search(debouncedInput).map((res) => res.item));
+      setResult(fuse.current.search(debouncedInput).map((res) => res.item));
     } else {
       setResult([]);
     }
 
     setIsSearching(false);
-  }, [debouncedInput, fuse]);
+  }, [debouncedInput]);
 
   const onFocus = useCallback(() => {
     setIsActive(true);
