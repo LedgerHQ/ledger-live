@@ -2,7 +2,7 @@ import React from "react";
 import FTXMfa from "./FTX";
 
 // Component to display a partner MFA / 2FA flow
-const MFA = ({ provider, onClose }: { provider: string; onClose: Function }) => {
+const MFA = ({ provider, onClose }: { provider?: string | undefined; onClose: () => void }) => {
   switch (provider) {
     case "ftxus":
     case "ftx":

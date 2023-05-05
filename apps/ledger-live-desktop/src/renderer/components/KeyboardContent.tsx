@@ -1,10 +1,13 @@
-// Toogle somehting after a sequence of keyboard
+import React, { useState, useRef, useEffect, useCallback } from "react";
 
-import { useState, useRef, useEffect, useCallback } from "react";
 type Props = {
-  children: React$Node;
+  children: React.ReactNode;
   sequence: string;
 };
+
+/**
+ * render {children} when the sequence is typed
+ */
 const KeyboardContent = ({ children, sequence }: Props) => {
   const [enabled, setEnabled] = useState(false);
   const sequenceIndex = useRef(-1);
@@ -27,6 +30,7 @@ const KeyboardContent = ({ children, sequence }: Props) => {
     window.addEventListener("keypress", onKeyPress);
     return () => window.removeEventListener("keypress", onKeyPress);
   }, [onKeyPress]);
-  return enabled ? children : null;
+  return <>{enabled ? children : null}</>;
 };
+
 export default KeyboardContent;

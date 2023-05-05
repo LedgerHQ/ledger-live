@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Flex, Icons, Tag, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import styled from "styled-components";
@@ -15,16 +15,14 @@ const ActionRowWrapper = styled(Flex)<{ completed: boolean }>`
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const { id, Icon, title, description, tagLabel, buttonLabelForAnalyticsEvent, completed } = props;
   const { t } = useTranslation();
-  const history = useHistory();
 
   const handleStartAction = useCallback(() => {
-    if ("navigationParams" in props && props.navigationParams) history.push(props.navigationParams);
-    else if ("startAction" in props) {
+    if ("startAction" in props) {
       props.startAction();
       buttonLabelForAnalyticsEvent &&
         track("button_clicked", { button: buttonLabelForAnalyticsEvent });
     }
-  }, [props, history, buttonLabelForAnalyticsEvent]);
+  }, [props, buttonLabelForAnalyticsEvent]);
 
   return (
     <ActionRowWrapper

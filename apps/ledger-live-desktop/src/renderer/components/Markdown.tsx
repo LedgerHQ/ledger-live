@@ -3,6 +3,7 @@ import styled from "styled-components";
 import ReactMarkdown from "react-markdown";
 import { shell } from "electron";
 import Box from "~/renderer/components/Box";
+
 export const Notes = styled(Box).attrs(() => ({
   ff: "Inter",
   fontSize: 4,
@@ -127,19 +128,19 @@ export const Notes = styled(Box).attrs(() => ({
 `;
 export const Terms = Notes;
 type Props = {
-  children: any;
+  children: React.ReactNode;
 };
 export default class Markdown extends PureComponent<Props> {
   componentDidMount() {
     if (this.parent) {
-      const links: NodeList<HTMLElement> = this.parent.querySelectorAll("a");
+      const links = this.parent.querySelectorAll("a");
       links.forEach(link => {
         link.style.cursor = "pointer";
         link.addEventListener("click", (e: MouseEvent) => {
           e.preventDefault();
 
-          const href = e.target && e.target.href;
-          shell.openExternal(href);
+          const href = e.target && (e.target as typeof link).href;
+          href && shell.openExternal(href);
         });
       });
     }

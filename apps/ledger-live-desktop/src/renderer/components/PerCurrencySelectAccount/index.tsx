@@ -2,23 +2,19 @@ import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/accoun
 import { TFunction, withTranslation } from "react-i18next";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import React, { useCallback, useState } from "react";
-import { connect } from "react-redux";
 import { createFilter } from "react-select";
-import { createStructuredSelector } from "reselect";
-import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { Option as ReactSelectOption } from "react-select/src/filters";
 import Select from "~/renderer/components/Select";
 import { MenuOption } from "~/renderer/components/PerCurrencySelectAccount/Option";
 import { AccountTuple } from "~/renderer/components/PerCurrencySelectAccount/state";
-const mapStateToProps = createStructuredSelector({
-  accounts: shallowAccountsSelector,
-});
+
 type Option = {
-  matched: "boolean";
+  matched: boolean;
   account: Account;
-  subAccount: SubAccount;
+  subAccount?: SubAccount | null;
 };
-const getOptionValue = option => {
-  return option.account ? option.account.id : null;
+const getOptionValue = (option: Option) => {
+  return option.account ? option.account.id : "";
 };
 const defaultFilter = createFilter({
   stringify: ({ data: account }) => {
@@ -27,8 +23,8 @@ const defaultFilter = createFilter({
     return `${currency.ticker}|${currency.name}|${name}`;
   },
 });
-const filterOption = () => (candidate, input) => {
-  const selfMatches = defaultFilter(candidate, input);
+const filterOption = () => (candidate: unknown, input: string) => {
+  const selfMatches = defaultFilter(candidate as ReactSelectOption, input);
   if (selfMatches) return [selfMatches, true];
   return [false, false];
 };
@@ -38,7 +34,7 @@ const AccountOption = React.memo(function AccountOption({
   isValue,
 }: {
   account: Account;
-  subAccount: SubAccount;
+  subAccount?: SubAccount;
   isValue?: boolean;
 }) {
   return <MenuOption isValue={isValue} account={account} subAccount={subAccount} />;
@@ -55,16 +51,16 @@ const RawSelectAccount = ({ accounts, value, onChange, t, ...props }: Props) => 
   const [searchInputValue, setSearchInputValue] = useState("");
   const renderValue = ({ data }: { data: Option }) => {
     return data.account ? (
-      <AccountOption account={data.account} subAccount={data.subAccount} isValue />
+      <AccountOption account={data.account} subAccount={data.subAccount || undefined} isValue />
     ) : null;
   };
   const renderOption = ({ data }: { data: Option }) => {
     return data.account ? (
-      <AccountOption account={data.account} subAccount={data.subAccount} disabled={!data.matched} />
+      <AccountOption account={data.account} subAccount={data.subAccount || undefined} />
     ) : null;
   };
   const onChangeCallback = useCallback(
-    (option?: Option) => {
+    (option?: Option | null) => {
       if (option) {
         onChange(option.account, option.subAccount);
       } else {
@@ -76,7 +72,7 @@ const RawSelectAccount = ({ accounts, value, onChange, t, ...props }: Props) => 
   const manualFilter = useCallback(
     () =>
       accounts.reduce((result, option) => {
-        const [display, match] = filterOption({})(
+        const [display, match] = filterOption()(
           {
             data: option.account,
           },
@@ -90,7 +86,7 @@ const RawSelectAccount = ({ accounts, value, onChange, t, ...props }: Props) => 
           });
         }
         return result;
-      }, []),
+      }, [] as Option[]),
     [searchInputValue, accounts],
   );
   const structuredResults = manualFilter();
@@ -98,17 +94,17 @@ const RawSelectAccount = ({ accounts, value, onChange, t, ...props }: Props) => 
     <Select
       {...props}
       virtual={false}
-      value={value}
+      value={value as Option}
       options={structuredResults}
       getOptionValue={getOptionValue}
       renderValue={renderValue}
       renderOption={renderOption}
-      onInputChange={v => setSearchInputValue(v)}
+      onInputChange={(v: string) => setSearchInputValue(v)}
       inputValue={searchInputValue}
-      filterOption={false}
-      isOptionDisabled={option => !option.matched}
+      filterOption={() => false}
+      isOptionDisabled={(option: Option) => !option.matched}
       placeholder={t("common.selectAccount")}
-      noOptionsMessage={({ inputValue }) =>
+      noOptionsMessage={({ inputValue }: { inputValue: string }) =>
         t("common.selectAccountNoOption", {
           accountName: inputValue,
         })
@@ -117,6 +113,4 @@ const RawSelectAccount = ({ accounts, value, onChange, t, ...props }: Props) => 
     />
   );
 };
-export const SelectAccount: React.ComponentType<OwnProps> = withTranslation()(RawSelectAccount);
-const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(SelectAccount);
-export default m;
+export const SelectAccount = withTranslation()(RawSelectAccount);

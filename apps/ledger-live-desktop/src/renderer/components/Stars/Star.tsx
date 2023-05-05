@@ -35,7 +35,7 @@ export default function Star({ accountId, parentId, yellow, rounded }: Props) {
   const MaybeButtonWrapper = yellow ? ButtonWrapper : FloatingWrapper;
   return (
     <MaybeButtonWrapper filled={isAccountStarred} rounded={rounded}>
-      <StarWrapper id="account-star-button" onClick={toggleStar} tabIndex="-1" rounded={rounded}>
+      <StarWrapper id="account-star-button" onClick={toggleStar} tabIndex={-1} rounded={rounded}>
         <Transition in={isAccountStarred} timeout={isAccountStarred ? startBurstTiming : 0}>
           {className => (
             <StarIcon yellow={yellow} filled={isAccountStarred} className={className} />
@@ -53,10 +53,13 @@ const starBust = keyframes`
     background-position: right;
   }
 `;
-const ButtonWrapper: ThemedComponent<{
+
+type WrapperProps = {
   filled?: boolean;
   rounded?: boolean;
-}> = styled.div`
+};
+
+const ButtonWrapper = styled.div<WrapperProps>`
   height: ${p => (p.rounded ? 40 : 34)}px};
   width: ${p => (p.rounded ? 40 : 34)}px};
   border: 1px solid
@@ -72,19 +75,20 @@ const ButtonWrapper: ThemedComponent<{
       p.filled ? p.theme.colors.starYellow : p.theme.colors.palette.text.shade100};
   }
 `;
-const FloatingWrapper = styled.div``;
+
+const FloatingWrapper = styled.div<WrapperProps>``;
 
 // NB negative margin to allow the burst to overflow
-const StarWrapper: ThemedComponent<{
+const StarWrapper = styled.div<{
   rounded?: boolean;
-}> = styled.div`
+}>`
   margin: -${p => (p.rounded ? 20 : 17)}px;
 `;
 const startBurstTiming = 800;
-const StarIcon: ThemedComponent<{
+const StarIcon = styled.div<{
   filled?: boolean;
   yellow?: boolean;
-}> = styled.div`
+}>`
   &.entering {
     animation: ${starBust} ${startBurstTiming}ms steps(29) 1;
   }

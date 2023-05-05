@@ -3,13 +3,19 @@ import styled from "styled-components";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { centerEllipsis } from "~/renderer/styles/helpers";
 import Fallback from "~/renderer/images/nftFallback.jpg";
+
 type Props = {
   metadata: NFTMetadata;
-  tokenId: string;
+  tokenId?: string;
   full?: boolean;
 }; // TODO Figure out if we really need this once we know who creates/processes the media.
-const StyledPlaceholder: ThemedComponent<Props> = styled.div`
-  --hue: ${p => (p?.tokenId || "abcdefg").substr(-8) % 360};
+
+function randomHueForTokenId(tokenId = "") {
+  return parseInt(tokenId.substr(-8)) % 360;
+}
+
+const StyledPlaceholder = styled.div<{ tokenId?: string; full?: boolean; metadata?: NFTMetadata }>`
+  --hue: ${p => randomHueForTokenId(p.tokenId)};
   background-image: url('${Fallback}');
   background-size: contain;
   border-radius: 4px;

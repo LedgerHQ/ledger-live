@@ -50,7 +50,6 @@ export const ManageButton = styled.button`
   `};
 `;
 export const InfoWrapper = styled(Box).attrs(() => ({
-  vertical: true,
   flex: 1,
   ml: 3,
   textAlign: "start",

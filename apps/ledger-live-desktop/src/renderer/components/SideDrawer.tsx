@@ -120,6 +120,7 @@ export type DrawerProps = {
   title?: string;
   preventBackdropClick?: boolean;
   forceDisableFocusTrap?: boolean;
+  style?: React.CSSProperties;
 };
 const domNode = document.getElementById("modals");
 export function SideDrawer({

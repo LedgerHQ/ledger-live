@@ -20,19 +20,24 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Separator, Item, TextLink, AngleDown, Check } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+
 const AccountCrumb = () => {
-  const { t } = useTranslation();
-  const accounts = useSelector(accountsSelector);
   const history = useHistory();
-  const { parentId, id } = useParams();
+  const { t } = useTranslation();
+  const { parentId, id } = useParams<{ parentId?: string; id?: string }>();
+
+  const accounts = useSelector(accountsSelector);
+
   const account: Account | undefined | null = useMemo(
     () => (parentId ? accounts.find(a => a.id === parentId) : accounts.find(a => a.id === id)),
     [parentId, accounts, id],
   );
+
   const tokenAccount: AccountLike | undefined | null = useMemo(
     () => (parentId && account && id ? findSubAccountById(account, id) : null),
     [parentId, account, id],
   );
+
   const currency = useMemo(
     () =>
       tokenAccount
@@ -42,11 +47,13 @@ const AccountCrumb = () => {
         : null,
     [tokenAccount, account],
   );
+
   const items = useMemo(() => (parentId && account ? listSubAccounts(account) : accounts), [
     parentId,
     account,
     accounts,
   ]);
+
   const renderItem = useCallback(({ item, isActive }) => {
     const currency = getAccountCurrency(item.account);
     return (
@@ -63,6 +70,7 @@ const AccountCrumb = () => {
       </Item>
     );
   }, []);
+
   const onAccountSelected = useCallback(
     item => {
       if (!item) {
@@ -81,8 +89,9 @@ const AccountCrumb = () => {
     },
     [parentId, history],
   );
+
   const openActiveAccount = useCallback(
-    (e: SyntheticEvent<HTMLButtonElement>) => {
+    (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       setTrackingSource("account breadcrumb");
       if (parentId) {
@@ -101,6 +110,7 @@ const AccountCrumb = () => {
     },
     [history, parentId, id],
   );
+
   const processItemsForDropdown = useCallback(
     (items: any[]) =>
       items.map(item => ({
@@ -110,10 +120,13 @@ const AccountCrumb = () => {
       })),
     [],
   );
+
   const processedItems = useMemo(() => processItemsForDropdown(items || []), [
     items,
     processItemsForDropdown,
   ]);
+
+  // no more id can happens if the account were just deleted
   if (!id) {
     return (
       <TextLink>
@@ -130,12 +143,11 @@ const AccountCrumb = () => {
       </TextLink>
     );
   }
+
   return (
     <>
       <Separator />
       <DropDownSelector
-        border
-        horizontal
         items={processedItems}
         renderItem={renderItem}
         onChange={onAccountSelected}

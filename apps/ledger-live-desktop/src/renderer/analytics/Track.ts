@@ -7,6 +7,7 @@ class Track extends PureComponent<{
   onUpdate?: boolean;
   event: string;
   mandatory?: boolean;
+  [key: string]: unknown;
 }> {
   componentDidMount() {
     if (typeof this.props.event !== "string") {

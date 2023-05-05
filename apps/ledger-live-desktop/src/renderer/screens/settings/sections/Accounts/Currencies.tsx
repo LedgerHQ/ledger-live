@@ -1,7 +1,12 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Currency, CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  Currency,
+  CryptoCurrency,
+  TokenCurrency,
+  CryptoOrTokenCurrency,
+} from "@ledgerhq/types-cryptoassets";
 import { cryptoCurrenciesSelector } from "~/renderer/reducers/accounts";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import SelectCurrency from "~/renderer/components/SelectCurrency";
@@ -15,8 +20,10 @@ export default function Currencies() {
   const currencies = useSelector(cryptoCurrenciesSelector);
   const [currency, setCurrency] = useState<CryptoCurrency | TokenCurrency | typeof undefined>();
   const handleChangeCurrency = useCallback(
-    (currency?: CryptoCurrency | TokenCurrency) => {
-      setCurrency(currency);
+    (currency?: CryptoOrTokenCurrency | null) => {
+      if (currency) {
+        setCurrency(currency);
+      }
     },
     [setCurrency],
   );
@@ -37,7 +44,7 @@ export default function Currencies() {
       <Row
         title={t("settings.tabs.currencies")}
         desc={t("settings.currencies.desc")}
-        style={{
+        contentContainerStyle={{
           cursor: "pointer",
         }}
       >
@@ -54,7 +61,7 @@ export default function Currencies() {
       </Row>
       {currency && (
         <Body>
-          <CurrencyRows currency={currency} />
+          <CurrencyRows currency={currency as CryptoCurrency} />
         </Body>
       )}
     </Box>

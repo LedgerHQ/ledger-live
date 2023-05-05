@@ -6,7 +6,7 @@ import { hasPasswordSelector } from "~/renderer/reducers/application";
 import debounce from "lodash/debounce";
 
 // FIXME drop: the impl is not correct! fn always changes so debounce is regenerated each callback
-const useDebouncedCallback = (fn, delay, options) =>
+const useDebouncedCallback: typeof debounce = (fn, delay, options) =>
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useCallback(debounce(fn, delay, options), [fn, delay, options]);
 const Idler = () => {
@@ -30,7 +30,7 @@ const Idler = () => {
     };
   }, [debounceOnChange]);
   useEffect(() => {
-    let timeout = null;
+    let timeout: NodeJS.Timeout | null = null;
     if (hasPassword && autoLockTimeout && autoLockTimeout !== -1) {
       timeout = setTimeout(() => {
         dispatch(lock());

@@ -15,7 +15,6 @@ export const DomainErrorsView = memo(({ domainError, isForwardResolution }: Doma
       <div data-testid="domain-error-invalid-domain">
         <Alert
           mt={5}
-          showIcon
           title={t("send.steps.recipient.domainService.invalidDomain.title")}
           type="warning"
           learnMoreLabel={t("common.learnMore")}
@@ -32,7 +31,6 @@ export const DomainErrorsView = memo(({ domainError, isForwardResolution }: Doma
       <div data-testid="domain-error-no-resolution">
         <Alert
           mt={5}
-          showIcon
           title={t("send.steps.recipient.domainService.noResolution.title")}
           type="secondary"
         />

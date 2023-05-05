@@ -38,7 +38,7 @@ export default function AccountDistribution({ accounts }: Props) {
     if (!cardRef.current) {
       return;
     }
-    const callback = entries => {
+    const callback = (entries: IntersectionObserverEntry[]) => {
       if (entries[0] && entries[0].isIntersecting) {
         setVisible(true);
       }

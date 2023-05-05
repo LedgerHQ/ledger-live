@@ -36,9 +36,26 @@ import {
 } from "./AccountActionsDefault";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-const ButtonSettings: ThemedComponent<{
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
+type RenderActionParams = {
+  label: React.ReactElement;
+  onClick: () => void;
+  event?: string;
+  eventProperties?: Record<string, unknown>;
+  icon:
+    | React.ComponentType<{
+        size: number;
+        overrideColor: string;
+        currency: TokenCurrency | CryptoCurrency;
+      }>
+    | ((a: { size: number }) => React.ReactElement);
   disabled?: boolean;
-}> = styled(Tabbable).attrs(() => ({
+  tooltip?: string;
+  accountActionsTestId?: string;
+};
+
+const ButtonSettings = styled(Tabbable).attrs<{ disabled?: boolean }>(() => ({
   alignItems: "center",
   justifyContent: "center",
 }))`
@@ -56,13 +73,12 @@ const ButtonSettings: ThemedComponent<{
     background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.divider, 0.3))};
   }
 `;
-const FadeInButtonsContainer = styled(Box).attrs(() => ({
+
+const FadeInButtonsContainer = styled(Box).attrs<{ show?: boolean }>({
   horizontal: true,
   flow: 2,
   alignItems: "center",
-}))`
-  pointer-events: ${p => !p.show && "none"};
-  opacity: ${p => (p.show ? 1 : 0)};
+})<{ show?: boolean }>`
   transition: opacity 400ms ease-in;
 `;
 const mapDispatchToProps = {
@@ -132,17 +148,19 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
 const pageName = "Page Account";
 const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const contrastText = useTheme("colors.palette.text.shade60");
+  const contrastText = useTheme().colors.palette.text.shade60;
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
-  const decorators = perFamilyAccountActions[mainAccount.currency.family];
-  const manage = perFamilyManageActions[mainAccount.currency.family];
-  let manageList = [];
+  const decorators =
+    perFamilyAccountActions[mainAccount.currency.family as keyof typeof perFamilyAccountActions];
+  const manage =
+    perFamilyManageActions[mainAccount.currency.family as keyof typeof perFamilyManageActions];
+  let manageList: any[] = [];
   if (manage) {
     const familyManageActions = manage({
-      account,
+      account: account as Account,
       parentAccount,
     });
     manageList = familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
@@ -171,11 +189,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   // don't show buttons until we know whether or not we can show swap button, otherwise possible click jacking
   const showButtons = !!(providers || storedProviders || providersError);
-  const availableOnSwap =
-    (providers || storedProviders) &&
-    !!(providers || storedProviders).find(({ pairs }) => {
-      return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
-    });
+  const availableOnSwap = providers?.concat(storedProviders ?? []).some(({ pairs }) => {
+    return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
+  });
+
   const history = useHistory();
   const buttonSharedTrackingFields = useMemo(
     () => ({
@@ -254,7 +271,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     disabled,
     tooltip,
     accountActionsTestId,
-  }) => {
+  }: RenderActionParams) => {
     const Icon = icon;
     const Action = (
       <ActionDefault
@@ -272,19 +289,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     }
     return Action;
   };
-  const manageActions: {
-    label: any;
-    onClick: () => void;
-    event?: string;
-    eventProperties?: object;
-    icon:
-      | React.ComponentType<{
-          size: number;
-        }>
-      | ((a: { size: number }) => React$Element<any>);
-    disabled?: boolean;
-    tooltip?: string;
-  }[] = [
+  const manageActions: RenderActionParams[] = [
     ...manageList.map(item => ({
       ...item,
       eventProperties: {
@@ -316,11 +321,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     </Box>
   );
 };
-const ConnectedAccountHeaderActions: React.ComponentType<OwnProps> = compose(
+const ConnectedAccountHeaderActions = compose<React.ComponentType<OwnProps>>(
   connect(null, mapDispatchToProps),
   withTranslation(),
 )(AccountHeaderActions);
-export const AccountHeaderSettingsButton: React.ComponentType<OwnProps> = compose(
+export const AccountHeaderSettingsButton = compose<React.ComponentType<OwnProps>>(
   connect(null, mapDispatchToProps),
   withTranslation(),
 )(AccountHeaderSettingsButtonComponent);
