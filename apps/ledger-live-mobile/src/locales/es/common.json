@@ -324,11 +324,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
-      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
+      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente.",
+      "primaryCTA" : "Cargar otra imagen"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
-      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
+      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente.",
+      "primaryCTA" : "Cargar otra imagen"
     },
     "InvalidAddress" : {
       "title" : "Esta no es una dirección de {{currencyName}} válida"
@@ -477,6 +479,10 @@
       "title" : "La contraseña no coincide",
       "description" : "Inténtalo de nuevo."
     },
+    "PeerRemovedPairing" : {
+      "title" : "Debes eliminar “{{ deviceName }}” de los dispositivos Bluetooth de tu teléfono",
+      "description" : "Ha cambiado la configuración Bluetooth de tu {{ productName }}. Quítalo de los ajustes de tu teléfono, luego vuelve a Ledger Live e intenta emparejarlo de nuevo."
+    },
     "SelectExchangesLoadError" : {
       "title" : "No es posible cargar",
       "description" : "No es posible cargar los exchanges."
@@ -549,11 +555,12 @@
       "description" : "Es necesario firmar las transacciones en menos de 30 segundos. Inténtalo de nuevo."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "La energía es menor que la requerida. Es posible que pagues hasta 50 TRX en tarifas."
+      "title" : "La energía es menor que la requerida. Es posible que pagues hasta 20 TRX en tarifas."
     },
     "UpdateYourApp" : {
       "title" : "Es necesario actualizar la aplicación",
-      "description" : "Desinstala y vuelve a instalar la aplicación {{managerAppName}} en Manager."
+      "description" : "Desinstala y vuelve a instalar la aplicación {{managerAppName}} en Manager.",
+      "primaryCTA" : "Abrir Manager"
     },
     "UserRefusedAllowManager" : {
       "title" : "Manager deshabilitado en el dispositivo",
@@ -672,7 +679,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
+      "description" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger.",
+      "primaryCTA" : "Reintentar"
     },
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
@@ -1811,7 +1819,8 @@
           "title" : "Tu dispositivo está bloqueado",
           "subtitle" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
         },
-        "retryCta" : "Inténtalo de nuevo"
+        "retryCta" : "Reintentar",
+        "openSettingsCta" : "Ir a los ajustes de Bluetooth"
       }
     }
   },
@@ -4455,19 +4464,44 @@
       "activatableVotes" : "Tienes votos que puedes activar."
     }
   },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO available"
+      },
+      "delegated" : {
+        "description" : "Los activos delegados se utilizan para la votación en Osmosis. Esta es tu cantidad total de votos."
+      },
+      "undelegating" : {
+        "description" : "Los activos desdelegados presentan un bloqueo temporal de 14 días antes de estar disponibles."
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Delega tus OSMO para recibir recompensas de forma segura, a la vez que mantienes el control de tus activos.",
+            "steps" : {
+              "1" : "Tendrás que esperar 14 días para que se complete la desdelegación."
+            }
+          }
+        }
+      }
+    }
+  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "{{currencyTicker}} disponibles",
+        "title" : "ATOM disponibles",
         "description" : "Este importe está disponible."
       },
       "delegated" : {
         "title" : "Activos delegados",
-        "description" : "Los activos delegados se utilizan para la votación en {{currencyName}}. Esta es tu cantidad total de votos."
+        "description" : "Los activos delegados se utilizan para la votación en Cosmos. Esta es tu cantidad total de votos."
       },
       "undelegating" : {
         "title" : "Desdelegando",
-        "description" : "Los activos desdelegados sufren un bloqueo temporal de {{numberOfDays}} días antes de estar disponibles."
+        "description" : "Los activos desdelegados presentan un bloqueo temporal de 21 días antes de estar disponibles."
       },
       "delegationUnavailable" : {
         "title" : "Delegación no disponible",
@@ -4475,7 +4509,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "Puedes recibir recompensas en {{ticker}} delegando tu activos.",
+      "delegationEarn" : "Puedes recibir recompensas ATOM delegando tu activos.",
       "info" : "Cómo funciona la delegación",
       "claimRewards" : "Reclamar recompensas",
       "claimAvailableRewards" : "Reclamar {{amount}}",
@@ -4503,10 +4537,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "Delega tus {{ticker}} para recibir recompensas de forma segura, a la vez que mantienes el control de tus activos.",
+            "description" : "Delega tus ATOM para recibir recompensas de forma segura, a la vez que mantienes el control de tus activos.",
             "steps" : {
               "0" : "Los activos delegados siguen siendo tuyos.",
-              "1" : "Tendrás que esperar {{numberOfDays}} días para que se complete la desdelegación.",
+              "1" : "Deberás esperar 21 días para que se complete la desdelegación.",
               "2" : "Delega y vota de forma segura con tu dispositivo Ledger."
             },
             "warning" : {
@@ -5964,13 +5998,6 @@
       "nft" : "NFTs"
     },
     "nftGallery" : {
-      "filters" : {
-        "selectAndHide" : "Seleccionar y ocultar",
-        "hide" : "Ocultar {{count}} colección",
-        "hide_plural" : "Ocultar {{count}} colecciones",
-        "alertHide" : "1 Colección oculta. Ve a los ajustes para mostrarla en cualquier momento",
-        "alertHide_plural" : "{{count}} Colecciones ocultas. Ve a los ajustes para mostrarlas en cualquier momento"
-      },
       "empty" : {
         "title" : "Todavía no hay NFTs para mostrar",
         "subtitle" : "Recibe tu primer NFT para comenzar",
