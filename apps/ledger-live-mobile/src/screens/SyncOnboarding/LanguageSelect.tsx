@@ -1,17 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { Button, Flex, SelectableList, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, SelectableList, Text, Box } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
-import {
-  ArrowLeftMedium,
-  ChevronBottomMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { CloseMedium, DropdownMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import { useTranslation } from "react-i18next";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { setLanguage } from "../../actions/settings";
 import { useLocale } from "../../context/Locale";
 import { languages, supportedLocales } from "../../languages";
@@ -20,6 +18,7 @@ import DeviceDark from "../../images/illustration/Dark/_FamilyPackX.png";
 import DeviceLight from "../../images/illustration/Light/_FamilyPackX.png";
 import { TrackScreen, updateIdentify, track } from "../../analytics";
 import QueuedDrawer from "../../components/QueuedDrawer";
+import InvertTheme from "../../components/theme/InvertTheme";
 
 type UiDrawerStatus =
   | "none"
@@ -33,8 +32,8 @@ type LanguageSelectStatus =
   | "completed";
 
 export type Props = {
-  device: Device;
-  productName: string;
+  device?: Device; // if device and productName not defined, the logic to check for firmware update is not triggered.
+  productName?: string;
 };
 
 const ScrollViewContainer = styled(ScrollView)`
@@ -92,7 +91,7 @@ const LanguageSelect = ({ device, productName }: Props) => {
       button: `change ${getDeviceModel(device.modelId).productName} language`,
     });
     // TODO: redirect to firmware localization flow when available
-  }, [device.modelId]);
+  }, [device?.modelId]);
 
   const handleFirmwareLanguageCancel = useCallback(() => {
     track("button_clicked", { button: "cancel change language" });
@@ -120,16 +119,21 @@ const LanguageSelect = ({ device, productName }: Props) => {
 
   return (
     <Flex>
-      <Button
-        type="main"
-        outline
-        size="small"
-        Icon={ChevronBottomMedium}
-        iconPosition="right"
-        onPress={handleLanguageSelectOnPress}
-      >
-        {currentLocale.toLocaleUpperCase()}
-      </Button>
+      <TouchableOpacity onPress={handleLanguageSelectOnPress}>
+        <Flex
+          flexDirection="row"
+          alignItems="center"
+          height={"32px"}
+          pl="12px"
+          pr={3}
+          bg="opacityDefault.c10"
+          borderRadius="50"
+        >
+          <Text mr="2px">{currentLocale.toLocaleUpperCase()}</Text>
+          <DropdownMedium />
+        </Flex>
+      </TouchableOpacity>
+
       <QueuedDrawer
         noCloseButton
         preventBackdropClick
@@ -142,16 +146,13 @@ const LanguageSelect = ({ device, productName }: Props) => {
           alignItems="center"
           justifyContent="space-between"
         >
-          <Flex flex={1}>
-            <Button
-              Icon={ArrowLeftMedium}
-              onPress={handleLanguageSelectCancel}
-            />
-          </Flex>
+          <Flex flex={1} />
           <Text variant="h5" fontWeight="semiBold" justifyContent="center">
             {t("syncOnboarding.languageSelect.title")}
           </Text>
-          <Flex flex={1} />
+          <Flex flex={1} alignItems="flex-end">
+            <Button Icon={CloseMedium} onPress={handleLanguageSelectCancel} />
+          </Flex>
         </Flex>
         <ScrollViewContainer>
           <Flex>

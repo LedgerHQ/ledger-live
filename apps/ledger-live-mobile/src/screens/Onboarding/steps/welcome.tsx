@@ -25,6 +25,7 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 
 import videoSources from "../../../../assets/videos";
+import LanguageSelect from "../../SyncOnboarding/LanguageSelect";
 
 const absoluteStyle = {
   position: "absolute" as const,
@@ -175,18 +176,9 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
         >
           {/* @ts-expect-error Bindings for SafeAreaView are not written properly. */}
           <SafeFlex position="absolute" top={0} right={0}>
-            <InvertTheme>
-              <Button
-                type={"main"}
-                size="small"
-                mr={4}
-                Icon={ChevronBottomMedium}
-                iconPosition="right"
-                onPress={onLanguageSelect}
-              >
-                {locale.toLocaleUpperCase()}
-              </Button>
-            </InvertTheme>
+            <Flex pr={4}>
+              <LanguageSelect />
+            </Flex>
           </SafeFlex>
         </Flex>
         <Flex px={6} py={10}>
