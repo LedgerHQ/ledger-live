@@ -737,7 +737,6 @@ DEPENDENCIES:
   - "glog (from `../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.21.0_@babel+preset-env@7.17.10_metro-resolver@0.76.0_metro-_45bugrpbusvyszmca3id4feh4e/node_modules/react-native/third-party-podspecs/glog.podspec`)"
   - "hermes-engine (from `../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.21.0_@babel+preset-env@7.17.10_metro-resolver@0.76.0_metro-_45bugrpbusvyszmca3id4feh4e/node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)"
   - libevent (~> 2.1.12)
-  - "lottie-ios (from `../../../node_modules/.pnpm/lottie-ios@3.5.0/node_modules/lottie-ios`)"
   - "lottie-react-native (from `../../../node_modules/.pnpm/lottie-react-native@6.0.0-rc.6_react-native@0.71.6_react@18.0.0/node_modules/lottie-react-native`)"
   - OpenSSL-Universal (= 1.1.1100)
   - "PasscodeAuth (from `../../../node_modules/.pnpm/@ledgerhq+react-native-passcode-auth@2.1.0/node_modules/@ledgerhq/react-native-passcode-auth`)"
@@ -843,6 +842,7 @@ SPEC REPOS:
     - GoogleUtilities
     - libevent
     - libwebp
+    - lottie-ios
     - MultiplatformBleAdapter
     - nanopb
     - OpenSSL-Universal
@@ -884,8 +884,6 @@ EXTERNAL SOURCES:
     :podspec: "../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.21.0_@babel+preset-env@7.17.10_metro-resolver@0.76.0_metro-_45bugrpbusvyszmca3id4feh4e/node_modules/react-native/third-party-podspecs/glog.podspec"
   hermes-engine:
     :podspec: "../../../node_modules/.pnpm/react-native@0.71.6_@babel+core@7.21.0_@babel+preset-env@7.17.10_metro-resolver@0.76.0_metro-_45bugrpbusvyszmca3id4feh4e/node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
-  lottie-ios:
-    :path: "../../../node_modules/.pnpm/lottie-ios@3.5.0/node_modules/lottie-ios"
   lottie-react-native:
     :path: "../../../node_modules/.pnpm/lottie-react-native@6.0.0-rc.6_react-native@0.71.6_react@18.0.0/node_modules/lottie-react-native"
   PasscodeAuth:

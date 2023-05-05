@@ -1051,9 +1051,6 @@ importers:
       lodash:
         specifier: 4.17.21
         version: 4.17.21
-      lottie-ios:
-        specifier: 3.5.0
-        version: 3.5.0
       lottie-react-native:
         specifier: 6.0.0-rc.6
         version: 6.0.0-rc.6(react-native@0.71.6)(react@18.0.0)
@@ -15476,7 +15473,7 @@ packages:
       '@babel/runtime': 7.20.13
       '@polkadot/ui-shared': 2.11.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
+      '@polkadot/util-crypto': 10.3.1
       react: 18.0.0
       react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-svg: 12.5.1(react-native@0.71.6)(react@18.0.0)
@@ -15554,8 +15551,25 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
+      '@polkadot/util-crypto': 10.3.1
       color: 3.2.1
+    dev: false
+
+  /@polkadot/util-crypto@10.3.1:
+    resolution: {integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@babel/runtime': 7.20.13
+      '@noble/hashes': 1.1.5
+      '@noble/secp256k1': 1.7.1
+      '@polkadot/networks': 10.3.1
+      '@polkadot/util': 10.3.1
+      '@polkadot/wasm-crypto': 6.4.1(@polkadot/util@10.3.1)(@polkadot/x-randomvalues@10.3.1)
+      '@polkadot/x-bigint': 10.3.1
+      '@polkadot/x-randomvalues': 10.3.1
+      '@scure/base': 1.1.1
+      ed2curve: 0.3.0
+      tweetnacl: 1.0.3
     dev: false
 
   /@polkadot/util-crypto@10.3.1(@polkadot/util@10.3.1):
@@ -26256,7 +26270,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-dom@17.0.2)(react-is@17.0.2)(react@17.0.2)
+      styled-components: 5.3.5(react-is@18.1.0)(react@18.0.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -34114,6 +34128,40 @@ packages:
       url-parse: 1.5.10
     transitivePeerDependencies:
       - expo
+    dev: true
+
+  /expo-asset@8.9.1(expo-file-system@15.2.2)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
+    resolution: {integrity: sha512-ugavxA7Scn96TBdeTYQA6xtHktnk0o/0xk7nFkxJKoH/t2cZDFSB05X0BI2/LDZY4iE6xTPOYw4C4mmourWfuA==}
+    peerDependencies:
+      expo-file-system: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-file-system:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      blueimp-md5: 2.19.0
+      expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-file-system: 15.2.2(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
+      invariant: 2.2.4
+      md5-file: 3.2.3
+      path-browserify: 1.0.1
+      react: 18.0.0
+      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      url-parse: 1.5.10
+    transitivePeerDependencies:
+      - expo
+      - supports-color
 
   /expo-barcode-scanner@12.3.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-aJ/MJVikSESKUwMUTIsURGJTMgAuiFhcAj0NxH0WiezhG7cJE4iIzbuk/+Ns5xpQT8y5Zc8Ulhj02qSW8+kxDQ==}
@@ -34373,7 +34421,7 @@ packages:
         optional: true
     dependencies:
       expo: 48.0.9(@babel/core@7.21.0)(metro@0.76.0)(react-native@0.71.6)(react@18.0.0)
-      expo-asset: 8.9.1(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-asset: 8.9.1(expo-file-system@15.2.2)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       fontfaceobserver: 2.1.0
@@ -34706,7 +34754,7 @@ packages:
       babel-preset-expo: 9.3.2(@babel/core@7.21.0)
       cross-spawn: 6.0.5
       expo-application: 5.1.1(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
-      expo-asset: 8.9.1(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
+      expo-asset: 8.9.1(expo-file-system@15.2.2)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-file-system: 15.2.2(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-font: 11.1.1(expo-asset@8.9.1)(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
@@ -42942,10 +42990,6 @@ packages:
     dependencies:
       js-tokens: 4.0.0
 
-  /lottie-ios@3.5.0:
-    resolution: {integrity: sha512-DM6BYLhHTzvUsK89AjY+K9RwVGkOBwbH/iytjyZUmFbXz8DVsoPEyy+c7L5NZmVouZHvLnOQp6NaYTkwMo+iOg==}
-    dev: false
-
   /lottie-react-native@6.0.0-rc.6(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-P0xyb/2MtWo+JVWq3eY2TYomfhefDAxa3N4+jw2UP248g7X1k/TqmmuNrztgQwsJzcubxY/Ro/PVVOupIAWCcg==}
     peerDependencies:
@@ -43796,7 +43840,7 @@ packages:
       metro-cache: 0.76.0
       metro-core: 0.76.0
       metro-runtime: 0.76.0
-      metro-transform-worker: 0.76.0
+      metro-transform-worker: 0.76.0(metro-minify-terser@0.76.0)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -54133,7 +54177,6 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-system@5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}
