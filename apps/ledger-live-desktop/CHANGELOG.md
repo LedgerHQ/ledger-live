@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.58.0-next.2
+
+### Patch Changes
+
+- [#3356](https://github.com/LedgerHQ/ledger-live/pull/3356) [`b3a76dbebc`](https://github.com/LedgerHQ/ledger-live/commit/b3a76dbebcbe073f672a776c7e85e3d6c54b0342) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD log content cards clicks when no url
+
 ## 2.58.0-next.1
 
 ### Patch Changes
