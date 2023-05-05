@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";

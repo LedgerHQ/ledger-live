@@ -30,7 +30,7 @@ const ExperimentalFeatureRow = ({
   feature: Feature;
   onDirtyChange: () => void;
 }) => {
-  const { type, dirty, ...rest } = feature;
+  const { dirty, ...rest } = feature;
   const Children = experimentalTypesMap[feature.type];
   const envValue = useEnv(feature.name);
   const isDefault = isEnvDefault(feature.name);
