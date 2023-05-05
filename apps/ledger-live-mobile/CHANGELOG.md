@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.21.0-nightly.5
+
+### Patch Changes
+
+- Updated dependencies [[`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9)]:
+  - @ledgerhq/types-live@6.33.0-nightly.3
+  - @ledgerhq/coin-framework@0.3.2-nightly.4
+  - @ledgerhq/domain-service@1.1.0-nightly.4
+  - @ledgerhq/live-common@29.5.0-nightly.4
+
 ## 3.21.0-nightly.4
 
 ### Minor Changes

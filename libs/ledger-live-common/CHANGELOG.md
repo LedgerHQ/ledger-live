@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 29.5.0-nightly.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.3.2-nightly.4
+  - @ledgerhq/coin-polkadot@0.1.3-nightly.4
+  - @ledgerhq/domain-service@1.1.0-nightly.4
+  - @ledgerhq/live-portfolio@0.0.4-nightly.3
+  - @ledgerhq/hw-app-eth@6.33.2-nightly.4
+
 ## 29.5.0-nightly.3
 
 ### Minor Changes

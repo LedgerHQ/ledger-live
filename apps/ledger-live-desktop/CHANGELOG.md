@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.58.0-nightly.4
+
+### Minor Changes
+
+- [#2967](https://github.com/LedgerHQ/ledger-live/pull/2967) [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Add onboarding recover case modal helper to update firmware
+
+- [#2967](https://github.com/LedgerHQ/ledger-live/pull/2967) [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Onboarding : Guidelines screen to Restore with Recover
+
+### Patch Changes
+
+- Updated dependencies [[`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9)]:
+  - @ledgerhq/types-live@6.33.0-nightly.3
+  - @ledgerhq/coin-framework@0.3.2-nightly.4
+  - @ledgerhq/domain-service@1.1.0-nightly.4
+  - @ledgerhq/live-common@29.5.0-nightly.4
+
 ## 2.58.0-nightly.3
 
 ### Minor Changes
