@@ -324,11 +324,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Image refusée sur votre Ledger Stax",
-      "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
+      "description" : "Si cette image ne vous plaît pas, choisissez une autre image.",
+      "primaryCTA" : "Télécharger une autre image"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Image refusée sur votre Ledger Stax",
-      "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
+      "description" : "Si cette image ne vous plaît pas, choisissez une autre image.",
+      "primaryCTA" : "Télécharger une autre image"
     },
     "InvalidAddress" : {
       "title" : "Adresse {{currencyName}} invalide"
@@ -477,6 +479,10 @@
       "title" : "Mots de passe non identiques",
       "description" : "Veuillez réessayer."
     },
+    "PeerRemovedPairing" : {
+      "title" : "Retirez votre '{{ deviceName }}' des appareils couplés à votre téléphone",
+      "description" : "La configuration Bluetooth de votre {{ productName }} a changé. Supprimez-le dans les Paramètres Bluetooth de votre téléphone, revenez dans Ledger Live, et réessayez de le coupler."
+    },
     "SelectExchangesLoadError" : {
       "title" : "Chargement impossible",
       "description" : "Chargement des échanges impossible"
@@ -549,11 +555,12 @@
       "description" : "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
+      "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 20 TRX."
     },
     "UpdateYourApp" : {
       "title" : "Mise à jour de l’app nécessaire",
-      "description" : "Merci de désinstaller puis réinstaller l’app {{managerAppName}} dans le Gestionnaire."
+      "description" : "Merci de désinstaller puis réinstaller l’app {{managerAppName}} dans le Gestionnaire.",
+      "primaryCTA" : "Ouvrir My Ledger"
     },
     "UserRefusedAllowManager" : {
       "title" : "Gestionnaire désactivé sur l’appareil",
@@ -672,7 +679,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
+      "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger.",
+      "primaryCTA" : "Réessayer"
     },
     "SolanaAccountNotFunded" : {
       "title" : "Pas de fonds sur le compte"
@@ -963,12 +971,12 @@
       },
       "buyCrypto" : {
         "title" : "Acheter des cryptos",
-        "description" : "Achetez plus de 50 cryptos avec nos partenaires.",
+        "description" : "Achetez plus de 50 cryptos avec nos prestataires tiers.",
         "cta" : "Acheter maintenant"
       },
       "swap" : {
         "title" : "Échanger des cryptos",
-        "description" : "Échangez plus de 100 cryptos et gardez le contrôle avec nos partenaires.",
+        "description" : "Échangez plus de 100 cryptos et gardez le contrôle avec nos prestataires tiers.",
         "cta" : "Échanger maintenant"
       },
       "algorand" : {
@@ -1059,7 +1067,7 @@
     },
     "2" : {
       "title" : "Vos clés vers le Web3",
-      "desc" : "Achetez, vendez et échangez les cryptos les plus connues, via nos partenaires et en toute sécurité avec votre Ledger."
+      "desc" : "Achetez, vendez et échangez les cryptos les plus connues, via nos prestataires tiers et en toute sécurité avec votre Ledger."
     },
     "3" : {
       "title" : "Une sécurité certifiée",
@@ -1141,7 +1149,7 @@
   "installSetOfApps" : {
     "restore" : {
       "title" : "Installer les mêmes apps que sur {{deviceName}} ?",
-      "titleNoDeviceName" : "Installer les mêmes apps que sur votre Ledger précédent ?",
+      "titleNoDeviceName" : "Installer les mêmes apps que sur votre autre Ledger ?",
       "installCTA" : "Installer maintenant",
       "skipCTA" : "Plus tard"
     },
@@ -1811,7 +1819,8 @@
           "title" : "Appareil verrouillé",
           "subtitle" : "Déverrouillez votre {{ productName }} et réessayez."
         },
-        "retryCta" : "Réessayer"
+        "retryCta" : "Réessayer",
+        "openSettingsCta" : "Accéder aux Paramètres Bluetooth"
       }
     }
   },
@@ -1984,7 +1993,7 @@
       "addAccounts" : {
         "addAccounts" : "Ajouter un actif",
         "title" : "Commencer",
-        "description" : "Vous pouvez acheter des cryptos auprès de nos partenaires ou configurer votre wallet."
+        "description" : "Vous pouvez acheter des cryptos auprès de nos prestataires ou configurer votre wallet."
       },
       "title" : "Commencez par ajouter vos actifs préférés à votre wallet",
       "subtitle" : "Ledger prend en charge plus de 6 000 cryptos.",
@@ -4455,19 +4464,44 @@
       "activatableVotes" : "Vos votes peuvent maintenant être activés."
     }
   },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO disponibles"
+      },
+      "delegated" : {
+        "description" : "Les actifs délégués sont utilisés pour voter sur Osmosis. Cela représente votre nombre total de votes."
+      },
+      "undelegating" : {
+        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 14 jours."
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Déléguez vos OSMO pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
+            "steps" : {
+              "1" : "Vous devrez attendre 14 jours pour que l’interruption de délégation soit terminée."
+            }
+          }
+        }
+      }
+    }
+  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "{{currencyTicker}} disponibles",
+        "title" : "ATOM disponible",
         "description" : "Ce montant est disponible."
       },
       "delegated" : {
         "title" : "Actifs délégués",
-        "description" : "Les actifs délégués sont utilisés pour voter sur {{currencyName}}. Cela représente votre nombre total de votes."
+        "description" : "Les actifs délégués sont utilisés pour voter sur Cosmos. Cela représente votre nombre total de votes."
       },
       "undelegating" : {
         "title" : "Délégation interrompue",
-        "description" : "Les actifs dont la délégation est interrompue sont disponibles après {{numberOfDays}} jours."
+        "description" : "Les actifs dont la délégation est interrompue sont disponibles après 21 jours."
       },
       "delegationUnavailable" : {
         "title" : "Délégation indisponible",
@@ -4475,7 +4509,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "Vous pouvez gagner des récompenses en {{ticker}} en déléguant vos actifs.",
+      "delegationEarn" : "Vous pouvez gagner des récompenses ATOM en déléguant vos actifs.",
       "info" : "Fonctionnement de la délégation",
       "claimRewards" : "Demander les récompenses",
       "claimAvailableRewards" : "Demander {{amount}}",
@@ -4503,10 +4537,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "Déléguez vos {{ticker}} pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
+            "description" : "Déléguez vos ATOM pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
             "steps" : {
               "0" : "Vous conservez la propriété de vos actifs délégués.",
-              "1" : "Vous devrez attendre {{numberOfDays}} jours pour que l’interruption de délégation soit terminée.",
+              "1" : "Vous devrez attendre 21 jours pour que l’interruption de délégation soit terminée.",
               "2" : "Déléguez en toute sécurité avec votre appareil Ledger."
             },
             "warning" : {
@@ -5558,8 +5592,8 @@
       "selectAccount" : "Sélectionner un compte",
       "wantToBuy" : "Je souhaite acheter",
       "connectDevice" : "Connecter votre appareil",
-      "title" : "Acheter des cryptos via nos partenaires",
-      "coinifyTitle" : "Acheter des cryptos via nos partenaires",
+      "title" : "Acheter des cryptos via nos prestataires tiers",
+      "coinifyTitle" : "Acheter des cryptos via nos prestataires tiers",
       "description" : "Achetez des crypto-actifs via Coinify et recevez-les directement dans votre compte Ledger.",
       "CTAButton" : "Acheter maintenant",
       "emptyState" : {
@@ -5586,7 +5620,7 @@
       "selectAccount" : "Sélectionner un compte",
       "wantToSell" : "Je souhaite vendre",
       "connectDevice" : "Connecter votre appareil",
-      "title" : "Vendre des cryptos via notre partenaire",
+      "title" : "Vendre des cryptos via notre prestataire tiers",
       "description" : "Vendez des crypto-actifs directement depuis votre compte Ledger via Coinify et recevez des monnaies fiduciaires sur votre compte bancaire.",
       "CTAButton" : "Vendre maintenant",
       "emptyState" : {
@@ -5609,7 +5643,7 @@
     },
     "swap" : {
       "title" : "ÉCHANGER DES CRYPTOS",
-      "description" : "Échangez des crypto-actifs directement depuis vos comptes Ledger avec notre partenaire."
+      "description" : "Échangez des crypto-actifs directement depuis vos comptes Ledger avec notre prestataire tiers."
     }
   },
   "walletconnect" : {
@@ -5742,7 +5776,7 @@
       "filter" : "Filtrer",
       "view" : {
         "label" : "Voir",
-        "all" : "Tous les coins",
+        "all" : "Toutes les cryptos",
         "liveCompatible" : "Compatible avec Live",
         "all_label" : "Toutes les cryptomonnaies",
         "liveCompatible_label" : "Compatible avec Live"
@@ -5964,13 +5998,6 @@
       "nft" : "NFT"
     },
     "nftGallery" : {
-      "filters" : {
-        "selectAndHide" : "Sélectionner et masquer",
-        "hide" : "Masquer {{count}} collection",
-        "hide_plural" : "Masquer {{count}} collections",
-        "alertHide" : "1 collection masquée. Accédez aux Paramètres pour l’afficher à nouveau.",
-        "alertHide_plural" : "{{count}} collections masquées. Accédez aux Paramètres pour les afficher à nouveau."
-      },
       "empty" : {
         "title" : "Pas (encore) de NFT",
         "subtitle" : "Lancez-vous et recevez votre premier NFT.",
