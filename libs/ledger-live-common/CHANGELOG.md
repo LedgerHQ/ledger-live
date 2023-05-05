@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 29.5.0-next.2
+
+### Patch Changes
+
+- [#3369](https://github.com/LedgerHQ/ledger-live/pull/3369) [`0ebfbbf596`](https://github.com/LedgerHQ/ledger-live/commit/0ebfbbf596ef3d690f1eb225698512f9a1108b59) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update osmosis node to fix history
+
 ## 29.5.0-next.1
 
 ### Patch Changes
