@@ -17,7 +17,6 @@ const PasswordAutoLockSelect = () => {
 
   const handleChangeTimeout = useCallback(
     (timeout?: SelectOption) => {
-      console.log(timeout);
       dispatch(setAutoLockTimeout(+Number(timeout?.value)));
     },
     [dispatch],
