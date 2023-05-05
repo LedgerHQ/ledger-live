@@ -1,74 +1,38 @@
 #!/usr/bin/env zx
 import "zx/globals";
-import rimraf from "rimraf";
+import fs from "fs";
+import path from "path";
 
 const basePath = path.join(__dirname, "..");
-const rendererPath = path.join(basePath, "src", "renderer");
-const generatedPath = path.join(rendererPath, "generated");
+const familiesPath = path.join(basePath, "src", "renderer", "families");
+const generatedFile = path.join(familiesPath, "generated.ts");
 
-await rimraf(generatedPath);
-await fs.promises.mkdir(generatedPath);
+async function gen() {
+  const families = (await fs.promises.readdir(familiesPath, { withFileTypes: true }))
+    .filter(d => d.isDirectory())
+    .map(dirent => dirent.name);
 
-const families = await fs.readdir(path.join(rendererPath, "families"));
-const targets = [
-  "operationDetails.tsx",
-  "accountActions.tsx",
-  "TransactionConfirmFields.tsx",
-  "AccountBodyHeader.ts",
-  "AccountSubHeader.tsx",
-  "SendAmountFields.tsx",
-  "SendRecipientFields.tsx",
-  "SendWarning.tsx",
-  "ReceiveWarning.tsx",
-  "AccountBalanceSummaryFooter.tsx",
-  "TokenList.tsx",
-  "AccountHeaderManageActions.ts",
-  "StepReceiveFunds.tsx",
-  "StepReceiveFundsPostAlert.tsx",
-  "NoAssociatedAccounts.tsx",
-  "live-common-setup.ts",
-  "modals.ts",
-  "StakeBanner.tsx",
-];
-
-async function genTarget(target) {
-  let imports = ``;
-  let exprts = `export default {`;
-  const outpath = path.join(generatedPath, target);
-  const [targetName, extension] = target.split(".");
-
+  let imports = `import { AllCoinFamilies } from "./types";`;
+  let exprts = `const all: AllCoinFamilies = {`;
   for (const family of families) {
-    try {
-      if (["tsx"].includes(extension)) {
-        await Promise.any([
-          fs.promises.access(
-            path.join(rendererPath, "families", family, `${targetName}.tsx`),
-            fs.constants.R_OK,
-          ),
-        ]);
-      } else {
-        await fs.promises.access(
-          path.join(rendererPath, "families", family, target),
-          fs.constants.R_OK,
-        );
-      }
-
-      imports += `
-import ${family} from "../families/${family}/${targetName}";`;
-      exprts += `
+    await fs.promises.access(path.join(familiesPath, family, "index.ts"), fs.constants.R_OK);
+    imports += `
+import ${family} from "../families/${family}/index";`;
+    exprts += `
   ${family},`;
-    } catch (error) {}
   }
 
   exprts += `
 };
+
+  export default all;
 `;
 
   const str = `${imports}
 
 ${exprts}`;
 
-  await fs.promises.writeFile(outpath, str, "utf8");
+  await fs.promises.writeFile(generatedFile, str, "utf8");
 }
 
-targets.map(genTarget);
+gen();

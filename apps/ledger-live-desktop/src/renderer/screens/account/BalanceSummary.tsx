@@ -11,9 +11,9 @@ import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountBalanceSummaryHeader from "./AccountBalanceSummaryHeader";
-import perFamilyAccountBalanceSummaryFooter from "~/renderer/generated/AccountBalanceSummaryFooter";
 import FormattedDate from "~/renderer/components/FormattedDate";
 import { Data, Item } from "~/renderer/components/Chart/types";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 type Props = {
   chartColor: string;
@@ -88,9 +88,7 @@ export default function AccountBalanceSummary({
   );
   const displayCountervalue = countervalueFirst && countervalueAvailable;
   const AccountBalanceSummaryFooter = mainAccount
-    ? perFamilyAccountBalanceSummaryFooter[
-        mainAccount.currency.family as keyof typeof perFamilyAccountBalanceSummaryFooter
-      ]
+    ? getLLDCoinFamily(mainAccount.currency.family).AccountBalanceSummaryFooter
     : null;
   const chartMagnitude = displayCountervalue
     ? counterValue.units[0].magnitude
@@ -132,7 +130,6 @@ export default function AccountBalanceSummary({
       {AccountBalanceSummaryFooter && (
         <AccountBalanceSummaryFooter
           account={account}
-          // @ts-expect-error Need to update prop in families
           counterValue={counterValue}
           discreetMode={discreetMode}
         />

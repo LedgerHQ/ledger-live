@@ -22,7 +22,7 @@ import {
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
 } from "@ledgerhq/live-common/operation";
-import { Account, AccountLike, NFTMetadata, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLike, NFTMetadata, Operation, OperationType } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { urls } from "~/config/urls";
@@ -40,7 +40,6 @@ import LinkHelp from "~/renderer/components/LinkHelp";
 import ConfirmationCheck from "~/renderer/components/OperationsList/ConfirmationCheck";
 import OperationComponent from "~/renderer/components/OperationsList/Operation";
 import Text, { TextProps } from "~/renderer/components/Text";
-import byFamiliesOperationDetails from "~/renderer/generated/operationDetails";
 import IconChevronRight from "~/renderer/icons/ChevronRight";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
 import InfoCircle from "~/renderer/icons/InfoCircle";
@@ -68,6 +67,7 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
 import { State } from "~/renderer/reducers";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 const mapStateToProps = (
   state: State,
@@ -152,34 +152,24 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
   });
   const confirmationsString = getOperationConfirmationDisplayableNumber(operation, mainAccount);
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-  const specific =
-    byFamiliesOperationDetails[
-      mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
-    ];
-  const IconElement =
-    specific && "confirmationCell" in specific && specific.confirmationCell
-      ? specific.confirmationCell[operation.type as keyof typeof specific.confirmationCell]
-      : null;
-  const AmountTooltip =
-    specific && "amountTooltip" in specific && specific.amountTooltip
-      ? specific.amountTooltip[operation.type as keyof typeof specific.amountTooltip]
-      : null;
-  const urlWhatIsThis =
-    specific &&
-    "getURLWhatIsThis" in specific &&
-    specific.getURLWhatIsThis &&
-    specific.getURLWhatIsThis({ op: operation, currencyId: mainAccount.currency.id });
-  const urlFeesInfo =
-    specific &&
-    "getURLFeesInfo" in specific &&
-    specific.getURLFeesInfo &&
-    specific.getURLFeesInfo({ op: operation, currencyId: mainAccount.currency.id });
+
+  const cryptoCurrency = mainAccount.currency;
+  const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
+  const confirmationCell = specific?.operationDetails?.confirmationCell;
+  const IconElement = confirmationCell ? confirmationCell[operation.type] : null;
+  const amountTooltip = specific?.operationDetails?.amountTooltip;
+  const AmountTooltip = amountTooltip ? amountTooltip[operation.type] : null;
+  const getURLWhatIsThis = specific?.operationDetails?.getURLWhatIsThis;
+  const getURLFeesInfo = specific?.operationDetails?.getURLFeesInfo;
+  const urlWhatIsThis = getURLWhatIsThis
+    ? getURLWhatIsThis({ op: operation, currencyId: cryptoCurrency.id })
+    : null;
+  const urlFeesInfo = getURLFeesInfo
+    ? getURLFeesInfo({ op: operation, currencyId: cryptoCurrency.id })
+    : null;
   const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
   const uniqueSenders = uniq(senders);
-  const OpDetailsExtra =
-    specific && "OperationDetailsExtra" in specific && specific.OperationDetailsExtra
-      ? specific.OperationDetailsExtra
-      : OperationDetailsExtra;
+  const OpDetailsExtra = specific?.OperationDetailsExtra || OperationDetailsExtra;
   const { hasFailed } = operation;
   const subOperations = operation.subOperations || [];
   const internalOperations = operation.internalOperations || [];
@@ -256,6 +246,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
         {IconElement ? (
           <IconElement
             operation={operation}
+            type={type}
             marketColor={marketColor}
             isConfirmed={isConfirmed}
             hasFailed={!!hasFailed}
@@ -647,12 +638,14 @@ const OpDetails = (
   return <OperationD {...(props as Props)} />;
 };
 export const OperationDetails = withTranslation()(connect(mapStateToProps)(OpDetails));
+
 type OperationDetailsExtraProps = {
+  operation: Operation;
+  account: Account;
+  type: OperationType;
   extra: {
     [key: string]: string;
   };
-  type: string;
-  account: AccountLike | undefined | null;
 };
 const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
   const jsx = Object.entries(extra).map(([key, value]) => {

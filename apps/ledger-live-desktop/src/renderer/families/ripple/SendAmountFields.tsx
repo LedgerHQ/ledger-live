@@ -9,6 +9,7 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import Box from "~/renderer/components/Box";
 import GenericContainer from "~/renderer/components/FeesContainer";
 import { track } from "~/renderer/analytics/segment";
+
 type Props = {
   account: Account;
   transaction: Transaction;
