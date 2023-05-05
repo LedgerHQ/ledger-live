@@ -172,7 +172,7 @@ const Carousel = ({
 
   useEffect(() => {
     logSlideImpression(0);
-  }, []);
+  }, [logSlideImpression]);
 
   const changeVisibleSlide = useCallback(
     index => {
