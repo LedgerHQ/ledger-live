@@ -104,6 +104,8 @@ const reducer = (state: State, e: SwapRequestEvent) => {
         isLoading: false,
       };
   }
+
+  // FIXME it is supposed to be unreachable but it seems to be reached in swap flow. so we must preserve returning the state
   return state;
 };
 
