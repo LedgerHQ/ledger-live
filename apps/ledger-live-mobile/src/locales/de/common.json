@@ -324,11 +324,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
-      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
+      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen.",
+      "primaryCTA" : "Ein weiteres Bild hochladen"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
-      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
+      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen.",
+      "primaryCTA" : "Ein weiteres Bild hochladen"
     },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
@@ -477,6 +479,10 @@
       "title" : "Passwort stimmt nicht überein",
       "description" : "Bitte versuchen Sie es erneut."
     },
+    "PeerRemovedPairing" : {
+      "title" : "Sie müssen {{ deviceName }} aus den Bluetooth-Geräten Ihres Mobiltelefons entfernen",
+      "description" : "Ihr {{ productName }} hat seine Bluetooth-Konfiguration geändert. Entfernen Sie es aus den Telefoneinstellungen, kehren Sie dann zu Ledger Live zurück und versuchen Sie die Kopplung erneut."
+    },
     "SelectExchangesLoadError" : {
       "title" : "Kann nicht geladen werden",
       "description" : "Kann die Exchanges nicht laden."
@@ -549,11 +555,12 @@
       "description" : "Transaktionen müssen innerhalb von 30 Sekunden signiert werden. Bitte versuchen Sie es erneut."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Energie ist niedriger als notwendig. Es können bis zu 50TRX an Gebühren anfallen."
+      "title" : "Energie ist niedriger als notwendig. Es können bis zu 20TRX an Gebühren anfallen."
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
-      "description" : "Bitte deinstallieren Sie die App {{managerAppName}} im Manager und installieren Sie sie dann neu."
+      "description" : "Bitte deinstallieren Sie die App {{managerAppName}} im Manager und installieren Sie sie dann neu.",
+      "primaryCTA" : "Manager öffnen"
     },
     "UserRefusedAllowManager" : {
       "title" : "Manager auf dem Gerät deaktiviert",
@@ -672,7 +679,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Etwas ist schief gelaufen.  Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
+      "description" : "Etwas ist schief gelaufen.  Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung.",
+      "primaryCTA" : "Wiederholen"
     },
     "SolanaAccountNotFunded" : {
       "title" : "Konto nicht gedeckt"
@@ -1811,7 +1819,8 @@
           "title" : "Ihr Gerät ist gesperrt",
           "subtitle" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
         },
-        "retryCta" : "Wiederholen"
+        "retryCta" : "Wiederholen",
+        "openSettingsCta" : "Gehen Sie zu den Bluetooth-Einstellungen"
       }
     }
   },
@@ -4455,19 +4464,44 @@
       "activatableVotes" : "Sie haben Stimmen, die jetzt aktiviert werden können."
     }
   },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO verfügbar"
+      },
+      "delegated" : {
+        "description" : "Übertragene Vermögenswerte werden für Osmosis-Abstimmungen verwendet. Dies ist Ihre Gesamtzahl der Stimmen."
+      },
+      "undelegating" : {
+        "description" : "Nicht delegierte Vermögenswerte sind in einer Zeitsperre von 14 Tagen, bevor sie verfügbar sind."
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Delegieren Sie Ihr OSMO, um sicher Prämien zu verdienen und behalten Sie die Kontrolle über Ihr Vermögen.",
+            "steps" : {
+              "1" : "Sie müssen 14 Tage warten, bis die Delegierung vollständig beendet ist."
+            }
+          }
+        }
+      }
+    }
+  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "{{currencyTicker}} verfügbar",
+        "title" : "ATOM verfügbar",
         "description" : "Dieser Betrag ist verfügbar."
       },
       "delegated" : {
         "title" : "Delegierte Vermögenswerte",
-        "description" : "Delegierte Vermögenswerte werden für {{currencyName}}-Abstimmungen verwendet. Dies ist Ihre Gesamtzahl der Stimmen."
+        "description" : "Übertragene Vermögenswerte werden für Cosmos-Abstimmungen verwendet. Dies ist Ihre Gesamtzahl der Stimmen."
       },
       "undelegating" : {
         "title" : "Delegierung aufheben",
-        "description" : "Nicht delegierte Vermögenswerte befinden sich in einer Zeitsperre von {{numberOfDays}} Tagen, bevor sie verfügbar sind."
+        "description" : "Nicht delegierte Vermögenswerte sind in einer Zeitsperre von 21 Tagen, bevor sie verfügbar sind."
       },
       "delegationUnavailable" : {
         "title" : "Übertragung nicht verfügbar",
@@ -4475,7 +4509,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "Sie können {{ticker}}-Belohnungen erhalten, indem Sie Ihre Vermögenswerte delegieren.",
+      "delegationEarn" : "Sie können ATOM-Prämien verdienen, indem Sie Ihre Vermögenswerte übertragen.",
       "info" : "So funktioniert Delegation",
       "claimRewards" : "Prämien beanspruchen",
       "claimAvailableRewards" : "Anspruch {{amount}}",
@@ -4503,10 +4537,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "Delegieren Sie Ihre {{ticker}}, um sicher Belohnungen zu verdienen und behalten Sie die Kontrolle über Ihre Vermögenswerte.",
+            "description" : "Delegieren Sie Ihr ATOM, um sicher Prämien zu verdienen und behalten Sie die Kontrolle über Ihr Vermögen.",
             "steps" : {
               "0" : "Delegierte Vermögenswerte bleiben in Ihrem Besitz.",
-              "1" : "Sie müssen {{numberOfDays}} Tage warten, bis die Aufhebung der Delegierung abgeschlossen ist.",
+              "1" : "Sie müssen 21 Tage warten, bis die Delegierung vollständig beendet ist.",
               "2" : "Delegieren Sie sicher mit Ihrem Ledger-Gerät."
             },
             "warning" : {
@@ -5964,13 +5998,6 @@
       "nft" : "NFTs"
     },
     "nftGallery" : {
-      "filters" : {
-        "selectAndHide" : "Auswählen und ausblenden",
-        "hide" : "{{count}} Sammlung ausblenden",
-        "hide_plural" : "{{count}} Sammlungen ausblenden",
-        "alertHide" : "1 Sammlung ausgeblendet. Gehen Sie zu den Einstellungen, um sie jederzeit ein- und auszublenden",
-        "alertHide_plural" : "{{count}} Sammlungen ausgeblendet. Gehen Sie zu den Einstellungen, um sie jederzeit ein- und auszublenden"
-      },
       "empty" : {
         "title" : "Noch keine NFTs zu zeigen",
         "subtitle" : "Fangen Sie an, indem Sie Ihr erstes NFT erhalten.",
