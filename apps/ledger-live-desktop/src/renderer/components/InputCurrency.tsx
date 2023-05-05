@@ -72,7 +72,7 @@ type Props = {
   onChangeFocus: (a: boolean) => void;
   onChangeUnit: (a: Unit) => void;
   locale: string;
-  forwardedRef: ElementRef<any> | undefined | null;
+  forwardedRef: React.ForwardedRef<HTMLInputElement> | undefined | null;
   placeholder?: string;
   loading: boolean;
 } & OwnProps;
