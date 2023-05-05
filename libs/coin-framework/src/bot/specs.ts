@@ -94,10 +94,10 @@ export function deviceActionFlow<T extends TransactionCommon>(
   description: FlowDesc<T>
 ): DeviceAction<T, State<T>> {
   return (arg: DeviceActionArg<T, State<T>>) => {
-    invariant(
-      arg.appCandidate.model === "nanoS",
-      "FIXME: stepper logic is only implemented for Nano S"
-    );
+    // invariant(
+    //   arg.appCandidate.model === "nanoS",
+    //   "FIXME: stepper logic is only implemented for Nano S"
+    // );
     const { transport, event, state, disableStrictStepValueValidation } = arg;
     let { finalState, stepTitle, stepValue, acc, currentStep } = state || {
       finalState: false,
