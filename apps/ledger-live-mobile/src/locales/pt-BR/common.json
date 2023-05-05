@@ -118,19 +118,9 @@
       "title" : "Desculpe, Bluetooth desativado",
       "description" : "Ative o Bluetooth nas configurações do seu telefone. (Estado {{state}})"
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "As atualizações de firmware só são suportadas para conexões com fio"
-    },
-    "BtcUnmatchedApp" : {
-      "title" : "Aplicativo Errado",
-      "description" : "Abra o aplicativo {{managerAppName}} em seu dispositivo."
-    },
     "CantOpenDevice" : {
       "title" : "Desculpe, falha de conexão",
       "description" : "Seu dispositivo Ledger deve estar desbloqueado e no alcance para usar o Bluetooth."
-    },
-    "CantScanQRCode" : {
-      "title" : "Não foi possível escanear o QR Code: verificação automática não compatível com este endereço."
     },
     "ConnectAppTimeout" : {
       "title" : "Nenhum dispositivo encontrado",
@@ -327,11 +317,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Tela de bloqueio cancelada na Ledger Stax",
-      "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem."
+      "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem.",
+      "primaryCTA" : "Enviar outra imagem"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Tela de bloqueio cancelada na Ledger Stax",
-      "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem."
+      "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem.",
+      "primaryCTA" : "Enviar outra imagem"
     },
     "InvalidAddress" : {
       "title" : "Este não é um endereço válido de {{currencyName}}."
@@ -480,6 +472,10 @@
       "title" : "A senha não corresponde",
       "description" : "Tente Novamente."
     },
+    "PeerRemovedPairing" : {
+      "title" : "A sua {{ productName }} precisa ser emparelhada novamente.",
+      "description" : "Vá para as configurações de Bluetooth do seu smartphone e esqueça sua {{ productName }}. Depois, volte ao Ledger Live e tente novamente."
+    },
     "SelectExchangesLoadError" : {
       "title" : "Não foi possível carregar",
       "description" : "Não foi possível carregar exchanges."
@@ -556,7 +552,8 @@
     },
     "UpdateYourApp" : {
       "title" : "Atualização de aplicativo necessária",
-      "description" : "Desinstale e reinstale o aplicativo {{managerAppName}} no Manager."
+      "description" : "Desinstale e reinstale o aplicativo {{managerAppName}} no Manager.",
+      "primaryCTA" : "Abrir Minha Ledger"
     },
     "UserRefusedAllowManager" : {
       "title" : "Manager desabilitado no dispositivo",
@@ -675,7 +672,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Algo deu errado. Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
+      "description" : "Algo deu errado. Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger.",
+      "primaryCTA" : "Tentar novamente"
     },
     "SolanaAccountNotFunded" : {
       "title" : "Conta sem saldo"
@@ -1840,7 +1838,8 @@
           "title" : "Seu dispositivo está bloqueado",
           "subtitle" : "Desbloqueie sua {{ productName }} e tente novamente."
         },
-        "retryCta" : "Tente novamente"
+        "retryCta" : "Tentar novamente",
+        "openSettingsCta" : "Vá para as configurações de Bluetooth"
       }
     }
   },
@@ -2390,6 +2389,7 @@
     },
     "earn" : "Ganhar",
     "quickActions" : "Ações Rápidas",
+    "referralProgram" : "Indique um amigo e ganhe US$10 em Bitcoin",
     "banner" : {
       "redelegation" : {
         "description" : "Caso você não saiba, o validador Ledger faz staking por uma comissão menor do que o validador que você está utilizando.",
@@ -2685,6 +2685,10 @@
           "title" : "API de Exploradores Experimentais",
           "description" : "Experimente uma versão futura dos exploradores de blockchain da Ledger. Alterar essa configuração poderá afetar o saldo e a sincronização da conta, bem como o recurso de enviar."
         },
+        "experimentalListAppsV2" : {
+          "title" : "Lista de aplicativos experimentais para Minha Ledger",
+          "description" : "Melhoria de desempenho no acesso à Minha Ledger e fluxos inline."
+        },
         "experimentalCountervalues" : {
           "title" : "API de Contravalores Experimentais",
           "description" : "Isso pode fazer com que os contravalores incorretos sejam exibidos nas suas contas."
@@ -2729,7 +2733,12 @@
       "featureFlagsTabGroups" : "Grupos",
       "firebaseProject" : "Projeto Firebase mirado por esta versão:",
       "showBannerDesc" : "Mostrar banner quando os marcadores estiverem desativados",
-      "bannerTitle" : "Marcadores desativados localmente"
+      "bannerTitle" : "Marcadores desativados localmente",
+      "features" : {
+        "firmwareUpdate" : {
+          "headerTitle" : "Debug da atualização de firmware"
+        }
+      }
     }
   },
   "notifications" : {
@@ -2742,7 +2751,8 @@
   },
   "transfer" : {
     "recipient" : {
-      "input" : "Digite o endereço"
+      "input" : "Digite o endereço",
+      "inputEns" : "Insira o endereço ou ENS"
     },
     "send" : {
       "title" : "Enviar",
@@ -2798,7 +2808,8 @@
         "addressVerified" : "Endereço Verificado",
         "verifyAddress" : "Toque aqui para verificar seu endereço",
         "adviceVerify" : "Recomendamos que você sempre verifique seu endereço com seu dispositivo Ledger",
-        "sendWarning" : "Envie somente {{currencyName}} ({{currencyTicker}}) para este endereço. Enviar qualquer outra moeda pode resultar em perda permanente."
+        "sendWarning" : "Envie somente {{currencyName}} ({{currencyTicker}}) para este endereço. Enviar qualquer outra moeda pode resultar em perda permanente.",
+        "dashStakingWarning" : "Certifique-se de não usar esse endereço para receber recompensas de staking"
       },
       "securityVerify" : {
         "title" : "Por segurança, recomendamos verificar este endereço com seu dispositivo Ledger.",
@@ -3375,7 +3386,14 @@
       "domainService" : {
         "reverse" : "Este endereço está vinculado a {{domain}}",
         "forward" : "Este é um endereço ENS válido",
-        "supportLink" : "O que é Ethereum Name Service?"
+        "supportLink" : "O que é Ethereum Name Service?",
+        "invalidDomain" : {
+          "title" : "Domínio não suportado",
+          "description" : "No momento, somente ENS com menos de 30 caracteres alfanuméricos são compatíveis."
+        },
+        "noResolution" : {
+          "title" : "Nenhum endereço encontrado para esse domínio"
+        }
       }
     },
     "amount" : {
@@ -3656,6 +3674,7 @@
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
     "allowManagerPermission" : "Permitir {{wording}} em sua {{productName}}",
+    "allowSecureConnection" : "Permitir uma conexão segura com a Ledger",
     "loading" : "Carregando...",
     "turnOnAndUnlockDevice" : "Ligue e desbloqueie seu dispositivo",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
@@ -4007,16 +4026,30 @@
   },
   "FirmwareUpdate" : {
     "title" : "Atualizar Firmware",
+    "updateDevice" : "Atualize a {{deviceName}}",
     "preparing" : "Preparando a atualização de firmware, mantenha seu dispositivo desperto e conectado. Avisaremos sobre o progresso",
     "confirmIdentifierText" : "Verifique se o identificador no seu dispositivo é o mesmo que o identificador abaixo. Confirme e insira seu código PIN se solicitado.",
     "pleaseReinstallApps" : "Reinstale os aplicativos no seu dispositivo",
     "pleaseConfirmUpdate" : "Confirme a atualização em seu dispositivo",
+    "pleaseConfirmUpdateOnYourDevice" : "Confirme instalação na {{deviceName}}",
     "finishUpdate" : "Termine a atualização em sua {{deviceName}}",
     "identifierTitle" : "Identificador:",
     "pleaseWaitDownload" : "Aguarde o download do instalador",
+    "doNotLeaveLedgerLive" : "Não saia do aplicativo Ledger Live até o fim da atualização.",
     "preparingDevice" : "Preparando seu dispositivo",
     "pleaseWaitUpdate" : "Aguarde a atualização terminar",
     "waitForFirmwareUpdate" : "Aguarde o término da atualização de firmware no seu dispositivo",
+    "waitForInstallationToFinish" : "Aguarde o fim da instalação em sua {{deviceName}}",
+    "staxBatteryLow" : "A bateria da Ledger Stax está muito baixa para atualizar",
+    "staxBatteryLowDescription" : "Para atualizar o sistema operacional, sua Ledger deve ter no mínimo 50% de carga ou estar carregando.",
+    "updateCancelled" : "A atualização foi cancelada na {{deviceName}}",
+    "updateCancelledDescription" : "A atualização do sistema operacional {{newFirmwareVersion}} foi recusada na {{deviceName}}. Se isso foi um engano, reinicie a atualização",
+    "updateNotYetComplete" : "A atualização ainda não foi concluída.",
+    "updateNotYetCompleteDescription" : "Se você interromper a atualização, seus aplicativos, idioma e imagem da tela de bloqueio podem não ser restaurados corretamente.",
+    "restartUpdate" : "Reiniciar atualização do sistema operacional",
+    "quitUpdate" : "Sair da atualização",
+    "continueUpdate" : "Continuar atualização",
+    "unlockDeviceToComplete" : "Desbloqueie a {{deviceName}} para concluir a instalação",
     "unlockDeviceWithPin" : "Desbloqueie seu dispositivo com seu PIN",
     "reinstallApps" : "Reinstalar Aplicativos.",
     "currentVersionNumber" : "Versão Atual",
@@ -4038,7 +4071,20 @@
       "flash-bootloader" : "Atualizando Bootloader",
       "flash" : "Seu dispositivo está piscando",
       "preparing" : "Preparando Atualização",
-      "firmware" : "Baixando Atualização"
+      "firmware" : "Baixando Atualização",
+      "prepareUpdate" : {
+        "titleActive" : "Preparando para instalar atualização",
+        "description" : "Transferindo o pacote de atualização para a {{deviceName}}"
+      },
+      "installUpdate" : {
+        "titleInactive" : "Instalar atualização",
+        "titleActive" : "Instalando atualização",
+        "description" : "A {{deviceName}} reiniciará várias vezes.\n\nApós o fim da instalação em sua {{deviceName}}, desbloqueie seu dispositivo para concluir a instalação"
+      },
+      "restoreSettings" : {
+        "titleInactive" : "Restaurar aplicativos e configurações",
+        "description" : "Suas configurações e aplicativos blockchain serão restaurados."
+      }
     },
     "newVersion" : "Atualização {{version}} disponível para sua {{deviceName}}",
     "drawerUpdate" : {
@@ -4046,6 +4092,12 @@
       "description" : "Atualize o firmware da sua Ledger Nano conectando-a ao aplicativo Ledger Live no desktop",
       "pleaseConnectUsbTitle" : "Necessário cabo USB",
       "pleaseConnectUsbDescription" : "Para iniciar a atualização do firmware, conecte sua {{deviceName}} ao seu celular usando um cabo USB."
+    },
+    "errors" : {
+      "TimeoutError" : {
+        "title" : "Tempo de atualização expirado",
+        "description" : "A atualização não pôde ser concluída porque perdemos a conexão com a {{deviceName}}"
+      }
     }
   },
   "firmwareUpdateRequired" : {
@@ -4606,7 +4658,8 @@
             "noResultsFound" : "Nenhum validador encontrado para <0>{{search}}</0>"
           },
           "amount" : {
-            "newRedelegatedBalance" : "Novo total para <0>{{name}}</0> após operação: <0>{{amount}}</0>"
+            "newRedelegatedBalance" : "Novo total para <0>{{name}}</0> após operação: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Todos os ativos usados"
           },
           "verification" : {
             "success" : {
@@ -5711,22 +5764,7 @@
       }
     },
     "status" : {
-      "title" : "Um problema precisa de sua atenção",
-      "title_plural" : "Alguns problemas podem precisar de sua atenção",
-      "desc" : {
-        "0" : "Eles estão sendo investigados e serão resolvidos em breve.",
-        "1" : "Se algum desses problemas afetar você, entre em contato com nosso <0>Suporte ao Cliente</0>"
-      },
-      "cta" : {
-        "ok" : "Entendi"
-      },
-      "ok" : {
-        "title" : "O Ledger Live está em pleno funcionamento",
-        "desc" : "<0>Com problemas? Vá para nossa </0><1>página de ajuda</1>"
-      },
-      "error" : {
-        "title" : "O Ledger Live está enfrentando problemas"
-      }
+      "header" : "Status"
     }
   },
   "browseWeb3" : {
@@ -6082,7 +6120,8 @@
       "media" : {
         "tag" : "{{count}} NFTs"
       }
-    }
+    },
+    "referralProgram" : "US$10"
   },
   "servicesWidget" : {
     "title" : "Serviços",
