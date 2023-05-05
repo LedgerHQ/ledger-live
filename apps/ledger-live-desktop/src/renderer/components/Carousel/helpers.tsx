@@ -207,7 +207,7 @@ export const useDefaultSlides = () => {
         braze.logContentCardClick(currentCard);
       }
     },
-    [portfolioCards, cachedContentCards],
+    [cachedContentCards],
   );
   const slides = useMemo(
     () =>
