@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useTransition, animated } from "react-spring";
@@ -169,6 +169,10 @@ const Carousel = ({
   const [wantToDismiss, setWantToDismiss] = useState(false);
   const [reverse, setReverse] = useState(false);
   const transitions = useTransition(index, p => p, getTransitions(type, reverse));
+
+  useEffect(() => {
+    logSlideImpression(0);
+  }, [logSlideImpression]);
 
   const changeVisibleSlide = useCallback(
     index => {
