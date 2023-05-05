@@ -2147,7 +2147,7 @@
         "title" : "Bénéficiaire",
         "nftRecipient" : "NFT à envoyer",
         "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire.",
-        "namingService" : {
+        "domainService" : {
           "resolve" : "Cet ENS est valide et est associé à l’adresse suivante :",
           "supportLink" : "Qu’est-ce qu’un Ethereum Name Service (ENS) ?",
           "reverse" : "Cette adresse est associée à {{domain}}"

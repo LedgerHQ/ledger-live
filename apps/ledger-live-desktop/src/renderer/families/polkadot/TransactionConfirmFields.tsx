@@ -30,7 +30,7 @@ const PolkadotValidatorsField = ({
   const { validators } = transaction;
   if (!validators) return null;
   return (
-    <Box vertical justifyContent="space-between" mb={2}>
+    <Box justifyContent="space-between" mb={2}>
       <TransactionConfirmField label={field.label} />
 
       <OperationDetailsValidators

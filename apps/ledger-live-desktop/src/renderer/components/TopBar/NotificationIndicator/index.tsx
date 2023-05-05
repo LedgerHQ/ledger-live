@@ -28,7 +28,7 @@ export function NotificationIndicator() {
       button: "Notification Center",
       page: history.location.pathname,
     });
-    dispatch(openInformationCenter());
+    dispatch(openInformationCenter(undefined));
   }, [dispatch, history.location.pathname]);
 
   return (

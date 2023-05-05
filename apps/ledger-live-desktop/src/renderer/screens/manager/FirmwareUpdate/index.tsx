@@ -16,6 +16,7 @@ import { openURL } from "~/renderer/linking";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import { FakeLink } from "~/renderer/components/TopBanner";
 import { track } from "~/renderer/analytics/segment";
+
 type Props = {
   deviceInfo: DeviceInfo;
   device: Device;
@@ -28,20 +29,24 @@ type Props = {
   isIncomplete?: boolean;
   openFirmwareUpdate?: boolean;
 };
+
 type State = {
   modal: ModalStatus;
   stepId: StepId;
 };
-const initialStepId = ({ deviceInfo, device }): StepId =>
+
+const initialStepId = ({ deviceInfo, device }: Props): StepId =>
   deviceInfo.isOSU
     ? "updateMCU"
     : manager.firmwareUpdateNeedsLegacyBlueResetInstructions(deviceInfo, device.modelId)
     ? "resetDevice"
     : "idCheck";
+
 const initializeState = (props: Props): State => ({
   modal: props.deviceInfo.isOSU ? "install" : props.openFirmwareUpdate ? "disclaimer" : "closed",
   stepId: initialStepId(props),
 });
+
 class FirmwareUpdate extends PureComponent<Props, State> {
   static defaultProps = {
     disableFirmwareUpdate: false,
@@ -141,7 +146,6 @@ class FirmwareUpdate extends PureComponent<Props, State> {
         <DisclaimerModal
           modelId={device.modelId}
           firmware={firmware}
-          deviceInfo={deviceInfo}
           status={modal}
           goToNextStep={this.handleDisclaimerNext}
           onClose={this.handleCloseModal}
@@ -171,4 +175,5 @@ class FirmwareUpdate extends PureComponent<Props, State> {
     );
   }
 }
+
 export default FirmwareUpdate;

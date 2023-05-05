@@ -21,7 +21,7 @@ import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
-export const Wrapper: ThemedComponent<any> = styled.div`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -51,7 +51,7 @@ export const Ellipsis = styled.div`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-export const Divider: ThemedComponent<any> = styled.div`
+export const Divider = styled.div`
   width: 100%;
   height: 1px;
   margin-bottom: ${p => p.theme.space[1]}px;

@@ -29,6 +29,7 @@ export function ToastOverlay() {
       {toasts.length < 2 ? (
         toasts.map(({ id, type, title, text, icon, callback }) => (
           <Toast
+            key={id}
             id={id}
             type={type}
             title={title}
@@ -36,7 +37,6 @@ export function ToastOverlay() {
             text={text}
             callback={callback}
             onDismiss={dismissToast}
-            key={id}
           />
         ))
       ) : (

@@ -74,7 +74,7 @@ export const CosmosDelegateValidatorsField = ({
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const mappedValidators = mapDelegationInfo(validators || [], cosmosValidators, unit, transaction);
   return mappedValidators && mappedValidators.length > 0 ? (
-    <Box vertical justifyContent="space-between" mb={2}>
+    <Box justifyContent="space-between" mb={2}>
       <TransactionConfirmField label={field.label} />
       {mappedValidators.map(({ formattedAmount, validator, address }, i) => (
         <OpDetailsData key={address + i}>

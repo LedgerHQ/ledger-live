@@ -7,7 +7,7 @@ import { RadioContext } from "./index";
 
 type ElementState = {
   checked: boolean;
-  disabled: boolean | undefined;
+  disabled?: boolean | undefined;
 };
 
 export const Label = styled(Text)<ElementState>`

@@ -27,6 +27,7 @@ import {
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+
 const assetMap = {
   applepay: applepayLogo,
   googlepay: googlepayLogo,
@@ -36,11 +37,13 @@ const assetMap = {
   sepa: sepaLogo,
   visa: visaLogo,
 };
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 40px 0px;
 `;
+
 const ProviderCardContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -62,10 +65,12 @@ const ProviderCardContainer = styled.div`
     opacity: 0.7;
   }
 `;
+
 const ProviderCardTopContainer = styled.div`
   display: flex;
   justify-content: center;
 `;
+
 const ChevronContainer = styled.div`
   position: absolute;
   top: 0;
@@ -76,6 +81,7 @@ const ChevronContainer = styled.div`
   align-items: center;
   color: ${p => p.theme.colors.palette.text.shade100};
 `;
+
 const PaymentSystemListContainer = styled.div`
   display: inline-flex;
   margin-top: 16px;
@@ -84,6 +90,7 @@ const PaymentSystemListContainer = styled.div`
   flex-wrap: wrap;
   pointer-events: none;
 `;
+
 const PaymentSystemContainer = styled.div`
   display: flex;
   border: 1px solid ${p => p.theme.colors.palette.text.shade30};
@@ -91,11 +98,14 @@ const PaymentSystemContainer = styled.div`
   padding: 6px;
   border-radius: 4px;
 `;
+
 const PaymentSystemLogo = styled.img``;
+
 type ProviderCardProps = {
   provider: RampLiveAppCatalogEntry;
   onClick: () => void;
 };
+
 function ProviderCard({ provider, onClick }: ProviderCardProps) {
   const manifest = useRemoteLiveAppManifest(provider.appId);
   if (!manifest) {
@@ -120,8 +130,8 @@ function ProviderCard({ provider, onClick }: ProviderCardProps) {
       <PaymentSystemListContainer>
         {provider.paymentProviders.map(paymentProvider => (
           <PaymentSystemContainer key={paymentProvider}>
-            {assetMap[paymentProvider] ? (
-              <PaymentSystemLogo src={assetMap[paymentProvider]} />
+            {assetMap[paymentProvider as keyof typeof assetMap] ? (
+              <PaymentSystemLogo src={assetMap[paymentProvider as keyof typeof assetMap]} />
             ) : (
               <Text
                 ff="Inter|Medium"
@@ -152,7 +162,7 @@ type ProviderViewProps = {
   provider: RampLiveAppCatalogEntry;
   onClose: () => void;
   account: AccountLike;
-  parentAccount: Account;
+  parentAccount?: Account | null;
   trade: TradeParams;
 };
 function ProviderView({ provider, onClose, trade, account, parentAccount }: ProviderViewProps) {
@@ -172,8 +182,8 @@ function ProviderView({ provider, onClose, trade, account, parentAccount }: Prov
     mode: trade.type,
     theme: theme.colors.palette.type,
     language,
-    fiatAmount: trade.fiatAmount,
-    cryptoAmount: trade.cryptoAmount,
+    fiatAmount: trade.fiatAmount + "",
+    cryptoAmount: trade.cryptoAmount + "",
   });
   return (
     <>
@@ -183,7 +193,7 @@ function ProviderView({ provider, onClose, trade, account, parentAccount }: Prov
         provider={provider.appId}
         trade={trade}
       />
-      <WebPlatformPlayer onClose={onClose} manifest={manifest} inputs={inputs} />
+      {manifest && <WebPlatformPlayer onClose={onClose} manifest={manifest} inputs={inputs} />}
     </>
   );
 }
@@ -192,11 +202,11 @@ function ProviderView({ provider, onClose, trade, account, parentAccount }: Prov
 type ProviderListProps = {
   account: AccountLike;
   parentAccount?: Account | null;
-  providers: RampCatalogEntry[];
+  providers?: RampCatalogEntry[];
   trade: TradeParams;
 };
-export function ProviderList({ account, parentAccount, providers, trade }: ProviderListProps) {
-  const [selectedProvider, setSelectedProvider] = useState(null);
+export function ProviderList({ account, parentAccount, providers = [], trade }: ProviderListProps) {
+  const [selectedProvider, setSelectedProvider] = useState<RampLiveAppCatalogEntry | null>(null);
   const { t } = useTranslation();
   const filteredProviders = filterRampCatalogEntries(providers, {
     cryptoCurrencies: trade.cryptoCurrencyId ? [trade.cryptoCurrencyId] : undefined,

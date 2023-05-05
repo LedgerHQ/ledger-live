@@ -452,8 +452,9 @@ export default function Market({ navigation }: NavigationProps) {
       return Promise.resolve();
     }
     setIsLoading(true);
-    return loadNextPage()
-      .then(
+    const next = loadNextPage();
+    return next
+      ?.then(
         () => {
           // do nothing
         },

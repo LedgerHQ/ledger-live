@@ -1,13 +1,14 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "../styles/StyleProvider";
 import Text from "./Text";
+
 const MainContainer = styled.div`
   display: block;
   width: auto;
   height: 32px;
   position: relative;
 `;
+
 const Container = styled.div`
   display: inline-flex;
   align-items: center;
@@ -20,6 +21,7 @@ const Container = styled.div`
   border-radius: 32px;
   overflow: hidden;
 `;
+
 const IndicatorContainer = styled.div`
   display: inline-flex;
   align-items: center;
@@ -34,26 +36,35 @@ const IndicatorContainer = styled.div`
   border-radius: 32px;
   z-index: 0;
 `;
-const Indicator: ThemedComponent<{
+
+const Indicator = styled.div.attrs<{
   length: number;
-}> = styled.div.attrs(p => ({
+  activeIndex: number;
+}>(p => ({
   style: {
     transform: `translateX(${p.activeIndex * 100}%)`,
   },
-}))`
+}))<{
+  length: number;
+  activeIndex: number;
+}>`
   flex: ${p => 1 / p.length};
   height: 32px;
   background-color: ${p => p.theme.colors.palette.primary.main};
   transition: transform 200ms ease-in;
   will-change: transform;
 `;
-const Label = styled(Text).attrs(p => ({
+
+const Label = styled(Text).attrs<{
+  active: boolean;
+}>(p => ({
   ff: "Inter|SemiBold",
   fontSize: 4,
   color: p.active ? "palette.primary.contrastText" : "palette.primary.main",
-}))`
+}))<{ active: boolean }>`
   transition: color 100ms 100ms ease-out;
 `;
+
 const OptionButton = styled.button`
   flex: 1;
   background-color: transparent;
@@ -62,6 +73,7 @@ const OptionButton = styled.button`
   cursor: pointer;
   transition: filter 200ms ease-out;
 `;
+
 type Props = {
   value: string;
   disabled?: boolean;
@@ -72,6 +84,7 @@ type Props = {
   }>;
   onChange: (value: string) => void;
 };
+
 const ToggleButton = ({ value, options, onChange }: Props) => {
   if (!options.length) return null;
   const activeIndex = options.findIndex(opt => opt.value === value);

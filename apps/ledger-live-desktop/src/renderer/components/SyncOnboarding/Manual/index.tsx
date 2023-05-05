@@ -220,7 +220,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     fatalError,
   } = useOnboardingStatePolling({
     getOnboardingStatePolling,
-    device,
+    device: device || null,
     pollingPeriodMs,
     stopPolling,
   });

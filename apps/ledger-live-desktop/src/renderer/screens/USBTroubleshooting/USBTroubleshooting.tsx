@@ -33,7 +33,7 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
   const fallBackUSBTroubleshootingIndex = useSelector(USBTroubleshootingIndexSelector);
 
   // Maybe extract an index from the state, fallback to selector
-  let { USBTroubleshootingIndex } = locationState || {};
+  let { USBTroubleshootingIndex } = (locationState || {}) as { USBTroubleshootingIndex?: number };
   USBTroubleshootingIndex = USBTroubleshootingIndex ?? fallBackUSBTroubleshootingIndex;
 
   // Show the splash screen only if we are not already mid troubleshooting
@@ -45,14 +45,19 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
   });
   const { context } = state || {};
   const { currentIndex, solutions, SolutionComponent, platform, done } = context;
-  const platformSolutions = solutions[platform];
+  const platformSolutions = solutions[platform as keyof typeof solutions];
   const isLastStep = useMemo(() => SolutionComponent === RepairFunnel, [SolutionComponent]);
   useEffect(() => {
     dispatch(setUSBTroubleshootingIndex(currentIndex));
   }, [currentIndex, dispatch]);
 
   // Nb reset the index if we navigate away
-  useEffect(() => () => dispatch(setUSBTroubleshootingIndex()), [dispatch]);
+  useEffect(
+    () => () => {
+      dispatch(setUSBTroubleshootingIndex());
+    },
+    [dispatch],
+  );
   const onExit = useCallback(() => {
     dispatch(setUSBTroubleshootingIndex());
     history.push({
@@ -67,14 +72,16 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
     <Intro onStart={() => setShowIntro(false)} onBack={onExit} />
   ) : (
     <Box p={onboarding ? 48 : 0}>
-      <SolutionComponent number={currentIndex + 1} sendEvent={sendEvent} done={done} />
+      {SolutionComponent && (
+        <SolutionComponent number={currentIndex! + 1} sendEvent={sendEvent} done={done} />
+      )}
       {!isLastStep && (
         <Box p={20}>
           <ConnectionTester onExit={onExit} onDone={onDone} />
         </Box>
       )}
       {!done && (
-        <StepWrapper onboarding={onboarding}>
+        <StepWrapper>
           {showExitOnboardingButton ? (
             <Button onClick={onExit} id="USBTroubleshooting-backToOnboarding">
               <ArrowRightIcon flipped size={16} />

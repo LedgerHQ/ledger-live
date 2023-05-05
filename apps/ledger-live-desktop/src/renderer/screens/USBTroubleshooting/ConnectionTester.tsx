@@ -9,11 +9,12 @@ import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import Text from "~/renderer/components/Text";
 import Spinner from "~/renderer/components/Spinner";
 import Button from "~/renderer/components/Button";
-import { from } from "rxjs";
+import { Subscription, from } from "rxjs";
 import IconCheckFull from "~/renderer/icons/CheckFull";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import Animation from "~/renderer/animations";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 const Wrapper = styled(Box)`
   align-items: center;
   justify-content: center;
@@ -32,7 +33,7 @@ const ConnectionTester = ({ onExit, onDone }: { onExit: () => void; onDone: () =
   const currentDevice = useSelector(getCurrentDevice);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   useEffect(() => {
-    let sub;
+    let sub: Subscription | undefined;
     if (currentDevice) {
       // Nb if we haven't detected a device at all, there's no point in running the command
       sub = withDevice("")(transport => from(getAppAndVersion(transport))).subscribe({
@@ -51,7 +52,7 @@ const ConnectionTester = ({ onExit, onDone }: { onExit: () => void; onDone: () =
       <Animation
         height={"140px"}
         animation={getDeviceAnimation(
-          lastSeenDevice?.modelId ?? "nanoS",
+          lastSeenDevice?.modelId ?? DeviceModelId.nanoS,
           "light",
           "plugAndPinCode",
         )}

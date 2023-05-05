@@ -15,7 +15,7 @@ export default function AssetCrumb() {
   const { t } = useTranslation();
   const distribution = useDistribution();
   const history = useHistory();
-  const { assetId } = useParams();
+  const { assetId } = useParams<{ assetId?: string }>();
   const renderItem = useCallback(
     ({ item, isActive }) => (
       <Item key={item.currency.id} isActive={isActive}>
@@ -79,10 +79,6 @@ export default function AssetCrumb() {
       </TextLink>
       <Separator />
       <DropDownSelector
-        flex={1}
-        offsetTop={0}
-        border
-        horizontal
         items={processedItems}
         value={{
           label: activeItem ? activeItem.currency.name : "",
