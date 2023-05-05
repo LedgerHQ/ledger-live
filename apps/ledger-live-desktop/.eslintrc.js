@@ -1,19 +1,15 @@
 const currencyFamiliesRules = {
   files: ["src/**"],
-  excludedFiles: [
-    "src/generated/**",
-    "src/renderer/families/**",
-    "src/renderer/screens/lend/**", // FIXME lend screen should be migrated to ethereum family (if we don't sunset it)
-  ],
+  excludedFiles: ["**/families/generated.ts", "**/families/*/**"],
   rules: {
     "no-restricted-imports": [
       "error",
       {
         patterns: [
           {
-            group: ["**/families/**"],
+            group: ["**/families/*/**"],
             message:
-              "families files must not be imported directly. use the bridge or export through 'generated/' folder instead.",
+              "families files must not be imported directly. use the bridge or export them through the LLDCoinFamily interface instead.",
           },
         ],
       },

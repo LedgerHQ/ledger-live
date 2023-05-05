@@ -3,6 +3,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import { Account, AccountLike, TokenAccount, Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+// eslint-disable-next-line no-restricted-imports
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ethereum/types";
 export type StepId = "amount" | "connectDevice" | "confirmation";
 export type StepProps = {

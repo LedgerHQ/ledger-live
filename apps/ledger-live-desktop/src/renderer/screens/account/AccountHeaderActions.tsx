@@ -18,8 +18,6 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import Star from "~/renderer/components/Stars/Star";
 import Tooltip from "~/renderer/components/Tooltip";
-import perFamilyAccountActions from "~/renderer/generated/accountActions";
-import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
 import IconWalletConnect from "~/renderer/icons/WalletConnect";
@@ -37,6 +35,8 @@ import {
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getLLDCoinFamily } from "~/renderer/families";
+import { ManageAction } from "~/renderer/families/types";
 
 type RenderActionParams = {
   label: React.ReactElement;
@@ -153,20 +153,18 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
-  const decorators =
-    perFamilyAccountActions[mainAccount.currency.family as keyof typeof perFamilyAccountActions];
-  const manage =
-    perFamilyManageActions[mainAccount.currency.family as keyof typeof perFamilyManageActions];
-  let manageList: any[] = [];
+
+  const specific = getLLDCoinFamily(mainAccount.currency.family);
+
+  const manage = specific?.accountHeaderManageActions;
+  let manageList: ManageAction[] = [];
   if (manage) {
-    const familyManageActions = manage({
-      account: account as Account,
-      parentAccount,
-    });
+    const familyManageActions = manage({ account, parentAccount });
     manageList = familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
   }
-  const SendAction = (decorators && decorators.SendAction) || SendActionDefault;
-  const ReceiveAction = (decorators && decorators.ReceiveAction) || ReceiveActionDefault;
+
+  const SendAction = specific?.accountActions?.SendAction || SendActionDefault;
+  const ReceiveAction = specific?.accountActions?.ReceiveAction || ReceiveActionDefault;
   const currency = getAccountCurrency(account);
 
   const rampCatalog = useRampCatalog();

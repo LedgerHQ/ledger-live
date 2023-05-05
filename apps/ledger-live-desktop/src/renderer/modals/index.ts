@@ -1,4 +1,4 @@
-import generated from "../generated/modals";
+import { modals as familiesModals } from "../families";
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
 import MODAL_PASSWORD from "./PasswordModal";
@@ -27,8 +27,8 @@ import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
 
-type ModalComponent = React.ComponentType<any>; // FIXME determine the common ground to modals
-type Modals = Record<string, ModalComponent>;
+export type ModalComponent = React.ComponentType<any>; // FIXME determine the common ground to modals
+export type Modals = Record<string, ModalComponent>;
 
 const modals: Modals = {
   MODAL_WEBSOCKET_BRIDGE,
@@ -64,18 +64,8 @@ const modals: Modals = {
   // NB We have dettached modals such as the repair modal,
   // in the meantime, we can rely on this to add the backdrop
   MODAL_STUB: () => null,
-};
 
-for (const family in generated) {
-  const components = (generated as Record<string, Modals>)[family] as Modals;
-  for (const name in components) {
-    if (name in modals) {
-      throw new Error(
-        `modal ${name} already exists. Make sure there is no name collision between families.`,
-      );
-    }
-    modals[name] = components[name];
-  }
-}
+  ...familiesModals,
+};
 
 export default modals;

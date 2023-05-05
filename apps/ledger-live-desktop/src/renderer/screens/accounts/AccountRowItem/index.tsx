@@ -20,7 +20,7 @@ import Header from "./Header";
 import Star from "~/renderer/components/Stars/Star";
 import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
-import perFamilyTokenList from "~/renderer/generated/TokenList";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 const Row = styled(Box)`
   background: ${p => p.theme.colors.palette.background.paper};
@@ -212,8 +212,7 @@ class AccountRowItem extends PureComponent<Props, State> {
       if (tokens) tokens = tokens.filter(t => matchesSearch(search, t));
     }
     const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);
-    const specific =
-      perFamilyTokenList[mainAccount.currency.family as keyof typeof perFamilyTokenList];
+    const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family).tokenList : null;
     const hasSpecificTokenWording = specific?.hasSpecificTokenWording;
     const translationMap = isToken
       ? {

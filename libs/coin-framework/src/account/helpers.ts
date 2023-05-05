@@ -20,13 +20,13 @@ import {
 // By convention, a main account is the top level account
 // - in case of an Account is the account itself
 // - in case of a SubAccount it's the parentAccount
-export const getMainAccount = (
-  account: AccountLike,
-  parentAccount?: Account | null | undefined
-): Account => {
+export const getMainAccount = <A extends Account>(
+  account: A | SubAccount,
+  parentAccount?: A | null | undefined
+): A => {
   const mainAccount = account.type === "Account" ? account : parentAccount;
   invariant(mainAccount, "an account is expected");
-  return mainAccount as Account;
+  return mainAccount as A;
 };
 
 // Return the currency in which fees are paid for this account

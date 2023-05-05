@@ -1,15 +1,13 @@
-import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
 import { FC, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { closeModal } from "~/renderer/actions/modals";
 import { Account } from "@ledgerhq/types-live";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 type Action = {
   key: string;
   onClick?: () => void;
 };
-
-type CurrencyFamily = keyof typeof perFamilyManageActions;
 
 interface ModalStartStakeProps {
   account: Account;
@@ -19,8 +17,8 @@ interface ModalStartStakeProps {
 }
 
 const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, source }) => {
-  const currencyFamily: CurrencyFamily = account.currency.family as CurrencyFamily;
-  const manage = perFamilyManageActions[currencyFamily];
+  const currencyFamily = account.currency.family;
+  const manage = getLLDCoinFamily(currencyFamily).accountHeaderManageActions;
   const dispatch = useDispatch();
   let manageList: Action[] = [];
   if (manage) {

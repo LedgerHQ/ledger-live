@@ -17,10 +17,10 @@ import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
-import perFamilyTokenList from "~/renderer/generated/TokenList";
 import { useTimeRange } from "~/renderer/actions/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import AngleDown from "~/renderer/icons/AngleDown";
+import { getLLDCoinFamily } from "~/renderer/families";
 type Props = {
   account: Account;
 };
@@ -64,9 +64,9 @@ function TokensList({ account }: Props) {
     currency && currency.type && tokenTypes && tokenTypes.length > 0
       ? supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType]
       : null;
-  const specific = perFamilyTokenList[family as keyof typeof perFamilyTokenList];
+  const specific = getLLDCoinFamily(family)?.tokenList;
   const hasSpecificTokenWording = specific?.hasSpecificTokenWording;
-  const ReceiveButtonComponent = specific ? specific.ReceiveButton : ReceiveButton;
+  const ReceiveButtonComponent = specific?.ReceiveButton || ReceiveButton;
   const titleLabel = t(hasSpecificTokenWording ? `tokensList.${family}.title` : "tokensList.title");
   const placeholderLabel = t(
     hasSpecificTokenWording ? `tokensList.${family}.placeholder` : "tokensList.placeholder",
@@ -144,7 +144,7 @@ function TokensList({ account }: Props) {
 }
 
 // Fixme Temporarily hiding the receive token button
-function ReceiveButton(props: { onClick: (account: Account) => void }) {
+function ReceiveButton(props: { account: Account; onClick: () => void }) {
   const { t } = useTranslation();
   return (
     <Button small primary onClick={props.onClick}>

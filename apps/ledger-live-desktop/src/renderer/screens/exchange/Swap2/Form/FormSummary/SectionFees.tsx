@@ -7,7 +7,6 @@ import SummaryLabel from "./SummaryLabel";
 import SummaryValue, { NoValuePlaceholder } from "./SummaryValue";
 import SummarySection from "./SummarySection";
 import FeesDrawer from "../FeesDrawer";
-import sendAmountByFamily from "~/renderer/generated/SendAmountFields";
 import {
   SwapTransactionType,
   SwapSelectorStateType,
@@ -22,6 +21,7 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import styled from "styled-components";
 import { useGetSwapTrackingProperties } from "../../utils/index";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 type Strategies = "slow" | "medium" | "fast" | "advanced";
 
@@ -76,6 +76,7 @@ const SectionFees = ({
   const estimatedFees = status?.estimatedFees;
   const showSummaryValue = mainFromAccount && estimatedFees && estimatedFees.gt(0);
   const family = mainFromAccount?.currency.family;
+  const sendAmountSpecific = account && family && getLLDCoinFamily(family)?.sendAmountFields;
   const canEdit =
     hasRates &&
     showSummaryValue &&
@@ -84,7 +85,7 @@ const SectionFees = ({
     transaction.networkInfo &&
     account &&
     family &&
-    sendAmountByFamily[family as keyof typeof sendAmountByFamily];
+    sendAmountSpecific;
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const StrategyIcon = useMemo(
     () =>

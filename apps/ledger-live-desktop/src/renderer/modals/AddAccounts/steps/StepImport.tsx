@@ -26,8 +26,8 @@ import Switch from "~/renderer/components/Switch";
 import { StepProps } from "..";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-import byFamily from "~/renderer/generated/NoAssociatedAccounts";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 type Props = AccountListProps & {
   defaultSelected: boolean;
@@ -286,7 +286,10 @@ class StepImport extends PureComponent<
         : [preferredNewAccountScheme!],
     });
     let creatable;
-    const NoAssociatedAccounts = byFamily[mainCurrency.family as keyof typeof byFamily];
+    const NoAssociatedAccounts = mainCurrency
+      ? getLLDCoinFamily(mainCurrency.family).NoAssociatedAccounts
+      : null;
+
     if (alreadyEmptyAccount) {
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noOperationOnLastAccount" parent="div">

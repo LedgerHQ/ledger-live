@@ -1,24 +1,25 @@
 import React from "react";
 import { Account, FeeStrategy } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import byFamily from "~/renderer/generated/SendAmountFields";
+import { getLLDCoinFamily } from "~/renderer/families";
+
 type Props = {
   account: Account;
   transaction: Transaction;
   status: TransactionStatus;
   onChange: (a: Transaction) => void;
-  updateTransaction: (updater: any) => void;
-  mapStrategies?: (
-    a: FeeStrategy,
-  ) => FeeStrategy & {
-    [x: string]: unknown;
-  };
-  [key: string]: unknown;
+  updateTransaction: (updater: (_: Transaction) => Transaction) => void;
+  mapStrategies?: (a: FeeStrategy) => FeeStrategy;
+  bridgePending?: boolean;
+  trackProperties?: Record<string, unknown>;
 };
+
 const AmountRelatedField = (props: Props) => {
-  const module = byFamily[props.account.currency.family as keyof typeof byFamily];
+  const module = getLLDCoinFamily<Account, Transaction, TransactionStatus>(
+    props.account.currency.family,
+  )?.sendAmountFields;
   if (!module) return null;
-  const Cmp = module.component as React.ComponentType<Props>;
+  const Cmp = module.component;
   return <Cmp {...props} />;
 };
 export default AmountRelatedField;

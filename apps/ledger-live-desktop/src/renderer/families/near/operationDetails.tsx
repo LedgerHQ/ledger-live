@@ -38,11 +38,10 @@ const AmountCellExtra = ({ operation, currency, unit }: AmountCellExtraProps) =>
     )
   );
 };
-const amountCellExtra: {
-  [key: string]: ComponentType<any>;
-} = {
+const amountCellExtra = {
   STAKE: AmountCellExtra,
 };
+
 type OperationDetailsExtraProps = {
   operation: Operation;
   type: string;
