@@ -324,11 +324,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Ledger Staxでロック画面がキャンセルされました",
-      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。",
+      "primaryCTA" : "別の写真をアップロード"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Ledger Staxでロック画面がキャンセルされました",
-      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。",
+      "primaryCTA" : "別の写真をアップロード"
     },
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
@@ -477,6 +479,10 @@
       "title" : "パスワードが一致しません。",
       "description" : "もう一度お試しください。"
     },
+    "PeerRemovedPairing" : {
+      "title" : "スマートフォンのBluetoothデバイスから「{{ deviceName }}」を削除する必要があります",
+      "description" : "お使いの{{ productName }}のBluetooth設定が変更されました。それを携帯電話の設定から削除した後、Ledger Live に戻ってペアリングを再試行してください。"
+    },
     "SelectExchangesLoadError" : {
       "title" : "読み込みできません",
       "description" : "取引を読み込めません。"
@@ -549,11 +555,12 @@
       "description" : "トランザクションは、30秒以内に署名する必要があります。もう一度お試しください。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "エネルギーが必要額を満たしていません。手数料には最大30TRXが必要となります。"
+      "title" : "エネルギーが必要額を満たしていません。手数料には最大20TRXが必要となります。"
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
-      "description" : "管理から{{managerAppName}}アプリをアンインストールして、再インストールしてください。"
+      "description" : "管理から{{managerAppName}}アプリをアンインストールして、再インストールしてください。",
+      "primaryCTA" : "管理画面を開く"
     },
     "UserRefusedAllowManager" : {
       "title" : "デバイスのManagerが無効です。",
@@ -672,7 +679,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
+      "description" : "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。",
+      "primaryCTA" : "再試行"
     },
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
@@ -1077,7 +1085,7 @@
     "setupCta" : "すでにデバイスを持っている場合の設定"
   },
   "postBuyDeviceSetupNanoWall" : {
-    "title" : "デバイスをお受け取りになりましたか？",
+    "title" : "デバイスを受け取りましたか？",
     "desc" : "デバイスを受け取ったら、Ledger Liveでセットアップを開始できます!",
     "cta" : "デバイスをセットアップ",
     "bannerTitle" : "デバイスを受け取りましたか？",
@@ -1196,7 +1204,7 @@
       },
       "desktopSync" : {
         "title" : "デスクトップアプリと同期",
-        "subtitle" : "Ledger Liveデスクトップの資産をモバイルと同期させます。"
+        "subtitle" : "Ledger Liveデスクトップの資産をモバイルと同期"
       }
     },
     "discoverLive" : {
@@ -1811,7 +1819,8 @@
           "title" : "デバイスがロックされています。",
           "subtitle" : "{{ productName }}のロックを解除して、再度お試しください。"
         },
-        "retryCta" : "再試行"
+        "retryCta" : "再試行",
+        "openSettingsCta" : "Bluetooth設定に移動する"
       }
     }
   },
@@ -4455,19 +4464,44 @@
       "activatableVotes" : "有効化可能な投票があります。"
     }
   },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO利用可"
+      },
+      "delegated" : {
+        "description" : "デリゲートされた資産は、Osmosisの投票に使われます。これがお客様の合計票数です。"
+      },
+      "undelegating" : {
+        "description" : "デリゲートを解除した資産は、14日間のロック期間後に再び利用可能になります。"
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "資産を管理しながら、OSMOをデリゲートして報酬を獲得しましょう。",
+            "steps" : {
+              "1" : "デリゲート解除が完了するまで、14日待つ必要があります。"
+            }
+          }
+        }
+      }
+    }
+  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "{{currencyTicker}} がご利用可能です",
+        "title" : "利用可能なATOM",
         "description" : "これは利用可能額です。"
       },
       "delegated" : {
         "title" : "デリゲートされた資産",
-        "description" : "デリゲートされた資産は、{{currencyName}}の投票に使われます。これがお客様の合計票数です。"
+        "description" : "デリゲートされた資産は、Cosmosの投票に使われます。これがあなたの合計票数です。"
       },
       "undelegating" : {
         "title" : "デリゲート解除中",
-        "description" : "デリゲートを解除した資産は、{{numberOfDays}}日間のロック期間後に再び利用可能になります。"
+        "description" : "デリゲートを解除した資産は、21日間のロック期間後に再び利用可能になります。"
       },
       "delegationUnavailable" : {
         "title" : "デリゲート不可",
@@ -4475,7 +4509,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "資産をデリゲートすることで、{{ticker}}で報酬を獲得できます。",
+      "delegationEarn" : "資産をデリゲートすることで、ATOMで報酬を獲得できます。",
       "info" : "デリゲートの仕組み",
       "claimRewards" : "報酬獲得を申請",
       "claimAvailableRewards" : "{{amount}}を獲得",
@@ -4503,10 +4537,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "資産を管理しながら、{{ticker}}をデリゲートして報酬を獲得しましょう。",
+            "description" : "資産を管理しながら、ATOMをデリゲートして報酬を獲得しましょう。",
             "steps" : {
               "0" : "資産をデリゲートしても、資産の所有者は変わりません。",
-              "1" : "デリゲート解除が完了するまで、{{numberOfDays}}日待つ必要があります。",
+              "1" : "デリゲート解除が完了するまで、21日待つ必要があります。",
               "2" : "Ledgerデバイスを使って安全にデリゲートできます。"
             },
             "warning" : {
@@ -5964,15 +5998,8 @@
       "nft" : "NFT"
     },
     "nftGallery" : {
-      "filters" : {
-        "selectAndHide" : "選択して非表示",
-        "hide" : "{{count}}個のコレクションを非表示",
-        "hide_plural" : "{{count}}個のコレクションを非表示",
-        "alertHide" : "1個のコレクションが非表示です。設定に移動して、いつでも表示か非表示を選択可能です",
-        "alertHide_plural" : "{{count}}個のコレクションが非表示です。設定に移動して、いつでも表示か非表示を選択可能です"
-      },
       "empty" : {
-        "title" : "表示できるNFTはまだありません",
+        "title" : "表示できるNFTがありません",
         "subtitle" : "最初のNFTを受け取って開始しましょう。",
         "receive" : "NFTを受け取る",
         "supportLink" : "別のウォレットからNFTを入手するには？"
