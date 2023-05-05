@@ -96,7 +96,7 @@ export class CosmosTransactionStatusManager {
 
     const estimatedFees = t.fees || new BigNumber(0);
 
-    if (!t.fees) {
+    if (t.fees == null) {
       errors.fees = new FeeNotLoaded();
     }
 
@@ -160,7 +160,7 @@ export class CosmosTransactionStatusManager {
 
     const estimatedFees = t.fees || new BigNumber(0);
 
-    if (!t.fees || !t.fees.gt(0)) {
+    if (t.fees == null) {
       errors.fees = new FeeNotLoaded();
     }
     const amount = t.useAllAmount
