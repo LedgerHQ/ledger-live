@@ -49,9 +49,6 @@ const QRCodeWrapper = styled.div`
   width: 208px;
   background: white;
 `;
-const AlertBoxContainer = styled.div`
-  margin-top: 20px;
-`;
 const Receive1ShareAddress = ({
   account,
   name,
@@ -95,7 +92,7 @@ const Receive1ShareAddress = ({
   );
 };
 const Receive2Device = ({ name, device }: { name: string; device: any }) => {
-  const type = useTheme("colors.palette.type");
+  const type = useTheme().colors.palette.type;
   return (
     <>
       <Box horizontal alignItems="center" flow={2}>
