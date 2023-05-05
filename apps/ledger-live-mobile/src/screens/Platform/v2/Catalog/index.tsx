@@ -34,21 +34,16 @@ export function Catalog() {
   const { t } = useTranslation();
   const title = t("browseWeb3.catalog.title");
 
-  const manifestsWithSearchableVisibilityOnly: LiveAppManifest[] = useManifests(
-    {
-      visibility: "searchable",
-    },
-  );
+  const manifestsSearchableVisibility: LiveAppManifest[] = useManifests({
+    visibility: "searchable",
+  });
 
-  const manifestsWithCompleteVisibilityOnly: LiveAppManifest[] = useManifests({
+  const manifestsCompleteVisibility: LiveAppManifest[] = useManifests({
     visibility: "complete",
   });
 
   const manifests = useMemo(
-    () => [
-      ...manifestsWithSearchableVisibilityOnly,
-      ...manifestsWithCompleteVisibilityOnly,
-    ],
+    () => [...manifestsSearchableVisibility, ...manifestsCompleteVisibility],
     [],
   );
 
@@ -58,7 +53,7 @@ export function Catalog() {
     selected,
     setSelected,
     initialSelectedState,
-  } = useCategories(manifestsWithCompleteVisibilityOnly);
+  } = useCategories(manifestsCompleteVisibility);
 
   const recentlyUsed = useRecentlyUsed(manifests);
 
@@ -124,7 +119,7 @@ export function Catalog() {
 
       {isActive ? (
         <Search
-          manifests={manifestsWithCompleteVisibilityOnly}
+          manifests={manifestsCompleteVisibility}
           recentlyUsed={recentlyUsed.data}
           title={title}
           input={input}

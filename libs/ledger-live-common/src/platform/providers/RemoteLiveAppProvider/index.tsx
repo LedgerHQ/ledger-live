@@ -75,12 +75,16 @@ export function useManifests(
 ): LiveAppManifest[] {
   const liveAppFiltered =
     useRemoteLiveAppContext().state?.value?.liveAppFiltered ?? [];
-  if (Object.keys(options).length === 0) {
-    return liveAppFiltered;
-  }
-  return liveAppFiltered.filter((manifest) =>
-    Object.keys(options).some((key) => manifest[key] === options[key])
-  );
+
+  const filteredList = useMemo(() => {
+    if (Object.keys(options).length === 0) {
+      return liveAppFiltered;
+    }
+    return liveAppFiltered.filter((manifest) =>
+      Object.keys(options).some((key) => manifest[key] === options[key])
+    );
+  }, [options, liveAppFiltered]);
+  return filteredList;
 }
 
 export function RemoteLiveAppProvider({
