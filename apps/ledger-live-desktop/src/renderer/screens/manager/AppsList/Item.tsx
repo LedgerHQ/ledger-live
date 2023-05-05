@@ -15,6 +15,7 @@ import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
 import { formatCurrencyIdToFeatureKey } from "~/renderer/components/FirebaseRemoteConfig";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const AppRow = styled.div`
   display: flex;
@@ -46,9 +47,9 @@ type Props = {
   onlyUpdate?: boolean;
   forceUninstall?: boolean;
   showActions?: boolean;
-  setAppInstallDep?: (a: any) => void;
-  setAppUninstallDep?: (a: any) => void;
-  addAccount?: (a: any) => void;
+  setAppInstallDep?: (a: { app: App; dependencies: App[] }) => void;
+  setAppUninstallDep?: (a: { dependents: App[]; app: App }) => void;
+  addAccount?: (a: CryptoCurrency | undefined) => void;
 };
 
 const Item = ({
@@ -68,9 +69,10 @@ const Item = ({
   const { name, type, currencyId } = app;
   const { deviceModel, deviceInfo } = state;
   const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, name);
-  const currency = useMemo(() => app.currencyId && getCryptoCurrencyById(app.currencyId), [
-    app.currencyId,
-  ]);
+  const currency = useMemo(
+    () => (app.currencyId && getCryptoCurrencyById(app.currencyId)) || undefined,
+    [app.currencyId],
+  );
   const currencySupported = !!currency && isCurrencySupported(currency);
   const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
   const onAddAccount = useCallback(() => {

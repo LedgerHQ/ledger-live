@@ -94,8 +94,7 @@ process.on("message", (m: Message) => {
       break;
     }
     default:
-      // @ts-expect-error just in case we pass a wrong type
-      log("error", `internal thread: '${m.type}' event not supported`);
+      log("error", `internal thread: '${(m as { type: string }).type}' event not supported`);
   }
 });
 process.on("disconnect", () => {

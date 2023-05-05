@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import map from "lodash/map";
 import { Trans } from "react-i18next";
 import { getEnv } from "@ledgerhq/live-common/env";
@@ -20,6 +20,8 @@ import SwapSmallCoin2Image from "./banners/Swap/images/smallcoin2.png";
 import SwapSmallCoin3Image from "./banners/Swap/images/smallcoin3.png";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { useSelector } from "react-redux";
+import * as braze from "@braze/web-sdk";
+import { ContentCard } from "~/types/dynamicContent";
 
 export const getTransitions = (transition: "slide" | "flip", reverse = false) => {
   const mult = reverse ? -1 : 1;
@@ -41,7 +43,6 @@ export const getTransitions = (transition: "slide" | "flip", reverse = false) =>
     },
     slide: {
       from: {
-        position: "absolute",
         opacity: 1,
         transform: `translate3d(${100 * mult}%,0,0)`,
       },
@@ -58,7 +59,7 @@ export const getTransitions = (transition: "slide" | "flip", reverse = false) =>
   }[transition];
 };
 
-const referralProgramSlide = {
+const referralProgramSlide: ContentCard = {
   id: "referralProgram",
   title: <Trans i18nKey={`banners.referralProgram.title`} />,
   description: <Trans i18nKey={`banners.referralProgram.description`} />,
@@ -82,7 +83,7 @@ const referralProgramSlide = {
   ],
 };
 
-const exchangeSlide = {
+const exchangeSlide: ContentCard = {
   path: "/exchange",
   id: "buyCrypto",
   title: <Trans i18nKey={`banners.buyCrypto.title`} />,
@@ -130,7 +131,7 @@ const exchangeSlide = {
     },
   ],
 };
-const swapSlide = {
+const swapSlide: ContentCard = {
   path: "/swap",
   id: "swap",
   title: <Trans i18nKey={`banners.swap.title`} />,
@@ -195,11 +196,19 @@ const swapSlide = {
   ],
 };
 
-export const useDefaultSlides = () => {
+type SlideRes = {
+  id: string;
+  Component: React.ComponentType<{}>;
+};
+
+export const useDefaultSlides = (): {
+  slides: SlideRes[];
+  logSlideImpression: (index: number) => void;
+} => {
   const referralProgramConfig = useFeature("referralProgramDesktopBanner");
   const portfolioCards = useSelector(portfolioContentCardSelector);
 
-  const slides = useMemo(() => {
+  const slidesData = useMemo(() => {
     if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       return [
         { ...referralProgramSlide, path: referralProgramConfig?.params?.path },
@@ -210,13 +219,45 @@ export const useDefaultSlides = () => {
     }
   }, [referralProgramConfig, portfolioCards]);
 
-  return useMemo(
-    () =>
-      map(getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : slides, (slide: Props) => ({
-        id: slide.name,
-        // eslint-disable-next-line react/display-name
-        Component: () => <Slide {...slide} />,
-      })),
-    [slides],
+  const logSlideImpression = useCallback(
+    index => {
+      const slide = slidesData[index];
+      if (slide?.id) {
+        const currentCard = portfolioCards.find(card => card.id === slide.id);
+
+        if (currentCard && currentCard.brazeCard) {
+          braze.logContentCardImpressions([currentCard.brazeCard]);
+        }
+      }
+    },
+    [portfolioCards, slidesData],
   );
+
+  const logSlideClick = useCallback(
+    cardId => {
+      const currentCard = portfolioCards.find(card => card.id === cardId);
+
+      if (currentCard && currentCard.brazeCard) {
+        braze.logContentCardClick(currentCard.brazeCard);
+      }
+    },
+    [portfolioCards],
+  );
+  const slides = useMemo(
+    () =>
+      map<ContentCard, SlideRes>(
+        getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : slidesData,
+        (slide): SlideRes => ({
+          id: slide.id,
+          // eslint-disable-next-line react/display-name
+          Component: () => <Slide {...slide} onClickOnSlide={logSlideClick} />,
+        }),
+      ),
+    [slidesData, logSlideClick],
+  );
+
+  return {
+    slides,
+    logSlideImpression,
+  };
 };

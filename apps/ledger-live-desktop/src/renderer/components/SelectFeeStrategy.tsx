@@ -28,7 +28,7 @@ type Props = {
   };
   suffixPerByte?: boolean;
 };
-const FeesWrapper = styled(Box)`
+const FeesWrapper = styled(Box)<{ selected?: boolean; disabled?: boolean }>`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -48,7 +48,7 @@ const FeesWrapper = styled(Box)`
     cursor: ${p => (p.disabled ? "unset" : "pointer")};
   }
 `;
-const FeesHeader = styled(Box)`
+const FeesHeader = styled(Box)<{ selected?: boolean; disabled?: boolean }>`
   color: ${p =>
     p.selected
       ? p.theme.colors.palette.primary.main

@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { Currency, CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import {
-  ValueChange,
-  BalanceHistoryWithCountervalue,
-} from "@ledgerhq/live-common/portfolio/v2/types";
+
 import { setCountervalueFirst } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";
 import { BalanceTotal, BalanceDiff } from "~/renderer/components/BalanceInfos";
@@ -25,6 +22,7 @@ import { useProviders } from "../exchange/Swap2/Form";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "~/renderer/screens/stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
+import { BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
 type Props = {
   isAvailable: boolean;
   cryptoChange: ValueChange;
@@ -89,11 +87,9 @@ export default function AssetBalanceSummaryHeader({
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
-  const availableOnSwap =
-    (providers || storedProviders) &&
-    !!(providers || storedProviders).find(({ pairs }) => {
-      return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
-    });
+  const availableOnSwap = providers?.concat(storedProviders ?? []).some(({ pairs }) => {
+    return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
+  });
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
     history.push({
@@ -154,7 +150,7 @@ export default function AssetBalanceSummaryHeader({
           onClick={() => setCountervalueFirst(!countervalueFirst)}
           showCryptoEvenIfNotAvailable
           isAvailable={isAvailable}
-          totalBalance={data[0].balance}
+          totalBalance={data[0].balance || 0}
           unit={data[0].unit}
         >
           <Wrapper
@@ -187,7 +183,6 @@ export default function AssetBalanceSummaryHeader({
               from={currency}
               withActivityCurrencyColor
               withEquality
-              color="warmGrey"
               fontSize={6}
               iconSize={16}
             />
@@ -219,7 +214,7 @@ export default function AssetBalanceSummaryHeader({
         flow={7}
       >
         <BalanceDiff
-          totalBalance={data[0].balance}
+          totalBalance={data[0].balance || 0}
           valueChange={data[0].valueChange}
           unit={data[0].unit}
           isAvailable={isAvailable}

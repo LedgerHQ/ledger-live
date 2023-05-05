@@ -39,9 +39,8 @@ function DisplayOptions() {
   );
 }
 export default React.memo<{}>(DisplayOptions);
-const ToggleButton: ThemedComponent<{
-  active?: boolean;
-}> = styled(Button)`
+
+const ToggleButton = styled(Button)<{ active?: boolean }>`
   height: 30px;
   width: 30px;
   padding: 7px;

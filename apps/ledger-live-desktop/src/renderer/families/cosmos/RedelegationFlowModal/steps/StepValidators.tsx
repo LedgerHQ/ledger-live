@@ -32,7 +32,7 @@ const SelectButton = styled(Base)`
     border-color: ${p => p.theme.colors.palette.text.shade30};
   }
 `;
-const Container: ThemedComponent<any> = styled(Box).attrs(p => ({
+const Container = styled(Box).attrs(p => ({
   flow: 1,
   relative: true,
   mr: -p.theme.overflow.trackSize,

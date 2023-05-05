@@ -29,11 +29,11 @@ const openAnim = keyframes`
     transform: translateY(-50%);
   }
 `;
-export const Dot: ThemedComponent<{
+export const Dot = styled.div<{
   color?: string;
   opacity?: number;
   collapsed?: boolean | null;
-}> = styled.div`
+}>`
   background-color: ${p => p.color || colors.wallet};
   opacity: ${p => p.opacity};
   border-radius: 50%;

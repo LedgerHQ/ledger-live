@@ -18,15 +18,15 @@ const OptionContainer = styled.div`
   flex: 1;
   flex-direction: column;
 `;
-const AccountRowContainer: ThemedComponent<{
-  nested?: boolean;
-  disabled?: boolean;
-}> = styled.div.attrs(p => ({
+const AccountRowContainer = styled.div.attrs<{ nested?: boolean; disabled?: boolean }>(p => ({
   style: {
     paddingTop: p.nested ? 3 : 0,
     color: p.disabled ? p.theme.colors.palette.text.shade40 : "inherit",
   },
-}))`
+}))<{
+  nested?: boolean;
+  disabled?: boolean;
+}>`
   display: flex;
   flex-direction: row;
   flex-grow: 1;
@@ -71,11 +71,7 @@ function AccountRow({
         {nested ? <NestingIndicator /> : null}
         <IconContainer>
           {parentAccount ? (
-            <ParentCryptoCurrencyIcon
-              overrideColor={disabled ? palette.text.shade40 : undefined}
-              size={16}
-              currency={getAccountCurrency(account)}
-            />
+            <ParentCryptoCurrencyIcon currency={getAccountCurrency(account)} />
           ) : (
             <CryptoCurrencyIcon
               overrideColor={disabled ? palette.text.shade40 : undefined}

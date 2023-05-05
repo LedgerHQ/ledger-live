@@ -43,7 +43,7 @@ const TronVotesField = ({ account, parentAccount, transaction, field }: FieldCom
   const { votes } = transaction;
   if (!votes) return null;
   return (
-    <Box vertical justifyContent="space-between" mb={2}>
+    <Box justifyContent="space-between" mb={2}>
       <TransactionConfirmField label={field.label} />
 
       <OperationDetailsVotes votes={votes} account={mainAccount} isTransactionField />

@@ -16,28 +16,38 @@ import {
   DeviceNotOnboarded,
   NoSuchAppOnProvider,
 } from "@ledgerhq/live-common/errors";
+
 export type ErrorIconProps = {
-  error: Error;
+  error: unknown;
   size?: number;
 };
+
 const ErrorIcon = ({ error, size = 44 }: ErrorIconProps) => {
-  switch (true) {
-    case !error:
-      return null;
-    case error instanceof DeviceNotOnboarded:
-      return <InfoCircle size={size} />;
-    case error instanceof UserRefusedFirmwareUpdate:
-      return <Warning size={size} />;
-    case error instanceof UserRefusedAllowManager:
-    case error instanceof UserRefusedOnDevice:
-    case error instanceof UserRefusedAddress:
-    case error instanceof SwapGenericAPIError:
-    case error instanceof NoSuchAppOnProvider:
-      return <CrossCircle size={size} />;
-    case error instanceof ManagerDeviceLockedError:
-      return <Lock size={size} />;
-    default:
-      return <ExclamationCircleThin size={size} />;
+  if (!error) return null;
+
+  if (error instanceof DeviceNotOnboarded) {
+    return <InfoCircle size={size} />;
   }
+
+  if (error instanceof UserRefusedFirmwareUpdate) {
+    return <Warning size={size} />;
+  }
+
+  if (
+    error instanceof UserRefusedAllowManager ||
+    error instanceof UserRefusedOnDevice ||
+    error instanceof UserRefusedAddress ||
+    error instanceof SwapGenericAPIError ||
+    error instanceof NoSuchAppOnProvider
+  ) {
+    return <CrossCircle size={size} />;
+  }
+
+  if (error instanceof ManagerDeviceLockedError) {
+    return <Lock size={size} />;
+  }
+
+  return <ExclamationCircleThin size={size} />;
 };
+
 export default ErrorIcon;

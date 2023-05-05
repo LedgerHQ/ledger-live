@@ -31,7 +31,10 @@ type API = {
   refresh: (param?: MarketListRequestParams) => void;
   refreshChart: (param?: MarketCurrencyChartDataRequestParams) => void;
   selectCurrency: (id?: string, data?: CurrencyData, range?: string) => void;
-  loadNextPage: () => Promise<boolean>;
+  loadNextPage: (
+    startIndex?: number,
+    stopIndex?: number
+  ) => void | Promise<void>;
   setCounterCurrency: (counterCurrency: string) => void;
 };
 
@@ -70,7 +73,7 @@ const MarketDataContext = createContext<MarketDataContextType>({
   refresh: () => {},
   refreshChart: () => {},
   selectCurrency: () => {},
-  loadNextPage: () => Promise.resolve(true),
+  loadNextPage: () => Promise.resolve(),
   setCounterCurrency: () => {},
 });
 

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import styled, { css } from "styled-components";
+import styled, { css, DefaultTheme, ThemedStyledProps } from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { colors } from "~/renderer/styles/theme";
 import { openURL } from "~/renderer/linking";
@@ -17,6 +17,8 @@ import CrossCircle from "../icons/CrossCircle";
 import LightBulb from "../icons/LightBulb";
 import Twitter from "../icons/Twitter";
 import ExternalLink from "./ExternalLink";
+import { BoxProps } from "./Box/Box";
+
 const getIcon = (type: AlertType) => {
   switch (type) {
     case "primary":
@@ -43,7 +45,10 @@ const getIcon = (type: AlertType) => {
       return null;
   }
 };
-const getStyle = p => {
+
+type ContainerProps = { small: boolean | undefined; type: AlertType };
+
+const getStyle = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) => {
   switch (p.type) {
     case "primary":
     case "hint":
@@ -121,11 +126,11 @@ const getStyle = p => {
 };
 const LeftContent = styled(Box)``;
 const RightContent = styled(Box)``;
-const Container = styled(Box).attrs(props => ({
+const Container = styled(Box).attrs<{ small: boolean | undefined }>(props => ({
   horizontal: true,
   flex: 1,
   fontSize: props.small ? 3 : 4,
-}))`
+}))<ContainerProps>`
   border-radius: 4px;
   align-items: center;
 
@@ -196,13 +201,16 @@ type AlertType =
   | "danger"
   | "update"
   | "twitter";
-type Props = {
+
+type Props = BoxProps & {
   type?: AlertType;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onLearnMore?: () => void;
   learnMoreLabel?: React.ReactNode;
   learnMoreIsInternal?: boolean;
   learnMoreOnRight?: boolean;
+  learnMoreUrl?: string | null;
+  // if bannerId is provided, the banner is dismissable
   bannerId?: string;
   left?: React.ReactNode;
   right?: React.ReactNode;
@@ -210,7 +218,8 @@ type Props = {
   horizontal?: boolean;
   noIcon?: boolean;
   small?: boolean;
-} & Box.propTypes;
+};
+
 export default function Alert({
   children: description,
   onLearnMore,
@@ -225,6 +234,8 @@ export default function Alert({
   left,
   title,
   small,
+  // eslint-disable-next-line
+  color,
   ...rest
 }: Props) {
   const { t } = useTranslation();
@@ -238,8 +249,9 @@ export default function Alert({
     () => (onLearnMore ? onLearnMore() : learnMoreUrl ? openURL(learnMoreUrl) : undefined),
     [onLearnMore, learnMoreUrl],
   );
+
   const onDismiss = useCallback(() => {
-    dispatch(dismissBanner(bannerId));
+    if (bannerId) dispatch(dismissBanner(bannerId));
   }, [bannerId, dispatch]);
   const learnMore = hasLearnMore && (
     <Text ff="Inter|SemiBold">
@@ -247,6 +259,18 @@ export default function Alert({
     </Text>
   );
   if (isDismissed) return null;
+  /**
+   * NOTE: Here we used to spread all props, yet there is a mismatch with the `color` prop
+   * we receive and the `color` props expected by Container.
+   * The `color` prop expected by Container seems to come from the TextColor types, yet the
+   * prop `color` we receive seems to work if we pass it to `backgroundColor` instead
+   *
+   * eg: <Container ... backgroundColor={color} />
+   *
+   * So ignoring the `color` prop for now
+   * Also I'm pretty confident the type now handles the display of the Alert
+   *
+   */
   return (
     <Container type={type} small={small} {...rest}>
       {left || (!noIcon && icon) ? <LeftContent>{left || icon}</LeftContent> : null}

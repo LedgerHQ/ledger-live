@@ -6,6 +6,7 @@ const WrappedSvg = styled.svg`
   border-radius: 50%;
   background-clip: padding-box;
 `;
+
 type Props = {
   size: number;
   bgColor?: string;
@@ -19,7 +20,7 @@ const AnimatedCountdown = ({
   duration = 60000,
 }: Props) => {
   return (
-    <WrappedSvg bgColor={bgColor} width={size} height={size} viewBox={"0 0 32 32"}>
+    <WrappedSvg width={size} height={size} viewBox={"0 0 32 32"}>
       <circle r={16} cx={16} cy={16} strokeWidth={32} fill={fillColor} stroke={bgColor}>
         <animate
           attributeName="stroke-dasharray"

@@ -1,10 +1,12 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-import { Box, Text, TextProps, Flex, Icon, Switch } from "@ledgerhq/react-ui";
+import styled, { DefaultTheme, StyledComponent } from "styled-components";
+import { Box, Text, Flex, Icon, Switch } from "@ledgerhq/react-ui";
+import { BoxProps } from "@ledgerhq/react-ui/components/layout/Box/index";
 import { SwitchProps } from "@ledgerhq/react-ui/components/form/Switch/Switch";
+import { TextProps } from "@ledgerhq/react-ui/components/asorted/Text";
 
-export const WaveContainer = styled(Box).attrs({
+export const WaveContainer: StyledComponent<"div", DefaultTheme, BoxProps> = styled(Box).attrs({
   position: "absolute",
   left: "0",
   right: "0",
@@ -14,7 +16,7 @@ export const WaveContainer = styled(Box).attrs({
   pointer-events: none;
 `;
 
-export const AnimationContainer = styled(Flex)`
+export const AnimationContainer: StyledComponent<"div", DefaultTheme, BoxProps> = styled(Flex)`
   overflow-x: clip;
   width: 324px;
   > * {
@@ -23,23 +25,31 @@ export const AnimationContainer = styled(Flex)`
   }
 `;
 
-export const IllustrationContainer = styled(Flex)<{ src: string }>`
+export const IllustrationContainer: StyledComponent<
+  "div",
+  DefaultTheme,
+  BoxProps & { src: string }
+> = styled(Flex)<{ src: string }>`
   background: url('${({ src }) => src}') no-repeat center;
   background-size: contain;
 `;
 
-export const Title = (props: TextProps) => <Text variant="h2" mb={12} {...props} />;
+export const Title = (props: TextProps & { children?: React.ReactNode }) => (
+  <Text variant="h2" mb={12} {...props} />
+);
 
-export const SubTitle = (props: TextProps) => (
+export const SubTitle = (props: TextProps & { children?: React.ReactNode }) => (
   <Text variant="body" mb={2} color="palette.neutral.c80" {...props} />
 );
 
-export const BorderFlex = styled(Flex)`
+export const BorderFlex: StyledComponent<"div", DefaultTheme, BoxProps> = styled(Flex)`
   border: 1px solid ${p => p.theme.colors.palette.neutral.c40};
   border-radius: 4px;
 `;
 
-export const IconContainer = styled(BorderFlex).attrs({
+export const IconContainer: StyledComponent<"div", DefaultTheme, BoxProps> = styled(
+  BorderFlex,
+).attrs({
   width: 60,
   height: 60,
   flexDirection: "row",
@@ -49,13 +59,13 @@ export const IconContainer = styled(BorderFlex).attrs({
   color: ${p => p.theme.colors.palette.neutral.c100};
 `;
 
-export const Row = styled(Flex).attrs({
+export const Row: StyledComponent<"div", DefaultTheme, BoxProps> = styled(Flex).attrs({
   flexDirection: "row",
   justifyContent: "flex-start",
   alignItems: "center",
 })``;
 
-export const Column = styled(Flex).attrs({
+export const Column: StyledComponent<"div", DefaultTheme, BoxProps> = styled(Flex).attrs({
   flexDirection: "column",
   justifyContent: "flex-start",
   alignItems: "stretch",
@@ -68,9 +78,9 @@ export const Bullet = ({
   subText,
 }: {
   icon?: string;
-  bulletText?: string | number;
-  text: string;
-  subText?: string;
+  bulletText?: string | number | null;
+  text: React.ReactNode;
+  subText?: React.ReactNode;
 }) => {
   return (
     <Row mb={8}>

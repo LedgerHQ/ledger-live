@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency, Currency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
 import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -11,9 +10,13 @@ import { useCurrencyPortfolio, usePortfolio } from "~/renderer/actions/portfolio
 import AssetBalanceSummaryHeader from "./AssetBalanceSummaryHeader";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import FormattedDate from "~/renderer/components/FormattedDate";
+import { Data, Item } from "~/renderer/components/Chart/types";
+import { PortfolioRange } from "@ledgerhq/types-live";
 
-import NoGraphWarning from "~/renderer/families/vechain/NoGraphWarning";
+// import NoGraphWarning from "~/renderer/families/vechain/NoGraphWarning";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
+import Alert from "~/renderer/components/Alert";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   counterValue: Currency;
@@ -31,6 +34,7 @@ export default function BalanceSummary({
   chartColor,
   currency,
 }: Props) {
+  const { t } = useTranslation();
   const portfolio = usePortfolio();
   const { history, countervalueAvailable, countervalueChange, cryptoChange } = useCurrencyPortfolio(
     {
@@ -39,12 +43,12 @@ export default function BalanceSummary({
     },
   );
   const discreetMode = useSelector(discreetModeSelector);
-  const mapValueCounterValue = useCallback((d: any) => d.countervalue, []);
-  const mapValueCryptoValue = useCallback((d: any) => d.value, []);
+  const mapValueCounterValue = useCallback((d: Item) => d.countervalue, []);
+  const mapValueCryptoValue = useCallback((d: Item) => d.value, []);
   const displayCountervalue = countervalueFirst && countervalueAvailable;
   const chartMagnitude = displayCountervalue ? counterValue.units[0].magnitude : unit.magnitude;
   const renderTooltip = useCallback(
-    (d: any) => {
+    d => {
       const data = [
         {
           val: d.value,
@@ -70,11 +74,12 @@ export default function BalanceSummary({
     },
     [counterValue.units, countervalueAvailable, displayCountervalue, unit],
   );
-  const renderTickYCryptoValue = useCallback((val: number) => formatShort(unit, BigNumber(val)), [
-    unit,
-  ]);
+  const renderTickYCryptoValue = useCallback(
+    (val: number | string) => formatShort(unit, BigNumber(val)),
+    [unit],
+  );
   const renderTickYCounterValue = useCallback(
-    (val: number) => formatShort(counterValue.units[0], BigNumber(val)),
+    (val: number | string) => formatShort(counterValue.units[0], BigNumber(val)),
     [counterValue.units],
   );
   return (
@@ -95,10 +100,12 @@ export default function BalanceSummary({
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={6}>
         {currency.type === "TokenCurrency" && currency.id === "vechain/vtho" ? (
           <>
-            <NoGraphWarning />
+            {/* <NoGraphWarning /> */}
+            <Alert type="secondary" noIcon={false}>
+              <span>{t("vechain.noGraphWarning")}</span>
+            </Alert>
             <PlaceholderChart
               magnitude={counterValue.units[0].magnitude}
-              chartId="prova"
               data={portfolio.balanceHistory}
               tickXScale={range}
             />
@@ -108,11 +115,10 @@ export default function BalanceSummary({
             magnitude={chartMagnitude}
             color={chartColor}
             // TODO make date non optional
-            data={history}
+            data={history as Data}
             height={200}
             tickXScale={range}
             valueKey={displayCountervalue ? "countervalue" : "value"}
-            mapValue={displayCountervalue ? mapValueCounterValue : mapValueCryptoValue}
             renderTickY={
               discreetMode
                 ? () => ""
@@ -120,7 +126,6 @@ export default function BalanceSummary({
                 ? renderTickYCounterValue
                 : renderTickYCryptoValue
             }
-            isInteractive
             renderTooltip={renderTooltip}
           />
         )}

@@ -1,6 +1,9 @@
 import React, { useCallback, useMemo } from "react";
 import { AnnouncementProvider } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
-import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
+import {
+  Announcement,
+  AnnouncementsUserSettings,
+} from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getKey, setKey } from "~/renderer/storage";
 import { cryptoCurrenciesSelector } from "~/renderer/reducers/accounts";
@@ -12,12 +15,15 @@ import { openInformationCenter } from "~/renderer/actions/UI";
 import { track } from "~/renderer/analytics/segment";
 import fetchApi from "../../../tests/mocks/notificationsHelpers";
 import networkApi from "../../../tests/mocks/serviceStatusHelpers";
-let notificationsApi;
-let serviceStatusApi;
+
+let notificationsApi: typeof fetchApi | undefined;
+let serviceStatusApi: typeof networkApi | undefined;
+
 if (getEnv("MOCK") || getEnv("PLAYWRIGHT_RUN")) {
   notificationsApi = fetchApi;
   serviceStatusApi = networkApi;
 }
+
 type Props = {
   children: React.ReactNode;
 };
@@ -64,7 +70,7 @@ export function AnnouncementProviderWrapper({ children }: Props) {
   const startDate = useMemo(() => new Date(), []);
   const language = useSelector(languageSelector);
   const currenciesRaw = useSelector(cryptoCurrenciesSelector);
-  const { currencies, tickers } = currenciesRaw.reduce(
+  const { currencies, tickers } = currenciesRaw.reduce<{ currencies: string[]; tickers: string[] }>(
     ({ currencies, tickers }, { id, ticker }) => ({
       currencies: [...currencies, id],
       tickers: [...tickers, ticker],
@@ -80,11 +86,11 @@ export function AnnouncementProviderWrapper({ children }: Props) {
 
   // please help on fixing this. bad type on live-common?
   const { pushToast, dismissToast } = useToasts();
-  const context = {
+  const context: AnnouncementsUserSettings = {
     language,
     currencies,
     getDate: () => new Date(),
-    lastSeenDevice: lastSeenDevice || undefined,
+    lastSeenDevice,
     platform: osPlatform,
     appVersion: __APP_VERSION__,
   };
