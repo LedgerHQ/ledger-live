@@ -2,7 +2,7 @@ import React, { useCallback, memo } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import styled, { CSSProperties, useTheme } from "styled-components";
+import styled, { CSSProperties } from "styled-components";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -86,7 +86,7 @@ function MarketRowItem({
   }, [dispatch, currency]);
 
   const history = useHistory();
-  const { colors } = useTheme();
+
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = flattenAccounts(allAccounts);
 
