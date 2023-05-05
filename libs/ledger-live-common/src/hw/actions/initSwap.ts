@@ -104,6 +104,7 @@ const reducer = (state: State, e: SwapRequestEvent) => {
         isLoading: false,
       };
   }
+  return state;
 };
 
 function useFrozenValue<T>(value: T, frozen: boolean): T {
