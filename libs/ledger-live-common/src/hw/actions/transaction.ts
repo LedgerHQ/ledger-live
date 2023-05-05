@@ -84,7 +84,6 @@ const reducer = (state: State, e: Event): State => {
     case "error": {
       const { error } = e;
       const transactionSignError =
-        // @ts-expect-error typescript doesn't check against the TransportStatusError type
         error instanceof TransportStatusError && error.statusCode === 0x6985
           ? new TransactionRefusedOnDevice()
           : error;
@@ -103,6 +102,7 @@ const reducer = (state: State, e: Event): State => {
     case "device-streaming":
       return { ...state, deviceStreamingProgress: e.progress };
   }
+  return state;
 };
 
 export const createAction = (
