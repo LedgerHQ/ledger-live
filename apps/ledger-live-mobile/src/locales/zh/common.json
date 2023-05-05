@@ -324,11 +324,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Ledger Stax 锁屏已取消",
-      "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
+      "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
+      "primaryCTA" : "上传另一张图片"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Ledger Stax 锁屏已取消",
-      "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
+      "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
+      "primaryCTA" : "上传另一张图片"
     },
     "InvalidAddress" : {
       "title" : "该{{currencyName}} 地址无效"
@@ -477,6 +479,10 @@
       "title" : "密码不匹配",
       "description" : "请再次尝试。"
     },
+    "PeerRemovedPairing" : {
+      "title" : "您需要从手机的蓝牙设备上移除“{{ deviceName }}”",
+      "description" : "您的 {{ productName }} 更改了其蓝牙配置。请从您的手机设置中删除它，然后返回 Ledger Live 并再次尝试配对。"
+    },
     "SelectExchangesLoadError" : {
       "title" : "无法加载",
       "description" : "无法加载这些交易所。"
@@ -549,11 +555,12 @@
       "description" : "必须在 30 秒内签署交易。请重试。"
     },
     "TronNotEnoughEnergy" : {
-      "title" : "能量低于必要值。您可能需要支付高达 50TRX 的费用。"
+      "title" : "能量低于必要值。您可能需要支付高达 20TRX 的费用。"
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
-      "description" : "请通过管理器卸载并重新安装 {{managerAppName}} 应用程序。"
+      "description" : "请通过管理器卸载并重新安装 {{managerAppName}} 应用程序。",
+      "primaryCTA" : "打开 “我的 Ledger”"
     },
     "UserRefusedAllowManager" : {
       "title" : "Manager（管理器）已被在设备上禁用",
@@ -672,7 +679,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
+      "description" : "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。",
+      "primaryCTA" : "重试"
     },
     "SolanaAccountNotFunded" : {
       "title" : "账户没有资金"
@@ -1811,7 +1819,8 @@
           "title" : "您的设备已经锁定",
           "subtitle" : "解锁您的 {{ productName }} 并重试。"
         },
-        "retryCta" : "请重试"
+        "retryCta" : "重试",
+        "openSettingsCta" : "转到蓝牙设置"
       }
     }
   },
@@ -4455,19 +4464,44 @@
       "activatableVotes" : "您有现在可激活的投票。"
     }
   },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO 现已推出"
+      },
+      "delegated" : {
+        "description" : "委托资产用于 Osmosis 投票。这是您的总得票数。"
+      },
+      "undelegating" : {
+        "description" : "取消委托的资产在 14 天锁定期才能使用。"
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "委托 OSMO 可安全赚取奖励，时刻掌控您的资产。",
+            "steps" : {
+              "1" : "取消委托过程必须等待 14 天才能完成。"
+            }
+          }
+        }
+      }
+    }
+  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "{{currencyTicker}} 可用",
+        "title" : "ATOM 可用",
         "description" : "该数额可自由支配。"
       },
       "delegated" : {
         "title" : "已委托资产",
-        "description" : "委托资产用于 {{currencyName}} 投票。这是您的总得票数。"
+        "description" : "已委托的资产被用于 Cosmos 投票。这是您的总票数。"
       },
       "undelegating" : {
         "title" : "正在解除委托",
-        "description" : "取消委托的资产在 {{numberOfDays}} 天锁定期后才能使用。"
+        "description" : "解除委托的资产会有 21 天的时间锁，之后才可用。"
       },
       "delegationUnavailable" : {
         "title" : "委托不可用",
@@ -4475,7 +4509,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "您可以通过委托资产赚取 {{ticker}} 奖励。",
+      "delegationEarn" : "您可以通过委托资产赚取 ATOM 奖励。",
       "info" : "委托机制如何运作",
       "claimRewards" : "申领奖励",
       "claimAvailableRewards" : "申领 {{amount}}",
@@ -4503,10 +4537,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "委托 {{ticker}} 可安全赚取奖励，时刻掌控您的资产。",
+            "description" : "将您的 ATOM 币委托出去从而安全地赚取奖励，同时依旧掌控您的资产。",
             "steps" : {
               "0" : "委托出去的资产依旧为您所有。",
-              "1" : "取消委托过程必须等待 {{numberOfDays}} 天才能完成。",
+              "1" : "你需要等待 21 天才能完成解除委托流程。",
               "2" : "使用您的 Ledger 设备安全地进行委托。"
             },
             "warning" : {
@@ -5964,13 +5998,6 @@
       "nft" : "NFT"
     },
     "nftGallery" : {
-      "filters" : {
-        "selectAndHide" : "选择并隐藏",
-        "hide" : "隐藏 {{count}} 件藏品",
-        "hide_plural" : "隐藏 {{count}} 件藏品",
-        "alertHide" : "已隐藏 1 件收藏。随时前往设置显示并取消隐藏",
-        "alertHide_plural" : "已隐藏 {{count}} 件收藏。随时前往设置显示并取消隐藏"
-      },
       "empty" : {
         "title" : "暂时没有 NFT 可显示",
         "subtitle" : "从接收您的第一个 NFT 开始。",
