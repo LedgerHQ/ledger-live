@@ -15417,12 +15417,9 @@ packages:
       webpack: 4.46.0
     dev: true
 
-  /@polkadot/keyring@10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1):
+  /@polkadot/keyring@10.3.1:
     resolution: {integrity: sha512-xBkUtyQ766NVS1ccSYbQssWpxAhSf0uwkw9Amj8TFhu++pnZcVm+EmM2VczWqgOkmWepO7MGRjEXeOIw1YUGiw==}
     engines: {node: '>=14.0.0'}
-    peerDependencies:
-      '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
@@ -15447,7 +15444,7 @@ packages:
       styled-components: '*'
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
+      '@polkadot/keyring': 10.3.1
       '@polkadot/ui-settings': 2.11.1
       '@polkadot/ui-shared': 2.11.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/util': 10.3.1
@@ -15522,7 +15519,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
+      '@polkadot/keyring': 10.3.1
       '@polkadot/types-augment': 9.8.1
       '@polkadot/types-codec': 9.8.1
       '@polkadot/types-create': 9.8.1
@@ -22986,7 +22983,7 @@ packages:
     resolution: {integrity: sha512-3NoqvZC2W5gAC5DZbTpCeJ251vGQmgcWIHQJGq2J240HY6ErQ9aWKkwfoKJlHLx+A83WPNTZ9+3cd2ILxbvr1w==}
     dev: true
 
-  /@typescript-eslint/eslint-plugin@2.34.0(@typescript-eslint/parser@2.34.0)(eslint@6.8.0)(typescript@4.9.5):
+  /@typescript-eslint/eslint-plugin@2.34.0(@typescript-eslint/parser@2.34.0)(eslint@6.8.0):
     resolution: {integrity: sha512-4zY3Z88rEE99+CNvTbXSyovv2z9PNOVffTWD2W8QF5s2prBQtwN2zadqERcrHpcR7O/+KMI3fcTAmUUhK/iQcQ==}
     engines: {node: ^8.10.0 || ^10.13.0 || >=11.10.1}
     peerDependencies:
