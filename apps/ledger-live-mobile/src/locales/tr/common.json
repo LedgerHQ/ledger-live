@@ -324,11 +324,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Ledger Stax’te kilit ekranı iptal edildi",
-      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
+      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz.",
+      "primaryCTA" : "Başka bir resim yükleyin"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Ledger Stax’te kilit ekranı iptal edildi",
-      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
+      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz.",
+      "primaryCTA" : "Başka bir resim yükleyin"
     },
     "InvalidAddress" : {
       "title" : "Bu geçerli bir {{currencyName}} adresi değil"
@@ -477,6 +479,10 @@
       "title" : "Parola eşleşmiyor",
       "description" : "Lütfen tekrar deneyin."
     },
+    "PeerRemovedPairing" : {
+      "title" : "“{{ deviceName }}” cihazını telefonunuzdaki Bluetooth cihazlarından kaldırmanız gerekiyor",
+      "description" : "{{ productName }} cihazınızın Bluetooth yapılandırması değişti. Telefonunuzun ayarlar kısmından onu kaldırın ve ardından Ledger Live'a dönüp yeniden eşleştirmeyi deneyin."
+    },
     "SelectExchangesLoadError" : {
       "title" : "Yüklenemiyor",
       "description" : "Borsalar yüklenemiyor."
@@ -549,11 +555,12 @@
       "description" : "İşlemlerin 30 saniye içinde imzalanması gerekir. Lütfen tekrar deneyin."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 50TRX tutarına ulaşabilir."
+      "title" : "Yeterince Enerji mevcut değil. Ağ ücreti 20TRX tutarına ulaşabilir."
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
-      "description" : "Yönetici sekmesinde {{managerAppName}} uygulamasını kaldırın ve yeniden yükleyin"
+      "description" : "Yönetici sekmesinde {{managerAppName}} uygulamasını kaldırın ve yeniden yükleyin",
+      "primaryCTA" : "Yöneticiyi Aç"
     },
     "UserRefusedAllowManager" : {
       "title" : "Cihazda Yönetici özelliği kapalı",
@@ -672,7 +679,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin.",
+      "primaryCTA" : "Tekrar dene"
     },
     "SolanaAccountNotFunded" : {
       "title" : "Hesap fonlanmadı"
@@ -1811,7 +1819,8 @@
           "title" : "Cihazınız kilitlendi",
           "subtitle" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
         },
-        "retryCta" : "Tekrar deneyin"
+        "retryCta" : "Tekrar dene",
+        "openSettingsCta" : "Bluetooth ayarlarına git"
       }
     }
   },
@@ -2280,7 +2289,7 @@
       },
       "advanced" : {
         "title" : "Kapsamlı loglar",
-        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu bir üçüncü taraf cüzdana aktarırken aynı türev modunu seçin.",
+        "warningDerivation" : "Bu bir {{tag}} xpub'ıdır. Bunu üçüncü taraf bir cüzdana aktarırken aynı türev modunu seçin.",
         "desc" : ""
       }
     },
@@ -2980,7 +2989,7 @@
           "receiveFloat" : "Hizmet ücretleri hariç alınacak tutar",
           "provider" : "Sağlayıcı",
           "method" : "Kur",
-          "fees" : "Maksimum ücret",
+          "fees" : "Ücret üst limiti",
           "disclaimer" : {
             "title" : "Hüküm ve Koşullar",
             "desc" : "“Kabul Et” seçeneğine tıklayarak, bu hizmetin tamamen ve sadece <0>{{provider}}</0> Hüküm ve Koşulları tarafından yönetildiğini anlıyor ve kabul ediyorum.",
@@ -3371,7 +3380,7 @@
       "maxPriorityFee" : "Öncelik ücreti üst limiti",
       "nextBlock" : "Sonraki blok",
       "suggested" : "Önerilen",
-      "maxFees" : "Maksimum ücret",
+      "maxFees" : "Ücret üst limiti",
       "validateGasLimit" : "Gas limitini onayla",
       "fees" : "Ücretler",
       "maxEstimatedFee" : "Maks. tahminî ücret",
@@ -4455,19 +4464,44 @@
       "activatableVotes" : "Etkinleştirebileceğiniz oylar bulunuyor."
     }
   },
+  "osmosis" : {
+    "info" : {
+      "available" : {
+        "title" : "OSMO mevcut"
+      },
+      "delegated" : {
+        "description" : "Yetkisi devredilen varlıklar Osmosis oylaması için kullanılır. Bu tutar toplam oy sayınızdır."
+      },
+      "undelegating" : {
+        "description" : "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce 14 gün boyunca zaman kilidinde tutulurlar."
+      }
+    },
+    "delegation" : {
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "OSMO'larınızla yetki devri yaparak hem güvenle ödül kazanın hem de varlıklarınızın kontrolünü muhafaza edin edin.",
+            "steps" : {
+              "1" : "Yetki iptallerinin tamamlanması için 14 gün beklemeniz gerekir."
+            }
+          }
+        }
+      }
+    }
+  },
   "cosmos" : {
     "info" : {
       "available" : {
-        "title" : "{{currencyTicker}} mevcut",
+        "title" : "ATOM mevcut",
         "description" : "Bu tutar, kullanabileceğiniz fondur."
       },
       "delegated" : {
         "title" : "Yetkisi devredilen varlıklar",
-        "description" : "Yetkisi devredilen varlıklar {{currencyName}} oylaması için kullanılır. Bu, toplam oy sayınızdır."
+        "description" : "Yetkisi devredilen varlıklar Cosmos oylaması için kullanılır. Bu tutar toplam oy sayınızdır."
       },
       "undelegating" : {
         "title" : "Yetki iptali",
-        "description" : "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce {{numberOfDays}} gün boyunca zaman kilidinde tutulurlar."
+        "description" : "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce 21 gün boyunca zaman kilidinde tutulurlar."
       },
       "delegationUnavailable" : {
         "title" : "Yetki devri yapılamıyor",
@@ -4475,7 +4509,7 @@
       }
     },
     "delegation" : {
-      "delegationEarn" : "Varlıklarınızın yetkisini devrederek {{ticker}} ödülleri kazanabilirsiniz.",
+      "delegationEarn" : "Varlıklarınızın yetkisini devrederek ATOM ödülleri kazanabilirsiniz.",
       "info" : "Yetki Devri nasıl çalışır?",
       "claimRewards" : "Ödüllerinizi alın",
       "claimAvailableRewards" : "{{amount}} topla",
@@ -4503,10 +4537,10 @@
       "flow" : {
         "steps" : {
           "starter" : {
-            "description" : "{{ticker}} varlıklarınızın yetkisini devrederek hem güvenle ödül kazanın hem de varlıkların kontrolünü elinizde tutun.",
+            "description" : "ATOM'larınızı yetki devretmek için kullanarak hem güvenle ödül kazanın hem de varlıklarınızın kontrolünü sağlamaya devam edin.",
             "steps" : {
               "0" : "Yetkisi devredilen varlıklar size ait olmaya devam eder.",
-              "1" : "Yetki iptalinin tamamlanması için {{numberOfDays}} gün beklemeniz gerekir.",
+              "1" : "Yetki iptallerinin tamamlanması için 21 gün beklemeniz gerekir.",
               "2" : "Ledger cihazınızı kullanarak güvenle yetki devredin."
             },
             "warning" : {
@@ -5584,7 +5618,7 @@
       "tabTitle" : "Sat",
       "selectCurrency" : "Bir para birimi seçin",
       "selectAccount" : "Bir hesap seçin",
-      "wantToSell" : "Satmak istiyorum",
+      "wantToSell" : "Satmak istediğim varlık:",
       "connectDevice" : "Cihazınızı bağlayın",
       "title" : "Ortağımız üzerinden kripto satın",
       "description" : "Ledger hesabınızdaki kripto varlıklarını Coinify üzerinden doğrudan satın ve itibari para birimlerini banka hesabınıza alın.",
@@ -5632,7 +5666,7 @@
     "stringHash" : "Hash",
     "from" : "Gönderici",
     "successTitle" : "Mesaj imzalandı",
-    "successDescription" : "Bir üçüncü taraf uygulamadan gelen mesajı imzaladınız",
+    "successDescription" : "Üçüncü taraf bir uygulamadan gelen mesajı imzaladınız",
     "stepperHeader" : {
       "summary" : "Özet",
       "selectDevice" : "Cihaz Seç",
@@ -5964,13 +5998,6 @@
       "nft" : "NFT'ler"
     },
     "nftGallery" : {
-      "filters" : {
-        "selectAndHide" : "Seç ve gizle",
-        "hide" : "{{count}} koleksiyonu gizle",
-        "hide_plural" : "{{count}} koleksiyonu gizle",
-        "alertHide" : "1 Koleksiyon gizlendi. İstediğiniz zaman ayarlara giderek tekrar gösterilmesini sağlayabilirsiniz",
-        "alertHide_plural" : "{{count}} Koleksiyon gizlendi. İstediğiniz zaman ayarlara giderek tekrar gösterilmesini sağlayabilirsiniz"
-      },
       "empty" : {
         "title" : "Gösterilecek NFT yok",
         "subtitle" : "Başlangıç olarak ilk NFT'nizi alın.",
