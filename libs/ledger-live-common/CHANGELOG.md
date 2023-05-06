@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 29.5.0-nightly.5
+
+### Minor Changes
+
+- [#3366](https://github.com/LedgerHQ/ledger-live/pull/3366) [`491b37f08d`](https://github.com/LedgerHQ/ledger-live/commit/491b37f08d9a17404eaf32c491628e65d2d8666a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating the `shouldUpgrade` & `mustUpgrade` helpers to allow for pre-release tags
+
+- [#3255](https://github.com/LedgerHQ/ledger-live/pull/3255) [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36) Thanks [@RamyEB](https://github.com/RamyEB)! - add field visibility to manifest and tests
+
 ## 29.5.0-nightly.4
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.58.0-nightly.5
+
+### Minor Changes
+
+- [#3360](https://github.com/LedgerHQ/ledger-live/pull/3360) [`130695325d`](https://github.com/LedgerHQ/ledger-live/commit/130695325d859e87157688071f1e8ea177a43a73) Thanks [@RamyEB](https://github.com/RamyEB)! - change param manifest api
+
+- [#3255](https://github.com/LedgerHQ/ledger-live/pull/3255) [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36) Thanks [@RamyEB](https://github.com/RamyEB)! - add field visibility to manifest and tests
+
+### Patch Changes
+
+- Updated dependencies [[`491b37f08d`](https://github.com/LedgerHQ/ledger-live/commit/491b37f08d9a17404eaf32c491628e65d2d8666a), [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36)]:
+  - @ledgerhq/live-common@29.5.0-nightly.5
+
 ## 2.58.0-nightly.4
 
 ### Minor Changes

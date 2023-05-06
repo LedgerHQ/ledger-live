@@ -1,5 +1,12 @@
 # live-common-tools
 
+## 0.4.0-nightly.5
+
+### Patch Changes
+
+- Updated dependencies [[`491b37f08d`](https://github.com/LedgerHQ/ledger-live/commit/491b37f08d9a17404eaf32c491628e65d2d8666a), [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36)]:
+  - @ledgerhq/live-common@29.5.0-nightly.5
+
 ## 0.4.0-nightly.4
 
 ### Patch Changes
