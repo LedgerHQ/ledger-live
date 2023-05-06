@@ -1,11 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import Box from "~/renderer/components/Box";
 import LiveAppIcon from "~/renderer/components/WebPlatformPlayer/LiveAppIcon";
 
-const getBranchColor = (branch, colors) => {
+const getBranchColor = (branch: string, colors: DefaultTheme["colors"]) => {
   switch (branch) {
     case "soon":
       return colors.palette.text.shade100;
@@ -47,11 +47,11 @@ const Content = styled(Box)`
     display: none;
   }
 `;
-const BranchBadge = styled(Box).attrs(p => ({
+const BranchBadge = styled(Box).attrs<{ branch: string }>(p => ({
   ff: "Inter|SemiBold",
   fontSize: 1,
   color: getBranchColor(p.branch, p.theme.colors),
-}))`
+}))<{ branch: string }>`
   display: inline-block;
   padding: 1px 4px;
   border: 1px solid currentColor;

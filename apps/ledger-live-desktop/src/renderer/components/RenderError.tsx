@@ -47,7 +47,7 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
     setIsHardResetting(true);
     try {
       await hardReset();
-      window.api.reloadRenderer();
+      window.api?.reloadRenderer();
     } catch (err) {
       setIsHardResetting(false);
     }
@@ -111,7 +111,7 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
     </Box>
   );
 }
-const printError = (error: unknown) => {
+const printError = (error: undefined | { message?: string; stack?: string; name?: string }) => {
   const print = [];
   if (!error) {
     return "bad error";
@@ -129,12 +129,19 @@ const printError = (error: unknown) => {
   }
   return print.join("\n");
 };
-class Unsafe extends PureComponent<any, any> {
+class Unsafe extends PureComponent<
+  {
+    children: React.ReactNode;
+  },
+  {
+    error: Error | null;
+  }
+> {
   state = {
     error: null,
   };
 
-  componentDidCatch(error) {
+  componentDidCatch(error: Error) {
     this.setState({
       error,
     });

@@ -25,12 +25,12 @@ type Props = {
   hideAmount?: boolean;
 };
 export default class AccountRow extends PureComponent<Props> {
-  handlePreventSubmit = (e: SyntheticEvent<any>) => {
+  handlePreventSubmit = (e: React.SyntheticEvent<HTMLInputElement>) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  handleKeyPress = (e: SyntheticEvent<HTMLInputElement>) => {
+  handleKeyPress = (e: React.SyntheticEvent<HTMLInputElement>) => {
     // this fixes a bug with the event propagating to the Tabbable
     e.stopPropagation();
   };
@@ -45,16 +45,16 @@ export default class AccountRow extends PureComponent<Props> {
     if (onEditName) onEditName(account, name);
   };
 
-  onClickInput = (e: SyntheticEvent<any>) => {
+  onClickInput = (e: React.SyntheticEvent<HTMLInputElement>) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  onFocus = (e: any) => {
+  onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     e.target.select();
   };
 
-  onBlur = (e: any) => {
+  onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { onEditName, account } = this.props;
     const { value } = e.target;
     if (!value && onEditName) {
@@ -64,7 +64,7 @@ export default class AccountRow extends PureComponent<Props> {
   };
 
   _input = null;
-  overflowStyles = {
+  overflowStyles: React.CSSProperties = {
     textOverflow: "ellipsis",
     overflow: "hidden",
     whiteSpace: "nowrap",
@@ -87,7 +87,7 @@ export default class AccountRow extends PureComponent<Props> {
       <AccountRowContainer
         className="account-row"
         isDisabled={isDisabled}
-        onClick={isDisabled ? null : this.onToggleAccount}
+        onClick={isDisabled ? undefined : this.onToggleAccount}
       >
         <CryptoCurrencyIconWithCount currency={account.currency} count={tokenCount} withTooltip />
         <Box
@@ -149,15 +149,15 @@ export default class AccountRow extends PureComponent<Props> {
     );
   }
 }
-const AccountRowContainer: ThemedComponent<{
-  isDisabled?: boolean;
-}> = styled(Tabbable).attrs(() => ({
+const AccountRowContainer = styled(Tabbable).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   bg: "palette.background.default",
   px: 3,
   flow: 1,
-}))`
+}))<{
+  isDisabled?: boolean;
+}>`
   height: 48px;
   border-radius: 4px;
 

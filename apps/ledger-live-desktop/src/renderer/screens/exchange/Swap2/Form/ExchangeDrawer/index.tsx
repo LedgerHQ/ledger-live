@@ -24,6 +24,8 @@ import { DrawerTitle } from "../DrawerTitle";
 import { Separator } from "../Separator";
 import SwapAction from "./SwapAction";
 import SwapCompleted from "./SwapCompleted";
+import { Account, Operation } from "@ledgerhq/types-live";
+
 const ContentBox = styled(Box)`
   ${DeviceActionHeader} {
     flex: 0;
@@ -32,15 +34,20 @@ const ContentBox = styled(Box)`
     flex: 0;
   }
 `;
+
 type Props = {
   swapTransaction: SwapTransactionType;
   exchangeRate: ExchangeRate;
   onCompleteSwap?: () => void;
 };
+
 export default function ExchangeDrawer({ swapTransaction, exchangeRate, onCompleteSwap }: Props) {
   const dispatch = useDispatch();
   const [error, setError] = useState(null);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<{
+    operation: Operation;
+    swapId: string;
+  } | null>(null);
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const redirectToHistory = useRedirectToSwapHistory();
   const {
@@ -79,7 +86,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
     [exchangeRate.provider, swapDefaultTrack],
   );
   const onCompletion = useCallback(
-    result => {
+    (result: { operation: Operation; swapId: string }) => {
       const { operation, swapId } = result;
 
       /**
@@ -98,14 +105,17 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
           transactionId: operation.hash,
         });
       }
-      const mainAccount = getMainAccount(exchange.fromAccount, exchange.fromParentAccount);
+      const mainAccount =
+        exchange.fromAccount && getMainAccount(exchange.fromAccount, exchange.fromParentAccount);
       if (!mainAccount) return;
-      const accountUpdater = account => {
+      const accountUpdater = (account: Account) => {
+        if (!transaction) return account;
         const accountWithUpdatedHistory = addToSwapHistory({
           account,
           operation,
           transaction,
           swap: {
+            // @ts-expect-error There is a disparity between the type of the Exchange (fromAccount can be undefined but not in the addToSwapHistory function)
             exchange,
             exchangeRate,
           },
@@ -181,13 +191,15 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
           provider={exchangeRate.provider}
           {...swapDefaultTrack}
         />
-        <Box justifyContent="center" flex={1} mx={3}>
-          <SwapCompleted
-            swapId={result?.swapId}
-            provider={exchangeRate.provider}
-            targetCurrency={targetCurrency.name}
-          />
-        </Box>
+        {targetCurrency && (
+          <Box justifyContent="center" flex={1} mx={3}>
+            <SwapCompleted
+              swapId={result.swapId}
+              provider={exchangeRate.provider}
+              targetCurrency={targetCurrency?.name}
+            />
+          </Box>
+        )}
         <Box flex={0}>
           <Separator noMargin />
           <Box

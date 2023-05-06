@@ -4,14 +4,14 @@ import { Handlers } from "./types";
 export type ModalsState = {
   [key: string]: {
     isOpened: boolean;
-    data?: object;
+    data?: unknown;
   };
 };
 const state: ModalsState = {};
 
 type OpenPayload = {
   name: string;
-  data?: object;
+  data?: unknown | undefined;
 };
 type HandlersPayloads = {
   MODAL_OPEN: OpenPayload;

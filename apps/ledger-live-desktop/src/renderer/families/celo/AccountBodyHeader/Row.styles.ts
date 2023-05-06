@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 import { TableLine } from "./Header.styles";
 
-export const Wrapper: ThemedComponent<any> = styled.div`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;

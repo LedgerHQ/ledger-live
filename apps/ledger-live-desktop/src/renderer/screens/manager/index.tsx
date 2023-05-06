@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { createAction } from "@ledgerhq/live-common/hw/actions/manager";
+import { Result, createAction } from "@ledgerhq/live-common/hw/actions/manager";
 import Dashboard from "~/renderer/screens/manager/Dashboard";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import DeviceAction from "~/renderer/components/DeviceAction";
@@ -12,10 +12,11 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import Disconnected from "./Disconnected";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
 import { useDispatch } from "react-redux";
+
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 const Manager = () => {
   const [appsToRestore, setRestoreApps] = useState();
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<Result | null>(null);
   const [hasReset, setHasReset] = useState(false);
   const onReset = useCallback((apps, firmwareUpdateOpened) => {
     setRestoreApps(apps);
@@ -45,10 +46,12 @@ const Manager = () => {
     <>
       <SyncSkipUnderPriority priority={999} />
       {result ? (
+        // Down below we are supposed to render <DeviceLanguage/> which requires deviceInfo.languageId to be set and types it strongly
+        // @ts-expect-error How are we supposed to make that guarantee here?
         <Dashboard
           {...result}
           onReset={onReset}
-          appsToRestore={appsToRestore}
+          appsToRestore={appsToRestore || []}
           onRefreshDeviceInfo={refreshDeviceInfo}
         />
       ) : !hasReset ? (

@@ -1,8 +1,11 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { createAction } from "redux-actions";
-export const openInformationCenter = createAction("INFORMATION_CENTER_OPEN", (tabId: string) => ({
-  tabId,
-}));
+export const openInformationCenter = createAction(
+  "INFORMATION_CENTER_OPEN",
+  (tabId: string | undefined) => ({
+    tabId,
+  }),
+);
 export const setTabInformationCenter = createAction(
   "INFORMATION_CENTER_SET_TAB",
   (tabId: string) => ({

@@ -15,7 +15,7 @@ const TransactionConfirmField = ({
   tooltipKey?: string;
   tooltipArgs?: {
     [key: string]: string;
-  } | null;
+  };
 }) => {
   const { t } = useTranslation();
   return (

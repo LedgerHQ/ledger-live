@@ -325,7 +325,7 @@ export default {
     // @ts-expect-error spreading unknowns is fine
     logger.log("error", ...args);
   },
-  critical: (error: Error, context?: string) => {
+  critical: (error: unknown, context?: string) => {
     if (context) {
       captureBreadcrumb({
         level: "critical",
@@ -333,12 +333,14 @@ export default {
         message: context,
       });
     }
-    logger.log("error", error && error.message, {
-      stack: error && error.stack,
+    if (error instanceof Error) {
+      logger.log("error", error && error.message, {
+        stack: error && error.stack,
 
-      ...error,
-    });
-    captureException(error);
+        ...error,
+      });
+      captureException(error);
+    }
   },
   add,
   onLog: (log: LogEntry | string) => {

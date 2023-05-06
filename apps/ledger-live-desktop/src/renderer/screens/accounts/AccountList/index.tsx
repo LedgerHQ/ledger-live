@@ -1,12 +1,12 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   getAccountCurrency,
   getAccountName,
   listSubAccounts,
 } from "@ledgerhq/live-common/account/helpers";
-import { Account, AccountLike, AccountLikeArray, TokenAccount } from "@ledgerhq/types-live";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { Account, AccountLike, AccountLikeArray, PortfolioRange } from "@ledgerhq/types-live";
+
 import Text from "~/renderer/components/Text";
 import { GenericBox } from "../index";
 import SearchBox from "./SearchBox";
@@ -15,10 +15,16 @@ import GridBody from "./GridBody";
 import ListBody from "./ListBody";
 type Props = {
   accounts: AccountLikeArray;
-  mode: any;
-  onAccountClick: (b: Account | TokenAccount, a?: Account | null) => void;
+  mode: "card" | "list";
+  onAccountClick: (b: AccountLike, a?: Account | null) => void;
   range: PortfolioRange;
 };
+
+const BodyByMode = {
+  card: GridBody,
+  list: ListBody,
+};
+
 export default function AccountList({ accounts, range, onAccountClick, mode }: Props) {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
@@ -33,9 +39,10 @@ export default function AccountList({ accounts, range, onAccountClick, mode }: P
     },
     [accounts],
   );
-  const onTextChange = useCallback((evt: SyntheticInputEvent<HTMLInputElement>) => {
-    setSearch(evt.target.value);
+  const onTextChange = useCallback((evt: SyntheticEvent<HTMLInputElement>) => {
+    setSearch(evt.currentTarget.value);
   }, []);
+
   const Body = BodyByMode[mode];
   const visibleAccounts = [];
   const hiddenAccounts = [];
@@ -86,10 +93,7 @@ export default function AccountList({ accounts, range, onAccountClick, mode }: P
     </div>
   );
 }
-const BodyByMode = {
-  card: GridBody,
-  list: ListBody,
-};
+
 export const matchesSearch = (
   search: string | undefined | null,
   account: AccountLike,

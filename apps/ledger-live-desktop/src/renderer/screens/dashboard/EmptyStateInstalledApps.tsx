@@ -12,6 +12,7 @@ import LinkHelp from "~/renderer/components/LinkHelp";
 import { openURL } from "~/renderer/linking";
 import { withTheme } from "styled-components";
 import { urls } from "~/config/urls";
+
 const EmptyStateInstalledApps = ({ theme }: { theme: any }) => {
   const { push } = useHistory();
   const { t } = useTranslation();
@@ -65,7 +66,9 @@ const EmptyStateInstalledApps = ({ theme }: { theme: any }) => {
             }}
             iconSize={14}
             label={<Trans i18nKey="emptyState.dashboard.buttons.help" />}
-            onClick={() => openURL(urls.faq[locale in urls.faq ? locale : "en"])}
+            onClick={() =>
+              openURL(urls.faq[locale in urls.faq ? (locale as keyof typeof urls.faq) : "en"])
+            }
           />
         </Box>
       </Box>

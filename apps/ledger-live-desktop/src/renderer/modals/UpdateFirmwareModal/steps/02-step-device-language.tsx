@@ -115,7 +115,6 @@ const StepDeviceLanguage = ({
       ) : null}
       {installingLanguage ? (
         <ChangeDeviceLanguageAction
-          device={device}
           language={languageToInstall}
           onError={(error: Error) =>
             track("Page Manager FwUpdateLanguageInstallError", {

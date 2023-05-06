@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Redirect } from "react-router";
 import { Account } from "@ledgerhq/types-live";
@@ -9,7 +8,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
-import AccountDistribution from "~/renderer/components/AccountDistribution";
+import AccountDistribution from "./AccountDistribution";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import BalanceSummary from "./BalanceSummary";
 import {
@@ -32,12 +31,12 @@ type Props = {
 };
 export default function AssetPage({ match }: Props) {
   const { t } = useTranslation();
-  const paperColor = useTheme("colors.palette.background.paper");
+  const paperColor = useTheme().colors.palette.background.paper;
   const range = useSelector(selectedTimeRangeSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
   const countervalueFirst = useSelector(countervalueFirstSelector);
   const allAccounts = useSelector(accountsSelector);
-  const history = useHistory();
+
   const accounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,
   }).filter(a => getAccountCurrency(a).id === match.params.assetId);
@@ -45,7 +44,7 @@ export default function AssetPage({ match }: Props) {
     (id: string): Account | undefined | null => allAccounts.find(a => a.id === id) || null,
     [allAccounts],
   );
-  const onAccountClick = useCallback(account => history.push(`/account/${account.id}`), [history]);
+
   if (!accounts.length) return <Redirect to="/" />;
   const parentAccount =
     accounts[0].type !== "Account" ? lookupParentAccount(accounts[0].parentId) : null;
@@ -66,7 +65,6 @@ export default function AssetPage({ match }: Props) {
         chartColor={color}
         unit={unit}
         counterValue={counterValue}
-        accounts={accounts}
       />
       <Box mt={40}>
         <AccountDistribution accounts={accounts} />
@@ -75,7 +73,7 @@ export default function AssetPage({ match }: Props) {
         <OperationsList
           accounts={accounts}
           title={t("dashboard.recentActivity")}
-          onAccountClick={onAccountClick}
+          t={t}
           withAccount
         />
       </Box>

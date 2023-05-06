@@ -21,7 +21,7 @@ const Placeholder = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const openAddAccounts = useCallback(() => {
-    dispatch(openModal("MODAL_ADD_ACCOUNTS"));
+    dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
   }, [dispatch]);
   return (
     <Box mb={5}>

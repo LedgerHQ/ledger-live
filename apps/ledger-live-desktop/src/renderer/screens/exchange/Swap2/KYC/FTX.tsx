@@ -3,12 +3,15 @@ import { useSelector } from "react-redux";
 import { FTXProviders, getFTXURL } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { swapKYCSelector } from "~/renderer/reducers/settings";
 import SwapConnectWidget from "../SwapConnectWidget";
+import { WebviewTag } from "~/renderer/components/Web3AppWebview/types";
+
 type Props = {
-  onClose: Function;
+  onClose: () => void;
   provider: FTXProviders;
 };
+
 const FTXKYC = ({ onClose, provider }: Props) => {
-  const webviewRef = useRef(null);
+  const webviewRef = useRef<WebviewTag | null>(null);
   const url = useMemo(
     () =>
       getFTXURL({
