@@ -1,19 +1,12 @@
 import values from "lodash/values";
-import type {
-  TokenAccount,
-  Account,
-  Operation,
-  AccountLike,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../types";
 import type { DeviceTransactionField } from "../../../transaction";
 // maintained union of all the modules
-import * as compound from "./compound";
 import * as erc20 from "./erc20";
 import * as send from "./send";
 import * as erc721 from "./erc721";
 import * as erc1155 from "./erc1155";
-import type { Modes as CompoundModes } from "./compound";
 import type { Modes as ERC20Modes } from "./erc20";
 import type { Modes as SendModes } from "./send";
 import type { Modes as ERC721Modes } from "./erc721";
@@ -23,13 +16,11 @@ import type { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 
 const modules = {
   erc20,
-  compound,
   send,
   erc721,
   erc1155,
 };
 export type TransactionMode =
-  | CompoundModes
   | ERC20Modes
   | SendModes
   | ERC721Modes
@@ -37,7 +28,7 @@ export type TransactionMode =
 
 /**
  * A ModeModule enable a new transaction mode in Ethereum family
- * for instance --mode send or --mode compound.supply
+ * for instance --mode send
  * You have to implement 4 functions that are all the specifics for this mode.
  * Each of these functions are named "fill*" and are MUTABLE style functions where you have to fill the last parameter of the function
  * A mode is exposed from within a module (as part of the potential hooks the module need to expose)
@@ -166,32 +157,7 @@ export const prepareTransaction = (
       (p, fn) => p.then((t) => fn(account, t)),
       Promise.resolve(transaction)
     );
-export const prepareTokenAccounts = (
-  currency: CryptoCurrency,
-  subAccounts: TokenAccount[],
-  address: string
-): Promise<TokenAccount[]> =>
-  values(modules)
-    // @ts-expect-error only exists in compound module. (type guard)
-    .map((m) => m.prepareTokenAccounts)
-    .filter(Boolean)
-    .reduce(
-      (p, fn) => p.then((s) => fn(currency, s, address)),
-      Promise.resolve(subAccounts)
-    );
-export const digestTokenAccounts = (
-  currency: CryptoCurrency,
-  subAccounts: TokenAccount[],
-  address: string
-): Promise<TokenAccount[]> =>
-  values(modules)
-    // @ts-expect-error only exists in compound module. (type guard)
-    .map((m) => m.digestTokenAccounts)
-    .filter(Boolean)
-    .reduce(
-      (p, fn) => p.then((s) => fn(currency, s, address)),
-      Promise.resolve(subAccounts)
-    );
+
 type BufferLike = Buffer | string | number;
 // this type is from transactionjs-tx
 interface TxData {

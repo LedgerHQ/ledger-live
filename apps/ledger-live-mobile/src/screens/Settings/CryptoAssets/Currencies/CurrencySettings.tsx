@@ -96,8 +96,11 @@ function EachCurrencySettings({
               value={value}
               onChange={(val: number) => setValue(val)}
               onTouchEnd={(val: number) =>
-                updateCurrencySettings(currency.ticker, {
-                  confirmationsNb: val,
+                updateCurrencySettings({
+                  ticker: currency.ticker,
+                  patch: {
+                    confirmationsNb: val,
+                  },
                 })
               }
             />

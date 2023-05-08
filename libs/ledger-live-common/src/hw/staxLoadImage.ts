@@ -2,6 +2,8 @@ import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 import {
   DeviceOnDashboardExpected,
+  ManagerNotEnoughSpaceError,
+  StatusCodes,
   TransportError,
   TransportStatusError,
 } from "@ledgerhq/errors";
@@ -40,15 +42,27 @@ export type LoadImageEvent =
       imageHash: string;
     };
 
+export type LoadimageResult = {
+  imageHash: string;
+  imageSize: number;
+};
+
 export type LoadImageRequest = {
+  hexImage: string; // When provided, will skip the backup if it matches the hash.
+  padImage?: boolean;
+};
+
+export type Input = {
   deviceId: string;
-  hexImage: string;
+  request: LoadImageRequest;
 };
 
 export default function loadImage({
   deviceId,
-  hexImage,
-}: LoadImageRequest): Observable<LoadImageEvent> {
+  request,
+}: Input): Observable<LoadImageEvent> {
+  const { hexImage, padImage = true } = request;
+
   const sub = withDevice(deviceId)(
     (transport) =>
       new Observable((subscriber) => {
@@ -63,7 +77,11 @@ export default function loadImage({
             mergeMap(async () => {
               timeoutSub.unsubscribe();
 
-              const imageData = await generateStaxImageFormat(hexImage, true);
+              const imageData = await generateStaxImageFormat(
+                hexImage,
+                true,
+                !!padImage
+              );
               const imageLength = imageData.length;
 
               const imageSize = Buffer.alloc(4);
@@ -76,7 +94,11 @@ export default function loadImage({
                 0x00,
                 0x00,
                 imageSize,
-                [0x9000, 0x5501]
+                [
+                  StatusCodes.NOT_ENOUGH_SPACE,
+                  StatusCodes.USER_REFUSED_ON_DEVICE,
+                  StatusCodes.OK,
+                ]
               );
 
               const createImageStatus = createImageResponse.readUInt16BE(
@@ -85,11 +107,13 @@ export default function loadImage({
               const createImageStatusStr = createImageStatus.toString(16);
               // reads last 2 bytes which correspond to the status
 
-              if (createImageStatus === 0x5501) {
+              if (createImageStatus === StatusCodes.USER_REFUSED_ON_DEVICE) {
                 return subscriber.error(
                   new ImageLoadRefusedOnDevice(createImageStatusStr)
                 );
-              } else if (createImageStatus !== 0x9000) {
+              } else if (createImageStatus === StatusCodes.NOT_ENOUGH_SPACE) {
+                return subscriber.error(new ManagerNotEnoughSpaceError());
+              } else if (createImageStatus !== StatusCodes.OK) {
                 return subscriber.error(
                   new TransportError(
                     "Unexpected device response",
@@ -210,8 +234,9 @@ export default function loadImage({
 
 export const generateStaxImageFormat: (
   hexImage: string,
-  compressImage: boolean
-) => Promise<Buffer> = async (hexImage, compressImage) => {
+  compressImage: boolean,
+  padImage: boolean
+) => Promise<Buffer> = async (hexImage, compressImage, padImage) => {
   const width = 400;
   const height = 672;
   const bpp = 2; // value for 4 bits per pixel
@@ -225,7 +250,9 @@ export const generateStaxImageFormat: (
 
   // Nb Display image data is missing 2 pixels from each column.
   // padding every 670 characters with two fillers, should do the trick.
-  const paddedHexImage = hexImage.replace(/(.{670})/g, "$100");
+  const paddedHexImage = padImage
+    ? hexImage.replace(/(.{670})/g, "$100")
+    : hexImage;
   const imgData = Buffer.from(paddedHexImage, "hex");
 
   if (!compressImage) {

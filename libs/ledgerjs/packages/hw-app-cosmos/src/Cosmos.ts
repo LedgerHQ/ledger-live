@@ -79,7 +79,7 @@ export default class Cosmos {
   }
 
   serializeHRP(hrp: string): Buffer {
-    if (hrp == null || hrp.length < 3 || hrp.length > 83) {
+    if (hrp == null || hrp.length === 0 || hrp.length > 83) {
       throw new Error("Invalid HRP");
     }
 

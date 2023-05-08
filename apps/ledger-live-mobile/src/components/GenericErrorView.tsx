@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import { Box, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
@@ -8,7 +8,7 @@ import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useExportLogs from "./useExportLogs";
 import TranslatedError from "./TranslatedError";
 import SupportLinkError from "./SupportLinkError";
-import { usePromptBluetoothCallback } from "../logic/usePromptBluetoothCallback";
+import BluetoothDisabled from "./RequiresBLE/BluetoothDisabled";
 
 type Props = {
   error: Error;
@@ -18,6 +18,7 @@ type Props = {
   outerError?: Error | null;
   withDescription?: boolean;
   withIcon?: boolean;
+  withHelp?: boolean;
   hasExportLogButton?: boolean;
   Icon?: IconType;
   iconColor?: string;
@@ -35,21 +36,13 @@ const GenericErrorView = ({
   error,
   outerError,
   withDescription = true,
+  withHelp = true,
   withIcon = true,
   hasExportLogButton = true,
   children,
   Icon = CloseMedium,
-  iconColor = "error.c100",
+  iconColor = "error.c50",
 }: Props) => {
-  const promptBluetooth = usePromptBluetoothCallback();
-  useEffect(() => {
-    if (error instanceof BluetoothRequired) {
-      promptBluetooth().catch(() => {
-        /* ignore */
-      });
-    }
-  }, [promptBluetooth, error]);
-
   const { t } = useTranslation();
 
   const onExport = useExportLogs();
@@ -58,6 +51,11 @@ const GenericErrorView = ({
   const subtitleError = outerError ? error : null;
 
   const { space } = useTheme();
+
+  // To avoid regression, but this case should not happen if RequiresBle component is correctly used.
+  if (error instanceof BluetoothRequired) {
+    return <BluetoothDisabled />;
+  }
 
   return (
     <Flex flexDirection={"column"} alignItems={"center"} alignSelf="stretch">
@@ -85,7 +83,7 @@ const GenericErrorView = ({
         <TranslatedError error={titleError} />
       </Text>
       {subtitleError ? (
-        <Text variant={"paragraph"} color="error.c80" numberOfLines={3} mb={6}>
+        <Text variant={"paragraph"} color="error.c40" numberOfLines={3} mb={6}>
           <TranslatedError error={subtitleError} />
         </Text>
       ) : null}
@@ -99,7 +97,7 @@ const GenericErrorView = ({
           >
             <TranslatedError error={error} field="description" />
           </Text>
-          <SupportLinkError error={error} />
+          {withHelp ? <SupportLinkError error={error} /> : null}
         </>
       ) : null}
       {children}

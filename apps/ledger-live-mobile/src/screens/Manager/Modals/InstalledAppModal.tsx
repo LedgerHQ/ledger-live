@@ -64,11 +64,6 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
     setHasBeenShown(true);
   }, [navigation]);
 
-  const onSupportLink = useCallback(() => {
-    Linking.openURL(urls.appSupport);
-    setHasBeenShown(true);
-  }, []);
-
   const successInstalls = useMemo(
     () =>
       !hasBeenShown && installQueue.length <= 0 && uninstallQueue.length <= 0
@@ -97,6 +92,11 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
       undefined,
     [successInstalls],
   );
+
+  const onSupportLink = useCallback(() => {
+    Linking.openURL(app?.supportURL || urls.appSupport);
+    setHasBeenShown(true);
+  }, [app]);
 
   const onClose = useCallback(() => setHasBeenShown(true), []);
 

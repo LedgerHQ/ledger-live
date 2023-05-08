@@ -16,7 +16,7 @@ test("Firmware Update", async ({ page }) => {
   await test.step("Access manager", async () => {
     await layout.goToManager();
     await deviceAction.accessManager();
-    await managerPage.firmwareUpdateButton.waitFor({ state: "visible" });
+    await managerPage.waitForFirmwareUpdateButton();
   });
 
   await test.step("Open firmware update modal", async () => {

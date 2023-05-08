@@ -1,9 +1,19 @@
 import React from "react";
-import { storiesOf } from "../../storiesOf";
-import { NumberedList } from "../../../../src";
-import { select } from "@storybook/addon-knobs";
+import { ComponentStory } from "@storybook/react-native";
+import { NumberedList } from "../../../../src/components";
 
-const NumberedListStory = () => {
+export default {
+  title: "Layout/List/Numbered",
+  component: NumberedList,
+  argTypes: {
+    alignItems: {
+      options: ["flex-start", "flex-end", "center", "baseline", "stretch"],
+      control: { type: "select" },
+    },
+  },
+};
+
+export const Default: ComponentStory<typeof NumberedList> = (args: typeof DefaultArgs) => {
   return (
     <NumberedList
       items={[
@@ -19,16 +29,12 @@ const NumberedListStory = () => {
             "Enter your recovery phrase on your new device to restore access to your crypto.",
         },
       ]}
-      itemContainerProps={{
-        alignItems: select(
-          "Align items",
-          ["flex-start", "flex-end", "center", "baseline", "stretch"],
-          "center",
-          "Layout",
-        ),
-      }}
+      itemContainerProps={{ alignItems: args.alignItems }}
     />
   );
 };
-
-storiesOf((story) => story("Layout/List", module).add("NumberedList", () => <NumberedListStory />));
+Default.storyName = "NumberedList";
+const DefaultArgs = {
+  alignItems: "center",
+};
+Default.args = DefaultArgs;

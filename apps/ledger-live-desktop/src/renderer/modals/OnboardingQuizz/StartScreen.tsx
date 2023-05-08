@@ -3,7 +3,7 @@ import { BoxedIcon, Flex, Icons, Text, Button } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 
 type Props = {
-  onStart: () => any;
+  onStart: () => void;
 };
 
 const StartScreen = ({ onStart }: Props) => {
@@ -31,7 +31,7 @@ const StartScreen = ({ onStart }: Props) => {
         <Button
           data-test-id="v3-quiz-start-button"
           variant="main"
-          Icon={Icons.TrophyRegular}
+          Icon={Icons.TrophyMedium}
           iconPosition="left"
           onClick={onStart}
         >

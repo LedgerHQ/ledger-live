@@ -1,6 +1,6 @@
 import Config from "react-native-config";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { Observable, timer } from "rxjs";
+import { map, debounce } from "rxjs/operators";
 import { listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
@@ -35,6 +35,10 @@ setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "avalanche_c_chain",
+  "axelar",
+  "onomy",
+  "quicksilver",
+  "persistence",
   "bitcoin",
   "ethereum",
   "bsc",
@@ -48,6 +52,7 @@ setSupportedCurrencies([
   "dogecoin",
   "cosmos",
   "crypto_org",
+  "crypto_org_croeseid",
   "celo",
   "dash",
   "tron",
@@ -79,6 +84,21 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "optimism",
+  "optimism_goerli",
+  "arbitrum",
+  "arbitrum_goerli",
+  "rsk",
+  "bittorrent",
+  "kava_evm",
+  "evmos_evm",
+  "energy_web",
+  "astar",
+  "metis",
+  "boba",
+  "moonriver",
+  "velas_evm",
+  "syscoin",
 ]);
 
 if (Config.VERBOSE) {
@@ -123,6 +143,7 @@ registerTransportModule({
         name,
       };
     }),
+    debounce(e => timer(e.type === "remove" ? 2000 : 0)),
   ),
 });
 // Add dev mode support of an http proxy

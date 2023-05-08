@@ -2,9 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Button, Flex, Input, SelectInput, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
-import { Device } from "@ledgerhq/types-devices";
 import { DeviceModelId } from "@ledgerhq/devices";
-
 import ButtonV2 from "~/renderer/components/Button";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import OnboardingAppInstallStep from "~/renderer/components/OnboardingAppInstall";
@@ -87,6 +85,7 @@ const OnboardingAppInstallDebugScreen = () => {
           deviceToRestore={restore ? deviceToRestore : undefined}
           device={device}
           onComplete={() => setInstallDone(true)}
+          onError={() => setInstallDone(false)}
         />
       ),
     },
@@ -103,10 +102,16 @@ const OnboardingAppInstallDebugScreen = () => {
         Onboarding apps installer
       </Text>
       <Flex pt={8} alignItems="center">
-        <Button mr={6} variant="main" outline={true} onClick={handleRemount}>
+        <Button
+          mr={6}
+          variant="main"
+          outline={true}
+          onClick={handleRemount}
+          data-test-id="reset-button"
+        >
           Reset
         </Button>
-        <Flex flex={1} flexDirection="column">
+        <Flex flex={1} flexDirection="column" data-test-id="input-option-selector">
           <SelectInput
             isMulti={false}
             value={selectedDeviceToRestoreOption}
@@ -147,7 +152,12 @@ const OnboardingAppInstallDebugButton = () => {
   }, []);
 
   return (
-    <ButtonV2 small primary onClick={handleOpenDebugScreen}>
+    <ButtonV2
+      small
+      primary
+      onClick={handleOpenDebugScreen}
+      data-test-id="debug-install-set-of-apps-button"
+    >
       Open
     </ButtonV2>
   );

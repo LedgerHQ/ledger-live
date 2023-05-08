@@ -6,8 +6,8 @@ export class Drawer {
   readonly drawerOverlay: Locator;
   readonly continueButton: Locator;
   readonly closeButton: Locator;
-  readonly currencyButton: Function;
-  readonly accountButton: Function;
+  readonly currencyButton: (currency: string) => Locator;
+  readonly accountButton: (accountName: string, index: number) => Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -15,10 +15,10 @@ export class Drawer {
     this.drawerOverlay = page.locator("[data-test-id='drawer-overlay'][style='opacity: 1;']");
     this.continueButton = page.locator("data-test-id=drawer-continue-button");
     this.closeButton = page.locator("data-test-id=drawer-close-button");
-    this.currencyButton = (currency: string) =>
+    this.currencyButton = currency =>
       page.locator(`data-test-id=currency-row-${currency.toLowerCase()}`);
-    this.accountButton = (accountName: string, index: number) =>
-      page.locator(`data-test-id=account-row-${accountName.toLowerCase()}-${index}`);
+    this.accountButton = (accountName, index) =>
+      page.locator(`data-test-id=account-row-${accountName.toLowerCase()}-${index}`).first();
   }
 
   async continue() {

@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { useCallback } from "react";
+import { Linking, StyleSheet } from "react-native";
 import {
   BleError,
   BleError as DeprecatedError,
@@ -11,10 +11,10 @@ import {
   GenuineCheckFailed,
   HwTransportError,
   HwTransportErrorType,
+  PeerRemovedPairing,
 } from "@ledgerhq/errors";
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, Button, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import LocationRequired from "../../components/LocationRequired";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
@@ -22,7 +22,8 @@ import GenericErrorView from "../../components/GenericErrorView";
 import HelpLink from "../../components/HelpLink";
 import IconArrowRight from "../../icons/ArrowRight";
 import { urls } from "../../config/urls";
-import Button from "../../components/Button";
+import LocationDisabled from "../../components/RequiresLocation/LocationDisabled";
+import LocationPermissionDenied from "../../components/RequiresLocation/LocationPermissionDenied";
 
 type Props = {
   error: HwTransportError | DeprecatedError | Error;
@@ -40,34 +41,48 @@ const hitSlop = {
 
 function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const { colors } = useTheme();
+  const isPairingStatus = status === "pairing";
+  const isGenuineCheckStatus = status === "genuinecheck";
+  const isBrokenPairing = error instanceof PeerRemovedPairing;
 
+  const url = isBrokenPairing
+    ? urls.errors.PeerRemovedPairing
+    : isPairingStatus
+    ? urls.errors.PairingFailed
+    : undefined;
+
+  const onOpenHelp = useCallback(() => {
+    if (!url) return;
+    Linking.openURL(url);
+  }, [url]);
+
+  // Location service is disabled
   if (
     (error instanceof BleError &&
       error.errorCode === BleErrorCode.LocationServicesDisabled) ||
     (error instanceof HwTransportError &&
-      error.type === HwTransportErrorType.BleLocationServicesDisabled)
+      error.type === HwTransportErrorType.LocationServicesDisabled)
   ) {
-    return <LocationRequired onRetry={onRetry} errorType="disabled" />;
+    return <LocationDisabled />;
   }
 
+  // Location has not enough permissions
+  // Indeed BleErrorCode.BluetoothUnauthorized is not the right error code. Legacy code.
   if (
     (error instanceof BleError &&
       error.errorCode === BleErrorCode.BluetoothUnauthorized) ||
     (error instanceof HwTransportError &&
-      error.type === HwTransportErrorType.BleBluetoothUnauthorized)
+      error.type === HwTransportErrorType.LocationServicesUnauthorized)
   ) {
-    return <LocationRequired onRetry={onRetry} errorType="unauthorized" />;
+    return <LocationPermissionDenied />;
   }
 
-  const isPairingStatus = status === "pairing";
-  const isGenuineCheckStatus = status === "genuinecheck";
-  const url = (isPairingStatus && urls.errors.PairingFailed) || undefined;
-
-  const outerError = isPairingStatus
-    ? new PairingFailed()
-    : isGenuineCheckStatus
-    ? new GenuineCheckFailed()
-    : null;
+  const outerError =
+    isPairingStatus && !isBrokenPairing
+      ? new PairingFailed()
+      : isGenuineCheckStatus
+      ? new GenuineCheckFailed()
+      : null;
 
   return (
     <Flex flex={1}>
@@ -77,32 +92,55 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
           error={error}
           outerError={outerError}
           withDescription
+          withHelp={!isBrokenPairing}
           withIcon
+          hasExportLogButton={!isBrokenPairing}
         />
-        <Flex mt={30} flexDirection={"row"}>
-          <Button
-            flex={1}
-            event="PairDevicesRetry"
-            type="main"
-            onPress={onRetry}
-          >
-            <Trans i18nKey="common.retry" />
-          </Button>
-        </Flex>
-        {isGenuineCheckStatus ? (
-          <Touchable
-            event="PairDevicesBypassGenuine"
-            onPress={onBypassGenuine}
-            hitSlop={hitSlop}
-            style={styles.linkContainer}
-          >
-            <LText color={colors.primary} semiBold>
-              <Trans i18nKey="common.skip" />{" "}
-            </LText>
-            <IconArrowRight size={16} color={colors.primary} />
-          </Touchable>
+        {isBrokenPairing ? (
+          <Flex mt={30} flexDirection="column">
+            <Button
+              type="main"
+              iconPosition="right"
+              Icon={Icons.ExternalLinkMedium}
+              onPress={onOpenHelp}
+              mb={0}
+            >
+              <Trans i18nKey="help.helpCenter.desc" />
+            </Button>
+            <Button onPress={onRetry} mt={6}>
+              <Trans i18nKey="common.retry" />
+            </Button>
+          </Flex>
         ) : (
-          <HelpLink url={url} style={styles.linkContainer} />
+          <>
+            <Flex mt={30} flexDirection={"row"}>
+              <Button
+                flex={1}
+                iconPosition="left"
+                Icon={Icons.ExternalLinkMedium}
+                type="main"
+                onPress={onRetry}
+              >
+                <Trans i18nKey="common.retry" />
+              </Button>
+            </Flex>
+
+            {isGenuineCheckStatus ? (
+              <Touchable
+                event="PairDevicesBypassGenuine"
+                onPress={onBypassGenuine}
+                hitSlop={hitSlop}
+                style={styles.linkContainer}
+              >
+                <LText color={colors.primary} semiBold>
+                  <Trans i18nKey="common.skip" />{" "}
+                </LText>
+                <IconArrowRight size={16} color={colors.primary} />
+              </Touchable>
+            ) : (
+              <HelpLink url={url} style={styles.linkContainer} />
+            )}
+          </>
         )}
       </Flex>
       {isGenuineCheckStatus ? (

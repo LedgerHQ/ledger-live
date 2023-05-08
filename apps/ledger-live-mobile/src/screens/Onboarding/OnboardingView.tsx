@@ -1,7 +1,7 @@
 import React from "react";
 import { View, TouchableOpacity } from "react-native";
 import { useNavigation, StackActions } from "@react-navigation/native";
-import { Icons } from "@ledgerhq/native-ui/assets";
+import { Icons } from "@ledgerhq/native-ui/assets/index";
 import { Flex, Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "styled-components/native";

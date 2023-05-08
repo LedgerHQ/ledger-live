@@ -10,7 +10,9 @@ export type CryptoCurrencyId =
   | "ark"
   | "atheios"
   | "avalanche_c_chain"
+  | "axelar"
   | "banano"
+  | "binance_beacon_chain"
   | "bitcoin"
   | "bitcoin_cash"
   | "bitcoin_gold"
@@ -25,11 +27,11 @@ export type CryptoCurrencyId =
   | "cosmos_testnet"
   | "dash"
   | "decred"
+  | "desmos"
   | "dexon"
   | "ellaism"
   | "dogecoin"
   | "digibyte"
-  | "energywebchain"
   | "eos"
   | "elastos"
   | "elrond"
@@ -53,7 +55,6 @@ export type CryptoCurrencyId =
   | "icon"
   | "icp"
   | "iota"
-  | "juno"
   | "iov"
   | "kin"
   | "komodo"
@@ -72,9 +73,12 @@ export type CryptoCurrencyId =
   | "nimiq"
   | "nix"
   | "nos"
+  | "nyx"
+  | "onomy"
   | "ontology"
   | "particl"
   | "peercoin"
+  | "persistence"
   | "pirl"
   | "pivx"
   | "poa"
@@ -83,16 +87,21 @@ export type CryptoCurrencyId =
   | "poswallet"
   | "qrl"
   | "qtum"
+  | "quicksilver"
   | "ravencoin"
   | "ripple"
   | "rise"
   | "reosc"
   | "resistance"
+  | "secret_network"
+  | "sei_network"
   | "solana"
   | "stakenet"
+  | "stargaze"
   | "stratis"
   | "stealthcoin"
   | "stellar"
+  | "stride"
   | "osmosis"
   | "shyft"
   | "tezos"
@@ -100,6 +109,7 @@ export type CryptoCurrencyId =
   | "tomo"
   | "tron"
   | "ubiq"
+  | "umee"
   | "vechain"
   | "vertcoin"
   | "viacoin"
@@ -120,6 +130,7 @@ export type CryptoCurrencyId =
   | "solana_devnet"
   | "filecoin"
   | "arbitrum"
+  | "arbitrum_goerli"
   | "cronos"
   | "fantom"
   | "flare"
@@ -127,7 +138,20 @@ export type CryptoCurrencyId =
   | "moonbeam"
   | "near"
   | "aptos"
-  | "aptos_testnet";
+  | "aptos_testnet"
+  | "rsk"
+  | "bittorrent"
+  | "kava_evm"
+  | "evmos_evm"
+  | "optimism"
+  | "optimism_goerli"
+  | "energy_web"
+  | "astar"
+  | "metis"
+  | "boba"
+  | "moonriver"
+  | "velas_evm"
+  | "syscoin";
 
 /**
  *
@@ -179,8 +203,6 @@ export type TokenCurrency = CurrencyCommon & {
   parentCurrency: CryptoCurrency;
   // the type of token in the blockchain it belongs. e.g. 'erc20'
   tokenType: string;
-  // indicates this is a compound token and it's "parent" erc20 have this id
-  compoundFor?: string;
 };
 
 /**

@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import { getAccountBannerState as getElrondBannerState } from "@ledgerhq/live-common/families/elrond/banner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import React from "react";
@@ -15,7 +14,7 @@ import { modals } from "~/renderer/families/elrond/modals";
 import { AccountBannerState } from "@ledgerhq/live-common/lib/families/elrond/banner";
 import { ElrondDelegation } from "@ledgerhq/live-common/lib/families/elrond/types";
 
-export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
+const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
@@ -56,7 +55,7 @@ export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) =
       page: "Page Account",
       button: "delegate",
       redelegate: bannerState.bannerType === "redelegate",
-      token: "ELROND",
+      currency: "ELROND",
     });
 
     if (bannerState.bannerType === "redelegate") {
@@ -102,3 +101,5 @@ export const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) =
     />
   );
 };
+
+export default StakeBanner;

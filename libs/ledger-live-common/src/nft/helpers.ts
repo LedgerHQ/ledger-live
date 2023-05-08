@@ -12,7 +12,7 @@ import type {
   NFTCollectionMetadataResponse,
   Account,
 } from "@ledgerhq/types-live";
-import { API, apiForCurrency } from "../api/Ethereum";
+import { API, apiForCurrency } from "../families/ethereum/api";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const nftsFromOperations = (ops: Operation[]): ProtoNFT[] => {
@@ -273,3 +273,17 @@ export function orderByLastReceived(
 
   return groupByCurrency([...new Set(orderedNFTs)]);
 }
+
+export const GENESIS_PASS_COLLECTION_CONTRACT =
+  "0x33c6Eec1723B12c46732f7AB41398DE45641Fa42";
+export const INFINITY_PASS_COLLECTION_CONTRACT =
+  "0xfe399E9a4B0bE4087a701fF0B1c89dABe7ce5425";
+
+export const hasNftInAccounts = (
+  nftCollection: string,
+  accounts: Account[]
+): boolean =>
+  accounts &&
+  accounts.some((account) =>
+    account?.nfts?.some((nft: ProtoNFT) => nft?.contract === nftCollection)
+  );

@@ -1,16 +1,17 @@
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "../../currencies";
-import { getAccountUnit } from "../../account";
-import ERC20ABI from "./abis/erc20.abi.json";
 import {
   formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "../../transaction/common";
+} from "@ledgerhq/coin-framework/transaction/common";
+import { transactionToEthersTransaction } from "./adapters";
+import { formatCurrencyUnit } from "../../currencies";
+import { getAccountUnit } from "../../account";
+import ERC20ABI from "./abis/erc20.abi.json";
 import type {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -56,7 +57,7 @@ export const fromTransactionRaw = (
     nonce: rawTx.nonce,
     gasLimit: new BigNumber(rawTx.gasLimit),
     feesStrategy: rawTx.feesStrategy,
-    type: Number(rawTx.type), // if rawTx.type is undefined, transaction will be considered legacy and therefore type 0
+    type: rawTx.type ?? 0, // if rawTx.type is undefined, transaction will be considered legacy and therefore type 0
   };
 
   if (rawTx.data) {
@@ -73,6 +74,10 @@ export const fromTransactionRaw = (
 
   if (rawTx.maxPriorityFeePerGas) {
     tx.maxPriorityFeePerGas = new BigNumber(rawTx.maxPriorityFeePerGas);
+  }
+
+  if (rawTx.additionalFees) {
+    tx.additionalFees = new BigNumber(rawTx.additionalFees);
   }
 
   return tx as EvmTransaction;
@@ -108,6 +113,10 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
 
   if (tx.maxPriorityFeePerGas) {
     txRaw.maxPriorityFeePerGas = tx.maxPriorityFeePerGas.toFixed();
+  }
+
+  if (tx.additionalFees) {
+    txRaw.additionalFees = tx.additionalFees.toFixed();
   }
 
   return txRaw as EvmTransactionRaw;
@@ -158,6 +167,21 @@ export const getTypedTransaction = (
   } as EvmTransactionLegacy;
 };
 
+/**
+ * Serialize a Ledger Live transaction into an hex string
+ */
+export const getSerializedTransaction = (
+  tx: EvmTransaction,
+  signature?: Partial<ethers.Signature>
+): string => {
+  const unsignedEthersTransaction = transactionToEthersTransaction(tx);
+
+  return ethers.utils.serializeTransaction(
+    unsignedEthersTransaction,
+    signature as ethers.Signature
+  );
+};
+
 export default {
   formatTransaction,
   fromTransactionRaw,
@@ -165,4 +189,5 @@ export default {
   toTransactionStatusRaw,
   formatTransactionStatus,
   fromTransactionStatusRaw,
+  getSerializedTransaction,
 };

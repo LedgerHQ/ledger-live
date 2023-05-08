@@ -9,15 +9,11 @@ type OperationDetailsExtraProps = {
   account: AccountLike | null | undefined;
 };
 
-const OperationDetailsExtra = ({ extra, type }: OperationDetailsExtraProps) => {
+const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
   const { t } = useTranslation();
   const entries = Object.keys(extra);
 
-  return (
-    type === "REDEEM" || type === "SUPPLY"
-      ? entries.filter(key => !["compoundValue", "rate"].includes(key))
-      : entries
-  ).map(key => (
+  return entries.map(key => (
     <Section
       title={t(`operationDetails.extra.${key}`)}
       value={`${extra[key]}`}

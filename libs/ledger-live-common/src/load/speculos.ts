@@ -9,12 +9,13 @@ import { promises as fsp } from "fs";
 import { log } from "@ledgerhq/logs";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos";
+import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { registerTransportModule } from "../hw";
 import { getEnv } from "../env";
 import { getDependencies } from "../apps/polyfill";
 import { findCryptoCurrencyByKeyword } from "../currencies";
 import { formatAppCandidate } from "../bot/formatters";
-import { delay } from "@ledgerhq/coin-framework/promise";
+import { delay } from "../promise";
 import { mustUpgrade, shouldUpgrade } from "../apps";
 
 let idCounter = getEnv("SPECULOS_PID_OFFSET");
@@ -243,13 +244,6 @@ export async function createSpeculosDevice(
     appPath,
   };
 }
-export type AppCandidate = {
-  path: string;
-  model: DeviceModelId;
-  firmware: string;
-  appName: string;
-  appVersion: string;
-};
 
 function hackBadSemver(str) {
   const split = str.split(".");
@@ -296,8 +290,8 @@ export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
             const appVersion = elf.slice(4, elf.length - 4);
             if (
               semver.valid(appVersion) &&
-              !shouldUpgrade(model, appName, appVersion) &&
-              !mustUpgrade(model, appName, appVersion)
+              !shouldUpgrade(appName, appVersion) &&
+              !mustUpgrade(appName, appVersion)
             ) {
               c.push({
                 path: p4,

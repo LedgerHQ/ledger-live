@@ -18,6 +18,7 @@ import {
   getAccountName,
   getAccountSpendableBalance,
   getAccountUnit,
+  getFeesCurrency,
 } from ".";
 import {
   isAccountEmpty,
@@ -128,6 +129,65 @@ describe(getAccountUnit.name, () => {
       expect.assertions(1);
       try {
         getAccountUnit(mockAccount);
+      } catch (e: unknown) {
+        expect((e as Error).message.includes(mockAccount.type)).toEqual(true);
+      }
+    });
+  });
+});
+
+describe(getFeesCurrency.name, () => {
+  describe("given an Account", () => {
+    beforeEach(() => {
+      mockAccount.type = "Account";
+    });
+    describe("without feesCurrency", () => {
+      it("should return the account's currency", () => {
+        const sampleCurrency = { family: "bitcoin" } as CryptoCurrency;
+        mockAccount.currency = sampleCurrency;
+        expect(getFeesCurrency(mockAccount)).toEqual(sampleCurrency);
+      });
+    });
+    describe("with feesCurrency", () => {
+      it("should return the fees currency", () => {
+        const sampleCurrency = { family: "vechain" } as CryptoCurrency;
+        const sampleFeesCurrency = { id: "VTHO" } as TokenCurrency;
+        mockAccount.currency = sampleCurrency;
+        mockAccount.feesCurrency = sampleFeesCurrency;
+        expect(getFeesCurrency(mockAccount)).toEqual(sampleFeesCurrency);
+      });
+    });
+  });
+
+  describe("given a ChildAccount", () => {
+    it("should return the currency", () => {
+      const sampleCurrency = { family: "bitcoin" } as CryptoCurrency;
+      childAccount.currency = sampleCurrency;
+      expect(getFeesCurrency(childAccount)).toEqual(sampleCurrency);
+    });
+  });
+
+  describe("given a TokenAccount", () => {
+    it("should return the token currency", () => {
+      const sampleToken = { id: "tokenId" } as TokenCurrency;
+      tokenAccount.token = sampleToken;
+      expect(getFeesCurrency(tokenAccount)).toEqual(sampleToken);
+    });
+  });
+
+  describe("given an unknown type Account", () => {
+    beforeEach(() => {
+      (mockAccount as any).type = "DefinitelyNotAStandardAccount";
+    });
+
+    it("should throw an error", () => {
+      expect(() => getFeesCurrency(mockAccount)).toThrow(Error);
+    });
+
+    it("should display the account type in the error message", () => {
+      expect.assertions(1);
+      try {
+        getFeesCurrency(mockAccount);
       } catch (e: unknown) {
         expect((e as Error).message.includes(mockAccount.type)).toEqual(true);
       }

@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/live-common/explorers";
 import type { Account, OperationType, Operation } from "@ledgerhq/types-live";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import type { CosmosDelegationInfo } from "@ledgerhq/live-common/families/cosmos/types";
@@ -49,9 +49,9 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
-  const currencyName = account.currency.name.toLowerCase();
+  const currencyId = account.currency.id;
   const { validators: cosmosValidators } =
-    useCosmosFamilyPreloadData(currencyName);
+    useCosmosFamilyPreloadData(currencyId);
   const redirectAddressCreator = useCallback(
     address => () => {
       const url = getAddressExplorer(

@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { getEnv } from "@ledgerhq/live-env";
 import type { FeeStrategy } from "@ledgerhq/types-live";
 import { getGasLimit } from "./transaction";
 import type { Transaction } from "./types";
@@ -16,7 +17,9 @@ export function useFeesStrategy(tx: Transaction): FeeStrategy[] {
 
   // EIP-1559 transaction
   if (networkInfo?.nextBaseFeePerGas && networkInfo?.maxPriorityFeePerGas) {
-    const amplifiedBaseFee = networkInfo.nextBaseFeePerGas.times(2); // ensuring valid base fee for 6 blocks
+    const amplifiedBaseFee = networkInfo.nextBaseFeePerGas
+      .times(getEnv("EIP1559_BASE_FEE_MULTIPLIER"))
+      .integerValue(); // ensuring valid base fee for 6 blocks with a mutliplier of 2
 
     return [
       {

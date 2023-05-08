@@ -12,16 +12,13 @@ import type {
 } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
-import Eth from "@ledgerhq/hw-app-eth";
+import Eth, { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
 import { BigNumber } from "bignumber.js";
 import { mergeMap } from "rxjs/operators";
 import { Observable, from, of } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
-import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
-import { ledgerService as ethLedgerServices } from "@ledgerhq/hw-app-eth";
-import { erc20SignatureInfo } from "./modules/erc20";
-import { apiForCurrency } from "../../api/Ethereum";
+import type { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { apiForCurrency } from "./api";
 import { withDevice } from "../../hw/deviceAccess";
 import type { Transaction } from "./types";
 import { isNFTActive } from "../../nft";
@@ -84,9 +81,11 @@ export const signOperation = ({
                 throw new FeeNotLoaded();
               }
 
-              const { ethTxObject, tx, common, fillTransactionDataResult } =
-                buildEthereumTx(account, transaction, nonce);
-
+              const { ethTxObject, tx, common } = buildEthereumTx(
+                account,
+                transaction,
+                nonce
+              );
               const to = eip55.encode((tx.to || "").toString());
               const value = new BigNumber(
                 "0x" + (tx.value.toString("hex") || "0")
@@ -123,6 +122,10 @@ export const signOperation = ({
                 ? m.getResolutionConfig(account, transaction)
                 : {};
 
+              if (transaction.recipientDomain?.type === "forward") {
+                resolutionConfig.domains = [transaction.recipientDomain];
+              }
+
               log("rawtx", txHex);
 
               const resolution = await ethLedgerServices.resolveTransaction(
@@ -133,27 +136,6 @@ export const signOperation = ({
 
               const eth = new Eth(transport);
               eth.setLoadConfig(loadConfig);
-
-              // FIXME this part is still required for compound to correctly display info on the device
-              const addrs =
-                (fillTransactionDataResult &&
-                  fillTransactionDataResult.erc20contracts) ||
-                [];
-
-              const erc20SignatureBlob = await erc20SignatureInfo(loadConfig);
-
-              for (const addr of addrs) {
-                const tokenInfo = byContractAddressAndChainId(
-                  addr,
-                  account.currency.ethereumLikeInfo?.chainId || 0,
-                  erc20SignatureBlob
-                );
-
-                if (tokenInfo) {
-                  await eth.provideERC20TokenInformation(tokenInfo);
-                  if (cancelled) return;
-                }
-              }
 
               o.next({ type: "device-signature-requested" });
               const result = await eth.signTransaction(

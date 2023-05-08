@@ -6,16 +6,12 @@ import {
   StackNavigationOptions,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "react-redux";
 import { ScreenName, NavigatorName } from "../../const";
 import * as families from "../../families";
-import OperationDetails, {
-  BackButton,
-  CloseButton,
-} from "../../screens/OperationDetails";
+import OperationDetails from "../../screens/OperationDetails";
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
 import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
@@ -39,13 +35,7 @@ import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
-import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
-import LendingNavigator from "./LendingNavigator";
-import LendingInfoNavigator from "./LendingInfoNavigator";
-import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
-import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
-import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "../../screens/Analytics/Allocation";
 import AnalyticsOperations from "../../screens/Analytics/Operations";
@@ -55,15 +45,17 @@ import Account from "../../screens/Account";
 import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import styles from "../../navigation/styles";
-import HeaderRightClose from "../HeaderRightClose";
 import StepHeader from "../StepHeader";
 import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "../../screens/VerifyAccount";
-import PlatformApp from "../../screens/Platform/App";
+import { LiveApp } from "../../screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
 import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
-import { BleDevicePairingFlow } from "../../screens/BleDevicePairingFlow/index";
+import {
+  BleDevicePairingFlow,
+  bleDevicePairingFlowHeaderOptions,
+} from "../../screens/BleDevicePairingFlow/index";
 import ProviderList from "../../screens/Exchange/ProviderList";
 import ProviderView from "../../screens/Exchange/ProviderView";
 import ScreenHeader from "../../screens/Exchange/ScreenHeader";
@@ -83,8 +75,19 @@ import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import DeviceConnect from "../../screens/DeviceConnect";
+import DeviceConnect, {
+  deviceConnectHeaderOptions,
+} from "../../screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
+import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
+import StakeFlowNavigator from "./StakeFlowNavigator";
+import { RecoverPlayer } from "../../screens/Protect/Player";
+import { RedirectToOnboardingRecoverFlowScreen } from "../../screens/Protect/RedirectToOnboardingRecoverFlow";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import {
+  NavigationHeaderCloseButton,
+  NavigationHeaderCloseButtonAdvanced,
+} from "../NavigationHeaderCloseButton";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -180,16 +183,18 @@ export default function BaseNavigator() {
       />
       <Stack.Screen
         name={ScreenName.PlatformApp}
-        component={PlatformApp}
-        options={({ route }) => ({
-          headerBackImage: () => (
-            <Flex pl="16px">
-              <Icons.CloseMedium color="neutral.c100" size="20px" />
-            </Flex>
-          ),
+        component={LiveApp}
+        options={{
           headerStyle: styles.headerNoShadow,
-          title: route.params.name,
-        })}
+        }}
+        {...noNanoBuyNanoWallScreenOptions}
+      />
+      <Stack.Screen
+        name={ScreenName.Recover}
+        component={RecoverPlayer}
+        options={{
+          headerStyle: styles.headerNoShadow,
+        }}
         {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
@@ -200,13 +205,13 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.ExploreTab}
         component={ExploreTabNavigator}
-        options={({ navigation }) => ({
+        options={{
           headerShown: true,
           animationEnabled: false,
           headerTitle: t("discover.sections.news.title"),
-          headerLeft: () => <BackButton navigation={navigation} />,
+          headerLeft: () => <NavigationHeaderBackButton />,
           headerRight: () => null,
-        })}
+        }}
       />
       <Stack.Screen
         name={NavigatorName.SignMessage}
@@ -221,36 +226,6 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.Swap}
         component={SwapNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.Lending}
-        component={LendingNavigator}
-        options={{
-          ...stackNavigationConfig,
-          headerStyle: styles.headerNoShadow,
-          headerLeft: () => null,
-          title: t("transfer.lending.title"),
-        }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingInfo}
-        component={LendingInfoNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingEnableFlow}
-        component={LendingEnableFlowNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingSupplyFlow}
-        component={LendingSupplyFlowNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.LendingWithdrawFlow}
-        component={LendingWithdrawFlowNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -372,7 +347,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.OperationDetails}
         component={OperationDetails}
-        options={({ route, navigation }) => {
+        options={({ route }) => {
           if (route.params?.isSubOperation) {
             return {
               headerTitle: () => (
@@ -385,8 +360,8 @@ export default function BaseNavigator() {
                   }
                 />
               ),
-              headerLeft: () => <BackButton navigation={navigation} />,
-              headerRight: () => <CloseButton navigation={navigation} />,
+              headerLeft: () => <NavigationHeaderBackButton />,
+              headerRight: () => <NavigationHeaderCloseButton />,
             };
           }
 
@@ -401,7 +376,7 @@ export default function BaseNavigator() {
                 }
               />
             ),
-            headerLeft: () => <BackButton navigation={navigation} />,
+            headerLeft: () => <NavigationHeaderBackButton />,
             headerRight: () => null,
           };
         }}
@@ -445,11 +420,6 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.PasswordModifyFlow}
         component={PasswordModifyFlowNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.MigrateAccountsFlow}
-        component={MigrateAccountsFlowNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -500,7 +470,7 @@ export default function BaseNavigator() {
           ...TransparentHeaderNavigationOptions,
           title: t("send.scan.title"),
           headerRight: () => (
-            <HeaderRightClose
+            <NavigationHeaderCloseButtonAdvanced
               color={colors.constant.white}
               preferDismiss={false}
             />
@@ -518,6 +488,7 @@ export default function BaseNavigator() {
         options={{
           headerShown: false,
         }}
+        {...noNanoBuyNanoWallScreenOptions}
       />
       <Stack.Screen
         name={NavigatorName.NotificationCenter}
@@ -566,9 +537,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.BleDevicePairingFlow}
         component={BleDevicePairingFlow}
-        options={{
-          headerShown: false,
-        }}
+        options={bleDevicePairingFlowHeaderOptions}
       />
       <Stack.Screen
         name={NavigatorName.PostOnboarding}
@@ -578,10 +547,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.DeviceConnect}
         component={DeviceConnect}
-        options={{
-          title: t("deviceConnect.title"),
-          headerRight: () => null,
-        }}
+        options={useMemo(() => deviceConnectHeaderOptions(t), [t])}
         listeners={({ route }) => ({
           beforeRemove: () => {
             const onClose =
@@ -592,6 +558,33 @@ export default function BaseNavigator() {
             }
           },
         })}
+      />
+      <Stack.Screen
+        name={ScreenName.RedirectToOnboardingRecoverFlow}
+        options={{ headerShown: false }}
+        component={RedirectToOnboardingRecoverFlowScreen}
+      />
+      <Stack.Screen
+        name={NavigatorName.NoFundsFlow}
+        component={NoFundsFlowNavigator}
+        options={{
+          ...TransparentHeaderNavigationOptions,
+          headerRight: () => (
+            <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />
+          ),
+          headerLeft: () => null,
+        }}
+      />
+      <Stack.Screen
+        name={NavigatorName.StakeFlow}
+        component={StakeFlowNavigator}
+        options={{
+          ...TransparentHeaderNavigationOptions,
+          headerRight: () => (
+            <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />
+          ),
+          headerLeft: () => null,
+        }}
       />
     </Stack.Navigator>
   );

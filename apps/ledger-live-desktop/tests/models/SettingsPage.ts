@@ -14,6 +14,8 @@ export class SettingsPage {
   readonly languageSelector: Locator;
   readonly themeSelector: Locator;
   readonly themeChoiceLight: Locator;
+  readonly versionRow: Locator;
+  readonly developerTab: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -21,6 +23,7 @@ export class SettingsPage {
     this.aboutTab = page.locator("data-test-id=settings-about-tab");
     this.helpTab = page.locator("data-test-id=settings-help-tab");
     this.experimentalTab = page.locator("data-test-id=settings-experimental-tab");
+    this.developerTab = page.locator("data-test-id=settings-developer-tab");
     this.experimentalDevModeToggle = page.locator("data-test-id=MANAGER_DEV_MODE-button");
     this.carouselSwitchButton = page.locator("data-test-id=settings-carousel-switch-button");
     this.counterValueSelector = page.locator(
@@ -36,6 +39,7 @@ export class SettingsPage {
     );
 
     this.themeChoiceLight = page.locator("text='Clair'");
+    this.versionRow = page.locator("data-test-id=version-row");
   }
 
   async goToAccountsTab() {
@@ -70,7 +74,14 @@ export class SettingsPage {
   }
 
   async changeTheme() {
-    await this.themeSelector.click();
+    await this.themeSelector.click(); // TODO: make this dynamic
     await this.themeChoiceLight.click();
+  }
+
+  async enableAndGoToDeveloperTab() {
+    for (let i = 0; i < 10; i++) {
+      await this.versionRow.click();
+    }
+    await this.developerTab.click();
   }
 }

@@ -23,7 +23,7 @@ import BigNumber from "bignumber.js";
 import * as converters from "./converters";
 import * as serializers from "./serializers";
 import * as signMessage from "../hw/signMessage/index";
-import { DerivationMode } from "../derivation";
+import { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RawPlatformTransaction } from "./rawTypes";
 import { setSupportedCurrencies } from "../currencies";
@@ -666,7 +666,7 @@ function createAppManifest(id = "1"): LiveAppManifest {
     homepageUrl: "https://www.ledger.com",
     supportUrl: "https://www.ledger.com",
     icon: null,
-    platform: "all",
+    platforms: ["ios", "android", "desktop"],
     apiVersion: "1.0.0",
     manifestVersion: "1.0.0",
     branch: "debug",
@@ -683,6 +683,7 @@ function createAppManifest(id = "1"): LiveAppManifest {
     },
     permissions: [],
     domains: [],
+    visibility: "complete",
   };
 }
 

@@ -1,8 +1,8 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
-import getTransactionStatus from "./getTransactionStatus";
 import { Transaction as EvmTransaction } from "./types";
-import { getMainAccount } from "../../account";
+import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";
+import { getMainAccount } from "../../account";
 
 export const estimateMaxSpendable: AccountBridge<EvmTransaction>["estimateMaxSpendable"] =
   async ({ account, parentAccount, transaction }) => {
@@ -13,6 +13,7 @@ export const estimateMaxSpendable: AccountBridge<EvmTransaction>["estimateMaxSpe
       useAllAmount: true,
     } as EvmTransaction;
 
-    const { amount } = await getTransactionStatus(mainAccount, estimatedTx);
+    const { amount } = await prepareTransaction(mainAccount, estimatedTx);
+
     return amount;
   };

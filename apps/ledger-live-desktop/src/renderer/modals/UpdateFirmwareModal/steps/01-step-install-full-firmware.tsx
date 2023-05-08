@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
+import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import manager from "@ledgerhq/live-common/manager/index";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
@@ -18,7 +18,6 @@ import Interactions from "~/renderer/icons/device/interactions";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { StepProps } from "../";
 import { getEnv } from "@ledgerhq/live-common/env";
-
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { AnimationWrapper } from "~/renderer/components/DeviceAction/rendering";
@@ -37,7 +36,7 @@ const Title = styled(Box).attrs(() => ({
   mb: 3,
 }))``;
 
-const Identifier = styled(Box).attrs(p => ({
+const Identifier = styled(Box).attrs(() => ({
   bg: "palette.background.default",
   borderRadius: 1,
   color: "palette.text.shade100",
@@ -86,6 +85,8 @@ const Body = ({
     );
   }
 
+  const deviceAnimation = getDeviceAnimation(deviceModelId, type, "verify");
+
   if (displayedOnDevice && firmware.osu.hash) {
     return (
       <>
@@ -116,7 +117,7 @@ const Body = ({
           </Box>
         ) : (
           <AnimationWrapper>
-            <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
+            {deviceAnimation && <Animation animation={deviceAnimation} />}
           </AnimationWrapper>
         )}
       </>
@@ -143,7 +144,7 @@ const Body = ({
         </Box>
       ) : (
         <AnimationWrapper>
-          <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
+          {deviceAnimation && <Animation animation={deviceAnimation} />}
         </AnimationWrapper>
       )}
     </>
@@ -173,12 +174,15 @@ const StepFullFirmwareInstall = ({
 
     const sub = (getEnv("MOCK")
       ? mockedEventEmitter()
-      : command("firmwarePrepare")({
-          deviceId: device ? device.deviceId : "",
-          firmware,
-        })
+      : firmwareUpdatePrepare(device ? device.deviceId : "", firmware)
     ).subscribe({
-      next: ({ progress, displayedOnDevice: displayed }) => {
+      next: ({
+        progress,
+        displayedOnDevice: displayed,
+      }: {
+        progress: number;
+        displayedOnDevice: boolean;
+      }) => {
         setProgress(progress);
         setDisplayedOnDevice(displayed);
       },
@@ -187,7 +191,7 @@ const StepFullFirmwareInstall = ({
           firmware.shouldFlashMCU || hasFinalFirmware(firmware.final) ? "updateMCU" : "updating",
         );
       },
-      error: error => {
+      error: (error: Error) => {
         setError(error);
         transitionTo("finish");
       },

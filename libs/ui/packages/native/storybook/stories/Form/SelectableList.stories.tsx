@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { storiesOf } from "../storiesOf";
-import { Flex, SelectableList } from "../../../src";
+import { action } from "@storybook/addon-actions";
+import { Flex, SelectableList } from "../../../src/components";
 import { Icons } from "../../../src/assets";
 import { TouchableOpacity } from "react-native";
-import { action } from "@storybook/addon-actions";
 
 const description = `
 ### A styled list of valued and selectable elements.
@@ -34,7 +33,20 @@ const [selectedValue, setSelectedValue] = React.useState()
 \`\`\`
 `;
 
-const Story = () => {
+export default {
+  title: "Form/SelectableList",
+  component: SelectableList,
+  parameters: {
+    docs: {
+      title: "Selectable List",
+      description: {
+        component: description,
+      },
+    },
+  },
+};
+
+export const Story = () => {
   const [selectedValue, setSelectedValue] = useState();
 
   return (
@@ -65,14 +77,4 @@ const Story = () => {
     </Flex>
   );
 };
-
-storiesOf((story) =>
-  story("Form/SelectableList", module).add("SelectableList", Story, {
-    docs: {
-      title: "Selectable List",
-      description: {
-        component: description,
-      },
-    },
-  }),
-);
+Story.storyName = "SelectableList";

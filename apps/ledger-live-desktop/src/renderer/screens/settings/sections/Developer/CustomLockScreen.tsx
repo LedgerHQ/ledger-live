@@ -1,15 +1,14 @@
 import React, { useCallback, useState } from "react";
-
 import Button from "~/renderer/components/Button";
 import { useHistory } from "react-router-dom";
 import Box from "~/renderer/components/Box";
-import { Flex, Alert } from "@ledgerhq/react-ui";
-
+import { Flex } from "@ledgerhq/react-ui";
 import FramedImage from "~/renderer/components/CustomImage/FramedImage";
 import Animation from "~/renderer/animations";
 import Slider from "~/renderer/components/Slider";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import source from "./sampleimage";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 const CustomLockScreen = () => {
   const history = useHistory();
@@ -37,7 +36,9 @@ const CustomLockScreen = () => {
             loadingProgress={0}
             scale={scale}
             background={
-              <Animation animation={getDeviceAnimation("stax", "light", "allowManager", true)} />
+              <Animation
+                animation={getDeviceAnimation(DeviceModelId.stax, "light", "allowManager", true)}
+              />
             }
           />
         </Flex>
@@ -48,7 +49,12 @@ const CustomLockScreen = () => {
             scale={scale}
             background={
               <Animation
-                animation={getDeviceAnimation("stax", "light", "confirmLockscreen", true)}
+                animation={getDeviceAnimation(
+                  DeviceModelId.stax,
+                  "light",
+                  "confirmLockscreen",
+                  true,
+                )}
               />
             }
           />
@@ -65,6 +71,7 @@ const CustomLockScreen = () => {
           setPercentage(number);
         }}
         steps={100}
+        error={undefined}
       />
       <Box horizontal>
         <Button onClick={() => setScale(1)}>{"x1"}</Button>

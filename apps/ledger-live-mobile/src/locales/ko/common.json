@@ -12,6 +12,7 @@
     "gotit" : "알겠습니다",
     "continue" : "계속",
     "retry" : "다시 시도",
+    "backTo" : "{{to}} 앱으로 돌아가기",
     "done" : "완료",
     "sortBy" : "정렬 기준",
     "signOut" : "로그아웃",
@@ -87,7 +88,12 @@
     "popular" : "인기 있는",
     "getSupport" : "지원 받기",
     "comingSoon" : "곧 출시 예정",
-    "restart" : "재시작"
+    "restart" : "재시작",
+    "loadMore" : "더 보기",
+    "patterns" : {
+      "id" : "ID {{ value }}",
+      "times" : "x{{ value }}"
+    }
   },
   "errors" : {
     "countervaluesUnavailable" : {
@@ -161,9 +167,6 @@
     "ClaimRewardsFeesWarning" : {
       "title" : "추정된 수수료보다 수령하는 보상액이 적습니다.",
       "description" : ""
-    },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "활성 예치금이 있을 때는 승인된 금액을 낮출 수 없습니다."
     },
     "CosmosBroadcastCodeInternal" : {
       "title" : "문제가 발생했습니다(오류 #1)",
@@ -549,7 +552,7 @@
       "description" : "트랜잭션은 30초 이내에 서명을 완료해야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 50 TRX를 지불할 수 있습니다."
     },
     "UpdateYourApp" : {
       "title" : "앱 업데이트 필요",
@@ -811,6 +814,13 @@
       "title" : "장치가 잠금 상태입니다",
       "description" : "장치의 잠금을 해제하고 다시 시도하세요.",
       "descriptionWithProductName" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
+    },
+    "EtherscanAPIError" : {
+      "title" : "트랜잭션을 가져오지 못했습니다",
+      "description" : "탐색기에서 예상하지 못한 오류가 발생했습니다. 나중에 다시 시도해 주세요"
+    },
+    "GasEstimationError" : {
+      "title" : "가스비를 추정하지 못했습니다"
     }
   },
   "crash" : {
@@ -820,7 +830,9 @@
     "required" : "죄송하지만 블루투스가 비활성 상태인 것 같습니다",
     "locationRequiredTitle" : "블루투스 LE 사용을 위해 위치 정보가 필요합니다.",
     "locationRequiredMessage" : "안드로이드에서 블루투스 LE 장치를 열거하려면 위치를 허용해야 합니다.",
-    "checkEnabled" : "휴대폰 설정에서 블루투스를 활성화해주세요."
+    "checkEnabled" : "휴대폰 설정에서 블루투스를 활성화해주세요.",
+    "tryEnablingAgain" : "블루투스를 다시 활성화해보세요",
+    "openSettings" : "블루투스 설정 열기"
   },
   "webview" : {
     "noConnectionError" : {
@@ -830,12 +842,10 @@
   },
   "location" : {
     "titleServiceRequired" : "위치 서비스가 필요합니다",
-    "titlePermissionRequired" : "위치 정보 액세스 권한이 필요합니다",
-    "titlePermissionRequiredPrecise" : "정확한 위치 정보 액세스 권한이 필요합니다",
     "descriptionServiceRequired" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 위치 서비스가 필요합니다.",
-    "descriptionPermissionRequired" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 위치 정보 액세스 권한이 필요합니다.",
-    "descriptionPermissionRequiredPrecise" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 정확한 위치 정보 액세스 권한이 필요합니다.",
     "open" : "위치 설정 열기",
+    "openSettings" : "위치 설정 열기",
+    "tryEnablingAgain" : "위치를 다시 활성화해보세요",
     "noInfos" : "Ledger는 사용자의 위치 정보를 사용하지 않습니다."
   },
   "permissions" : {
@@ -848,6 +858,12 @@
       "modalButtonLabelBase" : "승인",
       "modalButtonLabelSettingsVariant" : "설정으로 이동",
       "dontPair" : "페어링 금지"
+    },
+    "location" : {
+      "titlePermissionRequired" : "위치 정보 액세스 권한이 필요합니다",
+      "titlePermissionRequiredPrecise" : "정확한 위치 정보 액세스 권한이 필요합니다",
+      "descriptionPermissionRequired" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 위치 정보 액세스 권한이 필요합니다.",
+      "descriptionPermissionRequiredPrecise" : "블루투스로 귀하의 장치를 Ledger Live와 페어링 하려면 정확한 위치 정보 액세스 권한이 필요합니다."
     },
     "camera" : {
       "title" : "카메라 허용",
@@ -1118,9 +1134,17 @@
         "title" : "알아보기",
         "desc" : "암호화폐, Web3, 디지털 보안 등에 대해 알아보세요"
       },
+      "news" : {
+        "title" : "뉴스",
+        "desc" : "암호화, 보안, web3에 대해 알아보고 최신 뉴스를 확인하세요"
+      },
       "ledgerApps" : {
         "title" : "앱",
         "desc" : "Ledger의 파트너 앱을 한 곳에서 모두 살펴보세요"
+      },
+      "browseWeb3" : {
+        "title" : "Web3 둘러보기",
+        "desc" : "Ledger와 완전히 통합된 Web3 살펴보기"
       },
       "earn" : {
         "title" : "소득 창출",
@@ -1142,7 +1166,7 @@
     "restore" : {
       "title" : "{{deviceName}}에서와 동일한 앱을 설치하시겠어요?",
       "titleNoDeviceName" : "이전 Ledger 장치에서와 동일한 앱을 설치하시겠어요?",
-      "installCTA" : "지금 설치",
+      "installCTA" : "지금 복구하기",
       "skipCTA" : "나중에 할게요"
     },
     "landing" : {
@@ -1153,10 +1177,10 @@
       "skipCTA" : "나중에 할게요"
     },
     "ongoing" : {
-      "loading" : "로딩 중...",
       "resolving" : "의존성 해결",
-      "progress" : "앱 설치 중 {{progress}}%",
-      "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요."
+      "progress" : "앱을 설치하는 동안 Ledger Live를 종료하지 마세요.",
+      "skippedInfo" : "일부 앱은 이용할 수 없습니다. 아직 {{ productName }}용으로 개발되지 않았습니다.",
+      "skipped" : "아직 {{ productName }}에서 이용할 수 없습니다"
     }
   },
   "onboarding" : {
@@ -1267,8 +1291,13 @@
       },
       "recovery" : "이미 복구 문구가 있나요?",
       "protect" : {
-        "label" : "~60분",
-        "subTitle" : "Protect를 통해 복구하세요"
+        "subTitle" : "Ledger Recover를 통한 복구",
+        "drawer" : {
+          "title" : "Ledger Nano X 사용",
+          "desc" : "Ledger Recover 소프트 런칭은 Ledger Nano X 전용입니다.",
+          "buyNanoX" : "Ledger Nano X 구매하기",
+          "discoverBenefits" : "장점 살펴보기"
+        }
       }
     },
     "stepNewDevice" : {
@@ -1495,25 +1524,20 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "둘러보기 ",
-          "label" : "스크린 상의 지시를 읽어보며 다양한 장치 활용 방법을 알아보세요."
+          "title" : "\"복구\"를 선택하세요",
+          "label" : "두 버튼을 동시에 눌러 선택하세요."
         },
         "1" : {
-          "title" : "\"복구\"를 선택하세요",
-          "label" : "두 버튼을 동시에 눌러 선택한 항목을 승인해주세요."
-        },
-        "2" : {
-          "title" : "\"Protect로 복구\" 모드를 선택합니다",
-          "label" : "두 버튼을 동시에 눌러 선택한 항목을 승인해주세요."
+          "title" : "\"Ledger Recover로 복구\"를 선택합니다.",
+          "label" : "두 버튼을 동시에 눌러 선택하세요."
         }
       },
       "nextStep" : "계속",
       "extraInfo" : {
-        "tooltip" : "내 Ledger에 표시되지 않음",
-        "title" : "내 Ledger에 Protect를 통한 복구가 표시되지 않는 이유는 무엇인가요?",
-        "desc1" : "장치가 Protect와 호환되지 않기 때문일 가능성이 가장 높습니다. 걱정하지 마세요. 해결 방법을 안내해 드리겠습니다.",
-        "desc2" : "당사로 연락하여 \"내 Ledger에 Protect를 통한 복구가 표시되지 않음\"을 선택하시면 지원해 드리겠습니다.",
-        "cta" : "수동으로 진행",
+        "tooltip" : "'Ledger Recover로 복구' 메뉴가 보이지 않습니다.",
+        "title" : "Ledger Nano X의 OS를 업데이트해야 합니다.",
+        "desc" : "OS를 업데이트하거나 Ledger 지원 부서로 문의하세요.",
+        "cta" : "업데이트 방법 알아보기",
         "supportLink" : "Ledger 지원 부서에 문의해주세요"
       }
     },
@@ -1653,6 +1677,11 @@
             "label" : "Nano X가 감지되는지 확인하세요."
           }
         }
+      },
+      "protectConnectionInformationModal" : {
+        "title" : "Ledger Nano X 연결",
+        "description" : "LEDGER 장치가 휴대폰에 가까이 있는지 확인하고 다시 연결을 시도하세요. <LinkBluethooth>블루투스® 연결 문제 \n</LinkBluethooth>.\n블루투스®가 작동 중인 경우, LEDGER의 OS를 업데이트가 필요할 수 있습니다. OS를 업데이트하거나 Ledger 지원 부서에 도움을 요청하세요. ",
+        "learnHowToUpdate" : "업데이트 방법 알아보기"
       }
     },
     "stepImportAccounts" : {
@@ -1866,20 +1895,36 @@
     },
     "pairingStep" : {
       "title" : "{{productName}} 장치가 페어링되었습니다.",
-      "description" : "{{productName}}에서 설정을 계속 진행하세요. 단계별 지원은 여기를 다시 살펴보세요"
+      "description" : "{{productName}}에서 설정을 계속 진행하세요.\n단계별 지원은 여기를 다시 살펴보세요.",
+      "continueOnDevice" : "{{productName}}에서 계속 진행하려면 아무 곳이나 탭하세요"
     },
     "pinStep" : {
       "title" : "PIN",
       "doneTitle" : "PIN 설정",
-      "description" : "PIN은 {{productName}}에 대한 원치 않는 액세스를 차단합니다."
+      "description" : "PIN은 {{productName}}에 대한 원치 않는 액세스를 차단합니다.",
+      "continueOnDevice" : "{{productName}}에서 PIN을 설정하세요"
     },
     "seedStep" : {
       "title" : "비밀 복구 문구",
       "doneTitle" : "비밀 복구 문구 확인됨",
-      "description" : "복구 문구는 24개의 단어로 이루어진 시크릿 리스트로, 개인 키 백업에 사용됩니다. {{productName}} 장치가 고유한 복구 문구를 생성합니다. Ledger는 복구 문구의 복사본을 보관하지 않습니다."
+      "description" : "복구 문구는 24개의 단어로 이루어진 시크릿 리스트로, 개인 키 백업에 사용됩니다. {{productName}} 장치가 고유한 복구 문구를 생성합니다. Ledger는 복구 문구의 복사본을 보관하지 않습니다.",
+      "choiceRestoreDirectOrRecover" : "자리 표시자 - 직접 복원 선택 또는 복구 사용",
+      "recoverSeed" : "자리 표시자: 복구",
+      "restoreSeed" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
+      "selection" : "{{productName}}에서 가장 적합한 설정 옵션을 선택하세요.",
+      "selectionContinueOnDevice" : "{{productName}}에서 옵션을 탭하세요",
+      "newSeedDescription" : "아래 동영상에서 비밀번호 설정에 대해 알아보세요.",
+      "newSeedContinueOnDevice" : "{{productName}}에서 실행해보세요",
+      "recovery" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
+      "restoreChoiceContinueOnDevice" : "{{productName}}에서 옵션을 선택하세요",
+      "restoreChoiceSRPTitle" : "비밀 복구 문구를 사용해 복원하세요",
+      "restoreChoiceSRPDescription" : "LEDGER가 생성한 문구를 사용해 자산에 대한 확실한 보안을 보장받으세요.",
+      "restoreChoiceRecoverTitle" : "Ledger Recover를 이용한 복구",
+      "restoreChoiceRecoverDescription" : "Ledger 계정에 로그인하고 신원을 확인하여 복구 문구 백업을 복원하세요."
     },
     "softwareChecksSteps" : {
       "title" : "하드웨어 및 소프트웨어 점검",
+      "description" : "장치에 최신 보안 기능이 있고 사용하기에 안전한지 확인하세요.",
       "doneTitle" : "{{productName}}는 정품이며 최신 상태입니다",
       "genuineCheckRequestDrawer" : {
         "iconText" : "정품 확인",
@@ -2080,8 +2125,6 @@
       "OPT_IN" : "참여",
       "OPT_OUT" : "참여하지 않음",
       "CLOSE_ACCOUNT" : "계정 닫기",
-      "SUPPLY" : "예치됨",
-      "REDEEM" : "출금됨",
       "APPROVE" : "활성화됨",
       "BOND" : "본딩",
       "UNBOND" : "언본딩",
@@ -2449,6 +2492,8 @@
       "carouselDesc" : "개인 맞춤 팁이 포함된 카드와 귀하만을 위한 최신 오퍼를 안내해드립니다.",
       "language" : "언어 표시하기",
       "languageDesc" : "Ledger Live에 표시되는 언어를 설정하세요.",
+      "dateFormat" : "날짜 형식",
+      "dateFormatDesc" : "Ledger Live 날짜 형식 설정",
       "region" : "지역",
       "regionDesc" : "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "password" : "패스워드 잠금",
@@ -2495,7 +2540,15 @@
         "bullet2" : "Ledger Live 버전, OS 지역, 언어, 지역"
       },
       "hideEmptyTokenAccounts" : "빈 토큰 계정 숨기기",
-      "hideEmptyTokenAccountsDesc" : "자산 페이지의 모든 빈 토큰 계정은 숨겨집니다."
+      "hideEmptyTokenAccountsDesc" : "자산 페이지의 모든 빈 토큰 계정은 숨겨집니다.",
+      "filterTokenOperationsZeroAmount" : "값이 0 인 경우 토큰 트랜잭션을 숨깁니다",
+      "filterTokenOperationsZeroAmountDesc" : "값이 없는 토큰 트랜잭션을 숨기는 것은 ETH, 폴리곤, BSC, 트론에 대한 잠재적인 주소 포이즌 공격을 방지 할 수 있습니다...",
+      "DateFormatModal" : {
+        "title" : "날짜 형식",
+        "default" : "기본 설정",
+        "dayFirst" : "연도/월/일",
+        "monthFirst" : "연도/월/일"
+      }
     },
     "currencies" : {
       "header" : "통화",
@@ -2646,6 +2699,10 @@
           "title" : "실험적 앱 허용",
           "description" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요."
         },
+        "debugApps" : {
+          "title" : "디버그 앱 허용",
+          "description" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요."
+        },
         "staggingUrl" : {
           "title" : "스테이징 URL에 대해 알아보기",
           "description" : "학습 페이지에서 스테이징 URL 사용하기"
@@ -2681,46 +2738,6 @@
       "desc" : "Ledger Live, Ledger 제품, 맞춤형 제안 및 시장에 대한 최신 업데이트를 받아보세요. 해제는 언제든지 가능합니다.",
       "allow" : "알림 허용",
       "later" : "다음에 결정하기"
-    }
-  },
-  "migrateAccounts" : {
-    "banner" : "Ledger Live 계정 업데이트",
-    "overview" : {
-      "headerTitle" : "계정 업데이트",
-      "title" : "Ledger Live 계정 업데이트",
-      "subtitle" : "Ledger Live의 새로운 기능을 사용하려면 사용자 계정을 업데이트해야 합니다.",
-      "notice" : "{{accountCount}}개의 계정을 업데이트할 수 없습니다. 아래 계정과 연계된 장치를 연결하세요.",
-      "notice_plural" : "{{accountCount}}개의 계정을 업데이트할 수 없습니다. 아래 계정과 연계된 장치를 연결하세요.",
-      "currency" : "1 {{currency}} 계정을 업데이트해야 합니다.",
-      "currency_plural" : "{{currency}} 계정 {{count}}개를 업데이트해야 합니다",
-      "start" : "업데이트 시작",
-      "continue" : "업데이트 계속하기"
-    },
-    "progress" : {
-      "headerTitle" : "계정 업데이트 중",
-      "pending" : {
-        "title" : "{{currency}} 업데이트 진행 중",
-        "subtitle" : "계정이 업데이트될 때까지 기다려주세요."
-      },
-      "notice" : {
-        "title" : "{{currency}} 업데이트 미완료",
-        "subtitle" : "이 장치로 업데이트할 수 있는 {{currency}} 계정이 없습니다.",
-        "cta" : "계속",
-        "ctaNextCurrency" : "{{currency}}로 계속"
-      },
-      "done" : {
-        "title" : "{{currency}} 업데이트 완료",
-        "subtitle" : "축하합니다. 귀하의 {{currency}} 계정이 업데이트되었습니다.",
-        "cta" : "계속",
-        "ctaNextCurrency" : "{{currency}}로 계속",
-        "ctaDone" : "완료"
-      },
-      "error" : {
-        "cta" : "다시 시도"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "장치 연결"
     }
   },
   "transfer" : {
@@ -2830,6 +2847,10 @@
     },
     "exchange" : {
       "title" : "매수 / 매도"
+    },
+    "stake" : {
+      "title" : "스테이킹",
+      "description" : "암호화폐 보유 자산을 더 키워보세요."
     },
     "swap" : {
       "title" : "스왑",
@@ -3298,6 +3319,10 @@
           }
         }
       }
+    },
+    "walletConnect" : {
+      "title" : "WalletConnect",
+      "description" : "지갑을 디앱에 연결합니다"
     }
   },
   "signMessage" : {
@@ -3346,7 +3371,12 @@
       "scan" : "QR 코드 스캔",
       "enterAddress" : "주소 입력",
       "input" : "주소 입력",
-      "verifyAddress" : "주소가 수령인이 공유한 것과 일치하는지 확인하세요."
+      "verifyAddress" : "주소가 수령인이 공유한 것과 일치하는지 확인하세요.",
+      "domainService" : {
+        "reverse" : "이 주소는 {{domain}}에 연결되어 있습니다",
+        "forward" : "유효한 ENS 주소",
+        "supportLink" : "이더리움 네임 서비스란?"
+      }
     },
     "amount" : {
       "available" : "총 이용 가능",
@@ -4875,6 +4905,7 @@
       "header" : "투표 ({{total}})",
       "Amount" : "금액",
       "noRewards" : "이용 가능한 보상이 없습니다",
+      "warnDisableStakingMessage" : "트론 스테이킹 기능은 현재 사용할 수 없습니다",
       "votes" : {
         "title" : "투표",
         "description" : "투표로 1인 이상의 대표를 선출하고 보상으로 소득을 올려보세요.",
@@ -5424,6 +5455,7 @@
     "warnDelegation" : "투표권 위임은 검증인으로부터 어떠한 보상도 보장하지 않습니다.",
     "to" : "to",
     "from" : "from",
+    "yield" : "추정 수익",
     "forAnEstYield" : "추산 수익",
     "yieldPerYear" : "{{yield}}/년",
     "yieldInfos" : "다음에 의해 수익율이 제공됨:",
@@ -5551,6 +5583,7 @@
     "cta" : "계속"
   },
   "exchange" : {
+    "count" : "+ {{count}} 이상",
     "buy" : {
       "screenTitle" : "암호화폐 구매",
       "tabTitle" : "구매",
@@ -5696,6 +5729,51 @@
       }
     }
   },
+  "browseWeb3" : {
+    "catalog" : {
+      "title" : "Web3 둘러보기",
+      "subtitle" : "Ledger와 완전히 통합된 Web3 살펴보기",
+      "section" : {
+        "recentlyUsed" : "최근 사용된 항목",
+        "categories" : "카테고리",
+        "clearAll" : "모두 지우기"
+      },
+      "branch" : {
+        "soon" : "곧 출시 예정",
+        "experimental" : "실험",
+        "debug" : "디버그"
+      },
+      "banner" : {
+        "title" : "Live 카탈로그 살펴보기",
+        "description" : "암호화폐 세계의 새로운 가능성을 열어보세요 장치 하나로 모든 서비스를 안전하게 이용하세요(DeFi, NFT 지원 중, 서비스 확대 예정)."
+      },
+      "twitterBanner" : {
+        "description" : "또 어떤 서비스를 만나고 싶은지 해시태그로 알려주세요",
+        "tweetText" : "다음으로 만나볼 수 있는 Ledger 앱은..."
+      },
+      "pollCTA" : {
+        "title" : "설문조사",
+        "description" : "Ledger Live에서 가장 만나고 싶은 서비스는 무엇인가요?"
+      },
+      "developerCTA" : {
+        "title" : "개발자용",
+        "description" : "Ledger Live로 애플리케이션을 통합하는 데 필요한 모든 정보입니다."
+      }
+    },
+    "disclaimer" : {
+      "title" : "외부 애플리케이션",
+      "description" : "Ledger에서 운영하지 않는 애플리케이션으로 곧 이동합니다.",
+      "legalAdvice" : "Ledger에서 운영하지 않는 애플리케이션입니다. Ledger는 해당 애플리케이션으로 인한 자금의 손실이나 서비스 품질에 대한 책임을 지지 않습니다.\n\n언제나 귀하의 장치에 표시된 정보를 신중하게 확인하세요.",
+      "legalAdviceShort" : "Ledger는 자금 손실에 대해 책임을 지지 않습니다. 항상 장치에 표시된 정보를 확인하십시오.",
+      "checkbox" : "추가 알림을 보내지 마세요.",
+      "CTA" : "계속"
+    },
+    "webPlatformPlayer" : {
+      "infoPanel" : {
+        "website" : "웹사이트"
+      }
+    }
+  },
   "platform" : {
     "catalog" : {
       "title" : "Live 앱 카탈로그",
@@ -5795,10 +5873,13 @@
       "reload" : "새로고침",
       "noCryptosFound" : "발견된 코인이 없습니다",
       "noCurrencyFound" : "통화를 찾을 수 없습니다",
+      "noAppFound" : "발견된 앱 없음",
+      "notFound" : "찾을 수 없음",
       "noSearchResultsFor" : "죄송합니다. <0>{{search}}</0>에 대한 코인을 찾지 못했습니다. 다른 키워드로 검색을 다시 시도해 주세요.",
       "noCurrencySearchResultsFor" : "죄송합니다. <0>{{search}}</0>에 대한 통화를 찾지 못했습니다. 다른 키워드로 검색을 다시 시도해 주세요.",
       "noSearchResults" : "죄송합니다. 검색 결과를 찾지 못했습니다.",
       "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
+      "retrySearchKeywordAndUrl" : "다른 키워드로 검색을 다시 시도하거나 Ledger Live 외부에서 <Link>{{search}}</Link>을 열어 주세요.",
       "retrySearchParams" : "다른 매개변수로 검색을 다시 시도해 주세요.",
       "trackFavAssets" : "즐겨찾기를 찾아보세요",
       "clickOnStarIcon" : "자산 옆에 있는 별 아이콘을 클릭하면 자산이 자동으로 즐겨찾기에 추가됩니다.",
@@ -5817,6 +5898,13 @@
     "gallery" : {
       "allNft" : "모든 NFT",
       "addNew" : "새로 추가"
+    },
+    "designedForStax" : {
+      "title" : "<0>Ledger</0><1>Stax</1>을 위한 <2>디자인</2>",
+      "drawer" : {
+        "description" : "이 NFT에는 Ledger Stax의 E 잉크 스크린에 맞게 특별히 디자인한 추가 NFT 이미지가 포함되어 있습니다.\n\n해당 NFT를 잠금 화면으로 설정하면 이 이미지가 사용됩니다.",
+        "cta" : "알겠습니다"
+      }
     },
     "viewer" : {
       "properties" : "속성",
@@ -5892,7 +5980,7 @@
     },
     "confirmCrop" : "크롭한 이미지를 확인하세요",
     "confirmContrast" : "대비를 확인하세요",
-    "nftEntryPointButtonLabel" : "Ledger Stax 잠금화면 사진으로 설정하세요",
+    "nftEntryPointButtonLabel" : "Ledger Stax 잠금화면으로 설정하세요",
     "customImage" : "커스텀 사진",
     "doThisLater" : "다음에 결정하기",
     "preview" : {
@@ -6000,65 +6088,13 @@
     "title" : "서비스",
     "subTitle" : "Ledger 서비스 관리",
     "protect" : {
-      "title" : "Protect",
       "status" : {
         "new" : {
           "title" : "신규",
-          "desc" : "복구 문구 백업",
-          "0" : {
-            "title" : "수백만 명의 Ledger 사용자가 신뢰하는"
-          },
-          "1" : {
-            "title" : "귀하의 복구 문구는 귀하의 신원과 안전하게 연결됩니다"
-          },
-          "2" : {
-            "title" : "최첨단 암호화"
-          },
-          "3" : {
-            "title" : "3개의 탈중앙화된 부분으로 분할되어 복구 문구를 절대 도난당하지 않습니다"
-          },
+          "desc" : "비밀 복구 문구 없이 지갑에 대한 액세스를 복구하세요.",
           "actions" : {
-            "learnMore" : "자세히 알아보기",
-            "alreadySubscribed" : "이미 Protect에 가입하셨나요?"
-          }
-        },
-        "confirmIdentity" : {
-          "title" : "필요한 조치",
-          "desc" : "본인의 신원을 확인하고 모든 작업을 완료하여 복구 문구를 보호하세요.",
-          "actions" : {
-            "confirmNow" : "지금 확인하기",
-            "viewDetails" : "세부사항 보기"
-          }
-        },
-        "addPayment" : {
-          "title" : "필요한 조치",
-          "desc" : "결제 세부 정보를 추가하고 모든 작업을 완료하여 복구 문구를 보호하세요.",
-          "actions" : {
-            "addNow" : "지금 추가",
-            "viewDetails" : "세부사항 보기"
-          }
-        },
-        "paymentRejected" : {
-          "title" : "결제 거부됨",
-          "desc" : "$5 결제에 실패했습니다. 결제 세부정보를 수정해주세요.",
-          "actions" : {
-            "editNow" : "지금 수정",
-            "viewDetails" : "세부사항 보기"
-          }
-        },
-        "subscriptionCanceled" : {
-          "title" : "취소된 구독",
-          "desc" : "3개월 무료 평가판 이후 구독이 종료되었습니다.",
-          "actions" : {
-            "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요",
-            "viewDetails" : "세부사항 보기"
-          }
-        },
-        "active" : {
-          "title" : "활성",
-          "desc" : "귀하의 복구 문구가 보호됩니다",
-          "actions" : {
-            "viewDetails" : "세부사항 보기"
+            "learnMore" : "그것이 제게 어떤 도움이 되나요?",
+            "alreadySubscribed" : "이미 로그인하셨나요? <LinkAccount>내 구독 보기</LinkAccount>"
           }
         }
       }
@@ -6075,6 +6111,36 @@
       "errors" : {
         "emptyEmail" : "이메일은 비워둘 수 없습니다",
         "emptyPassword" : "패스워드는 비워둘 수 없습니다"
+      }
+    }
+  },
+  "newsfeed" : {
+    "title" : "뉴스피드",
+    "poweredByCryptopanic" : "Cryptopanic 제공",
+    "noPosts" : "현재 이용 가능한 게시물이 없습니다"
+  },
+  "deviceConnect" : {
+    "title" : "장치 연결"
+  },
+  "stake" : {
+    "noFundsModal" : {
+      "title" : "구매, 스왑 또는 수령",
+      "text" : "스테이킹에 이용 가능한 {{coin}} 잔액이 충분하지 않습니다",
+      "description" : "자금이 부족하신가요? 걱정하지 마세요. Ledger Live에서 바로 암호화폐 구매, 스왑, 또는 수령이 가능합니다.",
+      "options" : {
+        "buy" : {
+          "title" : "구매",
+          "body" : "신뢰할 수 있는 공급자를 통한 구매"
+        },
+        "swap" : {
+          "title" : "스왑",
+          "label" : "인기 있는",
+          "body" : "암호화폐 간 안전한 전환"
+        },
+        "receive" : {
+          "title" : "수령",
+          "body" : "본인 지갑에서 암호화폐 수령"
+        }
       }
     }
   }

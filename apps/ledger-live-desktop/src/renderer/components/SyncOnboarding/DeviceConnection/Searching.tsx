@@ -3,7 +3,6 @@ import { Flex, Link, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useHistory } from "react-router-dom";
-
 import DeviceIllustration from "../../DeviceIllustration";
 import OnboardingNavHeader from "../../Onboarding/OnboardingNavHeader";
 import { OnboardingContext } from "../../Onboarding";

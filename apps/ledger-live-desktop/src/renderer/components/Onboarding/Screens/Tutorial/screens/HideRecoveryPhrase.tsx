@@ -33,7 +33,7 @@ export function HideRecoveryPhrase({ handleHelp }: Props) {
         text={t("onboarding.screens.tutorial.screens.hideRecoveryPhrase.neverShowToAnyone")}
       />
       <Row>
-        <Button onClick={handleHelp} Icon={Icons.HelpRegular} iconSize={18} iconPosition="right">
+        <Button onClick={handleHelp} Icon={Icons.HelpMedium} iconSize={18} iconPosition="right">
           {t("onboarding.screens.tutorial.screens.hideRecoveryPhrase.buttons.learn")}
         </Button>
       </Row>
@@ -45,7 +45,7 @@ HideRecoveryPhrase.Illustration = (
   <IllustrationContainer width="240px" height="245px" src={hideRecoverySheet} />
 );
 
-const Footer = (props: any) => {
+const Footer = (props: object) => {
   const { t } = useTranslation();
   return (
     <AsideFooter

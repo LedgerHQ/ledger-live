@@ -134,7 +134,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
       });
 
       try {
-        const transport = await TransportBLE.open(bleDevice);
+        const transport = await TransportBLE.open(bleDevice.id);
         if (unmounted.current) return;
 
         try {
@@ -262,7 +262,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
   switch (status) {
     case "scanning":
       return (
-        <Scanning // $FlowFixMe
+        <Scanning
           onSelect={onSelect}
           onError={onError}
           onTimeout={onTimeout}

@@ -11,7 +11,7 @@ import { from } from "rxjs";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { useLocale } from "../../../context/Locale";
@@ -76,7 +76,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
       )
         .toPromise()
         .then(deviceInfo => {
-          dispatch(setLastSeenDevice({ deviceInfo }));
+          dispatch(setLastSeenDevice(deviceInfo));
         });
     }
   }, [lastConnectedDevice, lastSeenDevice, dispatch]);
@@ -136,7 +136,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
           potentialDeviceLanguage !== undefined &&
           availableLanguages.includes(potentialDeviceLanguage);
 
-        // firmware version verification is not really needed here, the presence of a language id
+        // Nb firmware version verification is not really needed here, the presence of a language id
         // indicates that we are in a firmware that supports localization
         if (
           l !== currentLocale &&
@@ -172,8 +172,9 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
     next();
   }, [next]);
 
-  const deviceName =
-    lastSeenDevice && getDeviceModel(lastSeenDevice?.modelId).productName;
+  const deviceModel = getDeviceModel(
+    lastSeenDevice?.modelId || DeviceModelId.nanoX,
+  );
 
   return (
     <>
@@ -224,7 +225,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
           ) : (
             <ChangeDeviceLanguagePrompt
               language={localeIdToDeviceLanguage[currentLocale] as Language}
-              deviceName={deviceName ?? ""}
+              deviceModel={deviceModel}
               onConfirm={() => {
                 track("Page LiveLanguageChange LanguageInstallTriggered", {
                   selectedLanguage: localeIdToDeviceLanguage[currentLocale],

@@ -7,6 +7,7 @@ import { Button, Flex, Icons, Text, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
+import { TrackScreen, track } from "../../analytics";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
 import { NavigatorName, ScreenName } from "../../const";
 import videoSources from "../../../assets/videos";
@@ -17,7 +18,7 @@ const BulletItem = ({ textKey }: { textKey: string }) => {
   const { t } = useTranslation();
   return (
     <Flex flexDirection="row" mb={6} alignItems="center">
-      <Icons.CircledCheckSolidRegular color="primary.c80" />
+      <Icons.CircledCheckSolidMedium color="primary.c80" />
       <Text ml={4}>{t(textKey)}</Text>
     </Flex>
   );
@@ -38,15 +39,19 @@ const ClaimNftWelcome = () => {
   const theme = useTheme();
   const completePostOnboardingAction = useCompleteActionCallback();
 
-  const handleGoToQrScan = useCallback(
-    () =>
-      navigation.navigate(NavigatorName.ClaimNft, {
-        screen: ScreenName.ClaimNftQrScan,
-      }),
-    [navigation],
-  );
+  const handleGoToQrScan = useCallback(() => {
+    track("button_clicked", {
+      button: "Claim Ledger Market Pass",
+    });
+    navigation.navigate(NavigatorName.ClaimNft, {
+      screen: ScreenName.ClaimNftQrScan,
+    });
+  }, [navigation]);
 
   const handleSkipQrScan = useCallback(() => {
+    track("button_clicked", {
+      button: "I've already claimed my Ledger Market Pass",
+    });
     completePostOnboardingAction(PostOnboardingActionId.claimNft);
     navigation.getParent()?.goBack();
   }, [completePostOnboardingAction, navigation]);
@@ -61,6 +66,7 @@ const ClaimNftWelcome = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
+      <TrackScreen category="Beginning of Claim Ledger Market Pass" />
       <Flex
         opacity={firstVideoReadyForDisplay ? 1 : 0}
         marginBottom={-0.4 * videoDimensions.height} // the bottom part of the video is empty space so other content can be displayed there

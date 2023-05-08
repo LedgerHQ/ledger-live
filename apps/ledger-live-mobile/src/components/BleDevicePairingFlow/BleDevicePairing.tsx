@@ -1,21 +1,22 @@
 import React, { ReactNode, useCallback, useEffect } from "react";
-import { TouchableOpacity } from "react-native";
+import { Linking } from "react-native";
 import { useTheme } from "styled-components/native";
 import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevicePairing";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Flex, InfiniteLoader, Text, Button } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text, Button, Icons } from "@ledgerhq/native-ui";
 import {
   CircledCheckSolidMedium,
   CircledCrossSolidMedium,
-  CloseMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-import { LockedDeviceError } from "@ledgerhq/errors";
+import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
 import Animation from "../Animation";
-
-const TIMEOUT_AFTER_PAIRED_MS = 2000;
+import { TrackScreen } from "../../analytics";
+import GenericErrorView from "../GenericErrorView";
+import { Wrapper } from "../DeviceAction/rendering";
+import { urls } from "../../config/urls";
 
 export type BleDevicePairingProps = {
   onPaired: (device: Device) => void;
@@ -50,38 +51,32 @@ const BleDevicePairing = ({
     deviceId: deviceToPair.deviceId,
   });
 
+  const onOpenHelp = useCallback(() => {
+    Linking.openURL(urls.errors.PairingFailed);
+  }, []);
+
   useEffect(() => {
     if (isPaired) {
-      // To display the success to the user
-      setTimeout(() => {
-        onPaired(deviceToPair);
-      }, TIMEOUT_AFTER_PAIRED_MS);
+      onPaired(deviceToPair);
     }
   }, [isPaired, deviceToPair, onPaired]);
-
-  const handleClose = useCallback(() => {
-    if (isPaired) {
-      onPaired(deviceToPair);
-    } else {
-      onRetry();
-    }
-  }, [deviceToPair, isPaired, onPaired, onRetry]);
 
   let content: ReactNode;
 
   if (isPaired) {
     content = (
       <>
+        <TrackScreen category="BT pairing successful" />
         <Flex
           alignItems="center"
           justifyContent="center"
           p={1}
           borderWidth={2}
           borderRadius="9999px"
-          borderColor={colors.success.c80}
+          borderColor={colors.success.c40}
           mb={9}
         >
-          <CircledCheckSolidMedium color={colors.success.c80} size={48} />
+          <CircledCheckSolidMedium color={colors.success.c40} size={48} />
         </Flex>
         <Text mb={4} textAlign="center" variant="h4" fontWeight="semiBold">
           {t("blePairingFlow.pairing.success.title", {
@@ -101,11 +96,38 @@ const BleDevicePairing = ({
         />
       </>
     );
+  } else if (pairingError instanceof PeerRemovedPairing) {
+    content = (
+      <Wrapper style={{ width: "100%" }}>
+        <GenericErrorView
+          error={pairingError}
+          withDescription
+          hasExportLogButton={false}
+          withIcon
+          withHelp={false}
+        />
+        <Flex mt={30} flexDirection="column" style={{ width: "100%" }}>
+          <Button
+            type="main"
+            iconPosition="right"
+            Icon={Icons.ExternalLinkMedium}
+            onPress={onOpenHelp}
+            mb={0}
+          >
+            <Trans i18nKey="help.helpCenter.desc" />
+          </Button>
+          <Button onPress={onRetry} mt={6}>
+            <Trans i18nKey="common.retry" />
+          </Button>
+        </Flex>
+      </Wrapper>
+    );
   } else if (pairingError) {
+    // TODO refactor this into the generic error rendering when possible.
     let title;
     let subtitle;
 
-    if (pairingError instanceof LockedDeviceError) {
+    if ((pairingError as unknown) instanceof LockedDeviceError) {
       title = t("blePairingFlow.pairing.error.lockedDevice.title");
       subtitle = t("blePairingFlow.pairing.error.lockedDevice.subtitle", {
         productName,
@@ -116,11 +138,13 @@ const BleDevicePairing = ({
         productName,
       });
     }
+
     content = (
       <Flex>
+        <TrackScreen category="BT failed to pair" />
         <Flex flex={1} alignItems="center" justifyContent="center">
           <Flex alignItems="center" justifyContent="center" mb={8}>
-            <CircledCrossSolidMedium color={colors.error.c80} size={56} />
+            <CircledCrossSolidMedium color={colors.error.c40} size={56} />
           </Flex>
           <Text mb={4} textAlign="center" variant="h4" fontWeight="semiBold">
             {title}
@@ -159,11 +183,6 @@ const BleDevicePairing = ({
 
   return (
     <Flex flex={1}>
-      <Flex flexDirection="row" justifyContent="flex-end">
-        <TouchableOpacity onPress={handleClose}>
-          <CloseMedium size={24} />
-        </TouchableOpacity>
-      </Flex>
       <Flex flex={1} px={10} pt={36} alignItems="center">
         {content}
       </Flex>

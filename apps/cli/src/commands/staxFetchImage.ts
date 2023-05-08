@@ -13,7 +13,7 @@ const exec = async (opts: staxFetchImageJobOpts) => {
   const { device: deviceId = "", fileOutput } = opts;
 
   await new Promise<void>((p) =>
-    staxFetchImage({ deviceId }).subscribe(
+    staxFetchImage({ deviceId, request: {} }).subscribe(
       (event) => {
         if (event.type === "imageFetched") {
           const { hexImage } = event;

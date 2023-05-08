@@ -7,7 +7,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import logger from "~/logger";
+import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
 import Stepper, { Step as TypedStep } from "~/renderer/components/Stepper";
 import { ModalStatus } from "~/renderer/screens/manager/FirmwareUpdate/types";
@@ -54,10 +54,12 @@ type Props = {
   onClose: (proceedToAppReinstall?: boolean) => void;
   firmware?: FirmwareUpdateContext;
   stepId: StepId;
-  error?: Error;
+  error?: Error | null;
   deviceModelId: DeviceModelId;
   deviceInfo: DeviceInfo;
   setFirmwareUpdateOpened: (isOpen: boolean) => void;
+  // This is bad practice but it seems to be needed since we spread additional props in the stepper and down below…
+  [key: string]: unknown;
 };
 
 const HookMountUnmount = ({ onMountUnmount }: { onMountUnmount: (m: boolean) => void }) => {
@@ -216,7 +218,6 @@ const UpdateModal = ({
       backdropColor
       onHide={handleReset}
       isOpened={status === "install"}
-      refocusWhenChange={stateStepId}
       preventBackdropClick={!["finish", "resetDevice"].includes(stepId) && !error}
       render={() => (
         <Stepper

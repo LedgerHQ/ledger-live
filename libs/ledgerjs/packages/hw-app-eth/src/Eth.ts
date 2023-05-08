@@ -17,9 +17,21 @@
 // FIXME drop:
 import type Transport from "@ledgerhq/hw-transport";
 import { BigNumber } from "bignumber.js";
-import { decodeTxInfo, hexBuffer, maybeHexBuffer, splitPath } from "./utils";
 // NB: these are temporary import for the deprecated fallback mechanism
-import { LedgerEthTransactionResolution, LoadConfig } from "./services/types";
+import {
+  LedgerEthTransactionResolution,
+  LoadConfig,
+  ResolutionConfig,
+} from "./services/types";
+import { log } from "@ledgerhq/logs";
+import {
+  decodeTxInfo,
+  hexBuffer,
+  intAsHexBytes,
+  maybeHexBuffer,
+  splitPath,
+} from "./utils";
+import { domainResolutionFlow } from "./modules/Domains";
 import ledgerService from "./services/ledger";
 import {
   EthAppNftNotSupported,
@@ -34,6 +46,7 @@ import {
 } from "./modules/EIP712";
 
 export { ledgerService, isEIP712Message, getFiltersForMessage };
+export * from "./utils";
 
 export type StarkQuantizationType =
   | "eth"
@@ -85,8 +98,13 @@ export default class Eth {
     transport.decorateAppAPIMethods(
       this,
       [
+        // "getChallange",                  | ⚠️
+        // "provideERC20TokenInformation",  | Those methods are not decorated as they're
+        // "setExternalPlugin",             | being used inside of the `signTransaction` flow
+        // "setPlugin",                     | and shouldn't be locking the transport
+        // "provideDomainName",             | ⚠️
+        // "provideNFTInformation",         |
         "getAddress",
-        "provideERC20TokenInformation",
         "signTransaction",
         "signPersonalMessage",
         "getAppConfiguration",
@@ -102,8 +120,6 @@ export default class Eth {
         "starkUnsafeSign",
         "eth2GetPublicKey",
         "eth2SetWithdrawalIndex",
-        "setExternalPlugin",
-        "setPlugin",
         "getEIP1024PublicEncryptionKey",
         "getEIP1024SharedSecret",
       ],
@@ -217,20 +233,30 @@ export default class Eth {
 
     // provide to the device resolved information to make it clear sign the signature
     if (resolution) {
+      for (const domainDescriptor of resolution.domains) {
+        await domainResolutionFlow(this, domainDescriptor).catch((e) => {
+          // error during the domain flow shouldn't be blocking the signature in case of failure
+          log("error", "domainResolutionFlow failed", {
+            domainDescriptor,
+            error: e,
+          });
+        });
+      }
+
       for (const plugin of resolution.plugin) {
-        await setPlugin(this.transport, plugin);
+        await this.setPlugin(plugin);
       }
+
       for (const { payload, signature } of resolution.externalPlugin) {
-        await setExternalPlugin(this.transport, payload, signature);
+        await this.setExternalPlugin(payload, signature);
       }
+
       for (const nft of resolution.nfts) {
-        await provideNFTInformation(this.transport, Buffer.from(nft, "hex"));
+        await this.provideNFTInformation(nft);
       }
+
       for (const data of resolution.erc20Tokens) {
-        await provideERC20TokenInformation(
-          this.transport,
-          Buffer.from(data, "hex")
-        );
+        await this.provideERC20TokenInformation(data);
       }
     }
 
@@ -304,6 +330,41 @@ export default class Eth {
     const r = response.slice(1, 1 + 32).toString("hex");
     const s = response.slice(1 + 32, 1 + 32 + 32).toString("hex");
     return { v, r, s };
+  }
+
+  /**
+   * Helper to get resolution and signature of a transaction in a single method
+   * 
+   * @param path: the BIP32 path to sign the transaction on
+   * @param rawTxHex: the raw ethereum transaction in hexadecimal to sign
+   * @param resolutionConfig: configuration about what should be clear signed in the transaction
+   * @param throwOnError: optional parameter to determine if a failing resolution of the transaction should throw an error or not
+   * @example
+   const tx = "e8018504e3b292008252089428ee52a8f3d6e5d15f8b131996950d7f296c7952872bd72a2487400080"; // raw tx to sign
+   const result = eth.clearSignTransaction("44'/60'/0'/0/0", tx, { erc20: true, externalPlugins: true, nft: true});
+   console.log(result);
+   */
+  async clearSignTransaction(
+    path: string,
+    rawTxHex: string,
+    resolutionConfig: ResolutionConfig,
+    throwOnError = false
+  ): Promise<{ r: string; s: string; v: string }> {
+    const resolution = await ledgerService
+      .resolveTransaction(rawTxHex, this.loadConfig, resolutionConfig)
+      .catch((e) => {
+        console.warn(
+          "an error occurred in resolveTransaction => fallback to blind signing: " +
+            String(e)
+        );
+
+        if (throwOnError) {
+          throw e;
+        }
+        return null;
+      });
+
+    return this.signTransaction(path, rawTxHex, resolution);
   }
 
   /**
@@ -471,6 +532,39 @@ export default class Eth {
       fullImplem,
       this.loadConfig
     );
+  }
+
+  /**
+   * Method returning a 4 bytes TLV challenge as an hexa string
+   *
+   * @returns {Promise<string>}
+   */
+  async getChallenge(): Promise<string> {
+    enum APDU_FIELDS {
+      CLA = 0xe0,
+      INS = 0x20,
+      P1 = 0x00,
+      P2 = 0x00,
+      LC = 0x00,
+    }
+
+    return this.transport
+      .send(APDU_FIELDS.CLA, APDU_FIELDS.INS, APDU_FIELDS.P1, APDU_FIELDS.P2)
+      .then((res) => {
+        const [, fourBytesChallenge, statusCode] =
+          new RegExp("(.*)(.{4}$)").exec(res.toString("hex")) || [];
+
+        if (statusCode !== "9000") {
+          throw new Error(
+            `An error happened while generating the challenge. Status code: ${statusCode}`
+          );
+        }
+        return `0x${fourBytesChallenge}`;
+      })
+      .catch((e) => {
+        log("error", "couldn't request a challenge", e);
+        throw e;
+      });
   }
 
   /**
@@ -1213,106 +1307,138 @@ export default class Eth {
       });
   }
 
-  provideERC20TokenInformation({ data }: { data: Buffer }): Promise<boolean> {
-    return provideERC20TokenInformation(this.transport, data);
-  }
-
-  setExternalPlugin(
-    pluginName: string,
-    contractAddress: string,
-    selector: string
-  ): Promise<boolean> {
-    console.warn(
-      "hw-app-eth: eth.setExternalPlugin is deprecated. signTransaction solves this for you when providing it in `resolution`."
+  /**
+   * provides a trusted description of an ERC 20 token to associate a contract address with a ticker and number of decimals.
+   *
+   * @param data stringified buffer of ERC20 signature
+   * @returns a boolean
+   */
+  provideERC20TokenInformation(data: string): Promise<boolean> {
+    const buffer = Buffer.from(data, "hex");
+    return this.transport.send(0xe0, 0x0a, 0x00, 0x00, buffer).then(
+      () => true,
+      (e) => {
+        if (e && e.statusCode === 0x6d00) {
+          // this case happen for older version of ETH app, since older app version had the ERC20 data hardcoded, it's fine to assume it worked.
+          // we return a flag to know if the call was effective or not
+          return false;
+        }
+        throw e;
+      }
     );
-    return setExternalPlugin(this.transport, pluginName, selector);
   }
 
+  /**
+   * provides the name of a trusted binding of a plugin with a contract address and a supported method selector. This plugin will be called to interpret contract data in the following transaction signing command.
+   *
+   * @param payload external plugin data
+   * @param signature signature for the plugin
+   * @returns a boolean
+   */
+  setExternalPlugin(payload: string, signature: string): Promise<boolean> {
+    const payloadBuffer = Buffer.from(payload, "hex");
+    const signatureBuffer = Buffer.from(signature, "hex");
+    const buffer = Buffer.concat([payloadBuffer, signatureBuffer]);
+    return this.transport.send(0xe0, 0x12, 0x00, 0x00, buffer).then(
+      () => true,
+      (e) => {
+        if (e && e.statusCode === 0x6a80) {
+          // this case happen when the plugin name is too short or too long
+          return false;
+        } else if (e && e.statusCode === 0x6984) {
+          // this case happen when the plugin requested is not installed on the device
+          return false;
+        } else if (e && e.statusCode === 0x6d00) {
+          // this case happen for older version of ETH app
+          return false;
+        }
+        throw e;
+      }
+    );
+  }
+
+  /**
+   * provides the name of a trusted binding of a plugin with a contract address and a supported method selector. This plugin will be called to interpret contract data in the following transaction signing command.
+   *
+   * @param data stringified buffer of plugin signature
+   * @returns a boolean
+   */
   setPlugin(data: string): Promise<boolean> {
-    console.warn(
-      "hw-app-eth: eth.setPlugin is deprecated. signTransaction solves this for you when providing it in `resolution`."
+    const buffer = Buffer.from(data, "hex");
+    return this.transport.send(0xe0, 0x16, 0x00, 0x00, buffer).then(
+      () => true,
+      (e) => {
+        if (e && e.statusCode === 0x6a80) {
+          // this case happen when the plugin name is too short or too long
+          return false;
+        } else if (e && e.statusCode === 0x6984) {
+          // this case happen when the plugin requested is not installed on the device
+          return false;
+        } else if (e && e.statusCode === 0x6d00) {
+          // this case happen for older version of ETH app
+          return false;
+        }
+        throw e;
+      }
     );
-    return setPlugin(this.transport, data);
   }
-}
 
-// internal helpers
-
-function provideERC20TokenInformation(
-  transport: Transport,
-  data: Buffer
-): Promise<boolean> {
-  return transport.send(0xe0, 0x0a, 0x00, 0x00, data).then(
-    () => true,
-    (e) => {
-      if (e && e.statusCode === 0x6d00) {
-        // this case happen for older version of ETH app, since older app version had the ERC20 data hardcoded, it's fine to assume it worked.
-        // we return a flag to know if the call was effective or not
-        return false;
+  /**
+   *  provides a trusted description of an NFT to associate a contract address with a collectionName.
+   *
+   * @param data stringified buffer of the NFT description
+   * @returns a boolean
+   */
+  provideNFTInformation(data: string): Promise<boolean> {
+    const buffer = Buffer.from(data, "hex");
+    return this.transport.send(0xe0, 0x14, 0x00, 0x00, buffer).then(
+      () => true,
+      (e) => {
+        if (e && e.statusCode === 0x6d00) {
+          // older version of ETH app => error because we don't allow blind sign when NFT is explicitly requested to be resolved.
+          throw new EthAppNftNotSupported();
+        }
+        throw e;
       }
-      throw e;
-    }
-  );
-}
+    );
+  }
 
-function provideNFTInformation(
-  transport: Transport,
-  data: Buffer
-): Promise<boolean> {
-  return transport.send(0xe0, 0x14, 0x00, 0x00, data).then(
-    () => true,
-    (e) => {
-      if (e && e.statusCode === 0x6d00) {
-        // older version of ETH app => error because we don't allow blind sign when NFT is explicitly requested to be resolved.
-        throw new EthAppNftNotSupported();
-      }
-      throw e;
+  /**
+   * provides a domain name (like ENS) to be displayed during transactions in place of the address it is associated to. It shall be run just before a transaction involving the associated address that would be displayed on the device.
+   *
+   * @param data an stringied buffer of some TLV encoded data to represent the domain
+   * @returns a boolean
+   */
+  async provideDomainName(data: string): Promise<boolean> {
+    enum APDU_FIELDS {
+      CLA = 0xe0,
+      INS = 0x22,
+      P1_FIRST_CHUNK = 0x01,
+      P1_FOLLOWING_CHUNK = 0x00,
+      P2 = 0x00,
     }
-  );
-}
+    const buffer = Buffer.from(data, "hex");
+    const payload = Buffer.concat([
+      Buffer.from(intAsHexBytes(buffer.length, 2), "hex"),
+      buffer,
+    ]);
 
-function setExternalPlugin(
-  transport: Transport,
-  payload: string,
-  signature: string
-): Promise<boolean> {
-  const payloadBuffer = Buffer.from(payload, "hex");
-  const signatureBuffer = Buffer.from(signature, "hex");
-  const buffer = Buffer.concat([payloadBuffer, signatureBuffer]);
-  return transport.send(0xe0, 0x12, 0x00, 0x00, buffer).then(
-    () => true,
-    (e) => {
-      if (e && e.statusCode === 0x6a80) {
-        // this case happen when the plugin name is too short or too long
-        return false;
-      } else if (e && e.statusCode === 0x6984) {
-        // this case happen when the plugin requested is not installed on the device
-        return false;
-      } else if (e && e.statusCode === 0x6d00) {
-        // this case happen for older version of ETH app
-        return false;
-      }
-      throw e;
+    const bufferChunks = new Array(Math.ceil(payload.length / 256))
+      .fill(null)
+      .map((_, i) => payload.slice(i * 255, (i + 1) * 255));
+    for (const chunk of bufferChunks) {
+      const isFirstChunk = chunk === bufferChunks[0];
+      await this.transport.send(
+        APDU_FIELDS.CLA,
+        APDU_FIELDS.INS,
+        isFirstChunk
+          ? APDU_FIELDS.P1_FIRST_CHUNK
+          : APDU_FIELDS.P1_FOLLOWING_CHUNK,
+        APDU_FIELDS.P2,
+        chunk
+      );
     }
-  );
-}
 
-function setPlugin(transport: Transport, data: string): Promise<boolean> {
-  const buffer = Buffer.from(data, "hex");
-  return transport.send(0xe0, 0x16, 0x00, 0x00, buffer).then(
-    () => true,
-    (e) => {
-      if (e && e.statusCode === 0x6a80) {
-        // this case happen when the plugin name is too short or too long
-        return false;
-      } else if (e && e.statusCode === 0x6984) {
-        // this case happen when the plugin requested is not installed on the device
-        return false;
-      } else if (e && e.statusCode === 0x6d00) {
-        // this case happen for older version of ETH app
-        return false;
-      }
-      throw e;
-    }
-  );
+    return true;
+  }
 }

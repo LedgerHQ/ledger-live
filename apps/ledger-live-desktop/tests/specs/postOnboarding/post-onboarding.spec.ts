@@ -4,7 +4,8 @@ import { expect } from "@playwright/test";
 import { SettingsPage } from "../../models/SettingsPage";
 import { Layout } from "../../models/Layout";
 import { PostOnboarding } from "../../models/PostOnboarding";
-import { padStart } from "lodash";
+import { PortfolioPage } from "../../models/PortfolioPage";
+import padStart from "lodash/padStart";
 
 test.use({
   userdata: "1AccountBTC1AccountETHwCarousel", // to have a non empty portfolio page and potentially detect layout issues with the post onboarding banner
@@ -12,12 +13,12 @@ test.use({
   featureFlags: { customImage: { enabled: true } },
 });
 
-test("PostOnboarding", async ({ page }) => {
+let screenshotIndex = 0;
+
+test("PostOnboarding state logic", async ({ page }) => {
   const settingsPage = new SettingsPage(page);
   const layout = new Layout(page);
   const postOnboarding = new PostOnboarding(page);
-
-  let screenshotIndex = 0;
 
   /**
    * Allows to easily navigate between screenshots in their order of execution.
@@ -35,7 +36,7 @@ test("PostOnboarding", async ({ page }) => {
     await layout.goToSettings();
     await settingsPage.goToExperimentalTab();
     await postOnboarding.waitForLaunch();
-    await postOnboarding.navigateToPostOnboardingScreen();
+    await postOnboarding.startNewMockPostOnboarding();
     await expect(page).toHaveScreenshot(`${generateScreenshotPrefix()}postonboarding-screen.png`);
   });
 

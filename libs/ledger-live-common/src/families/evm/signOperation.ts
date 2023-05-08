@@ -1,32 +1,12 @@
-import {
-  Account,
-  AccountBridge,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
-import { ethers } from "ethers";
 import { Observable } from "rxjs";
 import Eth, { ledgerService } from "@ledgerhq/hw-app-eth";
+import { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
+import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { prepareForSignOperation } from "./prepareTransaction";
-import { transactionToEthersTransaction } from "./adapters";
+import { getSerializedTransaction } from "./transaction";
 import { Transaction as EvmTransaction } from "./types";
 import { withDevice } from "../../hw/deviceAccess";
-
-/**
- * Serialize a Ledger Live transaction into an hex string
- */
-export const getSerializedTransaction = (
-  account: Account,
-  tx: EvmTransaction,
-  signature?: Partial<ethers.Signature>
-): string => {
-  const unsignedEthersTransaction = transactionToEthersTransaction(tx);
-
-  return ethers.utils.serializeTransaction(
-    unsignedEthersTransaction,
-    signature as ethers.Signature
-  );
-};
 
 /**
  * Transforms the ECDSA signature paremeter v hexadecimal string received
@@ -66,30 +46,34 @@ export const signOperation: AccountBridge<EvmTransaction>["signOperation"] = ({
     (transport) =>
       new Observable((o) => {
         async function main() {
-          o.next({
-            type: "device-signature-requested",
-          });
-
           const preparedTransaction = await prepareForSignOperation(
             account,
             transaction
           );
-          const serializedTxHexString = getSerializedTransaction(
-            account,
-            preparedTransaction
-          ).slice(2); // Remove 0x prefix
+          const serializedTxHexString =
+            getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
 
-          // Instanciate Eth app bindings
-          const eth = new Eth(transport);
+          // Configure type of resolutions necessary for the clear signing
+          const resolutionConfig: ResolutionConfig = {
+            externalPlugins: true,
+            erc20: true,
+            domains: transaction.recipientDomain
+              ? [transaction.recipientDomain]
+              : [],
+          };
           // Look for resolutions for external plugins and ERC20
           const resolution = await ledgerService.resolveTransaction(
             serializedTxHexString,
-            eth.loadConfig,
-            {
-              externalPlugins: true,
-              erc20: true,
-            }
+            {},
+            resolutionConfig
           );
+
+          o.next({
+            type: "device-signature-requested",
+          });
+
+          // Instanciate Eth app bindings
+          const eth = new Eth(transport);
           // Request signature on the nano
           const sig = await eth.signTransaction(
             account.freshAddressPath,
@@ -102,7 +86,6 @@ export const signOperation: AccountBridge<EvmTransaction>["signOperation"] = ({
           const { chainId = 0 } = account.currency.ethereumLikeInfo || {};
           // Create a new serialized tx with the signature now
           const signature = await getSerializedTransaction(
-            account,
             preparedTransaction,
             {
               r: "0x" + sig.r,

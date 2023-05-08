@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/icons-ui",
   "description": "Icons used by the Ledger design system.",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
     },
     "./native/": "./native/",
     "./native/*": "./native/*.js",
+    "./native": "./native/index.js",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -52,7 +53,7 @@
   "devDependencies": {
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-svgo": "^5.5.0",
-    "@types/react": "^17.0.37",
+    "@types/react": "^17.0.53",
     "@types/react-dom": "^17.0.11",
     "@types/react-native": "^0.65.27",
     "@types/styled-components": "^5.1.14",
@@ -61,9 +62,10 @@
     "camelcase": "^6.2.1",
     "esbuild": "^0.13.15",
     "glob": "^7.2.0",
-    "react-native-svg": "^12.1.1",
-    "rimraf": "^4.1.2",
-    "tiny-glob": "^0.2.9",
-    "typescript": "^4.8.3"
+    "react": "^18",
+    "react-native-svg": "13.4.0",
+    "rimraf": "^4.4.1",
+    "styled-system": "^5.1.5",
+    "tiny-glob": "^0.2.9"
   }
 }

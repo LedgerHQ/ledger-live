@@ -37,12 +37,10 @@ export type Loadable<T> = {
   value: T | null;
 };
 
-export type AppPlatform =
-  | "desktop" // == windows || mac || linux
-  | "mobile" // == android || ios
-  | "all";
+export type AppPlatform = "ios" | "android" | "desktop";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
+export type Visibility = "complete" | "searchable" | "deep";
 
 export type AppPermission = {
   method: string;
@@ -51,6 +49,7 @@ export type AppPermission = {
 
 export type LiveAppManifest = {
   id: string;
+  author?: string;
   private?: boolean;
   name: string;
   url: string | URL;
@@ -58,7 +57,7 @@ export type LiveAppManifest = {
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;
-  platform: AppPlatform;
+  platforms: AppPlatform[];
   apiVersion: string;
   manifestVersion: string;
   branch: AppBranch;
@@ -66,6 +65,7 @@ export type LiveAppManifest = {
   domains: string[];
   categories: string[];
   currencies: string[] | "*";
+  visibility: Visibility;
   content: {
     shortDescription: TranslatableString;
     description: TranslatableString;

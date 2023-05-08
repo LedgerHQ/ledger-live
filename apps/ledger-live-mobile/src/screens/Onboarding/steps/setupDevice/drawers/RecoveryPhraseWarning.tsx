@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Icons, ScrollContainer } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { ModalHeader } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal";
+import { ModalHeader } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import { StackNavigatorProps } from "../../../../../components/RootNavigator/types/helpers";
 import { OnboardingCarefulWarningParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
 import { ScreenName } from "../../../../../const";
@@ -27,7 +27,7 @@ const OnboardingRecoveryPhraseWarning = () => {
       <ScrollContainer flex={1}>
         <ModalHeader
           Icon={Icons.WarningMedium}
-          iconColor={"warning.c100"}
+          iconColor={"warning.c50"}
           title={t(
             "onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.title",
           )}

@@ -31,10 +31,10 @@ runs:
   steps:
     - uses: pnpm/action-setup@v2
       with:
-        version: latest
+        version: 8.1
     - uses: actions/setup-node@v3
       with:
-        node-version: 16.x
+        node-version: 18
         cache: pnpm
         cache-dependency-path: "**/pnpm-lock.yaml"
     - name: pull docker image
@@ -42,7 +42,7 @@ runs:
       shell: bash
     - name: install and build
       run: |
-        pnpm i --filter="live-cli..." --filter="ledger-live" --frozen-lockfile
+        pnpm i --filter="live-cli..." --filter="ledger-live"
         pnpm build:llc
       shell: bash
     - uses: 8BitJonny/gh-get-current-pr@2.1.1

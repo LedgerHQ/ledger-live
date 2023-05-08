@@ -47,6 +47,8 @@ export const urls = {
   erc20:
     "https://support.ledger.com/hc/en-us/articles/4404389645329-Manage-ERC20-tokens?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_erc20",
   errors: {
+    PeerRemovedPairing:
+      "https://support.ledger.com/hc/en-us/articles/360025864773-Fix-Bluetooth-pairing-issues?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=pairing_failed",
     PairingFailed:
       "https://support.ledger.com/hc/en-us/articles/360025864773?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=pairing_failed",
     SyncError:
@@ -63,13 +65,15 @@ export const urls = {
   delegation:
     "https://www.ledger.com/staking-tezos?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=delegation_tezos",
   appSupport:
-    "https://support.ledger.com/hc/en-us/articles/360011454079-What-are-apps-and-accounts-?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=appsupport",
+    "https://support.ledger.com/hc/en-us/sections/4404369637521-Crypto-assets?utm_source=ledger_live_mobile&utm_medium=self_referral&docs=true",
   goToManager:
     "https://support.ledger.com/hc/en-us/articles/4404382258961-Install-uninstall-and-update-apps?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=gotomanager",
   addAccount:
     "https://support.ledger.com/hc/en-us/articles/4404389482641?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=add_account",
   tronStaking:
     "https://www.ledger.com/staking-tron?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=tron",
+  TronStakingDisable:
+    "https://support.ledger.com/hc/en-us/articles/9949980566173?support=true",
   supportLinkByTokenType: {
     erc20:
       "https://support.ledger.com/hc/en-us/articles/4404389645329-Manage-ERC20-tokens?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow",
@@ -141,10 +145,6 @@ export const urls = {
     developerPage:
       "https://developers.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=catalog",
   },
-  compound:
-    "https://support.ledger.com/hc/en-us/articles/4404389208721-Lend-crypto-assets-with-Ledger-Live?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compound",
-  compoundTnC:
-    "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compoundTnC",
   approvedOperation:
     "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compoundTX",
   recoveryPhraseInfo:
@@ -210,5 +210,10 @@ export const urls = {
     howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
   },
   lnxFirmwareUpdate:
-    "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+    "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",
+  recoverSources: {
+    myLedger: "ledgerlive://myledger",
+  },
+  domainService:
+    "https://support.ledger.com/hc/articles/9710787581469?docs=true",
 };

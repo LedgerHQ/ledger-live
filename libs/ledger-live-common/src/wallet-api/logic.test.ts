@@ -20,7 +20,7 @@ import BigNumber from "bignumber.js";
 
 import * as converters from "./converters";
 import * as signMessage from "../hw/signMessage/index";
-import { DerivationMode } from "../derivation";
+import { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingAPI } from "./tracking";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
@@ -566,7 +566,7 @@ function createAppManifest(id = "1"): AppManifest {
     homepageUrl: "https://www.ledger.com",
     supportUrl: "https://www.ledger.com",
     icon: null,
-    platform: "all",
+    platforms: ["ios", "android", "desktop"],
     apiVersion: "1.0.0",
     manifestVersion: "1.0.0",
     branch: "debug",
@@ -583,6 +583,7 @@ function createAppManifest(id = "1"): AppManifest {
     },
     permissions: [],
     domains: [],
+    visibility: "complete",
   };
 }
 

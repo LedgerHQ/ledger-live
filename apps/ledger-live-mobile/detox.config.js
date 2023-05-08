@@ -13,6 +13,7 @@ module.exports = {
     jest: {
       setupTimeout: 500000,
     },
+    retries: 1,
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
@@ -34,13 +35,13 @@ module.exports = {
     },
     "ios.staging": {
       type: "ios.app",
-      build: `export RCT_NO_LAUNCH_PACKAGER=true && export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Staging -sdk iphonesimulator -derivedDataPath ios/build`,
+      build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Staging -sdk iphonesimulator -derivedDataPath ios/build`,
       binaryPath:
         "ios/build/Build/Products/Staging-iphonesimulator/ledgerlivemobile.app",
     },
     "ios.release": {
       type: "ios.app",
-      build: `export RCT_NO_LAUNCH_PACKAGER=true && export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
+      build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
       binaryPath:
         "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
     },

@@ -1,5 +1,5 @@
 import type { Account, Operation, SubAccount } from "@ledgerhq/types-live";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 export function shouldRetainPendingOperation(
   account: Account,
   op: Operation
@@ -28,7 +28,10 @@ const appendPendingOp = (ops: Operation[], op: Operation) => {
   return filtered;
 };
 
-export const addPendingOperation = (account: Account, operation: Operation) => {
+export const addPendingOperation = (
+  account: Account,
+  operation: Operation
+): Account => {
   const accountCopy = { ...account };
   const { subOperations } = operation;
   const { subAccounts } = account;

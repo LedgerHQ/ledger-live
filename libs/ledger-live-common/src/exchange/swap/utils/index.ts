@@ -161,7 +161,7 @@ export const shouldShowKYCBanner = ({
   kycStatus,
 }: {
   provider?: string;
-  kycStatus: ValidKYCStatus | "rejected";
+  kycStatus?: ValidKYCStatus | "rejected";
 }): boolean => {
   if (!provider) {
     return false;

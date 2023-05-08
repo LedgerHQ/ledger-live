@@ -1,7 +1,7 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { estimateGasLimit } from "./gas";
-import * as ethereumApi from "../../api/Ethereum";
+import * as ethereumApi from "./api";
 
 const api = {
   getDryRunGasLimit: jest.fn(),
@@ -10,7 +10,7 @@ const api = {
 
 const MULTIPLIER = 2.2;
 
-import type { API } from "../../api/Ethereum";
+import type { API } from "./api";
 import { setEnv } from "../../env";
 
 describe("estimateGasLimit", () => {

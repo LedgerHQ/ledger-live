@@ -1,4 +1,5 @@
-import { Subject } from "rxjs";
+import { Subject, Observable } from "rxjs";
+import TransportNodeHidSingleton from "@ledgerhq/hw-transport-node-hid-singleton";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { DisconnectedDeviceDuringOperation, serializeError } from "@ledgerhq/errors";
 import {
@@ -6,23 +7,20 @@ import {
   transportExchangeChannel,
   transportExchangeBulkChannel,
   transportOpenChannel,
+  transportExchangeBulkUnsubscribeChannel,
+  transportListenChannel,
 } from "~/config/transportChannels";
+import { MessagesMap } from "./types";
 
 type APDUMessage =
   | { type: "exchange"; apduHex: string; requestId: string }
-  | { type: "exchangeBulk"; apdusHex: string[]; requestId: string };
+  | { type: "exchangeBulk"; apdusHex: string[]; requestId: string }
+  | { type: "exchangeBulkUnsubscribe"; requestId: string };
 
 const transports = new Map<string, Subject<APDUMessage>>();
 const transportsBulkSubscriptions = new Map<string, { unsubscribe: () => void }>();
-// TODO transportsBulkSubscriptions isn't used yet, but I think we need to propagate the information of an interruption.
 
-export const transportOpen = ({
-  data,
-  requestId,
-}: {
-  data: { descriptor: string };
-  requestId: string;
-}) => {
+export const transportOpen = ({ data, requestId }: MessagesMap["transport:open"]) => {
   const subjectExist = transports.get(data.descriptor);
 
   const onEnd = () => {
@@ -72,7 +70,7 @@ export const transportOpen = ({
             error: error => {
               process.send?.({
                 type: transportExchangeBulkChannel,
-                error: serializeError(error),
+                error: serializeError(error as Parameters<typeof serializeError>[0]),
                 requestId: e.requestId,
               });
             },
@@ -84,6 +82,12 @@ export const transportOpen = ({
             },
           });
           transportsBulkSubscriptions.set(e.requestId, subscription);
+        } else if (e.type === "exchangeBulkUnsubscribe") {
+          const subscription = transportsBulkSubscriptions.get(e.requestId);
+          if (subscription) {
+            subscription.unsubscribe();
+            transportsBulkSubscriptions.delete(e.requestId);
+          }
         }
       },
       complete: () => {
@@ -107,13 +111,7 @@ export const transportOpen = ({
   });
 };
 
-export const transportExchange = ({
-  data,
-  requestId,
-}: {
-  data: { descriptor: string; apduHex: string };
-  requestId: string;
-}) => {
+export const transportExchange = ({ data, requestId }: MessagesMap["transport:exchange"]) => {
   const subject = transports.get(data.descriptor);
   if (!subject) {
     process.send?.({
@@ -131,10 +129,7 @@ export const transportExchange = ({
 export const transportExchangeBulk = ({
   data,
   requestId,
-}: {
-  data: { descriptor: string; apdusHex: string[] };
-  requestId: string;
-}) => {
+}: MessagesMap["transport:exchangeBulk"]) => {
   const subject = transports.get(data.descriptor);
   if (!subject) {
     process.send?.({
@@ -150,13 +145,58 @@ export const transportExchangeBulk = ({
   subject.next({ type: "exchangeBulk", apdusHex: data.apdusHex, requestId });
 };
 
-export const transportClose = ({
+export const transportExchangeBulkUnsubscribe = ({
   data,
   requestId,
-}: {
-  data: { descriptor: string };
-  requestId: string;
-}) => {
+}: MessagesMap["transport:exchangeBulk:unsubscribe"]) => {
+  const subject = transports.get(data.descriptor);
+  if (!subject) {
+    process.send?.({
+      type: transportExchangeBulkUnsubscribeChannel,
+      error: serializeError(
+        new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
+      ),
+      requestId,
+    });
+    return;
+  }
+  subject.next({ type: "exchangeBulkUnsubscribe", requestId });
+};
+
+const transportListenListeners = new Map<string, { unsubscribe: () => void }>();
+
+export const transportListen = ({ requestId }: MessagesMap["transport:listen"]) => {
+  const observable = new Observable(TransportNodeHidSingleton.listen);
+  const subscription = observable.subscribe({
+    next: e => {
+      process.send?.({
+        type: transportListenChannel,
+        data: e,
+        requestId,
+      });
+    },
+    error: error => {
+      process.send?.({
+        type: transportListenChannel,
+        error: serializeError(error),
+        requestId,
+      });
+    },
+  });
+  transportListenListeners.set(requestId, subscription);
+};
+
+export const transportListenUnsubscribe = ({
+  requestId,
+}: MessagesMap["transport:listen:unsubscribe"]) => {
+  const listener = transportListenListeners.get(requestId);
+  if (listener) {
+    listener.unsubscribe();
+    transportListenListeners.delete(requestId);
+  }
+};
+
+export const transportClose = ({ data, requestId }: MessagesMap["transport:close"]) => {
   const subject = transports.get(data.descriptor);
   if (!subject) {
     process.send?.({

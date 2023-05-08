@@ -1,7 +1,6 @@
 import { Account } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
@@ -11,7 +10,7 @@ import { getAccountBannerState as getNearBannerState } from "@ledgerhq/live-comm
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 
-export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
+const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
@@ -48,7 +47,7 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
       page: "Page Account",
       button: "delegate",
       redelegate,
-      token: "NEAR",
+      currency: "NEAR",
     });
     if (redelegate) {
       dispatch(
@@ -80,3 +79,5 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
     />
   );
 };
+
+export default StakeBanner;

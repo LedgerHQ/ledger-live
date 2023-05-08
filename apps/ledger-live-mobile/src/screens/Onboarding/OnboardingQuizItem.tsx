@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { Base as BaseButton } from "@ledgerhq/native-ui/components/cta/Button";
+import { Base as BaseButton } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { Image, ImageSourcePropType } from "react-native";
 import Button from "../../components/PreventDoubleClickButton";
 
@@ -93,7 +93,7 @@ export default function OnboardingQuizItem({
               key={i}
               onPress={() => {
                 setSelectedAnswer(answer);
-                setBg(answer.correct ? "success.c100" : "error.c100");
+                setBg(answer.correct ? "success.c50" : "error.c50");
               }}
               mt={6}
             >

@@ -41,7 +41,7 @@ export type QuizzStep = {
   /**
    * Default illustration to display on the right
    */
-  Illustration?: React.ReactNode;
+  Illustration?: (props: { size?: number }) => JSX.Element;
   /**
    * generic explanation to display on any answer
    */
@@ -49,7 +49,7 @@ export type QuizzStep = {
   /**
    * Illustration to display on the right in case of a correct answer
    */
-  CorrectAnswerIllustration?: React.ReactNode;
+  CorrectAnswerIllustration?: (props: { size?: number }) => JSX.Element;
   /**
    * generic title to display in case the user picks a correct answer
    */
@@ -62,7 +62,7 @@ export type QuizzStep = {
   /**
    * Illustration to display on the right in case of an incorrect answer
    */
-  IncorrectAnswerIllustration?: React.ReactNode;
+  IncorrectAnswerIllustration?: (props: { size?: number }) => JSX.Element;
   /**
    * generic title to display in case the user picks an incorrect answer
    */
@@ -85,14 +85,12 @@ export type Props = {
   onClose: () => void;
   onLose: () => void;
   onWin: () => void;
-  isOpen: boolean;
   dismissable?: boolean;
 };
 
 const ModalQuizz: React.FunctionComponent<Props> = ({
   title,
   steps,
-  isOpen,
   onClose,
   onLose,
   onWin,
@@ -199,8 +197,8 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
 
   const rightSideBgColor = userMadeAChoice
     ? isCorrectChoice
-      ? "success.c100"
-      : "error.c100"
+      ? "success.c50"
+      : "error.c50"
     : "primary.c60";
 
   const AsideRight = (
@@ -216,7 +214,7 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
   const style = { "max-width": width, width: width, height: height };
 
   return (
-    <Popin isOpen onClose={onClose} style={style} p={0} position="relative">
+    <Popin isOpen style={style} p={0} position="relative">
       {!started && StartScreen ? (
         colors.palette.type === "dark" ? (
           <InvertThemeV3>

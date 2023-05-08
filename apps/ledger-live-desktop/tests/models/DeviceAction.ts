@@ -5,19 +5,17 @@ import {
   deviceInfo210lo5,
   mockListAppsResult as innerMockListAppResult,
 } from "@ledgerhq/live-common/apps/mock";
+import { AppOp } from "@ledgerhq/live-common/apps/types";
+import { AppType } from "@ledgerhq/types-live/lib/manager";
 
 const mockListAppsResult = (...params) => {
   // Nb Should move this polyfill to live-common eventually.
   const result = innerMockListAppResult(...params);
   Object.keys(result?.appByName).forEach(key => {
-    result.appByName[key] = { ...result.appByName[key], type: "app" };
+    result.appByName[key] = { ...result.appByName[key], type: AppType.currency };
   });
   return result;
 };
-
-// fromTransactionRaw doesn't work as expected but I'm not sure why it produces the following error:
-// page.evaluate: ReferenceError: _transaction is not defined
-// import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 
 export class DeviceAction {
   readonly page: Page;
@@ -41,12 +39,22 @@ export class DeviceAction {
 
   async genuineCheck(appDesc = "Bitcoin", installedDesc = "Bitcoin") {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo);
+    const modelId = DeviceModelId.nanoS;
 
     await this.page.evaluate(
       args => {
-        const [deviceInfo, result] = args;
+        const [deviceInfo, result, modelId] = args;
 
         (window as any).mock.events.mockDeviceEvent(
+          {
+            type: "deviceChange",
+            device: {
+              deviceId: "",
+              deviceName: "Some name",
+              modelId,
+            },
+            replaceable: false,
+          },
           {
             type: "listingApps",
             deviceInfo,
@@ -58,7 +66,7 @@ export class DeviceAction {
           { type: "complete" },
         );
       },
-      [deviceInfo, result],
+      [deviceInfo, result, modelId],
     );
 
     await this.loader.waitFor({ state: "hidden" });
@@ -70,12 +78,22 @@ export class DeviceAction {
     deviceModelId?: DeviceModelId,
   ) {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo, deviceModelId);
+    const modelId = DeviceModelId.nanoS;
 
     await this.page.evaluate(
       args => {
-        const [deviceInfo, result] = args;
+        const [deviceInfo, result, modelId] = args;
 
         (window as any).mock.events.mockDeviceEvent(
+          {
+            type: "deviceChange",
+            device: {
+              deviceId: "",
+              deviceName: "Some name",
+              modelId,
+            },
+            replaceable: false,
+          },
           {
             type: "listingApps",
             deviceInfo,
@@ -87,7 +105,7 @@ export class DeviceAction {
           { type: "complete" },
         );
       },
-      [deviceInfo, result],
+      [deviceInfo, result, modelId],
     );
 
     await this.loader.waitFor({ state: "hidden" });
@@ -98,12 +116,22 @@ export class DeviceAction {
     installedDesc = "Bitcoin,Litecoin,Ethereum (outdated)",
   ) {
     const result = mockListAppsResult(appDesc, installedDesc, deviceInfo210lo5);
+    const modelId = DeviceModelId.nanoS;
 
     await this.page.evaluate(
       args => {
-        const [deviceInfo210lo5, result] = args;
+        const [deviceInfo210lo5, result, modelId] = args;
 
         (window as any).mock.events.mockDeviceEvent(
+          {
+            type: "deviceChange",
+            device: {
+              deviceId: "",
+              deviceName: "Some name",
+              modelId,
+            },
+            replaceable: false,
+          },
           {
             type: "listingApps",
             deviceInfo: deviceInfo210lo5,
@@ -115,7 +143,7 @@ export class DeviceAction {
           { type: "complete" },
         );
       },
-      [deviceInfo210lo5, result],
+      [deviceInfo210lo5, result, modelId],
     );
 
     await this.loader.waitFor({ state: "hidden" });
@@ -136,6 +164,48 @@ export class DeviceAction {
   async add50ProgressToLanguageInstallation() {
     await this.page.evaluate(() => {
       (window as any).mock.events.mockDeviceEvent({ type: "progress", progress: 0.5 });
+    });
+  }
+
+  async installSetOfAppsMocked(
+    progress: number,
+    itemProgress: number,
+    currentAppOp: AppOp,
+    installQueue: string[],
+  ) {
+    await this.page.evaluate(
+      args => {
+        const [progress, itemProgress, currentAppOp, installQueue] = args;
+
+        (window as any).mock.events.mockDeviceEvent({
+          type: "inline-install",
+          progress: progress,
+          itemProgress: itemProgress,
+          currentAppOp: currentAppOp,
+          installQueue: installQueue,
+        });
+      },
+      [progress, itemProgress, currentAppOp, installQueue],
+    );
+  }
+
+  async resolveDependenciesMocked(installQueue: string[]) {
+    await this.page.evaluate(
+      args => {
+        const [installQueue] = args;
+
+        (window as any).mock.events.mockDeviceEvent({
+          type: "listed-apps",
+          installQueue: installQueue,
+        });
+      },
+      [installQueue],
+    );
+  }
+
+  async mockOpened() {
+    await this.page.evaluate(() => {
+      (window as any).mock.events.mockDeviceEvent({ type: "opened" });
     });
   }
 
@@ -175,10 +245,11 @@ export class DeviceAction {
   async initiateSwap() {
     await this.page.evaluate(() => (window as any).mock.events.mockDeviceEvent({ type: "opened" }));
     await this.page.waitForTimeout(500);
-    await this.page.evaluate(() =>
-      (window as any).mock.events.mockDeviceEvent({ type: "complete" }),
-    );
-    await this.page.waitForTimeout(500);
+    // Keeping the same subject because it's too close and it's failing and I don't want to cry.
+    // await this.page.evaluate(() =>
+    //   (window as any).mock.events.mockDeviceEvent({ type: "complete" }),
+    // );
+    await this.page.waitForTimeout(2000);
     await this.page.evaluate(() =>
       (window as any).mock.events.mockDeviceEvent({ type: "init-swap-requested" }),
     );
@@ -189,32 +260,34 @@ export class DeviceAction {
 
   async confirmSwap() {
     await this.page.evaluate(() => {
-      // Transaction taken from original test here (and not using fromRawTransaction)
-      // https://github.com/LedgerHQ/ledger-live-desktop/blob/7a7ae3218f941dea5b9cdb2637acaa026b4f4a10/tests/specs/swap.spec.js
-      (window as any).mock.events.mockDeviceEvent(
+      const mock = (window as any).mock;
+      const transaction = mock.fromTransactionRaw({
+        family: "bitcoin",
+        recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
+        amount: "12",
+        feePerByte: "1",
+        networkInfo: {
+          family: "bitcoin",
+          feeItems: {
+            items: [
+              { key: "0", speed: "high", feePerByte: "3" },
+              { key: "1", speed: "standard", feePerByte: "2" },
+              { key: "2", speed: "low", feePerByte: "1" },
+            ],
+            defaultFeePerByte: "1",
+          },
+        },
+        rbf: false,
+        utxoStrategy: {
+          strategy: 0,
+          excludeUTXOs: [],
+        },
+      });
+      mock.events.mockDeviceEvent(
         {
           type: "init-swap-result",
           initSwapResult: {
-            transaction: {
-              amount: { s: 1, e: 0, c: [1] },
-              recipient: "1Cz2ZXb6Y6AacXJTpo4RBjQMLEmscuxD8e",
-              rbf: false,
-              utxoStrategy: { strategy: 0, excludeUTXOs: [] },
-              family: "bitcoin",
-              feePerByte: { s: 1, e: 0, c: [1] },
-              networkInfo: {
-                family: "bitcoin",
-                feeItems: {
-                  items: [
-                    { key: "0", speed: "high", feePerByte: "3" },
-                    { key: "1", speed: "standard", feePerByte: "2" },
-                    { key: "2", speed: "low", feePerByte: "1" },
-                  ],
-                  defaultFeePerByte: 1,
-                },
-              },
-              feesStrategy: undefined,
-            },
+            transaction,
             swapId: "12345",
           },
         },

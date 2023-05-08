@@ -1,5 +1,123 @@
 # @ledgerhq/native-ui
 
+## 0.18.1
+
+### Patch Changes
+
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a variant of the tiny text style with Alpha font family
+
+- [#2888](https://github.com/LedgerHQ/ledger-live/pull/2888) [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27) Thanks [@elbywan](https://github.com/elbywan)! - Upgrade dependencies
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+- Updated dependencies [[`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5)]:
+  - @ledgerhq/crypto-icons-ui@0.2.2
+  - @ledgerhq/icons-ui@0.4.0
+
+## 0.18.1-next.0
+
+### Patch Changes
+
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a variant of the tiny text style with Alpha font family
+
+- [#2888](https://github.com/LedgerHQ/ledger-live/pull/2888) [`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27) Thanks [@elbywan](https://github.com/elbywan)! - Upgrade dependencies
+
+- [#3125](https://github.com/LedgerHQ/ledger-live/pull/3125) [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed old icon weights (everything except Medium). Deprecated Weigth prop in Icon component
+
+- Updated dependencies [[`ac0fc92005`](https://github.com/LedgerHQ/ledger-live/commit/ac0fc92005a69e5bfe5f37cfed7a3c2a344f4c27), [`a8a992853b`](https://github.com/LedgerHQ/ledger-live/commit/a8a992853bfdf9fffc8ed1190e83dd37cd588cf5)]:
+  - @ledgerhq/crypto-icons-ui@0.2.2-next.0
+  - @ledgerhq/icons-ui@0.4.0-next.0
+
+## 0.18.0
+
+### Minor Changes
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+## 0.18.0-next.0
+
+### Minor Changes
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+## 0.17.0
+
+### Minor Changes
+
+- [#2843](https://github.com/LedgerHQ/ledger-live/pull/2843) [`61848df7ef`](https://github.com/LedgerHQ/ledger-live/commit/61848df7eff1abfef330585ca96b1688c858c637) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Fix metro config (forced dependencies)
+  ContinueOnDevice: new UI item to indicate the user to continue on the device
+  Divider: add a `text` prop to display some text in the middle of the divider
+  VerticalTimeline: new appearance (colors, fonts, dashed lines, icon sizes)
+  VerticalTimeline: make it scrollable (no need to wrap it in a ScrollView)
+  VerticalTimeline: add auto scrolling to active item
+  VerticalTimeline: add `header?: React.ReactNode | null` prop
+  VerticalTimeline: expose `BodyText` and `SubtitleText` components
+  Storybook - VerticalTimeline: more exhaustive examples
+
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#2843](https://github.com/LedgerHQ/ledger-live/pull/2843) [`61848df7ef`](https://github.com/LedgerHQ/ledger-live/commit/61848df7eff1abfef330585ca96b1688c858c637) Thanks [@pierrelouis-c](https://github.com/pierrelouis-c)! - Fix metro config (forced dependencies)
+  ContinueOnDevice: new UI item to indicate the user to continue on the device
+  Divider: add a `text` prop to display some text in the middle of the divider
+  VerticalTimeline: new appearance (colors, fonts, dashed lines, icon sizes)
+  VerticalTimeline: make it scrollable (no need to wrap it in a ScrollView)
+  VerticalTimeline: add auto scrolling to active item
+  VerticalTimeline: add `header?: React.ReactNode | null` prop
+  VerticalTimeline: expose `BodyText` and `SubtitleText` components
+  Storybook - VerticalTimeline: more exhaustive examples
+
+## 0.16.0
+
+### Minor Changes
+
+- [#2713](https://github.com/LedgerHQ/ledger-live/pull/2713) [`0840cfeab8`](https://github.com/LedgerHQ/ledger-live/commit/0840cfeab8d7d3a75def5de22285b913ad049d5a) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new VerticalStepper component to Natie UI, similar to the VerticalTimeline but featuring a new design and nesting capabilities
+
+### Patch Changes
+
+- [#2733](https://github.com/LedgerHQ/ledger-live/pull/2733) [`0272d44dff`](https://github.com/LedgerHQ/ledger-live/commit/0272d44dff11e356858f666b962b65025d2029eb) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Remove cycle dependencies
+
+- Updated dependencies [[`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5)]:
+  - @ledgerhq/icons-ui@0.3.5
+
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#2713](https://github.com/LedgerHQ/ledger-live/pull/2713) [`0840cfeab8`](https://github.com/LedgerHQ/ledger-live/commit/0840cfeab8d7d3a75def5de22285b913ad049d5a) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add a new VerticalStepper component to Natie UI, similar to the VerticalTimeline but featuring a new design and nesting capabilities
+
+### Patch Changes
+
+- [#2733](https://github.com/LedgerHQ/ledger-live/pull/2733) [`0272d44dff`](https://github.com/LedgerHQ/ledger-live/commit/0272d44dff11e356858f666b962b65025d2029eb) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Remove cycle dependencies
+
+- Updated dependencies [[`13a71f1cb2`](https://github.com/LedgerHQ/ledger-live/commit/13a71f1cb24fa254a2ed0b2db7f0d7b8f32465b5)]:
+  - @ledgerhq/icons-ui@0.3.5-next.0
+
+## 0.15.1
+
+### Patch Changes
+
+- [#2503](https://github.com/LedgerHQ/ledger-live/pull/2503) [`aed44f43b2`](https://github.com/LedgerHQ/ledger-live/commit/aed44f43b26fa9b60822c0754ba384412b9b236a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Minor ui modifications to Link, FullBackgroundCard and SideImageCard components
+
+- [#2519](https://github.com/LedgerHQ/ledger-live/pull/2519) [`68c0a2a2ac`](https://github.com/LedgerHQ/ledger-live/commit/68c0a2a2ac2080ec7de069ceb2053737f44f2a4b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: onModalHide passed down to ReactNativeModal
+
+  `BaseModal` was not passing down `onModalHide` to `ReactNativeModal`. Until this, `onModalHide={onClose}`, making `onClose` being called twice (once when the user closes the modal, once when the modal is hidden) and `onModalHide` being never called.
+
+  The fix is a workaround so we don't break legacy components that use `BaseModal`. The long-term fix would be to have `onModalHide={onModalHide}` and make sure every usage on `onClose` in the consumers of this component expect the correct behavior.
+
+## 0.15.1-next.0
+
+### Patch Changes
+
+- [#2503](https://github.com/LedgerHQ/ledger-live/pull/2503) [`aed44f43b2`](https://github.com/LedgerHQ/ledger-live/commit/aed44f43b26fa9b60822c0754ba384412b9b236a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Minor ui modifications to Link, FullBackgroundCard and SideImageCard components
+
+- [#2519](https://github.com/LedgerHQ/ledger-live/pull/2519) [`68c0a2a2ac`](https://github.com/LedgerHQ/ledger-live/commit/68c0a2a2ac2080ec7de069ceb2053737f44f2a4b) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: onModalHide passed down to ReactNativeModal
+
+  `BaseModal` was not passing down `onModalHide` to `ReactNativeModal`. Until this, `onModalHide={onClose}`, making `onClose` being called twice (once when the user closes the modal, once when the modal is hidden) and `onModalHide` being never called.
+
+  The fix is a workaround so we don't break legacy components that use `BaseModal`. The long-term fix would be to have `onModalHide={onModalHide}` and make sure every usage on `onClose` in the consumers of this component expect the correct behavior.
+
 ## 0.15.0
 
 ### Minor Changes

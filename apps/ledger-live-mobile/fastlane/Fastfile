@@ -27,7 +27,7 @@ package = load_json(json_path: "./package.json")
 
 def infer_android_version_code
   # Checks all relevant tracks in the play console and take the highest (plus one).
-  ["Nightly", "internal", "beta", "alpha", "production"].map { |track|
+  ["Nightly", "internal", "beta", "alpha", "production", "Recover Beta"].map { |track|
     google_play_track_version_codes(
       package_name: "com.ledger.live",
       track: track,
@@ -415,7 +415,11 @@ platform :android do
   desc "private: build the app apk for the specified build `type`. Defaults to `Release`"
   private_lane :build do |options|
     type = options.fetch(:type, "Release")
-    task = options[:apk] ? "assemble" : "bundle"
+    tasks =
+      options[:apk_and_aab] ? ["assemble", "bundle"] :
+      options[:apk] ? ["assemble"] :
+      ["bundle"]
+    tasks = tasks.map { |task| task + type }
     if(options[:ci])
       sh(
           <<-SHELL
@@ -427,15 +431,13 @@ platform :android do
     gradle(task: "clean", project_dir: 'android/')
     if (options[:local])
       gradle(
-        task: task,
-        build_type: type,
+        tasks: tasks,
         print_command: false,
         project_dir: 'android/'
       )
     else
       gradle(
-        task: task,
-        build_type: type,
+        tasks: tasks,
         print_command: false,
         properties: {
           "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
@@ -452,15 +454,17 @@ platform :android do
   private_lane :upload do |options|
     if(options[:ci])
       upload_to_play_store(
-        track: options[:nightly] ? 'Nightly' : "internal",
+        track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
         package_name: 'com.ledger.live',
-        json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
+        json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"],
+        skip_upload_apk: true
       )
     else
       upload_to_play_store(
-        track: options[:nightly] ? 'Nightly' : "internal",
+        track: options[:nightly] ? 'Nightly' : options[:recover] ? 'Recover Beta' : "internal",
         package_name: "com.ledger.live",
         json_key: ENV["ANDROID_SERVICE_KEY_PATH"],
+        skip_upload_apk: true
       )
     end
   end
@@ -488,19 +492,20 @@ platform :android do
     )
   end
 
-  desc "build APK and send to Google Play Store"
+  desc "build APKs + AAB and send the AAB to the Google Play Store "
   lane :ci_playstore do
     prepare_android_internal
     build(
       type: "Release",
-      ci: true
+      ci: true,
+      apk_and_aab: true
     )
     upload(ci: true)
   end
 
   desc "build nightly version"
   lane :ci_nightly do
-    prepare_android_internal(nightly: true)
+    prepare_android_internal
     build(
       type: "Release",
       ci: true
@@ -508,6 +513,27 @@ platform :android do
     upload(
       nightly: true,
       ci: true
+    )
+  end
+
+  desc "build recover version"
+  lane :ci_recover do
+    prepare_android_internal
+    build(
+      type: "Release",
+      ci: true
+    )
+    upload(
+      recover: true,
+      ci: true
+    )
+  end
+
+  lane :ci_build do
+    build(
+      type: "Release",
+      ci: true,
+      apk: true
     )
   end
 

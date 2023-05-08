@@ -38,8 +38,6 @@ export type TokenAccount = {
   token: TokenCurrency;
   balance: BigNumber;
   spendableBalance: BigNumber;
-  // in case of compound, this is the associated balance for the associated ctoken
-  compoundBalance?: BigNumber;
   creationDate: Date;
   operationsCount: number;
   operations: Operation[];
@@ -146,6 +144,8 @@ export type Account = {
   // ------------------------------------- Specific account fields
   // currency of this account
   currency: CryptoCurrency;
+  // Some blockchains may use a different currency than the main one to pay fees
+  feesCurrency?: CryptoCurrency | TokenCurrency;
   // user preferred unit to use. unit is coming from currency.units. You can assume currency.units.indexOf(unit) will work. (make sure to preserve reference)
   unit: Unit;
   // The total number of operations (operations[] can be partial)
@@ -218,7 +218,6 @@ export type TokenAccountRaw = {
   pendingOperations: OperationRaw[];
   balance: string;
   spendableBalance?: string;
-  compoundBalance?: string;
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
   approvals?: Array<{
@@ -266,6 +265,7 @@ export type AccountRaw = {
   // this is optional for backward compat
   // ------------------------------------- Specific raw fields
   currencyId: string;
+  feesCurrencyId?: string;
   operations: OperationRaw[];
   pendingOperations: OperationRaw[];
   unitMagnitude: number;

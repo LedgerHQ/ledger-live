@@ -15,9 +15,13 @@ import {
 } from "../../account";
 import { listTokensForCryptoCurrency } from "../../currencies";
 import { encodeAccountId } from "../../account";
-import type { Operation, TokenAccount, Account } from "@ledgerhq/types-live";
-import { API, apiForCurrency, Tx } from "../../api/Ethereum";
-import { digestTokenAccounts, prepareTokenAccounts } from "./modules";
+import type {
+  Operation,
+  TokenAccount,
+  SubAccount,
+  Account,
+} from "@ledgerhq/types-live";
+import { API, apiForCurrency, Block, Tx } from "./api";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeNftId, isNFTActive, nftsFromOperations } from "../../nft";
 import { encodeOperationId, encodeSubOperationId } from "../../operation";
@@ -25,6 +29,7 @@ import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
 } from "../../nft/nftOperationId";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const getAccountShape: GetAccountShape = async (
   infoInput,
@@ -75,7 +80,7 @@ export const getAccountShape: GetAccountShape = async (
     currentBlockP,
     balanceP,
   ]);
-  const blockHeight = currentBlock.height.toNumber();
+  const blockHeight = currentBlock?.height.toNumber();
 
   if (!pullFromBlockHeight && txs.length === 0) {
     log("ethereum", "no ops on " + address);
@@ -164,9 +169,7 @@ export const getAccountShape: GetAccountShape = async (
       };
     })
     .filter(Boolean);
-  tokenAccounts = await prepareTokenAccounts(currency, tokenAccounts, address);
   tokenAccounts = await loadERC20Balances(tokenAccounts, address, api);
-  tokenAccounts = await digestTokenAccounts(currency, tokenAccounts, address);
   const subAccounts = reconciliateSubAccounts(tokenAccounts, initialAccount);
   // has sub accounts have changed, we need to relink the subOperations
   newOps = newOps.map((o) => ({
@@ -201,7 +204,7 @@ export const getAccountShape: GetAccountShape = async (
   return accountShape;
 };
 
-const safeEncodeEIP55 = (addr) => {
+const safeEncodeEIP55 = (addr: string) => {
   if (!addr || addr === "0x") return "";
 
   try {
@@ -566,59 +569,58 @@ const txToOps =
     return ops;
   };
 
-const fetchCurrentBlock = ((perCurrencyId) => (currency) => {
-  if (perCurrencyId[currency.id]) return perCurrencyId[currency.id]();
-  const api = apiForCurrency(currency);
-  const f = throttle(
-    () =>
-      api.getCurrentBlock().catch((e) => {
-        f.cancel();
-        throw e;
-      }),
-    5000
-  );
-  perCurrencyId[currency.id] = f;
-  return f();
-})({});
+const fetchCurrentBlock = (
+  (perCurrencyId) =>
+  (currency: CryptoCurrency): Promise<Block> | undefined => {
+    if (perCurrencyId[currency.id]) return perCurrencyId[currency.id]();
+    const api = apiForCurrency(currency);
+    const f = throttle(
+      () =>
+        api.getCurrentBlock().catch((e) => {
+          f.cancel();
+          throw e;
+        }),
+      5000
+    );
+    perCurrencyId[currency.id] = f;
+    return f();
+  }
+)({});
 
-// FIXME : We need to use the pagination token from backend
-const fetchAllTransactions = async (api: API, address, blockHeight) => {
-  let getTransactionsResult: Tx[];
-  let txs: Tx[] = [];
-  let maxIteration = 20; // safe limit
-  let lastRequestTxHash: string | undefined;
+export const fetchAllTransactions = async (
+  api: API,
+  address: string,
+  blockHeight: number | null | undefined
+): Promise<Tx[]> => {
+  let accumulatedTxs: Tx[] = [];
+  let currentToken: string | undefined;
 
   do {
-    getTransactionsResult = await api.getTransactions(address, blockHeight);
-    if (getTransactionsResult.length === 0) return txs;
-    if (
-      lastRequestTxHash &&
-      getTransactionsResult[getTransactionsResult.length - 1].hash ===
-        lastRequestTxHash
-    ) {
-      return txs;
-    }
+    const { txs, nextPageToken } = await api.getTransactions(
+      address,
+      blockHeight,
+      2000,
+      currentToken
+    );
+    currentToken = nextPageToken;
+    accumulatedTxs = accumulatedTxs.concat(txs);
+  } while (currentToken != null);
 
-    txs = txs.concat(getTransactionsResult);
-    blockHeight = txs[txs.length - 1].block?.height;
-    lastRequestTxHash = txs[txs.length - 1].hash;
-
-    if (!blockHeight) {
-      log("ethereum", "block.height missing!");
-      return txs;
-    }
-  } while (--maxIteration);
-
-  return txs;
+  return accumulatedTxs;
 };
 
-async function loadERC20Balances(tokenAccounts, address, api) {
+async function loadERC20Balances(
+  tokenAccounts: TokenAccount[],
+  address: string,
+  api: API
+): Promise<TokenAccount[]> {
   const erc20balances = await api.getERC20Balances(
     tokenAccounts.map(({ token }) => ({
       contract: token.contractAddress,
       address,
     }))
   );
+
   return tokenAccounts
     .map((a) => {
       const r = erc20balances.find(
@@ -639,12 +641,12 @@ async function loadERC20Balances(tokenAccounts, address, api) {
 
       return a;
     })
-    .filter(Boolean);
+    .filter((account): account is TokenAccount => !!account);
 }
 
 const SAFE_REORG_THRESHOLD = 80;
 
-function stableOperations(a) {
+function stableOperations(a: Account): Operation[] {
   return a.operations.filter(
     (op) =>
       op.blockHeight && a.blockHeight - op.blockHeight > SAFE_REORG_THRESHOLD
@@ -652,8 +654,11 @@ function stableOperations(a) {
 }
 
 // reconciliate the existing token accounts so that refs don't change if no changes is contained
-function reconciliateSubAccounts(tokenAccounts, initialAccount) {
-  let subAccounts;
+function reconciliateSubAccounts(
+  tokenAccounts: TokenAccount[],
+  initialAccount: Account | undefined
+): SubAccount[] {
+  let subAccounts: SubAccount[] = [];
 
   if (initialAccount) {
     const initialSubAccounts = initialAccount.subAccounts;

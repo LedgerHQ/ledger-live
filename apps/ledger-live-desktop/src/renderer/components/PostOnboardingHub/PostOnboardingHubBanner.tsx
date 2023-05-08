@@ -1,13 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-
 import { Box, Flex, Icons, Link, Text } from "@ledgerhq/react-ui";
 import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useNavigateToPostOnboardingHubCallback } from "./logic/useNavigateToPostOnboardingHubCallback";
 import Illustration from "~/renderer/components/Illustration";
-
 import bannerStaxLight from "./assets/bannerStaxLight.svg";
 import bannerStaxDark from "./assets/bannerStaxDark.svg";
 
@@ -59,7 +57,10 @@ const PostOnboardingHubBanner = () => {
       <Flex>
         <Illustration lightSource={bannerStaxLight} darkSource={bannerStaxDark} size={240} />
       </Flex>
-      <CloseButtonWrapper onClick={handleHidePostOnboardingHubBanner}>
+      <CloseButtonWrapper
+        onClick={handleHidePostOnboardingHubBanner}
+        data-test-id="postonboarding-banner-entry-point-close-button"
+      >
         <Icons.CloseMedium color="neutral.c00" size={30} />
       </CloseButtonWrapper>
     </Flex>

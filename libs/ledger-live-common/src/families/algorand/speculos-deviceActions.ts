@@ -1,13 +1,13 @@
-import type { DeviceAction } from "../../bot/types";
-import type { AlgorandTransaction } from "./types";
-import { findTokenById } from "../../currencies";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
 } from "../../bot/specs";
-import { extractTokenId, addPrefixToken } from "./tokens";
+import type { DeviceAction } from "../../bot/types";
+import { findTokenById } from "../../currencies";
 import { displayTokenValue } from "./deviceTransactionConfig";
+import { addPrefixToken, extractTokenId } from "./tokens";
+import type { AlgorandTransaction } from "./types";
 
 export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
   deviceActionFlow({
@@ -42,7 +42,8 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
             ? extractTokenId(transaction.subAccountId)
             : "";
           const token = findTokenById(addPrefixToken(id));
-          return token ? displayTokenValue(token) : `#${id}`;
+          // 34 is max character displayable by nano.
+          return token ? displayTokenValue(token).substring(0, 34) : `#${id}`;
         },
       },
       {
@@ -68,10 +69,23 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> =
       {
         title: "Amount",
         button: SpeculosButton.RIGHT,
-        expectedValue: ({ account, status, transaction }) =>
-          transaction.mode === "claimReward"
-            ? "0"
-            : formatDeviceAmount(account.currency, status.amount),
+        expectedValue: ({ account, status, transaction }) => {
+          switch (transaction.mode) {
+            case "claimReward":
+              return "0";
+
+            case "optIn": {
+              const token = findTokenById(transaction?.assetId || "");
+              if (token) {
+                return formatDeviceAmount(token, status.amount, {
+                  forceFloating: token.units[0].magnitude > 0 ? true : false,
+                });
+              }
+              break;
+            }
+          }
+          return formatDeviceAmount(account.currency, status.amount);
+        },
       },
       {
         title: "APPROVE",

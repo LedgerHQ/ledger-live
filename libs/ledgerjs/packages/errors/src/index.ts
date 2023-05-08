@@ -221,6 +221,7 @@ export const FeeTooHigh = createCustomErrorClass("FeeTooHigh");
 export const PendingOperation = createCustomErrorClass("PendingOperation");
 export const SyncError = createCustomErrorClass("SyncError");
 export const PairingFailed = createCustomErrorClass("PairingFailed");
+export const PeerRemovedPairing = createCustomErrorClass("PeerRemovedPairing");
 export const GenuineCheckFailed = createCustomErrorClass("GenuineCheckFailed");
 export const LedgerAPI4xx = createCustomErrorClass("LedgerAPI4xx");
 export const LedgerAPI5xx = createCustomErrorClass("LedgerAPI5xx");
@@ -245,10 +246,10 @@ export const DBNotReset = createCustomErrorClass("DBNotReset");
  * Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport
  */
 export enum HwTransportErrorType {
-  Unknown = 0,
-  BleLocationServicesDisabled = 1,
-  BleBluetoothUnauthorized = 2,
-  BleScanStartFailed = 3,
+  Unknown = "Unknown",
+  LocationServicesDisabled = "LocationServicesDisabled",
+  LocationServicesUnauthorized = "LocationServicesUnauthorized",
+  BluetoothScanStartFailed = "BluetoothScanStartFailed",
 }
 
 /**
@@ -314,6 +315,7 @@ export const StatusCodes = {
   INCORRECT_P1_P2: 0x6b00,
   INS_NOT_SUPPORTED: 0x6d00,
   DEVICE_NOT_ONBOARDED: 0x6d07,
+  DEVICE_NOT_ONBOARDED_2: 0x6611,
   INVALID_KCV: 0x9485,
   INVALID_OFFSET: 0x9402,
   LICENSING: 0x6f42,
@@ -330,6 +332,7 @@ export const StatusCodes = {
   TECHNICAL_PROBLEM: 0x6f00,
   UNKNOWN_APDU: 0x6d02,
   USER_REFUSED_ON_DEVICE: 0x5501,
+  NOT_ENOUGH_SPACE: 0x5102,
 };
 
 export function getAltStatusMessage(code: number): string | undefined | null {

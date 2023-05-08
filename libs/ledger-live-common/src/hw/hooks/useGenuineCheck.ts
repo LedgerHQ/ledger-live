@@ -67,6 +67,7 @@ export const useGenuineCheck = ({
   const resetGenuineCheckState = useCallback(() => {
     setDevicePermissionState("unrequested");
     setGenuineState("unchecked");
+    setError(null);
   }, []);
 
   useEffect(() => {

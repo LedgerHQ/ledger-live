@@ -143,7 +143,6 @@ export default tokens;
       const disableCountervalue = !!common.disable_countervalue;
       const delisted = !!common.delisted;
       const countervalueTicker = common.countervalue_ticker;
-      const compoundFor = common.compound_for;
       try {
         invariant(
           typeof parentCurrency === "string" && parentCurrency,
@@ -198,7 +197,6 @@ export default tokens;
         disableCountervalue,
         delisted,
         countervalueTicker,
-        compoundFor,
       ];
     }),
 };

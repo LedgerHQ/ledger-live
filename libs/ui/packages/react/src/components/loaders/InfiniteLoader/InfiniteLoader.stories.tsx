@@ -18,7 +18,7 @@ import { InfiniteLoader } from "@ledgerhq/react-ui"
   Both color and size are optional.
   Extra props are passed to the child <svg> tag.
 */
-<InfiniteLoader size={40} color="warning.c50" />
+<InfiniteLoader size={40} color="warning.c20" />
 \`\`\`
 `;
 

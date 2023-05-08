@@ -8,7 +8,7 @@ import {
   ArrowEvolutionDownMedium,
 } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
-import { BaseTextProps } from "@ledgerhq/native-ui/components/Text";
+import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
 type Props = {
@@ -55,8 +55,8 @@ function Delta({
   const [color, ArrowIcon, sign] =
     delta !== 0
       ? delta > 0
-        ? ["success.c100", ArrowEvolutionUpMedium, "+"]
-        : ["error.c100", ArrowEvolutionDownMedium, "-"]
+        ? ["success.c50", ArrowEvolutionUpMedium, "+"]
+        : ["error.c50", ArrowEvolutionDownMedium, "-"]
       : ["neutral.c70", () => null, ""];
 
   if (

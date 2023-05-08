@@ -1,15 +1,18 @@
 import React, { useEffect, useMemo } from "react";
-import { Flex, Text } from "@ledgerhq/react-ui";
+import { Alert, Flex, InfiniteLoader, Text } from "@ledgerhq/react-ui";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { SkipReason } from "@ledgerhq/live-common/apps/types";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { useTranslation } from "react-i18next";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
-
-import AppInstallItem from "./AppInstallItem";
+import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
+import AppInstallItem, { ItemState } from "./AppInstallItem";
 import AllowManagerModal from "./AllowManagerModal";
+import { getEnv } from "@ledgerhq/live-common/env";
 
-const action = createAction(connectApp);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 
 type Props = {
   device: Device;
@@ -29,30 +32,33 @@ const InstallSetOfApps = ({
   onError,
 }: Props) => {
   const { t } = useTranslation();
+  const productName = getDeviceModel(device.modelId).productName;
 
-  const request = useMemo(
+  const commandRequest = useMemo(
     () => ({
       dependencies: dependencies.map(appName => ({ appName })),
       appName: "BOLOS",
       withInlineInstallProgress: true,
-      skipAppInstallIfNotFound: true,
+      allowPartialDependencies: true,
     }),
     [dependencies],
   );
 
-  const status = action.useHook(device, request);
+  const status = action.useHook(device, commandRequest);
 
   const {
-    isLoading,
-    allowManagerGranted,
-    listingApps,
+    skippedAppOps,
+    installQueue,
+    listedApps,
     error,
     currentAppOp,
     itemProgress,
     progress,
     opened,
-    installQueue,
+
     isLocked,
+    allowManagerGranted,
+    isLoading,
   } = status;
 
   useEffect(() => {
@@ -69,13 +75,13 @@ const InstallSetOfApps = ({
     }
   }, [error, onError, onCancel]);
 
-  useEffect(() => {
-    if (opened) {
-      onComplete();
-    }
-  }, [opened, onComplete]);
+  const installing = !opened && typeof progress === "number" && currentAppOp;
+  const missingApps = skippedAppOps?.some(
+    skippedAppOp => skippedAppOp.reason === SkipReason.NoSuchAppOnProvider,
+  );
 
   if (opened) {
+    onComplete();
     return null;
   }
 
@@ -84,39 +90,52 @@ const InstallSetOfApps = ({
       <AllowManagerModal
         isOpen={!isLoading && !allowManagerGranted && !error}
         status={status}
-        request={request}
+        request={commandRequest}
       />
-      <Flex height="100%" flexDirection="column">
-        <Flex flex={1} alignItems="center">
-          <Flex mb={2} alignSelf="flex-start">
-            <Text mb={5} variant="paragraphLineHeight">
-              {listingApps
-                ? t("onboardingAppInstall.progress.resolving")
-                : typeof progress === "number" && currentAppOp
-                ? t("onboardingAppInstall.progress.progress", {
-                    progress: Math.round(progress * 100),
-                  })
-                : t("onboardingAppInstall.progress.loading")}
-            </Text>
+      <Flex height="100%">
+        <Flex flex={1} alignItems="flex-start" flexDirection="column">
+          <Flex style={{ width: "100%" }} flexDirection="row" justifyContent="space-between" mb={6}>
+            {installing ? (
+              <Text data-test-id="installing-text">
+                {t("onboardingAppInstall.progress.progress")}
+              </Text>
+            ) : (
+              <>
+                <Text>{t("onboardingAppInstall.progress.resolving")}</Text>
+                <InfiniteLoader size={20} />
+              </>
+            )}
           </Flex>
+          {missingApps ? (
+            <Alert title={t("onboardingAppInstall.progress.skippedInfo", { productName })} />
+          ) : null}
+          {!!missingApps && <Flex mb={6} />}
+          {dependencies?.map((appName, i) => {
+            const skipped = skippedAppOps.find(skippedAppOp => skippedAppOp.appOp.name === appName);
+
+            const state = !listedApps
+              ? ItemState.Idle
+              : currentAppOp?.name === appName
+              ? ItemState.Active
+              : skipped?.reason === SkipReason.NoSuchAppOnProvider
+              ? ItemState.Skipped
+              : !installQueue?.includes(appName) ||
+                skipped?.reason === SkipReason.AppAlreadyInstalled
+              ? ItemState.Installed
+              : ItemState.Idle;
+
+            return (
+              <AppInstallItem
+                key={appName}
+                i={i}
+                appName={appName}
+                state={state}
+                productName={productName}
+                itemProgress={itemProgress}
+              />
+            );
+          })}
         </Flex>
-        <Flex flexDirection="column" mt={2} mb={4}>
-          {itemProgress !== undefined
-            ? dependencies.map((appName, index) => (
-                <AppInstallItem
-                  key={appName}
-                  appName={appName}
-                  index={index}
-                  isActive={currentAppOp?.name === appName}
-                  installed={progress ? !installQueue?.includes(appName) : undefined}
-                  itemProgress={itemProgress}
-                />
-              ))
-            : null}
-        </Flex>
-        <Text variant="paragraphLineHeight" color="neutral.c70">
-          {t("onboardingAppInstall.progress.disclaimer")}
-        </Text>
       </Flex>
     </>
   );

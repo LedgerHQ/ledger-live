@@ -5,7 +5,6 @@ import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import DefaultAppsIllustration from "./DefaultAppsIllustration";
 import RestoreAppsIllustration from "./RestoreAppsIllustration";
 import CancelModal from "./CancelModal";
@@ -111,11 +110,16 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
             {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.subtitle`)}
           </Text>
           <Flex pt={8} pb={2} justifyContent="space-between">
-            <Button flex={1} onClick={onComplete}>
+            <Button flex={1} onClick={onComplete} data-test-id="skip-cta-button">
               {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.skipCTA`)}
             </Button>
             <Flex px={2} />
-            <Button flex={1} variant="main" onClick={() => setInProgress(true)}>
+            <Button
+              flex={1}
+              variant="main"
+              onClick={() => setInProgress(true)}
+              data-test-id="install-cta-button"
+            >
               {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.installCTA`)}
             </Button>
           </Flex>

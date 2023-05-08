@@ -3,7 +3,6 @@ import { BigNumber } from "bignumber.js";
 import {
   listCryptoCurrencies,
   listTokensForCryptoCurrency,
-  findCompoundToken,
 } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
 import {
@@ -66,7 +65,6 @@ const hardcodedMarketcap = [
   "tezos",
   "iota",
   "ethereum/erc20/link_chainlink",
-  "neo",
   "ethereum/erc20/makerdao",
   "ethereum/erc20/usd__coin",
   "ontology",
@@ -271,6 +269,7 @@ export type GenAccountOptions = {
   subAccountsCount?: number;
   swapHistorySize?: number;
   withNft?: boolean;
+  tokenIds?: string[];
 };
 
 export function genTokenAccount(
@@ -391,7 +390,8 @@ export function genAccount(
     ...(withNft && {
       nfts: Array(10)
         .fill(null)
-        .map(() => createFixtureNFT(accountId, currency)),
+        // The index === 0 ensure at least one NFT is a Stax NFT if the currency is Ethereum
+        .map((_, index) => createFixtureNFT(accountId, currency, index === 0)),
     }),
   };
 
@@ -408,20 +408,19 @@ export function genAccount(
       typeof opts.subAccountsCount === "number"
         ? opts.subAccountsCount
         : rng.nextInt(0, 8);
-    const all = listTokensForCryptoCurrency(account.currency).filter((t) =>
-      hardcodedMarketcap.includes(t.id)
+    const all = listTokensForCryptoCurrency(account.currency, {
+      withDelisted: true,
+    }).filter(
+      ({ id, delisted }) =>
+        (hardcodedMarketcap.includes(id) && !delisted) ||
+        opts.tokenIds?.includes(id)
     );
-    const compoundReadyTokens = all.filter(findCompoundToken);
-    const notCompoundReadyTokens = all.filter((a) => !findCompoundToken(a));
-    // favorize the generation of compound tokens
-    const tokens = compoundReadyTokens
-      .concat(
-        // from random index
-        notCompoundReadyTokens.slice(
-          rng.nextInt(Math.floor(notCompoundReadyTokens.length / 2))
-        )
-      )
-      .slice(0, tokenCount);
+    const tokensFromOpts = all.filter((t) => opts.tokenIds?.includes(t.id));
+
+    // [ explicit token from opts ] > compoundReady > rest
+    const tokens = tokensFromOpts
+      .concat(all)
+      .slice(0, Math.max(tokenCount, opts.tokenIds?.length || 0));
     account.subAccounts = tokens.map((token, i) =>
       genTokenAccount(i, account, token)
     );

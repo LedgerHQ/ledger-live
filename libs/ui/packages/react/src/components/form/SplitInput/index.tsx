@@ -28,7 +28,7 @@ function getDividerColor(props: DividerProps) {
     return props.theme?.colors.neutral.c40;
   }
   if (props.error) {
-    return props.theme?.colors.error.c100;
+    return props.theme?.colors.error.c50;
   }
   if (props.focus) {
     return props.theme?.colors.primary.c80;

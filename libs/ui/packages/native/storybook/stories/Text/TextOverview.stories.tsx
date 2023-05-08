@@ -5,7 +5,11 @@ import { fontWeightTypes, FontWeightTypes } from "../../../src/components/Text/g
 import { Flex } from "../../../src/components/Layout";
 import Text from "../../../src/components/Text";
 import { textVariants, TextVariants } from "../../../src/styles/theme";
-import { storiesOf } from "../storiesOf";
+
+export default {
+  title: "Text/Overview",
+  component: Text,
+};
 
 const HorizontalScroll = proxyStyled(ScrollView).attrs({
   horizontal: true,
@@ -23,7 +27,7 @@ const isHeader = makeIsInCategory(headerVariants);
 const isSubtitle = makeIsInCategory(subtitleVariants);
 const isHeaderInter = makeIsInCategory(headerInterVariants);
 
-const Overview = () => {
+export const Overview = () => {
   return (
     <HorizontalScroll>
       <ScrollView>
@@ -68,5 +72,3 @@ const Overview = () => {
     </HorizontalScroll>
   );
 };
-
-storiesOf((story) => story("Text", module).add("Overview", Overview));

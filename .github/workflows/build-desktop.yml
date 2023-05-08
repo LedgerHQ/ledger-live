@@ -72,17 +72,10 @@ jobs:
           base: ${{ inputs.base_ref }}
       - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
@@ -113,12 +106,10 @@ jobs:
           dotnet-version: 2.1.816
       - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
@@ -146,17 +137,12 @@ jobs:
           persist-credentials: false
       - name: Set git user
         run: |
-          git config user.email "team-live@ledger.fr"
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
           git config user.name "live-github-bot[bot]"
-      - uses: pnpm/action-setup@v2
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
         with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
       - uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:

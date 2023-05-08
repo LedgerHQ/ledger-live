@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "22.6.4",
+  "version": "22.7.1",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
     "@ledgerhq/hw-transport-node-ble": "workspace:^"
   },
   "dependencies": {
+    "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
@@ -40,8 +41,8 @@
     "@ledgerhq/hw-transport-node-hid": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
-    "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-devices": "workspace:^",
     "@walletconnect/client": "^1.7.1",
     "asciichart": "^1.5.25",
     "bignumber.js": "^9.1.0",
@@ -69,7 +70,6 @@
     "@types/lodash": "^4.14.177",
     "@types/node": "^17.0.15",
     "@types/pako": "^2.0.0",
-    "ts-node": "^10.4.0",
-    "typescript": "^4.8.3"
+    "ts-node": "^10.4.0"
   }
 }

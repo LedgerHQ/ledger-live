@@ -23,49 +23,67 @@ export const defaultFeatures: DefaultFeatures = {
   currencyAvalancheCChain: {
     enabled: false,
   },
-  currencyOsmosis: {
+  currencyOptimism: {
     enabled: false,
   },
-  currencyFantom: {
+  currencyOptimismGoerli: {
     enabled: false,
   },
-  currencyMoonbeam: {
+  currencyArbitrum: {
     enabled: false,
   },
-  currencyCronos: {
+  currencyArbitrumGoerli: {
     enabled: false,
   },
-  currencyNear: {
+  currencyRsk: {
     enabled: false,
   },
-  currencySongbird: {
+  currencyBittorrent: {
     enabled: false,
   },
-  currencyFlare: {
+  currencyKavaEvm: {
     enabled: false,
   },
-  currencyOsmosisMobile: {
+  currencyEvmosEvm: {
     enabled: false,
   },
-  currencyFantomMobile: {
+  currencyEnergyWeb: {
     enabled: false,
   },
-  currencyMoonbeamMobile: {
+  currencyAstar: {
     enabled: false,
   },
-  currencyCronosMobile: {
+  currencyMetis: {
     enabled: false,
   },
-  currencySongbirdMobile: {
+  currencyBoba: {
     enabled: false,
   },
-  currencyFlareMobile: {
+  currencyMoonriver: {
+    enabled: false,
+  },
+  currencyVelasEvm: {
+    enabled: false,
+  },
+  currencySyscoin: {
+    enabled: false,
+  },
+  currencyAxelar: {
+    enabled: false,
+  },
+  currencyOnomy: {
+    enabled: false,
+  },
+  currencyQuicksilver: {
+    enabled: false,
+  },
+  currencyPersistence: {
     enabled: false,
   },
   deviceInitialApps: {
     enabled: false,
     params: {
-      apps: ["Boilerplate", "Boilerplate_2", "Boilerplate_3"],
+      apps: ["Bitcoin", "Ethereum", "Polygon"],
     },
   },
   disableNftSend: {
@@ -76,6 +94,12 @@ export const defaultFeatures: DefaultFeatures = {
   },
   disableNftRaribleOpensea: {
     enabled: false,
+  },
+  domainInputResolution: {
+    enabled: false,
+    params: {
+      supportedCurrencyIds: ["ethereum"],
+    },
   },
   ratingsPrompt: {
     enabled: false,
@@ -198,8 +222,55 @@ export const defaultFeatures: DefaultFeatures = {
   },
   protectServicesMobile: {
     enabled: false,
+    params: {
+      onboardingRestore: {
+        restoreInfoDrawer: {
+          enabled: true,
+          manualStepsURI:
+            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          supportLinkURI:
+            "http://chat.abhishekpriyam.com/sprinklrlivechatv2.php?appId=63453067138a3f453db323b4_app_300078397&env=prod3",
+        },
+        postOnboardingURI: `ledgerlive://recover/protect-simu?redirectTo=restore`,
+      },
+      managerStatesData: {
+        NEW: {
+          learnMoreURI: `ledgerlive://recover/protect-simu?redirectTo=upsell`,
+          alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login`,
+        },
+      },
+      login: {
+        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+      },
+      protectId: "protect-simu",
+    },
+  },
+  protectServicesDesktop: {
+    enabled: false,
   },
   newsfeedPage: {
     enabled: false,
+  },
+  discover: {
+    enabled: false,
+    params: {
+      version: "1",
+    },
+  },
+  protectServicesDiscoverDesktop: {
+    enabled: false,
+  },
+  referralProgramDesktopSidebar: {
+    enabled: false,
+    params: {
+      path: "/discover/refer-a-friend",
+      isNew: true,
+    },
+  },
+  referralProgramMobile: {
+    enabled: false,
+    params: {
+      path: "/discover/refer-a-friend",
+    },
   },
 };

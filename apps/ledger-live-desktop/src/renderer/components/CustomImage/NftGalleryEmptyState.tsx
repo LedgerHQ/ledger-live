@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import Illustration from "~/renderer/components/Illustration";

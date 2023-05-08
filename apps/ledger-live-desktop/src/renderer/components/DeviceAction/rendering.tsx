@@ -5,13 +5,11 @@ import { TFunction, Trans } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
-
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { WrongDeviceForAccount, UpdateYourApp, LockedDeviceError } from "@ledgerhq/errors";
-
 import { LatestFirmwareVersionRequired, DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -34,7 +32,6 @@ import { getDeviceAnimation } from "./animations";
 import { DeviceBlocker } from "./DeviceBlocker";
 import ErrorIcon from "~/renderer/components/ErrorIcon";
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
-import SupportLinkError from "~/renderer/components/SupportLinkError";
 import { urls } from "~/config/urls";
 import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
 import ExternalLinkButton from "../ExternalLinkButton";
@@ -51,7 +48,6 @@ import {
   Theme,
   Button as ButtonV3,
   Flex,
-  Icons,
   Text,
   Log,
   ProgressLoader,
@@ -61,6 +57,7 @@ import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import FramedImage from "../CustomImage/FramedImage";
+import { Account } from "@ledgerhq/types-live";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -99,7 +96,7 @@ export const ConfirmWrapper = styled.div`
   max-width: 100%;
 `;
 
-const Logo = styled.div<{ warning?: boolean }>`
+const Logo = styled.div<{ warning?: boolean; info?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -170,7 +167,7 @@ const ErrorDescription = styled(Text).attrs({
   user-select: text;
 `;
 
-const ButtonContainer = styled(Box).attrs(p => ({
+const ButtonContainer = styled(Box).attrs(() => ({
   mt: 25,
   horizontal: true,
 }))``;
@@ -191,7 +188,7 @@ export const renderRequestQuitApp = ({
 }) => (
   <Wrapper>
     <Header />
-    <AnimationWrapper modelId={modelId}>
+    <AnimationWrapper>
       <Animation animation={getDeviceAnimation(modelId, type, "quitApp")} />
     </AnimationWrapper>
     <Footer>
@@ -209,7 +206,7 @@ export const renderVerifyUnwrapped = ({
   modelId: DeviceModelId;
   type: Theme["theme"];
 }) => (
-  <AnimationWrapper modelId={modelId}>
+  <AnimationWrapper>
     <DeviceBlocker />
     <Animation animation={getDeviceAnimation(modelId, type, "verify")} />
   </AnimationWrapper>
@@ -313,23 +310,23 @@ export const InstallingApp = ({
   type: Theme["theme"];
   appName: string;
   progress: number;
-  request: any;
+  request: {
+    currency?: CryptoCurrency;
+    account?: Account;
+    appName?: string;
+  };
   analyticsPropertyFlow?: string;
 }) => {
   const currency = request?.currency || request?.account?.currency;
   const appNameToTrack = appName || request?.appName || currency?.managerAppName;
   const cleanProgress = progress ? Math.round(progress * 100) : null;
   useEffect(() => {
-    const trackingArgs = [
-      "In-line app install",
-      { appName: appNameToTrack, flow: analyticsPropertyFlow },
-    ];
-    track(...trackingArgs);
+    track("In-line app install", { appName: appNameToTrack, flow: analyticsPropertyFlow });
   }, [appNameToTrack, analyticsPropertyFlow]);
   return (
     <Wrapper data-test-id="device-action-loader">
       <Header />
-      <AnimationWrapper modelId={modelId}>
+      <AnimationWrapper>
         <Animation animation={getDeviceAnimation(modelId, type, "installLoading")} />
       </AnimationWrapper>
       <Footer>
@@ -397,7 +394,7 @@ export const renderAllowManager = ({
   <Wrapper>
     <DeviceBlocker />
     <Header />
-    <AnimationWrapper modelId={modelId}>
+    <AnimationWrapper>
       <Animation animation={getDeviceAnimation(modelId, type, "allowManager")} />
     </AnimationWrapper>
     <Footer>
@@ -425,7 +422,7 @@ export const renderAllowLanguageInstallation = ({
     data-test-id="allow-language-installation"
   >
     <DeviceBlocker />
-    <AnimationWrapper modelId={modelId}>
+    <AnimationWrapper>
       <Animation animation={getDeviceAnimation(modelId, type, "verify")} />
     </AnimationWrapper>
     <Log extraTextProps={{ fontSize: 20 }} alignSelf="stretch" mx={16} mt={10}>
@@ -450,7 +447,7 @@ export const renderAllowOpeningApp = ({
   <Wrapper>
     {isDeviceBlocker ? <DeviceBlocker /> : null}
     <Header />
-    <AnimationWrapper modelId={modelId}>
+    <AnimationWrapper>
       <Animation animation={getDeviceAnimation(modelId, type, "openApp")} />
     </AnimationWrapper>
     <Footer>
@@ -508,7 +505,7 @@ export const renderLockedDeviceError = ({
 }: {
   t: TFunction;
   device?: Device;
-  onRetry?: () => void;
+  onRetry?: (() => void) | null;
 }) => {
   const productName = device ? getDeviceModel(device.modelId).productName : null;
 
@@ -527,9 +524,9 @@ export const renderLockedDeviceError = ({
       </ErrorDescription>
       <ButtonContainer>
         {onRetry ? (
-          <Button primary onClick={onRetry}>
+          <ButtonV3 variant="main" onClick={onRetry}>
             {t("common.retry")}
-          </Button>
+          </ButtonV3>
         ) : null}
       </ButtonContainer>
     </Wrapper>
@@ -587,7 +584,7 @@ export const RenderDeviceNotOnboardedError = ({ t, device }: { t: TFunction; dev
   );
 };
 
-export const renderError = ({
+export function renderError({
   error,
   t,
   withOpenManager,
@@ -602,10 +599,10 @@ export const renderError = ({
   withOnboardingCTA,
   device,
 }: {
-  error: Error;
+  error: any;
   t: TFunction;
   withOpenManager?: boolean;
-  onRetry?: () => void;
+  onRetry?: (() => void) | null;
   withExportLogs?: boolean;
   list?: boolean;
   supportLink?: string;
@@ -615,7 +612,7 @@ export const renderError = ({
   requireFirmwareUpdate?: boolean;
   withOnboardingCTA?: boolean;
   device?: Device;
-}) => {
+}) {
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
   if (error instanceof LockedDeviceError) {
@@ -676,7 +673,7 @@ export const renderError = ({
       </ButtonContainer>
     </Wrapper>
   );
-};
+}
 
 export const renderInWrongAppForAccount = ({
   t,
@@ -684,12 +681,12 @@ export const renderInWrongAppForAccount = ({
   accountName,
 }: {
   t: TFunction;
-  onRetry: () => void;
+  onRetry?: (() => void) | null;
   accountName: string;
 }) =>
   renderError({
     t,
-    error: new WrongDeviceForAccount(null, { accountName }),
+    error: new WrongDeviceForAccount("", { accountName }),
     withExportLogs: true,
     onRetry,
   });
@@ -697,21 +694,19 @@ export const renderInWrongAppForAccount = ({
 export const renderConnectYourDevice = ({
   modelId,
   type,
-  onRetry,
   onRepairModal,
   device,
   unresponsive,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
-  onRetry: () => void;
-  onRepairModal: () => void;
+  onRepairModal?: ((open: boolean) => void) | null;
   device: Device;
-  unresponsive?: boolean;
+  unresponsive?: boolean | null;
 }) => (
   <Wrapper>
     <Header />
-    <AnimationWrapper modelId={modelId}>
+    <AnimationWrapper>
       <Animation
         animation={getDeviceAnimation(
           modelId,
@@ -728,7 +723,7 @@ export const renderConnectYourDevice = ({
           }
         />
       </Title>
-      {!device ? (
+      {!device && onRepairModal ? (
         <TroubleshootingWrapper>
           <ConnectTroubleshooting onRepair={onRepairModal} />
         </TroubleshootingWrapper>
@@ -746,7 +741,7 @@ export const renderFirmwareUpdating = ({
 }) => (
   <Wrapper>
     <Header />
-    <AnimationWrapper modelId={modelId}>
+    <AnimationWrapper>
       <Animation animation={getDeviceAnimation(modelId, type, "firmwareUpdating")} />
     </AnimationWrapper>
     <Footer>
@@ -761,7 +756,6 @@ export const renderSwapDeviceConfirmation = ({
   modelId,
   type,
   transaction,
-  status,
   exchangeRate,
   exchange,
   amountExpectedTo,
@@ -771,12 +765,11 @@ export const renderSwapDeviceConfirmation = ({
   modelId: DeviceModelId;
   type: Theme["theme"];
   transaction: Transaction;
-  status: TransactionStatus;
   exchangeRate: ExchangeRate;
   exchange: Exchange;
   amountExpectedTo?: string;
   estimatedFees?: string;
-  swapDefaultTrack: Record<string, string>;
+  swapDefaultTrack: Record<string, string | boolean>;
 }) => {
   const ProviderIcon = getProviderIcon(exchangeRate);
   const [sourceAccountName, sourceAccountCurrency] = [
@@ -904,16 +897,10 @@ export const renderSecureTransferDeviceConfirmation = ({
   </>
 );
 
-export const renderLoading = ({
-  modelId,
-  children,
-}: {
-  modelId: DeviceModelId;
-  children?: React.ReactNode;
-}) => (
+export const renderLoading = ({ children }: { children?: React.ReactNode } = {}) => (
   <Wrapper data-test-id="device-action-loader">
     <Header />
-    <AnimationWrapper modelId={modelId}>
+    <AnimationWrapper>
       <BigSpinner size={50} />
     </AnimationWrapper>
     <Footer>
@@ -990,7 +977,6 @@ export const renderImageLoadRequested = ({
       title={t("customImage.steps.transfer.allowPreview", {
         productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
       })}
-      progress={0}
       testId="device-action-image-load-requested"
     >
       <FramedImage

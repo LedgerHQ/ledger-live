@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Box } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
-
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/hw/hooks/useGetLatestAvailableFirmware";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { command } from "~/renderer/commands";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-
+import { getGenuineCheckFromDeviceId } from "@ledgerhq/live-common/hw/getGenuineCheckFromDeviceId";
+import { getLatestAvailableFirmwareFromDeviceId } from "@ledgerhq/live-common/hw/getLatestAvailableFirmwareFromDeviceId";
 import SoftwareCheckContent from "./SoftwareCheckContent";
 import GenuineCheckModal from "./GenuineCheckModal";
 import SoftwareCheckLockedDeviceModal from "./SoftwareCheckLockedDeviceModal";
@@ -25,13 +24,6 @@ export type Props = {
   deviceModelId: DeviceModelId;
 };
 
-// The commands needs to be defined outside of the function component, to avoid creating it at
-// each render, and re-triggering a run for their associated hooks
-const getGenuineCheckFromDeviceIdCommand = command("getGenuineCheckFromDeviceId");
-const getLatestAvailableFirmwareFromDeviceIdCommand = command(
-  "getLatestAvailableFirmwareFromDeviceId",
-);
-
 const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId }: Props) => {
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
     SoftwareCheckStatus.inactive,
@@ -45,13 +37,13 @@ const SoftwareCheckStep = ({ isDisplayed, onComplete, productName, deviceModelId
   const deviceId = device?.deviceId ?? "";
 
   const { genuineState, devicePermissionState, resetGenuineCheckState } = useGenuineCheck({
-    getGenuineCheckFromDeviceId: getGenuineCheckFromDeviceIdCommand,
+    getGenuineCheckFromDeviceId,
     isHookEnabled: genuineCheckStatus === SoftwareCheckStatus.active,
     deviceId,
   });
 
   const { latestFirmware, status, lockedDevice } = useGetLatestAvailableFirmware({
-    getLatestAvailableFirmwareFromDeviceId: getLatestAvailableFirmwareFromDeviceIdCommand,
+    getLatestAvailableFirmwareFromDeviceId,
     isHookEnabled: firmwareUpdateStatus === SoftwareCheckStatus.active,
     deviceId,
   });

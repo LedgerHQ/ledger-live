@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from "react";
-import { Icons, Alert as AlertBox } from "@ledgerhq/native-ui";
+import { Icons, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
 import { Alert, TouchableWithoutFeedback, View } from "react-native";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/provider";
 import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
@@ -52,11 +52,14 @@ export default function DebugSettings({
   return (
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Debug" />
-      <AlertBox
-        type={"warning"}
-        title={"Tools for development, debugging and QA."}
-      />
+      <Flex p={6} pt={0}>
+        <AlertBox
+          type={"warning"}
+          title={"Tools for development, debugging and QA."}
+        />
+      </Flex>
       <SettingsRow
+        hasBorderTop
         title="Configuration"
         desc="Env variables, feature-flags, and toggles."
         iconLeft={<Icons.SettingsMedium size={24} color="black" />}
@@ -75,7 +78,7 @@ export default function DebugSettings({
         onPress={() => navigate(ScreenName.DebugConnectivity)}
       />
       <SettingsRow
-        title="Generators"
+        title="Generators and Destructors"
         desc="Create new accounts, announcements, etc"
         iconLeft={<Icons.MicrochipMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugGenerators)}
@@ -97,6 +100,12 @@ export default function DebugSettings({
         desc="Get performance information about your setup"
         iconLeft={<Icons.BarChartMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugPerformance)}
+      />
+      <SettingsRow
+        title="Playground"
+        desc="Easy to access blank debugging screen"
+        iconLeft={<Icons.EmojiHappyMedium size={24} color="black" />}
+        onPress={() => navigate(ScreenName.DebugPlayground)}
       />
       <TouchableWithoutFeedback onPress={onDebugHiddenPress}>
         <View>

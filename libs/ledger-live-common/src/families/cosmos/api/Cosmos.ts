@@ -4,6 +4,13 @@ import { patchOperationWithHash } from "../../../operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import cryptoFactory from "../chain/chain";
+import {
+  CosmosDelegation,
+  CosmosDelegationStatus,
+  CosmosTx,
+  CosmosRedelegation,
+  CosmosUnbonding,
+} from "../types";
 
 export class CosmosAPI {
   protected defaultEndpoint: string;
@@ -18,7 +25,15 @@ export class CosmosAPI {
   getAccountInfo = async (
     address: string,
     currency: CryptoCurrency
-  ): Promise<any> => {
+  ): Promise<{
+    balances: BigNumber;
+    blockHeight: number;
+    txs: CosmosTx[];
+    delegations: CosmosDelegation[];
+    redelegations: CosmosRedelegation[];
+    unbondings: CosmosUnbonding[];
+    withdrawAddress: string;
+  }> => {
     try {
       const [
         balances,
@@ -47,8 +62,10 @@ export class CosmosAPI {
         unbondings,
         withdrawAddress,
       };
-    } catch (e: any) {
-      throw new Error(`"Error during cosmos synchronization: "${e.message}`);
+    } catch (e) {
+      throw new Error(
+        `"Error during cosmos synchronization: "${(e as Error).message}`
+      );
     }
   };
 
@@ -81,10 +98,10 @@ export class CosmosAPI {
   getChainId = async (): Promise<string> => {
     const { data } = await network({
       method: "GET",
-      url: `${this.defaultEndpoint}/node_info`,
+      url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/node_info`,
     });
 
-    return data.node_info.network;
+    return data.default_node_info.network;
   };
 
   getHeight = async (): Promise<number> => {
@@ -93,7 +110,7 @@ export class CosmosAPI {
       url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/blocks/latest`,
     });
 
-    return data.block.header.height;
+    return parseInt(data.block.header.height);
   };
 
   getAllBalances = async (
@@ -118,8 +135,8 @@ export class CosmosAPI {
   getDelegations = async (
     address: string,
     currency: CryptoCurrency
-  ): Promise<any> => {
-    const delegations: Array<any> = [];
+  ): Promise<CosmosDelegation[]> => {
+    const delegations: Array<CosmosDelegation> = [];
 
     const { data: data1 } = await network({
       method: "GET",
@@ -152,7 +169,7 @@ export class CosmosAPI {
             ? new BigNumber(d.balance.amount)
             : new BigNumber(0),
         pendingRewards: new BigNumber(0),
-        status,
+        status: status as CosmosDelegationStatus,
       });
     }
 
@@ -165,9 +182,10 @@ export class CosmosAPI {
       for (const d of delegations) {
         if (r.validator_address === d.validatorAddress) {
           for (const reward of r.reward) {
-            d.pendingRewards = d.pendingRewards.plus(
-              new BigNumber(reward.amount).integerValue()
-            );
+            if (reward.denom === currency.units[1].code)
+              d.pendingRewards = d.pendingRewards.plus(
+                new BigNumber(reward.amount).integerValue(BigNumber.ROUND_CEIL)
+              );
           }
         }
       }
@@ -176,8 +194,8 @@ export class CosmosAPI {
     return delegations;
   };
 
-  getRedelegations = async (address: string): Promise<any> => {
-    const redelegations: Array<any> = [];
+  getRedelegations = async (address: string): Promise<CosmosRedelegation[]> => {
+    const redelegations: Array<CosmosRedelegation> = [];
 
     const { data } = await network({
       method: "GET",
@@ -198,8 +216,8 @@ export class CosmosAPI {
     return redelegations;
   };
 
-  getUnbondings = async (address: string): Promise<any> => {
-    const unbondings: Array<any> = [];
+  getUnbondings = async (address: string): Promise<CosmosUnbonding[]> => {
+    const unbondings: Array<CosmosUnbonding> = [];
 
     const { data } = await network({
       method: "GET",
@@ -228,7 +246,7 @@ export class CosmosAPI {
     return data.withdraw_address;
   };
 
-  getTransactions = async (address: string): Promise<any> => {
+  getTransactions = async (address: string): Promise<CosmosTx[]> => {
     const receive = await network({
       method: "GET",
       url:
@@ -269,5 +287,26 @@ export class CosmosAPI {
     }
 
     return patchOperationWithHash(operation, data.tx_response.txhash);
+  };
+
+  /** Simulate a transaction on the node to get a precise estimation of gas used */
+  simulate = async (tx_bytes: number[]): Promise<BigNumber> => {
+    try {
+      const { data } = await network({
+        method: "POST",
+        url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/simulate`,
+        data: {
+          tx_bytes,
+        },
+      });
+
+      if (data && data.gas_info && data.gas_info.gas_used) {
+        return new BigNumber(data.gas_info.gas_used);
+      } else {
+        throw new Error("No gas used returned from lcd");
+      }
+    } catch (e) {
+      throw new Error("Tx simulation failed");
+    }
   };
 }

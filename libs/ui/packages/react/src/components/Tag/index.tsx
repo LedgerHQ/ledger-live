@@ -8,6 +8,7 @@ export type Size = "large" | "medium" | "small";
 export type Type = "plain" | "opacity" | "outlined" | "outlinedOpacity";
 
 export type TagProps = BaseStyledProps &
+  React.HTMLAttributes<HTMLDivElement> &
   BorderProps &
   React.PropsWithChildren<{
     /**
@@ -84,7 +85,6 @@ function getTextProps({ size }: TagProps): {
       return {
         variant: "tiny",
         fontWeight: "semiBold",
-        uppercase: true,
       };
     case "large":
     default:

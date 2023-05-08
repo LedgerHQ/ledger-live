@@ -21,7 +21,7 @@ inputs:
     description: slack icon emoji to post with (optional)
 runs:
   using: node16
-  main: build/index.js
+  main: build/main.js
 
 branding:
   icon: image

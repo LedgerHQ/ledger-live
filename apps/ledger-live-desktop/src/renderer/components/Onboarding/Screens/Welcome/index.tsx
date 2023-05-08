@@ -9,9 +9,7 @@ import { urls } from "~/config/urls";
 import { acceptTerms } from "~/renderer/terms";
 import { Text, Button, Logos, Icons, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
 import { saveSettings } from "~/renderer/actions/settings";
-
 import BuyNanoX from "./assets/buyNanoX.webm";
-
 import { hasCompletedOnboardingSelector, languageSelector } from "~/renderer/reducers/settings";
 
 const StyledLink = styled(Text)`
@@ -94,15 +92,23 @@ export function Welcome() {
   }
 
   const buyNanoX = useCallback(() => {
-    openURL(urls.noDevice.buyNew[locale in urls.terms ? locale : "en"]);
+    openURL(
+      urls.noDevice.buyNew[
+        locale in urls.terms ? (locale as keyof typeof urls.noDevice.buyNew) : "en"
+      ],
+    );
   }, [locale]);
 
   const openTermsAndConditions = useCallback(() => {
-    openURL(urls.terms[locale in urls.terms ? locale : "en"]);
+    openURL(urls.terms[locale in urls.terms ? (locale as keyof typeof urls.terms) : "en"]);
   }, [locale]);
 
   const openPrivacyPolicy = useCallback(() => {
-    openURL(urls.privacyPolicy[locale in urls.privacyPolicy ? locale : "en"]);
+    openURL(
+      urls.privacyPolicy[
+        locale in urls.privacyPolicy ? (locale as keyof typeof urls.privacyPolicy) : "en"
+      ],
+    );
   }, [locale]);
 
   const countTitle = useRef(0);

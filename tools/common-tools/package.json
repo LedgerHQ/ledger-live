@@ -1,10 +1,12 @@
 {
   "name": "live-common-tools",
-  "version": "0.2.24",
+  "version": "0.3.1",
   "private": true,
   "dependencies": {
+    "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
@@ -43,7 +45,7 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build && cp build/index.html build/200.html && cp build/index.html build/404.html",
+    "build": "react-app-rewired --openssl-legacy-provider build && cp build/index.html build/200.html && cp build/index.html build/404.html",
     "_test": "react-app-rewired test --env=jsdom",
     "eject": "react-app-rewired eject"
   },

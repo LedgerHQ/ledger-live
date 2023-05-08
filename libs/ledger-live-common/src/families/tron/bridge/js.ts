@@ -82,15 +82,11 @@ import {
   voteTronSuperRepresentatives,
   fetchCurrentBlockHeight,
   getContractUserEnergyRatioConsumption,
-} from "../../../api/Tron";
+} from "../api";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import type { AccountShapeInfo } from "../../../bridge/jsHelpers";
-import {
-  assignFromAccountRaw,
-  assignToAccountRaw,
-  applyReconciliation,
-} from "../serialization";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 
 const receive = makeAccountBridgeReceive();
 
@@ -849,7 +845,6 @@ const accountBridge: AccountBridge<Transaction> = {
   receive,
   signOperation,
   broadcast,
-  applyReconciliation,
   assignFromAccountRaw,
   assignToAccountRaw,
 };

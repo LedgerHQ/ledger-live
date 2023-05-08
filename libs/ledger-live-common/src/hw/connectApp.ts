@@ -13,14 +13,13 @@ import {
   LockedDeviceError,
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
-import type { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import type { DerivationMode } from "../derivation";
-import type { AppOp } from "../apps/types";
+import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
+import type { AppOp, SkippedAppOp } from "../apps/types";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import { withDevice } from "./deviceAccess";
-import { streamAppInstall } from "../apps/hw";
+import inlineAppInstall from "../apps/inlineAppInstall";
 import { isDashboardName } from "./isDashboardName";
 import getAppAndVersion from "./getAppAndVersion";
 import getDeviceInfo from "./getDeviceInfo";
@@ -40,15 +39,18 @@ export type RequiresDerivation = {
   forceFormat?: string;
 };
 export type Input = {
-  modelId: DeviceModelId;
-  devicePath: string;
+  deviceId: string;
+  request: ConnectAppRequest;
+};
+export type ConnectAppRequest = {
   appName: string;
   requiresDerivation?: RequiresDerivation;
   dependencies?: string[];
   requireLatestFirmware?: boolean;
   outdatedApp?: AppAndVersion;
-  skipAppInstallIfNotFound?: boolean;
+  allowPartialDependencies: boolean;
 };
+
 export type AppAndVersion = {
   name: string;
   version: string;
@@ -80,14 +82,22 @@ export type ConnectAppEvent =
       appName: string;
     }
   | {
-      type: "stream-install";
+      type: "inline-install";
       progress: number;
       itemProgress: number;
       currentAppOp: AppOp;
       installQueue: string[];
     }
   | {
+      type: "some-apps-skipped";
+      skippedAppOps: SkippedAppOp[];
+    }
+  | {
       type: "listing-apps";
+    }
+  | {
+      type: "listed-apps";
+      installQueue: string[];
     }
   | {
       type: "dependencies-resolved";
@@ -154,7 +164,7 @@ export const openAppFromDashboard = (
                 switch (e.statusCode) {
                   case 0x6984: // No StatusCodes definition
                   case 0x6807: // No StatusCodes definition
-                    return streamAppInstall({
+                    return inlineAppInstall({
                       transport,
                       appNames: [appName],
                       onSuccessObs: () =>
@@ -198,7 +208,7 @@ const attemptToQuitApp = (
       });
 
 const derivationLogic = (
-  transport,
+  transport: Transport,
   {
     requiresDerivation: { currencyId, ...derivationRest },
     appAndVersion,
@@ -269,20 +279,19 @@ const derivationLogic = (
   );
 
 /**
- * @param skipAppInstallIfNotFound If some dependencies need to be installed, and if set to true,
+ * @param allowPartialDependencies If some dependencies need to be installed, and if set to true,
  *   skip any app install if the app is not found from the provider.
  */
-const cmd = ({
-  modelId,
-  devicePath,
-  appName,
-  requiresDerivation,
-  dependencies,
-  requireLatestFirmware,
-  outdatedApp,
-  skipAppInstallIfNotFound = false,
-}: Input): Observable<ConnectAppEvent> =>
-  withDevice(devicePath)(
+const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
+  const {
+    appName,
+    requiresDerivation,
+    dependencies,
+    requireLatestFirmware,
+    outdatedApp,
+    allowPartialDependencies = false,
+  } = request;
+  return withDevice(deviceId)(
     (transport) =>
       new Observable((o) => {
         const timeoutSub = of({
@@ -290,12 +299,11 @@ const cmd = ({
         })
           .pipe(delay(1000))
           .subscribe((e) => o.next(e as ConnectAppEvent));
-
         const innerSub = ({
           appName,
           dependencies,
           requireLatestFirmware,
-        }: any) =>
+        }: ConnectAppRequest): Observable<ConnectAppEvent> =>
           defer(() => from(getAppAndVersion(transport))).pipe(
             concatMap((appAndVersion): Observable<ConnectAppEvent> => {
               timeoutSub.unsubscribe();
@@ -347,7 +355,12 @@ const cmd = ({
 
                             if (isLatest) {
                               o.next({ type: "latest-firmware-resolved" });
-                              return innerSub({ appName, dependencies }); // NB without the fw version check
+                              return innerSub({
+                                appName,
+                                dependencies,
+                                allowPartialDependencies,
+                                // requireLatestFirmware // Resolved!.
+                              });
                             } else {
                               return throwError(
                                 new LatestFirmwareVersionRequired(
@@ -368,7 +381,7 @@ const cmd = ({
                 // check if we meet dependencies
                 if (dependencies?.length) {
                   const completesInDashboard = isDashboardName(appName);
-                  return streamAppInstall({
+                  return inlineAppInstall({
                     transport,
                     appNames: [
                       ...(completesInDashboard ? [] : [appName]),
@@ -380,9 +393,11 @@ const cmd = ({
                       });
                       return innerSub({
                         appName,
-                      }); // NB without deps
+                        allowPartialDependencies,
+                        // dependencies // Resolved!
+                      });
                     },
-                    skipAppInstallIfNotFound,
+                    allowPartialDependencies,
                   });
                 }
 
@@ -400,20 +415,18 @@ const cmd = ({
               }
 
               const appNeedsUpgrade = mustUpgrade(
-                modelId,
                 appAndVersion.name,
                 appAndVersion.version
               );
               if (appNeedsUpgrade) {
-                // We need to quit the app first, then we need to get the device information to see if an
-                // app update that fulfills the minimum is available on this provider for this device version.
+                // quit app, check provider's app update for device's minimum requirements.
                 o.next({
                   type: "has-outdated-app",
                   outdatedApp: appAndVersion,
                 });
               }
 
-              // in order to check the fw version, install deps, or check app update availability, we need dashboard
+              // need dashboard to check firmware, install dependencies, or verify app update
               if (
                 dependencies?.length ||
                 requireLatestFirmware ||
@@ -480,6 +493,7 @@ const cmd = ({
           appName,
           dependencies,
           requireLatestFirmware,
+          allowPartialDependencies,
         }).subscribe(o);
 
         return () => {
@@ -488,5 +502,6 @@ const cmd = ({
         };
       })
   );
+};
 
 export default cmd;

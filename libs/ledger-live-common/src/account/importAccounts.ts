@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import type { Result } from "../cross";
 import { accountDataToAccount } from "../cross";
-import { findAccountMigration, checkAccountSupported } from "./index";
+import { checkAccountSupported } from "@ledgerhq/coin-framework/account/index";
 import joinSwapHistories from "../exchange/swap/joinSwapHistories";
 import isEqual from "lodash/isEqual";
 import type { Account } from "@ledgerhq/types-live";
@@ -49,19 +49,6 @@ export const importAccountsMakeItems = ({
             initialAccountId: account.id,
             account,
             mode: "unsupported",
-          };
-        }
-
-        const migratableAccount = accounts.find((a) =>
-          findAccountMigration(a, [account])
-        );
-
-        if (migratableAccount) {
-          // in migration case, we completely replace the older account
-          return {
-            initialAccountId: migratableAccount.id,
-            account,
-            mode: "update",
           };
         }
 

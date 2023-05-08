@@ -13,14 +13,13 @@ import { NavigatorName, ScreenName } from "../../const";
 import {
   accountsCountSelector,
   areAccountsEmptySelector,
-  hasLendEnabledAccountsSelector,
 } from "../../reducers/accounts";
 import {
   hasOrderedNanoSelector,
   readOnlyModeEnabledSelector,
 } from "../../reducers/settings";
 import { Props as ModalProps } from "../QueuedDrawer";
-import TransferButton from "./TransferButton";
+import TransferButton from "../TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../SetupDeviceBanner";
 import { track, useAnalytics } from "../../analytics";
@@ -48,11 +47,11 @@ export default function TransferDrawer({
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const accountsCount: number = useSelector(accountsCountSelector);
-  const lendingEnabled = useSelector(hasLendEnabledAccountsSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   const areAccountsEmpty = useSelector(areAccountsEmptySelector);
 
   const walletConnectEntryPoint = useFeature("walletConnectEntryPoint");
+  const stakePrograms = useFeature("stakePrograms");
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
@@ -79,6 +78,15 @@ export default function TransferDrawer({
     [onNavigate],
   );
 
+  const onStake = useCallback(() => {
+    track("button_clicked", {
+      button: "exchange",
+      page,
+      flow: "stake",
+    });
+    onNavigate(NavigatorName.StakeFlow);
+  }, [onNavigate, page, track]);
+
   const onWalletConnect = useCallback(
     () =>
       onNavigate(NavigatorName.WalletConnect, {
@@ -91,11 +99,12 @@ export default function TransferDrawer({
     track("button_clicked", {
       ...sharedSwapTracking,
       button: "swap",
+      page,
     });
     onNavigate(NavigatorName.Swap, {
       screen: ScreenName.SwapForm,
     });
-  }, [onNavigate, track]);
+  }, [onNavigate, page, track]);
   const onBuy = useCallback(
     () =>
       onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),
@@ -104,13 +113,6 @@ export default function TransferDrawer({
   const onSell = useCallback(
     () =>
       onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeSell }),
-    [onNavigate],
-  );
-  const onLending = useCallback(
-    () =>
-      onNavigate(NavigatorName.Lending, {
-        screen: ScreenName.LendingDashboard,
-      }),
     [onNavigate],
   );
 
@@ -170,6 +172,23 @@ export default function TransferDrawer({
           : null,
       disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
     },
+
+    ...(stakePrograms?.enabled
+      ? [
+          {
+            eventProperties: {
+              button: "transfer_stake",
+              page,
+              drawer: "stake",
+            },
+            title: t("transfer.stake.title"),
+            description: t("transfer.stake.description"),
+            Icon: Icons.ClaimRewardsMedium,
+            onPress: onStake,
+            disabled: readOnlyModeEnabled,
+          },
+        ]
+      : []),
     {
       eventProperties: {
         button: "transfer_swap",
@@ -199,26 +218,6 @@ export default function TransferDrawer({
             Icon: Icons.WalletConnectMedium,
             onPress: onWalletConnect,
             disabled: readOnlyModeEnabled,
-          },
-        ]
-      : []),
-    ...(lendingEnabled
-      ? [
-          {
-            eventProperties: {
-              button: "transfer_lending",
-              page,
-              drawer: "trade",
-            },
-            title: t("transfer.lending.titleTransferTab"),
-            description: t("transfer.lending.descriptionTransferTab"),
-            tag: t("common.popular"),
-            Icon: Icons.LendMedium,
-            onPress:
-              accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-                ? onLending
-                : null,
-            disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
           },
         ]
       : []),

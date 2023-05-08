@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { encodeTokenAccountId } from "./accountId";
 import { emptyHistoryCache } from "./balanceHistoryCache";
 import type {
@@ -17,9 +17,9 @@ import {
   Unit,
 } from "@ledgerhq/types-cryptoassets";
 
-// by convention, a main account is the top level account
-// in case of an Account is the account itself
-// in case of a TokenAccount it's the parentAccount
+// By convention, a main account is the top level account
+// - in case of an Account is the account itself
+// - in case of a SubAccount it's the parentAccount
 export const getMainAccount = (
   account: AccountLike,
   parentAccount?: Account | null | undefined
@@ -27,6 +27,32 @@ export const getMainAccount = (
   const mainAccount = account.type === "Account" ? account : parentAccount;
   invariant(mainAccount, "an account is expected");
   return mainAccount as Account;
+};
+
+// Return the currency in which fees are paid for this account
+export const getFeesCurrency = (
+  account?: AccountLike
+): TokenCurrency | CryptoCurrency => {
+  switch (account?.type) {
+    case "Account":
+      return account.feesCurrency || account.currency;
+
+    case "ChildAccount":
+      return account.currency;
+
+    case "TokenAccount":
+      return account.token;
+
+    default:
+      throw new Error(
+        "invalid account.type=" + (account as unknown as { type: string })?.type
+      );
+  }
+};
+
+// Return the unit to use with the fees currency
+export const getFeesUnit = (currency: TokenCurrency | CryptoCurrency): Unit => {
+  return currency.units[0];
 };
 
 export const getAccountCurrency = (

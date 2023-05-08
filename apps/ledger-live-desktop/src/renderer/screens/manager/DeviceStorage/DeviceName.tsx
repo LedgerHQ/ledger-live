@@ -49,14 +49,16 @@ const DeviceName: React.FC<Props> = ({
   );
 
   const openDeviceRename = useCallback(() => {
-    setDrawer(EditDeviceName, {
-      key: name,
-      device,
-      onSetName: onSuccess,
-      deviceName: name,
-    });
+    name &&
+      setDrawer(EditDeviceName, {
+        key: name,
+        device,
+        onSetName: onSuccess,
+        deviceName: name,
+        deviceInfo,
+      });
     track("Page Manager RenameDeviceEntered");
-  }, [device, name, onSuccess]);
+  }, [device, deviceInfo, name, onSuccess]);
 
   return (
     <Flex alignItems="center">

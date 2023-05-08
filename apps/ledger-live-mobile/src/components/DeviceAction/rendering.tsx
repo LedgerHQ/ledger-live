@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { LockedDeviceError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import {
+  LockedDeviceError,
+  PeerRemovedPairing,
+  WrongDeviceForAccount,
+} from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -36,6 +40,8 @@ import {
   getMainAccount,
   getAccountName,
   getAccountCurrency,
+  getFeesCurrency,
+  getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -58,7 +64,7 @@ import Circle from "../Circle";
 import { MANAGER_TABS } from "../../const/manager";
 import { providerIcons } from "../../icons/swap/index";
 import ExternalLink from "../ExternalLink";
-import { track } from "../../analytics";
+import { TrackScreen, track } from "../../analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
@@ -71,11 +77,10 @@ import {
   FramedImageWithLottieWithContext,
 } from "../CustomImage/FramedImageWithLottie";
 import ModalLock from "../ModalLock";
+import confirmLockscreen from "../../animations/stax/customimage/confirmLockscreen.json";
+import allowConnection from "../../animations/stax/customimage/allowConnection.json";
 
-const confirmLockscreen = require("../animations/stax/customimage/confirmLockscreen.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
-const allowConnection = require("../animations/stax/customimage/allowConnection.json"); // eslint-disable-line @typescript-eslint/no-var-requires, import/no-unresolved
-
-const Wrapper = styled(Flex).attrs({
+export const Wrapper = styled(Flex).attrs({
   flex: 1,
   alignItems: "center",
   justifyContent: "center",
@@ -330,10 +335,12 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.fees")}>
             <Text>
               <CurrencyUnitValue
-                unit={getAccountUnit(
-                  getMainAccount(
-                    exchange.fromAccount,
-                    exchange.fromParentAccount,
+                unit={getFeesUnit(
+                  getFeesCurrency(
+                    getMainAccount(
+                      exchange.fromAccount,
+                      exchange.fromParentAccount,
+                    ),
                   ),
                 )}
                 value={new BigNumber(estimatedFees || 0)}
@@ -451,6 +458,7 @@ export function renderAllowLanguageInstallation({
 
   return (
     <Wrapper>
+      <TrackScreen category="Allow language installation on Stax" />
       <Text variant="h4" textAlign="center">
         {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
       </Text>
@@ -648,6 +656,13 @@ export function renderError({
     return renderLockedDeviceError({ t, onRetry, device });
   }
 
+  // TODO Once we have the aligned Error renderings, the CTA list should be determined
+  // by the error class, not patched like here.
+  let showRetryIfAvailable = true;
+  if ((error as unknown) instanceof PeerRemovedPairing) {
+    showRetryIfAvailable = false;
+  }
+
   return (
     <Wrapper>
       <GenericErrorView
@@ -657,7 +672,7 @@ export function renderError({
         Icon={Icon}
         iconColor={iconColor}
       >
-        {onRetry || managerAppName ? (
+        {showRetryIfAvailable && (onRetry || managerAppName) ? (
           <ActionContainer marginBottom={0} marginTop={32}>
             <StyledButton
               event="DeviceActionErrorRetry"

@@ -1,6 +1,5 @@
 import BigNumber from "bignumber.js";
 import network from "../../../network";
-import URL from "url";
 import { getAccountBalance } from "./network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../../operation";
@@ -10,14 +9,12 @@ import { base64ToUrlSafeBase64 } from "../utils";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
-const fetch = (path, query = {}) =>
-  network({
+const fetch = (path) => {
+  return network({
     method: "GET",
-    url: URL.format({
-      pathname: `${getMirrorApiUrl()}/api/v1${path}`,
-      query,
-    }),
+    url: `${getMirrorApiUrl()}${path}`,
   });
+};
 
 export interface Account {
   accountId: AccountId;
@@ -29,10 +26,9 @@ export async function getAccountsForPublicKey(
 ): Promise<Account[]> {
   let r;
   try {
-    r = await fetch("/accounts", {
-      "account.publicKey": publicKey,
-      balance: false,
-    });
+    r = await fetch(
+      `/api/v1/accounts?account.publicKey=${publicKey}&balance=false`
+    );
   } catch (e: any) {
     if (e.name === "LedgerAPI4xx") return [];
     throw e;
@@ -70,11 +66,16 @@ export async function getOperationsForAccount(
   latestOperationTimestamp: string
 ): Promise<Operation[]> {
   const operations: Operation[] = [];
-  const r = await fetch("/transactions", {
-    "account.id": address,
-    timestamp: `gt:${latestOperationTimestamp}`,
-  });
+  let r = await fetch(
+    `/api/v1/transactions?account.id=${address}&timestamp=gt:${latestOperationTimestamp}`
+  );
   const rawOperations = r.data.transactions as HederaMirrorTransaction[];
+
+  while (r.data.links.next) {
+    r = await fetch(r.data.links.next);
+    const newOperations = r.data.transactions as HederaMirrorTransaction[];
+    rawOperations.push(...newOperations);
+  }
 
   for (const raw of rawOperations) {
     const { consensus_timestamp } = raw;

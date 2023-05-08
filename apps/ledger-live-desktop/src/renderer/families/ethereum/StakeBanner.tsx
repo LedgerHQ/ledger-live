@@ -2,7 +2,6 @@ import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router";
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import { getAccountBannerState as getEthereumBannerState } from "@ledgerhq/live-common/families/ethereum/banner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import { track } from "~/renderer/analytics/segment";
@@ -13,7 +12,7 @@ import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 const kilnAppId = "kiln";
 const lidoAppId = "lido";
 
-export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
+const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   const history = useHistory();
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
@@ -32,7 +31,7 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
       page: "Page Account",
       button: "delegate",
       provider: stakeProvider,
-      token: "ETH",
+      currency: "ETH",
     });
     history.push({
       pathname: `/platform/${providerLiveAppId}`,
@@ -74,3 +73,5 @@ export const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
     />
   );
 };
+
+export default StakeBanner;

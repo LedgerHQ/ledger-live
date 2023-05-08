@@ -25,7 +25,6 @@ import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
 
 import OnboardingPairNew from "../../screens/Onboarding/steps/pairNew";
 import OnboardingImportAccounts from "../../screens/Onboarding/steps/importAccounts";
-import OnboardingFinish from "../../screens/Onboarding/steps/finish";
 import OnboardingPreQuizModal from "../../screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
 import OnboardingQuiz from "../../screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "../../screens/Onboarding/OnboardingQuizFinal";
@@ -51,6 +50,7 @@ import {
 } from "./types/OnboardingNavigator";
 import { StackNavigatorProps } from "./types/helpers";
 import ProtectConnectionInformationModal from "../../screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
 const Stack = createStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingCarefulWarningStack =
@@ -182,6 +182,8 @@ export default function OnboardingNavigator() {
         headerShown: false,
         headerTitle: "",
         headerShadowVisible: false,
+        headerStyle: { backgroundColor: theme.colors.background.main },
+        cardStyle: { backgroundColor: theme.colors.background.main },
       }}
     >
       <Stack.Screen
@@ -189,8 +191,20 @@ export default function OnboardingNavigator() {
         component={OnboardingWelcome}
       />
       <Stack.Screen
+        name={ScreenName.OnboardingDoYouHaveALedgerDevice}
+        component={OnboardingStepDoYouHaveALedgerDevice}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.OnboardingPostWelcomeSelection}
         component={PostWelcomeSelection}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
       />
       <Stack.Screen
         name={ScreenName.GetDevice}
@@ -212,6 +226,10 @@ export default function OnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.OnboardingDeviceSelection}
         component={OnboardingDeviceSelection}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
       />
       <Stack.Screen
         name={ScreenName.OnboardingUseCase}
@@ -226,10 +244,6 @@ export default function OnboardingNavigator() {
         name={NavigatorName.OnboardingPreQuiz}
         component={OnboardingPreQuizModalNavigator}
         options={modalOptions}
-      />
-      <Stack.Screen
-        name={ScreenName.OnboardingDoYouHaveALedgerDevice}
-        component={OnboardingStepDoYouHaveALedgerDevice}
       />
       <Stack.Screen
         name={ScreenName.OnboardingModalDiscoverLive}
@@ -295,15 +309,6 @@ export default function OnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.OnboardingImportAccounts}
         component={OnboardingImportAccounts}
-      />
-
-      <Stack.Screen
-        name={ScreenName.OnboardingFinish}
-        component={OnboardingFinish}
-        options={{
-          cardStyleInterpolator:
-            CardStyleInterpolators.forFadeFromBottomAndroid,
-        }}
       />
 
       <Stack.Screen

@@ -5,7 +5,7 @@ import { closeModal } from "~/renderer/actions/modals";
 import ModalQuizz from "~/renderer/components/ModalQuizz/ModalQuizz";
 import { getQuizzSteps } from "./quizzSteps";
 import StartScreen from "./StartScreen";
-import { noop } from "lodash";
+import noop from "lodash/noop";
 
 type PopinProps = {
   isOpen: boolean;
@@ -20,7 +20,6 @@ export const QuizzPopin = ({ onWin, isOpen, onLose, onClose = noop }: PopinProps
   return (
     <ModalQuizz
       title={t("onboarding.quizz.heading")}
-      isOpen
       onClose={onClose}
       onWin={onWin}
       onLose={onLose}

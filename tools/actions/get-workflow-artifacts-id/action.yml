@@ -1,5 +1,5 @@
-name: download-workflow-artifacts
-description: get artifacts from previous workflow
+name: get-workflow-artifacts-id
+description: get ids of artifacts from previous workflow to download
 inputs:
   token:
     required: true
@@ -19,4 +19,4 @@ outputs:
 
 runs:
   using: node16
-  main: "build/index.js"
+  main: "build/main.js"

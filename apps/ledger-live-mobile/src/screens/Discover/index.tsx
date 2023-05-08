@@ -1,19 +1,17 @@
 import React, { memo, useCallback, useMemo, useContext } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
-import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
 import { urls } from "../../config/urls";
 import { TrackScreen, track } from "../../analytics";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
+import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
 import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { MainNavigatorParamList } from "../../components/RootNavigator/types/MainNavigator";
@@ -36,10 +34,6 @@ const images = {
     referralImg: require("../../images/illustration/Dark/_ReferralProgram.png"),
   },
 };
-
-const StyledSafeAreaView = styled(TabBarSafeAreaView)`
-  background-color: ${({ theme }) => theme.colors.background.main};
-`;
 
 function Discover() {
   const { t } = useTranslation();
@@ -66,6 +60,7 @@ function Discover() {
   }, []);
 
   const { learnCards } = useDynamicContent();
+  const config = useFeature("discover");
 
   const featuresList: {
     title: string;
@@ -77,7 +72,27 @@ function Discover() {
   }[] = useMemo(
     () =>
       [
-        ...(Platform.OS !== "ios"
+        ...(config?.enabled && config?.params.version === "2"
+          ? [
+              {
+                title: t("discover.sections.browseWeb3.title"),
+                subTitle: t("discover.sections.browseWeb3.desc"),
+                onPress: () => {
+                  navigation.navigate(NavigatorName.Discover, {
+                    screen: ScreenName.PlatformCatalog,
+                  });
+                },
+                disabled: false,
+                Image: (
+                  <Illustration
+                    size={110}
+                    darkSource={images.dark.appsImg}
+                    lightSource={images.light.appsImg}
+                  />
+                ),
+              },
+            ]
+          : Platform.OS !== "ios"
           ? [
               {
                 title: t("discover.sections.ledgerApps.title"),
@@ -98,7 +113,6 @@ function Discover() {
               },
             ]
           : []),
-
         ...(!learn?.enabled && !isNewsfeedAvailable
           ? [
               {
@@ -219,6 +233,8 @@ function Discover() {
       referralProgramConfig?.params.url,
       navigation,
       readOnlyTrack,
+      isNewsfeedAvailable,
+      config,
     ],
   );
 
@@ -234,20 +250,28 @@ function Discover() {
     }, [setSource, setScreen]),
   );
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <StyledSafeAreaView>
+    <Flex
+      /**
+       * NB: not using SafeAreaView because it flickers during navigation
+       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
+       */
+      flex={1}
+      mt={insets.top}
+    >
       <TrackScreen category="Discover" />
+      <Flex px={6} pb={6} flexDirection="row">
+        <Flex flex={1} justifyContent="flex-start" alignItems="flex-start">
+          <Text my={3} variant="h4" fontWeight="semiBold">
+            {t("discover.title")}
+          </Text>
+        </Flex>
+      </Flex>
       <ScrollView
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
       >
-        <Flex p={8} mt={8} flexDirection="row">
-          <Flex flex={1} justifyContent="flex-start" alignItems="flex-start">
-            <Text variant="h1">{t("discover.title")}</Text>
-            <Text variant="body" mb={4} mt={4} color="neutral.c70">
-              {t("discover.desc")}
-            </Text>
-          </Flex>
-        </Flex>
         {featuresList.map(
           ({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (
             <DiscoverCard
@@ -270,7 +294,7 @@ function Discover() {
           ),
         )}
       </ScrollView>
-    </StyledSafeAreaView>
+    </Flex>
   );
 }
 

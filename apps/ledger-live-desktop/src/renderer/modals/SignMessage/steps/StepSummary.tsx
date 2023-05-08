@@ -60,7 +60,7 @@ const MessageProperty = memo(({ label, value }: { label: string; value: string |
 
   return (
     <Box flex="1" mb={20}>
-      <Text ff="Inter|Medium" bold color="palette.text.shade40" fontSize={4}>
+      <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
         {label}
       </Text>
       <Text ff="Inter|Medium" color="palette.text.shade90" fontSize={3} pl={2}>
@@ -145,7 +145,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
 
           {fields ? (
             <Box flex="1">
-              <Button outline small mb={2} onClick={e => setShowAdvanced(!showAdvanced)}>
+              <Button outline small mb={2} onClick={() => setShowAdvanced(!showAdvanced)}>
                 {showAdvanced
                   ? `- ${t("signmessage.eip712.hideFullMessage")}`
                   : `+ ${t("signmessage.eip712.showFullMessage")}`}

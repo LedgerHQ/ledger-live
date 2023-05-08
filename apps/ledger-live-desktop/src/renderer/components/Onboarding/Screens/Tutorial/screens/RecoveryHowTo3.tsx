@@ -39,14 +39,16 @@ const RecoveryHowTo3Animation = () => {
 
   return (
     <AnimationContainer>
-      <Animation animation={getDeviceAnimation(deviceModelId, "light", "plugAndPinCode")} />
+      <Animation
+        animation={getDeviceAnimation(deviceModelId!, "light", "plugAndPinCode") as object}
+      />
     </AnimationContainer>
   );
 };
 
 RecoveryHowTo3.Illustration = <RecoveryHowTo3Animation />;
 
-const Footer = (props: any) => {
+const Footer = (props: object) => {
   const { t } = useTranslation();
   return (
     <AsideFooter

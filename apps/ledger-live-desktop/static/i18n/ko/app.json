@@ -84,6 +84,7 @@
     "save" : "Ledger Nano S를",
     "lock" : "잠금",
     "showMore" : "자세히 표시",
+    "backToMatchingURL" : "{{appName}} 앱으로 돌아가기",
     "back" : "뒤로",
     "adjustFees" : "수수료 조정",
     "reset" : "재설정",
@@ -118,7 +119,6 @@
       "syncing" : "동기화 중...",
       "upToDate" : "동기화됨",
       "outdated" : "일시 중지됨",
-      "needsMigration" : "클릭하여 계정 업데이트",
       "error" : "동기화 오류",
       "refresh" : "새로고침",
       "devTools" : "개발자 도구"
@@ -146,8 +146,6 @@
       "DELEGATE" : "위임됨",
       "REDELEGATE" : "재위임됨",
       "UNDELEGATE" : "위임 해제됨",
-      "SUPPLY" : "예치됨",
-      "REDEEM" : "출금됨",
       "APPROVE" : "승인됨",
       "VOTE" : "투표 완료",
       "FREEZE" : "동결됨",
@@ -214,26 +212,23 @@
     "stars" : "즐겨찾는 계정",
     "accounts" : "계정",
     "manager" : "내 Ledger",
+    "earn" : "수익",
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
     "lend" : "대출",
     "catalog" : "탐색",
-    "market" : "마켓"
+    "market" : "마켓",
+    "protect" : "Recover"
   },
   "stars" : {
     "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
     "tooltip" : "계정 즐겨찾기"
   },
   "bridge" : {
-    "modalTitle" : "장치 브릿지 열기",
-    "openHeader" : "Websocket을 통해 장치 계정 노출하기",
-    "openDescription" : "브릿지를 열면 귀하의 모든 계정이 타사 애플리케이션에 노출됩니다.",
-    "openedHeader" : "{{appName}} 브릿지 열림",
-    "openedDescription" : "이제 타사 WebSocket을 통해 웹 애플리케이션의 {{appName}} 계정에 접근할 수 있습니다.",
-    "completeHeader" : "브릿지 세션 완료",
-    "completeDescription" : "이제 WebSocket 브릿지가 마감되었습니다.",
-    "openButton" : "열기",
-    "disconnectButton" : "연결 해제"
+    "modalTitle" : "장치 브릿지(Device Bridge)",
+    "openHeader" : "장치 브릿지는 더 이상 사용할 수 없습니다",
+    "openDescription" : "브라우저 지갑 확장 프로그램에서 Ledger Live 대신 WebHID를 사용하도록 구성하세요.",
+    "closeButton" : "종료"
   },
   "swap2" : {
     "title" : "스왑",
@@ -819,12 +814,44 @@
       "redelegation" : {
         "title" : "알고 계셨나요?",
         "description" : "Ledger 검증인의 스테이킹 수수료는 귀하의 현 검증인보다 저렴합니다",
-        "cta" : "Ledger로 재위임"
+        "cta" : "Ledger로 재위임",
+        "linkText" : "재위임이란 무엇이며 시간이 얼마나 소요되나요?",
+        "solana" : {
+          "title" : "알고 계셨나요?",
+          "description" : "Ledger 수수료는 검증인 수수료보다 낮습니다. 이 프로세스는 최대 4일이 소요될 수 있습니다."
+        },
+        "near" : {
+          "title" : "알고 계셨나요?",
+          "description" : "Ledger 수수료는 검증인 수수료보다 낮습니다. 이 프로세스는 최대 65시간이 소요될 수 있습니다."
+        },
+        "elrond" : {
+          "title" : "알고 계셨나요?",
+          "description" : "Ledger 수수료는 검증인 수수료보다 낮습니다. 이 프로세스는 최대 10일이 소요될 수 있습니다."
+        }
       },
       "delegation" : {
         "title" : "알고 계셨나요?",
         "description" : "Ledger 검증인은 {{asset}} 스테이킹 서비스를 {{commission}}%의 커미션으로 제공합니다.",
-        "cta" : "Ledger를 통한 스테이킹"
+        "cta" : "Ledger를 통한 스테이킹",
+        "linkText" : "자세히 알아보기",
+        "ethereum" : {
+          "lido" : {
+            "title" : "알고 계셨나요?",
+            "description" : "Lido를 통해 이더리움을 스테이킹하고 매일 보상을 받으세요. 락업 기간 없음. 최소 예치금 없음.",
+            "cta" : "리도(Lido)를 통한 스테이킹"
+          },
+          "kiln" : {
+            "title" : "호들만으로는 부족합니다. 보유한 ETH로 더 큰 수익을 올려보세요",
+            "description" : "ETH를 32개 이상 보유하고 계시나요? Kiln을 통해 ETH를 안전하게 스테이킹하여 불로소득을 올려보세요.",
+            "cta" : "킬른(Kiln)으로 스테이킹"
+          }
+        },
+        "near" : {
+          "description" : "Ledger by Figment 검증인으로 NEAR를 스테이킹하세요. Ledger의 타협 없는 강력한 보안이 자산을 안전하게 보호합니다."
+        },
+        "elrond" : {
+          "description" : "Ledger by Figment 검증인으로 ELROND를 스테이킹하세요. Ledger의 타협 없는 강력한 보안이 자산을 안전하게 보호합니다."
+        }
       }
     }
   },
@@ -1186,9 +1213,13 @@
         "description" : "PIN은 4~8자리입니다.",
         "text" : "{{deviceName}} 및 PIN에 액세스할 수 있으면 누구나 사용자가 가진 모든 암호화폐와 NFT 자산에 액세스할 수 있습니다."
       },
-      "recoveryContent" : {
-        "title" : "복구 문구",
-        "content" : "아래 영상을 탭하여 비밀 복구 문구에 대해 자세히 알아보세요"
+      "seedContent" : {
+        "title" : "비밀 복구 문구",
+        "choiceNewOrRestore" : "가장 적합한 설정 옵션을 선택하세요.",
+        "newSeed" : "아래 영상을 탭하여 비밀 복구 문구에 대해 자세히 알아보세요",
+        "choiceRestoreDirectOrRecover" : "자리 표시자 - 직접 복원 선택 또는 복구 사용",
+        "recoverSeed" : "자리 표시자: 복구",
+        "restoreSeed" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요."
       },
       "softwareCheckContent" : {
         "title" : "소프트웨어 점검",
@@ -1399,7 +1430,7 @@
         "label" : "인기 있는"
       },
       "earn" : {
-        "title" : "수익",
+        "title" : "스테이킹",
         "description" : "Ledger와 함께 암호화폐 수익 실현"
       }
     }
@@ -1588,42 +1619,6 @@
     "hideSubAccounts" : "부계정 숨기기 ({{tokenCount}})",
     "countTooltip" : "1개의 부계정",
     "countTooltip_plural" : "{{count}} 부계정"
-  },
-  "migrateAccounts" : {
-    "overview" : {
-      "title" : "Ledger Live 계정 업데이트",
-      "successTitle" : "계정이 업데이트되었습니다",
-      "successDescPlu" : "사용자의 {{assets}} 계정이 이제 업데이트되어 바로 사용할 수 있습니다",
-      "successDesc" : "사용자의 {{assets}} 계정이 이제 업데이트되어 바로 사용할 수 있니다",
-      "mobileTitle" : "모바일로 계정 내보내기",
-      "mobileDesc" : "아래 버튼을 클릭해 업데이트된 계정을 Ledger Live 모바일 앱으로 내보내기하세요.",
-      "mobileCTA" : "모바일로 내보내기",
-      "description" : "Ledger Live의 새로운 기능을 이용하려면 업데이트가 필요합니다.",
-      "currency" : "1개의 {{currency}} 계정을 업데이트해야 합니다.",
-      "currency_plural" : "{{currency}} 계정 {{count}}개를 업데이트해야 합니다.",
-      "footer" : "업데이트를 완료하려면 Ledger 장치가 필요합니다",
-      "pendingDevices" : "1개의 계정을 업데이트할 수 없습니다. 아래 계정과 연계된 장치를 연결하세요",
-      "pendingDevices_plural" : "{{totalMigratableAccounts}} 계정을 업데이트할 수 없습니다. 아래 계정과 연계된 장치를 연결하세요",
-      "doItLaterBtn" : "나중에 다시 해주세요"
-    },
-    "progress" : {
-      "finished" : {
-        "title" : "{{currencyName}} 업데이트 완료됨",
-        "description" : ""
-      },
-      "scanning" : {
-        "title" : "{{currencyName}} 업데이트 진행 중...",
-        "description" : "계정이 업데이트될 때까지 기다려주세요"
-      },
-      "finished-empty" : {
-        "title" : "{{currencyName}} 업데이트 미완료",
-        "description" : "업데이트할 {{currencyName}} 계정 없음"
-      }
-    },
-    "cta" : {
-      "startUpdate" : "업데이트 시작",
-      "nextCurrency" : "{{currency}} 업데이트를 계속하세요"
-    }
   },
   "addAccounts" : {
     "title" : "계정 추가",
@@ -1814,7 +1809,7 @@
       "used" : "사용됨",
       "firmwareAvailable" : "오래된 펌웨어:",
       "firmwareUpToDate" : "펌웨어가 최신입니다:",
-      "genuine" : "정품 장치입니다",
+      "genuine" : "귀하의 장치는 정품입니다",
       "incomplete" : "일부 앱이 인식되지 않았습니다. 제거 후 다시 설치하세요."
     },
     "applist" : {
@@ -2129,16 +2124,16 @@
           "description" : "신뢰할 수 있는 Ledger 검증인을 통해 ATOM을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 자산을 안전하게 보호합니다."
         },
         "osmo" : {
-          "title" : "OSMO를 성장시켜보세요. Ledger를 통해 Figment로 스테이킹.",
-          "description" : "Ledger를 통해 Figment로 검증인을 통해 OSMO를 스테이킹하세요. 최저 수수료와 슬래싱에 대한 보장이 제공됩니다!"
+          "title" : "OSMO를 성장시켜보세요. Ledger by Figment로 스테이킹.",
+          "description" : "Ledger by Figment로 검증인을 통해 OSMO를 스테이킹하세요. 최저 수수료와 슬래싱에 대한 보장이 제공됩니다!"
         },
         "solana" : {
-          "title" : "SOL을 성장시켜보세요. Ledger를 통해 Figment로 스테이킹.",
-          "description" : "Ledger를 통해 Figment로 검증인을 통해 SOL을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 자산을 안전하게 보호합니다."
+          "title" : "SOL을 성장시켜보세요. Ledger by Figment로 스테이킹.",
+          "description" : "Ledger by Figment로 검증인을 통해 SOL을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 자산을 안전하게 보호합니다."
         },
         "celo" : {
-          "title" : "CELO를 성장시켜보세요. Ledger를 통해 Figment로 스테이킹.",
-          "description" : "Ledger를 통해 Figment로 검증인을 통해 CELO를 스테이킹하세요. Ledger의 타협 없는 확실한 보안을 통해 슬래싱에 완벽히 대비하세요."
+          "title" : "CELO를 성장시켜보세요. Ledger by Figment로 스테이킹.",
+          "description" : "Ledger by Figment로 검증인을 통해 CELO를 스테이킹하세요. Ledger의 타협 없는 확실한 보안을 통해 슬래싱에 완벽히 대비하세요."
         }
       }
     }
@@ -2150,7 +2145,13 @@
     "steps" : {
       "recipient" : {
         "title" : "수령인",
-        "nftRecipient" : "보낼 NFT"
+        "nftRecipient" : "보낼 NFT",
+        "verifyAddress" : "주소가 수령인이 공유한 것과 일치하는지 확인하세요.",
+        "domainService" : {
+          "resolve" : "이는 다음 주소에 연결된 유효한 ENS입니다.",
+          "supportLink" : "이더리움 네임 서비스란?",
+          "reverse" : "이 주소는 {{domain}}에 연결되어 있습니다."
+        }
       },
       "amount" : {
         "title" : "금액",
@@ -2236,6 +2237,13 @@
     },
     "switchButton" : "{{language}}로 전환",
     "no" : "다음을 선호하지 않습니다:"
+  },
+  "deviceRename" : {
+    "title" : "{{ productName }} 이름 변경",
+    "chooseName" : "이름을 선택하세요",
+    "placeholder" : "Tony의 Stax",
+    "remainingCharacters" : "{{ remainingCharacters }}개 문자 남음",
+    "renamed" : "{{ productName }} 이름이 “{{ name }}”로 변경되었습니다 "
   },
   "deviceLocalization" : {
     "language" : "언어",
@@ -2479,6 +2487,8 @@
       },
       "manageTP" : "자산 관리",
       "warnEarnRewards" : "보상 수령을 시작하시려면 {{amount}} 이상이 필요합니다",
+      "warnDisableStaking" : "이용할 수 없습니다",
+      "warnDisableStakingMessage" : "트론 스테이킹 기능은 현재 사용할 수 없습니다",
       "claimRewards" : "보상 수령",
       "nextRewardsDate" : "보상 수령일은 {{date}}입니다",
       "claimAvailableRewards" : "{{amount}} 수령",
@@ -3532,7 +3542,7 @@
           },
           "validator" : {
             "title" : "검증인",
-            "ledgerByFigmentTC" : "Figment 기반 Ledger 이용약관"
+            "ledgerByFigmentTC" : "Ledger by Figment 이용약관"
           },
           "connectDevice" : {
             "title" : "장치"
@@ -3761,6 +3771,9 @@
       "catalogRampServerDesc" : "다중 거래 공급자 간 전환",
       "enablePlatformDevTools" : "플랫폼 개발자 도구 사용",
       "enablePlatformDevToolsDesc" : "개방형 플랫폼 앱 개발자 도구 창 사용",
+      "customLockScreen" : "맞춤식 잠금 화면 자산",
+      "customLockScreenDesc" : "맞춤식 잠금 화면 그래픽 자산 디버그",
+      "customLockScreenCTA" : "실행",
       "featureFlagsTitle" : "Ledger Live에서 사용되는 정의된 기능 플래그",
       "featureFlagsDesc" : "앱을 다시 실행하면 재정의된 값이 다시 설정됩니다. 유효한 JSON 문자열만 허용됩니다.",
       "featureFlagsEdit" : "편집",
@@ -3776,7 +3789,9 @@
       "runLocalAppDeleteButton" : "삭제",
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
-      "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다."
+      "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다.",
+      "openOnboardingAppInstallDebug" : "온보딩 앱 설치 디버그 화면 열기",
+      "openOnboardingAppInstallDebugDesc" : "동기화 온보딩 앱 설치 단계의 구성 요소가 있는 화면을 엽니다."
     },
     "currencies" : {
       "selectPlaceholder" : "암호화 자산 선택",
@@ -3823,10 +3838,6 @@
         "experimentalCurrencies" : {
           "title" : "실험 통합",
           "description" : "사용 가능한 실험 암호화폐 통합을 사용합니다."
-        },
-        "experimentalExecutionOnRenderer" : {
-          "title" : "실험 네트워킹",
-          "description" : "실험 네트워킹을 통해 VPN으로 Ledger Live 경험을 최적화하세요. 현재 사용 중인 VPN이 시스템 오류를 일으키는 경우에만 활성화하세요."
         },
         "experimentalLanguages" : {
           "title" : "번역 테스팅",
@@ -3942,6 +3953,10 @@
       "fullNode" : {
         "title" : "비트코인 풀 노드 연결",
         "desc" : "비트코인 풀 노드를 설정해 Ledger의 탐색기를 사용하지 않고 트랜잭션을 동기화하고 전송하세요."
+      },
+      "filterTokenOperationsZeroAmount" : {
+        "title" : "값이 0 인 경우 토큰 트랜잭션을 숨깁니다",
+        "desc" : "값이 없는 토큰 트랜잭션을 숨기는 것은 ETH, 폴리곤, BSC, 트론에 대한 잠재적인 주소 포이즌 공격을 방지 할 수 있습니다..."
       }
     }
   },
@@ -4014,7 +4029,7 @@
       "tr" : "터키어",
       "ja" : "일본어",
       "ko" : "한국어",
-      "pt" : "포르투갈어"
+      "pt" : "포르투갈어(브라질)"
     }
   },
   "theme" : {
@@ -4849,9 +4864,6 @@
       "title" : "추정된 수수료보다 수령하는 보상액이 적습니다",
       "description" : ""
     },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "활성 예치금이 있을 때는 승인된 금액을 낮출 수 없습니다."
-    },
     "CosmosBroadcastCodeInternal" : {
       "title" : "문제가 발생했습니다(오류 #1)",
       "description" : "Ledger 지원 부서로 문의하세요"
@@ -5356,7 +5368,7 @@
       "description" : "30초 이내에 서명이 적용되어야 합니다. 다시 시도해 주세요."
     },
     "TronNotEnoughEnergy" : {
-      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 30TRX를 지불할 수 있습니다."
+      "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 50 TRX를 지불할 수 있습니다."
     },
     "PairingFailed" : {
       "title" : "페어링 실패",
@@ -5521,6 +5533,10 @@
       "title" : "파일 이미지 로딩 실패",
       "description" : "다른 이미지로 다시 시도하세요"
     },
+    "ImageLoadFromNftError" : {
+      "title" : "NFT 이미지 로딩 실패",
+      "description" : "다른 NFT로 다시 시도하세요"
+    },
     "ImageDownloadError" : {
       "title" : "이미지 다운로드 실패",
       "description" : "다른 이미지로 다시 시도하세요"
@@ -5593,6 +5609,13 @@
       "descriptionWithProductName" : "먼저 {{ productName }} 장치 설정이 필요합니다.\n설정 절차를 안내해드리겠습니다.",
       "goToOnboardingButton" : "내 장치 설정",
       "goToOnboardingButtonWithProductName" : "내 {{ productName }} 설정"
+    },
+    "EtherscanAPIError" : {
+      "title" : "트랜잭션을 가져오지 못했습니다",
+      "description" : "탐색기에서 예상하지 못한 오류가 발생했습니다. 나중에 다시 시도해 주세요"
+    },
+    "GasEstimationError" : {
+      "title" : "가스비를 추정하지 못했습니다"
     }
   },
   "cryptoOrg" : {
@@ -5626,12 +5649,19 @@
   },
   "customImage" : {
     "title" : "맞춤 가능한 잠금 화면",
+    "managerCTA" : "잠금 화면 사진",
     "steps" : {
       "choose" : {
         "stepLabel" : "이미지 선택",
         "description" : "(...)로 설정할 이미지 선택",
         "pickFromNftGallery" : "내 NFT 갤러리에서 선택",
-        "upload" : "내 컴퓨터에서 업로드"
+        "myNfts" : "내 NFT",
+        "upload" : "내 컴퓨터에서 업로드",
+        "chooseNft" : "NFT 선택하기",
+        "selectNft" : "NFT 선택",
+        "previousSelectNft" : "뒤로",
+        "nftEmptyStateTitle" : "아직 표시할 NFT가 없습니다",
+        "nftEmptyStateDescription" : "지갑에 NFT를 추가하고 시작하세요."
       },
       "adjust" : {
         "stepLabel" : "이미지 조정",
@@ -5657,5 +5687,45 @@
     },
     "customImageSet" : "잠금화면을 설정하세요",
     "finishCTA" : "완료"
+  },
+  "onboardingAppInstall" : {
+    "restore" : {
+      "title" : "{{deviceName}}에서와 동일한 앱을 설치하시겠어요?",
+      "titleNoDeviceName" : "이전 Ledger 장치에서와 동일한 앱을 설치하시겠어요?",
+      "subtitle" : "언제든지 앱을 설치하거나 제거할 수 있습니다.",
+      "installCTA" : "애플리케이션 복구",
+      "skipCTA" : "나중에 할게요"
+    },
+    "default" : {
+      "title" : "{{ productName }} 제품은 앱을 사용하여 안전한 블록체인 트랜잭션을 지원합니다",
+      "subtitle" : "기본 앱 세트를 다운로드를 권장드립니다. 이후 추가로 다운로드할 수 있습니다.",
+      "installCTA" : "애플리케이션 설치",
+      "skipCTA" : "나중에 할게요"
+    },
+    "progress" : {
+      "loading" : "로딩 중...",
+      "resolving" : "의존성 해결",
+      "progress" : "앱을 설치하는 동안 Ledger Live를 종료하지 마세요.",
+      "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요.",
+      "skippedInfo" : "일부 앱은 이용할 수 없습니다. 아직 {{ productName }}용으로 개발되지 않았습니다.",
+      "skipped" : "아직 {{ productName }}에서 이용할 수 없습니다"
+    },
+    "cancelled" : {
+      "title" : "{{productName}}에서 앱 설치가 취소되었습니다",
+      "subtitle" : "{{productName}}에서 암호화폐 및 NFT 트랜잭션을 승인하려면 블록체인 앱이 필요합니다.",
+      "installCTA" : "지금 설치",
+      "skipCTA" : "나중에 할게요"
+    },
+    "locked" : {
+      "title" : "{{productName}} 장치가 잠금 상태입니다",
+      "subtitle" : "{{productName}}의 잠금을 해제하고 설치를 다시 시작하세요.",
+      "installCTA" : "설치 재시작"
+    }
+  },
+  "discoverProtect" : {
+    "title" : "Recover your keys using\nyour identity",
+    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
+    "cta" : "Why should I subscribe?",
+    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
   }
 }

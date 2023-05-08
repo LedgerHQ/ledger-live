@@ -16,19 +16,21 @@ inputs:
   install_playwright:
     description: "install playwright"
     required: false
+  pnpm_dest:
+    description: "the location where to install pnpm"
+    required: false
+  upgrade_npm:
+    description: "should ugrade npm (windows support)"
+    required: false
 
 runs:
   using: "composite"
   steps:
-    - uses: pnpm/action-setup@v2
+    - name: Setup the toolchain
+      uses: ./tools/actions/composites/setup-toolchain
       with:
-        version: latest
-        dest: ${{ runner.temp }}/setup-pnpm
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: pnpm
-        cache-dependency-path: "**/pnpm-lock.yaml"
+        pnpm_dest: ${{ inputs.pnpm_dest }}
+        upgrade_npm: ${{ inputs.upgrade_npm }}
     - uses: actions/setup-python@v4
       if: ${{ !inputs.skip_python }}
       with:
@@ -43,11 +45,13 @@ runs:
         pnpm add -g node-gyp
       shell: bash
     - name: Install dependencies
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-live-app" --frozen-lockfile --unsafe-perm
+      env:
+        LANG: en_US.UTF-8
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="dummy-live-app" --unsafe-perm
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}
-      run: npx playwright@1.27.1 install --with-deps chromium
+      run: npx playwright@1.31.2 install --with-deps chromium
       shell: bash
     - name: TurboRepo local caching server
       id: turborepo-cache-server
@@ -56,12 +60,12 @@ runs:
         server-token: "yolo"
         cleanup-cache-folder: "true"
     - name: Build dependencies
-      env:
-        GOGC: 75
       run: |
         pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       shell: bash
     - name: Build desktop testing
+      env:
+        GOMEMLIMIT: 5GiB
       if: ${{ !inputs.skip_builds }}
       run: |
         pnpm desktop build:testing

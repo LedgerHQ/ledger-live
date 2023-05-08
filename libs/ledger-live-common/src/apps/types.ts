@@ -32,6 +32,46 @@ export type ListAppsEvent =
   | {
       type: "allow-manager-requested";
     };
+export type InlineAppInstallEvent =
+  | {
+      type: "device-permission-requested";
+      wording: string;
+    }
+  | {
+      type: "listing-apps";
+    }
+  | {
+      type: "listed-apps";
+      installQueue: string[];
+    }
+  | {
+      type: "device-permission-granted";
+    }
+  | {
+      type: "app-not-installed";
+      appName: string;
+      appNames: string[];
+    }
+  | {
+      type: "some-apps-skipped";
+      skippedAppOps: SkippedAppOp[];
+    }
+  | {
+      type: "inline-install";
+      progress: number;
+      itemProgress: number;
+      currentAppOp: AppOp;
+      installQueue: string[];
+    };
+
+export type ListAppResponse = Array<{
+  name: string;
+  hash: string;
+  hash_code_data: string; // To match HSM response.
+  blocks?: number;
+  flags?: number;
+}>;
+
 export type ListAppsResult = {
   appByName: Record<string, App>;
   appsListNames: string[];
@@ -55,8 +95,8 @@ export type State = {
   recentlyInstalledApps: string[];
   installQueue: string[];
   uninstallQueue: string[];
-  // queue saved at the time of a "updateAll" action
-  updateAllQueue: string[];
+  skippedAppOps: SkippedAppOp[]; // Nb If an AppOp couldn't be completed, track why.
+  updateAllQueue: string[]; // queue saved at the time of a "updateAll" action
   currentAppOp: AppOp | null | undefined;
   currentProgressSubject: Subject<number> | null | undefined;
   currentError:
@@ -76,6 +116,18 @@ export type AppOp =
       type: "uninstall";
       name: string;
     };
+
+export enum SkipReason {
+  NoSuchAppOnProvider,
+  AppAlreadyInstalled,
+  NotEnoughSpace,
+}
+
+export type SkippedAppOp = {
+  reason: SkipReason;
+  appOp: AppOp;
+};
+
 export type Action =  // recover from an error
   | {
       type: "recover";
@@ -91,6 +143,7 @@ export type Action =  // recover from an error
   | {
       type: "install";
       name: string;
+      allowPartialDependencies?: boolean;
     } // update all
   | {
       type: "updateAll";
@@ -125,6 +178,7 @@ export type RunnerEvent =
       type: "runSuccess";
       appOp: AppOp;
     };
+
 export type AppData = {
   currency: CryptoCurrency | null | undefined;
   name: string;

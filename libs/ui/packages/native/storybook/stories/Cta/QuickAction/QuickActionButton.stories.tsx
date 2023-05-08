@@ -1,5 +1,3 @@
-import { storiesOf } from "../../storiesOf";
-import { select, boolean, text } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import React from "react";
 import {
@@ -12,6 +10,11 @@ import {
 } from "@ledgerhq/icons-ui/native";
 import QuickActionButton from "../../../../src/components/cta/QuickAction/QuickActionButton";
 
+export default {
+  title: "CTA/QuickAction/Button",
+  component: QuickActionButton,
+};
+
 const iconOptions = {
   PlusMedium,
   LendMedium,
@@ -20,33 +23,37 @@ const iconOptions = {
   ArrowTopMedium,
   DelegateMedium,
 };
-const iconSelect = () =>
-  iconOptions[
-    select(
-      "Icon",
-      [
-        "PlusMedium",
-        "LendMedium",
-        "ArrowBottomMedium",
-        "MinusMedium",
-        "ArrowTopMedium",
-        "DelegateMedium",
-      ],
-      "PlusMedium",
-    )
-  ];
 
-const Regular = (): JSX.Element => (
+export const Regular = (args: typeof RegularArgs): JSX.Element => (
   <QuickActionButton
-    Icon={iconSelect()}
-    disabled={boolean("disabled", false)}
+    Icon={iconOptions[args.iconOption]}
+    disabled={args.disabled}
     onPress={action("onPress")}
-    onPressWhenDisabled={
-      boolean("onPressWhenDisabled", false) ? action("onPressWhenDisabled") : undefined
-    }
+    onPressWhenDisabled={args.onPressWhenDisabled ? action("onPressWhenDisabled") : undefined}
   >
-    {text("label", "Sell")}
+    {args.label}
   </QuickActionButton>
 );
-
-storiesOf((story) => story("CTA/QuickAction", module).add("Button", Regular));
+Regular.storyName = "QuickActionButton";
+const RegularArgs = {
+  iconOption: "PlusMedium" as keyof typeof iconOptions,
+  disabled: false,
+  onPressWhenDisabled: false,
+  label: "Sell",
+};
+Regular.args = RegularArgs;
+Regular.argTypes = {
+  iconOption: {
+    options: [
+      "PlusMedium",
+      "LendMedium",
+      "ArrowBottomMedium",
+      "MinusMedium",
+      "ArrowTopMedium",
+      "DelegateMedium",
+    ],
+    control: {
+      type: "select",
+    },
+  },
+};

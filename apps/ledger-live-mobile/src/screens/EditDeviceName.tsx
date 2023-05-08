@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
 import { connect } from "react-redux";
@@ -7,6 +7,7 @@ import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/ind
 import { Button, Text, Icons, Flex } from "@ledgerhq/native-ui";
 import { createAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
+import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLength";
 import { TrackScreen } from "../analytics";
 import KeyboardBackgroundDismiss from "../components/KeyboardBackgroundDismiss";
 import TextInput from "../components/TextInput";
@@ -21,8 +22,8 @@ import {
 import { BaseNavigatorStackParamList } from "../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../const";
 import { BaseOnboardingNavigatorParamList } from "../components/RootNavigator/types/BaseOnboardingNavigator";
+import { BleSaveDeviceNamePayload } from "../actions/types";
 
-const MAX_DEVICE_NAME = 20;
 const action = createAction(renameDevice);
 
 const mapDispatchToProps = {
@@ -37,19 +38,33 @@ type NavigationProps = RootComposite<
     >
 >;
 type Props = {
-  saveBleDeviceName: (d: string, v: string) => void;
+  saveBleDeviceName: ({ deviceId, name }: BleSaveDeviceNamePayload) => void;
 } & NavigationProps;
 
 function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const originalName = route.params?.deviceName;
   const device = route.params?.device;
+  const deviceInfo = route.params?.deviceInfo;
 
   const { t } = useTranslation();
   const { pushToast } = useToasts();
-  const [name, setName] = useState<string>(originalName);
+
+  const maxDeviceName = useMemo(
+    () =>
+      getDeviceNameMaxLength({
+        deviceModelId: device.modelId,
+        version: deviceInfo.version,
+      }),
+    [device.modelId, deviceInfo.version],
+  );
+
+  const [name, setName] = useState<string>(
+    originalName.slice(0, maxDeviceName),
+  );
   const [completed, setCompleted] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined | null>(null);
   const [running, setRunning] = useState(false);
+  const request = useMemo(() => ({ name }), [name]);
 
   const onChangeText = useCallback((name: string) => {
     // Nb mobile devices tend to use U+2018 for single quote, not supported
@@ -77,7 +92,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const onSuccess = useCallback(() => {
     setCompleted(true);
     setRunning(false);
-    saveBleDeviceName(device.deviceId, name);
+    saveBleDeviceName({ deviceId: device.deviceId, name });
 
     pushToast({
       id: "rename-device-success",
@@ -97,7 +112,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     }
   }, [completed, navigation]);
 
-  const remainingCount = MAX_DEVICE_NAME - name.length;
+  const remainingCount = maxDeviceName - name.length;
   const cleanName = name.trim();
   const disabled =
     !cleanName || !!error || running || cleanName === originalName;
@@ -111,7 +126,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
             <TextInput
               value={name}
               onChangeText={onChangeText}
-              maxLength={MAX_DEVICE_NAME}
+              maxLength={maxDeviceName}
               autoFocus
               selectTextOnFocus
               blurOnSubmit={true}
@@ -121,10 +136,10 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
 
             {error ? (
               <Flex alignItems={"center"} flexDirection={"row"} mt={1}>
-                <Icons.WarningMedium color="error.c100" size={16} />
+                <Icons.WarningMedium color="error.c50" size={16} />
                 <Text
                   variant="small"
-                  color="error.c100"
+                  color="error.c50"
                   ml={2}
                   numberOfLines={2}
                 >
@@ -148,7 +163,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
           {running ? (
             <DeviceActionModal
               device={device}
-              request={name}
+              request={request}
               action={action}
               onClose={onClose}
               onResult={onSuccess}

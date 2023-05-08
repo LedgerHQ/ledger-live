@@ -18,11 +18,15 @@ import { snakeCase } from "lodash";
 import { useCallback } from "react";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import {
+  hasNftInAccounts,
+  GENESIS_PASS_COLLECTION_CONTRACT,
+  INFINITY_PASS_COLLECTION_CONTRACT,
+} from "@ledgerhq/live-common/nft/helpers";
+import {
   getAndroidArchitecture,
   getAndroidVersionCode,
 } from "../logic/cleanBuildVersion";
 import getOrCreateUser from "../user";
-// eslint-disable-next-line import/no-cycle
 import {
   analyticsEnabledSelector,
   languageSelector,
@@ -34,6 +38,8 @@ import {
   readOnlyModeEnabledSelector,
   hasOrderedNanoSelector,
   notificationsSelector,
+  knownDeviceModelIdsSelector,
+  customImageTypeSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -45,11 +51,6 @@ import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
 import { Maybe } from "../types/helpers";
-import {
-  GENESIS_PASS_COLLECTION_CONTRACT,
-  INFINITY_PASS_COLLECTION_CONTRACT,
-  hasNftInAccounts,
-} from "../helpers/nfts";
 import { appStartupTime } from "../StartupTimeMarker";
 
 let sessionId = uuid();
@@ -66,6 +67,8 @@ const extraProperties = async (store: AppStore) => {
   const systemLanguage = sensitiveAnalytics
     ? null
     : RNLocalize.getLocales()[0]?.languageTag;
+  const knownDeviceModelIds = knownDeviceModelIdsSelector(state);
+  const customImageType = customImageTypeSelector(state);
   const language = sensitiveAnalytics ? null : languageSelector(state);
   const region = sensitiveAnalytics ? null : localeSelector(state);
   const devices = knownDevicesSelector(state);
@@ -151,6 +154,8 @@ const extraProperties = async (store: AppStore) => {
     hasGenesisPass,
     hasInfinityPass,
     appTimeToInteractiveMilliseconds: appStartupTime,
+    staxDeviceUser: knownDeviceModelIds.stax,
+    staxLockscreen: customImageType || "none",
   };
 };
 

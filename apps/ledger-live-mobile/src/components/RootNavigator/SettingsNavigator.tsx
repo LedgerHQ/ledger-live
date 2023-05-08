@@ -11,7 +11,9 @@ import DebugBenchmarkQRStream from "../../screens/Settings/Debug/Broken/Benchmar
 import DebugBLE from "../../screens/Settings/Debug/Connectivity/BLE";
 import DebugBLEBenchmark from "../../screens/Settings/Debug/Connectivity/BLEBenchmark";
 import DebugConfiguration from "../../screens/Settings/Debug/Configuration";
-import DebugConnectivity from "../../screens/Settings/Debug/Connectivity";
+import DebugConnectivity, {
+  connectivityHeaderOptions,
+} from "../../screens/Settings/Debug/Connectivity";
 import DebugCrash from "../../screens/Settings/Debug/Debugging/Crashes";
 import DebugCustomImageGraphics from "../../screens/Settings/Debug/Features/CustomImageGraphics";
 import DebugDebugging from "../../screens/Settings/Debug/Debugging";
@@ -19,15 +21,23 @@ import DebugEnv from "../../screens/Settings/Debug/Configuration/DebugEnv";
 import DebugExport from "../../screens/Settings/Debug/Features/ExportAccounts";
 import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 import DebugFeatures from "../../screens/Settings/Debug/Features";
-import DebugFetchCustomImage from "../../screens/Settings/Debug/Features/FetchCustomImage";
+import DebugFetchCustomImage, {
+  debugFetchCustomImageHeaderOptions,
+} from "../../screens/Settings/Debug/Features/FetchCustomImage";
+import DebugFirmwareUpdate, {
+  debugFirmwareUpdateHeaderOptions,
+} from "../../screens/Settings/Debug/Features/FirmwareUpdate";
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "../../screens/Settings/Debug/Information";
+import DebugInstallSetOfApps from "../../screens/Settings/Debug/Features/InstallSetOfApps";
 import DebugPerformance from "../../screens/Settings/Debug/Performance";
 import DebugLogs from "../../screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "../../screens/Settings/Debug/Features/Lottie";
 import DebugNetwork from "../../screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "../../screens/Settings/Debug/Connectivity/CommandSender";
+import DebugPlayground from "../../screens/Settings/Debug/Playground";
+import DebugBluetoothAndLocationServices from "../../screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "../../screens/Settings/Debug";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
@@ -220,15 +230,13 @@ export default function SettingsNavigator() {
         name={ScreenName.DebugGenerators}
         component={DebugGenerators}
         options={{
-          title: "Generators",
+          title: "Generators and Destructors",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugConnectivity}
         component={DebugConnectivity}
-        options={{
-          title: "Connectivity",
-        }}
+        options={connectivityHeaderOptions}
       />
       <Stack.Screen
         name={ScreenName.DebugFeatures}
@@ -245,6 +253,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugInstallSetOfApps}
+        component={DebugInstallSetOfApps}
+        options={{
+          title: "Install set of apps",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugMockGenerateAccounts}
         component={GenerateMockAccountSelectScreen}
         options={{
@@ -256,6 +271,20 @@ export default function SettingsNavigator() {
         component={DebugExport}
         options={{
           title: "Export Accounts and Settings",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugPlayground}
+        component={DebugPlayground}
+        options={{
+          title: "Playground",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugBluetoothAndLocationServices}
+        component={DebugBluetoothAndLocationServices}
+        options={{
+          title: "Bluetooth and location services",
         }}
       />
       <Stack.Screen
@@ -351,9 +380,12 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugFetchCustomImage}
         component={DebugFetchCustomImage}
-        options={{
-          title: "Debug FetchCustomImage",
-        }}
+        options={debugFetchCustomImageHeaderOptions}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugFirmwareUpdate}
+        component={DebugFirmwareUpdate}
+        options={useMemo(() => debugFirmwareUpdateHeaderOptions(t), [t])}
       />
       <Stack.Screen
         name={ScreenName.DebugCustomImageGraphics}

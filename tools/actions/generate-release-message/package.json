@@ -6,12 +6,12 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "ncc build main.ts -o build -m"
+    "build": "tsup -d build main.ts"
   },
-  "dependencies": {
+  "devDependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1",
-    "@vercel/ncc": "^0.33.4",
-    "semver": "^7.3.7"
+    "semver": "^7.3.7",
+    "tsup": "^6.6.3"
   }
 }

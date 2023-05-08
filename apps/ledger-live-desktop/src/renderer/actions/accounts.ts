@@ -1,7 +1,6 @@
 import { Dispatch } from "redux";
-
 import { Account, SubAccount } from "@ledgerhq/types-live";
-import { AccountComparator } from "@ledgerhq/live-common/account/ordering";
+import { AccountComparator } from "@ledgerhq/live-common/account/index";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { getKey } from "~/renderer/storage";
 
@@ -39,17 +38,22 @@ export const fetchAccounts = () => async (dispatch: Dispatch) => {
   });
 };
 
+type UpdateAccountAction = {
+  type: string;
+  payload: { updater: (account: Account) => Account; accountId?: string };
+};
+
 export type UpdateAccountWithUpdater = (
   accountId: string,
   updater: (account: Account) => Account,
-) => any;
+) => UpdateAccountAction;
 
 export const updateAccountWithUpdater: UpdateAccountWithUpdater = (accountId, updater) => ({
   type: "DB:UPDATE_ACCOUNT",
   payload: { accountId, updater },
 });
 
-export type UpdateAccount = (account: Partial<Account>) => any;
+export type UpdateAccount = (account: Partial<Account>) => UpdateAccountAction;
 export const updateAccount: UpdateAccount = payload => ({
   type: "DB:UPDATE_ACCOUNT",
   payload: {
@@ -58,21 +62,14 @@ export const updateAccount: UpdateAccount = payload => ({
   },
 });
 
-type ToggleAction = {
-  type: string;
-  payload: { updater: (account: Account) => any; accountId?: string };
-};
-export const toggleStarAction = (id: string, parentId?: string): ToggleAction => {
+export const toggleStarAction = (id: string, parentId?: string): UpdateAccountAction => {
   return {
     type: "DB:UPDATE_ACCOUNT",
     payload: {
       updater: (account: Account) => {
         if (parentId && account.subAccounts) {
           const subAccounts: SubAccount[] = account.subAccounts.map(sa =>
-            sa.id === id
-              ? // $FlowFixMe
-                { ...sa, starred: !sa.starred }
-              : sa,
+            sa.id === id ? { ...sa, starred: !sa.starred } : sa,
           );
           return { ...account, subAccounts };
         }

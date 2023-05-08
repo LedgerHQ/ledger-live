@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
@@ -20,9 +20,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "lib/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
   "typesVersions": {
     "*": {
       "lib/*": [
@@ -53,6 +50,9 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-polkadot": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-portfolio": "workspace:^",
+    "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
@@ -67,7 +67,9 @@
     "rxjs": "^6.6.7"
   },
   "devDependencies": {
+    "@types/invariant": "^2.2.2",
     "@types/jest": "^29.2.4",
+    "@types/lodash": "^4.14.191",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "eslint": "^7.32.0",
@@ -78,8 +80,7 @@
     "eslint-plugin-typescript": "^0.14.0",
     "jest": "^28.1.1",
     "prettier": "^2.8.1",
-    "ts-jest": "^28.0.5",
-    "typescript": "^4.9.4"
+    "ts-jest": "^28.0.5"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -90,6 +91,5 @@
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix",
     "test": "jest"
-  },
-  "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec"
+  }
 }

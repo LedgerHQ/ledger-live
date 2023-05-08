@@ -7,9 +7,6 @@ import { Modal } from "../../models/Modal";
 import { DeviceAction } from "../../models/DeviceAction";
 import * as server from "../../utils/serve-dummy-app";
 
-// Comment out to disable recorder
-// process.env.PWDEBUG = "1";
-
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
 let continueTest = false;
@@ -17,12 +14,12 @@ let continueTest = false;
 test.beforeAll(async ({ request }) => {
   // Check that dummy app in tests/utils/dummy-app-build has been started successfully
   try {
-    const port = await server.start();
+    const port = await server.start("dummy-live-app/build");
     const response = await request.get(`http://localhost:${port}`);
     if (response.ok()) {
       continueTest = true;
       console.info(`========> Dummy test app successfully running on port ${port}! <=========`);
-      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(server.manifest(port));
+      process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(server.dummyLiveAppManifest(port));
     } else {
       throw new Error("Ping response != 200, got: " + response.status);
     }
@@ -54,7 +51,6 @@ test("Discover", async ({ page }) => {
     await discoverPage.openTestApp();
     await drawer.continue();
     await drawer.waitForDrawerToDisappear(); // macos runner was having screenshot issues here because the drawer wasn't disappearing fast enough
-    await discoverPage.waitForLiveAppToLoad(); // let the loading spinner disappear first
     await discoverPage.waitForCorrectTextInWebview("Ledger Live Dummy Test App");
     await expect.soft(page).toHaveScreenshot("live-disclaimer-accepted.png");
   });
@@ -113,7 +109,10 @@ test("Discover", async ({ page }) => {
     await discoverPage.continueToSignTransaction();
     await layout.waitForLoadingSpinnerToHaveDisappeared();
     await discoverPage.waitForConfirmationScreenToBeDisplayed();
-    await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-confirm.png");
+    await expect(page.locator("text=0.0000123")).toBeVisible();
+    await expect(page.locator("text=0.0000025")).toBeVisible();
+    // This screenshot is flaky as the loading spinner appears again after this confirm modal, and on slow CI runners the screenshot can take a picture of this instead of the confirm.
+    // await expect.soft(page).toHaveScreenshot("live-app-sign-transaction-confirm.png");
   });
 
   await test.step("Sign Transaction - signature output", async () => {

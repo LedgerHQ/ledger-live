@@ -45,15 +45,10 @@ jobs:
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
           base: ${{ inputs.base_ref }}
-      - uses: pnpm/action-setup@v2
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
         with:
-          version: latest
-          dest: ${{ runner.temp }}/setup-pnpm
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: pnpm
-          cache-dependency-path: "**/pnpm-lock.yaml"
+          pnpm_dest: ${{ runner.temp }}/setup-pnpm
       - name: Install applesimutils
         run: |
           brew update
@@ -84,7 +79,7 @@ jobs:
       - name: Test iOS app
         id: detox
         run: |
-          pnpm mobile e2e:test -c ios.sim.release --record-logs all --take-screenshots all --record-videos failing --record-performance all --detectOpenHandles --cleanup --headless
+          pnpm mobile e2e:test -c ios.sim.release --record-logs all --take-screenshots all --detectOpenHandles --cleanup --headless
       - name: Delete iOS simulator
         if: always()
         run: |
@@ -105,7 +100,7 @@ jobs:
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live, linux]
-    if: always()
+    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     needs: [detox-tests-ios]
     steps:
       - uses: actions/checkout@v3
@@ -132,10 +127,10 @@ jobs:
   #         ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
   #     - uses: pnpm/action-setup@v2
   #       with:
-  #         version: latest
+  #         version: 8.1
   #     - uses: actions/setup-node@v3
   #       with:
-  #         node-version: 16.x
+  #         node-version: 18
   #         cache: pnpm
   #         cache-dependency-path: "**/pnpm-lock.yaml"
   #     - name: setup JDK 11
@@ -317,3 +312,63 @@ jobs:
         with:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
+
+  report-on-slack:
+    runs-on: ubuntu-latest
+    needs: [detox-tests-ios]
+    if: ${{ failure() && github.ref_name == 'develop' }}
+    steps:
+      - name: format message
+        uses: actions/github-script@v6
+        id: message
+        with:
+          script: |
+            const fs = require("fs");
+            const text = `❌ 🍏 Detox tests failed ❌`;
+            const iOSResult = [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": `❌ iOS Detox tests failed ❌`,
+                  "emoji": true
+                }
+              },
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": `😵 Build Failed
+                  `
+                }
+              }
+            ];
+            const infoBlock = [
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": `<https://github.com/LedgerHQ/ledger-live/actions/runs/${{ github.run_id }}|Workflow run> for more informations`,
+                }
+              }
+            ];
+            const blocks = [].concat(iOSResult).concat(infoBlock);
+            const result = {
+              text,
+              blocks
+            };
+            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: "CTMQ0S5SB"
+          payload-file-path: "./payload-slack-content.json"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
