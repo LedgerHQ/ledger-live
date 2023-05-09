@@ -101,7 +101,7 @@ const envDefinitions: Record<
     parser: stringParser,
     desc: "Node endpoint for Zilliqa",
   },
- API_RIPPLE_RPC: {
+  API_RIPPLE_RPC: {
     parser: stringParser,
     def: "https://xrplcluster.com/ledgerlive",
     desc: "XRP Ledger full history open JSON-RPC endpoint",

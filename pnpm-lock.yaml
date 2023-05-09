@@ -5,6 +5,8 @@ overrides:
   remove-flow-types-loader>flow-remove-types: ^2
   remove-flow-types-loader>loader-utils: '*'
 
+packageExtensionsChecksum: 5dbffbace7833b73ad0f9a243f1c7a4b
+
 patchedDependencies:
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
@@ -1083,7 +1085,7 @@ importers:
         version: 18.1.0
       react-native:
         specifier: 0.71.6
-        version: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+        version: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-adjust:
         specifier: ^4.33.0
         version: 4.33.0
@@ -1986,6 +1988,9 @@ importers:
       '@ledgerhq/hw-app-xrp':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-xrp
+      '@ledgerhq/hw-app-zilliqa':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-zilliqa
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport
@@ -2058,6 +2063,33 @@ importers:
       '@xstate/react':
         specifier: ^1.6.3
         version: 1.6.3(@types/react@17.0.53)(react@17.0.2)(xstate@4.32.0)
+      '@zilliqa-js/account':
+        specifier: ^3.3.4
+        version: 3.3.4
+      '@zilliqa-js/blockchain':
+        specifier: ^3.3.4
+        version: 3.3.4
+      '@zilliqa-js/contract':
+        specifier: ^3.3.4
+        version: 3.3.4
+      '@zilliqa-js/core':
+        specifier: ^3.3.4
+        version: 3.3.4
+      '@zilliqa-js/crypto':
+        specifier: ^3.3.4
+        version: 3.3.4
+      '@zilliqa-js/proto':
+        specifier: ^3.3.4
+        version: 3.3.4
+      '@zilliqa-js/subscriptions':
+        specifier: ^3.3.4
+        version: 3.3.4
+      '@zilliqa-js/util':
+        specifier: ^3.3.4
+        version: 3.3.4
+      '@zilliqa-js/zilliqa':
+        specifier: ^3.3.4
+        version: 3.3.4
       '@zondax/cbor':
         specifier: v8.1.0-zondax-no-bigint
         version: 8.1.0-zondax-no-bigint
@@ -3212,6 +3244,49 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
+
+  libs/ledgerjs/packages/hw-app-zilliqa:
+    dependencies:
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../hw-transport
+      bip32-path:
+        specifier: ^0.4.2
+        version: 0.4.2
+    devDependencies:
+      '@ledgerhq/hw-transport-mocker':
+        specifier: workspace:^
+        version: link:../hw-transport-mocker
+      '@types/jest':
+        specifier: ^29.5.0
+        version: 29.5.0
+      '@types/node':
+        specifier: ^18.15.3
+        version: 18.15.11
+      documentation:
+        specifier: 13.2.4
+        version: 13.2.4
+      jest:
+        specifier: ^28.1.1
+        version: 28.1.3(@types/node@18.15.11)(ts-node@10.7.0)
+      rimraf:
+        specifier: ^4.1.2
+        version: 4.4.1
+      source-map-support:
+        specifier: ^0.5.21
+        version: 0.5.21
+      ts-jest:
+        specifier: ^28.0.5
+        version: 28.0.8(jest@28.1.3)(typescript@4.9.5)
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.7.0(@types/node@18.15.11)(source-map-support@0.5.21)(typescript@4.9.5)
+      typescript:
+        specifier: ^4
+        version: 4.9.5
 
   libs/ledgerjs/packages/hw-transport:
     dependencies:
@@ -4555,7 +4630,7 @@ importers:
         version: 18.1.0
       react-native:
         specifier: 0.71.6
-        version: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+        version: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-reanimated:
         specifier: ^2.15.0
         version: 2.15.0(@babel/core@7.21.0)(react-native@0.71.6)(react@18.0.0)
@@ -5620,18 +5695,6 @@ packages:
       lru-cache: 5.1.1
       semver: 6.3.0
 
-  /@babel/helper-compilation-targets@7.21.4:
-    resolution: {integrity: sha512-Fa0tTuOXZ1iL8IeDFUWCzjZcn+sJGd9RZdH9esYVjEejGmzf+FFYQpMi/kZUk2kPy/q1H3/GPw7np8qar/stfg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/compat-data': 7.21.4
-      '@babel/helper-validator-option': 7.21.0
-      browserslist: 4.21.5
-      lru-cache: 5.1.1
-      semver: 6.3.0
-
   /@babel/helper-compilation-targets@7.21.4(@babel/core@7.21.0):
     resolution: {integrity: sha512-Fa0tTuOXZ1iL8IeDFUWCzjZcn+sJGd9RZdH9esYVjEejGmzf+FFYQpMi/kZUk2kPy/q1H3/GPw7np8qar/stfg==}
     engines: {node: '>=6.9.0'}
@@ -5673,6 +5736,7 @@ packages:
       '@babel/helper-split-export-declaration': 7.18.6
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@babel/helper-create-class-features-plugin@7.17.9(@babel/core@7.21.0):
     resolution: {integrity: sha512-kUjip3gruz6AJKOq5i3nC6CoCEEF/oHH3cp6tOZhB+IyyyPyW0g1Gfsxn3mkk6S08pIA2y8GQh609v9G/5sHVQ==}
@@ -5704,23 +5768,6 @@ packages:
       '@babel/helper-member-expression-to-functions': 7.17.7
       '@babel/helper-optimise-call-expression': 7.16.7
       '@babel/helper-replace-supers': 7.16.7
-      '@babel/helper-split-export-declaration': 7.18.6
-    transitivePeerDependencies:
-      - supports-color
-
-  /@babel/helper-create-class-features-plugin@7.21.4:
-    resolution: {integrity: sha512-46QrX2CQlaFRF4TkwfTt6nJD7IHq8539cCL7SDpqWSDeJKY1xylKKY5F/33mJhLZ3mFvKv2gGrVS6NkyF6qs+Q==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.18.6
-      '@babel/helper-environment-visitor': 7.18.9
-      '@babel/helper-function-name': 7.21.0
-      '@babel/helper-member-expression-to-functions': 7.21.0
-      '@babel/helper-optimise-call-expression': 7.18.6
-      '@babel/helper-replace-supers': 7.20.7
-      '@babel/helper-skip-transparent-expression-wrappers': 7.20.0
       '@babel/helper-split-export-declaration': 7.18.6
     transitivePeerDependencies:
       - supports-color
@@ -5781,15 +5828,6 @@ packages:
       '@babel/helper-annotate-as-pure': 7.18.6
       regexpu-core: 5.3.2
 
-  /@babel/helper-create-regexp-features-plugin@7.21.4:
-    resolution: {integrity: sha512-M00OuhU+0GyZ5iBBN9czjugzWrEq2vDpf/zCYHxxf93ul/Q5rv+a5h+/+0WnI1AebHNVtl5bFV0qsJoH23DbfA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.18.6
-      regexpu-core: 5.3.2
-
   /@babel/helper-create-regexp-features-plugin@7.21.4(@babel/core@7.21.0):
     resolution: {integrity: sha512-M00OuhU+0GyZ5iBBN9czjugzWrEq2vDpf/zCYHxxf93ul/Q5rv+a5h+/+0WnI1AebHNVtl5bFV0qsJoH23DbfA==}
     engines: {node: '>=6.9.0'}
@@ -5828,22 +5866,6 @@ packages:
       - supports-color
     dev: true
 
-  /@babel/helper-define-polyfill-provider@0.3.1:
-    resolution: {integrity: sha512-J9hGMpJQmtWmj46B3kBHmL38UhJGhYX7eqkcq+2gsstyYt341HmPeWspihX43yVRA0mS+8GGk2Gckc7bY/HCmA==}
-    peerDependencies:
-      '@babel/core': ^7.4.0-0
-    dependencies:
-      '@babel/helper-compilation-targets': 7.21.4
-      '@babel/helper-module-imports': 7.18.6
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/traverse': 7.21.4
-      debug: 4.3.4
-      lodash.debounce: 4.0.8
-      resolve: 1.22.1
-      semver: 6.3.0
-    transitivePeerDependencies:
-      - supports-color
-
   /@babel/helper-define-polyfill-provider@0.3.1(@babel/core@7.21.0):
     resolution: {integrity: sha512-J9hGMpJQmtWmj46B3kBHmL38UhJGhYX7eqkcq+2gsstyYt341HmPeWspihX43yVRA0mS+8GGk2Gckc7bY/HCmA==}
     peerDependencies:
@@ -5854,20 +5876,6 @@ packages:
       '@babel/helper-module-imports': 7.18.6
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/traverse': 7.21.4
-      debug: 4.3.4
-      lodash.debounce: 4.0.8
-      resolve: 1.22.1
-      semver: 6.3.0
-    transitivePeerDependencies:
-      - supports-color
-
-  /@babel/helper-define-polyfill-provider@0.3.3:
-    resolution: {integrity: sha512-z5aQKU4IzbqCC1XH0nAqfsFLMVSo22SBKUc0BxGrLkolTdPTructy0ToNnlO2zA4j9Q/7pjMZf0DSY+DSTYzww==}
-    peerDependencies:
-      '@babel/core': ^7.4.0-0
-    dependencies:
-      '@babel/helper-compilation-targets': 7.21.4
-      '@babel/helper-plugin-utils': 7.20.2
       debug: 4.3.4
       lodash.debounce: 4.0.8
       resolve: 1.22.1
@@ -5993,19 +6001,6 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/helper-annotate-as-pure': 7.18.6
-      '@babel/helper-wrap-function': 7.20.5
-      '@babel/types': 7.21.4
-    transitivePeerDependencies:
-      - supports-color
-
-  /@babel/helper-remap-async-to-generator@7.18.9:
-    resolution: {integrity: sha512-dI7q50YKd8BAv3VEfgg7PS7yD3Rtbi2J1XMXaalXO0W0164hYLnh8zpjRS0mte9MfVp/tltvr/cfdXPvJr1opA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.18.6
-      '@babel/helper-environment-visitor': 7.18.9
       '@babel/helper-wrap-function': 7.20.5
       '@babel/types': 7.21.4
     transitivePeerDependencies:
@@ -6222,19 +6217,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@babel/plugin-proposal-async-generator-functions@7.20.7:
-    resolution: {integrity: sha512-xMbiLsn/8RK7Wq7VeVytytS2L6qE69bXPB10YCmMdDZbKF4okCqY74pI/jJQ/8U0b/F6NrT2+14b8/P9/3AMGA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-environment-visitor': 7.18.9
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/helper-remap-async-to-generator': 7.18.9
-      '@babel/plugin-syntax-async-generators': 7.8.4
-    transitivePeerDependencies:
-      - supports-color
-
   /@babel/plugin-proposal-async-generator-functions@7.20.7(@babel/core@7.21.0):
     resolution: {integrity: sha512-xMbiLsn/8RK7Wq7VeVytytS2L6qE69bXPB10YCmMdDZbKF4okCqY74pI/jJQ/8U0b/F6NrT2+14b8/P9/3AMGA==}
     engines: {node: '>=6.9.0'}
@@ -6283,17 +6265,6 @@ packages:
     dependencies:
       '@babel/core': 7.21.0
       '@babel/helper-create-class-features-plugin': 7.17.9(@babel/core@7.21.0)
-      '@babel/helper-plugin-utils': 7.20.2
-    transitivePeerDependencies:
-      - supports-color
-
-  /@babel/plugin-proposal-class-properties@7.18.6:
-    resolution: {integrity: sha512-cumfXOF0+nzZrrN8Rf0t7M+tF6sZc7vhQwYQck9q1/5w2OExlD+b4v4RpMJFaV1Z7WcDRgO6FqvxqxGlwo+RHQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-create-class-features-plugin': 7.21.4
       '@babel/helper-plugin-utils': 7.20.2
     transitivePeerDependencies:
       - supports-color
@@ -6405,15 +6376,6 @@ packages:
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-dynamic-import': 7.8.3(@babel/core@7.9.0)
 
-  /@babel/plugin-proposal-export-default-from@7.16.7:
-    resolution: {integrity: sha512-+cENpW1rgIjExn+o5c8Jw/4BuH4eGKKYvkMB8/0ZxFQ9mC0t4z09VsPIwNg6waF69QYC81zxGeAsREGuqQoKeg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.16.7
-      '@babel/plugin-syntax-export-default-from': 7.16.7
-
   /@babel/plugin-proposal-export-default-from@7.16.7(@babel/core@7.21.0):
     resolution: {integrity: sha512-+cENpW1rgIjExn+o5c8Jw/4BuH4eGKKYvkMB8/0ZxFQ9mC0t4z09VsPIwNg6waF69QYC81zxGeAsREGuqQoKeg==}
     engines: {node: '>=6.9.0'}
@@ -6504,15 +6466,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3(@babel/core@7.21.0)
-
-  /@babel/plugin-proposal-nullish-coalescing-operator@7.18.6:
-    resolution: {integrity: sha512-wQxQzxYeJqHcfppzBDnm1yAY0jSRkUXR2z8RePZYrKwMKgMlE8+Z6LUno+bd6LvbGh8Gltvy74+9pIYkr+XkKA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3
 
   /@babel/plugin-proposal-nullish-coalescing-operator@7.18.6(@babel/core@7.21.0):
     resolution: {integrity: sha512-wQxQzxYeJqHcfppzBDnm1yAY0jSRkUXR2z8RePZYrKwMKgMlE8+Z6LUno+bd6LvbGh8Gltvy74+9pIYkr+XkKA==}
@@ -6606,18 +6559,6 @@ packages:
       '@babel/plugin-syntax-object-rest-spread': 7.8.3(@babel/core@7.21.0)
       '@babel/plugin-transform-parameters': 7.16.7(@babel/core@7.21.0)
 
-  /@babel/plugin-proposal-object-rest-spread@7.20.7:
-    resolution: {integrity: sha512-d2S98yCiLxDVmBmE8UjGcfPvNEUbA1U5q5WxaWFUGRzJSVAZqm5W6MbPct0jxnegUZ0niLeNX+IOzEs7wYg9Dg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/compat-data': 7.21.4
-      '@babel/helper-compilation-targets': 7.21.4
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/plugin-syntax-object-rest-spread': 7.8.3
-      '@babel/plugin-transform-parameters': 7.21.3
-
   /@babel/plugin-proposal-object-rest-spread@7.20.7(@babel/core@7.21.0):
     resolution: {integrity: sha512-d2S98yCiLxDVmBmE8UjGcfPvNEUbA1U5q5WxaWFUGRzJSVAZqm5W6MbPct0jxnegUZ0niLeNX+IOzEs7wYg9Dg==}
     engines: {node: '>=6.9.0'}
@@ -6654,15 +6595,6 @@ packages:
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/plugin-syntax-optional-catch-binding': 7.8.3(@babel/core@7.21.0)
 
-  /@babel/plugin-proposal-optional-catch-binding@7.18.6:
-    resolution: {integrity: sha512-Q40HEhs9DJQyaZfUjjn6vE8Cv4GmMHCYuMGIWUnlxH6400VGxOuwWsPt4FxXxJkC/5eOzgn0z21M9gMT4MOhbw==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/plugin-syntax-optional-catch-binding': 7.8.3
-
   /@babel/plugin-proposal-optional-catch-binding@7.18.6(@babel/core@7.21.0):
     resolution: {integrity: sha512-Q40HEhs9DJQyaZfUjjn6vE8Cv4GmMHCYuMGIWUnlxH6400VGxOuwWsPt4FxXxJkC/5eOzgn0z21M9gMT4MOhbw==}
     engines: {node: '>=6.9.0'}
@@ -6693,16 +6625,6 @@ packages:
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
       '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.21.0)
-
-  /@babel/plugin-proposal-optional-chaining@7.21.0:
-    resolution: {integrity: sha512-p4zeefM72gpmEe2fkUr/OnOXpWEf8nAgk7ZYVqqfFiyIG7oFfVZcCrU64hWn5xp4tQ9LkV4bTIa5rD0KANpKNA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/helper-skip-transparent-expression-wrappers': 7.20.0
-      '@babel/plugin-syntax-optional-chaining': 7.8.3
 
   /@babel/plugin-proposal-optional-chaining@7.21.0(@babel/core@7.21.0):
     resolution: {integrity: sha512-p4zeefM72gpmEe2fkUr/OnOXpWEf8nAgk7ZYVqqfFiyIG7oFfVZcCrU64hWn5xp4tQ9LkV4bTIa5rD0KANpKNA==}
@@ -6827,13 +6749,6 @@ packages:
       '@babel/helper-create-regexp-features-plugin': 7.21.4(@babel/core@7.9.0)
       '@babel/helper-plugin-utils': 7.20.2
 
-  /@babel/plugin-syntax-async-generators@7.8.4:
-    resolution: {integrity: sha512-tycmZxkGfZaxhMRbXlPXuVFpdWlXpir2W4AMhSJgRKzk/eDlIXOhb2LHWoLpDF7TEHylV5zNhykX6KAgHJmTNw==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-
   /@babel/plugin-syntax-async-generators@7.8.4(@babel/core@7.21.0):
     resolution: {integrity: sha512-tycmZxkGfZaxhMRbXlPXuVFpdWlXpir2W4AMhSJgRKzk/eDlIXOhb2LHWoLpDF7TEHylV5zNhykX6KAgHJmTNw==}
     peerDependencies:
@@ -6856,13 +6771,6 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.21.0
-      '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-syntax-class-properties@7.12.13:
-    resolution: {integrity: sha512-fm4idjKla0YahUNgFNLCB0qySdsoPiZP3iQE3rky0mBUtMZ23yDJ9SJdg6dXTSDnulOVqiF3Hgr9nbXvXTQZYA==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
       '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-class-properties@7.12.13(@babel/core@7.21.0):
@@ -6900,13 +6808,6 @@ packages:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.20.2
 
-  /@babel/plugin-syntax-dynamic-import@7.8.3:
-    resolution: {integrity: sha512-5gdGbFon+PszYzqs83S3E5mpi7/y/8M9eC90MRTZfduQOYW76ig6SOSPNe41IG5LoP3FGBn2N0RjVDSQiS94kQ==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-
   /@babel/plugin-syntax-dynamic-import@7.8.3(@babel/core@7.21.0):
     resolution: {integrity: sha512-5gdGbFon+PszYzqs83S3E5mpi7/y/8M9eC90MRTZfduQOYW76ig6SOSPNe41IG5LoP3FGBn2N0RjVDSQiS94kQ==}
     peerDependencies:
@@ -6922,14 +6823,6 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-syntax-export-default-from@7.16.7:
-    resolution: {integrity: sha512-4C3E4NsrLOgftKaTYTULhHsuQrGv3FHrBzOMDiS7UYKIpgGBkAdawg4h+EI8zPeK9M0fiIIh72hIwsI24K7MbA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
 
   /@babel/plugin-syntax-export-default-from@7.16.7(@babel/core@7.21.0):
     resolution: {integrity: sha512-4C3E4NsrLOgftKaTYTULhHsuQrGv3FHrBzOMDiS7UYKIpgGBkAdawg4h+EI8zPeK9M0fiIIh72hIwsI24K7MbA==}
@@ -6947,14 +6840,6 @@ packages:
     dependencies:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.18.9
-
-  /@babel/plugin-syntax-flow@7.21.4:
-    resolution: {integrity: sha512-l9xd3N+XG4fZRxEP3vXdK6RW7vN1Uf5dxzRC/09wV86wqZ/YYQooBIGNsiRdfNR3/q2/5pPzV4B54J/9ctX5jw==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-flow@7.21.4(@babel/core@7.21.0):
     resolution: {integrity: sha512-l9xd3N+XG4fZRxEP3vXdK6RW7vN1Uf5dxzRC/09wV86wqZ/YYQooBIGNsiRdfNR3/q2/5pPzV4B54J/9ctX5jw==}
@@ -7031,6 +6916,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/helper-plugin-utils': 7.20.2
+    dev: false
 
   /@babel/plugin-syntax-jsx@7.18.6(@babel/core@7.21.0):
     resolution: {integrity: sha512-6mmljtAedFGTWu2p/8WIORGwy+61PLgOMPOdazc7YoJ9ZCWUyFy3A6CpPkRKLKD1ToAesxX8KGEViAiLo9N+7Q==}
@@ -7056,13 +6942,6 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.21.0
-      '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-syntax-nullish-coalescing-operator@7.8.3:
-    resolution: {integrity: sha512-aSff4zPII1u2QD7y+F8oDsz19ew4IGEJg9SVW+bqwpwtfFleiQDMdzA/R+UlWDzfnHFCxxleFT0PMIrR36XLNQ==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
       '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-nullish-coalescing-operator@7.8.3(@babel/core@7.21.0):
@@ -7097,13 +6976,6 @@ packages:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.20.2
 
-  /@babel/plugin-syntax-object-rest-spread@7.8.3:
-    resolution: {integrity: sha512-XoqMijGZb9y3y2XskN+P1wUGiVwWZ5JmoDRwx5+3GmEplNyVM2s2Dg8ILFQm8rWM48orGy5YpI5Bl8U1y7ydlA==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-
   /@babel/plugin-syntax-object-rest-spread@7.8.3(@babel/core@7.12.9):
     resolution: {integrity: sha512-XoqMijGZb9y3y2XskN+P1wUGiVwWZ5JmoDRwx5+3GmEplNyVM2s2Dg8ILFQm8rWM48orGy5YpI5Bl8U1y7ydlA==}
     peerDependencies:
@@ -7129,13 +7001,6 @@ packages:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.20.2
 
-  /@babel/plugin-syntax-optional-catch-binding@7.8.3:
-    resolution: {integrity: sha512-6VPD0Pc1lpTqw0aKoeRTMiB+kWhAoT24PA+ksWSBrFtl5SIRVpZlwN3NNPQjehA2E/91FV3RjLWoVTglWcSV3Q==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-
   /@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.21.0):
     resolution: {integrity: sha512-6VPD0Pc1lpTqw0aKoeRTMiB+kWhAoT24PA+ksWSBrFtl5SIRVpZlwN3NNPQjehA2E/91FV3RjLWoVTglWcSV3Q==}
     peerDependencies:
@@ -7150,13 +7015,6 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-syntax-optional-chaining@7.8.3:
-    resolution: {integrity: sha512-KoK9ErH1MBlCPxV0VANkXW2/dw4vlbGDrFgz8bmUsBGYkFRcbRwMh6cIJubdPrkxRwuGdtCk0v/wPTKbQgBjkg==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
       '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-syntax-optional-chaining@7.8.3(@babel/core@7.21.0):
@@ -7209,6 +7067,7 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/helper-plugin-utils': 7.20.2
+    dev: false
 
   /@babel/plugin-syntax-typescript@7.17.10(@babel/core@7.21.0):
     resolution: {integrity: sha512-xJefea1DWXW09pW4Tm9bjwVlPDyYA2it3fWlmEjpYz6alPvTUjL0EOzNzI/FEOyI3r4/J7uVH5UqKgl1TQ5hqQ==}
@@ -7235,14 +7094,6 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.21.0
-      '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-transform-arrow-functions@7.20.7:
-    resolution: {integrity: sha512-3poA5E7dzDomxj9WXWwuD6A5F3kc7VXwIJO+E+J8qtDtS+pXPAhrgEyh+9GBwBgPq1Z+bB+/JD60lp5jsN7JPQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
       '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-arrow-functions@7.20.7(@babel/core@7.21.0):
@@ -7273,18 +7124,6 @@ packages:
       '@babel/helper-module-imports': 7.18.6
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-remap-async-to-generator': 7.16.8
-    transitivePeerDependencies:
-      - supports-color
-
-  /@babel/plugin-transform-async-to-generator@7.20.7:
-    resolution: {integrity: sha512-Uo5gwHPT9vgnSXQxqGtpdufUiWp96gk7yiP4Mp5bm1QMkEmLXBO7PAGYbKoJ6DhAwiNkcHFBol/x5zZZkL/t0Q==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-module-imports': 7.18.6
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/helper-remap-async-to-generator': 7.18.9
     transitivePeerDependencies:
       - supports-color
 
@@ -7323,14 +7162,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.20.2
 
-  /@babel/plugin-transform-block-scoped-functions@7.18.6:
-    resolution: {integrity: sha512-ExUcOqpPWnliRcPqves5HJcJOvHvIIWfuS4sroBUenPuMdmW+SMHDakmtS7qOo13sVppmUijqeTv7qqGsvURpQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-
   /@babel/plugin-transform-block-scoped-functions@7.18.6(@babel/core@7.21.0):
     resolution: {integrity: sha512-ExUcOqpPWnliRcPqves5HJcJOvHvIIWfuS4sroBUenPuMdmW+SMHDakmtS7qOo13sVppmUijqeTv7qqGsvURpQ==}
     engines: {node: '>=6.9.0'}
@@ -7357,14 +7188,6 @@ packages:
     dependencies:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.18.9
-
-  /@babel/plugin-transform-block-scoping@7.21.0:
-    resolution: {integrity: sha512-Mdrbunoh9SxwFZapeHVrwFmri16+oYotcZysSzhNIVDwIAb1UV+kvnxULSYq9J3/q5MDG+4X6w8QVgD1zhBXNQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-block-scoping@7.21.0(@babel/core@7.21.0):
     resolution: {integrity: sha512-Mdrbunoh9SxwFZapeHVrwFmri16+oYotcZysSzhNIVDwIAb1UV+kvnxULSYq9J3/q5MDG+4X6w8QVgD1zhBXNQ==}
@@ -7397,24 +7220,6 @@ packages:
       '@babel/helper-optimise-call-expression': 7.16.7
       '@babel/helper-plugin-utils': 7.20.2
       '@babel/helper-replace-supers': 7.16.7
-      '@babel/helper-split-export-declaration': 7.18.6
-      globals: 11.12.0
-    transitivePeerDependencies:
-      - supports-color
-
-  /@babel/plugin-transform-classes@7.21.0:
-    resolution: {integrity: sha512-RZhbYTCEUAe6ntPehC4hlslPWosNHDox+vAs4On/mCLRLfoDVHf6hVEd7kuxr1RnHwJmxFfUM3cZiZRmPxJPXQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.18.6
-      '@babel/helper-compilation-targets': 7.21.4
-      '@babel/helper-environment-visitor': 7.18.9
-      '@babel/helper-function-name': 7.21.0
-      '@babel/helper-optimise-call-expression': 7.18.6
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/helper-replace-supers': 7.20.7
       '@babel/helper-split-export-declaration': 7.18.6
       globals: 11.12.0
     transitivePeerDependencies:
@@ -7467,15 +7272,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.20.2
 
-  /@babel/plugin-transform-computed-properties@7.20.7:
-    resolution: {integrity: sha512-Lz7MvBK6DTjElHAmfu6bfANzKcxpyNPeYBGEafyA6E5HtRpjpZwU+u7Qrgz/2OR0z+5TvKYbPdphfSaAcZBrYQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/template': 7.20.7
-
   /@babel/plugin-transform-computed-properties@7.20.7(@babel/core@7.21.0):
     resolution: {integrity: sha512-Lz7MvBK6DTjElHAmfu6bfANzKcxpyNPeYBGEafyA6E5HtRpjpZwU+u7Qrgz/2OR0z+5TvKYbPdphfSaAcZBrYQ==}
     engines: {node: '>=6.9.0'}
@@ -7503,14 +7299,6 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.21.0
-      '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-transform-destructuring@7.21.3:
-    resolution: {integrity: sha512-bp6hwMFzuiE4HqYEyoGJ/V2LeIWn+hLVKc4pnj++E5XQptwhtcGmSayM029d/j2X1bPKGTlsyPwAubuU22KhMA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
       '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-destructuring@7.21.3(@babel/core@7.21.0):
@@ -7628,15 +7416,6 @@ packages:
       '@babel/helper-builder-binary-assignment-operator-visitor': 7.18.9
       '@babel/helper-plugin-utils': 7.20.2
 
-  /@babel/plugin-transform-flow-strip-types@7.16.7:
-    resolution: {integrity: sha512-mzmCq3cNsDpZZu9FADYYyfZJIOrSONmHcop2XEKPdBNMa4PDC4eEvcOvzZaCNcjKu72v0XQlA5y1g58aLRXdYg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/plugin-syntax-flow': 7.21.4
-
   /@babel/plugin-transform-flow-strip-types@7.16.7(@babel/core@7.21.0):
     resolution: {integrity: sha512-mzmCq3cNsDpZZu9FADYYyfZJIOrSONmHcop2XEKPdBNMa4PDC4eEvcOvzZaCNcjKu72v0XQlA5y1g58aLRXdYg==}
     engines: {node: '>=6.9.0'}
@@ -7663,14 +7442,6 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.21.0
-      '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-transform-for-of@7.21.0:
-    resolution: {integrity: sha512-LlUYlydgDkKpIY7mcBWvyPPmMcOphEyYA27Ef4xpbh1IiDNLr0kZsos2nf92vz3IccvJI25QUwp86Eo5s6HmBQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
       '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-for-of@7.21.0(@babel/core@7.21.0):
@@ -7700,16 +7471,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-compilation-targets': 7.20.7(@babel/core@7.21.0)
       '@babel/helper-function-name': 7.19.0
-      '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-transform-function-name@7.18.9:
-    resolution: {integrity: sha512-WvIBoRPaJQ5yVHzcnJFor7oS5Ls0PYixlTYE63lCj2RtdQEl15M68FXQlxnG6wdraJIXRdR7KI+hQ7q/9QjrCQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-compilation-targets': 7.21.4
-      '@babel/helper-function-name': 7.21.0
       '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-function-name@7.18.9(@babel/core@7.21.0):
@@ -7743,14 +7504,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.20.2
 
-  /@babel/plugin-transform-literals@7.18.9:
-    resolution: {integrity: sha512-IFQDSRoTPnrAIrI5zoZv73IFeZu2dhu6irxQjY9rNjTT53VmKg9fenjvoiOWOkJ6mm4jKVPtdMzBY98Fp4Z4cg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-
   /@babel/plugin-transform-literals@7.18.9(@babel/core@7.21.0):
     resolution: {integrity: sha512-IFQDSRoTPnrAIrI5zoZv73IFeZu2dhu6irxQjY9rNjTT53VmKg9fenjvoiOWOkJ6mm4jKVPtdMzBY98Fp4Z4cg==}
     engines: {node: '>=6.9.0'}
@@ -7776,14 +7529,6 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.21.0
-      '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-transform-member-expression-literals@7.18.6:
-    resolution: {integrity: sha512-qSF1ihLGO3q+/g48k85tUjD033C29TNTVB2paCwZPVmOsjn9pClvYYrM2VeJpBY2bcNkuny0YUyTNRyRxJ54KA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
       '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-member-expression-literals@7.18.6(@babel/core@7.21.0):
@@ -7852,18 +7597,6 @@ packages:
       '@babel/helper-plugin-utils': 7.18.9
       '@babel/helper-simple-access': 7.17.7
       babel-plugin-dynamic-import-node: 2.3.3
-    transitivePeerDependencies:
-      - supports-color
-
-  /@babel/plugin-transform-modules-commonjs@7.21.2:
-    resolution: {integrity: sha512-Cln+Yy04Gxua7iPdj6nOV96smLGjpElir5YwzF0LBPKoPlLDNJePNlrGGaybAJkd0zKRnOVXOgizSqPYMNYkzA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-module-transforms': 7.21.2
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/helper-simple-access': 7.20.2
     transitivePeerDependencies:
       - supports-color
 
@@ -7981,15 +7714,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-create-regexp-features-plugin': 7.17.0(@babel/core@7.21.0)
 
-  /@babel/plugin-transform-named-capturing-groups-regex@7.20.5:
-    resolution: {integrity: sha512-mOW4tTzi5iTLnw+78iEq3gr8Aoq4WNRGpmSlrogqaiCBoR1HFhpU4JkpQFOHfeYx3ReVIFWOQJS4aZBRvuZ6mA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/helper-create-regexp-features-plugin': 7.21.4
-      '@babel/helper-plugin-utils': 7.20.2
-
   /@babel/plugin-transform-named-capturing-groups-regex@7.20.5(@babel/core@7.21.0):
     resolution: {integrity: sha512-mOW4tTzi5iTLnw+78iEq3gr8Aoq4WNRGpmSlrogqaiCBoR1HFhpU4JkpQFOHfeYx3ReVIFWOQJS4aZBRvuZ6mA==}
     engines: {node: '>=6.9.0'}
@@ -8058,17 +7782,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@babel/plugin-transform-object-super@7.18.6:
-    resolution: {integrity: sha512-uvGz6zk+pZoS1aTZrOvrbj6Pp/kK2mp45t2B+bTDre2UgsZZ8EZLSJtUg7m/no0zOJUWgFONpB7Zv9W2tSaFlA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/helper-replace-supers': 7.20.7
-    transitivePeerDependencies:
-      - supports-color
-
   /@babel/plugin-transform-object-super@7.18.6(@babel/core@7.21.0):
     resolution: {integrity: sha512-uvGz6zk+pZoS1aTZrOvrbj6Pp/kK2mp45t2B+bTDre2UgsZZ8EZLSJtUg7m/no0zOJUWgFONpB7Zv9W2tSaFlA==}
     engines: {node: '>=6.9.0'}
@@ -8101,14 +7814,6 @@ packages:
     dependencies:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.18.9
-
-  /@babel/plugin-transform-parameters@7.21.3:
-    resolution: {integrity: sha512-Wxc+TvppQG9xWFYatvCGPvZ6+SIUxQ2ZdiBP+PHYMIjnPXD+uThCshaz4NZOnODAtBjjcVQQ/3OKs9LW28purQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-parameters@7.21.3(@babel/core@7.12.9):
     resolution: {integrity: sha512-Wxc+TvppQG9xWFYatvCGPvZ6+SIUxQ2ZdiBP+PHYMIjnPXD+uThCshaz4NZOnODAtBjjcVQQ/3OKs9LW28purQ==}
@@ -8147,14 +7852,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.20.2
 
-  /@babel/plugin-transform-property-literals@7.18.6:
-    resolution: {integrity: sha512-cYcs6qlgafTud3PAzrrRNbQtfpQ8+y/+M5tKmksS9+M1ckbH6kzY8MrexEM9mcA6JDsukE19iIRvAyYl463sMg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-
   /@babel/plugin-transform-property-literals@7.18.6(@babel/core@7.21.0):
     resolution: {integrity: sha512-cYcs6qlgafTud3PAzrrRNbQtfpQ8+y/+M5tKmksS9+M1ckbH6kzY8MrexEM9mcA6JDsukE19iIRvAyYl463sMg==}
     engines: {node: '>=6.9.0'}
@@ -8181,14 +7878,6 @@ packages:
     dependencies:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-transform-react-display-name@7.16.7:
-    resolution: {integrity: sha512-qgIg8BcZgd0G/Cz916D5+9kqX0c7nPZyXaP8R2tLNN5tkyIZdG5fEwBrxwplzSnjC1jvQmyMNVwUCZPcbGY7Pg==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.18.9
 
   /@babel/plugin-transform-react-display-name@7.16.7(@babel/core@7.21.0):
     resolution: {integrity: sha512-qgIg8BcZgd0G/Cz916D5+9kqX0c7nPZyXaP8R2tLNN5tkyIZdG5fEwBrxwplzSnjC1jvQmyMNVwUCZPcbGY7Pg==}
@@ -8234,14 +7923,6 @@ packages:
       '@babel/core': 7.9.0
       '@babel/plugin-transform-react-jsx': 7.18.10(@babel/core@7.9.0)
 
-  /@babel/plugin-transform-react-jsx-self@7.18.6:
-    resolution: {integrity: sha512-A0LQGx4+4Jv7u/tWzoJF7alZwnBDQd6cGLh9P+Ttk4dpiL+J5p7NSNv/9tlEFFJDq3kjxOavWmbm6t0Gk+A3Ig==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-
   /@babel/plugin-transform-react-jsx-self@7.18.6(@babel/core@7.21.0):
     resolution: {integrity: sha512-A0LQGx4+4Jv7u/tWzoJF7alZwnBDQd6cGLh9P+Ttk4dpiL+J5p7NSNv/9tlEFFJDq3kjxOavWmbm6t0Gk+A3Ig==}
     engines: {node: '>=6.9.0'}
@@ -8258,14 +7939,6 @@ packages:
       '@babel/core': ^7.0.0-0
     dependencies:
       '@babel/core': 7.9.0
-      '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-transform-react-jsx-source@7.19.6:
-    resolution: {integrity: sha512-RpAi004QyMNisst/pvSanoRdJ4q+jMCWyk9zdw/CyLB9j8RXEahodR6l2GyttDRyEVWZtbN+TpLiHJ3t34LbsQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
       '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-react-jsx-source@7.19.6(@babel/core@7.21.0):
@@ -8285,18 +7958,6 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-transform-react-jsx@7.18.10:
-    resolution: {integrity: sha512-gCy7Iikrpu3IZjYZolFE4M1Sm+nrh1/6za2Ewj77Z+XirT4TsbJcvOFOyF+fRPwU6AKKK136CZxx6L8AbSFG6A==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.18.6
-      '@babel/helper-module-imports': 7.18.6
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/plugin-syntax-jsx': 7.18.6
-      '@babel/types': 7.21.4
 
   /@babel/plugin-transform-react-jsx@7.18.10(@babel/core@7.21.0):
     resolution: {integrity: sha512-gCy7Iikrpu3IZjYZolFE4M1Sm+nrh1/6za2Ewj77Z+XirT4TsbJcvOFOyF+fRPwU6AKKK136CZxx6L8AbSFG6A==}
@@ -8390,21 +8051,6 @@ packages:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.20.2
 
-  /@babel/plugin-transform-runtime@7.17.10:
-    resolution: {integrity: sha512-6jrMilUAJhktTr56kACL8LnWC5hx3Lf27BS0R0DSyW/OoJfb/iTHeE96V3b1dgKG3FSFdd/0culnYWMkjcKCig==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-module-imports': 7.18.6
-      '@babel/helper-plugin-utils': 7.20.2
-      babel-plugin-polyfill-corejs2: 0.3.3
-      babel-plugin-polyfill-corejs3: 0.5.2
-      babel-plugin-polyfill-regenerator: 0.3.1
-      semver: 6.3.0
-    transitivePeerDependencies:
-      - supports-color
-
   /@babel/plugin-transform-runtime@7.17.10(@babel/core@7.21.0):
     resolution: {integrity: sha512-6jrMilUAJhktTr56kACL8LnWC5hx3Lf27BS0R0DSyW/OoJfb/iTHeE96V3b1dgKG3FSFdd/0culnYWMkjcKCig==}
     engines: {node: '>=6.9.0'}
@@ -8441,14 +8087,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.18.9
 
-  /@babel/plugin-transform-shorthand-properties@7.18.6:
-    resolution: {integrity: sha512-eCLXXJqv8okzg86ywZJbRn19YJHU4XUa55oz2wbHhaQVn/MM+XhukiT7SYqp/7o00dg52Rj51Ny+Ecw4oyoygw==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-
   /@babel/plugin-transform-shorthand-properties@7.18.6(@babel/core@7.21.0):
     resolution: {integrity: sha512-eCLXXJqv8okzg86ywZJbRn19YJHU4XUa55oz2wbHhaQVn/MM+XhukiT7SYqp/7o00dg52Rj51Ny+Ecw4oyoygw==}
     engines: {node: '>=6.9.0'}
@@ -8476,15 +8114,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.18.9
       '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
-
-  /@babel/plugin-transform-spread@7.20.7:
-    resolution: {integrity: sha512-ewBbHQ+1U/VnH1fxltbJqDeWBU1oNLG8Dj11uIv3xVf7nrQu0bPGe5Rf716r7K5Qz+SqtAOVswoVunoiBtGhxw==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-      '@babel/helper-skip-transparent-expression-wrappers': 7.20.0
 
   /@babel/plugin-transform-spread@7.20.7(@babel/core@7.21.0):
     resolution: {integrity: sha512-ewBbHQ+1U/VnH1fxltbJqDeWBU1oNLG8Dj11uIv3xVf7nrQu0bPGe5Rf716r7K5Qz+SqtAOVswoVunoiBtGhxw==}
@@ -8515,14 +8144,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.18.9
 
-  /@babel/plugin-transform-sticky-regex@7.18.6:
-    resolution: {integrity: sha512-kfiDrDQ+PBsQDO85yj1icueWMfGfJFKN1KCkndygtu/C9+XUfydLC8Iv5UYJqRwy4zk8EcplRxEOeLyjq1gm6Q==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
-
   /@babel/plugin-transform-sticky-regex@7.18.6(@babel/core@7.21.0):
     resolution: {integrity: sha512-kfiDrDQ+PBsQDO85yj1icueWMfGfJFKN1KCkndygtu/C9+XUfydLC8Iv5UYJqRwy4zk8EcplRxEOeLyjq1gm6Q==}
     engines: {node: '>=6.9.0'}
@@ -8549,14 +8170,6 @@ packages:
     dependencies:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.18.9
-
-  /@babel/plugin-transform-template-literals@7.18.9:
-    resolution: {integrity: sha512-S8cOWfT82gTezpYOiVaGHrCbhlHgKhQt8XH5ES46P2XWmX92yisoZywf5km75wv5sYcXDUCLMmMxOLCtthDgMA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-template-literals@7.18.9(@babel/core@7.21.0):
     resolution: {integrity: sha512-S8cOWfT82gTezpYOiVaGHrCbhlHgKhQt8XH5ES46P2XWmX92yisoZywf5km75wv5sYcXDUCLMmMxOLCtthDgMA==}
@@ -8602,18 +8215,6 @@ packages:
     dependencies:
       '@babel/core': 7.9.0
       '@babel/helper-plugin-utils': 7.20.2
-
-  /@babel/plugin-transform-typescript@7.16.8:
-    resolution: {integrity: sha512-bHdQ9k7YpBDO2d0NVfkj51DpQcvwIzIusJ7mEUaMlbZq3Kt/U47j24inXZHQ5MDiYpCs+oZiwnXyKedE8+q7AQ==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-create-class-features-plugin': 7.17.9
-      '@babel/helper-plugin-utils': 7.18.9
-      '@babel/plugin-syntax-typescript': 7.17.10
-    transitivePeerDependencies:
-      - supports-color
 
   /@babel/plugin-transform-typescript@7.16.8(@babel/core@7.21.0):
     resolution: {integrity: sha512-bHdQ9k7YpBDO2d0NVfkj51DpQcvwIzIusJ7mEUaMlbZq3Kt/U47j24inXZHQ5MDiYpCs+oZiwnXyKedE8+q7AQ==}
@@ -8668,15 +8269,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-create-regexp-features-plugin': 7.17.0(@babel/core@7.21.0)
       '@babel/helper-plugin-utils': 7.18.9
-
-  /@babel/plugin-transform-unicode-regex@7.18.6:
-    resolution: {integrity: sha512-gE7A6Lt7YLnNOL3Pb9BNeZvi+d8l7tcRrG4+pwJjK9hD2xX4mEvjlQW60G9EEmfXVYRPv9VRQcyegIVHCql/AA==}
-    engines: {node: '>=6.9.0'}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-create-regexp-features-plugin': 7.21.4
-      '@babel/helper-plugin-utils': 7.20.2
 
   /@babel/plugin-transform-unicode-regex@7.18.6(@babel/core@7.21.0):
     resolution: {integrity: sha512-gE7A6Lt7YLnNOL3Pb9BNeZvi+d8l7tcRrG4+pwJjK9hD2xX4mEvjlQW60G9EEmfXVYRPv9VRQcyegIVHCql/AA==}
@@ -9113,24 +8705,6 @@ packages:
 
   /@babel/traverse@7.18.11:
     resolution: {integrity: sha512-TG9PiM2R/cWCAy6BPJKeHzNbu4lPzOSZpeMfeNErskGpTJx6trEvFaVCbDvpcxwy49BKWmEPwiW8mrysNiDvIQ==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/code-frame': 7.21.4
-      '@babel/generator': 7.21.4
-      '@babel/helper-environment-visitor': 7.18.9
-      '@babel/helper-function-name': 7.21.0
-      '@babel/helper-hoist-variables': 7.18.6
-      '@babel/helper-split-export-declaration': 7.18.6
-      '@babel/parser': 7.21.4
-      '@babel/types': 7.21.4
-      debug: 4.3.4
-      globals: 11.12.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /@babel/traverse@7.20.13:
-    resolution: {integrity: sha512-kMJXfF0T6DIS9E8cgdLCSAL+cuCK+YEZHWiLK0SXpTo8YRj5lpJu3CDNKiIBCne4m9hhTIqUg6SYTAI39tAiVQ==}
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/code-frame': 7.21.4
@@ -10796,7 +10370,7 @@ packages:
       react-native: '>=0.14.0 <1'
     dependencies:
       '@emotion/primitives-core': 10.0.27(@emotion/core@10.3.1)(react@18.0.0)
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     transitivePeerDependencies:
       - '@emotion/core'
       - react
@@ -15386,15 +14960,6 @@ packages:
       webpack: 4.46.0
     dev: true
 
-  /@polkadot/keyring@10.3.1:
-    resolution: {integrity: sha512-xBkUtyQ766NVS1ccSYbQssWpxAhSf0uwkw9Amj8TFhu++pnZcVm+EmM2VczWqgOkmWepO7MGRjEXeOIw1YUGiw==}
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      '@babel/runtime': 7.20.13
-      '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
-    dev: false
-
   /@polkadot/keyring@10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1):
     resolution: {integrity: sha512-xBkUtyQ766NVS1ccSYbQssWpxAhSf0uwkw9Amj8TFhu++pnZcVm+EmM2VczWqgOkmWepO7MGRjEXeOIw1YUGiw==}
     engines: {node: '>=14.0.0'}
@@ -15425,11 +14990,11 @@ packages:
       styled-components: '*'
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1
+      '@polkadot/keyring': 10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/ui-settings': 2.11.1
       '@polkadot/ui-shared': 2.11.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
+      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
       color: 3.2.1
       ethereum-blockies-base64: 1.0.2
       jdenticon: 3.2.0
@@ -15451,7 +15016,7 @@ packages:
       '@polkadot/util': 10.3.1
       '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-svg: 12.5.1(react-native@0.71.6)(react@18.0.0)
     dev: false
 
@@ -15527,25 +15092,8 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
+      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
       color: 3.2.1
-    dev: false
-
-  /@polkadot/util-crypto@10.3.1:
-    resolution: {integrity: sha512-viqLMuNGrbB2lyDIYdXAl3tq/Em/Y7ql2FvCTHJmxXaB5C1NXiWf1SqFAahUJKohL+ke5IL0jr19wZu/f88lIQ==}
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      '@babel/runtime': 7.20.13
-      '@noble/hashes': 1.1.5
-      '@noble/secp256k1': 1.7.1
-      '@polkadot/networks': 10.3.1
-      '@polkadot/util': 10.3.1
-      '@polkadot/wasm-crypto': 6.4.1(@polkadot/util@10.3.1)(@polkadot/x-randomvalues@10.3.1)
-      '@polkadot/x-bigint': 10.3.1
-      '@polkadot/x-randomvalues': 10.3.1
-      '@scure/base': 1.1.1
-      ed2curve: 0.3.0
-      tweetnacl: 1.0.3
     dev: false
 
   /@polkadot/util-crypto@10.3.1(@polkadot/util@10.3.1):
@@ -15776,7 +15324,7 @@ packages:
       react-native: ^0.0.0-0 || 0.60 - 0.71 || 1000.0.0
     dependencies:
       merge-options: 3.0.4
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /@react-native-community/cli-clean@10.1.1:
     resolution: {integrity: sha512-iNsrjzjIRv9yb5y309SWJ8NDHdwYtnCpmxZouQDyOljUdC9MwdZ4ChbtA4rwQyAwgOVfS9F/j56ML3Cslmvrxg==}
@@ -15948,14 +15496,13 @@ packages:
       metro-runtime: 0.73.9
       readline: 1.3.0
     transitivePeerDependencies:
-      - '@babel/core'
       - bufferutil
       - encoding
       - metro-transform-worker
       - supports-color
       - utf-8-validate
 
-  /@react-native-community/cli-plugin-metro@10.2.2(@babel/core@7.21.0)(metro-transform-worker@0.76.0):
+  /@react-native-community/cli-plugin-metro@10.2.2(metro-transform-worker@0.76.0):
     resolution: {integrity: sha512-sTGjZlD3OGqbF9v1ajwUIXhGmjw9NyJ/14Lo0sg7xH8Pv4qUd5ZvQ6+DWYrQn3IKFUMfGFWYyL81ovLuPylrpw==}
     dependencies:
       '@react-native-community/cli-server-api': 10.1.1
@@ -15965,12 +15512,11 @@ packages:
       metro: 0.73.9
       metro-config: 0.73.9(metro-transform-worker@0.76.0)
       metro-core: 0.73.9
-      metro-react-native-babel-transformer: 0.73.9(@babel/core@7.21.0)
+      metro-react-native-babel-transformer: 0.73.9
       metro-resolver: 0.73.9
       metro-runtime: 0.73.9
       readline: 1.3.0
     transitivePeerDependencies:
-      - '@babel/core'
       - bufferutil
       - encoding
       - metro-transform-worker
@@ -16156,14 +15702,13 @@ packages:
       prompts: 2.4.2
       semver: 6.3.0
     transitivePeerDependencies:
-      - '@babel/core'
       - bufferutil
       - encoding
       - metro-transform-worker
       - supports-color
       - utf-8-validate
 
-  /@react-native-community/cli@10.2.2(@babel/core@7.21.0)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0):
+  /@react-native-community/cli@10.2.2(metro-resolver@0.76.0)(metro-transform-worker@0.76.0):
     resolution: {integrity: sha512-aZVcVIqj+OG6CrliR/Yn8wHxrvyzbFBY9cj7n0MvRw/P54QUru2nNqUTSSbqv0Qaa297yHJbe6kFDojDMSTM8Q==}
     engines: {node: '>=14'}
     hasBin: true
@@ -16178,7 +15723,7 @@ packages:
       '@react-native-community/cli-debugger-ui': 10.0.0
       '@react-native-community/cli-doctor': 10.2.2
       '@react-native-community/cli-hermes': 10.2.0
-      '@react-native-community/cli-plugin-metro': 10.2.2(@babel/core@7.21.0)(metro-transform-worker@0.76.0)
+      '@react-native-community/cli-plugin-metro': 10.2.2(metro-transform-worker@0.76.0)
       '@react-native-community/cli-server-api': 10.1.1
       '@react-native-community/cli-tools': 10.1.1
       '@react-native-community/cli-types': 10.0.0
@@ -16192,7 +15737,6 @@ packages:
       prompts: 2.4.2
       semver: 6.3.0
     transitivePeerDependencies:
-      - '@babel/core'
       - bufferutil
       - encoding
       - metro-transform-worker
@@ -16237,7 +15781,7 @@ packages:
       ora: 3.4.0
       pretty-format: 26.6.2
       prompts: 2.4.2
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       semver: 6.3.0
       serve-static: 1.15.0
       strip-ansi: 5.2.0
@@ -16260,7 +15804,7 @@ packages:
       react-native: '>=0.57.0'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /@react-native-community/datetimepicker@6.7.3:
@@ -16329,7 +15873,7 @@ packages:
     peerDependencies:
       react-native: '>=0.59'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /@react-native-community/slider@4.4.2:
@@ -16345,7 +15889,7 @@ packages:
       '@expo/config-plugins': 4.1.5
       opencollective-postinstall: 2.0.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       superstruct: 0.6.2
     transitivePeerDependencies:
       - supports-color
@@ -16375,7 +15919,7 @@ packages:
       react-native: '>=0.57'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /@react-native/assets@1.0.0:
@@ -16400,7 +15944,7 @@ packages:
       '@react-navigation/native': 6.0.13(react-native@0.71.6)(react@18.0.0)
       color: 4.2.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-safe-area-context: 4.5.0(react-native@0.71.6)(react@18.0.0)
       react-native-screens: 3.20.0(react-native@0.71.6)(react@18.0.0)
       warn-once: 0.1.0
@@ -16441,7 +15985,7 @@ packages:
     dependencies:
       '@react-navigation/native': 6.0.13(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-safe-area-context: 4.5.0(react-native@0.71.6)(react@18.0.0)
     dev: false
 
@@ -16457,7 +16001,7 @@ packages:
       '@react-navigation/native': 6.0.13(react-native@0.71.6)(react@18.0.0)
       color: 4.2.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-pager-view: 6.1.0(react-native@0.71.6)(react@18.0.0)
       react-native-tab-view: 3.3.0(react-native-pager-view@6.1.0)(react-native@0.71.6)(react@18.0.0)
       warn-once: 0.1.0
@@ -16474,7 +16018,7 @@ packages:
       fast-deep-equal: 3.1.3
       nanoid: 3.3.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /@react-navigation/routers@6.1.6:
@@ -16497,7 +16041,7 @@ packages:
       '@react-navigation/native': 6.0.13(react-native@0.71.6)(react@18.0.0)
       color: 4.2.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-gesture-handler: 2.9.0(react-native@0.71.6)(react@18.0.0)
       react-native-safe-area-context: 4.5.0(react-native@0.71.6)(react@18.0.0)
       react-native-screens: 3.20.0(react-native@0.71.6)(react@18.0.0)
@@ -16674,7 +16218,7 @@ packages:
       js-base64: 3.7.2
       promise.allsettled: 1.0.6
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /@segment/loosely-validate-event@2.0.0:
@@ -16693,7 +16237,7 @@ packages:
       ansi-regex: 5.0.1
       deepmerge: 4.2.2
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       shell-quote: 1.7.3
     dev: false
 
@@ -16908,7 +16452,7 @@ packages:
       '@sentry/utils': 7.45.0
       promise: 8.2.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       tslib: 2.5.0
     transitivePeerDependencies:
       - encoding
@@ -17026,7 +16570,7 @@ packages:
       '@shopify/react-native-performance': 4.1.2(@babel/runtime@7.17.9)(react-native@0.71.6)(react@18.0.0)
       lodash.isequal: 4.5.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       tslib: 2.5.0
     dev: false
 
@@ -17039,7 +16583,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.17.9
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       tslib: 2.5.0
     dev: false
 
@@ -18086,7 +17630,7 @@ packages:
       '@storybook/core-events': 6.5.16
       fast-deep-equal: 2.0.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     transitivePeerDependencies:
       - react-dom
     dev: true
@@ -18108,7 +17652,7 @@ packages:
       core-js: 3.22.5
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     transitivePeerDependencies:
       - react-dom
     dev: true
@@ -18133,7 +17677,7 @@ packages:
       deep-equal: 1.1.1
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-modal-datetime-picker: 14.0.1(@react-native-community/datetimepicker@6.7.3)(react-native@0.71.6)
       react-native-modal-selector: 2.1.2
       tinycolor2: 1.4.2
@@ -18158,7 +17702,7 @@ packages:
       emotion-theming: 10.3.0(@emotion/core@10.3.1)(react@18.0.0)
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       simple-markdown: 0.7.3(@types/react@17.0.53)
     transitivePeerDependencies:
       - '@types/react'
@@ -18831,7 +18375,7 @@ packages:
       '@storybook/core-events': 6.5.14
       core-js: 3.22.5
       global: 4.4.0
-      qs: 6.10.3
+      qs: 6.11.0
       telejson: 6.0.8
     dev: true
 
@@ -18843,7 +18387,7 @@ packages:
       '@storybook/core-events': 6.5.16
       core-js: 3.22.5
       global: 4.4.0
-      qs: 6.10.3
+      qs: 6.11.0
       telejson: 6.0.8
     dev: true
 
@@ -18951,7 +18495,7 @@ packages:
       global: 4.4.0
       lodash: 4.17.21
       memoizerific: 1.11.3
-      qs: 6.10.3
+      qs: 6.11.0
       react: 18.0.0
       react-dom: 18.0.0(react@18.0.0)
       regenerator-runtime: 0.13.11
@@ -18981,7 +18525,7 @@ packages:
       global: 4.4.0
       lodash: 4.17.21
       memoizerific: 1.11.3
-      qs: 6.10.3
+      qs: 6.11.0
       react: 18.0.0
       react-dom: 18.0.0(react@18.0.0)
       regenerator-runtime: 0.13.11
@@ -19059,7 +18603,7 @@ packages:
       '@storybook/theming': 6.5.14(react-dom@18.0.0)(react@18.0.0)
       core-js: 3.22.5
       memoizerific: 1.11.3
-      qs: 6.10.3
+      qs: 6.11.0
       react: 18.0.0
       react-dom: 18.0.0(react@18.0.0)
       regenerator-runtime: 0.13.11
@@ -19077,7 +18621,7 @@ packages:
       '@storybook/theming': 6.5.16(react-dom@18.0.0)(react@18.0.0)
       core-js: 3.22.5
       memoizerific: 1.11.3
-      qs: 6.10.3
+      qs: 6.11.0
       react: 18.0.0
       react-dom: 18.0.0(react@18.0.0)
       regenerator-runtime: 0.13.11
@@ -19110,7 +18654,7 @@ packages:
       core-js: 3.22.5
       global: 4.4.0
       lodash: 4.17.21
-      qs: 6.10.3
+      qs: 6.11.0
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
       regenerator-runtime: 0.13.11
@@ -19148,7 +18692,7 @@ packages:
       core-js: 3.22.5
       global: 4.4.0
       lodash: 4.17.21
-      qs: 6.10.3
+      qs: 6.11.0
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
       regenerator-runtime: 0.13.11
@@ -19187,7 +18731,7 @@ packages:
       core-js: 3.22.5
       global: 4.4.0
       lodash: 4.17.21
-      qs: 6.10.3
+      qs: 6.11.0
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
       regenerator-runtime: 0.13.11
@@ -19226,7 +18770,7 @@ packages:
       core-js: 3.22.5
       global: 4.4.0
       lodash: 4.17.21
-      qs: 6.10.3
+      qs: 6.11.0
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
       regenerator-runtime: 0.13.11
@@ -19265,7 +18809,7 @@ packages:
       core-js: 3.22.5
       global: 4.4.0
       lodash: 4.17.21
-      qs: 6.10.3
+      qs: 6.11.0
       react: 18.0.0
       react-dom: 18.0.0(react@18.0.0)
       regenerator-runtime: 0.13.11
@@ -20486,7 +20030,7 @@ packages:
       core-js: 3.22.5
       global: 4.4.0
       lodash: 4.17.21
-      qs: 6.10.3
+      qs: 6.11.0
       react: 18.0.0
       react-dom: 18.0.0(react@18.0.0)
       regenerator-runtime: 0.13.11
@@ -20590,7 +20134,7 @@ packages:
       jotai: 2.0.3(react@18.0.0)
       prettier: 2.8.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-safe-area-context: 4.5.0(react-native@0.71.6)(react@18.0.0)
       react-native-swipe-gestures: 1.0.5
       util: 0.12.5
@@ -20838,7 +20382,7 @@ packages:
       history: 5.0.0
       lodash: 4.17.21
       memoizerific: 1.11.3
-      qs: 6.10.3
+      qs: 6.11.0
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
       react-router: 6.3.0(react@17.0.2)
@@ -20855,7 +20399,7 @@ packages:
       '@storybook/client-logger': 6.5.14
       core-js: 3.22.5
       memoizerific: 1.11.3
-      qs: 6.10.3
+      qs: 6.11.0
       react: 18.0.0
       react-dom: 18.0.0(react@18.0.0)
       regenerator-runtime: 0.13.11
@@ -20870,7 +20414,7 @@ packages:
       '@storybook/client-logger': 6.5.16
       core-js: 3.22.5
       memoizerific: 1.11.3
-      qs: 6.10.3
+      qs: 6.11.0
       react: 18.0.0
       react-dom: 18.0.0(react@18.0.0)
       regenerator-runtime: 0.13.11
@@ -21134,7 +20678,7 @@ packages:
       '@storybook/theming': 6.5.14(react-dom@18.0.0)(react@18.0.0)
       core-js: 3.22.5
       memoizerific: 1.11.3
-      qs: 6.10.3
+      qs: 6.11.0
       react: 18.0.0
       react-dom: 18.0.0(react@18.0.0)
       regenerator-runtime: 0.13.11
@@ -21158,7 +20702,7 @@ packages:
       '@storybook/theming': 6.5.16(react-dom@18.0.0)(react@18.0.0)
       core-js: 3.22.5
       memoizerific: 1.11.3
-      qs: 6.10.3
+      qs: 6.11.0
       react: 18.0.0
       react-dom: 18.0.0(react@18.0.0)
       regenerator-runtime: 0.13.11
@@ -21667,7 +21211,7 @@ packages:
       jest-matcher-utils: 29.5.0
       pretty-format: 29.5.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-test-renderer: 17.0.2(react@18.0.0)
       redent: 3.0.0
     dev: true
@@ -21735,7 +21279,7 @@ packages:
       jest: 28.1.3(metro@0.76.0)
       pretty-format: 29.5.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-test-renderer: 17.0.2(react@18.0.0)
     dev: true
 
@@ -21863,6 +21407,12 @@ packages:
 
   /@types/bchaddrjs@0.4.0:
     resolution: {integrity: sha512-Nvv3haWpXNWYfKasVoEp3VBgVsBTLTh45anhHUN8xVUPhn4ErU3FPS5AEcZtACWc5ICGUxbaiLTWOnwDkwYF1Q==}
+    dev: false
+
+  /@types/bip39@2.4.2:
+    resolution: {integrity: sha512-Vo9lqOIRq8uoIzEVrV87ZvcIM0PN9t0K3oYZ/CS61fIYKCBdOIM7mlWzXuRvSXrDtVa1uUO2w1cdfufxTC0bzg==}
+    dependencies:
+      '@types/node': 18.15.11
     dev: false
 
   /@types/bn.js@4.11.6:
@@ -22073,6 +21623,12 @@ packages:
     dependencies:
       '@types/unist': 2.0.6
     dev: true
+
+  /@types/hdkey@0.7.1:
+    resolution: {integrity: sha512-4Kkr06hq+R8a9EzVNqXGOY2x1xA7dhY6qlp6OvaZ+IJy1BCca1Cv126RD9X7CMJoXoLo8WvAizy8gQHpqW6K0Q==}
+    dependencies:
+      '@types/node': 18.15.11
+    dev: false
 
   /@types/history@4.7.11:
     resolution: {integrity: sha512-qjDJRrmvBMiTx+jyLxvLfJU7UznFuokDv4f3WRuriHKERccVpFU+8XMQUAbDzoiJCsmexxRExQeMwwCdamSKDA==}
@@ -22808,6 +22364,12 @@ packages:
     dependencies:
       '@types/node': 18.15.11
 
+  /@types/sodium-native@2.3.5:
+    resolution: {integrity: sha512-a3DAIpW8+36XAY8aIR36JBQQsfOabxHuJwx11DL/PTvnbwEWPAXW66b8QbMi0r2vUnkOfREsketxdvjBmQxqDQ==}
+    dependencies:
+      '@types/node': 18.15.11
+    dev: false
+
   /@types/source-list-map@0.1.2:
     resolution: {integrity: sha512-K5K+yml8LTo9bWJI/rECfIPrGgxdpeNbj+d53lwN4QjW1MCwlkhUms+gtdzigTeUyBr09+u8BwOIY3MXvHdcsA==}
     dev: true
@@ -22914,6 +22476,10 @@ packages:
     resolution: {integrity: sha512-pRs2gYF5yoKYrgSaira0DJqVg2tFuF+Qjp838xS7K+mJyY2jJzjsrl6y17GbIa4uMRogMbxs+ghNCvKg6XyNrA==}
     dev: false
 
+  /@types/uuid@8.3.1:
+    resolution: {integrity: sha512-Y2mHTRAbqfFkpjldbkHGY8JIzRN6XqYRliG8/24FcHm2D2PwW24fl5xMRTVGdrb7iMrwCaIEbLWerGIkXuFWVg==}
+    dev: false
+
   /@types/uuid@8.3.4:
     resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
     dev: true
@@ -22957,6 +22523,12 @@ packages:
       anymatch: 3.1.2
       source-map: 0.6.1
     dev: true
+
+  /@types/websocket@1.0.4:
+    resolution: {integrity: sha512-qn1LkcFEKK8RPp459jkjzsfpbsx36BBt3oC3pITYtkoBw/aVX+EZFa5j3ThCRTNpLFvIMr5dSTD4RaMdilIOpA==}
+    dependencies:
+      '@types/node': 18.15.11
+    dev: false
 
   /@types/which@2.0.2:
     resolution: {integrity: sha512-113D3mDkZDjo+EeUEHCFy0qniNc1ZpecGiAU7WSo7YDoSzolZIQKpYFHrPpjkB2nuyahcKfrmLXeQlh7gqJYdw==}
@@ -24666,6 +24238,121 @@ packages:
   /@xtuc/long@4.2.2:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
+  /@zilliqa-js/account@3.3.4:
+    resolution: {integrity: sha512-WGiUYg2LD2nL2X+wMaI463+KhsoXBOP/qb1+WExFIEJm9DTC2y5nnikO+5JlAMescwLtWjsmTJn5uT1RZcHqIg==}
+    engines: {node: '>=12.0.0 <17'}
+    dependencies:
+      '@types/bip39': 2.4.2
+      '@types/hdkey': 0.7.1
+      '@zilliqa-js/core': 3.3.4
+      '@zilliqa-js/crypto': 3.3.4
+      '@zilliqa-js/proto': 3.3.4
+      '@zilliqa-js/util': 3.3.4
+      bip39: 2.6.0
+      hash.js: 1.1.7
+      hdkey: 1.1.2
+      tslib: 2.3.1
+    dev: false
+
+  /@zilliqa-js/blockchain@3.3.4:
+    resolution: {integrity: sha512-f6o29BYkFAv92DxQgFoRd6Ep3SM3Y456sm0WPmgjYtwwpUSoYpto3nBaVmVwUvmFpEcAic1NLMw5zN6FMNo5rw==}
+    engines: {node: '>=12.0.0 <17'}
+    dependencies:
+      '@zilliqa-js/account': 3.3.4
+      '@zilliqa-js/core': 3.3.4
+      '@zilliqa-js/crypto': 3.3.4
+      '@zilliqa-js/util': 3.3.4
+      tslib: 2.3.1
+      utility-types: 3.10.0
+    dev: false
+
+  /@zilliqa-js/contract@3.3.4:
+    resolution: {integrity: sha512-B2/ya2re+n0XYmwpNFJPyJ0e9oJcd3AtelBVDKKHzcJJJJ+9+R6M8lsLlhUkd77Z2Bf0ho/oGwb5JJuBsM0evQ==}
+    engines: {node: '>=12.0.0 <17'}
+    dependencies:
+      '@zilliqa-js/account': 3.3.4
+      '@zilliqa-js/blockchain': 3.3.4
+      '@zilliqa-js/core': 3.3.4
+      '@zilliqa-js/crypto': 3.3.4
+      '@zilliqa-js/util': 3.3.4
+      hash.js: 1.1.7
+      tslib: 2.3.1
+      utility-types: 2.1.0
+    dev: false
+
+  /@zilliqa-js/core@3.3.4:
+    resolution: {integrity: sha512-5bfXrhWUYY7wtBvGA+sLGVZvTpZOavr8KbZgdODpxXnDPLNjUe6Qoy36SkSIIU4TrLk9DMmY435RWjFEANkt0Q==}
+    engines: {node: '>=12.0.0 <17'}
+    dependencies:
+      cross-fetch: 2.2.5
+      mitt: 1.2.0
+      tslib: 2.3.1
+    dev: false
+
+  /@zilliqa-js/crypto@3.3.4:
+    resolution: {integrity: sha512-SOKDuEcBJ1zmnFsG1geiKwGODazy1RoPnqvyBHpakEGxdsZaP6sOomdd91WgqijOw2DOYd93BDXI+qnDlyOQGg==}
+    dependencies:
+      '@types/elliptic': 6.4.14
+      '@types/uuid': 8.3.1
+      '@zilliqa-js/util': 3.3.4
+      aes-js: 3.1.2
+      bsert: 0.0.4
+      elliptic: 6.5.4
+      hash.js: 1.1.7
+      hmac-drbg: 1.0.1
+      pbkdf2: 3.1.2
+      scrypt-js: 3.0.1
+      scryptsy: 2.1.0
+      sodium-randbytes: 0.14.0
+      tslib: 2.3.1
+      uuid: 8.3.2
+    dev: false
+
+  /@zilliqa-js/proto@3.3.4:
+    resolution: {integrity: sha512-2FwF5tq52irgQ2crMJUE8xcN83XfGvmSv7U9SsVFZHQbbPnteosLuPaXCP1ZcaHR7p28ifbgKibVTAHK8FBMiw==}
+    engines: {node: '>=12.0.0 <17'}
+    dependencies:
+      protobufjs: 6.11.3
+    dev: false
+
+  /@zilliqa-js/subscriptions@3.3.4:
+    resolution: {integrity: sha512-OGHtUmcUQn4ufMg5hCCQZsSg8GTib8DCslqtpl+lTGmuKNXQnXIuhrIsNmMaRpsxWKl47xMp6cqyHBvsstMrBQ==}
+    dependencies:
+      '@types/websocket': 1.0.4
+      mitt: 1.2.0
+      tslib: 2.3.1
+      websocket: 1.0.34
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@zilliqa-js/util@3.3.4:
+    resolution: {integrity: sha512-FtElC1Scksi8V8ys87kIUJvjY2w4wv57hFfeKvlXi2Gb3TrOjLZF33o8sUb1Ib9DJ24pB1JhCT2aAyHyJuE49g==}
+    engines: {node: '>=12.0.0 <17'}
+    dependencies:
+      '@types/bn.js': 5.1.1
+      '@types/long': 4.0.2
+      bn.js: 4.12.0
+      long: 4.0.0
+      tslib: 2.3.1
+    dev: false
+
+  /@zilliqa-js/zilliqa@3.3.4:
+    resolution: {integrity: sha512-vmR0xCG5jjJqCi8Hk1jO3Kjr99gEwE+E1EqiGBkLJxse0+v9BPJm1+NQYl/w7LSktP7ZqAp6U27HbnM3KqQ4dw==}
+    engines: {node: '>=12.0.0 <17'}
+    dependencies:
+      '@zilliqa-js/account': 3.3.4
+      '@zilliqa-js/blockchain': 3.3.4
+      '@zilliqa-js/contract': 3.3.4
+      '@zilliqa-js/core': 3.3.4
+      '@zilliqa-js/crypto': 3.3.4
+      '@zilliqa-js/subscriptions': 3.3.4
+      '@zilliqa-js/util': 3.3.4
+      tslib: 2.3.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /@zondax/cbor@8.1.0-zondax-no-bigint:
     resolution: {integrity: sha512-dFjJxSIZH2aaiG35iIUqKr3OXnZwy1XVYP5yx78UJP7ftOBxmN3OWX8k+pt4I2l/gjYONW/XMkG+RtTkxvFzlw==}
     engines: {node: '>=12.19'}
@@ -26168,17 +25855,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /babel-plugin-polyfill-corejs2@0.3.3:
-    resolution: {integrity: sha512-8hOdmFYFSZhqg2C/JgLUQ+t52o5nirNwaWM2B9LWteozwIvM14VSwdsCAUET10qT+kmySAlseadmfeeSWFCy+Q==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/compat-data': 7.21.4
-      '@babel/helper-define-polyfill-provider': 0.3.3
-      semver: 6.3.0
-    transitivePeerDependencies:
-      - supports-color
-
   /babel-plugin-polyfill-corejs2@0.3.3(@babel/core@7.21.0):
     resolution: {integrity: sha512-8hOdmFYFSZhqg2C/JgLUQ+t52o5nirNwaWM2B9LWteozwIvM14VSwdsCAUET10qT+kmySAlseadmfeeSWFCy+Q==}
     peerDependencies:
@@ -26203,16 +25879,6 @@ packages:
       - supports-color
     dev: true
 
-  /babel-plugin-polyfill-corejs3@0.5.2:
-    resolution: {integrity: sha512-G3uJih0XWiID451fpeFaYGVuxHEjzKTHtc9uGFEjR6hHrvNzeS/PX+LLLcetJcytsB5m4j+K3o/EpXJNb/5IEQ==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-define-polyfill-provider': 0.3.1
-      core-js-compat: 3.22.5
-    transitivePeerDependencies:
-      - supports-color
-
   /babel-plugin-polyfill-corejs3@0.5.2(@babel/core@7.21.0):
     resolution: {integrity: sha512-G3uJih0XWiID451fpeFaYGVuxHEjzKTHtc9uGFEjR6hHrvNzeS/PX+LLLcetJcytsB5m4j+K3o/EpXJNb/5IEQ==}
     peerDependencies:
@@ -26232,15 +25898,6 @@ packages:
       '@babel/core': 7.21.0
       '@babel/helper-define-polyfill-provider': 0.3.3(@babel/core@7.21.0)
       core-js-compat: 3.30.0
-    transitivePeerDependencies:
-      - supports-color
-
-  /babel-plugin-polyfill-regenerator@0.3.1:
-    resolution: {integrity: sha512-Y2B06tvgHYt1x0yz17jGkGeeMr5FeKUu+ASJ+N6nB5lQ8Dapfg42i0OVrf8PNGJ3zKL4A23snMi1IRwrqqND7A==}
-    peerDependencies:
-      '@babel/core': ^7.0.0-0
-    dependencies:
-      '@babel/helper-define-polyfill-provider': 0.3.1
     transitivePeerDependencies:
       - supports-color
 
@@ -26388,44 +26045,9 @@ packages:
       '@babel/preset-env': 7.21.4(@babel/core@7.21.0)
       babel-plugin-module-resolver: 4.1.0
       babel-plugin-react-native-web: 0.18.12
-      metro-react-native-babel-preset: 0.73.9(@babel/core@7.21.0)
+      metro-react-native-babel-preset: 0.73.9
     transitivePeerDependencies:
       - '@babel/core'
-      - supports-color
-
-  /babel-preset-fbjs@3.4.0:
-    resolution: {integrity: sha512-9ywCsCvo1ojrw0b+XYk7aFvTH6D9064t0RIL1rtMf3nsa02Xw41MS7sZw216Im35xj/UY0PDBQsa1brUDDF1Ow==}
-    peerDependencies:
-      '@babel/core': ^7.0.0
-    dependencies:
-      '@babel/plugin-proposal-class-properties': 7.18.6
-      '@babel/plugin-proposal-object-rest-spread': 7.20.7
-      '@babel/plugin-syntax-class-properties': 7.12.13
-      '@babel/plugin-syntax-flow': 7.21.4
-      '@babel/plugin-syntax-jsx': 7.18.6
-      '@babel/plugin-syntax-object-rest-spread': 7.8.3
-      '@babel/plugin-transform-arrow-functions': 7.20.7
-      '@babel/plugin-transform-block-scoped-functions': 7.18.6
-      '@babel/plugin-transform-block-scoping': 7.21.0
-      '@babel/plugin-transform-classes': 7.21.0
-      '@babel/plugin-transform-computed-properties': 7.20.7
-      '@babel/plugin-transform-destructuring': 7.21.3
-      '@babel/plugin-transform-flow-strip-types': 7.16.7
-      '@babel/plugin-transform-for-of': 7.21.0
-      '@babel/plugin-transform-function-name': 7.18.9
-      '@babel/plugin-transform-literals': 7.18.9
-      '@babel/plugin-transform-member-expression-literals': 7.18.6
-      '@babel/plugin-transform-modules-commonjs': 7.21.2
-      '@babel/plugin-transform-object-super': 7.18.6
-      '@babel/plugin-transform-parameters': 7.21.3
-      '@babel/plugin-transform-property-literals': 7.18.6
-      '@babel/plugin-transform-react-display-name': 7.16.7
-      '@babel/plugin-transform-react-jsx': 7.18.10
-      '@babel/plugin-transform-shorthand-properties': 7.18.6
-      '@babel/plugin-transform-spread': 7.20.7
-      '@babel/plugin-transform-template-literals': 7.18.9
-      babel-plugin-syntax-trailing-function-commas: 7.0.0-beta.0
-    transitivePeerDependencies:
       - supports-color
 
   /babel-preset-fbjs@3.4.0(@babel/core@7.21.0):
@@ -26830,6 +26452,16 @@ packages:
       tiny-secp256k1: 1.1.6
       typeforce: 1.18.0
       wif: 2.0.6
+    dev: false
+
+  /bip39@2.6.0:
+    resolution: {integrity: sha512-RrnQRG2EgEoqO24ea+Q/fftuPUZLmrEM3qNhhGsA3PbaXaCW791LTzPuVyx/VprXQcTbPJ3K3UeTna8ZnVl2sg==}
+    dependencies:
+      create-hash: 1.2.0
+      pbkdf2: 3.1.2
+      randombytes: 2.1.0
+      safe-buffer: 5.2.1
+      unorm: 1.6.0
     dev: false
 
   /bip39@3.0.2:
@@ -27341,6 +26973,11 @@ packages:
     resolution: {integrity: sha512-gQxTNE/GAfIIrmHLUE3oJyp5FO6HRBfhjnw4/wMmA63ZGDJnWBmgY/lyQBpnDUkGmAhbSe39tx2d/iTOAfglwQ==}
     dependencies:
       node-int64: 0.4.0
+
+  /bsert@0.0.4:
+    resolution: {integrity: sha512-VReLe1aTaHRmf80YLOHUk8ONQ48SjseZP76GlNIDheD5REYByn/Mm9yrtI0/ZCaFrcfxzgpiw1/hMMCUOSMa3w==}
+    engines: {node: '>=8.0.0'}
+    dev: false
 
   /btoa-lite@1.0.0:
     resolution: {integrity: sha1-M3dm2hWAEhD92VbCLpxokaudAzc=}
@@ -29192,6 +28829,13 @@ packages:
       cross-spawn: 7.0.3
     dev: true
 
+  /cross-fetch@2.2.5:
+    resolution: {integrity: sha512-xqYAhQb4NhCJSRym03dwxpP1bYXpK3y7UN83Bo2WFi3x1Zmzn0SL/6xGoPr+gpt4WmNrgCCX3HPysvOwFOW36w==}
+    dependencies:
+      node-fetch: 2.6.1
+      whatwg-fetch: 2.0.4
+    dev: false
+
   /cross-fetch@3.1.5:
     resolution: {integrity: sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==}
     dependencies:
@@ -30729,8 +30373,8 @@ packages:
       '@babel/core': 7.12.3
       '@babel/generator': 7.12.1
       '@babel/parser': 7.12.3
-      '@babel/traverse': 7.20.13
-      '@babel/types': 7.20.7
+      '@babel/traverse': 7.21.4
+      '@babel/types': 7.21.4
       ansi-html: 0.0.7
       babelify: 10.0.0(@babel/core@7.12.3)
       chalk: 2.4.2
@@ -30942,6 +30586,15 @@ packages:
       react-is: 17.0.2
       tslib: 2.5.0
     dev: true
+
+  /drbg.js@1.0.1:
+    resolution: {integrity: sha512-F4wZ06PvqxYLFEZKkFxTDcns9oFNk34hvmJSEwdzsxVQ8YI5YaxtACgQatkYgv2VI2CFkUd2Y+xosPQnHv809g==}
+    engines: {node: '>=0.10'}
+    dependencies:
+      browserify-aes: 1.2.0
+      create-hash: 1.2.0
+      create-hmac: 1.1.7
+    dev: false
 
   /dtrace-provider@0.8.8:
     resolution: {integrity: sha512-b7Z7cNtHPhH9EJhNNbbeqTcXB8LGFFZhq1PGgEvpeHlzd36bhbdTWoE/Ba/YguqpBSlAPKnARWhVlhunCMwfxg==}
@@ -32051,7 +31704,7 @@ packages:
     dependencies:
       confusing-browser-globals: 1.0.11
       eslint: 7.32.0
-      eslint-plugin-import: 2.26.0(@typescript-eslint/parser@5.43.0)(eslint-import-resolver-typescript@3.5.2)(eslint@7.32.0)
+      eslint-plugin-import: 2.26.0(@typescript-eslint/parser@4.33.0)(eslint@7.32.0)
       object.assign: 4.1.4
       object.entries: 1.1.5
     dev: true
@@ -34112,7 +33765,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /expo-asset@8.9.1(expo-constants@14.2.1)(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-ugavxA7Scn96TBdeTYQA6xtHktnk0o/0xk7nFkxJKoH/t2cZDFSB05X0BI2/LDZY4iE6xTPOYw4C4mmourWfuA==}
@@ -34141,7 +33794,7 @@ packages:
       md5-file: 3.2.3
       path-browserify: 1.0.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       url-parse: 1.5.10
     transitivePeerDependencies:
       - expo
@@ -34174,7 +33827,7 @@ packages:
       md5-file: 3.2.3
       path-browserify: 1.0.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       url-parse: 1.5.10
     transitivePeerDependencies:
       - expo
@@ -34201,7 +33854,7 @@ packages:
       expo-image-loader: 4.1.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-camera@13.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -34227,7 +33880,7 @@ packages:
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       invariant: 2.2.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-constants@14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -34253,7 +33906,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     transitivePeerDependencies:
       - supports-color
@@ -34282,7 +33935,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     transitivePeerDependencies:
       - supports-color
@@ -34331,7 +33984,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     dev: true
 
@@ -34357,7 +34010,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
 
   /expo-file-system@15.2.2(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -34381,7 +34034,7 @@ packages:
       expo: 48.0.9(@babel/core@7.21.0)(metro@0.76.0)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     dev: false
 
@@ -34412,7 +34065,7 @@ packages:
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       fontfaceobserver: 2.1.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /expo-font@11.1.1(expo-asset@8.9.1)(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -34442,7 +34095,7 @@ packages:
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       fontfaceobserver: 2.1.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /expo-image-loader@4.1.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-ciEHVokU0f6w0eTxdRxLCio6tskMsjxWIoV92+/ZD37qePUJYMfEphPhu1sruyvMBNR8/j5iyOvPFVGTfO8oxA==}
@@ -34465,7 +34118,7 @@ packages:
       expo: 48.0.9(@babel/core@7.21.0)(metro@0.76.0)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-image-manipulator@11.1.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -34490,7 +34143,7 @@ packages:
       expo-image-loader: 4.1.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-keep-awake@12.0.1(expo-constants@14.2.1)(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
@@ -34515,7 +34168,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.6)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /expo-modules-autolinking@1.1.2(expo-constants@14.2.1)(expo-modules-core@1.2.6)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-oOlkAccVnHwwR5ccvF/F/x4Omj9HWzSimMUlIVz0SVGdNBEqTPyn0L/d4uIufhyQbEWvrarqL8o5Yz11wEI0SQ==}
@@ -34543,7 +34196,7 @@ packages:
       find-up: 5.0.0
       fs-extra: 9.1.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /expo-modules-autolinking@1.1.2(expo-modules-core@1.2.2)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-oOlkAccVnHwwR5ccvF/F/x4Omj9HWzSimMUlIVz0SVGdNBEqTPyn0L/d4uIufhyQbEWvrarqL8o5Yz11wEI0SQ==}
@@ -34570,7 +34223,7 @@ packages:
       find-up: 5.0.0
       fs-extra: 9.1.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-modules-core@1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0):
@@ -34595,7 +34248,7 @@ packages:
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       invariant: 2.2.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /expo-modules-core@1.2.2(react-native@0.71.6)(react@18.0.0):
@@ -34619,7 +34272,7 @@ packages:
       expo-modules-core: 1.2.2(react-native@0.71.6)(react@18.0.0)
       invariant: 2.2.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /expo-modules-core@1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0):
@@ -34644,7 +34297,7 @@ packages:
       expo-modules-core: 1.2.6(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       invariant: 2.2.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /expo-pwa@0.0.124(expo-constants@14.2.1)(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0):
     resolution: {integrity: sha512-hYvQQhxATNTivWSRc9nrd1WVYJJnBG8P/SVrJ4PPu0pmsS7ZIvWt981IXYG461y9UWnTbXdZEG4UOt0Thak1Gg==}
@@ -34673,7 +34326,7 @@ packages:
       expo-constants: 14.2.1(expo-modules-core@1.2.2)(expo@48.0.9)(react-native@0.71.6)(react@18.0.0)
       expo-modules-core: 1.2.2(expo-constants@14.2.1)(react-native@0.71.6)(react@18.0.0)
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       update-check: 1.5.3
     transitivePeerDependencies:
       - encoding
@@ -34737,7 +34390,7 @@ packages:
       node-fetch: 2.6.9
       pretty-format: 26.6.2
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     transitivePeerDependencies:
       - '@babel/core'
@@ -34784,7 +34437,7 @@ packages:
       node-fetch: 2.6.9
       pretty-format: 26.6.2
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       uuid: 3.4.0
     transitivePeerDependencies:
       - '@babel/core'
@@ -37063,6 +36716,14 @@ packages:
       property-information: 5.6.0
       space-separated-tokens: 1.1.5
     dev: true
+
+  /hdkey@1.1.2:
+    resolution: {integrity: sha512-PTQ4VKu0oRnCrYfLp04iQZ7T2Cxz0UsEXYauk2j8eh6PJXCpbXuCFhOmtIFtbET0i3PMWmHN9J11gU8LEgUljQ==}
+    dependencies:
+      bs58check: 2.1.2
+      safe-buffer: 5.2.1
+      secp256k1: 3.8.0
+    dev: false
 
   /he@1.2.0:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
@@ -40267,7 +39928,7 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-      jest-resolve: 28.1.3
+      jest-resolve: 28.1.3(metro@0.76.0)
     dev: true
 
   /jest-regex-util@24.9.0:
@@ -43026,7 +42687,7 @@ packages:
       invariant: 2.2.4
       lottie-ios: 3.2.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-safe-modules: 1.0.3(react-native@0.71.6)
     dev: false
 
@@ -44121,53 +43782,6 @@ packages:
 
   /metro-react-native-babel-preset@0.73.9:
     resolution: {integrity: sha512-AoD7v132iYDV4K78yN2OLgTPwtAKn0XlD2pOhzyBxiI8PeXzozhbKyPV7zUOJUPETj+pcEVfuYj5ZN/8+bhbCw==}
-    peerDependencies:
-      '@babel/core': '*'
-    dependencies:
-      '@babel/plugin-proposal-async-generator-functions': 7.20.7
-      '@babel/plugin-proposal-class-properties': 7.18.6
-      '@babel/plugin-proposal-export-default-from': 7.16.7
-      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6
-      '@babel/plugin-proposal-object-rest-spread': 7.20.7
-      '@babel/plugin-proposal-optional-catch-binding': 7.18.6
-      '@babel/plugin-proposal-optional-chaining': 7.21.0
-      '@babel/plugin-syntax-dynamic-import': 7.8.3
-      '@babel/plugin-syntax-export-default-from': 7.16.7
-      '@babel/plugin-syntax-flow': 7.21.4
-      '@babel/plugin-syntax-nullish-coalescing-operator': 7.8.3
-      '@babel/plugin-syntax-optional-chaining': 7.8.3
-      '@babel/plugin-transform-arrow-functions': 7.20.7
-      '@babel/plugin-transform-async-to-generator': 7.20.7
-      '@babel/plugin-transform-block-scoping': 7.21.0
-      '@babel/plugin-transform-classes': 7.21.0
-      '@babel/plugin-transform-computed-properties': 7.20.7
-      '@babel/plugin-transform-destructuring': 7.21.3
-      '@babel/plugin-transform-flow-strip-types': 7.16.7
-      '@babel/plugin-transform-function-name': 7.18.9
-      '@babel/plugin-transform-literals': 7.18.9
-      '@babel/plugin-transform-modules-commonjs': 7.21.2
-      '@babel/plugin-transform-named-capturing-groups-regex': 7.20.5
-      '@babel/plugin-transform-parameters': 7.21.3
-      '@babel/plugin-transform-react-display-name': 7.16.7
-      '@babel/plugin-transform-react-jsx': 7.18.10
-      '@babel/plugin-transform-react-jsx-self': 7.18.6
-      '@babel/plugin-transform-react-jsx-source': 7.19.6
-      '@babel/plugin-transform-runtime': 7.17.10
-      '@babel/plugin-transform-shorthand-properties': 7.18.6
-      '@babel/plugin-transform-spread': 7.20.7
-      '@babel/plugin-transform-sticky-regex': 7.18.6
-      '@babel/plugin-transform-template-literals': 7.18.9
-      '@babel/plugin-transform-typescript': 7.16.8
-      '@babel/plugin-transform-unicode-regex': 7.18.6
-      '@babel/template': 7.20.7
-      react-refresh: 0.4.3
-    transitivePeerDependencies:
-      - supports-color
-
-  /metro-react-native-babel-preset@0.73.9(@babel/core@7.21.0):
-    resolution: {integrity: sha512-AoD7v132iYDV4K78yN2OLgTPwtAKn0XlD2pOhzyBxiI8PeXzozhbKyPV7zUOJUPETj+pcEVfuYj5ZN/8+bhbCw==}
-    peerDependencies:
-      '@babel/core': '*'
     dependencies:
       '@babel/core': 7.21.0
       '@babel/plugin-proposal-async-generator-functions': 7.20.7(@babel/core@7.21.0)
@@ -44276,28 +43890,12 @@ packages:
 
   /metro-react-native-babel-transformer@0.73.9:
     resolution: {integrity: sha512-DSdrEHuQ22ixY7DyipyKkIcqhOJrt5s6h6X7BYJCP9AMUfXOwLe2biY3BcgJz5GOXv8/Akry4vTCvQscVS1otQ==}
-    peerDependencies:
-      '@babel/core': '*'
-    dependencies:
-      babel-preset-fbjs: 3.4.0
-      hermes-parser: 0.8.0
-      metro-babel-transformer: 0.73.9
-      metro-react-native-babel-preset: 0.73.9
-      metro-source-map: 0.73.9
-      nullthrows: 1.1.1
-    transitivePeerDependencies:
-      - supports-color
-
-  /metro-react-native-babel-transformer@0.73.9(@babel/core@7.21.0):
-    resolution: {integrity: sha512-DSdrEHuQ22ixY7DyipyKkIcqhOJrt5s6h6X7BYJCP9AMUfXOwLe2biY3BcgJz5GOXv8/Akry4vTCvQscVS1otQ==}
-    peerDependencies:
-      '@babel/core': '*'
     dependencies:
       '@babel/core': 7.21.0
       babel-preset-fbjs: 3.4.0(@babel/core@7.21.0)
       hermes-parser: 0.8.0
       metro-babel-transformer: 0.73.9
-      metro-react-native-babel-preset: 0.73.9(@babel/core@7.21.0)
+      metro-react-native-babel-preset: 0.73.9
       metro-source-map: 0.73.9
       nullthrows: 1.1.1
     transitivePeerDependencies:
@@ -44686,7 +44284,7 @@ packages:
       metro-inspector-proxy: 0.73.9
       metro-minify-terser: 0.73.9
       metro-minify-uglify: 0.73.9
-      metro-react-native-babel-preset: 0.73.9(@babel/core@7.21.0)
+      metro-react-native-babel-preset: 0.73.9
       metro-resolver: 0.73.9
       metro-runtime: 0.73.9
       metro-source-map: 0.73.9
@@ -45076,6 +44674,10 @@ packages:
       pumpify: 1.5.1
       stream-each: 1.2.3
       through2: 2.0.5
+
+  /mitt@1.2.0:
+    resolution: {integrity: sha512-r6lj77KlwqLhIUku9UWYes7KJtsczvolZkzp8hbaDPPaE24OmWl5s539Mytlj22siEQKosZ26qCBgda2PKwoJw==}
+    dev: false
 
   /mixin-deep@1.3.2:
     resolution: {integrity: sha512-WRoDn//mXBiJ1H40rqa3vH0toePwSsGb45iInWlTySa+Uu4k3tYUSxa2v1KqAiLtvlrSzaExqS1gtk96A9zvEA==}
@@ -45481,6 +45083,11 @@ packages:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
     dev: true
+
+  /node-fetch@2.6.1:
+    resolution: {integrity: sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==}
+    engines: {node: 4.x || >=6.0.0}
+    dev: false
 
   /node-fetch@2.6.7:
     resolution: {integrity: sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==}
@@ -49876,7 +49483,7 @@ packages:
     peerDependencies:
       react-native: '>= 0.56.0'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-animatable@1.3.3(react-native@0.71.6)(react@18.0.0):
@@ -49892,7 +49499,7 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-appboy-sdk@1.40.0:
@@ -49904,7 +49511,7 @@ packages:
     peerDependencies:
       react-native: '>=0.60.0'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-ble-plx@2.0.3:
@@ -49996,7 +49603,7 @@ packages:
         optional: true
     dependencies:
       prop-types: 15.8.1
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       simple-markdown: 0.4.4
     dev: false
 
@@ -50010,7 +49617,7 @@ packages:
       react-native: '>=0.47.0 <1.0.0'
     dependencies:
       buffer: 5.7.1
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       rfc4648: 1.5.1
     dev: false
     patched: true
@@ -50022,7 +49629,7 @@ packages:
       react-native: '>=0.60.0'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-flipper-performance-plugin@0.4.0:
@@ -50036,7 +49643,7 @@ packages:
       react-native: '>0.62.0'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /react-native-gesture-handler@2.9.0(react-native@0.71.6)(react@18.0.0):
@@ -50051,7 +49658,7 @@ packages:
       lodash: 4.17.21
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-get-random-values@1.8.0(react-native@0.71.6):
@@ -50077,7 +49684,7 @@ packages:
       react-native: '>=0.59.0-rc.0 <1.0.x'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
     patched: true
 
@@ -50088,7 +49695,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-inappbrowser-reborn@3.7.0(react-native@0.71.6):
@@ -50099,7 +49706,7 @@ packages:
     dependencies:
       invariant: 2.2.4
       opencollective-postinstall: 2.0.3
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-iphone-x-helper@1.3.1(react-native@0.71.6):
@@ -50107,7 +49714,7 @@ packages:
     peerDependencies:
       react-native: '>=0.42.0'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-keyboard-aware-scroll-view@0.9.5(react-native@0.71.6):
@@ -50116,7 +49723,7 @@ packages:
       react-native: '>=0.48.4'
     dependencies:
       prop-types: 15.8.1
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-iphone-x-helper: 1.3.1(react-native@0.71.6)
     dev: false
 
@@ -50148,7 +49755,7 @@ packages:
         optional: true
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-mask-input@1.2.3(react-native@0.71.6)(react@18.0.0):
@@ -50158,7 +49765,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-modal-datetime-picker@14.0.1(@react-native-community/datetimepicker@6.7.3)(react-native@0.71.6):
@@ -50169,7 +49776,7 @@ packages:
     dependencies:
       '@react-native-community/datetimepicker': 6.7.3
       prop-types: 15.8.1
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /react-native-modal-selector@2.1.2:
@@ -50186,7 +49793,7 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-animatable: 1.3.3(react-native@0.71.6)(react@18.0.0)
     dev: false
 
@@ -50201,7 +49808,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-performance-flipper-reporter@3.0.0(react-native-flipper@0.164.0)(react-native-performance@3.1.2):
@@ -50219,7 +49826,7 @@ packages:
     peerDependencies:
       react-native: '*'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: true
 
   /react-native-qrcode-svg@6.1.1(react-native-svg@13.4.0)(react-native@0.71.6)(react@18.0.0):
@@ -50232,7 +49839,7 @@ packages:
       prop-types: 15.8.1
       qrcode: 1.5.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-svg: 13.4.0(react-native@0.71.6)(react@18.0.0)
     dev: false
 
@@ -50256,7 +49863,7 @@ packages:
       invariant: 2.2.4
       lodash.isequal: 4.5.0
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       setimmediate: 1.0.5
       string-hash-64: 1.0.3
     transitivePeerDependencies:
@@ -50274,7 +49881,7 @@ packages:
       normalize-svg-path: 1.1.0
       parse-svg-path: 0.1.2
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-gesture-handler: 2.9.0(react-native@0.71.6)(react@18.0.0)
       react-native-reanimated: 2.15.0(@babel/core@7.21.0)(react-native@0.71.6)(react@18.0.0)
     dev: false
@@ -50286,7 +49893,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-safe-area-context@4.5.0(react-native@0.71.6)(react@18.0.0):
@@ -50296,7 +49903,7 @@ packages:
       react-native: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
 
   /react-native-safe-modules@1.0.3(react-native@0.71.6):
     resolution: {integrity: sha512-DUxti4Z+AgJ/ZsO5U7p3uSCUBko8JT8GvFlCeOXk9bMd+4qjpoDvMYpfbixXKgL88M+HwmU/KI1YFN6gsQZyBA==}
@@ -50304,7 +49911,7 @@ packages:
       react-native: '*'
     dependencies:
       dedent: 0.6.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-screens@3.20.0(react-native@0.71.6)(react@18.0.0):
@@ -50315,7 +49922,7 @@ packages:
     dependencies:
       react: 18.0.0
       react-freeze: 1.0.0(react@18.0.0)
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       warn-once: 0.1.0
     dev: false
 
@@ -50334,7 +49941,7 @@ packages:
     peerDependencies:
       react-native: '>=0.57.0'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-startup-time@2.0.1(react-native@0.71.6)(react@18.0.0):
@@ -50344,7 +49951,7 @@ packages:
       react-native: '>=0.59.0'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-svg@12.5.1(react-native@0.71.6)(react@18.0.0):
@@ -50356,7 +49963,7 @@ packages:
       css-select: 5.1.0
       css-tree: 1.1.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-svg@13.4.0(react-native@0.71.6)(react@17.0.2):
@@ -50380,7 +49987,7 @@ packages:
       css-select: 5.1.0
       css-tree: 1.1.3
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-svg@13.4.0(react@18.0.0):
@@ -50406,7 +50013,7 @@ packages:
       react-native-pager-view: '*'
     dependencies:
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       react-native-pager-view: 6.1.0(react-native@0.71.6)(react@18.0.0)
       use-latest-callback: 0.1.5(react@18.0.0)
     dev: false
@@ -50418,7 +50025,7 @@ packages:
     dependencies:
       buffer: 5.7.1
       eventemitter3: 4.0.7
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /react-native-udp@4.1.5:
@@ -50433,7 +50040,7 @@ packages:
     peerDependencies:
       react-native: '*'
     dependencies:
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
       whatwg-url-without-unicode: 8.0.0-3
     dev: false
 
@@ -50486,11 +50093,11 @@ packages:
       escape-string-regexp: 2.0.0
       invariant: 2.2.4
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
     patched: true
 
-  /react-native@0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0):
+  /react-native@0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0):
     resolution: {integrity: sha512-gHrDj7qaAaiE41JwaFCh3AtvOqOLuRgZtHKzNiwxakG/wvPAYmG73ECfWHGxjxIx/QT17Hp37Da3ipCei/CayQ==}
     engines: {node: '>=14'}
     hasBin: true
@@ -50498,7 +50105,7 @@ packages:
       react: 18.2.0
     dependencies:
       '@jest/create-cache-key-function': 29.5.0
-      '@react-native-community/cli': 10.2.2(@babel/core@7.21.0)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)
+      '@react-native-community/cli': 10.2.2(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)
       '@react-native-community/cli-platform-android': 10.2.0
       '@react-native-community/cli-platform-ios': 10.2.1
       '@react-native/assets': 1.0.0
@@ -50513,7 +50120,7 @@ packages:
       jest-environment-node: 29.3.1
       jsc-android: 250231.0.0
       memoize-one: 5.2.1
-      metro-react-native-babel-transformer: 0.73.9(@babel/core@7.21.0)
+      metro-react-native-babel-transformer: 0.73.9
       metro-runtime: 0.73.9
       metro-source-map: 0.73.9
       mkdirp: 0.5.6
@@ -50534,7 +50141,6 @@ packages:
       ws: 6.2.2
       yargs: 17.5.1
     transitivePeerDependencies:
-      - '@babel/core'
       - '@babel/preset-env'
       - bufferutil
       - encoding
@@ -50587,7 +50193,6 @@ packages:
       ws: 6.2.2
       yargs: 17.5.1
     transitivePeerDependencies:
-      - '@babel/core'
       - '@babel/preset-env'
       - bufferutil
       - encoding
@@ -52191,7 +51796,7 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /roarr@2.15.4:
@@ -52516,6 +52121,25 @@ packages:
 
   /scrypt-js@3.0.1:
     resolution: {integrity: sha512-cdwTTnqPu0Hyvf5in5asVdZocVDTNRmR7XEcJuIzMjJeSHybHl7vpB66AzwTaIg6CLSbtjcxc8fqcySfnTkccA==}
+
+  /scryptsy@2.1.0:
+    resolution: {integrity: sha512-1CdSqHQowJBnMAFyPEBRfqag/YP9OF394FV+4YREIJX4ljD7OxvQRDayyoyyCk+senRjSkP6VnUNQmVQqB6g7w==}
+    dev: false
+
+  /secp256k1@3.8.0:
+    resolution: {integrity: sha512-k5ke5avRZbtl9Tqx/SA7CbY3NF6Ro+Sj9cZxezFzuBlLDmyqPiL8hJJ+EmzD8Ig4LUDByHJ3/iPOVoRixs/hmw==}
+    engines: {node: '>=4.0.0'}
+    requiresBuild: true
+    dependencies:
+      bindings: 1.5.0
+      bip66: 1.1.5
+      bn.js: 4.12.0
+      create-hash: 1.2.0
+      drbg.js: 1.0.1
+      elliptic: 6.5.4
+      nan: 2.15.0
+      safe-buffer: 5.2.1
+    dev: false
 
   /secp256k1@4.0.2:
     resolution: {integrity: sha512-UDar4sKvWAksIlfX3xIaQReADn+WFnHvbVujpcbr+9Sf/69odMwy2MUsz5CKLQgX9nsIyrjuxL2imVyoNHa3fg==}
@@ -53206,7 +52830,13 @@ packages:
     dependencies:
       node-gyp-build: 4.4.0
     dev: false
-    optional: true
+
+  /sodium-randbytes@0.14.0:
+    resolution: {integrity: sha512-X5HXTHiorRs8Jte7+SEwxnX0ZPmDdU3TxYIIOoTklEgdiFELtQ1CwwyBBePPZlN0T+XDNBlNaikPRarfT0cK/A==}
+    dependencies:
+      '@types/sodium-native': 2.3.5
+      sodium-native: 3.3.0
+    dev: false
 
   /sonic-boom@1.4.1:
     resolution: {integrity: sha512-LRHh/A8tpW7ru89lrlkU4AszXt1dbwSjVWguGrmlxE7tawVmDBlI1PILMkXAxJTwqhgsEeTHzj36D5CmHgQmNg==}
@@ -53660,7 +53290,7 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 18.0.0
-      react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
+      react-native: 0.71.6(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
   /stream-array@1.1.2:
@@ -54422,7 +54052,7 @@ packages:
       formidable: 2.0.1
       methods: 1.1.2
       mime: 2.6.0
-      qs: 6.10.3
+      qs: 6.11.0
       readable-stream: 3.6.2
       semver: 7.3.8
     transitivePeerDependencies:
@@ -55143,7 +54773,7 @@ packages:
       faye-websocket: 0.10.0
       livereload-js: 2.4.0
       object-assign: 4.1.1
-      qs: 6.10.3
+      qs: 6.11.0
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -55507,10 +55137,10 @@ packages:
       fast-json-stable-stringify: 2.1.0
       jest: 28.1.3
       jest-util: 28.1.3
-      json5: 2.2.1
+      json5: 2.2.3
       lodash.memoize: 4.1.2
       make-error: 1.3.6
-      semver: 7.3.7
+      semver: 7.3.8
       typescript: 4.9.5
       yargs-parser: 21.1.1
     dev: true
@@ -55542,10 +55172,10 @@ packages:
       fast-json-stable-stringify: 2.1.0
       jest: 28.1.3(metro@0.76.0)
       jest-util: 28.1.3
-      json5: 2.2.1
+      json5: 2.2.3
       lodash.memoize: 4.1.2
       make-error: 1.3.6
-      semver: 7.3.7
+      semver: 7.3.8
       typescript: 4.9.5
       yargs-parser: 21.1.1
     dev: true
@@ -55575,10 +55205,10 @@ packages:
       fast-json-stable-stringify: 2.1.0
       jest: 28.1.3
       jest-util: 28.1.3
-      json5: 2.2.1
+      json5: 2.2.3
       lodash.memoize: 4.1.2
       make-error: 1.3.6
-      semver: 7.3.7
+      semver: 7.3.8
       typescript: 4.9.5
       yargs-parser: 21.1.1
     dev: true
@@ -55603,7 +55233,7 @@ packages:
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
       '@types/node': 17.0.32
-      acorn: 8.7.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
@@ -55636,7 +55266,7 @@ packages:
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
       '@types/node': 18.15.11
-      acorn: 8.7.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
@@ -55669,7 +55299,7 @@ packages:
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
       '@types/node': 18.15.3
-      acorn: 8.7.1
+      acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
       create-require: 1.1.1
@@ -55805,6 +55435,10 @@ packages:
 
   /tslib@2.0.1:
     resolution: {integrity: sha512-SgIkNheinmEBgx1IUNirK0TUD4X9yjjBRTqqjggWCU3pUEqIk3/Uwl3yRixYKT6WjQuGiwDv4NomL3wqRCj+CQ==}
+    dev: false
+
+  /tslib@2.3.1:
+    resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}
     dev: false
 
   /tslib@2.4.0:
@@ -56847,6 +56481,11 @@ packages:
 
   /utila@0.4.0:
     resolution: {integrity: sha512-Z0DbgELS9/L/75wZbro8xAnT50pBVFQZ+hUEueGDU5FN51YSCYM+jdxsfCiHjwNP/4LCDD0i/graKpeBnOXKRA==}
+
+  /utility-types@2.1.0:
+    resolution: {integrity: sha512-/nP2gqavggo6l38rtQI/CdeV+2fmBGXVvHgj9kV2MAnms3TIi77Mz9BtapPFI0+GZQCqqom0vACQ+VlTTaCovw==}
+    engines: {node: '>= 4'}
+    dev: false
 
   /utility-types@3.10.0:
     resolution: {integrity: sha512-O11mqxmi7wMKCo6HKFt5AhO4BwY3VV68YU07tgxfz8zJTIxr4BpsezN49Ffwy9j3ZpwwJp4fkRwjRzq3uWE6Rg==}
