@@ -2,7 +2,9 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import styled from "styled-components";
 import { Base } from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
-const Tab = styled(Base)`
+const Tab = styled(Base)<{
+  active: boolean;
+}>`
   padding: 0 16px 4px 16px;
   border-radius: 0;
   flex: ${({ fullWidth }) => (fullWidth ? "1" : "initial")};
@@ -21,12 +23,21 @@ const Tab = styled(Base)`
     font-size: ${p => p.fontSize}px;
   }
 `;
-const TabIndicator = styled.span.attrs(({ currentRef = {}, index, short }) => ({
-  style: {
-    width: `${currentRef.clientWidth - (short && index === 0 ? 16 : 32)}px`,
-    transform: `translateX(${currentRef.offsetLeft}px)`,
-  },
-}))`
+
+type TabIndicatorProps = {
+  currentRef: HTMLButtonElement | null;
+  index: number;
+  short: boolean;
+};
+
+const TabIndicator = styled.span.attrs<TabIndicatorProps>(({ currentRef, index, short }) => ({
+  style: currentRef
+    ? {
+        width: `${currentRef.clientWidth - (short && index === 0 ? 16 : 32)}px`,
+        transform: `translateX(${currentRef.offsetLeft}px)`,
+      }
+    : {},
+}))<TabIndicatorProps>`
   height: 3px;
   position: absolute;
   bottom: 0;
@@ -34,10 +45,12 @@ const TabIndicator = styled.span.attrs(({ currentRef = {}, index, short }) => ({
   background-color: ${p => p.theme.colors.palette.primary.main};
   transition: all 0.3s ease-in-out;
 `;
-const Tabs: ThemedComponent<{
+
+const Tabs = styled.div<{
   short: boolean;
   separator: boolean;
-}> = styled.div`
+  height?: number;
+}>`
   height: ${p => p.height || p.theme.sizes.topBarHeight}px;
   display: flex;
   flex-direction: row;
@@ -65,6 +78,7 @@ const Tabs: ThemedComponent<{
   `
       : ""}
 `;
+
 type Props = {
   tabs: string[];
   ids?: string[];
@@ -91,10 +105,10 @@ const TabBar = ({
   fontSize = 16,
   height,
 }: Props) => {
-  const tabRefs = useRef([]);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [index, setIndex] = useState(defaultIndex);
   const [mounted, setMounted] = useState(false);
-  const i = !isNaN(propsIndex) && propsIndex !== undefined ? propsIndex : index;
+  const i = propsIndex !== undefined && !isNaN(propsIndex) ? propsIndex : index;
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -105,7 +119,7 @@ const TabBar = ({
     },
     [setIndex, onIndexChange],
   );
-  const setTabRef = index => ref => {
+  const setTabRef = (index: number) => (ref: HTMLButtonElement | null) => {
     tabRefs.current[index] = ref;
   };
   return (

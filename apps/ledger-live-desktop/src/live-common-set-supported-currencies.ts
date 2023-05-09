@@ -6,6 +6,10 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
+  "axelar",
+  "onomy",
+  "quicksilver",
+  "persistence",
   "avalanche_c_chain",
   "bitcoin",
   "ethereum",
@@ -52,4 +56,19 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
+  "optimism",
+  "optimism_goerli",
+  "arbitrum",
+  "arbitrum_goerli",
+  "rsk",
+  "bittorrent",
+  "kava_evm",
+  "evmos_evm",
+  "energy_web",
+  "astar",
+  "metis",
+  "boba",
+  "moonriver",
+  "velas_evm",
+  "syscoin",
 ]);

@@ -1,20 +1,21 @@
 import { useCallback, useMemo } from "react";
 import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import coinifyIcon from "~/renderer/images/coinifyLogo.png";
-export const useRampCatalogCurrencies = (entries: RampCatalogEntry[]) => {
+export const useRampCatalogCurrencies = (entries: RampCatalogEntry[] = []) => {
   const devMode = useEnv("MANAGER_DEV_MODE");
 
   // fetching all live supported currencies including tokens
-  const cryptoCurrencies = useMemo(() => listCryptoCurrencies(devMode).concat(listTokens()), [
-    devMode,
-  ]);
+  const cryptoCurrencies = useMemo(
+    () => (listCryptoCurrencies(devMode) as CryptoOrTokenCurrency[]).concat(listTokens()),
+    [devMode],
+  );
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   // cherry picking only those available in coinify
 

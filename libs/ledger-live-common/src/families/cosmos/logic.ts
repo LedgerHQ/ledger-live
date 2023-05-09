@@ -37,12 +37,12 @@ export function mapDelegations(
     return {
       ...d,
       formattedAmount: formatCurrencyUnit(unit, d.amount, {
-        disableRounding: true,
+        disableRounding: false,
         alwaysShowSign: false,
         showCode: true,
       }),
       formattedPendingRewards: formatCurrencyUnit(unit, d.pendingRewards, {
-        disableRounding: true,
+        disableRounding: false,
         alwaysShowSign: false,
         showCode: true,
       }),

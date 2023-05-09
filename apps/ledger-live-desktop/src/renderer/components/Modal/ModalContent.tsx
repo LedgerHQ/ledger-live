@@ -7,17 +7,17 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   overflow: hidden;
 `;
-const ContentScrollableContainer = styled.div`
+const ContentScrollableContainer = styled.div<{ noScroll?: boolean }>`
   padding: 20px ${p => (p.noScroll ? 20 : 20 - p.theme.overflow.trackSize)}px 40px 20px;
   ${p => (p.noScroll ? "overflow:hidden" : p.theme.overflow.y)};
   position: relative;
   flex: 0 auto;
 `;
-const ContentScrollableContainerGradient = styled.div.attrs(p => ({
+const ContentScrollableContainerGradient = styled.div.attrs<{ opacity?: number }>(p => ({
   style: {
     opacity: p.opacity,
   },
-}))`
+}))<{ opacity?: number }>`
   background: linear-gradient(
     rgba(255, 255, 255, 0),
     ${p => p.theme.colors.palette.background.paper}
@@ -30,24 +30,28 @@ const ContentScrollableContainerGradient = styled.div.attrs(p => ({
   right: 0;
   pointer-events: none;
 `;
-type Props = {
-  children: any;
+type Props = React.PropsWithRef<{
+  children: React.ReactNode;
   noScroll?: boolean;
-};
-const ModalContent: React.ComponentType<Props> = React.forwardRef(function ModalContent(
+}>;
+
+function ModalContent(
+  // eslint is wrong here, it should not complain
+  // eslint-disable-next-line
   { children, noScroll }: Props,
-  containerRef: React.Ref<any>,
+  containerRef: React.ForwardedRef<HTMLDivElement>,
 ) {
   const [isScrollable, setScrollable] = useState(false);
   const onHeightUpdate = useCallback(() => {
-    const { current } = containerRef;
-    if (!current) return;
+    const current = containerRef && "current" in containerRef && containerRef.current;
+    if (!current || !("current" in containerRef)) return;
     setScrollable(current.scrollHeight > current.clientHeight);
   }, [containerRef]);
   useLayoutEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef || !("current" in containerRef)) return;
+    if (!containerRef?.current) return;
     const ro = new ResizeObserver(onHeightUpdate);
-    ro.observe(containerRef.current);
+    ro.observe(containerRef?.current);
     return () => {
       ro.disconnect();
     };
@@ -64,5 +68,5 @@ const ModalContent: React.ComponentType<Props> = React.forwardRef(function Modal
       <ContentScrollableContainerGradient opacity={isScrollable && !noScroll ? 1 : 0} />
     </ContentWrapper>
   );
-});
-export default ModalContent;
+}
+export default React.forwardRef(ModalContent);

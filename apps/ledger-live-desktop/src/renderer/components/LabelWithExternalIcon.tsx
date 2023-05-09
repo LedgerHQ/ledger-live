@@ -1,24 +1,28 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import Label from "~/renderer/components/Label";
 import Box from "~/renderer/components/Box";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
 
-const LabelWrapper: ThemedComponent<{
+const LabelWrapper = styled(Label).attrs<{
   ff?: string;
   hoverColor: string;
-}> = styled(Label).attrs(p => ({
+}>(p => ({
   ff: p.ff ? p.ff : "Inter|Medium",
-}))`
+}))<{
+  ff?: string;
+  hoverColor: string;
+  color?: keyof DefaultTheme["colors"];
+}>`
   display: inline-flex;
-  color: ${p => p.theme.colors[p.color] || p.theme.colors.palette.text.shade60};
+  color: ${p => (p.color && p.theme.colors[p.color]) || p.theme.colors.palette.text.shade60};
   &:hover {
     color: ${p => p.theme.colors[p.hoverColor]};
     cursor: pointer;
   }
 `;
 type Props = {
-  onClick: (() => void) | undefined | null;
+  onClick: (e?: React.MouseEvent) => void | undefined | null;
   label: string | React.ReactNode;
   color?: string;
   hoverColor?: string;

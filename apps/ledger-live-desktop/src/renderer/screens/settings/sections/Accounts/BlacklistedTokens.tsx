@@ -66,7 +66,7 @@ export default function BlacklistedTokens() {
         title={t("settings.accounts.tokenBlacklist.title")}
         desc={t("settings.accounts.tokenBlacklist.desc")}
         onClick={toggleCurrencySection}
-        style={
+        contentContainerStyle={
           blacklistedTokenIds.length
             ? {
                 cursor: "pointer",
@@ -75,7 +75,7 @@ export default function BlacklistedTokens() {
         }
       >
         {blacklistedTokenIds.length ? (
-          <Box horizontal flex alignItems="center">
+          <Box horizontal alignItems="center">
             <Box ff="Inter" fontSize={3} mr={2}>
               {t("settings.accounts.tokenBlacklist.count", {
                 count: blacklistedTokenIds.length,
@@ -160,8 +160,6 @@ const BlacklistedTokensSectionHeader = styled.div`
     letter-spacing: 0.1em;
   }
 `;
-const Show: ThemedComponent<{
-  visible: boolean;
-}> = styled(Box)`
+const Show = styled(Box).attrs<{ visible?: boolean }>(() => ({}))<{ visible?: boolean }>`
   transform: rotate(${p => (p.visible ? 0 : 270)}deg);
 `;

@@ -11,7 +11,7 @@ import Button from "../../cta/Button";
 import TransitionInOut from "../../transitions/TransitionInOut";
 import TransitionScale from "../../transitions/TransitionScale";
 
-export interface PopinProps extends BaseStyledProps {
+export interface PopinProps extends FlexBoxProps {
   isOpen: boolean;
   children: React.ReactNode;
   menuPortalTarget?: Element | null;

@@ -61,12 +61,12 @@ function TokensList({ account }: Props) {
   const shouldSliceList = subAccounts.length >= 5;
   if (!isTokenAccount && isEmpty) return null;
   const url =
-    currency && currency.type !== "TokenCurrency" && tokenTypes && tokenTypes.length > 0
-      ? supportLinkByTokenType[tokenTypes[0]]
+    currency && currency.type && tokenTypes && tokenTypes.length > 0
+      ? supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType]
       : null;
-  const specific = perFamilyTokenList[family];
+  const specific = perFamilyTokenList[family as keyof typeof perFamilyTokenList];
   const hasSpecificTokenWording = specific?.hasSpecificTokenWording;
-  const ReceiveButtonComponent = specific?.ReceiveButton ?? ReceiveButton;
+  const ReceiveButtonComponent = specific ? specific.ReceiveButton : ReceiveButton;
   const titleLabel = t(hasSpecificTokenWording ? `tokensList.${family}.title` : "tokensList.title");
   const placeholderLabel = t(
     hasSpecificTokenWording ? `tokensList.${family}.placeholder` : "tokensList.placeholder",
@@ -114,20 +114,17 @@ function TokensList({ account }: Props) {
           <ReceiveButtonComponent onClick={onReceiveClick} account={account} />
         </EmptyState>
       )}
-      {subAccounts
-        .slice(0, shouldSliceList && collapsed ? 3 : subAccounts.length)
-        .map((token, index) => (
-          <AccountContextMenu key={token.id} account={token} parentAccount={account}>
-            <TokenRow
-              index={index}
-              range={range}
-              account={token}
-              parentAccount={account}
-              onClick={onAccountClick}
-              disableRounding
-            />
-          </AccountContextMenu>
-        ))}
+      {subAccounts.slice(0, shouldSliceList && collapsed ? 3 : subAccounts.length).map(token => (
+        <AccountContextMenu key={token.id} account={token} parentAccount={account}>
+          <TokenRow
+            range={range}
+            account={token}
+            parentAccount={account}
+            onClick={onAccountClick}
+            disableRounding
+          />
+        </AccountContextMenu>
+      ))}
       {shouldSliceList && (
         <TokenShowMoreIndicator expanded={!collapsed} onClick={toggleCollapse}>
           <Box horizontal alignContent="center" justifyContent="center">
@@ -147,7 +144,7 @@ function TokensList({ account }: Props) {
 }
 
 // Fixme Temporarily hiding the receive token button
-function ReceiveButton(props: { onClick: () => void }) {
+function ReceiveButton(props: { onClick: (account: Account) => void }) {
   const { t } = useTranslation();
   return (
     <Button small primary onClick={props.onClick}>
@@ -176,9 +173,7 @@ const Placeholder = styled.div`
   display: flex;
   padding-right: 50px;
 `;
-export const TokenShowMoreIndicator: ThemedComponent<{
-  expanded?: boolean;
-}> = styled(Button)`
+export const TokenShowMoreIndicator = styled(Button)<{ expanded?: boolean }>`
   display: flex;
   color: ${p => p.theme.colors.wallet};
   align-items: center;
@@ -200,9 +195,9 @@ export const TokenShowMoreIndicator: ThemedComponent<{
     transform: rotate(${p => (p.expanded ? "180deg" : "0deg")});
   }
 `;
-export const IconAngleDown: ThemedComponent<{
+export const IconAngleDown = styled.div<{
   expanded?: boolean;
-}> = styled.div`
+}>`
   display: flex;
   align-items: center;
   justify-content: center;

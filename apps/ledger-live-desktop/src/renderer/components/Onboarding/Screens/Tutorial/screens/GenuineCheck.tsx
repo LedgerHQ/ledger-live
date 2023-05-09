@@ -10,6 +10,7 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { useSelector } from "react-redux";
 import { OnboardingContext } from "../../../index";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { Device } from "@ledgerhq/types-devices";
 
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 
@@ -50,12 +51,14 @@ export function GenuineCheck({ connectedDevice, setConnectedDevice }: Props) {
   return passed ? (
     <Success device={connectedDevice} />
   ) : (
-    <DeviceAction
-      overridesPreferredDeviceModel={deviceModelId}
-      action={action}
-      request={null}
-      onResult={onResult}
-    />
+    deviceModelId && (
+      <DeviceAction
+        overridesPreferredDeviceModel={deviceModelId}
+        action={action}
+        request={null}
+        onResult={onResult}
+      />
+    )
   );
 }
 
@@ -63,7 +66,7 @@ GenuineCheck.Illustration = (
   <IllustrationContainer width="240px" height="245px" src={connectNano} />
 );
 
-const Footer = (props: unknown) => {
+const Footer = (props: object) => {
   const { t } = useTranslation();
   return (
     <AsideFooter

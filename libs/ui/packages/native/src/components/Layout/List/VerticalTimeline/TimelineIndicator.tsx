@@ -24,7 +24,7 @@ const linesLength = 5000;
 
 const TopSegmentSvg: React.FC<SegmentProps> = ({ status, hidden, height }) => {
   const theme = useTheme();
-  const strokeColor = status === "inactive" ? theme.colors.neutral.c50 : theme.colors.primary.c80;
+  const strokeColor = status === "inactive" ? theme.colors.neutral.c40 : theme.colors.primary.c80;
   const strokeDashArray = status === "inactive" ? `${dashLength}` : undefined;
   return (
     <Flex height={height} width={"100%"} overflow="hidden">
@@ -53,7 +53,7 @@ const topSegmentDefaultHeight = Platform.OS === "android" ? 23 : 21; // differen
 
 const BottomSegmentSvg: React.FC<SegmentProps> = ({ status, hidden }) => {
   const theme = useTheme();
-  const strokeColor = status === "completed" ? theme.colors.primary.c80 : theme.colors.neutral.c50;
+  const strokeColor = status === "completed" ? theme.colors.primary.c80 : theme.colors.neutral.c40;
   const strokeDashArray = status === "completed" ? undefined : `${dashLength}`;
   return (
     <Flex flex={1} width={"100%"} style={{ transform: [{ scaleY: -1 }] }} overflow="hidden">
@@ -81,21 +81,21 @@ const BottomSegmentSvg: React.FC<SegmentProps> = ({ status, hidden }) => {
 };
 
 const getIconBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (status === "completed") {
+  if (isLastItem) {
+    if (status === "inactive") return theme.colors.success.c10;
     return "transparent";
-  } else if (isLastItem) {
-    return theme.colors.success.c10;
   } else if (status === "active") {
     return theme.colors.neutral.c40;
+  } else {
+    return "transparent";
   }
-  return theme.colors.background.main;
 };
 
 const getIconBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
   if (isLastItem) {
-    return theme.colors.success.c50;
+    return theme.colors.success.c70;
   } else if (status === "inactive") {
-    return theme.colors.neutral.c50;
+    return theme.colors.neutral.c40;
   }
   return theme.colors.primary.c80;
 };
@@ -136,7 +136,7 @@ export default function TimelineIndicator({
       <CenterCircle status={status} isLastItem={isLastItem}>
         {status === "completed" && (
           <CircledCheckSolidMedium
-            color={isLastItem ? colors.success.c50 : colors.primary.c80}
+            color={isLastItem ? colors.success.c70 : colors.primary.c80}
             size={20}
           />
         )}

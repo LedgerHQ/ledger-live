@@ -85,6 +85,7 @@ const OnboardingAppInstallDebugScreen = () => {
           deviceToRestore={restore ? deviceToRestore : undefined}
           device={device}
           onComplete={() => setInstallDone(true)}
+          onError={() => setInstallDone(false)}
         />
       ),
     },

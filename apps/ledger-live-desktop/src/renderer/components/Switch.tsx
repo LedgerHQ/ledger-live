@@ -2,17 +2,20 @@ import React from "react";
 import noop from "lodash/noop";
 import styled from "styled-components";
 import { Tabbable } from "~/renderer/components/Box";
-const Base: ThemedComponent<{
+
+type BaseProps = {
   forceBgColor?: string;
   isChecked?: boolean;
   small?: boolean;
   medium?: boolean;
   disabled?: boolean;
-}> = styled(Tabbable).attrs(p => ({
+};
+
+const Base = styled(Tabbable).attrs<BaseProps>(p => ({
   bg: p.forceBgColor ? p.forceBgColor : p.isChecked ? "wallet" : "palette.text.shade10",
   horizontal: true,
   alignItems: "center",
-}))`
+}))<BaseProps>`
   & input[type="checkbox"] {
     display: none;
   }
@@ -26,7 +29,14 @@ const Base: ThemedComponent<{
     outline: none;
   }
 `;
-const Ball = styled.div`
+
+type BallProps = {
+  isChecked?: boolean;
+  small?: boolean;
+  medium?: boolean;
+};
+
+const Ball = styled.div<BallProps>`
   width: ${p => (p.small ? 9 : p.medium ? 14 : 20)}px;
   height: ${p => (p.small ? 9 : p.medium ? 14.5 : 20)}px;
   border-radius: 50%;
@@ -50,6 +60,7 @@ const Ball = styled.div`
     0
   );
 `;
+
 type Props = {
   isChecked: boolean;
   disabled?: boolean;
@@ -58,6 +69,7 @@ type Props = {
   medium?: boolean;
   forceBgColor?: string;
 };
+
 export default function Switch({
   isChecked,
   onChange = noop,
@@ -83,13 +95,7 @@ export default function Switch({
       className="switch"
       forceBgColor={forceBgColor}
     >
-      <input
-        type="checkbox"
-        disabled={disabled || null}
-        checked={isChecked}
-        readOnly
-        value={isChecked}
-      />
+      <input type="checkbox" disabled={disabled || false} checked={isChecked} readOnly />
       <Ball small={small} medium={medium} isChecked={isChecked} />
     </Base>
   );

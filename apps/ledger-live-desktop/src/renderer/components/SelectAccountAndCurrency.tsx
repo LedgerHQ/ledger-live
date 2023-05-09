@@ -102,14 +102,16 @@ const SelectAccountAndCurrency = ({
                 </Text>
               </FakeLink>
             </AccountSelectorLabel>
-            <SelectAccount
-              accounts={availableAccounts}
-              value={{
-                account,
-                subAccount,
-              }}
-              onChange={setAccount}
-            />
+            {account && (
+              <SelectAccount
+                accounts={availableAccounts}
+                value={{
+                  account,
+                  subAccount,
+                }}
+                onChange={setAccount}
+              />
+            )}
           </FormContent>
           <FormContent>
             <ConfirmButton

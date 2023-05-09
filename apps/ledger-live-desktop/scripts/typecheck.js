@@ -7,12 +7,7 @@ const { EOL } = require("os");
 const rootDirectory = path.resolve(__dirname, "..", "..", "..");
 const projectDirectory = path.resolve(__dirname, "..");
 
-const excluded = [
-  "src/renderer/components",
-  "src/renderer/screens",
-  "src/renderer/modals",
-  "src/renderer/families",
-].map(p => path.resolve(projectDirectory, p));
+const excluded = ["src/renderer/families"].map(p => path.resolve(projectDirectory, p));
 
 function compile() {
   const config = ts.parseJsonConfigFileContent(require("../tsconfig.json"), ts.sys, process.cwd());

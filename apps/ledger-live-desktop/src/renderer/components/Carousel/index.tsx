@@ -63,7 +63,7 @@ const ProgressBarWrapper = styled.div`
   display: none;
 `;
 
-const Bullets = styled.div`
+const Bullets = styled.div<{ index: number }>`
   position: absolute;
   bottom: 16px;
   left: 0;
@@ -162,7 +162,7 @@ const Carousel = ({
   speed?: number;
   type?: "slide" | "flip";
 }) => {
-  const slides = useDefaultSlides();
+  const { slides, logSlideImpression } = useDefaultSlides();
   const [index, setIndex] = useState(0);
   const hidden = useSelector(carouselVisibilitySelector);
   const [paused, setPaused] = useState(false);
@@ -170,32 +170,41 @@ const Carousel = ({
   const [reverse, setReverse] = useState(false);
   const transitions = useTransition(index, p => p, getTransitions(type, reverse));
 
+  const changeVisibleSlide = useCallback(
+    index => {
+      setIndex(index);
+      logSlideImpression(index);
+    },
+    [logSlideImpression],
+  );
+
   const dispatch = useDispatch();
+
   const onChooseSlide = useCallback(
     newIndex => {
       setReverse(index > newIndex);
-      setIndex(newIndex);
+      changeVisibleSlide(newIndex);
     },
-    [index],
+    [index, changeVisibleSlide],
   );
 
   const onNext = useCallback(() => {
     setReverse(false);
-    setIndex((index + 1) % slides.length);
+    changeVisibleSlide((index + 1) % slides.length);
     track("contentcards_slide", {
       button: "next",
       page: "Portfolio",
     });
-  }, [index, slides.length]);
+  }, [index, slides.length, changeVisibleSlide]);
 
   const onPrev = useCallback(() => {
     setReverse(true);
-    setIndex(!index ? slides.length - 1 : index - 1);
+    changeVisibleSlide(!index ? slides.length - 1 : index - 1);
     track("contentcards_slide", {
       button: "previous",
       page: "Portfolio",
     });
-  }, [index, slides.length]);
+  }, [index, slides.length, changeVisibleSlide]);
 
   const onDismiss = useCallback(() => {
     setWantToDismiss(true);

@@ -6,23 +6,25 @@ import {
   listSubAccounts,
 } from "@ledgerhq/live-common/account/index";
 import { TFunction, withTranslation, Trans } from "react-i18next";
-import { AccountLike, Account, TokenAccount } from "@ledgerhq/types-live";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import React, { useCallback, useState, useMemo } from "react";
 import { connect, useDispatch } from "react-redux";
-import { createFilter, components } from "react-select";
+import { createFilter, components, MenuListComponentProps } from "react-select";
+import { Option as ReactSelectOption } from "react-select/src/filters";
 import { createStructuredSelector } from "reselect";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import Select from "~/renderer/components/Select";
+import Select, { Props as SelectProps } from "~/renderer/components/Select";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import AccountTagDerivationMode from "./AccountTagDerivationMode";
-import Button from "~/renderer/components//Button";
+import Button from "~/renderer/components/Button";
 import Plus from "~/renderer/icons/Plus";
 import Text from "./Text";
 import { openModal } from "../actions/modals";
+
 const mapStateToProps = createStructuredSelector({
   accounts: shallowAccountsSelector,
 });
@@ -43,10 +45,10 @@ const tokenTick = (
   </div>
 );
 export type Option = {
-  matched: "boolean";
-  account: Account | TokenAccount;
+  matched?: boolean;
+  account?: AccountLike;
 };
-const getOptionValue = option => option.account && option.account.id;
+const getOptionValue = (option: Option): string => (option.account && option.account.id) || "";
 const defaultFilter = createFilter({
   stringify: ({ data: account }) => {
     const currency = getAccountCurrency(account);
@@ -54,7 +56,10 @@ const defaultFilter = createFilter({
     return `${currency.ticker}|${currency.name}|${name}`;
   },
 });
-const filterOption = o => (candidate, input) => {
+const filterOption = (o: { withSubAccounts?: boolean; enforceHideEmptySubAccounts?: boolean }) => (
+  candidate: ReactSelectOption,
+  input: string,
+) => {
   const selfMatches = defaultFilter(candidate, input);
   if (selfMatches) return [selfMatches, true];
   if (candidate.data.type === "Account" && o.withSubAccounts) {
@@ -67,6 +72,7 @@ const filterOption = o => (candidate, input) => {
         if (
           defaultFilter(
             {
+              label: ta.id, // might cause UI regression :dogkek:
               value: ta.id,
               data: ta,
             },
@@ -157,7 +163,7 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
     </Box>
   );
 });
-const AddAccountContainer = styled(Box)`
+const AddAccountContainer = styled(Box)<{ small?: boolean }>`
   // to prevent ScrollBlock.js (used by react-select under the hood) css stacking context issues
   position: relative;
   cursor: pointer;
@@ -179,10 +185,11 @@ function AddAccountButton() {
   );
 }
 const AddAccountFooter = (small?: boolean) =>
-  function AddAccountFooter({ children, ...props }: { children?: React.ReactNode }) {
+  function AddAccountFooter(props: MenuListComponentProps<Option, false>) {
+    const { children } = props;
     const dispatch = useDispatch();
     const openAddAccounts = useCallback(() => {
-      dispatch(openModal("MODAL_ADD_ACCOUNTS"));
+      dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
     }, [dispatch]);
     return (
       <>
@@ -216,7 +223,7 @@ type OwnProps = {
   placeholder?: string;
   showAddAccount?: boolean;
   disabledTooltipText?: string;
-};
+} & Omit<SelectProps, "onChange">;
 type Props = OwnProps & {
   accounts: Account[];
   small?: boolean;
@@ -251,13 +258,15 @@ export const RawSelectAccount = ({
       }
     : null;
   const onChangeCallback = useCallback(
-    (option?: Option) => {
+    (option?: Option | null) => {
       if (!option) {
         onChange(null);
       } else {
         const { account } = option;
         const parentAccount =
-          account.type !== "Account" ? accounts.find(a => a.id === account.parentId) : null;
+          account && account.type !== "Account"
+            ? accounts.find(a => a.id === account.parentId)
+            : null;
         onChange(account, parentAccount);
       }
     },
@@ -272,17 +281,19 @@ export const RawSelectAccount = ({
         })(
           {
             data: option,
+            value: option.id,
+            label: option.id,
           },
           searchInputValue,
         );
         if (display) {
           result.push({
-            matched: match && !option.disabled,
+            matched: match && !isDisabledOption(option as any),
             account: option,
           });
         }
         return result;
-      }, []),
+      }, [] as Option[]),
     [searchInputValue, all, withSubAccounts, enforceHideEmptySubAccounts],
   );
   const extraRenderers = useMemo(() => {
@@ -305,7 +316,7 @@ export const RawSelectAccount = ({
       renderOption={renderOption || defaultRenderOption}
       onInputChange={v => setSearchInputValue(v)}
       inputValue={searchInputValue}
-      filterOption={false}
+      filterOption={null}
       isOptionDisabled={option => !option.matched}
       placeholder={placeholder || t("common.selectAccount")}
       noOptionsMessage={({ inputValue }) =>
@@ -319,6 +330,14 @@ export const RawSelectAccount = ({
     />
   );
 };
-export const SelectAccount: React.ComponentType<Props> = withTranslation()(RawSelectAccount);
+export const SelectAccount = withTranslation()(RawSelectAccount);
 const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(SelectAccount);
 export default m;
+
+/**
+ * @deprecated we must completely remove this concept: account.disabled is not a thing!
+ */
+function isDisabledOption(option: { disabled?: boolean }): boolean {
+  if (!("disabled" in option)) return false;
+  return Boolean(option.disabled);
+}

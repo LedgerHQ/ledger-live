@@ -5,15 +5,14 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import Button from "~/renderer/components/Button";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import ResetFallbackModal from "~/renderer/modals/ResetFallbackModal";
-import { useActionModal } from "./logic";
+import { ActionModalReducer, ActionModalState, useActionModal } from "./logic";
 import { useSoftReset } from "~/renderer/reset";
 export default function CleanButton() {
   const { t } = useTranslation();
   const softReset = useSoftReset();
-  const [
-    { opened, pending, fallbackOpened },
-    { open, close, closeFallback, handleConfirm, handleError },
-  ] = useActionModal();
+  const [state, actions] = useActionModal();
+  const { opened, pending, fallbackOpened } = state as ActionModalState;
+  const { open, close, closeFallback, handleConfirm, handleError } = actions as ActionModalReducer;
   const onConfirm = useCallback(async () => {
     if (pending) return;
     try {

@@ -1,16 +1,19 @@
 import styled from "styled-components";
 import { color, margin } from "styled-system";
 
-const isEmoji = label =>
+const isEmoji = (label: string) =>
   /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(
     label.substring(0, 2),
   );
-const FirstLetterIcon: ThemedComponent<{
-  label: string;
-}> = styled.div.attrs(p => ({
+const FirstLetterIcon = styled.div.attrs<{
+  label?: string;
+}>(p => ({
   content: p.label ? p.label.substring(0, isEmoji(p.label) ? 2 : 1) : "",
   bg: p.theme.colors.palette.divider,
-}))`
+}))<{
+  label?: string;
+  content?: string;
+}>`
   display: flex;
   align-content: center;
   justify-content: center;

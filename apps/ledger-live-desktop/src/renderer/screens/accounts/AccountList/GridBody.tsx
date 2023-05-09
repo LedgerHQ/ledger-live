@@ -1,17 +1,17 @@
 import React from "react";
 import styled from "styled-components";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { Account, PortfolioRange, AccountLike } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import AccountCard from "../AccountGridItem";
 import AccountCardPlaceholder from "../AccountGridItem/Placeholder";
 type Props = {
-  visibleAccounts: (Account | TokenAccount)[];
-  hiddenAccounts: (Account | TokenAccount)[];
-  onAccountClick: (a: Account | TokenAccount) => void;
+  visibleAccounts: AccountLike[];
+  hiddenAccounts: AccountLike[];
+  onAccountClick: (a: AccountLike) => void;
   lookupParentAccount: (id: string) => Account | undefined | null;
   range: PortfolioRange;
   showNewAccount: boolean;
+  horizontal: boolean;
 };
 export default function GridBody({
   visibleAccounts,

@@ -3,7 +3,7 @@ import { BoxedIcon, Flex, Icons, Text, Button } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 
 type Props = {
-  onStart: () => Event;
+  onStart: () => void;
 };
 
 const StartScreen = ({ onStart }: Props) => {

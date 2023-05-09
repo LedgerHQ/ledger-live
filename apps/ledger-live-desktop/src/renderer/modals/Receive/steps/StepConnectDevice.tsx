@@ -25,8 +25,8 @@ export default function StepConnectDevice({
       <DeviceAction
         action={action}
         request={{
-          account: mainAccount,
-          tokenCurrency,
+          account: mainAccount || undefined,
+          tokenCurrency: tokenCurrency || undefined,
         }}
         onResult={() => transitionTo("receive")}
         analyticsPropertyFlow="receive"

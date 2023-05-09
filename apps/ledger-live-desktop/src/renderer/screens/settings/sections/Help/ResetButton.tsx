@@ -10,20 +10,19 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Alert from "~/renderer/components/Alert";
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
-import { useActionModal } from "./logic";
+import { ActionModalReducer, ActionModalState, useActionModal } from "./logic";
 export default function ResetButton() {
   const { t } = useTranslation();
   const hardReset = useHardReset();
-  const [
-    { opened, pending, fallbackOpened },
-    { open, close, closeFallback, handleConfirm, handleError },
-  ] = useActionModal();
+  const [state, actions] = useActionModal();
+  const { opened, pending, fallbackOpened } = state as ActionModalState;
+  const { open, close, closeFallback, handleConfirm, handleError } = actions as ActionModalReducer;
   const onConfirm = useCallback(async () => {
     if (pending) return;
     try {
       handleConfirm();
       await hardReset();
-      window.api.reloadRenderer();
+      window.api?.reloadRenderer();
     } catch (err) {
       logger.error(err);
       handleError();
@@ -68,9 +67,7 @@ export default function ResetButton() {
     </>
   );
 }
-export const IconWrapperCircle: ThemedComponent<{
-  color?: string;
-}> = styled(Box)`
+export const IconWrapperCircle = styled(Box)`
   width: 50px;
   height: 50px;
   border-radius: 50%;
