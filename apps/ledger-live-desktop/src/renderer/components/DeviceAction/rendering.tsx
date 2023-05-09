@@ -441,7 +441,7 @@ export const renderAllowRemoveCustomLockscreen = ({
   <Wrapper>
     <DeviceBlocker />
     <Header />
-    <AnimationWrapper modelId={modelId}>
+    <AnimationWrapper>
       <Animation animation={getDeviceAnimation(modelId, type, "verify")} />
     </AnimationWrapper>
     <Footer>

@@ -24,7 +24,7 @@ type State = {
 };
 type StateWithRetry = State & { onRetry: () => void };
 
-type RemoveImageAction = Action<RemoveImageInput, StateWithRetry, boolean>;
+type RemoveImageAction = Action<{}, StateWithRetry, boolean>;
 
 const mapResult = ({ imageRemoved }: State) => imageRemoved;
 

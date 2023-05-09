@@ -108,6 +108,7 @@ type States = PartialNullable<{
   completeExchangeStarted: boolean;
   completeExchangeResult: Transaction;
   completeExchangeError: Error;
+  imageRemoveRequested: boolean;
   initSellRequested: boolean;
   initSellResult: InitSellResult;
   initSellError: Error;

@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { BoxedIcon, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/staxRemoveImage";
 import removeImage from "@ledgerhq/live-common/hw/staxRemoveImage";
@@ -12,19 +11,13 @@ import { clearLastSeenCustomImage } from "~/renderer/actions/settings";
 
 const action = createAction(removeImage);
 
-type Props = {
-  onClose: () => void;
-  setDeviceHasImage: (arg0: boolean) => void;
-  device: Device;
-};
-
 const TextEllipsis = styled.div`
   flex-shrink: 1;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
-const RemoveCustomImage: React.FC<Props> = ({ onClose, setDeviceHasImage, device }: Props) => {
+const RemoveCustomImage: React.FC<{}> = () => {
   const request = useMemo(() => ({}), []);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -76,13 +69,7 @@ const RemoveCustomImage: React.FC<Props> = ({ onClose, setDeviceHasImage, device
           </Flex>
         ) : running ? (
           <Flex flex={1} alignItems="center" justifyContent="center" p={2}>
-            <DeviceAction
-              device={device}
-              request={request}
-              action={action}
-              onClose={onClose}
-              onResult={onSuccess}
-            />
+            <DeviceAction request={request} action={action} onResult={onSuccess} />
           </Flex>
         ) : null}
       </Flex>
