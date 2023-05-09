@@ -147,6 +147,7 @@ export function useEnableBluetooth(
     bluetoothServicesState = "unknown";
   }
 
+  // TODO: delete before merging
   if (__DEV__) {
     bluetoothServicesState = "enabled";
   }
