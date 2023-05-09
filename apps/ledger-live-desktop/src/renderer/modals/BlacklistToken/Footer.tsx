@@ -4,8 +4,9 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import { useDispatch } from "react-redux";
 import { blacklistToken } from "~/renderer/actions/settings";
-import { TokenCurrency } from "@ledgerhq/types-live";
-const Footer = ({ onClose, token }: { onClose: () => void; token: TokenCurrency }) => {
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
+const Footer = ({ onClose, token }: { onClose?: () => void; token: TokenCurrency }) => {
   const dispatch = useDispatch();
   const confirmBlacklistToken = useCallback(
     tokenId => {
@@ -22,7 +23,7 @@ const Footer = ({ onClose, token }: { onClose: () => void; token: TokenCurrency 
         data-test-id="modal-confirm-button"
         onClick={() => {
           confirmBlacklistToken(token.id);
-          onClose();
+          onClose && onClose();
         }}
         primary
       >

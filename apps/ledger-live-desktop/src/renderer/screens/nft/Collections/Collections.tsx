@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo, memo } from "react";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
-import { Account } from "@ledgerhq/types-live";
+import { Account, NFT, ProtoNFT } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -81,7 +81,7 @@ const Collections = ({ account }: Props) => {
     () =>
       filteredCollections
         .slice(0, numberOfVisibleCollections)
-        .map(([contract, nfts]: any) => (
+        .map(([contract, nfts]: [string, (ProtoNFT | NFT)[]]) => (
           <Row
             onClick={() => onOpenCollection(contract)}
             key={contract}

@@ -68,6 +68,18 @@ export const defaultFeatures: DefaultFeatures = {
   currencySyscoin: {
     enabled: false,
   },
+  currencyAxelar: {
+    enabled: false,
+  },
+  currencyOnomy: {
+    enabled: false,
+  },
+  currencyQuicksilver: {
+    enabled: false,
+  },
+  currencyPersistence: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {
@@ -232,6 +244,9 @@ export const defaultFeatures: DefaultFeatures = {
       },
       protectId: "protect-simu",
     },
+  },
+  protectServicesDesktop: {
+    enabled: false,
   },
   newsfeedPage: {
     enabled: false,

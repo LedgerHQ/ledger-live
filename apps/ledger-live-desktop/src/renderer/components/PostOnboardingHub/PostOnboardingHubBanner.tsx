@@ -57,7 +57,10 @@ const PostOnboardingHubBanner = () => {
       <Flex>
         <Illustration lightSource={bannerStaxLight} darkSource={bannerStaxDark} size={240} />
       </Flex>
-      <CloseButtonWrapper onClick={handleHidePostOnboardingHubBanner}>
+      <CloseButtonWrapper
+        onClick={handleHidePostOnboardingHubBanner}
+        data-test-id="postonboarding-banner-entry-point-close-button"
+      >
         <Icons.CloseMedium color="neutral.c00" size={30} />
       </CloseButtonWrapper>
     </Flex>

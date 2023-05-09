@@ -19,18 +19,18 @@ import ClockIcon from "~/renderer/icons/Clock";
 import ExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
-const Wrapper: ThemedComponent<any> = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 16px 20px;
 `;
-const Column: ThemedComponent<any> = styled(TableLine).attrs(() => ({
+const Column = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade80",
   fontSize: 3,
 }))``;
-const IconContainer: ThemedComponent<any> = styled.div`
+const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,7 +38,7 @@ const IconContainer: ThemedComponent<any> = styled.div`
   height: 24px;
   color: ${p => p.theme.colors.palette.primary.main};
 `;
-const ValidatorName: ThemedComponent<any> = styled(TableLine).attrs(() => ({
+const ValidatorName = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
   fontSize: 3,

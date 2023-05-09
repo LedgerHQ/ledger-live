@@ -167,7 +167,7 @@ const Root = ({ data, onClose, skipDevice, flow }: Props) => {
   const device = useSelector(getCurrentDevice);
   const { account, parentAccount, onResult, verifyAddress } = data;
   const mainAccount = getMainAccount(account, parentAccount);
-  const tokenCurrency = account.type === "TokenAccount" ? account.token : null;
+  const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleResult = useCallback(
     (res: any) => {
       if (!verifyAddress) {
@@ -252,7 +252,7 @@ const StepConnectDeviceFooter = ({ data, onClose, onSkipDevice }: PropsFooter) =
     </Box>
   ) : (
     <Box alignItems="center" shrink flow={2}>
-      <Receive2NoDevice name={name} onVerify={onVerify} onContinue={nextStep} />
+      <Receive2NoDevice onVerify={onVerify} onContinue={nextStep} />
     </Box>
   );
 };

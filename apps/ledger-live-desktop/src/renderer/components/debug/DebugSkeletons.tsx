@@ -19,7 +19,7 @@ const DebugSkeletons = () => {
   }, [alwaysShowSkeletons, dispatch]);
   return (
     <Box p={0} horizontal>
-      <Item ff="Inter|Medium" fontSize={3} onClick={handleToggleSkeletons}>
+      <Item onClick={handleToggleSkeletons}>
         {alwaysShowSkeletons ? "Hide skeletons" : "Show skeletons"}
       </Item>
     </Box>

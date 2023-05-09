@@ -19,15 +19,15 @@ const Label = styled(Text).attrs({
     text-transform: uppercase;
   }
 `;
-const Base: ThemedComponent<{
-  isChecked?: boolean;
-  isRadio?: boolean;
-  inverted?: boolean;
-}> = styled(Tabbable).attrs(() => ({
+const Base = styled(Tabbable).attrs(() => ({
   relative: true,
   alignItems: "center",
   justifyContent: "center",
-}))`
+}))<{
+  isChecked?: boolean;
+  isRadio?: boolean;
+  inverted?: boolean;
+}>`
   & input[type="checkbox"] {
     display: none;
   }
@@ -104,8 +104,8 @@ function CheckBox({ label, ...props }: Props) {
       >
         <input
           type="checkbox"
-          disabled={disabled || null}
-          checked={typeof isChecked === "boolean" ? isChecked : null}
+          disabled={disabled || false}
+          checked={typeof isChecked === "boolean" ? isChecked : false}
           onChange={onClick}
         />
         <Check size={12} />

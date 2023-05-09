@@ -94,12 +94,9 @@ const AssetHeader: React.ComponentType<Props> = React.memo(function AssetHeader(
                 {shortAddressPreview(account.token.contractAddress)}
               </CurNameTokenLink>
               <CurNameTokenIcon>
-                <ExternalLink
-                  size={12}
-                  style={{
-                    marginRight: 5,
-                  }}
-                />
+                <Box mr={5}>
+                  <ExternalLink size={12} />
+                </Box>
                 <Trans i18nKey="account.openInExplorer" />
               </CurNameTokenIcon>
             </Wrapper>

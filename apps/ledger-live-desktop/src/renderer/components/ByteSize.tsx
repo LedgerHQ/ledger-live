@@ -2,6 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { DeviceModel } from "@ledgerhq/devices";
 import { formatSize } from "@ledgerhq/live-common/apps/formatting";
+
 const ByteSize = ({
   value,
   deviceModel,
@@ -11,7 +12,7 @@ const ByteSize = ({
   deviceModel: DeviceModel;
   firmwareVersion: string;
 }) => {
-  if (!value) return "–";
+  if (!value) return <>{"–"}</>;
   const blockSize = deviceModel.getBlockSize(firmwareVersion);
   const [size, unit] = formatSize(value, blockSize);
   return (
@@ -23,4 +24,5 @@ const ByteSize = ({
     />
   );
 };
+
 export default ByteSize;

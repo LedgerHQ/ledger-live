@@ -67,7 +67,7 @@ const visibleModalsSelector = createSelector(modalsStateSelector, state =>
     .filter((name: string) => !!modals[name] && state[name].isOpened)
     .map((name: string) => ({
       name,
-      ...state[name].data,
+      ...(state[name].data as object),
     })),
 );
 const mapStateToProps = createStructuredSelector({

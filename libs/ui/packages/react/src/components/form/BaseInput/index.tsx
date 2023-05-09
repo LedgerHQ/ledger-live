@@ -12,9 +12,9 @@ type ValueType = HTMLInputElement["value"];
 export type CommonProps = InputHTMLAttributes<HTMLInputElement> &
   TypographyProps & {
     disabled?: boolean;
-    error?: string;
-    warning?: string;
-    info?: string;
+    error?: React.ReactNode;
+    warning?: React.ReactNode;
+    info?: React.ReactNode;
   };
 
 export type InputProps<T = ValueType> = Omit<CommonProps, "value" | "onChange"> & {

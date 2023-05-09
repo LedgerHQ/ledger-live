@@ -5,7 +5,7 @@ export const FakeLink = styled.span`
   cursor: pointer;
   color: ${p => p.color || p.theme.colors.wallet};
 `;
-const Link: ThemedComponent<any> = styled.a`
+const Link = styled.a`
   ${color};
   ${fontSize};
   ${fontWeight};

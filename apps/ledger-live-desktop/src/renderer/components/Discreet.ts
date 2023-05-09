@@ -1,11 +1,16 @@
 import { useSelector } from "react-redux";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 export const useDiscreetMode = () => useSelector(discreetModeSelector);
-const Discreet = ({ children, replace = "***" }) => {
+
+const Discreet = ({
+  children,
+  replace = "***",
+}: {
+  children: React.ReactNode;
+  replace: React.ReactNode;
+}) => {
   const discreetMode = useDiscreetMode();
-  if (discreetMode) {
-    return replace;
-  }
-  return children;
+  return discreetMode ? replace : children;
 };
+
 export default Discreet;

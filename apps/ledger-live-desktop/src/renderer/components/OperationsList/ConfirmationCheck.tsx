@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import styled from "styled-components";
+import styled, { DefaultTheme, ThemedStyledProps } from "styled-components";
 import { OperationType } from "@ledgerhq/types-live";
 import { rgba, mix } from "~/renderer/styles/helpers";
 import { TFunction } from "react-i18next";
@@ -22,7 +22,8 @@ import Tooltip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import Vote from "~/renderer/icons/Vote";
 import VoteNay from "~/renderer/icons/VoteNay";
-const border = p =>
+
+const border = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) =>
   p.hasFailed
     ? `1px solid ${p.theme.colors.alertRed}`
     : p.isConfirmed
@@ -32,7 +33,7 @@ const border = p =>
           ? p.theme.colors.warning
           : rgba(p.theme.colors.palette.text.shade60, 0.2)
       }`;
-function inferColor(p) {
+function inferColor(p: ThemedStyledProps<ContainerProps, DefaultTheme>) {
   switch (p.type) {
     case "IN":
     case "NFT_IN":
@@ -45,21 +46,24 @@ function inferColor(p) {
       return p.theme.colors.palette.text.shade60;
   }
 }
-export const Container: ThemedComponent<{
+
+type ContainerProps = {
   isConfirmed: boolean;
   type: string;
   marketColor: string;
   hasFailed?: boolean;
-}> = styled(Box).attrs(p => ({
+};
+
+export const Container = styled(Box).attrs<ContainerProps>(p => ({
   bg: p.hasFailed
     ? mix(p.theme.colors.alertRed, p.theme.colors.palette.background.paper, 0.95)
     : p.isConfirmed
-    ? mix(inferColor(p), p.theme.colors.palette.background.paper, 0.8)
+    ? mix(inferColor(p) as string, p.theme.colors.palette.background.paper, 0.8)
     : p.theme.colors.palette.background.paper,
   color: p.hasFailed ? p.theme.colors.alertRed : inferColor(p),
   alignItems: "center",
   justifyContent: "center",
-}))`
+}))<ContainerProps>`
   border: ${border};
   border-radius: 50%;
   position: relative;

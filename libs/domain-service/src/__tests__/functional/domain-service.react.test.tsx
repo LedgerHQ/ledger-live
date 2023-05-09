@@ -2,10 +2,12 @@ import React from "react";
 import "@testing-library/jest-dom";
 import { renderHook } from "@testing-library/react-hooks";
 import { render, screen, waitFor } from "@testing-library/react";
-import { DomainServiceProvider, useDomain } from "../../hooks";
+import { DomainEmpty, InvalidDomain, NoResolution } from "../../errors";
 import { resolveAddress, resolveDomain } from "../../resolvers";
+import { DomainServiceProvider, useDomain } from "../../hooks";
 import { DomainServiceResolution } from "../../types";
 
+jest.mock("axios");
 jest.mock("../../resolvers");
 
 const mockedResolvedDomain = jest.mocked(resolveDomain, true);
@@ -15,6 +17,7 @@ const resolutionKeys: (keyof DomainServiceResolution)[] = [
   "registry",
   "address",
   "domain",
+  "type",
 ];
 
 const CustomTest = ({ str }: { str: string }) => {
@@ -24,6 +27,9 @@ const CustomTest = ({ str }: { str: string }) => {
   return (
     <div>
       <div data-testid="status">{status}</div>
+      {status === "error" && (
+        <div data-testid="error-name">{result.error.name}</div>
+      )}
       {status === "loaded" && (
         <div data-testid="resolutions">
           {result.resolutions.map((resolution, index) => (
@@ -31,6 +37,7 @@ const CustomTest = ({ str }: { str: string }) => {
               <div data-testid={`${index}-registry`}>{resolution.registry}</div>
               <div data-testid={`${index}-address`}>{resolution.address}</div>
               <div data-testid={`${index}-domain`}>{resolution.domain}</div>
+              <div data-testid={`${index}-type`}>{resolution.type}</div>
             </React.Fragment>
           ))}
         </div>
@@ -39,31 +46,22 @@ const CustomTest = ({ str }: { str: string }) => {
   );
 };
 
-describe("useNamingService", () => {
-  test("should be an error", async () => {
+const wrapper: React.ComponentType<string> = ({ children }) => (
+  <DomainServiceProvider>{children}</DomainServiceProvider>
+);
+
+describe("useDomain", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
     mockedResolvedDomain.mockImplementation(async () => {
       return [];
     });
-
     mockedResolvedAddress.mockImplementation(async () => {
       return [];
     });
-
-    render(
-      <DomainServiceProvider>
-        <CustomTest str="notavalideth" />
-      </DomainServiceProvider>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId("status").textContent).not.toBe("loading");
-    });
-
-    // this test should be first otherwise mock call will be more than 0
-    expect(screen.getByTestId("status").textContent).toBe("error");
   });
 
-  test("should be queue", () => {
+  it("should be queued", async () => {
     const { result } = renderHook(useDomain, {
       initialProps: "vitalik.eth",
     });
@@ -71,7 +69,40 @@ describe("useNamingService", () => {
     expect(result.current.status).toBe("queued");
   });
 
-  test("success forward", async () => {
+  it("should return an error when no resolution is found", async () => {
+    const { result } = renderHook(useDomain, {
+      initialProps: "",
+      wrapper,
+    });
+
+    expect(result.current.status).toBe("error");
+    // @ts-expect-error no type guard
+    expect(result.current.error).toBeInstanceOf(DomainEmpty);
+  });
+
+  it("should return an error when no resolution is found", async () => {
+    const { result, waitForValueToChange } = renderHook(useDomain, {
+      initialProps: "404-Not-Found.eth",
+      wrapper,
+    });
+
+    await waitForValueToChange(() => result.current.status === "error");
+    // @ts-expect-error no type guard
+    expect(result.current.error).toBeInstanceOf(NoResolution);
+  });
+
+  it("should return an error when the input has a forward registry but content is invalid", async () => {
+    const { result, waitForValueToChange } = renderHook(useDomain, {
+      initialProps: "not|valid|👋.eth",
+      wrapper,
+    });
+
+    await waitForValueToChange(() => result.current.status === "error");
+    // @ts-expect-error no type guard
+    expect(result.current.error).toBeInstanceOf(InvalidDomain);
+  });
+
+  it("should return a successful forward resolution", async () => {
     const resolutions: DomainServiceResolution[] = [
       {
         address: "forced mocked address",
@@ -80,7 +111,7 @@ describe("useNamingService", () => {
         type: "forward",
       },
     ];
-    mockedResolvedDomain.mockImplementation(async () => resolutions);
+    mockedResolvedDomain.mockImplementationOnce(async () => resolutions);
 
     render(
       <DomainServiceProvider>
@@ -109,7 +140,7 @@ describe("useNamingService", () => {
     });
   });
 
-  test("success reverse", async () => {
+  it("should return a successful reverse resolution", async () => {
     const reverseResolutions: DomainServiceResolution[] = [
       {
         domain: "vitalik.eth",
@@ -118,10 +149,9 @@ describe("useNamingService", () => {
         type: "reverse",
       },
     ];
-    mockedResolvedDomain.mockImplementation(async () => {
-      return [];
-    });
-    mockedResolvedAddress.mockImplementation(async () => reverseResolutions);
+    mockedResolvedAddress.mockImplementationOnce(
+      async () => reverseResolutions
+    );
 
     render(
       <DomainServiceProvider>

@@ -2147,7 +2147,7 @@
         "title" : "Alıcı",
         "nftRecipient" : "Gönderilecek NFT",
         "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın.",
-        "namingService" : {
+        "domainService" : {
           "resolve" : "Bu, aşağıdaki adrese bağlı olan geçerli bir ENS'dir:",
           "supportLink" : "Ethereum Name Service nedir?",
           "reverse" : "Bu adres {{domain}} ile bağlı"

@@ -8,7 +8,9 @@ import OperationDate from "./OperationDate";
 const Cell = styled(Box).attrs(() => ({
   px: 3,
   horizontal: false,
-}))`
+}))<{
+  compact?: boolean;
+}>`
   width: auto;
   min-width: ${p => (p.compact ? 90 : 120)}px;
 `;
@@ -29,7 +31,7 @@ class DateCell extends PureComponent<Props> {
       display: "block",
       textOverflow: "ellipsis",
       overflow: "hidden",
-      whiteSpace: "nowrap",
+      whiteSpace: "nowrap" as const,
     };
     return (
       <Cell compact={compact}>

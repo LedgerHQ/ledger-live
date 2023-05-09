@@ -1,14 +1,17 @@
 import React, { Component } from "react";
-import styled from "styled-components";
+import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import Box from "~/renderer/components/Box";
 import Space from "~/renderer/components/Space";
+import { BoxProps } from "../Box/Box";
 
 /**
  * when collapsed =>
  * Hack to allocate an extension of space on the right for the tooltips
  * !important to keep track color hidden
  **/
-const ListWrapper = styled(Box)`
+const ListWrapper = styled(Box)<{
+  collapsed?: boolean;
+}>`
   ${p => (p.scroll ? p.theme.overflow.y : "")};
   ${p => (p.scroll ? "padding-right: 2px" : "")};
   will-change: unset;
@@ -72,14 +75,22 @@ class SideBarList extends Component<Props> {
     );
   }
 }
-const SideBarListTitle = styled(Box).attrs(() => ({
+const SideBarListTitle: StyledComponent<
+  "div",
+  DefaultTheme,
+  BoxProps & {
+    collapsed?: boolean;
+  }
+> = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   color: "palette.text.shade100",
   ff: "Inter|ExtraBold",
   fontSize: 1,
   px: 4,
-}))`
+}))<{
+  collapsed?: boolean;
+}>`
   cursor: default;
   letter-spacing: 2px;
   text-transform: uppercase;

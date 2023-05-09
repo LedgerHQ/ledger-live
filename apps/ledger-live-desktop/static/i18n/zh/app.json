@@ -2147,7 +2147,7 @@
         "title" : "接收方",
         "nftRecipient" : "待发送的 NFT",
         "verifyAddress" : "请验证该地址与接收方所提供的一致。",
-        "namingService" : {
+        "domainService" : {
           "resolve" : "这是与以下地址关联的有效 ENS：",
           "supportLink" : "什么是以太坊域名服务？",
           "reverse" : "此地址关联了 {{domain}}"

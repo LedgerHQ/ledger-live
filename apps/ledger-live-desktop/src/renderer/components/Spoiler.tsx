@@ -4,34 +4,45 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import IconChevronRight from "~/renderer/icons/ChevronRightSmall";
+
 type Props = {
-  children: any;
+  children: React.ReactNode;
   title: string;
   opened: boolean;
   onOpen: (a: boolean) => void;
 };
+
 type State = {
   isOpened: boolean;
 };
-const Title = styled(Text).attrs(p => ({
+
+type TitleProps = {
+  ff?: string;
+  fontSize?: number;
+  color?: string;
+  textTransform?: boolean;
+};
+
+const Title = styled(Text).attrs<TitleProps>(p => ({
   ff: p.ff ? p.ff : "Inter|Bold",
   fontSize: p.fontSize ? p.fontSize : 2,
   color: p.color ? p.color : "palette.text.shade100",
   tabIndex: 0,
-}))`
+}))<TitleProps>`
   text-transform: ${p => (!p.textTransform ? "auto" : "uppercase")};
   letter-spacing: 1px;
   outline: none;
 `;
-const IconContainer: ThemedComponent<{
+const IconContainer = styled(Box)<{
   isOpened?: boolean;
-}> = styled(Box)`
+}>`
   transform: rotate(${p => (p.isOpened ? "90" : "0")}deg);
   transition: 150ms linear transform;
 `;
+
 export class SpoilerIcon extends PureComponent<{
   isOpened: boolean;
-  mr?: any;
+  mr?: number;
 }> {
   render() {
     const { isOpened, mr } = this.props;
