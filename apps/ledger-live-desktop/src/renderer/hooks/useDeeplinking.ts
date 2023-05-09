@@ -63,7 +63,7 @@ export function useDeepLinkHandler() {
     [history, location],
   );
   const handler = useCallback(
-    (event: any, deeplink: string) => {
+    (_, deeplink: string) => {
       const { pathname, searchParams, search } = new URL(deeplink);
       /**
        * TODO: handle duplicated query params

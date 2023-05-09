@@ -7,8 +7,9 @@ import logger from "~/renderer/logger";
 import Button from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { ButtonProps } from "@ledgerhq/react-ui/components/cta/Button";
 type OwnProps = {
-  buttonProps?: any;
+  buttonProps?: ButtonProps;
   onRepair?: (a: boolean) => void;
 };
 type Props = OwnProps & {
