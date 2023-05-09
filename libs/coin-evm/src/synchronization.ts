@@ -1,3 +1,4 @@
+import { log } from "@ledgerhq/logs";
 import {
   decodeAccountId,
   emptyHistoryCache,
@@ -11,10 +12,8 @@ import {
   makeSync,
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { log } from "@ledgerhq/logs";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
-
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getBalanceAndBlock, getBlock, getTokenBalance, getTransaction } from "./api/rpc";
 import { getSyncHash, mergeSubAccounts } from "./logic";
 import { getExplorerApi } from "./api/explorer";

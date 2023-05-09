@@ -262,7 +262,7 @@ export type CryptoCurrency = CurrencyCommon & {
     // used by evm light integration
     explorer?: {
       uri: string;
-      type: "etherscan" | "blockscout";
+      type: "etherscan" | "blockscout" | "teloscan";
     };
     gasTracker?: { uri: string; type: "ledger" };
   };
