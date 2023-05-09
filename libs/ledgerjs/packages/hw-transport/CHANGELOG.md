@@ -1,5 +1,13 @@
 # @ledgerhq/hw-transport
 
+## 6.28.3
+
+### Patch Changes
+
+- Updated dependencies [[`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472)]:
+  - @ledgerhq/errors@6.12.5
+  - @ledgerhq/devices@8.0.2
+
 ## 6.28.3-next.0
 
 ### Patch Changes

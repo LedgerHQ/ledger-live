@@ -1,5 +1,19 @@
 # @ledgerhq/coin-framework
 
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d), [`835bfbaa45`](https://github.com/LedgerHQ/ledger-live/commit/835bfbaa45f2bee5416b40a34ae0bf150d780e2c), [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3), [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e), [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472), [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949), [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678)]:
+  - @ledgerhq/live-env@0.2.0
+  - @ledgerhq/types-live@6.33.0
+  - @ledgerhq/types-cryptoassets@7.2.0
+  - @ledgerhq/cryptoassets@9.5.0
+  - @ledgerhq/errors@6.12.5
+  - @ledgerhq/live-portfolio@0.0.4
+  - @ledgerhq/devices@8.0.2
+  - @ledgerhq/hw-transport@6.28.3
+
 ## 0.3.2-next.0
 
 ### Patch Changes
