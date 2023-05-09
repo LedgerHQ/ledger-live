@@ -46,7 +46,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired --openssl-legacy-provider build && cp build/index.html build/200.html && cp build/index.html build/404.html",
-    "_test": "react-app-rewired test --env=jsdom",
+    "notest": "react-app-rewired test --env=jsdom",
     "eject": "react-app-rewired eject"
   },
   "browserslist": [
