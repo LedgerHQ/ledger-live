@@ -43,7 +43,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
     });
 
   sub: any;
-  timeout: any;
+  timeout: NodeJS.Timeout | undefined;
   close = () => {
     const { onRepair } = this.props;
     if (this.sub) this.sub.unsubscribe();
