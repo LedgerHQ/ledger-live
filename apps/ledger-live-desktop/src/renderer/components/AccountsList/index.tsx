@@ -8,29 +8,31 @@ import { SpoilerIcon } from "~/renderer/components/Spoiler";
 import { openURL } from "~/renderer/linking";
 import AccountRow from "./AccountRow";
 
+export type AccountListProps = {
+  accounts: Account[];
+  checkedIds?: string[];
+  editedNames: {
+    [accountId: string]: string;
+  };
+  setAccountName?: (b: Account, a: string) => void;
+  onToggleAccount?: (a: Account) => void;
+  onSelectAll?: (a: Account[]) => void;
+  onUnselectAll?: (a: Account[]) => void;
+  title?: React.ReactNode;
+  emptyText?: React.ReactNode;
+  autoFocusFirstInput?: boolean;
+  collapsible?: boolean;
+  hideAmount?: boolean;
+  supportLink?: {
+    id: string;
+    url: string;
+  };
+  t: TFunction;
+  ToggleAllComponent?: React.ReactNode;
+};
+
 class AccountsList extends Component<
-  {
-    accounts: Account[];
-    checkedIds?: string[];
-    editedNames: {
-      [accountId: string]: string;
-    };
-    setAccountName?: (b: Account, a: string) => void;
-    onToggleAccount?: (a: Account) => void;
-    onSelectAll?: (a: Account[]) => void;
-    onUnselectAll?: (a: Account[]) => void;
-    title?: React.ReactNode;
-    emptyText?: React.ReactNode;
-    autoFocusFirstInput?: boolean;
-    collapsible?: boolean;
-    hideAmount?: boolean;
-    supportLink?: {
-      id: string;
-      url: string;
-    };
-    t: TFunction;
-    ToggleAllComponent?: React.ReactNode;
-  },
+  AccountListProps,
   {
     collapsed: boolean;
   }
