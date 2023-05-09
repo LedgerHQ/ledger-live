@@ -25,7 +25,7 @@ const mockedGetFeatureWithMockFeatureEnabled = (enabled) => ({
   overrideFeature: () => {},
   resetFeature: () => {},
   resetFeatures: () => {},
-  getAllCurrencyFlags: () => ({}),
+  getAllFlags: () => ({}),
 });
 
 const mockedUsePostOnboardingContext = jest.mocked(usePostOnboardingContext);

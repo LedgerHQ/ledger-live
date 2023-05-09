@@ -83,8 +83,8 @@ const Item = ({
     state.apps,
   ]);
 
-  const { getAllCurrencyFlags } = useFeatureFlags();
-  const currencyFlags = getAllCurrencyFlags();
+  const { getAllFlags } = useFeatureFlags();
+  const currencyFlags = getAllFlags();
 
   const flag = currencyId
     ? Object.entries(currencyFlags || {}).find(([flagName]) => {

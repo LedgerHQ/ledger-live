@@ -7,7 +7,7 @@ type State = {
   overrideFeature: (_: FeatureId, value: Feature) => void;
   resetFeature: (_: FeatureId) => void;
   resetFeatures: () => void;
-  getAllCurrencyFlags: () => Record<string, Feature>;
+  getAllFlags: () => Record<string, Feature>;
 };
 
 const initialState: State = {
@@ -16,7 +16,7 @@ const initialState: State = {
   overrideFeature: (_) => {},
   resetFeature: (_) => {},
   resetFeatures: () => {},
-  getAllCurrencyFlags: () => ({}),
+  getAllFlags: () => ({}),
 };
 
 const FeatureFlagsContext = createContext<State>(initialState);

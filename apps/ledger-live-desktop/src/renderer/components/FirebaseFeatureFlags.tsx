@@ -35,31 +35,18 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
   const localOverrides = useSelector(overriddenFeatureFlagsSelector);
   const dispatch = useDispatch();
 
-  const getAllFlags = useCallback(() => {
+  const getAllFlags = useCallback((): Record<string, Feature> => {
     if (remoteConfig) {
-      return getAll(remoteConfig);
-    }
+      const allFeatures = getAll(remoteConfig);
+      const parsedFeatures = Object.entries(allFeatures).map(([key, value]) => {
+        return [key, JSON.parse(value.asString())];
+      });
 
-    return null;
-  }, [remoteConfig]);
-
-  const getAllCurrencyFlags = useCallback((): Record<string, Feature> => {
-    const allFlags = getAllFlags();
-
-    if (allFlags) {
-      const entries = Object.entries(allFlags)
-        .filter(([key]) => {
-          return key.includes("feature_currency_");
-        })
-        .map(([key, value]) => {
-          return [key, JSON.parse(value.asString())];
-        });
-
-      return Object.fromEntries(entries);
+      return Object.fromEntries(parsedFeatures);
     }
 
     return {};
-  }, [getAllFlags]);
+  }, [remoteConfig]);
 
   const isFeature = useCallback(
     (key: string): boolean => {
@@ -146,7 +133,7 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
       overrideFeature={overrideFeature}
       resetFeature={resetFeature}
       resetFeatures={resetFeatures}
-      getAllCurrencyFlags={getAllCurrencyFlags}
+      getAllFlags={getAllFlags}
     >
       {children}
     </FeatureFlagsProvider>
