@@ -2056,9 +2056,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
-      '@ledgerhq/hw-app-algorand':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-app-algorand
       '@ledgerhq/hw-app-btc':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-btc
@@ -2170,12 +2167,6 @@ importers:
       '@zondax/ledger-filecoin':
         specifier: ^0.11.2
         version: 0.11.2
-      algo-msgpack-with-bigint:
-        specifier: ^2.1.1
-        version: 2.1.1
-      algosdk:
-        specifier: 1.13.0
-        version: 1.13.0
       async:
         specifier: ^3.2.3
         version: 3.2.3
