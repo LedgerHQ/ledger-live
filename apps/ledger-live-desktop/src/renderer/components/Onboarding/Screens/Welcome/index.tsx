@@ -11,6 +11,7 @@ import { Text, Button, Logos, Icons, InvertThemeV3, Flex } from "@ledgerhq/react
 import { saveSettings } from "~/renderer/actions/settings";
 import BuyNanoX from "./assets/buyNanoX.webm";
 import { hasCompletedOnboardingSelector, languageSelector } from "~/renderer/reducers/settings";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -91,6 +92,18 @@ export function Welcome() {
     history.push("/onboarding/select-device");
   }
 
+  const recoverFeature = useFeature("protectServicesDesktop");
+
+  const recoverLogIn = useCallback(() => {
+    if (!recoverFeature?.enabled) return;
+
+    acceptTerms();
+    const bypassLLOnboardingURL = "ledgerlive://recover-bypass-onboarding";
+    const url = `${recoverFeature?.params?.account?.loginURI}&bypassLLOnboardingURL=${bypassLLOnboardingURL}`;
+
+    openURL(url);
+  }, [recoverFeature?.enabled, recoverFeature?.params?.account?.loginURI]);
+
   const buyNanoX = useCallback(() => {
     openURL(urls.noDevice.buyNew[locale in urls.terms ? locale : "en"]);
   }, [locale]);
@@ -167,10 +180,23 @@ export function Welcome() {
             Icon={Icons.ArrowRightMedium}
             variant="main"
             onClick={handleAcceptTermsAndGetStarted}
-            mb="24px"
+            mb="5"
           >
             {t("onboarding.screens.welcome.nextButton")}
           </Button>
+          <FeatureToggle feature="protectServicesDesktop">
+            <Button
+              iconPosition="right"
+              variant="shade"
+              onClick={recoverLogIn}
+              outline={true}
+              flexDirection="column"
+              whiteSpace="normal"
+              mb="5"
+            >
+              {t("onboarding.screens.welcome.recoverSignIn")}
+            </Button>
+          </FeatureToggle>
           <Button
             iconPosition="right"
             variant="main"
