@@ -1,6 +1,6 @@
 import { createAction } from "redux-actions";
 
-export const openModal = createAction("MODAL_OPEN", (name: string, data: object | undefined) => ({
+export const openModal = createAction("MODAL_OPEN", (name: string, data: unknown) => ({
   name,
   data,
 }));

@@ -1,8 +1,8 @@
 import React, { memo, useRef, useState, useCallback, useMemo, useEffect } from "react";
 import styled from "styled-components";
 import { withTranslation } from "react-i18next";
-import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { App, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { Exec, InstalledItem, ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import {
   predictOptimisticState,
   reducer,
@@ -24,11 +24,14 @@ import {
   hasInstalledAppsSelector,
   lastSeenCustomImageSelector,
 } from "~/renderer/reducers/settings";
+import { TFunction } from "i18next";
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   animation: ${p => p.theme.animations.fadeIn};
 `;
+
 const QuitIconWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -41,10 +44,11 @@ const QuitIconWrapper = styled.div`
   border-radius: 100%;
   margin: ${p => -p.theme.space[5]}px auto ${p => p.theme.space[6]}px auto;
 `;
+
 type Props = {
   device: Device;
   firmware: FirmwareUpdateContext | undefined | null;
-  deviceInfo: DeviceInfo;
+  deviceInfo: DeviceInfo & { languageId: number };
   result: ListAppsResult;
   onRefreshDeviceInfo: () => void;
   exec: Exec;
@@ -52,7 +56,8 @@ type Props = {
   render?: (a: { disableFirmwareUpdate: boolean; installed: InstalledItem[] }) => React.ReactNode;
   appsToRestore?: string[];
 }; // workaround until we fix LL-4458
-const shouldBlockNavigation = l => l.pathname !== "/manager";
+
+const shouldBlockNavigation = (l: { pathname: string }) => l.pathname !== "/manager";
 const AppsList = ({
   firmware,
   deviceInfo,
@@ -61,14 +66,18 @@ const AppsList = ({
   exec,
   t,
   render,
-  appsToRestore,
+  appsToRestore = [],
   device,
 }: Props) => {
   const { deviceName } = result;
   const [state, dispatch] = useAppsRunner(result, exec, appsToRestore);
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
-  const [appInstallDep, setAppInstallDep] = useState(undefined);
-  const [appUninstallDep, setAppUninstallDep] = useState(undefined);
+  const [appInstallDep, setAppInstallDep] = useState<{ app: App; dependencies: App[] } | undefined>(
+    undefined,
+  );
+  const [appUninstallDep, setAppUninstallDep] = useState<
+    { dependents: App[]; app: App } | undefined
+  >(undefined);
   const isIncomplete = isIncompleteState(state);
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
   const reduxDispatch = useDispatch();
@@ -164,7 +173,6 @@ const AppsList = ({
           centered
         />
         <DeviceStorage
-          jobInProgress={jobInProgress}
           uninstallQueue={uninstallQueue}
           installQueue={installQueue}
           distribution={distribution}
@@ -177,7 +185,6 @@ const AppsList = ({
           firmware={firmware}
         />
         <AppList
-          deviceInfo={deviceInfo}
           optimisticState={optimisticState}
           state={state}
           dispatch={dispatch}
@@ -185,20 +192,16 @@ const AppsList = ({
           setAppInstallDep={setAppInstallDep}
           setAppUninstallDep={setAppUninstallDep}
           t={t}
-          distribution={distribution}
         />
         <AppDepsInstallModal
           app={appInstallDep && appInstallDep.app}
           dependencies={appInstallDep && appInstallDep.dependencies}
-          appList={state.apps}
           dispatch={dispatch}
           onClose={onCloseDepsInstallModal}
         />
         <AppDepsUnInstallModal
           app={appUninstallDep && appUninstallDep.app}
           dependents={appUninstallDep && appUninstallDep.dependents}
-          appList={state.apps}
-          installed={state.installed}
           dispatch={dispatch}
           onClose={onCloseDepsUninstallModal}
         />

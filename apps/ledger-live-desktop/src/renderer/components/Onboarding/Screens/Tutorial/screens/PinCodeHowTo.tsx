@@ -43,15 +43,19 @@ const PinCodeHowToAnimation = () => {
   const { deviceModelId } = useContext(OnboardingContext);
 
   return (
-    <AnimationContainer>
-      <Animation animation={getDeviceAnimation(deviceModelId, "light", "plugAndPinCode")} />
-    </AnimationContainer>
+    deviceModelId && (
+      <AnimationContainer>
+        <Animation
+          animation={getDeviceAnimation(deviceModelId, "light", "plugAndPinCode") as object}
+        />
+      </AnimationContainer>
+    )
   );
 };
 
 PinCodeHowTo.Illustration = <PinCodeHowToAnimation />;
 
-const Footer = (props: unknown) => {
+const Footer = (props: object) => {
   const { t } = useTranslation();
   return (
     <AsideFooter

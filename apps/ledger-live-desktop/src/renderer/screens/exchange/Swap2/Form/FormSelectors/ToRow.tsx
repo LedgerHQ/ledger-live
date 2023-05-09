@@ -25,11 +25,11 @@ import styled from "styled-components";
 import CounterValue from "~/renderer/components/CounterValue";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 type Props = {
   fromAccount: SwapSelectorStateType["account"];
   toAccount: SwapSelectorStateType["account"];
   toCurrency: SwapSelectorStateType["currency"];
-  setToAccount: SwapTransactionType["setToAccount"];
   setToCurrency: SwapTransactionType["setToCurrency"];
   toAmount: SwapSelectorStateType["amount"];
   provider: string | undefined | null;
@@ -57,7 +57,7 @@ function ToRow({
   loadingRates,
   updateSelectedRate,
 }: Props) {
-  const fromCurrencyId = fromAccount ? getAccountCurrency(fromAccount).id : null;
+  const fromCurrencyId = fromAccount ? getAccountCurrency(fromAccount).id : undefined;
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const allCurrencies = useSelector(toSelector)(fromCurrencyId);
   const currencies = useSelectableCurrencies({
@@ -71,15 +71,15 @@ function ToRow({
       page: "Page Swap Form",
       ...swapDefaultTrack,
     });
-  const setCurrencyAndTrack = currency => {
+  const setCurrencyAndTrack = (currency: CryptoOrTokenCurrency | null | undefined) => {
     updateSelectedRate();
     track("button_clicked", {
       button: "New target currency",
       page: "Page Swap Form",
       ...swapDefaultTrack,
-      currency: currency.ticker || currency.name,
+      currency: currency?.ticker || currency?.name,
     });
-    setToCurrency(currency);
+    setToCurrency(currency || undefined);
   };
   return (
     <>
@@ -102,7 +102,7 @@ function ToRow({
         </Box>
         <InputCurrencyContainer flex="1">
           <InputCurrency
-            // @DEV: onChange props is required by the composant, there is no read-only logic
+            // @DEV: onChange props is required by the component, there is no read-only logic
             onChange={() => null}
             value={unit ? toAmount : null}
             disabled

@@ -11,7 +11,7 @@ type Props = {
   newPassword: string;
   confirmPassword: string;
   incorrectPassword?: Error | null;
-  onSubmit: Function;
+  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
   isValid: () => boolean;
   onChange: Function;
 };

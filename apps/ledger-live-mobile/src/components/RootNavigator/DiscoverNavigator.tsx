@@ -19,15 +19,7 @@ export default function DiscoverNavigator() {
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
-      {config?.enabled && config?.params.version === "2" ? (
-        <Stack.Screen
-          name={ScreenName.PlatformCatalog}
-          component={Catalog}
-          options={{
-            headerShown: false,
-          }}
-        />
-      ) : (
+      {(!config?.enabled || config?.params.version === "1") && (
         <Stack.Screen
           name={ScreenName.DiscoverScreen}
           component={Discover}
@@ -36,6 +28,13 @@ export default function DiscoverNavigator() {
           }}
         />
       )}
+      <Stack.Screen
+        name={ScreenName.PlatformCatalog}
+        component={Catalog}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 }

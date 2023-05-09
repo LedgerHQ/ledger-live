@@ -10,11 +10,18 @@ export enum Platform {
   Desktop = "desktop",
 }
 
+export type Img = {
+  source: string;
+  transform: [number, number, number, number];
+  size: { width: number; height: number };
+};
+
 export type ContentCard = {
   id: string;
-  location: LocationContentCard;
-  title: string;
-  description: string;
+  location?: LocationContentCard;
+  imgs?: Img[];
+  title: React.ReactNode;
+  description: React.ReactNode;
   url?: string;
   path?: string;
   image?: string;

@@ -1,4 +1,4 @@
-import { createMachine, assign, actions } from "xstate";
+import { createMachine, assign, actions, EventObject } from "xstate";
 import { track } from "~/renderer/analytics/segment";
 // Solutions
 import ChangeUSBCable from "./solutions/ChangeUSBCable";
@@ -29,9 +29,13 @@ export default createMachine(
     context: {
       opened: true,
       done: false,
-      SolutionComponent: () => null,
+      SolutionComponent: (() => null) as React.ComponentType<{
+        number: number;
+        sendEvent: (event: string) => unknown;
+        done: boolean;
+      }> | null,
       platform: process.env.USBTROUBLESHOOTING_PLATFORM || detectedPlatform,
-      currentIndex: undefined,
+      currentIndex: undefined as number | undefined,
       solutions: {
         mac: [...commonSolutions, EnableFullDiskAccess, ResetNVRAM, RepairFunnel],
         windows: [RunAsAdmin, ...commonSolutions, UpdateUSBDeviceDrivers, RepairFunnel],
@@ -41,7 +45,7 @@ export default createMachine(
     states: {
       solution: {
         entry: [
-          choose([
+          choose<{ currentIndex?: number }, EventObject>([
             {
               actions: "next",
               cond: ({ currentIndex }) => currentIndex === undefined, // Nb Prevent 'next' if we are already in the flow,
@@ -67,10 +71,13 @@ export default createMachine(
   {
     actions: {
       load: assign(({ platform, currentIndex, solutions }) => {
-        if (!solutions[platform]) throw new Error(`Unknown platform ${platform}`);
+        if (!solutions[platform as keyof typeof solutions])
+          throw new Error(`Unknown platform ${platform}`);
         const index =
-          !currentIndex || currentIndex >= solutions[platform].length ? 0 : currentIndex;
-        const SolutionComponent = solutions[platform][index];
+          !currentIndex || currentIndex >= solutions[platform as keyof typeof solutions].length
+            ? 0
+            : currentIndex;
+        const SolutionComponent = solutions[platform as keyof typeof solutions][index];
         return {
           currentIndex: index,
           SolutionComponent,
@@ -82,14 +89,15 @@ export default createMachine(
       }),
       // Move forwards to another solution.
       next: assign(({ platform, currentIndex: i, solutions }) => {
-        const currentIndex = solutions[platform].length > i + 1 ? i + 1 : i;
+        const currentIndex =
+          solutions[platform as keyof typeof solutions].length > i! + 1 ? i! + 1 : i;
         return {
           currentIndex,
         };
       }),
       // Move back to a previous solution.
       previous: assign(({ platform, currentIndex: i, solutions }) => {
-        const currentIndex = solutions[platform].length <= 0 ? 0 : i - 1;
+        const currentIndex = solutions[platform as keyof typeof solutions].length <= 0 ? 0 : i! - 1;
         return {
           currentIndex,
           done: false,

@@ -3,29 +3,31 @@ import styled from "styled-components";
 
 type Props = {
   height: number;
-  progress: string;
+  progress: number;
   progressColor: string;
   backgroundColor?: string;
 };
-const Wrapper: ThemedComponent<{
+const Wrapper = styled.div<{
   height: number;
   backgroundColor?: string;
-}> = styled.div`
+}>`
   height: ${p => p.height}px;
   flex-grow: 1;
   background-color: ${p => p.backgroundColor || p.theme.colors.palette.divider};
   border-radius: ${p => p.height}px;
   overflow: hidden;
 `;
-const Progress: ThemedComponent<{
-  height: number;
-  width: string;
-  backgroundColor?: string;
-}> = styled.div.attrs(p => ({
+const Progress = styled.div.attrs<{
+  width: number;
+}>(p => ({
   style: {
     transform: `translateX(-${100 - p.width}%)`,
   },
-}))`
+}))<{
+  height: number;
+  width: number;
+  backgroundColor?: string;
+}>`
   height: ${p => p.height}px;
   background-color: ${p => p.backgroundColor};
   border-radius: ${p => p.height}px;

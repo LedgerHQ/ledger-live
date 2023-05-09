@@ -18,6 +18,7 @@ import SwapSmallCoin3Image from "./banners/Swap/images/smallcoin3.png";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { useSelector } from "react-redux";
 import * as braze from "@braze/web-sdk";
+import { ContentCard } from "~/types/dynamicContent";
 
 export const getTransitions = (transition: "slide" | "flip", reverse = false) => {
   const mult = reverse ? -1 : 1;
@@ -39,7 +40,6 @@ export const getTransitions = (transition: "slide" | "flip", reverse = false) =>
     },
     slide: {
       from: {
-        position: "absolute",
         opacity: 1,
         transform: `translate3d(${100 * mult}%,0,0)`,
       },
@@ -56,7 +56,7 @@ export const getTransitions = (transition: "slide" | "flip", reverse = false) =>
   }[transition];
 };
 
-const exchangeSlide = {
+const exchangeSlide: ContentCard = {
   path: "/exchange",
   id: "buyCrypto",
   title: <Trans i18nKey={`banners.buyCrypto.title`} />,
@@ -104,7 +104,7 @@ const exchangeSlide = {
     },
   ],
 };
-const swapSlide = {
+const swapSlide: ContentCard = {
   path: "/swap",
   id: "swap",
   title: <Trans i18nKey={`banners.swap.title`} />,
@@ -169,7 +169,15 @@ const swapSlide = {
   ],
 };
 
-export const useDefaultSlides = () => {
+type SlideRes = {
+  id: string;
+  Component: React.ComponentType<{}>;
+};
+
+export const useDefaultSlides = (): {
+  slides: SlideRes[];
+  logSlideImpression: (index: number) => void;
+} => {
   const [cachedContentCards, setCachedContentCards] = useState<braze.Card[]>([]);
   const portfolioCards = useSelector(portfolioContentCardSelector);
 
@@ -211,10 +219,10 @@ export const useDefaultSlides = () => {
   );
   const slides = useMemo(
     () =>
-      map(
+      map<ContentCard, SlideRes>(
         getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : portfolioCards,
-        (slide: Props) => ({
-          id: slide.name,
+        (slide): SlideRes => ({
+          id: slide.id,
           // eslint-disable-next-line react/display-name
           Component: () => <Slide {...slide} onClickOnSlide={logSlideClick} />,
         }),

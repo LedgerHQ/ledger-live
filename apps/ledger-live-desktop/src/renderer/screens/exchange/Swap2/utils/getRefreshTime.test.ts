@@ -1,3 +1,4 @@
+import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { getRefreshTime } from "~/renderer/screens/exchange/Swap2/utils/getRefreshTime";
 const mockDate = new Date("2020-01-01");
 jest.useFakeTimers().setSystemTime(mockDate);
@@ -10,7 +11,7 @@ describe("getRefreshTime", () => {
       getRefreshTime([
         {
           rateId: "1",
-        },
+        } as ExchangeRate,
       ]),
     ).toEqual(60000);
   });
@@ -29,7 +30,7 @@ describe("getRefreshTime", () => {
         {
           rateId: "3",
         },
-      ]),
+      ] as ExchangeRate[]),
     ).toEqual(58000);
   });
   it("returns 60s when the earliest expirationTime in the list of rates is over 60s", () => {
@@ -47,7 +48,7 @@ describe("getRefreshTime", () => {
         {
           rateId: "3",
         },
-      ]),
+      ] as ExchangeRate[]),
     ).toEqual(60000);
   });
 });

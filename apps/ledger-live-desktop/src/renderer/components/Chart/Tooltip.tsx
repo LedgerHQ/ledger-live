@@ -3,41 +3,50 @@ import styled from "styled-components";
 import { useSpring, animated, interpolate } from "react-spring";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Theme } from "~/renderer/styles/theme";
-const TooltipContainer: ThemedComponent<{
+import { ChartTooltipModel } from "chart.js";
+import { Item } from "./types";
+
+type TooltipContainerProps = {
   opacity: number;
-}> = styled.div.attrs(({ opacity }) => ({
+};
+
+const TooltipContainer = styled.div.attrs<TooltipContainerProps>(({ opacity }) => ({
   style: {
     display: opacity ? "block" : "none",
   },
-}))`
+}))<TooltipContainerProps>`
   transform: translate3d(-50%, -100%, 0);
-  background: ${p => p.theme.background.paper};
-  border: 1px solid ${p => p.theme.text.shade10};
+  background: ${p => p.theme.colors.palette.background.paper};
+  border: 1px solid ${p => p.theme.colors.palette.text.shade10};
   border-radius: 4px;
   width: 150px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.03);
   text-align: center;
   padding: 12px 10px;
 `;
+
 type TooltipProps = {
-  tooltip: any;
+  tooltip: ChartTooltipModel;
   theme: Theme;
-  renderTooltip: any;
+  renderTooltip: (data: Item) => React.ReactNode;
   color?: string;
-  data: any;
+  data: Item[];
 };
+
 const Tooltip = ({ tooltip, renderTooltip, color, data }: TooltipProps) => {
   const wasVisible = useRef(false);
-  const theme = useTheme("colors.palette");
-  const { x, y } = useSpring({
-    to: {
-      x: tooltip.caretX,
-      y: tooltip.caretY,
-    },
+  const theme = useTheme();
+  const { x, y } = useSpring<{
+    x: number;
+    y: number;
+  }>({
+    x: tooltip.caretX,
+    y: tooltip.caretY,
     reset: !wasVisible.current,
   });
   wasVisible.current = !!tooltip.opacity;
-  const tooltipData = data?.[tooltip.dataPoints?.[0]?.index];
+  const index = tooltip.dataPoints?.[0]?.index;
+  const tooltipData = index !== undefined ? data?.[index] : null;
   return (
     <>
       <div
@@ -64,7 +73,7 @@ const Tooltip = ({ tooltip, renderTooltip, color, data }: TooltipProps) => {
             r="4"
             stroke={color}
             strokeWidth="2"
-            fill={theme.background.paper}
+            fill={theme.colors.palette.background.paper}
           />
         </svg>
       </div>
@@ -78,7 +87,7 @@ const Tooltip = ({ tooltip, renderTooltip, color, data }: TooltipProps) => {
         }}
       >
         {tooltipData && (
-          <TooltipContainer opacity={tooltip.opacity} theme={theme}>
+          <TooltipContainer opacity={tooltip.opacity}>
             {renderTooltip(tooltipData)}
           </TooltipContainer>
         )}

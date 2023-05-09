@@ -40,6 +40,7 @@ export type Loadable<T> = {
 export type AppPlatform = "ios" | "android" | "desktop";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
+export type Visibility = "complete" | "searchable" | "deep";
 
 export type AppPermission = {
   method: string;
@@ -64,6 +65,7 @@ export type LiveAppManifest = {
   domains: string[];
   categories: string[];
   currencies: string[] | "*";
+  visibility: Visibility;
   content: {
     shortDescription: TranslatableString;
     description: TranslatableString;

@@ -57,7 +57,7 @@ export type OwnProps = {
   dynamicSignificantDigits?: number;
   staticSignificantDigits?: number;
   style?: React.CSSProperties;
-} & BoxProps;
+} & React.ComponentProps<typeof T>;
 const mapStateToProps = createStructuredSelector({
   discreet: discreetModeSelector,
   locale: localeSelector,

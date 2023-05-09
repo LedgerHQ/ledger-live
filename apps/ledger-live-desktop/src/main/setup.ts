@@ -15,14 +15,8 @@ ipcMain.on("updater", (e, type) => {
 });
 ipcMain.handle(
   "save-logs",
-  async (
-    event,
-    path: {
-      canceled: boolean;
-      filePath: string;
-    },
-    experimentalLogs: string,
-  ) => !path.canceled && path.filePath && fsWriteFile(path.filePath, experimentalLogs),
+  async (event, path: Electron.SaveDialogReturnValue, experimentalLogs: string) =>
+    !path.canceled && path.filePath && fsWriteFile(path.filePath, experimentalLogs),
 );
 ipcMain.handle(
   "export-operations",

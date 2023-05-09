@@ -29,16 +29,18 @@ type Props = {
 };
 class CurrencyRows extends PureComponent<Props> {
   handleChangeConfirmationsNb = (nb: number) => this.updateCurrencySettings("confirmationsNb", nb);
-  updateCurrencySettings = (key: string, val: any) => {
+  updateCurrencySettings = (key: string, val: number) => {
     // FIXME this really should be a dedicated action
     const { settings, saveSettings, currency } = this.props;
     const currencySettings = settings.currenciesSettings[currency.ticker];
-    let newCurrenciesSettings = [];
+    let newCurrenciesSettings: {
+      [currencyId: string]: CurrencySettings;
+    } = {};
     if (!currencySettings) {
       newCurrenciesSettings = {
         ...settings.currenciesSettings,
         [currency.ticker]: {
-          [key]: val,
+          [key as keyof CurrencySettings]: val,
         },
       };
     } else {
@@ -46,7 +48,7 @@ class CurrencyRows extends PureComponent<Props> {
         ...settings.currenciesSettings,
         [currency.ticker]: {
           ...currencySettings,
-          [key]: val,
+          [key as keyof CurrencySettings]: val,
         },
       };
     }

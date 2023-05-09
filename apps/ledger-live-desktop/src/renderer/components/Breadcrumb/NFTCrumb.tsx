@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { nftsByCollections, ProtoNFT } from "@ledgerhq/live-common/nft/index";
+import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import DropDownSelector, { DropDownItemType } from "~/renderer/components/DropDownSelector";
 import Button from "~/renderer/components/Button";
@@ -12,6 +12,9 @@ import IconAngleUp from "~/renderer/icons/AngleUp";
 import { Separator, Item, TextLink, AngleDown, Check } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import CollectionName from "~/renderer/components/Nft/CollectionName";
+import { ProtoNFT } from "@ledgerhq/types-live";
+import { State } from "~/renderer/reducers";
+
 const LabelWithMeta = ({
   item,
   isActive,
@@ -30,18 +33,21 @@ const LabelWithMeta = ({
     )}
   </Item>
 );
+
 const NFTCrumb = () => {
   const history = useHistory();
-  const { id, collectionAddress } = useParams();
-  const account = useSelector(state =>
-    accountSelector(state, {
-      accountId: id,
-    }),
+  const { id, collectionAddress } = useParams<{ id?: string; collectionAddress?: string }>();
+  const account = useSelector((state: State) =>
+    id
+      ? accountSelector(state, {
+          accountId: id,
+        })
+      : null,
   );
-  const collections = useMemo(() => nftsByCollections(account.nfts), [account.nfts]);
+  const collections = useMemo(() => nftsByCollections(account?.nfts), [account?.nfts]);
   const items: DropDownItemType<ProtoNFT>[] = useMemo(
     () =>
-      Object.entries(collections).map(([contract, nfts]: [string, any]) => ({
+      Object.entries(collections).map(([contract, nfts]: [string, ProtoNFT[]]) => ({
         key: contract,
         label: contract,
         content: nfts[0],
@@ -57,17 +63,17 @@ const NFTCrumb = () => {
       if (!item) return;
       setTrackingSource("NFT breadcrumb");
       history.push({
-        pathname: `/account/${account.id}/nft-collection/${item.key}`,
+        pathname: `/account/${account?.id}/nft-collection/${item.key}`,
       });
     },
-    [account.id, history],
+    [account?.id, history],
   );
   const onSeeAll = useCallback(() => {
     setTrackingSource("NFT breadcrumb");
     history.push({
-      pathname: `/account/${account.id}/nft-collection`,
+      pathname: `/account/${account?.id}/nft-collection`,
     });
-  }, [account.id, history]);
+  }, [account?.id, history]);
   return (
     <>
       <TextLink>
@@ -78,10 +84,6 @@ const NFTCrumb = () => {
         <>
           <Separator />
           <DropDownSelector
-            flex={1}
-            offsetTop={0}
-            border
-            horizontal
             items={items}
             controlled
             renderItem={LabelWithMeta}

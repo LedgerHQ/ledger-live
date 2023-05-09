@@ -104,7 +104,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
               {"and"}
               <Text ff="Inter|SemiBold" color="palette.text.shade100">
                 {account &&
-                  account.currency &&
+                  account.type === "Account" &&
                   listTokenTypesForCryptoCurrency(account.currency).join(", ")}
                 {"tokens"}
               </Text>
@@ -159,7 +159,8 @@ const Description = styled(Box).attrs(() => ({
   color: "palette.text.shade80",
   textAlign: "center",
 }))``;
-const ConnectedEmptyStateAccount: React.ComponentType<OwnProps> = compose(
+
+const ConnectedEmptyStateAccount = compose<React.ComponentType<OwnProps>>(
   connect(null, mapDispatchToProps),
   withRouter,
   withTranslation(),

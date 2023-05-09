@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from "react";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import manager from "@ledgerhq/live-common/manager/index";
 import { findCryptoCurrencyById, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { App } from "@ledgerhq/types-live";
 import Image from "~/renderer/components/Image";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/react";
 import ManagerAppIconPlaceholder from "~/renderer/icons/ManagerAppIcon";
+
 const size = 40;
 // trick to format size for certain type of icons
 const Container = styled.div`
@@ -32,7 +33,7 @@ const ManagerAppIconContainer = styled.div`
   transition: opacity 0.2s ease-out;
   color: ${p => p.theme.colors.palette.text.shade20};
 `;
-const IconContainer = styled.div`
+const IconContainer = styled.div<{ size?: number | string; loading?: boolean }>`
   width: ${p => p.size}px;
   height: ${p => p.size}px;
   position: relative;
@@ -57,7 +58,7 @@ function AppIcon({ app }: Props) {
   const currencyColor = currency && getCurrencyColor(currency);
   const IconCurrency = currency && getCryptoCurrencyIcon(currency);
   return IconCurrency ? (
-    <Container color={currencyColor}>
+    <Container color={currencyColor ?? undefined}>
       <IconCurrency size={size} color="#FFF" />
     </Container>
   ) : (
@@ -69,4 +70,4 @@ function AppIcon({ app }: Props) {
     </IconContainer>
   );
 }
-export default withTheme(AppIcon);
+export default AppIcon;
