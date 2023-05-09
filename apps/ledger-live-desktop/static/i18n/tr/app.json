@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "Asla",
+    "new" : "Yeni",
     "apply" : "Uygula",
     "done" : "Tamam",
     "confirm" : "Onayla",
@@ -126,7 +127,8 @@
     "exchange" : "Takas edin",
     "info" : "Bilgi",
     "connectDevice" : "Cihazınızı bağlayın",
-    "add" : "Ekle"
+    "add" : "Ekle",
+    "or" : "VEYA"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -215,6 +217,7 @@
     "earn" : "Kazan",
     "exchange" : "Satın Al / Sat",
     "swap" : "Takas et",
+    "refer" : "Arkadaşına Öner",
     "lend" : "Borç ver",
     "catalog" : "Keşfet",
     "market" : "Piyasa",
@@ -1203,23 +1206,33 @@
     },
     "manual" : {
       "title" : "{{deviceName}} cihazını kurun",
+      "continueOnDevice" : "Bu eylemi {{productName}} cihazında yapın",
       "pairedContent" : {
         "title" : "{{deviceName}} bağlandı",
         "description" : "{{deviceName}} üzerinde kuruluma devam edin",
-        "text" : "Bu ekran, {{deviceName}} cihazınızın kurulumunu yaparken ilgili bilgileri sunmak üzere dinamik olarak değişecek"
+        "text" : "Bu ekran, {{deviceName}} cihazınızın kurulumunu yaparken ilgili bilgileri sunmak üzere dinamik olarak değişecek",
+        "continueOnDevice" : "Bir sonraki ekranı görmek için {{productName}} cihazına dokunun."
       },
       "pinContent" : {
         "title" : "PIN Kodunuzu belirleyin",
         "description" : "PIN Kodunuz 4 ila 8 rakam uzunluğunda olabilir",
-        "text" : "{{deviceName}} cihazınıza ve PIN Kodunuza erişimi olan herkes tüm kripto ve NFT varlıklarınıza erişebilir."
+        "text" : "{{deviceName}} cihazınıza ve PIN Kodunuza erişimi olan herkes tüm kripto ve NFT varlıklarınıza erişebilir.",
+        "continueOnDevice" : "{{productName}} cihazında PIN Kodunuzu belirleyin"
       },
       "seedContent" : {
         "title" : "Gizli Kurtarma İfadesi",
-        "choiceNewOrRestore" : "Sizin için en uygun olan kurulum seçeneğini belirleyin.",
-        "newSeed" : "Gizli kurtarma ifadeniz hakkında daha fazla bilgi için aşağıdaki videolara dokunun",
-        "choiceRestoreDirectOrRecover" : "Yer tutucu: Doğrudan geri yüklemeyi seçin veya Recover'ı kullanın",
         "recoverSeed" : "Yer tutucu: Recover",
-        "restoreSeed" : "Kurtarma işlemini yaparken varlıklarınızın güvenliğini garantilemek için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesini kullandığınızdan emin olun.\n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın."
+        "restoreSeed" : "Kurtarma işlemini yaparken varlıklarınızın güvenliğini garantilemek için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesini kullandığınızdan emin olun.\n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın.",
+        "selection" : "{{productName}} cihazında size en uygun kurulum seçeneğini belirleyin.",
+        "selectionContinueOnDevice" : "{{productName}} cihazında bir seçeneğe dokunun",
+        "newSeedDescription" : "Gizli kelimeleriniz hakkında daha fazla bilgi edinmek için aşağıdaki videoları izleyin.",
+        "newSeedContinueOnDevice" : "Bunu {{productName}} cihazınızda yapın",
+        "recovery" : "Kurtarma işlemini yaparken varlıklarınızın güvenliğini garantilemek için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesini kullandığınızdan emin olun.\n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın.",
+        "restoreChoiceContinueOnDevice" : "{{productName}} cihazınızda bir seçenek belirleyin",
+        "restoreChoiceSRPTitle" : "Gizli Kurtarma İfadesini kullanarak geri yükleyin",
+        "restoreChoiceSRPDescription" : "Varlıklarınızın güvenliğini garantilemek için Ledger tarafından oluşturulan bir İfadeyi kullandığınızdan emin olun.",
+        "restoreChoiceRecoverTitle" : "Ledger Recover kullanarak geri yükleyin",
+        "restoreChoiceRecoverDescription" : "Ledger hesabınıza giriş yapıp kimliğinizi doğrulayarak Kurtarma İfadesi Yedeğinizi geri yükleyin."
       },
       "softwareCheckContent" : {
         "title" : "Yazılım kontrolü",
@@ -1238,10 +1251,13 @@
         }
       },
       "installApplications" : {
-        "title" : "Varsayılan bir uygulama grubunu indirmenizi öneririz Daha sonra diğer uygulamaları da indirebilirsiniz",
+        "title" : "Blok zinciri uygulamalarını yükleyin",
         "install" : "Yükle",
         "skip" : "Daha sonra yapacağım",
         "info" : "{{deviceName}} cihazındaki uygulamalar işlemleri onaylamak için kullanılır. İstediğiniz zaman bu uygulamaları ekleyebilir ve silebilirsiniz."
+      },
+      "endOfSetup" : {
+        "title" : "Kurulum sonu"
       },
       "genuineCheckModal" : {
         "title" : "Orijinallik Kontrolü",
@@ -1441,7 +1457,8 @@
     "messageIfUnverified" : "Lütfen paylaşılan adres ile cihazınızdaki adresin tam olarak eşleştiğini doğrulayın",
     "messageIfSkipped" : "{{name}} adresiniz Ledger cihazınızda doğrulanmadı. Güvenlik için lütfen doğrulayın.",
     "showQrCode" : "QR Kodunu Göster",
-    "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun"
+    "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
+    "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1891,7 @@
         "plugin" : "Uygulamaya git",
         "swap" : "Takas",
         "tool" : "Daha fazla bilgi",
-        "app" : "Daha fazla bilgi"
+        "currency" : "Daha fazla bilgi"
       },
       "uninstall" : {
         "title" : "Tümünü kaldır",
@@ -2244,6 +2261,11 @@
     "placeholder" : "Tony'nin Stax'i",
     "remainingCharacters" : "{{ remainingCharacters }} karakter kaldı",
     "renamed" : "{{ productName }} adını \n“{{ name }}” olarak değiştirdiniz "
+  },
+  "removeCustomLockscreen" : {
+    "cta" : "Kaldır",
+    "confirmation" : "Ledger Stax'inizde görüntünün kaldırılmasını onaylayın",
+    "success" : "Kilitli ekran resmi kaldırıldı"
   },
   "deviceLocalization" : {
     "language" : "Dil",
@@ -3761,6 +3783,7 @@
         "title" : "Artık bir geliştiricisiniz!",
         "text" : "Harikalar Diyarına Hoş Geldiniz"
       },
+      "userId" : "Kullanıcı kimliği",
       "debugApps" : "Hata ayıklama uygulamalarına izin ver",
       "debugAppsDesc" : "Hata ayıklama etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
       "experimentalApps" : "Deneysel uygulamalara izin ver",
@@ -3790,6 +3813,8 @@
       "runLocalAppOpenButton" : "Aç",
       "enableLearnStagingUrl" : "Öğren sayfası staging URL'si",
       "enableLearnStagingUrlDesc" : "Öğren sayfası için staging URL'sini etkinleştirin.",
+      "enableStagingNftMetadataService" : "NFT metaverileri test ortamı hizmeti",
+      "enableStagingNftMetadataServiceDesc" : "NFT metaverileri test ortamı hizmetini etkinleştirin ve NFT önbelleğini sıfırlayın",
       "openOnboardingAppInstallDebug" : "İlk uygulama kurulumu hata ayıklama ekranını açın",
       "openOnboardingAppInstallDebugDesc" : "İlk uygulama kurulumunu senkronize etme adımındaki bileşenlerin yer aldığı bir ekranı açın"
     },
@@ -3847,6 +3872,10 @@
           "title" : "Geliştirici modu",
           "description" : "My Ledger'da developer ve testnet uygulamalarını görüntüleyin."
         },
+        "listAppsV2" : {
+          "title" : "Deneysel My Ledger uygulama listesi",
+          "description" : "My Ledger erişimi ve uygulama içi akışlar için performans iyileştirmesi."
+        },
         "scanForInvalidPaths" : {
           "title" : "Genişletilmiş hesap arama",
           "description" : "Hatalı türetme yollarına sahip hesapları tarayın. Lütfen potansiyel olarak bulunan varlıkları normal bir hesaba gönderin."
@@ -3886,6 +3915,10 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "Özel öncelik ücreti kapısı",
           "description" : "Gelişmiş bir EIP1559 işlemi için izin verilen tahminî minimum öncelik ücretimizin yüzdesini özelleştirin"
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "Taban ücret için özel çarpan değeri",
+          "description" : "EIP1559 işleminin maxFeePerGas ücretini düzenleyerek taban ücret için kullanılan çarpan değerini özelleştirin"
         }
       }
     },
@@ -5650,6 +5683,7 @@
   "customImage" : {
     "title" : "Özel kilitli ekran",
     "managerCTA" : "Kilit ekranı resmi",
+    "managerCTARemove" : "Kaldır",
     "steps" : {
       "choose" : {
         "stepLabel" : "Bir görüntü seçin",
@@ -5658,6 +5692,7 @@
         "myNfts" : "NFT'lerim",
         "upload" : "Bilgisayarımdan yükle",
         "chooseNft" : "Bir NFT seçin",
+        "remove" : "Mevcut resmi kaldır",
         "selectNft" : "NFT'yi seç",
         "previousSelectNft" : "Geri",
         "nftEmptyStateTitle" : "Gösterilecek NFT yok",
@@ -5723,9 +5758,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "Kimliğinizi kullanarak\nanahtarlarınızı kurtarın",
+    "description" : "Gizli Kurtarma İfadeniz her zaman yanınızda olmaz.\nLedger Nano X'e özel ön lansman. 31 Mayıs 2023'e kadar ücretsiz abone olun",
+    "cta" : "Neden abone olmalıyım?",
+    "downloadLLM" : "Ledger Live Mobile uygulamasını kullanarak <purple>Ledger Recover</purple>'a abone olun"
   }
 }
