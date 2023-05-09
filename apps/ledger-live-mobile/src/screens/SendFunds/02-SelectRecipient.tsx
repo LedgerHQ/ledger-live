@@ -253,7 +253,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             )}
           </NavigationScrollView>
           <View style={styles.container}>
-            {(!isDomainResolutionEnabled || !isCurrencySupported) && transaction.recipient && !(error || warning) ? (
+            {(!isDomainResolutionEnabled || !isCurrencySupported) &&
+            transaction.recipient &&
+            !(error || warning) ? (
               <View style={styles.infoBox}>
                 <Alert type="primary">
                   {t("send.recipient.verifyAddress")}
