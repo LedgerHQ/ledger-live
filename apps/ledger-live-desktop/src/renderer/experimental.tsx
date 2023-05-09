@@ -13,8 +13,8 @@ export type FeatureCommon = {
 export type FeatureToggle =
   | {
       type: "toggle";
-      valueOn?: any;
-      valueOff?: any;
+      valueOn?: string | boolean;
+      valueOff?: string | boolean;
     }
   | {
       type: "integer";
@@ -133,7 +133,7 @@ export const experimentalFeatures: Feature[] = [
 const lsKey = "experimentalFlags";
 const lsKeyVersion = `${lsKey}_llversion`;
 export const getLocalStorageEnvs = (): {
-  [_: string]: any;
+  [_: string]: unknown;
 } => {
   const maybeData = window.localStorage.getItem(lsKey);
   if (!maybeData) return {};
