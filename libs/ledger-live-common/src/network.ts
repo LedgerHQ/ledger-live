@@ -57,7 +57,9 @@ export const errorInterceptor = (error: AxiosError<any>): AxiosError<any> => {
   const { baseURL, url, method = "", metadata } = config;
   const { startTime = 0 } = metadata || {};
 
-  let errorToThrow;
+  const duration = `${(Date.now() - startTime).toFixed(0)}ms`;
+
+  let errorToThrow: Error;
   if (error.response) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
@@ -78,21 +80,17 @@ export const errorInterceptor = (error: AxiosError<any>): AxiosError<any> => {
     } else {
       errorToThrow = makeError(`API HTTP ${status}`, status, url, method);
     }
+
     log(
       "network-error",
-      `${status} ${method} ${baseURL || ""}${url} (${(
-        Date.now() - startTime
-      ).toFixed(0)}ms): ${errorToThrow.message}`,
+      `${status} ${method} ${baseURL || ""}${url} (${duration}): ${
+        errorToThrow.message
+      }`,
       getEnv("DEBUG_HTTP_RESPONSE") ? { data: data } : {}
     );
     throw errorToThrow;
   } else if (error.request) {
-    log(
-      "network-down",
-      `DOWN ${method} ${baseURL || ""}${url} (${(
-        Date.now() - startTime
-      ).toFixed(0)}ms)`
-    );
+    log("network-down", `DOWN ${method} ${baseURL || ""}${url} (${duration})`);
     throw new NetworkDown();
   }
   throw error;
