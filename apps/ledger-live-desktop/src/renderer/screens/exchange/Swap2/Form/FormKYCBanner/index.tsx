@@ -25,7 +25,7 @@ const FormKYCBanner = ({
     if (!provider) {
       return;
     }
-    openURL(urls.swap.providers[provider]?.support);
+    openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.support);
   }, [provider]);
   let onClickAction = useCallback(() => {
     track("button_clicked", {

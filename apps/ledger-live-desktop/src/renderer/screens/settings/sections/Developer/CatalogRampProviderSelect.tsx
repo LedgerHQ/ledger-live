@@ -6,13 +6,21 @@ import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
 import { providers } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/api/index";
 
+type RemoteRampProvider = {
+  value: string;
+  url: string;
+  label: string;
+};
 const CatalogRampProviderSelect = () => {
   const dispatch = useDispatch();
   const provider = useSelector(catalogProviderSelector);
 
+  const avoidEmptyValue = (providerKey?: RemoteRampProvider | null) =>
+    providerKey && handleChangeProvider(providerKey);
+
   const handleChangeProvider = useCallback(
-    ({ value: providerKey }: { value: string }) => {
-      dispatch(setCatalogProvider(providerKey));
+    (providerKey: RemoteRampProvider) => {
+      dispatch(setCatalogProvider(providerKey.value));
     },
     [dispatch],
   );
@@ -26,7 +34,7 @@ const CatalogRampProviderSelect = () => {
         small
         minWidth={260}
         isSearchable={false}
-        onChange={handleChangeProvider}
+        onChange={avoidEmptyValue}
         value={currentProvider}
         options={providers}
       />

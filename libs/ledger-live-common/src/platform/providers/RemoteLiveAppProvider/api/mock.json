@@ -32,7 +32,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "ramp",
@@ -68,7 +69,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "paraswap",
@@ -136,7 +138,8 @@
         "method": "transaction.broadcast"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "paraswap v5",
@@ -204,7 +207,8 @@
         "method": "transaction.broadcast"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "lido",
@@ -239,7 +243,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "1inch",
@@ -284,7 +289,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "btcdirect",
@@ -307,7 +313,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "banxa",
@@ -330,7 +337,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "bitrefill",
@@ -353,7 +361,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "mercuryo",
@@ -414,7 +423,8 @@
         }
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "zerion",
@@ -449,7 +459,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "rainbow",
@@ -472,7 +483,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "poap",
@@ -495,7 +507,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "aave",
@@ -622,7 +635,8 @@
       }
     },
     "permissions": [],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "changenow",
@@ -665,7 +679,8 @@
         "method": "*"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "mercuryo",
@@ -733,7 +748,8 @@
         "method": "*"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   },
   {
     "id": "debug",
@@ -760,6 +776,7 @@
         "method": "*"
       }
     ],
-    "domains": ["https://*"]
+    "domains": ["https://*"],
+    "visibility": "complete"
   }
 ]

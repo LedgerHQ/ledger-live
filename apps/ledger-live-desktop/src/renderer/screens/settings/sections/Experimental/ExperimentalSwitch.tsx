@@ -3,11 +3,11 @@ import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
 type Props = {
   name: string;
-  valueOn: unknown;
-  valueOff: unknown;
+  valueOn?: boolean;
+  valueOff?: boolean;
   isDefault: boolean;
   readOnly: boolean;
-  onChange: (name: string, val: unknown) => boolean;
+  onChange: (name: string, val: unknown) => void;
 };
 const ExperimentalSwitch = ({
   onChange,
@@ -30,7 +30,7 @@ const ExperimentalSwitch = ({
       <Switch
         disabled={readOnly}
         isChecked={checked}
-        onChange={readOnly ? null : handleOnChange}
+        onChange={readOnly ? undefined : handleOnChange}
         data-test-id={`${name}-button`}
       />
     </>

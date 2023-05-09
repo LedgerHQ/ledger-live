@@ -8,8 +8,13 @@ import { Wrapper, Label, IllustrationWrapper } from "~/renderer/components/Carou
 import { useHistory } from "react-router-dom";
 import Image from "../Image";
 import { track } from "~/renderer/analytics/segment";
+import { ContentCard } from "~/types/dynamicContent";
 
-const Layer = styled(animated.div)`
+const Layer = styled(animated.div)<{
+  image: string;
+  width: number;
+  height: number;
+}>`
   background-image: url('${p => p.image}');
   background-size: contain;
   background-position: center center;
@@ -29,37 +34,28 @@ const EllipsedText = styled(Text)`
   -webkit-box-orient: vertical;
 `;
 
-type Img = {
-  source: string;
-  transform: [number, number, number, number];
-  size: { width: number; height: number };
-};
-type Props = {
-  id: string;
-  url?: string;
-  path?: string;
-  title: string;
-  description: string;
-  imgs?: Img[];
-  image?: string;
-  onClickOnSlide?: (id: string) => void;
-};
+type Props = ContentCard;
 
 const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide }: Props) => {
   const history = useHistory();
-  const [{ xy }, set] = useSpring(() => ({
+  const [{ xy }, set] = useSpring<{
+    xy: number[];
+    config: { mass: number; tension: number; friction: number };
+  }>(() => ({
     xy: [-120, -30],
     config: { mass: 10, tension: 550, friction: 140 },
   }));
-
-  const getTransform = (offsetX, effectX, offsetY, effectY) => ({
+  const getTransform = (offsetX: number, effectX: number, offsetY: number, effectY: number) => ({
     transform: xy.interpolate(
+      // @ts-expect-error react-spring types are broken
       (x, y) => `translate3d(${x / effectX + offsetX}px,${y / effectY + offsetY}px, 0)`,
     ),
   });
 
+  const ref = useRef<HTMLDivElement>(null);
+
   // React to the user mouse movement inside the banner for parallax effect
-  const onMouseMove = e => {
+  const onMouseMove = (e: React.MouseEvent) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -95,7 +91,6 @@ const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide 
     }, 400);
   }, [set]);
 
-  const ref = useRef(null);
   return (
     <Wrapper onClick={onClick} ref={ref} onMouseMove={onMouseMove} onMouseLeave={onMouseLeave}>
       <Box flex={1} p={24}>
@@ -116,9 +111,8 @@ const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide 
           {imgs.map(({ source, transform, size }, i) => (
             <Layer
               key={i}
-              // TODO: why is the .apply needed?
-              // eslint-disable-next-line
-              style={getTransform.apply(null, transform)}
+              // @ts-expect-error react-spring types are broken
+              style={getTransform(...transform)}
               image={source}
               width={size.width}
               height={size.height}

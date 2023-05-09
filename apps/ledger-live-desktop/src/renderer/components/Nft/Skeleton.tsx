@@ -3,21 +3,26 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import { alwaysShowSkeletonsSelector } from "~/renderer/reducers/application";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { layout, space } from "styled-system";
+import { layout, LayoutProps, space, SpaceProps } from "styled-system";
 import { State } from "~/renderer/reducers";
 type OwnProps = {
   width?: number;
   minHeight?: number;
   barHeight?: number;
   full?: boolean;
-  mt?: any;
+  mt?: string | number;
   children?: React.ReactNode;
   show?: boolean;
 };
 type Props = {
   alwaysShowSkeletons: boolean;
 } & OwnProps;
-const Wrapper = styled.div`
+const Wrapper = styled.div<
+  {
+    full?: boolean;
+  } & LayoutProps &
+    SpaceProps
+>`
   ${layout};
   ${space};
   ${p => (p.full ? "aspect-ratio: 1; height: auto;" : "")}
@@ -25,9 +30,11 @@ const Wrapper = styled.div`
   align-items: center;
   display: grid;
 `;
-const Item = styled.div.attrs(({ state }) => ({
-  style: transitionStyles[state],
-}))`
+const Item = styled.div<{
+  width?: number | string;
+  full?: boolean;
+  minHeight?: number | string;
+}>`
   display: block;
   grid-column: 1/2;
   grid-row: 1/2;
@@ -83,20 +90,6 @@ const Item = styled.div.attrs(({ state }) => ({
     }
   }
 `;
-const transitionStyles = {
-  entering: {
-    opacity: 0,
-  },
-  entered: {
-    opacity: 1,
-  },
-  exiting: {
-    opacity: 0,
-  },
-  exited: {
-    opacity: 0,
-  },
-};
 const mapStateToProps = (state: State) => ({
   alwaysShowSkeletons: alwaysShowSkeletonsSelector(state),
 });

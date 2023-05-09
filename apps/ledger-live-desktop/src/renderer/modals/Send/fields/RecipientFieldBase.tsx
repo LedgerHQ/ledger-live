@@ -5,8 +5,7 @@ import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { TFunction } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
-import RecipientAddress from "~/renderer/components/RecipientAddress";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import RecipientAddress, { OnChangeExtra } from "~/renderer/components/RecipientAddress";
 
 type Props = {
   account: Account;
@@ -17,9 +16,9 @@ type Props = {
   initValue?: string;
   resetInitValue?: () => void;
   value: string | undefined;
-  onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => Promise<void>;
   placeholderTranslationKey: string;
   hideError: boolean;
+  onChange: (recipient: string, maybeExtra?: OnChangeExtra | undefined) => void;
 };
 
 const RecipientFieldBase = ({

@@ -50,7 +50,7 @@ const RightContainer = styled(Box).attrs(() => ({
   ml: "auto",
 }))``;
 
-const ItemContainer: ThemedComponent<{
+type ItemContainerProps = {
   "data-e2e"?: string;
   isInteractive?: boolean;
   onClick?: () => void;
@@ -58,13 +58,15 @@ const ItemContainer: ThemedComponent<{
   children: React.ReactNode;
   justifyContent?: string;
   hidden?: boolean;
-}> = styled(Tabbable).attrs(p => ({
+};
+
+const ItemContainer = styled(Tabbable).attrs<ItemContainerProps>(p => ({
   padding: 1,
   alignItems: "center",
   cursor: p.disabled ? "not-allowed" : "default",
   horizontal: true,
   borderRadius: 1,
-}))`
+}))<ItemContainerProps>`
   -webkit-app-region: no-drag;
   height: 24px;
   position: relative;

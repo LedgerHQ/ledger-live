@@ -2,7 +2,7 @@ import React, { useRef, useMemo } from "react";
 import { FTXProviders, getFTXURL } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import SwapConnectWidget from "../SwapConnectWidget";
 type Props = {
-  onClose: Function;
+  onClose: () => void;
   provider: FTXProviders;
 };
 const FTXLogin = ({ onClose, provider }: Props) => {

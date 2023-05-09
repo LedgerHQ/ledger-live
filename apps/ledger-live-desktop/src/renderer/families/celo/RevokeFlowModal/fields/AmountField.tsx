@@ -63,7 +63,7 @@ const AmountField = ({
     amountError = null;
   }
   return (
-    <Box vertical flow={1}>
+    <Box flow={1}>
       <Box horizontal justifyContent="space-between">
         <Label>
           <Trans i18nKey="celo.revoke.steps.amount.amountLabel" />

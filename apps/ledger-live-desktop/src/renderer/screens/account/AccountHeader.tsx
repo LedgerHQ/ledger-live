@@ -1,6 +1,13 @@
 import React, { useCallback, useState, useEffect } from "react";
 import styled from "styled-components";
-import { fontSize, color } from "styled-system";
+import {
+  fontSize,
+  color,
+  ColorProps,
+  FontSizeProps,
+  FontWeightProps,
+  SpaceProps,
+} from "styled-system";
 import fontFamily from "~/renderer/styles/styled/fontFamily";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -27,6 +34,17 @@ import IconCross from "~/renderer/icons/Cross";
 import IconCheck from "~/renderer/icons/Check";
 import { updateAccount } from "~/renderer/actions/accounts";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+
+type BaseComponentProps = BaseProps & { ff?: string };
+
+type BaseProps = {
+  fontSize?: number;
+  disableEllipsis?: boolean;
+} & SpaceProps &
+  ColorProps &
+  FontSizeProps &
+  FontWeightProps;
+
 const CurName = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   fontSize: 2,
@@ -73,7 +91,10 @@ const AccountNameBox = styled(Box)`
   position: relative;
   left: -11px;
 `;
-const AccountName = styled.input`
+const AccountName = styled.input.attrs<BaseProps>(p => ({
+  fontSize: p.fontSize,
+  color: p.color,
+}))<BaseComponentProps>`
   ${fontFamily}
   ${fontSize}
   ${color}
@@ -93,7 +114,7 @@ const AccountName = styled.input`
   + svg {
     display: inline;
     opacity: 0;
-    transition opacity 0.2s;
+    transition: opacity 0.2s;
   }
 
   :hover {
@@ -114,9 +135,7 @@ const AccountName = styled.input`
     }
   }
 `;
-const IconButton: ThemedComponent<{
-  disabled?: boolean;
-}> = styled(Tabbable).attrs(() => ({
+const IconButton = styled(Tabbable).attrs(() => ({
   alignItems: "center",
   justifyContent: "center",
 }))`
@@ -161,9 +180,9 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
       dispatch(updateAccount(updatedAccount));
     }
   };
-  const submitNameChangeOnEnter = e => {
+  const submitNameChangeOnEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      e.target.blur();
+      e.currentTarget.blur();
       submitNameChange();
     }
   };
@@ -199,12 +218,9 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
                 {shortAddressPreview(account.token.contractAddress)}
               </CurNameTokenLink>
               <CurNameTokenIcon>
-                <ExternalLink
-                  size={12}
-                  style={{
-                    marginRight: 5,
-                  }}
-                />
+                <Box mr={5}>
+                  <ExternalLink size={12} />
+                </Box>
                 <Trans i18nKey="account.openInExplorer" />
               </CurNameTokenIcon>
             </Wrapper>
@@ -223,13 +239,13 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
             onFocus={() => {
               setEditingName(true);
               setTimeout(() => {
-                document.execCommand("selectAll", false, null);
+                document.execCommand("selectAll", false, undefined);
               });
             }}
             onBlur={() => {
               setEditingName(false);
               setTimeout(() => {
-                window.getSelection().removeAllRanges();
+                window.getSelection()?.removeAllRanges();
               });
             }}
             onKeyPress={submitNameChangeOnEnter}

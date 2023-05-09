@@ -22,7 +22,7 @@ const EmptyStateAccounts = ({ theme }: { theme: any }) => {
   }, [push]);
   const dispatch = useDispatch();
   const openAddAccounts = useCallback(() => {
-    dispatch(openModal("MODAL_ADD_ACCOUNTS"));
+    dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
   }, [dispatch]);
   return (
     <Box
@@ -89,7 +89,9 @@ const EmptyStateAccounts = ({ theme }: { theme: any }) => {
             }}
             iconSize={14}
             label={<Trans i18nKey="emptyState.accounts.buttons.help" />}
-            onClick={() => openURL(urls.faq[locale in urls.faq ? locale : "en"])}
+            onClick={() =>
+              openURL(urls.faq[locale in urls.faq ? (locale as keyof typeof urls.faq) : "en"])
+            }
           />
         </Box>
       </Box>

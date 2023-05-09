@@ -5,25 +5,25 @@ import { Handlers } from "./types";
 
 export type PlatformAppDrawerInfo = {
   type: "DAPP_INFO";
-  manifest: LiveAppManifest | undefined | null;
+  manifest?: LiveAppManifest | null;
   title: string;
 };
 export type PlatformAppDrawerDisclaimer = {
   type: "DAPP_DISCLAIMER";
-  manifest: LiveAppManifest | undefined | null;
+  manifest?: LiveAppManifest | null;
   disclaimerId: string;
   title: string;
   next: () => void;
 };
-export type PlatformAppDrawers = PlatformAppDrawerInfo & PlatformAppDrawerDisclaimer;
+export type PlatformAppDrawers = PlatformAppDrawerInfo | PlatformAppDrawerDisclaimer;
 export type UIState = {
   informationCenter: {
     isOpen: boolean;
-    tabId: string | undefined;
+    tabId?: string;
   };
   platformAppDrawer: {
     isOpen: boolean;
-    payload: PlatformAppDrawers | undefined | null;
+    payload?: PlatformAppDrawers | null;
   };
 };
 const initialState: UIState = {
@@ -103,8 +103,10 @@ const handlers: UIHandlers = {
 // Selectors
 
 export const UIStateSelector = (state: State): UIState => state.UI;
-export const informationCenterStateSelector = (state: State) => state.UI.informationCenter;
-export const platformAppDrawerStateSelector = (state: State) => state.UI.platformAppDrawer;
+export const informationCenterStateSelector = (state: State): UIState["informationCenter"] =>
+  state.UI.informationCenter;
+export const platformAppDrawerStateSelector = (state: State): UIState["platformAppDrawer"] =>
+  state.UI.platformAppDrawer;
 
 // Exporting reducer
 

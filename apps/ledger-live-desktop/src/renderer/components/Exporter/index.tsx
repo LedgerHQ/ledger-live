@@ -6,10 +6,11 @@ import Box from "~/renderer/components/Box";
 import QRCodeExporter from "~/renderer/components/Exporter/QRCodeExporter";
 import ExportInstructions from "~/renderer/components/Exporter/ExportInstructions";
 import { Account } from "@ledgerhq/types-live";
-type OwnProps = {};
-type Props = OwnProps & {
+
+type Props = {
   accounts?: Account[];
 };
+
 const Exporter = ({ accounts }: Props) => (
   <Box justifyContent="center" alignItems="center">
     <Box flow={2}>
@@ -21,5 +22,5 @@ const Exporter = ({ accounts }: Props) => (
 const mapStateToProps = createStructuredSelector({
   accounts: (state, props) => props.accounts || activeAccountsSelector(state),
 });
-const ConnectedExporter: React.ComponentType<OwnProps> = connect(mapStateToProps)(Exporter);
+const ConnectedExporter: React.ComponentType<Props> = connect(mapStateToProps)(Exporter);
 export default ConnectedExporter;

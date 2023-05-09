@@ -4,7 +4,7 @@ import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
-export type StepId = "amount" | "summary" | "device" | "confirmation";
+export type StepId = "amount" | "summary" | "device" | "confirmation" | "warning";
 export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;

@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import * as Animatable from "react-native-animatable";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import Fuse from "fuse.js";
+import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../../components/TabBar/TabBarSafeAreaView";
@@ -25,7 +26,7 @@ import { DAppDisclaimer } from "./DAppDisclaimer";
 const AnimatedView = Animatable.View;
 
 const options: Fuse.IFuseOptions<LiveAppManifest> = {
-  keys: ["name"],
+  keys: ["name", "categories"],
   threshold: 0.1,
 };
 
@@ -33,14 +34,26 @@ export function Catalog() {
   const { t } = useTranslation();
   const title = t("browseWeb3.catalog.title");
 
+  const manifestsSearchableVisibility: LiveAppManifest[] = useManifests({
+    visibility: "searchable",
+  });
+
+  const manifestsCompleteVisibility: LiveAppManifest[] = useManifests({
+    visibility: "complete",
+  });
+
+  const manifests = useMemo(
+    () => [...manifestsSearchableVisibility, ...manifestsCompleteVisibility],
+    [],
+  );
+
   const {
     manifestsByCategories,
-    manifests,
     categories,
     selected,
     setSelected,
     initialSelectedState,
-  } = useCategories();
+  } = useCategories(manifestsCompleteVisibility);
 
   const recentlyUsed = useRecentlyUsed(manifests);
 
@@ -106,7 +119,7 @@ export function Catalog() {
 
       {isActive ? (
         <Search
-          manifests={manifests}
+          manifests={manifestsCompleteVisibility}
           recentlyUsed={recentlyUsed.data}
           title={title}
           input={input}

@@ -1,10 +1,10 @@
 import styled from "styled-components";
 
-export const PlaceholderLine: ThemedComponent<{
+export const PlaceholderLine = styled.div<{
   dark?: boolean;
   width: number;
   height?: number;
-}> = styled.div`
+}>`
   background-color: ${p =>
     p.dark ? p.theme.colors.palette.text.shade80 : p.theme.colors.palette.text.shade20};
   width: ${p => p.width}px;

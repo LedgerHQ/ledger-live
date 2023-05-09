@@ -12,6 +12,7 @@ import CatalogBanner from "./CatalogBanner";
 import TwitterBanner from "./TwitterBanner";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
+
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -21,20 +22,24 @@ const Grid = styled.div`
   margin: auto;
   padding-bottom: 32px;
 `;
+
 const GridItem = styled.div`
   > * {
     height: 100%;
   }
 `;
+
 const Header = styled(Box).attrs(() => ({
   horizontal: true,
   paddingBottom: 32,
 }))``;
+
 const Title = styled(Box).attrs(p => ({
   ff: "Inter|SemiBold",
   fontSize: 7,
   color: p.theme.colors.palette.secondary.main,
 }))``;
+
 const PlatformCatalog = () => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -68,7 +73,7 @@ const PlatformCatalog = () => {
       </Header>
       <CatalogBanner />
       <TwitterBanner />
-      <Grid length={manifests.length}>
+      <Grid>
         {manifests.map(manifest => (
           <GridItem key={manifest.id}>
             <AppCard

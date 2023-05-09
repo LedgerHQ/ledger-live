@@ -38,13 +38,13 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
 
   const swapAvailableIds = useMemo(() => {
     return providers || storedProviders
-      ? (providers || storedProviders)
+      ? (providers || storedProviders)!
           .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
           .flat(2)
       : [];
   }, [providers, storedProviders]);
 
-  const currency: CryptoCurrency = parentAccount?.currency || account.currency;
+  const currency: CryptoCurrency = parentAccount?.currency || (account as Account).currency;
   const availableOnBuy = currency && onRampAvailableTickers.includes(currency.ticker.toUpperCase());
   const availableOnSwap = useMemo(() => {
     return currency && swapAvailableIds.includes(currency.id);

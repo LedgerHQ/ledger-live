@@ -7,7 +7,7 @@ import {
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import { rgba } from "~/renderer/styles/helpers";
-import { Account, NFTWithMetadata } from "@ledgerhq/types-live";
+import { Account, NFT, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import NFTCollectionContextMenu from "~/renderer/components/ContextMenu/NFTCollectionContextMenu";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
@@ -25,11 +25,10 @@ const Container = styled(Box)`
   }
 `;
 type Props = {
-  nfts: NFTWithMetadata[];
+  nfts: (ProtoNFT | NFT)[];
   contract: string;
   account: Account;
   onClick: (a: string) => void;
-  account: Account;
 };
 const Row = ({ nfts, contract, account, onClick }: Props) => {
   const [nft] = nfts;
@@ -49,7 +48,7 @@ const Row = ({ nfts, contract, account, onClick }: Props) => {
   ]);
   return (
     <NFTCollectionContextMenu
-      collectionName={tokenName}
+      collectionName={tokenName || undefined}
       collectionAddress={contract}
       account={account}
     >
@@ -59,10 +58,14 @@ const Row = ({ nfts, contract, account, onClick }: Props) => {
         horizontal
         px={4}
         py={3}
-        onClick={onClick}
+        onClick={() => onClick}
       >
         <Skeleton width={32} minHeight={32} show={loading}>
-          <Media metadata={nftMetadata} tokenId={nft?.tokenId} mediaFormat="preview" />
+          <Media
+            metadata={nftMetadata as NFTMetadata}
+            tokenId={nft?.tokenId}
+            mediaFormat="preview"
+          />
         </Skeleton>
         <Box ml={3} flex={1}>
           <Skeleton width={136} minHeight={24} barHeight={10} show={loading}>

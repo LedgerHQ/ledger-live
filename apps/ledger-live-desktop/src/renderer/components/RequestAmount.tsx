@@ -10,7 +10,9 @@ import IconTransfer from "~/renderer/icons/Transfer";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import TranslatedError from "./TranslatedError";
 
-const ErrorContainer = styled(Box)`
+const ErrorContainer = styled(Box)<{
+  hasError: unknown;
+}>`
   margin-top: 0px;
   font-size: 12px;
   width: 100%;
@@ -84,7 +86,7 @@ export default function RequestAmount({
   );
 
   return (
-    <Box vertical flow={5} alignItems="center">
+    <Box flow={5} alignItems="center">
       <Box horizontal grow shrink>
         <InputCurrency
           autoFocus={autoFocus}
