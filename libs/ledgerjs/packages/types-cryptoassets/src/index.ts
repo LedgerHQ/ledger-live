@@ -151,7 +151,8 @@ export type CryptoCurrencyId =
   | "moonriver"
   | "velas_evm"
   | "syscoin"
-  | "internet_computer";
+  | "internet_computer"
+  | "telos_evm";
 
 /**
  *
