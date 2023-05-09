@@ -63,7 +63,7 @@ exports[`finalMarkdownReport sample 1`] = `
 | Moonriver | ✅ | ? |
 | Velas EVM | [🙏](https://evmexplorer.velas.com/address/RWksZkxzcEYoBqC1DM6PrXyKurXRew9EP2) | ? |
 | Syscoin | [🙏](https://explorer.syscoin.org/address/ltc1qv29jhv9fgevexgezrds4jrll87sqdnmz2q7ah5) | ? |
-| Filecoin | [🙏](https://filfox.info/en/address/P9xs8oGpD87RUWTvGuHqrzCZu1J6vP6tr2) | ? |
+| Filecoin | [🙏](https://beryx.io/v1/explore/fil/mainnet/address/P9xs8oGpD87RUWTvGuHqrzCZu1J6vP6tr2) | ? |
 | Hedera | [🙏](https://hashscan.io/mainnet/account/D7jqj2UpQqWe4EZhwcWDBDcatGjeVFzakr) | ? |
 | NEAR | [🙏](https://explorer.near.org/accounts/MFd4ugE9STPXmTGQqqxsfSdhNP5rx1y7we) | ? |
 | XRP | [🙏](https://bithomp.com/explorer/3CGsK5NhQWmdsCu5Ryq3thu1ufNYwPoYA3) | ? |
