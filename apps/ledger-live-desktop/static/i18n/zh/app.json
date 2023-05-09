@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "从不",
+    "new" : "新",
     "apply" : "应用",
     "done" : "完成",
     "confirm" : "确认",
@@ -126,7 +127,8 @@
     "exchange" : "兑换",
     "info" : "信息",
     "connectDevice" : "连接您的设备",
-    "add" : "添加"
+    "add" : "添加",
+    "or" : "或者"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -215,10 +217,11 @@
     "earn" : "赚取",
     "exchange" : "买入 / 卖出",
     "swap" : "互换",
+    "refer" : "推荐好友",
     "lend" : "借出",
     "catalog" : "发现",
     "market" : "市场",
-    "protect" : "Recover"
+    "protect" : "恢复"
   },
   "stars" : {
     "placeholder" : "星标账户以在此显示。",
@@ -1203,23 +1206,33 @@
     },
     "manual" : {
       "title" : "设置 {{deviceName}}",
+      "continueOnDevice" : "在您的 {{productName}} 上执行此操作",
       "pairedContent" : {
         "title" : "{{deviceName}} 已连接",
         "description" : "在 {{deviceName}} 上继续设置",
-        "text" : "在您设置 {{deviceName}} 时，此屏幕将动态变化，向您提供相关信息"
+        "text" : "在您设置 {{deviceName}} 时，此屏幕将动态变化，向您提供相关信息",
+        "continueOnDevice" : "在 {{productName}} 点按查看下一页。"
       },
       "pinContent" : {
         "title" : "设置您的识别码",
         "description" : "您的识别码可以长 4 到 8 位",
-        "text" : "任何可获取您的 {{deviceName}} 和识别码的人都可以访问您的所有加密资产和 NFT 资产。"
+        "text" : "任何可获取您的 {{deviceName}} 和识别码的人都可以访问您的所有加密资产和 NFT 资产。",
+        "continueOnDevice" : "在 {{productName}} 上设置识别码"
       },
       "seedContent" : {
         "title" : "秘密恢复短语",
-        "choiceNewOrRestore" : "选择最适合您的设置选项。",
-        "newSeed" : "点按下面的视频，详细了解您的秘密恢复短语",
-        "choiceRestoreDirectOrRecover" : "占位符 - 选择直接恢复或使用 Recover",
         "recoverSeed" : "Placeholder: Recover",
-        "restoreSeed" : "要进行恢复，请务必使用 Ledger 生成的秘密恢复短语保证您的资产安全。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。"
+        "restoreSeed" : "要进行恢复，请务必使用 Ledger 生成的秘密恢复短语保证您的资产安全。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。",
+        "selection" : "在 {{productName}} 上，选择最适合您的设置选项。",
+        "selectionContinueOnDevice" : "在 {{productName}} 上点按一个选项",
+        "newSeedDescription" : "观看下面的视频，详细了解您的秘密助记词。",
+        "newSeedContinueOnDevice" : "在您的 {{productName}} 上执行此操作",
+        "recovery" : "要进行恢复，请务必使用 Ledger 生成的秘密恢复短语保证您的资产安全。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。",
+        "restoreChoiceContinueOnDevice" : "在您的 {{productName}} 上选择一个选项",
+        "restoreChoiceSRPTitle" : "使用秘密恢复短语恢复",
+        "restoreChoiceSRPDescription" : "请务必使用 Ledger 生成的短语保证您的资产安全。",
+        "restoreChoiceRecoverTitle" : "使用 Ledger Recover 恢复",
+        "restoreChoiceRecoverDescription" : "登录您的 Ledger 账户并确认您的身份来恢复您的恢复短语备份。"
       },
       "softwareCheckContent" : {
         "title" : "软件检查",
@@ -1238,10 +1251,13 @@
         }
       },
       "installApplications" : {
-        "title" : "我们建议下载一组默认应用程序。以后可以下载更多",
+        "title" : "安装区块链应用程序",
         "install" : "安装",
         "skip" : "我以后再下载",
         "info" : "{{deviceName}} 上的应用程序用于批准交易。您可以随时添加或删除它们。"
+      },
+      "endOfSetup" : {
+        "title" : "设置结束"
       },
       "genuineCheckModal" : {
         "title" : "真伪检查",
@@ -1441,7 +1457,8 @@
     "messageIfUnverified" : "请验证该共享地址与您设备上的地址完全匹配",
     "messageIfSkipped" : "未在您的 Ledger 设备上确认您的 {{name}} 地址。请验证以确保安全性。",
     "showQrCode" : "显示二维码",
-    "taprootWarning" : "确保发送方支持 taproot"
+    "taprootWarning" : "确保发送方支持 taproot",
+    "dashStakingWarning" : "请务必不要使用此地址接收权益质押奖励"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1891,7 @@
         "plugin" : "前往应用程序",
         "swap" : "互换",
         "tool" : "了解更多",
-        "app" : "了解更多"
+        "currency" : "了解更多"
       },
       "uninstall" : {
         "title" : "卸载全部",
@@ -2244,6 +2261,11 @@
     "placeholder" : "Tony 的 Stax",
     "remainingCharacters" : "剩余 {{ remainingCharacters }} 个字符",
     "renamed" : "{{ productName }} 名称已更改为\n“{{ name }}” "
+  },
+  "removeCustomLockscreen" : {
+    "cta" : "删除",
+    "confirmation" : "确认移除 Ledger Stax 上的图片",
+    "success" : "锁屏图片已移除"
   },
   "deviceLocalization" : {
     "language" : "语言",
@@ -3761,6 +3783,7 @@
         "title" : "您现在是一名开发者了 !",
         "text" : "欢迎来到 wonderland"
       },
+      "userId" : "用户 ID",
       "debugApps" : "允许调试应用程序",
       "debugAppsDesc" : "显示并允许打开调试标记的平台应用程序。",
       "experimentalApps" : "允许实验性应用程序",
@@ -3790,6 +3813,8 @@
       "runLocalAppOpenButton" : "打开",
       "enableLearnStagingUrl" : "学习页面的模拟环境 URL 网页地址",
       "enableLearnStagingUrlDesc" : "启用学习页面的模拟环境 URL 网址。",
+      "enableStagingNftMetadataService" : "登台/预发布环境下的 NFT 元数据服务",
+      "enableStagingNftMetadataServiceDesc" : "启用登台/预发布环境下的 NFT 元数据服务并重置 NFT 缓存",
       "openOnboardingAppInstallDebug" : "打开入门应用程序安装调试界面",
       "openOnboardingAppInstallDebugDesc" : "打开一个界面，其中包含同步入门应用程序安装步骤中的组件"
     },
@@ -3847,6 +3872,10 @@
           "title" : "开发者模式",
           "description" : "在 My Ledger（我的 Ledger）中显示开发者和测试网应用程序。"
         },
+        "listAppsV2" : {
+          "title" : "我的 Ledger 的实验性应用程序列表",
+          "description" : "我的 Ledger 访问和内部流程的性能改进。"
+        },
         "scanForInvalidPaths" : {
           "title" : "扩展的账户搜索",
           "description" : "扫描有错误派生路径的账户。请将可能找到的资产发送到一个常规账户。"
@@ -3886,6 +3915,10 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "自定义优先费用限额",
           "description" : "自定义高级 EIP1559 交易允许的预估最低优先费用百分比"
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "基本费用的自定义倍数",
+          "description" : "自定义组成 EIP1559 交易 maxFeePerGas 的基础费用的倍数"
         }
       }
     },
@@ -5650,6 +5683,7 @@
   "customImage" : {
     "title" : "自定义锁屏界面",
     "managerCTA" : "锁屏图片",
+    "managerCTARemove" : "删除",
     "steps" : {
       "choose" : {
         "stepLabel" : "选择一张图片",
@@ -5658,6 +5692,7 @@
         "myNfts" : "我的 NFT",
         "upload" : "从我的计算机上传",
         "chooseNft" : "选择 NFT",
+        "remove" : "移除当前图片",
         "selectNft" : "选择 NFT",
         "previousSelectNft" : "返回",
         "nftEmptyStateTitle" : "暂时没有 NFT 可显示",
@@ -5723,9 +5758,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "利用您的身份\n恢复您的密钥",
+    "description" : "您的秘密恢复短语并非总在身边。\n专用于 Ledger Nano X 的测试发布。2023 年 5 月 31 日前免费订阅",
+    "cta" : "为什么要订阅？",
+    "downloadLLM" : "使用 Ledger Live 手机应用程序订阅 <purple>Ledger Recover</purple>"
   }
 }
