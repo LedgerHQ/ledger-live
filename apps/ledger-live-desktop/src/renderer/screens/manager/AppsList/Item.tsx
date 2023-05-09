@@ -73,8 +73,6 @@ const Item = ({
     () => (app.currencyId && getCryptoCurrencyById(app.currencyId)) || undefined,
     [app.currencyId],
   );
-  const currencySupported = !!currency && isCurrencySupported(currency);
-  const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
   const onAddAccount = useCallback(() => {
     if (addAccount) addAccount(currency);
   }, [addAccount, currency]);
@@ -98,6 +96,8 @@ const Item = ({
   // flag[0]: name of the feature flag
   // flag[1]: { enabled: boolean }
   const currencyFlagEnabled = !flag || flag[1].enabled;
+  const currencySupported = !!currency && isCurrencySupported(currency) && currencyFlagEnabled;
+  const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
 
   const bytes = useMemo(
     () =>
