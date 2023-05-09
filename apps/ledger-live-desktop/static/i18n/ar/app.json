@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "أبداً",
+    "new" : "جديد",
     "apply" : "تقديم",
     "done" : "تم",
     "confirm" : "تأكيد",
@@ -126,7 +127,8 @@
     "exchange" : "تبادل",
     "info" : "معلومات",
     "connectDevice" : "توصيل جهازك",
-    "add" : "إضافة"
+    "add" : "إضافة",
+    "or" : "أو"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -171,7 +173,49 @@
       "REGISTER" : "مُسجّل",
       "STAKE" : "مُكدَّس",
       "UNSTAKE" : "غير مُكدَّس",
-      "WITHDRAW_UNSTAKED" : "مسحوب"
+      "WITHDRAW_UNSTAKED" : "مسحوب",
+      "SENDING" : "إرسال"
+    },
+    "edit" : {
+      "title" : "التسريع أو الإلغاء",
+      "description" : "معاملتك جارية. يمكنك تسريعها برسوم شبكة أعلى، أو إلغائها.",
+      "stuckDescription" : "معاملتك عالقة. قم بتسريعها برسوم شبكة أعلى أو قم بإلغائها.",
+      "previousFeesInfo" : "رسوم الشبكة الحالية = ",
+      "learnMore" : "أرغب في معرفة المزيد",
+      "panel" : {
+        "title" : "التسريع أو الإلغاء",
+        "description" : "واحدة من أحدث معاملات 'الإرسال' لديك عالقة. قم بتسريع المعاملة برسوم شبكة أعلى أو قم بإلغائها."
+      },
+      "speedUp" : {
+        "title" : "تسريع",
+        "description" : "أعد تقديم المعاملة برسوم شبكة أعلى."
+      },
+      "cancel" : {
+        "title" : "إلغاء",
+        "description" : "إرسال 0 {{ticker}} إلى عنوانك. لضمان الإلغاء، رسوم الشبكة أعلى بـ %30 من رسوم المعاملة المراد إلغاؤها."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "الطريقة"
+        },
+        "fees" : {
+          "title" : "رسوم"
+        },
+        "summary" : {
+          "title" : "الملخص"
+        },
+        "device" : {
+          "title" : "الجهاز"
+        },
+        "confirmation" : {
+          "title" : "تأكيد"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "إلغاء المعاملة غير متاح لأنه ليس لديك أموال كافية في حسابك.",
+        "notEnoughFundsToSpeedup" : "تسريع المعاملة غير متاح لأنه ليس لديك أموال كافية في حسابك.",
+        "notlowestNonceToSpeedup" : "ميزة التسريع غير متاحة. معاملتك مُعلَّقة لأن هناك معاملة سابقة عالقة. يمكنك الانتظار حتى يتم تأكيدها وتسريعها وإلغائها."
+      }
     }
   },
   "byteSize" : {
@@ -215,6 +259,7 @@
     "earn" : "اكسب",
     "exchange" : "شراء / بيع",
     "swap" : "مبادلة",
+    "refer" : "ترشيح صديق",
     "lend" : "إقراض",
     "catalog" : "Discover",
     "market" : "السوق",
@@ -1203,23 +1248,33 @@
     },
     "manual" : {
       "title" : "إعداد {{deviceName}}",
+      "continueOnDevice" : "قم بهذا الإجراء على جهازك {{productName}}",
       "pairedContent" : {
         "title" : "{{deviceName}} متصلة",
         "description" : "متابعة الإعداد على {{deviceName}}",
-        "text" : "هذه الشاشة ستتغير ديناميكيا لتزويدك بالمعلومات ذات الصلة ينما تقوم بإعداد {{deviceName}} خاصتك"
+        "text" : "هذه الشاشة ستتغير ديناميكيا لتزويدك بالمعلومات ذات الصلة ينما تقوم بإعداد {{deviceName}} خاصتك",
+        "continueOnDevice" : "انقر على {{productName}} لرؤية الشاشة التالية."
       },
       "pinContent" : {
         "title" : "إعداد كود PIN خاصتك",
         "description" : "كود PIN خاصتك يمكن أن يتراوح طوله بين 4 إلى 8 أرقام",
-        "text" : "أي شخص لديه وصول إلى {{deviceName}} وكود PIN خاصتك يمكنه أيضاً الوصول إلى جميع أصولك المشفرة ورموزك غير القابلة للاستبدال (NFT)."
+        "text" : "أي شخص لديه وصول إلى {{deviceName}} وكود PIN خاصتك يمكنه أيضاً الوصول إلى جميع أصولك المشفرة ورموزك غير القابلة للاستبدال (NFT).",
+        "continueOnDevice" : "قم بإعداد كود PIN الخاص بك على {{productName}}"
       },
       "seedContent" : {
         "title" : "عبارة الاسترداد السرية",
-        "choiceNewOrRestore" : "اختر خيار الإعداد الأكثر ملائمة لك.",
-        "newSeed" : "انقر على مقاطع الفيديو أدناه لتعلُم المزيد عن عبارة الاسترداد السرية خاصتك",
-        "choiceRestoreDirectOrRecover" : "Placeholder - اختيار استعادة مباشرة أو استخدم استرداد",
         "recoverSeed" : "Placeholder: استرداد",
-        "restoreSeed" : "للاسترداد، تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.\n\nليس لديك واحد؟ استخدم جهاز ك{{productName}} لإنشاء عبارة جديدة."
+        "restoreSeed" : "للاسترداد، تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.\n\nليس لديك واحد؟ استخدم جهاز ك{{productName}} لإنشاء عبارة جديدة.",
+        "selection" : "على {{productName}}، اختر خيار الإعداد الأكثر ملائمةً لك.",
+        "selectionContinueOnDevice" : "انقر على خيار في {{productName}}",
+        "newSeedDescription" : "شاهد مقاطع الفيديو أدناه لتعلُّم المزيد حول كلماتك السرية.",
+        "newSeedContinueOnDevice" : "قم بهذا على جهازك {{productName}}",
+        "recovery" : "للاسترداد، تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.\n\nليس لديك واحد؟ استخدم جهازك {{productName}} لإنشاء عبارة جديدة.",
+        "restoreChoiceContinueOnDevice" : "اختر أحد الخيارات على جهازك {{productName}}",
+        "restoreChoiceSRPTitle" : "الاستعادة باستخدام عبارة الاسترداد السرية",
+        "restoreChoiceSRPDescription" : "تأكد من استخدام عبارة تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.",
+        "restoreChoiceRecoverTitle" : "الاستعادة باستخدام Ledger Recover",
+        "restoreChoiceRecoverDescription" : "استعد النسخة الاحتياطية لعبارة الاسترداد الخاصة بك عن طريق تسجيل الدخول إلى حساب Ledger الخاص بك وتأكيد هويتك."
       },
       "softwareCheckContent" : {
         "title" : "التحقق من البرامج",
@@ -1238,10 +1293,13 @@
         }
       },
       "installApplications" : {
-        "title" : "نوصي بتنزيل مجموعة محددة من التطبيقات. يُمكنك تنزيل المزيد لاحقاً",
+        "title" : "تثبيت تطبيقات سلسلة الكتل (blockchain)",
         "install" : "تثبيت",
         "skip" : "سأقوم بذلك في وقت لاحق",
         "info" : "التطبيقات على {{deviceName}} تُستخدم للموافقة على المعاملات. يمكنك إضافتهم أو حذفهم في أي وقت."
+      },
+      "endOfSetup" : {
+        "title" : "نهاية الإعداد"
       },
       "genuineCheckModal" : {
         "title" : "اختبار الأصالة",
@@ -1441,7 +1499,8 @@
     "messageIfUnverified" : "قم بتأكيد أن العنوان الذي تمت مشاركته يتطابق تماماً مع العنوان الموجود على جهازك",
     "messageIfSkipped" : "لم يتم تأكيد عنوانك {{name}} على جهازك Ledger. يرجى التحقق من ذلك للأمان.",
     "showQrCode" : "إظهار كود QR",
-    "taprootWarning" : "تأكد أن المُرسل يدعم taproot"
+    "taprootWarning" : "تأكد أن المُرسل يدعم taproot",
+    "dashStakingWarning" : "يُرجى التأكد من أنك لا تستخدم هذا العنوان لتلقي مكافآت التكديس"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1933,7 @@
         "plugin" : "انتقل إلى التطبيق",
         "swap" : "مبادلة",
         "tool" : "تعرّف على المزيد",
-        "app" : "تعرّف على المزيد"
+        "currency" : "تعرّف على المزيد"
       },
       "uninstall" : {
         "title" : "إلغاء تثبيت الكل",
@@ -3761,6 +3820,7 @@
         "title" : "أنت الآن مطوّر!",
         "text" : "مرحباً بك في بلاد العجائب"
       },
+      "userId" : "مُعرّف المستخدم",
       "debugApps" : "السماح لتطبيقات تصحيح الأخطاء",
       "debugAppsDesc" : "عرض تطبيقات المنصة لتصحيح الأخطاء والسماح بفتحها.",
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
@@ -3790,6 +3850,8 @@
       "runLocalAppOpenButton" : "فتح",
       "enableLearnStagingUrl" : "الرابط المرحلي (staging URL) للصفحة التعليمية",
       "enableLearnStagingUrlDesc" : "تمكين الرابط المرحلي (staging URL) للصفحة التعليمية.",
+      "enableStagingNftMetadataService" : "خدمة البيانات الوصفية المرحلية للرموز غير القابل للاستبدال",
+      "enableStagingNftMetadataServiceDesc" : "تمكين خدمة البيانات الوصفية المرحلية للرموز غير القابل للاستبدال وإعادة تعيين ذاكرة التخزين المؤقت للرموز غير القابل للاستبدال",
       "openOnboardingAppInstallDebug" : "افتح شاشة تصحيح الأخطاء المتعلقة بتثبيت تطبيقات التهيئة",
       "openOnboardingAppInstallDebugDesc" : "افتح شاشة بالمكونات من خطوة تثبيت تطبيق مزامنة التهيئة"
     },
@@ -3847,6 +3909,10 @@
           "title" : "وضع المطور",
           "description" : "اعرض تطبيقات المطور وتطبيقات الشبكة التجريبية (testnet) في My Ledger."
         },
+        "listAppsV2" : {
+          "title" : "الإدراج التجريبي للتطبيقات في My Ledger",
+          "description" : "تحسين الأداء لوصول My Ledger والتدفقات المُضمَّنة."
+        },
         "scanForInvalidPaths" : {
           "title" : "بحث موسع عن الحساب",
           "description" : "البحث عن الحسابات ذات مسارات اشتقاق غير صحيحة. يرجى إرسال الأصول التي يحتمل العثور عليها إلى حساب عادي."
@@ -3886,6 +3952,10 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "بوابة رسوم أولوية مخصصة",
           "description" : "خصِّص النسبة المئوية من الحد الأدنى لرسوم الأولوية المُقدَّرة لدينا المسموح بها لمعاملات EIP1559 المتقدمة"
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "مُضاعِف مخصص للرسوم الأساسية",
+          "description" : "قم بتخصيص المُضاعِف المستخدَم للرسوم الأساسية التي تتكون منها maxFeePerGas لمعاملة EIP1559"
         }
       }
     },
@@ -5247,6 +5317,10 @@
       "title" : "العملية غير متوفرة لهذا الجهاز",
       "description" : "خاصية إرسال NFT متوفرة فقط لـ Nano X و +Nano S. يرجى زيارة منصة دعم العملاء لدينا لمعرفة كيفية إرسال NFT عن طريق Nano S."
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "لا يمكن تسريعها أو إلغائها",
+      "description" : "هذه المعاملة تم تأكيدها بالفعل"
+    },
     "CantScanQRCode" : {
       "title" : "تعذر فحص كود الاستجابة السريعة (QR) هذا: التحقق التلقائي غير مدعوم من قِبل هذا العنوان"
     },
@@ -5723,9 +5797,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "استعِد مفاتيحك باستخدام\nهويّتك",
+    "description" : "عبارة الاسترداد السرية الخاصة بك لن تكون دائماً في متناول اليد.\nإطلاق تجريبي حصرياً لـ Ledger Nano X. اشترك مجاناً حتى 31 مايو 2023",
+    "cta" : "لماذا يجب أن اشترك؟",
+    "downloadLLM" : "اشترك في <purple>Ledger Recover</purple> باستخدام تطبيق Ledger Live للجوّال"
   }
 }
