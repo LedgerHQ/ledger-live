@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "なし",
+    "new" : "New",
     "apply" : "適用",
     "done" : "完了",
     "confirm" : "確認",
@@ -126,7 +127,8 @@
     "exchange" : "取引",
     "info" : "情報",
     "connectDevice" : "デバイスを接続",
-    "add" : "追加"
+    "add" : "追加",
+    "or" : "または"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -215,6 +217,7 @@
     "earn" : "報酬獲得",
     "exchange" : "購入/売却",
     "swap" : "スワップ",
+    "refer" : "ご友人紹介",
     "lend" : "レンディング",
     "catalog" : "Discover",
     "market" : "マーケット",
@@ -1203,23 +1206,33 @@
     },
     "manual" : {
       "title" : "{{deviceName}}をセットアップ",
+      "continueOnDevice" : "{{productName}}でこのアクションを実行する",
       "pairedContent" : {
         "title" : "{{deviceName}}接続済み",
         "description" : "{{deviceName}}でセットアップを続行する",
-        "text" : "こちらの画面は、{{deviceName}}のセットアップ中に動的に変化し、関連情報をご提供します。"
+        "text" : "こちらの画面は、{{deviceName}}のセットアップ中に動的に変化し、関連情報をご提供します。",
+        "continueOnDevice" : "{{productName}}をタップして、次の画面を表示します。"
       },
       "pinContent" : {
         "title" : "PINコードを設定する",
         "description" : "PINコードの長さは4～8桁で設定可能です",
-        "text" : "お客様の{{deviceName}}とPINコードにアクセスできる人は誰でも、お客様の暗号資産とNFT資産すべてにアクセスできます。"
+        "text" : "お客様の{{deviceName}}とPINコードにアクセスできる人は誰でも、お客様の暗号資産とNFT資産すべてにアクセスできます。",
+        "continueOnDevice" : "{{productName}}にPINコードを設定する"
       },
       "seedContent" : {
         "title" : "秘密のリカバリーフレーズ",
-        "choiceNewOrRestore" : "最適な設定オプションを選択してください。",
-        "newSeed" : "下の動画をタップして、秘密のリカバリーフレーズを詳しく学ぶ",
-        "choiceRestoreDirectOrRecover" : "Placeholder－直接復元を選択するか、Recoverを使用する",
         "recoverSeed" : "Placeholder：Recover",
-        "restoreSeed" : "リカバリーには、資産の安全性を保証するため、必ずLedgerが生成した秘密のリカバリーフレーズを使用してください。\n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
+        "restoreSeed" : "リカバリーには、資産の安全性を保証するため、必ずLedgerが生成した秘密のリカバリーフレーズを使用してください。\n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
+        "selection" : "{{productName}}で、最適な設定オプションを選択する。",
+        "selectionContinueOnDevice" : "{{productName}}のオプションをタップする",
+        "newSeedDescription" : "以下の動画で、秘密の単語の詳細を学ぶ。",
+        "newSeedContinueOnDevice" : "{{productName}}でこの操作を行う",
+        "recovery" : "リカバリーには、資産の安全性を保証するため、必ずLedgerが生成した秘密のリカバリーフレーズを使用してください。\n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
+        "restoreChoiceContinueOnDevice" : "{{productName}}のオプションを選択する",
+        "restoreChoiceSRPTitle" : "秘密のリカバリーフレーズを使用して復元する",
+        "restoreChoiceSRPDescription" : "資産のセキュリティを保証するために、必ず、Ledgerによって生成されたフレーズを使用してください。",
+        "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元",
+        "restoreChoiceRecoverDescription" : "Ledgerアカウントにログインして本人確認を行い、リカバリーフレーズのバックアップを復元します。"
       },
       "softwareCheckContent" : {
         "title" : "ソフトウェアのチェック",
@@ -1238,10 +1251,13 @@
         }
       },
       "installApplications" : {
-        "title" : "既定のアプリ一式をダウンロードすることをお勧めします。ダウンロードは後でさらに可能です",
+        "title" : "ブロックチェーンアプリをインストールする",
         "install" : "インストール",
         "skip" : "後で",
         "info" : "{{deviceName}}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
+      },
+      "endOfSetup" : {
+        "title" : "セットアップの終了"
       },
       "genuineCheckModal" : {
         "title" : "真正性確認",
@@ -1441,7 +1457,8 @@
     "messageIfUnverified" : "共有アドレスが、お使いのデバイスのアドレスと完全に一致していることを確認してください。",
     "messageIfSkipped" : "{{name}} のアドレスが、Ledgerデバイスで確認できません。セキュリティを最適化するために、アドレスを確認してください。",
     "showQrCode" : "QRコードを表示",
-    "taprootWarning" : "送信者がタップルートをサポートしていることを確認する"
+    "taprootWarning" : "送信者がタップルートをサポートしていることを確認する",
+    "dashStakingWarning" : "このアドレスは、ステーキング報酬の受け取りに使用しないでください。"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1891,7 @@
         "plugin" : "アプリに移動",
         "swap" : "スワップ",
         "tool" : "詳細はこちら",
-        "app" : "詳細はこちら"
+        "currency" : "詳細はこちら"
       },
       "uninstall" : {
         "title" : "すべてアンインストール",
@@ -3761,6 +3778,7 @@
         "title" : "デベロッパーになりました！",
         "text" : "ワンダーランドへようこそ"
       },
+      "userId" : "ユーザーID",
       "debugApps" : "デバッグアプリを許可する",
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
       "experimentalApps" : "試験的なアプリを許可する",
@@ -3790,6 +3808,8 @@
       "runLocalAppOpenButton" : "開く",
       "enableLearnStagingUrl" : "学習ページのステージングURL",
       "enableLearnStagingUrlDesc" : "学習ページのステージングURLを有効にする。",
+      "enableStagingNftMetadataService" : "NFTメタデータサービスの実装",
+      "enableStagingNftMetadataServiceDesc" : "NFTメタデータサービスの実装を有効化して、NFT Cacheをリセットする",
       "openOnboardingAppInstallDebug" : "オンボーディングアプリのインストールデバッグ画面を開く",
       "openOnboardingAppInstallDebugDesc" : "同期オンボーディングアプリのインストール手順の構成要素で画面を開きます"
     },
@@ -3834,6 +3854,8 @@
     },
     "experimental" : {
       "disclaimer" : "テクノロジーファンのコミュニティ向けに提供される試験的な機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。",
+      "provider" : "試験的設定「マイLedgerプロバイダー（{{forcedProvider}}）」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。これは設定で無効にできます。",
+      "providerCTA" : "設定を開く",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "試験的統合",
@@ -3846,6 +3868,10 @@
         "managerDevMode" : {
           "title" : "デベロッパーモード",
           "description" : "開発者用アプリとテストネットアプリをMy Ledgerに表示する。"
+        },
+        "listAppsV2" : {
+          "title" : "My Ledger用アプリの試験的リスト",
+          "description" : "My Ledgerアクセスとインラインフローのパフォーマンスの向上。"
         },
         "scanForInvalidPaths" : {
           "title" : "拡張アカウント検索",
@@ -3886,6 +3912,10 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "カスタム優先手数料ゲート",
           "description" : "高度なEIP1559トランザクションで許可される、当社の推定最小優先手数料の割合をカスタマイズします"
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "基本手数料のカスタム乗数",
+          "description" : "EIP1559トランザクションのmaxFeePerGasを構成する基本手数料に使用される乗数をカスタマイズ"
         }
       }
     },
@@ -5660,7 +5690,7 @@
         "chooseNft" : "NFTを選択",
         "selectNft" : "NFTを選択",
         "previousSelectNft" : "戻る",
-        "nftEmptyStateTitle" : "表示できるNFTはまだありません",
+        "nftEmptyStateTitle" : "表示できるNFTがありません",
         "nftEmptyStateDescription" : "NFTをウォレットに追加して始めます。"
       },
       "adjust" : {
@@ -5723,9 +5753,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "お客様のIDで\n鍵を復元",
+    "description" : "お客様の秘密のリカバリーフレーズは、常に手の届くところにあるとは限りません。\nLedger Nano X専用のソフトローンチ（試験的公開）が行われます。2023年5月31日まで無料でサブスクリプション契約が可能です。",
+    "cta" : "サブスクリプション契約のメリットとは？",
+    "downloadLLM" : "Ledger Live Mobileアプリを使用して<purple>Ledger Recover</purple>のサブスクリプション契約をする"
   }
 }
