@@ -28,11 +28,11 @@ export const requestInterceptor = (
   return req;
 };
 
-export const responseInterceptor = (
-  response: {
-    config: ExtendedXHRConfig;
-  } & AxiosResponse<any>
-) => {
+type Response = {
+  config: ExtendedXHRConfig;
+} & AxiosResponse<any>;
+
+export const responseInterceptor = (response: Response): Response => {
   if (!getEnv("ENABLE_NETWORK_LOGS")) {
     return response;
   }
