@@ -45,7 +45,7 @@ export const responseInterceptor = (response: Response): Response => {
     `${response.status} ${method} ${baseURL || ""}${url} (${(
       Date.now() - startTime
     ).toFixed(0)}ms)`,
-    getEnv("DEBUG_HTTP_RESPONSE") ? { data: response.data } : undefined
+    { data: response.data }
   );
 
   return response;
