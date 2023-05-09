@@ -45,7 +45,6 @@ const ExperimentalFeatureRow = ({
   );
   return Children ? (
     <Row title={feature.title} desc={feature.description}>
-      {/* $FlowFixMe */}
       <Children
         value={envValue}
         readOnly={isReadOnlyEnv(feature.name)}
