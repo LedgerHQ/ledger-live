@@ -59,7 +59,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
     });
   };
 
-  repair = (version = null) => {
+  repair = (version?: string | null) => {
     if (this.state.isLoading) return;
     const { history, onRepair } = this.props;
     if (onRepair) {
@@ -76,7 +76,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
       next: patch => {
         this.setState(patch);
       },
-      error: error => {
+      error: (error: Error) => {
         logger.critical(error);
         if (this.timeout) clearTimeout(this.timeout);
         this.setState({
@@ -120,7 +120,6 @@ class RepairDeviceButton extends PureComponent<Props, State> {
           cancellable
           analyticsName="RepairDevice"
           isOpened={opened}
-          onClose={this.close}
           onReject={this.close}
           repair={this.repair}
           isLoading={isLoading}
@@ -134,7 +133,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
     );
   }
 }
-const RepairDeviceButtonOut: React$ComponentType<OwnProps> = compose(
+const RepairDeviceButtonOut = compose<React.ComponentType<OwnProps>>(
   withTranslation(),
   withRouter,
 )(RepairDeviceButton);

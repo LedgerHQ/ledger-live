@@ -2,10 +2,10 @@ import React from "react";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 type Props = {
-  ff?: string | number;
-  ffBold?: string | number;
+  ff?: string;
+  ffBold?: string;
   isBold: boolean;
-  children: any;
+  children: React.ReactNode;
 };
 function BoldToggle(props: Props) {
   const { ff, ffBold, isBold, children } = props;

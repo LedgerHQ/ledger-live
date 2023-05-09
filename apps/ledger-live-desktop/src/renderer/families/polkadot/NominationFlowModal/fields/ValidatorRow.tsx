@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, memo } from "react";
 import styled, { css } from "styled-components";
 import { Trans } from "react-i18next";
 import { Polkadot as PolkadotIdenticon } from "@polkadot/react-identicon/icons";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
@@ -12,7 +11,7 @@ import Text from "~/renderer/components/Text";
 import CheckBox from "~/renderer/components/CheckBox";
 import Tooltip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
-const IconContainer: ThemedComponent<any> = styled.div`
+const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,7 +20,6 @@ const IconContainer: ThemedComponent<any> = styled.div`
   color: ${p => p.theme.colors.palette.text.shade60};
 `;
 const InfoContainer = styled(Box).attrs(() => ({
-  vertical: true,
   ml: 2,
   flexShrink: 0,
   mr: "auto",
@@ -131,7 +129,6 @@ type ValidatorRowProps = {
   isSelected: boolean;
   disabled?: boolean;
   maxNominatorRewardedPerValidator: number;
-  onClick?: (a: any) => void;
   onUpdateVote?: (b: string, a: boolean) => void;
   onExternalLink: (address: string) => void;
   style?: any;
@@ -144,7 +141,6 @@ const ValidatorRow = ({
   maxNominatorRewardedPerValidator,
   onUpdateVote,
   onExternalLink,
-  onClick = () => null,
   style,
 }: ValidatorRowProps) => {
   const {
@@ -166,12 +162,9 @@ const ValidatorRow = ({
     },
     [onExternalLink, address],
   );
-  const onToggle = useCallback(
-    e => {
-      onUpdateVote && (!disabled || isSelected) && onUpdateVote(address, !isSelected);
-    },
-    [onUpdateVote, address, disabled, isSelected],
-  );
+  const onToggle = useCallback(() => {
+    onUpdateVote && (!disabled || isSelected) && onUpdateVote(address, !isSelected);
+  }, [onUpdateVote, address, disabled, isSelected]);
   const formattedCommission = useMemo(
     () => (commissionBN ? `${commissionBN.multipliedBy(100).toFixed(2)} %` : "-"),
     [commissionBN],

@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import Skeleton from "./Skeleton";
 import Placeholder from "./Placeholder";
@@ -13,7 +12,7 @@ import Placeholder from "./Placeholder";
  * The text in the fallback image is only visible if we are in `full` mode, since list
  * mode is not large enough for the text to be readable.
  */
-const Wrapper: ThemedComponent<{
+const Wrapper = styled.div<{
   full?: boolean;
   size?: number;
   loaded: boolean;
@@ -21,7 +20,8 @@ const Wrapper: ThemedComponent<{
   maxHeight?: number;
   maxWidth?: number;
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
-}> = styled.div`
+  error?: boolean;
+}>`
   width: ${({ full, size }) => (full ? "100%" : `${size}px`)};
   height: ${({ full }) => full && "100%"};
   aspect-ratio: ${({ square }) => (square ? "1 / 1" : "initial")};
@@ -56,14 +56,14 @@ type Props = {
   uri: string;
   mediaType: string;
   metadata: NFTMetadata;
-  tokenId: string;
+  tokenId?: string;
   full?: boolean;
   size?: number;
   maxHeight?: number;
   maxWidth?: number;
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
   square?: boolean;
-  onClick?: (e: Event) => void;
+  onClick?: (e: React.MouseEvent) => void;
   setUseFallback: (a: boolean) => void;
   isFallback: boolean;
 };

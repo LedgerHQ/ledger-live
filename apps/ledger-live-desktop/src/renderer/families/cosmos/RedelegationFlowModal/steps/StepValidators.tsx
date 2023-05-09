@@ -5,7 +5,6 @@ import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { StepProps } from "../types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -33,7 +32,7 @@ const SelectButton = styled(Base)`
     border-color: ${p => p.theme.colors.palette.text.shade30};
   }
 `;
-const Container: ThemedComponent<any> = styled(Box).attrs(p => ({
+const Container = styled(Box).attrs(p => ({
   flow: 1,
   relative: true,
   mr: -p.theme.overflow.trackSize,
@@ -54,7 +53,6 @@ export default function StepValidators({
   transaction,
   status,
   error,
-  bridgePending,
   t,
   transitionTo,
 }: StepProps) {
@@ -74,7 +72,7 @@ export default function StepValidators({
     [bridge, onUpdateTransaction],
   );
   const updateSourceValidator = useCallback(
-    ({ validatorAddress: sourceValidator, ...r }) => {
+    ({ validatorAddress: sourceValidator }) => {
       const source = account.cosmosResources?.delegations.find(
         d => d.validatorAddress === sourceValidator,
       );
@@ -116,8 +114,8 @@ export default function StepValidators({
   const amount = useMemo(() => (selectedValidator ? selectedValidator.amount : BigNumber(0)), [
     selectedValidator,
   ]);
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators } = useCosmosFamilyPreloadData(currencyName);
+  const currencyId = account.currency.id;
+  const { validators } = useCosmosFamilyPreloadData(currencyId);
   const selectedValidatorData = useMemo(
     () =>
       transaction.validators && transaction.validators[0]
@@ -198,7 +196,6 @@ export function StepValidatorsFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;

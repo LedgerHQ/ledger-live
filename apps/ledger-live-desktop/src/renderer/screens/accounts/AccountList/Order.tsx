@@ -77,7 +77,7 @@ type ItemProps = {
   item: DropDownItemType;
   isActive: boolean;
 };
-const OrderItem: React$ComponentType<ItemProps> = React.memo(function OrderItem({
+const OrderItem: React.ComponentType<ItemProps> = React.memo(function OrderItem({
   item,
   isActive,
 }: ItemProps) {

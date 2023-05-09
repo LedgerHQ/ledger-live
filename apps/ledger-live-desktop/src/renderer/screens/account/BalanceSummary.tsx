@@ -13,6 +13,8 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountBalanceSummaryHeader from "./AccountBalanceSummaryHeader";
 import perFamilyAccountBalanceSummaryFooter from "~/renderer/generated/AccountBalanceSummaryFooter";
 import FormattedDate from "~/renderer/components/FormattedDate";
+import { Data } from "~/renderer/components/Chart/types";
+
 type Props = {
   chartColor: string;
   account: AccountLike;
@@ -21,13 +23,13 @@ type Props = {
   setCountervalueFirst: (a: boolean) => void;
   mainAccount: Account | undefined | null;
 };
+
 export default function AccountBalanceSummary({
   account,
   countervalueFirst,
   chartColor,
   setCountervalueFirst,
   mainAccount,
-  parentAccount,
 }: Props) {
   const [range] = useTimeRange();
   const counterValue = useSelector(counterValueCurrencySelector);
@@ -74,19 +76,21 @@ export default function AccountBalanceSummary({
     [account, counterValue.units, countervalueAvailable, countervalueFirst],
   );
   const renderTickYCryptoValue = useCallback(
-    (val: any) => {
+    (val: number | string) => {
       const unit = getAccountUnit(account);
       return formatShort(unit, BigNumber(val));
     },
     [account],
   );
   const renderTickYCounterValue = useCallback(
-    (val: number) => formatShort(counterValue.units[0], BigNumber(val)),
+    (val: number | string) => formatShort(counterValue.units[0], BigNumber(val)),
     [counterValue.units],
   );
   const displayCountervalue = countervalueFirst && countervalueAvailable;
   const AccountBalanceSummaryFooter = mainAccount
-    ? perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family]
+    ? perFamilyAccountBalanceSummaryFooter[
+        mainAccount.currency.family as keyof typeof perFamilyAccountBalanceSummaryFooter
+      ]
     : null;
   const chartMagnitude = displayCountervalue
     ? counterValue.units[0].magnitude
@@ -111,7 +115,7 @@ export default function AccountBalanceSummary({
           magnitude={chartMagnitude}
           color={chartColor}
           // TODO we need to make Date non optional in live-common
-          data={history}
+          data={history as Data}
           height={200}
           tickXScale={range}
           valueKey={displayCountervalue ? "countervalue" : "value"}
@@ -128,6 +132,7 @@ export default function AccountBalanceSummary({
       {AccountBalanceSummaryFooter && (
         <AccountBalanceSummaryFooter
           account={account}
+          // @ts-expect-error Need to update prop in families
           counterValue={counterValue}
           discreetMode={discreetMode}
         />

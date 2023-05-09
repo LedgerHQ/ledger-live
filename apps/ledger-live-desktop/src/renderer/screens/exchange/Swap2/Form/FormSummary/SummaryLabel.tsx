@@ -1,16 +1,15 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
-const Container: ThemedComponent<{}> = styled.div`
+const Container = styled.div`
   display: flex;
   align-items: end;
   column-gap: 0.25rem;
   color: ${p => p.theme.colors.palette.text.shade40};
 `;
-const Label: ThemedComponent<{}> = styled(Text).attrs(() => ({
+const Label = styled(Text).attrs(() => ({
   ff: "Inter",
   fontSize: "13px",
   fontWeight: 500,

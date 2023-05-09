@@ -26,17 +26,26 @@ import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortByMarketcap";
 import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
+import { AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 
 // Pick a default source account if none are selected.
 // TODO use live-common once its ready
-const usePickDefaultAccount = (accounts, fromAccount, setFromAccount): void => {
+const usePickDefaultAccount = (
+  accounts: AccountLike[],
+  fromAccount: AccountLike | undefined,
+  setFromAccount: (acc?: AccountLike) => void,
+): void => {
   const list = [...listCryptoCurrencies(), ...listTokens()];
   const allCurrencies = useCurrenciesByMarketcap(list);
   useEffect(() => {
     if (!fromAccount && allCurrencies.length > 0) {
       allCurrencies.some(({ id }) => {
         const filteredAcc = accounts.filter(
-          acc => getAccountCurrency(acc)?.id === id && acc.balance.gt(0) && !acc.disabled,
+          acc =>
+            getAccountCurrency(acc)?.id === id &&
+            acc.balance.gt(0) &&
+            (!("disabled" in acc) || !acc.disabled),
         );
         if (filteredAcc.length > 0) {
           const defaultAccount = filteredAcc
@@ -83,7 +92,6 @@ function FromRow({
   isMaxEnabled,
   toggleMax,
   fromAmountError,
-  provider,
   isSendMaxLoading,
   updateSelectedRate,
 }: Props) {
@@ -98,7 +106,7 @@ function FromRow({
       page: "Page Swap Form",
       ...swapDefaultTrack,
     });
-  const setAccountAndTrack = account => {
+  const setAccountAndTrack = (account: AccountLike) => {
     updateSelectedRate();
     const name = account ? getAccountName(account) : undefined;
     track("button_clicked", {
@@ -109,7 +117,7 @@ function FromRow({
     });
     setFromAccount(account);
   };
-  const setValue = fromAmount => {
+  const setValue = (fromAmount: BigNumber) => {
     track("button_clicked", {
       button: "Amount input",
       page: "Page Swap Form",
@@ -119,14 +127,14 @@ function FromRow({
     updateSelectedRate();
     setFromAmount(fromAmount);
   };
-  const toggleMaxAndTrack = state => {
+  const toggleMaxAndTrack = (state: unknown) => {
     track("button_clicked", {
       button: "max",
       page: "Page Swap Form",
       ...swapDefaultTrack,
       state,
     });
-    toggleMax(state);
+    toggleMax();
   };
   return (
     <>

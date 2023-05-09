@@ -1,8 +1,7 @@
 import React, { useCallback, memo, useMemo } from "react";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import styled from "styled-components";
+import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
-import { Currency } from "@ledgerhq/types-cryptoassets";
 import { TFunction, Trans, useTranslation } from "react-i18next";
 import { FixedSizeList as List } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
@@ -20,10 +19,12 @@ import { getAllSupportedCryptoCurrencyTickers } from "@ledgerhq/live-common/plat
 import Image from "~/renderer/components/Image";
 import NoResultsFound from "~/renderer/images/no-results-found.png";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FlexProps } from "styled-system";
+import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 
-export const TableCellBase = styled(Flex).attrs({
+export const TableCellBase: StyledComponent<"div", DefaultTheme, FlexProps> = styled(Flex).attrs({
   alignItems: "center",
-})`
+})<{ disabled?: boolean }>`
   padding-left: 5px;
   padding-right: 5px;
   cursor: ${p => (p.disabled ? "default" : "pointer")};
@@ -36,9 +37,9 @@ export const TableCell = ({
 }: {
   disabled?: boolean;
   loading?: boolean;
-  onClick?: (e: Event) => void;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
   children?: React.ReactNode;
-}) => (
+} & React.ComponentProps<typeof TableCellBase>) => (
   <TableCellBase {...props}>
     {loading ? <LoadingPlaceholder style={{ borderRadius: 50, overflow: "hidden" }} /> : children}
   </TableCellBase>
@@ -46,7 +47,7 @@ export const TableCell = ({
 
 const ChevronContainer = styled(Flex).attrs({ m: 1 })<{
   show: boolean;
-  orderDirection: string;
+  orderDirection?: string | undefined;
 }>`
   opacity: ${p => (p.show ? 1 : 0)};
   svg {
@@ -71,8 +72,8 @@ export const SortTableCell = ({
   loading?: boolean;
   onClick?: (key: string) => void;
   orderByKey: string;
-  orderBy: string;
-  order: string;
+  orderBy?: string | undefined;
+  order?: string | undefined;
   children?: React.ReactNode;
 }) => (
   <TableCellBase onClick={() => !!onClick && onClick(orderByKey)} {...props}>
@@ -85,7 +86,11 @@ export const SortTableCell = ({
 
 const listItemHeight = 73;
 
-export const TableRow = styled(Flex).attrs({
+export const TableRow: StyledComponent<
+  "div",
+  DefaultTheme,
+  FlexProps & { header?: boolean; disabled?: boolean }
+> = styled(Flex).attrs({
   flexDirection: "row",
   alignItems: "stretch",
   justifyContent: "flex-start",
@@ -173,13 +178,7 @@ const NoCryptoPlaceholder = ({
   t,
   resetSearch,
 }: {
-  requestParams: {
-    orderBy: string;
-    order: string;
-    starred: boolean;
-    search: string;
-    range: string;
-  };
+  requestParams: MarketListRequestParams;
   t: TFunction;
   resetSearch: () => void;
 }) => (
@@ -230,17 +229,17 @@ const CurrencyRow = memo(function CurrencyRowItem({
   range,
   style,
 }: {
-  data: Currency[];
+  data: CurrencyData[];
   index: number;
-  counterCurrency: Currency;
+  counterCurrency?: string;
   loading: boolean;
-  toggleStar: (id: string) => void;
-  selectCurrency: (currency: Currency) => void;
+  toggleStar: (id: string, isStarred: boolean) => void;
+  selectCurrency: (currencyId: string) => void;
   starredMarketCoins: string[];
   locale: string;
   swapAvailableIds: string[];
   onRampAvailableTickers: string[];
-  range: string;
+  range?: string;
   style: React.CSSProperties;
 }) {
   const currency = data ? data[index] : null;
@@ -259,15 +258,14 @@ const CurrencyRow = memo(function CurrencyRowItem({
       loading={!currency || (index === data.length && index > 50 && loading)}
       currency={currency}
       counterCurrency={counterCurrency}
-      isStarred={isStarred}
-      toggleStar={() => toggleStar(currency.id, isStarred)}
+      isStarred={!!isStarred}
+      toggleStar={() => currency?.id && toggleStar(currency.id, !!isStarred)}
       key={index}
       locale={locale}
       selectCurrency={selectCurrency}
-      availableOnBuy={availableOnBuy}
-      availableOnSwap={availableOnSwap}
+      availableOnBuy={!!availableOnBuy}
+      availableOnSwap={!!availableOnSwap}
       availableOnStake={availableOnStake}
-      range={range}
       style={{ ...style }}
     />
   );
@@ -294,10 +292,8 @@ function MarketList({
 
   const swapAvailableIds =
     providers || storedProviders
-      ? (providers || storedProviders)
-          .map(<T,>({ pairs }: { params: Array<{ from: T; to: T }> }) =>
-            pairs.map(({ from, to }: { from: T; to: T }) => [from, to]),
-          )
+      ? (providers || storedProviders)!
+          .map(({ pairs }) => pairs.map(({ from, to }) => [from, to]))
           .flat(2)
       : [];
 
@@ -376,7 +372,7 @@ function MarketList({
             <TableCell disabled>{t("market.marketList.last7d")}</TableCell>
             <TableCell
               data-test-id="market-star-button"
-              disabled={starredMarketCoins.length <= 0 && starred.length <= 0}
+              disabled={starredMarketCoins.length <= 0 && (!starred || starred.length <= 0)}
               onClick={toggleStarredAccounts}
             >
               <Icon name={starred && starred.length > 0 ? "StarSolid" : "Star"} size={18} />
@@ -415,6 +411,7 @@ function MarketList({
                     itemCount={itemCount}
                     loadMoreItems={loadNextPage}
                   >
+                    {/* @ts-expect-error react-window-infinite-loader bindings are too strict here. */}
                     {({
                       onItemsRendered,
                       ref,

@@ -17,15 +17,17 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
 import GridListToggle from "./GridListToggle";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const SpinnerContainer: ThemedComponent<{}> = styled.div`
+import { State } from "~/renderer/reducers";
+import { ProtoNFT } from "@ledgerhq/types-live";
+
+const SpinnerContainer = styled.div`
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: center;
   padding: 20px;
 `;
-const SpinnerBackground: ThemedComponent<{}> = styled.div`
+const SpinnerBackground = styled.div`
   background: ${p => p.theme.colors.palette.background.paper};
   border-radius: 100%;
   padding: 2px;
@@ -36,7 +38,7 @@ const SpinnerBackground: ThemedComponent<{}> = styled.div`
   justify-content: center;
   border: 2px solid ${p => p.theme.colors.palette.background.paper};
 `;
-const ClickableCollectionName: ThemedComponent<{}> = styled(Box)`
+const ClickableCollectionName = styled(Box)`
   &:hover {
     cursor: pointer;
   }
@@ -44,8 +46,8 @@ const ClickableCollectionName: ThemedComponent<{}> = styled(Box)`
 const Gallery = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { id } = useParams();
-  const account = useSelector(state =>
+  const { id } = useParams<{ id: string }>();
+  const account = useSelector((state: State) =>
     accountSelector(state, {
       accountId: id,
     }),
@@ -54,18 +56,18 @@ const Gallery = () => {
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const collections = useMemo(
     () =>
-      Object.entries(nftsByCollections(account.nfts)).filter(
-        ([contract]) => !hiddenNftCollections.includes(`${account.id}|${contract}`),
+      Object.entries(nftsByCollections(account?.nfts)).filter(
+        ([contract]) => !hiddenNftCollections.includes(`${account?.id}|${contract}`),
       ),
-    [account.id, account.nfts, hiddenNftCollections],
+    [account?.id, account?.nfts, hiddenNftCollections],
   );
 
   // Should redirect to the account page if there is not NFT anymore in the page.
   useEffect(() => {
     if (collections.length <= 0) {
-      history.push(`/account/${account.id}/`);
+      history.push(`/account/${account?.id}/`);
     }
-  }, [account.id, history, collections.length]);
+  }, [account?.id, history, collections.length]);
   const onSend = useCallback(() => {
     dispatch(
       openModal("MODAL_SEND", {
@@ -77,26 +79,26 @@ const Gallery = () => {
   const onSelectCollection = useCallback(
     collectionAddress => {
       history.push({
-        pathname: `/account/${account.id}/nft-collection/${collectionAddress}`,
+        pathname: `/account/${account?.id}/nft-collection/${collectionAddress}`,
       });
     },
-    [account.id, history],
+    [account?.id, history],
   );
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>(null);
   const isAtBottom = useOnScreen(ref);
   const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(1);
   useEffect(() => {
-    if (isAtBottom && maxVisibleNFTs < account.nfts.length) {
+    if (isAtBottom && account?.nfts && maxVisibleNFTs < account?.nfts.length) {
       setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
     }
     // Exception to the rule, other deps must not be provided in this case
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAtBottom]);
   const [collectionsRender, isLoading] = useMemo(() => {
-    const collectionsRender = [];
+    const collectionsRender: JSX.Element[] = [];
     let isLoading = false;
     let displayedNFTs = 0;
-    collections.forEach(([contract, nfts]: [string, any]) => {
+    collections.forEach(([contract, nfts]: [string, ProtoNFT[]]) => {
       if (displayedNFTs > maxVisibleNFTs) return;
       collectionsRender.push(
         <div key={contract}>
@@ -105,7 +107,9 @@ const Gallery = () => {
               <CollectionName nft={nfts[0]} fallback={contract} account={account} showHideMenu />
             </Text>
           </ClickableCollectionName>
-          <TokensList account={account} nfts={nfts.slice(0, maxVisibleNFTs - displayedNFTs)} />
+          {account && (
+            <TokensList account={account} nfts={nfts.slice(0, maxVisibleNFTs - displayedNFTs)} />
+          )}
         </div>,
       );
       if (displayedNFTs + nfts.length > maxVisibleNFTs) {
@@ -120,7 +124,7 @@ const Gallery = () => {
       <TrackPage category="Page" name="NFT Gallery" />
       <Box horizontal alignItems="center" mb={6}>
         <Box flex={1}>
-          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={22} flex={1}>
+          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={22}>
             {t("NFT.gallery.title")}
           </Text>
         </Box>

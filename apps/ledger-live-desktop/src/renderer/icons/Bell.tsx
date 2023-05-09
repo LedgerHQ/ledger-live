@@ -1,10 +1,9 @@
 import React from "react";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import styled from "styled-components";
-const Container: ThemedComponent<any> = styled.div`
+const Container = styled.div`
   position: relative;
 `;
-const NotifBadge: ThemedComponent<any> = styled.div`
+const NotifBadge = styled.div`
   height: 20px;
   min-width: 20px;
   text-align: center;

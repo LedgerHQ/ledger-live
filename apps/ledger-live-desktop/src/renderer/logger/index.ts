@@ -1,4 +1,4 @@
-import winston from "winston";
+import winston, { LogEntry } from "winston";
 import Transport from "winston-transport";
 import { summarize } from "./summarize";
 import { captureException, captureBreadcrumb } from "~/sentry/renderer";
@@ -7,13 +7,13 @@ const { combine, json, timestamp } = format;
 
 // A transport that keep logs in memory for later use on Ctrl+E
 class MemoryTransport extends Transport {
-  _logs = [];
+  _logs: unknown[] = [];
   capacity = 3000;
   getMemoryLogs() {
     return this._logs.slice(0).reverse();
   }
 
-  log(info, callback) {
+  log(info: unknown, callback: () => void) {
     setImmediate(() => {
       this.emit("logged", info);
     });
@@ -44,10 +44,11 @@ export function enableDebugLogger() {
     // On Browser we want to preserve direct usage of console with the "expandable" objects
     const SPLAT = Symbol.for("splat");
     class CustomConsole extends Transport {
-      log(info, callback) {
+      log(info: LogEntry, callback: () => void) {
         setImmediate(() => {
           this.emit("logged", info);
         });
+        // @ts-expect-error it exists allegedly
         const rest = info[SPLAT];
         /* eslint-disable no-console, no-lonely-if */
         if (info.level === "error") {
@@ -88,7 +89,7 @@ const logApdu = !process.env.NO_DEBUG_DEVICE;
 const logCountervalues = !process.env.NO_DEBUG_COUNTERVALUES;
 const ANALYTICS_TYPE = "analytics";
 export default {
-  onCmd: (type: string, id: string, spentTime: number, data?: any) => {
+  onCmd: (type: string, id: string, spentTime: number, data?: unknown) => {
     if (logCmds) {
       switch (type) {
         case "cmd.START":
@@ -150,7 +151,7 @@ export default {
   },
   // tracks Redux actions (NB not all actions are serializable)
 
-  onReduxAction: (action: object) => {
+  onReduxAction: (action: { type: string }) => {
     if (logRedux) {
       logger.log("debug", `⚛️  ${action.type}`, {
         type: "action",
@@ -297,29 +298,34 @@ export default {
       data: properties,
     });
   },
-  countervalues: (...args: any) => {
+  countervalues: (...args: unknown[]) => {
     if (logCountervalues) {
       logger.log("debug", "Countervalues:", ...args);
     }
   },
   // General functions in case the hooks don't apply
 
-  debug: (...args: any) => {
+  debug: (...args: unknown[]) => {
+    // @ts-expect-error spreading unknowns is fine
     logger.log("debug", ...args);
   },
-  info: (...args: any) => {
+  info: (...args: unknown[]) => {
+    // @ts-expect-error spreading unknowns is fine
     logger.log("info", ...args);
   },
-  log: (...args: any) => {
+  log: (...args: unknown[]) => {
+    // @ts-expect-error spreading unknowns is fine
     logger.log("info", ...args);
   },
-  warn: (...args: any) => {
+  warn: (...args: unknown[]) => {
+    // @ts-expect-error spreading unknowns is fine
     logger.log("warn", ...args);
   },
-  error: (...args: any) => {
+  error: (...args: unknown[]) => {
+    // @ts-expect-error spreading unknowns is fine
     logger.log("error", ...args);
   },
-  critical: (error: Error, context?: string) => {
+  critical: (error: unknown, context?: string) => {
     if (context) {
       captureBreadcrumb({
         level: "critical",
@@ -327,15 +333,17 @@ export default {
         message: context,
       });
     }
-    logger.log("error", error && error.message, {
-      stack: error && error.stack,
+    if (error instanceof Error) {
+      logger.log("error", error && error.message, {
+        stack: error && error.stack,
 
-      ...error,
-    });
-    captureException(error);
+        ...error,
+      });
+      captureException(error);
+    }
   },
   add,
-  onLog: (log: any) => {
-    logger.log(log);
+  onLog: (log: LogEntry | string) => {
+    logger.log(log as LogEntry);
   },
 };

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Range, reverseRangeIndex, projectRangeIndex } from "@ledgerhq/live-common/range";
 import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import Box from "./Box";
@@ -20,7 +19,7 @@ type Props = {
   error: Error | undefined | null;
   defaultValue: BigNumber;
 };
-const ErrorWrapper: ThemedComponent<{}> = styled.div`
+const ErrorWrapper = styled.div`
   align-items: center;
   color: ${p => p.theme.colors.alertRed};
   display: flex;
@@ -28,7 +27,7 @@ const ErrorWrapper: ThemedComponent<{}> = styled.div`
     margin-right: 5px;
   }
 `;
-const ErrorContainer = styled(Box)`
+const ErrorContainer = styled(Box)<{ hasError?: boolean }>`
   margin-top: 0px;
   font-size: 12px;
   width: 100%;
@@ -50,7 +49,6 @@ const Holder = styled.div`
 export function useDynamicRange({
   range,
   value,
-  defaultValue,
   onChange,
 }: {
   range: Range;
@@ -107,7 +105,7 @@ const FeeSliderField = ({ range, value, onChange, unit, error, defaultValue }: P
           <Trans i18nKey="fees.fast" />
         </Text>
       </Box>
-      <ErrorContainer hasError={error}>
+      <ErrorContainer hasError={!!error}>
         {error ? (
           <ErrorWrapper>
             <IconExclamationCircle size={12} />

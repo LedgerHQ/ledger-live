@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 export type AccountTuple = {
   account: Account;
   subAccount: SubAccount | undefined | null;
@@ -46,13 +46,15 @@ const getIdsFromTuple = (accountTuple: AccountTuple) => ({
   accountId: accountTuple.account ? accountTuple.account.id : null,
   subAccountId: accountTuple.subAccount ? accountTuple.subAccount.id : null,
 });
-export type UseCurrencyAccountSelectReturnType = {
+export type UseCurrencyAccountSelectReturnType<
+  C extends CryptoOrTokenCurrency = CryptoOrTokenCurrency
+> = {
   availableAccounts: Array<AccountTuple>;
-  currency: (CryptoCurrency | undefined | null) | TokenCurrency;
-  account: (Account | undefined | null) | any;
-  subAccount: (SubAccount | undefined | null) | any;
+  currency: C | undefined | null;
+  account: Account | undefined | null;
+  subAccount: SubAccount | undefined | null;
   setAccount: (account?: Account | null, subAccount?: SubAccount | null) => void;
-  setCurrency: (currency?: (CryptoCurrency | TokenCurrency) | null) => void;
+  setCurrency: (currency?: C | null) => void;
 };
 export function useCurrencyAccountSelect({
   allCurrencies,
@@ -67,7 +69,10 @@ export function useCurrencyAccountSelect({
   defaultAccountId: string | undefined | null;
   hideEmpty?: boolean | null;
 }): UseCurrencyAccountSelectReturnType {
-  const [state, setState] = useState(() => {
+  const [state, setState] = useState<{
+    currency: CryptoCurrency | TokenCurrency | null | undefined;
+    accountId: string | null | undefined;
+  }>(() => {
     const currency = defaultCurrencyId
       ? allCurrencies.find(currency => currency.id === defaultCurrencyId)
       : allCurrencies.length > 0
@@ -118,7 +123,7 @@ export function useCurrencyAccountSelect({
     },
     [allAccounts, hideEmpty],
   );
-  const setAccount = useCallback((account?: Account | null, subAccount?: SubAccount | null) => {
+  const setAccount = useCallback((account?: Account | null) => {
     setState(currState => ({
       ...currState,
       accountId: account ? account.id : null,

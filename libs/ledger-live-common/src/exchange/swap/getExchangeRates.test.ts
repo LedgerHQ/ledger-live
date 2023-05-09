@@ -359,7 +359,7 @@ describe("swap/getExchangeRates", () => {
     );
     expect(res[0]?.error?.name).toEqual("SwapExchangeRateAmountTooLow");
   });
-  test("should return correct error SwapExchangeRateAmountTooLowOrTooHigh", async () => {
+  test("should return correct error SwapExchangeRateAmountTooLowOrTooHigh for DEX", async () => {
     const data = [
       {
         provider: "paraswap",
@@ -392,5 +392,38 @@ describe("swap/getExchangeRates", () => {
     expect(res[0]?.error?.name).toEqual(
       "SwapExchangeRateAmountTooLowOrTooHigh"
     );
+  });
+
+  test("should return correct error CurrencyNotSupportedError for CEX", async () => {
+    const data = [
+      {
+        provider: "changelly",
+        providerType: "CEX",
+        from: "ethereum",
+        to: "ethereum/erc20/usd_tether__erc20_",
+        tradeMethod: "float",
+        errorCode: 300,
+        errorMessage: "Failed to get rate for paraswap.",
+        status: "error",
+      },
+    ];
+    const resp = {
+      data,
+      status: 200,
+      statusText: "",
+      headers: {},
+      config: {},
+    };
+
+    mockedAxios.mockResolvedValue(Promise.resolve(resp));
+    mockedProviders.mockResolvedValue(Promise.resolve([]));
+    const res = await getExchangeRates(
+      exchange,
+      transaction,
+      undefined,
+      undefined,
+      providers
+    );
+    expect(res[0]?.error?.name).toEqual("CurrencyNotSupportedError");
   });
 });

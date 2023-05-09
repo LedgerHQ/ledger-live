@@ -15,17 +15,7 @@ import Text from "~/renderer/components/Text";
 import ClaimRewardsIllu from "~/renderer/images/rewards.svg";
 import Image from "~/renderer/components/Image";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-export default function StepInfo({
-  account,
-  parentAccount,
-  onUpdateTransaction,
-  transaction,
-  status,
-  bridgePending,
-  warning,
-  error,
-  t,
-}: StepProps) {
+export default function StepInfo({ account, transaction, warning, error }: StepProps) {
   invariant(
     account && account.algorandResources && transaction,
     "account and transaction required",
@@ -71,7 +61,6 @@ export function StepInfoFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;

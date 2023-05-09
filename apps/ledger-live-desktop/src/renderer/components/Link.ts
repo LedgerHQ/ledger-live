@@ -1,12 +1,11 @@
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { space, lineHeight, fontSize, fontWeight, color } from "styled-system";
-export const FakeLink: ThemedComponent<{}> = styled.span`
+export const FakeLink = styled.span`
   text-decoration: underline;
   cursor: pointer;
   color: ${p => p.color || p.theme.colors.wallet};
 `;
-const Link: ThemedComponent<any> = styled.a`
+const Link = styled.a`
   ${color};
   ${fontSize};
   ${fontWeight};

@@ -16,7 +16,9 @@ export function NotificationIndicator() {
   const { t } = useTranslation();
   const notificationsCards = useSelector(notificationsContentCardSelector);
 
-  const totalNotifCount = getEnv("PLAYWRIGHT_RUN") ? 0 : notificationsCards?.filter(n => !n.viewed).length || 0;
+  const totalNotifCount = getEnv("PLAYWRIGHT_RUN")
+    ? 0
+    : notificationsCards?.filter(n => !n.viewed).length || 0;
   const { isOpen } = useSelector(informationCenterStateSelector);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -26,7 +28,7 @@ export function NotificationIndicator() {
       button: "Notification Center",
       page: history.location.pathname,
     });
-    dispatch(openInformationCenter());
+    dispatch(openInformationCenter(undefined));
   }, [dispatch, history.location.pathname]);
 
   return (

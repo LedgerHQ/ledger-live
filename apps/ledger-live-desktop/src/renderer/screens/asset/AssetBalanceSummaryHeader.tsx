@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { Currency, CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import {
-  ValueChange,
-  BalanceHistoryWithCountervalue,
-} from "@ledgerhq/live-common/portfolio/v2/types";
+
 import { setCountervalueFirst } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";
 import { BalanceTotal, BalanceDiff } from "~/renderer/components/BalanceInfos";
@@ -15,7 +12,6 @@ import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import styled from "styled-components";
 import Swap from "~/renderer/icons/Swap";
-
 import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
@@ -26,6 +22,7 @@ import { useProviders } from "../exchange/Swap2/Form";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "~/renderer/screens/stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
+import { BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
 type Props = {
   isAvailable: boolean;
   cryptoChange: ValueChange;
@@ -77,19 +74,12 @@ export default function AssetBalanceSummaryHeader({
   const primaryKey = data[0].unit.code;
   const secondaryKey = data[1].unit.code;
   const rampCatalog = useRampCatalog();
-  // eslint-disable-next-line no-unused-vars
-  const [availableOnBuy, availableOnSell] = useMemo(() => {
+  const availableOnBuy = useMemo(() => {
     if (!rampCatalog.value) {
-      return [false, false];
+      return false;
     }
     const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
-    const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.offRamp,
-    );
-    return [
-      allBuyableCryptoCurrencyIds.includes(currency.id),
-      allSellableCryptoCurrencyIds.includes(currency.id),
-    ];
+    return allBuyableCryptoCurrencyIds.includes(currency.id);
   }, [rampCatalog.value, currency.id]);
   const { providers, storedProviders } = useProviders();
   const startStakeFlow = useStakeFlow();
@@ -97,11 +87,9 @@ export default function AssetBalanceSummaryHeader({
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
-  const availableOnSwap =
-    (providers || storedProviders) &&
-    !!(providers || storedProviders).find(({ pairs }) => {
-      return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
-    });
+  const availableOnSwap = providers?.concat(storedProviders ?? []).some(({ pairs }) => {
+    return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
+  });
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
     history.push({
@@ -162,7 +150,7 @@ export default function AssetBalanceSummaryHeader({
           onClick={() => setCountervalueFirst(!countervalueFirst)}
           showCryptoEvenIfNotAvailable
           isAvailable={isAvailable}
-          totalBalance={data[0].balance}
+          totalBalance={data[0].balance || 0}
           unit={data[0].unit}
         >
           <Wrapper
@@ -195,7 +183,6 @@ export default function AssetBalanceSummaryHeader({
               from={currency}
               withActivityCurrencyColor
               withEquality
-              color="warmGrey"
               fontSize={6}
               iconSize={16}
             />
@@ -227,7 +214,7 @@ export default function AssetBalanceSummaryHeader({
         flow={7}
       >
         <BalanceDiff
-          totalBalance={data[0].balance}
+          totalBalance={data[0].balance || 0}
           valueChange={data[0].valueChange}
           unit={data[0].unit}
           isAvailable={isAvailable}

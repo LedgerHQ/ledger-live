@@ -4,11 +4,9 @@ import * as remote from "@electron/remote";
 import React, { forwardRef, RefObject, useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-
 import {
   useWalletAPIServer,
   useConfig,
@@ -18,7 +16,6 @@ import {
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import { getEnv } from "@ledgerhq/live-common/env";
-
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { flattenAccountsSelector } from "../../reducers/accounts";
@@ -48,7 +45,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
           SelectAccountAndCurrencyDrawer,
           {
             currencies,
-            onAccountSelected: (account: Account, parentAccount: Account | undefined) => {
+            onAccountSelected: (account: AccountLike, parentAccount: Account | undefined) => {
               setDrawer();
               onSuccess(account, parentAccount);
             },
@@ -87,7 +84,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
         );
       },
       "storage.get": ({ key, storeId }) => {
-        return getStoreValue(key, storeId);
+        return getStoreValue(key, storeId) as string | undefined;
       },
       "storage.set": ({ key, value, storeId }) => {
         setStoreValue(key, value, storeId);
@@ -131,7 +128,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
             setDrawer(OperationDetails, {
               operationId: optimisticOperation.id,
               accountId: account.id,
-              parentId: parentAccount?.id,
+              parentId: parentAccount?.id as string | undefined | null,
             });
           },
         });
@@ -196,7 +193,8 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
         const webview = webviewRef.current;
         if (webview) {
           const origin = new URL(webview.src).origin;
-          webview.contentWindow.postMessage(message, origin);
+          // @ts-expect-error Electron webview type issue
+          webview.contentWindow?.postMessage(message, origin);
         }
       },
     };
@@ -230,8 +228,7 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
     const id = webview.getWebContentsId();
 
     // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-    // @ts-expect-error: missing typings for api
-    window.api.openWindow(id);
+    window.api?.openWindow(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

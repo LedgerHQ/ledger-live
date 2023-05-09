@@ -17,7 +17,6 @@ import DateCell from "./DateCell";
 import AccountCell from "./AccountCell";
 import AddressCell from "./AddressCell";
 import AmountCell from "./AmountCell";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 const mapStateToProps = createStructuredSelector({
@@ -26,10 +25,10 @@ const mapStateToProps = createStructuredSelector({
       currency: getMainAccount(account, parentAccount).currency,
     }),
 });
-const OperationRow: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const OperationRow = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
-}))`
+}))<{ isOptimistic: boolean }>`
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
   height: 68px;
   opacity: ${p => (p.isOptimistic ? 0.5 : 1)};
@@ -45,8 +44,8 @@ type OwnProps = {
   parentAccount?: Account;
   onOperationClick: (operation: Operation, account: AccountLike, parentAccount?: Account) => void;
   t: TFunction;
-  withAccount: boolean;
-  withAddress: boolean;
+  withAccount?: boolean;
+  withAddress?: boolean;
   text?: string;
 };
 type Props = {
@@ -105,7 +104,7 @@ class OperationComponent extends PureComponent<Props> {
     );
   }
 }
-const ConnectedOperationComponent: React$ComponentType<OwnProps> = connect(mapStateToProps)(
+const ConnectedOperationComponent: React.ComponentType<OwnProps> = connect(mapStateToProps)(
   OperationComponent,
 );
 export default ConnectedOperationComponent;

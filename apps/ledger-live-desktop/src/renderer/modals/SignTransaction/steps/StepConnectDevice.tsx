@@ -14,7 +14,7 @@ export default function StepConnectDevice({
   onTransactionSigned,
 }: StepProps) {
   // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
-  const dependencies = [getMainAccount(account, parentAccount)];
+  const dependencies = (account && [getMainAccount(account, parentAccount)]) || [];
   return (
     <>
       <TrackPage category="Sign Transaction Flow" name="Step ConnectDevice" />

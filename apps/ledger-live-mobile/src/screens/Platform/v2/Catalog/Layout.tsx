@@ -58,7 +58,6 @@ export function Layout({
     <SafeAreaView style={styles.container}>
       <Flex
         style={[
-          styles.topHeader,
           styles.marginHorizontal,
           {
             flexDirection: "row",

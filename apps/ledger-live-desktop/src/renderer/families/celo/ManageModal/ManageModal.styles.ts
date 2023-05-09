@@ -1,8 +1,8 @@
 import styled, { css } from "styled-components";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-export const IconWrapper: ThemedComponent<{}> = styled.div`
+
+export const IconWrapper = styled.div`
   width: 32px;
   height: 32px;
   border-radius: 32px;
@@ -13,7 +13,7 @@ export const IconWrapper: ThemedComponent<{}> = styled.div`
   align-items: center;
   margin-top: ${p => p.theme.space[2]}px;
 `;
-export const ManageButton: ThemedComponent<{}> = styled.button`
+export const ManageButton = styled.button`
   min-height: 88px;
   padding: 16px;
   margin: 5px 0;
@@ -49,13 +49,12 @@ export const ManageButton: ThemedComponent<{}> = styled.button`
       cursor: pointer;
   `};
 `;
-export const InfoWrapper: ThemedComponent<{}> = styled(Box).attrs(() => ({
-  vertical: true,
+export const InfoWrapper = styled(Box).attrs(() => ({
   flex: 1,
   ml: 3,
   textAlign: "start",
 }))``;
-export const Title: ThemedComponent<{}> = styled(Text).attrs(() => ({
+export const Title = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   fontSize: 4,
 }))``;

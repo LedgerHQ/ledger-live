@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-
 import PostOnboardingActionRow from "./PostOnboardingActionRow";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 

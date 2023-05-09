@@ -1,4 +1,6 @@
-import { keyframes, css, CSSRules } from "styled-components";
+import { keyframes, css } from "styled-components";
+import { Theme as UITheme } from "@ledgerhq/react-ui/styles/theme";
+
 export const space = [0, 5, 10, 15, 20, 30, 40, 50, 70];
 export const fontSizes = [8, 9, 10, 12, 13, 16, 18, 22, 32];
 export const radii = [0, 4];
@@ -113,10 +115,10 @@ const fadeInUp = keyframes`
     }
   `;
 const animations = {
-  fadeIn: props => css`${fadeIn} ${animationLength} ${easings.outQuadratic} forwards`,
-  fadeOut: props => css`${fadeOut} ${animationLength} ${easings.outQuadratic} forwards`,
-  fadeInGrowX: props => css`${fadeInGrowX} 0.6s ${easings.outQuadratic} forwards`,
-  fadeInUp: props => css`${fadeInUp} ${animationLength} ${easings.outQuadratic} forwards`,
+  fadeIn: () => css`${fadeIn} ${animationLength} ${easings.outQuadratic} forwards`,
+  fadeOut: () => css`${fadeOut} ${animationLength} ${easings.outQuadratic} forwards`,
+  fadeInGrowX: () => css`${fadeInGrowX} 0.6s ${easings.outQuadratic} forwards`,
+  fadeInUp: () => css`${fadeInUp} ${animationLength} ${easings.outQuadratic} forwards`,
 };
 const overflow = {
   x: css`
@@ -194,9 +196,15 @@ export type Theme = {
     [x: string]: string;
   };
   animations: {
-    [x: string]: (props: never) => CSSRules;
+    [x: string]: (props: never) => any;
+  };
+  overflow: {
+    [x: string]: any;
   };
 };
+
+export type MergedThemes = UITheme & Theme;
+
 const theme: Theme = {
   sizes: {
     topBarHeight: 58,

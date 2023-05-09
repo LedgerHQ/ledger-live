@@ -69,7 +69,7 @@ const ErrorDisplay = styled(Box)`
 const WarningDisplay = styled(Box)`
   color: ${p => p.theme.colors.warning};
 `;
-interface Props {
+export interface Props {
   amount: BigNumber;
   initialAmount: BigNumber;
   account: Account;
@@ -122,7 +122,7 @@ const AmountField = (props: Props) => {
     warnings,
   ]);
   return (
-    <Box vertical>
+    <Box>
       <Label>{label}</Label>
       <InputCurrency
         autoFocus={false}

@@ -15,7 +15,7 @@ type Props = {
   confirmText?: React.ReactNode;
   cancelText?: React.ReactNode;
   onReject?: Function;
-  onClose?: Function;
+  onClose?: () => void;
   onConfirm: Function;
   isLoading?: boolean;
   analyticsName: string;
@@ -54,14 +54,13 @@ const ConfirmModal = ({
       name={name}
       isOpened={isOpened}
       centered={centered}
-      width={narrow && 380}
+      width={narrow ? 380 : undefined}
       onClose={!cancellable && isLoading ? undefined : onClose}
       preventBackdropClick={isLoading}
       backdropColor
     >
       <ModalBody
         {...props}
-        preventBackdropClick={isLoading}
         onClose={!cancellable && isLoading ? undefined : onClose}
         title={title}
         renderFooter={() => (

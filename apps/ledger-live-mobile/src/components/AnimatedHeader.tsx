@@ -3,76 +3,25 @@ import {
   View,
   StyleSheet,
   Platform,
-  TouchableOpacity,
   FlatList,
   StyleProp,
   ViewStyle,
   TextStyle,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  useNavigation,
-  useTheme,
-  useIsFocused,
-} from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import Animated from "react-native-reanimated";
 import * as Animatable from "react-native-animatable";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { space } from "@ledgerhq/native-ui/styles/theme";
 import Styles from "../navigation/styles";
 import LText from "./LText";
 import { width } from "../helpers/normalizeSize";
-import ArrowLeft from "../icons/ArrowLeft";
-import Close from "../icons/Close";
-import { Theme } from "../colors";
-
-type WildcardNavigation = StackNavigationProp<
-  Record<string, object | undefined>
->;
+import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
+import { NavigationHeaderCloseButton } from "./NavigationHeaderCloseButton";
 
 const { interpolateNode, Extrapolate } = Animated;
 const AnimatedView = Animatable.View;
-const hitSlop = {
-  bottom: 10,
-  left: 24,
-  right: 24,
-  top: 10,
-};
-
-const BackButton = ({
-  colors,
-  navigation,
-  action,
-}: {
-  colors: Theme["colors"];
-  navigation: WildcardNavigation;
-  action?: () => void;
-}) => (
-  <TouchableOpacity
-    hitSlop={hitSlop}
-    style={styles.buttons}
-    onPress={() => (action ? action() : navigation.goBack())}
-  >
-    <ArrowLeft size={18} color={colors.darkBlue} />
-  </TouchableOpacity>
-);
-
-const CloseButton = ({
-  colors,
-  navigation,
-  action,
-}: {
-  colors: Theme["colors"];
-  navigation: WildcardNavigation;
-  action?: () => void;
-}) => (
-  <TouchableOpacity
-    hitSlop={hitSlop}
-    onPress={() => (action ? action() : navigation.popToTop())}
-    style={styles.buttons}
-  >
-    <Close size={18} color={colors.darkBlue} />
-  </TouchableOpacity>
-);
 
 type Props = {
   title: React.ReactNode;
@@ -99,8 +48,7 @@ export default function AnimatedHeaderView({
   titleStyle,
   edges,
 }: Props) {
-  const { colors } = useTheme();
-  const navigation = useNavigation<WildcardNavigation>();
+  const { colors, space } = useTheme();
   const [textHeight, setTextHeight] = useState(250);
   const [isReady, setReady] = useState(false);
   const onLayoutText = useCallback(event => {
@@ -124,12 +72,12 @@ export default function AnimatedHeaderView({
   const event = Animated.event<typeof eventArgs>(eventArgs);
   const translateY = interpolateNode(scrollY, {
     inputRange: [0, 76],
-    outputRange: [0, -50],
+    outputRange: [0, -45],
     extrapolate: Extrapolate.CLAMP,
   });
   const translateX = interpolateNode(scrollY, {
     inputRange: [0, 76],
-    outputRange: [0, hasBackButton ? -5 : -40],
+    outputRange: [space[6], space[6] + (hasBackButton ? -5 : -40)],
     extrapolate: Extrapolate.CLAMP,
   });
   const scale = interpolateNode(scrollY, {
@@ -143,7 +91,7 @@ export default function AnimatedHeaderView({
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
         style,
       ]}
@@ -157,20 +105,10 @@ export default function AnimatedHeaderView({
         ]}
       >
         <View style={styles.topHeader}>
-          {hasBackButton && (
-            <BackButton
-              colors={colors}
-              navigation={navigation}
-              action={backAction}
-            />
-          )}
+          {hasBackButton && <NavigationHeaderBackButton onPress={backAction} />}
           <View style={styles.spacer} />
           {hasCloseButton && (
-            <CloseButton
-              colors={colors}
-              navigation={navigation}
-              action={closeAction}
-            />
+            <NavigationHeaderCloseButton onPress={closeAction} />
           )}
         </View>
 
@@ -236,7 +174,6 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "ios" ? 0 : 40,
     flexDirection: "column",
     overflow: "visible",
-    paddingHorizontal: 24,
     marginBottom: 16,
   },
   titleContainer: {
@@ -250,7 +187,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   scrollArea: {
-    paddingHorizontal: 24,
+    paddingHorizontal: space[6],
     paddingTop: 50,
     paddingBottom: 116,
   },

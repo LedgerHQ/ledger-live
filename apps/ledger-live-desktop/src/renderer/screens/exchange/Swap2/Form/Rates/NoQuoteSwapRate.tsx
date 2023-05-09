@@ -2,20 +2,19 @@ import React from "react";
 import { Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Trans } from "react-i18next";
 import Rate from "./Rate";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 export type Props = {
-  value?: ExchangeRate;
+  value: ExchangeRate;
   onSelect: (a: ExchangeRate) => void;
-  selected?: boolean;
+  selected?: boolean | null;
   icon?: string;
 };
-const SecondaryText: ThemedComponent<{}> = styled(Text)`
+const SecondaryText = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
-function NoQuoteSwapRate({ value = {}, selected, onSelect, icon }: Props) {
+function NoQuoteSwapRate({ value, selected, onSelect, icon }: Props) {
   return (
     <Rate
       value={value}

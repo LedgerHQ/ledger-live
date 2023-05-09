@@ -87,21 +87,19 @@ async function init() {
     }
   });
   let deepLinkUrl; // Nb In some cases `fetchSettings` runs after this, voiding the deep link.
-  ipcRenderer.once("deep-linking", (event, url) => {
+  ipcRenderer.once("deep-linking", (_, url: string) => {
     store.dispatch(setDeepLinkUrl(url));
     deepLinkUrl = url;
   });
-  const initialSettings = await getKey("app", "settings", {});
-  store.dispatch(
-    fetchSettings(
-      deepLinkUrl
-        ? {
-            ...initialSettings,
-            deepLinkUrl,
-          }
-        : initialSettings,
-    ),
-  );
+  const initialSettings = (await getKey("app", "settings")) || {};
+  fetchSettings(
+    deepLinkUrl
+      ? {
+          ...initialSettings,
+          deepLinkUrl,
+        }
+      : initialSettings,
+  )(store.dispatch);
   const state = store.getState();
   const language = languageSelector(state);
   const locale = localeSelector(state);
@@ -132,7 +130,7 @@ async function init() {
   let accounts = await getKey("app", "accounts", []);
   if (accounts) {
     accounts = implicitMigration(accounts);
-    await store.dispatch(setAccounts(accounts));
+    store.dispatch(setAccounts(accounts));
 
     // preload currency that's not in accounts list
     if (accounts.some(a => a.currency.id !== "ethereum")) {
@@ -159,10 +157,10 @@ async function init() {
     events({
       store,
     });
-    window.addEventListener("keydown", (e: SyntheticKeyboardEvent<any>) => {
+    window.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.which === TAB_KEY) {
         if (!isGlobalTabEnabled()) enableGlobalTab();
-        logger.onTabKey(document.activeElement);
+        logger.onTabKey(document.activeElement as HTMLElement);
       }
     });
     window.addEventListener("click", () => {
@@ -191,7 +189,7 @@ async function init() {
   );
   if (document.body) {
     const classes = document.body.classList;
-    let timer = 0;
+    let timer: NodeJS.Timeout | number | null = 0;
     window.addEventListener("resize", () => {
       if (timer) {
         clearTimeout(timer);
@@ -209,7 +207,7 @@ async function init() {
     store,
   };
 }
-function r(Comp) {
+function r(Comp: JSX.Element) {
   if (rootNode) {
     render(Comp, rootNode);
   }
@@ -217,7 +215,7 @@ function r(Comp) {
 init()
   .catch(e => {
     logger.critical(e);
-    r(<AppError error={e} language="en" />);
+    r(<AppError error={e} />);
   })
   .catch(error => {
     const pre = document.createElement("pre");

@@ -69,7 +69,6 @@ const ManageButton = styled.button`
   `};
 `;
 const InfoWrapper = styled(Box).attrs(() => ({
-  vertical: true,
   flex: 1,
   ml: 3,
   textAlign: "start",
@@ -126,7 +125,7 @@ const ManageModal = ({ name, account, ...rest }: Props) => {
       {...rest}
       name={name}
       centered
-      render={({ onClose, data }) => (
+      render={({ onClose }) => (
         <ModalBody
           onClose={onClose}
           onBack={undefined}

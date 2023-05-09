@@ -4,7 +4,6 @@ import { Text } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { ExchangeRate, SwapSelectorStateType } from "@ledgerhq/live-common/exchange/swap/types";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import {
   getProviderName,
   isRegistrationRequired,
@@ -13,20 +12,23 @@ import Price from "~/renderer/components/Price";
 import CounterValue from "~/renderer/components/CounterValue";
 import { Trans } from "react-i18next";
 import Rate from "./Rate";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+
 export type Props = {
-  value?: ExchangeRate;
+  value: ExchangeRate;
   onSelect: (a: ExchangeRate) => void;
-  selected?: boolean;
+  selected?: boolean | null;
   fromCurrency?: SwapSelectorStateType["currency"];
   toCurrency?: SwapSelectorStateType["currency"];
 };
-const SecondaryText: ThemedComponent<{}> = styled(Text)`
+
+const SecondaryText = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
-const StyledCounterValue: ThemedComponent<{}> = styled(CounterValue)`
+const StyledCounterValue = styled(CounterValue)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
-function SwapRate({ value = {}, selected, onSelect, fromCurrency, toCurrency }: Props) {
+function SwapRate({ value, selected, onSelect, fromCurrency, toCurrency }: Props) {
   const { toAmount: amount, provider } = value;
   return (
     <Rate
@@ -55,11 +57,10 @@ function SwapRate({ value = {}, selected, onSelect, fromCurrency, toCurrency }: 
             <Price
               withEquality
               withIcon={false}
-              from={fromCurrency}
+              from={fromCurrency as Currency}
               to={toCurrency}
               rate={value.magnitudeAwareRate}
-              fontWeight="600"
-              color="palette.text.shade100"
+              fontWeight={600}
               staticSignificantDigits={7}
             />
           </Box>

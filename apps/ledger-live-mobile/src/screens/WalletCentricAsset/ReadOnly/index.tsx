@@ -36,6 +36,7 @@ import { AccountsNavigatorParamList } from "../../../components/RootNavigator/ty
 import { ScreenName } from "../../../const";
 import AssetMarketSection from "../AssetMarketSection";
 import AssetGraph from "../AssetGraph";
+import { ReferralProgram } from "../referralProgram";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset>
@@ -77,6 +78,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
           accountsAreEmpty
         />
       </Flex>,
+      currency.ticker === "BTC" ? <ReferralProgram /> : null,
       <SectionContainer px={6} isFirst>
         <SectionTitle
           title={t("account.quickActions")}

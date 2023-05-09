@@ -22,8 +22,7 @@ import Spoiler from "~/renderer/components/Spoiler";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
 import Button from "~/renderer/components/Button";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 type State = {
   accountName: string | undefined | null;
   accountUnit: Unit | undefined | null;
@@ -32,16 +31,18 @@ type State = {
   endpointConfigError: Error | undefined | null;
   isRemoveAccountModalOpen: boolean;
 };
+type OwnProps = {
+  onClose?: () => void;
+  data: any;
+};
 type Props = {
   setDataModal: Function;
   updateAccount: Function;
   removeAccount: Function;
   t: TFunction;
-  onClose: () => void;
-  data: any;
-};
-const unitGetOptionValue = unit => unit.magnitude;
-const renderUnitItemCode = item => item.data.code;
+} & OwnProps;
+const unitGetOptionValue = (unit: Unit) => unit.magnitude + "";
+const renderUnitItemCode = (item: { data: Unit }) => item.data.code;
 const mapDispatchToProps = {
   setDataModal,
   updateAccount,
@@ -60,7 +61,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     ...defaultState,
   };
 
-  getAccount(data: object): Account {
+  getAccount(data: unknown): Account {
     const { accountName } = this.state;
     const account = get(data, "account", {});
     return {
@@ -79,7 +80,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     });
 
   handleSubmit = (account: Account, onClose: () => void) => (
-    e: SyntheticEvent<HTMLFormElement | HTMLInputElement>,
+    e: React.SyntheticEvent<HTMLFormElement | HTMLInputElement>,
   ) => {
     e.preventDefault();
     const { updateAccount, setDataModal } = this.props;
@@ -106,7 +107,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     }
   };
 
-  handleFocus = (e: any, name: string) => {
+  handleFocus = (e: React.FocusEvent<HTMLInputElement>, name: string) => {
     e.target.select();
     switch (name) {
       case "accountName":
@@ -124,7 +125,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     }
   };
 
-  handleChangeUnit = (value: Unit) => {
+  handleChangeUnit = (value?: Unit | null) => {
     this.setState({
       accountUnit: value,
     });
@@ -146,7 +147,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     this.setState({
       isRemoveAccountModalOpen: false,
     });
-    onClose();
+    onClose?.();
   };
 
   render() {
@@ -161,11 +162,11 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
       id: account.id,
       blockHeight: account.blockHeight,
     };
-    const onSubmit = this.handleSubmit(account, onClose);
+    const onSubmit = onClose && this.handleSubmit(account, onClose);
     const tag =
       account.derivationMode !== undefined &&
       account.derivationMode !== null &&
-      getTagDerivationMode(account.currency, account.derivationMode);
+      getTagDerivationMode(account.currency, account.derivationMode as DerivationMode);
     return (
       <ModalBody
         onClose={onClose}
@@ -190,7 +191,9 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
                   maxLength={getEnv("MAX_ACCOUNT_NAME_SIZE")}
                   onChange={this.handleChangeName}
                   onEnter={onSubmit}
-                  onFocus={e => this.handleFocus(e, "accountName")}
+                  onFocus={(e: React.FocusEvent<HTMLInputElement>) =>
+                    this.handleFocus(e, "accountName")
+                  }
                   error={accountNameError}
                   id="input-edit-name"
                 />
@@ -269,7 +272,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     );
   }
 }
-const AdvancedLogsContainer: ThemedComponent<{}> = styled.div`
+const AdvancedLogsContainer = styled.div`
   border: 1px dashed ${p => p.theme.colors.palette.background.default};
   background-color: ${p => p.theme.colors.palette.background.default};
   color: ${p => p.theme.colors.palette.text.shade100};
@@ -284,12 +287,12 @@ const AdvancedLogsContainer: ThemedComponent<{}> = styled.div`
   ${p => p.theme.overflow.xy};
   user-select: text;
 `;
-const ConnectedAccountSettingRenderBody: React$ComponentType<{}> = compose(
+const ConnectedAccountSettingRenderBody = compose(
   connect(null, mapDispatchToProps),
   withTranslation(),
-)(AccountSettingRenderBody);
+)(AccountSettingRenderBody) as React.ComponentType<OwnProps>;
 export default ConnectedAccountSettingRenderBody;
-export const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const Container = styled(Box).attrs(() => ({
   flow: 2,
   horizontal: true,
   mb: 3,
@@ -298,7 +301,7 @@ export const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
   justify-content: space-between;
 `;
-export const OptionRowDesc: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const OptionRowDesc = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 3,
   textAlign: "left",
@@ -306,7 +309,7 @@ export const OptionRowDesc: ThemedComponent<{}> = styled(Box).attrs(() => ({
   color: "palette.text.shade60",
   shrink: 1,
 }))``;
-export const OptionRowTitle: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const OptionRowTitle = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
   fontSize: 4,

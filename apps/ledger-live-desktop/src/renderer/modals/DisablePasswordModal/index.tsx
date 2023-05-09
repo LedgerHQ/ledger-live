@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, SyntheticEvent } from "react";
 import { useDispatch } from "react-redux";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
@@ -10,7 +10,7 @@ import InputPassword from "~/renderer/components/InputPassword";
 import Label from "~/renderer/components/Label";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { setHasPassword } from "~/renderer/actions/application";
-type MaybePasswordIncorrectError = PasswordIncorrectError | undefined | null;
+type MaybePasswordIncorrectError = ReturnType<typeof PasswordIncorrectError> | undefined | null;
 const DisablePasswordModal = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();

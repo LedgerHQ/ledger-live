@@ -18,7 +18,7 @@ import { DeviceInfo } from "@ledgerhq/types-live";
 const action = createAction(renameDevice);
 
 type Props = {
-  onClose: () => void;
+  onClose?: () => void;
   deviceName: string;
   deviceInfo: DeviceInfo;
   onSetName: (name: string) => void;
@@ -55,8 +55,10 @@ const EditDeviceName: React.FC<Props> = ({
   const [running, setRunning] = useState(false);
   const disableButton = running || (!completed && (deviceName === name || !name.trim() || error));
 
+  const request = useMemo(() => ({ name }), [name]);
+
   const onCloseDrawer = useCallback(() => {
-    onClose();
+    onClose?.();
     setRunning(false);
   }, [onClose]);
 
@@ -79,7 +81,7 @@ const EditDeviceName: React.FC<Props> = ({
     if (deviceName !== name) {
       setName(name.trim());
     } else {
-      onClose();
+      onClose?.();
     }
   }, [deviceName, name, onClose]);
 
@@ -112,7 +114,7 @@ const EditDeviceName: React.FC<Props> = ({
           >
             <BoxedIcon
               Icon={Icons.CheckAloneMedium}
-              iconColor="success.c100"
+              iconColor="success.c50"
               size={64}
               iconSize={24}
             />
@@ -135,11 +137,12 @@ const EditDeviceName: React.FC<Props> = ({
         ) : running ? (
           <Flex flex={1} alignItems="center" justifyContent="center" p={2}>
             <DeviceAction
-              device={device}
-              request={name}
+              request={request}
               action={action}
-              onClose={onClose}
               onResult={onSuccess}
+              // @ts-expect-error TODO: device and onClose are not expected as props - is it safe to remove?
+              device={device}
+              onClose={onClose}
             />
           </Flex>
         ) : (
@@ -164,12 +167,12 @@ const EditDeviceName: React.FC<Props> = ({
         )}
         {(!running || completed) && (
           <Flex flexDirection="column" rowGap={8}>
-            <Divider variant="light" />
+            <Divider />
             <Flex alignSelf="end" px={12} pb={8}>
               <Button
                 variant="main"
                 onClick={completed ? onCloseDrawer : onSubmit}
-                disabled={disableButton}
+                disabled={!!disableButton}
               >
                 {completed ? t(`common.close`) : t(`common.continue`)}
               </Button>

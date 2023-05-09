@@ -18,6 +18,7 @@ type Props = {
   outerError?: Error | null;
   withDescription?: boolean;
   withIcon?: boolean;
+  withHelp?: boolean;
   hasExportLogButton?: boolean;
   Icon?: IconType;
   iconColor?: string;
@@ -35,11 +36,12 @@ const GenericErrorView = ({
   error,
   outerError,
   withDescription = true,
+  withHelp = true,
   withIcon = true,
   hasExportLogButton = true,
   children,
   Icon = CloseMedium,
-  iconColor = "error.c100",
+  iconColor = "error.c50",
 }: Props) => {
   const { t } = useTranslation();
 
@@ -81,7 +83,7 @@ const GenericErrorView = ({
         <TranslatedError error={titleError} />
       </Text>
       {subtitleError ? (
-        <Text variant={"paragraph"} color="error.c80" numberOfLines={3} mb={6}>
+        <Text variant={"paragraph"} color="error.c40" numberOfLines={3} mb={6}>
           <TranslatedError error={subtitleError} />
         </Text>
       ) : null}
@@ -95,7 +97,7 @@ const GenericErrorView = ({
           >
             <TranslatedError error={error} field="description" />
           </Text>
-          <SupportLinkError error={error} />
+          {withHelp ? <SupportLinkError error={error} /> : null}
         </>
       ) : null}
       {children}

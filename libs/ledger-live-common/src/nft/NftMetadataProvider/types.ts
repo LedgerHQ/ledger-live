@@ -5,10 +5,14 @@ import {
 
 export type NFTResourceQueued = {
   status: "queued";
+  metadata?: null;
+  updatedAt?: undefined;
 };
 
 export type NFTResourceLoading = {
   status: "loading";
+  metadata?: null;
+  updatedAt?: undefined;
 };
 
 export type NFTResourceLoaded = {
@@ -23,11 +27,13 @@ export type NFTResourceError = {
   status: "error";
   error: any;
   updatedAt: number;
+  metadata?: null;
 };
 
 export type NFTResourceNoData = {
   status: "nodata";
   updatedAt: number;
+  metadata?: null;
 };
 
 export type NFTResource =

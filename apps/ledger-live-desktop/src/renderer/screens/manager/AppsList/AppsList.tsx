@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { Trans, TFunction } from "react-i18next";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
-import { DeviceInfo } from "@ledgerhq/types-live";
-import { State, Action, AppsDistribution } from "@ledgerhq/live-common/apps/types";
+import { State, Action } from "@ledgerhq/live-common/apps/types";
 import { currenciesSelector } from "~/renderer/reducers/accounts";
 import UpdateAllApps from "./UpdateAllApps";
 import Placeholder from "./Placeholder";
@@ -21,10 +20,11 @@ import { openModal } from "~/renderer/actions/modals";
 import debounce from "lodash/debounce";
 import InstallSuccessBanner from "./InstallSuccessBanner";
 import SearchBox from "../../accounts/AccountList/SearchBox";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { App } from "@ledgerhq/types-live";
+import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 
 // sticky top bar with extra width to cover card boxshadow underneath
-export const StickyTabBar: ThemedComponent<{}> = styled.div`
+export const StickyTabBar = styled.div`
   position: sticky;
   background-color: ${p => p.theme.colors.palette.background.default};
   top: -${p => p.theme.space[3]}px;
@@ -37,7 +37,7 @@ export const StickyTabBar: ThemedComponent<{}> = styled.div`
   box-sizing: content-box;
   z-index: 1;
 `;
-const FilterHeader = styled.div`
+const FilterHeader = styled.div<{ isIncomplete?: boolean }>`
   display: flex;
   flex-direction: row;
   padding: 10px 20px;
@@ -52,19 +52,18 @@ const FilterHeader = styled.div`
   right: 0;
   z-index: 1;
 `;
+
 type Props = {
-  deviceInfo: DeviceInfo;
   optimisticState: State;
   state: State;
   dispatch: (a: Action) => void;
   isIncomplete: boolean;
-  setAppInstallDep: (a: any) => void;
-  setAppUninstallDep: (a: any) => void;
+  setAppInstallDep?: (a: { app: App; dependencies: App[] }) => void;
+  setAppUninstallDep?: (a: { dependents: App[]; app: App }) => void;
   t: TFunction;
-  distribution: AppsDistribution;
 };
+
 const AppsList = ({
-  deviceInfo,
   optimisticState,
   state,
   dispatch,
@@ -72,22 +71,21 @@ const AppsList = ({
   setAppInstallDep,
   setAppUninstallDep,
   t,
-  distribution,
 }: Props) => {
   const { push } = useHistory();
   const { search } = useLocation();
   const reduxDispatch = useDispatch();
   const currenciesAccountsSetup = useSelector(currenciesSelector);
-  const inputRef = useRef<any>();
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const [query, setQuery] = useState("");
-  const [appFilter, setFilter] = useState("all");
-  const [sort, setSort] = useState({
+  const [appFilter, setFilter] = useState<AppType>("all");
+  const [sort, setSort] = useState<SortOptions>({
     type: "marketcap",
     order: "desc",
   });
   const [activeTab, setActiveTab] = useState(0);
   const onTextChange = useCallback(
-    (evt: SyntheticInputEvent<HTMLInputElement>, v) => setQuery(evt.target.value),
+    (evt: React.ChangeEvent<HTMLInputElement>) => setQuery(evt.target.value),
     [setQuery],
   );
 
@@ -123,7 +121,7 @@ const AppsList = ({
   });
   const displayedAppList = isDeviceTab ? device : catalog;
   const mapApp = useCallback(
-    (app, appStoreView, onlyUpdate, showActions) => (
+    (app: App, appStoreView: boolean, onlyUpdate?: boolean, showActions?: boolean) => (
       <Item
         optimisticState={optimisticState}
         state={state}
@@ -154,10 +152,8 @@ const AppsList = ({
     <>
       <InstallSuccessBanner
         state={state}
-        dispatch={dispatch}
-        isIncomplete={isIncomplete}
         addAccount={addAccount}
-        disabled={update.length >= 1 || currenciesAccountsSetup.length}
+        disabled={update.length >= 1 || !!currenciesAccountsSetup.length}
       />
       <UpdateAllApps
         optimisticState={optimisticState}

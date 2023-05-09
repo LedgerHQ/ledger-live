@@ -22,7 +22,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 class StatusQueued extends PureComponent<{
-  onClick: (a: any) => void;
+  onClick: (a: React.SyntheticEvent<HTMLDivElement>) => void;
 }> {
   render() {
     const { onClick } = this.props;
@@ -36,7 +36,7 @@ class StatusQueued extends PureComponent<{
   }
 }
 class StatusSynchronizing extends PureComponent<{
-  onClick: (a: any) => void;
+  onClick: (a: React.SyntheticEvent<HTMLDivElement>) => void;
 }> {
   render() {
     const { onClick } = this.props;
@@ -53,7 +53,7 @@ class StatusSynchronizing extends PureComponent<{
 }
 class StatusUpToDate extends PureComponent<{
   showSatStackIcon?: boolean;
-  onClick: (a: any) => void;
+  onClick: (a: React.SyntheticEvent<HTMLDivElement>) => void;
 }> {
   render() {
     const { showSatStackIcon, onClick } = this.props;
@@ -61,9 +61,9 @@ class StatusUpToDate extends PureComponent<{
       <Tooltip content={<Trans i18nKey="common.sync.upToDate" />}>
         <Box onClick={onClick}>
           {showSatStackIcon ? (
-            <IconSyncServer onClick={onClick} color={colors.positiveGreen} size={16} />
+            <IconSyncServer color={colors.positiveGreen} size={16} />
           ) : (
-            <IconCheck onClick={onClick} color={colors.positiveGreen} size={16} />
+            <IconCheck color={colors.positiveGreen} size={16} />
           )}
         </Box>
       </Tooltip>
@@ -71,7 +71,7 @@ class StatusUpToDate extends PureComponent<{
   }
 }
 class StatusError extends PureComponent<{
-  onClick: (a: any) => void;
+  onClick: (a: React.SyntheticEvent<HTMLDivElement>) => void;
   error: Error | undefined | null;
 }> {
   render() {
@@ -90,7 +90,7 @@ class StatusError extends PureComponent<{
         }
       >
         <Box onClick={onClick}>
-          <IconError onClick={onClick} color={colors.alertRed} size={16} />
+          <IconError color={colors.alertRed} size={16} />
         </Box>
       </Tooltip>
     );
@@ -110,7 +110,7 @@ const AccountSyncStatusIndicator = ({ accountId, account, isUpToDateAccount }: P
   });
   const sync = useBridgeSync();
   const [userAction, setUserAction] = useState(false);
-  const timeout = useRef(null);
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
   const satStackAlreadyConfigured = useEnv("SATSTACK");
   const currency = getAccountCurrency(account);
   const showSatStackIcon = satStackAlreadyConfigured && currency.id === "bitcoin";
@@ -150,5 +150,5 @@ const AccountSyncStatusIndicator = ({ accountId, account, isUpToDateAccount }: P
   }
   return <StatusQueued onClick={onClick} />;
 };
-const m: React$ComponentType<OwnProps> = connect(mapStateToProps)(AccountSyncStatusIndicator);
+const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(AccountSyncStatusIndicator);
 export default m;

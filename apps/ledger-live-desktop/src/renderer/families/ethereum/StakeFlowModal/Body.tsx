@@ -1,16 +1,18 @@
 import React, { useCallback, useState } from "react";
 import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
-import EthStakeIllustration from "./assets/EthStakeIlustration.tsx";
+import EthStakeIllustration from "./assets/EthStakeIlustration";
 import ProviderItem from "./component/ProviderItem";
 import { Flex } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import CheckBox from "~/renderer/components/CheckBox";
 import { track } from "~/renderer/analytics/segment";
-import { LOCAL_STORAGE_KEY_PREFIX } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
+import {
+  LOCAL_STORAGE_KEY_PREFIX,
+  CheckBoxContainer,
+} from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
 import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
-import { CheckBoxContainer } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow.tsx";
 type Props = {
   onClose: () => void;
   account: Account;
@@ -90,7 +92,7 @@ const Body = ({
       <EthStakeIllustration size={140} />
       <Flex flexDirection={"column"} mt={7} px={20} width="100%">
         <Flex flexDirection={"column"} width="100%">
-          {providers.map((item, i) => (
+          {providers.map(item => (
             <Flex key={item.id} width="100%" flexDirection={"column"}>
               <ProviderItem
                 id={item.liveAppId}

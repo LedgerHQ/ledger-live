@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { RatesReducerState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import AnimatedCountdown from "~/renderer/components/AnimatedCountdown";
 import { formatCountdown } from "~/renderer/screens/exchange/Swap2/Form/Rates/utils/formatCountdown";
+import { RatesReducerState } from "@ledgerhq/live-common/exchange/swap/types";
+
 export type Props = {
   rates: RatesReducerState["value"];
   refreshTime: number;
 };
-const CountdownText: ThemedComponent<{}> = styled(Text)`
+
+const CountdownText = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
+
 export default function Countdown({ refreshTime, rates }: Props) {
-  const getSeconds = time => Math.round(time / 1000);
+  const getSeconds = (time: number) => Math.round(time / 1000);
   const [countdown, setCountdown] = useState(getSeconds(refreshTime));
   const [iconKey, setIconKey] = useState(0);
   useEffect(() => {

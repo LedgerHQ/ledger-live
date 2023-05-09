@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from "react";
-
 import { Flex, Drawer, Button, Divider } from "@ledgerhq/react-ui";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
 import { useDispatch, useSelector } from "react-redux";
 import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
-import { DeviceInfo } from "@ledgerhq/types-live";
+import { DeviceInfo, Language } from "@ledgerhq/types-live";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
 import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
@@ -94,13 +93,17 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
         {installingLanguage ? (
           <>
             <ChangeDeviceLanguageAction
-              language={localeIdToDeviceLanguage[currentLanguage]}
+              language={
+                localeIdToDeviceLanguage[
+                  currentLanguage as keyof typeof localeIdToDeviceLanguage
+                ] ?? (localeIdToDeviceLanguage.en as Language)
+              }
               onSuccess={handleSuccess}
               onError={handleError}
             />
             {languageInstalled && (
               <Flex flexDirection="column" rowGap={8} alignSelf="stretch">
-                <Divider variant="light" />
+                <Divider />
                 <Flex alignSelf="end" pb={8} px={12}>
                   <Button
                     variant="main"

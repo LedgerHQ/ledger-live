@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from "react";
-
 import {
   Transaction as EthereumTransaction,
   TransactionStatus,

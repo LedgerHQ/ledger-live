@@ -10,8 +10,8 @@ import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLangua
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 type Props = {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  onClose?: () => void;
   deviceInfo: DeviceInfo;
   onSuccess: (selectedLanguage: Language) => void;
   onError: (error: Error) => void;
@@ -45,13 +45,14 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   const [installed, setInstalled] = useState(false);
 
   const onCloseDrawer = useCallback(() => {
-    onClose();
+    onClose?.();
     setInstalling(false);
     setInstalled(false);
   }, [onClose, setInstalling]);
 
   const onChange = useCallback(
-    (radioValue?: string | string[] | number) => setSelectedLanguage(radioValue as Language),
+    (radioValue?: string | number | readonly string[] | undefined) =>
+      setSelectedLanguage(radioValue as Language),
     [setSelectedLanguage],
   );
 
@@ -125,7 +126,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
       </Flex>
       {(!installing || installed) && (
         <Flex flexDirection="column" rowGap={8} flex={0}>
-          <Divider variant="light" />
+          <Divider />
           <Flex alignSelf="end" px={12} pb={8}>
             <Button
               data-test-id={

@@ -2,14 +2,16 @@ import React, { useRef, useCallback, memo } from "react";
 import { Trans } from "react-i18next";
 import styled, { css } from "styled-components";
 import { BigNumber } from "bignumber.js";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ExternalLink from "~/renderer/icons/ExternalLink";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import { colors } from "~/renderer/styles/theme";
-export const IconContainer: ThemedComponent<any> = styled.div`
+
+export const IconContainer = styled.div<{
+  isSR?: boolean;
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,11 +23,12 @@ export const IconContainer: ThemedComponent<any> = styled.div`
   color: ${p =>
     p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
 `;
+
 const InfoContainer = styled(Box).attrs(() => ({
-  vertical: true,
   ml: 2,
   flex: 1,
 }))``;
+
 const Title = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -80,7 +83,9 @@ const InputRight = styled(Box).attrs(() => ({
 const InputBox = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
-}))`
+}))<{
+  active?: boolean;
+}>`
   position: relative;
   flex-basis: 160px;
   height: 32px;
@@ -110,17 +115,18 @@ const MaxButton = styled.button`
     filter: contrast(2);
   }
 `;
-const Row: ThemedComponent<{
-  active: boolean;
-  disabled: boolean;
-}> = styled(Box).attrs(() => ({
+
+const Row = styled(Box).attrs(() => ({
   horizontal: true,
   flex: "0 0 56px",
   mb: 2,
   alignItems: "center",
   justifyContent: "flex-start",
   p: 2,
-}))`
+}))<{
+  active: boolean;
+  disabled?: boolean;
+}>`
   border-radius: 4px;
   border: 1px solid transparent;
   position: relative;
@@ -160,6 +166,7 @@ const Row: ThemedComponent<{
         `
       : ""}
 `;
+
 export type ValidatorRowProps = {
   validator: {
     address: string;
@@ -200,7 +207,7 @@ const ValidatorRow = ({
   shouldRenderMax,
   className,
 }: ValidatorRowProps) => {
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement>();
   const onTitleClick = useCallback(
     e => {
       e.stopPropagation();

@@ -1,22 +1,23 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import { Trans } from "react-i18next";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
 import IconSwap from "~/renderer/icons/Swap";
 import IconExchange from "~/renderer/icons/Exchange";
 import IconSell from "~/renderer/icons/Plus";
-
 import Button from "~/renderer/components/ButtonV3";
 import { Flex } from "@ledgerhq/react-ui";
+
 type Props = {
   onClick: () => void;
-  iconComponent: any;
-  labelComponent: any;
+  iconComponent: JSX.Element;
+  labelComponent: ReactElement;
   event?: string;
-  eventProperties?: object;
+  eventProperties?: Record<string, unknown>;
   disabled?: boolean;
   accountActionsTestId?: string;
 };
+
 export const ActionDefault = ({
   onClick,
   iconComponent,

@@ -566,7 +566,7 @@ function createAppManifest(id = "1"): AppManifest {
     homepageUrl: "https://www.ledger.com",
     supportUrl: "https://www.ledger.com",
     icon: null,
-    platform: "all",
+    platforms: ["ios", "android", "desktop"],
     apiVersion: "1.0.0",
     manifestVersion: "1.0.0",
     branch: "debug",
@@ -583,6 +583,7 @@ function createAppManifest(id = "1"): AppManifest {
     },
     permissions: [],
     domains: [],
+    visibility: "complete",
   };
 }
 

@@ -42,8 +42,6 @@ const AmountField = ({
   onChangeTransaction,
   transaction,
   status,
-  bridgePending,
-  t,
 }: Props) => {
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);
@@ -79,7 +77,7 @@ const AmountField = ({
     amountError = null;
   }
   return (
-    <Box vertical flow={1}>
+    <Box flow={1}>
       <Box horizontal justifyContent="space-between">
         <Label>
           <Trans i18nKey="polkadot.unbond.steps.amount.amountLabel" />

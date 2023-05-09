@@ -9,7 +9,6 @@ import Box from "~/renderer/components/Box";
 import Card from "~/renderer/components/Box/Card";
 import TabBar from "~/renderer/components/TabBar";
 import { languageSelector } from "~/renderer/reducers/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import OnRamp from "./Buy";
 import { useExchangeProvider } from "./hooks";
 import OffRamp from "./Sell";
@@ -18,9 +17,9 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import useTheme from "~/renderer/hooks/useTheme";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest, Loadable } from "@ledgerhq/live-common/platform/types";
 
-const Container: ThemedComponent<{ selectable: boolean; pb: number }> = styled(Box)`
+const Container = styled(Box)`
   flex: 1;
   display: flex;
 `;
@@ -40,7 +39,7 @@ export type DProps = {
   defaultCurrencyId?: string | null;
   defaultAccountId?: string | null;
   defaultTicker?: string | null;
-  rampCatalog: RampCatalog;
+  rampCatalog: Loadable<RampCatalog>;
 };
 type QueryParams = {
   mode?: "onRamp" | "offRamp";
@@ -52,7 +51,8 @@ const DEFAULT_MULTIBUY_APP_ID = "multibuy";
 
 // Exchange (Buy / Sell) as a live app screen
 const LiveAppExchange = ({ appId }: { appId: string }) => {
-  const { state: urlParams } = useLocation();
+  const { state: urlParams, search } = useLocation();
+  const searchParams = new URLSearchParams(search);
   const locale = useSelector(languageSelector);
 
   const mockManifest: LiveAppManifest | undefined =
@@ -75,8 +75,9 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
           manifest={manifest}
           inputs={{
             theme: themeType,
-            ...urlParams,
+            ...(urlParams as object),
             lang: locale,
+            ...Object.fromEntries(searchParams.entries()),
           }}
         />
       ) : null}
@@ -87,10 +88,10 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
 // Legacy native Exchange (Buy / Sell) screen, should be deprecated soonish
 const LegacyExchange = () => {
   const rampCatalog = useRampCatalog();
-  const location = useLocation();
+  const location = useLocation<QueryParams>();
   const [provider] = useExchangeProvider();
   // no clue what's up
-  const state: QueryParams = location.state;
+  const state = location.state;
   const defaultMode = state?.mode || "onRamp";
   const [activeTabIndex, setActiveTabIndex] = useState(defaultMode === "onRamp" ? 0 : 1);
   const { t } = useTranslation();
@@ -99,7 +100,7 @@ const LegacyExchange = () => {
     <Container pb={6} selectable>
       <Box ff="Inter|SemiBold" fontSize={7} color="palette.text.shade100" id="exchange-title">
         {t(tabs[activeTabIndex].header, {
-          provider: provider.id,
+          provider: ("id" in provider && provider.id) || undefined,
         })}
       </Box>
       <TabBar

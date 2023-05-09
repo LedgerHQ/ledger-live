@@ -2,30 +2,21 @@ import React from "react";
 import styled, { withTheme } from "styled-components";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import RetryButton from "~/renderer/components/RetryButton";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { StepProps } from "../types";
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
   min-height: 220px;
 `;
-function StepConfirmation({
-  account,
-  t,
-  error,
-  theme,
-  device,
-}: StepProps & {
-  theme: any;
-}) {
+function StepConfirmation({ account, error }: StepProps) {
   const currency = account && getAccountCurrency(account);
   const currencyName = currency?.name ?? "";
   if (error) {
@@ -42,16 +33,7 @@ function StepConfirmation({
   }
   return null;
 }
-export function StepConfirmationFooter({
-  t,
-  transitionTo,
-  account,
-  parentAccount,
-  onRetry,
-  error,
-  openModal,
-  closeModal,
-}: StepProps) {
+export function StepConfirmationFooter({ transitionTo, onRetry, error }: StepProps) {
   return (
     <>
       {error ? (
@@ -67,4 +49,4 @@ export function StepConfirmationFooter({
     </>
   );
 }
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

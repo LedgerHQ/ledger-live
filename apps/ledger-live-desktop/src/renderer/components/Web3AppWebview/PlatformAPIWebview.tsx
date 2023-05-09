@@ -5,9 +5,8 @@ import { JSONRPCRequest } from "json-rpc-2.0";
 import React, { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import {
   receiveOnAccountLogic,
@@ -28,11 +27,9 @@ import {
   useListPlatformCurrencies,
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
-
 import { openModal } from "../../actions/modals";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import BigSpinner from "../BigSpinner";
-
 import { track } from "~/renderer/analytics/segment";
 import {
   requestAccountLogic,
@@ -83,7 +80,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
                   account,
                   parentAccount,
-                  onResult: (_account: Account, _parentAccount: Account) => {
+                  onResult: () => {
                     tracking.platformReceiveSuccess(manifest);
                     resolve(accountAddress);
                   },
@@ -289,7 +286,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       const webview = webviewRef.current;
       if (webview) {
         const origin = new URL(webview.src).origin;
-        webview.contentWindow.postMessage(JSON.stringify(request), origin);
+        // @ts-expect-error issue in Electron type of Webview?
+        webview.contentWindow?.postMessage(JSON.stringify(request), origin);
       }
 
       return Promise.resolve();
@@ -336,8 +334,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       const id = webview.getWebContentsId();
 
       // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-      // @ts-expect-error: missing typings for api
-      window.api.openWindow(id);
+      window.api?.openWindow(id);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

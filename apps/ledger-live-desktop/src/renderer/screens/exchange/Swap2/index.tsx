@@ -30,14 +30,14 @@ const Swap2 = () => {
   const { t } = useTranslation();
   return (
     <>
-      <Text horizontal mb={20} ff="Inter|SemiBold" fontSize={7} color="palette.text.shade100">
+      <Text mb={20} ff="Inter|SemiBold" fontSize={7} color="palette.text.shade100">
         {t("swap2.title")}
       </Text>
       <Body>
         <SwapNavbar />
         <Main>
-          <Route path="/swap" render={props => <SwapForm {...props} />} exact />
-          <Route path="/swap/history" render={props => <SwapHistory {...props} />} exact />
+          <Route path="/swap" component={SwapForm} exact />
+          <Route path="/swap/history" component={SwapHistory} exact />
         </Main>
       </Body>
     </>

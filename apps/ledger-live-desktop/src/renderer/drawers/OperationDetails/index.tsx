@@ -22,7 +22,7 @@ import {
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
 } from "@ledgerhq/live-common/operation";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLike, NFTMetadata, Operation } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { urls } from "~/config/urls";
@@ -39,7 +39,7 @@ import Link from "~/renderer/components/Link";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import ConfirmationCheck from "~/renderer/components/OperationsList/ConfirmationCheck";
 import OperationComponent from "~/renderer/components/OperationsList/Operation";
-import Text from "~/renderer/components/Text";
+import Text, { TextProps } from "~/renderer/components/Text";
 import byFamiliesOperationDetails from "~/renderer/generated/operationDetails";
 import IconChevronRight from "~/renderer/icons/ChevronRight";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
@@ -67,12 +67,22 @@ import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
-const mapStateToProps = (state, { operationId, accountId, parentId }) => {
-  const parentAccount: Account | undefined | null =
-    parentId &&
-    accountSelector(state, {
-      accountId: parentId,
-    });
+import { State } from "~/renderer/reducers";
+
+const mapStateToProps = (
+  state: State,
+  {
+    operationId,
+    accountId,
+    parentId,
+  }: { operationId: string; accountId: string; parentId: string | undefined | null },
+) => {
+  const parentAccount: Account | undefined =
+    typeof parentId !== "undefined" && parentId !== null
+      ? accountSelector(state, {
+          accountId: parentId,
+        })
+      : undefined;
   let account: AccountLike | undefined | null;
   if (parentAccount) {
     account = findSubAccountById(parentAccount, accountId);
@@ -103,7 +113,7 @@ type OwnProps = {
   t: TFunction;
   operation: Operation;
   account: AccountLike;
-  onClose: () => void;
+  onClose?: () => void;
 };
 type Props = OwnProps & {
   parentAccount: Account | undefined | null;
@@ -111,7 +121,7 @@ type Props = OwnProps & {
   parentOperation?: Operation;
 };
 type openOperationType = "goBack" | "subOperation" | "internalOperation";
-const OperationD: React$ComponentType<Props> = (props: Props) => {
+const OperationD: React.ComponentType<Props> = (props: Props) => {
   const { t, onClose, operation, account, parentAccount, confirmationsNb } = props;
   const history = useHistory();
   const location = useLocation();
@@ -142,23 +152,32 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
   });
   const confirmationsString = getOperationConfirmationDisplayableNumber(operation, mainAccount);
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-  const specific = byFamiliesOperationDetails[mainAccount.currency.family];
+  const specific =
+    byFamiliesOperationDetails[
+      mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
+    ];
   const IconElement =
-    specific && specific.confirmationCell ? specific.confirmationCell[operation.type] : null;
+    specific && "confirmationCell" in specific && specific.confirmationCell
+      ? specific.confirmationCell[operation.type as keyof typeof specific.confirmationCell]
+      : null;
   const AmountTooltip =
-    specific && specific.amountTooltip ? specific.amountTooltip[operation.type] : null;
+    specific && "amountTooltip" in specific && specific.amountTooltip
+      ? specific.amountTooltip[operation.type as keyof typeof specific.amountTooltip]
+      : null;
   const urlWhatIsThis =
     specific &&
+    "getURLWhatIsThis" in specific &&
     specific.getURLWhatIsThis &&
-    specific.getURLWhatIsThis(operation, mainAccount.currency.id);
+    specific.getURLWhatIsThis({ op: operation, currencyId: mainAccount.currency.id });
   const urlFeesInfo =
     specific &&
+    "getURLFeesInfo" in specific &&
     specific.getURLFeesInfo &&
-    specific.getURLFeesInfo(operation, mainAccount.currency.id);
+    specific.getURLFeesInfo({ op: operation, currencyId: mainAccount.currency.id });
   const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
   const uniqueSenders = uniq(senders);
   const OpDetailsExtra =
-    specific && specific.OperationDetailsExtra
+    specific && "OperationDetailsExtra" in specific && specific.OperationDetailsExtra
       ? specific.OperationDetailsExtra
       : OperationDetailsExtra;
   const { hasFailed } = operation;
@@ -170,9 +189,9 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
       const data = {
         operationId: operation.id,
         accountId: operation.accountId,
-        parentOperation: undefined,
-        parentId: undefined,
-        onRequestBack: undefined,
+        parentOperation: undefined as Operation | undefined,
+        parentId: undefined as string | undefined,
+        onRequestBack: undefined as (() => void) | undefined,
       };
       if (["subOperation", "internalOperation"].includes(type)) {
         data.parentOperation = parentOperation;
@@ -183,7 +202,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
           ? () => openOperation("goBack", parentOperation)
           : undefined;
       }
-      setDrawer(OperationDetails, data);
+      setDrawer(OperationDetails, data as React.ComponentProps<typeof OperationDetails>);
     },
     [account],
   );
@@ -191,29 +210,31 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
     const data = {
       operation,
       account,
-      onRequestBack: () => setDrawer(OperationDetails, props),
+      onRequestBack: () =>
+        // @ts-expect-error TODO: the props type seems quite suspicious here…
+        setDrawer(OperationDetails, props),
     };
     setDrawer(AmountDetails, data);
   }, [operation, props, account]);
   const goToMainAccount = useCallback(() => {
     const url = `/account/${mainAccount.id}`;
-    if (location !== url) {
+    if (location.pathname !== url) {
       setTrackingSource("operation details");
       history.push({
         pathname: url,
       });
     }
-    onClose();
+    onClose && onClose();
   }, [mainAccount, history, onClose, location]);
   const goToSubAccount = useCallback(() => {
     const url = `/account/${mainAccount.id}/${account.id}`;
-    if (location !== url) {
+    if (location.pathname !== url) {
       setTrackingSource("operation details");
       history.push({
         pathname: url,
       });
     }
-    onClose();
+    onClose && onClose();
   }, [mainAccount, account, history, onClose, location]);
   const currencyName = currency
     ? currency.type === "TokenCurrency"
@@ -237,13 +258,12 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
             operation={operation}
             marketColor={marketColor}
             isConfirmed={isConfirmed}
-            hasFailed={hasFailed}
+            hasFailed={!!hasFailed}
             style={{
               transform: "scale(1.5)",
               padding: 0,
             }}
             t={t}
-            type={type}
             withTooltip={false}
           />
         ) : (
@@ -310,14 +330,14 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
         </Box>
       ) : (
         <Box flex={1} mb={2} alignItems="center">
-          <Skeleton show={show} width={160} barHeight={16} minHeight={32} textAlign="center">
+          <Skeleton show={show} width={160} barHeight={16} minHeight={32}>
             <Text ff="Inter|SemiBold" textAlign="center" fontSize={7} color="palette.text.shade80">
-              {metadata?.nftName || "-"}
+              {(metadata as NFTMetadata)?.nftName || "-"}
             </Text>
           </Skeleton>
-          <Skeleton show={show} width={200} barHeight={10} minHeight={24} mt={1} textAlign="center">
+          <Skeleton show={show} width={200} barHeight={10} minHeight={24} mt={1}>
             <Text ff="Inter|Regular" textAlign="center" fontSize={5} color="palette.text.shade50">
-              ID {centerEllipsis(operation.tokenId)}
+              ID {operation.tokenId && centerEllipsis(operation.tokenId)}
             </Text>
           </Skeleton>
         </Box>
@@ -461,9 +481,6 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
                 text={t(
                   isToken ? "operationDetails.tokenTooltip" : "operationDetails.subAccountTooltip",
                 )}
-                style={{
-                  marginLeft: 4,
-                }}
               />
             </OpDetailsTitle>
           </OpDetailsSection>
@@ -505,12 +522,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
             <OpDetailsTitle>
               {t("operationDetails.internalOperations")}
               &nbsp;
-              <LabelInfoTooltip
-                text={t("operationDetails.internalOpTooltip")}
-                style={{
-                  marginLeft: 4,
-                }}
-              />
+              <LabelInfoTooltip text={t("operationDetails.internalOpTooltip")} />
             </OpDetailsTitle>
           </OpDetailsSection>
           <Box m={0}>
@@ -600,7 +612,6 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
                   ml={2}
                   color="palette.text.shade80"
                   onClick={() => openURL(urls.multipleDestinationAddresses)}
-                  iconFirst
                 >
                   <Box mr={1}>
                     <IconExternalLink size={12} />
@@ -613,19 +624,29 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
           </Box>
         </OpDetailsSection>
       ) : null}
-      <OpDetailsExtra operation={operation} extra={extra} type={type} account={account} />
+      {OpDetailsExtra && (
+        <OpDetailsExtra
+          operation={operation}
+          extra={extra}
+          type={type}
+          account={account as Account}
+        />
+      )}
       <B />
     </Box>
   );
 };
-const OpDetails = (props: Props) => {
+const OpDetails = (
+  props: Omit<Props, "operation" | "account"> & {
+    operation: Operation | null | undefined;
+    account: AccountLike | undefined | null;
+  },
+) => {
   const { operation, account } = props;
   if (!operation || !account) return null;
-  return <OperationD {...props} />;
+  return <OperationD {...(props as Props)} />;
 };
-export const OperationDetails: React$ComponentType<OwnProps> = withTranslation()(
-  connect(mapStateToProps)(OpDetails),
-);
+export const OperationDetails = withTranslation()(connect(mapStateToProps)(OpDetails));
 type OperationDetailsExtraProps = {
   extra: {
     [key: string]: string;
@@ -634,7 +655,7 @@ type OperationDetailsExtraProps = {
   account: AccountLike | undefined | null;
 };
 const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
-  return Object.entries(extra).map(([key, value]) => {
+  const jsx = Object.entries(extra).map(([key, value]) => {
     if (typeof value === "object" || typeof value === "function") return null;
     return (
       <OpDetailsSection key={key}>
@@ -647,13 +668,14 @@ const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
       </OpDetailsSection>
     );
   });
+  return <>{jsx}</>;
 };
-const More = styled(Text).attrs(p => ({
+const More = styled(Text).attrs<TextProps>(p => ({
   ff: p.ff ? p.ff : "Inter|Bold",
   fontSize: p.fontSize ? p.fontSize : 2,
   color: p.color || "palette.text.shade100",
   tabIndex: 0,
-}))`
+}))<TextProps & { textTransform?: boolean }>`
   text-transform: ${p => (!p.textTransform ? "auto" : "uppercase")};
   outline: none;
 `;
@@ -670,7 +692,7 @@ export class DataList extends Component<
   };
 
   onClick = () => {
-    this.setState(({ showMore, numToShow }) => ({
+    this.setState(({ showMore }: { showMore: boolean; numToShow: number | undefined }) => ({
       showMore: !showMore,
       numToShow: showMore ? undefined : 2,
     }));
@@ -681,7 +703,7 @@ export class DataList extends Component<
     const { showMore, numToShow } = this.state;
     // Hardcoded for now
     const shouldShowMore = lines.length > 3;
-    const renderLine = (line, index) => (
+    const renderLine = (line: string, index: number) => (
       <OpDetailsData relative horizontal key={line + index}>
         <HashContainer>
           <SplitAddress value={line} />
@@ -703,12 +725,7 @@ export class DataList extends Component<
         {shouldShowMore ? (
           <OpDetailsSideButton mt={2} onClick={this.onClick}>
             <More fontSize={4} color="wallet" ff="Inter|SemiBold" mt={1}>
-              <IconChevronRight
-                size={12}
-                style={{
-                  marginRight: 5,
-                }}
-              />
+              <IconChevronRight size={12} />
               {showMore
                 ? t("operationDetails.showMore", {
                     recipients: lines.length - 2,

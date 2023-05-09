@@ -1,10 +1,9 @@
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Bar from "~/renderer/components/Bar";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Link from "~/renderer/components/Link";
-export const OpDetailsSection: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const OpDetailsSection = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "flex-start",
   justifyContent: "space-between",
@@ -12,7 +11,7 @@ export const OpDetailsSection: ThemedComponent<{}> = styled(Box).attrs(() => ({
   fontSize: 4,
   color: "palette.text.shade60",
 }))``;
-export const OpDetailsTitle: ThemedComponent<{}> = styled(Box).attrs(p => ({
+export const OpDetailsTitle = styled(Box).attrs<{ horizontal?: boolean }>(p => ({
   ff: "Inter|SemiBold",
   fontSize: 3,
   color: "palette.text.shade100",
@@ -23,7 +22,7 @@ export const OpDetailsTitle: ThemedComponent<{}> = styled(Box).attrs(p => ({
   letter-spacing: 2px;
   line-height: 30px;
 `;
-export const Address: ThemedComponent<{}> = styled(Text)`
+export const Address = styled(Text)`
   margin-left: -4px;
   border-radius: 4px;
   flex-wrap: wrap;
@@ -33,7 +32,7 @@ export const Address: ThemedComponent<{}> = styled(Text)`
   display: inline-block;
   word-break: break-all;
 `;
-export const GradientHover: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const GradientHover = styled(Box).attrs(() => ({
   alignItem: "center",
   justifyContent: "center",
   color: "wallet",
@@ -50,18 +49,18 @@ export const GradientHover: ThemedComponent<{}> = styled(Box).attrs(() => ({
     ${p => p.theme.colors.palette.background.paper} 20%
   );
 `;
-export const OpDetailsData: ThemedComponent<{
-  color?: string;
-}> = styled(Box).attrs(p => ({
-  ff: "Inter",
-  color: p.color || "palette.text.shade80",
-  fontSize: 3,
-  relative: true,
-  flex: 1,
-  horizontal: true,
-  justifyContent: p.justifyContent || "flex-end",
-  alignItems: p.alignItems || "center",
-}))`
+export const OpDetailsData = styled(Box).attrs<{ justifyContent?: string; alignItems?: string }>(
+  p => ({
+    ff: "Inter",
+    color: p.color || "palette.text.shade80",
+    fontSize: 3,
+    relative: true,
+    flex: 1,
+    horizontal: true,
+    justifyContent: p.justifyContent || "flex-end",
+    alignItems: p.alignItems || "center",
+  }),
+)`
   min-height: 30px;
   max-width: 100%;
   ${GradientHover} {
@@ -85,24 +84,27 @@ export const OpDetailsData: ThemedComponent<{
     text-decoration: underline;
   }
 `;
-export const NoMarginWrapper: ThemedComponent<{}> = styled.div`
+export const NoMarginWrapper = styled.div`
   margin-left: -20px;
   margin-right: -20px;
 `;
-export const B: ThemedComponent<{}> = styled(Bar).attrs(() => ({
+/**
+ * @deprecated Bar being deprecated, this can be reworked to simpler code.
+ */
+export const B = styled(Bar).attrs(() => ({
   color: "palette.divider",
   size: 1,
 }))``;
-export const TextEllipsis: ThemedComponent<{}> = styled.div`
+export const TextEllipsis = styled.div`
   flex-shrink: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-export const Separator: ThemedComponent<{}> = styled.div`
+export const Separator = styled.div`
   margin: 0 4px;
 `;
-export const OpDetailsVoteData: ThemedComponent<{}> = styled.blockquote`
+export const OpDetailsVoteData = styled.blockquote`
   max-width: 100%;
   margin-bottom: 13px;
   padding-left: 10px;
@@ -111,7 +113,7 @@ export const OpDetailsVoteData: ThemedComponent<{}> = styled.blockquote`
     cursor: pointer;
   }
 `;
-export const HashContainer: ThemedComponent<{}> = styled.div`
+export const HashContainer = styled.div`
   width: 100%;
   word-break: break-all;
   user-select: text;
@@ -119,7 +121,7 @@ export const HashContainer: ThemedComponent<{}> = styled.div`
   height: 30px;
   line-height: 30px;
 `;
-export const OpDetailsSideButton: ThemedComponent<{}> = styled(Box).attrs(p => ({
+export const OpDetailsSideButton = styled(Box).attrs(() => ({
   horizontal: true,
   justifyContent: "flex-end",
   alignItems: "center",

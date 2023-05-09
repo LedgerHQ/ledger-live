@@ -3,16 +3,19 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
 import { dismissBanner } from "~/renderer/actions/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { radii } from "~/renderer/styles/theme";
 import IconCross from "~/renderer/icons/Cross";
 import Box from "~/renderer/components/Box";
+
 const IconContainer = styled.div`
   margin-right: 15px;
   display: flex;
   align-items: center;
 `;
-const Container: ThemedComponent<{}> = styled(Box).attrs(p => ({
+
+const Container = styled(Box).attrs<{
+  status: string;
+}>(p => ({
   horizontal: true,
   alignItems: "center",
   py: "8px",
@@ -22,19 +25,26 @@ const Container: ThemedComponent<{}> = styled(Box).attrs(p => ({
   mb: 20,
   fontSize: 4,
   ff: "Inter|SemiBold",
-}))`
+}))<{
+  status: string;
+}>`
   border-radius: ${radii[1]}px;
 `;
+
 const RightContainer = styled.div`
   margin-left: auto;
 `;
-export const FakeLink: ThemedComponent<{}> = styled.span`
+
+export const FakeLink = styled.span<{
+  disabled?: boolean;
+}>`
   color: ${p => p.theme.colors.palette.primary.contrastText};
   text-decoration: underline;
   cursor: pointer;
   pointer-events: ${p => (p.disabled ? "none" : "auto")};
   opacity: ${p => (p.disabled ? "0.6" : "1")};
 `;
+
 const CloseContainer = styled(Box).attrs(() => ({
   color: "palette.primary.contrastText",
 }))`
@@ -49,11 +59,13 @@ const CloseContainer = styled(Box).attrs(() => ({
     color: #eee;
   }
 `;
+
 export type Content = {
-  Icon?: React$ComponentType<any>;
+  Icon?: React.ComponentType<{ size: number }>;
   message: React.ReactNode;
   right?: React.ReactNode;
 };
+
 type Props = {
   content?: Content;
   status?: string;
@@ -62,6 +74,7 @@ type Props = {
   id?: string;
   testId?: string;
 };
+
 const TopBanner = ({ id, testId, content, status = "", dismissable = false, bannerId }: Props) => {
   const dispatch = useDispatch();
   const dismissedBanners = useSelector(dismissedBannersSelector);

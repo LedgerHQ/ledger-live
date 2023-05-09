@@ -1,10 +1,9 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import debounce from "lodash/debounce";
 import noop from "lodash/noop";
 import Box from "~/renderer/components/Box";
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   horizontal: true,
   flow: 1,
   alignItems: "center",
@@ -19,12 +18,12 @@ const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
   height: 24px;
   padding: 0 3px;
 `;
-const Btn = styled(Box).attrs(p => ({
+const Btn = styled(Box).attrs<{ disabled?: boolean }>(p => ({
   bg: p.disabled ? "rgba(138, 128, 219, 0.5)" : "wallet",
   color: "white",
   alignItems: "center",
   justifyContent: "center",
-}))`
+}))<{ disabled?: boolean }>`
   border-radius: 50%;
   cursor: ${p => (p.disabled ? "default" : "pointer")};
   height: 18px;
@@ -69,7 +68,7 @@ class StepperNumber extends PureComponent<Props, State> {
     }
   }
 
-  _timeout = undefined;
+  _timeout: NodeJS.Timeout | undefined = undefined;
   isMax = (v: number) => v >= this.props.max;
   isMin = (v: number) => v <= this.props.min;
   emitChange = (v: number) => {

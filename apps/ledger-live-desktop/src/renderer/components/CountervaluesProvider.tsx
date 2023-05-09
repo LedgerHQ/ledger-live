@@ -4,7 +4,11 @@ import {
   useCountervaluesPolling,
   useCountervaluesExport,
 } from "@ledgerhq/live-common/countervalues/react";
-import { CountervaluesSettings } from "@ledgerhq/live-common/countervalues/types";
+import {
+  CountervaluesSettings,
+  CounterValuesStateRaw,
+  RateMapRaw,
+} from "@ledgerhq/live-common/countervalues/types";
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
 import { setKey } from "~/renderer/storage";
 import { useUserSettings } from "../actions/general";
@@ -13,7 +17,7 @@ export default function CountervaluesProvider({
   initialState,
 }: {
   children: React.ReactNode;
-  initialState: any;
+  initialState: CounterValuesStateRaw;
 }) {
   const userSettings = useUserSettings();
   return (
@@ -31,7 +35,7 @@ function CountervaluesManager({
 }) {
   useCacheManager(userSettings);
   usePollingManager();
-  return children;
+  return <>{children}</>;
 }
 function useCacheManager(userSettings: CountervaluesSettings) {
   const { status, ...state } = useCountervaluesExport();
@@ -39,7 +43,7 @@ function useCacheManager(userSettings: CountervaluesSettings) {
     if (!Object.keys(status).length) return;
     const ids = userSettings.trackingPairs.map(pairId);
     const newState = Object.entries(state).reduce(
-      (prev, [key, val]) =>
+      (prev: Record<string, RateMapRaw>, [key, val]) =>
         ids.includes(key)
           ? {
               ...prev,
@@ -50,7 +54,7 @@ function useCacheManager(userSettings: CountervaluesSettings) {
     );
     setKey("app", "countervalues", {
       ...newState,
-      status,
+      status: status,
     });
   }, [state, userSettings, status]);
 }

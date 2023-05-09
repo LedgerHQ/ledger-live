@@ -12,6 +12,67 @@ export const supportLinkByTokenType = {
   nfts:
     "https://support.ledger.com/hc/en-us/articles/4404389453841-Receive-crypto-assets?utm_medium=self_referral&utm_content=receive_account_flow",
 };
+
+const urlsErrors: Record<string, string> = {
+  CantOpenDevice:
+    "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_cantopendevice",
+  WrongDeviceForAccount:
+    "https://support.ledger.com/hc/en-us/articles/360025322153-Wrong-private-keys-for-account?support=true",
+  SyncError:
+    "https://support.ledger.com/hc/en-us/articles/360012207759-Solve-a-synchronization-error?support=true",
+  ServiceStatusWarning: "https://status.ledger.com",
+  EConnReset:
+    "https://support.ledger.com/hc/en-us/articles/6793501085981?support=true&utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_connect_manager",
+  TronSendTrc20ToNewAccountForbidden:
+    "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
+  TronStakingDisable: "https://support.ledger.com/hc/en-us/articles/9949980566173?support=true",
+  OperatingSystemOutdated: "https://support.ledger.com/hc/articles/8083692639901?support=true",
+};
+
+const faq: Record<string, string> = {
+  en:
+    "https://support.ledger.com/hc/en-us/categories/4404369571601-Support?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+  fr:
+    "https://support.ledger.com/hc/fr-fr/categories/4404369571601-Assistance?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+  es:
+    "https://support.ledger.com/hc/es/categories/4404369571601-Soporte?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+  de:
+    "https://support.ledger.com/hc/de/categories/4404369571601-Support?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+  ru:
+    "https://support.ledger.com/hc/ru/categories/4404369571601-%D0%A1%D0%BB%D1%83%D0%B6%D0%B1%D0%B0-%D0%BF%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D0%B8?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+  zh:
+    "https://support.ledger.com/hc/zh-cn/categories/4404369571601-%E6%8A%80%E6%9C%AF%E6%94%AF%E6%8C%81?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+  tr:
+    "https://support.ledger.com/hc/tr/categories/4404369571601-Destek?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+  ja:
+    "https://support.ledger.com/hc/ja/categories/4404369571601-%E3%82%B5%E3%83%9D%E3%83%BC%E3%83%88?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+  ko:
+    "https://support.ledger.com/hc/ko/categories/4404369571601-%EC%A7%80%EC%9B%90?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
+};
+
+const terms = {
+  en:
+    "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+  fr:
+    "https://shop.ledger.com/fr/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+  de:
+    "https://shop.ledger.com/de/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+  es:
+    "https://shop.ledger.com/es/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+  tr:
+    "https://shop.ledger.com/tr/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+  ar:
+    "https://shop.ledger.com/ar/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+  ru:
+    "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+  ja:
+    "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+  zh:
+    "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+  ko:
+    "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
+};
+
 export const urls = {
   ledger: "https://www.ledger.com",
   liveHome:
@@ -30,51 +91,11 @@ export const urls = {
   promoNanoX:
     "https://www.ledger.com/pages/ledger-nano-x#utm_source=Ledger%20Live%20Desktop%20App&utm_medium=Ledger%20Live&utm_campaign=Ledger%20Live%20Desktop%20-%20Banner%20LNX",
   // Ledger support
-  faq: {
-    en:
-      "https://support.ledger.com/hc/en-us/categories/4404369571601-Support?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
-    fr:
-      "https://support.ledger.com/hc/fr-fr/categories/4404369571601-Assistance?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
-    es:
-      "https://support.ledger.com/hc/es/categories/4404369571601-Soporte?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
-    de:
-      "https://support.ledger.com/hc/de/categories/4404369571601-Support?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
-    ru:
-      "https://support.ledger.com/hc/ru/categories/4404369571601-%D0%A1%D0%BB%D1%83%D0%B6%D0%B1%D0%B0-%D0%BF%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D0%B8?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
-    zh:
-      "https://support.ledger.com/hc/zh-cn/categories/4404369571601-%E6%8A%80%E6%9C%AF%E6%94%AF%E6%8C%81?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
-    tr:
-      "https://support.ledger.com/hc/tr/categories/4404369571601-Destek?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
-    ja:
-      "https://support.ledger.com/hc/ja/categories/4404369571601-%E3%82%B5%E3%83%9D%E3%83%BC%E3%83%88?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
-    ko:
-      "https://support.ledger.com/hc/ko/categories/4404369571601-%EC%A7%80%EC%9B%90?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=faq",
-  },
+  faq,
   ledgerStatus: "https://status.ledger.com/",
   syncErrors:
     "https://support.ledger.com/hc/en-us/articles/360012207759?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_syncerror",
-  terms: {
-    en:
-      "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    fr:
-      "https://shop.ledger.com/fr/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    de:
-      "https://shop.ledger.com/de/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    es:
-      "https://shop.ledger.com/es/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    tr:
-      "https://shop.ledger.com/tr/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    ar:
-      "https://shop.ledger.com/ar/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    ru:
-      "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    ja:
-      "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    zh:
-      "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-    ko:
-      "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
-  },
+  terms,
   noDevice: {
     buyNew: {
       en:
@@ -252,21 +273,7 @@ export const urls = {
       "https://developers.ledger.com?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=catalog",
   },
   // Errors
-  errors: {
-    CantOpenDevice:
-      "https://support.ledger.com/hc/en-us/articles/115005165269?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_cantopendevice",
-    WrongDeviceForAccount:
-      "https://support.ledger.com/hc/en-us/articles/360025322153-Wrong-private-keys-for-account?support=true",
-    SyncError:
-      "https://support.ledger.com/hc/en-us/articles/360012207759-Solve-a-synchronization-error?support=true",
-    ServiceStatusWarning: "https://status.ledger.com",
-    EConnReset:
-      "https://support.ledger.com/hc/en-us/articles/6793501085981?support=true&utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=error_connect_manager",
-    TronSendTrc20ToNewAccountForbidden:
-      "https://support.ledger.com/hc/en-us/articles/6516823445533--Sending-TRC20-to-a-new-account-won-t-activate-it-message-in-Ledger-Live?support=true",
-    TronStakingDisable: "https://support.ledger.com/hc/en-us/articles/9949980566173?support=true",
-    OperatingSystemOutdated: "https://support.ledger.com/hc/articles/8083692639901?support=true",
-  },
+  errors: urlsErrors,
   approvedOperation:
     "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true",
   cryptoOrg: {
@@ -302,4 +309,5 @@ export const urls = {
     appStore: "https://apps.apple.com/app/id1361671700",
     playStore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   },
+  howToUpdateNewLedger: "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",
 };

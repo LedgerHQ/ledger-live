@@ -96,20 +96,20 @@ function MarketInfo({
   locale,
 }: {
   marketcap?: number;
-  marketcapRank: number;
-  totalVolume: number;
-  high24h: number;
-  low24h: number;
-  price: number;
-  priceChangePercentage: number;
-  marketCapChangePercentage24h: number;
-  circulatingSupply: number;
-  totalSupply: number;
-  maxSupply: number;
-  ath: number;
-  athDate: Date;
-  atl: number;
-  atlDate: Date;
+  marketcapRank?: number;
+  totalVolume?: number;
+  high24h?: number;
+  low24h?: number;
+  price?: number;
+  priceChangePercentage?: number;
+  marketCapChangePercentage24h?: number;
+  circulatingSupply?: number;
+  totalSupply?: number;
+  maxSupply?: number;
+  ath?: number;
+  athDate?: Date;
+  atl?: number;
+  atlDate?: Date;
   counterCurrency: string;
   loading: boolean;
   locale: string;
@@ -258,4 +258,4 @@ function MarketInfo({
   );
 }
 
-export default memo<Props>(MarketInfo);
+export default memo(MarketInfo);

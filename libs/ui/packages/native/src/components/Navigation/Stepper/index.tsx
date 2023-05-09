@@ -107,7 +107,7 @@ const PendingText = styled(Text)`
 `;
 
 const ErroredText = styled(Text)`
-  color: ${(p) => p.theme.colors.error.c100};
+  color: ${(p) => p.theme.colors.error.c50};
 `;
 
 type StepState = "CURRENT" | "PENDING" | "COMPLETED" | "ERRORED";
@@ -155,7 +155,7 @@ function Step({
       case "ERRORED":
         return (
           <StepIcon.Background backgroundColor="warning.c30">
-            <StepIcon.Errored color={colors.error.c100} />
+            <StepIcon.Errored color={colors.error.c50} />
           </StepIcon.Background>
         );
       case "PENDING":

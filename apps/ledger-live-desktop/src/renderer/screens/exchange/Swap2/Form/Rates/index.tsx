@@ -26,10 +26,9 @@ type Props = {
   rates: RatesReducerState["value"];
   provider: string | undefined | null;
   refreshTime: number;
-  updateSelection: () => void;
   countdown: boolean;
 };
-const TableHeader: ThemedComponent<{}> = styled(Box).attrs({
+const TableHeader = styled(Box).attrs({
   horizontal: true,
   alignItems: "center",
   ff: "Inter|SemiBold",
@@ -54,8 +53,8 @@ export default function ProviderRate({
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
-  const [filter, setFilter] = useState([]);
-  const [defaultPartner, setDefaultPartner] = useState(null);
+  const [filter, setFilter] = useState<string[]>([]);
+  const [defaultPartner, setDefaultPartner] = useState<string | null>(null);
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
   const updateRate = useCallback(
@@ -101,7 +100,7 @@ export default function ProviderRate({
     }
   }, [filteredRates, selectedRate, dispatch]);
   const updateFilter = useCallback(
-    newFilter => {
+    (newFilter: string[]) => {
       track("button_clicked", {
         button: "Filter selected",
         page: "Page Swap Form",
@@ -122,7 +121,6 @@ export default function ProviderRate({
       />
       <Box horizontal justifyContent="space-between" fontSize={5}>
         <Text
-          variant="h5"
           color="neutral.c100"
           style={{
             textTransform: "uppercase",
@@ -140,7 +138,7 @@ export default function ProviderRate({
       <Filter onClick={updateFilter} />
       <TableHeader>
         <Box horizontal width="215px" alignItems="center" pr="38px">
-          <Text alignItems="center" display="flex" mr={1}>
+          <Text mr={1}>
             <Trans i18nKey="swap2.form.rates.name.title" />
           </Text>
           <Tooltip
@@ -158,7 +156,7 @@ export default function ProviderRate({
           </Tooltip>
         </Box>
         <Box horizontal flex="1" alignItems="center" justifyContent="flex-start">
-          <Text alignItems="center" display="flex" mr={1}>
+          <Text mr={1}>
             <Trans i18nKey="swap2.form.rates.rate.title" />
           </Text>
           <Tooltip
@@ -184,7 +182,7 @@ export default function ProviderRate({
           </Tooltip>
         </Box>
         <Box horizontal flex="1" alignItems="center" justifyContent="flex-end" mr={1}>
-          <Text alignItems="center" display="flex" mr={1}>
+          <Text mr={1}>
             <Trans i18nKey="swap2.form.rates.receive.title" />
           </Text>
           <Tooltip
@@ -214,8 +212,6 @@ export default function ProviderRate({
             selectedRate.tradeMethod === rate.tradeMethod;
           return rate.providerType === "DEX" && rate.rate === undefined ? (
             <NoQuoteSwapRate
-              filter={filter}
-              key={rate.id}
               value={rate}
               selected={isSelected}
               onSelect={updateRate}

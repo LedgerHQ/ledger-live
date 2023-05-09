@@ -3,11 +3,10 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Toast } from "./Toast";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { v4 as uuidv4 } from "uuid";
 import { openInformationCenter } from "~/renderer/actions/UI";
-const Wrapper: ThemedComponent<{}> = styled.div`
+const Wrapper = styled.div`
   position: absolute;
   bottom: 0;
   right: 0;
@@ -30,6 +29,7 @@ export function ToastOverlay() {
       {toasts.length < 2 ? (
         toasts.map(({ id, type, title, text, icon, callback }) => (
           <Toast
+            key={id}
             id={id}
             type={type}
             title={title}
@@ -37,7 +37,6 @@ export function ToastOverlay() {
             text={text}
             callback={callback}
             onDismiss={dismissToast}
-            key={id}
           />
         ))
       ) : (

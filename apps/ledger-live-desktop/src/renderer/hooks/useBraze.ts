@@ -1,7 +1,6 @@
 import { useEffect, useCallback } from "react";
 import * as braze from "@braze/web-sdk";
 import { ClassicCard } from "@braze/web-sdk";
-
 import { getBrazeConfig } from "~/braze-setup";
 import {
   LocationContentCard,
@@ -9,9 +8,10 @@ import {
   NotificationContentCard,
   Platform,
 } from "~/types/dynamicContent";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setNotificationsCards, setPortfolioCards } from "../actions/dynamicContent";
 import getUser from "~/helpers/user";
+import { developerModeSelector } from "../reducers/settings";
 
 const getDesktopCards = (elem: braze.ContentCards) =>
   elem.cards.filter(card => card.extras?.platform === Platform.Desktop);
@@ -28,6 +28,7 @@ export const mapAsPortfolioContentCard = (card: ClassicCard) =>
     image: card.extras?.image,
     url: card.extras?.url,
     path: card.extras?.path,
+    brazeCard: { ...card },
   } as PortfolioContentCard);
 
 export const mapAsNotificationContentCard = (card: ClassicCard) =>
@@ -41,10 +42,12 @@ export const mapAsNotificationContentCard = (card: ClassicCard) =>
     cta: card.extras?.cta,
     createdAt: card.created,
     viewed: card.viewed,
+    brazeCard: { ...card },
   } as NotificationContentCard);
 
 export async function useBraze() {
   const dispatch = useDispatch();
+  const devMode = useSelector(developerModeSelector);
 
   const initBraze = useCallback(async () => {
     const user = await getUser();
@@ -55,19 +58,14 @@ export async function useBraze() {
       allowUserSuppliedJavascript: true,
       enableHtmlInAppMessages: true,
       enableLogging: __DEV__,
+      sessionTimeoutInSeconds: devMode ? 1 : 1800,
     });
+
     if (user) {
       braze.changeUser(user.id);
     }
 
-    braze.requestPushPermission(
-      (endpoint, publicKey, userAuth) => {
-        console.log("SUCCESS", { endpoint, publicKey, userAuth });
-      },
-      temporaryDenial => {
-        console.log("NOT GRANTED - is temporary :", temporaryDenial);
-      },
-    );
+    braze.requestPushPermission();
 
     braze.requestContentCardsRefresh();
 
@@ -89,7 +87,7 @@ export async function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch]);
+  }, [dispatch, devMode]);
 
   useEffect(() => {
     initBraze();

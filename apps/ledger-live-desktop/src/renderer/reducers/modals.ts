@@ -1,28 +1,30 @@
 import { handleActions } from "redux-actions";
 import { State } from "~/renderer/reducers";
+import { Handlers } from "./types";
 export type ModalsState = {
   [key: string]: {
     isOpened: boolean;
-    data?: object;
+    data?: unknown;
   };
 };
 const state: ModalsState = {};
+
 type OpenPayload = {
   name: string;
-  data?: object;
+  data?: unknown | undefined;
 };
-type ClosePayload = {
-  name: string;
+type HandlersPayloads = {
+  MODAL_OPEN: OpenPayload;
+  MODAL_CLOSE: {
+    name: string;
+  };
+  MODAL_CLOSE_ALL: never;
+  MODAL_SET_DATA: OpenPayload;
 };
-const handlers = {
-  MODAL_OPEN: (
-    state,
-    {
-      payload,
-    }: {
-      payload: OpenPayload;
-    },
-  ) => {
+type ModalsHandlers<PreciseKey = true> = Handlers<ModalsState, HandlersPayloads, PreciseKey>;
+
+const handlers: ModalsHandlers = {
+  MODAL_OPEN: (state, { payload }) => {
     const { name, data } = payload;
     return {
       ...state,
@@ -32,14 +34,7 @@ const handlers = {
       },
     };
   },
-  MODAL_CLOSE: (
-    state,
-    {
-      payload,
-    }: {
-      payload: ClosePayload;
-    },
-  ) => {
+  MODAL_CLOSE: (state, { payload }) => {
     const { name } = payload;
     return {
       ...state,
@@ -51,14 +46,7 @@ const handlers = {
   MODAL_CLOSE_ALL: () => {
     return {};
   },
-  MODAL_SET_DATA: (
-    state,
-    {
-      payload,
-    }: {
-      payload: OpenPayload;
-    },
-  ) => {
+  MODAL_SET_DATA: (state, { payload }) => {
     const { name, data } = payload;
     return {
       ...state,
@@ -73,11 +61,14 @@ const handlers = {
 // Selectors
 
 export const modalsStateSelector = (state: State): ModalsState => state.modals;
-export const isModalOpened = (state: object, name: string) =>
+export const isModalOpened = (state: State, name: string) =>
   state.modals[name] && state.modals[name].isOpened;
-export const getModalData = (state: object, name: string) =>
+export const getModalData = (state: State, name: string) =>
   state.modals[name] && state.modals[name].data;
 
 // Exporting reducer
 
-export default handleActions(handlers, state);
+export default handleActions<ModalsState, HandlersPayloads[keyof HandlersPayloads]>(
+  (handlers as unknown) as ModalsHandlers<false>,
+  state,
+);

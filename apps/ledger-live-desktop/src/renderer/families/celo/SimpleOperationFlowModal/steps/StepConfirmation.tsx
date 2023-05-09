@@ -11,17 +11,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import * as S from "./StepConfirmation.styles";
 import { StepProps } from "../types";
-export const StepConfirmationFooter = ({
-  transitionTo,
-  account,
-  parentAccount,
-  onRetry,
-  error,
-  openModal,
-  onClose,
-  optimisticOperation,
-  mode,
-}: StepProps) => {
+export const StepConfirmationFooter = ({ account, onRetry, error, onClose }: StepProps) => {
   return (
     <Box horizontal alignItems="right">
       {/**
@@ -41,19 +31,7 @@ export const StepConfirmationFooter = ({
     </Box>
   );
 };
-const StepConfirmation = ({
-  account,
-  t,
-  optimisticOperation,
-  error,
-  theme,
-  device,
-  signed,
-  transaction,
-  mode,
-}: StepProps & {
-  theme: any;
-}) => {
+const StepConfirmation = ({ optimisticOperation, error, signed, mode }: StepProps) => {
   if (optimisticOperation) {
     return (
       <S.Container>

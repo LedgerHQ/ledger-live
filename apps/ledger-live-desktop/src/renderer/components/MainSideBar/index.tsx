@@ -6,8 +6,8 @@ import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
-import { Icons } from "@ledgerhq/react-ui";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   sidebarCollapsedSelector,
@@ -17,7 +17,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { isNavigationLocked } from "~/renderer/reducers/application";
 import { openModal } from "~/renderer/actions/modals";
-import { setFirstTimeLend, setSidebarCollapsed } from "~/renderer/actions/settings";
+import { setSidebarCollapsed } from "~/renderer/actions/settings";
 import useExperimental from "~/renderer/hooks/useExperimental";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { darken, rgba } from "~/renderer/styles/helpers";
@@ -46,11 +46,11 @@ import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
 
 const MAIN_SIDEBAR_WIDTH = 230;
-const TagText = styled.div.attrs(p => ({
+const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
   style: {
     opacity: p.collapsed ? 1 : 0,
   },
-}))`
+}))<{ collapsed?: boolean }>`
   margin-left: ${p => p.theme.space[3]}px;
   transition: opacity 0.2s;
 `;
@@ -77,13 +77,21 @@ const Tag = styled(Link)`
     border-color: ${p => p.theme.colors.wallet};
   }
 `;
+
+const CustomTag = styled(TagComponent)`
+  border-radius: 6px;
+  padding: 2px 6px 2px 6px;
+`;
+
 const collapserSize = 24;
 const collapsedWidth = 15 * 4 + 16; // 15 * 4 margins + 16 icon size
 
 const Collapser = styled(Box).attrs(() => ({
   alignItems: "center",
   justifyContent: "center",
-}))`
+}))<{
+  collapsed?: boolean;
+}>`
   position: absolute;
   top: ${58 - collapserSize / 2}px;
   left: ${p => (p.collapsed ? collapsedWidth : MAIN_SIDEBAR_WIDTH) - collapserSize / 2}px;
@@ -207,7 +215,7 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
       }}
       onClick={() => setTrackingSource("sidebar")}
     >
-      <Icons.ChartNetworkMedium width={16} height={16} />
+      <Icons.ChartNetworkMedium size={16} />
       <TagText collapsed={collapsed}>{t("common.featureFlags")}</TagText>
     </Tag>
   ) : null;
@@ -227,7 +235,8 @@ const MainSideBar = () => {
   const noAccounts = useSelector(accountsSelector).length === 0;
   const hasStarredAccounts = useSelector(starredAccountsSelector).length > 0;
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
-  const firstTimeLend = useSelector(state => state.settings.firstTimeLend);
+
+  const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -241,53 +250,79 @@ const MainSideBar = () => {
     },
     [history, location.pathname],
   );
+
+  const trackEntry = useCallback(
+    (entry: string, flagged = false) => {
+      track(flagged ? "menu_entry_click_flagged" : "menuentry_clicked", {
+        entry,
+        page: history.location.pathname,
+      });
+    },
+    [history.location.pathname],
+  );
   const handleClickCard = useCallback(() => {
     push("/card");
-  }, [push]);
+    trackEntry("card");
+  }, [push, trackEntry]);
   const handleClickLearn = useCallback(() => {
     push("/learn");
-  }, [push]);
+    trackEntry("learn");
+  }, [push, trackEntry]);
   const handleClickDashboard = useCallback(() => {
     push("/");
-  }, [push]);
+    trackEntry("/");
+  }, [push, trackEntry]);
   const handleClickMarket = useCallback(() => {
     push("/market");
-  }, [push]);
+    trackEntry("market");
+  }, [push, trackEntry]);
   const handleClickManager = useCallback(() => {
     push("/manager");
-  }, [push]);
+    trackEntry("manager");
+  }, [push, trackEntry]);
   const handleClickAccounts = useCallback(() => {
     push("/accounts");
-  }, [push]);
+    trackEntry("accounts");
+  }, [push, trackEntry]);
   const handleClickCatalog = useCallback(() => {
     push("/platform");
-  }, [push]);
+    trackEntry("platform");
+  }, [push, trackEntry]);
   const handleClickExchange = useCallback(() => {
     push("/exchange");
-  }, [push]);
+    trackEntry("exchange");
+  }, [push, trackEntry]);
   const handleClickEarn = useCallback(() => {
     push("/earn");
-  }, [push]);
+    trackEntry("earn");
+  }, [push, trackEntry]);
   const handleClickSwap = useCallback(() => {
     push("/swap");
-  }, [push]);
+    trackEntry("swap");
+  }, [push, trackEntry]);
+  const handleClickRefer = useCallback(() => {
+    if (referralProgramConfig?.enabled && referralProgramConfig?.params.path) {
+      push(referralProgramConfig?.params.path);
+      trackEntry("refer-a-friend", referralProgramConfig?.params.isNew);
+    }
+  }, [push, referralProgramConfig, trackEntry]);
   const maybeRedirectToAccounts = useCallback(() => {
     return location.pathname === "/manager" && push("/accounts");
   }, [location.pathname, push]);
   const handleOpenSendModal = useCallback(() => {
     maybeRedirectToAccounts();
-    dispatch(openModal("MODAL_SEND"));
+    dispatch(openModal("MODAL_SEND", undefined));
   }, [dispatch, maybeRedirectToAccounts]);
   const handleOpenReceiveModal = useCallback(() => {
     maybeRedirectToAccounts();
-    dispatch(openModal("MODAL_RECEIVE"));
+    dispatch(openModal("MODAL_RECEIVE", undefined));
   }, [dispatch, maybeRedirectToAccounts]);
 
   const handleOpenProtectDiscoverModal = useCallback(() => {
     track("button_clicked", {
       button: "Protect",
     });
-    dispatch(openModal("MODAL_PROTECT_DISCOVER"));
+    dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
   }, [dispatch]);
 
   return (
@@ -302,7 +337,10 @@ const MainSideBar = () => {
       {state => {
         const secondAnim = !(state === "entered" && !collapsed);
         return (
-          <SideBar className="unstoppableAnimation" style={sideBarTransitionStyles[state]}>
+          <SideBar
+            className="unstoppableAnimation"
+            style={sideBarTransitionStyles[state as keyof typeof sideBarTransitionStyles]}
+          >
             <Collapser
               collapsed={collapsed}
               onClick={handleCollapse}
@@ -414,6 +452,24 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
+                <FeatureToggle feature="referralProgramDesktopSidebar">
+                  <SideBarListItem
+                    id={"refer"}
+                    label={t("sidebar.refer")}
+                    icon={Icons.GiftMedium}
+                    iconActiveColor="wallet"
+                    onClick={handleClickRefer}
+                    isActive={location.pathname.startsWith(referralProgramConfig?.params.path)}
+                    collapsed={secondAnim}
+                    NotifComponent={
+                      referralProgramConfig?.params.isNew ? (
+                        <CustomTag active type="plain" size="small">
+                          {t("common.new")}
+                        </CustomTag>
+                      ) : null
+                    }
+                  />
+                </FeatureToggle>
                 <SideBarListItem
                   id={"card"}
                   label={t("sidebar.card")}

@@ -1,17 +1,16 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { rgba } from "~/renderer/styles/helpers";
 import Card from "~/renderer/components/Box/Card";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ToolTip from "./Tooltip";
 import InfoCircle from "../icons/InfoCircle";
-const TableContainer: ThemedComponent<any> = styled(Card)`
+const TableContainer = styled(Card)`
   border-radius: 4px;
   overflow: hidden;
 `;
-const TableHeaderRow: ThemedComponent<any> = styled(Box).attrs(() => ({
+const TableHeaderRow = styled(Box).attrs(() => ({
   flex: 1,
   py: 3,
   px: 4,
@@ -22,20 +21,20 @@ const TableHeaderRow: ThemedComponent<any> = styled(Box).attrs(() => ({
 }))`
   border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
 `;
-export const HeaderWrapper: ThemedComponent<{}> = styled.div`
+export const HeaderWrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 10px 20px;
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
   background-color: ${p => rgba(p.theme.colors.palette.secondary.main, 0.02)};
 `;
-const TableHeaderTitle: ThemedComponent<any> = styled(Text).attrs(() => ({
+const TableHeaderTitle = styled(Text).attrs(() => ({
   color: "palette.text.shade100",
   ff: "Inter|Medium",
 }))`
   font-size: 14px;
 `;
-export const TableRow: ThemedComponent<{}> = styled(Box)`
+export const TableRow = styled(Box)`
   align-items: center;
   flex-direction: row;
   color: #abadb6;

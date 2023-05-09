@@ -30,7 +30,14 @@ export type FeatureInteger = {
   maxValue?: number;
 };
 
-export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
+export type FeatureFloat = {
+  type: "float";
+  minValue?: number;
+  maxValue?: number;
+};
+
+export type Feature = FeatureCommon &
+  (FeatureToggle | FeatureInteger | FeatureFloat);
 
 // comma-separated list of currencies that we want to enable as experimental, e.g:
 // const experimentalCurrencies = "solana,cardano";
@@ -62,6 +69,12 @@ export const experimentalFeatures: Feature[] = [
     name: "MANAGER_DEV_MODE",
     title: i18n.t(i18nKey("developerMode", "title")),
     description: i18n.t(i18nKey("developerMode", "description")),
+  },
+  {
+    type: "toggle",
+    name: "LIST_APPS_V2",
+    title: i18n.t(i18nKey("experimentalListAppsV2", "title")),
+    description: i18n.t(i18nKey("experimentalListAppsV2", "description")),
   },
   {
     type: "integer",
@@ -101,6 +114,15 @@ export const experimentalFeatures: Feature[] = [
       "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction",
     minValue: 0,
     maxValue: 1,
+  },
+  {
+    type: "float",
+    name: "EIP1559_BASE_FEE_MULTIPLIER",
+    title: "Custom multiplier for the base fee",
+    description:
+      "Customize the multiplier used for the base fee composing the maxFeePerGas",
+    minValue: 0,
+    maxValue: 10,
   },
   ...(__DEV__
     ? [

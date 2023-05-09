@@ -12,10 +12,10 @@ const PasswordButton = () => {
   const hasPassword = useSelector(hasPasswordSelector);
   const { t } = useTranslation();
   const handleOpenPasswordModal = useCallback(() => {
-    dispatch(openModal("MODAL_PASSWORD"));
+    dispatch(openModal("MODAL_PASSWORD", undefined));
   }, [dispatch]);
   const handleOpenDisablePassword = useCallback(() => {
-    dispatch(openModal("MODAL_DISABLE_PASSWORD"));
+    dispatch(openModal("MODAL_DISABLE_PASSWORD", undefined));
   }, [dispatch]);
   const handleChangePasswordCheck = useCallback(
     (isChecked: boolean) => {

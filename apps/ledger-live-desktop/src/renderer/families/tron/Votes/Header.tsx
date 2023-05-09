@@ -2,9 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { HeaderWrapper } from "~/renderer/components/TableContainer";
-export const TableLine: ThemedComponent<{}> = styled(Text).attrs(() => ({
+export const TableLine = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade60",
   fontSize: 3,
