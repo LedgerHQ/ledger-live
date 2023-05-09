@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 
 type Props = {
-  counterCurrency: string;
+  counterCurrency?: string;
   setCounterCurrency: (counterCurrency: string) => void;
   supportedCounterCurrencies: string[];
 };
@@ -19,8 +19,10 @@ function CounterValueSelect({
   const { t } = useTranslation();
 
   const handleChangeCounterValue = useCallback(
-    (item: { currency: Currency }) => {
-      setCounterCurrency(item.currency.ticker);
+    (item: { currency: Currency } | null) => {
+      // TODO: double check if this is correct to pass undefined/null ticker
+      // @ts-expect-error because the types tell us that it should not be the case
+      setCounterCurrency(item?.currency?.ticker);
     },
     [setCounterCurrency],
   );

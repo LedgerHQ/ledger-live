@@ -20,7 +20,6 @@ type FormInputsProps = {
   toAmount: SwapSelectorStateType["amount"];
   setFromAccount: SwapTransactionType["setFromAccount"];
   setFromAmount: SwapTransactionType["setFromAmount"];
-  setToAccount: SwapTransactionType["setToAccount"];
   setToCurrency: SwapTransactionType["setToCurrency"];
   toggleMax: SwapTransactionType["toggleMax"];
   reverseSwap: SwapTransactionType["reverseSwap"];
@@ -47,7 +46,7 @@ type SwapButtonProps = {
   onClick: SwapTransactionType["reverseSwap"];
   disabled: boolean;
 };
-function SwapButton({ onClick, disabled }: SwapButtonProps): React.ReactNode {
+function SwapButton({ onClick, disabled }: SwapButtonProps): JSX.Element {
   return (
     <RoundButton
       lighterPrimary
@@ -60,15 +59,14 @@ function SwapButton({ onClick, disabled }: SwapButtonProps): React.ReactNode {
   );
 }
 export default function FormInputs({
-  fromAccount = null,
+  fromAccount = undefined,
   toAccount,
-  fromAmount = null,
+  fromAmount = undefined,
   isMaxEnabled = false,
   setFromAccount,
   setFromAmount,
   toCurrency,
   toAmount,
-  setToAccount,
   setToCurrency,
   toggleMax,
   fromAmountError,
@@ -114,7 +112,6 @@ export default function FormInputs({
       >
         <ToRow
           toCurrency={toCurrency}
-          setToAccount={setToAccount}
           setToCurrency={setToCurrency}
           toAmount={toAmount}
           fromAccount={fromAccount}

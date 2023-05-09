@@ -152,5 +152,6 @@ function appManifestFixture(name = "live-app"): LiveAppManifest {
     },
     permissions: [],
     domains: [],
+    visibility: "complete",
   };
 }

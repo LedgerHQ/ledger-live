@@ -41,7 +41,7 @@ const SummaryValue = ({
   children,
 }: {
   value?: string;
-  handleChange?: Function;
+  handleChange?: (() => void) | null;
   children?: React.ReactNode;
 }) => {
   const { t } = useTranslation();

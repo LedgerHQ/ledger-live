@@ -4242,6 +4242,10 @@
           "3": {
             "title": "Restore your recovery phrase on a new device",
             "description": "Use an existing recovery phrase to restore your private keys on a new Nano!"
+          },
+          "4": {
+            "title": "Restore using Ledger Recover",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4387,6 +4391,25 @@
             "help": {
               "help": "Need help",
               "descr": "Don't know what you have to do? Get some help to close this step."
+            }
+          },
+          "recoverHowTo": {
+            "title": "Select ‘Restore using Ledger Recover’",
+            "1": {
+              "title": "Select ‘Restore’",
+              "descr": "Press both buttons simultaneously to select."
+            },
+            "2": {
+              "title": "Select ‘Restore using Ledger Recover’"
+            },
+            "help": {
+              "iDontSee": "I don’t see ‘Restore using Ledger Recover’",
+              "modal": {
+                "title": "The OS on your Ledger Nano X needs to be updated",
+                "subtitle": " You can try updating the OS or contact Ledger support for assistance.",
+                "learnHowToUpdate": "Learn how to update",
+                "contactLedgerSupport": "Contact ledger support"
+              }
             }
           },
           "existingRecoveryPhrase": {

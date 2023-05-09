@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { SyntheticEvent, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { openModal } from "~/renderer/actions/modals";
@@ -11,7 +11,7 @@ const SectionExport = () => {
   const onModalOpen = useCallback(
     (e: SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
-      dispatch(openModal("MODAL_EXPORT_ACCOUNTS"));
+      dispatch(openModal("MODAL_EXPORT_ACCOUNTS", undefined));
     },
     [dispatch],
   );
@@ -26,7 +26,7 @@ const SectionExport = () => {
         title={t("settings.export.operations.title")}
         desc={t("settings.export.operations.desc")}
       >
-        <ExportOperationsBtn primary />
+        <ExportOperationsBtn primary t={t} openModal={() => ""} accounts={[]} />
       </Row>
     </>
   );

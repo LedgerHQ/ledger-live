@@ -1,5 +1,5 @@
 import React from "react";
-import Modal, { ModalBody } from "~/renderer/components/Modal";
+import Modal, { ModalBody, RenderProps } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/startExchange";
@@ -12,13 +12,20 @@ const StartExchange = () => {
       name="MODAL_PLATFORM_EXCHANGE_START"
       centered
       preventBackdropClick
-      render={({ data, onClose }) => (
+      render={({
+        data,
+        onClose,
+      }: RenderProps<{
+        onCancel?: (_: string) => void;
+        exchangeType: unknown;
+        onResult: (startExchangeResult: string) => void;
+      }>) => (
         <ModalBody
           onClose={() => {
             if (data.onCancel) {
               data.onCancel("Interrupted by user");
             }
-            onClose();
+            onClose?.();
           }}
           render={() => (
             <Box alignItems={"center"} px={32}>
@@ -27,9 +34,11 @@ const StartExchange = () => {
                 request={{
                   exchangeType: data.exchangeType,
                 }}
-                onResult={({ startExchangeResult }) => {
-                  data.onResult(startExchangeResult);
-                  onClose();
+                onResult={result => {
+                  if ("startExchangeResult" in result) {
+                    data.onResult(result.startExchangeResult);
+                  }
+                  onClose?.();
                 }}
               />
             </Box>

@@ -9,7 +9,7 @@ type Props = {
   onSkip: () => void;
   onConfirm: () => void;
   descriptionWording: string;
-  titleWording: string;
+  titleWording?: string;
   deviceModelId: DeviceModelId;
 };
 

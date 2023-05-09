@@ -122,7 +122,7 @@ const AmountField = (props: Props) => {
     warnings,
   ]);
   return (
-    <Box vertical>
+    <Box>
       <Label>{label}</Label>
       <InputCurrency
         autoFocus={false}

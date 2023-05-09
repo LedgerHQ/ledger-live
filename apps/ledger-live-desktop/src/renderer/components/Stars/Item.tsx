@@ -16,15 +16,17 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 const ParentCryptoCurrencyIconWrapper = styled.div`
   width: 20px;
 `;
-const ItemWrapper: ThemedComponent<{
+const ItemWrapper = styled.div.attrs<{
   active: boolean;
-}> = styled.div.attrs(p => ({
+}>(p => ({
   style: {
     backgroundColor: p.active
       ? p.theme.colors.palette.action.hover
       : p.theme.colors.palette.background.paper,
   },
-}))`
+}))<{
+  active: boolean;
+}>`
   flex: 1;
   align-items: center;
   display: flex;
@@ -61,20 +63,12 @@ const Item = ({ account, pathname, collapsed }: Props) => {
   }, [account, history]);
   const unit = getAccountUnit(account);
   return (
-    <ItemWrapper
-      className="bookmarked-account-item"
-      collapsed={collapsed}
-      active={active}
-      onClick={onAccountClick}
-    >
+    <ItemWrapper className="bookmarked-account-item" active={active} onClick={onAccountClick}>
       <Box horizontal ff="Inter|SemiBold" flex={1} flow={3} alignItems="center">
-        <ParentCryptoCurrencyIconWrapper
-          collapsed={collapsed}
-          isToken={account.type === "TokenAccount"}
-        >
+        <ParentCryptoCurrencyIconWrapper>
           <ParentCryptoCurrencyIcon inactive={!active} currency={getAccountCurrency(account)} />
         </ParentCryptoCurrencyIconWrapper>
-        <Box vertical flex={1}>
+        <Box flex={1}>
           <Hide visible={!collapsed}>
             <Ellipsis>{getAccountName(account)}</Ellipsis>
             <FormattedVal

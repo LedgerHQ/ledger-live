@@ -1,10 +1,9 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Route, useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { lock } from "~/renderer/actions/application";
-import { openModal } from "~/renderer/actions/modals";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import { hasAccountsSelector } from "~/renderer/reducers/accounts";
 import { Bar, ItemContainer } from "./shared";
@@ -48,7 +47,6 @@ export const SeparatorBar = styled.div`
   position: relative;
 `;
 const TopBar = () => {
-  const settingsClickTimes = useRef([]);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -64,19 +62,13 @@ const TopBar = () => {
   ]);
   const navigateToSettings = useCallback(() => {
     const url = "/settings";
-    const now = Date.now();
-    settingsClickTimes.current = settingsClickTimes.current.filter(t => now - t < 3000).concat(now);
-    if (settingsClickTimes.current.length === 7) {
-      settingsClickTimes.current = [];
-      dispatch(openModal("MODAL_DEBUG"));
-    }
     if (location.pathname !== url) {
       setTrackingSource("topbar");
       history.push({
         pathname: url,
       });
     }
-  }, [history, location, dispatch]);
+  }, [history, location]);
   return (
     <Container color="palette.text.shade80">
       <Inner bg="palette.background.default">
