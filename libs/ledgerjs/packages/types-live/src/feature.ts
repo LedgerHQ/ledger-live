@@ -31,6 +31,7 @@ export type FeatureId =
   | "currencyOnomy"
   | "currencyPersistence"
   | "currencyQuicksilver"
+  | "currencyTelos"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
   | "multibuyNavigation"

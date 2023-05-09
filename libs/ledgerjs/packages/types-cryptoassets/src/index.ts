@@ -149,7 +149,8 @@ export type CryptoCurrencyId =
   | "boba"
   | "moonriver"
   | "velas_evm"
-  | "syscoin";
+  | "syscoin"
+  | "telos";
 
 /**
  *
