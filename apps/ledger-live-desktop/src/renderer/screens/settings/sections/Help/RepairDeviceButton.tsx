@@ -1,19 +1,20 @@
 import React, { PureComponent } from "react";
 import { compose } from "redux";
-import { withRouter } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import repairFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { withTranslation, TFunction } from "react-i18next";
 import logger from "~/renderer/logger";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+
 type OwnProps = {
   buttonProps?: ButtonProps;
   onRepair?: (a: boolean) => void;
 };
 type Props = OwnProps & {
   t: TFunction;
-  history: any;
+  history: RouteComponentProps["history"];
 };
 type State = {
   opened: boolean;
