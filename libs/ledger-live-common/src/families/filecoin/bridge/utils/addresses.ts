@@ -1,4 +1,4 @@
-import { Address } from "@zondax/izari-filecoin/address";
+import { Address } from "@zondax/izari-filecoin";
 
 export type ValidateAddressResult =
   | {
