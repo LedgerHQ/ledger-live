@@ -8,7 +8,6 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import Box, { Tabbable } from "~/renderer/components/Box";
 
@@ -31,7 +30,13 @@ const Container = styled(Box).attrs(() => ({
   border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
 `;
 
-const ItemContainer: ThemedComponent<{
+const ItemContainer = styled(Tabbable).attrs(p => ({
+  padding: 1,
+  alignItems: "center",
+  cursor: p.disabled ? "not-allowed" : "default",
+  horizontal: true,
+  borderRadius: 1,
+}))<{
   "data-e2e"?: string;
   isInteractive?: boolean;
   onClick?: () => void;
@@ -39,13 +44,7 @@ const ItemContainer: ThemedComponent<{
   children: React.ReactNode;
   justifyContent?: string;
   hidden?: boolean;
-}> = styled(Tabbable).attrs(p => ({
-  padding: 1,
-  alignItems: "center",
-  cursor: p.disabled ? "not-allowed" : "default",
-  horizontal: true,
-  borderRadius: 1,
-}))`
+}>`
   -webkit-app-region: no-drag;
   height: 24px;
   position: relative;
