@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "Nunca",
+    "new" : "Novo",
     "apply" : "Aplicar",
     "done" : "Concluído",
     "confirm" : "Confirmar",
@@ -126,7 +127,8 @@
     "exchange" : "Negociar",
     "info" : "Informações",
     "connectDevice" : "Conecte seu dispositivo",
-    "add" : "Adicionar"
+    "add" : "Adicionar",
+    "or" : "OU"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -171,7 +173,49 @@
       "REGISTER" : "Registrado",
       "STAKE" : "Aplicado",
       "UNSTAKE" : "Desaplicado",
-      "WITHDRAW_UNSTAKED" : "Sacado"
+      "WITHDRAW_UNSTAKED" : "Sacado",
+      "SENDING" : "Enviando"
+    },
+    "edit" : {
+      "title" : "Acelerar ou Cancelar",
+      "description" : "A transação está em andamento. Você pode acelerar a transação com uma taxa de rede maior ou cancelá-la.",
+      "stuckDescription" : "Sua transação está travada. Acelere-a com uma taxa de rede maior ou cancele-a.",
+      "previousFeesInfo" : "Taxa de rede atual = ",
+      "learnMore" : "Quero saber mais",
+      "panel" : {
+        "title" : "Acelerar ou Cancelar",
+        "description" : "Uma de suas transações de 'envio' mais recentes está travada. Acelere a transação com uma taxa de rede maior ou a cancele."
+      },
+      "speedUp" : {
+        "title" : "Acelerar",
+        "description" : "Reenviar a transação com uma taxa de rede maior."
+      },
+      "cancel" : {
+        "title" : "Cancelar",
+        "description" : "Enviando 0 {{ticker}} para seu próprio endereço. Para garantir o cancelamento, a taxa de rede é de 30% mais alta do que a taxa da transação a ser cancelada."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Método"
+        },
+        "fees" : {
+          "title" : "Taxas"
+        },
+        "summary" : {
+          "title" : "Resumo"
+        },
+        "device" : {
+          "title" : "Dispositivo"
+        },
+        "confirmation" : {
+          "title" : "Confirmação"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "Você não tem a opção de cancelar a transação porque não há fundos suficientes em sua conta.",
+        "notEnoughFundsToSpeedup" : "Você não tem a opção de acelerar a transação porque não há fundos suficientes em sua conta.",
+        "notlowestNonceToSpeedup" : "O recurso de aceleração não está disponível. Sua transação está pendente porque uma transação anterior está travada. Você pode esperar até que ela seja confirmada, acelerá-la ou cancelá-la."
+      }
     }
   },
   "byteSize" : {
@@ -215,6 +259,7 @@
     "earn" : "Ganhar",
     "exchange" : "Comprar / Vender",
     "swap" : "Trocar",
+    "refer" : "Indique um amigo",
     "lend" : "Emprestar",
     "catalog" : "Explorar",
     "market" : "Mercado",
@@ -1203,23 +1248,33 @@
     },
     "manual" : {
       "title" : "Configurar {{deviceName}}",
+      "continueOnDevice" : "Execute essa ação em sua {{productName}}",
       "pairedContent" : {
         "title" : "{{deviceName}} está conectada",
         "description" : "Continuar a configuração em {{deviceName}}",
-        "text" : "Esta tela mudará dinamicamente para fornecer a você informações relevantes enquanto você configura sua {{deviceName}}"
+        "text" : "Esta tela mudará dinamicamente para fornecer a você informações relevantes enquanto você configura sua {{deviceName}}",
+        "continueOnDevice" : "Toque em {{productName}} para ver a próxima tela."
       },
       "pinContent" : {
         "title" : "Definir seu PIN",
         "description" : "Seu PIN pode conter de 4 a 8 dígitos",
-        "text" : "Qualquer pessoa com acesso à sua {{deviceName}} e ao seu PIN pode também acessar todos os seus criptoativos e NFTs."
+        "text" : "Qualquer pessoa com acesso à sua {{deviceName}} e ao seu PIN pode também acessar todos os seus criptoativos e NFTs.",
+        "continueOnDevice" : "Defina seu PIN em {{productName}}"
       },
       "seedContent" : {
         "title" : "Frase de Recuperação Secreta",
-        "choiceNewOrRestore" : "Escolha a opção de configuração que mais sirva a você.",
-        "newSeed" : "Toque nos vídeos abaixo para saber mais sobre a sua frase de recuperação secreta",
-        "choiceRestoreDirectOrRecover" : "Placeholder - escolha restaurar diretamente ou usar o Recover",
         "recoverSeed" : "Placeholder: Recover",
-        "restoreSeed" : "Para a recuperação, certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir a segurança de seus ativos.\n\nNão tem um? Use sua {{productName}} para gerar uma nova Frase."
+        "restoreSeed" : "Para a recuperação, certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir a segurança de seus ativos.\n\nNão tem um? Use sua {{productName}} para gerar uma nova Frase.",
+        "selection" : "Na {{productName}}, escolha a opção de configuração que for melhor para você.",
+        "selectionContinueOnDevice" : "Toque em uma opção na {{productName}}",
+        "newSeedDescription" : "Assista aos vídeos abaixo para saber mais sobre suas palavras secretas.",
+        "newSeedContinueOnDevice" : "Faça isso em sua {{productName}}",
+        "recovery" : "Para recuperar, certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir a segurança de seus ativos.\n\nNão tem um? Use sua {{productName}} para gerar uma nova frase.",
+        "restoreChoiceContinueOnDevice" : "Escolha uma opção em sua {{productName}}",
+        "restoreChoiceSRPTitle" : "Restaurar usando a Frase de Recuperação Secreta",
+        "restoreChoiceSRPDescription" : "Certifique-se de usar uma Frase gerada por uma Ledger para garantir a segurança de seus ativos.",
+        "restoreChoiceRecoverTitle" : "Restaurar usando o Ledger Recover",
+        "restoreChoiceRecoverDescription" : "Restaure o backup da sua frase de recuperação entrando na sua conta Ledger e confirmando sua identidade."
       },
       "softwareCheckContent" : {
         "title" : "Verificação de software",
@@ -1238,10 +1293,13 @@
         }
       },
       "installApplications" : {
-        "title" : "Recomendamos que você baixe um conjunto padrão de aplicativos. Você pode baixar outros mais tarde",
+        "title" : "Instalar aplicativos de blockchain",
         "install" : "Instalar",
         "skip" : "Farei isso mais tarde",
         "info" : "Aplicativos da {{deviceName}} são usados para aprovar transações. Você pode adicioná-los ou removê-los a qualquer momento."
+      },
+      "endOfSetup" : {
+        "title" : "Fim da configuração"
       },
       "genuineCheckModal" : {
         "title" : "Verificação de autenticidade",
@@ -1441,7 +1499,8 @@
     "messageIfUnverified" : "Verifique se o endereço compartilhado corresponde exatamente ao exibido no seu dispositivo",
     "messageIfSkipped" : "Seu endereço {{name}} não foi confirmado no seu dispositivo Ledger. Verifique-o por segurança.",
     "showQrCode" : "Mostrar QR Code",
-    "taprootWarning" : "Certifique-se de que o remetente é compatível com taproot"
+    "taprootWarning" : "Certifique-se de que o remetente é compatível com taproot",
+    "dashStakingWarning" : "Certifique-se de não usar esse endereço para receber recompensas de staking"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1933,7 @@
         "plugin" : "Ir para o aplicativo",
         "swap" : "Trocar",
         "tool" : "Saiba Mais",
-        "app" : "Saiba Mais"
+        "currency" : "Saiba mais"
       },
       "uninstall" : {
         "title" : "Desinstalar Todos",
@@ -2864,7 +2923,7 @@
       "commission" : "Comissão",
       "totalStake" : "Aplicação Total",
       "claimRewards" : "Resgatar Recompensas",
-      "header" : "Delegação(ões)",
+      "header" : "Delegações",
       "noRewards" : "Nenhuma recompensa disponível",
       "delegate" : "Adicionar",
       "undelegate" : "Parar Delegação",
@@ -3761,6 +3820,7 @@
         "title" : "Agora você é um desenvolvedor!",
         "text" : "Boas-vindas ao país das maravilhas"
       },
+      "userId" : "ID do usuário",
       "debugApps" : "Permitir debug de aplicativos",
       "debugAppsDesc" : "Exibir e permitir a abertura de aplicativos da plataforma etiquetados como de debug",
       "experimentalApps" : "Permitir aplicativos experimentais",
@@ -3790,6 +3850,8 @@
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "Staging URL da página Aprender",
       "enableLearnStagingUrlDesc" : "Habilite a staging URL da página Aprender.",
+      "enableStagingNftMetadataService" : "Teste do serviço de metadados de NFTs",
+      "enableStagingNftMetadataServiceDesc" : "Habilite o teste do serviço de metadados de NFTs e redefina o cache de NFTs",
       "openOnboardingAppInstallDebug" : "Abrir a tela inicial de debug da instalação do aplicativo",
       "openOnboardingAppInstallDebugDesc" : "Abra uma tela com os componentes da etapa de instalação do aplicativo de sincronização inicial"
     },
@@ -3847,6 +3909,10 @@
           "title" : "Modo Desenvolvedor",
           "description" : "Mostrar aplicativos testnet e de desenvolvedor em Minha Ledger."
         },
+        "listAppsV2" : {
+          "title" : "Lista de aplicativos experimentais para Minha Ledger",
+          "description" : "Melhoria de desempenho no acesso à Minha Ledger e fluxos inline."
+        },
         "scanForInvalidPaths" : {
           "title" : "Pesquisa de contas ampliada",
           "description" : "Procure contas com caminhos de derivação incorretos. Envie os potenciais ativos encontrados para uma conta regular."
@@ -3886,6 +3952,10 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "Personalizar Taxa de Prioridade",
           "description" : "Defina uma porcentagem personalizada da nossa taxa de prioridade mínima estimada permitida para uma transação EIP1559 avançada"
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "Multiplicador personalizado para a taxa básica",
+          "description" : "Personalize o multiplicador usado para a taxa básica que compõe o maxFeePerGas da transação EIP1559"
         }
       }
     },
@@ -3992,7 +4062,7 @@
     "checking" : "Verificando Atualização...",
     "checkSuccess" : "Atualização pronta para instalação",
     "quitAndInstall" : "Instalar agora",
-    "updateAvailable" : "Atualização disponível para a versão {{version}} do Ledger Live",
+    "updateAvailable" : "Atualização para a versão {{version}} do Ledger Live disponível",
     "error" : "Erro durante a atualização. Baixe Novamente",
     "reDownload" : "Baixar Novamente",
     "nightlyWarning" : "Esta versão não pode ser atualizada automaticamente. Instale a versão mais recente manualmente",
@@ -5247,6 +5317,10 @@
       "title" : "Operação não disponível para este dispositivo",
       "description" : "A função de enviar NFTs está disponível apenas para a Nano X e a Nano S+. Visite nossa plataforma de suporte ao cliente para saber como enviar um NFT com uma Nano S."
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "Não pode ser acelerada ou cancelada",
+      "description" : "Essa transação já foi validada"
+    },
     "CantScanQRCode" : {
       "title" : "Não foi possível escanear o QR Code: verificação automática não compatível com este endereço."
     },
@@ -5723,9 +5797,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "Recupere suas chaves usando\nsua identidade",
+    "description" : "Sua Frase de Recuperação Secreta nem sempre estará ao seu alcance.\nLançamento piloto exclusivo para a Ledger Nano X. Inscreva-se gratuitamente até 31 de maio de 2023",
+    "cta" : "Por que devo me inscrever?",
+    "downloadLLM" : "Inscreva-se no <purple>Ledger Recover</purple> usando o aplicativo Ledger Live mobile"
   }
 }
