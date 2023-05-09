@@ -3,13 +3,14 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import { BoxProps } from "../Box/Box";
-import Step from "./Step";
+import Step, { Status } from "./Step";
+
 const Container = styled(Box)`
   position: sticky;
   top: -20px;
   z-index: 2;
 `;
+
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -19,12 +20,13 @@ const Wrapper = styled(Box).attrs(() => ({
   margin-bottom: 25px;
   z-index: 2;
 `;
-const Bar: ThemedComponent<{
+
+const Bar = styled.div<{
   start: number;
   end: number;
   current: number;
   disabled: Array<number> | undefined | null;
-}> = styled.div`
+}>`
   background: ${p => p.theme.colors.palette.text.shade20};
   flex-grow: 1;
   height: 1px;
@@ -60,33 +62,46 @@ const Bar: ThemedComponent<{
     z-index: 2;
   }
 `;
-const indexToPercent = (index, itemsLength) =>
-  100 - (100 / (itemsLength - 1)) * parseInt(index, 10);
-type Props = {
-  currentStep: number | string;
-  items: Array<object>;
+
+const indexToPercent = (index: number, itemsLength: number): number =>
+  100 - (100 / (itemsLength - 1)) * index;
+
+type ItemBase = {
+  label?: React.ReactNode;
+  excludeFromBreadcrumb?: boolean;
+};
+
+type Props<Item extends ItemBase> = {
+  currentStep: number;
+  items: Array<Item>;
   stepsDisabled: Array<number>;
   stepsErrors: Array<number>;
-} & BoxProps;
-class Breadcrumb extends PureComponent<Props> {
+  mb?: number;
+};
+
+class Breadcrumb<Item extends ItemBase> extends PureComponent<Props<Item>> {
   static defaultProps = {
     stepsDisabled: [],
     stepsErrors: [],
   };
 
   render() {
-    const { items, stepsDisabled, stepsErrors, currentStep, ...props } = this.props;
+    const { items, stepsDisabled, stepsErrors, currentStep, mb } = this.props;
     const itemsLength = items.length;
     const start = 100 / itemsLength / 2;
+    const currentStepInteger =
+      // FIXME deprecated the implicit accept of string values
+      typeof currentStep === "string" ? parseInt(currentStep, 10) : currentStep;
+
     return (
       <Container>
-        <Box {...props} bg="palette.background.paper" relative>
+        <Box mb={mb} bg="palette.background.paper" relative>
           <Wrapper>
             {items
               .filter(i => !i.excludeFromBreadcrumb)
               .map((item, i) => {
-                let status = "next";
-                const stepIndex = parseInt(currentStep, 10);
+                let status: Status = "next";
+                const stepIndex = currentStepInteger;
                 if (i === stepIndex) {
                   status = "active";
                 }
@@ -117,7 +132,7 @@ class Breadcrumb extends PureComponent<Props> {
                   ]
                 : null
             }
-            current={!currentStep ? 100 : indexToPercent(currentStep, itemsLength)}
+            current={!currentStep ? 100 : indexToPercent(currentStepInteger, itemsLength)}
           />
         </Box>
       </Container>

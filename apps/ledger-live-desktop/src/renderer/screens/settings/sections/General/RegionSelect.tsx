@@ -7,7 +7,15 @@ import { languageSelector, localeSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
 import regionsByKey from "./regions.json";
-const getRegionOption = (regionLocale, languageLocale) => {
+
+type RegionSelectOption = {
+  value: string;
+  locale: string;
+  language: string;
+  region: string;
+  label: string;
+};
+const getRegionOption = (regionLocale: string, languageLocale: string | Intl.Locale) => {
   const [language, region = ""] = regionLocale.split("-");
   const languageDisplayName = new window.Intl.DisplayNames([languageLocale], {
     type: "language",
@@ -26,7 +34,7 @@ const getRegionOption = (regionLocale, languageLocale) => {
     label,
   };
 };
-const getRegionsOptions = languageLocale =>
+const getRegionsOptions = (languageLocale: string) =>
   Object.keys(regionsByKey)
     .map(regionLocale => getRegionOption(regionLocale, languageLocale))
     .sort((a, b) => a.label.localeCompare(b.label));
@@ -37,10 +45,14 @@ const RegionSelect = () => {
   const regionsOptions = useMemo(() => {
     return getRegionsOptions(language);
   }, [language]);
+
+  const avoidEmptyValue = (region?: RegionSelectOption | null) =>
+    region && handleChangeRegion(region);
+
   const handleChangeRegion = useCallback(
-    ({ locale }: { locale: string }) => {
-      moment.locale(locale);
-      dispatch(setLocale(locale));
+    (region?: RegionSelectOption) => {
+      moment.locale(region?.locale);
+      dispatch(setLocale(region?.locale ?? "en"));
     },
     [dispatch],
   );
@@ -54,8 +66,8 @@ const RegionSelect = () => {
       <Select
         small
         minWidth={260}
-        onChange={handleChangeRegion}
-        renderSelected={item => item && item.name}
+        onChange={avoidEmptyValue}
+        renderSelected={(item: { name: string }) => item && item.name}
         value={currentRegionOption}
         options={regionsOptions}
       />

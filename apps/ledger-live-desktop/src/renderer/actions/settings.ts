@@ -34,11 +34,11 @@ export const setCountervalueFirst = (countervalueFirst: boolean) =>
   saveSettings({
     countervalueFirst,
   });
-export const setAccountsViewMode = (accountsViewMode: any) =>
+export const setAccountsViewMode = (accountsViewMode: "list" | "card" | undefined) =>
   saveSettings({
     accountsViewMode,
   });
-export const setNftsViewMode = (nftsViewMode: any) =>
+export const setNftsViewMode = (nftsViewMode: "list" | "grid" | undefined) =>
   saveSettings({
     nftsViewMode,
   });
@@ -121,7 +121,7 @@ export const setUSBTroubleshootingIndex = (USBTroubleshootingIndex?: number) =>
   saveSettings({
     USBTroubleshootingIndex,
   });
-export function useHideEmptyTokenAccounts() {
+export function useHideEmptyTokenAccounts(): [boolean, (hideEmptyTokenAccounts: boolean) => void] {
   const dispatch = useDispatch();
   const value = useSelector(hideEmptyTokenAccountsSelector);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
@@ -140,7 +140,10 @@ export function useHideEmptyTokenAccounts() {
   );
   return [value, setter];
 }
-export function useFilterTokenOperationsZeroAmount() {
+export function useFilterTokenOperationsZeroAmount(): [
+  boolean,
+  (filterTokenOperationsZeroAmount: boolean) => void,
+] {
   const dispatch = useDispatch();
   const value = useSelector(filterTokenOperationsZeroAmountSelector);
   const setter = useCallback(
@@ -157,12 +160,16 @@ export function useFilterTokenOperationsZeroAmount() {
   );
   return [value, setter];
 }
-type PortfolioRangeOption = {
+export type PortfolioRangeOption = {
   key: PortfolioRange;
   value: string;
   label: string;
 };
-export function useTimeRange() {
+export function useTimeRange(): [
+  PortfolioRange,
+  (range: PortfolioRangeOption | PortfolioRange) => void,
+  PortfolioRangeOption[],
+] {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const val = useSelector(selectedTimeRangeSelector);
@@ -181,6 +188,7 @@ export function useTimeRange() {
   }));
   return [val, setter, options];
 }
+
 export const setShowClearCacheBanner = (showClearCacheBanner: boolean) =>
   saveSettings({
     showClearCacheBanner,
@@ -233,13 +241,20 @@ export const fetchSettings: FetchSettings = (settings: SettingsState) => dispatc
     payload: settings,
   });
 };
+
+type ExchangePairs = Array<{
+  from: Currency;
+  to: Currency;
+  exchange: string | undefined | null;
+}>;
+
 type SetExchangePairs = (
-  a: Array<{
-    from: Currency;
-    to: Currency;
-    exchange: string | undefined | null;
-  }>,
-) => any;
+  a: ExchangePairs,
+) => {
+  type: "SETTINGS_SET_PAIRS";
+  payload: ExchangePairs;
+};
+
 export const setExchangePairsAction: SetExchangePairs = pairs => ({
   type: "SETTINGS_SET_PAIRS",
   payload: pairs,
@@ -257,7 +272,7 @@ export const setLastSeenDeviceInfo = ({
   latestFirmware,
 }: {
   lastSeenDevice: DeviceModelInfo;
-  latestFirmware: any;
+  latestFirmware: unknown;
 }) => ({
   type: "LAST_SEEN_DEVICE_INFO",
   payload: {
@@ -317,9 +332,11 @@ export const setOverriddenFeatureFlag = (key: FeatureId, value: Feature | undefi
   },
 });
 export const setOverriddenFeatureFlags = (
-  overriddenFeatureFlags: {
-    [key in FeatureId]: Feature;
-  },
+  overriddenFeatureFlags: Partial<
+    {
+      [key in FeatureId]: Feature;
+    }
+  >,
 ) => ({
   type: "SET_OVERRIDDEN_FEATURE_FLAGS",
   payload: {

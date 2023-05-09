@@ -1,7 +1,7 @@
 import Color from "color";
 import light from "./light.json";
 import dark from "./dark.json";
-const shades = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+
 export type RawPalette = {
   type: "light" | "dark";
   primary: {
@@ -24,6 +24,8 @@ export type RawPalette = {
   };
   wave: string;
 };
+
+const shades = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 export type Theme = {
   text: {
     shade5: string;
@@ -39,12 +41,12 @@ export type Theme = {
     shade100: string;
   };
 } & RawPalette;
+
 const enrichPalette = (rawPalette: RawPalette): Theme => {
   return {
     ...rawPalette,
     text: shades.reduce((acc, value) => {
-      // @ts-expect-error TODO: hopefully remove this when we migrate to the new theme
-      acc[`shade${value}`] = Color(rawPalette.secondary.main)
+      acc[`shade${value}` as keyof Theme["text"]] = Color(rawPalette.secondary.main)
         .alpha(value / 100)
         .toString();
       return acc;

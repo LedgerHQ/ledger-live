@@ -1,11 +1,11 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import styled from "styled-components";
+import styled, { DefaultTheme, ThemedStyledProps } from "styled-components";
 import AngleUp from "~/renderer/icons/AngleUp";
 import TopBar from "~/renderer/components/TopBar";
 
 type Props = {
-  children: any;
+  children: React.ReactNode;
 };
 const PageContainer = styled.div`
   display: flex;
@@ -13,8 +13,12 @@ const PageContainer = styled.div`
   flex: 1;
   position: relative;
 `;
-export const getPagePaddingLeft = (p: any) => p.theme.space[6];
-export const getPagePaddingRight = (p: any) => p.theme.space[6] - p.theme.overflow.trackSize;
+
+export const getPagePaddingLeft = (p: ThemedStyledProps<unknown, DefaultTheme>) => p.theme.space[6];
+
+export const getPagePaddingRight = (p: ThemedStyledProps<unknown, DefaultTheme>) =>
+  p.theme.space[6] - p.theme.overflow.trackSize;
+
 const PageScroller = styled.div`
   padding: ${p => p.theme.space[3]}px ${p => getPagePaddingLeft(p)}px;
   padding-right: ${p => getPagePaddingRight(p)}px;
@@ -23,6 +27,7 @@ const PageScroller = styled.div`
   flex-direction: column;
   flex: 1;
 `;
+
 const PageScrollerContainer = styled.div`
   overflow: hidden;
   position: relative;
@@ -30,13 +35,16 @@ const PageScrollerContainer = styled.div`
   flex-direction: column;
   flex: 1;
 `;
-const PageScrollTopSeparator: ThemedComponent<{
+
+const PageScrollTopSeparator = styled.div.attrs<{
   isAtUpperBound: boolean;
-}> = styled.div.attrs(p => ({
+}>(p => ({
   style: {
     opacity: p.isAtUpperBound ? 0 : 1,
   },
-}))`
+}))<{
+  isAtUpperBound: boolean;
+}>`
   position: absolute;
   pointer-events: none;
   left: 0;
@@ -54,6 +62,7 @@ const PageScrollTopSeparator: ThemedComponent<{
     background-color: ${p => p.theme.colors.palette.text.shade10};
   }
 `;
+
 const PageContentContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -61,12 +70,17 @@ const PageContentContainer = styled.div`
   flex: 1;
   height: 100%;
 `;
-const ScrollUpButton = styled.div.attrs(p => ({
+
+const ScrollUpButton = styled.div.attrs<{
+  isVisible: boolean;
+}>(p => ({
   style: {
     opacity: p.isVisible ? 1 : 0,
     pointerEvents: p.isVisible ? "initial" : "none",
   },
-}))`
+}))<{
+  isVisible: boolean;
+}>`
   position: absolute;
   z-index: 10;
   bottom: 100px;
@@ -83,22 +97,27 @@ const ScrollUpButton = styled.div.attrs(p => ({
   align-items: center;
   justify-content: center;
 `;
+
 const Page = ({ children }: Props) => {
-  const pageScrollerRef = useRef(null);
+  const pageScrollerRef = useRef<HTMLDivElement>(null);
   const [isScrollUpButtonVisible, setScrollUpButtonVisibility] = useState(false);
   const [isScrollAtUpperBound, setScrollAtUpperBound] = useState(true);
   const { pathname } = useLocation();
-  const scrolltoTop = (smooth = true) => {
+  const scrolltoTop = useCallback((smooth = true) => {
     if (pageScrollerRef.current) {
       pageScrollerRef.current.scrollTo({
         top: 0,
         behavior: smooth ? "smooth" : undefined,
       });
     }
-  };
+  }, []);
+
+  const onClickScrollUp = useCallback(() => scrolltoTop(), [scrolltoTop]);
+
   useLayoutEffect(() => {
     scrolltoTop(false);
-  }, [pathname]);
+  }, [pathname, scrolltoTop]);
+
   useLayoutEffect(() => {
     const pageContentElement = pageScrollerRef.current;
     const listener = () => {
@@ -128,7 +147,7 @@ const Page = ({ children }: Props) => {
       <ScrollUpButton
         id={"scrollUpButton"}
         isVisible={isScrollUpButtonVisible}
-        onClick={scrolltoTop}
+        onClick={onClickScrollUp}
       >
         <AngleUp size={20} />
       </ScrollUpButton>

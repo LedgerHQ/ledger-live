@@ -2147,7 +2147,7 @@
         "title" : "Получатель",
         "nftRecipient" : "NFT для отправки",
         "verifyAddress" : "Убедитесь, что адрес совпадает с адресом, предоставленным получателем.",
-        "namingService" : {
+        "domainService" : {
           "resolve" : "Это актуальный ENS, связанный со следующим адресом:",
           "supportLink" : "Что такое Ethereum Name Service?",
           "reverse" : "Этот адрес привязан к {{domain}}"

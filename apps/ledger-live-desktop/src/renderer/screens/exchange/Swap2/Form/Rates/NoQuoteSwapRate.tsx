@@ -6,15 +6,15 @@ import { Trans } from "react-i18next";
 import Rate from "./Rate";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 export type Props = {
-  value?: ExchangeRate;
+  value: ExchangeRate;
   onSelect: (a: ExchangeRate) => void;
-  selected?: boolean;
+  selected?: boolean | null;
   icon?: string;
 };
 const SecondaryText = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
-function NoQuoteSwapRate({ value = {}, selected, onSelect, icon }: Props) {
+function NoQuoteSwapRate({ value, selected, onSelect, icon }: Props) {
   return (
     <Rate
       value={value}

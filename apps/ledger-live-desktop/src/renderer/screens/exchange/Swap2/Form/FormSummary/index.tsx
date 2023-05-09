@@ -1,9 +1,9 @@
-import { SwapTransactionType, KYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
+import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import SectionFees from "./SectionFees";
 import SectionTarget from "./SectionTarget";
-const Form = styled.section.attrs(({ ready }) => ({
+const Form = styled.section.attrs<{ ready?: boolean }>(({ ready }) => ({
   style: ready
     ? {
         opacity: 1,
@@ -11,7 +11,7 @@ const Form = styled.section.attrs(({ ready }) => ({
         overflow: "auto",
       }
     : {},
-}))`
+}))<{ ready?: boolean }>`
   display: grid;
   row-gap: 1.25rem;
   color: white;
@@ -25,7 +25,6 @@ const Form = styled.section.attrs(({ ready }) => ({
 `;
 type SwapFormSummaryProps = {
   swapTransaction: SwapTransactionType;
-  kycStatus?: KYCStatus;
   provider?: string;
 };
 const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) => {
@@ -44,17 +43,17 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
   } = swapTransaction.swap.from;
   const { currency: toCurrency, account: toAccount } = swapTransaction.swap.to;
   const ratesState = swapTransaction.swap.rates;
-  const hasRates = ratesState?.value?.length > 0;
+  const hasRates = ratesState?.value?.length && ratesState?.value?.length > 0;
   const [hasFetchedRates, setHasFetchedRates] = useState(hasRates);
   useEffect(() => setHasFetchedRates(v => (!v ? hasRates : v)), [hasRates]);
   return (
-    <Form ready={hasFetchedRates}>
+    <Form ready={!!hasFetchedRates}>
       <SectionTarget
         account={toAccount}
         currency={toCurrency}
         setToAccount={setToAccount}
         targetAccounts={targetAccounts}
-        hasRates={hasRates}
+        hasRates={!!hasRates}
       />
       <SectionFees
         transaction={transaction}
@@ -65,7 +64,7 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
         updateTransaction={updateTransaction}
         setTransaction={setTransaction}
         provider={provider}
-        hasRates={hasRates}
+        hasRates={!!hasRates}
       />
     </Form>
   );

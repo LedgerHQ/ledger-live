@@ -6,7 +6,7 @@ import { FILTER } from "../utils";
 import Button from "~/renderer/components/Button";
 import { Icons } from "@ledgerhq/react-ui";
 type Props = {
-  onClick: () => void;
+  onClick: (newFilter: string[]) => void;
 };
 const Container = styled(Box).attrs(() => ({}))`
   flex-direction: row;
@@ -33,10 +33,10 @@ export const Btn = styled(Button).attrs(p => {
   }
 `;
 export default function Filter({ onClick }: Props) {
-  const [filter, setFilter] = useState([]);
+  const [filter, setFilter] = useState<string[]>([]);
   const updateFilter = useCallback(
     type => {
-      let newFilter = [];
+      let newFilter: string[] = [];
       if (filter.includes(type)) {
         newFilter = filter.filter(e => e !== type);
       } else {
@@ -67,7 +67,6 @@ export default function Filter({ onClick }: Props) {
         const selected = filter.includes(type);
         const props = {
           selected,
-          key: type,
           updateFilter,
           type,
         };

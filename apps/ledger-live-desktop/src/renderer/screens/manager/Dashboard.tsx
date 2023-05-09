@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 import manager from "@ledgerhq/live-common/manager/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { execWithTransport } from "@ledgerhq/live-common/apps/hw";
-import { DeviceInfo } from "@ledgerhq/types-live";
-import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { App, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { AppOp, ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { distribute, initState } from "@ledgerhq/live-common/apps/logic";
 import { mockExecWithInstalledContext } from "@ledgerhq/live-common/apps/mock";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -16,14 +16,16 @@ import FirmwareUpdate from "./FirmwareUpdate";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { useLocation } from "react-router";
+
 type Props = {
   device: Device;
-  deviceInfo: DeviceInfo;
+  deviceInfo: DeviceInfo & { languageId: number };
   result: ListAppsResult | undefined | null;
   onRefreshDeviceInfo: () => void;
   onReset: (b?: string[] | null, a?: boolean | null) => void;
   appsToRestore: string[];
 };
+
 const Dashboard = ({
   device,
   deviceInfo,
@@ -37,7 +39,7 @@ const Dashboard = ({
   const currentDevice = useSelector(getCurrentDevice);
   const [firmwareUpdateOpened, setFirmwareUpdateOpened] = useState(false);
   const hasDisconnectedDuringFU = useRef(false);
-  const [firmware, setFirmware] = useState(null);
+  const [firmware, setFirmware] = useState<FirmwareUpdateContext | null>(null);
   const [firmwareError, setFirmwareError] = useState(null);
   const params = new URLSearchParams(search || "");
   const openFirmwareUpdate = params.get("firmwareUpdate") === "true";
@@ -66,7 +68,7 @@ const Dashboard = ({
     () =>
       getEnv("MOCK")
         ? mockExecWithInstalledContext(result?.installed || [])
-        : (appOp, targetId, app) =>
+        : (appOp: AppOp, targetId: string | number, app: App) =>
             withDevice(device.deviceId)(transport =>
               execWithTransport(transport)(appOp, targetId, app),
             ),
@@ -98,7 +100,6 @@ const Dashboard = ({
           exec={exec}
           render={({ disableFirmwareUpdate, installed }) => (
             <FirmwareUpdate
-              t={t}
               device={device}
               deviceInfo={deviceInfo}
               firmware={firmware}
@@ -113,7 +114,6 @@ const Dashboard = ({
         />
       ) : (
         <FirmwareUpdate
-          t={t}
           device={device}
           deviceInfo={deviceInfo}
           firmware={firmware}

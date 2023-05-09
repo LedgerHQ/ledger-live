@@ -182,7 +182,7 @@ const DrawerContent = React.forwardRef(
                 </ScrollWrapper>
                 {footer && (
                   <>
-                    <Divider variant="light" {...extraFooterDividerProps} />
+                    <Divider {...extraFooterDividerProps} />
                     <FlexBox alignItems="center" py={8} px={12} {...extraFooterProps}>
                       {footer}
                     </FlexBox>

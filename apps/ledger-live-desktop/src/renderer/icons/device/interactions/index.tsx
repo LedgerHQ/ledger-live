@@ -3,6 +3,9 @@ import styled from "styled-components";
 import NanoS from "./NanoS";
 import NanoX from "./NanoX";
 import Blue from "./Blue";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { classByState } from "./USBCable";
+
 export type ScreenTypes =
   | "validation"
   | "home"
@@ -13,7 +16,7 @@ export type ScreenTypes =
   | "recovery"
   | "update";
 export type Props = {
-  type: "nanoS" | "nanoX" | "blue";
+  type: DeviceModelId;
   wire?: "wired" | "disconnecting" | "connecting";
   action?: "left" | "accept";
   screen?: ScreenTypes;
@@ -23,17 +26,36 @@ export type Props = {
 export const Wrapper = styled.div`
   position: relative;
 `;
+
 const usbMap = {
   wired: "plugged",
   disconnecting: "unplugHint",
   connecting: "plugHint",
 };
-const devices = {
+
+type DeviceProps = {
+  open?: boolean;
+  usb?: keyof typeof classByState;
+  screen?: string;
+  xOffset?: number;
+  error?: boolean;
+  width?: number;
+};
+
+const devices: Partial<Record<DeviceModelId, React.ComponentType<DeviceProps>>> = {
   blue: Blue,
   nanoX: NanoX,
   nanoS: NanoS,
 };
-const Interactions = ({ type = "nanoS", wire, screen, error, action, width }: Props) => {
+
+const Interactions = ({
+  type = DeviceModelId.nanoS,
+  wire,
+  screen,
+  error,
+  action,
+  width,
+}: Props) => {
   const Device = devices[type] || NanoS;
   const props = {
     error: !!error,
@@ -45,4 +67,5 @@ const Interactions = ({ type = "nanoS", wire, screen, error, action, width }: Pr
   };
   return <Device open {...props} />;
 };
+
 export default Interactions;

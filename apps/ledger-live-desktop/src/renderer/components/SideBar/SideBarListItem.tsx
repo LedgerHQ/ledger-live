@@ -1,23 +1,23 @@
 import React, { PureComponent } from "react";
-import styled from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import Hide from "~/renderer/components/MainSideBar/Hide";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import Tooltip from "~/renderer/components/Tooltip";
+
 export type Props = {
   label: string | ((a: Props) => React.ReactNode);
-  desc?: (a: Props) => any;
-  // TODO: type should be more precise, but, eh ¯\_(ツ)_/¯
-  icon?: any;
-  // TODO: type should be more precise, but, eh ¯\_(ツ)_/¯
+  desc?: (a: Props) => React.ReactNode;
+  icon?: React.ComponentType<{ size?: number }>;
   iconSize?: number;
   disabled?: boolean;
-  iconActiveColor: string | undefined | null;
+  iconActiveColor: string | undefined;
   NotifComponent?: React.ReactNode;
+  onClick?: (arg: React.SyntheticEvent) => void;
   isActive?: boolean;
-  onClick?: (a: void) => void;
   collapsed?: boolean;
   id: string;
 };
+
 class SideBarListItem extends PureComponent<Props> {
   render() {
     const {
@@ -48,7 +48,7 @@ class SideBarListItem extends PureComponent<Props> {
         </span>
       );
     return (
-      <Tooltip content={renderedLabel} enabled={!!collapsed} boundary="window" placement="right">
+      <Tooltip content={renderedLabel} enabled={!!collapsed} placement="right">
         <Container
           data-test-id={`drawer-${id}-button`}
           isActive={!disabled && isActive}
@@ -79,7 +79,10 @@ const Container = styled(Tabbable).attrs(() => ({
   horizontal: true,
   px: 3,
   py: 2,
-}))`
+}))<{
+  isActive?: boolean;
+  iconActiveColor?: string;
+}>`
   position: relative;
   width: 100%;
   cursor: ${p => (p.disabled ? "not-allowed" : "pointer")};
@@ -97,7 +100,8 @@ const Container = styled(Tabbable).attrs(() => ({
   }
 
   ${p => {
-    const iconActiveColor = p.theme.colors[p.iconActiveColor] || p.iconActiveColor;
+    const iconActiveColor =
+      p.theme.colors[p.iconActiveColor as keyof DefaultTheme["colors"]] || p.iconActiveColor;
     const color = p.isActive ? iconActiveColor : p.theme.colors.palette.text.shade60;
     return `
       svg { color: ${color}; }

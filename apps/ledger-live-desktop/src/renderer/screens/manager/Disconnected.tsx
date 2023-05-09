@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
-import { from } from "rxjs";
+import { Subscription, from } from "rxjs";
 import styled from "styled-components";
 import {
   Wrapper,
@@ -24,6 +24,7 @@ import nanoSDark from "./assets/nanoS_dark.png";
 import blueDark from "./assets/blue_dark.png";
 import nanoXDark from "./assets/nanoX_dark.png";
 import nanoSPDark from "./assets/nanoSP_dark.png";
+
 const illustrations = {
   nanoX: {
     light: nanoX,
@@ -51,12 +52,15 @@ const illustrations = {
     width: 64,
   },
 };
-const Illustration: ThemedComponent<{
+const Illustration = styled.div<{
   modelId: string;
-}> = styled.div`
-  background: url('${p => illustrations[p.modelId][p.theme.colors.palette.type || "light"]}')
+}>`
+  background: url('${p =>
+    illustrations[p.modelId as keyof typeof illustrations][
+      p.theme.colors.palette.type || "light"
+    ]}')
     no-repeat top right;
-  width: ${p => illustrations[p.modelId].width}px;
+  width: ${p => illustrations[p.modelId as keyof typeof illustrations].width}px;
   height: 50px;
   background-size: contain;
 `;
@@ -81,7 +85,7 @@ const Disconnected = ({ onTryAgain }: { onTryAgain: (a: boolean) => void }) => {
     }, 3000);
   }, []);
   useEffect(() => {
-    let sub;
+    let sub: Subscription;
     if (readyToDecide) {
       if (!device) {
         onTryAgain(false); // Device is disconnected
@@ -106,14 +110,7 @@ const Disconnected = ({ onTryAgain }: { onTryAgain: (a: boolean) => void }) => {
     };
   }, [readyToDecide, device, onTryAgain]);
 
-  if (showSpinner)
-    return (
-      <Wrapper>
-        {renderLoading({
-          modelId,
-        })}
-      </Wrapper>
-    );
+  if (showSpinner) return <Wrapper>{renderLoading()}</Wrapper>;
   return (
     <Wrapper>
       <Illustration modelId={modelId} />

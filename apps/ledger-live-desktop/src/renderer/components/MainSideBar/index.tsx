@@ -46,11 +46,11 @@ import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
 
 const MAIN_SIDEBAR_WIDTH = 230;
-const TagText = styled.div.attrs(p => ({
+const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
   style: {
     opacity: p.collapsed ? 1 : 0,
   },
-}))`
+}))<{ collapsed?: boolean }>`
   margin-left: ${p => p.theme.space[3]}px;
   transition: opacity 0.2s;
 `;
@@ -89,7 +89,9 @@ const collapsedWidth = 15 * 4 + 16; // 15 * 4 margins + 16 icon size
 const Collapser = styled(Box).attrs(() => ({
   alignItems: "center",
   justifyContent: "center",
-}))`
+}))<{
+  collapsed?: boolean;
+}>`
   position: absolute;
   top: ${58 - collapserSize / 2}px;
   left: ${p => (p.collapsed ? collapsedWidth : MAIN_SIDEBAR_WIDTH) - collapserSize / 2}px;
@@ -213,7 +215,7 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
       }}
       onClick={() => setTrackingSource("sidebar")}
     >
-      <Icons.ChartNetworkMedium width={16} height={16} />
+      <Icons.ChartNetworkMedium size={16} />
       <TagText collapsed={collapsed}>{t("common.featureFlags")}</TagText>
     </Tag>
   ) : null;
@@ -309,18 +311,18 @@ const MainSideBar = () => {
   }, [location.pathname, push]);
   const handleOpenSendModal = useCallback(() => {
     maybeRedirectToAccounts();
-    dispatch(openModal("MODAL_SEND"));
+    dispatch(openModal("MODAL_SEND", undefined));
   }, [dispatch, maybeRedirectToAccounts]);
   const handleOpenReceiveModal = useCallback(() => {
     maybeRedirectToAccounts();
-    dispatch(openModal("MODAL_RECEIVE"));
+    dispatch(openModal("MODAL_RECEIVE", undefined));
   }, [dispatch, maybeRedirectToAccounts]);
 
   const handleOpenProtectDiscoverModal = useCallback(() => {
     track("button_clicked", {
       button: "Protect",
     });
-    dispatch(openModal("MODAL_PROTECT_DISCOVER"));
+    dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
   }, [dispatch]);
 
   return (
@@ -335,7 +337,10 @@ const MainSideBar = () => {
       {state => {
         const secondAnim = !(state === "entered" && !collapsed);
         return (
-          <SideBar className="unstoppableAnimation" style={sideBarTransitionStyles[state]}>
+          <SideBar
+            className="unstoppableAnimation"
+            style={sideBarTransitionStyles[state as keyof typeof sideBarTransitionStyles]}
+          >
             <Collapser
               collapsed={collapsed}
               onClick={handleCollapse}

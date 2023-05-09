@@ -39,7 +39,7 @@ import Link from "~/renderer/components/Link";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import ConfirmationCheck from "~/renderer/components/OperationsList/ConfirmationCheck";
 import OperationComponent from "~/renderer/components/OperationsList/Operation";
-import Text from "~/renderer/components/Text";
+import Text, { TextProps } from "~/renderer/components/Text";
 import byFamiliesOperationDetails from "~/renderer/generated/operationDetails";
 import IconChevronRight from "~/renderer/icons/ChevronRight";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
@@ -75,10 +75,10 @@ const mapStateToProps = (
     operationId,
     accountId,
     parentId,
-  }: { operationId: string; accountId: string; parentId: string | undefined },
+  }: { operationId: string; accountId: string; parentId: string | undefined | null },
 ) => {
   const parentAccount: Account | undefined =
-    typeof parentId !== "undefined"
+    typeof parentId !== "undefined" && parentId !== null
       ? accountSelector(state, {
           accountId: parentId,
         })
@@ -168,12 +168,12 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
     specific &&
     "getURLWhatIsThis" in specific &&
     specific.getURLWhatIsThis &&
-    specific.getURLWhatIsThis(operation);
+    specific.getURLWhatIsThis({ op: operation, currencyId: mainAccount.currency.id });
   const urlFeesInfo =
     specific &&
     "getURLFeesInfo" in specific &&
     specific.getURLFeesInfo &&
-    specific.getURLFeesInfo(operation);
+    specific.getURLFeesInfo({ op: operation, currencyId: mainAccount.currency.id });
   const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
   const uniqueSenders = uniq(senders);
   const OpDetailsExtra =
@@ -670,12 +670,12 @@ const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
   });
   return <>{jsx}</>;
 };
-const More = styled(Text).attrs(p => ({
+const More = styled(Text).attrs<TextProps>(p => ({
   ff: p.ff ? p.ff : "Inter|Bold",
   fontSize: p.fontSize ? p.fontSize : 2,
   color: p.color || "palette.text.shade100",
   tabIndex: 0,
-}))`
+}))<TextProps & { textTransform?: boolean }>`
   text-transform: ${p => (!p.textTransform ? "auto" : "uppercase")};
   outline: none;
 `;

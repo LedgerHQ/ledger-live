@@ -1,8 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import { withTheme } from "styled-components";
+import { DefaultTheme, withTheme } from "styled-components";
 import IconOpposingChevrons from "~/renderer/icons/OpposingChevrons";
 import { lighten } from "~/renderer/styles/helpers";
-const getPalette = theme => ({
+
+const getPalette = (theme: DefaultTheme) => ({
   default: {
     primary: theme.colors.palette.primary.main,
     primaryHover: lighten(theme.colors.palette.primary.main, 0.1),
@@ -16,19 +17,22 @@ const getPalette = theme => ({
     buttonInner: theme.colors.palette.primary.contrastText,
   },
 });
+
 type Props = {
   steps: number;
   value: number;
   error: Error | undefined | null;
   onChange: (a: number) => void;
-  theme: any;
+  theme: DefaultTheme;
 };
-function xForEvent(node, e) {
+
+function xForEvent(node: HTMLDivElement | null, e: MouseEvent) {
   if (!node) throw new Error("node expected");
   const { clientX } = e;
   const { left } = node.getBoundingClientRect();
   return clientX - left;
 }
+
 const Handle = React.memo(function Handle({
   active,
   x,
@@ -42,7 +46,7 @@ const Handle = React.memo(function Handle({
   const onMouseEnter = useCallback(() => setHover(true), []);
   const onMouseLeave = useCallback(() => setHover(false), []);
   const size = 14;
-  const style = {
+  const style: React.CSSProperties = {
     boxSizing: "border-box",
     cursor: active ? "ew-resize" : "pointer",
     WebkitTapHighlightColor: "rgba(0,0,0,0)",
@@ -80,8 +84,11 @@ const Track = React.memo(function Track({ x, colors }: { x: number; colors: any 
   );
 });
 const Slider = ({ steps, value, onChange, error, theme }: Props) => {
-  const [down, setDown] = useState(false);
-  const root = useRef(null);
+  const [down, setDown] = useState<{
+    touchId: number;
+    x: number;
+  } | null>(null);
+  const root = useRef<HTMLDivElement>(null);
   const internalPadding = 12;
   const reverseX = useCallback(
     x => {

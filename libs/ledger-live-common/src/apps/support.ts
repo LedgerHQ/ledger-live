@@ -16,9 +16,7 @@ export function shouldUpgrade(appName: string, appVersion: string): boolean {
     appName === "Bitcoin"
   ) {
     // https://donjon.ledger.com/lsb/010/
-    return !semver.satisfies(appVersion || "", ">= 1.4.0", {
-      includePrerelease: true, // this will allow pre-release tags that would otherwise return false. E.g. 1.0.0-dev
-    });
+    return !semver.satisfies(appVersion || "", ">= 1.4.0-0"); // the `-0` is here to allow for pre-release tags
   }
 
   return false;
@@ -28,7 +26,7 @@ const appVersionsRequired = {
   Algorand: ">= 1.2.9",
   MultiversX: ">= 1.0.18",
   Polkadot: ">= 20.9370.0",
-  Ethereum: ">= 1.10.1-0",
+  Ethereum: ">= 1.10.2-0", // the `-0` is here to allow for pre-release tags
   Solana: ">= 1.2.0",
   Celo: ">= 1.1.8",
   "Cardano ADA": ">= 4.1.0",
@@ -40,9 +38,7 @@ export function mustUpgrade(appName: string, appVersion: string): boolean {
   const range = appVersionsRequired[appName];
 
   if (range) {
-    return !semver.satisfies(appVersion || "", range, {
-      includePrerelease: true, // this will allow pre-release tags that would otherwise return false. E.g. 1.0.0-dev
-    });
+    return !semver.satisfies(appVersion || "", range);
   }
 
   return false;
