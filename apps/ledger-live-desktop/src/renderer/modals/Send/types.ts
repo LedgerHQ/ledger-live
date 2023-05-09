@@ -26,7 +26,7 @@ export type StepProps = {
   error: Error | undefined | null;
   optimisticOperation: Operation | undefined | null;
   closeModal: (a: void) => void;
-  openModal: (b: string, a: any) => void;
+  openModal: (b: string, a: unknown) => void;
   onChangeAccount: (b?: AccountLike | null, a?: Account | null) => void;
   onChangeTransaction: (a: AccountBridge<TransactionCommon> | Transaction) => void;
   onTransactionError: (a: Error) => void;
