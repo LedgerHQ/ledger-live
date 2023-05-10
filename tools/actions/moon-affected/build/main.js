@@ -2206,7 +2206,7 @@ async function main() {
   const ref = core.getInput("ref");
   try {
     const touchedFiles = (0, import_child_process.execSync)(
-      `npx @moonrepo/cli query touched-files --base "develop"`
+      `npx @moonrepo/cli query touched-files --base "${ref}"`
     );
     core.debug(touchedFiles.toString());
     const moonOutput = (0, import_child_process.execSync)(

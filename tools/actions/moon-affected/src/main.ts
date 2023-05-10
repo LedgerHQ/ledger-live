@@ -6,7 +6,7 @@ async function main() {
 
   try {
     const touchedFiles = execSync(
-      `npx @moonrepo/cli query touched-files --base "develop"`
+      `npx @moonrepo/cli query touched-files --base "${ref}"`
     );
 
     core.debug(touchedFiles.toString());
