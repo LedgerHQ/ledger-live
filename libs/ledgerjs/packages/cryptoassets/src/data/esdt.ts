@@ -3,8 +3,7 @@ export type ElrondESDTToken = [
   string, // identifier
   number, // decimals
   string, // signature
-  string, // name
-  boolean // disableCountervalue
+  string // name
 ];
 
 import tokens from "./esdt.json";

@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo } from "react";
-import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
@@ -8,6 +7,7 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
+import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 
 import type { StackNavigationProp } from "@react-navigation/stack";
 import type { NavigationType } from "../../../../types";
@@ -46,7 +46,12 @@ const Delegations = (props: DelegationsPropsType) => {
 
   const delegationEnabled = useMemo(
     () =>
-      account.spendableBalance.isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT),
+      new BigNumber(
+        denominate({
+          input: String(account.spendableBalance),
+          showLastNonZeroDecimal: true,
+        }),
+      ).isGreaterThanOrEqualTo(1),
     [account.spendableBalance],
   );
 
