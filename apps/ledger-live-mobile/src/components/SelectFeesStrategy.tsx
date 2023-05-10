@@ -38,12 +38,12 @@ type Props = {
   account: AccountLike;
   parentAccount?: Account | null;
   transaction: Transaction;
-  onStrategySelect: (stategy: SelectFeeStrategy) => void;
-  onCustomFeesPress: TouchableOpacityProps["onPress"];
   forceUnitLabel?: boolean | React.ReactNode;
   disabledStrategies?: Array<string>;
   NetworkFeesInfoComponent?: React.FC;
   forceValueLabel?: string;
+  onStrategySelect: (stategy: SelectFeeStrategy) => void;
+  onCustomFeesPress: TouchableOpacityProps["onPress"];
 };
 
 const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
