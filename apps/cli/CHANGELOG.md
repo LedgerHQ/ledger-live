@@ -1,5 +1,13 @@
 # @ledgerhq/live-cli
 
+## 22.8.0-nightly.6
+
+### Patch Changes
+
+- Updated dependencies [[`dfccb01b94`](https://github.com/LedgerHQ/ledger-live/commit/dfccb01b94d545af80ee5e77bf1d04d9d2fd0faa), [`fb1fcc47e4`](https://github.com/LedgerHQ/ledger-live/commit/fb1fcc47e444c35b0908d528b58e096d79d6f967)]:
+  - @ledgerhq/live-common@29.5.0-nightly.6
+  - @ledgerhq/hw-app-btc@10.0.2-nightly.1
+
 ## 22.8.0-nightly.5
 
 ### Patch Changes

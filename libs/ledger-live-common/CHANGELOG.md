@@ -1,5 +1,14 @@
 # @ledgerhq/live-common
 
+## 29.5.0-nightly.6
+
+### Patch Changes
+
+- [#3386](https://github.com/LedgerHQ/ledger-live/pull/3386) [`dfccb01b94`](https://github.com/LedgerHQ/ledger-live/commit/dfccb01b94d545af80ee5e77bf1d04d9d2fd0faa) Thanks [@grsoares21](https://github.com/grsoares21)! - Throttle the events coming from inline app installs. They were causing the UI to slow down as they weren't being properly throttled.
+
+- Updated dependencies [[`fb1fcc47e4`](https://github.com/LedgerHQ/ledger-live/commit/fb1fcc47e444c35b0908d528b58e096d79d6f967)]:
+  - @ledgerhq/hw-app-btc@10.0.2-nightly.1
+
 ## 29.5.0-nightly.5
 
 ### Minor Changes

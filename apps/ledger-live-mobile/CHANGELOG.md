@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.21.0-nightly.7
+
+### Patch Changes
+
+- [#3381](https://github.com/LedgerHQ/ledger-live/pull/3381) [`d4befe5acf`](https://github.com/LedgerHQ/ledger-live/commit/d4befe5acf9e64458d38495e528cf813b4dd3faa) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Do not display the usual verifyAddress message on send ens
+
+- Updated dependencies [[`05c4b20b3a`](https://github.com/LedgerHQ/ledger-live/commit/05c4b20b3a89a1fe0e851189b51a2b5fdf625f01), [`dfccb01b94`](https://github.com/LedgerHQ/ledger-live/commit/dfccb01b94d545af80ee5e77bf1d04d9d2fd0faa)]:
+  - @ledgerhq/react-native-hw-transport-ble@6.28.6-nightly.1
+  - @ledgerhq/live-common@29.5.0-nightly.6
+
 ## 3.21.0-nightly.6
 
 ### Minor Changes
