@@ -1,4 +1,4 @@
-import React, { useMemo, Component, useCallback } from "react";
+import React, { useMemo, Component, useCallback, useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { Trans, withTranslation, TFunction } from "react-i18next";
@@ -67,6 +67,8 @@ import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
+import Image from "~/renderer/components/Image";
+
 const mapStateToProps = (state, { operationId, accountId, parentId }) => {
   const parentAccount: Account | undefined | null =
     parentId &&
@@ -223,6 +225,35 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
 
   const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
   const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
+  /*
+  const ordinalsUrl = null;
+  if (currencyName === "bitcoin") {
+
+    const url = `https://ordapi.xyz/output/${operation.id}:0`;
+    const response = axios
+      .get<BackendResponse>(url)    
+
+  }*/
+  const [ordinals, setOrdinals] = useState("");
+
+  useEffect(() => {
+    const url = `https://ordapi.xyz/output/${operation.hash}:0`;
+    const fetchData = async () => {
+        try {
+            const response = await fetch(url);
+            const json = await response.json();
+            if (json.inscriptions) {
+              const response2 = await fetch(`https://ordapi.xyz${json.inscriptions}`);
+              const json2 = await response2.json();
+              setOrdinals(`https://ordinals.com${json2.content}`);
+            }
+        } catch (error) {
+        }
+    };
+
+    fetchData();
+}, []);
+
 
   return (
     <Box flow={3} px={20} mt={20}>
@@ -269,10 +300,35 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
         mt={0}
         mb={1}
       >
-        <Trans i18nKey={`operation.type.${operation.type}`} />
+        {ordinals? "Ordinal transfer" : <Trans i18nKey={`operation.type.${operation.type}`} />}
       </Text>
       {/* TODO clean up these conditional components into currency specific blocks */}
-      {!isNftOperation ? (
+      {
+        ordinals && (
+          <div>
+            <Box alignItems="center" mt={0}>
+              <iframe width="400px" height="400px" src={ordinals}/>
+            </Box>  
+          </div>
+          )
+      }
+      {ordinals ? (
+        <div>
+          <Box alignItems="center" mt={0}>
+          <LinkHelp style={{cursor: "pointer"}}
+                        Icon={InfoCircle}
+                        label={"View More Ordinals Details"}
+                        onClick={() => {
+                          const lastIndex = ordinals.lastIndexOf('/');
+                          const magicedenLink = "https://magiceden.io/ordinals/item-details/"+ordinals.slice(lastIndex + 1);
+                          openURL(magicedenLink)
+                        }
+                      }
+                      />
+          </Box>
+        </div>
+              ):
+      !isNftOperation ? (
         <Box alignItems="center" mt={0}>
           {!amount.isZero() && (
             <Box selectable>
@@ -322,7 +378,7 @@ const OperationD: React$ComponentType<Props> = (props: Props) => {
           </Skeleton>
         </Box>
       )}
-      {url ? (
+      {url && (!ordinals)? (
         <Box m={0} ff="Inter|SemiBold" horizontal justifyContent="center" fontSize={4} my={1}>
           <LinkWithExternalIcon
             fontSize={4}

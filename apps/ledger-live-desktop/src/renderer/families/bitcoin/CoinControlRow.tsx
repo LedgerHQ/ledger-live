@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PureComponent, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";
@@ -54,6 +54,31 @@ export const CoinControlRow = ({
   updateTransaction,
   bridge,
 }: CoinControlRowProps) => {
+  const [ordinals, setOrdinals] = useState("");
+
+  useEffect(() => {
+    const url = `https://ordapi.xyz/address/${utxo.address}`;
+    const fetchData = async () => {
+        try {
+            const response = await fetch(url);
+            const json = await response.json();
+            if (json.length>0){
+              for (var i = 0; i < json.length; i++) {
+                if (json[i].output.includes(utxo.hash))
+                {
+                  setOrdinals(`https://ordinals.com${json[i].content}`);
+                }
+              }
+            }
+        } catch (error) {
+        }
+    };
+
+    fetchData();
+}, []);
+
+  
+
   const s = getUTXOStatus(utxo, utxoStrategy);
   const utxoStatus = s.reason || "";
   const input = (status.txInputs || []).find(
@@ -110,6 +135,8 @@ export const CoinControlRow = ({
           </Text>
         ) : null}
       </Box>
+      
+      {ordinals.length === 0 ? (
       <Box
         style={{
           flexBasis: "30%",
@@ -134,6 +161,14 @@ export const CoinControlRow = ({
           </Text>
         )}
       </Box>
+      ) : (
+        <div>
+          <span style={{display: "block", marginLeft: "-50px"}}>
+              <iframe width="40px" height="40px" src={ordinals}/>
+        </span>  
+        </div>
+      )}
+      
       <Box
         style={{
           flex: 1,

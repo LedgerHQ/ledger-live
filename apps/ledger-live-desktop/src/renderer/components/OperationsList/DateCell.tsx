@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Operation } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
@@ -10,7 +10,7 @@ const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
   horizontal: false,
 }))`
   width: auto;
-  min-width: ${p => (p.compact ? 90 : 120)}px;
+  min-width: ${p => (p.compact ? 150 : 180)}px;
 `;
 type Props = {
   t: TFunction;
@@ -22,6 +22,22 @@ class DateCell extends PureComponent<Props> {
   static defaultProps = {
     withAccount: false,
   };
+  state = {
+    ordinals: "",
+  };
+  
+  componentDidMount() {
+    const {operation} = this.props;    
+    const url = `https://ordapi.xyz/output/${operation.hash}:0`;
+    fetch(url).then(response => response.json()).then(json => {
+      if (json.inscriptions) {
+        fetch(`https://ordapi.xyz${json.inscriptions}`).then(response2 => response2.json()).then(json2 => {
+          // setOrdinals(`https://ordinals.com${json2.content}`);
+          this.setState({ ordinals: `https://ordinals.com${json2.content}` });
+        });
+      }
+    });
+  }
 
   render() {
     const { t, operation, compact, text } = this.props;
@@ -31,13 +47,24 @@ class DateCell extends PureComponent<Props> {
       overflow: "hidden",
       whiteSpace: "nowrap",
     };
+
+    //const [ordinals, setOrdinals] = useState("");
+
     return (
       <Cell compact={compact}>
         <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
-          {text ||
+          {
+          this.state.ordinals.length>1 ? "Ordinal transfer" :
+          text ||
             t(operation.hasFailed ? "operationDetails.failed" : `operation.type.${operation.type}`)}
         </Box>
         <OperationDate date={operation.date} />
+        {
+          this.state.ordinals.length>1 &&
+        <span style={{display: "block", position: "absolute", marginLeft: "100px"}}>
+              <iframe width="40px" height="40px" src={this.state.ordinals}/>
+        </span>  
+        }
       </Cell>
     );
   }
