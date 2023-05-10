@@ -48,7 +48,7 @@ const getMainActions = ({
       event: "button_clicked",
       eventProperties: {
         button: "stake",
-        token: "SOL",
+        currency: "SOL",
         page: "Account Page",
       },
     },

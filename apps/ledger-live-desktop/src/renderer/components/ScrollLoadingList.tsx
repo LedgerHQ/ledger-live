@@ -1,32 +1,30 @@
 import React, { useCallback, useState, useRef, memo, useEffect } from "react";
 import debounce from "lodash/debounce";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
-const ScrollContainer: ThemedComponent<{}> = styled(Box).attrs(p => ({
-  vertical: true,
+const ScrollContainer = styled(Box).attrs(p => ({
   pl: p.theme.overflow.trackSize,
   mb: -40,
 }))`
   ${p => p.theme.overflow.yAuto};
 `;
-type ScrollLoadingListProps = {
-  data: Array<any>;
-  renderItem: (a: any, index: number) => React.ReactNode;
+type ScrollLoadingListProps<D> = {
+  data: Array<D>;
+  renderItem: (a: D, index: number) => React.ReactNode;
   noResultPlaceholder: React.ReactNode | undefined | null;
   scrollEndThreshold?: number;
   bufferSize?: number;
-  style?: any;
+  style?: React.CSSProperties;
 };
-const ScrollLoadingList = ({
+function ScrollLoadingList<D>({
   data,
   renderItem,
   noResultPlaceholder,
   scrollEndThreshold = 200,
   bufferSize = 20,
   style,
-}: ScrollLoadingListProps) => {
-  const scrollRef = useRef();
+}: ScrollLoadingListProps<D>) {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
   const [scrollOffset, setScrollOffset] = useState(bufferSize);
 
   /**
@@ -34,7 +32,7 @@ const ScrollLoadingList = ({
    * to the top position
    */
   useEffect(() => {
-    scrollRef.current.scrollTop = 0;
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
     setScrollOffset(bufferSize);
   }, [data, scrollRef, bufferSize]);
   const handleScroll = useCallback(() => {
@@ -56,5 +54,5 @@ const ScrollLoadingList = ({
       {data.length <= 0 && noResultPlaceholder}
     </ScrollContainer>
   );
-};
-export default memo<ScrollLoadingListProps>(ScrollLoadingList);
+}
+export default memo<ScrollLoadingListProps<unknown>>(ScrollLoadingList);

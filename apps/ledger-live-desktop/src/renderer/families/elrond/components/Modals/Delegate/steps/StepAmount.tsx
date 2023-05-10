@@ -9,8 +9,9 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import SpendableBanner from "~/renderer/components/SpendableBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
-import { Transaction } from "@ledgerhq/types-live";
 import { StepProps } from "../types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+
 const StepAmount = (props: StepProps) => {
   const {
     t,

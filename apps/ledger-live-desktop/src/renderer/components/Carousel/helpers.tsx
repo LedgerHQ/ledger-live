@@ -1,12 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import map from "lodash/map";
 import { Trans } from "react-i18next";
 import { getEnv } from "@ledgerhq/live-common/env";
 import Slide from "./Slide";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-
-import ReferralProgramBgImage from "./banners/ReferralProgram/images/bg.png";
-import ReferralProgramCoinImage from "./banners/ReferralProgram/images/coin.png";
 import BuyCryptoBgImage from "./banners/BuyCrypto/images/bg.png";
 import BuyCryptoCartImage from "./banners/BuyCrypto/images/cart.png";
 import BuyCryptoCoinImage from "./banners/BuyCrypto/images/coin.png";
@@ -19,9 +15,10 @@ import SwapLoopImage from "./banners/Swap/images/loop.png";
 import SwapSmallCoin1Image from "./banners/Swap/images/smallcoin1.png";
 import SwapSmallCoin2Image from "./banners/Swap/images/smallcoin2.png";
 import SwapSmallCoin3Image from "./banners/Swap/images/smallcoin3.png";
-
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { useSelector } from "react-redux";
+import * as braze from "@braze/web-sdk";
+import { ContentCard } from "~/types/dynamicContent";
 
 export const getTransitions = (transition: "slide" | "flip", reverse = false) => {
   const mult = reverse ? -1 : 1;
@@ -43,7 +40,6 @@ export const getTransitions = (transition: "slide" | "flip", reverse = false) =>
     },
     slide: {
       from: {
-        position: "absolute",
         opacity: 1,
         transform: `translate3d(${100 * mult}%,0,0)`,
       },
@@ -60,31 +56,7 @@ export const getTransitions = (transition: "slide" | "flip", reverse = false) =>
   }[transition];
 };
 
-const referralProgramSlide = {
-  id: "referralProgram",
-  title: <Trans i18nKey={`banners.referralProgram.title`} />,
-  description: <Trans i18nKey={`banners.referralProgram.description`} />,
-  imgs: [
-    {
-      source: ReferralProgramBgImage,
-      transform: [0, -30, -40, 30],
-      size: {
-        width: 154,
-        height: 200,
-      },
-    },
-    {
-      source: ReferralProgramCoinImage,
-      transform: [0, -50, -50, 50],
-      size: {
-        width: 134,
-        height: 200,
-      },
-    },
-  ],
-};
-
-const exchangeSlide = {
+const exchangeSlide: ContentCard = {
   path: "/exchange",
   id: "buyCrypto",
   title: <Trans i18nKey={`banners.buyCrypto.title`} />,
@@ -132,7 +104,7 @@ const exchangeSlide = {
     },
   ],
 };
-const swapSlide = {
+const swapSlide: ContentCard = {
   path: "/swap",
   id: "swap",
   title: <Trans i18nKey={`banners.swap.title`} />,
@@ -197,28 +169,69 @@ const swapSlide = {
   ],
 };
 
-export const useDefaultSlides = () => {
-  const referralProgramConfig = useFeature("referralProgramDesktopBanner");
+type SlideRes = {
+  id: string;
+  Component: React.ComponentType<{}>;
+};
+
+export const useDefaultSlides = (): {
+  slides: SlideRes[];
+  logSlideImpression: (index: number) => void;
+} => {
+  const [cachedContentCards, setCachedContentCards] = useState<braze.Card[]>([]);
   const portfolioCards = useSelector(portfolioContentCardSelector);
 
-  const slides = useMemo(() => {
-    if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
-      return [
-        { ...referralProgramSlide, path: referralProgramConfig?.params?.path },
-        ...portfolioCards,
-      ];
-    } else {
-      return portfolioCards;
-    }
-  }, [referralProgramConfig, portfolioCards]);
+  useEffect(() => {
+    const cards = braze.getCachedContentCards().cards;
+    setCachedContentCards(cards);
+  }, []);
 
-  return useMemo(
-    () =>
-      map(getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : slides, (slide: Props) => ({
-        id: slide.name,
-        // eslint-disable-next-line react/display-name
-        Component: () => <Slide {...slide} />,
-      })),
-    [slides],
+  const logSlideImpression = useCallback(
+    index => {
+      if (portfolioCards && portfolioCards.length > index) {
+        const slide = portfolioCards[index];
+        if (slide?.id) {
+          const currentCard = cachedContentCards.find(card => card.id === slide.id);
+
+          if (currentCard) {
+            braze.logContentCardImpressions([currentCard]);
+          }
+        }
+      }
+    },
+    [portfolioCards, cachedContentCards],
   );
+
+  const logSlideClick = useCallback(
+    cardId => {
+      const currentCard = cachedContentCards.find(card => card.id === cardId);
+
+      if (currentCard) {
+        // For some reason braze won't log the click event if the card url is empty
+        // Setting it as the card id just to have a dummy non empty value
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        currentCard.url = currentCard.id;
+        braze.logContentCardClick(currentCard);
+      }
+    },
+    [cachedContentCards],
+  );
+  const slides = useMemo(
+    () =>
+      map<ContentCard, SlideRes>(
+        getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : portfolioCards,
+        (slide): SlideRes => ({
+          id: slide.id,
+          // eslint-disable-next-line react/display-name
+          Component: () => <Slide {...slide} onClickOnSlide={logSlideClick} />,
+        }),
+      ),
+    [portfolioCards, logSlideClick],
+  );
+
+  return {
+    slides,
+    logSlideImpression,
+  };
 };

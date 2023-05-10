@@ -222,6 +222,7 @@ export const getSubAccountShape = async (
     operationsCount: operations.length,
     pendingOperations: [],
     balanceHistoryCache: emptyHistoryCache,
+    swapHistory: [],
   };
 };
 

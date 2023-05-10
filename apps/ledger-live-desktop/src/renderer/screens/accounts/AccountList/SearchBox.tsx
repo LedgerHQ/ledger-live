@@ -3,14 +3,15 @@ import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import SearchIcon from "~/renderer/icons/Search";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
-  onTextChange: (evt: SyntheticInputEvent<HTMLInputElement>) => void;
+  onTextChange: (evt: React.ChangeEvent<HTMLInputElement>) => void;
   search?: string;
-  placeholder?: any;
+  placeholder?: string;
   autoFocus?: boolean;
+  id?: string;
 };
-const SearchInput: ThemedComponent<{}> = styled.input`
+const SearchInput = styled.input`
   border: none;
   background: transparent;
   outline: none;
@@ -25,16 +26,19 @@ const SearchInput: ThemedComponent<{}> = styled.input`
     font-weight: 500;
   }
 `;
-const SearchIconContainer: ThemedComponent<{
+const SearchIconContainer = styled(Box).attrs<{
   focused?: boolean;
-}> = styled(Box).attrs(p => ({
+}>(p => ({
   style: {
     color: p.focused ? p.theme.colors.palette.text.shade100 : p.theme.colors.palette.text.shade40,
   },
-}))`
+}))<{
+  focused?: boolean;
+}>`
   justify-content: center;
 `;
-const SearchBox = forwardRef(function Search(
+
+const SearchBox = forwardRef<HTMLInputElement, Props>(function Search(
   { onTextChange, search, placeholder, autoFocus, ...p }: Props,
   ref,
 ) {
@@ -58,4 +62,4 @@ const SearchBox = forwardRef(function Search(
     </>
   );
 });
-export default React.memo<Props>(SearchBox);
+export default React.memo(SearchBox) as typeof SearchBox; // to preserve the ref forwarding prop

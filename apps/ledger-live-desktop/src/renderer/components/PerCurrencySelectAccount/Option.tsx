@@ -12,41 +12,41 @@ import Box from "~/renderer/components/Box";
 import useTheme from "~/renderer/hooks/useTheme";
 import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrencyIcon";
 import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const OptionContainer: ThemedComponent<{}> = styled.div`
+
+const OptionContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
 `;
-const AccountRowContainer: ThemedComponent<{
-  nested?: boolean;
-  disabled?: boolean;
-}> = styled.div.attrs(p => ({
+const AccountRowContainer = styled.div.attrs<{ nested?: boolean; disabled?: boolean }>(p => ({
   style: {
     paddingTop: p.nested ? 3 : 0,
     color: p.disabled ? p.theme.colors.palette.text.shade40 : "inherit",
   },
-}))`
+}))<{
+  nested?: boolean;
+  disabled?: boolean;
+}>`
   display: flex;
   flex-direction: row;
   flex-grow: 1;
   justify-content: space-between;
 `;
-const NestingIndicator: ThemedComponent<{}> = styled.div`
+const NestingIndicator = styled.div`
   padding-right: 16px;
   border-left: ${p => p.theme.colors.palette.text.shade40} 1px solid;
   margin-left: 6px;
 `;
-const Left: ThemedComponent<{}> = styled.div`
+const Left = styled.div`
   display: flex;
   flex-direction: row;
   flex: 1;
 `;
-const Right: ThemedComponent<{}> = styled.div`
+const Right = styled.div`
   display: flex;
   flex-direction: row;
 `;
-const IconContainer: ThemedComponent<{}> = styled.div`
+const IconContainer = styled.div`
   padding-right: 6px;
 `;
 function AccountRow({
@@ -71,11 +71,7 @@ function AccountRow({
         {nested ? <NestingIndicator /> : null}
         <IconContainer>
           {parentAccount ? (
-            <ParentCryptoCurrencyIcon
-              overrideColor={disabled ? palette.text.shade40 : undefined}
-              size={16}
-              currency={getAccountCurrency(account)}
-            />
+            <ParentCryptoCurrencyIcon currency={getAccountCurrency(account)} />
           ) : (
             <CryptoCurrencyIcon
               overrideColor={disabled ? palette.text.shade40 : undefined}

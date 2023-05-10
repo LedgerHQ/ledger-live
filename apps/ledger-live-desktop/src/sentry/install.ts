@@ -12,7 +12,7 @@ import { getOperatingSystemSupportStatus } from "~/support/os";
 // initially we will send errors (anonymized as we don't initially know "userId" neither)
 let shouldSendCallback = () => true;
 let productionBuildSampleRate = 1;
-let tracesSampleRate = 0.005;
+let tracesSampleRate = 0.0002;
 if (process.env.SENTRY_SAMPLE_RATE) {
   const v = parseFloat(process.env.SENTRY_SAMPLE_RATE);
   productionBuildSampleRate = v;

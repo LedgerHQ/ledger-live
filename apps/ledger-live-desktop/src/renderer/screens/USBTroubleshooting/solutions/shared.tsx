@@ -1,24 +1,27 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import Box from "~/renderer/components/Box";
 import { Flex } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import ExternalLinkIcon from "~/renderer/icons/ExternalLink";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-export const Wrapper: ThemedComponent<{}> = styled(Box).attrs({
+import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex";
+
+export const Wrapper = styled(Box).attrs({
   alignItems: "center",
 })`
   padding: 20px;
   grid-gap: 12px;
 `;
-export const DeviceSelectorWrapper: ThemedComponent<{}> = styled(Flex).attrs({
+export const DeviceSelectorWrapper: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled(
+  Flex,
+).attrs({
   height: "100%",
   width: "100%",
   justifyContent: "center",
   alignItems: "center",
   flexDirection: "column",
 })``;
-export const Number: ThemedComponent<{}> = styled(Text).attrs({
+export const Number = styled(Text).attrs({
   color: "palette.primary.main",
   ff: "Inter|Medium",
   fontSize: 3,
@@ -26,18 +29,18 @@ export const Number: ThemedComponent<{}> = styled(Text).attrs({
   text-transform: uppercase;
   letter-spacing: 0.2em;
 `;
-export const Title: ThemedComponent<{}> = styled(Text).attrs({
+export const Title = styled(Text).attrs({
   color: "palette.text.shade100",
   ff: "Inter|SemiBold",
   fontSize: 22,
 })``;
-export const Subtitle: ThemedComponent<{}> = styled(Text).attrs({
+export const Subtitle = styled(Text).attrs({
   color: "palette.text.shade80",
   ff: "Inter|Regular",
   fontSize: 14,
   textAlign: "center",
 })``;
-export const Content: ThemedComponent<{}> = styled(Box).attrs({
+export const Content = styled(Box).attrs({
   horizontal: true,
 })`
   align-items: flex-start;
@@ -45,7 +48,7 @@ export const Content: ThemedComponent<{}> = styled(Box).attrs({
   grid-gap: 20px;
   width: 100%;
 `;
-export const Illustration: ThemedComponent<{}> = styled.div`
+export const Illustration = styled.div<{ image: string; height?: string | number }>`
   background-image: url('${p => p.image}');
   background-size: contain;
   background-position: center center;
@@ -55,7 +58,7 @@ export const Illustration: ThemedComponent<{}> = styled.div`
   grid-gap: 12px;
   flex: 1;
 `;
-export const BulletRowIcon: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const BulletRowIcon = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 10,
   textAlign: "center",
@@ -70,7 +73,7 @@ export const BulletRowIcon: ThemedComponent<{}> = styled(Box).attrs(() => ({
   padding: 0px;
   padding-top: 2px;
 `;
-const Container: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const Container = styled(Box).attrs(() => ({
   cursor: "pointer",
   horizontal: true,
 }))`

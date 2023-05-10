@@ -3,11 +3,11 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
-
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import RecipientFieldBase from "./RecipientFieldBase";
 import RecipientFieldDomainService from "./RecipientFieldDomainService";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { OnChangeExtra } from "~/renderer/components/RecipientAddress";
 
 type Props = {
   account: Account;
@@ -50,8 +50,8 @@ const RecipientField = ({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onChange = useCallback(
-    async (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => {
-      const { currency } = maybeExtra || {}; // FIXME fromQRCode ?
+    async (recipient: string, maybeExtra?: OnChangeExtra | null) => {
+      const { currency } = maybeExtra || {};
       const invalidRecipient = currency && currency.scheme !== account.currency.scheme;
       setValue(recipient);
       onChangeTransaction(

@@ -162,12 +162,13 @@ const setup = (
 ) => {
   return render(
     <ThemeProvider
+      // @ts-expect-error let's assume that the theme is correct
       theme={{ ...defaultTheme, colors: { ...defaultTheme.colors, palette: palettes.dark } }}
     >
       <DomainServiceProvider>
         <RecipientField
           account={account}
-          transaction={{ ...baseMockTransaction, ...mockTransaction }}
+          transaction={{ ...baseMockTransaction, ...mockTransaction } as Transaction}
           t={any => any.toString()}
           onChangeTransaction={mockedOnChangeTransaction}
           status={{ ...baseMockStatus, ...mockStatus }}
@@ -273,14 +274,46 @@ describe("RecipientField", () => {
         setup();
         const input = screen.getByRole("textbox");
 
-        await act(() => userEvent.type(input, "vitalik.notanamingservice"));
+        await act(() => userEvent.type(input, "vitalik.notadomainservice"));
         await waitFor(() =>
           expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
             ...baseMockTransaction,
-            recipient: "vitalik.notanamingservice",
+            recipient: "vitalik.notadomainservice",
             recipientDomain: undefined,
           }),
         );
+      });
+
+      it("should not change domain if domain is invalid", async () => {
+        setup();
+        const input = screen.getByRole("textbox");
+
+        await act(() => userEvent.type(input, "vitalik👋.eth"));
+        await waitFor(() => {
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "vitalik👋.eth",
+            recipientDomain: undefined,
+          });
+          // @ts-expect-error unclear why this is not working (@testing-library/jest-dom)
+          expect(screen.getByTestId("domain-error-invalid-domain")).toBeInTheDocument();
+        });
+      });
+
+      it("should not change domain if domain has no resolution", async () => {
+        setup();
+        const input = screen.getByRole("textbox");
+
+        await act(() => userEvent.type(input, "anything-not-existing.eth"));
+        await waitFor(() => {
+          expect(mockedOnChangeTransaction).toHaveLastReturnedWith({
+            ...baseMockTransaction,
+            recipient: "anything-not-existing.eth",
+            recipientDomain: undefined,
+          });
+          // @ts-expect-error unclear why this is not working (@testing-library/jest-dom)
+          expect(screen.getByTestId("domain-error-no-resolution")).toBeInTheDocument();
+        });
       });
 
       it("should remove domain on input change", async () => {

@@ -12,30 +12,31 @@ export type Step<T, StepProps> = {
   id: T;
   label?: React.ReactNode;
   excludeFromBreadcrumb?: boolean;
-  component: React$ComponentType<StepProps>;
-  footer?: React$ComponentType<StepProps>;
+  component: React.ComponentType<StepProps>;
+  footer?: React.ComponentType<StepProps>;
   onBack?: ((a: StepProps) => void) | null;
   backButtonComponent?: React.ReactNode;
   noScroll?: boolean;
   hideFooter?: boolean;
 };
-type Props<T, StepProps> = {
-  t: TFunction;
+type OwnProps<T, StepProps> = {
   title?: React.ReactNode;
   stepId: T;
   onStepChange: (a: Step<T, StepProps>) => void;
   steps: Step<T, StepProps>[];
   hideBreadcrumb?: boolean;
-  onClose: (a: void) => void;
+  onClose?: (a: void) => void;
   disabledSteps?: number[];
   errorSteps?: number[];
-  children: any;
   error?: Error | null;
   signed?: boolean;
   children?: React.ReactNode;
   params?: any;
   hideCloseButton?: boolean;
+  // Additional props are passed to the step components…
+  [key: string]: any;
 };
+type Props<T, StepProps> = OwnProps<T, StepProps> & { t: TFunction } & StepProps;
 const Stepper = <T, StepProps>({
   stepId,
   steps,
@@ -84,7 +85,7 @@ const Stepper = <T, StepProps>({
   } = step;
 
   // we'll need to improve this. also ...props is bad practice...
-  const stepProps: StepProps = {
+  const stepProps = {
     ...props,
     onClose,
     t,
@@ -94,7 +95,7 @@ const Stepper = <T, StepProps>({
     <ModalBody
       refocusWhenChange={stepId}
       onClose={hideCloseButton || deviceBlocked ? undefined : onClose}
-      onBack={onBack && !deviceBlocked ? () => onBack(stepProps) : undefined}
+      onBack={onBack && !deviceBlocked ? () => onBack(stepProps as StepProps) : undefined}
       backButtonComponent={backButtonComponent}
       title={title}
       noScroll={noScroll}
@@ -109,12 +110,18 @@ const Stepper = <T, StepProps>({
               stepsErrors={errorSteps}
             />
           )}
-          <StepComponent {...stepProps} />
+          <StepComponent {...(stepProps as React.PropsWithChildren<StepProps>)} />
           {children}
         </>
       )}
-      renderFooter={StepFooter ? () => <StepFooter {...stepProps} /> : undefined}
+      renderFooter={
+        StepFooter
+          ? () => <StepFooter {...(stepProps as React.PropsWithChildren<StepProps>)} />
+          : undefined
+      }
     />
   );
 };
-export default withTranslation()(Stepper);
+export default withTranslation()(Stepper) as <T, StepProps>(
+  props: OwnProps<T, StepProps>,
+) => JSX.Element; // to preserve the generic types

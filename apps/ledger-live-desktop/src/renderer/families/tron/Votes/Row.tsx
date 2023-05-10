@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { ExplorerView } from "@ledgerhq/types-cryptoassets";
 import { openURL } from "~/renderer/linking";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -9,7 +8,7 @@ import { TableLine } from "./Header";
 import Trophy from "~/renderer/icons/Trophy";
 import Medal from "~/renderer/icons/Medal";
 import Discreet from "~/renderer/components/Discreet";
-const Wrapper: ThemedComponent<any> = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -47,16 +46,7 @@ const IconContainer = styled.div`
   color: ${p =>
     p.isSR ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade60};
 `;
-const Row = ({
-  validator,
-  address,
-  amount,
-  isSR,
-  duration,
-  percentTP,
-  currency,
-  explorerView,
-}: Props) => {
+const Row = ({ validator, address, amount, isSR, duration, percentTP, explorerView }: Props) => {
   const srURL = explorerView && getAddressExplorer(explorerView, address);
   const openSR = useCallback(() => {
     if (srURL) openURL(srURL);

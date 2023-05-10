@@ -4,7 +4,11 @@ import {
   useCountervaluesPolling,
   useCountervaluesExport,
 } from "@ledgerhq/live-common/countervalues/react";
-import { CountervaluesSettings, RateMapRaw } from "@ledgerhq/live-common/countervalues/types";
+import {
+  CountervaluesSettings,
+  CounterValuesStateRaw,
+  RateMapRaw,
+} from "@ledgerhq/live-common/countervalues/types";
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
 import { setKey } from "~/renderer/storage";
 import { useUserSettings } from "../actions/general";
@@ -13,7 +17,7 @@ export default function CountervaluesProvider({
   initialState,
 }: {
   children: React.ReactNode;
-  initialState: any;
+  initialState: CounterValuesStateRaw;
 }) {
   const userSettings = useUserSettings();
   return (
@@ -31,7 +35,7 @@ function CountervaluesManager({
 }) {
   useCacheManager(userSettings);
   usePollingManager();
-  return children;
+  return <>{children}</>;
 }
 function useCacheManager(userSettings: CountervaluesSettings) {
   const { status, ...state } = useCountervaluesExport();

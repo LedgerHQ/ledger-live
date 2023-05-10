@@ -1,19 +1,18 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box/Box";
 import Button from "~/renderer/components/Button";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
-export const Wrapper: ThemedComponent<{}> = styled.div`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   padding: 16px 20px;
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
 `;
-export const TableLine: ThemedComponent<{}> = styled(Text).attrs(() => ({
+export const TableLine = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade60",
   fontSize: 3,
@@ -40,7 +39,7 @@ const Footer = ({ total, used }: Props) => {
   return (
     <Box bg="palette.action.hover" horizontal alignItems="center" px={4} py={2}>
       <ProgressCircle size={50} progress={percentVotesUsed} />
-      <Box vertical ml={2}>
+      <Box ml={2}>
         <Text ff="Inter|SemiBold" fontSize={3} color="palette.text.shade100">
           <Trans
             i18nKey="tron.voting.remainingVotes.title"

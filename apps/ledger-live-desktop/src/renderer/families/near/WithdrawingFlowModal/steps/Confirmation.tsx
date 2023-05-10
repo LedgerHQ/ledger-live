@@ -10,7 +10,6 @@ import Button from "~/renderer/components/Button";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { StepProps } from "../types";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -21,7 +20,6 @@ export default function StepConfirmation({
   account,
   optimisticOperation,
   error,
-  device,
   signed,
   transaction,
 }: StepProps) {
@@ -89,7 +87,6 @@ export function StepConfirmationFooter({
   error,
   onClose,
   onRetry,
-  openModal,
   optimisticOperation,
 }: StepProps) {
   const { t } = useTranslation();

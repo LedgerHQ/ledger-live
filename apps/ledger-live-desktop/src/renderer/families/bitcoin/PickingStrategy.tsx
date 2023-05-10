@@ -12,9 +12,8 @@ type Props = {
   account: Account;
   transaction: Transaction;
   onChange: (a: Transaction) => void;
-  status: TransactionStatus;
 };
-export const PickingStrategy = ({ transaction, account, onChange, status }: Props) => {
+export const PickingStrategy = ({ transaction, account, onChange }: Props) => {
   const bridge = getAccountBridge(account);
   const { item, options } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
   return (

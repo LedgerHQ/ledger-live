@@ -20,7 +20,6 @@ import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/ut
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import useStakeFlow from "~/renderer/screens/stake/index";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const CryptoCurrencyIconWrapper = styled.div`
@@ -42,8 +41,8 @@ const EllipsisText = styled(Text)`
 `;
 
 type Props = {
-  currency: CurrencyData;
-  counterCurrency: string;
+  currency?: CurrencyData | null;
+  counterCurrency?: string;
   style: CSSProperties;
   loading: boolean;
   locale: string;
@@ -53,7 +52,6 @@ type Props = {
   availableOnBuy: boolean;
   availableOnSwap: boolean;
   availableOnStake: boolean;
-  range?: string;
 };
 
 function MarketRowItem({
@@ -68,7 +66,6 @@ function MarketRowItem({
   availableOnBuy,
   availableOnSwap,
   availableOnStake,
-  range,
 }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -90,21 +87,22 @@ function MarketRowItem({
 
   const history = useHistory();
   const { colors } = useTheme();
-  const graphColor = colors.neutral.c80;
   const allAccounts = useSelector(accountsSelector);
   const flattenedAccounts = flattenAccounts(allAccounts);
 
   const onCurrencyClick = useCallback(() => {
-    selectCurrency(currency.id, currency, range);
-    setTrackingSource("Page Market");
-    history.push({
-      pathname: `/market/${currency.id}`,
-      state: currency,
-    });
-  }, [currency, history, range, selectCurrency]);
+    if (currency) {
+      selectCurrency(currency.id);
+      setTrackingSource("Page Market");
+      history.push({
+        pathname: `/market/${currency.id}`,
+        state: currency,
+      });
+    }
+  }, [currency, history, selectCurrency]);
 
   const onBuy = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
       setTrackingSource("Page Market");
@@ -129,7 +127,7 @@ function MarketRowItem({
   );
 
   const onSwap = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.SyntheticEvent<HTMLButtonElement>) => {
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
@@ -154,9 +152,10 @@ function MarketRowItem({
           state: {
             defaultCurrency: currency.internalCurrency,
             defaultAccount,
-            defaultParentAccount: defaultAccount?.parentId
-              ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
-              : null,
+            defaultParentAccount:
+              defaultAccount && "parentId" in defaultAccount && defaultAccount.parentId
+                ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
+                : null,
           },
         });
       }
@@ -172,7 +171,7 @@ function MarketRowItem({
   );
 
   const onStake = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
       track("button_clicked", {
@@ -183,6 +182,7 @@ function MarketRowItem({
       });
       startStakeFlow({
         currencies: currency?.internalCurrency ? [currency.internalCurrency.id] : undefined,
+        source: "Page Market",
       });
       setTrackingSource("Page Market");
     },
@@ -190,7 +190,7 @@ function MarketRowItem({
   );
 
   const onStarClick = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.MouseEvent<HTMLDivElement>) => {
       e.preventDefault();
       e.stopPropagation();
       toggleStar();
@@ -308,7 +308,7 @@ function MarketRowItem({
           </TableCell>
           <TableCell>
             {currency.sparklineIn7d && (
-              <SmallMarketItemChart sparklineIn7d={currency.sparklineIn7d} color={graphColor} />
+              <SmallMarketItemChart sparklineIn7d={currency.sparklineIn7d} />
             )}
           </TableCell>
 

@@ -5,11 +5,14 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
+
 type Props = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
+  source?: string;
 };
-const AccountHeaderActions = ({ account, parentAccount }: Props) => {
+
+const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -30,11 +33,12 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
             : "MODAL_SOLANA_REWARDS_INFO",
           {
             account,
+            source,
           },
         ),
       );
     }
-  }, [account, dispatch, parentAccount, solanaResources]);
+  }, [account, dispatch, source, parentAccount, solanaResources]);
   return [
     {
       key: "Stake",

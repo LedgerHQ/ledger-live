@@ -1,31 +1,33 @@
 import React from "react";
 import styled from "styled-components";
-import { components } from "react-select";
+import { components, GroupTypeBase, OptionTypeBase } from "react-select";
 import Box from "~/renderer/components/Box";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import IconCheck from "~/renderer/icons/Check";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import IconCross from "~/renderer/icons/Cross";
 import { useTranslation } from "react-i18next";
-import { Option } from ".";
 import SearchIcon from "~/renderer/icons/Search";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Props as SelectProps } from "~/renderer/components/Select";
 import { rgba } from "~/renderer/styles/helpers";
 type OptionProps = any;
-const InputWrapper: ThemedComponent<{}> = styled(Box)`
+const InputWrapper = styled(Box)`
   & input::placeholder {
     color: ${p => p.theme.colors.palette.text.shade30};
   }
 `;
-export default ({
+export default <
+  OptionType extends OptionTypeBase = { label: string; value: string },
+  IsMulti extends boolean = false,
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+>({
   renderOption,
   renderValue,
   selectProps,
 }: {
-  renderOption: (a: Option) => Node;
-  renderValue: (a: Option) => Node;
-  selectProps: SelectProps;
+  renderOption?: (a: { data: OptionType }) => React.ReactNode;
+  renderValue?: (a: { data: OptionType }) => React.ReactNode;
+  selectProps: SelectProps<OptionType, IsMulti, GroupType>;
 }) => ({
   ...STYLES_OVERRIDE,
   Option: function Option(props: OptionProps) {
@@ -114,7 +116,7 @@ const STYLES_OVERRIDE = {
 const InformativeContainer = styled(Box).attrs(() => ({
   alignItems: "center",
   justifyContent: "center",
-}))`
+}))<{ disabled?: boolean }>`
   position: absolute;
   top: 0;
   right: 0;

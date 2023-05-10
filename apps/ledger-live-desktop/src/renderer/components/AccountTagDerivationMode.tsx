@@ -1,10 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { AccountLike } from "@ledgerhq/types-live";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import Text from "~/renderer/components/Text";
-const CurrencyLabel: ThemedComponent<any> = styled(Text).attrs(() => ({
+const CurrencyLabel = styled(Text).attrs(() => ({
   color: "palette.text.shade60",
   ff: "Inter|SemiBold",
   fontSize: "8px",
@@ -29,9 +28,7 @@ type Props = {
 };
 export default function AccountTagDerivationMode({ account, margin }: Props) {
   if (account.type !== "Account") return null;
-  const tag =
-    account.derivationMode !== undefined &&
-    account.derivationMode !== null &&
-    getTagDerivationMode(account.currency, account.derivationMode);
+  const derivationMode = account.derivationMode as DerivationMode; // FIXME types-live's DerivationMode is loose
+  const tag = getTagDerivationMode(account.currency, derivationMode);
   return tag ? <CurrencyLabel margin={margin ?? "0 8px"}>{tag}</CurrencyLabel> : null;
 }

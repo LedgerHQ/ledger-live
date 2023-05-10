@@ -73,7 +73,7 @@ function Item({ item, selected, disabled, onSelect, onClick }: Props) {
         {isElected ? (
           <LText
             style={[styles.valueLabel]}
-            color={isOversubscribed ? colors.warning.c100 : colors.neutral.c70}
+            color={isOversubscribed ? colors.warning.c50 : colors.neutral.c70}
           >
             {isOversubscribed ? (
               <Trans

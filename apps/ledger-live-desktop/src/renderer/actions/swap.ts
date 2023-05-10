@@ -4,10 +4,10 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import memoize from "lodash/memoize";
 import { createAction } from "redux-actions";
-import { OutputSelector, createSelector } from "reselect";
+import { createSelector } from "reselect";
 import { State } from "~/renderer/reducers";
 import { SwapStateType } from "~/renderer/reducers/swap";
-import { Pair } from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, Pair } from "@ledgerhq/live-common/exchange/swap/types";
 
 type UPDATE_PROVIDERS_TYPE = {
   payload: SwapStateType["providers"];
@@ -20,7 +20,7 @@ export const updateProvidersAction = createAction<UPDATE_PROVIDERS_TYPE["payload
 export const updateTransactionAction = createAction<Transaction | undefined | null>(
   "SWAP/UPDATE_TRANSACTION",
 );
-export const updateRateAction = createAction<Transaction | undefined | null>("SWAP/UPDATE_RATE");
+export const updateRateAction = createAction<ExchangeRate | undefined | null>("SWAP/UPDATE_RATE");
 export const resetSwapAction = createAction("SWAP/RESET_STATE");
 
 /* SELECTORS */
@@ -55,11 +55,19 @@ const filterAvailableFromAssets = (
 export const toSelector = createSelector(
   (state: State) => state.swap.pairs,
   pairs =>
-    memoize((fromId?: "string") => {
+    memoize((fromId?: string) => {
       const filteredAssets = filterAvailableToAssets(pairs, fromId);
       const uniqueAssetList = [...new Set(filteredAssets)];
       return uniqueAssetList;
     }),
+);
+export const fromSelector = createSelector(
+  (state: State) => state.swap.pairs,
+  pairs =>
+    memoize(
+      (allAccounts: Array<Account>): Array<Account | TokenAccount> =>
+        sortAccountsByStatus(filterAvailableFromAssets(pairs, allAccounts)),
+    ),
 );
 
 // Put disabled accounts and subaccounts at the bottom of the list while preserving the parent/children position.
@@ -97,14 +105,6 @@ export function sortAccountsByStatus(accounts: (Account & { disabled: boolean })
   }
   return [...activeAccounts, ...disabledAccounts];
 }
-export const fromSelector = createSelector(
-  (state: State) => state.swap.pairs,
-  pairs =>
-    memoize(
-      (allAccounts: Array<Account>): Array<Account | TokenAccount> =>
-        sortAccountsByStatus(filterAvailableFromAssets(pairs, allAccounts)),
-    ),
-);
 export const transactionSelector = createSelector(
   (state: State) => state.swap,
   swap => swap.transaction,

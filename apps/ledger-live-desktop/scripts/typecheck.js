@@ -7,7 +7,7 @@ const { EOL } = require("os");
 const rootDirectory = path.resolve(__dirname, "..", "..", "..");
 const projectDirectory = path.resolve(__dirname, "..");
 
-const nonTypedZones = ["src/renderer/"].map(p => path.resolve(projectDirectory, p));
+const excluded = ["src/renderer/families"].map(p => path.resolve(projectDirectory, p));
 
 function compile() {
   const config = ts.parseJsonConfigFileContent(require("../tsconfig.json"), ts.sys, process.cwd());
@@ -24,7 +24,7 @@ function compile() {
     // Exclude non ts(x) files and files in non-typed zones
     const pass =
       /\.tsx?/.test(diag.file.fileName) &&
-      nonTypedZones.every(zone => !diag.file.fileName.startsWith(zone));
+      excluded.every(zone => !diag.file.fileName.startsWith(zone));
     if (!pass) nbOfFilteredDiagnostics++;
     return pass;
   });
@@ -47,18 +47,21 @@ function compile() {
       return acc;
     }, {});
 
-    Object.entries(errorsByFile).forEach(([fileName, counter]) => {
-      const decimals = Math.floor(Math.log10(counter)) + 1;
-      let str = "";
-      new Array(6 - decimals).fill().forEach(() => (str += " "));
-      str += counter;
-      str += "  ";
-      str += fileName;
-      console.log(str);
-    });
+    Object.entries(errorsByFile)
+      // Sort by the error count
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([fileName, counter]) => {
+        const decimals = Math.floor(Math.log10(counter)) + 1;
+        let str = "";
+        new Array(6 - decimals).fill().forEach(() => (str += " "));
+        str += counter;
+        str += "  ";
+        str += fileName;
+        console.log(str);
+      });
     console.log("");
     console.log(
-      `⚠️ - Found ${allDiagnostics.length} errors in ${Object.keys(errorsByFile).length}.\n`,
+      `⚠️ - Found ${allDiagnostics.length} errors in ${Object.keys(errorsByFile).length} files.\n`,
     );
     process.exitCode = 1;
   } else {

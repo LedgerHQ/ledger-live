@@ -6,7 +6,7 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
 };
-const AccountHeaderManageActionsComponent = ({ account, parentAccount }: Props) => {
+const AccountHeaderManageActionsComponent = ({ parentAccount }: Props) => {
   const { t } = useTranslation();
   if (parentAccount) return null;
   const disabledLabel = t("tron.voting.warnDisableStaking");

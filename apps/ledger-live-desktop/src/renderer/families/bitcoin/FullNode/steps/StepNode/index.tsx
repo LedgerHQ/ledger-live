@@ -22,7 +22,6 @@ const Node = ({
   nodeConfig,
   setNodeConfig,
   setNodeConnectionStatus,
-  onStepChange,
   errors,
 }: {
   nodeConnectionStatus: ConnectionStatus;

@@ -14,7 +14,6 @@ import InputPassword from "~/renderer/components/InputPassword";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Button from "~/renderer/components/Button";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import IconArrowRight from "~/renderer/icons/ArrowRight";
 import Logo from "~/renderer/icons/Logo";
 export default function IsUnlocked({ children }: { children: any }) {
@@ -39,7 +38,7 @@ export default function IsUnlocked({ children }: { children: any }) {
     [inputValue],
   );
   const handleSubmit = useCallback(
-    async (e: SyntheticEvent<HTMLFormElement>) => {
+    async (e: React.SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault();
       const isAccountDecrypted = await hasBeenDecrypted("app", "accounts");
       try {
@@ -69,7 +68,7 @@ export default function IsUnlocked({ children }: { children: any }) {
     setIsHardResetting(true);
     try {
       await hardReset();
-      window.api.reloadRenderer();
+      window.api?.reloadRenderer();
     } catch (error) {
       setIsHardResetting(false);
     }
@@ -179,12 +178,12 @@ type InputValue = {
   password: string;
 };
 type MaybeError = Error | undefined | null;
-export const PageTitle: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const PageTitle = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 7,
   color: "palette.text.shade100",
 }))``;
-export const LockScreenDesc: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const LockScreenDesc = styled(Box).attrs(() => ({
   ff: "Inter|Regular",
   fontSize: 4,
   textAlign: "center",

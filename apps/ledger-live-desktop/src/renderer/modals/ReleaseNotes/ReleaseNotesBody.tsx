@@ -10,7 +10,7 @@ import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Markdown, { Notes } from "~/renderer/components/Markdown";
 type Props = {
-  onClose: () => void;
+  onClose?: () => void | undefined;
 };
 type RenderContentProps = {
   notes: Array<{
@@ -49,10 +49,10 @@ const RenderContent = ({ notes }: RenderContentProps) => {
     </Box>
   );
 };
-const RenderContentMemo = memo(RenderContent);
+const RenderContentMemo = memo(RenderContent as React.ComponentType<RenderContentProps>);
 const ReleaseNotesBody = ({ onClose }: Props) => {
   const { t } = useTranslation();
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState<typeof releaseNotes>([]);
   useEffect(() => {
     setNotes(releaseNotes);
   }, []);

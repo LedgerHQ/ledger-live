@@ -4,11 +4,13 @@ import { Operation } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import OperationDate from "./OperationDate";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
+
+const Cell = styled(Box).attrs(() => ({
   px: 3,
   horizontal: false,
-}))`
+}))<{
+  compact?: boolean;
+}>`
   width: auto;
   min-width: ${p => (p.compact ? 150 : 180)}px;
 `;
@@ -45,7 +47,7 @@ class DateCell extends PureComponent<Props> {
       display: "block",
       textOverflow: "ellipsis",
       overflow: "hidden",
-      whiteSpace: "nowrap",
+      whiteSpace: "nowrap" as const,
     };
 
     //const [ordinals, setOrdinals] = useState("");

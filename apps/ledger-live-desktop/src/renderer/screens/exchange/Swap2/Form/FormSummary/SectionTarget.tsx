@@ -12,7 +12,6 @@ import SummarySection from "./SummarySection";
 import { openModal } from "~/renderer/actions/modals";
 import { context } from "~/renderer/drawers/Provider";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-
 import {
   SwapSelectorStateType,
   SwapTransactionType,
@@ -75,13 +74,13 @@ type SectionTargetProps = {
   account: SwapSelectorStateType["account"];
   currency: SwapSelectorStateType["currency"];
   setToAccount: SwapTransactionType["setToAccount"];
-  targetAccounts: AccountLike[];
+  targetAccounts: AccountLike[] | undefined;
   hasRates: boolean;
 };
 
 type SetDrawerStateRef = (args: {
   selectedAccount: AccountLike | undefined;
-  targetAccounts: AccountLike[];
+  targetAccounts: AccountLike[] | undefined;
 }) => void;
 const SectionTarget = ({
   account,

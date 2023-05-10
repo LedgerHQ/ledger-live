@@ -8,7 +8,7 @@ async function main() {
 
   try {
     const turboOutput = execSync(
-      `npx turbo@1.7 run ${command} --filter=...[${ref}] --dry=json`,
+      `npx turbo@1.8 run ${command} --filter=...[${ref}] --dry=json`,
       { encoding: "utf-8" }
     );
     const pnpmOutput = execSync(`npx pnpm list -r --depth=0 --json`, {

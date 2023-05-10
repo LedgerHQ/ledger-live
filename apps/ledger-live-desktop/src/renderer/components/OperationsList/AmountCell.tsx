@@ -6,10 +6,9 @@ import { Operation } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { colors } from "~/renderer/styles/theme";
 import perFamilyOperationDetails from "~/renderer/generated/operationDetails";
-const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Cell = styled(Box).attrs(() => ({
   px: 4,
   horizontal: false,
   alignItems: "flex-end",
@@ -32,15 +31,23 @@ class AmountCell extends PureComponent<Props> {
     const { currency, unit, operation, isConfirmed } = this.props;
     const amount = getOperationAmountNumber(operation);
 
-    const specific = currency.family ? perFamilyOperationDetails[currency.family] : null;
+    const specific =
+      "family" in currency && currency.family
+        ? perFamilyOperationDetails[currency.family as keyof typeof perFamilyOperationDetails]
+        : null;
     const Element =
-      specific && specific.amountCellExtra ? specific.amountCellExtra[operation.type] : null;
+      specific && "amountCellExtra" in specific && specific.amountCellExtra
+        ? specific.amountCellExtra[operation.type as keyof typeof specific.amountCellExtra]
+        : null;
     const AmountElement =
-      specific && specific.amountCell ? specific.amountCell[operation.type] : null;
+      specific && "amountCell" in specific && specific.amountCell
+        ? specific.amountCell[operation.type as keyof typeof specific.amountCell]
+        : null;
     return (
       <>
         {Element && (
           <Cell>
+            {/* @ts-expect-error TODO: check why TS is unable to reconciliate Element as a react component */}
             <Element operation={operation} unit={unit} currency={currency} />
           </Cell>
         )}
@@ -48,6 +55,7 @@ class AmountCell extends PureComponent<Props> {
           <Cell>
             {AmountElement ? (
               <AmountElement
+                // @ts-expect-error TODO: double check if any of the families have a component accepting an amount prop
                 amount={amount}
                 operation={operation}
                 unit={unit}

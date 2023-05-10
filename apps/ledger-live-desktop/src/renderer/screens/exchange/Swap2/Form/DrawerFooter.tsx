@@ -7,9 +7,8 @@ import Box from "~/renderer/components/Box/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Separator } from "./Separator";
-const Terms: ThemedComponent<{}> = styled(Text).attrs({
+const Terms = styled(Text).attrs({
   ff: "Inter|SemiBold",
   color: "palette.text.shade60",
   fontSize: 13,
@@ -17,8 +16,9 @@ const Terms: ThemedComponent<{}> = styled(Text).attrs({
   white-space: pre-line;
 `;
 export function DrawerFooter({ provider }: { provider: string }) {
-  const url = urls.swap.providers[provider]?.tos;
-  const onLinkClick = useCallback(() => openURL(url), [url]);
+  const swapProvider = urls.swap.providers[provider as keyof typeof urls.swap.providers];
+  const url = ("tos" in swapProvider && swapProvider?.tos) || undefined;
+  const onLinkClick = useCallback(() => openURL(url!), [url]);
   if (!url) {
     return null;
   }

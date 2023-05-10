@@ -14,8 +14,22 @@ import {
   style,
   layout,
   position,
+  FontSizeProps,
+  AlignItemsProps,
+  AlignSelfProps,
+  BorderRadiusProps,
+  BoxShadowProps,
+  ColorProps,
+  FlexWrapProps,
+  FontFamilyProps,
+  JustifyContentProps,
+  SpaceProps,
+  TextAlignProps,
+  LayoutProps,
+  FontWeightProps,
+  PositionProps,
+  FlexboxProps,
 } from "styled-system";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import fontFamily from "~/renderer/styles/styled/fontFamily";
 export const styledTextAlign = style({
   prop: "textAlign",
@@ -33,7 +47,8 @@ export const styledTextTransform = style({
   prop: "textTransform",
   cssProperty: "textTransform",
 });
-const Box: ThemedComponent<{
+
+export type BoxProps = {
   noShrink?: boolean;
   shrink?: boolean;
   grow?: boolean | number;
@@ -48,9 +63,27 @@ const Box: ThemedComponent<{
   align?: "THIS PROPERTY IS NOT VALID \u2013 SWITCH TO alignItems";
   justify?: "THIS PROPERTY IS NOT VALID \u2013 SWITCH TO justifyContent";
   fontWeight?: string | number;
+  textTransform?: string;
+  cursor?: string;
   ff?: string;
   gap?: string | number;
-}> = styled.div`
+} & AlignItemsProps &
+  AlignSelfProps &
+  BorderRadiusProps &
+  BoxShadowProps &
+  ColorProps &
+  FlexboxProps &
+  FlexWrapProps &
+  FontFamilyProps &
+  FontSizeProps &
+  JustifyContentProps &
+  SpaceProps &
+  TextAlignProps &
+  LayoutProps &
+  PositionProps &
+  FontWeightProps;
+
+const Box = styled.div<BoxProps>`
   ${alignItems};
   ${alignSelf};
   ${borderRadius};

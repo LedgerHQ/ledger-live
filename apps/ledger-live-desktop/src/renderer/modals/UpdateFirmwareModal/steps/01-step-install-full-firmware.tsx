@@ -18,7 +18,6 @@ import Interactions from "~/renderer/icons/device/interactions";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { StepProps } from "../";
 import { getEnv } from "@ledgerhq/live-common/env";
-
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { AnimationWrapper } from "~/renderer/components/DeviceAction/rendering";
@@ -86,6 +85,8 @@ const Body = ({
     );
   }
 
+  const deviceAnimation = getDeviceAnimation(deviceModelId, type, "verify");
+
   if (displayedOnDevice && firmware.osu.hash) {
     return (
       <>
@@ -116,7 +117,7 @@ const Body = ({
           </Box>
         ) : (
           <AnimationWrapper>
-            <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
+            {deviceAnimation && <Animation animation={deviceAnimation} />}
           </AnimationWrapper>
         )}
       </>
@@ -143,7 +144,7 @@ const Body = ({
         </Box>
       ) : (
         <AnimationWrapper>
-          <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
+          {deviceAnimation && <Animation animation={deviceAnimation} />}
         </AnimationWrapper>
       )}
     </>
@@ -175,7 +176,13 @@ const StepFullFirmwareInstall = ({
       ? mockedEventEmitter()
       : firmwareUpdatePrepare(device ? device.deviceId : "", firmware)
     ).subscribe({
-      next: ({ progress, displayedOnDevice: displayed }) => {
+      next: ({
+        progress,
+        displayedOnDevice: displayed,
+      }: {
+        progress: number;
+        displayedOnDevice: boolean;
+      }) => {
         setProgress(progress);
         setDisplayedOnDevice(displayed);
       },
@@ -184,7 +191,7 @@ const StepFullFirmwareInstall = ({
           firmware.shouldFlashMCU || hasFinalFirmware(firmware.final) ? "updateMCU" : "updating",
         );
       },
-      error: error => {
+      error: (error: Error) => {
         setError(error);
         transitionTo("finish");
       },

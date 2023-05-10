@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 import Box from "~/renderer/components/Box";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
 import Header from "~/renderer/screens/accounts/AccountRowItem/Header";
@@ -9,18 +8,18 @@ import Balance from "~/renderer/screens/accounts/AccountRowItem/Balance";
 import Delta from "~/renderer/screens/accounts/AccountRowItem/Delta";
 import Countervalue from "~/renderer/screens/accounts/AccountRowItem/Countervalue";
 import Star from "~/renderer/components/Stars/Star";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { TableRow } from "./TableContainer";
+
 type Props = {
   account: AccountLike;
   nested?: boolean;
   disableRounding?: boolean;
-  index: number;
   parentAccount: Account;
   onClick: (b: AccountLike, a: Account) => void;
   range: PortfolioRange;
 };
-const NestedRow: ThemedComponent<{}> = styled(Box)`
+
+const NestedRow = styled(Box)`
   flex: 1;
   font-weight: 600;
   align-items: center;
@@ -38,6 +37,7 @@ const NestedRow: ThemedComponent<{}> = styled(Box)`
     background: ${p => p.theme.colors.palette.action.hover};
   }
 `;
+
 class TokenRow extends PureComponent<Props> {
   onClick = () => {
     const { account, parentAccount, onClick } = this.props;
@@ -45,12 +45,12 @@ class TokenRow extends PureComponent<Props> {
   };
 
   render() {
-    const { account, range, index, nested, disableRounding } = this.props;
+    const { account, range, nested, disableRounding } = this.props;
     const currency = getAccountCurrency(account);
     const unit = currency.units[0];
     const Row = nested ? NestedRow : TableRow;
     return (
-      <Row className="token-row" index={index} onClick={this.onClick} tabIndex="-1">
+      <Row className="token-row" onClick={this.onClick} tabIndex={-1}>
         <Header nested={nested} account={account} />
         <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
         <Countervalue account={account} currency={currency} range={range} />

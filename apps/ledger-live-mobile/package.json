@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.20.1",
+  "version": "3.21.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -72,6 +72,7 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-native-hid": "workspace:^",
@@ -217,7 +218,6 @@
     "@types/jest": "^28.1.8",
     "@types/lodash": "^4.14.182",
     "@types/react": "^17.0.53",
-    "@types/react-native": "0.71.5",
     "@types/react-native-extra-dimensions-android": "^1.2.0",
     "@types/react-native-vector-icons": "^6.4.10",
     "@types/react-native-video": "^5.0.14",
@@ -273,7 +273,6 @@
     "strip-ansi": "6.0.1",
     "ts-jest": "^28.0.8",
     "tslib": "^2.5.0",
-    "typescript": "^4.9.5",
     "ws": "^7.5.2"
   }
 }

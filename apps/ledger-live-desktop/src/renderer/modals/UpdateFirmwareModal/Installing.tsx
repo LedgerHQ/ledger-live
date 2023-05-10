@@ -1,6 +1,5 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ProgressCircle from "~/renderer/components/ProgressCircle";

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { ScrollView, Linking, TouchableOpacity } from "react-native";
+import { ScrollView, Linking } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { HwTransportErrorType } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
@@ -25,7 +24,6 @@ const CANT_SEE_DEVICE_TIMEOUT = 5000;
 
 export type BleDevicesScanningProps = {
   onDeviceSelect: (item: Device) => void;
-  onGoBack?: () => void;
   filterByDeviceModelId?: FilterByDeviceModelId;
   areKnownDevicesDisplayed?: boolean;
   areKnownDevicesPairable?: boolean;
@@ -42,14 +40,12 @@ export type BleDevicesScanningProps = {
  * @param filterByDeviceModelId The only model of the devices that will be scanned
  * @param areKnownDevicesDisplayed Choose to display seen devices that are already known by LLM
  * @param areKnownDevicesPairable Display already known devices in the same way as unknown devices, allowing to connect to them.
- * @param onGoBack If this function is set, a back arrow is displayed that calls this function if pressed
  */
 const BleDevicesScanning = ({
   onDeviceSelect,
   filterByDeviceModelId = null,
   areKnownDevicesDisplayed,
   areKnownDevicesPairable,
-  onGoBack,
 }: BleDevicesScanningProps) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -166,39 +162,40 @@ const BleDevicesScanning = ({
       <TrackScreen
         category={`Looking for ${productName ?? "device"} Bluetooth`}
       />
-      {onGoBack && (
-        <TouchableOpacity onPress={onGoBack}>
-          <ArrowLeftMedium size={24} />
-        </TouchableOpacity>
-      )}
-      <Flex flex={1} px={4}>
-        <Flex height={180} alignItems="center" justifyContent="center">
-          <Animation source={lottie} />
+      <Flex flex={1} px={2}>
+        <Flex py={16}>
+          <Flex
+            height={100}
+            alignItems="center"
+            justifyContent="center"
+            mb={24}
+          >
+            <Animation style={{ width: 250 }} source={lottie} />
+          </Flex>
+          <Text
+            mb={1}
+            textAlign="center"
+            variant="h4"
+            fontWeight="semiBold"
+            fontSize={24}
+          >
+            {productName
+              ? t("blePairingFlow.scanning.withProductName.title", {
+                  productName,
+                })
+              : t("blePairingFlow.scanning.withoutProductName.title")}
+          </Text>
+          <Text
+            color="neutral.c70"
+            textAlign="center"
+            variant="body"
+            fontWeight="medium"
+          >
+            {t("blePairingFlow.scanning.description")}
+          </Text>
         </Flex>
-        <Text
-          mb={3}
-          textAlign="center"
-          variant="h4"
-          fontWeight="semiBold"
-          fontSize={24}
-        >
-          {productName
-            ? t("blePairingFlow.scanning.withProductName.title", {
-                productName,
-              })
-            : t("blePairingFlow.scanning.withoutProductName.title")}
-        </Text>
-        <Text
-          mb={8}
-          color="neutral.c70"
-          textAlign="center"
-          variant="body"
-          fontWeight="medium"
-        >
-          {t("blePairingFlow.scanning.description")}
-        </Text>
 
-        <Flex flex={1}>
+        <Flex flex={1} py={16}>
           <ScrollView>
             <Flex pb={10}>
               {scannedDevices
@@ -207,9 +204,13 @@ const BleDevicesScanning = ({
                   deviceName: `${item.deviceName}`,
                   wired: false,
                   modelId: item.deviceModel.id,
-                  isAlreadyKnown: Boolean(
-                    knownDeviceIds.some(deviceId => deviceId === item.deviceId),
-                  ),
+                  isAlreadyKnown:
+                    !areKnownDevicesPairable &&
+                    Boolean(
+                      knownDeviceIds.some(
+                        deviceId => deviceId === item.deviceId,
+                      ),
+                    ),
                 }))
                 // unknown devices go first, already known devices go last
                 .sort((a, b) =>

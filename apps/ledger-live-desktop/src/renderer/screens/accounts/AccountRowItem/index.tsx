@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent, SyntheticEvent } from "react";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -11,7 +11,6 @@ import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContext
 import Text from "~/renderer/components/Text";
 import TokenRow from "~/renderer/components/TokenRow";
 import AngleDown from "~/renderer/icons/AngleDown";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { matchesSearch } from "../AccountList";
 import AccountSyncStatusIndicator from "../AccountSyncStatusIndicator";
 import Balance from "./Balance";
@@ -22,7 +21,8 @@ import Star from "~/renderer/components/Stars/Star";
 import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
 import perFamilyTokenList from "~/renderer/generated/TokenList";
-const Row: ThemedComponent<{}> = styled(Box)`
+
+const Row = styled(Box)`
   background: ${p => p.theme.colors.palette.background.paper};
   border-radius: 4px;
   border: 1px solid transparent;
@@ -45,10 +45,10 @@ const Row: ThemedComponent<{}> = styled(Box)`
     background: ${p => p.theme.colors.palette.action.hover};
   }
 `;
-const RowContent: ThemedComponent<{
+const RowContent = styled.div<{
   disabled?: boolean;
   isSubAccountsExpanded: boolean;
-}> = styled.div`
+}>`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -69,7 +69,7 @@ const TokenContent = styled.div`
 const TokenContentWrapper = styled.div`
   position: relative;
 `;
-const TokenBarIndicator: ThemedComponent<{}> = styled.div`
+const TokenBarIndicator = styled.div`
   width: 15px;
   border-left: 1px solid ${p => p.theme.colors.palette.divider};
   z-index: 2;
@@ -82,9 +82,7 @@ const TokenBarIndicator: ThemedComponent<{}> = styled.div`
     border-color: ${p => p.theme.colors.palette.text.shade60};
   }
 `;
-const TokenShowMoreIndicator: ThemedComponent<{
-  expanded?: boolean;
-}> = styled(Button)`
+const TokenShowMoreIndicator = styled(Button)<{ expanded?: boolean }>`
   margin: ${p => (p.expanded ? 0 : -1)}px 0 0;
   display: flex;
   color: ${p => p.theme.colors.wallet};
@@ -109,9 +107,9 @@ const TokenShowMoreIndicator: ThemedComponent<{
     transform: rotate(${p => (p.expanded ? "180deg" : "0deg")});
   }
 `;
-const IconAngleDown: ThemedComponent<{
+const IconAngleDown = styled.div<{
   expanded?: boolean;
-}> = styled.div`
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -145,7 +143,7 @@ class AccountRowItem extends PureComponent<Props, State> {
 
   static getDerivedStateFromProps(nextProps: Props) {
     const { account } = nextProps;
-    if (account.subAccounts) {
+    if (account.type === "Account" && account.subAccounts) {
       return {
         expanded: expandedStates[account.id] || !!nextProps.search,
       };
@@ -171,7 +169,7 @@ class AccountRowItem extends PureComponent<Props, State> {
     onClick(account, parentAccount);
   };
 
-  toggleAccordion = (e: SyntheticEvent<any>) => {
+  toggleAccordion = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
     const { account } = this.props;
     expandedStates[account.id] = !expandedStates[account.id];
@@ -194,7 +192,7 @@ class AccountRowItem extends PureComponent<Props, State> {
     const { expanded } = this.state;
     let currency;
     let unit;
-    let mainAccount;
+    let mainAccount: Account | null | undefined;
     let tokens;
     let disabled;
     let isToken;
@@ -213,8 +211,9 @@ class AccountRowItem extends PureComponent<Props, State> {
       isToken = listTokenTypesForCryptoCurrency(currency).length > 0;
       if (tokens) tokens = tokens.filter(t => matchesSearch(search, t));
     }
-    const showTokensIndicator = tokens && tokens.length > 0 && !hidden;
-    const specific = perFamilyTokenList[mainAccount.currency.family];
+    const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);
+    const specific =
+      perFamilyTokenList[mainAccount.currency.family as keyof typeof perFamilyTokenList];
     const hasSpecificTokenWording = specific?.hasSpecificTokenWording;
     const translationMap = isToken
       ? {
@@ -247,15 +246,15 @@ class AccountRowItem extends PureComponent<Props, State> {
           ref={this.scrollTopFocusRef}
         />
         <AccountContextMenu account={account}>
-          <Row expanded={expanded} tokens={showTokensIndicator} key={mainAccount.id}>
+          <Row key={mainAccount.id}>
             <RowContent
               disabled={disabled}
               className="accounts-account-row-item-content"
               isSubAccountsExpanded={showTokensIndicator && expanded}
               onClick={this.onClick}
-              data-test-id={`account-component-${account.name}`}
+              data-test-id={account.type === "Account" && `account-component-${account.name}`}
             >
-              <Header account={account} name={mainAccount.name} />
+              <Header account={account} />
               <Box flex="12%">
                 <div>
                   <AccountSyncStatusIndicator accountId={mainAccount.id} account={account} />
@@ -274,20 +273,21 @@ class AccountRowItem extends PureComponent<Props, State> {
                 <TokenBarIndicator onClick={this.toggleAccordion} />
                 <TokenContent>
                   {tokens &&
-                    tokens.map((token, index) => (
+                    tokens.map(token => (
                       <AccountContextMenu
                         key={token.id}
                         account={token}
                         parentAccount={mainAccount}
                       >
-                        <TokenRow
-                          nested
-                          index={index}
-                          range={range}
-                          account={token}
-                          parentAccount={mainAccount}
-                          onClick={onClick}
-                        />
+                        {!!mainAccount && (
+                          <TokenRow
+                            nested
+                            range={range}
+                            account={token}
+                            parentAccount={mainAccount}
+                            onClick={onClick}
+                          />
+                        )}
                       </AccountContextMenu>
                     ))}
                 </TokenContent>
@@ -326,5 +326,7 @@ class AccountRowItem extends PureComponent<Props, State> {
 const mapStateToProps = createStructuredSelector({
   hideEmptyTokenAccounts: hideEmptyTokenAccountsSelector,
 });
-const ConnectedAccountRowItem: React$ComponentType<{}> = connect(mapStateToProps)(AccountRowItem);
+const ConnectedAccountRowItem: React.ComponentType<Props> = connect(mapStateToProps)(
+  AccountRowItem,
+);
 export default ConnectedAccountRowItem;

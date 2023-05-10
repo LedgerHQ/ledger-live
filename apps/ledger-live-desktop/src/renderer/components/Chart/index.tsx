@@ -33,34 +33,61 @@
  */
 
 import React, { useRef, useLayoutEffect, useState, useMemo } from "react";
-import ChartJs from "chart.js";
+import ChartJs, { ChartColor, ChartData, ChartOptions, ChartTooltipModel } from "chart.js";
 import styled from "styled-components";
 import Color from "color";
 import moment from "moment";
 import useTheme from "~/renderer/hooks/useTheme";
 import Tooltip from "./Tooltip";
-import { Data } from "./types";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { Data, Item } from "./types";
+
 export type Props = {
   data: Data;
   magnitude: number;
   height?: number;
-  tickXScale: string;
+  tickXScale?: string;
   color?: string;
   hideAxis?: boolean;
-  renderTooltip?: Function;
-  renderTickY: (t: number) => string | number;
-  valueKey?: string;
+  renderTooltip?: (data: Item) => React.ReactNode;
+  renderTickY: (t: string | number) => string | number;
+  valueKey?: "value" | "countervalue";
   suggestedMin?: number;
   suggestedMax?: number;
 };
-const ChartContainer: ThemedComponent<{}> = styled.div.attrs(({ height }) => ({
+
+const ChartContainer = styled.div.attrs<{
+  height?: number;
+}>(({ height }) => ({
   style: {
     height,
   },
-}))`
+}))<{
+  height?: number;
+}>`
   position: relative;
 `;
+
+export function genericBackgroundColor(color: string | undefined) {
+  return ({ chart }: { chart?: ChartJs }): ChartColor => {
+    const ctx = chart?.ctx;
+    if (!ctx) return "";
+    const gradient = ctx?.createLinearGradient(0, 0, 0, (chart.height || 0) / 1.2);
+    gradient?.addColorStop(
+      0,
+      Color(color)
+        .alpha(0.4)
+        .toString(),
+    );
+    gradient?.addColorStop(
+      1,
+      Color(color)
+        .alpha(0.0)
+        .toString(),
+    );
+    return gradient;
+  };
+}
+
 export default function Chart({
   magnitude,
   height,
@@ -71,25 +98,19 @@ export default function Chart({
   renderTooltip,
   valueKey = "value",
   suggestedMin,
-  suggestedMax,
 }: Props) {
-  const canvasRef = useRef(null);
-  const chartRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const chartRef = useRef<ChartJs | null>(null);
   const theme = useTheme("colors.palette");
-  const [tooltip, setTooltip] = useState();
+  const [tooltip, setTooltip] = useState<ChartTooltipModel>();
   const valueKeyRef = useRef(valueKey);
-  const generatedData = useMemo(
-    () => ({
+  const generatedData = useMemo(() => {
+    const chartData: ChartData = {
       datasets: [
         {
           label: "all accounts",
           borderColor: color,
-          backgroundColor: ({ chart }) => {
-            const gradient = chart.ctx.createLinearGradient(0, 0, 0, chart.height / 1.2);
-            gradient.addColorStop(0, Color(color).alpha(0.4));
-            gradient.addColorStop(1, Color(color).alpha(0.0));
-            return gradient;
-          },
+          backgroundColor: genericBackgroundColor(color),
           pointRadius: 0,
           borderWidth: 2,
           data: data.map((d, i) => ({
@@ -111,10 +132,10 @@ export default function Chart({
           })),
         },
       ],
-    }),
-    [color, data, valueKey, tickXScale],
-  );
-  const generateOptions = useMemo(
+    };
+    return chartData;
+  }, [color, data, valueKey, tickXScale]);
+  const generateOptions: ChartOptions = useMemo(
     () => ({
       animation: {
         duration: 0,
@@ -196,10 +217,11 @@ export default function Chart({
         valueKeyRef.current = valueKey;
         shouldAnimate = true;
       }
+      if (!chartRef.current.data.datasets || !generatedData.datasets) return;
       chartRef.current.data.datasets[0].data = generatedData.datasets[0].data;
       chartRef.current.options = generateOptions;
-      chartRef.current.update(shouldAnimate ? 500 : 0);
-    } else {
+      chartRef.current.update({ duration: shouldAnimate ? 500 : 0 });
+    } else if (canvasRef.current) {
       chartRef.current = new ChartJs(canvasRef.current, {
         type: "line",
         data: generatedData,

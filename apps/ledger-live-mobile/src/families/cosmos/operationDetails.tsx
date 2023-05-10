@@ -49,9 +49,9 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
-  const currencyName = account.currency.name.toLowerCase();
+  const currencyId = account.currency.id;
   const { validators: cosmosValidators } =
-    useCosmosFamilyPreloadData(currencyName);
+    useCosmosFamilyPreloadData(currencyId);
   const redirectAddressCreator = useCallback(
     address => () => {
       const url = getAddressExplorer(

@@ -38,7 +38,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
       <OldButton flexDirection="row" py={1} onClick={handleClick}>
         <Flex flex={1} mr={3} alignItems="center">
           <Box
-            bg={flagValue?.enabled ? "success.c100" : "error.c100"}
+            bg={flagValue?.enabled ? "success.c50" : "error.c50"}
             height={10}
             width={10}
             mr={2}

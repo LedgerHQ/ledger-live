@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemeProvider } from "styled-components";
+import { DefaultTheme, ThemeProvider } from "styled-components";
 import theme, { colors } from "~/renderer/styles/theme";
 import palette from "~/renderer/styles/palettes";
 import "~/renderer/i18n/init";
@@ -10,14 +10,14 @@ import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 // Like App except it just render an error
 
 const themePalette = palette.light;
-const lightLiveTheme = {
+const lightLiveTheme: DefaultTheme = ({
   ...theme,
   colors: {
     ...colors,
     palette: themePalette,
   },
-};
-const App = ({ language, error }: { error: Error; language: string }) => (
+} as unknown) as DefaultTheme;
+const App = ({ error }: { error: Error }) => (
   <LiveStyleSheetManager>
     <ThemeProvider theme={lightLiveTheme}>
       <RenderError withoutAppData error={error}>

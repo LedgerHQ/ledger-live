@@ -5,13 +5,12 @@ import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { localeSelector } from "~/renderer/reducers/settings";
-const Wrapper: ThemedComponent<any> = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
   p: 5,
@@ -21,7 +20,6 @@ const Wrapper: ThemedComponent<any> = styled(Box).attrs(() => ({
 `;
 const BalanceDetail = styled(Box).attrs(() => ({
   flex: 1.25,
-  vertical: true,
   alignItems: "start",
 }))`
   &:nth-child(n + 3) {
@@ -50,7 +48,7 @@ type Props = {
   account: any;
   countervalue: any;
 };
-const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
+const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   if (!account.tronResources) return null;

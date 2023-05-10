@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import styled, { css, keyframes } from "styled-components";
 import { Trans } from "react-i18next";
-import { Transition, TransitionGroup } from "react-transition-group";
+import { Transition, TransitionGroup, TransitionStatus } from "react-transition-group";
 import manager from "@ledgerhq/live-common/manager/index";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -9,7 +9,6 @@ import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Icons } from "@ledgerhq/react-ui";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import ByteSize from "~/renderer/components/ByteSize";
 import { rgba } from "~/renderer/styles/helpers";
 import Text from "~/renderer/components/Text";
@@ -29,6 +28,8 @@ import blue from "~/renderer/images/devices/blue.png";
 import CustomImageManagerButton from "./CustomImageManagerButton";
 import DeviceLanguage from "./DeviceLanguage";
 import DeviceName from "./DeviceName";
+import { Device, DeviceModel } from "@ledgerhq/types-devices";
+
 const illustrations = {
   nanoS: {
     light: nanoS,
@@ -51,12 +52,17 @@ const illustrations = {
     dark: blue,
   },
 };
-export const DeviceIllustration: ThemedComponent<{}> = styled.img.attrs(p => ({
+
+export const DeviceIllustration = styled.img.attrs<{
+  deviceModel: DeviceModel;
+}>(p => ({
   src:
-    illustrations[process.env.OVERRIDE_MODEL_ID || p.deviceModel.id][
-      p.theme.colors.palette.type || "light"
-    ],
-}))`
+    illustrations[
+      (process.env.OVERRIDE_MODEL_ID || p.deviceModel.id) as keyof typeof illustrations
+    ][p.theme.colors.palette.type || "light"],
+}))<{
+  deviceModel: DeviceModel;
+}>`
   position: absolute;
   top: 0;
   left: 50%;
@@ -94,6 +100,7 @@ const Info = styled.div`
     margin-right: 30px;
   }
 `;
+
 const blinkOpacity = keyframes`
 	0% {
 		opacity: 0.6;
@@ -105,9 +112,8 @@ const blinkOpacity = keyframes`
 		opacity: 0.6;
 	}
 `;
-const StorageBarWrapper: ThemedComponent<{
-  installing: boolean;
-}> = styled.div`
+
+const StorageBarWrapper = styled.div`
   width: 100%;
   border-radius: 3px;
   height: 23px;
@@ -124,13 +130,14 @@ const StorageBarGraph = styled.div`
   transform-origin: left;
   animation: ${p => p.theme.animations.fadeInGrowX};
 `;
+
 const transitionStyles = {
   entering: () => ({
     opacity: 0,
     flexBasis: 0,
     flexGrow: 0,
   }),
-  entered: flexBasis => ({
+  entered: (flexBasis: string) => ({
     opacity: 1,
     flexBasis,
   }),
@@ -147,14 +154,18 @@ const transitionStyles = {
 };
 
 /** each device storage bar will grow of 0.5% if the space is available or just fill its given percent basis if the bar is filled */
-const StorageBarItem: ThemedComponent<{
+const StorageBarItem = styled.div.attrs<{
+  installing?: boolean;
+  state: TransitionStatus;
   ratio: number;
-}> = styled.div.attrs(props => ({
+}>(props => ({
   style: {
     backgroundColor: props.installing ? props.theme.colors.palette.text.shade30 : props.color,
-    ...transitionStyles[props.state](`${(props.ratio * 1e2).toFixed(3)}%`),
+    ...transitionStyles[props.state as keyof typeof transitionStyles](
+      `${(props.ratio * 1e2).toFixed(3)}%`,
+    ),
   },
-}))`
+}))<{ installing?: boolean; state: TransitionStatus; ratio: number }>`
   display: flex;
   flex: 0.005 0 0;
   background-color: black;
@@ -176,14 +187,14 @@ const StorageBarItem: ThemedComponent<{
     width: 100%;
   }
 `;
-const FreeInfo = styled.div`
+const FreeInfo = styled.div<{ danger?: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
   color: ${p => (p.danger ? p.theme.colors.warning : p.theme.colors.palette.text.shade100)};
 `;
-const TooltipContentWrapper: ThemedComponent<{}> = styled.div`
+const TooltipContentWrapper = styled.div`
   & > :nth-child(1) {
     color: ${p => rgba(p.theme.colors.palette.background.paper, 0.7)};
     text-align: center;
@@ -208,12 +219,7 @@ const TooltipContent = ({
   <TooltipContentWrapper>
     <Text>{name}</Text>
     <Text>
-      <ByteSize
-        value={bytes}
-        deviceModel={deviceModel}
-        firmwareVersion={deviceInfo.version}
-        formatFunction={Math.ceil}
-      />
+      <ByteSize value={bytes} deviceModel={deviceModel} firmwareVersion={deviceInfo.version} />
     </Text>
   </TooltipContentWrapper>
 );
@@ -228,7 +234,7 @@ const getAppStorageBarColor = ({
 }: {
   currency: CryptoCurrency | undefined | null;
   name: string;
-}) => (name in appDataColors ? appDataColors[name] : currency?.color);
+}) => (name in appDataColors ? appDataColors[name as keyof typeof appDataColors] : currency?.color);
 export const StorageBar = ({
   deviceInfo,
   distribution,
@@ -236,7 +242,6 @@ export const StorageBar = ({
   isIncomplete,
   installQueue,
   uninstallQueue,
-  jobInProgress,
 }: {
   deviceInfo: DeviceInfo;
   distribution: AppsDistribution;
@@ -244,12 +249,11 @@ export const StorageBar = ({
   isIncomplete: boolean;
   installQueue: string[];
   uninstallQueue: string[];
-  jobInProgress: boolean;
 }) => (
-  <StorageBarWrapper installing={jobInProgress}>
+  <StorageBarWrapper>
     {!isIncomplete && (
       <TransitionGroup component={StorageBarGraph}>
-        {distribution.apps.map(({ name, currency, bytes, blocks }, index) => (
+        {distribution.apps.map(({ name, currency, bytes, blocks }) => (
           <Transition
             timeout={{
               appear: 333,
@@ -289,7 +293,7 @@ export const StorageBar = ({
 );
 type Props = {
   deviceModel: DeviceModel;
-  deviceInfo: DeviceInfo;
+  deviceInfo: DeviceInfo & { languageId: number };
   deviceName: string;
   device: Device;
   distribution: AppsDistribution;
@@ -297,7 +301,6 @@ type Props = {
   isIncomplete: boolean;
   installQueue: string[];
   uninstallQueue: string[];
-  jobInProgress: boolean;
   firmware: FirmwareUpdateContext | undefined | null;
 };
 const DeviceStorage = ({
@@ -310,7 +313,6 @@ const DeviceStorage = ({
   isIncomplete,
   installQueue,
   uninstallQueue,
-  jobInProgress,
   firmware,
 }: Props) => {
   const shouldWarn = distribution.shouldWarnMemory || isIncomplete;
@@ -357,7 +359,7 @@ const DeviceStorage = ({
                   {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
                 </Text>
                 <Flex ml={2} flexDirection="row">
-                  <Icons.CircledCheckSolidMedium size={22} color="success.c100" />
+                  <Icons.CircledCheckSolidMedium size={22} color="success.c50" />
                   <Text ff="Inter|SemiBold" color="palette.text.shade80" ml={1} fontSize={4}>
                     <Trans i18nKey="manager.deviceStorage.genuine" />
                   </Text>
@@ -375,7 +377,6 @@ const DeviceStorage = ({
                     deviceModel={deviceModel}
                     value={distribution.totalAppsBytes}
                     firmwareVersion={deviceInfo.version}
-                    formatFunction={Math.ceil}
                   />
                 </Text>
               </div>
@@ -388,7 +389,6 @@ const DeviceStorage = ({
                     deviceModel={deviceModel}
                     value={distribution.appsSpaceBytes}
                     firmwareVersion={deviceInfo.version}
-                    formatFunction={Math.floor}
                   />
                 </Text>
               </div>
@@ -418,7 +418,6 @@ const DeviceStorage = ({
                             value={distribution.freeSpaceBytes}
                             deviceModel={deviceModel}
                             firmwareVersion={deviceInfo.version}
-                            formatFunction={Math.floor}
                           />
                           {"free"}
                         </Trans>
@@ -437,7 +436,6 @@ const DeviceStorage = ({
               isIncomplete={isIncomplete}
               installQueue={installQueue}
               uninstallQueue={uninstallQueue}
-              jobInProgress={jobInProgress}
             />
           </div>
           <Flex

@@ -4,11 +4,12 @@ import { useSelector } from "react-redux";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import FormattedVal from "~/renderer/components/FormattedVal";
+import FormattedVal, { OwnProps as FormattedValProps } from "~/renderer/components/FormattedVal";
 import ToolTip from "./Tooltip";
 import { Trans } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
 import { addExtraSessionTrackingPair, useTrackingPairs } from "../actions/general";
+
 type Props = {
   // wich market to query
   currency: Currency;
@@ -26,15 +27,16 @@ type Props = {
   placeholderStyle?: {
     [key: string]: string | number;
   };
-};
+} & Partial<FormattedValProps>;
+
 export const NoCountervaluePlaceholder = ({
   placeholder,
   style = {},
 }: {
   placeholder?: React.ReactNode;
-  style?: any;
+  style?: React.CSSProperties;
 }) => {
-  const colors = useTheme("colors");
+  const colors = useTheme().colors;
   return (
     <div
       style={{
@@ -74,18 +76,14 @@ export default function CounterValue({
     [counterValueCurrency, currency, trackingPairs],
   );
   useEffect(() => {
-    let t;
     if (!hasTrackingPair) {
       addExtraSessionTrackingPair({
         from: currency,
         to: counterValueCurrency,
       });
-      t = setTimeout(cvPolling.poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
+      const t = setTimeout(cvPolling.poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
+      return () => clearTimeout(t);
     }
-
-    return () => {
-      if (t) clearTimeout(t);
-    };
   }, [counterValueCurrency, currency, cvPolling, cvPolling.poll, hasTrackingPair, trackingPairs]);
   const countervalue = useCalculate({
     from: currency,

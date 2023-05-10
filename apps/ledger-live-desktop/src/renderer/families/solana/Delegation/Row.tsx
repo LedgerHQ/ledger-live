@@ -20,9 +20,8 @@ import CheckCircle from "~/renderer/icons/CheckCircle";
 import ChevronRight from "~/renderer/icons/ChevronRight";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import Loader from "~/renderer/icons/Loader";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { TableLine } from "./Header";
-const Wrapper: ThemedComponent<any> = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -45,7 +44,7 @@ const Column: ThemedComponent<{
     `
       : ``}
 `;
-const Ellipsis: ThemedComponent<{}> = styled.div`
+const Ellipsis = styled.div`
   flex: 1;
   display: block;
   overflow: hidden;
@@ -146,7 +145,7 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
       <Column>{formatAmount(stake.withdrawable)}</Column>
       <Column>
         <DropDown items={stakeActions} renderItem={ManageDropDownItem} onChange={onSelect}>
-          {({ isOpen, value }) => {
+          {() => {
             return (
               <Box flex horizontal alignItems="center">
                 <Trans i18nKey="common.manage" />
