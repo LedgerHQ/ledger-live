@@ -39,13 +39,13 @@ type SelectFeeStrategy = FeeStrategy & {
 
 type Props = {
   strategies: SelectFeeStrategy[];
+  disabledStrategies?: string[];
   account: AccountLike;
   parentAccount?: Account | null;
   transaction: Transaction;
   onStrategySelect: (stategy: SelectFeeStrategy) => void;
   onCustomFeesPress: TouchableOpacityProps["onPress"];
   forceUnitLabel?: boolean | React.ReactNode;
-  disabledStrategies?: Array<string>;
 };
 
 const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
