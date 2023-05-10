@@ -77,7 +77,7 @@ const BleDevicePairing = ({
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
-              borderColor={colors.opacityDefault.c05}
+              borderColor="none"
               iconSize={32}
               iconColor={colors.success.c50}
             />
@@ -163,7 +163,7 @@ const BleDevicePairing = ({
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
-              borderColor={colors.opacityDefault.c05}
+              borderColor="none"
               iconSize={32}
               iconColor={colors.error.c60}
             />
@@ -197,7 +197,7 @@ const BleDevicePairing = ({
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
-              borderColor={colors.opacityDefault.c05}
+              borderColor="none"
               iconSize={32}
               iconColor={colors.success.c50}
             />
