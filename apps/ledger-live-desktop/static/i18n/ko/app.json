@@ -221,7 +221,7 @@
     "lend" : "대출",
     "catalog" : "탐색",
     "market" : "마켓",
-    "protect" : "복구"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
@@ -1759,7 +1759,8 @@
     "loading" : "로딩...",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
     "unlockDevice" : "장치를 잠금 해제하세요",
-    "unlockDeviceAfterFirmwareUpdate" : "펌웨어 업데이트를 기다려 PIN으로 장치를 잠금 해제해 보세요",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "{{productName}}에 설치를 완료할 때까지 기다려주세요",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "{{productName}}의 잠금을 해제해 설치를 완료하세요",
     "quitApp" : "장치에서 앱을 중단하세요",
     "appNotInstalledTitle" : "필수 앱 없음",
     "appNotInstalledTitle_plural" : "필수 앱 없음",
@@ -1824,9 +1825,8 @@
       "installed" : "앱",
       "capacity" : "용량",
       "used" : "사용됨",
-      "firmwareAvailable" : "오래된 펌웨어:",
-      "firmwareUpToDate" : "펌웨어가 최신입니다:",
-      "genuine" : "귀하의 장치는 정품입니다",
+      "OSVersion" : "OS 버전",
+      "genuine" : "정품 장치입니다",
       "incomplete" : "일부 앱이 인식되지 않았습니다. 제거 후 다시 설치하세요."
     },
     "applist" : {
@@ -1918,7 +1918,7 @@
       "dontHaveSeed" : "복구 문구가 없나요? ",
       "followTheGuide" : "단계별 업데이트 가이드를 따르세요",
       "removeApps" : "모든 앱을 삭제하고 업데이트하세요",
-      "update" : "펌웨어 업데이트",
+      "update" : "{{productName}} 업데이트",
       "updateBtn" : "펌웨어를 업데이트하세요",
       "banner" : {
         "warning" : "펌웨어 {{latestFirmware}}으로 업데이트하실 수 있습니다",
@@ -1933,12 +1933,17 @@
       "contactSupport" : "지원 부서 연락",
       "deprecated" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
       "prepareSeed" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용 가능한 상태로 준비해 두세요.",
-      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다.",
-      "downloadingUpdateDesc" : "업데이트 설치자가 다운로드될 때까지 기다려 주세요"
+      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다."
     },
     "modal" : {
+      "title" : "{{productName}} 업데이트",
       "steps" : {
-        "downloadingUpdate" : "업데이트 다운로드 중",
+        "preparingUpdate" : "업데이트 준비 중",
+        "transferringUpdate" : "{{productName}}에 업데이트 전송 중",
+        "prepare" : "업데이트 준비",
+        "install" : "업데이트 설치",
+        "restore" : "설정 복원",
+        "apps" : "앱 복원",
         "updateMCU" : "펌웨어 업데이트",
         "updating" : "펌웨어 업데이트",
         "reset" : "장치를 준비합니다",
@@ -1949,9 +1954,8 @@
         "flash" : "장치 준비 중..."
       },
       "confirmIdentifier" : "식별자 확인",
-      "confirmIdentifierText" : "장치의 식별자가 아래 식별자와 동일한지 확인하세요. 요청 받은 경우 PIN 코드를 확인하여 입력하세요",
+      "confirmIdentifierText" : "{{productName}}에 설치 확인",
       "identifier" : "식별자",
-      "preparation" : "준비",
       "newFirmware" : "새 펌웨어 {{version}}",
       "confirmUpdate" : "장치에서 업데이트를 확인하세요",
       "mcuTitle" : "업데이트 마무리",
@@ -1961,7 +1965,7 @@
       "mcuSecondNanoX" : "<1><0>{{bootloaderOption}}</0></1>이 표시될 때까지 왼쪽 버튼을 길게 누르세요. 버튼 두 개를 모두 눌러 장치를 확인하고 재연결하세요.",
       "mcuBlueFirst" : "측면 버튼을 10초간 길게 눌러 장치를 끄세요. 버튼에서 손을 떼세요.",
       "mcuBlueSecond" : "부팅 옵션이 표시될 때까지 버튼을 5초 이상 누르세요. Bootloader 모드 탭",
-      "successTitle" : "펌웨어 업데이트됨",
+      "successTitle" : "OS 업데이트 정상 완료.",
       "successTextApps" : "장치에 앱을 다시 설치하세요",
       "successTextNoApps" : "이제 장치에 앱을 설치할 수 있습니다",
       "sucessCTAApps" : "앱 재설치",
@@ -2271,10 +2275,9 @@
   },
   "deviceLocalization" : {
     "language" : "언어",
-    "deviceLanguage" : "언어",
+    "deviceLanguage" : "장치 언어 변경",
     "changeLanguage" : "언어 변경",
     "changeDeviceLanguage" : "장치 언어를 변경하시겠습니까?",
-    "chooseLanguage" : "{{deviceName}}의 언어를 선택하세요.",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{deviceName}}에서 {{language}}도 지원됩니다",
       "description" : "언어를 {{language}}로 변경하시겠습니까?"
@@ -4226,6 +4229,10 @@
           "3" : {
             "title" : "새 장치에서 복구 문구를 복원하세요",
             "description" : "기존 복구 문구를 사용하여 새 Nano에서 개인 키를 복구하세요!"
+          },
+          "4" : {
+            "title" : "Ledger Recover를 이용한 복구",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4378,25 @@
             "help" : {
               "help" : "도움 요청",
               "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "\"Ledger Recover로 복구\"를 선택합니다.",
+            "1" : {
+              "title" : "'복구'를 선택합니다",
+              "descr" : "두 버튼을 동시에 눌러 선택하세요."
+            },
+            "2" : {
+              "title" : "\"Ledger Recover로 복구\"를 선택합니다."
+            },
+            "help" : {
+              "iDontSee" : "'Ledger Recover로 복구' 메뉴가 보이지 않습니다.",
+              "modal" : {
+                "title" : "Ledger Nano X의 OS를 업데이트해야 합니다.",
+                "subtitle" : " OS를 업데이트하거나 Ledger 지원 부서로 문의해주세요.",
+                "learnHowToUpdate" : "업데이트 방법 알아보기",
+                "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5602,11 +5628,11 @@
       "description" : "다른 이미지로 다시 시도하세요"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "장치에서 이미지 커밋이 거부됨(할 일: 최종 문구)",
+      "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "장치에서 이미지 로드가 거부됨(할 일: 최종 문구)",
+      "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
     },
     "NearNewAccountWarning" : {
@@ -5710,9 +5736,11 @@
         "stepLabel" : "전송",
         "uploadAnotherImage" : "다른 이미지 업로드",
         "allowPreview" : "잠금 화면 사진이 {{productName}}에 로드되도록 허용하세요",
+        "allowConfirmPreview" : "{{productName}}에서 잠금 화면 이미지 복원 허용",
         "loadingPicture" : "로딩 중...",
         "imageLoaded" : "{{productName}}에서 로드한 이미지",
         "confirmPicture" : "마음에 드시나요?\n그러면 저장하세요!",
+        "confirmRestorePicture" : "잠금 화면 이미지 복원 확인",
         "doThisLater" : "다음에 결정하기"
       }
     },
