@@ -1,11 +1,5 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useMemo } from "react";
-
-function useReplacedURI(uri?: string, id?: string) {
-  return useMemo(() => {
-    return uri && id ? uri.replace("protect-simu", id) : undefined;
-  }, [id, uri]);
-}
+import { useReplacedURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 
 export function usePostOnboardingURI(): string | undefined {
   const servicesConfig = useFeature("protectServicesMobile");
