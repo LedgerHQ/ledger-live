@@ -62,6 +62,13 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
     },
     [account],
   );
+  const formatValidatorName = (validatorAddress: string) => {
+    const relatedValidator = cosmosValidators.find(
+      v => v.validatorAddress === validatorAddress,
+    );
+    return relatedValidator ? relatedValidator.name : validatorAddress;
+  };
+
   let ret = null;
 
   switch (type) {
@@ -192,21 +199,30 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
 
     case "REWARD": {
       const { validators } = extra;
-      if (!validators || validators.length <= 0) break;
-      const validator = extra.validators[0];
-      const formattedValidator = cosmosValidators.find(
-        v => v.validatorAddress === validator.address,
-      );
+      if (validators == null || validators.length <= 0) break;
       ret = (
-        <>
-          <Section
-            title={t("operationDetails.extra.rewardFrom")}
-            value={formattedValidator?.name ?? validator.address}
-            onPress={() => {
-              redirectAddressCreator(validator.address);
-            }}
-          />
-        </>
+        <React.Fragment>
+          {validators.map(v => (
+            <Section
+              key={v.address}
+              title={t("operationDetails.extra.rewardFrom")}
+              value={
+                formatValidatorName(v.address) +
+                " " +
+                formatCurrencyUnit(unit, BigNumber(v.amount), {
+                  disableRounding: true,
+                  alwaysShowSign: false,
+                  showCode: true,
+                  discreet,
+                  locale,
+                })
+              }
+              onPress={() => {
+                redirectAddressCreator(v.address);
+              }}
+            />
+          ))}
+        </React.Fragment>
       );
       break;
     }

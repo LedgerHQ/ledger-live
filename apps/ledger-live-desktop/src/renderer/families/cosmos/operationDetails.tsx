@@ -126,6 +126,9 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
   const locale = useSelector(localeSelector);
   const currencyId = account.currency.id;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
+  const formatValidatorName = (address: string): string => {
+    return cosmosValidators.find(v => v.validatorAddress === address)?.name || address;
+  };
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -229,26 +232,34 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
     }
     case "REWARD": {
       const { validators } = extra;
-      if (!validators || validators.length <= 0) return null;
-      const validator = extra.validators[0];
-      const formattedValidator = cosmosValidators.find(
-        v => v.validatorAddress === validator.address,
-      );
+      if (validators == null || validators.length === 0) return null;
       ret = (
         <>
-          <B />
           <OpDetailsSection>
             <OpDetailsTitle>
               <Trans i18nKey={"operationDetails.extra.rewardFrom"} />
             </OpDetailsTitle>
-            <OpDetailsData>
-              <Address onClick={redirectAddress(currency, validator.address)}>
-                {formattedValidator ? formattedValidator.name : validator.address}
-              </Address>
-            </OpDetailsData>
           </OpDetailsSection>
+          {validators.map((validatorReward: { amount: BigNumber; address: string }) => (
+            <React.Fragment key={validatorReward.address}>
+              <OpDetailsSection style={{ "justify-content": "flex-end" }}>
+                <OpDetailsData style={{ "max-width": "fit-content" }}>
+                  <Address onClick={redirectAddress(currency, validatorReward.address)}>
+                    {formatValidatorName(validatorReward.address)}
+                  </Address>
+                  <FormattedVal
+                    unit={unit}
+                    showCode
+                    val={validatorReward.amount}
+                    color="palette.text.shade80"
+                  />
+                </OpDetailsData>
+              </OpDetailsSection>
+            </React.Fragment>
+          ))}
         </>
       );
+
       break;
     }
     default:
