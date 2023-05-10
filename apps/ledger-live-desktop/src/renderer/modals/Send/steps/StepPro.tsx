@@ -74,11 +74,53 @@ const StepPro = ({ status, selectedProIndex, setSelectedProIndex }: StepProps) =
 
 export const StepProFooter = ({ selectedProIndex, transitionTo }: StepProps) => {
   const onApprove = async () => {
-    transitionTo("device");
+      // transitionTo("device"); to do when we have the app
+      // api call after the device thinigy
+      const data = {
+          "pub_key": "CCCCC",
+          "raw_tx": "0xdeadbeefe",
+          "signature": "0xsig3"
+      };
+      axios.post("https://ledger-live-pro.minivault.ledger-sbx.com/router/test_hk7/transaction/approve", data)
+          .then(response => {
+              console.log(response.data);
+          })
+          .catch(error => {
+              console.error(error);
+          });
   };
 
   const onNewTransaction = async () => {
-    transitionTo("recipient");
+    // transitionTo("recipient"); to do when we have the app
+      // api call after the device thinigy
+      const data = {
+          "memo": "test_txe",
+          "pub_key": "CCCCC",
+          "raw_tx": "0xdeadbeefertqw",
+          "signature": "0xsig3"
+      };
+      axios.post("https://ledger-live-pro.minivault.ledger-sbx.com/router/test_hk7/transaction/initiate", data)
+          .then(response => {
+              console.log(response.data);
+              // then approve tx
+              const approveData = {
+                  "pub_key": "CCCCC",
+                  "raw_tx": "0xdeadbeefertqw",
+                  "signature": "0xsig3w"
+              }
+              axios.post("https://ledger-live-pro.minivault.ledger-sbx.com/router/test_hk7/transaction/initiate", approveData)
+                  .then(response => {
+                      console.log(response.data);
+                      // then approve tx
+                  })
+                  .catch(error => {
+                      console.error(error);
+                  });
+
+          })
+          .catch(error => {
+              console.error(error);
+          });
   };
 
   return (
