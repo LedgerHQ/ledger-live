@@ -221,7 +221,7 @@
     "lend" : "借出",
     "catalog" : "发现",
     "market" : "市场",
-    "protect" : "恢复"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "星标账户以在此显示。",
@@ -1759,7 +1759,8 @@
     "loading" : "正在加载……",
     "connectAndUnlockDevice" : "连接并解锁您的设备",
     "unlockDevice" : "解锁您的设备",
-    "unlockDeviceAfterFirmwareUpdate" : "等待固件更新并使用您的 PIN 识别密码解锁您的设备",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "等待在 {{productName}} 上完成安装",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "解锁 {{productName}} 以完成安装",
     "quitApp" : "在您的设备上退出该应用程序",
     "appNotInstalledTitle" : "缺少所需的应用程序",
     "appNotInstalledTitle_plural" : "缺少所需的应用程序",
@@ -1824,9 +1825,8 @@
       "installed" : "应用程序",
       "capacity" : "容量",
       "used" : "已用",
-      "firmwareAvailable" : "固件版本过期：",
-      "firmwareUpToDate" : "固件为最新版本：",
-      "genuine" : "您的设备是正版的",
+      "OSVersion" : "操作系统版本",
+      "genuine" : "设备是正版的",
       "incomplete" : "部分应用程序没有被识别。请卸载并重新安装。"
     },
     "applist" : {
@@ -1918,7 +1918,7 @@
       "dontHaveSeed" : "没有您的恢复短语？ ",
       "followTheGuide" : "请按照我们的更新指南的步骤操作",
       "removeApps" : "更新前卸载所有应用程序",
-      "update" : "固件更新",
+      "update" : "更新 {{productName}}",
       "updateBtn" : "更新固件",
       "banner" : {
         "warning" : "可将固件更新到 {{latestFirmware}} 版本",
@@ -1933,12 +1933,17 @@
       "contactSupport" : "联系客服",
       "deprecated" : "设备固件版本太旧而无法更新。请联系 Ledger 客服以获取替代版本。",
       "prepareSeed" : "预防起见，请确保将您的 24 词恢复短语写在所提供的恢复表中。",
-      "disclaimerTitle" : "您即将安装 <1>固件版本 {{version}}</1>。",
-      "downloadingUpdateDesc" : "请等待更新安装程序下载"
+      "disclaimerTitle" : "您即将安装 <1>固件版本 {{version}}</1>。"
     },
     "modal" : {
+      "title" : "更新 {{productName}}",
       "steps" : {
-        "downloadingUpdate" : "正在下载更新",
+        "preparingUpdate" : "正在准备更新",
+        "transferringUpdate" : "正在向 {{productName}} 传输更新",
+        "prepare" : "准备更新",
+        "install" : "安装更新",
+        "restore" : "恢复设置",
+        "apps" : "恢复应用程序",
         "updateMCU" : "固件更新",
         "updating" : "固件更新",
         "reset" : "准备设备",
@@ -1949,9 +1954,8 @@
         "flash" : "正在准备您的设备……"
       },
       "confirmIdentifier" : "验证标识符",
-      "confirmIdentifierText" : "请确认您设备上的标识符和下方的标识符一致。如果需要，请确认并输入您的 PIN 识别密码。",
+      "confirmIdentifierText" : "在 {{productName}} 上确认安装",
       "identifier" : "标识符",
-      "preparation" : "准备工作",
       "newFirmware" : "新固件 {{version}}",
       "confirmUpdate" : "请在您的设备上确认更新",
       "mcuTitle" : "完成更新",
@@ -1961,7 +1965,7 @@
       "mcuSecondNanoX" : "长按左键，直到 <1><0>{{bootloaderOption}}</0></1> 显示出来。同时按下两个按钮来确认并重新连接您的设备。",
       "mcuBlueFirst" : "持续按住设备侧面按钮10秒来关闭设备。松开按钮。",
       "mcuBlueSecond" : "持续按住设备侧面按钮至少5秒直至设备显示 Boot Options（启动选项）。轻击 Bootloader Mode（启动装载模式）。",
-      "successTitle" : "固件已更新",
+      "successTitle" : "操作系统更新成功。",
       "successTextApps" : "请在设备上重新安装应用程序",
       "successTextNoApps" : "您现在可以在您的设备上安装应用程序",
       "sucessCTAApps" : "重新安装应用程序",
@@ -2271,10 +2275,9 @@
   },
   "deviceLocalization" : {
     "language" : "语言",
-    "deviceLanguage" : "语言",
+    "deviceLanguage" : "更改设备语言",
     "changeLanguage" : "更改语言",
     "changeDeviceLanguage" : "要更改您的设备语言？",
-    "chooseLanguage" : "为您的 {{deviceName}} 选择语言。",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}}同样适用于您的 {{deviceName}}",
       "description" : "是否要将语言更改为{{language}}？"
@@ -4226,6 +4229,10 @@
           "3" : {
             "title" : "在新设备上还原您的恢复短语",
             "description" : "在新的 Nano 设备上使用现有的恢复短语来还原您的私钥！"
+          },
+          "4" : {
+            "title" : "使用 Ledger Recover 恢复",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4378,25 @@
             "help" : {
               "help" : "需要帮助",
               "descr" : "不知道如何操作？获取完成此步骤的帮助。"
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "选择“使用 Ledger Recover 重置”",
+            "1" : {
+              "title" : "选择“重置”",
+              "descr" : "同时按下两个按钮进行选择。"
+            },
+            "2" : {
+              "title" : "选择“使用 Ledger Recover 重置”"
+            },
+            "help" : {
+              "iDontSee" : "我没有看到“使用 Ledger Recover 重置”",
+              "modal" : {
+                "title" : "Ledger Nano X 的操作系统需要更新",
+                "subtitle" : " 您可以尝试更新操作系统或联系 Ledger 客服寻求帮助。",
+                "learnHowToUpdate" : "了解如何更新",
+                "contactLedgerSupport" : "联系 Ledger 客服"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5602,11 +5628,11 @@
       "description" : "请使用另一张图片重试"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "图像提交在设备上被拒绝",
+      "title" : "Ledger Stax 锁屏已取消",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "图像加载在设备上被拒绝",
+      "title" : "Ledger Stax 锁屏已取消",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
     },
     "NearNewAccountWarning" : {
@@ -5710,9 +5736,11 @@
         "stepLabel" : "转移",
         "uploadAnotherImage" : "上传另一张图片",
         "allowPreview" : "允许在您的 {{productName}} 上加载锁屏图片",
+        "allowConfirmPreview" : "允许在 {{productName}} 上恢复锁屏图片",
         "loadingPicture" : "正在加载……",
         "imageLoaded" : "图片已加载到 {{productName}}",
         "confirmPicture" : "很合心意？\n用此设定！",
+        "confirmRestorePicture" : "确认恢复锁屏图片",
         "doThisLater" : "以后再说"
       }
     },
