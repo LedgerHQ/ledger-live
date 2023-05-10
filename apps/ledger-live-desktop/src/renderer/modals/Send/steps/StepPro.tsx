@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { StepProps } from "../types";
@@ -6,6 +6,7 @@ import { Alert, Text, Divider, Flex } from "@ledgerhq/react-ui";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Label from "~/renderer/components/Label";
 import Item from "./Pro/Item";
+import axios from 'axios';
 
 const StepPro = ({ status, selectedProIndex, setSelectedProIndex }: StepProps) => {
   const wrappedOnSetSelectedProIndex = useCallback(
@@ -15,24 +16,30 @@ const StepPro = ({ status, selectedProIndex, setSelectedProIndex }: StepProps) =
     },
     [selectedProIndex, setSelectedProIndex],
   );
+
+  const [pending, setPending] = useState([]);
+
+  useEffect(() => {
+    axios.get('https://ledger-live-pro.minivault.ledger-sbx.com/router/test_hk7/dashboard')
+        .then(response => {
+          console.log(response.data);
+          const transactions = response.data["pending_transactions"];
+          const pendingTransactions = transactions.map(transaction => {
+            return {
+              memo: transaction.memo,
+              hash: transaction.raw_tx,
+              validators: [transaction.approvals.length, 3]
+            };
+          });
+          console.log(pendingTransactions);
+          setPending(pendingTransactions);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+  }, []);
+
   if (!status) return null;
-
-  // TODO query the backend for the list of pending transaction approvals.
-
-  const pending = [
-    // {
-    //   memo: "Yacine wants a new car",
-    //   memo2: "Sending 2ETH to yacine.eth",
-    //   hash: "5b62bc12aae45ed3acd0152b57516f9d",
-    //   validators: [2, 4],
-    // },
-    // {
-    //   memo: "Dany is trying to take over",
-    //   memo2: "Sending 99ETH to dany.eth",
-    //   hash: "6a4368049aa06f6746138c9f84d7b412",
-    //   validators: [1, 3],
-    // },
-  ];
 
   return (
     <Box flow={4}>
