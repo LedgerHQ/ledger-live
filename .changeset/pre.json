@@ -80,5 +80,17 @@
     "native-modules-tools": "1.0.2",
     "pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "cold-actors-invent",
+    "cold-files-punch",
+    "fluffy-pumas-brake",
+    "large-ducks-suffer",
+    "moody-rabbits-doubt",
+    "popular-nails-laugh",
+    "quiet-cherries-breathe",
+    "smooth-cooks-sort",
+    "stupid-rules-sort",
+    "sweet-masks-agree",
+    "twenty-foxes-admire"
+  ]
 }
