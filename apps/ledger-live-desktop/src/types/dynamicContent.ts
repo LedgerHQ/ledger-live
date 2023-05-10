@@ -25,6 +25,7 @@ export type ContentCard = {
   url?: string;
   path?: string;
   image?: string;
+  onClickOnSlide?: (cardId: any) => void;
 };
 
 export type PortfolioContentCard = ContentCard;
