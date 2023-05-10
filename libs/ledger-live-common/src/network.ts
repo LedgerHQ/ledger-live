@@ -28,11 +28,13 @@ export const requestInterceptor = (
   return req;
 };
 
-type Response = {
+type InterceptedResponse = {
   config: ExtendedXHRConfig;
 } & AxiosResponse<any>;
 
-export const responseInterceptor = (response: Response): Response => {
+export const responseInterceptor = (
+  response: InterceptedResponse
+): InterceptedResponse => {
   if (!getEnv("ENABLE_NETWORK_LOGS")) {
     return response;
   }
@@ -51,8 +53,12 @@ export const responseInterceptor = (response: Response): Response => {
   return response;
 };
 
-export const errorInterceptor = (error: AxiosError<any>): AxiosError<any> => {
-  const config = error?.response?.config as ExtendedXHRConfig | null;
+type InterceptedError = {
+  response?: InterceptedResponse;
+} & AxiosError<any>;
+
+export const errorInterceptor = (error: InterceptedError): InterceptedError => {
+  const config = error?.response?.config;
   if (!config) throw error;
   const { baseURL, url, method = "", metadata } = config;
   const { startTime = 0 } = metadata || {};
