@@ -12,7 +12,6 @@ import { splitTransaction } from "./splitTransaction";
 import type { Transaction } from "./types";
 export type { AddressFormat };
 import { signP2SHTransaction } from "./signP2SHTransaction";
-import { signMessage } from "./signMessage";
 import { checkIsBtcLegacy, getAppAndVersion } from "./getAppAndVersion";
 
 /**
@@ -139,9 +138,11 @@ export default class Btc {
     r: string;
     s: string;
   }> {
-    return signMessage(this._transport, {
-      path,
-      messageHex,
+    return this.changeImplIfNecessary().then((impl) => {
+      return impl.signMessage({
+        path,
+        messageHex,
+      });
     });
   }
 
