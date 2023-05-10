@@ -5,6 +5,7 @@ import Body, { Data } from "./Body";
 import { StepId } from "./types";
 type Props = {
   stepId: StepId;
+  pro?: boolean;
   onClose: () => void;
 };
 const MODAL_LOCKED: {
@@ -17,7 +18,7 @@ const MODAL_LOCKED: {
   confirmation: true,
   warning: false,
 };
-const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
+const SendModal = ({ stepId: initialStepId, onClose, pro }: Props) => {
   const [stepId, setStep] = useState(() => initialStepId || "recipient");
   const handleReset = useCallback(() => setStep("recipient"), []);
   const handleStepChange = useCallback(stepId => setStep(stepId), []);
@@ -33,6 +34,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         render={({ onClose, data }: RenderProps<Data>) => (
           <Body
             stepId={stepId}
+            pro={pro}
             onClose={onClose}
             onChangeStepId={handleStepChange}
             params={data || {}}

@@ -316,6 +316,7 @@ export function toAccountLikeRaw(accountLike: AccountLike): AccountRawLike {
 export function fromAccountRaw(rawAccount: AccountRaw): Account {
   const {
     id,
+    pro,
     seedIdentifier,
     derivationMode,
     index,
@@ -373,6 +374,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
 
   const res: Account = {
     type: "Account",
+    pro,
     id,
     starred: starred || false,
     used: false,
@@ -444,8 +446,10 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   return res;
 }
 export function toAccountRaw(account: Account): AccountRaw {
+  
   const {
     id,
+    pro,
     seedIdentifier,
     xpub,
     name,
@@ -474,8 +478,10 @@ export function toAccountRaw(account: Account): AccountRaw {
     syncHash,
     nfts,
   } = account;
+  console.log("wadus", {id, pro})
   const res: AccountRaw = {
     id,
+    pro,
     seedIdentifier,
     name,
     starred,

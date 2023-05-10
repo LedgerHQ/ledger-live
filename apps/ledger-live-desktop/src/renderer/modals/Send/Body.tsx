@@ -24,6 +24,7 @@ import StepRecipient, { StepRecipientFooter } from "./steps/StepRecipient";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConnectDevice from "./steps/StepConnectDevice";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
+import StepPro, { StepProFooter } from "./steps/StepPro";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import { St, StepId } from "./types";
@@ -32,6 +33,7 @@ export type Data = {
   account: AccountLike | undefined | null;
   parentAccount: Account | undefined | null;
   startWithWarning?: boolean;
+  pro?: boolean;
   recipient?: string;
   amount?: BigNumber;
   disableBacks?: string[];
@@ -46,6 +48,7 @@ export type Data = {
 
 type OwnProps = {
   stepId: StepId;
+  pro?: boolean;
   onChangeStepId: (a: StepId) => void;
   onClose?: () => void | undefined;
   params: Data;
@@ -65,6 +68,12 @@ const createSteps = (disableBacks: string[] = []): St[] => [
     excludeFromBreadcrumb: true,
     component: StepWarning,
     footer: StepWarningFooter,
+  },
+  {
+    id: "pro",
+    excludeFromBreadcrumb: true,
+    component: StepPro,
+    footer: StepProFooter,
   },
   {
     id: "recipient",
@@ -122,6 +131,7 @@ const Body = ({
   onChangeStepId,
   onClose,
   stepId,
+  pro,
   params,
   accounts,
   updateAccountWithUpdater,
@@ -167,8 +177,16 @@ const Body = ({
     const stepId = params && params.startWithWarning ? "warning" : null;
     if (stepId) onChangeStepId(stepId);
   }, [onChangeStepId, params]);
+
+  // make sure step id is in sync
+  useEffect(() => {
+    const stepId = params && params.pro ? "pro" : null;
+    if (stepId) onChangeStepId(stepId);
+  }, [onChangeStepId, params]);
+
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
+  const [selectedProIndex, setSelectedProIndex] = useState<number | null>(null);
   const [signed, setSigned] = useState(false);
   const currency = account ? getAccountCurrency(account) : undefined;
   const currencyName = currency ? currency.name : undefined;
@@ -254,9 +272,12 @@ const Body = ({
         ? t("common.information")
         : isNFTSend
         ? t("send.titleNft")
+        : stepId === "pro"
+        ? "Live Pro Dashboard"
         : t("send.title"),
     stepId,
     steps,
+    pro,
     errorSteps,
     device,
     openedFromAccount,
@@ -293,10 +314,13 @@ const Body = ({
     maybeNFTCollection,
     onChangeQuantities: handleChangeQuantities,
     onChangeNFT: handleChangeNFT,
+
+    selectedProIndex,
+    setSelectedProIndex,
   };
   if (!status) return null;
   return (
-    <Stepper {...stepperProps}>
+    <Stepper {...stepperProps} hideBreadcrumb={stepId === "pro"}>
       {stepId === "confirmation" ? null : <SyncSkipUnderPriority priority={100} />}
       <Track onUnmount event="CloseModalSend" />
     </Stepper>

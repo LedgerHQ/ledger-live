@@ -10,7 +10,14 @@ import {
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
-export type StepId = "warning" | "recipient" | "amount" | "summary" | "device" | "confirmation";
+export type StepId =
+  | "pro"
+  | "warning"
+  | "recipient"
+  | "amount"
+  | "summary"
+  | "device"
+  | "confirmation";
 export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
@@ -46,5 +53,8 @@ export type StepProps = {
   maybeNFTCollection?: string;
   onChangeQuantities: (a: any) => void;
   onChangeNFT: (a: any) => void;
+
+  selectedProIndex?: number;
+  setSelectedProIndex: (index: number) => void;
 };
 export type St = Step<StepId, StepProps>;

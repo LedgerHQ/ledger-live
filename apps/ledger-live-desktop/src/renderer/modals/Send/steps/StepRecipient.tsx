@@ -23,7 +23,7 @@ const StepRecipient = ({
   onChangeTransaction,
   error,
   status,
-  bridgePending,
+  pro,
   maybeRecipient,
   onResetMaybeRecipient,
   maybeNFTId,
@@ -60,6 +60,7 @@ const StepRecipient = ({
         <Box flow={1}>
           <Label>{t("send.steps.details.selectAccountDebit")}</Label>
           <SelectAccount
+            filter={a => !!a.pro}
             withSubAccounts
             enforceHideEmptySubAccounts
             autoFocus={!openedFromAccount}

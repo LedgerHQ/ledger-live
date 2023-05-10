@@ -107,6 +107,8 @@ export type Account = {
   // in BTC like accounts, we use pubKey(purpose'/coinType')
   // For other accounts that don't have sub derivation, we have used the account address
   seedIdentifier: string;
+  // is this account part of a live pro setup
+  pro?: boolean;
   // account xpub if available
   xpub?: string;
   // Identify the derivation used. it allows us to map this to a derivation scheme.
@@ -247,6 +249,7 @@ export type ChildAccountRaw = {
 /** */
 export type AccountRaw = {
   id: string;
+  pro?: boolean;
   seedIdentifier: string;
   xpub?: string;
   derivationMode: DerivationMode;

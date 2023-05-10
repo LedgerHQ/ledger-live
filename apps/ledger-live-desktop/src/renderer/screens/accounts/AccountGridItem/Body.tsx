@@ -9,6 +9,7 @@ import CounterValue from "~/renderer/components/CounterValue";
 import Chart from "~/renderer/components/ChartPreview";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Data } from "~/renderer/components/Chart/types";
+import Pro from "../Pro";
 type Props = {
   account: AccountLike;
   range: PortfolioRange;
@@ -22,7 +23,7 @@ function Body({ account, range }: Props) {
   const currency = getAccountCurrency(account);
   const color = useCurrencyColor(currency, bgColor);
   return (
-    <Box flow={4}>
+    <Box flow={4} style={{ position: "relative" }}>
       <Box flow={2} horizontal>
         <Box justifyContent="center">
           <CounterValue
@@ -52,6 +53,7 @@ function Body({ account, range }: Props) {
         valueKey={countervalueAvailable ? "countervalue" : "value"}
         height={52}
       />
+      {account?.pro ? <Pro /> : null}
     </Box>
   );
 }

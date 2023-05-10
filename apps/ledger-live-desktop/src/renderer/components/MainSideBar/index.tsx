@@ -303,6 +303,10 @@ const MainSideBar = () => {
     maybeRedirectToAccounts();
     dispatch(openModal("MODAL_SEND", undefined));
   }, [dispatch, maybeRedirectToAccounts]);
+  const handleOpenSendModalForPro = useCallback(() => {
+    maybeRedirectToAccounts();
+    dispatch(openModal("MODAL_SEND", { pro: true }));
+  }, [dispatch, maybeRedirectToAccounts]);
   const handleOpenReceiveModal = useCallback(() => {
     maybeRedirectToAccounts();
     dispatch(openModal("MODAL_RECEIVE", undefined));
@@ -351,6 +355,15 @@ const MainSideBar = () => {
                   onClick={handleClickDashboard}
                   isActive={location.pathname === "/"}
                   NotifComponent={<UpdateDot collapsed={collapsed} />}
+                  collapsed={secondAnim}
+                />
+                <SideBarListItem
+                  id={"pro"}
+                  label={"PRO"}
+                  icon={Icons.HandshakeMedium}
+                  iconSize={20}
+                  iconActiveColor="wallet"
+                  onClick={handleOpenSendModalForPro}
                   collapsed={secondAnim}
                 />
                 <SideBarListItem

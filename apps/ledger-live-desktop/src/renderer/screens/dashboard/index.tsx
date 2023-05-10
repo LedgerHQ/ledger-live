@@ -52,7 +52,7 @@ export default function DashboardPage() {
   const totalOperations = useMemo(() => accounts.reduce((sum, a) => sum + a.operations.length, 0), [
     accounts,
   ]);
-  const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
+  const isPostOnboardingBannerVisible = false; // usePostOnboardingEntryPointVisibleOnWallet();
 
   const showCarousel = hasInstalledApps && totalAccounts > 0;
   useRefreshAccountsOrderingEffect({
