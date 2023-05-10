@@ -25,7 +25,7 @@ const defaultConfig = {
         minGasPrice: 0.003,
       },
       osmo: {
-        lcd: "https://lcd.osmosis.zone",
+        lcd: "https://osmosis-api.polkachu.com",
         ledgerValidator: "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t",
         minGasPrice: 0.025,
       },

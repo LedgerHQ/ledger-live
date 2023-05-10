@@ -59,6 +59,7 @@
   },
   "common" : {
     "never" : "절대",
+    "new" : "신규",
     "apply" : "적용",
     "done" : "완료",
     "confirm" : "확인",
@@ -126,7 +127,8 @@
     "exchange" : "교환",
     "info" : "정보",
     "connectDevice" : "내 장치 연결하기",
-    "add" : "추가"
+    "add" : "추가",
+    "or" : "또는"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -215,10 +217,11 @@
     "earn" : "수익",
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
+    "refer" : "친구 추천",
     "lend" : "대출",
     "catalog" : "탐색",
     "market" : "마켓",
-    "protect" : "Recover"
+    "protect" : "복구"
   },
   "stars" : {
     "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
@@ -1203,23 +1206,33 @@
     },
     "manual" : {
       "title" : "{{deviceName}} 설정",
+      "continueOnDevice" : "{{productName}}에서 이 동작을 실행합니다",
       "pairedContent" : {
         "title" : "{{deviceName}} 장치가 연결되었습니다.",
         "description" : "{{deviceName}}에서 설정을 계속 진행하세요",
-        "text" : "이 화면은 {{deviceName}} 설정이 진행되는 동안 관련 정보 제공을 위해 동적으로 변경됩니다."
+        "text" : "이 화면은 {{deviceName}} 설정이 진행되는 동안 관련 정보 제공을 위해 동적으로 변경됩니다.",
+        "continueOnDevice" : "{{productName}}에서 탭하여 다음 화면을 확인하세요."
       },
       "pinContent" : {
         "title" : "PIN 설정",
         "description" : "PIN은 4~8자리입니다.",
-        "text" : "{{deviceName}} 및 PIN에 액세스할 수 있으면 누구나 사용자가 가진 모든 암호화폐와 NFT 자산에 액세스할 수 있습니다."
+        "text" : "{{deviceName}} 및 PIN에 액세스할 수 있으면 누구나 사용자가 가진 모든 암호화폐와 NFT 자산에 액세스할 수 있습니다.",
+        "continueOnDevice" : "{{productName}}에서 PIN을 설정하세요"
       },
       "seedContent" : {
         "title" : "비밀 복구 문구",
-        "choiceNewOrRestore" : "가장 적합한 설정 옵션을 선택하세요.",
-        "newSeed" : "아래 영상을 탭하여 비밀 복구 문구에 대해 자세히 알아보세요",
-        "choiceRestoreDirectOrRecover" : "자리 표시자 - 직접 복원 선택 또는 복구 사용",
         "recoverSeed" : "자리 표시자: 복구",
-        "restoreSeed" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요."
+        "restoreSeed" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
+        "selection" : "{{productName}}에서 가장 적합한 설정 옵션을 선택하세요.",
+        "selectionContinueOnDevice" : "{{productName}}에서 옵션을 탭하세요",
+        "newSeedDescription" : "아래 동영상에서 비밀번호 설정에 대해 알아보세요.",
+        "newSeedContinueOnDevice" : "{{productName}}에서 실행해보세요",
+        "recovery" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
+        "restoreChoiceContinueOnDevice" : "{{productName}}에서 옵션을 선택하세요",
+        "restoreChoiceSRPTitle" : "비밀 복구 문구를 사용해 복원하세요",
+        "restoreChoiceSRPDescription" : "LEDGER가 생성한 문구를 사용해 자산에 대한 확실한 보안을 보장받으세요.",
+        "restoreChoiceRecoverTitle" : "Ledger Recover를 이용한 복구",
+        "restoreChoiceRecoverDescription" : "Ledger 계정에 로그인하고 신원을 확인하여 복구 문구 백업을 복원하세요."
       },
       "softwareCheckContent" : {
         "title" : "소프트웨어 점검",
@@ -1238,10 +1251,13 @@
         }
       },
       "installApplications" : {
-        "title" : "기본 앱 세트 다운로드를 권장드립니다. 이후 추가로 다운로드할 수 있습니다",
+        "title" : "블록체인 앱 설치",
         "install" : "설치",
         "skip" : "나중에",
         "info" : "{{deviceName}}의 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
+      },
+      "endOfSetup" : {
+        "title" : "설정 종료"
       },
       "genuineCheckModal" : {
         "title" : "정품 확인",
@@ -1441,7 +1457,8 @@
     "messageIfUnverified" : "공유된 주소가 장치의 주소와 정확히 일치하는지 확인하세요.",
     "messageIfSkipped" : "귀하의 {{name}} 주소가 Ledger 장치에서 확인되지 않았습니다. 보안을 위해 주소를 인증하세요.",
     "showQrCode" : "QR 코드 보기",
-    "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요"
+    "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요",
+    "dashStakingWarning" : "스테이킹 보상 수령에 이 주소를 사용해서는 안됩니다"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1874,7 +1891,7 @@
         "plugin" : "앱으로 이동",
         "swap" : "스왑",
         "tool" : "자세히 알아보기",
-        "app" : "자세히 알아보기"
+        "currency" : "자세히 알아보기"
       },
       "uninstall" : {
         "title" : "모두 제거",
@@ -2150,7 +2167,14 @@
         "domainService" : {
           "resolve" : "이는 다음 주소에 연결된 유효한 ENS입니다.",
           "supportLink" : "이더리움 네임 서비스란?",
-          "reverse" : "이 주소는 {{domain}}에 연결되어 있습니다."
+          "reverse" : "이 주소는 {{domain}}에 연결되어 있습니다",
+          "invalidDomain" : {
+            "title" : "지원하지 않는 도메인입니다",
+            "description" : "현재 30자 이하의 영숫자 ENS만 지원됩니다."
+          },
+          "noResolution" : {
+            "title" : "이 도메인과 관련하여 발견된 주소가 없습니다"
+          }
         }
       },
       "amount" : {
@@ -3761,6 +3785,7 @@
         "title" : "개발자 등록이 완료되었습니다!",
         "text" : "환영합니다"
       },
+      "userId" : "사용자 ID",
       "debugApps" : "디버그 앱 허용",
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
       "experimentalApps" : "실험적 앱 허용",
@@ -3790,6 +3815,8 @@
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
       "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다.",
+      "enableStagingNftMetadataService" : "NFT 메타데이터 서비스 스테이징",
+      "enableStagingNftMetadataServiceDesc" : "NFT 메타데이터 서비스 스테이징 활성화 및 NFT 캐시 재설정",
       "openOnboardingAppInstallDebug" : "온보딩 앱 설치 디버그 화면 열기",
       "openOnboardingAppInstallDebugDesc" : "동기화 온보딩 앱 설치 단계의 구성 요소가 있는 화면을 엽니다."
     },
@@ -3847,6 +3874,10 @@
           "title" : "개발자 모드",
           "description" : "내 Ledger에서 개발자 및 테스트넷 앱을 보여줍니다."
         },
+        "listAppsV2" : {
+          "title" : "My Ledger용 실험 앱 목록",
+          "description" : "My Ledger 액세스와 즉각 처리 흐름을 개선합니다."
+        },
         "scanForInvalidPaths" : {
           "title" : "확장 계정 검색",
           "description" : "잘못된 파생 경로가 있는 계정을 스캔합니다. 잠재적으로 찾은 자산을 일반 계정으로 보내세요."
@@ -3886,6 +3917,10 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "개인 맞춤형 우선 수수료 게이트",
           "description" : "고급 EIP1559 트랜잭션에 대한 예상 최소 우선 수수료의 비율을 사용자 지정합니다."
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "기본 수수료에 대한 커스텀 멀티플라이어",
+          "description" : "EIP1559 트랜잭션 최대 가스비를 구성하는 기본 수수료에 이용되는 멀티플라이어를 커스터마이징합니다"
         }
       }
     },
@@ -4755,7 +4790,8 @@
     "votes" : "투표 ({{count}})"
   },
   "RecipientField" : {
-    "placeholder" : "{{currencyName}} 주소를 입력하세요"
+    "placeholder" : "{{currencyName}} 주소를 입력하세요",
+    "placeholderEns" : "{{currencyName}} 주소 또는 ENS를 입력하세요"
   },
   "Terms" : {
     "title" : "이용 약관",
@@ -5723,9 +5759,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "신원 확인을 통해\n 키 복구하기",
+    "description" : "비밀 복구 문구가 항상 사용자의 손이 닿는 곳에 있는 것은 아닙니다.\nLedger Nano X 전용 소프트 런칭. 2023년 6월 30일까지 무료 구독",
+    "cta" : "구독이 왜 필요한가요?",
+    "downloadLLM" : "Ledger Live 모바일 앱으로 <purple>Ledger Recover</purple> 구독"
   }
 }
