@@ -1,4 +1,4 @@
-import React, { PureComponent, ElementRef } from "react";
+import React, { PureComponent } from "react";
 import { BigNumber } from "bignumber.js";
 import { uncontrollable } from "uncontrollable";
 import styled from "styled-components";
