@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { Button, Flex, SelectableList, Text, Box } from "@ledgerhq/native-ui";
+import { Button, Flex, SelectableList, Text } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import { CloseMedium, DropdownMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
@@ -18,7 +18,6 @@ import DeviceDark from "../../images/illustration/Dark/_FamilyPackX.png";
 import DeviceLight from "../../images/illustration/Light/_FamilyPackX.png";
 import { TrackScreen, updateIdentify, track } from "../../analytics";
 import QueuedDrawer from "../../components/QueuedDrawer";
-import InvertTheme from "../../components/theme/InvertTheme";
 
 type UiDrawerStatus =
   | "none"
