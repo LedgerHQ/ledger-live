@@ -1,7 +1,6 @@
 import React from "react";
-import { Platform } from "react-native";
+import { Platform, StyleProp, ViewStyle } from "react-native";
 import { Trans } from "react-i18next";
-import type { OnboardingScene } from "../../../components/OnboardingStepperView";
 import setupDeviceStartImage from "../assets/getStarted.png";
 import pinCodeImage from "../assets/pinCodeImage.png";
 import recoveryPhrase from "../assets/recoveryPhrase.png";
@@ -71,6 +70,7 @@ import LText from "../../../components/LText";
 import NanoDeviceCancelIcon from "../../../icons/NanoDeviceCancelIcon";
 import NanoDeviceCheckIcon from "../../../icons/NanoDeviceCheckIcon";
 import { urls } from "../../../config/urls";
+import { LottieProps } from "../../../components/Animation";
 
 export const lottieAnimations = {
   nanoS: {
@@ -528,6 +528,45 @@ const pinCodeScenes = (
     id: "pinCodeSetup",
   },
 ];
+
+export type InfoStepViewProps = {
+  trackPage?: string;
+  title?: React.ReactNode;
+  warning?: React.ReactNode;
+  descs?: React.ReactNode[];
+  image?: number;
+  lottie?: LottieProps["source"];
+  lottieStyle?: StyleProp<ViewStyle>;
+  bullets?: {
+    Icon?: React.ComponentType<{ size: number; color?: string }>;
+    label?: React.ReactNode;
+    labels?: React.ReactNode[];
+    title?: React.ReactNode;
+    index?: number;
+    color?: string;
+  }[];
+  ctaText?: React.ReactNode;
+  ctaWarningModal?: {
+    Icon?: React.ComponentType<{ size: number; color?: string }>;
+    image?: number;
+    title: React.ReactNode;
+    desc?: React.ReactNode;
+    ctaText: React.ReactNode;
+  };
+  ctaWarningCheckbox?: {
+    desc: React.ReactNode;
+  };
+  children?: React.ReactNode;
+  ctaEvent?: string;
+  isActive?: boolean;
+};
+
+export type OnboardingScene = {
+  id: string;
+  sceneProps: InfoStepViewProps;
+  type: "primary" | "secondary";
+  sceneInfoKey?: string;
+};
 
 const getSetupDeviceScenes: (
   deviceModelId: "nanoS" | "nanoSP" | "nanoX" | "blue" | "stax",
