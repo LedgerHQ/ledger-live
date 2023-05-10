@@ -9,7 +9,7 @@ async function main() {
       `npx @moonrepo/cli query touched-files --base "develop"`
     );
 
-    console.log(touchedFiles);
+    core.debug(touchedFiles.toString());
 
     const moonOutput = execSync(
       `npx @moonrepo/cli query projects --affected --json`,
@@ -22,6 +22,7 @@ async function main() {
     );
 
     const moonAffected = JSON.parse(moonOutput);
+    core.debug(moonAffected);
 
     if (moonAffected === null) {
       core.error(`Failed to parse JSON output from "${moonOutput}"`);
@@ -31,13 +32,11 @@ async function main() {
 
     const { projects } = moonAffected;
     if (projects.length) {
-      const affectedPackages = {};
-      projects.forEach((proj) => {
-        const { aliases, source } = proj;
-        const name =
-          aliases.find((alias) => alias.startsWith("@ledgerhq/")) || aliases[0];
+      const affectedPackages: { [key: string]: { path: string } } = {};
+      projects.forEach((proj: { source: string; alias: string }) => {
+        const { alias, source } = proj;
 
-        affectedPackages[name] = {
+        affectedPackages[alias] = {
           path: source,
         };
       });
@@ -65,7 +64,7 @@ async function main() {
     core.summary.write();
   } catch (error) {
     core.error(`${error}`);
-    core.setFailed(error);
+    core.setFailed(error as Error);
     return;
   }
 }
