@@ -221,7 +221,7 @@
     "lend" : "Prestar",
     "catalog" : "Discover",
     "market" : "Mercado",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Tus cuentas favoritas aparecerán aquí.",
@@ -1759,7 +1759,8 @@
     "loading" : "Cargando...",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
     "unlockDevice" : "Desbloquea tu dispositivo",
-    "unlockDeviceAfterFirmwareUpdate" : "Espera a que se actualice el firmware y desbloquea tu dispositivo con tu PIN",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Espera a que finalice la instalación en {{productName}}",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Desbloquear {{productName}} para finalizar la instalación",
     "quitApp" : "Cierra la aplicación en tu dispositivo",
     "appNotInstalledTitle" : "Falta una aplicación necesaria",
     "appNotInstalledTitle_plural" : "Faltan aplicaciones necesarias",
@@ -1824,9 +1825,8 @@
       "installed" : "Aplicaciones",
       "capacity" : "Capacidad",
       "used" : "Utilizado",
-      "firmwareAvailable" : "El firmware está desactualizado:",
-      "firmwareUpToDate" : "El firmware está actualizado:",
-      "genuine" : "Tu dispositivo es original",
+      "OSVersion" : "Versión del SO",
+      "genuine" : "El dispositivo es auténtico",
       "incomplete" : "No se reconocieron algunas aplicaciones. Desinstálalas y luego vuelve a instalarlas."
     },
     "applist" : {
@@ -1918,7 +1918,7 @@
       "dontHaveSeed" : "¿No tienes tu Frase de recuperación? ",
       "followTheGuide" : "Sigue nuestra Guía de actualización paso a paso",
       "removeApps" : "Desinstalar todas las aplicaciones antes de actualizar",
-      "update" : "Actualización de firmware",
+      "update" : "Actualizar {{productName}}",
       "updateBtn" : "Actualizar firmware",
       "banner" : {
         "warning" : "Actualización disponible del Firmware para la versión {{latestFirmware}}",
@@ -1933,12 +1933,17 @@
       "contactSupport" : "Ponte en contacto con Soporte",
       "deprecated" : "La versión de firmware del dispositivo es demasiado antigua para poder actualizarla. Contacta al Soporte de Ledger para obtener un reemplazo.",
       "prepareSeed" : "Como precaución, asegúrate de que la Frase de recuperación de 24 Palabras esté escrita en la Hoja de recuperación y de tener fácil acceso a ella.",
-      "disclaimerTitle" : "Estás a punto de instalar <1>la versión de firmware {{version}}</1>.",
-      "downloadingUpdateDesc" : "Espera a que se descargue el instalador de actualizaciones"
+      "disclaimerTitle" : "Estás a punto de instalar <1>la versión de firmware {{version}}</1>."
     },
     "modal" : {
+      "title" : "Actualizar {{productName}}",
       "steps" : {
-        "downloadingUpdate" : "Descargando actualización",
+        "preparingUpdate" : "Preparando actualización",
+        "transferringUpdate" : "Transfiriendo la actualización a {{productName}}",
+        "prepare" : "Preparando actualización",
+        "install" : "Instalar actualización",
+        "restore" : "Restaurando ajustes",
+        "apps" : "Restaurando aplicaciones",
         "updateMCU" : "Actualización de firmware",
         "updating" : "Actualización de firmware",
         "reset" : "Preparar dispositivo",
@@ -1949,9 +1954,8 @@
         "flash" : "Preparando tu dispositivo..."
       },
       "confirmIdentifier" : "Verifica el identificador",
-      "confirmIdentifierText" : "Comprueba que el identificador de tu dispositivo coincida con el identificador a continuación. Confirma e introduce tu código PIN, si así lo indica la aplicación.",
+      "confirmIdentifierText" : "Confirmar la instalación en {{productName}}",
       "identifier" : "Identificador",
-      "preparation" : "Preparación",
       "newFirmware" : "Nuevo firmware {{version}}",
       "confirmUpdate" : "Por favor, confirma la actualización en tu dispositivo",
       "mcuTitle" : "Finalizar actualización",
@@ -1961,10 +1965,10 @@
       "mcuSecondNanoX" : "Mantén presionado el botón izquierdo hasta que aparezca <1><0>{{bootloaderOption}}</0></1>. Presiona ambos botones para confirmar y vuelve a conectar tu dispositivo.",
       "mcuBlueFirst" : "Mantén presionado el botón lateral durante 10 segundos para apagar el dispositivo. Suelta el botón.",
       "mcuBlueSecond" : "Mantén presionado el botón durante al menos 5 segundos hasta que se muestren las “Boot Options” (\"Opciones de arranque\"). Toca en Bootloader Mode",
-      "successTitle" : "Firmware actualizado",
+      "successTitle" : "Se ha actualizado el SO correctamente.",
       "successTextApps" : "Vuelve a instalar las aplicaciones en tu dispositivo",
       "successTextNoApps" : "Ahora puedes instalar aplicaciones en tu dispositivo",
-      "sucessCTAApps" : "Reinstalar aplicaciones",
+      "sucessCTAApps" : "Volver a instalar las aplicaciones",
       "SuccessCTANoApps" : "Instalar aplicaciones",
       "cancelReinstallCTA" : "Instalar actualización",
       "resetSteps" : {
@@ -2271,10 +2275,9 @@
   },
   "deviceLocalization" : {
     "language" : "Idioma",
-    "deviceLanguage" : "Idioma",
+    "deviceLanguage" : "Cambiar el idioma del dispositivo",
     "changeLanguage" : "Cambiar idioma",
     "changeDeviceLanguage" : "¿Deseas cambiar el idioma de tu dispositivo?",
-    "chooseLanguage" : "Elige un idioma para tu {{deviceName}}.",
     "changeDeviceLanguagePrompt" : {
       "title" : "El idioma {{language}} también está disponible para tu {{deviceName}}.",
       "description" : "¿Quieres cambiar el idioma al {{language}}?"
@@ -4226,6 +4229,10 @@
           "3" : {
             "title" : "Restaura tu Frase de recuperación a un nuevo dispositivo",
             "description" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
+          },
+          "4" : {
+            "title" : "Restaurar con Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4378,25 @@
             "help" : {
               "help" : "Necesitas ayuda",
               "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Selecciona “Restore using Ledger Recover” (Restaurar con Ledger Recover).",
+            "1" : {
+              "title" : "Selecciona \"Restore\" (Restaurar)",
+              "descr" : "Presiona los dos botones a la vez para seleccionar."
+            },
+            "2" : {
+              "title" : "Selecciona “Restore using Ledger Recover” (Restaurar con Ledger Recover)."
+            },
+            "help" : {
+              "iDontSee" : "No veo “Restore using Ledger Recover” (Restaurar con Ledger Recover)",
+              "modal" : {
+                "title" : "Es necesario actualizar el SO de tu Ledger Nano X",
+                "subtitle" : " Puedes probar a actualizar el SO o contactar al servicio de soporte de Ledger para pedir ayuda.",
+                "learnHowToUpdate" : "Aprende cómo actualizarlo",
+                "contactLedgerSupport" : "Ponte en contacto con el Soporte de Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5602,11 +5628,11 @@
       "description" : "Vuelve a intentarlo con otra imagen"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Commit de imagen rechazado en el dispositivo (TODO: final wording)",
+      "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
       "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Carga de imagen rechazada en el dispositivo (TODO: final wording)",
+      "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
       "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
     },
     "NearNewAccountWarning" : {
@@ -5710,9 +5736,11 @@
         "stepLabel" : "Transferir",
         "uploadAnotherImage" : "Cargar otra imagen",
         "allowPreview" : "Permite que la imagen de la pantalla de bloqueo se cargue en tu {{productName}}",
+        "allowConfirmPreview" : "Permitir la restauración de la imagen de pantalla de bloqueo en {{productName}}",
         "loadingPicture" : "Cargando...",
         "imageLoaded" : "Imagen cargada en {{productName}}",
         "confirmPicture" : "¿Te gusta lo que ves?\n¡Pues consérvalo!",
+        "confirmRestorePicture" : "Confirmar la restauración de la imagen de pantalla de bloqueo",
         "doThisLater" : "Quizás más tarde"
       }
     },
