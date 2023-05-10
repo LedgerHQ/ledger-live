@@ -20,7 +20,7 @@
     "build:libs": "moon r :build/libs",
     "build:libs:force": "pnpm -r --filter=\"./libs/**\" build",
     "build:actions": "moon r :build/actions",
-    "build:cli": "moon r live-cli:build",
+    "build:cli": "moon r @ledgerhq/live-cli:build",
     "build:coin": "moon r coin-framework:build",
     "build:coin:polkadot": "moon r coin-polkadot:build",
     "build:domain": "moon r domain-service:build",
