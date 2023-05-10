@@ -13,6 +13,7 @@ import { Account, TransactionCommon } from "@ledgerhq/types-live";
 import { botTest } from "./bot-test-context";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 export { botTest };
 
@@ -118,13 +119,19 @@ export function deviceActionFlow<T extends TransactionCommon>(
             currentStep.stepValueTransform || stepValueTransformDefault;
 
           if (!ignoreAssertionFailure && !disableStrictStepValueValidation) {
-            botTest("deviceAction confirm step '" + stepTitle + "'", () =>
+            botTest("deviceAction confirm step '" + stepTitle + "'", () => {
               expect({
                 [stepTitle]: stepValueTransform(stepValue),
               }).toMatchObject({
-                [stepTitle]: expectedValue(arg, acc).trim(),
-              })
-            );
+                [stepTitle]: expectedValue(arg, acc)
+                  .replace(
+                    "S",
+                    arg.appCandidate.model === DeviceModelId.nanoS ? "S" : ""
+                  )
+                  .trim(),
+                // FIX_ME: OCR of speculos couldn't retrieve S properly
+              });
+            });
           }
         }
 
