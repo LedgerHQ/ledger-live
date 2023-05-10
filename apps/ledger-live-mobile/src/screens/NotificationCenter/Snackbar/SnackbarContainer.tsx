@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { v4 as uuid } from "uuid";
@@ -14,6 +14,8 @@ export default function SnackbarContainer() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { dismissToast, toasts } = useToasts();
   const { t } = useTranslation();
+  const [nonce, setNonce] = useState(0);
+
   const navigate = useCallback(
     (toast: ToastData) => {
       if (toast.type === "announcement" || !toast.type) {
@@ -25,10 +27,14 @@ export default function SnackbarContainer() {
     },
     [dismissToast, toasts],
   );
+
   const handleDismissToast = useCallback(
-    (toast: ToastData) => dismissToast(toast.id),
+    (toast: ToastData) => {
+      dismissToast(toast.id);
+    },
     [dismissToast],
   );
+
   const groupedSnackbarsItems = {
     id: uuid(),
     title: t("notificationCenter.groupedToast.text", {
@@ -40,10 +46,24 @@ export default function SnackbarContainer() {
   const lastToastIsSuccess =
     toasts && toasts[toasts.length - 1]?.type === "success";
 
+  // Needed to force re-rendering of Snackbar when toasts is updated:
+  // it was not re-render when a toast was removed on the Android version.
+  // Also used to set a random zIndex.
+  useEffect(() => {
+    setNonce(prevNonce => prevNonce + 1);
+  }, [toasts]);
+
+  // Fixes a bug on Android: if zIndex was not updated to a new value
+  // the next component using the same zIndex would not be displayed ...
+  const randomZIndex = (nonce % 10) + 150;
+
   return hasCompletedOnboarding && toasts?.length ? (
     toasts.length === 1 ? (
       <FlatList
-        style={styles.root}
+        style={{
+          ...styles.root,
+          zIndex: randomZIndex,
+        }}
         data={[toasts[0]]} // NB in case we change our minds about the max
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
@@ -55,7 +75,12 @@ export default function SnackbarContainer() {
         )}
       />
     ) : (
-      <View style={styles.root}>
+      <View
+        style={{
+          ...styles.root,
+          zIndex: randomZIndex,
+        }}
+      >
         <Snackbar
           toast={
             lastToastIsSuccess
@@ -69,11 +94,13 @@ export default function SnackbarContainer() {
           }
           onPress={navigate}
           onClose={lastToastIsSuccess ? handleDismissToast : undefined}
+          key={nonce}
         />
       </View>
     )
   ) : null;
 }
+
 const styles = StyleSheet.create({
   root: {
     position: "absolute",
