@@ -221,7 +221,7 @@
     "lend" : "レンディング",
     "catalog" : "Discover",
     "market" : "マーケット",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "お気に入りに登録したアカウントは、こちらに表示されます。",
@@ -1759,7 +1759,8 @@
     "loading" : "読み込み中...",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
     "unlockDevice" : "デバイスのロックを解除する",
-    "unlockDeviceAfterFirmwareUpdate" : "ファームウェアのアップデート完了を待ってから、デバイスのロックをPINコードで解除してください。",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "{{productName}}のインストールが完了するまでお待ちください",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "{{productName}}のロックを解除してインストールを完了",
     "quitApp" : "デバイスのアプリケーションを終了する",
     "appNotInstalledTitle" : "必要なアプリが揃っていません。",
     "appNotInstalledTitle_plural" : "必要なアプリが揃っていません。",
@@ -1824,8 +1825,7 @@
       "installed" : "アプリ",
       "capacity" : "容量",
       "used" : "使用中",
-      "firmwareAvailable" : "ファームウェアが最新ではありません。",
-      "firmwareUpToDate" : "最新のファームウェア：",
+      "OSVersion" : "OSバージョン",
       "genuine" : "お使いのデバイスは正規品です。",
       "incomplete" : "一部のアプリが認識されませんでした。アンインストールしてから、再インストールしてください。"
     },
@@ -1918,7 +1918,7 @@
       "dontHaveSeed" : "リカバリーフレーズをお持ちでないですか？ ",
       "followTheGuide" : "アップデートの手順はこちらをご覧ください。",
       "removeApps" : "アップデート前に全アプリをアンインストールする",
-      "update" : "ファームウェアをアップデート",
+      "update" : "{{productName}}をアップデートする",
       "updateBtn" : "ファームウェアをアップデート",
       "banner" : {
         "warning" : "ファームウェアを{{latestFirmware}}にアップデートできます",
@@ -1933,12 +1933,17 @@
       "contactSupport" : "サポートへのお問い合わせ",
       "deprecated" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
       "prepareSeed" : "万が一に備えて、書き留めた24単語のリカバリーフレーズを用意してください。",
-      "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。",
-      "downloadingUpdateDesc" : "アップデートインストーラーのダウンロードが完了するまでお待ちください"
+      "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。"
     },
     "modal" : {
+      "title" : "{{productName}}をアップデートする",
       "steps" : {
-        "downloadingUpdate" : "アップデートをダウンロードしています",
+        "preparingUpdate" : "アップデートを準備中",
+        "transferringUpdate" : "アップデートを{{productName}}に転送中",
+        "prepare" : "アップデートの準備",
+        "install" : "アップデートをインストール",
+        "restore" : "設定の復元",
+        "apps" : "アプリの復元",
         "updateMCU" : "ファームウェアをアップデート",
         "updating" : "ファームウェアをアップデート",
         "reset" : "デバイスの準備中...",
@@ -1949,9 +1954,8 @@
         "flash" : "デバイスの準備中..."
       },
       "confirmIdentifier" : "識別子を確認する",
-      "confirmIdentifierText" : "デバイスの識別子が以下の識別子と同じであることを認証します。必要に応じて、PINコードを確認して入力します。",
+      "confirmIdentifierText" : "{{productName}}へのインストールを確定",
       "identifier" : "識別子",
-      "preparation" : "準備",
       "newFirmware" : "新しいファームウェア{{version}}",
       "confirmUpdate" : "アップデートをデバイスで確定してください。",
       "mcuTitle" : "アップデートの最終確認",
@@ -1961,7 +1965,7 @@
       "mcuSecondNanoX" : "<1><0> {{bootloaderOption}}</0></1>が表示されるまで左ボタンを長押しする。両方のボタンを押して、デバイスを確認して再接続します。",
       "mcuBlueFirst" : "ボタンを10秒間長押しして、デバイスの電源をオフにする。ボタンから指を離す。",
       "mcuBlueSecond" : "<strong>Boot Options(起動オプション)</strong>が表示されるまで、ボタンを5秒以上押し続ける。Bootloader(ブートローダモード)をタップする",
-      "successTitle" : "ファームウェアのアップデート完了",
+      "successTitle" : "OSアップデートが成功しました。",
       "successTextApps" : "デバイスにアプリを再インストールしてください。",
       "successTextNoApps" : "デバイスにアプリをインストールできるようになりました。",
       "sucessCTAApps" : "アプリを再インストール",
@@ -2271,10 +2275,9 @@
   },
   "deviceLocalization" : {
     "language" : "言語",
-    "deviceLanguage" : "言語",
+    "deviceLanguage" : "デバイスの言語を変更する",
     "changeLanguage" : "言語の変更",
     "changeDeviceLanguage" : "デバイスの言語を変更しますか？",
-    "chooseLanguage" : "{{deviceName}}の言語を選択してください。",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}}が{{deviceName}}でもご利用可能になりました",
       "description" : "言語を{{language}}に変更しますか？"
@@ -4226,6 +4229,10 @@
           "3" : {
             "title" : "新しいデバイスでリカバリーフレーズを復元",
             "description" : "既存のリカバリーフレーズを使って、新しいNanoに秘密鍵を復元できます。"
+          },
+          "4" : {
+            "title" : "Ledger Recoverを使用して復元",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4378,25 @@
             "help" : {
               "help" : "お困りですか？",
               "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "「Ledger Recoverを使用して復元する」を選択",
+            "1" : {
+              "title" : "「復元」を選択",
+              "descr" : "両方のボタンを同時に押して選択します。"
+            },
+            "2" : {
+              "title" : "「Ledger Recoverを使用して復元する」を選択"
+            },
+            "help" : {
+              "iDontSee" : "「Ledger Recoverを使用して復元する」が表示されません",
+              "modal" : {
+                "title" : "Ledger Nano XのOSをアップデートしてください",
+                "subtitle" : " OSをアップデートしてみるか、Ledgerサポートにご連絡ください。",
+                "learnHowToUpdate" : "アップデート方法を確認",
+                "contactLedgerSupport" : "Ledgerサポートへ問い合わせ"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5602,11 +5628,11 @@
       "description" : "別の画像でもう一度お試しください"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "デバイスで画像のコミットが拒否されました",
+      "title" : "Ledger Staxでロック画面がキャンセルされました",
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "デバイスで画像の読み込みが拒否されました",
+      "title" : "Ledger Staxでロック画面がキャンセルされました",
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
     },
     "NearNewAccountWarning" : {
@@ -5710,9 +5736,11 @@
         "stepLabel" : "送金",
         "uploadAnotherImage" : "他の画像をアップロードする",
         "allowPreview" : "{{productName}}でのロック画面の画像の読み込みを許可します",
+        "allowConfirmPreview" : "{{productName}}でロック画面の画像の復元を許可する",
         "loadingPicture" : "読み込み中...",
         "imageLoaded" : "{{productName}}に画像が読み込まれました",
         "confirmPicture" : "気に入りましたか？\n",
+        "confirmRestorePicture" : "ロック画面の画像の復元を確定する",
         "doThisLater" : "後で"
       }
     },
@@ -5721,7 +5749,7 @@
       "description" : "画面をカスタマイズ",
       "actionCompletedPopupLabel" : "デバイスがパーソナライズされました"
     },
-    "customImageSet" : "ロック画面が設定されました",
+    "customImageSet" : "スクリーン設定をロック",
     "finishCTA" : "終了する"
   },
   "onboardingAppInstall" : {
