@@ -91,17 +91,16 @@ const Body = ({
   const [transactionError, setTransactionError] = useState(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const { account, source = "Account Page" } = params;
   const {
     transaction,
     setTransaction,
     updateTransaction,
-    account,
     parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account } = params;
     invariant(account && account.nearResources, "near: account and near resources required");
     const bridge = getAccountBridge(account, undefined);
     const t = bridge.createTransaction(account);
@@ -174,6 +173,7 @@ const Body = ({
     onTransactionError: handleTransactionError,
     t,
     bridgePending,
+    source,
   };
   return (
     <Stepper {...stepperProps}>
