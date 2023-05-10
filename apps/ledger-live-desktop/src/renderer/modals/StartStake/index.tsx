@@ -15,6 +15,7 @@ interface ModalStartStakeProps {
   account: Account;
   parentAccount: Account | null;
   alwaysShowNoFunds: boolean;
+  source?: string;
 }
 
 const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, source }) => {
