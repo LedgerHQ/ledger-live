@@ -245,9 +245,6 @@ export const defaultFeatures: DefaultFeatures = {
       protectId: "protect-simu",
     },
   },
-  protectServicesDesktop: {
-    enabled: false,
-  },
   newsfeedPage: {
     enabled: false,
   },
@@ -259,6 +256,30 @@ export const defaultFeatures: DefaultFeatures = {
   },
   protectServicesDiscoverDesktop: {
     enabled: false,
+  },
+  protectServicesDesktop: {
+    enabled: false,
+    params: {
+      onboardingRestore: {
+        restoreInfoDrawer: {
+          enabled: true,
+          manualStepsURI:
+            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          supportLinkURI: "https://support.ledger.com",
+        },
+        postOnboardingURI:
+          "ledgerlive://discover/protect-simu?redirectTo=restore",
+      },
+      onboardingCompleted: {
+        upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
+        alreadySubscribedURI:
+          "ledgerlive://recover/protect-simu?redirectTo=login",
+      },
+      login: {
+        loginURI: "ledgerlive://discover/protect-simu?redirectTo=login",
+      },
+      protectId: "protect-simu",
+    },
   },
   referralProgramDesktopSidebar: {
     enabled: false,

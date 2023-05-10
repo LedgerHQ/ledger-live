@@ -11,7 +11,7 @@ import {
 } from "./logic";
 import { runAllWithProgress } from "./runner";
 import { InlineAppInstallEvent } from "./types";
-import { mergeMap, map } from "rxjs/operators";
+import { mergeMap, map, throttleTime } from "rxjs/operators";
 
 /**
  * Tries to install a list of apps
@@ -95,6 +95,7 @@ const inlineAppInstall = ({
             }),
             maybeSkippedEvent,
             runAllWithProgress(state, exec).pipe(
+              throttleTime(100),
               map(
                 ({
                   globalProgress,
