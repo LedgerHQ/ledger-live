@@ -132,6 +132,6 @@
     "node": "18"
   },
   "dependencies": {
-    "@moonrepo/cli": "^1.5.0"
+    "@moonrepo/cli": "^1.5.1"
   }
 }
