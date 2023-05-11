@@ -1,4 +1,9 @@
-import { makeAccountBridgeReceive } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import {
+  DeviceCommunication,
+  makeAccountBridgeReceive,
+  makeScanAccounts,
+  makeSync,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { createTransaction } from "../createTransaction";
@@ -6,12 +11,15 @@ import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
 import { hydrate, preload } from "../preload";
 import { prepareTransaction } from "../prepareTransaction";
-import { signOperation } from "../signOperation";
-import { scanAccounts, sync } from "../synchronization";
+import { buildSignOperation } from "../signOperation";
+import { getAccountShape } from "../synchronization";
 import type { Transaction as EvmTransaction } from "../types";
-
-// FIXME: dependency injection
-const receive = makeAccountBridgeReceive();
+import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
+import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
+import type { Transaction } from "../types";
+import { EvmAPI } from "../api";
+import getAddress from "../hw-getAddress";
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
 const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
   transaction,
@@ -20,25 +28,56 @@ const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
   return { ...transaction, ...patch } as EvmTransaction;
 };
 
-const currencyBridge: CurrencyBridge = {
-  preload,
-  hydrate,
-  scanAccounts,
-};
+export function buildCurrencyBridge(
+  deviceCommunication: DeviceCommunication,
+  network: NetworkRequestCall,
+  cacheFn: LRUCacheFn
+): CurrencyBridge {
+  const evmAPI = new EvmAPI(network, cacheFn);
 
-const accountBridge: AccountBridge<EvmTransaction> = {
-  createTransaction,
-  updateTransaction,
-  prepareTransaction,
-  getTransactionStatus,
-  sync,
-  receive,
-  signOperation,
-  broadcast,
-  estimateMaxSpendable,
-};
+  const scanAccounts = makeScanAccounts({
+    getAccountShape,
+    deviceCommunication,
+    getAddressFn: getAddress,
+  });
 
-export default {
-  currencyBridge,
-  accountBridge,
-};
+  return {
+    preload: preload(evmAPI),
+    hydrate,
+    scanAccounts,
+  };
+}
+
+export function buildAccountBridge(
+  deviceCommunication: DeviceCommunication
+): AccountBridge<Transaction> {
+  const receive = makeAccountBridgeReceive(
+    getAddressWrapper(getAddress),
+    deviceCommunication
+  );
+  const signOperation = buildSignOperation(deviceCommunication);
+  const sync = makeSync({ getAccountShape });
+
+  return {
+    createTransaction,
+    updateTransaction,
+    prepareTransaction,
+    getTransactionStatus,
+    sync,
+    receive,
+    signOperation,
+    broadcast,
+    estimateMaxSpendable,
+  };
+}
+
+export function createBridges(
+  deviceCommunication: DeviceCommunication,
+  network: NetworkRequestCall,
+  cacheFn: LRUCacheFn
+) {
+  return {
+    currencyBridge: buildCurrencyBridge(deviceCommunication, network, cacheFn),
+    accountBridge: buildAccountBridge(deviceCommunication),
+  };
+}

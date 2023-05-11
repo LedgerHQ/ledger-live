@@ -1,8 +1,6 @@
 import {
   AccountShapeInfo,
   GetAccountShape,
-  makeScanAccounts,
-  makeSync,
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { log } from "@ledgerhq/logs";
@@ -311,10 +309,3 @@ export const postSync = (initial: Account, synced: Account): Account => {
     }),
   };
 };
-
-export const scanAccounts = makeScanAccounts({ getAccountShape });
-export const sync = makeSync({
-  getAccountShape,
-  postSync,
-  shouldMergeOps: false,
-});
