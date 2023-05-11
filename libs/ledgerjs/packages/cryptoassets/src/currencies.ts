@@ -299,7 +299,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         name: "AVAX",
         code: "AVAX",
         magnitude: 9,
-      },
+      }
     ],
     explorerViews: [
       {

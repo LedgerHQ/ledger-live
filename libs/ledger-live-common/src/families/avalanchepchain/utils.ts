@@ -18,14 +18,28 @@ export const isDefaultValidatorNode = (nodeID: string): boolean =>
 export const canDelegate = (account: Account) =>
   account.spendableBalance.gt(AVAX_MINIMUM_STAKE_AMOUNT);
 
-export const getReadableDate = (unixTimestamp: number, locale: string) =>
-  new Date(unixTimestamp * 1000).toLocaleDateString(locale, {
+export const getReadableDate = (
+  unixTimestamp: number,
+  locale: string,
+  dateFormatOptions?: Intl.DateTimeFormatOptions
+) =>
+  new Date(unixTimestamp * 1000).toLocaleDateString(locale, dateFormatOptions ?? {
     year: "numeric",
     month: "short",
     day: "numeric",
     hour: "2-digit",
-    minute: "2-digit",
+    minute: "2-digit"
   });
+
+  export const getReadableTime = (
+    unixTimestamp: number,
+    locale: string,
+    dateFormatOptions?: Intl.DateTimeFormatOptions
+  ) =>
+    new Date(unixTimestamp * 1000).toLocaleTimeString(locale, dateFormatOptions ?? {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
 
 export const MINUTE = 60;
 export const FIVE_MINUTES = MINUTE * 5;

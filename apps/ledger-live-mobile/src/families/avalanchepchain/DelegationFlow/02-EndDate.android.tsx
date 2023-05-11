@@ -21,8 +21,8 @@ import {
   TWO_WEEKS,
   YEAR,
   getReadableDate,
+  getReadableTime,
 } from "@ledgerhq/live-common/families/avalanchepchain/utils";
-import moment from "moment";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -68,6 +68,8 @@ export default function DelegationEndDate({ navigation, route }: Props) {
   invariant(transaction, "transaction must be defined");
 
   const onChange = (_: DateTimePickerEvent, selectedDate: Date | undefined) => {
+    if (showDate) setShowDate(false);
+    if (showTime) setShowTime(false);
     if (selectedDate) {
       setTransaction(
         bridge.updateTransaction(transaction, {
@@ -75,8 +77,6 @@ export default function DelegationEndDate({ navigation, route }: Props) {
         }),
       );
     }
-    setShowDate(false);
-    setShowTime(false);
   };
 
   const onContinue = () => {
@@ -100,16 +100,19 @@ export default function DelegationEndDate({ navigation, route }: Props) {
 
   const readableMinEndDate = getReadableDate(unixMinEndDate, locale);
   const readableMaxEndDate = getReadableDate(unixMaxEndDate, locale);
-  const readableSelectedDate = moment(
-    (transaction.endTime?.toNumber() || 0) * 1000,
-  )
-    .locale(locale)
-    .format("ll");
-  const readableSelectedTime = moment(
-    (transaction.endTime?.toNumber() || 0) * 1000,
-  )
-    .locale(locale)
-    .format("LT");
+  const readableSelectedDate = getReadableDate(
+    transaction.endTime?.toNumber() || 0,
+    locale,
+    {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    },
+  );
+  const readableSelectedTime = getReadableTime(
+    transaction.endTime?.toNumber() || 0,
+    locale,
+  );
 
   const onChangeDate = () => {
     setShowDate(true);
