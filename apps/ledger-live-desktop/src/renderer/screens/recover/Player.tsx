@@ -1,13 +1,18 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
+import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { languageSelector } from "~/renderer/reducers/settings";
 import WebRecoverPlayer from "~/renderer/components/WebRecoverPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 import styled from "styled-components";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
+const pollingPeriodMs = 1000;
 
 export type RecoverComponentParams = {
   appId: string;
@@ -38,6 +43,22 @@ export default function RecoverPlayer({ match }: RouteComponentProps<RecoverComp
   const recoverConfig = useFeature("protectServicesDesktop");
 
   const availableOnDesktop = recoverConfig?.enabled && recoverConfig?.params?.availableOnDesktop;
+
+  const device = useSelector(getCurrentDevice);
+
+  const { onboardingState } = useOnboardingStatePolling({
+    device: device || null,
+    pollingPeriodMs,
+  });
+
+  useEffect(() => {
+    if (
+      onboardingState &&
+      onboardingState.currentOnboardingStep !== OnboardingStep.RecoverRestore
+    ) {
+      onClose();
+    }
+  }, [onClose, onboardingState]);
 
   return manifest ? (
     <FullscreenWrapper>

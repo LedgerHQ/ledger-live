@@ -11,6 +11,8 @@ import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import HelpDrawer from "./HelpDrawer";
@@ -75,6 +77,9 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
   const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
+
+  const servicesConfig = useFeature("protectServicesDesktop");
+  const postOnboardingPath = usePostOnboardingPath(servicesConfig);
 
   const device = useSelector(getCurrentDevice);
 
@@ -365,6 +370,12 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       setStopPolling(true);
     }
   }, [isTroubleshootingDrawerOpen]);
+
+  useEffect(() => {
+    if (seedPathStatus === "recover_seed" && postOnboardingPath) {
+      history.push(postOnboardingPath);
+    }
+  }, [history, postOnboardingPath, seedPathStatus]);
 
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
