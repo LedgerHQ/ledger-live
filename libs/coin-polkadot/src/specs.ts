@@ -125,6 +125,12 @@ const polkadot: AppSpec<Transaction> = {
         );
         const sibling = pickSiblings(siblings, maxAccounts);
 
+        invariant(
+          sibling.balance.eq(0) &&
+            account.spendableBalance.lte(EXISTENTIAL_DEPOSIT),
+          "send is too low to activate account"
+        );
+
         return {
           transaction: bridge.createTransaction(account),
           updates: [
