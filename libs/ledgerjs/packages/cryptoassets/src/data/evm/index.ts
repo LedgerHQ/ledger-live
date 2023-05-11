@@ -13,6 +13,7 @@ import moonbeam_tokens from "./1284/erc20.json";
 import optimism_tokens from "./10/erc20.json";
 import optimism_goerli_tokens from "./420/erc20.json";
 import polygon_tokens from "./137/erc20.json";
+import rootstock_tokens from "./30/erc20.json";
 import songbird_tokens from "./19/erc20.json";
 import arbitrum_signatures from "./42161/erc20-signatures.json";
 import arbitrum_goerli_signatures from "./421613/erc20-signatures.json";
@@ -29,6 +30,7 @@ import moonbeam_signatures from "./1284/erc20-signatures.json";
 import optimism_signatures from "./10/erc20-signatures.json";
 import optimism_goerli_signatures from "./420/erc20-signatures.json";
 import polygon_signatures from "./137/erc20-signatures.json";
+import rootstock_signatures from "./30/erc20-signatures.json";
 import songbird_signatures from "./19/erc20-signatures.json";
 
 export const tokens = {
@@ -47,6 +49,7 @@ export const tokens = {
   10: optimism_tokens,
   420: optimism_goerli_tokens,
   137: polygon_tokens,
+  30: rootstock_tokens,
   19: songbird_tokens,
 };
 
@@ -66,6 +69,7 @@ export const signatures = {
   10: optimism_signatures,
   420: optimism_goerli_signatures,
   137: polygon_signatures,
+  30: rootstock_signatures,
   19: songbird_signatures,
 };
 
