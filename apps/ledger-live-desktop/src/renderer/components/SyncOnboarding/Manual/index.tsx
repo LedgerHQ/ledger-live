@@ -22,7 +22,6 @@ import { StepText } from "./shared";
 import Header from "./Header";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
-import ContinueOnStax from "./ContinueOnStax";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 
 const readyRedirectDelayMs = 2500;
@@ -380,7 +379,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       <Flex
         height="100%"
         overflow="hidden"
-        maxWidth="680px"
+        width="432px"
         flexDirection="column"
         justifyContent="flex-start"
         alignSelf="center"
