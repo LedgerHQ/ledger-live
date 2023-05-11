@@ -118,19 +118,9 @@
       "title" : "Bluetoothが無効です。",
       "description" : "スマートフォンの設定でBluetoothを有効にしてください。({{state}}状態)"
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "ファームウェアアップデートは有線接続にのみ対応しています"
-    },
-    "BtcUnmatchedApp" : {
-      "title" : "間違ったアプリです。",
-      "description" : "デバイス上で{{managerAppName}}アプリを開いてください。"
-    },
     "CantOpenDevice" : {
       "title" : "接続に失敗しました。",
       "description" : "Bluetoothを使用するには、Ledgerデバイスのロックを解除し、通信範囲内に置いてください。"
-    },
-    "CantScanQRCode" : {
-      "title" : "このQRコードをスキャンできませんでした：このアドレスでは自動認証がサポートされていません。"
     },
     "ConnectAppTimeout" : {
       "title" : "デバイスが見つかりません。",
@@ -327,11 +317,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Ledger Staxでロック画面がキャンセルされました",
-      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。",
+      "primaryCTA" : "別の写真をアップロード"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Ledger Staxでロック画面がキャンセルされました",
-      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。",
+      "primaryCTA" : "別の写真をアップロード"
     },
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
@@ -480,6 +472,10 @@
       "title" : "パスワードが一致しません。",
       "description" : "もう一度お試しください。"
     },
+    "PeerRemovedPairing" : {
+      "title" : "お客様の{{ productName }}は再度ペアリングする必要があります。",
+      "description" : "スマートフォンのBluetooth設定に移動し、{{ productName }}を削除してください。その後、Ledger Liveから再度お試しください。"
+    },
     "SelectExchangesLoadError" : {
       "title" : "読み込みできません",
       "description" : "取引を読み込めません。"
@@ -556,7 +552,8 @@
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
-      "description" : "管理から{{managerAppName}}アプリをアンインストールして、再インストールしてください。"
+      "description" : "管理から{{managerAppName}}アプリをアンインストールして、再インストールしてください。",
+      "primaryCTA" : "管理画面を開く"
     },
     "UserRefusedAllowManager" : {
       "title" : "デバイスのManagerが無効です。",
@@ -675,7 +672,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
+      "description" : "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。",
+      "primaryCTA" : "再試行"
     },
     "SolanaAccountNotFunded" : {
       "title" : "アカウントに資金がありません"
@@ -1840,7 +1838,8 @@
           "title" : "デバイスがロックされています。",
           "subtitle" : "{{ productName }}のロックを解除して、再度お試しください。"
         },
-        "retryCta" : "再試行"
+        "retryCta" : "再試行",
+        "openSettingsCta" : "Bluetooth設定に移動する"
       }
     }
   },
@@ -2390,6 +2389,7 @@
     },
     "earn" : "報酬獲得",
     "quickActions" : "クイックアクション",
+    "referralProgram" : "ご友人を紹介し、$10相当のBitcoinを獲得しましょう",
     "banner" : {
       "redelegation" : {
         "description" : "ご存知でしたか？Ledgerのバリデーターは、現在お使いのバリデーターよりも低額の手数料でステーキングを行います。",
@@ -2685,6 +2685,10 @@
           "title" : "試験的なエクスプローラーAPI",
           "description" : "Ledgerのブロックチェーンエクスプローラーの新バージョンをお試しいただけます。この設定を変更すると、アカウントの残高と同期、および送金機能に影響を与える可能性があります。"
         },
+        "experimentalListAppsV2" : {
+          "title" : "My Ledger用アプリの試験的リスト",
+          "description" : "My Ledgerアクセスとインラインフローのパフォーマンスの向上。"
+        },
         "experimentalCountervalues" : {
           "title" : "試験的なカウンターバリューAPI",
           "description" : "これにより、アカウントに表示されるカウンター値が不正確になる可能性があります。"
@@ -2729,7 +2733,12 @@
       "featureFlagsTabGroups" : "グループ",
       "firebaseProject" : "対象となるFirebaseプロジェクト：",
       "showBannerDesc" : "フラグがオーバーライドされたときにバナーを表示する",
-      "bannerTitle" : "フラグがローカルでオーバーライドされています"
+      "bannerTitle" : "フラグがローカルでオーバーライドされています",
+      "features" : {
+        "firmwareUpdate" : {
+          "headerTitle" : "ファームウェアのアップデートをデバッグする"
+        }
+      }
     }
   },
   "notifications" : {
@@ -2742,7 +2751,8 @@
   },
   "transfer" : {
     "recipient" : {
-      "input" : "アドレスを入力"
+      "input" : "アドレスを入力",
+      "inputEns" : "アドレスまたはENSを入力してください"
     },
     "send" : {
       "title" : "送付",
@@ -2798,7 +2808,8 @@
         "addressVerified" : "認証済みアドレス",
         "verifyAddress" : "タップしてアドレスを認証",
         "adviceVerify" : "当社では常にLedgerデバイスでアドレス認証することを推奨しています",
-        "sendWarning" : "このアドレスには、 {{currencyName}} ({{currencyTicker}}) のみを送信します。その他の暗号資産を送信すると、資金が永久に失われる可能性があります。"
+        "sendWarning" : "このアドレスには、 {{currencyName}} ({{currencyTicker}}) のみを送信します。その他の暗号資産を送信すると、資金が永久に失われる可能性があります。",
+        "dashStakingWarning" : "このアドレスは、ステーキング報酬の受け取りに使用しないでください。"
       },
       "securityVerify" : {
         "title" : "安全上の理由から、当社ではLedgerデバイスでこのアドレスの認証を推奨しています。",
@@ -3375,7 +3386,14 @@
       "domainService" : {
         "reverse" : "このアドレスは{{domain}}にリンクされています",
         "forward" : "これは有効なENSアドレスです",
-        "supportLink" : "イーサリアム・ネーム・サービスとは？"
+        "supportLink" : "イーサリアム・ネーム・サービスとは？",
+        "invalidDomain" : {
+          "title" : "ドメイン未対応",
+          "description" : "現在、英数字が30文字未満のENSのみがサポートされています。"
+        },
+        "noResolution" : {
+          "title" : "このドメインのアドレスが見つかりません"
+        }
       }
     },
     "amount" : {
@@ -4606,7 +4624,8 @@
             "noResultsFound" : "<0>{{search}}</0>のバリデーターが見つかりませんでした。"
           },
           "amount" : {
-            "newRedelegatedBalance" : "処理後の<0>{{name}}</0>に対する合計額：<0>{{amount}}</0>"
+            "newRedelegatedBalance" : "処理後の<0>{{name}}</0>に対する合計額：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中"
           },
           "verification" : {
             "success" : {
@@ -5711,22 +5730,7 @@
       }
     },
     "status" : {
-      "title" : "注意が必要な問題があるかもしれません",
-      "title_plural" : "注意が必要な複数の問題があるかもしれません",
-      "desc" : {
-        "0" : "それらは調査中であり、まもなく解決されます。",
-        "1" : "問題がある場合は、当社の<0>カスタマーサポート</0>にご連絡ください。"
-      },
-      "cta" : {
-        "ok" : "了解"
-      },
-      "ok" : {
-        "title" : "Ledger Liveは正常に作動しています。",
-        "desc" : "<0>お困りですか？</0><1>ヘルプページ</1>を参照してください。"
-      },
-      "error" : {
-        "title" : "Ledger Liveで問題が発生しています。"
-      }
+      "header" : "ステータス"
     }
   },
   "browseWeb3" : {
@@ -6082,7 +6086,8 @@
       "media" : {
         "tag" : "{{count}}NFT"
       }
-    }
+    },
+    "referralProgram" : "$10"
   },
   "servicesWidget" : {
     "title" : "サービス",
