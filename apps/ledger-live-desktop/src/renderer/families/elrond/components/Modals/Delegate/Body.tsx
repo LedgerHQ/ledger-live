@@ -33,6 +33,7 @@ interface OwnProps {
     parentAccount: Account | undefined | null;
     validators?: Array<ElrondProvider>;
     delegations?: Array<DelegationType>;
+    source?: string;
   };
   name: string;
 }
