@@ -1992,9 +1992,6 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-mocker
-      '@ledgerhq/hw-transport-node-speculos':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-transport-node-speculos
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-node-speculos-http
@@ -15392,12 +15389,9 @@ packages:
       webpack: 4.46.0
     dev: true
 
-  /@polkadot/keyring@10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1):
+  /@polkadot/keyring@10.3.1:
     resolution: {integrity: sha512-xBkUtyQ766NVS1ccSYbQssWpxAhSf0uwkw9Amj8TFhu++pnZcVm+EmM2VczWqgOkmWepO7MGRjEXeOIw1YUGiw==}
     engines: {node: '>=14.0.0'}
-    peerDependencies:
-      '@polkadot/util': 10.3.1
-      '@polkadot/util-crypto': 10.3.1
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
@@ -15422,7 +15416,7 @@ packages:
       styled-components: '*'
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
+      '@polkadot/keyring': 10.3.1
       '@polkadot/ui-settings': 2.11.1
       '@polkadot/ui-shared': 2.11.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/util': 10.3.1
@@ -15497,7 +15491,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
+      '@polkadot/keyring': 10.3.1
       '@polkadot/types-augment': 9.8.1
       '@polkadot/types-codec': 9.8.1
       '@polkadot/types-create': 9.8.1

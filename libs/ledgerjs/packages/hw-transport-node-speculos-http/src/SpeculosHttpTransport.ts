@@ -55,7 +55,7 @@ export default class SpeculosHttpTransport extends Transport {
   ): Promise<SpeculosHttpTransport> =>
     new Promise((resolve, reject) => {
       const instance = axios.create({
-        baseURL: `http://localhost:${opts.apiPort || '5000'}`,
+        baseURL: `http://localhost:${opts.apiPort || "5000"}`,
       });
 
       const transport = new SpeculosHttpTransport(instance, opts);

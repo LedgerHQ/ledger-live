@@ -148,7 +148,6 @@
     "@ledgerhq/hw-app-xrp": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-env": "workspace:^",
