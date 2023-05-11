@@ -29,6 +29,7 @@ export default function Animation({
   if (!source) return null;
 
   // Computes the ration w / h because lottie-react-native v6 seems not to compute and apply a ratio anymore.
+  // It will be overridden if the provided style sets one (see below)
   let aspectRatio = 1;
   if (isAnimationObject(source)) {
     const { w, h } = source;
