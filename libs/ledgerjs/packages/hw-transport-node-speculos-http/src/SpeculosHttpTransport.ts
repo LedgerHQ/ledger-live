@@ -6,7 +6,6 @@ import { log } from "@ledgerhq/logs";
 import { Subject } from "rxjs";
 
 export type SpeculosHttpTransportOpts = {
-  timeout?: number;
   apiPort?: string;
 };
 
@@ -56,7 +55,7 @@ export default class SpeculosHttpTransport extends Transport {
   ): Promise<SpeculosHttpTransport> =>
     new Promise((resolve, reject) => {
       const instance = axios.create({
-        baseURL: `http://localhost:${opts.apiPort}`,
+        baseURL: `http://localhost:${opts.apiPort || '5000'}`,
       });
 
       const transport = new SpeculosHttpTransport(instance, opts);
@@ -69,6 +68,7 @@ export default class SpeculosHttpTransport extends Transport {
           response.data.on("data", (chunk) => {
             log("speculos-event", chunk.toString());
             const split = chunk.toString().replace("data: ", "");
+            // FIXME: ugly patch because speculos return us a `data: `
             const json = JSON.parse(split);
             transport.automationEvents.next(json);
           });
