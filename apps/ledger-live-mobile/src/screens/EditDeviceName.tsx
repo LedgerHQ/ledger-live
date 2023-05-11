@@ -127,6 +127,15 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const disabled =
     !cleanName || !!error || running || cleanName === originalName;
 
+  /**
+   * Blurring the input when "running" (when the device action modal is mounted)
+   * allows to avoid a glitch in case of success: on iOS, if the input was
+   * focused when the modal got initially mounted, on the unmount of the modal
+   * it would refocus the input, so the keyboard would reappear. In this
+   * specific case, on success of the renaming action, the input gets unmounted
+   * as well (because we navigate away from this screen), resulting in a glitch
+   * where the keyboard appears and then quickly disappears.
+   */
   useEffect(() => {
     let handle: number;
     if (running) textInputRef.current?.blur();
