@@ -88,6 +88,7 @@ import {
   NavigationHeaderCloseButton,
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
+import { RedirectToRecoverStaxFlowScreen } from "../../screens/Protect/RedirectToRecoverStaxFlow";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -563,6 +564,11 @@ export default function BaseNavigator() {
         name={ScreenName.RedirectToOnboardingRecoverFlow}
         options={{ headerShown: false }}
         component={RedirectToOnboardingRecoverFlowScreen}
+      />
+      <Stack.Screen
+        name={ScreenName.RedirectToRecoverStaxFlow}
+        options={{ headerShown: false }}
+        component={RedirectToRecoverStaxFlowScreen}
       />
       <Stack.Screen
         name={NavigatorName.NoFundsFlow}
