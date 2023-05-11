@@ -7,6 +7,7 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import WebRecoverPlayer from "~/renderer/components/WebRecoverPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import styled from "styled-components";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export type RecoverComponentParams = {
   appId: string;
@@ -34,6 +35,9 @@ export default function RecoverPlayer({ match }: RouteComponentProps<RecoverComp
   const theme = useTheme("colors.palette.type");
   const history = useHistory();
   const onClose = useCallback(() => history.goBack(), [history]);
+  const recoverConfig = useFeature("protectServicesDesktop");
+
+  const availableOnDesktop = recoverConfig?.enabled && recoverConfig?.params?.availableOnDesktop;
 
   return manifest ? (
     <FullscreenWrapper>
@@ -42,6 +46,7 @@ export default function RecoverPlayer({ match }: RouteComponentProps<RecoverComp
         inputs={{
           theme,
           lang: locale,
+          availableOnDesktop,
           ...params,
           ...queryParams,
         }}
