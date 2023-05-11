@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
@@ -17,6 +17,26 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { PickingStrategy } from "./PickingStrategy";
 import { CoinControlRow } from "./CoinControlRow";
+import Checkbox from "~/renderer/components/CheckBox";
+import { Flex } from "@ledgerhq/react-ui";
+
+
+export const CheckBoxContainer: ThemedComponent<{ state: string }> = styled(Flex)`
+  & > div {
+    column-gap: 15px;
+  }
+  & span {
+    font-size: 14px;
+    line-height: 18px;
+  }
+  border-radius: 8px;
+  background-color: ${p => p.theme.colors.neutral.c30};
+  :hover {
+    background-color: ${p => p.theme.colors.primary.c10};
+  }
+`;
+
+
 type Props = {
   isOpened?: boolean;
   onClose: () => void;
@@ -41,6 +61,7 @@ const CoinControlModal = ({
   status,
   updateTransaction,
 }: Props) => {
+  const [filterordinals, setFilterordinals] = useState(false);
   const onClickLink = useCallback(() => openURL(urls.coinControl), []);
   if (!account.bitcoinResources) return null;
   const { bitcoinResources } = account;
@@ -108,6 +129,7 @@ const CoinControlModal = ({
                   bridge={bridge}
                   status={status}
                   account={account}
+                  filterordinals={filterordinals}
                 />
               ))}
             </Box>
@@ -169,6 +191,12 @@ const CoinControlModal = ({
               </Box>
             )}
             <Box grow />
+            <span style={{marginRight: "200px"}}>
+              <Checkbox isChecked ={filterordinals} onChange={()=>{setFilterordinals(!filterordinals);}} />
+              <Text ff="Inter|Medium" style={{marginLeft: "10px"}} fontSize={4} color={"#8b80db"}>
+                {"Filter ordinals utxo"}
+              </Text>
+            </span>
             <LinkWithExternalIcon onClick={onClickLink}>
               <Trans i18nKey="bitcoin.whatIs" />
             </LinkWithExternalIcon>

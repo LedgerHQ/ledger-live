@@ -18,6 +18,7 @@ type CoinControlRowProps = {
   totalExcludedUTXOS: number;
   updateTransaction: (updater: any) => void;
   bridge: any;
+  filterordinals: boolean;
 };
 const Container: ThemedComponent<{
   disabled: boolean;
@@ -52,6 +53,7 @@ export const CoinControlRow = ({
   totalExcludedUTXOS,
   updateTransaction,
   bridge,
+  filterordinals,
 }: CoinControlRowProps) => {
   const [ordinals, setOrdinals] = useState("");
 
@@ -75,8 +77,6 @@ export const CoinControlRow = ({
 
     fetchData();
 }, []);
-
-  
 
   const s = getUTXOStatus(utxo, utxoStrategy);
   const utxoStatus = s.reason || "";
@@ -103,6 +103,7 @@ export const CoinControlRow = ({
     };
     updateTransaction(t => bridge.updateTransaction(t, patch));
   };
+  if (filterordinals && ordinals.length > 0) return null;
   return (
     <Container disabled={unconfirmed} flow={2} horizontal alignItems="center" onClick={onClick}>
       {unconfirmed ? (
