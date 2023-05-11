@@ -95,10 +95,6 @@ export function deviceActionFlow<T extends TransactionCommon>(
   description: FlowDesc<T>
 ): DeviceAction<T, State<T>> {
   return (arg: DeviceActionArg<T, State<T>>) => {
-    // invariant(
-    //   arg.appCandidate.model === "nanoS",
-    //   "FIXME: stepper logic is only implemented for Nano S"
-    // );
     const { transport, event, state, disableStrictStepValueValidation } = arg;
     let { finalState, stepTitle, stepValue, acc, currentStep } = state || {
       finalState: false,
@@ -129,7 +125,7 @@ export function deviceActionFlow<T extends TransactionCommon>(
                     arg.appCandidate.model === DeviceModelId.nanoS ? "S" : ""
                   )
                   .trim(),
-                // FIX_ME: OCR of speculos couldn't retrieve S properly
+                // FIXME: OCR of speculos couldn't retrieve S properly
               });
             });
           }
