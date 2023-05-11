@@ -16,9 +16,10 @@ const Content = styled.div`
   display: flex;
   flex-direction: row;
 `;
-const Wrapper: ThemedComponent<{
-  onClick?: () => void;
-}> = styled(animated.div)`
+
+const Wrapper = styled(animated.div)<{
+  onClick?: Function;
+}>`
   cursor: ${p => (p.onClick ? "pointer" : "auto")};
   background-color: ${p => p.theme.colors.palette.text.shade100};
   position: relative;
@@ -47,7 +48,10 @@ const TextContainer = styled.div`
   flex: 1;
   flex-direction: column;
 `;
-const icons = {
+const icons: Record<
+  string,
+  { defaultIconColor: string; Icon: React.ComponentType<{ size: number }> }
+> = {
   warning: {
     defaultIconColor: "orange",
     Icon: TriangleWarning,
@@ -57,6 +61,7 @@ const icons = {
     Icon: InfoCircle,
   },
 };
+
 export function Toast({
   duration,
   onDismiss,
@@ -76,12 +81,12 @@ export function Toast({
   type?: string;
   title: string;
   cta?: string;
-  text?: string;
-  icon: string;
+  text?: string | null;
+  icon?: string;
   id: string;
 }) {
   const { t } = useTranslation();
-  const { Icon, defaultIconColor } = icons[icon];
+  const { Icon, defaultIconColor } = icons[icon ?? ""];
   const transitions = useTransition(1, null, {
     from: {
       height: 0,
@@ -103,7 +108,7 @@ export function Toast({
     },
   });
   useEffect(() => {
-    async function scheduledDismiss(duration) {
+    async function scheduledDismiss(duration: number) {
       await delay(duration);
       onDismiss(id);
     }
@@ -121,67 +126,71 @@ export function Toast({
     },
     [callback, id, onDismiss],
   );
-  return transitions.map(({ key, props }) => (
-    <Wrapper key={key} style={props} onClick={onClick}>
-      <Content>
-        <IconContainer color={defaultIconColor}>
-          <Icon size={19} />
-        </IconContainer>
-        <TextContainer>
-          {type ? (
-            <Text
-              ff="Inter|Bold"
-              fontSize="8px"
-              lineHeight="9.68px"
-              uppercase
-              letterSpacing="0.2em"
-              style={{
-                opacity: 0.4,
+  return (
+    <>
+      {transitions.map(({ key, props }) => (
+        <Wrapper key={key} style={props} onClick={onClick}>
+          <Content>
+            <IconContainer color={defaultIconColor}>
+              <Icon size={19} />
+            </IconContainer>
+            <TextContainer>
+              {type ? (
+                <Text
+                  ff="Inter|Bold"
+                  fontSize="8px"
+                  lineHeight="9.68px"
+                  uppercase
+                  letterSpacing="0.2em"
+                  style={{
+                    opacity: 0.4,
+                  }}
+                >
+                  {t(`toastOverlay.toastType.${type}`)}
+                </Text>
+              ) : null}
+              <Box horizontal mt="2px" justifyContent="space-between" alignItems="center">
+                <Text ff="Inter|SemiBold" fontSize="14px" lineHeight="19px">
+                  {title}
+                </Text>
+                {cta ? (
+                  <FakeLink onClick={callback} ff="Inter|Regular" fontSize="13px">
+                    {cta}
+                  </FakeLink>
+                ) : null}
+              </Box>
+              {text ? (
+                <Text
+                  mt="10px"
+                  ff="Inter|Regular"
+                  fontSize="13px"
+                  lineHeight="18px"
+                  style={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    opacity: 0.5,
+                  }}
+                >
+                  {text}
+                </Text>
+              ) : null}
+            </TextContainer>
+          </Content>
+          {duration ? (
+            <TimeBasedProgressBar duration={duration} />
+          ) : dismissable ? (
+            <DismissWrapper
+              onClick={event => {
+                onDismiss(id);
+                event.stopPropagation();
               }}
             >
-              {t(`toastOverlay.toastType.${type}`)}
-            </Text>
+              <IconCross size={12} />
+            </DismissWrapper>
           ) : null}
-          <Box horizontal mt="2px" justifyContent="space-between" alignItems="center">
-            <Text ff="Inter|SemiBold" fontSize="14px" lineHeight="19px">
-              {title}
-            </Text>
-            {cta ? (
-              <FakeLink onClick={callback} ff="Inter|Regular" fontSize="13px" lineHeight="18px">
-                {cta}
-              </FakeLink>
-            ) : null}
-          </Box>
-          {text ? (
-            <Text
-              mt="10px"
-              ff="Inter|Regular"
-              fontSize="13px"
-              lineHeight="18px"
-              style={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-                opacity: 0.5,
-              }}
-            >
-              {text}
-            </Text>
-          ) : null}
-        </TextContainer>
-      </Content>
-      {duration ? (
-        <TimeBasedProgressBar duration={duration} />
-      ) : dismissable ? (
-        <DismissWrapper
-          onClick={event => {
-            onDismiss(id);
-            event.stopPropagation();
-          }}
-        >
-          <IconCross size={12} />
-        </DismissWrapper>
-      ) : null}
-    </Wrapper>
-  ));
+        </Wrapper>
+      ))}
+    </>
+  );
 }

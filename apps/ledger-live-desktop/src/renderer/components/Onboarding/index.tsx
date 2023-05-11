@@ -45,6 +45,7 @@ export enum UseCase {
   setupDevice = "setup-device",
   connectDevice = "connect-device",
   recoveryPhrase = "recovery-phrase",
+  recover = "recover",
 }
 
 type NullableDeviceModelId = DeviceModelId | null;
@@ -62,7 +63,7 @@ export const OnboardingContext = createContext<OnboardingContextTypes>({
 
 export function Onboarding() {
   const [imgsLoaded, setImgsLoaded] = useState(false);
-  const [useCase, setUseCase] = useState(null);
+  const [useCase, setUseCase] = useState<UseCase | null>(null);
   const [deviceModelId, setDeviceModelId] = useState<NullableDeviceModelId>(null);
   const [openedPedagogyModal, setOpenedPedagogyModal] = useState(false);
   const [openedRecoveryPhraseWarningHelp, setOpenedRecoveryPhraseWarningHelp] = useState(false);
@@ -104,19 +105,22 @@ export function Onboarding() {
               <Route path={`${path}/sync`} component={SyncOnboarding} />
               <Route
                 path={`${path}/select-use-case`}
-                render={props => (
-                  <SelectUseCase
-                    {...props}
-                    setOpenedPedagogyModal={setOpenedPedagogyModal}
-                    setUseCase={setUseCase}
-                  />
-                )}
+                render={props =>
+                  setUseCase && (
+                    <SelectUseCase
+                      {...props}
+                      setOpenedPedagogyModal={setOpenedPedagogyModal}
+                      setUseCase={setUseCase}
+                    />
+                  )
+                }
               />
               <Route
                 path={[
                   `${path}/${UseCase.setupDevice}`,
                   `${path}/${UseCase.connectDevice}`,
                   `${path}/${UseCase.recoveryPhrase}`,
+                  `${path}/${UseCase.recover}`,
                 ]}
                 render={props => useCase && <Tutorial {...props} useCase={useCase} />}
               />

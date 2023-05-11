@@ -4,11 +4,12 @@ import Box from "~/renderer/components/Box";
 import IconCheck from "~/renderer/icons/Check";
 import IconCross from "~/renderer/icons/Cross";
 
-type Status = "next" | "active" | "valid" | "error" | "disable";
+export type Status = "next" | "active" | "valid" | "error" | "disable";
 const RADIUS = 18;
-const Wrapper: ThemedComponent<{
+
+const Wrapper = styled(Box).attrs<{
   status: Status;
-}> = styled(Box).attrs((p: { status: Status }) => ({
+}>((p: { status: Status }) => ({
   alignItems: "center",
   color: ["active", "valid"].includes(p.status)
     ? "palette.primary.main"
@@ -18,13 +19,18 @@ const Wrapper: ThemedComponent<{
   grow: true,
   justifyContent: "center",
   relative: true,
-}))`
+}))<{
+  status: Status;
+}>`
   width: ${RADIUS}px;
   flex-shrink: 0;
   text-align: center;
   font-size: 9px;
 `;
-const StepNumber = styled(Box).attrs(p => ({
+
+const StepNumber = styled(Box).attrs<{
+  status: Status;
+}>(p => ({
   color: ["active", "valid", "error"].includes(p.status)
     ? "palette.primary.contrastText"
     : "palette.text.shade40",
@@ -34,7 +40,9 @@ const StepNumber = styled(Box).attrs(p => ({
     ? "alertRed"
     : "palette.background.paper",
   ff: p.status === "active" ? "Inter|Bold" : "Inter|SemiBold",
-}))`
+}))<{
+  status: Status;
+}>`
   display: inline;
   text-align: center;
   border-radius: 50%;
@@ -52,21 +60,28 @@ const StepNumber = styled(Box).attrs(p => ({
   transition: all ease-in-out 0.1s ${p => (["active", "valid"].includes(p.status) ? 0.4 : 0)}s;
   width: ${RADIUS}px;
 `;
-const Label = styled(Box).attrs(p => ({
+
+const Label = styled(Box).attrs<{
+  status: Status;
+}>(p => ({
   fontSize: 3,
   ff: p.status === "active" ? "Inter|SemiBold" : "Inter|Medium",
   px: 2,
-}))`
+}))<{
+  status: Status;
+}>`
   line-height: 1.2;
   position: absolute;
   top: 25px;
   transition: color ease-in-out 0.1s ${p => (["active", "valid"].includes(p.status) ? 0.4 : 0)}s;
 `;
+
 type Props = {
   number: number;
   status: Status;
-  children: any;
+  children: React.ReactNode;
 };
+
 const Step = ({ number, status, children }: Props) => {
   return (
     <Wrapper status={status}>

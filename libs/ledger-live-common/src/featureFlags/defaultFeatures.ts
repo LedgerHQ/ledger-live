@@ -24,6 +24,63 @@ export const defaultFeatures: DefaultFeatures = {
     enabled: false,
   },
   currencyAvalanchePChain: {
+    enabled: false
+  },
+  currencyOptimism: {
+    enabled: false,
+  },
+  currencyOptimismGoerli: {
+    enabled: false,
+  },
+  currencyArbitrum: {
+    enabled: false,
+  },
+  currencyArbitrumGoerli: {
+    enabled: false,
+  },
+  currencyRsk: {
+    enabled: false,
+  },
+  currencyBittorrent: {
+    enabled: false,
+  },
+  currencyKavaEvm: {
+    enabled: false,
+  },
+  currencyEvmosEvm: {
+    enabled: false,
+  },
+  currencyEnergyWeb: {
+    enabled: false,
+  },
+  currencyAstar: {
+    enabled: false,
+  },
+  currencyMetis: {
+    enabled: false,
+  },
+  currencyBoba: {
+    enabled: false,
+  },
+  currencyMoonriver: {
+    enabled: false,
+  },
+  currencyVelasEvm: {
+    enabled: false,
+  },
+  currencySyscoin: {
+    enabled: false,
+  },
+  currencyAxelar: {
+    enabled: false,
+  },
+  currencyOnomy: {
+    enabled: false,
+  },
+  currencyQuicksilver: {
+    enabled: false,
+  },
+  currencyPersistence: {
     enabled: false,
   },
   deviceInitialApps: {
@@ -203,11 +260,41 @@ export const defaultFeatures: DefaultFeatures = {
   protectServicesDiscoverDesktop: {
     enabled: false,
   },
+  protectServicesDesktop: {
+    enabled: false,
+    params: {
+      onboardingRestore: {
+        restoreInfoDrawer: {
+          enabled: true,
+          manualStepsURI:
+            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          supportLinkURI: "https://support.ledger.com",
+        },
+        postOnboardingURI:
+          "ledgerlive://discover/protect-simu?redirectTo=restore",
+      },
+      onboardingCompleted: {
+        upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
+        alreadySubscribedURI:
+          "ledgerlive://recover/protect-simu?redirectTo=login",
+      },
+      login: {
+        loginURI: "ledgerlive://discover/protect-simu?redirectTo=login",
+      },
+      protectId: "protect-simu",
+    },
+  },
   referralProgramDesktopSidebar: {
     enabled: false,
     params: {
       path: "/discover/refer-a-friend",
       isNew: true,
+    },
+  },
+  referralProgramMobile: {
+    enabled: false,
+    params: {
+      path: "/discover/refer-a-friend",
     },
   },
 };

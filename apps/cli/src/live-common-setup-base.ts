@@ -58,7 +58,26 @@ setSupportedCurrencies([
   "songbird",
   "flare",
   "near",
-  "avalanchepchain"
+  "avalanchepchain",
+  "optimism",
+  "optimism_goerli",
+  "arbitrum",
+  "arbitrum_goerli",
+  "rsk",
+  "bittorrent",
+  "kava_evm",
+  "evmos_evm",
+  "energy_web",
+  "astar",
+  "metis",
+  "boba",
+  "moonriver",
+  "velas_evm",
+  "syscoin",
+  "axelar",
+  "onomy",
+  "persistence",
+  "quicksilver",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

@@ -1,9 +1,10 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { Account, SubAccount } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { getOptimismAdditionalFees } from "./api/rpc.common";
 import {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
@@ -27,24 +28,41 @@ export const eip1559TransactionHasFees = (tx: EvmTransactionEIP1559): boolean =>
  */
 export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
   if (tx.type !== 2) {
-    return (
-      (tx as EvmTransactionLegacy).gasPrice?.multipliedBy(tx.gasLimit) ||
-      new BigNumber(0)
-    );
+    return tx.gasPrice?.multipliedBy(tx.gasLimit) || new BigNumber(0);
   }
-  return (
-    (tx as EvmTransactionEIP1559).maxFeePerGas?.multipliedBy(tx.gasLimit) ||
-    new BigNumber(0)
-  );
+  return tx.maxFeePerGas?.multipliedBy(tx.gasLimit) || new BigNumber(0);
+};
+
+/**
+ * Helper returning the potential additional fees necessary for layer twos
+ * to settle the transaction on layer 1.
+ */
+export const getAdditionalLayer2Fees = async (
+  currency: CryptoCurrency,
+  transaction: EvmTransaction
+): Promise<BigNumber | undefined> => {
+  switch (currency.id) {
+    case "optimism":
+    case "optimism_goerli": {
+      const additionalFees = await getOptimismAdditionalFees(
+        currency,
+        transaction
+      );
+      return additionalFees;
+    }
+    default:
+      return;
+  }
 };
 
 /**
  * List of properties of a sub account that can be updated when 2 "identical" accounts are found
  */
-const updatableSubAccountProperties = [
+const updatableSubAccountProperties: { name: string; isOps: boolean }[] = [
   { name: "balance", isOps: false },
   { name: "spendableBalance", isOps: false },
   { name: "balanceHistoryCache", isOps: false },
+  { name: "swapHistory", isOps: false },
   { name: "operations", isOps: true },
   { name: "pendingOperations", isOps: true },
 ];

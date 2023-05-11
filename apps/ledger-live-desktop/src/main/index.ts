@@ -75,7 +75,7 @@ app.on("ready", async () => {
     await installExtensions();
   }
   db.init(userDataDirectory);
-  const settings: SettingsState = await db.getKey("app", "settings");
+  const settings = (await db.getKey("app", "settings")) as SettingsState;
   const user: User = (await db.getKey("app", "user")) as User;
   const userId = user?.id;
   if (userId) {

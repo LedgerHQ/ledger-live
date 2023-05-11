@@ -14,91 +14,87 @@ import { getMetadataMediaTypes } from "~/helpers/nft";
 import { setDrawer } from "../drawers/Provider";
 import CustomImage from "~/renderer/screens/customImage";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
+import { ContextMenuItemType } from "../components/ContextMenu/ContextMenuWrapper";
 
-const linksPerCurrency = {
-  ethereum: (t: TFunction, links: NFTMetadata["links"]) => [
-    links?.opensea && {
-      key: "opensea",
-      id: "opensea",
-      label: t("NFT.viewer.actions.open", {
-        viewer: "Opensea.io",
-      }),
-      Icon: IconOpensea,
-      type: "external",
-      callback: () => openURL(links.opensea),
-    },
-    links?.rarible && {
-      key: "rarible",
-      id: "rarible",
-      label: t("NFT.viewer.actions.open", {
-        viewer: "Rarible",
-      }),
-      Icon: IconRarible,
-      type: "external",
-      callback: () => openURL(links.rarible),
-    },
-    {
-      key: "sep2",
-      id: "sep2",
-      type: "separator",
-      label: "",
-    },
-    links?.explorer && {
-      key: "explorer",
-      id: "explorer",
-      label: t("NFT.viewer.actions.open", {
-        viewer: "Explorer",
-      }),
-      Icon: IconGlobe,
-      type: "external",
-      callback: () => openURL(links.explorer),
-    },
-  ],
-  polygon: (t: TFunction, links: NFTMetadata["links"]) => [
-    links?.opensea && {
-      key: "opensea",
-      id: "opensea",
-      label: t("NFT.viewer.actions.open", {
-        viewer: "Opensea.io",
-      }),
-      Icon: IconOpensea,
-      type: "external",
-      callback: () => openURL(links.opensea),
-    },
-    links?.rarible && {
-      key: "rarible",
-      id: "rarible",
-      label: t("NFT.viewer.actions.open", {
-        viewer: "Rarible",
-      }),
-      Icon: IconRarible,
-      type: "external",
-      callback: () => openURL(links.rarible),
-    },
-    {
-      key: "sep2",
-      id: "sep2",
-      type: "separator",
-      label: "",
-    },
-    links?.explorer && {
-      key: "explorer",
-      id: "explorer",
-      label: t("NFT.viewer.actions.open", {
-        viewer: "Explorer",
-      }),
-      Icon: IconGlobe,
-      type: "external",
-      callback: () => openURL(links.explorer),
-    },
-  ],
+function safeList(items: (ContextMenuItemType | "" | undefined)[]): ContextMenuItemType[] {
+  return items.filter(Boolean) as ContextMenuItemType[];
+}
+
+const linksPerCurrency: Record<
+  string,
+  (t: TFunction, links: NFTMetadata["links"]) => ContextMenuItemType[]
+> = {
+  ethereum: (t, links) =>
+    safeList([
+      links?.opensea && {
+        id: "opensea",
+        label: t("NFT.viewer.actions.open", {
+          viewer: "Opensea.io",
+        }),
+        Icon: IconOpensea,
+        type: "external",
+        callback: () => openURL(links.opensea),
+      },
+      links?.rarible && {
+        id: "rarible",
+        label: t("NFT.viewer.actions.open", {
+          viewer: "Rarible",
+        }),
+        Icon: IconRarible,
+        type: "external",
+        callback: () => openURL(links.rarible),
+      },
+      {
+        id: "sep2",
+        type: "separator",
+        label: "",
+      },
+      links?.explorer && {
+        id: "explorer",
+        label: t("NFT.viewer.actions.open", {
+          viewer: "Explorer",
+        }),
+        Icon: IconGlobe,
+        type: "external",
+        callback: () => openURL(links.explorer),
+      },
+    ]),
+  polygon: (t: TFunction, links: NFTMetadata["links"]) =>
+    safeList([
+      links?.opensea && {
+        id: "opensea",
+        label: t("NFT.viewer.actions.open", {
+          viewer: "Opensea.io",
+        }),
+        Icon: IconOpensea,
+        type: "external",
+        callback: () => openURL(links.opensea),
+      },
+      links?.rarible && {
+        id: "rarible",
+        label: t("NFT.viewer.actions.open", {
+          viewer: "Rarible",
+        }),
+        Icon: IconRarible,
+        type: "external",
+        callback: () => openURL(links.rarible),
+      },
+      {
+        id: "sep2",
+        type: "separator",
+        label: "",
+      },
+      links?.explorer && {
+        id: "explorer",
+        label: t("NFT.viewer.actions.open", {
+          viewer: "Explorer",
+        }),
+        Icon: IconGlobe,
+        type: "external",
+        callback: () => openURL(links.explorer),
+      },
+    ]),
 };
-
-type CurrencyLink = ReturnType<
-  typeof linksPerCurrency[keyof typeof linksPerCurrency]
-> extends Array<infer T>
-  ? Exclude<T, "">
-  : never;
 
 export default (
   account: Account,
@@ -106,16 +102,14 @@ export default (
   metadata: NFTMetadata,
   onClose?: () => void,
   isInsideDrawer?: boolean,
-) => {
+): ContextMenuItemType[] => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const hideCollection = useMemo(
     () => ({
-      key: "hide-collection",
       id: "hide-collection",
       label: t("hideNftCollection.hideCTA"),
       Icon: IconBan,
-      type: null,
       callback: () => {
         return dispatch(
           openModal("MODAL_HIDE_NFT_COLLECTION", {
@@ -139,14 +133,13 @@ export default (
       null;
     return customImageUri;
   }, [metadata]);
-  const customImage = useMemo(
-    () => ({
-      key: "custom-image",
+
+  const customImage = useMemo(() => {
+    const img: ContextMenuItemType = {
       id: "custom-image",
       label: "Custom image",
       // TODO: get proper wording for this
       Icon: Icons.ToolsMedium,
-      type: null,
       callback: () => {
         if (customImageUri)
           setDrawer(CustomImage, {
@@ -162,16 +155,13 @@ export default (
               : undefined,
           });
       },
-    }),
-    [account, customImageUri, isInsideDrawer, nft.id],
-  );
+    };
+    return img;
+  }, [account, customImageUri, isInsideDrawer, nft.id]);
+
   const customImageEnabled = useFeature("customImage")?.enabled;
   const links = useMemo(() => {
-    const metadataLinks =
-      (linksPerCurrency[account.currency.id as keyof typeof linksPerCurrency]?.(
-        t,
-        metadata?.links,
-      ).filter(x => !!x) as CurrencyLink[]) || [];
+    const metadataLinks = linksPerCurrency[account.currency.id]?.(t, metadata?.links) || [];
     return [
       ...metadataLinks,
       ...(customImageEnabled && customImageUri ? [customImage] : []),

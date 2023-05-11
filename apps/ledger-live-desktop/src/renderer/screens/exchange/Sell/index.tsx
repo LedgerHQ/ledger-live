@@ -12,6 +12,8 @@ import { useRampCatalogCurrencies } from "../hooks";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { currenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import BigSpinner from "~/renderer/components/BigSpinner";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+
 const BuyContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -19,16 +21,18 @@ const BuyContainer = styled.div`
   flex: 1;
   width: 100%;
 `;
+
 type State = {
   sortedCurrencies: Array<TokenCurrency | CryptoCurrency>;
   isLoading: boolean;
 };
+
 const OffRamp = ({ defaultCurrencyId, defaultAccountId, defaultTicker, rampCatalog }: DProps) => {
   const [currencyState, setCurrencyState] = useState<State>({
     sortedCurrencies: [],
     isLoading: false,
   });
-  const allCurrencies = useRampCatalogCurrencies(rampCatalog.value.offRamp);
+  const allCurrencies = useRampCatalogCurrencies(rampCatalog?.value?.offRamp);
   useEffect(
     () => {
       const filteredCurrencies = defaultTicker
@@ -49,18 +53,14 @@ const OffRamp = ({ defaultCurrencyId, defaultAccountId, defaultTicker, rampCatal
     [],
   );
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const [state, setState] = useState({
+  const [state, setState] = useState<{
+    account: AccountLike | undefined;
+    parentAccount?: Account;
+  }>({
     account: undefined,
     parentAccount: undefined,
   });
   const { account, parentAccount } = state;
-  const reset = useCallback(() => {
-    track("Page Sell Reset");
-    setState({
-      account: undefined,
-      parentAccount: undefined,
-    });
-  }, []);
   const selectAccount = useCallback((account, parentAccount) => {
     setState(oldState => ({
       ...oldState,
@@ -83,11 +83,11 @@ const OffRamp = ({ defaultCurrencyId, defaultAccountId, defaultTicker, rampCatal
         <ProviderList
           account={account}
           parentAccount={parentAccount}
-          providers={rampCatalog.value.offRamp}
-          onBack={reset}
+          providers={rampCatalog?.value?.offRamp}
           trade={{
             type: "offRamp",
-            cryptoCurrencyId: account.token ? account.token.id : account.currency.id,
+            cryptoCurrencyId:
+              account.type === "TokenAccount" ? account.token.id : account.currency.id,
             fiatCurrencyId: fiatCurrency.ticker,
             fiatAmount: 400,
           }}
@@ -105,4 +105,5 @@ const OffRamp = ({ defaultCurrencyId, defaultAccountId, defaultTicker, rampCatal
     </BuyContainer>
   );
 };
+
 export default OffRamp;

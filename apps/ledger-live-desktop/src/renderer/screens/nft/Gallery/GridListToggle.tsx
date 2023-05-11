@@ -7,9 +7,9 @@ import { setNftsViewMode } from "~/renderer/actions/settings";
 import Button from "~/renderer/components/Button";
 import GridIcon from "~/renderer/icons/Grid";
 import ListIcon from "~/renderer/icons/List";
-const ToggleButton: ThemedComponent<{
+const ToggleButton = styled(Button).attrs<{
   active?: boolean;
-}> = styled(Button)`
+}>({})<{ active?: boolean }>`
   height: 30px;
   width: 30px;
   padding: 7px;

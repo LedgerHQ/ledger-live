@@ -1,4 +1,5 @@
-import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+
 export type FormProvidersSections = "provider" | "fees" | "rate" | "target";
 export type FormProvidersProps = {
   provider?: string;

@@ -2,6 +2,7 @@ import { Page, Locator } from "@playwright/test";
 
 export class PortfolioPage {
   readonly page: Page;
+  readonly portfolioContainer: Locator;
   readonly emptyStateTitle: Locator;
   readonly addAccountButton: Locator;
   readonly carousel: Locator;
@@ -14,6 +15,7 @@ export class PortfolioPage {
 
   constructor(page: Page) {
     this.page = page;
+    this.portfolioContainer = page.locator("data-test-id=portfolio-container");
     this.emptyStateTitle = page.locator("data-test-id=portfolio-empty-state-title");
     this.addAccountButton = page.locator("data-test-id=portfolio-empty-state-add-account-button");
     this.carousel = page.locator("data-test-id=carousel");

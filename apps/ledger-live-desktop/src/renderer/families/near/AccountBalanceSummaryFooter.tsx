@@ -11,7 +11,7 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-const Wrapper: ThemedComponent<any> = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
   p: 5,
@@ -22,7 +22,6 @@ const Wrapper: ThemedComponent<any> = styled(Box).attrs(() => ({
 `;
 const BalanceDetail = styled(Box).attrs(() => ({
   flex: "0.25 0 auto",
-  vertical: true,
   alignItems: "start",
   paddingRight: 20,
 }))``;

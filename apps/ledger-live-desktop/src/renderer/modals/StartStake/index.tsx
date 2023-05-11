@@ -6,7 +6,7 @@ import { Account } from "@ledgerhq/types-live";
 
 type Action = {
   key: string;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 type CurrencyFamily = keyof typeof perFamilyManageActions;
@@ -15,15 +15,16 @@ interface ModalStartStakeProps {
   account: Account;
   parentAccount: Account | null;
   alwaysShowNoFunds: boolean;
+  source?: string;
 }
 
-const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount }) => {
+const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, source }) => {
   const currencyFamily: CurrencyFamily = account.currency.family as CurrencyFamily;
   const manage = perFamilyManageActions[currencyFamily];
   const dispatch = useDispatch();
   let manageList: Action[] = [];
   if (manage) {
-    const familyManageActions = manage({ account, parentAccount });
+    const familyManageActions = manage({ account, parentAccount, source });
     manageList = familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
   }
 
@@ -32,7 +33,7 @@ const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount }) =
     dispatch(closeModal("MODAL_START_STAKE"));
 
     if (stakeAction) {
-      stakeAction.onClick();
+      stakeAction.onClick?.();
     }
     // ignoring manageList from dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps

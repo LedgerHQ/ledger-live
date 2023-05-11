@@ -26,7 +26,7 @@ const SectionHelp = () => {
         <RowItem
           title={t("settings.help.faq")}
           desc={t("settings.help.faqDesc")}
-          url={urls.faq[locale in urls.faq ? locale : "en"]}
+          url={urls.faq[locale in urls.faq ? (locale as keyof typeof urls.faq) : "en"]}
         />
         <Row
           title={t("settings.profile.softResetTitle")}

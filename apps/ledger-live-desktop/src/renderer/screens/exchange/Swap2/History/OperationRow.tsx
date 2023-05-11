@@ -10,7 +10,7 @@ import {
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React from "react";
-import styled from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import Box from "~/renderer/components/Box";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -23,7 +23,7 @@ import IconClock from "~/renderer/icons/Clock";
 import IconSwap from "~/renderer/icons/Swap";
 import { rgba } from "~/renderer/styles/helpers";
 
-export const getStatusColor = (status: string, theme: any) => {
+export const getStatusColor = (status: string, theme: DefaultTheme) => {
   if (isSwapOperationPending(status)) {
     return status === "hold" ? theme.colors.orange : theme.colors.wallet;
   }
@@ -33,9 +33,10 @@ export const getStatusColor = (status: string, theme: any) => {
   if (operationStatusList.finishedKO.includes(status)) {
     return theme.colors.alertRed;
   }
-  return theme.colors.palette.shade50;
+  return theme.colors.palette.text.shade50;
 };
-const Status = styled.div`
+
+const Status = styled.div<{ status: string }>`
   height: 24px;
   width: 24px;
   display: flex;
@@ -58,7 +59,7 @@ const WrapperClock = styled(Box).attrs(() => ({
   right: -4px;
   padding: 1px;
 `;
-const Row = styled(Box)`
+const Row = styled(Box)<{ isOptimistic?: boolean; toExists?: boolean }>`
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
   height: 68px;
   opacity: ${p => (p.isOptimistic || !p.toExists ? 0.5 : 1)};

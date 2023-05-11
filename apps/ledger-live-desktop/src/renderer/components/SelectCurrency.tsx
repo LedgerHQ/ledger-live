@@ -2,34 +2,44 @@ import React, { useCallback, useMemo, useState, memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Fuse from "fuse.js";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import useEnv from "~/renderer/hooks/useEnv";
-import Select, { Option } from "~/renderer/components/Select";
+import Select from "~/renderer/components/Select";
 import { CreateStylesReturnType } from "~/renderer/components/Select/createStyles";
 import Box from "~/renderer/components/Box";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Text from "./Text";
-type Props<C extends Currency> = {
-  onChange: (a?: C | null) => void;
-  currencies: C[];
-  value?: C;
+import { ThemeConfig } from "react-select/src/theme";
+
+type CurrencyOption = CryptoOrTokenCurrency & {
+  value: CryptoOrTokenCurrency;
+  label: CryptoOrTokenCurrency["name"];
+  currency: CryptoOrTokenCurrency;
+  isDisabled: boolean;
+};
+
+type Props = {
+  onChange: (a?: CryptoOrTokenCurrency | null) => void;
+  currencies: CryptoOrTokenCurrency[];
+  value?: CurrencyOption["currency"] | null;
   placeholder?: string;
   autoFocus?: boolean;
   minWidth?: number;
   width?: number;
   rowHeight?: number;
-  isCurrencyDisabled?: (a: Currency) => boolean;
+  isCurrencyDisabled?: (a: CryptoOrTokenCurrency) => boolean;
   isDisabled?: boolean;
   id?: string;
-  renderOptionOverride?: (option: Option) => any;
-  renderValueOverride?: (option: Option) => any;
-  stylesMap?: (a: CreateStylesReturnType) => CreateStylesReturnType;
+  renderValueOverride?: ({ data }: { data: CurrencyOption }) => React.ReactNode;
+  stylesMap?: (a: ThemeConfig) => CreateStylesReturnType<CurrencyOption>;
+  onMenuOpen?: () => void;
+  small?: boolean;
 };
-const getOptionValue = c => c.id;
+const getOptionValue = (data: CurrencyOption) => (data.currency as CryptoOrTokenCurrency).id;
 
 // TODO: I removed the {...props} that was passed to Select. We might need to check out it doesnt break other stuff
-const SelectCurrency = <C extends Currency>({
+const SelectCurrency = ({
   onChange,
   value,
   placeholder,
@@ -38,13 +48,14 @@ const SelectCurrency = <C extends Currency>({
   minWidth,
   width,
   rowHeight = 47,
-  renderOptionOverride,
   renderValueOverride,
   isCurrencyDisabled,
   isDisabled,
   id,
   stylesMap,
-}: Props<C>) => {
+  onMenuOpen,
+  small,
+}: Props) => {
   const { t } = useTranslation();
   const devMode = useEnv("MANAGER_DEV_MODE");
   let c = currencies;
@@ -63,7 +74,7 @@ const SelectCurrency = <C extends Currency>({
         : t("common.selectCurrencyEmptyOption"),
     [t],
   );
-  const options = useMemo(
+  const options: CurrencyOption[] = useMemo(
     () =>
       cryptos.map(c => ({
         ...c,
@@ -73,6 +84,20 @@ const SelectCurrency = <C extends Currency>({
         isDisabled: isCurrencyDisabled ? isCurrencyDisabled(c) : false,
       })),
     [isCurrencyDisabled, cryptos],
+  );
+
+  const selectedOption: CurrencyOption | null = useMemo(
+    () =>
+      value
+        ? ({
+            ...value,
+            value: value,
+            label: value.name,
+            currency: value,
+            isDisabled: isCurrencyDisabled ? isCurrencyDisabled(value) : false,
+          } as CurrencyOption)
+        : null,
+    [value, isCurrencyDisabled],
   );
   const fuseOptions = useMemo(
     () => ({
@@ -91,12 +116,13 @@ const SelectCurrency = <C extends Currency>({
     <Select
       id={id}
       autoFocus={autoFocus}
-      value={value}
+      value={selectedOption as CurrencyOption}
       options={filteredOptions}
-      filterOption={false}
+      filterOption={null}
       getOptionValue={getOptionValue}
-      renderOption={renderOptionOverride || renderOption}
-      renderValue={renderValueOverride || renderOptionOverride || renderOption}
+      renderOption={renderOption}
+      onMenuOpen={onMenuOpen}
+      renderValue={renderValueOverride || renderOption}
       onInputChange={v => setSearchInputValue(v)}
       inputValue={searchInputValue}
       placeholder={placeholder || t("common.selectCurrency")}
@@ -107,6 +133,7 @@ const SelectCurrency = <C extends Currency>({
       isDisabled={isDisabled}
       rowHeight={rowHeight}
       stylesMap={stylesMap}
+      small={small}
     />
   );
 };
@@ -135,18 +162,20 @@ export function CurrencyOption({
   hideParentTag = false,
   tagVariant = "default",
 }: {
-  currency: Currency;
+  currency: CryptoOrTokenCurrency;
   singleLineLayout?: boolean;
   hideParentTag?: boolean;
   tagVariant?: "default" | "thin";
 }) {
-  const isParentTagDisplayed = !hideParentTag && currency.parentCurrency;
+  const isParentTagDisplayed = !hideParentTag && (currency as TokenCurrency).parentCurrency;
   const textContents = singleLineLayout ? (
     <>
       <Box grow ff="Inter|SemiBold" color="palette.text.shade100" fontSize={4}>
         {`${currency.name} (${currency.ticker})`}
       </Box>
-      {isParentTagDisplayed ? <CurrencyLabel>{currency.parentCurrency.name}</CurrencyLabel> : null}
+      {isParentTagDisplayed ? (
+        <CurrencyLabel>{(currency as TokenCurrency).parentCurrency.name}</CurrencyLabel>
+      ) : null}
     </>
   ) : (
     <>
@@ -158,13 +187,13 @@ export function CurrencyOption({
           <Text color="palette.text.shade40" ff="Inter|Medium" fontSize={3}>
             {currency.ticker}{" "}
             {isParentTagDisplayed && tagVariant === "thin"
-              ? `(${currency.parentCurrency.name})`
+              ? `(${(currency as TokenCurrency).parentCurrency.name})`
               : null}
           </Text>
         </Box>
       </OptionMultilineContainer>
       {isParentTagDisplayed && tagVariant === "default" ? (
-        <CurrencyLabel>{currency.parentCurrency.name}</CurrencyLabel>
+        <CurrencyLabel>{(currency as TokenCurrency).parentCurrency.name}</CurrencyLabel>
       ) : null}
     </>
   );
@@ -175,5 +204,7 @@ export function CurrencyOption({
     </Box>
   );
 }
-const renderOption = ({ data: currency }: Option) => <CurrencyOption currency={currency} />;
-export default memo<Props<any>>(SelectCurrency);
+const renderOption = <C extends CurrencyOption>({ data }: { data: C }) => (
+  <CurrencyOption currency={data.currency} />
+);
+export default memo<Props>(SelectCurrency);

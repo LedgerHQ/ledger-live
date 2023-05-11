@@ -6,13 +6,13 @@ import Box from "~/renderer/components/Box";
 import RetryButton from "~/renderer/components/RetryButton";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { StepProps } from "../types";
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
   min-height: 220px;
 `;
@@ -49,4 +49,4 @@ export function StepConfirmationFooter({ transitionTo, onRetry, error }: StepPro
     </>
   );
 }
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

@@ -3,29 +3,29 @@ import ModalContent from "./ModalContent";
 import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
 import { RenderProps } from ".";
-type Props = {
+type Props<Data> = {
   title?: React.ReactNode;
   subTitle?: React.ReactNode;
   headerStyle?: any;
-  onBack?: (a: void) => void;
-  onClose?: (a: void) => void;
-  render?: (a?: RenderProps | null) => any;
-  renderFooter?: (a?: RenderProps | null) => any;
+  onBack?: (() => void) | undefined;
+  onClose?: (() => void) | undefined;
+  render?: (a?: RenderProps<Data> | null) => any;
+  renderFooter?: (a?: RenderProps<Data> | null) => any;
   modalFooterStyle?: any;
-  renderProps?: RenderProps;
+  renderProps?: RenderProps<Data>;
   noScroll?: boolean;
   refocusWhenChange?: any;
   backButtonComponent?: React.ReactNode;
 };
-class ModalBody extends PureComponent<Props> {
-  componentDidUpdate(prevProps: Props) {
+class ModalBody<Data> extends PureComponent<Props<Data>> {
+  componentDidUpdate(prevProps: Props<Data>) {
     const shouldFocus = prevProps.refocusWhenChange !== this.props.refocusWhenChange;
     if (shouldFocus && this._content.current) {
-      this._content.current.focus();
+      this._content.current?.focus();
     }
   }
 
-  _content: React.Ref<any> = React.createRef();
+  _content = React.createRef<HTMLDivElement>();
   render() {
     const {
       onBack,

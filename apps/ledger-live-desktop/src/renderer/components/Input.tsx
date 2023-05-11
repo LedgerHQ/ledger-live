@@ -6,6 +6,10 @@ import fontFamily from "~/renderer/styles/styled/fontFamily";
 import Box from "~/renderer/components/Box";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import BigSpinner from "~/renderer/components/BigSpinner";
+import { BoxProps } from "./Box/Box";
+
+export type InputError = Error | boolean | null | undefined;
+
 const RenderLeftWrapper = styled(Box)`
   align-items: center;
   justify-content: center;
@@ -19,9 +23,22 @@ const RenderRightWrapper = styled(Box)`
     flex: 1;
   }
 `;
-export const Container: ThemedComponent<any> = styled(Box).attrs(() => ({
+
+type InnerProps = {
+  noBorder?: boolean;
+  noBorderLeftRadius?: boolean;
+  noBoxShadow?: boolean;
+  isFocus?: boolean;
+  disabled?: boolean;
+  small?: boolean;
+  error?: InputError;
+  warning?: InputError;
+  editInPlace?: boolean;
+};
+
+export const Container = styled(Box).attrs(() => ({
   horizontal: true,
-}))`
+}))<InnerProps>`
   background: ${p =>
     p.disabled
       ? p.theme.colors.palette.background.default
@@ -71,16 +88,22 @@ export const Container: ThemedComponent<any> = styled(Box).attrs(() => ({
       border-color: var(--status-color);
     }`}
 `;
-export const ErrorContainer: ThemedComponent<any> = styled(Box)`
+
+type ErrorContainerInnerProps = {
+  hasError?: Error | boolean | null | undefined;
+};
+
+export const ErrorContainer = styled(Box)<ErrorContainerInnerProps & BoxProps>`
   margin-top: 0px;
   font-size: 12px;
   width: 100%;
   transition: all 0.4s ease-in-out;
   will-change: max-height;
-  max-height: ${p => (p.hasError ? 60 : 0)}px;
-  min-height: ${p => (p.hasError ? 20 : 0)}px;
+  max-height: ${(p: ErrorContainerInnerProps) => (p.hasError ? 60 : 0)}px;
+  min-height: ${(p: ErrorContainerInnerProps) => (p.hasError ? 20 : 0)}px;
   overflow: hidden;
 `;
+
 const ErrorDisplay = styled(Box)`
   color: ${p => p.theme.colors.pearl};
 `;
@@ -133,27 +156,29 @@ const Base = styled.input.attrs(() => ({
     }
   }
 `;
-type Props = {
-  keepEvent?: boolean;
-  onBlur: (a: SyntheticInputEvent<HTMLInputElement>) => void;
-  onChange?: Function;
-  onEnter?: (a: SyntheticKeyboardEvent<HTMLInputElement>) => any;
-  onEsc?: (a: SyntheticKeyboardEvent<HTMLInputElement>) => void;
-  onFocus: (a: SyntheticInputEvent<HTMLInputElement>) => void;
-  renderLeft?: any;
-  renderRight?: any;
+
+export type Props = {
+  onChange?: (a: string) => void;
+  onBlur?: (a: React.FocusEvent<HTMLInputElement>) => void;
+  onEnter?: (a: React.KeyboardEvent<HTMLInputElement>) => void;
+  onEsc?: (a: React.KeyboardEvent<HTMLInputElement>) => void;
+  onFocus?: (a: React.FocusEvent<HTMLInputElement>) => void;
+  renderLeft?: React.ReactNode;
+  renderRight?: React.ReactNode;
   containerProps?: object;
   loading?: boolean;
-  error?: Error | null;
-  warning?: Error | null;
+  error?: InputError;
+  warning?: InputError;
   small?: boolean;
   editInPlace?: boolean;
   disabled?: boolean;
   hideErrorMessage?: boolean;
   value?: string;
   placeholder?: string;
-};
-const Input = React.forwardRef(function Input(
+  ff?: string;
+} & React.ComponentProps<typeof Base>;
+
+const Input = function Input(
   {
     renderLeft = null,
     renderRight = null,
@@ -165,7 +190,6 @@ const Input = React.forwardRef(function Input(
     warning,
     disabled,
     onChange,
-    keepEvent,
     onEnter,
     onEsc,
     onFocus = noop,
@@ -174,19 +198,21 @@ const Input = React.forwardRef(function Input(
     value,
     ...props
   }: Props,
-  inputRef,
+  inputRef: React.ForwardedRef<HTMLInputElement> | null,
 ) {
   const [isFocus, setFocus] = useState(false);
+
   const handleChange = useCallback(
-    (e: SyntheticInputEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       if (onChange) {
-        onChange(keepEvent ? e : e.target.value);
+        onChange(e.target.value);
       }
     },
-    [onChange, keepEvent],
+    [onChange],
   );
+
   const handleKeyDown = useCallback(
-    (e: SyntheticKeyboardEvent<HTMLInputElement>) => {
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
       // handle enter key
       if (e.which === 13 && onEnter) {
         onEnter(e);
@@ -196,13 +222,13 @@ const Input = React.forwardRef(function Input(
     },
     [onEnter, onEsc],
   );
+
   const handleClick = useCallback(() => {
-    if (inputRef && inputRef.current) {
-      inputRef.current.focus();
-    }
+    inputRef && "current" in inputRef && inputRef.current?.focus();
   }, [inputRef]);
+
   const handleFocus = useCallback(
-    (e: SyntheticInputEvent<HTMLInputElement>) => {
+    (e: React.FocusEvent<HTMLInputElement>) => {
       setFocus(true);
       if (onFocus) {
         onFocus(e);
@@ -211,7 +237,7 @@ const Input = React.forwardRef(function Input(
     [onFocus],
   );
   const handleBlur = useCallback(
-    (e: SyntheticInputEvent<HTMLInputElement>) => {
+    (e: React.FocusEvent<HTMLInputElement>) => {
       setFocus(false);
       if (onBlur) {
         onBlur(e);
@@ -237,7 +263,7 @@ const Input = React.forwardRef(function Input(
           {...props}
           placeholder={loading ? "" : props.placeholder}
           value={loading ? "" : value}
-          small={small}
+          // small={small}
           disabled={disabled}
           ref={inputRef}
           onFocus={handleFocus}
@@ -249,13 +275,17 @@ const Input = React.forwardRef(function Input(
         <ErrorContainer hasError={!hideErrorMessage && (error || warning)}>
           {!hideErrorMessage ? (
             error ? (
-              <ErrorDisplay id="input-error" data-testid="input-error">
-                <TranslatedError error={error} />
-              </ErrorDisplay>
+              typeof error === "boolean" ? null : (
+                <ErrorDisplay id="input-error" data-testid="input-error">
+                  <TranslatedError error={error} />
+                </ErrorDisplay>
+              )
             ) : warning ? (
-              <WarningDisplay id="input-warning">
-                <TranslatedError error={warning} />
-              </WarningDisplay>
+              typeof warning === "boolean" ? null : (
+                <WarningDisplay id="input-warning">
+                  <TranslatedError error={warning} />
+                </WarningDisplay>
+              )
             ) : null
           ) : null}
         </ErrorContainer>
@@ -268,5 +298,5 @@ const Input = React.forwardRef(function Input(
       {renderRight ? <RenderRightWrapper>{renderRight}</RenderRightWrapper> : null}
     </Container>
   );
-});
-export default Input;
+};
+export default React.forwardRef(Input) as typeof Input;

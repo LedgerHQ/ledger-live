@@ -5,7 +5,10 @@ import TabBar from "~/renderer/components/TabBar";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import swapRoutes from "./routes.json";
+
 const Nav = styled.nav`
   background-color: ${p => p.theme.colors.palette.background.paper};
 
@@ -29,7 +32,7 @@ const Navbar = () => {
     () => swapRoutes.filter(route => !route.disabled).map(route => t(route.title)),
     [t],
   );
-  const onWrappedTabChange = nextIndex => {
+  const onWrappedTabChange = (nextIndex: number) => {
     track("button_clicked", {
       button: `${swapRoutes[nextIndex].name} Tab`,
       page: "Page Swap Form",
@@ -42,11 +45,12 @@ const Navbar = () => {
     });
   };
   return (
-    currentIndex >= 0 && (
+    (currentIndex >= 0 && (
       <Nav>
         <TabBar tabs={tabs} onIndexChange={onWrappedTabChange} index={currentIndex} />
       </Nav>
-    )
+    )) ||
+    null
   );
 };
 export default Navbar;

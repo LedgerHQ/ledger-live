@@ -1,7 +1,6 @@
 import React from "react";
 import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { PortfolioRange, AccountLike } from "@ledgerhq/types-live";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
@@ -9,8 +8,9 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import Chart from "~/renderer/components/ChartPreview";
 import useTheme from "~/renderer/hooks/useTheme";
+import { Data } from "~/renderer/components/Chart/types";
 type Props = {
-  account: Account | TokenAccount;
+  account: AccountLike;
   range: PortfolioRange;
 };
 function Body({ account, range }: Props) {
@@ -18,7 +18,7 @@ function Body({ account, range }: Props) {
     account,
     range,
   });
-  const bgColor = useTheme("colors.palette.background.paper");
+  const bgColor = useTheme().colors.palette.background.paper;
   const currency = getAccountCurrency(account);
   const color = useCurrencyColor(currency, bgColor);
   return (
@@ -47,7 +47,7 @@ function Body({ account, range }: Props) {
       </Box>
       <Chart
         // TODO make date non optional
-        data={history}
+        data={history as Data}
         color={color}
         valueKey={countervalueAvailable ? "countervalue" : "value"}
         height={52}

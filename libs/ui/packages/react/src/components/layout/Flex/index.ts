@@ -1,7 +1,6 @@
 import baseStyled, { BaseStyledProps } from "../../styled";
 
-export type FlexBoxProps = BaseStyledProps;
-
-const FlexBox = baseStyled.div.attrs<FlexBoxProps, FlexBoxProps>({ display: "flex" })``;
+const FlexBox = baseStyled.div.attrs<BaseStyledProps, BaseStyledProps>({ display: "flex" })``;
+export type FlexBoxProps = BaseStyledProps & React.HTMLAttributes<HTMLDivElement>;
 
 export default FlexBox;
