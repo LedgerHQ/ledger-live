@@ -30,7 +30,7 @@ const ExperimentalFeatureRow = ({
   feature: Feature;
   onDirtyChange: () => void;
 }) => {
-  const { type, dirty, ...rest } = feature;
+  const { dirty, ...rest } = feature;
   const Children = experimentalTypesMap[feature.type];
   const envValue = useEnv(feature.name);
   const isDefault = isEnvDefault(feature.name);
@@ -45,7 +45,6 @@ const ExperimentalFeatureRow = ({
   );
   return Children ? (
     <Row title={feature.title} desc={feature.description}>
-      {/* $FlowFixMe */}
       <Children
         value={envValue}
         readOnly={isReadOnlyEnv(feature.name)}

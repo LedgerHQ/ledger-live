@@ -8,7 +8,7 @@ import ExportInstructions from "~/renderer/components/Exporter/ExportInstruction
 import { Account } from "@ledgerhq/types-live";
 
 type Props = {
-  accounts?: Account[];
+  accounts: Account[];
 };
 
 const Exporter = ({ accounts }: Props) => (
@@ -22,5 +22,5 @@ const Exporter = ({ accounts }: Props) => (
 const mapStateToProps = createStructuredSelector({
   accounts: (state, props) => props.accounts || activeAccountsSelector(state),
 });
-const ConnectedExporter: React.ComponentType<Props> = connect(mapStateToProps)(Exporter);
+const ConnectedExporter: React.ComponentType<Partial<Props>> = connect(mapStateToProps)(Exporter);
 export default ConnectedExporter;

@@ -94,7 +94,13 @@ const ExternalLinkIconContainer = styled.span`
   display: inline-flex;
   margin-left: 4px;
 `;
-export const TranslatedLink = ({ children, onClick }: any) => (
+export const TranslatedLink = ({
+  children,
+  onClick,
+}: {
+  children?: React.ReactNode;
+  onClick: () => void;
+}) => (
   <Container onClick={onClick}>
     {children}
     <ExternalLinkIconContainer>

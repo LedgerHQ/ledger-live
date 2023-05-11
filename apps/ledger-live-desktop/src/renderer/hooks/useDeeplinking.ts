@@ -40,7 +40,13 @@ export function useDeepLinkHandler() {
   const location = useLocation();
   const history = useHistory();
   const navigate = useCallback(
-    (pathname: string, state?: any, search?: string) => {
+    (
+      pathname: string,
+      state?: {
+        [k: string]: string;
+      },
+      search?: string,
+    ) => {
       const hasNewPathname = pathname !== location.pathname;
       const hasNewSearch = typeof search === "string" && search !== location.search;
       const hasNewState = JSON.stringify(state) !== JSON.stringify(location.state);
@@ -63,7 +69,7 @@ export function useDeepLinkHandler() {
     [history, location],
   );
   const handler = useCallback(
-    (event: any, deeplink: string) => {
+    (_, deeplink: string) => {
       const { pathname, searchParams, search } = new URL(deeplink);
       /**
        * TODO: handle duplicated query params

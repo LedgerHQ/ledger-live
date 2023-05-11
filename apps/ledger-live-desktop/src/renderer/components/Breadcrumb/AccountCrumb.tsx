@@ -9,7 +9,7 @@ import {
   findSubAccountById,
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import IconCheck from "~/renderer/icons/Check";
 import IconAngleDown from "~/renderer/icons/AngleDown";
@@ -112,7 +112,7 @@ const AccountCrumb = () => {
   );
 
   const processItemsForDropdown = useCallback(
-    (items: any[]) =>
+    (items: (Account | SubAccount)[]) =>
       items.map(item => ({
         key: item.id,
         label: getAccountName(item),

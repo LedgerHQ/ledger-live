@@ -13,7 +13,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountBalanceSummaryHeader from "./AccountBalanceSummaryHeader";
 import perFamilyAccountBalanceSummaryFooter from "~/renderer/generated/AccountBalanceSummaryFooter";
 import FormattedDate from "~/renderer/components/FormattedDate";
-import { Data } from "~/renderer/components/Chart/types";
+import { Data, Item } from "~/renderer/components/Chart/types";
 
 type Props = {
   chartColor: string;
@@ -44,7 +44,7 @@ export default function AccountBalanceSummary({
   });
   const discreetMode = useSelector(discreetModeSelector);
   const renderTooltip = useCallback(
-    (d: any) => {
+    (d: Item) => {
       const displayCountervalue = countervalueFirst && countervalueAvailable;
       const unit = getAccountUnit(account);
       const data = [
@@ -53,7 +53,7 @@ export default function AccountBalanceSummary({
           unit,
         },
         {
-          val: d.countervalue,
+          val: Number(d.countervalue),
           unit: counterValue.units[0],
         },
       ];
