@@ -121,11 +121,12 @@ export function deviceActionFlow<T extends TransactionCommon>(
               }).toMatchObject({
                 [stepTitle]: expectedValue(arg, acc)
                   .replace(
-                    "S",
+                    /S/g,
                     arg.appCandidate.model === DeviceModelId.nanoS ? "S" : ""
                   )
                   .trim(),
                 // FIXME: OCR of speculos couldn't retrieve S properly
+                // Issue on speculos repository : https://github.com/LedgerHQ/speculos/issues/204
               });
             });
           }
