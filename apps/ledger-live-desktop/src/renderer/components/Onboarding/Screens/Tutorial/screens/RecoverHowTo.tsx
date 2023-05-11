@@ -103,7 +103,7 @@ const PinCodeHowToAnimation = () => {
 
 RecoverHowTo.Illustration = <PinCodeHowToAnimation />;
 
-const Footer = (props: any) => {
+const Footer = (props: React.ComponentProps<typeof AsideFooter>) => {
   const { t } = useTranslation();
   return (
     <AsideFooter

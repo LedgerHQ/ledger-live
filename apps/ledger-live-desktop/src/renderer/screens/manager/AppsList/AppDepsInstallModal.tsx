@@ -25,7 +25,7 @@ const Separator = styled.div`
 `;
 const LinkIconWrapper = styled.div`
   padding: ${p => p.theme.space[1]}px;
-  box-sizeing: content-box;
+  box-sizing: content-box;
   border-radius: 100%;
   display: flex;
   justify-content: center;

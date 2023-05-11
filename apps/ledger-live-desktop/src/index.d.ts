@@ -33,6 +33,7 @@ declare namespace Electron {
 }
 
 interface Window {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 
   api?: {
@@ -63,6 +64,7 @@ interface Window {
       history: Record<string, unknown>[];
       subject: ReplaySubject;
       parseRawEvents: (rawEvents: RawEvents | RawEvents[], maybeKey?: string) => unknown;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       emitter: any;
       mockDeviceEvent: (...args: RawEvents[]) => void;
       exposed: {
@@ -72,6 +74,7 @@ interface Window {
           deviceInfo: import("@ledgerhq/types-live").DeviceInfo,
           deviceModelId?: import("@ledgerhq/types-devices").DeviceModelId,
         ) => ListAppResult;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         deviceInfo155: any;
       };
     };

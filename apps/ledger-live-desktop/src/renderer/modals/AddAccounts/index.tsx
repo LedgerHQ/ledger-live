@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { addAccounts } from "@ledgerhq/live-common/account/index";
 import logger from "~/renderer/logger";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
