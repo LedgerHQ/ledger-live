@@ -77,7 +77,7 @@ const polkadot: AppSpec<Transaction> = {
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
 
-        invariant(amount.gte(0), "not enough balance to do a transfer")
+        invariant(amount.gte(0), "not enough balance to do a transfer");
 
         if (sibling.balance.eq(0) && amount.lt(EXISTENTIAL_DEPOSIT)) {
           invariant(
