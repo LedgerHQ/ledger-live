@@ -1,7 +1,10 @@
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import React from "react";
+import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import { withTheme } from "styled-components";
+import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
+import { Theme } from "@ledgerhq/react-ui";
+import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
@@ -63,9 +66,26 @@ const StepConfirmation = ({
   optimisticOperation,
   error,
   signed,
+  transaction,
+  source,
 }: StepProps & {
-  theme: any;
+  theme: Theme;
 }) => {
+  const voteAccAddress = transaction?.recipient;
+  const validators = useValidatorGroups();
+  useEffect(() => {
+    if (optimisticOperation && voteAccAddress && validators) {
+      const chosenValidator = validators.find(v => v.address === voteAccAddress);
+      track("staking_completed", {
+        currency: "CELO",
+        validator: chosenValidator.name || voteAccAddress,
+        source,
+        delegation: "vote",
+        flow: "stake",
+      });
+    }
+  }, [optimisticOperation, validators, voteAccAddress, source]);
+
   if (optimisticOperation) {
     return (
       <S.Container>

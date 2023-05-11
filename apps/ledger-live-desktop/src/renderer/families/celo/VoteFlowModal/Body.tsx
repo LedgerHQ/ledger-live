@@ -31,6 +31,7 @@ type OwnProps = {
   params: {
     account: Account;
     parentAccount: Account | undefined | null;
+    source?: string;
   };
   name: string;
 };
@@ -93,17 +94,16 @@ const Body = ({
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const { account, source } = params;
   const {
     transaction,
     setTransaction,
     updateTransaction,
-    account,
     parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account } = params;
     invariant(account && account.celoResources, "celo: account and celo resources required");
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
@@ -176,6 +176,7 @@ const Body = ({
     onTransactionError: handleTransactionError,
     t,
     bridgePending,
+    source,
   };
   return (
     <Stepper {...stepperProps}>
