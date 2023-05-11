@@ -1,116 +1,130 @@
 # @ledgerhq/live-common
 
-## 29.5.0-nightly.6
-
-### Patch Changes
-
-- [#3386](https://github.com/LedgerHQ/ledger-live/pull/3386) [`dfccb01b94`](https://github.com/LedgerHQ/ledger-live/commit/dfccb01b94d545af80ee5e77bf1d04d9d2fd0faa) Thanks [@grsoares21](https://github.com/grsoares21)! - Throttle the events coming from inline app installs. They were causing the UI to slow down as they weren't being properly throttled.
-
-- Updated dependencies [[`fb1fcc47e4`](https://github.com/LedgerHQ/ledger-live/commit/fb1fcc47e444c35b0908d528b58e096d79d6f967)]:
-  - @ledgerhq/hw-app-btc@10.0.2-nightly.1
-
-## 29.5.0-nightly.5
-
-### Minor Changes
-
-- [#3366](https://github.com/LedgerHQ/ledger-live/pull/3366) [`491b37f08d`](https://github.com/LedgerHQ/ledger-live/commit/491b37f08d9a17404eaf32c491628e65d2d8666a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating the `shouldUpgrade` & `mustUpgrade` helpers to allow for pre-release tags
-
-- [#3255](https://github.com/LedgerHQ/ledger-live/pull/3255) [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36) Thanks [@RamyEB](https://github.com/RamyEB)! - add field visibility to manifest and tests
-
-## 29.5.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.3.2-nightly.4
-  - @ledgerhq/coin-polkadot@0.1.3-nightly.4
-  - @ledgerhq/domain-service@1.1.0-nightly.4
-  - @ledgerhq/live-portfolio@0.0.4-nightly.3
-  - @ledgerhq/hw-app-eth@6.33.2-nightly.4
-
-## 29.5.0-nightly.3
-
-### Minor Changes
-
-- [#2809](https://github.com/LedgerHQ/ledger-live/pull/2809) [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Quicksilver, Persistence, Onomy, Axelar to Cosmos family
-
-### Patch Changes
-
-- Updated dependencies [[`a0a4e2eb0e`](https://github.com/LedgerHQ/ledger-live/commit/a0a4e2eb0e84f5679ba5994f8d375054c8466c7e), [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949)]:
-  - @ledgerhq/domain-service@1.1.0-nightly.3
-  - @ledgerhq/hw-app-cosmos@6.28.0-nightly.1
-  - @ledgerhq/cryptoassets@9.5.0-nightly.1
-  - @ledgerhq/live-env@0.2.0-nightly.2
-  - @ledgerhq/hw-app-eth@6.33.2-nightly.3
-  - @ledgerhq/coin-framework@0.3.2-nightly.3
-  - @ledgerhq/coin-polkadot@0.1.3-nightly.3
-  - @ledgerhq/live-portfolio@0.0.4-nightly.2
-
-## 29.5.0-nightly.2
-
-### Minor Changes
-
-- [#3153](https://github.com/LedgerHQ/ledger-live/pull/3153) [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding support for new EVM chains, including Layer 2s like Optimism & Arbitrum
-
-### Patch Changes
-
-- Updated dependencies [[`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3)]:
-  - @ledgerhq/cryptoassets@9.5.0-nightly.0
-  - @ledgerhq/coin-framework@0.3.2-nightly.2
-  - @ledgerhq/coin-polkadot@0.1.3-nightly.2
-  - @ledgerhq/domain-service@1.0.2-nightly.2
-  - @ledgerhq/live-portfolio@0.0.4-nightly.1
-  - @ledgerhq/hw-app-eth@6.33.2-nightly.2
-
-## 29.5.0-nightly.1
+## 29.5.0
 
 ### Minor Changes
 
 - [#3315](https://github.com/LedgerHQ/ledger-live/pull/3315) [`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add env & exerimental feature for the base fee multiplier used to compose the maxFeePerGas of an EIP1559 transaction
 
-### Patch Changes
+- [#3153](https://github.com/LedgerHQ/ledger-live/pull/3153) [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding support for new EVM chains, including Layer 2s like Optimism & Arbitrum
 
-- [#3229](https://github.com/LedgerHQ/ledger-live/pull/3229) [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added mising error for broken ble pairing
+- [#3105](https://github.com/LedgerHQ/ledger-live/pull/3105) [`5d7bd8c68e`](https://github.com/LedgerHQ/ledger-live/commit/5d7bd8c68ee33507ff065c05965e1a8c387a4fae) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Refactor device action implementations unifying the logic
 
-- Updated dependencies [[`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d), [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472)]:
-  - @ledgerhq/live-env@0.2.0-nightly.1
-  - @ledgerhq/errors@6.12.5-nightly.0
-  - @ledgerhq/coin-framework@0.3.2-nightly.1
-  - @ledgerhq/coin-polkadot@0.1.3-nightly.1
-  - @ledgerhq/domain-service@1.0.2-nightly.1
-  - @ledgerhq/devices@8.0.2-nightly.0
-  - @ledgerhq/hw-app-algorand@6.27.14-nightly.0
-  - @ledgerhq/hw-app-cosmos@6.27.14-nightly.0
-  - @ledgerhq/hw-app-eth@6.33.2-nightly.1
-  - @ledgerhq/hw-app-exchange@0.1.1-nightly.0
-  - @ledgerhq/hw-app-near@6.27.9-nightly.0
-  - @ledgerhq/hw-app-polkadot@6.27.14-nightly.0
-  - @ledgerhq/hw-app-solana@7.0.8-nightly.0
-  - @ledgerhq/hw-app-trx@6.27.14-nightly.0
-  - @ledgerhq/hw-transport@6.28.3-nightly.0
-  - @ledgerhq/hw-transport-node-speculos@6.27.14-nightly.0
-  - @ledgerhq/hw-app-btc@10.0.2-nightly.0
-  - @ledgerhq/hw-app-str@6.27.14-nightly.0
-  - @ledgerhq/hw-app-tezos@6.27.14-nightly.0
-  - @ledgerhq/hw-app-xrp@6.27.14-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.27.14-nightly.0
+- [#2809](https://github.com/LedgerHQ/ledger-live/pull/2809) [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Quicksilver, Persistence, Onomy, Axelar to Cosmos family
 
-## 29.4.1-nightly.0
+- [#2953](https://github.com/LedgerHQ/ledger-live/pull/2953) [`baa687a281`](https://github.com/LedgerHQ/ledger-live/commit/baa687a281b5f75cacd06b05b5438807874fa152) Thanks [@RamyEB](https://github.com/RamyEB)! - refacto type and name of platform field
 
 ### Patch Changes
 
 - [#3271](https://github.com/LedgerHQ/ledger-live/pull/3271) [`07fc266a10`](https://github.com/LedgerHQ/ledger-live/commit/07fc266a10479f77044e36b9347b9a97e42f0566) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix regression in the stax load image introduced by device action rework
 
+- [#3227](https://github.com/LedgerHQ/ledger-live/pull/3227) [`f11d282bde`](https://github.com/LedgerHQ/ledger-live/commit/f11d282bded679dfcbb0bbffe88055d55995e03f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add helper for Segment event/properties
+
+- [#3369](https://github.com/LedgerHQ/ledger-live/pull/3369) [`0ebfbbf596`](https://github.com/LedgerHQ/ledger-live/commit/0ebfbbf596ef3d690f1eb225698512f9a1108b59) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update osmosis node to fix history
+
 - [#3244](https://github.com/LedgerHQ/ledger-live/pull/3244) [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new FF
 
 - [#3280](https://github.com/LedgerHQ/ledger-live/pull/3280) [`d67f7480f7`](https://github.com/LedgerHQ/ledger-live/commit/d67f7480f767ffceab82a43c37089948315a3fc4) Thanks [@lvndry](https://github.com/lvndry)! - Delete api folder in live-common
 
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.3.2-nightly.0
-  - @ledgerhq/coin-polkadot@0.1.3-nightly.0
-  - @ledgerhq/domain-service@1.0.2-nightly.0
-  - @ledgerhq/live-portfolio@0.0.4-nightly.0
-  - @ledgerhq/hw-app-eth@6.33.2-nightly.0
+- [#3364](https://github.com/LedgerHQ/ledger-live/pull/3364) [`164409ab4e`](https://github.com/LedgerHQ/ledger-live/commit/164409ab4e035bb6c941c2f5a0c4e26873c52270) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix onomy redelegation
+
+- [#3241](https://github.com/LedgerHQ/ledger-live/pull/3241) [`ec9426b354`](https://github.com/LedgerHQ/ledger-live/commit/ec9426b354156eb9362a74649a1f887a3aef7f8d) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLC - Stop tracking SyncError event
+
+- [#3229](https://github.com/LedgerHQ/ledger-live/pull/3229) [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added mising error for broken ble pairing
+
+- [#3097](https://github.com/LedgerHQ/ledger-live/pull/3097) [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce a new manager API for listApps, which should bring memory and time improvements.
+
+- Updated dependencies [[`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d), [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3), [`a0a4e2eb0e`](https://github.com/LedgerHQ/ledger-live/commit/a0a4e2eb0e84f5679ba5994f8d375054c8466c7e), [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472), [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949), [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678)]:
+  - @ledgerhq/live-env@0.2.0
+  - @ledgerhq/cryptoassets@9.5.0
+  - @ledgerhq/domain-service@1.1.0
+  - @ledgerhq/errors@6.12.5
+  - @ledgerhq/hw-app-cosmos@6.28.0
+  - @ledgerhq/coin-framework@0.3.2
+  - @ledgerhq/coin-polkadot@0.1.3
+  - @ledgerhq/live-portfolio@0.0.4
+  - @ledgerhq/hw-app-eth@6.33.2
+  - @ledgerhq/devices@8.0.2
+  - @ledgerhq/hw-app-algorand@6.27.14
+  - @ledgerhq/hw-app-exchange@0.1.1
+  - @ledgerhq/hw-app-near@6.27.9
+  - @ledgerhq/hw-app-polkadot@6.27.14
+  - @ledgerhq/hw-app-solana@7.0.8
+  - @ledgerhq/hw-app-trx@6.27.14
+  - @ledgerhq/hw-transport@6.28.3
+  - @ledgerhq/hw-transport-node-speculos@6.27.14
+  - @ledgerhq/hw-app-btc@10.0.2
+  - @ledgerhq/hw-app-str@6.27.14
+  - @ledgerhq/hw-app-tezos@6.27.14
+  - @ledgerhq/hw-app-xrp@6.27.14
+  - @ledgerhq/hw-transport-mocker@6.27.14
+
+## 29.5.0-next.2
+
+### Patch Changes
+
+- [#3369](https://github.com/LedgerHQ/ledger-live/pull/3369) [`0ebfbbf596`](https://github.com/LedgerHQ/ledger-live/commit/0ebfbbf596ef3d690f1eb225698512f9a1108b59) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update osmosis node to fix history
+
+## 29.5.0-next.1
+
+### Patch Changes
+
+- [#3364](https://github.com/LedgerHQ/ledger-live/pull/3364) [`164409ab4e`](https://github.com/LedgerHQ/ledger-live/commit/164409ab4e035bb6c941c2f5a0c4e26873c52270) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix onomy redelegation
+
+## 29.5.0-next.0
+
+### Minor Changes
+
+- [#3315](https://github.com/LedgerHQ/ledger-live/pull/3315) [`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add env & exerimental feature for the base fee multiplier used to compose the maxFeePerGas of an EIP1559 transaction
+
+- [#3153](https://github.com/LedgerHQ/ledger-live/pull/3153) [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding support for new EVM chains, including Layer 2s like Optimism & Arbitrum
+
+- [#3105](https://github.com/LedgerHQ/ledger-live/pull/3105) [`5d7bd8c68e`](https://github.com/LedgerHQ/ledger-live/commit/5d7bd8c68ee33507ff065c05965e1a8c387a4fae) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Refactor device action implementations unifying the logic
+
+- [#2809](https://github.com/LedgerHQ/ledger-live/pull/2809) [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add Quicksilver, Persistence, Onomy, Axelar to Cosmos family
+
+- [#2953](https://github.com/LedgerHQ/ledger-live/pull/2953) [`baa687a281`](https://github.com/LedgerHQ/ledger-live/commit/baa687a281b5f75cacd06b05b5438807874fa152) Thanks [@RamyEB](https://github.com/RamyEB)! - refacto type and name of platform field
+
+### Patch Changes
+
+- [#3271](https://github.com/LedgerHQ/ledger-live/pull/3271) [`07fc266a10`](https://github.com/LedgerHQ/ledger-live/commit/07fc266a10479f77044e36b9347b9a97e42f0566) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix regression in the stax load image introduced by device action rework
+
+- [#3227](https://github.com/LedgerHQ/ledger-live/pull/3227) [`f11d282bde`](https://github.com/LedgerHQ/ledger-live/commit/f11d282bded679dfcbb0bbffe88055d55995e03f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add helper for Segment event/properties
+
+- [#3244](https://github.com/LedgerHQ/ledger-live/pull/3244) [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new FF
+
+- [#3280](https://github.com/LedgerHQ/ledger-live/pull/3280) [`d67f7480f7`](https://github.com/LedgerHQ/ledger-live/commit/d67f7480f767ffceab82a43c37089948315a3fc4) Thanks [@lvndry](https://github.com/lvndry)! - Delete api folder in live-common
+
+- [#3241](https://github.com/LedgerHQ/ledger-live/pull/3241) [`ec9426b354`](https://github.com/LedgerHQ/ledger-live/commit/ec9426b354156eb9362a74649a1f887a3aef7f8d) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLC - Stop tracking SyncError event
+
+- [#3229](https://github.com/LedgerHQ/ledger-live/pull/3229) [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added mising error for broken ble pairing
+
+- [#3097](https://github.com/LedgerHQ/ledger-live/pull/3097) [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Introduce a new manager API for listApps, which should bring memory and time improvements.
+
+- Updated dependencies [[`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d), [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3), [`a0a4e2eb0e`](https://github.com/LedgerHQ/ledger-live/commit/a0a4e2eb0e84f5679ba5994f8d375054c8466c7e), [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472), [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949), [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678)]:
+  - @ledgerhq/live-env@0.2.0-next.0
+  - @ledgerhq/cryptoassets@9.5.0-next.0
+  - @ledgerhq/domain-service@1.1.0-next.0
+  - @ledgerhq/errors@6.12.5-next.0
+  - @ledgerhq/hw-app-cosmos@6.28.0-next.0
+  - @ledgerhq/coin-framework@0.3.2-next.0
+  - @ledgerhq/coin-polkadot@0.1.3-next.0
+  - @ledgerhq/live-portfolio@0.0.4-next.0
+  - @ledgerhq/hw-app-eth@6.33.2-next.0
+  - @ledgerhq/devices@8.0.2-next.0
+  - @ledgerhq/hw-app-algorand@6.27.14-next.0
+  - @ledgerhq/hw-app-exchange@0.1.1-next.0
+  - @ledgerhq/hw-app-near@6.27.9-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.14-next.0
+  - @ledgerhq/hw-app-solana@7.0.8-next.0
+  - @ledgerhq/hw-app-trx@6.27.14-next.0
+  - @ledgerhq/hw-transport@6.28.3-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.27.14-next.0
+  - @ledgerhq/hw-app-btc@10.0.2-next.0
+  - @ledgerhq/hw-app-str@6.27.14-next.0
+  - @ledgerhq/hw-app-tezos@6.27.14-next.0
+  - @ledgerhq/hw-app-xrp@6.27.14-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.14-next.0
 
 ## 29.4.0
 

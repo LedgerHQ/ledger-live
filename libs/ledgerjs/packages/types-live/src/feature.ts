@@ -64,7 +64,8 @@ export type FeatureId =
   | "newsfeedPage"
   | "domainInputResolution"
   | "discover"
-  | "protectServicesDiscoverDesktop";
+  | "protectServicesDiscoverDesktop"
+  | "protectServicesDesktop";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

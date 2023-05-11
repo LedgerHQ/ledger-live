@@ -182,6 +182,7 @@ function MarketRowItem({
       });
       startStakeFlow({
         currencies: currency?.internalCurrency ? [currency.internalCurrency.id] : undefined,
+        source: "Page Market",
       });
       setTrackingSource("Page Market");
     },

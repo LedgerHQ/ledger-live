@@ -1,3 +1,7 @@
+# 2.58.0
+
+This release features small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.57.0
 
 ### 🗑 Removed features

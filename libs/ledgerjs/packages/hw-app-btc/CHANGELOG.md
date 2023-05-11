@@ -1,17 +1,18 @@
 # @ledgerhq/hw-app-btc
 
-## 10.0.2-nightly.1
-
-### Patch Changes
-
-- [#3131](https://github.com/LedgerHQ/ledger-live/pull/3131) [`fb1fcc47e4`](https://github.com/LedgerHQ/ledger-live/commit/fb1fcc47e444c35b0908d528b58e096d79d6f967) Thanks [@davidknezic](https://github.com/davidknezic)! - Fix sign message support for Bitcoin app 2.1.0+
-
-## 10.0.2-nightly.0
+## 10.0.2
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.28.3-nightly.0
+  - @ledgerhq/hw-transport@6.28.3
+
+## 10.0.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.28.3-next.0
 
 ## 10.0.1
 
