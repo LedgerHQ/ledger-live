@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.22.0-next.1
+
+### Patch Changes
+
+- [#3408](https://github.com/LedgerHQ/ledger-live/pull/3408) [`db8c4b3502`](https://github.com/LedgerHQ/ledger-live/commit/db8c4b350260cf667a77c38de8747c23808f8200) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix device name text wrapping issue in My Ledger
+  Fix device renaming input focusing issue on iOS
+
 ## 3.22.0-next.0
 
 ### Minor Changes
