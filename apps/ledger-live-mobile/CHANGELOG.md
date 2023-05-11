@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.21.1-nightly.0
+
+### Patch Changes
+
+- [#3340](https://github.com/LedgerHQ/ledger-live/pull/3340) [`fd8941e1b2`](https://github.com/LedgerHQ/ledger-live/commit/fd8941e1b200180eaa75a285a5a7ef59b16e63e3) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Pixel polish on Pairing flow screens
+
 ## 3.21.0
 
 ### Minor Changes

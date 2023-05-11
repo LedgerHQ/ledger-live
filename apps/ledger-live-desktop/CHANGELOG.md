@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.58.1-nightly.0
+
+### Patch Changes
+
+- [#3298](https://github.com/LedgerHQ/ledger-live/pull/3298) [`67efb7ed98`](https://github.com/LedgerHQ/ledger-live/commit/67efb7ed98c3158952ac6d9cd63989e2510e53fa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove enetry point of referral program on topbar
+
+- [#3316](https://github.com/LedgerHQ/ledger-live/pull/3316) [`3879386423`](https://github.com/LedgerHQ/ledger-live/commit/38793864236f01fda33c73d4d38711f3a024c1c8) Thanks [@sarneijim](https://github.com/sarneijim)! - Add sol and cosmos staking_completed track
+
 ## 2.58.0
 
 ### Minor Changes
