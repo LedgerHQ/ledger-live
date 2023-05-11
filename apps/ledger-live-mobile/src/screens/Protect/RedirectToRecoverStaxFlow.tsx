@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Linking } from "react-native";
+import { Linking, StyleSheet, SafeAreaView } from "react-native";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import {
   RootComposite,
@@ -11,7 +11,6 @@ import {
 import { ScreenName } from "../../const";
 import { useNavigationInterceptor } from "../Onboarding/onboardingContext";
 import BleDevicePairingFlow from "../../components/BleDevicePairingFlow";
-import DeviceSetupView from "../../components/DeviceSetupView";
 import { useIncrementOnNavigationFocusState } from "../../helpers/useIncrementOnNavigationFocusState";
 import { usePostOnboardingURI } from "../../hooks/recoverFeatureFlag";
 import { ServicesConfig } from "../../components/ServicesWidget/types";
@@ -51,8 +50,15 @@ export function RedirectToRecoverStaxFlowScreen({
     }
   }, [recoverConfig?.enabled, recoverRestoreFlowURI]);
 
+  const requestToSetHeaderOptions = useCallback(
+    () => ({
+      type: "clean",
+    }),
+    [],
+  );
+
   return (
-    <DeviceSetupView hasBackButton>
+    <SafeAreaView style={[styles.root]}>
       <Flex px={6} flex={1}>
         <BleDevicePairingFlow
           key={keyToReset}
@@ -61,8 +67,17 @@ export function RedirectToRecoverStaxFlowScreen({
           areKnownDevicesPairable={true}
           onPairingSuccess={onPairingSuccess}
           onPairingSuccessAddToKnownDevices={true}
+          requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
       </Flex>
-    </DeviceSetupView>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    margin: 16,
+    alignSelf: "center",
+  },
+});
