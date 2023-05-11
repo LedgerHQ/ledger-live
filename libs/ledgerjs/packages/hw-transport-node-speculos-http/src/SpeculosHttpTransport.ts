@@ -7,9 +7,11 @@ import { Subject } from "rxjs";
 
 export type SpeculosHttpTransportOpts = {
   apiPort?: string;
+  timeout?: number;
+  baseURL?: string;
 };
 
-export enum SpeculosButton {
+enum SpeculosButton {
   LEFT = "Ll",
   RIGHT = "Rr",
   BOTH = "LRlr",
@@ -28,8 +30,6 @@ export default class SpeculosHttpTransport extends Transport {
   opts: SpeculosHttpTransportOpts;
   eventStream: any; // ReadStream?
   automationEvents: Subject<Record<string, any>> = new Subject();
-  rejectExchange: (arg0: Error) => void = (_e) => {};
-  resolveExchange: (arg0: Buffer) => void = (_b) => {};
 
   constructor(instance: AxiosInstance, opts: SpeculosHttpTransportOpts) {
     super();
@@ -56,6 +56,7 @@ export default class SpeculosHttpTransport extends Transport {
     new Promise((resolve, reject) => {
       const instance = axios.create({
         baseURL: `http://localhost:${opts.apiPort || "5000"}`,
+        timeout: opts.timeout,
       });
 
       const transport = new SpeculosHttpTransport(instance, opts);
@@ -68,7 +69,6 @@ export default class SpeculosHttpTransport extends Transport {
           response.data.on("data", (chunk) => {
             log("speculos-event", chunk.toString());
             const split = chunk.toString().replace("data: ", "");
-            // FIXME: ugly patch because speculos return us a `data: `
             const json = JSON.parse(split);
             transport.automationEvents.next(json);
           });
@@ -95,10 +95,10 @@ export default class SpeculosHttpTransport extends Transport {
    */
   button = (but: string): Promise<void> =>
     new Promise((resolve, reject) => {
-      const action = { action: "press-and-release" };
-      log("speculos-button", "press-and-release", but);
+      const input = this.buttonTable[but] ?? but;
+      log("speculos-button", "press-and-release", input);
       this.instance
-        .post(`/button/${this.buttonTable[but]}`, action)
+        .post(`/button/${input}`, { action: "press-and-release" })
         .then((response) => {
           resolve(response.data);
         })
