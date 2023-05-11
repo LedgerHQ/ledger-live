@@ -77,9 +77,11 @@ const polkadot: AppSpec<Transaction> = {
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
 
-        if (!sibling.used && amount.lt(EXISTENTIAL_DEPOSIT)) {
+        invariant(amount.gte(0), "not enough balance to do a transfer");
+
+        if (sibling.balance.eq(0) && amount.lt(EXISTENTIAL_DEPOSIT)) {
           invariant(
-            account.spendableBalance.gt(
+            account.spendableBalance.gte(
               EXISTENTIAL_DEPOSIT.plus(POLKADOT_MIN_SAFE)
             ),
             "send is too low to activate account"
@@ -122,6 +124,12 @@ const polkadot: AppSpec<Transaction> = {
           "polkadot resources"
         );
         const sibling = pickSiblings(siblings, maxAccounts);
+
+        invariant(
+          sibling.balance.eq(0) &&
+            account.spendableBalance.lte(EXISTENTIAL_DEPOSIT),
+          "send is too low to activate account"
+        );
 
         return {
           transaction: bridge.createTransaction(account),

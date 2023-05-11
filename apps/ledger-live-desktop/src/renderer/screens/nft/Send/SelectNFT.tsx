@@ -11,7 +11,7 @@ const SelectNFT = ({
   maybeNFTCollection,
   account,
 }: {
-  onSelect: (a: any) => void;
+  onSelect: (a: ProtoNFT | NFT) => void;
   maybeNFTId?: string;
   maybeNFTCollection?: string;
   account: Account;

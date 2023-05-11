@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Text, Link as TextLink } from "@ledgerhq/native-ui";
-import { ChevronBottomMedium } from "@ledgerhq/native-ui/assets/icons";
 import Video from "react-native-video";
 import { Linking, StyleSheet } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
@@ -15,7 +14,6 @@ import { urls } from "../../../config/urls";
 import { TermsContext } from "../../../logic/terms";
 import { setAnalytics } from "../../../actions/settings";
 import useIsAppInBackground from "../../../components/useIsAppInBackground";
-import InvertTheme from "../../../components/theme/InvertTheme";
 import ForceTheme from "../../../components/theme/ForceTheme";
 import Button from "../../../components/wrappedUi/Button";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
@@ -25,6 +23,7 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 
 import videoSources from "../../../../assets/videos";
+import LanguageSelect from "../../SyncOnboarding/LanguageSelect";
 
 const absoluteStyle = {
   position: "absolute" as const,
@@ -49,11 +48,6 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { accept: acceptTerms } = useContext(TermsContext);
-
-  const onLanguageSelect = useCallback(
-    () => navigation.navigate(ScreenName.OnboardingLanguage),
-    [navigation],
-  );
 
   const {
     i18n: { language: locale },
@@ -175,18 +169,9 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
         >
           {/* @ts-expect-error Bindings for SafeAreaView are not written properly. */}
           <SafeFlex position="absolute" top={0} right={0}>
-            <InvertTheme>
-              <Button
-                type={"main"}
-                size="small"
-                mr={4}
-                Icon={ChevronBottomMedium}
-                iconPosition="right"
-                onPress={onLanguageSelect}
-              >
-                {locale.toLocaleUpperCase()}
-              </Button>
-            </InvertTheme>
+            <Flex pr={4}>
+              <LanguageSelect />
+            </Flex>
           </SafeFlex>
         </Flex>
         <Flex px={6} py={10}>

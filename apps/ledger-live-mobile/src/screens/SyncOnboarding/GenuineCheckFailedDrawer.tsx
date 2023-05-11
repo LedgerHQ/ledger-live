@@ -67,11 +67,11 @@ const GenuineCheckFailedDrawer = ({
             mb={6}
           >
             <BoxedIcon
-              Icon={<WarningSolidMedium color="warning.c40" size={24} />}
+              Icon={<WarningSolidMedium color="warning.c70" size={32} />}
               variant="circle"
               backgroundColor="neutral.c30"
               borderColor="transparent"
-              size={48}
+              size={64}
             />
           </Flex>
           <Text

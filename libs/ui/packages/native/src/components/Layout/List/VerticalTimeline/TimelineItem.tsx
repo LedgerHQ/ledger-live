@@ -24,7 +24,7 @@ const getContainerBackground = (theme: Theme, status: ItemStatus) => {
   if (status === "completed") {
     return "transparent";
   } else if (status === "active") {
-    return theme.colors.neutral.c20;
+    return theme.colors.opacityDefault.c05;
   }
   return "transparent";
 };
@@ -33,7 +33,7 @@ const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boole
   if (status === "completed") {
     return "transparent";
   } else if (isLastItem && status === "active") {
-    return theme.colors.success.c50;
+    return theme.colors.success.c70;
   } else if (status === "active") {
     return theme.colors.neutral.c40;
   }
@@ -112,11 +112,11 @@ export default function TimelineItem({
           <Flex flexDirection="row" justifyContent="space-between">
             <Text
               variant="body"
-              fontWeight={status === "active" ? "semiBold" : "medium"}
+              fontWeight={item.status === "active" ? "semiBold" : "medium"}
               flexShrink={1}
               color={
                 item.status === "completed" && isLastItem
-                  ? "success.c40"
+                  ? "success.c70"
                   : item.status === "active"
                   ? "primary.c80"
                   : "neutral.c70"

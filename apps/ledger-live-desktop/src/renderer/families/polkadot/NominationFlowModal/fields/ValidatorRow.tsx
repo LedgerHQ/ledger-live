@@ -131,7 +131,7 @@ type ValidatorRowProps = {
   maxNominatorRewardedPerValidator: number;
   onUpdateVote?: (b: string, a: boolean) => void;
   onExternalLink: (address: string) => void;
-  style?: any;
+  style?: React.CSSProperties;
 };
 const ValidatorRow = ({
   validator,

@@ -58,7 +58,6 @@ const ExportLogsBtn = ({
   primary = true,
   small = true,
   title,
-  withoutAppData,
   accounts = [],
   ...rest
 }: Props) => {
@@ -100,7 +99,7 @@ const ExportLogsBtn = ({
     try {
       await exportLogs();
     } catch (error) {
-      logger.critical(error);
+      logger.critical(error as Error);
     } finally {
       setExporting(false);
     }

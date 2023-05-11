@@ -599,7 +599,7 @@ export function renderError({
   withOnboardingCTA,
   device,
 }: {
-  error: any;
+  error: Error | ErrorConstructor;
   t: TFunction;
   withOpenManager?: boolean;
   onRetry?: (() => void) | null;
@@ -627,15 +627,15 @@ export function renderError({
         <ErrorIcon size={44} error={error} />
       </Logo>
       <ErrorTitle>
-        <TranslatedError error={error} noLink />
+        <TranslatedError error={(error as unknown) as Error} noLink />
       </ErrorTitle>
       <ErrorDescription>
-        <TranslatedError error={error} field="description" />
+        <TranslatedError error={(error as unknown) as Error} field="description" />
       </ErrorDescription>
       {list ? (
         <ErrorDescription>
           <ol style={{ textAlign: "justify" }}>
-            <TranslatedError error={error} field="list" />
+            <TranslatedError error={(error as unknown) as Error} field="list" />
           </ol>
         </ErrorDescription>
       ) : null}
