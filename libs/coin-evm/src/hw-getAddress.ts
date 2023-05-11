@@ -1,7 +1,6 @@
 import Eth from "@ledgerhq/hw-app-eth";
 import eip55 from "eip55";
-// FIXME: imports
-import type { Resolver } from "../../hw/getAddress/types";
+import type { Resolver } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
 /**
  * Eth app binding request for the address
