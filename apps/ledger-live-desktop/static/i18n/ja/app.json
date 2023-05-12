@@ -25,6 +25,13 @@
     },
     "catalog" : {
       "title" : "Discover",
+      "section" : {
+        "recentlyUsed" : "最近使用した項目",
+        "browse" : "チェックする"
+      },
+      "filter" : {
+        "categories" : "カテゴリー"
+      },
       "branch" : {
         "soon" : "近日公開",
         "experimental" : "試験的",
@@ -47,6 +54,11 @@
         "title" : "開発者向け",
         "description" : "Ledger Liveでのアプリケーション管理に必要な全ての情報。",
         "button" : "ポータルサイトに移動"
+      },
+      "warnings" : {
+        "notFound" : "検索結果が見つかりません",
+        "retrySearchKeyword" : "別のキーワードで検索を再試行してください。",
+        "retrySearchKeywordAndUrl" : "別のキーワードで検索をやり直すか、Ledger Liveの外で<Link>{{search}}</Link>を開いてください。"
       }
     },
     "disclaimer" : {
@@ -128,7 +140,8 @@
     "info" : "情報",
     "connectDevice" : "デバイスを接続",
     "add" : "追加",
-    "or" : "または"
+    "or" : "または",
+    "clearAll" : "全消去"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -221,7 +234,7 @@
     "lend" : "レンディング",
     "catalog" : "Discover",
     "market" : "マーケット",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "お気に入りに登録したアカウントは、こちらに表示されます。",
@@ -3921,6 +3934,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "基本手数料のカスタム乗数",
           "description" : "EIP1559トランザクションのmaxFeePerGasを構成する基本手数料に使用される乗数をカスタマイズ"
+        },
+        "enableNetworkLogs" : {
+          "title" : "ネットワークログを有効にする",
+          "description" : "コンソールでネットワークログを有効にする（エラーログは常に有効になっています）。"
         }
       }
     },
@@ -4226,6 +4243,10 @@
           "3" : {
             "title" : "新しいデバイスでリカバリーフレーズを復元",
             "description" : "既存のリカバリーフレーズを使って、新しいNanoに秘密鍵を復元できます。"
+          },
+          "4" : {
+            "title" : "Ledger Recoverを使用して復元",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4392,25 @@
             "help" : {
               "help" : "お困りですか？",
               "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "「Ledger Recoverを使用して復元する」を選択",
+            "1" : {
+              "title" : "「復元」を選択",
+              "descr" : "両方のボタンを同時に押して選択します。"
+            },
+            "2" : {
+              "title" : "「Ledger Recoverを使用して復元する」を選択"
+            },
+            "help" : {
+              "iDontSee" : "「Ledger Recoverを使用して復元する」が表示されません",
+              "modal" : {
+                "title" : "Ledger Nano XのOSをアップデートしてください",
+                "subtitle" : " OSをアップデートしてみるか、Ledgerサポートにご連絡ください。",
+                "learnHowToUpdate" : "アップデート方法を確認",
+                "contactLedgerSupport" : "Ledgerサポートへ問い合わせ"
+              }
             }
           },
           "existingRecoveryPhrase" : {
