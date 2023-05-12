@@ -221,7 +221,7 @@
     "lend" : "Leihen",
     "catalog" : "Entdecken",
     "market" : "Markt",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Geben Sie einem Konto einen Stern, um es hier anzuzeigen.",
@@ -1759,7 +1759,8 @@
     "loading" : "Lade Daten...",
     "connectAndUnlockDevice" : "Verbinden und entsperren Sie Ihr Gerät",
     "unlockDevice" : "Entsperren Sie Ihr Gerät",
-    "unlockDeviceAfterFirmwareUpdate" : "Warten Sie",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Warten Sie, bis die Installation auf Ihrem {{productName}} abgeschlossen ist",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Geben Sie das {{productName}} frei, um die Installation abzuschließen",
     "quitApp" : "Beenden Sie die Anwendung auf Ihrem Gerät",
     "appNotInstalledTitle" : "Fehlende, erforderliche App",
     "appNotInstalledTitle_plural" : "Fehlende, erforderliche Apps",
@@ -1824,9 +1825,8 @@
       "installed" : "Apps",
       "capacity" : "Kapazität",
       "used" : "Verwendet",
-      "firmwareAvailable" : "Die Firmware ist veraltet:",
-      "firmwareUpToDate" : "Die Firmware ist auf dem neuesten Stand:",
-      "genuine" : "Ihr Gerät ist echt",
+      "OSVersion" : "OS-Version",
+      "genuine" : "Dein Gerät ist echt",
       "incomplete" : "Einige Apps wurden nicht erkannt. Bitte deinstallieren Sie diese und installieren Sie sie dann neu."
     },
     "applist" : {
@@ -1918,7 +1918,7 @@
       "dontHaveSeed" : "Sie haben keine Wiederherstellungsphrase? ",
       "followTheGuide" : "Folgen Sie unserer Schritt-für-Schritt-Update-Anleitung",
       "removeApps" : "Deinstallieren Sie alle Apps vor dem Update",
-      "update" : "Firmware-Update",
+      "update" : "Machen Sie ein Update für {{productName}}",
       "updateBtn" : "Firmware aktualisieren",
       "banner" : {
         "warning" : "Update-Firmware zu {{latestFirmware}} ist verfügbar",
@@ -1933,12 +1933,17 @@
       "contactSupport" : "Support kontaktieren",
       "deprecated" : "Geräte-Firmware-Version zu alt, um aktualisiert zu werden. Kontaktieren Sie den Ledger-Support für einen Ersatz.",
       "prepareSeed" : "Vergewissern Sie sich vorsichtshalber, dass Ihre 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und Ihnen vorliegt.",
-      "disclaimerTitle" : "Sie sind dabei, die <1>Firmware-Version {{version}}</1> zu installieren.",
-      "downloadingUpdateDesc" : "Bitte warten Sie, bis der Update-Installer heruntergeladen ist"
+      "disclaimerTitle" : "Sie sind dabei, die <1>Firmware-Version {{version}}</1> zu installieren."
     },
     "modal" : {
+      "title" : "Machen Sie ein Update für {{productName}}",
       "steps" : {
-        "downloadingUpdate" : "Update wird heruntergeladen",
+        "preparingUpdate" : "Update wird vorbereitet",
+        "transferringUpdate" : "Update wird an {{productName}} übertragen",
+        "prepare" : "Update vorbereiten",
+        "install" : "Update installieren",
+        "restore" : "Einstellungen wiederherstellen",
+        "apps" : "Apps wiederherstellen",
         "updateMCU" : "Firmware-Update",
         "updating" : "Firmware-Update",
         "reset" : "Gerät vorbereiten",
@@ -1949,9 +1954,8 @@
         "flash" : "Ihr Gerät vorbereiten ..."
       },
       "confirmIdentifier" : "Überprüfen Sie die Kennung",
-      "confirmIdentifierText" : "Vergewissern Sie sich, dass die Kennung auf Ihrem Gerät mit der unten stehenden Kennung übereinstimmt. Bestätigen Sie und geben Sie Ihren PIN-Code ein, wenn Sie dazu aufgefordert werden.",
+      "confirmIdentifierText" : "Installation auf {{productName}} bestätigen",
       "identifier" : "Kennung",
-      "preparation" : "Vorbereitung",
       "newFirmware" : "Neue Firmware {{version}}",
       "confirmUpdate" : "Bitte bestätigen Sie den Vorgang auf Ihrem Gerät",
       "mcuTitle" : "Update abschließen",
@@ -1961,10 +1965,10 @@
       "mcuSecondNanoX" : "Drücken und halten Sie die linke Taste, bis <1><0>{{bootloaderOption}}</0></1> erscheint. Drücken Sie beide Tasten, um zu bestätigen und Ihr Gerät erneut zu verbinden.",
       "mcuBlueFirst" : "Halten Sie die seitliche Taste 10 Sekunden lang gedrückt, um das Gerät auszuschalten. Lassen Sie die Taste danach los.",
       "mcuBlueSecond" : "Halten Sie die Taste für mindestens 5 Sekunden gedrückt, bis die Boot-Optionen angezeigt werden. Tippen Sie auf Bootloader-Modus",
-      "successTitle" : "Firmware aktualisiert",
+      "successTitle" : "OS-Update erfolgreich.",
       "successTextApps" : "Bitte installieren Sie die Apps erneut auf Ihrem Gerät",
       "successTextNoApps" : "Sie können jetzt Apps auf Ihrem Gerät installieren",
-      "sucessCTAApps" : "Apps erneut installieren",
+      "sucessCTAApps" : "Apps neu installieren",
       "SuccessCTANoApps" : "Installieren Sie Apps",
       "cancelReinstallCTA" : "Update installieren",
       "resetSteps" : {
@@ -2271,10 +2275,9 @@
   },
   "deviceLocalization" : {
     "language" : "Sprache",
-    "deviceLanguage" : "Sprache",
+    "deviceLanguage" : "Gerätesprache wechseln",
     "changeLanguage" : "Sprache wechseln",
     "changeDeviceLanguage" : "Möchten Sie die Sprache Ihres Geräts ändern?",
-    "chooseLanguage" : "Wählen Sie eine Sprache für {{deviceName}} aus.",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}} ist jetzt für {{deviceName}} verfügbar.",
       "description" : "Möchten Sie die Sprache auf {{language}} umstellen?"
@@ -3921,6 +3924,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Benutzerdefinierten Faktor für Mindestgebühr eingeben",
           "description" : "Passen Sie den für die Mindestgebühr verwendeten Multiplikationsfaktor an. Hieraus setzt sich die maxFeePerGas der EIP1559-Transaktion zusammen."
+        },
+        "enableNetworkLogs" : {
+          "title" : "Netzwerklogs aktivieren",
+          "description" : "Netzwerklogs in der Konsole aktivieren (Fehlerprotokolle sind immer aktiviert)"
         }
       }
     },
@@ -4226,6 +4233,10 @@
           "3" : {
             "title" : "Wiederherstellen Ihrer Wiederherstellungsphrase auf einem neuen Gerät",
             "description" : "Verwenden Sie eine vorhandene Wiederherstellungsphrase, um Ihre privaten Schlüssel auf einem neuen Nano wiederherzustellen!"
+          },
+          "4" : {
+            "title" : "Wiederherstellen mit Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4382,25 @@
             "help" : {
               "help" : "Hilfe benötigt",
               "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Wählen Sie „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen)",
+            "1" : {
+              "title" : "Wählen Sie „Restore“ (Wiederherstellen)",
+              "descr" : "Drücken Sie beide Tasten gleichzeitig, um auszuwählen."
+            },
+            "2" : {
+              "title" : "Wählen Sie „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen)"
+            },
+            "help" : {
+              "iDontSee" : "Ich kann „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen) nicht sehen",
+              "modal" : {
+                "title" : "Das Betriebssystem auf Ihrem Ledger Nano X muss aktualisiert werden",
+                "subtitle" : " Sie können versuchen, das Betriebssystem zu aktualisieren oder den Ledger Kundenservice um Hilfe bitten.",
+                "learnHowToUpdate" : "Erfahren Sie, wie Sie aktualisieren können",
+                "contactLedgerSupport" : "Ledger-Kundenservice kontaktieren"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5602,11 +5632,11 @@
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Bildübertragung auf Gerät verweigert",
+      "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Laden von Bildern auf Gerät verweigert",
+      "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
     },
     "NearNewAccountWarning" : {
@@ -5710,9 +5740,11 @@
         "stepLabel" : "Übertragen",
         "uploadAnotherImage" : "Ein weiteres Bild hochladen",
         "allowPreview" : "Erlauben Sie das Laden eines Bildes im Sperrbildschirm auf Ihrem {{productName}}",
+        "allowConfirmPreview" : "Wiederherstellung des Sperrbildschirmbildes auf {{productName}} erlauben",
         "loadingPicture" : "Lade Daten...",
         "imageLoaded" : "Bild geladen auf {{productName}}",
         "confirmPicture" : "Gefällt Ihnen, was Sie sehen?\nBehalten Sie es!",
+        "confirmRestorePicture" : "Wiederherstellung des Sperrbildschirmbildes bestätigen",
         "doThisLater" : "Vielleicht später"
       }
     },
