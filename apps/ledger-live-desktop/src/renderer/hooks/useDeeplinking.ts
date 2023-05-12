@@ -238,6 +238,9 @@ export function useDeepLinkHandler() {
         case "market":
           navigate(`/market`);
           break;
+        case "recover-bypass-onboarding":
+          navigate(`/recover-bypass-onboarding`);
+          break;
         case "portfolio":
         default:
           navigate("/");

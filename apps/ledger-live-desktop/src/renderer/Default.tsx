@@ -60,6 +60,7 @@ import Learn from "~/renderer/screens/learn";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
 import SyncOnboarding from "./components/SyncOnboarding";
+import FinishOnboardingRedirection from "~/renderer/screens/misc/FinishOnboardingRedirection";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -179,6 +180,7 @@ export default function Default() {
               <Route path="/USBTroubleshooting">
                 <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
               </Route>
+              <Route path="/recover-bypass-onboarding" component={FinishOnboardingRedirection} />
               {!hasCompletedOnboarding ? (
                 <Route path="/settings" component={WelcomeScreenSettings} />
               ) : (
