@@ -75,7 +75,7 @@ type Props = {
   error?: boolean;
 } & React.ComponentProps<typeof ScreenSVG>;
 const NanoSScreen = ({ active, display, error, ...props }: Props) => {
-  const type = useTheme("colors.palette.type") as keyof typeof colors;
+  const type = useTheme().colors.palette.type;
   const screens = getScreens(error ? "#EA2E49" : colors[type].screenColor);
   return (
     <ScreenSVG {...props} width="58" height="20">

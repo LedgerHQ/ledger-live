@@ -26,7 +26,7 @@ type BodyProps = {
 };
 
 export const Body = ({ modelId }: BodyProps) => {
-  const type = useTheme("colors.palette.type");
+  const type = useTheme().colors.palette.type;
   return renderFirmwareUpdating({ modelId, type });
 };
 

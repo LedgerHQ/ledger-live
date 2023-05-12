@@ -101,7 +101,7 @@ export default function Chart({
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<ChartJs | null>(null);
-  const theme = useTheme("colors.palette");
+  const theme = useTheme().colors.palette;
   const [tooltip, setTooltip] = useState<ChartTooltipModel>();
   const valueKeyRef = useRef(valueKey);
   const generatedData = useMemo(() => {
@@ -233,13 +233,7 @@ export default function Chart({
     <ChartContainer height={height}>
       <canvas ref={canvasRef} />
       {tooltip && renderTooltip ? (
-        <Tooltip
-          tooltip={tooltip}
-          theme={theme}
-          renderTooltip={renderTooltip}
-          color={color}
-          data={data}
-        />
+        <Tooltip tooltip={tooltip} renderTooltip={renderTooltip} color={color} data={data} />
       ) : null}
     </ChartContainer>
   );

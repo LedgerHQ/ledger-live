@@ -1,21 +1,21 @@
+import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import StellarSdk, {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,
-  NotFoundError,
   NetworkError,
+  NotFoundError,
 } from "stellar-sdk";
-import { getEnv } from "../../../env";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
-import type { Account, Operation } from "@ledgerhq/types-live";
-import type { NetworkInfo } from "../types";
+import { getEnv } from "../../../env";
+import { requestInterceptor, responseInterceptor } from "../../../network";
 import {
   getAccountSpendableBalance,
-  rawOperationsToOperations,
   getReservedBalance,
+  rawOperationsToOperations,
 } from "../logic";
-import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
-import type { BalanceAsset } from "../types";
+import type { BalanceAsset, NetworkInfo } from "../types";
 import { NetworkCongestionLevel, Signer } from "../types";
 
 const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
@@ -30,7 +30,10 @@ export const BASE_RESERVE = 0.5;
 export const BASE_RESERVE_MIN_COUNT = 2;
 export const MIN_BALANCE = 1;
 
+StellarSdk.HorizonAxiosClient.interceptors.request.use(requestInterceptor);
+
 StellarSdk.HorizonAxiosClient.interceptors.response.use((response) => {
+  responseInterceptor(response);
   // FIXME: workaround for the Stellar SDK not using the correct URL: the "next" URL
   // included in server responses points to the node itself instead of our reverse proxy...
   // (https://github.com/stellar/js-stellar-sdk/issues/637)

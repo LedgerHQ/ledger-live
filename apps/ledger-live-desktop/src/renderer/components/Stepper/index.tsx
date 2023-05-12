@@ -31,10 +31,10 @@ type OwnProps<T, StepProps> = {
   error?: Error | null;
   signed?: boolean;
   children?: React.ReactNode;
-  params?: any;
+  params?: unknown;
   hideCloseButton?: boolean;
   // Additional props are passed to the step components…
-  [key: string]: any;
+  [key: string]: unknown;
 };
 type Props<T, StepProps> = OwnProps<T, StepProps> & { t: TFunction } & StepProps;
 const Stepper = <T, StepProps>({

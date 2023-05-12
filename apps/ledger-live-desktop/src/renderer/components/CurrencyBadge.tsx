@@ -61,7 +61,7 @@ export function CurrencyCircleIcon({
   showSpinner?: boolean;
   showCheckmark?: boolean;
 }) {
-  const bgColor = useTheme("colors.palette.background.paper");
+  const bgColor = useTheme().colors.palette.background.paper;
   const cryptoColor = useMemo(
     () => (currency.type === "CryptoCurrency" ? ensureContrast(currency.color, bgColor) : ""),
     [currency, bgColor],

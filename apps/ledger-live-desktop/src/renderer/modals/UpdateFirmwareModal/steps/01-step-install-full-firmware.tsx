@@ -68,7 +68,7 @@ const Body = ({
   deviceInfo: DeviceInfo;
 }) => {
   const { t } = useTranslation();
-  const type = useTheme("colors.palette.type");
+  const type = useTheme().colors.palette.type;
 
   const isBlue = deviceModelId === "blue";
 

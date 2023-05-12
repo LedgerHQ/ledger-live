@@ -103,17 +103,16 @@ const Body = ({
   const [transactionError, setTransactionError] = useState(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const { account, validatorAddress, validatorDstAddress = "", source = "Account Page" } = params;
   const {
     transaction,
     setTransaction,
     updateTransaction,
-    account,
     parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account, validatorAddress, validatorDstAddress = "" } = params;
     invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
     const source = account.cosmosResources?.delegations.find(
       d => d.validatorAddress === validatorAddress,
@@ -198,6 +197,7 @@ const Body = ({
     onTransactionError: handleTransactionError,
     t,
     bridgePending,
+    source,
   };
   return (
     <Stepper {...stepperProps}>

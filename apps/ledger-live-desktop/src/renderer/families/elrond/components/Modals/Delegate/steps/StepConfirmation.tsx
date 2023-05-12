@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import styled, { withTheme } from "styled-components";
+import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -20,7 +21,21 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 const StepConfirmation = (props: StepProps) => {
-  const { t, optimisticOperation = {}, error, signed } = props;
+  const { t, optimisticOperation = {}, error, signed, transaction, source, validators } = props;
+  const voteAccAddress = transaction?.recipient;
+  useEffect(() => {
+    if (optimisticOperation && voteAccAddress && validators) {
+      const chosenValidator = validators.find(v => v.contract === voteAccAddress);
+      track("staking_completed", {
+        currency: "EGLD",
+        validator: chosenValidator?.identity?.name || voteAccAddress,
+        source,
+        delegation: "delegation",
+        flow: "stake",
+      });
+    }
+  }, [optimisticOperation, validators, voteAccAddress, source]);
+
   if (optimisticOperation) {
     return (
       <Container>

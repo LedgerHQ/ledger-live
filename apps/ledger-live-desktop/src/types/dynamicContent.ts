@@ -25,8 +25,7 @@ export type ContentCard = {
   url?: string;
   path?: string;
   image?: string;
-  brazeCard?: ClassicCard;
-  onClickOnSlide?: (id: string) => void;
+  onClickOnSlide?: (cardId: any) => void;
 };
 
 export type PortfolioContentCard = ContentCard;
