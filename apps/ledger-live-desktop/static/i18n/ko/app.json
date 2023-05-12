@@ -25,9 +25,16 @@
     },
     "catalog" : {
       "title" : "탐색",
+      "section" : {
+        "recentlyUsed" : "최근 사용된 항목",
+        "browse" : "둘러보기"
+      },
+      "filter" : {
+        "categories" : "카테고리"
+      },
       "branch" : {
         "soon" : "곧 출시 예정",
-        "experimental" : "실험적",
+        "experimental" : "실험",
         "debug" : "디버그"
       },
       "banner" : {
@@ -47,6 +54,11 @@
         "title" : "개발자용",
         "description" : "Ledger Live로 애플리케이션을 통합하는 데 필요한 모든 정보입니다.",
         "button" : "포털로 이동"
+      },
+      "warnings" : {
+        "notFound" : "찾을 수 없음",
+        "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
+        "retrySearchKeywordAndUrl" : "다른 키워드로 검색을 다시 시도하거나 Ledger Live 외부에서 <Link>{{search}}</Link>을 열어 주세요."
       }
     },
     "disclaimer" : {
@@ -128,7 +140,8 @@
     "info" : "정보",
     "connectDevice" : "내 장치 연결하기",
     "add" : "추가",
-    "or" : "또는"
+    "or" : "또는",
+    "clearAll" : "모두 지우기"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -221,7 +234,7 @@
     "lend" : "대출",
     "catalog" : "탐색",
     "market" : "마켓",
-    "protect" : "복구"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
@@ -2269,6 +2282,11 @@
     "remainingCharacters" : "{{ remainingCharacters }}개 문자 남음",
     "renamed" : "{{ productName }} 이름이 “{{ name }}”로 변경되었습니다 "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "제거",
+    "confirmation" : "Ledger Stax에서 이미지 삭제 확인",
+    "success" : "잠금 화면 사진이 삭제됨"
+  },
   "deviceLocalization" : {
     "language" : "언어",
     "deviceLanguage" : "언어",
@@ -3921,6 +3939,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "기본 수수료에 대한 커스텀 멀티플라이어",
           "description" : "EIP1559 트랜잭션 최대 가스비를 구성하는 기본 수수료에 이용되는 멀티플라이어를 커스터마이징합니다"
+        },
+        "enableNetworkLogs" : {
+          "title" : "네트워크 로그 활성화",
+          "description" : "콘솔에서 네트워크 로그 활성화(오류 로그는 항상 활성화됨)"
         }
       }
     },
@@ -4226,6 +4248,10 @@
           "3" : {
             "title" : "새 장치에서 복구 문구를 복원하세요",
             "description" : "기존 복구 문구를 사용하여 새 Nano에서 개인 키를 복구하세요!"
+          },
+          "4" : {
+            "title" : "Ledger Recover를 이용한 복구",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4397,25 @@
             "help" : {
               "help" : "도움 요청",
               "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "\"Ledger Recover로 복구\"를 선택합니다.",
+            "1" : {
+              "title" : "'복구'를 선택합니다",
+              "descr" : "두 버튼을 동시에 눌러 선택하세요."
+            },
+            "2" : {
+              "title" : "\"Ledger Recover로 복구\"를 선택합니다."
+            },
+            "help" : {
+              "iDontSee" : "'Ledger Recover로 복구' 메뉴가 보이지 않습니다.",
+              "modal" : {
+                "title" : "Ledger Nano X의 OS를 업데이트해야 합니다.",
+                "subtitle" : " OS를 업데이트하거나 Ledger 지원 부서로 문의해주세요.",
+                "learnHowToUpdate" : "업데이트 방법 알아보기",
+                "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5686,6 +5731,7 @@
   "customImage" : {
     "title" : "맞춤 가능한 잠금 화면",
     "managerCTA" : "잠금 화면 사진",
+    "managerCTARemove" : "제거",
     "steps" : {
       "choose" : {
         "stepLabel" : "이미지 선택",
@@ -5694,6 +5740,7 @@
         "myNfts" : "내 NFT",
         "upload" : "내 컴퓨터에서 업로드",
         "chooseNft" : "NFT 선택하기",
+        "remove" : "현재 사진 삭제",
         "selectNft" : "NFT 선택",
         "previousSelectNft" : "뒤로",
         "nftEmptyStateTitle" : "아직 표시할 NFT가 없습니다",
