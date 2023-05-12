@@ -1,11 +1,14 @@
-import { log } from "@ledgerhq/logs";
-import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import type { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
+import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
+import { tokens as tokensByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { getEnv } from "@ledgerhq/live-env";
+import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { tokens as tokensByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
-
+import BigNumber from "bignumber.js";
+import { Transaction } from "../types";
+import createEtherscanLikeApi from "./etherscan";
+import { getOptimismAdditionalFees } from "./rpc.common";
 export class EvmAPI {
   network: NetworkRequestCall;
   cache: LRUCacheFn;
@@ -49,5 +52,28 @@ export class EvmAPI {
       currency
     );
     return [];
+  }
+
+  async getOptimismAdditionalFees(
+    currency: CryptoCurrency,
+    transaction: Transaction
+  ): Promise<BigNumber> {
+    return getOptimismAdditionalFees(this.cache)(currency, transaction);
+  }
+
+  /**
+   * Switch to select one of the compatible explorer
+   */
+  getExplorerApi(currency: CryptoCurrency) {
+    const apiType = currency.ethereumLikeInfo?.explorer?.type;
+
+    switch (apiType) {
+      case "etherscan":
+      case "blockscout":
+        return createEtherscanLikeApi(this.cache);
+
+      default:
+        throw new Error("API type not supported");
+    }
   }
 }

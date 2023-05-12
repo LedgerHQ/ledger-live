@@ -4,12 +4,12 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { getOptimismAdditionalFees } from "./api/rpc.common";
 import {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
 } from "./types";
+import { EvmAPI } from "./api";
 
 /**
  * Helper to check if a legacy transaction has the right fee property
@@ -37,23 +37,25 @@ export const getEstimatedFees = (tx: EvmTransaction): BigNumber => {
  * Helper returning the potential additional fees necessary for layer twos
  * to settle the transaction on layer 1.
  */
-export const getAdditionalLayer2Fees = async (
-  currency: CryptoCurrency,
-  transaction: EvmTransaction
-): Promise<BigNumber | undefined> => {
-  switch (currency.id) {
-    case "optimism":
-    case "optimism_goerli": {
-      const additionalFees = await getOptimismAdditionalFees(
-        currency,
-        transaction
-      );
-      return additionalFees;
+export const getAdditionalLayer2Fees =
+  (evmAPI: EvmAPI) =>
+  async (
+    currency: CryptoCurrency,
+    transaction: EvmTransaction
+  ): Promise<BigNumber | undefined> => {
+    switch (currency.id) {
+      case "optimism":
+      case "optimism_goerli": {
+        const additionalFees = await evmAPI.getOptimismAdditionalFees(
+          currency,
+          transaction
+        );
+        return additionalFees;
+      }
+      default:
+        return;
     }
-    default:
-      return;
-  }
-};
+  };
 
 /**
  * List of properties of a sub account that can be updated when 2 "identical" accounts are found

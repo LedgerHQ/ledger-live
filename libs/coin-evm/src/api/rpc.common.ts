@@ -10,9 +10,8 @@ import { transactionToEthersTransaction } from "../adapters";
 import { GasEstimationError, InsufficientFunds } from "../errors";
 import { getSerializedTransaction } from "../transaction";
 import { Transaction as EvmTransaction, FeeData, FeeHistory } from "../types";
-// FIXME: move makeLRUCache to coin-framework/cache
-import { makeLRUCache } from "../../../cache";
 import ERC20Abi from "../abis/erc20.abi.json";
+import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
 
 export const RPC_TIMEOUT = 5000; // wait 5 sec after a fail
 export const DEFAULT_RETRIES_RPC_METHODS = 3;
@@ -287,57 +286,57 @@ export const getSubAccount: (
  *
  * @see https://help.optimism.io/hc/en-us/articles/4411895794715-How-do-transaction-fees-on-Optimism-work-
  */
-export const getOptimismAdditionalFees = makeLRUCache<
-  [CryptoCurrency, EvmTransaction],
-  BigNumber
->(
-  async (currency, transaction) =>
-    withApi(currency, async (api) => {
-      if (!["optimism", "optimism_goerli"].includes(currency.id)) {
-        return new BigNumber(0);
-      }
+export const getOptimismAdditionalFees = (cache: LRUCacheFn) =>
+  cache<[CryptoCurrency, EvmTransaction], BigNumber>(
+    async (currency, transaction) =>
+      withApi(currency, async (api) => {
+        if (!["optimism", "optimism_goerli"].includes(currency.id)) {
+          return new BigNumber(0);
+        }
 
-      // Fake signature is added to get the best approximation possible for the gas on L1
+        // Fake signature is added to get the best approximation possible for the gas on L1
+        const serializedTransaction = (() => {
+          try {
+            return getSerializedTransaction(transaction, {
+              r: "0xffffffffffffffffffffffffffffffffffffffff",
+              s: "0xffffffffffffffffffffffffffffffffffffffff",
+              v: 0,
+            });
+          } catch (e) {
+            return null;
+          }
+        })();
+        if (!serializedTransaction) {
+          return new BigNumber(0);
+        }
+
+        const optimismGasOracle = new ethers.Contract(
+          // contract address provided here
+          // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
+          "0x420000000000000000000000000000000000000F",
+          OptimismGasPriceOracleAbi,
+          api
+        );
+        const additionalL1Fees = await optimismGasOracle.getL1Fee(
+          serializedTransaction
+        );
+        return new BigNumber(additionalL1Fees.toString());
+      }),
+    (currency, transaction) => {
       const serializedTransaction = (() => {
         try {
-          return getSerializedTransaction(transaction, {
-            r: "0xffffffffffffffffffffffffffffffffffffffff",
-            s: "0xffffffffffffffffffffffffffffffffffffffff",
-            v: 0,
-          });
+          return getSerializedTransaction(transaction);
         } catch (e) {
           return null;
         }
       })();
-      if (!serializedTransaction) {
-        return new BigNumber(0);
-      }
 
-      const optimismGasOracle = new ethers.Contract(
-        // contract address provided here
-        // @see https://community.optimism.io/docs/developers/build/transaction-fees/#displaying-fees-to-users
-        "0x420000000000000000000000000000000000000F",
-        OptimismGasPriceOracleAbi,
-        api
+      return (
+        "getOptimismL1BaseFee_" + currency.id + "_" + serializedTransaction
       );
-      const additionalL1Fees = await optimismGasOracle.getL1Fee(
-        serializedTransaction
-      );
-      return new BigNumber(additionalL1Fees.toString());
-    }),
-  (currency, transaction) => {
-    const serializedTransaction = (() => {
-      try {
-        return getSerializedTransaction(transaction);
-      } catch (e) {
-        return null;
-      }
-    })();
-
-    return "getOptimismL1BaseFee_" + currency.id + "_" + serializedTransaction;
-  },
-  { ttl: 15 * 1000 } // preventing rate limit by caching this for at least 15sec
-);
+    },
+    { ttl: 15 * 1000 } // preventing rate limit by caching this for at least 15sec
+  );
 
 export default {
   DEFAULT_RETRIES_RPC_METHODS,

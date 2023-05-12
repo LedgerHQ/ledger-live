@@ -1,11 +1,14 @@
-import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import { createTransaction } from "./createTransaction";
-import { prepareTransaction } from "./prepareTransaction";
 import { Transaction as EvmTransaction } from "./types";
+import { prepareTransaction } from "./prepareTransaction";
+import { createTransaction } from "./createTransaction";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { EvmAPI } from "./api";
 
-export const estimateMaxSpendable: AccountBridge<EvmTransaction>["estimateMaxSpendable"] =
-  async ({ account, parentAccount, transaction }) => {
+export function estimateMaxSpendable(
+  evmAPI: EvmAPI
+): AccountBridge<EvmTransaction>["estimateMaxSpendable"] {
+  return async ({ account, parentAccount, transaction }) => {
     const mainAccount = getMainAccount(account, parentAccount);
     const estimatedTx = {
       ...createTransaction(mainAccount),
@@ -13,7 +16,11 @@ export const estimateMaxSpendable: AccountBridge<EvmTransaction>["estimateMaxSpe
       useAllAmount: true,
     } as EvmTransaction;
 
-    const { amount } = await prepareTransaction(mainAccount, estimatedTx);
+    const { amount } = await prepareTransaction(evmAPI)(
+      mainAccount,
+      estimatedTx
+    );
 
     return amount;
   };
+}
