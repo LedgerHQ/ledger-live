@@ -94,7 +94,7 @@ export function useDeepLinkHandler() {
       const query = Object.fromEntries(searchParams);
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
       const [url, path] = fullUrl.split("/");
-      // Track a deeplink only when ajsPropSource attribute exists.
+      // Track deeplink only when ajsPropSource attribute exists.
       const { ajs_prop_source: ajsPropSource } = query;
       if (ajsPropSource) {
         const { currency, installApp, appName, amount } = query;
