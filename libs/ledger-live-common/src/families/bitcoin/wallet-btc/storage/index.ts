@@ -1,6 +1,6 @@
 import { findLast, filter, uniqBy, findIndex } from "lodash";
 import Base from "../crypto/base";
-import { Input, IStorage, Output, TX, Address } from "./types";
+import { Input, IStorage, Output, TX, Address, Block } from "./types";
 
 // a mock storage class that just use js objects
 // sql.js would be perfect for the job
@@ -39,39 +39,42 @@ class BitcoinLikeStorage implements IStorage {
       this.accountIndex[index].map((i) => this.txs[i]).some((tx) => !tx.block)
     );
   }
-  getHighestBlockHeightAndHash(): [number, string] {
-    let height = 0;
-    let hash = "";
+  getHighestBlockHeightAndHash(): Block | null {
+    let highestBlock: Block | null = null;
     this.txs.forEach((tx) => {
-      if (!!tx.block && tx.block.height > height) {
-        height = tx.block.height;
-        hash = tx.block.hash;
+      if (
+        !!tx.block &&
+        (!highestBlock || tx.block.height > highestBlock.height)
+      ) {
+        highestBlock = tx.block;
       }
     });
-    return [height, hash];
+    return highestBlock;
   }
 
-  getLastConfirmedTxBlockheightAndHash(txFilter: {
+  getLastConfirmedTxBlock(txFilter: {
     account: number;
     index: number;
-  }): [number, string] {
+  }): Block | null {
     if (
       typeof this.accountIndex[`${txFilter.account}-${txFilter.index}`] ===
       "undefined"
     ) {
-      return [0, ""];
+      return null;
     }
-    let blockheight = 0;
-    let blockhash = "";
+    let lastConfirmedTxBlock: Block | null = null;
     this.accountIndex[`${txFilter.account}-${txFilter.index}`]
       .map((i) => this.txs[i])
       .forEach((tx) => {
-        if (!!tx.block && tx.block.height > blockheight) {
-          blockheight = tx.block.height;
-          blockhash = tx.block.hash;
+        if (
+          !!tx.block &&
+          (!lastConfirmedTxBlock ||
+            tx.block.height > lastConfirmedTxBlock.height)
+        ) {
+          lastConfirmedTxBlock = tx.block;
         }
       });
-    return [blockheight, blockhash];
+    return lastConfirmedTxBlock;
   }
 
   getLastUnconfirmedTx(): TX | undefined {

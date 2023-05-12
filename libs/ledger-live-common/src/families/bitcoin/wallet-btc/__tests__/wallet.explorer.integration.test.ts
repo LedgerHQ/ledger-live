@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BitcoinLikeExplorer from "../explorer";
 
-describe("Unit tests for bitcoin v4 explorer api", () => {
+describe("Integration tests for bitcoin v4 explorer api", () => {
   it("Test API for btc", async () => {
     const explorer = new BitcoinLikeExplorer({
       cryptoCurrency: getCryptoCurrencyById("bitcoin"),

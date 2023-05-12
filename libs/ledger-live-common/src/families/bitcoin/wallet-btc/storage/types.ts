@@ -44,14 +44,14 @@ export interface Address {
 export interface IStorage {
   appendTxs(txs: TX[]): number;
   getAddressUnspentUtxos(address: Address): Output[];
-  getLastConfirmedTxBlockheightAndHash(txFilter: {
+  getLastConfirmedTxBlock(txFilter: {
     account: number;
     index: number;
-  }): [number, string];
+  }): Block | null;
   hasTx(txFilter: { account: number; index: number }): boolean;
   hasPendingTx(txFilter: { account: number; index: number }): boolean;
   getLastUnconfirmedTx(): TX | undefined;
-  getHighestBlockHeightAndHash(): [number, string];
+  getHighestBlockHeightAndHash(): Block | null;
   getTx(address: string, txId: string): TX | undefined;
   getUniquesAddresses(addressesFilter: {
     account?: number;

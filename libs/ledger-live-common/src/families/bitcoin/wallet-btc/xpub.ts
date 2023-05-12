@@ -118,14 +118,13 @@ class Xpub {
   // TODO : test fail case + incremental
   async sync(): Promise<void> {
     this.freshAddressIndex = 0;
-    const [highestBlockHeight, highestBlockHash] =
-      this.storage.getHighestBlockHeightAndHash();
-    let needReorg = highestBlockHeight > 0;
-    if (needReorg) {
-      const highestBlock = await this.explorer.getBlockByHeight(
-        highestBlockHeight
+    const highestBlockFromStorage = this.storage.getHighestBlockHeightAndHash();
+    let needReorg = !!highestBlockFromStorage;
+    if (highestBlockFromStorage) {
+      const highestBlockFromExplorer = await this.explorer.getBlockByHeight(
+        highestBlockFromStorage.height
       );
-      if (highestBlock?.hash === highestBlockHash) {
+      if (highestBlockFromExplorer?.hash === highestBlockFromStorage.hash) {
         needReorg = false;
       }
     }
@@ -354,10 +353,10 @@ class Xpub {
     let inserted = 0;
     do {
       const lastTxBlockheight =
-        this.storage.getLastConfirmedTxBlockheightAndHash({
+        this.storage.getLastConfirmedTxBlock({
           account,
           index,
-        })[0];
+        })?.height || 0;
       if (pendingTxs.length > 0) {
         txs = await this.explorer.getTxsSinceBlockheight(
           this.txsSyncArraySize,
@@ -389,20 +388,21 @@ class Xpub {
   }
 
   async checkAddressReorg(account: number, index: number): Promise<void> {
-    const [lastTxBlockheight, lastTxBlockhash] =
-      this.storage.getLastConfirmedTxBlockheightAndHash({
-        account,
-        index,
-      });
+    const lastConfirmedTxBlock = this.storage.getLastConfirmedTxBlock({
+      account,
+      index,
+    });
 
-    if (!lastTxBlockheight) {
+    if (!lastConfirmedTxBlock) {
       return;
     }
 
-    const block = await this.explorer.getBlockByHeight(lastTxBlockheight);
+    const block = await this.explorer.getBlockByHeight(
+      lastConfirmedTxBlock.height
+    );
 
     // all good the block is valid
-    if (block && block.hash === lastTxBlockhash) {
+    if (block && block.hash === lastConfirmedTxBlock.hash) {
       return;
     }
 

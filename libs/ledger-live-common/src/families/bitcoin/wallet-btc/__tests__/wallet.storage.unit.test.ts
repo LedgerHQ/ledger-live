@@ -148,10 +148,11 @@ describe("Unit tests for bitcoin storage", () => {
 
   it("testing fetch transaction data from bitcoin storage", async () => {
     // 1 pending txs and 2 confirmed txs
-    expect(storage.getHighestBlockHeightAndHash()).toEqual([
-      120,
-      "305d4b8d4a6d6ecca0a3dd0216f8ecd090978ed346d1845883c8aa4529d72fc8",
-    ]);
+    expect(storage.getHighestBlockHeightAndHash()?.height).toEqual(120);
+    expect(storage.getHighestBlockHeightAndHash()?.hash).toEqual(
+      "305d4b8d4a6d6ecca0a3dd0216f8ecd090978ed346d1845883c8aa4529d72fc8"
+    );
+
     expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(true);
     expect(storage.hasTx({ account: 0, index: 0 })).toBe(true);
     expect(storage.getLastUnconfirmedTx()).toBeDefined();
@@ -160,19 +161,22 @@ describe("Unit tests for bitcoin storage", () => {
     expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(false);
     expect(storage.hasTx({ account: 0, index: 0 })).toBe(true);
     expect(
-      storage.getLastConfirmedTxBlockheightAndHash({ account: 0, index: 0 })
-    ).toEqual([
-      120,
-      "305d4b8d4a6d6ecca0a3dd0216f8ecd090978ed346d1845883c8aa4529d72fc8",
-    ]);
+      storage.getLastConfirmedTxBlock({ account: 0, index: 0 })?.height
+    ).toEqual(120);
+    expect(
+      storage.getLastConfirmedTxBlock({ account: 0, index: 0 })?.hash
+    ).toEqual(
+      "305d4b8d4a6d6ecca0a3dd0216f8ecd090978ed346d1845883c8aa4529d72fc8"
+    );
+
     expect(storage.getLastUnconfirmedTx()).toBeUndefined();
     // remove all tx
     storage.removeTxs({ account: 0, index: 0 });
     expect(
-      storage.getLastConfirmedTxBlockheightAndHash({ account: 0, index: 0 })
-    ).toEqual([0, ""]);
+      storage.getLastConfirmedTxBlock({ account: 0, index: 0 })
+    ).toBeNull();
     expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(false);
     expect(storage.hasTx({ account: 0, index: 0 })).toBe(false);
-    expect(storage.getHighestBlockHeightAndHash()).toEqual([0, ""]);
+    expect(storage.getHighestBlockHeightAndHash()).toBeNull();
   }, 30000);
 });
