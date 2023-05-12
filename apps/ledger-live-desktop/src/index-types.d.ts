@@ -1,4 +1,3 @@
-declare const __APP_VERSION__: string;
 declare const INDEX_URL: string;
 declare const __SENTRY_URL__: string;
 declare const __APP_VERSION__: string;
