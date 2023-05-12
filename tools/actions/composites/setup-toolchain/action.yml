@@ -7,6 +7,9 @@ inputs:
   upgrade_npm:
     description: "should update npm (windows support)"
     required: false
+  npm_token:
+    description: "npm token used to publish to npmjs"
+    required: false
 
 runs:
   using: "composite"
@@ -14,18 +17,18 @@ runs:
     # ⚠️ We have issues with the runners and proto,
     # so for the moment we're not using it at all in the CI.
     - uses: pnpm/action-setup@v2
-      if: inputs.pnpm_dest != ''
+      if: inputs.pnpm_dest != '' && runner.os == 'Windows'
       # if: ${{ runner.os == 'Windows' }}
       with:
         version: 8.1
         dest: ${{ inputs.pnpm_dest }}
     - uses: pnpm/action-setup@v2
-      if: inputs.pnpm_dest == ''
+      if: inputs.pnpm_dest == '' && runner.os == 'Windows'
       # if: ${{ runner.os == 'Windows' }}
       with:
         version: 8.1
     - uses: actions/setup-node@v3
-      # if: ${{ runner.os == 'Windows' }}
+      if: ${{ runner.os == 'Windows' }}
       with:
         node-version: 18
         cache: pnpm
@@ -36,69 +39,74 @@ runs:
       run: |
         npm i -g npm
       shell: bash
-      
     # Using the proto toolchain manager:
-    # - name: Setup proto
+    - name: Setup proto
+      if: ${{ runner.os != 'Windows' }}
+      shell: bash
+      run: |
+        curl -fsSL https://moonrepo.dev/install/proto.sh | bash
+        echo "Adding $HOME/.proto/bin to GITHUB_PATH"
+        echo "$HOME/.proto/bin" >> $GITHUB_PATH
+        if [[ -z "${HOME}" ]]; then
+          # EC2 runners don't have a HOME variable
+          echo "Adding /root/.proto/bin to PATH"
+          echo "/root/.proto/bin" >> $GITHUB_PATH
+        fi
+    # - name: Setup proto (Windows)
+    #   if: ${{ runner.os == 'Windows' }}
+    #   shell: powershell
+    #   run: |
+    #     irm https://moonrepo.dev/install/proto.ps1 | iex
+    #     Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+    #     echo "Adding ${Home}\.proto\bin to GITHUB_PATH"
+    #     echo "${Home}\.proto\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+    # - name: Update proto (bash)
     #   if: ${{ runner.os != 'Windows' }}
     #   shell: bash
     #   run: |
-    #     curl -fsSL https://moonrepo.dev/install/proto.sh | bash
-    #     echo "Adding $HOME/.proto/bin to GITHUB_PATH"
-    #     echo "$HOME/.proto/bin" >> $GITHUB_PATH
-    #     if [[ -z "${HOME}" ]]; then
-    #       # EC2 runners don't have a HOME variable
-    #       echo "Adding /root/.proto/bin to PATH"
-    #       echo "/root/.proto/bin" >> $GITHUB_PATH
-    #     fi
-    # # - name: Setup proto (Windows)
-    # #   if: ${{ runner.os == 'Windows' }}
-    # #   shell: powershell
-    # #   run: |
-    # #     irm https://moonrepo.dev/install/proto.ps1 | iex
-    # #     Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-    # #     echo "Adding ${Home}\.proto\bin to GITHUB_PATH"
-    # #     echo "${Home}\.proto\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-    # # - name: Update proto (bash)
-    # #   if: ${{ runner.os != 'Windows' }}
-    # #   shell: bash
-    # #   run: |
-    # #     proto upgrade
-    # - name: Use proto (bash)
-    #   if: ${{ runner.os != 'Windows' }}
-    #   shell: bash
+    #     proto upgrade
+    - name: Use proto (bash)
+      if: ${{ runner.os != 'Windows' }}
+      shell: bash
+      run: |
+        proto --version
+        proto use
+        which node
+        proto run node -- --version
+        node --version
+        which pnpm
+        proto run pnpm -- --version
+        pnpm --version
+        which npm
+        proto run npm -- --version
+        npm --version
+    # - name: Use proto (powershell)
+    #   if: ${{ runner.os == 'Windows' }}
+    #   shell: powershell
     #   run: |
-    #     proto --version
     #     proto use
-    #     which node
-    #     proto run node -- --version
+    #     echo ${env:PATH}
+    #     Get-Command node
     #     node --version
-    #     which pnpm
-    #     proto run pnpm -- --version
+    #     Get-Command pnpm
     #     pnpm --version
-    #     which npm
-    #     proto run npm -- --version
+    #     Get-Command npm
     #     npm --version
-    # # - name: Use proto (powershell)
-    # #   if: ${{ runner.os == 'Windows' }}
-    # #   shell: powershell
-    # #   run: |
-    # #     proto use
-    # #     echo ${env:PATH}
-    # #     Get-Command node
-    # #     node --version
-    # #     Get-Command pnpm
-    # #     pnpm --version
-    # #     Get-Command npm
-    # #     npm --version
-    # - name: Get pnpm store directory
-    #   if: ${{ runner.os != 'Windows' }}
-    #   id: pnpm-cache
-    #   shell: bash
-    #   run: |
-    #     echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-    # - name: Setup pnpm cache
-    #   if: ${{ runner.os != 'Windows' }}
-    #   uses: actions/cache@v3
-    #   with:
-    #     path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-    #     key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+    - name: Get pnpm store directory
+      if: ${{ runner.os != 'Windows' }}
+      id: pnpm-cache
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+    - name: Setup pnpm cache
+      if: ${{ runner.os != 'Windows' }}
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+    - name: setup pnpm token
+      if: inputs.npm_token != ''
+      shell: bash
+      run: |
+        echo "//registry.npmjs.org/:_authToken=${{ inputs.npm_token }}" >> ${{ runner.temp }}/.npmrc
+        echo "NPM_CONFIG_USERCONFIG=${{ runner.temp }}/.npmrc" >> $GITHUB_ENV
