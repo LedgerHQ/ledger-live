@@ -341,26 +341,29 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   // FIXME when we rework the error rendering, this should be handled at that
   // level instead of being an exception here.
   if (imageRemoveRequested) {
-    if (error && (error as Status["error"]) instanceof UserRefusedOnDevice) {
-      return renderError({
+    if (error) {
+      if ((error as Status["error"]) instanceof UserRefusedOnDevice) {
+        return renderError({
+          t,
+          navigation,
+          error,
+          onRetry,
+          colors,
+          theme,
+          iconColor: palette.neutral.c20,
+          Icon: () => (
+            <Icons.InfoAltFillMedium size={28} color={palette.primary.c80} />
+          ),
+          device: device ?? undefined,
+        });
+      }
+    } else {
+      return renderAllowRemoveCustomLockscreen({
         t,
-        navigation,
-        error,
-        onRetry,
-        colors,
         theme,
-        iconColor: palette.neutral.c20,
-        Icon: () => (
-          <Icons.InfoAltFillMedium size={28} color={palette.primary.c80} />
-        ),
-        device: device ?? undefined,
+        device: selectedDevice,
       });
     }
-    return renderAllowRemoveCustomLockscreen({
-      t,
-      theme,
-      device: selectedDevice,
-    });
   }
 
   if (listingApps) {
