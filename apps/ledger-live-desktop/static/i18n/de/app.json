@@ -221,7 +221,7 @@
     "lend" : "Leihen",
     "catalog" : "Entdecken",
     "market" : "Markt",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Geben Sie einem Konto einen Stern, um es hier anzuzeigen.",
@@ -3921,6 +3921,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Benutzerdefinierten Faktor für Mindestgebühr eingeben",
           "description" : "Passen Sie den für die Mindestgebühr verwendeten Multiplikationsfaktor an. Hieraus setzt sich die maxFeePerGas der EIP1559-Transaktion zusammen."
+        },
+        "enableNetworkLogs" : {
+          "title" : "Netzwerklogs aktivieren",
+          "description" : "Netzwerklogs in der Konsole aktivieren (Fehlerprotokolle sind immer aktiviert)"
         }
       }
     },
@@ -4226,6 +4230,10 @@
           "3" : {
             "title" : "Wiederherstellen Ihrer Wiederherstellungsphrase auf einem neuen Gerät",
             "description" : "Verwenden Sie eine vorhandene Wiederherstellungsphrase, um Ihre privaten Schlüssel auf einem neuen Nano wiederherzustellen!"
+          },
+          "4" : {
+            "title" : "Wiederherstellen mit Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4379,25 @@
             "help" : {
               "help" : "Hilfe benötigt",
               "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Wählen Sie „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen)",
+            "1" : {
+              "title" : "Wählen Sie „Restore“ (Wiederherstellen)",
+              "descr" : "Drücken Sie beide Tasten gleichzeitig, um auszuwählen."
+            },
+            "2" : {
+              "title" : "Wählen Sie „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen)"
+            },
+            "help" : {
+              "iDontSee" : "Ich kann „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen) nicht sehen",
+              "modal" : {
+                "title" : "Das Betriebssystem auf Ihrem Ledger Nano X muss aktualisiert werden",
+                "subtitle" : " Sie können versuchen, das Betriebssystem zu aktualisieren oder den Ledger Kundenservice um Hilfe bitten.",
+                "learnHowToUpdate" : "Erfahren Sie, wie Sie aktualisieren können",
+                "contactLedgerSupport" : "Ledger-Kundenservice kontaktieren"
+              }
             }
           },
           "existingRecoveryPhrase" : {
