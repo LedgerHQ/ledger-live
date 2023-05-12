@@ -32,7 +32,7 @@ export default function RecoverPlayer({ match }: RouteComponentProps<RecoverComp
   const localManifest = useLocalLiveAppManifest(params.appId);
   const remoteManifest = useRemoteLiveAppManifest(params.appId);
   const manifest = localManifest || remoteManifest;
-  const theme = useTheme("colors.palette.type");
+  const theme = useTheme().colors.palette.type;
   const history = useHistory();
   const onClose = useCallback(() => history.goBack(), [history]);
   const recoverConfig = useFeature("protectServicesDesktop");
