@@ -25,9 +25,16 @@
     },
     "catalog" : {
       "title" : "发现",
+      "section" : {
+        "recentlyUsed" : "最近使用",
+        "browse" : "浏览"
+      },
+      "filter" : {
+        "categories" : "类别"
+      },
       "branch" : {
         "soon" : "敬请期待",
-        "experimental" : "实验性的",
+        "experimental" : "实验性功能",
         "debug" : "除错"
       },
       "banner" : {
@@ -47,6 +54,11 @@
         "title" : "面向开发者",
         "description" : "您所需要的将您的应用程序整合到 Ledger Live 的全部信息。",
         "button" : "前往门户页面"
+      },
+      "warnings" : {
+        "notFound" : "未能找到",
+        "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
+        "retrySearchKeywordAndUrl" : "请使用其他关键字重试搜索或在 Ledger Live 外打开 <Link>{{search}}</Link>。"
       }
     },
     "disclaimer" : {
@@ -128,7 +140,8 @@
     "info" : "信息",
     "connectDevice" : "连接您的设备",
     "add" : "添加",
-    "or" : "或者"
+    "or" : "或者",
+    "clearAll" : "清除所有"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -221,7 +234,7 @@
     "lend" : "借出",
     "catalog" : "发现",
     "market" : "市场",
-    "protect" : "恢复"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "星标账户以在此显示。",
@@ -3921,6 +3934,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "基本费用的自定义倍数",
           "description" : "自定义组成 EIP1559 交易 maxFeePerGas 的基础费用的倍数"
+        },
+        "enableNetworkLogs" : {
+          "title" : "启用网络日志",
+          "description" : "在控制台启用网络日志（错误日志已始终启用）"
         }
       }
     },
@@ -4226,6 +4243,10 @@
           "3" : {
             "title" : "在新设备上还原您的恢复短语",
             "description" : "在新的 Nano 设备上使用现有的恢复短语来还原您的私钥！"
+          },
+          "4" : {
+            "title" : "使用 Ledger Recover 恢复",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4392,25 @@
             "help" : {
               "help" : "需要帮助",
               "descr" : "不知道如何操作？获取完成此步骤的帮助。"
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "选择“使用 Ledger Recover 重置”",
+            "1" : {
+              "title" : "选择“重置”",
+              "descr" : "同时按下两个按钮进行选择。"
+            },
+            "2" : {
+              "title" : "选择“使用 Ledger Recover 重置”"
+            },
+            "help" : {
+              "iDontSee" : "我没有看到“使用 Ledger Recover 重置”",
+              "modal" : {
+                "title" : "Ledger Nano X 的操作系统需要更新",
+                "subtitle" : " 您可以尝试更新操作系统或联系 Ledger 客服寻求帮助。",
+                "learnHowToUpdate" : "了解如何更新",
+                "contactLedgerSupport" : "联系 Ledger 客服"
+              }
             }
           },
           "existingRecoveryPhrase" : {
