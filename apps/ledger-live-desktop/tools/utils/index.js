@@ -50,7 +50,7 @@ const buildMainEnv = (mode, argv) => {
   };
 
   if (mode === "development") {
-    env.INDEX_URL = JSON.stringify(`http://localhost:${argv.port}/index.html`);
+    env.INDEX_URL = JSON.stringify(`http://localhost:${argv.port}/`);
   }
 
   return env;

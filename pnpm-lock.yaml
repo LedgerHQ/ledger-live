@@ -286,6 +286,9 @@ importers:
       electron-context-menu:
         specifier: ^3.6.0
         version: 3.6.1
+      electron-serve:
+        specifier: ^1.1.0
+        version: 1.1.0
       electron-store:
         specifier: ^8.1.0
         version: 8.1.0
@@ -31102,6 +31105,10 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /electron-serve@1.1.0:
+    resolution: {integrity: sha512-tQJBCbXKoKCfkBC143QCqnEtT1s8dNE2V+b/82NF6lxnGO/2Q3a3GSLHtKl3iEDQgdzTf9pH7p418xq2rXbz1Q==}
+    dev: false
 
   /electron-store@8.1.0:
     resolution: {integrity: sha512-2clHg/juMjOH0GT9cQ6qtmIvK183B39ZXR0bUoPwKwYHJsEF3quqyDzMFUAu+0OP8ijmN2CbPRAelhNbWUbzwA==}

@@ -4,6 +4,7 @@ import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL } from "url";
 import * as remoteMain from "@electron/remote/main";
+import serve from "electron-serve";
 const intFromEnv = (key: string, def: number): number => {
   const v = process.env[key];
   if (v && !isNaN(+v)) return parseInt(v, 10);
@@ -53,7 +54,7 @@ const defaultWindowOptions = {
   },
 };
 export const loadWindow = async () => {
-  const url = __DEV__ ? INDEX_URL : path.join("file://", __dirname, "index.html");
+  const url = __DEV__ ? INDEX_URL : path.join("app://-");
   if (mainWindow) {
     /** Making the following variables easily accessible to the renderer thread:
      * - theme
@@ -65,6 +66,9 @@ export const loadWindow = async () => {
     await mainWindow.loadURL(fullUrl.href);
   }
 };
+
+const loadURL = __DEV__ ? () => Promise.resolve() : serve({ directory: "./" });
+
 export async function createMainWindow(
   {
     dimensions,
@@ -104,6 +108,7 @@ export async function createMainWindow(
   mainWindow = new BrowserWindow(windowOptions);
   remoteMain.enable(mainWindow.webContents);
   mainWindow.name = "MainWindow";
+  await loadURL(mainWindow);
   loadWindow();
   if (DEV_TOOLS && !process.env.DISABLE_DEV_TOOLS) {
     mainWindow.webContents.on("did-frame-finish-load", () => {
