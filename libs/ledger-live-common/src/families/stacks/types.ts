@@ -5,11 +5,11 @@ import {
   BroadcastArg0,
   Operation,
   TransactionCommon,
-  TransactionCommonRaw,
+  TransactionCommonRaw
 } from "@ledgerhq/types-live";
 import {
   TransactionStatusCommon,
-  TransactionStatusCommonRaw,
+  TransactionStatusCommonRaw
 } from "@ledgerhq/types-live";
 
 import { StacksNetwork } from "./bridge/utils/types";
@@ -46,9 +46,4 @@ export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
-
-export type CoreStatics = Record<string, never>;
-export type CoreAccountSpecifics = Record<string, never>;
-export type CoreOperationSpecifics = Record<string, never>;
-export type CoreCurrencySpecifics = Record<string, never>;
 export const reflect = (_declare: any) => {};

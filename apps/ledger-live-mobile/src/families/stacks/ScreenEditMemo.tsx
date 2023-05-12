@@ -18,9 +18,6 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SwapFormNavigatorParamList } from "../../components/RootNavigator/types/SwapFormNavigator";
 
 type NavigationProps = BaseComposite<
@@ -30,15 +27,6 @@ type NavigationProps = BaseComposite<
     >
   | StackNavigatorProps<
       SignTransactionNavigatorParamList,
-      ScreenName.StacksEditMemo
-    >
-  | StackNavigatorProps<LendingEnableFlowParamsList, ScreenName.StacksEditMemo>
-  | StackNavigatorProps<
-      LendingSupplyFlowNavigatorParamList,
-      ScreenName.StacksEditMemo
-    >
-  | StackNavigatorProps<
-      LendingWithdrawFlowNavigatorParamList,
       ScreenName.StacksEditMemo
     >
   | StackNavigatorProps<SwapFormNavigatorParamList, ScreenName.StacksEditMemo>

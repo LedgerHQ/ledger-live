@@ -15,7 +15,7 @@ const stacksSpecs: AppSpec<Transaction> = {
   name: "Stacks",
   currency: getCryptoCurrencyById("stacks"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Stacks",
   },
   genericDeviceAction: acceptTransaction,

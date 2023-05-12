@@ -217,10 +217,6 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
           const blockstack = new BlockstackApp(transport);
 
-          o.next({
-            type: "device-signature-requested"
-          });
-
           const options: UnsignedTokenTransferOptions = {
             amount: new BN(amount.toFixed()),
             recipient,
@@ -235,6 +231,10 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           const tx = await makeUnsignedSTXTokenTransfer(options);
 
           const serializedTx = tx.serialize();
+
+          o.next({
+            type: "device-signature-requested"
+          });
 
           // Sign by device
           const result = await blockstack.sign(

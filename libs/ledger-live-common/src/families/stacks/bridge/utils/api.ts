@@ -9,7 +9,7 @@ import {
   EstimatedFeesResponse,
   NetworkStatusResponse,
   TransactionResponse,
-  TransactionsResponse,
+  TransactionsResponse
 } from "./types";
 import network from "../../../../network";
 import { getEnv } from "../../../../env";
@@ -27,7 +27,7 @@ const fetch = async <T>(path: string) => {
   // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
   const opts: AxiosRequestConfig = {
     method: "GET",
-    url,
+    url
   };
   const rawResponse = await network(opts);
 
@@ -44,7 +44,7 @@ const send = async <T>(path: string, data: Record<string, any>) => {
     method: "POST",
     url,
     data: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json" }
   };
 
   const rawResponse = await network(opts);
@@ -62,7 +62,7 @@ const sendRaw = async <T>(path: string, data: Buffer) => {
     method: "POST",
     url,
     data,
-    headers: { "Content-Type": "application/octet-stream" },
+    headers: { "Content-Type": "application/octet-stream" }
   };
 
   const rawResponse = await network(opts);
@@ -106,17 +106,17 @@ export const fetchTxs = async (
 export const fetchFullTxs = async (
   addr: string
 ): Promise<TransactionResponse[]> => {
-  let done = false,
-    newOffset = 0;
+  let qty,
+    offset = 0;
   let txs: TransactionResponse[] = [];
 
-  while (!done) {
-    const { results, total, limit } = await fetchTxs(addr, newOffset);
+  do {
+    const { results, total, limit } = await fetchTxs(addr, offset);
     txs = txs.concat(results);
-    newOffset += limit;
 
-    if (newOffset >= total) done = true;
-  }
+    offset += limit;
+    qty = total;
+  } while (offset < qty);
 
   return txs; // TODO Validate if the response fits this interface
 };
