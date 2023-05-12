@@ -221,7 +221,7 @@
     "lend" : "Prestar",
     "catalog" : "Discover",
     "market" : "Mercado",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Tus cuentas favoritas aparecerán aquí.",
@@ -3921,6 +3921,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Multiplicador personalizado para la tarifa base",
           "description" : "Personaliza el multiplicador utilizado para la tarifa base que compone el maxFeePerGas de la transacción EIP1559"
+        },
+        "enableNetworkLogs" : {
+          "title" : "Activar registros de red",
+          "description" : "Activar registros de red en la consola (los registros de error están siempre activados)"
         }
       }
     },
@@ -4226,6 +4230,10 @@
           "3" : {
             "title" : "Restaura tu Frase de recuperación a un nuevo dispositivo",
             "description" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
+          },
+          "4" : {
+            "title" : "Restaurar con Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4379,25 @@
             "help" : {
               "help" : "Necesitas ayuda",
               "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Selecciona “Restore using Ledger Recover” (Restaurar con Ledger Recover).",
+            "1" : {
+              "title" : "Selecciona \"Restore\" (Restaurar)",
+              "descr" : "Presiona los dos botones a la vez para seleccionar."
+            },
+            "2" : {
+              "title" : "Selecciona “Restore using Ledger Recover” (Restaurar con Ledger Recover)."
+            },
+            "help" : {
+              "iDontSee" : "No veo “Restore using Ledger Recover” (Restaurar con Ledger Recover)",
+              "modal" : {
+                "title" : "Es necesario actualizar el SO de tu Ledger Nano X",
+                "subtitle" : " Puedes probar a actualizar el SO o contactar al servicio de soporte de Ledger para pedir ayuda.",
+                "learnHowToUpdate" : "Aprende cómo actualizarlo",
+                "contactLedgerSupport" : "Ponte en contacto con el Soporte de Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
