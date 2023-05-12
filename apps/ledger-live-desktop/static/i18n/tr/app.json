@@ -25,10 +25,17 @@
     },
     "catalog" : {
       "title" : "Keşfedin",
+      "section" : {
+        "recentlyUsed" : "Son kullanılanlar",
+        "browse" : "Göz atın"
+      },
+      "filter" : {
+        "categories" : "Kategoriler"
+      },
       "branch" : {
-        "soon" : "çok yakında",
-        "experimental" : "deneysel",
-        "debug" : "hata ayıklama"
+        "soon" : "Çok yakında",
+        "experimental" : "Deneysel",
+        "debug" : "Hata ayıklama"
       },
       "banner" : {
         "title" : "Live Apps Kataloğumuzu Keşfedin",
@@ -47,6 +54,11 @@
         "title" : "Geliştiriciler için",
         "description" : "Uygulamalarınızı Ledger Live'a entegre etmek için ihtiyacınız olan tüm bilgiler.",
         "button" : "Portala git"
+      },
+      "warnings" : {
+        "notFound" : "Bulunamadı",
+        "retrySearchKeyword" : "Lütfen aramayı başka bir anahtar kelime ile yeniden deneyin.",
+        "retrySearchKeywordAndUrl" : "Lütfen başka bir anahtar kelimeyle yeniden aramayı deneyin ya da <Link>{{search}}</Link> hedefini Ledger Live'ın dışında açın."
       }
     },
     "disclaimer" : {
@@ -128,7 +140,8 @@
     "info" : "Bilgi",
     "connectDevice" : "Cihazınızı bağlayın",
     "add" : "Ekle",
-    "or" : "VEYA"
+    "or" : "VEYA",
+    "clearAll" : "Tümünü temizle"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -221,7 +234,7 @@
     "lend" : "Borç ver",
     "catalog" : "Keşfet",
     "market" : "Piyasa",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Favori hesaplarınızı yıldızlayarak burada görüntüleyebilirsiniz.",
@@ -3921,6 +3934,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Taban ücret için özel çarpan değeri",
           "description" : "EIP1559 işleminin maxFeePerGas ücretini düzenleyerek taban ücret için kullanılan çarpan değerini özelleştirin"
+        },
+        "enableNetworkLogs" : {
+          "title" : "Ağ log'larını etkinleştirin",
+          "description" : "Konsolda ağ log'larını etkinleştirin (hata log'ları her zaman etkindir)"
         }
       }
     },
@@ -4226,6 +4243,10 @@
           "3" : {
             "title" : "Kurtarma ifadenizi yeni bir cihazda geri yükleyin",
             "description" : "Özel anahtarlarınızı yeni bir Nano üzerinde geri yüklemek için mevcut bir kurtarma ifadesini kullanın!"
+          },
+          "4" : {
+            "title" : "Ledger Recover kullanarak geri yükleyin",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4392,25 @@
             "help" : {
               "help" : "Yardım gerekli",
               "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "“Restore using Ledger Recover” (Ledger Recover kullanarak geri yükle) seçimini yapın",
+            "1" : {
+              "title" : "“Restore” seçimini yapın",
+              "descr" : "Seçmek için iki tuşa aynı anda basın."
+            },
+            "2" : {
+              "title" : "“Restore using Ledger Recover” seçimini yapın"
+            },
+            "help" : {
+              "iDontSee" : "“Restore using Ledger Recover” seçeneği yok",
+              "modal" : {
+                "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
+                "subtitle" : " İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
+                "learnHowToUpdate" : "Güncelleme yönergeleri",
+                "contactLedgerSupport" : "Ledger Destek ile iletişime geçin"
+              }
             }
           },
           "existingRecoveryPhrase" : {
