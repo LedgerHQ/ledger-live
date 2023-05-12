@@ -11,6 +11,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { deepLinkUrlSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
 import { setDeepLinkUrl } from "~/renderer/actions/settings";
+import { track } from "~/renderer/analytics/segment";
 import { setTrackingSource } from "../analytics/TrackPage";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Account, SubAccount } from "@ledgerhq/types-live";
@@ -93,6 +94,19 @@ export function useDeepLinkHandler() {
       const query = Object.fromEntries(searchParams);
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
       const [url, path] = fullUrl.split("/");
+      // Track a deeplink only when ajsPropSource attribute exists.
+      const { ajs_prop_source: ajsPropSource } = query;
+      if (ajsPropSource) {
+        const { currency, installApp, appName, amount } = query;
+        track("deeplink_clicked", {
+          deeplinkSource: ajsPropSource,
+          url,
+          currency,
+          installApp,
+          appName,
+          amount,
+        });
+      }
       switch (url) {
         case "accounts": {
           const { address } = query;
