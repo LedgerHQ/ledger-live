@@ -221,7 +221,7 @@
     "lend" : "Emprestar",
     "catalog" : "Explorar",
     "market" : "Mercado",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Veja suas contas favoritas aqui",
@@ -415,13 +415,13 @@
     },
     "missingApp" : {
       "title" : "Instale o aplicativo {{appName}} no seu dispositivo",
-      "subtitle" : "Vá a Minha Ledger e instale o aplicativo {{appName}} para trocar ativos.",
-      "cta" : "Vá a Minha Ledger"
+      "subtitle" : "Vá à Minha Ledger e instale o aplicativo {{appName}} para trocar ativos.",
+      "cta" : "Vá à Minha Ledger"
     },
     "outdatedApp" : {
       "title" : "Atualize o aplicativo {{appName}} no seu dispositivo",
-      "subtitle" : "Vá a Minha Ledger e atualize o aplicativo {{appName}} para trocar ativos.",
-      "cta" : "Vá a Minha Ledger"
+      "subtitle" : "Vá à Minha Ledger e atualize o aplicativo {{appName}} para trocar ativos.",
+      "cta" : "Vá à Minha Ledger"
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar criptos",
@@ -1170,7 +1170,7 @@
     },
     "helpCenter" : {
       "title" : "Suporte Ledger",
-      "desc" : "Obter ajuda"
+      "desc" : "Obtenha ajuda"
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
@@ -1447,7 +1447,7 @@
       },
       "earn" : {
         "title" : "Aplicar",
-        "description" : "Cresça suas criptos com a Ledger"
+        "description" : "Multiplique suas criptos com a Ledger"
       }
     }
   },
@@ -1463,18 +1463,18 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Instalar aplicativos no seu dispositivo",
-      "desc" : "Vá a Minha Ledger para instalar aplicativos em seu dispositivo. Você pode adicionar contas quando tiver aplicativos no seu dispositivo.",
+      "desc" : "Vá à Minha Ledger para instalar aplicativos no seu dispositivo. Você pode adicionar contas quando tiver aplicativos instalados.",
       "buttons" : {
-        "installApp" : "Vá a Minha Ledger",
+        "installApp" : "Vá à Minha Ledger",
         "help" : "Ajuda"
       }
     },
     "accounts" : {
       "title" : "Adicione uma conta para começar",
-      "desc" : "Adicione uma conta para começar a gerenciar suas criptos. Você precisa instalar o aplicativo da sua cripto no seu dispositivo.",
+      "desc" : "Adicione uma conta para começar a gerenciar suas criptos. Você precisa instalar o aplicativo da sua cripto no dispositivo.",
       "buttons" : {
         "addAccount" : "Adicionar Conta",
-        "installApp" : "Vá a Minha Ledger para instalar aplicativos",
+        "installApp" : "Vá à Minha Ledger para instalar aplicativos",
         "help" : "Ajuda"
       }
     }
@@ -1759,16 +1759,17 @@
     "loading" : "Carregando...",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
     "unlockDevice" : "Desbloqueie seu dispositivo",
-    "unlockDeviceAfterFirmwareUpdate" : "Aguarde a atualização do firmware e desbloqueie seu dispositivo com seu PIN",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Aguarde o fim da instalação em sua {{productName}}",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Desbloqueie a {{productName}} para concluir a instalação",
     "quitApp" : "Feche o aplicativo no seu dispositivo",
     "appNotInstalledTitle" : "Aplicativo necessário em falta",
     "appNotInstalledTitle_plural" : "Aplicativos necessários em falta",
-    "appNotInstalled" : "O aplicativo {{appName}} é necessário para completar esta ação. Vá a Minha Ledger e o instale em seu dispositivo",
-    "appNotInstalled_plural" : "Os aplicativos {{appName}} são necessários para completar esta ação. Vá a Minha Ledger e os instale em seu dispositivo",
+    "appNotInstalled" : "O aplicativo {{appName}} é necessário para completar esta ação. Vá à Minha Ledger e o instale em seu dispositivo",
+    "appNotInstalled_plural" : "Os aplicativos {{appName}} são necessários para completar esta ação. Vá à Minha Ledger e os instale em seu dispositivo",
     "openManager" : "Abra a Minha Ledger",
     "openOnboarding" : "Configurar Dispositivo",
     "outdated" : "Versão do aplicativo desatualizada",
-    "outdatedDesc" : "Uma atualização importante está disponível para o aplicativo {{appName}} no seu dispositivo. Vá a Minha Ledger e o atualize.",
+    "outdatedDesc" : "Uma atualização importante está disponível para o aplicativo {{appName}} no seu dispositivo. Vá à Minha Ledger e o atualize.",
     "installApp" : "Instalação do aplicativo {{appName}}",
     "installAppDescription" : "Aguarde a instalação ser concluída",
     "listApps" : "Verificando dependências do aplicativo",
@@ -1824,9 +1825,8 @@
       "installed" : "Aplicativos",
       "capacity" : "Capacidade",
       "used" : "Usado",
-      "firmwareAvailable" : "O firmware está desatualizado:",
-      "firmwareUpToDate" : "O firmware está atualizado:",
-      "genuine" : "Seu dispositivo é autêntico",
+      "OSVersion" : "Versão do Sistema Operacional",
+      "genuine" : "O dispositivo é autêntico",
       "incomplete" : "Alguns aplicativos não foram reconhecidos. Desinstale-os e depois os reinstale."
     },
     "applist" : {
@@ -1918,11 +1918,11 @@
       "dontHaveSeed" : "Não está com sua frase de recuperação? ",
       "followTheGuide" : "Siga nosso guia passo a passo de atualização",
       "removeApps" : "Desinstale todos os aplicativos antes de atualizar",
-      "update" : "Atualização de firmware",
+      "update" : "Atualizar a {{productName}}",
       "updateBtn" : "Atualizar Firmware",
       "banner" : {
         "warning" : "Atualização do firmware {{latestFirmware}} disponível",
-        "cta" : "Vá a Minha Ledger",
+        "cta" : "Vá à Minha Ledger",
         "old" : {
           "warning" : "A versão do firmware do dispositivo é antiga demais para ser atualizada. Contate o Suporte Ledger para substituir o dispositivo.",
           "cta" : "Contatar Suporte"
@@ -1933,12 +1933,17 @@
       "contactSupport" : "Contatar Suporte",
       "deprecated" : "A versão do firmware do dispositivo é antiga demais para ser atualizada. Contate o Suporte Ledger para substituir o dispositivo.",
       "prepareSeed" : "Por precaução, certifique-se de que sua frase de recuperação de 24 palavras esteja anotada na folha de recuperação e esteja disponível.",
-      "disclaimerTitle" : "Você está prestes a instalar a <1>versão {{version}} do firmware</1>.",
-      "downloadingUpdateDesc" : "Aguarde o download do instalador da atualização"
+      "disclaimerTitle" : "Você está prestes a instalar a <1>versão {{version}} do firmware</1>."
     },
     "modal" : {
+      "title" : "Atualizar a {{productName}}",
       "steps" : {
-        "downloadingUpdate" : "Baixando Atualização",
+        "preparingUpdate" : "Preparando atualização",
+        "transferringUpdate" : "Transferindo atualização à {{productName}}",
+        "prepare" : "Preparar atualização",
+        "install" : "Instalar atualização",
+        "restore" : "Restaurar configurações",
+        "apps" : "Restaurar aplicativos",
         "updateMCU" : "Atualização de firmware",
         "updating" : "Atualização de firmware",
         "reset" : "Preparar Dispositivo",
@@ -1949,9 +1954,8 @@
         "flash" : "Preparando seu dispositivo..."
       },
       "confirmIdentifier" : "Verifique o identificador",
-      "confirmIdentifierText" : "Verifique se o identificador no seu dispositivo é o mesmo que o identificador abaixo. Confirme e insira seu código PIN, se solicitado.",
+      "confirmIdentifierText" : "Confirmar instalação na {{productName}}",
       "identifier" : "Identificador",
-      "preparation" : "Preparação",
       "newFirmware" : "Novo firmware {{version}}",
       "confirmUpdate" : "Confirme a atualização no seu dispositivo",
       "mcuTitle" : "Finalizar a atualização",
@@ -1961,10 +1965,10 @@
       "mcuSecondNanoX" : "Mantenha pressionado o botão esquerdo até que <1><0>{{bootloaderOption}}</0></1> seja exibido. Pressione ambos os botões para confirmar e reconectar seu dispositivo.",
       "mcuBlueFirst" : "Mantenha pressionado o botão lateral por 10 segundos para desligar seu dispositivo. Solte o botão.",
       "mcuBlueSecond" : "Pressione e segure o botão por pelo menos 5 segundos até que as opções de inicialização sejam exibidas. Selecione o modo bootloader",
-      "successTitle" : "Firmware Atualizado",
+      "successTitle" : "Sistema Operacional atualizado com êxito.",
       "successTextApps" : "Reinstale os aplicativos no seu dispositivo",
       "successTextNoApps" : "Agora você pode instalar aplicativos no seu dispositivo",
-      "sucessCTAApps" : "Reinstalar Aplicativos",
+      "sucessCTAApps" : "Reinstalar aplicativos",
       "SuccessCTANoApps" : "Instalar Aplicativos",
       "cancelReinstallCTA" : "Instalar Atualização",
       "resetSteps" : {
@@ -2271,10 +2275,9 @@
   },
   "deviceLocalization" : {
     "language" : "Idioma",
-    "deviceLanguage" : "Idioma",
+    "deviceLanguage" : "Mudar idioma do dispositivo",
     "changeLanguage" : "Mudar Idioma",
     "changeDeviceLanguage" : "Alterar o idioma do seu dispositivo?",
-    "chooseLanguage" : "Escolha um idioma para sua {{deviceName}}.",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}} também está disponível para a sua {{deviceName}}",
       "description" : "Gostaria de mudar o idioma para {{language}}?"
@@ -3921,6 +3924,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Multiplicador personalizado para a taxa básica",
           "description" : "Personalize o multiplicador usado para a taxa básica que compõe o maxFeePerGas da transação EIP1559"
+        },
+        "enableNetworkLogs" : {
+          "title" : "Habilitar registros de rede",
+          "description" : "Habilite os registros de rede no console (os registros de erro estão sempre habilitados)"
         }
       }
     },
@@ -4120,7 +4127,7 @@
           "1" : "<0>Sempre</0> escolha o código PIN você mesmo.",
           "2" : "<0>Sempre</0> insira seu código PIN fora de vista.",
           "3" : "Você pode alterar seu código PIN, se necessário.",
-          "4" : "Ao inserir o código PIN incorretamente três vezes seguidas, o dispositivo será redefinido.",
+          "4" : "Ao inserir o código PIN incorreto três vezes seguidas, o dispositivo será redefinido.",
           "5" : "<0>Nunca</0> use um código PIN simples como 0000, 123456 ou 55555555.",
           "6" : "<0>Nunca</0> compartilhe seu código PIN com outra pessoa. Nem mesmo com a Ledger.",
           "7" : "<0>Nunca</0> use um código PIN que você não escolheu.",
@@ -4142,7 +4149,7 @@
         }
       },
       "whereToHide" : {
-        "title" : "Onde devo guardar minha frase de recuperação?",
+        "title" : "Onde guardar minha frase de recuperação?",
         "points" : {
           "1" : "<0>NUNCA</0> a insira em um computador, smartphone ou qualquer outro dispositivo. Não tire fotos dela.",
           "2" : "<0>NUNCA</0> compartilhe suas 24 palavras com ninguém.",
@@ -4176,11 +4183,11 @@
     "screens" : {
       "welcome" : {
         "title" : "A carteira de criptomoedas e NFTs mais segura",
-        "description" : "Gerencie, compre e cresça suas criptos e NFTs em segurança no Ledger Live.",
+        "description" : "Gerencie, compre e multiplique suas criptos e NFTs em segurança no Ledger Live.",
         "nextButton" : "Começar",
         "noDevice" : "Sem Dispositivo?",
         "buyLink" : "Sem Dispositivo? Comprar uma Ledger Nano X",
-        "byTapping" : "Ao tocar \"Começar\" você consente e concorda com nossos",
+        "byTapping" : "Ao clicar em \"Começar\" você consente e concorda com nossos",
         "termsAndConditions" : "Termos e condições",
         "and" : "e",
         "privacyPolicy" : "Política de privacidade",
@@ -4191,7 +4198,7 @@
           },
           "1" : {
             "title" : "Controle sua chave privada",
-            "desc" : "Sua chave privada é armazenada dentro da sua Ledger Nano.\nSó você deve possuí-la para estar no controle do seu dinheiro"
+            "desc" : "Sua chave privada é armazenada dentro da sua Ledger Nano.\nPara estar no controle do seu dinheiro, não a compartilhe com ninguém"
           },
           "2" : {
             "title" : "Fique Offline",
@@ -4217,7 +4224,7 @@
         "options" : {
           "1" : {
             "title" : "Configurar uma nova {{deviceName}}",
-            "description" : "Vamos começar configurando seu dispositivo"
+            "description" : "Vamos começar configurando seu dispositivo."
           },
           "2" : {
             "title" : "Conectar sua {{deviceName}}",
@@ -4226,6 +4233,10 @@
           "3" : {
             "title" : "Restaurar sua frase em um novo dispositivo",
             "description" : "Use uma frase de recuperação e restaure suas chaves privadas em uma nova Ledger Nano!"
+          },
+          "4" : {
+            "title" : "Restaurar usando o Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4240,7 +4251,7 @@
         "screens" : {
           "importYourRecoveryPhrase" : {
             "title" : "Restaurar a partir da frase de recuperação",
-            "paragraph1" : "Restaure sua Nano a partir da sua frase de recuperação para restaurar, substituir ou fazer backup da sua carteira hardware da Ledger.",
+            "paragraph1" : "Restaure sua Nano com sua frase de recuperação para restaurar, substituir ou fazer backup da sua carteira hardware Ledger.",
             "paragraph2" : "Sua Nano irá restaurar suas chaves privadas e você poderá acessar e administrar suas criptos.",
             "buttons" : {
               "next" : "OK, vamos lá!",
@@ -4253,7 +4264,7 @@
             "rules" : {
               "1" : "Reserve 30 minutos e não tenha pressa.",
               "2" : "Pegue uma caneta para escrever.",
-              "3" : "Fique a sós e escolha um ambiente seguro e tranquilo."
+              "3" : "Fique a sós em um ambiente seguro e tranquilo."
             },
             "buttons" : {
               "next" : "OK, vamos lá!",
@@ -4271,7 +4282,7 @@
             },
             "browse" : {
               "title" : "Navegar",
-              "descr" : "Aprenda como interagir com seu dispositivo lendo as instruções na tela."
+              "descr" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
               "title" : "Selecione “Set up as new device\"",
@@ -4299,10 +4310,10 @@
             },
             "browse" : {
               "title" : "Navegar",
-              "descr" : "Aprenda como interagir com seu dispositivo lendo as instruções na tela."
+              "descr" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
-              "title" : "Selecione \"Insira sua frase de recuperação\"",
+              "title" : "Selecione “Enter your recovery phrase”",
               "descr" : "Pressione ambos os botões simultaneamente para validar a seleção."
             },
             "follow" : {
@@ -4321,8 +4332,8 @@
           },
           "pinCode" : {
             "title" : "Código PIN",
-            "paragraph" : "Seu código PIN é a primeira camada de segurança. Ele protege fisicamente o acesso à sua chave privada e à sua Nano. O seu código PIN deve ter entre 4 e 8 dígitos.",
-            "disclaimer" : "Entendo que eu mesmo devo escolher meu código PIN e mantê-lo secreto.",
+            "paragraph" : "Seu código PIN é a primeira camada de segurança. Ele protege fisicamente o acesso à chave privada na sua Nano. O PIN deve ter de 4 a 8 dígitos.",
+            "disclaimer" : "Entendo que eu mesmo devo escolher meu código PIN e guardá-lo em segredo.",
             "buttons" : {
               "next" : "Configurar código PIN",
               "prev" : "Passo Anterior",
@@ -4357,7 +4368,7 @@
           "pinCodeHowTo" : {
             "setUp" : {
               "title" : "Escolher código PIN",
-              "descr" : "Pressione o botão esquerdo ou direito para mudar os dígitos. Pressione ambos os botões para validar um dígito. Selecione <0></0> para confirmar seu código PIN. Selecione <1></1> para apagar um dígito."
+              "descr" : "Pressione o botão esquerdo ou direito para passar os dígitos. Pressione ambos os botões para validar um dígito. Selecione <0></0> para confirmar seu código PIN. Selecione <1></1> para apagar um dígito."
             },
             "confirm" : {
               "title" : "Confirmar código PIN",
@@ -4373,11 +4384,30 @@
               "descr" : "Não sabe o que fazer agora? Peça ajuda para encerrar esta etapa."
             }
           },
+          "recoverHowTo" : {
+            "title" : "Selecione \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)",
+            "1" : {
+              "title" : "Selecione \"Restore\" (Restaurar)",
+              "descr" : "Pressione ambos os botões simultaneamente para selecionar."
+            },
+            "2" : {
+              "title" : "Selecione \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)"
+            },
+            "help" : {
+              "iDontSee" : "Não vejo \"Restore using Ledger Recover\" (Restaurar usando o Ledger Recover)",
+              "modal" : {
+                "title" : "O sistema operacional em sua Ledger Nano X precisa ser atualizado",
+                "subtitle" : " Tente atualizar o sistema operacional ou entre em contato com o Suporte Ledger para assistência.",
+                "learnHowToUpdate" : "Aprenda como atualizar",
+                "contactLedgerSupport" : "Fale com o Suporte Ledger"
+              }
+            }
+          },
           "existingRecoveryPhrase" : {
             "title" : "Insira sua frase de recuperação",
-            "paragraph1" : "Sua frase de recuperação é a lista secreta de palavras que você guardou quando configurou sua carteira pela primeira vez.",
+            "paragraph1" : "Sua frase de recuperação é a lista secreta de palavras que você guardou ao configurar sua carteira pela primeira vez.",
             "paragraph2" : "A Ledger não armazena cópias da sua frase de recuperação.",
-            "disclaimer" : "Eu entendo que, se eu perder esta frase de recuperação, não poderei acessar minhas criptomoedas caso eu perca o acesso à minha Nano.",
+            "disclaimer" : "Entendo que, se eu perder esta frase de recuperação, não poderei acessar minhas criptomoedas se perder acesso à minha Nano.",
             "buttons" : {
               "next" : "Inserir frase de recuperação",
               "prev" : "Passo Anterior",
@@ -4392,7 +4422,7 @@
           "useRecoverySheet" : {
             "takeYourRecoverySheet" : {
               "title" : "Pegue sua folha de recuperação",
-              "descr" : "Pegue uma folha de recuperação em branco que veio junto com sua Nano. Se a folha de recuperação não tiver chegado em branco, contate o Suporte Ledger."
+              "descr" : "Pegue uma folha de recuperação em branco que veio junto com sua Nano. Se a folha de recuperação não estava em branco quando a recebeu, fale com o Suporte Ledger."
             },
             "writeDownWords" : {
               "title" : "Anote as 24 palavras",
@@ -4428,8 +4458,8 @@
               "title" : "Pegue sua frase de recuperação"
             },
             "selectLength" : {
-              "title" : "Selecionar comprimento da frase de recuperação",
-              "descr" : "Suas frases de recuperação podem ter 12, 18 ou 24 palavras. Você deve inserir todas as palavras para ter acesso às suas criptos."
+              "title" : "Selecione o comprimento da frase de recuperação",
+              "descr" : "Suas frases de recuperação podem ter 12, 18 ou 24 palavras. Você deve inserir todas as palavras para acessar suas criptos."
             },
             "enterWord" : {
               "title" : "Insira a palavra nº 1...",
@@ -4473,7 +4503,7 @@
           "genuineCheck" : {
             "success" : {
               "title" : "Tudo certo!",
-              "desc" : "Seu Ledger {{deviceName}} é genuíno e está pronto para ser usado com o Ledger Live"
+              "desc" : "Sua Ledger {{deviceName}} é autêntica e está pronta para ser usada com o Ledger Live"
             },
             "buttons" : {
               "next" : "Continuar",
@@ -4483,14 +4513,14 @@
           },
           "hideRecoveryPhrase" : {
             "title" : "Esconda sua frase de recuperação",
-            "paragraph" : "Sua frase de recuperação é seu último recurso para acessar seus criptoativos caso você não possa usar sua Nano. Você deve mantê-la em um lugar seguro.",
-            "keepItOffline" : "Somente insira essas palavras em carteiras hardware, nunca em computadores nem smartphones.",
+            "paragraph" : "Sua frase de recuperação é o último recurso para acessar seus criptoativos se não puder usar a Nano. Você deve guardá-la em um lugar seguro.",
+            "keepItOffline" : "Essas palavras só devem ser inseridas em carteiras hardware, jamais em computadores ou smartphones.",
             "neverShowToAnyone" : "Nunca compartilhe suas 24 palavras com ninguém, nem mesmo com a Ledger.",
             "buttons" : {
               "next" : "OK, está feito!",
               "prev" : "Passo Anterior",
               "help" : "Preciso de ajuda",
-              "learn" : "Aprenda como escondê-la"
+              "learn" : "Aprender a escondê-la"
             },
             "help" : {
               "help" : "Preciso de ajuda",
@@ -4522,7 +4552,7 @@
         },
         "ownYourPrivateKey" : {
           "title" : "Controle sua chave privada",
-          "description" : "Sua chave privada é armazenada dentro da sua Ledger Nano. Só você deve possuí-la para estar no controle do seu dinheiro."
+          "description" : "Sua chave privada é armazenada dentro da sua Ledger Nano. Para estar no controle do seu dinheiro, não a compartilhe com ninguém."
         },
         "stayOffline" : {
           "title" : "Fique offline",
@@ -4550,7 +4580,7 @@
       },
       "questions" : {
         "1" : {
-          "text" : "Como usuário da Ledger, meus criptoativos são armazenados:",
+          "text" : "Como usuário Ledger, meus criptoativos estão armazenados:",
           "answers" : {
             "1" : "Na minha Nano",
             "2" : "Na blockchain"
@@ -4592,11 +4622,11 @@
           "results" : {
             "success" : {
               "title" : "Parabéns!",
-              "text" : "Sua chave privada sempre está offline na sua carteira hardware. Mesmo conectado à sua Nano, o aplicativo da Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo."
+              "text" : "Sua chave privada está sempre offline na sua carteira hardware. Mesmo conectado à Nano, o aplicativo Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo."
             },
             "fail" : {
               "title" : "Incorreto!",
-              "text" : "Sua chave privada sempre está offline na sua carteira hardware. Mesmo conectado à sua Nano, o aplicativo da Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo."
+              "text" : "Sua chave privada está sempre offline na sua carteira hardware. Mesmo conectado à Nano, o aplicativo Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo."
             }
           }
         }
@@ -5602,11 +5632,11 @@
       "description" : "Tente novamente com outra imagem"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Commit de imagem recusado no dispositivo (TODO: final wording)",
+      "title" : "Tela de bloqueio cancelada na Ledger Stax",
       "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Carregamento de imagem recusada no dispositivo (TODO: final wording)",
+      "title" : "Tela de bloqueio cancelada na Ledger Stax",
       "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem."
     },
     "NearNewAccountWarning" : {
@@ -5710,9 +5740,11 @@
         "stepLabel" : "Transferência",
         "uploadAnotherImage" : "Enviar outra imagem",
         "allowPreview" : "Permitir que a imagem da tela de bloqueio seja carregada em sua {{productName}}",
+        "allowConfirmPreview" : "Permitir restauração da imagem da tela de bloqueio em {{productName}}",
         "loadingPicture" : "Carregando...",
         "imageLoaded" : "Imagem carregada em {{productName}}",
         "confirmPicture" : "Gostou do que está vendo?\nMantenha assim!",
+        "confirmRestorePicture" : "Confirme a restauração da imagem da tela de bloqueio",
         "doThisLater" : "Talvez mais tarde"
       }
     },
