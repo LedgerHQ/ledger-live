@@ -221,7 +221,7 @@
     "lend" : "借出",
     "catalog" : "发现",
     "market" : "市场",
-    "protect" : "恢复"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "星标账户以在此显示。",
@@ -1492,7 +1492,7 @@
     "sectionArticles" : "文章"
   },
   "market" : {
-    "title" : "Market（市场）",
+    "title" : "市场",
     "currency" : "货币",
     "rangeLabel" : "时间",
     "goBack" : "返回",
@@ -2268,6 +2268,11 @@
     "placeholder" : "Tony 的 Stax",
     "remainingCharacters" : "剩余 {{ remainingCharacters }} 个字符",
     "renamed" : "{{ productName }} 名称已更改为\n“{{ name }}” "
+  },
+  "removeCustomLockscreen" : {
+    "cta" : "删除",
+    "confirmation" : "确认移除 Ledger Stax 上的图片",
+    "success" : "锁屏图片已移除"
   },
   "deviceLocalization" : {
     "language" : "语言",
@@ -3921,6 +3926,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "基本费用的自定义倍数",
           "description" : "自定义组成 EIP1559 交易 maxFeePerGas 的基础费用的倍数"
+        },
+        "enableNetworkLogs" : {
+          "title" : "启用网络日志",
+          "description" : "在控制台启用网络日志（错误日志已始终启用）"
         }
       }
     },
@@ -4180,6 +4189,7 @@
         "nextButton" : "开始",
         "noDevice" : "没有设备？",
         "buyLink" : "没有设备？购买 Ledger Nano X",
+        "recoverSignIn" : "Log in for Ledger Recover",
         "byTapping" : "点按“开始”即表示您应允并同意我们的",
         "termsAndConditions" : "条款与条件",
         "and" : "和",
@@ -4226,6 +4236,10 @@
           "3" : {
             "title" : "在新设备上还原您的恢复短语",
             "description" : "在新的 Nano 设备上使用现有的恢复短语来还原您的私钥！"
+          },
+          "4" : {
+            "title" : "使用 Ledger Recover 恢复",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4385,25 @@
             "help" : {
               "help" : "需要帮助",
               "descr" : "不知道如何操作？获取完成此步骤的帮助。"
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "选择“使用 Ledger Recover 重置”",
+            "1" : {
+              "title" : "选择“重置”",
+              "descr" : "同时按下两个按钮进行选择。"
+            },
+            "2" : {
+              "title" : "选择“使用 Ledger Recover 重置”"
+            },
+            "help" : {
+              "iDontSee" : "我没有看到“使用 Ledger Recover 重置”",
+              "modal" : {
+                "title" : "Ledger Nano X 的操作系统需要更新",
+                "subtitle" : " 您可以尝试更新操作系统或联系 Ledger 客服寻求帮助。",
+                "learnHowToUpdate" : "了解如何更新",
+                "contactLedgerSupport" : "联系 Ledger 客服"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5686,6 +5719,7 @@
   "customImage" : {
     "title" : "自定义锁屏界面",
     "managerCTA" : "锁屏图片",
+    "managerCTARemove" : "删除",
     "steps" : {
       "choose" : {
         "stepLabel" : "选择一张图片",
@@ -5694,6 +5728,7 @@
         "myNfts" : "我的 NFT",
         "upload" : "从我的计算机上传",
         "chooseNft" : "选择 NFT",
+        "remove" : "移除当前图片",
         "selectNft" : "选择 NFT",
         "previousSelectNft" : "返回",
         "nftEmptyStateTitle" : "暂时没有 NFT 可显示",
