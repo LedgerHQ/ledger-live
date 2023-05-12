@@ -10,8 +10,9 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 type Props = {
   account: Account;
   parentAccount: Account | undefined | null;
+  source?: string;
 };
-const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
+const AccountHeaderManageActions = ({ account, parentAccount, source = "Account Page" }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
@@ -28,10 +29,11 @@ const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
       dispatch(
         openModal("MODAL_CELO_MANAGE", {
           account,
+          source,
         }),
       );
     }
-  }, [account, dispatch, parentAccount]);
+  }, [account, dispatch, parentAccount, source]);
   const disabledLabel = isRegistrationPending
     ? `${t("celo.manage.titleWhenPendingRegistration")}`
     : "";
