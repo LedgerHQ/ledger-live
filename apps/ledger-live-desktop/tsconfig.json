@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
+    "allowJs": false,
     "composite": true,
     "module": "es2020",
     "jsx": "react",

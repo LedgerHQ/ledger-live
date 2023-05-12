@@ -1,6 +1,6 @@
-import styled from "styled-components";
-// import { Box } from "@ledgerhq/react-ui";
-import Box from "./Box"; // NOTE: Speedrun glitch
+import styled, { DefaultTheme, StyledComponent } from "styled-components";
+import { Box } from "@ledgerhq/react-ui";
+import { BoxProps } from "@ledgerhq/react-ui/components/layout/Box";
 
 type Props = {
   lightSource: string;
@@ -9,7 +9,9 @@ type Props = {
   height?: number;
 };
 
-const Illustration = styled(Box).attrs<Props>(p => ({
+const Illustration: StyledComponent<"div", DefaultTheme, BoxProps & Props> = styled(Box).attrs<
+  Props
+>(p => ({
   width: `${p.size}px`,
   height: p.height ? `${p.height}px` : `${p.size}px`,
 }))<Props>`

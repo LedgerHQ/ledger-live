@@ -16,7 +16,7 @@ import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import styled from "styled-components";
-import { withRouter } from "react-router-dom";
+import { useHistory, withRouter } from "react-router-dom";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
@@ -30,13 +30,14 @@ type OwnProps = {
 };
 type Props = OwnProps & {
   t: TFunction;
-  history: any;
+
   openModal: Function;
 };
-function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Props) {
+function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
   const rampCatalog = useRampCatalog();
+  const history = useHistory();
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");

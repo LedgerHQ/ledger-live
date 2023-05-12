@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 import styled from "styled-components";
 import { useSpring, animated, interpolate } from "react-spring";
 import useTheme from "~/renderer/hooks/useTheme";
-import { Theme } from "~/renderer/styles/theme";
 import { ChartTooltipModel } from "chart.js";
 import { Item } from "./types";
 
@@ -27,7 +26,6 @@ const TooltipContainer = styled.div.attrs<TooltipContainerProps>(({ opacity }) =
 
 type TooltipProps = {
   tooltip: ChartTooltipModel;
-  theme: Theme;
   renderTooltip: (data: Item) => React.ReactNode;
   color?: string;
   data: Item[];

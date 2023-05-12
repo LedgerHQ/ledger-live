@@ -10,8 +10,9 @@ import IconCoins from "~/renderer/icons/Coins";
 type Props = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
+  source?: string;
 };
-const AccountHeaderActions = ({ account, parentAccount }: Props) => {
+const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -32,6 +33,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         dispatch(
           openModal("MODAL_NEAR_STAKE", {
             account,
+            source,
           }),
         );
       } else {
@@ -42,7 +44,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         );
       }
     }
-  }, [stakingEnabled, dispatch, account, hasStakingPositions, parentAccount]);
+  }, [stakingEnabled, dispatch, account, parentAccount, hasStakingPositions, source]);
   if (parentAccount) return null;
   return [
     {

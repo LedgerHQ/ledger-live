@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
@@ -22,7 +23,28 @@ const Container: ThemedComponent<{
 }))`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
-function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) {
+function StepConfirmation({
+  t,
+  optimisticOperation,
+  error,
+  signed,
+  transaction,
+  source,
+}: StepProps) {
+  useEffect(() => {
+    const voteAccAddress = transaction?.recipient;
+    // Blockchain is not retrieving the name yet.
+    if (optimisticOperation && voteAccAddress) {
+      track("staking_completed", {
+        currency: "NEAR",
+        validator: voteAccAddress,
+        source,
+        delegation: "delegation",
+        flow: "stake",
+      });
+    }
+  }, [optimisticOperation, source, transaction?.recipient]);
+
   if (optimisticOperation) {
     return (
       <Container>

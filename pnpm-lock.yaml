@@ -1992,9 +1992,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-mocker
-      '@ledgerhq/hw-transport-node-speculos':
+      '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-transport-node-speculos
+        version: link:../ledgerjs/packages/hw-transport-node-speculos-http
       '@ledgerhq/live-app-sdk':
         specifier: ^0.8.1
         version: 0.8.1
@@ -3574,6 +3574,9 @@ importers:
       axios:
         specifier: ^0.26.1
         version: 0.26.1
+      rxjs:
+        specifier: '6'
+        version: 6.6.7
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0

@@ -48,6 +48,7 @@ import staxFetchAndRestoreDemo from "./commands/staxFetchAndRestoreDemo";
 import staxFetchImage from "./commands/staxFetchImage";
 import staxFetchImageHash from "./commands/staxFetchImageHash";
 import staxLoadImage from "./commands/staxLoadImage";
+import staxRemoveImage from "./commands/staxRemoveImage";
 import swap from "./commands/swap";
 import sync from "./commands/sync";
 import synchronousOnboarding from "./commands/synchronousOnboarding";
@@ -108,6 +109,7 @@ export default {
   staxFetchImage,
   staxFetchImageHash,
   staxLoadImage,
+  staxRemoveImage,
   swap,
   sync,
   synchronousOnboarding,

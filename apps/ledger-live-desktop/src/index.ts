@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { getEnv } from "@ledgerhq/live-common/env";
 
 if (getEnv("PLAYWRIGHT_RUN")) {

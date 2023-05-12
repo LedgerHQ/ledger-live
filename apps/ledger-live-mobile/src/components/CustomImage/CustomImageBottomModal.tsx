@@ -1,8 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { Device } from "@ledgerhq/types-devices";
+import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import { createAction } from "@ledgerhq/live-common/hw/actions/staxRemoveImage";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import removeImage from "@ledgerhq/live-common/hw/staxRemoveImage";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { NavigatorName, ScreenName } from "../../const";
 import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
 import ModalChoice from "./ModalChoice";
@@ -10,6 +13,9 @@ import { importImageFromPhoneGallery } from "./imageUtils";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { TrackScreen } from "../../analytics";
+import DeviceAction from "../DeviceAction";
+
+const action = createAction(removeImage);
 
 const analyticsDrawerName = "Choose an image to set as your Stax lockscreen";
 
@@ -26,13 +32,19 @@ const analyticsButtonChooseNFTGalleryEventProps = {
 type Props = {
   isOpened?: boolean;
   onClose: BottomModalProps["onClose"];
+  setDeviceHasImage?: (arg0: boolean) => void;
+  deviceHasImage?: boolean;
   device: Device | null;
 };
 
 const CustomImageBottomModal: React.FC<Props> = props => {
   const [isLoading, setIsLoading] = useState(false);
-  const { isOpened, onClose, device } = props;
+  const [isRemovingCustomImage, setIsRemovingCustomImage] = useState(false);
+  const { isOpened, onClose, device, deviceHasImage, setDeviceHasImage } =
+    props;
   const { t } = useTranslation();
+  const { pushToast } = useToasts();
+
   const navigation =
     useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
@@ -69,14 +81,59 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     onClose && onClose();
   }, [navigation, device, onClose]);
 
+  const request = useMemo(
+    () => ({ deviceId: device?.deviceId || "", request: {} }),
+    [device],
+  );
+
+  useEffect(() => {
+    return () => {
+      setIsRemovingCustomImage(false);
+    };
+  }, []);
+
+  const wrappedOnClose = useCallback(() => {
+    setIsRemovingCustomImage(false);
+    onClose && onClose();
+  }, [onClose]);
+
+  const onSuccess = useCallback(() => {
+    setIsRemovingCustomImage(false);
+    if (setDeviceHasImage) {
+      setDeviceHasImage(false);
+    }
+    wrappedOnClose();
+    pushToast({
+      id: "customImage.remove",
+      type: "success",
+      icon: "success",
+      title: t("customImage.toastRemove"),
+    });
+  }, [setDeviceHasImage, wrappedOnClose, pushToast, t]);
+
   return (
-    <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose}>
+    <QueuedDrawer
+      isRequestingToBeOpened={!!isOpened}
+      onClose={wrappedOnClose}
+      preventBackdropClick={isRemovingCustomImage}
+    >
       <TrackScreen
         category={analyticsDrawerName}
         type="drawer"
         refreshSource={false}
       />
-      {isLoading ? (
+      {isRemovingCustomImage && device ? (
+        <Flex alignItems="center">
+          <Flex flexDirection="row">
+            <DeviceAction
+              device={device}
+              request={request}
+              action={action}
+              onResult={onSuccess}
+            />
+          </Flex>
+        </Flex>
+      ) : isLoading ? (
         <Flex m={10}>
           <InfiniteLoader />
         </Flex>
@@ -97,6 +154,18 @@ const CustomImageBottomModal: React.FC<Props> = props => {
             event="button_clicked"
             eventProperties={analyticsButtonChooseNFTGalleryEventProps}
           />
+          {deviceHasImage ? (
+            <Button
+              mt={6}
+              type="error"
+              iconName="Trash"
+              iconPosition="right"
+              outline
+              onPress={() => setIsRemovingCustomImage(true)}
+            >
+              {t("customImage.drawer.options.remove")}
+            </Button>
+          ) : null}
         </>
       )}
     </QueuedDrawer>
