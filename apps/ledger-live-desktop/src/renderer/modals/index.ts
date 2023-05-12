@@ -1,3 +1,5 @@
+import { ModalData } from "./types";
+
 import { modals as familiesModals } from "../families";
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
@@ -26,9 +28,11 @@ import MODAL_STORYLY_DEBUGGER from "./StorylyDebugger";
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
+import React from "react";
 
-export type ModalComponent = React.ComponentType<any>; // FIXME determine the common ground to modals
-export type Modals = Record<string, ModalComponent>;
+export type Modals = {
+  [Name in keyof ModalData]: React.ComponentType<{ name: Name } & ModalData[Name]>;
+};
 
 const modals: Modals = {
   MODAL_WEBSOCKET_BRIDGE,

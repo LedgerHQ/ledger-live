@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import Button from "~/renderer/components/Button";
+
 export default function ResetKYCButton() {
   const { t } = useTranslation();
   const dispatch = useDispatch();

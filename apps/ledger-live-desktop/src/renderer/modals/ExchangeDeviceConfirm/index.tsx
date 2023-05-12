@@ -144,7 +144,7 @@ const VerifyOnDevice = ({
     </>
   ) : null;
 };
-type DataProp = {
+export type DataProp = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
   onResult: (c: AccountLike, b: Account | undefined | null, a: AppResult | boolean) => null;

@@ -6,14 +6,12 @@ import Button from "~/renderer/components/Button";
 const ReleaseNotesButton = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const version = __APP_VERSION__;
   const onClick = useCallback(
     (e: SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
-      // TODO: Modal release notes
-      dispatch(openModal("MODAL_RELEASE_NOTES", version));
+      dispatch(openModal("MODAL_RELEASE_NOTES", undefined));
     },
-    [dispatch, version],
+    [dispatch],
   );
   return (
     <Button event="Version details" small primary onClick={onClick}>

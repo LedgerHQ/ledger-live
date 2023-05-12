@@ -5,23 +5,18 @@ import Body from "./Body";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { Flex } from "@ledgerhq/react-ui";
 import { Account } from "@ledgerhq/types-live";
+
 type Props = {
-  name: string;
   account: Account;
   checkbox?: boolean;
   singleProviderRedirectMode?: boolean;
   source?: string;
 };
-const DelegationModal = ({
-  name,
-  account,
-  checkbox,
-  singleProviderRedirectMode,
-  source,
-}: Props) => {
+
+const DelegationModal = ({ account, checkbox, singleProviderRedirectMode, source }: Props) => {
   return (
     <Modal
-      name={name}
+      name="MODAL_ETH_STAKE"
       centered
       title={<Trans i18nKey="ethereum.stake.title" />}
       width={500}

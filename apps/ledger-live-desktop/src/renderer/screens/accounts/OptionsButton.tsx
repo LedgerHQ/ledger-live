@@ -39,7 +39,7 @@ const OptionsButton = () => {
   const dispatch = useDispatch();
   const [hideEmptyTokenAccounts, setHideEmptyTokenAccounts] = useHideEmptyTokenAccounts();
   const onOpenModal = useCallback(
-    (modal: string) => {
+    (modal: "MODAL_EXPORT_ACCOUNTS" | "MODAL_EXPORT_OPERATIONS") => {
       dispatch(openModal(modal, undefined));
     },
     [dispatch],

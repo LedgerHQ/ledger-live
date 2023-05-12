@@ -1,5 +1,5 @@
 import React from "react";
-import Modal, { ModalBody, RenderProps } from "~/renderer/components/Modal";
+import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/startExchange";
@@ -12,14 +12,7 @@ const StartExchange = () => {
       name="MODAL_PLATFORM_EXCHANGE_START"
       centered
       preventBackdropClick
-      render={({
-        data,
-        onClose,
-      }: RenderProps<{
-        onCancel?: (_: string) => void;
-        exchangeType: unknown;
-        onResult: (startExchangeResult: string) => void;
-      }>) => (
+      render={({ data, onClose }) => (
         <ModalBody
           onClose={() => {
             if (data.onCancel) {

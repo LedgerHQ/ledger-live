@@ -10,7 +10,6 @@ import Button from "./Button";
 import Box from "./Box";
 import Modal, { ModalBody } from "./Modal";
 type Props = {
-  name?: string;
   onNext: () => void;
   nextLabel?: React.ReactNode;
   description: string;
@@ -18,8 +17,8 @@ type Props = {
   additional: React.ReactNode;
   footerLeft?: React.ReactNode;
 };
+
 export default function EarnRewardsInfoModal({
-  name,
   onNext,
   nextLabel,
   description,
@@ -30,7 +29,7 @@ export default function EarnRewardsInfoModal({
   const infoColor = useTheme("colors.positiveGreen");
   return (
     <Modal
-      name={name}
+      name="MODAL_ALGORAND_EARN_REWARDS_INFO"
       centered
       render={({ onClose }) => (
         <ModalBody

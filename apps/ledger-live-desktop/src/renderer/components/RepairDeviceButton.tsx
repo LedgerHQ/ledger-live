@@ -43,7 +43,7 @@ const RepairDeviceButton = React.forwardRef(function RepairDevice(
     setError(null);
     // NB due to the fact that this modal is not part of the modals layer, we need to dispatch the open modal
     // event to have the backdrop layer added. I'm not refactoring the modal because of fear.
-    dispatch(openModal("MODAL_STUB", null));
+    dispatch(openModal("MODAL_STUB", undefined));
     setOpened(true);
   }, [dispatch]);
   const close = useCallback(

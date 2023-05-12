@@ -7,7 +7,7 @@ import Button from "~/renderer/components/Button";
 import Animation from "~/renderer/animations";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
-import Modal, { ModalBody, RenderProps } from "~/renderer/components/Modal";
+import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Select from "~/renderer/components/Select";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { AnimationKey, getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
@@ -265,7 +265,7 @@ export const lottieAnimations = {
     },
   },
 };
-const LottieDebugger = ({ name }: { name: string }) => {
+const LottieDebugger = () => {
   const keys = useMemo(
     () => [
       "plugAndPinCode",
@@ -321,9 +321,9 @@ const LottieDebugger = ({ name }: { name: string }) => {
   }, [key, keys, modelId, onBoardingKeys]);
   return (
     <Modal
-      name={name}
+      name="MODAL_LOTTIE_DEBUGGER"
       centered
-      render={({ onClose }: RenderProps<unknown>) => (
+      render={({ onClose }) => (
         <ModalBody
           onClose={onClose}
           onBack={undefined}

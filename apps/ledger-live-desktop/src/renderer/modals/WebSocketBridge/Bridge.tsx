@@ -19,8 +19,8 @@ const Bridge = ({
   appName,
   onClose,
 }: {
-  origin: string | undefined | null;
-  appName: string | undefined | null;
+  origin?: string | undefined | null;
+  appName?: string | undefined | null;
   onClose?: () => void;
 }) => {
   const { t } = useTranslation();

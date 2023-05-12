@@ -10,7 +10,7 @@ const IsNewVersion = () => {
   const currentVersion = __APP_VERSION__;
   useEffect(() => {
     if (gt(currentVersion, lastUsedVersion)) {
-      dispatch(openModal("MODAL_RELEASE_NOTES", currentVersion));
+      dispatch(openModal("MODAL_RELEASE_NOTES", undefined));
       dispatch(
         saveSettings({
           lastUsedVersion: currentVersion,
