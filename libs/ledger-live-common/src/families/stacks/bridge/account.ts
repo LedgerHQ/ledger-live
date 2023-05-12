@@ -41,7 +41,7 @@ import { broadcastTx } from "./utils/api";
 import { getAddress } from "../../filecoin/bridge/utils/utils";
 import { withDevice } from "../../../hw/deviceAccess";
 import { close } from "../../../hw";
-import { getPath, isError } from "../utils";
+import { getPath, throwIfError } from "../utils";
 import { decodeAccountId, getMainAccount } from "../../../account";
 import { fetchBalances } from "./utils/api";
 import { encodeOperationId, patchOperationWithHash } from "../../../operation";
@@ -241,7 +241,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             getPath(derivationPath),
             serializedTx
           );
-          isError(result);
+          throwIfError(result);
 
           o.next({
             type: "device-signature-granted"

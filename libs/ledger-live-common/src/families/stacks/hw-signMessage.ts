@@ -1,7 +1,7 @@
 import BlockstackApp from "@zondax/ledger-stacks";
 
 import type { SignMessage, Result } from "../../hw/signMessage/types";
-import { getBufferFromString, getPath, isError } from "./utils";
+import { getBufferFromString, getPath, throwIfError } from "./utils";
 
 const signMessage: SignMessage = async (
   transport,
@@ -13,7 +13,7 @@ const signMessage: SignMessage = async (
   if (typeof message !== "string") throw new Error(`Message must be string`);
 
   const r = await blockstack.sign(getPath(path), getBufferFromString(message));
-  isError(r);
+  throwIfError(r);
 
   return {
     rsv: {

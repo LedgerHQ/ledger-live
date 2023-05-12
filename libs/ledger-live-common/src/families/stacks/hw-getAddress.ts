@@ -3,7 +3,7 @@ import { AddressVersion } from "@stacks/transactions/dist";
 import { log } from "@ledgerhq/logs";
 
 import type { Resolver } from "../../hw/getAddress/types";
-import { getPath, isError } from "./utils";
+import { getPath, throwIfError } from "./utils";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
   const blockstack = new BlockstackApp(transport);
@@ -18,7 +18,7 @@ const resolver: Resolver = async (transport, { path, verify }) => {
         AddressVersion.MainnetSingleSig
       );
 
-  isError(r);
+  throwIfError(r);
 
   return {
     path,
