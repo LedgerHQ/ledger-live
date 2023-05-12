@@ -208,7 +208,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
-  const type = useTheme("colors.palette.type");
+  const type = useTheme().colors.palette.type;
 
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
   useEffect(() => {
