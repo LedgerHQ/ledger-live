@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
-import Modal, { RenderProps } from "~/renderer/components/Modal";
-import Body, { Params } from "./Body";
+import Modal from "~/renderer/components/Modal";
+import Body from "./Body";
 import { StepId } from "./types";
 type Props = {
   stepId: StepId;
@@ -37,7 +37,7 @@ const SignTransactionModal = ({ stepId }: Props) => {
         centered
         onHide={handleReset}
         preventBackdropClick
-        render={({ onClose, data }: RenderProps<Params>) => (
+        render={({ onClose, data }) => (
           <Body
             stepId={state.stepId}
             onClose={() => {

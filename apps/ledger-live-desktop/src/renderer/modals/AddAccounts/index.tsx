@@ -206,7 +206,7 @@ class AddAccounts extends PureComponent<Props, State> {
     });
   };
 
-  handleBeforeOpen = ({ data }: RenderProps<{ currency?: CryptoCurrency }>) => {
+  handleBeforeOpen = ({ data }: RenderProps<"MODAL_ADD_ACCOUNTS">) => {
     const { currency } = this.state;
     if (!currency) {
       if (data && data.currency) {

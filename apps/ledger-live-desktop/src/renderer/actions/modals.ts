@@ -1,15 +1,14 @@
 import { createAction } from "redux-actions";
+import { ModalData } from "~/renderer/modals/types";
 
-export const openModal = createAction("MODAL_OPEN", (name: string, data: unknown) => ({
-  name,
-  data,
-}));
+function openModalF<Name extends keyof ModalData>(name: Name, data: ModalData[Name]) {
+  return { name, data };
+}
+
+export const openModal = createAction("MODAL_OPEN", openModalF);
+
 export const closeModal = createAction("MODAL_CLOSE", (name: string) => ({ name }));
+
 export const closeAllModal = createAction("MODAL_CLOSE_ALL");
-export const setDataModal = createAction(
-  "MODAL_SET_DATA",
-  (name: string, data: object | undefined) => ({
-    name,
-    data,
-  }),
-);
+
+export const setDataModal = createAction("MODAL_SET_DATA", openModalF);
