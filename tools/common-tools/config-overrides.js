@@ -33,7 +33,10 @@ module.exports = function override(webpackConfig) {
   webpackConfig.resolve.alias["@ledgerhq/coin-polkadot"] =
     "@ledgerhq/coin-polkadot/lib-es";
   webpackConfig.resolve.alias["@ledgerhq/domain-service"] =
-  "@ledgerhq/domain-service/lib-es";
+    "@ledgerhq/domain-service/lib-es";
+
+  webpackConfig.resolve.alias["@zondax/izari-filecoin"] =
+    "@zondax/izari-filecoin/dist/cjs";
 
   return webpackConfig;
 };
