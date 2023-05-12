@@ -25,10 +25,17 @@
     },
     "catalog" : {
       "title" : "Исследуйте",
+      "section" : {
+        "recentlyUsed" : "Недавние",
+        "browse" : "Посмотреть"
+      },
+      "filter" : {
+        "categories" : "Категории"
+      },
       "branch" : {
-        "soon" : "уже скоро",
-        "experimental" : "экспериментальная функция",
-        "debug" : "отладка"
+        "soon" : "Скоро",
+        "experimental" : "Экспериментальный режим",
+        "debug" : "Отладка"
       },
       "banner" : {
         "title" : "Исследуйте наш Каталог приложений",
@@ -47,6 +54,11 @@
         "title" : "Для разработчиков",
         "description" : "Информация о том, как интегрировать собственные приложения в Ledger Live.",
         "button" : "Перейти в Портал"
+      },
+      "warnings" : {
+        "notFound" : "Ничего нет",
+        "retrySearchKeyword" : "Повторите поиск по другому запросу.",
+        "retrySearchKeywordAndUrl" : "Повторите поиск с другим запросом или откройте <Link>{{search}}</Link> вне приложения Ledger Live."
       }
     },
     "disclaimer" : {
@@ -128,7 +140,8 @@
     "info" : "Информация",
     "connectDevice" : "Подключите устройство",
     "add" : "Добавить",
-    "or" : "ИЛИ"
+    "or" : "ИЛИ",
+    "clearAll" : "Очистить все"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -221,7 +234,7 @@
     "lend" : "Кредитование",
     "catalog" : "Исследуйте",
     "market" : "Рынок",
-    "protect" : "Ledger Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Выделите счёт, чтобы он отобразился здесь.",
@@ -2269,6 +2282,11 @@
     "remainingCharacters" : "Осталось символов: {{ remainingCharacters }}",
     "renamed" : "Название {{ productName }} изменено на\n«{{ name }}» "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "Удалить",
+    "confirmation" : "Подтвердите удаление изображения на Ledger Stax",
+    "success" : "Изображение экрана блокировки удалено"
+  },
   "deviceLocalization" : {
     "language" : "Язык устройства",
     "deviceLanguage" : "Язык устройства",
@@ -3544,7 +3562,7 @@
         "pending" : "Ожидает вывода",
         "available" : "Доступно для вывода"
       },
-      "unstake" : "Вывести из стейкинга",
+      "unstake" : "Разблокировать",
       "withdraw" : "Вывести",
       "activeTooltip" : "Стейкинг приносит вознаграждения",
       "inactiveTooltip" : "Без стейкинга средства не приносят вознаграждения",
@@ -3586,7 +3604,7 @@
     "unstake" : {
       "disabledTooltip" : "Недостаточно активов в стейкинге для вывода из него",
       "flow" : {
-        "title" : "Вывести из стейкинга",
+        "title" : "Разблокировать",
         "steps" : {
           "amount" : {
             "title" : "Сумма",
@@ -3921,6 +3939,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Пользовательский множитель для базовой комиссии",
           "description" : "Укажите множитель для базовой комиссии, который будет определять показатель maxFeePerGas для EIP1559-транзакций"
+        },
+        "enableNetworkLogs" : {
+          "title" : "Активация логов сети",
+          "description" : "Включить сетевые логи в консоли. Логи ошибок активированы всегда"
         }
       }
     },
@@ -4226,6 +4248,10 @@
           "3" : {
             "title" : "Ввести фразу восстановления на новом устройстве",
             "description" : "Воспользуйтесь мнемонической фразой, чтобы восстановить приватные ключи на новом Nano."
+          },
+          "4" : {
+            "title" : "Восстановить с Ledger Recover",
+            "description" : "Съешь ещё этих мягких французских булок, да выпей же чаю"
           }
         }
       },
@@ -4371,6 +4397,25 @@
             "help" : {
               "help" : "Требуется помощь?",
               "descr" : "Не знаете, что делать? Обратитесь за помощью для завершения данного этапа."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Выберите «Restore using Ledger Recover» (Восстановить с Ledger Recover)",
+            "1" : {
+              "title" : "Выберите «Restore» (Восстановить)",
+              "descr" : "Для подтверждения нажмите обе кнопки одновременно."
+            },
+            "2" : {
+              "title" : "Выберите «Restore using Ledger Recover» (Восстановить с Ledger Recover)"
+            },
+            "help" : {
+              "iDontSee" : "Если нет «Restore using Ledger Recover»",
+              "modal" : {
+                "title" : "ОС вашего Ledger Nano X необходимо обновить",
+                "subtitle" : " Попробуйте обновить ОС самостоятельно или обратитесь за помощью в Поддержку Ledger.",
+                "learnHowToUpdate" : "Как обновить устройство",
+                "contactLedgerSupport" : "Связаться с Поддержкой Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5686,6 +5731,7 @@
   "customImage" : {
     "title" : "Персонализированный экран блокировки",
     "managerCTA" : "Изображение экрана блокировки",
+    "managerCTARemove" : "Удалить",
     "steps" : {
       "choose" : {
         "stepLabel" : "Выбрать изображение",
@@ -5694,6 +5740,7 @@
         "myNfts" : "Мои NFT",
         "upload" : "Загрузить с ПК",
         "chooseNft" : "Выбрать NFT",
+        "remove" : "Удалить изображение",
         "selectNft" : "Выбрать NFT",
         "previousSelectNft" : "Назад",
         "nftEmptyStateTitle" : "Пока тут ничего нет",
