@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.19.1-nightly.0
+
+### Patch Changes
+
+- [#3365](https://github.com/LedgerHQ/ledger-live/pull/3365) [`ff962bbe95`](https://github.com/LedgerHQ/ledger-live/commit/ff962bbe95ec68c6de09fbe4c76cb164f139936a) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Vertical Timeline (fixed crash + pixel polish) + pixel polish of the Sync Onboarding including language selection (now used in welcome screen)
+
 ## 0.19.0
 
 ### Minor Changes

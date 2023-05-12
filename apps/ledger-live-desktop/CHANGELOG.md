@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.59.0-nightly.1
+
+### Minor Changes
+
+- [#3338](https://github.com/LedgerHQ/ledger-live/pull/3338) [`22491091f7`](https://github.com/LedgerHQ/ledger-live/commit/22491091f7b4e06ee6a0cdf964498aa5b08d6eb0) Thanks [@chabroA](https://github.com/chabroA)! - Restore full network logs under env var and with experimental setting
+
+### Patch Changes
+
+- Updated dependencies [[`22491091f7`](https://github.com/LedgerHQ/ledger-live/commit/22491091f7b4e06ee6a0cdf964498aa5b08d6eb0)]:
+  - @ledgerhq/live-common@29.6.0-nightly.0
+  - @ledgerhq/live-env@0.3.0-nightly.0
+  - @ledgerhq/coin-framework@0.3.3-nightly.0
+  - @ledgerhq/domain-service@1.1.1-nightly.0
+
 ## 2.58.1-nightly.0
 
 ### Patch Changes

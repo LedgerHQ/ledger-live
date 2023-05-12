@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "0.3.2",
+  "version": "0.3.3-nightly.0",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
