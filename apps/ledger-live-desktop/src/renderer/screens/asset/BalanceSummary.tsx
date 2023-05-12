@@ -100,7 +100,6 @@ export default function BalanceSummary({
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={6}>
         {currency.type === "TokenCurrency" && currency.id === "vechain/vtho" ? (
           <>
-            {/* <NoGraphWarning /> */}
             <Alert type="secondary" noIcon={false}>
               <span>{t("vechain.noGraphWarning")}</span>
             </Alert>
