@@ -125,10 +125,8 @@ const estimateMaxSpendable = async ({
   transaction?: Transaction | null | undefined;
 }): Promise<BigNumber> => {
   const a = getMainAccount(account, parentAccount);
-  const { address } = getAddress(a);
-
-  const balance = await fetchBalances(address);
-  return new BigNumber(balance.balance);
+  const { balance } = a;
+  return balance;
 };
 
 const prepareTransaction = async (
