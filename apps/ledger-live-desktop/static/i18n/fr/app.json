@@ -25,8 +25,15 @@
     },
     "catalog" : {
       "title" : "Discover",
+      "section" : {
+        "recentlyUsed" : "Récemment utilisé",
+        "browse" : "Naviguer"
+      },
+      "filter" : {
+        "categories" : "Catégories"
+      },
       "branch" : {
-        "soon" : "À découvrir prochainement",
+        "soon" : "Bientôt disponible",
         "experimental" : "Expérimental",
         "debug" : "Débugger"
       },
@@ -47,6 +54,11 @@
         "title" : "Pour les développeurs",
         "description" : "Toutes les informations dont vous avez besoin pour intégrer vos applications dans Ledger Live.",
         "button" : "Accéder au portail"
+      },
+      "warnings" : {
+        "notFound" : "Pas de résultat",
+        "retrySearchKeyword" : "Veuillez réessayer avec un autre mot-clé.",
+        "retrySearchKeywordAndUrl" : "Veuillez réessayer avec un autre mot-clé ou ouvrez <Link>{{search}}</Link> en dehors de Ledger Live."
       }
     },
     "disclaimer" : {
@@ -128,7 +140,8 @@
     "info" : "Informations",
     "connectDevice" : "Connectez votre appareil",
     "add" : "Ajouter",
-    "or" : "OU"
+    "or" : "OU",
+    "clearAll" : "Tout effacer"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -221,7 +234,7 @@
     "lend" : "Prêter",
     "catalog" : "Discover",
     "market" : "Marché",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Mettez une étoile sur un compte pour l’afficher ici.",
@@ -3921,6 +3934,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Coefficient personnalisé pour les frais de base",
           "description" : "Personnalisez le coefficient multiplicateur des frais de base, qui composent les frais de gaz maximaux des transactions EIP-1559."
+        },
+        "enableNetworkLogs" : {
+          "title" : "Activer les logs réseau",
+          "description" : "Activez les logs réseau dans la console (les logs d’erreur sont toujours activés)."
         }
       }
     },
@@ -4226,6 +4243,10 @@
           "3" : {
             "title" : "Restaurer une phrase de récupération sur un nouvel appareil",
             "description" : "Utilisez une phrase de récupération existante pour restaurer vos clés privées sur votre nouveau Nano."
+          },
+          "4" : {
+            "title" : "Restaurer avec Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4392,25 @@
             "help" : {
               "help" : "Besoin d’aide",
               "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Sélectionnez \"Restore using Ledger Recover\"",
+            "1" : {
+              "title" : "Sélectionnez \"Restore\"",
+              "descr" : "Appuyez simultanément sur les deux boutons pour sélectionner."
+            },
+            "2" : {
+              "title" : "Sélectionnez \"Restore using Ledger Recover\""
+            },
+            "help" : {
+              "iDontSee" : "Je ne vois pas \"Restore using Ledger Recover\"",
+              "modal" : {
+                "title" : "Le système d’exploitation de votre Ledger doit être mis à jour",
+                "subtitle" : " Essayez de mettre à jour le système d’exploitation ou contactez l’Assistance Ledger pour obtenir de l’aide.",
+                "learnHowToUpdate" : "Comment mettre à jour",
+                "contactLedgerSupport" : "Contacter l’Assistance Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
