@@ -11,11 +11,16 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import styled from "styled-components";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { StaticContext } from "react-router";
 
 const pollingPeriodMs = 1000;
 
 export type RecoverComponentParams = {
   appId: string;
+};
+
+export type RecoverState = {
+  fromOnboarding?: boolean;
 };
 
 const FullscreenWrapper = styled.div`
@@ -29,9 +34,12 @@ const FullscreenWrapper = styled.div`
   z-index: 20;
 `;
 
-export default function RecoverPlayer({ match }: RouteComponentProps<RecoverComponentParams>) {
+export default function RecoverPlayer({
+  match,
+  location,
+}: RouteComponentProps<RecoverComponentParams, StaticContext, RecoverState | undefined>) {
   const { params } = match;
-  const { search } = useLocation();
+  const { search, state } = location;
   const queryParams = useMemo(() => Object.fromEntries(new URLSearchParams(search)), [search]);
   const locale = useSelector(languageSelector);
   const localManifest = useLocalLiveAppManifest(params.appId);
@@ -49,6 +57,8 @@ export default function RecoverPlayer({ match }: RouteComponentProps<RecoverComp
   const { onboardingState } = useOnboardingStatePolling({
     device: device || null,
     pollingPeriodMs,
+    // stop polling if not coming from the onboarding
+    stopPolling: !(state?.fromOnboarding || queryParams.fromOnboarding),
   });
 
   useEffect(() => {

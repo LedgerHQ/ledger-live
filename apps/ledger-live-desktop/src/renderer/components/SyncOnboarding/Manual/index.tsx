@@ -25,6 +25,7 @@ import Header from "./Header";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
+import { RecoverState } from "~/renderer/screens/recover/Player";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -72,7 +73,7 @@ export type SyncOnboardingManualProps = {
  */
 const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardingManualProps) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const history = useHistory<RecoverState>();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
   const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
@@ -373,7 +374,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
 
   useEffect(() => {
     if (seedPathStatus === "recover_seed" && postOnboardingPath) {
-      history.push(postOnboardingPath);
+      history.push(postOnboardingPath, { fromOnboarding: true });
     }
   }, [history, postOnboardingPath, seedPathStatus]);
 
