@@ -11,7 +11,8 @@ import {
   InvalidNonce,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  RecipientRequired
+  RecipientRequired,
+  StacksMemoTooLong
 } from "@ledgerhq/errors";
 import {
   AddressVersion,
@@ -21,7 +22,7 @@ import {
   estimateTransfer,
   makeUnsignedSTXTokenTransfer
 } from "@stacks/transactions";
-import { getNonce, txidFromData } from "@stacks/transactions";
+import { getNonce } from "@stacks/transactions";
 
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 import {
@@ -34,16 +35,14 @@ import {
   SignOperationFnSignature
 } from "@ledgerhq/types-live";
 
-import { StacksNetwork } from "./utils/types";
+import { StacksNetwork } from "./utils/api.types";
 import { Transaction, TransactionStatus } from "../types";
-import { getAccountShape, getTxToBroadcast } from "./utils/utils";
+import { getAccountShape, getTxToBroadcast } from "./utils/misc";
 import { broadcastTx } from "./utils/api";
 import { getAddress } from "../../filecoin/bridge/utils/utils";
 import { withDevice } from "../../../hw/deviceAccess";
-import { close } from "../../../hw";
 import { getPath, throwIfError } from "../utils";
 import { decodeAccountId, getMainAccount } from "../../../account";
-import { fetchBalances } from "./utils/api";
 import { encodeOperationId, patchOperationWithHash } from "../../../operation";
 import { validateAddress } from "./utils/addresses";
 
@@ -87,7 +86,7 @@ const getTransactionStatus = async (
   const { balance } = a;
   const { address } = getAddress(a);
   const { recipient, useAllAmount, fee } = t;
-  let { amount } = t;
+  let { amount, memo } = t;
 
   if (!recipient) {
     errors.recipient = new RecipientRequired();
@@ -106,6 +105,7 @@ const getTransactionStatus = async (
 
   if (amount.lte(0)) errors.amount = new AmountRequired();
   if (totalSpent.gt(a.spendableBalance)) errors.amount = new NotEnoughBalance();
+  if (memo && memo.length > 34) errors.transaction = new StacksMemoTooLong();
 
   return {
     errors,
