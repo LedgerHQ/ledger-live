@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { DefaultTheme, withTheme } from "styled-components";
 import IconOpposingChevrons from "~/renderer/icons/OpposingChevrons";
 import { lighten } from "~/renderer/styles/helpers";
+import { Theme as OldTheme } from "~/renderer/styles/theme";
 
 const getPalette = (theme: DefaultTheme) => ({
   default: {
@@ -40,7 +41,7 @@ const Handle = React.memo(function Handle({
 }: {
   active: boolean;
   x: number;
-  colors: any;
+  colors: OldTheme["colors"];
 }) {
   const [hover, setHover] = useState(false);
   const onMouseEnter = useCallback(() => setHover(true), []);
@@ -71,7 +72,7 @@ const Handle = React.memo(function Handle({
     </div>
   );
 });
-const Track = React.memo(function Track({ x, colors }: { x: number; colors: any }) {
+const Track = React.memo(function Track({ x, colors }: { x: number; colors: OldTheme["colors"] }) {
   return (
     <div
       style={{

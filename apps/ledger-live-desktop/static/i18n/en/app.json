@@ -3937,6 +3937,10 @@
         "1559CustomBaseFeeMultiplier": {
           "title": "Custom multiplier for the base fee",
           "description": "Customize the multiplier used for the base fee composing the maxFeePerGas of the EIP1559 transaction"
+        },
+        "enableNetworkLogs": {
+          "title": "Enable network logs",
+          "description": "Enable network logs in the console (error logs are always enabled)"
         }
       }
     },

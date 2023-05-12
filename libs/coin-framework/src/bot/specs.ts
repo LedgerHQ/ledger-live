@@ -13,6 +13,7 @@ import { Account, TransactionCommon } from "@ledgerhq/types-live";
 import { botTest } from "./bot-test-context";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 export { botTest };
 
@@ -94,10 +95,6 @@ export function deviceActionFlow<T extends TransactionCommon>(
   description: FlowDesc<T>
 ): DeviceAction<T, State<T>> {
   return (arg: DeviceActionArg<T, State<T>>) => {
-    invariant(
-      arg.appCandidate.model === "nanoS",
-      "FIXME: stepper logic is only implemented for Nano S"
-    );
     const { transport, event, state, disableStrictStepValueValidation } = arg;
     let { finalState, stepTitle, stepValue, acc, currentStep } = state || {
       finalState: false,
@@ -118,13 +115,20 @@ export function deviceActionFlow<T extends TransactionCommon>(
             currentStep.stepValueTransform || stepValueTransformDefault;
 
           if (!ignoreAssertionFailure && !disableStrictStepValueValidation) {
-            botTest("deviceAction confirm step '" + stepTitle + "'", () =>
+            botTest("deviceAction confirm step '" + stepTitle + "'", () => {
               expect({
                 [stepTitle]: stepValueTransform(stepValue),
               }).toMatchObject({
-                [stepTitle]: expectedValue(arg, acc).trim(),
-              })
-            );
+                // FIXME: OCR of speculos couldn't retrieve S properly
+                // Issue on speculos repository : https://github.com/LedgerHQ/speculos/issues/204
+                [stepTitle]: expectedValue(arg, acc)
+                  .replace(
+                    /S/g,
+                    arg.appCandidate.model === DeviceModelId.nanoS ? "S" : ""
+                  )
+                  .trim(),
+              });
+            });
           }
         }
 
