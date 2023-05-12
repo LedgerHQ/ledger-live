@@ -5,7 +5,13 @@ import {
   listTokens,
   isCurrencySupported,
 } from "@ledgerhq/live-common/currencies/index";
-import { distribute, Action, State } from "@ledgerhq/live-common/apps/index";
+import {
+  distribute,
+  Action,
+  State,
+  predictOptimisticState,
+  reducer,
+} from "@ledgerhq/live-common/apps/index";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
@@ -84,7 +90,17 @@ const AppsScreen = ({
   result,
   onLanguageChange,
 }: Props) => {
-  const distribution = distribute(state);
+  const distribution = useMemo(() => {
+    const newState = state.installQueue.length
+      ? predictOptimisticState(
+          reducer(state, {
+            type: "install",
+            name: state.installQueue[0],
+          }),
+        )
+      : state;
+    return distribute(newState);
+  }, [state]);
 
   const [appFilter, setFilter] = useState<AppType | null | undefined>("all");
   const [sort, setSort] = useState<SortOptions["type"] | null | undefined>(

@@ -203,6 +203,8 @@ const DeviceCard = ({
       <DeviceAppStorage
         distribution={distribution}
         deviceModel={deviceModel}
+        installQueue={state.installQueue}
+        uninstallQueue={state.uninstallQueue}
         deviceInfo={deviceInfo}
       />
       {appList.length > 0 && (
