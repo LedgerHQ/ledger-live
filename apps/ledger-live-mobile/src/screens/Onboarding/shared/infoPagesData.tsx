@@ -1,7 +1,6 @@
 import React from "react";
-import { Platform, StyleProp, ViewStyle } from "react-native";
+import { Platform } from "react-native";
 import { Trans } from "react-i18next";
-import pinCodeImage from "../assets/pinCodeImage.png";
 import pinCodeNanoXLight from "../assets/nanoX/pinCode/light.json";
 import pinCodeNanoXDark from "../assets/nanoX/pinCode/dark.json";
 import pinCodeNanoSLight from "../assets/nanoS/pinCode/light.json";
@@ -50,19 +49,12 @@ import powerOnRecoveryNanoSPLight from "../assets/nanoSP/powerOnRecovery/light.j
 import powerOnRecoveryNanoSPDark from "../assets/nanoSP/powerOnRecovery/dark.json";
 import powerOnRecoveryStaxLight from "../assets/stax/powerOnRecovery/light.json";
 import powerOnRecoveryStaxDark from "../assets/stax/powerOnRecovery/dark.json";
-import importRecoveryPhrase from "../assets/importRecoveryPhrase.png";
-import syncCryptos from "../assets/syncCryptos.png";
-import Clock from "../../../icons/Clock";
 import Check from "../../../icons/Check";
-import Warning from "../../../icons/Warning";
 import WarningOutline from "../../../icons/WarningOutline";
 import Close from "../../../icons/Close";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
-import NanoDeviceCancelIcon from "../../../icons/NanoDeviceCancelIcon";
-import NanoDeviceCheckIcon from "../../../icons/NanoDeviceCheckIcon";
 import { urls } from "../../../config/urls";
-import { LottieProps } from "../../../components/Animation";
 
 export const lottieAnimations = {
   nanoS: {
