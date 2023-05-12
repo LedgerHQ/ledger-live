@@ -9,6 +9,9 @@ import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
 
 const ProviderWarning = () => {
   const forcedProvider = useEnv("FORCE_PROVIDER");
+  const devMode = useEnv("MANAGER_DEV_MODE");
+  const oddProvider = forcedProvider !== 1;
+
   const { t } = useTranslation();
   const navigation = useNavigation<BaseNavigation>();
 
@@ -29,7 +32,11 @@ const ProviderWarning = () => {
         learnMoreKey="settings.experimental.providerCTA"
         onLearnMore={onLearnMore}
       >
-        {t("settings.experimental.provider", { forcedProvider })}
+        {oddProvider
+          ? devMode
+            ? t("settings.experimental.providerDevMode", { forcedProvider })
+            : t("settings.experimental.provider", { forcedProvider })
+          : t("settings.experimental.devMode", { forcedProvider })}
       </Alert>
     </Flex>
   ) : null;
