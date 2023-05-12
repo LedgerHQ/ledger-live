@@ -6,7 +6,7 @@ import { getEnv } from "../env";
 import announcementsApi from "../notifications/AnnouncementProvider/api/api";
 import serviceStatusApi from "../notifications/ServiceStatusProvider/api/api";
 
-type TroubleshootStatus = {
+export type TroubleshootStatus = {
   title: string;
   technicalDescription: string;
   status: "success" | "error" | "loading";

@@ -31,7 +31,7 @@ const FlashMCUNanosLocal = ({ deviceModelId }: Props) => (
         <Interactions
           screen="empty"
           wire="disconnecting"
-          type={deviceModelId || "nanoS"}
+          type={deviceModelId || DeviceModelId.nanoS}
           width={368}
         />
       </Box>
@@ -63,7 +63,7 @@ const FlashMCUNanosLocal = ({ deviceModelId }: Props) => (
           screen="empty"
           action="left"
           wire="connecting"
-          type={deviceModelId || "nanoS"}
+          type={deviceModelId || DeviceModelId.nanoS}
           width={368}
         />
       </Box>
@@ -87,7 +87,7 @@ const FlashMCUBlueLocal = ({ deviceModelId }: Props) => (
           <Trans i18nKey="manager.modal.mcuBlueFirst" />
         </Text>
         <Box mt={5}>
-          <Interactions wire="wired" type={deviceModelId || "nanoS"} width={120} />
+          <Interactions wire="wired" type={deviceModelId || DeviceModelId.nanoS} width={120} />
         </Box>
       </Container>
       <Container>
@@ -99,7 +99,7 @@ const FlashMCUBlueLocal = ({ deviceModelId }: Props) => (
           <Interactions
             screen="bootloader"
             wire="wired"
-            type={deviceModelId || "nanoS"}
+            type={deviceModelId || DeviceModelId.nanoS}
             width={120}
           />
         </Box>

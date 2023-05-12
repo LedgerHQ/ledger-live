@@ -3,8 +3,7 @@ import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { BalanceHistoryData } from "@ledgerhq/types-live";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { BalanceHistoryData, PortfolioRange } from "@ledgerhq/types-live";
 import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -16,28 +15,18 @@ import FormattedDate from "~/renderer/components/FormattedDate";
 type Props = {
   counterValue: Currency;
   chartColor: string;
-  chartId: string;
   range: PortfolioRange;
-  selectedTimeRange: string;
-  handleChangeSelectedTime: (a: any) => void;
 };
-export default function PortfolioBalanceSummary({
-  range,
-  chartColor,
-  chartId,
-  counterValue,
-  selectedTimeRange,
-  handleChangeSelectedTime,
-}: Props) {
+export default function PortfolioBalanceSummary({ range, chartColor, counterValue }: Props) {
   const portfolio = usePortfolio();
   const discreetMode = useSelector(discreetModeSelector);
   const renderTickY = useCallback(
-    (val: number) => formatShort(counterValue.units[0], BigNumber(val)),
+    (val: number | string) => formatShort(counterValue.units[0], BigNumber(val)),
     [counterValue],
   );
   const renderTooltip = useCallback(
-    (data: BalanceHistoryData) => <Tooltip data={data} counterValue={counterValue} range={range} />,
-    [counterValue, range],
+    (data: BalanceHistoryData) => <Tooltip data={data} counterValue={counterValue} />,
+    [counterValue],
   );
   return (
     <Card p={0} py={5}>
@@ -45,10 +34,8 @@ export default function PortfolioBalanceSummary({
         <BalanceInfos
           unit={counterValue.units[0]}
           isAvailable={portfolio.balanceAvailable}
-          since={selectedTimeRange}
           valueChange={portfolio.countervalueChange}
           totalBalance={portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value}
-          handleChangeSelectedTime={handleChangeSelectedTime}
         />
       </Box>
 
@@ -76,7 +63,6 @@ export default function PortfolioBalanceSummary({
         ) : (
           <PlaceholderChart
             magnitude={counterValue.units[0].magnitude}
-            chartId={chartId}
             data={portfolio.balanceHistory}
             tickXScale={range}
           />

@@ -13,6 +13,7 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { urls } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
+
 const IncidentContainer = styled(Box)`
   width: 100%;
   display: flex;
@@ -22,18 +23,22 @@ const IncidentContainer = styled(Box)`
   padding: 16px;
   margin: 6px;
 `;
+
 const IncidentRightColumnContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
 `;
+
 const IncidentLeftColumnContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
 const IncidentIconContainer = styled(Box)`
   padding-right: 14.5px;
 `;
+
 type IncidentProps = {
   incidentData: Incident;
 };
@@ -65,7 +70,7 @@ function IncidentArticle({ incidentData }: IncidentProps) {
             ))
           : null}
         <LinkWithExternalIcon
-          onClick={shortlink ? () => openURL(shortlink) : null}
+          onClick={shortlink ? () => openURL(shortlink) : undefined}
           style={{
             marginTop: 15,
           }}

@@ -45,7 +45,7 @@ const FeaturedButtons = () => {
   const handleClickStake = useCallback(() => {
     track("button_clicked", { button: "stake", flow: "stake", page: "portfolio" });
 
-    startStakeFlow();
+    startStakeFlow({ source: "Portafolio" });
   }, [startStakeFlow]);
 
   if (!bannerEnabled) return null;

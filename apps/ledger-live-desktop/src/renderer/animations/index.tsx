@@ -1,5 +1,5 @@
 import React from "react";
-import Lottie from "react-lottie";
+import Lottie, { LottieProps } from "react-lottie";
 const Animation = ({
   animation,
   width = "100%",
@@ -12,12 +12,12 @@ const Animation = ({
   isPaused = false,
   isStopped = false,
 }: {
-  animation: object;
+  animation: object | null;
   width?: string;
   height?: string;
   loop?: boolean;
   autoplay?: boolean;
-  rendererSettings?: any;
+  rendererSettings?: LottieProps["options"]["rendererSettings"];
   isPaused?: boolean;
   isStopped?: boolean;
 }) => (

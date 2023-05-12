@@ -30,7 +30,7 @@ const logger = winston.createLogger({
   format: combine(timestamp(), json()),
   transports,
 });
-export const add = (transport: any) => {
+export const add = (transport: winston.transport) => {
   logger.add(transport);
 };
 export function enableDebugLogger() {
@@ -185,7 +185,7 @@ export default {
       });
     }
   },
-  network: ({ method, url, data }: { method: string; url: string; data: any }) => {
+  network: ({ method, url, data }: { method: string; url: string; data: unknown }) => {
     const log = `➡📡  ${method} ${url}`;
     if (logNetwork) {
       logger.log("info", log, {
@@ -269,7 +269,7 @@ export default {
       });
     }
   },
-  analyticsTrack: (event: string, properties?: object | null) => {
+  analyticsTrack: (event: string, properties?: object) => {
     if (logAnalytics) {
       logger.log("info", `△ track ${event}`, {
         type: ANALYTICS_TYPE,
@@ -295,7 +295,7 @@ export default {
       level: "info",
       category: "page",
       message,
-      data: properties,
+      data: properties || undefined,
     });
   },
   countervalues: (...args: unknown[]) => {
@@ -325,20 +325,22 @@ export default {
     // @ts-expect-error spreading unknowns is fine
     logger.log("error", ...args);
   },
-  critical: (error: Error, context?: string) => {
+  critical: (error: unknown, context?: string) => {
     if (context) {
       captureBreadcrumb({
-        level: "critical",
+        level: "fatal",
         category: "context",
         message: context,
       });
     }
-    logger.log("error", error && error.message, {
-      stack: error && error.stack,
+    if (error instanceof Error) {
+      logger.log("error", error && error.message, {
+        stack: error && error.stack,
 
-      ...error,
-    });
-    captureException(error);
+        ...error,
+      });
+      captureException(error);
+    }
   },
   add,
   onLog: (log: LogEntry | string) => {

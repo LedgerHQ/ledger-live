@@ -35,7 +35,7 @@ function CountervaluesManager({
 }) {
   useCacheManager(userSettings);
   usePollingManager();
-  return children;
+  return <>{children}</>;
 }
 function useCacheManager(userSettings: CountervaluesSettings) {
   const { status, ...state } = useCountervaluesExport();

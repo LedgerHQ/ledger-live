@@ -10,6 +10,8 @@ import FadeInOutBox from "~/renderer/components/FadeInOutBox";
 import IconCross from "~/renderer/icons/Cross";
 import Button from "~/renderer/components/Button";
 import AccountsIllustration from "~/renderer/icons/AccountsIllustration";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
 const IconContainer = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -31,6 +33,7 @@ const animLogo = keyframes`
   opacity: 1;
 }
 `;
+
 const LogoContainer = styled(Box).attrs(() => ({
   flex: 1,
   justifyContent: "center",
@@ -47,16 +50,19 @@ const LogoContainer = styled(Box).attrs(() => ({
     max-width: 110px;
   }
 `;
+
 const Container = styled.div`
   position: relative;
 `;
+
 type Props = {
   state: State;
-  addAccount: (a: any) => void;
+  addAccount: (a: CryptoCurrency) => void;
   disabled: boolean;
 };
+
 const InstallSuccessBanner = ({ state, addAccount, disabled }: Props) => {
-  const cardRef = useRef();
+  const cardRef = useRef<HTMLDivElement | null>(null);
   const [hasBeenShown, setHasBeenShown] = useState(disabled);
   const { installQueue, uninstallQueue, recentlyInstalledApps, appByName, installed } = state;
   const installedSupportedApps = useMemo(() => {

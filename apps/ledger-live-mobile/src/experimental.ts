@@ -124,6 +124,14 @@ export const experimentalFeatures: Feature[] = [
     minValue: 0,
     maxValue: 10,
   },
+  {
+    type: "toggle",
+    name: "ENABLE_NETWORK_LOGS",
+    title: i18n.t(i18nKey("experimentalEnableNetworkLogs", "title")),
+    description: i18n.t(
+      i18nKey("experimentalEnableNetworkLogs", "description"),
+    ),
+  },
   ...(__DEV__
     ? [
         {

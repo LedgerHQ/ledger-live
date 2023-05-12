@@ -19,22 +19,24 @@ export type Step<T, StepProps> = {
   noScroll?: boolean;
   hideFooter?: boolean;
 };
-type Props<T, StepProps> = {
-  t: TFunction;
+type OwnProps<T, StepProps> = {
   title?: React.ReactNode;
   stepId: T;
   onStepChange: (a: Step<T, StepProps>) => void;
   steps: Step<T, StepProps>[];
   hideBreadcrumb?: boolean;
-  onClose: (a: void) => void;
+  onClose?: (a: void) => void;
   disabledSteps?: number[];
   errorSteps?: number[];
   error?: Error | null;
   signed?: boolean;
   children?: React.ReactNode;
-  params?: any;
+  params?: unknown;
   hideCloseButton?: boolean;
-} & StepProps;
+  // Additional props are passed to the step components…
+  [key: string]: unknown;
+};
+type Props<T, StepProps> = OwnProps<T, StepProps> & { t: TFunction } & StepProps;
 const Stepper = <T, StepProps>({
   stepId,
   steps,
@@ -120,4 +122,6 @@ const Stepper = <T, StepProps>({
     />
   );
 };
-export default withTranslation()(Stepper) as typeof Stepper; // to preserve the generic type
+export default withTranslation()(Stepper) as <T, StepProps>(
+  props: OwnProps<T, StepProps>,
+) => JSX.Element; // to preserve the generic types

@@ -17,6 +17,7 @@ enum BitcoinIns {
   GET_WALLET_ADDRESS = 0x03,
   SIGN_PSBT = 0x04,
   GET_MASTER_FINGERPRINT = 0x05,
+  SIGN_MESSAGE = 0x10,
 }
 
 enum FrameworkIns {
@@ -186,5 +187,35 @@ export class AppClient {
 
   async getMasterFingerprint(): Promise<Buffer> {
     return this.makeRequest(BitcoinIns.GET_MASTER_FINGERPRINT, Buffer.from([]));
+  }
+
+  async signMessage(message: Buffer, pathElements: number[]): Promise<string> {
+    if (pathElements.length > 6) {
+      throw new Error("Path too long. At most 6 levels allowed.");
+    }
+
+    const clientInterpreter = new ClientCommandInterpreter(() => {});
+
+    // prepare ClientCommandInterpreter
+    const nChunks = Math.ceil(message.length / 64);
+    const chunks: Buffer[] = [];
+    for (let i = 0; i < nChunks; i++) {
+      chunks.push(message.subarray(64 * i, 64 * i + 64));
+    }
+
+    clientInterpreter.addKnownList(chunks);
+    const chunksRoot = new Merkle(chunks.map((m) => hashLeaf(m))).getRoot();
+
+    const response = await this.makeRequest(
+      BitcoinIns.SIGN_MESSAGE,
+      Buffer.concat([
+        pathElementsToBuffer(pathElements),
+        createVarint(message.length),
+        chunksRoot,
+      ]),
+      clientInterpreter
+    );
+
+    return response.toString("base64");
   }
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import Modal from "~/renderer/components/Modal";
+import Modal, { RenderProps } from "~/renderer/components/Modal";
 import TermOfUseUpdateBody from "./TermOfUseUpdateBody";
 
 const TermOfUseUpdateModal = () => (
@@ -7,11 +7,11 @@ const TermOfUseUpdateModal = () => (
     name="MODAL_TERM_OF_USE_UPDATE"
     centered
     preventBackdropClick={true}
-    render={({ data, onClose }) => (
+    render={({ data, onClose }: RenderProps<{ acceptTerms: () => void }>) => (
       <TermOfUseUpdateBody
         onClose={() => {
           data.acceptTerms();
-          onClose();
+          onClose?.();
         }}
       />
     )}

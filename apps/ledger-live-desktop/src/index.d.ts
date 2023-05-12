@@ -9,6 +9,18 @@ declare const __static: string;
 
 declare module "*.svg";
 declare module "*.png";
+declare module "*.jpg";
+declare module "*.webm";
+
+type ReplaySubject = import("rxjs").ReplaySubject;
+type ListAppResult = import("@ledgerhq/live-common/apps/types").ListAppsResult;
+type TransactionRaw = import("@ledgerhq/live-common/generated/types").TransactionRaw;
+type Transaction = import("@ledgerhq/live-common/generated/types").Transaction;
+type UpdateStatus = import("./main/updater/init").UpdateStatus;
+
+interface RawEvents {
+  [key: string]: RawEvents | RawEvents[];
+}
 
 declare namespace Electron {
   interface BrowserWindow {
@@ -21,6 +33,7 @@ declare namespace Electron {
 }
 
 interface Window {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 
   api?: {
@@ -36,4 +49,34 @@ interface Window {
   // used for the analytics, initialized in the index.html
   // eslint-disable-next-line
   analytics: any;
+
+  // for mocking purposes apparently?
+  // eslint-disable-next-line
+  mock: {
+    fromTransactionRaw: (rawTransaction: TransactionRaw) => Transaction;
+    updater?: {
+      setStatus?: (a: UpdateStatus) => void;
+      quitAndInstall?: () => void;
+    };
+    events: {
+      test: number;
+      queue: Record<string, unknown>[];
+      history: Record<string, unknown>[];
+      subject: ReplaySubject;
+      parseRawEvents: (rawEvents: RawEvents | RawEvents[], maybeKey?: string) => unknown;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      emitter: any;
+      mockDeviceEvent: (...args: RawEvents[]) => void;
+      exposed: {
+        mockListAppsResult: (
+          appDesc: string,
+          installedDesc: string,
+          deviceInfo: import("@ledgerhq/types-live").DeviceInfo,
+          deviceModelId?: import("@ledgerhq/types-devices").DeviceModelId,
+        ) => ListAppResult;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        deviceInfo155: any;
+      };
+    };
+  };
 }

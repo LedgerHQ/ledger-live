@@ -28,6 +28,10 @@ export type FeatureId =
   | "currencyMoonriver"
   | "currencyVelasEvm"
   | "currencySyscoin"
+  | "currencyAxelar"
+  | "currencyOnomy"
+  | "currencyPersistence"
+  | "currencyQuicksilver"
   | "ptxSmartRoutingMobile"
   | "mockFeature"
   | "multibuyNavigation"
@@ -51,6 +55,7 @@ export type FeatureId =
   | "postOnboardingAssetsTransfer"
   | "firebaseEnvironmentReadOnly"
   | "protectServicesMobile"
+  | "protectServicesDesktop"
   | "swapShowDexQuotes"
   | "stakePrograms"
   | "portfolioExchangeBanner"
@@ -59,7 +64,8 @@ export type FeatureId =
   | "newsfeedPage"
   | "domainInputResolution"
   | "discover"
-  | "protectServicesDiscoverDesktop";
+  | "protectServicesDiscoverDesktop"
+  | "protectServicesDesktop";
 
 /**  We use objects instead of direct booleans for potential future improvements
 like feature versioning etc */

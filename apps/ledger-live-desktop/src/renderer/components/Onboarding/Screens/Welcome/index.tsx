@@ -92,15 +92,23 @@ export function Welcome() {
   }
 
   const buyNanoX = useCallback(() => {
-    openURL(urls.noDevice.buyNew[locale in urls.terms ? locale : "en"]);
+    openURL(
+      urls.noDevice.buyNew[
+        locale in urls.terms ? (locale as keyof typeof urls.noDevice.buyNew) : "en"
+      ],
+    );
   }, [locale]);
 
   const openTermsAndConditions = useCallback(() => {
-    openURL(urls.terms[locale in urls.terms ? locale : "en"]);
+    openURL(urls.terms[locale in urls.terms ? (locale as keyof typeof urls.terms) : "en"]);
   }, [locale]);
 
   const openPrivacyPolicy = useCallback(() => {
-    openURL(urls.privacyPolicy[locale in urls.privacyPolicy ? locale : "en"]);
+    openURL(
+      urls.privacyPolicy[
+        locale in urls.privacyPolicy ? (locale as keyof typeof urls.privacyPolicy) : "en"
+      ],
+    );
   }, [locale]);
 
   const countTitle = useRef(0);

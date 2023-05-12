@@ -1,17 +1,17 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { TFunction, Trans } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
+import { CosmosDelegation, CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Account } from "@ledgerhq/types-live";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { TFunction, Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
-import IconAngleDown from "~/renderer/icons/AngleDown";
-import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
-import { Account } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { CosmosDelegation, CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
+import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
+import Text from "~/renderer/components/Text";
+import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
+import IconAngleDown from "~/renderer/icons/AngleDown";
 type Props = {
   t: TFunction;
   account: Account;
@@ -24,12 +24,17 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   const [showAll, setShowAll] = useState(false);
   const [search, setSearch] = useState("");
   const unit = getAccountUnit(account);
-  const currencyName = account.currency.name.toLowerCase();
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName, search);
+  const currencyId = account.currency.id;
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
   const chosenValidator = useMemo(() => {
     return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];
   }, [validators, chosenVoteAccAddr]);
+
+  if (chosenVoteAccAddr === "") {
+    onChangeValidator({ address: validators[0].validatorAddress });
+  }
+
   const renderItem = (validator: CosmosValidatorItem) => {
     return (
       <ValidatorRow

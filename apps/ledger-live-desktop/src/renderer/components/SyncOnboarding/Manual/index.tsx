@@ -22,7 +22,6 @@ import { StepText } from "./shared";
 import Header from "./Header";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
-import ContinueOnStax from "./ContinueOnStax";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 
 const readyRedirectDelayMs = 2500;
@@ -220,7 +219,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     fatalError,
   } = useOnboardingStatePolling({
     getOnboardingStatePolling,
-    device,
+    device: device || null,
     pollingPeriodMs,
     stopPolling,
   });

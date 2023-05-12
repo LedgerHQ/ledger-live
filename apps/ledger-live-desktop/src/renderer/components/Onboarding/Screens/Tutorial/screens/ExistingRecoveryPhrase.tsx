@@ -36,7 +36,7 @@ ExistingRecoveryPhrase.Illustration = (
   <IllustrationContainer width="240px" height="245px" src={RecoverySheet} />
 );
 
-const Footer = (props: unknown) => {
+const Footer = (props: object) => {
   const { t } = useTranslation();
   return (
     <AsideFooter

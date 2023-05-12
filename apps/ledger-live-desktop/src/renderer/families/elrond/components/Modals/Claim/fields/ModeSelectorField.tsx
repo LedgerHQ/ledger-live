@@ -39,8 +39,8 @@ const ModeSelectorField = (props: Props) => {
         <Popover
           position="right"
           content={
-            <Box vertical={true} px={2}>
-              <Box vertical={true} alignItems="start" justifyContent="start" my={2}>
+            <Box px={2}>
+              <Box alignItems="start" justifyContent="start" my={2}>
                 <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
                   <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.compound" />
                 </Text>
@@ -50,7 +50,7 @@ const ModeSelectorField = (props: Props) => {
                 </Text>
               </Box>
 
-              <Box vertical={true} alignItems="start" justifyContent="start" my={2}>
+              <Box alignItems="start" justifyContent="start" my={2}>
                 <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
                   <Trans i18nKey="elrond.claimRewards.flow.steps.claimRewards.claim" />
                 </Text>

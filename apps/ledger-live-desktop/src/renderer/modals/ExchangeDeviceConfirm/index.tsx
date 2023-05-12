@@ -5,7 +5,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getAccountName, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { urls } from "~/config/urls";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import Modal from "~/renderer/components/Modal";
@@ -65,7 +65,7 @@ const Receive1ShareAddress = ({ name, address }: { name: string; address: string
 };
 type VerifyOnDeviceProps = {
   mainAccount: Account;
-  onAddressVerified: (status: boolean, err?: any) => void;
+  onAddressVerified: (status: boolean, err?: unknown) => void;
   device: Device | undefined | null;
   skipDevice: boolean;
 };
@@ -147,7 +147,7 @@ const VerifyOnDevice = ({
 type DataProp = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
-  onResult: (c: AccountLike, b: Account | undefined | null, a: any) => null;
+  onResult: (c: AccountLike, b: Account | undefined | null, a: AppResult | boolean) => null;
   verifyAddress?: boolean;
   onCancel?: () => void;
 };
@@ -167,9 +167,9 @@ const Root = ({ data, onClose, skipDevice, flow }: Props) => {
   const device = useSelector(getCurrentDevice);
   const { account, parentAccount, onResult, verifyAddress } = data;
   const mainAccount = getMainAccount(account, parentAccount);
-  const tokenCurrency = account.type === "TokenAccount" ? account.token : null;
+  const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleResult = useCallback(
-    (res: any) => {
+    (res: AppResult) => {
       if (!verifyAddress) {
         onResult(account, parentAccount, res);
         onClose();
@@ -219,8 +219,6 @@ const StepConnectDeviceFooter = ({ data, onClose, onSkipDevice }: PropsFooter) =
   const { t } = useTranslation();
   const [skipClicked, setSkipClicked] = useState(false);
   const { account, parentAccount, onResult, verifyAddress } = data;
-  const mainAccount = getMainAccount(account, parentAccount);
-  const name = getAccountName(mainAccount);
   const nextStep = useCallback(() => {
     onResult(account, parentAccount, true);
     onClose();
@@ -252,7 +250,7 @@ const StepConnectDeviceFooter = ({ data, onClose, onSkipDevice }: PropsFooter) =
     </Box>
   ) : (
     <Box alignItems="center" shrink flow={2}>
-      <Receive2NoDevice name={name} onVerify={onVerify} onContinue={nextStep} />
+      <Receive2NoDevice onVerify={onVerify} onContinue={nextStep} />
     </Box>
   );
 };

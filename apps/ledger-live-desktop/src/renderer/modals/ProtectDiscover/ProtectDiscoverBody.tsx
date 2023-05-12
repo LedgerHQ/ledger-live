@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Flex, Button as BaseButton, Text } from "@ledgerhq/react-ui";
-import styled from "@ledgerhq/react-ui/components/styled";
+import styled, { BaseStyledProps } from "@ledgerhq/react-ui/components/styled";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ModalBody } from "~/renderer/components/Modal";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -14,10 +14,10 @@ import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 
 type Props = {
-  onClose: () => void;
+  onClose?: () => void | undefined;
 };
 
-const StyledImgLink = styled("a").attrs(() => ({}))`
+const StyledImgLink = styled("a")<BaseStyledProps>`
   cursor: pointer;
 `;
 
@@ -37,7 +37,6 @@ const ProtectDiscoverBody = ({ onClose }: Props) => {
   return (
     <ModalBody
       onClose={onClose}
-      p={1}
       render={() => (
         <Flex flexDirection={"column"} px={7}>
           <Flex margin={"auto"} mb={8}>

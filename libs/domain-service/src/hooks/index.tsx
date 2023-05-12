@@ -6,7 +6,10 @@ import React, {
   useState,
 } from "react";
 import { resolveAddress, resolveDomain } from "../resolvers";
+import { getRegistriesForAddress } from "../registries";
+import { getRegistriesForDomain } from "../registries";
 import { SupportedRegistries } from "../types";
+import { validateDomain } from "../utils";
 import { isOutdated } from "./logic";
 import {
   DomainServiceContextAPI,
@@ -14,6 +17,12 @@ import {
   DomainServiceContextType,
   DomainServiceStatus,
 } from "./types";
+import {
+  DomainEmpty,
+  InvalidDomain,
+  NoResolution,
+  UnsupportedDomainOrAddress,
+} from "../errors";
 
 const DomainServiceContext = createContext<DomainServiceContextType>({
   cache: {},
@@ -25,26 +34,61 @@ export const useDomain = (
   addressOrDomain: string,
   registry?: SupportedRegistries
 ): DomainServiceStatus => {
+  const [state, setState] = useState<DomainServiceStatus>({ status: "queued" });
   const addressOrDomainLC = addressOrDomain.toLowerCase();
   const { cache, loadDomainServiceAPI } = useContext(DomainServiceContext);
   const cachedData = addressOrDomain && cache[addressOrDomainLC];
 
   useEffect(() => {
-    if (!cachedData || isOutdated(cachedData)) {
-      loadDomainServiceAPI(addressOrDomainLC, registry);
-    }
+    (async () => {
+      // serve data from the context API
+      if (cachedData && !isOutdated(cachedData)) return;
+
+      // no input
+      if (!addressOrDomainLC) {
+        setState({
+          status: "error",
+          error: new DomainEmpty(),
+          updatedAt: Date.now(),
+        });
+        return;
+      }
+
+      // checking if any registry is compatible with the provided string
+      const [forwardRegistries, reverseRegistries] = await Promise.all([
+        getRegistriesForDomain(addressOrDomainLC),
+        getRegistriesForAddress(addressOrDomainLC),
+      ]);
+
+      // if no registry is found at all
+      if (!forwardRegistries.length && !reverseRegistries.length) {
+        setState({
+          status: "error",
+          error: new UnsupportedDomainOrAddress(),
+          updatedAt: Date.now(),
+        });
+        return;
+      }
+
+      // if it's a domain but the domain is not respecting our security rules
+      if (forwardRegistries.length && !validateDomain(addressOrDomainLC)) {
+        setState({
+          status: "error",
+          error: new InvalidDomain(),
+          updatedAt: Date.now(),
+        });
+        return;
+      }
+
+      // otherwise let the resolution happen by the backend
+      await loadDomainServiceAPI(addressOrDomainLC, registry);
+    })();
   }, [loadDomainServiceAPI, addressOrDomainLC, cachedData]);
 
   if (cachedData) {
     return cachedData;
-  } else if (!addressOrDomain) {
-    return {
-      status: "error",
-      error: new Error("No address or domain provided"),
-      updatedAt: Date.now(),
-    };
   }
-  return { status: "queued" };
+  return state;
 };
 
 type DomainServiceProviderProps = {
@@ -74,42 +118,43 @@ export function DomainServiceProvider({
           },
         }));
 
-        try {
-          const resolutions = await Promise.all([
-            resolveDomain(addressOrDomain, registry),
-            resolveAddress(addressOrDomain, registry),
-          ]).then((res) => res.flat());
+        const resolutions = await Promise.all([
+          resolveDomain(addressOrDomain, registry),
+          resolveAddress(addressOrDomain, registry),
+        ])
+          .then((res) => res.flat())
+          .catch((e: Error) => e);
 
-          if (resolutions.length) {
-            setState((oldState) => ({
-              ...oldState,
-              cache: {
-                ...oldState.cache,
-                [addressOrDomain]: {
-                  status: "loaded",
+        const newEntry = (() => {
+          if (Array.isArray(resolutions)) {
+            return resolutions.length
+              ? {
+                  status: "loaded" as const,
                   resolutions,
                   updatedAt: Date.now(),
-                },
-              },
-            }));
-
-            return;
+                }
+              : {
+                  status: "error" as const,
+                  error: new NoResolution(
+                    `No resolution found for ${addressOrDomain}`
+                  ),
+                  updatedAt: Date.now(),
+                };
           }
+          return {
+            status: "error" as const,
+            error: resolutions,
+            updatedAt: Date.now(),
+          };
+        })();
 
-          throw new Error("no resolution for " + addressOrDomain);
-        } catch (error) {
-          setState((oldState) => ({
-            ...oldState,
-            cache: {
-              ...oldState.cache,
-              [addressOrDomain]: {
-                status: "error",
-                error,
-                updatedAt: Date.now(),
-              },
-            },
-          }));
-        }
+        setState((oldState) => ({
+          ...oldState,
+          cache: {
+            ...oldState.cache,
+            [addressOrDomain]: newEntry,
+          },
+        }));
       },
       clearCache: () => {
         setState((oldState) => ({

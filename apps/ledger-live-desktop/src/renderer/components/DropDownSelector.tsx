@@ -2,9 +2,13 @@ import Tippy from "@tippyjs/react";
 import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-export const DropDownItem: ThemedComponent<{
-  isActive: boolean;
-}> = styled(Box).attrs(p => ({
+
+type DropDownItemProps = {
+  isActive?: boolean;
+  disabled?: boolean;
+};
+
+export const DropDownItem = styled(Box).attrs<DropDownItemProps>(p => ({
   borderRadius: 1,
   justifyContent: "center",
   ff: "Inter|SemiBold",
@@ -16,7 +20,7 @@ export const DropDownItem: ThemedComponent<{
     ? "palette.text.shade100"
     : "palette.text.shade60",
   bg: p.isActive && !p.disabled ? "palette.background.default" : "",
-}))`
+}))<DropDownItemProps>`
   height: 40px;
   white-space: nowrap;
   cursor: pointer;
@@ -43,9 +47,9 @@ const DropContainer = styled.div`
     margin-bottom: 0px;
   }
 `;
-export type DropDownItemType<ContentType = any> = {
-  key: string;
-  label: any;
+export type DropDownItemType<ContentType = unknown> = {
+  key?: string;
+  label: React.ReactNode;
   disabled?: boolean;
   content?: ContentType;
 };
@@ -56,20 +60,20 @@ const ButtonContainer = styled.div`
   cursor: pointer;
   flex-shrink: 1;
 `;
-type Props = {
+type Props<Item> = {
   children: (props: {
     isOpen: boolean | undefined | null;
     value: DropDownItemType | undefined | null;
   }) => React.ReactNode;
-  items: DropDownItemType[];
-  onChange?: (value: any) => void;
-  renderItem: (props: { isActive: boolean; item: any }) => React.ReactNode | null;
+  items: Item[];
+  onChange?: (value: Item) => void;
+  renderItem: (props: { isActive: boolean; item: Item }) => React.ReactNode;
   value?: DropDownItemType | null;
   controlled?: boolean;
   defaultValue?: DropDownItemType | null;
   buttonId?: string;
 };
-const DropDownSelector = ({
+const DropDownSelector = <ContentType, Item extends DropDownItemType<ContentType>>({
   children,
   items = [],
   onChange,
@@ -78,7 +82,7 @@ const DropDownSelector = ({
   controlled = false,
   defaultValue = null,
   buttonId,
-}: Props) => {
+}: Props<Item>) => {
   const [isOpen, setOpen] = useState(false);
   const [stateValue, setStateValue] = useState(defaultValue);
   const selectedOption = controlled ? value : stateValue;
@@ -121,7 +125,7 @@ const DropDownSelector = ({
       placement="bottom-start"
       interactive
       arrow={false}
-      content={<DropContainer border>{items.map(renderOption)}</DropContainer>}
+      content={<DropContainer>{items.map(renderOption)}</DropContainer>}
     >
       <ButtonContainer id={buttonId} onClick={() => setOpen(!isOpen)}>
         {children({

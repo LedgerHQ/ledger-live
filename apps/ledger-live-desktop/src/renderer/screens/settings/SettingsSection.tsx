@@ -40,10 +40,10 @@ export const SettingsSectionBody = styled(Box)`
 type SettingsSectionHeaderProps = {
   title: string;
   desc: string;
-  icon: any;
-  renderRight?: any;
+  icon: JSX.Element;
+  renderRight?: JSX.Element;
   onClick?: () => void;
-  style?: any;
+  style?: React.CSSProperties;
 };
 export const SettingsSectionHeader = ({
   title,
@@ -70,9 +70,9 @@ export const SettingsSectionHeader = ({
     )}
   </SettingsSectionHeaderContainer>
 );
-export const SettingsSectionRowContainer: ThemedComponent<{
+export const SettingsSectionRowContainer = styled(Box).attrs<{
   inset?: boolean;
-}> = styled(Box).attrs(p => ({
+}>(p => ({
   p: p.inset ? 3 : 4,
   m: p.inset ? 4 : 0,
   horizontal: true,
@@ -81,11 +81,12 @@ export const SettingsSectionRowContainer: ThemedComponent<{
   justifyContent: "space-between",
   backgroundColor: p.inset ? p.theme.colors.palette.text.shade5 : "transparent",
   borderRadius: p.inset ? 4 : 0,
-}))``;
+}))<{ inset?: boolean }>``;
+
 type SettingsSectionRowProps = {
   title?: string | React.ReactNode;
   desc: string | React.ReactNode;
-  children?: any;
+  children?: React.ReactNode;
   onClick?: () => void;
   inset?: boolean;
   contentContainerStyle?: React.CSSProperties;
@@ -97,7 +98,7 @@ export const SettingsSectionRow = ({
   title,
   desc,
   children = null,
-  onClick = null,
+  onClick = () => null,
   inset = false,
   contentContainerStyle,
   descContainerStyle,
