@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
+import { RouteComponentProps, useHistory } from "react-router-dom";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
