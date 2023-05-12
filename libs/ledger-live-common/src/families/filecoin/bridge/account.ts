@@ -154,27 +154,26 @@ const prepareTransaction = async (
   a: Account,
   t: Transaction
 ): Promise<Transaction> => {
-  // log("debug", "[prepareTransaction] start fn");
-
   const { address } = getAddress(a);
   const { recipient } = t;
 
   if (recipient && address) {
-    // log("debug", "[prepareTransaction] fetching estimated fees");
 
     if (
       validateAddress(recipient).isValid &&
       validateAddress(address).isValid
     ) {
+      const newTx = {...t};
+
       const result = await fetchEstimatedFees({ to: recipient, from: address });
-      t.gasFeeCap = new BigNumber(result.gas_fee_cap);
-      t.gasPremium = new BigNumber(result.gas_premium);
-      t.gasLimit = new BigNumber(result.gas_limit);
-      t.nonce = result.nonce;
+      newTx.gasFeeCap = new BigNumber(result.gas_fee_cap);
+      newTx.gasPremium = new BigNumber(result.gas_premium);
+      newTx.gasLimit = new BigNumber(result.gas_limit);
+      newTx.nonce = result.nonce;
+
+      return newTx;
     }
   }
-
-  // log("debug", "[prepareTransaction] finish fn");
 
   return t;
 };
