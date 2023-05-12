@@ -10,7 +10,7 @@ type Props = {
   angle: number;
 };
 const NanoSSwivel = ({ angle, ...props }: Props) => {
-  const type = useTheme("colors.palette.type") as keyof typeof colors;
+  const type = useTheme().colors.palette.type as keyof typeof colors;
   return (
     <Motion
       defaultStyle={{

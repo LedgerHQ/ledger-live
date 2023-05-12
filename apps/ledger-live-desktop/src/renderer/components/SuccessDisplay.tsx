@@ -27,7 +27,7 @@ function SuccessDisplay({
   description?: React.ReactNode;
   children?: React.ReactNode;
 }) {
-  const colors = useTheme("colors");
+  const { colors } = useTheme();
   return (
     <>
       <span

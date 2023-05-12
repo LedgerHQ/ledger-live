@@ -11,7 +11,7 @@ type Props = {
   error?: boolean;
 };
 const NanoSFrame = ({ children, overlay, error }: Props) => {
-  const type = useTheme("colors.palette.type") as keyof typeof colors;
+  const type = useTheme().colors.palette.type as keyof typeof colors;
   return (
     <FrameSVG width="131" height="44">
       <defs />

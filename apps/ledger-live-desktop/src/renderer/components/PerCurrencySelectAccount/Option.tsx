@@ -60,7 +60,7 @@ function AccountRow({
   nested?: boolean;
   disabled?: boolean;
 }) {
-  const palette = useTheme("colors.palette");
+  const palette = useTheme().colors.palette;
   const balance =
     account.type !== "ChildAccount" && account.spendableBalance
       ? account.spendableBalance
