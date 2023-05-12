@@ -431,6 +431,27 @@ export const renderAllowLanguageInstallation = ({
   </Flex>
 );
 
+export const renderAllowRemoveCustomLockscreen = ({
+  modelId,
+  type,
+}: {
+  modelId: DeviceModelId;
+  type: Theme["theme"];
+}) => (
+  <Wrapper>
+    <DeviceBlocker />
+    <Header />
+    <AnimationWrapper>
+      <Animation animation={getDeviceAnimation(modelId, type, "verify")} />
+    </AnimationWrapper>
+    <Footer>
+      <Title>
+        <Trans i18nKey="removeCustomLockscreen.confirmation" />
+      </Title>
+    </Footer>
+  </Wrapper>
+);
+
 export const renderAllowOpeningApp = ({
   modelId,
   type,

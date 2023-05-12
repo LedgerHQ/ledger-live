@@ -110,7 +110,7 @@ const EditDeviceName: React.FC<Props> = ({
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            data-test-id="language-installed"
+            data-test-id="device-renamed"
           >
             <BoxedIcon
               Icon={Icons.CheckAloneMedium}
