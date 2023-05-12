@@ -33,6 +33,8 @@ jobs:
           git merge origin/develop -X theirs
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          npm_token: ${{ secrets.NPMJS_TOKEN }}
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version:
