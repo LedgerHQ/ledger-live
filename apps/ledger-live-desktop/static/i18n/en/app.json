@@ -2269,6 +2269,11 @@
     "remainingCharacters": "{{ remainingCharacters }} characters remaining",
     "renamed": "{{ productName }} name changed to \n“{{ name }}” "
   },
+  "removeCustomLockscreen": {
+    "cta": "Remove",
+    "confirmation": "Confirm removal of image on your Ledger Stax",
+    "success": "Lock screen picture removed"
+  },
   "deviceLocalization": {
     "language": "Language",
     "deviceLanguage": "Language",
@@ -3877,6 +3882,10 @@
     },
     "experimental": {
       "disclaimer": "These are experimental features we provide on an \"as is\" basis for our tech savvy community to test. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk.",
+      "provider": "The experimental setting “My Ledger provider ({{forcedProvider}})” may show unreleased OS and apps, leading to compatibility issues. You can disable it in settings.",
+      "providerDevMode": "The experimental settings “My Ledger provider ({{forcedProvider}})” and “Developer mode” may show unreleased OS and apps, leading to compatibility issues. You can disable them in settings.",
+      "devMode": "The experimental setting “Developer mode” may show unreleased OS and apps, leading to compatibility issues. You can disable it in settings.",
+      "providerCTA": "Go to settings",
       "features": {
         "experimentalCurrencies": {
           "title": "Experimental integrations",
@@ -5732,6 +5741,7 @@
   "customImage": {
     "title": "Custom lock screen",
     "managerCTA": "Lock screen picture",
+    "managerCTARemove": "Remove",
     "steps": {
       "choose": {
         "stepLabel": "Choose an image",
@@ -5740,6 +5750,7 @@
         "myNfts": "My NFTs",
         "upload": "Upload from my computer",
         "chooseNft": "Choose an NFT",
+        "remove": "Remove current picture",
         "selectNft": "Choose NFT",
         "previousSelectNft": "back",
         "nftEmptyStateTitle": "No NFT's to show yet",
