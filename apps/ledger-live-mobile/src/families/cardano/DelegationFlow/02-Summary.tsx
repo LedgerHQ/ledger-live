@@ -11,7 +11,7 @@ import React, {
 import { Trans, useTranslation } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
-import Icon from "react-native-vector-icons/dist/Feather";
+import Icon from "react-native-vector-icons/Feather";
 import {
   getAccountCurrency,
   getAccountUnit,
@@ -192,7 +192,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
       </View>
       <View style={styles.footer}>
         {displayError ? (
-          <Box grow>
+          <Box>
             <Text fontSize={13} color="red">
               <TranslatedError error={displayError} field="title" />
             </Text>
@@ -207,7 +207,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
           containerStyle={styles.continueButton}
           onPress={onContinue}
           disabled={
-            displayError ||
+            !!displayError ||
             bridgePending ||
             !!bridgeError ||
             !chosenPool ||
@@ -287,6 +287,7 @@ const styles = StyleSheet.create({
   labelText: {
     paddingRight: 8,
     fontSize: 14,
+    fontWeight: "500",
   },
   valueWrapper: {
     alignItems: "flex-end",
@@ -305,7 +306,7 @@ function SummaryWords({
   status,
 }: {
   chosenPool?: StakePool;
-  account: CardanoAccount;
+  account: AccountLike;
   currentDelegation?: CardanoDelegation;
   isFetchingPoolDetails: boolean;
   onChangePool: () => void;
@@ -540,11 +541,7 @@ function SummaryWords({
           )}
         </View>
         {toDelegationPoolData.map((field, i) => (
-          <DataField
-            {...field}
-            key={"data-" + i}
-            isLast={i === toDelegationPoolData.length - 1}
-          />
+          <DataField {...field} key={"data-" + i} />
         ))}
         <View
           style={[
@@ -586,7 +583,9 @@ function SummaryWords({
                 {formatCurrencyUnit(
                   unit,
                   new BigNumber(
-                    account.cardanoResources.protocolParams.stakeKeyDeposit,
+                    (
+                      account as CardanoAccount
+                    ).cardanoResources.protocolParams.stakeKeyDeposit,
                   ),
                   formatConfig,
                 )}
@@ -629,7 +628,7 @@ function DataField({ label, Component }: FieldType) {
   return (
     <View style={styles.row}>
       <View>
-        <LText numberOfLines={1} medium style={styles.labelText} color="smoke">
+        <LText numberOfLines={1} style={styles.labelText} color="smoke">
           {label}
         </LText>
       </View>
