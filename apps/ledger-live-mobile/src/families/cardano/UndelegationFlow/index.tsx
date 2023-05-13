@@ -11,6 +11,7 @@ import UndelegationValidationError from "./03-ValidationError";
 import UndelegationValidationSuccess from "./03-ValidationSuccess";
 import SelectDevice from "../../../screens/SelectDevice";
 import ConnectDevice from "../../../screens/ConnectDevice";
+import { CardanoUndelegationFlowParamList } from "./types";
 
 const totalSteps = "3";
 
@@ -95,4 +96,5 @@ const options = {
   headerShown: false,
 };
 export { UndelegationFlow as component, options };
-const Stack = createStackNavigator();
+
+const Stack = createStackNavigator<CardanoUndelegationFlowParamList>();
