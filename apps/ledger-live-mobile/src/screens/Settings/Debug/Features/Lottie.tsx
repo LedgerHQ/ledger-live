@@ -47,7 +47,7 @@ function getAnimation(params: {
       device: {
         deviceId: "",
         modelId,
-        wired: wired && modelId === "nanoX",
+        wired: wired && ["nanoX", "stax"].includes(modelId),
       },
       key,
       theme,
@@ -157,7 +157,9 @@ const DebugLottie = () => {
         type="primary"
         outline={false}
         title={`Show ${wired ? "Bluetooth" : "Wired"}`}
-        disabled={selectedModelId !== "nanoX" || !keys.includes(key)}
+        disabled={
+          !["nanoX", "stax"].includes(selectedModelId) || !keys.includes(key)
+        }
         onPress={() => setWired(wired => !wired)}
       />
       <Flex mt={8} flexDirection="row">
