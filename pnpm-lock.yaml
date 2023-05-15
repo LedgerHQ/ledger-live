@@ -2165,6 +2165,9 @@ importers:
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-algorand
+      '@ledgerhq/coin-evm':
+        specifier: workspace:^
+        version: link:../coin-evm
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../coin-framework
