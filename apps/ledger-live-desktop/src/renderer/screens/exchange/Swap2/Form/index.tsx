@@ -399,6 +399,7 @@ const SwapForm = () => {
         pathname: "/swap-web",
         state: {
           provider,
+          swapTransaction: JSON.stringify(swapTransaction),
         },
       });
       // setDrawer(
