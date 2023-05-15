@@ -179,5 +179,6 @@ export function getEthStuckAccountAndOperation(
       }
     });
   }
+
   return [stuckAccount, stuckParentAccount, stuckOperation];
 }

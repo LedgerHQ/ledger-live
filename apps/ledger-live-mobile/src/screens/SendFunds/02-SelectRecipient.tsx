@@ -101,6 +101,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     },
     [account, parentAccount, setTransaction, transaction, setValue],
   );
+
   // FIXME: PROP IS NOT USED. REMOVE ?
   // const clear = useCallback(() => onChangeText(""), [onChangeText]);
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
