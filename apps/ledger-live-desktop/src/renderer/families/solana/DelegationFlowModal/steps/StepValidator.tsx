@@ -27,7 +27,7 @@ export default function StepValidator({
   );
   const updateValidator = ({ address }: { address: string }) => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
-    onUpdateTransaction(tx => {
+    onUpdateTransaction(_tx => {
       return bridge.updateTransaction(transaction, {
         model: {
           kind: "stake.createAccount",

@@ -2,10 +2,9 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import { ValidatorAppValidator } from "@ledgerhq/live-common/families/solana/validator-app";
 import { Account } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import invariant from "invariant";
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { TFunction, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import ValidatorSearchInput, {
@@ -15,6 +14,7 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "../components/ValidatorRow";
+
 type Props = {
   account: Account;
   chosenVoteAccAddr: string | undefined | null;

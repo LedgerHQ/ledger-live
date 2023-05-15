@@ -1,10 +1,9 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -30,7 +29,7 @@ export default function StepDelegation({
   const updateValidator = useCallback(
     ({ address }: { address: string }) => {
       const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
-      onUpdateTransaction(tx => {
+      onUpdateTransaction(_tx => {
         return bridge.updateTransaction(transaction, {
           validators: [
             {

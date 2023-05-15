@@ -87,8 +87,7 @@ function Body({
       transaction,
     };
   });
-  const currencyName = account.currency.name.toLowerCase();
-  const steps = useSteps(currencyName);
+  const steps = useSteps();
   const error = transactionError || bridgeError;
   const handleRetry = useCallback(() => {
     setTransactionError(null);

@@ -3,7 +3,7 @@ import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-com
 import { CosmosDelegation, CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { TFunction, Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";

@@ -1,5 +1,3 @@
-import { ClassicCard } from "@braze/web-sdk";
-
 export enum LocationContentCard {
   Portfolio = "portfolio",
   NotificationCenter = "notification_center",

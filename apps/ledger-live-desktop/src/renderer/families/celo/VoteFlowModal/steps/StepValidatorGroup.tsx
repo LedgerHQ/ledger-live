@@ -56,7 +56,7 @@ const StepValidatorGroup = ({
   );
   const updateValidatorGroup = ({ address }: { address: string }) => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
-    onUpdateTransaction(tx => {
+    onUpdateTransaction(_tx => {
       return bridge.updateTransaction(transaction, {
         recipient: address,
       });
