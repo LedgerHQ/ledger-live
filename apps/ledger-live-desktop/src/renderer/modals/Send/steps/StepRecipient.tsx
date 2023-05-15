@@ -13,6 +13,7 @@ import RecipientField from "../fields/RecipientField";
 import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import { Account } from "@ledgerhq/types-live";
+
 const StepRecipient = ({
   t,
   account,
