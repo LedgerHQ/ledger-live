@@ -43,7 +43,7 @@ const App = () => {
       return;
     }
     try {
-      const action = await api.current.listAccounts({ currencyIds: ["bitcoin", "ethereum"] });
+      const action = await api.current.account.list({ currencyIds: ["bitcoin", "ethereum"] });
       setOutput(action);
     } catch (error) {
       console.error(error);
@@ -55,7 +55,7 @@ const App = () => {
       return;
     }
     try {
-      const action = await api.current.requestAccount({ currencyIds: ["bitcoin", "ethereum"] });
+      const action = await api.current.account.request({ currencyIds: ["bitcoin", "ethereum"] });
       setOutput(action);
     } catch (error) {
       console.error(error);
@@ -75,7 +75,7 @@ const App = () => {
 
     const params: TransactionSign["params"]["options"] = { hwAppId: undefined };
 
-    const action = await api.current.signTransaction(
+    const action = await api.current.transaction.sign(
       "mock:1:bitcoin:true_bitcoin_0:",
       transaction,
       params,
@@ -96,7 +96,7 @@ const App = () => {
       return;
     }
     try {
-      const action = await api.current.listCurrencies({ currencyIds: ["bitcoin", "ethereum"] });
+      const action = await api.current.currency.list({ currencyIds: ["bitcoin", "ethereum"] });
       setOutput(action);
     } catch (error) {
       console.error(error);
@@ -108,7 +108,7 @@ const App = () => {
       return;
     }
     try {
-      transport.current = await api.current.deviceTransport({ appName });
+      transport.current = await api.current.device.transport({ appName });
     } catch (error) {
       console.error(error);
     }
