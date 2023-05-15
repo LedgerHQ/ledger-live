@@ -4,7 +4,7 @@ import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
-export type StepId = "amount" | "summary" | "device" | "confirmation";
+export type StepId = "amount" | "summary" | "device" | "confirmation" | "warning";
 export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
@@ -19,7 +19,7 @@ export type StepProps = {
   error: Error | undefined | null;
   warning: Error | undefined | null;
   closeModal: (a: void) => void;
-  openModal: (b: string, a: any) => void;
+  openModal: (b: string, a: unknown) => void;
   onChangeAccount: (b?: AccountLike | null, a?: Account | null) => void;
   onChangeTransaction: (a: Transaction) => void;
   onTransactionError: (a: Error) => void;

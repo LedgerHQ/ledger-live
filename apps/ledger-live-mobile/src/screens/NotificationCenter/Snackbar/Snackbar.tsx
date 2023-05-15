@@ -110,12 +110,12 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
           variant: "plain",
           iconColor: "success.c20",
           title,
-          subtitle: text,
+          subtitle: text || undefined,
         }
       : {
           variant: "primary",
           title: type || title,
-          subtitle: type ? title : text,
+          subtitle: type ? title : text || undefined,
         };
 
   return (

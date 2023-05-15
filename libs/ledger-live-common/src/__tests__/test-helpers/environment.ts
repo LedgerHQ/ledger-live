@@ -10,9 +10,12 @@ import { setEnv } from "../../env";
 
 setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
-
 setSupportedCurrencies([
   "avalanche_c_chain",
+  "axelar",
+  "onomy",
+  "quicksilver",
+  "persistence",
   "bitcoin",
   "ethereum",
   "bsc",

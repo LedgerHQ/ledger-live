@@ -16,17 +16,17 @@ const options = prodStableLanguages.map(value => ({
 const styles = {
   // TODO: implement this behavior in the @ledger/ui lib, here we are just overriding the style from the design system lib to have the MENU right aligned
   menu: (styles: unknown) => ({
-    ...styles,
+    ...(styles as object),
     backgroundColor: "transparent",
     width: "fit-content",
   }),
 
   // TODO: implement this behavior in the @ledger/ui lib, here we are just overriding the style from the design system lib to have the VALUE right aligned
-  valueContainer: (styles: unknown) => ({ ...styles }),
+  valueContainer: (styles: unknown) => ({ ...(styles as object) }),
   option: () => ({
     flex: 1,
-    alignSelf: "center",
-    textAlign: "center",
+    alignSelf: "center" as const,
+    textAlign: "center" as const,
   }),
 };
 

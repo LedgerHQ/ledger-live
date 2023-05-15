@@ -11,6 +11,7 @@ import CollapsibleCard from "~/renderer/components/CollapsibleCard";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box/Box";
 import Image from "~/renderer/components/Image";
+
 const IconsSection = styled.div`
   display: flex;
   flex-direction: row;
@@ -20,6 +21,7 @@ const IconsSection = styled.div`
   margin: ${p => -p.theme.space[6]}px 0px ${p => p.theme.space[6]}px 0;
   color: ${p => p.theme.colors.grey};
 `;
+
 const ItemLine = styled(Box).attrs(() => ({
   flex: 1,
   horizontal: true,
@@ -29,16 +31,19 @@ const ItemLine = styled(Box).attrs(() => ({
   height: ${p => p.theme.space[7]}px;
   position: relative;
 `;
+
 const ListIcon = styled(Box)`
   position: absolute;
   top: -28px;
 `;
+
 type Props = {
   app?: App;
   dependents?: App[];
   dispatch: (a: Action) => void;
   onClose: () => void;
 };
+
 const AppDepsUninstallModal = ({ app, dependents, dispatch, onClose }: Props) => {
   const onConfirm = useCallback(() => {
     if (app && app.name)

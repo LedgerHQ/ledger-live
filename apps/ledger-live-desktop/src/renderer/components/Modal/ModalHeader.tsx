@@ -6,9 +6,10 @@ import Text from "~/renderer/components/Text";
 import Tabbable from "~/renderer/components/Box/Tabbable";
 import IconCross from "~/renderer/icons/Cross";
 import IconAngleLeft from "~/renderer/icons/AngleLeft";
-const TitleContainer = styled(Box).attrs(() => ({
-  vertical: true,
-}))`
+const TitleContainer = styled(Box)<{
+  color?: string;
+  right?: boolean;
+}>`
   position: absolute;
   left: 0;
   right: 0;
@@ -35,7 +36,7 @@ const ModalHeaderAction = styled(Tabbable).attrs(() => ({
   alignItems: "center",
   fontSize: 3,
   p: 3,
-}))`
+}))<{ right?: boolean }>`
   border-radius: 8px;
   color: ${p => p.color || p.theme.colors.palette.text.shade60};
   top: 0;
@@ -65,15 +66,15 @@ const ModalHeaderAction = styled(Tabbable).attrs(() => ({
   `
       : ""}
 `;
-const Container: ThemedComponent<{
-  hasTitle: boolean;
-}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   justifyContent: "space-between",
   p: 2,
   relative: true,
-}))`
+}))<{
+  hasTitle?: boolean;
+}>`
   min-height: ${p => (p.hasTitle ? 66 : 0)}px;
 `;
 const ModalHeader = ({
@@ -84,11 +85,11 @@ const ModalHeader = ({
   onClose,
   style = {},
 }: {
-  children?: any;
+  children?: React.ReactNode;
   subTitle?: React.ReactNode;
-  onBack?: (a: void) => void;
-  onClose?: (a: void) => void;
-  style?: any;
+  onBack?: (e?: React.SyntheticEvent) => void;
+  onClose?: (e?: React.SyntheticEvent) => void;
+  style?: React.CSSProperties;
   backButtonComponent?: React.ReactNode;
 }) => {
   const { t } = useTranslation();
@@ -113,6 +114,7 @@ const ModalHeader = ({
         </TitleContainer>
       ) : null}
       {onClose ? (
+        // @ts-expect-error it is complicated to override styled-components prop types - right is supposed to be a string and inherited from Tabbable
         <ModalHeaderAction right onClick={onClose} data-test-id="modal-close-button">
           <IconCross size={16} />
         </ModalHeaderAction>

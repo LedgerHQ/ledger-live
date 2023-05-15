@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
-import Modal from "~/renderer/components/Modal";
-import Body from "./Body";
+import Modal, { RenderProps } from "~/renderer/components/Modal";
+import Body, { Params } from "./Body";
 import { StepId } from "./types";
 type Props = {
   stepId: StepId;
@@ -11,7 +11,7 @@ type Props = {
 const SignTransactionModal = ({ stepId }: Props) => {
   const [state, setState] = useState({
     stepId: stepId || "summary",
-    error: undefined,
+    error: undefined as Error | undefined,
   });
   const handleReset = () => {
     setState({
@@ -35,17 +35,16 @@ const SignTransactionModal = ({ stepId }: Props) => {
       <Modal
         name="MODAL_SIGN_TRANSACTION"
         centered
-        refocusWhenChange={state.stepId}
         onHide={handleReset}
         preventBackdropClick
-        render={({ onClose, data }) => (
+        render={({ onClose, data }: RenderProps<Params>) => (
           <Body
             stepId={state.stepId}
             onClose={() => {
               if (data.onCancel) {
                 data.onCancel(state.error || new Error("Signature interrupted by user"));
               }
-              onClose();
+              onClose?.();
             }}
             setError={setError}
             onChangeStepId={handleStepChange}

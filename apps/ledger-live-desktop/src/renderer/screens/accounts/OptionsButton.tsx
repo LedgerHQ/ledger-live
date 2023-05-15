@@ -23,9 +23,7 @@ const Separator = styled.div`
   margin-top: 8px;
   margin-bottom: 8px;
 `;
-const Item: ThemedComponent<{
-  disableHover?: boolean;
-}> = styled(DropDownItem)`
+const Item = styled(DropDownItem)<{ disableHover?: boolean }>`
   width: 230px;
   cursor: pointer;
   white-space: pre-wrap;
@@ -33,7 +31,7 @@ const Item: ThemedComponent<{
   align-items: center;
 `;
 type ItemType = DropDownItemType & {
-  icon?: React$Element<any>;
+  icon?: JSX.Element;
   onClick?: Function;
   type?: "separator";
 };
@@ -42,12 +40,12 @@ const OptionsButton = () => {
   const [hideEmptyTokenAccounts, setHideEmptyTokenAccounts] = useHideEmptyTokenAccounts();
   const onOpenModal = useCallback(
     (modal: string) => {
-      dispatch(openModal(modal));
+      dispatch(openModal(modal, undefined));
     },
     [dispatch],
   );
   const { t } = useTranslation();
-  const items: DropDownItemType[] = [
+  const items: ItemType[] = [
     {
       key: "exportOperations",
       label: t("accounts.optionsMenu.exportOperations"),
@@ -68,7 +66,7 @@ const OptionsButton = () => {
     {
       key: "hideEmpty",
       label: t("settings.accounts.hideEmptyTokens.title"),
-      onClick: (e: MouseEvent) => {
+      onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.preventDefault();
         e.stopPropagation();
         setHideEmptyTokenAccounts(!hideEmptyTokenAccounts);
@@ -82,9 +80,10 @@ const OptionsButton = () => {
     return (
       <Item
         id={`accounts-button-${item.key}`}
+        isActive={false}
         horizontal
         flow={2}
-        onClick={item.onClick}
+        onClick={e => (item.onClick ? item.onClick(e) : undefined)}
         disableHover={item.key === "hideEmpty"}
       >
         {item.key === "hideEmpty" ? (
@@ -107,12 +106,7 @@ const OptionsButton = () => {
     );
   };
   return (
-    <DropDownSelector
-      buttonId="accounts-options-button"
-      horizontal
-      items={items}
-      renderItem={renderItem}
-    >
+    <DropDownSelector buttonId="accounts-options-button" items={items} renderItem={renderItem}>
       {() => (
         <Box horizontal>
           <Tooltip content={t("accounts.optionsMenu.title")}>

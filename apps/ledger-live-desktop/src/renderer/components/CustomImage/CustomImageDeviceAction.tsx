@@ -35,6 +35,10 @@ type Props = {
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : staxLoadImage);
 const mockedDevice = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
 
+function checkIfIsRefusedOnStaxError(e: unknown): boolean {
+  return e instanceof ImageLoadRefusedOnDevice || e instanceof ImageCommitRefusedOnDevice;
+}
+
 const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props => {
   const {
     hexImage,
@@ -46,7 +50,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     onTryAnotherImage,
     blockNavigation,
   } = props;
-  const type: Theme["theme"] = useTheme("colors.palette.type");
+  const type: Theme["theme"] = useTheme().colors.palette.type;
   const device = getEnv("MOCK") ? mockedDevice : props.device;
   const commandRequest = useMemo(() => ({ hexImage }), [hexImage]);
 
@@ -75,8 +79,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
 
   const { error, imageLoadRequested, loadingImage, imageCommitRequested, progress } = status;
   const isError = !!error;
-  const isRefusedOnStaxError =
-    error instanceof ImageLoadRefusedOnDevice || error instanceof ImageCommitRefusedOnDevice;
+  const isRefusedOnStaxError = checkIfIsRefusedOnStaxError(error);
 
   useEffect(() => {
     // Once transferred the old image is wiped, we need to clear it from the data.

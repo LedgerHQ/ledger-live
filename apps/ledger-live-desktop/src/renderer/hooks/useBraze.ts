@@ -8,9 +8,10 @@ import {
   NotificationContentCard,
   Platform,
 } from "~/types/dynamicContent";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setNotificationsCards, setPortfolioCards } from "../actions/dynamicContent";
 import getUser from "~/helpers/user";
+import { developerModeSelector } from "../reducers/settings";
 
 const getDesktopCards = (elem: braze.ContentCards) =>
   elem.cards.filter(card => card.extras?.platform === Platform.Desktop);
@@ -44,6 +45,7 @@ export const mapAsNotificationContentCard = (card: ClassicCard) =>
 
 export async function useBraze() {
   const dispatch = useDispatch();
+  const devMode = useSelector(developerModeSelector);
 
   const initBraze = useCallback(async () => {
     const user = await getUser();
@@ -54,19 +56,14 @@ export async function useBraze() {
       allowUserSuppliedJavascript: true,
       enableHtmlInAppMessages: true,
       enableLogging: __DEV__,
+      sessionTimeoutInSeconds: devMode ? 1 : 1800,
     });
+
     if (user) {
       braze.changeUser(user.id);
     }
 
-    braze.requestPushPermission(
-      (endpoint, publicKey, userAuth) => {
-        console.log("SUCCESS", { endpoint, publicKey, userAuth });
-      },
-      temporaryDenial => {
-        console.log("NOT GRANTED - is temporary :", temporaryDenial);
-      },
-    );
+    braze.requestPushPermission();
 
     braze.requestContentCardsRefresh();
 
@@ -88,7 +85,7 @@ export async function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch]);
+  }, [dispatch, devMode]);
 
   useEffect(() => {
     initBraze();

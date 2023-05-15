@@ -9,7 +9,7 @@ export type DomainServiceResponseQueued = { status: "queued" };
 export type DomainServiceResponseLoading = { status: "loading" };
 export type DomainServiceResponseError = {
   status: "error";
-  error: any;
+  error: Error;
   updatedAt: number;
 };
 

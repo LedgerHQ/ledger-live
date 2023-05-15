@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { withTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { getCryptoCurrencyIcon, getTokenCurrencyIcon } from "@ledgerhq/live-common/react";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
@@ -11,13 +11,15 @@ type Props = {
   size: number;
   overrideColor?: string;
   inactive?: boolean;
-  theme: any;
   fallback?: React.ReactNode;
-}; // NB this is to avoid seeing the parent icon through
+};
+
+// NB this is to avoid seeing the parent icon through
 export const TokenIconWrapper = styled.div`
   border-radius: 4px;
 `;
-export const CircleWrapper = styled.div`
+
+export const CircleWrapper = styled.div<{ size: number }>`
   border-radius: 50%;
   border: 1px solid transparent;
   background: ${p => p.color};
@@ -27,12 +29,13 @@ export const CircleWrapper = styled.div`
   justify-content: center;
   display: flex;
 `;
-export const TokenIcon: ThemedComponent<{
+
+export const TokenIcon = styled.div<{
   fontSize?: number;
   size: number;
-  color?: string;
+  color: string;
   circle?: boolean;
-}> = styled.div`
+}>`
   font-size: ${p => (p.fontSize ? p.fontSize : p.size / 2)}px;
   font-family: "Inter";
   font-weight: bold;
@@ -50,7 +53,7 @@ export const TokenIcon: ThemedComponent<{
 `;
 
 // trick to format size for certain type of icons
-const Container = styled.div`
+const Container = styled.div<{ size: number }>`
   width: ${p => p.size}px;
   height: ${p => p.size}px;
   position: relative;
@@ -69,9 +72,9 @@ const CryptoCurrencyIcon = ({
   size,
   overrideColor,
   inactive,
-  theme,
   fallback,
 }: Props) => {
+  const theme = useTheme();
   const currencyColor = useCurrencyColor(currency, theme.colors.palette.background.paper);
   const color = overrideColor || (inactive ? theme.colors.palette.text.shade60 : currencyColor);
   if (currency.type === "FiatCurrency") {
@@ -99,7 +102,8 @@ const CryptoCurrencyIcon = ({
       </Container>
     )
   ) : (
-    fallback || null
+    <>{fallback || null}</>
   );
 };
-export default withTheme(CryptoCurrencyIcon);
+
+export default CryptoCurrencyIcon;

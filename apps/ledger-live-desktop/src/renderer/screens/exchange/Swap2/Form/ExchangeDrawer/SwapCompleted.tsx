@@ -73,7 +73,7 @@ const SwapCompleted = ({
   targetCurrency: string;
 }) => {
   const openProviderSupport = useCallback(() => {
-    openURL(urls.swap.providers[provider]?.support);
+    openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.support);
   }, [provider]);
   const SwapPill = ({ swapId }: { swapId: string }) => (
     <SwapIdWrapper>

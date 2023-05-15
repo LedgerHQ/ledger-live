@@ -7,7 +7,7 @@ import BulletRow from "~/renderer/components/BulletRow";
 import Text from "~/renderer/components/Text";
 import IconCopy from "~/renderer/icons/Copy";
 import illustration from "~/renderer/images/USBTroubleshooting/illus1.png";
-let clipboard = null;
+let clipboard: Electron.Clipboard | null = null;
 if (!process.env.STORYBOOK_ENV) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const electron = require("electron");

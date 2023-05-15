@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { Redirect } from "react-router";
@@ -29,7 +29,7 @@ export default function AccountsPage() {
     onMount: true,
   });
   const onAccountClick = useCallback(
-    (account: Account | TokenAccount, parentAccount?: Account | null) => {
+    (account: AccountLike, parentAccount?: Account | null) => {
       setTrackingSource("accounts page");
       history.push({
         pathname: parentAccount

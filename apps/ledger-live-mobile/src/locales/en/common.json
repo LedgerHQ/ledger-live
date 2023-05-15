@@ -2670,6 +2670,10 @@
       "title": "Experimental features",
       "desc": "Try out the Experimental features and let us know what you think.",
       "disclaimer": "These are Experimental features provided on an \"as is\" basis for our community of tech enthusiasts. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk.",
+      "provider": "The experimental setting “My Ledger provider ({{forcedProvider}})” may show unreleased OS and apps, leading to compatibility issues. You can disable it in settings.",
+      "providerDevMode": "The experimental settings “My Ledger provider ({{forcedProvider}})” and “Developer mode” may show unreleased OS and apps, leading to compatibility issues. You can disable them in settings.",
+      "devMode": "The experimental setting “Developer mode” may show unreleased OS and apps, leading to compatibility issues. You can disable it in settings.",
+      "providerCTA": "Go to settings",
       "experimentalFeatures": {
         "experimentalIntegrations": {
           "title": "Experimental integrations",
@@ -2698,6 +2702,10 @@
         "experimentalSwap": {
           "title": "New SWAP interface",
           "description": "Use the new experimental swap interface"
+        },
+        "experimentalEnableNetworkLogs": {
+          "title": "Enable network logs",
+          "description": "Enable network logs in the console (error logs are always enabled)"
         }
       },
       "developerFeatures": {
@@ -2753,7 +2761,8 @@
   },
   "transfer": {
     "recipient": {
-      "input": "Enter address"
+      "input": "Enter address",
+      "inputEns": "Enter address or ENS"
     },
     "send": {
       "title": "Send",
@@ -3387,7 +3396,14 @@
       "domainService": {
         "reverse": "This address is linked to {{domain}}",
         "forward": "This is a valid ENS address",
-        "supportLink": "What's an Ethereum Name Service ?"
+        "supportLink": "What's an Ethereum Name Service ?",
+        "invalidDomain": {
+          "title": "Domain not supported",
+          "description": "Only ENS with less than 30 alphanumerical characters are currently supported."
+        },
+        "noResolution": {
+          "title": "No address found for this domain"
+        }
       }
     },
     "amount": {
@@ -3666,6 +3682,7 @@
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
     "allowManagerPermission": "Allow {{wording}} on your {{productName}}",
+    "allowRemoveCustomLockscreen": "Confirm removal of image on your Ledger Stax",
     "loading": "Loading...",
     "turnOnAndUnlockDevice": "Turn on and unlock your device",
     "connectAndUnlockDevice": "Connect and unlock your device",
@@ -4696,7 +4713,8 @@
             "noResultsFound": "No validator found for <0>{{search}}</0>"
           },
           "amount": {
-            "newRedelegatedBalance": "New total for <0>{{name}}</0> after operation: <0>{{amount}}</0>"
+            "newRedelegatedBalance": "New total for <0>{{name}}</0> after operation: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used"
           },
           "verification": {
             "success": {
@@ -6045,9 +6063,11 @@
     "drawer": {
       "options": {
         "uploadFromPhone": "Choose from my picture gallery",
-        "selectFromNFTGallery": "Choose from NFT gallery"
+        "selectFromNFTGallery": "Choose from NFT gallery",
+        "remove": "Remove current picture"
       }
     },
+    "toastRemove": "Lock screen picture removed",
     "cropImage": "Crop picture",
     "chooseConstrast": "Choose contrast",
     "uploadAnotherImage": "Upload another image",
@@ -6166,7 +6186,7 @@
         "tag": "{{count}} NFTs"
       }
     },
-    "referralProgram":"$10"
+    "referralProgram": "$10"
   },
   "servicesWidget": {
     "title": "Services",
