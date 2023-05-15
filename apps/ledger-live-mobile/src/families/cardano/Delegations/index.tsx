@@ -17,6 +17,7 @@ import {
 } from "@ledgerhq/live-common/explorers";
 
 import { StackNavigationProp } from "@react-navigation/stack";
+import { AccountLike } from "@ledgerhq/types-live";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import DelegationDrawer from "../../../components/DelegationDrawer";
@@ -277,9 +278,13 @@ function Delegations({ account }: Props) {
   );
 }
 
-export default function CardanoDelegations({ account }: Props) {
-  if (!account.cardanoResources) return null;
-  return <Delegations account={account} />;
+export default function CardanoDelegations({
+  account,
+}: {
+  account: AccountLike;
+}) {
+  if (!(account as CardanoAccount).cardanoResources) return null;
+  return <Delegations account={account as CardanoAccount} />;
 }
 
 const styles = StyleSheet.create({
