@@ -374,7 +374,12 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
 
   useEffect(() => {
     if (seedPathStatus === "recover_seed" && postOnboardingPath) {
-      history.push(postOnboardingPath, { fromOnboarding: true });
+      const [pathname, search] = postOnboardingPath.split("?");
+      history.push({
+        pathname,
+        search,
+        state: { fromOnboarding: true },
+      });
     }
   }, [history, postOnboardingPath, seedPathStatus]);
 
