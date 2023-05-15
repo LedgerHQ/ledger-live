@@ -377,7 +377,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       const [pathname, search] = postOnboardingPath.split("?");
       history.push({
         pathname,
-        search,
+        search: search ? `?${search}` : undefined,
         state: { fromOnboarding: true },
       });
     }
