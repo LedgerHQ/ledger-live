@@ -147,9 +147,9 @@ const VerifyOnDevice = ({
 export type DataProp = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
-  onResult: (c: AccountLike, b: Account | undefined | null, a: AppResult | boolean) => null;
+  onResult: (c: AccountLike, b: Account | undefined | null, a: AppResult | boolean) => void;
   verifyAddress?: boolean;
-  onCancel?: () => void;
+  onCancel?: (error: Error) => void;
 };
 type Props = {
   onClose: () => void;
@@ -268,7 +268,7 @@ const BuyCryptoModal = ({
   const { t } = useTranslation();
   const handleClose = useCallback(() => {
     if (data.onCancel) {
-      data.onCancel();
+      data.onCancel(new Error("Canceled by user"));
     }
     onClose();
   }, [data, onClose]);

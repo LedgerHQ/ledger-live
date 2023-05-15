@@ -77,7 +77,7 @@ export type ModalData = {
   MODAL_PASSWORD: undefined;
   MODAL_DISABLE_PASSWORD: undefined;
   MODAL_PLATFORM_EXCHANGE_START: {
-    onCancel?: (_: string) => void;
+    onCancel?: (error: Error) => void;
     exchangeType: unknown;
     onResult: (startExchangeResult: string) => void;
   };
