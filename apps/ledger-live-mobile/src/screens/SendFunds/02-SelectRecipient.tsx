@@ -13,6 +13,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
+import { getEthStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -38,6 +39,7 @@ import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
+import { EditOperationCard } from "../../families/ethereum/EditTransaction/EditOperationCard";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
@@ -166,9 +168,16 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     parentAccount?.id,
     route.params,
   ]);
+
   if (!account || !transaction) return null;
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
+
+  const [, , oldestEditableOperation] = getEthStuckAccountAndOperation(
+    account,
+    mainAccount,
+  );
+
   return (
     <>
       <SafeAreaView
@@ -195,6 +204,14 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             flex: 1,
           }}
         >
+          {oldestEditableOperation ? (
+            <EditOperationCard
+              oldestEditableOperation={oldestEditableOperation}
+              isOperationStuck
+              account={account}
+              parentAccount={parentAccount}
+            />
+          ) : null}
           <NavigationScrollView
             style={[
               styles.container,

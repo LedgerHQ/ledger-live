@@ -216,6 +216,10 @@ export const WrongDeviceForAccount = createCustomErrorClass(
 export const WrongAppForCurrency = createCustomErrorClass(
   "WrongAppForCurrency"
 );
+export const TransactionHasBeenValidatedError = createCustomErrorClass(
+  "TransactionHasBeenValidatedError"
+);
+
 export const ETHAddressNonEIP = createCustomErrorClass("ETHAddressNonEIP");
 export const CantScanQRCode = createCustomErrorClass("CantScanQRCode");
 export const FeeNotLoaded = createCustomErrorClass("FeeNotLoaded");

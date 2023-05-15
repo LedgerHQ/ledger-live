@@ -146,13 +146,6 @@ export default function Content({
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
-  const onEditTxPress = useCallback(() => {
-    navigation.navigate(NavigatorName.EditTransaction, {
-      screen: ScreenName.EditTransactionMethodSelection,
-      params: { operation, account, parentAccount },
-    });
-  }, []);
-
   const isConfirmed = isConfirmedOperation(
     operation,
     mainAccount,
@@ -363,7 +356,9 @@ export default function Content({
       {isEditable ? (
         <EditOperationPanel
           isOperationStuck={isOperationStuck}
-          onEditTxPress={onEditTxPress}
+          account={account}
+          parentAccount={parentAccount}
+          operation={operation}
         />
       ) : null}
 

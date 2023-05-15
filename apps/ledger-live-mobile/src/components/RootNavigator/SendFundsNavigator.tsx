@@ -30,6 +30,7 @@ export default function SendFundsNavigator() {
     () => getStackNavigatorConfig(colors, true),
     [colors],
   );
+
   return (
     <DomainServiceProvider>
       <Stack.Navigator screenOptions={stackNavigationConfig}>

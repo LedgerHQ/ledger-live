@@ -2,21 +2,31 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useNavigation } from "@react-navigation/core";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 
 import LText from "../../../components/LText";
 import Link from "../../../components/wrappedUi/Link";
+import { NavigatorName, ScreenName } from "../../../const";
 
 type EditOperationPanelProps = {
   isOperationStuck: boolean;
-  onEditTxPress: () => void;
+  operation: Operation;
+  account: AccountLike | null | undefined;
+  parentAccount: Account | null | undefined;
+  onEditTxPress?: () => void;
 };
 
 export const EditOperationPanel = ({
   isOperationStuck,
+  operation,
+  account,
+  parentAccount,
   onEditTxPress,
 }: EditOperationPanelProps) => {
   const { t } = useTranslation();
   const flag = useFeature("editEthTx");
+  const navigation = useNavigation();
 
   return flag?.enabled ? (
     <Flex
@@ -34,7 +44,18 @@ export const EditOperationPanel = ({
             {t("editTransaction.panel.stuckMessage")}
           </LText>
           <LText marginTop={4}>
-            <Link onPress={onEditTxPress}>
+            <Link
+              onPress={() => {
+                onEditTxPress && onEditTxPress();
+
+                if (account) {
+                  navigation.navigate(NavigatorName.EditTransaction, {
+                    screen: ScreenName.EditTransactionMethodSelection,
+                    params: { operation, account, parentAccount },
+                  });
+                }
+              }}
+            >
               <LText
                 color="neutral.c20"
                 style={{ textDecorationLine: "underline" }}
@@ -52,7 +73,18 @@ export const EditOperationPanel = ({
               {t("editTransaction.panel.speedupMessage")}
             </LText>
             <LText marginTop={4}>
-              <Link onPress={onEditTxPress}>
+              <Link
+                onPress={() => {
+                  onEditTxPress && onEditTxPress();
+
+                  if (account) {
+                    navigation.navigate(NavigatorName.EditTransaction, {
+                      screen: ScreenName.EditTransactionMethodSelection,
+                      params: { operation, account, parentAccount },
+                    });
+                  }
+                }}
+              >
                 <LText
                   color="neutral.c20"
                   style={{ textDecorationLine: "underline" }}

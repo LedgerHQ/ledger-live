@@ -10,7 +10,6 @@ import {
   ValueChange,
   PortfolioRange,
   BalanceHistoryWithCountervalue,
-  Operation,
 } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
@@ -56,7 +55,6 @@ type Props = {
   colors: ColorPalette;
   secondaryActions: ActionButtonEvent[];
   t: TFunction;
-  onEditTransactionPress: (latestOperation: Operation) => void;
 };
 
 type MaybeComponent =
@@ -84,7 +82,6 @@ export function getListHeaderComponents({
   colors,
   secondaryActions,
   t,
-  onEditTransactionPress,
 }: Props): {
   listHeaderComponents: ReactNode[];
   stickyHeaderIndices?: number[];
@@ -171,7 +168,8 @@ export function getListHeaderComponents({
         <EditOperationCard
           oldestEditableOperation={oldestEditableOperation}
           isOperationStuck={isOperationStuck}
-          onEditTransactionPress={onEditTransactionPress}
+          account={account}
+          parentAccount={parentAccount}
         />
       ) : null,
       <SectionContainer px={6} bg={colors.background.main}>
