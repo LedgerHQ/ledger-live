@@ -36,7 +36,6 @@ import { ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncDrawer from "./DesyncDrawer";
 import ResyncOverlay, { PlainOverlay } from "./ResyncOverlay";
-import LanguageSelect from "./LanguageSelect";
 import SoftwareChecksStep from "./SoftwareChecksStep";
 import {
   completeOnboarding,
@@ -586,12 +585,9 @@ export const SyncOnboarding = ({
             <Flex
               my={5}
               flexDirection="row"
-              justifyContent="space-between"
+              justifyContent="flex-end"
               alignItems="center"
             >
-              <Flex ml={6}>
-                <LanguageSelect device={device} productName={productName} />
-              </Flex>
               <NavigationHeaderCloseButton />
             </Flex>
           </SafeAreaView>
