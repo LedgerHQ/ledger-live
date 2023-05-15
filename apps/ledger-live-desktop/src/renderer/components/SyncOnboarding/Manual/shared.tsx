@@ -72,13 +72,13 @@ export const Bullet = ({ status, bulletText, text, subText, ...props }: BulletPr
     <Row {...props}>
       <IconContainer>
         {status === Status.active ? (
-          <InfiniteLoader color="primary.c80" size={24} />
+          <InfiniteLoader color="primary.c60" size={24} />
         ) : status === Status.completed ? (
-          <Icons.CircledCheckSolidMedium size={24} color="success.c30" />
+          <Icons.CheckTickMedium size={20} color="success.c50" />
         ) : status === Status.updateAvailable ? (
-          <InfoCircle size={24} color={colors.constant.purple} />
+          <InfoCircle size={20} color={colors.primary.c80} />
         ) : status === Status.failed ? (
-          <Icons.CircledCrossSolidMedium size={24} color="error.c40" />
+          <Icons.CircledCrossSolidMedium size={20} color="error.c50" />
         ) : (
           <Text variant="body">{bulletText}</Text>
         )}

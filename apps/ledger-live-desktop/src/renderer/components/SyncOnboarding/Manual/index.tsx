@@ -379,7 +379,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       <Flex
         height="100%"
         overflow="hidden"
-        maxWidth="680px"
+        width="432px"
         flexDirection="column"
         justifyContent="flex-start"
         alignSelf="center"
