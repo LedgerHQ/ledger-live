@@ -1,5 +1,8 @@
+import { makeNoCache } from "@ledgerhq/coin-framework/cache";
+import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
+import { EvmAPI } from "../api";
 import * as rpcAPI from "../api/rpc.common";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { makeAccount, makeTokenAccount } from "../testUtils";
@@ -23,6 +26,11 @@ jest.spyOn(rpcAPI, "getFeesEstimation").mockImplementation(async () => ({
   maxPriorityFeePerGas: new BigNumber(0),
 }));
 
+const mockNetwork: NetworkRequestCall = (_): Promise<any> => {
+  return Promise.resolve();
+};
+const evmAPI = new EvmAPI(mockNetwork, makeNoCache);
+
 describe("EVM Family", () => {
   describe("estimateMaxSpendable.ts", () => {
     it("should get a max spendable of the account balance minus the EIP1559 coin tx", async () => {
@@ -39,7 +47,7 @@ describe("EVM Family", () => {
         maxPriorityFeePerGas: new BigNumber(0),
         type: 2,
       };
-      const amount = await estimateMaxSpendable({
+      const amount = await estimateMaxSpendable(evmAPI)({
         account,
         transaction: eip1559Tx,
       });
@@ -62,7 +70,7 @@ describe("EVM Family", () => {
         gasPrice: new BigNumber(0),
         type: 0,
       };
-      const amount = await estimateMaxSpendable({
+      const amount = await estimateMaxSpendable(evmAPI)({
         account,
         transaction: legacyTx,
       });
@@ -88,7 +96,7 @@ describe("EVM Family", () => {
         type: 2,
       };
 
-      const amount = await estimateMaxSpendable({
+      const amount = await estimateMaxSpendable(evmAPI)({
         account: tokenAccount,
         parentAccount: account,
         transaction: eip1559Tx,
@@ -111,7 +119,7 @@ describe("EVM Family", () => {
         subAccountId: tokenAccount.id,
         type: 0,
       };
-      const amount = await estimateMaxSpendable({
+      const amount = await estimateMaxSpendable(evmAPI)({
         account: tokenAccount,
         parentAccount: account,
         transaction: legacyTx,

@@ -1,7 +1,10 @@
+import { LRUCacheFn, makeNoCache } from "@ledgerhq/coin-framework/cache";
+import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
+import { EvmAPI } from "../api";
 import * as RPC_API from "../api/rpc.common";
 import {
   eip1559TransactionHasFees,
@@ -13,6 +16,11 @@ import {
 } from "../logic";
 import { makeAccount, makeOperation, makeTokenAccount } from "../testUtils";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
+
+const mockNetwork: NetworkRequestCall = (_): Promise<any> => {
+  return Promise.resolve();
+};
+const evmAPI = new EvmAPI(mockNetwork, makeNoCache);
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {
@@ -149,18 +157,20 @@ describe("EVM Family", () => {
       it("should try to get additionalFees for a valid layer 2", async () => {
         const spy = jest
           .spyOn(RPC_API, "getOptimismAdditionalFees")
-          .mockImplementation(jest.fn());
+          // @ts-expect-error not casted as jest mock
+          .mockImplementation((_cache: LRUCacheFn) => jest.fn());
 
-        await getAdditionalLayer2Fees(optimism, {} as any);
+        await getAdditionalLayer2Fees(evmAPI)(optimism, {} as any);
         expect(spy).toBeCalled();
       });
 
       it("should not try to get additionalFees for an invalid layer 2", async () => {
         const spy = jest
           .spyOn(RPC_API, "getOptimismAdditionalFees")
-          .mockImplementation(jest.fn());
+          // @ts-expect-error not casted as jest mock
+          .mockImplementation((_cache: LRUCacheFn) => jest.fn());
 
-        await getAdditionalLayer2Fees(ethereum, {} as any);
+        await getAdditionalLayer2Fees(evmAPI)(ethereum, {} as any);
         expect(spy).not.toBeCalled();
       });
     });
@@ -340,11 +350,13 @@ describe("EVM Family", () => {
       it("should provide a hash not dependent on reference", () => {
         jest
           .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
-          .mockImplementationOnce((currency) => {
+          .mockImplementationOnce((currency): TokenCurrency[] => {
             const { listTokensForCryptoCurrency } = jest.requireActual(
               "@ledgerhq/cryptoassets/tokens"
             );
-            return listTokensForCryptoCurrency(currency).map((t) => ({ ...t }));
+            return listTokensForCryptoCurrency(currency).map(
+              (t: TokenCurrency) => ({ ...t })
+            );
           });
         expect(getSyncHash(currency)).toEqual(getSyncHash(currency));
       });

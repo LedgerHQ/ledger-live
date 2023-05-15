@@ -1,5 +1,3 @@
-import "../../__tests__/test-helpers/setup";
-
 import { FeeTooHigh } from "@ledgerhq/errors";
 import type {
   AccountRaw,

@@ -1,3 +1,4 @@
+import { makeNoCache } from "@ledgerhq/coin-framework/cache";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { AssertionError, fail } from "assert";
@@ -466,9 +467,9 @@ describe("EVM Family", () => {
 
   describe("getOptimismAdditionalFees", () => {
     it("should return the expected payload", async () => {
-      RPC_API.getOptimismAdditionalFees.reset();
+      RPC_API.getOptimismAdditionalFees(makeNoCache).reset();
       expect(
-        await RPC_API.getOptimismAdditionalFees(
+        await RPC_API.getOptimismAdditionalFees(makeNoCache)(
           { ...fakeCurrency, id: "optimism" } as CryptoCurrency,
           {
             mode: "send",
@@ -489,7 +490,7 @@ describe("EVM Family", () => {
 
     it("should return 0 if the currency isn't optimism", async () => {
       expect(
-        await RPC_API.getOptimismAdditionalFees(
+        await RPC_API.getOptimismAdditionalFees(makeNoCache)(
           fakeCurrency as CryptoCurrency,
           {
             mode: "send",
@@ -510,7 +511,7 @@ describe("EVM Family", () => {
 
     it("should return 0 if the transaction is invalid", async () => {
       expect(
-        await RPC_API.getOptimismAdditionalFees(
+        await RPC_API.getOptimismAdditionalFees(makeNoCache)(
           fakeCurrency as CryptoCurrency,
           {
             mode: "send",

@@ -1,10 +1,13 @@
+import { makeNoCache } from "@ledgerhq/coin-framework/cache";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import evms from "@ledgerhq/cryptoassets/data/evm/index";
 import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
-import { fetchERC20Tokens, hydrate, preload } from "../preload";
-// FIXME: dependency injection?
-import network from "../../../network";
+import { EvmAPI } from "../api";
+import { hydrate, preload } from "../preload";
+
+const mockNetwork = jest.fn();
+const evmAPI = new EvmAPI(mockNetwork, makeNoCache);
 
 const usdcDefinition: ERC20Token = [
   "ethereum",
@@ -34,7 +37,6 @@ const usdtDefinition: ERC20Token = [
 ];
 const currency1 = getCryptoCurrencyById("ethereum"); // chain id 1
 
-jest.mock("../../../network");
 jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
   get tokens() {
     return {
@@ -45,8 +47,7 @@ jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
 
 describe("EVM Family", () => {
   beforeEach(() => {
-    // @ts-expect-error not casted as jest mock
-    network.mockResolvedValue({});
+    mockNetwork.mockResolvedValue({});
   });
 
   afterEach(() => {
@@ -56,37 +57,34 @@ describe("EVM Family", () => {
   describe("preload.ts", () => {
     describe("fetchERC20Tokens", () => {
       it("should load dynamically the tokens", async () => {
-        // @ts-expect-error not casted as jest mock
-        network.mockResolvedValue({ data: [usdtDefinition] });
+        mockNetwork.mockResolvedValue({ data: [usdtDefinition] });
 
-        const tokens = await fetchERC20Tokens(currency1);
+        const tokens = await evmAPI.fetchERC20Tokens({ currency: currency1 });
         expect(tokens).toEqual([usdtDefinition]);
       });
 
       it("should fallback on local CAL on dynamic CAL error", async () => {
-        // @ts-expect-error not casted as jest mock
-        network.mockImplementationOnce(async () => {
+        mockNetwork.mockImplementationOnce(async () => {
           throw new Error();
         });
 
-        const tokens = await fetchERC20Tokens(currency1);
+        const tokens = await evmAPI.fetchERC20Tokens({ currency: currency1 });
         expect(tokens).toEqual([usdcDefinition]);
       });
 
       it("should load erc20 tokens from local CAL when dynamic CAL undefined", async () => {
-        const tokens = await fetchERC20Tokens(currency1);
+        const tokens = await evmAPI.fetchERC20Tokens({ currency: currency1 });
         expect(tokens).toEqual([usdcDefinition]);
       });
 
       it("should load erc20 tokens from local CAL when dynamic CAL is empty []", async () => {
-        // @ts-expect-error not casted as jest mock
-        network.mockResolvedValue({
+        mockNetwork.mockResolvedValue({
           data: {
             tokens: { 1: [] },
           },
         });
 
-        const tokens = await fetchERC20Tokens(currency1);
+        const tokens = await evmAPI.fetchERC20Tokens({ currency: currency1 });
         expect(tokens).toEqual([usdcDefinition]);
       });
 
@@ -95,7 +93,7 @@ describe("EVM Family", () => {
           .spyOn(evms, "tokens", "get")
           .mockImplementationOnce(() => ({} as any));
 
-        const tokens = await fetchERC20Tokens(currency1);
+        const tokens = await evmAPI.fetchERC20Tokens({ currency: currency1 });
         expect(tokens).toEqual([]);
       });
     });
@@ -106,7 +104,7 @@ describe("EVM Family", () => {
           .spyOn(CALTokensAPI, "addTokens")
           .mockImplementationOnce(() => null);
 
-        const tokens = await preload(currency1);
+        const tokens = await preload(evmAPI)(currency1);
 
         expect(tokens).toEqual([usdcDefinition]);
         expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([

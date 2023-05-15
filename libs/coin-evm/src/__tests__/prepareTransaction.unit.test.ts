@@ -1,7 +1,10 @@
+import { makeNoCache } from "@ledgerhq/coin-framework/cache";
+import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import ERC20ABI from "../abis/erc20.abi.json";
+import { EvmAPI } from "../api";
 import * as rpcAPI from "../api/rpc.common";
 import {
   prepareForSignOperation,
@@ -9,6 +12,11 @@ import {
 } from "../prepareTransaction";
 import { makeAccount, makeTokenAccount } from "../testUtils";
 import { Transaction as EvmTransaction } from "../types";
+
+const mockNetwork: NetworkRequestCall = (_): Promise<any> => {
+  return Promise.resolve();
+};
+const evmAPI = new EvmAPI(mockNetwork, makeNoCache);
 
 const currency = getCryptoCurrencyById("ethereum");
 const tokenAccount = makeTokenAccount(
@@ -69,7 +77,7 @@ describe("EVM Family", () => {
               throw new Error();
             });
 
-          const tx = await prepareTransaction(account, {
+          const tx = await prepareTransaction(evmAPI)(account, {
             ...transaction,
             recipient: "notValid",
           });
@@ -92,7 +100,7 @@ describe("EVM Family", () => {
               throw new Error();
             });
 
-          const tx = await prepareTransaction(account, {
+          const tx = await prepareTransaction(evmAPI)(account, {
             ...transaction,
             amount: new BigNumber(0),
           });
@@ -109,7 +117,7 @@ describe("EVM Family", () => {
         });
 
         it("should return an EIP1559 coin transaction", async () => {
-          const tx = await prepareTransaction(account, transaction);
+          const tx = await prepareTransaction(evmAPI)(account, transaction);
 
           expect(tx).toEqual({
             ...transaction,
@@ -128,7 +136,7 @@ describe("EVM Family", () => {
               maxPriorityFeePerGas: null,
             }));
 
-          const tx = await prepareTransaction(account, transaction);
+          const tx = await prepareTransaction(evmAPI)(account, transaction);
 
           expect(tx).toEqual({
             ...transaction,
@@ -147,7 +155,7 @@ describe("EVM Family", () => {
             useAllAmount: true,
           };
 
-          const tx = await prepareTransaction(
+          const tx = await prepareTransaction(evmAPI)(
             accountWithBalance,
             transactionWithUseAllAmount
           );
@@ -171,7 +179,7 @@ describe("EVM Family", () => {
             ...account,
             balance: new BigNumber(4206900),
           };
-          const tx = await prepareTransaction(accountWithBalance, {
+          const tx = await prepareTransaction(evmAPI)(accountWithBalance, {
             ...transaction,
             data: Buffer.from("Sm4rTC0ntr4ct", "hex"),
           });
@@ -195,7 +203,7 @@ describe("EVM Family", () => {
               throw new Error();
             });
 
-          const tx = await prepareTransaction(account, {
+          const tx = await prepareTransaction(evmAPI)(account, {
             ...tokenTransaction,
             recipient: "notValid",
           });
@@ -219,7 +227,7 @@ describe("EVM Family", () => {
               throw new Error();
             });
 
-          const tx = await prepareTransaction(account, {
+          const tx = await prepareTransaction(evmAPI)(account, {
             ...tokenTransaction,
             amount: new BigNumber(0),
           });
@@ -250,7 +258,7 @@ describe("EVM Family", () => {
             subAccounts: [tokenAccountWithBalance],
           };
 
-          const tx = await prepareTransaction(account2, {
+          const tx = await prepareTransaction(evmAPI)(account2, {
             ...tokenTransaction,
             amount: new BigNumber(0),
             useAllAmount: true,
@@ -288,7 +296,7 @@ describe("EVM Family", () => {
             subAccounts: [tokenAccountWithBalance],
           };
 
-          await prepareTransaction(account2, {
+          await prepareTransaction(evmAPI)(account2, {
             ...tokenTransaction,
             useAllAmount: true,
             subAccountId: tokenAccountWithBalance.id,
@@ -316,7 +324,10 @@ describe("EVM Family", () => {
             ...account,
             subAccounts: [tokenAccountWithBalance],
           };
-          const tx = await prepareTransaction(account2, tokenTransaction);
+          const tx = await prepareTransaction(evmAPI)(
+            account2,
+            tokenTransaction
+          );
 
           expect(tx).toEqual({
             ...tokenTransaction,
@@ -347,7 +358,10 @@ describe("EVM Family", () => {
             ...account,
             subAccounts: [tokenAccountWithBalance],
           };
-          const tx = await prepareTransaction(account2, tokenTransaction);
+          const tx = await prepareTransaction(evmAPI)(
+            account2,
+            tokenTransaction
+          );
 
           expect(tx).toEqual({
             ...tokenTransaction,

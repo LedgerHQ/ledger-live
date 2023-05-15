@@ -1,3 +1,5 @@
+// FIXME: fix mocks
+
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
@@ -10,6 +12,16 @@ import * as rpcAPI from "../api/rpc.common";
 import * as logic from "../logic";
 import * as synchronization from "../synchronization";
 import { makeAccount, makeOperation, makeTokenAccount } from "../testUtils";
+
+import { LRUCacheFn, makeNoCache } from "@ledgerhq/coin-framework/cache";
+import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
+import { EvmAPI } from "../api";
+
+const mockNetwork: NetworkRequestCall = (_): Promise<any> => {
+  return Promise.resolve();
+};
+
+const evmAPI = new EvmAPI(mockNetwork, makeNoCache);
 
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
 
@@ -134,7 +146,7 @@ describe("EVM Family", () => {
 
       it("should throw for currency without ethereumLikeInfo", async () => {
         try {
-          await synchronization.getAccountShape(
+          await synchronization.makeGetAccountShape(evmAPI)(
             {
               ...getAccountShapeParameters,
               currency: {
@@ -155,7 +167,7 @@ describe("EVM Family", () => {
 
       it("should throw for currency with unsupported explorer", async () => {
         try {
-          await synchronization.getAccountShape(
+          await synchronization.makeGetAccountShape(evmAPI)(
             {
               ...getAccountShapeParameters,
               currency: {
@@ -181,19 +193,22 @@ describe("EVM Family", () => {
       });
 
       describe("With no transactions fetched", () => {
+        let mockedGetLastCoinOperations: jest.Mock;
+        let mockedGetLastTokenOperations: jest.Mock;
+
         beforeAll(() => {
-          jest
-            .spyOn(etherscanAPI, "getLastCoinOperations")
-            .mockImplementation(() => Promise.resolve([]));
-          jest
-            .spyOn(etherscanAPI?.default, "getLastCoinOperations")
-            .mockImplementation(() => Promise.resolve([]));
-          jest
-            .spyOn(etherscanAPI, "getLastTokenOperations")
-            .mockImplementation(() => Promise.resolve([]));
-          jest
-            .spyOn(etherscanAPI?.default, "getLastTokenOperations")
-            .mockImplementation(() => Promise.resolve([]));
+          mockedGetLastCoinOperations = jest.fn(() => Promise.resolve([]));
+
+          mockedGetLastTokenOperations = jest.fn(() => Promise.resolve([]));
+
+          jest.spyOn(etherscanAPI, "getLastCoinOperations").mockImplementation(
+            // @ts-expect-error mock
+            (_cache: LRUCacheFn) => mockedGetLastCoinOperations
+          );
+          jest.spyOn(etherscanAPI, "getLastTokenOperations").mockImplementation(
+            // @ts-expect-error mock
+            (_cache: LRUCacheFn) => mockedGetLastTokenOperations
+          );
         });
 
         afterAll(() => {
@@ -201,7 +216,7 @@ describe("EVM Family", () => {
         });
 
         it("should return an account with a valid id", async () => {
-          const account = await synchronization.getAccountShape(
+          const account = await synchronization.makeGetAccountShape(evmAPI)(
             getAccountShapeParameters,
             {} as any
           );
@@ -215,7 +230,7 @@ describe("EVM Family", () => {
         });
 
         it("should return an account with the correct balance", async () => {
-          const account = await synchronization.getAccountShape(
+          const account = await synchronization.makeGetAccountShape(evmAPI)(
             getAccountShapeParameters,
             {} as any
           );
@@ -223,7 +238,7 @@ describe("EVM Family", () => {
         });
 
         it("should return an account with the correct operations count", async () => {
-          const account = await synchronization.getAccountShape(
+          const account = await synchronization.makeGetAccountShape(evmAPI)(
             getAccountShapeParameters,
             {} as any
           );
@@ -231,7 +246,7 @@ describe("EVM Family", () => {
         });
 
         it("should return an account with the correct block height", async () => {
-          const account = await synchronization.getAccountShape(
+          const account = await synchronization.makeGetAccountShape(evmAPI)(
             getAccountShapeParameters,
             {} as any
           );
@@ -241,17 +256,20 @@ describe("EVM Family", () => {
         it("should keep the operations from a sync to another", async () => {
           const operations = [coinOperation1];
           const tokenOperations = [tokenOperation1];
-          const accountWithSubAccount = await synchronization.getAccountShape(
-            {
-              ...getAccountShapeParameters,
-              initialAccount: {
-                ...account,
-                operations,
-                subAccounts: [{ ...tokenAccount, operations: tokenOperations }],
+          const accountWithSubAccount =
+            await synchronization.makeGetAccountShape(evmAPI)(
+              {
+                ...getAccountShapeParameters,
+                initialAccount: {
+                  ...account,
+                  operations,
+                  subAccounts: [
+                    { ...tokenAccount, operations: tokenOperations },
+                  ],
+                },
               },
-            },
-            {} as any
-          );
+              {} as any
+            );
           expect(accountWithSubAccount.operations).toBe(operations);
           expect(accountWithSubAccount?.subAccounts?.[0].operations).toBe(
             tokenOperations
@@ -263,7 +281,7 @@ describe("EVM Family", () => {
             .spyOn(logic, "getSyncHash")
             .mockImplementationOnce(() => "0xNope");
 
-          await synchronization.getAccountShape(
+          await synchronization.makeGetAccountShape(evmAPI)(
             {
               ...getAccountShapeParameters,
               initialAccount: {
@@ -277,17 +295,13 @@ describe("EVM Family", () => {
             {} as any
           );
 
-          expect(
-            etherscanAPI?.default.getLastCoinOperations
-          ).toHaveBeenCalledWith(
+          expect(mockedGetLastCoinOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
             0
           );
-          expect(
-            etherscanAPI?.default.getLastTokenOperations
-          ).toHaveBeenCalledWith(
+          expect(mockedGetLastTokenOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
@@ -296,7 +310,7 @@ describe("EVM Family", () => {
         });
 
         it("should do a full sync when syncHash changes", async () => {
-          await synchronization.getAccountShape(
+          await synchronization.makeGetAccountShape(evmAPI)(
             {
               ...getAccountShapeParameters,
               initialAccount: {
@@ -310,17 +324,13 @@ describe("EVM Family", () => {
             {} as any
           );
 
-          expect(
-            etherscanAPI?.default.getLastCoinOperations
-          ).toHaveBeenCalledWith(
+          expect(mockedGetLastCoinOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
             coinOperation1.blockHeight
           );
-          expect(
-            etherscanAPI?.default.getLastTokenOperations
-          ).toHaveBeenCalledWith(
+          expect(mockedGetLastTokenOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
@@ -331,14 +341,13 @@ describe("EVM Family", () => {
 
       describe("With transactions fetched", () => {
         beforeAll(() => {
-          jest
-            .spyOn(etherscanAPI?.default, "getLastCoinOperations")
-            .mockImplementation(() =>
-              Promise.resolve([coinOperation1, coinOperation2])
-            );
-          jest
-            .spyOn(etherscanAPI?.default, "getLastTokenOperations")
-            .mockImplementation(() =>
+          jest.spyOn(etherscanAPI, "getLastCoinOperations").mockImplementation(
+            // @ts-expect-error mock
+            (_cache) => () => Promise.resolve([coinOperation1, coinOperation2])
+          );
+          jest.spyOn(etherscanAPI, "getLastTokenOperations").mockImplementation(
+            // @ts-expect-error mock
+            (_cache) => () =>
               Promise.resolve([
                 {
                   tokenCurrency: tokenCurrency1,
@@ -349,7 +358,7 @@ describe("EVM Family", () => {
                   operation: tokenOperation2,
                 },
               ])
-            );
+          );
           jest
             .spyOn(rpcAPI, "getTokenBalance")
             .mockImplementation(async (a, b, contractAddress) => {
@@ -367,7 +376,9 @@ describe("EVM Family", () => {
         });
 
         it("should add the fetched transactions to the operations", async () => {
-          const accountShape = await synchronization.getAccountShape(
+          const accountShape = await synchronization.makeGetAccountShape(
+            evmAPI
+          )(
             {
               ...getAccountShapeParameters,
               initialAccount: account,
@@ -385,11 +396,14 @@ describe("EVM Family", () => {
         });
 
         it("should return a partial account based on blockHeight", async () => {
-          jest
-            .spyOn(etherscanAPI?.default, "getLastCoinOperations")
-            .mockImplementation(() => Promise.resolve([coinOperation3]));
+          jest.spyOn(etherscanAPI, "getLastCoinOperations").mockImplementation(
+            // @ts-expect-error mock
+            (_cache) => () => Promise.resolve([coinOperation3])
+          );
           const operations = [coinOperation2, coinOperation1];
-          const accountShape = await synchronization.getAccountShape(
+          const accountShape = await synchronization.makeGetAccountShape(
+            evmAPI
+          )(
             {
               ...getAccountShapeParameters,
               initialAccount: {
@@ -427,16 +441,12 @@ describe("EVM Family", () => {
         beforeAll(() => {
           jest
             .spyOn(etherscanAPI, "getLastCoinOperations")
-            .mockImplementation(() => Promise.resolve([]));
-          jest
-            .spyOn(etherscanAPI?.default, "getLastCoinOperations")
-            .mockImplementation(() => Promise.resolve([]));
+            // @ts-expect-error mock
+            .mockImplementation((_cache) => () => Promise.resolve([]));
           jest
             .spyOn(etherscanAPI, "getLastTokenOperations")
-            .mockImplementation(() => Promise.resolve([]));
-          jest
-            .spyOn(etherscanAPI?.default, "getLastTokenOperations")
-            .mockImplementation(() => Promise.resolve([]));
+            // @ts-expect-error mock
+            .mockImplementation((_cache) => () => Promise.resolve([]));
           jest
             .spyOn(synchronization, "getOperationStatus")
             .mockImplementation((currency, op) =>
@@ -449,7 +459,9 @@ describe("EVM Family", () => {
         });
 
         it("should add the confirmed pending operation to the operations", async () => {
-          const accountShape = await synchronization.getAccountShape(
+          const accountShape = await synchronization.makeGetAccountShape(
+            evmAPI
+          )(
             {
               ...getAccountShapeParameters,
               initialAccount: {
@@ -494,8 +506,9 @@ describe("EVM Family", () => {
 
       it("should return the right subAccounts", async () => {
         jest
-          .spyOn(etherscanAPI?.default, "getLastTokenOperations")
-          .mockImplementation(async () => [
+          .spyOn(etherscanAPI, "getLastTokenOperations")
+          // @ts-expect-error mock
+          .mockImplementation((_cache) => async () => [
             { tokenCurrency: tokenCurrency1, operation: tokenOperation1 },
             { tokenCurrency: tokenCurrency1, operation: tokenOperation2 },
             { tokenCurrency: tokenCurrency2, operation: tokenOperation4 },
@@ -505,7 +518,7 @@ describe("EVM Family", () => {
             },
           ]);
 
-        const tokenAccounts = await synchronization.getSubAccounts(
+        const tokenAccounts = await synchronization.getSubAccounts(evmAPI)(
           {
             ...getAccountShapeParameters,
             initialAccount: account,
@@ -539,11 +552,13 @@ describe("EVM Family", () => {
       });
 
       it("should return a partial sub account based on blockHeight", async () => {
+        const mockedGetLastTokenOperations = jest.fn(async () => [
+          { tokenCurrency: tokenCurrency1, operation: tokenOperation3 },
+        ]);
         jest
-          .spyOn(etherscanAPI?.default, "getLastTokenOperations")
-          .mockImplementation(async () => [
-            { tokenCurrency: tokenCurrency1, operation: tokenOperation3 },
-          ]);
+          .spyOn(etherscanAPI, "getLastTokenOperations")
+          // @ts-expect-error mock
+          .mockImplementation((_cache) => mockedGetLastTokenOperations);
 
         const incompleteUsdcAccount = {
           ...tokenAccount,
@@ -557,7 +572,7 @@ describe("EVM Family", () => {
           subAccounts: [incompleteUsdcAccount],
         };
 
-        const tokenAccounts = await synchronization.getSubAccounts(
+        const tokenAccounts = await synchronization.getSubAccounts(evmAPI)(
           {
             ...getAccountShapeParameters,
             initialAccount: accountWithIncompleteSubAccount,
@@ -577,7 +592,7 @@ describe("EVM Family", () => {
 
         expect(tokenAccounts).toEqual([expectedUsdcAccount]);
         // (currency, address, accountId, fromBlock)
-        expect(etherscanAPI.default.getLastTokenOperations).toBeCalledWith(
+        expect(mockedGetLastTokenOperations).toBeCalledWith(
           currency,
           account.freshAddress,
           account.id,
@@ -587,7 +602,7 @@ describe("EVM Family", () => {
 
       it("should throw for currency with unsupported explorer", async () => {
         try {
-          await synchronization.getSubAccounts(
+          await synchronization.getSubAccounts(evmAPI)(
             {
               ...getAccountShapeParameters,
               currency: {
