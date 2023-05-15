@@ -31066,32 +31066,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
       '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
-=======
-=======
->>>>>>> 7be4efc059 (pdate lockfile)
-=======
->>>>>>> cfabf79564 (lockfile)
-<<<<<<< HEAD
-      '@polkadot/util-crypto': 10.3.1
-=======
-=======
->>>>>>> 90544cf1ec (pdate lockfile)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 860d666bd7 (lockfile)
-      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
->>>>>>> 63f98d45aa (remove useless jest config props)
->>>>>>> c8e3fb4fcc (remove useless jest config props)
-=======
-      '@polkadot/util-crypto': 10.3.1(@polkadot/util@10.3.1)
->>>>>>> 9d175ece19 (update feature flag doc)
       color: 3.2.1
     dev: false
 
@@ -60800,33 +60775,6 @@ packages:
       jest-resolve:
         optional: true
     dependencies:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-      jest-resolve: 28.1.3(metro@0.76.0)
-=======
-<<<<<<< HEAD
-      jest-resolve: 28.1.3
->>>>>>> e0c58918db (ockfile)
-    dev: true
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 9d175ece19 (update feature flag doc)
-=======
->>>>>>> d6fb66efde (ockfile)
-=======
->>>>>>> d6b3ef3ae6 (lockfile)
-=======
->>>>>>> 479ea967f1 (lockfile)
       jest-resolve: 28.1.3(metro@0.76.0)
     dev: true
 
