@@ -395,16 +395,23 @@ const SwapForm = () => {
         },
       });
     } else {
-      setDrawer(
-        ExchangeDrawer,
-        {
-          swapTransaction,
-          exchangeRate,
-        },
-        {
-          preventBackdropClick: true,
-        },
-      );
+      history.push({
+        pathname: "/swap-web",
+        // state: {
+        //   returnTo: "/swap",
+        //   accountId: fromAddress,
+        // },
+      });
+      // setDrawer(
+      //   ExchangeDrawer,
+      //   {
+      //     swapTransaction,
+      //     exchangeRate,
+      //   },
+      //   {
+      //     preventBackdropClick: true,
+      //   },
+      // );
     }
   };
   const sourceAccount = swapTransaction.swap.from.account;

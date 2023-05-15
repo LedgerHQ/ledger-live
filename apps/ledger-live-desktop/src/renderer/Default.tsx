@@ -14,6 +14,7 @@ import Card from "~/renderer/screens/card";
 import Manager from "~/renderer/screens/manager";
 import Exchange from "~/renderer/screens/exchange";
 import Earn from "./screens/earn";
+import SwapWeb from "./screens/swapWeb";
 import Swap2 from "~/renderer/screens/exchange/Swap2";
 import USBTroubleshooting from "~/renderer/screens/USBTroubleshooting";
 import Account from "~/renderer/screens/account";
@@ -229,6 +230,7 @@ export default function Default() {
                               path="/account/:id/nft-collection"
                               component={NFTGallery}
                             />
+                            <Route path="/swap-web" component={SwapWeb} />
                             <Route
                               path="/account/:id/nft-collection/:collectionAddress?"
                               component={NFTCollection}
