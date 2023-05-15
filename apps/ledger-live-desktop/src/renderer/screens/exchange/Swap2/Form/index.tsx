@@ -397,10 +397,9 @@ const SwapForm = () => {
     } else {
       history.push({
         pathname: "/swap-web",
-        // state: {
-        //   returnTo: "/swap",
-        //   accountId: fromAddress,
-        // },
+        state: {
+          provider,
+        },
       });
       // setDrawer(
       //   ExchangeDrawer,

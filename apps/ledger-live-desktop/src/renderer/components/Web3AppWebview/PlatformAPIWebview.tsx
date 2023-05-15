@@ -364,7 +364,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         transition: "opacity 200ms ease-out",
       };
     }, [widgetLoaded]);
-
+    console.log("webviewProps.src", webviewProps.src);
     return (
       <>
         <webview

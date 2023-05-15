@@ -6,16 +6,19 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useLocation } from "react-router-dom";
 
 const DEFAULT_SWAP_APP_ID = "swapWeb";
 
 const Swap = () => {
+  const location = useLocation();
   const locale = useSelector(languageSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const localManifest = useLocalLiveAppManifest(DEFAULT_SWAP_APP_ID);
   const remoteManifest = useRemoteLiveAppManifest(DEFAULT_SWAP_APP_ID);
   const manifest = localManifest || remoteManifest;
   const themeType = useTheme("colors.palette.type");
+  const params = location.state;
 
   return (
     // TODO: Remove @ts-ignore after Card component be compatible with TS
@@ -37,6 +40,7 @@ const Swap = () => {
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
+            ...params,
           }}
         />
       ) : null}
