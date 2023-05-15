@@ -7,8 +7,13 @@ import {
 import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
 
-const maxFeesExpectedValue = ({ account, status }) =>
-  formatDeviceAmount(account.currency, status.estimatedFees);
+const maxFeesExpectedValue = ({
+  account,
+  status,
+}: {
+  account: any;
+  status: any;
+}) => formatDeviceAmount(account.currency, status.estimatedFees);
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({

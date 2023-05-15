@@ -43,6 +43,7 @@ export class EvmAPI {
       });
     if (dynamicTokens) return dynamicTokens;
 
+    // @ts-expect-error FIXME: fix typings
     const tokens = tokensByChainId[ethereumLikeInfo?.chainId || ""];
     if (tokens) return tokens;
 

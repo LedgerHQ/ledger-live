@@ -1,11 +1,11 @@
-// FIXME: imports
-
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { validateDomain } from "@ledgerhq/domain-service/utils/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { TransactionStatus } from "../../generated/types";
-import { DeviceTransactionField } from "../../transaction";
-import { Transaction as EvmTransaction } from "./types";
+
+import type { CommonDeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { Transaction as EvmTransaction, TransactionStatus } from "./types";
+
+type DeviceTransactionField = CommonDeviceTransactionField;
 
 /**
  * Method responsible for creating the summary of the screens visible on the nano
