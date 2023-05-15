@@ -36,10 +36,18 @@ const StepFees = (props: StepProps) => {
     .times(feePerGas)
     .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
   // todo remove logger it after test
-  logger.error(`transactionRaw.maxFeePerGas: ${transactionRaw.maxFeePerGas}`);
-  logger.error(`transactionRaw.gasPrice: ${transactionRaw.gasPrice}`);
-  logger.error(`transactionRaw.maxPriorityFeePerGas: ${transactionRaw.maxPriorityFeePerGas}`);
+  logger.log(`transactionRaw.maxFeePerGas: ${transactionRaw.maxFeePerGas}`);
+  logger.log(`transactionRaw.gasPrice: ${transactionRaw.gasPrice}`);
+  logger.log(`transactionRaw.maxPriorityFeePerGas: ${transactionRaw.maxPriorityFeePerGas}`);
 
+  let maxPriorityFeePerGasinGwei, maxFeePerGasinGwei, maxGasPriceinGwei;
+  if (EIP1559ShouldBeUsed(mainAccount.currency)){
+    maxPriorityFeePerGasinGwei = ((new BigNumber(transactionRaw.maxPriorityFeePerGas)).dividedBy(1000000000)).toNumber();
+    maxFeePerGasinGwei = ((new BigNumber(transactionRaw.maxFeePerGas)).dividedBy(1000000000)).toNumber();
+  }
+  else{
+    maxGasPriceinGwei = ((new BigNumber(transactionRaw.gasPrice)).dividedBy(1000000000)).toNumber();
+  }
   return (
     <Box flow={4}>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
@@ -58,9 +66,25 @@ const StepFees = (props: StepProps) => {
         </Fragment>
       )}
       <Alert type="primary">
-        <div>{`${t("operation.edit.previousFeesInfo")} ${feeValue} ${
-          mainAccount.currency.ticker
-        }`}</div>
+        {
+          EIP1559ShouldBeUsed(mainAccount.currency) ? 
+          (
+            <ul>
+              {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
+              <li>{`${t("operation.edit.previousFeesInfo.networkfee")} ${feeValue} ${mainAccount.currency.ticker}`}</li>
+              <li>{`${t("operation.edit.previousFeesInfo.maxPriorityFee")} ${maxPriorityFeePerGasinGwei} Gwei`}</li>
+              <li>{`${t("operation.edit.previousFeesInfo.maxFee")} ${maxFeePerGasinGwei} Gwei`}</li>
+            </ul>
+          )
+          :
+          (
+            <ul>
+              {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
+              <li>{`${t("operation.edit.previousFeesInfo.networkfee")} ${feeValue} ${mainAccount.currency.ticker}`}</li>
+              <li>{`${t("operation.edit.previousFeesInfo.gasPrice")} ${maxGasPriceinGwei} Gwei`}</li>
+            </ul>
+          )
+        }
       </Alert>
     </Box>
   );

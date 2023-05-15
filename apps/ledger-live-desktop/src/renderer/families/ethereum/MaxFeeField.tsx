@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import {
   Transaction as EthereumTransaction,
   TransactionStatus,
+  TransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -21,6 +22,7 @@ import Label from "~/renderer/components/Label";
 import Box from "~/renderer/components/Box";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
+import { MaxFeeTooLow } from "@ledgerhq/errors";
 
 const ErrorContainer = styled(Box)`
   margin-top: 0px;
@@ -55,9 +57,10 @@ type Props = {
   transaction: EthereumTransaction;
   status: TransactionStatus;
   updateTransaction: Result<EthereumTransaction>["updateTransaction"];
+  transactionRaw?: TransactionRaw;
 };
 
-const FeesField = ({ account, parentAccount, transaction, status, updateTransaction }: Props) => {
+const FeesField = ({ account, parentAccount, transaction, status, updateTransaction, transactionRaw }: Props) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -99,8 +102,15 @@ const FeesField = ({ account, parentAccount, transaction, status, updateTransact
   );
 
   const validTransactionError = status.errors.maxFee;
-  const validTransactionWarning = status.warnings.maxFee;
-
+  let validTransactionWarning = status.warnings.maxFee;
+  // give user a warning if maxFeePerGas is lower than pending transaction maxFeePerGas + 10% of pending transaction maxPriorityFeePerGas for edit eth transaction feature
+  if (!validTransactionWarning && transactionRaw && transactionRaw.maxPriorityFeePerGas) {
+    const maxPriorityFeeGap:number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
+    const lowerLimitMaxFeePerGas = (new BigNumber(transactionRaw.maxFeePerGas)).plus((new BigNumber(transactionRaw.maxPriorityFeePerGas)).times(maxPriorityFeeGap));
+    if (transaction.maxFeePerGas.isLessThan(lowerLimitMaxFeePerGas)) {
+      validTransactionWarning = new MaxFeeTooLow();
+    }
+  }
   return (
     <Box mb={1}>
       <LabelWithExternalIcon

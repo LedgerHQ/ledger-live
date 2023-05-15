@@ -200,9 +200,9 @@ const Body = ({
     feeValue.times(1.1).plus(account.type === "Account" ? params.transactionRaw.amount : 0),
   );
   // todo remove logger it after test
-  logger.error(`main account address: ${mainAccount.freshAddress}`);
-  logger.error(`main account balance: ${mainAccount.balance.toNumber()}`);
-  logger.error(`feeValue: ${feeValue.toNumber()}`);
+  logger.log(`main account address: ${mainAccount.freshAddress}`);
+  logger.log(`main account balance: ${mainAccount.balance.toNumber()}`);
+  logger.log(`feeValue: ${feeValue.toNumber()}`);
 
   let isOldestEditableOperation = true;
   account.pendingOperations.forEach(operation => {

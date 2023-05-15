@@ -10,6 +10,8 @@ import {
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import FeeSliderField from "~/renderer/components/FeeSliderField";
 import { inferDynamicRange } from "@ledgerhq/live-common/range";
+import { getEnv } from "@ledgerhq/live-env";
+
 type Props = {
   account: Account;
   transaction: Transaction;
@@ -42,7 +44,8 @@ const FeesField = ({ account, transaction, status, updateTransaction, transactio
   const gasPrice = transaction.gasPrice || range.initial;
   // update gas price range according to previous pending transaction if necessary
   if (transactionRaw && transactionRaw.gasPrice) {
-    const minNewGasPrice = new BigNumber(transactionRaw.gasPrice).times(1.1);
+    const gaspriceGap:number = getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR");
+    const minNewGasPrice = new BigNumber(transactionRaw.gasPrice).times(1+gaspriceGap);
     const minValue = BigNumber.max(range.min, minNewGasPrice);
     let maxValue = BigNumber.max(range.max, minNewGasPrice);
     // avoid lower bound = upper bound, which will cause an error in inferDynamicRange

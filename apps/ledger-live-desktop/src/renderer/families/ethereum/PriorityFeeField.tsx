@@ -22,6 +22,7 @@ import Label from "~/renderer/components/Label";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import { urls } from "~/config/urls";
+import { getEnv } from "@ledgerhq/live-env";
 
 const ErrorContainer = styled(Box)`
   margin-top: 0px;
@@ -105,7 +106,9 @@ const FeesField = ({
   );
   // update suggested max priority fee according to previous pending transaction if necessary
   if (transactionRaw && transactionRaw.maxPriorityFeePerGas) {
-    const newMaxPriorityFeePerGas = new BigNumber(transactionRaw.maxPriorityFeePerGas).times(1.1);
+    // update the range to make sure that new maxPriorityFeePerGas is at least 10% higher than the pending transaction
+    const maxPriorityFeeGap:number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
+    const newMaxPriorityFeePerGas = new BigNumber(transactionRaw.maxPriorityFeePerGas).times(1+maxPriorityFeeGap);
     if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(lowPriorityFeeValue))) {
       lowPriorityFeeValue = formatCurrencyUnit(unit, newMaxPriorityFeePerGas);
     }
