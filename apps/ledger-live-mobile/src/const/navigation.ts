@@ -19,7 +19,7 @@ export enum ScreenName {
   ClaimNftQrScan = "ClaimNftQrScan",
   ClaimRewardsConnectDevice = "ClaimRewardsConnectDevice",
   ClaimRewardsSelectDevice = "ClaimRewardsSelectDevice",
-  ClaimRewardsSendValidationErrorionError = "ClaimRewardsValidationError",
+  ClaimRewardsValidationError = "ClaimRewardsValidationError",
   ClaimRewardsValidationSuccess = "ClaimRewardsValidationSuccess",
   ConfirmPassword = "ConfirmPassword",
   CountervalueSettings = "CountervalueSettings",
@@ -284,6 +284,7 @@ export enum ScreenName {
   ElrondWithdrawValidationError = "ElrondWithdrawValidationError",
   ElrondWithdrawValidationSuccess = "ElrondWithdrawValidationSuccess",
 
+  // Osmosis
   OsmosisDelegationStarted = "OsmosisDelegationStarted",
   OsmosisDelegationValidator = "OsmosisDelegationValidator",
   OsmosisDelegationValidatorSelect = "OsmosisDelegationValidatorSelect",
@@ -312,6 +313,8 @@ export enum ScreenName {
 
   // crypto_org
   CryptoOrgEditMemo = "CryptoOrgEditMemo",
+
+  // Algorand
   AlgorandEditMemo = "AlgorandEditMemo",
   AlgorandClaimRewardsInfo = "AlgorandClaimRewardsInfo",
   AlgorandClaimRewardsStarted = "AlgorandClaimRewardsStarted",
