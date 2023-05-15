@@ -12,6 +12,9 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "../../const";
 
 export type EditTransactionParamList = {
+  [ScreenName.TransactionAlreadyValidatedError]: {
+    error: Error;
+  };
   [ScreenName.EditTransactionMethodSelection]: {
     operation: Operation;
     account: AccountLike;

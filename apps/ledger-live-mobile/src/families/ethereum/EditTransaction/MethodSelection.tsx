@@ -18,6 +18,8 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { isOldestEditableOperation } from "@ledgerhq/live-common/operation";
+import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -39,6 +41,8 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     "operation.transactionRaw not found. Could not edit the transaction",
   );
 
+  const mainAccount = getMainAccount(account, parentAccount);
+
   const transactionToEdit = fromTransactionRaw(
     operation.transactionRaw as TransactionRaw,
   ) as Transaction;
@@ -57,7 +61,6 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     "[useBridgeTransaction - MethodSelection] could not found transaction from bridge.",
   );
 
-  const mainAccount = getMainAccount(account, parentAccount);
   const feePerGas = new BigNumber(
     EIP1559ShouldBeUsed(mainAccount.currency)
       ? transactionToEdit.maxFeePerGas!
@@ -161,8 +164,24 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       transactionToEdit,
       bridge,
       operation.transactionSequenceNumber,
+      setTransaction,
+      mainAccount.currency,
     ],
   );
+
+  apiForCurrency(mainAccount.currency)
+    .getAccountNonce(mainAccount.freshAddress)
+    .then(nonce => {
+      const { transactionSequenceNumber } = operation;
+
+      if (transactionSequenceNumber && transactionSequenceNumber < nonce - 1) {
+        navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
+          error: new TransactionHasBeenValidatedError(
+            "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
+          ),
+        });
+      }
+    });
 
   useEffect(() => {
     if (selectedMethod === "cancel") {
@@ -183,7 +202,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
         nextNavigation: ScreenName.SendSelectDevice,
       });
     }
-  }, [selectedMethod, transaction]);
+  }, [selectedMethod, transaction, operation, status]);
 
   const { t } = useTranslation();
 

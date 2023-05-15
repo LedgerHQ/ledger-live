@@ -13,6 +13,7 @@ import SendConnectDevice from "../../screens/ConnectDevice";
 import SendSummary from "../../screens/SendFunds/04-Summary";
 import SendValidationSuccess from "../../screens/SendFunds/07-ValidationSuccess";
 import SendValidationError from "../../screens/SendFunds/07-ValidationError";
+import { TransactionAlreadyValidatedError } from "./EditTransaction/TransactionAlreadyValidatedError";
 
 const Stack = createStackNavigator<EditTransactionParamList>();
 
@@ -71,6 +72,14 @@ export default function EditTransactionNavigator() {
       <Stack.Screen
         name={ScreenName.SendValidationError}
         component={SendValidationError}
+        options={{
+          headerShown: false,
+          headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.TransactionAlreadyValidatedError}
+        component={TransactionAlreadyValidatedError}
         options={{
           headerShown: false,
           headerTitle: () => <StepHeader title={t("editTransaction.header")} />,
