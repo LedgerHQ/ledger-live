@@ -8,6 +8,7 @@ import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import {
   discreetModeSelector,
@@ -47,7 +48,6 @@ import {
 } from "../../reducers/accounts";
 import PortfolioAssets from "./PortfolioAssets";
 import { internetReachable } from "../../logic/internetReachable";
-import { useLearnMoreURI } from "../../hooks/recoverFeatureFlag";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -71,7 +71,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
   const protectFeature = useFeature("protectServicesMobile");
-  const recoverUpsellURL = useLearnMoreURI();
+  const recoverUpsellURL = useLearnMoreURI(protectFeature);
   const dispatch = useDispatch();
 
   useEffect(() => {
