@@ -107,9 +107,9 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
       type: "scanning",
     });
   }, [dispatch, navigation]);
+
   const onError = useCallback(
     (error: Error) => {
-      logger.critical(error);
       navigation.setParams({
         hasError: true,
       });
@@ -120,6 +120,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
     },
     [dispatch, navigation],
   );
+
   const onSelect = useCallback(
     async (bleDevice: TransportBleDevice, deviceMeta?: Device) => {
       const device = {
