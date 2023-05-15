@@ -60,7 +60,14 @@ type Props = {
   transactionRaw?: TransactionRaw;
 };
 
-const FeesField = ({ account, parentAccount, transaction, status, updateTransaction, transactionRaw }: Props) => {
+const FeesField = ({
+  account,
+  parentAccount,
+  transaction,
+  status,
+  updateTransaction,
+  transactionRaw,
+}: Props) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -105,8 +112,10 @@ const FeesField = ({ account, parentAccount, transaction, status, updateTransact
   let validTransactionWarning = status.warnings.maxFee;
   // give user a warning if maxFeePerGas is lower than pending transaction maxFeePerGas + 10% of pending transaction maxPriorityFeePerGas for edit eth transaction feature
   if (!validTransactionWarning && transactionRaw && transactionRaw.maxPriorityFeePerGas) {
-    const maxPriorityFeeGap:number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
-    const lowerLimitMaxFeePerGas = (new BigNumber(transactionRaw.maxFeePerGas)).plus((new BigNumber(transactionRaw.maxPriorityFeePerGas)).times(maxPriorityFeeGap));
+    const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
+    const lowerLimitMaxFeePerGas = new BigNumber(transactionRaw.maxFeePerGas).plus(
+      new BigNumber(transactionRaw.maxPriorityFeePerGas).times(maxPriorityFeeGap),
+    );
     if (transaction.maxFeePerGas.isLessThan(lowerLimitMaxFeePerGas)) {
       validTransactionWarning = new MaxFeeTooLow();
     }

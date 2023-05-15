@@ -188,13 +188,28 @@ export class StepMethodFooter extends PureComponent<StepProps> {
                   recipient: account.freshAddress ?? parentAccount.freshAddress,
                   // increase gas fees in case of cancel flow as we don't have the fees input screen for cancel flow
                   maxFeePerGas: transactionRaw.maxFeePerGas
-                    ? new BigNumber(Math.round(transactionRaw.maxFeePerGas * (1+getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")) ))
+                    ? new BigNumber(
+                        Math.round(
+                          transactionRaw.maxFeePerGas *
+                            (1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")),
+                        ),
+                      )
                     : null,
                   maxPriorityFeePerGas: transactionRaw.maxPriorityFeePerGas
-                    ? new BigNumber(Math.round(transactionRaw.maxPriorityFeePerGas * (1+getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR"))))
+                    ? new BigNumber(
+                        Math.round(
+                          transactionRaw.maxPriorityFeePerGas *
+                            (1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR")),
+                        ),
+                      )
                     : null,
                   gasPrice: transactionRaw.gasPrice
-                    ? new BigNumber(Math.round(transactionRaw.gasPrice * (1+getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR"))))
+                    ? new BigNumber(
+                        Math.round(
+                          transactionRaw.gasPrice *
+                            (1 + getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR")),
+                        ),
+                      )
                     : null,
                   feesStrategy: "custom",
                 }),

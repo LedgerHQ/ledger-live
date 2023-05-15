@@ -107,8 +107,10 @@ const FeesField = ({
   // update suggested max priority fee according to previous pending transaction if necessary
   if (transactionRaw && transactionRaw.maxPriorityFeePerGas) {
     // update the range to make sure that new maxPriorityFeePerGas is at least 10% higher than the pending transaction
-    const maxPriorityFeeGap:number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
-    const newMaxPriorityFeePerGas = new BigNumber(transactionRaw.maxPriorityFeePerGas).times(1+maxPriorityFeeGap);
+    const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
+    const newMaxPriorityFeePerGas = new BigNumber(transactionRaw.maxPriorityFeePerGas).times(
+      1 + maxPriorityFeeGap,
+    );
     if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(lowPriorityFeeValue))) {
       lowPriorityFeeValue = formatCurrencyUnit(unit, newMaxPriorityFeePerGas);
     }
