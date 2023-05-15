@@ -16,7 +16,7 @@ const StartExchange = () => {
         <ModalBody
           onClose={() => {
             if (data.onCancel) {
-              data.onCancel("Interrupted by user");
+              data.onCancel(new Error("Interrupted by user"));
             }
             onClose?.();
           }}

@@ -255,7 +255,7 @@ export type CompleteExchangeRequest = {
 export type CompleteExchangeUiRequest = {
   provider: string;
   exchange: Exchange;
-  transaction: WalletAPITransaction;
+  transaction: Transaction;
   binaryPayload: string;
   signature: string;
   feesStrategy: string;
