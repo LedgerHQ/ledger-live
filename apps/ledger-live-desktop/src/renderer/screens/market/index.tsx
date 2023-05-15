@@ -130,7 +130,7 @@ export default function Market() {
         <SelectBarContainer flexDirection="row" alignItems="center" justifyContent="flex-end">
           <Flex data-test-id="market-countervalue-select" justifyContent="flex-end" mx={4}>
             <CounterValueSelect
-              counterCurrency={counterCurrency}
+              counterCurrency={String(counterCurrency)}
               setCounterCurrency={setCounterCurrency}
               supportedCounterCurrencies={supportedCounterCurrencies}
             />
@@ -161,7 +161,7 @@ export default function Market() {
                 },
                 liveCompatible: {
                   toggle: toggleLiveCompatible,
-                  value: liveCompatible,
+                  value: Boolean(liveCompatible),
                 },
               }}
               t={t}

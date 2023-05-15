@@ -31,7 +31,7 @@ const T = styled(Box).attrs((p: { color?: string; inline?: boolean; ff?: string 
   width: ${p => (p.inline ? "" : "100%")};
   overflow: hidden;
 `;
-const I = ({ color, children }: { color?: string; children: any }) => (
+const I = ({ color, children }: { color?: string; children: React.ReactNode }) => (
   <Box color={color}>{children}</Box>
 );
 I.defaultProps = {
@@ -57,7 +57,7 @@ export type OwnProps = {
   dynamicSignificantDigits?: number;
   staticSignificantDigits?: number;
   style?: React.CSSProperties;
-} & BoxProps;
+} & React.ComponentProps<typeof T>;
 const mapStateToProps = createStructuredSelector({
   discreet: discreetModeSelector,
   locale: localeSelector,

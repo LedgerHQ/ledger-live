@@ -19,11 +19,11 @@ export const VISIBLE_STATUS = [
   "downloading-update",
 ];
 const CONTENT_BY_STATUS = (
-  quitAndInstall,
-  reDownload,
-  progress,
-  downloadUpdate,
-  version,
+  quitAndInstall: () => void,
+  reDownload: () => void,
+  progress: number,
+  downloadUpdate: () => void,
+  version: string,
 ): {
   [x: string]: Content;
 } => ({

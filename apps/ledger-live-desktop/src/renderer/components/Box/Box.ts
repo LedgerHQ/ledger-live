@@ -63,6 +63,8 @@ export type BoxProps = {
   align?: "THIS PROPERTY IS NOT VALID \u2013 SWITCH TO alignItems";
   justify?: "THIS PROPERTY IS NOT VALID \u2013 SWITCH TO justifyContent";
   fontWeight?: string | number;
+  textTransform?: string;
+  cursor?: string;
   ff?: string;
   gap?: string | number;
 } & AlignItemsProps &

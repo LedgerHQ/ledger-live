@@ -21,7 +21,7 @@ import ChevronRight from "~/renderer/icons/ChevronRight";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import Loader from "~/renderer/icons/Loader";
 import { TableLine } from "./Header";
-const Wrapper: ThemedComponent<any> = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;

@@ -26,7 +26,6 @@ const StepRecipient = ({
   onChangeTransaction,
   error,
   status,
-  bridgePending,
   maybeRecipient,
   onResetMaybeRecipient,
   maybeNFTId,
@@ -56,12 +55,14 @@ const StepRecipient = ({
       {isNFTSend ? (
         <Box flow={1}>
           <Label>{t("send.steps.recipient.nftRecipient")}</Label>
-          <SelectNFT
-            onSelect={onChangeNFT}
-            maybeNFTId={maybeNFTId}
-            maybeNFTCollection={maybeNFTCollection}
-            account={account}
-          />
+          {account && (
+            <SelectNFT
+              onSelect={onChangeNFT}
+              maybeNFTId={maybeNFTId}
+              maybeNFTCollection={maybeNFTCollection}
+              account={account as Account}
+            />
+          )}
         </Box>
       ) : (
         <Box flow={1}>
@@ -91,7 +92,6 @@ const StepRecipient = ({
             account={mainAccount}
             transaction={transaction}
             onChangeTransaction={onChangeTransaction}
-            bridgePending={bridgePending}
             t={t}
             initValue={maybeRecipient}
             resetInitValue={onResetMaybeRecipient}

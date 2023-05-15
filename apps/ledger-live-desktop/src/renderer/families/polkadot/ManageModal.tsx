@@ -69,7 +69,6 @@ const ManageButton = styled.button`
   `};
 `;
 const InfoWrapper = styled(Box).attrs(() => ({
-  vertical: true,
   flex: 1,
   ml: 3,
   textAlign: "start",

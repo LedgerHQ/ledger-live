@@ -38,8 +38,8 @@ export default function ResourceField({
         <Popover
           position="right"
           content={
-            <Box vertical px={2}>
-              <Box vertical alignItems="start" justifyContent="start" my={2}>
+            <Box px={2}>
+              <Box alignItems="start" justifyContent="start" my={2}>
                 <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
                   <Trans i18nKey="polkadot.bond.rewardDestination.stash" />
                 </Text>
@@ -48,7 +48,7 @@ export default function ResourceField({
                 </Text>
               </Box>
 
-              <Box vertical alignItems="start" justifyContent="start" my={2}>
+              <Box alignItems="start" justifyContent="start" my={2}>
                 <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
                   <Trans i18nKey="polkadot.bond.rewardDestination.staked" />
                 </Text>
@@ -57,7 +57,7 @@ export default function ResourceField({
                 </Text>
               </Box>
 
-              <Box vertical alignItems="start" justifyContent="start" my={2}>
+              <Box alignItems="start" justifyContent="start" my={2}>
                 <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
                   <Trans i18nKey="polkadot.bond.rewardDestination.optionTitle" />
                 </Text>

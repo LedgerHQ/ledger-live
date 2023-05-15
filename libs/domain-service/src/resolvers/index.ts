@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import eip55 from "eip55";
 import { log } from "@ledgerhq/logs";
 import { DomainServiceResolution, SupportedRegistries } from "../types";
@@ -44,7 +44,7 @@ export const resolveDomain = async (
       if (promise.status !== "fulfilled") {
         // ignore 404 error
         if (
-          promise.reason instanceof AxiosError &&
+          axios.isAxiosError(promise.reason) &&
           promise.reason.response?.status !== 404
         ) {
           log("domain-service", "failed to resolve a domain", {
@@ -119,7 +119,7 @@ export const resolveAddress = async (
       if (promise.status !== "fulfilled") {
         // ignore 404 error
         if (
-          promise.reason instanceof AxiosError &&
+          axios.isAxiosError(promise.reason) &&
           promise.reason.response?.status !== 404
         ) {
           log("domain-service", "failed to resolve a address", {

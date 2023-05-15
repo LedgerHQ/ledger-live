@@ -4,16 +4,18 @@ import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
 import Input from "~/renderer/components/Input";
 import Box from "~/renderer/components/Box";
+
 type Props = {
-  name: any;
+  name: string;
   isDefault: boolean;
   readOnly: boolean;
-  onChange: (name: string, val: unknown) => boolean;
+  onChange: (name: string, val: unknown) => void;
   value: number;
-  minValue: number;
-  maxValue: number;
+  minValue?: number;
+  maxValue?: number;
 };
-const ExperimentalInteger = ({
+
+const ExperimentalFloat = ({
   name,
   isDefault,
   readOnly,
@@ -86,10 +88,10 @@ const ExperimentalInteger = ({
         <Switch
           disabled={readOnly}
           isChecked={enabled}
-          onChange={readOnly ? null : onEnableChange}
+          onChange={readOnly ? undefined : onEnableChange}
         />
       </Box>
     </>
   );
 };
-export default ExperimentalInteger;
+export default ExperimentalFloat;

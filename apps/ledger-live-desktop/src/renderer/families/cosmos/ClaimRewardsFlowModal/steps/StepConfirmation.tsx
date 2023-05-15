@@ -26,9 +26,18 @@ const Container: ThemedComponent<{
 }))`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
-function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators } = useCosmosFamilyPreloadData(currencyName);
+
+function StepConfirmation({
+  account,
+  optimisticOperation,
+  error,
+  signed,
+  transaction,
+}: StepProps & {
+  theme: any;
+}) {
+  const currencyId = account.currency.id;
+  const { validators } = useCosmosFamilyPreloadData(currencyId);
   const locale = useSelector(localeSelector);
   if (optimisticOperation) {
     const unit = account && getAccountUnit(account);

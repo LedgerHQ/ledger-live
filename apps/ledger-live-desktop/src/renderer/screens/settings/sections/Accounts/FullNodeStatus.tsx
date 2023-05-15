@@ -14,9 +14,9 @@ import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 // eslint-disable-next-line no-restricted-imports
 import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 
-const Dot: ThemedComponent<{
+const Dot = styled.div<{
   color?: string;
-}> = styled.div`
+}>`
   background-color: ${p => p.color || colors.wallet};
   border-radius: 50%;
   width: 8px;
@@ -28,7 +28,7 @@ const Wrapper = styled(Box)`
   padding: 12px 20px;
   display: flow;
 `;
-const getColorsForStatus = status => {
+const getColorsForStatus = (status: string) => {
   // FIXME this knowledge should be in live-common (because we may add more status)
   // FIXME we should make it a map of {status->type} because it's more usable and also better to prove to Flow we have define all cases
   const naiveMapping = {
@@ -61,7 +61,7 @@ const FullNodeStatus = () => {
   const { progress, type } = latestStatus;
 
   const { textColor, dotColor } = getColorsForStatus(type);
-  const formattedProgress = progress ? (parseFloat(progress) * 100).toFixed(0) : undefined;
+  const formattedProgress = progress ? (parseFloat(String(progress)) * 100).toFixed(0) : undefined;
   const statusLabel = `${t("fullNode.status")}:`;
   return (
     <Box horizontal>

@@ -1,21 +1,25 @@
 import React, { PureComponent } from "react";
 import invariant from "invariant";
-import { withContextMenuContext, ContextMenuItemType } from "./ContextMenuWrapper";
+import { withContextMenuContext, ContextMenuItemType, ContextType } from "./ContextMenuWrapper";
 import { track } from "~/renderer/analytics/segment";
 const DISABLE_CONTEXT_MENU = Boolean(process.env.DISABLE_CONTEXT_MENU);
-type Props = {
+
+type InnerProps = {
   children?: React.ReactNode;
   leftClick?: boolean;
   items: ContextMenuItemType[];
   event?: string;
-  eventProperties?: any;
-  context: {
-    showContextMenu: (event: MouseEvent, items: ContextMenuItemType[]) => void;
-  };
+  eventProperties?: Record<string, unknown>;
 };
+
+type Props = InnerProps & {
+  context: ContextType;
+};
+
 type State = {
   active: boolean;
 };
+
 class ContextMenuItem extends PureComponent<Props, State> {
   componentDidMount() {
     const { items, leftClick } = this.props;
@@ -49,10 +53,13 @@ class ContextMenuItem extends PureComponent<Props, State> {
     e.stopPropagation();
   };
 
-  ref: any;
+  ref: HTMLDivElement | null = null;
   render() {
     const { children } = this.props;
     return <div ref={c => (this.ref = c)}>{children}</div>;
   }
 }
-export default withContextMenuContext(ContextMenuItem);
+
+const Wrapped = withContextMenuContext<InnerProps>(ContextMenuItem);
+
+export default Wrapped;

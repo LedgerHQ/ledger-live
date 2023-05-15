@@ -18,7 +18,7 @@ import RetryButton from "~/renderer/components/RetryButton";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
-import AccountsList from "~/renderer/components/AccountsList";
+import AccountsList, { AccountListProps } from "~/renderer/components/AccountsList";
 import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
@@ -27,6 +27,12 @@ import { StepProps } from "..";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import byFamily from "~/renderer/generated/NoAssociatedAccounts";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+
+type Props = AccountListProps & {
+  defaultSelected: boolean;
+  currency: CryptoOrTokenCurrency;
+};
 
 // TODO: This Error return type is just wrong…
 const remapTransportError = (err: unknown, appName: string): Error => {
@@ -51,7 +57,7 @@ const LoadingRow = styled(Box).attrs(() => ({
   height: 48px;
   border: 1px dashed ${p => p.theme.colors.palette.text.shade60};
 `;
-const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
+const SectionAccounts = ({ defaultSelected, ...rest }: Props) => {
   // componentDidMount-like effect
   useEffect(() => {
     if (defaultSelected && rest.onSelectAll) {
@@ -336,10 +342,11 @@ class StepImport extends PureComponent<
                 checkedIds={!selectable ? undefined : checkedAccountsIds}
                 onToggleAccount={!selectable ? undefined : this.handleToggleAccount}
                 setAccountName={!selectable ? undefined : setAccountName}
-                editedNames={!selectable ? undefined : editedNames}
+                editedNames={!selectable ? {} : editedNames}
                 onSelectAll={!selectable ? undefined : this.handleSelectAll}
                 onUnselectAll={!selectable ? undefined : this.handleUnselectAll}
                 ToggleAllComponent={hasMultipleSchemes && this.renderLegacyAccountsToggle()}
+                t={t}
               />
             );
           })}

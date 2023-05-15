@@ -27,7 +27,7 @@ const ErrorWrapper = styled.div`
     margin-right: 5px;
   }
 `;
-const ErrorContainer = styled(Box)`
+const ErrorContainer = styled(Box)<{ hasError?: boolean }>`
   margin-top: 0px;
   font-size: 12px;
   width: 100%;
@@ -105,7 +105,7 @@ const FeeSliderField = ({ range, value, onChange, unit, error, defaultValue }: P
           <Trans i18nKey="fees.fast" />
         </Text>
       </Box>
-      <ErrorContainer hasError={error}>
+      <ErrorContainer hasError={!!error}>
         {error ? (
           <ErrorWrapper>
             <IconExclamationCircle size={12} />

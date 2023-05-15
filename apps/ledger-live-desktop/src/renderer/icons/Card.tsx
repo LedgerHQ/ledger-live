@@ -10,7 +10,7 @@ const path = (
     />
   </>
 );
-const Card = ({ size }: { size: number }) => (
+const Card = ({ size = 16 }: { size?: number }) => (
   <svg viewBox="0 0 16 16" height={size} width={size}>
     {path}
   </svg>

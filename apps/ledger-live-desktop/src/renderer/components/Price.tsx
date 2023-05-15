@@ -12,6 +12,9 @@ import Box from "~/renderer/components/Box";
 import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
 import IconActivity from "~/renderer/icons/Activity";
 import { NoCountervaluePlaceholder } from "./CounterValue";
+
+type ColorKeys = keyof typeof colors;
+
 type Props = {
   unit?: Unit;
   rate?: BigNumber;
@@ -19,10 +22,10 @@ type Props = {
   from: Currency;
   to?: Currency;
   withActivityCurrencyColor?: boolean;
-  withActivityColor?: string;
+  withActivityColor?: ColorKeys;
   withIcon?: boolean;
   withEquality?: boolean;
-  color?: string;
+  color?: ColorKeys; // TODO change type of this props
   fontSize?: number;
   fontWeight?: number;
   iconSize?: number;
@@ -63,7 +66,7 @@ export default function Price({
     : typeof rawCounterValue === "number"
     ? BigNumber(rawCounterValue)
     : rawCounterValue;
-  const bgColor = useTheme("colors.palette.background.paper");
+  const bgColor = useTheme().colors.palette.background.paper;
   const activityColor = useMemo(
     () =>
       withActivityColor

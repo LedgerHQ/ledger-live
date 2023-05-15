@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Skeleton from "./Skeleton";
-const Wrapper: ThemedComponent<{
+const Wrapper = styled.div<{
   full?: boolean;
   size?: number;
   loaded: boolean;
@@ -9,7 +9,8 @@ const Wrapper: ThemedComponent<{
   maxHeight?: number;
   maxWidth?: number;
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
-}> = styled.div`
+  error?: boolean;
+}>`
   width: ${({ full, size }) => (full ? "100%" : `${size}px`)};
   height: ${({ full }) => full && "100%"};
   aspect-ratio: ${({ square, error }) => (square || error ? "1 / 1" : "initial")};
@@ -52,6 +53,8 @@ type Props = {
   objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
   square?: boolean;
   setUseFallback: (a: boolean) => void;
+  // To achieve props parity with <Image />
+  isFallback?: boolean;
 };
 type State = {
   loaded: boolean;

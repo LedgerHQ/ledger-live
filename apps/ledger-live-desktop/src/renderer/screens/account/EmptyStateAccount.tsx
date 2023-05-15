@@ -16,7 +16,7 @@ import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import styled from "styled-components";
-import { withRouter } from "react-router-dom";
+import { useHistory, withRouter } from "react-router-dom";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
@@ -30,13 +30,14 @@ type OwnProps = {
 };
 type Props = OwnProps & {
   t: TFunction;
-  history: any;
+
   openModal: Function;
 };
-function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Props) {
+function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
   const rampCatalog = useRampCatalog();
+  const history = useHistory();
 
   // PTX smart routing feature flag - buy sell live app flag
   const ptxSmartRouting = useFeature("ptxSmartRouting");
@@ -104,7 +105,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal, history }: Pr
               {"and"}
               <Text ff="Inter|SemiBold" color="palette.text.shade100">
                 {account &&
-                  account.currency &&
+                  account.type === "Account" &&
                   listTokenTypesForCryptoCurrency(account.currency).join(", ")}
                 {"tokens"}
               </Text>
@@ -159,7 +160,8 @@ const Description = styled(Box).attrs(() => ({
   color: "palette.text.shade80",
   textAlign: "center",
 }))``;
-const ConnectedEmptyStateAccount: React.ComponentType<OwnProps> = compose(
+
+const ConnectedEmptyStateAccount = compose<React.ComponentType<OwnProps>>(
   connect(null, mapDispatchToProps),
   withRouter,
   withTranslation(),

@@ -8,6 +8,7 @@ import {
   getKYCStatusFromCheckQuoteStatus,
   getProviderName,
   KYC_STATUS,
+  KYCStatus,
   shouldShowKYCBanner,
   shouldShowLoginBanner,
 } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -54,6 +55,13 @@ import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import usePageState from "./hooks/usePageState";
 import { getCustomDappUrl } from "./utils";
+import { AccountLike, Feature } from "@ledgerhq/types-live";
+import {
+  ValidCheckQuoteErrorCodes,
+  ValidKYCStatus,
+} from "@ledgerhq/live-common/exchange/swap/types";
+import BigNumber from "bignumber.js";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 const Wrapper = styled(Box).attrs({
   p: 20,
   mt: 12,
@@ -89,11 +97,11 @@ export const useProviders = () => {
 };
 const SwapForm = () => {
   // FIXME: should use enums for Flow and Banner values
-  const [currentFlow, setCurrentFlow] = useState(null);
-  const [currentBanner, setCurrentBanner] = useState(null);
+  const [currentFlow, setCurrentFlow] = useState<string | null>(null);
+  const [currentBanner, setCurrentBanner] = useState<string | null>(null);
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const [idleState, setIdleState] = useState(false);
-  const [error, setError] = useState();
+  const [error, setError] = useState<ValidCheckQuoteErrorCodes | undefined>();
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
@@ -107,7 +115,7 @@ const SwapForm = () => {
     },
     [dispatch],
   );
-  const showDexQuotes: boolean | null = useFeature("swapShowDexQuotes");
+  const showDexQuotes: Feature<boolean> | null = useFeature("swapShowDexQuotes");
   const onNoRates = useCallback(
     ({ toState }) => {
       track("error_message", {
@@ -123,8 +131,8 @@ const SwapForm = () => {
     accounts,
     setExchangeRate,
     onNoRates,
-    ...locationState,
-    providers: storedProviders,
+    ...(locationState as object),
+    providers: storedProviders || undefined,
     includeDEX: showDexQuotes?.enabled || false,
   });
   const exchangeRatesState = swapTransaction.swap?.rates;
@@ -132,9 +140,10 @@ const SwapForm = () => {
   const pageState = usePageState(swapTransaction, swapError);
   const swapKYC = useSelector(swapKYCSelector);
   const provider = exchangeRate?.provider;
-  const providerKYC = swapKYC?.[provider];
-  const kycStatus = providerKYC?.status;
-  const idleTimeout = useRef();
+  const providerKYC = (provider && swapKYC?.[provider]) || undefined;
+  const kycStatus =
+    (providerKYC && (providerKYC?.status as ValidKYCStatus | undefined)) || undefined;
+  const idleTimeout = useRef<NodeJS.Timeout | undefined>();
 
   // On provider change, reset banner and flow
   useEffect(() => {
@@ -177,7 +186,7 @@ const SwapForm = () => {
     }
   }, [error, provider, providerKYC?.id, kycStatus, currentBanner]);
   const { setDrawer } = React.useContext(context);
-  const pauseRefreshing = swapError || idleState;
+  const pauseRefreshing = !!swapError || idleState;
   const refreshTime = useRefreshRates(swapTransaction.swap, {
     pause: pauseRefreshing,
   });
@@ -214,7 +223,7 @@ const SwapForm = () => {
       onChange: res => {
         dispatch(
           setSwapKYCStatus({
-            provider: provider,
+            provider: provider!, // provider should be defined - onChange is not supposed to be called if it's not
             id: res?.id,
             status: res?.status,
           }),
@@ -253,6 +262,7 @@ const SwapForm = () => {
    */
   useEffect(() => {
     if (
+      !provider ||
       !providerKYC?.id ||
       !exchangeRate?.rateId ||
       currentFlow === "KYC" ||
@@ -351,6 +361,8 @@ const SwapForm = () => {
     swapTransaction.swap.from.amount &&
     swapTransaction.swap.from.amount.gt(0);
   const onSubmit = () => {
+    if (!exchangeRate) return;
+
     const { provider, providerURL, providerType } = exchangeRate;
     track("button_clicked", {
       button: "Request",
@@ -362,16 +374,19 @@ const SwapForm = () => {
     });
     if (providerType === "DEX") {
       const from = swapTransaction.swap.from;
-      const fromAddress = from.parentAccount?.id || from.account.id;
+      const fromAddress = from.parentAccount?.id || from.account?.id;
       const customParams = {
         provider,
-        providerURL,
+        providerURL: providerURL || undefined,
       };
       const customDappUrl = getCustomDappUrl({
         ...customParams,
       });
       const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
       history.push({
+        // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
+        // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
+        // @ts-expect-error so customDappUrl is not expected to be here
         customDappUrl,
         pathname,
         state: {
@@ -422,6 +437,7 @@ const SwapForm = () => {
   }, [showDexQuotes, sourceAccount, sourceParentAccount, targetAccount, targetParentAccount]);
   useEffect(() => {
     if (!exchangeRate) {
+      // @ts-expect-error This seems like a mistake? updateSelectedRate expects an ExchangeRate
       swapTransaction.swap.updateSelectedRate({});
       return;
     }
@@ -459,17 +475,14 @@ const SwapForm = () => {
     default:
       break;
   }
-  const setFromAccount = currency => {
-    swapTransaction.setFromAccount(currency);
+  const setFromAccount = (account: AccountLike | undefined) => {
+    swapTransaction.setFromAccount(account);
   };
-  const setToAccount = account => {
-    swapTransaction.setToAccount(account);
-  };
-  const setToCurrency = currency => {
+  const setToCurrency = (currency: TokenCurrency | CryptoCurrency | undefined) => {
     swapTransaction.setToCurrency(currency);
   };
-  const toggleMax = state => {
-    swapTransaction.toggleMax(state);
+  const toggleMax = () => {
+    swapTransaction.toggleMax();
   };
   if (storedProviders?.length)
     return (
@@ -480,10 +493,9 @@ const SwapForm = () => {
           toAccount={swapTransaction.swap.to.account}
           fromAmount={swapTransaction.swap.from.amount}
           toCurrency={targetCurrency}
-          toAmount={exchangeRate?.toAmount || null}
+          toAmount={exchangeRate?.toAmount}
           setFromAccount={setFromAccount}
           setFromAmount={debouncedSetFromAmount}
-          setToAccount={setToAccount}
           setToCurrency={setToCurrency}
           isMaxEnabled={swapTransaction.swap.isMaxEnabled}
           toggleMax={toggleMax}
@@ -505,11 +517,7 @@ const SwapForm = () => {
 
         {pageState === "loaded" && (
           <>
-            <SwapFormSummary
-              swapTransaction={swapTransaction}
-              kycStatus={kycStatus}
-              provider={provider}
-            />
+            <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
             <SwapFormRates
               swap={swapTransaction.swap}
               provider={provider}
@@ -525,7 +533,7 @@ const SwapForm = () => {
         {currentBanner === "KYC" ? (
           <FormKYCBanner
             provider={provider}
-            status={kycStatus}
+            status={kycStatus as KYCStatus}
             onClick={() => setCurrentFlow("KYC")}
           />
         ) : null}

@@ -167,7 +167,7 @@ export const starredAccountsSelector = createSelector(shallowAccountsSelector, a
   flattenAccounts(accounts).filter(a => a.starred),
 );
 export const isStarredAccountSelector = (
-  s: any,
+  s: State,
   {
     accountId,
   }: {

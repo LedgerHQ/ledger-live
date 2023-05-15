@@ -37,7 +37,7 @@ const RewardsSection = ({ account }: Props) => {
         }}
       />
       <Box p={4} horizontal alignItems="center" justifyContent="space-between">
-        <Box vertical>
+        <Box>
           <FormattedVal
             val={rewards}
             unit={unit}

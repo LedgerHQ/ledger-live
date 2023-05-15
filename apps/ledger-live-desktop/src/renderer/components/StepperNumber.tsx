@@ -18,12 +18,12 @@ const Container = styled(Box).attrs(() => ({
   height: 24px;
   padding: 0 3px;
 `;
-const Btn = styled(Box).attrs(p => ({
+const Btn = styled(Box).attrs<{ disabled?: boolean }>(p => ({
   bg: p.disabled ? "rgba(138, 128, 219, 0.5)" : "wallet",
   color: "white",
   alignItems: "center",
   justifyContent: "center",
-}))`
+}))<{ disabled?: boolean }>`
   border-radius: 50%;
   cursor: ${p => (p.disabled ? "default" : "pointer")};
   height: 18px;
@@ -68,7 +68,7 @@ class StepperNumber extends PureComponent<Props, State> {
     }
   }
 
-  _timeout = undefined;
+  _timeout: NodeJS.Timeout | undefined = undefined;
   isMax = (v: number) => v >= this.props.max;
   isMin = (v: number) => v <= this.props.min;
   emitChange = (v: number) => {

@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -16,13 +16,13 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
   min-height: 220px;
 `;
@@ -110,10 +110,11 @@ export function StepConfirmationFooter({
           onClick={() => {
             closeModal();
             if (account && concernedOperation) {
+              // @ts-expect-error TODO: fix types
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
+                parentId: (parentAccount && parentAccount.id) || undefined,
               });
             }
           }}
@@ -134,4 +135,4 @@ export function StepConfirmationFooter({
     </>
   );
 }
-export default withTheme(StepConfirmation);
+export default StepConfirmation;
