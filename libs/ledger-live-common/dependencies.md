@@ -26,7 +26,6 @@ yarn upgrade-interactive -i --latest
 | @ledgerhq/cryptoassets                      | crypto currencies and tokens                                      | weekly                                                               |
 | @ledgerhq/devices                           | devices data                                                      | weekly                                                               |
 | @ledgerhq/errors                            | errors defintion                                                  | weekly                                                               |
-| @ledgerhq/hw-app-algorand                   | Algorand coin integration                                         | weekly                                                               |
 | @ledgerhq/hw-app-btc                        | Bitcoin coin integration                                          | weekly                                                               |
 | @ledgerhq/hw-app-cosmos                     | Cosmos coin integration                                           | weekly                                                               |
 | @ledgerhq/hw-app-eth                        | Ethereum coin integration                                         | weekly                                                               |

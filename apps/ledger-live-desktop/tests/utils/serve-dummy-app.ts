@@ -55,6 +55,7 @@ export const dummyLiveAppManifest = (port: number) => [
       },
     ],
     domains: ["https://*"],
+    visibility: "complete",
   },
 ];
 

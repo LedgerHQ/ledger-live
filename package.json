@@ -21,6 +21,7 @@
     "build:actions": "pnpm turbo build --filter=@actions/*",
     "build:cli": "pnpm turbo build --no-daemon --filter=live-cli",
     "build:coin": "pnpm turbo build --no-daemon --filter=coin-framework",
+    "build:coin:algorand": "pnpm turbo build --no-daemon --filter=coin-algorand",
     "build:coin:polkadot": "pnpm turbo build --no-daemon --filter=coin-polkadot",
     "build:domain": "pnpm turbo build --no-daemon --filter=domain-service",
     "build:llc": "pnpm turbo build --no-daemon --filter=\"live-common\"",

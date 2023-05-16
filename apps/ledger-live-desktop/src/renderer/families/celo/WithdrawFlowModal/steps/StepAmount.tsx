@@ -79,7 +79,7 @@ const StepAmount = ({
       !(error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice) ? (
         <ErrorBanner error={error} />
       ) : null}
-      <Box vertical>
+      <Box>
         {pendingWithdrawals.map(({ value, time, index }) => {
           const withdrawalTime = new Date(time.toNumber() * 1000);
           const disabled = withdrawalTime > new Date();

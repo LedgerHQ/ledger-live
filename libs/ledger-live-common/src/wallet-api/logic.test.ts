@@ -583,6 +583,7 @@ function createAppManifest(id = "1"): AppManifest {
     },
     permissions: [],
     domains: [],
+    visibility: "complete",
   };
 }
 

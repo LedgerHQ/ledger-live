@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
-import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { TextInput } from "react-native";
@@ -12,14 +11,12 @@ import { readOnlyModeEnabledSelector } from "../../../../reducers/settings";
 import { NavigationProps, PlatformState, SearchBarValues } from "./types";
 import { getPlatform, savePlatform } from "../../../../db";
 
-export function useCategories() {
-  const manifests = useManifests();
+export function useCategories(manifests: AppManifest[]) {
   const { categories, manifestsByCategories } = useCategoriesRaw(manifests);
   const initialSelectedState = "all";
   const [selected, setSelected] = useState(initialSelectedState);
 
   return {
-    manifests,
     categories,
     manifestsByCategories,
     initialSelectedState,

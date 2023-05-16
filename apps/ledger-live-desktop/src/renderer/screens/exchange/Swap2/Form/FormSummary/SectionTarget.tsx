@@ -74,13 +74,13 @@ type SectionTargetProps = {
   account: SwapSelectorStateType["account"];
   currency: SwapSelectorStateType["currency"];
   setToAccount: SwapTransactionType["setToAccount"];
-  targetAccounts: AccountLike[];
+  targetAccounts: AccountLike[] | undefined;
   hasRates: boolean;
 };
 
 type SetDrawerStateRef = (args: {
   selectedAccount: AccountLike | undefined;
-  targetAccounts: AccountLike[];
+  targetAccounts: AccountLike[] | undefined;
 }) => void;
 const SectionTarget = ({
   account,

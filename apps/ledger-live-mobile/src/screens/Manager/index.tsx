@@ -7,6 +7,7 @@ import {
 } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { BluetoothRequired } from "@ledgerhq/errors";
 
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { createAction, Result } from "@ledgerhq/live-common/hw/actions/manager";
@@ -100,6 +101,16 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     setDevice(undefined);
   };
 
+  const onError = (error: Error) => {
+    // Both the old (SelectDevice) and new (SelectDevice2) device selection components handle the bluetooth requirements with a hook + bottom drawer.
+    // By setting back the device to `undefined` it gives back the responsibilities to those select components to check for the bluetooth requirements
+    // and avoids a duplicated error drawers/messages.
+    // The only drawback: the user has to select again their device once the bluetooth requirements are respected.
+    if (error instanceof BluetoothRequired) {
+      setDevice(undefined);
+    }
+  };
+
   useEffect(() => {
     setDevice(params?.device);
   }, [params]);
@@ -191,6 +202,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         onModalHide={onModalHide}
         action={action}
         request={null}
+        onError={onError}
       />
     </Flex>
   );

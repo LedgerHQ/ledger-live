@@ -36,7 +36,10 @@ export const useRedirectToSwapHistory = () => {
     [history],
   );
 };
-export const iconByProviderName = Object.entries(providerIcons).reduce(
+export const iconByProviderName: Record<
+  string,
+  React.ComponentType<{ size?: number }>
+> = Object.entries(providerIcons).reduce(
   (obj, [key, value]) => ({
     ...obj,
     [key.toLowerCase()]: value,
@@ -44,8 +47,8 @@ export const iconByProviderName = Object.entries(providerIcons).reduce(
   {},
 );
 export const getProviderIcon = (exchangeRate: ExchangeRate) =>
-  iconByProviderName[exchangeRate.provider.toLowerCase()];
-export const trackSwapError = (error: any, properties: any = {}) => {
+  iconByProviderName[exchangeRate.provider.toLowerCase() as keyof typeof iconByProviderName];
+export const trackSwapError = (error: Error, properties: Record<string, unknown> = {}) => {
   if (!error) return;
   if (error instanceof SwapExchangeRateAmountTooLow) {
     track("error_message", {

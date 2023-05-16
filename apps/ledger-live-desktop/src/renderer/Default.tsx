@@ -60,6 +60,7 @@ import Learn from "~/renderer/screens/learn";
 import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
 import SyncOnboarding from "./components/SyncOnboarding";
+import RecoverPlayer from "~/renderer/screens/recover/Player";
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
@@ -127,6 +128,7 @@ const NightlyLayerR = () => {
   );
 };
 const NightlyLayer = React.memo(NightlyLayerR);
+
 export default function Default() {
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -200,6 +202,11 @@ export default function Default() {
                           height: "100%",
                         }}
                       >
+                        <FeatureToggle feature="protectServicesDesktop">
+                          <Switch>
+                            <Route path="/recover/:appId" component={RecoverPlayer} />
+                          </Switch>
+                        </FeatureToggle>
                         <MainSideBar />
                         <Page>
                           <TopBannerContainer>

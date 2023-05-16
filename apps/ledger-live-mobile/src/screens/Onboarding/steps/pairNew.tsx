@@ -111,7 +111,7 @@ function OnboardingStepPairNew() {
   const onFinish = useCallback(() => {
     if (next) {
       // only used for protect for now
-      navigation.navigate(next as ScreenName.OnboardingProtectFlow, {
+      navigation.navigate(next, {
         deviceModelId,
       });
       return;

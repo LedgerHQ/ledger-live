@@ -1,4 +1,3 @@
-import algorand from "../families/algorand/cli-transaction";
 import bitcoin from "../families/bitcoin/cli-transaction";
 import cardano from "../families/cardano/cli-transaction";
 import celo from "../families/celo/cli-transaction";
@@ -18,9 +17,9 @@ import tron from "../families/tron/cli-transaction";
 import { makeLRUCache } from "../cache";
 import network from "../network";
 import polkadotCreateCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
+import algorandCreateCliTools from "@ledgerhq/coin-algorand/cli-transaction";
 
 export default {
-  algorand,
   bitcoin,
   cardano,
   celo,
@@ -38,4 +37,5 @@ export default {
   tezos,
   tron,
   polkadot: polkadotCreateCliTools(network, makeLRUCache),
+  algorand: algorandCreateCliTools(network, makeLRUCache),
 };

@@ -56,6 +56,12 @@ function DelegationAmount({ navigation, route }: Props) {
       route.params.transaction,
     "account and cosmos transaction required",
   );
+  const tx = route.params.transaction;
+  invariant(
+    ["delegate", "redelegate", "undelegate"].includes(tx.mode),
+    "unsupported cosmos transaction mode",
+  );
+
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
   const initialValue = useMemo(
@@ -72,7 +78,6 @@ function DelegationAmount({ navigation, route }: Props) {
   );
   const min = useMemo(() => route?.params?.min ?? BigNumber(0), [route]);
   const onNext = useCallback(() => {
-    const tx = route.params.transaction;
     const validators = tx.validators;
     const validatorAddress = route.params.validator.validatorAddress;
     const i = validators.findIndex(
@@ -109,7 +114,7 @@ function DelegationAmount({ navigation, route }: Props) {
       transaction,
       fromSelectAmount: true,
     });
-  }, [navigation, route.params, bridge, value]);
+  }, [navigation, route.params, bridge, tx, value]);
   const [ratioButtons] = useState(
     [0.25, 0.5, 0.75, 1].map(ratio => ({
       label: `${ratio * 100}%`,

@@ -91,11 +91,6 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
   },
-  API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://cosmoshub4.coin.ledger.com",
-    parser: stringParser,
-    desc: "Node endpoint for cosmos",
-  },
   API_RIPPLE_RPC: {
     parser: stringParser,
     def: "https://xrplcluster.com/ledgerlive",
@@ -730,6 +725,11 @@ const envDefinitions: Record<
     parser: stringParser,
     desc: "bucket S3 of the dynamic cryptoassets list",
   },
+  CURRENCY_CONFIG_BASE_URL: {
+    def: "https://ledger-live-production-default-rtdb.europe-west1.firebasedatabase.app/",
+    parser: stringParser,
+    desc: "Currency config firebase url",
+  },
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,
@@ -744,6 +744,11 @@ const envDefinitions: Record<
     def: 5 * 60 * 1000,
     parser: intParser,
     desc: "Time after which an optimisc operation is considered stuck",
+  },
+  ENABLE_NETWORK_LOGS: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable network request and responses logs. Errors are always logged",
   },
 };
 

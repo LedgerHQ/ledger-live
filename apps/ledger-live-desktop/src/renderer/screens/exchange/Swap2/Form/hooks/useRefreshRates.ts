@@ -9,7 +9,7 @@ const useRefreshRates = (
     pause: boolean;
   },
 ) => {
-  const refreshInterval = useRef();
+  const refreshInterval = useRef<NodeJS.Timeout>();
   const refreshTime = useMemo(() => getRefreshTime(swap.rates?.value), [swap.rates?.value]);
   useEffect(() => {
     clearTimeout(refreshInterval.current);
@@ -17,9 +17,9 @@ const useRefreshRates = (
       if (!pause) {
         swap.refetchRates();
       }
-    }, [refreshTime]);
+    }, refreshTime);
     return () => {
-      clearTimeout(useRefreshRates.current);
+      clearTimeout(refreshInterval.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pause, refreshTime, swap.rates?.value]);

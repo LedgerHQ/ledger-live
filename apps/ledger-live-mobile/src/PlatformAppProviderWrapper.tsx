@@ -32,7 +32,7 @@ export default function PlatformAppProviderWrapper({
     <RemoteLiveAppProvider
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
       parameters={{
-        version: getPlatformVersion(),
+        apiVersion: getPlatformVersion(),
         platform: PLATFORM,
         private: false,
         allowDebugApps: isDebugAppEnabled,

@@ -1,9 +1,10 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import Box from "~/renderer/components/Box";
 import { Flex } from "@ledgerhq/react-ui";
 import Text from "~/renderer/components/Text";
 import ExternalLinkIcon from "~/renderer/icons/ExternalLink";
+import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex";
 
 export const Wrapper = styled(Box).attrs({
   alignItems: "center",
@@ -11,7 +12,9 @@ export const Wrapper = styled(Box).attrs({
   padding: 20px;
   grid-gap: 12px;
 `;
-export const DeviceSelectorWrapper = styled(Flex).attrs({
+export const DeviceSelectorWrapper: StyledComponent<"div", DefaultTheme, FlexBoxProps> = styled(
+  Flex,
+).attrs({
   height: "100%",
   width: "100%",
   justifyContent: "center",
@@ -45,7 +48,7 @@ export const Content = styled(Box).attrs({
   grid-gap: 20px;
   width: 100%;
 `;
-export const Illustration = styled.div`
+export const Illustration = styled.div<{ image: string; height?: string | number }>`
   background-image: url('${p => p.image}');
   background-size: contain;
   background-position: center center;
@@ -91,7 +94,13 @@ const ExternalLinkIconContainer = styled.span`
   display: inline-flex;
   margin-left: 4px;
 `;
-export const TranslatedLink = ({ children, onClick }: any) => (
+export const TranslatedLink = ({
+  children,
+  onClick,
+}: {
+  children?: React.ReactNode;
+  onClick: () => void;
+}) => (
   <Container onClick={onClick}>
     {children}
     <ExternalLinkIconContainer>

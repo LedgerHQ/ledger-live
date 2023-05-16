@@ -52,9 +52,16 @@ const Property = styled.div`
   margin-right: 10px;
 `;
 let id = 0;
+
+type Item = {
+  event: string;
+  properties: Object | null | undefined;
+  id: number;
+};
+
 function AnalyticsConsole() {
   const [items, addItem] = useReducer(
-    (items, item) => (items.length > 10 ? items.slice(1) : items).concat(item),
+    (items: Item[], item: Item) => (items.length > 10 ? items.slice(1) : items).concat(item),
     [],
   );
   useEffect(() => {

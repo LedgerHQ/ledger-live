@@ -328,4 +328,5 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.StakeFlow]: NavigatorScreenParams<StakeNavigatorParamList>;
 
   [ScreenName.RedirectToOnboardingRecoverFlow]: undefined;
+  [ScreenName.RedirectToRecoverStaxFlow]: Record<string, unknown>;
 };

@@ -68,6 +68,18 @@ export const defaultFeatures: DefaultFeatures = {
   currencySyscoin: {
     enabled: false,
   },
+  currencyAxelar: {
+    enabled: false,
+  },
+  currencyOnomy: {
+    enabled: false,
+  },
+  currencyQuicksilver: {
+    enabled: false,
+  },
+  currencyPersistence: {
+    enabled: false,
+  },
   deviceInitialApps: {
     enabled: false,
     params: {
@@ -244,6 +256,30 @@ export const defaultFeatures: DefaultFeatures = {
   },
   protectServicesDiscoverDesktop: {
     enabled: false,
+  },
+  protectServicesDesktop: {
+    enabled: false,
+    params: {
+      onboardingRestore: {
+        restoreInfoDrawer: {
+          enabled: true,
+          manualStepsURI:
+            "https://support.ledger.com/hc/en-us/articles/360013349800-Update-Ledger-Nano-X-firmware?docs=true",
+          supportLinkURI: "https://support.ledger.com",
+        },
+        postOnboardingURI:
+          "ledgerlive://recover/protect-simu?redirectTo=restore",
+      },
+      onboardingCompleted: {
+        upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
+        alreadySubscribedURI:
+          "ledgerlive://recover/protect-simu?redirectTo=login",
+      },
+      login: {
+        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
+      },
+      protectId: "protect-simu",
+    },
   },
   referralProgramDesktopSidebar: {
     enabled: false,

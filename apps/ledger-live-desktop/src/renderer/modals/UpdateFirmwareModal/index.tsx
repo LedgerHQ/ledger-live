@@ -54,10 +54,12 @@ type Props = {
   onClose: (proceedToAppReinstall?: boolean) => void;
   firmware?: FirmwareUpdateContext;
   stepId: StepId;
-  error?: Error;
+  error?: Error | null;
   deviceModelId: DeviceModelId;
   deviceInfo: DeviceInfo;
   setFirmwareUpdateOpened: (isOpen: boolean) => void;
+  // This is bad practice but it seems to be needed since we spread additional props in the stepper and down below…
+  [key: string]: unknown;
 };
 
 const HookMountUnmount = ({ onMountUnmount }: { onMountUnmount: (m: boolean) => void }) => {
@@ -216,7 +218,6 @@ const UpdateModal = ({
       backdropColor
       onHide={handleReset}
       isOpened={status === "install"}
-      refocusWhenChange={stateStepId}
       preventBackdropClick={!["finish", "resetDevice"].includes(stepId) && !error}
       render={() => (
         <Stepper

@@ -70,8 +70,21 @@ export function useRemoteLiveAppContext(): LiveAppContextType {
   return useContext(liveAppContext);
 }
 
-export function useManifests(): LiveAppManifest[] {
-  return useRemoteLiveAppContext().state?.value?.liveAppFiltered ?? [];
+export function useManifests(
+  options: Partial<LiveAppManifest> = {}
+): LiveAppManifest[] {
+  const liveAppFiltered =
+    useRemoteLiveAppContext().state?.value?.liveAppFiltered ?? [];
+
+  const filteredList = useMemo(() => {
+    if (Object.keys(options).length === 0) {
+      return liveAppFiltered;
+    }
+    return liveAppFiltered.filter((manifest) =>
+      Object.keys(options).some((key) => manifest[key] === options[key])
+    );
+  }, [options, liveAppFiltered]);
+  return filteredList;
 }
 
 export function RemoteLiveAppProvider({

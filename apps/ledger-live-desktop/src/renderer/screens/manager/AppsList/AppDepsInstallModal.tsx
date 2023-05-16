@@ -7,6 +7,7 @@ import manager from "@ledgerhq/live-common/manager/index";
 import ConfirmModal from "~/renderer/modals/ConfirmModal/index";
 import LinkIcon from "~/renderer/icons/LinkIcon";
 import Image from "~/renderer/components/Image";
+
 const IconsSection = styled.div`
   height: ${p => p.theme.space[7]}px;
   display: flex;
@@ -24,7 +25,7 @@ const Separator = styled.div`
 `;
 const LinkIconWrapper = styled.div`
   padding: ${p => p.theme.space[1]}px;
-  box-sizeing: content-box;
+  box-sizing: content-box;
   border-radius: 100%;
   display: flex;
   justify-content: center;
@@ -33,6 +34,7 @@ const LinkIconWrapper = styled.div`
   color: ${p => p.theme.colors.palette.primary.main};
   background-color: ${p => p.theme.colors.palette.action.hover};
 `;
+
 type Props = {
   app?: App;
   dependencies?: App[];

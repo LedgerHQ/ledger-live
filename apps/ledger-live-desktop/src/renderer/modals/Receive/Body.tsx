@@ -18,10 +18,10 @@ import StepConnectDevice, { StepConnectDeviceFooter } from "./steps/StepConnectD
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import StepReceiveFunds from "./steps/StepReceiveFunds";
 import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepReceiveStakingFlow";
-export type StepId = "warning" | "account" | "device" | "receive";
+export type StepId = "warning" | "account" | "device" | "receive" | "stakingFlow";
 type OwnProps = {
   stepId: StepId;
-  onClose: () => void;
+  onClose?: () => void | undefined;
   onChangeStepId: (a: StepId) => void;
   isAddressVerified: boolean | undefined | null;
   verifyAddressError: Error | undefined | null;
@@ -36,12 +36,11 @@ type OwnProps = {
 };
 type StateProps = {
   t: TFunction;
-  device: Device | undefined | null;
   accounts: Account[];
   device: Device | undefined | null;
   closeModal: (a: string) => void;
 };
-type Props = {} & OwnProps & StateProps;
+export type Props = OwnProps & StateProps;
 export type StepProps = {
   t: TFunction;
   transitionTo: (id: string) => void;
@@ -119,9 +118,9 @@ const Body = ({
   const [steps] = useState(createSteps);
   const [account, setAccount] = useState(() => (params && params.account) || accounts[0]);
   const [parentAccount, setParentAccount] = useState(() => params && params.parentAccount);
-  const [disabledSteps, setDisabledSteps] = useState([]);
+  const [disabledSteps, setDisabledSteps] = useState<number[]>([]);
   const [token, setToken] = useState(null);
-  const [hideBreadcrumb, setHideBreadcrumb] = useState(false);
+  const [hideBreadcrumb, setHideBreadcrumb] = useState<boolean | undefined>(false);
   const [title, setTitle] = useState("");
   const currency = getAccountCurrency(account);
   const currencyName = currency ? currency.name : undefined;
@@ -157,7 +156,7 @@ const Body = ({
   }, [onChangeStepId, params]);
   useEffect(() => {
     if (!account) {
-      if (!params && params.account) {
+      if (params && params.account) {
         handleChangeAccount(params.account, params.parentAccount);
       } else {
         handleChangeAccount(accounts[0], null);
@@ -166,7 +165,7 @@ const Body = ({
   }, [accounts, account, params, handleChangeAccount]);
   useEffect(() => {
     const currentStep = steps.find(step => step.id === stepId);
-    setHideBreadcrumb(currentStep.excludeFromBreadcrumb);
+    setHideBreadcrumb(currentStep?.excludeFromBreadcrumb);
     switch (stepId) {
       case "warning":
         setTitle(t("common.information"));
@@ -216,8 +215,8 @@ const Body = ({
     </Stepper>
   );
 };
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
-)(Body);
+)(Body) as React.ComponentType<OwnProps>;
 export default C;

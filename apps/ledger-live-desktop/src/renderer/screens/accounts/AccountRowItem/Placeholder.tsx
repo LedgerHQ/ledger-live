@@ -6,7 +6,7 @@ import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import IconPlus from "~/renderer/icons/Plus";
 
-const AddAccountButton = styled.div`
+const AddAccountButton = styled(Box)`
   border: 1px dashed rgba(153, 153, 153, 0.3);
   cursor: pointer;
   border-radius: 4px;
@@ -29,13 +29,13 @@ const Placeholder = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const openAddAccounts = useCallback(() => {
-    dispatch(openModal("MODAL_ADD_ACCOUNTS"));
+    dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
   }, [dispatch]);
   return (
     <Box mb={5}>
-      <AddAccountButton isAccountRow onClick={openAddAccounts} pb={6}>
-        <IconPlus size={16} mr={20} />
-        <Box ml={2} ff="Inter|Regular" fontSize={4}>
+      <AddAccountButton onClick={openAddAccounts} pb={6}>
+        <IconPlus size={16} />
+        <Box ml={20} ff="Inter|Regular" fontSize={4}>
           {t("addAccounts.cta.add")}
         </Box>
       </AddAccountButton>

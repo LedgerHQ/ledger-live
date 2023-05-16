@@ -7,7 +7,13 @@ import {
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { DeviceModelInfo, FeatureId, Feature, PortfolioRange } from "@ledgerhq/types-live";
+import {
+  DeviceModelInfo,
+  FeatureId,
+  Feature,
+  PortfolioRange,
+  FirmwareUpdateContext,
+} from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getLanguages, defaultLocaleForLanguage, Locale } from "~/config/languages";
@@ -26,7 +32,7 @@ export type SettingsState = {
   preferredDeviceModel: DeviceModelId;
   hasInstalledApps: boolean;
   lastSeenDevice: DeviceModelInfo | undefined | null;
-  latestFirmware: any;
+  latestFirmware: FirmwareUpdateContext | null;
   language: string | undefined | null;
   theme: string | undefined | null;
   /** DEPRECATED, use field `locale` instead */
@@ -181,7 +187,7 @@ type HandlersPayloads = {
   HIDE_NFT_COLLECTION: string;
   LAST_SEEN_DEVICE_INFO: {
     lastSeenDevice: DeviceModelInfo;
-    latestFirmware: any;
+    latestFirmware: FirmwareUpdateContext;
   };
   LAST_SEEN_DEVICE: DeviceModelInfo;
   SET_DEEPLINK_URL: string | null | undefined;
@@ -642,14 +648,14 @@ export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
   state.settings.filterTokenOperationsZeroAmount;
-export const lastSeenDeviceSelector = (state: State) => {
+export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | undefined => {
   // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
   // to be removed in a while.
   // @ts-expect-error TODO: time to remove this maybe?
   if (state.settings.lastSeenDevice?.modelId === "nanoFTS") {
     return {
       ...state.settings.lastSeenDevice,
-      modelId: "stax",
+      modelId: DeviceModelId.stax,
     };
   }
   return state.settings.lastSeenDevice;

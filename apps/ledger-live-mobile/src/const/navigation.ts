@@ -55,6 +55,7 @@ export enum ScreenName {
   DebugPlayground = "DebugPlayground",
   DebugBluetoothAndLocationServices = "DebugBluetoothAndLocationServices",
   DebugSettings = "DebugSettings",
+  DebugSnackbars = "DebugSnackbars",
   DebugStore = "DebugStore",
   DebugStoryly = "DebugStoryly",
   DebugSwap = "DebugSwap",
@@ -486,6 +487,7 @@ export enum ScreenName {
   Stake = "Stake",
 
   RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
+  RedirectToRecoverStaxFlow = "RedirectToRecoverStaxFlow",
 }
 export enum NavigatorName {
   // Stack

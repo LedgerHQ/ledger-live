@@ -35,20 +35,28 @@ import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHead
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
 import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
-import { AccountLike, Account } from "@ledgerhq/types-live";
+import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
+import { State } from "~/renderer/reducers";
+
+type Params = {
+  id: string;
+  parentId: string;
+};
 const mapStateToProps = (
-  state,
+  state: State,
   {
     match: {
       params: { id, parentId },
     },
+  }: {
+    match: {
+      params: Params;
+    };
   },
 ) => {
-  const parentAccount: Account | undefined | null =
-    parentId &&
-    accountSelector(state, {
-      accountId: parentId,
-    });
+  const parentAccount: Account | undefined | null = accountSelector(state, {
+    accountId: parentId,
+  });
   let account: AccountLike | undefined | null;
   if (parentAccount) {
     account = findSubAccountById(parentAccount, id);
@@ -82,16 +90,20 @@ const AccountPage = ({
 }: Props) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const AccountBodyHeader = mainAccount
-    ? perFamilyAccountBodyHeader[mainAccount.currency.family]
+    ? perFamilyAccountBodyHeader[
+        mainAccount.currency.family as keyof typeof perFamilyAccountBodyHeader
+      ]
     : null;
   const AccountSubHeader = mainAccount
-    ? perFamilyAccountSubHeader[mainAccount.currency.family]
+    ? perFamilyAccountSubHeader[
+        mainAccount.currency.family as keyof typeof perFamilyAccountSubHeader
+      ]
     : null;
-  const bgColor = useTheme("colors.palette.background.paper");
+  const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
-    (operation, account) => {
+    (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
       const removeZeroAmountTokenOp =
         shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
@@ -141,6 +153,7 @@ const AccountPage = ({
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
       {AccountSubHeader ? (
+        // @ts-expect-error Need to update type in families
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}
       {!isAccountEmpty(account) ? (
@@ -157,6 +170,7 @@ const AccountPage = ({
           </Box>
           <AccountStakeBanner account={account} />
           {AccountBodyHeader ? (
+            // @ts-expect-error Need to update type in families
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
           {account.type === "Account" && isNFTActive(account.currency) ? (
@@ -168,6 +182,7 @@ const AccountPage = ({
             parentAccount={parentAccount}
             title={t("account.lastOperations")}
             filterOperation={filterOperations}
+            t={t}
           />
         </>
       ) : (
@@ -176,7 +191,7 @@ const AccountPage = ({
     </Box>
   );
 };
-const ConnectedAccountPage: React.ComponentType<{}> = compose(
+const ConnectedAccountPage = compose<React.ComponentType<Props>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(AccountPage);

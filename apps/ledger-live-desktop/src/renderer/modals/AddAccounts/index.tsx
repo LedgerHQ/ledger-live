@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { addAccounts } from "@ledgerhq/live-common/account/index";
 import logger from "~/renderer/logger";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -15,7 +15,7 @@ import { closeModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
 import Stepper, { Step } from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import Modal from "~/renderer/components/Modal";
+import Modal, { RenderProps } from "~/renderer/components/Modal";
 import StepChooseCurrency, { StepChooseCurrencyFooter } from "./steps/StepChooseCurrency";
 import StepConnectDevice from "./steps/StepConnectDevice";
 import StepImport, { StepImportFooter } from "./steps/StepImport";
@@ -27,7 +27,7 @@ type Props = {
   closeModal: (a: string) => void;
   replaceAccounts: (a: Account[]) => void;
   blacklistedTokenIds?: string[];
-  currency: (CryptoCurrency | undefined | null) | (TokenCurrency | undefined | null);
+  currency: CryptoOrTokenCurrency | undefined | null;
   flow?: string | null;
   onClose?: () => void;
   preventSkippingCurrencySelection: boolean | undefined | null;
@@ -37,7 +37,7 @@ type ScanStatus = "idle" | "scanning" | "error" | "finished";
 export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
-  currency: (CryptoCurrency | undefined | null) | (TokenCurrency | undefined | null);
+  currency: CryptoOrTokenCurrency | null;
   device: Device | undefined | null;
   scannedAccounts: Account[];
   existingAccounts: Account[];
@@ -48,7 +48,7 @@ export type StepProps = {
   onGoStep1: () => void;
   onCloseModal: () => void;
   resetScanState: () => void;
-  setCurrency: (a?: CryptoCurrency | null) => void;
+  setCurrency: (a?: CryptoOrTokenCurrency | null) => void;
   setScanStatus: (b: ScanStatus, a?: Error | null) => string;
   setAccountName: (b: Account, a: string) => void;
   editedNames: {
@@ -109,7 +109,7 @@ const createSteps = (skipChooseCurrencyStep?: boolean | null): St[] => {
 type State = {
   stepId: StepId;
   scanStatus: ScanStatus | string;
-  currency: CryptoCurrency | TokenCurrency | undefined | null;
+  currency: CryptoOrTokenCurrency | null | undefined;
   scannedAccounts: Account[];
   checkedAccountsIds: string[];
   editedNames: {
@@ -158,7 +158,7 @@ class AddAccounts extends PureComponent<Props, State> {
       stepId: step.id,
     });
 
-  handleSetCurrency = (currency?: CryptoCurrency | null) =>
+  handleSetCurrency = (currency: CryptoCurrency | null) =>
     this.setState({
       currency,
     });
@@ -206,7 +206,7 @@ class AddAccounts extends PureComponent<Props, State> {
     });
   };
 
-  handleBeforeOpen = ({ data }: { data: { currency?: CryptoCurrency } }) => {
+  handleBeforeOpen = ({ data }: RenderProps<{ currency?: CryptoCurrency }>) => {
     const { currency } = this.state;
     if (!currency) {
       if (data && data.currency) {
@@ -288,11 +288,9 @@ class AddAccounts extends PureComponent<Props, State> {
               key={reset} // THIS IS A HACK because stepper is not controllable. FIXME
               title={title}
               stepId={stepId}
-              // @ts-expect-error This is complicated to type properly…
               onStepChange={this.handleStepChange}
               onClose={handleCloseModal}
               onCloseModal={handleCloseModal}
-              // @ts-expect-error This is complicated to type properly…
               steps={this.STEPS}
               errorSteps={errorSteps}
               {...stepperProps}

@@ -1,7 +1,10 @@
 import React, { useReducer, useEffect, useCallback } from "react";
 import { DrawerProps as SideDrawerProps } from "~/renderer/components/SideDrawer";
+
 export type State<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   C extends React.ComponentType<P> | undefined | null = React.ComponentType<any> | undefined | null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   P = any
 > = {
   Component: C;
@@ -9,6 +12,7 @@ export type State<
   open: boolean;
   options: Omit<SideDrawerProps, "children" | "isOpen" | "onRequestBack">;
 }; // actions
+
 // it makes them available and current from connector events handlers
 export let setDrawer: <
   P,

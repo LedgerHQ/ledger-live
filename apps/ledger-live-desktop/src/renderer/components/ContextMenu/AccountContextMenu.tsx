@@ -18,11 +18,12 @@ import { swapSelectableCurrenciesSelector } from "~/renderer/reducers/settings";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { ContextMenuItemType } from "./ContextMenuWrapper";
 type Props = {
   account: AccountLike;
   parentAccount?: Account | null;
   leftClick?: boolean;
-  children: any;
+  children: React.ReactNode;
   withStar?: boolean;
 };
 export default function AccountContextMenu({
@@ -42,7 +43,7 @@ export default function AccountContextMenu({
   const menuItems = useMemo(() => {
     const currency = getAccountCurrency(account);
     const mainAccount = getMainAccount(account, parentAccount);
-    const items = [
+    const items: ContextMenuItemType[] = [
       {
         label: "accounts.contextMenu.send",
         Icon: IconSend,

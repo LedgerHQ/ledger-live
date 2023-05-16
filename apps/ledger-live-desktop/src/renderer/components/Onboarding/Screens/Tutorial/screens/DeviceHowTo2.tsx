@@ -42,14 +42,18 @@ const DeviceHowTo2Animation = () => {
 
   return (
     <AnimationContainer>
-      <Animation animation={getDeviceAnimation(deviceModelId, "light", "plugAndPinCode")} />
+      {deviceModelId && (
+        <Animation
+          animation={getDeviceAnimation(deviceModelId, "light", "plugAndPinCode") as object}
+        />
+      )}
     </AnimationContainer>
   );
 };
 
 DeviceHowTo2.Illustration = <DeviceHowTo2Animation />;
 
-const Footer = (props: unknown) => {
+const Footer = (props: object) => {
   const { t } = useTranslation();
   return (
     <AsideFooter

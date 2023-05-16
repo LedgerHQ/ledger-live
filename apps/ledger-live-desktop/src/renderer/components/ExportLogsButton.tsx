@@ -11,13 +11,15 @@ import logger, { memoryLogger } from "~/renderer/logger";
 import getUser from "~/helpers/user";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-const saveLogs = async (path: { canceled: boolean; filePath: string }) => {
+
+const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
   await ipcRenderer.invoke(
     "save-logs",
     path,
     JSON.stringify(memoryLogger.getMemoryLogs(), null, 2),
   );
 };
+
 type RestProps = ButtonProps & {
   icon?: boolean;
   inverted?: boolean;
@@ -56,7 +58,6 @@ const ExportLogsBtn = ({
   primary = true,
   small = true,
   title,
-  withoutAppData,
   accounts = [],
   ...rest
 }: Props) => {
@@ -98,7 +99,7 @@ const ExportLogsBtn = ({
     try {
       await exportLogs();
     } catch (error) {
-      logger.critical(error);
+      logger.critical(error as Error);
     } finally {
       setExporting(false);
     }

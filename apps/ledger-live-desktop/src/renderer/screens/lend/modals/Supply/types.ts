@@ -15,9 +15,9 @@ export type StepProps = {
   parentAccount: Account | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;
-  openModal: (key: string, config?: any) => void;
+  openModal: (key: string, config?: unknown) => void;
   onChangeAccount: (nextAccount: AccountLike, nextParentAccount?: Account) => void;
-  optimisticOperation: any;
+  optimisticOperation: Operation;
   bridgeError: Error | undefined | null;
   transactionError: Error | undefined | null;
   signed: boolean;

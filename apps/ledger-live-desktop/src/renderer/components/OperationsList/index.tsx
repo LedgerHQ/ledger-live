@@ -41,11 +41,11 @@ const mapDispatchToProps = {
   openModal,
 };
 type Props = {
-  account: AccountLike;
+  account?: AccountLike;
   parentAccount?: Account | null;
-  accounts: AccountLike[];
-  allAccounts: AccountLike[];
-  openModal: (b: string, a: object) => any;
+  accounts?: AccountLike[];
+  allAccounts?: AccountLike[];
+  openModal?: (b: string, a: object) => void;
   t: TFunction;
   withAccount?: boolean;
   withSubAccounts?: boolean;
@@ -68,7 +68,7 @@ export class OperationsList extends PureComponent<Props, State> {
     setDrawer(OperationDetails, {
       operationId: operation.id,
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      parentId: parentAccount?.id as string | undefined | null,
     });
 
   // TODO: convert of async/await if fetching with the api
@@ -102,12 +102,17 @@ export class OperationsList extends PureComponent<Props, State> {
           withSubAccounts,
           filterOperation,
         })
-      : groupAccountsOperationsByDay(accounts, {
+      : accounts
+      ? groupAccountsOperationsByDay(accounts, {
           count: nbToShow,
           withSubAccounts,
           filterOperation,
-        });
-    const all = flattenAccounts(accounts || []).concat([account, parentAccount].filter(Boolean));
+        })
+      : undefined;
+
+    const all = flattenAccounts(accounts || []).concat(
+      [account as AccountLike, parentAccount as AccountLike].filter(Boolean),
+    );
     const accountsMap = keyBy(all, "id");
     return (
       <>
@@ -120,7 +125,7 @@ export class OperationsList extends PureComponent<Props, State> {
               }}
             />
           )}
-          {groupedOperations.sections.map(group => (
+          {groupedOperations?.sections.map(group => (
             <Box key={group.day.toISOString()}>
               <SectionTitle day={group.day} />
               <Box p={0}>
@@ -134,7 +139,7 @@ export class OperationsList extends PureComponent<Props, State> {
                   if (account.type !== "Account") {
                     const pa =
                       accountsMap[account.parentId] ||
-                      allAccounts.find(a => a.id === account.parentId);
+                      allAccounts?.find(a => a.id === account.parentId);
                     if (pa && pa.type === "Account") {
                       parentAccount = pa;
                     }
@@ -145,7 +150,6 @@ export class OperationsList extends PureComponent<Props, State> {
                   }
                   return (
                     <OperationC
-                      compact
                       operation={operation}
                       account={account}
                       parentAccount={parentAccount}
@@ -160,7 +164,7 @@ export class OperationsList extends PureComponent<Props, State> {
             </Box>
           ))}
         </TableContainer>
-        {!groupedOperations.completed ? (
+        {!groupedOperations?.completed ? (
           <ShowMore onClick={this.fetchMoreOperations}>
             <span>{t("common.showMore")}</span>
             <IconAngleDown size={12} />
@@ -176,7 +180,7 @@ export class OperationsList extends PureComponent<Props, State> {
     );
   }
 }
-export default compose(
+export default compose<React.ComponentType<Props>>(
   withTranslation(),
   connect(
     createStructuredSelector({

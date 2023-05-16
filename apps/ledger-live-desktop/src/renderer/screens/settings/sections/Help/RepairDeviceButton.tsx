@@ -1,19 +1,20 @@
 import React, { PureComponent } from "react";
 import { compose } from "redux";
-import { withRouter } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import repairFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { withTranslation, TFunction } from "react-i18next";
 import logger from "~/renderer/logger";
-import Button from "~/renderer/components/Button";
+import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import RepairModal from "~/renderer/modals/RepairModal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+
 type OwnProps = {
-  buttonProps?: any;
+  buttonProps?: ButtonProps;
   onRepair?: (a: boolean) => void;
 };
 type Props = OwnProps & {
   t: TFunction;
-  history: any;
+  history: RouteComponentProps["history"];
 };
 type State = {
   opened: boolean;
@@ -43,7 +44,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
     });
 
   sub: any;
-  timeout: any;
+  timeout: NodeJS.Timeout | undefined;
   close = () => {
     const { onRepair } = this.props;
     if (this.sub) this.sub.unsubscribe();
@@ -59,7 +60,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
     });
   };
 
-  repair = (version = null) => {
+  repair = (version?: string | null) => {
     if (this.state.isLoading) return;
     const { history, onRepair } = this.props;
     if (onRepair) {
@@ -76,7 +77,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
       next: patch => {
         this.setState(patch);
       },
-      error: error => {
+      error: (error: Error) => {
         logger.critical(error);
         if (this.timeout) clearTimeout(this.timeout);
         this.setState({
@@ -120,7 +121,6 @@ class RepairDeviceButton extends PureComponent<Props, State> {
           cancellable
           analyticsName="RepairDevice"
           isOpened={opened}
-          onClose={this.close}
           onReject={this.close}
           repair={this.repair}
           isLoading={isLoading}
@@ -134,7 +134,7 @@ class RepairDeviceButton extends PureComponent<Props, State> {
     );
   }
 }
-const RepairDeviceButtonOut: React.ComponentType<OwnProps> = compose(
+const RepairDeviceButtonOut = compose<React.ComponentType<OwnProps>>(
   withTranslation(),
   withRouter,
 )(RepairDeviceButton);
