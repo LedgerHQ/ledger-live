@@ -8,12 +8,13 @@ import NoAccounts from "./NoAccountsImage";
 import Text from "~/renderer/components/Text";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import { openURL } from "~/renderer/linking";
-import { withTheme } from "styled-components";
+import { DefaultTheme, withTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import { languageSelector } from "~/renderer/reducers/settings";
-const EmptyStateAccounts = ({ theme }: { theme: any }) => {
+
+const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const { push } = useHistory();
   const { t } = useTranslation();
   const locale = useSelector(languageSelector) || "en";

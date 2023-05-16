@@ -47,9 +47,9 @@ const DropContainer = styled.div`
     margin-bottom: 0px;
   }
 `;
-export type DropDownItemType<ContentType = any> = {
-  key: string;
-  label: any;
+export type DropDownItemType<ContentType = unknown> = {
+  key?: string;
+  label: React.ReactNode;
   disabled?: boolean;
   content?: ContentType;
 };
@@ -60,20 +60,20 @@ const ButtonContainer = styled.div`
   cursor: pointer;
   flex-shrink: 1;
 `;
-type Props = {
+type Props<Item> = {
   children: (props: {
     isOpen: boolean | undefined | null;
     value: DropDownItemType | undefined | null;
   }) => React.ReactNode;
-  items: DropDownItemType[];
-  onChange?: (value: any) => void;
-  renderItem: (props: { isActive: boolean; item: any }) => React.ReactNode | null;
+  items: Item[];
+  onChange?: (value: Item) => void;
+  renderItem: (props: { isActive: boolean; item: Item }) => React.ReactNode;
   value?: DropDownItemType | null;
   controlled?: boolean;
   defaultValue?: DropDownItemType | null;
   buttonId?: string;
 };
-const DropDownSelector = ({
+const DropDownSelector = <ContentType, Item extends DropDownItemType<ContentType>>({
   children,
   items = [],
   onChange,
@@ -82,7 +82,7 @@ const DropDownSelector = ({
   controlled = false,
   defaultValue = null,
   buttonId,
-}: Props) => {
+}: Props<Item>) => {
   const [isOpen, setOpen] = useState(false);
   const [stateValue, setStateValue] = useState(defaultValue);
   const selectedOption = controlled ? value : stateValue;

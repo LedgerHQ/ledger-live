@@ -50,7 +50,7 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     onTryAnotherImage,
     blockNavigation,
   } = props;
-  const type: Theme["theme"] = useTheme("colors.palette.type");
+  const type: Theme["theme"] = useTheme().colors.palette.type;
   const device = getEnv("MOCK") ? mockedDevice : props.device;
   const commandRequest = useMemo(() => ({ hexImage }), [hexImage]);
 

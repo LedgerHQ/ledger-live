@@ -6,7 +6,7 @@ const rootFolder = path.resolve(__dirname, "..", "..");
 
 module.exports = {
   ...common,
-  entryPoints: ["./src/index.js"],
+  entryPoints: ["./src/index.ts"],
   entryNames: "main.bundle",
   target: ["node12"],
   platform: "node",
