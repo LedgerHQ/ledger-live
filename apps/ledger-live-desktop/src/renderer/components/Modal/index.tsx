@@ -125,7 +125,7 @@ const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) =>
   transition: all 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
 `;
 export type RenderProps<Name extends keyof ModalData> = {
-  onClose?: (() => void) | undefined;
+  onClose: () => void;
   data: ModalData[Name];
 };
 
@@ -245,7 +245,7 @@ class Modal<Name extends keyof ModalData> extends PureComponent<
       bodyStyle,
     } = this.props;
     const renderProps = {
-      onClose,
+      onClose: onClose!,
       data: data!,
     };
     const modal = (

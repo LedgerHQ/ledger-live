@@ -21,22 +21,25 @@ import StepAsset, { StepAssetFooter } from "./steps/StepAsset";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
+import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
+
+export type Data = {
+  account: AlgorandAccount;
+  parentAccount: AlgorandAccount | undefined | null;
+};
+
 type OwnProps = {
   stepId: StepId;
   onClose: () => void;
   onChangeStepId: (a: StepId) => void;
-  params: {
-    account: Account;
-    parentAccount: Account | undefined | null;
-  };
-  name: string;
+  params: Data;
 };
+
 type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  device: Device | undefined | null;
-  closeModal: (a: string) => void;
+  closeModal: () => void;
   openModal: (a: string) => void;
 };
 type Props = OwnProps & StateProps;
@@ -68,18 +71,9 @@ const mapDispatchToProps = {
   closeModal,
   openModal,
 };
-const Body = ({
-  t,
-  stepId,
-  device,
-  closeModal,
-  openModal,
-  onChangeStepId,
-  params,
-  name,
-}: Props) => {
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+const Body = ({ t, stepId, device, closeModal, openModal, onChangeStepId, params }: Props) => {
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const {
@@ -106,8 +100,8 @@ const Body = ({
     };
   });
   const handleCloseModal = useCallback(() => {
-    closeModal(name);
-  }, [closeModal, name]);
+    closeModal();
+  }, [closeModal]);
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
@@ -175,8 +169,9 @@ const Body = ({
     </Stepper>
   );
 };
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);
+
 export default C;
