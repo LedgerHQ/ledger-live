@@ -5,7 +5,6 @@ import {
   DEFAULT_GAS_COEFFICIENT,
   HEX_PREFIX,
   MAINNET_CHAIN_TAG,
-  TESTNET_CHAIN_TAG,
 } from "./constants";
 import { Transaction } from "./types";
 import { Transaction as ThorTransaction } from "thor-devkit";
@@ -19,18 +18,14 @@ import { VTHO_ADDRESS } from "./contracts/constants";
 import VIP180 from "./contracts/abis/VIP180";
 import { calculateTransactionInfo } from "./utils/calculateTransactionInfo";
 import { isValid } from "./utils/address-utils";
-import { getEnv } from "@ledgerhq/live-env";
+
 /**
  * Create an empty VET or VTHO transaction
  *
  * @returns {Transaction}
  */
 export const createTransaction = (): Transaction => {
-  const BASE_URL = getEnv("API_VECHAIN_THOREST");
-
-  const chainTag = BASE_URL.includes("mainnet")
-    ? MAINNET_CHAIN_TAG
-    : TESTNET_CHAIN_TAG;
+  const chainTag = MAINNET_CHAIN_TAG;
 
   return {
     family: "vechain",

@@ -202,7 +202,7 @@ const envDefinitions: Record<
     desc: "mirror node API for Hedera",
   },
   API_VECHAIN_THOREST: {
-    def: "https://mainnet-ledger.vechain.org",
+    def: "https://vechain.coin.ledger.com",
     parser: stringParser,
     desc: "Thorest API for VeChain",
   },
