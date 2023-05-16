@@ -5,7 +5,7 @@ import {
   parseCurrencyUnit,
 } from "../../../../currencies";
 import { BigNumber } from "bignumber.js";
-import { BroadcastTransactionRequest, TransactionResponse } from "./types";
+import {BroadcastTransactionRequest, TransactionResponse, TxStatus} from "./types";
 import {
   GetAccountShape,
   AccountShapeInfo,
@@ -65,7 +65,7 @@ export const processTxs = (
 export const mapTxToOps =
   (accountId, { address }: AccountShapeInfo) =>
   (tx: TransactionResponse): Operation[] => {
-    const { to, from, hash, timestamp, amount, fee } = tx;
+    const { to, from, hash, timestamp, amount, fee, status } = tx;
     const ops: Operation[] = [];
     const date = new Date(timestamp * 1000);
     const value = parseCurrencyUnit(getUnit(), amount.toString());
@@ -73,6 +73,7 @@ export const mapTxToOps =
 
     const isSending = address === from;
     const isReceiving = address === to;
+    const hasFailed = status !== TxStatus.Ok;
 
     if (isSending) {
       ops.push({
@@ -88,6 +89,7 @@ export const mapTxToOps =
         recipients: [to],
         date,
         extra: {},
+        hasFailed,
       });
     }
 
@@ -105,6 +107,7 @@ export const mapTxToOps =
         recipients: [to],
         date,
         extra: {},
+        hasFailed,
       });
     }
 
