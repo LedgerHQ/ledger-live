@@ -66,14 +66,16 @@ const pickSiblingsOptedIn = (
 // being opted-in by an account
 
 const getRandomAssetId = (account: Account): string | undefined => {
-  // FIXME: properly type reduce function and optedInASA
-  const optedInASA = account.subAccounts?.reduce((old: any, current: any) => {
-    if (current.type === "TokenAccount") {
-      return [...old, current.token.id];
-    }
+  const optedInASA = account.subAccounts?.reduce(
+    (old: string[], current: SubAccount) => {
+      if (current.type === "TokenAccount") {
+        return [...old, current.token.id];
+      }
 
-    return old;
-  }, []);
+      return old;
+    },
+    []
+  );
   const ASAs = listTokensForCryptoCurrency(account.currency).map(
     (asa) => asa.id
   );
