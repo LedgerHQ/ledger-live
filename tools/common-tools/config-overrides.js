@@ -32,8 +32,10 @@ module.exports = function override(webpackConfig) {
     "@ledgerhq/coin-framework/lib-es";
   webpackConfig.resolve.alias["@ledgerhq/coin-polkadot"] =
     "@ledgerhq/coin-polkadot/lib-es";
+  webpackConfig.resolve.alias["@ledgerhq/coin-algorand"] =
+    "@ledgerhq/coin-algorand/lib-es";
   webpackConfig.resolve.alias["@ledgerhq/domain-service"] =
-  "@ledgerhq/domain-service/lib-es";
+    "@ledgerhq/domain-service/lib-es";
 
   return webpackConfig;
 };

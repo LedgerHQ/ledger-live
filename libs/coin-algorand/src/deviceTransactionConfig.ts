@@ -1,14 +1,32 @@
-import type { AlgorandTransaction, TransactionStatus } from "./types";
-import type { DeviceTransactionField } from "../../transaction";
-import { getAccountUnit } from "../../account";
-import { formatCurrencyUnit, findTokenById } from "../../currencies";
-import { extractTokenId } from "./tokens";
+import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import {
+  findTokenById,
+  formatCurrencyUnit,
+} from "@ledgerhq/coin-framework/currencies/index";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
+import { extractTokenId } from "./tokens";
+import type {
+  AlgorandTransaction,
+  Transaction,
+  TransactionStatus,
+} from "./types";
+
+export type ExtraDeviceTransactionField = {
+  type: "polkadot.validators";
+  label: string;
+};
+
 export const displayTokenValue = (token: TokenCurrency) =>
   `${token.name} (#${extractTokenId(token.id)})`;
 
-const getSendFields = (transaction, status, account, addRecipient: boolean) => {
+const getSendFields = (
+  transaction: Transaction,
+  status: TransactionStatus,
+  account: AccountLike,
+  addRecipient: boolean
+) => {
   const { estimatedFees, amount } = status;
   const fields: {
     type: string;

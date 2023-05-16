@@ -1,11 +1,13 @@
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import type {
+  Account,
+  AccountLike,
+  AccountLikeArray,
+} from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { Transaction } from "../../generated/types";
-import { getAccountCurrency } from "../../account";
 import { extractTokenId } from "./tokens";
-import type { Account } from "@ledgerhq/types-live";
-import type { AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
-import type { AlgorandAccount } from "./types";
+import type { AlgorandAccount, Transaction } from "./types";
 
 const options = [
   {
@@ -48,7 +50,7 @@ function inferAccounts(
     return accounts;
   }
 
-  return opts.token.map((token) => {
+  return opts.token.map((token?: string) => {
     const subAccounts = account.subAccounts || [];
 
     if (token) {
@@ -109,8 +111,14 @@ function inferTransactions(
   });
 }
 
-export default {
-  options,
-  inferAccounts,
-  inferTransactions,
-};
+/**
+ * FIXME: unsued network and cache params are passed to makeCliTools because of how the
+ * libs/ledger-live-common/scripts/sync-families-dispatch.mjs script works.
+ */
+export default function makeCliTools(_network: unknown, _cache: unknown) {
+  return {
+    options,
+    inferAccounts,
+    inferTransactions,
+  };
+}

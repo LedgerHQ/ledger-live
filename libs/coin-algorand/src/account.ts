@@ -1,11 +1,10 @@
-import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
-import { getAccountUnit } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
-import type { Account } from "@ledgerhq/types-live";
-import type { AlgorandResources, AlgorandAccount } from "./types";
-import type { Operation } from "@ledgerhq/types-live";
+import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { Account, Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import type { AlgorandAccount, AlgorandResources } from "./types";
 
 function formatOperationSpecifics(
   op: Operation,

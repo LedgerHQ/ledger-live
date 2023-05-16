@@ -10,6 +10,7 @@ import {
 import type { Transaction } from "../types";
 import { getFeeItems } from "../api";
 import {
+  makeAccountBridgeReceive,
   scanAccounts,
   signOperation,
   broadcast,
@@ -17,7 +18,6 @@ import {
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import { getMainAccount } from "../../../account";
-import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 import type {
   Account,
   AccountBridge,
