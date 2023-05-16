@@ -2,12 +2,12 @@ import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { AlgoAccount, AlgoTransactionParams } from "./algodv2.types";
 
 import {
-  broadcastTransaction as sidecardBroadcastTransaction,
-  getAccount as sidecardGetAccount,
-  getTransactionParams as sidecardGetTransactionParams,
+  broadcastTransaction,
+  getAccount,
+  getTransactionParams,
 } from "./algodv2";
 
-import { getAccountTransactions as sidecardGetAccountTransactions } from "./indexer";
+import { getAccountTransactions } from "./indexer";
 import { AlgoTransaction } from "./indexer.types";
 
 export * from "./algodv2.types";
@@ -21,21 +21,21 @@ export class AlgorandAPI {
   }
 
   async getAccount(address: string): Promise<AlgoAccount> {
-    return sidecardGetAccount(this.network)(address);
+    return getAccount(this.network)(address);
   }
 
   async getTransactionParams(): Promise<AlgoTransactionParams> {
-    return sidecardGetTransactionParams(this.network)();
+    return getTransactionParams(this.network)();
   }
 
   async broadcastTransaction(payload: Buffer): Promise<string> {
-    return sidecardBroadcastTransaction(this.network)(payload);
+    return broadcastTransaction(this.network)(payload);
   }
 
   async getAccountTransactions(
     address: string,
     startAt?: number
   ): Promise<AlgoTransaction[]> {
-    return sidecardGetAccountTransactions(this.network)(address, startAt);
+    return getAccountTransactions(this.network)(address, startAt);
   }
 }
