@@ -9,8 +9,8 @@ import {
   EstimatedFeesResponse,
   NetworkStatusResponse,
   TransactionResponse,
-  TransactionsResponse
-} from "./types";
+  TransactionsResponse,
+} from "./api.types";
 import network from "../../../../network";
 import { getEnv } from "../../../../env";
 
@@ -27,7 +27,7 @@ const fetch = async <T>(path: string) => {
   // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
   const opts: AxiosRequestConfig = {
     method: "GET",
-    url
+    url,
   };
   const rawResponse = await network(opts);
 
@@ -44,7 +44,7 @@ const send = async <T>(path: string, data: Record<string, any>) => {
     method: "POST",
     url,
     data: JSON.stringify(data),
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
   };
 
   const rawResponse = await network(opts);
@@ -62,7 +62,7 @@ const sendRaw = async <T>(path: string, data: Buffer) => {
     method: "POST",
     url,
     data,
-    headers: { "Content-Type": "application/octet-stream" }
+    headers: { "Content-Type": "application/octet-stream" },
   };
 
   const rawResponse = await network(opts);

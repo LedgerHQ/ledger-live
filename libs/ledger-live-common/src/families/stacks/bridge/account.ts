@@ -12,15 +12,15 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
-  StacksMemoTooLong
 } from "@ledgerhq/errors";
+import { StacksMemoTooLong } from "../errors";
 import {
   AddressVersion,
   TransactionVersion,
   AnchorMode,
   UnsignedTokenTransferOptions,
   estimateTransfer,
-  makeUnsignedSTXTokenTransfer
+  makeUnsignedSTXTokenTransfer,
 } from "@stacks/transactions";
 import { getNonce } from "@stacks/transactions";
 
@@ -32,7 +32,7 @@ import {
   BroadcastFnSignature,
   Operation,
   SignOperationEvent,
-  SignOperationFnSignature
+  SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 
 import { StacksNetwork } from "./utils/api.types";
@@ -55,7 +55,7 @@ const createTransaction = (): Transaction => {
     amount: new BigNumber(0),
     network: "mainnet",
     anchorMode: AnchorMode.Any,
-    useAllAmount: false
+    useAllAmount: false,
   };
 };
 
@@ -66,7 +66,7 @@ const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
 const sync = makeSync({ getAccountShape });
 
 const broadcast: BroadcastFnSignature = async ({
-  signedOperation: { operation, signature }
+  signedOperation: { operation, signature },
 }) => {
   const tx = await getTxToBroadcast(operation, signature);
 
@@ -112,13 +112,13 @@ const getTransactionStatus = async (
     warnings,
     estimatedFees,
     amount,
-    totalSpent
+    totalSpent,
   };
 };
 
 const estimateMaxSpendable = async ({
   account,
-  parentAccount
+  parentAccount,
 }: {
   account: AccountLike;
   parentAccount?: Account | null | undefined;
@@ -150,7 +150,7 @@ const prepareTransaction = async (
       memo,
       network,
       publicKey: xpub,
-      amount: new BN(amount.toFixed())
+      amount: new BN(amount.toFixed()),
     };
 
     const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -181,25 +181,18 @@ const prepareTransaction = async (
 const signOperation: SignOperationFnSignature<Transaction> = ({
   account,
   deviceId,
-  transaction
+  transaction,
 }): Observable<SignOperationEvent> =>
   withDevice(deviceId)(
-    transport =>
-      new Observable(o => {
+    (transport) =>
+      new Observable((o) => {
         async function main() {
           const { id: accountId } = account;
           const { address, derivationPath } = getAddress(account);
           const { xpubOrAddress: xpub } = decodeAccountId(accountId);
 
-          const {
-            recipient,
-            fee,
-            anchorMode,
-            network,
-            memo,
-            amount,
-            nonce
-          } = transaction;
+          const { recipient, fee, anchorMode, network, memo, amount, nonce } =
+            transaction;
 
           if (!xpub) {
             throw new InvalidAddress();
@@ -223,7 +216,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             memo,
             publicKey: xpub,
             fee: new BN(fee.toFixed()),
-            nonce: new BN(nonce.toFixed())
+            nonce: new BN(nonce.toFixed()),
           };
 
           const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -231,7 +224,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           const serializedTx = tx.serialize();
 
           o.next({
-            type: "device-signature-requested"
+            type: "device-signature-requested",
           });
 
           // Sign by device
@@ -242,7 +235,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           throwIfError(result);
 
           o.next({
-            type: "device-signature-granted"
+            type: "device-signature-granted",
           });
 
           const txHash = "";
@@ -268,8 +261,8 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
               xpub,
               network,
               anchorMode,
-              signatureType: 1
-            }
+              signatureType: 1,
+            },
           };
 
           o.next({
@@ -277,14 +270,14 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             signedOperation: {
               operation,
               signature,
-              expirationDate: null
-            }
+              expirationDate: null,
+            },
           });
         }
 
         main().then(
           () => o.complete(),
-          e => o.error(e)
+          (e) => o.error(e)
         );
       })
   );
@@ -298,5 +291,5 @@ export const accountBridge: AccountBridge<Transaction> = {
   signOperation,
   sync,
   receive,
-  broadcast
+  broadcast,
 };
