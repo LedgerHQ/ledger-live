@@ -7,7 +7,7 @@ type State = {
   stepId: StepId;
 };
 
-class SendModal extends PureComponent<{}, State> {
+class SendModal extends PureComponent<Data, State> {
   state: State = {
     stepId: "starter",
   };

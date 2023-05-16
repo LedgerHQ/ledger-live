@@ -1,4 +1,6 @@
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+import { SubAccount } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -8,17 +10,17 @@ import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import WarnBox from "~/renderer/components/WarnBox";
 import { openURL } from "~/renderer/linking";
-type Props = {
-  name?: string;
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+
+export type Props = {
+  account: CeloAccount | SubAccount;
+  parentAccount: CeloAccount | undefined | null;
 };
-const CeloEarnRewardsInfoModal = ({ name, account, parentAccount }: Props) => {
+const CeloEarnRewardsInfoModal = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
-    dispatch(closeModal(name));
-    if (account.celoResources?.registrationStatus) {
+    dispatch(closeModal("MODAL_CELO_EARN_REWARDS_INFO"));
+    if (getMainAccount(account, parentAccount).celoResources?.registrationStatus) {
       dispatch(
         openModal("MODAL_CELO_LOCK", {
           parentAccount,
@@ -34,13 +36,12 @@ const CeloEarnRewardsInfoModal = ({ name, account, parentAccount }: Props) => {
         }),
       );
     }
-  }, [parentAccount, account, dispatch, name]);
+  }, [parentAccount, account, dispatch]);
   const onLearnMore = useCallback(() => {
     openURL(urls.celo.learnMore);
   }, []);
   return (
     <EarnRewardsInfoModal
-      name={name}
       onNext={onNext}
       description={t("celo.delegation.earnRewards.description")}
       bullets={[
@@ -53,4 +54,5 @@ const CeloEarnRewardsInfoModal = ({ name, account, parentAccount }: Props) => {
     />
   );
 };
+
 export default CeloEarnRewardsInfoModal;

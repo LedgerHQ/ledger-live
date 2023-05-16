@@ -25,6 +25,7 @@ export default function EarnRewardsInfoModal({
   additional,
   footerLeft,
 }: Props) {
+  // TODO rename MODAL_ALGORAND_EARN_REWARDS_INFO to something more generic
   return (
     <Modal
       name="MODAL_ALGORAND_EARN_REWARDS_INFO"

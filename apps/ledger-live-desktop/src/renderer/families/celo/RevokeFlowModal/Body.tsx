@@ -19,27 +19,27 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepVote, { StepVoteFooter } from "./steps/StepVote";
-import { CeloVote, Transaction } from "@ledgerhq/live-common/families/celo/types";
-import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
+import { CeloAccount, CeloVote, Transaction } from "@ledgerhq/live-common/families/celo/types";
+import { AccountBridge, Operation, Account, SubAccount } from "@ledgerhq/types-live";
 import { St, StepProps, StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+
+export type Data = {
+  account: CeloAccount | SubAccount;
+  parentAccount: CeloAccount | undefined | null;
+  vote: CeloVote;
+};
 type OwnProps = {
   stepId: StepId;
   onClose: () => void;
   onChangeStepId: (a: StepId) => void;
-  params: {
-    account: Account;
-    parentAccount: Account | undefined | null;
-    vote: CeloVote;
-  };
-  name: string;
+  params: Data;
 };
 type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  device: Device | undefined | null;
-  closeModal: (a: string) => void;
+  closeModal: () => void;
   openModal: (a: string) => void;
 };
 type Props = OwnProps & StateProps;
@@ -79,16 +79,7 @@ const mapDispatchToProps = {
   closeModal,
   openModal,
 };
-const Body = ({
-  t,
-  stepId,
-  device,
-  closeModal,
-  openModal,
-  onChangeStepId,
-  params,
-  name,
-}: Props) => {
+const Body = ({ t, stepId, device, closeModal, openModal, onChangeStepId, params }: Props) => {
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
@@ -104,7 +95,10 @@ const Body = ({
     bridgePending,
   } = useBridgeTransaction(() => {
     const { account, vote } = params;
-    invariant(account && account.celoResources, "celo: account and celo resources required");
+    invariant(
+      account?.type === "Account" && account.celoResources,
+      "celo: account and celo resources required",
+    );
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
       mode: "revoke",
@@ -118,8 +112,8 @@ const Body = ({
     };
   });
   const handleCloseModal = useCallback(() => {
-    closeModal(name);
-  }, [closeModal, name]);
+    closeModal();
+  }, [closeModal]);
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
@@ -185,7 +179,7 @@ const Body = ({
     </Stepper>
   );
 };
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);

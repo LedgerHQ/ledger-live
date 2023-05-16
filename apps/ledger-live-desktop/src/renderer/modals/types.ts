@@ -23,7 +23,7 @@ import { CoinModalsData } from "../families/generated";
  */
 
 export type MakeModalsType<MData> = {
-  [Name in keyof MData]: React.ComponentType<Partial<NonNullable<MData[Name]>>>;
+  [Name in keyof MData]: React.ComponentType<NonNullable<MData[Name]>>;
 };
 
 /**

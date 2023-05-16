@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import Modal from "~/renderer/components/Modal";
-import Body from "./Body";
+import Body, { Data } from "./Body";
 import { StepId } from "./types";
 type State = {
   stepId: StepId;
@@ -8,7 +8,7 @@ type State = {
 const INITIAL_STATE: State = {
   stepId: "info",
 };
-class ClaimRewardsModal extends PureComponent<{}, State> {
+class ClaimRewardsModal extends PureComponent<Data, State> {
   state: State = INITIAL_STATE;
   handleReset = () => this.setState({ ...INITIAL_STATE });
 

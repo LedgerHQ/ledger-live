@@ -10,7 +10,6 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { Account, Operation } from "@ledgerhq/live-common/types/index";
 import { StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import logger from "~/renderer/logger";
@@ -20,20 +19,26 @@ import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
+import { NearAccount } from "@ledgerhq/live-common/families/near/types";
+import { Account, Operation } from "@ledgerhq/types-live";
+
+export type Data = {
+  account: NearAccount;
+  validatorAddress: string;
+};
+
 type OwnProps = {
-  account: Account;
+  account: NearAccount;
   stepId: StepId;
   onClose: () => void;
   onChangeStepId: (a: StepId) => void;
   validatorAddress: string;
-  name: string;
 };
 type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  device: Device | undefined | null;
-  closeModal: (a: string) => void;
+  closeModal: () => void;
   openModal: (a: string) => void;
 };
 type Props = OwnProps & StateProps;
@@ -52,12 +57,11 @@ function Body({
   closeModal,
   openModal,
   device,
-  name,
   validatorAddress,
 }: Props) {
   const dispatch = useDispatch();
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const {
     account,
@@ -98,8 +102,8 @@ function Body({
   }, [onChangeStepId]);
   const handleStepChange = useCallback(({ id }) => onChangeStepId(id), [onChangeStepId]);
   const handleCloseModal = useCallback(() => {
-    closeModal(name);
-  }, [name, closeModal]);
+    closeModal();
+  }, [closeModal]);
   const handleOperationBroadcasted = useCallback(
     (optimisticOperation: Operation) => {
       if (!account) return;
@@ -157,7 +161,7 @@ function Body({
     </Stepper>
   );
 }
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);
