@@ -5848,5 +5848,14 @@
     "description": "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until June 30th 2023",
     "cta": "Why should I subscribe?",
     "downloadLLM": "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+  },
+  "webview": {
+    "networkError": {
+      "title": "Network Error",
+      "subtitle": "Check your internet connection and try again.",
+      "subtitleTwo": "Contact Ledger Support if the problem continues.",
+      "tryAgain": "Try again",
+      "contactSupport": "Contact Ledger support" 
+    }
   }
 }

@@ -126,6 +126,8 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/4404382258961-Install-uninstall-and-update-apps?docs=true&utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=manager_hanging",
   contactSupport:
     "https://support.ledger.com/hc/en-us/requests/new?ticket_form_id=248165?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=support_contact",
+  contactSupportWebview:
+    "https://support.ledger.com/hc/en-us/articles/4423020306705-Contact-Us?support=true",
   whatIsARecoveryPhrase: "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase",
   feesMoreInfo:
     "https://support.ledger.com/hc/en-us/articles/360021039173-Choose-network-fees?docs=true",

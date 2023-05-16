@@ -18,6 +18,7 @@ export const initialWebviewState: WebviewState = {
   canGoForward: false,
   title: "",
   loading: false,
+  isAppUnavailable: false,
 };
 
 type UseWebviewStateParams = {
@@ -31,6 +32,7 @@ type UseWebviewStateReturn = {
     src: string;
   };
   webviewRef: RefObject<WebviewTag>;
+  handleRefresh: () => void;
 };
 
 export function useWebviewState(
@@ -154,6 +156,7 @@ export function useWebviewState(
     setState(oldState => ({
       ...oldState,
       loading: true,
+      isAppUnavailable: false,
     }));
   }, []);
 
@@ -166,18 +169,31 @@ export function useWebviewState(
 
   const handleDomReady = useCallback(() => {
     const webview = webviewRef.current;
-
     if (!webview) {
       return;
     }
 
-    setState({
+    setState(oldState => ({
       url: webview.getURL(),
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
       title: webview.getTitle(),
       loading: webview.isLoading(),
-    });
+      isAppUnavailable: oldState.isAppUnavailable,
+    }));
+  }, [webviewRef]);
+
+  const handleFail = useCallback(() => {
+    setState(oldState => ({
+      ...oldState,
+      loading: false,
+      isAppUnavailable: true,
+    }));
+  }, []);
+
+  const handleRefresh = useCallback(() => {
+    const webview = safeGetRefValue(webviewRef);
+    webview.reload();
   }, [webviewRef]);
 
   useEffect(() => {
@@ -193,6 +209,8 @@ export function useWebviewState(
     webview.addEventListener("did-start-loading", handleDidStartLoading);
     webview.addEventListener("did-stop-loading", handleDidStopLoading);
     webview.addEventListener("dom-ready", handleDomReady);
+    webview.addEventListener("did-fail-load", handleFail);
+    webview.addEventListener("crashed", handleFail);
 
     return () => {
       webview.removeEventListener("page-title-updated", handlePageTitleUpdated);
@@ -201,6 +219,7 @@ export function useWebviewState(
       webview.removeEventListener("did-start-loading", handleDidStartLoading);
       webview.removeEventListener("did-stop-loading", handleDidStopLoading);
       webview.removeEventListener("dom-ready", handleDomReady);
+      webview.removeEventListener("crashed", handleFail);
     };
   }, [
     handleDidNavigate,
@@ -209,6 +228,7 @@ export function useWebviewState(
     handleDidStopLoading,
     handlePageTitleUpdated,
     handleDomReady,
+    handleFail,
     webviewRef,
     isMounted,
   ]);
@@ -221,5 +241,6 @@ export function useWebviewState(
     webviewState: state,
     webviewProps: props,
     webviewRef,
+    handleRefresh,
   };
 }
