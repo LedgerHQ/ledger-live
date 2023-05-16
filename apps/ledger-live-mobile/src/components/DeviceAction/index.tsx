@@ -588,6 +588,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
           : t("send.verification.streaming.inaccurate"),
       colors,
       theme,
+      lockModal: true,
     });
   }
 

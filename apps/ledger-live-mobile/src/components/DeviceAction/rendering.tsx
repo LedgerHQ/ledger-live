@@ -531,6 +531,7 @@ const AllowOpeningApp = ({
           })}
         </CenteredText>
       ) : null}
+      <ModalLock />
     </Wrapper>
   );
 };
@@ -922,8 +923,10 @@ export function renderConnectYourDevice({
 export function renderLoading({
   t,
   description,
+  lockModal = false,
 }: RawProps & {
   description?: string;
+  lockModal?: boolean;
 }) {
   return (
     <Wrapper>
@@ -931,7 +934,7 @@ export function renderLoading({
         <InfiniteLoader />
       </SpinnerContainer>
       <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
-      <ModalLock />
+      {lockModal ? <ModalLock /> : null}
     </Wrapper>
   );
 }
@@ -1004,7 +1007,7 @@ export function LoadingAppInstall({
     track(...trackingArgs);
   }, [appName, analyticsPropertyFlow]);
 
-  return renderLoading(props);
+  return renderLoading({ ...props, lockModal: true });
 }
 
 type WarningOutdatedProps = RawProps & {

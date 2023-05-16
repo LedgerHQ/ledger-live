@@ -210,7 +210,11 @@ export function Confirmation({
         footer={
           <View style={styles.footerContainer}>
             {signedOperation ? (
-              renderLoading({ t, description: t("transfer.swap.broadcasting") })
+              renderLoading({
+                t,
+                description: t("transfer.swap.broadcasting"),
+                lockModal: true,
+              })
             ) : !swapData ? (
               <DeviceAction
                 key={"initSwap"}
