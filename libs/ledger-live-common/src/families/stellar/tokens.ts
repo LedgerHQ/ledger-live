@@ -38,7 +38,7 @@ const buildStellarTokenAccount = ({
   );
 
   const reservedBalance = new BigNumber(stellarAsset.balance).minus(
-    stellarAsset.buying_liabilities || 0
+    stellarAsset.selling_liabilities || 0
   );
   const spendableBalance = parseCurrencyUnit(
     token.units[0],
