@@ -219,6 +219,7 @@ export function useWebviewState(
       webview.removeEventListener("did-start-loading", handleDidStartLoading);
       webview.removeEventListener("did-stop-loading", handleDidStopLoading);
       webview.removeEventListener("dom-ready", handleDomReady);
+      webview.removeEventListener("did-fail-load", handleFail);
       webview.removeEventListener("crashed", handleFail);
     };
   }, [
