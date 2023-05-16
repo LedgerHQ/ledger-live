@@ -19,7 +19,6 @@ export const AlgorandOperationTypeEnum = {
 
 export type AlgorandResources = {
   rewards: BigNumber;
-  // Ledger Live only supports a limited list of ASA (defined here https://github.com/LedgerHQ/ledgerjs/blob/master/packages/cryptoassets/src/data/asa.js)
   // This is the actual number of ASA opted-in for the Algo account
   nbAssets: number;
 };
