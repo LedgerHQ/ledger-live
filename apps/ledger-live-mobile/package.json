@@ -55,7 +55,8 @@
     "test": "pnpm test:jest && pnpm test:env",
     "sync-locales": "./scripts/sync-locales.sh",
     "test-deep-links": "ws --spa ./deep-links-test-page.html",
-    "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs"
+    "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs",
+    "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts"
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "^1.0.2",
@@ -273,6 +274,7 @@
     "react-test-renderer": "^17.0.2",
     "strip-ansi": "6.0.1",
     "ts-jest": "^28.0.8",
+    "ts-node": "^10.4.0",
     "tslib": "^2.5.0",
     "ws": "^7.5.2"
   }
