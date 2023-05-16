@@ -1,44 +1,33 @@
-import invariant from "invariant";
-import React, { useState, useCallback, useEffect } from "react";
-import { Trans, withTranslation } from "react-i18next";
-import styled from "styled-components";
-import { Account, FeeStrategy } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { context } from "~/renderer/drawers/Provider";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
+import {
+  Transaction
+} from "@ledgerhq/live-common/families/bitcoin/types";
+import React, { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import styled from "styled-components";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
-import Tooltip from "~/renderer/components/Tooltip";
 import SelectFeeStrategy from "~/renderer/components/SelectFeeStrategy";
+import SendFeeMode from "~/renderer/components/SendFeeMode";
+import Text from "~/renderer/components/Text";
+import Tooltip from "~/renderer/components/Tooltip";
+import { context } from "~/renderer/drawers/Provider";
 import CoinControlModal from "./CoinControlModal";
 import { FeesField } from "./FeesField";
+import { BitcoinFamily } from "./types";
 import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
-import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
-import SendFeeMode from "~/renderer/components/SendFeeMode";
-import { track } from "~/renderer/analytics/segment";
-type Props = {
-  account: Account;
-  parentAccount: Account | undefined | null;
-  transaction: Transaction;
-  onChange: (a: Transaction) => void;
-  status: TransactionStatus;
-  bridgePending: boolean;
-  updateTransaction: (updater: any) => void;
-  mapStrategies?: (
-    a: FeeStrategy,
-  ) => FeeStrategy & {
-    [x: string]: any;
-  };
-  trackProperties?: object;
-};
+
+type Props = NonNullable<BitcoinFamily["sendAmountFields"]>["component"];
+
 const Separator = styled.div`
   width: 100%;
   height: 1px;
   background-color: ${p => p.theme.colors.palette.text.shade10};
   margin: 20px 0;
 `;
-const Fields = ({
+const Fields: Props = ({
   transaction,
   account,
   parentAccount,
@@ -47,9 +36,9 @@ const Fields = ({
   updateTransaction,
   mapStrategies,
   trackProperties = {},
-}: Props) => {
-  invariant(transaction.family === "bitcoin", "FeeField: bitcoin family expected");
+}) => {
   const bridge = getAccountBridge(account);
+  const { t } = useTranslation();
   const { state: drawerState, setDrawer } = React.useContext(context);
   const [coinControlOpened, setCoinControlOpened] = useState(false);
   const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
@@ -63,7 +52,7 @@ const Fields = ({
    * Meanwhile, using this trick (please don't kill me)
    */
   useEffect(() => {
-    updateTransaction(t =>
+    updateTransaction((t: Transaction) =>
       bridge.updateTransaction(t, {
         rbf: true,
       }),
@@ -77,7 +66,7 @@ const Fields = ({
         button: feesStrategy,
         feePerByte: amount,
       });
-      updateTransaction(transaction =>
+      updateTransaction((transaction: Transaction) =>
         bridge.updateTransaction(transaction, {
           feePerByte: amount,
           feesStrategy,
@@ -125,7 +114,7 @@ const Fields = ({
             <Box horizontal alignItems="center">
               <Box>
                 <Text ff="Inter|Regular" fontSize={12} color="palette.text.shade50">
-                  <Trans i18nKey="bitcoin.strategy" />
+                  {t("bitcoin.strategy")}
                 </Text>
                 <Text ff="Inter|Regular" fontSize={13} color="palette.text.shade100">
                   {item ? item.label : null}
@@ -135,12 +124,12 @@ const Fields = ({
               <Box horizontal alignItems="center">
                 {canNext ? (
                   <Button secondary onClick={onCoinControlOpen} disabled={!canNext}>
-                    <Trans i18nKey="bitcoin.coincontrol" />
+                    {t("bitcoin.coincontrol")}
                   </Button>
                 ) : (
-                  <Tooltip content={<Trans i18nKey="bitcoin.ctaDisabled" />}>
+                  <Tooltip content={t("bitcoin.ctaDisabled")}>
                     <Button secondary onClick={onCoinControlOpen} disabled={!canNext}>
-                      <Trans i18nKey="bitcoin.coincontrol" />
+                      {t("bitcoin.coincontrol")}
                     </Button>
                   </Tooltip>
                 )}
@@ -173,6 +162,6 @@ const Fields = ({
   );
 };
 export default {
-  component: withTranslation()(Fields),
+  component: Fields,
   fields: ["feePerByte", "rbf"],
 };

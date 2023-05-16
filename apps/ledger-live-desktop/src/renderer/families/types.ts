@@ -19,6 +19,36 @@ import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
 import { MakeModalsType } from "../modals/types";
 
+export type AmountCellExtraProps = {
+  operation: Operation;
+  unit: Unit;
+  currency: CryptoCurrency;
+};
+
+export type AmountCellProps = {
+  amount: BigNumber;
+  operation: Operation;
+  unit: Unit;
+  currency: CryptoCurrency;
+};
+
+export type ConfirmationCellProps = {
+  operation: Operation;
+  type?: OperationType;
+  isConfirmed: boolean;
+  marketColor: string;
+  hasFailed?: boolean;
+  t: TFunction;
+  withTooltip?: boolean;
+  style?: React.CSSProperties;
+};
+
+export type AmountTooltipProps = {
+  operation: Operation;
+  unit: Unit;
+  amount: BigNumber;
+};
+
 /**
  * LLD family specific that a coin family can implement
  * @template A is the account type of the family. you can set it to Account if there is no customisation of that type among the family.
@@ -36,64 +66,32 @@ export type LLDCoinFamily<
     /**
      * TODO document me
      */
-    amountCellExtra?: Partial<
-      Record<
-        OperationType,
-        React.ComponentType<{
-          operation: Operation;
-          unit: Unit;
-          currency: CryptoCurrency;
-        }>
-      >
-    >;
+    OperationDetailsExtra?: React.ComponentType<{
+      operation: Operation;
+      account: A;
+      type: OperationType;
+      extra: Record<string, string | BigNumber | number>
+    }>;
 
     /**
      * TODO document me
      */
-    amountCell?: Partial<
-      Record<
-        OperationType,
-        React.ComponentType<{
-          amount: BigNumber;
-          operation: Operation;
-          unit: Unit;
-          currency: CryptoCurrency;
-        }>
-      >
-    >;
+    amountCellExtra?: Partial<Record<OperationType, React.ComponentType<AmountCellExtraProps>>>;
 
     /**
      * TODO document me
      */
-    confirmationCell?: Partial<
-      Record<
-        OperationType,
-        React.ComponentType<{
-          operation: Operation;
-          type?: OperationType;
-          isConfirmed: boolean;
-          marketColor: string;
-          hasFailed?: boolean;
-          t: TFunction;
-          withTooltip?: boolean;
-          style?: React.CSSProperties;
-        }>
-      >
-    >;
+    amountCell?: Partial<Record<OperationType, React.ComponentType<AmountCellProps>>>;
 
     /**
      * TODO document me
      */
-    amountTooltip?: Partial<
-      Record<
-        OperationType,
-        React.ComponentType<{
-          operation: Operation;
-          unit: Unit;
-          amount: BigNumber;
-        }>
-      >
-    >;
+    confirmationCell?: Partial<Record<OperationType, React.ComponentType<ConfirmationCellProps>>>;
+
+    /**
+     * TODO document me
+     */
+    amountTooltip?: Partial<Record<OperationType, React.ComponentType<AmountTooltipProps>>>;
 
     /**
      * TODO document me
@@ -105,18 +103,6 @@ export type LLDCoinFamily<
      */
     getURLFeesInfo?: (_: { op: Operation; currencyId: string }) => string | undefined;
   };
-
-  /**
-   * TODO document me
-   */
-  OperationDetailsExtra?: React.ComponentType<{
-    operation: Operation;
-    account: A;
-    type: OperationType;
-    extra: {
-      [key: string]: string;
-    };
-  }>;
 
   accountActions?: {
     /**
@@ -195,6 +181,7 @@ export type LLDCoinFamily<
   sendAmountFields?: {
     component: React.ComponentType<{
       account: A;
+      parentAccount: A | null | undefined;
       transaction: T;
       status: TS;
       onChange: (t: T) => void;
@@ -212,6 +199,7 @@ export type LLDCoinFamily<
   sendRecipientFields?: {
     component: React.ComponentType<{
       account: A;
+      parentAccount: A | undefined | null;
       transaction: T;
       status: TS;
       onChange: (t: T) => void;
@@ -300,7 +288,7 @@ export type FieldComponentProps<
 
 export type ManageAction = {
   key: string;
-  label: React.ReactElement;
+  label: React.ReactNode;
   onClick: () => void;
   event?: string;
   eventProperties?: Record<string, unknown>;

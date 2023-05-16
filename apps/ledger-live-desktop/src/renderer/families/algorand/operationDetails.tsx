@@ -1,29 +1,28 @@
-/* eslint-disable consistent-return */
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import React from "react";
-import styled from "styled-components";
+import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Trans, TFunction } from "react-i18next";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { Operation, Account } from "@ledgerhq/types-live";
-import {
-  OpDetailsTitle,
-  OpDetailsData,
-  OpDetailsSection,
-} from "~/renderer/drawers/OperationDetails/styledComponents";
-import { useDiscreetMode } from "~/renderer/components/Discreet";
-import { localeSelector } from "~/renderer/reducers/settings";
-import FormattedVal from "~/renderer/components/FormattedVal";
+import styled from "styled-components";
+import Box from "~/renderer/components/Box/Box";
 import CounterValue from "~/renderer/components/CounterValue";
-import ToolTip from "~/renderer/components/Tooltip";
+import { useDiscreetMode } from "~/renderer/components/Discreet";
+import FormattedVal from "~/renderer/components/FormattedVal";
 import ConfirmationCheck, {
   Container,
 } from "~/renderer/components/OperationsList/ConfirmationCheck";
+import ToolTip from "~/renderer/components/Tooltip";
+import {
+  OpDetailsData,
+  OpDetailsSection,
+  OpDetailsTitle,
+} from "~/renderer/drawers/OperationDetails/styledComponents";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
-import Box from "~/renderer/components/Box/Box";
-const CellIcon = styled(Box)`
+import { localeSelector } from "~/renderer/reducers/settings";
+import { AmountCellProps, AmountTooltipProps, ConfirmationCellProps } from "../types";
+import { AlgorandFamily } from "./types";
+const CellIcon = styled(Box)<{ index: number }>`
   flex: 1 0 50%;
   overflow: visible;
   z-index: ${p => p.index};
@@ -47,33 +46,29 @@ const Cell = styled(Box).attrs(() => ({
     }
   }
 `;
-const ConfirmationCellContainer = styled(Container)``;
-type OperationDetailsExtraProps = {
-  extra: {
-    [key: string]: any;
-  };
-  type: string;
-  account: Account;
-};
-const OperationDetailsExtra = ({ extra, account }: OperationDetailsExtraProps) => {
+
+type OperationDetails = NonNullable<AlgorandFamily["operationDetails"]>;
+
+const OperationDetailsExtra: OperationDetails["OperationDetailsExtra"] = ({ extra, account }) => {
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
+  const { rewards, memo, assetId } = extra;
   return (
     <>
-      {extra.rewards && extra.rewards.gt(0) && (
+      {rewards && rewards instanceof BigNumber && rewards.gt(0) && (
         <OpDetailsSection>
           <OpDetailsTitle>
             <Trans i18nKey={"operationDetails.extra.rewards"} />
           </OpDetailsTitle>
           <OpDetailsData>
             <Box alignItems="flex-end">
-              <FormattedVal unit={unit} showCode val={extra.rewards} color="palette.text.shade80" />
+              <FormattedVal unit={unit} showCode val={rewards} color="palette.text.shade80" />
               <Box horizontal justifyContent="flex-end">
                 <CounterValue
                   color="palette.text.shade60"
                   fontSize={3}
                   currency={currency}
-                  value={extra.rewards}
+                  value={rewards}
                   subMagnitude={1}
                   prefix={
                     <Box
@@ -92,32 +87,27 @@ const OperationDetailsExtra = ({ extra, account }: OperationDetailsExtraProps) =
           </OpDetailsData>
         </OpDetailsSection>
       )}
-      {extra.assetId && (
+      {assetId && (
         <OpDetailsSection>
           <OpDetailsTitle>
             <Trans i18nKey={"operationDetails.extra.assetId"} />
           </OpDetailsTitle>
-          <OpDetailsData>{extra.assetId}</OpDetailsData>
+          <OpDetailsData>{assetId}</OpDetailsData>
         </OpDetailsSection>
       )}
-      {extra.memo && (
+      {memo && (
         <OpDetailsSection>
           <OpDetailsTitle>
             <Trans i18nKey={"operationDetails.extra.memo"} />
           </OpDetailsTitle>
-          <OpDetailsData>{extra.memo}</OpDetailsData>
+          <OpDetailsData>{memo}</OpDetailsData>
         </OpDetailsSection>
       )}
     </>
   );
 };
-type Props = {
-  amount: BigNumber;
-  operation: Operation;
-  currency: Currency;
-  unit: Unit;
-};
-const AmountCell = ({ amount, operation, currency, unit }: Props) => {
+
+const AmountCell = ({ amount, operation, currency, unit }: AmountCellProps) => {
   const reward =
     operation.extra && operation.extra.rewards ? operation.extra.rewards : BigNumber(0);
   const discreet = useDiscreetMode();
@@ -165,15 +155,7 @@ const AmountCell = ({ amount, operation, currency, unit }: Props) => {
     </>
   );
 };
-type ConfirmationCellProps = {
-  operation: Operation;
-  isConfirmed: boolean;
-  marketColor: string;
-  hasFailed: boolean;
-  t: TFunction;
-  withTooltip: boolean;
-  style?: React.CSSProperties;
-};
+
 const ConfirmationCell = ({
   operation,
   isConfirmed,
@@ -202,15 +184,14 @@ const ConfirmationCell = ({
           <Spacer />
           <CellIcon index={0}>
             <ToolTip content={withTooltip ? t("algorand.operationHasRewards") : null}>
-              <ConfirmationCellContainer
+              <Container
                 type={"REWARD"}
                 isConfirmed={isConfirmed}
                 marketColor={marketColor}
                 hasFailed={hasFailed}
-                t={t}
               >
                 <ClaimRewards size={12} />
-              </ConfirmationCellContainer>
+              </Container>
             </ToolTip>
           </CellIcon>
         </>
@@ -227,15 +208,7 @@ const ConfirmationCell = ({
     </Cell>
   );
 };
-const AmountTooltip = ({
-  operation,
-  amount,
-  unit,
-}: {
-  operation: Operation;
-  amount: BigNumber;
-  unit: Unit;
-}) => {
+const AmountTooltip = ({ operation, amount, unit }: AmountTooltipProps) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const formatConfig = {
@@ -261,7 +234,7 @@ const AmountTooltip = ({
     </Trans>
   ) : null;
 };
-const amountCell = {
+const amountCell: OperationDetails["amountCell"] = {
   OUT: AmountCell,
   IN: AmountCell,
 };
@@ -273,6 +246,7 @@ const amountTooltip = {
   OUT: AmountTooltip,
   IN: AmountTooltip,
 };
+
 export default {
   OperationDetailsExtra,
   amountCell,
