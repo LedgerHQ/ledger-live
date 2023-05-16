@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-eth
 
+## 6.33.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/domain-service@1.1.1
+
 ## 6.33.3-next.0
 
 ### Patch Changes

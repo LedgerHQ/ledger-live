@@ -1,5 +1,11 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.28.7
+
+### Patch Changes
+
+- [#3380](https://github.com/LedgerHQ/ledger-live/pull/3380) [`05c4b20b3a`](https://github.com/LedgerHQ/ledger-live/commit/05c4b20b3a89a1fe0e851189b51a2b5fdf625f01) Thanks [@grsoares21](https://github.com/grsoares21)! - Fix the mapping of errors on the BLE transport. "Disconnect" and "device not found" errors were not correctly being mapped.
+
 ## 6.28.7-next.0
 
 ### Patch Changes

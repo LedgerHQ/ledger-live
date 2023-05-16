@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.22.0
+
+### Minor Changes
+
+- [#3360](https://github.com/LedgerHQ/ledger-live/pull/3360) [`130695325d`](https://github.com/LedgerHQ/ledger-live/commit/130695325d859e87157688071f1e8ea177a43a73) Thanks [@RamyEB](https://github.com/RamyEB)! - fix issue with discover android
+
+### Patch Changes
+
+- [#3381](https://github.com/LedgerHQ/ledger-live/pull/3381) [`d4befe5acf`](https://github.com/LedgerHQ/ledger-live/commit/d4befe5acf9e64458d38495e528cf813b4dd3faa) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Do not display the usual verifyAddress message on send ens
+
+- [#3408](https://github.com/LedgerHQ/ledger-live/pull/3408) [`db8c4b3502`](https://github.com/LedgerHQ/ledger-live/commit/db8c4b350260cf667a77c38de8747c23808f8200) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix device name text wrapping issue in My Ledger
+  Fix device renaming input focusing issue on iOS
+- Updated dependencies [[`491b37f08d`](https://github.com/LedgerHQ/ledger-live/commit/491b37f08d9a17404eaf32c491628e65d2d8666a), [`05c4b20b3a`](https://github.com/LedgerHQ/ledger-live/commit/05c4b20b3a89a1fe0e851189b51a2b5fdf625f01), [`dfccb01b94`](https://github.com/LedgerHQ/ledger-live/commit/dfccb01b94d545af80ee5e77bf1d04d9d2fd0faa), [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9), [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36)]:
+  - @ledgerhq/live-common@29.6.0
+  - @ledgerhq/react-native-hw-transport-ble@6.28.7
+  - @ledgerhq/types-live@6.34.0
+  - @ledgerhq/coin-framework@0.3.3
+  - @ledgerhq/domain-service@1.1.1
+
 ## 3.22.0-next.1
 
 ### Patch Changes
