@@ -6068,8 +6068,8 @@
         "selectAndHide": "Select and hide",
         "hide": "Hide {{count}} collection",
         "hide_plural": "Hide {{count}} collections",
-        "alertHide": "1 Collection hidden. Go to the settings to display and unhide it at any time",
-        "alertHide_plural": "{{count}} Collections hidden. Go to the settings to display and unhide them at any time"
+        "alertHide": "1 Collection hidden. Go to the Account section in Settings to display and unhide them at any time",
+        "alertHide_plural": "{{count}} Collections hidden. Go to the Account section in Settings to display and unhide them at any time"
       },
       "empty": {
         "title": "No NFTs to show, yet",
@@ -6095,7 +6095,7 @@
         "tag": "{{count}} NFTs"
       }
     },
-    "referralProgram":"$10"
+    "referralProgram": "$10"
   },
   "servicesWidget": {
     "title": "Services",
