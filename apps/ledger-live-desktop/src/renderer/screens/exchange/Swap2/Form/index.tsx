@@ -395,11 +395,28 @@ const SwapForm = () => {
         },
       });
     } else {
+      const { to, from } = swapTransaction.swap;
+      const {
+        account: { freshAddress: fromFreshAddress, token: fromToken },
+        currency: { id: fromCurrency },
+      } = from;
+      const fromAddressId = fromToken?.contractAddress || fromFreshAddress;
+      const {
+        account: { freshAddress: toFreshAddress, token: toToken },
+        currency: { id: toCurrency },
+      } = to;
+      const toAddressId = toToken?.contractAddress || toFreshAddress;
+      const fromAmount = swapTransaction.transaction.amount.toNumber();
+
       history.push({
         pathname: "/swap-web",
         state: {
           provider,
-          swapTransaction: JSON.stringify(swapTransaction),
+          fromCurrency,
+          toCurrency,
+          toAddressId,
+          fromAddressId,
+          fromAmount,
         },
       });
       // setDrawer(
