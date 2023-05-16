@@ -15,10 +15,20 @@ import { UserProps as AddAccountProps } from "./AddAccounts";
 import { ModalStartStakeProps } from "./StartStake";
 import { CoinModalsData } from "../families/generated";
 
-export type MakeModalsType<T> = {
-  [Name in keyof T]: React.ComponentType<NonNullable<T[Name]>>;
+/**
+ * the modals data type are all defined by a key value map,
+ * where the key is the modal name, and the value is the data type that it can optionally takes
+ * it is literally the two parameters of openModal(key, value)
+ * once these types are defined, everything is infered at usage of openModal and <Modal>
+ */
+
+export type MakeModalsType<MData> = {
+  [Name in keyof MData]: React.ComponentType<NonNullable<MData[Name]>>;
 };
 
+/**
+ * these are all the LLD global modals (outside of the families own definitions)
+ */
 export type GlobalModalData = {
   MODAL_SEND: undefined | SendData;
   MODAL_RECEIVE: undefined | ReceiveData;
@@ -79,4 +89,7 @@ export type GlobalModalData = {
   MODAL_ERROR: ErrorProps;
 };
 
+/**
+ * finally, we make a union with the coin modals data and we obtain the complete modal data type.
+ */
 export type ModalData = GlobalModalData & CoinModalsData;
