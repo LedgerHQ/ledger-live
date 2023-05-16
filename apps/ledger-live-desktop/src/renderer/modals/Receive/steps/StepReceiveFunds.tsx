@@ -214,7 +214,7 @@ const StepReceiveFunds = (props: StepProps) => {
       if (receiveStakingFlowConfig?.params?.[id]?.direct) {
         dispatch(
           openModal("MODAL_ETH_STAKE", {
-            account,
+            account: mainAccount,
             checkbox: true,
             singleProviderRedirectMode: false,
             source: "receive",
@@ -228,8 +228,7 @@ const StepReceiveFunds = (props: StepProps) => {
       onClose();
     }
   }, [
-    account,
-    mainAccount?.currency?.id,
+    mainAccount,
     currencyName,
     dispatch,
     name,
