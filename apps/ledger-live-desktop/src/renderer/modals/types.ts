@@ -1,4 +1,5 @@
-import { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import React from "react";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
@@ -10,8 +11,15 @@ import { Data as PlatformExchangeCompleteData } from "./Platform/Exchange/Comple
 import { Params as SignTransactionData } from "./SignTransaction/Body";
 import { Props as ConfirmProps } from "./ConfirmModal";
 import { Props as ErrorProps } from "./ErrorModal";
+import { UserProps as AddAccountProps } from "./AddAccounts";
+import { ModalStartStakeProps } from "./StartStake";
+import { CoinModalsData } from "../families/generated";
 
-export type ModalData = {
+export type MakeModalsType<T> = {
+  [Name in keyof T]: React.ComponentType<NonNullable<T[Name]>>;
+};
+
+export type GlobalModalData = {
   MODAL_SEND: undefined | SendData;
   MODAL_RECEIVE: undefined | ReceiveData;
   MODAL_SETTINGS_ACCOUNT: {
@@ -27,51 +35,22 @@ export type ModalData = {
     acceptTerms: () => void;
   };
   MODAL_STUB: undefined;
-  MODAL_ADD_ACCOUNTS:
-    | undefined
-    | {
-        currency?: CryptoCurrency | TokenCurrency | null;
-        preventSkippingCurrencySelection?: boolean;
-        flow?: string;
-        onClose?: () => void;
-      };
+  MODAL_ADD_ACCOUNTS: undefined | AddAccountProps;
   MODAL_BLACKLIST_TOKEN: {
     token: TokenCurrency;
   };
   MODAL_SWAP_RESET_KYC: undefined;
   MODAL_STORYLY_DEBUGGER: undefined;
   MODAL_LOTTIE_DEBUGGER: undefined;
-  MODAL_BITCOIN_FULL_NODE:
-    | undefined
-    | {
-        skipNodeSetup?: boolean;
-      };
   MODAL_PLATFORM_EXCHANGE_COMPLETE: PlatformExchangeCompleteData;
   MODAL_EXPORT_ACCOUNTS: undefined;
   MODAL_EXPORT_OPERATIONS: undefined;
-  MODAL_START_STAKE: {
-    account?: AccountLike | undefined | null;
-    parentAccount?: Account | undefined | null;
-    source?: string;
-  };
+  MODAL_START_STAKE: ModalStartStakeProps;
   MODAL_SIGN_TRANSACTION: SignTransactionData;
   MODAL_SIGN_MESSAGE: SignMessageData;
-  MODAL_DELEGATE: {
-    account: AccountLike | undefined | null;
-    parentAccount: Account | undefined | null;
-    mode?: string | undefined | null;
-    eventType?: string;
-    stepId?: string;
-  };
   MODAL_TROUBLESHOOT_NETWORK: undefined;
-  MODAL_ETH_STAKE: {
-    account: Account;
-    checkbox?: boolean;
-    singleProviderRedirectMode?: boolean;
-    source?: string;
-  };
   MODAL_NO_FUNDS_STAKE: {
-    account?: AccountLike | undefined | null;
+    account: AccountLike | undefined | null;
     parentAccount?: Account | undefined | null;
   };
   MODAL_PASSWORD: undefined;
@@ -96,7 +75,8 @@ export type ModalData = {
     origin?: string | undefined | null;
     appName?: string | undefined | null;
   };
-  MODAL_ALGORAND_EARN_REWARDS_INFO: undefined;
   MODAL_CONFIRM: ConfirmProps;
   MODAL_ERROR: ErrorProps;
 };
+
+export type ModalData = GlobalModalData & CoinModalsData;

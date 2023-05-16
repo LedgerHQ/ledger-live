@@ -1,5 +1,4 @@
-import { ModalData } from "./types";
-
+import { MakeModalsType, GlobalModalData, ModalData } from "./types";
 import { modals as familiesModals } from "../families";
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
@@ -28,13 +27,12 @@ import MODAL_STORYLY_DEBUGGER from "./StorylyDebugger";
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
-import React from "react";
+import MODAL_CONFIRM from "./ConfirmModal";
+import MODAL_ERROR from "./ErrorModal";
 
-export type Modals = {
-  [Name in keyof ModalData]: React.ComponentType<{ name: Name } & ModalData[Name]>;
-};
+type GlobalModals = MakeModalsType<GlobalModalData>;
 
-const modals: Modals = {
+const globalModals: GlobalModals = {
   MODAL_WEBSOCKET_BRIDGE,
   MODAL_EXPORT_OPERATIONS,
   MODAL_PASSWORD,
@@ -69,6 +67,14 @@ const modals: Modals = {
   // in the meantime, we can rely on this to add the backdrop
   MODAL_STUB: () => null,
 
+  MODAL_CONFIRM,
+  MODAL_ERROR,
+};
+
+export type Modals = MakeModalsType<ModalData>;
+
+const modals: Modals = {
+  ...globalModals,
   ...familiesModals,
 };
 

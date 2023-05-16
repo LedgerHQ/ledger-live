@@ -17,15 +17,20 @@ import {
 import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
-import { Modals } from "../modals";
+import { MakeModalsType } from "../modals/types";
 
 /**
  * LLD family specific that a coin family can implement
+ * @template A is the account type of the family. you can set it to Account if there is no customisation of that type among the family.
+ * @template T is the transaction type of the family.
+ * @template TS is the transaction status type of the family.
+ * @template FamilyModalsData is an object typing all the modals data. See GlobalModalData type in ../modals/types.ts for more details.
  */
 export type LLDCoinFamily<
   A extends Account,
   T extends TransactionCommon,
-  TS extends TransactionStatus
+  TS extends TransactionStatus,
+  FamilyModalsData = {}
 > = {
   operationDetails?: {
     /**
@@ -276,8 +281,9 @@ export type LLDCoinFamily<
 
   /**
    * all modals that are specific to this family
+   * If you define modals, you MUST export type ModalsData from a file modals.ts and use that type type as this parametric FamilyModalsData.
    */
-  modals?: Modals;
+  modals?: MakeModalsType<FamilyModalsData>;
 };
 
 export type FieldComponentProps<

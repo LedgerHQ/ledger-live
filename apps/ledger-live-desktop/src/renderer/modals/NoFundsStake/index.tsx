@@ -17,8 +17,8 @@ import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 interface NoFundsStakeModalProps {
-  account: AccountLike;
-  parentAccount?: Account;
+  account: AccountLike | undefined | null;
+  parentAccount?: Account | undefined | null;
 }
 
 const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) => {

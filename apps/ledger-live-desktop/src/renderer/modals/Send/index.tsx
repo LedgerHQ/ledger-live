@@ -3,9 +3,10 @@ import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
+
 type Props = {
-  stepId: StepId;
-  onClose: () => void;
+  stepId?: StepId;
+  onClose?: () => void;
 };
 const MODAL_LOCKED: {
   [key in StepId]: boolean;

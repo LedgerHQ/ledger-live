@@ -42,6 +42,7 @@ export type Data = {
   transaction?: Transaction;
   onConfirmationHandler?: Function;
   onFailHandler?: Function;
+  stepId?: StepId;
 };
 
 type OwnProps = {

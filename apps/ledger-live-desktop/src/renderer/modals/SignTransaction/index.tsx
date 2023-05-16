@@ -4,8 +4,8 @@ import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
 type Props = {
-  stepId: StepId;
-  canEditFees: boolean;
+  stepId?: StepId;
+  canEditFees?: boolean;
   error?: Error;
 };
 const SignTransactionModal = ({ stepId }: Props) => {

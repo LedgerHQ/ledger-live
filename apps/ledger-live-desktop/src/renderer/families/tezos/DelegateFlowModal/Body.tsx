@@ -1,14 +1,15 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { bindActionCreators } from "redux";
 import { useDispatch, useSelector } from "react-redux";
-import { Trans, useTranslation } from "react-i18next";
+import { TFunction, Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation, SubAccount } from "@ledgerhq/types-live";
 import { useBakers, useRandomBaker } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount, addPendingOperation } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -17,7 +18,6 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { delegatableAccountsSelector } from "~/renderer/actions/general";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import Stepper from "~/renderer/components/Stepper";
-import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import StepAccount, { StepAccountFooter } from "./steps/StepAccount";
 import StepStarter from "./steps/StepStarter";
 import StepConnectDevice from "./steps/StepConnectDevice";
@@ -26,8 +26,15 @@ import StepValidator from "./steps/StepValidator";
 import StepCustom, { StepCustomFooter } from "./steps/StepCustom";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { StepId, St } from "./types";
-const createTitles = t => ({
+import {
+  TezosAccount,
+  TezosOperationMode,
+  Transaction,
+} from "@ledgerhq/live-common/families/tezos/types";
+
+const createTitles = (t: TFunction): Record<StepId | "undelegate", string> => ({
   account: t("delegation.flow.steps.account.title"),
+  device: t("delegation.flow.steps.account.title"), // same as account
   starter: t("delegation.flow.steps.starter.title"),
   summary: t("delegation.flow.steps.summary.title"),
   validator: t("delegation.flow.steps.validator.title"),
@@ -35,19 +42,23 @@ const createTitles = t => ({
   confirmation: t("delegation.flow.steps.confirmation.title"),
   custom: t("delegation.flow.steps.custom.title"),
 });
+
+export type Data = {
+  account?: TezosAccount | SubAccount;
+  parentAccount?: TezosAccount | null;
+  mode?: TezosOperationMode | undefined | null;
+  eventType?: string;
+  stepId?: StepId;
+};
+
 type Props = {
   stepId: StepId;
-  onClose: () => void;
+  onClose?: () => void;
   onChangeStepId: (a: StepId) => void;
-  params: {
-    account: AccountLike | undefined | null;
-    parentAccount: Account | undefined | null;
-    mode: string | undefined | null;
-    eventType?: string;
-    stepId: StepId | undefined | null;
-  };
+  params: Data;
 };
-const createSteps = (params): St[] => [
+
+const createSteps = (params: Data): St[] => [
   {
     id: "starter",
     component: StepStarter,
@@ -126,7 +137,7 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
     invariant(transaction.family === "tezos", "tezos tx");
 
     // make sure the mode is in sync (an account changes can reset it)
-    const patch: object = {
+    const patch: Partial<Transaction> = {
       mode: (params && params.mode) || "delegate",
     };
 
@@ -148,8 +159,8 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
     const stepId = params && params.stepId;
     if (stepId) onChangeStepId(stepId);
   }, [onChangeStepId, params]);
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const handleCloseModal = useCallback(() => dispatch(closeModal("MODAL_DELEGATE")), [dispatch]);
   const handleOpenModal = useMemo(() => bindActionCreators(openModal, dispatch), [dispatch]);
@@ -191,7 +202,7 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
   const title =
     transaction && transaction.family === "tezos" && transaction.mode === "undelegate"
       ? titles.undelegate
-      : titles[String(stepId)] || titles.account;
+      : (stepId ? titles[stepId] : undefined) || titles.account;
   const errorSteps = [];
   if (transactionError) {
     errorSteps.push(2);

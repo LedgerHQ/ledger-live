@@ -150,6 +150,7 @@ export type DataProp = {
   onResult: (c: AccountLike, b: Account | undefined | null, a: AppResult | boolean) => void;
   verifyAddress?: boolean;
   onCancel?: (error: Error) => void;
+  flow?: string;
 };
 type Props = {
   onClose: () => void;

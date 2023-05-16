@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { LLDCoinFamily } from "../types";
 import operationDetails from "./operationDetails";
-import modals from "./modals";
+import modals, { ModalsData } from "./modals";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import transactionConfirmFields from "./TransactionConfirmFields";
 import AccountBodyHeader from "./AccountBodyHeader";
@@ -13,7 +13,7 @@ import sendRecipientFields from "./SendRecipientFields";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import StakeBanner from "./StakeBanner";
 
-const family: LLDCoinFamily<CosmosAccount, Transaction, TransactionStatus> = {
+const family: LLDCoinFamily<CosmosAccount, Transaction, TransactionStatus, ModalsData> = {
   operationDetails,
   accountHeaderManageActions,
   modals,

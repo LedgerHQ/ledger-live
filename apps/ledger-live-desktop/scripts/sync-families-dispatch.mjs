@@ -12,25 +12,31 @@ async function gen() {
     .filter(d => d.isDirectory())
     .map(dirent => dirent.name);
 
-  let imports = `import { AllCoinFamilies } from "./types";`;
-  let exprts = `const all: AllCoinFamilies = {`;
+  let imports = "";
+  let modalsData = "export type CoinModalsData =";
+  let exprts = `export default {`;
   for (const family of families) {
     await fs.promises.access(path.join(familiesPath, family, "index.ts"), fs.constants.R_OK);
     imports += `
 import ${family} from "../families/${family}/index";`;
     exprts += `
   ${family},`;
+
+    try {
+      await fs.promises.access(path.join(familiesPath, family, "modals.ts"), fs.constants.R_OK);
+      imports += `
+import { ModalsData as ${family}ModalsData } from "../families/${family}/modals";`;
+      modalsData += `\n  & ${family}ModalsData`;
+    } catch (e) {}
   }
-
-  exprts += `
-};
-
-  export default all;
-`;
+  exprts += `\n};`;
+  modalsData += ";";
 
   const str = `${imports}
 
-${exprts}`;
+${exprts}
+
+${modalsData}`;
 
   await fs.promises.writeFile(generatedFile, str, "utf8");
 }

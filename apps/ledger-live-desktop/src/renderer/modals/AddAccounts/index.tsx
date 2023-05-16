@@ -21,17 +21,24 @@ import StepConnectDevice from "./steps/StepConnectDevice";
 import StepImport, { StepImportFooter } from "./steps/StepImport";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
-type Props = {
+
+export type Props = {
+  // props from redux
   device: Device | undefined | null;
   existingAccounts: Account[];
   closeModal: (a: string) => void;
   replaceAccounts: (a: Account[]) => void;
   blacklistedTokenIds?: string[];
-  currency: CryptoOrTokenCurrency | undefined | null;
+} & UserProps;
+
+export type UserProps = {
+  // props from user
+  currency?: CryptoOrTokenCurrency | undefined | null;
   flow?: string | null;
   onClose?: () => void;
-  preventSkippingCurrencySelection: boolean | undefined | null;
+  preventSkippingCurrencySelection?: boolean | undefined | null;
 };
+
 type StepId = "chooseCurrency" | "connectDevice" | "import" | "finish";
 type ScanStatus = "idle" | "scanning" | "error" | "finished";
 export type StepProps = {
@@ -304,8 +311,10 @@ class AddAccounts extends PureComponent<Props, State> {
     );
   }
 }
+
 const m = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
-)(AddAccounts) as typeof AddAccounts;
+)(AddAccounts) as React.ComponentType<UserProps>;
+
 export default m;

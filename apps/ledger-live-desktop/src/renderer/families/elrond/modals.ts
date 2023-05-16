@@ -3,6 +3,7 @@ import MODAL_ELROND_REWARDS_INFO from "./components/Modals/Delegate/Info";
 import MODAL_ELROND_UNDELEGATE from "./components/Modals/Undelegate";
 import MODAL_ELROND_CLAIM_REWARDS from "./components/Modals/Claim";
 import MODAL_ELROND_WITHDRAW from "./components/Modals/Withdraw";
+import { MakeModalsType } from "~/renderer/modals/types";
 
 export const modals = {
   rewards: "MODAL_ELROND_REWARDS_INFO",
@@ -12,10 +13,20 @@ export const modals = {
   withdraw: "MODAL_ELROND_WITHDRAW",
 };
 
-export default {
+export type ModalsData = {
+  MODAL_ELROND_DELEGATE: undefined; // FIXME type me
+  MODAL_ELROND_REWARDS_INFO: undefined; // FIXME type me
+  MODAL_ELROND_UNDELEGATE: undefined; // FIXME type me
+  MODAL_ELROND_CLAIM_REWARDS: undefined; // FIXME type me
+  MODAL_ELROND_WITHDRAW: undefined; // FIXME type me
+};
+
+const mods: MakeModalsType<ModalsData> = {
   MODAL_ELROND_DELEGATE,
   MODAL_ELROND_REWARDS_INFO,
   MODAL_ELROND_UNDELEGATE,
   MODAL_ELROND_CLAIM_REWARDS,
   MODAL_ELROND_WITHDRAW,
 };
+
+export default mods;

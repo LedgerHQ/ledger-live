@@ -5,13 +5,13 @@ import {
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { LLDCoinFamily } from "../types";
 import operationDetails from "./operationDetails";
-import modals from "./modals";
+import modals, { ModalsData } from "./modals";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import transactionConfirmFields from "./TransactionConfirmFields";
 import AccountBodyHeader from "./AccountBodyHeader";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 
-const family: LLDCoinFamily<PolkadotAccount, Transaction, TransactionStatus> = {
+const family: LLDCoinFamily<PolkadotAccount, Transaction, TransactionStatus, ModalsData> = {
   operationDetails,
   accountHeaderManageActions,
   modals,
