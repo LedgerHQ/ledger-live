@@ -20,6 +20,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { isOldestEditableOperation } from "@ledgerhq/live-common/operation";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { getEnv } from "@ledgerhq/live-env";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -106,19 +107,24 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
             if (EIP1559ShouldBeUsed(mainAccount.currency)) {
               if (transactionToEdit.maxPriorityFeePerGas) {
-                updatedTransaction.maxPriorityFeePerGas = new BigNumber(
-                  transactionToEdit.maxPriorityFeePerGas.times(1.1),
-                );
+                updatedTransaction.maxPriorityFeePerGas =
+                  transactionToEdit.maxPriorityFeePerGas?.times(
+                    1 +
+                      getEnv(
+                        "EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR",
+                      ),
+                  );
               }
 
               if (transactionToEdit.maxFeePerGas) {
-                updatedTransaction.maxFeePerGas = new BigNumber(
-                  transactionToEdit.maxFeePerGas.times(1.3),
-                );
+                updatedTransaction.maxFeePerGas =
+                  transactionToEdit.maxFeePerGas?.times(
+                    1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"),
+                  );
               }
             } else if (transactionToEdit.gasPrice) {
-              updatedTransaction.gasPrice = new BigNumber(
-                transactionToEdit.gasPrice.times(1.3),
+              updatedTransaction.gasPrice = transactionToEdit.gasPrice.times(
+                1 + getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR"),
               );
             }
 
