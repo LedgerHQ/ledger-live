@@ -49,6 +49,7 @@ import SwapFormSelectors from "./FormSelectors";
 import SwapFormSummary from "./FormSummary";
 import SwapFormRates from "./FormRates";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import debounce from "lodash/debounce";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
@@ -396,26 +397,18 @@ const SwapForm = () => {
       });
     } else {
       const { to, from } = swapTransaction.swap;
-      const {
-        account: { freshAddress: fromFreshAddress, token: fromToken },
-        currency: { id: fromCurrency },
-      } = from;
-      const fromAddressId = fromToken?.contractAddress || fromFreshAddress;
-      const {
-        account: { freshAddress: toFreshAddress, token: toToken },
-        currency: { id: toCurrency },
-      } = to;
-      const toAddressId = toToken?.contractAddress || toFreshAddress;
+      const { account: fromAccount, parentAccount: fromParentAccount } = from;
+      const { account: toAccount, parentAccount: toParentAccount } = to;
+      const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+      const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
       const fromAmount = swapTransaction.transaction.amount.toNumber();
 
       history.push({
         pathname: "/swap-web",
         state: {
           provider,
-          fromCurrency,
-          toCurrency,
-          toAddressId,
-          fromAddressId,
+          fromAccountId,
+          toAccountId,
           fromAmount,
         },
       });
