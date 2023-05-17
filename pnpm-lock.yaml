@@ -1614,6 +1614,9 @@ importers:
 
   libs/coin-evm:
     dependencies:
+      '@ethersproject/shims':
+        specifier: ^5.7.0
+        version: 5.7.0
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../coin-framework
@@ -2150,9 +2153,6 @@ importers:
       '@ethereumjs/tx':
         specifier: ^3.5.0
         version: 3.5.1
-      '@ethersproject/shims':
-        specifier: ^5.7.0
-        version: 5.7.0
       '@hashgraph/sdk':
         specifier: ^2.10.1
         version: 2.14.2(react-native@0.71.6)(react@17.0.2)

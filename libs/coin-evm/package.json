@@ -44,6 +44,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@ethersproject/shims": "^5.7.0",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
