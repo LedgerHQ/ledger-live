@@ -1,20 +1,44 @@
 # @ledgerhq/live-common
 
-## 29.6.0-nightly.0
+## 29.6.0
 
 ### Minor Changes
 
-- [#3338](https://github.com/LedgerHQ/ledger-live/pull/3338) [`22491091f7`](https://github.com/LedgerHQ/ledger-live/commit/22491091f7b4e06ee6a0cdf964498aa5b08d6eb0) Thanks [@chabroA](https://github.com/chabroA)! - Restore full network logs under env var and with experimental setting
+- [#3366](https://github.com/LedgerHQ/ledger-live/pull/3366) [`491b37f08d`](https://github.com/LedgerHQ/ledger-live/commit/491b37f08d9a17404eaf32c491628e65d2d8666a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating the `shouldUpgrade` & `mustUpgrade` helpers to allow for pre-release tags
+
+- [#3255](https://github.com/LedgerHQ/ledger-live/pull/3255) [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36) Thanks [@RamyEB](https://github.com/RamyEB)! - add field visibility to manifest and tests
 
 ### Patch Changes
 
-- Updated dependencies [[`817a8dd811`](https://github.com/LedgerHQ/ledger-live/commit/817a8dd8112ff7c4640852ab4e47ea0436df2ec1), [`22491091f7`](https://github.com/LedgerHQ/ledger-live/commit/22491091f7b4e06ee6a0cdf964498aa5b08d6eb0)]:
-  - @ledgerhq/cryptoassets@9.6.0-nightly.0
-  - @ledgerhq/live-env@0.3.0-nightly.0
-  - @ledgerhq/coin-framework@0.3.3-nightly.0
-  - @ledgerhq/coin-polkadot@0.1.4-nightly.0
-  - @ledgerhq/domain-service@1.1.1-nightly.0
-  - @ledgerhq/hw-app-eth@6.33.3-nightly.0
+- [#3386](https://github.com/LedgerHQ/ledger-live/pull/3386) [`dfccb01b94`](https://github.com/LedgerHQ/ledger-live/commit/dfccb01b94d545af80ee5e77bf1d04d9d2fd0faa) Thanks [@grsoares21](https://github.com/grsoares21)! - Throttle the events coming from inline app installs. They were causing the UI to slow down as they weren't being properly throttled.
+
+- Updated dependencies [[`fb1fcc47e4`](https://github.com/LedgerHQ/ledger-live/commit/fb1fcc47e444c35b0908d528b58e096d79d6f967)]:
+  - @ledgerhq/hw-app-btc@10.0.3
+  - @ledgerhq/coin-framework@0.3.3
+  - @ledgerhq/coin-polkadot@0.1.4
+  - @ledgerhq/domain-service@1.1.1
+  - @ledgerhq/live-portfolio@0.0.5
+  - @ledgerhq/hw-app-eth@6.33.3
+
+## 29.6.0-next.0
+
+### Minor Changes
+
+- [#3366](https://github.com/LedgerHQ/ledger-live/pull/3366) [`491b37f08d`](https://github.com/LedgerHQ/ledger-live/commit/491b37f08d9a17404eaf32c491628e65d2d8666a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating the `shouldUpgrade` & `mustUpgrade` helpers to allow for pre-release tags
+
+- [#3255](https://github.com/LedgerHQ/ledger-live/pull/3255) [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36) Thanks [@RamyEB](https://github.com/RamyEB)! - add field visibility to manifest and tests
+
+### Patch Changes
+
+- [#3386](https://github.com/LedgerHQ/ledger-live/pull/3386) [`dfccb01b94`](https://github.com/LedgerHQ/ledger-live/commit/dfccb01b94d545af80ee5e77bf1d04d9d2fd0faa) Thanks [@grsoares21](https://github.com/grsoares21)! - Throttle the events coming from inline app installs. They were causing the UI to slow down as they weren't being properly throttled.
+
+- Updated dependencies [[`fb1fcc47e4`](https://github.com/LedgerHQ/ledger-live/commit/fb1fcc47e444c35b0908d528b58e096d79d6f967)]:
+  - @ledgerhq/hw-app-btc@10.0.3-next.0
+  - @ledgerhq/coin-framework@0.3.3-next.0
+  - @ledgerhq/coin-polkadot@0.1.4-next.0
+  - @ledgerhq/domain-service@1.1.1-next.0
+  - @ledgerhq/live-portfolio@0.0.5-next.0
+  - @ledgerhq/hw-app-eth@6.33.3-next.0
 
 ## 29.5.0
 

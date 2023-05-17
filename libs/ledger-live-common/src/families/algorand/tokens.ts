@@ -1,5 +1,2 @@
-export const addPrefixToken = (tokenId: string) => `algorand/asa/${tokenId}`;
-
-export const extractTokenId = (tokenId: string) => {
-  return tokenId.split("/")[2];
-};
+// Encapsulate for LLD et LLM
+export * from "@ledgerhq/coin-algorand/tokens";

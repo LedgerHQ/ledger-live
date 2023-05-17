@@ -1,58 +1,13 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import Animated, { EasingNode } from "react-native-reanimated";
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
-
-const {
-  cond,
-  set,
-  block,
-  clockRunning,
-  startClock,
-  timing,
-  Clock,
-  Value,
-  interpolateNode,
-} = Animated;
-
-/**
- * @param {Animated.Clock} clock animation clock
- * @param {Animated.Value} value current position
- * @param {Animated.Value} dest position to interpolate to
- * @returns {Animated.Node<number>}
- */
-const runTranslate = (
-  clock: Animated.Clock,
-  value: Animated.Value<number> | number,
-  dest: Animated.Value<number> | number,
-) => {
-  const state = {
-    finished: new Value(0),
-    position: new Value(0),
-    time: new Value(0),
-    frameTime: new Value(0),
-  };
-  const config = {
-    duration: new Value(150),
-    toValue: new Value(1),
-    easing: EasingNode.inOut(EasingNode.quad),
-  };
-  return block([
-    // if clock running reset timer and switch position
-    cond(clockRunning(clock), 0, [
-      // reset running state
-      set(state.finished, 0), // reset time
-      set(state.time, 0), // reset frame time count
-      set(state.frameTime, 0), // set current anim position
-      set(state.position, value), // set new anim destination
-      set(config.toValue, dest), // start clock animation
-      startClock(clock),
-    ]), // run clock timing
-    timing(clock, state, config), // return anim position
-    state.position,
-  ]);
-};
 
 type Props = {
   value: string;
@@ -67,31 +22,40 @@ type Props = {
 
 const ToggleButton = ({ value, options, onChange }: Props) => {
   const { colors } = useTheme();
+
   const [width, setWidth] = useState(0);
-  // animation translate state
-  const [animIndex] = useState(new Value(0));
+  // Index of the `value` in `options`
+  const [activeIndex, setActiveIndex] = useState(0);
+  // Animated value that will be updated to be equal to `activeIndex`
+  const animatedIndex = useSharedValue(0);
+
   const onLayout = useCallback(evt => {
     setWidth(evt.nativeEvent.layout.width);
   }, []);
-  if (!options.length) return null;
-  const activeIndex = options.findIndex(opt => opt.value === value);
-  // animation clock
-  const clock = new Clock();
-  // animation opening anim node
-  const openingAnim = block([
-    // opening
-    set(animIndex, runTranslate(clock, animIndex, activeIndex)),
-    animIndex,
-  ]);
-  // interpolated height from opening anim state for list container
-  const left = interpolateNode(openingAnim, {
-    inputRange: [0, options.length - 1],
-    outputRange: [0, ((options.length - 1) * width) / options.length],
-  });
-  const indicatorStyle = {
+
+  // Updates the animated active index
+  useEffect(() => {
+    const newActiveIndex = options.findIndex(opt => opt.value === value);
+    setActiveIndex(newActiveIndex);
+
+    animatedIndex.value = withTiming(newActiveIndex, {
+      duration: 150,
+    });
+  }, [value, options, animatedIndex]);
+
+  // The indicator is the component highlighting the currently active option.
+  // `left` is interpolated from the animated-new-active-index state.
+  const indicatorStyle = useAnimatedStyle(() => ({
     width: `${100 / options.length}%`,
-    left,
-  };
+    left: interpolate(
+      animatedIndex.value,
+      [0, options.length - 1],
+      [0, ((options.length - 1) * width) / options.length],
+    ),
+  }));
+
+  if (!options.length) return null;
+
   return (
     <View
       style={[

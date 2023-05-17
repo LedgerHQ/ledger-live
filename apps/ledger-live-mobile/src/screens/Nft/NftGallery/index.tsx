@@ -1,10 +1,9 @@
-import React, { useState, useMemo, useCallback, useRef, memo } from "react";
+import React, { useState, useMemo, useCallback, memo } from "react";
 import { View, FlatList, StyleSheet, Platform } from "react-native";
-import type { FlatListProps, ListRenderItem } from "react-native";
+import type { ListRenderItem } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import Animated, { Value, event } from "react-native-reanimated";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -31,9 +30,6 @@ import { notAvailableModalInfo } from "../NftInfoNotAvailable";
 const MAX_COLLECTIONS_FIRST_RENDER = 12;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
 
-const CollectionsList =
-  Animated.createAnimatedComponent<FlatListProps<ProtoNFT[]>>(FlatList);
-
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountsNavigatorParamList, ScreenName.NftGallery>
 >;
@@ -47,30 +43,21 @@ const NftGallery = () => {
     accountSelector(state, { accountId: params?.accountId }),
   );
   const [isOpen, setOpen] = useState<boolean>(false);
+
   const onOpenModal = useCallback(() => {
     setOpen(true);
   }, []);
+
   const onCloseModal = useCallback(() => {
     setOpen(false);
   }, []);
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
-  const scrollY = useRef(new Value(0)).current;
-  const onScroll = event(
-    [
-      {
-        nativeEvent: {
-          contentOffset: { y: scrollY },
-        },
-      },
-    ],
-    { useNativeDriver: true },
-  );
-
   const [collectionsCount, setCollectionsCount] = useState(
     MAX_COLLECTIONS_FIRST_RENDER,
   );
+
   const collections = useMemo(
     () =>
       Object.entries(nftsByCollections((account as Account).nfts)).filter(
@@ -135,12 +122,11 @@ const NftGallery = () => {
           },
         ]}
       >
-        <CollectionsList
+        <FlatList
           data={collectionsSlice}
           contentContainerStyle={styles.collectionsList}
           renderItem={renderItem}
           onEndReached={onEndReached}
-          onScroll={onScroll}
           maxToRenderPerBatch={1}
           initialNumToRender={1}
           showsVerticalScrollIndicator={false}

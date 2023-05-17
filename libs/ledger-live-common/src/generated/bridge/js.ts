@@ -1,4 +1,3 @@
-import algorand from "../../families/algorand/bridge/js";
 import bitcoin from "../../families/bitcoin/bridge/js";
 import cardano from "../../families/cardano/bridge/js";
 import celo from "../../families/celo/bridge/js";
@@ -19,9 +18,9 @@ import { makeLRUCache } from "../../cache";
 import network from "../../network";
 import { withDevice } from "../../hw/deviceAccess";
 import { createBridges as polkadotCreateBridges } from "@ledgerhq/coin-polkadot/bridge/js";
+import { createBridges as algorandCreateBridges } from "@ledgerhq/coin-algorand/bridge/js";
 
 export default {
-  algorand,
   bitcoin,
   cardano,
   celo,
@@ -39,4 +38,5 @@ export default {
   tezos,
   tron,
   polkadot: polkadotCreateBridges(withDevice, network, makeLRUCache),
+  algorand: algorandCreateBridges(withDevice, network, makeLRUCache),
 };
