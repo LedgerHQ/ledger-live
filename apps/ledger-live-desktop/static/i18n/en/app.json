@@ -3525,6 +3525,19 @@
       },
       "providerTitle": "Earn with {{provider}}",
       "providerLink": "Learn more about {{provider}}"
+    },
+    "stakeV2": {
+      "kiln": {
+        "title": "Kiln validator",
+        "description": "Got more than 32 ETH? Stake on dedicated validator. Earn rewards daily. No lock-up period.",
+        "tag": "Requires 32 ETH",
+        "supportLink": "Learn more about Kiln validator"
+      },
+      "kilnPooling": {
+        "title": "Kiln pooling",
+        "description": "Participate in a pool and stake any ETH amount. No lock-up period. No minimum.",
+        "supportLink": "Learn more about Kiln pooling"
+      }
     }
   },
   "near": {

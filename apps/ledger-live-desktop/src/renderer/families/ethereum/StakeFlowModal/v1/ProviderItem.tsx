@@ -2,8 +2,9 @@ import React, { useCallback } from "react";
 import { Flex, Text, Icons, Link, ProviderIcon, Icon, Tag as TagCore } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import { Provider } from "./types";
 
-export const Container: ThemedComponent = styled(Flex)`
+const Container = styled(Flex)`
   cursor: pointer;
   border-radius: 8px;
   :hover {
@@ -11,7 +12,7 @@ export const Container: ThemedComponent = styled(Flex)`
   }
 `;
 
-export const Tag: ThemedComponent = styled(TagCore)`
+const Tag = styled(TagCore)`
   padding: 0 5px;
   > span {
     font-size: 14px;
@@ -19,7 +20,15 @@ export const Tag: ThemedComponent = styled(TagCore)`
   }
 `;
 
-const ProviderItem = ({ id, name, provider, infoOnClick, stakeOnClick }: ItemProps) => {
+type Props = {
+  id: string;
+  name: string;
+  provider: Provider;
+  infoOnClick(provider: Provider): void;
+  stakeOnClick(provider: Provider): void;
+};
+
+const ProviderItem = ({ id, name, provider, infoOnClick, stakeOnClick }: Props) => {
   const { t } = useTranslation();
 
   const stakeLink = useCallback(() => {
@@ -37,10 +46,9 @@ const ProviderItem = ({ id, name, provider, infoOnClick, stakeOnClick }: ItemPro
   return (
     <Container
       pl={3}
-      flow={1}
       onClick={stakeLink}
       py={4}
-      data-test-id={`stake-provider-container-${provider?.name?.toLowerCase()}`}
+      data-test-id={`stake-provider-container-${provider.name.toLowerCase()}`}
     >
       <ProviderIcon name={name} size="S" boxed={true} />
       <Flex flexDirection={"column"} ml={5} flex={"auto"} alignItems="flex-start">
@@ -50,7 +58,6 @@ const ProviderItem = ({ id, name, provider, infoOnClick, stakeOnClick }: ItemPro
           </Text>
           <Tag
             size="small"
-            fontFamily={14}
             active
             type="plain"
             style={{ fontFamily: "14px", textTransform: "none" }}

@@ -48,6 +48,7 @@ export type FeatureId =
   | "walletNftGallery"
   | "receiveStakingFlowConfigDesktop"
   | "ethStakingProviders"
+  | "ethStakingProvidersV2"
   | "storyly"
   | "staxWelcomeScreen"
   | "postOnboardingClaimNft"

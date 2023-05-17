@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
-import EthStakeIllustration from "./assets/EthStakeIlustration";
-import ProviderItem from "./component/ProviderItem";
+import EthStakeIllustration from "../assets/EthStakeIlustration";
+import ProviderItem from "./ProviderItem";
 import { Flex } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import CheckBox from "~/renderer/components/CheckBox";
@@ -13,14 +13,16 @@ import {
 } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
 import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
+import { Provider } from "./types";
+import { getTrackProperties } from "../utils/getTrackProperties";
 type Props = {
-  onClose: () => void;
+  onClose?: () => void;
   account: Account;
   checkbox?: boolean;
   singleProviderRedirectMode?: boolean;
   source?: string;
 };
-const Body = ({
+export const EthStakingModalBody = ({
   checkbox = false,
   singleProviderRedirectMode = true,
   source = "stake",
@@ -30,28 +32,22 @@ const Body = ({
   const { t } = useTranslation();
   const history = useHistory();
   const [doNotShowAgain, setDoNotShowAgain] = useState<boolean>(false);
-  const ethStakingProviders = useFeature("ethStakingProviders");
+  const ethStakingProviders = useFeature<{
+    listProvider: Array<{
+      name: string;
+      minAccountBalance: number;
+      liveAppId: string;
+      supportLink: string;
+    }>;
+  }>("ethStakingProviders");
   const providers = ethStakingProviders?.params?.listProvider || [];
-  const getTrackProperties = useCallback(
-    value => {
-      return {
-        page: window.location.hash
-          .split("/")
-          .filter(e => e !== "#")
-          .join("/"),
-        modal: source,
-        flow: "stake",
-        value,
-      };
-    },
-    [source],
-  );
+
   const stakeOnClick = useCallback(
-    provider => {
+    (provider: Provider) => {
       const value = `/platform/${provider.liveAppId}`;
       track("button_clicked", {
-        button: `${name}`,
-        ...getTrackProperties(value),
+        button: provider.name,
+        ...getTrackProperties({ value, locationHash: window.location.hash, source }),
       });
       history.push({
         pathname: value,
@@ -59,12 +55,12 @@ const Body = ({
           accountId: account.id,
         },
       });
-      onClose();
+      onClose?.();
     },
-    [getTrackProperties, history, account.id, onClose],
+    [history, account.id, onClose, source],
   );
   const infoOnClick = useCallback(
-    provider => {
+    (provider: Provider) => {
       const { liveAppId, supportLink } = provider;
       track("button_clicked", {
         button: `learn_more_${liveAppId}`,
@@ -80,7 +76,10 @@ const Body = ({
   }
   const checkBoxOnChange = useCallback(() => {
     const value = !doNotShowAgain;
-    global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.currency?.id}`, value);
+    global.localStorage.setItem(
+      `${LOCAL_STORAGE_KEY_PREFIX}${account?.currency?.id}`,
+      value.toString(),
+    );
     setDoNotShowAgain(value);
     track("button_clicked", {
       button: "not_show",
@@ -93,7 +92,7 @@ const Body = ({
       <Flex flexDirection={"column"} mt={7} px={20} width="100%">
         <Flex flexDirection={"column"} width="100%">
           {providers.map(item => (
-            <Flex key={item.id} width="100%" flexDirection={"column"}>
+            <Flex key={item.liveAppId} width="100%" flexDirection={"column"}>
               <ProviderItem
                 id={item.liveAppId}
                 name={item.name}
@@ -120,4 +119,3 @@ const Body = ({
     </Flex>
   );
 };
-export default Body;
