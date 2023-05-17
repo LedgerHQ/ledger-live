@@ -339,14 +339,20 @@ export const SyncOnboarding = ({
       companionStepKey > CompanionStepKey.Seed &&
       !analyticsSeedingTracked.current
     ) {
-      screen("Set up Ledger Stax: Step 3 Seed", undefined, {
-        seedPhraseType: analyticsSeedPhraseType.current
-          ? fromSeedPhraseTypeToAnalyticsPropertyString.get(
-              analyticsSeedPhraseType.current,
-            )
-          : undefined,
-        seedConfiguration: analyticsSeedConfiguration.current,
-      });
+      screen(
+        "Set up Ledger Stax: Step 3 Seed Success",
+        undefined,
+        {
+          seedPhraseType: analyticsSeedPhraseType.current
+            ? fromSeedPhraseTypeToAnalyticsPropertyString.get(
+                analyticsSeedPhraseType.current,
+              )
+            : undefined,
+          seedConfiguration: analyticsSeedConfiguration.current,
+        },
+        true,
+        true,
+      );
 
       analyticsSeedingTracked.current = true;
     }
@@ -516,7 +522,7 @@ export const SyncOnboarding = ({
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
           renderBody: () => (
             <Flex>
-              <TrackScreen category="Set up Ledger Stax: Step 3 Seed" />
+              <TrackScreen category="Set up Ledger Stax: Step 3 Seed Intro" />
               {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
                   <BodyText mb={6}>
