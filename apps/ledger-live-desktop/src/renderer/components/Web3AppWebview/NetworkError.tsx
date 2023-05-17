@@ -4,11 +4,22 @@ import { useTranslation } from "react-i18next";
 import ErrorNoBorder from "~/renderer/icons/ErrorNoBorder";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
+import { languageSelector } from "~/renderer/reducers/settings";
+import { useSelector } from "react-redux";
 
 export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
   const { t } = useTranslation();
+  const locale = useSelector(languageSelector) || "en";
 
-  const handleContactSupport = useCallback(() => openURL(urls.contactSupportWebview), []);
+  const handleContactSupport = useCallback(
+    () =>
+      openURL(
+        urls.contactSupportWebview[
+          locale in urls.terms ? (locale as keyof typeof urls.terms) : "en"
+        ],
+      ),
+    [locale],
+  );
 
   return (
     <Flex alignItems="center" justifyContent="center" flexGrow={1} flexDirection="column">
