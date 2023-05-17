@@ -182,7 +182,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     .then(nonce => {
       const { transactionSequenceNumber } = operation;
 
-      if (transactionSequenceNumber && transactionSequenceNumber < nonce - 1) {
+      if (transactionSequenceNumber && transactionSequenceNumber < nonce) {
         navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
           error: new TransactionHasBeenValidatedError(
             "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
