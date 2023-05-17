@@ -69,6 +69,7 @@
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
+    "react-native-get-random-values": "^1.8.0",
     "rxjs": "^6.6.7"
   },
   "devDependencies": {
