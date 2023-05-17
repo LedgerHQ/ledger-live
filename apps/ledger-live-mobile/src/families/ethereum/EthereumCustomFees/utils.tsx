@@ -27,12 +27,17 @@ export const inferMaxPriorityFeeRange = (
   let maxValue = networkInfo.maxPriorityFeePerGas.max;
 
   if (transactionRaw && transactionRaw.maxPriorityFeePerGas) {
+    const maxPriorityFeeGap: number = getEnv(
+      "EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR",
+    );
     const newMaxPriorityFeePerGas = new BigNumber(
       transactionRaw.maxPriorityFeePerGas,
-    ).times(1.1);
+    ).times(1 + maxPriorityFeeGap);
+
     if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(minValue))) {
       minValue = newMaxPriorityFeePerGas;
     }
+
     if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(maxValue))) {
       maxValue = newMaxPriorityFeePerGas;
     }
