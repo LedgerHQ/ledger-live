@@ -1471,6 +1471,7 @@ importers:
         version: 7.16.7(@babel/core@7.21.0)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@babel/preset-typescript':
         specifier: ^7.15.0
         version: 7.16.7(@babel/core@7.21.0)
@@ -1482,6 +1483,8 @@ importers:
         specifier: ^7.15.0
         version: 7.16.7(@babel/core@7.21.0)
 >>>>>>> 0c99f8ce62 (lockfile)
+=======
+>>>>>>> 3d2461341b (pass correct fees to custom strategy)
       '@babel/runtime':
         specifier: ^7.12.5
         version: 7.17.9

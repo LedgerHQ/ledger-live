@@ -145,6 +145,8 @@ function MethodSelectionComponent({ navigation, route }: Props) {
               recipient: transactionToEdit.recipient,
               mode: transactionToEdit.mode,
               nonce: operation.transactionSequenceNumber,
+              // set "fast" as default option for speedup flow
+              feesStrategy: "fast",
               networkInfo: null,
               gasPrice: null,
               maxFeePerGas: null,
@@ -208,7 +210,14 @@ function MethodSelectionComponent({ navigation, route }: Props) {
         nextNavigation: ScreenName.SendSelectDevice,
       });
     }
-  }, [selectedMethod, transaction, operation, status]);
+  }, [
+    selectedMethod,
+    transaction,
+    operation,
+    status,
+    account.id,
+    parentAccount?.id,
+  ]);
 
   const { t } = useTranslation();
 
