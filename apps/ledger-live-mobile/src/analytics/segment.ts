@@ -337,6 +337,13 @@ export const useAnalytics = () => {
     page,
   };
 };
+
+/**
+ * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
+ * Extra logic to update the route names used in "screen" and "source"
+ * properties of further events can be optionally enabled with the parameters
+ * `updateRoutes` and `refreshSource`.
+ */
 export const screen = async (
   /**
    * First part of the event name string
