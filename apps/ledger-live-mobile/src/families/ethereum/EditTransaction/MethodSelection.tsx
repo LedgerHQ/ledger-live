@@ -21,6 +21,7 @@ import { isOldestEditableOperation } from "@ledgerhq/live-common/operation";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
+import { log } from "@ledgerhq/logs";
 
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -192,6 +193,9 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     });
 
   useEffect(() => {
+    log("[edit transaction]", "Transaction to edit", transaction);
+    log("[edit transaction]", "User balance", mainAccount.balance.toNumber());
+
     if (selectedMethod === "cancel") {
       navigation.navigate(ScreenName.SendSelectDevice, {
         accountId: account.id,
