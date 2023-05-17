@@ -1,13 +1,13 @@
-import React, { ComponentType } from "react";
+import { Account, Currency, Operation, Unit } from "@ledgerhq/live-common/types/index";
+import React from "react";
 import { Trans } from "react-i18next";
-import { Currency, Unit, Operation, Account } from "@ledgerhq/live-common/types/index";
 import Box from "~/renderer/components/Box";
-import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
+import FormattedVal from "~/renderer/components/FormattedVal";
 import {
-  OpDetailsTitle,
   OpDetailsData,
   OpDetailsSection,
+  OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 type AmountCellExtraProps = {
   operation: Operation;

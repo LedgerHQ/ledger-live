@@ -1,5 +1,5 @@
 import React from "react";
-import { Operation, Account } from "@ledgerhq/types-live";
+import { Operation } from "@ledgerhq/types-live";
 import {
   OpDetailsTitle,
   OpDetailsSection,
@@ -16,9 +16,10 @@ import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-commo
 import { openURL } from "~/renderer/linking";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { fallbackValidatorGroup } from "@ledgerhq/live-common/families/celo/logic";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 
-const redirectAddress = (currency: Currency, address: string) => () => {
+const redirectAddress = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
   if (url) openURL(url);
 };
@@ -28,7 +29,7 @@ type OperationDetailsExtraProps = {
     [key: string]: any;
   };
   type: string;
-  account: Account;
+  account: CeloAccount;
 };
 const OperationDetailsExtra = ({ operation, type, account }: OperationDetailsExtraProps) => {
   const { currency } = account;
@@ -39,11 +40,9 @@ const OperationDetailsExtra = ({ operation, type, account }: OperationDetailsExt
     case "VOTE": {
       const recipient = operation.recipients[0];
       const validatorGroup =
-        recipient &&
-        (validatorGroups.find(
+        validatorGroups.find(
           validatorGroup => validatorGroup.address.toLowerCase() === recipient.toLowerCase(),
-        ) ||
-          fallbackValidatorGroup(recipient));
+        ) || fallbackValidatorGroup(recipient);
       return (
         <>
           {type !== "ACTIVATE" && (

@@ -66,16 +66,6 @@ export type LLDCoinFamily<
     /**
      * TODO document me
      */
-    OperationDetailsExtra?: React.ComponentType<{
-      operation: Operation;
-      account: A;
-      type: OperationType;
-      extra: Record<string, string | BigNumber | number>
-    }>;
-
-    /**
-     * TODO document me
-     */
     amountCellExtra?: Partial<Record<OperationType, React.ComponentType<AmountCellExtraProps>>>;
 
     /**
@@ -103,6 +93,16 @@ export type LLDCoinFamily<
      */
     getURLFeesInfo?: (_: { op: Operation; currencyId: string }) => string | undefined;
   };
+
+  /**
+   * TODO document me
+   */
+  OperationDetailsExtra?: React.ComponentType<{
+    operation: Operation;
+    account: A;
+    type: OperationType;
+    extra: Record<string, string | BigNumber | number>;
+  }>;
 
   accountActions?: {
     /**

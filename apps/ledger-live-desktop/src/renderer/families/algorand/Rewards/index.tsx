@@ -1,6 +1,5 @@
-import { getAccountCurrency, getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
-import { ChildAccount, TokenAccount } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -14,10 +13,15 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { AlgorandFamily } from "../types";
 
-type AccountBodyHeader = NonNullable<AlgorandFamily["AccountBodyHeader"]>
+type AccountBodyHeader = NonNullable<AlgorandFamily["AccountBodyHeader"]>;
 
-
-const RewardsSection = ({ account }: { account: AlgorandAccount }) => {
+const RewardsSection = ({
+  account,
+  parentAccount,
+}: {
+  account: AlgorandAccount;
+  parentAccount: AlgorandAccount | null | undefined;
+}) => {
   const { rewards } = account.algorandResources || {};
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
@@ -26,9 +30,10 @@ const RewardsSection = ({ account }: { account: AlgorandAccount }) => {
     dispatch(
       openModal("MODAL_ALGORAND_CLAIM_REWARDS", {
         account,
+        parentAccount,
       }),
     );
-  }, [dispatch, account]);
+  }, [dispatch, account, parentAccount]);
   const rewardsDisabled = rewards.lte(0);
   return (
     <TableContainer mb={6}>
@@ -76,9 +81,9 @@ const RewardsSection = ({ account }: { account: AlgorandAccount }) => {
     </TableContainer>
   );
 };
-const Rewards: AccountBodyHeader = ({ account }) => {
+const Rewards: AccountBodyHeader = ({ account, parentAccount }) => {
   if (account.type === "Account") {
-    return <RewardsSection account={account} />;
+    return <RewardsSection account={account} parentAccount={parentAccount} />;
   }
   return null;
 };

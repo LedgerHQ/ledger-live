@@ -39,7 +39,7 @@ import { getLLDCoinFamily } from "~/renderer/families";
 import { ManageAction } from "~/renderer/families/types";
 
 type RenderActionParams = {
-  label: React.ReactElement;
+  label: React.ReactNode;
   onClick: () => void;
   event?: string;
   eventProperties?: Record<string, unknown>;

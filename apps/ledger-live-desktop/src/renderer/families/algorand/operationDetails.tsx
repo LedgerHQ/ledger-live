@@ -47,9 +47,9 @@ const Cell = styled(Box).attrs(() => ({
   }
 `;
 
-type OperationDetails = NonNullable<AlgorandFamily["operationDetails"]>;
+type OperationDetailsExtra = NonNullable<AlgorandFamily["OperationDetailsExtra"]>;
 
-const OperationDetailsExtra: OperationDetails["OperationDetailsExtra"] = ({ extra, account }) => {
+const OperationDetailsExtra: OperationDetailsExtra = ({ extra, account }) => {
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
   const { rewards, memo, assetId } = extra;
@@ -234,7 +234,7 @@ const AmountTooltip = ({ operation, amount, unit }: AmountTooltipProps) => {
     </Trans>
   ) : null;
 };
-const amountCell: OperationDetails["amountCell"] = {
+const amountCell = {
   OUT: AmountCell,
   IN: AmountCell,
 };

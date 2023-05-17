@@ -5,6 +5,7 @@ import { getLLDCoinFamily } from "~/renderer/families";
 
 type Props = {
   account: Account;
+  parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
   onChange: (a: Transaction) => void;

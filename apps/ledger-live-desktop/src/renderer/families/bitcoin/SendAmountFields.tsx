@@ -1,8 +1,6 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
-import {
-  Transaction
-} from "@ledgerhq/live-common/families/bitcoin/types";
+import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";

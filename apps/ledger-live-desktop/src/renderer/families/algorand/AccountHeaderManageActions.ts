@@ -6,7 +6,10 @@ import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { AlgorandFamily } from "./types";
 
-const AccountHeaderActions: AlgorandFamily["accountHeaderManageActions"] = ({ account, parentAccount }) => {
+const AccountHeaderActions: AlgorandFamily["accountHeaderManageActions"] = ({
+  account,
+  parentAccount,
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const balance = account.balance;
