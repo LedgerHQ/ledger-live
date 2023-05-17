@@ -5,6 +5,7 @@ import React, {
   useMemo,
   ReactNode,
   useRef,
+  useLayoutEffect,
 } from "react";
 import type { StackScreenProps } from "@react-navigation/stack";
 import {
@@ -324,9 +325,13 @@ export const SyncOnboarding = ({
     "new_seed" | "restore_seed" | "recover_seed"
   >();
 
-  // Analytics: track complete seeding of device
   const analyticsSeedingTracked = useRef(false);
-  useEffect(() => {
+  /**
+   * Analytics: track complete seeding of device
+   * We use useLayoutEffect to ensure the event is sent before the following
+   * step gets rendered and its corresponding analytics event gets dispatched
+   */
+  useLayoutEffect(() => {
     if (
       deviceInitiallyOnboarded.current === false && // can't just use ! operator because value can be undefined
       lastCompanionStepKey.current !== undefined &&
