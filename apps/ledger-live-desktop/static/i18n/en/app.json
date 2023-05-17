@@ -5287,8 +5287,8 @@
       "title": "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate": {
-      "title": "Update cancelled on device",
-      "description": "All apps on your device have been uninstalled. Keep your device up to date to benefit from improvements in security and functionality."
+      "title": "Update was cancelled on device",
+      "description": "The installation of OS update was refused on your device. If this was a mistake, restart the update."
     },
     "UserRefusedOnDevice": {
       "title": "Action rejected",
