@@ -352,7 +352,8 @@ export const screen = async (
    */
   properties?: Record<string, unknown> | null | undefined,
   /**
-   * Should this function call update the previous & current route names, route names are used to track:
+   * Should this function call update the previous & current route names.
+   * Previous and current route names are used to track:
    * - the `screen` property in non-screen events (for instance `button_clicked` events)
    * - the `source` property in further screen events
    */
