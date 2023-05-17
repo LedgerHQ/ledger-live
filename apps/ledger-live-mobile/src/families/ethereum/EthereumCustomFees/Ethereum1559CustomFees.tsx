@@ -15,6 +15,9 @@ import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import invariant from "invariant";
+import { getEnv } from "@ledgerhq/live-env";
+import { MaxFeeTooLow } from "@ledgerhq/errors";
+
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import EthereumGasLimit from "../SendRowGasLimit";
@@ -70,14 +73,36 @@ const Ethereum1559CustomFees = ({
         maxPriorityFeePerGas,
       },
     }));
+
   const { errors, warnings } = status;
   const { maxPriorityFee: maxPriorityFeeError, maxFee: maxFeeError } = errors;
-  const { maxPriorityFee: maxPriorityFeeWarning, maxFee: maxFeeWarning } =
-    warnings;
+  const { maxFee: maxFeeWarning } = warnings;
+  let { maxPriorityFee: maxPriorityFeeWarning } = warnings;
+
+  // give user a warning if maxFeePerGas is lower than pending transaction maxFeePerGas + 10% of pending transaction maxPriorityFeePerGas for edit eth transaction feature
+  if (
+    !maxPriorityFeeWarning &&
+    transactionRaw &&
+    transactionRaw.maxPriorityFeePerGas
+  ) {
+    const maxPriorityFeeGap: number = getEnv(
+      "EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR",
+    );
+    const lowerLimitMaxFeePerGas = new BigNumber(
+      transactionRaw.maxFeePerGas || 0,
+    ).plus(
+      new BigNumber(transactionRaw.maxPriorityFeePerGas).times(
+        maxPriorityFeeGap,
+      ),
+    );
+    if (transaction?.maxFeePerGas?.isLessThan(lowerLimitMaxFeePerGas)) {
+      maxPriorityFeeWarning = new MaxFeeTooLow();
+    }
+  }
 
   const maxPriorityFeeRange = useMemo(
     () => inferMaxPriorityFeeRange(transaction?.networkInfo, transactionRaw),
-    [transaction?.networkInfo],
+    [transaction?.networkInfo, transactionRaw],
   );
   const maxFeePerGasRange = useMemo(() => {
     return inferMaxFeeRange(transaction?.networkInfo);
