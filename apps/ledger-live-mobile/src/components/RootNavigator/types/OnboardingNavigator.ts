@@ -18,6 +18,7 @@ export type OnboardingPreQuizModalNavigatorParamList = {
 export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingWelcome]: undefined;
   [ScreenName.OnboardingPostWelcomeSelection]: { userHasDevice: boolean };
+  [ScreenName.OnboardingWelcomeBack]: undefined;
   [ScreenName.GetDevice]: undefined;
   [ScreenName.OnboardingLanguage]: undefined;
   [ScreenName.OnboardingTermsOfUse]: undefined;

@@ -1215,9 +1215,20 @@
       "subtitle_yes": "Set up your Ledger, or take a look around the app first.",
       "subtitle_no": "You can choose to take a look around the app first or buy a Nano X device",
       "noLedgerLink": "I don’t have a Ledger and I would like to buy one",
+      "noLedgerYet": "I don’t have a Ledger yet",
+      "noLedgerYetModal": {
+        "title": "Benefit driven statement of having a Ledger",
+        "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+        "buy": "Buy a Ledger",
+        "explore": "Explore the app"
+      },
       "setupLedger": {
-        "title": "Set up my Ledger",
-        "subtitle": "We’ll guide your every step to secure your crypto and NFTs"
+        "title": "Set up a new Ledger",
+        "subtitle": "Choose this if you are setting up your Ledger for the first time"
+      },
+      "accessWallet": {
+        "title": "Access an existing wallet",
+        "subtitle": "Connect your Ledger or sync your assets from Ledger Live desktop."
       },
       "buyNano": {
         "title": "Buy a Ledger Nano X",
@@ -1231,6 +1242,13 @@
         "title": "Sync with desktop app",
         "subtitle": "Sync your assets from Ledger Live desktop with your mobile."
       }
+    },
+    "welcomeBackStep": {
+      "title": "Welcome back",
+      "subtitle": "How would you like to access your wallet?",
+      "connect": "Connect your Ledger",
+      "sync": "Sync with Ledger Live desktop",
+      "recover": "Login to Ledger Recover"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",
@@ -1276,16 +1294,22 @@
       "title": "Hello!",
       "or": "Or",
       "firstUse": {
-        "title": "First time using your Nano?",
+        "section": "Set up your {{model}}",
+        "title": "Set up as new",
         "subTitle": "Set up a new Nano",
         "desc": "Let’s start and set up your device!",
         "label": "30 mins"
       },
       "devicePairing": {
-        "title": "Already have a recovery phrase?",
+        "title": "Got a Secret Recovery Phrase?",
         "label": "Device pairing",
         "subTitle": "Connect your Nano",
         "desc": "Your device is already set up? Connect it to the app!"
+      },
+      "newDevice": {
+        "label": "new device",
+        "title": "Set up as new",
+        "subTitle": "Choose this if you are setting up your Ledger for the first time"
       },
       "desktopSync": {
         "title": "Already have a recovery phrase?",
@@ -1295,12 +1319,14 @@
       },
       "restoreDevice": {
         "label": "Restore device",
-        "subTitle": "Restore your recovery phrase on a new device",
+        "title": "Restore from your Secret  Recovery Phrase",
+        "subTitle": "Connect your Ledger or sync your assets from Ledger Live desktop.",
         "desc": "Use an existing recovery phrase to restore your private keys on a new Nano!"
       },
       "recovery": "Already have a recovery phrase?",
       "protect": {
-        "subTitle": "Restore using Ledger Recover",
+        "title": "Restore with Ledger Recover",
+        "subTitle":"Connect your Ledger or sync your assets from Ledger Live desktop.",
         "drawer": {
           "title": "Use Ledger Nano X",
           "desc": "Ledger Recover soft launch is exclusively for Ledger Nano X",
@@ -1858,9 +1884,14 @@
     "title": "Setup {{deviceName}}",
     "estimatedTimeFormat": "{{estimatedTime}} min",
     "deviceSelection": {
-      "title": "Choose the Ledger you'd like to set up:",
+      "title": "Which Ledger do you own?",
       "brand": "Ledger",
-      "setupTime": "{{time}} mins"
+      "setupTime": "{{time}} mins",
+      "notCompatible": "No iPhone compatibility",
+      "modal":{
+        "title": "Nano S and Nano S Plus not supported on iOS",
+        "desc": "iOS does not permit cable connection of devices. Use your Nano S or Nano S Plus with Ledger Live on your computer."
+      }
     },
     "scanning": {
       "title": "Looking for your {{productName}}",

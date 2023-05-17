@@ -367,6 +367,7 @@ export enum ScreenName {
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingDoYouHaveALedgerDevice = "OnboardingStepDoYouHaveALedgerDevice",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
+  OnboardingWelcomeBack = "OnboardingWelcomeBack",
   OnboardingLanguage = "OnboardingLanguage",
   OnboardingStepLanguageGetStarted = "OnboardingStepLanguageGetStarted",
   OnboardingTermsOfUse = "OnboardingTermsOfUse",
