@@ -20,7 +20,6 @@ import { NavigateInput } from "../../../components/RootNavigator/types/BaseNavig
 import ChoiceCard from "./ChoiceCard";
 import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 import { NotCompatibleModal } from "./setupDevice/drawers/NotCompatibleModal";
-import { NavigationProps } from "../../AccountSettings";
 
 const nanoX = {
   source: require("../../../../assets/images/devices/NanoXCropped.png"),
@@ -68,8 +67,9 @@ function OnboardingStepDeviceSelection() {
   }, [syncOnboarding?.enabled]);
 
   const getProductName = (modelId: DeviceModelId) =>
-    getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() ||
-    modelId;
+    getDeviceModel(modelId)
+      ?.productName.replace("Ledger", "")
+      .trimStart() || modelId;
 
   const next = (deviceModelId: DeviceModelId) => {
     if (route.params?.next) {
@@ -144,9 +144,7 @@ function OnboardingStepDeviceSelection() {
           testID={`onboarding-device-selection-${device.id}`}
           title={getProductName(device.id)}
           onPress={() =>
-            isNotCompatible(device.id)
-              ? triggerNotCompatibleDrawer()
-              : next(device.id)
+            isNotCompatible(device.id) ? triggerNotCompatibleDrawer() : next(device.id)
           }
           notCompatible={isNotCompatible(device.id)}
           Image={
