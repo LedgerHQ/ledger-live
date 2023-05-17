@@ -51,6 +51,7 @@ import {
 import { StackNavigatorProps } from "./types/helpers";
 import ProtectConnectionInformationModal from "../../screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import AccessExistingWallet from "../../screens/Onboarding/steps/accessExistingWallet";
 
 const Stack = createStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingCarefulWarningStack =
@@ -201,6 +202,14 @@ export default function OnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.OnboardingPostWelcomeSelection}
         component={PostWelcomeSelection}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingWelcomeBack}
+        component={AccessExistingWallet}
         options={{
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,

@@ -1,35 +1,33 @@
 import React from "react";
-import { Flex, Tag, Text } from "@ledgerhq/native-ui";
-import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
+import { TFunction } from "i18next";
 import Touchable from "../../../components/Touchable";
 
 export type Props = {
   title: string;
-  titleProps?: Partial<BaseTextProps>;
-  labelBadge?: string;
+  notCompatible?: boolean;
   subtitleElement?: React.ReactNode;
   Image: React.ReactNode;
   onPress: React.ComponentProps<typeof Touchable>["onPress"];
-  disabled?: boolean;
   event?: string;
   eventProperties?: Record<string, unknown>;
   testID?: string;
   imageContainerProps?: Partial<FlexBoxProps>;
+  t: TFunction;
 };
 
 const ChoiceCard = ({
   title,
-  titleProps,
   subtitleElement,
-  labelBadge,
+  notCompatible = false,
   onPress,
   Image,
-  disabled,
   imageContainerProps,
+  t,
   ...props
 }: Props) => (
-  <Touchable onPress={onPress} disabled={disabled} {...props}>
+  <Touchable onPress={onPress} {...props}>
     <Flex
       flexDirection={"row"}
       justifyContent={"space-between"}
@@ -38,7 +36,7 @@ const ChoiceCard = ({
       borderRadius={8}
       overflow="hidden"
       minHeight={130}
-      opacity={disabled ? 0.6 : 1}
+      opacity={notCompatible ? 0.6 : 1}
       position="relative"
       mb={6}
     >
@@ -50,22 +48,28 @@ const ChoiceCard = ({
         alignItems="flex-start"
         flexDirection={"column"}
       >
-        <Flex flexDirection="row" alignItems="center" mb={3}>
+        <Text
+          mt={2}
+          variant={"paragraphLineHeight"}
+          fontWeight={"semiBold"}
+          color={"neutral.c60"}
+        >
+          {t("syncOnboarding.deviceSelection.brand")}
+        </Text>
+
+        <Text variant={"h5"} fontWeight={"semiBold"} color={"neutral.c100"}>
+          {title}
+        </Text>
+
+        {notCompatible ? (
           <Text
             mt={2}
-            variant={"h2"}
-            fontWeight={"semiBold"}
+            variant="paragraph"
+            fontWeight="medium"
             color={"neutral.c100"}
-            {...titleProps}
           >
-            {title}
+            {t("syncOnboarding.deviceSelection.notCompatible")}
           </Text>
-        </Flex>
-        {subtitleElement ?? null}
-        {labelBadge ? (
-          <Tag type="shade" uppercase={false} size="small">
-            {labelBadge}
-          </Tag>
         ) : null}
       </Flex>
       <Flex height="100%" overflow="hidden" width={150} alignItems="flex-end">

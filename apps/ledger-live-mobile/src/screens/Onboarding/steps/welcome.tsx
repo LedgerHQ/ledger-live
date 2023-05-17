@@ -40,7 +40,7 @@ const SafeFlex = styled(SafeAreaView)`
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
     OnboardingNavigatorParamList,
-    ScreenName.OnboardingWelcome
+    ScreenName.OnboardingPostWelcomeSelection
   >
 >;
 
@@ -74,7 +74,12 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     acceptTerms();
     dispatch(setAnalytics(true));
 
-    navigation.navigate(ScreenName.OnboardingDoYouHaveALedgerDevice);
+    navigation.navigate({
+      name: ScreenName.OnboardingPostWelcomeSelection,
+      params: {
+        userHasDevice: true,
+      },
+    });
   }, [acceptTerms, dispatch, navigation]);
 
   const videoMounted = !useIsAppInBackground();
