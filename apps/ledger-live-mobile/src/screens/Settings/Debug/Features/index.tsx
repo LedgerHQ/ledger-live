@@ -95,6 +95,13 @@ export default function Features() {
         iconLeft={<Icons.LayersMedium size={32} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugQueuedDrawers)}
       />
+
+      <SettingsRow
+        title="Snackbars"
+        desc="Test toasts and other snackbars"
+        iconLeft={<Icons.MailMedium size={32} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugSnackbars)}
+      />
     </SettingsNavigationScrollView>
   );
 }

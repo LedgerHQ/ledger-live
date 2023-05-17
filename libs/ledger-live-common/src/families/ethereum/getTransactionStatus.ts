@@ -134,12 +134,9 @@ const validateEIP1559Gas = (
 export const getTransactionStatus: AccountBridge<Transaction>["getTransactionStatus"] =
   (account, tx) => {
     const gasLimit = getGasLimit(tx);
-    const estimatedGasPrice = (() => {
-      if (EIP1559ShouldBeUsed(account.currency)) {
-        return tx.maxFeePerGas || new BigNumber(0);
-      }
-      return tx.gasPrice;
-    })();
+    const estimatedGasPrice = EIP1559ShouldBeUsed(account.currency)
+      ? tx.maxFeePerGas || new BigNumber(0)
+      : tx.gasPrice;
     const estimatedFees = (estimatedGasPrice || new BigNumber(0)).times(
       gasLimit
     );
