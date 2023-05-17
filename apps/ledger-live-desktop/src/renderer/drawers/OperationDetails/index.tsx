@@ -249,7 +249,14 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
   const editable = editEthTx?.enabled && isEditableOperation(mainAccount, operation);
   const dispatch = useDispatch();
   const handleOpenEditModal = useCallback(
-    (account, parentAccount, transactionRaw, transactionSequenceNumber, isNftOperation) => {
+    (
+      account,
+      parentAccount,
+      transactionRaw,
+      transactionSequenceNumber,
+      transactionHash,
+      isNftOperation,
+    ) => {
       setDrawer(undefined);
       dispatch(
         openModal("MODAL_EDIT_TRANSACTION", {
@@ -257,6 +264,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
           parentAccount,
           transactionRaw,
           transactionSequenceNumber,
+          transactionHash,
           isNftOperation,
         }),
       );
@@ -264,7 +272,8 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
     [dispatch],
   );
   // pending transactions that exceeds 5 minutes are considered as stuck transactions
-  const isStuck = new Date() - operation.date > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+  const isStuck =
+    new Date().getTime() - operation.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
   const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
   const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
 
@@ -393,6 +402,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
                   parentAccount,
                   operation.transactionRaw,
                   operation.transactionSequenceNumber,
+                  operation.hash,
                   isNftOperation,
                 );
               }}

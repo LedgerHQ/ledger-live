@@ -115,6 +115,8 @@ const SelectFeeStrategy = ({
           oldMaxFeePerGas &&
           strategyMaxFeePerGas
         ) {
+          // MaxPriorityFee should be at least 10% higher than the old one
+          // MaxFee should be at least old MaxFee + 10% of old MaxPriorityFee
           strategy.disabled =
             strategy.disabled ||
             strategyMaxPriorityFeePerGas.isLessThan(

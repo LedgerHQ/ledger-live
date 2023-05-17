@@ -25,6 +25,7 @@ const EditOperationPanel = (props: Props) => {
         parentAccount,
         transactionRaw: operation.transactionRaw,
         transactionSequenceNumber: operation.transactionSequenceNumber,
+        transactionHash: operation.hash,
         isNftOperation: operation.type === "NFT_OUT",
       }),
     );

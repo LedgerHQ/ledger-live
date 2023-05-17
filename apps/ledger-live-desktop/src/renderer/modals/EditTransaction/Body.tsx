@@ -1,4 +1,4 @@
-import React, { useCallback, useState, memo } from "react";
+import React, { useCallback, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -12,6 +12,8 @@ import { Account, AccountLike, Operation, TransactionCommonRaw } from "@ledgerhq
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 // eslint-disable-next-line no-restricted-imports
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
+// eslint-disable-next-line no-restricted-imports
+import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
 import logger from "~/renderer/logger";
 import Stepper from "~/renderer/components/Stepper";
@@ -31,23 +33,28 @@ import StepConfirmation, {
 } from "~/renderer/modals/Send/steps/StepConfirmation";
 import { St, StepId } from "./types";
 
+export type Data = {
+  account: AccountLike | undefined | null;
+  parentAccount: Account | undefined | null;
+  recipient?: string;
+  amount?: BigNumber;
+  disableBacks?: string[];
+  transaction?: Transaction;
+  onConfirmationHandler: Function;
+  onFailHandler: Function;
+  transactionRaw: TransactionCommonRaw;
+  transactionSequenceNumber: number;
+  transactionHash: string;
+  isNftOperation: boolean;
+};
+
 type OwnProps = {
   stepId: StepId;
   onChangeStepId: (a: StepId) => void;
-  onClose: () => void;
-  params: {
-    account: AccountLike | undefined | null;
-    parentAccount: Account | undefined | null;
-    recipient?: string;
-    amount?: BigNumber;
-    disableBacks?: string[];
-    transaction?: Transaction;
-    onConfirmationHandler: Function;
-    onFailHandler: Function;
-    transactionRaw: TransactionCommonRaw;
-    transactionSequenceNumber: number;
-    isNftOperation: boolean;
-  };
+  onClose?: () => void | undefined;
+  setIsNFTSend?: (a: boolean) => void;
+  isNftSend?: boolean;
+  params: Data;
 };
 
 type StateProps = {
@@ -55,7 +62,7 @@ type StateProps = {
   device: Device | undefined | null;
   accounts: Account[];
   closeModal: (a: string) => void;
-  openModal: (b: string, a: any) => void;
+  openModal: (b: string, a: unknown) => void;
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
   setIsNFTSend: (a: boolean) => void;
   isNFTSend: boolean;
@@ -141,10 +148,14 @@ const Body = ({
   } = useBridgeTransaction(() => {
     const parentAccount = params && params.parentAccount;
     const account = (params && params.account) || accounts[0];
-    return { account, parentAccount, transaction: fromTransactionRaw(params.transactionRaw) };
+    return {
+      account,
+      parentAccount,
+      transaction: fromTransactionRaw(params.transactionRaw as EthereumTransactionRaw),
+    };
   });
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
 
   const currency = account ? getAccountCurrency(account) : undefined;
@@ -183,15 +194,17 @@ const Body = ({
 
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const error = transactionError || bridgeError;
-
+  if (!account) return null;
   const mainAccount = getMainAccount(account, parentAccount);
   const feePerGas = new BigNumber(
     EIP1559ShouldBeUsed(mainAccount.currency)
-      ? params.transactionRaw.maxFeePerGas
-      : params.transactionRaw.gasPrice,
+      ? (params.transactionRaw as EthereumTransactionRaw).maxFeePerGas ?? "0"
+      : (params.transactionRaw as EthereumTransactionRaw).gasPrice ?? "0",
   );
   const feeValue = new BigNumber(
-    params.transactionRaw.userGasLimit || params.transactionRaw.estimatedGasLimit,
+    (params.transactionRaw as EthereumTransactionRaw).userGasLimit ||
+      (params.transactionRaw as EthereumTransactionRaw).estimatedGasLimit ||
+      0,
   )
     .times(feePerGas)
     .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
@@ -199,7 +212,7 @@ const Body = ({
   const haveFundToSpeedup = mainAccount.balance.gt(
     feeValue.times(1.1).plus(account.type === "Account" ? params.transactionRaw.amount : 0),
   );
-  // todo remove logger it after test
+  // log account and fees info
   logger.log(`main account address: ${mainAccount.freshAddress}`);
   logger.log(`main account balance: ${mainAccount.balance.toNumber()}`);
   logger.log(`feeValue: ${feeValue.toNumber()}`);
@@ -207,14 +220,20 @@ const Body = ({
   let isOldestEditableOperation = true;
   account.pendingOperations.forEach(operation => {
     if (isEditableOperation(account, operation)) {
-      if (operation.transactionSequenceNumber < params.transactionSequenceNumber) {
+      if (
+        operation.transactionSequenceNumber !== undefined &&
+        operation.transactionSequenceNumber < params.transactionSequenceNumber
+      ) {
         isOldestEditableOperation = false;
       }
     }
   });
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [editType, setEditType] = useState(
     isOldestEditableOperation && haveFundToSpeedup ? "speedup" : haveFundToCancel ? "cancel" : "",
   );
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const handleSetEditType = useCallback(editType => setEditType(editType), []);
 
   const stepperProps = {
@@ -251,6 +270,7 @@ const Body = ({
     transactionRaw: params.transactionRaw,
     isNftOperation: params.isNftOperation,
     transactionSequenceNumber: params.transactionSequenceNumber,
+    transactionHash: params.transactionHash,
     haveFundToSpeedup,
     haveFundToCancel,
     isOldestEditableOperation,
@@ -263,9 +283,8 @@ const Body = ({
   );
 };
 
-const m: React$ComponentType<OwnProps> = compose(
+const m = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
-)(memo(Body));
-
+)(Body) as React.ComponentType<OwnProps>;
 export default m;

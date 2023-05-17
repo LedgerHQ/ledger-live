@@ -4,7 +4,6 @@ import { Operation } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import OperationDate from "./OperationDate";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { InfiniteLoader } from "@ledgerhq/react-ui";
 import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
 import { getEnv } from "@ledgerhq/live-common/env";

@@ -12,6 +12,8 @@ import { StepProps } from "../types";
 import { BigNumber } from "bignumber.js";
 // eslint-disable-next-line no-restricted-imports
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
+// eslint-disable-next-line no-restricted-imports
+import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 
 const StepFees = (props: StepProps) => {
   const {
@@ -24,32 +26,38 @@ const StepFees = (props: StepProps) => {
     status,
     bridgePending,
     updateTransaction,
-    transactionRaw,
   } = props;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  if (!mainAccount) return null;
+  const transactionRaw = props.transactionRaw as EthereumTransactionRaw;
   const feePerGas = new BigNumber(
     EIP1559ShouldBeUsed(mainAccount.currency)
-      ? transactionRaw.maxFeePerGas
-      : transactionRaw.gasPrice,
+      ? transactionRaw?.maxFeePerGas ?? 0
+      : transactionRaw?.gasPrice ?? 0,
   );
-  const feeValue = new BigNumber(transactionRaw.userGasLimit || transactionRaw.estimatedGasLimit)
+  const feeValue = new BigNumber(
+    transactionRaw.userGasLimit || transactionRaw.estimatedGasLimit || 0,
+  )
     .times(feePerGas)
     .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
-  // todo remove logger it after test
+  // log fees info
   logger.log(`transactionRaw.maxFeePerGas: ${transactionRaw.maxFeePerGas}`);
   logger.log(`transactionRaw.gasPrice: ${transactionRaw.gasPrice}`);
   logger.log(`transactionRaw.maxPriorityFeePerGas: ${transactionRaw.maxPriorityFeePerGas}`);
 
   let maxPriorityFeePerGasinGwei, maxFeePerGasinGwei, maxGasPriceinGwei;
   if (EIP1559ShouldBeUsed(mainAccount.currency)) {
-    maxPriorityFeePerGasinGwei = new BigNumber(transactionRaw.maxPriorityFeePerGas)
+    // dividedBy 1000000000 to convert from wei to gwei
+    maxPriorityFeePerGasinGwei = new BigNumber(transactionRaw?.maxPriorityFeePerGas ?? 0)
       .dividedBy(1000000000)
       .toNumber();
-    maxFeePerGasinGwei = new BigNumber(transactionRaw.maxFeePerGas)
+    maxFeePerGasinGwei = new BigNumber(transactionRaw?.maxFeePerGas ?? 0)
       .dividedBy(1000000000)
       .toNumber();
   } else {
-    maxGasPriceinGwei = new BigNumber(transactionRaw.gasPrice).dividedBy(1000000000).toNumber();
+    maxGasPriceinGwei = new BigNumber(transactionRaw?.gasPrice ?? 0)
+      .dividedBy(1000000000)
+      .toNumber();
   }
   return (
     <Box flow={4}>
@@ -69,7 +77,7 @@ const StepFees = (props: StepProps) => {
         </Fragment>
       )}
       <Alert type="primary">
-        {EIP1559ShouldBeUsed(mainAccount.currency) ? (
+        {EIP1559ShouldBeUsed(mainAccount.currency) ? ( // Display the fees info of the pending transaction (network fee, maxPriorityFeePerGas, maxFeePerGas, maxGasPrice)
           <ul>
             {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
             <li>{`${t("operation.edit.previousFeesInfo.networkfee")} ${feeValue} ${

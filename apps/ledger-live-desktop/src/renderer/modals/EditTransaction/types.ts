@@ -31,6 +31,7 @@ export type StepProps = {
   currencyName: string | undefined | null;
   transactionRaw: TransactionCommonRaw;
   transactionSequenceNumber: number;
+  transactionHash: string;
   isNftOperation: boolean;
   editType: string | undefined | null;
   haveFundToSpeedup: boolean;
@@ -40,4 +41,4 @@ export type StepProps = {
   setIsNFTSend: (a: boolean) => void;
 };
 
-export type St = Step<StepId, StepProps>;
+export type St = Step<StepId, any>;

@@ -291,15 +291,14 @@ export class StepSummaryFooter extends PureComponent<StepProps> {
   };
 
   componentDidMount() {
-    const { account, parentAccount, transaction } = this.props;
-    if (!account) return;
+    const { account, parentAccount, transaction, transactionHash } = this.props;
+    if (!account || !transaction || !transactionHash) return;
     const mainAccount = getMainAccount(account, parentAccount);
     if (mainAccount.currency.family !== "ethereum") return;
-    // In eth eth transaction flow, we need to check if the transaction has been already validated in the blockchain
     apiForCurrency(mainAccount.currency)
-      .getAccountNonce(mainAccount.freshAddress)
-      .then(nonce => {
-        if (transaction.nonce < nonce) {
+      .getTransactionByHash(transactionHash)
+      .then((tx: any) => {
+        if (tx?.confirmations) {
           this.setState({ transactionHasBeenValidated: true });
         }
       });

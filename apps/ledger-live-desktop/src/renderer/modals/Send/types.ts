@@ -46,6 +46,7 @@ export type StepProps = {
   walletConnectProxy?: boolean;
   maybeNFTId?: string;
   maybeNFTCollection?: string;
+  transactionHash?: string;
   onChangeQuantities: (a: string) => void;
   onChangeNFT: (a: ProtoNFT | NFT) => void;
 };

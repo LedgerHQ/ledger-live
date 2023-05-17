@@ -14,9 +14,12 @@ import { Flex } from "@ledgerhq/react-ui";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { getEnv } from "@ledgerhq/live-env";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+// eslint-disable-next-line no-restricted-imports
+import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 
-const EditTypeWrapper = styled(Box)`
-  border: ${p =>
+const EditTypeWrapper = styled(Box)<{ selected: boolean }>`
+  border: ${(p: any) =>
     `1px solid ${
       p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.divider
     }`};
@@ -26,14 +29,14 @@ const EditTypeWrapper = styled(Box)`
     cursor: "pointer";
   }
 `;
-const EditTypeHeader = styled(Box)`
-  color: ${p =>
+const EditTypeHeader = styled(Box)<{ selected: boolean }>`
+  color: ${(p: any) =>
     p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade50};
   margin-left: 10px;
 `;
 
-const Description = styled(Box)`
-  color: ${p => (p.selected ? "white" : "gray")};
+const Description = styled(Box)<{ selected: boolean }>`
+  color: ${(p: any) => (p.selected ? "white" : "gray")};
   margin-top: 5px;
   margin-left: 15px;
   width: 400px;
@@ -48,6 +51,7 @@ const StepMethod = ({
   haveFundToCancel,
   isOldestEditableOperation,
 }: StepProps) => {
+  if (!account) return null;
   const isCancel = editType === "cancel";
   const isSpeedup = editType === "speedup";
   const disableSpeedup = !haveFundToSpeedup || !isOldestEditableOperation;
@@ -64,7 +68,7 @@ const StepMethod = ({
         }}
       >
         <Flex flexDirection="row" justifyContent="left" alignItems="center">
-          <CheckBox style={{ marginLeft: "0px" }} isChecked={isSpeedup} disabled={disableSpeedup} />
+          <CheckBox isChecked={isSpeedup} disabled={disableSpeedup} />
           <Box>
             <EditTypeHeader horizontal alignItems="center" selected={isSpeedup}>
               <Text fontSize={14} ff="Inter|SemiBold" uppercase ml={1}>
@@ -143,7 +147,6 @@ export class StepMethodFooter extends PureComponent<StepProps> {
       updateTransaction,
       account,
       parentAccount,
-      transactionRaw,
       transactionSequenceNumber,
       isNftOperation,
       setIsNFTSend,
@@ -151,6 +154,8 @@ export class StepMethodFooter extends PureComponent<StepProps> {
       haveFundToCancel,
       isOldestEditableOperation,
     } = this.props;
+    const transactionRaw = this.props.transactionRaw as EthereumTransactionRaw;
+    if (!account) return null;
     const bridge = getAccountBridge(account, parentAccount);
     return (
       <>
@@ -163,7 +168,7 @@ export class StepMethodFooter extends PureComponent<StepProps> {
               setIsNFTSend(editType === "speedup");
             }
             if (editType === "speedup") {
-              updateTransaction(tx =>
+              updateTransaction((tx: any) =>
                 bridge.updateTransaction(tx, {
                   amount: new BigNumber(transactionRaw.amount),
                   data: transactionRaw.data,
@@ -178,19 +183,20 @@ export class StepMethodFooter extends PureComponent<StepProps> {
                 }),
               );
             } else {
-              updateTransaction(tx =>
+              const mainAccount = getMainAccount(account, parentAccount);
+              updateTransaction((tx: any) =>
                 bridge.updateTransaction(tx, {
                   amount: new BigNumber(0),
                   allowZeroAmount: true,
                   data: undefined,
                   nonce: transactionSequenceNumber,
                   mode: "send",
-                  recipient: account.freshAddress ?? parentAccount.freshAddress,
+                  recipient: mainAccount.freshAddress,
                   // increase gas fees in case of cancel flow as we don't have the fees input screen for cancel flow
                   maxFeePerGas: transactionRaw.maxFeePerGas
                     ? new BigNumber(
                         Math.round(
-                          transactionRaw.maxFeePerGas *
+                          Number(transactionRaw.maxFeePerGas) *
                             (1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")),
                         ),
                       )
@@ -198,7 +204,7 @@ export class StepMethodFooter extends PureComponent<StepProps> {
                   maxPriorityFeePerGas: transactionRaw.maxPriorityFeePerGas
                     ? new BigNumber(
                         Math.round(
-                          transactionRaw.maxPriorityFeePerGas *
+                          Number(transactionRaw.maxPriorityFeePerGas) *
                             (1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR")),
                         ),
                       )
@@ -206,7 +212,7 @@ export class StepMethodFooter extends PureComponent<StepProps> {
                   gasPrice: transactionRaw.gasPrice
                     ? new BigNumber(
                         Math.round(
-                          transactionRaw.gasPrice *
+                          Number(transactionRaw.gasPrice) *
                             (1 + getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR")),
                         ),
                       )

@@ -1,11 +1,12 @@
 import React, { useCallback, useState, memo } from "react";
-import Modal from "~/renderer/components/Modal";
-import Body from "./Body";
+import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
+import Modal, { RenderProps } from "~/renderer/components/Modal";
+import Body, { Data } from "./Body";
 import { StepId } from "./types";
 
 type Props = {
   stepId: StepId;
-  onClose: Function;
+  onClose: () => void;
 };
 
 const EditTransactionModal = ({ stepId: initialStepId, onClose }: Props) => {
@@ -15,24 +16,25 @@ const EditTransactionModal = ({ stepId: initialStepId, onClose }: Props) => {
   const handleStepChange = useCallback(stepId => setStep(stepId), []);
   const handleSetIsNFTSend = useCallback(isNftSend => setIsNFTSend(isNftSend), []);
   return (
-    <Modal
-      name="MODAL_EDIT_TRANSACTION"
-      centered
-      refocusWhenChange={stepId}
-      onHide={handleReset}
-      onClose={onClose}
-      preventBackdropClick={true}
-      render={({ onClose, data }) => (
-        <Body
-          stepId={stepId}
-          onClose={onClose}
-          setIsNFTSend={handleSetIsNFTSend}
-          isNftSend={isNftSend}
-          onChangeStepId={handleStepChange}
-          params={data || {}}
-        />
-      )}
-    />
+    <DomainServiceProvider>
+      <Modal
+        name="MODAL_EDIT_TRANSACTION"
+        centered
+        preventBackdropClick={true}
+        onHide={handleReset}
+        onClose={onClose}
+        render={({ onClose, data }: RenderProps<Data>) => (
+          <Body
+            stepId={stepId}
+            onClose={onClose}
+            setIsNFTSend={handleSetIsNFTSend}
+            isNftSend={isNftSend}
+            onChangeStepId={handleStepChange}
+            params={data || {}}
+          />
+        )}
+      />
+    </DomainServiceProvider>
   );
 };
 
