@@ -11,6 +11,7 @@ import {
 import { FeeStrategy } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
+import { getEnv } from "@ledgerhq/live-env";
 
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
 import { SendRowsFeeProps as Props } from "./types";
@@ -64,21 +65,46 @@ export default function EthereumFeesStrategy({
       ? strategies
           .filter(strategy => {
             if (EIP1559ShouldBeUsed(currency)) {
-              const lessMaxFeePerGas = strategy.extra?.maxFeePerGas.isLessThan(
-                transaction.maxFeePerGas!,
+              const oldMaxPriorityFeePerGas = transaction.maxPriorityFeePerGas;
+              const oldMaxFeePerGas = transaction.maxFeePerGas;
+              const maxPriorityFeeGap: number = getEnv(
+                "EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR",
               );
+              const strategyMaxPriorityFeePerGas =
+                strategy.extra?.maxPriorityFeePerGas;
+              const strategyMaxFeePerGas = strategy.extra?.maxFeePerGas;
 
-              const lessMaxPriorityFeePerGas =
-                strategy.extra?.maxPriorityFeePerGas.isLessThan(
-                  transaction.maxPriorityFeePerGas!.multipliedBy(1.1),
+              const disabled =
+                strategy.disabled ||
+                strategyMaxPriorityFeePerGas?.isLessThan(
+                  BigNumber(oldMaxPriorityFeePerGas || 0).times(
+                    1 + maxPriorityFeeGap,
+                  ),
+                ) ||
+                strategyMaxFeePerGas?.isLessThan(
+                  BigNumber(oldMaxFeePerGas || 0).plus(
+                    BigNumber(oldMaxPriorityFeePerGas || 0).times(
+                      maxPriorityFeeGap,
+                    ),
+                  ),
                 );
 
-              return lessMaxFeePerGas && lessMaxPriorityFeePerGas;
+              return disabled;
             }
 
-            return strategy.extra?.gasPrice.isLessThan(
-              transaction.gasPrice?.multipliedBy(1.1) ?? 0,
+            const gaspriceGap: number = getEnv(
+              "EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR",
             );
+
+            const oldGasPrice = transaction.gasPrice;
+
+            const disabled =
+              strategy.disabled ||
+              strategy.amount.isLessThan(
+                BigNumber(oldGasPrice || 0).times(1 + gaspriceGap),
+              );
+
+            return disabled;
           })
           .map(strategy => strategy.label)
       : [];

@@ -745,6 +745,31 @@ const envDefinitions: Record<
     parser: boolParser,
     desc: "Enable network request and responses logs. Errors are always logged",
   },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Speedup transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_CANCEL_FACTOR: {
+    def: 0.1,
+    parser: floatParser,
+    desc: "Cancel transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
+  },
+  EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR: {
+    def: 0.3,
+    parser: floatParser,
+    desc: "Cancel transaction max fee gap factor for EIP1559 for edit eth transaction feature",
+  },
 };
 
 export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
