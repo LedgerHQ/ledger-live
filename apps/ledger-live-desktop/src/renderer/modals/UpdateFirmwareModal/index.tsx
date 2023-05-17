@@ -9,7 +9,7 @@ import logger from "~/renderer/logger";
 import StepResetDevice, { StepResetFooter } from "./steps/00-step-reset-device";
 import StepPrepare from "./steps/01-step-prepare";
 import StepFlashMcu from "./steps/02-step-flash-mcu";
-import StepRestore from "./steps/02-step-restore";
+import StepRestore, { StepRestoreFooter } from "./steps/02-step-restore";
 import StepUpdating from "./steps/02-step-updating";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import StepConfirmation, { StepConfirmFooter } from "./steps/03-step-confirmation";
@@ -23,7 +23,7 @@ export type StepProps = {
   appsToBeReinstalled: boolean;
   onDrawerClose: (reinstall?: boolean) => void;
   error?: Error | null | undefined;
-  setError: (e: Error) => void;
+  setError: (e: Error | null) => void;
   CLSBackup?: string;
   deviceModelId: DeviceModelId;
   deviceInfo: DeviceInfo;
@@ -32,15 +32,16 @@ export type StepProps = {
   transitionTo: (step: StepId) => void;
   onRetry: () => void;
   setCLSBackup: (hexImage: string) => void;
+
+  completedRestoreSteps: string[];
+  setCompletedRestoreSteps: (arg0: string[]) => void;
+  currentRestoreStep: string;
+  setCurrentRestoreStep: (arg0: string) => void;
+  nonce: number;
+  setNonce: (arg0: number) => void;
 };
 
-export type StepId =
-  | "idCheck"
-  | "updateMCU"
-  | "updating"
-  | "finish"
-  | "resetDevice"
-  | "deviceLanguage";
+export type StepId = "idCheck" | "updateMCU" | "updating" | "finish" | "resetDevice" | "restore";
 
 type Props = {
   withResetStep: boolean;
@@ -75,6 +76,8 @@ const UpdateModal = ({
 }: Props) => {
   const { t } = useTranslation();
   const [stateStepId, setStateStepId] = useState<StepId>(stepId);
+  const [completedRestoreSteps, setCompletedRestoreSteps] = useState<string[]>([]);
+  const [currentRestoreStep, setCurrentRestoreStep] = useState<string>("");
   const [nonce, setNonce] = useState(0);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [err, setErr] = useState<MaybeError>(error || null);
@@ -106,9 +109,10 @@ const UpdateModal = ({
       };
 
       const restoreStep: Step = {
-        id: "deviceLanguage",
+        id: "restore",
         label: t("manager.modal.steps.restore"),
         component: StepRestore,
+        footer: StepRestoreFooter,
       };
 
       const updatingStep: Step = {
@@ -148,7 +152,7 @@ const UpdateModal = ({
   const steps = useMemo(() => createSteps({ withResetStep }), [createSteps, withResetStep]);
 
   const setError = useCallback(
-    (e: Error) => {
+    (e: Error | null) => {
       logger.critical(e);
       setErr(e);
     },
@@ -186,6 +190,13 @@ const UpdateModal = ({
     firmware,
     updatedDeviceInfo,
     t,
+
+    completedRestoreSteps,
+    setCompletedRestoreSteps,
+    currentRestoreStep,
+    setCurrentRestoreStep,
+    nonce,
+    setNonce,
   };
 
   const deviceModel = getDeviceModel(deviceModelId);

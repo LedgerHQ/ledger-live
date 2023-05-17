@@ -60,6 +60,7 @@
   "common": {
     "never": "Never",
     "new": "New",
+    "skip": "Skip",
     "apply": "Apply",
     "done": "Done",
     "confirm": "Confirm",
@@ -5102,6 +5103,10 @@
       "title": "Language installation refused on device",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
+    "RestoreLanguageInstallRefusedOnDevice": {
+      "title": "Restoration of Language was cancelled on Ledger Stax",
+      "description": "If this was a mistake you can retry the restoration, or you may skip this step."
+    },
     "LanguageNotFound": {
       "title": "Language not found",
       "description": "The language you are trying to install was not found. Please try installing another language."
@@ -5667,6 +5672,14 @@
     "ImageLoadRefusedOnDevice": {
       "title": "Lock screen cancelled on Ledger Stax",
       "description": "If this image wasn't the right fit, you can try again with another image."
+    },
+    "RestoreImageCommitRefusedOnDevice": {
+      "title": "Restoration of Lock screen picture was cancelled on Ledger Stax",
+      "description": "If this was a mistake you can retry the restoration, or you may skip this step."
+    },
+    "RestoreImageLoadRefusedOnDevice": {
+      "title": "Restoration of Lock screen picture was cancelled on Ledger Stax",
+      "description": "If this was a mistake you can retry the restoration, or you may skip this step."
     },
     "NearNewAccountWarning": {
       "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."

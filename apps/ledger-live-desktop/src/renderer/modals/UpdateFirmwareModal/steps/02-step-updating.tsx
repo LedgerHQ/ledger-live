@@ -48,9 +48,7 @@ const StepUpdating = ({
       .subscribe({
         next: setUpdatedDeviceInfo,
         complete: () => {
-          const shouldGoToLanguageStep =
-            firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
-          transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
+          transitionTo("restore");
         },
         error: (error: Error) => {
           setError(error);

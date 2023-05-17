@@ -77,7 +77,7 @@ const StepFlashMcu = ({
           complete: () => {
             const shouldGoToLanguageStep =
               firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
-            transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
+            transitionTo(shouldGoToLanguageStep ? "restore" : "finish");
           },
           error: (error: Error) => {
             setError(error);
