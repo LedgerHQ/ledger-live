@@ -12,8 +12,9 @@ export type EthStakingProvidersV2 = {
     id: string;
     name: string;
     liveAppId: string;
-    supportLink: string;
-    minAccountBalance: number;
+    supportLink?: string;
+    icon?: string;
+    minAccountBalance?: number;
     queryParams?: Record<string, string>;
   }>;
 };

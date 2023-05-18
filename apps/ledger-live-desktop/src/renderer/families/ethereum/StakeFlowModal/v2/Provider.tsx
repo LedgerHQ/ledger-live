@@ -1,14 +1,18 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
-import { Flex, ProviderIcon, Text, Tag as TagCore, Link, Icons, Icon } from "@ledgerhq/react-ui";
+import { Flex, Text, Tag as TagCore, Link, Icons, Icon } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { Provider as ProviderType } from "./types";
 import { useHistory } from "react-router-dom";
 import { Account } from "@ledgerhq/types-live";
+import { track } from "~/renderer/analytics/segment";
+import { getTrackProperties } from "../utils/getTrackProperties";
+import { StakingIcon } from "./StakingIcon";
 
 type Props = {
   provider: ProviderType;
   account: Account;
+  source?: string;
 };
 
 const Container = styled(Flex)`
@@ -27,7 +31,7 @@ const Tag = styled(TagCore)`
   }
 `;
 
-export function Provider({ provider, account }: Props) {
+export function Provider({ provider, account, source }: Props) {
   const { i18n, t } = useTranslation();
   const history = useHistory();
 
@@ -37,6 +41,11 @@ export function Provider({ provider, account }: Props) {
 
   const onProviderClick = useCallback(() => {
     const providerParams = provider.queryParams ?? {};
+    const pathname = `/platform/${provider.liveAppId}`;
+    track("button_clicked", {
+      button: provider.name,
+      ...getTrackProperties({ value: pathname, modal: source }),
+    });
     history.push({
       pathname: `/platform/${provider.liveAppId}`,
       state: {
@@ -44,10 +53,9 @@ export function Provider({ provider, account }: Props) {
         ...providerParams,
       },
     });
-  }, [provider, history, account]);
+  }, [provider, history, account, source]);
 
   const onInfoLinkClick = useCallback(event => {
-    console.log("info link clicked");
     event.stopPropagation();
   }, []);
 
@@ -58,7 +66,7 @@ export function Provider({ provider, account }: Props) {
       py={4}
       data-test-id={`stake-provider-container-${provider.name.toLowerCase()}`}
     >
-      <ProviderIcon name={provider.name} size="S" boxed={true} />
+      {!!provider.icon && <StakingIcon icon={provider.icon} />}
       <Flex flexDirection={"column"} ml={5} flex={"auto"} alignItems="flex-start">
         <Flex alignItems="center" mb={1}>
           <Text variant="bodyLineHeight" fontSize={14} fontWeight="semiBold" mr={2}>
@@ -74,17 +82,19 @@ export function Provider({ provider, account }: Props) {
         <Text variant="paragraph" fontSize={13} color="neutral.c70">
           {t(`${tPrefix}.description`)}
         </Text>
-        <Link
-          iconPosition="right"
-          Icon={Icons.ExternalLinkMedium}
-          onClick={onInfoLinkClick}
-          type="color"
-          color="primary.c80"
-          mt={4}
-          style={{ fontSize: "14px" }}
-        >
-          {t(`${tPrefix}.supportLink`)}
-        </Link>
+        {provider.supportLink && (
+          <Link
+            iconPosition="right"
+            Icon={Icons.ExternalLinkMedium}
+            onClick={onInfoLinkClick}
+            type="color"
+            color="primary.c80"
+            mt={4}
+            style={{ fontSize: "14px" }}
+          >
+            {t(`${tPrefix}.supportLink`)}
+          </Link>
+        )}
       </Flex>
       <Flex width={40} justifyContent="center" alignItems="center">
         <Icon name="ChevronRight" size={25} />

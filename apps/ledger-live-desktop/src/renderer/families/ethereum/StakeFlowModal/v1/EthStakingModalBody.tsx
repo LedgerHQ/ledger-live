@@ -25,7 +25,7 @@ type Props = {
 export const EthStakingModalBody = ({
   checkbox = false,
   singleProviderRedirectMode = true,
-  source = "stake",
+  source,
   onClose,
   account,
 }: Props) => {
@@ -47,7 +47,7 @@ export const EthStakingModalBody = ({
       const value = `/platform/${provider.liveAppId}`;
       track("button_clicked", {
         button: provider.name,
-        ...getTrackProperties({ value, locationHash: window.location.hash, source }),
+        ...getTrackProperties({ value, modal: source }),
       });
       history.push({
         pathname: value,
@@ -59,18 +59,15 @@ export const EthStakingModalBody = ({
     },
     [history, account.id, onClose, source],
   );
-  const infoOnClick = useCallback(
-    (provider: Provider) => {
-      const { liveAppId, supportLink } = provider;
-      track("button_clicked", {
-        button: `learn_more_${liveAppId}`,
-        ...getTrackProperties(supportLink),
-        link: supportLink,
-      });
-      openURL(supportLink, "OpenURL", getTrackProperties(supportLink));
-    },
-    [getTrackProperties],
-  );
+  const infoOnClick = useCallback((provider: Provider) => {
+    const { liveAppId, supportLink } = provider;
+    track("button_clicked", {
+      button: `learn_more_${liveAppId}`,
+      ...getTrackProperties({ value: provider.supportLink }),
+      link: supportLink,
+    });
+    openURL(supportLink, "OpenURL", getTrackProperties({ value: provider.supportLink }));
+  }, []);
   if (singleProviderRedirectMode && providers.length === 1) {
     stakeOnClick(providers[0]);
   }
@@ -83,9 +80,9 @@ export const EthStakingModalBody = ({
     setDoNotShowAgain(value);
     track("button_clicked", {
       button: "not_show",
-      ...getTrackProperties(value),
+      ...getTrackProperties({ value: value.toString() }),
     });
-  }, [doNotShowAgain, account?.currency?.id, getTrackProperties]);
+  }, [doNotShowAgain, account?.currency?.id]);
   return (
     <Flex flexDirection={"column"} alignItems="center" width={"100%"}>
       <EthStakeIllustration size={140} />

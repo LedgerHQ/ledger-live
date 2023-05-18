@@ -1,16 +1,15 @@
 type Props = {
   value: string;
-  locationHash: string;
-  source: string;
+  modal?: string;
 };
 
-export function getTrackProperties({ value, locationHash, source }: Props) {
+export function getTrackProperties({ value, modal = "stake" }: Props) {
   return {
-    page: locationHash
+    page: window.location.hash
       .split("/")
       .filter(e => e !== "#")
       .join("/"),
-    modal: source,
+    modal,
     flow: "stake",
     value,
   };
