@@ -397,11 +397,14 @@ const SwapForm = () => {
       });
     } else {
       const { to, from } = swapTransaction.swap;
+      const transaction = swapTransaction.transaction;
       const { account: fromAccount, parentAccount: fromParentAccount } = from;
       const { account: toAccount, parentAccount: toParentAccount } = to;
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
-      const fromAmount = swapTransaction.transaction.amount.toNumber();
+      const fromAmount = transaction?.amount / Math.pow(10, from.currency.units[0].magnitude);
+      const rateId = exchangeRate?.rateId;
+      const feeStrategy = transaction?.feesStrategy.toUpperCase();
 
       history.push({
         pathname: "/swap-web",
@@ -410,6 +413,8 @@ const SwapForm = () => {
           fromAccountId,
           toAccountId,
           fromAmount,
+          quoteId: rateId,
+          feeStrategy, // Custom is not supported yet
         },
       });
       // setDrawer(
