@@ -183,7 +183,27 @@ export function useWebviewState(
     }));
   }, [webviewRef]);
 
-  const handleFail = useCallback(() => {
+  const handleFailLoad = useCallback(
+    (errorCode: number, errorDescription: string, validatedURL: string, isMainFrame: boolean) => {
+      console.error(
+        "Web3AppView handleFailLoad",
+        errorCode,
+        errorDescription,
+        validatedURL,
+        isMainFrame,
+      );
+      if (isMainFrame) {
+        setState(oldState => ({
+          ...oldState,
+          loading: false,
+          isAppUnavailable: true,
+        }));
+      }
+    },
+    [],
+  );
+
+  const handleCrashed = useCallback(() => {
     setState(oldState => ({
       ...oldState,
       loading: false,
@@ -209,8 +229,8 @@ export function useWebviewState(
     webview.addEventListener("did-start-loading", handleDidStartLoading);
     webview.addEventListener("did-stop-loading", handleDidStopLoading);
     webview.addEventListener("dom-ready", handleDomReady);
-    webview.addEventListener("did-fail-load", handleFail);
-    webview.addEventListener("crashed", handleFail);
+    webview.addEventListener("did-fail-load", handleFailLoad);
+    webview.addEventListener("crashed", handleCrashed);
 
     return () => {
       webview.removeEventListener("page-title-updated", handlePageTitleUpdated);
@@ -219,8 +239,8 @@ export function useWebviewState(
       webview.removeEventListener("did-start-loading", handleDidStartLoading);
       webview.removeEventListener("did-stop-loading", handleDidStopLoading);
       webview.removeEventListener("dom-ready", handleDomReady);
-      webview.removeEventListener("did-fail-load", handleFail);
-      webview.removeEventListener("crashed", handleFail);
+      webview.removeEventListener("did-fail-load", handleFailLoad);
+      webview.removeEventListener("crashed", handleCrashed);
     };
   }, [
     handleDidNavigate,
@@ -229,7 +249,8 @@ export function useWebviewState(
     handleDidStopLoading,
     handlePageTitleUpdated,
     handleDomReady,
-    handleFail,
+    handleFailLoad,
+    handleCrashed,
     webviewRef,
     isMounted,
   ]);
