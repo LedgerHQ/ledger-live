@@ -6,11 +6,12 @@ import { PortfolioPage } from "../../models/PortfolioPage";
 import { DiscoverPage } from "../../models/DiscoverPage";
 import { MarketPage } from "../../models/MarketPage";
 import { Layout } from "../../models/Layout";
-import { MarketCoinPage } from "../../models/MarketCoinPage";
 import { AssetPage } from "../../models/AssetPage";
 import { AccountsPage } from "../../models/AccountsPage";
 import { AccountPage } from "../../models/AccountPage";
 import { getProvidersMock } from "./services-api-mocks/getProviders.mock";
+import { MarketCoinPage } from "../../models/MarketCoinPage";
+import { Analytics } from "../../models/Analytics";
 
 test.use({
   env: {
@@ -41,10 +42,9 @@ test.use({
       params: {
         providers: [
           {
-            id: "kilnPooling",
-            name: "Kiln",
+            id: "kiln_pooling",
             liveAppId: "kiln",
-            supportLink: "https://www.kiln.fi",
+            supportLink: "#",
             minAccountBalance: 0,
             icon: "Group",
             queryParams: {
@@ -53,9 +53,8 @@ test.use({
           },
           {
             id: "kiln",
-            name: "Kiln",
             liveAppId: "kiln",
-            supportLink: "https://www.kiln.fi",
+            supportLink: "#",
             minAccountBalance: 0,
             icon: "User",
             queryParams: {
@@ -69,6 +68,7 @@ test.use({
 });
 
 test.only("Ethereum staking flows via portfolio, asset page and market page", async ({ page }) => {
+  const analytics = new Analytics(page);
   const portfolioPage = new PortfolioPage(page);
   const drawer = new Drawer(page);
   const modal = new Modal(page);
@@ -77,6 +77,8 @@ test.only("Ethereum staking flows via portfolio, asset page and market page", as
   const accountsPage = new AccountsPage(page);
   const accountPage = new AccountPage(page);
   const layout = new Layout(page);
+  const marketPage = new MarketPage(page);
+  const marketCoinPage = new MarketCoinPage(page);
 
   await page.route("https://swap.ledger.com/v4/providers**", async route => {
     const mockProvidersResponse = getProvidersMock();
@@ -105,7 +107,15 @@ test.only("Ethereum staking flows via portfolio, asset page and market page", as
   });
 
   await test.step("choose Kiln", async () => {
-    await modal.chooseStakeProvider("Kiln");
+    const event = analytics.waitForTracking({
+      event: "button_clicked",
+      properties: {
+        button: "kiln",
+        page: "account/mock:1:ethereum:true_ethereum_1:",
+      },
+    });
+    await modal.chooseStakeProvider("kiln");
+    await event;
     await liveApp.waitForCorrectTextInWebview("Ethereum 2");
     await expect(await liveApp.getLiveAppTitle()).toBe("Kiln");
     await expect.soft(page).toHaveScreenshot("stake-provider-dapp-has-opened.png", {
@@ -128,10 +138,18 @@ test.only("Ethereum staking flows via portfolio, asset page and market page", as
 
   await test.step("choose ethereum account", async () => {
     await drawer.selectAccount("Ethereum", 1);
+    const event = analytics.waitForTracking({
+      event: "button_clicked",
+      properties: {
+        button: "kiln_pooling",
+        page: "account/mock:1:ethereum:true_ethereum_0:",
+      },
+    });
+    await modal.chooseStakeProvider("kiln_pooling");
+    await event;
     await expect
       .soft(page)
       .toHaveScreenshot("choose-stake-provider-modal-from-portfolio-page-from-asset-page.png");
-    await modal.close();
   });
 
   // Account page
@@ -145,6 +163,34 @@ test.only("Ethereum staking flows via portfolio, asset page and market page", as
     await accountPage.startStakingFlowFromMainStakeButton();
     await modal.waitForModalToAppear();
     await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-account-page.png");
+    await page.getByTestId("stake-provider-support-link-kiln");
+    await page.getByTestId("stake-provider-support-link-kiln_pooling");
+    await modal.close();
+  });
+
+  // Market page
+  await test.step("Market page loads with ETH staking available", async () => {
+    await layout.goToMarket();
+    await marketPage.waitForLoading();
+    await expect.soft(page).toHaveScreenshot("market-loaded-with-eth-stake-button-available.png");
+  });
+
+  await test.step("start stake flow via Stake entry button", async () => {
+    await marketPage.startStakeFlowByTicker("eth");
+    await drawer.waitForDrawerToBeVisible();
+    await drawer.selectAccount("Ethereum", 1);
+    await expect.soft(page).toHaveScreenshot("stake-modal-opened-from-market-page.png");
+    await modal.close();
+  });
+
+  await test.step("Go back to Market page and start stake from ETH coin detail page", async () => {
+    await layout.goToMarket();
+    await marketPage.waitForLoading();
+    await marketPage.openCoinPage("eth");
+    await marketCoinPage.startStakeFlow();
+    await drawer.waitForDrawerToBeVisible();
+    await drawer.selectAccount("Ethereum", 1);
+    await expect.soft(page).toHaveScreenshot("stake-modal-opened-from-market-coin-page.png");
     await modal.close();
   });
 });

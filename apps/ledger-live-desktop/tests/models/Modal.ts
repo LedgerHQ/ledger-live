@@ -15,6 +15,7 @@ export class Modal {
   readonly closeButton: Locator;
   readonly backButton: Locator;
   readonly stakeProviderContainer: (stakeProvider: string) => Locator;
+  readonly stakeProviderSupportLink: (stakeProvider: string) => Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -34,6 +35,8 @@ export class Modal {
     this.backButton = page.locator("data-test-id=modal-back-button");
     this.stakeProviderContainer = stakeProvider =>
       page.locator(`data-test-id=stake-provider-container-${stakeProvider.toLowerCase()}`);
+    this.stakeProviderSupportLink = stakeProvider =>
+      page.locator(`data-test-id=stake-provider-support-link-${stakeProvider}`);
   }
 
   async continue() {
@@ -75,5 +78,9 @@ export class Modal {
 
   async chooseStakeProvider(stakeProvider: string) {
     await this.stakeProviderContainer(stakeProvider).click();
+  }
+
+  async chooseStakeSupportLink(stakeProvider: string) {
+    await this.stakeProviderSupportLink(stakeProvider).dispatchEvent("click");
   }
 }

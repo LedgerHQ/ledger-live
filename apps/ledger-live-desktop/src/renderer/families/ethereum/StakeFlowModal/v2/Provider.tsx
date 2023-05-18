@@ -47,7 +47,7 @@ export function Provider({ provider, account, source, onClose }: Props) {
     const providerParams = provider.queryParams ?? {};
     const pathname = `/platform/${provider.liveAppId}`;
     track("button_clicked", {
-      button: provider.name,
+      button: provider.id,
       ...getTrackProperties({ value: pathname, modal: source }),
     });
     history.push({
@@ -60,32 +60,23 @@ export function Provider({ provider, account, source, onClose }: Props) {
     onClose?.();
   }, [provider, history, account, source, onClose]);
 
-  const onInfoLinkClick = useCallback(
-    event => {
-      if (provider.supportLink) {
-        const { liveAppId, supportLink } = provider;
-        track("button_clicked", {
-          button: `learn_more_${liveAppId}`,
-          ...getTrackProperties({ value: provider.supportLink }),
-          link: supportLink,
-        });
-        openURL(
-          provider.supportLink,
-          "OpenURL",
-          getTrackProperties({ value: provider.supportLink }),
-        );
-      }
-      event.stopPropagation();
-    },
-    [provider],
-  );
+  const onInfoLinkClick = useCallback(() => {
+    const { id, supportLink } = provider;
+    if (supportLink) {
+      track("button_clicked", {
+        button: `learn_more_${id}`,
+        ...getTrackProperties({ value: supportLink }),
+      });
+      openURL(supportLink, "OpenURL", getTrackProperties({ value: supportLink }));
+    }
+  }, [provider]);
 
   return (
     <Container
       pl={3}
       onClick={onProviderClick}
       py={4}
-      data-test-id={`stake-provider-container-${provider.id.toLowerCase()}`}
+      data-test-id={`stake-provider-container-${provider.id}`}
     >
       {!!provider.icon && <StakingIcon icon={provider.icon} />}
       <Flex flexDirection={"column"} ml={5} flex={"auto"} alignItems="flex-start">
@@ -105,6 +96,7 @@ export function Provider({ provider, account, source, onClose }: Props) {
         </Text>
         {provider.supportLink && (
           <Link
+            data-testid={`stake-provider-support-link-${provider.id}`}
             iconPosition="right"
             Icon={Icons.ExternalLinkMedium}
             onClick={onInfoLinkClick}

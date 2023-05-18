@@ -21,6 +21,8 @@ type TestFixtures = {
   featureFlags: { [key in FeatureId]?: Feature };
 };
 
+const IS_DEBUG_MODE = !!process.env.PWDEBUG;
+
 const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
@@ -101,8 +103,10 @@ const test = base.extend<TestFixtures>({
     // app is ready
     const page = await electronApp.firstWindow();
 
-    // Direct Electron console to Node terminal.
-    page.on("console", console.log);
+    if (IS_DEBUG_MODE) {
+      // Direct Electron console to Node terminal.
+      page.on("console", console.log);
+    }
 
     // app is loaded
     await page.waitForLoadState("domcontentloaded");

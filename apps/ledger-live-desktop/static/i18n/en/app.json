@@ -3533,7 +3533,7 @@
         "tag": "Requires 32 ETH",
         "supportLink": "Learn more about Kiln validator"
       },
-      "kilnPooling": {
+      "kiln_pooling": {
         "title": "Kiln pooling",
         "description": "Participate in a pool and stake any ETH amount. No lock-up period. No minimum.",
         "supportLink": "Learn more about Kiln pooling"
