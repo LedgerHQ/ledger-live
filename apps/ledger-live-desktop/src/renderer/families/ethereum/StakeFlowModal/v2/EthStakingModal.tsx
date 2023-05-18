@@ -6,6 +6,7 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 
 import { EthStakingModalBody } from "./EthStakingModalBody";
 import { Providers } from "./types";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 type Props = {
   name: string;
@@ -23,11 +24,14 @@ export function EthStakingModal(props: Props) {
       centered
       width={500}
       render={({ onClose }) => (
-        <ModalBody
-          title={<Trans i18nKey="ethereum.stake.title" />}
-          onClose={onClose}
-          render={() => <EthStakingModalBody {...props} onClose={onClose} />}
-        />
+        <>
+          <TrackPage category="ETH Stake Modal" name="Main Modal" />
+          <ModalBody
+            title={<Trans i18nKey="ethereum.stake.title" />}
+            onClose={onClose}
+            render={() => <EthStakingModalBody {...props} onClose={onClose} />}
+          />
+        </>
       )}
     />
   );

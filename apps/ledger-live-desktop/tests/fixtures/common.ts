@@ -101,6 +101,9 @@ const test = base.extend<TestFixtures>({
     // app is ready
     const page = await electronApp.firstWindow();
 
+    // Direct Electron console to Node terminal.
+    page.on("console", console.log);
+
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });

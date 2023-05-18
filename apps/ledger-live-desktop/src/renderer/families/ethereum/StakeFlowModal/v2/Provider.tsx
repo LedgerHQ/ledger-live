@@ -26,10 +26,12 @@ const Container = styled(Flex)`
 `;
 
 const Tag = styled(TagCore)`
-  padding: 0 5px;
+  padding: 3px 6px;
   > span {
-    font-size: 14px;
+    font-size: 11px;
     text-transform: none;
+    font-weight: bold;
+    line-height: 11.66px;
   }
 `;
 
@@ -83,7 +85,7 @@ export function Provider({ provider, account, source, onClose }: Props) {
       pl={3}
       onClick={onProviderClick}
       py={4}
-      data-test-id={`stake-provider-container-${provider.name.toLowerCase()}`}
+      data-test-id={`stake-provider-container-${provider.id.toLowerCase()}`}
     >
       {!!provider.icon && <StakingIcon icon={provider.icon} />}
       <Flex flexDirection={"column"} ml={5} flex={"auto"} alignItems="flex-start">

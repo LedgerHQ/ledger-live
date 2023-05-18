@@ -55,6 +55,11 @@ export class DiscoverPage {
     return await this.liveAppTitle.textContent();
   }
 
+  async getLiveAppURL() {
+    console.log(this.page.url);
+    return Promise.resolve();
+  }
+
   async getAccountsList() {
     await this.clickWebviewElement("[data-test-id=get-all-accounts-button]");
   }
