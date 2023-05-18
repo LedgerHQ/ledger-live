@@ -12,7 +12,7 @@ type Props = {
   source?: string;
 };
 
-export function EthStakingModalBody({ providers, account, source }: Props) {
+export function EthStakingModalBody({ providers, account, source, onClose }: Props) {
   return (
     <Flex flexDirection="column" alignItems="center" width="100%">
       <EthStakeIllustration size={140} />
@@ -20,7 +20,7 @@ export function EthStakingModalBody({ providers, account, source }: Props) {
         <Flex flexDirection={"column"} width="100%">
           {providers.map(provider => (
             <Flex key={provider.id} width="100%" flexDirection={"column"}>
-              <Provider provider={provider} account={account} source={source} />
+              <Provider provider={provider} account={account} source={source} onClose={onClose} />
             </Flex>
           ))}
         </Flex>

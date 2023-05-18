@@ -8,11 +8,13 @@ import { Account } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import { getTrackProperties } from "../utils/getTrackProperties";
 import { StakingIcon } from "./StakingIcon";
+import { openURL } from "~/renderer/linking";
 
 type Props = {
   provider: ProviderType;
   account: Account;
   source?: string;
+  onClose?(): void;
 };
 
 const Container = styled(Flex)`
@@ -31,7 +33,7 @@ const Tag = styled(TagCore)`
   }
 `;
 
-export function Provider({ provider, account, source }: Props) {
+export function Provider({ provider, account, source, onClose }: Props) {
   const { i18n, t } = useTranslation();
   const history = useHistory();
 
@@ -47,17 +49,34 @@ export function Provider({ provider, account, source }: Props) {
       ...getTrackProperties({ value: pathname, modal: source }),
     });
     history.push({
-      pathname: `/platform/${provider.liveAppId}`,
+      pathname,
       state: {
         accountId: account.id,
         ...providerParams,
       },
     });
-  }, [provider, history, account, source]);
+    onClose?.();
+  }, [provider, history, account, source, onClose]);
 
-  const onInfoLinkClick = useCallback(event => {
-    event.stopPropagation();
-  }, []);
+  const onInfoLinkClick = useCallback(
+    event => {
+      if (provider.supportLink) {
+        const { liveAppId, supportLink } = provider;
+        track("button_clicked", {
+          button: `learn_more_${liveAppId}`,
+          ...getTrackProperties({ value: provider.supportLink }),
+          link: supportLink,
+        });
+        openURL(
+          provider.supportLink,
+          "OpenURL",
+          getTrackProperties({ value: provider.supportLink }),
+        );
+      }
+      event.stopPropagation();
+    },
+    [provider],
+  );
 
   return (
     <Container
