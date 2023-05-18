@@ -11,6 +11,7 @@ import { addParamsToURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { LiveAppManifest } from "~/../../../libs/ledger-live-common/lib/platform/types";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
+import { track } from "~/renderer/analytics/segment";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -183,15 +184,13 @@ export function useWebviewState(
     }));
   }, [webviewRef]);
 
-  const handleFailLoad = useCallback(
+  const handleFailLoad = (useCallback(
     (errorCode: number, errorDescription: string, validatedURL: string, isMainFrame: boolean) => {
-      console.error(
-        "Web3AppView handleFailLoad",
-        errorCode,
-        errorDescription,
-        validatedURL,
-        isMainFrame,
-      );
+      const errorInfo = { errorCode, errorDescription, validatedURL, isMainFrame };
+      console.error("Web3AppView handleFailLoad", errorInfo);
+
+      track("useWebviewState", errorInfo);
+
       if (isMainFrame) {
         setState(oldState => ({
           ...oldState,
@@ -201,7 +200,7 @@ export function useWebviewState(
       }
     },
     [],
-  );
+  ) as unknown) as EventListenerOrEventListenerObject;
 
   const handleCrashed = useCallback(() => {
     setState(oldState => ({
