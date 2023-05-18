@@ -126,10 +126,16 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
         border-color: ${p.theme.colors.neutral.c50};
         color: ${p.theme.colors.neutral.c50};
         background-color: transparent;
+        &:focus, &:hover {
+          box-shadow: none;
+        }
       `,
     filled: `
         color: ${p.theme.colors.neutral.c50};
         background-color: ${p.theme.colors.neutral.c30};
+        &:focus, &:hover {
+          box-shadow: none;
+        }
       `,
   },
   default: `
