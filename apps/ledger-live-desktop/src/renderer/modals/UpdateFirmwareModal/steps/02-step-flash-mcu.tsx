@@ -1,24 +1,22 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { timeout } from "rxjs/operators";
 import { Subscriber, from } from "rxjs";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
+import { getEnv } from "@ledgerhq/live-common/env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import FlashMCU from "~/renderer/components/FlashMCU";
-import Installing from "../Installing";
-import { StepProps } from "..";
-import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
+import Installing from "../Installing";
 import { Body as StepUpdatingBody } from "./02-step-updating";
+import { StepProps } from "..";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -26,29 +24,21 @@ const Container = styled(Box).attrs(() => ({
   color: "palette.text.shade100",
 }))``;
 
-const Title = styled(Box).attrs(() => ({
-  ff: "Inter|Regular",
-  fontSize: 5,
-  mb: 3,
-}))``;
-
 type BodyProps = {
   installing?: string;
   progress: number;
   deviceModelId: DeviceModelId;
-  firmware: FirmwareUpdateContext;
+  firmware?: FirmwareUpdateContext;
   initialDelayPhase: boolean;
 };
 
 const Body = ({ installing, progress, firmware, deviceModelId, initialDelayPhase }: BodyProps) => {
-  return installing || !firmware.shouldFlashMCU || initialDelayPhase ? (
+  return installing || !firmware?.shouldFlashMCU || initialDelayPhase ? (
     <Installing installing={installing} progress={progress} />
   ) : (
     <FlashMCU deviceModelId={deviceModelId} />
   );
 };
-
-type Props = StepProps;
 
 const DELAY_PHASE = 10000;
 
@@ -58,8 +48,7 @@ const StepFlashMcu = ({
   setError,
   transitionTo,
   setUpdatedDeviceInfo,
-}: Props) => {
-  const { t } = useTranslation();
+}: StepProps) => {
   const [installing, setInstalling] = useState<string | undefined>(undefined);
   const [initialDelayPhase, setInitialDelayPhase] = useState(true);
   // when autoUpdatingMode is true, we simply display the same content as in "step-updating" as the device turns into auto update mode
@@ -68,7 +57,6 @@ const StepFlashMcu = ({
   const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
 
   const [isMcuUpdateFinished, setIsMcuUpdateFinished] = useState<boolean>(false);
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
 
   // Gets the updated device info from the command waitForDeviceInfo
   // after a successful MCU update
@@ -88,9 +76,7 @@ const StepFlashMcu = ({
           next: setUpdatedDeviceInfo,
           complete: () => {
             const shouldGoToLanguageStep =
-              firmware &&
-              isDeviceLocalizationSupported(firmware.final.name, deviceModelId) &&
-              deviceLocalizationFeatureFlag?.enabled;
+              firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
             transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
           },
           error: (error: Error) => {
@@ -105,18 +91,12 @@ const StepFlashMcu = ({
         sub.unsubscribe();
       }
     };
-  }, [
-    deviceLocalizationFeatureFlag?.enabled,
-    deviceModelId,
-    firmware,
-    isMcuUpdateFinished,
-    setError,
-    setUpdatedDeviceInfo,
-    transitionTo,
-  ]);
+  }, [deviceModelId, firmware, isMcuUpdateFinished, setError, setUpdatedDeviceInfo, transitionTo]);
 
   // Updates the MCU
   useEffect(() => {
+    if (!firmware) return;
+
     setTimeout(() => {
       setInitialDelayPhase(false);
     }, DELAY_PHASE);
@@ -170,7 +150,6 @@ const StepFlashMcu = ({
 
   return (
     <Container data-test-id="firmware-update-flash-mcu-progress">
-      <Title>{installing ? "" : t("manager.modal.mcuTitle")}</Title>
       <TrackPage category="Manager" name="FlashMCU" />
       <Body
         deviceModelId={deviceModelId}

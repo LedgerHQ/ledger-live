@@ -196,7 +196,6 @@ const AppsList = ({
           device={device}
           deviceName={deviceName}
           isIncomplete={isIncomplete}
-          firmware={firmware}
         />
         <ProviderWarning />
         <AppList

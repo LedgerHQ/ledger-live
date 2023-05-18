@@ -1,52 +1,52 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { getDeviceModel } from "@ledgerhq/devices";
-import { StepProps } from "..";
-import { idsToLanguage, Language, languageIds } from "@ledgerhq/types-live";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { StepProps } from "../..";
+import { idsToLanguage, Language as LanguageType, languageIds } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { Locale, localeIdToDeviceLanguage } from "~/config/languages";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
-import { useTranslation } from "react-i18next";
-import Track from "~/renderer/analytics/Track";
 import { track } from "~/renderer/analytics/segment";
-import BigSpinner from "~/renderer/components/BigSpinner";
-import ChangeDeviceLanguagePrompt from "~/renderer/components/ChangeDeviceLanguagePrompt";
 import ChangeDeviceLanguageAction from "~/renderer/components/ChangeDeviceLanguageAction";
+import { renderLoading } from "~/renderer/components/DeviceAction/rendering";
 
-type Props = StepProps;
+type Props = Partial<StepProps> & { onDone: () => void };
 
-const StepDeviceLanguage = ({
-  updatedDeviceInfo,
-  device,
-  deviceInfo: oldDeviceInfo,
-  transitionTo,
-}: Props) => {
+const Language = ({ updatedDeviceInfo, deviceInfo: oldDeviceInfo, onDone }: Props) => {
+  const [isLanguagePromptOpen, setIsLanguagePromptOpen] = useState<boolean>(false);
+  const [languageToInstall, setLanguageToInstall] = useState<LanguageType>("english");
+  const [installingLanguage, setInstallingLanguage] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
   const currentLocale = useSelector(languageSelector) as Locale;
 
   const {
     availableLanguages: newAvailableLanguages,
     loaded: newLanguagesLoaded,
   } = useAvailableLanguagesForDevice(updatedDeviceInfo);
+
   const {
     availableLanguages: oldAvailableLanguages,
     loaded: oldLanguagesLoaded,
   } = useAvailableLanguagesForDevice(oldDeviceInfo);
 
-  const [isLanguagePromptOpen, setIsLanguagePromptOpen] = useState<boolean>(false);
-
-  const [languageToInstall, setLanguageToInstall] = useState<Language>("english");
-  const [installingLanguage, setInstallingLanguage] = useState(false);
-
-  const { t } = useTranslation();
-
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
-
-  const installLanguage = useCallback((language: Language) => {
+  const installLanguage = useCallback((language: LanguageType) => {
     setLanguageToInstall(language);
     setInstallingLanguage(true);
   }, []);
+
+  useEffect(() => {
+    if (!error) return;
+    // Nb Error cases in the recovery flow are acknowledged but still continue
+    // the restore flow. Consider refactoring this to not repeat the other usage.
+    const timer = setTimeout(() => {
+      track("Page Manager FwUpdateLanguageInstallError", {
+        error,
+      });
+      onDone();
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [error, onDone]);
 
   useEffect(() => {
     if (newLanguagesLoaded && oldLanguagesLoaded) {
@@ -63,8 +63,7 @@ const StepDeviceLanguage = ({
       if (
         langAvailableForTheFirstTime &&
         deviceLanguageId !== undefined &&
-        idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        deviceLocalizationFeatureFlag?.enabled
+        idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage
       ) {
         setIsLanguagePromptOpen(true);
       } else if (
@@ -74,7 +73,7 @@ const StepDeviceLanguage = ({
         track("Page Manager FwUpdateReinstallLanguage");
         installLanguage(idsToLanguage[oldDeviceInfo.languageId]);
       } else {
-        transitionTo("finish");
+        onDone();
       }
     }
   }, [
@@ -86,54 +85,28 @@ const StepDeviceLanguage = ({
     oldDeviceInfo,
     updatedDeviceInfo,
     installLanguage,
-    deviceLocalizationFeatureFlag?.enabled,
-    transitionTo,
+    onDone,
   ]);
-
-  const deviceName = getDeviceModel(device.modelId).productName;
 
   return (
     <Flex justifyContent="center" flex={1}>
-      {isLanguagePromptOpen && !installingLanguage ? (
-        <>
-          <Track event="Page Manager FwUpdateDeviceLanguagePrompt" onMount />
-          <ChangeDeviceLanguagePrompt
-            descriptionWording={t("deviceLocalization.firmwareUpdatePrompt.description", {
-              language: t(
-                `deviceLocalization.languages.${localeIdToDeviceLanguage[currentLocale]}`,
-              ),
-              deviceName,
-            })}
-            deviceModelId={device.modelId}
-            onSkip={() => {
-              track("Page Manager FwUpdateDeviceLanguagePromptDismissed");
-              transitionTo("finish");
-            }}
-            onConfirm={() => installLanguage(localeIdToDeviceLanguage[currentLocale] as Language)}
-          />
-        </>
-      ) : null}
       {installingLanguage ? (
         <ChangeDeviceLanguageAction
           language={languageToInstall}
-          onError={(error: Error) =>
-            track("Page Manager FwUpdateLanguageInstallError", {
-              error,
-            })
-          }
+          onError={setError}
           onSuccess={() => {
             track("Page Manager FwUpdateLanguageInstalled", {
               selectedLanguage: languageToInstall,
             });
             setInstallingLanguage(false);
-            transitionTo("finish");
+            onDone();
           }}
         />
       ) : (
-        !isLanguagePromptOpen && <BigSpinner size={50} />
+        !isLanguagePromptOpen && renderLoading({})
       )}
     </Flex>
   );
 };
 
-export default StepDeviceLanguage;
+export default Language;
