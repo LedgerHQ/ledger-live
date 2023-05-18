@@ -34,17 +34,19 @@ const EditOperationPanel = (props: Props) => {
     return null;
   }
   return (
-    <Alert type="warning" style={{ marginBottom: "40px" }}>
-      <Trans i18nKey="operation.edit.panel.description" />
-      <div>
-        <Link
-          style={{ textDecoration: "underline", fontSize: "13px" }}
-          onClick={handleOpenEditModal}
-        >
-          <Trans i18nKey="operation.edit.panel.title" />
-        </Link>
-      </div>
-    </Alert>
+    <div style={{ marginBottom: "15px" }}>
+      <Alert type="warning">
+        <Trans i18nKey="operation.edit.panel.description" />
+        <div>
+          <Link
+            style={{ textDecoration: "underline", fontSize: "13px" }}
+            onClick={handleOpenEditModal}
+          >
+            <Trans i18nKey="operation.edit.panel.title" />
+          </Link>
+        </div>
+      </Alert>
+    </div>
   );
 };
 

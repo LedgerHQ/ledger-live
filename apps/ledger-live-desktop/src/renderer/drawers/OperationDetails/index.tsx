@@ -310,7 +310,6 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
             }}
             type={type}
             withTooltip={false}
-            editable={editable}
           />
         )}
       </Box>
