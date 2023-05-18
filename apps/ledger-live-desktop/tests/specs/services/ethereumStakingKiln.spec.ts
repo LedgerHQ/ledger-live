@@ -67,7 +67,7 @@ test.use({
   },
 });
 
-test.only("Ethereum staking flows via portfolio, asset page and market page", async ({ page }) => {
+test("Ethereum staking flows via portfolio, asset page and market page", async ({ page }) => {
   const analytics = new Analytics(page);
   const portfolioPage = new PortfolioPage(page);
   const drawer = new Drawer(page);

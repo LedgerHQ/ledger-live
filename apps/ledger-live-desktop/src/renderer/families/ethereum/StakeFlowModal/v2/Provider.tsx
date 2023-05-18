@@ -2,13 +2,16 @@ import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Flex, Text, Tag as TagCore, Link, Icons, Icon } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { Provider as ProviderType } from "./types";
+import { Manifest, Provider as ProviderType } from "./types";
 import { useHistory } from "react-router-dom";
 import { Account } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import { getTrackProperties } from "../utils/getTrackProperties";
 import { StakingIcon } from "./StakingIcon";
 import { openURL } from "~/renderer/linking";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { generateValidDappURLWithParams } from "../utils/generateValidDappURLWithParams";
 
 type Props = {
   provider: ProviderType;
@@ -36,15 +39,21 @@ const Tag = styled(TagCore)`
 `;
 
 export function Provider({ provider, account, source, onClose }: Props) {
+  const localManifest = useLocalLiveAppManifest(provider.liveAppId) as Manifest;
+  const remoteManifest = useRemoteLiveAppManifest(provider.liveAppId) as Manifest;
+
+  const customDappUrl = generateValidDappURLWithParams(
+    remoteManifest || localManifest,
+    provider.queryParams,
+  );
+
   const { i18n, t } = useTranslation();
   const history = useHistory();
 
   const tPrefix = `ethereum.stakeV2.${provider.id}`;
-
   const hasTag = i18n.exists(`${tPrefix}.tag`);
 
   const onProviderClick = useCallback(() => {
-    const providerParams = provider.queryParams ?? {};
     const pathname = `/platform/${provider.liveAppId}`;
     track("button_clicked", {
       button: provider.id,
@@ -52,13 +61,13 @@ export function Provider({ provider, account, source, onClose }: Props) {
     });
     history.push({
       pathname,
+      ...(customDappUrl ? { customDappUrl } : {}),
       state: {
         accountId: account.id,
-        ...providerParams,
       },
     });
     onClose?.();
-  }, [provider, history, account, source, onClose]);
+  }, [provider, history, account, source, onClose, customDappUrl]);
 
   const onInfoLinkClick = useCallback(() => {
     const { id, supportLink } = provider;
