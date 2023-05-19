@@ -16,13 +16,13 @@ import { generateValidDappURLWithParams } from "~/helpers/generateValidDappURLWi
 import EthStakeIllustration from "./assets/EthStakeIlustration";
 import CheckBox from "~/renderer/components/CheckBox";
 import { Manifest } from "~/types/manifest";
-import ProviderItem from "./ProviderItem";
+import ProviderItem from "./component/ProviderItem";
 
 type Props = {
-  onClose?: () => void;
   account: Account;
-  checkbox?: boolean;
   singleProviderRedirectMode?: boolean;
+  onClose?: () => void;
+  checkbox?: boolean;
   source?: string;
   listProviders?: ListProviders;
 };

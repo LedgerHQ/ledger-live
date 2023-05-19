@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { Flex, Text, Icons, Link, ProviderIcon, Icon, Tag as TagCore } from "@ledgerhq/react-ui";
+import { Flex, Text, Icons, Link, Icon, Tag as TagCore } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ListProvider } from "./types";
+import { ListProvider } from "../types";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { Manifest } from "~/types/manifest";
-import { StakeOnClickProps } from "./EthStakingModalBody";
-import { StakingIcon } from "./StakingIcon";
+import { StakeOnClickProps } from "../EthStakingModalBody";
+import { StakingIcon } from "../StakingIcon";
 
 const Container = styled(Flex)`
   cursor: pointer;
