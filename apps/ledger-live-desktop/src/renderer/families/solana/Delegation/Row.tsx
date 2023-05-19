@@ -21,6 +21,7 @@ import ChevronRight from "~/renderer/icons/ChevronRight";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import Loader from "~/renderer/icons/Loader";
 import { TableLine } from "./Header";
+import { DelegateModalName } from "../modals";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -83,8 +84,8 @@ const ManageDropDownItem = ({
 type Props = {
   account: Account;
   stakeWithMeta: SolanaStakeWithMeta;
-  onManageAction: (stakeWithMeta: SolanaStakeWithMeta, action: string) => void;
-  onExternalLink: (address: string) => void;
+  onManageAction: (stakeWithMeta: SolanaStakeWithMeta, action: DelegateModalName) => void;
+  onExternalLink: (stakeWithMeta: SolanaStakeWithMeta) => void;
 };
 export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: Props) {
   const onSelect = useCallback(
@@ -164,7 +165,10 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
     </Wrapper>
   );
 }
-function toStakeDropDownItem(stakeAction: string) {
+
+function toStakeDropDownItem(
+  stakeAction: string,
+): { key: DelegateModalName; label: React.ReactNode } {
   switch (stakeAction) {
     case "activate":
       return {

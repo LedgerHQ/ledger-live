@@ -19,11 +19,11 @@ import Delegations from "~/renderer/families/elrond/components/Delegations";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { modals } from "./modals";
 import { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";
-import { Account } from "@ledgerhq/types-live";
+import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+
 export interface DelegationPropsType {
-  account: Account;
+  account: ElrondAccount;
 }
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -113,7 +113,7 @@ const Delegation = (props: DelegationPropsType) => {
   }, [account.elrondResources]);
   const onEarnRewards = useCallback(() => {
     dispatch(
-      openModal(modals.rewards, {
+      openModal("MODAL_ELROND_REWARDS_INFO", {
         account,
         validators,
         delegations,
@@ -123,7 +123,7 @@ const Delegation = (props: DelegationPropsType) => {
   const onDelegate = useCallback(() => {
     if (validators) {
       dispatch(
-        openModal(modals.stake, {
+        openModal("MODAL_ELROND_DELEGATE", {
           account,
           validators,
           delegations,
@@ -134,7 +134,7 @@ const Delegation = (props: DelegationPropsType) => {
   const onClaimRewards = useCallback(() => {
     if (validators && delegations) {
       dispatch(
-        openModal(modals.claim, {
+        openModal("MODAL_ELROND_CLAIM_REWARDS", {
           account,
           validators,
           delegations,

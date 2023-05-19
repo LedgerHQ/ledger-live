@@ -7,7 +7,11 @@ function openModalF<Name extends keyof ModalData>(name: Name, data: ModalData[Na
 
 export const openModal = createAction("MODAL_OPEN", openModalF);
 
-export const closeModal = createAction("MODAL_CLOSE", (name: string) => ({ name }));
+export const closeModal = createAction("MODAL_CLOSE", (name: keyof ModalData): {
+  name: keyof ModalData;
+} => ({
+  name,
+}));
 
 export const closeAllModal = createAction("MODAL_CLOSE_ALL");
 

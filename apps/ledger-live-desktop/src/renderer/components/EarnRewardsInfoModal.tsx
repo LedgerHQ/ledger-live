@@ -1,14 +1,19 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Check from "../icons/CheckFull";
 import TrackPage from "../analytics/TrackPage";
+import { closeModal } from "~/renderer/actions/modals";
 import Rewards from "../images/rewards.svg";
 import Text from "./Text";
 import Button from "./Button";
 import Box from "./Box";
 import Modal, { ModalBody } from "./Modal";
-type Props = {
+import { useDispatch } from "react-redux";
+import { ModalData } from "../modals/types";
+
+type Props<Name extends keyof ModalData> = {
+  name: Name;
   onNext: () => void;
   nextLabel?: React.ReactNode;
   description: string;
@@ -17,18 +22,24 @@ type Props = {
   footerLeft?: React.ReactNode;
 };
 
-export default function EarnRewardsInfoModal({
+export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
+  name,
   onNext,
   nextLabel,
   description,
   bullets,
   additional,
   footerLeft,
-}: Props) {
+}: Props<Name>) {
+  const dispatch = useDispatch();
+  const onNextFn = useCallback(() => {
+    dispatch(closeModal(name));
+    if (onNext) onNext();
+  }, [dispatch, name, onNext]);
   // TODO rename MODAL_ALGORAND_EARN_REWARDS_INFO to something more generic
   return (
     <Modal
-      name="MODAL_ALGORAND_EARN_REWARDS_INFO"
+      name={name}
       centered
       render={({ onClose }) => (
         <ModalBody
@@ -82,7 +93,7 @@ export default function EarnRewardsInfoModal({
               <Button ml={2} secondary onClick={onClose}>
                 <Trans i18nKey="common.cancel" />
               </Button>
-              <Button ml={2} primary onClick={onNext} data-test-id="modal-continue-button">
+              <Button ml={2} primary onClick={onNextFn} data-test-id="modal-continue-button">
                 {nextLabel || <Trans i18nKey="common.continue" />}
               </Button>
             </Box>

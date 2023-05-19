@@ -109,7 +109,6 @@ const StepReceiveFunds = ({
           <>
             <Receive1ShareAddress
               account={mainAccount}
-              name={name}
               address={address}
               showQRCodeModal={showQRCodeModal}
             />

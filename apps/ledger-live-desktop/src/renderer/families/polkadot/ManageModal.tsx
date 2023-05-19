@@ -3,7 +3,6 @@ import invariant from "invariant";
 import { useDispatch } from "react-redux";
 import styled, { css } from "styled-components";
 import { Trans } from "react-i18next";
-import { Account } from "@ledgerhq/types-live";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import {
   canNominate,
@@ -21,6 +20,7 @@ import ChillIcon from "~/renderer/icons/VoteNay";
 import WithdrawUnbondedIcon from "~/renderer/icons/Coins";
 import Text from "~/renderer/components/Text";
 import ElectionStatusWarning from "./ElectionStatusWarning";
+import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 const IconWrapper = styled.div`
   width: 32px;
   height: 32px;
@@ -90,10 +90,9 @@ const Description = styled(Text).attrs(({ isPill }) => ({
       : ""}
 `;
 type Props = {
-  name?: string;
-  account: Account;
+  account: PolkadotAccount;
 };
-const ManageModal = ({ name, account, ...rest }: Props) => {
+const ManageModal = ({ account, ...rest }: Props) => {
   const dispatch = useDispatch();
   const { staking } = usePolkadotPreloadData();
   const { polkadotResources } = account;

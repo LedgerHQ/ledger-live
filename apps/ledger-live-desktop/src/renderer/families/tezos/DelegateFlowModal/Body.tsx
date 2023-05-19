@@ -16,7 +16,8 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import Track from "~/renderer/analytics/Track";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { delegatableAccountsSelector } from "~/renderer/actions/general";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/actions/modals";
+
 import Stepper from "~/renderer/components/Stepper";
 import StepAccount, { StepAccountFooter } from "./steps/StepAccount";
 import StepStarter from "./steps/StepStarter";
@@ -162,7 +163,6 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
-  const handleCloseModal = useCallback(() => dispatch(closeModal("MODAL_DELEGATE")), [dispatch]);
   const handleOpenModal = useMemo(() => bindActionCreators(openModal, dispatch), [dispatch]);
   const handleChangeAccount = useCallback(
     (nextAccount: AccountLike, nextParentAccount?: Account | null) => {
@@ -238,7 +238,6 @@ const Body = ({ onChangeStepId, onClose, stepId, params }: Props) => {
     openModal: handleOpenModal,
     onClose,
     isRandomChoice,
-    closeModal: handleCloseModal,
     onChangeAccount: handleChangeAccount,
     onChangeTransaction: setTransaction,
     onRetry: handleRetry,

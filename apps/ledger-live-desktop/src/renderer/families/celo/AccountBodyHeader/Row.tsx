@@ -21,8 +21,9 @@ import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import * as S from "./Row.styles";
 import ManageDropDown from "./ManageDropDown";
-const voteActions = vote => {
-  const actions = [];
+import { ModalActions } from "../modals";
+const voteActions = (vote: CeloVote): Array<{ key: ModalActions; label: React.ReactNode }> => {
+  const actions: Array<{ key: ModalActions; label: React.ReactNode }> = [];
   if (vote.activatable)
     actions.push({
       key: "MODAL_CELO_ACTIVATE",
@@ -38,8 +39,8 @@ const voteActions = vote => {
 type Props = {
   account: Account;
   vote: CeloVote;
-  onManageAction: (vote: CeloVote, action: string) => void;
-  onExternalLink: (address: string) => void;
+  onManageAction: (vote: CeloVote, action: ModalActions) => void;
+  onExternalLink: (vote: CeloVote) => void;
 };
 export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) => {
   const onSelect = useCallback(

@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { AccountLike, Account } from "@ledgerhq/types-live";
+import { SubAccount } from "@ledgerhq/types-live";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
@@ -12,6 +12,7 @@ import UserEdit from "~/renderer/icons/UserEdit";
 import ArrowDown from "~/renderer/icons/ArrowDown";
 import StopCircle from "~/renderer/icons/StopCircle";
 import IconDots from "~/renderer/icons/Dots";
+import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -27,8 +28,8 @@ const Item = styled(DropDownItem)`
   align-items: center;
 `;
 type Props = {
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+  account: TezosAccount | SubAccount;
+  parentAccount: TezosAccount | undefined | null;
 };
 const ContextMenu = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();

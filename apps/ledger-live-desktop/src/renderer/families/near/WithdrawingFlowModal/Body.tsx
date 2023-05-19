@@ -14,7 +14,8 @@ import { StepId } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/actions/modals";
+
 import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -38,7 +39,6 @@ type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  closeModal: () => void;
   openModal: (a: string) => void;
 };
 type Props = OwnProps & StateProps;
@@ -46,7 +46,6 @@ const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
 });
 const mapDispatchToProps = {
-  closeModal,
   openModal,
 };
 function Body({
@@ -54,7 +53,6 @@ function Body({
   account: accountProp,
   stepId,
   onChangeStepId,
-  closeModal,
   openModal,
   device,
   validatorAddress,
@@ -101,9 +99,7 @@ function Body({
     onChangeStepId("amount");
   }, [onChangeStepId]);
   const handleStepChange = useCallback(({ id }) => onChangeStepId(id), [onChangeStepId]);
-  const handleCloseModal = useCallback(() => {
-    closeModal();
-  }, [closeModal]);
+
   const handleOperationBroadcasted = useCallback(
     (optimisticOperation: Operation) => {
       if (!account) return;
@@ -142,7 +138,7 @@ function Body({
     hideBreadcrumb: !!error && ["amount"].includes(stepId),
     onRetry: handleRetry,
     onStepChange: handleStepChange,
-    onClose: handleCloseModal,
+    onClose,
     error,
     status,
     optimisticOperation,

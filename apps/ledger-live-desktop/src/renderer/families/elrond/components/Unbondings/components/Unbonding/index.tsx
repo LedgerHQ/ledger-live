@@ -10,7 +10,6 @@ import ToolTip from "~/renderer/components/Tooltip";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Logo from "~/renderer/icons/Logo";
-import { modals } from "~/renderer/families/elrond/modals";
 import { openURL } from "~/renderer/linking";
 import { Ellipsis, Column, Wrapper, Withdraw } from "~/renderer/families/elrond/blocks/Delegation";
 import { openModal } from "~/renderer/actions/modals";
@@ -61,7 +60,7 @@ const Unbonding = (props: UnbondingType) => {
   };
   const onWithdraw = useCallback(() => {
     dispatch(
-      openModal(modals.withdraw, {
+      openModal("MODAL_ELROND_WITHDRAW", {
         account,
         unbondings,
         contract,

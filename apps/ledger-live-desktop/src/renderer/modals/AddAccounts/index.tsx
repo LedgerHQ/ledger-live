@@ -15,7 +15,7 @@ import { closeModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
 import Stepper, { Step } from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import Modal, { RenderProps } from "~/renderer/components/Modal";
+import Modal from "~/renderer/components/Modal";
 import StepChooseCurrency, { StepChooseCurrencyFooter } from "./steps/StepChooseCurrency";
 import StepConnectDevice from "./steps/StepConnectDevice";
 import StepImport, { StepImportFooter } from "./steps/StepImport";
@@ -213,7 +213,7 @@ class AddAccounts extends PureComponent<Props, State> {
     });
   };
 
-  handleBeforeOpen = ({ data }: RenderProps<"MODAL_ADD_ACCOUNTS">) => {
+  handleBeforeOpen = ({ data }: { data: UserProps | undefined }) => {
     const { currency } = this.state;
     if (!currency) {
       if (data && data.currency) {

@@ -10,7 +10,8 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/actions/modals";
+
 import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import StepWithdraw, { StepWithdrawFooter } from "./steps/StepWithdraw";
@@ -20,25 +21,24 @@ import logger from "~/renderer/logger";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { StepProps, St } from "./types";
+
+export type Data = {
+  account: Account;
+  parentAccount: Account | undefined | null;
+  unbondings?: any;
+  contract?: string;
+  amount?: string;
+};
 interface OwnProps {
   stepId: StepId;
   onClose: () => void;
   onChangeStepId: (step: StepId) => void;
-  params: {
-    account: Account;
-    parentAccount: Account | undefined | null;
-    unbondings?: any;
-    contract?: string;
-    amount?: string;
-  };
-  name: string;
+  params: Data;
 }
 interface StateProps {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  device: Device | undefined | null;
-  closeModal: (name: string) => void;
   openModal: (name: string) => void;
 }
 type Props = OwnProps & StateProps;
@@ -67,13 +67,12 @@ const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
 });
 const mapDispatchToProps = {
-  closeModal,
   openModal,
 };
 const Body = (props: Props) => {
-  const { t, stepId, device, closeModal, openModal, onChangeStepId, params, name } = props;
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+  const { t, stepId, device, onClose, openModal, onChangeStepId, params } = props;
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const {
@@ -95,9 +94,7 @@ const Body = (props: Props) => {
       }),
     };
   });
-  const handleCloseModal = useCallback(() => {
-    closeModal(name);
-  }, [closeModal, name]);
+
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
@@ -144,7 +141,7 @@ const Body = (props: Props) => {
     hideBreadcrumb: (!!error || !!warning) && ["withdraw"].includes(stepId),
     onRetry: handleRetry,
     onStepChange: handleStepChange,
-    onClose: handleCloseModal,
+    onClose,
     error,
     warning,
     status,
@@ -169,7 +166,7 @@ const Body = (props: Props) => {
     </Stepper>
   );
 };
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);

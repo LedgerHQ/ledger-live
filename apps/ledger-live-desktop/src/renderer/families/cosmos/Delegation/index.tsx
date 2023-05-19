@@ -1,9 +1,8 @@
 import React, { useCallback } from "react";
-import invariant from "invariant";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { Account } from "@ledgerhq/types-live";
+import { SubAccount } from "@ledgerhq/types-live";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   useCosmosFamilyPreloadData,
@@ -26,9 +25,9 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-type Props = {
-  account: Account;
-};
+import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { DelegationActionsModalName } from "../modals";
+
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
 }))`
@@ -36,10 +35,9 @@ const Wrapper = styled(Box).attrs(() => ({
   justify-content: space-between;
   align-items: center;
 `;
-const Delegation = ({ account }: Props) => {
+const Delegation = ({ account }: { account: CosmosAccount }) => {
   const dispatch = useDispatch();
   const { cosmosResources } = account;
-  invariant(cosmosResources, "cosmos account expected");
   const {
     delegations,
     pendingRewardsBalance: _pendingRewardsBalance,
@@ -74,7 +72,7 @@ const Delegation = ({ account }: Props) => {
     );
   }, [account, dispatch]);
   const onRedirect = useCallback(
-    (validatorAddress: string, modalName: string) => {
+    (validatorAddress: string, modalName: DelegationActionsModalName) => {
       dispatch(
         openModal(modalName, {
           account,
@@ -227,8 +225,8 @@ const Delegation = ({ account }: Props) => {
     </>
   );
 };
-const Delegations = ({ account }: Props) => {
-  if (!account.cosmosResources) return null;
+const Delegations = ({ account }: { account: CosmosAccount | SubAccount }) => {
+  if (account.type !== "Account") return null;
   return <Delegation account={account} />;
 };
 export default Delegations;

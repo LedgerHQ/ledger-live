@@ -18,6 +18,8 @@ import MODAL_CELO_REVOKE from "./RevokeFlowModal";
 import { Data as RevokeProps } from "./RevokeFlowModal/Body";
 import { MakeModalsType } from "~/renderer/modals/types";
 
+export type ModalActions = "MODAL_CELO_ACTIVATE" | "MODAL_CELO_REVOKE";
+
 export type ModalsData = {
   MODAL_CELO_REWARDS_INFO: RewardsInfoProps;
   MODAL_CELO_MANAGE: ManageProps;

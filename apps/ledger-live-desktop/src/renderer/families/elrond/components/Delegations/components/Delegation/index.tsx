@@ -16,7 +16,6 @@ import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import { Ellipsis, Column, Wrapper, Divider } from "~/renderer/families/elrond/blocks/Delegation";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { modals } from "~/renderer/families/elrond/modals";
 import {
   ELROND_EXPLORER_URL,
   ELROND_LEDGER_VALIDATOR_ADDRESS,
@@ -53,7 +52,7 @@ type Props = DelegationType &
   Array<UnbondingType>;
 const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
   <Fragment>
-    {item.key === modals.claim && item.divider && <Divider />}
+    {item.key === "MODAL_ELROND_CLAIM_REWARDS" && item.divider && <Divider />}
 
     <ToolTip
       content={item.tooltip}
@@ -92,7 +91,7 @@ const Delegation = (props: Props) => {
     (): Array<DropDownItemType> =>
       [
         {
-          key: modals.unstake,
+          key: "MODAL_ELROND_UNDELEGATE",
           label: "elrond.delegation.undelegate",
           show: BigNumber(userActiveStake).gt(0),
           parameters: {
@@ -104,7 +103,7 @@ const Delegation = (props: Props) => {
           },
         },
         {
-          key: modals.claim,
+          key: "MODAL_ELROND_CLAIM_REWARDS",
           label: "elrond.delegation.reward",
           divider: BigNumber(userActiveStake).gt(0),
           show: BigNumber(claimableRewards).gt(0),

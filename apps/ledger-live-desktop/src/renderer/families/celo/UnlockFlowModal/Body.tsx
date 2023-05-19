@@ -10,7 +10,8 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/actions/modals";
+
 import Stepper from "~/renderer/components/Stepper";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
@@ -35,7 +36,6 @@ type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  closeModal: () => void;
   openModal: (a: string) => void;
 };
 type Props = OwnProps & StateProps;
@@ -64,10 +64,9 @@ const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
 });
 const mapDispatchToProps = {
-  closeModal,
   openModal,
 };
-const Body = ({ t, stepId, device, closeModal, openModal, onChangeStepId, params }: Props) => {
+const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }: Props) => {
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
@@ -93,9 +92,7 @@ const Body = ({ t, stepId, device, closeModal, openModal, onChangeStepId, params
       transaction,
     };
   });
-  const handleCloseModal = useCallback(() => {
-    closeModal();
-  }, [closeModal]);
+
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
@@ -135,7 +132,7 @@ const Body = ({ t, stepId, device, closeModal, openModal, onChangeStepId, params
     hideBreadcrumb: !!error,
     onRetry: handleRetry,
     onStepChange: handleStepChange,
-    onClose: handleCloseModal,
+    onClose,
     error,
     status,
     optimisticOperation,

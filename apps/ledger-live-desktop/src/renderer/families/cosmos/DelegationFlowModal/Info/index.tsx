@@ -1,37 +1,31 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-import { openModal, closeModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import WarnBox from "~/renderer/components/WarnBox";
 import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
-type Props = {
-  name?: string;
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+
+export type Props = {
+  account: CosmosAccount;
 };
-export default function CosmosEarnRewardsInfoModal({ name, account, parentAccount }: Props) {
+
+export default function CosmosEarnRewardsInfoModal({ account, parentAccount }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
-    dispatch(closeModal(name));
-    dispatch(
-      openModal("MODAL_COSMOS_DELEGATE", {
-        parentAccount,
-        account,
-      }),
-    );
-  }, [parentAccount, account, dispatch, name]);
+    dispatch(openModal("MODAL_COSMOS_DELEGATE", { parentAccount, account }));
+  }, [parentAccount, account, dispatch]);
   const onLearnMore = useCallback((currencyId: string) => {
     openURL(cryptoFactory(currencyId).stakingDocUrl);
   }, []);
   const crypto = cryptoFactory(account.currency.id);
   return (
     <EarnRewardsInfoModal
-      name={name}
+      name="MODAL_COSMOS_REWARDS_INFO"
       onNext={onNext}
       description={t("cosmos.delegation.flow.steps.starter.description", {
         currencyTicker: account.currency.ticker,

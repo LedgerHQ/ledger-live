@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import moment from "moment";
-import { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
@@ -39,8 +38,9 @@ import {
   ExternalStashUnsupportedWarning,
 } from "./UnsupportedWarning";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
+
 type Props = {
-  account: Account;
+  account: PolkadotAccount;
 };
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,

@@ -15,7 +15,8 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/actions/modals";
+
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import { BigNumber } from "bignumber.js";
@@ -24,22 +25,23 @@ import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
+import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+
+export type Data = {
+  account: CosmosAccount;
+  source?: string;
+};
+
 type OwnProps = {
   stepId: StepId;
   onClose: () => void;
   onChangeStepId: (a: StepId) => void;
-  params: {
-    account: Account;
-    parentAccount: Account | undefined | null;
-  };
-  name: string;
+  params: Data;
 };
 type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  device: Device | undefined | null;
-  closeModal: (a: string) => void;
   openModal: (a: string) => void;
 };
 type Props = OwnProps & StateProps;
@@ -76,21 +78,11 @@ const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
 });
 const mapDispatchToProps = {
-  closeModal,
   openModal,
 };
-const Body = ({
-  t,
-  stepId,
-  device,
-  closeModal,
-  openModal,
-  onChangeStepId,
-  params,
-  name,
-}: Props) => {
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }: Props) => {
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const { account, source = "Account Page" } = params;
@@ -122,9 +114,7 @@ const Body = ({
       transaction,
     };
   });
-  const handleCloseModal = useCallback(() => {
-    closeModal(name);
-  }, [closeModal, name]);
+
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
@@ -170,7 +160,7 @@ const Body = ({
     hideBreadcrumb: !!error && ["validator"].includes(stepId),
     onRetry: handleRetry,
     onStepChange: handleStepChange,
-    onClose: handleCloseModal,
+    onClose,
     error,
     status,
     optimisticOperation,
@@ -191,7 +181,7 @@ const Body = ({
     </Stepper>
   );
 };
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);

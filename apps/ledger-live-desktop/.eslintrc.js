@@ -84,6 +84,7 @@ module.exports = {
         "space-before-function-paren": 0,
         "no-prototype-builtins": 0,
         "promise/param-names": 0,
+        "react/prop-types": 0,
         "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
         "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
         "no-use-before-define": "off",

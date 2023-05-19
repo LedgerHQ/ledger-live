@@ -15,7 +15,8 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/actions/modals";
+
 import Stepper from "~/renderer/components/Stepper";
 import StepAsset, { StepAssetFooter } from "./steps/StepAsset";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
@@ -25,7 +26,6 @@ import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 
 export type Data = {
   account: AlgorandAccount;
-  parentAccount: AlgorandAccount | undefined | null;
 };
 
 type OwnProps = {
@@ -39,7 +39,6 @@ type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  closeModal: () => void;
   openModal: (a: string) => void;
 };
 type Props = OwnProps & StateProps;
@@ -68,10 +67,9 @@ const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
 });
 const mapDispatchToProps = {
-  closeModal,
   openModal,
 };
-const Body = ({ t, stepId, device, closeModal, openModal, onChangeStepId, params }: Props) => {
+const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }: Props) => {
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
@@ -99,9 +97,7 @@ const Body = ({ t, stepId, device, closeModal, openModal, onChangeStepId, params
       transaction,
     };
   });
-  const handleCloseModal = useCallback(() => {
-    closeModal();
-  }, [closeModal]);
+
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
@@ -148,7 +144,7 @@ const Body = ({ t, stepId, device, closeModal, openModal, onChangeStepId, params
     hideBreadcrumb: !!error || !!warning,
     onRetry: handleRetry,
     onStepChange: handleStepChange,
-    onClose: handleCloseModal,
+    onClose,
     error,
     warning,
     status,

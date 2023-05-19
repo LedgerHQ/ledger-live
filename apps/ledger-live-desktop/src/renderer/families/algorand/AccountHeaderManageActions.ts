@@ -16,11 +16,7 @@ const AccountHeaderActions: AlgorandFamily["accountHeaderManageActions"] = ({
   const unit = getAccountUnit(account);
   const minRewardsBalance = 10 ** unit.magnitude;
   const onClick = useCallback(() => {
-    dispatch(
-      openModal("MODAL_ALGORAND_EARN_REWARDS_INFO", {
-        account,
-      }),
-    );
+    dispatch(openModal("MODAL_ALGORAND_EARN_REWARDS_INFO", { account }));
   }, [dispatch, account]);
   if (parentAccount || balance.gt(minRewardsBalance)) return null;
   return [

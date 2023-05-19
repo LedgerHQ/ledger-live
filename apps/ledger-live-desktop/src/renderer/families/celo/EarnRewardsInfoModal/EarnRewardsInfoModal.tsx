@@ -5,7 +5,8 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { urls } from "~/config/urls";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { openModal } from "~/renderer/actions/modals";
+
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import WarnBox from "~/renderer/components/WarnBox";
@@ -19,7 +20,6 @@ const CeloEarnRewardsInfoModal = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
-    dispatch(closeModal("MODAL_CELO_EARN_REWARDS_INFO"));
     if (getMainAccount(account, parentAccount).celoResources?.registrationStatus) {
       dispatch(
         openModal("MODAL_CELO_LOCK", {
@@ -42,6 +42,7 @@ const CeloEarnRewardsInfoModal = ({ account, parentAccount }: Props) => {
   }, []);
   return (
     <EarnRewardsInfoModal
+      name="MODAL_CELO_EARN_REWARDS_INFO"
       onNext={onNext}
       description={t("celo.delegation.earnRewards.description")}
       bullets={[

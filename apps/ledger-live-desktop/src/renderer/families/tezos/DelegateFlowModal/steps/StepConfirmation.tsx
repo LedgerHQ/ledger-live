@@ -94,7 +94,7 @@ export const StepConfirmationFooter = ({
   onRetry,
   optimisticOperation,
   error,
-  closeModal,
+  onClose,
 }: StepProps) => {
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
@@ -115,7 +115,7 @@ export const StepConfirmationFooter = ({
           id={"delegate-confirmation-details-button"}
           event="Delegation Flow Step 4 View OpD Clicked"
           onClick={() => {
-            closeModal();
+            onClose();
             if (account && concernedOperation) {
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,

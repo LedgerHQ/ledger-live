@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { StepId } from "./types";
 import Modal from "~/renderer/components/Modal";
-import Body from "./Body";
+import Body, { Data } from "./Body";
 
 type State = {
   stepId: StepId;
