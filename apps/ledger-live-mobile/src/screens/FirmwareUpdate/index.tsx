@@ -17,7 +17,11 @@ import {
 } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
-import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import {
+  DeviceInfo,
+  FirmwareUpdateContext,
+  languageIds,
+} from "@ledgerhq/types-live";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -41,6 +45,7 @@ import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/t
 import { ScreenName } from "../../const";
 import {
   renderAllowLanguageInstallation,
+  renderConnectYourDevice,
   renderImageCommitRequested,
   renderImageLoadRequested,
 } from "../../components/DeviceAction/rendering";
@@ -143,9 +148,14 @@ export const FirmwareUpdate = ({
   const {
     updateActionState,
     updateStep,
-    retryUpdate,
+    retryCurrentStep,
+    staxFetchImageState,
     staxLoadImageState,
     installLanguageState,
+    restoreAppsState,
+    noOfAppsToReinstall,
+    deviceLockedOrUnresponsive,
+    hasReconnectErrors,
   } = useUpdateFirmwareAndRestoreSettings({
     updateFirmwareAction,
     device,
@@ -165,11 +175,14 @@ export const FirmwareUpdate = ({
     return undefined;
   });
 
-  const restoreSteps = useMemo(
-    () => [
-      {
+  const restoreSteps = useMemo(() => {
+    const steps = [];
+
+    if (deviceInfo.languageId !== languageIds["english"]) {
+      steps.push({
         status: {
           start: ItemStatus.inactive,
+          appsBackup: ItemStatus.inactive,
           imageBackup: ItemStatus.inactive,
           firmwareUpdate: ItemStatus.inactive,
           languageRestore: ItemStatus.active,
@@ -179,10 +192,14 @@ export const FirmwareUpdate = ({
         }[updateStep],
         progress: installLanguageState.progress,
         title: t("FirmwareUpdate.steps.restoreSettings.restoreLanguage"),
-      },
-      {
+      });
+    }
+
+    if (staxFetchImageState.hexImage) {
+      steps.push({
         status: {
           start: ItemStatus.inactive,
+          appsBackup: ItemStatus.inactive,
           imageBackup: ItemStatus.inactive,
           firmwareUpdate: ItemStatus.inactive,
           languageRestore: ItemStatus.inactive,
@@ -194,10 +211,48 @@ export const FirmwareUpdate = ({
         title: t(
           "FirmwareUpdate.steps.restoreSettings.restoreLockScreenPicture",
         ),
-      },
-    ],
-    [updateStep, installLanguageState.progress, t, staxLoadImageState.progress],
-  );
+      });
+    }
+
+    if (noOfAppsToReinstall > 0) {
+      steps.push({
+        status: {
+          start: ItemStatus.inactive,
+          appsBackup: ItemStatus.inactive,
+          imageBackup: ItemStatus.inactive,
+          firmwareUpdate: ItemStatus.inactive,
+          languageRestore: ItemStatus.inactive,
+          imageRestore: ItemStatus.inactive,
+          appsRestore: ItemStatus.active,
+          completed: ItemStatus.completed,
+        }[updateStep],
+        progress: restoreAppsState.itemProgress,
+        title:
+          t("FirmwareUpdate.steps.restoreSettings.installingApps") +
+          ` ${
+            !restoreAppsState.listedApps
+              ? 0
+              : restoreAppsState.installQueue !== undefined &&
+                restoreAppsState.installQueue.length > 0
+              ? noOfAppsToReinstall - (restoreAppsState.installQueue.length - 1)
+              : noOfAppsToReinstall
+          }/${noOfAppsToReinstall}`,
+      });
+    }
+
+    return steps;
+  }, [
+    updateStep,
+    installLanguageState.progress,
+    t,
+    staxFetchImageState.hexImage,
+    staxLoadImageState.progress,
+    restoreAppsState.listedApps,
+    restoreAppsState.itemProgress,
+    restoreAppsState.installQueue,
+    noOfAppsToReinstall,
+    deviceInfo.languageId,
+  ]);
 
   const defaultSteps: UpdateSteps = useMemo(
     () => ({
@@ -231,8 +286,9 @@ export const FirmwareUpdate = ({
             <Text color="neutral.c80">
               {t("FirmwareUpdate.steps.restoreSettings.description")}
             </Text>
-            {/* TODO: create custom component here with its own state for the restoring */}
-            <VerticalStepper nested steps={restoreSteps} />
+            {restoreSteps.length > 0 && (
+              <VerticalStepper nested steps={restoreSteps} />
+            )}
           </Flex>
         ),
       },
@@ -375,7 +431,12 @@ export const FirmwareUpdate = ({
 
   const deviceInteractionDisplay = useMemo(() => {
     const error = updateActionState.error;
-    if (error) {
+
+    // a TransportRaceCondition error is to be expected since we chain multiple
+    // device actions that use different transport acquisition paradigms
+    // the action should, however, retry to execute and resolve the error by itself
+    // no need to present the error to the user
+    if (error && error.name !== "TransportRaceCondition") {
       return (
         <DeviceActionError
           device={device}
@@ -418,7 +479,7 @@ export const FirmwareUpdate = ({
           <FirmwareUpdateDenied
             device={device}
             newFirmwareVersion={firmwareUpdateContext.final.name}
-            onPressRestart={retryUpdate}
+            onPressRestart={retryCurrentStep}
             onPressQuit={quitUpdate}
             t={t}
           />
@@ -437,12 +498,46 @@ export const FirmwareUpdate = ({
         break;
     }
 
+    if (deviceLockedOrUnresponsive || hasReconnectErrors) {
+      return (
+        <Flex>
+          {renderConnectYourDevice({
+            t,
+            device,
+            theme,
+            fullScreen: false,
+          })}
+          <Button
+            type="main"
+            outline={false}
+            onPress={retryCurrentStep}
+            mt={6}
+            alignSelf="stretch"
+          >
+            {t("common.retry")}
+          </Button>
+          <Button type="default" outline={false} onPress={quitUpdate} mt={6}>
+            {t("FirmwareUpdate.quitUpdate")}
+          </Button>
+        </Flex>
+      );
+    }
+
     if (staxLoadImageState.imageLoadRequested) {
       return renderImageLoadRequested({ t, device, fullScreen: false });
     }
 
     if (staxLoadImageState.imageCommitRequested) {
       return renderImageCommitRequested({ t, device, fullScreen: false });
+    }
+
+    if (restoreAppsState.allowManagerRequestedWording) {
+      return (
+        <AllowManager
+          device={device}
+          wording={t("DeviceAction.allowSecureConnection")}
+        />
+      );
     }
 
     if (installLanguageState.languageInstallationRequested) {
@@ -462,13 +557,17 @@ export const FirmwareUpdate = ({
     staxLoadImageState.imageLoadRequested,
     staxLoadImageState.imageCommitRequested,
     installLanguageState.languageInstallationRequested,
+    restoreAppsState.allowManagerRequestedWording,
     device,
     t,
+    theme,
     quitUpdate,
     deviceInfo.seVersion,
     firmwareUpdateContext.final.name,
     firmwareUpdateContext.shouldFlashMCU,
-    retryUpdate,
+    retryCurrentStep,
+    hasReconnectErrors,
+    deviceLockedOrUnresponsive,
   ]);
 
   return (

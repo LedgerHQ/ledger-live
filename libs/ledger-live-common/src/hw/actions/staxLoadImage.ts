@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { scan, tap } from "rxjs/operators";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import { useReplaySubject } from "../../observable";
@@ -30,7 +30,11 @@ type State = {
   progress?: number;
 };
 
-type LoadImageAction = Action<LoadImageRequest, State, LoadimageResult>;
+type ActionState = State & {
+  onRetry: () => void;
+};
+
+type LoadImageAction = Action<LoadImageRequest, ActionState, LoadimageResult>;
 
 const mapResult = ({ imageHash, imageSize }: State) => ({
   imageHash,
@@ -127,8 +131,9 @@ export const createAction = (
   const useHook = (
     device: Device | null | undefined,
     request: LoadImageRequest
-  ): State => {
+  ): ActionState => {
     const [state, setState] = useState(() => getInitialState(device));
+    const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
 
     useEffect(() => {
@@ -152,10 +157,16 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [deviceSubject, request, state.imageLoaded]);
+    }, [deviceSubject, request, state.imageLoaded, resetIndex]);
+
+    const onRetry = useCallback(() => {
+      setResetIndex((currIndex) => currIndex + 1);
+      setState((s) => getInitialState(s.device));
+    }, []);
 
     return {
       ...state,
+      onRetry,
     };
   };
 

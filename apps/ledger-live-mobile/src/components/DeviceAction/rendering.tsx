@@ -877,14 +877,22 @@ export function renderConnectYourDevice({
   device,
   theme,
   onSelectDeviceLink,
+  fullScreen = true,
 }: RawProps & {
   unresponsive?: boolean | null;
   isLocked?: boolean;
   device: Device;
+  fullScreen?: boolean;
   onSelectDeviceLink?: () => void;
 }) {
   return (
-    <Wrapper>
+    <Flex
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      alignSelf="stretch"
+      flex={fullScreen ? 1 : undefined}
+    >
       <AnimationContainer
         withConnectDeviceHeight={
           ![DeviceModelId.blue, DeviceModelId.stax].includes(device.modelId)
@@ -919,7 +927,7 @@ export function renderConnectYourDevice({
           />
         </ConnectDeviceExtraContentWrapper>
       ) : null}
-    </Wrapper>
+    </Flex>
   );
 }
 

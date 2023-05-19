@@ -175,6 +175,14 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     [device, installedApps, navigation, refreshDeviceInfo],
   );
 
+  const onBackFromNewUpdateUx = useCallback(
+    () => {
+      navigation.replace(ScreenName.Manager, {
+        device
+      });
+    }, [device, navigation]
+  )
+
   return (
     <>
       <TrackScreen
@@ -203,7 +211,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
         tab={tab}
         result={result}
         onLanguageChange={refreshDeviceInfo}
-        onBackFromUpdate={refreshDeviceInfo}
+        onBackFromUpdate={onBackFromNewUpdateUx}
       />
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <QuitManagerModal
