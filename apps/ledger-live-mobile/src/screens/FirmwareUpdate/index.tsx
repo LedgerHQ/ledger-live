@@ -16,7 +16,6 @@ import {
   ItemStatus,
 } from "@ledgerhq/native-ui";
 import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
-// import { log } from "@ledgerhq/logs";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -24,7 +23,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Observable } from "rxjs";
-// import { scan, tap } from "rxjs/operators";
 import { updateMainNavigatorVisibility } from "../../actions/appstate";
 import {
   AllowManager,

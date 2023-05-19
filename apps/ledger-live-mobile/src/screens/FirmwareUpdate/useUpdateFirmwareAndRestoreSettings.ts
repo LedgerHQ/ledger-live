@@ -10,6 +10,7 @@ import {
 } from "@ledgerhq/live-common/deviceSDK/actions/updateFirmware";
 import { Observable } from "rxjs";
 import { useEffect, useMemo, useState } from "react";
+import { log } from "@ledgerhq/logs";
 
 export type FirmwareUpdateParams = {
   device: Device;
@@ -71,6 +72,15 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         }
         break;
       case "imageBackup":
+        // Only logging for now
+        if (staxLoadImageState.error) {
+          log(
+            "UpdateFirmwareAndRestoreSettings",
+            "Unable to fetch image",
+            staxFetchImageState.error,
+          );
+        }
+
         if (staxFetchImageState.imageFetched || staxFetchImageState.error) {
           // TODO: check if we want to do something with error, maybe just log it
           setUpdateStep("firmwareUpdate");
@@ -88,12 +98,20 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         setUpdateStep("imageRestore");
         break;
       case "imageRestore":
+        // Only logging for now
+        if (staxLoadImageState.error) {
+          log(
+            "UpdateFirmwareAndRestoreSettings",
+            "Unable to restore image",
+            staxLoadImageState.error,
+          );
+        }
+
         if (
           staxLoadImageState.imageLoaded ||
           staxLoadImageState.error ||
           !staxFetchImageState.hexImage
         ) {
-          // TODO: check if we want to do something with error, maybe just log it
           setUpdateStep("appsRestore");
         }
         break;
