@@ -1,4 +1,3 @@
-
 import { Manifest } from "~/types/manifest";
 import { getValidDappURLFromManifest } from "./getValidDappURLFromManifest";
 
