@@ -4,7 +4,7 @@ import useStakeFlow from "~/renderer/screens/stake";
 import { useHistory, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 /**
  * Valid URLs that this hook will listen for and handle:
  * ledgerlive://earn?action=get-funds&currencyId=ethereum - this will open a modal to get funds
@@ -32,7 +32,8 @@ export const useDeepLinkListener = () => {
       case "stake-account": {
         const accountId = queryParams.get("accountId");
         if (accountId) {
-          const account = accounts.find(acc => acc.id === accountId);
+          const id = getAccountIdFromWalletAccountId(accountId);
+          const account = accounts.find(acc => acc.id === id);
           if (account) {
             dispatch(
               openModal("MODAL_START_STAKE", {
