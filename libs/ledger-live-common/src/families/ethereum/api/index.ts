@@ -119,6 +119,7 @@ export type API = {
   ) => Promise<{ txs: Tx[]; nextPageToken: string | undefined }>;
   getCurrentBlock: () => Promise<Block>;
   getAccountNonce: (address: string) => Promise<number>;
+  getTransactionByHash: (hash: string) => Promise<Tx | undefined>;
   broadcastTransaction: (signedTransaction: string) => Promise<string>;
   getERC20Balances: (input: ERC20BalancesInput) => Promise<ERC20BalanceOutput>;
   getNFTMetadata: (input: NFTMetadataInput, chainId: string) => Promise<NFTMetadataResponse[]>;
@@ -221,6 +222,14 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         },
       });
       return data.result;
+    },
+
+    async getTransactionByHash(hash): Promise<Tx | undefined> {
+      const { data } = await network({
+        method: "GET",
+        url: `${baseURL}/tx/${hash}`,
+      });
+      return data;
     },
 
     async getAccountBalance(address): Promise<BigNumber> {
