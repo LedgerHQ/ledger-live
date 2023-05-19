@@ -1,37 +1,34 @@
-import React from "react";
-import { Operation } from "@ledgerhq/types-live";
-import {
-  OpDetailsTitle,
-  OpDetailsSection,
-  OpDetailsData,
-  OpDetailsVoteData,
-  Address,
-} from "~/renderer/drawers/OperationDetails/styledComponents";
-import { Trans } from "react-i18next";
-import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
-import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { openURL } from "~/renderer/linking";
-import FormattedVal from "~/renderer/components/FormattedVal";
 import { fallbackValidatorGroup } from "@ledgerhq/live-common/families/celo/logic";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import React from "react";
+import { Trans } from "react-i18next";
+import Box from "~/renderer/components/Box";
+import FormattedVal from "~/renderer/components/FormattedVal";
+import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
+import Text from "~/renderer/components/Text";
+import {
+  Address,
+  OpDetailsData,
+  OpDetailsSection,
+  OpDetailsTitle,
+  OpDetailsVoteData,
+} from "~/renderer/drawers/OperationDetails/styledComponents";
+import { openURL } from "~/renderer/linking";
+import { OperationDetailsExtraProps } from "../types";
 
 const redirectAddress = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
   if (url) openURL(url);
 };
-type OperationDetailsExtraProps = {
-  operation: Operation;
-  extra: {
-    [key: string]: any;
-  };
-  type: string;
-  account: CeloAccount;
-};
-const OperationDetailsExtra = ({ operation, type, account }: OperationDetailsExtraProps) => {
+
+const OperationDetailsExtra = ({
+  operation,
+  type,
+  account,
+}: OperationDetailsExtraProps<CeloAccount>) => {
   const { currency } = account;
   const { validatorGroups } = useCeloPreloadData();
   switch (type) {
@@ -39,10 +36,11 @@ const OperationDetailsExtra = ({ operation, type, account }: OperationDetailsExt
     case "REVOKE":
     case "VOTE": {
       const recipient = operation.recipients[0];
-      const validatorGroup =
-        validatorGroups.find(
-          validatorGroup => validatorGroup.address.toLowerCase() === recipient.toLowerCase(),
-        ) || fallbackValidatorGroup(recipient);
+      const validatorGroup = recipient
+        ? validatorGroups.find(
+            validatorGroup => validatorGroup.address.toLowerCase() === recipient.toLowerCase(),
+          ) || fallbackValidatorGroup(recipient)
+        : null;
       return (
         <>
           {type !== "ACTIVATE" && (
@@ -67,18 +65,20 @@ const OperationDetailsExtra = ({ operation, type, account }: OperationDetailsExt
             <OpDetailsTitle>
               <Trans i18nKey={"celo.delegation.validatorGroup"} />
             </OpDetailsTitle>
-            <Box flex="1" pl={2}>
-              <OpDetailsData justifyContent="flex-start">
-                <OpDetailsVoteData>
-                  <Box>
-                    <Text ff="Inter|SemiBold">{validatorGroup?.name}</Text>
-                  </Box>
-                  <Address onClick={redirectAddress(currency, validatorGroup?.address)}>
-                    <SplitAddress value={validatorGroup?.address} />
-                  </Address>
-                </OpDetailsVoteData>
-              </OpDetailsData>
-            </Box>
+            {validatorGroup ? (
+              <Box flex="1" pl={2}>
+                <OpDetailsData justifyContent="flex-start">
+                  <OpDetailsVoteData>
+                    <Box>
+                      <Text ff="Inter|SemiBold">{validatorGroup.name}</Text>
+                    </Box>
+                    <Address onClick={redirectAddress(currency, validatorGroup.address)}>
+                      <SplitAddress value={validatorGroup.address} />
+                    </Address>
+                  </OpDetailsVoteData>
+                </OpDetailsData>
+              </Box>
+            ) : null}
           </OpDetailsSection>
         </>
       );

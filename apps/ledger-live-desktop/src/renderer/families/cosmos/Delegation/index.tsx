@@ -227,6 +227,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
 };
 const Delegations = ({ account }: { account: CosmosAccount | SubAccount }) => {
   if (account.type !== "Account") return null;
+
   return <Delegation account={account} />;
 };
 export default Delegations;

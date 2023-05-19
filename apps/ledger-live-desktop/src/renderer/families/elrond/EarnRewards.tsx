@@ -19,7 +19,7 @@ import Delegations from "~/renderer/families/elrond/components/Delegations";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";
+import { DelegationType, ElrondFamily, UnbondingType } from "~/renderer/families/elrond/types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 
 export interface DelegationPropsType {
@@ -34,8 +34,6 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 
 /* eslint-disable react/display-name */
-const withDelegation = (Component: JSX.Element) => (props: DelegationPropsType) =>
-  props.account.elrondResources ? <Component {...props} /> : null;
 const Delegation = (props: DelegationPropsType) => {
   const { account } = props;
   const validators = useElrondRandomizedValidators();
@@ -47,7 +45,7 @@ const Delegation = (props: DelegationPropsType) => {
     (): boolean =>
       BigNumber(
         denominate({
-          input: account.spendableBalance,
+          input: account.spendableBalance.toString(),
           showLastNonZeroDecimal: true,
         }),
       ).gte(1),
@@ -261,4 +259,9 @@ const Delegation = (props: DelegationPropsType) => {
     </Fragment>
   );
 };
-export default withDelegation(Delegation);
+
+const EarnRewards: ElrondFamily["AccountBodyHeader"] = ({ account }) => {
+  return account.type === "Account" ? <Delegation account={account} /> : null;
+};
+
+export default EarnRewards;

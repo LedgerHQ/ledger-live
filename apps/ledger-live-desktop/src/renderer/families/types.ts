@@ -49,6 +49,12 @@ export type AmountTooltipProps = {
   amount: BigNumber;
 };
 
+export type OperationDetailsExtraProps<A> = {
+  operation: Operation;
+  account: A;
+  type: OperationType;
+  extra: Record<string, any>;
+};
 /**
  * LLD family specific that a coin family can implement
  * @template A is the account type of the family. you can set it to Account if there is no customisation of that type among the family.
@@ -92,17 +98,12 @@ export type LLDCoinFamily<
      * TODO document me
      */
     getURLFeesInfo?: (_: { op: Operation; currencyId: string }) => string | null | undefined;
-  };
 
-  /**
-   * TODO document me
-   */
-  OperationDetailsExtra?: React.ComponentType<{
-    operation: Operation;
-    account: A;
-    type: OperationType;
-    extra: Record<string, string | BigNumber | number>;
-  }>;
+    /**
+     * TODO document me
+     */
+    OperationDetailsExtra?: React.ComponentType<OperationDetailsExtraProps<A>>;
+  };
 
   accountActions?: {
     /**

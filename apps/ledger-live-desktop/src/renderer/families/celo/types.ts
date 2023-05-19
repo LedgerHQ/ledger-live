@@ -1,7 +1,12 @@
 import { TFunction } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Account, TransactionStatus, Operation } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/families/celo/types";
+import { Account, Operation } from "@ledgerhq/types-live";
+import {
+  CeloAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/celo/types";
+import { LLDCoinFamily } from "../types";
 export type CoreStakingFlowModalStepProps = {
   t: TFunction;
   transitionTo: (string: string) => void;
@@ -24,3 +29,5 @@ export type CoreStakingFlowModalStepProps = {
   setSigned: (a: boolean) => void;
   bridgePending: boolean;
 };
+
+export type CeloFamily = LLDCoinFamily<CeloAccount, Transaction, TransactionStatus>;

@@ -23,13 +23,14 @@ import {
 import * as S from "./AccountBodyHeader.styles";
 import { CeloAccount, CeloVote } from "@ledgerhq/live-common/families/celo/types";
 import { ModalActions } from "../modals";
+import { CeloFamily } from "../types";
 type Props = {
   account: CeloAccount;
 };
 const AccountBodyHeaderComponent = ({ account }: Props) => {
   const { celoResources } = account;
   const dispatch = useDispatch();
-  const accounts = useSelector(accountsSelector);
+  const accounts = useSelector(accountsSelector) as CeloAccount[]; // FIXME: how to not cast here ?
   const isRegistrationPending = isAccountRegistrationPending(account?.id, accounts);
   const { votes } = celoResources;
   const onEarnRewards = useCallback(() => {
@@ -80,7 +81,7 @@ const AccountBodyHeaderComponent = ({ account }: Props) => {
     },
     [explorerView],
   );
-  const hasVotes = votes.length > 0;
+
   return (
     <>
       {!!withdrawEnabled && (
@@ -109,7 +110,7 @@ const AccountBodyHeaderComponent = ({ account }: Props) => {
       )}
       <TableContainer mb={6}>
         <TableHeader title={<Trans i18nKey="celo.delegation.listHeader" />} />
-        {hasVotes ? (
+        {votes && votes.length > 0 ? (
           <>
             <Header />
             {votes.map(vote => (
@@ -164,8 +165,7 @@ const AccountBodyHeaderComponent = ({ account }: Props) => {
     </>
   );
 };
-const AccountBodyHeader = ({ account }: Props) => {
-  if (!account.celoResources) return null;
-  return <AccountBodyHeaderComponent account={account} />;
+const AccountBodyHeader: CeloFamily["AccountBodyHeader"] = ({ account }) => {
+  return account.type === "Account" ? <AccountBodyHeaderComponent account={account} /> : null;
 };
 export default AccountBodyHeader;

@@ -26,7 +26,7 @@ import { StepId, StepProps, St } from "./types";
 export type Data = {
   account: CeloAccount | SubAccount;
   parentAccount: CeloAccount | undefined | null;
-  vote: CeloVote;
+  vote?: CeloVote;
   source?: string;
 };
 type OwnProps = {

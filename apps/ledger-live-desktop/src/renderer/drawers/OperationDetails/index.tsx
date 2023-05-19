@@ -169,7 +169,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
     : null;
   const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
   const uniqueSenders = uniq(senders);
-  const OpDetailsExtra = specific?.OperationDetailsExtra || OperationDetailsExtra;
+  const OpDetailsExtra = specific?.operationDetails?.OperationDetailsExtra || OperationDetailsExtra;
   const { hasFailed } = operation;
   const subOperations = operation.subOperations || [];
   const internalOperations = operation.internalOperations || [];

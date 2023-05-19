@@ -5,17 +5,18 @@ import { isAccountRegistrationPending } from "@ledgerhq/live-common/families/cel
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import Icon from "./Icon";
-import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-type Props = {
-  account: Account;
-  parentAccount: Account | undefined | null;
-  source?: string;
-};
-const AccountHeaderManageActions = ({ account, parentAccount, source = "Account Page" }: Props) => {
+import { CeloFamily } from "../types";
+import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+
+const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
+  account,
+  parentAccount,
+  source = "Account Page",
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const accounts = useSelector(accountsSelector);
+  const accounts = useSelector(accountsSelector) as CeloAccount[]; // FIXME: Celo Account
   const isRegistrationPending = isAccountRegistrationPending(account.id, accounts);
   const onClick = useCallback(() => {
     if (isAccountEmpty(account)) {
@@ -26,12 +27,14 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
         }),
       );
     } else {
-      dispatch(
-        openModal("MODAL_CELO_MANAGE", {
-          account,
-          source,
-        }),
-      );
+      if (account.type === "Account") {
+        dispatch(
+          openModal("MODAL_CELO_MANAGE", {
+            account,
+            source,
+          }),
+        );
+      }
     }
   }, [account, dispatch, parentAccount, source]);
   const disabledLabel = isRegistrationPending
