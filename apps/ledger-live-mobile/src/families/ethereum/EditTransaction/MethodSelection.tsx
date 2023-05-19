@@ -95,15 +95,14 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       switch (option) {
         case "cancel":
           {
+            const mainAccount = getMainAccount(account, parentAccount);
             const updatedTransaction: Partial<Transaction> = {
               amount: new BigNumber(0),
               data: Buffer.from(""),
               nonce: operation.transactionSequenceNumber,
               allowZeroAmount: true,
               mode: "send",
-              recipient:
-                (account as Account)?.freshAddress ??
-                (parentAccount as Account)?.freshAddress,
+              recipient: mainAccount.freshAddress,
             };
 
             if (EIP1559ShouldBeUsed(mainAccount.currency)) {
@@ -179,11 +178,9 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   );
 
   apiForCurrency(mainAccount.currency)
-    .getAccountNonce(mainAccount.freshAddress)
-    .then(nonce => {
-      const { transactionSequenceNumber } = operation;
-
-      if (transactionSequenceNumber && transactionSequenceNumber < nonce) {
+    .getTransactionByHash(operation.hash)
+    .then(tx => {
+      if (tx?.confirmations) {
         navigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
           error: new TransactionHasBeenValidatedError(
             "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
