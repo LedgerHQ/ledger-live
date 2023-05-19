@@ -403,7 +403,8 @@ const SwapForm = () => {
       const fromAccountId = accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
       const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
       const fromAmount = transaction?.amount / Math.pow(10, from.currency.units[0].magnitude);
-      const rateId = exchangeRate?.rateId;
+      const rateId = encodeURIComponent(exchangeRate?.rateId);
+
       const feeStrategy = transaction?.feesStrategy.toUpperCase();
 
       history.push({
@@ -414,7 +415,7 @@ const SwapForm = () => {
           toAccountId,
           fromAmount,
           quoteId: rateId,
-          feeStrategy, // Custom is not supported yet
+          feeStrategy, // Custom fee is not supported yet
         },
       });
       // setDrawer(
