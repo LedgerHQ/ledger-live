@@ -28,7 +28,7 @@ type State = {
 
 type ActionState = State & {
   onRetry: () => void;
-}
+};
 
 type InstallLanguageAction = Action<
   InstallLanguageRequest,
@@ -150,7 +150,7 @@ export const createAction = (
 
     return {
       ...state,
-      onRetry
+      onRetry,
     };
   };
 
