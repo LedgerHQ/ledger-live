@@ -175,13 +175,11 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     [device, installedApps, navigation, refreshDeviceInfo],
   );
 
-  const onBackFromNewUpdateUx = useCallback(
-    () => {
-      navigation.replace(ScreenName.Manager, {
-        device
-      });
-    }, [device, navigation]
-  )
+  const onBackFromNewUpdateUx = useCallback(() => {
+    navigation.replace(ScreenName.Manager, {
+      device,
+    });
+  }, [device, navigation]);
 
   return (
     <>

@@ -15,7 +15,7 @@ import {
   VerticalStepper,
   ItemStatus,
 } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme, useNavigation, useRoute } from "@react-navigation/native";
 import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
 import {
   DeviceInfo,
@@ -23,7 +23,6 @@ import {
   languageIds,
 } from "@ledgerhq/types-live";
 
-import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -178,7 +177,7 @@ export const FirmwareUpdate = ({
   const restoreSteps = useMemo(() => {
     const steps = [];
 
-    if (deviceInfo.languageId !== languageIds["english"]) {
+    if (deviceInfo.languageId !== languageIds.english) {
       steps.push({
         status: {
           start: ItemStatus.inactive,
