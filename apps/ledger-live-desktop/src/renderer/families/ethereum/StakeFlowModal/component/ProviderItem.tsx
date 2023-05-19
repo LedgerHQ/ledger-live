@@ -42,8 +42,7 @@ const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvi
 
   const manifest = useMemo(() => remoteManifest || localManifest, [localManifest, remoteManifest]);
 
-  const tPrefix = `ethereum.stake.${provider.id}`;
-  const hasTag = i18n.exists(`${tPrefix}.tag`);
+  const hasTag = i18n.exists(`ethereum.stake.${provider.id}.tag`);
 
   useEffect(() => {
     redirectIfOnlyProvider({ provider, manifest });
@@ -87,7 +86,7 @@ const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvi
         </Flex>
 
         <Text variant="paragraph" fontSize={13} color="neutral.c70">
-          {t(`ethereum.stake.${provider.id}.description`, { provider: provider.name })}
+          {t(`ethereum.stake.${provider.id}.description`)}
         </Text>
         <Link
           iconPosition="right"

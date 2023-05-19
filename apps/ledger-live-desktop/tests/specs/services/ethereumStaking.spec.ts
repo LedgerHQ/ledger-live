@@ -24,6 +24,30 @@ test.use({
     portfolioExchangeBanner: {
       enabled: true,
     },
+    ethStakingProviders: {
+      enabled: true,
+      params: {
+        listProvider: [
+          {
+            id: "lido",
+            icon: "Lido:provider",
+            name: "Lido",
+            minAccountBalance: 0,
+            liveAppId: "lido",
+            supportLink:
+              "https://support.ledger.com/hc/en-us/articles/4406882832401-Staking-ETH-in-Ledger-Live-with-Lido?docs=true",
+          },
+          {
+            id: "kiln",
+            icon: "Kiln:provider",
+            name: "Kiln",
+            minAccountBalance: 32,
+            liveAppId: "kiln",
+            supportLink: "https://www.kiln.fi",
+          },
+        ],
+      },
+    },
     stakeAccountBanner: {
       enabled: true,
       params: {
