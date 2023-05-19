@@ -5,6 +5,8 @@ import { useHistory, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import logger from "~/renderer/logger";
+
 /**
  * Valid URLs that this hook will listen for and handle:
  * ledgerlive://earn?action=get-funds&currencyId=ethereum - this will open a modal to get funds
@@ -41,7 +43,11 @@ export const useDeepLinkListener = () => {
                 parentAccount: undefined,
               }),
             );
+          } else {
+            logger.warn("not account found in earn dashboard deeplink");
           }
+        } else {
+          logger.warn("accountId query is missing for earn dashboard deeplink");
         }
         queryParams.delete("accountId");
         break;
