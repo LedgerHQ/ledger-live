@@ -6,7 +6,7 @@ import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import { createCanvas } from "~/renderer/components/CustomImage/imageUtils";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 
-function reconstructImage({
+export function reconstructImage({
   hexData,
   width,
   height,
