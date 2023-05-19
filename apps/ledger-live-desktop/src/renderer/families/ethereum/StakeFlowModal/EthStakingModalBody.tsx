@@ -1,49 +1,60 @@
 import React, { useCallback, useState } from "react";
 import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
-import EthStakeIllustration from "../assets/EthStakeIlustration";
+
 import { Flex } from "@ledgerhq/react-ui";
-import CheckBox from "~/renderer/components/CheckBox";
 import { track } from "~/renderer/analytics/segment";
 import {
-  LOCAL_STORAGE_KEY_PREFIX,
   CheckBoxContainer,
+  LOCAL_STORAGE_KEY_PREFIX,
 } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
 import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
-
-import { getTrackProperties } from "../utils/getTrackProperties";
-import { ProviderV1, ProvidersV1 } from "../types";
+import { ListProvider, ListProviders } from "./types";
+import { getTrackProperties } from "./utils/getTrackProperties";
+import { generateValidDappURLWithParams } from "~/helpers/generateValidDappURLWithParams";
+import EthStakeIllustration from "./assets/EthStakeIlustration";
+import CheckBox from "~/renderer/components/CheckBox";
+import { Manifest } from "~/types/manifest";
 import ProviderItem from "./ProviderItem";
+
 type Props = {
   onClose?: () => void;
   account: Account;
   checkbox?: boolean;
   singleProviderRedirectMode?: boolean;
   source?: string;
-  listProviders?: ProvidersV1;
+  listProviders?: ListProviders;
 };
-export const EthStakingModalBody = ({
+
+export type StakeOnClickProps = {
+  provider: ListProvider;
+  manifest: Manifest;
+};
+
+export function EthStakingModalBody({
   checkbox = false,
   singleProviderRedirectMode = true,
   source,
   onClose,
   account,
   listProviders = [],
-}: Props) => {
+}: Props) {
   const { t } = useTranslation();
   const history = useHistory();
   const [doNotShowAgain, setDoNotShowAgain] = useState<boolean>(false);
 
   const stakeOnClick = useCallback(
-    (provider: ProviderV1) => {
-      const value = `/platform/${provider.liveAppId}`;
+    ({ provider: { liveAppId, id, queryParams }, manifest }: StakeOnClickProps) => {
+      const value = `/platform/${liveAppId}`;
+      const customDappUrl = queryParams && generateValidDappURLWithParams(manifest, queryParams);
       track("button_clicked", {
-        button: provider.name,
+        button: id,
         ...getTrackProperties({ value, modal: source }),
       });
       history.push({
         pathname: value,
+        ...(customDappUrl ? { customDappUrl } : {}),
         state: {
           accountId: account.id,
         },
@@ -53,18 +64,25 @@ export const EthStakingModalBody = ({
     [history, account.id, onClose, source],
   );
 
-  const infoOnClick = useCallback(({ liveAppId, supportLink }: ProviderV1) => {
-    track("button_clicked", {
-      button: `learn_more_${liveAppId}`,
-      ...getTrackProperties({ value: supportLink }),
-      link: supportLink,
-    });
-    openURL(supportLink, "OpenURL", getTrackProperties({ value: supportLink }));
+  const infoOnClick = useCallback(({ liveAppId, supportLink }: ListProvider) => {
+    if (supportLink) {
+      track("button_clicked", {
+        button: `learn_more_${liveAppId}`,
+        ...getTrackProperties({ value: supportLink }),
+        link: supportLink,
+      });
+      openURL(supportLink, "OpenURL", getTrackProperties({ value: supportLink }));
+    }
   }, []);
 
-  if (singleProviderRedirectMode && listProviders.length === 1) {
-    stakeOnClick(listProviders[0]);
-  }
+  const redirectIfOnlyProvider = useCallback(
+    (stakeOnClickProps: StakeOnClickProps) => {
+      if (singleProviderRedirectMode && listProviders.length === 1) {
+        stakeOnClick(stakeOnClickProps);
+      }
+    },
+    [singleProviderRedirectMode, listProviders.length, stakeOnClick],
+  );
 
   const checkBoxOnChange = useCallback(() => {
     const value = !doNotShowAgain;
@@ -87,16 +105,15 @@ export const EthStakingModalBody = ({
           {listProviders.map(item => (
             <Flex key={item.liveAppId} width="100%" flexDirection={"column"}>
               <ProviderItem
-                id={item.liveAppId}
-                name={item.name}
                 provider={item}
                 infoOnClick={infoOnClick}
                 stakeOnClick={stakeOnClick}
+                redirectIfOnlyProvider={redirectIfOnlyProvider}
               />
             </Flex>
           ))}
         </Flex>
-        {checkbox && (
+        {!!checkbox && (
           <CheckBoxContainer
             p={3}
             borderRadius={8}
@@ -111,4 +128,4 @@ export const EthStakingModalBody = ({
       </Flex>
     </Flex>
   );
-};
+}

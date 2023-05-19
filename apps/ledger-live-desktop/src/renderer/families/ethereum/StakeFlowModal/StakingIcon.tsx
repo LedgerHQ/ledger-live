@@ -3,7 +3,7 @@ import { CryptoIcon, Icon, ProviderIcon } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 
 type Props = {
-  icon: string;
+  icon?: string;
 };
 
 const IconContainer = styled.div(

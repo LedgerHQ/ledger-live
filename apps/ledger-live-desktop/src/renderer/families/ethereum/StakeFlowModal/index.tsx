@@ -14,12 +14,8 @@ type Props = {
 const DelegationModal = (props: Props) => {
   const ethStakingProviders = useFeature<EthStakingProviders>("ethStakingProviders");
 
-  return (
-    <EthStakingModal
-      {...props}
-      // in this case the remaining providers have to be of type V1.
-      listProviders={ethStakingProviders?.params?.listProvider}
-    />
-  );
+  if (!ethStakingProviders?.enabled) return null;
+
+  return <EthStakingModal {...props} listProviders={ethStakingProviders?.params?.listProvider} />;
 };
 export default DelegationModal;
