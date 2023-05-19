@@ -25,6 +25,14 @@ export const useAppsRunner = (
   );
   const nextAppOp = useMemo(() => getNextAppOp(state), [state]);
   const appOp = state.currentAppOp || nextAppOp;
+
+  useEffect(() => {
+    dispatch({
+      type: "reset",
+      initialState: initState(listResult, appsToRestore),
+    });
+  }, [listResult, appsToRestore]);
+
   useEffect(() => {
     if (appOp) {
       const sub = runAppOp(state, appOp, exec).subscribe((event) => {
