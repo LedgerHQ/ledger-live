@@ -40,10 +40,8 @@ export const liveAppContext = createContext<LiveAppContextType>({
   updateManifests: () => Promise.resolve(),
 });
 
-type FetchLiveAppCatalogPrams = Required<
-  Omit<FilterParams, "branches" | "private">
-> &
-  Pick<FilterParams, "private"> & {
+type FetchLiveAppCatalogPrams = Required<Omit<FilterParams, "private">> &
+  FilterParams & {
     allowDebugApps: boolean;
     allowExperimentalApps: boolean;
   };
