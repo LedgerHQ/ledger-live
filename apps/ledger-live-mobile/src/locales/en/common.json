@@ -1197,7 +1197,8 @@
       "terms": "By tapping “Get Started” you consent and agree to our",
       "termsLink": "Terms of Service",
       "privacyLink": "Privacy Policy",
-      "and": "and"
+      "and": "and",
+      "recoverLogIn": "Log in for Ledger Recover"
     },
     "stepDoYouHaveALedgerDevice": {
       "title": "Do you own a Ledger?",
@@ -6168,20 +6169,6 @@
             "alreadySubscribed": "Already logged in? <LinkAccount>View my subscription</LinkAccount>"
           }
         }
-      }
-    }
-  },
-  "protect": {
-    "login": {
-      "title": "Log In",
-      "desc": "Log in with your Ledger account to manage your Protect subscription.",
-      "email": "Email",
-      "password": "Password",
-      "cta": "Login",
-      "forgotPassword": "Forgot password?",
-      "errors": {
-        "emptyEmail": "Email cannot be empty",
-        "emptyPassword": "Password cannot be empty"
       }
     }
   },
