@@ -1,4 +1,5 @@
-import { Manifest } from "../v2/types";
+
+import { Manifest } from "~/types/manifest";
 import { getValidDappURLFromManifest } from "./getValidDappURLFromManifest";
 
 export function generateValidDappURLWithParams(

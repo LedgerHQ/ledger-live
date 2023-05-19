@@ -1,9 +1,9 @@
 import React from "react";
 import { Account } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { EthStakingModal as V2EthStakingModal } from "./v2/EthStakingModal";
-import { EthStakingModal as V1EthStakingModal } from "./v1/EthStakingModal";
-import { EthStakingProvidersV2 } from "~/types/featureFlags";
+import { EthStakingProviders } from "~/types/featureFlags";
+import { EthStakingModal } from "./EthStakingModal";
+
 type Props = {
   name: string;
   account: Account;
@@ -12,14 +12,14 @@ type Props = {
   source?: string;
 };
 const DelegationModal = (props: Props) => {
-  const ethStakingProvidersV2 = useFeature<EthStakingProvidersV2>("ethStakingProvidersV2");
+  const ethStakingProviders = useFeature<EthStakingProviders>("ethStakingProviders");
 
-  if (ethStakingProvidersV2?.enabled) {
-    return (
-      <V2EthStakingModal {...props} providers={ethStakingProvidersV2.params?.providers ?? []} />
-    );
-  }
-
-  return <V1EthStakingModal {...props} />;
+  return (
+    <EthStakingModal
+      {...props}
+      // in this case the remaining providers have to be of type V1.
+      listProviders={ethStakingProviders?.params?.listProvider}
+    />
+  );
 };
 export default DelegationModal;

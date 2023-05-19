@@ -1,8 +1,8 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Flex, Text, Tag as TagCore, Link, Icons, Icon } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { Manifest, Provider as ProviderType } from "./types";
+import { ProviderV2 } from "../types";
 import { useHistory } from "react-router-dom";
 import { Account } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
@@ -11,10 +11,12 @@ import { StakingIcon } from "./StakingIcon";
 import { openURL } from "~/renderer/linking";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { generateValidDappURLWithParams } from "../utils/generateValidDappURLWithParams";
+
+import { Manifest } from "~/types/manifest";
+import { generateValidDappURLWithParams } from "~/helpers/generateValidDappURLWithParams";
 
 type Props = {
-  provider: ProviderType;
+  provider: ProviderV2;
   account: Account;
   source?: string;
   onClose?(): void;
@@ -42,9 +44,9 @@ export function Provider({ provider, account, source, onClose }: Props) {
   const localManifest = useLocalLiveAppManifest(provider.liveAppId) as Manifest;
   const remoteManifest = useRemoteLiveAppManifest(provider.liveAppId) as Manifest;
 
-  const customDappUrl = generateValidDappURLWithParams(
-    remoteManifest || localManifest,
-    provider.queryParams,
+  const customDappUrl = useMemo(
+    () => generateValidDappURLWithParams(remoteManifest || localManifest, provider.queryParams),
+    [remoteManifest, localManifest, provider.queryParams],
   );
 
   const { i18n, t } = useTranslation();
@@ -69,16 +71,20 @@ export function Provider({ provider, account, source, onClose }: Props) {
     onClose?.();
   }, [provider, history, account, source, onClose, customDappUrl]);
 
-  const onInfoLinkClick = useCallback(() => {
-    const { id, supportLink } = provider;
-    if (supportLink) {
-      track("button_clicked", {
-        button: `learn_more_${id}`,
-        ...getTrackProperties({ value: supportLink }),
-      });
-      openURL(supportLink, "OpenURL", getTrackProperties({ value: supportLink }));
-    }
-  }, [provider]);
+  const onInfoLinkClick = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
+      const { id, supportLink } = provider;
+      if (supportLink) {
+        track("button_clicked", {
+          button: `learn_more_${id}`,
+          ...getTrackProperties({ value: supportLink }),
+        });
+        openURL(supportLink, "OpenURL", getTrackProperties({ value: supportLink }));
+      }
+      event.stopPropagation();
+    },
+    [provider],
+  );
 
   return (
     <Container
@@ -103,7 +109,7 @@ export function Provider({ provider, account, source, onClose }: Props) {
         <Text variant="paragraph" fontSize={13} color="neutral.c70">
           {t(`${tPrefix}.description`)}
         </Text>
-        {provider.supportLink && (
+        {!!provider.supportLink && (
           <Link
             data-testid={`stake-provider-support-link-${provider.id}`}
             iconPosition="right"

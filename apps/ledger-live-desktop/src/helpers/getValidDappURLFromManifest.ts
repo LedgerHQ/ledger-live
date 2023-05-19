@@ -1,4 +1,4 @@
-import { Manifest } from "../v2/types";
+import { Manifest } from "~/types/manifest";
 
 export function getValidDappURLFromManifest(manifest: Manifest): URL | undefined {
   if (manifest && manifest.params && manifest.params.dappUrl) {

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Flex, Text, Icons, Link, ProviderIcon, Icon, Tag as TagCore } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { Provider } from "./types";
+import { ProviderV1 } from "../types";
 
 const Container = styled(Flex)`
   cursor: pointer;
@@ -23,9 +23,9 @@ const Tag = styled(TagCore)`
 type Props = {
   id: string;
   name: string;
-  provider: Provider;
-  infoOnClick(provider: Provider): void;
-  stakeOnClick(provider: Provider): void;
+  provider: ProviderV1;
+  infoOnClick(provider: ProviderV1): void;
+  stakeOnClick(provider: ProviderV1): void;
 };
 
 const ProviderItem = ({ id, name, provider, infoOnClick, stakeOnClick }: Props) => {
@@ -36,7 +36,7 @@ const ProviderItem = ({ id, name, provider, infoOnClick, stakeOnClick }: Props) 
   }, [provider, stakeOnClick]);
 
   const infoLink = useCallback(
-    event => {
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
       infoOnClick(provider);
       event.stopPropagation();
     },

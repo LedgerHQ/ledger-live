@@ -28,13 +28,13 @@ const ProviderIconContainer = styled.div(
 export function StakingIcon({ icon }: Props) {
   if (!icon) return null;
 
-  const [iconType, iconName] = icon.split(":");
+  const [iconName, iconType] = icon.split(":");
 
-  // if no icon name then no iconType defined, and iconType can be treated as iconName.
-  if (!iconName) {
+  // if no icon type then treat as "normal" icon.
+  if (!iconType) {
     return (
       <IconContainer>
-        <Icon name={iconType} size={14} />
+        <Icon name={iconName} size={14} />
       </IconContainer>
     );
   }

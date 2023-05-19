@@ -37,10 +37,10 @@ test.use({
         },
       },
     },
-    ethStakingProvidersV2: {
+    ethStakingProviders: {
       enabled: true,
       params: {
-        providers: [
+        listProvider: [
           {
             id: "kiln_pooling",
             liveAppId: "kiln",
