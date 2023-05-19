@@ -81,7 +81,12 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     connectManagerRequest,
   );
 
-  const staxFetchImageRequest = useMemo(() => ({}), []);
+  const staxFetchImageRequest = useMemo(
+    () => ({
+      allowedEmpty: true,
+    }),
+    [],
+  );
   const staxFetchImageState = staxFetchImageAction.useHook(
     updateStep === "imageBackup" ? device : null,
     staxFetchImageRequest,
@@ -313,7 +318,6 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     restoreAppsState.opened,
     proceedToAppsBackup,
     connectManagerState.error,
-    staxFetchImageState.hexImage,
   ]);
 
   const hasReconnectErrors = useMemo(

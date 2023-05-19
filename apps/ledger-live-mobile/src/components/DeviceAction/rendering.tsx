@@ -1192,7 +1192,7 @@ export const renderImageLoadRequested = ({
   t,
   device,
   fullScreen = true,
-}: RawProps & { device: Device; fullScreen: boolean }) => {
+}: RawProps & { device: Device; fullScreen?: boolean }) => {
   return (
     <ImageLoadingGeneric
       fullScreen={fullScreen}
@@ -1231,7 +1231,7 @@ export const renderImageCommitRequested = ({
   t,
   device,
   fullScreen = true,
-}: RawProps & { device: Device; fullScreen: boolean }) => {
+}: RawProps & { device: Device; fullScreen?: boolean }) => {
   return (
     <ImageLoadingGeneric
       fullScreen={fullScreen}
