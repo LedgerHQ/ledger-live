@@ -86,12 +86,12 @@ export type LLDCoinFamily<
     /**
      * TODO document me
      */
-    getURLWhatIsThis?: (_: { op: Operation; currencyId: string }) => string | undefined;
+    getURLWhatIsThis?: (_: { op: Operation; currencyId: string }) => string | null | undefined;
 
     /**
      * TODO document me
      */
-    getURLFeesInfo?: (_: { op: Operation; currencyId: string }) => string | undefined;
+    getURLFeesInfo?: (_: { op: Operation; currencyId: string }) => string | null | undefined;
   };
 
   /**

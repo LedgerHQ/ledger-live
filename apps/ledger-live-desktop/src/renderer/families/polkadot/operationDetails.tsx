@@ -45,8 +45,9 @@ function formatPalletMethod(palletMethod?: string | null): string {
     .join(" - ");
 }
 const redirectAddress = (currency: Currency, address: string) => () => {
-  /** $FlowFixMe */
-  const url = getAddressExplorer(getDefaultExplorerView(currency), address);
+  const url =
+    currency.type === "CryptoCurrency" &&
+    getAddressExplorer(getDefaultExplorerView(currency), address);
   if (url) openURL(url);
 };
 type OperationDetailsValidatorsProps = {

@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
-import invariant from "invariant";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { Account } from "@ledgerhq/types-live";
+import { SubAccount } from "@ledgerhq/types-live";
 import {
   useTronSuperRepresentatives,
   getLastVotedDate,
@@ -31,9 +30,8 @@ import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-type Props = {
-  account: Account;
-};
+import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
+
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
 }))`
@@ -41,7 +39,7 @@ const Wrapper = styled(Box).attrs(() => ({
   justify-content: space-between;
   align-items: center;
 `;
-const Delegation = ({ account }: Props) => {
+const Delegation = ({ account }: { account: TronAccount }) => {
   const locale = useSelector(localeSelector);
   const superRepresentatives = useTronSuperRepresentatives();
   const lastVoteDate = getLastVotedDate(account);
@@ -51,7 +49,6 @@ const Delegation = ({ account }: Props) => {
   const unit = getAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
   const { tronResources } = account;
-  invariant(tronResources, "tron account expected");
   const { votes, tronPower, unwithdrawnReward } = tronResources;
   const discreet = useDiscreetMode();
   const formattedUnwidthDrawnReward = formatCurrencyUnit(unit, BigNumber(unwithdrawnReward || 0), {
@@ -201,8 +198,8 @@ const Delegation = ({ account }: Props) => {
     </TableContainer>
   );
 };
-const Votes = ({ account }: Props) => {
-  if (!account.tronResources) return null;
+const Votes = ({ account }: { account: TronAccount | SubAccount }) => {
+  if (account.type !== "Account") return null;
   return <Delegation account={account} />;
 };
 export default Votes;

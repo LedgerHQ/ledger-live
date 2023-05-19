@@ -1,9 +1,9 @@
 /* eslint-disable consistent-return */
 import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
-import { Operation, Account } from "@ledgerhq/types-live";
+import { Operation } from "@ledgerhq/types-live";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { Vote } from "@ledgerhq/live-common/families/tron/types";
+import { TronAccount, Vote } from "@ledgerhq/live-common/families/tron/types";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { openURL } from "~/renderer/linking";
 import {
@@ -24,24 +24,22 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
-function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined | null {
+
+function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined {
   if (op.fee.gt(200000)) {
     return helpURL;
   }
 }
-function getURLWhatIsThis({
-  op,
-}: {
-  op: Operation;
-  currencyId: string;
-}): string | undefined | null {
+
+function getURLWhatIsThis({ op }: { op: Operation; currencyId: string }): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
     return helpURL;
   }
 }
+
 type OperationsDetailsVotesProps = {
   votes: Array<Vote> | undefined | null;
-  account: Account;
+  account: TronAccount;
   isTransactionField?: boolean;
 };
 export const OperationDetailsVotes = ({
@@ -106,7 +104,7 @@ type OperationDetailsExtraProps = {
     [key: string]: any;
   };
   type: string;
-  account: Account;
+  account: TronAccount;
 };
 const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps) => {
   switch (type) {
@@ -164,57 +162,44 @@ type Props = {
 };
 const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
   const amount = new BigNumber(operation.extra ? operation.extra.frozenAmount : 0);
-  return (
-    !amount.isZero() && (
-      <>
-        <FormattedVal
-          val={amount}
-          unit={unit}
-          showCode
-          fontSize={4}
-          color={"palette.text.shade80"}
-        />
+  return !amount.isZero() ? (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
 
-        <CounterValue
-          color="palette.text.shade60"
-          fontSize={3}
-          date={operation.date}
-          currency={currency}
-          value={amount}
-        />
-      </>
-    )
-  );
+      <CounterValue
+        color="palette.text.shade60"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  ) : null;
 };
 const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
   const amount = new BigNumber(operation.extra ? operation.extra.unfreezeAmount : 0);
-  return (
-    !amount.isZero() && (
-      <>
-        <FormattedVal
-          val={amount}
-          unit={unit}
-          showCode
-          fontSize={4}
-          color={"palette.text.shade80"}
-        />
+  return !amount.isZero() ? (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
 
-        <CounterValue
-          color="palette.text.shade60"
-          fontSize={3}
-          date={operation.date}
-          currency={currency}
-          value={amount}
-        />
-      </>
-    )
-  );
+      <CounterValue
+        color="palette.text.shade60"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  ) : null;
 };
 const VoteAmountCell = ({ operation }: Props) => {
   const discreet = useDiscreetMode();
   const amount =
     operation.extra && operation.extra.votes
-      ? operation.extra.votes.reduce((sum, { voteCount }) => sum + voteCount, 0)
+      ? operation.extra.votes.reduce(
+          (sum: number, { voteCount }: { voteCount: number }) => sum + voteCount,
+          0,
+        )
       : 0;
   return amount > 0 ? (
     <Text ff="Inter|SemiBold" fontSize={4}>
