@@ -2,9 +2,13 @@ import { log } from "@ledgerhq/logs";
 import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
 import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
 import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { createAction as createStaxLoadImageAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
 import { createAction as createStaxFetchImageAction } from "@ledgerhq/live-common/hw/actions/staxFetchImage";
 import { createAction as createInstallLanguageAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
+import { createAction as createConnectAppAction } from "@ledgerhq/live-common/hw/actions/app";
+import { createAction as createConnectManagerAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { useUpdateFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useUpdateFirmware";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import {
@@ -14,6 +18,24 @@ import {
 import { Observable } from "rxjs";
 import { useCallback, useMemo, useEffect, useState } from "react";
 import { DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
+import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
+import {
+  CantOpenDevice,
+  DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
+  LockedDeviceError,
+} from "@ledgerhq/errors";
+import { ConnectManagerTimeout } from "@ledgerhq/live-common/errors";
+
+export const reconnectDeviceErrors: LedgerErrorConstructor<{
+  [key: string]: unknown;
+}>[] = [
+  CantOpenDevice,
+  DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
+  LockedDeviceError,
+  ConnectManagerTimeout,
+];
 
 export type FirmwareUpdateParams = {
   device: Device;
@@ -25,6 +47,7 @@ export type FirmwareUpdateParams = {
 
 export type UpdateStep =
   | "start"
+  | "appsBackup"
   | "imageBackup"
   | "firmwareUpdate"
   | "languageRestore"
@@ -35,6 +58,8 @@ export type UpdateStep =
 const installLanguageAction = createInstallLanguageAction(installLanguage);
 const staxLoadImageAction = createStaxLoadImageAction(staxLoadImage);
 const staxFetchImageAction = createStaxFetchImageAction(staxFetchImage);
+const connectManagerAction = createConnectManagerAction(connectManager);
+const connectAppAction = createConnectAppAction(connectApp);
 
 export const useUpdateFirmwareAndRestoreSettings = ({
   updateFirmwareAction,
@@ -42,6 +67,19 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   deviceInfo,
 }: FirmwareUpdateParams) => {
   const [updateStep, setUpdateStep] = useState<UpdateStep>("start");
+  const [installedApps, setInstalledApps] = useState<string[]>([]);
+
+  // device action hooks only get triggered when they have a device passed to them
+  // so in order to control the chaining of actions we use a step state and only
+  // pass a device down the hook when we're at the correct step
+  const connectManagerRequest = useMemo(
+    () => ({ cancelExecution: updateStep !== "appsBackup" }),
+    [updateStep],
+  );
+  const connectManagerState = connectManagerAction.useHook(
+    updateStep === "appsBackup" ? device : null,
+    connectManagerRequest,
+  );
 
   const staxFetchImageRequest = useMemo(() => ({}), []);
   const staxFetchImageState = staxFetchImageAction.useHook(
@@ -77,8 +115,27 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     staxLoadImageRequest,
   );
 
+  const restoreAppsRequest = useMemo(
+    () => ({
+      dependencies: installedApps.map(appName => ({ appName })),
+      appName: "BOLOS",
+      withInlineInstallProgress: true,
+      allowPartialDependencies: true,
+    }),
+    [installedApps],
+  );
+
+  const restoreAppsState = connectAppAction.useHook(
+    updateStep === "appsRestore" ? device : null,
+    restoreAppsRequest,
+  );
+
   const proceedToFirmwareUpdate = useCallback(() => {
     setUpdateStep("firmwareUpdate");
+  }, []);
+
+  const proceedToAppsBackup = useCallback(() => {
+    setUpdateStep("appsBackup");
   }, []);
 
   const proceedToImageBackup = useCallback(() => {
@@ -94,9 +151,12 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   }, []);
 
   const proceedToAppsRestore = useCallback(() => {
-    // TODO: if no apps to restore proceed to update completed
-    setUpdateStep("appsRestore");
-  }, []);
+    if (installedApps.length > 0) {
+      setUpdateStep("appsRestore");
+    } else {
+      proceedToUpdateCompleted();
+    }
+  }, [proceedToUpdateCompleted, installedApps.length]);
 
   const proceedToImageRestore = useCallback(() => {
     if (staxFetchImageState.hexImage) {
@@ -113,17 +173,49 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     ) {
       setUpdateStep("languageRestore");
     } else {
-      setUpdateStep("imageRestore");
+      proceedToImageRestore();
     }
-  }, [deviceInfo.languageId]);
+  }, [proceedToImageRestore, deviceInfo.languageId]);
 
+  // this hook controls the chaining of device actions by updating the current step
+  // when needed. It basically implements a state macgine
   useEffect(() => {
+    let unrecoverableError;
+
     switch (updateStep) {
       case "start":
-        proceedToImageBackup();
+        proceedToAppsBackup();
+        break;
+      case "appsBackup":
+        unrecoverableError =
+          connectManagerState.error &&
+          !reconnectDeviceErrors.some(
+            err => connectManagerState.error instanceof err,
+          );
+        if (connectManagerState.result || unrecoverableError) {
+          if (connectManagerState.error) {
+            log(
+              "FirmwareUpdate",
+              "error while backing up device apps",
+              connectManagerState.error,
+            );
+          }
+          if (connectManagerState.result) {
+            const installedAppsNames = connectManagerState.result.installed.map(
+              ({ name }) => name,
+            );
+            setInstalledApps(installedAppsNames);
+          }
+          proceedToImageBackup();
+        }
         break;
       case "imageBackup":
-        if (staxFetchImageState.imageFetched || staxFetchImageState.error) {
+        unrecoverableError =
+          staxFetchImageState.error &&
+          !reconnectDeviceErrors.some(
+            err => staxFetchImageState.error instanceof err,
+          );
+        if (staxFetchImageState.imageFetched || unrecoverableError) {
           if (staxFetchImageState.error)
             log(
               "FirmwareUpdate",
@@ -141,10 +233,12 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         }
         break;
       case "languageRestore":
-        if (
-          installLanguageState.languageInstalled ||
-          installLanguageState.error
-        ) {
+        unrecoverableError =
+          installLanguageState.error &&
+          !reconnectDeviceErrors.some(
+            err => installLanguageState.error instanceof err,
+          );
+        if (installLanguageState.languageInstalled || unrecoverableError) {
           if (installLanguageState.error)
             log(
               "FirmwareUpdate",
@@ -155,22 +249,42 @@ export const useUpdateFirmwareAndRestoreSettings = ({
         }
         break;
       case "imageRestore":
+        unrecoverableError =
+          staxLoadImageState.error &&
+          !reconnectDeviceErrors.some(
+            err => staxLoadImageState.error instanceof err,
+          );
         if (
           staxLoadImageState.imageLoaded ||
-          staxLoadImageState.error ||
+          unrecoverableError ||
           !staxFetchImageState.hexImage
         ) {
-          if (staxLoadImageState.error)
+          if (staxLoadImageState.error) {
             log(
               "FirmwareUpdate",
               "error while restoring stax image",
-              installLanguageState.error,
+              staxLoadImageState.error,
             );
+          }
           proceedToAppsRestore();
         }
         break;
       case "appsRestore":
-        proceedToUpdateCompleted();
+        unrecoverableError =
+          restoreAppsState.error &&
+          !reconnectDeviceErrors.some(
+            err => restoreAppsState.error instanceof err,
+          );
+        if (restoreAppsState.opened || unrecoverableError) {
+          if (restoreAppsState.error) {
+            log(
+              "FirmwareUpdate",
+              "error while restoring apps",
+              restoreAppsState.error,
+            );
+          }
+          proceedToUpdateCompleted();
+        }
         break;
       default:
         break;
@@ -178,10 +292,11 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   }, [
     device.modelId,
     deviceInfo.languageId,
+    connectManagerState.result,
     installLanguageState.error,
     installLanguageState.languageInstalled,
-    proceedToAppsRestore,
     proceedToFirmwareUpdate,
+    proceedToAppsRestore,
     proceedToImageBackup,
     proceedToImageRestore,
     proceedToLanguageRestore,
@@ -194,14 +309,94 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     triggerUpdate,
     updateActionState.step,
     updateStep,
+    restoreAppsState.error,
+    restoreAppsState.opened,
+    proceedToAppsBackup,
+    connectManagerState.error,
+    staxFetchImageState.hexImage,
+  ]);
+
+  const hasReconnectErrors = useMemo(
+    () =>
+      reconnectDeviceErrors.some(
+        err =>
+          connectManagerState.error instanceof err ||
+          staxFetchImageState.error instanceof err ||
+          staxLoadImageState.error instanceof err ||
+          restoreAppsState.error instanceof err ||
+          installLanguageState.error instanceof err,
+      ),
+    [
+      connectManagerState.error,
+      staxFetchImageState.error,
+      staxLoadImageState.error,
+      restoreAppsState.error,
+      installLanguageState.error,
+    ],
+  );
+
+  const deviceLockedOrUnresponsive = useMemo(
+    () =>
+      updateActionState.lockedDevice ||
+      connectManagerState.isLocked ||
+      staxFetchImageState.unresponsive ||
+      staxLoadImageState.unresponsive ||
+      restoreAppsState.isLocked ||
+      installLanguageState.unresponsive,
+    [
+      updateActionState.lockedDevice,
+      connectManagerState.isLocked,
+      staxFetchImageState.unresponsive,
+      staxLoadImageState.unresponsive,
+      restoreAppsState.isLocked,
+      installLanguageState.unresponsive,
+    ],
+  );
+
+  const retryCurrentStep = useCallback(() => {
+    switch (updateStep) {
+      case "appsBackup":
+        connectManagerState.onRetry();
+        break;
+      case "appsRestore":
+        restoreAppsState.onRetry();
+        break;
+      case "firmwareUpdate":
+        triggerUpdate();
+        break;
+      case "imageBackup":
+        staxFetchImageState.onRetry();
+        break;
+      case "imageRestore":
+        staxLoadImageState.onRetry();
+        break;
+      case "languageRestore":
+        installLanguageState.onRetry();
+        break;
+      default:
+        break;
+    }
+  }, [
+    connectManagerState,
+    installLanguageState,
+    restoreAppsState,
+    staxFetchImageState,
+    staxLoadImageState,
+    triggerUpdate,
+    updateStep,
   ]);
 
   return {
     updateStep,
+    connectManagerState,
     staxFetchImageState,
     updateActionState,
     staxLoadImageState,
     installLanguageState,
-    retryUpdate: triggerUpdate,
+    restoreAppsState,
+    retryCurrentStep,
+    noOfAppsToReinstall: installedApps.length,
+    deviceLockedOrUnresponsive,
+    hasReconnectErrors,
   };
 };
