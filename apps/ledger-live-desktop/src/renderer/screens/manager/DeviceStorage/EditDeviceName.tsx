@@ -172,20 +172,6 @@ const EditDeviceName: React.FC<Props> = ({
             </Box>
           </Flex>
         )}
-        {(!running || completed) && (
-          <Flex flexDirection="column" rowGap={8}>
-            <Divider />
-            <Flex alignSelf="end" px={12} pb={8}>
-              <Button
-                variant="main"
-                onClick={completed ? onCloseDrawer : onSubmit}
-                disabled={!!disableButton}
-              >
-                {completed ? t(`common.close`) : t(`common.continue`)}
-              </Button>
-            </Flex>
-          </Flex>
-        )}
       </Flex>
       {!running || (running && actionError) || completed ? (
         <Flex flexDirection="column" alignSelf="stretch">
