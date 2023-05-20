@@ -10,11 +10,14 @@ import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import styled from "styled-components/native";
 import ByteSize from "../../../components/ByteSize";
+import StorageBarItem from "./StorageBarItem";
 
 type Props = {
   deviceModel: DeviceModel;
   deviceInfo: DeviceInfo;
   distribution: AppsDistribution;
+  installQueue: string[];
+  uninstallQueue: string[];
 };
 
 const StorageRepartition = styled(Box)`
@@ -38,6 +41,8 @@ const DeviceAppStorage = ({
     shouldWarnMemory,
     apps,
   },
+  installQueue,
+  uninstallQueue,
 }: Props) => {
   const appSizes = useMemo(
     () =>
@@ -141,7 +146,10 @@ const DeviceAppStorage = ({
       </Flex>
       <StorageRepartition bg="neutral.c40" style={{ flex: 1 }}>
         {appSizes.map(({ ratio, color, name }, i) => (
-          <Box
+          <StorageBarItem
+            installing={
+              installQueue.includes(name) || uninstallQueue.includes(name)
+            }
             key={`${i}${name}`}
             backgroundColor={color}
             flexBasis={`${ratio}%`}
