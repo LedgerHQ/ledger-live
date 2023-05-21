@@ -7,9 +7,11 @@ import { Text, Flex, ProgressLoader } from "@ledgerhq/react-ui";
 type Props = {
   progress: number;
   installing?: string;
+  current: number;
+  total: number;
 };
 
-function Installing({ progress, installing }: Props) {
+function Installing({ progress, installing, current, total }: Props) {
   const { t } = useTranslation();
   const normalProgress = (progress || 0) * 100;
 
@@ -23,7 +25,7 @@ function Installing({ progress, installing }: Props) {
           showPercentage={false}
         />
       </Flex>
-      <Title>{installing ? t(`manager.modal.steps.${installing}`) : null}</Title>
+      <Title>{installing ? t(`manager.modal.steps.progress`, { current, total }) : null}</Title>
       <Text mt={2} ff="Inter|Regular" textAlign="center" color="palette.text.shade100">
         {t("manager.modal.mcuPin")}
       </Text>
