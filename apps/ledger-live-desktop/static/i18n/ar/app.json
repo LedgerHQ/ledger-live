@@ -59,7 +59,6 @@
   },
   "common" : {
     "never" : "أبداً",
-    "new" : "جديد",
     "apply" : "تقديم",
     "done" : "تم",
     "confirm" : "تأكيد",
@@ -127,8 +126,7 @@
     "exchange" : "تبادل",
     "info" : "معلومات",
     "connectDevice" : "توصيل جهازك",
-    "add" : "إضافة",
-    "or" : "أو"
+    "add" : "إضافة"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -217,7 +215,6 @@
     "earn" : "اكسب",
     "exchange" : "شراء / بيع",
     "swap" : "مبادلة",
-    "refer" : "ترشيح صديق",
     "lend" : "إقراض",
     "catalog" : "Discover",
     "market" : "السوق",
@@ -1206,33 +1203,23 @@
     },
     "manual" : {
       "title" : "إعداد {{deviceName}}",
-      "continueOnDevice" : "قم بهذا الإجراء على جهازك {{productName}}",
       "pairedContent" : {
         "title" : "{{deviceName}} متصلة",
         "description" : "متابعة الإعداد على {{deviceName}}",
-        "text" : "هذه الشاشة ستتغير ديناميكيا لتزويدك بالمعلومات ذات الصلة ينما تقوم بإعداد {{deviceName}} خاصتك",
-        "continueOnDevice" : "انقر على {{productName}} لرؤية الشاشة التالية."
+        "text" : "هذه الشاشة ستتغير ديناميكيا لتزويدك بالمعلومات ذات الصلة ينما تقوم بإعداد {{deviceName}} خاصتك"
       },
       "pinContent" : {
         "title" : "إعداد كود PIN خاصتك",
         "description" : "كود PIN خاصتك يمكن أن يتراوح طوله بين 4 إلى 8 أرقام",
-        "text" : "أي شخص لديه وصول إلى {{deviceName}} وكود PIN خاصتك يمكنه أيضاً الوصول إلى جميع أصولك المشفرة ورموزك غير القابلة للاستبدال (NFT).",
-        "continueOnDevice" : "قم بإعداد كود PIN الخاص بك على {{productName}}"
+        "text" : "أي شخص لديه وصول إلى {{deviceName}} وكود PIN خاصتك يمكنه أيضاً الوصول إلى جميع أصولك المشفرة ورموزك غير القابلة للاستبدال (NFT)."
       },
       "seedContent" : {
         "title" : "عبارة الاسترداد السرية",
+        "choiceNewOrRestore" : "اختر خيار الإعداد الأكثر ملائمة لك.",
+        "newSeed" : "انقر على مقاطع الفيديو أدناه لتعلُم المزيد عن عبارة الاسترداد السرية خاصتك",
+        "choiceRestoreDirectOrRecover" : "Placeholder - اختيار استعادة مباشرة أو استخدم استرداد",
         "recoverSeed" : "Placeholder: استرداد",
-        "restoreSeed" : "للاسترداد، تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.\n\nليس لديك واحد؟ استخدم جهاز ك{{productName}} لإنشاء عبارة جديدة.",
-        "selection" : "على {{productName}}، اختر خيار الإعداد الأكثر ملائمةً لك.",
-        "selectionContinueOnDevice" : "انقر على خيار في {{productName}}",
-        "newSeedDescription" : "شاهد مقاطع الفيديو أدناه لتعلُّم المزيد حول كلماتك السرية.",
-        "newSeedContinueOnDevice" : "قم بهذا على جهازك {{productName}}",
-        "recovery" : "للاسترداد، تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.\n\nليس لديك واحد؟ استخدم جهازك {{productName}} لإنشاء عبارة جديدة.",
-        "restoreChoiceContinueOnDevice" : "اختر أحد الخيارات على جهازك {{productName}}",
-        "restoreChoiceSRPTitle" : "الاستعادة باستخدام عبارة الاسترداد السرية",
-        "restoreChoiceSRPDescription" : "تأكد من استخدام عبارة تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.",
-        "restoreChoiceRecoverTitle" : "الاستعادة باستخدام Ledger Recover",
-        "restoreChoiceRecoverDescription" : "استعد النسخة الاحتياطية لعبارة الاسترداد الخاصة بك عن طريق تسجيل الدخول إلى حساب Ledger الخاص بك وتأكيد هويتك."
+        "restoreSeed" : "للاسترداد، تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.\n\nليس لديك واحد؟ استخدم جهاز ك{{productName}} لإنشاء عبارة جديدة."
       },
       "softwareCheckContent" : {
         "title" : "التحقق من البرامج",
@@ -1251,13 +1238,10 @@
         }
       },
       "installApplications" : {
-        "title" : "تثبيت تطبيقات سلسلة الكتل (blockchain)",
+        "title" : "نوصي بتنزيل مجموعة محددة من التطبيقات. يُمكنك تنزيل المزيد لاحقاً",
         "install" : "تثبيت",
         "skip" : "سأقوم بذلك في وقت لاحق",
         "info" : "التطبيقات على {{deviceName}} تُستخدم للموافقة على المعاملات. يمكنك إضافتهم أو حذفهم في أي وقت."
-      },
-      "endOfSetup" : {
-        "title" : "نهاية الإعداد"
       },
       "genuineCheckModal" : {
         "title" : "اختبار الأصالة",
@@ -1457,8 +1441,7 @@
     "messageIfUnverified" : "قم بتأكيد أن العنوان الذي تمت مشاركته يتطابق تماماً مع العنوان الموجود على جهازك",
     "messageIfSkipped" : "لم يتم تأكيد عنوانك {{name}} على جهازك Ledger. يرجى التحقق من ذلك للأمان.",
     "showQrCode" : "إظهار كود QR",
-    "taprootWarning" : "تأكد أن المُرسل يدعم taproot",
-    "dashStakingWarning" : "يُرجى التأكد من أنك لا تستخدم هذا العنوان لتلقي مكافآت التكديس"
+    "taprootWarning" : "تأكد أن المُرسل يدعم taproot"
   },
   "emptyState" : {
     "dashboard" : {
@@ -2164,17 +2147,10 @@
         "title" : "المستلم",
         "nftRecipient" : "NFT المراد إرسالها",
         "verifyAddress" : "يرجى التأكد أن العنوان متطابق مع العنوان الذي شاركه المستلم.",
-        "domainService" : {
-          "resolve" : "هذه ENS صالحة مرتبطة بالعنوان التالي:",
-          "supportLink" : "ما هي Ethereum Name Service (خدمة اسم إيثريوم)؟",
-          "reverse" : "هذا العنوان مرتبط بـ {{domain}}",
-          "invalidDomain" : {
-            "title" : "النطاق ليس مدعوماً",
-            "description" : "يتم دعم ENS فقط الذي يحتوي على أقل من 30 حرف أبجدي رقمي."
-          },
-          "noResolution" : {
-            "title" : "لم يتم العثور على عنوان لهذا النطاق"
-          }
+        "namingService" : {
+          "resolve" : "هذه ENS صالحة مربوطة بالعنوان التالي:",
+          "supportLink" : "ما هي Ethereum Name Service (خدمة أسماء إيثريوم)؟",
+          "reverse" : "هذا العنوان مربوط بـ {{domain}}"
         }
       },
       "amount" : {
@@ -3785,7 +3761,6 @@
         "title" : "أنت الآن مطوّر!",
         "text" : "مرحباً بك في بلاد العجائب"
       },
-      "userId" : "مُعرّف المستخدم",
       "debugApps" : "السماح لتطبيقات تصحيح الأخطاء",
       "debugAppsDesc" : "عرض تطبيقات المنصة لتصحيح الأخطاء والسماح بفتحها.",
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
@@ -3917,10 +3892,6 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "بوابة رسوم أولوية مخصصة",
           "description" : "خصِّص النسبة المئوية من الحد الأدنى لرسوم الأولوية المُقدَّرة لدينا المسموح بها لمعاملات EIP1559 المتقدمة"
-        },
-        "1559CustomBaseFeeMultiplier" : {
-          "title" : "مُضاعِف مخصص للرسوم الأساسية",
-          "description" : "قم بتخصيص المُضاعِف المستخدَم للرسوم الأساسية التي تتكون منها maxFeePerGas لمعاملة EIP1559"
         }
       }
     },
@@ -4790,8 +4761,7 @@
     "votes" : "الأصوات ({{count}})"
   },
   "RecipientField" : {
-    "placeholder" : "أدخل عنوان {{currencyName}}",
-    "placeholderEns" : "أدخِل عنوان {{currencyName}} أو ENS"
+    "placeholder" : "أدخل عنوان {{currencyName}}"
   },
   "Terms" : {
     "title" : "شروط الاستخدام",
@@ -5760,7 +5730,7 @@
   },
   "discoverProtect" : {
     "title" : "استعِد مفاتيحك باستخدام\nهويّتك",
-    "description" : "عبارة الاسترداد السرية الخاصة بك لن تكون دائماً في متناول اليد.\nإطلاق تجريبي حصرياً لـ Ledger Nano X. اشترك مجاناً حتى 30 يونيو 2023",
+    "description" : "عبارة الاسترداد السرية الخاصة بك لن تكون دائماً في متناول اليد.\nإطلاق تجريبي حصرياً لـ Ledger Nano X. اشترك مجاناً حتى 31 مايو 2023",
     "cta" : "لماذا يجب أن اشترك؟",
     "downloadLLM" : "اشترك في <purple>Ledger Recover</purple> باستخدام تطبيق Ledger Live للجوّال"
   }
