@@ -118,9 +118,19 @@
       "title" : "Bluetooth está deshabilitado",
       "description" : "Habilita Bluetooth en los ajustes del teléfono. (estado {{state}})"
     },
+    "FwUpdateBluetoothNotSupported" : {
+      "title" : "Las actualizaciones de firmware solo se pueden realizar con conexiones cableadas"
+    },
+    "BtcUnmatchedApp" : {
+      "title" : "Esa es la aplicación incorrecta",
+      "description" : "Abre la aplicación {{managerAppName}} en tu dispositivo."
+    },
     "CantOpenDevice" : {
       "title" : "La conexión ha fallado",
       "description" : "Tu dispositivo Ledger debe estar desbloqueado y dentro del alcance para utilizar Bluetooth."
+    },
+    "CantScanQRCode" : {
+      "title" : "No fue posible escanear este código QR: esta dirección no es compatible con la verificación automática."
     },
     "ConnectAppTimeout" : {
       "title" : "No se ha encontrado ningún dispositivo",
@@ -317,13 +327,11 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
-      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente.",
-      "primaryCTA" : "Cargar otra imagen"
+      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
-      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente.",
-      "primaryCTA" : "Cargar otra imagen"
+      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
     },
     "InvalidAddress" : {
       "title" : "Esta no es una dirección de {{currencyName}} válida"
@@ -472,10 +480,6 @@
       "title" : "La contraseña no coincide",
       "description" : "Inténtalo de nuevo."
     },
-    "PeerRemovedPairing" : {
-      "title" : "Es necesario volver a emparejar tu {{ productName }}.",
-      "description" : "Ve a los ajustes de Bluetooth del teléfono y olvida tu {{ productName }}. Luego vuelve a Ledger Live e inténtalo de nuevo."
-    },
     "SelectExchangesLoadError" : {
       "title" : "No es posible cargar",
       "description" : "No es posible cargar los exchanges."
@@ -552,8 +556,7 @@
     },
     "UpdateYourApp" : {
       "title" : "Es necesario actualizar la aplicación",
-      "description" : "Desinstala y vuelve a instalar la aplicación {{managerAppName}} en Manager.",
-      "primaryCTA" : "Abrir Manager"
+      "description" : "Desinstala y vuelve a instalar la aplicación {{managerAppName}} en Manager."
     },
     "UserRefusedAllowManager" : {
       "title" : "Manager deshabilitado en el dispositivo",
@@ -672,8 +675,7 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger.",
-      "primaryCTA" : "Reintentar"
+      "description" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
     },
     "SolanaAccountNotFunded" : {
       "title" : "Cuenta sin fondos"
@@ -1838,8 +1840,7 @@
           "title" : "Tu dispositivo está bloqueado",
           "subtitle" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
         },
-        "retryCta" : "Reintentar",
-        "openSettingsCta" : "Ir a los ajustes de Bluetooth"
+        "retryCta" : "Inténtalo de nuevo"
       }
     }
   },
@@ -2389,7 +2390,6 @@
     },
     "earn" : "Gana",
     "quickActions" : "Acciones rápidas",
-    "referralProgram" : "Recomiéndanos a un amigo y recibe $10 USD en Bitcoin",
     "banner" : {
       "redelegation" : {
         "description" : "Por si no lo sabías, el validador de Ledger pone en participación con una comisión inferior a la del validador que estás utilizando.",
@@ -2733,12 +2733,7 @@
       "featureFlagsTabGroups" : "Grupos",
       "firebaseProject" : "Proyecto de Firebase al que se refiere esta compilación:",
       "showBannerDesc" : "Mostrar banner cuando estén anuladas las señales de alarma",
-      "bannerTitle" : "Señales de alarma anuladas localmente",
-      "features" : {
-        "firmwareUpdate" : {
-          "headerTitle" : "Actualización del firmware de depuración"
-        }
-      }
+      "bannerTitle" : "Señales de alarma anuladas localmente"
     }
   },
   "notifications" : {
@@ -2751,8 +2746,7 @@
   },
   "transfer" : {
     "recipient" : {
-      "input" : "Ingresar dirección",
-      "inputEns" : "Ingresa la dirección o el ENS"
+      "input" : "Ingresar dirección"
     },
     "send" : {
       "title" : "Enviar",
@@ -2808,8 +2802,7 @@
         "addressVerified" : "Dirección verificada",
         "verifyAddress" : "Toca aquí para verificar tu dirección",
         "adviceVerify" : "Siempre recomendamos verificar la dirección con el dispositivo Ledger.",
-        "sendWarning" : "Envía solamente {{currencyName}} ({{currencyTicker}}) a esta dirección. El envío de cualquier otra moneda puede suponer una pérdida permanente.",
-        "dashStakingWarning" : "Asegúrate de no utilizar esta dirección para recibir recompensas de participación"
+        "sendWarning" : "Envía solamente {{currencyName}} ({{currencyTicker}}) a esta dirección. El envío de cualquier otra moneda puede suponer una pérdida permanente."
       },
       "securityVerify" : {
         "title" : "Por motivos de seguridad, te recomendamos que verifiques esta dirección con tu dispositivo Ledger.",
@@ -3386,14 +3379,7 @@
       "domainService" : {
         "reverse" : "Esta dirección está enlazada con {{domain}}",
         "forward" : "Este es una dirección de ENS válida",
-        "supportLink" : "¿Qué es un Servicio de Nombre de Ethereum?",
-        "invalidDomain" : {
-          "title" : "Dominio no compatible",
-          "description" : "En este momento solo se admiten ENS con menos de 30 caracteres alfanuméricos."
-        },
-        "noResolution" : {
-          "title" : "No se ha encontrado la dirección para este dominio"
-        }
+        "supportLink" : "¿Qué es un Servicio de Nombre de Ethereum?"
       }
     },
     "amount" : {
@@ -4624,8 +4610,7 @@
             "noResultsFound" : "No se encontraron validadores para <0>{{search}}</0>"
           },
           "amount" : {
-            "newRedelegatedBalance" : "Nuevo total para <0>{{name}}</0> luego de la operación: <0>{{amount}}</0>",
-            "allAssetsUsed" : "Todos los activos utilizados"
+            "newRedelegatedBalance" : "Nuevo total para <0>{{name}}</0> luego de la operación: <0>{{amount}}</0>"
           },
           "verification" : {
             "success" : {
@@ -5730,7 +5715,22 @@
       }
     },
     "status" : {
-      "header" : "Estado"
+      "title" : "Puede que un problema requiera tu atención",
+      "title_plural" : "Algunos problemas podrían requerir tu atención",
+      "desc" : {
+        "0" : "Se están investigando y se resolverán pronto.",
+        "1" : "Si alguno de los problemas te afecta, ponte en contacto con nuestro servicio de <0>soporte al cliente</0>."
+      },
+      "cta" : {
+        "ok" : "Entendido"
+      },
+      "ok" : {
+        "title" : "Ledger Live funciona correctamente",
+        "desc" : "<0>¿Tienes problemas? Visita nuestra </0><1>página de ayuda</1>"
+      },
+      "error" : {
+        "title" : "Ledger Live está experimentando problemas"
+      }
     }
   },
   "browseWeb3" : {
@@ -6086,8 +6086,7 @@
       "media" : {
         "tag" : "{{count}} NFTs"
       }
-    },
-    "referralProgram" : "$10 USD"
+    }
   },
   "servicesWidget" : {
     "title" : "Servicios",
