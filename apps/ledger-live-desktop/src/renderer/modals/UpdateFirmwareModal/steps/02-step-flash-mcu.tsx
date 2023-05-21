@@ -124,10 +124,6 @@ const StepFlashMcu = ({
     setCurrentStep(currentStep => currentStep + 1);
   }, [installing]);
 
-  useEffect(() => {
-    console.log({ installing, maxSteps, currentStep });
-  }, [installing, maxSteps, currentStep]);
-
   // Updates the MCU
   useEffect(() => {
     if (!firmware) return;
