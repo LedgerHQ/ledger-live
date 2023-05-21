@@ -118,9 +118,19 @@
       "title" : "Üzgünüz, Bluetooth devre dışı",
       "description" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin. ({{state}} durum)"
     },
+    "FwUpdateBluetoothNotSupported" : {
+      "title" : "Donanım yazılımı güncellemeleri sadece kablolu bağlantıyla desteklenir"
+    },
+    "BtcUnmatchedApp" : {
+      "title" : "Bu, yanlış uygulama",
+      "description" : "Lütfen cihazınızda {{managerAppName}} uygulamasını açın"
+    },
     "CantOpenDevice" : {
       "title" : "Üzgünüz, bağlantı başarısız",
       "description" : "Ledger cihazınız kilidi açılmış durumda ve Bluetooth kapsama alanı içinde olmalıdır."
+    },
+    "CantScanQRCode" : {
+      "title" : "Bu QR kodu taranamadı; otomatik doğrulama bu adres tarafından desteklenmiyor."
     },
     "ConnectAppTimeout" : {
       "title" : "Üzgünüz, cihaz bulunamadı",
@@ -317,13 +327,11 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Ledger Stax’te kilit ekranı iptal edildi",
-      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz.",
-      "primaryCTA" : "Başka bir resim yükleyin"
+      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Ledger Stax’te kilit ekranı iptal edildi",
-      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz.",
-      "primaryCTA" : "Başka bir resim yükleyin"
+      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
     },
     "InvalidAddress" : {
       "title" : "Bu geçerli bir {{currencyName}} adresi değil"
@@ -472,10 +480,6 @@
       "title" : "Parola eşleşmiyor",
       "description" : "Lütfen tekrar deneyin."
     },
-    "PeerRemovedPairing" : {
-      "title" : "{{ productName }} cihazının tekrar eşleştirilmesi gerekiyor.",
-      "description" : "Telefonunuzun Bluetooth ayarlarına gidip {{ productName }} cihazını unutturun. Ardından Ledger Live'a dönüp tekrar deneyin."
-    },
     "SelectExchangesLoadError" : {
       "title" : "Yüklenemiyor",
       "description" : "Borsalar yüklenemiyor."
@@ -552,8 +556,7 @@
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
-      "description" : "Yönetici sekmesinde {{managerAppName}} uygulamasını kaldırın ve yeniden yükleyin",
-      "primaryCTA" : "Yöneticiyi Aç"
+      "description" : "Yönetici sekmesinde {{managerAppName}} uygulamasını kaldırın ve yeniden yükleyin"
     },
     "UserRefusedAllowManager" : {
       "title" : "Cihazda Yönetici özelliği kapalı",
@@ -672,8 +675,7 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin.",
-      "primaryCTA" : "Tekrar dene"
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
     "SolanaAccountNotFunded" : {
       "title" : "Hesap fonlanmadı"
@@ -1838,8 +1840,7 @@
           "title" : "Cihazınız kilitlendi",
           "subtitle" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
         },
-        "retryCta" : "Tekrar dene",
-        "openSettingsCta" : "Bluetooth ayarlarına git"
+        "retryCta" : "Tekrar deneyin"
       }
     }
   },
@@ -2389,7 +2390,6 @@
     },
     "earn" : "Kazanın",
     "quickActions" : "Hızlı işlemler",
-    "referralProgram" : "Bizi arkadaşınıza önererek $10 değerinde Bitcoin kazanın",
     "banner" : {
       "redelegation" : {
         "description" : "Haberiniz olsun! Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
@@ -2733,12 +2733,7 @@
       "featureFlagsTabGroups" : "Gruplar",
       "firebaseProject" : "Bu sürüm tarafından hedeflenen Firebase projesi:",
       "showBannerDesc" : "Bayraklar geçersiz bırakıldığında banner'ı göster",
-      "bannerTitle" : "Bayraklar yerel olarak geçersiz bırakıldı",
-      "features" : {
-        "firmwareUpdate" : {
-          "headerTitle" : "Donanım yazılımı güncellemesi için hata ayıklama"
-        }
-      }
+      "bannerTitle" : "Bayraklar yerel olarak geçersiz bırakıldı"
     }
   },
   "notifications" : {
@@ -2751,8 +2746,7 @@
   },
   "transfer" : {
     "recipient" : {
-      "input" : "Adresi girin",
-      "inputEns" : "Adres ya da ENS adı girin"
+      "input" : "Adresi girin"
     },
     "send" : {
       "title" : "Gönder",
@@ -2808,8 +2802,7 @@
         "addressVerified" : "Adres doğrulandı",
         "verifyAddress" : "Adresinizi doğrulamak için buraya dokunun",
         "adviceVerify" : "Adresinizi daima Ledger cihazınız ile doğrulamanızı öneririz",
-        "sendWarning" : "Bu adrese sadece {{currencyName}} ({{currencyTicker}}) gönderin. Başka herhangi bir coin gönderdiğiniz takdirde bu coin'leri kalıcı olarak yitirebilirsiniz.",
-        "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın"
+        "sendWarning" : "Bu adrese sadece {{currencyName}} ({{currencyTicker}}) gönderin. Başka herhangi bir coin gönderdiğiniz takdirde bu coin'leri kalıcı olarak yitirebilirsiniz."
       },
       "securityVerify" : {
         "title" : "Güvenliğiniz açısından bu adresi Ledger cihazınızla doğrulamanızı öneririz.",
@@ -3386,14 +3379,7 @@
       "domainService" : {
         "reverse" : "Bu adres {{domain}} ile bağlı",
         "forward" : "Bu geçerli bir ENS adresidir",
-        "supportLink" : "Ethereum Name Service nedir?",
-        "invalidDomain" : {
-          "title" : "Alan desteklenmiyor",
-          "description" : "Şu anda sadece 30'dan az alfasayısal karaktere sahip olan ENS alanları desteklenmektedir."
-        },
-        "noResolution" : {
-          "title" : "Bu alan için adres bulunamadı"
-        }
+        "supportLink" : "Ethereum Name Service nedir?"
       }
     },
     "amount" : {
@@ -4624,8 +4610,7 @@
             "noResultsFound" : "<0>{{search}}</0> için doğrulayıcı bulunamadı"
           },
           "amount" : {
-            "newRedelegatedBalance" : "İşlemden sonra <0>{{name}}</0> için yeni toplam: <0>{{amount}}</0>",
-            "allAssetsUsed" : "Tüm varlıklar kullanıldı"
+            "newRedelegatedBalance" : "İşlemden sonra <0>{{name}}</0> için yeni toplam: <0>{{amount}}</0>"
           },
           "verification" : {
             "success" : {
@@ -5730,7 +5715,22 @@
       }
     },
     "status" : {
-      "header" : "Durum"
+      "title" : "İlgilenmeniz gereken bir sorun var",
+      "title_plural" : "Dikkatinizi gerektiren bazı sorunlar var",
+      "desc" : {
+        "0" : "An itibarıyla inceleniyorlar ve kısa süre içerisinde çözülecekler.",
+        "1" : "Bu sorunlardan etkilendiyseniz <0>Müşteri Desteği</0> ekibimizle iletişime geçin"
+      },
+      "cta" : {
+        "ok" : "Anladım"
+      },
+      "ok" : {
+        "title" : "Ledger Live çalışır durumda",
+        "desc" : "<0>Sorun mu yaşıyorsunuz? </0><1>Yardım sayfamıza</1> gidin"
+      },
+      "error" : {
+        "title" : "Ledger Live'de bir sorun var"
+      }
     }
   },
   "browseWeb3" : {
@@ -6086,8 +6086,7 @@
       "media" : {
         "tag" : "{{count}} NFT"
       }
-    },
-    "referralProgram" : "$10"
+    }
   },
   "servicesWidget" : {
     "title" : "Hizmetler",
