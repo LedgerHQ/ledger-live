@@ -118,9 +118,19 @@
       "title" : "عذراً، تم تعطيل البلوتوث",
       "description" : "يرجى تفعيل البلوتوث في إعدادات هاتفك. (حالة {{state}})"
     },
+    "FwUpdateBluetoothNotSupported" : {
+      "title" : "تحديثات البرامج الثابتة مدعومة فقط للاتصالات السلكية"
+    },
+    "BtcUnmatchedApp" : {
+      "title" : "هذا التطبيق الخطأ",
+      "description" : "يرجى فتح تطبيق {{managerAppName}} على جهازك."
+    },
     "CantOpenDevice" : {
       "title" : "عذراً، فشل الاتصال",
       "description" : "يجب إلغاء قفل جهازك Ledger وأن يكون داخل النطاق لاستخدام البلوتوث."
+    },
+    "CantScanQRCode" : {
+      "title" : "تعذر فحص رمز الاستجابة السريعة (QR) هذا: التحقق التلقائي غير مدعوم من قِبل هذا العنوان"
     },
     "ConnectAppTimeout" : {
       "title" : "عفوًا، لم يتم العثور على أي جهاز",
@@ -317,13 +327,11 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "تم إلغاء شاشة القَفل على Ledger Stax",
-      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى.",
-      "primaryCTA" : "تحميل صورة أخرى"
+      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "تم إلغاء شاشة القَفل على Ledger Stax",
-      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى.",
-      "primaryCTA" : "تحميل صورة أخرى"
+      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
     },
     "InvalidAddress" : {
       "title" : "هذا ليس عنوان {{currencyName}} صحيح"
@@ -472,10 +480,6 @@
       "title" : "كلمة المرور غير مطابقة",
       "description" : "يرجى إعادة المحاولة."
     },
-    "PeerRemovedPairing" : {
-      "title" : "{{ productName }} الخاص بك يحتاج أن يتم إقرانه مرة أخرى.",
-      "description" : "انتقل إلى إعدادات البلوتوث في هاتفك وقم بنسيان {{ productName }} الخاص بك. ثُم ارجع إلى Ledger Live وحاول مجدداً."
-    },
     "SelectExchangesLoadError" : {
       "title" : "تعذر التحميل",
       "description" : "لا يمكن تحميل المبادلات."
@@ -552,8 +556,7 @@
     },
     "UpdateYourApp" : {
       "title" : "مطلوب تحديث للتطبيق",
-      "description" : "يرجى إلغاء التثبيت ثم إعادة تثبيت تطبيق {{managerAppName}} في المدير (Manager).",
-      "primaryCTA" : "افتح Manager (المدير)"
+      "description" : "يرجى إلغاء التثبيت ثم إعادة تثبيت تطبيق {{managerAppName}} في المدير (Manager)."
     },
     "UserRefusedAllowManager" : {
       "title" : "تم تعطيل المدير (Manager) على الجهاز",
@@ -672,8 +675,7 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "حدث خطأ ما. يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger.",
-      "primaryCTA" : "إعادة المحاولة"
+      "description" : "حدث خطأ ما. يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
     "SolanaAccountNotFunded" : {
       "title" : "الحساب غير ممول"
@@ -1838,8 +1840,7 @@
           "title" : "جهازك مقفل",
           "subtitle" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
         },
-        "retryCta" : "إعادة المحاولة",
-        "openSettingsCta" : "انتقل إلى إعدادات البلوتوث"
+        "retryCta" : "أعد المحاولة"
       }
     }
   },
@@ -2389,7 +2390,6 @@
     },
     "earn" : "اكسب",
     "quickActions" : "إجراءات سريعة",
-    "referralProgram" : "قم بترشيح صديق واحصل على 10$ من بيتكوين",
     "banner" : {
       "redelegation" : {
         "description" : "في حالة أنك لم تكن تعلم، مدقق Ledger يقوم بالتكديس بعمولة منخفضة عن المدقق الذي تستخدمه.",
@@ -2733,12 +2733,7 @@
       "featureFlagsTabGroups" : "المجموعات",
       "firebaseProject" : "مشروع Firebase الذي يستهدفه هذا الإصدار:",
       "showBannerDesc" : "عرض الشريط عندما يتم تجاوز العلامات",
-      "bannerTitle" : "تم تجاوز العلامات محلياً",
-      "features" : {
-        "firmwareUpdate" : {
-          "headerTitle" : "تصحيح أخطاء تحديث البرنامج الثابت"
-        }
-      }
+      "bannerTitle" : "تم تجاوز العلامات محلياً"
     }
   },
   "notifications" : {
@@ -2751,8 +2746,7 @@
   },
   "transfer" : {
     "recipient" : {
-      "input" : "أدخل العنوان",
-      "inputEns" : "أدخِل عنواناً أو ENS"
+      "input" : "أدخل العنوان"
     },
     "send" : {
       "title" : "إرسال",
@@ -2808,8 +2802,7 @@
         "addressVerified" : "تم تأكيد العنوان",
         "verifyAddress" : "انقر هنا للتحقق من عنوانك",
         "adviceVerify" : "نوصي دائماً بالتحقق من عنوانك باستخدام جهازك Ledger",
-        "sendWarning" : "قم بإرسال فقط {{currencyName}} ({{currencyTicker}}) إلى هذا العنوان. إرسال أي عملات أخرى قد يُؤدي إلى فقدانها تماماً.",
-        "dashStakingWarning" : "يُرجى التأكد من أنك لا تستخدم هذا العنوان لتلقي مكافآت التكديس"
+        "sendWarning" : "قم بإرسال فقط {{currencyName}} ({{currencyTicker}}) إلى هذا العنوان. إرسال أي عملات أخرى قد يُؤدي إلى فقدانها تماماً."
       },
       "securityVerify" : {
         "title" : "لضمان الأمان، نوصي دائماً بالتحقق من هذا العنوان باستخدام جهازك Ledger.",
@@ -3386,14 +3379,7 @@
       "domainService" : {
         "reverse" : "هذا العنوان مربوط بـ {{domain}}",
         "forward" : "هذا عنوان ENS صالح",
-        "supportLink" : "ما هي Ethereum Name Service (خدمة أسماء إيثريوم)؟",
-        "invalidDomain" : {
-          "title" : "النطاق ليس مدعوماً",
-          "description" : "يتم دعم ENS فقط الذي يحتوي على أقل من 30 حرف أبجدي رقمي."
-        },
-        "noResolution" : {
-          "title" : "لم يتم العثور على عنوان لهذا النطاق"
-        }
+        "supportLink" : "ما هي Ethereum Name Service (خدمة أسماء إيثريوم)؟"
       }
     },
     "amount" : {
@@ -4624,8 +4610,7 @@
             "noResultsFound" : "لم يتم العثور على مدقق لـ <0>{{search}}</0>"
           },
           "amount" : {
-            "newRedelegatedBalance" : "الإجمالي الجديد لـ <0>{{name}}</0> بعد العملية: <0>{{amount}}</0>",
-            "allAssetsUsed" : "جميع الأصول المستخدمة"
+            "newRedelegatedBalance" : "الإجمالي الجديد لـ <0>{{name}}</0> بعد العملية: <0>{{amount}}</0>"
           },
           "verification" : {
             "success" : {
@@ -5730,7 +5715,22 @@
       }
     },
     "status" : {
-      "header" : "الحالة"
+      "title" : "هناك مشكلة ما قد تتطلب انتباهك",
+      "title_plural" : "قد تتطلب بعض المشاكل انتباهك",
+      "desc" : {
+        "0" : "يجري فحصها وسيتم حلها قريباً.",
+        "1" : "إذا كنت مُتأثراً بأي من هذه المشاكل، تواصل مع <0>دعم العملاء</0> لدينا"
+      },
+      "cta" : {
+        "ok" : "فهمت ذلك"
+      },
+      "ok" : {
+        "title" : "Ledger Live قيد التشغيل",
+        "desc" : "<0>تواجه مشكلة؟ اذهب الى </0><1>صفحة المساعدة</1> لدينا"
+      },
+      "error" : {
+        "title" : "Ledger Live يواجه مشاكل"
+      }
     }
   },
   "browseWeb3" : {
@@ -6086,8 +6086,7 @@
       "media" : {
         "tag" : "{{count}} رمز غير قابل للاستبدال"
       }
-    },
-    "referralProgram" : "$10"
+    }
   },
   "servicesWidget" : {
     "title" : "الخدمات",
