@@ -95,8 +95,15 @@ export const StepRestoreFooter = ({
   setCompletedRestoreSteps,
   setNonce,
   nonce,
+  setFirmwareUpdateCompleted,
 }: StepProps) => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    // Reset manager if user closes drawer to fetch latest state.
+    // Avoid unexpected behavior from outdated firmware info.
+    setFirmwareUpdateCompleted(true);
+  }, [setFirmwareUpdateCompleted]);
 
   const onSkip = useCallback(() => {
     setCompletedRestoreSteps([...completedRestoreSteps, currentRestoreStep]);

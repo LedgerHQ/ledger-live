@@ -39,6 +39,7 @@ export type StepProps = {
   setCurrentRestoreStep: (arg0: string) => void;
   nonce: number;
   setNonce: (arg0: number) => void;
+  setFirmwareUpdateCompleted: (arg0: boolean) => void;
 };
 
 export type StepId = "idCheck" | "updateMCU" | "updating" | "finish" | "resetDevice" | "restore";
@@ -53,6 +54,7 @@ type Props = {
   deviceModelId: DeviceModelId;
   deviceInfo: DeviceInfo;
   setFirmwareUpdateOpened: (isOpen: boolean) => void;
+  setFirmwareUpdateCompleted: (completed: boolean) => void;
   // This is bad practice but it seems to be needed since we spread additional props in the stepper and down below…
   [key: string]: unknown;
 };
@@ -71,6 +73,7 @@ const UpdateModal = ({
   withAppsToReinstall,
   error,
   onDrawerClose,
+  setFirmwareUpdateCompleted,
   firmware,
   ...props
 }: Props) => {
@@ -197,6 +200,7 @@ const UpdateModal = ({
     setCurrentRestoreStep,
     nonce,
     setNonce,
+    setFirmwareUpdateCompleted,
   };
 
   const deviceModel = getDeviceModel(deviceModelId);
