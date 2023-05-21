@@ -781,7 +781,9 @@ const renderFirmwareUpdatingBase = ({
 }) => (
   <Wrapper>
     <Header />
-    <Animation animation={getDeviceAnimation(modelId, type, "firmwareUpdating")} />
+    <Box mb={8}>
+      <Animation animation={getDeviceAnimation(modelId, type, "firmwareUpdating")} />
+    </Box>
     <Footer>
       <Flex alignItems="flex-start" flexDirection="column">
         <Flex alignItems="center">

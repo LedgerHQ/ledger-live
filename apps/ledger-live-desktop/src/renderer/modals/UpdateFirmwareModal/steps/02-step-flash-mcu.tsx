@@ -110,7 +110,6 @@ const StepFlashMcu = ({
   }, [deviceModelId, firmware, isMcuUpdateFinished, setError, setUpdatedDeviceInfo, transitionTo]);
 
   useEffect(() => {
-    console.log("installing", installing);
     if (!installing) return;
 
     // Whenever the 'installing' state changes we are flashing a different step,
