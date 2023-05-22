@@ -1995,7 +1995,7 @@
     "platform" : "Live 应用程序",
     "discover" : "发现",
     "nanoX" : "Nano X",
-    "market" : "Market（市场）",
+    "market" : "市场",
     "learn" : "学习"
   },
   "learn" : {
@@ -2668,6 +2668,10 @@
       "title" : "实验性功能",
       "desc" : "尝试一下实验性功能，让我们知道您的想法。",
       "disclaimer" : "这些是我们以“按现状”为基准提供的实验性功能，以供我们的专业爱好者社区测试。这些功能随时可能会更改、中断或删除。启用这些功能，意味着您同意自行承担使用过程中的风险。",
+      "provider" : "实验性设置“我的 Ledger 提供商 ({{forcedProvider}})”可能会显示未发布的操作系统和应用程序，从而导致兼容性问题。您可以在设置中禁用此设置。",
+      "providerDevMode" : "实验性设置“我的 Ledger 提供商 ({{forcedProvider}})”和“开发者模式”可能会显示未发布的操作系统和应用程序，从而导致兼容性问题。您可以在设置中禁用这些设置。",
+      "devMode" : "实验性设置“开发者模式”可能会显示未发布的操作系统和应用程序，从而导致兼容性问题。您可以在设置中禁用此设置。",
+      "providerCTA" : "前往设置选项",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "实验性集成",
@@ -2689,13 +2693,13 @@
           "title" : "我的 Ledger 的实验性应用程序列表",
           "description" : "我的 Ledger 访问和内部流程的性能改进。"
         },
-        "experimentalCountervalues" : {
-          "title" : "实验性对价 API",
-          "description" : "这可能会导致您的账户对价显示错误。"
-        },
         "experimentalSwap" : {
           "title" : "新的互换界面",
           "description" : "使用新的实验性互换界面"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "启用网络日志",
+          "description" : "在控制台启用网络日志（错误日志已始终启用）"
         }
       },
       "developerFeatures" : {
@@ -3674,6 +3678,7 @@
     "allowAppPermission" : "在您的设备上打开 {{wording}} 应用程序",
     "allowAppPermissionSubtitleToken" : "管理您的 {{token}} 代币",
     "allowManagerPermission" : "在 {{productName}} 上允许使用 {{wording}}",
+    "allowRemoveCustomLockscreen" : "确认移除 Ledger Stax 上的图片",
     "loading" : "正在加载……",
     "turnOnAndUnlockDevice" : "启动并解锁您的设备",
     "connectAndUnlockDevice" : "连接并解锁您的设备",
@@ -5818,7 +5823,7 @@
     }
   },
   "market" : {
-    "title" : "Market（市场）",
+    "title" : "市场",
     "filters" : {
       "sort" : "排序",
       "filter" : "筛选",
@@ -5966,9 +5971,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "从我的图片库中选择",
-        "selectFromNFTGallery" : "从 NFT 库中选择"
+        "selectFromNFTGallery" : "从 NFT 库中选择",
+        "remove" : "移除当前图片"
       }
     },
+    "toastRemove" : "锁屏图片已移除",
     "cropImage" : "裁剪图片",
     "chooseConstrast" : "选择对比度",
     "uploadAnotherImage" : "上传另一张图片",
