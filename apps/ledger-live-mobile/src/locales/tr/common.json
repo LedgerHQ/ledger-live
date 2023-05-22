@@ -2668,6 +2668,10 @@
       "title" : "Deneysel özellikler",
       "desc" : "Deneysel özelliklere bakıp ne düşündüğünüzü bize bildirin.",
       "disclaimer" : "Bu Deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunuyoruz. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz.",
+      "provider" : "“My Ledger sağlayıcısı ({{forcedProvider}})” deneysel ayarı, piyasaya sürülmemiş işletim sistemlerini ve uygulamaları göstererek uyumluluk sorunlarına yol açabiliyor. Bunu ayarlardan devre dışı bırakabilirsiniz.",
+      "providerDevMode" : "“My Ledger sağlayıcısı ({{forcedProvider}})” ve “Developer mode (Geliştirici modu) deneysel ayarları, piyasaya sürülmemiş işletim sistemlerini ve uygulamaları göstererek uyumluluk sorunlarına yol açabiliyor. Bunu ayarlardan devre dışı bırakabilirsiniz.",
+      "devMode" : "“Developer mode” (Geliştirici modu) deneysel ayarı, piyasaya sürülmemiş işletim sistemlerini ve uygulamaları göstererek uyumluluk sorunlarına yol açabiliyor. Bunu ayarlardan devre dışı bırakabilirsiniz.",
+      "providerCTA" : "Ayarlara git",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "Deneysel entegrasyonlar",
@@ -2696,6 +2700,10 @@
         "experimentalSwap" : {
           "title" : "Yeni TAKAS arayüzü",
           "description" : "Yeni ve deneysel takas arayüzünü kullanın"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "Ağ log'larını etkinleştirin",
+          "description" : "Konsolda ağ log'larını etkinleştirin (hata log'ları her zaman etkindir)"
         }
       },
       "developerFeatures" : {
@@ -3468,6 +3476,33 @@
       }
     }
   },
+  "editTransaction" : {
+    "cta" : "Hızlandırın ya da İptal Edin",
+    "previousFeesInfo" : "Mevcut ağ ücreti = {{amount}} ETH",
+    "header" : "İşlemi Düzenleyin",
+    "learnMore" : "Daha fazla bilgi almak istiyorum",
+    "panel" : {
+      "stuckMessage" : "Bu \"gönder\" işlemi takıldı. İşlemi daha yüksek bir ağ ücretiyle hızlandırın veya iptal edin.",
+      "speedupMessage" : "İşleminiz devam ediyor. Daha yüksek bir ağ ücretiyle hızlandırabilir ya da işlemi iptal edebilirsiniz."
+    },
+    "speedUp" : {
+      "title" : "Hızlandırın",
+      "description" : "İşlemi daha yüksek bir ağ ücretiyle yeniden gönderin."
+    },
+    "cancel" : {
+      "title" : "İptal et",
+      "description" : "Sizin adresinize 0 {{ticker}} gönderiliyor. İptal edildiğinden emin olmak için ağ ücreti, iptal edilecek işlemin ücretinden %30 daha yüksek olacaktır."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Hesabınızda yeterince fon olmadığı için işlem iptal edilemiyor.",
+      "notEnoughFundsToSpeedup" : "Hesabınızda yeterince fon olmadığı için işlem hızlandırılamıyor.",
+      "notlowestNonceToSpeedup" : "Hızlandırma özelliği kullanılamıyor. Önceki bir işlem takıldığı için işleminiz beklemede. Onaylanmasını bekleyebilir, hızlandırabilir veya iptal edebilirsiniz.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "Hızlandırılamıyor veya iptal edilemiyor",
+        "description" : "Bu işlem zaten doğrulanmış"
+      }
+    }
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "Kripto seç",
@@ -3674,6 +3709,7 @@
     "allowAppPermission" : "Cihazınızda {{wording}} uygulamasını açın",
     "allowAppPermissionSubtitleToken" : "ve {{token}} token'larınızı yönetin",
     "allowManagerPermission" : "{{productName}} cihazınızda {{wording}} iznini verin",
+    "allowRemoveCustomLockscreen" : "Ledger Stax'inizde görüntünün kaldırılmasını onaylayın",
     "loading" : "Yükleniyor...",
     "turnOnAndUnlockDevice" : "Cihazınızı çalıştırın ve kilidini açın",
     "connectAndUnlockDevice" : "Cihazınızı bağlayın ve kilidini açın",
@@ -5966,9 +6002,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Resim galerimden seç",
-        "selectFromNFTGallery" : "NFT galerisinden seç"
+        "selectFromNFTGallery" : "NFT galerisinden seç",
+        "remove" : "Mevcut resmi kaldır"
       }
     },
+    "toastRemove" : "Kilitli ekran resmi kaldırıldı",
     "cropImage" : "Resmi kırp",
     "chooseConstrast" : "Kontrastı seç",
     "uploadAnotherImage" : "Başka bir görsel yükleyin",
