@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useCallback, useContext, useRef } from "react";
 import { Trans } from "react-i18next";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -60,6 +60,7 @@ const FirmwareUpdate = (props: Props) => {
   } = props;
   const { setDrawer } = useContext(context);
   const stepId = initialStepId(props);
+  const firmwareUpdateCompletedRef = useRef(false);
   const modal = deviceInfo.isOSU ? "install" : props.openFirmwareUpdate ? "disclaimer" : "closed";
   const deviceSpecs = getDeviceModel(device.modelId);
   const isDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
@@ -67,6 +68,17 @@ const FirmwareUpdate = (props: Props) => {
   const onDrawerClose = useCallback(() => {
     onReset((installed || []).map(({ name }) => name));
   }, [installed, onReset]);
+
+  const setFirmwareUpdateCompleted = useCallback((completed: boolean) => {
+    firmwareUpdateCompletedRef.current = completed;
+  }, []);
+
+  const onRequestClose = useCallback(() => {
+    setDrawer();
+    if (firmwareUpdateCompletedRef.current) {
+      onReset([]);
+    }
+  }, [onReset, setDrawer]);
 
   const onShowDisclaimer = useCallback(() => {
     if (!firmware) return;
@@ -95,10 +107,12 @@ const FirmwareUpdate = (props: Props) => {
         device: device,
         error: error,
         deviceModelId: deviceSpecs.id,
-        setFirmwareUpdateOpened: setFirmwareUpdateOpened,
+        setFirmwareUpdateOpened,
+        setFirmwareUpdateCompleted,
       },
       {
         preventBackdropClick: true,
+        onRequestClose,
       },
     );
   }, [
@@ -110,7 +124,9 @@ const FirmwareUpdate = (props: Props) => {
     installed,
     modal,
     onDrawerClose,
+    onRequestClose,
     setDrawer,
+    setFirmwareUpdateCompleted,
     setFirmwareUpdateOpened,
     stepId,
   ]);
