@@ -128,7 +128,6 @@ export default tokens;
       const parentCurrency = inferParentCurrency(common);
       const disableCountervalue = !!common.disable_countervalue;
       const delisted = !!common.delisted;
-      const countervalueTicker = common.countervalue_ticker;
       try {
         invariant(
           typeof parentCurrency === "string" && parentCurrency,
@@ -182,7 +181,6 @@ export default tokens;
         contractAddress,
         disableCountervalue,
         delisted,
-        countervalueTicker,
       ];
     }),
 };
