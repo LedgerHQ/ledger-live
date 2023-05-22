@@ -3,6 +3,7 @@ import { Observable, Subscription } from "rxjs";
 import { NativeModules, Platform } from "react-native";
 import Config from "react-native-config";
 import TransportBLE from "../../../react-native-hw-transport-ble";
+import { es } from "date-fns/locale";
 
 const { BluetoothHelperModule } = NativeModules;
 
@@ -137,7 +138,9 @@ export function useEnableBluetooth(
 
   let bluetoothServicesState: BluetoothServicesState = "disabled";
 
-  if (observedTransportState === "PoweredOn") {
+  if (__DEV__) {
+    bluetoothServicesState = "enabled";
+  } else if (observedTransportState === "PoweredOn") {
     bluetoothServicesState = "enabled";
   } else if (observedTransportState === "PoweredOff") {
     bluetoothServicesState = "disabled";
