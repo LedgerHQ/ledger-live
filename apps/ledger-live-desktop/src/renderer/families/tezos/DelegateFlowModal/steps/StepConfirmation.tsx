@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React from "react";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { multiline } from "~/renderer/styles/helpers";
@@ -17,13 +17,13 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
   min-height: 220px;
 `;
@@ -141,4 +141,4 @@ export const StepConfirmationFooter = ({
     </>
   );
 };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
@@ -103,4 +103,4 @@ const StepConfirmationFooter = (props: StepProps) => {
   );
 };
 export { StepConfirmationFooter };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

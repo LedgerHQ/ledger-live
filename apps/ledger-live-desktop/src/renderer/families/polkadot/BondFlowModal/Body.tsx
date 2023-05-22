@@ -74,13 +74,12 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     transaction,
     setTransaction,
     account,
-    parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account, parentAccount } = params;
-    const bridge = getAccountBridge(account, parentAccount);
+    const { account } = params;
+    const bridge = getAccountBridge(account);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "bond",
@@ -89,7 +88,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     });
     return {
       account,
-      parentAccount,
       transaction,
     };
   });
@@ -123,7 +121,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     title: t("polkadot.bond.title"),
     device,
     account,
-    parentAccount,
     transaction,
     signed,
     stepId,

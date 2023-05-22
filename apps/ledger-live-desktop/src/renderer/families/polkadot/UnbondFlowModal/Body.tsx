@@ -24,6 +24,7 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 
 export type Data = {
   account: PolkadotAccount;
+  reward: number;
 };
 
 type OwnProps = {
@@ -75,20 +76,18 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     transaction,
     setTransaction,
     account,
-    parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account, parentAccount } = params;
-    const bridge = getAccountBridge(account, parentAccount);
+    const { account } = params;
+    const bridge = getAccountBridge(account);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "unbond",
     });
     return {
       account,
-      parentAccount,
       transaction,
     };
   });
@@ -122,7 +121,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     title: t("polkadot.unbond.title"),
     device,
     account,
-    parentAccount,
     transaction,
     signed,
     stepId,

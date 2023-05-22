@@ -22,7 +22,7 @@ import StepInfo, { StepInfoFooter } from "./steps/StepInfo";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { PolkadotAccount, TransactionStatus } from "@ledgerhq/live-common/families/polkadot/types";
 
 export type Data = {
   account: PolkadotAccount;
@@ -65,11 +65,13 @@ const steps: Array<St> = [
 ];
 
 // returns the first error
-function getStatusError(status, type = "errors"): Error | undefined | null {
-  if (!status || !status[type]) return null;
-  const firstKey = Object.keys(status[type])[0];
+function getStatusError(status: TransactionStatus, type = "errors"): Error | undefined | null {
+  if (!status || !status[type as keyof TransactionStatus]) return null;
+  const firstKey = Object.keys(status[type as keyof TransactionStatus]!)[0];
+  // @ts-expect-error This is complicated to prove that type / firstKey are the right keys
   return firstKey ? status[type][firstKey] : null;
 }
+
 const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
 });

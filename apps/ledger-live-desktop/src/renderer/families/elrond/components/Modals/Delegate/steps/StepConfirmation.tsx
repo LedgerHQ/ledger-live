@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -100,4 +100,4 @@ const StepConfirmationFooter = (props: StepProps) => {
   );
 };
 export { StepConfirmationFooter };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

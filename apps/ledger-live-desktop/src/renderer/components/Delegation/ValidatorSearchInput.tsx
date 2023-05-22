@@ -39,7 +39,7 @@ const Placeholder = styled(Box).attrs(() => ({
 type ValidatorSearchInputProps = {
   onSearch: (evt: React.SyntheticEvent<HTMLInputElement>) => void;
   search?: string;
-  noMargin: boolean;
+  noMargin?: boolean;
 };
 const ValidatorSearchInput = ({
   search,

@@ -67,7 +67,7 @@ export const OperationDetailsValidators = ({
   const mappedValidators = useMemo(
     () =>
       (validators || [])
-        .map(address => polkadotValidators.find(v => v.address === address))
+        .map(address => polkadotValidators.find(v => v.address === address)!)
         .filter(Boolean),
     [validators, polkadotValidators],
   );

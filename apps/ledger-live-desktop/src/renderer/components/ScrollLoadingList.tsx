@@ -55,4 +55,4 @@ function ScrollLoadingList<D>({
     </ScrollContainer>
   );
 }
-export default memo<ScrollLoadingListProps<unknown>>(ScrollLoadingList);
+export default memo<ScrollLoadingListProps<unknown>>(ScrollLoadingList) as typeof ScrollLoadingList;

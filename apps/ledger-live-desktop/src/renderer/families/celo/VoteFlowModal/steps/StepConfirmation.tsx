@@ -112,4 +112,4 @@ const StepConfirmation = ({
   }
   return null;
 };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

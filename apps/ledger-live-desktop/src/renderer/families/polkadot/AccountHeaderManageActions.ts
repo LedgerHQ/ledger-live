@@ -44,8 +44,8 @@ const AccountHeaderManageActions = ({ account, parentAccount }: Props) => {
       );
     }
   }, [mainAccount, hasBondedBalance, hasPendingBondOperation, dispatch]);
-  const _hasExternalController = hasExternalController(account);
-  const _hasExternalStash = hasExternalStash(account);
+  const _hasExternalController = hasExternalController(mainAccount);
+  const _hasExternalStash = hasExternalStash(mainAccount);
   const manageEnabled = !(
     _hasExternalController ||
     _hasExternalStash ||

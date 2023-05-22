@@ -56,7 +56,7 @@ const AmountField = ({
   if (!status) return null;
   const { useAllAmount } = transaction;
   const { amount, errors, warnings } = status;
-  let { amount: amountError } = errors;
+  let amountError: Error | null = errors.amount;
 
   // we ignore zero case for displaying field error because field is empty.
   if (amount.eq(0)) {

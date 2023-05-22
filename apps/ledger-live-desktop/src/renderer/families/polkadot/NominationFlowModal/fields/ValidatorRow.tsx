@@ -60,7 +60,9 @@ const SubTitle = styled(Box).attrs(() => ({
   font-weight: 500;
   color: ${p => p.theme.colors.palette.text.shade60};
 `;
-const Status = styled(Text)`
+const Status = styled(Text)<{
+  isElected?: boolean;
+}>`
   font-size: 11px;
   font-weight: 700;
   color: ${p => (p.isElected ? p.theme.colors.positiveGreen : p.theme.colors.palette.text.shade60)};
@@ -70,7 +72,9 @@ const TotalStake = styled.span`
   padding-left: 4px;
   border-left: 1px solid ${p => p.theme.colors.palette.text.shade30};
 `;
-const NominatorsCount = styled.span`
+const NominatorsCount = styled.span<{
+  isOversubscribed?: boolean;
+}>`
   font-size: 11px;
   font-weight: 700;
   color: ${p =>
@@ -86,17 +90,17 @@ const SideInfo = styled(Box).attrs(() => ({
 }))`
   margin-right: 8px;
 `;
-const Row: ThemedComponent<{
-  active: boolean;
-  disabled: boolean;
-}> = styled(Box).attrs(() => ({
+const Row = styled(Box).attrs(() => ({
   horizontal: true,
   flex: "0 0 56px",
   mb: 2,
   alignItems: "center",
   justifyContent: "flex-start",
   p: 2,
-}))`
+}))<{
+  active: boolean;
+  disabled: boolean;
+}>`
   border-radius: 4px;
   border: 1px solid transparent;
   position: relative;

@@ -7,9 +7,9 @@ import AngleDown from "~/renderer/icons/AngleDown";
 const Wrapper = styled.div`
   position: relative;
 `;
-const ShowMore: ThemedComponent<{
-  collapsed?: boolean;
-}> = styled(Button)`
+const ShowMore = styled(Button)<{
+  collapsed: boolean;
+}>`
   margin: 0;
   display: flex;
   color: ${p => p.theme.colors.wallet};
@@ -28,7 +28,9 @@ const ShowMore: ThemedComponent<{
     background-color: initial;
   }
 `;
-const IconAngleDown = styled.div`
+const IconAngleDown = styled.div<{
+  collapsed: boolean;
+}>`
   display: flex;
   align-items: center;
   justify-content: center;

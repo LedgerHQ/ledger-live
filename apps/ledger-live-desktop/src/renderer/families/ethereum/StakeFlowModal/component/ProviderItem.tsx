@@ -8,7 +8,7 @@ import { ListProvider } from "../types";
 import { StakeOnClickProps } from "../EthStakingModalBody";
 import { StakingIcon } from "../StakingIcon";
 
-const Container = styled(Flex)`
+export const Container = styled(Flex)`
   cursor: pointer;
   border-radius: 8px;
   :hover {
@@ -16,7 +16,7 @@ const Container = styled(Flex)`
   }
 `;
 
-const Tag = styled(TagCore)`
+export const Tag = styled(TagCore)`
   padding: 3px 6px;
   > span {
     font-size: 11px;

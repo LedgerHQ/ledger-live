@@ -38,9 +38,15 @@ import {
   ExternalStashUnsupportedWarning,
 } from "./UnsupportedWarning";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
+import {
+  PolkadotAccount,
+  PolkadotNomination,
+  PolkadotValidator,
+} from "@ledgerhq/live-common/families/polkadot/types";
+import { SubAccount } from "@ledgerhq/types-live";
 
 type Props = {
-  account: PolkadotAccount;
+  account: PolkadotAccount | SubAccount;
 };
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -49,7 +55,13 @@ const Wrapper = styled(Box).attrs(() => ({
   justify-content: space-between;
   align-items: center;
 `;
-const Nomination = ({ account }: Props) => {
+
+type NominationValidator = {
+  nomination: PolkadotNomination;
+  validator?: PolkadotValidator;
+};
+
+const Nomination = ({ account }: { account: PolkadotAccount }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = getAccountUnit(account);
@@ -67,7 +79,7 @@ const Nomination = ({ account }: Props) => {
           validator,
         };
       }) || [];
-    return all.reduce(
+    return all?.reduce(
       (sections, mapped) => {
         if (mapped.nomination.status === "active") {
           sections.uncollapsed.push(mapped);
@@ -77,8 +89,8 @@ const Nomination = ({ account }: Props) => {
         return sections;
       },
       {
-        uncollapsed: [],
-        collapsed: [],
+        uncollapsed: [] as NominationValidator[],
+        collapsed: [] as NominationValidator[],
       },
     );
   }, [nominations, validators]);
@@ -442,7 +454,7 @@ const Nomination = ({ account }: Props) => {
   );
 };
 const Nominations = ({ account }: Props) => {
-  if (!account.polkadotResources) return null;
+  if (account.type !== "Account") return null;
   return <Nomination account={account} />;
 };
 export default Nominations;

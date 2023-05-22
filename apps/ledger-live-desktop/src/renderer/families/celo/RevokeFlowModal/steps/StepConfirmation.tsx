@@ -92,4 +92,4 @@ export const StepConfirmationFooter = ({
     </Box>
   );
 };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

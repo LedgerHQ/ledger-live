@@ -77,11 +77,15 @@ const Title = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   fontSize: 4,
 }))``;
-const Description = styled(Text).attrs(({ isPill }) => ({
+const Description = styled(Text).attrs<{
+  isPill?: boolean;
+}>(({ isPill }) => ({
   ff: isPill ? "Inter|SemiBold" : "Inter|Regular",
   fontSize: isPill ? 2 : 3,
   color: "palette.text.shade60",
-}))`
+}))<{
+  isPill?: boolean;
+}>`
   ${p =>
     p.isPill
       ? `
@@ -122,7 +126,6 @@ const ManageModal = ({ account, ...rest }: Props) => {
   return (
     <Modal
       {...rest}
-      name={name}
       centered
       render={({ onClose }) => (
         <ModalBody

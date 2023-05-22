@@ -85,4 +85,4 @@ const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps) 
   }
   return null;
 };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;
