@@ -35,6 +35,14 @@ const latest = async (pairs: TrackingPair[], direct?: boolean) => {
   return data;
 };
 
+// to have more determinism in the order of the pairs requested to the API
+const sortTrackingPair = (a: TrackingPair, b: TrackingPair) =>
+  (
+    encodeCurrencyAsLedgerId(a.from) + encodeCurrencyAsLedgerId(a.to)
+  ).localeCompare(
+    encodeCurrencyAsLedgerId(b.from) + encodeCurrencyAsLedgerId(b.to)
+  );
+
 const api: CounterValuesAPI = {
   fetchHistorical: async (granularity, { from, to, startDate }) => {
     const format = formatPerGranularity[granularity];
@@ -71,6 +79,8 @@ const api: CounterValuesAPI = {
         indirectP.push(p);
       }
     });
+    directP.sort(sortTrackingPair);
+    indirectP.sort(sortTrackingPair);
     const [direct, indirect] = await Promise.all([
       directP.length ? latest(directP, true) : Promise.resolve([]),
       indirectP.length ? latest(indirectP) : Promise.resolve([]),
