@@ -1,6 +1,18 @@
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import type { RateGranularity } from "./types";
 
+export const encodeCurrencyAsLedgerId = (currency: Currency) => {
+  switch (currency.type) {
+    case "FiatCurrency": {
+      return currency.ticker;
+    }
+    case "CryptoCurrency":
+    case "TokenCurrency": {
+      return encodeURIComponent(currency.id);
+    }
+  }
+};
+
 const HOUR = 60 * 60 * 1000;
 const DAY = 24 * HOUR;
 
@@ -68,9 +80,7 @@ export const formatPerGranularity: Record<
 };
 
 export function pairId({ from, to }: { from: Currency; to: Currency }): string {
-  const fromTicker = from.countervalueTicker ?? from.ticker;
-  const toTicker = to.countervalueTicker ?? to.ticker;
-  return `${fromTicker}-${toTicker}`;
+  return `${encodeCurrencyAsLedgerId(from)}-${encodeCurrencyAsLedgerId(to)}`;
 }
 
 export function magFromTo(from: Currency, to: Currency): number {

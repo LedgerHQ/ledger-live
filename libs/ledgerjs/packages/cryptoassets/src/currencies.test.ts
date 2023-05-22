@@ -285,7 +285,6 @@ test("can register a new coin externally", () => {
     name: "MyCoin",
     managerAppName: "MyCoin",
     ticker: "MYC",
-    countervalueTicker: "MYC",
     scheme: "mycoin",
     color: "#ff0000",
     family: "mycoin",
