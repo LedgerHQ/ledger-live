@@ -2668,6 +2668,10 @@
       "title" : "試験的機能",
       "desc" : "試験的機能をお試しになり、フィードバックをお寄せください。",
       "disclaimer" : "これらは、テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。",
+      "provider" : "試験的設定「マイLedgerプロバイダー（{{forcedProvider}}）」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。これは設定で無効にできます。",
+      "providerDevMode" : "試験的設定「My Ledgerプロバイダー（{{forcedProvider}}）」と「デベロッパーモード」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。設定にて無効にできます。",
+      "devMode" : "試験的設定「デベロッパーモード」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。設定にて無効にできます。",
+      "providerCTA" : "設定を開く",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "試験的統合",
@@ -2696,6 +2700,10 @@
         "experimentalSwap" : {
           "title" : "新しいスワップインタフェース",
           "description" : "新しい試験的スワップインタフェースを使用する"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "ネットワークログを有効にする",
+          "description" : "コンソールでネットワークログを有効にする（エラーログは常に有効になっています）。"
         }
       },
       "developerFeatures" : {
@@ -3468,6 +3476,33 @@
       }
     }
   },
+  "editTransaction" : {
+    "cta" : "速度を上げる、またはキャンセルする",
+    "previousFeesInfo" : "現在のネットワーク手数料 = {{amount}} ETH",
+    "header" : "トランザクションを編集",
+    "learnMore" : "詳細が知りたいです",
+    "panel" : {
+      "stuckMessage" : "こちらの「送付」トランザクションが滞っています。より高いネットワーク手数料でトランザクションを高速化するか、キャンセルしてください。",
+      "speedupMessage" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。"
+    },
+    "speedUp" : {
+      "title" : "スピードアップ",
+      "description" : "より高いネットワーク手数料でトランザクションを再送信します。"
+    },
+    "cancel" : {
+      "title" : "キャンセル",
+      "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルを確定するには、ネットワーク手数料はキャンセルされるトランザクション手数料よりも30%高くなります。"
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "アカウントに十分な資金がないため、トランザクションをキャンセルすることはできません。",
+      "notEnoughFundsToSpeedup" : "アカウントに十分な資金がないため、トランザクションの高速化は利用できません。",
+      "notlowestNonceToSpeedup" : "高速化機能は利用できません。以前のトランザクションが滞っているため、お客様のトランザクションは保留中です。承認されるのを待って、高速化してキャンセルすることができます。",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "速度を上げる、またはキャンセルすることはできません",
+        "description" : "このトランザクションはすでに検証済みです"
+      }
+    }
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "暗号資産を選択",
@@ -3674,6 +3709,7 @@
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
     "allowManagerPermission" : "お持ちの{{productName}}で{{wording}}を許可する",
+    "allowRemoveCustomLockscreen" : "Ledger Staxの画像の削除を確定する",
     "loading" : "読み込み中...",
     "turnOnAndUnlockDevice" : "デバイスの電源をオンにしてロックを解除する",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
@@ -5966,9 +6002,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "画像ギャラリーから選択",
-        "selectFromNFTGallery" : "NFTギャラリーから選択"
+        "selectFromNFTGallery" : "NFTギャラリーから選択",
+        "remove" : "現在の画像を削除する"
       }
     },
+    "toastRemove" : "ロック画面の画像が削除されました",
     "cropImage" : "画像のトリミング",
     "chooseConstrast" : "コントラストを選択",
     "uploadAnotherImage" : "他の画像をアップロードする",
