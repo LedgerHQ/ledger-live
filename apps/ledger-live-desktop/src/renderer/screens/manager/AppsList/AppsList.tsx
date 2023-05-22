@@ -1,4 +1,4 @@
-import React, { useState, memo, useCallback, useEffect, useRef } from "react";
+import React, { useState, memo, useCallback, useEffect, useRef, useMemo } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
@@ -125,7 +125,7 @@ const AppsList = ({
   const displayedAppList = isDeviceTab ? device : catalog;
 
   const { getAllFlags } = useFeatureFlags();
-  const currencyFlags = getAllFlags();
+  const currencyFlags = useMemo(() => getAllFlags(), [getAllFlags]);
 
   const mapApp = useCallback(
     (app: App, appStoreView: boolean, onlyUpdate?: boolean, showActions?: boolean) => {
