@@ -221,7 +221,7 @@
     "lend" : "Borç ver",
     "catalog" : "Keşfet",
     "market" : "Piyasa",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Favori hesaplarınızı yıldızlayarak burada görüntüleyebilirsiniz.",
@@ -2269,6 +2269,11 @@
     "remainingCharacters" : "{{ remainingCharacters }} karakter kaldı",
     "renamed" : "{{ productName }} adını \n“{{ name }}” olarak değiştirdiniz "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "Kaldır",
+    "confirmation" : "Ledger Stax'inizde görüntünün kaldırılmasını onaylayın",
+    "success" : "Kilitli ekran resmi kaldırıldı"
+  },
   "deviceLocalization" : {
     "language" : "Dil",
     "deviceLanguage" : "Dil",
@@ -3861,6 +3866,10 @@
     },
     "experimental" : {
       "disclaimer" : "Bu deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunmaktayız. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz.",
+      "provider" : "“My Ledger sağlayıcısı ({{forcedProvider}})” deneysel ayarı, piyasaya sürülmemiş işletim sistemlerini ve uygulamaları göstererek uyumluluk sorunlarına yol açabiliyor. Bunu ayarlardan devre dışı bırakabilirsiniz.",
+      "providerDevMode" : "“My Ledger sağlayıcısı ({{forcedProvider}})” ve “Developer mode (Geliştirici modu) deneysel ayarları, piyasaya sürülmemiş işletim sistemlerini ve uygulamaları göstererek uyumluluk sorunlarına yol açabiliyor. Bunu ayarlardan devre dışı bırakabilirsiniz.",
+      "devMode" : "“Developer mode” (Geliştirici modu) deneysel ayarı, piyasaya sürülmemiş işletim sistemlerini ve uygulamaları göstererek uyumluluk sorunlarına yol açabiliyor. Bunu ayarlardan devre dışı bırakabilirsiniz.",
+      "providerCTA" : "Ayarlara git",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "Deneysel entegrasyonlar",
@@ -3921,6 +3930,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Taban ücret için özel çarpan değeri",
           "description" : "EIP1559 işleminin maxFeePerGas ücretini düzenleyerek taban ücret için kullanılan çarpan değerini özelleştirin"
+        },
+        "enableNetworkLogs" : {
+          "title" : "Ağ log'larını etkinleştirin",
+          "description" : "Konsolda ağ log'larını etkinleştirin (hata log'ları her zaman etkindir)"
         }
       }
     },
@@ -4226,6 +4239,10 @@
           "3" : {
             "title" : "Kurtarma ifadenizi yeni bir cihazda geri yükleyin",
             "description" : "Özel anahtarlarınızı yeni bir Nano üzerinde geri yüklemek için mevcut bir kurtarma ifadesini kullanın!"
+          },
+          "4" : {
+            "title" : "Ledger Recover kullanarak geri yükleyin",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4388,25 @@
             "help" : {
               "help" : "Yardım gerekli",
               "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "“Restore using Ledger Recover” (Ledger Recover kullanarak geri yükle) seçimini yapın",
+            "1" : {
+              "title" : "“Restore” seçimini yapın",
+              "descr" : "Seçmek için iki tuşa aynı anda basın."
+            },
+            "2" : {
+              "title" : "“Restore using Ledger Recover” seçimini yapın"
+            },
+            "help" : {
+              "iDontSee" : "“Restore using Ledger Recover” seçeneği yok",
+              "modal" : {
+                "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
+                "subtitle" : " İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
+                "learnHowToUpdate" : "Güncelleme yönergeleri",
+                "contactLedgerSupport" : "Ledger Destek ile iletişime geçin"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5686,6 +5722,7 @@
   "customImage" : {
     "title" : "Özel kilitli ekran",
     "managerCTA" : "Kilit ekranı resmi",
+    "managerCTARemove" : "Kaldır",
     "steps" : {
       "choose" : {
         "stepLabel" : "Bir görüntü seçin",
@@ -5694,6 +5731,7 @@
         "myNfts" : "NFT'lerim",
         "upload" : "Bilgisayarımdan yükle",
         "chooseNft" : "Bir NFT seçin",
+        "remove" : "Mevcut resmi kaldır",
         "selectNft" : "NFT'yi seç",
         "previousSelectNft" : "Geri",
         "nftEmptyStateTitle" : "Gösterilecek NFT yok",
