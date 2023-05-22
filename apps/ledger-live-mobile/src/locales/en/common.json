@@ -2695,10 +2695,6 @@
           "title": "Experimental list apps for My Ledger",
           "description": "Performance improvement for My Ledger access and inline flows."
         },
-        "experimentalCountervalues": {
-          "title": "Experimental countervalues API",
-          "description": "This may cause the countervalues displayed for your accounts to become incorrect."
-        },
         "experimentalSwap": {
           "title": "New SWAP interface",
           "description": "Use the new experimental swap interface"
