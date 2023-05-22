@@ -34,7 +34,7 @@ type Props = {
 const ContextMenu = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
   const delegation = useDelegation(account);
-  const receiveShouldWarnDelegation = delegation && delegation.receiveShouldWarnDelegation;
+  const receiveShouldWarnDelegation = delegation ? delegation.receiveShouldWarnDelegation : undefined;
   const items = [
     {
       key: "topUp",
@@ -108,10 +108,6 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
     <DropDownSelector items={items} renderItem={renderItem}>
       {() => (
         <Container
-          horizontal
-          small
-          outlineGrey
-          flow={1}
           style={{
             width: 34,
             padding: 0,

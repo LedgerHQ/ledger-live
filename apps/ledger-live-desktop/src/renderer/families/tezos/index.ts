@@ -1,19 +1,14 @@
-import {
-  TezosAccount,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/tezos/types";
-import { LLDCoinFamily } from "../types";
-import operationDetails from "./operationDetails";
-import modals, { ModalsData } from "./modals";
-import accountActions from "./accountActions";
-import accountHeaderManageActions from "./AccountHeaderManageActions";
-import transactionConfirmFields from "./TransactionConfirmFields";
 import AccountBodyHeader from "./AccountBodyHeader";
-import sendWarning from "./SendWarning";
+import accountHeaderManageActions from "./AccountHeaderManageActions";
 import receiveWarning from "./ReceiveWarning";
+import sendWarning from "./SendWarning";
+import transactionConfirmFields from "./TransactionConfirmFields";
+import accountActions from "./accountActions";
+import modals from "./modals";
+import operationDetails from "./operationDetails";
+import { TezosFamily } from "./types";
 
-const family: LLDCoinFamily<TezosAccount, Transaction, TransactionStatus, ModalsData> = {
+const family: TezosFamily = {
   operationDetails,
   accountActions,
   accountHeaderManageActions,

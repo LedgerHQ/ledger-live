@@ -47,7 +47,7 @@ const createTitles = (t: TFunction): Record<StepId | "undelegate", string> => ({
 export type Data = {
   account?: TezosAccount | SubAccount;
   parentAccount?: TezosAccount | null;
-  mode?: TezosOperationMode | undefined | null;
+  mode?: TezosOperationMode | undefined;
   eventType?: string;
   stepId?: StepId;
 };

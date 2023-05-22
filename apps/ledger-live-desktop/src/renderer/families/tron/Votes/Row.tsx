@@ -14,9 +14,7 @@ const Wrapper = styled.div`
   justify-content: space-between;
   padding: 16px 20px;
 `;
-const Column: ThemedComponent<{
-  clickable?: boolean;
-}> = styled(TableLine).attrs(p => ({
+const Column= styled(TableLine).attrs((p: {strong?: boolean}) => ({
   ff: "Inter|SemiBold",
   color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
   fontSize: 3,
@@ -33,7 +31,7 @@ type Props = {
   currency: any;
   explorerView: ExplorerView | undefined | null;
 };
-const IconContainer = styled.div`
+const IconContainer = styled.div<{isSR: boolean}>`
   display: flex;
   margin-right: 15px;
   align-items: center;
