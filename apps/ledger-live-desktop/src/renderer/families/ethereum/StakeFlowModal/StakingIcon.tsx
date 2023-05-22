@@ -45,7 +45,7 @@ export function StakingIcon({ icon }: Props) {
   if (iconType === "provider") {
     return (
       <ProviderIconContainer>
-        <ProviderIcon name={iconName} size="S" />
+        <ProviderIcon name={iconName} size="S" boxed={true} />
       </ProviderIconContainer>
     );
   }

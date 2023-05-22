@@ -3516,15 +3516,15 @@
     "stake": {
       "title": "Earn Ethereum",
       "lido": {
-        "title": "Lido",
+        "title": "Earn with Lido",
         "tag": "No minimum",
         "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum.",
         "supportLink": "Learn more about Lido"
       },
       "kiln": {
         "title": "Kiln validator",
-        "description": "Got more than 32 ETH? Stake on dedicated validator. Earn rewards daily. No lock-up period.",
         "tag": "Requires 32 ETH",
+        "description": "Got more than 32 ETH? Stake on dedicated validator. Earn rewards daily. No lock-up period.",
         "supportLink": "Learn more about Kiln validator"
       },
       "kiln_pooling": {
