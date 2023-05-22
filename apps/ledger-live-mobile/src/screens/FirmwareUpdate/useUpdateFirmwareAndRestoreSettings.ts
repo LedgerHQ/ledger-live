@@ -83,7 +83,9 @@ export const useUpdateFirmwareAndRestoreSettings = ({
 
   const staxFetchImageRequest = useMemo(
     () => ({
-      allowedEmpty: true,
+      // In the LLM fwm update flow, the error thrown because there is no image is caught and part of the normal flow
+      // So we want it to throw the error.
+      allowedEmpty: false,
     }),
     [],
   );
