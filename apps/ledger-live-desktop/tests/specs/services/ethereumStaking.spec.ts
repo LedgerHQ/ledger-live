@@ -1,5 +1,6 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
+import { Analytics } from "../../models/Analytics";
 import { Drawer } from "../../models/Drawer";
 import { Modal } from "../../models/Modal";
 import { PortfolioPage } from "../../models/PortfolioPage";
@@ -13,6 +14,9 @@ import { AccountPage } from "../../models/AccountPage";
 import { getProvidersMock } from "./services-api-mocks/getProviders.mock";
 
 test.use({
+  env: {
+    SEGMENT_TEST: true,
+  },
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
     stakePrograms: {
@@ -29,21 +33,22 @@ test.use({
       params: {
         listProvider: [
           {
-            id: "lido",
-            icon: "Lido:provider",
-            name: "Lido",
-            minAccountBalance: 0,
-            liveAppId: "lido",
-            supportLink:
-              "https://support.ledger.com/hc/en-us/articles/4406882832401-Staking-ETH-in-Ledger-Live-with-Lido?docs=true",
+            id: "kiln_pooling",
+            liveAppId: "kiln",
+            supportLink: "https://www.kiln.fi",
+            icon: "Kiln:provider",
+            queryParams: {
+              focus: "pooled",
+            },
           },
           {
             id: "kiln",
-            icon: "Kiln:provider",
-            name: "Kiln",
-            minAccountBalance: 32,
             liveAppId: "kiln",
             supportLink: "https://www.kiln.fi",
+            icon: "Kiln:provider",
+            queryParams: {
+              focus: "dedicated",
+            },
           },
         ],
       },
@@ -53,7 +58,7 @@ test.use({
       params: {
         eth: {
           kiln: true,
-          lido: true,
+          lido: false,
         },
       },
     },
@@ -71,6 +76,7 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
   const layout = new Layout(page);
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
+  const analytics = new Analytics(page);
 
   await page.route("https://swap.ledger.com/v4/providers**", async route => {
     const mockProvidersResponse = getProvidersMock();
@@ -97,10 +103,23 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
     await expect.soft(page).toHaveScreenshot("choose-stake-provider-modal-from-portfolio-page.png");
   });
 
-  await test.step("choose Lido", async () => {
-    await modal.chooseStakeProvider("Lido");
+  await test.step("choose Kiln", async () => {
+    const analyticsPromise = analytics.waitForTracking({
+      event: "button_clicked",
+      properties: {
+        button: "kiln",
+        page: "account/mock:1:ethereum:true_ethereum_1:",
+        modal: "stake",
+        flow: "stake",
+        value: "/platform/kiln",
+      },
+    });
+    await modal.chooseStakeProvider("kiln");
+    await analyticsPromise;
     await liveApp.waitForCorrectTextInWebview("Ethereum 2");
-    await expect(await liveApp.getLiveAppTitle()).toBe("Lido");
+    const dappURL = await liveApp.getLiveAppDappURL();
+    await expect(await liveApp.getLiveAppTitle()).toBe("Kiln");
+    expect(dappURL).toContain("?focus=dedicated");
     await expect.soft(page).toHaveScreenshot("stake-provider-dapp-has-opened.png", {
       mask: [page.locator("webview")],
     });
@@ -132,15 +151,6 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
     await modal.close();
   });
 
-  await test.step("start stake flow via Banner CTA", async () => {
-    await accountPage.clickBannerCTA();
-    await liveApp.waitForCorrectTextInWebview("Ethereum 2");
-    await expect(await liveApp.getLiveAppTitle()).toBe("Lido");
-    await expect.soft(page).toHaveScreenshot("lido-opened-after-banner-cta-clicked.png", {
-      mask: [page.locator("webview")],
-    });
-  });
-
   await test.step("Market page loads with ETH staking available", async () => {
     await layout.goToMarket();
     await marketPage.waitForLoading();
@@ -161,5 +171,22 @@ test("Ethereum staking flows via portfolio, asset page and market page", async (
     await marketCoinPage.startStakeFlow();
     await drawer.waitForDrawerToBeVisible();
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-coin-page.png");
+    await drawer.selectAccount("Ethereum", 1);
+    const analyticsPromise = analytics.waitForTracking({
+      event: "button_clicked",
+      properties: {
+        button: "kiln_pooling",
+        page: "account/mock:1:ethereum:true_ethereum_0:",
+        modal: "stake",
+        flow: "stake",
+        value: "/platform/kiln",
+      },
+    });
+    await modal.chooseStakeProvider("kiln_pooling");
+    await analyticsPromise;
+    const dappURL = await liveApp.getLiveAppDappURL();
+    await liveApp.waitForCorrectTextInWebview("Ethereum 1");
+    expect(dappURL).toContain("?focus=pooled");
+    await expect(await liveApp.getLiveAppTitle()).toBe("Kiln");
   });
 });
