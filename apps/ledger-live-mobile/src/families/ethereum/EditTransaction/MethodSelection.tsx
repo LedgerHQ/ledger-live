@@ -173,7 +173,6 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       bridge,
       operation.transactionSequenceNumber,
       setTransaction,
-      mainAccount.currency,
     ],
   );
 
@@ -218,6 +217,8 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     status,
     account.id,
     parentAccount?.id,
+    mainAccount.balance,
+    navigation,
   ]);
 
   const { t } = useTranslation();
