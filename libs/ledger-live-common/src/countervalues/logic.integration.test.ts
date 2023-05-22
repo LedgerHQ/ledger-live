@@ -108,6 +108,7 @@ describe("extreme cases", () => {
       .filter((t) => t !== "BTC")
       .map(findCurrencyByTicker)
       .filter(Boolean) as Currency[];
+
     const state = await loadCountervalues(initialState, {
       trackingPairs: currencies.map((from) => ({
         from,
