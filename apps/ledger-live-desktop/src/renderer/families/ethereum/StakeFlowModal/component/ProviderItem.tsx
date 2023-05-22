@@ -69,7 +69,7 @@ const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvi
     >
       <StakingIcon icon={provider.icon} />
       <Flex flexDirection={"column"} ml={5} flex={"auto"} alignItems="flex-start">
-        <Flex alignItems="center" mb={1}>
+        <Flex alignItems="center">
           <Text variant="bodyLineHeight" fontSize={14} fontWeight="semiBold" mr={2}>
             {t(`ethereum.stake.${provider.id}.title`)}
           </Text>
@@ -94,7 +94,7 @@ const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvi
           onClick={infoLink}
           type="color"
           color="primary.c80"
-          mt={4}
+          mt={2}
           style={{ fontSize: "14px" }}
         >
           {t(`ethereum.stake.${provider.id}.supportLink`)}
