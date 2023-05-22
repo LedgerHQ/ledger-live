@@ -3,7 +3,11 @@ import chunk from "lodash/chunk";
 import URL from "url";
 import { getEnv } from "../../env";
 import { promiseAllBatched } from "../../promise";
-import { encodeCurrencyAsLedgerId, formatPerGranularity } from "../helpers";
+import {
+  encodeCurrencyAsLedgerId,
+  encodePairAsLedgerIdPair,
+  formatPerGranularity,
+} from "../helpers";
 import type { CounterValuesAPI, TrackingPair } from "../types";
 
 const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
@@ -15,19 +19,12 @@ const latest = async (pairs: TrackingPair[], direct?: boolean) => {
     4,
     chunk(pairs, LATEST_CHUNK),
     async (partial) => {
-      const { data } = await network({
-        method: "GET",
-        url: `${baseURL()}/v2/latest/${
-          direct ? "direct" : "indirect"
-        }?pairs=${partial
-          .map(
-            (p) =>
-              `${encodeCurrencyAsLedgerId(p.from)}:${encodeCurrencyAsLedgerId(
-                p.to
-              )}`
-          )
-          .join(",")}`,
-      });
+      const url = `${baseURL()}/v2/latest/${
+        direct ? "direct" : "indirect"
+      }?pairs=${partial
+        .map((p) => encodePairAsLedgerIdPair(p.from, p.to))
+        .join(",")}`;
+      const { data } = await network({ method: "GET", url });
       return data;
     }
   );
@@ -37,10 +34,8 @@ const latest = async (pairs: TrackingPair[], direct?: boolean) => {
 
 // to have more determinism in the order of the pairs requested to the API
 const sortTrackingPair = (a: TrackingPair, b: TrackingPair) =>
-  (
-    encodeCurrencyAsLedgerId(a.from) + encodeCurrencyAsLedgerId(a.to)
-  ).localeCompare(
-    encodeCurrencyAsLedgerId(b.from) + encodeCurrencyAsLedgerId(b.to)
+  encodePairAsLedgerIdPair(a.from, a.to).localeCompare(
+    encodePairAsLedgerIdPair(b.from, b.to)
   );
 
 const api: CounterValuesAPI = {
@@ -56,16 +51,13 @@ const api: CounterValuesAPI = {
       // for anything else than fiat, we use direct
       query.method = "direct";
     }
-
-    const { data } = await network({
-      method: "GET",
-      url: URL.format({
-        pathname: `${baseURL()}/v2/${granularity}/${encodeCurrencyAsLedgerId(
-          from
-        )}/${encodeCurrencyAsLedgerId(to)}`,
-        query,
-      }),
+    const url = URL.format({
+      pathname: `${baseURL()}/v2/${granularity}/${encodeCurrencyAsLedgerId(
+        from
+      )}/${to.ticker}`,
+      query,
     });
+    const { data } = await network({ method: "GET", url });
     return data;
   },
   fetchLatest: async (pairs: TrackingPair[]) => {

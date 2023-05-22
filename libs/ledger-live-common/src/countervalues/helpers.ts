@@ -1,7 +1,7 @@
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import type { RateGranularity } from "./types";
 
-export const encodeCurrencyAsLedgerId = (currency: Currency) => {
+export const encodeCurrencyAsLedgerId = (currency: Currency): string => {
   switch (currency.type) {
     case "FiatCurrency": {
       return currency.ticker;
@@ -11,6 +11,14 @@ export const encodeCurrencyAsLedgerId = (currency: Currency) => {
       return encodeURIComponent(currency.id);
     }
   }
+};
+
+export const encodePairAsLedgerIdPair = (
+  from: Currency,
+  to: Currency
+): string => {
+  // at the moment, the "to" uses the .ticker in the countervalues API
+  return `${encodeCurrencyAsLedgerId(from)}:${to.ticker}`;
 };
 
 const HOUR = 60 * 60 * 1000;
@@ -80,7 +88,7 @@ export const formatPerGranularity: Record<
 };
 
 export function pairId({ from, to }: { from: Currency; to: Currency }): string {
-  return `${encodeCurrencyAsLedgerId(from)}-${encodeCurrencyAsLedgerId(to)}`;
+  return encodePairAsLedgerIdPair(from, to);
 }
 
 export function magFromTo(from: Currency, to: Currency): number {
