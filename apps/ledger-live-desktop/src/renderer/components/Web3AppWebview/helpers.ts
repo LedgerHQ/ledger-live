@@ -185,10 +185,19 @@ export function useWebviewState(
   }, [webviewRef]);
 
   const handleFailLoad = (useCallback(
-    (errorCode: number, errorDescription: string, validatedURL: string, isMainFrame: boolean) => {
-      const errorInfo = { errorCode, errorDescription, validatedURL, isMainFrame };
-      console.error("Web3AppView handleFailLoad", errorInfo);
-
+    (errorEvent: {
+      errorCode: number;
+      errorDescription: string;
+      validatedURL: string;
+      isMainFrame: boolean;
+    }) => {
+      const { errorCode, validatedURL, isMainFrame } = errorEvent;
+      const fullURL = new URL(validatedURL);
+      const errorInfo = {
+        errorCode,
+        url: fullURL.hostname,
+      };
+      console.error("Web3AppView handleFailLoad", { errorInfo, isMainFrame });
       track("useWebviewState", errorInfo);
 
       if (isMainFrame) {
