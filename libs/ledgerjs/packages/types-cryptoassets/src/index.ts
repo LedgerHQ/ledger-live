@@ -183,8 +183,6 @@ type CurrencyCommon = {
   // tells if countervalue need to be disabled (typically because colliding with other coins)
   disableCountervalue?: boolean;
   delisted?: boolean;
-  // some countervalue will have a ticker alias
-  countervalueTicker?: string;
   // keywords to be able to find currency from "obvious" terms
   keywords?: string[];
 };

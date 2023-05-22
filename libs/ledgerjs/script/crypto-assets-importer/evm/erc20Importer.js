@@ -15,9 +15,6 @@ const getDefinition = (chain, tokenId, definitionJSON, signature) => {
       definitionJSON.disable_countervalue
     );
     const delisted = ENTRIES_CHECKS.delisted(definitionJSON.delisted);
-    const countervalueTicker = ENTRIES_CHECKS.countervalueTicker(
-      definitionJSON.countervalue_ticker
-    );
 
     return [
       currencyId,
@@ -29,7 +26,6 @@ const getDefinition = (chain, tokenId, definitionJSON, signature) => {
       contractAddress,
       disableCountervalue,
       delisted,
-      countervalueTicker,
     ];
   } catch (e) {
     console.error(`ERC20 import error: ${chain.name} - ${tokenId}:`, e);
@@ -134,10 +130,10 @@ module.exports = async (chain, outputFolder) => {
   await fs.writeFile(
     path.join(outputDir, "index.ts"),
     // eslint-disable-next-line prettier/prettier
-    "import tokens from \"./erc20.json\";" +
+    'import tokens from "./erc20.json";' +
       String.fromCharCode(10) + // lf line break for linter
       // eslint-disable-next-line prettier/prettier
-      "import signatures from \"./erc20-signatures.json\";" +
+      'import signatures from "./erc20-signatures.json";' +
       String.fromCharCode(10) + // lf line break for linter
       "export default { tokens, signatures };\r" +
       String.fromCharCode(10) // lf line break for linter
