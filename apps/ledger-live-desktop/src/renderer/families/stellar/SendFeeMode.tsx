@@ -16,7 +16,7 @@ const SelectorContainer = styled.div`
   overflow: hidden;
   border-radius: 9999px;
 `;
-const Selector = styled(Tabbable)`
+const Selector = styled(Tabbable)<{ active?: boolean }>`
   color: ${p =>
     p.active ? p.theme.colors.palette.primary.contrastText : p.theme.colors.palette.text.shade20};
   background: ${p =>

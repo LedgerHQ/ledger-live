@@ -6,9 +6,12 @@ import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { TezosFamily } from "./types";
-import { StepId } from "./DelegateFlowModal/types"
+import { StepId } from "./DelegateFlowModal/types";
 
-const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({ account, parentAccount }) => {
+const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
+  account,
+  parentAccount,
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const delegation = useDelegation(account);

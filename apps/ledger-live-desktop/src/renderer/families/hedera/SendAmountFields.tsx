@@ -3,7 +3,6 @@ import Box from "~/renderer/components/Box";
 import MemoField from "./MemoField";
 import { SendAmountProps } from "./types";
 
-
 const Root = (props: SendAmountProps) => {
   return (
     <Box flow={1}>
@@ -12,6 +11,6 @@ const Root = (props: SendAmountProps) => {
   );
 };
 export default {
-  component: (Root),
+  component: Root,
   fields: ["memo"],
 };

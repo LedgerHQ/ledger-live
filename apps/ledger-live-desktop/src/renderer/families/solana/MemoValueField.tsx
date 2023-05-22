@@ -36,7 +36,7 @@ const MemoValueField = ({ onChange, account, transaction, status }: Props) => {
     },
     [onChange, transaction, bridge],
   );
-  return (
+  return transaction.model.kind === "transfer" || transaction.model.kind === "token.transfer" ? (
     <Input
       warning={status.warnings.memo}
       error={status.errors.memo}
@@ -44,6 +44,6 @@ const MemoValueField = ({ onChange, account, transaction, status }: Props) => {
       onChange={onMemoValueChange}
       placeholder={t("families.solana.memoPlaceholder")}
     />
-  );
+  ) : null;
 };
 export default MemoValueField;

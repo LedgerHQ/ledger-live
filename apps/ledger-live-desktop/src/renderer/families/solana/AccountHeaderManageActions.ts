@@ -1,18 +1,16 @@
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
+import { SolanaFamily } from "./types";
 
-type Props = {
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
-  source?: string;
-};
-
-const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
+const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({
+  account,
+  parentAccount,
+  source,
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);

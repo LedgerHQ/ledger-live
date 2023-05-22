@@ -2,9 +2,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/ethereum/react";
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
-import {
-  Transaction as EthereumTransaction
-} from "@ledgerhq/live-common/families/ethereum/types";
+import { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import React, { useCallback, useState } from "react";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
@@ -15,7 +13,6 @@ import MaxFeeField from "./MaxFeeField";
 import PriorityFeeField from "./PriorityFeeField";
 import SelectFeeStrategy from "./SelectFeeStrategy";
 import { EthereumFamily } from "./types";
-
 
 const Root: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = props => {
   const { account, parentAccount, updateTransaction, transaction } = props;

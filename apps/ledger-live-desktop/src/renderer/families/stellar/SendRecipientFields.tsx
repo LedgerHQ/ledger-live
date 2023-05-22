@@ -1,22 +1,18 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import MemoTypeField from "./MemoTypeField";
-import MemoValueField from "./MemoValueField";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
-import Text from "~/renderer/components/Text";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
-import { Account } from "@ledgerhq/types-live";
+import MemoTypeField from "./MemoTypeField";
+import MemoValueField from "./MemoValueField";
+import { StellarFamily } from "./types";
 
-type Props = {
-  onChange: (t: Transaction) => void;
-  transaction: Transaction;
-  status: TransactionStatus;
-  account: Account;
-};
-
-const Root = ({ transaction, account, onChange, status }: Props) => {
+const Root: NonNullable<StellarFamily["sendRecipientFields"]>["component"] = ({
+  transaction,
+  account,
+  onChange,
+  status,
+}) => {
   const memoActivated = transaction.memoType && transaction.memoType !== "NO_MEMO";
   return (
     <Box flow={1}>
@@ -42,13 +38,6 @@ const Root = ({ transaction, account, onChange, status }: Props) => {
           </Box>
         ) : null}
       </Box>
-      {transaction.memoTypeRecommended && (
-        <Box horizontal grow justifyContent="space-between">
-          <Text ff="Inter|Regular" color="palette.text.shade50" fontSize={4}>
-            <Trans i18nKey="families.stellar.recommendedMemo" />
-          </Text>
-        </Box>
-      )}
     </Box>
   );
 };

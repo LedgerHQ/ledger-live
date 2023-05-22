@@ -1,22 +1,21 @@
-import React, { useEffect } from "react";
-import { Trans } from "react-i18next";
-import { withTheme } from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import { Theme } from "@ledgerhq/react-ui";
-import { track } from "~/renderer/analytics/segment";
+import React, { useEffect } from "react";
+import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { multiline } from "~/renderer/styles/helpers";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
-import RetryButton from "~/renderer/components/RetryButton";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
-import { setDrawer } from "~/renderer/drawers/Provider";
+import Button from "~/renderer/components/Button";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import RetryButton from "~/renderer/components/RetryButton";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-import * as S from "./StepConfirmation.styles";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
+import * as S from "./StepConfirmation.styles";
 export const StepConfirmationFooter = ({
   account,
   parentAccount,

@@ -34,12 +34,13 @@ const MemoTypeField = ({
   );
   return (
     <Select
-      width="156px"
       isSearchable={false}
       onChange={onMemoTypeChange}
       value={selectedMemoType}
       options={options}
-      renderOption={({ label }) => <Trans i18nKey={`families.stellar.memoType.${label}`} />}
+      renderOption={({ data: { label } }) => (
+        <Trans i18nKey={`families.stellar.memoType.${label}`} />
+      )}
       renderValue={({ data: { label } }) => (
         <Trans i18nKey={`families.stellar.memoType.${label}`} />
       )}

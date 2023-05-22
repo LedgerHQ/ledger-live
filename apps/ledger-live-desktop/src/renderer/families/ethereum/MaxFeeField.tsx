@@ -1,9 +1,7 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import {
-  Transaction as EthereumTransaction
-} from "@ledgerhq/live-common/families/ethereum/types";
+import { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
 import { getEnv } from "@ledgerhq/live-env";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -48,7 +46,13 @@ const WhiteSpacedLabel = styled(Label)`
   color: ${p => p.theme.colors.neutral.c60};
 `;
 
-const FeesField: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = ({ account, parentAccount, transaction, status, updateTransaction }) => {
+const FeesField: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = ({
+  account,
+  parentAccount,
+  transaction,
+  status,
+  updateTransaction,
+}) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");
 
   const mainAccount = getMainAccount(account, parentAccount);
