@@ -221,7 +221,7 @@
     "lend" : "إقراض",
     "catalog" : "Discover",
     "market" : "السوق",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "قم بتفضيل حساب لعرضه هنا.",
@@ -2269,6 +2269,11 @@
     "remainingCharacters" : "{{ remainingCharacters }} حرف متبقي",
     "renamed" : "اسم {{ productName }} تم تغييره إلى \n\"{{ name }}\" "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "حذف",
+    "confirmation" : "قم بتأكيد إزالة الصورة على Ledger Stax الخاص بك",
+    "success" : "تم إزالة صورة شاشة القفل"
+  },
   "deviceLocalization" : {
     "language" : "اللغة",
     "deviceLanguage" : "اللغة",
@@ -3861,6 +3866,10 @@
     },
     "experimental" : {
       "disclaimer" : "هذه ميزات تجريبية نقدمها \"كما هي\" لكي يختبرها مجتمعنا المتمرس بالتكنولوجيا. من الممكن أن يتم تغيير هذه الميزات أو تعطيلها أو إزالتها في أي وقت. من خلال تمكينها، فإنك توافق على استخدامها على مسؤوليتك الخاصة.",
+      "provider" : "الإعداد التجريبي \"My Ledger provider ({{forcedProvider}})\" قد يعرض نظام تشغيل وتطبيقات لم تُطرح بعد، مما يؤدي إلى مشكلات توافق. يمكنك تعطيله في الإعدادات.",
+      "providerDevMode" : "الإعدادات التجريبية \"My Ledger provider ({{forcedProvider}})\" و \"Developer mode (وضع المطور)\" قد يعرضا نظام تشغيل وتطبيقات لم تُطرح بعد، مما يؤدي إلى مشكلات توافق. يمكنك تعطيلهما في الإعدادات.",
+      "devMode" : "الإعداد التجريبي \"Developer mode (وضع المطور)\" قد يعرض نظام تشغيل وتطبيقات لم تُطرح بعد، مما يؤدي إلى مشكلات توافق. يمكنك تعطيله في الإعدادات.",
+      "providerCTA" : "انتقل إلى الإعدادات",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "دمج تجريبي",
@@ -3921,6 +3930,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "مُضاعِف مخصص للرسوم الأساسية",
           "description" : "قم بتخصيص المُضاعِف المستخدَم للرسوم الأساسية التي تتكون منها maxFeePerGas لمعاملة EIP1559"
+        },
+        "enableNetworkLogs" : {
+          "title" : "تمكين سجلات الشبكة",
+          "description" : "تمكين سجلات الشبكة في وحدة التحكم (سجلات الأخطاء دائماً مُمَكَّنة)"
         }
       }
     },
@@ -4226,6 +4239,10 @@
           "3" : {
             "title" : "استعادة عبارة الاسترداد الخاصة بك على جهاز جديد",
             "description" : "استخدم عبارة استرداد حالية لاستعادة مفاتيحك الخاصة على Nano جديدة!"
+          },
+          "4" : {
+            "title" : "استعادة باستخدام Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4388,25 @@
             "help" : {
               "help" : "بحاجة الى مساعدة",
               "descr" : "لا تعرف ما يتعين عليك فعله؟ احصل على بعض المساعدة لتجتاز هذه الخطوة."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "اختر ’Restore using Ledger Recover [استعادة باستخدام Ledger Recover]’",
+            "1" : {
+              "title" : "اختر ’Restore [استعادة]’",
+              "descr" : "اضغط على كلا الزرين معاً للاختيار."
+            },
+            "2" : {
+              "title" : "اختر ’Restore using Ledger Recover [استعادة باستخدام Ledger Recover]’"
+            },
+            "help" : {
+              "iDontSee" : "لا أرى ’Restore using Ledger Recover [استعادة باستخدام Ledger Recover]’",
+              "modal" : {
+                "title" : "نظام التشغيل على Ledger Nano X خاصتك يحتاج إلى التحديث",
+                "subtitle" : " يمكنك محاولة تحديث نظام التشغيل أو التواصل مع دعم Ledger من أجل المساعدة.",
+                "learnHowToUpdate" : "تعرف على كيفية التحديث",
+                "contactLedgerSupport" : "تواصل مع دعم Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5686,6 +5722,7 @@
   "customImage" : {
     "title" : "شاشة قَفل مُخصّصة",
     "managerCTA" : "صورة شاشة القَفل",
+    "managerCTARemove" : "حذف",
     "steps" : {
       "choose" : {
         "stepLabel" : "اختر صورة",
@@ -5694,6 +5731,7 @@
         "myNfts" : "رموزي غير القابلة للاستبدال",
         "upload" : "تحميل من الكمبيوتر الخاص بي",
         "chooseNft" : "اختر رمزاً غير قابل للاستبدال",
+        "remove" : "إزالة الصورة الحالية",
         "selectNft" : "اختر رمز غير قابل للاستبدال",
         "previousSelectNft" : "عودة",
         "nftEmptyStateTitle" : "ليس هناك رموز غير قابلة للاستبدال بعد لعرضها",
