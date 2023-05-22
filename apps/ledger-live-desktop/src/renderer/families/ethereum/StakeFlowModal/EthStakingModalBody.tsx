@@ -105,7 +105,7 @@ export function EthStakingModalBody({
         <Text ff="Inter|SemiBold" fontSize="24px" lineHeight="32px">
           {t("ethereum.stake.title")}
         </Text>
-        <Text textAlign="center" color="neutral.c70" variant="body" maxWidth={400}>
+        <Text textAlign="center" color="neutral.c70" fontSize={14} maxWidth={360}>
           {t("ethereum.stake.subTitle")}
         </Text>
       </Flex>
