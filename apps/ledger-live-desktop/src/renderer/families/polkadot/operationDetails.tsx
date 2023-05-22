@@ -2,8 +2,8 @@
 import startCase from "lodash/startCase";
 import React, { useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { Operation, Account } from "@ledgerhq/types-live";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import { Operation, Account, OperationType } from "@ledgerhq/types-live";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { openURL } from "~/renderer/linking";
 import {
@@ -22,6 +22,8 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { urls } from "~/config/urls";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
+import { AmountCellExtraProps } from "../types";
+
 function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined | null {
   if (op.fee.gt(200000)) {
     return urls.polkadotFeesInfo;
@@ -267,84 +269,56 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
       return <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />;
   }
 };
-type Props = {
-  operation: Operation;
-  currency: Currency;
-  unit: Unit;
-};
-const BondAmountCell = ({ operation, currency, unit }: Props) => {
+
+const BondAmountCell = ({ operation, currency, unit }: AmountCellExtraProps) => {
   const amount = new BigNumber(operation.extra ? operation.extra.bondedAmount : 0);
-  return (
-    !amount.isZero() && (
-      <>
-        <FormattedVal
-          val={amount}
-          unit={unit}
-          showCode
-          fontSize={4}
-          color={"palette.text.shade80"}
-        />
+  return !amount.isZero() ? (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
 
-        <CounterValue
-          color="palette.text.shade60"
-          fontSize={3}
-          date={operation.date}
-          currency={currency}
-          value={amount}
-        />
-      </>
-    )
-  );
+      <CounterValue
+        color="palette.text.shade60"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  ) : null;
 };
-const UnbondAmountCell = ({ operation, currency, unit }: Props) => {
+const UnbondAmountCell = ({ operation, currency, unit }: AmountCellExtraProps) => {
   const amount = new BigNumber(operation.extra ? operation.extra.unbondedAmount : 0);
-  return (
-    !amount.isZero() && (
-      <>
-        <FormattedVal
-          val={amount}
-          unit={unit}
-          showCode
-          fontSize={4}
-          color={"palette.text.shade80"}
-        />
+  return !amount.isZero() ? (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
 
-        <CounterValue
-          color="palette.text.shade60"
-          fontSize={3}
-          date={operation.date}
-          currency={currency}
-          value={amount}
-        />
-      </>
-    )
-  );
+      <CounterValue
+        color="palette.text.shade60"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  ) : null;
 };
-const WithdrawUnbondedAmountCell = ({ operation, currency, unit }: Props) => {
+const WithdrawUnbondedAmountCell = ({ operation, currency, unit }: AmountCellExtraProps) => {
   const amount = new BigNumber(operation.extra ? operation.extra.withdrawUnbondedAmount : 0);
-  return (
-    !amount.isZero() && (
-      <>
-        <FormattedVal
-          val={amount}
-          unit={unit}
-          showCode
-          fontSize={4}
-          color={"palette.text.shade80"}
-        />
+  return !amount.isZero() ? (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
 
-        <CounterValue
-          color="palette.text.shade60"
-          fontSize={3}
-          date={operation.date}
-          currency={currency}
-          value={amount}
-        />
-      </>
-    )
-  );
+      <CounterValue
+        color="palette.text.shade60"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  ) : null;
 };
-const NominateAmountCell = ({ operation }: Props) => {
+const NominateAmountCell = ({ operation }: AmountCellExtraProps) => {
   const discreet = useDiscreetMode();
   const amount = operation.extra?.validators?.length || 0;
   return amount > 0 ? (
@@ -358,12 +332,14 @@ const NominateAmountCell = ({ operation }: Props) => {
     </Text>
   ) : null;
 };
-const amountCellExtra = {
+
+const amountCellExtra: Partial<Record<OperationType, React.ComponentType<AmountCellExtraProps>>> = {
   BOND: BondAmountCell,
   UNBOND: UnbondAmountCell,
   NOMINATE: NominateAmountCell,
   WITHDRAW_UNBONDED: WithdrawUnbondedAmountCell,
 };
+
 export default {
   getURLFeesInfo,
   getURLWhatIsThis,

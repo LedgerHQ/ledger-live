@@ -1,13 +1,23 @@
 import React from "react";
-import { Trans, withTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import MemoTypeField from "./MemoTypeField";
 import MemoValueField from "./MemoValueField";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Text from "~/renderer/components/Text";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
-const Root = (props: any) => {
-  const memoActivated = props.transaction.memoType && props.transaction.memoType !== "NO_MEMO";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
+import { Account } from "@ledgerhq/types-live";
+
+type Props = {
+  onChange: (t: Transaction) => void;
+  transaction: Transaction;
+  status: TransactionStatus;
+  account: Account;
+};
+
+const Root = ({ transaction, account, onChange, status }: Props) => {
+  const memoActivated = transaction.memoType && transaction.memoType !== "NO_MEMO";
   return (
     <Box flow={1}>
       <Box mb={10}>
@@ -20,14 +30,19 @@ const Root = (props: any) => {
         </Label>
       </Box>
       <Box mb={15} horizontal grow alignItems="center" justifyContent="space-between">
-        <MemoTypeField {...props} />
+        <MemoTypeField onChange={onChange} account={account} transaction={transaction} />
         {memoActivated ? (
           <Box ml={20} grow={1}>
-            <MemoValueField {...props} />
+            <MemoValueField
+              onChange={onChange}
+              account={account}
+              transaction={transaction}
+              status={status}
+            />
           </Box>
         ) : null}
       </Box>
-      {props.transaction.memoTypeRecommended && (
+      {transaction.memoTypeRecommended && (
         <Box horizontal grow justifyContent="space-between">
           <Text ff="Inter|Regular" color="palette.text.shade50" fontSize={4}>
             <Trans i18nKey="families.stellar.recommendedMemo" />
@@ -38,7 +53,7 @@ const Root = (props: any) => {
   );
 };
 export default {
-  component: withTranslation()(Root),
+  component: Root,
   // Transaction is used here to prevent user to forward
   // If he format a memo incorrectly
   fields: ["memoType", "transaction"],

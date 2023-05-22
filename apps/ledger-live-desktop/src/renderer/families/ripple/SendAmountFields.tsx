@@ -3,7 +3,7 @@ import invariant from "invariant";
 import styled from "styled-components";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ripple/types";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Box from "~/renderer/components/Box";
@@ -15,7 +15,7 @@ type Props = {
   transaction: Transaction;
   status: TransactionStatus;
   onChange: (a: Transaction) => void;
-  trackProperties?: object;
+  trackProperties?: Record<string, unknown>;
 };
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter",
