@@ -6,6 +6,7 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
+import ExportLogsButton from "~/renderer/components/ExportLogsButton";
 
 export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
   const { t } = useTranslation();
@@ -15,7 +16,9 @@ export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
     () =>
       openURL(
         urls.contactSupportWebview[
-          locale in urls.contactSupportWebview ? (locale as keyof typeof urls.contactSupportWebview) : "en"
+          locale in urls.contactSupportWebview
+            ? (locale as keyof typeof urls.contactSupportWebview)
+            : "en"
         ],
       ),
     [locale],
@@ -33,11 +36,16 @@ export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
       >
         {t("webview.networkError.title")}
       </Text>
-      <Text variant="body" color="neutral.c70" marginTop="24px" fontSize={14} fontFamily="Inter">
+      <Text
+        variant="body"
+        color="neutral.c70"
+        marginTop="24px"
+        width="343px"
+        fontSize={14}
+        fontFamily="Inter"
+        textAlign="center"
+      >
         {t("webview.networkError.subtitle")}
-      </Text>
-      <Text variant="body" color="neutral.c70" marginTop="0px" fontSize={14} fontFamily="Inter">
-        {t("webview.networkError.subtitleTwo")}
       </Text>
       <Button
         variant="main"
@@ -49,13 +57,28 @@ export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
       >
         {t("webview.networkError.tryAgain")}
       </Button>
+      <ExportLogsButton
+        customComponent={(handleSaveLogPress: () => Promise<void>) => (
+          <Link
+            size="large"
+            Icon={() => <Icon name="Download" />}
+            marginTop="17px"
+            onClick={handleSaveLogPress}
+          >
+            <Text fontSize={14} fontWeight="semiBold" fontFamily="Inter">
+              {t("webview.networkError.saveLog")}
+            </Text>
+          </Link>
+        )}
+      />
+
       <Link
         size="large"
         Icon={() => <Icon name="ExternalLink" />}
         marginTop="17px"
         onClick={handleContactSupport}
       >
-        <Text fontSize={14} fontWeight="bold" fontFamily="Inter">
+        <Text fontSize={14} fontWeight="semiBold" fontFamily="Inter">
           {t("webview.networkError.contactSupport")}
         </Text>
       </Link>

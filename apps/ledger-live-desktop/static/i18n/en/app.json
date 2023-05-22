@@ -5852,10 +5852,10 @@
   "webview": {
     "networkError": {
       "title": "Network Error",
-      "subtitle": "Check your internet connection and try again.",
-      "subtitleTwo": "Contact Ledger Support if the problem continues.",
+      "subtitle": "Something went wrong. Please try again. If the problem persists, save your log and contact Ledger support.",
       "tryAgain": "Try again",
-      "contactSupport": "Contact Ledger support" 
+      "contactSupport": "Contact Ledger support",
+      "saveLog": "Save log"
     }
   }
 }
