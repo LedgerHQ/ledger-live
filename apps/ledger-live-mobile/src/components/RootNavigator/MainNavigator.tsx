@@ -79,7 +79,7 @@ export default function MainNavigator({
             borderTopWidth: 1,
             elevation: 5,
             shadowColor: colors.neutral.c30,
-            backgroundColor: colors.background.main,
+            backgroundColor: colors.opacityDefault.c10,
           },
           hideTabNavigation ? { display: "none" } : {},
         ],

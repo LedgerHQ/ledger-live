@@ -370,7 +370,7 @@ const NftViewer = ({ route }: Props) => {
       <InfoModal
         isOpened={isOpen}
         onClose={onCloseModal}
-        data={notAvailableModalInfo}
+        data={notAvailableModalInfo(onCloseModal)}
       />
       <DesignedForStaxDrawer
         isOpen={isStaxDrawerOpen}

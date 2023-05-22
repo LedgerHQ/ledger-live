@@ -5941,9 +5941,10 @@
       "txDetails": "Transaction details"
     },
     "modalDisabled": {
-      "title": "Send function not available",
+      "title": "Send function is not available on iOS",
       "body": "In order to comply with Apple's recent updates on their App Store, sending NFTs is temporary unavailable. You can still use Ledger Live on Desktop to send NFTs.",
-      "contactSupport": "Please read our support article for more information."
+      "learnMore": "Learn more",
+      "continue": "Got it!"
     }
   },
   "ApplicationVersion": "v{{version}}",
