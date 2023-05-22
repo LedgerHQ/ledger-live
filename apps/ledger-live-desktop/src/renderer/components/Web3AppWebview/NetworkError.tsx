@@ -15,7 +15,7 @@ export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
     () =>
       openURL(
         urls.contactSupportWebview[
-          locale in urls.terms ? (locale as keyof typeof urls.terms) : "en"
+          locale in urls.contactSupportWebview ? (locale as keyof typeof urls.contactSupportWebview) : "en"
         ],
       ),
     [locale],
