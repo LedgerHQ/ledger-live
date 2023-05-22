@@ -2668,6 +2668,10 @@
       "title" : "실험 특징",
       "desc" : "다양한 실험 특징을 시험해 보고 의견을 나누어 주세요.",
       "disclaimer" : "이는 기술에 대한 관심이 지대한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거될 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다.",
+      "provider" : "실험 설정인 “내 Ledger 공급자({{forcedProvider}})”가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
+      "providerDevMode" : "실험 설정인 “내 Ledger 공급자({{forcedProvider}})” 및 \"개발자 모드\"가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
+      "devMode" : "실험 설정인 “개발자 모드”가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
+      "providerCTA" : "설정으로 이동",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "실험 통합",
@@ -2689,13 +2693,13 @@
           "title" : "My Ledger용 실험 앱 목록",
           "description" : "My Ledger 액세스와 즉각 처리 흐름을 개선합니다."
         },
-        "experimentalCountervalues" : {
-          "title" : "실험적 등가 API",
-          "description" : "이로 인해 계정과 관련하여 올바른 등가 값이 표시되지 않을 수 있습니다."
-        },
         "experimentalSwap" : {
           "title" : "새로운 스왑 인터페이스",
           "description" : "새로운 실험적 스왑 인터페이스 사용"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "네트워크 로그 활성화",
+          "description" : "콘솔에서 네트워크 로그 활성화(오류 로그는 항상 활성화됨)"
         }
       },
       "developerFeatures" : {
@@ -3674,6 +3678,7 @@
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
     "allowManagerPermission" : "{{productName}}에서 {{wording}} 허용",
+    "allowRemoveCustomLockscreen" : "Ledger Stax에서 이미지 삭제 확인",
     "loading" : "로딩...",
     "turnOnAndUnlockDevice" : "장치를 켜고 잠금 해제하세요",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
@@ -5966,9 +5971,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "내 사진 갤러리에서 선택",
-        "selectFromNFTGallery" : "NFT 갤러리에서 선택"
+        "selectFromNFTGallery" : "NFT 갤러리에서 선택",
+        "remove" : "현재 사진 삭제"
       }
     },
+    "toastRemove" : "잠금 화면 사진이 삭제됨",
     "cropImage" : "크롭 기능으로 사진을 잘라주세요",
     "chooseConstrast" : "대비 선택",
     "uploadAnotherImage" : "다른 이미지 업로드",
