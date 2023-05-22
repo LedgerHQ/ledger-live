@@ -2668,6 +2668,10 @@
       "title" : "Funciones experimentales",
       "desc" : "Prueba las funciones experimentales y dinos qué te parecen.",
       "disclaimer" : "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que fallen, sufran cambios o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad.",
+      "provider" : "El ajuste experimental “Proveedor de Mi Ledger ({{forcedProvider}})” puede mostrar SO y aplicaciones no publicados y causar problemas de compatibilidad. Puedes desactivarlo en los ajustes.",
+      "providerDevMode" : "El ajuste experimental “Proveedor de Mi Ledger ({{forcedProvider}})” y el “Modo desarrollador” pueden mostrar SO y aplicaciones no publicadas y causar problemas de compatibilidad. Puedes desactivarlo en los ajustes.",
+      "devMode" : "El ajuste experimental “Modo desarrollador” puede mostrar SO y aplicaciones no publicadas y causar problemas de compatibilidad. Puedes desactivarlo en los ajustes.",
+      "providerCTA" : "Ir a Ajustes",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "Integraciones experimentales",
@@ -2696,6 +2700,10 @@
         "experimentalSwap" : {
           "title" : "Nueva interfaz de PERMUTA",
           "description" : "Usa la nueva interfaz experimental de permuta"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "Activar registros de red",
+          "description" : "Activar registros de red en la consola (los registros de error están siempre activados)"
         }
       },
       "developerFeatures" : {
@@ -3468,6 +3476,33 @@
       }
     }
   },
+  "editTransaction" : {
+    "cta" : "Acelerar o cancelar",
+    "previousFeesInfo" : "Tarifa de red actual = {{amount}} ETH",
+    "header" : "Editar transacción",
+    "learnMore" : "Quiero saber más",
+    "panel" : {
+      "stuckMessage" : "Esta transacción de envío se ha quedado atascada. Acelera la transacción con una tarifa de red más alta o cancélala.",
+      "speedupMessage" : "Tu transacción está en curso. Puedes acelerarla con una tarifa de red más alta o cancelarla."
+    },
+    "speedUp" : {
+      "title" : "Acelerar",
+      "description" : "Vuelve a enviar la transacción con una tarifa de red mayor."
+    },
+    "cancel" : {
+      "title" : "Cancelar",
+      "description" : "Enviando 0 {{ticker}} a tu propia dirección. Para garantizar la cancelación, la tarifa de red es un 30% más alta que la tarifa de la transacción que se pretende cancelar."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "La cancelación de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+      "notEnoughFundsToSpeedup" : "La aceleración de la transacción no está disponible porque no tienes fondos suficientes en tu cuenta.",
+      "notlowestNonceToSpeedup" : "La función de aceleración no está disponible. Tu transacción está pendiente porque hay una transacción anterior atascada. Puedes esperar a que se confirme, acelerarla o cancelarla.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "No es posible acelerarla ni cancelarla",
+        "description" : "Esta transacción ya se ha validado"
+      }
+    }
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "Seleccionar cripto",
@@ -3674,6 +3709,7 @@
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
     "allowManagerPermission" : "Permite {{wording}} en tu {{productName}}",
+    "allowRemoveCustomLockscreen" : "Confirmar eliminación de imagen en tu Ledger Stax",
     "loading" : "Cargando...",
     "turnOnAndUnlockDevice" : "Enciende y desbloquea tu dispositivo",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
@@ -5966,9 +6002,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Elegir de mi galería de fotos",
-        "selectFromNFTGallery" : "Elegir de la galería de NFTs"
+        "selectFromNFTGallery" : "Elegir de la galería de NFTs",
+        "remove" : "Eliminar imagen actual"
       }
     },
+    "toastRemove" : "Imagen de pantalla de bloqueo eliminada",
     "cropImage" : "Recortar imagen",
     "chooseConstrast" : "Elegir contraste",
     "uploadAnotherImage" : "Cargar otra imagen",
