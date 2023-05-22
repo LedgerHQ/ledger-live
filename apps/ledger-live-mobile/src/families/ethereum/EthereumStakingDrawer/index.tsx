@@ -1,11 +1,18 @@
 import React, { useCallback, useState } from "react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { Button, Flex } from "@ledgerhq/native-ui";
 
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import { EthStakingProviders } from "./types";
 import { EthereumStakingDrawerBody } from "./EthereumStakingDrawerBody";
+import { useTranslation } from "react-i18next";
+import { SafeAreaFrameContext } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native";
 
-export function EthereumStakingDrawer() {
+type Props = unknown;
+
+export function EthereumStakingDrawer(_: Props) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(true);
   const ethStakingProviders = useFeature<EthStakingProviders>(
     "ethStakingProviders",
@@ -23,9 +30,14 @@ export function EthereumStakingDrawer() {
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
-      <EthereumStakingDrawerBody
-        providers={ethStakingProviders.params!.listProvider}
-      />
+      <Flex rowGap={52}>
+        <EthereumStakingDrawerBody
+          providers={ethStakingProviders.params!.listProvider}
+        />
+        <Button onPress={onClose} type="main">
+          {t("stake.ethereum.close")}
+        </Button>
+      </Flex>
     </QueuedDrawer>
   );
 }
