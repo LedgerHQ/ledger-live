@@ -28,7 +28,7 @@ type Props = {
   nfts: (ProtoNFT | NFT)[];
   contract: string;
   account: Account;
-  onClick: (a: string) => void;
+  onClick: () => void;
 };
 const Row = ({ nfts, contract, account, onClick }: Props) => {
   const [nft] = nfts;
@@ -58,7 +58,7 @@ const Row = ({ nfts, contract, account, onClick }: Props) => {
         horizontal
         px={4}
         py={3}
-        onClick={() => onClick}
+        onClick={onClick}
       >
         <Skeleton width={32} minHeight={32} show={loading}>
           <Media
