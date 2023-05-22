@@ -6,11 +6,10 @@ import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index"
 import { Unit, CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   Account,
-  ChildAccount,
   FeeStrategy,
   Operation,
   OperationType,
-  TokenAccount,
+  SubAccount,
   TransactionCommon,
 } from "@ledgerhq/types-live";
 // FIXME: ideally we need to have <A,T,TS> parametric version of StepProps
@@ -55,6 +54,7 @@ export type OperationDetailsExtraProps<A> = {
   type: OperationType;
   extra: Record<string, any>;
 };
+
 /**
  * LLD family specific that a coin family can implement
  * @template A is the account type of the family. you can set it to Account if there is no customisation of that type among the family.
@@ -110,7 +110,7 @@ export type LLDCoinFamily<
      * TODO document me
      */
     SendAction?: React.ComponentType<{
-      account: A | TokenAccount | ChildAccount;
+      account: A | SubAccount;
       parentAccount: A | null | undefined;
       onClick: () => void;
     }>;
@@ -119,7 +119,7 @@ export type LLDCoinFamily<
      * TODO document me
      */
     ReceiveAction?: React.ComponentType<{
-      account: TokenAccount | A | ChildAccount;
+      account: A | SubAccount;
       parentAccount: A | null | undefined;
       onClick: () => void;
     }>;
@@ -129,7 +129,7 @@ export type LLDCoinFamily<
    * TODO document me
    */
   accountHeaderManageActions?: (_: {
-    account: A | TokenAccount | ChildAccount;
+    account: A | SubAccount;
     parentAccount: A | null | undefined;
     source?: string;
   }) => ManageAction[] | null | undefined;
@@ -141,7 +141,7 @@ export type LLDCoinFamily<
     fieldComponents?: Record<string, React.ComponentType<FieldComponentProps<A, T, TS>>>;
 
     warning?: React.ComponentType<{
-      account: A | TokenAccount | ChildAccount;
+      account: A | SubAccount;
       parentAccount: A | null | undefined;
       transaction: T;
       status: TS;
@@ -149,7 +149,7 @@ export type LLDCoinFamily<
     }>;
 
     title?: React.ComponentType<{
-      account: A | TokenAccount | ChildAccount;
+      account: A | SubAccount;
       parentAccount: A | null | undefined;
       transaction: T;
       status: TS;
@@ -164,7 +164,7 @@ export type LLDCoinFamily<
    * TODO document me
    */
   AccountBodyHeader?: React.ComponentType<{
-    account: A | TokenAccount | ChildAccount;
+    account: A | SubAccount;
     parentAccount: A | null | undefined;
   }>;
 
@@ -172,7 +172,7 @@ export type LLDCoinFamily<
    * TODO document me
    */
   AccountSubHeader?: React.ComponentType<{
-    account: A | TokenAccount | ChildAccount;
+    account: A | SubAccount;
     parentAccount: A | null | undefined;
   }>;
 
@@ -182,6 +182,9 @@ export type LLDCoinFamily<
   sendAmountFields?: {
     component: React.ComponentType<{
       account: A;
+      /**
+       * @deprecated use account instead
+       */
       parentAccount: A | null | undefined;
       transaction: T;
       status: TS;
@@ -196,10 +199,15 @@ export type LLDCoinFamily<
 
   /**
    * TODO document me
+   *
+   * FIXME: account will have to be A | SubAccount
    */
   sendRecipientFields?: {
     component: React.ComponentType<{
       account: A;
+      /**
+       * @deprecated use account instead
+       */
       parentAccount: A | undefined | null;
       transaction: T;
       status: TS;
@@ -230,7 +238,7 @@ export type LLDCoinFamily<
    * TODO document me
    */
   AccountBalanceSummaryFooter?: React.ComponentType<{
-    account: A | TokenAccount | ChildAccount;
+    account: A | SubAccount;
     counterValue: Currency;
     discreetMode: boolean;
   }>;
@@ -280,7 +288,7 @@ export type FieldComponentProps<
   T extends TransactionCommon,
   TS extends TransactionStatus
 > = {
-  account: A | TokenAccount | ChildAccount;
+  account: A | SubAccount;
   parentAccount: A | undefined | null;
   transaction: T;
   status: TS;
