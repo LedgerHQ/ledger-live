@@ -23,11 +23,9 @@ const DelegationModal = ({ name, account, singleProviderRedirectMode, source }: 
       name={name}
       centered
       width={500}
-      bodyStyle={{
-        paddingTop: "0px",
-      }}
       render={({ onClose }) => (
         <ModalBody
+          pt={0}
           onClose={onClose}
           render={() => (
             <Flex justifyContent={"center"}>
