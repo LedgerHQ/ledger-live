@@ -703,7 +703,7 @@
       "title" : "O formato do memo está incorreto"
     },
     "StellarMemoRecommended" : {
-      "title" : "Pode ser necessário um memo ao enviar a este destinatário"
+      "title" : "Um memo pode ser necessário para enviar a este destinatário"
     },
     "StellarAssetNotAccepted" : {
       "title" : "Este destinatário ainda não tem uma trustline para {{assetCode}}"
@@ -2490,8 +2490,8 @@
       "desc" : "Ajuste as configurações gerais do Ledger Live.",
       "carousel" : "Recomendações",
       "carouselDesc" : "Mostraremos cartões com dicas personalizadas e nossas últimas ofertas só para você.",
-      "language" : "Idioma de exibição",
-      "languageDesc" : "Defina o idioma exibido no Ledger Live.",
+      "language" : "Idioma do aplicativo",
+      "languageDesc" : "Selecione o idioma do Ledger Live.",
       "dateFormat" : "Formato da data",
       "dateFormatDesc" : "Defina o formato de data do Ledger Live",
       "region" : "Região",
@@ -2517,10 +2517,10 @@
       "developerMode" : "Modo desenvolvedor",
       "developerModeDesc" : "Mostrar aplicativos de desenvolvedor no Manager e habilitar aplicativos Testnet.",
       "analytics" : "Métricas",
-      "analyticsDesc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência do usuário.",
+      "analyticsDesc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência de uso.",
       "analyticsModal" : {
         "title" : "Compartilhar métricas",
-        "desc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência do usuário.",
+        "desc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência de uso",
         "bullet0" : "Cliques",
         "bullet1" : "Visitas à página do aplicativo",
         "bullet2" : "Redirecionar para página web",
@@ -2573,7 +2573,7 @@
         "confirm" : "Ocultar token"
       },
       "hideNFTCollectionCTA" : "Ocultar coleção",
-      "hiddenNFTCollections" : "Coleções de NFT ocultas",
+      "hiddenNFTCollections" : "Coleções NFT ocultas",
       "hiddenNFTCollectionsDesc" : "Você pode esconder tokens indo até a conta e depois pressionando uma coleção longamente e selecionando \"Ocultar coleção\".",
       "hideNFTCollectionModal" : {
         "title" : "Esconder coleção?",
@@ -2654,9 +2654,9 @@
       "clearCacheModalDesc" : "Faremos uma nova varredura completa das transações na rede. Os históricos da conta serão reconstruídos e os saldos serão recalculados.",
       "clearCacheButton" : "Limpar",
       "exportLogs" : "Salvar registros",
-      "exportLogsDesc" : "Salvar registros do Ledger Live pode ser necessário para fins de solução de problemas.",
+      "exportLogsDesc" : "Salvar os registros do Ledger Live pode ser necessário para solucionar problemas.",
       "resetThirdPartyData" : "Redefinir dados de terceiros",
-      "resetThirdPartyDataDesc" : "Apague todos seus dados locais de terceiros, usados para acessar o provedor de transações terceirizado.",
+      "resetThirdPartyDataDesc" : "Apague todos seus dados locais de provedores externos, usados para acessar serviços de transação.",
       "resetThirdPartyDataModal" : "Exclua seus dados locais de terceiros",
       "resetThirdPartyDataModalDesc" : "Exclua seus dados locais de terceiros Você pode precisar reenviar seu KYC e/ou fazer login novamente para acessar os serviços fornecidos por nossos parceiros.",
       "hardReset" : "Redefinir o Ledger Live",
@@ -2668,6 +2668,10 @@
       "title" : "Recursos experimentais",
       "desc" : "Ative os recursos experimentais e nos conte o que achou.",
       "disclaimer" : "Estes são recursos experimentais que fornecemos \"tal como se encontram\" para serem testados pela nossa comunidade de especialistas em tecnologia. Eles podem mudar, quebrar ou ser removidos a qualquer momento. Ao habilitá-los, você concorda em usá-los por sua conta e risco.",
+      "provider" : "A configuração experimental \"Provedor da Minha Ledger ({{forcedProvider}})\" pode mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas compatibilidade. Você pode desativá-la nas configurações.",
+      "providerDevMode" : "As configurações experimentais \"Provedor da Minha Ledger ({{forcedProvider}})\" e \"Modo desenvolvedor\" podem mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas compatibilidade. Você pode desativá-las nas configurações.",
+      "devMode" : "A configuração experimental \"Modo desenvolvedor\" pode mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas de compatibilidade. Você pode desativá-la nas configurações.",
+      "providerCTA" : "Ir para Configurações",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "Integrações Experimentais",
@@ -2679,29 +2683,33 @@
         },
         "managerProvider" : {
           "title" : "Provedor do Manager",
-          "description" : "Alterar o provedor de aplicativos no Manager pode impossibilitar a instalação ou desinstalação de aplicativos no seu dispositivo Ledger."
+          "description" : "Alterar o provedor de aplicativos da Minha Ledger pode impossibilitar a instalação ou desinstalação de aplicativos no seu dispositivo."
         },
         "experimentalExplorers" : {
           "title" : "API de Exploradores Experimentais",
           "description" : "Experimente uma versão futura dos exploradores de blockchain da Ledger. Alterar essa configuração poderá afetar o saldo e a sincronização da conta, bem como o recurso de enviar."
         },
         "experimentalListAppsV2" : {
-          "title" : "Lista de aplicativos experimentais para Minha Ledger",
-          "description" : "Melhoria de desempenho no acesso à Minha Ledger e fluxos inline."
+          "title" : "Lista de aplicativos experimentais em Minha Ledger",
+          "description" : "Melhorias de desempenho para acessar Minha Ledger e fluxos inline."
         },
         "experimentalCountervalues" : {
-          "title" : "API de Contravalores Experimentais",
+          "title" : "API experimental de contravalores",
           "description" : "Isso pode fazer com que os contravalores incorretos sejam exibidos nas suas contas."
         },
         "experimentalSwap" : {
           "title" : "Nova Interface de Troca",
           "description" : "Use a nova interface experimental de troca"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "Habilitar registros de rede",
+          "description" : "Habilite os registros de rede no console (os registros de erro estão sempre habilitados)"
         }
       },
       "developerFeatures" : {
         "experimentalApps" : {
           "title" : "Permitir aplicativos experimentais",
-          "description" : "Exibir e permitir a abertura de aplicativos classificados como experimentais na plataforma"
+          "description" : "Exibe e permite abrir aplicativos da plataforma marcados como 'experimentais'."
         },
         "debugApps" : {
           "title" : "Permitir debug de aplicativos",
@@ -3453,7 +3461,7 @@
       "edit" : {
         "title" : "Escolha a unidade"
       },
-      "networkInfo" : "Escolha a quantia das taxas de rede a serem incluídas na transação. A quantia das taxas afeta a velocidade de processamento da transação"
+      "networkInfo" : "Escolha o quanto de taxas de rede incluir na transação. A quantia de taxas afeta a velocidade de processamento da transação"
     },
     "verification" : {
       "streaming" : {
@@ -3465,6 +3473,33 @@
       "maxSpendable" : {
         "title" : "Quantia máxima a ser gasta",
         "description" : "A quantia máxima a ser gasta é o saldo total em uma conta que está disponível para enviar em uma transação."
+      }
+    }
+  },
+  "editTransaction" : {
+    "cta" : "Acelerar ou Cancelar",
+    "previousFeesInfo" : "Taxa de rede atual = {{amount}} ETH",
+    "header" : "Editar Transação",
+    "learnMore" : "Quero saber mais.",
+    "panel" : {
+      "stuckMessage" : "Essa transação de \"envio\" está travada. Acelere a transação com uma taxa de rede maior ou a cancele.",
+      "speedupMessage" : "A transação está em andamento. Você pode acelerá-la com uma taxa de rede maior ou cancelá-la."
+    },
+    "speedUp" : {
+      "title" : "Acelerar",
+      "description" : "Reenviar a transação com uma taxa de rede maior."
+    },
+    "cancel" : {
+      "title" : "Cancelar",
+      "description" : "Enviando 0 {{ticker}} para seu próprio endereço. Para garantir o cancelamento, a taxa de rede é de 30% a mais do que a taxa da transação a ser cancelada."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "Você não tem a opção de cancelar a transação porque não há fundos suficientes em sua conta.",
+      "notEnoughFundsToSpeedup" : "Você não tem a opção de acelerar a transação porque não há fundos suficientes em sua conta.",
+      "notlowestNonceToSpeedup" : "O recurso de aceleração não está disponível. Sua transação está pendente porque uma transação anterior está presa. Você pode esperar até que ela seja confirmada, acelerá-la ou cancelá-la.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "Não pode ser acelerada ou cancelada",
+        "description" : "Essa transação já foi validada"
       }
     }
   },
@@ -3674,6 +3709,7 @@
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
     "allowManagerPermission" : "Permitir {{wording}} em sua {{productName}}",
+    "allowRemoveCustomLockscreen" : "Confirme a remoção da imagem em sua Ledger Stax",
     "loading" : "Carregando...",
     "turnOnAndUnlockDevice" : "Ligue e desbloqueie seu dispositivo",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
@@ -5623,7 +5659,7 @@
         "confirm" : "Confirmar",
         "cancel" : "Cancelar",
         "address" : "Endereço para conta {{currency}}.",
-        "warning" : "Seu endereço não foi confirmado no seu dispositivo Ledger. Verifique-o por segurança."
+        "warning" : "Seu endereço não foi confirmado no seu dispositivo Ledger. É mais seguro verificá-lo"
       },
       "bullets" : {
         "whereToBuy" : "Compre em qualquer lugar",
@@ -5966,9 +6002,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Escolher na minha galeria de imagens",
-        "selectFromNFTGallery" : "Escolher na galeria de NFTs"
+        "selectFromNFTGallery" : "Escolher na galeria de NFTs",
+        "remove" : "Remover a imagem atual"
       }
     },
+    "toastRemove" : "Imagem da tela de bloqueio removida",
     "cropImage" : "Cortar imagem",
     "chooseConstrast" : "Escolher contraste",
     "uploadAnotherImage" : "Enviar outra imagem",
