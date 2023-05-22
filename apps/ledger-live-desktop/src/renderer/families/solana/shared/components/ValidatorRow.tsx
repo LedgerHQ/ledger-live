@@ -1,6 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { ValidatorAppValidator } from "@ledgerhq/live-common/families/solana/validator-app";
+import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
@@ -19,9 +19,9 @@ import { openURL } from "~/renderer/linking";
 
 type Props = {
   currency: CryptoCurrency;
-  validator: ValidatorAppValidator;
+  validator: ValidatorsAppValidator;
   active?: boolean;
-  onClick?: (v: ValidatorAppValidator) => void;
+  onClick?: (v: ValidatorsAppValidator) => void;
   disableHover?: boolean;
   unit: Unit;
 };

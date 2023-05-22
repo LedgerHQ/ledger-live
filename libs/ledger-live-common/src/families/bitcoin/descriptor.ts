@@ -2,7 +2,7 @@ import { Observable, from, of, EMPTY } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import invariant from "invariant";
 import bs58 from "bs58";
-import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
+import type { DerivationMode, GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 import type { Result } from "../../hw/getAddress/types";
 import { hash256, hash160 } from "../../crypto";
 import {
@@ -159,7 +159,7 @@ export function scanDescriptors(
   currency: CryptoCurrency,
   limit = 10
 ): Observable<AccountDescriptor> {
-  const derivateAddress = (opts) =>
+  const derivateAddress = (opts: GetAddressOptions) =>
     withDevice(deviceId)((transport) => from(getAddress(transport, opts)));
 
   function stepAddress({

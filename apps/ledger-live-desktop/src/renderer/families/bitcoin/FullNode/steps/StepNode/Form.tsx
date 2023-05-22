@@ -34,12 +34,19 @@ export type RPCNodeConfig = {
   password: string;
   tls?: boolean;
 };
-const maybeError = (errors, field, satStackAlreadyConfigured, ignoredErrorClass) => {
+
+const maybeError = (
+  errors: (Error & { field?: string; error: Error })[],
+  field: unknown,
+  satStackAlreadyConfigured: boolean,
+  ignoredErrorClass: Function,
+) => {
   const error = errors.find(e => e.field === field)?.error;
   return error && (satStackAlreadyConfigured || !(error instanceof ignoredErrorClass))
     ? error
     : null;
 };
+
 const Form = ({
   nodeConfig,
   patchNodeConfig,
@@ -119,7 +126,7 @@ const Form = ({
               />
               <InputPassword
                 error={passwordError}
-                onChange={password =>
+                onChange={(password: string) =>
                   patchNodeConfig({
                     password,
                   })

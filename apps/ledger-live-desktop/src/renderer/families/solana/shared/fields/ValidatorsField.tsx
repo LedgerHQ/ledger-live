@@ -1,7 +1,7 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
-import { ValidatorAppValidator } from "@ledgerhq/live-common/families/solana/validator-app";
-import { Account } from "@ledgerhq/types-live";
+import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
+import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import invariant from "invariant";
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -16,9 +16,9 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "../components/ValidatorRow";
 
 type Props = {
-  account: Account;
+  account: SolanaAccount;
   chosenVoteAccAddr: string | undefined | null;
-  onChangeValidator: (v: ValidatorAppValidator) => void;
+  onChangeValidator: (v: ValidatorsAppValidator) => void;
 };
 const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
   invariant(account && account.solanaResources, "solana account and resources required");
@@ -41,7 +41,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
     }
   }, []);
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
-  const renderItem = (validator: ValidatorAppValidator) => {
+  const renderItem = (validator: ValidatorsAppValidator) => {
     return (
       <ValidatorRow
         currency={account.currency}
@@ -85,9 +85,9 @@ const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
 `;
-const SeeAllButton: ThemedComponent<{
+const SeeAllButton = styled.div<{
   expanded: boolean;
-}> = styled.div`
+}>`
   display: flex;
   color: ${p => p.theme.colors.wallet};
   align-items: center;

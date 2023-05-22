@@ -1,9 +1,6 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { Account } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -17,6 +14,12 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { PickingStrategy } from "./PickingStrategy";
 import { CoinControlRow } from "./CoinControlRow";
+import {
+  BitcoinAccount as Account,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/bitcoin/types";
+
 type Props = {
   isOpened?: boolean;
   onClose: () => void;
@@ -61,12 +64,7 @@ const CoinControlModal = ({
         onClose={onClose}
         render={() => (
           <Box flow={2}>
-            <PickingStrategy
-              transaction={transaction}
-              account={account}
-              onChange={onChange}
-              status={status}
-            />
+            <PickingStrategy transaction={transaction} account={account} onChange={onChange} />
 
             <Separator />
             <Box mt={0} mb={4} horizontal alignItem="center" justifyContent="space-between">

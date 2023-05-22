@@ -16,6 +16,7 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { FullNodeSteps, ConnectionStatus, CheckWrapper, connectionStatus } from "..";
 import IconCheck from "~/renderer/icons/Check";
+import { Device } from "@ledgerhq/types-devices";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const StepConnectDevice = ({
   setScannedDescriptors,
@@ -27,7 +28,7 @@ const StepConnectDevice = ({
   setError: (a: Error) => void;
 }) => {
   const currency = getCryptoCurrencyById("bitcoin");
-  const [device, setDevice] = useState(null);
+  const [device, setDevice] = useState<Device>(null);
   const [scanStatus, setScanStatus] = useState<ConnectionStatus>(connectionStatus.IDLE);
   useEffect(() => {
     if (device) {

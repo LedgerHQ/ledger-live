@@ -13,9 +13,7 @@ export const connectionStatus = Object.freeze({
   FAILURE: "failure",
 });
 export type ConnectionStatus = typeof connectionStatus[keyof typeof connectionStatus];
-export const CheckWrapper: ThemedComponent<{
-  size?: number;
-}> = styled.div`
+export const CheckWrapper = styled.div<{ size: number }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,9 +23,7 @@ export const CheckWrapper: ThemedComponent<{
   background-color: ${p => rgba(p.theme.colors.positiveGreen, 0.2)};
   color: ${p => p.theme.colors.positiveGreen};
 `;
-export const CrossWrapper: ThemedComponent<{
-  size: number;
-}> = styled.div`
+export const CrossWrapper = styled.div<{ size: number }>`
   display: flex;
   align-items: center;
   justify-content: center;

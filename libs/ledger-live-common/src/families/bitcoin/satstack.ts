@@ -35,6 +35,7 @@ export type RPCNodeConfig = {
   username: string;
   password: string;
   tls?: boolean;
+  notls?: boolean;
 };
 
 export function isValidHost(host: string): boolean {

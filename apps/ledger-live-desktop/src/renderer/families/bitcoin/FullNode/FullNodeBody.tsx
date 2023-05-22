@@ -17,6 +17,7 @@ import StepDisconnect, { StepDisconnectFooter } from "./steps/StepDisconnect";
 import { FullNodeSteps, ConnectionStatus, connectionStatus } from ".";
 import useEnv from "~/renderer/hooks/useEnv";
 import { loadLSS, saveLSS } from "~/renderer/storage";
+
 const steps = ["landing", "node", "accounts", "device", "satstack", "disconnect"];
 const FullNodeBody = ({
   onClose,
