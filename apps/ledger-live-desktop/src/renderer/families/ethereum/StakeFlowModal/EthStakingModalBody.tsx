@@ -1,19 +1,14 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
 
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { track } from "~/renderer/analytics/segment";
-import {
-  CheckBoxContainer,
-  LOCAL_STORAGE_KEY_PREFIX,
-} from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
 import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
 import { ListProvider, ListProviders } from "./types";
 import { getTrackProperties } from "./utils/getTrackProperties";
 import { generateValidDappURLWithParams } from "~/helpers/generateValidDappURLWithParams";
-import CheckBox from "~/renderer/components/CheckBox";
 import { Manifest } from "~/types/manifest";
 import ProviderItem from "./component/ProviderItem";
 
@@ -32,7 +27,6 @@ export type StakeOnClickProps = {
 };
 
 export function EthStakingModalBody({
-  checkbox = false,
   singleProviderRedirectMode = true,
   source,
   onClose,
@@ -41,7 +35,6 @@ export function EthStakingModalBody({
 }: Props) {
   const { t } = useTranslation();
   const history = useHistory();
-  const [doNotShowAgain, setDoNotShowAgain] = useState<boolean>(false);
 
   const stakeOnClick = useCallback(
     ({
@@ -86,19 +79,6 @@ export function EthStakingModalBody({
     [singleProviderRedirectMode, listProviders.length, stakeOnClick],
   );
 
-  const checkBoxOnChange = useCallback(() => {
-    const value = !doNotShowAgain;
-    global.localStorage.setItem(
-      `${LOCAL_STORAGE_KEY_PREFIX}${account?.currency?.id}`,
-      value.toString(),
-    );
-    setDoNotShowAgain(value);
-    track("button_clicked", {
-      button: "not_show",
-      ...getTrackProperties({ value: value.toString() }),
-    });
-  }, [doNotShowAgain, account?.currency?.id]);
-
   return (
     <Flex flexDirection={"column"} alignItems="center" width={"100%"}>
       <Flex flexDirection="column" alignItems="center" rowGap={16}>
@@ -122,18 +102,6 @@ export function EthStakingModalBody({
             </Flex>
           ))}
         </Flex>
-        {!!checkbox && (
-          <CheckBoxContainer
-            p={3}
-            borderRadius={8}
-            borderWidth={0}
-            width={"100%"}
-            onClick={checkBoxOnChange}
-            mt={15}
-          >
-            <CheckBox isChecked={doNotShowAgain} label={t("receive.steps.staking.notShow")} />
-          </CheckBoxContainer>
-        )}
       </Flex>
     </Flex>
   );
