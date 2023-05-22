@@ -221,7 +221,7 @@
     "lend" : "Prestar",
     "catalog" : "Discover",
     "market" : "Mercado",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Tus cuentas favoritas aparecerán aquí.",
@@ -2269,6 +2269,11 @@
     "remainingCharacters" : "Quedan {{ remainingCharacters }} caracteres",
     "renamed" : "El nombre de {{ productName }} se cambió a \n“{{ name }}” "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "Eliminar",
+    "confirmation" : "Confirmar eliminación de imagen en tu Ledger Stax",
+    "success" : "Imagen de pantalla de bloqueo eliminada"
+  },
   "deviceLocalization" : {
     "language" : "Idioma",
     "deviceLanguage" : "Idioma",
@@ -3861,6 +3866,10 @@
     },
     "experimental" : {
       "disclaimer" : "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que fallen, sufran cambios o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad.",
+      "provider" : "El ajuste experimental “Proveedor de Mi Ledger ({{forcedProvider}})” puede mostrar SO y aplicaciones no publicados y causar problemas de compatibilidad. Puedes desactivarlo en los ajustes.",
+      "providerDevMode" : "El ajuste experimental “Proveedor de Mi Ledger ({{forcedProvider}})” y el “Modo desarrollador” pueden mostrar SO y aplicaciones no publicadas y causar problemas de compatibilidad. Puedes desactivarlo en los ajustes.",
+      "devMode" : "El ajuste experimental “Modo desarrollador” puede mostrar SO y aplicaciones no publicadas y causar problemas de compatibilidad. Puedes desactivarlo en los ajustes.",
+      "providerCTA" : "Ir a Ajustes",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "Integraciones experimentales",
@@ -3921,6 +3930,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Multiplicador personalizado para la tarifa base",
           "description" : "Personaliza el multiplicador utilizado para la tarifa base que compone el maxFeePerGas de la transacción EIP1559"
+        },
+        "enableNetworkLogs" : {
+          "title" : "Activar registros de red",
+          "description" : "Activar registros de red en la consola (los registros de error están siempre activados)"
         }
       }
     },
@@ -4226,6 +4239,10 @@
           "3" : {
             "title" : "Restaura tu Frase de recuperación a un nuevo dispositivo",
             "description" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
+          },
+          "4" : {
+            "title" : "Restaurar con Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4388,25 @@
             "help" : {
               "help" : "Necesitas ayuda",
               "descr" : "¿No sabes lo que tienes que hacer? Obtén ayuda para concluir este paso."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Selecciona “Restore using Ledger Recover” (Restaurar con Ledger Recover).",
+            "1" : {
+              "title" : "Selecciona \"Restore\" (Restaurar)",
+              "descr" : "Presiona los dos botones a la vez para seleccionar."
+            },
+            "2" : {
+              "title" : "Selecciona “Restore using Ledger Recover” (Restaurar con Ledger Recover)."
+            },
+            "help" : {
+              "iDontSee" : "No veo “Restore using Ledger Recover” (Restaurar con Ledger Recover)",
+              "modal" : {
+                "title" : "Es necesario actualizar el SO de tu Ledger Nano X",
+                "subtitle" : " Puedes probar a actualizar el SO o contactar al servicio de soporte de Ledger para pedir ayuda.",
+                "learnHowToUpdate" : "Aprende cómo actualizarlo",
+                "contactLedgerSupport" : "Ponte en contacto con el Soporte de Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5686,6 +5722,7 @@
   "customImage" : {
     "title" : "Pantalla de bloqueo personalizada",
     "managerCTA" : "Imagen de pantalla de bloqueo",
+    "managerCTARemove" : "Eliminar",
     "steps" : {
       "choose" : {
         "stepLabel" : "Elige una imagen",
@@ -5694,6 +5731,7 @@
         "myNfts" : "Mis NFTs",
         "upload" : "Cargar desde mi PC",
         "chooseNft" : "Elige un NFT",
+        "remove" : "Eliminar imagen actual",
         "selectNft" : "Elegir NFT",
         "previousSelectNft" : "Atrás",
         "nftEmptyStateTitle" : "Todavía no hay NFTs para mostrar",
