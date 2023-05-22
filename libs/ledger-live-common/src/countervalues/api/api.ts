@@ -1,27 +1,14 @@
-import { Currency } from "@ledgerhq/types-cryptoassets";
 import network from "@ledgerhq/live-network/network";
 import chunk from "lodash/chunk";
 import URL from "url";
 import { getEnv } from "../../env";
 import { promiseAllBatched } from "../../promise";
-import { formatPerGranularity } from "../helpers";
+import { encodeCurrencyAsLedgerId, formatPerGranularity } from "../helpers";
 import type { CounterValuesAPI, TrackingPair } from "../types";
 
 const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 
 const LATEST_CHUNK = 50;
-
-const encodedId = (currency: Currency) => {
-  switch (currency.type) {
-    case "FiatCurrency": {
-      return currency.ticker;
-    }
-    case "CryptoCurrency":
-    case "TokenCurrency": {
-      return encodeURIComponent(currency.id);
-    }
-  }
-};
 
 const latest = async (pairs: TrackingPair[], direct?: boolean) => {
   const all = await promiseAllBatched(
@@ -33,7 +20,12 @@ const latest = async (pairs: TrackingPair[], direct?: boolean) => {
         url: `${baseURL()}/v2/latest/${
           direct ? "direct" : "indirect"
         }?pairs=${partial
-          .map((p) => `${encodedId(p.from)}:${encodedId(p.to)}`)
+          .map(
+            (p) =>
+              `${encodeCurrencyAsLedgerId(p.from)}:${encodeCurrencyAsLedgerId(
+                p.to
+              )}`
+          )
           .join(",")}`,
       });
       return data;
@@ -60,9 +52,9 @@ const api: CounterValuesAPI = {
     const { data } = await network({
       method: "GET",
       url: URL.format({
-        pathname: `${baseURL()}/v2/${granularity}/${encodedId(
+        pathname: `${baseURL()}/v2/${granularity}/${encodeCurrencyAsLedgerId(
           from
-        )}/${encodedId(to)}`,
+        )}/${encodeCurrencyAsLedgerId(to)}`,
         query,
       }),
     });
