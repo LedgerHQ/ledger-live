@@ -1,12 +1,10 @@
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/hedera/types";
-import { Account } from "@ledgerhq/types-live";
-import { LLDCoinFamily } from "../types";
 import AccountSubHeader from "./AccountSubHeader";
+import NoAssociatedAccounts from "./NoAssociatedAccounts";
 import sendAmountFields from "./SendAmountFields";
 import StepReceiveFunds from "./StepReceiveFunds";
-import NoAssociatedAccounts from "./NoAssociatedAccounts";
+import { HederaFamily } from "./types";
 
-const family: LLDCoinFamily<Account, Transaction, TransactionStatus> = {
+const family: HederaFamily = {
   AccountSubHeader,
   sendAmountFields,
   StepReceiveFunds,

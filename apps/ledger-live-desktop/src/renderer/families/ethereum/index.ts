@@ -1,14 +1,12 @@
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ethereum/types";
-import { LLDCoinFamily } from "../types";
-import operationDetails from "./operationDetails";
-import modals, { ModalsData } from "./modals";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
-import transactionConfirmFields from "./TransactionConfirmFields";
 import sendAmountFields from "./SendAmountFields";
 import StakeBanner from "./StakeBanner";
-import { Account } from "@ledgerhq/types-live";
+import transactionConfirmFields from "./TransactionConfirmFields";
+import modals from "./modals";
+import operationDetails from "./operationDetails";
+import { EthereumFamily } from "./types";
 
-const family: LLDCoinFamily<Account, Transaction, TransactionStatus, ModalsData> = {
+const family: EthereumFamily = {
   operationDetails,
   accountHeaderManageActions,
   modals,

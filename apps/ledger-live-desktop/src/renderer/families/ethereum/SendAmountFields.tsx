@@ -1,31 +1,23 @@
-import React, { useState, useCallback } from "react";
-import {
-  Transaction as EthereumTransaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/ethereum/types";
-import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
-import { useFeesStrategy } from "@ledgerhq/live-common/families/ethereum/react";
-import { Account, AccountLike, AccountBridge } from "@ledgerhq/types-live";
-import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { context, ContextValue } from "~/renderer/drawers/Provider";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useFeesStrategy } from "@ledgerhq/live-common/families/ethereum/react";
+import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
+import {
+  Transaction as EthereumTransaction
+} from "@ledgerhq/live-common/families/ethereum/types";
+import { AccountBridge } from "@ledgerhq/types-live";
+import React, { useCallback, useState } from "react";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
-import SelectFeeStrategy from "./SelectFeeStrategy";
-import PriorityFeeField from "./PriorityFeeField";
+import { ContextValue, context } from "~/renderer/drawers/Provider";
 import GasLimitField from "./GasLimitField";
 import GasPriceField from "./GasPriceField";
 import MaxFeeField from "./MaxFeeField";
+import PriorityFeeField from "./PriorityFeeField";
+import SelectFeeStrategy from "./SelectFeeStrategy";
+import { EthereumFamily } from "./types";
 
-type Props = {
-  transaction: EthereumTransaction;
-  account: AccountLike;
-  parentAccount: Account | undefined;
-  updateTransaction: Result<EthereumTransaction>["updateTransaction"];
-  status: TransactionStatus;
-};
 
-const Root = (props: Props) => {
+const Root: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = props => {
   const { account, parentAccount, updateTransaction, transaction } = props;
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge: AccountBridge<EthereumTransaction> = getAccountBridge(mainAccount);
@@ -37,7 +29,7 @@ const Root = (props: Props) => {
 
   const onFeeStrategyClick = useCallback(
     ({ amount, feesStrategy, extra }) => {
-      updateTransaction(tx =>
+      updateTransaction((tx: EthereumTransaction) =>
         bridge.updateTransaction(tx, {
           gasPrice: amount,
           maxFeePerGas: extra?.maxFeePerGas,
