@@ -2668,6 +2668,10 @@
       "title" : "실험 특징",
       "desc" : "다양한 실험 특징을 시험해 보고 의견을 나누어 주세요.",
       "disclaimer" : "이는 기술에 대한 관심이 지대한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거될 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다.",
+      "provider" : "실험 설정인 “내 Ledger 공급자({{forcedProvider}})”가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
+      "providerDevMode" : "실험 설정인 “내 Ledger 공급자({{forcedProvider}})” 및 \"개발자 모드\"가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
+      "devMode" : "실험 설정인 “개발자 모드”가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
+      "providerCTA" : "설정으로 이동",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "실험 통합",
@@ -2696,6 +2700,10 @@
         "experimentalSwap" : {
           "title" : "새로운 스왑 인터페이스",
           "description" : "새로운 실험적 스왑 인터페이스 사용"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "네트워크 로그 활성화",
+          "description" : "콘솔에서 네트워크 로그 활성화(오류 로그는 항상 활성화됨)"
         }
       },
       "developerFeatures" : {
@@ -3468,6 +3476,33 @@
       }
     }
   },
+  "editTransaction" : {
+    "cta" : "속도 올리기 또는 취소",
+    "previousFeesInfo" : "현재 네트워크 수수료 = {{amount}} ETH",
+    "header" : "트랜잭션 수정",
+    "learnMore" : "더 자세히 알고 싶어요",
+    "panel" : {
+      "stuckMessage" : "'전송' 트랜잭션이 멈춘 상태입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+      "speedupMessage" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다."
+    },
+    "speedUp" : {
+      "title" : "스피드 업",
+      "description" : "네트워크 수수료를 높여 트랜잭션을 다시 제출하세요."
+    },
+    "cancel" : {
+      "title" : "취소",
+      "description" : "0의 {{ticker}}를 본인 주소로 전송하기 취소를 담보하기 위해 네트워크 수수료는 취소하려는 트랜잭션 수수료보다 30% 더 높습니다."
+    },
+    "error" : {
+      "notEnoughFundsToCancel" : "계정에 충분한 자금이 없기 때문에 트랜잭션을 취소할 수 없습니다.",
+      "notEnoughFundsToSpeedup" : "계정에 충분한 자금이 없기 때문에 트랜잭션 속도를 높일 수 없습니다.",
+      "notlowestNonceToSpeedup" : "속도 향상 기능을 사용할 수 없습니다. 이전 트랜잭션이 중단되어 현재 트랜잭션이 보류 중입니다. 확인될 때까지 기다렸다가 속도를 높이거나 취소할 수 있습니다.",
+      "TransactionHasBeenValidatedError" : {
+        "title" : "속도를 높이거나 취소할 수 없습니다",
+        "description" : "이 트랜잭션은 이미 검증되었습니다"
+      }
+    }
+  },
   "requestAccount" : {
     "stepperHeader" : {
       "selectCrypto" : "암호화폐 선택",
@@ -3674,6 +3709,7 @@
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
     "allowManagerPermission" : "{{productName}}에서 {{wording}} 허용",
+    "allowRemoveCustomLockscreen" : "Ledger Stax에서 이미지 삭제 확인",
     "loading" : "로딩...",
     "turnOnAndUnlockDevice" : "장치를 켜고 잠금 해제하세요",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
@@ -5966,9 +6002,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "내 사진 갤러리에서 선택",
-        "selectFromNFTGallery" : "NFT 갤러리에서 선택"
+        "selectFromNFTGallery" : "NFT 갤러리에서 선택",
+        "remove" : "현재 사진 삭제"
       }
     },
+    "toastRemove" : "잠금 화면 사진이 삭제됨",
     "cropImage" : "크롭 기능으로 사진을 잘라주세요",
     "chooseConstrast" : "대비 선택",
     "uploadAnotherImage" : "다른 이미지 업로드",
