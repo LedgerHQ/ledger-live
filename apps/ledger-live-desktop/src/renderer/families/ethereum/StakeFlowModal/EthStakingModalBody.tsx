@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
 
-import { Flex } from "@ledgerhq/react-ui";
+import { Flex, Text } from "@ledgerhq/react-ui";
 import { track } from "~/renderer/analytics/segment";
 import {
   CheckBoxContainer,
@@ -13,7 +13,6 @@ import { openURL } from "~/renderer/linking";
 import { ListProvider, ListProviders } from "./types";
 import { getTrackProperties } from "./utils/getTrackProperties";
 import { generateValidDappURLWithParams } from "~/helpers/generateValidDappURLWithParams";
-import EthStakeIllustration from "./assets/EthStakeIlustration";
 import CheckBox from "~/renderer/components/CheckBox";
 import { Manifest } from "~/types/manifest";
 import ProviderItem from "./component/ProviderItem";
@@ -99,8 +98,15 @@ export function EthStakingModalBody({
 
   return (
     <Flex flexDirection={"column"} alignItems="center" width={"100%"}>
-      <EthStakeIllustration size={140} />
-      <Flex flexDirection={"column"} mt={7} px={20} width="100%">
+      <Flex flexDirection="column" alignItems="center" rowGap={16}>
+        <Text ff="Inter|SemiBold" fontSize="24px" lineHeight="32px">
+          {t("ethereum.stake.title")}
+        </Text>
+        <Text textAlign="center" color="neutral.c70" variant="body" maxWidth={400}>
+          {t("ethereum.stake.subTitle")}
+        </Text>
+      </Flex>
+      <Flex flexDirection={"column"} mt={5} px={20} width="100%">
         <Flex flexDirection={"column"} width="100%">
           {listProviders.map(item => (
             <Flex key={item.liveAppId} width="100%" flexDirection={"column"}>

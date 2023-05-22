@@ -3,7 +3,6 @@ import { Account } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { EthStakingProviders } from "~/types/featureFlags";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
-import { Trans } from "react-i18next";
 import { Flex } from "@ledgerhq/react-ui";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { EthStakingModalBody } from "./EthStakingModalBody";
@@ -31,9 +30,11 @@ const DelegationModal = ({
       name={name}
       centered
       width={500}
+      bodyStyle={{
+        paddingTop: "0px",
+      }}
       render={({ onClose }) => (
         <ModalBody
-          title={<Trans i18nKey="ethereum.stake.title" />}
           onClose={onClose}
           render={() => (
             <Flex justifyContent={"center"}>

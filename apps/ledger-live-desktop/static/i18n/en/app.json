@@ -3514,7 +3514,8 @@
   },
   "ethereum": {
     "stake": {
-      "title": "Earn Ethereum",
+      "title": "Grow your ETH holdings",
+      "subTitle": "Stake your ETH and grow your holdings by receiving daily rewards directly into your Ledger Live.",
       "lido": {
         "title": "Earn with Lido",
         "tag": "No minimum",
@@ -3522,14 +3523,14 @@
         "supportLink": "Learn more about Lido"
       },
       "kiln": {
-        "title": "Kiln validator",
+        "title": "Kiln dedicated staking",
         "tag": "Requires 32 ETH",
-        "description": "Got more than 32 ETH? Stake on dedicated validator. Earn rewards daily. No lock-up period.",
+        "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed.",
         "supportLink": "Learn more about Kiln validator"
       },
       "kiln_pooling": {
-        "title": "Kiln pooling",
-        "description": "Participate in a pool and stake any ETH amount. No lock-up period. No minimum.",
+        "title": "Kiln staking pool",
+        "description": "Join a staking pool. No minimum ETH is required. Rewards are automatically claimed.",
         "supportLink": "Learn more about Kiln pooling"
       }
     }

@@ -21,7 +21,7 @@ const IconContainer = styled.div(
 
 const ProviderIconContainer = styled.div(
   ({ theme }) => `
-  margin-top: ${theme.space[3]}px;
+  margin-top: ${theme.space[1]}px;
 `,
 );
 
