@@ -111,7 +111,7 @@ const NftGallery = () => {
       <InfoModal
         isOpened={isOpen}
         onClose={onCloseModal}
-        data={notAvailableModalInfo}
+        data={notAvailableModalInfo(onCloseModal)}
       />
       <TabBarSafeAreaView
         edges={["left", "right", "bottom"]}
