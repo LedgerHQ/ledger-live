@@ -3,7 +3,7 @@ import { StepProps } from "..";
 
 import Language from "./restore/Language";
 import CLS from "./restore/CLS";
-import { Button, Flex, BoxedIcon, Icons } from "@ledgerhq/react-ui";
+import { Button, Flex } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import {
   ImageCommitRefusedOnDevice,

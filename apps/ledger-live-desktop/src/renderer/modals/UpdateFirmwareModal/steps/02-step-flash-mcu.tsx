@@ -119,7 +119,7 @@ const StepFlashMcu = ({
       return installing === "flash-bootloader" ? 3 : installing === "flash-mcu" ? 2 : 1;
     });
 
-    // An change here also means we've moved to a new step, so increase the counter (?)
+    // A change here also means we've moved to a new step, so increase the counter (?)
     setCurrentStep(currentStep => currentStep + 1);
   }, [installing]);
 
