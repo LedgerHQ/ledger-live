@@ -1,5 +1,6 @@
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 import { BigNumber } from "bignumber.js";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -20,8 +21,13 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { AmountCellProps, AmountTooltipProps, ConfirmationCellProps } from "../types";
-import { AlgorandFamily } from "./types";
+import {
+  AmountCellProps,
+  AmountTooltipProps,
+  ConfirmationCellProps,
+  OperationDetailsExtraProps,
+} from "../types";
+
 const CellIcon = styled(Box)<{ index: number }>`
   flex: 1 0 50%;
   overflow: visible;
@@ -47,9 +53,7 @@ const Cell = styled(Box).attrs(() => ({
   }
 `;
 
-type OperationDetailsExtra = NonNullable<AlgorandFamily["OperationDetailsExtra"]>;
-
-const OperationDetailsExtra: OperationDetailsExtra = ({ extra, account }) => {
+const OperationDetailsExtra = ({ extra, account }: OperationDetailsExtraProps<AlgorandAccount>) => {
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
   const { rewards, memo, assetId } = extra;

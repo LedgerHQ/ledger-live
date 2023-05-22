@@ -29,7 +29,6 @@ const renderItem = ({
         <FirstLetterIcon
           color={isDisabled ? "palette.text.shade40" : "palette.text.shade100"}
           label={name}
-          mr={2}
         />
         <Text ff="Inter|Medium">{name}</Text>
         <Text fontSize={3} color="palette.text.shade40">
