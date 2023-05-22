@@ -5,7 +5,6 @@ import { App, Feature } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 
 import ByteSize from "~/renderer/components/ByteSize";
 import Text from "~/renderer/components/Text";
