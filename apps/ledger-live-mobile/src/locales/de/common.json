@@ -2668,6 +2668,10 @@
       "title" : "Experimentelle Funktionen",
       "desc" : "Probieren Sie die experimentellen Funktionen aus und lassen Sie uns wissen, was Sie davon halten.",
       "disclaimer" : "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen.",
+      "provider" : "Die experimentelle Einstellung „My Ledger provider ({{forcedProvider}})“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie in den Einstellungen deaktivieren.",
+      "providerDevMode" : "Die experimentellen Einstellungen „My Ledger provider ({{forcedProvider}})“ und „Developer mode“ zeigen möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
+      "devMode" : "Die experimentelle Einstellung „Developer mode“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
+      "providerCTA" : "Gehen Sie zu Einstellungen",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "Experimentelle Integrationen",
@@ -2689,13 +2693,13 @@
           "title" : "Experimentelle Apps-Liste für My Ledger",
           "description" : "Leistungsverbesserung für den Zugriff auf My Ledger und Inline-Flows."
         },
-        "experimentalCountervalues" : {
-          "title" : "Experimentelle Gegenwerte API",
-          "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
-        },
         "experimentalSwap" : {
           "title" : "Neue SWAP-Schnittstelle",
           "description" : "Verwenden Sie die neue experimentelle Swap-Schnittstelle"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "Netzwerklogs aktivieren",
+          "description" : "Netzwerklogs in der Konsole aktivieren (Fehlerprotokolle sind immer aktiviert)"
         }
       },
       "developerFeatures" : {
@@ -3674,6 +3678,7 @@
     "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
     "allowManagerPermission" : "Erlauben Sie {{wording}} auf Ihrem {{productName}}",
+    "allowRemoveCustomLockscreen" : "Bestätigen Sie die Entfernung des Bildes auf Ihrem Ledger Stax",
     "loading" : "Lade Daten...",
     "turnOnAndUnlockDevice" : "Schalten Sie Ihr Gerät ein und entsperren Sie es",
     "connectAndUnlockDevice" : "Verbinden und entsperren Sie Ihr Gerät",
@@ -5966,9 +5971,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Aus meiner Bildergalerie auswählen",
-        "selectFromNFTGallery" : "Aus meiner NFT-Galerie auswählen"
+        "selectFromNFTGallery" : "Aus meiner NFT-Galerie auswählen",
+        "remove" : "Aktuelles Bild entfernen"
       }
     },
+    "toastRemove" : "Bild für Sperrbildschirm entfernt",
     "cropImage" : "Bild zuschneiden",
     "chooseConstrast" : "Kontrast auswählen",
     "uploadAnotherImage" : "Ein weiteres Bild hochladen",
