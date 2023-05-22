@@ -703,7 +703,7 @@
       "title" : "O formato do memo está incorreto"
     },
     "StellarMemoRecommended" : {
-      "title" : "Pode ser necessário um memo ao enviar a este destinatário"
+      "title" : "Um memo pode ser necessário para enviar a este destinatário"
     },
     "StellarAssetNotAccepted" : {
       "title" : "Este destinatário ainda não tem uma trustline para {{assetCode}}"
@@ -1079,9 +1079,9 @@
       "title" : "Segurança certificada",
       "desc" : "Nossos produtos são as únicas carteiras hardware certificadas por agências nacionais de segurança cibernética."
     },
-    "title" : "Você precisa de uma Ledger",
+    "title" : "A Ledger é para você",
     "desc" : "Para sua segurança, o Ledger Live só funciona com um dispositivo. Você precisa de um dispositivo para poder continuar.",
-    "cta" : "Compre sua Ledger agora",
+    "cta" : "Comprar sua Ledger agora",
     "footer" : "Já tenho um dispositivo, configurar agora",
     "bannerTitle" : "Mantenha suas criptos e NFTs seguros",
     "bannerTitle2" : "Você precisará de uma Nano para negociar",
@@ -1184,7 +1184,7 @@
   "onboarding" : {
     "stepWelcome" : {
       "title" : "Boas-vindas à Ledger",
-      "subtitle" : "Tornamos a propriedade digital simples e segura",
+      "subtitle" : "Propriedade digital simples e segura",
       "start" : "Começar",
       "noDevice" : "Sem dispositivo?",
       "buy" : "Comprar uma {{fullDeviceName}}",
@@ -1206,7 +1206,7 @@
       "noLedgerLink" : "Eu não tenho uma Ledger e gostaria de comprar uma",
       "setupLedger" : {
         "title" : "Configurar minha Ledger",
-        "subtitle" : "Guiaremos cada passo para proteger suas criptos e NFTs"
+        "subtitle" : "Vamos mostrar os passos para proteger suas criptos e NFTs"
       },
       "buyNano" : {
         "title" : "Comprar uma Ledger Nano X",
@@ -1214,27 +1214,27 @@
       },
       "discoverLedger" : {
         "title" : "Explorar o Ledger Live",
-        "subtitle" : "Explore o aplicativo e saiba mais sobre seus benefícios "
+        "subtitle" : "Explore o aplicativo e conheça melhor seus benefícios "
       },
       "desktopSync" : {
         "title" : "Sincronizar com o aplicativo desktop",
-        "subtitle" : "Sincronize seus ativos do Ledger Live desktop com seu celular."
+        "subtitle" : "Sincronize seus ativos no Ledger Live desktop com o smartphone."
       }
     },
     "discoverLive" : {
       "exploreWithoutADevice" : "Explorar sem um dispositivo",
-      "buyALedgerNow" : "Compre uma Ledger agora",
+      "buyALedgerNow" : "Comprar uma Ledger agora",
       "0" : {
-        "title" : "Proteja todos seus criptoativos."
+        "title" : "Proteja todos os seus criptoativos."
       },
       "1" : {
         "title" : "Fique de olho nos mercados."
       },
       "2" : {
-        "title" : "Descubra aplicativos e aprenda mais sobre web3."
+        "title" : "Descubra mais sobre a Web3 e os DApps."
       },
       "3" : {
-        "title" : "Mantenha suas criptos e NFTs protegidos."
+        "title" : "Proteja suas criptos e NFTs."
       }
     },
     "stepLanguage" : {
@@ -1279,7 +1279,7 @@
       "desktopSync" : {
         "title" : "Já tem uma frase de recuperação?",
         "label" : "Sincronização com desktop",
-        "subTitle" : "Sincronizar cripto do seu aplicativo de desktop",
+        "subTitle" : "Sincronizar cripto com o aplicativo desktop",
         "desc" : "Já tem o aplicativo de desktop? Sincronize para gerenciar sua cripto do seu smartphone!"
       },
       "restoreDevice" : {
@@ -1367,7 +1367,7 @@
             }
           },
           "1" : {
-            "title" : "Navegar",
+            "title" : "Navegue",
             "label" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
           },
           "2" : {
@@ -1404,7 +1404,7 @@
           "title" : "Proteja seu código PIN",
           "bullets" : {
             "0" : {
-              "label" : "Sempre escolha um código PIN ao estar só."
+              "label" : "Sempre escolha um código PIN a sós."
             },
             "1" : {
               "label" : "Sempre insira seu código PIN fora de vista."
@@ -1436,7 +1436,7 @@
         "desc" : "Sua frase de recuperação é uma lista secreta de 24 palavras que respaldam suas chaves privadas.",
         "desc_1" : "Sua Nano gera uma frase de recuperação única. A Ledger não guarda uma cópia dela.",
         "cta" : "Próximo passo",
-        "checkboxDesc" : "Eu entendo que, se eu perder esta frase de recuperação, não poderei acessar minhas criptos caso perca o acesso à minha Nano."
+        "checkboxDesc" : "Eu entendo que, se perder esta frase de recuperação, não poderei acessar minhas criptos caso perca o acesso à minha Nano."
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
@@ -1450,7 +1450,7 @@
               "label" : "Obtenha uma nova carteira hardware."
             },
             "1" : {
-              "label" : "Selecione \"Restaurar frase de recuperação em um novo dispositivo\" no aplicativo Ledger."
+              "label" : "Selecione \"Restore recovery phrase on a new device\" no aplicativo Ledger."
             },
             "2" : {
               "label" : "Insira sua frase de recuperação no seu novo dispositivo para restaurar o acesso aos seus criptoativos."
@@ -1468,14 +1468,14 @@
             "label_1" : "Repita o processo para todas as palavras, respeitando cuidadosamente a ordem e a ortografia. Pressione o botão esquerdo na sua Nano para verificar se há algum erro."
           },
           "2" : {
-            "title" : "Confirme sua frase de recuperação",
+            "title" : "Confirmar sua frase de recuperação",
             "label" : "Pressione o botão direito para percorrer as palavras até encontrar a palavra nº 1. Valide pressionando ambos os botões."
           },
           "3" : {
             "title" : "Repita isso para todas as palavras!"
           }
         },
-        "cta" : "Confirme sua frase de recuperação",
+        "cta" : "Confirmar frase de recuperação",
         "nextStep" : "Próximo passo"
       },
       "hideRecoveryPhrase" : {
@@ -1568,11 +1568,11 @@
             }
           },
           "1" : {
-            "title" : "Navegar",
+            "title" : "Navegue",
             "label" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
           },
           "2" : {
-            "title" : "Selecione \"Restaurar com frase de recuperação\"",
+            "title" : "Selecione \"Restore from recovery phrase\"",
             "label" : "Pressione ambos os botões simultaneamente para validar a seleção."
           },
           "3" : {
@@ -1612,22 +1612,22 @@
     "stepPairNew" : {
       "nanoX" : {
         "title" : "Emparelhar sua Nano",
-        "desc" : "Esta é a primeira vez que você está configurando sua Nano com este telefone. Vamos rapidamente emparelhar seu dispositivo.",
+        "desc" : "Esta é a primeira vez que você está configurando sua Nano com este smartphone. Vamos rapidamente emparelhar seu dispositivo.",
         "cta" : "Vamos emparelhar minha Nano"
       },
       "nanoS" : {
         "title" : "Conecte sua Ledger Nano",
-        "desc" : "Esta é a primeira vez que você está configurando sua Nano com este telefone. Vamos conectar seu dispositivo rapidamente.",
+        "desc" : "Esta é a primeira vez que você está configurando sua Nano com este smartphone. Vamos conectar seu dispositivo rapidamente.",
         "cta" : "Vamos conectar minha Nano"
       },
       "nanoSP" : {
         "title" : "Conecte sua Ledger Nano",
-        "desc" : "Esta é a primeira vez que você está configurando sua Nano com este telefone. Vamos conectar seu dispositivo rapidamente.",
+        "desc" : "Esta é a primeira vez que você está configurando sua Nano com este smartphone. Vamos conectar seu dispositivo rapidamente.",
         "cta" : "Vamos conectar minha Nano"
       },
       "blue" : {
         "title" : "Conecte seu Blue",
-        "desc" : "Esta é a primeira vez que você está configurando seu Blue com este telefone. Vamos conectar seu dispositivo rapidamente.",
+        "desc" : "Esta é a primeira vez que você está configurando sua Blue com este smartphone. Vamos conectar seu dispositivo rapidamente.",
         "cta" : "Vamos conectar meu Blue"
       },
       "infoModal" : {
@@ -1683,7 +1683,7 @@
       }
     },
     "stepImportAccounts" : {
-      "title" : "Sincronizar criptos do desktop",
+      "title" : "Sincronizar criptos com desktop",
       "desc" : "Se você já configurou suas criptos no aplicativo para desktop, você pode sincronizá-las para gerenciá-las pelo celular.",
       "cta" : "Tudo pronto para escanear",
       "bullets" : {
@@ -1691,14 +1691,14 @@
           "label" : "No aplicativo de desktop, selecione\n<1>Configurações > Contas > Exportar Contas</1>."
         },
         "1" : {
-          "label" : "Escaneie o LiveQR Code com seu telefone."
+          "label" : "Escaneie os QR codes com seu telefone."
         },
         "2" : {
-          "label" : "Selecione as contas cripto a importar."
+          "label" : "Selecione quais contas cripto importar."
         }
       },
       "warning" : {
-        "title" : "Seus aplicativos desktop e mobile devem ser sincronizados manualmente.",
+        "title" : "Aplicativos desktop e móvel devem ser manualmente sincronizados.",
         "desc" : "O Ledger Live respeita sua privacidade e armazena seus dados localmente. Se você mudar contas e configurações no seu telefone, precisará fazer o mesmo em seu computador e vice-versa. Suas transações são sincronizadas com a blockchain.",
         "cta" : "Entendi!"
       }
@@ -1780,13 +1780,13 @@
           "wrong" : "se conecta brevemente à internet"
         },
         "modal" : {
-          "text" : "Sua chave privada está sempre offline na sua carteira hardware. Mesmo conectado à Nano, o aplicativo Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo.",
+          "text" : "Sua chave privada está sempre offline, na sua carteira hardware. Mesmo conectado à Nano, o aplicativo Ledger não pode acessar sua chave privada. Você precisa autorizar fisicamente cada transação no seu dispositivo.",
           "cta" : "Terminar quiz"
         }
       },
       "final" : {
         "successTitle" : "Já é profissional!",
-        "successText" : "Você já pode gerenciar suas criptos com segurança. Só falta mais um passo!",
+        "successText" : "Você já pode gerenciar seus criptoativos com segurança. Só falta mais um passo!",
         "failTitle" : "Você logo será profissional...",
         "failText" : "Não se preocupe, a Ledger está aqui para te guiar ao longo da sua jornada. Em breve você se sentirá extra confortável com a segurança das suas criptos. Só mais um passo!",
         "cta" : "Próximo passo"
@@ -1801,7 +1801,7 @@
         "supportLink" : "Entre em contato com o suporte"
       },
       "seed" : {
-        "title" : "Selecione as caixas de conteúdo",
+        "title" : "Consulte as caixas de conteúdo",
         "desc" : "Se sua {{deviceName}} veio com um código PIN ou frase de recuperação, não é seguro utilizá-la e você deve entrar em contato com o Suporte Ledger.",
         "warning" : "Use apenas a frase de recuperação que seu dispositivo exibiu quando foi configurado",
         "continueCTA" : "Continuar",
@@ -2490,8 +2490,8 @@
       "desc" : "Ajuste as configurações gerais do Ledger Live.",
       "carousel" : "Recomendações",
       "carouselDesc" : "Mostraremos cartões com dicas personalizadas e nossas últimas ofertas só para você.",
-      "language" : "Idioma de exibição",
-      "languageDesc" : "Defina o idioma exibido no Ledger Live.",
+      "language" : "Idioma do aplicativo",
+      "languageDesc" : "Selecione o idioma do Ledger Live.",
       "dateFormat" : "Formato da data",
       "dateFormatDesc" : "Defina o formato de data do Ledger Live",
       "region" : "Região",
@@ -2517,10 +2517,10 @@
       "developerMode" : "Modo desenvolvedor",
       "developerModeDesc" : "Mostrar aplicativos de desenvolvedor no Manager e habilitar aplicativos Testnet.",
       "analytics" : "Métricas",
-      "analyticsDesc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência do usuário.",
+      "analyticsDesc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência de uso.",
       "analyticsModal" : {
         "title" : "Compartilhar métricas",
-        "desc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência do usuário.",
+        "desc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência de uso",
         "bullet0" : "Cliques",
         "bullet1" : "Visitas à página do aplicativo",
         "bullet2" : "Redirecionar para página web",
@@ -2573,7 +2573,7 @@
         "confirm" : "Ocultar token"
       },
       "hideNFTCollectionCTA" : "Ocultar coleção",
-      "hiddenNFTCollections" : "Coleções de NFT ocultas",
+      "hiddenNFTCollections" : "Coleções NFT ocultas",
       "hiddenNFTCollectionsDesc" : "Você pode esconder tokens indo até a conta e depois pressionando uma coleção longamente e selecionando \"Ocultar coleção\".",
       "hideNFTCollectionModal" : {
         "title" : "Esconder coleção?",
@@ -2654,9 +2654,9 @@
       "clearCacheModalDesc" : "Faremos uma nova varredura completa das transações na rede. Os históricos da conta serão reconstruídos e os saldos serão recalculados.",
       "clearCacheButton" : "Limpar",
       "exportLogs" : "Salvar registros",
-      "exportLogsDesc" : "Salvar registros do Ledger Live pode ser necessário para fins de solução de problemas.",
+      "exportLogsDesc" : "Salvar os registros do Ledger Live pode ser necessário para solucionar problemas.",
       "resetThirdPartyData" : "Redefinir dados de terceiros",
-      "resetThirdPartyDataDesc" : "Apague todos seus dados locais de terceiros, usados para acessar o provedor de transações terceirizado.",
+      "resetThirdPartyDataDesc" : "Apague todos seus dados locais de provedores externos, usados para acessar serviços de transação.",
       "resetThirdPartyDataModal" : "Exclua seus dados locais de terceiros",
       "resetThirdPartyDataModalDesc" : "Exclua seus dados locais de terceiros Você pode precisar reenviar seu KYC e/ou fazer login novamente para acessar os serviços fornecidos por nossos parceiros.",
       "hardReset" : "Redefinir o Ledger Live",
@@ -2668,6 +2668,10 @@
       "title" : "Recursos experimentais",
       "desc" : "Ative os recursos experimentais e nos conte o que achou.",
       "disclaimer" : "Estes são recursos experimentais que fornecemos \"tal como se encontram\" para serem testados pela nossa comunidade de especialistas em tecnologia. Eles podem mudar, quebrar ou ser removidos a qualquer momento. Ao habilitá-los, você concorda em usá-los por sua conta e risco.",
+      "provider" : "A configuração experimental \"Provedor da Minha Ledger ({{forcedProvider}})\" pode mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas compatibilidade. Você pode desativá-la nas configurações.",
+      "providerDevMode" : "As configurações experimentais \"Provedor da Minha Ledger ({{forcedProvider}})\" e \"Modo desenvolvedor\" podem mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas compatibilidade. Você pode desativá-las nas configurações.",
+      "devMode" : "A configuração experimental \"Modo desenvolvedor\" pode mostrar sistemas operacionais e aplicativos ainda não lançados, o que pode causar problemas de compatibilidade. Você pode desativá-la nas configurações.",
+      "providerCTA" : "Ir para Configurações",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "Integrações Experimentais",
@@ -2679,29 +2683,29 @@
         },
         "managerProvider" : {
           "title" : "Provedor do Manager",
-          "description" : "Alterar o provedor de aplicativos no Manager pode impossibilitar a instalação ou desinstalação de aplicativos no seu dispositivo Ledger."
+          "description" : "Alterar o provedor de aplicativos da Minha Ledger pode impossibilitar a instalação ou desinstalação de aplicativos no seu dispositivo."
         },
         "experimentalExplorers" : {
           "title" : "API de Exploradores Experimentais",
           "description" : "Experimente uma versão futura dos exploradores de blockchain da Ledger. Alterar essa configuração poderá afetar o saldo e a sincronização da conta, bem como o recurso de enviar."
         },
         "experimentalListAppsV2" : {
-          "title" : "Lista de aplicativos experimentais para Minha Ledger",
-          "description" : "Melhoria de desempenho no acesso à Minha Ledger e fluxos inline."
-        },
-        "experimentalCountervalues" : {
-          "title" : "API de Contravalores Experimentais",
-          "description" : "Isso pode fazer com que os contravalores incorretos sejam exibidos nas suas contas."
+          "title" : "Lista de aplicativos experimentais em Minha Ledger",
+          "description" : "Melhorias de desempenho para acessar Minha Ledger e fluxos inline."
         },
         "experimentalSwap" : {
           "title" : "Nova Interface de Troca",
           "description" : "Use a nova interface experimental de troca"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "Habilitar registros de rede",
+          "description" : "Habilite os registros de rede no console (os registros de erro estão sempre habilitados)"
         }
       },
       "developerFeatures" : {
         "experimentalApps" : {
           "title" : "Permitir aplicativos experimentais",
-          "description" : "Exibir e permitir a abertura de aplicativos classificados como experimentais na plataforma"
+          "description" : "Exibe e permite abrir aplicativos da plataforma marcados como 'experimentais'."
         },
         "debugApps" : {
           "title" : "Permitir debug de aplicativos",
@@ -3453,7 +3457,7 @@
       "edit" : {
         "title" : "Escolha a unidade"
       },
-      "networkInfo" : "Escolha a quantia das taxas de rede a serem incluídas na transação. A quantia das taxas afeta a velocidade de processamento da transação"
+      "networkInfo" : "Escolha o quanto de taxas de rede incluir na transação. A quantia de taxas afeta a velocidade de processamento da transação"
     },
     "verification" : {
       "streaming" : {
@@ -3674,6 +3678,7 @@
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
     "allowManagerPermission" : "Permitir {{wording}} em sua {{productName}}",
+    "allowRemoveCustomLockscreen" : "Confirme a remoção da imagem em sua Ledger Stax",
     "loading" : "Carregando...",
     "turnOnAndUnlockDevice" : "Ligue e desbloqueie seu dispositivo",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
@@ -5623,7 +5628,7 @@
         "confirm" : "Confirmar",
         "cancel" : "Cancelar",
         "address" : "Endereço para conta {{currency}}.",
-        "warning" : "Seu endereço não foi confirmado no seu dispositivo Ledger. Verifique-o por segurança."
+        "warning" : "Seu endereço não foi confirmado no seu dispositivo Ledger. É mais seguro verificá-lo"
       },
       "bullets" : {
         "whereToBuy" : "Compre em qualquer lugar",
@@ -5966,9 +5971,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Escolher na minha galeria de imagens",
-        "selectFromNFTGallery" : "Escolher na galeria de NFTs"
+        "selectFromNFTGallery" : "Escolher na galeria de NFTs",
+        "remove" : "Remover a imagem atual"
       }
     },
+    "toastRemove" : "Imagem da tela de bloqueio removida",
     "cropImage" : "Cortar imagem",
     "chooseConstrast" : "Escolher contraste",
     "uploadAnotherImage" : "Enviar outra imagem",
