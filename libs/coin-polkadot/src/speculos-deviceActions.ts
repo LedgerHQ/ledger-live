@@ -10,6 +10,14 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
       {
+        title: "Please",
+        button: SpeculosButton.RIGHT,
+      },
+      {
+        title: "Review",
+        button: SpeculosButton.RIGHT,
+      },
+      {
         title: "Staking",
         button: SpeculosButton.RIGHT,
       },

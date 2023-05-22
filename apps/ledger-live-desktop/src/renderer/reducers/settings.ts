@@ -187,7 +187,7 @@ type HandlersPayloads = {
   HIDE_NFT_COLLECTION: string;
   LAST_SEEN_DEVICE_INFO: {
     lastSeenDevice: DeviceModelInfo;
-    latestFirmware: any;
+    latestFirmware: FirmwareUpdateContext;
   };
   LAST_SEEN_DEVICE: DeviceModelInfo;
   SET_DEEPLINK_URL: string | null | undefined;

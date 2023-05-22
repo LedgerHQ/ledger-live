@@ -1,4 +1,4 @@
-import React, { PureComponent, ElementRef } from "react";
+import React, { PureComponent } from "react";
 import { BigNumber } from "bignumber.js";
 import { uncontrollable } from "uncontrollable";
 import styled from "styled-components";
@@ -72,7 +72,7 @@ type Props = {
   onChangeFocus: (a: boolean) => void;
   onChangeUnit: (a: Unit) => void;
   locale: string;
-  forwardedRef: ElementRef<any> | undefined | null;
+  forwardedRef: React.ForwardedRef<HTMLInputElement> | undefined | null;
   placeholder?: string;
   loading: boolean;
 } & OwnProps;

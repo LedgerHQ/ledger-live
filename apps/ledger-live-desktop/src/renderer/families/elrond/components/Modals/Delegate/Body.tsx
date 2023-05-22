@@ -33,6 +33,7 @@ interface OwnProps {
     parentAccount: Account | undefined | null;
     validators?: Array<ElrondProvider>;
     delegations?: Array<DelegationType>;
+    source?: string;
   };
   name: string;
 }
@@ -90,17 +91,16 @@ const Body = (props: Props) => {
   const defaultValidator: ElrondProvider | undefined = params.validators.find(
     validator => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
   );
+  const { account, source = "Account Page" } = params;
   const {
     transaction,
     setTransaction,
     updateTransaction,
-    account,
     parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account } = params;
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
     const transaction: Transaction = bridge.createTransaction(account);
     return {
@@ -173,6 +173,7 @@ const Body = (props: Props) => {
     bridgePending,
     validators: params.validators,
     delegations: params.delegations,
+    source,
   };
   return (
     <Stepper {...stepperProps}>

@@ -42,7 +42,7 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
     return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;
   }, [search, urlParams?.returnTo, internalParams?.returnTo]);
   const handleClose = useCallback(() => history.push(returnTo || `/platform`), [history, returnTo]);
-  const themeType = useTheme("colors.palette.type");
+  const themeType = useTheme().colors.palette.type;
   const lang = useSelector(languageSelector);
   const params = {
     theme: themeType,

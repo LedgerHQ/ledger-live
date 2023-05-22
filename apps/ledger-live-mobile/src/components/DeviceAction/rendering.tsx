@@ -469,6 +469,29 @@ export function renderAllowLanguageInstallation({
   );
 }
 
+export const renderAllowRemoveCustomLockscreen = ({
+  t,
+  device,
+  theme,
+}: RawProps & {
+  device: Device;
+}) => {
+  const productName = getDeviceModel(device.modelId).productName;
+  const key = device.modelId === "stax" ? "allowManager" : "sign";
+
+  return (
+    <Wrapper>
+      <TrackScreen category={`Allow CLS removal on ${productName}`} />
+      <Text variant="h4" textAlign="center">
+        {t("DeviceAction.allowRemoveCustomLockscreen", { productName })}
+      </Text>
+      <AnimationContainer>
+        <Animation source={getDeviceAnimation({ device, key, theme })} />
+      </AnimationContainer>
+    </Wrapper>
+  );
+};
+
 const AllowOpeningApp = ({
   t,
   navigation,
@@ -508,6 +531,7 @@ const AllowOpeningApp = ({
           })}
         </CenteredText>
       ) : null}
+      <ModalLock />
     </Wrapper>
   );
 };
@@ -899,8 +923,10 @@ export function renderConnectYourDevice({
 export function renderLoading({
   t,
   description,
+  lockModal = false,
 }: RawProps & {
   description?: string;
+  lockModal?: boolean;
 }) {
   return (
     <Wrapper>
@@ -908,7 +934,7 @@ export function renderLoading({
         <InfiniteLoader />
       </SpinnerContainer>
       <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
-      <ModalLock />
+      {lockModal ? <ModalLock /> : null}
     </Wrapper>
   );
 }
@@ -981,7 +1007,7 @@ export function LoadingAppInstall({
     track(...trackingArgs);
   }, [appName, analyticsPropertyFlow]);
 
-  return renderLoading(props);
+  return renderLoading({ ...props, lockModal: true });
 }
 
 type WarningOutdatedProps = RawProps & {

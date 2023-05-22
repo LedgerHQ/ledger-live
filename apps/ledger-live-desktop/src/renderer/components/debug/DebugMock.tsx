@@ -23,7 +23,6 @@ import Box from "~/renderer/components/Box";
 import { Item, MockContainer, EllipsesText, MockedGlobalStyle } from "./shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
-import { kill } from "process";
 
 const mockListAppsResult = (
   appDesc: string,

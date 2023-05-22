@@ -26,6 +26,7 @@ type OwnProps = {
   params: {
     account: Account;
     parentAccount: Account | undefined | null;
+    source?: string;
   };
   name: string;
 };
@@ -80,27 +81,21 @@ const Body = ({
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
-  const {
-    transaction,
-    setTransaction,
-    account,
-    parentAccount,
-    status,
-    bridgeError,
-    bridgePending,
-  } = useBridgeTransaction(() => {
-    const { account, parentAccount } = params;
-    const bridge = getAccountBridge(account, parentAccount);
-    const t = bridge.createTransaction(account);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "lock",
-    });
-    return {
-      account,
-      parentAccount,
-      transaction,
-    };
-  });
+  const { account, parentAccount, source } = params;
+  const { transaction, setTransaction, status, bridgeError, bridgePending } = useBridgeTransaction(
+    () => {
+      const bridge = getAccountBridge(account, parentAccount);
+      const t = bridge.createTransaction(account);
+      const transaction = bridge.updateTransaction(t, {
+        mode: "lock",
+      });
+      return {
+        account,
+        parentAccount,
+        transaction,
+      };
+    },
+  );
   const handleCloseModal = useCallback(() => {
     closeModal(name);
   }, [closeModal, name]);
@@ -154,6 +149,7 @@ const Body = ({
     onTransactionError: handleTransactionError,
     t,
     bridgePending,
+    source,
   };
   return (
     <Stepper {...stepperProps}>

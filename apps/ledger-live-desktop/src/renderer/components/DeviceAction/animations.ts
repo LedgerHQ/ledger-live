@@ -136,16 +136,7 @@ import STAX_allowConnection from "~/renderer/animations/stax/allowConnection.jso
 // @ts-ignore
 import STAX_confirmLockscreen from "~/renderer/animations/stax/confirmLockscreen.json";
 
-// Nb We will eventually transition to lottie animations that are not surrounded by a huge box
-// like we have today. Until then, we need to maintain two types of animations for those that
-// don't have a bounding box, and use the boundingboxless one when requested, if available.
-// @ts-ignore
-import STAX_allowConnection_noBox from "~/renderer/animations/stax/noBox/allowConnection.json";
-// @ts-ignore
-import STAX_confirmLockscreen_noBox from "~/renderer/animations/stax/noBox/confirmLockscreen.json";
-
 /* eslint-enable camelcase */
-
 type ThemedAnimation = Record<Theme["theme"], Record<string, unknown>>;
 export type AnimationKey =
   | "plugAndPinCode"
@@ -332,8 +323,8 @@ const stax: DeviceAnimations = {
     dark: STAX_signTransaction,
   },
   firmwareUpdating: {
-    light: STAX_allowConnection,
-    dark: STAX_allowConnection,
+    light: STAX_enterPin,
+    dark: STAX_enterPin,
   },
   installLoading: {
     light: STAX_allowConnection,
@@ -397,23 +388,6 @@ const blue: DeviceAnimations = {
   },
 };
 
-const animationsWithoutBoundingBox: { [modelId in DeviceModelId]: Partial<DeviceAnimations> } = {
-  nanoX: {},
-  nanoS: {},
-  nanoSP: {},
-  stax: {
-    allowManager: {
-      light: STAX_allowConnection_noBox,
-      dark: STAX_allowConnection_noBox,
-    },
-    confirmLockscreen: {
-      light: STAX_confirmLockscreen_noBox,
-      dark: STAX_confirmLockscreen_noBox,
-    },
-  },
-  blue: {},
-};
-
 type Animations = {
   [modelId in DeviceModelId]: DeviceAnimations;
 };
@@ -423,20 +397,12 @@ export const getDeviceAnimation = (
   modelId: DeviceModelId,
   theme: Theme["theme"],
   key: AnimationKey,
-  noBox?: boolean,
-): object | null => {
+) => {
   const animationModelId = (process.env.OVERRIDE_MODEL_ID as DeviceModelId) || modelId;
 
   // Handles the case where OVERRIDE_MODEL_ID is incorrect
   const animationModel = animations[animationModelId] || animations.nanoX;
-  let animationKey: ThemedAnimation | undefined = animationModel[key];
-
-  // With the current assets I see no other way of doing this.
-  // Check whether the requested animation is expecting a bounded or boundless version,
-  // falling back to the default if the boundingboxless version doesn't exist.
-  if (noBox && animationsWithoutBoundingBox[animationModelId][key]) {
-    animationKey = animationsWithoutBoundingBox[animationModelId][key];
-  }
+  const animationKey: ThemedAnimation | undefined = animationModel[key];
 
   if (!animationKey) {
     return null;

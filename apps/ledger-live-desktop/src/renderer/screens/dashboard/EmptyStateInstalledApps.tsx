@@ -10,10 +10,10 @@ import NoApps from "~/renderer/images/no-apps.svg";
 import Text from "~/renderer/components/Text";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import { openURL } from "~/renderer/linking";
-import { withTheme } from "styled-components";
+import { DefaultTheme, withTheme } from "styled-components";
 import { urls } from "~/config/urls";
 
-const EmptyStateInstalledApps = ({ theme }: { theme: any }) => {
+const EmptyStateInstalledApps = ({ theme }: { theme: DefaultTheme }) => {
   const { push } = useHistory();
   const { t } = useTranslation();
   const locale = useSelector(languageSelector) || "en";

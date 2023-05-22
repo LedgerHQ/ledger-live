@@ -1,5 +1,4 @@
-import React, { useState, useRef, useCallback, useMemo, memo } from "react";
-
+import React, { useState, useCallback, useMemo, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -13,7 +12,6 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/account/index";
-import Animated, { Value, event } from "react-native-reanimated";
 import {
   Account,
   DailyOperationsSection,
@@ -49,11 +47,6 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountsNavigatorParamList, ScreenName.NftCollection>
 >;
 
-const NftList = Animated.createAnimatedComponent(FlatList) as typeof FlatList;
-const OperationsList = Animated.createAnimatedComponent(
-  SectionList,
-) as typeof SectionList;
-
 const renderOperationSectionHeader = ({
   section,
 }: {
@@ -69,18 +62,6 @@ const NftCollection = ({ route }: NavigationProps) => {
   } = route;
   const nft = collection[0];
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const scrollY = useRef(new Value(0)).current;
-  const onScroll = () =>
-    event(
-      [
-        {
-          nativeEvent: {
-            contentOffset: { y: scrollY },
-          },
-        },
-      ],
-      { useNativeDriver: true },
-    );
 
   // nfts' list related -----
   const [nftCount, setNftCount] = useState(MAX_NFT_FIRST_RENDER);
@@ -171,18 +152,17 @@ const NftCollection = ({ route }: NavigationProps) => {
       />
     </View>,
     <View style={styles.nftList}>
-      <NftList
+      <FlatList
         data={nfts}
         numColumns={2}
         keyExtractor={(n: ProtoNFT) => n.id}
         renderItem={renderNftItem}
         onEndReached={onNftsEndReached}
-        onScroll={onScroll}
         ListFooterComponent={renderNftListFooter}
       />
     </View>,
     <View style={styles.contentContainer}>
-      <OperationsList
+      <SectionList
         sections={sections}
         style={[styles.sectionList, { backgroundColor: colors.background }]}
         contentContainerStyle={styles.contentContainer}
@@ -190,7 +170,6 @@ const NftCollection = ({ route }: NavigationProps) => {
         renderItem={renderOperationItem}
         renderSectionHeader={renderOperationSectionHeader}
         onEndReached={onOperationsEndReached}
-        onScroll={onScroll}
         showsVerticalScrollIndicator={false}
         ListFooterComponent={
           !completed ? <LoadingFooter /> : <NoMoreOperationFooter />

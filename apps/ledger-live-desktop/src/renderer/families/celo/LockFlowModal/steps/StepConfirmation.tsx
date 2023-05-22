@@ -1,9 +1,11 @@
 import { useSelector } from "react-redux";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { withTheme } from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { accountSelector } from "~/renderer/reducers/accounts";
+import { Theme } from "@ledgerhq/react-ui";
+import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
@@ -70,9 +72,21 @@ const StepConfirmation = ({
   optimisticOperation,
   error,
   signed,
+  source,
 }: StepProps & {
-  theme: any;
+  theme: Theme;
 }) => {
+  useEffect(() => {
+    if (optimisticOperation) {
+      track("staking_completed", {
+        currency: "CELO",
+        source,
+        delegation: "lock",
+        flow: "stake",
+      });
+    }
+  }, [optimisticOperation, source]);
+
   if (optimisticOperation) {
     return (
       <S.Container>

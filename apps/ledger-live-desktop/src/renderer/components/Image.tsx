@@ -28,7 +28,7 @@ const Img = styled.img`
   pointer-events: none;
 `;
 const Image = ({ resource, alt, className, ...rest }: Props) => {
-  const type = useTheme("colors.palette.type");
+  const type = useTheme().colors.palette.type;
   const asset = typeof resource === "object" ? resource[type] : resource;
   return <Img {...rest} alt={alt} className={className} src={asset} />;
 };

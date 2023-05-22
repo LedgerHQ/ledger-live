@@ -55,7 +55,7 @@ type StateProps = {
   device: Device | undefined | null;
   accounts: Account[];
   closeModal: (a: string) => void;
-  openModal: (b: string, a: any) => void;
+  openModal: (b: string, a: unknown) => void;
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
 type Props = {} & OwnProps & StateProps;

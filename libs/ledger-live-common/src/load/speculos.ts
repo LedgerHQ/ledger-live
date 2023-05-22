@@ -8,7 +8,7 @@ import { spawn, exec } from "child_process";
 import { promises as fsp } from "fs";
 import { log } from "@ledgerhq/logs";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos";
+import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos-http";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { registerTransportModule } from "../hw";
 import { getEnv } from "../env";
@@ -90,10 +90,8 @@ export async function createSpeculosDevice(
   const { model, firmware, appName, appVersion, seed, coinapps, dependency } =
     arg;
   const speculosID = `speculosID-${++idCounter}`;
-  const apduPort = 30000 + idCounter;
+  const apiPort = 30000 + idCounter;
   const vncPort = 35000 + idCounter;
-  const buttonPort = 40000 + idCounter;
-  const automationPort = 45000 + idCounter;
 
   const sdk = inferSDK(firmware, model);
 
@@ -106,13 +104,9 @@ export async function createSpeculosDevice(
     "-v",
     `${coinapps}:/speculos/apps`,
     "-p",
-    `${apduPort}:40000`,
+    `${apiPort}:40000`,
     "-p",
     `${vncPort}:41000`,
-    "-p",
-    `${buttonPort}:42000`,
-    "-p",
-    `${automationPort}:43000`,
     "-e",
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
@@ -137,14 +131,10 @@ export async function createSpeculosDevice(
     "headless",
     "--vnc-password",
     "live",
-    "--apdu-port",
+    "--api-port",
     "40000",
     "--vnc-port",
     "41000",
-    "--button-port",
-    "42000",
-    "--automation-port",
-    "43000",
   ];
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
@@ -226,15 +216,11 @@ export async function createSpeculosDevice(
   }
 
   const transport = await SpeculosTransport.open({
-    apduPort,
-    buttonPort,
-    automationPort,
+    apiPort,
   });
   data[speculosID] = {
     process: p,
-    apduPort,
-    buttonPort,
-    automationPort,
+    apiPort,
     transport,
     destroy,
   };

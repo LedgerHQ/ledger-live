@@ -11,9 +11,9 @@ type Props = {
   mapStrategies?: (
     a: FeeStrategy,
   ) => FeeStrategy & {
-    [x: string]: any;
+    [x: string]: unknown;
   };
-  [key: string]: any;
+  [key: string]: unknown;
 };
 const AmountRelatedField = (props: Props) => {
   const module = byFamily[props.account.currency.family as keyof typeof byFamily];

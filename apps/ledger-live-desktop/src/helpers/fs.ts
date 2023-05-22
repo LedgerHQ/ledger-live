@@ -1,7 +1,11 @@
 import fs from "fs";
-const promisify = (fn: any) => (...args: any): Promise<any> =>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const promisify = <F extends (...args: any) => any>(fn: any) => (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ...args: any
+): Promise<ReturnType<F>> =>
   new Promise((resolve, reject) =>
-    fn(...args, (err: Error, res: any) => {
+    fn(...args, (err: Error, res: ReturnType<F>) => {
       if (err) return reject(err);
       return resolve(res);
     }),

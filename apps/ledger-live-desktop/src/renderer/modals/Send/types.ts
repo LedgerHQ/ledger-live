@@ -4,7 +4,9 @@ import {
   Account,
   AccountBridge,
   AccountLike,
+  NFT,
   Operation,
+  ProtoNFT,
   TransactionCommon,
 } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -24,7 +26,7 @@ export type StepProps = {
   error: Error | undefined | null;
   optimisticOperation: Operation | undefined | null;
   closeModal: (a: void) => void;
-  openModal: (b: string, a: any) => void;
+  openModal: (b: string, a: unknown) => void;
   onChangeAccount: (b?: AccountLike | null, a?: Account | null) => void;
   onChangeTransaction: (a: AccountBridge<TransactionCommon> | Transaction) => void;
   onTransactionError: (a: Error) => void;
@@ -44,7 +46,7 @@ export type StepProps = {
   walletConnectProxy?: boolean;
   maybeNFTId?: string;
   maybeNFTCollection?: string;
-  onChangeQuantities: (a: any) => void;
-  onChangeNFT: (a: any) => void;
+  onChangeQuantities: (a: string) => void;
+  onChangeNFT: (a: ProtoNFT | NFT) => void;
 };
 export type St = Step<StepId, StepProps>;
