@@ -135,17 +135,17 @@ export function useEnableBluetooth(
     };
   }, [isHookEnabled]);
 
-  const bluetoothServicesState: BluetoothServicesState = "enabled";
+  let bluetoothServicesState: BluetoothServicesState = "disabled";
 
-  // if (observedTransportState === "PoweredOn") {
-  //   bluetoothServicesState = "enabled";
-  // } else if (observedTransportState === "PoweredOff") {
-  //   bluetoothServicesState = "disabled";
-  // } else if (observedTransportState === "Unauthorized") {
-  //   bluetoothServicesState = "unauthorized";
-  // } else if (observedTransportState === "Unknown") {
-  //   bluetoothServicesState = "unknown";
-  // }
+  if (observedTransportState === "PoweredOn") {
+    bluetoothServicesState = "enabled";
+  } else if (observedTransportState === "PoweredOff") {
+    bluetoothServicesState = "disabled";
+  } else if (observedTransportState === "Unauthorized") {
+    bluetoothServicesState = "unauthorized";
+  } else if (observedTransportState === "Unknown") {
+    bluetoothServicesState = "unknown";
+  }
 
   return {
     checkAndRequestAgain,
