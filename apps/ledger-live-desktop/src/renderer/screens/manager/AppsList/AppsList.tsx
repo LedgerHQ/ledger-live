@@ -23,6 +23,7 @@ import SearchBox from "../../accounts/AccountList/SearchBox";
 import { App } from "@ledgerhq/types-live";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import NoResults from "~/renderer/icons/NoResults";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 
 // sticky top bar with extra width to cover card boxshadow underneath
 export const StickyTabBar = styled.div`
@@ -120,25 +121,33 @@ const AppsList = ({
     appFilter,
     sort,
   });
+
   const displayedAppList = isDeviceTab ? device : catalog;
+
+  const { getAllFlags } = useFeatureFlags();
+  const currencyFlags = getAllFlags();
+
   const mapApp = useCallback(
-    (app: App, appStoreView: boolean, onlyUpdate?: boolean, showActions?: boolean) => (
-      <Item
-        optimisticState={optimisticState}
-        state={state}
-        key={`${appStoreView ? "APP_STORE" : "DEVICE_TAB"}_${app.name}`}
-        app={app}
-        installed={state.installed.find(({ name }) => name === app.name)}
-        dispatch={dispatch}
-        forceUninstall={isIncomplete}
-        appStoreView={appStoreView}
-        onlyUpdate={onlyUpdate}
-        showActions={showActions}
-        setAppInstallDep={setAppInstallDep}
-        setAppUninstallDep={setAppUninstallDep}
-        addAccount={addAccount}
-      />
-    ),
+    (app: App, appStoreView: boolean, onlyUpdate?: boolean, showActions?: boolean) => {
+      return (
+        <Item
+          optimisticState={optimisticState}
+          state={state}
+          key={`${appStoreView ? "APP_STORE" : "DEVICE_TAB"}_${app.name}`}
+          app={app}
+          installed={state.installed.find(({ name }) => name === app.name)}
+          dispatch={dispatch}
+          forceUninstall={isIncomplete}
+          appStoreView={appStoreView}
+          onlyUpdate={onlyUpdate}
+          showActions={showActions}
+          setAppInstallDep={setAppInstallDep}
+          setAppUninstallDep={setAppUninstallDep}
+          addAccount={addAccount}
+          currencyFlags={currencyFlags}
+        />
+      );
+    },
     [
       optimisticState,
       state,
@@ -147,6 +156,7 @@ const AppsList = ({
       setAppInstallDep,
       setAppUninstallDep,
       addAccount,
+      currencyFlags,
     ],
   );
   return (
@@ -234,4 +244,5 @@ const AppsList = ({
     </>
   );
 };
+
 export default memo<Props>(AppsList);

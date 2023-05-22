@@ -1,7 +1,7 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { getCryptoCurrencyById, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
-import { App } from "@ledgerhq/types-live";
+import { App, Feature } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
@@ -42,11 +42,12 @@ type Props = {
   state: State;
   app: App;
   installed: InstalledItem | undefined | null;
-  dispatch: (a: Action) => void;
   appStoreView: boolean;
   onlyUpdate?: boolean;
   forceUninstall?: boolean;
   showActions?: boolean;
+  currencyFlags: Record<string, Feature>;
+  dispatch: (a: Action) => void;
   setAppInstallDep?: (a: { app: App; dependencies: App[] }) => void;
   setAppUninstallDep?: (a: { dependents: App[]; app: App }) => void;
   addAccount?: (a: CryptoCurrency | undefined) => void;
@@ -57,11 +58,12 @@ const Item = ({
   state,
   app,
   installed,
-  dispatch,
   appStoreView,
   onlyUpdate,
   forceUninstall,
   showActions = true,
+  currencyFlags,
+  dispatch,
   setAppInstallDep,
   setAppUninstallDep,
   addAccount,
@@ -82,9 +84,6 @@ const Item = ({
     app.name,
     state.apps,
   ]);
-
-  const { getAllFlags } = useFeatureFlags();
-  const currencyFlags = getAllFlags();
 
   const flag = currencyId
     ? Object.entries(currencyFlags || {}).find(([flagName]) => {
