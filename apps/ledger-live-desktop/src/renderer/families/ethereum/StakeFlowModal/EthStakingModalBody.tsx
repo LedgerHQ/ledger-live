@@ -59,10 +59,10 @@ export function EthStakingModalBody({
     [history, account.id, onClose, source],
   );
 
-  const infoOnClick = useCallback(({ liveAppId, supportLink }: ListProvider) => {
+  const infoOnClick = useCallback(({ supportLink, id: providerConfigID }: ListProvider) => {
     if (supportLink) {
       track("button_clicked", {
-        button: `learn_more_${liveAppId}`,
+        button: `learn_more_${providerConfigID}`,
         ...getTrackProperties({ value: supportLink }),
         link: supportLink,
       });
