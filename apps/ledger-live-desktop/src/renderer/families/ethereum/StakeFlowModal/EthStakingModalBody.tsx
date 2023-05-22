@@ -44,11 +44,14 @@ export function EthStakingModalBody({
   const [doNotShowAgain, setDoNotShowAgain] = useState<boolean>(false);
 
   const stakeOnClick = useCallback(
-    ({ provider: { liveAppId, id, queryParams }, manifest }: StakeOnClickProps) => {
+    ({
+      provider: { liveAppId, id: providerConfigID, queryParams },
+      manifest,
+    }: StakeOnClickProps) => {
       const value = `/platform/${liveAppId}`;
       const customDappUrl = queryParams && generateValidDappURLWithParams(manifest, queryParams);
       track("button_clicked", {
-        button: id,
+        button: providerConfigID,
         ...getTrackProperties({ value, modal: source }),
       });
       history.push({
