@@ -12,6 +12,7 @@ import {
   predictOptimisticState,
   reducer,
 } from "@ledgerhq/live-common/apps/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
@@ -286,6 +287,7 @@ const AppsScreen = ({
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
   const showFwUpdateBanner = Boolean(latestFirmware);
+  const newFwUpdateUxFeatureFlag = useFeature("llmNewFirmwareUpdateUx");
 
   const renderList = useCallback(
     (items?: App[]) => (
@@ -293,11 +295,11 @@ const AppsScreen = ({
         data={items}
         ListHeaderComponent={
           <Flex mt={4}>
-            {showFwUpdateBanner && (
+            {showFwUpdateBanner && newFwUpdateUxFeatureFlag?.enabled ? (
               <Flex mb={5}>
                 <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
               </Flex>
-            )}
+            ) : null}
             <DeviceCard
               distribution={distribution}
               state={state}
@@ -314,12 +316,16 @@ const AppsScreen = ({
             />
             <ProviderWarning />
             <Benchmarking state={state} />
-            <AppUpdateAll
-              state={state}
-              appsToUpdate={update}
-              dispatch={dispatch}
-              isModalOpened={updateModalOpened}
-            />
+            {showFwUpdateBanner && !newFwUpdateUxFeatureFlag?.enabled ? (
+              <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+            ) : (
+              <AppUpdateAll
+                state={state}
+                appsToUpdate={update}
+                dispatch={dispatch}
+                isModalOpened={updateModalOpened}
+              />
+            )}
             <Flex
               flexDirection="row"
               mt={8}
@@ -349,6 +355,9 @@ const AppsScreen = ({
     ),
 
     [
+      showFwUpdateBanner,
+      newFwUpdateUxFeatureFlag?.enabled,
+      onBackFromUpdate,
       distribution,
       state,
       result,
@@ -361,7 +370,6 @@ const AppsScreen = ({
       device,
       deviceApps,
       onLanguageChange,
-      showFwUpdateBanner,
       update,
       updateModalOpened,
       query,

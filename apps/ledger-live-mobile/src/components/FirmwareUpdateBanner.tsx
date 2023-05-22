@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Text, Flex, Icons, IconBadge } from "@ledgerhq/native-ui";
+import { Alert, Text, Flex, Icons, IconBadge } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -141,7 +141,7 @@ const FirmwareUpdateBanner = ({
     if (lastConnectedDevice) {
       Linking.openURL(urls.fwUpdateReleaseNotes[lastConnectedDevice?.modelId]);
     }
-  }, []);
+  }, [lastConnectedDevice]);
 
   const isUsbFwVersionUpdateSupported =
     lastSeenDevice &&
@@ -199,44 +199,65 @@ const FirmwareUpdateBanner = ({
 
   return showBanner && hasCompletedOnboarding && hasConnectedDevice ? (
     <>
-      <Flex backgroundColor="neutral.c100" borderRadius={8} px={5} py={6}>
-        <Flex flexDirection="row" alignItems="center" mb={5}>
-          <Icons.CloudDownloadMedium color="neutral.c00" size={32} />
-          <Text
-            ml={5}
-            flexShrink={1}
-            flexGrow={1}
-            color="neutral.c00"
-            fontWeight="semiBold"
-          >
-            {t("FirmwareUpdate.newVersion", {
-              version,
-              deviceName,
-            })}
-          </Text>
+      {newFwUpdateUxFeatureFlag?.enabled ? (
+        <Flex backgroundColor="neutral.c100" borderRadius={8} px={5} py={6}>
+          <Flex flexDirection="row" alignItems="center" mb={5}>
+            <Icons.CloudDownloadMedium color="neutral.c00" size={32} />
+            <Text
+              ml={5}
+              flexShrink={1}
+              flexGrow={1}
+              color="neutral.c00"
+              fontWeight="semiBold"
+            >
+              {t("FirmwareUpdate.newVersion", {
+                version,
+                deviceName,
+              })}
+            </Text>
+          </Flex>
+          <InvertTheme>
+            <Flex flexDirection="row">
+              <Button
+                flex={1}
+                outline
+                event="FirmwareUpdateBannerClick"
+                type="main"
+                title={t("common.learnMore")}
+                onPress={onOpenReleaseNotes}
+              />
+              <Button
+                ml={3}
+                flex={1}
+                event="FirmwareUpdateBannerClick"
+                type="main"
+                title={t("FirmwareUpdate.update")}
+                onPress={onClickUpdate}
+                outline={false}
+              />
+            </Flex>
+          </InvertTheme>
         </Flex>
-        <InvertTheme>
-          <Flex flexDirection="row">
+      ) : (
+        <Flex mt={5}>
+          <Alert type="info" showIcon={false}>
+            <Text flexShrink={1} flexGrow={1}>
+              {t("FirmwareUpdate.newVersion", {
+                version,
+                deviceName,
+              })}
+            </Text>
             <Button
-              flex={1}
-              outline
+              ml={5}
               event="FirmwareUpdateBannerClick"
-              type="main"
-              title={t("common.learnMore")}
-              onPress={onOpenReleaseNotes}
-            />
-            <Button
-              ml={3}
-              flex={1}
-              event="FirmwareUpdateBannerClick"
-              type="main"
+              type="color"
               title={t("FirmwareUpdate.update")}
               onPress={onClickUpdate}
               outline={false}
             />
-          </Flex>
-        </InvertTheme>
-      </Flex>
+          </Alert>
+        </Flex>
+      )}
 
       <QueuedDrawer
         isRequestingToBeOpened={showUnsupportedUpdateDrawer}
