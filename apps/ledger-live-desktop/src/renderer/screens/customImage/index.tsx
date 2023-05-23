@@ -175,7 +175,7 @@ const CustomImage: React.FC<Props> = props => {
     if (isFromPostOnboardingEntryPoint) {
       openPostOnboarding();
     }
-  }, [exit, openPostOnboarding, isFromPostOnboardingEntryPoint]);
+  }, [exit, dispatch, isFromPostOnboardingEntryPoint, openPostOnboarding]);
 
   const renderError = useMemo(
     () =>
