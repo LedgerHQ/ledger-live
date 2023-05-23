@@ -53,10 +53,16 @@ const Card = ({
         <Box mr={4} pt={1}>
           {Icon}
         </Box>
-
-        <Text variant="h5" fontWeight="medium" color="neutral.c100">
-          {title}
-        </Text>
+        <Box pr={space[7]}>
+          <Text
+            variant="h5"
+            fontWeight="medium"
+            color="neutral.c100"
+            flexWrap="wrap"
+          >
+            {title}
+          </Text>
+        </Box>
       </Flex>
     </Touchable>
   );
