@@ -68,6 +68,7 @@ exports.ENTRIES_CHECKS = {
   },
   disableCountervalue: (disableCountervalue) => !!disableCountervalue,
   delisted: (delisted) => !!delisted,
+  countervalueTicker: (countervalueTicker) => countervalueTicker || null,
 };
 
 exports.asUint4be = (n) => {
