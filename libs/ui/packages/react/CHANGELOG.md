@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.14.1-next.0
+
+### Patch Changes
+
+- [#3314](https://github.com/LedgerHQ/ledger-live/pull/3314) [`5ed0a65543`](https://github.com/LedgerHQ/ledger-live/commit/5ed0a65543b68f0512e48d59c8ed77d33fb63550) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Infinite mode added to ProgressLoader, changes to divider
+
 ## 0.14.0
 
 ### Minor Changes
