@@ -129,6 +129,8 @@ export type CryptoCurrencyId =
   | "solana_testnet"
   | "solana_devnet"
   | "filecoin"
+  | "ethereum_as_evm_test_only"
+  | "polygon_as_evm_test_only"
   | "arbitrum"
   | "arbitrum_goerli"
   | "cronos"
