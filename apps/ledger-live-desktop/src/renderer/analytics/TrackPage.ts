@@ -1,12 +1,12 @@
 import { memo, useEffect } from "react";
 import { trackPage } from "./segment";
+import { currentRouteNameRef } from "./screenRefs";
 
-let source: string | undefined | null;
 /**
  * @deprecated
  */
 export const setTrackingSource = (s?: string) => {
-  source = s;
+  currentRouteNameRef.current = s;
 };
 
 type Props = {
@@ -19,13 +19,6 @@ type Props = {
    * after a whitespace if defined.
    */
   name?: string;
-  /**
-   *
-   * @deprecated
-   * just disable this and the "source" property of further screens will be
-   * automatically set to the value of the previous screen visited.
-   * */
-  enableDeprecatedSourceTracking?: boolean;
   /**
    * Should this update the current route name.
    * If true, it means that the full page name (`category` + " " + `name`) will
@@ -45,28 +38,9 @@ type Props = {
  * On mount, this component will track an event which will have the name
  * `Page ${category}${name ? " " + name : ""}`.
  */
-const TrackPage: React.FC<Props> = ({
-  category,
-  name,
-  enableDeprecatedSourceTracking = false,
-  refreshSource = true,
-  ...properties
-}) => {
+const TrackPage: React.FC<Props> = ({ category, name, refreshSource = true, ...properties }) => {
   useEffect(() => {
-    if (enableDeprecatedSourceTracking) {
-      trackPage(category, name, {
-        ...properties,
-        ...(source
-          ? {
-              source,
-            }
-          : {}),
-      });
-      // reset source param once it has been tracked to not repeat it from further unrelated navigation
-      source = null;
-    } else {
-      trackPage(category, name, properties, true, refreshSource);
-    }
+    trackPage(category, name, properties, true, refreshSource);
     // should only happen on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
