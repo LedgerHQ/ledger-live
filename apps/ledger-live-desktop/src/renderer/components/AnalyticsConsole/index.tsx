@@ -62,7 +62,6 @@ function AnalyticsConsole() {
   const [showExtraProps, setShowExtraProps] = useState(false);
   const [hideSyncEvents, setHideSyncEvents] = useState(false);
   const onClickDebugButton = useCallback(() => {
-    console.log("");
     switch (visibility) {
       case Visibility.hidden:
         setVisibility(Visibility.transparent);
