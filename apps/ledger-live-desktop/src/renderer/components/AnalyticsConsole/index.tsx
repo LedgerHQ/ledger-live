@@ -31,7 +31,6 @@ const Container = styled(Flex)`
   position: fixed;
   top: 60px;
   bottom: 10px;
-  right: 10px;
   pointer-events: none;
 `;
 
@@ -58,6 +57,7 @@ const EventListContainer = styled.div<{ visibility: Visibility }>`
 `;
 
 function AnalyticsConsole() {
+  const [position, setPosition] = useState<"left" | "right">("right");
   const [visibility, setVisibility] = useState<Visibility>(Visibility.transparent);
   const [showExtraProps, setShowExtraProps] = useState(false);
   const [hideSyncEvents, setHideSyncEvents] = useState(false);
@@ -75,11 +75,17 @@ function AnalyticsConsole() {
         break;
     }
   }, [visibility]);
+  const onClickArrowButton = useCallback(() => {
+    setPosition(position === "left" ? "right" : "left");
+  }, [position]);
 
   return (
     <StyleProviderV3 selectedPalette={"light"}>
       <Root>
-        <Container flexDirection="row">
+        <Container
+          flexDirection={position === "left" ? "row-reverse" : "row"}
+          style={{ [position]: "10px" }}
+        >
           <EventListContainer visibility={visibility}>
             {visibility === Visibility.opaque ? (
               <Flex flexDirection={"column"} rowGap={3} px={2} py={3} flexShrink={1} flexGrow={0}>
@@ -102,9 +108,18 @@ function AnalyticsConsole() {
 
             <EventList showExtraProps={showExtraProps} hideSyncEvents={hideSyncEvents} />
           </EventListContainer>
-          <ButtonContainer onClick={onClickDebugButton}>
-            <Icons.ActivityMedium size={18} color="black" />
-          </ButtonContainer>
+          <Flex alignSelf={"flex-end"} flexDirection={"column"} style={{ pointerEvents: "auto" }}>
+            <ButtonContainer onClick={onClickArrowButton}>
+              {position === "left" ? (
+                <Icons.ArrowRightMedium size={18} color="black" />
+              ) : (
+                <Icons.ArrowLeftMedium size={18} color="black" />
+              )}
+            </ButtonContainer>
+            <ButtonContainer onClick={onClickDebugButton}>
+              <Icons.ActivityMedium size={18} color="black" />
+            </ButtonContainer>
+          </Flex>
         </Container>
       </Root>
     </StyleProviderV3>
