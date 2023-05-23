@@ -29,6 +29,7 @@ type OwnProps = {
     account: Account;
     parentAccount: Account | undefined | null;
     vote: CeloVote;
+    source?: string;
   };
   name: string;
 };
@@ -83,28 +84,22 @@ const Body = ({
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
-  const {
-    transaction,
-    setTransaction,
-    account,
-    parentAccount,
-    status,
-    bridgeError,
-    bridgePending,
-  } = useBridgeTransaction(() => {
-    const { account, parentAccount, vote } = params;
-    const bridge = getAccountBridge(account, parentAccount);
-    const t = bridge.createTransaction(account);
-    const transaction = bridge.updateTransaction(t, {
-      mode: "activate",
-      recipient: vote?.validatorGroup,
-    });
-    return {
-      account,
-      parentAccount,
-      transaction,
-    };
-  });
+  const { account, parentAccount, vote, source } = params;
+  const { transaction, setTransaction, status, bridgeError, bridgePending } = useBridgeTransaction(
+    () => {
+      const bridge = getAccountBridge(account, parentAccount);
+      const t = bridge.createTransaction(account);
+      const transaction = bridge.updateTransaction(t, {
+        mode: "activate",
+        recipient: vote?.validatorGroup,
+      });
+      return {
+        account,
+        parentAccount,
+        transaction,
+      };
+    },
+  );
   const handleCloseModal = useCallback(() => {
     closeModal(name);
   }, [closeModal, name]);
@@ -161,6 +156,7 @@ const Body = ({
     onTransactionError: handleTransactionError,
     t,
     bridgePending,
+    source,
   };
   return (
     <Stepper {...stepperProps}>

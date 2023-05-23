@@ -12,7 +12,6 @@ import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { useLocale } from "../../../context/Locale";
 import {
@@ -84,8 +83,6 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
   const [deviceForChangeLanguageAction, setDeviceForChangeLanguageAction] =
     useState<Device | null>(null);
 
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
-
   const { availableLanguages, loaded } = useAvailableLanguagesForDevice(
     lastSeenDevice?.deviceInfo,
   );
@@ -143,8 +140,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
           loaded &&
           langAvailableOnDevice &&
           deviceLanguageId !== undefined &&
-          idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-          deviceLocalizationFeatureFlag?.enabled
+          idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage
         ) {
           track("Page LiveLanguageChange DeviceLanguagePrompt", {
             selectedLanguage: potentialDeviceLanguage,
@@ -161,7 +157,6 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
       availableLanguages,
       currentLocale,
       loaded,
-      deviceLocalizationFeatureFlag?.enabled,
       next,
       toggleModal,
     ],

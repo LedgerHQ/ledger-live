@@ -40,7 +40,7 @@ export type Props<
   // NB at least a different rendering for now
   stylesMap?: (a: ThemeConfig) => StylesConfig<OptionType, IsMulti, GroupType>;
   extraRenderers?: {
-    [x: string]: (props: any) => React.ReactNode;
+    [x: string]: (props: unknown) => React.ReactNode;
   };
   // Allows overriding react-select components. See: https://react-select.com/components
   disabledTooltipText?: string;
@@ -155,7 +155,7 @@ class Select<
 > extends PureComponent<Props<OptionType, IsMulti, GroupType>> {
   componentDidMount() {
     if (this.ref && this.props.autoFocus) {
-      this.timeout = requestAnimationFrame(() => this.ref.focus());
+      this.timeout = requestAnimationFrame(() => this.ref?.focus());
     }
     window.addEventListener("resize", this.resizeHandler);
   }
@@ -190,8 +190,9 @@ class Select<
     }
   };
 
-  ref: any;
-  timeout: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ref: ReactSelect<any, IsMulti> | undefined | null;
+  timeout: number | undefined;
   render() {
     const {
       async,
@@ -234,6 +235,7 @@ class Select<
     // @ts-expect-error This is complicated to get it right
     styles = stylesMap ? stylesMap(styles) : styles;
     return (
+      // @ts-expect-error This is complicated to get it right
       <Comp
         {...props}
         ref={c => (this.ref = c)}
@@ -263,7 +265,6 @@ class Select<
                 ...(extraRenderers || {}),
               }
         }
-        // @ts-expect-error This is complicated to get it right
         styles={styles}
         placeholder={placeholder}
         isDisabled={isDisabled}

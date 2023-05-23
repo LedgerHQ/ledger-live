@@ -65,7 +65,7 @@ const ProgressCircle = ({ size, progress, hideProgress }: Props) => {
       </TextContainer>
       <svg height={size} width={size}>
         <circle
-          stroke={lighten(useTheme("colors.wallet"), 0.2)}
+          stroke={lighten(useTheme().colors.wallet, 0.2)}
           fill="transparent"
           strokeWidth={STROKE_WIDTH}
           style={{
@@ -77,7 +77,7 @@ const ProgressCircle = ({ size, progress, hideProgress }: Props) => {
         />
         <InnerCircle
           progress={progress}
-          stroke={useTheme("colors.wallet")}
+          stroke={useTheme().colors.wallet}
           fill="transparent"
           strokeWidth={STROKE_WIDTH}
           strokeDasharray={`${circumference} ${circumference}`}

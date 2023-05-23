@@ -162,34 +162,40 @@ const BleDevicesScanning = ({
       <TrackScreen
         category={`Looking for ${productName ?? "device"} Bluetooth`}
       />
-      <Flex flex={1} px={4}>
-        <Flex height={180} alignItems="center" justifyContent="center">
-          <Animation source={lottie} />
+      <Flex flex={1} px={2}>
+        <Flex py={16}>
+          <Flex
+            height={100}
+            alignItems="center"
+            justifyContent="center"
+            mb={24}
+          >
+            <Animation style={{ width: 250 }} source={lottie} />
+          </Flex>
+          <Text
+            mb={1}
+            textAlign="center"
+            variant="h4"
+            fontWeight="semiBold"
+            fontSize={24}
+          >
+            {productName
+              ? t("blePairingFlow.scanning.withProductName.title", {
+                  productName,
+                })
+              : t("blePairingFlow.scanning.withoutProductName.title")}
+          </Text>
+          <Text
+            color="neutral.c70"
+            textAlign="center"
+            variant="body"
+            fontWeight="medium"
+          >
+            {t("blePairingFlow.scanning.description")}
+          </Text>
         </Flex>
-        <Text
-          mb={3}
-          textAlign="center"
-          variant="h4"
-          fontWeight="semiBold"
-          fontSize={24}
-        >
-          {productName
-            ? t("blePairingFlow.scanning.withProductName.title", {
-                productName,
-              })
-            : t("blePairingFlow.scanning.withoutProductName.title")}
-        </Text>
-        <Text
-          mb={8}
-          color="neutral.c70"
-          textAlign="center"
-          variant="body"
-          fontWeight="medium"
-        >
-          {t("blePairingFlow.scanning.description")}
-        </Text>
 
-        <Flex flex={1}>
+        <Flex flex={1} py={16}>
           <ScrollView>
             <Flex pb={10}>
               {scannedDevices

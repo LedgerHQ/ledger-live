@@ -23,7 +23,6 @@ const StepRecipient = ({
   onChangeTransaction,
   error,
   status,
-  bridgePending,
   maybeRecipient,
   onResetMaybeRecipient,
   maybeNFTId,

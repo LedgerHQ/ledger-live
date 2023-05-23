@@ -13,8 +13,8 @@ export type FeatureCommon = {
 export type FeatureToggle =
   | {
       type: "toggle";
-      valueOn?: any;
-      valueOff?: any;
+      valueOn?: string | boolean;
+      valueOff?: string | boolean;
     }
   | {
       type: "integer";
@@ -129,11 +129,17 @@ export const experimentalFeatures: Feature[] = [
     minValue: 0,
     maxValue: 10,
   },
+  {
+    type: "toggle",
+    name: "ENABLE_NETWORK_LOGS",
+    title: <Trans i18nKey="settings.experimental.features.enableNetworkLogs.title" />,
+    description: <Trans i18nKey="settings.experimental.features.enableNetworkLogs.description" />,
+  },
 ];
 const lsKey = "experimentalFlags";
 const lsKeyVersion = `${lsKey}_llversion`;
 export const getLocalStorageEnvs = (): {
-  [_: string]: any;
+  [_: string]: unknown;
 } => {
   const maybeData = window.localStorage.getItem(lsKey);
   if (!maybeData) return {};

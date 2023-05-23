@@ -10,9 +10,10 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 type Props = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
+  source?: string;
 };
 const AccountHeaderActions = (props: Props) => {
-  const { account, parentAccount } = props;
+  const { account, parentAccount, source } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const validators = useElrondRandomizedValidators();
@@ -33,6 +34,7 @@ const AccountHeaderActions = (props: Props) => {
         openModal(modals.stake, {
           account,
           validators,
+          source,
         }),
       );
     } else {
@@ -43,7 +45,7 @@ const AccountHeaderActions = (props: Props) => {
         }),
       );
     }
-  }, [account, earnRewardEnabled, hasDelegations, dispatch, parentAccount, validators]);
+  }, [earnRewardEnabled, hasDelegations, dispatch, account, parentAccount, validators, source]);
   if (parentAccount) return null;
   return [
     {

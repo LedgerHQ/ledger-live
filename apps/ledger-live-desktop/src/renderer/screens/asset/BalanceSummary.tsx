@@ -10,7 +10,7 @@ import { useCurrencyPortfolio } from "~/renderer/actions/portfolio";
 import AssetBalanceSummaryHeader from "./AssetBalanceSummaryHeader";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import FormattedDate from "~/renderer/components/FormattedDate";
-import { Data, Item } from "~/renderer/components/Chart/types";
+import { Data } from "~/renderer/components/Chart/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
 
 type Props = {
@@ -36,8 +36,7 @@ export default function BalanceSummary({
     },
   );
   const discreetMode = useSelector(discreetModeSelector);
-  const mapValueCounterValue = useCallback((d: Item) => d.countervalue, []);
-  const mapValueCryptoValue = useCallback((d: Item) => d.value, []);
+
   const displayCountervalue = countervalueFirst && countervalueAvailable;
   const chartMagnitude = displayCountervalue ? counterValue.units[0].magnitude : unit.magnitude;
   const renderTooltip = useCallback(

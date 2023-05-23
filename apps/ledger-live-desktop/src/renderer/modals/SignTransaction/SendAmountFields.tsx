@@ -8,7 +8,7 @@ type Props = {
   status: TransactionStatus;
   onChange: (a: Transaction) => void;
   updateTransaction: (updater: any) => void;
-  [key: string]: any;
+  [key: string]: unknown;
 };
 const AmountRelatedField = (props: Props) => {
   const module = byFamily[props.account.currency.family as keyof typeof byFamily];

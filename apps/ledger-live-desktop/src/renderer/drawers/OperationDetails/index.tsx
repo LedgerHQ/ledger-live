@@ -679,13 +679,10 @@ const More = styled(Text).attrs<TextProps>(p => ({
   text-transform: ${p => (!p.textTransform ? "auto" : "uppercase")};
   outline: none;
 `;
-export class DataList extends Component<
-  {
-    lines: string[];
-    t: TFunction;
-  },
-  any
-> {
+export class DataList extends Component<{
+  lines: string[];
+  t: TFunction;
+}> {
   state = {
     numToShow: 2,
     showMore: true,

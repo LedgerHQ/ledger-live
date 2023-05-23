@@ -35,6 +35,8 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+
 const Separator = styled.div`
   border-top: 1px solid #99999933;
   margin: 50px 0;
@@ -48,9 +50,6 @@ const QRCodeWrapper = styled.div`
   height: 208px;
   width: 208px;
   background: white;
-`;
-const AlertBoxContainer = styled.div`
-  margin-top: 20px;
 `;
 const Receive1ShareAddress = ({
   account,
@@ -94,8 +93,8 @@ const Receive1ShareAddress = ({
     </>
   );
 };
-const Receive2Device = ({ name, device }: { name: string; device: any }) => {
-  const type = useTheme("colors.palette.type");
+const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
+  const type = useTheme().colors.palette.type;
   return (
     <>
       <Box horizontal alignItems="center" flow={2}>

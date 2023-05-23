@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 type StepType = {
-  icon: any;
-  desc: any;
+  icon: React.ReactNode;
+  desc: React.ReactNode;
 };
 const OptionRow = ({ step, ...p }: { step: StepType }) => {
   const { icon, desc } = step;

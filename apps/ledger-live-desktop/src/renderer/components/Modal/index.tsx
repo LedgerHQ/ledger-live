@@ -212,7 +212,7 @@ class Modal<Data> extends PureComponent<
     });
 
   /** combined with tab-index 0 this will allow tab navigation into the modal disabling tab navigation behind it */
-  setFocus = (r: any) => {
+  setFocus = (r: HTMLDivElement) => {
     /** only pull focus if focus is out of modal ie: no input autofocused in modal */
     r && !r.contains(document.activeElement) && r.focus();
   };

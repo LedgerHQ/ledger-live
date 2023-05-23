@@ -15,6 +15,7 @@ type Props = {
   currencies?: string[];
   shouldRedirect?: boolean;
   alwaysShowNoFunds?: boolean;
+  source?: string;
 };
 
 const useStakeFlow = () => {
@@ -23,7 +24,7 @@ const useStakeFlow = () => {
   const dispatch = useDispatch();
 
   return useCallback(
-    ({ currencies, shouldRedirect = true, alwaysShowNoFunds = false }: Props = {}) => {
+    ({ currencies, shouldRedirect = true, alwaysShowNoFunds = false, source }: Props = {}) => {
       const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
         currencies: currencies || list,
       });
@@ -52,7 +53,7 @@ const useStakeFlow = () => {
             if (alwaysShowNoFunds) {
               dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account, parentAccount }));
             } else {
-              dispatch(openModal("MODAL_START_STAKE", { account, parentAccount }));
+              dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
             }
 
             if (shouldRedirect) {

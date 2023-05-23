@@ -117,7 +117,7 @@ export default function DebugMultiAppInstall() {
                       isDisplayed ? (
                         <InstallSetOfApps
                           restore={restoreMode}
-                          key={nonce}
+                          key={`${nonce}_installSetOfApps`}
                           device={device}
                           onResult={onComplete}
                           onError={onReset}

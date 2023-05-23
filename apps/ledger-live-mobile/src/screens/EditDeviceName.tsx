@@ -1,7 +1,15 @@
-import React, { memo, useCallback, useMemo, useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
 import { connect } from "react-redux";
+import { TextInput as NativeTextInput } from "react-native";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { Button, Text, Icons, Flex } from "@ledgerhq/native-ui";
@@ -45,6 +53,8 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const originalName = route.params?.deviceName;
   const device = route.params?.device;
   const deviceInfo = route.params?.deviceInfo;
+
+  const textInputRef = useRef<NativeTextInput | null>(null);
 
   const { t } = useTranslation();
   const { pushToast } = useToasts();
@@ -117,6 +127,26 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const disabled =
     !cleanName || !!error || running || cleanName === originalName;
 
+  /**
+   * Blurring the input when "running" (when the device action modal is mounted)
+   * allows to avoid a glitch in case of success: on iOS, if the input was
+   * focused when the modal got initially mounted, on the unmount of the modal
+   * it would refocus the input, so the keyboard would reappear. In this
+   * specific case, on success of the renaming action, the input gets unmounted
+   * as well (because we navigate away from this screen), resulting in a glitch
+   * where the keyboard appears and then quickly disappears.
+   */
+  useEffect(() => {
+    let handle: number;
+    if (running) textInputRef.current?.blur();
+    else {
+      handle = requestAnimationFrame(() => textInputRef.current?.focus());
+    }
+    return () => {
+      handle && cancelAnimationFrame(handle);
+    };
+  }, [running]);
+
   return (
     <KeyboardBackgroundDismiss>
       <SafeAreaView style={{ flex: 1 }}>
@@ -124,10 +154,10 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
           <TrackScreen category="EditDeviceName" />
           <Flex flex={1} p={6} bg="background.main">
             <TextInput
+              ref={textInputRef}
               value={name}
               onChangeText={onChangeText}
               maxLength={maxDeviceName}
-              autoFocus
               selectTextOnFocus
               blurOnSubmit={true}
               clearButtonMode="always"

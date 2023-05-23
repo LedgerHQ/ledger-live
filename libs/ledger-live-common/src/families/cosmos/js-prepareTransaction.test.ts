@@ -1,8 +1,10 @@
 import BigNumber from "bignumber.js";
 import { CosmosAccount, Transaction } from "./types";
-import { getEstimatedFees } from "./js-prepareTransaction";
+import { calculateFees, getEstimatedFees } from "./js-prepareTransaction";
 import network from "../../network";
 jest.mock("../../network");
+import * as jsPrepareTransaction from "./js-prepareTransaction";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 const account = {
   id: "accountId",
@@ -48,5 +50,108 @@ describe("getEstimatedFees", () => {
     );
     expect(estimatedFees.gt(0)).toEqual(true);
     expect(estimatedGas.gt(0)).toEqual(true);
+  });
+});
+
+describe("calculateFees", () => {
+  let getEstimatedFeesSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    getEstimatedFeesSpy = jest
+      .spyOn(jsPrepareTransaction, "getEstimatedFees")
+      .mockImplementation();
+  });
+
+  afterEach(() => {
+    // Reset LRU cache
+    calculateFees.reset();
+    // Reset spy
+    jest.resetAllMocks();
+  });
+
+  it("should not estimate fees again if account and transaction didn't change", async () => {
+    await calculateFees({ account, transaction });
+    await calculateFees({ account, transaction });
+    expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("should estimate fees again if account id changed", async () => {
+    await calculateFees({ account, transaction });
+    account.id = "i changed hehe";
+    await calculateFees({ account, transaction });
+    expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("should estimate fees again if account currency changed", async () => {
+    await calculateFees({ account, transaction });
+    account.currency.id =
+      "i am a currency that changed hehe" as CryptoCurrencyId;
+    await calculateFees({ account, transaction });
+    expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("should estimate fees again if transaction amount changed", async () => {
+    await calculateFees({ account, transaction });
+    transaction.amount = new BigNumber(9000);
+    await calculateFees({ account, transaction });
+    expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("should estimate fees again if transaction recipient changed", async () => {
+    await calculateFees({ account, transaction });
+    transaction.recipient = "tasse";
+    await calculateFees({ account, transaction });
+    expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("should estimate fees again if transaction useAllAmount prop changed", async () => {
+    await calculateFees({ account, transaction });
+    transaction.useAllAmount = true;
+    await calculateFees({ account, transaction });
+    expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("should estimate fees again if transaction mode changed", async () => {
+    await calculateFees({ account, transaction });
+    transaction.mode = "delegate";
+    transaction.validators = [{ address: "toto", amount: new BigNumber(1) }];
+    await calculateFees({ account, transaction });
+    expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("should estimate fees again if transaction validator address changed", async () => {
+    transaction.mode = "delegate";
+    transaction.validators = [{ address: "toto", amount: new BigNumber(1) }];
+    await calculateFees({ account, transaction });
+    transaction.mode = "delegate";
+    transaction.validators = [
+      { address: "totoleretour", amount: new BigNumber(1) },
+    ];
+    await calculateFees({ account, transaction });
+    expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("should estimate fees again if transaction validator amount changed", async () => {
+    transaction.mode = "delegate";
+    transaction.validators = [{ address: "toto", amount: new BigNumber(1) }];
+    await calculateFees({ account, transaction });
+    transaction.mode = "delegate";
+    transaction.validators = [{ address: "toto", amount: new BigNumber(2) }];
+    await calculateFees({ account, transaction });
+    expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("should estimate fees again if transaction memo changed", async () => {
+    await calculateFees({ account, transaction });
+    transaction.memo = "yikes";
+    await calculateFees({ account, transaction });
+    expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it("should estimate fees again if transaction sourceValidator changed", async () => {
+    await calculateFees({ account, transaction });
+    transaction.sourceValidator = "source";
+    await calculateFees({ account, transaction });
+    expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
   });
 });
