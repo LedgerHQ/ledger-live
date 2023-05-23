@@ -10,9 +10,6 @@ export const defaultFeatures: DefaultFeatures = {
   brazeLearn: {
     enabled: false,
   },
-  deviceLocalization: {
-    enabled: false,
-  },
   buyDeviceFromLive: {
     enabled: false,
     params: {
@@ -154,7 +151,7 @@ export const defaultFeatures: DefaultFeatures = {
   llmNewDeviceSelection: {
     enabled: false,
   },
-  llmUsbFirmwareUpdate: {
+  llmNewFirmwareUpdateUx: {
     enabled: false,
   },
   ptxSmartRouting: {

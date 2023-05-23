@@ -22,7 +22,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .tippy-box {
-    background-color: transparent;
+    background-color: transparent!important;
   }
 
   .tippy-box[data-theme~='ledger'] > .tippy-svg-arrow {

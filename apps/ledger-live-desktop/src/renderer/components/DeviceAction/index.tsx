@@ -8,6 +8,7 @@ import {
   DeviceNotOnboarded,
   NoSuchAppOnProvider,
   EConnResetError,
+  LanguageInstallRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
 import { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -22,7 +23,11 @@ import {
   ManagerNotEnoughSpaceError,
   UpdateYourApp,
   TransportStatusError,
+  UserRefusedAddress,
+  UserRefusedAllowManager,
+  UserRefusedFirmwareUpdate,
   UserRefusedOnDevice,
+  UserRefusedDeviceNameChange,
 } from "@ledgerhq/errors";
 import {
   InstallingApp,
@@ -131,6 +136,7 @@ type InnerProps<P> = {
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   overridesPreferredDeviceModel?: DeviceModelId;
+  inlineRetry?: boolean; // Set to false if the retry mechanism is handled externally.
 };
 
 type Props<H extends States, P> = InnerProps<P> & {
@@ -157,6 +163,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   onResult,
   onError,
   overridesPreferredDeviceModel,
+  inlineRetry = true,
   analyticsPropertyFlow,
 }: Props<H, P> & {
   request?: R;
@@ -411,7 +418,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       });
     }
 
-    // workarround to catch ECONNRESET error and show better message
+    // workaround to catch ECONNRESET error and show better message
     if (error?.message?.includes("ECONNRESET")) {
       return renderError({
         t,
@@ -421,18 +428,37 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       });
     }
 
+    let withExportLogs = true;
+    let warning = false;
+    // User rejections, should be rendered as warnings and not export logs.
+    // All the error rendering needs to be unified, the same way we do for ErrorIcon
+    // not handled here.
+    if (
+      error instanceof UserRefusedFirmwareUpdate ||
+      (error as unknown) instanceof UserRefusedAllowManager ||
+      (error as unknown) instanceof UserRefusedOnDevice ||
+      (error as unknown) instanceof UserRefusedAddress ||
+      (error as unknown) instanceof UserRefusedDeviceNameChange ||
+      (error as unknown) instanceof LanguageInstallRefusedOnDevice
+    ) {
+      withExportLogs = false;
+      warning = true;
+    }
+
     return renderError({
       t,
       error,
+      warning,
       onRetry,
-      withExportLogs: true,
+      withExportLogs,
       device: device ?? undefined,
+      inlineRetry,
     });
   }
 
   // Renders an error as long as LLD is using the "event" implementation of device actions
   if (isLocked) {
-    return renderLockedDeviceError({ t, device, onRetry });
+    return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
   }
 
   if ((!isLoading && !device) || unresponsive) {

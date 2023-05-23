@@ -16,6 +16,7 @@ export const groupedFeatures: Record<
       "postOnboardingClaimNft",
       "staxWelcomeScreen",
       "syncOnboarding",
+      "llmNewFirmwareUpdateUx",
     ],
   },
   disableNft: {
