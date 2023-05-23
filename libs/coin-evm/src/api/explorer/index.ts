@@ -1,19 +1,46 @@
 import { CacheRes } from "@ledgerhq/live-network/cache";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import etherscanLikeApi from "./etherscan";
 
 type ExplorerApi = {
-  getLastCoinOperations: CacheRes<
-    [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
-    Operation[]
-  >;
-  getLastTokenOperations: CacheRes<
+  getLastCoinOperations: (
+    currency: CryptoCurrency,
+    address: string,
+    accountId: string,
+    fromBlock: number,
+  ) => Promise<Operation[]>;
+  getLastTokenOperations: (
+    currency: CryptoCurrency,
+    address: string,
+    accountId: string,
+    fromBlock: number,
+  ) => Promise<Operation[]>;
+  getLastERC721Operations: (
+    currency: CryptoCurrency,
+    address: string,
+    accountId: string,
+    fromBlock: number,
+  ) => Promise<Operation[]>;
+  getLastERC1155Operations: (
+    currency: CryptoCurrency,
+    address: string,
+    accountId: string,
+    fromBlock: number,
+  ) => Promise<Operation[]>;
+  getLastNftOperations: (
+    currency: CryptoCurrency,
+    address: string,
+    accountId: string,
+    fromBlock: number,
+  ) => Promise<Operation[]>;
+  getLastOperations: CacheRes<
     [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
     {
-      tokenCurrency: TokenCurrency;
-      operation: Operation;
-    }[]
+      lastCoinOperations: Operation[];
+      lastTokenOperations: Operation[];
+      lastNftOperations: Operation[];
+    }
   >;
 };
 
