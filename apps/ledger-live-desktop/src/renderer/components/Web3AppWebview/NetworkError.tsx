@@ -61,7 +61,7 @@ export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
         customComponent={(handleSaveLogPress: () => Promise<void>) => (
           <Link
             size="large"
-            Icon={() => <Icon name="Download" />}
+            Icon={() => <Icon name="Import" />}
             marginTop="17px"
             onClick={handleSaveLogPress}
           >
