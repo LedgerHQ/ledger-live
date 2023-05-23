@@ -9,6 +9,7 @@ import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
+
 const renderItem = ({
   data: { id, name },
   isDisabled,

@@ -9,7 +9,7 @@ type Props = {
   transaction: Transaction;
   status: TransactionStatus;
   onChange: (a: Transaction) => void;
-  updateTransaction: (updater: any) => void;
+  updateTransaction: (updater: (t: Transaction) => Transaction) => void;
   bridgePending?: boolean;
 };
 

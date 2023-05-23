@@ -38,7 +38,7 @@ export type StepProps = {
   onResetMaybeRecipient: () => void;
   maybeAmount?: BigNumber;
   onResetMaybeAmount: () => void;
-  updateTransaction: (updater: any) => void;
+  updateTransaction: (updater: (t: Transaction) => Transaction) => void;
   onConfirmationHandler: Function;
   onFailHandler: Function;
   currencyName: string | undefined | null;
