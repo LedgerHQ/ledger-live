@@ -10,6 +10,8 @@ import { useSelector } from "react-redux";
 import CustomImageDeviceAction from "~/renderer/components/CustomImage/CustomImageDeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { ImageCommitRefusedOnDevice, ImageLoadRefusedOnDevice } from "@ledgerhq/live-common/errors";
+import { analyticsDrawerNames } from "./shared";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 type Props = StepProps & {
   result?: ProcessorResult;
@@ -65,11 +67,34 @@ const StepTransfer: React.FC<Props> = props => {
               : ""
           }
           onClickNext={error ? (isRefusedOnStaxError ? handleTryAnotherImage : onRetry) : undefined}
+          previousEventProperties={{
+            button: "Previous",
+            drawer: error ? analyticsDrawerNames.error + error.name : analyticsDrawerNames.transfer,
+          }}
+          nextEventProperties={
+            error
+              ? {
+                  button: error
+                    ? isRefusedOnStaxError
+                      ? "Upload another image"
+                      : "Retry"
+                    : undefined,
+                  drawer: analyticsDrawerNames.error + error.name,
+                }
+              : {}
+          }
         />
       }
     >
       {result ? (
         <Flex flex={1} px={12}>
+          {error ? (
+            <TrackPage
+              category={analyticsDrawerNames.error + error.name}
+              type="drawer"
+              refreshSource={false}
+            />
+          ) : null}
           <CustomImageDeviceAction
             device={device}
             hexImage={result?.rawResult.hexData}

@@ -21,6 +21,9 @@ import StepContainer from "./StepContainer";
 import StepFooter from "./StepFooter";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
+import { analyticsDrawerNames, analyticsFlowName } from "./shared";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 
 type Props = {
   imageUri?: string;
@@ -132,13 +135,8 @@ const CustomImage: React.FC<Props> = props => {
   }, []);
 
   const handleStepTransferResult = useCallback(() => {
-    // TODO: when post onboarding hub is merged: completeAction(PostOnboardingAction.customImage)
     setTransferDone(true);
   }, []);
-
-  const handleErrorRetryClicked = useCallback(() => {
-    setStepWrapper(Step.chooseImage);
-  }, [setStepWrapper]);
 
   const handleError = useCallback(
     (step: Step, error: Error) => {
@@ -160,6 +158,12 @@ const CustomImage: React.FC<Props> = props => {
 
   const error = stepError[step];
 
+  const handleErrorRetryClicked = useCallback(() => {
+    error?.name &&
+      track("button_clicked", { button: "Retry", drawer: analyticsDrawerNames.error + error.name });
+    setStepWrapper(Step.chooseImage);
+  }, [error, setStepWrapper]);
+
   const previousStep: Step | undefined = orderedSteps[orderedSteps.findIndex(s => s === step) - 1];
 
   const openPostOnboarding = useNavigateToPostOnboardingHubCallback();
@@ -173,6 +177,7 @@ const CustomImage: React.FC<Props> = props => {
 
   const handleDone = useCallback(() => {
     exit();
+    // TODO: completeAction(PostOnboardingAction.customImage)
     if (isFromPostOnboardingEntryPoint) {
       openPostOnboarding();
     }
@@ -189,9 +194,18 @@ const CustomImage: React.FC<Props> = props => {
                     previousStep={previousStep}
                     previousLabel={t("common.previous")}
                     setStep={setStepWrapper}
+                    previousEventProperties={{
+                      button: "Previous",
+                      drawer: analyticsDrawerNames.error + error.name,
+                    }}
                   />
                 }
               >
+                <TrackPage
+                  category={analyticsDrawerNames.error + error.name}
+                  type="drawer"
+                  refreshSource={false}
+                />
                 <ErrorDisplayV2 error={error} onRetry={handleErrorRetryClicked} />
               </StepContainer>
             );
@@ -286,9 +300,16 @@ const CustomImage: React.FC<Props> = props => {
               setStep={setStepWrapper}
               onClickNext={handleDone}
               nextTestId="custom-image-finish-button"
+              nextEventProperties={{ button: "Finish", drawer: analyticsDrawerNames.success }}
             />
           }
         >
+          <TrackPage
+            category={analyticsDrawerNames.success}
+            type="drawer"
+            flow={analyticsFlowName}
+            refreshSource={false}
+          />
           <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
             <BoxedIcon
               Icon={Icons.CheckAloneMedium}

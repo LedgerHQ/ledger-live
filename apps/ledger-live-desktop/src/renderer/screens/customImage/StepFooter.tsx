@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { Flex, Button, InfiniteLoader, Divider } from "@ledgerhq/react-ui";
 import { Step } from "./types";
+import { track } from "~/renderer/analytics/segment";
 
 type Props = {
   setStep?: (step: Step) => void;
@@ -13,6 +14,7 @@ type Props = {
   previousLoading?: boolean;
   previousLabel?: string;
   previousTestId?: string;
+  previousEventProperties?: Record<string, unknown>;
   onClickPrevious?: () => void;
 
   nextHidden?: boolean;
@@ -20,6 +22,7 @@ type Props = {
   nextLoading?: boolean;
   nextLabel?: string;
   nextTestId?: string;
+  nextEventProperties?: Record<string, unknown>;
   onClickNext?: () => void;
 };
 
@@ -34,22 +37,26 @@ const StepFooter: React.FC<Props> = props => {
     previousLoading,
     previousLabel,
     previousTestId,
+    previousEventProperties,
     onClickPrevious,
     nextHidden,
     nextDisabled,
     nextLoading,
     nextLabel,
     nextTestId,
+    nextEventProperties,
     onClickNext,
   } = props;
 
   const handleNext = useCallback(() => {
+    nextEventProperties && track("button_clicked", nextEventProperties);
     onClickNext ? onClickNext() : nextStep && setStep && setStep(nextStep);
-  }, [onClickNext, setStep, nextStep]);
+  }, [nextEventProperties, onClickNext, nextStep, setStep]);
 
   const handlePrevious = useCallback(() => {
+    previousEventProperties && track("button_clicked", previousEventProperties);
     onClickPrevious ? onClickPrevious() : previousStep && setStep && setStep(previousStep);
-  }, [onClickPrevious, setStep, previousStep]);
+  }, [onClickPrevious, previousEventProperties, previousStep, setStep]);
 
   const showPrevious = !previousHidden && (previousStep || onClickPrevious);
   const showNext = !nextHidden && (nextStep || onClickNext);

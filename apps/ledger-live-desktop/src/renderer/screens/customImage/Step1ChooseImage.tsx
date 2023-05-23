@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
 import { getMetadataMediaTypes } from "~/helpers/nft";
@@ -16,6 +16,9 @@ import {
 } from "@ledgerhq/live-common/customImage/errors";
 import { urlContentToDataUri } from "~/renderer/components/CustomImage/shared";
 import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { analyticsDrawerNames, analyticsFlowName } from "./shared";
+import { track } from "~/renderer/analytics/segment";
 
 type Props = StepProps & {
   onResult: (res: ImageBase64Data) => void;
@@ -109,11 +112,43 @@ const StepChooseImage: React.FC<Props> = props => {
     >
       {!isShowingNftGallery ? (
         <Flex flexDirection="column" rowGap={6} px={12}>
-          <ImportImage setLoading={setLoading} onResult={onResult} onError={onError} />
-          <ImportNFTButton onClick={() => setIsShowingNftGallery(true)} />
+          <TrackPage
+            category={analyticsDrawerNames.chooseImage}
+            type="drawer"
+            flow={analyticsFlowName}
+            refreshSource={false}
+          />
+          <ImportImage
+            setLoading={setLoading}
+            onResult={onResult}
+            onError={onError}
+            onClick={() =>
+              track("button_clicked", {
+                button: "Choose from my picture gallery",
+                drawer: analyticsDrawerNames.chooseImage,
+              })
+            }
+          />
+          <ImportNFTButton
+            onClick={() => {
+              setIsShowingNftGallery(true);
+              track("button_clicked", {
+                button: "Choose from NFT gallery",
+                drawer: analyticsDrawerNames.chooseImage,
+              });
+            }}
+          />
         </Flex>
       ) : (
-        <NFTGallerySelector handlePickNft={handlePickNft} selectedNftId={selectedNftId} />
+        <>
+          <TrackPage
+            category={analyticsDrawerNames.chooseNftGallery}
+            type="drawer"
+            flow={analyticsFlowName}
+            refreshSource={false}
+          />
+          <NFTGallerySelector handlePickNft={handlePickNft} selectedNftId={selectedNftId} />
+        </>
       )}
     </StepContainer>
   );
