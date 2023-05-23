@@ -4,6 +4,9 @@ import { Step } from "~/renderer/components/Stepper";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Transaction } from "@ledgerhq/live-common/families/algorand/types";
+import { ModalsData } from "../modals";
+import { MakeModalsType } from "~/renderer/modals/types";
+
 export type StepId = "assets" | "connectDevice" | "confirmation";
 export type StepProps = {
   t: TFunction;
@@ -13,10 +16,10 @@ export type StepProps = {
   parentAccount: Account | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;
-  openModal: (key: string, config?: any) => void;
-  optimisticOperation: any;
-  error: any;
-  warning: any;
+  openModal: (key: string, config?: MakeModalsType<ModalsData>) => void;
+  optimisticOperation: Operation;
+  error: Error;
+  warning: Error;
   signed: boolean;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;

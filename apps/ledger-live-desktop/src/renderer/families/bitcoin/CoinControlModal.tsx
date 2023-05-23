@@ -26,7 +26,7 @@ type Props = {
   account: Account;
   transaction: Transaction;
   onChange: (a: Transaction) => void;
-  updateTransaction: (updater: any) => void;
+  updateTransaction: (updater: Transaction) => void;
   status: TransactionStatus;
 };
 const Separator = styled.div`
