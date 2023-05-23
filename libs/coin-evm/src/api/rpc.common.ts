@@ -119,7 +119,7 @@ export const getTokenBalance = (
  */
 export const getTransactionCount = (currency: CryptoCurrency, addr: string): Promise<number> =>
   withApi(currency, async api => {
-    return api.getTransactionCount(addr);
+    return api.getTransactionCount(addr, "pending");
   });
 
 /**
