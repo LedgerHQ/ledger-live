@@ -112,6 +112,8 @@ const findDependents = (
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case "reset":
+      return action.initialState;
     case "onRunnerEvent": {
       // an app operation was correctly prefered. update state accordingly
       const { event } = action;

@@ -130,6 +130,10 @@ export type SkippedAppOp = {
 
 export type Action =  // recover from an error
   | {
+      type: "reset";
+      initialState: State;
+    }
+  | {
       type: "recover";
     } // wipe will remove all apps of the device
   | {

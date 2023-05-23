@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { scan, tap } from "rxjs/operators";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import { useReplaySubject } from "../../observable";
@@ -26,9 +26,13 @@ type State = {
   progress?: number;
 };
 
+type ActionState = State & {
+  onRetry: () => void;
+};
+
 type InstallLanguageAction = Action<
   InstallLanguageRequest,
-  State,
+  ActionState,
   boolean | undefined
 >;
 
@@ -111,8 +115,9 @@ export const createAction = (
   const useHook = (
     device: Device | null | undefined,
     request: InstallLanguageRequest
-  ): State => {
+  ): ActionState => {
     const [state, setState] = useState(() => getInitialState(device));
+    const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
 
     useEffect(() => {
@@ -136,10 +141,16 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [deviceSubject, request, state.languageInstalled]);
+    }, [deviceSubject, request, state.languageInstalled, resetIndex]);
+
+    const onRetry = useCallback(() => {
+      setResetIndex((currIndex) => currIndex + 1);
+      setState((s) => getInitialState(s.device));
+    }, []);
 
     return {
       ...state,
+      onRetry,
     };
   };
 
