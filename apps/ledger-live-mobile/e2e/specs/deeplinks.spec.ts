@@ -21,8 +21,8 @@ let sendPage: SendPage;
 let swapFormPage: SwapFormPage;
 let receivePage: ReceivePage;
 
-const ethereumShort = "eth";
-const bitcoinShort = "btc";
+// const ethereumShort = "eth";
+// const bitcoinShort = "btc";
 const ethereumLong = "Ethereum";
 const bitcoinLong = "Bitcoin";
 

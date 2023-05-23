@@ -128,7 +128,7 @@ const buildViteConfig = argv =>
             name: "Externalize Nodejs Standard Library",
             setup(build) {
               nodeExternals.forEach(external => {
-                build.onResolve({ filter: new RegExp(`^${external}$`) }, args => ({
+                build.onResolve({ filter: new RegExp(`^${external}$`) }, _args => ({
                   path: external,
                   external: true,
                 }));

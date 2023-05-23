@@ -19,19 +19,23 @@ const makeAssetSelector = (lightAsset: string, darkAsset: string) => (
 
 const NanoS = styled.div`
   // TODO: rendering issue in the SVG in the "hole"
+  // prettier-ignore
   background: url('${p => makeAssetSelector(nanoS, nanoSDark)(p)}') no-repeat center;
 `;
 
 const NanoSP = styled.div`
   // TODO: rendering issue in the SVG in the "hole"
+  // prettier-ignore
   background: url('${p => makeAssetSelector(nanoS2, nanoS2Dark)(p)}') no-repeat center;
 `;
 
 const NanoX = styled.div`
+  // prettier-ignore
   background: url('${p => makeAssetSelector(nanoX, nanoXDark)(p)}') no-repeat center;
 `;
 
 const Stax = styled.div`
+  // prettier-ignore
   background: url('${p => makeAssetSelector(stax, staxDark)(p)}') no-repeat center;
 `;
 

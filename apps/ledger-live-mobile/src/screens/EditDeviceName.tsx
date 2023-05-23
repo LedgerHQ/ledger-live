@@ -81,6 +81,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     // by our firmware, replacing it a U+0027. Same for U+201C,U+201D,...
     // TODO when we offer device rename on LLD, move this logic to common.
     const sanitizedName = name.replace(/[’‘]/g, "'").replace(/[“”]/g, '"');
+    // eslint-disable-next-line no-control-regex
     const invalidCharacters = sanitizedName.replace(/[\x00-\x7F]*/g, "");
     const maybeError = invalidCharacters
       ? new DeviceNameInvalid("", { invalidCharacters })

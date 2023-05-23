@@ -1,1 +1,1 @@
-export type CurrencyConfigCommon = {};
+export type CurrencyConfigCommon = Record<string, unknown>;

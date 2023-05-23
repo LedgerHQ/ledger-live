@@ -27,7 +27,7 @@ const sync: AccountBridge<Transaction>["sync"] = makeSync({
   shouldMergeOps: false,
 });
 
-const getPreloadStrategy = (): {} => ({
+const getPreloadStrategy = (): { preloadMaxAge: number } => ({
   preloadMaxAge: 30 * 1000,
 });
 

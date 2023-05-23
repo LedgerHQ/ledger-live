@@ -1,10 +1,4 @@
-import {
-  currencyParam,
-  getElementById,
-  openDeeplink,
-  tapByElement,
-  waitForElementByID,
-} from "../../helpers";
+import { currencyParam, openDeeplink, waitForElementByID } from "../../helpers";
 
 let baseLink: string = "accounts";
 
