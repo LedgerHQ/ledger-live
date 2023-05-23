@@ -234,20 +234,15 @@ const CustomImage: React.FC<Props> = props => {
             itemKey={Step.chooseImage}
             label={t("customImage.steps.choose.stepLabel")}
           >
-            {sourceLoading ? (
-              <Flex flex={1} justifyContent="center" alignItems="center">
-                <InfiniteLoader />
-              </Flex>
-            ) : (
-              <StepChooseImage
-                onError={errorHandlers[Step.chooseImage]}
-                onResult={handleStepChooseImageResult}
-                setStep={setStepWrapper}
-                setLoading={setSourceLoading}
-                isShowingNftGallery={isShowingNftGallery}
-                setIsShowingNftGallery={setIsShowingNftGallery}
-              />
-            )}
+            <StepChooseImage
+              onError={errorHandlers[Step.chooseImage]}
+              onResult={handleStepChooseImageResult}
+              setStep={setStepWrapper}
+              loading={sourceLoading}
+              setLoading={setSourceLoading}
+              isShowingNftGallery={isShowingNftGallery}
+              setIsShowingNftGallery={setIsShowingNftGallery}
+            />
           </FlowStepper.Indexed.Step>
           <FlowStepper.Indexed.Step
             itemKey={Step.adjustImage}
