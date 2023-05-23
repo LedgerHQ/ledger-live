@@ -20,7 +20,7 @@ const minSpendableRequiredForTokenTx = parseCurrencyUnit(
   currency.units[0],
   "3"
 );
-const minBalanceRequiredForDelegate = parseCurrencyUnit(currency.units[0], "1");
+const minBalanceRequiredForDelegate = parseCurrencyUnit(currency.units[0], "3");
 
 const cardano: AppSpec<Transaction> = {
   name: "cardano",
