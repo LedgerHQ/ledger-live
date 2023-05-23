@@ -24,16 +24,8 @@ const Row = styled(Flex)`
   animation-name: ${animateHeight};
   animation-duration: 1s;
   animation-iteration-count: 1;
+  cursor: pointer;
 `;
-
-/*
-{items.map(item => (
-          <Row key={item.id}>
-            <Property>{item.properties ? JSON.stringify(item.properties) : null}</Property>
-            <Event>{item.event}</Event>
-          </Row>
-        ))}
-        */
 
 const Event: React.FC<Props> = ({
   eventName,
