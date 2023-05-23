@@ -1,13 +1,11 @@
 import React, { useCallback, useState } from "react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Button, Flex } from "@ledgerhq/native-ui";
+import { useTranslation } from "react-i18next";
 
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import { EthStakingProviders } from "./types";
 import { EthereumStakingDrawerBody } from "./EthereumStakingDrawerBody";
-import { useTranslation } from "react-i18next";
-import { SafeAreaFrameContext } from "react-native-safe-area-context";
-import { SafeAreaView } from "react-native";
 
 type Props = unknown;
 

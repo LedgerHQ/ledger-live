@@ -116,6 +116,7 @@ export type BaseNavigatorStackParamList = {
     defaultAccountId?: string;
     defaultCurrencyId?: string;
     defaultTicker?: string;
+    customDappURL?: string;
   };
   [ScreenName.Recover]: {
     platform?: string;

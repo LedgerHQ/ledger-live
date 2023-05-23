@@ -23,7 +23,7 @@ export type Props = StackNavigatorProps<
 
 export function LiveApp({ route }: Props) {
   const { theme } = useTheme();
-  const { platform: appId, ...params } = route.params || {};
+  const { platform: appId, customDappURL, ...params } = route.params || {};
   const { setParams } = useNavigation<Props["navigation"]>();
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
@@ -32,10 +32,9 @@ export function LiveApp({ route }: Props) {
   const manifest = localManifest || remoteManifest;
 
   useEffect(() => {
-    manifest?.name &&
-      setParams({
-        name: manifest.name,
-      });
+    setParams({
+      ...(manifest?.name ? { name: manifest.name } : {}),
+    });
   }, [manifest, setParams]);
 
   return manifest ? (
