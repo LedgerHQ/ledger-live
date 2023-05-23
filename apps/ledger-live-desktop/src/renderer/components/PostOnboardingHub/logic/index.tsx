@@ -47,7 +47,12 @@ const customImage: PostOnboardingAction = {
   titleCompleted: "customImage.postOnboarding.title",
   description: "customImage.postOnboarding.description",
   actionCompletedPopupLabel: "customImage.postOnboarding.actionCompletedPopupLabel",
-  startAction: () => setDrawer(CustomImage, { isFromPostOnboardingEntryPoint: true }),
+  startAction: () =>
+    setDrawer(
+      CustomImage,
+      { isFromPostOnboardingEntryPoint: true },
+      { forceDisableFocusTrap: true },
+    ),
 };
 
 /**

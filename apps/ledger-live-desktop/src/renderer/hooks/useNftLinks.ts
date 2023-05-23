@@ -142,7 +142,9 @@ export default (
       Icon: Icons.ToolsMedium,
       callback: () => {
         if (customImageUri)
-          setDrawer(CustomImage, {
+          setDrawer(
+            CustomImage,
+            {
             imageUri: customImageUri,
             isFromNFTEntryPoint: true,
             reopenPreviousDrawer: isInsideDrawer
@@ -153,7 +155,9 @@ export default (
                     isOpen: true,
                   })
               : undefined,
-          });
+            },
+            { forceDisableFocusTrap: true },
+          );
       },
     };
     return img;
