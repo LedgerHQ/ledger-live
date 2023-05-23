@@ -41,6 +41,7 @@ import type {
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
 import { ScreenName } from "../../const";
 import { lastSeenDeviceSelector } from "../../reducers/settings";
+import ProviderWarning from "./ProviderWarning";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -288,6 +289,7 @@ const AppsScreen = ({
               appList={deviceApps}
               onLanguageChange={onLanguageChange}
             />
+            <ProviderWarning />
             <Benchmarking state={state} />
             {showFwUpdateBanner ? (
               <FirmwareUpdateBanner />

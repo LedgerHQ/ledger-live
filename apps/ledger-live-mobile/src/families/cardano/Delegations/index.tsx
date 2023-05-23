@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo, ElementProps } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -6,14 +6,18 @@ import {
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import type { Account } from "@ledgerhq/live-common/types/index";
-import type { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
+import type {
+  CardanoAccount,
+  CardanoDelegation,
+} from "@ledgerhq/live-common/families/cardano/types";
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 import {
   getDefaultExplorerView,
   getStakePoolExplorer,
 } from "@ledgerhq/live-common/explorers";
 
+import { StackNavigationProp } from "@react-navigation/stack";
+import { AccountLike } from "@ledgerhq/types-live";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import DelegationDrawer from "../../../components/DelegationDrawer";
@@ -31,10 +35,10 @@ import DelegationRow from "./Row";
 import PoolImage from "../shared/PoolImage";
 
 type Props = {
-  account: Account;
+  account: CardanoAccount;
 };
 
-type DelegationDrawerProps = ElementProps<typeof DelegationDrawer>;
+type DelegationDrawerProps = React.ComponentProps<typeof DelegationDrawer>;
 type DelegationDrawerActions = DelegationDrawerProps["actions"];
 
 function Delegations({ account }: Props) {
@@ -47,7 +51,7 @@ function Delegations({ account }: Props) {
   const navigation = useNavigation();
 
   const { cardanoResources } = account;
-  const d: CardanoDelegation = cardanoResources.delegation;
+  const d = cardanoResources.delegation;
 
   const [delegation, setDelegation] = useState<CardanoDelegation>();
 
@@ -57,15 +61,18 @@ function Delegations({ account }: Props) {
       screen,
       params,
     }: {
-      route: typeof NavigatorName | typeof ScreenName;
-      screen?: typeof ScreenName;
+      route: string;
+      screen?: string;
       params?: { [key: string]: unknown };
     }) => {
       setDelegation(undefined);
-      navigation.navigate(route, {
-        screen,
-        params: { ...params, accountId: account.id },
-      });
+      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
+        route,
+        {
+          screen,
+          params: { ...params, accountId: account.id },
+        },
+      );
     },
     [navigation, account.id],
   );
@@ -271,9 +278,13 @@ function Delegations({ account }: Props) {
   );
 }
 
-export default function CardanoDelegations({ account }: Props) {
-  if (!account.cardanoResources) return null;
-  return <Delegations account={account} />;
+export default function CardanoDelegations({
+  account,
+}: {
+  account: AccountLike;
+}) {
+  if (!(account as CardanoAccount).cardanoResources) return null;
+  return <Delegations account={account as CardanoAccount} />;
 }
 
 const styles = StyleSheet.create({

@@ -36,7 +36,9 @@ export const calculateFees: CacheRes<
       transaction.recipient
     }_${String(transaction.useAllAmount)}_${transaction.mode}_${
       transaction.validators
-        ? transaction.validators.map((v) => v.address).join("-")
+        ? transaction.validators
+            .map((v) => `${v.address}-${v.amount}`)
+            .join("_")
         : ""
     }_${transaction.memo ? transaction.memo.toString() : ""}_${
       transaction.sourceValidator ? transaction.sourceValidator : ""

@@ -18,6 +18,12 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         button: SpeculosButton.RIGHT,
       },
       {
+        title: "Warning:",
+        button: SpeculosButton.BOTH,
+        expectedValue: () =>
+          "cannot verify network id: no outputs or withrawals",
+      },
+      {
         title: "Auxiliary data hash",
         button: SpeculosButton.BOTH,
       },

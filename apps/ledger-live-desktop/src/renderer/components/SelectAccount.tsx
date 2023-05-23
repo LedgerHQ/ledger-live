@@ -288,7 +288,7 @@ export const RawSelectAccount = ({
         );
         if (display) {
           result.push({
-            matched: match && !isDisabledOption(option as any),
+            matched: match && !isDisabledOption(option as { disabled?: boolean }),
             account: option,
           });
         }

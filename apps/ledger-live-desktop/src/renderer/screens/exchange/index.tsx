@@ -61,7 +61,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = localManifest || mockManifest || remoteManifest;
-  const themeType = useTheme("colors.palette.type");
+  const themeType = useTheme().colors.palette.type;
 
   return (
     <Card

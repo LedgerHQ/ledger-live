@@ -174,6 +174,7 @@ const styles = StyleSheet.create({
   labelText: {
     paddingRight: 8,
     fontSize: 14,
+    fontWeight: "500",
   },
   valueWrapper: {
     alignItems: "flex-end",
@@ -202,7 +203,7 @@ function SummaryWords({
   return (
     <>
       <View style={styles.summarySection}>
-        <LText medium style={styles.labelText} color="smoke">
+        <LText style={styles.labelText} color="smoke">
           {t("cardano.undelegation.undelegationMessage")}
         </LText>
         <View
@@ -275,7 +276,7 @@ function DataField({ label, Component }: FieldType) {
   return (
     <View style={styles.row}>
       <View>
-        <LText numberOfLines={1} medium style={styles.labelText} color="smoke">
+        <LText numberOfLines={1} style={styles.labelText} color="smoke">
           {label}
         </LText>
       </View>

@@ -27,7 +27,7 @@ export default function EarnRewardsInfoModal({
   additional,
   footerLeft,
 }: Props) {
-  const infoColor = useTheme("colors.positiveGreen");
+  const infoColor = useTheme().colors.positiveGreen;
   return (
     <Modal
       name={name}

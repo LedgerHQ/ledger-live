@@ -3,7 +3,7 @@ type Props = {
   size?: number;
   color?: string;
   className?: string;
-  style?: any;
+  style?: React.CSSProperties;
 };
 export default function NanoDeviceCheckIcon({
   size = 16,

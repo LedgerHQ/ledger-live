@@ -11,7 +11,7 @@ import { UpdaterContext } from "~/renderer/components/Updater/UpdaterContext";
 import { shouldUpdateYet } from "~/helpers/user";
 import { useRemoteConfig } from "~/renderer/components/RemoteConfig";
 import { VISIBLE_STATUS } from "./Updater/Banner";
-const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: any }) => {
+const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
   const history = useHistory();
   const location = useLocation();
   const latestFirmware = useSelector(latestFirmwareSelector);
@@ -64,7 +64,7 @@ const FirmwareUpdateBanner = ({ old, right }: { old?: boolean; right?: any }) =>
     />
   );
 };
-const FirmwareUpdateBannerEntry = ({ old, right }: { old?: boolean; right?: any }) => {
+const FirmwareUpdateBannerEntry = ({ old, right }: { old?: boolean; right?: React.ReactNode }) => {
   const context = useContext(UpdaterContext);
   const remoteConfig = useRemoteConfig();
   if (

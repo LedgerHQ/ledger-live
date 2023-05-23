@@ -15,15 +15,16 @@ interface ModalStartStakeProps {
   account: Account;
   parentAccount: Account | null;
   alwaysShowNoFunds: boolean;
+  source?: string;
 }
 
-const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount }) => {
+const ModalStartStake: FC<ModalStartStakeProps> = ({ account, parentAccount, source }) => {
   const currencyFamily: CurrencyFamily = account.currency.family as CurrencyFamily;
   const manage = perFamilyManageActions[currencyFamily];
   const dispatch = useDispatch();
   let manageList: Action[] = [];
   if (manage) {
-    const familyManageActions = manage({ account, parentAccount });
+    const familyManageActions = manage({ account, parentAccount, source });
     manageList = familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
   }
 

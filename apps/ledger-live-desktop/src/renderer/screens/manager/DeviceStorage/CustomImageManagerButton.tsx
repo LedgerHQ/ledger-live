@@ -4,13 +4,23 @@ import { useTranslation } from "react-i18next";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import CustomImage from "~/renderer/screens/customImage";
+import RemoveCustomImage from "./RemoveCustomImage";
 import UFO from "~/renderer/icons/UFO";
+import { useSelector } from "react-redux";
+import { lastSeenCustomImageSelector } from "~/renderer/reducers/settings";
 
-const CustomImageManagerButton: React.FC<Record<string, never>> = () => {
+const CustomImageManagerButton = () => {
   const { t } = useTranslation();
-  const handleClick = useCallback(() => {
+  const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
+
+  const onAdd = useCallback(() => {
     setDrawer(CustomImage);
   }, []);
+
+  const onRemove = useCallback(() => {
+    setDrawer(RemoveCustomImage);
+  }, []);
+
   return (
     <Flex flexDirection="row" columnGap={3} alignItems="center">
       <UFO />
@@ -18,12 +28,21 @@ const CustomImageManagerButton: React.FC<Record<string, never>> = () => {
         {t("customImage.managerCTA")}
       </Text>
       <Link
-        onClick={handleClick}
+        onClick={onAdd}
         Icon={Icons.ChevronRightMedium}
         data-test-id="manager-custom-image-button"
       >
         {t("common.add")}
       </Link>
+      {lastSeenCustomImage.size ? (
+        <Link
+          onClick={onRemove}
+          Icon={Icons.ChevronRightMedium}
+          data-test-id="manager-custom-image-button"
+        >
+          {t("removeCustomLockscreen.cta")}
+        </Link>
+      ) : null}
     </Flex>
   );
 };

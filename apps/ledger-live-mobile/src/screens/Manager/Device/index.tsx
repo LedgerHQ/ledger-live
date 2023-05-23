@@ -205,6 +205,7 @@ const DeviceCard = ({
         deviceModel={deviceModel}
         deviceInfo={deviceInfo}
       />
+
       {appList.length > 0 && (
         <Flex mx={6} mb={6}>
           <Button size="small" type="color" onPress={openAppsModal}>

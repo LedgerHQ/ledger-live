@@ -3,7 +3,7 @@ const { electronPreloaderExternals } = require("esbuild-utils");
 
 module.exports = {
   ...common,
-  entryPoints: ["./src/swapConnectWebviewPreloader/index.js"],
+  entryPoints: ["./src/swapConnectWebviewPreloader/index.ts"],
   entryNames: "swapConnectWebviewPreloader.bundle",
   platform: "node",
   format: "cjs",

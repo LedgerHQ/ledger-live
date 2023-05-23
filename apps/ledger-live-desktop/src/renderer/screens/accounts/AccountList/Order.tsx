@@ -88,7 +88,7 @@ const OrderItem: React.ComponentType<ItemProps> = React.memo(function OrderItem(
       horizontal
       isActive={isActive}
       flow={2}
-      id={`accounts-order-select-${item.key.replace("|", "-")}`}
+      id={`accounts-order-select-${item.key?.replace("|", "-")}`}
     >
       <BoldToggle isBold={isActive}>{item.label}</BoldToggle>
     </DropDownItem>

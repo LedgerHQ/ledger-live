@@ -232,6 +232,7 @@ export default function MarketCoinScreen() {
 
       startStakeFlow({
         currencies: internalCurrency ? [internalCurrency.id] : undefined,
+        source: "Page Market Coin",
       });
     },
     [currency?.ticker, internalCurrency, startStakeFlow],

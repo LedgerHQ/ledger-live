@@ -93,17 +93,16 @@ const Body = ({
   const [transactionError, setTransactionError] = useState(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const { account, source = "Account Page" } = params;
   const {
     transaction,
     setTransaction,
     updateTransaction,
-    account,
     parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account } = params;
     invariant(account && account.solanaResources, "solana: account and solana resources required");
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
@@ -182,6 +181,7 @@ const Body = ({
     onTransactionError: handleTransactionError,
     t,
     bridgePending,
+    source,
   };
   return (
     <Stepper {...stepperProps}>

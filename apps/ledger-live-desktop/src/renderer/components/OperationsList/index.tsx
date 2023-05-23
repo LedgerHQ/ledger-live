@@ -45,7 +45,7 @@ type Props = {
   parentAccount?: Account | null;
   accounts?: AccountLike[];
   allAccounts?: AccountLike[];
-  openModal?: (b: string, a: object) => any;
+  openModal?: (b: string, a: object) => void;
   t: TFunction;
   withAccount?: boolean;
   withSubAccounts?: boolean;

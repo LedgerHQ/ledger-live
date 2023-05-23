@@ -1,5 +1,17 @@
 # @ledgerhq/errors
 
+## 6.12.5
+
+### Patch Changes
+
+- [#3229](https://github.com/LedgerHQ/ledger-live/pull/3229) [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added mising error for broken ble pairing
+
+## 6.12.5-next.0
+
+### Patch Changes
+
+- [#3229](https://github.com/LedgerHQ/ledger-live/pull/3229) [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Added mising error for broken ble pairing
+
 ## 6.12.4
 
 ### Patch Changes

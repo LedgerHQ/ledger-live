@@ -40,8 +40,8 @@ export const SettingsSectionBody = styled(Box)`
 type SettingsSectionHeaderProps = {
   title: string;
   desc: string;
-  icon: any;
-  renderRight?: any;
+  icon: JSX.Element;
+  renderRight?: JSX.Element;
   onClick?: () => void;
   style?: React.CSSProperties;
 };
@@ -86,7 +86,7 @@ export const SettingsSectionRowContainer = styled(Box).attrs<{
 type SettingsSectionRowProps = {
   title?: string | React.ReactNode;
   desc: string | React.ReactNode;
-  children?: any;
+  children?: React.ReactNode;
   onClick?: () => void;
   inset?: boolean;
   contentContainerStyle?: React.CSSProperties;

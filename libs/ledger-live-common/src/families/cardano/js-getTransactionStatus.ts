@@ -181,6 +181,10 @@ async function getUndelegateTransactionStatus(
     throw new Error("StakeKey is not registered");
   }
 
+  if (a.balance.eq(0)) {
+    throw new CardanoNotEnoughFunds();
+  }
+
   try {
     await buildTransaction(a, t);
   } catch (e: any) {

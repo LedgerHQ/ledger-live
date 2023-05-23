@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "29.4.0",
+  "version": "29.5.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -148,7 +148,7 @@
     "@ledgerhq/hw-app-xrp": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
-    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-portfolio": "workspace:^",

@@ -226,7 +226,6 @@ const CurrencyRow = memo(function CurrencyRowItem({
   locale,
   swapAvailableIds,
   onRampAvailableTickers,
-  range,
   style,
 }: {
   data: CurrencyData[];

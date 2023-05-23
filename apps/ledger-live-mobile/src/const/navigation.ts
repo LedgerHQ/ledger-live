@@ -498,6 +498,7 @@ export enum ScreenName {
   Stake = "Stake",
 
   RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
+  RedirectToRecoverStaxFlow = "RedirectToRecoverStaxFlow",
 }
 export enum NavigatorName {
   // Stack

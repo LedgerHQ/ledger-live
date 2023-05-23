@@ -99,7 +99,7 @@ function DelegationAmount({ navigation, route }: Props) {
         : validators;
     const transaction = bridge.updateTransaction(
       tx,
-      ["delegate", "redelegate", "undelegate"].includes(tx.mode)
+      tx.mode === "delegate"
         ? {
             amount: new BigNumber(value),
             validators: filteredValidators,

@@ -33,7 +33,7 @@ type State = {
 };
 type OwnProps = {
   onClose?: () => void;
-  data: any;
+  data: unknown;
 };
 type Props = {
   setDataModal: Function;

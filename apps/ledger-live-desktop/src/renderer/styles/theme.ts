@@ -196,10 +196,10 @@ export type Theme = {
     [x: string]: string;
   };
   animations: {
-    [x: string]: (props: never) => any;
+    [x: string]: (props: never) => unknown;
   };
   overflow: {
-    [x: string]: any;
+    [x: string]: unknown;
   };
 };
 

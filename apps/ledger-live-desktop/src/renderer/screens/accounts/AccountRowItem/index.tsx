@@ -163,7 +163,7 @@ class AccountRowItem extends PureComponent<Props, State> {
     }
   }
 
-  scrollTopFocusRef: any = React.createRef();
+  scrollTopFocusRef = React.createRef<HTMLSpanElement>();
   onClick = () => {
     const { account, parentAccount, onClick } = this.props;
     onClick(account, parentAccount);

@@ -1,17 +1,71 @@
-import invariant from "invariant";
-import axios, { AxiosPromise } from "axios";
-import type { AxiosError, AxiosRequestConfig, Method } from "axios";
+import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { NetworkDown, LedgerAPI5xx, LedgerAPI4xx } from "@ledgerhq/errors";
+import type { AxiosError, AxiosRequestConfig, Method } from "axios";
+import axios, { AxiosPromise, AxiosResponse } from "axios";
+import invariant from "invariant";
+import { changes, getEnv } from "./env";
 import { retry } from "./promise";
-import { getEnv, changes } from "./env";
 
-export const errorInterceptor = (error: AxiosError<any>): AxiosError<any> => {
-  const config = error?.response?.config || null;
+type Metadata = { startTime: number };
+type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
+
+export const requestInterceptor = (
+  request: AxiosRequestConfig
+): ExtendedXHRConfig => {
+  if (!getEnv("ENABLE_NETWORK_LOGS")) {
+    return request;
+  }
+
+  const { baseURL, url, method = "", data } = request;
+  log("network", `${method} ${baseURL || ""}${url}`, { data });
+
+  const req: ExtendedXHRConfig = request;
+
+  req.metadata = {
+    startTime: Date.now(),
+  };
+
+  return req;
+};
+
+type InterceptedResponse = {
+  config: ExtendedXHRConfig;
+} & AxiosResponse<any>;
+
+export const responseInterceptor = (
+  response: InterceptedResponse
+): InterceptedResponse => {
+  if (!getEnv("ENABLE_NETWORK_LOGS")) {
+    return response;
+  }
+
+  const { baseURL, url, method = "", metadata } = response.config;
+  const { startTime = 0 } = metadata || {};
+
+  log(
+    "network-success",
+    `${response.status} ${method} ${baseURL || ""}${url} (${(
+      Date.now() - startTime
+    ).toFixed(0)}ms)`,
+    { data: response.data }
+  );
+
+  return response;
+};
+
+type InterceptedError = {
+  response?: InterceptedResponse;
+} & AxiosError<any>;
+
+export const errorInterceptor = (error: InterceptedError): InterceptedError => {
+  const config = error?.response?.config;
   if (!config) throw error;
-  const { baseURL, url, method = "" } = config;
+  const { baseURL, url, method = "", metadata } = config;
+  const { startTime = 0 } = metadata || {};
 
-  let errorToThrow;
+  const duration = `${(Date.now() - startTime).toFixed(0)}ms`;
+
+  let errorToThrow: Error;
   if (error.response) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
@@ -32,20 +86,24 @@ export const errorInterceptor = (error: AxiosError<any>): AxiosError<any> => {
     } else {
       errorToThrow = makeError(`API HTTP ${status}`, status, url, method);
     }
+
     log(
       "network-error",
-      `${status} ${method} ${baseURL || ""}${url}: ${errorToThrow.message}`,
+      `${status} ${method} ${baseURL || ""}${url} (${duration}): ${
+        errorToThrow.message
+      }`,
       getEnv("DEBUG_HTTP_RESPONSE") ? { data: data } : {}
     );
     throw errorToThrow;
   } else if (error.request) {
-    log("network-down", `DOWN ${method} ${baseURL || ""}${url}`);
+    log("network-down", `DOWN ${method} ${baseURL || ""}${url} (${duration})`);
     throw new NetworkDown();
   }
   throw error;
 };
 
-axios.interceptors.response.use(undefined, errorInterceptor);
+axios.interceptors.request.use(requestInterceptor);
+axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
 const makeError = (
   msg: string,

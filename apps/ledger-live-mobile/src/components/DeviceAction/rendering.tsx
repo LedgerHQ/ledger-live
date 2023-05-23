@@ -469,6 +469,29 @@ export function renderAllowLanguageInstallation({
   );
 }
 
+export const renderAllowRemoveCustomLockscreen = ({
+  t,
+  device,
+  theme,
+}: RawProps & {
+  device: Device;
+}) => {
+  const productName = getDeviceModel(device.modelId).productName;
+  const key = device.modelId === "stax" ? "allowManager" : "sign";
+
+  return (
+    <Wrapper>
+      <TrackScreen category={`Allow CLS removal on ${productName}`} />
+      <Text variant="h4" textAlign="center">
+        {t("DeviceAction.allowRemoveCustomLockscreen", { productName })}
+      </Text>
+      <AnimationContainer>
+        <Animation source={getDeviceAnimation({ device, key, theme })} />
+      </AnimationContainer>
+    </Wrapper>
+  );
+};
+
 const AllowOpeningApp = ({
   t,
   navigation,

@@ -4,10 +4,11 @@ import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import { dataToFrames } from "qrloop";
-import { encode } from "@ledgerhq/live-common/cross";
+import { Settings, encode } from "@ledgerhq/live-common/cross";
 import { activeAccountsSelector } from "~/renderer/reducers/accounts";
 import { exportSettingsSelector } from "~/renderer/reducers/settings";
 import QRCode from "~/renderer/components/QRCode";
+import { Account } from "@ledgerhq/types-live";
 
 const mapStateToProps = createStructuredSelector({
   accounts: (state, props) => props.accounts || activeAccountsSelector(state),
@@ -24,10 +25,11 @@ const QRCodeContainer = styled.div`
 `;
 type OwnProps = {
   size: number;
+  accounts?: Account[];
 };
 type Props = OwnProps & {
-  accounts: any;
-  settings?: any;
+  accounts: Account[];
+  settings: Settings;
 };
 class QRCodeExporter extends PureComponent<
   Props,
@@ -116,7 +118,7 @@ class QRCodeExporter extends PureComponent<
     );
   }
 }
-const ConnectedQRCodeExporter: React.ComponentType<Props> = connect(mapStateToProps)(
+const ConnectedQRCodeExporter: React.ComponentType<OwnProps> = connect(mapStateToProps)(
   QRCodeExporter,
 );
 export default ConnectedQRCodeExporter;

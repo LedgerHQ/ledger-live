@@ -179,10 +179,10 @@ export type ValidatorRowProps = {
   disabled?: boolean;
   maxAvailable?: number;
   notEnoughVotes?: boolean;
-  onClick?: (a: any) => void;
+  onClick?: (a: ValidatorRowProps["validator"]) => void;
   onUpdateVote?: (b: string, a: string) => void;
   onExternalLink: (address: string) => void;
-  style?: any;
+  style?: React.CSSProperties;
   unit: Unit;
   onMax?: () => void;
   shouldRenderMax?: boolean;

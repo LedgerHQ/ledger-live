@@ -25,11 +25,11 @@ const ListWrapper = styled(Box)<{
       : ""};
 `;
 type Props = {
-  children: any;
+  children: React.ReactNode;
   title?: React.ReactNode;
   scroll?: boolean;
-  titleRight?: any;
-  emptyState?: any;
+  titleRight?: React.ReactNode;
+  emptyState?: React.ReactNode;
   collapsed?: boolean;
   flex?: string;
 };
