@@ -15,7 +15,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "transaction?",
-        button: SpeculosButton.RIGHT,
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Warning:",
@@ -53,7 +53,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "output?",
-        button: SpeculosButton.RIGHT,
+        button: SpeculosButton.BOTH,
       },
       {
         title: "Transaction fee",
@@ -64,6 +64,9 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       },
       {
         title: "Register",
+      },
+      {
+        title: "Deregister",
       },
       {
         title: "staking key",
@@ -97,6 +100,10 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         button: SpeculosButton.BOTH,
       },
       {
+        title: "deregistration?",
+        button: SpeculosButton.BOTH,
+      },
+      {
         title: "Delegate stake to",
         button: SpeculosButton.BOTH,
       },
@@ -107,7 +114,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
       {
         title: "transaction?",
         final: true,
-        button: SpeculosButton.RIGHT,
+        button: SpeculosButton.BOTH,
       },
     ],
   });
