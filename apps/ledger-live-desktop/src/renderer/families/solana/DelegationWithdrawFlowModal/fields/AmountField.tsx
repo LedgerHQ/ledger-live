@@ -1,6 +1,6 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/solana/types";
 import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";

@@ -2,8 +2,11 @@ import { TFunction } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import { Operation } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { PolkadotAccount, Transaction } from "@ledgerhq/live-common/families/polkadot/types";
+import {
+  TransactionStatus,
+  PolkadotAccount,
+  Transaction,
+} from "@ledgerhq/live-common/families/polkadot/types";
 export type StepId = "amount" | "connectDevice" | "confirmation";
 
 export type StepProps = {

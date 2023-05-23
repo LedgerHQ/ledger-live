@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { withTranslation } from "react-i18next";
+import { TFunction, withTranslation } from "react-i18next";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -11,14 +11,18 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { openModal } from "~/renderer/actions/modals";
-
 import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
-import { AccountBridge, Operation } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ElrondAccount, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import {
+  Transaction,
+  ElrondAccount,
+  ElrondProvider,
+} from "@ledgerhq/live-common/families/elrond/types";
+import { StepId } from "./types";
+import { Device } from "@ledgerhq/types-devices";
 
 export type Data = {
   account: ElrondAccount;

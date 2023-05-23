@@ -8,7 +8,7 @@ import Select, { Option } from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { TFunction } from "react-i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { UnbondingType, ElrondProvider } from "~/renderer/families/elrond/types";
 type NoOptionsMessageCallbackType = {
   inputValue: string;
@@ -18,7 +18,7 @@ type EnhancedUnbonding = UnbondingType & {
 };
 export interface Props {
   onChange: (validator: ElrondProvider) => void;
-  onUpdateTransaction: (transaction: Transaction) => void;
+  onUpdateTransaction: (transaction: (_: Transaction) => Transaction) => void;
   bridge: AccountBridge<Transaction>;
   transaction: Transaction;
   unbondings: Array<UnbondingType>;
@@ -96,12 +96,11 @@ const DelegationSelectorField = (props: Props) => {
   useEffect(() => {
     const [defaultOption] = options;
     if (defaultOption && !transaction.recipient && transaction.amount.isEqualTo(0)) {
-      onUpdateTransaction(
-        (transaction: Transaction): AccountBridge<Transaction> =>
-          bridge.updateTransaction(transaction, {
-            recipient: defaultOption.contract,
-            amount: BigNumber(defaultOption.amount),
-          }),
+      onUpdateTransaction(transaction =>
+        bridge.updateTransaction(transaction, {
+          recipient: defaultOption.contract,
+          amount: BigNumber(defaultOption.amount),
+        }),
       );
     }
   }, [options, bridge, transaction, onUpdateTransaction]);

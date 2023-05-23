@@ -21,7 +21,7 @@ interface DelegationSelectorFieldType {
   contract: string;
   transaction: Transaction;
   onChange: (validator: ElrondProvider) => void;
-  onUpdateTransaction: (transaction: Transaction) => void;
+  onUpdateTransaction: (transaction: (_: Transaction) => Transaction) => void;
   t: TFunction;
   bridge: AccountBridge<Transaction>;
 }

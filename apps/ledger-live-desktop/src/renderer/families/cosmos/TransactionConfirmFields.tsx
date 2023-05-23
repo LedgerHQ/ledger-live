@@ -2,7 +2,6 @@ import invariant from "invariant";
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import Text from "~/renderer/components/Text";
@@ -18,7 +17,7 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { CosmosFieldComponentProps } from "./types";
-import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",

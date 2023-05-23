@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
-import { Trans, withTranslation } from "react-i18next";
+import { TFunction, Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -18,13 +18,14 @@ import StepWithdraw, { StepWithdrawFooter } from "./steps/StepWithdraw";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { AccountBridge, Operation } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { StepProps, St } from "./types";
+import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { StepProps, St, StepId } from "./types";
+import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { Device } from "@ledgerhq/types-devices";
 
 export type Data = {
-  account: Account;
-  parentAccount: Account | undefined | null;
+  account: ElrondAccount;
+  parentAccount: ElrondAccount | undefined | null;
   unbondings?: any;
   contract?: string;
   amount?: string;

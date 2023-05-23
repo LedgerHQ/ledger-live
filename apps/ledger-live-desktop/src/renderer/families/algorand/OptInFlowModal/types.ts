@@ -2,10 +2,9 @@ import { TFunction } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { Transaction } from "@ledgerhq/live-common/families/algorand/types";
 import { ModalsData } from "../modals";
 import { MakeModalsType } from "~/renderer/modals/types";
+import { TransactionStatus, Transaction } from "@ledgerhq/live-common/families/algorand/types";
 
 export type StepId = "assets" | "connectDevice" | "confirmation";
 export type StepProps = {

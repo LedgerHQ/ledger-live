@@ -4,7 +4,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Input from "~/renderer/components/Input";
 import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/cardano/types";
 import { track } from "~/renderer/analytics/segment";
 const MemoValueField = ({
   onChange,

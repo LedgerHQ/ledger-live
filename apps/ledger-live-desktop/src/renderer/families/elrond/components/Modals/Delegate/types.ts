@@ -19,7 +19,7 @@ export type StepProps = {
   transaction?: Transaction;
   status: TransactionStatus;
   onChangeTransaction: (transaction: Transaction) => void;
-  onUpdateTransaction: (transaction: Transaction) => void;
+  onUpdateTransaction: (transaction: (_: Transaction) => Transaction) => void;
   onTransactionError: (error: Error) => void;
   onOperationBroadcasted: (operation: Operation) => void;
   setSigned: (assigned: boolean) => void;

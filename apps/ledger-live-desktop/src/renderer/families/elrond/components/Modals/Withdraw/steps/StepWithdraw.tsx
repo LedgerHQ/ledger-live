@@ -13,9 +13,9 @@ import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { ElrondProvider, Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { StepProps } from "../types";
+
 const StepWithdraw = (props: StepProps) => {
   const {
     account,
@@ -33,13 +33,12 @@ const StepWithdraw = (props: StepProps) => {
   const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
   const onDelegationChange = useCallback(
     (validator: ElrondProvider) => {
-      onUpdateTransaction(
-        (transaction: Transaction): AccountBridge<Transaction> =>
-          bridge.updateTransaction(transaction, {
-            ...transaction,
-            recipient: validator.contract,
-            amount: BigNumber(validator.amount),
-          }),
+      onUpdateTransaction(transaction =>
+        bridge.updateTransaction(transaction, {
+          ...transaction,
+          recipient: validator.contract,
+          amount: BigNumber(validator.amount),
+        }),
       );
     },
     [bridge, onUpdateTransaction],

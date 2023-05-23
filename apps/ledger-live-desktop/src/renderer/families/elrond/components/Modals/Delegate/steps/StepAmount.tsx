@@ -10,7 +10,7 @@ import SpendableBanner from "~/renderer/components/SpendableBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import { StepProps } from "../types";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 
 const StepAmount = (props: StepProps) => {
   const {

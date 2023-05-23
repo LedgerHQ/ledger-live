@@ -5,9 +5,10 @@ import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import { Account, TransactionStatus } from "@ledgerhq/types-live";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { ElrondAccount, TransactionStatus } from "@ledgerhq/live-common/families/elrond/types";
+
 const InputLeft = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
   color: "palette.text.shade60",
@@ -72,7 +73,7 @@ const WarningDisplay = styled(Box)`
 export interface Props {
   amount: BigNumber;
   initialAmount: BigNumber;
-  account: Account;
+  account: ElrondAccount;
   label: JSX.Element;
   onChange: (amount: BigNumber) => void;
   status: TransactionStatus;

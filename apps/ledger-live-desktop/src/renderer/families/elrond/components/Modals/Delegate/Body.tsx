@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
-import { Trans, withTranslation } from "react-i18next";
+import { TFunction, Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -21,11 +21,15 @@ import Track from "~/renderer/analytics/Track";
 import logger from "~/renderer/logger";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account, Operation } from "@ledgerhq/live-common/types/index";
-import { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
-import { StepProps, St } from "./types";
-import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import { DelegationType } from "~/renderer/families/elrond/types";
+import { StepProps, St, StepId } from "./types";
+import {
+  ElrondAccount,
+  ElrondProvider,
+  Transaction,
+} from "@ledgerhq/live-common/families/elrond/types";
+import { Device } from "@ledgerhq/types-devices";
 
 export type Data = {
   account: ElrondAccount;
@@ -88,7 +92,7 @@ const Body = (props: Props) => {
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
-  const defaultValidator: ElrondProvider | undefined = params.validators.find(
+  const defaultValidator: ElrondProvider | undefined = params.validators?.find(
     validator => validator.contract === ELROND_LEDGER_VALIDATOR_ADDRESS,
   );
   const { account, source = "Account Page" } = params;

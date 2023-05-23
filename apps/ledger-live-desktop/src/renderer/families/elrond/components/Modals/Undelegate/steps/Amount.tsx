@@ -11,21 +11,18 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import { ValidatorField, AmountField } from "../fields";
-import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { DelegationType } from "~/renderer/families/elrond/types";
 import { StepProps } from "../types";
+
 const StepAmount = (props: StepProps) => {
   const { account, onUpdateTransaction, status, error, contract, amount, delegations } = props;
   const [initialAmount, setInitialAmount] = useState(BigNumber(amount));
   const [value, setValue] = useState(BigNumber(amount));
-  const bridge = getAccountBridge(account);
+  const bridge = account && getAccountBridge(account);
   const updateValidator = useCallback(
     (payload: Transaction) => {
-      onUpdateTransaction(
-        (transaction: Transaction): AccountBridge<Transaction> =>
-          bridge.updateTransaction(transaction, payload),
-      );
+      onUpdateTransaction(transaction => bridge?.updateTransaction(transaction, payload));
     },
     [onUpdateTransaction, bridge],
   );
@@ -50,16 +47,14 @@ const StepAmount = (props: StepProps) => {
     [updateValidator],
   );
   useEffect(() => {
-    onUpdateTransaction(
-      (transaction: Transaction): AccountBridge<Transaction> => {
-        if (transaction.amount.isEqualTo(value)) {
-          return transaction;
-        }
-        return bridge.updateTransaction(transaction, {
-          amount: value,
-        });
-      },
-    );
+    onUpdateTransaction(transaction => {
+      if (transaction.amount.isEqualTo(value)) {
+        return transaction;
+      }
+      return bridge?.updateTransaction(transaction, {
+        amount: value,
+      });
+    });
   }, [bridge, onUpdateTransaction, value]);
   return (
     <Box flow={1}>

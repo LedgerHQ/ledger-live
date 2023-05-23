@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import styled from "styled-components";
-import ValidatorRow, { ValidatorRowProps } from "~/renderer/components/Delegation/ValidatorRow";
+import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Check from "~/renderer/icons/Check";
@@ -28,18 +28,20 @@ export type ValidatorItemType = ElrondProvider & {
   active: boolean;
   unit: Unit;
 };
-const StyledValidatorRow: ThemedComponent<ValidatorRowProps> = styled(ValidatorRow)`
+const StyledValidatorRow = styled(ValidatorRow)`
   border-color: transparent;
   margin-bottom: 0;
   pointer-events: ${provider => (provider.disabled ? "none" : "auto")};
   opacity: ${provider => (provider.disabled ? "0.25" : "1")};
 `;
-const ChosenMark: ThemedComponent<{
+const ChosenMark = styled(Check).attrs<{
   active: boolean;
-}> = styled(Check).attrs(p => ({
+}>(p => ({
   color: p.active ? p.theme.colors.palette.primary.main : "transparent",
   size: 14,
-}))``;
+}))<{
+  active: boolean;
+}>``;
 const ValidatorItem = (props: ValidatorItemType) => {
   const {
     contract,

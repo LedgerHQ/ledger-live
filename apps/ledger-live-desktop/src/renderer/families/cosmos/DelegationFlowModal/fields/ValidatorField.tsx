@@ -1,7 +1,10 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
-import { CosmosDelegation, CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import {
+  CosmosDelegation,
+  CosmosValidatorItem,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
 import { TFunction, Trans } from "react-i18next";

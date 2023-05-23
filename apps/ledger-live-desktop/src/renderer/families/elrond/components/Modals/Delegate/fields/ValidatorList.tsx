@@ -10,9 +10,11 @@ import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSear
 import ValidatorItem, { ValidatorItemType } from "./ValidatorItem";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react";
-import { Account } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import {
+  ElrondAccount,
+  ElrondProvider,
+  Transaction,
+} from "@ledgerhq/live-common/families/elrond/types";
 
 const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -39,7 +41,7 @@ const SeeAllButton: ThemedComponent<{
   }
 `;
 type Props = {
-  account: Account;
+  account: ElrondAccount;
   validators: Array<ElrondProvider>;
   onSelectValidator: (recipient: string) => void;
   transaction: Transaction;

@@ -33,10 +33,7 @@ const StepClaimRewards = (props: StepProps) => {
   const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
   const updateClaimRewards = useCallback(
     (newTransaction: Transaction) => {
-      onUpdateTransaction(
-        (transaction: Transaction): AccountBridge<Transaction> =>
-          bridge.updateTransaction(transaction, newTransaction),
-      );
+      onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
     },
     [bridge, onUpdateTransaction],
   );

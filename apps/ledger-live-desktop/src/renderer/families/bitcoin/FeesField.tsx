@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React, { useRef, useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { Account } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import InputCurrency from "~/renderer/components/InputCurrency";
