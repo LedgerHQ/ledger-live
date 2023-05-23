@@ -8,7 +8,6 @@ import { useSelector } from "react-redux";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;

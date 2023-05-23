@@ -94,6 +94,10 @@ export function RemoteLiveAppProvider({
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
   const [provider, setProvider] = useState<string>(initialProvider);
 
+  parameters.apiVersion = parameters.apiVersion
+    ? parameters.apiVersion
+    : ["1.0.0", "2.0.0"];
+
   const { allowExperimentalApps, allowDebugApps, ...params } = parameters;
 
   const providerURL: string =
