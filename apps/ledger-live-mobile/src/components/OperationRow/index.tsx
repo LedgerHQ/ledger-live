@@ -148,7 +148,6 @@ function OperationRow({
   const unit = getAccountUnit(account);
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
-
   const isOperationStuck =
     isEditableOperation(account, operation) &&
     operation.date.getTime() <=
