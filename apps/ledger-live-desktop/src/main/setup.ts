@@ -33,7 +33,9 @@ ipcMain.handle(
         await fs.writeFile(path.filePath, csv);
         return true;
       }
-    } catch (error) {}
+    } catch (error) {
+      // ignore
+    }
     return false;
   },
 );

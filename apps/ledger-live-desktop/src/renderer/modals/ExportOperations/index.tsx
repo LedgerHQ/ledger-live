@@ -49,7 +49,9 @@ const exportOperations = async (
     if (res && callback) {
       callback();
     }
-  } catch (error) {}
+  } catch (error) {
+    // ignore
+  }
 };
 function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props) {
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
