@@ -3,7 +3,6 @@ import { Observable, Subscription } from "rxjs";
 import { NativeModules, Platform } from "react-native";
 import Config from "react-native-config";
 import TransportBLE from "../../../react-native-hw-transport-ble";
-import { es } from "date-fns/locale";
 
 const { BluetoothHelperModule } = NativeModules;
 
