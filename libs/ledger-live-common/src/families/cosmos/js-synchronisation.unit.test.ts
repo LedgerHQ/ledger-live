@@ -1,7 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation, SyncConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { encodeAccountId } from "../../account";
 import { AccountShapeInfo } from "../../bridge/jsHelpers";
 import { CosmosAPI } from "./api/Cosmos";
 import { getAccountShape } from "./js-synchronisation";

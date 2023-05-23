@@ -87,7 +87,7 @@ const txToOps = (
         }
         break;
 
-      case "withdraw_rewards":
+      case "withdraw_rewards": {
         op.type = "REWARD";
 
         const rewardShards: { amount: BigNumber; address: string }[] = [];
@@ -132,6 +132,7 @@ const txToOps = (
         op.extra.validators = rewardShards;
 
         break;
+      }
 
       case "delegate":
         if (
