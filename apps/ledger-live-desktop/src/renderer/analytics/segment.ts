@@ -126,19 +126,19 @@ export const stop = () => {
   if (!analytics) return;
   analytics.reset();
 };
-export const trackSubject = new ReplaySubject<{
-  event: string;
-  properties: object | undefined | null;
-}>(10);
+type Properties = Error | Record<string, unknown> | null;
+export type LoggableEvent = {
+  eventName: string;
+  eventProperties?: Properties;
+  eventPropertiesWithoutExtra?: Properties;
+  date: Date;
+};
+export const trackSubject = new ReplaySubject<LoggableEvent>(30);
 function sendTrack(event: string, properties: object | undefined | null) {
   const analytics = getAnalytics();
   if (!analytics) return;
   analytics.track(event, properties, {
     context: getContext(),
-  });
-  trackSubject.next({
-    event,
-    properties,
   });
 }
 
@@ -163,20 +163,32 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
 };
 
 export const track = (
-  event: string,
+  eventName: string,
   properties?: Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
   if (!storeInstance || (!mandatory && !shareAnalyticsSelector(storeInstance.getState()))) {
     return;
   }
-  const fullProperties = {
-    page: currentRouteNameRef.current,
+
+  const eventPropertiesWithoutExtra = {
+    // page: currentRouteNameRef.current ?? undefined,
+    ...properties,
+  };
+  const allProperties = {
+    ...eventPropertiesWithoutExtra,
     ...extraProperties(storeInstance),
     ...confidentialityFilter(properties),
   };
-  logger.analyticsTrack(event, fullProperties);
-  sendTrack(event, fullProperties);
+
+  logger.analyticsTrack(eventName, allProperties);
+  sendTrack(eventName, allProperties);
+  trackSubject.next({
+    eventName,
+    eventProperties: allProperties,
+    eventPropertiesWithoutExtra,
+    date: new Date(),
+  });
 };
 
 /**
@@ -228,11 +240,20 @@ export const trackPage = (
   }
   const eventName = `Page ${fullScreenName}`;
 
-  const allProperties = {
-    source: previousRouteNameRef.current,
-    ...extraProperties(storeInstance),
+  const eventPropertiesWithoutExtra = {
+    source: previousRouteNameRef.current ?? undefined,
     ...properties,
+  };
+  const allProperties = {
+    ...eventPropertiesWithoutExtra,
+    ...extraProperties(storeInstance),
   };
   logger.analyticsPage(category, name, allProperties);
   sendTrack(eventName, allProperties);
+  trackSubject.next({
+    eventName,
+    eventProperties: allProperties,
+    eventPropertiesWithoutExtra,
+    date: new Date(),
+  });
 };
