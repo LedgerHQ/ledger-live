@@ -65,7 +65,8 @@ export type LiveAppManifestParams =
     }
   | {
       networks: Array<LiveAppManifestParamsNetwork>;
-    };
+    }
+  | Array<string>;
 
 export type LiveAppManifestParamsNetwork = {
   currency: string;
