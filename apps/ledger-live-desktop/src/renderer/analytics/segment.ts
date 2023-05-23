@@ -22,6 +22,7 @@ import {
   INFINITY_PASS_COLLECTION_CONTRACT,
 } from "@ledgerhq/live-common/nft/helpers";
 import createStore from "../createStore";
+import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const os = require("os");
@@ -170,20 +171,68 @@ export const track = (
     return;
   }
   const fullProperties = {
+    page: currentRouteNameRef.current,
     ...extraProperties(storeInstance),
     ...confidentialityFilter(properties),
   };
   logger.analyticsTrack(event, fullProperties);
   sendTrack(event, fullProperties);
 };
-export const page = (category: string, name?: string | null, properties?: object | null) => {
+
+/**
+ * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
+ * Extra logic to update the route names used in "screen" and "source"
+ * properties of further events can be optionally enabled with the parameters
+ * `updateRoutes` and `refreshSource`.
+ */
+export const trackPage = (
+  /**
+   * First part of the event name string
+   */
+  category: string,
+  /**
+   * Second part of the event name string, will be concatenated to `category`
+   * after a whitespace if defined.
+   */
+  name?: string | null,
+  /**
+   * Event properties
+   */
+  properties?: object | null,
+  /**
+   * Should this function call update the previous & current route names.
+   * Previous and current route names are used to track:
+   * - the `screen` property in non-screen events (for instance `button_clicked` events)
+   * - the `source` property in further screen events
+   */
+  updateRoutes?: boolean,
+  /**
+   * Should this function call update the current route name.
+   * If true, it means that the full screen name (`category` + " " + `name`) will
+   * be used as a "source" property for further screen events.
+   * NB: the previous parameter `updateRoutes` must be true for this to have
+   * any effect.
+   */
+  refreshSource?: boolean,
+) => {
   if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) {
     return;
   }
-  const fullProperties = {
+
+  const fullScreenName = category + (name ? ` ${name}` : "");
+  if (updateRoutes) {
+    previousRouteNameRef.current = currentRouteNameRef.current;
+    if (refreshSource) {
+      currentRouteNameRef.current = fullScreenName;
+    }
+  }
+  const eventName = `Page ${fullScreenName}`;
+
+  const allProperties = {
+    source: previousRouteNameRef.current,
     ...extraProperties(storeInstance),
     ...properties,
   };
-  logger.analyticsPage(category, name, fullProperties);
-  sendTrack(`Page ${category + (name ? ` ${name}` : "")}`, fullProperties);
+  logger.analyticsPage(category, name, allProperties);
+  sendTrack(eventName, allProperties);
 };
