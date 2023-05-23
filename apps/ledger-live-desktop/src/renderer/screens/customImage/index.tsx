@@ -169,15 +169,9 @@ const CustomImage: React.FC<Props> = props => {
   const openPostOnboarding = useNavigateToPostOnboardingHubCallback();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (transferDone && isFromPostOnboardingEntryPoint) {
-      dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.customImage }));
-    }
-  }, [dispatch, transferDone, isFromPostOnboardingEntryPoint]);
-
   const handleDone = useCallback(() => {
     exit();
-    // TODO: completeAction(PostOnboardingAction.customImage)
+    dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.customImage }));
     if (isFromPostOnboardingEntryPoint) {
       openPostOnboarding();
     }
