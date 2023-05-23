@@ -31540,9 +31540,9 @@ var init_httpPipelineLogLevel = __esm({
   }
 });
 
-// ../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/tslib.js
+// ../../../node_modules/.pnpm/tslib@2.5.2/node_modules/tslib/tslib.js
 var require_tslib = __commonJS({
-  "../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/tslib.js"(exports, module2) {
+  "../../../node_modules/.pnpm/tslib@2.5.2/node_modules/tslib/tslib.js"(exports, module2) {
     var __extends2;
     var __assign2;
     var __rest2;
@@ -31680,10 +31680,10 @@ var require_tslib = __commonJS({
             if (_ = accept3(result.set))
               descriptor.set = _;
             if (_ = accept3(result.init))
-              initializers.push(_);
+              initializers.unshift(_);
           } else if (_ = accept3(result)) {
             if (kind === "field")
-              initializers.push(_);
+              initializers.unshift(_);
             else
               descriptor[key] = _;
           }
@@ -32047,10 +32047,10 @@ var require_tslib = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/modules/index.js
+// ../../../node_modules/.pnpm/tslib@2.5.2/node_modules/tslib/modules/index.js
 var import_tslib, __extends, __assign, __rest, __decorate, __param, __esDecorate, __runInitializers, __propKey, __setFunctionName, __metadata, __awaiter, __generator, __exportStar, __createBinding, __values2, __read, __spread, __spreadArrays, __spreadArray, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault, __classPrivateFieldGet, __classPrivateFieldSet, __classPrivateFieldIn;
 var init_modules = __esm({
-  "../../../node_modules/.pnpm/tslib@2.5.0/node_modules/tslib/modules/index.js"() {
+  "../../../node_modules/.pnpm/tslib@2.5.2/node_modules/tslib/modules/index.js"() {
     import_tslib = __toESM(require_tslib(), 1);
     ({
       __extends,
@@ -69287,16 +69287,16 @@ var require_callBound = __commonJS({
   }
 });
 
-// ../../../node_modules/.pnpm/object-inspect@1.12.2/node_modules/object-inspect/util.inspect.js
+// ../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/util.inspect.js
 var require_util_inspect = __commonJS({
-  "../../../node_modules/.pnpm/object-inspect@1.12.2/node_modules/object-inspect/util.inspect.js"(exports, module2) {
+  "../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/util.inspect.js"(exports, module2) {
     module2.exports = require("util").inspect;
   }
 });
 
-// ../../../node_modules/.pnpm/object-inspect@1.12.2/node_modules/object-inspect/index.js
+// ../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/index.js
 var require_object_inspect = __commonJS({
-  "../../../node_modules/.pnpm/object-inspect@1.12.2/node_modules/object-inspect/index.js"(exports, module2) {
+  "../../../node_modules/.pnpm/object-inspect@1.12.3/node_modules/object-inspect/index.js"(exports, module2) {
     var hasMap = typeof Map === "function" && Map.prototype;
     var mapSizeDescriptor = Object.getOwnPropertyDescriptor && hasMap ? Object.getOwnPropertyDescriptor(Map.prototype, "size") : null;
     var mapSize = hasMap && mapSizeDescriptor && typeof mapSizeDescriptor.get === "function" ? mapSizeDescriptor.get : null;
@@ -69473,16 +69473,20 @@ var require_object_inspect = __commonJS({
       }
       if (isMap(obj)) {
         var mapParts = [];
-        mapForEach.call(obj, function(value, key) {
-          mapParts.push(inspect2(key, obj, true) + " => " + inspect2(value, obj));
-        });
+        if (mapForEach) {
+          mapForEach.call(obj, function(value, key) {
+            mapParts.push(inspect2(key, obj, true) + " => " + inspect2(value, obj));
+          });
+        }
         return collectionOf("Map", mapSize.call(obj), mapParts, indent);
       }
       if (isSet(obj)) {
         var setParts = [];
-        setForEach.call(obj, function(value) {
-          setParts.push(inspect2(value, obj));
-        });
+        if (setForEach) {
+          setForEach.call(obj, function(value) {
+            setParts.push(inspect2(value, obj));
+          });
+        }
         return collectionOf("Set", setSize.call(obj), setParts, indent);
       }
       if (isWeakMap(obj)) {

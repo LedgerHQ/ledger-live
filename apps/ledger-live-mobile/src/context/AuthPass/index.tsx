@@ -65,12 +65,15 @@ class AuthPass extends PureComponent<Props, State> {
   }
 
   componentDidMount() {
+    // TODO: REWORK THIS COMPONENT WITHOUT USING STATE (eg: this.mounted instead)
+    // eslint-disable-next-line react/no-direct-mutation-state
     this.state.mounted = true;
     this.auth();
     AppState.addEventListener("change", this.handleAppStateChange);
   }
 
   componentWillUnmount() {
+    // eslint-disable-next-line react/no-direct-mutation-state
     this.state.mounted = false;
   }
 

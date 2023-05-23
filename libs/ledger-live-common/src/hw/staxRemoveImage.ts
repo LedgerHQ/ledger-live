@@ -24,7 +24,7 @@ export type RemoveImageEvent =
 
 export type Input = {
   deviceId: string;
-  request: {};
+  request: Record<string, unknown>;
 };
 
 /**

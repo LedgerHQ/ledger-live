@@ -56,27 +56,17 @@ export const useProviderRates: UseProviderRates = ({
   includeDEX,
 }) => {
   const { account: fromAccount, parentAccount: fromParentAccount } = fromState;
-  const {
-    currency: toCurrency,
-    parentAccount: toParentAccount,
-    account: toAccount,
-  } = toState;
+  const { currency: toCurrency, parentAccount: toParentAccount, account: toAccount } = toState;
 
-  const [rates, dispatchRates] = useReducer(
-    ratesReducer,
-    ratesReducerInitialState
+  const [rates, dispatchRates] = useReducer(ratesReducer, ratesReducerInitialState);
+  const [getRatesDependency, setGetRatesDependency] = useState<unknown | null>(null);
+  const [getSelectedRate, setGetSelectedRate] = useState<ExchangeRate | Record<string, unknown>>(
+    {},
   );
-  const [getRatesDependency, setGetRatesDependency] = useState<unknown | null>(
-    null
-  );
-  const [getSelectedRate, setGetSelectedRate] = useState<ExchangeRate | {}>({});
 
   const refetchRates = useCallback(() => setGetRatesDependency({}), []);
 
-  const updateSelectedRate = useCallback(
-    (selected = {}) => setGetSelectedRate(selected),
-    []
-  );
+  const updateSelectedRate = useCallback((selected = {}) => setGetSelectedRate(selected), []);
 
   useEffect(
     () => {
@@ -105,7 +95,7 @@ export const useProviderRates: UseProviderRates = ({
             undefined,
             toCurrency,
             providers,
-            includeDEX
+            includeDEX,
           );
 
           if (abort) return;
@@ -165,8 +155,7 @@ export const useProviderRates: UseProviderRates = ({
                * Based on returns from https://mikemcl.github.io/bignumber.js/#cmp
                */
 
-              const cmp =
-                rateError?.name === "SwapExchangeRateAmountTooLow" ? -1 : 1;
+              const cmp = rateError?.name === "SwapExchangeRateAmountTooLow" ? -1 : 1;
 
               /**
                * If the amount is too low, the user should put at least the
@@ -177,7 +166,7 @@ export const useProviderRates: UseProviderRates = ({
 
               rateError =
                 (rateError as CustomMinOrMaxError).amount.comparedTo(
-                  (rate.error as CustomMinOrMaxError)?.amount
+                  (rate.error as CustomMinOrMaxError)?.amount,
                 ) === cmp
                   ? rateError
                   : rate.error;
@@ -203,8 +192,7 @@ export const useProviderRates: UseProviderRates = ({
               }
               const { provider, tradeMethod } = getSelectedRate as ExchangeRate;
               const rate = rates.find(
-                (rate) =>
-                  rate.provider === provider && rate.tradeMethod === tradeMethod
+                rate => rate.provider === provider && rate.tradeMethod === tradeMethod,
               );
               return rate ? rate : rates[0];
             };
@@ -223,14 +211,7 @@ export const useProviderRates: UseProviderRates = ({
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      fromAccount,
-      toCurrency,
-      transaction,
-      getRatesDependency,
-      onNoRates,
-      setExchangeRate,
-    ]
+    [fromAccount, toCurrency, transaction, getRatesDependency, onNoRates, setExchangeRate],
   );
 
   return {
