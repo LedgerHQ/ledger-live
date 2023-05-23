@@ -24,11 +24,11 @@ const Wrapper = styled.div`
   justify-content: space-between;
   padding: 16px 20px;
 `;
-const Column = styled(TableLine).attrs(p => ({
+const Column = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
-  color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
   fontSize: 3,
-}))`
+}))<{ strong?: boolean; clickable?: boolean }>`
+  color: ${p => (p.strong ? "palette.text.shade100" : "palette.text.shade80")}
   cursor: ${p => (p.clickable ? "pointer" : "cursor")};
   ${p =>
     p.clickable

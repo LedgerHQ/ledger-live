@@ -20,20 +20,26 @@ import {
   ELROND_EXPLORER_URL,
   ELROND_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
-import { DelegationType, ElrondProvider, UnbondingType } from "~/renderer/families/elrond/types";
-import { Account as AccountType } from "@ledgerhq/types-live";
+import { DelegationType } from "~/renderer/families/elrond/types";
+import {
+  ElrondProvider,
+  ElrondAccount as AccountType,
+} from "@ledgerhq/live-common/families/elrond/types";
+import { ModalsData } from "~/renderer/families/elrond/modals";
+
 interface RenderDropdownItemType {
   isActive: boolean;
   item: {
-    key: string;
+    key?: string;
     label: string;
-    disabled: boolean;
-    tooltip: ReactNode;
+    disabled?: boolean;
+    tooltip?: ReactNode;
+    divider?: boolean;
     show: boolean;
   };
 }
 interface DropDownItemType {
-  key: string;
+  key: keyof ModalsData;
   label: string;
   show: boolean;
   divider?: boolean;
@@ -45,11 +51,13 @@ interface DropDownItemType {
     amount?: string;
   };
 }
-type Props = DelegationType &
-  AccountType &
-  Array<DelegationType> &
-  Array<ElrondProvider> &
-  Array<UnbondingType>;
+
+type Props = DelegationType & {
+  account: AccountType;
+  delegations: Array<DelegationType>;
+  validators: Array<ElrondProvider>;
+};
+
 const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
   <Fragment>
     {item.key === "MODAL_ELROND_CLAIM_REWARDS" && item.divider && <Divider />}
@@ -171,7 +179,7 @@ const Delegation = (props: Props) => {
       <Column>
         <DropDown items={dropDownItems} renderItem={RenderDropdownItem} onChange={onSelect}>
           {() => (
-            <Box flex={true} horizontal={true} alignItems="center">
+            <Box horizontal={true} alignItems="center">
               <Trans i18nKey="common.manage" />
 
               <div

@@ -3,7 +3,6 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import Text from "~/renderer/components/Text";
@@ -18,6 +17,8 @@ import {
   OpDetailsVoteData,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import FormattedVal from "~/renderer/components/FormattedVal";
+import { CosmosFieldComponentProps } from "./types";
+import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
@@ -55,22 +56,22 @@ const AddressText = styled(Text).attrs(() => ({
   `
       : ``}
 `;
-const onExternalLink = (account, address) => {
+const onExternalLink = (account: CosmosAccount, address: string) => {
   const explorerView = getDefaultExplorerView(account.currency);
   const URL = explorerView && getAddressExplorer(explorerView, address);
   if (URL) openURL(URL);
 };
+
 export const CosmosDelegateValidatorsField = ({
   account,
   parentAccount,
   transaction,
   field,
-}: FieldComponentProps) => {
+}: CosmosFieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   const unit = getAccountUnit(mainAccount);
   const { validators } = transaction;
-  const currencyId = account.currency.id;
+  const currencyId = mainAccount.currency.id;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const mappedValidators = mapDelegationInfo(validators || [], cosmosValidators, unit, transaction);
   return mappedValidators && mappedValidators.length > 0 ? (
@@ -108,11 +109,11 @@ export const CosmosValidatorNameField = ({
   parentAccount,
   transaction,
   field,
-}: FieldComponentProps) => {
+}: CosmosFieldComponentProps) => {
   invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   const mainAccount = getMainAccount(account, parentAccount);
   const { validators } = transaction;
-  const currencyId = account.currency.id;
+  const currencyId = mainAccount.currency.id;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const address = validators && validators.length > 0 ? validators[0].address : null;
   const formattedValidator = useMemo(
@@ -142,7 +143,7 @@ export const CosmosValidatorAmountField = ({
   parentAccount,
   transaction,
   field,
-}: FieldComponentProps) => {
+}: CosmosFieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   const unit = getAccountUnit(mainAccount);
@@ -166,11 +167,11 @@ export const CosmosSourceValidatorField = ({
   parentAccount,
   transaction,
   field,
-}: FieldComponentProps) => {
+}: CosmosFieldComponentProps) => {
   invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   const mainAccount = getMainAccount(account, parentAccount);
   const { sourceValidator } = transaction;
-  const currencyId = account.currency.id;
+  const currencyId = mainAccount.currency.id;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const formattedValidator = useMemo(
     () => cosmosValidators.find(v => v.validatorAddress === sourceValidator),
@@ -194,7 +195,7 @@ export const CosmosSourceValidatorField = ({
     </TransactionConfirmField>
   ) : null;
 };
-const CosmosMemoField = ({ transaction, field }: FieldComponentProps) => {
+const CosmosMemoField = ({ transaction, field }: CosmosFieldComponentProps) => {
   invariant(transaction.family === "cosmos", "cosmos transaction");
   const { memo } = transaction;
   return memo ? (
