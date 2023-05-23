@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import { getEnv } from "@ledgerhq/live-common/env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -48,9 +47,7 @@ const StepUpdating = ({
       .subscribe({
         next: setUpdatedDeviceInfo,
         complete: () => {
-          const shouldGoToLanguageStep =
-            firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
-          transitionTo(shouldGoToLanguageStep ? "deviceLanguage" : "finish");
+          transitionTo("restore");
         },
         error: (error: Error) => {
           setError(error);

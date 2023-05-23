@@ -107,9 +107,9 @@ const Body = ({
             />
           </Box>
         ) : (
-          <AnimationWrapper>
+          <Box mb={8}>
             <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
-          </AnimationWrapper>
+          </Box>
         )}
 
         <Flex flexDirection="row" alignItems="center" my={2}>
