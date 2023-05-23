@@ -10,7 +10,7 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
 import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -45,7 +45,7 @@ interface StateProps {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  openModal: (name: string) => void;
+  openModal: OpenModal;
 }
 type Props = OwnProps & StateProps;
 const mapStateToProps = createStructuredSelector({

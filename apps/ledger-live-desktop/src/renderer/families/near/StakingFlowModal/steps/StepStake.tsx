@@ -6,7 +6,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { AccountBridge, Transaction } from "@ledgerhq/live-common/types/index";
+import { AccountBridge, Transaction } from "@ledgerhq/types-live";
 import ValidatorField from "../fields/ValidatorField";
 import LedgerByFigmentTCLink from "../components/LedgerByFigmentTCLink";
 import ErrorBanner from "~/renderer/components/ErrorBanner";

@@ -6,6 +6,7 @@ import {
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Operation } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
+import { OpenModal } from "~/renderer/actions/modals";
 import { Step } from "~/renderer/components/Stepper";
 import { DelegationType } from "~/renderer/families/elrond/types";
 
@@ -18,9 +19,9 @@ export type StepProps = {
   parentAccount?: ElrondAccount;
   onRetry: () => void;
   onClose: () => void;
-  openModal: (key: string, config?: any) => void;
-  optimisticOperation: any;
-  error: any;
+  openModal: OpenModal;
+  optimisticOperation: Operation | undefined;
+  error: Error | undefined;
   signed: boolean;
   transaction?: Transaction;
   status: TransactionStatus;

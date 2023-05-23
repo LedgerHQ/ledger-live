@@ -14,7 +14,7 @@ export type StepProps = {
   onRetry: (a: void) => void;
   onClose: () => void;
   openModal: (key: string, config?: unknown) => void;
-  optimisticOperation: Operation;
+  optimisticOperation: Operation | undefined;
   bridgeError: Error | undefined | null;
   transactionError: Error | undefined | null;
   signed: boolean;

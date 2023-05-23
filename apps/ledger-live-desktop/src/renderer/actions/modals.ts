@@ -5,6 +5,8 @@ function openModalF<Name extends keyof ModalData>(name: Name, data: ModalData[Na
   return { name, data };
 }
 
+export type OpenModal = typeof openModalF;
+
 export const openModal = createAction("MODAL_OPEN", openModalF);
 
 export const closeModal = createAction("MODAL_CLOSE", (name: keyof ModalData): {

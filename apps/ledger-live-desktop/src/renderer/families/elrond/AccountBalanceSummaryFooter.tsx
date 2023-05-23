@@ -15,10 +15,11 @@ import {
   Title,
   TitleWrapper,
 } from "~/renderer/families/elrond/blocks/Summary";
-import { Account } from "@ledgerhq/live-common/types/index";
 import { UnbondingType, DelegationType } from "./types";
+import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+
 export interface Props {
-  account: Account;
+  account: ElrondAccount;
 }
 interface BalanceType {
   tooltip: string;

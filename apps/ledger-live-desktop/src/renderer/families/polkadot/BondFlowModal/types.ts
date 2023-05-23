@@ -7,6 +7,7 @@ import {
   PolkadotAccount,
   Transaction,
 } from "@ledgerhq/live-common/families/polkadot/types";
+import { OpenModal } from "~/renderer/actions/modals";
 export type StepId = "amount" | "connectDevice" | "confirmation";
 
 export type StepProps = {
@@ -16,9 +17,9 @@ export type StepProps = {
   account: PolkadotAccount | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;
-  openModal: (key: string, config?: any) => void;
-  optimisticOperation: any;
-  error: any;
+  openModal: OpenModal;
+  optimisticOperation: Operation | undefined;
+  error: Error | undefined;
   signed: boolean;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;

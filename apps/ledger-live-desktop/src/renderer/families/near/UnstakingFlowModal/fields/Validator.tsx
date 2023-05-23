@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNearStakingPositionsQuerySelector } from "@ledgerhq/live-common/families/near/react";
 import { Transaction, NearMappedStakingPosition } from "@ledgerhq/live-common/families/near/types";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import LedgerValidatorIcon from "~/renderer/families/near/shared/components/LedgerValidatorIcon";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";

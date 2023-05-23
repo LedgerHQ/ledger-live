@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { NearMappedStakingPosition } from "@ledgerhq/live-common/families/near/types";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { canUnstake, canWithdraw } from "@ledgerhq/live-common/families/near/logic";
 import { TableLine } from "./Header";
 import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";

@@ -3,6 +3,7 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/tezos/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
+import { OpenModal } from "~/renderer/actions/modals";
 export type StepId =
   | "starter"
   | "account"
@@ -25,7 +26,7 @@ export type StepProps = {
   error: Error | undefined | null;
   optimisticOperation: Operation | undefined | null;
   onClose: () => void;
-  openModal: (b: string, a: any) => void;
+  openModal: OpenModal;
   onChangeAccount: (b?: AccountLike | null, a?: Account | null) => void;
   onChangeTransaction: (a: Transaction) => void;
   onTransactionError: (a: Error) => void;

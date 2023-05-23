@@ -18,12 +18,14 @@ const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 const StepConfirmation = (props: StepProps) => {
   const { optimisticOperation, error, signed, account, transaction } = props;
-  if (optimisticOperation) {
+  if (optimisticOperation && account && transaction) {
     const amount = `${denominate({
       input: String(transaction.amount),
       decimals: 4,
@@ -66,7 +68,7 @@ const StepConfirmation = (props: StepProps) => {
   return null;
 };
 const StepConfirmationFooter = (props: StepProps) => {
-  const { account, parentAccount, onRetry, error, onClose, optimisticOperation } = props;
+  const { account, onRetry, error, onClose, optimisticOperation } = props;
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
       ? optimisticOperation.subOperations[0]
@@ -89,7 +91,6 @@ const StepConfirmationFooter = (props: StepProps) => {
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}

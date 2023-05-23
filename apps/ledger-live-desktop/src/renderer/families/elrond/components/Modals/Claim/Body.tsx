@@ -10,7 +10,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
 
 import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
@@ -18,10 +18,14 @@ import StepClaimRewards, { StepClaimRewardsFooter } from "./steps/StepClaimRewar
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { Transaction, AccountBridge, Operation, Account } from "@ledgerhq/types-live";
-import { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
+import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
+import { DelegationType } from "~/renderer/families/elrond/types";
 import { StepProps, St, StepId } from "./types";
-import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import {
+  ElrondAccount,
+  Transaction,
+  ElrondProvider,
+} from "@ledgerhq/live-common/families/elrond/types";
 import { Device } from "@ledgerhq/types-devices";
 
 export type Data = {
@@ -40,7 +44,7 @@ interface StateProps {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  openModal: (name: string) => void;
+  openModal: OpenModal;
 }
 type Props = OwnProps & StateProps;
 const steps: Array<St> = [

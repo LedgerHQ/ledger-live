@@ -2,9 +2,8 @@ import { TFunction } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { ModalsData } from "../modals";
-import { MakeModalsType } from "~/renderer/modals/types";
 import { TransactionStatus, Transaction } from "@ledgerhq/live-common/families/algorand/types";
+import { OpenModal } from "~/renderer/actions/modals";
 
 export type StepId = "assets" | "connectDevice" | "confirmation";
 export type StepProps = {
@@ -15,10 +14,10 @@ export type StepProps = {
   parentAccount: Account | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;
-  openModal: (key: string, config?: MakeModalsType<ModalsData>) => void;
-  optimisticOperation: Operation;
-  error: Error;
-  warning: Error;
+  openModal: OpenModal;
+  optimisticOperation: Operation | undefined;
+  error: Error | undefined;
+  warning: Error | undefined;
   signed: boolean;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;

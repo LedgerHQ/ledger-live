@@ -1,13 +1,6 @@
 import { TFunction } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import {
-  Account,
-  AccountLike,
-  NFT,
-  Operation,
-  ProtoNFT,
-  TransactionCommon,
-} from "@ledgerhq/types-live";
+import { Account, AccountLike, NFT, Operation, ProtoNFT } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";

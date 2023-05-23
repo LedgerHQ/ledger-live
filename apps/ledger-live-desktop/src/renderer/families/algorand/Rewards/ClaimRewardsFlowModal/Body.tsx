@@ -15,7 +15,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
 
 import Stepper from "~/renderer/components/Stepper";
 import StepInfo, { StepInfoFooter } from "./steps/StepInfo";
@@ -39,7 +39,7 @@ type StateProps = {
   t: TFunction;
   accounts: Account[];
   device: Device | undefined | null;
-  openModal: (a: string) => void;
+  openModal: OpenModal;
 };
 type Props = OwnProps & StateProps;
 const steps: Array<St> = [

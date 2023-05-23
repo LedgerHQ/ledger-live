@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { canStake } from "@ledgerhq/live-common/families/near/logic";
-import { Account, AccountLike } from "@ledgerhq/live-common/types/index";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";

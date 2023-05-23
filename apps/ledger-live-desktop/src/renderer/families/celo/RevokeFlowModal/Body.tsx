@@ -11,7 +11,7 @@ import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
-import { openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
 
 import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
@@ -40,7 +40,7 @@ type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  openModal: (a: string) => void;
+  openModal: OpenModal;
 };
 type Props = OwnProps & StateProps;
 const steps: Array<St> = [

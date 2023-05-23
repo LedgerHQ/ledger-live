@@ -13,11 +13,14 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { multiline } from "~/renderer/styles/helpers";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { StepProps } from "../types";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 const StepConfirmation = (props: StepProps) => {
@@ -67,7 +70,7 @@ const StepConfirmation = (props: StepProps) => {
   return null;
 };
 const StepConfirmationFooter = (props: StepProps) => {
-  const { account, parentAccount, onRetry, error, onClose, optimisticOperation } = props;
+  const { account, onRetry, error, onClose, optimisticOperation } = props;
   const concernedOperation = optimisticOperation;
   return (
     <Box horizontal alignItems="right">
@@ -86,7 +89,6 @@ const StepConfirmationFooter = (props: StepProps) => {
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}

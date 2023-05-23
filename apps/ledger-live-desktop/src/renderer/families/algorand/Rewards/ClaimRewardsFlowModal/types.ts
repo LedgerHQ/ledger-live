@@ -7,8 +7,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/algorand/types";
-import { MakeModalsType } from "~/renderer/modals/types";
-import { ModalsData } from "../../modals";
+import { OpenModal } from "~/renderer/actions/modals";
 
 export type StepId = "info" | "connectDevice" | "confirmation";
 export type StepProps = {
@@ -19,10 +18,10 @@ export type StepProps = {
   parentAccount: Account | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;
-  openModal: (key: string, config?: MakeModalsType<ModalsData>) => void;
-  optimisticOperation: Operation;
-  error: Error;
-  warning: Error;
+  openModal: OpenModal;
+  optimisticOperation: Operation | undefined;
+  error: Error | undefined;
+  warning: Error | undefined;
   signed: boolean;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;

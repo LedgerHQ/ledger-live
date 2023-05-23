@@ -10,7 +10,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
 
 import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
@@ -40,7 +40,7 @@ interface StateProps {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  openModal: (name: string) => void;
+  openModal: OpenModal;
 }
 type Props = OwnProps & StateProps;
 const steps: Array<St> = [

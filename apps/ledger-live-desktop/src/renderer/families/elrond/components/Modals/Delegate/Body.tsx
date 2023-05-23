@@ -10,7 +10,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
 
 import Stepper from "~/renderer/components/Stepper";
 import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
@@ -20,8 +20,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import Track from "~/renderer/analytics/Track";
 import logger from "~/renderer/logger";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
-import { AccountBridge } from "@ledgerhq/types-live";
-import { Account, Operation } from "@ledgerhq/live-common/types/index";
+import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/elrond/types";
 import { StepProps, St, StepId } from "./types";
 import {
@@ -48,7 +47,7 @@ interface StateProps {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  openModal: (name: string) => void;
+  openModal: OpenModal;
 }
 type Props = OwnProps & StateProps;
 const steps: Array<St> = [

@@ -7,6 +7,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/polkadot/types";
+import { OpenModal } from "~/renderer/actions/modals";
 export type Mode = "withdrawUnbonded" | "chill" | "claimRewards" | "setController";
 export type StepId = "info" | "connectDevice" | "confirmation";
 
@@ -18,10 +19,10 @@ export type StepProps = {
   parentAccount: PolkadotAccount | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;
-  openModal: (key: string, config?: any) => void;
-  optimisticOperation: any;
-  error: any;
-  warning: any;
+  openModal: OpenModal;
+  optimisticOperation: Operation | undefined;
+  error: Error | undefined;
+  warning: Error | undefined;
   signed: boolean;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;

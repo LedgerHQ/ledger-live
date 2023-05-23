@@ -10,22 +10,12 @@ import SpendableBanner from "~/renderer/components/SpendableBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import { StepProps } from "../types";
-import { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 
 const StepAmount = (props: StepProps) => {
-  const {
-    t,
-    account,
-    parentAccount,
-    transaction,
-    onChangeTransaction,
-    error,
-    status,
-    bridgePending,
-  } = props;
-  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const { t, account, transaction, onChangeTransaction, error, status, bridgePending } = props;
+  const mainAccount = account ? getMainAccount(account) : null;
   const onUpdateTransactionCallback = useCallback(
-    (transaction: Transaction) =>
+    transaction =>
       onChangeTransaction({
         ...transaction,
         mode: "delegate",
@@ -42,11 +32,7 @@ const StepAmount = (props: StepProps) => {
       {account && transaction && mainAccount && (
         <Fragment key={account.id}>
           {account && transaction ? (
-            <SpendableBanner
-              account={account}
-              transaction={transaction}
-              parentAccount={parentAccount}
-            />
+            <SpendableBanner account={account} transaction={transaction} />
           ) : null}
 
           <AmountField
@@ -55,7 +41,6 @@ const StepAmount = (props: StepProps) => {
             transaction={transaction}
             t={t}
             bridgePending={bridgePending}
-            parentAccount={parentAccount}
             onChangeTransaction={onUpdateTransactionCallback}
             withUseMaxLabel={true}
           />
@@ -71,16 +56,16 @@ export class StepAmountFooter extends PureComponent<StepProps> {
   };
 
   render() {
-    const { account, parentAccount, status, bridgePending } = this.props;
+    const { account, status, bridgePending } = this.props;
     const { errors } = status;
     if (!account) return null;
-    const mainAccount = getMainAccount(account, parentAccount);
+    const mainAccount = getMainAccount(account);
     const isTerminated = mainAccount.currency.terminated;
     const hasErrors = Object.keys(errors).length;
     const canNext = !bridgePending && !hasErrors && !isTerminated;
     return (
       <Fragment>
-        <AccountFooter account={account} status={status} parentAccount={parentAccount} />
+        <AccountFooter account={account} status={status} />
 
         <Button
           id="send-amount-continue-button"
