@@ -41,9 +41,7 @@ type Props = {
 const TrackPage: React.FC<Props> = ({ category, name, refreshSource = true, ...properties }) => {
   useEffect(() => {
     trackPage(category, name, properties, true, refreshSource);
-    // should only happen on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [category, name, properties, refreshSource]);
   return null;
 };
 

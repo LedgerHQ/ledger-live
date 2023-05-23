@@ -349,9 +349,7 @@ function MarketList({
         <NoCryptoPlaceholder requestParams={requestParams} t={t} resetSearch={resetSearch} />
       ) : (
         <>
-          {search && currenciesLength > 0 && (
-            <Track event="Page Market Search" onMount success={true} />
-          )}
+          {search && currenciesLength > 0 && <TrackPage name="Market Search" success={true} />}
           <TableRow header>
             <SortTableCell
               data-test-id="market-sort-button"

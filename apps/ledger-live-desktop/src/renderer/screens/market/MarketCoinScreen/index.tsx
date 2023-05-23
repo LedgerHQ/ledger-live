@@ -3,7 +3,7 @@ import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { starredMarketCoinsSelector, localeSelector } from "~/renderer/reducers/settings";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import styled, { useTheme } from "styled-components";
@@ -16,7 +16,6 @@ import { Button } from "..";
 import MarketCoinChart from "./MarketCoinChart";
 import MarketInfo from "./MarketInfo";
 import { useProviders } from "../../exchange/Swap2/Form";
-import Track from "~/renderer/analytics/Track";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
@@ -248,10 +247,8 @@ export default function MarketCoinScreen() {
 
   return currency && counterCurrency ? (
     <Container data-test-id="market-coin-page-container">
-      <Track
-        event="Page Market Coin"
-        onMount
-        onUpdate
+      <TrackPage
+        name="Page Market Coin"
         currencyName={name}
         starred={isStarred}
         timeframe={chartRequestParams.range}
