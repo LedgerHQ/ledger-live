@@ -53,7 +53,7 @@ export default function EthereumFeesStrategy({
   const { operation } = route.params;
 
   let ethereumTransaction = transaction;
-  if (operation && operation.transactionRaw && isEditableOperation(account, operation)) {
+  if (operation?.transactionRaw && isEditableOperation(account, operation)) {
     ethereumTransaction = fromTransactionRaw(operation.transactionRaw as TransactionRaw);
   }
 
