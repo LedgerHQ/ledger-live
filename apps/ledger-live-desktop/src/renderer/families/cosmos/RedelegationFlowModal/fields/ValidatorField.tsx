@@ -9,12 +9,25 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";
 import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
+import {
+  CosmosAccount,
+  CosmosValidatorItem,
+  Transaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 const ValidatorsSection = styled(Box)`
   width: 100%;
   height: 100%;
   padding-bottom: ${p => p.theme.space[6]}px;
 `;
-export default function ValidatorField({ account, transaction, onChange }: any) {
+export default function ValidatorField({
+  account,
+  transaction,
+  onChange,
+}: {
+  account: CosmosAccount;
+  transaction: Transaction;
+  onChange: (a: CosmosValidatorItem) => void;
+}) {
   const currencyId = account.currency.id.toLowerCase();
   const [search, setSearch] = useState("");
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
@@ -26,7 +39,7 @@ export default function ValidatorField({ account, transaction, onChange }: any) 
   const sortedFilteredValidators = validators.filter(
     v => v.validatorAddress !== fromValidatorAddress,
   );
-  const renderItem = validator => {
+  const renderItem = (validator: CosmosValidatorItem) => {
     return (
       <ValidatorRow
         currency={account.currency}

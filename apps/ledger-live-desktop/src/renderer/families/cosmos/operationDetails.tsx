@@ -6,6 +6,7 @@ import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import {
+  CosmosAccount,
   CosmosDelegationInfo,
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/families/cosmos/types";
@@ -31,7 +32,7 @@ import {
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import { openURL } from "~/renderer/linking";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { AmountCellExtraProps } from "../types";
+import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
 
 function getURLFeesInfo({
   op,
@@ -114,12 +115,12 @@ export const OperationDetailsDelegation = ({
     </OpDetailsSection>
   );
 };
-type OperationDetailsExtraProps = {
-  extra: Record<string, any>;
-  type: string;
-  account: Account;
-};
-const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps) => {
+
+const OperationDetailsExtra = ({
+  extra,
+  type,
+  account,
+}: OperationDetailsExtraProps<CosmosAccount>) => {
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
   const discreet = useDiscreetMode();

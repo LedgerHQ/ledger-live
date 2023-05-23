@@ -5,7 +5,11 @@ import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Logo from "~/renderer/icons/Logo";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
-const CosmosFamilyLedgerValidatorIcon = ({ validator }: { validator: CosmosValidatorItem }) => {
+const CosmosFamilyLedgerValidatorIcon = ({
+  validator,
+}: {
+  validator: CosmosValidatorItem | null | undefined;
+}) => {
   return (
     <IconContainer isSR>
       {validator &&

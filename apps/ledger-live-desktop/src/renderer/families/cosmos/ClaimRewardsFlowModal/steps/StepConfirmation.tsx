@@ -27,15 +27,7 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 
-function StepConfirmation({
-  account,
-  optimisticOperation,
-  error,
-  signed,
-  transaction,
-}: StepProps & {
-  theme: any;
-}) {
+function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
   const currencyId = account.currency.id;
   const { validators } = useCosmosFamilyPreloadData(currencyId);
   const locale = useSelector(localeSelector);
