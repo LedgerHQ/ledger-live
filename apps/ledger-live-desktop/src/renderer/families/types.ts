@@ -52,7 +52,7 @@ export type OperationDetailsExtraProps<A> = {
   operation: Operation;
   account: A;
   type: OperationType;
-  extra: Record<string, any>;
+  extra: Record<string, any>; // TODO check if we can use unknown instead of any
 };
 
 /**

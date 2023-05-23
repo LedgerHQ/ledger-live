@@ -149,7 +149,6 @@ const Delegation = ({ account }: { account: TronAccount }) => {
                 )
               }
               percentTP={String(Math.round(100 * Number((voteCount * 1e2) / tronPower)) / 100)}
-              currency={account.currency}
               explorerView={explorerView}
             />
           ))}

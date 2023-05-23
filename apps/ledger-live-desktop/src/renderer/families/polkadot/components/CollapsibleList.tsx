@@ -4,6 +4,7 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import AngleDown from "~/renderer/icons/AngleDown";
+import { NominationValidator } from "../Nomination";
 const Wrapper = styled.div`
   position: relative;
 `;
@@ -38,9 +39,9 @@ const IconAngleDown = styled.div<{
 `;
 type Props = {
   children?: React.ReactNode;
-  uncollapsedItems: Array<any>;
-  collapsedItems: Array<any>;
-  renderItem: (item: any, index: number, isLast: boolean) => React.ReactNode;
+  uncollapsedItems: NominationValidator[];
+  collapsedItems: NominationValidator[];
+  renderItem: (item: NominationValidator, index: number, isLast: boolean) => React.ReactNode;
   renderShowMore: (collapsed: boolean) => React.ReactNode;
 };
 const CollapsibleList = ({

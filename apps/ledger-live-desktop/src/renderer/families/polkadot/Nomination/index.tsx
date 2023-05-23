@@ -41,6 +41,7 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import {
   PolkadotAccount,
   PolkadotNomination,
+  PolkadotUnlocking,
   PolkadotValidator,
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { SubAccount } from "@ledgerhq/types-live";
@@ -56,10 +57,12 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 
-type NominationValidator = {
-  nomination: PolkadotNomination;
-  validator?: PolkadotValidator;
-};
+export type NominationValidator =
+  | {
+      nomination: PolkadotNomination;
+      validator?: PolkadotValidator;
+    }
+  | PolkadotUnlocking;
 
 const Nomination = ({ account }: { account: PolkadotAccount }) => {
   const discreet = useDiscreetMode();
@@ -103,7 +106,7 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
         ? [
             {
               amount: unlockedBalance,
-              completionDate: now,
+              completionDate: now.toDate(),
             },
             ...withoutUnlocked,
           ]

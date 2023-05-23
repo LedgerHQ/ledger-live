@@ -22,7 +22,7 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { urls } from "~/config/urls";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
-import { AmountCellExtraProps } from "../types";
+import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
 
 function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined | null {
   if (op.fee.gt(200000)) {
@@ -142,14 +142,8 @@ export const OperationDetailsPalletMethod = ({
     </OpDetailsSection>
   ) : null;
 };
-type OperationDetailsExtraProps = {
-  extra: {
-    [key: string]: any;
-  };
-  type: string;
-  account: Account;
-};
-const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps) => {
+
+const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps<Account>) => {
   switch (type) {
     case "OUT":
     case "IN":

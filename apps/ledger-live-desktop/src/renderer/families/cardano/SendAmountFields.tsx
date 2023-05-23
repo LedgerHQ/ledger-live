@@ -3,7 +3,18 @@ import { useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import MemoValueField from "./MemoValueField";
-const Root = (props: any) => {
+import {
+  CardanoAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/cardano/types";
+const Root = (props: {
+  account: CardanoAccount;
+  transaction: Transaction;
+  status: TransactionStatus;
+  onChange: (t: Transaction) => void;
+  trackProperties?: Record<string, unknown>;
+}) => {
   const { t } = useTranslation();
   return (
     <Box flow={1}>

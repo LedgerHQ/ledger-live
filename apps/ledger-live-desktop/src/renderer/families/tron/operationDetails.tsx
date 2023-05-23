@@ -23,6 +23,7 @@ import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
+import { OperationDetailsExtraProps } from "../types";
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 
 function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined {
@@ -99,14 +100,12 @@ export const OperationDetailsVotes = ({
     </OpDetailsSection>
   );
 };
-type OperationDetailsExtraProps = {
-  extra: {
-    [key: string]: any;
-  };
-  type: string;
-  account: TronAccount;
-};
-const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps) => {
+
+const OperationDetailsExtra = ({
+  extra,
+  type,
+  account,
+}: OperationDetailsExtraProps<TronAccount>) => {
   switch (type) {
     case "VOTE": {
       const { votes } = extra;

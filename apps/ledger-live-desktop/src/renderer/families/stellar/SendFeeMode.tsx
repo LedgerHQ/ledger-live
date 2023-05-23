@@ -8,7 +8,7 @@ import Label from "~/renderer/components/Label";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 type Props = {
   isCustomMode: boolean;
-  setCustomMode: any;
+  setCustomMode: (isCustom: boolean) => void;
 };
 const SelectorContainer = styled.div`
   display: inline-flex;

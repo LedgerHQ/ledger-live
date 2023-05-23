@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Trans } from "react-i18next";
+import { TFunction, Trans } from "react-i18next";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
@@ -9,6 +9,7 @@ import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
+import { AlgorandAccount, Transaction } from "@ledgerhq/live-common/families/algorand/types";
 
 const renderItem = ({
   data: { id, name },
@@ -46,7 +47,17 @@ const renderItem = ({
     </Box>
   );
 };
-export default function DelegationSelectorField({ account, transaction, t, onChange }: any) {
+export default function DelegationSelectorField({
+  account,
+  transaction,
+  t,
+  onChange,
+}: {
+  account: AlgorandAccount;
+  transaction: Transaction;
+  onChange: (token: TokenCurrency | undefined | null) => void;
+  t: TFunction;
+}) {
   const [query, setQuery] = useState("");
   const subAccounts = account.subAccounts;
   const options = listTokensForCryptoCurrency(account.currency);
@@ -60,7 +71,9 @@ export default function DelegationSelectorField({ account, transaction, t, onCha
         value={value}
         options={options}
         getOptionValue={({ name }) => name}
-        isOptionDisabled={({ id }) => subAccounts.some(({ token }) => token.id === id)}
+        isOptionDisabled={({ id }) =>
+          subAccounts?.some(o => o.type === "TokenAccount" && o.token.id === id) || false
+        }
         renderValue={renderItem}
         renderOption={renderItem}
         onInputChange={setQuery}

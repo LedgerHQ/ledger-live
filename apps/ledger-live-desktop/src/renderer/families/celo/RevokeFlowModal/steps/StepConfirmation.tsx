@@ -13,14 +13,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 import * as S from "./StepConfirmation.styles";
-const StepConfirmation = ({
-  t,
-  optimisticOperation,
-  error,
-  signed,
-}: StepProps & {
-  theme: any;
-}) => {
+const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps) => {
   if (optimisticOperation) {
     return (
       <S.Container>

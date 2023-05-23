@@ -57,15 +57,7 @@ export const StepConfirmationFooter = ({
     </Box>
   );
 };
-const StepConfirmation = ({
-  t,
-  transaction,
-  optimisticOperation,
-  error,
-  signed,
-}: StepProps & {
-  theme: any;
-}) => {
+const StepConfirmation = ({ t, transaction, optimisticOperation, error, signed }: StepProps) => {
   if (optimisticOperation) {
     return (
       <S.Container>

@@ -44,7 +44,7 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
     {
       key: "Stake",
       onClick: onClick,
-      icon: (props: any) => <Icon {...props} isDisabled={isRegistrationPending} />,
+      icon: props => <Icon {...props} isDisabled={isRegistrationPending} />,
       disabled: isRegistrationPending,
       label: t("account.stake"),
       tooltip: disabledLabel,
