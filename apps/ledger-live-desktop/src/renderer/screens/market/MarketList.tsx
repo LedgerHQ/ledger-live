@@ -21,6 +21,7 @@ import NoResultsFound from "~/renderer/images/no-results-found.png";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { FlexProps } from "styled-system";
 import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 export const TableCellBase: StyledComponent<"div", DefaultTheme, FlexProps> = styled(Flex).attrs({
   alignItems: "center",
@@ -349,7 +350,7 @@ function MarketList({
         <NoCryptoPlaceholder requestParams={requestParams} t={t} resetSearch={resetSearch} />
       ) : (
         <>
-          {search && currenciesLength > 0 && <TrackPage name="Market Search" success={true} />}
+          {search && currenciesLength > 0 && <TrackPage category="Market Search" success={true} />}
           <TableRow header>
             <SortTableCell
               data-test-id="market-sort-button"

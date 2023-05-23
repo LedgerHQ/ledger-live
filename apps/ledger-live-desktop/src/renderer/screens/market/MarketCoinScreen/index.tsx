@@ -248,7 +248,7 @@ export default function MarketCoinScreen() {
   return currency && counterCurrency ? (
     <Container data-test-id="market-coin-page-container">
       <TrackPage
-        name="Page Market Coin"
+        category="Page Market Coin"
         currencyName={name}
         starred={isStarred}
         timeframe={chartRequestParams.range}
