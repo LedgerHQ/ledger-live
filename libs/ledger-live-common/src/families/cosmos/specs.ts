@@ -501,6 +501,10 @@ const axelar = {
   ...generateGenericCosmosTest("axelar"),
 };
 
+const nyx = {
+  ...generateGenericCosmosTest("nyx"),
+};
+
 export default {
   axelar,
   cosmos,
@@ -510,4 +514,5 @@ export default {
   persistence,
   quicksilver,
   onomy,
+  nyx,
 };
