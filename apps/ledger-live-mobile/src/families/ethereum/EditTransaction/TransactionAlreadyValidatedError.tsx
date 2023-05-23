@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -32,6 +32,7 @@ const TransactionAlreadyValidatedErrorComponent = ({
 }: Props) => {
   const { colors } = useTheme();
   const { error } = route.params;
+  const { t } = useTranslation();
 
   return (
     <View
@@ -68,7 +69,7 @@ const TransactionAlreadyValidatedErrorComponent = ({
             mb={2}
             mt={24}
           >
-            {"Transaction already validated"}
+            {t("errors.transactionAlreadyValidated.title")}
           </Text>
 
           <>

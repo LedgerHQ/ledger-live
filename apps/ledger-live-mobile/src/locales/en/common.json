@@ -497,6 +497,9 @@
       "title": "Sorry, server took too long to respond ({{tag}})",
       "description": "Timeout occurred."
     },
+    "TransactionAlreadyValidated": {
+      "title": "Transaction already validated"
+    },
     "TransactionRefusedOnDevice": {
       "title": "Transaction refused on device",
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
