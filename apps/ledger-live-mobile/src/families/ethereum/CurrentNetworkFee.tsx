@@ -47,7 +47,10 @@ const CurrentNetworkFeeComponent = ({
     );
 
     const feeValue = new BigNumber(
-      transaction.userGasLimit || transaction.estimatedGasLimit || 1,
+      transaction.userGasLimit ||
+        transaction.estimatedGasLimit ||
+        transaction.gasPrice ||
+        1,
     )
       .times(feePerGas)
       .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
