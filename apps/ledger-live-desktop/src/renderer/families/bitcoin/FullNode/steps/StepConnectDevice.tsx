@@ -4,7 +4,10 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
-import { scanDescriptors } from "@ledgerhq/live-common/families/bitcoin/descriptor";
+import {
+  AccountDescriptor,
+  scanDescriptors,
+} from "@ledgerhq/live-common/families/bitcoin/descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import Text from "~/renderer/components/Text";
@@ -17,13 +20,14 @@ import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { FullNodeSteps, ConnectionStatus, CheckWrapper, connectionStatus } from "..";
 import IconCheck from "~/renderer/icons/Check";
 import { Device } from "@ledgerhq/types-devices";
+import { ScannedDescriptor } from "../../types";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const StepConnectDevice = ({
   setScannedDescriptors,
   numberOfAccountsToScan,
   setError,
 }: {
-  setScannedDescriptors: (a: any) => void;
+  setScannedDescriptors: (a: { descriptor: AccountDescriptor }[]) => void;
   numberOfAccountsToScan: number;
   setError: (a: Error) => void;
 }) => {
@@ -38,9 +42,9 @@ const StepConnectDevice = ({
         numberOfAccountsToScan,
       )
         // I don't know what you want.
-        .pipe(
+        .pipe<ScannedDescriptor[]>(
           reduce(
-            (acc, item) =>
+            (acc: ScannedDescriptor[], item) =>
               acc.concat({
                 descriptor: item,
               }),
@@ -128,7 +132,7 @@ export const StepDeviceFooter = ({
 }: {
   onClose: () => void;
   onStepChange: (a: FullNodeSteps) => void;
-  scannedDescriptors: any;
+  scannedDescriptors?: ScannedDescriptor[];
 }) => (
   <Box horizontal alignItems={"flex-end"}>
     {scannedDescriptors ? (

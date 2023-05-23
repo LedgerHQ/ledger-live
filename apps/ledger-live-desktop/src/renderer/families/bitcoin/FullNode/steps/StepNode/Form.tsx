@@ -47,14 +47,20 @@ const maybeError = (
     : null;
 };
 
+type ConfigKey = keyof RPCNodeConfig;
+
+type ConfigOption<T extends ConfigKey> = {
+  [K in T]: RPCNodeConfig[K];
+};
+
 const Form = ({
   nodeConfig,
   patchNodeConfig,
   errors,
 }: {
   nodeConfig?: RPCNodeConfig;
-  patchNodeConfig: (a: { [x: keyof RPCNodeConfig]: any }) => void;
-  errors: any;
+  patchNodeConfig: (a: Partial<ConfigOption<ConfigKey>>) => void;
+  errors: (Error & { field?: string; error: Error })[];
 }) => {
   const { t } = useTranslation();
   const satStackAlreadyConfigured = useEnv("SATSTACK");
@@ -141,7 +147,7 @@ const Form = ({
         </Box>
         <Box flow={1} mt={32} horizontal>
           <Switch
-            onChange={tls =>
+            onChange={(tls: boolean) =>
               patchNodeConfig({
                 tls,
               })

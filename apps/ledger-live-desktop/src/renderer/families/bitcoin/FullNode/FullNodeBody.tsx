@@ -1,22 +1,23 @@
-import React, { useMemo, useEffect, useCallback, useState } from "react";
-import { Trans } from "react-i18next";
 import {
-  validateRPCNodeConfig,
   RPCNodeConfig,
+  validateRPCNodeConfig,
 } from "@ledgerhq/live-common/families/bitcoin/satstack";
-import { ModalBody } from "~/renderer/components/Modal";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import Breadcrumb from "~/renderer/components/Stepper/Breadcrumb";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import StepLanding, { StepLandingFooter } from "./steps/StepLanding";
-import StepNode, { StepNodeFooter } from "./steps/StepNode";
-import StepAccounts, { StepAccountsFooter } from "./steps/StepAccounts";
-import StepConnectDevice, { StepDeviceFooter } from "./steps/StepConnectDevice";
-import StepSatStack, { StepSatStackFooter } from "./steps/StepSatStack";
-import StepDisconnect, { StepDisconnectFooter } from "./steps/StepDisconnect";
-import { FullNodeSteps, ConnectionStatus, connectionStatus } from ".";
+import { ModalBody } from "~/renderer/components/Modal";
+import Breadcrumb from "~/renderer/components/Stepper/Breadcrumb";
 import useEnv from "~/renderer/hooks/useEnv";
 import { loadLSS, saveLSS } from "~/renderer/storage";
+import { ConnectionStatus, FullNodeSteps, connectionStatus } from ".";
+import { ScannedDescriptor } from "../types";
+import StepAccounts, { StepAccountsFooter } from "./steps/StepAccounts";
+import StepConnectDevice, { StepDeviceFooter } from "./steps/StepConnectDevice";
+import StepDisconnect, { StepDisconnectFooter } from "./steps/StepDisconnect";
+import StepLanding, { StepLandingFooter } from "./steps/StepLanding";
+import StepNode, { StepNodeFooter } from "./steps/StepNode";
+import StepSatStack, { StepSatStackFooter } from "./steps/StepSatStack";
 
 const steps = ["landing", "node", "accounts", "device", "satstack", "disconnect"];
 const FullNodeBody = ({
@@ -24,13 +25,19 @@ const FullNodeBody = ({
   onStepChange,
   activeStep,
 }: {
-  onClose: any;
+  onClose: () => void;
   onStepChange: (a: FullNodeSteps) => void;
   activeStep: FullNodeSteps;
 }) => {
-  const [errors, setErrors] = useState(null);
-  const [error, setError] = useState(null);
-  const [errorStep, setErrorStep] = useState(null);
+  const [errors, setErrors] = useState<
+    | {
+        field: string;
+        error: Error;
+      }[]
+    | null
+  >(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [errorStep, setErrorStep] = useState<number | null>(null);
   const satStackAlreadyConfigured = useEnv("SATSTACK");
   const [satStackDownloaded, setSatStackDownloaded] = useState(false);
   const [nodeConnectionStatus, setNodeConnectionStatus] = useState<ConnectionStatus>(
@@ -59,7 +66,7 @@ const FullNodeBody = ({
     password: "",
     notls: false,
   });
-  const [scannedDescriptors, setScannedDescriptors] = useState();
+  const [scannedDescriptors, setScannedDescriptors] = useState<ScannedDescriptor[]>();
   const patchNodeConfig = useCallback(
     (patch: Partial<RPCNodeConfig>) =>
       setNodeConfig({
@@ -137,8 +144,6 @@ const FullNodeBody = ({
           ) : activeStep === "device" ? (
             <StepConnectDevice
               setError={setError}
-              onStepChange={onStepChange}
-              nodeConfig={nodeConfig}
               setScannedDescriptors={setScannedDescriptors}
               numberOfAccountsToScan={numberOfAccountsToScan || 10}
             />

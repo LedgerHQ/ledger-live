@@ -8,6 +8,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
+import BigNumber from "bignumber.js";
 type Props = {
   account: Account;
   transaction: Transaction;
@@ -31,7 +32,7 @@ export const FeesField = ({ transaction, account, onChange, status }: Props) => 
   const { units } = account.currency;
   const satoshi = units[units.length - 1];
   const onSelectChange = useCallback(
-    (item: any) => {
+    (item: { feePerByte: BigNumber }) => {
       onChange(
         bridge.updateTransaction(transaction, {
           feePerByte: item.feePerByte,
@@ -41,7 +42,7 @@ export const FeesField = ({ transaction, account, onChange, status }: Props) => 
     },
     [onChange, transaction, bridge],
   );
-  const onInputChange = feePerByte =>
+  const onInputChange = (feePerByte: BigNumber) =>
     onSelectChange({
       feePerByte,
     });
