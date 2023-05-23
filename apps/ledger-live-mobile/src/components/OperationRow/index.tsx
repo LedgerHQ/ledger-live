@@ -148,16 +148,19 @@ function OperationRow({
   const unit = getAccountUnit(account);
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
-  const spinner =
+
+  const isOperationStuck =
     isEditableOperation(account, operation) &&
     operation.date.getTime() <=
-      new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT") ? (
-      <WarningMedium />
-    ) : (
-      <SpinnerContainer>
-        <InfiniteLoader size={10} />
-      </SpinnerContainer>
-    );
+      new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+
+  const spinner = isOperationStuck ? (
+    <WarningMedium />
+  ) : (
+    <SpinnerContainer>
+      <InfiniteLoader size={10} />
+    </SpinnerContainer>
+  );
 
   return (
     <ContainerTouchable as={TouchableOpacity} isLast={isLast} onPress={goToOperationDetails}>
