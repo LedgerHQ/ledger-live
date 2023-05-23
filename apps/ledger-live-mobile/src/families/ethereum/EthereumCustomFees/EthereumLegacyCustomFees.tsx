@@ -54,7 +54,7 @@ const EthereumLegacyCustomFees = ({
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
 
   // update gas price range according to previous pending transaction if necessary
-  if (transactionRaw && transactionRaw.gasPrice) {
+  if (transactionRaw?.gasPrice) {
     const gaspriceGap: number = getEnv(
       "EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR",
     );
