@@ -53,6 +53,7 @@ const customImage: PostOnboardingAction = {
       { isFromPostOnboardingEntryPoint: true },
       { forceDisableFocusTrap: true },
     ),
+  buttonLabelForAnalyticsEvent: "Set lock screen picture",
 };
 
 /**

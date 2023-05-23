@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAllPostOnboardingActionsCompleted } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import PostOnboardingHubContent from "~/renderer/components/PostOnboardingHub/PostOnboardingHubContent";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import TrackPage from "~/renderer/analytics/TrackPage";
 
 const PostOnboardingScreen = () => {
   const { t } = useTranslation();
@@ -23,6 +24,14 @@ const PostOnboardingScreen = () => {
         paddingLeft={100}
         paddingRight={50}
       >
+        {
+          <TrackPage
+            category={
+              allDone ? "User has completed all post-onboarding actions" : "Post-onboarding hub"
+            }
+            flow={"post-onboarding"}
+          />
+        }
         <Text variant="paragraph" fontSize={48} mb={8} whiteSpace="pre-wrap">
           {allDone
             ? t("postOnboarding.postOnboardingScreen.titleCompleted")
