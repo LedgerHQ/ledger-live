@@ -77,7 +77,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   iconWrapper: {
-    marginRight: 12,
     marginBottom: 24,
   },
   title: {
