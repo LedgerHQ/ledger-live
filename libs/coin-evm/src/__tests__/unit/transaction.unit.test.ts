@@ -1,83 +1,22 @@
-import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { transactionToEthersTransaction } from "../adapters";
-import * as rpcAPI from "../api/rpc.common";
-import { fromTransactionRaw, getSerializedTransaction, toTransactionRaw } from "../transaction";
+import BigNumber from "bignumber.js";
+import { transactionToEthersTransaction } from "../../adapters";
+import { Transaction as EvmTransaction } from "../../types";
+import * as rpcAPI from "../../api/rpc.common";
 import {
-  Transaction as EvmTransaction,
-  EvmTransactionEIP1559,
-  EvmTransactionEIP1559Raw,
-  EvmTransactionLegacy,
-  EvmTransactionLegacyRaw,
-} from "../types";
-
-const testData = Buffer.from("testBufferString").toString("hex");
-const rawEip1559Tx: EvmTransactionEIP1559Raw = {
-  amount: "100",
-  useAllAmount: false,
-  subAccountId: "id",
-  recipient: "0xkvn",
-  feesStrategy: "custom",
-  family: "evm",
-  mode: "send",
-  nonce: 0,
-  gasLimit: "21000",
-  chainId: 1,
-  data: testData,
-  maxFeePerGas: "10000",
-  maxPriorityFeePerGas: "10000",
-  additionalFees: "420",
-  type: 2,
-};
-const eip1559Tx: EvmTransactionEIP1559 = {
-  amount: new BigNumber(100),
-  useAllAmount: false,
-  subAccountId: "id",
-  recipient: "0xkvn",
-  feesStrategy: "custom",
-  family: "evm",
-  mode: "send",
-  nonce: 0,
-  gasLimit: new BigNumber(21000),
-  chainId: 1,
-  data: Buffer.from(testData, "hex"),
-  maxFeePerGas: new BigNumber(10000),
-  maxPriorityFeePerGas: new BigNumber(10000),
-  additionalFees: new BigNumber(420),
-  type: 2,
-};
-const rawLegacyTx: EvmTransactionLegacyRaw = {
-  amount: "100",
-  useAllAmount: false,
-  subAccountId: "id",
-  recipient: "0xkvn",
-  feesStrategy: "custom",
-  family: "evm",
-  mode: "send",
-  nonce: 0,
-  gasLimit: "21000",
-  chainId: 1,
-  data: testData,
-  gasPrice: "10000",
-  additionalFees: "420",
-  type: 0,
-};
-const legacyTx: EvmTransactionLegacy = {
-  amount: new BigNumber(100),
-  useAllAmount: false,
-  subAccountId: "id",
-  recipient: "0xkvn",
-  feesStrategy: "custom",
-  family: "evm",
-  mode: "send",
-  nonce: 0,
-  gasLimit: new BigNumber(21000),
-  chainId: 1,
-  data: Buffer.from(testData, "hex"),
-  gasPrice: new BigNumber(10000),
-  additionalFees: new BigNumber(420),
-  type: 0,
-};
+  eip1559Tx,
+  legacyTx,
+  rawEip1559Tx,
+  rawLegacyTx,
+  testData,
+  tokenTransaction,
+} from "../fixtures/transaction.fixtures";
+import {
+  fromTransactionRaw,
+  getSerializedTransaction,
+  getTransactionData,
+  toTransactionRaw,
+} from "../../transaction";
 
 describe("EVM Family", () => {
   describe("transaction.ts", () => {
@@ -89,15 +28,36 @@ describe("EVM Family", () => {
       it("should deserialize a raw legacy transaction into a ledger live transaction", () => {
         expect(fromTransactionRaw(rawLegacyTx)).toEqual(legacyTx);
       });
+
+      it("should deserialize a legacy transaction without type into a ledger live transaction", () => {
+        expect(
+          fromTransactionRaw({
+            ...rawLegacyTx,
+            type: undefined,
+          }),
+        ).toEqual(legacyTx);
+      });
     });
 
-    describe("toTransaction", () => {
+    describe("toTransactionRaw", () => {
       it("should serialize a ledger live EIP1559 transaction into a raw transaction", () => {
         expect(toTransactionRaw(eip1559Tx)).toEqual(rawEip1559Tx);
       });
 
       it("should serialize a ledger live legacy transaction into a raw transaction", () => {
         expect(toTransactionRaw(legacyTx)).toEqual(rawLegacyTx);
+      });
+    });
+
+    describe("getTransactionData", () => {
+      it("should return the data for an ERC20 transaction", () => {
+        expect(getTransactionData(tokenTransaction)).toEqual(
+          Buffer.from(
+            // using transfer method to 0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168 & value is 0x64 (100)
+            "a9059cbb00000000000000000000000051df0af74a0dbae16cb845b46daf2a35cb1d41680000000000000000000000000000000000000000000000000000000000000064",
+            "hex",
+          ),
+        );
       });
     });
 

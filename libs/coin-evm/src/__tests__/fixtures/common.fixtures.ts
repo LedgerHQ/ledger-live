@@ -1,3 +1,9 @@
+import BigNumber from "bignumber.js";
+import {
+  DerivationMode,
+  getDerivationScheme,
+  runDerivationScheme,
+} from "@ledgerhq/coin-framework/derivation";
 import {
   decodeAccountId,
   decodeTokenAccountId,
@@ -5,14 +11,13 @@ import {
   shortAddressPreview,
 } from "@ledgerhq/coin-framework/account/index";
 import {
-  DerivationMode,
-  getDerivationScheme,
-  runDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
+  encodeERC1155OperationId,
+  encodeERC721OperationId,
+} from "@ledgerhq/coin-framework/nft/nftOperationId";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { Account, Operation, ProtoNFT, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 
 export const makeAccount = (
   address: string,
@@ -47,6 +52,7 @@ export const makeAccount = (
     currency,
     unit: currency.units[0],
     index,
+    nfts: [],
     freshAddress: xpubOrAddress,
     freshAddressPath,
     freshAddresses: [],
@@ -74,7 +80,7 @@ export const makeAccount = (
     },
   };
 
-  return account;
+  return Object.freeze(account);
 };
 
 export const makeTokenAccount = (address: string, tokenCurrency: TokenCurrency): TokenAccount => {
@@ -83,7 +89,7 @@ export const makeTokenAccount = (address: string, tokenCurrency: TokenCurrency):
 
   const tokenAccountId = encodeTokenAccountId(account.id, tokenCurrency);
 
-  return {
+  return Object.freeze({
     type: "TokenAccount",
     id: tokenAccountId,
     parentId: account.id,
@@ -110,7 +116,7 @@ export const makeTokenAccount = (address: string, tokenCurrency: TokenCurrency):
       },
     },
     swapHistory: [],
-  };
+  });
 };
 
 export const makeOperation = (partialOp?: Partial<Operation>): Operation => {
@@ -120,8 +126,47 @@ export const makeOperation = (partialOp?: Partial<Operation>): Operation => {
   );
   const hash = partialOp?.hash ?? "0xhash";
   const type = partialOp?.type ?? "OUT";
-  return {
+
+  return Object.freeze({
     id: encodeOperationId(accountId, hash, type),
+    hash,
+    type,
+    value: new BigNumber(0),
+    fee: new BigNumber(0),
+    blockHash: null,
+    blockHeight: null,
+    senders: [xpubOrAddress],
+    recipients: ["0xlmb"],
+    accountId,
+    transactionSequenceNumber: 0,
+    date: new Date(),
+    nftOperations: [],
+    subOperations: [],
+    extra: {},
+    ...partialOp,
+  });
+};
+
+export const makeNftOperation = (
+  partialOp?: Partial<Operation>,
+  operationIndex?: number,
+): Operation => {
+  const accountId = partialOp?.accountId ?? "js:2:ethereum:0xkvn:";
+  const { xpubOrAddress, currencyId } = decodeAccountId(
+    accountId.includes("+") ? decodeTokenAccountId(accountId).accountId : accountId,
+  );
+  const hash = partialOp?.hash ?? "0xhash";
+  const type = partialOp?.type ?? "NFT_OUT";
+  const contract = partialOp?.contract ?? "0xNftContract";
+  const tokenId = partialOp?.tokenId ?? "tokenId1";
+  const standard = partialOp?.standard ?? "ERC721";
+  const nftId = encodeNftId(accountId, contract, tokenId, currencyId);
+
+  return Object.freeze({
+    id:
+      standard === "ERC721"
+        ? encodeERC721OperationId(nftId, hash, type, operationIndex)
+        : encodeERC1155OperationId(nftId, hash, type, operationIndex),
     hash,
     type,
     value: new BigNumber(0),
@@ -135,5 +180,25 @@ export const makeOperation = (partialOp?: Partial<Operation>): Operation => {
     date: new Date(),
     extra: {},
     ...partialOp,
-  };
+  });
+};
+
+export const makeNft = (partialNft?: Partial<ProtoNFT>): ProtoNFT =>
+  Object.freeze({
+    id: "NFT-ID",
+    tokenId: "1",
+    amount: new BigNumber(1),
+    contract: "0xNftContract",
+    standard: "ERC721",
+    currencyId: "ethereum",
+    ...partialNft,
+  });
+
+export const deepFreeze = <T>(obj: T): Readonly<T> => {
+  if (obj && typeof obj === "object" && !Object.isFrozen(obj)) {
+    Object.freeze(obj);
+    const propNames = Object.getOwnPropertyNames(obj) as Array<keyof T>;
+    propNames.forEach(propName => deepFreeze(obj[propName]));
+  }
+  return obj;
 };

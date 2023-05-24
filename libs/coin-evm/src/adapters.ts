@@ -221,9 +221,6 @@ export const etherscanERC1155EventToOperations = (
   if (event.contractAddress && from === eip55.encode(address)) {
     types.push("NFT_OUT");
   }
-  if (!types.length) {
-    types.push("NONE");
-  }
 
   return types.map(
     type =>

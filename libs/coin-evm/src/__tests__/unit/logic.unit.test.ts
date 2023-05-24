@@ -1,18 +1,26 @@
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import * as RPC_API from "../api/rpc.common";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
+import * as RPC_API from "../../api/rpc.common";
 import {
+  deepFreeze,
+  makeAccount,
+  makeNftOperation,
+  makeOperation,
+  makeTokenAccount,
+} from "../fixtures/common.fixtures";
+import {
+  attachOperations,
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
   getEstimatedFees,
   getSyncHash,
   legacyTransactionHasFees,
   mergeSubAccounts,
-} from "../logic";
-import { makeAccount, makeOperation, makeTokenAccount } from "../testUtils";
-import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
+} from "../../logic";
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {
@@ -258,7 +266,9 @@ describe("EVM Family", () => {
           ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
           balance: new BigNumber(1),
         };
-        const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"));
+        const account = {
+          ...makeAccount("0xkvn", getCryptoCurrencyById("ethereum")),
+        };
         delete account.subAccounts;
 
         const newSubAccounts = mergeSubAccounts(account, [tokenAccount]);
@@ -285,8 +295,14 @@ describe("EVM Family", () => {
     describe("getSyncHash", () => {
       const currency = getCryptoCurrencyById("ethereum");
 
+      let oldEnv: string;
+      beforeAll(() => {
+        oldEnv = getEnv("NFT_CURRENCIES");
+      });
+
       afterEach(() => {
         jest.restoreAllMocks();
+        setEnv("NFT_CURRENCIES", oldEnv);
       });
 
       it("should provide a valid sha256 hash", () => {
@@ -353,6 +369,125 @@ describe("EVM Family", () => {
             ];
           });
         expect(getSyncHash(currency)).not.toEqual(getSyncHash(currency));
+      });
+
+      it("should provide a new hash if nft support is activated or not", () => {
+        setEnv("NFT_CURRENCIES", "");
+        const hash1 = getSyncHash(currency);
+        setEnv("NFT_CURRENCIES", currency.id);
+        const hash2 = getSyncHash(currency);
+
+        expect(hash1).not.toEqual(hash2);
+      });
+    });
+
+    describe("attachOperations", () => {
+      it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", () => {
+        const coinOperation = makeOperation({
+          hash: "0xCoinOp3Hash",
+        });
+        const tokenOperations = [
+          makeOperation({
+            hash: coinOperation.hash,
+            contract: "0xTokenContract",
+            value: new BigNumber(1),
+            type: "OUT",
+          }),
+          makeOperation({
+            hash: coinOperation.hash,
+            contract: "0xTokenContract",
+            value: new BigNumber(2),
+            type: "IN",
+          }),
+          makeOperation({
+            hash: "0xUnknownHash",
+            contract: "0xOtherTokenContract",
+            value: new BigNumber(2),
+            type: "IN",
+          }),
+        ];
+        const nftOperations = [
+          makeNftOperation({
+            hash: coinOperation.hash,
+            contract: "0xTokenContract",
+            value: new BigNumber(1),
+            type: "NFT_OUT",
+          }),
+          makeNftOperation({
+            hash: coinOperation.hash,
+            contract: "0xTokenContract",
+            value: new BigNumber(2),
+            type: "NFT_IN",
+          }),
+          makeNftOperation({
+            hash: "0xUnknownNftHash",
+            contract: "0xOtherNftTokenContract",
+            value: new BigNumber(2),
+            type: "NFT_IN",
+          }),
+        ];
+
+        expect(attachOperations([coinOperation], tokenOperations, nftOperations)).toEqual([
+          {
+            ...coinOperation,
+            subOperations: [tokenOperations[0], tokenOperations[1]],
+            nftOperations: [nftOperations[0], nftOperations[1]],
+          },
+          {
+            ...tokenOperations[2],
+            id: `js:2:ethereum:0xkvn:-${tokenOperations[2].hash}-NONE`,
+            type: "NONE",
+            value: new BigNumber(0),
+            fee: new BigNumber(0),
+            senders: [],
+            recipients: [],
+            nftOperations: [],
+            subOperations: [tokenOperations[2]],
+            accountId: "",
+            contract: undefined,
+          },
+          {
+            ...nftOperations[2],
+            id: `js:2:ethereum:0xkvn:-${nftOperations[2].hash}-NONE`,
+            type: "NONE",
+            value: new BigNumber(0),
+            fee: new BigNumber(0),
+            senders: [],
+            recipients: [],
+            nftOperations: [nftOperations[2]],
+            subOperations: [],
+            accountId: "",
+            contract: undefined,
+          },
+        ]);
+      });
+
+      it("should not mutate the original operations", () => {
+        const coinOperations = deepFreeze([
+          makeOperation({
+            hash: "0xCoinOp3Hash",
+          }),
+        ]);
+        const tokenOperations = deepFreeze([
+          makeOperation({
+            hash: coinOperations[0].hash,
+            contract: "0xTokenContract",
+            value: new BigNumber(1),
+            type: "OUT",
+          }),
+        ]);
+        const nftOperations = deepFreeze([
+          makeNftOperation({
+            hash: coinOperations[0].hash,
+            contract: "0xTokenContract",
+            value: new BigNumber(1),
+            type: "NFT_OUT",
+          }),
+        ]);
+        expect(
+          // @ts-expect-error purposely ignore readonly ts issue for this
+          () => attachOperations(coinOperations, tokenOperations, nftOperations),
+        ).not.toThrow(); // mutation prevented by deepFreeze method
       });
     });
   });

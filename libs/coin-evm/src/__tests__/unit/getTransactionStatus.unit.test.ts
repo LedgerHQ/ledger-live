@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import {
   AmountRequired,
   ETHAddressNonEIP,
@@ -12,9 +10,10 @@ import {
   RecipientRequired,
 } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
-import getTransactionStatus from "../getTransactionStatus";
-import { makeAccount, makeTokenAccount } from "../testUtils";
-import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
+import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
+import getTransactionStatus from "../../getTransactionStatus";
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");

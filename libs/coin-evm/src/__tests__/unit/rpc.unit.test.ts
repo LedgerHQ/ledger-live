@@ -1,12 +1,12 @@
+import { ethers } from "ethers";
+import BigNumber from "bignumber.js";
+import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { AssertionError, fail } from "assert";
-import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
-import * as RPC_API from "../api/rpc.common";
-import { GasEstimationError, InsufficientFunds } from "../errors";
-import { makeAccount } from "../testUtils";
-import { Transaction as EvmTransaction, EvmTransactionLegacy } from "../types";
+import { EvmTransactionLegacy, Transaction as EvmTransaction } from "../../types";
+import { GasEstimationError, InsufficientFunds } from "../../errors";
+import { makeAccount } from "../fixtures/common.fixtures";
+import * as RPC_API from "../../api/rpc.common";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
@@ -128,8 +128,8 @@ describe("EVM Family", () => {
         }
       });
 
-      it("should retry on fail as many times as the DEFAULT_RETRIES_RPC_METHODS constant is set to", async () => {
-        let retries = RPC_API.DEFAULT_RETRIES_RPC_METHODS;
+      it("should retry on fail", async () => {
+        let retries = 2;
         const spy = jest.fn(async () => {
           if (retries) {
             --retries;
@@ -137,11 +137,11 @@ describe("EVM Family", () => {
           }
           return true;
         });
-        const response = await RPC_API.withApi(fakeCurrency as CryptoCurrency, spy);
+        const response = await RPC_API.withApi(fakeCurrency as CryptoCurrency, spy, retries);
 
         expect(response).toBe(true);
-        // it should fail DEFAULT_RETRIES_RPC_METHODS times and succeed on the next try, therefore the +1
-        expect(spy).toBeCalledTimes(RPC_API.DEFAULT_RETRIES_RPC_METHODS + 1);
+        // it should fail 1 time and succeed on the next try
+        expect(spy).toBeCalledTimes(3);
       });
 
       it("should throw after too many retries", async () => {
