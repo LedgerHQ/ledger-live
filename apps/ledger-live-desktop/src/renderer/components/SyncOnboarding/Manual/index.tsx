@@ -1,4 +1,12 @@
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useHistory } from "react-router-dom";
 import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
@@ -6,7 +14,7 @@ import { useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
-import { DeviceModelInfo } from "@ledgerhq/types-live";
+import { DeviceModelInfo, SeedPhraseType } from "@ledgerhq/types-live";
 import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
@@ -20,12 +28,15 @@ import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import SoftwareCheckStep from "./SoftwareCheckStep";
 import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
-import { StepText } from "./shared";
+import { StepText, analyticsFlowName } from "./shared";
 import Header from "./Header";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { RecoverState } from "~/renderer/screens/recover/Player";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { trackPage } from "~/renderer/analytics/segment";
+import Track from "~/renderer/analytics/Track";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -43,6 +54,12 @@ enum StepKey {
   Ready,
   Exit,
 }
+
+const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, string>([
+  [SeedPhraseType.TwentyFour, "TwentyFour"],
+  [SeedPhraseType.Eighteen, "Eighteen"],
+  [SeedPhraseType.Twelve, "Twelve"],
+]);
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -77,6 +94,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
   const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
+  const lastCompanionStepKey = useRef<StepKey>();
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
 
   const servicesConfig = useFeature("protectServicesDesktop");
@@ -122,6 +140,10 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         }),
         renderBody: () => (
           <Flex flexDirection="column">
+            <TrackPage
+              category="Set up Ledger Stax: Step 1 device paired"
+              flow={analyticsFlowName}
+            />
             <StepText mb={6}>
               {t("syncOnboarding.manual.pairedContent.description", {
                 deviceName: productName,
@@ -145,6 +167,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         title: t("syncOnboarding.manual.pinContent.title"),
         renderBody: () => (
           <Flex flexDirection="column">
+            <TrackPage category="Set up Ledger Stax: Step 2 PIN" flow={analyticsFlowName} />
             <StepText mb={6}>{t("syncOnboarding.manual.pinContent.description")}</StepText>
             <StepText>
               {t("syncOnboarding.manual.pinContent.text", {
@@ -163,7 +186,10 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         status: "inactive",
         title: t("syncOnboarding.manual.seedContent.title"),
         renderBody: () => (
-          <SeedStep seedPathStatus={seedPathStatus} deviceModelId={deviceModelId} />
+          <>
+            <TrackPage category="Set up Ledger Stax: Step 3 Seed Intro" flow={analyticsFlowName} />
+            <SeedStep seedPathStatus={seedPathStatus} deviceModelId={deviceModelId} />
+          </>
         ),
       },
       {
@@ -171,12 +197,18 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         status: "inactive",
         title: t("syncOnboarding.manual.softwareCheckContent.title"),
         renderBody: (isDisplayed?: boolean) => (
-          <SoftwareCheckStep
-            deviceModelId={lastKnownDeviceModelId}
-            isDisplayed={isDisplayed}
-            onComplete={handleSoftwareCheckComplete}
-            productName={productName}
-          />
+          <>
+            <TrackPage
+              category="Set up Ledger Stax: Step 4 Software & Hardware check"
+              flow={analyticsFlowName}
+            />
+            <SoftwareCheckStep
+              deviceModelId={lastKnownDeviceModelId}
+              isDisplayed={isDisplayed}
+              onComplete={handleSoftwareCheckComplete}
+              productName={productName}
+            />
+          </>
         ),
       },
       {
@@ -247,6 +279,65 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     setTroubleshootingDrawerOpen(true);
   }, []);
 
+  /**
+   * True if the device was initially onboarded/seeded when this component got
+   * mounted. False otherwise.
+   * Value is undefined until the onboarding state polling returns a first
+   * result.
+   * */
+  const deviceInitiallyOnboarded = useRef<boolean>();
+  /**
+   * Variable holding the seed phrase type (number of words) until we are
+   * ready to track the event (when the seeding step finishes).
+   * Should only be maintained if the device is not onboarded/not seeded as the
+   * onboarding flags can only be trusted for a non-onboarded device.
+   */
+  const analyticsSeedPhraseType = useRef<SeedPhraseType>();
+  useEffect(() => {
+    if (!deviceOnboardingState) return;
+    if (deviceInitiallyOnboarded.current === undefined)
+      deviceInitiallyOnboarded.current = deviceOnboardingState.isOnboarded;
+    if (
+      !deviceOnboardingState.isOnboarded && // onboarding state flags can only be trusted for a non-onboarded/non-seeded device
+      deviceOnboardingState.seedPhraseType
+    )
+      analyticsSeedPhraseType.current = deviceOnboardingState.seedPhraseType;
+  }, [deviceOnboardingState]);
+
+  const analyticsSeedConfiguration = useRef<"new_seed" | "restore_seed" | "recover_seed">();
+
+  const analyticsSeedingTracked = useRef(false);
+  /**
+   * Analytics: track complete seeding of device
+   * We use useLayoutEffect to ensure the event is sent before the following
+   * step gets rendered and its corresponding analytics event gets dispatched
+   */
+  useLayoutEffect(() => {
+    if (
+      deviceInitiallyOnboarded.current === false && // can't just use ! operator because value can be undefined
+      lastCompanionStepKey.current !== undefined &&
+      lastCompanionStepKey.current <= StepKey.Seed &&
+      stepKey > StepKey.Seed &&
+      !analyticsSeedingTracked.current
+    ) {
+      trackPage(
+        "Set up Ledger Stax: Step 3 Seed Success",
+        undefined,
+        {
+          seedPhraseType: analyticsSeedPhraseType.current
+            ? fromSeedPhraseTypeToAnalyticsPropertyString.get(analyticsSeedPhraseType.current)
+            : undefined,
+          seedConfiguration: analyticsSeedConfiguration.current,
+        },
+        true,
+        true,
+      );
+
+      analyticsSeedingTracked.current = true;
+    }
+    lastCompanionStepKey.current = stepKey;
+  }, [stepKey]);
+
   useEffect(() => {
     // When the device is seeded, there are 2 cases before triggering the software check step:
     // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
@@ -272,6 +363,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         setShouldRestoreApps(false);
         setStepKey(StepKey.Seed);
         setSeedPathStatus("new_seed");
+        analyticsSeedConfiguration.current = "new_seed";
         break;
       case DeviceOnboardingStep.SetupChoiceRestore:
         setStepKey(StepKey.Seed);
@@ -281,11 +373,13 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         setShouldRestoreApps(true);
         setStepKey(StepKey.Seed);
         setSeedPathStatus("restore_seed");
+        analyticsSeedConfiguration.current = "restore_seed";
         break;
       case DeviceOnboardingStep.RecoverRestore:
         setShouldRestoreApps(true);
         setStepKey(StepKey.Seed);
         setSeedPathStatus("recover_seed");
+        analyticsSeedConfiguration.current = "recover_seed";
         break;
       case DeviceOnboardingStep.WelcomeScreen1:
       case DeviceOnboardingStep.WelcomeScreen2:
@@ -334,6 +428,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     }
 
     if (stepKey === StepKey.Exit) {
+      trackPage("Stax Set Up - Final step: Stax is ready", undefined, { flow: analyticsFlowName });
       setTimeout(handleDeviceReady, readyRedirectDelayMs / 2);
     }
 

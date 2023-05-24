@@ -10,6 +10,9 @@ import RestoreAppsIllustration from "./RestoreAppsIllustration";
 import CancelModal from "./CancelModal";
 import InstallSetOfApps from "./InstallSetOfApps";
 import LockedModal from "./LockedModal";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { analyticsFlowName } from "../SyncOnboarding/Manual/shared";
+import { track, trackPage } from "~/renderer/analytics/segment";
 
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
 
@@ -76,20 +79,63 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
     [onError],
   );
 
+  const handlePressSkip = useCallback(() => {
+    track("button_click", { button: "maybe later", flow: analyticsFlowName });
+    onComplete();
+  }, [onComplete]);
+
+  const handlePressInstall = useCallback(() => {
+    track("button_click", {
+      button: deviceToRestore ? "Restore applications" : "Install applications",
+      flow: analyticsFlowName,
+    });
+    setInProgress(true);
+  }, [deviceToRestore]);
+
+  const handleCancelModalRetryPressed = useCallback(() => {
+    track("button_click", {
+      button: "Install now",
+      flow: analyticsFlowName,
+    });
+    handleRetry();
+  }, [])
+
+  const handleCancelModalSkipPressed = useCallback(() => {
+    track("button_click", {
+      button: "I'll do this later",
+      flow: analyticsFlowName,
+    });
+    onComplete();
+  }, [])
+
+  const handleInstallComplete = useCallback(() => {
+    trackPage("Stax Set Up - Step 5: Successful", "", {flow: analyticsFlowName})
+    onComplete();
+  }, []);
+
   return (
     <>
+      {isCancelModalOpen ? <TrackPage category={`App installation was cancelled on ${productName}`} flow={analyticsFlowName} type="modal" refreshSource={false} />}
       <CancelModal
         isOpen={isCancelModalOpen}
         productName={productName}
-        onRetry={handleRetry}
-        onSkip={onComplete}
+        onRetry={handleCancelModalRetryPressed}
+        onSkip={handleCancelModalSkipPressed}
       />
       <LockedModal isOpen={isLockedModalOpen} productName={productName} onClose={handleRetry} />
+      <TrackPage
+        category={
+          deviceToRestore
+            ? "Stax Set Up - Step 5: Install Apps"
+            : "Stax Set Up - Step 5: Restore Apps"
+        }
+        flow={analyticsFlowName}
+      />
       {inProgress && device ? (
         <InstallSetOfApps
           device={device}
           dependencies={dependencies}
-          onComplete={onComplete}
+          onComplete={handleInstallComplete}
           onCancel={handleCancel}
           onLocked={handleLocked}
           onError={handleError}
@@ -110,14 +156,14 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
             {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.subtitle`)}
           </Text>
           <Flex pt={8} pb={2} justifyContent="space-between">
-            <Button flex={1} onClick={onComplete} data-test-id="skip-cta-button">
+            <Button flex={1} onClick={handlePressSkip} data-test-id="skip-cta-button">
               {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.skipCTA`)}
             </Button>
             <Flex px={2} />
             <Button
               flex={1}
               variant="main"
-              onClick={() => setInProgress(true)}
+              onClick={handlePressInstall}
               data-test-id="install-cta-button"
             >
               {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.installCTA`)}
