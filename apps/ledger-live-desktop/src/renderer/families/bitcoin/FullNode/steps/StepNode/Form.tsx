@@ -35,6 +35,12 @@ export type RPCNodeConfig = {
   tls?: boolean;
 };
 
+type RPCNodeConfigKey = keyof RPCNodeConfig;
+
+export type RpcNodeConfigOption = {
+  [K in RPCNodeConfigKey]: RPCNodeConfig[K];
+};
+
 const maybeError = (
   errors: (Error & { field?: string; error: Error })[],
   field: unknown,
@@ -47,19 +53,13 @@ const maybeError = (
     : null;
 };
 
-type ConfigKey = keyof RPCNodeConfig;
-
-type ConfigOption<T extends ConfigKey> = {
-  [K in T]: RPCNodeConfig[K];
-};
-
 const Form = ({
   nodeConfig,
   patchNodeConfig,
   errors,
 }: {
   nodeConfig?: RPCNodeConfig;
-  patchNodeConfig: (a: Partial<ConfigOption<ConfigKey>>) => void;
+  patchNodeConfig: (a: Partial<RpcNodeConfigOption>) => void;
   errors: (Error & { field?: string; error: Error })[];
 }) => {
   const { t } = useTranslation();

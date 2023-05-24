@@ -26,7 +26,7 @@ type Props = {
   account: Account;
   transaction: Transaction;
   onChange: (a: Transaction) => void;
-  updateTransaction: (updater: Transaction) => void;
+  updateTransaction: (updater: (t: Transaction) => void) => void;
   status: TransactionStatus;
 };
 const Separator = styled.div`
@@ -54,12 +54,11 @@ const CoinControlModal = ({
   const bridge = getAccountBridge(account);
   const errorKeys = Object.keys(status.errors);
   const error = errorKeys.length ? status.errors[errorKeys[0]] : null;
-  const returning = (status.txOutputs || []).find(output => !!output.path || !!output.isChange);
+  const returning = (status.txOutputs || []).find(output => !!output.isChange);
   return (
     <Modal width={700} isOpened={isOpened} centered onClose={onClose}>
       <TrackPage category="Modal" name="BitcoinCoinControl" />
       <ModalBody
-        width={700}
         title={<Trans i18nKey="bitcoin.modalTitle" />}
         onClose={onClose}
         render={() => (
@@ -67,11 +66,11 @@ const CoinControlModal = ({
             <PickingStrategy transaction={transaction} account={account} onChange={onChange} />
 
             <Separator />
-            <Box mt={0} mb={4} horizontal alignItem="center" justifyContent="space-between">
+            <Box mt={0} mb={4} horizontal justifyContent="space-between">
               <Text color="palette.text.shade50" ff="Inter|Regular" fontSize={13}>
                 <Trans i18nKey="bitcoin.selected" />
               </Text>
-              <Box horizontal alignItem="center">
+              <Box horizontal>
                 <Text
                   color="palette.text.shade50"
                   ff="Inter|Medium"

@@ -6,7 +6,7 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import IconCheck from "~/renderer/icons/Check";
 import IconCross from "~/renderer/icons/Cross";
-import Form from "./Form";
+import Form, { RpcNodeConfigOption } from "./Form";
 import Button from "~/renderer/components/Button";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import {
@@ -26,10 +26,10 @@ const Node = ({
 }: {
   nodeConnectionStatus: ConnectionStatus;
   nodeConfig: RPCNodeConfig;
-  setNodeConfig: (a: any) => void;
+  setNodeConfig: (a: Partial<RpcNodeConfigOption>) => void;
   setNodeConnectionStatus: (a: ConnectionStatus) => void;
   onStepChange: (a: FullNodeSteps) => void;
-  errors: any;
+  errors: (Error & { field?: string; error: Error })[];
 }) => {
   useEffect(() => {
     if (nodeConnectionStatus === connectionStatus.PENDING) {
