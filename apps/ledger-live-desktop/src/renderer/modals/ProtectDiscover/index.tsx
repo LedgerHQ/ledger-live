@@ -19,8 +19,7 @@ const ProtectDiscoverModal = () => (
       <Modal
         name="MODAL_PROTECT_DISCOVER"
         centered
-        render={({ data, onClose }) => <ProtectDiscoverBody version={data} onClose={onClose} />}
-        customBackground={LedgerRecoverBackground}
+        render={({ onClose }) => <ProtectDiscoverBody onClose={onClose} />}
         bodyStyle={{
           backgroundImage: `url(${LedgerRecoverBackground})`,
           backgroundPosition: "center",

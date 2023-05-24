@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "../../const";
 import AddAccountsSelectCrypto from "../../screens/AddAccounts/01-SelectCrypto";
-import AddAccountsSelectDevice from "../../screens/AddAccounts/02-SelectDevice";
+import AddAccountsSelectDevice, {
+  addAccountsSelectDeviceHeaderOptions,
+} from "../../screens/AddAccounts/02-SelectDevice";
 import AddAccountsTokenCurrencyDisclaimer from "../../screens/AddAccounts/02-TokenCurrencyDisclaimer";
 import AddAccountsAccounts from "../../screens/AddAccounts/03-Accounts";
 import AddAccountsSuccess from "../../screens/AddAccounts/04-Success";
@@ -104,6 +106,7 @@ export default function AddAccountsNavigator({ route }: NavigationProps) {
             />
           ),
           gestureEnabled: false,
+          ...addAccountsSelectDeviceHeaderOptions,
         }}
       />
       <Stack.Screen

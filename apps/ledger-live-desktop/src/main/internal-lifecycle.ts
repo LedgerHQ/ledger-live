@@ -3,7 +3,7 @@ import path from "path";
 import { setEnvUnsafe, getAllEnvs } from "@ledgerhq/live-common/env";
 import { isRestartNeeded } from "~/helpers/env";
 import { setTags } from "~/sentry/main";
-import InternalProcess from "./InternalProcess";
+import InternalProcess, { InternalMessage as FromInternalMessage } from "./InternalProcess";
 import {
   transportCloseChannel,
   transportExchangeChannel,
@@ -13,6 +13,7 @@ import {
   transportListenChannel,
   transportListenUnsubscribeChannel,
 } from "~/config/transportChannels";
+import { Message as ToInternalMessage } from "~/internal/types";
 
 // ~~~
 
@@ -21,9 +22,9 @@ const HOME_DIRECTORY = app.getPath("home");
 const internal = new InternalProcess({
   timeout: 3000,
 });
-let sentryEnabled = null;
-let userId = null;
-let sentryTags = null;
+let sentryEnabled: boolean | null = null;
+let userId: string | null = null;
+let sentryTags: string | null = null;
 export function getSentryEnabled(): boolean | null {
   return sentryEnabled;
 }
@@ -53,13 +54,14 @@ const spawnCoreProcess = () => {
   };
   internal.configure(path.resolve(__dirname, "main.bundle.js"), [], {
     silent: true,
+    // @ts-expect-error Some envs are not typed as strings…
     env,
     execArgv: (process.env.LEDGER_INTERNAL_ARGS || "").split(/[ ]+/).filter(Boolean),
   });
   internal.start();
 };
 internal.onStart(() => {
-  internal.process.on("message", handleGlobalInternalMessage);
+  internal.process?.on("message", handleGlobalInternalMessage);
 });
 app.on("window-all-closed", async () => {
   if (internal.active) {
@@ -73,7 +75,7 @@ ipcMain.on("clean-processes", async () => {
   }
   spawnCoreProcess();
 });
-const ongoing = {};
+const ongoing: Record<string, Electron.IpcMainEvent> = {};
 internal.onMessage(message => {
   const event = ongoing[message.requestId];
   if (event) {
@@ -104,21 +106,26 @@ internal.onExit((code, signal, unexpected) => {
     }
   }
 });
-ipcMain.on("command", (event, command) => {
-  ongoing[command.requestId] = event;
-  internal.send({
-    type: "command",
-    command,
-  });
-});
-ipcMain.on("command-unsubscribe", (event, { requestId }) => {
-  delete ongoing[requestId];
-  internal.send({
-    type: "command-unsubscribe",
-    requestId,
-  });
-});
-function handleGlobalInternalMessage(payload) {
+
+/* The following handlers seem to be unused. */
+/* TODO: confim and remove. */
+
+// ipcMain.on("command", (event, command) => {
+//   ongoing[command.requestId] = event;
+//   internal.send({
+//     type: "command",
+//     command,
+//   });
+// });
+// ipcMain.on("command-unsubscribe", (event, { requestId }) => {
+//   delete ongoing[requestId];
+//   internal.send({
+//     type: "command-unsubscribe",
+//     requestId,
+//   });
+// });
+
+function handleGlobalInternalMessage(payload: { type: string }) {
   switch (payload.type) {
     case "uncaughtException": {
       // FIXME
@@ -163,10 +170,10 @@ ipcMain.on("setEnv", async (event, env) => {
 });
 
 // route internal process messages to renderer
-const internalHandlerPromise = channel => {
+const internalHandlerPromise = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
-    const handler = message => {
+    const handler = (message: FromInternalMessage) => {
       if (message.type === channel && message.requestId === requestId) {
         if (message.error) {
           // reject
@@ -179,23 +186,23 @@ const internalHandlerPromise = channel => {
             data: message.data,
           });
         }
-        internal.process.removeListener("message", handler);
+        internal.process?.removeListener("message", handler);
       }
     };
-    internal.process.on("message", handler);
+    internal.process?.on("message", handler);
     internal.send({
       type: channel,
       data,
       requestId,
-    });
+    } as ToInternalMessage);
   });
 };
 
 // multi event version of internalHandler
-const internalHandlerObservable = channel => {
+const internalHandlerObservable = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
-    const handler = message => {
+    const handler = (message: FromInternalMessage) => {
       if (message.type === channel && message.requestId === requestId) {
         if (message.error) {
           // error
@@ -210,27 +217,27 @@ const internalHandlerObservable = channel => {
         } else {
           // complete
           event.reply(replyChannel, {});
-          internal.process.removeListener("message", handler);
+          internal.process?.removeListener("message", handler);
         }
       }
     };
-    internal.process.on("message", handler);
+    internal.process?.on("message", handler);
     internal.send({
       type: channel,
       data,
       requestId,
-    });
+    } as ToInternalMessage);
   });
 };
 
 // simple event routing
-const internalHandlerEvent = channel => {
+const internalHandlerEvent = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     internal.send({
       type: channel,
       data,
       requestId,
-    });
+    } as ToInternalMessage);
   });
 };
 internalHandlerPromise(transportOpenChannel);

@@ -28,7 +28,7 @@ const WelcomeScreenSettings: React.FC<Props> = props => {
         >
           Back
         </Link>
-        <Settings {...props} />
+        <Settings />
       </Page>
     </Box>
   );

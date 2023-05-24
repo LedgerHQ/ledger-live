@@ -16,6 +16,10 @@ import { RowContainer, RowInnerContainer } from "./shared";
 import styled from "styled-components";
 import Plus from "~/renderer/icons/Plus";
 import { darken } from "~/renderer/styles/helpers";
+import { Observable } from "rxjs7";
+import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
+import { useTranslation } from "react-i18next";
+
 const AddIconContainer = styled.div`
   border-radius: 50%;
   width: 24px;
@@ -26,13 +30,16 @@ const AddIconContainer = styled.div`
   background: ${({ theme }) => darken(theme.colors.palette.primary.main, 0.3)};
   color: ${({ theme }) => theme.colors.palette.primary.main};
 `;
+
 type Props = {
   currency: CryptoCurrency | TokenCurrency;
   onAccountSelect: (account: AccountLike, parentAccount?: Account) => void;
   accounts$?: Observable<WalletAPIAccount[]>;
 };
+
 export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
   const accountTuples = useMemo(() => {
@@ -45,6 +52,7 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
       }),
     );
   }, [dispatch, currency]);
+
   return (
     <>
       <RowContainer onClick={openAddAccounts} id="add-account">
@@ -61,11 +69,12 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
                 marginLeft: 12,
               }}
             >
-              {"Add account"}
+              {t("addAccounts.cta.add")}
             </Text>
           </Box>
         </RowInnerContainer>
       </RowContainer>
+
       {accountTuples.map((accountTuple, index) => {
         const { account, subAccount } = accountTuple;
         const accountCurrency = getAccountCurrency(subAccount || account);

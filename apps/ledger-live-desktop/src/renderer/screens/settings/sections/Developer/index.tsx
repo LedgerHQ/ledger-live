@@ -1,6 +1,7 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Switch, Route } from "react-router-dom";
+import user from "~/helpers/user";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
@@ -55,6 +56,14 @@ function convertERC20([
 
 const Default = () => {
   const { t } = useTranslation();
+  const [segmentId, setSegmentID] = useState("loading...");
+
+  useEffect(() => {
+    user().then(u => {
+      setSegmentID(u.id);
+    });
+  });
+
   const test = useCallback(() => {
     addTokens(
       [
@@ -73,8 +82,11 @@ const Default = () => {
       ].map(convertERC20),
     );
   }, [addTokens, convertERC20]);
+
   return (
     <Body>
+      <Row title={t("settings.developer.userId")} desc={segmentId} />
+
       <Row title={t("settings.developer.debugApps")} desc={t("settings.developer.debugAppsDesc")}>
         <AllowDebugAppsToggle />
       </Row>

@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { concat, Observable, of } from "rxjs";
 import { catchError, scan, tap } from "rxjs/operators";
 import { getMainAccount } from "../../account";
@@ -15,6 +15,7 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import type { AppState } from "./app";
 import { createAction as createAppAction } from "./app";
 import type { Action, Device } from "./types";
+import { TransactionStatus } from "../../generated/types";
 
 type State = {
   initSwapResult: InitSwapResult | null | undefined;
@@ -34,6 +35,8 @@ type InitSwapRequest = {
   transaction: SwapTransaction;
   userId?: string;
   requireLatestFirmware?: boolean;
+  status?: TransactionStatus;
+  device?: React.RefObject<Device | null | undefined>;
 };
 
 type Result =
@@ -101,6 +104,8 @@ const reducer = (state: State, e: SwapRequestEvent) => {
         isLoading: false,
       };
   }
+
+  // FIXME it is supposed to be unreachable but it seems to be reached in swap flow. so we must preserve returning the state
   return state;
 };
 

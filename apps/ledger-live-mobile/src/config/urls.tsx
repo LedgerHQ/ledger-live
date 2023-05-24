@@ -47,6 +47,8 @@ export const urls = {
   erc20:
     "https://support.ledger.com/hc/en-us/articles/4404389645329-Manage-ERC20-tokens?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_erc20",
   errors: {
+    PeerRemovedPairing:
+      "https://support.ledger.com/hc/en-us/articles/360025864773-Fix-Bluetooth-pairing-issues?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=pairing_failed",
     PairingFailed:
       "https://support.ledger.com/hc/en-us/articles/360025864773?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=pairing_failed",
     SyncError:
@@ -206,6 +208,16 @@ export const urls = {
     supportDisableIos:
       "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
     howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
+  },
+  fwUpdateReleaseNotes: {
+    nanoS:
+      "https://support.ledger.com/hc/en-us/articles/360010446000-Ledger-Nano-S-firmware-release-notes?docs=true",
+    nanoSP:
+      "https://support.ledger.com/hc/en-us/articles/4494540771997-Ledger-Nano-S-Plus-Firmware-Release-Notes?docs=true",
+    nanoX:
+      "https://support.ledger.com/hc/en-us/articles/360014980580-Ledger-Nano-X-firmware-release-notes?docs=true",
+    stax: "https://support.ledger.com/hc/en-us/articles/9950654827293?docs=true",
+    blue: "https://support.ledger.com/hc/en-us/articles/360014980580-Ledger-Nano-X-firmware-release-notes?docs=true",
   },
   lnxFirmwareUpdate:
     "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",

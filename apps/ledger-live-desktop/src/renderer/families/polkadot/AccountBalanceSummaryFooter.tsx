@@ -7,7 +7,6 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";
@@ -15,7 +14,7 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import ToolTip from "~/renderer/components/Tooltip";
-const Wrapper: ThemedComponent<any> = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
   p: 5,
@@ -25,7 +24,6 @@ const Wrapper: ThemedComponent<any> = styled(Box).attrs(() => ({
 `;
 const BalanceDetail = styled(Box).attrs(() => ({
   flex: "0.25 0 auto",
-  vertical: true,
   alignItems: "start",
 }))`
   &:nth-child(n + 3) {
@@ -52,9 +50,8 @@ const AmountValue = styled(Text).attrs(props => ({
 }))``;
 type Props = {
   account: any;
-  countervalue: any;
 };
-const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
+const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const preloaded = usePolkadotPreloadData();

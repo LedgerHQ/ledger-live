@@ -22,9 +22,11 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import styled from "styled-components";
 import { useGetSwapTrackingProperties } from "../../utils/index";
+
 type Strategies = "slow" | "medium" | "fast" | "advanced";
+
 const FEES_STRATEGY_ICONS: {
-  [x: Strategies]: (a: { color?: string; size?: number }) => React$Element<"svg">;
+  [x in Strategies]: (a: { color?: string; size?: number }) => React.ReactElement<"svg">;
 } = {
   slow: TachometerLow,
   medium: TachometerMedium,
@@ -77,14 +79,20 @@ const SectionFees = ({
   const canEdit =
     hasRates &&
     showSummaryValue &&
-    transaction?.networkInfo &&
+    transaction &&
+    "networkInfo" in transaction &&
+    transaction.networkInfo &&
     account &&
     family &&
-    sendAmountByFamily[family];
+    sendAmountByFamily[family as keyof typeof sendAmountByFamily];
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const StrategyIcon = useMemo(() => FEES_STRATEGY_ICONS[transaction?.feesStrategy], [
-    transaction?.feesStrategy,
-  ]);
+  const StrategyIcon = useMemo(
+    () =>
+      (transaction?.feesStrategy &&
+        FEES_STRATEGY_ICONS[transaction?.feesStrategy as keyof typeof FEES_STRATEGY_ICONS]) ||
+      undefined,
+    [transaction?.feesStrategy],
+  );
 
   // Deselect slow strategy if the exchange rate is changed to fixed.
   useEffect(
@@ -101,29 +109,30 @@ const SectionFees = ({
   );
   const handleChange = useMemo(
     () =>
-      canEdit &&
-      (() => {
-        track("button_clicked", {
-          button: "change network fees",
-          page: "Page Swap Form",
-          ...swapDefaultTrack,
-        });
-        setDrawer(
-          FeesDrawer,
-          {
-            setTransaction,
-            updateTransaction,
-            mainAccount: mainFromAccount,
-            currency,
-            status,
-            disableSlowStrategy: exchangeRate?.tradeMethod === "fixed",
-            provider,
-          },
-          {
-            forceDisableFocusTrap: true,
-          },
-        );
-      }),
+      (canEdit &&
+        (() => {
+          track("button_clicked", {
+            button: "change network fees",
+            page: "Page Swap Form",
+            ...swapDefaultTrack,
+          });
+          setDrawer(
+            FeesDrawer,
+            {
+              setTransaction,
+              updateTransaction,
+              mainAccount: mainFromAccount,
+              currency,
+              status,
+              disableSlowStrategy: exchangeRate?.tradeMethod === "fixed",
+              provider,
+            },
+            {
+              forceDisableFocusTrap: true,
+            },
+          );
+        })) ||
+      undefined,
     [
       canEdit,
       swapDefaultTrack,

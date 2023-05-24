@@ -100,8 +100,6 @@ const DeviceCard = ({
     }
   }, [dispatch, lastSeenCustomImage]);
 
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
-
   const openAppsModal = useCallback(() => {
     setAppsModalOpen(true);
   }, [setAppsModalOpen]);
@@ -119,9 +117,7 @@ const DeviceCard = ({
   );
 
   const showDeviceLanguage =
-    deviceLocalizationFeatureFlag?.enabled &&
-    isLocalizationSupported &&
-    deviceInfo.languageId !== undefined;
+    isLocalizationSupported && deviceInfo.languageId !== undefined;
 
   const hasCustomImage =
     useFeature("customImage")?.enabled && deviceModel.id === DeviceModelId.stax;
@@ -139,6 +135,7 @@ const DeviceCard = ({
         >
           <DeviceName
             device={device}
+            deviceInfo={deviceInfo}
             initialDeviceName={initialDeviceName}
             disabled={pendingInstalls}
           />
@@ -161,7 +158,7 @@ const DeviceCard = ({
             </Text>
           </Flex>
           <Flex flexDirection={"row"} alignItems={"center"} mt={2} mb={3}>
-            <CircledCheckSolidMedium size={18} color={"palette.success.c80"} />
+            <CircledCheckSolidMedium size={18} color={"palette.success.c40"} />
             <Text
               variant={"body"}
               fontWeight={"medium"}
@@ -202,8 +199,11 @@ const DeviceCard = ({
       <DeviceAppStorage
         distribution={distribution}
         deviceModel={deviceModel}
+        installQueue={state.installQueue}
+        uninstallQueue={state.uninstallQueue}
         deviceInfo={deviceInfo}
       />
+
       {appList.length > 0 && (
         <Flex mx={6} mb={6}>
           <Button size="small" type="color" onPress={openAppsModal}>

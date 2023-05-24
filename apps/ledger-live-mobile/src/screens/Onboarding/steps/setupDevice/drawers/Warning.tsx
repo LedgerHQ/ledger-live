@@ -30,7 +30,7 @@ const OnboardingSetupDeviceInformation = () => {
       <Flex flex={1} alignItems="center" justifyContent="center">
         <IconBox
           Icon={Icons.WarningMedium}
-          color="warning.c100"
+          color="warning.c50"
           iconSize={24}
           boxSize={64}
         />

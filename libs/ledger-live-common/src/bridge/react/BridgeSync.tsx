@@ -165,21 +165,19 @@ function useSyncQueue({
           lastTimeAnalyticsTrackPerAccountId[accountId] = startSyncTime;
         }
 
-        const trackEnd = (event) => {
+        const trackSyncSuccessEnd = () => {
           if (trackedRecently) return;
           const account = accounts.find((a) => a.id === accountId);
           if (!account) return;
           const subAccounts: SubAccount[] = account.subAccounts || [];
 
-          if (event === "SyncSuccess") {
-            // Nb Only emit SyncSuccess/SyncSuccessToken event once per launch
-            if (lastTimeSuccessSyncPerAccountId[accountId]) {
-              return;
-            }
-            lastTimeSuccessSyncPerAccountId[accountId] = startSyncTime;
+          // Nb Only emit SyncSuccess/SyncSuccessToken event once per launch
+          if (lastTimeSuccessSyncPerAccountId[accountId]) {
+            return;
           }
+          lastTimeSuccessSyncPerAccountId[accountId] = startSyncTime;
 
-          trackAnalytics(event, {
+          trackAnalytics("SyncSuccess", {
             duration: (Date.now() - startSyncTime) / 1000,
             currencyName: account.currency.name,
             derivationMode: account.derivationMode,
@@ -193,23 +191,21 @@ function useSyncQueue({
             reason,
           });
 
-          if (event === "SyncSuccess") {
-            subAccounts.forEach((a) => {
-              const tokenId =
-                a.type === "TokenAccount"
-                  ? getAccountCurrency(a).id
-                  : account.currency.name;
-              trackAnalytics("SyncSuccessToken", {
-                tokenId,
-                tokenTicker: getAccountCurrency(a).ticker,
-                operationsLength: a.operationsCount,
-                parentCurrencyName: account.currency.name,
-                parentDerivationMode: account.derivationMode,
-                votesCount: getVotesCount(a, account),
-                reason,
-              });
+          subAccounts.forEach((a) => {
+            const tokenId =
+              a.type === "TokenAccount"
+                ? getAccountCurrency(a).id
+                : account.currency.name;
+            trackAnalytics("SyncSuccessToken", {
+              tokenId,
+              tokenTicker: getAccountCurrency(a).ticker,
+              operationsLength: a.operationsCount,
+              parentCurrencyName: account.currency.name,
+              parentDerivationMode: account.derivationMode,
+              votesCount: getVotesCount(a, account),
+              reason,
             });
-          }
+          });
         };
 
         const syncConfig = {
@@ -224,7 +220,7 @@ function useSyncQueue({
             updateAccountWithUpdater(accountId, accountUpdater);
           },
           complete: () => {
-            trackEnd("SyncSuccess");
+            trackSyncSuccessEnd();
             setAccountSyncState(accountId, {
               pending: false,
               error: null,
@@ -242,10 +238,6 @@ function useSyncQueue({
               });
               next();
               return;
-            }
-
-            if (error && error.name !== "NetworkDown") {
-              trackEnd("SyncError");
             }
 
             setAccountSyncState(accountId, {

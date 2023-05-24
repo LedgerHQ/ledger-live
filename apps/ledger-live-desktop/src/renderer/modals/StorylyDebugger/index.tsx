@@ -12,7 +12,7 @@ const StorylyDebugger = ({ name }: { name: string }) => {
     <Modal
       name={name}
       centered
-      render={({ onClose }: { onClose: void }) => (
+      render={({ onClose }: { onClose?: () => void }) => (
         <ModalBody
           onClose={onClose}
           onBack={undefined}

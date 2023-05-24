@@ -2,7 +2,7 @@ import React from "react";
 import FTXLogin from "./FTX";
 
 // Component to display a partner login flow
-const Login = ({ provider, onClose }: { provider: string; onClose: Function }) => {
+const Login = ({ provider, onClose }: { provider?: string | undefined; onClose: () => void }) => {
   switch (provider) {
     case "ftxus":
     case "ftx":

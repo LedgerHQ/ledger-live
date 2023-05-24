@@ -1,10 +1,18 @@
 import { memo, useEffect } from "react";
 import { page } from "./segment";
-let source;
+let source: string | undefined | null;
 export const setTrackingSource = (s?: string) => {
   source = s;
 };
-function TrackPage({ category, name, ...properties }: { category: string; name?: string }) {
+function TrackPage({
+  category,
+  name,
+  ...properties
+}: {
+  category: string;
+  name?: string;
+  [key: string]: unknown;
+}) {
   useEffect(() => {
     page(category, name, {
       ...properties,
@@ -20,7 +28,4 @@ function TrackPage({ category, name, ...properties }: { category: string; name?:
   }, []);
   return null;
 }
-export default memo<{
-  category: string;
-  name?: string;
-}>(TrackPage);
+export default memo(TrackPage);

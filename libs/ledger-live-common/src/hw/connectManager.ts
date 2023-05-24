@@ -16,15 +16,11 @@ import { isDashboardName } from "./isDashboardName";
 import { DeviceNotOnboarded } from "../errors";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
 import { LockedDeviceEvent } from "./actions/types";
+import { ManagerRequest } from "./actions/manager";
 
 export type Input = {
-  devicePath: string;
-  managerRequest:
-    | {
-        autoQuitAppDisabled?: boolean;
-      }
-    | null
-    | undefined;
+  deviceId: string;
+  request: ManagerRequest | null | undefined;
 };
 
 export type ConnectManagerEvent =
@@ -44,11 +40,8 @@ export type ConnectManagerEvent =
   | ListAppsEvent
   | LockedDeviceEvent;
 
-const cmd = ({
-  devicePath,
-  managerRequest,
-}: Input): Observable<ConnectManagerEvent> =>
-  withDevice(devicePath)(
+const cmd = ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
+  withDevice(deviceId)(
     (transport) =>
       new Observable((o) => {
         const timeoutSub = of({
@@ -110,7 +103,7 @@ const cmd = ({
               ) {
                 return from(getAppAndVersion(transport)).pipe(
                   concatMap((appAndVersion) => {
-                    return !managerRequest?.autoQuitAppDisabled &&
+                    return !request?.autoQuitAppDisabled &&
                       !isDashboardName(appAndVersion.name)
                       ? attemptToQuitApp(transport, appAndVersion)
                       : of({

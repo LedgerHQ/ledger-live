@@ -11,6 +11,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import LedgerByFigmentTC from "../../shared/components/LedgerByFigmentTCLink";
 import ValidatorsField from "../../shared/fields/ValidatorsField";
 import { StepProps } from "../types";
+
 export default function StepValidator({
   account,
   parentAccount,
@@ -59,7 +60,6 @@ export default function StepValidator({
 export function StepValidatorFooter({
   transitionTo,
   account,
-  parentAccount,
   onClose,
   status,
   bridgePending,

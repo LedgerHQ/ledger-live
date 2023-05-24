@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
-import { Account } from "@ledgerhq/types-live";
+import { Account, NFT, ProtoNFT } from "@ledgerhq/types-live";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/helpers";
 import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
@@ -11,7 +11,7 @@ const SelectNFT = ({
   maybeNFTCollection,
   account,
 }: {
-  onSelect: (a: any) => void;
+  onSelect: (a: ProtoNFT | NFT) => void;
   maybeNFTId?: string;
   maybeNFTCollection?: string;
   account: Account;
@@ -22,7 +22,7 @@ const SelectNFT = ({
   const filteredNFTs = useMemo(
     () =>
       maybeNFTCollection
-        ? nftsByCollections(account.nfts, maybeNFTCollection)
+        ? (nftsByCollections(account.nfts, maybeNFTCollection) as (ProtoNFT | NFT)[])
         : account.nfts?.filter(
             nft => !hiddenNftCollections.includes(`${account.id}|${nft.contract}`),
           ) || [],

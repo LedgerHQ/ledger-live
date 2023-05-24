@@ -23,6 +23,7 @@
           "providerId": "eth",
           "ticker": "ETH"
         },
+        { "id": "cosmos", "providerId": "atom", "ticker": "ATOM" },
         {
           "id": "ethereum/erc20/usd__coin",
           "providerId": "usdc",

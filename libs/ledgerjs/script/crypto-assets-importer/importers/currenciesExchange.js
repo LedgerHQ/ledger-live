@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 const { readFileJSON } = require("../utils");
 
 const idFromFolderAndFile = (folder, id) =>
@@ -17,14 +18,14 @@ const exchanges: Exchange[] = [
 
 export default exchanges;
 `,
-  loader: ({ signatureFolder, folder, id }) =>
-    Promise.all([
-      readFileJSON(path.join(signatureFolder, id, "exchange_signature.json")),
-    ]).then(([exchange]) => {
-      return [
-        idFromFolderAndFile(folder, id),
-        exchange.serialized_config,
-        exchange.signature,
-      ];
-    }),
+  loader: ({ signatureFolder, folder, id }) => {
+    const filePath = path.join(signatureFolder, id, "exchange_signature.json");
+    if (!fs.existsSync(filePath)) return;
+
+    return readFileJSON(filePath).then((exchange) => [
+      idFromFolderAndFile(folder, id),
+      exchange.serialized_config,
+      exchange.signature,
+    ]);
+  },
 };

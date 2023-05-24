@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import { getAccountBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";

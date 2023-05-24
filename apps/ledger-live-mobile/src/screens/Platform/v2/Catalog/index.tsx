@@ -1,12 +1,10 @@
-import React, { useCallback, useEffect } from "react";
-import { TouchableOpacity } from "react-native";
-import { useTheme } from "styled-components/native";
+import React, { useCallback, useEffect, useMemo } from "react";
 import * as Animatable from "react-native-animatable";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import Fuse from "fuse.js";
-import ArrowLeft from "../../../../icons/ArrowLeft";
+import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import TabBarSafeAreaView, {
   TAB_BAR_SAFE_HEIGHT,
 } from "../../../../components/TabBar/TabBarSafeAreaView";
@@ -24,28 +22,38 @@ import { ManifestList } from "./ManifestList";
 import { RecentlyUsed } from "./RecentlyUsed";
 import { CatalogSection } from "./CatalogSection";
 import { DAppDisclaimer } from "./DAppDisclaimer";
-import { Props } from "../../Catalog";
 
 const AnimatedView = Animatable.View;
 
 const options: Fuse.IFuseOptions<LiveAppManifest> = {
-  keys: ["name"],
+  keys: ["name", "categories"],
   threshold: 0.1,
 };
 
-export function Catalog({ navigation }: Props) {
-  const { colors } = useTheme();
+export function Catalog() {
   const { t } = useTranslation();
   const title = t("browseWeb3.catalog.title");
 
+  const manifestsSearchableVisibility: LiveAppManifest[] = useManifests({
+    visibility: "searchable",
+  });
+
+  const manifestsCompleteVisibility: LiveAppManifest[] = useManifests({
+    visibility: "complete",
+  });
+
+  const manifests = useMemo(
+    () => [...manifestsSearchableVisibility, ...manifestsCompleteVisibility],
+    [],
+  );
+
   const {
     manifestsByCategories,
-    manifests,
     categories,
     selected,
     setSelected,
     initialSelectedState,
-  } = useCategories();
+  } = useCategories(manifestsCompleteVisibility);
 
   const recentlyUsed = useRecentlyUsed(manifests);
 
@@ -111,7 +119,7 @@ export function Catalog({ navigation }: Props) {
 
       {isActive ? (
         <Search
-          manifests={manifests}
+          manifests={manifestsCompleteVisibility}
           recentlyUsed={recentlyUsed.data}
           title={title}
           input={input}
@@ -127,37 +135,21 @@ export function Catalog({ navigation }: Props) {
       ) : (
         <>
           <Layout
-            title={title}
-            listStickyElement={[3]}
-            topHeaderContent={
-              <TouchableOpacity
-                hitSlop={{
-                  bottom: 10,
-                  left: 24,
-                  right: 24,
-                  top: 10,
-                }}
-                style={{ paddingVertical: 16 }}
-                onPress={navigation.goBack}
-              >
-                <ArrowLeft size={18} color={colors.neutral.c100} />
-              </TouchableOpacity>
-            }
-            titleHeaderContent={
-              <Flex marginBottom={16}>
-                <Text fontWeight="bold" variant="h1Inter">
-                  {title}
-                </Text>
-                <Text variant="large">{t("browseWeb3.catalog.subtitle")}</Text>
-              </Flex>
-            }
+            listStickyElement={[2]}
             middleHeaderContent={
-              <SearchBar
-                input={input}
-                inputRef={inputRef}
-                onChange={onChange}
-                onFocus={onFocus}
-              />
+              <>
+                <Flex marginBottom={16}>
+                  <Text fontWeight="semiBold" variant="h4">
+                    {title}
+                  </Text>
+                </Flex>
+                <SearchBar
+                  input={input}
+                  inputRef={inputRef}
+                  onChange={onChange}
+                  onFocus={onFocus}
+                />
+              </>
             }
             disableStyleBottomHeader
             bottomHeaderContent={

@@ -5,7 +5,7 @@ import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
 import Delegation from "~/renderer/families/elrond/components/Delegations/components/Delegation";
 import { Account as AccountType } from "@ledgerhq/types-live";
 import { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
-interface Props {
+export interface Props {
   delegations: Array<DelegationType>;
   validators: Array<ElrondProvider>;
   account: AccountType;

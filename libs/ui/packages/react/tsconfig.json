@@ -1,28 +1,15 @@
 {
+  "extends": "../../../../tsconfig.base",
   "compilerOptions": {
     "composite": true,
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
     "jsx": "react",
-    "lib": [
-      "es2019",
-      "dom"
-    ],
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "strict": true,
-    "target": "ESNext",
+    "lib": ["es2019", "dom"],
     "baseUrl": ".",
-    "skipLibCheck": true,
     "rootDir": "./src",
     "outDir": "./lib",
     "preserveSymlinks": true
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "babel.config.js",

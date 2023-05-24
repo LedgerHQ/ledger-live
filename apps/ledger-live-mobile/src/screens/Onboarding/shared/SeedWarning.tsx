@@ -24,7 +24,7 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
       <Flex alignItems="center">
         <IconBox
           Icon={Icons.WarningMedium}
-          color="warning.c100"
+          color="warning.c50"
           iconSize={24}
           boxSize={64}
         />

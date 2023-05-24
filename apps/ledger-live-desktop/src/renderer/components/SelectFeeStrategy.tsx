@@ -11,24 +11,28 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, FeeStrategy } from "@ledgerhq/types-live";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+
 type OnClickType = {
   amount: BigNumber;
   feesStrategy: string;
 };
+
 type Props = {
   onClick: (a: OnClickType) => void;
-  transaction: any;
+  transaction: Transaction;
   account: Account;
   parentAccount: Account | undefined | null;
   strategies: FeeStrategy[];
   mapStrategies?: (
     a: FeeStrategy,
   ) => FeeStrategy & {
-    [x: string]: any;
+    [x: string]: unknown;
   };
   suffixPerByte?: boolean;
 };
-const FeesWrapper = styled(Box)`
+
+const FeesWrapper = styled(Box)<{ selected?: boolean; disabled?: boolean }>`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -48,7 +52,7 @@ const FeesWrapper = styled(Box)`
     cursor: ${p => (p.disabled ? "unset" : "pointer")};
   }
 `;
-const FeesHeader = styled(Box)`
+const FeesHeader = styled(Box)<{ selected?: boolean; disabled?: boolean }>`
   color: ${p =>
     p.selected
       ? p.theme.colors.palette.primary.main

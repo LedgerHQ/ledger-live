@@ -13,7 +13,7 @@ type NoOptionsMessageCallbackType = {
 type OptionType = ElrondProvider & {
   delegation: DelegationType | undefined;
 };
-interface Props {
+export interface Props {
   delegations: Array<DelegationType>;
   onChange: (delegation: DelegationType) => void;
   contract: string;

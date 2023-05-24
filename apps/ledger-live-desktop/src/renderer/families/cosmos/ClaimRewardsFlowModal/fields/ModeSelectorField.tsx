@@ -34,8 +34,8 @@ export default function ModeSelectorField({
         <Popover
           position="right"
           content={
-            <Box vertical px={2}>
-              <Box vertical alignItems="start" justifyContent="start" my={2}>
+            <Box px={2}>
+              <Box alignItems="start" justifyContent="start" my={2}>
                 <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
                   <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.compound" />
                 </Text>
@@ -44,7 +44,7 @@ export default function ModeSelectorField({
                 </Text>
               </Box>
 
-              <Box vertical alignItems="start" justifyContent="start" my={2}>
+              <Box alignItems="start" justifyContent="start" my={2}>
                 <Text ff="Inter|SemiBold" fontSize={4} color="palette.primary.main">
                   <Trans i18nKey="cosmos.claimRewards.flow.steps.claimRewards.claim" />
                 </Text>

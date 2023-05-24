@@ -72,7 +72,13 @@ const CatalogProviderInput = () => {
               onClick={handleOnClickApplyProvider}
               style={{ minWidth: 64, display: "flex", justifyContent: "center" }}
             >
-              {isLoading ? <Loader style={{ margin: "auto" }} size={14} /> : t("common.apply")}
+              {isLoading ? (
+                <Box style={{ margin: "auto" }}>
+                  <Loader size={14} />
+                </Box>
+              ) : (
+                t("common.apply")
+              )}
             </Button>
           </>
         ) : null}

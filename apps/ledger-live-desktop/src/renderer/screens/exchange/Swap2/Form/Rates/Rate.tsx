@@ -2,14 +2,13 @@ import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Text } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { iconByProviderName } from "../../utils";
-const ProviderContainer: ThemedComponent<{}> = styled(Box).attrs({
+const ProviderContainer = styled(Box).attrs({
   horizontal: true,
   alignItems: "center",
   ff: "Inter|SemiBold",
-})`
+})<{ selected?: boolean | null }>`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
   cursor: pointer;
@@ -25,21 +24,21 @@ const ProviderContainer: ThemedComponent<{}> = styled(Box).attrs({
       box-shadow: 0px 0px 2px 1px ${p.theme.colors.palette.divider};
     }`}
 `;
-const SecondaryText: ThemedComponent<{}> = styled(Text)`
+const SecondaryText = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
 export type Props = {
-  value?: ExchangeRate;
+  value: ExchangeRate;
   onSelect: (a: ExchangeRate) => void;
-  selected?: boolean;
+  selected?: boolean | null;
   icon?: string;
   title: string;
-  subtitle: string;
+  subtitle: React.ReactNode;
   centerContainer?: JSX.Element;
   rightContainer: JSX.Element;
 };
 function Rate({
-  value = {},
+  value,
   selected,
   onSelect,
   icon,
@@ -49,7 +48,7 @@ function Rate({
   rightContainer,
 }: Props) {
   const handleSelection = useCallback(() => onSelect(value), [value, onSelect]);
-  const ProviderIcon = iconByProviderName[icon];
+  const ProviderIcon = iconByProviderName[icon as keyof typeof iconByProviderName];
   return (
     <ProviderContainer
       p={3}

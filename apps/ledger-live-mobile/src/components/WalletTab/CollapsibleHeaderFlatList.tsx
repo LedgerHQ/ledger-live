@@ -1,3 +1,4 @@
+import { Flex } from "@ledgerhq/native-ui";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import React, { useContext, useCallback } from "react";
 import {
@@ -7,7 +8,7 @@ import {
   FlatList,
   FlatListProps,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import AnimatedProps = Animated.AnimatedProps;
 
@@ -26,8 +27,17 @@ function CollapsibleHeaderFlatList<T>({
     syncScrollOffset(route.name);
   }, [route.name, syncScrollOffset]);
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView>
+    <Flex
+      /**
+       * NB: not using SafeAreaView because it flickers during navigation
+       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
+       */
+      flex={1}
+      mt={insets.top}
+    >
       <Animated.FlatList<T>
         scrollToOverflowEnabled={true}
         ref={(ref: FlatList) => onGetRef({ key: route.name, value: ref })}
@@ -58,7 +68,7 @@ function CollapsibleHeaderFlatList<T>({
       >
         {children}
       </Animated.FlatList>
-    </SafeAreaView>
+    </Flex>
   );
 }
 

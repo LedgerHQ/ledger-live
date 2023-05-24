@@ -21,31 +21,35 @@ let sendPage: SendPage;
 let swapFormPage: SwapFormPage;
 let receivePage: ReceivePage;
 
-let ethereumShort: string = "eth";
-let bitcoinShort: string = "btc";
-let ethereumLong: string = "Ethereum";
-let bitcoinLong: string = "Bitcoin";
+const ethereumShort = "eth";
+const bitcoinShort = "btc";
+const ethereumLong = "Ethereum";
+const bitcoinLong = "Bitcoin";
 
-let deviceName = "Nano X de David";
-let mercuryoDL: string = "Mercuryo";
+const deviceName = "Nano X de David";
+const mercuryoDL = { name: "Mercuryo", url: " https://www.mercuryo.io/" };
 const discoverApps = [
-  { link: "ParaSwap" },
-  { link: "MoonPay" },
-  { link: "Ramp" },
-  { link: "Lido" },
-  { link: "1inch" },
-  { link: "BTCDirect", name: "BTC Direct" },
-  { link: "Wyre_buy", name: "Wyre" },
-  { link: "Zerion" },
-  { link: "Rainbow", name: "Rainbow.me" },
-  { link: "POAP" },
+  { name: "MoonPay", url: " https://www.moonpay.com/" },
+  { name: "Ramp", url: " https://ramp.network/buy" },
+  { name: "ParaSwap", url: " https://paraswap.io" },
+  { name: "Lido", url: " https://lido.fi/" },
+  { name: "1inch", url: " https://1inch.io/" },
+  { name: "BTCDirect", url: " https://btcdirect.eu/" },
+  { name: "Banxa", url: " https://banxa.com/" },
+  { name: "Bitrefill", url: " https://bitrefill.com" },
+  { name: "Wyre_buy", url: " https://www.sendwyre.com/" },
+  { name: "Zerion", url: " https://zerion.io/" },
+  { name: "Rainbow", url: " https://rainbow.me" },
+  { name: "POAP", url: " https://app.poap.xyz/" },
+  { name: "Yearn", url: " https://beta.yearn.finance" },
+  { name: "ChangeNOW", url: " https://changenow.io/" },
+  { name: "Transak", url: " https://transak.com" },
 ];
 
-const openNCheckApp = (l10n: { link: string; name?: string }) => {
-  it(`should open discovery to ${l10n.link}`, async () => {
-    l10n.name = l10n.name || l10n.link;
-    await discoveryPage.openViaDeeplink(l10n.link);
-    await expect(getElementByText(l10n.name)).toBeVisible();
+const openNCheckApp = (l10n: { name: string; url: string }) => {
+  it(`should open discovery to ${l10n.name}`, async () => {
+    await discoveryPage.openViaDeeplink(l10n.name);
+    await expect(getElementByText(l10n.url)).toBeVisible();
   });
 };
 
@@ -63,11 +67,11 @@ describe("DeepLinks Tests", () => {
     receivePage = new ReceivePage();
   });
 
-  it.only("should open on Portofolio page", async () => {
+  it("should open on Portofolio page", async () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  it.only("should open My Ledger page and add a device", async () => {
+  it("should open My Ledger page and add a device", async () => {
     await managerPage.openViaDeeplink();
     await managerPage.expectManagerPage();
     await managerPage.addDevice(deviceName);
@@ -99,17 +103,17 @@ describe("DeepLinks Tests", () => {
     if (!(await isAndroid())) return;
     await discoveryPage.openViaDeeplink();
     await discoveryPage.expectDiscoveryPage();
-    await discoveryPage.openViaDeeplink(mercuryoDL);
+    await discoveryPage.openViaDeeplink(mercuryoDL.name);
     await discoveryPage.waitForSelectCrypto();
     await device.pressBack();
-    await expect(getElementByText(mercuryoDL)).toBeVisible();
+    await expect(getElementByText(mercuryoDL.url)).toBeVisible();
   });
 
   for (const l10n of discoverApps) {
     openNCheckApp(l10n);
   }
 
-  it.only("should open Swap Form page", async () => {
+  it("should open Swap Form page", async () => {
     await swapFormPage.openViaDeeplink();
     await swapFormPage.expectSwapFormPage();
   });

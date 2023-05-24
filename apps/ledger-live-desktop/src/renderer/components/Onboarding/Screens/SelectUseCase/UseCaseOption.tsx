@@ -19,7 +19,7 @@ const DescriptionText = styled(Text).attrs(() => ({}))``;
 const ArrowButton = styled(Button).attrs(() => ({
   variant: "main",
   size: "medium",
-  Icon: Icons.ArrowRightRegular,
+  Icon: Icons.ArrowRightMedium,
   iconButton: true,
 }))`
   margin-top: 27px;

@@ -1,6 +1,5 @@
 import { Dispatch } from "redux";
 import { TFunction } from "react-i18next";
-
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -12,10 +11,8 @@ import { RawPlatformSignedTransaction } from "@ledgerhq/live-common/platform/raw
 import { serializePlatformAccount } from "@ledgerhq/live-common/platform/serializers";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { selectAccountAndCurrency } from "../../drawers/DataSelector/logic";
-
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
@@ -65,7 +62,7 @@ export const broadcastTransactionLogic = (
     signedTransaction,
     async (
       account: AccountLike,
-      parentAccount: Account | null,
+      parentAccount: Account | undefined,
       signedOperation: SignedOperation,
     ): Promise<string> => {
       const bridge = getAccountBridge(account, parentAccount);
@@ -101,7 +98,11 @@ export const broadcastTransactionLogic = (
         icon: "info",
         callback: () => {
           tracking.platformBroadcastOperationDetailsClick(manifest);
-          setDrawer(OperationDetails, {
+          setDrawer<{
+            operationId: string;
+            accountId: string;
+            parentId: string | undefined | null;
+          }>(OperationDetails, {
             operationId: optimisticOperation.id,
             accountId: account.id,
             parentId: parentAccount?.id,

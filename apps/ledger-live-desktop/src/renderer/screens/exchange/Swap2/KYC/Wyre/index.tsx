@@ -4,7 +4,7 @@ import { useTranslation, Trans } from "react-i18next";
 import styled from "styled-components";
 import { submitKYC, countries, USStates } from "@ledgerhq/live-common/exchange/swap/index";
 import { getFlag } from "@ledgerhq/live-common/react";
-import { KYCData } from "@ledgerhq/live-common/exchange/swap/types";
+import { KYCData, KYCStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
@@ -25,6 +25,7 @@ import { openURL } from "~/renderer/linking";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
 import FakeLink from "~/renderer/components/FakeLink";
 import { useDynamicUrl } from "~/renderer/terms";
+
 const Footer = styled.div`
   border-top: 1px solid ${p => p.theme.colors.palette.divider};
   flex-direction: row;
@@ -52,7 +53,13 @@ const Disclaimer = styled(Text)`
   line-height: 18px;
   color: ${p => p.theme.colors.palette.text.shade50};
 `;
-const renderCountry = option => {
+
+const renderCountry = (option: {
+  data: {
+    value: string;
+    label: string;
+  };
+}) => {
   if (!option) return null;
   const Icon = getFlag(option.data.value);
   return (
@@ -62,11 +69,12 @@ const renderCountry = option => {
     </Box>
   );
 };
-const WyreKYC = ({ onClose }: { onClose: Function }) => {
+
+const WyreKYC = ({ onClose }: { onClose: () => void }) => {
   const { t } = useTranslation();
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, Error | null | undefined>>({});
   const isUpdateAvailable = useIsUpdateAvailable();
-  const [APIError, setAPIError] = useState<any>(null);
+  const [APIError, setAPIError] = useState<Error | null | undefined>(null);
   const [isLoading, setLoading] = useState(false);
   const [hasSubmittedOnce, setHasSubmittedOnce] = useState(false);
   const privacyPolicyUrl = useDynamicUrl("privacyPolicy");
@@ -92,7 +100,9 @@ const WyreKYC = ({ onClose }: { onClose: Function }) => {
   const [street2, setStreet2] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
-  const [country, setCountry] = useState(countryOptions[0]);
+  const [country, setCountry] = useState<typeof countryOptions[0] | null | undefined>(
+    countryOptions[0],
+  );
   const [postalCode, setPostalCode] = useState("");
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const requiredFields = useMemo(
@@ -107,6 +117,7 @@ const WyreKYC = ({ onClose }: { onClose: Function }) => {
     }),
     [city, dateOfBirth, firstName, lastName, postalCode, state, street1],
   );
+  // @ts-expect-error country.value can be null or undefined and KYCData expects a non-nullable value :/
   const kycData: KYCData = useMemo(
     () => ({
       firstName,
@@ -126,13 +137,15 @@ const WyreKYC = ({ onClose }: { onClose: Function }) => {
   const onValidateFields = useCallback(() => {
     const errors = {};
     for (const field in requiredFields) {
-      if (!requiredFields[field]) {
-        errors[field] = t(`swap2.kyc.wyre.form.${field}Error`);
+      if (!requiredFields[field as keyof typeof requiredFields]) {
+        errors[field as keyof typeof errors] = t(`swap2.kyc.wyre.form.${field}Error`);
       }
       if (field === "dateOfBirth") {
         const date = new Date(requiredFields[field]);
         if (minDOB > date || maxDOB < date) {
-          errors[field] = t(`swap2.kyc.wyre.form.dateOfBirthValidationError`);
+          errors[field as keyof typeof errors] = t(
+            `swap2.kyc.wyre.form.dateOfBirthValidationError`,
+          );
         }
       }
     }
@@ -141,8 +154,8 @@ const WyreKYC = ({ onClose }: { onClose: Function }) => {
   useEffect(() => {
     setErrors(onValidateFields);
   }, [onValidateFields, requiredFields, t]);
-  const onUpdateField = useCallback(updater => {
-    return value => updater(value);
+  const onUpdateField = useCallback((updater: (value: string) => void) => {
+    return (value: string) => updater(value);
   }, []);
   const onSubmit = useCallback(() => {
     setHasSubmittedOnce(true);
@@ -151,17 +164,17 @@ const WyreKYC = ({ onClose }: { onClose: Function }) => {
       async function onSubmitKYC() {
         setLoading(true);
         const res = await submitKYC("wyre", kycData);
-        if (res.error) {
+        if ("error" in res && res.error) {
           setAPIError(res.error);
         } else if (!cancelled) {
           dispatch(
             setSwapKYCStatus({
               provider: "wyre",
-              id: res?.id,
-              status: res.status,
+              id: (res as KYCStatus)?.id,
+              status: (res as KYCStatus).status,
             }),
           );
-          setAPIError();
+          setAPIError(undefined);
         }
         setLoading(false);
       }
@@ -295,8 +308,8 @@ const WyreKYC = ({ onClose }: { onClose: Function }) => {
                 </Text>
                 <Select
                   isDisabled={isLoading}
-                  onChange={option => setState(option.value)}
-                  error={hasSubmittedOnce && errors.state}
+                  onChange={option => setState(option?.value || "")}
+                  error={(hasSubmittedOnce && errors.state) || undefined}
                   options={stateOptions}
                 />
               </Box>
@@ -332,7 +345,6 @@ const WyreKYC = ({ onClose }: { onClose: Function }) => {
                   e.preventDefault();
                   openURL(privacyPolicyUrl);
                 }}
-                iconFirst
                 style={{
                   textTransform: "capitalize",
                   display: "inline-flex",

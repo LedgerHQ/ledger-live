@@ -9,7 +9,7 @@ import {
   ManagerNotEnoughSpaceError,
 } from "@ledgerhq/errors";
 
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "../manager/api";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import { Language, LanguagePackage } from "@ledgerhq/types-live";
@@ -33,15 +33,18 @@ export type InstallLanguageEvent =
       type: "languageInstalled";
     };
 
-export type InstallLanguageRequest = {
+export type InstallLanguageRequest = { language: Language };
+export type Input = {
   deviceId: string;
-  language: Language;
+  request: InstallLanguageRequest;
 };
 
 export default function installLanguage({
   deviceId,
-  language,
-}: InstallLanguageRequest): Observable<InstallLanguageEvent> {
+  request,
+}: Input): Observable<InstallLanguageEvent> {
+  const { language } = request;
+
   const sub = withDevice(deviceId)(
     (transport) =>
       new Observable((subscriber) => {

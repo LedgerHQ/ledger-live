@@ -12,7 +12,7 @@ const TransactionsPendingConfirmationWarning = ({
 }: {
   maybeAccount?: AccountLike;
 }) => {
-  let accounts = useSelector(accountsSelector);
+  let accounts: AccountLike[] = useSelector(accountsSelector);
   accounts = maybeAccount ? [maybeAccount] : accounts;
   const { t } = useTranslation();
   const content = (

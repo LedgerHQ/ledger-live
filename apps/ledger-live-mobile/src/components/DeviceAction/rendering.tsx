@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { LockedDeviceError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import {
+  LockedDeviceError,
+  PeerRemovedPairing,
+  WrongDeviceForAccount,
+} from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -42,7 +46,6 @@ import {
 import { TFunction } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
@@ -76,7 +79,7 @@ import ModalLock from "../ModalLock";
 import confirmLockscreen from "../../animations/stax/customimage/confirmLockscreen.json";
 import allowConnection from "../../animations/stax/customimage/allowConnection.json";
 
-const Wrapper = styled(Flex).attrs({
+export const Wrapper = styled(Flex).attrs({
   flex: 1,
   alignItems: "center",
   justifyContent: "center",
@@ -446,14 +449,22 @@ export function renderAllowLanguageInstallation({
   t,
   device,
   theme,
+  fullScreen = true,
 }: RawProps & {
   device: Device;
+  fullScreen?: boolean;
 }) {
   const deviceName = getDeviceModel(device.modelId).productName;
   const key = device.modelId === "stax" ? "allowManager" : "sign";
 
   return (
-    <Wrapper>
+    <Flex
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      alignSelf="stretch"
+      flex={fullScreen ? 1 : undefined}
+    >
       <TrackScreen category="Allow language installation on Stax" />
       <Text variant="h4" textAlign="center">
         {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
@@ -461,9 +472,32 @@ export function renderAllowLanguageInstallation({
       <AnimationContainer>
         <Animation source={getDeviceAnimation({ device, key, theme })} />
       </AnimationContainer>
-    </Wrapper>
+    </Flex>
   );
 }
+
+export const renderAllowRemoveCustomLockscreen = ({
+  t,
+  device,
+  theme,
+}: RawProps & {
+  device: Device;
+}) => {
+  const productName = getDeviceModel(device.modelId).productName;
+  const key = device.modelId === "stax" ? "allowManager" : "sign";
+
+  return (
+    <Wrapper>
+      <TrackScreen category={`Allow CLS removal on ${productName}`} />
+      <Text variant="h4" textAlign="center">
+        {t("DeviceAction.allowRemoveCustomLockscreen", { productName })}
+      </Text>
+      <AnimationContainer>
+        <Animation source={getDeviceAnimation({ device, key, theme })} />
+      </AnimationContainer>
+    </Wrapper>
+  );
+};
 
 const AllowOpeningApp = ({
   t,
@@ -504,6 +538,7 @@ const AllowOpeningApp = ({
           })}
         </CenteredText>
       ) : null}
+      <ModalLock />
     </Wrapper>
   );
 };
@@ -652,6 +687,13 @@ export function renderError({
     return renderLockedDeviceError({ t, onRetry, device });
   }
 
+  // TODO Once we have the aligned Error renderings, the CTA list should be determined
+  // by the error class, not patched like here.
+  let showRetryIfAvailable = true;
+  if ((error as unknown) instanceof PeerRemovedPairing) {
+    showRetryIfAvailable = false;
+  }
+
   return (
     <Wrapper>
       <GenericErrorView
@@ -661,7 +703,7 @@ export function renderError({
         Icon={Icon}
         iconColor={iconColor}
       >
-        {onRetry || managerAppName ? (
+        {showRetryIfAvailable && (onRetry || managerAppName) ? (
           <ActionContainer marginBottom={0} marginTop={32}>
             <StyledButton
               event="DeviceActionErrorRetry"
@@ -693,15 +735,12 @@ export function RequiredFirmwareUpdate({
     lastSeenDeviceSelector,
   );
 
-  const usbFwUpdateFeatureFlag = useFeature("llmUsbFirmwareUpdate");
   const isUsbFwVersionUpdateSupported =
     lastSeenDevice &&
     isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, device.modelId);
 
   const usbFwUpdateActivated =
-    usbFwUpdateFeatureFlag?.enabled &&
-    Platform.OS === "android" &&
-    isUsbFwVersionUpdateSupported;
+    Platform.OS === "android" && isUsbFwVersionUpdateSupported;
 
   const deviceName = getDeviceModel(device.modelId).productName;
 
@@ -839,14 +878,22 @@ export function renderConnectYourDevice({
   device,
   theme,
   onSelectDeviceLink,
+  fullScreen = true,
 }: RawProps & {
   unresponsive?: boolean | null;
   isLocked?: boolean;
   device: Device;
+  fullScreen?: boolean;
   onSelectDeviceLink?: () => void;
 }) {
   return (
-    <Wrapper>
+    <Flex
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      alignSelf="stretch"
+      flex={fullScreen ? 1 : undefined}
+    >
       <AnimationContainer
         withConnectDeviceHeight={
           ![DeviceModelId.blue, DeviceModelId.stax].includes(device.modelId)
@@ -881,15 +928,17 @@ export function renderConnectYourDevice({
           />
         </ConnectDeviceExtraContentWrapper>
       ) : null}
-    </Wrapper>
+    </Flex>
   );
 }
 
 export function renderLoading({
   t,
   description,
+  lockModal = false,
 }: RawProps & {
   description?: string;
+  lockModal?: boolean;
 }) {
   return (
     <Wrapper>
@@ -897,7 +946,7 @@ export function renderLoading({
         <InfiniteLoader />
       </SpinnerContainer>
       <CenteredText>{description ?? t("DeviceAction.loading")}</CenteredText>
-      <ModalLock />
+      {lockModal ? <ModalLock /> : null}
     </Wrapper>
   );
 }
@@ -970,7 +1019,7 @@ export function LoadingAppInstall({
     track(...trackingArgs);
   }, [appName, analyticsPropertyFlow]);
 
-  return renderLoading(props);
+  return renderLoading({ ...props, lockModal: true });
 }
 
 type WarningOutdatedProps = RawProps & {
@@ -1097,19 +1146,20 @@ export const AutoRepair = ({
 
 const ImageLoadingGeneric: React.FC<{
   title: string;
+  fullScreen?: boolean;
   children?: React.ReactNode | undefined;
   progress?: number;
   lottieSource?: FramedImageWithLottieProps["lottieSource"];
-}> = ({ title, children, progress, lottieSource }) => {
+}> = ({ title, fullScreen = true, children, progress, lottieSource }) => {
   return (
     <Flex
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      flex={1}
       alignSelf="stretch"
+      flex={fullScreen ? 1 : undefined}
     >
-      <Flex {...StyleSheet.absoluteFillObject}>
+      <Flex {...(fullScreen ? StyleSheet.absoluteFillObject : {})}>
         <Text
           textAlign="center"
           variant="h4"
@@ -1144,9 +1194,11 @@ const ImageLoadingGeneric: React.FC<{
 export const renderImageLoadRequested = ({
   t,
   device,
-}: RawProps & { device: Device }) => {
+  fullScreen = true,
+}: RawProps & { device: Device; fullScreen?: boolean }) => {
   return (
     <ImageLoadingGeneric
+      fullScreen={fullScreen}
       title={t("customImage.allowPreview", {
         productName:
           device.deviceName || getDeviceModel(device.modelId)?.productName,
@@ -1181,9 +1233,11 @@ export const renderLoadingImage = ({
 export const renderImageCommitRequested = ({
   t,
   device,
-}: RawProps & { device: Device }) => {
+  fullScreen = true,
+}: RawProps & { device: Device; fullScreen?: boolean }) => {
   return (
     <ImageLoadingGeneric
+      fullScreen={fullScreen}
       title={t("customImage.commitRequested", {
         productName:
           device.deviceName || getDeviceModel(device.modelId)?.productName,

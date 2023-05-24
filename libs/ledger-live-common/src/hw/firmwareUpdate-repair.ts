@@ -11,7 +11,7 @@ import {
   throttleTime,
 } from "rxjs/operators";
 import semver from "semver";
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "../manager/api";
 import { withDevicePolling, withDevice } from "./deviceAccess";
 import { getProviderId } from "../manager/provider";
 import getDeviceInfo from "./getDeviceInfo";

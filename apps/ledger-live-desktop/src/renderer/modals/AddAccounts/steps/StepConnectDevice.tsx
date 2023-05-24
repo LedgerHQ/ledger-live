@@ -9,7 +9,7 @@ import { getEnv } from "@ledgerhq/live-common/env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
-const StepConnectDevice = ({ currency, device, transitionTo, flow }: StepProps) => {
+const StepConnectDevice = ({ currency, transitionTo, flow }: StepProps) => {
   invariant(currency, "No crypto asset given");
 
   // preload currency ahead of time

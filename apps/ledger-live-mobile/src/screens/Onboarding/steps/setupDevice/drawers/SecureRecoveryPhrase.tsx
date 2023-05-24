@@ -36,7 +36,7 @@ const OnboardingSetupRecoveryPhrase = () => {
         <List
           items={content.map(item => ({
             title: <Trans i18nKey={item} components={{ bold: <Bold /> }} />,
-            bullet: <Icons.CheckAloneMedium size={20} color="success.c100" />,
+            bullet: <Icons.CheckAloneMedium size={20} color="success.c50" />,
           }))}
         />
       </ScrollListContainer>

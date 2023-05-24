@@ -28,7 +28,6 @@ import StyledStatusBar from "../../components/StyledStatusBar";
 import DisplayResultItem from "./DisplayResultItem";
 import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
 import ResultSection from "./ResultSection";
-import HeaderBackImage from "../../components/HeaderBackImage";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 import type { State as StoreState } from "../../reducers/types";
 import type { ImportAccountsNavigatorParamList } from "../../components/RootNavigator/types/ImportAccountsNavigator";
@@ -39,6 +38,7 @@ import type {
   StackNavigatorProps,
 } from "../../components/RootNavigator/types/helpers";
 import { SettingsImportDesktopPayload } from "../../actions/types";
+import { NavigationHeaderBackImage } from "../../components/NavigationHeaderBackButton";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
@@ -80,7 +80,7 @@ export function BackButton() {
       onPress={() => {
         if (navigation.replace) navigation.replace(ScreenName.ScanAccounts);
       }}
-      backImage={HeaderBackImage}
+      backImage={NavigationHeaderBackImage}
     />
   );
 }

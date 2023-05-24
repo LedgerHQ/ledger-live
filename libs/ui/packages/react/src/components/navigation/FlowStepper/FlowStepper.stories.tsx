@@ -158,7 +158,7 @@ export const Minimal: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
       footer={() => (
         <Flex mt={6} flexDirection="column" rowGap={6} alignItems="flex-end">
           <Box alignSelf="stretch">
-            <Divider variant="light" />
+            <Divider />
           </Box>
           <Flex columnGap={6}>
             <Button
@@ -228,7 +228,7 @@ const Footer = ({
 }) => (
   <Flex mt={6} flexDirection="column" rowGap={6}>
     <Box alignSelf="stretch">
-      <Divider variant="light" />
+      <Divider />
     </Box>
     <Flex flexDirection="row" justifyContent="space-between" alignItems="center">
       {children || <Flex />}

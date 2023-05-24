@@ -14,7 +14,7 @@ import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   currency: CryptoCurrency;
   validator: CosmosValidatorItem;

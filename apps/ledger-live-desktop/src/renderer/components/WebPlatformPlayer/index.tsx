@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-
 import { Web3AppWebview } from "../Web3AppWebview";
 import { TopBar, TopBarConfig } from "./TopBar";
 import Box from "../Box";

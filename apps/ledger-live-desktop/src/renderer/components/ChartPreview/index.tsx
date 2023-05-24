@@ -33,32 +33,30 @@
  */
 
 import React, { useRef, useLayoutEffect, useMemo } from "react";
-import ChartJs from "chart.js";
-import Color from "color";
+import ChartJs, { ChartData, ChartOptions } from "chart.js";
 import useTheme from "~/renderer/hooks/useTheme";
-import { Data } from "./types";
+import { Data } from "../Chart/types";
+import { genericBackgroundColor } from "../Chart";
+
 export type Props = {
   data: Data;
   height: number;
   color?: string;
-  valueKey?: string;
+  valueKey?: "value" | "countervalue";
 };
+
 export default function Chart({ height, data, color, valueKey = "value" }: Props) {
-  const canvasRef = useRef(null);
-  const chartRef = useRef(null);
-  const theme = useTheme("colors.palette");
-  const generatedData = useMemo(
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const chartRef = useRef<ChartJs | null>(null);
+  const theme = useTheme().colors.palette;
+
+  const generatedData: ChartData = useMemo(
     () => ({
       datasets: [
         {
           label: "all accounts",
           borderColor: color,
-          backgroundColor: ({ chart }) => {
-            const gradient = chart.ctx.createLinearGradient(0, 0, 0, chart.height / 1.2);
-            gradient.addColorStop(0, Color(color).alpha(0.4));
-            gradient.addColorStop(1, Color(color).alpha(0.0));
-            return gradient;
-          },
+          backgroundColor: genericBackgroundColor(color),
           pointRadius: 0,
           borderWidth: 2,
           data: data.map(d => ({
@@ -70,7 +68,7 @@ export default function Chart({ height, data, color, valueKey = "value" }: Props
     }),
     [color, data, valueKey],
   );
-  const generateOptions = useMemo(
+  const generateOptions: ChartOptions = useMemo(
     () => ({
       responsive: false,
       maintainAspectRatio: false,
@@ -124,12 +122,13 @@ export default function Chart({ height, data, color, valueKey = "value" }: Props
     }),
     [theme.text.shade10, theme.text.shade60],
   );
+
   useLayoutEffect(() => {
     if (chartRef.current) {
       chartRef.current.data = generatedData;
       chartRef.current.options = generateOptions;
-      chartRef.current.update(0);
-    } else {
+      chartRef.current.update({ duration: 0 });
+    } else if (canvasRef.current) {
       chartRef.current = new ChartJs(canvasRef.current, {
         type: "line",
         data: generatedData,
@@ -137,6 +136,7 @@ export default function Chart({ height, data, color, valueKey = "value" }: Props
       });
     }
   }, [generateOptions, generatedData]);
+
   return (
     <canvas
       ref={canvasRef}

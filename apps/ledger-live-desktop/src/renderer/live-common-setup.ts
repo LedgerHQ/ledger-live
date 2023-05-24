@@ -8,6 +8,7 @@ import { getUserId } from "~/helpers/user";
 import { setEnvOnAllThreads } from "./../helpers/env";
 import { IPCTransport } from "./IPCTransport";
 import logger from "./logger";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 listenLogs(({ id, date, ...log }) => {
   if (log.type === "hid-frame") return;
   logger.debug(log);

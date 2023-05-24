@@ -57,7 +57,7 @@ type Props = {
 };
 
 const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequested }: Props) => {
-  const type = useTheme("colors.palette.type");
+  const type = useTheme().colors.palette.type;
   const { t } = useTranslation();
   const { currency } = getMainAccount(account, parentAccount);
   const [inferredNanoFields, setInferredNanoFields] = useState<{
@@ -71,7 +71,7 @@ const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequest
 
   if (!device) return null;
 
-  let fields = [];
+  let fields: DeviceTransactionField[] = [];
   if (inferredNanoFields?.fields && Array.isArray(inferredNanoFields.fields)) {
     fields = inferredNanoFields.fields.map(field => ({
       ...field,

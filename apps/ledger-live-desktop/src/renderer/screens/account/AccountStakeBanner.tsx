@@ -7,6 +7,7 @@ type Generated = Record<string, React.FC<{ account: Account }>>;
 
 export const AccountStakeBanner = ({ account }: { account: AccountLike }) => {
   if (account && isAccount(account)) {
+    // @ts-expect-error  Need to update prop in families
     const Comp = (generated as Generated)[account.currency.family];
     if (Comp) return <Comp account={account} />;
   }

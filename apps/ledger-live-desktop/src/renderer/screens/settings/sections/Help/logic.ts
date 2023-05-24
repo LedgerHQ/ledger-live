@@ -1,9 +1,6 @@
-import { useReducer, useCallback } from "react";
+import { useReducer, useCallback, Dispatch } from "react";
 export function useActionModal() {
-  const [state, dispatch] = useReducer<ActionModalState, Action>(
-    actionModalReducer,
-    actionModalInitState,
-  );
+  const [state, dispatch] = useReducer(actionModalReducer, actionModalInitState);
   const open = useCallback(() => {
     dispatch({
       type: "open",
@@ -41,7 +38,7 @@ export function useActionModal() {
     },
   ];
 }
-type ActionModalState = {
+export type ActionModalState = {
   opened: boolean;
   fallbackOpened: boolean;
   pending: boolean;
@@ -62,6 +59,15 @@ type Action =
   | {
       type: "error";
     };
+
+export type ActionModalReducer = {
+  dispatch: Dispatch<Action>;
+  open: () => void;
+  close: () => void;
+  closeFallback: () => void;
+  handleConfirm: () => void;
+  handleError: () => void;
+};
 const actionModalInitState: ActionModalState = {
   opened: false,
   fallbackOpened: false,

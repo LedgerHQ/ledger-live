@@ -4,7 +4,7 @@ import { useObservable } from "@ledgerhq/live-common/observable";
 // eslint-disable-next-line no-restricted-imports
 import { SatStackStatus, statusObservable } from "@ledgerhq/live-common/families/bitcoin/satstack";
 
-let lastState;
+let lastState: SatStackStatus | undefined | null;
 const useSatStackStatus = (): SatStackStatus | undefined | null => {
   const value = useObservable(statusObservable, lastState || undefined);
   lastState = value;

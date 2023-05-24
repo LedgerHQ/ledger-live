@@ -12,24 +12,29 @@ export type RenderedDevice = Device & {
 
 type Props = {
   deviceMeta: RenderedDevice;
+  areKnownDevicesPairable?: boolean;
   onSelect: () => void;
 };
 
-const BleDeviceItem = ({ deviceMeta, onSelect }: Props) => {
+const BleDeviceItem = ({
+  deviceMeta,
+  onSelect,
+  areKnownDevicesPairable,
+}: Props) => {
   const { t } = useTranslation();
   const { deviceName, isAlreadyKnown } = deviceMeta;
 
   const deviceIcon = useMemo(() => {
     switch (deviceMeta.modelId) {
       case DeviceModelId.stax:
-        return <Icons.StaxRegular size={20} />;
+        return <Icons.StaxMedium size={20} />;
       case DeviceModelId.nanoX:
       default:
         return <Icons.NanoXFoldedMedium size={20} />;
     }
   }, [deviceMeta.modelId]);
 
-  if (isAlreadyKnown) {
+  if (isAlreadyKnown && !areKnownDevicesPairable) {
     return (
       <Flex mb={3} opacity="0.5">
         <Flex

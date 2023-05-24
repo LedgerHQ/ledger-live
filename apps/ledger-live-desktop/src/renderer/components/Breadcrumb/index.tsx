@@ -1,12 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import { Route } from "react-router-dom";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import AccountCrumb from "./AccountCrumb";
 import AssetCrumb from "./AssetCrumb";
 import NFTCrumb from "./NFTCrumb";
 import MarketCrumb from "./MarketCrumb";
-const Wrapper: ThemedComponent<{}> = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;

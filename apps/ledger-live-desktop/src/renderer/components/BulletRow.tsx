@@ -1,10 +1,12 @@
 import React from "react";
 import Box from "~/renderer/components/Box";
 import { OptionRowDesc } from "~/renderer/components/OptionRow";
+
 type StepType = {
-  icon: any;
-  desc: any;
+  icon: React.ReactNode;
+  desc: React.ReactNode;
 };
+
 const BulletRow = ({ step, ...p }: { step: StepType }) => {
   const { icon, desc } = step;
   return (

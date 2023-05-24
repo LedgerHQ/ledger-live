@@ -3,13 +3,13 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import DelegationIcon from "~/renderer/icons/Delegation";
 import UndelegationIcon from "~/renderer/icons/Undelegation";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   left: React.ReactNode;
   right: React.ReactNode;
   undelegation?: boolean;
 };
-const Wrapper: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
 }))`
   justify-content: space-between;

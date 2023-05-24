@@ -9,12 +9,12 @@ type Props = {
   onChange: (a: Transaction) => void;
 };
 export const getFields = (account: Account): string[] => {
-  const module = byFamily[account.currency.family];
+  const module = byFamily[account.currency.family as keyof typeof byFamily];
   if (!module) return [];
-  return module.fields;
+  return "fields" in module ? module.fields : [];
 };
 const RecipientRelatedField = (props: Props) => {
-  const module = byFamily[props.account.currency.family];
+  const module = byFamily[props.account.currency.family as keyof typeof byFamily];
   if (!module) return null;
   const Cmp = module.component;
   return <Cmp {...props} />;

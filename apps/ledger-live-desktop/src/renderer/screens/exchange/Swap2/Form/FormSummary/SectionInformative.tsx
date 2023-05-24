@@ -1,10 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { rgba } from "~/renderer/styles/helpers";
 import Button from "~/renderer/components/Button";
 import TextBase from "~/renderer/components/Text";
-const Container: ThemedComponent<{}> = styled.div`
+const Container = styled.div`
   display: flex;
   justify-content: space-between;
   background-color: ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
@@ -14,7 +13,7 @@ const Container: ThemedComponent<{}> = styled.div`
   border-radius: 4px;
   align-items: center;
 `;
-const Text: ThemedComponent<{}> = styled(TextBase).attrs(() => ({
+const Text = styled(TextBase).attrs(() => ({
   ff: "Inter",
   fontSize: "0.875rem",
   fontWeight: 500,

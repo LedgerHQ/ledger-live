@@ -19,7 +19,7 @@ const GenuineCheckNotGenuineModal = ({ isOpen, onClose, onSkip }: Props) => {
           variant="body"
           textTransform="uppercase"
           fontWeight="semiBold"
-          color="palette.error.c100"
+          color="palette.error.c50"
           fontSize={16}
         >
           {t("syncOnboarding.manual.genuineCheckNotGenuineModal.title")}

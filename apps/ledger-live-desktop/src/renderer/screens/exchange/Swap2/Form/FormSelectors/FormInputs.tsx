@@ -3,7 +3,6 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ArrowsUpDown from "~/renderer/icons/ArrowsUpDown";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { track } from "~/renderer/analytics/segment";
 import FromRow from "./FromRow";
 import ToRow from "./ToRow";
@@ -21,7 +20,6 @@ type FormInputsProps = {
   toAmount: SwapSelectorStateType["amount"];
   setFromAccount: SwapTransactionType["setFromAccount"];
   setFromAmount: SwapTransactionType["setFromAmount"];
-  setToAccount: SwapTransactionType["setToAccount"];
   setToCurrency: SwapTransactionType["setToCurrency"];
   toggleMax: SwapTransactionType["toggleMax"];
   reverseSwap: SwapTransactionType["reverseSwap"];
@@ -38,7 +36,7 @@ const RoundButton = styled(Button)`
   border-radius: 9999px;
   height: initial;
 `;
-const Main: ThemedComponent<{}> = styled.section`
+const Main = styled.section`
   display: flex;
   flex-direction: column;
   row-gap: 12px;
@@ -48,7 +46,7 @@ type SwapButtonProps = {
   onClick: SwapTransactionType["reverseSwap"];
   disabled: boolean;
 };
-function SwapButton({ onClick, disabled }: SwapButtonProps): React.ReactNode {
+function SwapButton({ onClick, disabled }: SwapButtonProps): JSX.Element {
   return (
     <RoundButton
       lighterPrimary
@@ -61,15 +59,14 @@ function SwapButton({ onClick, disabled }: SwapButtonProps): React.ReactNode {
   );
 }
 export default function FormInputs({
-  fromAccount = null,
+  fromAccount = undefined,
   toAccount,
-  fromAmount = null,
+  fromAmount = undefined,
   isMaxEnabled = false,
   setFromAccount,
   setFromAmount,
   toCurrency,
   toAmount,
-  setToAccount,
   setToCurrency,
   toggleMax,
   fromAmountError,
@@ -115,7 +112,6 @@ export default function FormInputs({
       >
         <ToRow
           toCurrency={toCurrency}
-          setToAccount={setToAccount}
           setToCurrency={setToCurrency}
           toAmount={toAmount}
           fromAccount={fromAccount}

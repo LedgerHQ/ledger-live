@@ -3,29 +3,30 @@ import ModalContent from "./ModalContent";
 import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
 import { RenderProps } from ".";
-type Props = {
+type Props<Data> = {
   title?: React.ReactNode;
   subTitle?: React.ReactNode;
-  headerStyle?: any;
-  onBack?: (a: void) => void;
-  onClose?: (a: void) => void;
-  render?: (a?: RenderProps | null) => any;
-  renderFooter?: (a?: RenderProps | null) => any;
-  modalFooterStyle?: any;
-  renderProps?: RenderProps;
+  headerStyle?: React.CSSProperties;
+  onBack?: (() => void) | undefined;
+  onClose?: (() => void) | undefined;
+  render?: (a?: RenderProps<Data> | null) => React.ReactNode;
+  renderFooter?: (a?: RenderProps<Data> | null) => React.ReactNode;
+  modalFooterStyle?: React.CSSProperties;
+  renderProps?: RenderProps<Data>;
   noScroll?: boolean;
-  refocusWhenChange?: any;
+  refocusWhenChange?: unknown;
   backButtonComponent?: React.ReactNode;
+  pt?: number;
 };
-class ModalBody extends PureComponent<Props> {
-  componentDidUpdate(prevProps: Props) {
+class ModalBody<Data> extends PureComponent<Props<Data>> {
+  componentDidUpdate(prevProps: Props<Data>) {
     const shouldFocus = prevProps.refocusWhenChange !== this.props.refocusWhenChange;
     if (shouldFocus && this._content.current) {
-      this._content.current.focus();
+      this._content.current?.focus();
     }
   }
 
-  _content: React$ElementRef<any> = React.createRef();
+  _content = React.createRef<HTMLDivElement>();
   render() {
     const {
       onBack,
@@ -39,6 +40,7 @@ class ModalBody extends PureComponent<Props> {
       renderProps,
       noScroll,
       modalFooterStyle,
+      pt,
     } = this.props;
 
     // For `renderFooter` returning falsy values, we need to resolve first.
@@ -54,7 +56,7 @@ class ModalBody extends PureComponent<Props> {
         >
           {title || null}
         </ModalHeader>
-        <ModalContent ref={this._content} noScroll={noScroll}>
+        <ModalContent pt={pt} ref={this._content} noScroll={noScroll}>
           {render && render(renderProps)}
         </ModalContent>
         {renderedFooter && <ModalFooter style={modalFooterStyle}>{renderedFooter}</ModalFooter>}

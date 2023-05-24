@@ -1,12 +1,5 @@
 import React from "react";
-const ExclamationCircle = ({
-  size,
-  color = "currentColor",
-  ...p
-}: {
-  size: number;
-  color?: string;
-}) => (
+const ExclamationCircle = ({ size, color = "currentColor" }: { size: number; color?: string }) => (
   <svg viewBox="0 0 16 16" height={size} width={size}>
     <path
       fill={color}

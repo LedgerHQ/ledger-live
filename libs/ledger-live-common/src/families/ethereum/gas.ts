@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
+import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { apiForCurrency } from "../../api/Ethereum";
+import { apiForCurrency } from "./api";
 import { EIP1559ShouldBeUsed } from "./transaction";
 import { NetworkInfo, Transaction } from "./types";
 import { inferDynamicRange } from "../../range";
 import { Account } from "@ledgerhq/types-live";
 import { makeLRUCache } from "../../cache";
-import { getEnv } from "../../env";
 
 export const getNetworkInfo = async (
   currency: CryptoCurrency
@@ -79,7 +79,9 @@ export const inferMaxFeePerGas = (
 ): BigNumber | null | undefined => {
   if (tx.maxFeePerGas) return tx.maxFeePerGas;
 
-  const amplifiedBaseFee = networkInfo?.nextBaseFeePerGas?.multipliedBy(2);
+  const amplifiedBaseFee = networkInfo?.nextBaseFeePerGas
+    ?.multipliedBy(getEnv("EIP1559_BASE_FEE_MULTIPLIER"))
+    .integerValue();
   return amplifiedBaseFee?.plus(priorityFeePerGas || 0);
 };
 

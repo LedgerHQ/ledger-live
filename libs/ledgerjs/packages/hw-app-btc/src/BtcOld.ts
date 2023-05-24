@@ -7,6 +7,7 @@ import { createTransaction } from "./createTransaction";
 import type { AddressFormat } from "./getWalletPublicKey";
 import { getWalletPublicKey } from "./getWalletPublicKey";
 import { pathArrayToString, pathStringToArray } from "./bip32";
+import { signMessage } from "./signMessage";
 export type { AddressFormat };
 
 /**
@@ -135,6 +136,23 @@ export default class BtcOld {
       );
     }
     return createTransaction(this.transport, arg);
+  }
+
+  async signMessage({
+    path,
+    messageHex,
+  }: {
+    path: string;
+    messageHex: string;
+  }): Promise<{
+    v: number;
+    r: string;
+    s: string;
+  }> {
+    return signMessage(this.transport, {
+      path,
+      messageHex,
+    });
   }
 }
 

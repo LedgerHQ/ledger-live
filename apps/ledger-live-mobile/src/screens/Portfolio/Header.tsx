@@ -43,7 +43,7 @@ const NotificationsButton = () => {
       <Notifications
         size={24}
         color={colors.neutral.c100}
-        dotColor={colors.error.c80}
+        dotColor={colors.error.c40}
         isOn={notificationsCount > 0}
       />
     </Touchable>
@@ -94,6 +94,7 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
       flexDirection="row"
       alignItems="center"
       justifyContent="space-between"
+      py={3}
     >
       <Flex
         flexDirection={"row"}
@@ -103,11 +104,12 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
         flexGrow={1}
       >
         <Text
-          variant={"large"}
+          variant={"h4"}
           fontWeight={"semiBold"}
           color={"neutral.c100"}
           flexGrow={0}
           flexShrink={1}
+          textAlign="center"
           mr={3}
           numberOfLines={2}
         >

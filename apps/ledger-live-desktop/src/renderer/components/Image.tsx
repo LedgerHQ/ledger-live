@@ -13,7 +13,6 @@
 
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import useTheme from "~/renderer/hooks/useTheme";
 type Props = {
   resource:
@@ -23,13 +22,13 @@ type Props = {
     | string;
   alt: string;
   className?: string;
-};
-const Img: ThemedComponent<{}> = styled.img`
+} & React.ComponentProps<typeof Img>;
+const Img = styled.img`
   user-select: none;
   pointer-events: none;
 `;
 const Image = ({ resource, alt, className, ...rest }: Props) => {
-  const type = useTheme("colors.palette.type");
+  const type = useTheme().colors.palette.type;
   const asset = typeof resource === "object" ? resource[type] : resource;
   return <Img {...rest} alt={alt} className={className} src={asset} />;
 };

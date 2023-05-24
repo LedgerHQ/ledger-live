@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { resetSwapLoginAndKYCData } from "~/renderer/actions/settings";
 import { closeModal } from "~/renderer/actions/modals";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Text from "~/renderer/components/Text";
@@ -13,7 +12,7 @@ import Button from "~/renderer/components/Button";
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import { rgba } from "~/renderer/styles/helpers";
 import { clearStorageData } from "~/renderer/storage";
-const Logo: ThemedComponent<{}> = styled.div`
+const Logo = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,7 +46,7 @@ const SwapResetKYC = () => {
     <Modal
       name="MODAL_SWAP_RESET_KYC"
       centered
-      render={({ data, onClose }) => (
+      render={({ onClose }) => (
         <ModalBody
           onClose={onClose}
           render={() => (

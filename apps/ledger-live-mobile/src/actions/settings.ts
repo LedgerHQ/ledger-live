@@ -50,7 +50,6 @@ import {
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
   SettingsSetDismissedDynamicCardsPayload,
-  SettingsSetStatusCenterPayload,
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
   SettingsSetFeatureFlagsBannerVisiblePayload,
@@ -259,9 +258,6 @@ export const setWalletTabNavigatorLastVisitedTab =
   );
 export const setDateFormat = createAction<SettingsSetDateFormatPayload>(
   SettingsActionTypes.SETTINGS_SET_DATE_FORMAT,
-);
-export const setStatusCenter = createAction<SettingsSetStatusCenterPayload>(
-  SettingsActionTypes.SET_STATUS_CENTER,
 );
 export const setOverriddenFeatureFlag =
   createAction<SettingsSetOverriddenFeatureFlagPlayload>(

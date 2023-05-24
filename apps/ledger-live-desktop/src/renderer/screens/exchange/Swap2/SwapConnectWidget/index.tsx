@@ -1,35 +1,27 @@
 import * as remote from "@electron/remote";
-import { WebviewTag } from "electron";
 import React, { forwardRef, useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { setSwapKYCStatus } from "~/renderer/actions/settings";
 import Box from "~/renderer/components/Box";
-import { handleMessageEvent, handleNewWindowEvent } from "./utils";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { Message, handleMessageEvent, handleNewWindowEvent } from "./utils";
 import TopBar from "./TopBar";
-type Message =
-  | {
-      type: "setToken";
-      token: string;
-    }
-  | {
-      type: "closeWidget";
-    };
-const Container: ThemedComponent<{}> = styled.div`
+import { WebviewTag } from "~/renderer/components/Web3AppWebview/types";
+
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: 100%;
 `;
 
-const CustomWebview: ThemedComponent<{}> = styled("webview")`
+const CustomWebview = styled("webview")`
   border: none;
   width: 100%;
   flex: 1;
   transition: opacity 200ms ease-out;
 `;
-const Wrapper: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   flex: 1,
 }))`
   position: relative;
@@ -41,7 +33,7 @@ type Props = {
 };
 const SwapConnectWidget = (
   { provider, url, onClose }: Props,
-  webviewRef: React.MutableRefObject<WebviewTag>,
+  webviewRef: React.ForwardedRef<WebviewTag> | null,
 ) => {
   const dispatch = useDispatch();
   const handleMessageData = useCallback(
@@ -77,7 +69,7 @@ const SwapConnectWidget = (
 
   // Setup communication between webview and application
   useEffect(() => {
-    const webview = webviewRef.current;
+    const webview = webviewRef && "current" in webviewRef && webviewRef.current;
     if (webview) {
       // For mysterious reasons, the webpreferences attribute does not
       // pass through the styled component when added in the JSX.
@@ -94,7 +86,11 @@ const SwapConnectWidget = (
   }, [handleMessage, handleNewWindow, webviewRef]);
   return (
     <Container>
-      <TopBar provider={provider} onClose={onClose} webviewRef={webviewRef} />
+      <TopBar
+        provider={provider}
+        onClose={onClose}
+        webviewRef={webviewRef as React.MutableRefObject<WebviewTag>}
+      />
       <Wrapper>
         <CustomWebview
           src={url.toString()}

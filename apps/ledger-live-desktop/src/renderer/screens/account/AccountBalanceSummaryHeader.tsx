@@ -1,11 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import {
-  ValueChange,
-  BalanceHistoryWithCountervalue,
-} from "@ledgerhq/live-common/portfolio/v2/types";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { BalanceTotal, BalanceDiff } from "~/renderer/components/BalanceInfos";
 import Box, { Tabbable } from "~/renderer/components/Box";
@@ -13,8 +9,8 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Price from "~/renderer/components/Price";
 import PillsDaysCount from "~/renderer/components/PillsDaysCount";
 import Swap from "~/renderer/icons/Swap";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";
+
 type Props = {
   isAvailable: boolean;
   cryptoChange: ValueChange;
@@ -76,7 +72,7 @@ export default function AccountBalanceSummaryHeader({
           onClick={() => setCountervalueFirst(!countervalueFirst)}
           showCryptoEvenIfNotAvailable
           isAvailable={isAvailable}
-          totalBalance={data[0].balance}
+          totalBalance={data[0].balance || 0}
           unit={data[0].unit}
           dynamicSignificantDigits={data[0].dynamicSignificantDigits}
         >
@@ -112,7 +108,6 @@ export default function AccountBalanceSummaryHeader({
               from={currency}
               withActivityCurrencyColor
               withEquality
-              color="warmGrey"
               fontSize={6}
               iconSize={16}
               placeholder={typeof data[1].balance !== "number" ? " " : undefined}
@@ -128,7 +123,7 @@ export default function AccountBalanceSummaryHeader({
         flow={7}
       >
         <BalanceDiff
-          totalBalance={data[0].balance}
+          totalBalance={data[0].balance || 0}
           valueChange={data[0].valueChange}
           unit={data[0].unit}
           isAvailable={isAvailable}
@@ -138,12 +133,12 @@ export default function AccountBalanceSummaryHeader({
     </Box>
   );
 }
-const Wrapper: ThemedComponent<{}> = styled(Box)`
+const Wrapper = styled(Box)`
   display: flex;
   align-items: center;
   flex-direction: row;
 `;
-const SwapButton: ThemedComponent<{}> = styled(Tabbable).attrs(() => ({
+const SwapButton = styled(Tabbable).attrs(() => ({
   color: "palette.text.shade100",
   ff: "Inter",
   fontSize: 7,

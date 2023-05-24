@@ -1,11 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import styled, { DefaultTheme } from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import Box from "~/renderer/components/Box";
 import LiveAppIcon from "~/renderer/components/WebPlatformPlayer/LiveAppIcon";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const getBranchColor = (branch, colors) => {
+
+const getBranchColor = (branch: string, colors: DefaultTheme["colors"]) => {
   switch (branch) {
     case "soon":
       return colors.palette.text.shade100;
@@ -17,21 +17,21 @@ const getBranchColor = (branch, colors) => {
       return "currentColor";
   }
 };
-const HeaderContainer: ThemedComponent<{}> = styled(Box)`
+const HeaderContainer = styled(Box)`
   width: 100%;
   flex-direction: row;
   align-items: center;
 `;
-export const IconContainer: ThemedComponent<{}> = styled(Box).attrs(p => ({
+export const IconContainer = styled(Box).attrs(() => ({
   mr: 2,
 }))`
   user-select: none;
   pointer-events: none;
 `;
-const TitleContainer: ThemedComponent<{}> = styled.div`
+const TitleContainer = styled.div`
   flex-shrink: 1;
 `;
-const AppName: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const AppName = styled(Box).attrs(p => ({
   ff: "Inter|SemiBold",
   fontSize: 5,
   textAlign: "left",
@@ -39,7 +39,7 @@ const AppName: ThemedComponent<{}> = styled(Box).attrs(p => ({
 }))`
   line-height: 18px;
 `;
-const Content: ThemedComponent<{}> = styled(Box)`
+const Content = styled(Box)`
   margin-top: 16px;
   width: 100%;
 
@@ -47,11 +47,11 @@ const Content: ThemedComponent<{}> = styled(Box)`
     display: none;
   }
 `;
-const BranchBadge: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const BranchBadge = styled(Box).attrs<{ branch: string }>(p => ({
   ff: "Inter|SemiBold",
   fontSize: 1,
   color: getBranchColor(p.branch, p.theme.colors),
-}))`
+}))<{ branch: string }>`
   display: inline-block;
   padding: 1px 4px;
   border: 1px solid currentColor;

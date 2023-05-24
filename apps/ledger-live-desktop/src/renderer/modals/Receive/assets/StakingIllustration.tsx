@@ -4,8 +4,8 @@ export default function StakingIllustration({
   size = 150,
   color = "currentColor",
 }: {
-  size: number;
-  color: string;
+  size?: number;
+  color?: string;
 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 106 152" fill="none">

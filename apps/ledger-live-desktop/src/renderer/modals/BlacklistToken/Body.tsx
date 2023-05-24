@@ -5,11 +5,10 @@ import ModalBody from "~/renderer/components/Modal/ModalBody";
 import React from "react";
 import Footer from "~/renderer/modals/BlacklistToken/Footer";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-const Body = ({ onClose, token }: { onClose: () => void; token: TokenCurrency }) => {
+const Body = ({ onClose, token }: { onClose?: () => void; token: TokenCurrency }) => {
   const { t } = useTranslation();
   return (
     <ModalBody
-      preventBackdropClick
       onClose={onClose}
       title={t("blacklistToken.title")}
       render={() => (

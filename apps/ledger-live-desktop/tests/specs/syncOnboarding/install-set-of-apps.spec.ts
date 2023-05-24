@@ -1,5 +1,4 @@
 import { expect } from "@playwright/test";
-
 import test from "../../fixtures/common";
 import { InstallSetOfApps } from "../../models/InstallSetOfAppsPage";
 import { SettingsPage } from "../../models/SettingsPage";
@@ -54,6 +53,7 @@ test("Install set of apps", async ({ page }) => {
     await deviceAction.mockOpened();
     await installSetOfAppsPage.waitForInstallingTextToDisappear();
     await expect(page).toHaveScreenshot("debug-install-set-of-apps-completed.png");
+    await deviceAction.complete();
   });
 
   await test.step("restore apps from Ledger Stax", async () => {
@@ -82,6 +82,7 @@ test("Install set of apps", async ({ page }) => {
     await deviceAction.mockOpened();
     await installSetOfAppsPage.waitForInstallingTextToDisappear();
     await expect(page).toHaveScreenshot("debug-restore-set-of-apps-completed.png");
+    await deviceAction.complete();
   });
 
   await test.step("skip install or restore set of apps step", async () => {

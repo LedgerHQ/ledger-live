@@ -1,17 +1,23 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Dispatch } from "redux";
+import { Dispatch, Action } from "redux";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import {
+  PortfolioRange,
+  DeviceModelInfo,
+  FeatureId,
+  Feature,
+  DeviceInfo,
+} from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { DeviceModelInfo, FeatureId, Feature } from "@ledgerhq/types-live";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import {
   SettingsState as Settings,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,
+  SettingsState,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 export type SaveSettings = (
@@ -28,11 +34,11 @@ export const setCountervalueFirst = (countervalueFirst: boolean) =>
   saveSettings({
     countervalueFirst,
   });
-export const setAccountsViewMode = (accountsViewMode: any) =>
+export const setAccountsViewMode = (accountsViewMode: "list" | "card" | undefined) =>
   saveSettings({
     accountsViewMode,
   });
-export const setNftsViewMode = (nftsViewMode: any) =>
+export const setNftsViewMode = (nftsViewMode: "list" | "grid" | undefined) =>
   saveSettings({
     nftsViewMode,
   });
@@ -64,7 +70,7 @@ export const setShareAnalytics = (shareAnalytics: boolean) =>
   saveSettings({
     shareAnalytics,
   });
-export const setAutoLockTimeout = (autoLockTimeout: any) =>
+export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
     autoLockTimeout,
   });
@@ -115,7 +121,7 @@ export const setUSBTroubleshootingIndex = (USBTroubleshootingIndex?: number) =>
   saveSettings({
     USBTroubleshootingIndex,
   });
-export function useHideEmptyTokenAccounts() {
+export function useHideEmptyTokenAccounts(): [boolean, (hideEmptyTokenAccounts: boolean) => void] {
   const dispatch = useDispatch();
   const value = useSelector(hideEmptyTokenAccountsSelector);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
@@ -134,7 +140,10 @@ export function useHideEmptyTokenAccounts() {
   );
   return [value, setter];
 }
-export function useFilterTokenOperationsZeroAmount() {
+export function useFilterTokenOperationsZeroAmount(): [
+  boolean,
+  (filterTokenOperationsZeroAmount: boolean) => void,
+] {
   const dispatch = useDispatch();
   const value = useSelector(filterTokenOperationsZeroAmountSelector);
   const setter = useCallback(
@@ -151,12 +160,16 @@ export function useFilterTokenOperationsZeroAmount() {
   );
   return [value, setter];
 }
-type PortfolioRangeOption = {
+export type PortfolioRangeOption = {
   key: PortfolioRange;
   value: string;
   label: string;
 };
-export function useTimeRange() {
+export function useTimeRange(): [
+  PortfolioRange,
+  (range: PortfolioRangeOption | PortfolioRange) => void,
+  PortfolioRangeOption[],
+] {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const val = useSelector(selectedTimeRangeSelector);
@@ -175,6 +188,7 @@ export function useTimeRange() {
   }));
   return [val, setter, options];
 }
+
 export const setShowClearCacheBanner = (showClearCacheBanner: boolean) =>
   saveSettings({
     showClearCacheBanner,
@@ -220,23 +234,30 @@ export const unhideNftCollection = (collectionId: string) => ({
   type: "UNHIDE_NFT_COLLECTION",
   payload: collectionId,
 });
-type FetchSettings = (a: any) => (a: Dispatch<any>) => void;
-export const fetchSettings: FetchSettings = (settings: any) => dispatch => {
+type FetchSettings = (a: SettingsState) => (a: Dispatch<Action<"FETCH_SETTINGS">>) => void;
+export const fetchSettings: FetchSettings = (settings: SettingsState) => dispatch => {
   dispatch({
     type: "FETCH_SETTINGS",
     payload: settings,
   });
 };
+
+type ExchangePairs = Array<{
+  from: Currency;
+  to: Currency;
+  exchange: string | undefined | null;
+}>;
+
 type SetExchangePairs = (
-  a: Array<{
-    from: Currency;
-    to: Currency;
-    exchange: string | undefined | null;
-  }>,
-) => any;
+  a: ExchangePairs,
+) => {
+  type: "SETTINGS_SET_PAIRS";
+  payload: ExchangePairs;
+};
+
 export const setExchangePairsAction: SetExchangePairs = pairs => ({
   type: "SETTINGS_SET_PAIRS",
-  pairs,
+  payload: pairs,
 });
 export const dismissBanner = (bannerKey: string) => ({
   type: "SETTINGS_DISMISS_BANNER",
@@ -251,7 +272,7 @@ export const setLastSeenDeviceInfo = ({
   latestFirmware,
 }: {
   lastSeenDevice: DeviceModelInfo;
-  latestFirmware: any;
+  latestFirmware: unknown;
 }) => ({
   type: "LAST_SEEN_DEVICE_INFO",
   payload: {
@@ -310,9 +331,13 @@ export const setOverriddenFeatureFlag = (key: FeatureId, value: Feature | undefi
     value,
   },
 });
-export const setOverriddenFeatureFlags = (overriddenFeatureFlags: {
-  [key: FeatureId]: Feature;
-}) => ({
+export const setOverriddenFeatureFlags = (
+  overriddenFeatureFlags: Partial<
+    {
+      [key in FeatureId]: Feature;
+    }
+  >,
+) => ({
   type: "SET_OVERRIDDEN_FEATURE_FLAGS",
   payload: {
     overriddenFeatureFlags,

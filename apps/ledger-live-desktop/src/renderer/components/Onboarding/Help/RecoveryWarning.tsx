@@ -20,9 +20,10 @@ export default function RecoveryWarning() {
   const { t } = useTranslation();
   const locale = useSelector(languageSelector) || "en";
 
-  const onClickLink = useCallback(() => openURL(urls.faq[locale in urls.faq ? locale : "en"]), [
-    locale,
-  ]);
+  const onClickLink = useCallback(
+    () => openURL(urls.faq[locale in urls.faq ? (locale as keyof typeof urls.faq) : "en"]),
+    [locale],
+  );
 
   return (
     <ScrollArea isInsideDrawer>

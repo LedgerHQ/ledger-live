@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { rgba } from "~/renderer/styles/helpers";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -14,7 +13,7 @@ import IconClock from "~/renderer/icons/Clock";
 import Button from "~/renderer/components/Button";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-export const CircleWrapper: ThemedComponent<{}> = styled.div`
+export const CircleWrapper = styled.div<{ size: number | string }>`
   border-radius: 50%;
   border: 1px solid transparent;
   background: ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
@@ -26,7 +25,7 @@ export const CircleWrapper: ThemedComponent<{}> = styled.div`
   display: flex;
   position: relative;
 `;
-const WrapperClock: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const WrapperClock = styled(Box).attrs(() => ({
   bg: "palette.background.paper",
   color: "palette.text.shade60",
 }))`
@@ -36,7 +35,7 @@ const WrapperClock: ThemedComponent<{}> = styled(Box).attrs(() => ({
   right: -5px;
   padding: 3px;
 `;
-const Container: ThemedComponent<{}> = styled(Box).attrs({
+const Container = styled(Box).attrs({
   p: 20,
   justifyContent: "center",
   alignItems: "center",

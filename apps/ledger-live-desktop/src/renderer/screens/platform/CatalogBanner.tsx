@@ -1,10 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import PlatformCatalogIllu from "~/renderer/images/platform-catalog-illu.svg";
 import Box from "../../components/Box";
-const Container: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const Container = styled(Box).attrs(p => ({
   flex: 0,
   horizontal: true,
   fontSize: 4,
@@ -17,7 +16,7 @@ const Container: ThemedComponent<{}> = styled(Box).attrs(p => ({
   align-items: stretch;
   justify-content: space-between;
 `;
-const Title = styled(Box).attrs(p => ({
+const Title = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   fontSize: 5,
   horizontal: true,

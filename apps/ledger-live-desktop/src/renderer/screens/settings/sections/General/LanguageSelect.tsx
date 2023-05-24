@@ -2,7 +2,6 @@ import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   allLanguages,
   prodStableLanguages,
@@ -46,7 +45,7 @@ export const languageLabels: { [key in Locale]: string } = {
   zh: "简体中文",
 };
 
-type ChangeLangArgs = { value: Locale; label: string };
+type ChangeLangArgs = { value: Locale | null; label: string };
 
 type Props = {
   disableLanguagePrompt?: boolean;
@@ -60,9 +59,6 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
   const dispatch = useDispatch();
 
   const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<boolean>(false);
-
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
-  // TODO: reactivate this feature flag once QA is done
 
   const { availableLanguages: availableDeviceLanguages } = useAvailableLanguagesForDevice(
     lastSeenDevice?.deviceInfo,
@@ -93,11 +89,15 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
     i18n.changeLanguage(language);
   }, [i18n, language]);
 
+  const avoidEmptyValue = (language?: ChangeLangArgs | null) =>
+    language && handleChangeLanguage(language);
+
   const handleChangeLanguage = useCallback(
-    ({ value: languageKey }: ChangeLangArgs) => {
+    (language?: ChangeLangArgs) => {
       const deviceLanguageId = lastSeenDevice?.deviceInfo.languageId;
+      const key = language?.value ?? getInitialLanguageLocale();
       const potentialDeviceLanguage =
-        localeIdToDeviceLanguage[languageKey ?? getInitialLanguageLocale()];
+        localeIdToDeviceLanguage[key as keyof typeof localeIdToDeviceLanguage];
       const langAvailableOnDevice =
         potentialDeviceLanguage !== undefined &&
         availableDeviceLanguages.includes(potentialDeviceLanguage);
@@ -108,7 +108,6 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
         langAvailableOnDevice &&
         deviceLanguageId !== undefined &&
         idsToLanguage[deviceLanguageId] !== potentialDeviceLanguage &&
-        deviceLocalizationFeatureFlag?.enabled &&
         !disableLanguagePrompt
       ) {
         track("Page LiveLanguageChange DeviceLanguagePrompt", {
@@ -117,12 +116,11 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
         setIsDeviceLanguagePromptOpen(true);
       }
 
-      dispatch(setLanguage(languageKey));
+      dispatch(setLanguage(language?.value));
     },
     [
       lastSeenDevice?.deviceInfo.languageId,
       availableDeviceLanguages,
-      deviceLocalizationFeatureFlag?.enabled,
       disableLanguagePrompt,
       dispatch,
     ],
@@ -141,7 +139,7 @@ const LanguageSelect: React.FC<Props> = ({ disableLanguagePrompt }) => {
         small
         minWidth={260}
         isSearchable={false}
-        onChange={handleChangeLanguage}
+        onChange={avoidEmptyValue}
         renderSelected={(item: { name: unknown } | undefined) => item && item.name}
         value={currentLanguage}
         options={languages}

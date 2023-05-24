@@ -18,7 +18,7 @@ export function NotAvailable() {
     <BaseModal
       isOpen={isOpen}
       noCloseButton
-      Icon={Icons.RedelegateRegular}
+      Icon={Icons.RedelegateMedium}
       title={t("transfer.swap2.form.notAvailable.title")}
       description={t("transfer.swap2.form.notAvailable.content")}
     >

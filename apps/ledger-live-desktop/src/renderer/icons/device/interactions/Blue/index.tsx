@@ -1,19 +1,18 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Frame from "./Frame";
 import Screen from "./Screen";
 import Hint from "../Hint";
-import USBCable from "../USBCable";
-const DeviceContainer: ThemedComponent<{
-  width?: number;
-  height?: number;
-}> = styled.div.attrs(p => ({
+import USBCable, { classByState } from "../USBCable";
+const DeviceContainer = styled.div.attrs((p: { width?: number; height?: number }) => ({
   style: {
     width: p.width || 300,
     height: p.height || 60,
   },
-}))`
+}))<{
+  width?: number;
+  height?: number;
+}>`
   margin: 32px auto 64px auto;
   justify-content: center;
   align-items: center;
@@ -29,7 +28,7 @@ const DeviceSVG = styled.svg`
 `;
 type Props = {
   open?: boolean;
-  usb?: string;
+  usb?: keyof typeof classByState;
   screen?: string;
   xOffset?: number;
   error?: boolean;

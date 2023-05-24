@@ -281,22 +281,24 @@ const NftLinksPanel = ({
   };
 
   return (
-    <QueuedDrawer
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background.drawer,
-        },
-      ]}
-      isRequestingToBeOpened={isOpen}
-      onClose={onClose}
-    >
-      <TrackScreen
-        category="NFT settings"
-        refreshSource={false}
-        type="drawer"
-      />
-      {content}
+    <>
+      <QueuedDrawer
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background.drawer,
+          },
+        ]}
+        isRequestingToBeOpened={isOpen && !bottomHideCollectionOpen}
+        onClose={onClose}
+      >
+        <TrackScreen
+          category="NFT settings"
+          refreshSource={false}
+          type="drawer"
+        />
+        {content}
+      </QueuedDrawer>
       <HideNftDrawer
         nftContract={nftContract}
         nftId={nftId}
@@ -304,7 +306,7 @@ const NftLinksPanel = ({
         isOpened={bottomHideCollectionOpen}
         onClose={closeHideModal}
       />
-    </QueuedDrawer>
+    </>
   );
 };
 

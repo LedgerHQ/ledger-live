@@ -86,7 +86,7 @@ const StepVote = ({
       <Alert type="primary" mb={4} learnMoreUrl={urls.celo.learnMore}>
         <Trans i18nKey="celo.revoke.steps.vote.info" />
       </Alert>
-      <S.ValidatorsFieldContainer vertical scroll>
+      <S.ValidatorsFieldContainer scroll>
         <Box p={1}>
           {mappedVotes.map(({ vote, validatorGroup }) => {
             const active =

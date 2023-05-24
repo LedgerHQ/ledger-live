@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-
 import { SettingsSectionRow } from "~/renderer/screens/settings/SettingsSection";
 import Button from "~/renderer/components/Button";
 

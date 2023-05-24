@@ -38,14 +38,14 @@ const OnboardingSetupDeviceInformation = () => {
         <List
           items={[...content].slice(0, 4).map(item => ({
             title: t(item),
-            bullet: <Icons.CheckAloneMedium size={20} color="success.c100" />,
+            bullet: <Icons.CheckAloneMedium size={20} color="success.c50" />,
           }))}
         />
         <Flex my={8} borderBottomColor="neutral.c40" borderBottomWidth={1} />
         <List
           items={[...content].slice(4, 8).map(item => ({
             title: t(item),
-            bullet: <Icons.CloseMedium size={20} color="error.c100" />,
+            bullet: <Icons.CloseMedium size={20} color="error.c50" />,
           }))}
         />
       </ScrollListContainer>

@@ -17,11 +17,18 @@ type ExtraProps<O = unknown, M extends boolean = false, G extends GroupBase<O> =
   /* A render function to customize the contents. */
   render?: (props: React.PropsWithChildren<ValueContainerProps<O, M, G>>) => React.ReactNode;
 };
+
+export type MixedProps<
+  O = unknown,
+  M extends boolean = false,
+  G extends GroupBase<O> = GroupBase<O>,
+> = ValueContainerProps<O, M, G> & ExtraProps<O, M, G>;
+
 export function ValueContainer<
   O = unknown,
   M extends boolean = false,
   G extends GroupBase<O> = GroupBase<O>,
->(props: ValueContainerProps<O, M, G> & ExtraProps<O, M, G>): JSX.Element {
+>(props: MixedProps<O, M, G>): JSX.Element {
   const color = props.selectProps.isDisabled ? "neutral.c60" : "neutral.c100";
   return (
     <components.ValueContainer {...props}>

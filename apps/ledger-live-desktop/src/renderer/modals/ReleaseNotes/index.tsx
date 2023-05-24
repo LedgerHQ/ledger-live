@@ -5,7 +5,7 @@ const ReleaseNotesModal = () => (
   <Modal
     name="MODAL_RELEASE_NOTES"
     centered
-    render={({ data, onClose }) => <ReleaseNotesBody version={data} onClose={onClose} />}
+    render={({ onClose }) => <ReleaseNotesBody onClose={onClose} />}
   />
 );
 export default ReleaseNotesModal;

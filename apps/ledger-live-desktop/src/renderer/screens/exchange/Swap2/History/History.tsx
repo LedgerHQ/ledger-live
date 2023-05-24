@@ -36,10 +36,7 @@ const ExportOperationsWrapper = styled(Box)`
   z-index: 10;
 `;
 const exportOperations = async (
-  path: {
-    canceled: boolean;
-    filePath: string;
-  },
+  path: Electron.SaveDialogReturnValue,
   csv: string,
   callback?: () => void,
 ) => {
@@ -56,7 +53,7 @@ const History = () => {
   const [mappedSwapOperations, setMappedSwapOperations] = useState<
     SwapHistorySection[] | undefined | null
   >(null);
-  const history = useHistory();
+  const history = useHistory<{ swapId?: string }>();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const defaultOpenedOnce = useRef(false);
@@ -121,7 +118,7 @@ const History = () => {
       const updatedAccounts = await Promise.all(accounts.map(updateAccountSwapStatus));
       if (!cancelled) {
         updatedAccounts.filter(Boolean).forEach(account => {
-          dispatch(updateAccountWithUpdater(account.id, a => account));
+          account && dispatch(updateAccountWithUpdater(account.id, () => account));
         });
       }
     }

@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { useState, useEffect, useMemo, useRef } from "react";
-import { getTronSuperRepresentatives } from "../../api/Tron";
+import { getTronSuperRepresentatives } from "./api";
 import { BigNumber } from "bignumber.js";
 import type { SuperRepresentative, TronAccount, Vote } from "./types";
 import { useBridgeSync } from "../../bridge/react";

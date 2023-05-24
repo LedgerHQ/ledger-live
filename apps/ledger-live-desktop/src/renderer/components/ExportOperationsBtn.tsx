@@ -11,18 +11,20 @@ import DownloadCloud from "~/renderer/icons/DownloadCloud";
 import Label from "~/renderer/components/Label";
 import Button from "~/renderer/components/Button";
 import { activeAccountsSelector } from "~/renderer/reducers/accounts";
+
+type Props = {
+  t: TFunction;
+  openModal: (b: string) => void;
+  primary?: boolean;
+  accounts: Account[];
+};
 const mapDispatchToProps = {
   openModal,
 };
 const mapStateToProps = createStructuredSelector({
   accounts: activeAccountsSelector,
 });
-class ExportOperationsBtn extends Component<{
-  t: TFunction;
-  openModal: (b: string, a: any) => void;
-  primary?: boolean;
-  accounts: Account[];
-}> {
+class ExportOperationsBtn extends Component<Props> {
   openModal = () => this.props.openModal("MODAL_EXPORT_OPERATIONS");
   render() {
     const { t, primary, accounts } = this.props;
@@ -47,10 +49,11 @@ class ExportOperationsBtn extends Component<{
     );
   }
 }
-export default compose(
+export default compose<React.ComponentType<Props>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(ExportOperationsBtn);
+
 const LabelWrapper = styled(Label)`
   &:hover {
     color: ${p => p.theme.colors.wallet};

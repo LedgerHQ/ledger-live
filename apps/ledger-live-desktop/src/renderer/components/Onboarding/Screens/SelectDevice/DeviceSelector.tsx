@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Flex } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-
 import { DeviceSelectorOption } from "./DeviceSelectorOption";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 
@@ -51,7 +50,7 @@ export function DeviceSelector({ onClick }: DeviceSelectorProps) {
           id={`device-${id}`}
           key={id}
           label={getDeviceModel(id as DeviceModelId).productName}
-          Illu={<DeviceIllustration deviceId={id} />}
+          Illu={<DeviceIllustration deviceId={id as DeviceModelId} />}
           onClick={() => enabled && onClick(id as DeviceModelId)}
           isFirst={index === 0}
           isLast={index === arr.length - 1}

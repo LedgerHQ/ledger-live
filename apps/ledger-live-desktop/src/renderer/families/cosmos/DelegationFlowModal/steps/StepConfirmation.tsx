@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import styled, { withTheme } from "styled-components";
+import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
+import { Theme } from "@ledgerhq/react-ui";
+import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -14,6 +16,7 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
+
 const Container: ThemedComponent<{
   shouldSpace?: boolean;
 }> = styled(Box).attrs(() => ({
@@ -24,16 +27,34 @@ const Container: ThemedComponent<{
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 function StepConfirmation({
-  account,
   t,
   optimisticOperation,
   error,
-  theme,
-  device,
   signed,
+  transaction,
+  source,
+  account,
 }: StepProps & {
-  theme: any;
+  theme: Theme;
 }) {
+  const voteAccAddress = transaction?.validators[0]?.address;
+  const currencyName = account.currency.name.toLowerCase();
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
+
+  useEffect(() => {
+    if (optimisticOperation && voteAccAddress && validators) {
+      const chosenValidator = validators.find(v => v.validatorAddress === voteAccAddress);
+      const currency = account?.currency?.id?.toUpperCase();
+      track("staking_completed", {
+        currency,
+        validator: chosenValidator.name || voteAccAddress,
+        source,
+        delegation: "delegation",
+        flow: "stake",
+      });
+    }
+  }, [optimisticOperation, validators, account?.currency?.id, voteAccAddress, source]);
+
   if (optimisticOperation) {
     return (
       <Container>
@@ -66,12 +87,10 @@ function StepConfirmation({
   return null;
 }
 export function StepConfirmationFooter({
-  transitionTo,
   account,
   parentAccount,
   onRetry,
   error,
-  openModal,
   onClose,
   optimisticOperation,
   transaction,

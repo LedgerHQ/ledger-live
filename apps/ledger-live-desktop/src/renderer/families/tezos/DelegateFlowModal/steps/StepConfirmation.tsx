@@ -11,7 +11,6 @@ import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { openURL } from "~/renderer//linking";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
@@ -29,7 +28,6 @@ const Container: ThemedComponent<{
   min-height: 220px;
 `;
 const StepConfirmation = ({
-  account,
   t,
   optimisticOperation,
   error,

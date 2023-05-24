@@ -16,7 +16,7 @@ const Wrapper = styled(Flex).attrs({
 
 type StatusCustomProps = { active: boolean };
 const Status = styled(Flex).attrs<StatusCustomProps>(p => ({
-  bg: p.active ? "success.c100" : "warning.c100",
+  bg: p.active ? "success.c50" : "warning.c50",
   borderRadius: 20,
   borderWidth: 0,
   height: 10,

@@ -15,7 +15,7 @@ function DeleteAccountRow({ onPress }: Props) {
     <SettingsRow
       event="DeleteAccountRow"
       title={t("account.settings.delete.title")}
-      titleStyle={{ color: colors.error.c100 }}
+      titleStyle={{ color: colors.error.c50 }}
       desc={t("account.settings.delete.desc")}
       onPress={onPress}
       arrowRight

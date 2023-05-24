@@ -91,6 +91,8 @@ export function TransferTabIcon() {
 
   const track = useTrack();
 
+  // Value used to derive which step of animation is being displayed.
+  // Used by several animation: drawer translation and opacity, button's lottie etc.
   const openAnimValue = useSharedValue(initialIsModalOpened ? 1 : 0);
 
   const getIsModalOpened = useCallback(
@@ -120,6 +122,15 @@ export function TransferTabIcon() {
     ],
   }));
 
+  /**
+   * openAnimValue.value:
+   *            0             ->       1           ->             2
+   * transfer arrow icon (0)     close icon (0.5)        transfer arrow icon (1)
+   * with intermediate animation/steps in decimal (test 0.2 for ex)
+   *
+   * progress: from lottie-react-native. Represents the normalized progress of the animation.
+   * If this prop is updated, the animation will correspondingly update to the frame at that progress value.
+   */
   const lottieProps = useAnimatedProps(() => ({
     progress: interpolate(openAnimValue.value, [0, 1, 2], [0, 0.5, 1]),
   }));
@@ -137,6 +148,7 @@ export function TransferTabIcon() {
     const animCallback = () => {
       if (!readOnlyModeEnabled) track("drawer_viewed", { drawer: "trade" });
     };
+
     openAnimValue.value = 0;
     openAnimValue.value = withTiming(1, animParams, finished => {
       if (finished) {

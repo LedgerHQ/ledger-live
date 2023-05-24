@@ -32,7 +32,7 @@ const GenuineCheckDrawer = ({
         refreshSource={false}
       />
       <Flex justifyContent="center" alignItems="center" flex={1} mt={9} mb={6}>
-        <Icons.LedgerLogoRegular size={28} color="primary.c80" />
+        <Icons.LedgerLogoMedium size={28} color="primary.c80" />
       </Flex>
       <Text variant="paragraph" color="primary.c80" textAlign="center">
         {t(

@@ -1,5 +1,3 @@
-// providers getting called twice - why?
-
 export const getProvidersMock = () => {
   return JSON.stringify({
     currencies: {

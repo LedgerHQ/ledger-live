@@ -1,15 +1,18 @@
 import React, { Component } from "react";
-import { Store } from "redux";
+import { AnyAction, Store } from "redux";
 import { State as StoreState } from "~/renderer/reducers";
 import App from "./App";
 import "./global.css";
+import { Countervalues } from "./storage";
+import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+
 type State = {
   error: unknown;
 };
 type Props = {
-  store: Store<StoreState, any>;
+  store: Store<StoreState, AnyAction>;
   language: string;
-  initialCountervalues: any;
+  initialCountervalues: Countervalues;
 };
 class ReactRoot extends Component<Props, State> {
   state = {
@@ -23,12 +26,12 @@ class ReactRoot extends Component<Props, State> {
   }
 
   render() {
-    const { store, language, initialCountervalues } = this.props;
+    const { store, initialCountervalues } = this.props;
     const { error } = this.state;
     return error ? (
       String(error)
     ) : (
-      <App store={store} language={language} initialCountervalues={initialCountervalues} />
+      <App store={store} initialCountervalues={initialCountervalues as CounterValuesStateRaw} />
     );
   }
 }

@@ -20,7 +20,7 @@ const GenuineCheckCancelModal = ({ isOpen, onClose, onSkip, productName }: Props
           variant="body"
           textTransform="uppercase"
           fontWeight="semiBold"
-          color="palette.warning.c80"
+          color="palette.warning.c40"
           fontSize={16}
         >
           {t("syncOnboarding.manual.genuineCheckCancelModal.title")}

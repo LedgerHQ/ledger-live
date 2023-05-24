@@ -73,7 +73,7 @@ function GenericInformationalDrawerContent({
     <Flex minHeight="280px" paddingX="20px" alignItems="center">
       {renderedIcon ? (
         <Flex
-          backgroundColor={"neutral.c100a005"}
+          backgroundColor={"opacityDefault.c05"}
           height={64}
           width={64}
           borderRadius={999}

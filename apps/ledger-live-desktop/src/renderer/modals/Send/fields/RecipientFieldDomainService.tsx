@@ -1,19 +1,20 @@
-import React, { memo, useCallback, useEffect, useMemo } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
+import { getRegistriesForDomain } from "@ledgerhq/domain-service/registries/index";
+import { isLoaded, isError } from "@ledgerhq/domain-service/hooks/logic";
+import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
-
-import { useDomain } from "@ledgerhq/domain-service/hooks/index";
-import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
-
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import { DomainErrorsView } from "./DomainErrorHandlers";
 import RecipientFieldBase from "./RecipientFieldBase";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Alert from "~/renderer/components/Alert";
 import Text from "~/renderer/components/Text";
+import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import { urls } from "~/config/urls";
-import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
-import { openURL } from "~/renderer/linking";
+import { OnChangeExtra } from "~/renderer/components/RecipientAddress";
 
 type Props = {
   account: Account;
@@ -27,7 +28,7 @@ type Props = {
   resetInitValue?: () => void;
   value: string | string;
   bridge: AccountBridge<Transaction>;
-  onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => Promise<void>;
+  onChange: (recipient: string, maybeExtra?: OnChangeExtra | null) => void;
 };
 
 const RecipientFieldDomainService = ({
@@ -49,12 +50,36 @@ const RecipientFieldDomainService = ({
     () => (isLoaded(domainServiceResponse) ? domainServiceResponse.resolutions[0] : null),
     [domainServiceResponse],
   );
+  const domainError = useMemo(
+    () => (isError(domainServiceResponse) ? domainServiceResponse : null),
+    [domainServiceResponse],
+  );
 
   const lowerCaseValue = useMemo(() => value.toLowerCase(), [value]);
-  const isForwardResolution = useMemo(
-    () => !!lowerCaseValue && lowerCaseValue === ensResolution?.domain,
-    [ensResolution?.domain, lowerCaseValue],
-  );
+
+  const [isForwardResolution, setIsForwardResolution] = useState(false);
+  useEffect(() => {
+    // if a registry compatible with the input is found, then we know the input is a domain
+    getRegistriesForDomain(lowerCaseValue).then(registries =>
+      setIsForwardResolution(Boolean(registries.length)),
+    );
+  }, [lowerCaseValue]);
+
+  const domainErrorHandled = useMemo(() => {
+    if (domainError) {
+      if (!isForwardResolution && domainError.error instanceof NoResolution) {
+        return false;
+      }
+
+      if (
+        (domainError.error as Error) instanceof NoResolution ||
+        (domainError.error as Error) instanceof InvalidDomain
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }, [domainError, isForwardResolution]);
 
   useEffect(() => {
     const { recipient, recipientDomain } = transaction;
@@ -102,14 +127,16 @@ const RecipientFieldDomainService = ({
         account={account}
         value={value}
         onChange={onChange}
+        placeholderTranslationKey="RecipientField.placeholderEns"
+        hideError={domainErrorHandled}
       />
-      {transaction.recipientDomain && (
+      {transaction.recipientDomain ? (
         <Alert mt={5}>
           {isForwardResolution ? (
             <>
               <Box>
                 <Text ff="Inter" fontSize={3}>
-                  {t("send.steps.recipient.namingService.resolve")}
+                  {t("send.steps.recipient.domainService.resolve")}
                 </Text>
               </Box>
               <Box>
@@ -122,21 +149,24 @@ const RecipientFieldDomainService = ({
             <>
               <Box>
                 <Text ff="Inter" fontSize={3}>
-                  {t("send.steps.recipient.namingService.reverse", {
+                  {t("send.steps.recipient.domainService.reverse", {
                     domain: transaction.recipientDomain.domain,
                   })}
                 </Text>
               </Box>
               <Box>
                 <LinkWithExternalIcon
-                  label={t("send.steps.recipient.namingService.supportLink")}
+                  label={t("send.steps.recipient.domainService.supportLink")}
                   onClick={onSupportLinkClick}
                 />
               </Box>
             </>
           )}
         </Alert>
-      )}
+      ) : null}
+      {domainError ? (
+        <DomainErrorsView domainError={domainError} isForwardResolution={isForwardResolution} />
+      ) : null}
     </>
   );
 };

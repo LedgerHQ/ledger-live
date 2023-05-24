@@ -39,7 +39,7 @@ const StorageWarningModal = ({ warning, onClose }: Props) => (
   <QueuedDrawer isRequestingToBeOpened={!!warning} onClose={onClose}>
     <Flex alignItems="center">
       <IconContainer borderColor="neutral.c40">
-        <Icons.StorageMedium size={24} color="error.c100" />
+        <Icons.StorageMedium size={24} color="error.c50" />
       </IconContainer>
       <TextContainer>
         <ModalText color="neutral.c100" fontWeight="medium" variant="h2">

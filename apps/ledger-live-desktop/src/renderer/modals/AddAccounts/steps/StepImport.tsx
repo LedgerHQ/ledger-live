@@ -2,7 +2,7 @@ import React, { useEffect, PureComponent } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { concat, from } from "rxjs";
+import { concat, from, Subscription } from "rxjs";
 import { ignoreElements, filter, map } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty, groupAddAccounts } from "@ledgerhq/live-common/account/index";
@@ -18,7 +18,7 @@ import RetryButton from "~/renderer/components/RetryButton";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
-import AccountsList from "~/renderer/components/AccountsList";
+import AccountsList, { AccountListProps } from "~/renderer/components/AccountsList";
 import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
@@ -27,17 +27,24 @@ import { StepProps } from "..";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import byFamily from "~/renderer/generated/NoAssociatedAccounts";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
+type Props = AccountListProps & {
+  defaultSelected: boolean;
+  currency: CryptoOrTokenCurrency;
+};
+
+// TODO: This Error return type is just wrong…
 const remapTransportError = (err: unknown, appName: string): Error => {
-  if (!err || typeof err !== "object") return err;
-  const { name, statusCode } = err;
+  if (!err || typeof err !== "object") return err as Error;
+  const { name, statusCode } = err as { name: string; statusCode: number };
   const errorToThrow =
     name === "BtcUnmatchedApp" || statusCode === 0x6982 || statusCode === 0x6700
-      ? new DeviceShouldStayInApp(null, {
+      ? new DeviceShouldStayInApp(undefined, {
           appName,
         })
       : err;
-  return errorToThrow;
+  return errorToThrow as Error;
 };
 const LoadingRow = styled(Box).attrs(() => ({
   horizontal: true,
@@ -50,7 +57,7 @@ const LoadingRow = styled(Box).attrs(() => ({
   height: 48px;
   border: 1px dashed ${p => p.theme.colors.palette.text.shade60};
 `;
-const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
+const SectionAccounts = ({ defaultSelected, ...rest }: Props) => {
   // componentDidMount-like effect
   useEffect(() => {
     if (defaultSelected && rest.onSelectAll) {
@@ -98,7 +105,7 @@ class StepImport extends PureComponent<
     this.unsub();
   }
 
-  scanSubscription = null;
+  scanSubscription: Subscription | null = null;
   unsub = () => {
     if (this.scanSubscription) {
       this.scanSubscription.unsubscribe();
@@ -165,7 +172,7 @@ class StepImport extends PureComponent<
           },
         });
     } catch (err) {
-      setScanStatus("error", err);
+      setScanStatus("error", err as Error);
     }
   }
 
@@ -276,10 +283,10 @@ class StepImport extends PureComponent<
       scanning: scanStatus === "scanning",
       preferredNewAccountSchemes: this.state.showAllCreatedAccounts
         ? undefined
-        : [preferredNewAccountScheme],
+        : [preferredNewAccountScheme!],
     });
     let creatable;
-    const NoAssociatedAccounts = byFamily[currency.family];
+    const NoAssociatedAccounts = byFamily[mainCurrency.family as keyof typeof byFamily];
     if (alreadyEmptyAccount) {
       creatable = (
         <Trans i18nKey="addAccounts.createNewAccount.noOperationOnLastAccount" parent="div">
@@ -327,7 +334,7 @@ class StepImport extends PureComponent<
                 title={t(`addAccounts.sections.${id}.title`, {
                   count: data.length,
                 })}
-                emptyText={emptyTexts[id]}
+                emptyText={emptyTexts[id as keyof typeof emptyTexts]}
                 accounts={data}
                 autoFocusFirstInput={selectable && i === 0}
                 hideAmount={id === "creatable"}
@@ -335,10 +342,11 @@ class StepImport extends PureComponent<
                 checkedIds={!selectable ? undefined : checkedAccountsIds}
                 onToggleAccount={!selectable ? undefined : this.handleToggleAccount}
                 setAccountName={!selectable ? undefined : setAccountName}
-                editedNames={!selectable ? undefined : editedNames}
+                editedNames={!selectable ? {} : editedNames}
                 onSelectAll={!selectable ? undefined : this.handleSelectAll}
                 onUnselectAll={!selectable ? undefined : this.handleUnselectAll}
                 ToggleAllComponent={hasMultipleSchemes && this.renderLegacyAccountsToggle()}
+                t={t}
               />
             );
           })}
@@ -352,8 +360,6 @@ class StepImport extends PureComponent<
             </LoadingRow>
           ) : null}
         </Box>
-
-        {err && <Box shrink>{err.message}</Box>}
       </>
     );
   }

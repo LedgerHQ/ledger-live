@@ -1,7 +1,25 @@
-import { fork } from "child_process";
+import { ChildProcess, ForkOptions, fork } from "child_process";
 import forceKill from "tree-kill";
+import { Message } from "~/internal/types";
+
+export type InternalMessage = { type: string; requestId: string; error: unknown; data: unknown };
+
 class InternalProcess {
-  constructor({ timeout }) {
+  timeout: number;
+  process: ChildProcess | null;
+  active: boolean;
+  onStartCallback: (() => void) | null;
+  onMessageCallback: ((message: InternalMessage) => void) | null;
+  onExitCallback:
+    | ((code: number | null, signal: string | null, unexpected: boolean) => void)
+    | null;
+
+  messageQueue: Message[];
+  path: string | undefined;
+  args: string[] | undefined;
+  options: ForkOptions | undefined;
+
+  constructor({ timeout }: { timeout: number }) {
     this.process = null;
     this.timeout = timeout;
     this.active = false;
@@ -11,11 +29,11 @@ class InternalProcess {
     this.messageQueue = [];
   }
 
-  onMessage(callback) {
+  onMessage(callback: typeof this.onMessageCallback) {
     this.onMessageCallback = callback;
   }
 
-  onExit(callback) {
+  onExit(callback: typeof this.onExitCallback) {
     this.onExitCallback = callback;
   }
 
@@ -28,22 +46,22 @@ class InternalProcess {
       this.process.connected
     ) {
       const message = this.messageQueue.shift();
-      this.process.send(message);
+      this.process?.send && this.process.send(message as object);
     }
   }
 
-  send(message) {
+  send(message: Message) {
     this.messageQueue.push(message);
     if (this.active) {
       this.run();
     }
   }
 
-  onStart(callback) {
+  onStart(callback: typeof this.onStartCallback) {
     this.onStartCallback = callback;
   }
 
-  configure(path, args, options) {
+  configure(path: string, args: Array<string>, options: ForkOptions) {
     this.path = path;
     this.args = args;
     this.options = options;
@@ -53,7 +71,7 @@ class InternalProcess {
     if (this.process) {
       throw new Error("Internal process is already running !");
     }
-    this.process = fork(this.path, this.args, this.options);
+    this.process = fork(this.path!, this.args, this.options);
     this.active = true;
     const pid = this.process.pid;
     console.log(`spawned internal process ${pid}`);
@@ -70,7 +88,7 @@ class InternalProcess {
     });
     this.process.on("message", message => {
       if (this.onMessageCallback && this.active) {
-        this.onMessageCallback(message);
+        this.onMessageCallback(message as InternalMessage);
       }
     });
     if (this.messageQueue.length) {
@@ -97,7 +115,7 @@ class InternalProcess {
       this.process.disconnect();
       setTimeout(() => {
         if (this.process && this.process.pid === pid) {
-          forceKill(pid, "SIGKILL");
+          forceKill(pid!, "SIGKILL");
         }
       }, this.timeout);
     });

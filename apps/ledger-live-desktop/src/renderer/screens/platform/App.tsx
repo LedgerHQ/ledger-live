@@ -30,14 +30,19 @@ type Props = {
 export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
   const { params: internalParams, search } = location;
-  const { state: urlParams, customDappUrl } = useLocation();
+  const { state: urlParams, customDappUrl } = useLocation() as ReturnType<typeof useLocation> &
+    Props["location"] & {
+      state: {
+        [key: string]: string;
+      };
+    };
   const appId = propsAppId || match.params?.appId;
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
     return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;
   }, [search, urlParams?.returnTo, internalParams?.returnTo]);
   const handleClose = useCallback(() => history.push(returnTo || `/platform`), [history, returnTo]);
-  const themeType = useTheme("colors.palette.type");
+  const themeType = useTheme().colors.palette.type;
   const lang = useSelector(languageSelector);
   const params = {
     theme: themeType,
@@ -52,7 +57,10 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
     manifest = {
       ...manifest,
       params: {
+        // manifest.params is supposed to be a string[] in the common types
+        // @ts-expect-error TODO: investigate because common types seem to be wrong
         ...manifest.params,
+        // @ts-expect-error Same here, params should be a Record<string, ?> but it's a string[]
         dappUrl: customDappUrl,
       },
     };

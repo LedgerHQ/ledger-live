@@ -1,5 +1,5 @@
 import Eth, { isEIP712Message } from "@ledgerhq/hw-app-eth";
-import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712/EIP712.types";
+import type { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712/EIP712.types";
 import { getFiltersForMessage } from "@ledgerhq/hw-app-eth";
 import Transport from "@ledgerhq/hw-transport";
 import { TypedDataUtils } from "eth-sig-util";

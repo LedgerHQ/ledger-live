@@ -14,6 +14,7 @@ describe("Domain Service", () => {
         expect(await getRegistriesForDomain("vitalik.notsupport")).toHaveLength(
           0
         );
+        expect(await getRegistriesForDomain("vitaliketh")).toHaveLength(0);
       });
     });
 

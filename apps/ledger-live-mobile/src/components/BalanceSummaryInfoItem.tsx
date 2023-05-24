@@ -40,7 +40,7 @@ export default function BalanceSummaryInfoItem({
           {onPress && (
             <>
               {warning ? (
-                <Icons.WarningMedium size={16} color={"warning.c60"} />
+                <Icons.WarningMedium size={16} color={"warning.c30"} />
               ) : (
                 <Icons.InfoMedium size={16} color={"neutral.c70"} />
               )}

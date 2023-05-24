@@ -1,15 +1,17 @@
-import { BigNumber } from "bignumber.js";
 import React, { PureComponent } from "react";
 import styled from "styled-components";
 import noop from "lodash/noop";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { RecipientRequired } from "@ledgerhq/errors";
 import { radii } from "~/renderer/styles/theme";
 import QRCodeCameraPickerCanvas from "~/renderer/components/QRCodeCameraPickerCanvas";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
 import { track } from "~/renderer/analytics/segment";
 import IconQrCode from "~/renderer/icons/QrCode";
+import BigNumber from "bignumber.js";
+
 const Right = styled(Box).attrs(() => ({
   bg: "palette.background.default",
   px: 3,
@@ -35,22 +37,23 @@ const BackgroundLayer = styled(Box)`
   height: 100%;
   z-index: 2;
 `;
+
+export type OnChangeExtra = {
+  currency?: CryptoCurrency;
+  amount?: BigNumber;
+  userGasLimit?: BigNumber;
+  gasPrice?: BigNumber;
+};
+
 type Props = {
   placeholder: string;
   autoFocus: boolean | undefined;
   readOnly: boolean | undefined;
-  error: RecipientRequired | null;
+  error: typeof RecipientRequired | null;
   warning: Error;
   value: string;
   id: string;
-  // return false if it can't be changed (invalid info)
-  onChange: (
-    b: string,
-    a?: {
-      amount?: BigNumber;
-      currency?: CryptoCurrency;
-    } | null,
-  ) => Promise<boolean | undefined | null>;
+  onChange: (b: string, a?: OnChangeExtra | undefined) => void;
   withQrCode: boolean;
 };
 type State = {
@@ -83,15 +86,14 @@ class RecipientAddress extends PureComponent<Props, State> {
     Object.assign(rest, {
       fromQRCode: true,
     });
-    if (this.props.onChange(address, rest) !== false) {
-      this.setState({
-        qrReaderOpened: false,
-      });
-    }
+    this.props.onChange(address, rest);
+    this.setState({
+      qrReaderOpened: false,
+    });
   };
 
   render() {
-    const { onChange, withQrCode, value, ...rest } = this.props;
+    const { onChange, withQrCode, value, error, ...rest } = this.props;
     const { qrReaderOpened } = this.state;
     const renderRight = withQrCode ? (
       <Right onClick={this.handleClickQrCode}>
@@ -106,12 +108,13 @@ class RecipientAddress extends PureComponent<Props, State> {
         )}
       </Right>
     ) : null;
-    const preOnChange = text => onChange((text && text.replace(/\s/g, "")) || "");
+    const preOnChange = (text: string) => onChange((text && text.replace(/\s/g, "")) || "");
     return (
       <Box relative justifyContent="center">
         <Input
           {...rest}
-          spellCheck="false"
+          error={(error as unknown) as Error}
+          spellCheck={false}
           value={value}
           onChange={preOnChange}
           renderRight={renderRight}

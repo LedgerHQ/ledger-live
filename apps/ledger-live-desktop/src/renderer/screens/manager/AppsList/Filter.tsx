@@ -6,10 +6,13 @@ import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSe
 import Box from "~/renderer/components/Box";
 import BoldToggle from "~/renderer/components/BoldToggle";
 import Text from "~/renderer/components/Text";
+import { AppType } from "@ledgerhq/live-common/apps/filtering";
+
 type Props = {
   onFilterChange: Function;
-  filter: any;
+  filter: AppType;
 };
+
 const Filter = ({ onFilterChange, filter }: Props) => {
   const onFilterChangeWrapper = useCallback(
     item => {
@@ -54,9 +57,6 @@ const Filter = ({ onFilterChange, filter }: Props) => {
   );
   return (
     <DropDownSelector
-      flow={1}
-      offsetTop={2}
-      horizontal
       items={filterItems}
       renderItem={renderItem}
       onChange={onFilterChangeWrapper}

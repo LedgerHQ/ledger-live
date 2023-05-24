@@ -12,7 +12,6 @@ import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 const renderItem = ({
   data: { id, name },
   isDisabled,
-  data,
 }: {
   data: TokenCurrency;
   isDisabled: boolean;

@@ -1,7 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Flex } from "@ledgerhq/react-ui";
-
 import { Bullet, Status as SoftwareCheckStatus } from "./shared";
 
 export type Props = {

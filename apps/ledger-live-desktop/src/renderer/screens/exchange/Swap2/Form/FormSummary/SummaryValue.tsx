@@ -3,15 +3,15 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import ButtonBase from "~/renderer/components/Button";
 import TextBase from "~/renderer/components/Text";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Container: ThemedComponent<{}> = styled.div`
+
+const Container = styled.div`
   display: flex;
   flex-direction: row;
   column-gap: 0.375rem;
   align-items: center;
   color: ${p => p.theme.colors.palette.text.shade100};
 `;
-const Text: ThemedComponent<{}> = styled(TextBase).attrs(() => ({
+const Text = styled(TextBase).attrs(() => ({
   ff: "Inter",
   fontSize: "13px",
   fontWeight: 600,
@@ -24,7 +24,7 @@ const Text: ThemedComponent<{}> = styled(TextBase).attrs(() => ({
     text-transform: uppercase;
   }
 `;
-const Button: ThemedComponent<{}> = styled(ButtonBase).attrs(() => ({
+const Button = styled(ButtonBase).attrs(() => ({
   color: "palette.primary.main",
 }))`
   padding: 0;
@@ -41,7 +41,7 @@ const SummaryValue = ({
   children,
 }: {
   value?: string;
-  handleChange?: Function;
+  handleChange?: (() => void) | null;
   children?: React.ReactNode;
 }) => {
   const { t } = useTranslation();

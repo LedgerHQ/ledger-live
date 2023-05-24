@@ -9,8 +9,8 @@ import IconAngleUp from "~/renderer/icons/AngleUp";
 type Props = {
   onSortChange: Function;
   sort: {
-    type: string;
-    order: string;
+    type?: string;
+    order?: string;
   };
 };
 const Sort = ({ onSortChange, sort }: Props) => {

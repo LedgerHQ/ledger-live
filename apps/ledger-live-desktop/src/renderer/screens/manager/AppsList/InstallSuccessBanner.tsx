@@ -3,13 +3,15 @@ import styled, { keyframes } from "styled-components";
 import { Trans } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/index";
-import { State, Action } from "@ledgerhq/live-common/apps/types";
+import { State } from "@ledgerhq/live-common/apps/types";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box/Box";
 import FadeInOutBox from "~/renderer/components/FadeInOutBox";
 import IconCross from "~/renderer/icons/Cross";
 import Button from "~/renderer/components/Button";
 import AccountsIllustration from "~/renderer/icons/AccountsIllustration";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
 const IconContainer = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -31,6 +33,7 @@ const animLogo = keyframes`
   opacity: 1;
 }
 `;
+
 const LogoContainer = styled(Box).attrs(() => ({
   flex: 1,
   justifyContent: "center",
@@ -47,18 +50,19 @@ const LogoContainer = styled(Box).attrs(() => ({
     max-width: 110px;
   }
 `;
+
 const Container = styled.div`
   position: relative;
 `;
+
 type Props = {
   state: State;
-  dispatch: (a: Action) => void;
-  isIncomplete: boolean;
-  addAccount: (a: any) => void;
+  addAccount: (a: CryptoCurrency) => void;
   disabled: boolean;
 };
-const InstallSuccessBanner = ({ state, isIncomplete, dispatch, addAccount, disabled }: Props) => {
-  const cardRef = useRef();
+
+const InstallSuccessBanner = ({ state, addAccount, disabled }: Props) => {
+  const cardRef = useRef<HTMLDivElement | null>(null);
   const [hasBeenShown, setHasBeenShown] = useState(disabled);
   const { installQueue, uninstallQueue, recentlyInstalledApps, appByName, installed } = state;
   const installedSupportedApps = useMemo(() => {

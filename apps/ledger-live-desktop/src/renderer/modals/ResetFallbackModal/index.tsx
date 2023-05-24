@@ -4,7 +4,7 @@ import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import { openUserDataFolderAndQuit } from "~/renderer/reset";
 type Props = {
   isOpened: boolean;
-  onClose: () => any;
+  onClose?: () => void | undefined;
 };
 const ResetFallbackModal = ({ isOpened, onClose }: Props) => {
   const { t } = useTranslation();

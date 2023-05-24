@@ -24,7 +24,7 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
   return (
     <RemoteLiveAppProvider
       parameters={{
-        version: getPlatformVersion(),
+        apiVersion: getPlatformVersion(),
         private: false,
         platform: "desktop",
         allowDebugApps,

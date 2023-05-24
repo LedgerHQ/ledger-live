@@ -1,10 +1,9 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Text } from "@ledgerhq/react-ui";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Check from "~/renderer/icons/Check";
 import { Tabbable } from "~/renderer/components/Box";
-const Container: ThemedComponent<{}> = styled.div`
+const Container = styled.div`
   display: inline-flex;
   column-gap: ${p => p.theme.space[5]}px;
   align-items: center;
@@ -20,15 +19,15 @@ const Label = styled(Text).attrs({
     text-transform: uppercase;
   }
 `;
-const Base: ThemedComponent<{
-  isChecked?: boolean;
-  isRadio?: boolean;
-  inverted?: boolean;
-}> = styled(Tabbable).attrs(() => ({
+const Base = styled(Tabbable).attrs(() => ({
   relative: true,
   alignItems: "center",
   justifyContent: "center",
-}))`
+}))<{
+  isChecked?: boolean;
+  isRadio?: boolean;
+  inverted?: boolean;
+}>`
   & input[type="checkbox"] {
     display: none;
   }
@@ -105,8 +104,8 @@ function CheckBox({ label, ...props }: Props) {
       >
         <input
           type="checkbox"
-          disabled={disabled || null}
-          checked={typeof isChecked === "boolean" ? isChecked : null}
+          disabled={disabled || false}
+          checked={typeof isChecked === "boolean" ? isChecked : false}
           onChange={onClick}
         />
         <Check size={12} />

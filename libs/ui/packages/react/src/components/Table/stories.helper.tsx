@@ -83,7 +83,7 @@ export const balance: { data: BalanceElement[]; columns: Column<BalanceElement>[
       header: () => <Header>Evolution</Header>,
       subtitle: (elt) => (elt.evolution > 0 ? "+" : "") + elt.evolution,
       subtitleProps: (elt) => ({
-        color: elt.evolution < 0 ? "error.c100" : "success.c100",
+        color: elt.evolution < 0 ? "error.c50" : "success.c50",
       }),
     }),
     Columns.icon({
@@ -181,7 +181,7 @@ export const accounts: { data: Account[]; columns: Column<Account>[] } = {
     Columns.icon({
       props: (elt) => ({
         name: elt.synchronized ? "CircledCheck" : "Clock",
-        color: elt.synchronized ? "success.c100" : "neutral.c80",
+        color: elt.synchronized ? "success.c50" : "neutral.c80",
       }),
     }),
     Columns.text({
@@ -196,7 +196,7 @@ export const accounts: { data: Account[]; columns: Column<Account>[] } = {
       layout: "1fr",
       subtitle: (elt) => (elt.evolution > 0 ? "+" : "") + elt.evolution,
       subtitleProps: (elt) => ({
-        color: elt.evolution < 0 ? "error.c100" : "success.c100",
+        color: elt.evolution < 0 ? "error.c50" : "success.c50",
       }),
     }),
     Columns.icon({

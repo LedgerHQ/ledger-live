@@ -38,7 +38,7 @@ export default function createAppUpdater(
   }
 
   // compute the update hash and compare it to the hash located in hash file
-  async function compareHash(hashFile) {
+  async function compareHash(hashFile: string) {
     const computedHash = await computeHash();
     const hashFromFile = extractHashFromHashFile(hashFile, filename);
     if (hashFromFile !== computedHash) {
@@ -49,7 +49,7 @@ export default function createAppUpdater(
   // verify hash signature with given pubkey
   // if it fails, try to get next key and repeat
   // if no more key, throw
-  async function verifyHashFileSignature(hash, sigContent, pubKey) {
+  async function verifyHashFileSignature(hash: string, sigContent: Buffer, pubKey: string) {
     try {
       await sslHelper.verify(hash, sigContent, pubKey);
     } catch (err) {
@@ -64,7 +64,7 @@ export default function createAppUpdater(
 
   // fetch the next pubkey based on the previous key fingerprint
   // also fetch signature, and verify against previous pubkey
-  async function getNextPubKey(pubKey) {
+  async function getNextPubKey(pubKey: string) {
     const fingerprint = await sslHelper.getFingerprint(pubKey);
     const nextPubKey = await getNextKey(fingerprint);
     const nextPubKeySignature = await getNextKeySignature(fingerprint);
@@ -78,7 +78,7 @@ export default function createAppUpdater(
 
 // a hash file looks like: "<hash>  <filename>\n<hash>  <filename>"
 // we only need the hash for the given filename
-function extractHashFromHashFile(hashFile, filename) {
+function extractHashFromHashFile(hashFile: string, filename: string) {
   let hash;
   hashFile.split("\n").find(r => {
     const row = r.split(/\s+/);

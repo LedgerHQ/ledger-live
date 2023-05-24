@@ -1,9 +1,8 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -14,29 +13,25 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
   min-height: 220px;
 `;
+
 function StepConfirmation({
-  account,
   t,
   optimisticOperation,
   error,
-  theme,
-  device,
   isNFTSend,
   signed,
   currencyName,
-}: StepProps & {
-  theme: any;
-}) {
+}: StepProps) {
   if (optimisticOperation) {
     return (
       <Container>
@@ -85,7 +80,6 @@ export function StepConfirmationFooter({
   onRetry,
   optimisticOperation,
   error,
-  openModal,
   closeModal,
 }: StepProps) {
   const concernedOperation = optimisticOperation
@@ -104,10 +98,11 @@ export function StepConfirmationFooter({
           onClick={() => {
             closeModal();
             if (account && concernedOperation) {
+              // @ts-expect-error TODO: fix types
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
+                parentId: (parentAccount && parentAccount.id) || undefined,
               });
             }
           }}
@@ -128,4 +123,4 @@ export function StepConfirmationFooter({
     </>
   );
 }
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

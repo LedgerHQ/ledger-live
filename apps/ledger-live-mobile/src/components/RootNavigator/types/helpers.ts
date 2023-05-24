@@ -148,3 +148,12 @@ export type RootNavigationComposite<
     any
   >,
 > = CompositeNavigationProp<A, StackNavigationProp<RootStackParamList>>;
+
+// Represents the header part of the react-navigation options
+// Could be expanded to add `headerTitle` and/or `header` if needed one day
+export type ReactNavigationHeaderOptions = {
+  title?: string;
+  headerShown?: boolean;
+  headerLeft?: () => React.ReactElement | null;
+  headerRight?: () => React.ReactElement | null;
+};

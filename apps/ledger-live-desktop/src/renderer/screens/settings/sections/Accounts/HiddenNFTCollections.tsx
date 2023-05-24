@@ -7,7 +7,6 @@ import {
   useNftCollectionMetadata,
 } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 import { SettingsSection as Section, SettingsSectionRow as Row } from "../../SettingsSection";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
 import IconCross from "~/renderer/icons/Cross";
@@ -18,6 +17,9 @@ import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import Track from "~/renderer/analytics/Track";
 import IconAngleDown from "~/renderer/icons/AngleDown";
+import { State } from "~/renderer/reducers";
+import { NFTMetadata } from "@ledgerhq/types-live";
+
 const HiddenNftCollectionRow = ({
   contractAddress,
   accountId,
@@ -25,14 +27,14 @@ const HiddenNftCollectionRow = ({
 }: {
   contractAddress: string;
   accountId: string;
-  onUnhide: Function;
+  onUnhide: () => void;
 }) => {
-  const account = useSelector(state =>
+  const account = useSelector((state: State) =>
     accountSelector(state, {
       accountId,
     }),
   );
-  const firstNft = account?.nfts.find(nft => nft.contract === contractAddress);
+  const firstNft = account?.nfts?.find(nft => nft.contract === contractAddress);
   const { metadata: nftMetadata, status: nftStatus } = useNftMetadata(
     contractAddress,
     firstNft?.tokenId,
@@ -46,10 +48,17 @@ const HiddenNftCollectionRow = ({
     collectionStatus,
     nftStatus,
   ]);
+
   return (
     <HiddenNftCollectionRowContainer>
       <Skeleton width={32} minHeight={32} show={loading}>
-        <Media metadata={nftMetadata} tokenId={firstNft?.tokenId} mediaFormat="preview" />
+        {nftMetadata && firstNft && (
+          <Media
+            metadata={nftMetadata as NFTMetadata}
+            tokenId={firstNft?.tokenId}
+            mediaFormat="preview"
+          />
+        )}
       </Skeleton>
       <Text
         style={{
@@ -93,7 +102,7 @@ export default function HiddenNftCollections() {
         title={t("settings.accounts.hiddenNftCollections.title")}
         desc={t("settings.accounts.hiddenNftCollections.desc")}
         onClick={toggleCurrencySection}
-        style={
+        contentContainerStyle={
           hiddenNftCollections.length
             ? {
                 cursor: "pointer",
@@ -102,7 +111,7 @@ export default function HiddenNftCollections() {
         }
       >
         {hiddenNftCollections.length ? (
-          <Box horizontal flex alignItems="center">
+          <Box horizontal alignItems="center">
             <Box ff="Inter" fontSize={3} mr={2}>
               {t("settings.accounts.hiddenNftCollections.count", {
                 count: hiddenNftCollections.length,
@@ -133,7 +142,7 @@ export default function HiddenNftCollections() {
     </Section>
   );
 }
-const IconContainer: ThemedComponent<{}> = styled.div`
+const IconContainer = styled.div`
   color: ${p => p.theme.colors.palette.text.shade60};
   text-align: center;
   &:hover {
@@ -141,7 +150,7 @@ const IconContainer: ThemedComponent<{}> = styled.div`
     color: ${p => p.theme.colors.palette.text.shade40};
   }
 `;
-const HiddenNftCollectionRowContainer: ThemedComponent<{}> = styled(Box).attrs({
+const HiddenNftCollectionRowContainer = styled(Box).attrs({
   alignItems: "center",
   horizontal: true,
   flow: 1,
@@ -153,13 +162,12 @@ const HiddenNftCollectionRowContainer: ThemedComponent<{}> = styled(Box).attrs({
   }
   padding: 14px 6px;
 `;
-const Body: ThemedComponent<{}> = styled(Box)`
+const Body = styled(Box)`
   &:not(:empty) {
     padding: 0 20px;
   }
 `;
-const Show: ThemedComponent<{
-  visible: boolean;
-}> = styled(Box)`
+
+const Show = styled(Box).attrs<{ visible?: boolean }>({})<{ visible?: boolean }>`
   transform: rotate(${p => (p.visible ? 0 : 270)}deg);
 `;

@@ -9,10 +9,11 @@ import NoResults from "~/renderer/icons/NoResults";
 import Box from "~/renderer/components/Box/Box";
 import Button from "~/renderer/components/Button";
 import Image from "~/renderer/components/Image";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 const tokens = listTokens();
 type Props = {
   query: string;
-  addAccount: (a: any) => void;
+  addAccount: (a?: TokenCurrency) => void;
   dispatch: (a: Action) => void;
   installed: InstalledItem[];
   apps: App[];
@@ -121,7 +122,7 @@ const Placeholder = ({ query, addAccount, dispatch, installed, apps }: Props) =>
       </Box>
     </Box>
   ) : (
-    <Box vertical py={6} flex alignContent="center">
+    <Box py={6} flex={1} alignContent="center">
       <Box mb={4} horizontal color="palette.text.shade30" justifyContent="center">
         <NoResults />
       </Box>

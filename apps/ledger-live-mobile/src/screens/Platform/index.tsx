@@ -9,7 +9,7 @@ export function Catalog(props: CatalogProps) {
   const config = useFeature("discover");
 
   return config?.enabled && config?.params.version === "2" ? (
-    <Catalog2 {...props} />
+    <Catalog2 />
   ) : (
     <Catalog1 {...props} />
   );

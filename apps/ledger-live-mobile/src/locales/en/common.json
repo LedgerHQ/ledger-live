@@ -118,19 +118,9 @@
       "title": "Sorry, Bluetooth is disabled",
       "description": "Please enable Bluetooth in your phone settings. ({{state}} state)"
     },
-    "FwUpdateBluetoothNotSupported": {
-      "title": "Firmware updates are only supported for wired connections"
-    },
-    "BtcUnmatchedApp": {
-      "title": "That's the wrong app",
-      "description": "Please open the {{managerAppName}} app on your device."
-    },
     "CantOpenDevice": {
       "title": "Sorry, connection failed",
       "description": "Your Ledger device must be unlocked and in range to use Bluetooth."
-    },
-    "CantScanQRCode": {
-      "title": "Could not scan this QR code: auto-verification not supported by this address."
     },
     "ConnectAppTimeout": {
       "title": "Sorry, no device found",
@@ -327,11 +317,13 @@
     },
     "ImageCommitRefusedOnDevice": {
       "title": "Lock screen cancelled on Ledger Stax",
-      "description": "If this image wasn't the right fit, you can try again with another image."
+      "description": "If this image wasn't the right fit, you can try again with another image.",
+      "primaryCTA": "Upload another picture"
     },
     "ImageLoadRefusedOnDevice": {
       "title": "Lock screen cancelled on Ledger Stax",
-      "description": "If this image wasn't the right fit, you can try again with another image."
+      "description": "If this image wasn't the right fit, you can try again with another image.",
+      "primaryCTA": "Upload another picture"
     },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
@@ -480,6 +472,10 @@
       "title": "Password does not match",
       "description": "Please try again."
     },
+    "PeerRemovedPairing": {
+      "title": "Your {{ productName }} needs to be paired again.",
+      "description": "Go to your phone's Bluetooth settings and forget your {{ productName }}. Then come back in Ledger Live and try again."
+    },
     "SelectExchangesLoadError": {
       "title": "Unable to load",
       "description": "Cannot load the exchanges."
@@ -556,7 +552,8 @@
     },
     "UpdateYourApp": {
       "title": "App update needed",
-      "description": "Please uninstall then reinstall the {{managerAppName}} app in the Manager."
+      "description": "Please uninstall then reinstall the {{managerAppName}} app in the Manager.",
+      "primaryCTA": "Open Manager"
     },
     "UserRefusedAllowManager": {
       "title": "Manager disabled on device",
@@ -675,7 +672,8 @@
     },
     "generic": {
       "title": "{{message}}",
-      "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support.",
+      "primaryCTA": "Retry"
     },
     "SolanaAccountNotFunded": {
       "title": "Account not funded"
@@ -1840,7 +1838,8 @@
           "title": "Your device is locked",
           "subtitle": "Unlock your {{ productName }} and try again."
         },
-        "retryCta": "Try again"
+        "retryCta": "Retry",
+        "openSettingsCta": "Go to Bluetooth settings"
       }
     }
   },
@@ -2392,6 +2391,7 @@
     },
     "earn": "Earn",
     "quickActions": "Quick actions",
+    "referralProgram": "Refer a friend and get $10 of Bitcoin",
     "banner": {
       "redelegation": {
         "description": "In case you didn’t know, the Ledger validator stakes at a lower commission than the validator you’re using.",
@@ -2670,6 +2670,10 @@
       "title": "Experimental features",
       "desc": "Try out the Experimental features and let us know what you think.",
       "disclaimer": "These are Experimental features provided on an \"as is\" basis for our community of tech enthusiasts. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk.",
+      "provider": "The experimental setting “My Ledger provider ({{forcedProvider}})” may show unreleased OS and apps, leading to compatibility issues. You can disable it in settings.",
+      "providerDevMode": "The experimental settings “My Ledger provider ({{forcedProvider}})” and “Developer mode” may show unreleased OS and apps, leading to compatibility issues. You can disable them in settings.",
+      "devMode": "The experimental setting “Developer mode” may show unreleased OS and apps, leading to compatibility issues. You can disable it in settings.",
+      "providerCTA": "Go to settings",
       "experimentalFeatures": {
         "experimentalIntegrations": {
           "title": "Experimental integrations",
@@ -2687,6 +2691,10 @@
           "title": "Experimental Explorers API",
           "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature."
         },
+        "experimentalListAppsV2": {
+          "title": "Experimental list apps for My Ledger",
+          "description": "Performance improvement for My Ledger access and inline flows."
+        },
         "experimentalCountervalues": {
           "title": "Experimental countervalues API",
           "description": "This may cause the countervalues displayed for your accounts to become incorrect."
@@ -2694,6 +2702,10 @@
         "experimentalSwap": {
           "title": "New SWAP interface",
           "description": "Use the new experimental swap interface"
+        },
+        "experimentalEnableNetworkLogs": {
+          "title": "Enable network logs",
+          "description": "Enable network logs in the console (error logs are always enabled)"
         }
       },
       "developerFeatures": {
@@ -2731,7 +2743,12 @@
       "featureFlagsTabGroups": "Groups",
       "firebaseProject": "Firebase project targeted by this build:",
       "showBannerDesc": "Show banner when flags are overridden",
-      "bannerTitle": "Flags overridden locally"
+      "bannerTitle": "Flags overridden locally",
+      "features": {
+        "firmwareUpdate": {
+          "headerTitle": "Debug firmware update"
+        }
+      }
     }
   },
   "notifications": {
@@ -2744,7 +2761,8 @@
   },
   "transfer": {
     "recipient": {
-      "input": "Enter address"
+      "input": "Enter address",
+      "inputEns": "Enter address or ENS"
     },
     "send": {
       "title": "Send",
@@ -2800,7 +2818,8 @@
         "addressVerified": "Address verified",
         "verifyAddress": "Tap here to verify your address",
         "adviceVerify": "We always recommend verifying your address with your Ledger device",
-        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss."
+        "sendWarning": "Send only {{currencyName}} ({{currencyTicker}}) to this address. Sending any other coins may result in permanent loss.",
+        "dashStakingWarning": "Please make sure you don't use this address for receiving staking rewards"
       },
       "securityVerify": {
         "title": "For security we recommend verifying this address with your Ledger device.",
@@ -3377,7 +3396,14 @@
       "domainService": {
         "reverse": "This address is linked to {{domain}}",
         "forward": "This is a valid ENS address",
-        "supportLink": "What's an Ethereum Name Service ?"
+        "supportLink": "What's an Ethereum Name Service ?",
+        "invalidDomain": {
+          "title": "Domain not supported",
+          "description": "Only ENS with less than 30 alphanumerical characters are currently supported."
+        },
+        "noResolution": {
+          "title": "No address found for this domain"
+        }
       }
     },
     "amount": {
@@ -3656,6 +3682,8 @@
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
     "allowManagerPermission": "Allow {{wording}} on your {{productName}}",
+    "allowRemoveCustomLockscreen": "Confirm removal of image on your Ledger Stax",
+    "allowSecureConnection": "Allow a secure connection with Ledger",
     "loading": "Loading...",
     "turnOnAndUnlockDevice": "Turn on and unlock your device",
     "connectAndUnlockDevice": "Connect and unlock your device",
@@ -4007,16 +4035,34 @@
   },
   "FirmwareUpdate": {
     "title": "Update firmware",
+    "updateDevice": "Update {{deviceName}}",
+    "updateDone": "All done! Your {{deviceName}} is up to date",
+    "updateDoneDescription": "New OS Version: {{firmwareVersion}}",
     "preparing": "Preparing the firmware update, please keep your device awake and connected. We will notify you of the progress",
     "confirmIdentifierText": "Verify that the identifier on your device is the same as the identifier below. Confirm and enter your PIN code if requested.",
     "pleaseReinstallApps": "Please reinstall the apps on your device.",
     "pleaseConfirmUpdate": "Confirm the update on your device",
+    "pleaseConfirmUpdateOnYourDevice": "Confirm installation on {{deviceName}}",
+    "finishUpdateCTA": "Finish",
     "finishUpdate": "Finish the update on your {{deviceName}}",
     "identifierTitle": "Identifier:",
     "pleaseWaitDownload": "Please wait for the installer to be downloaded",
+    "doNotLeaveLedgerLive": "Do not leave the Ledger Live app until the update is complete.",
     "preparingDevice": "Preparing your device",
     "pleaseWaitUpdate": "Please wait for the update to finish",
+    "viewUpdateChangelog": "View update changelog",
     "waitForFirmwareUpdate": "Wait for the firmware update to finish on your device",
+    "waitForInstallationToFinish": "Wait for installation to finish on your {{deviceName}}",
+    "staxBatteryLow": "Ledger Stax battery too low to update",
+    "staxBatteryLowDescription": "To perform an OS update, your Ledger must have a minimum of 20% charge, or be charging.",
+    "updateCancelled": "Update was cancelled on {{deviceName}}",
+    "updateCancelledDescription": "The installation of OS update {{newFirmwareVersion}} was refused on {{deviceName}}. If this was a mistake, restart the update",
+    "updateNotYetComplete": "Update is not complete yet",
+    "updateNotYetCompleteDescription": "If you interrupt the update, your apps, language, and lock screen picture may not be restored correctly.",
+    "restartUpdate": "Restart OS update",
+    "quitUpdate": "Exit Update",
+    "continueUpdate": "Continue Update",
+    "unlockDeviceToComplete": "Unlock {{deviceName}} to complete installation",
     "unlockDeviceWithPin": "Unlock your device with your PIN",
     "reinstallApps": "Reinstall apps.",
     "currentVersionNumber": "Current version",
@@ -4038,7 +4084,23 @@
       "flash-bootloader": "Bootloader updating",
       "flash": "Flashing your device",
       "preparing": "Preparing update",
-      "firmware": "Downloading update"
+      "firmware": "Downloading update",
+      "prepareUpdate":  {
+        "titleActive": "Preparing update for install",
+        "description": "Backing up your configuration and transferring the update to {{deviceName}}."
+      },
+      "installUpdate":  {
+        "titleInactive": "Install update",
+        "titleActive": "Installing update",
+        "description": "{{deviceName}} will restart multiple times.\n\nAfter installation is finished on your {{deviceName}}, unlock your device to complete installation"
+      },
+      "restoreSettings":  {
+        "titleInactive": "Restore apps and settings",
+        "description": "Your settings and blockchain apps will be restored.",
+        "restoreLockScreenPicture": "Restoring lock screen picture",
+        "restoreLanguage": "Restoring language",
+        "installingApps": "Installing apps"
+      }
     },
     "newVersion": "Update {{version}} available for your {{deviceName}}",
     "drawerUpdate": {
@@ -4046,6 +4108,12 @@
       "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
       "pleaseConnectUsbTitle": "USB cable needed",
       "pleaseConnectUsbDescription": "To start the firmware update, plug your {{deviceName}} to your mobile phone using a USB cable."
+    },
+    "errors": {
+      "TimeoutError": {
+        "title": "Update timeout",
+        "description": "The update was unable to complete because we lost connection to {{deviceName}}"
+      }
     }
   },
   "firmwareUpdateRequired": {
@@ -4606,7 +4674,8 @@
             "noResultsFound": "No validator found for <0>{{search}}</0>"
           },
           "amount": {
-            "newRedelegatedBalance": "New total for <0>{{name}}</0> after operation: <0>{{amount}}</0>"
+            "newRedelegatedBalance": "New total for <0>{{name}}</0> after operation: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used"
           },
           "verification": {
             "success": {
@@ -5719,22 +5788,7 @@
       }
     },
     "status": {
-      "title": "An issue might need your attention",
-      "title_plural": "Some issues might need your attention",
-      "desc": {
-        "0": "They’re being investigated and will be resolved shortly.",
-        "1": "If you’re affected by any of the issues, reach out to our <0>Customer Support</0>"
-      },
-      "cta": {
-        "ok": "Got it"
-      },
-      "ok": {
-        "title": "Ledger Live is up and running",
-        "desc": "<0>Having trouble? Go on our </0><1>help page</1>"
-      },
-      "error": {
-        "title": "Ledger Live is experiencing issues"
-      }
+      "header": "Status"
     }
   },
   "browseWeb3": {
@@ -5970,9 +6024,11 @@
     "drawer": {
       "options": {
         "uploadFromPhone": "Choose from my picture gallery",
-        "selectFromNFTGallery": "Choose from NFT gallery"
+        "selectFromNFTGallery": "Choose from NFT gallery",
+        "remove": "Remove current picture"
       }
     },
+    "toastRemove": "Lock screen picture removed",
     "cropImage": "Crop picture",
     "chooseConstrast": "Choose contrast",
     "uploadAnotherImage": "Upload another image",
@@ -6090,7 +6146,8 @@
       "media": {
         "tag": "{{count}} NFTs"
       }
-    }
+    },
+    "referralProgram": "$10"
   },
   "servicesWidget": {
     "title": "Services",

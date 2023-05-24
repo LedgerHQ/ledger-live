@@ -102,13 +102,17 @@ const buildViteConfig = argv =>
           path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-polkadot"),
           "lib-es",
         ),
+        "@ledgerhq/coin-algorand": path.join(
+          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-algorand"),
+          "lib-es",
+        ),
         electron: path.join(__dirname, "electronRendererStubs.js"),
       },
     },
     optimizeDeps: {
       // The common.js dependencies and files need to be force-added below:
       include: ["@ledgerhq/hw-app-eth/erc20"],
-      exclude: ['@braze/web-sdk'],
+      exclude: ["@braze/web-sdk"],
       esbuildOptions: {
         target: ["es2020"],
         plugins: [

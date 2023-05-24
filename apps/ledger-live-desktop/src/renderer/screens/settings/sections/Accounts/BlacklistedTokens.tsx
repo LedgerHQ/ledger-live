@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { showToken } from "~/renderer/actions/settings";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Track from "~/renderer/analytics/Track";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 export default function BlacklistedTokens() {
@@ -67,7 +66,7 @@ export default function BlacklistedTokens() {
         title={t("settings.accounts.tokenBlacklist.title")}
         desc={t("settings.accounts.tokenBlacklist.desc")}
         onClick={toggleCurrencySection}
-        style={
+        contentContainerStyle={
           blacklistedTokenIds.length
             ? {
                 cursor: "pointer",
@@ -76,7 +75,7 @@ export default function BlacklistedTokens() {
         }
       >
         {blacklistedTokenIds.length ? (
-          <Box horizontal flex alignItems="center">
+          <Box horizontal alignItems="center">
             <Box ff="Inter" fontSize={3} mr={2}>
               {t("settings.accounts.tokenBlacklist.count", {
                 count: blacklistedTokenIds.length,
@@ -126,7 +125,7 @@ export default function BlacklistedTokens() {
     </Section>
   );
 }
-const IconContainer: ThemedComponent<{}> = styled.div`
+const IconContainer = styled.div`
   color: ${p => p.theme.colors.palette.text.shade60};
   text-align: center;
   &:hover {
@@ -134,7 +133,7 @@ const IconContainer: ThemedComponent<{}> = styled.div`
     color: ${p => p.theme.colors.palette.text.shade40};
   }
 `;
-const BlacklistedTokenRow: ThemedComponent<{}> = styled(Box).attrs({
+const BlacklistedTokenRow = styled(Box).attrs({
   alignItems: "center",
   horizontal: true,
   flow: 1,
@@ -146,12 +145,12 @@ const BlacklistedTokenRow: ThemedComponent<{}> = styled(Box).attrs({
   }
   padding: 14px 6px;
 `;
-const Body: ThemedComponent<{}> = styled(Box)`
+const Body = styled(Box)`
   &:not(:empty) {
     padding: 0 20px;
   }
 `;
-const BlacklistedTokensSectionHeader: ThemedComponent<{}> = styled.div`
+const BlacklistedTokensSectionHeader = styled.div`
   background: ${p => p.theme.colors.palette.background.default};
   margin: 0 20px;
   padding: 2px 12px;
@@ -161,8 +160,6 @@ const BlacklistedTokensSectionHeader: ThemedComponent<{}> = styled.div`
     letter-spacing: 0.1em;
   }
 `;
-const Show: ThemedComponent<{
-  visible: boolean;
-}> = styled(Box)`
+const Show = styled(Box).attrs<{ visible?: boolean }>(() => ({}))<{ visible?: boolean }>`
   transform: rotate(${p => (p.visible ? 0 : 270)}deg);
 `;

@@ -1,28 +1,20 @@
 import React, { RefObject, useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-
 import Box, { Tabbable } from "~/renderer/components/Box";
-
 import ArrowRight from "~/renderer/icons/ArrowRight";
 import IconClose from "~/renderer/icons/Cross";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
-
 import { useDispatch, useSelector } from "react-redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import LiveAppIcon from "./LiveAppIcon";
-
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
-
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 
@@ -58,7 +50,7 @@ const RightContainer = styled(Box).attrs(() => ({
   ml: "auto",
 }))``;
 
-const ItemContainer: ThemedComponent<{
+type ItemContainerProps = {
   "data-e2e"?: string;
   isInteractive?: boolean;
   onClick?: () => void;
@@ -66,13 +58,15 @@ const ItemContainer: ThemedComponent<{
   children: React.ReactNode;
   justifyContent?: string;
   hidden?: boolean;
-}> = styled(Tabbable).attrs(p => ({
+};
+
+const ItemContainer = styled(Tabbable).attrs<ItemContainerProps>(p => ({
   padding: 1,
   alignItems: "center",
   cursor: p.disabled ? "not-allowed" : "default",
   horizontal: true,
   borderRadius: 1,
-}))`
+}))<ItemContainerProps>`
   -webkit-app-region: no-drag;
   height: 24px;
   position: relative;

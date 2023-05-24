@@ -1,7 +1,7 @@
-import { Transaction as algorandTransaction } from "../families/algorand/types";
-import { TransactionRaw as algorandTransactionRaw } from "../families/algorand/types";
-import { TransactionStatus as algorandTransactionStatus } from "../families/algorand/types";
-import { TransactionStatusRaw as algorandTransactionStatusRaw } from "../families/algorand/types";
+import { Transaction as algorandTransaction } from "@ledgerhq/coin-algorand/types";
+import { TransactionRaw as algorandTransactionRaw } from "@ledgerhq/coin-algorand/types";
+import { TransactionStatus as algorandTransactionStatus } from "@ledgerhq/coin-algorand/types";
+import { TransactionStatusRaw as algorandTransactionStatusRaw } from "@ledgerhq/coin-algorand/types";
 import { Transaction as bitcoinTransaction } from "../families/bitcoin/types";
 import { TransactionRaw as bitcoinTransactionRaw } from "../families/bitcoin/types";
 import { TransactionStatus as bitcoinTransactionStatus } from "../families/bitcoin/types";

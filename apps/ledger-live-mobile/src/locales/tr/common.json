@@ -12,7 +12,7 @@
     "gotit" : "Anladım",
     "continue" : "Devam",
     "retry" : "Tekrar dene",
-    "backTo" : "Back to {{to}}",
+    "backTo" : "{{to}} sayfasına dön",
     "done" : "Tamam",
     "sortBy" : "Sıralama türü",
     "signOut" : "Oturumu kapat",
@@ -118,19 +118,9 @@
       "title" : "Üzgünüz, Bluetooth devre dışı",
       "description" : "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin. ({{state}} durum)"
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "Donanım yazılımı güncellemeleri sadece kablolu bağlantıyla desteklenir"
-    },
-    "BtcUnmatchedApp" : {
-      "title" : "Bu, yanlış uygulama",
-      "description" : "Lütfen cihazınızda {{managerAppName}} uygulamasını açın"
-    },
     "CantOpenDevice" : {
       "title" : "Üzgünüz, bağlantı başarısız",
       "description" : "Ledger cihazınız kilidi açılmış durumda ve Bluetooth kapsama alanı içinde olmalıdır."
-    },
-    "CantScanQRCode" : {
-      "title" : "Bu QR kodu taranamadı; otomatik doğrulama bu adres tarafından desteklenmiyor."
     },
     "ConnectAppTimeout" : {
       "title" : "Üzgünüz, cihaz bulunamadı",
@@ -167,9 +157,6 @@
     "ClaimRewardsFeesWarning" : {
       "title" : "Ödül miktarı, ödülü almak için gereken tahmini ağ ücretlerinden daha az.",
       "description" : ""
-    },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Aktif fonlama işlemi sırasında onaylanan tutarı azaltamazsınız."
     },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Bir hata oluştu (Error #1)",
@@ -330,11 +317,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Ledger Stax’te kilit ekranı iptal edildi",
-      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
+      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz.",
+      "primaryCTA" : "Başka bir resim yükleyin"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Ledger Stax’te kilit ekranı iptal edildi",
-      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
+      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz.",
+      "primaryCTA" : "Başka bir resim yükleyin"
     },
     "InvalidAddress" : {
       "title" : "Bu geçerli bir {{currencyName}} adresi değil"
@@ -483,6 +472,10 @@
       "title" : "Parola eşleşmiyor",
       "description" : "Lütfen tekrar deneyin."
     },
+    "PeerRemovedPairing" : {
+      "title" : "{{ productName }} cihazının tekrar eşleştirilmesi gerekiyor.",
+      "description" : "Telefonunuzun Bluetooth ayarlarına gidip {{ productName }} cihazını unutturun. Ardından Ledger Live'a dönüp tekrar deneyin."
+    },
     "SelectExchangesLoadError" : {
       "title" : "Yüklenemiyor",
       "description" : "Borsalar yüklenemiyor."
@@ -559,7 +552,8 @@
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
-      "description" : "Yönetici sekmesinde {{managerAppName}} uygulamasını kaldırın ve yeniden yükleyin"
+      "description" : "Yönetici sekmesinde {{managerAppName}} uygulamasını kaldırın ve yeniden yükleyin",
+      "primaryCTA" : "Yöneticiyi Aç"
     },
     "UserRefusedAllowManager" : {
       "title" : "Cihazda Yönetici özelliği kapalı",
@@ -678,7 +672,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
+      "description" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin.",
+      "primaryCTA" : "Tekrar dene"
     },
     "SolanaAccountNotFunded" : {
       "title" : "Hesap fonlanmadı"
@@ -1843,7 +1838,8 @@
           "title" : "Cihazınız kilitlendi",
           "subtitle" : "{{ productName }} cihazınızın kilidini açın ve tekrar deneyin."
         },
-        "retryCta" : "Tekrar deneyin"
+        "retryCta" : "Tekrar dene",
+        "openSettingsCta" : "Bluetooth ayarlarına git"
       }
     }
   },
@@ -2128,8 +2124,6 @@
       "OPT_IN" : "Onaylama",
       "OPT_OUT" : "Reddetme",
       "CLOSE_ACCOUNT" : "Hesabı kapama",
-      "SUPPLY" : "Fonlandı",
-      "REDEEM" : "Çekildi",
       "APPROVE" : "Etkin",
       "BOND" : "Bağlama",
       "UNBOND" : "Çözme",
@@ -2395,6 +2389,7 @@
     },
     "earn" : "Kazanın",
     "quickActions" : "Hızlı işlemler",
+    "referralProgram" : "Bizi arkadaşınıza önererek $10 değerinde Bitcoin kazanın",
     "banner" : {
       "redelegation" : {
         "description" : "Haberiniz olsun! Ledger doğrulayıcısı, kullanmakta olduğunuz doğrulayıcıya kıyasla daha düşük bir komisyonla stake eder.",
@@ -2690,6 +2685,10 @@
           "title" : "Deneysel Tarayıcılar API'ı",
           "description" : "Ledger'ın blok zinciri tarayıcılarının gelecek bir sürümünü deneyin. Bu ayarın değiştirilmesi, hesap bakiyesi ve senkronizasyonun yanı sıra gönderme özelliğini de etkileyebilir."
         },
+        "experimentalListAppsV2" : {
+          "title" : "Deneysel My Ledger uygulama listesi",
+          "description" : "My Ledger erişimi ve uygulama içi akışlar için performans iyileştirmesi."
+        },
         "experimentalCountervalues" : {
           "title" : "Deneysel karşı değerler API'ı",
           "description" : "Bu, hesaplarınız için görüntülenen karşı değerlerin hatalı gözükmesine neden olabilir."
@@ -2703,6 +2702,10 @@
         "experimentalApps" : {
           "title" : "Deneysel uygulamalara izin ver",
           "description" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
+        },
+        "debugApps" : {
+          "title" : "Hata ayıklama uygulamalarına izin ver",
+          "description" : "Hata ayıklama etiketli platform uygulamalarını görüntüleme ve açmaya izin verin."
         },
         "staggingUrl" : {
           "title" : "Test ortamı URL'sini öğrenin",
@@ -2730,7 +2733,12 @@
       "featureFlagsTabGroups" : "Gruplar",
       "firebaseProject" : "Bu sürüm tarafından hedeflenen Firebase projesi:",
       "showBannerDesc" : "Bayraklar geçersiz bırakıldığında banner'ı göster",
-      "bannerTitle" : "Bayraklar yerel olarak geçersiz bırakıldı"
+      "bannerTitle" : "Bayraklar yerel olarak geçersiz bırakıldı",
+      "features" : {
+        "firmwareUpdate" : {
+          "headerTitle" : "Donanım yazılımı güncellemesi için hata ayıklama"
+        }
+      }
     }
   },
   "notifications" : {
@@ -2741,49 +2749,10 @@
       "later" : "Belki sonra"
     }
   },
-  "migrateAccounts" : {
-    "banner" : "Ledger Live hesap güncellemesi",
-    "overview" : {
-      "headerTitle" : "Hesap güncellemesi",
-      "title" : "Ledger Live hesap güncellemesi",
-      "subtitle" : "Ledger Live'daki yeni özellikler, hesaplarınızın güncellenmesi gerektiği anlamına gelir",
-      "notice" : "{{accountCount}} hesap güncellenemedi. Lütfen aşağıdaki hesapla ilişkili cihazı bağlayın",
-      "notice_plural" : "{{accountCount}} hesap güncellenemedi. Lütfen aşağıdaki hesaplarla ilişkili cihazı bağlayın.",
-      "currency" : "1 {{currency}} hesabının güncellenmesi gerekiyor:",
-      "currency_plural" : "{{count}} {{currency}} hesabının güncellenmesi gerekiyor:",
-      "start" : "Güncellemeyi başlat",
-      "continue" : "Güncellemeye devam et"
-    },
-    "progress" : {
-      "headerTitle" : "Hesaplar güncelleniyor",
-      "pending" : {
-        "title" : "{{currency}} güncellemesi devam ediyor",
-        "subtitle" : "Lütfen hesaplarınızın güncellenmesini bekleyin"
-      },
-      "notice" : {
-        "title" : "{{currency}} güncellemesi tamamlanmadı",
-        "subtitle" : "Bu cihaz ile güncellenebilen bir {{currency}} hesabı yok.",
-        "cta" : "Devam",
-        "ctaNextCurrency" : "{{currency}} ile devam et"
-      },
-      "done" : {
-        "title" : "{{currency}} güncellemesi tamamlandı",
-        "subtitle" : "Tebrikler, {{currency}} hesaplarınız başarıyla güncellendi.",
-        "cta" : "Devam",
-        "ctaNextCurrency" : "{{currency}} ile devam et",
-        "ctaDone" : "Tamam"
-      },
-      "error" : {
-        "cta" : "Tekrar dene"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "Cihazı bağlayın"
-    }
-  },
   "transfer" : {
     "recipient" : {
-      "input" : "Adresi girin"
+      "input" : "Adresi girin",
+      "inputEns" : "Adres ya da ENS adı girin"
     },
     "send" : {
       "title" : "Gönder",
@@ -2839,7 +2808,8 @@
         "addressVerified" : "Adres doğrulandı",
         "verifyAddress" : "Adresinizi doğrulamak için buraya dokunun",
         "adviceVerify" : "Adresinizi daima Ledger cihazınız ile doğrulamanızı öneririz",
-        "sendWarning" : "Bu adrese sadece {{currencyName}} ({{currencyTicker}}) gönderin. Başka herhangi bir coin gönderdiğiniz takdirde bu coin'leri kalıcı olarak yitirebilirsiniz."
+        "sendWarning" : "Bu adrese sadece {{currencyName}} ({{currencyTicker}}) gönderin. Başka herhangi bir coin gönderdiğiniz takdirde bu coin'leri kalıcı olarak yitirebilirsiniz.",
+        "dashStakingWarning" : "Lütfen bu adresi staking ödüllerini almak için kullanmayın"
       },
       "securityVerify" : {
         "title" : "Güvenliğiniz açısından bu adresi Ledger cihazınızla doğrulamanızı öneririz.",
@@ -2890,7 +2860,7 @@
       "title" : "Satın Al / Sat"
     },
     "stake" : {
-      "title" : "Stake",
+      "title" : "Stake edin",
       "description" : "Elinizdeki kriptoları artırın."
     },
     "swap" : {
@@ -3042,7 +3012,7 @@
           "receiveFloat" : "Hizmet ücretleri hariç alınacak tutar",
           "provider" : "Sağlayıcı",
           "method" : "Kur",
-          "fees" : "Maksimum ücret",
+          "fees" : "Ücret üst limiti",
           "disclaimer" : {
             "title" : "Hüküm ve Koşullar",
             "desc" : "“Kabul Et” seçeneğine tıklayarak, bu hizmetin tamamen ve sadece <0>{{provider}}</0> Hüküm ve Koşulları tarafından yönetildiğini anlıyor ve kabul ediyorum.",
@@ -3412,7 +3382,19 @@
       "scan" : "QR kodunu tarayın",
       "enterAddress" : "Adresi girin",
       "input" : "Adresi girin",
-      "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın."
+      "verifyAddress" : "Adresin, alıcıyla paylaşılan adres ile eşleştiğini doğrulayın.",
+      "domainService" : {
+        "reverse" : "Bu adres {{domain}} ile bağlı",
+        "forward" : "Bu geçerli bir ENS adresidir",
+        "supportLink" : "Ethereum Name Service nedir?",
+        "invalidDomain" : {
+          "title" : "Alan desteklenmiyor",
+          "description" : "Şu anda sadece 30'dan az alfasayısal karaktere sahip olan ENS alanları desteklenmektedir."
+        },
+        "noResolution" : {
+          "title" : "Bu alan için adres bulunamadı"
+        }
+      }
     },
     "amount" : {
       "available" : "Toplam mevcut",
@@ -3437,7 +3419,7 @@
       "maxPriorityFee" : "Öncelik ücreti üst limiti",
       "nextBlock" : "Sonraki blok",
       "suggested" : "Önerilen",
-      "maxFees" : "Maksimum ücret",
+      "maxFees" : "Ücret üst limiti",
       "validateGasLimit" : "Gas limitini onayla",
       "fees" : "Ücretler",
       "maxEstimatedFee" : "Maks. tahminî ücret",
@@ -4642,7 +4624,8 @@
             "noResultsFound" : "<0>{{search}}</0> için doğrulayıcı bulunamadı"
           },
           "amount" : {
-            "newRedelegatedBalance" : "İşlemden sonra <0>{{name}}</0> için yeni toplam: <0>{{amount}}</0>"
+            "newRedelegatedBalance" : "İşlemden sonra <0>{{name}}</0> için yeni toplam: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı"
           },
           "verification" : {
             "success" : {
@@ -4941,6 +4924,7 @@
       "header" : "Oylar ({{total}})",
       "Amount" : "Tutar",
       "noRewards" : "Ödül yok",
+      "warnDisableStakingMessage" : "Şu anda Tron için staking özelliği kullanılamıyor",
       "votes" : {
         "title" : "Oylar",
         "description" : "Ödül kazanmaya başlamak için bir veya daha fazla Temsilciye oy verin.",
@@ -5746,22 +5730,7 @@
       }
     },
     "status" : {
-      "title" : "İlgilenmeniz gereken bir sorun var",
-      "title_plural" : "Dikkatinizi gerektiren bazı sorunlar var",
-      "desc" : {
-        "0" : "An itibarıyla inceleniyorlar ve kısa süre içerisinde çözülecekler.",
-        "1" : "Bu sorunlardan etkilendiyseniz <0>Müşteri Desteği</0> ekibimizle iletişime geçin"
-      },
-      "cta" : {
-        "ok" : "Anladım"
-      },
-      "ok" : {
-        "title" : "Ledger Live çalışır durumda",
-        "desc" : "<0>Sorun mu yaşıyorsunuz? </0><1>Yardım sayfamıza</1> gidin"
-      },
-      "error" : {
-        "title" : "Ledger Live'de bir sorun var"
-      }
+      "header" : "Durum"
     }
   },
   "browseWeb3" : {
@@ -5914,7 +5883,7 @@
       "noCurrencySearchResultsFor" : "Üzgünüz, <0>{{search}}</0> araması için bir para bulamadık. Lütfen aramayı başka bir anahtar kelime ile yeniden deneyin.",
       "noSearchResults" : "Üzgünüz, herhangi bir arama sonucu bulamadık.",
       "retrySearchKeyword" : "Lütfen aramayı başka bir anahtar kelime ile yeniden deneyin.",
-      "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
+      "retrySearchKeywordAndUrl" : "Lütfen başka bir anahtar kelimeyle yeniden aramayı deneyin ya da <Link>{{search}}</Link> hedefini Ledger Live'ın dışında açın.",
       "retrySearchParams" : "Lütfen aramayı farklı bir değişkenle yeniden deneyin.",
       "trackFavAssets" : "Favorilerinizi takip edin",
       "clickOnStarIcon" : "Bir varlığın yanındaki yıldız simgesine tıklamak onu otomatik bir şekilde favori varlıklarınız arasına ekler.",
@@ -5933,6 +5902,13 @@
     "gallery" : {
       "allNft" : "Tüm NFT'ler",
       "addNew" : "Yeni ekle"
+    },
+    "designedForStax" : {
+      "title" : "<1>Ledger</1><2>Stax</2><0>için tasarlandı</0>",
+      "drawer" : {
+        "description" : "Bu NFT, Ledger Stax'in E Ink Ekranı için özel olarak tasarlanmış ek bir resim içermektedir.\n\nBu resim, bu NFT'yi kilitli ekran olarak ayarladığınızda kullanılacaktır.",
+        "cta" : "Anladım"
+      }
     },
     "viewer" : {
       "properties" : "Özellikler",
@@ -6008,7 +5984,7 @@
     },
     "confirmCrop" : "Kırpmayı onayla",
     "confirmContrast" : "Zıtlığı onayla",
-    "nftEntryPointButtonLabel" : "Ledger Stax kilit ekranı resmi olarak belirle",
+    "nftEntryPointButtonLabel" : "Ledger Stax kilitli ekranı olarak belirle",
     "customImage" : "Özel resim",
     "doThisLater" : "Belki sonra",
     "preview" : {
@@ -6110,7 +6086,8 @@
       "media" : {
         "tag" : "{{count}} NFT"
       }
-    }
+    },
+    "referralProgram" : "$10"
   },
   "servicesWidget" : {
     "title" : "Hizmetler",
@@ -6121,7 +6098,7 @@
           "title" : "Yeni",
           "desc" : "Gizli Kurtarma İfadenizi kullanmadan cüzdanınıza yeniden erişin.",
           "actions" : {
-            "learnMore" : "Bunun bana ne yararı var?",
+            "learnMore" : "Bunun bana yararı nedir?",
             "alreadySubscribed" : "Zaten giriş yaptınız mı? <LinkAccount>Aboneliğimi görüntüle</LinkAccount>"
           }
         }

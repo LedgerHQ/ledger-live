@@ -64,6 +64,7 @@ const expectedOrder = [
   "test5 - sub1",
 ];
 test("SortAccountsByStatus should keep disable accounts with active subAccounts before disable accounts", () => {
+  // @ts-expect-error For testing purposes
   expect(sortAccountsByStatus(accounts).map(value => value.name)).toEqual(expectedOrder);
 });
 test("filterAvailableToAssets returns to assets with fromId", () => {
@@ -72,18 +73,22 @@ test("filterAvailableToAssets returns to assets with fromId", () => {
       {
         from: "a",
         to: "b",
+        tradeMethod: "",
       },
       {
         from: "b",
         to: "a",
+        tradeMethod: "",
       },
       {
         from: "c",
         to: "d",
+        tradeMethod: "",
       },
       {
         from: "a",
         to: "e",
+        tradeMethod: "",
       },
     ],
     "a",
@@ -95,18 +100,22 @@ test("filterAvailableToAssets returns to assets without fromId", () => {
     {
       from: "a",
       to: "b",
+      tradeMethod: "",
     },
     {
       from: "b",
       to: "a",
+      tradeMethod: "",
     },
     {
       from: "c",
       to: "d",
+      tradeMethod: "",
     },
     {
       from: "a",
       to: "e",
+      tradeMethod: "",
     },
   ]);
   expect(toAssets).toEqual(["b", "a", "d", "e"]);

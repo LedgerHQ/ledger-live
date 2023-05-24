@@ -1,12 +1,9 @@
-import { DeviceModelId } from "@ledgerhq/devices";
 import { renderLoading } from "~/renderer/components/DeviceAction/rendering";
+
 type Props = {
-  modelId: DeviceModelId;
-  children?: React$Node;
+  children?: React.ReactNode;
 };
-const StepProgress = ({ children, modelId }: Props) =>
-  renderLoading({
-    modelId,
-    children,
-  });
+
+const StepProgress = ({ children }: Props) => renderLoading({ children });
+
 export default StepProgress;

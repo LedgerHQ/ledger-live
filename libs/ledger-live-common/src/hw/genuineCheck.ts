@@ -3,7 +3,7 @@ import Transport from "@ledgerhq/hw-transport";
 import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { Observable, from } from "rxjs";
 import { switchMap } from "rxjs/operators";
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "../manager/api";
 import { getProviderId } from "../manager";
 export default (
   transport: Transport,

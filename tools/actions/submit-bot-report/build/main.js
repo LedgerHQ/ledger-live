@@ -1,3 +1,4 @@
+"use strict";
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -31,26 +32,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve2, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve2(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
 
 // ../../../node_modules/.pnpm/unfetch@4.2.0/node_modules/unfetch/dist/unfetch.module.js
 var unfetch_module_exports = {};
@@ -5239,78 +5220,76 @@ function handleErrors(response) {
   }
   return response;
 }
-function main() {
-  return __async(this, null, function* () {
-    const githubToken = core.getInput("githubToken");
-    const githubSha = core.getInput("githubSha");
-    const githubPR = core.getInput("githubPR");
-    const slackChannel = core.getInput("slackChannel");
-    const slackIconEmoji = core.getInput("slackIconEmoji");
-    const slackApiToken = core.getInput("slackApiToken");
-    const reportsFolder = path.resolve(core.getInput("path"));
-    const slackCommentTemplateP = fs.promises.readFile(
-      path.join(reportsFolder, "slack-comment-template.md"),
-      "utf-8"
-    );
-    const commentAPIs = [
-      githubPR ? `issues/${githubPR}/comments` : null,
-      githubSha ? `commits/${githubSha}/comments` : null
-    ].filter(Boolean);
-    let githubComment;
-    for (const uri of commentAPIs) {
-      const githubUrl = `https://api.github.com/repos/LedgerHQ/ledger-live/${uri}`;
-      console.log("sending to " + githubUrl);
-      try {
-        const fullReportBodyP = fs.promises.readFile(
-          path.join(reportsFolder, "full-report.md"),
-          "utf-8"
-        );
-        githubComment = yield (0, import_isomorphic_unfetch.default)(githubUrl, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${githubToken}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ body: yield fullReportBodyP })
-        }).then(handleErrors).then((r) => r.json());
-      } catch (e) {
-        console.error(
-          "Couldn't send the full report. fallbacking on the lighter version"
-        );
-        const reportBodyP = fs.promises.readFile(
-          path.join(reportsFolder, "github-report.md"),
-          "utf-8"
-        );
-        githubComment = yield (0, import_isomorphic_unfetch.default)(githubUrl, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${githubToken}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ body: yield reportBodyP })
-        }).then(handleErrors).then((r) => r.json());
-      }
-    }
-    if (slackApiToken && githubComment) {
-      const slackCommentTemplate = yield slackCommentTemplateP;
-      const text = slackCommentTemplate.replace(
-        "{{url}}",
-        githubComment.html_url
+async function main() {
+  const githubToken = core.getInput("githubToken");
+  const githubSha = core.getInput("githubSha");
+  const githubPR = core.getInput("githubPR");
+  const slackChannel = core.getInput("slackChannel");
+  const slackIconEmoji = core.getInput("slackIconEmoji");
+  const slackApiToken = core.getInput("slackApiToken");
+  const reportsFolder = path.resolve(core.getInput("path"));
+  const slackCommentTemplateP = fs.promises.readFile(
+    path.join(reportsFolder, "slack-comment-template.md"),
+    "utf-8"
+  );
+  const commentAPIs = [
+    githubPR ? `issues/${githubPR}/comments` : null,
+    githubSha ? `commits/${githubSha}/comments` : null
+  ].filter(Boolean);
+  let githubComment;
+  for (const uri of commentAPIs) {
+    const githubUrl = `https://api.github.com/repos/LedgerHQ/ledger-live/${uri}`;
+    console.log("sending to " + githubUrl);
+    try {
+      const fullReportBodyP = fs.promises.readFile(
+        path.join(reportsFolder, "full-report.md"),
+        "utf-8"
       );
-      yield (0, import_isomorphic_unfetch.default)("https://slack.com/api/chat.postMessage", {
+      githubComment = await (0, import_isomorphic_unfetch.default)(githubUrl, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${slackApiToken}`,
+          Authorization: `Bearer ${githubToken}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          text,
-          channel: slackChannel || "ledger-live-bot",
-          icon_emoji: slackIconEmoji || ":mere_denis:"
-        })
-      }).then(handleErrors);
+        body: JSON.stringify({ body: await fullReportBodyP })
+      }).then(handleErrors).then((r) => r.json());
+    } catch (e) {
+      console.error(
+        "Couldn't send the full report. fallbacking on the lighter version"
+      );
+      const reportBodyP = fs.promises.readFile(
+        path.join(reportsFolder, "github-report.md"),
+        "utf-8"
+      );
+      githubComment = await (0, import_isomorphic_unfetch.default)(githubUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${githubToken}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ body: await reportBodyP })
+      }).then(handleErrors).then((r) => r.json());
     }
-  });
+  }
+  if (slackApiToken && githubComment) {
+    const slackCommentTemplate = await slackCommentTemplateP;
+    const text = slackCommentTemplate.replace(
+      "{{url}}",
+      githubComment.html_url
+    );
+    await (0, import_isomorphic_unfetch.default)("https://slack.com/api/chat.postMessage", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${slackApiToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        text,
+        channel: slackChannel || "ledger-live-bot",
+        icon_emoji: slackIconEmoji || ":mere_denis:"
+      })
+    }).then(handleErrors);
+  }
 }
 main().catch((err) => {
   core.setFailed(err);

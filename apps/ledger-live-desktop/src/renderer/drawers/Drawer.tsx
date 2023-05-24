@@ -1,8 +1,8 @@
 import React, { useContext, useCallback, useEffect, useState } from "react";
-import { context } from "./Provider";
+import { context, State } from "./Provider";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
-import { Transition, TransitionGroup } from "react-transition-group";
+import { Transition, TransitionGroup, TransitionStatus } from "react-transition-group";
 const transitionStyles = {
   entering: {},
   entered: {
@@ -17,11 +17,11 @@ const transitionStyles = {
   },
 };
 const DURATION = 200;
-const Bar = styled.div.attrs(props => ({
+const Bar = styled.div.attrs<{ state: TransitionStatus }>(props => ({
   style: {
-    ...transitionStyles[props.state],
+    ...transitionStyles[props.state as keyof typeof transitionStyles],
   },
-}))`
+}))<{ state: TransitionStatus; index: number }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -39,7 +39,7 @@ const Bar = styled.div.attrs(props => ({
 `;
 export const Drawer = () => {
   const { state, setDrawer } = useContext(context);
-  const [queue, setQueue] = useState([]);
+  const [queue, setQueue] = useState<State[]>([]);
   useEffect(() => {
     setQueue(q => {
       if (!state.open) return [];
@@ -48,7 +48,7 @@ export const Drawer = () => {
     });
   }, [state]);
   useEffect(() => {
-    let t;
+    let t: NodeJS.Timeout | undefined;
     if (queue.length > 1) {
       const [, ...rest] = queue;
       t = setTimeout(() => setQueue(rest), DURATION * 2);
@@ -79,7 +79,12 @@ export const Drawer = () => {
             >
               {s => (
                 <Bar state={s} index={index}>
-                  <Component onClose={state.options.onRequestClose || onRequestClose} {...props} />
+                  {Component && (
+                    <Component
+                      onClose={state.options.onRequestClose || onRequestClose}
+                      {...props}
+                    />
+                  )}
                 </Bar>
               )}
             </Transition>

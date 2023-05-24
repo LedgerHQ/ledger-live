@@ -14,15 +14,8 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import ErrorDisplay from "../../shared/components/ErrorDisplay";
 import { StepProps } from "../types";
 import ValidatorRow from "../../shared/components/ValidatorRow";
-export default function StepValidator({
-  account,
-  parentAccount,
-  onUpdateTransaction,
-  transaction,
-  status,
-  error,
-  t,
-}: StepProps) {
+
+export default function StepValidator({ account, transaction, status, error }: StepProps) {
   if (account === null || transaction === null || account?.solanaResources === undefined) {
     throw new Error("account, transaction and solana resouces required");
   }
@@ -66,7 +59,6 @@ export function StepValidatorFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;

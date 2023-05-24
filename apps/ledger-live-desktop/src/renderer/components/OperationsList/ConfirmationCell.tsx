@@ -7,9 +7,8 @@ import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { getMarketColor } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import ConfirmationCheck from "./ConfirmationCheck";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import perFamilyOperationDetails from "~/renderer/generated/operationDetails";
-const Cell: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Cell = styled(Box).attrs(() => ({
   pl: 4,
   horizontal: true,
   alignItems: "center",
@@ -21,7 +20,7 @@ type OwnProps = {
   operation: Operation;
 };
 type Props = {
-  confirmationsNb: number;
+  confirmationsNb?: number;
   isConfirmed: boolean;
 } & OwnProps;
 class ConfirmationCell extends PureComponent<Props> {
@@ -35,10 +34,16 @@ class ConfirmationCell extends PureComponent<Props> {
       isNegative,
     });
 
-    const specific = currency.family ? perFamilyOperationDetails[currency.family] : null;
+    const specific =
+      "family" in currency && currency.family
+        ? perFamilyOperationDetails[currency.family as keyof typeof perFamilyOperationDetails]
+        : null;
     const SpecificConfirmationCell =
-      specific && specific.confirmationCell ? specific.confirmationCell[operation.type] : null;
+      specific && "confirmationCell" in specific && specific.confirmationCell
+        ? specific.confirmationCell[operation.type as keyof typeof specific.confirmationCell]
+        : null;
     return SpecificConfirmationCell ? (
+      // @ts-expect-error TODO: check why TS is unable to infer the type of SpecificConfirmationCell
       <SpecificConfirmationCell
         operation={operation}
         type={operation.type}

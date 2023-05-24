@@ -88,7 +88,6 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           action={sendAction}
           onClose={onClose}
           onResult={onSign}
-          // @ts-expect-error Wrong types?
           request={{
             tokenCurrency,
             parentAccount,

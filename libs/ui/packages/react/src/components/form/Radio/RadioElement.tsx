@@ -72,10 +72,10 @@ const Input = styled.input`
     :hover,
     :checked:not([disabled]),
     :checked:not([disabled]) + ${Label}, :focus {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.success.c100};
+      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.success.c50};
     }
     :focus {
-      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.success.c100, 0.48)};
+      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.success.c50, 0.48)};
     }
   }
 
@@ -83,10 +83,10 @@ const Input = styled.input`
     :hover,
     :checked:not([disabled]),
     :checked:not([disabled]) + ${Label}, :focus {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.error.c100};
+      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.error.c50};
     }
     :focus {
-      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.error.c100, 0.48)};
+      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.error.c50, 0.48)};
     }
   }
 
@@ -125,19 +125,19 @@ const outlinedCSS = css`
 
   &[data-variant="success"] {
     &[data-checked]:not([disabled]) {
-      border-color: ${(p) => p.theme.colors.success.c100};
+      border-color: ${(p) => p.theme.colors.success.c50};
     }
     :hover {
-      border-color: ${(p) => p.theme.colors.success.c100};
+      border-color: ${(p) => p.theme.colors.success.c50};
     }
   }
 
   &[data-variant="error"] {
     &[data-checked]:not([disabled]) {
-      border-color: ${(p) => p.theme.colors.error.c100};
+      border-color: ${(p) => p.theme.colors.error.c50};
     }
     :hover {
-      border-color: ${(p) => p.theme.colors.error.c100};
+      border-color: ${(p) => p.theme.colors.error.c50};
     }
   }
 

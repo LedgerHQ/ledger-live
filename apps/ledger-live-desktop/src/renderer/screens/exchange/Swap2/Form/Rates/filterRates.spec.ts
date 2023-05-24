@@ -1,7 +1,7 @@
 import { ExchangeRate } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { filterRates } from "~/renderer/screens/exchange/Swap2/Form/Rates/filterRates";
 import { FILTER } from "~/renderer/screens/exchange/Swap2/Form/utils";
-const rates: ExchangeRate[] = [
+const rates: Partial<ExchangeRate>[] = [
   {
     providerType: "CEX",
     tradeMethod: "fixed",
@@ -25,11 +25,11 @@ const rates: ExchangeRate[] = [
 ];
 describe("filterRates", () => {
   it("does not apply any filters", () => {
-    const filtered = filterRates(rates, []);
+    const filtered = filterRates(rates as ExchangeRate[], []);
     expect(filtered).toEqual(rates);
   });
   it("filters centralised rates", () => {
-    const filtered = filterRates(rates, [FILTER.centralised]);
+    const filtered = filterRates(rates as ExchangeRate[], [FILTER.centralised]);
     expect(filtered).toEqual([
       {
         providerType: "CEX",
@@ -44,7 +44,7 @@ describe("filterRates", () => {
     ]);
   });
   it("filters centralised floating rates", () => {
-    const filtered = filterRates(rates, [FILTER.centralised, FILTER.float]);
+    const filtered = filterRates(rates as ExchangeRate[], [FILTER.centralised, FILTER.float]);
     expect(filtered).toEqual([
       {
         providerType: "CEX",
@@ -54,7 +54,7 @@ describe("filterRates", () => {
     ]);
   });
   it("filters centralised fixed rates", () => {
-    const filtered = filterRates(rates, [FILTER.centralised, FILTER.fixed]);
+    const filtered = filterRates(rates as ExchangeRate[], [FILTER.centralised, FILTER.fixed]);
     expect(filtered).toEqual([
       {
         providerType: "CEX",
@@ -64,7 +64,7 @@ describe("filterRates", () => {
     ]);
   });
   it("filters decentralised rates", () => {
-    const filtered = filterRates(rates, [FILTER.decentralised]);
+    const filtered = filterRates(rates as ExchangeRate[], [FILTER.decentralised]);
     expect(filtered).toEqual([
       {
         providerType: "DEX",
@@ -79,7 +79,7 @@ describe("filterRates", () => {
     ]);
   });
   it("filters decentralised floating rates", () => {
-    const filtered = filterRates(rates, [FILTER.decentralised, FILTER.float]);
+    const filtered = filterRates(rates as ExchangeRate[], [FILTER.decentralised, FILTER.float]);
     expect(filtered).toEqual([
       {
         providerType: "DEX",
@@ -89,7 +89,7 @@ describe("filterRates", () => {
     ]);
   });
   it("filters decentralised fixed rates", () => {
-    const filtered = filterRates(rates, [FILTER.decentralised, FILTER.fixed]);
+    const filtered = filterRates(rates as ExchangeRate[], [FILTER.decentralised, FILTER.fixed]);
     expect(filtered).toEqual([
       {
         providerType: "DEX",
@@ -99,7 +99,7 @@ describe("filterRates", () => {
     ]);
   });
   it("filters fixed rates", () => {
-    const filtered = filterRates(rates, [FILTER.fixed]);
+    const filtered = filterRates(rates as ExchangeRate[], [FILTER.fixed]);
     expect(filtered).toEqual([
       {
         providerType: "CEX",
@@ -114,7 +114,7 @@ describe("filterRates", () => {
     ]);
   });
   it("filters floating rates", () => {
-    const filtered = filterRates(rates, [FILTER.float]);
+    const filtered = filterRates(rates as ExchangeRate[], [FILTER.float]);
     expect(filtered).toEqual([
       {
         providerType: "CEX",

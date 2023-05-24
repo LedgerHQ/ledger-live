@@ -8,6 +8,7 @@ import {
 import {
   TransportStatusError,
   UserRefusedDeviceNameChange,
+  UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
 import {
@@ -53,6 +54,7 @@ import {
   LoadingAppInstall,
   AutoRepair,
   renderAllowLanguageInstallation,
+  renderAllowRemoveCustomLockscreen,
   renderImageLoadRequested,
   renderLoadingImage,
   renderImageCommitRequested,
@@ -105,6 +107,7 @@ type Status = PartialNullable<{
   initSwapResult: InitSwapResult | null;
   installingLanguage: boolean;
   languageInstallationRequested: boolean;
+  imageRemoveRequested: boolean;
   signMessageRequested: TypedMessageData | MessageData;
   allowOpeningGranted: boolean;
   completeExchangeStarted: boolean;
@@ -207,6 +210,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     initSwapResult,
     installingLanguage,
     languageInstallationRequested,
+    imageRemoveRequested,
     signMessageRequested,
     allowOpeningGranted,
     completeExchangeStarted,
@@ -224,7 +228,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   } = status;
 
   useEffect(() => {
-    if (deviceInfo) {
+    if (deviceInfo && device) {
       dispatch(
         setLastSeenDeviceInfo({
           modelId: device!.modelId,
@@ -332,6 +336,34 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       theme,
       device: selectedDevice,
     });
+  }
+
+  // FIXME when we rework the error rendering, this should be handled at that
+  // level instead of being an exception here.
+  if (imageRemoveRequested) {
+    if (error) {
+      if ((error as Status["error"]) instanceof UserRefusedOnDevice) {
+        return renderError({
+          t,
+          navigation,
+          error,
+          onRetry,
+          colors,
+          theme,
+          iconColor: palette.neutral.c20,
+          Icon: () => (
+            <Icons.InfoAltFillMedium size={28} color={palette.primary.c80} />
+          ),
+          device: device ?? undefined,
+        });
+      }
+    } else {
+      return renderAllowRemoveCustomLockscreen({
+        t,
+        theme,
+        device: selectedDevice,
+      });
+    }
   }
 
   if (listingApps) {
@@ -454,7 +486,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         onRetry,
         colors,
         theme,
-        iconColor: palette.neutral.c100a01,
+        iconColor: palette.opacityDefault.c10,
         Icon: () => (
           <Icons.WarningSolidMedium size={28} color={colors.warning} />
         ),
@@ -556,6 +588,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
           : t("send.verification.streaming.inaccurate"),
       colors,
       theme,
+      lockModal: true,
     });
   }
 

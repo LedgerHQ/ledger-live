@@ -1,5 +1,6 @@
 import React from "react";
-const Star = ({ size = 16, filled = false }: { size?: number; filled: boolean }) => (
+
+const Star = ({ size = 16, filled = false }: { size?: number; filled?: boolean }) => (
   <svg viewBox="0 0 13 13" width={size} height={size}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <path
@@ -11,4 +12,5 @@ const Star = ({ size = 16, filled = false }: { size?: number; filled: boolean })
     </g>
   </svg>
 );
+
 export default Star;

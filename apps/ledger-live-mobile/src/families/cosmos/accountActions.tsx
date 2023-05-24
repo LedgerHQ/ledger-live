@@ -47,7 +47,7 @@ const getMainActions = ({
       event: "button_clicked",
       eventProperties: {
         button: "stake",
-        token: "COSMOS",
+        currency: "COSMOS",
         page: "Account Page",
       },
     },

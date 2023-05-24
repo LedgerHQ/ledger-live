@@ -16,21 +16,40 @@ import {
   mockAccountNoReward,
   mockAccountNoVote,
 } from "./data.mock";
-jest.mock("../../api/Tron");
-import superRepresentatives from "../../api/__mocks__/superRepresentativesData";
+import superRepresentatives from "./api/superRepresentativesData.mock";
+
+jest.mock("./api", () => {
+  return {
+    extractBandwidthInfo: jest.fn().mockImplementation(() => {
+      return {
+        freeUsed: 0,
+        freeLimit: 0,
+        gainedUsed: 0,
+        gainedLimit: 0,
+      };
+    }),
+    getTronSuperRepresentatives: jest.fn().mockImplementation(() => {
+      return Promise.resolve(superRepresentatives);
+    }),
+  };
+});
+
 test("Tron SuperRepresentatives hook - useTronSuperRepresentatives - Expect super representatives list", async () => {
   const { result } = renderHook(() => useTronSuperRepresentatives());
   await act(async () => {
     expect(result.current).toStrictEqual([]);
   });
+
   process.nextTick(() =>
     expect(result.current).toStrictEqual(superRepresentatives)
   );
 });
+
 test("Tron get last voting date - getLastVotedDate - Expect to get last voted date", () => {
   expect(getLastVotedDate(mockAccount)).toStrictEqual(__LAST_VOTING_DATE__);
   expect(getLastVotedDate(mockAccountNoVote)).toStrictEqual(null);
 });
+
 test("Tron get next reward date - getNextRewardDate - Expect to get next reward date", () => {
   expect(getNextRewardDate(mockAccount)).toStrictEqual(
     __NEXT_REWARD_DATE__.valueOf() + 24 * 60 * 60 * 1000
@@ -61,6 +80,7 @@ test("Tron format votes - formatVotes - Expect to get formatted votes", () => {
     __FORMATTED_VOTES__
   );
 });
+
 const SR_INDEX_1 = 9;
 const SR_INDEX_2 = 2;
 const VOTE_AMOUNT_1 = 10;
@@ -75,6 +95,7 @@ const votes = [
     voteCount: VOTE_AMOUNT_2,
   },
 ];
+
 test("Tron search SR - search SR in the list - Expect to retrieve a specific list SR", () => {
   const { result } = renderHook(() =>
     useSortedSr(
@@ -84,6 +105,7 @@ test("Tron search SR - search SR in the list - Expect to retrieve a specific lis
       votes
     )
   );
+
   act(() => {
     expect(Array.isArray(result.current)).toBe(true);
     expect(result.current[0].address).toBe(
@@ -91,6 +113,7 @@ test("Tron search SR - search SR in the list - Expect to retrieve a specific lis
     );
   });
 });
+
 test("Tron search SR - search SR in the list - Expect to retrieve all the list if no search provided and sorted by votes", () => {
   const { result } = renderHook(() =>
     useSortedSr("", superRepresentatives as any[], votes)
@@ -102,6 +125,7 @@ test("Tron search SR - search SR in the list - Expect to retrieve all the list i
     expect(result.current[1].address).toBe(votes[0].address);
   });
 });
+
 test("Tron unfreeze - get unfreeze data - Expect to retrieve unfreeze data from account", () => {
   const {
     unfreezeBandwidth,

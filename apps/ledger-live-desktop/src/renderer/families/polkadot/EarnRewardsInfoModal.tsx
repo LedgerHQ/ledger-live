@@ -13,7 +13,7 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
 };
-export default function PolkadotEarnRewardsInfoModal({ name, account, parentAccount }: Props) {
+export default function PolkadotEarnRewardsInfoModal({ name, account }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {

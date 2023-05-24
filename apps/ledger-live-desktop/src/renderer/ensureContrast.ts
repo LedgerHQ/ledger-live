@@ -13,7 +13,7 @@ const ensureContrast = (color1: string, color2: string) => {
   return color1;
 };
 export const useAutoContrast = (color: string) => {
-  const color2 = useTheme("colors.palette.background.paper");
+  const color2 = useTheme().colors.palette.background.paper;
   return ensureContrast(color, color2);
 };
 export default ensureContrast;

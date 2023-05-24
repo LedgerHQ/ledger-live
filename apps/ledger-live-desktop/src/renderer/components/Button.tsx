@@ -1,19 +1,27 @@
 import React, { PureComponent } from "react";
-import styled from "styled-components";
-import { space, fontSize, fontWeight, color } from "styled-system";
+import styled, { ThemedStyledProps, DefaultTheme } from "styled-components";
+import {
+  space,
+  fontSize,
+  fontWeight,
+  color,
+  SpaceProps,
+  ColorProps,
+  FontSizeProps,
+  FontWeightProps,
+} from "styled-system";
 import noop from "lodash/noop";
 import get from "lodash/get";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { track } from "~/renderer/analytics/segment";
 import { isGlobalTabEnabled } from "~/config/global-tab";
 import { darken, lighten, rgba } from "~/renderer/styles/helpers";
 import fontFamily from "~/renderer/styles/styled/fontFamily";
 import { focusedShadowStyle } from "~/renderer/components/Box/Tabbable";
 import Spinner from "~/renderer/components/Spinner";
-type Style = any; // FIXME
-const buttonStyles: {
-  [_: string]: Style;
-} = {
+
+type BaseComponentProps = BaseProps & { ff?: string; fullWidth?: boolean };
+type ButtonStyle = (p: ThemedStyledProps<BaseComponentProps, DefaultTheme>) => string;
+const buttonStyles: Record<string, Record<string, ButtonStyle>> = {
   default: {
     default: p => `
       box-shadow: ${p.isFocused ? focusedShadowStyle : ""};
@@ -198,8 +206,11 @@ const buttonStyles: {
   },
   icon: {
     default: () => `
+      ${/*  @ts-expect-error TODO: isn't this weird? fontSize is a styled-system function */ ""}
       font-size: ${fontSize[3]}px;
+      ${/*  @ts-expect-error TODO: isn't this weird? space is a styled-system function */ ""}
       padding-left: ${space[1]}px;
+      ${/*  @ts-expect-error TODO: isn't this weird? space is a styled-system function */ ""}
       padding-right: ${space[1]}px;
     `,
   },
@@ -212,22 +223,22 @@ const buttonStyles: {
     `,
   },
 };
-function getStyles(props, state) {
+function getStyles(props: BaseComponentProps, state: string) {
   let output = "";
   let hasModifier = false;
   for (const s in buttonStyles) {
-    if (buttonStyles.hasOwnProperty(s) && props[s] === true) {
+    if (buttonStyles.hasOwnProperty(s) && props[s as keyof typeof props] === true) {
       const style = buttonStyles[s][state];
       if (style) {
         hasModifier = true;
-        output += style(props);
+        output += style(props as ThemedStyledProps<BaseComponentProps, DefaultTheme>);
       }
     }
   }
   if (!hasModifier) {
     const defaultStyle = buttonStyles.default[state];
     if (defaultStyle) {
-      output += defaultStyle(props) || "";
+      output += defaultStyle(props as ThemedStyledProps<BaseComponentProps, DefaultTheme>) || "";
     }
   }
   return output;
@@ -242,20 +253,33 @@ const LoadingWrapper = styled.div`
   align-items: center;
   justify-content: center;
 `;
-const ChildrenWrapper = styled.div`
+const ChildrenWrapper = styled.div<{ isLoading?: boolean }>`
   opacity: ${p => (p.isLoading ? 0 : 1)};
   flex-shrink: 1;
   display: flex;
   align-items: center;
 `;
-export const Base: ThemedComponent<any> = styled.button.attrs(p => ({
+
+type BaseProps = {
+  fontSize?: number;
+  small?: boolean;
+  isFocused?: boolean;
+  disabled?: boolean;
+  inverted?: boolean;
+  outlineColor?: string;
+} & SpaceProps &
+  ColorProps &
+  FontSizeProps &
+  FontWeightProps;
+
+export const Base = styled.button.attrs<BaseProps>(p => ({
   ff: "Inter|SemiBold",
   fontSize: p.fontSize || (!p.small ? 4 : 3),
   px: p.px ? p.px : !p.small ? 4 : 3,
   py: !p.small ? 2 : 0,
   color: p.color || p.theme.colors.palette.text.shade60,
   bg: "transparent",
-}))`
+}))<BaseComponentProps>`
   ${space};
   ${color};
   ${fontSize};
@@ -287,7 +311,7 @@ export const Base: ThemedComponent<any> = styled.button.attrs(p => ({
   }
 `;
 export type Props = {
-  children?: any;
+  children?: React.ReactNode;
   icon?: boolean;
   primary?: boolean;
   inverted?: boolean;
@@ -299,15 +323,16 @@ export type Props = {
   outline?: boolean;
   fullWidth?: boolean;
   outlineGrey?: boolean;
-  onClick?: Function;
+  onClick?: (e?: React.MouseEvent) => void;
   small?: boolean;
   isLoading?: boolean;
   event?: string;
-  eventProperties?: object;
+  eventProperties?: Record<string, unknown>;
   mr?: number;
   mx?: number;
-  innerRef?: any;
-};
+  innerRef?: React.ForwardedRef<HTMLButtonElement>;
+  style?: React.CSSProperties;
+} & React.ComponentProps<typeof Base>;
 class ButtonInner extends PureComponent<
   Props,
   {
@@ -345,7 +370,7 @@ class ButtonInner extends PureComponent<
     const { disabled, innerRef } = this.props;
     const { onClick, children, isLoading, event, eventProperties, ...rest } = this.props;
     const isClickDisabled = disabled || isLoading;
-    const onClickHandler = e => {
+    const onClickHandler = (e: React.MouseEvent) => {
       if (onClick) {
         if (event) {
           track(event, eventProperties);
@@ -372,7 +397,7 @@ class ButtonInner extends PureComponent<
     );
   }
 }
-const Button: React$ComponentType<Props> = React.forwardRef((props, ref) => (
+const Button = React.forwardRef<HTMLButtonElement, Props>((props, ref) => (
   <ButtonInner {...props} innerRef={ref} />
 ));
 export default Button;

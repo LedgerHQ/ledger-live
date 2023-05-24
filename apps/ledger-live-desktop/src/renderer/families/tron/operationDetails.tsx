@@ -24,12 +24,17 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
-function getURLFeesInfo(op: Operation, currencyId: string): string | undefined | null {
+function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined | null {
   if (op.fee.gt(200000)) {
     return helpURL;
   }
 }
-function getURLWhatIsThis(op: Operation, currencyId: string): string | undefined | null {
+function getURLWhatIsThis({
+  op,
+}: {
+  op: Operation;
+  currencyId: string;
+}): string | undefined | null {
   if (op.type !== "IN" && op.type !== "OUT") {
     return helpURL;
   }
@@ -205,7 +210,7 @@ const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
     )
   );
 };
-const VoteAmountCell = ({ operation, currency, unit }: Props) => {
+const VoteAmountCell = ({ operation }: Props) => {
   const discreet = useDiscreetMode();
   const amount =
     operation.extra && operation.extra.votes

@@ -37,7 +37,10 @@ axios
         imp.paths.map((p) => {
           const folder = path.join(inputFolder, "assets", p);
           const signatureFolder = path.join(inputFolder, "signatures/prod/", p);
-          const items = fs.readdirSync(folder);
+          const items = fs
+            .readdirSync(folder, { withFileTypes: true })
+            .filter((dirent) => dirent.isDirectory())
+            .map((dir) => dir.name);
           const shouldLoad = (id) =>
             imp.shouldLoad
               ? imp.shouldLoad({ folder, id })

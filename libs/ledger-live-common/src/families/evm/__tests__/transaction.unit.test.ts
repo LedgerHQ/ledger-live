@@ -1,7 +1,13 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { transactionToEthersTransaction } from "../adapters";
-import { fromTransactionRaw, toTransactionRaw } from "../transaction";
+import { Transaction as EvmTransaction } from "../types";
+import * as rpcAPI from "../api/rpc.common";
+import {
+  fromTransactionRaw,
+  getSerializedTransaction,
+  toTransactionRaw,
+} from "../transaction";
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -24,6 +30,7 @@ const rawEip1559Tx: EvmTransactionEIP1559Raw = {
   data: testData,
   maxFeePerGas: "10000",
   maxPriorityFeePerGas: "10000",
+  additionalFees: "420",
   type: 2,
 };
 const eip1559Tx: EvmTransactionEIP1559 = {
@@ -40,6 +47,7 @@ const eip1559Tx: EvmTransactionEIP1559 = {
   data: Buffer.from(testData, "hex"),
   maxFeePerGas: new BigNumber(10000),
   maxPriorityFeePerGas: new BigNumber(10000),
+  additionalFees: new BigNumber(420),
   type: 2,
 };
 const rawLegacyTx: EvmTransactionLegacyRaw = {
@@ -55,6 +63,7 @@ const rawLegacyTx: EvmTransactionLegacyRaw = {
   chainId: 1,
   data: testData,
   gasPrice: "10000",
+  additionalFees: "420",
   type: 0,
 };
 const legacyTx: EvmTransactionLegacy = {
@@ -70,6 +79,7 @@ const legacyTx: EvmTransactionLegacy = {
   chainId: 1,
   data: Buffer.from(testData, "hex"),
   gasPrice: new BigNumber(10000),
+  additionalFees: new BigNumber(420),
   type: 0,
 };
 
@@ -126,6 +136,59 @@ describe("EVM Family", () => {
 
         expect(transactionToEthersTransaction(legacyTx)).toEqual(
           legacyEthersTx
+        );
+      });
+    });
+
+    describe("getSerializedTransaction", () => {
+      beforeAll(() => {
+        jest
+          .spyOn(rpcAPI, "getTransactionCount")
+          .mockImplementation(() => Promise.resolve(0));
+      });
+
+      it("should serialize a type 0 transaction", async () => {
+        const transactionLegacy: EvmTransaction = {
+          amount: new BigNumber(100),
+          useAllAmount: false,
+          subAccountId: "id",
+          recipient: "0x6775e49108cb77cda06Fc3BEF51bcD497602aD88", // obama.eth
+          feesStrategy: "custom",
+          family: "evm",
+          mode: "send",
+          nonce: 0,
+          gasLimit: new BigNumber(21000),
+          chainId: 1,
+          gasPrice: new BigNumber(100),
+          type: 0,
+        };
+        const serializedTx = await getSerializedTransaction(transactionLegacy);
+
+        expect(serializedTx).toBe(
+          "0xdf8064825208946775e49108cb77cda06fc3bef51bcd497602ad886480018080"
+        );
+      });
+
+      it("should serialize a type 2 transaction", async () => {
+        const transactionEIP1559: EvmTransaction = {
+          amount: new BigNumber(100),
+          useAllAmount: false,
+          subAccountId: "id",
+          recipient: "0x6775e49108cb77cda06Fc3BEF51bcD497602aD88", // obama.eth
+          feesStrategy: "custom",
+          family: "evm",
+          mode: "send",
+          nonce: 0,
+          gasLimit: new BigNumber(21000),
+          chainId: 1,
+          maxFeePerGas: new BigNumber(100),
+          maxPriorityFeePerGas: new BigNumber(100),
+          type: 2,
+        };
+        const serializedTx = await getSerializedTransaction(transactionEIP1559);
+
+        expect(serializedTx).toBe(
+          "0x02df01806464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c0"
         );
       });
     });

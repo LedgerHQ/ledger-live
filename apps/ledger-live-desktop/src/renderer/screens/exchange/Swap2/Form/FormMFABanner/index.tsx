@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import SectionInformative from "~/renderer/screens/exchange/Swap2/Form/FormSummary/SectionInformative";
-const FormMFABanner = ({ provider, onClick }: { provider?: string; onClick: Function }) => {
+const FormMFABanner = ({ provider, onClick }: { provider?: string; onClick: () => void }) => {
   const { t } = useTranslation();
   if (!provider) return null;
   const { message, cta } = {

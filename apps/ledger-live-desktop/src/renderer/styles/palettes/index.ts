@@ -1,8 +1,8 @@
 import Color from "color";
 import light from "./light.json";
 import dark from "./dark.json";
-const shades = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-type RawPalette = {
+
+export type RawPalette = {
   type: "light" | "dark";
   primary: {
     main: string;
@@ -24,6 +24,8 @@ type RawPalette = {
   };
   wave: string;
 };
+
+const shades = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 export type Theme = {
   text: {
     shade5: string;
@@ -39,26 +41,33 @@ export type Theme = {
     shade100: string;
   };
 } & RawPalette;
+
 const enrichPalette = (rawPalette: RawPalette): Theme => {
   return {
     ...rawPalette,
     text: shades.reduce((acc, value) => {
-      acc[`shade${value}`] = Color(rawPalette.secondary.main)
+      acc[`shade${value}` as keyof Theme["text"]] = Color(rawPalette.secondary.main)
         .alpha(value / 100)
         .toString();
       return acc;
-    }, {}),
+    }, {} as Theme["text"]),
   };
 };
 const palettes: {
-  dark: RawPalette;
-  light: RawPalette;
+  dark: Theme;
+  light: Theme;
 } = Object.entries({
   light,
   dark,
-}).reduce((acc, [name, value]) => {
-  const rawPalette: RawPalette = value as any;
-  acc[name] = enrichPalette(rawPalette);
-  return acc;
-}, {});
+}).reduce(
+  (acc, [name, value]) => {
+    const rawPalette: RawPalette = value as RawPalette;
+    acc[name as "dark" | "light"] = enrichPalette(rawPalette);
+    return acc;
+  },
+  {} as {
+    dark: Theme;
+    light: Theme;
+  },
+);
 export default palettes;

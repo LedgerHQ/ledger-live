@@ -99,7 +99,7 @@ jobs:
 
   allure-report-ios:
     name: "Allure Reports Export on Server"
-    runs-on: [ledger-live, linux]
+    runs-on: [ledger-live-medium-linux]
     if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     needs: [detox-tests-ios]
     steps:
@@ -207,7 +207,7 @@ jobs:
   #         path: apps/ledger-live-mobile/allure-results
   # allure-report-android:
   #   name: "Allure Reports Export on Server"
-  #   runs-on: [ledger-live, linux]
+  #   runs-on: [ledger-live-medium-linux]
   #   if: always()
   #   needs: [detox-tests-android]
   #   steps:

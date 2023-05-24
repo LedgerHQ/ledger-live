@@ -13,14 +13,16 @@ import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types"
 // eslint-disable-next-line no-restricted-imports
 import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 
+export type Data = {
+  account: Account;
+  message: MessageData | TypedMessageData;
+  onConfirmationHandler: Function;
+  onFailHandler: Function;
+};
+
 type OwnProps = {
-  onClose: () => void;
-  data: {
-    account: Account;
-    message: MessageData | TypedMessageData;
-    onConfirmationHandler: Function;
-    onFailHandler: Function;
-  };
+  onClose?: () => void;
+  data: Data;
 };
 type Props = OwnProps;
 const steps: Array<St> = [

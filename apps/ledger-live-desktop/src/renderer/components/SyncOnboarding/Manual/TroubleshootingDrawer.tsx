@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
-
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 
@@ -24,10 +23,11 @@ const TroubleshootingDrawer = ({ isOpen, onClose, lastKnownDeviceId }: Props) =>
       <Flex position="relative" flexDirection="column" height="100%" px={6}>
         <Flex flexDirection="column" flex={1}>
           <Animation
-            height="300px"
-            animation={getDeviceAnimation(lastKnownDeviceId, theme.theme, "plugAndPinCode")}
+            animation={
+              getDeviceAnimation(lastKnownDeviceId, theme.theme, "plugAndPinCode") as object
+            }
           />
-          <Text variant="h4Inter" textAlign="center" fontSize={24} fontWeight="semiBold">
+          <Text mt={5} variant="h4Inter" textAlign="center" fontSize={24} fontWeight="semiBold">
             {t("syncOnboarding.manual.troubleshootingDrawer.title")}
           </Text>
           <Text variant="large" textAlign="center" mt={6} color="neutral.c70">

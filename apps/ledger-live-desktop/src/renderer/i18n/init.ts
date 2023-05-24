@@ -15,17 +15,4 @@ const config = {
   },
 };
 i18n.use(initReactI18next).init(config);
-if (module.hot) {
-  module.hot.accept("./index", () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const newResources = require("./index").default;
-    Object.keys(newResources).forEach(lang => {
-      const langObj = newResources[lang];
-      Object.keys(langObj).forEach(namespace => {
-        const nsResource = langObj[namespace];
-        i18n.addResourceBundle(lang, namespace, nsResource, true, true);
-      });
-    });
-  });
-}
 export default i18n;

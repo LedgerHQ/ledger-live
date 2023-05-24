@@ -1,7 +1,8 @@
 import { app, BrowserWindow } from "electron";
-import { autoUpdater } from "@ledgerhq/electron-updater";
+import { autoUpdater, UpdateDownloadedEvent } from "@ledgerhq/electron-updater";
 import { getMainWindow } from "~/main/window-lifecycle";
 import createElectronAppUpdater from "./createElectronAppUpdater";
+
 export type UpdateStatus =
   | "idle"
   | "checking-for-update"
@@ -16,7 +17,7 @@ export type UpdateStatus =
 const UPDATE_CHECK_IGNORE = Boolean(process.env.UPDATE_CHECK_IGNORE);
 const UPDATE_CHECK_FEED =
   process.env.UPDATE_CHECK_FEED || "http://resources.live.ledger.app/public_resources/signatures";
-const sendStatus = (status: UpdateStatus, payload?: any) => {
+const sendStatus = (status: UpdateStatus, payload?: unknown) => {
   const win = getMainWindow();
   if (win) {
     win.webContents.send("updater", {
@@ -25,7 +26,7 @@ const sendStatus = (status: UpdateStatus, payload?: any) => {
     });
   }
 };
-const handleDownload = async info => {
+const handleDownload = async (info: UpdateDownloadedEvent) => {
   try {
     sendStatus("checking");
     if (!__PRERELEASE__) {

@@ -40,7 +40,7 @@ export const InformationDrawer = ({
   const { t } = useTranslation();
   const { incidents } = useFilteredServiceStatus();
   const notificationsCards = useSelector(notificationsContentCardSelector);
-  const unseenCount =  notificationsCards?.filter(n => !n.viewed).length || 0;
+  const unseenCount = notificationsCards?.filter(n => !n.viewed).length || 0;
   const incidentCount = incidents.length;
   const { tabId } = useSelector(informationCenterStateSelector);
 

@@ -3,11 +3,9 @@ import { RecipientRequired } from "@ledgerhq/errors";
 import { Account } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { TFunction } from "react-i18next";
-
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
-import RecipientAddress from "~/renderer/components/RecipientAddress";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import RecipientAddress, { OnChangeExtra } from "~/renderer/components/RecipientAddress";
 
 type Props = {
   account: Account;
@@ -18,10 +16,22 @@ type Props = {
   initValue?: string;
   resetInitValue?: () => void;
   value: string | undefined;
-  onChange: (recipient: string, maybeExtra?: Record<string, CryptoCurrency>) => Promise<void>;
+  placeholderTranslationKey: string;
+  hideError: boolean;
+  onChange: (recipient: string, maybeExtra?: OnChangeExtra | undefined) => void;
 };
 
-const RecipientFieldBase = ({ t, account, autoFocus, status, label, value, onChange }: Props) => {
+const RecipientFieldBase = ({
+  t,
+  account,
+  autoFocus,
+  status,
+  label,
+  value,
+  onChange,
+  placeholderTranslationKey,
+  hideError,
+}: Props) => {
   const { recipient: recipientError } = status.errors;
   const { recipient: recipientWarning } = status.warnings;
 
@@ -31,11 +41,11 @@ const RecipientFieldBase = ({ t, account, autoFocus, status, label, value, onCha
         <span>{label || t("send.steps.details.recipientAddress")}</span>
       </Label>
       <RecipientAddress
-        placeholder={t("RecipientField.placeholder", { currencyName: account.currency.name })}
+        placeholder={t(placeholderTranslationKey, { currencyName: account.currency.name })}
         autoFocus={autoFocus}
         withQrCode={!status.recipientIsReadOnly}
         readOnly={status.recipientIsReadOnly}
-        error={recipientError instanceof RecipientRequired ? null : recipientError}
+        error={hideError || recipientError instanceof RecipientRequired ? null : recipientError}
         warning={recipientWarning}
         value={value}
         onChange={onChange}
@@ -43,6 +53,11 @@ const RecipientFieldBase = ({ t, account, autoFocus, status, label, value, onCha
       />
     </Box>
   );
+};
+
+RecipientFieldBase.defaultProps = {
+  placeholderTranslationKey: "RecipientField.placeholder",
+  hideError: false,
 };
 
 export default memo(RecipientFieldBase);

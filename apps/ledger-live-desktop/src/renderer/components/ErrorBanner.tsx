@@ -7,7 +7,7 @@ type Props = {
   warning?: boolean;
 };
 const ErrorBanner = ({ error, warning }: Props) => {
-  const maybeUrl = error ? urls.errors[error.name] : null;
+  const maybeUrl = error ? urls.errors[String(error?.name)] : null;
   return (
     <Alert
       type={warning ? "warning" : "error"}

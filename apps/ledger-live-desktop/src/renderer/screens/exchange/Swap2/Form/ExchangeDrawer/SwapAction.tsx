@@ -1,8 +1,14 @@
 import { getEnv } from "@ledgerhq/live-common/env";
-import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import {
+  Exchange,
+  ExchangeRate,
+  InitSwapResult,
+  SwapTransaction,
+  SwapTransactionType,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
 import { createAction as transactionCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import { SignedOperation } from "@ledgerhq/types-live";
+import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -16,17 +22,18 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { swapKYCSelector } from "~/renderer/reducers/settings";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
+import { Device } from "@ledgerhq/types-devices";
 const transactionAction = transactionCreateAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const initAction = initSwapCreateAction(
   getEnv("MOCK") ? mockedEventEmitter : connectApp,
   getEnv("MOCK") ? mockedEventEmitter : initSwap,
 );
-const TransactionResult = ({
-  signedOperation,
-}: {
-  signedOperation: SignedOperation | undefined | null;
-}) => {
-  if (!signedOperation) return null;
+const TransactionResult = (
+  props:
+    | { signedOperation: SignedOperation; device?: Device; swapId?: string | undefined }
+    | { transactionSignError?: Error },
+) => {
+  if (!("signedOperation" in props) || !props.signedOperation) return null;
   return (
     <Box
       alignItems={"center"}
@@ -47,7 +54,7 @@ type Props = {
   swapTransaction: SwapTransactionType;
   exchangeRate: ExchangeRate;
   onCompletion: (a: { operation: Operation; swapId: string }) => void;
-  onError: (a: { error: Error; swapId: string }) => void;
+  onError: (a: { error: Error; swapId?: string }) => void;
 };
 export default function SwapAction({
   swapTransaction,
@@ -55,8 +62,8 @@ export default function SwapAction({
   onCompletion,
   onError,
 }: Props) {
-  const [initData, setInitData] = useState(null);
-  const [signedOperation, setSignedOperation] = useState(null);
+  const [initData, setInitData] = useState<InitSwapResult | null>(null);
+  const [signedOperation, setSignedOperation] = useState<SignedOperation | null>(null);
   const device = useSelector(getCurrentDevice);
   const deviceRef = useRef(device);
   const swapKYC = useSelector(swapKYCSelector);
@@ -99,26 +106,26 @@ export default function SwapAction({
       );
     }
   }, [broadcast, onCompletion, onError, initData, signedOperation]);
-  return !initData ? (
+  return !initData || !transaction ? (
     <DeviceAction
       key={"initSwap"}
       action={initAction}
       request={{
-        exchange,
+        exchange: exchange as Exchange,
         exchangeRate,
-        transaction,
+        transaction: transaction as SwapTransaction,
         status,
         device: deviceRef,
         userId: providerKYC?.id,
       }}
-      onResult={({ initSwapResult, initSwapError, swapId, ...rest }) => {
-        if (initSwapError) {
+      onResult={result => {
+        if ("initSwapError" in result && result.initSwapError) {
           onError({
-            error: initSwapError,
-            swapId,
+            error: result.initSwapError,
+            swapId: result.swapId,
           });
-        } else {
-          setInitData(initSwapResult);
+        } else if ("initSwapResult" in result) {
+          setInitData(result.initSwapResult);
         }
       }}
       analyticsPropertyFlow="swap"
@@ -130,19 +137,19 @@ export default function SwapAction({
       request={{
         tokenCurrency,
         parentAccount: fromParentAccount,
-        account: fromAccount,
+        account: fromAccount!,
         transaction: initData.transaction,
         appName: "Exchange",
       }}
       Result={TransactionResult}
-      onResult={({ signedOperation, transactionSignError }) => {
-        if (transactionSignError) {
+      onResult={result => {
+        if ("transactionSignError" in result) {
           onError({
-            error: transactionSignError,
+            error: result.transactionSignError,
             swapId: initData.swapId,
           });
         } else {
-          setSignedOperation(signedOperation);
+          setSignedOperation(result.signedOperation);
         }
       }}
       analyticsPropertyFlow="swap"

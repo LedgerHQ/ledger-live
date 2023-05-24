@@ -1,8 +1,20 @@
+import { DeviceModelId } from "@ledgerhq/devices";
+import { Account, Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import expect from "expect";
+import invariant from "invariant";
 import sample from "lodash/sample";
 import sampleSize from "lodash/sampleSize";
-import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
+import { toOperationRaw } from "../../account";
+import {
+  botTest,
+  expectSiblingsHaveSpendablePartGreaterThan,
+  genericTestDestination,
+  pickSiblings,
+} from "../../bot/specs";
+import type { AppSpec, MutationSpec } from "../../bot/types";
+import { getCryptoCurrencyById } from "../../currencies";
+import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData";
 import type {
   CosmosAccount,
   CosmosDelegation,
@@ -11,26 +23,14 @@ import type {
   CosmosUnbonding,
   Transaction,
 } from "../../families/cosmos/types";
-import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData";
-import { getCryptoCurrencyById } from "../../currencies";
-import {
-  pickSiblings,
-  botTest,
-  expectSiblingsHaveSpendablePartGreaterThan,
-  genericTestDestination,
-} from "../../bot/specs";
-import type { AppSpec, MutationSpec } from "../../bot/types";
-import { toOperationRaw } from "../../account";
+import cryptoFactory from "./chain/chain";
 import {
   canDelegate,
-  canUndelegate,
   canRedelegate,
+  canUndelegate,
   getMaxDelegationAvailable,
 } from "./logic";
-import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
-import cryptoFactory from "./chain/chain";
-import { Account, Operation } from "@ledgerhq/types-live";
 
 const maxAccounts = 16;
 
@@ -431,47 +431,83 @@ function cosmosLikeMutations(currency: string): MutationSpec<Transaction>[] {
   ];
 }
 
-const cosmos: AppSpec<Transaction> = {
-  name: "Cosmos",
-  currency: getCryptoCurrencyById("cosmos"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Cosmos",
-  },
-  genericDeviceAction: acceptTransaction,
-  testTimeout: 2 * 60 * 1000,
-  minViableAmount: cryptoFactory("cosmos").minimalTransactionAmount,
-  transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(cryptoFactory("cosmos").minimalTransactionAmount),
-      "balance is too low"
-    );
-  },
-  test: cosmosLikeTest,
-  mutations: cosmosLikeMutations("cosmos"),
+const generateGenericCosmosTest = (
+  currencyId: string,
+  config?: Partial<AppSpec<Transaction>>
+) => {
+  return {
+    name: currencyId,
+    currency: getCryptoCurrencyById(currencyId),
+    appQuery: {
+      model: DeviceModelId.nanoS,
+      appName: "Cosmos",
+    },
+    genericDeviceAction: acceptTransaction,
+    testTimeout: 2 * 60 * 1000,
+    minViableAmount: cryptoFactory(currencyId).minimalTransactionAmount,
+    transactionCheck: ({ maxSpendable }) => {
+      invariant(
+        maxSpendable.gt(cryptoFactory(currencyId).minimalTransactionAmount),
+        "balance is too low"
+      );
+    },
+    test: cosmosLikeTest,
+    mutations: cosmosLikeMutations(currencyId),
+    ...config,
+  };
 };
 
-const osmosis: AppSpec<Transaction> = {
-  name: "Osmosis",
-  currency: getCryptoCurrencyById("osmosis"),
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Cosmos",
-  },
-  genericDeviceAction: acceptTransaction,
-  testTimeout: 8 * 60 * 1000,
-  minViableAmount: cryptoFactory("osmosis").minimalTransactionAmount,
-  transactionCheck: ({ maxSpendable }) => {
-    invariant(
-      maxSpendable.gt(cryptoFactory("osmosis").minimalTransactionAmount),
-      "balance is too low"
-    );
-  },
-  test: cosmosLikeTest,
-  mutations: cosmosLikeMutations("osmosis"),
+const cosmos = {
+  ...generateGenericCosmosTest("cosmos"),
+};
+
+const osmosis = {
+  ...generateGenericCosmosTest("osmosis", {
+    testTimeout: 8 * 60 * 1000,
+  }),
+};
+
+const desmos = {
+  ...generateGenericCosmosTest("desmos", {
+    testTimeout: 8 * 60 * 1000,
+  }),
+};
+
+const umee = {
+  ...generateGenericCosmosTest("umee", {
+    testTimeout: 8 * 60 * 1000,
+  }),
+};
+
+const persistence = {
+  ...generateGenericCosmosTest("persistence", {
+    testTimeout: 8 * 60 * 1000,
+  }),
+};
+
+const quicksilver = {
+  ...generateGenericCosmosTest("quicksilver", {
+    testTimeout: 8 * 60 * 1000,
+  }),
+};
+
+const onomy = {
+  ...generateGenericCosmosTest("onomy", {
+    testTimeout: 8 * 60 * 1000,
+  }),
+};
+
+const axelar = {
+  ...generateGenericCosmosTest("axelar"),
 };
 
 export default {
+  axelar,
   cosmos,
   osmosis,
+  desmos,
+  umee,
+  persistence,
+  quicksilver,
+  onomy,
 };

@@ -45,7 +45,7 @@ const getMainActions = ({
       event: "button_clicked",
       eventProperties: {
         button: "stake",
-        token: "NEAR",
+        currency: "NEAR",
         page: "Account Page",
       },
     },

@@ -11,13 +11,14 @@ type Props = {
   mapStrategies?: (
     a: FeeStrategy,
   ) => FeeStrategy & {
-    [x: string]: any;
+    [x: string]: unknown;
   };
+  [key: string]: unknown;
 };
 const AmountRelatedField = (props: Props) => {
-  const module = byFamily[props.account.currency.family];
+  const module = byFamily[props.account.currency.family as keyof typeof byFamily];
   if (!module) return null;
-  const Cmp = module.component;
+  const Cmp = module.component as React.ComponentType<Props>;
   return <Cmp {...props} />;
 };
 export default AmountRelatedField;

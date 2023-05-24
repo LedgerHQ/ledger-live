@@ -50,6 +50,7 @@ import {
 } from "./types/OnboardingNavigator";
 import { StackNavigatorProps } from "./types/helpers";
 import ProtectConnectionInformationModal from "../../screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
+import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
 const Stack = createStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingCarefulWarningStack =
@@ -181,6 +182,8 @@ export default function OnboardingNavigator() {
         headerShown: false,
         headerTitle: "",
         headerShadowVisible: false,
+        headerStyle: { backgroundColor: theme.colors.background.main },
+        cardStyle: { backgroundColor: theme.colors.background.main },
       }}
     >
       <Stack.Screen
@@ -188,8 +191,20 @@ export default function OnboardingNavigator() {
         component={OnboardingWelcome}
       />
       <Stack.Screen
+        name={ScreenName.OnboardingDoYouHaveALedgerDevice}
+        component={OnboardingStepDoYouHaveALedgerDevice}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.OnboardingPostWelcomeSelection}
         component={PostWelcomeSelection}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
       />
       <Stack.Screen
         name={ScreenName.GetDevice}
@@ -211,6 +226,10 @@ export default function OnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.OnboardingDeviceSelection}
         component={OnboardingDeviceSelection}
+        options={{
+          headerShown: true,
+          headerLeft: () => <NavigationHeaderBackButton />,
+        }}
       />
       <Stack.Screen
         name={ScreenName.OnboardingUseCase}
@@ -225,10 +244,6 @@ export default function OnboardingNavigator() {
         name={NavigatorName.OnboardingPreQuiz}
         component={OnboardingPreQuizModalNavigator}
         options={modalOptions}
-      />
-      <Stack.Screen
-        name={ScreenName.OnboardingDoYouHaveALedgerDevice}
-        component={OnboardingStepDoYouHaveALedgerDevice}
       />
       <Stack.Screen
         name={ScreenName.OnboardingModalDiscoverLive}

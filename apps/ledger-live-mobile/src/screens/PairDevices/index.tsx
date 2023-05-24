@@ -11,7 +11,6 @@ import { delay } from "@ledgerhq/live-common/promise";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
-import logger from "../../logger";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { GENUINE_CHECK_TIMEOUT } from "../../constants";
 import { addKnownDevice } from "../../actions/ble";
@@ -107,9 +106,9 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
       type: "scanning",
     });
   }, [dispatch, navigation]);
+
   const onError = useCallback(
     (error: Error) => {
-      logger.critical(error);
       navigation.setParams({
         hasError: true,
       });
@@ -120,6 +119,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
     },
     [dispatch, navigation],
   );
+
   const onSelect = useCallback(
     async (bleDevice: TransportBleDevice, deviceMeta?: Device) => {
       const device = {
@@ -262,7 +262,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
   switch (status) {
     case "scanning":
       return (
-        <Scanning // $FlowFixMe
+        <Scanning
           onSelect={onSelect}
           onError={onError}
           onTimeout={onTimeout}

@@ -38,7 +38,7 @@ const TagField = ({ onChange, account, transaction, t }: Props) => {
     [onChange, account, transaction],
   );
   return (
-    <Box vertical flow={5}>
+    <Box flow={5}>
       <Box grow>
         <Label mb={5}>
           <span>

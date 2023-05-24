@@ -48,8 +48,8 @@ const Delegation = ({ account }: Props) => {
   } = cosmosResources;
   const delegationEnabled = canDelegate(account);
   const mappedDelegations = useCosmosFamilyMappedDelegations(account);
-  const currencyName = account.currency.name.toLowerCase();
-  const { validators } = useCosmosFamilyPreloadData(currencyName);
+  const currencyId = account.currency.id;
+  const { validators } = useCosmosFamilyPreloadData(currencyId);
   const unit = getAccountUnit(account);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
   const onEarnRewards = useCallback(() => {

@@ -40,7 +40,7 @@ export function useServiceStatus(): StatusContextType {
 }
 
 function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+  return string.replace(/[.*+?^${}()[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
 export function filterServiceStatusIncidents(
@@ -61,7 +61,7 @@ export function filterServiceStatusIncidents(
     ({ components }) =>
       !components || // dont filter out if no components
       components.length === 0 ||
-      components.some(({ name }) => tickersRegex.test(name)) // component name should hold currency name
+      components.some(({ name }) => tickersRegex.test(name)) // component name should hold currency ticker
   );
 }
 
@@ -71,7 +71,6 @@ export function useFilteredServiceStatus(
 ): StatusContextType {
   const stateData = useContext(ServiceStatusContext);
   const { incidents, context } = stateData;
-
   const filteredIncidents = useMemo(() => {
     return filterServiceStatusIncidents(
       incidents,

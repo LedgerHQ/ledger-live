@@ -10,12 +10,16 @@ import SpendableAmount from "./SpendableAmount";
 const TextContent = styled.div`
   display: inline-flex;
 `;
-type Props = {
+type Props<T extends TransactionCommon> = {
   account: AccountLike;
-  transaction: TransactionCommon;
+  transaction: T;
   parentAccount: Account | undefined | null;
 };
-const SpendableBanner = ({ account, parentAccount, transaction }: Props) => (
+const SpendableBanner = <T extends TransactionCommon>({
+  account,
+  parentAccount,
+  transaction,
+}: Props<T>) => (
   <Alert type="secondary" small learnMoreUrl={urls.maxSpendable} learnMoreOnRight>
     <TextContent>
       <Trans i18nKey="send.steps.amount.banner" />

@@ -18,8 +18,8 @@ function DeltaVariation({ value, percent, ...props }: Props) {
   const [color, ArrowIcon, sign] =
     delta !== 0
       ? delta > 0
-        ? ["success.c100", Icons.ArrowEvolutionUpMedium, "+"]
-        : ["error.c100", Icons.ArrowEvolutionDownMedium, "-"]
+        ? ["success.c50", Icons.ArrowEvolutionUpMedium, "+"]
+        : ["error.c50", Icons.ArrowEvolutionDownMedium, "-"]
       : ["neutral.c100", null, ""];
 
   return (

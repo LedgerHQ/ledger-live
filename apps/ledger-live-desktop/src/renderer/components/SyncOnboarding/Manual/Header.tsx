@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { Button, Flex } from "@ledgerhq/react-ui";
 import { CloseMedium } from "@ledgerhq/react-ui/assets/icons";
 import styled from "styled-components";
-
 import LangSwitcher from "../../Onboarding/LangSwitcher";
 import { rgba } from "~/renderer/styles/helpers";
 

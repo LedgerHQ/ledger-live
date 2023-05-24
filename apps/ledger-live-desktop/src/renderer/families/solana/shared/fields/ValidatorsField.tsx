@@ -14,16 +14,13 @@ import ValidatorSearchInput, {
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import ValidatorRow from "../components/ValidatorRow";
 type Props = {
-  t: TFunction;
   account: Account;
-  status: TransactionStatus;
   chosenVoteAccAddr: string | undefined | null;
   onChangeValidator: (v: ValidatorAppValidator) => void;
 };
-const ValidatorField = ({ t, account, onChangeValidator, chosenVoteAccAddr, status }: Props) => {
+const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
   invariant(account && account.solanaResources, "solana account and resources required");
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
@@ -44,7 +41,7 @@ const ValidatorField = ({ t, account, onChangeValidator, chosenVoteAccAddr, stat
     }
   }, []);
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
-  const renderItem = (validator: ValidatorAppValidator, validatorIdx: number) => {
+  const renderItem = (validator: ValidatorAppValidator) => {
     return (
       <ValidatorRow
         currency={account.currency}
@@ -84,7 +81,7 @@ const ValidatorField = ({ t, account, onChangeValidator, chosenVoteAccAddr, stat
     </>
   );
 };
-const ValidatorsFieldContainer: ThemedComponent<{}> = styled(Box)`
+const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
 `;

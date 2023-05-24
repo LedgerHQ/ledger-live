@@ -23,7 +23,8 @@ import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-const AccountWrapper = styled(Tabbable)`
+
+const AccountWrapper = styled(Tabbable)<{ selected?: boolean }>`
   cursor: pointer;
   &:hover {
     background-color: ${p => p.theme.colors.palette.text.shade10};
@@ -67,6 +68,7 @@ const TargetAccount = memo(function TargetAccount({
   const name = getAccountName(account);
   const parentAccount =
     account?.type !== "Account" ? allAccounts?.find(a => a.id === account?.parentId) : null;
+  const parentName = parentAccount ? getAccountName(parentAccount) : undefined;
   const balance =
     account.type !== "ChildAccount" && account.spendableBalance
       ? account.spendableBalance
@@ -77,12 +79,13 @@ const TargetAccount = memo(function TargetAccount({
       ...swapDefaultTrack,
       button: "account",
       currency,
-      account,
-      parentAccount,
+      account: name,
+      parentAccount: parentName,
     });
-    setAccount && setAccount(currency, account, parentAccount);
-  }, [swapDefaultTrack, currency, account, parentAccount, setAccount]);
-  const Wrapper = setAccount ? AccountWrapper : Box;
+    setAccount && setAccount(currency, account, parentAccount || undefined);
+  }, [swapDefaultTrack, currency, name, parentName, setAccount, account, parentAccount]);
+  const Wrapper: React.ComponentType<React.ComponentProps<typeof Box> &
+    React.ComponentProps<typeof AccountWrapper>> = setAccount ? AccountWrapper : Box;
   return (
     <Wrapper
       horizontal
@@ -90,7 +93,7 @@ const TargetAccount = memo(function TargetAccount({
       justifyContent="space-between"
       selected={selected}
       onClick={onClick}
-      data-test-id={`target-account-container-${account.name}`}
+      data-test-id={`target-account-container-${("name" in account && account.name) || ""}`}
     >
       <Box horizontal alignItems="center" pl={isChild ? "8px" : 0}>
         {isChild && (
@@ -135,8 +138,8 @@ const TargetAccount = memo(function TargetAccount({
   );
 });
 type Props = {
-  accounts: AccountLike[];
-  selectedAccount: AccountLike;
+  accounts: AccountLike[] | undefined;
+  selectedAccount: AccountLike | undefined;
   setToAccount: SwapTransactionType["setToAccount"];
   setDrawerStateRef: {
     current:
@@ -178,29 +181,41 @@ export default function TargetAccountDrawer({
     setDrawer(undefined);
   };
 
-  const accountsList: {
-    account: AccountLike;
-    subAccounts: AccountLike[];
-  }[] = useMemo(
+  const accountsList:
+    | {
+        account: AccountLike;
+        subAccounts: AccountLike[];
+      }[]
+    | undefined = useMemo(
     () =>
+      targetAccounts &&
       Object.values(
-        targetAccounts.reduce((result, account) => {
-          const parentId = account.parentId;
-          if (parentId) {
-            result[parentId] = result[parentId] ?? {
-              account: allAccounts.find(acc => acc.id === parentId),
-              subAccounts: [],
-            };
-            result[parentId].subAccounts.push(account);
-            return result;
-          } else {
-            result[account.id] = result[account.id] ?? {
-              account,
-              subAccounts: [],
-            };
-            return result;
-          }
-        }, {}),
+        targetAccounts.reduce(
+          (result, account) => {
+            const parentId = "parentId" in account && account.parentId;
+            if (parentId) {
+              result[parentId] = result[parentId] ?? {
+                account: allAccounts.find(acc => acc.id === parentId),
+                subAccounts: [],
+              };
+              result[parentId].subAccounts.push(account);
+              return result;
+            } else {
+              result[account.id] = result[account.id] ?? {
+                account,
+                subAccounts: [],
+              };
+              return result;
+            }
+          },
+          {} as Record<
+            string,
+            {
+              account: AccountLike;
+              subAccounts: AccountLike[];
+            }
+          >,
+        ),
       ),
     [targetAccounts, allAccounts],
   );
@@ -208,13 +223,13 @@ export default function TargetAccountDrawer({
     <Box height="100%">
       <DrawerTitle i18nKey="swap2.form.to.title" />
       <Box mx={3}>
-        {accountsList.map(({ account, subAccounts }) => (
+        {accountsList?.map(({ account, subAccounts }) => (
           <>
             <TargetAccount
               key={account.id}
               account={account}
               selected={selectedAccount?.id === account.id}
-              setAccount={subAccounts.length === 0 ? handleAccountPick : null}
+              setAccount={subAccounts.length === 0 ? handleAccountPick : undefined}
             />
             {subAccounts.map(account => (
               <TargetAccount

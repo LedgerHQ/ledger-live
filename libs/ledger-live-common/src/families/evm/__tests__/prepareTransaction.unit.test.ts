@@ -62,7 +62,13 @@ describe("EVM Family", () => {
 
     describe("prepareTransaction", () => {
       describe("Coins", () => {
-        it("should not go to gasEstimation when recipient has an error", async () => {
+        it("should have a gasLimit = 0 when recipient has an error", async () => {
+          jest
+            .spyOn(rpcAPI, "getGasEstimation")
+            .mockImplementation(async () => {
+              throw new Error();
+            });
+
           const tx = await prepareTransaction(account, {
             ...transaction,
             recipient: "notValid",
@@ -74,12 +80,18 @@ describe("EVM Family", () => {
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(1),
             gasPrice: undefined,
+            gasLimit: new BigNumber(0),
             type: 2,
           });
-          expect(rpcAPI.getGasEstimation).not.toBeCalled();
         });
 
-        it("should not go to gasEstimation when amount has an error", async () => {
+        it("should have a gasLimit = 0 when amount has an error", async () => {
+          jest
+            .spyOn(rpcAPI, "getGasEstimation")
+            .mockImplementation(async () => {
+              throw new Error();
+            });
+
           const tx = await prepareTransaction(account, {
             ...transaction,
             amount: new BigNumber(0),
@@ -91,9 +103,9 @@ describe("EVM Family", () => {
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(1),
             gasPrice: undefined,
+            gasLimit: new BigNumber(0),
             type: 2,
           });
-          expect(rpcAPI.getGasEstimation).not.toBeCalled();
         });
 
         it("should return an EIP1559 coin transaction", async () => {
@@ -176,7 +188,13 @@ describe("EVM Family", () => {
       });
 
       describe("Tokens", () => {
-        it("should not go to gasEstimation when recipient has an error", async () => {
+        it("should have a gasLimit = 0 and no data when recipient has an error", async () => {
+          jest
+            .spyOn(rpcAPI, "getGasEstimation")
+            .mockImplementation(async () => {
+              throw new Error();
+            });
+
           const tx = await prepareTransaction(account, {
             ...tokenTransaction,
             recipient: "notValid",
@@ -188,12 +206,19 @@ describe("EVM Family", () => {
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(1),
             gasPrice: undefined,
+            gasLimit: new BigNumber(0),
+            data: undefined,
             type: 2,
           });
-          expect(rpcAPI.getGasEstimation).not.toBeCalled();
         });
 
-        it("should not go to gasEstimation when amount has an error", async () => {
+        it("should have a gasLimit = 0 when amount has an error", async () => {
+          jest
+            .spyOn(rpcAPI, "getGasEstimation")
+            .mockImplementation(async () => {
+              throw new Error();
+            });
+
           const tx = await prepareTransaction(account, {
             ...tokenTransaction,
             amount: new BigNumber(0),
@@ -205,12 +230,13 @@ describe("EVM Family", () => {
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(1),
             gasPrice: undefined,
+            gasLimit: new BigNumber(0),
+            data: expectedData(tokenTransaction.recipient, new BigNumber(0)),
             type: 2,
           });
-          expect(rpcAPI.getGasEstimation).not.toBeCalled();
         });
 
-        it("should go to gasEstimation when amount is 0 but it's send max with token transaction", async () => {
+        it("should create a token transaction using all amount in the token account", async () => {
           jest
             .spyOn(rpcAPI, "getGasEstimation")
             .mockImplementationOnce(async () => new BigNumber(12));
@@ -233,7 +259,7 @@ describe("EVM Family", () => {
 
           expect(tx).toEqual({
             ...tokenTransaction,
-            amount: new BigNumber(0),
+            amount: tokenAccountWithBalance.balance,
             useAllAmount: true,
             subAccountId: tokenAccountWithBalance.id,
             data: expectedData(
@@ -246,7 +272,6 @@ describe("EVM Family", () => {
             gasLimit: new BigNumber(12),
             type: 2,
           });
-          expect(rpcAPI.getGasEstimation).toBeCalled();
         });
 
         it("should go to gas estimation with a transaction without 0 amount", async () => {

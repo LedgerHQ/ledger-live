@@ -1,4 +1,3 @@
-import { disconnect } from "./api";
 import { BigNumber } from "bignumber.js";
 import { canUnbond, MAX_UNLOCKINGS } from "./logic";
 import {
@@ -691,11 +690,6 @@ export const dataset: DatasetTest<Transaction> = {
     polkadot,
   },
 };
-
-// Disconnect all api clients that could be open.
-afterAll(async () => {
-  await disconnect();
-});
 
 describe("canUnbond", () => {
   test("can unbond", () => {

@@ -9,7 +9,7 @@ import DisplayResult from "../../screens/ImportAccounts/DisplayResult";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import type { ImportAccountsNavigatorParamList } from "./types/ImportAccountsNavigator";
-import HeaderRightClose from "../HeaderRightClose";
+import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
 
 export default function ImportAccountsNavigator() {
   const { t } = useTranslation();
@@ -31,7 +31,9 @@ export default function ImportAccountsNavigator() {
               {t("account.import.scan.title")}
             </Text>
           ),
-          headerRight: props => <HeaderRightClose {...props} color={"#fff"} />,
+          headerRight: props => (
+            <NavigationHeaderCloseButtonAdvanced {...props} color={"#fff"} />
+          ),
           headerLeft: () => null,
         }}
       />

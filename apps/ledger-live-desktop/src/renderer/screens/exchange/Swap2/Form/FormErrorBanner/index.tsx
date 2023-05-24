@@ -10,7 +10,7 @@ const FormErrorBanner = ({ provider, error }: { provider?: string; error: string
     if (!provider) {
       return;
     }
-    openURL(urls.swap.providers[provider]?.support);
+    openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.support);
   }, [provider]);
   if (!provider) return null;
   const ctaLabel = t("common.getSupport");
