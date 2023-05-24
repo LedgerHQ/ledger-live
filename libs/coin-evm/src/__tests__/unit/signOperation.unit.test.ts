@@ -1,14 +1,14 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { buildSignOperation, applyEIP155 } from "../signOperation";
-import { Transaction as EvmTransaction } from "../types";
-import * as rpcAPI from "../api/rpc/rpc.common";
-import { getEstimatedFees } from "../logic";
-import { makeAccount } from "../testUtils";
-import { EvmAddress, EvmSignature, EvmSigner } from "../signer";
+import { Account } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { buildSignOperation, applyEIP155 } from "../../signOperation";
+import { EvmAddress, EvmSignature, EvmSigner } from "../../signer";
+import { Transaction as EvmTransaction } from "../../types";
+import { makeAccount } from "../fixtures/common.fixtures";
+import * as rpcAPI from "../../api/rpc/rpc.common";
+import { getEstimatedFees } from "../../logic";
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
