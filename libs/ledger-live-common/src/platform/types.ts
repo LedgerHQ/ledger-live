@@ -80,7 +80,7 @@ export type LiveAppManifest = {
   private?: boolean;
   name: string;
   url: string | URL;
-  params?: string[];
+  params?: LiveAppManifestParams;
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;
