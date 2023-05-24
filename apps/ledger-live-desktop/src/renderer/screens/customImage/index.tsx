@@ -26,15 +26,11 @@ import StepTransfer from "./Step4Transfer";
 import { Step } from "./types";
 import StepContainer from "./StepContainer";
 import StepFooter from "./StepFooter";
-import {
-  analyticsDrawerContext,
-  context as drawerContext,
-  setDrawer,
-} from "~/renderer/drawers/Provider";
+import { analyticsDrawerContext, setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
+import { useTrack } from "~/renderer/analytics/segment";
 
 type Props = {
   imageUri?: string;
@@ -60,7 +56,7 @@ const CustomImage: React.FC<Props> = props => {
     isFromPostOnboardingEntryPoint,
   } = props;
   const { t } = useTranslation();
-
+  const track = useTrack();
   const { setAnalyticsDrawerName } = useContext(analyticsDrawerContext);
 
   useEffect(() => setAnalyticsDrawerName(analyticsDrawerName), [setAnalyticsDrawerName]);
@@ -174,7 +170,7 @@ const CustomImage: React.FC<Props> = props => {
   const error = stepError[step];
 
   const handleErrorRetryClicked = useCallback(() => {
-    error?.name && track("button_clicked", { button: "Retry", drawer: analyticsDrawerName });
+    error?.name && track("button_clicked", { button: "Retry" });
     setStepWrapper(Step.chooseImage);
   }, [error, setStepWrapper]);
 
@@ -204,7 +200,6 @@ const CustomImage: React.FC<Props> = props => {
                     setStep={setStepWrapper}
                     previousEventProperties={{
                       button: "Previous",
-                      drawer: analyticsDrawerName,
                     }}
                   />
                 }
@@ -303,7 +298,7 @@ const CustomImage: React.FC<Props> = props => {
               setStep={setStepWrapper}
               onClickNext={handleDone}
               nextTestId="custom-image-finish-button"
-              nextEventProperties={{ button: "Finish", drawer: analyticsDrawerName }}
+              nextEventProperties={{ button: "Finish" }}
             />
           }
         >

@@ -5,8 +5,7 @@ import { Button, Flex, Icons } from "@ledgerhq/react-ui";
 import Cropper, { Area, CropperProps } from "react-easy-crop";
 import { createCanvas, getRadianAngle, rotateSize } from "./imageUtils";
 import { ImageCropError } from "@ledgerhq/live-common/customImage/errors";
-import { track } from "~/renderer/analytics/segment";
-import { analyticsDrawerName } from "~/renderer/screens/customImage/shared";
+import { useTrack } from "~/renderer/analytics/segment";
 
 export type CropResult = ImageDimensions & ImageBase64Data;
 
@@ -134,6 +133,8 @@ const ImageCropper: React.FC<Props> = props => {
     setLoading,
   } = props;
 
+  const track = useTrack();
+
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [completeCropPixel, setCompleteCropPixel] = useState<Crop>();
 
@@ -179,7 +180,7 @@ const ImageCropper: React.FC<Props> = props => {
   }, [debouncedCompleteCropPixel, targetDimensions, onResult, setLoading]);
 
   const rotateCounterClockwise: () => void = useCallback(() => {
-    track("button_clicked", { button: "Rotate", drawer: analyticsDrawerName });
+    track("button_clicked", { button: "Rotate" });
     setLoading(true);
     /** the increments are of 90° so 360°/4 */
     setRotationIncrements((rotationIncrements - 1) % 4);

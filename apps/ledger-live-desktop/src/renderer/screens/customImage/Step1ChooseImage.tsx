@@ -17,8 +17,8 @@ import {
 import { urlContentToDataUri } from "~/renderer/components/CustomImage/shared";
 import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
-import { track } from "~/renderer/analytics/segment";
+import { analyticsPageNames, analyticsFlowName } from "./shared";
+import { useTrack } from "~/renderer/analytics/segment";
 
 type Props = StepProps & {
   onResult: (res: ImageBase64Data) => void;
@@ -53,6 +53,7 @@ const StepChooseImage: React.FC<Props> = props => {
   } = props;
   const isMounted = useIsMounted();
   const { t } = useTranslation();
+  const track = useTrack();
 
   const [selectedNftId, setSelectedNftId] = useState<string>();
   const [selectedNftBase64Data, setSelectedNftBase64] = useState<ImageBase64Data | null>(null);
@@ -146,7 +147,6 @@ const StepChooseImage: React.FC<Props> = props => {
             onClick={() =>
               track("button_clicked", {
                 button: "Choose from my picture gallery",
-                drawer: analyticsDrawerName,
               })
             }
           />
@@ -155,7 +155,6 @@ const StepChooseImage: React.FC<Props> = props => {
               setIsShowingNftGallery(true);
               track("button_clicked", {
                 button: "Choose from NFT gallery",
-                drawer: analyticsDrawerName,
               });
             }}
           />

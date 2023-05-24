@@ -69,7 +69,6 @@ const StepTransfer: React.FC<Props> = props => {
           onClickNext={error ? (isRefusedOnStaxError ? handleTryAnotherImage : onRetry) : undefined}
           previousEventProperties={{
             button: "Previous",
-            drawer: analyticsDrawerName,
           }}
           nextEventProperties={
             error
@@ -79,7 +78,6 @@ const StepTransfer: React.FC<Props> = props => {
                       ? "Upload another image"
                       : "Retry"
                     : undefined,
-                  drawer: analyticsDrawerName,
                 }
               : {}
           }

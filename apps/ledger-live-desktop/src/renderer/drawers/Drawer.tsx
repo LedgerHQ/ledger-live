@@ -1,9 +1,9 @@
 import React, { useContext, useCallback, useEffect, useState } from "react";
-import { analyticsDrawerContext, context, State } from "./Provider";
+import { context, State } from "./Provider";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
 import { Transition, TransitionGroup, TransitionStatus } from "react-transition-group";
-import { track } from "../analytics/segment";
+import { useTrack } from "../analytics/segment";
 const transitionStyles = {
   entering: {},
   entered: {
@@ -39,7 +39,6 @@ const Bar = styled.div.attrs<{ state: TransitionStatus }>(props => ({
   overflow-y: auto;
 `;
 export const Drawer = () => {
-  const { analyticsDrawerName } = useContext(analyticsDrawerContext);
   const { state, setDrawer } = useContext(context);
   const [queue, setQueue] = useState<State[]>([]);
   useEffect(() => {
@@ -59,11 +58,11 @@ export const Drawer = () => {
       if (t) clearTimeout(t);
     };
   }, [queue]);
+  const track = useTrack();
   const onRequestClose = useCallback(() => {
-    analyticsDrawerName &&
-      track("button_clicked", { button: "Close", drawer: analyticsDrawerName });
+    track("button_clicked", { button: "Close" });
     setDrawer();
-  }, [analyticsDrawerName, setDrawer]);
+  }, [setDrawer, track]);
   return (
     <SideDrawer
       isOpen={!!state.open}

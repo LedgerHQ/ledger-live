@@ -6,7 +6,7 @@ import { targetDisplayDimensions } from "~/renderer/components/CustomImage/share
 import StepFooter from "./StepFooter";
 import { useTranslation } from "react-i18next";
 import StepContainer from "./StepContainer";
-import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
+import { analyticsPageNames, analyticsFlowName } from "./shared";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 type Props = StepProps & {
@@ -18,12 +18,10 @@ type Props = StepProps & {
 
 const previousButtonEventProperties = {
   button: "Back",
-  drawer: analyticsDrawerName,
 };
 
 const nextButtonEventProperties = {
   button: "Confirm crop",
-  drawer: analyticsDrawerName,
 };
 
 const StepAdjustImage: React.FC<Props> = props => {

@@ -23,6 +23,8 @@ import {
 } from "@ledgerhq/live-common/nft/helpers";
 import createStore from "../createStore";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
+import { useCallback, useContext } from "react";
+import { analyticsDrawerContext } from "../drawers/Provider";
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const os = require("os");
@@ -172,7 +174,6 @@ export const track = (
   }
 
   const eventPropertiesWithoutExtra = {
-    // page: currentRouteNameRef.current ?? undefined,
     ...properties,
   };
   const allProperties = {
@@ -190,6 +191,33 @@ export const track = (
     date: new Date(),
   });
 };
+
+/**
+ * Enriched track function that uses the context to add contextual props to
+ * events.
+ *
+ * For now it's only adding the "drawer" property if it's defined.
+ * */
+export function useTrack() {
+  const { analyticsDrawerName } = useContext(analyticsDrawerContext);
+  return useCallback(
+    (
+      eventName: string,
+      properties?: Record<string, unknown> | null,
+      mandatory?: boolean | null,
+    ) => {
+      track(
+        eventName,
+        {
+          ...(analyticsDrawerName ? { drawer: analyticsDrawerName } : {}),
+          ...(properties ?? {}),
+        },
+        mandatory,
+      );
+    },
+    [analyticsDrawerName],
+  );
+}
 
 /**
  * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
