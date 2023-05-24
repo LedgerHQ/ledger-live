@@ -32,6 +32,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { track } from "../../analytics";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
+import { NavigatorName } from "../../const";
 
 type BackToWhitelistedDomainProps = {
   manifest: AppManifest;
@@ -97,10 +98,15 @@ function BackToWhitelistedDomain({
   );
 }
 
-function HeaderRight() {
+function HeaderRight({ onClose }: { onClose?: () => void }) {
   const { colors } = useTheme();
 
-  return <NavigationHeaderCloseButtonAdvanced color={colors.neutral.c100} />;
+  return (
+    <NavigationHeaderCloseButtonAdvanced
+      onClose={onClose}
+      color={colors.neutral.c100}
+    />
+  );
 }
 
 type Props = {
@@ -167,6 +173,12 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
     }
   }, [handleHardwareBackPress]);
 
+  const onClose = () => {
+    navigation.navigate(NavigatorName.Base, {
+      screen: NavigatorName.Main,
+    });
+  };
+
   useEffect(() => {
     const handler = (e: { preventDefault: () => void }) => {
       const webviewAPI = safeGetRefValue(webviewAPIRef);
@@ -184,7 +196,7 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <HeaderRight />,
+      headerRight: () => <HeaderRight onClose={onClose} />,
       headerLeft: () =>
         isWhitelistedDomain ? null : (
           <BackToWhitelistedDomain
