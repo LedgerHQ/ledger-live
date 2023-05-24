@@ -1,12 +1,12 @@
 import { Observable } from "rxjs";
 import Eth, { ledgerService } from "@ledgerhq/hw-app-eth";
 import { Account, SignOperationFnSignature, SignOperationEvent } from "@ledgerhq/types-live";
+import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
 import { Transaction } from "./types";
-import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 /**
  * Transforms the ECDSA signature paremeter v hexadecimal string received
@@ -108,6 +108,7 @@ export const buildSignOperation =
 
           main().then(
             () => o.complete(),
+            /* istanbul ignore next: don't test throwing an error */
             e => o.error(e),
           );
         }),
