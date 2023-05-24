@@ -34,6 +34,7 @@ const defaultConfig = {
   collectCoverage: true,
   coveragePathIgnorePatterns: ["src/__tests__"],
   modulePathIgnorePatterns: [
+    "__tests__/fixtures",
     "<rootDir>/benchmark/.*",
     "<rootDir>/cli/.yalc/.*",
   ],
