@@ -91,6 +91,11 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> =
           navigation
             .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
             .pop();
+
+          if (navigation.canGoBack()) {
+            navigation.goBack();
+          }
+
           onClose && onClose();
           return;
         }
