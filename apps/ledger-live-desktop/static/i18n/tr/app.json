@@ -173,7 +173,55 @@
       "REGISTER" : "Kaydedildi",
       "STAKE" : "Stake edildi",
       "UNSTAKE" : "Stake iptali",
-      "WITHDRAW_UNSTAKED" : "Çekildi"
+      "WITHDRAW_UNSTAKED" : "Çekildi",
+      "SENDING" : "Gönderiliyor"
+    },
+    "edit" : {
+      "title" : "Hızlandırın veya İptal Edin",
+      "description" : "İşleminiz devam ediyor. Daha yüksek bir ağ ücretiyle hızlandırabilir ya da işlemi iptal edebilirsiniz.",
+      "stuckDescription" : "İşleminiz takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "Bekleyen işlem ücreti bilgileri: ",
+        "networkfee" : "Ağ ücreti = ",
+        "maxFee" : "Ücret üst limiti = ",
+        "maxPriorityFee" : "Öncelik ücreti üst limiti = ",
+        "gasPrice" : "Gas ücreti = "
+      },
+      "learnMore" : "Daha fazla bilgi almak istiyorum",
+      "panel" : {
+        "title" : "Hızlandırın veya İptal Edin",
+        "description" : "En son başlattığınız gönderme işlemlerinden biri takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin."
+      },
+      "speedUp" : {
+        "title" : "Hızlandır",
+        "description" : "İşlemi daha yüksek bir ağ ücretiyle yeniden gönderin."
+      },
+      "cancel" : {
+        "title" : "İptal et",
+        "description" : "Sizin adresinize 0 {{ticker}} gönderiliyor. İptal edildiğinden emin olmak için ağ ücreti, iptal edilecek işlemin işlem ücretinden %30 daha yüksek olacaktır."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Yöntem"
+        },
+        "fees" : {
+          "title" : "Ücretler"
+        },
+        "summary" : {
+          "title" : "Özet"
+        },
+        "device" : {
+          "title" : "Cihaz"
+        },
+        "confirmation" : {
+          "title" : "Onaylayın"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "Hesabınızda yeterince fon olmadığı için işlem iptal edilemiyor.",
+        "notEnoughFundsToSpeedup" : "Hesabınızda yeterince fon olmadığı için işlem hızlandırılamıyor.",
+        "notlowestNonceToSpeedup" : "Hızlandırma özelliği kullanılamıyor. Önceki bir işlem takıldığı için işleminiz beklemede. Onaylanmasını bekleyebilir, hızlandırabilir veya iptal edebilirsiniz."
+      }
     }
   },
   "byteSize" : {
@@ -221,7 +269,7 @@
     "lend" : "Borç ver",
     "catalog" : "Keşfet",
     "market" : "Piyasa",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Favori hesaplarınızı yıldızlayarak burada görüntüleyebilirsiniz.",
@@ -1759,7 +1807,8 @@
     "loading" : "Yükleniyor...",
     "connectAndUnlockDevice" : "Cihazınızı bağlayın ve kilidini açın",
     "unlockDevice" : "Cihazınızın kilidini açın",
-    "unlockDeviceAfterFirmwareUpdate" : "Yazılımın güncellenmesini bekleyin ve cihazınızın kilidini PIN kodunuzla açın",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Kurulumun {{productName}} cihazınızda tamamlanmasını bekleyin",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Kurulumu tamamlamak için {{productName}} cihazının kilidini açın",
     "quitApp" : "Cihazınızdaki uygulamadan çıkın",
     "appNotInstalledTitle" : "Gerekli uygulama eksik",
     "appNotInstalledTitle_plural" : "Gerekli uygulamalar eksik",
@@ -1824,9 +1873,8 @@
       "installed" : "Uygulamalar",
       "capacity" : "Kapasite",
       "used" : "Kullanılan",
-      "firmwareAvailable" : "Yazılım sürümü eski:",
-      "firmwareUpToDate" : "Yazılım sürümü güncel:",
-      "genuine" : "Cihazınız orijinal",
+      "OSVersion" : "İşletim sistemi sürümü",
+      "genuine" : "Cihaz orijinal",
       "incomplete" : "Bazı uygulamalar tanınmadı. Lütfen bunları kaldırın ve yeniden yükleyin."
     },
     "applist" : {
@@ -1918,7 +1966,7 @@
       "dontHaveSeed" : "Kurtarma ifadeniz yok mu? ",
       "followTheGuide" : "Adım adım güncelleme kılavuzumuzu uygulayın",
       "removeApps" : "Güncellemeden önce tüm uygulamaları kaldırın",
-      "update" : "Donanım yazılımı güncellemesi",
+      "update" : "{{productName}} cihazını güncelleyin",
       "updateBtn" : "Donanım yazılımını güncelle",
       "banner" : {
         "warning" : "Donanım yazılımının {{latestFirmware}} güncellemesi mevcut",
@@ -1933,12 +1981,17 @@
       "contactSupport" : "Destek al",
       "deprecated" : "Cihazın yazılım sürümü güncellenemeyecek kadar eski. Değiştirmek için Ledger Destek ekibiyle iletişime geçin.",
       "prepareSeed" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi bir Kurtarma Kağıdına yazdığınızdan ve ona kolayca ulaşabileceğinizden emin olun.",
-      "disclaimerTitle" : "<1>Donanım yazılımının {{version}} sürümünü</1> yüklemek üzeresiniz.",
-      "downloadingUpdateDesc" : "Lütfen güncelleme yükleyicisinin indirilmesini bekleyin"
+      "disclaimerTitle" : "<1>Donanım yazılımının {{version}} sürümünü</1> yüklemek üzeresiniz."
     },
     "modal" : {
+      "title" : "{{productName}} cihazını güncelleyin",
       "steps" : {
-        "downloadingUpdate" : "Güncelleme indiriliyor",
+        "preparingUpdate" : "Güncelleme hazırlanıyor",
+        "transferringUpdate" : "Güncelleme {{productName}} cihazına aktarılıyor",
+        "prepare" : "Güncellemeyi hazırlayın",
+        "install" : "Güncellemeyi yükleyin",
+        "restore" : "Ayarları geri yükleyin",
+        "apps" : "Uygulamaları geri yükleyin",
         "updateMCU" : "Donanım yazılımı güncellemesi",
         "updating" : "Donanım yazılımı güncellemesi",
         "reset" : "Cihazı hazırlayın",
@@ -1949,9 +2002,8 @@
         "flash" : "Cihazınız hazırlanıyor..."
       },
       "confirmIdentifier" : "Tanımlayıcıyı doğrulayın",
-      "confirmIdentifierText" : "Cihazınızdaki tanımlayıcının aşağıdaki tanımlayıcıyla aynı olduğunu doğrulayın. İstenirse PIN kodunuzu girin ve onaylayın.",
+      "confirmIdentifierText" : "Yüklemeyi {{productName}} cihazında onaylayın",
       "identifier" : "Tanımlayıcı",
-      "preparation" : "Hazırlık",
       "newFirmware" : "Yeni donanım yazılımı {{version}}",
       "confirmUpdate" : "Lütfen cihazınızdaki güncellemeyi onaylayın",
       "mcuTitle" : "Güncellemeyi tamamla",
@@ -1961,10 +2013,10 @@
       "mcuSecondNanoX" : "<1><0>{{bootloaderOption}}</0></1> görünene kadar sol tuşa basılı tutun. Onaylamak ve cihazınızı tekrar bağlamak için her iki tuşa da basın.",
       "mcuBlueFirst" : "Cihazı kapatmak için yan tuşu 10 saniye basılı tutun. Tuşu bırakın.",
       "mcuBlueSecond" : "Başlatma Seçenekleri görüntülenene kadar tuşu en az 5 saniye basılı tutun. Bootlader Moduna dokunun",
-      "successTitle" : "Donanım yazılımı güncellendi",
+      "successTitle" : "İşletim sistemi başarıyla güncellendi.",
       "successTextApps" : "Lütfen uygulamaları cihazınıza tekrar yükleyin",
       "successTextNoApps" : "Artık cihazınıza uygulama yükleyebilirsiniz",
-      "sucessCTAApps" : "Uygulamaları tekrar yükle",
+      "sucessCTAApps" : "Uygulamaları yeniden yükleyin",
       "SuccessCTANoApps" : "Uygulama yükleyin",
       "cancelReinstallCTA" : "Güncellemeyi yükle",
       "resetSteps" : {
@@ -2269,12 +2321,16 @@
     "remainingCharacters" : "{{ remainingCharacters }} karakter kaldı",
     "renamed" : "{{ productName }} adını \n“{{ name }}” olarak değiştirdiniz "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "Kaldır",
+    "confirmation" : "Ledger Stax'inizde görüntünün kaldırılmasını onaylayın",
+    "success" : "Kilitli ekran resmi kaldırıldı"
+  },
   "deviceLocalization" : {
     "language" : "Dil",
-    "deviceLanguage" : "Dil",
+    "deviceLanguage" : "Cihaz dilini değiştirin",
     "changeLanguage" : "Dili değiştir",
     "changeDeviceLanguage" : "Cihazınızın dili değiştirilsin mi?",
-    "chooseLanguage" : "{{deviceName}} cihazınız için bir dil seçin.",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{deviceName}} cihazınızı {{language}} dilinde de kullanabilirsiniz",
       "description" : "Dili {{language}} yapmak ister misiniz?"
@@ -3861,6 +3917,10 @@
     },
     "experimental" : {
       "disclaimer" : "Bu deneysel özellikleri, teknoloji tutkunu topluluğumuzun test edebilmesi için \"olduğu gibi\" sunmaktayız. Herhangi bir zamanda değişebilir, bozulabilir veya kaldırılabilirler. Bu özellikleri etkinleştirdiğinizde tüm riskin size ait olduğunu kabul etmiş olursunuz.",
+      "provider" : "“My Ledger sağlayıcısı ({{forcedProvider}})” deneysel ayarı, piyasaya sürülmemiş işletim sistemlerini ve uygulamaları göstererek uyumluluk sorunlarına yol açabiliyor. Bunu ayarlardan devre dışı bırakabilirsiniz.",
+      "providerDevMode" : "“My Ledger sağlayıcısı ({{forcedProvider}})” ve “Developer mode (Geliştirici modu) deneysel ayarları, piyasaya sürülmemiş işletim sistemlerini ve uygulamaları göstererek uyumluluk sorunlarına yol açabiliyor. Bunu ayarlardan devre dışı bırakabilirsiniz.",
+      "devMode" : "“Developer mode” (Geliştirici modu) deneysel ayarı, piyasaya sürülmemiş işletim sistemlerini ve uygulamaları göstererek uyumluluk sorunlarına yol açabiliyor. Bunu ayarlardan devre dışı bırakabilirsiniz.",
+      "providerCTA" : "Ayarlara git",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "Deneysel entegrasyonlar",
@@ -3921,6 +3981,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Taban ücret için özel çarpan değeri",
           "description" : "EIP1559 işleminin maxFeePerGas ücretini düzenleyerek taban ücret için kullanılan çarpan değerini özelleştirin"
+        },
+        "enableNetworkLogs" : {
+          "title" : "Ağ log'larını etkinleştirin",
+          "description" : "Konsolda ağ log'larını etkinleştirin (hata log'ları her zaman etkindir)"
         }
       }
     },
@@ -4226,6 +4290,10 @@
           "3" : {
             "title" : "Kurtarma ifadenizi yeni bir cihazda geri yükleyin",
             "description" : "Özel anahtarlarınızı yeni bir Nano üzerinde geri yüklemek için mevcut bir kurtarma ifadesini kullanın!"
+          },
+          "4" : {
+            "title" : "Ledger Recover kullanarak geri yükleyin",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4439,25 @@
             "help" : {
               "help" : "Yardım gerekli",
               "descr" : "Ne yapmanız gerektiğini bilmiyor musunuz? Bu adımı tamamlamak için yardım alın."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "“Restore using Ledger Recover” (Ledger Recover kullanarak geri yükle) seçimini yapın",
+            "1" : {
+              "title" : "“Restore” seçimini yapın",
+              "descr" : "Seçmek için iki tuşa aynı anda basın."
+            },
+            "2" : {
+              "title" : "“Restore using Ledger Recover” seçimini yapın"
+            },
+            "help" : {
+              "iDontSee" : "“Restore using Ledger Recover” seçeneği yok",
+              "modal" : {
+                "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
+                "subtitle" : " İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
+                "learnHowToUpdate" : "Güncelleme yönergeleri",
+                "contactLedgerSupport" : "Ledger Destek ile iletişime geçin"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5283,6 +5370,10 @@
       "title" : "Bu işlem bu cihaz için mevcut değil",
       "description" : "NFT Gönder özelliği yalnızca Nano X ve Nano S+ ile kullanılabilir. Nano S ile nasıl NFT gönderebileceğinizi öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "Hızlandırılamıyor veya iptal edilemiyor",
+      "description" : "Bu işlem zaten doğrulanmış"
+    },
     "CantScanQRCode" : {
       "title" : "Bu QR kodu taranamadı; otomatik doğrulama bu adres tarafından desteklenmiyor"
     },
@@ -5602,11 +5693,11 @@
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Görüntü commit etme cihazda reddedildi (TODO: final wording)",
+      "title" : "Kilitli ekran, Ledger Stax'te iptal edildi",
       "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Görüntü yükleme cihazda reddedildi (TODO: final wording)",
+      "title" : "Kilitli ekran, Ledger Stax'te iptal edildi",
       "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
     },
     "NearNewAccountWarning" : {
@@ -5686,6 +5777,7 @@
   "customImage" : {
     "title" : "Özel kilitli ekran",
     "managerCTA" : "Kilit ekranı resmi",
+    "managerCTARemove" : "Kaldır",
     "steps" : {
       "choose" : {
         "stepLabel" : "Bir görüntü seçin",
@@ -5694,6 +5786,7 @@
         "myNfts" : "NFT'lerim",
         "upload" : "Bilgisayarımdan yükle",
         "chooseNft" : "Bir NFT seçin",
+        "remove" : "Mevcut resmi kaldır",
         "selectNft" : "NFT'yi seç",
         "previousSelectNft" : "Geri",
         "nftEmptyStateTitle" : "Gösterilecek NFT yok",
@@ -5710,9 +5803,11 @@
         "stepLabel" : "Transfer",
         "uploadAnotherImage" : "Başka bir görsel yükleyin",
         "allowPreview" : "{{productName}} cihazınızda kilitli ekran resminin yüklenmesine izin verin",
+        "allowConfirmPreview" : "{{productName}} cihazında kilitli ekran resminin geri yüklenmesine izin verin",
         "loadingPicture" : "Yükleniyor...",
         "imageLoaded" : "Görsel {{productName}} cihazına yüklendi",
         "confirmPicture" : "Gördüğünüz şey hoşunuza gitti mi?\nO zaman böyle kalsın!",
+        "confirmRestorePicture" : "Kilitli ekran resminin geri yüklenmesini onaylayın",
         "doThisLater" : "Belki sonra"
       }
     },
@@ -5721,7 +5816,7 @@
       "description" : "Ekranı özelleştirin",
       "actionCompletedPopupLabel" : "Cihaz kişiselleştirildi"
     },
-    "customImageSet" : "Kilitli ekran resmi belirlendi",
+    "customImageSet" : "Kilitli ekran belirlendi",
     "finishCTA" : "Bitir"
   },
   "onboardingAppInstall" : {
