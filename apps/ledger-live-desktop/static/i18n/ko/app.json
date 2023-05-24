@@ -173,7 +173,55 @@
       "REGISTER" : "등록 완료",
       "STAKE" : "스테이킹 완료",
       "UNSTAKE" : "언스테이킹 완료",
-      "WITHDRAW_UNSTAKED" : "출금됨"
+      "WITHDRAW_UNSTAKED" : "출금됨",
+      "SENDING" : "보내기"
+    },
+    "edit" : {
+      "title" : "속도 올리기 또는 취소",
+      "description" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
+      "stuckDescription" : "트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높이세요.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "보류 중인 트랜잭션 수수료 정보: ",
+        "networkfee" : "네트워크 수수료 = ",
+        "maxFee" : "최대 비용 = ",
+        "maxPriorityFee" : "최대 우선 수수료 = ",
+        "gasPrice" : "가스비 = "
+      },
+      "learnMore" : "더 자세히 알고 싶어요",
+      "panel" : {
+        "title" : "속도 올리기 또는 취소",
+        "description" : "가장 최근 실행한 '전송' 트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다."
+      },
+      "speedUp" : {
+        "title" : "스피드 업",
+        "description" : "네트워크 수수료를 높여 트랜잭션을 다시 제출하세요."
+      },
+      "cancel" : {
+        "title" : "취소",
+        "description" : "0의 {{ticker}}를 본인 주소로 전송하기 취소를 담보하기 위해 네트워크 수수료는 취소하려는 트랜잭션 수수료보다 30% 더 높습니다."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "방법"
+        },
+        "fees" : {
+          "title" : "수수료"
+        },
+        "summary" : {
+          "title" : "요약"
+        },
+        "device" : {
+          "title" : "장치"
+        },
+        "confirmation" : {
+          "title" : "확인"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "계정에 충분한 자금이 없기 때문에 트랜잭션을 취소할 수 없습니다.",
+        "notEnoughFundsToSpeedup" : "계정에 충분한 자금이 없기 때문에 트랜잭션 속도를 높일 수 없습니다.",
+        "notlowestNonceToSpeedup" : "속도 향상 기능을 사용할 수 없습니다. 이전 트랜잭션이 중단되어 현재 트랜잭션이 보류 중입니다. 확인될 때까지 기다렸다가 속도를 높이거나 취소할 수 있습니다."
+      }
     }
   },
   "byteSize" : {
@@ -221,7 +269,7 @@
     "lend" : "대출",
     "catalog" : "탐색",
     "market" : "마켓",
-    "protect" : "복구"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
@@ -1759,7 +1807,8 @@
     "loading" : "로딩...",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
     "unlockDevice" : "장치를 잠금 해제하세요",
-    "unlockDeviceAfterFirmwareUpdate" : "펌웨어 업데이트를 기다려 PIN으로 장치를 잠금 해제해 보세요",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "{{productName}}에 설치를 완료할 때까지 기다려주세요",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "{{productName}}의 잠금을 해제해 설치를 완료하세요",
     "quitApp" : "장치에서 앱을 중단하세요",
     "appNotInstalledTitle" : "필수 앱 없음",
     "appNotInstalledTitle_plural" : "필수 앱 없음",
@@ -1824,9 +1873,8 @@
       "installed" : "앱",
       "capacity" : "용량",
       "used" : "사용됨",
-      "firmwareAvailable" : "오래된 펌웨어:",
-      "firmwareUpToDate" : "펌웨어가 최신입니다:",
-      "genuine" : "귀하의 장치는 정품입니다",
+      "OSVersion" : "OS 버전",
+      "genuine" : "정품 장치입니다",
       "incomplete" : "일부 앱이 인식되지 않았습니다. 제거 후 다시 설치하세요."
     },
     "applist" : {
@@ -1918,7 +1966,7 @@
       "dontHaveSeed" : "복구 문구가 없나요? ",
       "followTheGuide" : "단계별 업데이트 가이드를 따르세요",
       "removeApps" : "모든 앱을 삭제하고 업데이트하세요",
-      "update" : "펌웨어 업데이트",
+      "update" : "{{productName}} 업데이트",
       "updateBtn" : "펌웨어를 업데이트하세요",
       "banner" : {
         "warning" : "펌웨어 {{latestFirmware}}으로 업데이트하실 수 있습니다",
@@ -1933,12 +1981,17 @@
       "contactSupport" : "지원 부서 연락",
       "deprecated" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
       "prepareSeed" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용 가능한 상태로 준비해 두세요.",
-      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다.",
-      "downloadingUpdateDesc" : "업데이트 설치자가 다운로드될 때까지 기다려 주세요"
+      "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다."
     },
     "modal" : {
+      "title" : "{{productName}} 업데이트",
       "steps" : {
-        "downloadingUpdate" : "업데이트 다운로드 중",
+        "preparingUpdate" : "업데이트 준비 중",
+        "transferringUpdate" : "{{productName}}에 업데이트 전송 중",
+        "prepare" : "업데이트 준비",
+        "install" : "업데이트 설치",
+        "restore" : "설정 복원",
+        "apps" : "앱 복원",
         "updateMCU" : "펌웨어 업데이트",
         "updating" : "펌웨어 업데이트",
         "reset" : "장치를 준비합니다",
@@ -1949,9 +2002,8 @@
         "flash" : "장치 준비 중..."
       },
       "confirmIdentifier" : "식별자 확인",
-      "confirmIdentifierText" : "장치의 식별자가 아래 식별자와 동일한지 확인하세요. 요청 받은 경우 PIN 코드를 확인하여 입력하세요",
+      "confirmIdentifierText" : "{{productName}}에 설치 확인",
       "identifier" : "식별자",
-      "preparation" : "준비",
       "newFirmware" : "새 펌웨어 {{version}}",
       "confirmUpdate" : "장치에서 업데이트를 확인하세요",
       "mcuTitle" : "업데이트 마무리",
@@ -1961,7 +2013,7 @@
       "mcuSecondNanoX" : "<1><0>{{bootloaderOption}}</0></1>이 표시될 때까지 왼쪽 버튼을 길게 누르세요. 버튼 두 개를 모두 눌러 장치를 확인하고 재연결하세요.",
       "mcuBlueFirst" : "측면 버튼을 10초간 길게 눌러 장치를 끄세요. 버튼에서 손을 떼세요.",
       "mcuBlueSecond" : "부팅 옵션이 표시될 때까지 버튼을 5초 이상 누르세요. Bootloader 모드 탭",
-      "successTitle" : "펌웨어 업데이트됨",
+      "successTitle" : "OS 업데이트 정상 완료.",
       "successTextApps" : "장치에 앱을 다시 설치하세요",
       "successTextNoApps" : "이제 장치에 앱을 설치할 수 있습니다",
       "sucessCTAApps" : "앱 재설치",
@@ -2269,12 +2321,16 @@
     "remainingCharacters" : "{{ remainingCharacters }}개 문자 남음",
     "renamed" : "{{ productName }} 이름이 “{{ name }}”로 변경되었습니다 "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "제거",
+    "confirmation" : "Ledger Stax에서 이미지 삭제 확인",
+    "success" : "잠금 화면 사진이 삭제됨"
+  },
   "deviceLocalization" : {
     "language" : "언어",
-    "deviceLanguage" : "언어",
+    "deviceLanguage" : "장치 언어 변경",
     "changeLanguage" : "언어 변경",
     "changeDeviceLanguage" : "장치 언어를 변경하시겠습니까?",
-    "chooseLanguage" : "{{deviceName}}의 언어를 선택하세요.",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{deviceName}}에서 {{language}}도 지원됩니다",
       "description" : "언어를 {{language}}로 변경하시겠습니까?"
@@ -3861,6 +3917,10 @@
     },
     "experimental" : {
       "disclaimer" : "이는 기술적 관심과 지식이 풍부한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거할 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다.",
+      "provider" : "실험 설정인 “내 Ledger 공급자({{forcedProvider}})”가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
+      "providerDevMode" : "실험 설정인 “내 Ledger 공급자({{forcedProvider}})” 및 \"개발자 모드\"가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
+      "devMode" : "실험 설정인 “개발자 모드”가 출시되지 않은 OS와 앱을 표시하여 호환성 문제로 이어질 수 있습니다. 이는 설정에서 비활성화할 수 있습니다.",
+      "providerCTA" : "설정으로 이동",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "실험 통합",
@@ -3921,6 +3981,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "기본 수수료에 대한 커스텀 멀티플라이어",
           "description" : "EIP1559 트랜잭션 최대 가스비를 구성하는 기본 수수료에 이용되는 멀티플라이어를 커스터마이징합니다"
+        },
+        "enableNetworkLogs" : {
+          "title" : "네트워크 로그 활성화",
+          "description" : "콘솔에서 네트워크 로그 활성화(오류 로그는 항상 활성화됨)"
         }
       }
     },
@@ -4226,6 +4290,10 @@
           "3" : {
             "title" : "새 장치에서 복구 문구를 복원하세요",
             "description" : "기존 복구 문구를 사용하여 새 Nano에서 개인 키를 복구하세요!"
+          },
+          "4" : {
+            "title" : "Ledger Recover를 이용한 복구",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4439,25 @@
             "help" : {
               "help" : "도움 요청",
               "descr" : "무엇을 해야 할지 모르겠나요? 도움을 받아 이 단계를 종료하세요."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "\"Ledger Recover로 복구\"를 선택합니다.",
+            "1" : {
+              "title" : "'복구'를 선택합니다",
+              "descr" : "두 버튼을 동시에 눌러 선택하세요."
+            },
+            "2" : {
+              "title" : "\"Ledger Recover로 복구\"를 선택합니다."
+            },
+            "help" : {
+              "iDontSee" : "'Ledger Recover로 복구' 메뉴가 보이지 않습니다.",
+              "modal" : {
+                "title" : "Ledger Nano X의 OS를 업데이트해야 합니다.",
+                "subtitle" : " OS를 업데이트하거나 Ledger 지원 부서로 문의해주세요.",
+                "learnHowToUpdate" : "업데이트 방법 알아보기",
+                "contactLedgerSupport" : "Ledger 지원 부서에 문의해주세요"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5283,6 +5370,10 @@
       "title" : "이 장치에서 사용할 수 없는 작업",
       "description" : "NFT 보내기 기능은 Nano X 및 Nano S+에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문하세요."
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "속도를 높이거나 취소할 수 없습니다.",
+      "description" : "이 트랜잭션은 이미 검증되었습니다"
+    },
     "CantScanQRCode" : {
       "title" : "이 QR 코드를 스캔할 수 없습니다: 이 주소는 자동 확인을 지원하지 않습니다"
     },
@@ -5602,11 +5693,11 @@
       "description" : "다른 이미지로 다시 시도하세요"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "장치에서 이미지 커밋이 거부됨(할 일: 최종 문구)",
+      "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "장치에서 이미지 로드가 거부됨(할 일: 최종 문구)",
+      "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
     },
     "NearNewAccountWarning" : {
@@ -5686,6 +5777,7 @@
   "customImage" : {
     "title" : "맞춤 가능한 잠금 화면",
     "managerCTA" : "잠금 화면 사진",
+    "managerCTARemove" : "제거",
     "steps" : {
       "choose" : {
         "stepLabel" : "이미지 선택",
@@ -5694,6 +5786,7 @@
         "myNfts" : "내 NFT",
         "upload" : "내 컴퓨터에서 업로드",
         "chooseNft" : "NFT 선택하기",
+        "remove" : "현재 사진 삭제",
         "selectNft" : "NFT 선택",
         "previousSelectNft" : "뒤로",
         "nftEmptyStateTitle" : "아직 표시할 NFT가 없습니다",
@@ -5710,9 +5803,11 @@
         "stepLabel" : "전송",
         "uploadAnotherImage" : "다른 이미지 업로드",
         "allowPreview" : "잠금 화면 사진이 {{productName}}에 로드되도록 허용하세요",
+        "allowConfirmPreview" : "{{productName}}에서 잠금 화면 이미지 복원 허용",
         "loadingPicture" : "로딩 중...",
         "imageLoaded" : "{{productName}}에서 로드한 이미지",
         "confirmPicture" : "마음에 드시나요?\n그러면 저장하세요!",
+        "confirmRestorePicture" : "잠금 화면 이미지 복원 확인",
         "doThisLater" : "다음에 결정하기"
       }
     },
