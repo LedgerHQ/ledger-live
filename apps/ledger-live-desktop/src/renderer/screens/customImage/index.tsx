@@ -1,4 +1,11 @@
-import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  ComponentProps,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { BoxedIcon, Flex, FlowStepper, Icons, Text } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
@@ -19,7 +26,11 @@ import StepTransfer from "./Step4Transfer";
 import { Step } from "./types";
 import StepContainer from "./StepContainer";
 import StepFooter from "./StepFooter";
-import { setDrawer } from "~/renderer/drawers/Provider";
+import {
+  analyticsDrawerContext,
+  context as drawerContext,
+  setDrawer,
+} from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -49,6 +60,10 @@ const CustomImage: React.FC<Props> = props => {
     isFromPostOnboardingEntryPoint,
   } = props;
   const { t } = useTranslation();
+
+  const { setAnalyticsDrawerName } = useContext(analyticsDrawerContext);
+
+  useEffect(() => setAnalyticsDrawerName(analyticsDrawerName), [setAnalyticsDrawerName]);
 
   const [stepError, setStepError] = useState<{ [key in Step]?: Error }>({});
 
