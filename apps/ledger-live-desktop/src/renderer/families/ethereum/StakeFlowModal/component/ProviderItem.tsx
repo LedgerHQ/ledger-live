@@ -3,12 +3,17 @@ import { Flex, Text, Icons, Link, Icon, Tag as TagCore } from "@ledgerhq/react-u
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import { ListProvider } from "../types";
 import { StakeOnClickProps } from "../EthStakingModalBody";
 import { StakingIcon } from "../StakingIcon";
 
-export const Container = styled(Flex)`
+export const Container: StyledComponent<
+  "div",
+  DefaultTheme,
+  Record<string, unknown>,
+  never
+> = styled(Flex)`
   cursor: pointer;
   border-radius: 8px;
   :hover {

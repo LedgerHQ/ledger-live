@@ -22,7 +22,7 @@ import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import { urls } from "~/config/urls";
 
-const ErrorContainer = styled(Box)`
+const ErrorContainer = styled(Box)<{ hasError?: boolean }>`
   margin-top: 0px;
   font-size: 10px;
   width: 100%;
@@ -118,7 +118,7 @@ const FeesField = ({ account, parentAccount, transaction, status, updateTransact
           onChange={onPriorityFeeChange}
         />
       </Box>
-      <ErrorContainer hasError={validTransactionError || validTransactionWarning}>
+      <ErrorContainer hasError={!!validTransactionError || !!validTransactionWarning}>
         {validTransactionError ? (
           <ErrorDisplay id="input-error">
             <TranslatedError error={validTransactionError} />

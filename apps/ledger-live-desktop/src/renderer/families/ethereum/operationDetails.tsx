@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 import toPairs from "lodash/toPairs";
 import { Trans } from "react-i18next";
-import { AccountLike, Operation } from "@ledgerhq/types-live";
+import { AccountLike, NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { decodeAccountId } from "@ledgerhq/live-common/account/index";
 import { centerEllipsis } from "~/renderer/styles/helpers";
@@ -57,7 +57,7 @@ const NFTAmountField = ({ operation }: Props) => {
     <Cell>
       <Skeleton show={show} width={170} minHeight={24} barHeight={10}>
         <Text ff="Inter|SemiBold" fontSize={4} color="palette.text.shade100">
-          {metadata?.nftName || "-"}
+          {(metadata as NFTMetadataResponse["result"])?.nftName || "-"}
         </Text>
       </Skeleton>
       <Skeleton show={show} width={200} minHeight={24} barHeight={6}>

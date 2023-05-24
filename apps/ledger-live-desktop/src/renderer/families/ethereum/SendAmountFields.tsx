@@ -1,4 +1,3 @@
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/ethereum/react";
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
@@ -15,9 +14,8 @@ import SelectFeeStrategy from "./SelectFeeStrategy";
 import { EthereumFamily } from "./types";
 
 const Root: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = props => {
-  const { account, parentAccount, updateTransaction, transaction } = props;
-  const mainAccount = getMainAccount(account, parentAccount);
-  const bridge: AccountBridge<EthereumTransaction> = getAccountBridge(mainAccount);
+  const { account, updateTransaction, transaction } = props;
+  const bridge: AccountBridge<EthereumTransaction> = getAccountBridge(account);
   const { state: drawerState, setDrawer } = React.useContext<ContextValue>(context);
 
   const defaultStrategies = useFeesStrategy(transaction);
@@ -44,7 +42,7 @@ const Root: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = props
     <>
       <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceMode} />
       {isAdvanceMode ? (
-        EIP1559ShouldBeUsed(mainAccount.currency) ? (
+        EIP1559ShouldBeUsed(account.currency) ? (
           <>
             <PriorityFeeField {...props} />
             <MaxFeeField {...props} />
