@@ -1,29 +1,29 @@
-import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { AssertionError, fail } from "assert";
 import BigNumber from "bignumber.js";
-import { getEnv } from "../../../env";
-import * as etherscanAPI from "../api/explorer/etherscan";
-import * as rpcAPI from "../api/rpc/rpc.common";
-import * as logic from "../logic";
-import * as synchronization from "../synchronization";
-import { makeAccount, makeOperation, makeTokenAccount } from "../testUtils";
+import { AssertionError, fail } from "assert";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { makeTokenAccount } from "../fixtures/common.fixtures";
+import * as etherscanAPI from "../../api/explorer/etherscan";
+import * as synchronization from "../../synchronization";
+import * as rpcAPI from "../../api/rpc/rpc.common";
+import { getEnv } from "../../../../env";
+import * as logic from "../../logic";
+import {
+  account,
+  coinOperations,
+  currency,
+  erc1155Operations,
+  erc721Operations,
+  nfts,
+  pendingOperation,
+  tokenAccount,
+  tokenCurrencies,
+  tokenOperations,
+} from "../fixtures/synchronization.fixtures";
 
+jest.mock("../../api/rpc/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
 
-const currency: CryptoCurrency = {
-  ...getCryptoCurrencyById("ethereum"),
-  ethereumLikeInfo: {
-    chainId: 1,
-    rpc: "https://my-rpc.com",
-    explorer: {
-      uri: "https://api.com",
-      type: "etherscan",
-    },
-  },
-};
 const getAccountShapeParameters: AccountShapeInfo = {
   address: "0xkvn",
   currency,
@@ -31,80 +31,6 @@ const getAccountShapeParameters: AccountShapeInfo = {
   derivationPath: "44'/60'/0'/0/0",
   index: 0,
 };
-const tokenCurrency1 = getTokenById("ethereum/erc20/usd__coin");
-const tokenCurrency2 = getTokenById("ethereum/erc20/usd_tether__erc20_");
-const tokenAccount = makeTokenAccount("0xkvn", tokenCurrency1);
-const account = {
-  ...makeAccount("0xkvn", currency, [tokenAccount]),
-  syncHash: logic.getSyncHash(currency),
-};
-const coinOperation1 = makeOperation({
-  hash: "0xH4sH",
-  accountId: "js:2:ethereum:0xkvn:",
-  blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
-  senders: ["0xd48f2332Eeed88243Cb6b1D0d65a10368A5370f0"], // johnnyhallyday.eth
-  transactionSequenceNumber: 1,
-  date: new Date(),
-  blockHeight: 1,
-});
-const coinOperation2 = makeOperation({
-  hash: "0xOtherHash",
-  accountId: "js:2:ethereum:0xkvn:",
-  transactionSequenceNumber: 2,
-  date: new Date(Date.now() + 1),
-  blockHeight: 100,
-});
-const coinOperation3 = makeOperation({
-  hash: "0xYeTAnOtherHash",
-  accountId: "js:2:ethereum:0xkvn:",
-  transactionSequenceNumber: 5,
-  date: new Date(Date.now() + 2),
-  blockHeight: 1000,
-});
-const tokenOperation1 = makeOperation({
-  hash: "0xH4sHT0k3n",
-  accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin",
-  blockHash: "0x95dc138a02c1b0e3fd49305f785e8e27e88a885004af13a9b4c62ad94eed07dd",
-  recipients: ["0xB0B"],
-  senders: ["0x9b744C0451D73C0958d8aA566dAd33022E4Ee797"], // sbf.eth
-  contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  value: new BigNumber(152021496),
-  fee: new BigNumber(1935663357068271),
-  type: "OUT",
-  date: new Date(),
-  blockHeight: 10,
-});
-const tokenOperation2 = makeOperation({
-  hash: "0xTokenHashAga1n",
-  accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin",
-  contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  date: new Date(Date.now() + 1),
-  blockHeight: 1000,
-});
-const tokenOperation3 = makeOperation({
-  hash: "0xTokenHashAga1n",
-  accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin",
-  contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-  date: new Date(Date.now() + 2),
-  blockHeight: 10000,
-});
-const tokenOperation4 = makeOperation({
-  hash: "0xTokenHashOtherToken",
-  accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd_tether__erc20_",
-  contract: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-  date: new Date(Date.now() + 3),
-  blockHeight: 11000,
-});
-const ignoredTokenOperation = makeOperation({
-  hash: "0xigN0r3Me",
-  accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd_tether__erc20_",
-  contract: "0xUnknownContract",
-  date: new Date(Date.now() + 4),
-  blockHeight: 12000,
-});
-const pendingOperation = makeOperation({
-  hash: "123",
-});
 
 describe("EVM Family", () => {
   describe("synchronization.ts", () => {
@@ -180,18 +106,20 @@ describe("EVM Family", () => {
 
       describe("With no transactions fetched", () => {
         beforeAll(() => {
-          jest
-            .spyOn(etherscanAPI, "getLastCoinOperations")
-            .mockImplementation(() => Promise.resolve([]));
-          jest
-            .spyOn(etherscanAPI?.default, "getLastCoinOperations")
-            .mockImplementation(() => Promise.resolve([]));
-          jest
-            .spyOn(etherscanAPI, "getLastTokenOperations")
-            .mockImplementation(() => Promise.resolve([]));
-          jest
-            .spyOn(etherscanAPI?.default, "getLastTokenOperations")
-            .mockImplementation(() => Promise.resolve([]));
+          jest.spyOn(etherscanAPI, "getLastOperations").mockImplementation(() =>
+            Promise.resolve({
+              lastCoinOperations: [],
+              lastTokenOperations: [],
+              lastNftOperations: [],
+            }),
+          );
+          jest.spyOn(etherscanAPI?.default, "getLastOperations").mockImplementation(() =>
+            Promise.resolve({
+              lastCoinOperations: [],
+              lastTokenOperations: [],
+              lastNftOperations: [],
+            }),
+          );
         });
 
         afterAll(() => {
@@ -237,21 +165,21 @@ describe("EVM Family", () => {
         });
 
         it("should keep the operations from a sync to another", async () => {
-          const operations = [coinOperation1];
-          const tokenOperations = [tokenOperation1];
+          const operations = [coinOperations[0]];
+          const tokenOps = [tokenOperations[0]];
           const accountWithSubAccount = await synchronization.getAccountShape(
             {
               ...getAccountShapeParameters,
               initialAccount: {
                 ...account,
                 operations,
-                subAccounts: [{ ...tokenAccount, operations: tokenOperations }],
+                subAccounts: [{ ...tokenAccount, operations: tokenOps }],
               },
             },
             {} as any,
           );
           expect(accountWithSubAccount.operations).toBe(operations);
-          expect(accountWithSubAccount?.subAccounts?.[0].operations).toBe(tokenOperations);
+          expect(accountWithSubAccount?.subAccounts?.[0].operations).toBe(tokenOps);
         });
 
         it("should do a full sync when syncHash changes", async () => {
@@ -262,20 +190,14 @@ describe("EVM Family", () => {
               ...getAccountShapeParameters,
               initialAccount: {
                 ...account,
-                operations: [coinOperation1],
-                subAccounts: [{ ...tokenAccount, operations: [tokenOperation1] }],
+                operations: [coinOperations[0]],
+                subAccounts: [{ ...tokenAccount, operations: [tokenOperations[0]] }],
               },
             },
             {} as any,
           );
 
-          expect(etherscanAPI?.default.getLastCoinOperations).toHaveBeenCalledWith(
-            getAccountShapeParameters.currency,
-            getAccountShapeParameters.address,
-            account.id,
-            0,
-          );
-          expect(etherscanAPI?.default.getLastTokenOperations).toHaveBeenCalledWith(
+          expect(etherscanAPI?.default.getLastOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
@@ -283,30 +205,24 @@ describe("EVM Family", () => {
           );
         });
 
-        it("should do a full sync when syncHash changes", async () => {
+        it("should do an incremental sync when syncHash is identical", async () => {
           await synchronization.getAccountShape(
             {
               ...getAccountShapeParameters,
               initialAccount: {
                 ...account,
-                operations: [coinOperation1],
-                subAccounts: [{ ...tokenAccount, operations: [tokenOperation1] }],
+                operations: [coinOperations[2]],
+                subAccounts: [{ ...tokenAccount, operations: [tokenOperations[0]] }],
               },
             },
             {} as any,
           );
 
-          expect(etherscanAPI?.default.getLastCoinOperations).toHaveBeenCalledWith(
+          expect(etherscanAPI?.default.getLastOperations).toHaveBeenCalledWith(
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
-            coinOperation1.blockHeight,
-          );
-          expect(etherscanAPI?.default.getLastTokenOperations).toHaveBeenCalledWith(
-            getAccountShapeParameters.currency,
-            getAccountShapeParameters.address,
-            account.id,
-            tokenOperation1.blockHeight,
+            coinOperations[2].blockHeight! - synchronization.SAFE_REORG_THRESHOLD,
           );
         });
       });
@@ -314,24 +230,30 @@ describe("EVM Family", () => {
       describe("With transactions fetched", () => {
         beforeAll(() => {
           jest
-            .spyOn(etherscanAPI?.default, "getLastCoinOperations")
-            .mockImplementation(() => Promise.resolve([coinOperation1, coinOperation2]));
-          jest.spyOn(etherscanAPI?.default, "getLastTokenOperations").mockImplementation(() =>
-            Promise.resolve([
-              {
-                tokenCurrency: tokenCurrency1,
-                operation: tokenOperation1,
-              },
-              {
-                tokenCurrency: tokenCurrency1,
-                operation: tokenOperation2,
-              },
-            ]),
-          );
+            .spyOn(etherscanAPI, "getLastCoinOperations")
+            .mockImplementation(() =>
+              Promise.resolve([{ ...coinOperations[0] }, { ...coinOperations[1] }]),
+            );
+          jest
+            .spyOn(etherscanAPI, "getLastTokenOperations")
+            .mockImplementation(() =>
+              Promise.resolve([{ ...tokenOperations[0] }, { ...tokenOperations[1] }]),
+            );
+          jest
+            .spyOn(etherscanAPI, "getLastNftOperations")
+            .mockImplementation(() =>
+              Promise.resolve([
+                { ...erc721Operations[0] },
+                { ...erc721Operations[1] },
+                { ...erc721Operations[2] },
+                { ...erc1155Operations[0] },
+                { ...erc1155Operations[1] },
+              ]),
+            );
           jest
             .spyOn(rpcAPI, "getTokenBalance")
             .mockImplementation(async (a, b, contractAddress) => {
-              if (contractAddress === tokenCurrency1.contractAddress) {
+              if (contractAddress === tokenCurrencies[0].contractAddress) {
                 return new BigNumber(10000);
               }
               throw new Error("Shouldn't be trying to fetch this token balance");
@@ -350,18 +272,65 @@ describe("EVM Family", () => {
             },
             {} as any,
           );
-          expect(accountShape.operations).toEqual([coinOperation2, coinOperation1]);
+
+          expect(accountShape.operations).toEqual([
+            {
+              ...coinOperations[1],
+              nftOperations: [erc721Operations[1], erc721Operations[2], erc1155Operations[1]],
+            },
+            {
+              ...tokenOperations[1],
+              id: `js:2:ethereum:0xkvn:-${tokenOperations[1].hash}-NONE`,
+              type: "NONE",
+              value: new BigNumber(0),
+              fee: new BigNumber(0),
+              senders: [],
+              recipients: [],
+              subOperations: [tokenOperations[1]],
+              accountId: "",
+              contract: undefined,
+            },
+            {
+              ...coinOperations[0],
+              subOperations: [tokenOperations[0]],
+              nftOperations: [erc721Operations[0], erc1155Operations[0]],
+            },
+          ]);
+
           expect(accountShape?.subAccounts?.[0]?.operations).toEqual([
-            tokenOperation2,
-            tokenOperation1,
+            tokenOperations[1],
+            tokenOperations[0],
           ]);
         });
 
+        it("should add aggregated NFTs to the account", async () => {
+          const accountShape = await synchronization.getAccountShape(
+            {
+              ...getAccountShapeParameters,
+              initialAccount: account,
+            },
+            {} as any,
+          );
+
+          expect(accountShape.nfts).toEqual([nfts[0], nfts[1]]);
+        });
+
         it("should return a partial account based on blockHeight", async () => {
-          jest
-            .spyOn(etherscanAPI?.default, "getLastCoinOperations")
-            .mockImplementation(() => Promise.resolve([coinOperation3]));
-          const operations = [coinOperation2, coinOperation1];
+          jest.spyOn(etherscanAPI?.default, "getLastOperations").mockImplementation(async () => ({
+            lastTokenOperations: [],
+            lastNftOperations: [],
+            lastCoinOperations: [coinOperations[2]],
+          }));
+          const operations = [
+            {
+              ...coinOperations[1],
+              nftOperations: [erc721Operations[1], erc721Operations[2], erc1155Operations[1]],
+            },
+            {
+              ...coinOperations[0],
+              nftOperations: [erc721Operations[0], erc1155Operations[0]],
+            },
+          ];
           const accountShape = await synchronization.getAccountShape(
             {
               ...getAccountShapeParameters,
@@ -379,18 +348,11 @@ describe("EVM Family", () => {
             syncHash: expect.stringMatching(/^0x[A-Fa-f0-9]{64}$/), // matching a sha256 hex
             balance: new BigNumber(100),
             spendableBalance: new BigNumber(100),
+            nfts: [nfts[0], nfts[1]],
             blockHeight: 10,
-            operations: [coinOperation3, coinOperation2, coinOperation1],
+            operations: [coinOperations[2], ...operations],
             operationsCount: 3,
-            subAccounts: [
-              {
-                ...tokenAccount,
-                balance: new BigNumber(10000),
-                spendableBalance: new BigNumber(10000),
-                operations: [tokenOperation2, tokenOperation1],
-                operationsCount: 2,
-              },
-            ],
+            subAccounts: account.subAccounts,
             lastSyncDate: new Date("2014-04-21"),
           });
         });
@@ -398,22 +360,17 @@ describe("EVM Family", () => {
 
       describe("With pending operations", () => {
         beforeAll(() => {
-          jest
-            .spyOn(etherscanAPI, "getLastCoinOperations")
-            .mockImplementation(() => Promise.resolve([]));
-          jest
-            .spyOn(etherscanAPI?.default, "getLastCoinOperations")
-            .mockImplementation(() => Promise.resolve([]));
-          jest
-            .spyOn(etherscanAPI, "getLastTokenOperations")
-            .mockImplementation(() => Promise.resolve([]));
-          jest
-            .spyOn(etherscanAPI?.default, "getLastTokenOperations")
-            .mockImplementation(() => Promise.resolve([]));
+          jest.spyOn(etherscanAPI?.default, "getLastOperations").mockImplementation(() =>
+            Promise.resolve({
+              lastCoinOperations: [],
+              lastTokenOperations: [],
+              lastNftOperations: [],
+            }),
+          );
           jest
             .spyOn(synchronization, "getOperationStatus")
             .mockImplementation((currency, op) =>
-              Promise.resolve(op.hash === "0xH4sH" ? coinOperation1 : null),
+              Promise.resolve(op.hash === coinOperations[0].hash ? coinOperations[0] : null),
             );
         });
 
@@ -429,9 +386,9 @@ describe("EVM Family", () => {
                 ...account,
                 // 2 operations to confirm here, they're differenciated by id
                 pendingOperations: [
-                  coinOperation1,
+                  coinOperations[0],
                   {
-                    ...coinOperation1,
+                    ...coinOperations[0],
                     hash: "0xN0tH4sH",
                     id: "js:2:ethereum:0xkvn:-0xN0tH4sH-OUT",
                   },
@@ -441,7 +398,7 @@ describe("EVM Family", () => {
             {} as any,
           );
 
-          expect(accountShape.operations).toEqual([coinOperation1]);
+          expect(accountShape.operations).toEqual([coinOperations[0]]);
         });
       });
     });
@@ -464,118 +421,35 @@ describe("EVM Family", () => {
       });
 
       it("should return the right subAccounts", async () => {
-        jest.spyOn(etherscanAPI?.default, "getLastTokenOperations").mockImplementation(async () => [
-          { tokenCurrency: tokenCurrency1, operation: tokenOperation1 },
-          { tokenCurrency: tokenCurrency1, operation: tokenOperation2 },
-          { tokenCurrency: tokenCurrency2, operation: tokenOperation4 },
-          {
-            tokenCurrency: undefined as any,
-            operation: ignoredTokenOperation,
-          },
-        ]);
-
         const tokenAccounts = await synchronization.getSubAccounts(
           {
             ...getAccountShapeParameters,
             initialAccount: account,
           },
           account.id,
+          [tokenOperations[0], tokenOperations[1], tokenOperations[3]],
         );
 
         const expectedUsdcAccount = {
           ...tokenAccount,
           balance: new BigNumber(1),
           spendableBalance: new BigNumber(1),
-          operations: [tokenOperation1, tokenOperation2],
+          operations: [tokenOperations[0], tokenOperations[1]],
           operationsCount: 2,
           starred: undefined,
           swapHistory: [],
         };
         const expectedUsdtAccount = {
-          ...makeTokenAccount(account.freshAddress, tokenCurrency2),
+          ...makeTokenAccount(account.freshAddress, tokenCurrencies[1]),
           balance: new BigNumber(2),
           spendableBalance: new BigNumber(2),
-          operations: [tokenOperation4],
+          operations: [tokenOperations[3]],
           operationsCount: 1,
           starred: undefined,
           swapHistory: [],
         };
 
         expect(tokenAccounts).toEqual([expectedUsdcAccount, expectedUsdtAccount]);
-      });
-
-      it("should return a partial sub account based on blockHeight", async () => {
-        jest
-          .spyOn(etherscanAPI?.default, "getLastTokenOperations")
-          .mockImplementation(async () => [
-            { tokenCurrency: tokenCurrency1, operation: tokenOperation3 },
-          ]);
-
-        const incompleteUsdcAccount = {
-          ...tokenAccount,
-          balance: new BigNumber(0),
-          spendableBalance: new BigNumber(0),
-          operations: [tokenOperation1, tokenOperation2],
-          operationsCount: 1,
-        };
-        const accountWithIncompleteSubAccount = {
-          ...account,
-          subAccounts: [incompleteUsdcAccount],
-        };
-
-        const tokenAccounts = await synchronization.getSubAccounts(
-          {
-            ...getAccountShapeParameters,
-            initialAccount: accountWithIncompleteSubAccount,
-          },
-          account.id,
-        );
-
-        const expectedUsdcAccount = {
-          ...incompleteUsdcAccount,
-          balance: new BigNumber(1),
-          spendableBalance: new BigNumber(1),
-          operations: [tokenOperation3],
-          operationsCount: 1,
-          starred: undefined,
-          swapHistory: [],
-        };
-
-        expect(tokenAccounts).toEqual([expectedUsdcAccount]);
-        // (currency, address, accountId, fromBlock)
-        expect(etherscanAPI.default.getLastTokenOperations).toBeCalledWith(
-          currency,
-          account.freshAddress,
-          account.id,
-          tokenOperation2.blockHeight,
-        );
-      });
-
-      it("should throw for currency with unsupported explorer", async () => {
-        try {
-          await synchronization.getSubAccounts(
-            {
-              ...getAccountShapeParameters,
-              currency: {
-                ...currency,
-                ethereumLikeInfo: {
-                  chainId: 1,
-                  explorer: {
-                    uri: "http://nope.com",
-                    type: "unsupported" as any,
-                  },
-                },
-              },
-            },
-            account.id,
-          );
-          fail("Promise should have been rejected");
-        } catch (e: any) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e.message).toMatch("No explorer found for currency");
-        }
       });
     });
 
@@ -600,15 +474,15 @@ describe("EVM Family", () => {
         const subAccount = await synchronization.getSubAccountShape(
           currency,
           account.id,
-          tokenCurrency1,
-          [tokenOperation1, tokenOperation2, tokenOperation3],
+          tokenCurrencies[0],
+          [tokenOperations[0], tokenOperations[1], tokenOperations[2]],
         );
 
         expect(subAccount).toEqual({
           ...tokenAccount,
           balance: new BigNumber(1),
           spendableBalance: new BigNumber(1),
-          operations: [tokenOperation1, tokenOperation2, tokenOperation3],
+          operations: [tokenOperations[0], tokenOperations[1], tokenOperations[2]],
           operationsCount: 3,
           starred: undefined,
           swapHistory: [],
@@ -622,7 +496,7 @@ describe("EVM Family", () => {
           throw new Error();
         });
 
-        expect(await synchronization.getOperationStatus(currency, coinOperation1)).toBe(null);
+        expect(await synchronization.getOperationStatus(currency, coinOperations[0])).toBe(null);
       });
 
       it("should return null if retrieved transaction has no blockHeight", async () => {
@@ -635,7 +509,7 @@ describe("EVM Family", () => {
             } as any),
         );
 
-        expect(await synchronization.getOperationStatus(currency, coinOperation1)).toBe(null);
+        expect(await synchronization.getOperationStatus(currency, coinOperations[0])).toBe(null);
       });
 
       it("should return the retrieved operation with network properties", async () => {
@@ -649,8 +523,8 @@ describe("EVM Family", () => {
             } as any),
         );
 
-        expect(await synchronization.getOperationStatus(currency, coinOperation1)).toEqual({
-          ...coinOperation1,
+        expect(await synchronization.getOperationStatus(currency, coinOperations[0])).toEqual({
+          ...coinOperations[0],
           blockHash: "hash",
           blockHeight: 10,
           date: new Date(),
@@ -671,8 +545,8 @@ describe("EVM Family", () => {
           .spyOn(rpcAPI, "getBlock")
           .mockImplementationOnce(async () => ({ timestamp: Date.now() / 1000 } as any));
 
-        expect(await synchronization.getOperationStatus(currency, coinOperation1)).toEqual({
-          ...coinOperation1,
+        expect(await synchronization.getOperationStatus(currency, coinOperations[0])).toEqual({
+          ...coinOperations[0],
           blockHash: "hash",
           blockHeight: 10,
           date: new Date(),
