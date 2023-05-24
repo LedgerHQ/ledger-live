@@ -9,7 +9,7 @@ yarn upgrade-interactive -i --latest
 ### Direct Dependencies
 
 | library name (what).                        | description of its usage (why)                                    | ideal frequency of update (when) / status                            |
-|---------------------------------------------| ----------------------------------------------------------------- | -------------------------------------------------------------------- |
+| ------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------- |
 | @celo/contractkit                           | Celo coin integration                                             | monthly                                                              |
 | @celo/wallet-base                           | Celo coin integration                                             | monthly                                                              |
 | @celo/wallet-ledger                         | Celo coin integration                                             | monthly                                                              |
@@ -26,7 +26,6 @@ yarn upgrade-interactive -i --latest
 | @ledgerhq/cryptoassets                      | crypto currencies and tokens                                      | weekly                                                               |
 | @ledgerhq/devices                           | devices data                                                      | weekly                                                               |
 | @ledgerhq/errors                            | errors defintion                                                  | weekly                                                               |
-| @ledgerhq/hw-app-algorand                   | Algorand coin integration                                         | weekly                                                               |
 | @ledgerhq/hw-app-btc                        | Bitcoin coin integration                                          | weekly                                                               |
 | @ledgerhq/hw-app-cosmos                     | Cosmos coin integration                                           | weekly                                                               |
 | @ledgerhq/hw-app-eth                        | Ethereum coin integration                                         | weekly                                                               |
@@ -58,7 +57,6 @@ yarn upgrade-interactive -i --latest
 | @xstate/react                               | used for some components                                          | TBD DEPRECATE?                                                       |
 | @zondax/ledger-filecoin                     | Filecoin coin integration                                         | monthly                                                              |
 | @zondax/izari-filecoin                      | Filecoin coin integration                                         | monthly                                                              |
-| algosdk                                     | Algorand coin integration                                         | monthly                                                              |
 | async                                       | ???                                                               | UNCLEAR IF USED                                                      |
 | axios                                       | network                                                           | monthly                                                              |
 | axios-retry                                 | network                                                           | monthly                                                              |

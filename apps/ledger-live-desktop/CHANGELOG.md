@@ -1,5 +1,45 @@
 # ledger-live-desktop
 
+## 2.59.0
+
+### Minor Changes
+
+- [#3360](https://github.com/LedgerHQ/ledger-live/pull/3360) [`130695325d`](https://github.com/LedgerHQ/ledger-live/commit/130695325d859e87157688071f1e8ea177a43a73) Thanks [@RamyEB](https://github.com/RamyEB)! - change param manifest api
+
+- [#2967](https://github.com/LedgerHQ/ledger-live/pull/2967) [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Add onboarding recover case modal helper to update firmware
+
+- [#2967](https://github.com/LedgerHQ/ledger-live/pull/2967) [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Onboarding : Guidelines screen to Restore with Recover
+
+- [#3255](https://github.com/LedgerHQ/ledger-live/pull/3255) [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36) Thanks [@RamyEB](https://github.com/RamyEB)! - add field visibility to manifest and tests
+
+### Patch Changes
+
+- Updated dependencies [[`491b37f08d`](https://github.com/LedgerHQ/ledger-live/commit/491b37f08d9a17404eaf32c491628e65d2d8666a), [`dfccb01b94`](https://github.com/LedgerHQ/ledger-live/commit/dfccb01b94d545af80ee5e77bf1d04d9d2fd0faa), [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9), [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36)]:
+  - @ledgerhq/live-common@29.6.0
+  - @ledgerhq/types-live@6.34.0
+  - @ledgerhq/coin-framework@0.3.3
+  - @ledgerhq/domain-service@1.1.1
+
+## 2.59.0-next.0
+
+### Minor Changes
+
+- [#3360](https://github.com/LedgerHQ/ledger-live/pull/3360) [`130695325d`](https://github.com/LedgerHQ/ledger-live/commit/130695325d859e87157688071f1e8ea177a43a73) Thanks [@RamyEB](https://github.com/RamyEB)! - change param manifest api
+
+- [#2967](https://github.com/LedgerHQ/ledger-live/pull/2967) [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Add onboarding recover case modal helper to update firmware
+
+- [#2967](https://github.com/LedgerHQ/ledger-live/pull/2967) [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Onboarding : Guidelines screen to Restore with Recover
+
+- [#3255](https://github.com/LedgerHQ/ledger-live/pull/3255) [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36) Thanks [@RamyEB](https://github.com/RamyEB)! - add field visibility to manifest and tests
+
+### Patch Changes
+
+- Updated dependencies [[`491b37f08d`](https://github.com/LedgerHQ/ledger-live/commit/491b37f08d9a17404eaf32c491628e65d2d8666a), [`dfccb01b94`](https://github.com/LedgerHQ/ledger-live/commit/dfccb01b94d545af80ee5e77bf1d04d9d2fd0faa), [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9), [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36)]:
+  - @ledgerhq/live-common@29.6.0-next.0
+  - @ledgerhq/types-live@6.34.0-next.0
+  - @ledgerhq/coin-framework@0.3.3-next.0
+  - @ledgerhq/domain-service@1.1.1-next.0
+
 ## 2.58.0
 
 ### Minor Changes

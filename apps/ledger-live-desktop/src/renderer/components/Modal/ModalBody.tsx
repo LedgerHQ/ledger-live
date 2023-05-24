@@ -16,6 +16,7 @@ type Props<Data> = {
   noScroll?: boolean;
   refocusWhenChange?: unknown;
   backButtonComponent?: React.ReactNode;
+  pt?: number;
 };
 class ModalBody<Data> extends PureComponent<Props<Data>> {
   componentDidUpdate(prevProps: Props<Data>) {
@@ -39,6 +40,7 @@ class ModalBody<Data> extends PureComponent<Props<Data>> {
       renderProps,
       noScroll,
       modalFooterStyle,
+      pt,
     } = this.props;
 
     // For `renderFooter` returning falsy values, we need to resolve first.
@@ -54,7 +56,7 @@ class ModalBody<Data> extends PureComponent<Props<Data>> {
         >
           {title || null}
         </ModalHeader>
-        <ModalContent ref={this._content} noScroll={noScroll}>
+        <ModalContent pt={pt} ref={this._content} noScroll={noScroll}>
           {render && render(renderProps)}
         </ModalContent>
         {renderedFooter && <ModalFooter style={modalFooterStyle}>{renderedFooter}</ModalFooter>}

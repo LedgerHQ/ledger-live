@@ -7,12 +7,15 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   overflow: hidden;
 `;
-const ContentScrollableContainer = styled.div<{ noScroll?: boolean }>`
-  padding: 20px ${p => (p.noScroll ? 20 : 20 - p.theme.overflow.trackSize)}px 40px 20px;
-  ${p => (p.noScroll ? "overflow:hidden" : p.theme.overflow.y)};
+const ContentScrollableContainer = styled.div<{ noScroll?: boolean; pt?: number }>(
+  ({ pt = 20, noScroll, theme }) => `
+  padding: ${pt}px ${noScroll ? 20 : 20 - theme.overflow.trackSize}px 40px 20px;
+  ${noScroll ? "overflow:hidden" : theme.overflow.y};
   position: relative;
   flex: 0 auto;
-`;
+`,
+);
+
 const ContentScrollableContainerGradient = styled.div.attrs<{ opacity?: number }>(p => ({
   style: {
     opacity: p.opacity,
@@ -33,12 +36,13 @@ const ContentScrollableContainerGradient = styled.div.attrs<{ opacity?: number }
 type Props = React.PropsWithRef<{
   children: React.ReactNode;
   noScroll?: boolean;
+  pt?: number;
 }>;
 
 function ModalContent(
   // eslint is wrong here, it should not complain
   // eslint-disable-next-line
-  { children, noScroll }: Props,
+  { children, noScroll, pt }: Props,
   containerRef: React.ForwardedRef<HTMLDivElement>,
 ) {
   const [isScrollable, setScrollable] = useState(false);
@@ -59,6 +63,7 @@ function ModalContent(
   return (
     <ContentWrapper>
       <ContentScrollableContainer
+        pt={pt}
         ref={containerRef}
         noScroll={noScroll}
         data-test-id="modal-content"

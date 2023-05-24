@@ -11,6 +11,8 @@ import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import HelpDrawer from "./HelpDrawer";
@@ -23,6 +25,7 @@ import Header from "./Header";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
+import { RecoverState } from "~/renderer/screens/recover/Player";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -70,11 +73,14 @@ export type SyncOnboardingManualProps = {
  */
 const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardingManualProps) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const history = useHistory<RecoverState>();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
   const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
+
+  const servicesConfig = useFeature("protectServicesDesktop");
+  const postOnboardingPath = usePostOnboardingPath(servicesConfig);
 
   const device = useSelector(getCurrentDevice);
 
@@ -366,6 +372,17 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     }
   }, [isTroubleshootingDrawerOpen]);
 
+  useEffect(() => {
+    if (seedPathStatus === "recover_seed" && postOnboardingPath) {
+      const [pathname, search] = postOnboardingPath.split("?");
+      history.push({
+        pathname,
+        search: search ? `?${search}` : undefined,
+        state: { fromOnboarding: true },
+      });
+    }
+  }, [history, postOnboardingPath, seedPathStatus]);
+
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
       <Header onClose={handleClose} onHelp={() => setHelpDrawerOpen(true)} />
@@ -379,7 +396,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       <Flex
         height="100%"
         overflow="hidden"
-        maxWidth="680px"
+        width="432px"
         flexDirection="column"
         justifyContent="flex-start"
         alignSelf="center"
