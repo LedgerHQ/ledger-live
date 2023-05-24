@@ -173,7 +173,55 @@
       "REGISTER" : "Enregistré",
       "STAKE" : "Staké",
       "UNSTAKE" : "Déstaké",
-      "WITHDRAW_UNSTAKED" : "Retiré"
+      "WITHDRAW_UNSTAKED" : "Retiré",
+      "SENDING" : "Envoi"
+    },
+    "edit" : {
+      "title" : "Accélérer ou annuler",
+      "description" : "Votre transaction est en cours. Vous pouvez l’accélérer en augmentant les frais de réseau, ou l’annuler.",
+      "stuckDescription" : "Votre transaction est bloquée. Accélérez-la en augmentant les frais de réseau, ou annulez-la.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "Info sur les frais des transactions en attente : ",
+        "networkfee" : "Frais de réseau = ",
+        "maxFee" : "Frais maximaux = ",
+        "maxPriorityFee" : "Frais de priorité maximaux = ",
+        "gasPrice" : "Prix du gaz = "
+      },
+      "learnMore" : "En savoir plus",
+      "panel" : {
+        "title" : "Accélérer ou annuler",
+        "description" : "L’une de vos dernières transactions sortantes est bloquée. Accélérez-la en augmentant les frais de réseau, ou annulez-la."
+      },
+      "speedUp" : {
+        "title" : "Accélérer",
+        "description" : "Renvoyez votre transaction avec des frais de réseau plus élevés."
+      },
+      "cancel" : {
+        "title" : "Annuler",
+        "description" : "Envoyez 0 {{ticker}} à votre propre adresse. Les frais de réseau doivent être 30 % plus élevés que les frais de la transaction à annuler."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Méthode"
+        },
+        "fees" : {
+          "title" : "Frais"
+        },
+        "summary" : {
+          "title" : "Récapitulatif"
+        },
+        "device" : {
+          "title" : "Appareil"
+        },
+        "confirmation" : {
+          "title" : "Confirmation"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "Vous ne pouvez pas annuler la transaction car vous ne disposez pas d’assez de fonds sur votre compte.",
+        "notEnoughFundsToSpeedup" : "Vous ne pouvez pas accélérer la transaction car vous ne disposez pas d’assez de fonds sur votre compte.",
+        "notlowestNonceToSpeedup" : "La fonctionnalité permettant d’accélérer la transaction n’est pas disponible. Votre transaction est en attente parce qu’une transaction antérieure est bloquée. Vous pouvez attendre qu’elle soit confirmée, l’accélérer ou l’annuler."
+      }
     }
   },
   "byteSize" : {
@@ -221,7 +269,7 @@
     "lend" : "Prêter",
     "catalog" : "Discover",
     "market" : "Marché",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Mettez une étoile sur un compte pour l’afficher ici.",
@@ -1759,7 +1807,8 @@
     "loading" : "Chargement...",
     "connectAndUnlockDevice" : "Connectez et déverrouillez votre appareil.",
     "unlockDevice" : "Déverrouillez votre appareil.",
-    "unlockDeviceAfterFirmwareUpdate" : "Patientez pendant la mise à jour du micrologiciel, puis déverrouillez votre Ledger avec votre code PIN.",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Attendez la fin de l’installation sur votre {{productName}}",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Déverrouillez votre {{productName}} pour terminer l’installation",
     "quitApp" : "Sortez de l’application sur votre appareil.",
     "appNotInstalledTitle" : "Application nécessaire manquante",
     "appNotInstalledTitle_plural" : "Applications nécessaires manquantes",
@@ -1824,8 +1873,7 @@
       "installed" : "Applications",
       "capacity" : "Capacité",
       "used" : "Utilisé",
-      "firmwareAvailable" : "Micrologiciel obsolète :",
-      "firmwareUpToDate" : "Le micrologiciel est à jour :",
+      "OSVersion" : "Système d’exploitation",
       "genuine" : "Votre Ledger est authentique.",
       "incomplete" : "Certaines applications n’ont pas été reconnues. Merci de les désinstaller puis les réinstaller."
     },
@@ -1918,7 +1966,7 @@
       "dontHaveSeed" : "Vous n’avez pas votre phrase de récupération ? ",
       "followTheGuide" : "Laissez-vous guider",
       "removeApps" : "Désinstaller toutes les applications avant de mettre à jour",
-      "update" : "Mise à jour du micrologiciel",
+      "update" : "Mettez à jour votre {{productName}}",
       "updateBtn" : "Mettre à jour le micrologiciel",
       "banner" : {
         "warning" : "Mise à jour {{latestFirmware}} du micrologiciel disponible",
@@ -1933,12 +1981,17 @@
       "contactSupport" : "Contacter l’Assistance",
       "deprecated" : "La version du micrologiciel de l’appareil est trop ancienne pour être mise à jour. Contactez l’Assistance Ledger pour le remplacer.",
       "prepareSeed" : "Assurez-vous par précaution que votre phrase de récupération de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
-      "disclaimerTitle" : "Vous êtes sur le point d’installer la <1>version {{version}} du micrologiciel</1>.",
-      "downloadingUpdateDesc" : "Merci de patienter pendant le téléchargement du programme d’installation des mises à jour"
+      "disclaimerTitle" : "Vous êtes sur le point d’installer la <1>version {{version}} du micrologiciel</1>."
     },
     "modal" : {
+      "title" : "Mettez à jour votre {{productName}}",
       "steps" : {
-        "downloadingUpdate" : "Téléchargement de la mise à jour",
+        "preparingUpdate" : "Préparation de la mise à jour",
+        "transferringUpdate" : "Transfert de la mise à jour vers {{productName}}",
+        "prepare" : "Préparation",
+        "install" : "Installation",
+        "restore" : "Restauration réglages",
+        "apps" : "Restauration apps",
         "updateMCU" : "Mise à jour du micrologiciel",
         "updating" : "Mise à jour du micrologiciel",
         "reset" : "Préparation de l’appareil",
@@ -1949,9 +2002,8 @@
         "flash" : "Préparation de votre appareil..."
       },
       "confirmIdentifier" : "Vérifier l’identifiant",
-      "confirmIdentifierText" : "Vérifiez que l’identifiant sur votre appareil est le même que l’identifiant affiché ci-dessous. Confirmez et saisissez votre code PIN si demandé.",
+      "confirmIdentifierText" : "Confirmez l’installation sur votre {{productName}}.",
       "identifier" : "Identifiant",
-      "preparation" : "Préparation",
       "newFirmware" : "Nouveau micrologiciel {{version}}",
       "confirmUpdate" : "Confirmez la mise à jour sur votre appareil.",
       "mcuTitle" : "Terminer la mise à jour",
@@ -1961,10 +2013,10 @@
       "mcuSecondNanoX" : "Maintenez le bouton gauche enfoncé jusqu’à ce que <1><0>{{bootloaderOption}}</0></1> apparaisse. Appuyez sur les deux boutons pour confirmer et reconnecter votre appareil.",
       "mcuBlueFirst" : "Appuyez sur le bouton latéral pendant 10 secondes pour éteindre l’appareil. Relâchez le bouton.",
       "mcuBlueSecond" : "Faites un appui long sur le bouton pendant au moins 5 secondes jusqu’à ce que les options de Boot apparaissent. Sélectionnez le mode Bootloader.",
-      "successTitle" : "Micrologiciel mis à jour",
+      "successTitle" : "Le système d’exploitation a été mis à jour.",
       "successTextApps" : "Vous pouvez réinstaller vos applications sur votre appareil.",
       "successTextNoApps" : "Vous pouvez maintenant installer des applications sur votre appareil.",
-      "sucessCTAApps" : "Réinstaller des applications",
+      "sucessCTAApps" : "Réinstaller les apps",
       "SuccessCTANoApps" : "Installer des applications",
       "cancelReinstallCTA" : "Installer la mise à jour",
       "resetSteps" : {
@@ -2269,12 +2321,16 @@
     "remainingCharacters" : "{{ remainingCharacters }} caractères restants",
     "renamed" : "Le nouveau nom de votre {{ productName }} est \n« {{ name }} » "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "Retirer",
+    "confirmation" : "Confirmez la suppression de l’image sur votre Ledger Stax",
+    "success" : "Image de verrouillage retirée"
+  },
   "deviceLocalization" : {
     "language" : "Langue",
-    "deviceLanguage" : "Langue",
+    "deviceLanguage" : "Changer la langue de votre appareil",
     "changeLanguage" : "Changer la langue",
     "changeDeviceLanguage" : "Voulez-vous changer la langue de votre Ledger ?",
-    "chooseLanguage" : "Choisissez une langue pour votre {{deviceName}}.",
     "changeDeviceLanguagePrompt" : {
       "title" : "Vous pouvez utiliser votre {{deviceName}} en : {{language}}.",
       "description" : "Souhaitez-vous l’utiliser en {{language}} ?"
@@ -3861,6 +3917,10 @@
     },
     "experimental" : {
       "disclaimer" : "Il s’agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause.",
+      "provider" : "Le paramètre expérimental « Fournisseur de My Ledger ({{forcedProvider}}) » peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
+      "providerDevMode" : "Les paramètres expérimentaux « Fournisseur de My Ledger ({{forcedProvider}}) » et « Mode développeur » peuvent afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez les désactiver dans les Paramètres.",
+      "devMode" : "Le paramètre expérimental « Mode développeur » peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
+      "providerCTA" : "Accéder aux Paramètres",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "Intégrations expérimentales",
@@ -3921,6 +3981,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Coefficient personnalisé pour les frais de base",
           "description" : "Personnalisez le coefficient multiplicateur des frais de base, qui composent les frais de gaz maximaux des transactions EIP-1559."
+        },
+        "enableNetworkLogs" : {
+          "title" : "Activer les logs réseau",
+          "description" : "Activez les logs réseau dans la console (les logs d’erreur sont toujours activés)."
         }
       }
     },
@@ -4226,6 +4290,10 @@
           "3" : {
             "title" : "Restaurer une phrase de récupération sur un nouvel appareil",
             "description" : "Utilisez une phrase de récupération existante pour restaurer vos clés privées sur votre nouveau Nano."
+          },
+          "4" : {
+            "title" : "Restaurer avec Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4439,25 @@
             "help" : {
               "help" : "Besoin d’aide",
               "descr" : "Obtenez de l’aide : Ledger vous accompagne à chaque étape."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Sélectionnez \"Restore using Ledger Recover\"",
+            "1" : {
+              "title" : "Sélectionnez \"Restore\"",
+              "descr" : "Appuyez simultanément sur les deux boutons pour sélectionner."
+            },
+            "2" : {
+              "title" : "Sélectionnez \"Restore using Ledger Recover\""
+            },
+            "help" : {
+              "iDontSee" : "Je ne vois pas \"Restore using Ledger Recover\"",
+              "modal" : {
+                "title" : "Le système d’exploitation de votre Ledger doit être mis à jour",
+                "subtitle" : " Essayez de mettre à jour le système d’exploitation ou contactez l’Assistance Ledger pour obtenir de l’aide.",
+                "learnHowToUpdate" : "Comment mettre à jour",
+                "contactLedgerSupport" : "Contacter l’Assistance Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5283,6 +5370,10 @@
       "title" : "Opération indisponible sur cet appareil",
       "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X et le Nano S Plus. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "Impossible de l’accélérer ou de l’annuler",
+      "description" : "Cette transaction a déjà été validée."
+    },
     "CantScanQRCode" : {
       "title" : "Échec du scan de ce code QR. Cette adresse ne prend pas en charge la vérification automatique."
     },
@@ -5602,11 +5693,11 @@
       "description" : "Veuillez réessayer avec une autre image."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Validation de l’image refusée sur votre Ledger (TODO: final wording)",
+      "title" : "Image refusée sur votre Ledger Stax",
       "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Chargement de l’image refusé sur votre Ledger (TODO: final wording)",
+      "title" : "Image refusée sur votre Ledger Stax",
       "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
     },
     "NearNewAccountWarning" : {
@@ -5686,6 +5777,7 @@
   "customImage" : {
     "title" : "Écran de verrouillage personnalisé",
     "managerCTA" : "Écran de verrouillage",
+    "managerCTARemove" : "Retirer",
     "steps" : {
       "choose" : {
         "stepLabel" : "Choisissez une image",
@@ -5694,6 +5786,7 @@
         "myNfts" : "Mes NFT",
         "upload" : "Télécharger à partir de mon ordinateur",
         "chooseNft" : "Choisir un NFT",
+        "remove" : "Retirer l’image actuelle",
         "selectNft" : "Choisir ce NFT",
         "previousSelectNft" : "Retour",
         "nftEmptyStateTitle" : "Pas (encore) de NFT",
@@ -5710,9 +5803,11 @@
         "stepLabel" : "Transfert",
         "uploadAnotherImage" : "Télécharger une autre image",
         "allowPreview" : "Autorisez le chargement de l’image sur votre {{productName}}",
+        "allowConfirmPreview" : "Autorisez la restauration de l’écran de verrouillage sur votre{{productName}}.",
         "loadingPicture" : "Chargement...",
         "imageLoaded" : "Image chargée sur votre {{productName}}",
         "confirmPicture" : "C’est parfait ?\nValidez !",
+        "confirmRestorePicture" : "Confirmez la restauration de l’écran de verrouillage.",
         "doThisLater" : "Pas maintenant"
       }
     },
