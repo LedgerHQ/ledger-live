@@ -295,19 +295,19 @@ export type FieldComponentProps<
   field: DeviceTransactionField;
 };
 
+export type IconType = {
+  size: number;
+  overrideColor: string;
+  currency: TokenCurrency | CryptoCurrency;
+};
+
 export type ManageAction = {
   key: string;
   label: React.ReactNode;
   onClick: () => void;
   event?: string;
   eventProperties?: Record<string, unknown>;
-  icon:
-    | React.ComponentType<{
-        size: number;
-        overrideColor: string;
-        currency: TokenCurrency | CryptoCurrency;
-      }>
-    | ((a: { size: number }) => React.ReactElement);
+  icon: React.ComponentType<IconType> | ((a: { size: number }) => React.ReactElement);
   disabled?: boolean;
   tooltip?: string;
   accountActionsTestId?: string;

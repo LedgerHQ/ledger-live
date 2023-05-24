@@ -1,13 +1,14 @@
-import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { isAccountRegistrationPending } from "@ledgerhq/live-common/families/celo/logic";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { openModal } from "~/renderer/actions/modals";
-import Icon from "./Icon";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { CeloFamily } from "../types";
+import { isAccountRegistrationPending } from "@ledgerhq/live-common/families/celo/logic";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+import React, { useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { IconType } from "../../types";
+import { CeloFamily } from "../types";
+import Icon from "./Icon";
 
 const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
   account,
@@ -44,7 +45,7 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
     {
       key: "Stake",
       onClick: onClick,
-      icon: props => <Icon {...props} isDisabled={isRegistrationPending} />,
+      icon: (props: IconType) => <Icon {...props} isDisabled={isRegistrationPending} />,
       disabled: isRegistrationPending,
       label: t("account.stake"),
       tooltip: disabledLabel,

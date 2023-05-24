@@ -107,7 +107,7 @@ export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) =>
           <Trans i18nKey={`celo.revoke.steps.vote.${status}`} />
         </Box>
       </S.Column>
-      <S.Column>{formatAmount(vote.amount ?? 0)}</S.Column>
+      <S.Column>{formatAmount(vote.amount.toNumber() ?? 0)}</S.Column>
       <S.Column>
         {actions.length > 0 && <ManageDropDown actions={actions} onSelect={onSelect} />}
         {actions.length === 0 && (
@@ -123,7 +123,7 @@ export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) =>
                 />
               }
             >
-              <IconInfoCircle height={16} width={16} />
+              <IconInfoCircle />
             </Tooltip>
           </S.ManageInfoIconWrapper>
         )}

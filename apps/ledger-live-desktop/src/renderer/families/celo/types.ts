@@ -1,6 +1,5 @@
 import { TFunction } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Account, Operation } from "@ledgerhq/types-live";
 import {
   CeloAccount,
   Transaction,
@@ -8,13 +7,14 @@ import {
 } from "@ledgerhq/live-common/families/celo/types";
 import { LLDCoinFamily } from "../types";
 import { OpenModal } from "~/renderer/actions/modals";
+import { Operation } from "@ledgerhq/types-live";
 
 export type CoreStakingFlowModalStepProps = {
   t: TFunction;
   transitionTo: (string: string) => void;
   device: Device | undefined | null;
-  account: Account | undefined | null;
-  parentAccount: Account | undefined | null;
+  account: CeloAccount;
+  parentAccount: CeloAccount | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;
   openModal: OpenModal;
@@ -30,6 +30,7 @@ export type CoreStakingFlowModalStepProps = {
   onOperationBroadcasted: (a: Operation) => void;
   setSigned: (a: boolean) => void;
   bridgePending: boolean;
+  source?: string;
 };
 
 export type CeloFamily = LLDCoinFamily<CeloAccount, Transaction, TransactionStatus>;

@@ -4,8 +4,11 @@ import { Trans, TFunction } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { Account, TransactionStatus } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/families/celo/types";
+import {
+  CeloAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/celo/types";
 import SpendableAmount from "~/renderer/components/SpendableAmount";
 import Label from "~/renderer/components/Label";
 import Box from "~/renderer/components/Box";
@@ -15,8 +18,8 @@ import Text from "~/renderer/components/Text";
 import * as S from "./AmountField.styles";
 type Props = {
   t: TFunction;
-  account: Account | undefined | null;
-  parentAccount: Account | undefined | null;
+  account: CeloAccount | undefined | null;
+  parentAccount: CeloAccount | undefined | null;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;
   onChangeTransaction: (a: Transaction) => void;

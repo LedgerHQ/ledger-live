@@ -1,8 +1,6 @@
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { Theme } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
@@ -13,31 +11,33 @@ import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { accountSelector } from "~/renderer/reducers/accounts";
 import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 import * as S from "./StepConfirmation.styles";
+
 export const StepConfirmationFooter = ({
-  account: initialAccount,
+  account,
+  parentAccount,
   onRetry,
   error,
   onClose,
   optimisticOperation,
 }: StepProps) => {
-  const account = useSelector(s =>
-    accountSelector(s, {
-      accountId: initialAccount?.id,
-    }),
-  );
+  // const account = useSelector(s =>
+  //   accountSelector(s, {
+  //     accountId: initialAccount?.id,
+  //   }),
+  // );
   const goToOperationDetails = useCallback(() => {
     onClose();
     if (account && optimisticOperation) {
       setDrawer(OperationDetails, {
         operationId: optimisticOperation.id,
         accountId: account.id,
+        parentId: parentAccount && parentAccount.id,
       });
     }
-  }, [account, optimisticOperation, onClose]);
+  }, [account, parentAccount, optimisticOperation, onClose]);
   if (error) {
     return <RetryButton ml={2} primary onClick={onRetry} />;
   }
@@ -66,15 +66,7 @@ export const StepConfirmationFooter = ({
     </Box>
   );
 };
-const StepConfirmation = ({
-  t,
-  optimisticOperation,
-  error,
-  signed,
-  source,
-}: StepProps & {
-  theme: Theme;
-}) => {
+const StepConfirmation = ({ t, optimisticOperation, error, signed, source }: StepProps) => {
   useEffect(() => {
     if (optimisticOperation) {
       track("staking_completed", {

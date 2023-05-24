@@ -11,6 +11,7 @@ import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import WarnBox from "~/renderer/components/WarnBox";
 import { openURL } from "~/renderer/linking";
+import { ModalsData } from "../modals";
 
 export type Props = {
   account: CeloAccount | SubAccount;
@@ -41,8 +42,8 @@ const CeloEarnRewardsInfoModal = ({ account, parentAccount }: Props) => {
     openURL(urls.celo.learnMore);
   }, []);
   return (
-    <EarnRewardsInfoModal
-      name="MODAL_CELO_EARN_REWARDS_INFO"
+    <EarnRewardsInfoModal<keyof ModalsData>
+      name="MODAL_CELO_REWARDS_INFO"
       onNext={onNext}
       description={t("celo.delegation.earnRewards.description")}
       bullets={[

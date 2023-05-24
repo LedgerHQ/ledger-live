@@ -77,7 +77,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = {
   openModal,
 };
-const Body = ({ t, stepId, device, openModal, onChangeStepId, params, mode }: Props) => {
+const Body = ({ t, stepId, device, openModal, onClose, onChangeStepId, params, mode }: Props) => {
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);

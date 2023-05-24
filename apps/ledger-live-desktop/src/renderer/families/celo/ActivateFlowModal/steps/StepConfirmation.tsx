@@ -1,6 +1,5 @@
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import { Theme } from "@ledgerhq/react-ui";
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -67,9 +66,7 @@ const StepConfirmation = ({
   error,
   signed,
   source,
-}: StepProps & {
-  theme: Theme;
-}) => {
+}: StepProps) => {
   const voteAccAddress = transaction?.recipient;
   const validators = useValidatorGroups();
   useEffect(() => {
@@ -77,7 +74,7 @@ const StepConfirmation = ({
       const chosenValidator = validators.find(v => v.address === voteAccAddress);
       track("staking_completed", {
         currency: "CELO",
-        validator: chosenValidator.name || voteAccAddress,
+        validator: chosenValidator?.name || voteAccAddress,
         source,
         delegation: "activate",
         flow: "stake",
@@ -91,11 +88,7 @@ const StepConfirmation = ({
         <TrackPage category="Celo Activate" name="Step Confirmed" />
         <SuccessDisplay
           title={<Trans i18nKey="celo.activate.steps.confirmation.success.title" />}
-          description={multiline(
-            t("celo.activate.steps.confirmation.success.text", {
-              resource: transaction && transaction.resource && transaction.resource.toLowerCase(),
-            }),
-          )}
+          description={multiline(t("celo.activate.steps.confirmation.success.text"))}
         />
       </S.Container>
     );

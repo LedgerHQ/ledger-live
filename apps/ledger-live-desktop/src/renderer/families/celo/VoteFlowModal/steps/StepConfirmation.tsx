@@ -77,7 +77,7 @@ const StepConfirmation = ({
       const chosenValidator = validators.find(v => v.address === voteAccAddress);
       track("staking_completed", {
         currency: "CELO",
-        validator: chosenValidator.name || voteAccAddress,
+        validator: chosenValidator?.name || voteAccAddress,
         source,
         delegation: "vote",
         flow: "stake",
