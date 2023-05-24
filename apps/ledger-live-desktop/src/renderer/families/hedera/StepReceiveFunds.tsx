@@ -30,7 +30,7 @@ const Receive1ShareAddress = ({
   showQRCodeModal,
 }: {
   account: AccountLike;
-  name: string;
+  name?: string;
   address: string;
   showQRCodeModal: () => void;
 }) => {
