@@ -32,7 +32,6 @@ export default function PlatformAppProviderWrapper({
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
       parameters={{
         platform: PLATFORM,
-        private: false,
         allowDebugApps: isDebugAppEnabled,
         allowExperimentalApps: isExperimentalAppEnabled,
       }}

@@ -7,7 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import { LiveAppRegistry } from "./types";
-import { LiveAppManifest, Loadable } from "../../types";
+import { AppPlatform, LiveAppManifest, Loadable } from "../../types";
 
 import api from "./api";
 import { FilterParams } from "../../filters";
@@ -40,11 +40,12 @@ export const liveAppContext = createContext<LiveAppContextType>({
   updateManifests: () => Promise.resolve(),
 });
 
-type FetchLiveAppCatalogPrams = Required<Omit<FilterParams, "private">> &
-  FilterParams & {
-    allowDebugApps: boolean;
-    allowExperimentalApps: boolean;
-  };
+type FetchLiveAppCatalogPrams = {
+  apiVersions?: string[];
+  platform: AppPlatform;
+  allowDebugApps: boolean;
+  allowExperimentalApps: boolean;
+};
 
 type LiveAppProviderProps = {
   children: React.ReactNode;
@@ -94,11 +95,11 @@ export function RemoteLiveAppProvider({
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
   const [provider, setProvider] = useState<string>(initialProvider);
 
-  parameters.apiVersion = parameters.apiVersion
-    ? parameters.apiVersion
-    : ["1.0.0", "2.0.0"];
+  const { allowExperimentalApps, allowDebugApps, apiVersions, platform } =
+    parameters;
 
-  const { allowExperimentalApps, allowDebugApps, ...params } = parameters;
+  // apiVersion renamed without (s) because param
+  const apiVersion = apiVersions ? apiVersions : ["1.0.0", "2.0.0"];
 
   const providerURL: string =
     provider === "production" ? getEnv("PLATFORM_MANIFEST_API_URL") : provider;
@@ -118,8 +119,10 @@ export function RemoteLiveAppProvider({
       const allManifests = await api.fetchLiveAppManifests(providerURL);
 
       const catalogManifests = await api.fetchLiveAppManifests(providerURL, {
-        ...params,
+        apiVersion,
         branches,
+        platform,
+        private: false,
       });
 
       if (!isMounted()) return;
