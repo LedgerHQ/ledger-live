@@ -1,3 +1,7 @@
+/**
+ * ⚠️ In order to test this file, you must run the test from the live-common repo
+ */
+
 import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded, NotEnoughBalance } from "@ledgerhq/errors";
 import type { AccountRaw, DatasetTest } from "@ledgerhq/types-live";
