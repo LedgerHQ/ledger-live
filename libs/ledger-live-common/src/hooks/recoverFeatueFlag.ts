@@ -46,3 +46,12 @@ export function useAlreadySubscribedURI(
 
   return useReplacedURI(uri, id);
 }
+
+export function useUpsellURI(
+  servicesConfig: Feature<any> | null
+): string | undefined {
+  const uri = servicesConfig?.params?.onboardingCompleted?.upsellURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
