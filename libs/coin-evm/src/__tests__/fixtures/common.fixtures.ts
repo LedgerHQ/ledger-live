@@ -1,3 +1,5 @@
+/* instanbul ignore file: don't test fixtures */
+
 import BigNumber from "bignumber.js";
 import {
   DerivationMode,

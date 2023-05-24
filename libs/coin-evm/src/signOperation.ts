@@ -120,6 +120,7 @@ export const buildSignOperation =
 
       main().then(
         () => o.complete(),
+        /* istanbul ignore next: don't test throwing an error */
         e => o.error(e),
       );
     });
