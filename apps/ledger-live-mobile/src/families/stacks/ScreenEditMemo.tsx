@@ -45,6 +45,7 @@ function StacksEditMemo({ navigation, route }: NavigationProps) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
+    // @ts-expect-error FIXME: No current / next navigation params?
     navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
