@@ -587,6 +587,12 @@
       "title": "Something went wrong",
       "description": "Please check that your hardware wallet is set up with the recovery phrase or passphrase associated to the selected account."
     },
+    "WebPTXPlayerNetworkFail": {
+      "title": "Network error",
+      "description": "Check your internet connection and try again. Contact Ledger Support if the problem continues.",
+      "contactSupport": "Contact Ledger support",
+      "primaryCTA": "Try again"
+    },
     "UnexpectedBootloader": {
       "title": "Sorry, your device must not be in Bootloader mode",
       "description": "Please restart your device without touching the buttons when the logo appears. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
