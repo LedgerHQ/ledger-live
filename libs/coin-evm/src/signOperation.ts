@@ -6,13 +6,13 @@ import {
   DeviceId,
 } from "@ledgerhq/types-live";
 import { ledgerService } from "@ledgerhq/hw-app-eth";
-import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
 import { Transaction } from "./types";
-import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
 
 /**
  * Transforms the ECDSA signature paremeter v hexadecimal string received
@@ -110,6 +110,7 @@ export const buildSignOperation =
 
       main().then(
         () => o.complete(),
+        /* istanbul ignore next: don't test throwing an error */
         e => o.error(e),
       );
     });
