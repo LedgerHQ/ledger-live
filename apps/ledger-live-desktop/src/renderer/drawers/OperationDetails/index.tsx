@@ -75,7 +75,7 @@ const mapStateToProps = (
     operationId,
     accountId,
     parentId,
-  }: { operationId: string; accountId: string; parentId: string | undefined | null },
+  }: { operationId: string; accountId: string; parentId?: string | null },
 ) => {
   const parentAccount: Account | undefined =
     typeof parentId !== "undefined" && parentId !== null

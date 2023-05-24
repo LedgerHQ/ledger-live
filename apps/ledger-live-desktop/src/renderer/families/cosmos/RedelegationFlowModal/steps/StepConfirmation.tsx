@@ -45,7 +45,7 @@ function StepConfirmation({
       const currency = account?.currency?.id?.toUpperCase();
       track("staking_completed", {
         currency,
-        validator: chosenValidator.name || voteAccAddress,
+        validator: chosenValidator?.name || voteAccAddress,
         source,
         delegation: "redelegation",
         flow: "stake",
@@ -86,7 +86,6 @@ function StepConfirmation({
 }
 export function StepConfirmationFooter({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -114,7 +113,6 @@ export function StepConfirmationFooter({
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}

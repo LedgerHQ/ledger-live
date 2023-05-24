@@ -20,6 +20,8 @@ import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/c
 import Text from "~/renderer/components/Text";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import { CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/types";
+
 const SelectButton = styled(Base)`
   border-radius: 4px;
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -32,11 +34,13 @@ const SelectButton = styled(Base)`
     border-color: ${p => p.theme.colors.palette.text.shade30};
   }
 `;
-const Container = styled(Box).attrs(p => ({
+const Container = styled(Box).attrs<{ isOpen?: boolean }>(p => ({
   flow: 1,
   relative: true,
   mr: -p.theme.overflow.trackSize,
-}))`
+}))<{
+  isOpen?: boolean;
+}>`
   min-height: 330px;
   max-height: calc(100% - ${p => p.theme.space[6]}px);
   padding-bottom: 20px;
@@ -58,21 +62,26 @@ export default function StepValidators({
 }: StepProps) {
   invariant(account && account.cosmosResources && transaction, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);
-  const sourceValidator = useMemo(
-    () =>
-      account.cosmosResources?.delegations.find(
-        d => d.validatorAddress === transaction.sourceValidator,
-      ),
-    [account, transaction.sourceValidator],
-  );
+  const sourceValidator = useMemo(() => {
+    const found = account.cosmosResources?.delegations.find(
+      d => d.validatorAddress === transaction.sourceValidator,
+    );
+
+    if (!found) return;
+
+    return { address: found.validatorAddress, amount: found.amount };
+  }, [account, transaction.sourceValidator]);
   const updateRedelegation = useCallback(
     newTransaction => {
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
     },
     [bridge, onUpdateTransaction],
   );
+
   const updateSourceValidator = useCallback(
-    ({ validatorAddress: sourceValidator }) => {
+    (delegation?: CosmosMappedDelegation | null) => {
+      if (!delegation) return;
+      const { validatorAddress: sourceValidator } = delegation;
       const source = account.cosmosResources?.delegations.find(
         d => d.validatorAddress === sourceValidator,
       );
@@ -136,7 +145,6 @@ export default function StepValidators({
       <RedelegationSelectorField
         transaction={transaction}
         account={account}
-        t={t}
         onChange={updateSourceValidator}
       />
       <StepRecipientSeparator />
@@ -158,12 +166,12 @@ export default function StepValidators({
               </Text>
             )}
             <Box color="palette.text.shade20">
-              <ChevronRight size={16} color="palette.divider" />
+              <ChevronRight size={16} />
             </Box>
           </Box>
         </SelectButton>
       </Box>
-      {selectedValidatorData && (
+      {selectedValidatorData && sourceValidator && (
         <Box pb={4}>
           <AmountField
             amount={amount}

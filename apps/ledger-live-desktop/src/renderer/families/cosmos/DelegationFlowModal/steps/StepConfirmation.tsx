@@ -3,7 +3,6 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { Theme } from "@ledgerhq/react-ui";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { multiline } from "~/renderer/styles/helpers";
@@ -34,9 +33,7 @@ function StepConfirmation({
   transaction,
   source,
   account,
-}: StepProps & {
-  theme: Theme;
-}) {
+}: StepProps) {
   const voteAccAddress = transaction?.validators[0]?.address;
   const currencyName = account.currency.name.toLowerCase();
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
@@ -47,13 +44,13 @@ function StepConfirmation({
       const currency = account?.currency?.id?.toUpperCase();
       track("staking_completed", {
         currency,
-        validator: chosenValidator.name || voteAccAddress,
-        source,
+        validator: chosenValidator?.name || voteAccAddress,
         delegation: "delegation",
         flow: "stake",
+        source,
       });
     }
-  }, [optimisticOperation, validators, account?.currency?.id, voteAccAddress, source]);
+  }, [optimisticOperation, validators, account.currency.id, voteAccAddress, source]);
 
   if (optimisticOperation) {
     return (
@@ -88,7 +85,6 @@ function StepConfirmation({
 }
 export function StepConfirmationFooter({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -118,7 +114,6 @@ export function StepConfirmationFooter({
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}

@@ -13,12 +13,12 @@ export type Props = {
   account: CosmosAccount;
 };
 
-export default function CosmosEarnRewardsInfoModal({ account, parentAccount }: Props) {
+export default function CosmosEarnRewardsInfoModal({ account }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
-    dispatch(openModal("MODAL_COSMOS_DELEGATE", { parentAccount, account }));
-  }, [parentAccount, account, dispatch]);
+    dispatch(openModal("MODAL_COSMOS_DELEGATE", { account }));
+  }, [account, dispatch]);
   const onLearnMore = useCallback((currencyId: string) => {
     openURL(cryptoFactory(currencyId).stakingDocUrl);
   }, []);

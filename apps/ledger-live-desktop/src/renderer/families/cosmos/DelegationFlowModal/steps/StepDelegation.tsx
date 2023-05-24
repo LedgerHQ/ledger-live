@@ -22,9 +22,8 @@ export default function StepDelegation({
   error,
   t,
 }: StepProps) {
-  invariant(account && transaction && transaction.validators, "account and transaction required");
+  invariant(transaction && transaction.validators, "transaction required");
   const { cosmosResources } = account;
-  invariant(cosmosResources, "cosmosResources required");
   const delegations = cosmosResources.delegations || [];
   const updateValidator = useCallback(
     ({ address }: { address: string }) => {
@@ -68,7 +67,6 @@ export function StepDelegationFooter({
   bridgePending,
   transaction,
 }: StepProps) {
-  invariant(account, "account required");
   const { errors } = status;
   const canNext =
     !bridgePending && !errors.validators && transaction && transaction.validators.length > 0;

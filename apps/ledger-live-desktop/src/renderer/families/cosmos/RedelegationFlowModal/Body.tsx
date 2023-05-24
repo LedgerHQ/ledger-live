@@ -29,6 +29,7 @@ export type Data = {
   account: CosmosAccount;
   validatorAddress: string | undefined | null;
   validatorDstAddress: string | undefined | null;
+  source?: string;
 };
 type OwnProps = {
   stepId: StepId;

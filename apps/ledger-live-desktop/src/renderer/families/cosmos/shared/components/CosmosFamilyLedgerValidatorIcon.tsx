@@ -8,15 +8,16 @@ import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 const CosmosFamilyLedgerValidatorIcon = ({
   validator,
 }: {
-  validator: CosmosValidatorItem | null | undefined;
+  validator?: Partial<CosmosValidatorItem> | null;
 }) => {
   return (
     <IconContainer isSR>
       {validator &&
+      validator.validatorAddress &&
       cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(validator.validatorAddress) ? (
         <LedgerLiveLogo width={24} height={24} icon={<Logo size={15} />} />
       ) : (
-        <FirstLetterIcon label={validator.name || validator.validatorAddress} />
+        <FirstLetterIcon label={validator?.name || validator?.validatorAddress} />
       )}
     </IconContainer>
   );

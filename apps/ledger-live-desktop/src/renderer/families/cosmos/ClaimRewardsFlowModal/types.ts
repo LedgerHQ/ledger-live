@@ -13,8 +13,8 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
   device: Device | undefined | null;
-  account: CosmosAccount | undefined | null;
-  parentAccount: CosmosAccount | undefined | null;
+  account: CosmosAccount;
+  parentAccount: typeof undefined;
   onRetry: (a: void) => void;
   onClose: () => void;
   openModal: OpenModal;

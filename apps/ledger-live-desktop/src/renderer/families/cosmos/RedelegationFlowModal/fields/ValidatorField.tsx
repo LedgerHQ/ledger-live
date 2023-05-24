@@ -26,7 +26,7 @@ export default function ValidatorField({
 }: {
   account: CosmosAccount;
   transaction: Transaction;
-  onChange: (a: CosmosValidatorItem) => void;
+  onChange: (a?: { address: string } | null) => void;
 }) {
   const currencyId = account.currency.id.toLowerCase();
   const [search, setSearch] = useState("");
