@@ -11,6 +11,7 @@ import { StackNavigatorNavigation } from "../../../components/RootNavigator/type
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 import { generateValidDappURLWithParams } from "../../../helpers/generateValidDappURLWithParams";
 import { ScreenName } from "../../../const";
+import Kiln from "../../../icons/Kiln";
 
 type Props = {
   provider: ListProvider;
@@ -53,7 +54,7 @@ export function EthereumStakingDrawerProvider({ provider }: Props) {
   return (
     <TouchableOpacity onPress={onProviderPress}>
       <Flex flexDirection="row" columnGap={16}>
-        <Icon name="Group" size={32} />
+        <Kiln size={32} />
         <Flex rowGap={12} alignItems="flex-start" flex={1}>
           <Flex rowGap={2}>
             <Flex flexDirection="row" columnGap={8} rowGap={8} flexWrap="wrap">
