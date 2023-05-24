@@ -25,7 +25,7 @@ type Props = {
   onClose: () => void;
   account: Account;
   transaction: Transaction;
-  onChange: (a: Transaction) => void;
+  onChange: (a: (t: Transaction, p: Partial<Transaction>) => void) => void;
   updateTransaction: (updater: (t: Transaction) => void) => void;
   status: TransactionStatus;
 };

@@ -10,7 +10,7 @@ import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
 type Props = {
   account: Account;
   transaction: Transaction;
-  onChange: (a: Transaction) => void;
+  onChange: (a: (t: Transaction, p: Partial<Transaction>) => void) => void;
 };
 export const PickingStrategy = ({ transaction, account, onChange }: Props) => {
   const bridge = getAccountBridge(account);
@@ -29,7 +29,9 @@ export const PickingStrategy = ({ transaction, account, onChange }: Props) => {
             bridge.updateTransaction(transaction, {
               utxoStrategy: {
                 ...transaction.utxoStrategy,
-                strategy: bitcoinPickingStrategy[item.value] || 0,
+                strategy: item
+                  ? bitcoinPickingStrategy[item.value as keyof typeof bitcoinPickingStrategy]
+                  : 0,
               },
             }),
           )
