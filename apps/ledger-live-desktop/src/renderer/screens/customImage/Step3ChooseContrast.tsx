@@ -5,8 +5,7 @@ import { Step, StepProps } from "./types";
 import { useTranslation } from "react-i18next";
 import StepFooter from "./StepFooter";
 import StepContainer from "./StepContainer";
-import { analyticsDrawerNames } from "./shared";
-import C from "~/renderer/families/elrond/components/Modals/Delegate/Body";
+import { analyticsDrawerName } from "./shared";
 
 type Props = StepProps & {
   onResult: React.ComponentProps<typeof ImageGrayscalePreview>["onResult"];
@@ -15,7 +14,7 @@ type Props = StepProps & {
 
 const previousButtonEventProperties = {
   button: "Back",
-  drawer: analyticsDrawerNames.chooseContrast,
+  drawer: analyticsDrawerName,
 };
 
 const StepChooseContrast: React.FC<Props> = props => {
@@ -28,7 +27,7 @@ const StepChooseContrast: React.FC<Props> = props => {
   const nextButtonEventProperties = useMemo(
     () => ({
       button: "Confirm contrast",
-      drawer: analyticsDrawerNames.chooseContrast,
+      drawer: analyticsDrawerName,
       ...(contrast ? { contrast: contrast.value } : {}),
     }),
     [contrast],

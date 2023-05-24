@@ -1,6 +1,8 @@
 export const analyticsFlowName = "custom lock screen";
 
-export const analyticsDrawerNames = {
+export const analyticsDrawerName = "custom lock screen";
+
+export const analyticsPageNames = {
   chooseImage: "Choose an image to set as your Stax lockscreen",
   chooseNftGallery: "Choose lockscreen from NFT gallery",
   preview: "Preview of the lockscreen picture",

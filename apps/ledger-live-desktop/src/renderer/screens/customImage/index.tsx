@@ -1,5 +1,5 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
-import { BoxedIcon, Flex, FlowStepper, Icons, InfiniteLoader, Text } from "@ledgerhq/react-ui";
+import { BoxedIcon, Flex, FlowStepper, Icons, Text } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
@@ -21,7 +21,7 @@ import StepContainer from "./StepContainer";
 import StepFooter from "./StepFooter";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
-import { analyticsDrawerNames, analyticsFlowName } from "./shared";
+import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 
@@ -159,8 +159,7 @@ const CustomImage: React.FC<Props> = props => {
   const error = stepError[step];
 
   const handleErrorRetryClicked = useCallback(() => {
-    error?.name &&
-      track("button_clicked", { button: "Retry", drawer: analyticsDrawerNames.error + error.name });
+    error?.name && track("button_clicked", { button: "Retry", drawer: analyticsDrawerName });
     setStepWrapper(Step.chooseImage);
   }, [error, setStepWrapper]);
 
@@ -190,13 +189,13 @@ const CustomImage: React.FC<Props> = props => {
                     setStep={setStepWrapper}
                     previousEventProperties={{
                       button: "Previous",
-                      drawer: analyticsDrawerNames.error + error.name,
+                      drawer: analyticsDrawerName,
                     }}
                   />
                 }
               >
                 <TrackPage
-                  category={analyticsDrawerNames.error + error.name}
+                  category={analyticsPageNames.error + error.name}
                   type="drawer"
                   refreshSource={false}
                 />
@@ -289,12 +288,12 @@ const CustomImage: React.FC<Props> = props => {
               setStep={setStepWrapper}
               onClickNext={handleDone}
               nextTestId="custom-image-finish-button"
-              nextEventProperties={{ button: "Finish", drawer: analyticsDrawerNames.success }}
+              nextEventProperties={{ button: "Finish", drawer: analyticsDrawerName }}
             />
           }
         >
           <TrackPage
-            category={analyticsDrawerNames.success}
+            category={analyticsPageNames.success}
             type="drawer"
             flow={analyticsFlowName}
             refreshSource={false}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
 import { getMetadataMediaTypes } from "~/helpers/nft";
@@ -17,7 +17,7 @@ import {
 import { urlContentToDataUri } from "~/renderer/components/CustomImage/shared";
 import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { analyticsDrawerNames, analyticsFlowName } from "./shared";
+import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
 import { track } from "~/renderer/analytics/segment";
 
 type Props = StepProps & {
@@ -120,14 +120,14 @@ const StepChooseImage: React.FC<Props> = props => {
     >
       {isShowingNftGallery ? (
         <TrackPage
-          category={analyticsDrawerNames.chooseNftGallery}
+          category={analyticsPageNames.chooseNftGallery}
           type="drawer"
           flow={analyticsFlowName}
           refreshSource={false}
         />
       ) : (
         <TrackPage
-          category={analyticsDrawerNames.chooseImage}
+          category={analyticsPageNames.chooseImage}
           type="drawer"
           flow={analyticsFlowName}
           refreshSource={false}
@@ -146,7 +146,7 @@ const StepChooseImage: React.FC<Props> = props => {
             onClick={() =>
               track("button_clicked", {
                 button: "Choose from my picture gallery",
-                drawer: analyticsDrawerNames.chooseImage,
+                drawer: analyticsDrawerName,
               })
             }
           />
@@ -155,7 +155,7 @@ const StepChooseImage: React.FC<Props> = props => {
               setIsShowingNftGallery(true);
               track("button_clicked", {
                 button: "Choose from NFT gallery",
-                drawer: analyticsDrawerNames.chooseImage,
+                drawer: analyticsDrawerName,
               });
             }}
           />
