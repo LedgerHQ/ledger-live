@@ -1,10 +1,11 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { isEqual } from "lodash";
 import BigNumber from "bignumber.js";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { getFeesEstimation, getGasEstimation, getTransactionCount } from "./api/rpc";
-import { validateRecipient } from "./getTransactionStatus";
-import { getAdditionalLayer2Fees, getEstimatedFees } from "./logic";
 import { getTransactionData, getTypedTransaction } from "./transaction";
+import { getAdditionalLayer2Fees, getEstimatedFees } from "./logic";
+import { validateRecipient } from "./getTransactionStatus";
 import { Transaction as EvmTransaction } from "./types";
 
 /**
@@ -123,9 +124,12 @@ export const prepareTransaction = async (
   const isTokenTransaction = subAccount?.type === "TokenAccount";
   const typedTransaction = getTypedTransaction(transaction, feeData);
 
-  return isTokenTransaction
+  const newTransaction = isTokenTransaction
     ? await prepareTokenTransaction(account, subAccount, typedTransaction)
     : await prepareCoinTransaction(account, typedTransaction);
+
+  // maintaining reference if the transaction hasn't change
+  return isEqual(transaction, newTransaction) ? transaction : newTransaction;
 };
 
 /**
