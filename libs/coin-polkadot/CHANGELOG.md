@@ -1,5 +1,18 @@
 # @ledgerhq/coin-polkadot
 
+## 0.1.5-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`5cce6e3593`](https://github.com/LedgerHQ/ledger-live/commit/5cce6e359309110df53e16ef989c5b8b94492dfd), [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`745fbf2a54`](https://github.com/LedgerHQ/ledger-live/commit/745fbf2a54cdc34aea938d7fbe4c8b198dc36b54), [`7cf49e1919`](https://github.com/LedgerHQ/ledger-live/commit/7cf49e1919466836e9025693ed07b18ebf99041a), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500)]:
+  - @ledgerhq/cryptoassets@9.6.0-nightly.1
+  - @ledgerhq/errors@6.12.6-nightly.0
+  - @ledgerhq/coin-framework@0.3.4-nightly.0
+  - @ledgerhq/types-live@6.35.0-nightly.0
+  - @ledgerhq/devices@8.0.3-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.27.15-nightly.0
+  - @ledgerhq/live-portfolio@0.0.6-nightly.0
+
 ## 0.1.4
 
 ### Patch Changes

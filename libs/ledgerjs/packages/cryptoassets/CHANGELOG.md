@@ -1,5 +1,13 @@
 # @ledgerhq/cryptoassets
 
+## 9.6.0-nightly.1
+
+### Minor Changes
+
+- [#3397](https://github.com/LedgerHQ/ledger-live/pull/3397) [`5cce6e3593`](https://github.com/LedgerHQ/ledger-live/commit/5cce6e359309110df53e16ef989c5b8b94492dfd) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for more ESDT tokens
+
+- [#3458](https://github.com/LedgerHQ/ledger-live/pull/3458) [`7cf49e1919`](https://github.com/LedgerHQ/ledger-live/commit/7cf49e1919466836e9025693ed07b18ebf99041a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - add Cardano CLAY token
+
 ## 9.6.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # @ledgerhq/react-native-hw-transport-ble
 
+## 6.29.0-nightly.0
+
+### Minor Changes
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Remove BLE high priority connection request as it was breaking the firmware update via BLE on Android
+
+### Patch Changes
+
+- Updated dependencies [[`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546)]:
+  - @ledgerhq/errors@6.12.6-nightly.0
+  - @ledgerhq/devices@8.0.3-nightly.0
+  - @ledgerhq/hw-transport@6.28.4-nightly.0
+
 ## 6.28.7
 
 ### Patch Changes
