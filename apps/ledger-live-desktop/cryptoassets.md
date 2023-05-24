@@ -53,6 +53,7 @@
 | RSK | RBTC | YES | rsk |
 | Solana | SOL | YES | solana |
 | Songbird | SGB | YES | songbird |
+| Stacks | STX | YES | stacks |
 | Stellar | XLM | YES | stellar |
 | Syscoin | SYS | YES | syscoin |
 | Tezos | XTZ | YES | tezos |
@@ -118,7 +119,6 @@
 | SecretNetwork | SCRT | NO | secret_network |
 | SeiNetwork | SEI | NO | sei_network |
 | Shyft | SHFT | NO | shyft |
-| Stacks | STX | NO | stacks |
 | Stargaze | STARS | NO | stargaze |
 | Stride | STRD | NO | stride |
 | Thundercore | TT | NO | thundercore |
