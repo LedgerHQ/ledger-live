@@ -12,6 +12,7 @@ const Animation = ({
   },
   isPaused = false,
   isStopped = false,
+  small = false,
 }: {
   animation: any;
   width?: string;
@@ -21,12 +22,16 @@ const Animation = ({
   rendererSettings?: LottieProps["options"]["rendererSettings"];
   isPaused?: boolean;
   isStopped?: boolean;
+  small?: boolean;
 }) =>
   animation ? (
     <Flex
       style={{
-        maxHeight: `200px`,
+        maxHeight: small ? "120px" : "200px",
         maxWidth: `500px`,
+        marginTop: small ? 20 : undefined,
+        paddingLeft: 20,
+        paddingRight: 20,
       }}
     >
       <Lottie

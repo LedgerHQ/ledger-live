@@ -215,7 +215,7 @@ export const renderVerifyUnwrapped = ({
 }) => (
   <AnimationWrapper>
     <DeviceBlocker />
-    <Animation animation={getDeviceAnimation(modelId, type, "verify")} />
+    <Animation small animation={getDeviceAnimation(modelId, type, "verify")} />
   </AnimationWrapper>
 );
 
