@@ -184,7 +184,7 @@ const ImageCropper: React.FC<Props> = props => {
     setLoading(true);
     /** the increments are of 90° so 360°/4 */
     setRotationIncrements((rotationIncrements - 1) % 4);
-  }, [rotationIncrements, setRotationIncrements, setLoading]);
+  }, [track, setLoading, rotationIncrements]);
 
   const handleCropChange = useCallback(
     crop => {

@@ -145,16 +145,16 @@ export default (
           setDrawer(
             CustomImage,
             {
-            imageUri: customImageUri,
-            isFromNFTEntryPoint: true,
-            reopenPreviousDrawer: isInsideDrawer
-              ? () =>
-                  setDrawer(NFTViewerDrawer, {
-                    account,
-                    nftId: nft.id,
-                    isOpen: true,
-                  })
-              : undefined,
+              imageUri: customImageUri,
+              isFromNFTEntryPoint: true,
+              reopenPreviousDrawer: isInsideDrawer
+                ? () =>
+                    setDrawer(NFTViewerDrawer, {
+                      account,
+                      nftId: nft.id,
+                      isOpen: true,
+                    })
+                : undefined,
             },
             { forceDisableFocusTrap: true },
           );

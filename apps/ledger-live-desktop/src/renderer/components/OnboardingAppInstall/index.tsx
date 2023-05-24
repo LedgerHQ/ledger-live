@@ -98,7 +98,7 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
       flow: analyticsFlowName,
     });
     handleRetry();
-  }, [])
+  }, [handleRetry]);
 
   const handleCancelModalSkipPressed = useCallback(() => {
     track("button_click", {
@@ -106,16 +106,23 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
       flow: analyticsFlowName,
     });
     onComplete();
-  }, [])
+  }, [onComplete]);
 
   const handleInstallComplete = useCallback(() => {
-    trackPage("Stax Set Up - Step 5: Successful", "", {flow: analyticsFlowName})
+    trackPage("Stax Set Up - Step 5: Successful", "", { flow: analyticsFlowName });
     onComplete();
-  }, []);
+  }, [onComplete]);
 
   return (
     <>
-      {isCancelModalOpen ? <TrackPage category={`App installation was cancelled on ${productName}`} flow={analyticsFlowName} type="modal" refreshSource={false} />}
+      {isCancelModalOpen ? (
+        <TrackPage
+          category={`App installation was cancelled on ${productName}`}
+          flow={analyticsFlowName}
+          type="modal"
+          refreshSource={false}
+        />
+      ) : null}
       <CancelModal
         isOpen={isCancelModalOpen}
         productName={productName}
