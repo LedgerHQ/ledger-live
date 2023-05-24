@@ -173,7 +173,55 @@
       "REGISTER" : "Registriert",
       "STAKE" : "Gestaked",
       "UNSTAKE" : "Nicht mehr gestaked",
-      "WITHDRAW_UNSTAKED" : "Ausgezahlt"
+      "WITHDRAW_UNSTAKED" : "Ausgezahlt",
+      "SENDING" : "Senden"
+    },
+    "edit" : {
+      "title" : "Beschleunigen oder Abbrechen",
+      "description" : "Ihre Transaktion ist noch nicht abgeschlossen. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+      "stuckDescription" : "Ihre Transaktion ist stecken geblieben. Sie können sie mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen.",
+      "previousFeesInfo" : {
+        "pendingTransactionFeesInfo" : "Informationen über ausstehende Transaktionsgebühren: ",
+        "networkfee" : "Netzwerkgebühr: ",
+        "maxFee" : "Maximalgebühr: ",
+        "maxPriorityFee" : "Maximale Prioritätsgebühr: ",
+        "gasPrice" : "Gaspreis: "
+      },
+      "learnMore" : "Ich möchte mehr erfahren",
+      "panel" : {
+        "title" : "Beschleunigen oder Abbrechen",
+        "description" : "Eine Ihrer zuletzt „gesendeten“ Transaktionen ist stecken geblieben. Sie können die Transaktion mit einer höheren Netzwerkgebühr beschleunigen, oder sie abbrechen."
+      },
+      "speedUp" : {
+        "title" : "Beschleunigen",
+        "description" : "Reichen Sie die Transaktion mit einer höheren Netzwerkgebühr erneut ein."
+      },
+      "cancel" : {
+        "title" : "Abbrechen",
+        "description" : "Sendet 0 {{ticker}} an Ihre eigene Adresse. Um die Stornierung zu gewährleisten, ist die Netzwerkgebühr 30 % höher als die Gebühr für die zu stornierende Transaktion."
+      },
+      "steps" : {
+        "method" : {
+          "title" : "Methode"
+        },
+        "fees" : {
+          "title" : "Gebühren"
+        },
+        "summary" : {
+          "title" : "Zusammenfassung"
+        },
+        "device" : {
+          "title" : "Gerät"
+        },
+        "confirmation" : {
+          "title" : "Bestätigung"
+        }
+      },
+      "error" : {
+        "notEnoughFundsToCancel" : "Die Stornierung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+        "notEnoughFundsToSpeedup" : "Die Beschleunigung der Transaktion ist nicht möglich, da Ihr Konto nicht genügend Guthaben aufweist.",
+        "notlowestNonceToSpeedup" : "Die Funktion „Speed up“ (Beschleunigen) ist nicht verfügbar. Ihre Transaktion ist ausstehend, da eine vorherige Transaktion stecken geblieben ist. Sie können auf die Bestätigung der Transaktion warten, die Transaktion beschleunigen oder sie stornieren."
+      }
     }
   },
   "byteSize" : {
@@ -221,7 +269,7 @@
     "lend" : "Leihen",
     "catalog" : "Entdecken",
     "market" : "Markt",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "Geben Sie einem Konto einen Stern, um es hier anzuzeigen.",
@@ -1759,7 +1807,8 @@
     "loading" : "Lade Daten...",
     "connectAndUnlockDevice" : "Verbinden und entsperren Sie Ihr Gerät",
     "unlockDevice" : "Entsperren Sie Ihr Gerät",
-    "unlockDeviceAfterFirmwareUpdate" : "Warten Sie",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Warten Sie, bis die Installation auf Ihrem {{productName}} abgeschlossen ist",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Geben Sie das {{productName}} frei, um die Installation abzuschließen",
     "quitApp" : "Beenden Sie die Anwendung auf Ihrem Gerät",
     "appNotInstalledTitle" : "Fehlende, erforderliche App",
     "appNotInstalledTitle_plural" : "Fehlende, erforderliche Apps",
@@ -1824,9 +1873,8 @@
       "installed" : "Apps",
       "capacity" : "Kapazität",
       "used" : "Verwendet",
-      "firmwareAvailable" : "Die Firmware ist veraltet:",
-      "firmwareUpToDate" : "Die Firmware ist auf dem neuesten Stand:",
-      "genuine" : "Ihr Gerät ist echt",
+      "OSVersion" : "OS-Version",
+      "genuine" : "Dein Gerät ist echt",
       "incomplete" : "Einige Apps wurden nicht erkannt. Bitte deinstallieren Sie diese und installieren Sie sie dann neu."
     },
     "applist" : {
@@ -1918,7 +1966,7 @@
       "dontHaveSeed" : "Sie haben keine Wiederherstellungsphrase? ",
       "followTheGuide" : "Folgen Sie unserer Schritt-für-Schritt-Update-Anleitung",
       "removeApps" : "Deinstallieren Sie alle Apps vor dem Update",
-      "update" : "Firmware-Update",
+      "update" : "Machen Sie ein Update für {{productName}}",
       "updateBtn" : "Firmware aktualisieren",
       "banner" : {
         "warning" : "Update-Firmware zu {{latestFirmware}} ist verfügbar",
@@ -1933,12 +1981,17 @@
       "contactSupport" : "Support kontaktieren",
       "deprecated" : "Geräte-Firmware-Version zu alt, um aktualisiert zu werden. Kontaktieren Sie den Ledger-Support für einen Ersatz.",
       "prepareSeed" : "Vergewissern Sie sich vorsichtshalber, dass Ihre 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und Ihnen vorliegt.",
-      "disclaimerTitle" : "Sie sind dabei, die <1>Firmware-Version {{version}}</1> zu installieren.",
-      "downloadingUpdateDesc" : "Bitte warten Sie, bis der Update-Installer heruntergeladen ist"
+      "disclaimerTitle" : "Sie sind dabei, die <1>Firmware-Version {{version}}</1> zu installieren."
     },
     "modal" : {
+      "title" : "Machen Sie ein Update für {{productName}}",
       "steps" : {
-        "downloadingUpdate" : "Update wird heruntergeladen",
+        "preparingUpdate" : "Update wird vorbereitet",
+        "transferringUpdate" : "Update wird an {{productName}} übertragen",
+        "prepare" : "Update vorbereiten",
+        "install" : "Update installieren",
+        "restore" : "Einstellungen wiederherstellen",
+        "apps" : "Apps wiederherstellen",
         "updateMCU" : "Firmware-Update",
         "updating" : "Firmware-Update",
         "reset" : "Gerät vorbereiten",
@@ -1949,9 +2002,8 @@
         "flash" : "Ihr Gerät vorbereiten ..."
       },
       "confirmIdentifier" : "Überprüfen Sie die Kennung",
-      "confirmIdentifierText" : "Vergewissern Sie sich, dass die Kennung auf Ihrem Gerät mit der unten stehenden Kennung übereinstimmt. Bestätigen Sie und geben Sie Ihren PIN-Code ein, wenn Sie dazu aufgefordert werden.",
+      "confirmIdentifierText" : "Installation auf {{productName}} bestätigen",
       "identifier" : "Kennung",
-      "preparation" : "Vorbereitung",
       "newFirmware" : "Neue Firmware {{version}}",
       "confirmUpdate" : "Bitte bestätigen Sie den Vorgang auf Ihrem Gerät",
       "mcuTitle" : "Update abschließen",
@@ -1961,10 +2013,10 @@
       "mcuSecondNanoX" : "Drücken und halten Sie die linke Taste, bis <1><0>{{bootloaderOption}}</0></1> erscheint. Drücken Sie beide Tasten, um zu bestätigen und Ihr Gerät erneut zu verbinden.",
       "mcuBlueFirst" : "Halten Sie die seitliche Taste 10 Sekunden lang gedrückt, um das Gerät auszuschalten. Lassen Sie die Taste danach los.",
       "mcuBlueSecond" : "Halten Sie die Taste für mindestens 5 Sekunden gedrückt, bis die Boot-Optionen angezeigt werden. Tippen Sie auf Bootloader-Modus",
-      "successTitle" : "Firmware aktualisiert",
+      "successTitle" : "OS-Update erfolgreich.",
       "successTextApps" : "Bitte installieren Sie die Apps erneut auf Ihrem Gerät",
       "successTextNoApps" : "Sie können jetzt Apps auf Ihrem Gerät installieren",
-      "sucessCTAApps" : "Apps erneut installieren",
+      "sucessCTAApps" : "Apps neu installieren",
       "SuccessCTANoApps" : "Installieren Sie Apps",
       "cancelReinstallCTA" : "Update installieren",
       "resetSteps" : {
@@ -2269,12 +2321,16 @@
     "remainingCharacters" : "{{ remainingCharacters }} Zeichen verbleibend",
     "renamed" : "{{ productName }}-Name geändert zu “{{ name }}” "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "Entfernen",
+    "confirmation" : "Bestätigen Sie die Entfernung des Bildes auf Ihrem Ledger Stax",
+    "success" : "Bild für Sperrbildschirm entfernt"
+  },
   "deviceLocalization" : {
     "language" : "Sprache",
-    "deviceLanguage" : "Sprache",
+    "deviceLanguage" : "Gerätesprache wechseln",
     "changeLanguage" : "Sprache wechseln",
     "changeDeviceLanguage" : "Möchten Sie die Sprache Ihres Geräts ändern?",
-    "chooseLanguage" : "Wählen Sie eine Sprache für {{deviceName}} aus.",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}} ist jetzt für {{deviceName}} verfügbar.",
       "description" : "Möchten Sie die Sprache auf {{language}} umstellen?"
@@ -3861,6 +3917,10 @@
     },
     "experimental" : {
       "disclaimer" : "Dies sind experimentelle Funktionen, die wir für unsere technisch versierte Community zum Testen bereitstellen. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen.",
+      "provider" : "Die experimentelle Einstellung „My Ledger provider ({{forcedProvider}})“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie in den Einstellungen deaktivieren.",
+      "providerDevMode" : "Die experimentellen Einstellungen „My Ledger provider ({{forcedProvider}})“ und „Developer mode“ zeigen möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
+      "devMode" : "Die experimentelle Einstellung „Developer mode“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
+      "providerCTA" : "Gehen Sie zu Einstellungen",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "Experimentelle Integrationen",
@@ -3921,6 +3981,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Benutzerdefinierten Faktor für Mindestgebühr eingeben",
           "description" : "Passen Sie den für die Mindestgebühr verwendeten Multiplikationsfaktor an. Hieraus setzt sich die maxFeePerGas der EIP1559-Transaktion zusammen."
+        },
+        "enableNetworkLogs" : {
+          "title" : "Netzwerklogs aktivieren",
+          "description" : "Netzwerklogs in der Konsole aktivieren (Fehlerprotokolle sind immer aktiviert)"
         }
       }
     },
@@ -4226,6 +4290,10 @@
           "3" : {
             "title" : "Wiederherstellen Ihrer Wiederherstellungsphrase auf einem neuen Gerät",
             "description" : "Verwenden Sie eine vorhandene Wiederherstellungsphrase, um Ihre privaten Schlüssel auf einem neuen Nano wiederherzustellen!"
+          },
+          "4" : {
+            "title" : "Wiederherstellen mit Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4439,25 @@
             "help" : {
               "help" : "Hilfe benötigt",
               "descr" : "Sie wissen nicht, was Sie tun müssen? Dann holen Sie sich Hilfe, um diesen Schritt abzuschließen."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "Wählen Sie „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen)",
+            "1" : {
+              "title" : "Wählen Sie „Restore“ (Wiederherstellen)",
+              "descr" : "Drücken Sie beide Tasten gleichzeitig, um auszuwählen."
+            },
+            "2" : {
+              "title" : "Wählen Sie „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen)"
+            },
+            "help" : {
+              "iDontSee" : "Ich kann „Restore using Ledger Recover“ (Mit Ledger Recover wiederherstellen) nicht sehen",
+              "modal" : {
+                "title" : "Das Betriebssystem auf Ihrem Ledger Nano X muss aktualisiert werden",
+                "subtitle" : " Sie können versuchen, das Betriebssystem zu aktualisieren oder den Ledger Kundenservice um Hilfe bitten.",
+                "learnHowToUpdate" : "Erfahren Sie, wie Sie aktualisieren können",
+                "contactLedgerSupport" : "Ledger-Kundenservice kontaktieren"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5283,6 +5370,10 @@
       "title" : "Vorgang auf diesem Gerät nicht verfügbar",
       "description" : "Die Funktion zum Senden von NFTs ist nur für Nano X und Nano S+ verfügbar. Bitte besuchen Sie unsere Kunden-Support-Plattform, um herauszufinden, wie man ein NFT mit einem Nano S sendet."
     },
+    "TransactionHasBeenValidatedError" : {
+      "title" : "Kann nicht beschleunigt oder abgebrochen werden",
+      "description" : "Diese Transaktion wurde bereits validiert"
+    },
     "CantScanQRCode" : {
       "title" : "Dieser QR-Code konnte nicht gescannt werden: Auto-Verifizierung wird von dieser Adresse nicht unterstützt"
     },
@@ -5602,11 +5693,11 @@
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Bildübertragung auf Gerät verweigert",
+      "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Laden von Bildern auf Gerät verweigert",
+      "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
     },
     "NearNewAccountWarning" : {
@@ -5686,6 +5777,7 @@
   "customImage" : {
     "title" : "Individueller Sperrbildschirm",
     "managerCTA" : "Bild für Sperrbildschirm",
+    "managerCTARemove" : "Entfernen",
     "steps" : {
       "choose" : {
         "stepLabel" : "Wählen Sie ein Bild aus",
@@ -5694,6 +5786,7 @@
         "myNfts" : "Meine NFTs",
         "upload" : "Von meinem Computer hochladen",
         "chooseNft" : "Wählen Sie ein NFT",
+        "remove" : "Aktuelles Bild entfernen",
         "selectNft" : "NFT wählen",
         "previousSelectNft" : "Zurück",
         "nftEmptyStateTitle" : "Es können noch keine NFTs angezeigt werden",
@@ -5710,9 +5803,11 @@
         "stepLabel" : "Übertragen",
         "uploadAnotherImage" : "Ein weiteres Bild hochladen",
         "allowPreview" : "Erlauben Sie das Laden eines Bildes im Sperrbildschirm auf Ihrem {{productName}}",
+        "allowConfirmPreview" : "Wiederherstellung des Sperrbildschirmbildes auf {{productName}} erlauben",
         "loadingPicture" : "Lade Daten...",
         "imageLoaded" : "Bild geladen auf {{productName}}",
         "confirmPicture" : "Gefällt Ihnen, was Sie sehen?\nBehalten Sie es!",
+        "confirmRestorePicture" : "Wiederherstellung des Sperrbildschirmbildes bestätigen",
         "doThisLater" : "Vielleicht später"
       }
     },
