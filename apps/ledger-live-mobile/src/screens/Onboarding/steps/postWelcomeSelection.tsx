@@ -65,8 +65,7 @@ function PostWelcomeSelection() {
 
   return (
     <Flex flex={1} mx={6} mt={3}>
-      <TrackScreen category="Onboarding" name={""} />
-      <TrackScreen category="Onboarding" name="SelectDevice" />
+      <TrackScreen category="Onboarding" name="Onboarding Get Started" />
       <Text variant="h4" fontWeight="semiBold" mb={7}>
         {t("onboarding.postWelcomeStep.title")}
       </Text>
