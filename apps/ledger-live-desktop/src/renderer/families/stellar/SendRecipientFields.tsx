@@ -5,13 +5,19 @@ import Label from "~/renderer/components/Label";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import MemoTypeField from "./MemoTypeField";
 import MemoValueField from "./MemoValueField";
-import { StellarFamily } from "./types";
+import { TransactionStatus, Transaction } from "@ledgerhq/live-common/families/stellar/types";
+import { Account } from "@ledgerhq/types-live";
 
-const Root: NonNullable<StellarFamily["sendRecipientFields"]>["component"] = ({
+const Root = ({
   transaction,
   account,
   onChange,
   status,
+}: {
+  transaction: Transaction;
+  account: Account;
+  onChange: (t: Transaction) => void;
+  status: TransactionStatus;
 }) => {
   const memoActivated = transaction.memoType && transaction.memoType !== "NO_MEMO";
   return (

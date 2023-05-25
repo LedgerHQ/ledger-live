@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { SubAccount } from "@ledgerhq/types-live";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
@@ -28,10 +27,9 @@ const Item = styled(DropDownItem)`
   align-items: center;
 `;
 type Props = {
-  account: TezosAccount | SubAccount;
-  parentAccount: TezosAccount | undefined | null;
+  account: TezosAccount;
 };
-const ContextMenu = ({ account, parentAccount }: Props) => {
+const ContextMenu = ({ account }: Props) => {
   const dispatch = useDispatch();
   const delegation = useDelegation(account);
   const receiveShouldWarnDelegation = delegation
@@ -45,7 +43,6 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
       onClick: () =>
         dispatch(
           openModal("MODAL_RECEIVE", {
-            parentAccount,
             account,
             eventType: "tezos",
             startWithWarning: receiveShouldWarnDelegation,
@@ -59,7 +56,6 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
       onClick: () =>
         dispatch(
           openModal("MODAL_DELEGATE", {
-            parentAccount,
             account,
             eventType: "redelegate",
             stepId: "summary",
@@ -73,7 +69,6 @@ const ContextMenu = ({ account, parentAccount }: Props) => {
       onClick: () =>
         dispatch(
           openModal("MODAL_DELEGATE", {
-            parentAccount,
             account,
             eventType: "undelegate",
             mode: "undelegate",

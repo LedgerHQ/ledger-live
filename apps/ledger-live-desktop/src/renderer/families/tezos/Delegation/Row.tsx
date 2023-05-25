@@ -13,7 +13,7 @@ import {
   getTransactionExplorer,
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { SubAccount } from "@ledgerhq/types-live";
 import { Delegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import { openURL } from "~/renderer/linking";
 import CounterValue from "~/renderer/components/CounterValue";
@@ -22,14 +22,16 @@ import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import BakerImage from "../BakerImage";
 import ContextMenu from "./ContextMenu";
+import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
+
 type Props = {
   delegation: Delegation;
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+  account: TezosAccount | SubAccount;
+  parentAccount: TezosAccount | undefined | null;
 };
-const Wrapper: ThemedComponent<{
+const Wrapper = styled.div<{
   isPending: boolean;
-}> = styled.div`
+}>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -141,7 +143,7 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
       </Base>
       {account.type === "Account" && !delegation.isPending ? (
         <CTA>
-          <ContextMenu account={account} parentAccount={parentAccount} />
+          <ContextMenu account={account} />
         </CTA>
       ) : (
         <CTA />
