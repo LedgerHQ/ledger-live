@@ -158,12 +158,11 @@ const prepareTransaction = async (
   const { recipient } = t;
 
   if (recipient && address) {
-
     if (
       validateAddress(recipient).isValid &&
       validateAddress(address).isValid
     ) {
-      const newTx = {...t};
+      const newTx = { ...t };
 
       const result = await fetchEstimatedFees({ to: recipient, from: address });
       newTx.gasFeeCap = new BigNumber(result.gas_fee_cap);

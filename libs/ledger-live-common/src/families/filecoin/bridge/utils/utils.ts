@@ -5,7 +5,11 @@ import {
   parseCurrencyUnit,
 } from "../../../../currencies";
 import { BigNumber } from "bignumber.js";
-import {BroadcastTransactionRequest, TransactionResponse, TxStatus} from "./types";
+import {
+  BroadcastTransactionRequest,
+  TransactionResponse,
+  TxStatus,
+} from "./types";
 import {
   GetAccountShape,
   AccountShapeInfo,
