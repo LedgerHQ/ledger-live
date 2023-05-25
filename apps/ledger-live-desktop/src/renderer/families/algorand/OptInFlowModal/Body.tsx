@@ -79,21 +79,19 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     setTransaction,
     updateTransaction,
     account,
-    parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
     const { account } = params;
     invariant(account, "algorand: account required");
-    const bridge = getAccountBridge(account, undefined);
+    const bridge = getAccountBridge(account);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "optIn",
     });
     return {
       account,
-      parentAccount: undefined,
       transaction,
     };
   });
@@ -134,7 +132,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     title: t("algorand.optIn.flow.title"),
     device,
     account,
-    parentAccount,
     transaction,
     signed,
     stepId,

@@ -79,7 +79,6 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
 }
 export function StepConfirmationFooter({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -107,7 +106,6 @@ export function StepConfirmationFooter({
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
