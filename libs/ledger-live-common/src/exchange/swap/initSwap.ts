@@ -1,7 +1,7 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import Exchange, { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";

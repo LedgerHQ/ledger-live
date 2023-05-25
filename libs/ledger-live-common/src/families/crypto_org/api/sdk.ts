@@ -1,5 +1,5 @@
 import { utils } from "@crypto-org-chain/chain-jslib";
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getEnv } from "../../../env";

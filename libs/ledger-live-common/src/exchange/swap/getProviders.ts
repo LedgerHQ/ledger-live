@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import qs from "qs";
 import { getEnv } from "../../env";
 import { SwapNoAvailableProviders } from "../../errors";

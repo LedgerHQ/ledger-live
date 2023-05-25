@@ -1,5 +1,5 @@
-import type { CacheRes } from "@ledgerhq/live-network/src/cache";
-import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import type { CacheRes } from "@ledgerhq/live-network";
+import { makeLRUCache } from "@ledgerhq/live-network";
 import type {
   Account,
   Operation,

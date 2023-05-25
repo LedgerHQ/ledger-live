@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import { BigNumber } from "bignumber.js";
 import * as nearAPI from "near-api-js";
 import { getEnv } from "../../../env";

@@ -10,7 +10,7 @@ import { Observable, from, of, throwError } from "rxjs";
 import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 
 import Transport from "@ledgerhq/hw-transport";
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import { Language, LanguagePackage } from "@ledgerhq/types-live";
 import { LanguageInstallRefusedOnDevice } from "../errors";
 import ManagerAPI from "../manager/api";

@@ -1,4 +1,4 @@
-import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import { makeLRUCache } from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   AccountBridge,

@@ -2,7 +2,7 @@ import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import {
   requestInterceptor,
   responseInterceptor,
-} from "@ledgerhq/live-network/src/network";
+} from "@ledgerhq/live-network";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import StellarSdk, {

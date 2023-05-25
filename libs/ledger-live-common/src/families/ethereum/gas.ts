@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import { makeLRUCache } from "@ledgerhq/live-network";
 import { apiForCurrency } from "./api";
 import { EIP1559ShouldBeUsed } from "./transaction";
 import { NetworkInfo, Transaction } from "./types";

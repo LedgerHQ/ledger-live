@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import { ValidationError } from "../../errors";
 import { getSwapAPIBaseURL } from "./";
 import type { KYCData, SubmitKYC } from "./types";

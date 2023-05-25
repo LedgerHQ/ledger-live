@@ -1,5 +1,5 @@
 import { AccountId } from "@hashgraph/sdk";
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getEnv } from "../../../env";

@@ -1,5 +1,5 @@
-import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
-import network from "@ledgerhq/live-network/src/network";
+import { makeLRUCache } from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";

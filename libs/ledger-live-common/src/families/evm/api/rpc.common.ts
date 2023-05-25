@@ -5,7 +5,7 @@ import { log } from "@ledgerhq/logs";
 import { delay } from "@ledgerhq/live-promise";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import { makeLRUCache } from "@ledgerhq/live-network";
 import OptimismGasPriceOracleAbi from "../abis/optimismGasPriceOracle.abi.json";
 import { FeeData, FeeHistory, Transaction as EvmTransaction } from "../types";
 import { GasEstimationError, InsufficientFunds } from "../errors";

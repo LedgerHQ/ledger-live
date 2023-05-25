@@ -1,6 +1,6 @@
 import { listCryptoCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 import { listTokens } from "@ledgerhq/cryptoassets";
-import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import { makeLRUCache } from "@ledgerhq/live-network";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useEffect, useState } from "react";
 import api from "../countervalues/api";

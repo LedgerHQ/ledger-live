@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { FloorPrice, ProtoNFT } from "@ledgerhq/types-live";
 import { getEnv } from "../env";

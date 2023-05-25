@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import chunk from "lodash/chunk";
 import URL from "url";
 import { getEnv } from "../../env";

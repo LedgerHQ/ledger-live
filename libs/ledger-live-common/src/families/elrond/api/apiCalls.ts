@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import { SignedOperation } from "@ledgerhq/types-live";
 import { MAX_PAGINATION_SIZE, METACHAIN_SHARD } from "../constants";
 import {

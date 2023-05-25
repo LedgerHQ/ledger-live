@@ -1,8 +1,8 @@
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from ".";
 import defaultConfig from "./defaultConfig";
-jest.mock("@ledgerhq/live-network/src/network");
+jest.mock("@ledgerhq/live-network");
 
 describe("getCurrencyConfiguration", () => {
   const cosmosCurrencyMock = {

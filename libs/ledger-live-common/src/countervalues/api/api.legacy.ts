@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/src/network";
+import network from "@ledgerhq/live-network";
 import { findCurrencyByTicker } from "../../currencies";
 import { getEnv } from "../../env";
 import {

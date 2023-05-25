@@ -4,7 +4,7 @@ beforeEach(() => {
   jest.resetModules();
 });
 
-jest.mock("@ledgerhq/live-network/src/network", () => {
+jest.mock("@ledgerhq/live-network", () => {
   return jest.fn().mockImplementationOnce(() => ({
     data: [
       [

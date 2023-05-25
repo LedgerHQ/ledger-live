@@ -1,4 +1,4 @@
-import { CacheRes, makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import { CacheRes, makeLRUCache } from "@ledgerhq/live-network";
 import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
