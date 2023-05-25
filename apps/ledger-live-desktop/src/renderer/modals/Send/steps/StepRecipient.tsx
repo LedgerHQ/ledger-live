@@ -14,7 +14,7 @@ import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import { Account } from "@ledgerhq/types-live";
 import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
-import { getEthStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 
 const StepRecipient = ({
   t,
@@ -37,7 +37,7 @@ const StepRecipient = ({
   if (!status || !account) return null;
   const mainAccount = getMainAccount(account, parentAccount);
   // for ethereum family, check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
-  const [stuckAccount, stuckParentAccount, stuckOperation] = getEthStuckAccountAndOperation(
+  const stuckAccountAndOperation = getStuckAccountAndOperation(
     account,
     parentAccount,
   );
@@ -76,11 +76,11 @@ const StepRecipient = ({
           />
         </Box>
       )}
-      {stuckOperation && stuckAccount ? (
+      {stuckAccountAndOperation ? (
         <EditOperationPanel
-          operation={stuckOperation}
-          account={stuckAccount}
-          parentAccount={stuckParentAccount}
+          operation={stuckAccountAndOperation.operation}
+          account={stuckAccountAndOperation.account}
+          parentAccount={stuckAccountAndOperation.parentAccount}
         />
       ) : null}
       <StepRecipientSeparator />

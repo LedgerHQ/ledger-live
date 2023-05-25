@@ -90,7 +90,6 @@ export const signOperation = ({
               const value = new BigNumber(
                 "0x" + (tx.value.toString("hex") || "0")
               );
-
               // rawData Format: type 0 `rlp([nonce, gasPrice, gasLimit, to, value, data, v, r, s])`
               // EIP1559 Format: type 2 || rlp([chainId, nonce, maxPriorityFeePerGas, maxFeePerGas, gasLimit, destination, amount, data, access_list, v, r, s])
               const txHex = (() => {
@@ -182,6 +181,7 @@ export const signOperation = ({
               })();
 
               const transactionSequenceNumber = nonce;
+              transaction.nonce = nonce;
               const accountId = account.id;
               // currently, all mode are always at least one OUT tx on ETH parent
               const operation: Operation = {

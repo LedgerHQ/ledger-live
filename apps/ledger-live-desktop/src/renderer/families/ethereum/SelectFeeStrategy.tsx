@@ -130,7 +130,7 @@ const SelectFeeStrategy = ({
         }
       });
     } else {
-      const gaspriceGap: number = getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR");
+      const gaspriceGap: number = getEnv("EDIT_TX_LEGACY_GASPRICE_GAP_SPEEDUP_FACTOR");
       const oldGasPrice = transactionRaw.gasPrice;
       if (oldGasPrice) {
         strategies.forEach(strategy => {

@@ -44,7 +44,7 @@ const FeesField = ({ account, transaction, status, updateTransaction, transactio
   const gasPrice = transaction.gasPrice || range.initial;
   // update gas price range according to previous pending transaction if necessary
   if (transactionRaw && transactionRaw.gasPrice) {
-    const gaspriceGap: number = getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR");
+    const gaspriceGap: number = getEnv("EDIT_TX_LEGACY_GASPRICE_GAP_SPEEDUP_FACTOR");
     const minNewGasPrice = new BigNumber(transactionRaw.gasPrice).times(1 + gaspriceGap);
     const minValue = BigNumber.max(range.min, minNewGasPrice);
     let maxValue = BigNumber.max(range.max, minNewGasPrice);

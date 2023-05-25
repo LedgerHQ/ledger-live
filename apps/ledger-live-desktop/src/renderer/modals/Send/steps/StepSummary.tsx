@@ -26,10 +26,6 @@ import Alert from "~/renderer/components/Alert";
 import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-// eslint-disable-next-line no-restricted-imports
-import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
-import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -281,40 +277,18 @@ export default class StepSummary extends PureComponent<StepProps> {
   }
 }
 export class StepSummaryFooter extends PureComponent<StepProps> {
-  state = {
-    transactionHasBeenValidated: false,
-  };
-
   onNext = async () => {
     const { transitionTo } = this.props;
     transitionTo("device");
   };
 
-  componentDidMount() {
-    const { account, parentAccount, transaction, transactionHash } = this.props;
-    if (!account || !transaction || !transactionHash) return;
-    const mainAccount = getMainAccount(account, parentAccount);
-    if (mainAccount.currency.family !== "ethereum") return;
-    apiForCurrency(mainAccount.currency)
-      .getTransactionByHash(transactionHash)
-      .then((tx: any) => {
-        if (tx?.confirmations) {
-          this.setState({ transactionHasBeenValidated: true });
-        }
-      });
-  }
-
   render() {
     const { account, status, bridgePending } = this.props;
     if (!account) return null;
     const { errors } = status;
-    const canNext =
-      !bridgePending && !Object.keys(errors).length && !this.state.transactionHasBeenValidated;
+    const canNext = !bridgePending && !Object.keys(errors).length;
     return (
       <>
-        {this.state.transactionHasBeenValidated ? (
-          <ErrorBanner error={new TransactionHasBeenValidatedError()} />
-        ) : null}
         <Button
           id={"send-summary-continue-button"}
           primary

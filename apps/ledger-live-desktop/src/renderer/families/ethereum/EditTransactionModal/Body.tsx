@@ -10,9 +10,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, AccountLike, Operation, TransactionCommonRaw } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-// eslint-disable-next-line no-restricted-imports
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
-// eslint-disable-next-line no-restricted-imports
 import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
 import logger from "~/renderer/logger";
@@ -26,12 +24,14 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import StepMethod, { StepMethodFooter } from "./steps/StepMethod";
 import StepFees, { StepFeesFooter } from "./steps/StepFees";
 import StepConnectDevice from "~/renderer/modals/Send/steps/StepConnectDevice";
-import StepSummary, { StepSummaryFooter } from "~/renderer/modals/Send/steps/StepSummary";
+import StepSummary from "~/renderer/modals/Send/steps/StepSummary";
+import { StepSummaryFooter } from "./steps/StepSummaryFooter";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import StepConfirmation, {
   StepConfirmationFooter,
 } from "~/renderer/modals/Send/steps/StepConfirmation";
 import { St, StepId } from "./types";
+import invariant from "invariant";
 
 export type Data = {
   account: AccountLike | undefined | null;
@@ -42,8 +42,7 @@ export type Data = {
   transaction?: Transaction;
   onConfirmationHandler: Function;
   onFailHandler: Function;
-  transactionRaw: TransactionCommonRaw;
-  transactionSequenceNumber: number;
+  transactionRaw: EthereumTransactionRaw;
   transactionHash: string;
   isNftOperation: boolean;
 };
@@ -154,13 +153,14 @@ const Body = ({
       transaction: fromTransactionRaw(params.transactionRaw as EthereumTransactionRaw),
     };
   });
+  invariant(account, "account required");
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
 
-  const currency = account ? getAccountCurrency(account) : undefined;
+  const currency = getAccountCurrency(account);
 
-  const currencyName = currency ? currency.name : undefined;
+  const currencyName = currency.name;
 
   const handleCloseModal = useCallback(() => {
     closeModal("MODAL_EDIT_TRANSACTION");
@@ -181,7 +181,6 @@ const Body = ({
 
   const handleOperationBroadcasted = useCallback(
     (optimisticOperation: Operation) => {
-      if (!account) return;
       const mainAccount = getMainAccount(account, parentAccount);
       updateAccountWithUpdater(mainAccount.id, account =>
         addPendingOperation(account, optimisticOperation),
@@ -194,7 +193,6 @@ const Body = ({
 
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const error = transactionError || bridgeError;
-  if (!account) return null;
   const mainAccount = getMainAccount(account, parentAccount);
   const feePerGas = new BigNumber(
     EIP1559ShouldBeUsed(mainAccount.currency)
@@ -218,22 +216,17 @@ const Body = ({
   logger.log(`feeValue: ${feeValue.toNumber()}`);
 
   let isOldestEditableOperation = true;
-  account.pendingOperations.forEach(operation => {
+  mainAccount.pendingOperations.forEach((operation: Operation) => {
     if (isEditableOperation(account, operation)) {
-      if (
-        operation.transactionSequenceNumber !== undefined &&
-        operation.transactionSequenceNumber < params.transactionSequenceNumber
-      ) {
+      if (operation.transactionSequenceNumber!==undefined && params.transactionRaw.nonce!==undefined && operation.transactionSequenceNumber < params.transactionRaw.nonce) {
         isOldestEditableOperation = false;
       }
     }
   });
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [editType, setEditType] = useState(
     isOldestEditableOperation && haveFundToSpeedup ? "speedup" : haveFundToCancel ? "cancel" : "",
   );
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const handleSetEditType = useCallback(editType => setEditType(editType), []);
 
   const stepperProps = {
@@ -269,7 +262,6 @@ const Body = ({
     isNFTSend,
     transactionRaw: params.transactionRaw,
     isNftOperation: params.isNftOperation,
-    transactionSequenceNumber: params.transactionSequenceNumber,
     transactionHash: params.transactionHash,
     haveFundToSpeedup,
     haveFundToCancel,

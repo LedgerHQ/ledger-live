@@ -6,14 +6,14 @@ import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
-import SendAmountFields from "../../Send/SendAmountFields";
+import SendAmountFields from "../../../../modals/Send/SendAmountFields";
 import logger from "~/renderer/logger";
 import { StepProps } from "../types";
 import { BigNumber } from "bignumber.js";
-// eslint-disable-next-line no-restricted-imports
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
-// eslint-disable-next-line no-restricted-imports
 import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 
 const StepFees = (props: StepProps) => {
   const {
@@ -50,14 +50,14 @@ const StepFees = (props: StepProps) => {
     // dividedBy 1000000000 to convert from wei to gwei
     maxPriorityFeePerGasinGwei = new BigNumber(transactionRaw?.maxPriorityFeePerGas ?? 0)
       .dividedBy(1000000000)
-      .toNumber();
+      .toFixed();
     maxFeePerGasinGwei = new BigNumber(transactionRaw?.maxFeePerGas ?? 0)
       .dividedBy(1000000000)
-      .toNumber();
+      .toFixed();
   } else {
     maxGasPriceinGwei = new BigNumber(transactionRaw?.gasPrice ?? 0)
       .dividedBy(1000000000)
-      .toNumber();
+      .toFixed();
   }
   return (
     <Box flow={4}>
@@ -103,20 +103,42 @@ const StepFees = (props: StepProps) => {
 };
 
 export class StepFeesFooter extends PureComponent<StepProps> {
+  state = {
+    transactionHasBeenValidated: false,
+  };
   onNext = async () => {
     const { transitionTo } = this.props;
     transitionTo("summary");
   };
 
+  componentDidMount() {
+    const { account, parentAccount, transaction, transactionHash } = this.props;
+    if (!account || !transaction || !transactionHash) return;
+    const mainAccount = getMainAccount(account, parentAccount);
+    if (mainAccount.currency.family !== "ethereum") return;
+    apiForCurrency(mainAccount.currency)
+      .getTransactionByHash(transactionHash)
+      .then((tx: { confirmations?: number }) => {
+        if (tx.confirmations) {
+          this.setState({ transactionHasBeenValidated: true });
+        }
+      });
+  }
+
   render() {
-    const { bridgePending } = this.props;
+    const { bridgePending, status } = this.props;
+    const { errors } = status;
+    const hasErrors = Object.keys(errors).length;
     return (
       <>
+        {this.state.transactionHasBeenValidated ? (
+          <ErrorBanner error={new TransactionHasBeenValidatedError()} />
+        ) : null}
         <Button
           id={"send-amount-continue-button"}
           isLoading={bridgePending}
           primary
-          disabled={false}
+          disabled={this.state.transactionHasBeenValidated || bridgePending || hasErrors}
           onClick={this.onNext}
         >
           <Trans i18nKey="common.continue" />

@@ -23,6 +23,7 @@ import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import { urls } from "~/config/urls";
 import { getEnv } from "@ledgerhq/live-env";
+import { PriorityFeeTooLow } from "@ledgerhq/errors";
 
 const ErrorContainer = styled(Box)`
   margin-top: 0px;
@@ -104,6 +105,7 @@ const FeesField = ({
     ],
     [networkPriorityFee.max, networkPriorityFee.min, unit],
   );
+
   // update suggested max priority fee according to previous pending transaction if necessary
   if (transactionRaw && transactionRaw.maxPriorityFeePerGas) {
     // update the range to make sure that new maxPriorityFeePerGas is at least 10% higher than the pending transaction
@@ -111,13 +113,19 @@ const FeesField = ({
     const newMaxPriorityFeePerGas = new BigNumber(transactionRaw.maxPriorityFeePerGas).times(
       1 + maxPriorityFeeGap,
     );
-    if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(lowPriorityFeeValue))) {
-      lowPriorityFeeValue = formatCurrencyUnit(unit, newMaxPriorityFeePerGas);
+    const newMaxPriorityFeePerGasinGwei = formatCurrencyUnit(unit, newMaxPriorityFeePerGas);
+    if ((new BigNumber(newMaxPriorityFeePerGasinGwei)).isGreaterThan(new BigNumber(lowPriorityFeeValue))) {
+      lowPriorityFeeValue = newMaxPriorityFeePerGasinGwei;
     }
-    if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(highPriorityFeeValue))) {
-      highPriorityFeeValue = formatCurrencyUnit(unit, newMaxPriorityFeePerGas);
+    if ((new BigNumber(newMaxPriorityFeePerGasinGwei)).isGreaterThan(new BigNumber(highPriorityFeeValue))) {
+      highPriorityFeeValue = newMaxPriorityFeePerGasinGwei;
+    }
+    // give user an error if maxPriorityFeePerGas is lower than pending transaction maxPriorityFeePerGas + 10% for edit eth transaction feature
+    if (!status.errors.maxPriorityFee && transaction.maxPriorityFeePerGas && transaction.maxPriorityFeePerGas.isLessThan(newMaxPriorityFeePerGas)) {
+      status.errors.maxPriorityFee = new PriorityFeeTooLow();
     }
   }
+
   const validTransactionError = status.errors.maxPriorityFee;
   const validTransactionWarning = status.warnings.maxPriorityFee;
 

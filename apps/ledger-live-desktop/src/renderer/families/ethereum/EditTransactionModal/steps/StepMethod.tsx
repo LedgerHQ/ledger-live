@@ -1,6 +1,4 @@
-// @flow
-
-import React, { PureComponent, memo } from "react";
+import React, { PureComponent, memo, useCallback } from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -15,8 +13,10 @@ import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { getEnv } from "@ledgerhq/live-env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-// eslint-disable-next-line no-restricted-imports
-import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
+import ErrorBanner from "~/renderer/components/ErrorBanner";
+import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
+import invariant from "invariant";
 
 const EditTypeWrapper = styled(Box)<{ selected: boolean }>`
   border: ${(p: any) =>
@@ -51,21 +51,30 @@ const StepMethod = ({
   haveFundToCancel,
   isOldestEditableOperation,
 }: StepProps) => {
-  if (!account) return null;
+  invariant(account, "account required");
   const isCancel = editType === "cancel";
   const isSpeedup = editType === "speedup";
   const disableSpeedup = !haveFundToSpeedup || !isOldestEditableOperation;
   const disableCancel = !haveFundToCancel;
+  const handleSpeedupClick = useCallback(() => {
+    if (!disableSpeedup) {
+      setEditType("speedup");
+    }
+  }, [haveFundToSpeedup, isOldestEditableOperation, setEditType]);
+  const handleCancelClick = useCallback(() => {
+    if (!disableCancel) {
+      setEditType("cancel");
+    }
+  }, [haveFundToCancel, setEditType]);
+  const handleLearnMoreClick = useCallback(() => {
+    openURL(urls.editEthTx.learnMore);
+  }, []);
   return (
     <Box flow={4}>
       <EditTypeWrapper
         key={0}
         selected={isSpeedup}
-        onClick={() => {
-          if (!disableSpeedup) {
-            setEditType("speedup");
-          }
-        }}
+        onClick={handleSpeedupClick}
       >
         <Flex flexDirection="row" justifyContent="left" alignItems="center">
           <CheckBox isChecked={isSpeedup} disabled={disableSpeedup} />
@@ -92,11 +101,7 @@ const StepMethod = ({
       <EditTypeWrapper
         key={1}
         selected={isCancel}
-        onClick={() => {
-          if (!disableCancel) {
-            setEditType("cancel");
-          }
-        }}
+        onClick={handleCancelClick}
       >
         <Flex flexDirection="row" justifyContent="left" alignItems="center">
           <CheckBox isChecked={editType === "cancel"} disabled={disableCancel} />
@@ -130,7 +135,7 @@ const StepMethod = ({
         ff="Inter|Medium"
         fontSize={12}
         style={{ textDecoration: "underline", textAlign: "center", cursor: "pointer" }}
-        onClick={() => openURL(urls.editEthTx.learnMore)}
+        onClick={handleLearnMoreClick}
       >
         {t("operation.edit.learnMore")}
       </Text>
@@ -139,91 +144,110 @@ const StepMethod = ({
 };
 
 export class StepMethodFooter extends PureComponent<StepProps> {
-  render() {
+  state = {
+    transactionHasBeenValidated: false,
+  };
+
+  handleContinueClick = () => {
     const {
-      t,
       transitionTo,
       editType,
       updateTransaction,
       account,
       parentAccount,
-      transactionSequenceNumber,
       isNftOperation,
       setIsNFTSend,
+      transactionRaw,
+    } = this.props;
+    invariant(account && transactionRaw, "account and transactionRaw required");
+    const bridge = getAccountBridge(account, parentAccount);
+    if (isNftOperation) {
+      setIsNFTSend(editType === "speedup");
+    }
+    console.log("nonce", transactionRaw.nonce);
+    console.log("amount", transactionRaw.amount.toString());
+    if (editType === "speedup") {
+      updateTransaction((tx) =>
+        bridge.updateTransaction(tx, {
+          amount: new BigNumber(transactionRaw.amount),
+          data: transactionRaw.data ? Buffer.from(transactionRaw.data, "hex") : undefined,
+          nonce: transactionRaw.nonce,
+          recipient: transactionRaw.recipient,
+          mode: transactionRaw.mode,
+          networkInfo: null, // force to update network fee
+          feesStrategy: "fast", // set "fast" as default option for speedup flow
+          maxFeePerGas: null,
+          maxPriorityFeePerGas: null,
+          gasPrice: null,
+        }),
+      );
+    } else {
+      const mainAccount = getMainAccount(account, parentAccount);
+      updateTransaction((tx) =>
+        bridge.updateTransaction(tx, {
+          amount: new BigNumber(0),
+          allowZeroAmount: true,
+          data: undefined,
+          nonce: transactionRaw.nonce,
+          mode: "send",
+          recipient: mainAccount.freshAddress,
+          // increase gas fees in case of cancel flow as we don't have the fees input screen for cancel flow
+          maxFeePerGas: transactionRaw.maxFeePerGas
+            ? new BigNumber(transactionRaw.maxFeePerGas)
+                .times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR"))
+                .integerValue()
+            : null,
+          maxPriorityFeePerGas: transactionRaw.maxPriorityFeePerGas
+            ? new BigNumber(transactionRaw.maxPriorityFeePerGas)
+                .times(1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR"))
+                .integerValue()
+            : null,
+          gasPrice: transactionRaw.gasPrice
+            ? new BigNumber(transactionRaw.gasPrice)
+                .times(1 + getEnv("EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR"))
+                .integerValue()
+            : null,
+          feesStrategy: "custom",
+        }),
+      );
+    }
+    // skip fees input screen for cancel flow
+    transitionTo(editType === "speedup" ? "fees" : "summary");
+  };
+
+  componentDidMount() {
+    const { account, parentAccount, transaction, transactionHash } = this.props;
+    if (!account || !transaction || !transactionHash) return;
+    const mainAccount = getMainAccount(account, parentAccount);
+    if (mainAccount.currency.family !== "ethereum") return;
+    apiForCurrency(mainAccount.currency)
+      .getTransactionByHash(transactionHash)
+      .then((tx: { confirmations?: number }) => {
+        console.log("tx.con", tx.confirmations);
+        if (tx.confirmations) {
+          this.setState({ transactionHasBeenValidated: true });
+        }
+      });
+  }
+
+  render() {
+    const {
+      t,
       haveFundToSpeedup,
       haveFundToCancel,
       isOldestEditableOperation,
     } = this.props;
-    const transactionRaw = this.props.transactionRaw as EthereumTransactionRaw;
-    if (!account) return null;
-    const bridge = getAccountBridge(account, parentAccount);
+
     return (
       <>
+        {this.state.transactionHasBeenValidated ? (
+          <ErrorBanner error={new TransactionHasBeenValidatedError()} />
+        ) : null}
         <Button
           id={"send-recipient-continue-button"}
           primary
-          disabled={(!haveFundToSpeedup || !isOldestEditableOperation) && !haveFundToCancel} // continue button is disable if both "speedup" and "cancel" are not possible
-          onClick={() => {
-            if (isNftOperation) {
-              setIsNFTSend(editType === "speedup");
-            }
-            if (editType === "speedup") {
-              updateTransaction((tx: any) =>
-                bridge.updateTransaction(tx, {
-                  amount: new BigNumber(transactionRaw.amount),
-                  data: transactionRaw.data,
-                  nonce: transactionSequenceNumber,
-                  recipient: transactionRaw.recipient,
-                  mode: transactionRaw.mode,
-                  networkInfo: null, // force to update network fee
-                  feesStrategy: "fast", // set "fast" as default option for speedup flow
-                  maxFeePerGas: null,
-                  maxPriorityFeePerGas: null,
-                  gasPrice: null,
-                }),
-              );
-            } else {
-              const mainAccount = getMainAccount(account, parentAccount);
-              updateTransaction((tx: any) =>
-                bridge.updateTransaction(tx, {
-                  amount: new BigNumber(0),
-                  allowZeroAmount: true,
-                  data: undefined,
-                  nonce: transactionSequenceNumber,
-                  mode: "send",
-                  recipient: mainAccount.freshAddress,
-                  // increase gas fees in case of cancel flow as we don't have the fees input screen for cancel flow
-                  maxFeePerGas: transactionRaw.maxFeePerGas
-                    ? new BigNumber(
-                        Math.round(
-                          Number(transactionRaw.maxFeePerGas) *
-                            (1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")),
-                        ),
-                      )
-                    : null,
-                  maxPriorityFeePerGas: transactionRaw.maxPriorityFeePerGas
-                    ? new BigNumber(
-                        Math.round(
-                          Number(transactionRaw.maxPriorityFeePerGas) *
-                            (1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR")),
-                        ),
-                      )
-                    : null,
-                  gasPrice: transactionRaw.gasPrice
-                    ? new BigNumber(
-                        Math.round(
-                          Number(transactionRaw.gasPrice) *
-                            (1 + getEnv("EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR")),
-                        ),
-                      )
-                    : null,
-                  feesStrategy: "custom",
-                }),
-              );
-            }
-            // skip fees input screen for cancel flow
-            transitionTo(editType === "speedup" ? "fees" : "summary");
-          }}
+          disabled={this.state.transactionHasBeenValidated || ((!haveFundToSpeedup || !isOldestEditableOperation) && !haveFundToCancel)} // continue button is disable if both "speedup" and "cancel" are not possible
+          onClick={this.handleContinueClick}
         >
           {t("common.continue")}
         </Button>

@@ -3,7 +3,8 @@ import Box from "~/renderer/components/Box";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
-import { getEthStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+import invariant from "invariant";
 
 type Props = {
   account?: AccountLike;
@@ -16,18 +17,19 @@ const EditStuckTransactionPanelBodyHeader = (props: Props) => {
   if (!editEthTx?.enabled) {
     return null;
   }
+  invariant(account, "account required");
   // for ethereum family, check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
-  const [stuckAccount, stuckParentAccount, stuckOperation] = getEthStuckAccountAndOperation(
+  const stuckAccountAndOperation = getStuckAccountAndOperation(
     account,
     parentAccount,
   );
   return (
     <Box>
-      {stuckOperation && stuckAccount ? (
+      {stuckAccountAndOperation ? (
         <EditOperationPanel
-          operation={stuckOperation}
-          account={stuckAccount}
-          parentAccount={stuckParentAccount}
+          operation={stuckAccountAndOperation.operation}
+          account={stuckAccountAndOperation.account}
+          parentAccount={stuckAccountAndOperation.parentAccount}
         />
       ) : null}
     </Box>

@@ -120,7 +120,7 @@ export type API = {
     batchSize?: number,
     token?: string
   ) => Promise<{ txs: Tx[]; nextPageToken: string | undefined }>;
-  getTransactionByHash: (hash: string) => Promise<Tx | undefined>;
+  getTransactionByHash: (hash: string) => Promise<Tx>;
   getCurrentBlock: () => Promise<Block>;
   getAccountNonce: (address: string) => Promise<number>;
   broadcastTransaction: (signedTransaction: string) => Promise<string>;
@@ -199,7 +199,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return { txs: txData.data.data, nextPageToken: txData.data.token };
     },
 
-    async getTransactionByHash(hash): Promise<Tx | undefined> {
+    async getTransactionByHash(hash): Promise<Tx> {
       const { data } = await network({
         method: "GET",
         url: `${baseURL}/tx/${hash}`,

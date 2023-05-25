@@ -1,18 +1,10 @@
-import type {
-  NFTStandard,
-  Operation,
-  AccountLike,
-  Account,
-  SubAccount,
-} from "@ledgerhq/types-live";
+import type { NFTStandard, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "./account";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
 } from "./nft/nftOperationId";
-import { getEnv } from "./env";
-import { getMainAccount } from "./account/index";
 
 const nftOperationIdEncoderPerStandard: Record<
   NFTStandard,
@@ -36,6 +28,8 @@ import {
   isConfirmedOperation,
   patchOperationWithHash as commonPatchOperationWithHash,
   isAddressPoisoningOperation,
+  isEditableOperation,
+  getStuckAccountAndOperation,
 } from "@ledgerhq/coin-framework/operation";
 
 export {
@@ -51,6 +45,8 @@ export {
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
   isAddressPoisoningOperation,
+  isEditableOperation,
+  getStuckAccountAndOperation,
 };
 
 export function patchOperationWithHash(
@@ -82,80 +78,4 @@ export function patchOperationWithHash(
         };
       }),
   };
-}
-
-export function isEditableOperation(
-  account: AccountLike,
-  operation: Operation
-): boolean {
-  let isEthFamily = false;
-  if (account.type === "Account") {
-    isEthFamily = account.currency.family === "ethereum";
-  } else if (account.type === "TokenAccount") {
-    isEthFamily = account.token.parentCurrency.family === "ethereum";
-  }
-  return (
-    isEthFamily && operation.blockHeight === null && !!operation.transactionRaw
-  );
-}
-
-export function getEthStuckAccountAndOperation(
-  account: AccountLike | undefined,
-  parentAccount: Account | undefined | null
-): [
-  stuckAccount: AccountLike | undefined,
-  stuckParentAccount: Account | undefined,
-  stuckOperation: Operation | undefined
-] {
-  let stuckAccount: AccountLike | undefined;
-  let stuckParentAccount: Account | undefined;
-  let stuckOperation: Operation | undefined;
-  const mainAccount = account
-    ? getMainAccount(account, parentAccount)
-    : undefined;
-  if (mainAccount && mainAccount.currency.family === "ethereum") {
-    if (mainAccount.subAccounts && mainAccount.subAccounts.length > 0) {
-      mainAccount.subAccounts.forEach((subAccount: SubAccount) => {
-        subAccount.pendingOperations.forEach((pendingOperation) => {
-          if (
-            isEditableOperation(subAccount, pendingOperation) &&
-            new Date().getTime() - pendingOperation.date.getTime() >
-              getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
-          ) {
-            if (
-              !stuckAccount ||
-              (pendingOperation.transactionSequenceNumber !== undefined &&
-                stuckOperation?.transactionSequenceNumber !== undefined &&
-                pendingOperation.transactionSequenceNumber <
-                  stuckOperation.transactionSequenceNumber)
-            ) {
-              stuckAccount = subAccount;
-              stuckOperation = pendingOperation;
-              stuckParentAccount = mainAccount;
-            }
-          }
-        });
-      });
-    }
-    mainAccount.pendingOperations.forEach((pendingOperation) => {
-      if (
-        isEditableOperation(mainAccount, pendingOperation) &&
-        new Date().getTime() - pendingOperation.date.getTime() >
-          getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
-      ) {
-        if (
-          !stuckAccount ||
-          (pendingOperation.transactionSequenceNumber !== undefined &&
-            stuckOperation?.transactionSequenceNumber !== undefined &&
-            pendingOperation.transactionSequenceNumber <
-              stuckOperation.transactionSequenceNumber)
-        ) {
-          stuckAccount = mainAccount;
-          stuckOperation = pendingOperation;
-          stuckParentAccount = undefined;
-        }
-      }
-    });
-  }
-  return [stuckAccount, stuckParentAccount, stuckOperation];
 }

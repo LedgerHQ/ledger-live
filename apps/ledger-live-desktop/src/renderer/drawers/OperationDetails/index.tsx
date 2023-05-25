@@ -253,7 +253,6 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
       account,
       parentAccount,
       transactionRaw,
-      transactionSequenceNumber,
       transactionHash,
       isNftOperation,
     ) => {
@@ -263,7 +262,6 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
           account,
           parentAccount,
           transactionRaw,
-          transactionSequenceNumber,
           transactionHash,
           isNftOperation,
         }),
@@ -400,7 +398,6 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
                   account,
                   parentAccount,
                   operation.transactionRaw,
-                  operation.transactionSequenceNumber,
                   operation.hash,
                   isNftOperation,
                 );

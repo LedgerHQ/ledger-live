@@ -108,18 +108,20 @@ const FeesField = ({
     [transaction.networkInfo?.nextBaseFeePerGas, unit],
   );
 
-  const validTransactionError = status.errors.maxFee;
-  let validTransactionWarning = status.warnings.maxFee;
-  // give user a warning if maxFeePerGas is lower than pending transaction maxFeePerGas + 10% of pending transaction maxPriorityFeePerGas for edit eth transaction feature
-  if (!validTransactionWarning && transactionRaw && transactionRaw.maxPriorityFeePerGas) {
+  // give user an error if maxFeePerGas is lower than pending transaction maxFeePerGas + 10% of pending transaction maxPriorityFeePerGas for edit eth transaction feature
+  if (!status.errors.maxFee && transactionRaw && transactionRaw.maxPriorityFeePerGas && transactionRaw.maxFeePerGas) {
     const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
     const lowerLimitMaxFeePerGas = new BigNumber(transactionRaw.maxFeePerGas).plus(
       new BigNumber(transactionRaw.maxPriorityFeePerGas).times(maxPriorityFeeGap),
     );
-    if (transaction.maxFeePerGas.isLessThan(lowerLimitMaxFeePerGas)) {
-      validTransactionWarning = new MaxFeeTooLow();
+    if (transaction.maxFeePerGas && transaction.maxFeePerGas.isLessThan(lowerLimitMaxFeePerGas)) {
+      status.errors.maxFee = new MaxFeeTooLow();
     }
   }
+
+  const validTransactionError = status.errors.maxFee;
+  const validTransactionWarning = status.warnings.maxFee;
+
   return (
     <Box mb={1}>
       <LabelWithExternalIcon

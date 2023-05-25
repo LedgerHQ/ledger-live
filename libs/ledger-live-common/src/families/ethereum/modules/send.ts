@@ -444,7 +444,7 @@ const send: ModeModule = {
         ) {
           result.errors.amount = new AmountRequired();
         } else if (
-          !result.totalSpent.gt(0) ||
+          (!result.totalSpent.gt(0) && !t.allowZeroAmount) ||
           result.totalSpent.gt(account.spendableBalance)
         ) {
           result.errors.amount = new NotEnoughBalance();

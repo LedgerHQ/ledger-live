@@ -1,8 +1,10 @@
 import { TFunction } from "react-i18next";
-import { Account, AccountLike, Operation, TransactionCommonRaw } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
+import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
+
 
 export type StepId = "method" | "fees" | "summary" | "device" | "confirmation";
 
@@ -25,12 +27,11 @@ export type StepProps = {
   onRetry: (a: void) => void;
   setSigned: (a: boolean) => void;
   signed: boolean;
-  updateTransaction: (updater: any) => void;
+  updateTransaction: (updater: (a: Transaction) => void) => void;
   onConfirmationHandler: Function;
   onFailHandler: Function;
   currencyName: string | undefined | null;
-  transactionRaw: TransactionCommonRaw;
-  transactionSequenceNumber: number;
+  transactionRaw: EthereumTransactionRaw;
   transactionHash: string;
   isNftOperation: boolean;
   editType: string | undefined | null;
