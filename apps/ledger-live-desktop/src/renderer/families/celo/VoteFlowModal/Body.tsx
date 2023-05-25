@@ -3,7 +3,6 @@ import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { Trans, withTranslation, TFunction } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
@@ -94,7 +93,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    invariant(account && account.celoResources, "celo: account and celo resources required");
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
       mode: "vote",

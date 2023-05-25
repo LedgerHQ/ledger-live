@@ -1,6 +1,5 @@
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import { Theme } from "@ledgerhq/react-ui";
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -18,7 +17,6 @@ import { StepProps } from "../types";
 import * as S from "./StepConfirmation.styles";
 export const StepConfirmationFooter = ({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -47,7 +45,6 @@ export const StepConfirmationFooter = ({
               setDrawer(OperationDetails, {
                 operationId: optimisticOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
@@ -67,9 +64,7 @@ const StepConfirmation = ({
   signed,
   transaction,
   source,
-}: StepProps & {
-  theme: Theme;
-}) => {
+}: StepProps) => {
   const voteAccAddress = transaction?.recipient;
   const validators = useValidatorGroups();
   useEffect(() => {

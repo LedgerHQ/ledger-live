@@ -15,7 +15,6 @@ import { StepProps } from "../types";
 import * as S from "./StepConfirmation.styles";
 export const StepConfirmationFooter = ({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -44,7 +43,6 @@ export const StepConfirmationFooter = ({
               setDrawer(OperationDetails, {
                 operationId: optimisticOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
@@ -57,18 +55,14 @@ export const StepConfirmationFooter = ({
     </Box>
   );
 };
-const StepConfirmation = ({ t, transaction, optimisticOperation, error, signed }: StepProps) => {
+const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps) => {
   if (optimisticOperation) {
     return (
       <S.Container>
         <TrackPage category="Celo Withdraw" name="Step Confirmed" />
         <SuccessDisplay
           title={<Trans i18nKey="celo.withdraw.steps.confirmation.success.title" />}
-          description={multiline(
-            t("celo.withdraw.steps.confirmation.success.text", {
-              resource: transaction && transaction.resource && transaction.resource.toLowerCase(),
-            }),
-          )}
+          description={multiline(t("celo.withdraw.steps.confirmation.success.text"))}
         />
       </S.Container>
     );

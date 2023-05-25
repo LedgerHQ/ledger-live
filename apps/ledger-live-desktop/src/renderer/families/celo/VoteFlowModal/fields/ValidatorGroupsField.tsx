@@ -40,7 +40,7 @@ const ValidatorGroupsField = ({
       return validatorGroups.find(v => v.address === chosenValidatorGroupAddress);
     }
   }, [validatorGroups, chosenValidatorGroupAddress]);
-  const containerRef = useRef();
+  const containerRef = useRef<HTMLDivElement>();
 
   /** auto focus first input on mount */
   useEffect(() => {

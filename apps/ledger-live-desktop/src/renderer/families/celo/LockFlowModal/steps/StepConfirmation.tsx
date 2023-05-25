@@ -17,7 +17,6 @@ import * as S from "./StepConfirmation.styles";
 
 export const StepConfirmationFooter = ({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -34,10 +33,9 @@ export const StepConfirmationFooter = ({
       setDrawer(OperationDetails, {
         operationId: optimisticOperation.id,
         accountId: account.id,
-        parentId: parentAccount && parentAccount.id,
       });
     }
-  }, [account, parentAccount, optimisticOperation, onClose]);
+  }, [account, optimisticOperation, onClose]);
   if (error) {
     return <RetryButton ml={2} primary onClick={onRetry} />;
   }

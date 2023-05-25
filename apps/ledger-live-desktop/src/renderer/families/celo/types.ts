@@ -22,7 +22,7 @@ export type CoreStakingFlowModalStepProps = {
   error: Error | undefined;
   warning: Error | undefined;
   signed: boolean;
-  transaction: Transaction | undefined | null;
+  transaction: Transaction;
   status: TransactionStatus;
   onChangeTransaction: (a: Transaction) => void;
   onUpdateTransaction: (a: (a: Transaction) => Transaction) => void;
