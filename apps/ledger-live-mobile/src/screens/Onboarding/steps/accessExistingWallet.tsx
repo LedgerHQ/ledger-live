@@ -11,7 +11,7 @@ import { props } from "lodash/fp";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import Touchable from "../../../components/Touchable";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen, track } from "../../../analytics";
 import { ScreenName } from "../../../const/navigation";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
@@ -40,8 +40,16 @@ const Card = ({
   Icon,
 }: CardProps) => {
   const { colors, space } = useTheme();
+
+  const pressAndTrack = useCallback(() => {
+    track(event, {
+      page: "Onboarding choose access to wallet",
+      ...eventProperties,
+    });
+    onPress?.();
+  }, [event, eventProperties, onPress]);
   return (
-    <Touchable onPress={onPress} {...props}>
+    <Touchable onPress={pressAndTrack} {...props} testID={testID}>
       <Flex
         flexDirection="row"
         px={7}
@@ -105,8 +113,11 @@ function AccessExistingWallet() {
       <Box mb={6}>
         <Card
           title={t("onboarding.welcomeBackStep.connect")}
-          event={""}
-          testID={""}
+          event={"button_clicked"}
+          eventProperties={{
+            button: "Connect your Ledger",
+          }}
+          testID={"Existing Wallet | Connect"}
           onPress={connect}
           Icon={<Icons.BluetoothMedium color="primary.c80" size={30} />}
         />
@@ -114,16 +125,22 @@ function AccessExistingWallet() {
       <Box mb={6}>
         <Card
           title={t("onboarding.welcomeBackStep.sync")}
-          event={""}
-          testID={""}
+          event={"button_clicked"}
+          eventProperties={{
+            button: "Sync with Desktop",
+          }}
+          testID={"Existing Wallet | Sync"}
           onPress={sync}
           Icon={<Icons.QrCodeMedium color="primary.c80" size={30} />}
         />
       </Box>
       <Card
         title={t("onboarding.welcomeBackStep.recover")}
-        event={""}
-        testID={""}
+        event={"button_clicked"}
+        eventProperties={{
+          button: "Login to Ledger recover",
+        }}
+        testID={"Existing Wallet | Recover"}
         onPress={recover}
         Icon={<Icons.ShieldMedium color="primary.c80" size={30} />}
       />
