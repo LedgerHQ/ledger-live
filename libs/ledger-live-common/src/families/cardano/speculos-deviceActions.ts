@@ -28,7 +28,13 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
         button: SpeculosButton.BOTH,
       },
       {
-        title: "Send to address",
+        title: "Send to address (1/2)",
+        button: SpeculosButton.RIGHT,
+        ignoreAssertionFailure: true,
+        expectedValue: ({ transaction }) => transaction.recipient,
+      },
+      {
+        title: "Send to address (2/2)",
         button: SpeculosButton.BOTH,
         ignoreAssertionFailure: true,
         expectedValue: ({ transaction }) => transaction.recipient,
