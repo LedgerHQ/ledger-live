@@ -26,7 +26,7 @@ const StakeFlow = ({ route }: Props) => {
   const currencies = route?.params?.currencies || featureFlag?.params?.list;
   const navigation =
     useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
-  const screen = route?.params?.previousScreen;
+  const parentRoute = route?.params?.parentRoute;
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
       currencies: currencies || [],
@@ -44,7 +44,7 @@ const StakeFlow = ({ route }: Props) => {
             account,
             parentAccount,
             colors: {},
-            screen,
+            parentRoute,
           })) ||
         [];
       const stakeFlow = familySpecificMainActions.find(
@@ -53,10 +53,11 @@ const StakeFlow = ({ route }: Props) => {
       if (!stakeFlow) return null;
       const [name, options] = stakeFlow;
       navigation.navigate(NavigatorName.Base, {
-        screen: options.screen ?? name,
+        screen: parentRoute?.name ?? name,
         params: {
           screen: options.screen,
           params: {
+            ...(parentRoute?.params ?? {}),
             ...(options?.params || {}),
             account,
             parentAccount,
@@ -64,7 +65,7 @@ const StakeFlow = ({ route }: Props) => {
         },
       });
     },
-    [navigation, screen],
+    [navigation, parentRoute],
   );
   const onError = (error: Error) => {
     logger.critical(error);

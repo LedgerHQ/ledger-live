@@ -3,16 +3,17 @@ import type { Account } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../const";
 
 const getMainActions = ({
   account,
   parentAccount,
-  screen,
+  parentRoute,
 }: {
   account: Account;
   parentAccount: Account;
-  screen: ScreenName;
+  parentRoute: RouteProp<ParamListBase>;
 }) => {
   if (account.type === "Account" && account.currency.id === "ethereum") {
     const navigationParams = isAccountEmpty(account)
@@ -29,7 +30,7 @@ const getMainActions = ({
       : [
           NavigatorName.Base,
           {
-            screen,
+            screen: parentRoute.name,
             params: {
               drawer: {
                 id: "EthStakingDrawer",
