@@ -5,6 +5,7 @@ import {
 } from "@ledgerhq/errors";
 import { command as staxRemoveImage } from "./staxRemoveImage";
 import Transport from "@ledgerhq/hw-transport";
+import { ImageDoesNotExistOnDevice } from "../errors";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore next-line
@@ -32,6 +33,15 @@ describe("staxRemoveImage", () => {
       Buffer.from(StatusCodes.USER_REFUSED_ON_DEVICE.toString(16), "hex")
     );
     await expect(staxRemoveImage(mockedTransport)).rejects.toThrow(Error);
+  });
+
+  test("missing image, should throw", async () => {
+    const mockedTransport = mockTransportGenerator(
+      Buffer.from(StatusCodes.CUSTOM_IMAGE_EMPTY.toString(16), "hex")
+    );
+    await expect(staxRemoveImage(mockedTransport)).rejects.toThrow(
+      ImageDoesNotExistOnDevice
+    );
   });
 
   test("unexpected bootloader or any other code, should throw", async () => {
