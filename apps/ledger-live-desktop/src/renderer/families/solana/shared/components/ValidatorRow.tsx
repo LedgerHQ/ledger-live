@@ -21,7 +21,7 @@ type Props = {
   currency: CryptoCurrency;
   validator: ValidatorsAppValidator;
   active?: boolean;
-  onClick?: (v: ValidatorsAppValidator) => void;
+  onClick?: (v: { address: string }) => void;
   disableHover?: boolean;
   unit: Unit;
 };
@@ -95,19 +95,23 @@ function SolanaValidatorRow({ validator, active, onClick, unit, currency, disabl
     ></StyledValidatorRow>
   );
 }
-const StyledValidatorRow: ThemedComponent<ValidatorRowProps & {
-  disableHover: boolean;
-}> = styled(ValidatorRow)`
+const StyledValidatorRow = styled(ValidatorRow)<
+  ValidatorRowProps & {
+    disableHover: boolean;
+  }
+>`
   border-color: transparent;
   margin-bottom: 0;
   ${p => (p.disableHover ? "&:hover { border-color: transparent; }" : "")}
 `;
-const ChosenMark: ThemedComponent<{
-  active: boolean;
-}> = styled(Check).attrs(p => ({
+const ChosenMark = styled(Check).attrs<{
+  active?: boolean;
+}>(p => ({
   color: p.active ? p.theme.colors.palette.primary.main : "transparent",
   size: 14,
-}))``;
+}))<{
+  active?: boolean;
+}>``;
 const TotalStakeTitle = styled(Text)`
   font-size: 11px;
   font-weight: 500;

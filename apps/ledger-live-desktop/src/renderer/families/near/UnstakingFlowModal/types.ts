@@ -12,7 +12,7 @@ export type StepProps = {
   transitionTo: (address: string) => void;
   device: Device | undefined | null;
   account: NearAccount;
-  parentAccount: typeof undefined;
+  parentAccount: never;
   onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;

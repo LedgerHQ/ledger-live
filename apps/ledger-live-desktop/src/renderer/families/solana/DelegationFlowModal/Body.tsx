@@ -27,6 +27,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { defaultVoteAccAddrByCurrencyId } from "@ledgerhq/live-common/families/solana/utils";
 export type Data = {
   account: SolanaAccount;
+  source?: string;
 };
 type OwnProps = {
   stepId: StepId;

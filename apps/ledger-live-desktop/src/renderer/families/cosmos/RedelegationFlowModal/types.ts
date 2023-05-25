@@ -19,7 +19,7 @@ export type StepProps = {
   transitionTo: (a: string) => void;
   device: Device | undefined | null;
   account: CosmosAccount;
-  parentAccount: typeof undefined;
+  parentAccount: never;
   onRetry: (a: void) => void;
   onClose: () => void;
   openModal: OpenModal;

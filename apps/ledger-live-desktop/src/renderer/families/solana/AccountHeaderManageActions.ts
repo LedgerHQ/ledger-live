@@ -6,21 +6,16 @@ import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { SolanaFamily } from "./types";
 
-const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({
-  account,
-  parentAccount,
-  source,
-}) => {
+const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({ account, source }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = getMainAccount(account);
   const { solanaResources } = mainAccount;
   const onClick = useCallback(() => {
     if (isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
-          parentAccount,
         }),
       );
     } else {
@@ -30,13 +25,13 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({
             ? "MODAL_SOLANA_DELEGATE"
             : "MODAL_SOLANA_REWARDS_INFO",
           {
-            account,
+            account: mainAccount,
             source,
           },
         ),
       );
     }
-  }, [account, dispatch, source, parentAccount, solanaResources]);
+  }, [account, dispatch, source, solanaResources, mainAccount]);
   return [
     {
       key: "Stake",

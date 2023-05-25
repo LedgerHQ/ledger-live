@@ -1,6 +1,10 @@
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/solana/types";
+import {
+  SolanaAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/solana/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Operation } from "@ledgerhq/types-live";
 import { TFunction } from "react-i18next";
 import { OpenModal } from "~/renderer/actions/modals";
 import { Step } from "~/renderer/components/Stepper";
@@ -9,8 +13,8 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
   device: Device | undefined | null;
-  account: Account | undefined | null;
-  parentAccount: Account | undefined | null;
+  account: SolanaAccount;
+  parentAccount: never;
   onRetry: (a: void) => void;
   onClose: () => void;
   openModal: OpenModal;
@@ -25,5 +29,6 @@ export type StepProps = {
   onOperationBroadcasted: (a: Operation) => void;
   setSigned: (a: boolean) => void;
   bridgePending: boolean;
+  source?: string;
 };
 export type St = Step<StepId, StepProps>;

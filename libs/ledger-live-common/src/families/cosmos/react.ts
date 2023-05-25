@@ -26,7 +26,7 @@ import useMemoOnce from "../../hooks/useMemoOnce";
 import cryptoFactory from "./chain/chain";
 
 export function useCosmosFamilyPreloadData(
-  currencyId: string
+  currencyId?: string
 ): CosmosPreloadData {
   const getCurrent = getCurrentCosmosPreloadData;
   const getUpdates = getCosmosPreloadDataUpdates;

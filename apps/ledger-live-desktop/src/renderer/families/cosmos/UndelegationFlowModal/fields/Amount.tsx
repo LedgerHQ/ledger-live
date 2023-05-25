@@ -3,10 +3,7 @@ import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
-import {
-  CosmosDelegationInfo,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/cosmos/types";
+import { TransactionStatus } from "@ledgerhq/live-common/families/cosmos/types";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
