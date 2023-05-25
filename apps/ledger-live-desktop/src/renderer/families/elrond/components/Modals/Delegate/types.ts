@@ -11,6 +11,7 @@ import {
 import { Step } from "~/renderer/components/Stepper";
 import { OpenModal } from "~/renderer/actions/modals";
 export type StepId = "validator" | "amount" | "connectDevice" | "confirmation";
+
 export type StepProps = {
   t: TFunction;
   transitionTo: (param: string) => void;

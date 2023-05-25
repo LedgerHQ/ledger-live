@@ -26,7 +26,6 @@ import { UnbondingType } from "../../../types";
 
 export type Data = {
   account: ElrondAccount;
-  parentAccount: ElrondAccount | undefined | null;
   unbondings?: UnbondingType[];
   validator?: ElrondProvider;
   contract?: string;

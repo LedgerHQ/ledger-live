@@ -23,13 +23,14 @@ import {
 } from "@ledgerhq/live-common/families/elrond/types";
 import { StepId } from "./types";
 import { Device } from "@ledgerhq/types-devices";
+import { DelegationType } from "../../../types";
 
 export type Data = {
   account: ElrondAccount;
   contract: string;
   validators: Array<ElrondProvider>;
   amount: string;
-  delegations: Array<{ validator: string; amount: string }>;
+  delegations: Array<DelegationType>;
 };
 interface OwnProps {
   account: ElrondAccount;
@@ -39,7 +40,7 @@ interface OwnProps {
   contract: string;
   validators: Array<ElrondProvider>;
   amount: string;
-  delegations: Array<{ validator: string; amount: string }>;
+  delegations: Array<DelegationType>;
 }
 interface StateProps {
   t: TFunction;

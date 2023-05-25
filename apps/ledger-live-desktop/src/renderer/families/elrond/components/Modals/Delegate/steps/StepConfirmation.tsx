@@ -24,7 +24,16 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 const StepConfirmation = (props: StepProps) => {
-  const { t, optimisticOperation = {}, error, signed, transaction, source, validators } = props;
+  const {
+    t,
+    optimisticOperation = {},
+    account,
+    error,
+    signed,
+    transaction,
+    source,
+    validators,
+  } = props;
   const voteAccAddress = transaction?.recipient;
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {
@@ -43,7 +52,7 @@ const StepConfirmation = (props: StepProps) => {
     return (
       <Container>
         <TrackPage category="Delegation Cosmos" name="Step Confirmed" />
-        <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
+        {account ? <SyncOneAccountOnMount priority={10} accountId={account.id} /> : null}
 
         <SuccessDisplay
           title={<Trans i18nKey="elrond.delegation.flow.steps.confirmation.success.title" />}

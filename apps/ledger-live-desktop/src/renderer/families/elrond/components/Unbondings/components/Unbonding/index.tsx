@@ -18,7 +18,15 @@ import {
   ELROND_EXPLORER_URL,
   ELROND_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
-const Unbonding = (props: UnbondingType) => {
+import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+
+// FIXME spreading UnbondingType is a bad pattern
+const Unbonding = (
+  props: UnbondingType & {
+    account: ElrondAccount;
+    unbondings: UnbondingType[];
+  },
+) => {
   const { account, contract, seconds, validator, amount, unbondings } = props;
   const [counter, setCounter] = useState(seconds);
   const name = useMemo(() => (validator ? validator.identity.name || contract : contract), [
@@ -36,14 +44,14 @@ const Unbonding = (props: UnbondingType) => {
   const dispatch = useDispatch();
   const getTime = useCallback(() => {
     const duration = moment.duration(counter, "seconds");
-    const formatters = {
+    const formatters: Record<string, [number, string | number]> = {
       d: [duration.asDays(), Math.floor(duration.asDays())],
       h: [duration.asHours(), "H"],
       m: [duration.asMinutes(), "m"],
       s: [duration.asSeconds(), "s"],
     };
     const format = Object.keys(formatters).reduce((total, key) => {
-      const [time, label] = formatters[key];
+      const [time, label] = formatters[key as keyof typeof formatters];
       if (Math.floor(time) > 0) {
         return total === "" ? `${label}[${key}]` : `${total} : ${label}[${key}]`;
       }

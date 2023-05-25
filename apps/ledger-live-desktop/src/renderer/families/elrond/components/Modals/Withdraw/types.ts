@@ -10,7 +10,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { OpenModal } from "~/renderer/actions/modals";
-export type StepId = "claimRewards" | "connectDevice" | "confirmation";
+export type StepId = "claimRewards" | "connectDevice" | "confirmation" | "withdraw";
 export type StepProps = {
   t: TFunction;
   transitionTo: (param: string) => void;

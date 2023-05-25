@@ -8,9 +8,7 @@ const UndelegationModal = () => {
   const onHide = useCallback(() => {
     setStepId("amount");
   }, []);
-  const onChange = useCallback((id: string) => {
-    setStepId(id);
-  }, []);
+  const onChange = useCallback((id: StepId) => setStepId(id), []);
   const isModalLocked = ["device", "confirmation"].includes(stepId);
   return (
     <Modal

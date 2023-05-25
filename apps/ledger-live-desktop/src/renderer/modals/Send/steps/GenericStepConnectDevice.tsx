@@ -45,9 +45,9 @@ export default function StepConnectDevice({
   onFailHandler,
 }: {
   transitionTo: (a: string) => void;
-  account: AccountLike | undefined | null;
+  account?: AccountLike | undefined | null;
   parentAccount?: Account | undefined | null;
-  transaction: Transaction | undefined | null;
+  transaction?: Transaction | undefined | null;
   status: TransactionStatus;
   onTransactionError: (a: Error) => void;
   onOperationBroadcasted: (a: Operation) => void;
