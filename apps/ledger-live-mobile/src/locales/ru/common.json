@@ -52,7 +52,7 @@
     "token_plural" : "Токены",
     "subaccount" : "Субсчёт",
     "subaccount_plural" : "Субсчета",
-    "forgetDevice" : "Удаление устройства",
+    "forgetDevice" : "Удалить устройство",
     "help" : "Помощь",
     "saveLogs" : "Сохранить логи",
     "sync" : {
@@ -136,7 +136,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Извините, не удалось подключиться к Диспетчеру",
+      "title" : "Извините, не удалось подключиться к «Мой Ledger»",
       "description" : {
         "ios" : {
           "nanoX" : "Убедитесь, что {{productName}} разблокирован и Bluetooth включён."
@@ -1134,7 +1134,7 @@
       },
       "news" : {
         "title" : "Новости",
-        "desc" : "Узнайте больше о криптовалютах, безопасности, Web3, а также получайте актуальные новости"
+        "desc" : "Узнайте больше о криптовалютах, безопасности, Web3, а также получайте актуальные новости."
       },
       "ledgerApps" : {
         "title" : "Приложения",
@@ -2058,7 +2058,7 @@
   },
   "addAccountsModal" : {
     "title" : "Добавить счёт",
-    "ctaAdd" : "Добавление счёта",
+    "ctaAdd" : "Добавить счёт",
     "ctaImport" : "Импорт из настольного приложения",
     "description" : "Вы можете добавить криптовалюту с помощью устройства, либо импортировать её из Ledger Live для ПК.",
     "add" : {
@@ -2665,9 +2665,13 @@
       "repairDeviceDesc" : "Если при обновлении устройства возникла проблема и вы не можете продолжить обновление, воспользуйтесь этой функцией для устранения неполадок."
     },
     "experimental" : {
-      "title" : "Экспериментальные функции",
+      "title" : "Экспериментальный режим",
       "desc" : "Попробуйте экспериментальные функции и скажите нам, что вы думаете.",
       "disclaimer" : "Это Экспериментальные функции, предоставляемые на условиях «как есть» для нашего сообщества технических энтузиастов. Эти функции могут быть изменены, заблокированы или удалены в любое время. Активируя их, вы принимаете на себя все риски от использования.",
+      "provider" : "Экспериментальная настройка «Мой поставщик Ledger ({{forcedProvider}})» может отображать невыпущенные версии ОС и приложений, что приводит к неполадкам совместимости. Отключить её можно в Настройках.",
+      "providerDevMode" : "Экспериментальные настройки «Оператор в Мой Ledger ({{forcedProvider}})» и «Режим разработчика» могут отображать невыпущенные версии ОС и приложений, что приводит к неполадкам совместимости. Отключить их можно в Настройках.",
+      "devMode" : "Экспериментальная настройка «Режим разработчика» может отображать невыпущенные версии ОС и приложений, что приводит к неполадкам совместимости. Отключить её можно в Настройках.",
+      "providerCTA" : "Перейти в Настройки",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "Экспериментальная интеграция",
@@ -2689,13 +2693,13 @@
           "title" : "Экспериментальный список приложений для вкладки «Мой Ledger»",
           "description" : "Оптимизация встроенных потоков и доступа к вкладке «Мой Ledger»."
         },
-        "experimentalCountervalues" : {
-          "title" : "Экспериментальный API эквивалентов",
-          "description" : "Данная функция может привести к ошибке отображения эквивалентов для ваших счетов."
-        },
         "experimentalSwap" : {
           "title" : "Новый интерфейс обмена",
           "description" : "Использовать обновлённый интерфейс при обмене криптовалют и токенов"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "Активация логов сети",
+          "description" : "Включить сетевые логи в консоли. Логи ошибок активированы всегда"
         }
       },
       "developerFeatures" : {
@@ -2755,7 +2759,7 @@
       "inputEns" : "Введите адрес или ENS"
     },
     "send" : {
-      "title" : "Отправка",
+      "title" : "Отправить",
       "description" : "Отправляйте криптовалюту на другие кошельки."
     },
     "fees" : {
@@ -3372,7 +3376,7 @@
       "selectAmount" : "Сумма",
       "summary" : "Сводка",
       "selectDevice" : "Выбор устройства",
-      "connectDevice" : "Добавление устройства",
+      "connectDevice" : "Подключение устройства",
       "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
       "quantity" : "Количество",
       "selectCollection" : "Коллекция",
@@ -3484,7 +3488,7 @@
       "selectAmount" : "Заморозить",
       "summary" : "Сводка",
       "selectDevice" : "Выбор устройства",
-      "connectDevice" : "Добавление устройства",
+      "connectDevice" : "Подключение устройства",
       "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
     },
     "info" : {
@@ -3522,7 +3526,7 @@
       "selectAmount" : "Разморозить",
       "summary" : "Сводка",
       "selectDevice" : "Выбор устройства",
-      "connectDevice" : "Добавление устройства",
+      "connectDevice" : "Подключение устройства",
       "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
     },
     "amount" : {
@@ -3542,7 +3546,7 @@
   "claimReward" : {
     "stepperHeader" : {
       "selectDevice" : "Выбор устройства",
-      "connectDevice" : "Добавление устройства",
+      "connectDevice" : "Подключение устройства",
       "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
     },
     "validation" : {
@@ -3558,7 +3562,7 @@
       "selectValidator" : "Передать голоса",
       "castVote" : "Мои голоса",
       "selectDevice" : "Выбор устройства",
-      "connectDevice" : "Добавление устройства",
+      "connectDevice" : "Подключение устройства",
       "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
     },
     "selectValidator" : {
@@ -3674,6 +3678,7 @@
     "allowAppPermission" : "Откройте приложение {{wording}} на устройстве",
     "allowAppPermissionSubtitleToken" : "для управления {{token}}",
     "allowManagerPermission" : "Одобрите {{wording}} на {{productName}}",
+    "allowRemoveCustomLockscreen" : "Подтвердите удаление изображения на Ledger Stax",
     "loading" : "Загружаем...",
     "turnOnAndUnlockDevice" : "Включите и разблокируйте устройство",
     "connectAndUnlockDevice" : "Подключите и разблокируйте устройство",
@@ -3894,7 +3899,7 @@
       "uninstallAll" : "Удалить все"
     },
     "remove" : {
-      "title" : "Удаление устройства",
+      "title" : "Удалить устройство",
       "description" : "Вы уверены? {{productName}} можно будет вновь добавить в любой момент.",
       "button" : "Удалить"
     },
@@ -4012,7 +4017,7 @@
     "subtitle" : "Подлинное"
   },
   "RemoveRow" : {
-    "title" : "Удаление устройства"
+    "title" : "Удалить устройство"
   },
   "FirmwareVersionRow" : {
     "title" : "Версия прошивки",
@@ -4153,7 +4158,7 @@
       "stepperHeader" : {
         "info" : "Получение вознаграждений",
         "starter" : "Вознаграждения",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "verification" : "Проверка",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
@@ -4192,7 +4197,7 @@
     "optIn" : {
       "stepperHeader" : {
         "selectToken" : "Добавление активов ASA",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "verification" : "Проверка",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
@@ -4290,7 +4295,7 @@
         "title" : "Разблокировать активы",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4314,7 +4319,7 @@
         "title" : "Голосовать",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4349,7 +4354,7 @@
         "title" : "Активировать голоса",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "title" : "Активировать голоса",
       "flow" : {
@@ -4369,7 +4374,7 @@
         "title" : "Голосовать",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4403,7 +4408,7 @@
         "continue" : "Продолжить",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4424,7 +4429,7 @@
         "title" : "Заблокировать активы",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4466,7 +4471,7 @@
         "title" : "Голосовать",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства"
+        "connectDevice" : "Подключение устройства"
       },
       "flow" : {
         "steps" : {
@@ -4545,7 +4550,7 @@
         "summary" : "Сводка",
         "verification" : "Проверка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4609,7 +4614,7 @@
         "amountTitle" : "{{from}} → {{to}}",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4646,7 +4651,7 @@
         "amountSubTitle" : "Сумма отзыва делегирования",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4674,7 +4679,7 @@
         "method" : "Получение вознаграждения",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4747,7 +4752,7 @@
         "summary" : "Сводка",
         "verification" : "Проверка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4812,7 +4817,7 @@
         "method" : "Получить вознаграждения",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4849,7 +4854,7 @@
         "amountSubTitle" : "Сумма вывода из стейкинга",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -4881,7 +4886,7 @@
         "method" : "Получить вознаграждение",
         "summary" : "Сводка",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -5055,7 +5060,7 @@
     "addAsset" : {
       "stepperHeader" : {
         "selectAsset" : "Добавить актив",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "verification" : "Проверка",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
@@ -5185,7 +5190,7 @@
       "stepperHeader" : {
         "validators" : "Выбор валидаторов",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "steps" : {
@@ -5221,7 +5226,7 @@
         "starter" : "Получение вознаграждений",
         "amount" : "Сумма блокировки",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "steps" : {
@@ -5257,7 +5262,7 @@
       "stepperHeader" : {
         "amount" : "Сумма повторной блокировки",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "steps" : {
@@ -5280,7 +5285,7 @@
       "stepperHeader" : {
         "amount" : "Сумма разблокировки",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "steps" : {
@@ -5319,7 +5324,7 @@
       "stepperHeader" : {
         "info" : "Подробнее",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "steps" : {
@@ -5430,7 +5435,7 @@
       "stepperHeader" : {
         "amountSubTitle" : "Сумма для стейкинга",
         "selectDevice" : "Выбор устройства",
-        "connectDevice" : "Добавление устройства",
+        "connectDevice" : "Подключение устройства",
         "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
       },
       "flow" : {
@@ -5851,7 +5856,7 @@
       "priceStatistics" : "Статистика цены",
       "price" : "Цена",
       "tradingVolume" : "Торговый объём",
-      "24hLowHight" : "Макс/Мин (24 часа)",
+      "24hLowHight" : "Мин/Макс (24 часа)",
       "7dLowHigh" : "Мин/Макс (Неделя)",
       "allTimeHigh" : "Исторический макс.",
       "allTimeLow" : "Исторический мин.",
@@ -5966,9 +5971,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Выбрать из галереи изображений",
-        "selectFromNFTGallery" : "Выбрать из галереи NFT"
+        "selectFromNFTGallery" : "Выбрать из галереи NFT",
+        "remove" : "Удалить изображение"
       }
     },
+    "toastRemove" : "Изображение экрана блокировки удалено",
     "cropImage" : "Обрезка",
     "chooseConstrast" : "Указать контраст",
     "uploadAnotherImage" : "Загрузить другое изображение",
@@ -6058,7 +6065,7 @@
     "nftGallery" : {
       "filters" : {
         "selectAndHide" : "Выбрать и скрыть",
-        "hide" : "Скрыть {{count}} коллекцию",
+        "hide" : "Скрыть коллекции ({{count}})",
         "hide_plural" : "Скрыть коллекции: {{count}}",
         "alertHide" : "1 коллекция скрыта. Отобразить её вновь можно в любой момент в Настройках.",
         "alertHide_plural" : "Скрытых коллекций: {{count}}. Отобразить их вновь можно в любой момент в Настройках"
@@ -6070,7 +6077,7 @@
         "supportLink" : "Как получить NFT с других кошельков?"
       },
       "receiveModal" : {
-        "title" : "Получить NFT можно так же, как и другие криптоактивы",
+        "title" : "Получать NFT можно так же как и другие криптоактивы",
         "bullets" : {
           "0" : "• Выберите блокчейн NFT",
           "1" : "• Выберите счёт для получения NFT"
