@@ -5,11 +5,14 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 
 import { useTheme } from "styled-components/native";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen, track, updateIdentify } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 
-import { setReadOnlyMode } from "../../../actions/settings";
+import {
+  setOnboardingHasDevice,
+  setReadOnlyMode,
+} from "../../../actions/settings";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 
@@ -29,17 +32,36 @@ function PostWelcomeSelection() {
 
   const [isNoLedgerModalOpen, setOpen] = useState(false);
 
-  const openModal = useCallback(() => setOpen(true), []);
+  const identifyUser = useCallback(
+    (hasDevice: boolean) => {
+      dispatch(setOnboardingHasDevice(hasDevice));
+      updateIdentify();
+    },
+    [dispatch],
+  );
+
+  const openModal = useCallback(() => {
+    setOpen(true);
+    track("button_clicked", {
+      button: "I don’t have a Ledger yet",
+      page: "Onboarding Get Started",
+    });
+    identifyUser(false);
+  }, [identifyUser]);
+
   const closeModal = useCallback(() => setOpen(false), []);
+
   const setupLedger = useCallback(() => {
     dispatch(setReadOnlyMode(false));
+    identifyUser(true);
     navigation.navigate(ScreenName.OnboardingDeviceSelection);
-  }, [dispatch, navigation]);
+  }, [dispatch, identifyUser, navigation]);
 
   const accessExistingWallet = useCallback(() => {
     dispatch(setReadOnlyMode(false));
+    identifyUser(true);
     navigation.navigate(ScreenName.OnboardingWelcomeBack);
-  }, [dispatch, navigation]);
+  }, [dispatch, identifyUser, navigation]);
 
   return (
     <Flex flex={1} mx={6} mt={3}>
@@ -54,11 +76,11 @@ function PostWelcomeSelection() {
       <SelectionCard
         title={t("onboarding.postWelcomeStep.setupLedger.title")}
         subTitle={t("onboarding.postWelcomeStep.setupLedger.subtitle")}
-        event="banner_clicked"
+        event="button_clicked"
         eventProperties={{
-          banner: "Explore LL",
+          button: "Setup your Ledger",
         }}
-        testID={`Onboarding PostWelcome - Selection|ExploreLedger`}
+        testID={`Onboarding PostWelcome - Selection|Setup your Ledger`}
         onPress={setupLedger}
         Icon={<Icons.PlusMedium color={colors.primary.c80} size={14} />}
       />
@@ -67,11 +89,11 @@ function PostWelcomeSelection() {
         <SelectionCard
           title={t("onboarding.postWelcomeStep.accessWallet.title")}
           subTitle={t("onboarding.postWelcomeStep.accessWallet.subtitle")}
-          event="banner_clicked"
+          event="button_clicked"
           eventProperties={{
-            banner: "Explore LL",
+            button: "Access an existing wallet",
           }}
-          testID={`Onboarding PostWelcome - Selection|ExploreLedger`}
+          testID={`Onboarding PostWelcome - Selection|Access an existing wallet`}
           onPress={accessExistingWallet}
           Icon={<Icons.PlusMedium color={colors.primary.c80} size={14} />}
         />

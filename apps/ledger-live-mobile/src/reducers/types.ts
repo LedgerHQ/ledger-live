@@ -216,7 +216,7 @@ export type SettingsState = {
   marketCounterCurrency: string | null | undefined;
   marketFilterByStarredAccounts: boolean;
   sensitiveAnalytics: boolean;
-  firstConnectionHasDevice: boolean | null;
+  onboardingHasDevice: boolean | null;
   firstConnectHasDeviceUpdated: boolean | null;
   customImageType: ImageType | null;
   customImageBackup?: { hex: string; hash: string };

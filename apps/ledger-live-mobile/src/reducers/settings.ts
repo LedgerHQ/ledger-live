@@ -161,7 +161,7 @@ export const INITIAL_STATE: SettingsState = {
   marketCounterCurrency: null,
   marketFilterByStarredAccounts: false,
   sensitiveAnalytics: false,
-  firstConnectionHasDevice: null,
+  onboardingHasDevice: null,
   firstConnectHasDeviceUpdated: null,
   notifications: {
     areNotificationsAllowed: true,
@@ -778,10 +778,12 @@ export const marketRequestParamsSelector = (state: State) => state.settings.mark
 export const marketCounterCurrencySelector = (state: State) => state.settings.marketCounterCurrency;
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
-export const customImageBackupSelector = (state: State) => state.settings.customImageBackup;
-export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
-export const firstConnectionHasDeviceSelector = (state: State) =>
-  state.settings.firstConnectionHasDevice;
+export const customImageBackupSelector = (state: State) =>
+  state.settings.customImageBackup;
+export const sensitiveAnalyticsSelector = (state: State) =>
+  state.settings.sensitiveAnalytics;
+export const onboardingHasDeviceSelector = (state: State) =>
+  state.settings.onboardingHasDevice;
 export const firstConnectHasDeviceUpdatedSelector = (state: State) =>
   state.settings.firstConnectHasDeviceUpdated;
 export const notificationsSelector = (state: State) => state.settings.notifications;

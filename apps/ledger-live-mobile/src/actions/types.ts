@@ -343,8 +343,10 @@ export type SettingsSetMarketRequestParamsPayload = SettingsState["marketRequest
 export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCounterCurrency"];
 export type SettingsSetMarketFilterByStarredAccountsPayload =
   SettingsState["marketFilterByStarredAccounts"];
-export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
-export type SettingsSetFirstConnectionHasDevicePayload = SettingsState["firstConnectionHasDevice"];
+export type SettingsSetSensitiveAnalyticsPayload =
+  SettingsState["sensitiveAnalytics"];
+export type SettingsSetOnboardingHasDevicePayload =
+  SettingsState["onboardingHasDevice"];
 export type SettingsSetFirstConnectHasDeviceUpdatedPayload =
   SettingsState["firstConnectHasDeviceUpdated"];
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
