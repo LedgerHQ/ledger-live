@@ -337,14 +337,53 @@ export const useAnalytics = () => {
     page,
   };
 };
+
+/**
+ * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
+ * Extra logic to update the route names used in "screen" and "source"
+ * properties of further events can be optionally enabled with the parameters
+ * `updateRoutes` and `refreshSource`.
+ */
 export const screen = async (
+  /**
+   * First part of the event name string
+   */
   category?: string,
+  /**
+   * Second part of the event name string, will be concatenated to `category`
+   * after a whitespace if defined.
+   */
   name?: string | null,
+  /**
+   * Event properties
+   */
   properties?: Record<string, unknown> | null | undefined,
+  /**
+   * Should this function call update the previous & current route names.
+   * Previous and current route names are used to track:
+   * - the `screen` property in non-screen events (for instance `button_clicked` events)
+   * - the `source` property in further screen events
+   */
+  updateRoutes?: boolean,
+  /**
+   * Should this function call update the current route name.
+   * If true, it means that the full screen name (`category` + " " + `name`) will
+   * be used as a "source" property for further screen events.
+   * NB: the previous parameter `updateRoutes` must be true for this to have
+   * any effect.
+   */
+  refreshSource?: boolean,
 ) => {
-  const title = `Page ${category + (name ? ` ${name}` : "")}`;
+  const fullScreenName = category + (name ? ` ${name}` : "");
+  if (updateRoutes) {
+    previousRouteNameRef.current = currentRouteNameRef.current;
+    if (refreshSource) {
+      currentRouteNameRef.current = fullScreenName;
+    }
+  }
+  const eventName = `Page ${fullScreenName}`;
   Sentry.addBreadcrumb({
-    message: title,
+    message: eventName,
     category: "screen",
     data: properties || {},
     level: "info",
@@ -376,11 +415,11 @@ export const screen = async (
   if (ANALYTICS_LOGS)
     console.log("analytics:screen", category, name, allProperties);
   trackSubject.next({
-    eventName: title,
+    eventName,
     eventProperties: allProperties,
     eventPropertiesWithoutExtra,
     date: new Date(),
   });
   if (!token) return;
-  segmentClient?.track(title, allProperties);
+  segmentClient?.track(eventName, allProperties);
 };

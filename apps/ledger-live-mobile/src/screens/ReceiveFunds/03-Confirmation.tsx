@@ -227,7 +227,13 @@ function ReceiveConfirmationInner({
           currency={currency.name}
         />
         <Flex p={6} alignItems="center" justifyContent="center">
-          <Text color="neutral.c100" fontWeight="semiBold" variant="h4" mb={3}>
+          <Text
+            testID="receive-header-step3-title"
+            color="neutral.c100"
+            fontWeight="semiBold"
+            variant="h4"
+            mb={3}
+          >
             {t("transfer.receive.receiveConfirmation.title", {
               currencyTicker: currency.ticker,
             })}

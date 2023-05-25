@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
-import { Linking } from "react-native";
+import { Linking, View } from "react-native";
 import Svg, { G, Path, Rect, Mask } from "react-native-svg";
 import { NavigatorName, ScreenName } from "../../../const";
 import { track, TrackScreen } from "../../../analytics";
@@ -71,25 +71,33 @@ export default function ReceiveNFTsModal({ onClose, isOpened }: Props) {
         type="drawer"
         refreshSource={false}
       />
+      <View testID="wallet-nft-gallery-receive-modal">
+        {new Array(2).fill(null).map((_e, index) => (
+          <Text
+            variant="body"
+            fontWeight="medium"
+            color="neutral.c80"
+            key={index}
+          >
+            {t(`wallet.nftGallery.receiveModal.bullets.${index}`)}
+          </Text>
+        ))}
 
-      {new Array(2).fill(null).map((_e, index) => (
-        <Text
-          variant="body"
-          fontWeight="medium"
-          color="neutral.c80"
-          key={index}
+        <Button
+          testID="wallet-nft-gallery-receive-modal-continue-button"
+          type="main"
+          size="large"
+          onPress={onClickContinue}
+          mt={8}
+          mb={4}
         >
-          {t(`wallet.nftGallery.receiveModal.bullets.${index}`)}
-        </Text>
-      ))}
+          {t("wallet.nftGallery.receiveModal.cta")}
+        </Button>
 
-      <Button type="main" size="large" onPress={onClickContinue} mt={8} mb={4}>
-        {t("wallet.nftGallery.receiveModal.cta")}
-      </Button>
-
-      <Button size="large" type="default" onPress={onClickLearnMore}>
-        {t("wallet.nftGallery.receiveModal.info")}
-      </Button>
+        <Button size="large" type="default" onPress={onClickLearnMore}>
+          {t("wallet.nftGallery.receiveModal.info")}
+        </Button>
+      </View>
     </QueuedDrawer>
   );
 }

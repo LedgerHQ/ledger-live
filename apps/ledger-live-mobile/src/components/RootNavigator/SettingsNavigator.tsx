@@ -24,9 +24,7 @@ import DebugFeatures from "../../screens/Settings/Debug/Features";
 import DebugFetchCustomImage, {
   debugFetchCustomImageHeaderOptions,
 } from "../../screens/Settings/Debug/Features/FetchCustomImage";
-import DebugFirmwareUpdate, {
-  debugFirmwareUpdateHeaderOptions,
-} from "../../screens/Settings/Debug/Features/FirmwareUpdate";
+import DebugFirmwareUpdate from "../../screens/Settings/Debug/Features/FirmwareUpdate";
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "../../screens/Settings/Debug/Information";
@@ -386,7 +384,9 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugFirmwareUpdate}
         component={DebugFirmwareUpdate}
-        options={useMemo(() => debugFirmwareUpdateHeaderOptions(t), [t])}
+        options={{
+          title: "Debug Firmware update",
+        }}
       />
       <Stack.Screen
         name={ScreenName.DebugCustomImageGraphics}

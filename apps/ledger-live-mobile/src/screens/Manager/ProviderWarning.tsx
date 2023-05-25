@@ -24,7 +24,7 @@ const ProviderWarning = () => {
     });
   }, [navigation]);
 
-  return forcedProvider !== 1 ? (
+  return oddProvider || devMode ? (
     <Flex mt={4}>
       <Alert
         type="warning"
