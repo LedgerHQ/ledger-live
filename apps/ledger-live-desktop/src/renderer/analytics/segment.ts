@@ -193,8 +193,8 @@ export const track = (
 };
 
 /**
- * Enriched track function that uses the context to add contextual props to
- * events.
+ * Returns an enriched track function that uses the context to add contextual
+ * props to events.
  *
  * For now it's only adding the "drawer" property if it's defined.
  * */
