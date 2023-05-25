@@ -2,12 +2,7 @@ import network from "@ledgerhq/live-network";
 import { BigNumber } from "bignumber.js";
 import * as nearAPI from "near-api-js";
 import { getEnv } from "../../../env";
-import {
-  MIN_ACCOUNT_BALANCE_BUFFER,
-  canUnstake,
-  canWithdraw,
-  getYoctoThreshold,
-} from "../logic";
+import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
 import { getCurrentNearPreloadData } from "../preload";
 import { NearAccount } from "../types";
 import { getStakingDeposits } from "./index";
@@ -19,6 +14,7 @@ import {
   NearRawValidator,
   NearStakingPosition,
 } from "./sdk.types";
+import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
 
 export const fetchAccountDetails = async (
   address: string

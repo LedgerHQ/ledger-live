@@ -1,5 +1,6 @@
 import { getCurrentNearPreloadData } from "./preload";
-import { canStake, canUnstake, FIGMENT_NEAR_VALIDATOR_ADDRESS } from "./logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "./constants";
+import { canStake, canUnstake } from "./logic";
 import type { NearAccount, NearValidatorItem } from "./types";
 
 export interface AccountBannerState {
