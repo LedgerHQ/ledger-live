@@ -15,7 +15,7 @@ import Text from "~/renderer/components/Text";
 type Props = {
   account: NearAccount;
   transaction: Transaction;
-  onChange: (stakingPosition: NearMappedStakingPosition) => void;
+  onChange: (stakingPosition?: NearMappedStakingPosition | null) => void;
 };
 export default function ValidatorField({ account, transaction, onChange }: Props) {
   const { t } = useTranslation();

@@ -35,12 +35,14 @@ export default function StepAmount({
     },
     [onUpdateTransaction, bridge, staked],
   );
+
   const onChangeValidator = useCallback(
-    ({ validatorId, staked }: NearMappedStakingPosition) => {
-      setStaked(staked);
+    (validator?: NearMappedStakingPosition | null) => {
+      if (!validator) return;
+      setStaked(validator.staked);
       updateValidator({
-        address: validatorId,
-        amount: staked,
+        address: validator.validatorId,
+        amount: validator.staked,
       });
     },
     [updateValidator],

@@ -5,7 +5,6 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { LLDCoinFamily } from "../types";
-import { ModalsData } from "./modals";
 
 export type ElrondFamily = LLDCoinFamily<ElrondAccount, Transaction, TransactionStatus>;
 
