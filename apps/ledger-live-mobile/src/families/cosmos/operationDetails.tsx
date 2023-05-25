@@ -62,7 +62,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
     },
     [account],
   );
-  const formatValidatorName = (validatorAddress: string) => {
+  const getValidatorName = (validatorAddress: string) => {
     const relatedValidator = cosmosValidators.find(
       v => v.validatorAddress === validatorAddress,
     );
@@ -207,7 +207,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
               key={v.address}
               title={t("operationDetails.extra.rewardFrom")}
               value={
-                formatValidatorName(v.address) +
+                getValidatorName(v.address) +
                 " " +
                 formatCurrencyUnit(unit, BigNumber(v.amount), {
                   disableRounding: true,

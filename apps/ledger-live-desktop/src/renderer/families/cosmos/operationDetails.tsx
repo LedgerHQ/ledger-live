@@ -126,7 +126,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
   const locale = useSelector(localeSelector);
   const currencyId = account.currency.id;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
-  const formatValidatorName = (address: string): string => {
+  const getValidatorName = (address: string): string => {
     return cosmosValidators.find(v => v.validatorAddress === address)?.name || address;
   };
   const formatConfig = {
@@ -245,7 +245,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
               <OpDetailsSection style={{ "justify-content": "flex-end" }}>
                 <OpDetailsData style={{ "max-width": "fit-content" }}>
                   <Address onClick={redirectAddress(currency, validatorReward.address)}>
-                    {formatValidatorName(validatorReward.address)}
+                    {getValidatorName(validatorReward.address)}
                   </Address>
                   <FormattedVal
                     unit={unit}
