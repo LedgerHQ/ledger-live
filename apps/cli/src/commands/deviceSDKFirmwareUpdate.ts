@@ -4,7 +4,7 @@ import { mergeMap } from "rxjs/operators";
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { UnknownMCU } from "@ledgerhq/errors";
 import ManagerAPI from "@ledgerhq/live-common/manager/api";
-import network from "@ledgerhq/live-common/network";
+import network from "@ledgerhq/live-network/src/network";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getProviderId } from "@ledgerhq/live-common/manager/provider";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";

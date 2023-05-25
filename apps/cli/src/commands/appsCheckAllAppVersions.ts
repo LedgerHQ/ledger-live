@@ -12,7 +12,7 @@ import {
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import ManagerAPI from "@ledgerhq/live-common/manager/api";
-import network from "@ledgerhq/live-common/network";
+import network from "@ledgerhq/live-network/src/network";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import uninstallApp from "@ledgerhq/live-common/hw/uninstallApp";
 import { initState, reducer, runAll } from "@ledgerhq/live-common/apps/index";
