@@ -1,12 +1,14 @@
-import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans, TFunction } from "react-i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/polkadot/types";
+import {
+  PolkadotAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/polkadot/types";
 import SpendableAmount from "~/renderer/components/SpendableAmount";
 import Label from "~/renderer/components/Label";
 import Box from "~/renderer/components/Box";
@@ -29,22 +31,14 @@ const TextSeparator = styled.span`
 `;
 type Props = {
   t: TFunction;
-  account: Account | undefined | null;
-  parentAccount: Account | undefined | null;
-  transaction: Transaction | undefined | null;
+  account: PolkadotAccount;
+  transaction: Transaction;
   status: TransactionStatus;
   onChangeTransaction: (a: Transaction) => void;
   bridgePending: boolean;
 };
-const AmountField = ({
-  account,
-  parentAccount,
-  onChangeTransaction,
-  transaction,
-  status,
-}: Props) => {
-  invariant(account && transaction && account.spendableBalance, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
+const AmountField = ({ account, onChangeTransaction, transaction, status }: Props) => {
+  const bridge = getAccountBridge(account);
   const defaultUnit = getAccountUnit(account);
   const onChange = useCallback(
     (value: BigNumber) => {
@@ -89,12 +83,7 @@ const AmountField = ({
               {": "}
             </Text>
             <Text color="palette.text.shade40" ff="Inter|Medium" fontSize={13}>
-              <SpendableAmount
-                account={account}
-                parentAccount={parentAccount}
-                transaction={transaction}
-                disableRounding
-              />
+              <SpendableAmount account={account} transaction={transaction} disableRounding />
             </Text>
             <TextSeparator />
             <Text

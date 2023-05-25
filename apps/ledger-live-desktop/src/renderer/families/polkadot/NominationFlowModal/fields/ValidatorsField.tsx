@@ -146,7 +146,7 @@ const ValidatorField = ({
     },
     [onChangeNominations],
   );
-  const containerRef = useRef<HTMLDivElement>();
+  const containerRef = useRef<HTMLDivElement>(null);
   const explorerView = getDefaultExplorerView(account.currency);
   const onExternalLink = useCallback(
     (address: string) => {

@@ -53,7 +53,6 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
 }
 export function StepConfirmationFooter({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -76,7 +75,6 @@ export function StepConfirmationFooter({
               setDrawer(OperationDetails, {
                 operationId: optimisticOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}

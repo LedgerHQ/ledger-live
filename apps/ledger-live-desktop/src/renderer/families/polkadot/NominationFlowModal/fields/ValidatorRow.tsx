@@ -188,6 +188,7 @@ const ValidatorRow = ({
   return (
     <Row style={style} disabled={!!disabled} active={!!isSelected}>
       <IconContainer>
+        {/* @ts-expect-error there is a TS error from polkadot lib that it expects a mandatory publicKey where it actually doesn't */}
         <PolkadotIdenticon address={address} size={24} />
       </IconContainer>
       <InfoContainer>

@@ -14,7 +14,7 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
   device: Device | undefined | null;
-  account: PolkadotAccount | undefined | null;
+  account: PolkadotAccount;
   onRetry: (a: void) => void;
   onClose: () => void;
   openModal: OpenModal;

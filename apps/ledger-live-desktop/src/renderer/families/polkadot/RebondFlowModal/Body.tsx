@@ -75,25 +75,23 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     transaction,
     setTransaction,
     account,
-    parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const { account, parentAccount } = params;
-    const bridge = getAccountBridge(account, parentAccount);
+    const { account } = params;
+    const bridge = getAccountBridge(account);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "rebond",
     });
     return {
       account,
-      parentAccount,
       transaction,
     };
   });
 
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+  const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
     onChangeStepId("amount");
@@ -122,7 +120,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     title: t("polkadot.rebond.title"),
     device,
     account,
-    parentAccount,
     transaction,
     signed,
     stepId,
@@ -133,7 +130,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     onRetry: handleRetry,
     onStepChange: handleStepChange,
     onClose,
-    reward: params.reward,
     error,
     status,
     optimisticOperation,

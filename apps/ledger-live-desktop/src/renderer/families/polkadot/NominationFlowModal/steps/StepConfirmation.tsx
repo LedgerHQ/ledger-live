@@ -79,7 +79,6 @@ export function StepConfirmationFooter({
               setDrawer(OperationDetails, {
                 operationId: optimisticOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
