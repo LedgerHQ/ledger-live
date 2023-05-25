@@ -6,7 +6,7 @@ import {
 import { FieldComponentProps, LLDCoinFamily } from "../types";
 import { ModalsData } from "./modals";
 
-export type CosmosFamily = LLDCoinFamily<CosmosAccount, Transaction, TransactionStatus, ModalsData>;
+export type CosmosFamily = LLDCoinFamily<CosmosAccount, Transaction, TransactionStatus>;
 export type CosmosFieldComponentProps = FieldComponentProps<
   CosmosAccount,
   Transaction,

@@ -7,7 +7,7 @@ import {
 import { LLDCoinFamily } from "../types";
 import { ModalsData } from "./modals";
 
-export type ElrondFamily = LLDCoinFamily<ElrondAccount, Transaction, TransactionStatus, ModalsData>;
+export type ElrondFamily = LLDCoinFamily<ElrondAccount, Transaction, TransactionStatus>;
 
 export interface UnbondingType {
   amount: string;
