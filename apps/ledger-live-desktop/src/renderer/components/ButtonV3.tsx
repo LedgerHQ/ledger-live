@@ -1,7 +1,7 @@
 import React from "react";
 import { Button as BaseButton, InvertTheme } from "@ledgerhq/react-ui";
 import { ButtonProps as BaseButtonProps } from "@ledgerhq/react-ui/components/cta/Button";
-import { track } from "~/renderer/analytics/segment";
+import { useTrack } from "~/renderer/analytics/segment";
 import styled from "styled-components";
 
 export const Base = styled(BaseButton)<{ big?: boolean }>`
@@ -38,6 +38,7 @@ export default function Button({
   buttonTestId,
   ...rest
 }: Props) {
+  const track = useTrack();
   const isClickDisabled = disabled || isLoading;
   const onClickHandler = (e: React.SyntheticEvent<HTMLButtonElement, Event>) => {
     if (onClick) {
