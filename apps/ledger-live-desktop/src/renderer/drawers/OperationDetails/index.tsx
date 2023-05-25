@@ -1,7 +1,7 @@
 import React, { useMemo, Component, useCallback } from "react";
 import { connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
-import { Trans, withTranslation, TFunction } from "react-i18next";
+import { Trans, TFunction, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import uniq from "lodash/uniq";
 import { getEnv } from "@ledgerhq/live-common/env";
@@ -71,12 +71,13 @@ import { getLLDCoinFamily } from "~/renderer/families";
 
 const mapStateToProps = (
   state: State,
-  {
-    operationId,
-    accountId,
-    parentId,
-  }: { operationId: string; accountId: string; parentId?: string | null },
+  props: {
+    operationId: string;
+    accountId: string;
+    parentId?: string | null;
+  },
 ) => {
+  const { operationId, accountId, parentId } = props;
   const parentAccount: Account | undefined =
     typeof parentId !== "undefined" && parentId !== null
       ? accountSelector(state, {
@@ -107,22 +108,27 @@ const mapStateToProps = (
     parentAccount,
     operation,
     confirmationsNb,
+    onRequestBack: () => setDrawer(OperationDetails, props),
   };
 };
-type OwnProps = {
-  t: TFunction;
-  operation: Operation;
-  account: AccountLike;
+
+type RestProps = {
   onClose?: () => void;
-};
-type Props = OwnProps & {
-  parentAccount: Account | undefined | null;
   confirmationsNb: number;
   parentOperation?: Operation;
+  onRequestBack: () => void;
 };
+
+type Props = RestProps & {
+  operation: Operation;
+  account: AccountLike;
+  parentAccount: Account | undefined;
+};
+
 type openOperationType = "goBack" | "subOperation" | "internalOperation";
-const OperationD: React.ComponentType<Props> = (props: Props) => {
-  const { t, onClose, operation, account, parentAccount, confirmationsNb } = props;
+const OperationD = (props: Props) => {
+  const { t } = useTranslation();
+  const { onClose, operation, account, parentAccount, confirmationsNb } = props;
   const history = useHistory();
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -192,7 +198,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
           ? () => openOperation("goBack", parentOperation)
           : undefined;
       }
-      setDrawer(OperationDetails, data as React.ComponentProps<typeof OperationDetails>);
+      setDrawer(OperationDetails, data);
     },
     [account],
   );
@@ -200,9 +206,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
     const data = {
       operation,
       account,
-      onRequestBack: () =>
-        // @ts-expect-error TODO: the props type seems quite suspicious here…
-        setDrawer(OperationDetails, props),
+      onRequestBack: props.onRequestBack,
     };
     setDrawer(AmountDetails, data);
   }, [operation, props, account]);
@@ -628,16 +632,19 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
   );
 };
 const OpDetails = (
-  props: Omit<Props, "operation" | "account"> & {
+  props: RestProps & {
     operation: Operation | null | undefined;
-    account: AccountLike | undefined | null;
+    account: AccountLike | null | undefined;
+    parentAccount: Account | undefined;
   },
 ) => {
-  const { operation, account } = props;
-  if (!operation || !account) return null;
-  return <OperationD {...(props as Props)} />;
+  const { operation, account, parentAccount, ...rest } = props;
+  if (!operation || !account || !operation) return null;
+  return (
+    <OperationD account={account} parentAccount={parentAccount} operation={operation} {...rest} />
+  );
 };
-export const OperationDetails = withTranslation()(connect(mapStateToProps)(OpDetails));
+export const OperationDetails = connect(mapStateToProps)(OpDetails);
 
 type OperationDetailsExtraProps = {
   operation: Operation;
