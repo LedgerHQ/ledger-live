@@ -1,5 +1,6 @@
 import {
   ElrondAccount,
+  ElrondProvider,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
@@ -15,8 +16,8 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (param: string) => void;
   device?: Device;
-  account?: ElrondAccount;
-  parentAccount?: ElrondAccount;
+  account: ElrondAccount;
+  validators: ElrondProvider[];
   onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;

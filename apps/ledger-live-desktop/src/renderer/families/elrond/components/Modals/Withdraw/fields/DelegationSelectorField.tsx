@@ -4,12 +4,13 @@ import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denomi
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Label from "~/renderer/components/Label";
-import Select, { Option } from "~/renderer/components/Select";
+import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { TFunction } from "react-i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/families/elrond/types";
-import { UnbondingType, ElrondProvider } from "~/renderer/families/elrond/types";
+import { ElrondProvider, Transaction } from "@ledgerhq/live-common/families/elrond/types";
+import { UnbondingType } from "~/renderer/families/elrond/types";
+
 type NoOptionsMessageCallbackType = {
   inputValue: string;
 };
@@ -20,14 +21,14 @@ export interface Props {
   onChange: (validator: ElrondProvider) => void;
   onUpdateTransaction: (transaction: (_: Transaction) => Transaction) => void;
   bridge: AccountBridge<Transaction>;
-  transaction: Transaction;
-  unbondings: Array<UnbondingType>;
-  contract: string;
-  amount: string;
+  transaction?: Transaction;
+  unbondings: UnbondingType[];
+  contract?: string;
+  amount?: string;
   t: TFunction;
 }
-const renderItem = (item: Option) => {
-  const label: string = item.data.validator.identity.name || item.data.contract;
+const renderItem = (item: { data: EnhancedUnbonding }) => {
+  const label = item.data.validator?.identity.name || item.data.contract;
   const balance = denominate({
     input: item.data.amount,
     decimals: 4,
@@ -35,7 +36,7 @@ const renderItem = (item: Option) => {
   return (
     <Box horizontal={true} alignItems="center" justifyContent="space-between">
       <Box horizontal={true} alignItems="center">
-        <FirstLetterIcon label={label} mr={2} />
+        <FirstLetterIcon label={label} />
         <Text ff="Inter|Medium">{label}</Text>
       </Box>
 
@@ -78,14 +79,14 @@ const DelegationSelectorField = (props: Props) => {
     [t],
   );
   const filterOptions = useCallback(
-    (option: Option, needle: string): boolean =>
+    (option, needle: string): boolean =>
       option.data.validator.identity.name
         ? option.data.validator.identity.name.toLowerCase().includes(needle.toLowerCase())
         : false,
     [],
   );
   const onValueChange = useCallback(
-    (option: EnhancedUnbonding) => {
+    option => {
       setValue(option);
       if (onChange) {
         onChange(option);
@@ -95,7 +96,7 @@ const DelegationSelectorField = (props: Props) => {
   );
   useEffect(() => {
     const [defaultOption] = options;
-    if (defaultOption && !transaction.recipient && transaction.amount.isEqualTo(0)) {
+    if (defaultOption && transaction && !transaction.recipient && transaction.amount.isEqualTo(0)) {
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
           recipient: defaultOption.contract,

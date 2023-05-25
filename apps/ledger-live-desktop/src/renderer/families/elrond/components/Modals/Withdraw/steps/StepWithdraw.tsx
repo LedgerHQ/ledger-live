@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import React, { Fragment, useCallback } from "react";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -13,13 +12,12 @@ import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { AccountBridge } from "@ledgerhq/types-live";
-import { ElrondProvider, Transaction } from "@ledgerhq/live-common/families/elrond/types";
+import { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { StepProps } from "../types";
 
 const StepWithdraw = (props: StepProps) => {
   const {
     account,
-    parentAccount,
     onUpdateTransaction,
     transaction,
     warning,
@@ -30,9 +28,9 @@ const StepWithdraw = (props: StepProps) => {
     amount,
     name,
   } = props;
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const onDelegationChange = useCallback(
-    (validator: ElrondProvider) => {
+    validator => {
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
           ...transaction,
@@ -49,7 +47,7 @@ const StepWithdraw = (props: StepProps) => {
       {warning && !error ? <ErrorBanner error={warning} warning={true} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
 
-      {transaction.amount.gt(0) && (
+      {transaction?.amount.gt(0) && (
         <Text fontSize={4} ff="Inter|Medium" textAlign="center">
           <Trans
             i18nKey="elrond.withdraw.flow.steps.withdraw.description"
@@ -80,14 +78,13 @@ const StepWithdraw = (props: StepProps) => {
   );
 };
 const StepWithdrawFooter = (props: StepProps) => {
-  const { transitionTo, account, parentAccount, onClose, status, bridgePending } = props;
-  invariant(account, "account required");
+  const { transitionTo, account, onClose, status, bridgePending } = props;
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const canNext = !bridgePending && !hasErrors;
   return (
     <Fragment>
-      <AccountFooter status={status} account={account} parentAccount={parentAccount} />
+      <AccountFooter status={status} account={account} />
 
       <Box horizontal={true}>
         <Button mr={1} secondary={true} onClick={onClose}>

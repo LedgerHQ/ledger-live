@@ -2,7 +2,7 @@ import { TFunction } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Operation } from "@ledgerhq/types-live";
 import { Step } from "~/renderer/components/Stepper";
-import { DelegationType } from "~/renderer/families/elrond/types";
+import { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";
 import {
   ElrondAccount,
   ElrondProvider,
@@ -15,15 +15,19 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (param: string) => void;
   device?: Device;
-  account?: ElrondAccount;
+  account: ElrondAccount;
   onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;
   optimisticOperation: Operation | undefined;
   error: Error | undefined;
+  warning: Error | undefined;
   signed: boolean;
+  unbondings: UnbondingType[];
   transaction?: Transaction;
   status: TransactionStatus;
+  amount?: string;
+  name?: string;
   onChangeTransaction: (transaction: Transaction) => void;
   onUpdateTransaction: (transaction: (_: Transaction) => Transaction) => void;
   onTransactionError: (error: Error) => void;

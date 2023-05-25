@@ -17,12 +17,13 @@ import {
   ELROND_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { ElrondAccount, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 
 export type Recipient = {
   address: string;
 };
 export type ValidatorItemType = ElrondProvider & {
+  account: ElrondAccount;
   onSelectValidator: (recipient: string) => void;
   disabled: boolean;
   active: boolean;

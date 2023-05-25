@@ -28,7 +28,10 @@ const InputRight = styled(Box).attrs(() => ({
 `;
 const AmountButton = styled.button.attrs(() => ({
   type: "button",
-}))`
+}))<{
+  error: boolean;
+  active: boolean;
+}>`
   background-color: ${p =>
     p.error
       ? p.theme.colors.lightRed
@@ -55,7 +58,9 @@ const AmountButton = styled.button.attrs(() => ({
     filter: contrast(2);
   }
 `;
-const ErrorContainer = styled(Box)`
+const ErrorContainer = styled(Box)<{
+  hasError: Error | undefined;
+}>`
   margin-top: 0px;
   font-size: 12px;
   width: 100%;
@@ -75,7 +80,7 @@ export interface Props {
   initialAmount: BigNumber;
   account: ElrondAccount;
   label: JSX.Element;
-  onChange: (amount: BigNumber) => void;
+  onChange: (amount: BigNumber, unit?: Unit) => void;
   status: TransactionStatus;
 }
 interface OptionType {
@@ -118,7 +123,7 @@ const AmountField = (props: Props) => {
     [initialAmount],
   );
   const error = errors.amount || errors.unbonding;
-  const warning: string | undefined = useMemo(() => focused && Object.values(warnings || {})[0], [
+  const warning = useMemo(() => (focused && Object.values(warnings || {})[0]) || undefined, [
     focused,
     warnings,
   ]);

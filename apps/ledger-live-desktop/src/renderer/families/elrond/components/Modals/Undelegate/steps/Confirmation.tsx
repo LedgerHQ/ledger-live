@@ -13,22 +13,23 @@ import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 import { StepProps } from "../types";
+
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 const StepConfirmation = (props: StepProps) => {
   const { optimisticOperation, error, signed, account, transaction, validators } = props;
   const { t } = useTranslation();
-  if (optimisticOperation) {
+  if (optimisticOperation && transaction) {
     const provider: string | undefined = transaction && transaction.recipient;
-    const v: ElrondProvider | undefined =
-      provider && validators.find(validator => validator.contract === provider);
+    const v = provider ? validators.find(validator => validator.contract === provider) : undefined;
     const amount = `${denominate({
       input: String(transaction.amount),
       decimals: 4,
@@ -45,7 +46,7 @@ const StepConfirmation = (props: StepProps) => {
                 i18nKey="elrond.undelegation.flow.steps.confirmation.success.description"
                 values={{
                   amount,
-                  validator: (v && v.identity.name) || v.contract,
+                  validator: (v && v.identity.name) || v?.contract,
                 }}
               >
                 <b></b>
@@ -72,7 +73,7 @@ const StepConfirmation = (props: StepProps) => {
   return null;
 };
 const StepConfirmationFooter = (props: StepProps) => {
-  const { account, parentAccount, error, onClose, onRetry, optimisticOperation } = props;
+  const { account, error, onClose, onRetry, optimisticOperation } = props;
   const { t } = useTranslation();
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
@@ -85,10 +86,9 @@ const StepConfirmationFooter = (props: StepProps) => {
       setDrawer(OperationDetails, {
         operationId: concernedOperation.id,
         accountId: account.id,
-        parentId: parentAccount && parentAccount.id,
       });
     }
-  }, [onClose, account, concernedOperation, parentAccount]);
+  }, [onClose, account, concernedOperation]);
   return (
     <Box horizontal alignItems="right">
       <Button ml={2} onClick={onClose}>

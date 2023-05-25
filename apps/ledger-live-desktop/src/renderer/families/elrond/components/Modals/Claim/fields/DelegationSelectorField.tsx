@@ -4,11 +4,13 @@ import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denomi
 import Box from "~/renderer/components/Box";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Label from "~/renderer/components/Label";
-import Select, { Option } from "~/renderer/components/Select";
+import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import { TFunction } from "react-i18next";
-import { Transaction, AccountBridge } from "@ledgerhq/types-live";
-import { ElrondProvider, DelegationType } from "~/renderer/families/elrond/types";
+import { AccountBridge } from "@ledgerhq/types-live";
+import { DelegationType } from "~/renderer/families/elrond/types";
+import { Transaction, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+
 type NoOptionsMessageCallbackType = {
   inputValue: string;
 };
@@ -20,13 +22,16 @@ interface DelegationSelectorFieldType {
   delegations: Array<DelegationType>;
   contract: string;
   transaction: Transaction;
-  onChange: (validator: ElrondProvider) => void;
+  onChange: (validator: ElrondProvider | undefined | null) => void;
   onUpdateTransaction: (transaction: (_: Transaction) => Transaction) => void;
   t: TFunction;
   bridge: AccountBridge<Transaction>;
 }
-const renderItem = (item: Option) => {
+const renderItem = (item: { data: OptionType }) => {
   const name: string = item.data.identity.name || item.data.contract;
+  if (!item.data.delegation) {
+    return null;
+  }
   const balance = denominate({
     input: item.data.delegation.claimableRewards,
     decimals: 4,
@@ -34,7 +39,7 @@ const renderItem = (item: Option) => {
   return (
     <Box horizontal={true} alignItems="center" justifyContent="space-between">
       <Box horizontal={true} alignItems="center">
-        <FirstLetterIcon label={name} mr={2} />
+        <FirstLetterIcon label={name} />
         <Text ff="Inter|Medium">{name}</Text>
       </Box>
 
@@ -56,7 +61,7 @@ const DelegationSelectorField = (props: DelegationSelectorFieldType) => {
     onUpdateTransaction,
   } = props;
   const options = useMemo(
-    (): Array<OptionType> =>
+    (): OptionType[] =>
       validators.reduce((total, validator) => {
         const item: OptionType = {
           ...validator,
@@ -71,11 +76,11 @@ const DelegationSelectorField = (props: DelegationSelectorFieldType) => {
             ? [item, ...total]
             : [...total, item]
           : total;
-      }, []),
+      }, [] as OptionType[]),
     [delegations, validators, contract],
   );
   const [query, setQuery] = useState<string>("");
-  const [value, setValue] = useState<OptionType>(options.find(() => true));
+  const [value, setValue] = useState<OptionType | null | undefined>(options.find(() => true));
   const noOptionsMessageCallback = useCallback(
     (needle: NoOptionsMessageCallbackType): string =>
       t("common.selectValidatorNoOption", {
@@ -84,14 +89,14 @@ const DelegationSelectorField = (props: DelegationSelectorFieldType) => {
     [t],
   );
   const filterOptions = useCallback(
-    (option: Option, needle: string): boolean =>
+    (option, needle: string): boolean =>
       BigNumber(option.data.delegation.claimableRewards).gt(0) && option.data.identity.name
         ? option.data.identity.name.toLowerCase().includes(needle.toLowerCase())
         : false,
     [],
   );
   const onValueChange = useCallback(
-    (option: OptionType) => {
+    (option: OptionType | null | undefined) => {
       setValue(option);
       if (onChange) {
         onChange(option);
@@ -102,11 +107,15 @@ const DelegationSelectorField = (props: DelegationSelectorFieldType) => {
   useEffect(() => {
     const [defaultOption] = options;
     if (defaultOption && !transaction.recipient && transaction.amount.isEqualTo(0)) {
+      const { delegation } = defaultOption;
+      if (!delegation) {
+        return;
+      }
       onUpdateTransaction(
         (transaction: Transaction): Transaction =>
           bridge.updateTransaction(transaction, {
-            recipient: defaultOption.delegation.contract,
-            amount: BigNumber(defaultOption.delegation.claimableRewards),
+            recipient: delegation.contract,
+            amount: BigNumber(delegation.claimableRewards),
           }),
       );
     }

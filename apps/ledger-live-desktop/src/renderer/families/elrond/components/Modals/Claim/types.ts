@@ -15,12 +15,13 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (param: string) => void;
   device?: Device;
-  account?: ElrondAccount;
+  account: ElrondAccount;
   onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;
   optimisticOperation: Operation | undefined;
   error: Error | undefined;
+  warning: Error | undefined;
   signed: boolean;
   transaction?: Transaction;
   status: TransactionStatus;

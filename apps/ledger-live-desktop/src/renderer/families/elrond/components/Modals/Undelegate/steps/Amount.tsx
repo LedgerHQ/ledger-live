@@ -21,13 +21,14 @@ const StepAmount = (props: StepProps) => {
   const [value, setValue] = useState(BigNumber(amount));
   const bridge = account && getAccountBridge(account);
   const updateValidator = useCallback(
-    (payload: Transaction) => {
+    (payload: Partial<Transaction>) => {
       onUpdateTransaction(transaction => bridge?.updateTransaction(transaction, payload));
     },
     [onUpdateTransaction, bridge],
   );
   const onChangeValidator = useCallback(
-    (delegation: DelegationType) => {
+    (delegation: DelegationType | null | undefined) => {
+      if (!delegation) return;
       updateValidator({
         recipient: delegation.contract,
         amount: BigNumber(delegation.userActiveStake),
@@ -56,6 +57,7 @@ const StepAmount = (props: StepProps) => {
       });
     });
   }, [bridge, onUpdateTransaction, value]);
+  if (!account) return null;
   return (
     <Box flow={1}>
       <TrackPage category="Undelegation Flow" name="Step 1" />
@@ -82,7 +84,7 @@ const StepAmount = (props: StepProps) => {
         label={<Trans i18nKey="elrond.undelegation.flow.steps.amount.fields.amount" />}
       />
 
-      <Alert info="primary" mt={2}>
+      <Alert mt={2}>
         <Trans i18nKey="elrond.undelegation.flow.steps.amount.warning">
           <b></b>
         </Trans>
@@ -91,14 +93,15 @@ const StepAmount = (props: StepProps) => {
   );
 };
 const StepAmountFooter = (props: StepProps) => {
-  const { transitionTo, account, parentAccount, onClose, status, bridgePending } = props;
+  const { transitionTo, account, onClose, status, bridgePending } = props;
   const { t } = useTranslation();
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const canNext = !bridgePending && !hasErrors;
+  if (!account) return null;
   return (
     <Fragment>
-      <AccountFooter account={account} parentAccount={parentAccount} status={status} />
+      <AccountFooter account={account} status={status} />
 
       <Box horizontal>
         <Button mr={1} secondary={true} onClick={onClose}>

@@ -35,13 +35,11 @@ interface RenderDropdownItemType {
     disabled?: boolean;
     tooltip?: ReactNode;
     divider?: boolean;
-    show: boolean;
   };
 }
 interface DropDownItemType {
   key: keyof ModalsData;
   label: string;
-  show: boolean;
   divider?: boolean;
   parameters: {
     account: AccountType;
@@ -95,36 +93,36 @@ const Delegation = (props: Props) => {
     },
     [dispatch],
   );
-  const dropDownItems = useMemo(
-    (): Array<DropDownItemType> =>
-      [
-        {
-          key: "MODAL_ELROND_UNDELEGATE",
-          label: "elrond.delegation.undelegate",
-          show: BigNumber(userActiveStake).gt(0),
-          parameters: {
-            account,
-            contract,
-            validators,
-            delegations,
-            amount: userActiveStake,
-          },
+  const dropDownItems = useMemo(() => {
+    const items = [] as DropDownItemType[];
+    if (BigNumber(userActiveStake).gt(0)) {
+      items.push({
+        key: "MODAL_ELROND_UNDELEGATE",
+        label: "elrond.delegation.undelegate",
+        parameters: {
+          account,
+          contract,
+          validators,
+          delegations,
+          amount: userActiveStake,
         },
-        {
-          key: "MODAL_ELROND_CLAIM_REWARDS",
-          label: "elrond.delegation.reward",
-          divider: BigNumber(userActiveStake).gt(0),
-          show: BigNumber(claimableRewards).gt(0),
-          parameters: {
-            account,
-            contract,
-            delegations,
-            validators,
-          },
+      });
+    }
+    if (BigNumber(claimableRewards).gt(0)) {
+      items.push({
+        key: "MODAL_ELROND_CLAIM_REWARDS",
+        label: "elrond.delegation.reward",
+        divider: BigNumber(userActiveStake).gt(0),
+        parameters: {
+          account,
+          contract,
+          delegations,
+          validators,
         },
-      ].filter(item => item.show),
-    [claimableRewards, account, userActiveStake, contract, delegations, validators],
-  );
+      });
+    }
+    return items;
+  }, [claimableRewards, account, userActiveStake, contract, delegations, validators]);
   const name = validator ? validator.identity.name || contract : contract;
   const amount = useMemo(
     () =>
