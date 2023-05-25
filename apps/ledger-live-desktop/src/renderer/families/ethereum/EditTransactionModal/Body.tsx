@@ -212,13 +212,17 @@ const Body = ({
   );
   // log account and fees info
   logger.log(`main account address: ${mainAccount.freshAddress}`);
-  logger.log(`main account balance: ${mainAccount.balance.toNumber()}`);
-  logger.log(`feeValue: ${feeValue.toNumber()}`);
+  logger.log(`main account balance: ${mainAccount.balance.toFixed()}`);
+  logger.log(`feeValue: ${feeValue.toFixed()}`);
 
   let isOldestEditableOperation = true;
   mainAccount.pendingOperations.forEach((operation: Operation) => {
     if (isEditableOperation(account, operation)) {
-      if (operation.transactionSequenceNumber!==undefined && params.transactionRaw.nonce!==undefined && operation.transactionSequenceNumber < params.transactionRaw.nonce) {
+      if (
+        operation.transactionSequenceNumber !== undefined &&
+        params.transactionRaw.nonce !== undefined &&
+        operation.transactionSequenceNumber < params.transactionRaw.nonce
+      ) {
         isOldestEditableOperation = false;
       }
     }
