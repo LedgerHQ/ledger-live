@@ -10,7 +10,7 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
-import { NearAccount } from "@ledgerhq/live-common/families/near/types";
+import { NearFamily } from "./types";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -46,12 +46,11 @@ const AmountValue = styled(Text).attrs(() => ({
 }))<{ paddingRight?: number }>`
   ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
 `;
-type Props = {
-  account: NearAccount;
-};
-const AccountBalanceSummaryFooter = ({ account }: Props) => {
+
+const AccountBalanceSummaryFooter: NearFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
+  if (account.type !== "Account") return null;
   const {
     spendableBalance: _spendableBalance,
     nearResources: {

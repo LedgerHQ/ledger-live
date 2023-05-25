@@ -1,17 +1,17 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { canStake } from "@ledgerhq/live-common/families/near/logic";
-import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
-type Props = {
-  account: NearAccount;
-  parentAccount: NearAccount | undefined | null;
-  source?: string;
-};
-const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
+import { NearFamily } from "./types";
+
+const AccountHeaderActions: NearFamily["accountHeaderManageActions"] = ({
+  account,
+  parentAccount,
+  source,
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -30,19 +30,19 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
       if (hasStakingPositions) {
         dispatch(
           openModal("MODAL_NEAR_STAKE", {
-            account,
+            account: mainAccount,
             source,
           }),
         );
       } else {
         dispatch(
           openModal("MODAL_NEAR_REWARDS_INFO", {
-            account,
+            account: mainAccount,
           }),
         );
       }
     }
-  }, [stakingEnabled, dispatch, account, parentAccount, hasStakingPositions, source]);
+  }, [stakingEnabled, dispatch, account, mainAccount, parentAccount, hasStakingPositions, source]);
   if (parentAccount) return null;
   return [
     {
