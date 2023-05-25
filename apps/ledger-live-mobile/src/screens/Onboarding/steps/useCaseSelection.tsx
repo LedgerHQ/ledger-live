@@ -50,12 +50,21 @@ const OnboardingStepUseCaseSelection = () => {
     navigation.navigate(ScreenName.OnboardingModalSetupNewDevice, {
       deviceModelId,
     });
+    track("button_clicked", {
+      button: "Setup as new",
+      page: "Onboarding setup new options",
+    });
   }, [deviceModelId, navigation]);
 
   const onPressRecoveryPhrase = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingRecoveryPhrase, {
       deviceModelId,
       showSeedWarning: true,
+    });
+
+    track("button_clicked", {
+      button: "Restore from recovery phrase",
+      page: "Onboarding setup new options",
     });
   }, [navigation, deviceModelId]);
 
@@ -71,8 +80,8 @@ const OnboardingStepUseCaseSelection = () => {
     }
 
     track("button_clicked", {
-      button: "Restore with Protect",
-      screen: "UseCase",
+      button: "Restore with ledger recover",
+      page: "Onboarding setup new options",
       timestamp: Date.now(),
     });
   }, [deviceModelId, navigation]);
