@@ -23,7 +23,7 @@ import {
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetFirstConnectionHasDevicePayload,
+  SettingsSetOnboardingHasDevicePayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
@@ -245,8 +245,8 @@ export const setSensitiveAnalytics =
   createAction<SettingsSetSensitiveAnalyticsPayload>(
     SettingsActionTypes.SET_SENSITIVE_ANALYTICS,
   );
-export const setFirstConnectionHasDevice =
-  createAction<SettingsSetFirstConnectionHasDevicePayload>(
+export const setOnboardingHasDevice =
+  createAction<SettingsSetOnboardingHasDevicePayload>(
     SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE,
   );
 export const setNotifications = createAction<SettingsSetNotificationsPayload>(

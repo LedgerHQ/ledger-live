@@ -33,7 +33,7 @@ import {
   localeSelector,
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
-  firstConnectionHasDeviceSelector,
+  onboardingHasDeviceSelector,
   firstConnectHasDeviceUpdatedSelector,
   readOnlyModeEnabledSelector,
   hasOrderedNanoSelector,
@@ -87,7 +87,7 @@ const extraProperties = async (store: AppStore) => {
         modelId: lastDevice.modelId,
       }
     : {};
-  const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+  const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
   const notificationsAllowed = notifications.areNotificationsAllowed;
   const notificationsBlacklisted = Object.entries(notifications)
@@ -138,7 +138,7 @@ const extraProperties = async (store: AppStore) => {
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
-    firstConnectionHasDevice,
+    onboardingHasDevice,
     firstConnectHasDeviceUpdated,
     ...(satisfaction
       ? {

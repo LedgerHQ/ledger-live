@@ -1199,12 +1199,6 @@
       "privacyLink": "Privacy Policy",
       "and": "and"
     },
-    "stepDoYouHaveALedgerDevice": {
-      "title": "Do you own a Ledger?",
-      "subtitle": "First things first",
-      "yes": "Yes, I do",
-      "no": "Not yet"
-    },
     "postWelcomeStep": {
       "title": "Let's get you started",
       "subtitle_yes": "Set up your Ledger, or take a look around the app first.",
