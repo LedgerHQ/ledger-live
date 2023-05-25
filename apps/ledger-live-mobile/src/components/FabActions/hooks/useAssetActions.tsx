@@ -7,6 +7,7 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useRoute } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import {
   readOnlyModeEnabledSelector,
@@ -35,6 +36,8 @@ export default function useAssetActions({
 }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];
 } {
+  const route = useRoute();
+
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
@@ -168,7 +171,10 @@ export default function useAssetActions({
                       NavigatorName.StakeFlow,
                       {
                         screen: ScreenName.Stake,
-                        params: { currencies: [currency?.id] },
+                        params: {
+                          currencies: [currency?.id],
+                          parentRoute: route,
+                        },
                       },
                     ] as const,
                   },

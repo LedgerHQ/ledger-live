@@ -67,6 +67,13 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   const isStarred = starredMarketCoins.includes(currencyId);
   const { triggerMarketPushNotificationModal } = useNotifications();
 
+  console.log(
+    "%c xxxxxxx index.tsx line:70 params",
+    "color: #007acc;",
+    params,
+    route,
+  );
+
   let loc = locale;
   // TEMPORARY : quick win to transform arabic to english
   if (locale === "ar") {

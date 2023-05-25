@@ -209,6 +209,13 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.MarketDetail]: {
     currencyId: string;
     resetSearchOnUmount?: boolean;
+    drawer?: {
+      name: string;
+      props?: {
+        singleProviderRedirectMode: boolean;
+        account?: Account;
+      };
+    };
   };
 
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;

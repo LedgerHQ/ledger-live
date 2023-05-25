@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import { EthStakingProviders } from "./types";
 import { EthereumStakingDrawerBody } from "./EthereumStakingDrawerBody";
+import { Track } from "../../../analytics";
 
 type Props = unknown;
 
@@ -29,6 +30,7 @@ export function EthereumStakingDrawer(_: Props) {
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
       <Flex rowGap={52}>
+        <Track onMount event="ETH Stake Modal" />
         <EthereumStakingDrawerBody
           providers={ethStakingProviders.params!.listProvider}
         />

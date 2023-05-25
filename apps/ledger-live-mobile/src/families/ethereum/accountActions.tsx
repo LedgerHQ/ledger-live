@@ -8,11 +8,12 @@ import { NavigatorName, ScreenName } from "../../const";
 const getMainActions = ({
   account,
   parentAccount,
+  screen,
 }: {
   account: Account;
   parentAccount: Account;
+  screen: ScreenName;
 }) => {
-  // TODO: Update ledger-live/apps/ledger-live-mobile/src/components/Stake/index.tsx after Kiln stake implementation
   if (account.type === "Account" && account.currency.id === "ethereum") {
     const navigationParams = isAccountEmpty(account)
       ? [
@@ -28,10 +29,15 @@ const getMainActions = ({
       : [
           NavigatorName.Base,
           {
-            screen: ScreenName.PlatformApp,
+            screen,
             params: {
-              platform: "lido",
-              name: "Lido",
+              drawer: {
+                id: "EthStakingDrawer",
+                props: {
+                  singleProviderRedirectMode: true,
+                  account,
+                },
+              },
             },
           },
         ];

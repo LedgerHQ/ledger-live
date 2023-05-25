@@ -26,6 +26,7 @@ const StakeFlow = ({ route }: Props) => {
   const currencies = route?.params?.currencies || featureFlag?.params?.list;
   const navigation =
     useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
+  const screen = route?.params?.previousScreen;
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
       currencies: currencies || [],
@@ -43,6 +44,7 @@ const StakeFlow = ({ route }: Props) => {
             account,
             parentAccount,
             colors: {},
+            screen,
           })) ||
         [];
       const stakeFlow = familySpecificMainActions.find(
@@ -50,35 +52,19 @@ const StakeFlow = ({ route }: Props) => {
       )?.navigationParams;
       if (!stakeFlow) return null;
       const [name, options] = stakeFlow;
-
-      // TODO: Remove after Kiln stake implementation was be done
-      if (
-        account?.currency?.family === "ethereum" &&
-        name === NavigatorName.Base
-      ) {
-        navigation.navigate(name, {
+      navigation.navigate(NavigatorName.Base, {
+        screen: options.screen ?? name,
+        params: {
           screen: options.screen,
           params: {
             ...(options?.params || {}),
-            accountId: account?.id,
-            parentId: parentAccount?.id,
+            account,
+            parentAccount,
           },
-        });
-      } else {
-        navigation.navigate(NavigatorName.Base, {
-          screen: name,
-          params: {
-            screen: options.screen,
-            params: {
-              ...(options?.params || {}),
-              account,
-              parentAccount,
-            },
-          },
-        });
-      }
+        },
+      });
     },
-    [navigation],
+    [navigation, screen],
   );
   const onError = (error: Error) => {
     logger.critical(error);
