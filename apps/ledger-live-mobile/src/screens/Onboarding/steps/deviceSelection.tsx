@@ -139,8 +139,8 @@ function OnboardingStepDeviceSelection() {
       {devices.map(device => (
         <ChoiceCard
           key={device.id}
-          event="Onboarding Device - Selection"
-          eventProperties={{ id: device.id }}
+          event="button_clicked"
+          eventProperties={{ button: device.id }}
           testID={`onboarding-device-selection-${device.id}`}
           title={getProductName(device.id)}
           onPress={() =>
