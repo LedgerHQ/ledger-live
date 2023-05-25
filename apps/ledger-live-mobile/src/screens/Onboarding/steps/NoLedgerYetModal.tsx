@@ -12,6 +12,7 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { track } from "../../../analytics";
 
 type Props = {
   onClose: () => void;
@@ -27,9 +28,23 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const onCloseAndTrack = useCallback(() => {
+    onClose();
+
+    track("button_clicked", {
+      button: "Close",
+      drawer: "Get Started Upsell",
+    });
+  }, [onClose]);
+
   const exploreLedger = useCallback(() => {
     dispatch(setHasOrderedNano(false));
     navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
+
+    track("button_clicked", {
+      button: "Explore the app",
+      drawer: "Get Started Upsell",
+    });
   }, [navigation, dispatch]);
 
   const buyLedger = useCallback(() => {
@@ -39,7 +54,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   }, [navigation]);
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={!!isOpen} onClose={onClose}>
+    <QueuedDrawer isRequestingToBeOpened={!!isOpen} onClose={onCloseAndTrack}>
       <Flex alignItems="center" mt={7}>
         <Text variant="h4" fontWeight="semiBold" color="neutral.c100">
           {t("onboarding.postWelcomeStep.noLedgerYetModal.title")}
