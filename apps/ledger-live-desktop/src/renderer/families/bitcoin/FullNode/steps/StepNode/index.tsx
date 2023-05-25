@@ -29,7 +29,7 @@ const Node = ({
   setNodeConfig: (a: Partial<RpcNodeConfigOption>) => void;
   setNodeConnectionStatus: (a: ConnectionStatus) => void;
   onStepChange: (a: FullNodeSteps) => void;
-  errors: (Error & { field?: string; error: Error })[];
+  errors: { field: string; error: Error }[] | null;
 }) => {
   useEffect(() => {
     if (nodeConnectionStatus === connectionStatus.PENDING) {

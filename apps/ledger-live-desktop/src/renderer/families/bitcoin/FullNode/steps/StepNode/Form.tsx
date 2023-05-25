@@ -42,12 +42,12 @@ export type RpcNodeConfigOption = {
 };
 
 const maybeError = (
-  errors: (Error & { field?: string; error: Error })[],
+  errors: { field: string; error: Error }[] | null,
   field: unknown,
   satStackAlreadyConfigured: boolean,
   ignoredErrorClass: Function,
 ) => {
-  const error = errors.find(e => e.field === field)?.error;
+  const error = errors?.find(e => e.field === field)?.error;
   return error && (satStackAlreadyConfigured || !(error instanceof ignoredErrorClass))
     ? error
     : null;
@@ -60,7 +60,7 @@ const Form = ({
 }: {
   nodeConfig?: RPCNodeConfig;
   patchNodeConfig: (a: Partial<RpcNodeConfigOption>) => void;
-  errors: (Error & { field?: string; error: Error })[];
+  errors: { field: string; error: Error }[] | null;
 }) => {
   const { t } = useTranslation();
   const satStackAlreadyConfigured = useEnv("SATSTACK");

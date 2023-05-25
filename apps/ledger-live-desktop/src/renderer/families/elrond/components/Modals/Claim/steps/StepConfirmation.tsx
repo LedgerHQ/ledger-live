@@ -50,6 +50,7 @@ const StepConfirmation = (props: StepProps) => {
                 i18nKey={`elrond.claimRewards.flow.steps.confirmation.success.${textKey}`}
                 values={{
                   amount,
+                  // @ts-expect-error Elrond seems to use a wrong .name field that don't exist?
                   validator: v.name,
                 }}
               >
