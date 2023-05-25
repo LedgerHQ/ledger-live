@@ -1,15 +1,19 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useNearStakingPositionsQuerySelector } from "@ledgerhq/live-common/families/near/react";
-import { Transaction, NearMappedStakingPosition } from "@ledgerhq/live-common/families/near/types";
-import { Account } from "@ledgerhq/types-live";
+import {
+  Transaction,
+  NearMappedStakingPosition,
+  NearAccount,
+} from "@ledgerhq/live-common/families/near/types";
 import LedgerValidatorIcon from "~/renderer/families/near/shared/components/LedgerValidatorIcon";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
+
 type Props = {
-  account: Account;
+  account: NearAccount;
   transaction: Transaction;
   onChange: (stakingPosition: NearMappedStakingPosition) => void;
 };

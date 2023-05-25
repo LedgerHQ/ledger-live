@@ -18,7 +18,6 @@ export default function StepAmount({
   status,
   error,
 }: StepProps) {
-  invariant(account && account.nearResources && transaction, "account and transaction required");
   const [available, setAvailable] = useState(transaction.amount);
   const bridge = getAccountBridge(account);
   const updateValidator = useCallback(

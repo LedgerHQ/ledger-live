@@ -19,13 +19,17 @@ const Wrapper = styled.div`
   justify-content: space-between;
   padding: 16px 20px;
 `;
-const Column: ThemedComponent<{
+const Column = styled(TableLine).attrs<{
   clickable?: boolean;
-}> = styled(TableLine).attrs(p => ({
+  strong?: boolean;
+}>(p => ({
   ff: "Inter|SemiBold",
   color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
   fontSize: 3,
-}))`
+}))<{
+  clickable?: boolean;
+  strong?: boolean;
+}>`
   cursor: ${p => (p.clickable ? "pointer" : "cursor")};
   ${p =>
     p.clickable
@@ -49,16 +53,16 @@ const ManageDropDownItem = ({
 }: {
   item: {
     key: string;
-    label: string;
+    label?: React.ReactNode;
     disabled: boolean;
-    tooltip: React.ReactNode;
+    content?: React.ReactNode;
   };
   isActive: boolean;
 }) => {
   return (
     <>
       <ToolTip
-        content={item.tooltip}
+        content={item.content}
         containerStyle={{
           width: "100%",
         }}
@@ -156,7 +160,7 @@ export function Row({
       <Column>
         <DropDown items={dropDownItems} renderItem={ManageDropDownItem} onChange={onSelect}>
           {() => (
-            <Box flex horizontal alignItems="center">
+            <Box horizontal alignItems="center">
               <Trans i18nKey="common.manage" />
               <div
                 style={{

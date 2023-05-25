@@ -1,13 +1,17 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
-import { Account, Operation } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/near/types";
+import { Operation } from "@ledgerhq/types-live";
+import {
+  NearAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/near/types";
 import { OpenModal } from "~/renderer/actions/modals";
 export type StepId = "amount" | "device" | "confirmation";
 export type StepProps = {
   transitionTo: (address: string) => void;
   device: Device | undefined | null;
-  account: Account | undefined | null;
+  account: NearAccount;
   parentAccount: typeof undefined;
   onRetry: () => void;
   onClose: () => void;
@@ -15,7 +19,7 @@ export type StepProps = {
   optimisticOperation: Operation | undefined;
   error: Error | undefined;
   signed: boolean;
-  transaction: Transaction | undefined | null;
+  transaction: Transaction;
   status: TransactionStatus;
   onChangeTransaction: (tx: Transaction) => void;
   onUpdateTransaction: (a: (tx: Transaction) => Transaction) => void;

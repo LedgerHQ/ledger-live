@@ -20,7 +20,6 @@ export default function StepAmount({
   status,
   error,
 }: StepProps) {
-  invariant(account && account.nearResources && transaction, "account and transaction required");
   const [staked, setStaked] = useState(transaction.amount);
   const bridge = getAccountBridge(account);
   const updateValidator = useCallback(
@@ -82,7 +81,7 @@ export default function StepAmount({
         onChange={onChangeAmount}
         label={<Trans i18nKey="near.unstake.flow.steps.amount.fields.amount" />}
       />
-      <Alert info="primary" mt={2}>
+      <Alert mt={2}>
         <Trans i18nKey="near.unstake.flow.steps.amount.warning">
           <b></b>
         </Trans>

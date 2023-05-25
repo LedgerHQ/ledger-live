@@ -51,6 +51,7 @@ const mapDispatchToProps = {
 function Body({
   t,
   account: accountProp,
+  onClose,
   stepId,
   onChangeStepId,
   openModal,

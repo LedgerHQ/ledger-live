@@ -110,12 +110,12 @@ const InputRight = styled(Box).attrs(() => ({
 }))`
   padding: ${p => p.theme.space[2]}px;
 `;
-const AmountButton: ThemedComponent<{
+const AmountButton = styled.button.attrs(() => ({
+  type: "button",
+}))<{
   error: boolean;
   active: boolean;
-}> = styled.button.attrs(() => ({
-  type: "button",
-}))`
+}>`
   background-color: ${p =>
     p.error
       ? p.theme.colors.lightRed

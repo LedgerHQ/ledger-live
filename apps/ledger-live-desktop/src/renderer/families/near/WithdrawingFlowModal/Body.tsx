@@ -53,6 +53,7 @@ function Body({
   account: accountProp,
   stepId,
   onChangeStepId,
+  onClose,
   openModal,
   device,
   validatorAddress,

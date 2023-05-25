@@ -79,9 +79,9 @@ const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
 `;
-const SeeAllButton: ThemedComponent<{
+const SeeAllButton = styled.div<{
   expanded: boolean;
-}> = styled.div`
+}>`
   display: flex;
   color: ${p => p.theme.colors.wallet};
   align-items: center;
