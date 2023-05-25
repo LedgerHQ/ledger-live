@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network/src/network";
 import BigNumber from "bignumber.js";
 import { CosmosAPI } from "./Cosmos";
-jest.mock("../../../network");
+jest.mock("@ledgerhq/live-network/src/network");
 
 describe("CosmosApi", () => {
   let cosmosApi: CosmosAPI;

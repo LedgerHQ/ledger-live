@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import * as jsPrepareTransaction from "./js-prepareTransaction";
 import { calculateFees, getEstimatedFees } from "./js-prepareTransaction";
 import { CosmosAccount, Transaction } from "./types";
-jest.mock("../../network");
+jest.mock("@ledgerhq/live-network/src/network");
 
 const account = {
   id: "accountId",
