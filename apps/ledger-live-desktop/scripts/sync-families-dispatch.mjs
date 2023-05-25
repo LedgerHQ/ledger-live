@@ -12,8 +12,9 @@ async function gen() {
     .filter(d => d.isDirectory())
     .map(dirent => dirent.name);
 
-  let imports = "";
-  let modalsData = "export type CoinModalsData =";
+  let imports = 'import { MakeModalsType } from "../modals/types";';
+  let modalsData = "";
+  let modals = "export const coinModals: MakeModalsType<CoinModalsData> = {\n";
   let exprts = `export default {`;
   for (const family of families) {
     await fs.promises.access(path.join(familiesPath, family, "index.ts"), fs.constants.R_OK);
@@ -25,18 +26,21 @@ import ${family} from "../families/${family}/index";`;
     try {
       await fs.promises.access(path.join(familiesPath, family, "modals.ts"), fs.constants.R_OK);
       imports += `
-import { ModalsData as ${family}ModalsData } from "../families/${family}/modals";`;
-      modalsData += `\n  & ${family}ModalsData`;
+import ${family}Modals, { ModalsData as ${family}ModalsData } from "../families/${family}/modals";`;
+      modalsData += `${modalsData ? " &\n  " : ""}${family}ModalsData`;
+      modals += "  ..." + family + "Modals,\n";
     } catch (e) {}
   }
   exprts += `\n};`;
-  modalsData += ";";
+  modals += "};";
 
   const str = `${imports}
 
 ${exprts}
 
-${modalsData}`;
+export type CoinModalsData = ${modalsData};
+
+${modals}`;
 
   await fs.promises.writeFile(generatedFile, str, "utf8");
 }

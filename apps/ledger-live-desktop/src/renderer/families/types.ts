@@ -16,7 +16,6 @@ import {
 import { StepProps as SendStepProps } from "../modals/Send/types";
 import { StepProps as ReceiveStepProps } from "../modals/Receive/Body";
 import { StepProps as AddAccountsStepProps } from "../modals/AddAccounts";
-import { MakeModalsType } from "../modals/types";
 
 export type AmountCellExtraProps = {
   operation: Operation;
@@ -65,8 +64,7 @@ export type OperationDetailsExtraProps<A> = {
 export type LLDCoinFamily<
   A extends Account,
   T extends TransactionCommon,
-  TS extends TransactionStatus,
-  FamilyModalsData = {}
+  TS extends TransactionStatus
 > = {
   operationDetails?: {
     /**
@@ -275,12 +273,6 @@ export type LLDCoinFamily<
   StakeBanner?: React.ComponentType<{
     account: A;
   }>;
-
-  /**
-   * all modals that are specific to this family
-   * If you define modals, you MUST export type ModalsData from a file modals.ts and use that type type as this parametric FamilyModalsData.
-   */
-  modals?: MakeModalsType<FamilyModalsData>;
 };
 
 export type FieldComponentProps<

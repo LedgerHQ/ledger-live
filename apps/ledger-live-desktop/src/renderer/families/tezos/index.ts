@@ -4,7 +4,6 @@ import receiveWarning from "./ReceiveWarning";
 import sendWarning from "./SendWarning";
 import transactionConfirmFields from "./TransactionConfirmFields";
 import accountActions from "./accountActions";
-import modals from "./modals";
 import operationDetails from "./operationDetails";
 import { TezosFamily } from "./types";
 
@@ -12,7 +11,6 @@ const family: TezosFamily = {
   operationDetails,
   accountActions,
   accountHeaderManageActions,
-  modals,
   transactionConfirmFields,
   sendWarning,
   receiveWarning,

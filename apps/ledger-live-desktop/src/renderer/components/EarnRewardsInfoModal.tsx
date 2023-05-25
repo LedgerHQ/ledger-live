@@ -36,7 +36,6 @@ export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
     dispatch(closeModal(name));
     if (onNext) onNext();
   }, [dispatch, name, onNext]);
-  // TODO rename MODAL_ALGORAND_EARN_REWARDS_INFO to something more generic
   return (
     <Modal
       name={name}
