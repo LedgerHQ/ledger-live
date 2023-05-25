@@ -29,7 +29,10 @@ export const AddNewItem = () => {
   });
 
   return (
-    <StyledTouchableOpacity onPress={openModal}>
+    <StyledTouchableOpacity
+      testID="wallet-nft-gallery-add-new-list-item"
+      onPress={openModal}
+    >
       <Flex flexDirection="column" alignItems="center" justifyContent="center">
         <Icons.PlusMedium size={24} color={colors.neutral.c100} />
         <Text
