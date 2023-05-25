@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { summarize } from "./summarize";
 describe("circular reference protection", () => {
   test("object circular reference", () => {
-    const obj: unknown = {
+    const obj: any = {
       foo: 42,
     };
     obj.a = obj;
@@ -11,7 +12,7 @@ describe("circular reference protection", () => {
     });
   });
   test("array circular reference", () => {
-    const obj: unknown = {
+    const obj: any = {
       foo: 42,
       a: [],
     };
@@ -22,7 +23,7 @@ describe("circular reference protection", () => {
     });
   });
   test("inner object circular reference", () => {
-    const obj: unknown = {
+    const obj: any = {
       foo: 42,
       a: {},
     };
