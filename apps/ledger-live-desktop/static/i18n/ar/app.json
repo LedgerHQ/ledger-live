@@ -60,6 +60,7 @@
   "common" : {
     "never" : "أبداً",
     "new" : "جديد",
+    "skip" : "تخطي",
     "apply" : "تقديم",
     "done" : "تم",
     "confirm" : "تأكيد",
@@ -221,7 +222,7 @@
     "lend" : "إقراض",
     "catalog" : "Discover",
     "market" : "السوق",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "قم بتفضيل حساب لعرضه هنا.",
@@ -1759,7 +1760,8 @@
     "loading" : "جاري التحميل...",
     "connectAndUnlockDevice" : "قم بتوصيل جهازك وإلغاء قفله",
     "unlockDevice" : "قم بإلغاء قفل جهازك",
-    "unlockDeviceAfterFirmwareUpdate" : "انتظر حتى يقوم البرنامج الثابت بالتحديث ثم قم بإلغاء قفل جهازك باستخدام PIN الخاص بك",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "انتظر حتى انتهاء التثبيت على جهازك {{productName}}",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "قم بإلغاء قفل {{productName}} لإكمال التثبيت",
     "quitApp" : "الخروج من التطبيق على جهازك",
     "appNotInstalledTitle" : "التطبيق المطلوب غير موجود",
     "appNotInstalledTitle_plural" : "التطبيقات المطلوبة غير موجودة",
@@ -1824,9 +1826,8 @@
       "installed" : "التطبيقات",
       "capacity" : "السعة",
       "used" : "مُستَخدمة",
-      "firmwareAvailable" : "البرنامج الثابت قديم:",
-      "firmwareUpToDate" : "البرنامج الثابت محدّث:",
-      "genuine" : "جهازك أصلي",
+      "OSVersion" : "إصدار نظام التشغيل",
+      "genuine" : "الجهاز أصلي",
       "incomplete" : "لم يتم التعرف على بعض التطبيقات. يُرجى إلغاء التثبيت، ثم إعادة تثبيتهم."
     },
     "applist" : {
@@ -1918,7 +1919,7 @@
       "dontHaveSeed" : "ليست لديك عبارة الاسترداد الخاصة بك؟ ",
       "followTheGuide" : "اتبع دليل الخطوة بخطوة للتحديث",
       "removeApps" : "قم بإلغاء تثبيت جميع التطبيقات قبل التحديث",
-      "update" : "تحديث البرنامج الثابت",
+      "update" : "تحديث {{productName}}",
       "updateBtn" : "قم بتحديث البرنامج الثابت",
       "banner" : {
         "warning" : "تحديث البرنامج الثابت إلى {{latestFirmware}} متاح",
@@ -1933,25 +1934,30 @@
       "contactSupport" : "تواصل مع الدعم",
       "deprecated" : "إصدار البرنامج الثابت للجهاز قديم للغاية ليتم تحديثه. تواصل مع دعم Ledger للحصول على بديل.",
       "prepareSeed" : "تأكد من كتابة عبارة الاسترداد الخاصة المكونة من 24 كلمة على ورقة الاسترداد وأنها متوفرة، على سبيل الاحتياط.",
-      "disclaimerTitle" : "أنت على وشك تثبيت <1>إصدار البرنامج الثابت {{version}}</1>.",
-      "downloadingUpdateDesc" : "يُرجى الانتظار حتى يتم تنزيل مُثبت التحديث"
+      "disclaimerTitle" : "أنت على وشك تثبيت <1>إصدار البرنامج الثابت {{version}}</1>."
     },
     "modal" : {
+      "title" : "تحديث {{productName}}",
       "steps" : {
-        "downloadingUpdate" : "جاري تنزيل التحديث",
+        "preparingUpdate" : "جاري إعداد التحديث",
+        "transferringUpdate" : "نقل التحديث إلى {{productName}}",
+        "prepare" : "إعداد التحديث",
+        "install" : "تثبيت التحديث",
+        "restore" : "استعادة الإعدادات",
+        "apps" : "استعادة التطبيقات",
         "updateMCU" : "تحديث البرنامج الثابت",
         "updating" : "تحديث البرنامج الثابت",
         "reset" : "إعداد الجهاز",
         "osu" : "جاري تثبيت OSU...",
         "flash-mcu" : "جاري تحديث MCU...",
         "flash-bootloader" : "جاري تحديث Bootloader...",
+        "progress" : "Installing update {{current}}/{{total}}",
         "firmware" : "جاري تحديث البرنامج الثابت...",
         "flash" : "جاري تحضير جهازك..."
       },
       "confirmIdentifier" : "قم بالتحقق من المُعرّف",
-      "confirmIdentifierText" : "تحقق من أن المُعرّف على جهازك هو المُعرّف ذاته أدناه. قم بتأكيد وإدخال كود PIN الخاص بك إذا طُلب.",
+      "confirmIdentifierText" : "تأكيد التثبيت على {{productName}}",
       "identifier" : "المُعرّف",
-      "preparation" : "التحضير",
       "newFirmware" : "برنامج ثابت جديد {{version}}",
       "confirmUpdate" : "يرجى تأكيد التحديث على جهازك",
       "mcuTitle" : "الانتهاء من التحديث",
@@ -1961,10 +1967,10 @@
       "mcuSecondNanoX" : "اضغط مع الاستمرار على الزر الأيسر حتى تظهر <1><0>{{bootloaderOption}}</0></1>. اضغط على الزرين للتأكيد وأعد الاتصال بجهازك.",
       "mcuBlueFirst" : "اضغط مع الاستمرار على الزر الجانبي لمدة 10 ثوان لإيقاف تشغيل الجهاز. ثم حرر الزر.",
       "mcuBlueSecond" : "اضغط مع الاستمرار على الزر على الأقل لمدة 5 ثوانٍ حتى يتم عرض خيارات التمهيد. انقر على وضع Bootloader",
-      "successTitle" : "تم تحديث البرنامج الثابت",
+      "successTitle" : "تحديث نظام التشغيل تم بنجاح.",
       "successTextApps" : "يُرجى إعادة تثبيت التطبيقات على جهازك",
       "successTextNoApps" : "يمكنك الآن تثبيت التطبيقات على جهازك",
-      "sucessCTAApps" : "إعادة تثبيت التطبيقات",
+      "sucessCTAApps" : "أعد تثبيت التطبيقات",
       "SuccessCTANoApps" : "تثبيت التطبيقات",
       "cancelReinstallCTA" : "تثبيت التحديث",
       "resetSteps" : {
@@ -2269,12 +2275,16 @@
     "remainingCharacters" : "{{ remainingCharacters }} حرف متبقي",
     "renamed" : "اسم {{ productName }} تم تغييره إلى \n\"{{ name }}\" "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "حذف",
+    "confirmation" : "قم بتأكيد إزالة الصورة على Ledger Stax الخاص بك",
+    "success" : "تم إزالة صورة شاشة القفل"
+  },
   "deviceLocalization" : {
     "language" : "اللغة",
-    "deviceLanguage" : "اللغة",
+    "deviceLanguage" : "تغيير لغة الجهاز",
     "changeLanguage" : "تغيير اللغة",
     "changeDeviceLanguage" : "هل تريد تغير لغة جهازك؟",
-    "chooseLanguage" : "اختر لغة لجهازك {{deviceName}}.",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}} متاحة أيضاً لجهازك {{deviceName}}",
       "description" : "هل ترغب في تغيير لغته إلى {{language}}؟"
@@ -3493,17 +3503,25 @@
   },
   "ethereum" : {
     "stake" : {
-      "title" : "اكسب إيثريوم",
+      "title" : "قم بتنمية ما تملك من ETH",
+      "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال تلقي مكافآت يومية مباشرةً في Ledger Live لديك.",
       "lido" : {
+        "title" : "اكسب مع Lido",
         "tag" : "ليس هناك حد أدنى",
-        "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. ليس هناك فترة قَفل. ليس هناك حد أدنى."
+        "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. ليس هناك فترة قَفل. ليس هناك حد أدنى.",
+        "supportLink" : "تعرف على المزيد عن Lido"
       },
       "kiln" : {
+        "title" : "تكديس Kiln المُخصص",
         "tag" : "يتطلب 32 ETH",
-        "description" : "لديك أكثر من 32 ETH؟ اكسب مكافآت يومياً عن طريق تكديس ETH خاصتك بأمان مع Kiln."
+        "description" : "قم بالتكديس مع مدققين مخصصين. يتطلب مضاعفات 32 ETH. المطالبة بالمكافآت تتم يدوياً.",
+        "supportLink" : "تعرف على المزيد عن مدقق Kiln"
       },
-      "providerTitle" : "اكسب مع {{provider}}",
-      "providerLink" : "تعرف على المزيد عن {{provider}}"
+      "kiln_pooling" : {
+        "title" : "مُجمِع تكديس Kiln",
+        "description" : "انضم إلى مُجمِع تكديس. لا يوجد حد أدنى مطلوب من ETH. المطالبة بالمكافآت تتم تلقائياً.",
+        "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln"
+      }
     }
   },
   "near" : {
@@ -3861,6 +3879,10 @@
     },
     "experimental" : {
       "disclaimer" : "هذه ميزات تجريبية نقدمها \"كما هي\" لكي يختبرها مجتمعنا المتمرس بالتكنولوجيا. من الممكن أن يتم تغيير هذه الميزات أو تعطيلها أو إزالتها في أي وقت. من خلال تمكينها، فإنك توافق على استخدامها على مسؤوليتك الخاصة.",
+      "provider" : "الإعداد التجريبي \"My Ledger provider ({{forcedProvider}})\" قد يعرض نظام تشغيل وتطبيقات لم تُطرح بعد، مما يؤدي إلى مشكلات توافق. يمكنك تعطيله في الإعدادات.",
+      "providerDevMode" : "الإعدادات التجريبية \"My Ledger provider ({{forcedProvider}})\" و \"Developer mode (وضع المطور)\" قد يعرضا نظام تشغيل وتطبيقات لم تُطرح بعد، مما يؤدي إلى مشكلات توافق. يمكنك تعطيلهما في الإعدادات.",
+      "devMode" : "الإعداد التجريبي \"Developer mode (وضع المطور)\" قد يعرض نظام تشغيل وتطبيقات لم تُطرح بعد، مما يؤدي إلى مشكلات توافق. يمكنك تعطيله في الإعدادات.",
+      "providerCTA" : "انتقل إلى الإعدادات",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "دمج تجريبي",
@@ -3881,10 +3903,6 @@
         "scanForInvalidPaths" : {
           "title" : "بحث موسع عن الحساب",
           "description" : "البحث عن الحسابات ذات مسارات اشتقاق غير صحيحة. يرجى إرسال الأصول التي يحتمل العثور عليها إلى حساب عادي."
-        },
-        "experimentalCountervalues" : {
-          "title" : "API للقيم المقابلة التجريبية",
-          "description" : "قد يتسبب هذا في أن تكون القيم المقابلة المعروضة لحساباتك غير صحيحة."
         },
         "experimentalExplorers" : {
           "title" : "API للمستكشفين التجريبيين",
@@ -3921,6 +3939,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "مُضاعِف مخصص للرسوم الأساسية",
           "description" : "قم بتخصيص المُضاعِف المستخدَم للرسوم الأساسية التي تتكون منها maxFeePerGas لمعاملة EIP1559"
+        },
+        "enableNetworkLogs" : {
+          "title" : "تمكين سجلات الشبكة",
+          "description" : "تمكين سجلات الشبكة في وحدة التحكم (سجلات الأخطاء دائماً مُمَكَّنة)"
         }
       }
     },
@@ -4226,6 +4248,10 @@
           "3" : {
             "title" : "استعادة عبارة الاسترداد الخاصة بك على جهاز جديد",
             "description" : "استخدم عبارة استرداد حالية لاستعادة مفاتيحك الخاصة على Nano جديدة!"
+          },
+          "4" : {
+            "title" : "استعادة باستخدام Ledger Recover",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4397,25 @@
             "help" : {
               "help" : "بحاجة الى مساعدة",
               "descr" : "لا تعرف ما يتعين عليك فعله؟ احصل على بعض المساعدة لتجتاز هذه الخطوة."
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "اختر ’Restore using Ledger Recover [استعادة باستخدام Ledger Recover]’",
+            "1" : {
+              "title" : "اختر ’Restore [استعادة]’",
+              "descr" : "اضغط على كلا الزرين معاً للاختيار."
+            },
+            "2" : {
+              "title" : "اختر ’Restore using Ledger Recover [استعادة باستخدام Ledger Recover]’"
+            },
+            "help" : {
+              "iDontSee" : "لا أرى ’Restore using Ledger Recover [استعادة باستخدام Ledger Recover]’",
+              "modal" : {
+                "title" : "نظام التشغيل على Ledger Nano X خاصتك يحتاج إلى التحديث",
+                "subtitle" : " يمكنك محاولة تحديث نظام التشغيل أو التواصل مع دعم Ledger من أجل المساعدة.",
+                "learnHowToUpdate" : "تعرف على كيفية التحديث",
+                "contactLedgerSupport" : "تواصل مع دعم Ledger"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5043,6 +5088,10 @@
       "title" : "تم رفض تثبيت اللغة على الجهاز",
       "description" : "يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
+    "RestoreLanguageInstallRefusedOnDevice" : {
+      "title" : "Restoration of Language was cancelled on Ledger Stax",
+      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+    },
     "LanguageNotFound" : {
       "title" : "لم يتم العثور على اللغة",
       "description" : "لم يتم العثور على اللغة التي تحاول تثبيتها. يرجى محاولة تثبيت لغة أخرى."
@@ -5223,8 +5272,8 @@
       "title" : "تم رفض My Ledger على الجهاز"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "تم إلغاء التحديث على الجهاز",
-      "description" : "تم إلغاء تثبيت جميع التطبيقات الموجودة على جهازك. حافظ على جهازك محدثاً للاستفادة من التحسينات في الأمان والوظائف."
+      "title" : "Update was cancelled on device",
+      "description" : "The installation of OS update was refused on your device. If this was a mistake, restart the update."
     },
     "UserRefusedOnDevice" : {
       "title" : "تم رفض الإجراء",
@@ -5602,12 +5651,20 @@
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "الالتزام بالصورة رُفِض على الجهاز (TODO: final wording)",
+      "title" : "تم إلغاء شاشة القَفل على Ledger Stax",
       "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "تحميل الصورة رُفض على الجهاز (TODO: final wording)",
+      "title" : "تم إلغاء شاشة القَفل على Ledger Stax",
       "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
+    },
+    "RestoreImageCommitRefusedOnDevice" : {
+      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
+      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+    },
+    "RestoreImageLoadRefusedOnDevice" : {
+      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
+      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
     },
     "NearNewAccountWarning" : {
       "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. البروتوكول يتطلب تحويل {{formattedNewAccountStorageCost}} لإنشائه."
@@ -5686,6 +5743,7 @@
   "customImage" : {
     "title" : "شاشة قَفل مُخصّصة",
     "managerCTA" : "صورة شاشة القَفل",
+    "managerCTARemove" : "حذف",
     "steps" : {
       "choose" : {
         "stepLabel" : "اختر صورة",
@@ -5694,6 +5752,7 @@
         "myNfts" : "رموزي غير القابلة للاستبدال",
         "upload" : "تحميل من الكمبيوتر الخاص بي",
         "chooseNft" : "اختر رمزاً غير قابل للاستبدال",
+        "remove" : "إزالة الصورة الحالية",
         "selectNft" : "اختر رمز غير قابل للاستبدال",
         "previousSelectNft" : "عودة",
         "nftEmptyStateTitle" : "ليس هناك رموز غير قابلة للاستبدال بعد لعرضها",
@@ -5710,9 +5769,11 @@
         "stepLabel" : "تحويل",
         "uploadAnotherImage" : "قم بتحميل صورة أخرى",
         "allowPreview" : "اسمح لصورة شاشة القَفل بالتحميل على {{productName}} الخاص بك",
+        "allowConfirmPreview" : "السماح باستعادة صورة شاشة القفل على {{productName}}",
         "loadingPicture" : "جاري التحميل ...",
         "imageLoaded" : "تم تحميل الصورة على {{productName}}",
         "confirmPicture" : "يُعجبك ما تراه؟\nاحتفظ بها!",
+        "confirmRestorePicture" : "تأكيد استعادة صورة شاشة القفل",
         "doThisLater" : "ربّما في وقت لاحق"
       }
     },
@@ -5721,7 +5782,7 @@
       "description" : "عبر تخصيص الشاشة",
       "actionCompletedPopupLabel" : "تم تخصيص الجهاز"
     },
-    "customImageSet" : "تم إعداد شاشة القَفل",
+    "customImageSet" : "تم تعيين شاشة القَفل",
     "finishCTA" : "إنهاء"
   },
   "onboardingAppInstall" : {
@@ -5763,5 +5824,14 @@
     "description" : "عبارة الاسترداد السرية الخاصة بك لن تكون دائماً في متناول اليد.\nإطلاق تجريبي حصرياً لـ Ledger Nano X. اشترك مجاناً حتى 30 يونيو 2023",
     "cta" : "لماذا يجب أن اشترك؟",
     "downloadLLM" : "اشترك في <purple>Ledger Recover</purple> باستخدام تطبيق Ledger Live للجوّال"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "Network Error",
+      "subtitle" : "Something went wrong. Please try again. If the problem persists, save your log and contact Ledger support.",
+      "tryAgain" : "أعد المحاولة",
+      "contactSupport" : "تواصل مع دعم Ledger",
+      "saveLog" : "Save log"
+    }
   }
 }
