@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 30.0.0-nightly.1
+
+### Minor Changes
+
+- [#3491](https://github.com/LedgerHQ/ledger-live/pull/3491) [`f13bf2e2cc`](https://github.com/LedgerHQ/ledger-live/commit/f13bf2e2ccd1684692e1f641b66f0f3b4d457c2d) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Update LiveAppManifest params type whilst keeping it backwards compatible. Add helper functions to fetch and augment the manifest.params.dappUrl
+
 ## 30.0.0-nightly.0
 
 ### Major Changes

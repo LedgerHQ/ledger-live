@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.23.0-nightly.1
+
+### Minor Changes
+
+- [#3495](https://github.com/LedgerHQ/ledger-live/pull/3495) [`4d10718642`](https://github.com/LedgerHQ/ledger-live/commit/4d10718642799bfe665c28101942b1416231c898) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add network error view to WebPTXPlayer
+
+### Patch Changes
+
+- Updated dependencies [[`f13bf2e2cc`](https://github.com/LedgerHQ/ledger-live/commit/f13bf2e2ccd1684692e1f641b66f0f3b4d457c2d)]:
+  - @ledgerhq/live-common@30.0.0-nightly.1
+
 ## 3.23.0-nightly.0
 
 ### Minor Changes
