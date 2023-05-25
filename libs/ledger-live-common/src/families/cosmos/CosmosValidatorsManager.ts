@@ -1,11 +1,11 @@
-import network from "../../network";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import network from "@ledgerhq/live-network/src/network";
 import { log } from "@ledgerhq/logs";
-import { EnvName, EnvValue } from "../../env";
-import { makeLRUCache } from "../../cache";
-import type { CosmosValidatorItem } from "./types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { EnvName, EnvValue } from "../../env";
 import cryptoFactory from "./chain/chain";
 import cosmosBase from "./chain/cosmosBase";
+import type { CosmosValidatorItem } from "./types";
 
 export class CosmosValidatorsManager {
   protected _version: string;

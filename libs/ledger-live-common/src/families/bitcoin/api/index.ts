@@ -1,11 +1,11 @@
+import { FeeEstimationFailed } from "@ledgerhq/errors";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import network from "@ledgerhq/live-network/src/network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import type { FeeItems } from "../types";
-import { makeLRUCache } from "../../../cache";
-import { blockchainBaseURL } from "../../../explorer";
 import invariant from "invariant";
-import network from "../../../network";
-import { FeeEstimationFailed } from "@ledgerhq/errors";
+import { blockchainBaseURL } from "../../../explorer";
+import type { FeeItems } from "../types";
 
 type Fees = Record<string, number>;
 

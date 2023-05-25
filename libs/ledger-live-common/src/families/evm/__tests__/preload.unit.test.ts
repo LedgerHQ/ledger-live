@@ -2,8 +2,8 @@ import evms from "@ledgerhq/cryptoassets/data/evm/index";
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import network from "@ledgerhq/live-network/src/network";
 import { fetchERC20Tokens, hydrate, preload } from "../preload";
-import network from "../../../network";
 
 const usdcDefinition: ERC20Token = [
   "ethereum",

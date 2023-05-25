@@ -1,14 +1,14 @@
+import {
+  errorInterceptor,
+  requestInterceptor,
+  responseInterceptor,
+} from "@ledgerhq/live-network/src/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AxiosRequestConfig } from "axios";
 import axios, { AxiosInstance } from "axios";
 import axiosRetry, { isNetworkOrIdempotentRequestError } from "axios-retry";
 import genericPool, { Pool } from "generic-pool";
 import { blockchainBaseURL } from "../../../../explorer";
-import {
-  errorInterceptor,
-  requestInterceptor,
-  responseInterceptor,
-} from "../../../../network";
 import { Address, Block, TX } from "../storage/types";
 import { IExplorer } from "./types";
 

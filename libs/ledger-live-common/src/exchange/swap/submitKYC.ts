@@ -1,7 +1,7 @@
-import network from "../../network";
+import network from "@ledgerhq/live-network/src/network";
+import { ValidationError } from "../../errors";
 import { getSwapAPIBaseURL } from "./";
 import type { KYCData, SubmitKYC } from "./types";
-import { ValidationError } from "../../errors";
 
 export const submitKYC: SubmitKYC = async (provider: string, data: KYCData) => {
   try {

@@ -1,18 +1,18 @@
 import { utils } from "@crypto-org-chain/chain-jslib";
-import {
-  CryptoOrgAccountTransaction,
-  CryptoOrgMsgSendContent,
-  CryptoOrgAmount,
-  CryptoOrgAccountTransactionTypeEnum,
-  CryptoOrgCurrency,
-  CryptoOrgTestnetCurrency,
-} from "./sdk.types";
-import { BigNumber } from "bignumber.js";
-import network from "../../../network";
-import { getCroSdk, isTestNet } from "../logic";
+import network from "@ledgerhq/live-network/src/network";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
+import { getCroSdk, isTestNet } from "../logic";
+import {
+  CryptoOrgAccountTransaction,
+  CryptoOrgAccountTransactionTypeEnum,
+  CryptoOrgAmount,
+  CryptoOrgCurrency,
+  CryptoOrgMsgSendContent,
+  CryptoOrgTestnetCurrency,
+} from "./sdk.types";
 const PAGINATION_LIMIT = 200;
 const instances = {};
 

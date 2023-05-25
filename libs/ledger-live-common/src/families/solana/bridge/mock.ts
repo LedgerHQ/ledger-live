@@ -1,12 +1,19 @@
-import { flow, isArray, isEqual, isObject } from "lodash/fp";
-import { isUndefined, mapValues, omitBy } from "lodash/fp";
-import { cached, ChainAPI, Config, getChainAPI, logged, queued } from "../api";
-import { makeBridges } from "./bridge";
-import { makeLRUCache } from "../../../cache";
-import { getMockedMethods } from "./mock-data";
-import { minutes } from "../api/cached";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
 import { Message } from "@solana/web3.js";
+import {
+  flow,
+  isArray,
+  isEqual,
+  isObject,
+  isUndefined,
+  mapValues,
+  omitBy,
+} from "lodash/fp";
+import { ChainAPI, Config, cached, getChainAPI, logged, queued } from "../api";
+import { minutes } from "../api/cached";
 import { Functions } from "../utils";
+import { makeBridges } from "./bridge";
+import { getMockedMethods } from "./mock-data";
 
 function mockChainAPI(config: Config): ChainAPI {
   const mockedMethods = getMockedMethods();

@@ -1,5 +1,5 @@
+import network from "@ledgerhq/live-network/src/network";
 import { getEnv } from "../../env";
-import network from "../../network";
 import { getSwapAPIBaseURL } from "./";
 import { mockGetStatus } from "./mock";
 import type { GetMultipleStatus } from "./types";

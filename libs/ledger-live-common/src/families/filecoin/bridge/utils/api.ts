@@ -1,6 +1,8 @@
 import { log } from "@ledgerhq/logs";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 
+import network from "@ledgerhq/live-network/src/network";
+import { getEnv } from "../../../../env";
 import {
   BalanceResponse,
   BroadcastTransactionRequest,
@@ -11,8 +13,6 @@ import {
   TransactionResponse,
   TransactionsResponse,
 } from "./types";
-import network from "../../../../network";
-import { getEnv } from "../../../../env";
 
 const getFilecoinURL = (path?: string): string => {
   const baseUrl = getEnv("API_FILECOIN_ENDPOINT");

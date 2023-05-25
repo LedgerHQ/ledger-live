@@ -1,8 +1,8 @@
+import network from "@ledgerhq/live-network/src/network";
 import { Cluster } from "@solana/web3.js";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { compact } from "lodash/fp";
 import { getEnv } from "../../../env";
-import network from "../../../network";
 
 const MAX_VALIDATORS_NB = 1000; // Max number of validators to fetch
 

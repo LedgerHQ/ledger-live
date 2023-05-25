@@ -1,10 +1,10 @@
-import BigNumber from "bignumber.js";
-import { CosmosAccount, Transaction } from "./types";
-import { calculateFees, getEstimatedFees } from "./js-prepareTransaction";
-import network from "../../network";
-jest.mock("../../network");
-import * as jsPrepareTransaction from "./js-prepareTransaction";
+import network from "@ledgerhq/live-network/src/network";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import * as jsPrepareTransaction from "./js-prepareTransaction";
+import { calculateFees, getEstimatedFees } from "./js-prepareTransaction";
+import { CosmosAccount, Transaction } from "./types";
+jest.mock("../../network");
 
 const account = {
   id: "accountId",

@@ -1,3 +1,4 @@
+import network from "@ledgerhq/live-network/src/network";
 import type {
   CryptoCurrency,
   TokenCurrency,
@@ -12,7 +13,6 @@ import {
   SwapExchangeRateAmountTooLow,
   SwapExchangeRateAmountTooLowOrTooHigh,
 } from "../../errors";
-import network from "../../network";
 import type { Transaction } from "../../generated/types";
 import { getProviderConfig, getSwapAPIBaseURL, getSwapAPIError } from "./";
 import { mockGetExchangeRates } from "./mock";

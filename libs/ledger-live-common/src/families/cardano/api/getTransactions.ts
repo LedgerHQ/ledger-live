@@ -1,22 +1,22 @@
-import network from "../../../network";
-import * as ApiTypes from "./api-types";
+import network from "@ledgerhq/live-network/src/network";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Bip32PublicKey } from "@stricahq/bip32ed25519";
-import { CardanoAccount, PaymentChain, PaymentCredential } from "../types";
+import chunk from "lodash/chunk";
+import range from "lodash/range";
 import { getEnv } from "../../../env";
+import {
+  CARDANO_API_ENDPOINT,
+  CARDANO_TESTNET_API_ENDPOINT,
+} from "../constants";
 import {
   getBipPath,
   getCredentialKey,
   getExtendedPublicKeyFromHex,
   isTestnet,
 } from "../logic";
-import range from "lodash/range";
-import chunk from "lodash/chunk";
+import { CardanoAccount, PaymentChain, PaymentCredential } from "../types";
+import * as ApiTypes from "./api-types";
 import { APITransaction } from "./api-types";
-import {
-  CARDANO_API_ENDPOINT,
-  CARDANO_TESTNET_API_ENDPOINT,
-} from "../constants";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 async function fetchTransactions(
   paymentKeys: Array<string>,

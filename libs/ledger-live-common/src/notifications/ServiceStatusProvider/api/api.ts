@@ -1,6 +1,6 @@
+import network from "@ledgerhq/live-network/src/network";
 import { getEnv } from "../../../env";
-import network from "../../../network";
-import type { ServiceStatusSummary, ServiceStatusApi } from "../types";
+import type { ServiceStatusApi, ServiceStatusSummary } from "../types";
 
 const baseStatusUrl = () => getEnv("STATUS_API_URL");
 

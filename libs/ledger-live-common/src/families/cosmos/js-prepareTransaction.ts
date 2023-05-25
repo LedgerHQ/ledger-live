@@ -1,16 +1,16 @@
-import { CosmosAccount, Transaction } from "./types";
-import BigNumber from "bignumber.js";
-import { getMaxEstimatedBalance } from "./logic";
+import { CacheRes, makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
-import cryptoFactory from "./chain/chain";
+import BigNumber from "bignumber.js";
+import { getEnv } from "../../env";
 import { CosmosAPI } from "./api/Cosmos";
+import cryptoFactory from "./chain/chain";
 import {
   buildUnsignedPayloadTransaction,
   postBuildUnsignedPayloadTransaction,
 } from "./js-buildTransaction";
-import { getEnv } from "../../env";
-import { log } from "@ledgerhq/logs";
-import { CacheRes, makeLRUCache } from "../../cache";
+import { getMaxEstimatedBalance } from "./logic";
+import { CosmosAccount, Transaction } from "./types";
 
 export const calculateFees: CacheRes<
   Array<{

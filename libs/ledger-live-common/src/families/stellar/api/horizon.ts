@@ -1,4 +1,8 @@
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
+import {
+  requestInterceptor,
+  responseInterceptor,
+} from "@ledgerhq/live-network/src/network";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import StellarSdk, {
@@ -9,7 +13,6 @@ import StellarSdk, {
 } from "stellar-sdk";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
 import { getEnv } from "../../../env";
-import { requestInterceptor, responseInterceptor } from "../../../network";
 import {
   getAccountSpendableBalance,
   getReservedBalance,

@@ -1,12 +1,12 @@
-import network from "../../../network";
-import { APINetworkInfo } from "./api-types";
-import { getEpoch, isTestnet } from "../logic";
+import network from "@ledgerhq/live-network/src/network";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   CARDANO_API_ENDPOINT,
   CARDANO_TESTNET_API_ENDPOINT,
 } from "../constants";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getEpoch, isTestnet } from "../logic";
 import { CardanoAccount } from "../types";
+import { APINetworkInfo } from "./api-types";
 
 async function fetchNetworkInfo(
   currency: CryptoCurrency

@@ -1,10 +1,10 @@
-import { BigNumber } from "bignumber.js";
-import network from "../../../network";
-import { getEnv } from "../../../env";
+import network from "@ledgerhq/live-network/src/network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
-import { CeloValidatorGroup, FigmentIndexerTransaction } from "../types";
 import { isDefaultValidatorGroup } from "../logic";
+import { CeloValidatorGroup, FigmentIndexerTransaction } from "../types";
 import { celoKit } from "./sdk";
 
 const DEFAULT_TRANSACTIONS_LIMIT = 200;

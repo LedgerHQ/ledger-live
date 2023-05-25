@@ -1,7 +1,7 @@
+import network from "@ledgerhq/live-network/src/network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { FloorPrice, ProtoNFT } from "@ledgerhq/types-live";
 import { getEnv } from "../env";
-import network from "../network";
 
 const FLOOR_PRICE_CURRENCIES = new Set(["ethereum"]);
 

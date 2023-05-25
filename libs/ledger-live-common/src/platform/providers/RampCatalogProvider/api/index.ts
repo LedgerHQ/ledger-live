@@ -1,4 +1,4 @@
-import network from "../../../../network";
+import network from "@ledgerhq/live-network/src/network";
 import { getEnv } from "../../../../env";
 import type { RampCatalog } from "../types";
 import mockData from "./mock.json";

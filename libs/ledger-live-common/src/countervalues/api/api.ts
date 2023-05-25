@@ -1,10 +1,10 @@
+import network from "@ledgerhq/live-network/src/network";
+import chunk from "lodash/chunk";
 import URL from "url";
 import { getEnv } from "../../env";
-import network from "../../network";
-import chunk from "lodash/chunk";
+import { promiseAllBatched } from "../../promise";
 import { formatPerGranularity } from "../helpers";
 import type { CounterValuesAPI, TrackingPair } from "../types";
-import { promiseAllBatched } from "../../promise";
 
 const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 

@@ -1,11 +1,11 @@
 import { RecipientRequired } from "@ledgerhq/errors";
-import { makeLRUCache } from "./../../cache";
-import type { Transaction } from "./types";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
 import getFeesForTransaction from "./js-getFeesForTransaction";
 import { isValidRecipient } from "./logic";
+import type { Transaction } from "./types";
 import { Currency, isTaprootAddress } from "./wallet-btc";
-import type { Account } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const getCacheKeyForCalculateFees = ({
   a,

@@ -1,37 +1,21 @@
 /* eslint-disable camelcase */
-import invariant from "invariant";
-import { log } from "@ledgerhq/logs";
-import URL from "url";
 import {
   DeviceOnDashboardExpected,
+  FirmwareNotRecognized,
   ManagerAppAlreadyInstalledError,
   ManagerDeviceLockedError,
   ManagerFirmwareNotEnoughSpaceError,
   ManagerNotEnoughSpaceError,
-  UserRefusedFirmwareUpdate,
   NetworkDown,
-  FirmwareNotRecognized,
   TransportStatusError,
+  UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
-import { throwError, Observable } from "rxjs";
-import { catchError, map } from "rxjs/operators";
-import { version as livecommonversion } from "../../package.json";
-import { createDeviceSocket } from "../socket";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import network from "@ledgerhq/live-network/src/network";
+import { log } from "@ledgerhq/logs";
 import {
-  createMockSocket,
-  bulkSocketMock,
-  secureChannelMock,
-  resultMock,
-} from "../socket/socket.mock";
-import semver from "semver";
-import network from "../network";
-import { getEnv } from "../env";
-import { makeLRUCache } from "../cache";
-import { getUserHashes } from "../user";
-import {
-  LanguagePackage,
-  LanguagePackageResponse,
+  App,
   Application,
   ApplicationV2,
   ApplicationVersion,
@@ -40,12 +24,28 @@ import {
   DeviceVersion,
   FinalFirmware,
   Id,
+  LanguagePackage,
+  LanguagePackageResponse,
   McuVersion,
   OsuFirmware,
   SocketEvent,
-  App,
 } from "@ledgerhq/types-live";
+import invariant from "invariant";
+import { Observable, throwError } from "rxjs";
+import { catchError, map } from "rxjs/operators";
+import semver from "semver";
+import URL from "url";
+import { version as livecommonversion } from "../../package.json";
 import { mapApplicationV2ToApp } from "../apps/polyfill";
+import { getEnv } from "../env";
+import { createDeviceSocket } from "../socket";
+import {
+  bulkSocketMock,
+  createMockSocket,
+  resultMock,
+  secureChannelMock,
+} from "../socket/socket.mock";
+import { getUserHashes } from "../user";
 import { getProviderId } from "./provider";
 
 declare global {

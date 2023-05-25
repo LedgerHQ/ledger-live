@@ -1,24 +1,24 @@
-import { Observable, from, of, throwError } from "rxjs";
-import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 import {
   DeviceOnDashboardExpected,
+  LanguageNotFound,
+  ManagerNotEnoughSpaceError,
+  StatusCodes,
   TransportError,
   TransportStatusError,
-  LanguageNotFound,
-  StatusCodes,
-  ManagerNotEnoughSpaceError,
 } from "@ledgerhq/errors";
+import { Observable, from, of, throwError } from "rxjs";
+import { catchError, concatMap, delay, mergeMap } from "rxjs/operators";
 
-import ManagerAPI from "../manager/api";
-import { withDevice } from "./deviceAccess";
-import getDeviceInfo from "./getDeviceInfo";
-import { Language, LanguagePackage } from "@ledgerhq/types-live";
-import network from "../network";
-import { LanguageInstallRefusedOnDevice } from "../errors";
-import getAppAndVersion from "./getAppAndVersion";
-import { isDashboardName } from "./isDashboardName";
 import Transport from "@ledgerhq/hw-transport";
+import network from "@ledgerhq/live-network/src/network";
+import { Language, LanguagePackage } from "@ledgerhq/types-live";
+import { LanguageInstallRefusedOnDevice } from "../errors";
+import ManagerAPI from "../manager/api";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
+import { withDevice } from "./deviceAccess";
+import getAppAndVersion from "./getAppAndVersion";
+import getDeviceInfo from "./getDeviceInfo";
+import { isDashboardName } from "./isDashboardName";
 
 export type InstallLanguageEvent =
   | AttemptToQuitAppEvent

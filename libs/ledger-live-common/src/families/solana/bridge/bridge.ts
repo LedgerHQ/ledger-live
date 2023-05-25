@@ -1,11 +1,5 @@
-import BigNumber from "bignumber.js";
-import {
-  GetAccountShape,
-  makeAccountBridgeReceive,
-  makeScanAccounts as makeScanHelper,
-  makeSync as makeSyncHelper,
-} from "../../../bridge/jsHelpers";
-import { makeLRUCache } from "../../../cache";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   AccountBridge,
   AccountLike,
@@ -13,6 +7,13 @@ import type {
   CurrencyBridge,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import {
+  GetAccountShape,
+  makeAccountBridgeReceive,
+  makeScanAccounts as makeScanHelper,
+  makeSync as makeSyncHelper,
+} from "../../../bridge/jsHelpers";
 import { ChainAPI, Config } from "../api";
 import { minutes } from "../api/cached";
 import { broadcastWithAPI } from "../js-broadcast";
@@ -23,10 +24,9 @@ import { PRELOAD_MAX_AGE, hydrate, preloadWithAPI } from "../js-preload";
 import { prepareTransaction as prepareTransactionWithAPI } from "../js-prepareTransaction";
 import { signOperationWithAPI } from "../js-signOperation";
 import { getAccountShapeWithAPI } from "../js-synchronization";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import type { SolanaAccount, Transaction } from "../types";
 import { endpointByCurrencyId } from "../utils";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   async function prepareTransaction(

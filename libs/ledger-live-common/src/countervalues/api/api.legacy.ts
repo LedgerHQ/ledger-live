@@ -1,10 +1,10 @@
+import network from "@ledgerhq/live-network/src/network";
 import { findCurrencyByTicker } from "../../currencies";
 import { getEnv } from "../../env";
-import network from "../../network";
 import {
-  magFromTo,
-  formatPerGranularity,
   formatCounterValueDay,
+  formatPerGranularity,
+  magFromTo,
 } from "../helpers";
 import type { CounterValuesAPI } from "../types";
 

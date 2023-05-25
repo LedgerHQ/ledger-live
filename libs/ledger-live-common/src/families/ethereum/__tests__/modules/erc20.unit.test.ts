@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import network from "@ledgerhq/live-network/src/network";
 import { preload } from "../../modules/erc20";
-import network from "../../../../network";
 
 const currency1 = getCryptoCurrencyById("ethereum");
 jest.mock("../../../../network");

@@ -1,9 +1,9 @@
-import { useEffect, useState, useMemo } from "react";
-import type { Operation, AccountLike } from "@ledgerhq/types-live";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import network from "@ledgerhq/live-network/src/network";
 import { log } from "@ledgerhq/logs";
-import { makeLRUCache } from "../../cache";
+import type { AccountLike, Operation } from "@ledgerhq/types-live";
+import { useEffect, useMemo, useState } from "react";
 import { getEnv } from "../../env";
-import network from "../../network";
 const capacityStatuses = {
   normal: null,
   full: null,

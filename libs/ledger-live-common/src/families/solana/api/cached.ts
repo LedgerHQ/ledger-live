@@ -1,6 +1,6 @@
-import { makeLRUCache } from "../../../cache";
-import { ChainAPI } from "./chain";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
 import hash from "object-hash";
+import { ChainAPI } from "./chain";
 
 type CacheOptions = { max: number; ttl: number };
 export function seconds(num: number, max = 100): CacheOptions {

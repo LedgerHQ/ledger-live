@@ -1,9 +1,9 @@
 import { getEnv } from "@ledgerhq/live-env";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import network from "@ledgerhq/live-network/src/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { makeLRUCache } from "../cache";
-import network from "../network";
-import { CurrencyConfigCommon } from "./types";
 import defaultConfig from "./defaultConfig";
+import { CurrencyConfigCommon } from "./types";
 
 export const getCurrencyConfiguration = makeLRUCache(
   async (

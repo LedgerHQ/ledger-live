@@ -1,15 +1,15 @@
-import network from "../../../network";
-import { METACHAIN_SHARD, MAX_PAGINATION_SIZE } from "../constants";
+import network from "@ledgerhq/live-network/src/network";
+import { SignedOperation } from "@ledgerhq/types-live";
+import { MAX_PAGINATION_SIZE, METACHAIN_SHARD } from "../constants";
 import {
+  ESDTToken,
   ElrondApiTransaction,
   ElrondDelegation,
   ElrondProvider,
   ElrondTransactionAction,
   ElrondTransferOptions,
-  ESDTToken,
   NetworkInfo,
 } from "../types";
-import { SignedOperation } from "@ledgerhq/types-live";
 
 const decodeTransactionMode = (action: ElrondTransactionAction): string => {
   if (!action) {

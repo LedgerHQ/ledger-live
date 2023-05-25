@@ -1,8 +1,8 @@
+import network from "@ledgerhq/live-network/src/network";
+import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import network from "../../../network";
 import { getEnv } from "../../../env";
 import { encodeOperationId } from "../../../operation";
-import { Operation, OperationType } from "@ledgerhq/types-live";
 import { NearTransaction } from "./sdk.types";
 
 const DEFAULT_TRANSACTIONS_LIMIT = 100;

@@ -1,9 +1,9 @@
-import type { Currency } from "@ledgerhq/types-cryptoassets";
-import { useState, useEffect } from "react";
-import { makeLRUCache } from "../cache";
-import api from "../countervalues/api";
-import { listTokens } from "@ledgerhq/cryptoassets";
 import { listCryptoCurrencies } from "@ledgerhq/coin-framework/currencies/index";
+import { listTokens } from "@ledgerhq/cryptoassets";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
+import type { Currency } from "@ledgerhq/types-cryptoassets";
+import { useEffect, useState } from "react";
+import api from "../countervalues/api";
 
 // FIXME in future we would put it back in ledgerjs to be more "dynamic"
 let currenciesAndTokenWithCountervaluesByTicker:

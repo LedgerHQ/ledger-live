@@ -1,8 +1,8 @@
-import BigNumber from "bignumber.js";
+import network from "@ledgerhq/live-network/src/network";
 import type { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import type { Transaction } from "../types";
 import { calculateAmount } from "../utils";
-import network from "../../../network";
 
 // Balance is 1 Hbar
 const account: Account = {

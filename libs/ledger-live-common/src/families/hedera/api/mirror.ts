@@ -1,11 +1,11 @@
-import BigNumber from "bignumber.js";
-import network from "../../../network";
-import { getAccountBalance } from "./network";
-import { Operation, OperationType } from "@ledgerhq/types-live";
-import { encodeOperationId } from "../../../operation";
 import { AccountId } from "@hashgraph/sdk";
+import network from "@ledgerhq/live-network/src/network";
+import { Operation, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { getEnv } from "../../../env";
+import { encodeOperationId } from "../../../operation";
 import { base64ToUrlSafeBase64 } from "../utils";
+import { getAccountBalance } from "./network";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 

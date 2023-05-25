@@ -1,9 +1,9 @@
-import { cached, Config, getChainAPI, queued } from "../api";
-import { makeLRUCache } from "../../../cache";
-import { makeBridges } from "./bridge";
-import { minutes } from "../api/cached";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
 import { log } from "@ledgerhq/logs";
+import { cached, Config, getChainAPI, queued } from "../api";
+import { minutes } from "../api/cached";
 import { traced } from "../api/traced";
+import { makeBridges } from "./bridge";
 
 const httpRequestLogger = (url: string, options: any) => {
   log("network", url, {

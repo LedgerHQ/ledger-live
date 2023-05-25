@@ -1,7 +1,7 @@
+import network from "@ledgerhq/live-network/src/network";
 import qs from "qs";
 import { getEnv } from "../../env";
 import { SwapNoAvailableProviders } from "../../errors";
-import network from "../../network";
 import { getAvailableProviders, getSwapAPIBaseURL } from "./";
 import { mockGetProviders } from "./mock";
 import type { GetProviders, ProvidersResponseV4 } from "./types";

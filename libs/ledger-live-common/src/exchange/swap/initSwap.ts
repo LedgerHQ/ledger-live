@@ -1,9 +1,11 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import Exchange, { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
+import network from "@ledgerhq/live-network/src/network";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { from, Observable } from "rxjs";
+import { Observable, from } from "rxjs";
 import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import {
@@ -16,9 +18,7 @@ import { getEnv } from "../../env";
 import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
-import network from "../../network";
 import { delay } from "../../promise";
-import Exchange, { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
 import { getProviderConfig, getSwapAPIBaseURL } from "./";
 import { mockInitSwap } from "./mock";
 import type { InitSwapInput, SwapRequestEvent } from "./types";

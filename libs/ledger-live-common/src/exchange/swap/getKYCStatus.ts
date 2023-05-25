@@ -1,9 +1,9 @@
-import network from "../../network";
-import { getSwapAPIBaseURL } from "./";
-import type { GetKYCStatus } from "./types";
-import { SwapCheckKYCStatusFailed } from "../../errors";
+import network from "@ledgerhq/live-network/src/network";
 import { getEnv } from "../../env";
+import { SwapCheckKYCStatusFailed } from "../../errors";
+import { getSwapAPIBaseURL } from "./";
 import { mockGetKYCStatus } from "./mock";
+import type { GetKYCStatus } from "./types";
 
 export const getKYCStatus: GetKYCStatus = async (
   provider: string,

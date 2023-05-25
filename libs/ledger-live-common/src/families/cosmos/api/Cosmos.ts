@@ -1,14 +1,14 @@
-import BigNumber from "bignumber.js";
-import network from "../../../network";
-import { patchOperationWithHash } from "../../../operation";
+import network from "@ledgerhq/live-network/src/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { patchOperationWithHash } from "../../../operation";
 import cryptoFactory from "../chain/chain";
 import {
   CosmosDelegation,
   CosmosDelegationStatus,
-  CosmosTx,
   CosmosRedelegation,
+  CosmosTx,
   CosmosUnbonding,
 } from "../types";
 

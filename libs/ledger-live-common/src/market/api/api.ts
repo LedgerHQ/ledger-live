@@ -1,20 +1,20 @@
-import {
-  MarketListRequestParams,
-  MarketCurrencyChartDataRequestParams,
-  CurrencyData,
-  SupportedCoins,
-  MarketCoin,
-  SparklineSvgData,
-} from "../types";
+import network from "@ledgerhq/live-network/src/network";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   listCryptoCurrencies,
-  listTokens,
   listSupportedCurrencies,
+  listTokens,
 } from "../../currencies";
-import { rangeDataTable } from "../utils/rangeDataTable";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "../../env";
-import network from "../../network";
+import {
+  CurrencyData,
+  MarketCoin,
+  MarketCurrencyChartDataRequestParams,
+  MarketListRequestParams,
+  SparklineSvgData,
+  SupportedCoins,
+} from "../types";
+import { rangeDataTable } from "../utils/rangeDataTable";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 

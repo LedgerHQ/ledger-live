@@ -1,8 +1,8 @@
-import estimateMaxSpendable from "./js-estimateMaxSpendable";
-import BigNumber from "bignumber.js";
+import network from "@ledgerhq/live-network/src/network";
 import type { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import estimateMaxSpendable from "./js-estimateMaxSpendable";
 import type { Transaction } from "./types";
-import network from "../../network";
 
 export const estimatedFeeSafetyRate = 2;
 

@@ -3,7 +3,7 @@ import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { addTokens, convertERC20 } from "@ledgerhq/cryptoassets/tokens";
 import { tokens as tokensByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
-import network from "../../network";
+import network from "@ledgerhq/live-network/src/network";
 import { getEnv } from "../../env";
 
 export const fetchERC20Tokens: (

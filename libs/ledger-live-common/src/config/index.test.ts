@@ -1,6 +1,6 @@
+import network from "@ledgerhq/live-network/src/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from ".";
-import network from "../network";
 import defaultConfig from "./defaultConfig";
 jest.mock("../network");
 

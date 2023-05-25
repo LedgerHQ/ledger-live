@@ -1,9 +1,9 @@
-import network from "../../../../network";
+import network from "@ledgerhq/live-network/src/network";
+import qs from "qs";
 import { getEnv } from "../../../../env";
+import { FilterParams } from "../../../filters";
 import type { LiveAppManifest } from "../../../types";
 import mockData from "./mock.json";
-import { FilterParams } from "../../../filters";
-import qs from "qs";
 
 const api = {
   fetchLiveAppManifests: async (

@@ -5,12 +5,12 @@ import { log } from "@ledgerhq/logs";
 import { delay } from "@ledgerhq/live-promise";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
 import OptimismGasPriceOracleAbi from "../abis/optimismGasPriceOracle.abi.json";
 import { FeeData, FeeHistory, Transaction as EvmTransaction } from "../types";
 import { GasEstimationError, InsufficientFunds } from "../errors";
 import { transactionToEthersTransaction } from "../adapters";
 import { getSerializedTransaction } from "../transaction";
-import { makeLRUCache } from "../../../cache";
 import ERC20Abi from "../abis/erc20.abi.json";
 
 export const RPC_TIMEOUT = 5000; // wait 5 sec after a fail

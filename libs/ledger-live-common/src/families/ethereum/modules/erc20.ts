@@ -6,6 +6,8 @@ import { BigNumber } from "bignumber.js";
 import type { ModeModule } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
 import { convertERC20, ERC20Token } from "@ledgerhq/cryptoassets";
+import network from "@ledgerhq/live-network/src/network";
+import { makeLRUCache } from "@ledgerhq/live-network/src/cache";
 import { inferTokenAccount } from "../transaction";
 import { getAccountCurrency } from "../../../account";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -13,8 +15,6 @@ import { addTokens } from "../../../currencies";
 import { DeviceTransactionField } from "../../../transaction";
 import { getEnv } from "../../../env";
 import { log } from "@ledgerhq/logs";
-import network from "../../../network";
-import { makeLRUCache } from "../../../cache";
 import { findERC20SignaturesInfo } from "@ledgerhq/hw-app-eth/erc20";
 import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 
