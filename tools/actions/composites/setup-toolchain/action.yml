@@ -83,7 +83,7 @@ runs:
         npm --version
     - name: Use proto (powershell)
       if: ${{ runner.os == 'Windows' }}
-      shell: pwsh
+      shell: POWERSHELL
       run: |
         proto use
         echo ${env:PATH}
