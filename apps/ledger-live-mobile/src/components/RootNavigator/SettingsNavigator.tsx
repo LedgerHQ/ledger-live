@@ -11,7 +11,9 @@ import DebugBenchmarkQRStream from "../../screens/Settings/Debug/Broken/Benchmar
 import DebugBLE from "../../screens/Settings/Debug/Connectivity/BLE";
 import DebugBLEBenchmark from "../../screens/Settings/Debug/Connectivity/BLEBenchmark";
 import DebugConfiguration from "../../screens/Settings/Debug/Configuration";
-import DebugConnectivity from "../../screens/Settings/Debug/Connectivity";
+import DebugConnectivity, {
+  connectivityHeaderOptions,
+} from "../../screens/Settings/Debug/Connectivity";
 import DebugCrash from "../../screens/Settings/Debug/Debugging/Crashes";
 import DebugCustomImageGraphics from "../../screens/Settings/Debug/Features/CustomImageGraphics";
 import DebugDebugging from "../../screens/Settings/Debug/Debugging";
@@ -19,7 +21,9 @@ import DebugEnv from "../../screens/Settings/Debug/Configuration/DebugEnv";
 import DebugExport from "../../screens/Settings/Debug/Features/ExportAccounts";
 import DebugFeatureFlags from "../../screens/FeatureFlagsSettings";
 import DebugFeatures from "../../screens/Settings/Debug/Features";
-import DebugFetchCustomImage from "../../screens/Settings/Debug/Features/FetchCustomImage";
+import DebugFetchCustomImage, {
+  debugFetchCustomImageHeaderOptions,
+} from "../../screens/Settings/Debug/Features/FetchCustomImage";
 import DebugFirmwareUpdate from "../../screens/Settings/Debug/Features/FirmwareUpdate";
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
@@ -33,6 +37,7 @@ import DebugCommandSender from "../../screens/Settings/Debug/Connectivity/Comman
 import DebugPlayground from "../../screens/Settings/Debug/Playground";
 import DebugBluetoothAndLocationServices from "../../screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "../../screens/Settings/Debug";
+import DebugSnackbars from "../../screens/Settings/Debug/Features/Snackbars";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "../../screens/Settings/Debug/Features/Swap";
@@ -230,9 +235,7 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugConnectivity}
         component={DebugConnectivity}
-        options={{
-          title: "Connectivity",
-        }}
+        options={connectivityHeaderOptions}
       />
       <Stack.Screen
         name={ScreenName.DebugFeatures}
@@ -376,15 +379,13 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugFetchCustomImage}
         component={DebugFetchCustomImage}
-        options={{
-          title: "Debug FetchCustomImage",
-        }}
+        options={debugFetchCustomImageHeaderOptions}
       />
       <Stack.Screen
         name={ScreenName.DebugFirmwareUpdate}
         component={DebugFirmwareUpdate}
         options={{
-          title: "Debug FirmwareUpdate",
+          title: "Debug Firmware update",
         }}
       />
       <Stack.Screen
@@ -392,6 +393,13 @@ export default function SettingsNavigator() {
         component={DebugCustomImageGraphics}
         options={{
           title: "Custom image graphics",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugSnackbars}
+        component={DebugSnackbars}
+        options={{
+          title: "Debug snackbars",
         }}
       />
       <Stack.Screen

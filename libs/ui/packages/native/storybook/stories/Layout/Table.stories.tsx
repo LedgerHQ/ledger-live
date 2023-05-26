@@ -31,7 +31,7 @@ const TopLeft = ({ text }: { text: string | undefined }) => {
       <Text color={neutral.c100} variant="body" fontWeight="semiBold" mr={2}>
         {text}
       </Text>
-      <Icons.CircledCheckRegular size={12.5} color={success.c100} />
+      <Icons.CircledCheckMedium size={12.5} color={success.c50} />
     </FlexBox>
   );
 };

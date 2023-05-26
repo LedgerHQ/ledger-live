@@ -4,7 +4,6 @@ import styled from "styled-components";
 import Check from "../icons/CheckFull";
 import TrackPage from "../analytics/TrackPage";
 import Rewards from "../images/rewards.svg";
-import useTheme from "../hooks/useTheme";
 import Text from "./Text";
 import Button from "./Button";
 import Box from "./Box";
@@ -27,16 +26,15 @@ export default function EarnRewardsInfoModal({
   additional,
   footerLeft,
 }: Props) {
-  const infoColor = useTheme("colors.positiveGreen");
   return (
     <Modal
       name={name}
       centered
-      render={({ onClose, data }) => (
+      render={({ onClose }) => (
         <ModalBody
           title={<Trans i18nKey="delegation.earnRewards" />}
           onClose={onClose}
-          render={onClose => (
+          render={() => (
             <Box flow={4} mx={4}>
               <TrackPage category="Delegation Flow" name="Step Starter" />
               <Box flow={1} alignItems="center">
@@ -59,7 +57,7 @@ export default function EarnRewardsInfoModal({
                 <Box>
                   {bullets.map((val, i) => (
                     <Row key={val + i}>
-                      <Check size={16} color={infoColor} />
+                      <Check size={16} />
                       <Text
                         ff="Inter|SemiBold"
                         style={{

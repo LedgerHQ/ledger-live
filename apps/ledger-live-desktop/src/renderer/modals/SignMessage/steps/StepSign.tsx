@@ -7,10 +7,12 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { closeModal } from "~/renderer/actions/modals";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+
 const action = createAction(
   getEnv("MOCK") ? mockedEventEmitter : connectApp,
   getEnv("MOCK") ? mockedEventEmitter : signMessageExec,
 );
+
 export default function StepSign({
   account,
   message,
@@ -25,7 +27,11 @@ export default function StepSign({
         account,
         message,
       }}
-      onResult={result => {
+      onResult={r => {
+        const result = r as {
+          error: Error | null | undefined;
+          signature: string | null | undefined;
+        };
         dispatch(closeModal("MODAL_SIGN_MESSAGE"));
         if (result.error) {
           onFailHandler(result.error);

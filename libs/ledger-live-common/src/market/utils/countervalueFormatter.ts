@@ -5,7 +5,7 @@ export const counterValueFormatter = ({
   locale,
 }: {
   currency?: string;
-  value: number;
+  value?: number;
   shorten?: boolean;
   locale: string;
 }): string => {

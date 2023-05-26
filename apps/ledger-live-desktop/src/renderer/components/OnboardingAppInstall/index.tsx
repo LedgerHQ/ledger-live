@@ -5,7 +5,6 @@ import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import DefaultAppsIllustration from "./DefaultAppsIllustration";
 import RestoreAppsIllustration from "./RestoreAppsIllustration";
 import CancelModal from "./CancelModal";
@@ -44,7 +43,7 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
     : deviceToRestore?.modelId;
 
   useEffect(() => {
-    if (deviceToRestore) {
+    if (deviceToRestore?.apps) {
       setDependencies(deviceToRestore.apps.map(app => app.name));
     } else if (deviceInitialApps?.params?.apps) {
       setDependencies(deviceInitialApps.params.apps);

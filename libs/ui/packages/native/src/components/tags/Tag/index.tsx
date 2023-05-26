@@ -20,7 +20,7 @@ export interface TagProps extends FlexBoxProps {
 const typeColor = {
   color: "primary.c80",
   shade: "neutral.c30",
-  warning: "warning.c100",
+  warning: "warning.c50",
 };
 
 export default function Tag({

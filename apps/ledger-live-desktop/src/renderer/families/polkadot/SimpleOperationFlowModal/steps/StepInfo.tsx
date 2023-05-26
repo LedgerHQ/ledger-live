@@ -10,18 +10,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
 import Text from "~/renderer/components/Text";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-export default function StepInfo({
-  account,
-  parentAccount,
-  onUpdateTransaction,
-  transaction,
-  status,
-  bridgePending,
-  warning,
-  error,
-  t,
-  mode,
-}: StepProps) {
+export default function StepInfo({ account, transaction, warning, error, mode }: StepProps) {
   invariant(
     account && account.polkadotResources && transaction,
     "account and transaction required",
@@ -56,7 +45,6 @@ export function StepInfoFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;

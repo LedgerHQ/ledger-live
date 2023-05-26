@@ -5,8 +5,8 @@ import React, { PureComponent } from "react";
 import styled from "styled-components";
 import { Spring, animated } from "react-spring/renderprops";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+
+const Container = styled(Box).attrs(() => ({
   horizontal: true,
   relative: true,
 }))`
@@ -39,7 +39,7 @@ class FlipTicker extends PureComponent<Props, State> {
     }
   }
 
-  _node = null;
+  _node: HTMLDivElement | null = null;
   render() {
     const { value, ...p } = this.props;
     const { height } = this.state;
@@ -87,6 +87,7 @@ function Tick(props: { height: number; value: string }) {
       {m => (
         <animated.div
           style={{
+            // @ts-expect-error react-spring types are broken
             transform: m.offset.interpolate(v => `translate3d(0, -${v}px, 0)`),
             top: 0,
             position: "absolute",

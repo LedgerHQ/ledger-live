@@ -16,7 +16,7 @@ type Props = StackNavigatorProps<
   TezosDelegationFlowParamList,
   ScreenName.DelegationStarted
 >;
-const Check = <Icons.CheckAloneMedium size={20} color={"success.c100"} />;
+const Check = <Icons.CheckAloneMedium size={20} color={"success.c50"} />;
 
 export default function DelegationStarted({ navigation, route }: Props) {
   const onNext = useCallback(() => {

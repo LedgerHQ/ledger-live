@@ -1,37 +1,38 @@
 import React, { Component } from "react";
 import { withTranslation, TFunction } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import FakeLink from "~/renderer/components/FakeLink";
 import { SpoilerIcon } from "~/renderer/components/Spoiler";
 import { openURL } from "~/renderer/linking";
 import AccountRow from "./AccountRow";
+
+export type AccountListProps = {
+  accounts: Account[];
+  checkedIds?: string[];
+  editedNames: {
+    [accountId: string]: string;
+  };
+  setAccountName?: (b: Account, a: string) => void;
+  onToggleAccount?: (a: Account) => void;
+  onSelectAll?: (a: Account[]) => void;
+  onUnselectAll?: (a: Account[]) => void;
+  title?: React.ReactNode;
+  emptyText?: React.ReactNode;
+  autoFocusFirstInput?: boolean;
+  collapsible?: boolean;
+  hideAmount?: boolean;
+  supportLink?: {
+    id: string;
+    url: string;
+  };
+  t: TFunction;
+  ToggleAllComponent?: React.ReactNode;
+};
+
 class AccountsList extends Component<
-  {
-    accounts: Account[];
-    currency?: CryptoCurrency | TokenCurrency;
-    checkedIds?: string[];
-    editedNames: {
-      [accountId: string]: string;
-    };
-    setAccountName?: (b: Account, a: string) => void;
-    onToggleAccount?: (a: Account) => void;
-    onSelectAll?: (a: Account[]) => void;
-    onUnselectAll?: (a: Account[]) => void;
-    title?: React.ReactNode;
-    emptyText?: React.ReactNode;
-    autoFocusFirstInput?: boolean;
-    collapsible?: boolean;
-    hideAmount?: boolean;
-    supportLink?: {
-      id: any;
-      url: string;
-    };
-    t: TFunction;
-    ToggleAllComponent?: React.ReactNode;
-  },
+  AccountListProps,
   {
     collapsed: boolean;
   }
@@ -63,7 +64,6 @@ class AccountsList extends Component<
   render() {
     const {
       accounts,
-      currency,
       checkedIds,
       onToggleAccount,
       editedNames,
@@ -136,7 +136,6 @@ class AccountsList extends Component<
               <AccountRow
                 key={account.id}
                 account={account}
-                currency={currency}
                 autoFocusInput={i === 0 && autoFocusFirstInput}
                 isDisabled={!onToggleAccount || !checkedIds}
                 isChecked={!checkedIds || checkedIds.find(id => id === account.id) !== undefined}

@@ -1,19 +1,21 @@
-import React, { memo, useCallback, useEffect, useMemo } from "react";
-import { Linking, Platform, StyleSheet, View } from "react-native";
-import Clipboard from "@react-native-community/clipboard";
-import { useDomain } from "@ledgerhq/domain-service/hooks/index";
-import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import React, { memo, useEffect, useMemo, useState } from "react";
+import { getRegistriesForDomain } from "@ledgerhq/domain-service/registries/index";
+import { isError, isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { useDomain } from "@ledgerhq/domain-service/hooks/index";
+import { Platform, StyleSheet, View } from "react-native";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import Clipboard from "@react-native-community/clipboard";
+import {
+  InvalidDomain,
+  NoResolution,
+} from "@ledgerhq/domain-service/errors/index";
 import { Trans } from "react-i18next";
+import { BasicErrorsView, DomainErrorsView } from "./DomainErrorHandlers";
 import RecipientInput from "../../components/RecipientInput";
 import Alert from "../../components/Alert";
-import ExternalLink from "../../components/ExternalLink";
 import { urls } from "../../config/urls";
-import TranslatedError from "../../components/TranslatedError";
-import LText from "../../components/LText";
-import SupportLinkError from "../../components/SupportLinkError";
 
 type Props = {
   onChangeText: (value: string) => void;
@@ -39,7 +41,10 @@ const DomainServiceRecipientInput = ({
   error,
 }: Props) => {
   const bridge = getAccountBridge(account, parentAccount);
+
   const domainServiceResponse = useDomain(value, "ens");
+  const lowerCaseValue = useMemo(() => value.toLowerCase(), [value]);
+
   const ensResolution = useMemo(
     () =>
       isLoaded(domainServiceResponse)
@@ -47,12 +52,24 @@ const DomainServiceRecipientInput = ({
         : null,
     [domainServiceResponse],
   );
-
-  const lowerCaseValue = useMemo(() => value.toLowerCase(), [value]);
-  const isForwardResolution = useMemo(
-    () => !!lowerCaseValue && lowerCaseValue === ensResolution?.domain,
-    [ensResolution?.domain, lowerCaseValue],
+  const domainError = useMemo(
+    () => (isError(domainServiceResponse) ? domainServiceResponse : null),
+    [domainServiceResponse],
   );
+  const domainErrorHandled = useMemo(
+    () =>
+      (domainError?.error as Error) instanceof InvalidDomain ||
+      (domainError?.error as Error) instanceof NoResolution,
+    [domainError],
+  );
+
+  const [isForwardResolution, setIsForwardResolution] = useState(false);
+  useEffect(() => {
+    // if a registry compatible with the input is found, then we know the input is a domain
+    getRegistriesForDomain(lowerCaseValue).then(registries =>
+      setIsForwardResolution(Boolean(registries.length)),
+    );
+  }, [lowerCaseValue]);
 
   useEffect(() => {
     const { recipient, recipientDomain } = transaction;
@@ -97,10 +114,6 @@ const DomainServiceRecipientInput = ({
     value,
   ]);
 
-  const domainServiceSupportLink = useCallback(() => {
-    Linking.openURL(urls.domainService);
-  }, []);
-
   return (
     <>
       <View style={styles.inputWrapper}>
@@ -111,30 +124,18 @@ const DomainServiceRecipientInput = ({
           }}
           onFocus={onRecipientFieldFocus}
           onChangeText={onChangeText}
-          // FIXME: onInputCleared PROP DOES NOT EXISTS
-          // onInputCleared={clear}
           value={value}
+          placeholderTranslationKey="transfer.recipient.inputEns"
         />
       </View>
 
-      {(error || warning) && (
-        <>
-          <LText
-            style={[styles.warningBox]}
-            color={error ? "alert" : warning ? "orange" : "darkBlue"}
-          >
-            <TranslatedError error={error || warning} />
-          </LText>
-          <View
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-            }}
-          >
-            <SupportLinkError error={error} type="alert" />
-          </View>
-        </>
-      )}
+      <BasicErrorsView
+        error={error}
+        warning={warning}
+        domainError={domainError}
+        domainErrorHandled={domainErrorHandled}
+        isForwardResolution={isForwardResolution}
+      />
 
       {transaction.recipientDomain && (
         <View style={styles.inputWrapper}>
@@ -143,21 +144,28 @@ const DomainServiceRecipientInput = ({
               <Trans i18nKey="send.recipient.domainService.forward" />
             </Alert>
           ) : (
-            <Alert type="success">
+            <Alert
+              type="success"
+              learnMoreUrl={urls.domainService}
+              learnMoreKey="send.recipient.domainService.supportLink"
+            >
               <Trans
                 i18nKey="send.recipient.domainService.reverse"
                 values={{ domain: transaction.recipientDomain.domain }}
-              />
-              <ExternalLink
-                onPress={domainServiceSupportLink}
-                text={
-                  <Trans i18nKey="send.recipient.domainService.supportLink" />
-                }
               />
             </Alert>
           )}
         </View>
       )}
+
+      {domainError && domainErrorHandled ? (
+        <View style={styles.inputWrapper}>
+          <DomainErrorsView
+            domainError={domainError}
+            isForwardResolution={isForwardResolution}
+          />
+        </View>
+      ) : null}
     </>
   );
 };

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   troubleshootOverObservable,
   troubleshootOverObservableReducer,
+  TroubleshootStatus,
 } from "@ledgerhq/live-common/network-troubleshooting/index";
 import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
@@ -12,6 +13,7 @@ import Button from "~/renderer/components/Button";
 import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import TranslatedError from "~/renderer/components/TranslatedError";
+
 const Table = styled.table`
   border-collapse: collapse;
   width: 100%;
@@ -25,7 +27,7 @@ const Table = styled.table`
   }
 `;
 type Props = {
-  onClose: () => void;
+  onClose?: () => void;
 };
 function useRendererState() {
   const [state, dispatch] = useReducer(troubleshootOverObservableReducer, []);
@@ -38,7 +40,7 @@ function useRendererState() {
 const Status = ({ status }: { status?: TroubleshootStatus }) => {
   switch (status?.status) {
     case "success":
-      return "✅";
+      return <>{"✅"}</>;
     case "error":
       return (
         <Tooltip

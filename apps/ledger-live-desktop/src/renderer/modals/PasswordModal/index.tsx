@@ -10,7 +10,7 @@ import PasswordForm from "./PasswordForm";
 import { setEncryptionKey, removeEncryptionKey, isEncryptionKeyCorrect } from "~/renderer/storage";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { setHasPassword } from "~/renderer/actions/application";
-type MaybePasswordIncorrectError = PasswordIncorrectError | undefined | null;
+type MaybePasswordIncorrectError = ReturnType<typeof PasswordIncorrectError> | undefined | null;
 const PasswordModal = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const PasswordModal = () => {
     [setPassword, onClose],
   );
   const handleSave = useCallback(
-    async (e: SyntheticEvent<HTMLFormElement>) => {
+    async (e: React.SyntheticEvent<HTMLFormElement>) => {
       if (e) {
         e.preventDefault();
       }
@@ -99,17 +99,10 @@ const PasswordModal = () => {
       setIncorrectPassword,
     ],
   );
-  const handleReset = useCallback(() => {
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setIncorrectPassword(null);
-  }, [setCurrentPassword, setNewPassword, setConfirmPassword, setIncorrectPassword]);
   return (
     <Modal name="MODAL_PASSWORD" onClose={onClose} centered>
       <ModalBody
         title={hasPassword ? t("password.changePassword.title") : t("password.setPassword.title")}
-        onHide={handleReset}
         onClose={onClose}
         render={() => (
           <>

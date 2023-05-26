@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import Modal from "~/renderer/components/Modal";
 import AccountSettingRenderBody from "~/renderer/modals/SettingsAccount/AccountSettingRenderBody";
-export default class SettingsAccount extends PureComponent<any, any> {
+export default class SettingsAccount extends PureComponent {
   render() {
     return (
       <Modal

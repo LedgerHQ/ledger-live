@@ -34,7 +34,7 @@ const Item = ({ appName, state, itemProgress, productName, i }: Props) => {
             strokeWidth={2}
           />
         ) : state === ItemState.Installed ? (
-          <Icons.CheckAloneMedium size={20} color={"success.c100"} />
+          <Icons.CheckAloneMedium size={20} color={"success.c50"} />
         ) : state === ItemState.Skipped ? (
           <Icons.InfoAltMedium size={20} color={"neutral.c100"} />
         ) : (

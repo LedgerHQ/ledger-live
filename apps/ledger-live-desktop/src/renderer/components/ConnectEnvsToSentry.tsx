@@ -6,7 +6,7 @@ import { FeatureId } from "@ledgerhq/types-live";
 import { enabledExperimentalFeatures } from "../experimental";
 import { setTags } from "../../sentry/renderer";
 
-type Tags = { [_: string]: boolean | number | string };
+type Tags = { [_: string]: boolean | number | string | undefined };
 
 function setSentryTagsEverywhere(tags: Tags) {
   ipcRenderer.invoke("set-sentry-tags", tags);
@@ -35,16 +35,17 @@ export const ConnectEnvsToSentry = () => {
         tags[safekey(key)] = getEnv(key);
       });
       // if there are features on, we will add them in tags
-      const features: { [key in FeatureId]: boolean } = {};
+      const features: { [key in FeatureId]?: boolean } = {};
       Object.keys(defaultFeatures).forEach(key => {
-        const value = featureFlags.getFeature(key);
-        if (value && value.enabled !== defaultFeatures[key].enabled) {
-          features[key] = value.enabled;
+        const value = featureFlags.getFeature(key as keyof typeof defaultFeatures);
+        if (key && value && value.enabled !== defaultFeatures[key as FeatureId]!.enabled) {
+          features[key as FeatureId] = value.enabled;
         }
       });
 
       Object.keys(features).forEach(key => {
-        tags[safekey(`f_${key}`)] = features[key];
+        const safeKey = safekey(`f_${key}`);
+        tags[safeKey] = features[key as keyof typeof features];
       });
 
       setSentryTagsEverywhere(tags);

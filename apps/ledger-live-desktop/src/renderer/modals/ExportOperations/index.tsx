@@ -37,10 +37,7 @@ const mapDispatchToProps = {
   closeModal,
 };
 const exportOperations = async (
-  path: {
-    canceled: boolean;
-    filePath: string;
-  },
+  path: Electron.SaveDialogReturnValue,
   csv: string,
   callback?: () => void,
 ) => {
@@ -52,7 +49,7 @@ const exportOperations = async (
   } catch (error) {}
 };
 function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props) {
-  const [checkedIds, setCheckedIds] = useState([]);
+  const [checkedIds, setCheckedIds] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
   const countervalueState = useCountervaluesState();
   const exportCsv = useCallback(async () => {
@@ -188,7 +185,7 @@ const LabelWrapper = styled(Box)`
   font-family: "Inter";
   font-weight: ;
 `;
-const IconWrapperCircle = styled(Box)`
+const IconWrapperCircle = styled(Box)<{ green?: boolean }>`
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -200,7 +197,7 @@ const IconWrapperCircle = styled(Box)`
   margin-bottom: 15px;
 `;
 const IconWrapper = styled(Box)`
-  color: ${_ => colors.positiveGreen};
+  color: ${() => colors.positiveGreen};
   align-self: center;
   margin-bottom: 15px;
 `;
@@ -213,7 +210,7 @@ const Title = styled(Box).attrs(() => ({
 }))`
   text-align: center;
 `;
-const ConnectedExportOperations: React$ComponentType<OwnProps> = connect(
+const ConnectedExportOperations: React.ComponentType<OwnProps> = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(ExportOperations);

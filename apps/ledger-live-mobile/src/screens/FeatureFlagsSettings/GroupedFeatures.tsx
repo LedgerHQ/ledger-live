@@ -78,10 +78,10 @@ const GroupedFeatures: React.FC<Props> = ({
             <TagEnabled
               backgroundColor={
                 allEnabled
-                  ? "success.c100"
+                  ? "success.c50"
                   : someEnabled
-                  ? "warning.c100"
-                  : "error.c100"
+                  ? "warning.c50"
+                  : "error.c50"
               }
             >
               {groupName}

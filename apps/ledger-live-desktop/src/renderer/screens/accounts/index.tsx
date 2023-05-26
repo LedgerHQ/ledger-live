@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { Redirect } from "react-router";
@@ -12,7 +12,6 @@ import {
 } from "~/renderer/actions/general";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/reducers/settings";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import AccountList from "./AccountList";
 import AccountsHeader from "./AccountsHeader";
 
@@ -30,7 +29,7 @@ export default function AccountsPage() {
     onMount: true,
   });
   const onAccountClick = useCallback(
-    (account: Account | TokenAccount, parentAccount?: Account | null) => {
+    (account: AccountLike, parentAccount?: Account | null) => {
       setTrackingSource("accounts page");
       history.push({
         pathname: parentAccount
@@ -56,7 +55,7 @@ export default function AccountsPage() {
     </Box>
   );
 }
-export const GenericBox: ThemedComponent<{}> = styled(Box)`
+export const GenericBox = styled(Box)`
   background: ${p => p.theme.colors.palette.background.paper};
   flex: 1;
   padding: 10px 20px;

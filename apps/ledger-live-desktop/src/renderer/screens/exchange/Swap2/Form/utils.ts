@@ -4,7 +4,7 @@ export const FILTER = {
   float: "float",
   fixed: "fixed",
 };
-const isValidUrl = urlString => {
+const isValidUrl = (urlString: string) => {
   try {
     return Boolean(new URL(urlString));
   } catch (e) {
@@ -20,7 +20,13 @@ const isValidUrl = urlString => {
 // backend: /platform/1inch/#/1/unified/swap/usdt/shib?sourceTokenAmount=24.6
 // real: https://app.1inch.io/#/1/simple/swap/usdt/shib?ledgerLive=true&sourceTokenAmount=24.6
 
-export const getCustomDappUrl = ({ provider, providerURL = "" }) => {
+export const getCustomDappUrl = ({
+  provider,
+  providerURL = "",
+}: {
+  provider: string;
+  providerURL?: string;
+}) => {
   // To support when bk apply set the complete URL
   if (isValidUrl(providerURL)) {
     return providerURL;

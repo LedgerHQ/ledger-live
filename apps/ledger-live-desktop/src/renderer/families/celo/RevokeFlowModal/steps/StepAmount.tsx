@@ -15,7 +15,6 @@ export const StepAmountFooter = ({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) => {
   invariant(account, "account required");
   const { errors } = status;

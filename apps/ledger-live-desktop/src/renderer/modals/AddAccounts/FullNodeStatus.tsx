@@ -6,14 +6,13 @@ import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 // eslint-disable-next-line no-restricted-imports
 import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import { Rotating } from "~/renderer/components/Spinner";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
 import Alert from "~/renderer/components/Alert";
 import Text from "~/renderer/components/Text";
 import useEnv from "~/renderer/hooks/useEnv";
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   horizontal: true,
 }))`
   padding: 16px;

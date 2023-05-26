@@ -89,7 +89,7 @@ const getMainActions = (args: {
       event: "button_clicked",
       eventProperties: {
         button: "stake",
-        token: "DOT",
+        currency: "DOT",
         page: "Account Page",
       },
     },

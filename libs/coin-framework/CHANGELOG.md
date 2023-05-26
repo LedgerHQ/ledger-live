@@ -1,5 +1,105 @@
 # @ledgerhq/coin-framework
 
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies [[`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9)]:
+  - @ledgerhq/types-live@6.34.0
+  - @ledgerhq/live-portfolio@0.0.5
+
+## 0.3.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9)]:
+  - @ledgerhq/types-live@6.34.0-next.0
+  - @ledgerhq/live-portfolio@0.0.5-next.0
+
+## 0.3.2
+
+### Patch Changes
+
+- Updated dependencies [[`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d), [`835bfbaa45`](https://github.com/LedgerHQ/ledger-live/commit/835bfbaa45f2bee5416b40a34ae0bf150d780e2c), [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3), [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e), [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472), [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949), [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678)]:
+  - @ledgerhq/live-env@0.2.0
+  - @ledgerhq/types-live@6.33.0
+  - @ledgerhq/types-cryptoassets@7.2.0
+  - @ledgerhq/cryptoassets@9.5.0
+  - @ledgerhq/errors@6.12.5
+  - @ledgerhq/live-portfolio@0.0.4
+  - @ledgerhq/devices@8.0.2
+  - @ledgerhq/hw-transport@6.28.3
+
+## 0.3.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`a1c1ea56aa`](https://github.com/LedgerHQ/ledger-live/commit/a1c1ea56aa2a9e106b831107d8fae24ea0f27d4d), [`835bfbaa45`](https://github.com/LedgerHQ/ledger-live/commit/835bfbaa45f2bee5416b40a34ae0bf150d780e2c), [`cec978f36e`](https://github.com/LedgerHQ/ledger-live/commit/cec978f36e5841ce3f8d117530e13902590596c3), [`5e6f053a27`](https://github.com/LedgerHQ/ledger-live/commit/5e6f053a2744a5ff5f5364609cc1287c3dd8e69e), [`87d2349fd8`](https://github.com/LedgerHQ/ledger-live/commit/87d2349fd835e5deb39d1ee8dfcf3539f4195472), [`51c01541df`](https://github.com/LedgerHQ/ledger-live/commit/51c01541df8a414851ea4ef493dc9045272ef949), [`4500a00f21`](https://github.com/LedgerHQ/ledger-live/commit/4500a00f215f73e6c9bbf1d904cb6a4c3d67e678)]:
+  - @ledgerhq/live-env@0.2.0-next.0
+  - @ledgerhq/types-live@6.33.0-next.0
+  - @ledgerhq/types-cryptoassets@7.2.0-next.0
+  - @ledgerhq/cryptoassets@9.5.0-next.0
+  - @ledgerhq/errors@6.12.5-next.0
+  - @ledgerhq/live-portfolio@0.0.4-next.0
+  - @ledgerhq/devices@8.0.2-next.0
+  - @ledgerhq/hw-transport@6.28.3-next.0
+
+## 0.3.1
+
+### Patch Changes
+
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add Stax-enabled NFTs in the mock fixtures
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- Updated dependencies [[`3242a0a794`](https://github.com/LedgerHQ/ledger-live/commit/3242a0a7948c20fb0100ce3cc73e55e338534d32), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253)]:
+  - @ledgerhq/cryptoassets@9.4.0
+  - @ledgerhq/types-live@6.32.1
+  - @ledgerhq/live-portfolio@0.0.3
+
+## 0.3.1-next.0
+
+### Patch Changes
+
+- [#2817](https://github.com/LedgerHQ/ledger-live/pull/2817) [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253) Thanks [@thomasrogerlux](https://github.com/thomasrogerlux)! - Add Stax-enabled NFTs in the mock fixtures
+
+- [#3164](https://github.com/LedgerHQ/ledger-live/pull/3164) [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add a 'feesCurrency' field to 'Account' type, and use it
+
+- Updated dependencies [[`3242a0a794`](https://github.com/LedgerHQ/ledger-live/commit/3242a0a7948c20fb0100ce3cc73e55e338534d32), [`be5589dac6`](https://github.com/LedgerHQ/ledger-live/commit/be5589dac675e2c8c1771b135bd0f330a868ed2d), [`d5cf1abc6e`](https://github.com/LedgerHQ/ledger-live/commit/d5cf1abc6eb30d399c83b827452dc4bc61fd2253)]:
+  - @ledgerhq/cryptoassets@9.4.0-next.0
+  - @ledgerhq/types-live@6.32.1-next.0
+  - @ledgerhq/live-portfolio@0.0.3-next.0
+
+## 0.3.0
+
+### Minor Changes
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+### Patch Changes
+
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/types-cryptoassets@7.1.0
+  - @ledgerhq/cryptoassets@9.3.0
+  - @ledgerhq/types-live@6.32.0
+  - @ledgerhq/live-env@0.1.0
+  - @ledgerhq/live-portfolio@0.0.2
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#3079](https://github.com/LedgerHQ/ledger-live/pull/3079) [`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60) Thanks [@gre](https://github.com/gre)! - Sunset Compound Lending from Ledger Live 'native' codebase
+
+### Patch Changes
+
+- Updated dependencies [[`d9732f38ed`](https://github.com/LedgerHQ/ledger-live/commit/d9732f38ed891ce090c98645de55103208015a60), [`5785155282`](https://github.com/LedgerHQ/ledger-live/commit/5785155282d61d0dbdc30f7a66d3243a74fce117), [`197d28697b`](https://github.com/LedgerHQ/ledger-live/commit/197d28697b173c3f6b2badfe4d1deddeadc912d4), [`d4834aad3f`](https://github.com/LedgerHQ/ledger-live/commit/d4834aad3f58d904850be9a3ab40b46260d9f7d4)]:
+  - @ledgerhq/types-cryptoassets@7.1.0-next.0
+  - @ledgerhq/cryptoassets@9.3.0-next.0
+  - @ledgerhq/types-live@6.32.0-next.0
+  - @ledgerhq/live-env@0.1.0-next.0
+  - @ledgerhq/live-portfolio@0.0.2-next.0
+
 ## 0.2.1
 
 ### Patch Changes

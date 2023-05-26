@@ -1,14 +1,14 @@
 import React, { PureComponent } from "react";
 import logger from "~/renderer/logger";
-import Modal from "~/renderer/components/Modal";
-import Body, { StepId } from "./Body";
+import Modal, { RenderProps } from "~/renderer/components/Modal";
+import Body, { StepId, Props as BodyProps } from "./Body";
 type State = {
   stepId: StepId;
   isAddressVerified: boolean | undefined | null;
   verifyAddressError: Error | undefined | null;
 };
 const INITIAL_STATE = {
-  stepId: "account",
+  stepId: "account" as StepId,
   isAddressVerified: null,
   verifyAddressError: null,
 };
@@ -41,10 +41,9 @@ class ReceiveModal extends PureComponent<{}, State> {
       <Modal
         name="MODAL_RECEIVE"
         centered
-        refocusWhenChange={stepId}
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}
-        render={({ data, onClose }) => (
+        render={({ data, onClose }: RenderProps<BodyProps["params"]>) => (
           <Body
             onClose={onClose}
             stepId={stepId}

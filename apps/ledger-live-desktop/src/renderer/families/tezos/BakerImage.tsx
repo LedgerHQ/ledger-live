@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { Baker } from "@ledgerhq/live-common/families/tezos/bakers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import CustomValidator from "~/renderer/icons/CustomValidator";
 import Image from "~/renderer/components/Image";

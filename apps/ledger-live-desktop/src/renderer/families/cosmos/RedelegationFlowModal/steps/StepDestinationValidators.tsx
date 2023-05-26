@@ -9,9 +9,6 @@ export default function StepValidators({
   parentAccount,
   onUpdateTransaction,
   transaction,
-  status,
-  error,
-  bridgePending,
   transitionTo,
   t,
 }: StepProps) {

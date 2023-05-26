@@ -16,7 +16,7 @@ const REGISTRIES: Registry[] = [
         "https://nft.api.live.ledger.com/v1/names/ens/reverse/{address}?challenge={challenge}",
     },
     patterns: {
-      forward: new RegExp(".eth$"),
+      forward: new RegExp("\\.eth$"),
       reverse: new RegExp("^0x[0-9a-fA-F]{40}$"),
     },
     coinTypes: [60],

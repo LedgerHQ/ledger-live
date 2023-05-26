@@ -12,9 +12,9 @@ type ValueType = HTMLInputElement["value"];
 export type CommonProps = InputHTMLAttributes<HTMLInputElement> &
   TypographyProps & {
     disabled?: boolean;
-    error?: string;
-    warning?: string;
-    info?: string;
+    error?: React.ReactNode;
+    warning?: React.ReactNode;
+    info?: React.ReactNode;
   };
 
 export type InputProps<T = ValueType> = Omit<CommonProps, "value" | "onChange"> & {
@@ -66,7 +66,7 @@ export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolea
     p.error &&
     !p.disabled &&
     css`
-      border: 1px solid ${p.theme.colors.error.c100};
+      border: 1px solid ${p.theme.colors.error.c50};
     `};
 
   ${(p) =>
@@ -74,7 +74,7 @@ export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolea
     p.warning &&
     !p.disabled &&
     css`
-      border: 1px solid ${p.theme.colors.warning.c80};
+      border: 1px solid ${p.theme.colors.warning.c40};
     `};
 
   ${(p) =>
@@ -104,7 +104,7 @@ export const BaseInput = styled.input.attrs<
   height: 100%;
   width: 100%;
   border: 0;
-  caret-color: ${(p) => (p.error ? p.theme.colors.error.c100 : p.theme.colors.primary.c80)};
+  caret-color: ${(p) => (p.error ? p.theme.colors.error.c50 : p.theme.colors.primary.c80)};
   background: none;
   outline: none;
   cursor: ${(p) => (p.disabled ? "not-allowed" : "text")};
@@ -134,11 +134,11 @@ export const BaseInput = styled.input.attrs<
 `;
 
 export const InputErrorContainer = styled(Text)`
-  color: ${(p) => p.theme.colors.error.c100};
+  color: ${(p) => p.theme.colors.error.c50};
   margin-left: 12px;
 `;
 export const InputWarningContainer = styled(Text)`
-  color: ${(p) => p.theme.colors.warning.c80};
+  color: ${(p) => p.theme.colors.warning.c40};
   margin-left: 12px;
 `;
 export const InputInfoContainer = styled(Text)`

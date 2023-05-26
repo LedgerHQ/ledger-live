@@ -33,7 +33,7 @@ const baseSampleApp: App = {
   version: "2.0.6",
   currencyId: "",
   description: "",
-  type: AppType.app,
+  type: AppType.currency,
   dateModified: "2022-06-07T08:57:34.783551Z",
   icon: "dogecoin",
   authorName: "",

@@ -1,4 +1,3 @@
-import algorand from "../families/algorand/specs";
 import bitcoin from "../families/bitcoin/specs";
 import cardano from "../families/cardano/specs";
 import celo from "../families/celo/specs";
@@ -16,9 +15,9 @@ import stellar from "../families/stellar/specs";
 import tezos from "../families/tezos/specs";
 import tron from "../families/tron/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
+import algorand from "@ledgerhq/coin-algorand/specs";
 
 export default {
-  algorand,
   bitcoin,
   cardano,
   celo,
@@ -36,4 +35,5 @@ export default {
   tezos,
   tron,
   polkadot,
+  algorand,
 };

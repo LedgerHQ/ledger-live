@@ -9,7 +9,7 @@ type Props = {
 };
 const ServiceStatusWarning = createCustomErrorClass("ServiceStatusWarning");
 const CurrencyDownStatusAlert = ({ currencies, hideStatusIncidents }: Props) => {
-  const errors = [];
+  const errors: Error[] = [];
   const { incidents } = useFilteredServiceStatus({
     tickers: currencies.map(c => c.ticker),
   });

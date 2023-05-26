@@ -2,8 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import Box from "../Box";
 import ExternalLinkIcon from "../../icons/ExternalLink";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Container: ThemedComponent<{}> = styled(Box).attrs(p => ({
+
+const Container = styled(Box).attrs(() => ({
   cursor: "pointer",
   horizontal: true,
 }))`
@@ -23,8 +23,8 @@ const ExternalLinkIconContainer = styled.span`
   margin-left: 4px;
 `;
 type Props = {
-  label: any;
-  isInternal: boolean;
+  label: React.ReactNode;
+  isInternal?: boolean;
   onClick: () => void;
 };
 const ExternalLink = ({ label, isInternal, onClick }: Props) => {

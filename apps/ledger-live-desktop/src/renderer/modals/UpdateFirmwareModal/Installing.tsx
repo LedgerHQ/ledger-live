@@ -1,33 +1,35 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import ProgressCircle from "~/renderer/components/ProgressCircle";
+import { Title } from "~/renderer/components/DeviceAction/rendering";
+import { Text, Flex, ProgressLoader } from "@ledgerhq/react-ui";
 
 type Props = {
   progress: number;
   installing?: string;
+  current: number;
+  total: number;
 };
 
-function Installing({ progress, installing }: Props) {
+function Installing({ progress, installing, current, total }: Props) {
   const { t } = useTranslation();
+  const normalProgress = (progress || 0) * 100;
+
   return (
-    <>
-      <Box mx={7} alignItems="center">
-        <ProgressCircle size={64} progress={progress} />
-      </Box>
-      <Box mx={7} mt={4} mb={2}>
-        <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade100" fontSize={6}>
-          {installing ? t(`manager.modal.steps.${installing}`) : null}
-        </Text>
-      </Box>
-      <Box mx={7} mt={4} mb={7}>
-        <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade80" fontSize={4}>
-          {t("manager.modal.mcuPin")}
-        </Text>
-      </Box>
-    </>
+    <Box my={5} alignItems="center">
+      <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
+        <ProgressLoader
+          stroke={8}
+          infinite={!normalProgress}
+          progress={normalProgress}
+          showPercentage={false}
+        />
+      </Flex>
+      <Title>{installing ? t(`manager.modal.steps.progress`, { current, total }) : null}</Title>
+      <Text mt={2} ff="Inter|Regular" textAlign="center" color="palette.text.shade100">
+        {t("manager.modal.mcuPin")}
+      </Text>
+    </Box>
   );
 }
 

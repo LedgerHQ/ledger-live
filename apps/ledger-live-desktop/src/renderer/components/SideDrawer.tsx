@@ -2,9 +2,9 @@ import React, { useEffect, useCallback, useRef } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { color } from "styled-system";
-import { Transition } from "react-transition-group";
+import { Transition, TransitionStatus } from "react-transition-group";
 import IconCross from "~/renderer/icons/Cross";
-import { createFocusTrap } from "focus-trap";
+import { createFocusTrap, FocusTrap } from "focus-trap";
 import Text from "./Text";
 import { Trans } from "react-i18next";
 import IconAngleLeft from "~/renderer/icons/AngleLeft";
@@ -12,6 +12,7 @@ import { Base as Button } from "./Button";
 import Box from "./Box/Box";
 import { createPortal } from "react-dom";
 import { modalsStateSelector } from "~/renderer/reducers/modals";
+import { useDeviceBlocked } from "./DeviceAction/DeviceBlocker";
 const TouchButton = styled.button`
   border: none;
   background-color: rgba(0, 0, 0, 0);
@@ -42,9 +43,9 @@ const transitionBackdropStyles = {
   },
   exited: {},
 };
-const DrawerBackdrop = styled.div.attrs(({ state }) => ({
-  style: transitionBackdropStyles[state],
-}))`
+const DrawerBackdrop = styled.div.attrs(({ state }: { state: TransitionStatus }) => ({
+  style: transitionBackdropStyles[state as keyof typeof transitionBackdropStyles],
+}))<{ state: TransitionStatus }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -63,10 +64,10 @@ const transitionStyles = {
   exiting: {},
   exited: {},
 };
-const DrawerContent = styled.div.attrs(({ state }) => ({
-  style: transitionStyles[state],
+const DrawerContent = styled.div.attrs(({ state }: { state: TransitionStatus }) => ({
+  style: transitionStyles[state as keyof typeof transitionStyles],
   bg: "palette.background.paper",
-}))`
+}))<{ state: TransitionStatus; direction: "left" | "right" }>`
   position: absolute;
   top: 0;
   left: ${p => (p.direction === "right" ? 0 : "unset")};
@@ -98,9 +99,9 @@ const transitionContainerStyles = {
     visibility: "hidden",
   },
 };
-const DrawerContainer = styled.div.attrs(({ state }) => ({
-  style: transitionContainerStyles[state],
-}))`
+const DrawerContainer = styled.div.attrs(({ state }: { state: TransitionStatus }) => ({
+  style: transitionContainerStyles[state as keyof typeof transitionContainerStyles],
+}))<{ state: TransitionStatus }>`
   color: ${p => p.theme.colors.palette.text.shade90};
   position: fixed;
   left: 0;
@@ -113,15 +114,17 @@ const DrawerContainer = styled.div.attrs(({ state }) => ({
 export type DrawerProps = {
   children?: React.ReactNode;
   isOpen?: boolean;
-  onRequestClose?: (a: any) => void;
-  onRequestBack?: (a: any) => void;
+  onRequestClose?: (a: React.MouseEvent) => void;
+  onRequestBack?: (a: React.MouseEvent) => void;
   direction?: "right" | "left";
   paper?: boolean;
   title?: string;
   preventBackdropClick?: boolean;
   forceDisableFocusTrap?: boolean;
+  style?: React.CSSProperties;
 };
 const domNode = document.getElementById("modals");
+
 export function SideDrawer({
   children,
   isOpen = false,
@@ -133,14 +136,22 @@ export function SideDrawer({
   forceDisableFocusTrap = false,
   ...props
 }: DrawerProps) {
+  const deviceBlocked = useDeviceBlocked();
+
   const onKeyPress = useCallback(
     e => {
-      if (isOpen && !preventBackdropClick && e.key === "Escape" && onRequestClose) {
+      if (
+        isOpen &&
+        !preventBackdropClick &&
+        e.key === "Escape" &&
+        onRequestClose &&
+        !deviceBlocked
+      ) {
         e.preventDefault();
         onRequestClose(e);
       }
     },
-    [onRequestClose, isOpen, preventBackdropClick],
+    [isOpen, preventBackdropClick, onRequestClose, deviceBlocked],
   );
   useEffect(() => {
     window.addEventListener("keydown", onKeyPress, false);
@@ -148,11 +159,11 @@ export function SideDrawer({
       window.removeEventListener("keydown", onKeyPress, false);
     };
   }, [onKeyPress]);
-  const focusTrapElem = useRef(null);
-  const focusTrap = useRef(null);
+  const focusTrapElem = useRef<typeof DrawerContainer>(null);
+  const focusTrap = useRef<FocusTrap | null>(null);
   const modalsState = useSelector(modalsStateSelector);
   const shouldDisableFocusTrap = Object.values(modalsState).reduce(
-    (previous, current) => previous.isOpened || current.isOpened,
+    (previous, current) => previous || current.isOpened,
     false,
   );
   useEffect(() => {
@@ -166,7 +177,7 @@ export function SideDrawer({
         clickOutsideDeactivates: false,
         preventScroll: true,
       });
-      focusTrap.current.activate();
+      focusTrap.current?.activate();
     } else if (shouldDisableFocusTrap) {
       focusTrap.current?.deactivate();
       focusTrap.current = null;
@@ -197,7 +208,6 @@ export function SideDrawer({
             >
               <DrawerContent
                 {...props}
-                isOpened={isOpen}
                 state={state}
                 direction={direction}
                 data-test-id="drawer-content"
@@ -235,7 +245,7 @@ export function SideDrawer({
                       </Text>
                     )}
 
-                    {onRequestClose ? (
+                    {onRequestClose && !deviceBlocked ? (
                       <TouchButton onClick={onRequestClose} data-test-id="drawer-close-button">
                         <IconCross size={16} />
                       </TouchButton>
@@ -248,7 +258,7 @@ export function SideDrawer({
               </DrawerContent>
               <DrawerBackdrop
                 state={state}
-                onClick={preventBackdropClick ? undefined : onRequestClose}
+                onClick={preventBackdropClick || deviceBlocked ? undefined : onRequestClose}
                 data-test-id="drawer-overlay"
               />
             </DrawerContainer>

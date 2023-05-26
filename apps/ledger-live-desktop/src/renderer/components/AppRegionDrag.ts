@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const AppRegionDrag: ThemedComponent<{}> = styled.div`
+
+const AppRegionDrag = styled.div`
   -webkit-app-region: drag;
   height: 40px;
   position: absolute;

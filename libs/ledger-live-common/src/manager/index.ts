@@ -5,7 +5,7 @@ import chunk from "lodash/chunk";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { UnknownMCU } from "@ledgerhq/errors";
 import { listCryptoCurrencies } from "../currencies";
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "./api";
 import { getProviderId } from "./provider";
 import type {
   Language,

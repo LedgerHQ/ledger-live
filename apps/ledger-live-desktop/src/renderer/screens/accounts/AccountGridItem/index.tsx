@@ -1,17 +1,16 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
-import { TokenAccount, Account } from "@ledgerhq/types-live";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { Account, PortfolioRange, AccountLike } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import AccountCardHeader from "./Header";
 import AccountCardBody from "./Body";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   hidden?: boolean;
-  account: TokenAccount | Account;
+  account: AccountLike;
   parentAccount: Account | undefined | null;
-  onClick: (b: Account | TokenAccount, a?: Account | null) => void;
+  onClick: (b: AccountLike, a?: Account | null) => void;
   range: PortfolioRange;
 };
 export default function AccountCard({
@@ -40,12 +39,12 @@ export default function AccountCard({
         onClick={onClick}
       >
         <AccountCardHeader account={account} parentAccount={parentAccount} />
-        <AccountCardBody account={account} parentAccount={parentAccount} range={range} />
+        <AccountCardBody account={account} range={range} />
       </Card>
     </AccountContextMenu>
   );
 }
-const Card: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Card = styled(Box).attrs(() => ({
   bg: "palette.background.paper",
   p: 3,
   boxShadow: 0,

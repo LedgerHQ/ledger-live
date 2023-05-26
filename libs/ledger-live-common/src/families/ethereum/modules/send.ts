@@ -64,7 +64,7 @@ const inferDeviceTransactionConfigWalletApi: ModeModule["fillDeviceTransactionCo
                 new BigNumber(value)
               )}`,
             },
-            transaction.recipientDomain && hasValidDomain
+            transaction.recipientDomain?.type === "forward" && hasValidDomain
               ? {
                   type: "text",
                   label: "Domain",
@@ -99,7 +99,7 @@ const inferDeviceTransactionConfigWalletApi: ModeModule["fillDeviceTransactionCo
                     new BigNumber(value)
                   )}`,
             },
-            transaction.recipientDomain && hasValidDomain
+            transaction.recipientDomain?.type === "forward" && hasValidDomain
               ? {
                   type: "text",
                   label: "Domain",
@@ -524,7 +524,7 @@ const send: ModeModule = {
         type: "amount",
         label: "Amount",
       },
-      transaction.recipientDomain && hasValidDomain
+      transaction.recipientDomain?.type === "forward" && hasValidDomain
         ? {
             type: "text",
             label: "Domain",

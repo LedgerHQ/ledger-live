@@ -2,7 +2,6 @@ import React from "react";
 import styled, { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import LiveAppIcon from "~/renderer/components/WebPlatformPlayer/LiveAppIcon";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import InfoIcon from "~/renderer/icons/InfoCircle";
@@ -13,7 +12,7 @@ import Box from "~/renderer/components/Box";
 type Props = {
   manifest: LiveAppManifest;
 };
-const Head: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const Head = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   justifyContent: "center",
@@ -23,7 +22,7 @@ const Head: ThemedComponent<{}> = styled(Box).attrs(p => ({
     margin: 0 4px;
   }
 `;
-const Dashes: ThemedComponent<{}> = styled.div`
+const Dashes = styled.div`
   width: 40px;
   opacity: 0.5;
   height: 3px;
@@ -32,20 +31,20 @@ const Dashes: ThemedComponent<{}> = styled.div`
       1,
     )}' stroke-opacity='0.5' stroke-width='2' stroke-linecap='round' stroke-dasharray='2 6'/%3E%3C/svg%3E%0A");
 `;
-const Title: ThemedComponent<{}> = styled(Text).attrs(p => ({
+const Title = styled(Text).attrs(() => ({
   mb: 12,
   fontSize: 22,
   textAlign: "center",
   ff: "Inter|SemiBold",
 }))``;
-const Description: ThemedComponent<{}> = styled(Text).attrs(p => ({
+const Description = styled(Text).attrs(p => ({
   color: p.theme.colors.palette.text.shade60,
   ff: "Inter|Regular",
   mb: 12,
   textAlign: "center",
   fontSize: 14,
 }))``;
-const BlueInfoContainer: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const BlueInfoContainer = styled(Box).attrs(() => ({
   flex: 1,
   p: 12,
   horizontal: true,
@@ -54,10 +53,10 @@ const BlueInfoContainer: ThemedComponent<{}> = styled(Box).attrs(p => ({
 }))`
   background-color: ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
 `;
-const InfoIconContainer: ThemedComponent<{}> = styled(Box).attrs(p => ({
+const InfoIconContainer = styled(Box).attrs(() => ({
   mr: "6px",
 }))``;
-const InfoText: ThemedComponent<{}> = styled(Text).attrs(p => ({
+const InfoText = styled(Text).attrs(p => ({
   ml: "6px",
   ff: "Inter|Medium",
   fontSize: 12,

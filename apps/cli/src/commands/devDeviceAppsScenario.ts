@@ -8,7 +8,7 @@ import {
   reducer,
   runAll,
 } from "@ledgerhq/live-common/apps/index";
-import ManagerAPI from "@ledgerhq/live-common/api/Manager";
+import ManagerAPI from "@ledgerhq/live-common/manager/api";
 import { listApps, execWithTransport } from "@ledgerhq/live-common/apps/hw";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import { deviceOpt } from "../scan";

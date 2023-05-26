@@ -1,7 +1,6 @@
 import React from "react";
 import styled, { css, keyframes } from "styled-components";
 import useTheme from "~/renderer/hooks/useTheme";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Text from "~/renderer/components/Text";
 import { lighten } from "~/renderer/styles/helpers";
 const STROKE_WIDTH = 4;
@@ -18,7 +17,9 @@ const animIndeterminate = keyframes`
     transform: rotate(360deg);
   }
 `;
-const InnerCircle = styled.circle`
+const InnerCircle = styled.circle<{
+  progress: number;
+}>`
   transform-origin: 50% 50%;
   ${p =>
     p.progress === 0
@@ -30,9 +31,9 @@ const InnerCircle = styled.circle`
           transform: rotate(-90deg);
         `};
 `;
-const Container: ThemedComponent<{
+const Container = styled.div<{
   size: number | string;
-}> = styled.div`
+}>`
   position: relative;
   width: ${p => p.size}px;
   height: ${p => p.size}px;
@@ -64,7 +65,7 @@ const ProgressCircle = ({ size, progress, hideProgress }: Props) => {
       </TextContainer>
       <svg height={size} width={size}>
         <circle
-          stroke={lighten(useTheme("colors.wallet"), 0.2)}
+          stroke={lighten(useTheme().colors.wallet, 0.2)}
           fill="transparent"
           strokeWidth={STROKE_WIDTH}
           style={{
@@ -76,7 +77,7 @@ const ProgressCircle = ({ size, progress, hideProgress }: Props) => {
         />
         <InnerCircle
           progress={progress}
-          stroke={useTheme("colors.wallet")}
+          stroke={useTheme().colors.wallet}
           fill="transparent"
           strokeWidth={STROKE_WIDTH}
           strokeDasharray={`${circumference} ${circumference}`}

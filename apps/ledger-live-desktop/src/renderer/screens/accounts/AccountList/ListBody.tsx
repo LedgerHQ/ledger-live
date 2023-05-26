@@ -1,16 +1,16 @@
 import React from "react";
-import { AccountLike, Account } from "@ledgerhq/types-live";
-import { PortfolioRange } from "@ledgerhq/live-common/portfolio/v2/types";
+import { Account, PortfolioRange, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import AccountItem from "../AccountRowItem";
 import AccountItemPlaceholder from "../AccountRowItem/Placeholder";
 type Props = {
-  visibleAccounts: Account[];
-  hiddenAccounts: Account[];
+  visibleAccounts: AccountLike[];
+  hiddenAccounts: AccountLike[];
   onAccountClick: (a: AccountLike) => void;
   lookupParentAccount: (id: string) => Account | undefined | null;
   range: PortfolioRange;
   showNewAccount: boolean;
+  horizontal: boolean;
   search?: string;
 };
 const ListBody = ({
@@ -30,7 +30,7 @@ const ListBody = ({
         <AccountItem
           hidden={i >= visibleAccounts.length}
           key={account.id}
-          account={account}
+          account={account as TokenAccount | Account}
           search={search}
           parentAccount={account.type !== "Account" ? lookupParentAccount(account.parentId) : null}
           range={range}

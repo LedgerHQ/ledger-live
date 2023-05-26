@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { NearMappedStakingPosition } from "@ledgerhq/live-common/families/near/types";
 import { Account } from "@ledgerhq/live-common/types/index";
 import { canUnstake, canWithdraw } from "@ledgerhq/live-common/families/near/logic";
@@ -14,7 +13,7 @@ import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
 import LedgerValidatorIcon from "~/renderer/families/near/shared/components/LedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
-const Wrapper: ThemedComponent<any> = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -37,7 +36,7 @@ const Column: ThemedComponent<{
     `
       : ``}
 `;
-const Ellipsis: ThemedComponent<{}> = styled.div`
+const Ellipsis = styled.div`
   flex: 1;
   display: block;
   overflow: hidden;
@@ -80,7 +79,6 @@ type Props = {
   onExternalLink: (address: string) => void;
 };
 export function Row({
-  account,
   stakingPosition: {
     validatorId,
     staked,
@@ -157,7 +155,7 @@ export function Row({
       </Column>
       <Column>
         <DropDown items={dropDownItems} renderItem={ManageDropDownItem} onChange={onSelect}>
-          {({ isOpen, value }) => (
+          {() => (
             <Box flex horizontal alignItems="center">
               <Trans i18nKey="common.manage" />
               <div

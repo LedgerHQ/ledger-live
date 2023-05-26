@@ -10,7 +10,10 @@ import { from } from "rxjs";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
-import { hasCompletedCustomImageFlowSelector } from "../../../reducers/settings";
+import {
+  hasCompletedCustomImageFlowSelector,
+  lastSeenCustomImageSelector,
+} from "../../../reducers/settings";
 import { NavigatorName, ScreenName } from "../../../const";
 import CustomImageBottomModal from "../../../components/CustomImage/CustomImageBottomModal";
 import DeviceOptionRow from "./DeviceOptionRow";
@@ -19,11 +22,17 @@ const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
   const navigation = useNavigation();
   const [isCustomImageOpen, setIsCustomImageOpen] = useState(false);
   const [deviceHasImage, setDeviceHasImage] = useState(false);
+  const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
+
   const hasCompletedCustomImageFlow = useSelector(
     hasCompletedCustomImageFlowSelector,
   );
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    setDeviceHasImage(!!lastSeenCustomImage);
+  }, [lastSeenCustomImage]);
 
   useEffect(() => {
     withDevice(device.deviceId)(transport =>
@@ -51,7 +60,7 @@ const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
   return (
     <>
       <DeviceOptionRow
-        Icon={Icons.PhotographRegular}
+        Icon={Icons.PhotographMedium}
         iconSize={20}
         label={t("customImage.title")}
         onPress={handleStartCustomImage}
@@ -59,7 +68,9 @@ const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
       />
       <CustomImageBottomModal
         device={device}
+        deviceHasImage={deviceHasImage}
         isOpened={isCustomImageOpen}
+        setDeviceHasImage={setDeviceHasImage}
         onClose={() => setIsCustomImageOpen(false)}
       />
     </>

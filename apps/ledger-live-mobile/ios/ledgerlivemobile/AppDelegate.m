@@ -160,4 +160,16 @@
   return [RCTLinkingManager application:application openURL:url options:options];
 }
 
+// Handle universal links -> forwarding URL to RCTLinkingManager lib
+// similar implementation as the method above (application:openURL:options)
+- (BOOL)application:(UIApplication *)application
+   continueUserActivity:(NSUserActivity *)userActivity
+   restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler
+{
+  NSURL *url = userActivity.webpageURL;
+  return [RCTLinkingManager application:application
+                   continueUserActivity:userActivity
+                     restorationHandler:restorationHandler];
+}
+
 @end

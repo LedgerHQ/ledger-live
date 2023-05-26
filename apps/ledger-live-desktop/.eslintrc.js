@@ -94,6 +94,7 @@ module.exports = {
         "@typescript-eslint/ban-types": 0, // FIXME make an error later
         "@typescript-eslint/no-use-before-define": 0, // FIXME make an error later
         "react/jsx-filename-extension": 0,
+        "@typescript-eslint/no-non-null-assertion": 0, // Useful sometimes. Should not be abused.
 
         // Ignore live-common for the moment because this rule does not work with subpath exports
         // See: https://github.com/import-js/eslint-plugin-import/issues/1810

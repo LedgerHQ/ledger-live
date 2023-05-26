@@ -28,7 +28,7 @@ export default function Paired({ device, onContinue: onContinueProps }: Props) {
           Icon={CheckAloneMedium}
           iconSize={24}
           boxSize={64}
-          color={"success.c100"}
+          color={"success.c50"}
         />
       </Flex>
       <Text variant={"h2"} textAlign={"center"} mb={5} mt={7}>

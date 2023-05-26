@@ -144,7 +144,7 @@ function OperationRow({
   }, [account, operation, parentAccount]);
 
   const amount = getOperationAmountNumber(operation);
-  const valueColor = amount.isNegative() ? "neutral.c100" : "success.c100";
+  const valueColor = amount.isNegative() ? "neutral.c100" : "success.c50";
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
 

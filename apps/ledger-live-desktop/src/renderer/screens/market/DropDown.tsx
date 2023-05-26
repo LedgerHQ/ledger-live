@@ -1,20 +1,22 @@
 import React from "react";
-import { components, GroupBase, ControlProps, ValueContainerProps } from "react-select";
+import { components, ControlProps, OptionTypeBase } from "react-select";
 import { useTheme } from "styled-components";
 import SelectInput, {
   Props as SelectInputProps,
 } from "@ledgerhq/react-ui/components/form/SelectInput/index";
 import { Text, Flex as FlexBox } from "@ledgerhq/react-ui";
-import { ValueContainer } from "@ledgerhq/react-ui/components/form/SelectInput/ValueContainer";
+import {
+  ValueContainer,
+  MixedProps as ValueContainerProps,
+} from "@ledgerhq/react-ui/components/form/SelectInput/ValueContainer";
 import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/react-ui/assets/icons";
 
-export type Props<O> = SelectInputProps<O, false, GroupBase<O>> & {
+export type Props<O> = SelectInputProps<O> & {
   searchable?: boolean;
+  label?: React.ReactNode;
 };
 
-function DropdownControl<O, M extends boolean, G extends GroupBase<O>>(
-  props: ControlProps<O, M, G>,
-) {
+function DropdownControl<O extends OptionTypeBase>(props: ControlProps<O, false>) {
   const { children } = props;
 
   return (
@@ -26,9 +28,12 @@ function DropdownControl<O, M extends boolean, G extends GroupBase<O>>(
   );
 }
 
-function DropdownValueContainer<O>(props: ValueContainerProps<O, false>) {
+function DropdownValueContainer<O extends OptionTypeBase>(
+  props: ValueContainerProps<O, false> & { label?: React.ReactNode },
+) {
   const ChevronIcon = props.selectProps.menuIsOpen ? ChevronTopMedium : ChevronBottomMedium;
-  const { label } = (props.selectProps as unknown) as Props<O>;
+  // @ts-expect-error This label prop is inherited from the original component props but it is not handled well in the react-select bindings
+  const { label } = props.selectProps;
 
   return (
     <ValueContainer
@@ -54,7 +59,7 @@ function DropdownIndicatorsContainer() {
   return null;
 }
 
-export default function Dropdown<O>(props: Props<O>): JSX.Element {
+export default function Dropdown<O extends OptionTypeBase>(props: Props<O>): JSX.Element {
   const theme = useTheme();
 
   return (
@@ -94,6 +99,8 @@ export default function Dropdown<O>(props: Props<O>): JSX.Element {
       }}
       {...props}
       components={{
+        // This error is caused by a mismatch between react-select versions
+        // @ts-expect-error DropdownControl uses the component from react-select@4 but SelectInput relies on react-select@5
         Control: DropdownControl,
         ValueContainer: DropdownValueContainer,
         IndicatorsContainer: DropdownIndicatorsContainer,

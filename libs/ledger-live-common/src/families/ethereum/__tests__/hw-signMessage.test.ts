@@ -1,7 +1,7 @@
 import "../../../__tests__/test-helpers/setup";
 
 import { fail } from "assert";
-import { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712";
+import type { EIP712Message } from "@ledgerhq/hw-app-eth/lib/modules/EIP712";
 import testEIP712Message from "@ledgerhq/hw-app-eth/tests/fixtures/messages/0.json";
 import { createFixtureCryptoCurrency } from "../../../mock/fixtures/cryptoCurrencies";
 import { StatusCodes, TransportStatusError } from "@ledgerhq/errors";
@@ -31,6 +31,7 @@ const signEIP712Message = jest.fn(() =>
 // We only need to mock the defaut class returned
 jest.mock("@ledgerhq/hw-app-eth", () => {
   return {
+    __esModule: true,
     ...jest.requireActual("@ledgerhq/hw-app-eth"),
     default: class {
       signPersonalMessage = signPersonalMessage;

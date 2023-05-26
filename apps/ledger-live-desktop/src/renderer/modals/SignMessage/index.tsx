@@ -1,8 +1,9 @@
 import React from "react";
-import Modal from "~/renderer/components/Modal";
-import Body from "./Body";
-const SignMessage = (props: { onClose: Function }) => {
-  const rest = {};
+import Modal, { RenderProps } from "~/renderer/components/Modal";
+import Body, { Data } from "./Body";
+const SignMessage = (props: { onClose?: () => void }) => {
+  // TODO: what is this rest thing?
+  const rest: typeof props = {};
   if (props.onClose) {
     rest.onClose = props.onClose;
   }
@@ -10,7 +11,7 @@ const SignMessage = (props: { onClose: Function }) => {
     <Modal
       name="MODAL_SIGN_MESSAGE"
       centered
-      render={({ data, onClose }) => <Body onClose={onClose} data={data} />}
+      render={({ data, onClose }: RenderProps<Data>) => <Body onClose={onClose} data={data} />}
       {...rest}
     />
   );

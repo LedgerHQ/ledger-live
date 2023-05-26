@@ -2,7 +2,6 @@ import React from "react";
 import { Flex, Icons, Link, Log, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-
 import { ModalBody } from "~/renderer/components/Modal";
 import Button from "~/renderer/components/ButtonV3";
 import { openURL } from "~/renderer/linking";

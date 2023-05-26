@@ -21,7 +21,7 @@ import type {
   SubAccount,
   Account,
 } from "@ledgerhq/types-live";
-import { API, apiForCurrency, Block, Tx } from "../../api/Ethereum";
+import { API, apiForCurrency, Block, Tx } from "./api";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeNftId, isNFTActive, nftsFromOperations } from "../../nft";
 import { encodeOperationId, encodeSubOperationId } from "../../operation";

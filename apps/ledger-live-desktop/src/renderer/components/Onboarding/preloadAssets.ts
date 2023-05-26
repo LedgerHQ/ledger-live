@@ -1,4 +1,4 @@
-const assetUrls = [];
+const assetUrls: string[] = [];
 export function registerAssets(assetUrl: string | string[]) {
   if (Array.isArray(assetUrl)) {
     assetUrl.forEach(url => {
@@ -9,7 +9,7 @@ export function registerAssets(assetUrl: string | string[]) {
   }
 }
 export function preloadAssets() {
-  const promises = [];
+  const promises: Promise<unknown>[] = [];
   assetUrls.forEach(url => {
     promises.push(
       new Promise(resolve => {

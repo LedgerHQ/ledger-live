@@ -11,13 +11,15 @@ import logger, { memoryLogger } from "~/renderer/logger";
 import getUser from "~/helpers/user";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-const saveLogs = async (path: { canceled: boolean; filePath: string }) => {
+
+const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
   await ipcRenderer.invoke(
     "save-logs",
     path,
     JSON.stringify(memoryLogger.getMemoryLogs(), null, 2),
   );
 };
+
 type RestProps = ButtonProps & {
   icon?: boolean;
   inverted?: boolean;
@@ -39,6 +41,7 @@ type Props = {
   title?: React.ReactNode;
   withoutAppData?: boolean;
   accounts?: Account[];
+  customComponent?: React.FC<() => Promise<void>>;
 } & RestProps;
 const ExportLogsBtnWrapper = (args: Props) => {
   if (args.withoutAppData) {
@@ -56,8 +59,8 @@ const ExportLogsBtn = ({
   primary = true,
   small = true,
   title,
-  withoutAppData,
   accounts = [],
+  customComponent,
   ...rest
 }: Props) => {
   const { t } = useTranslation();
@@ -98,7 +101,7 @@ const ExportLogsBtn = ({
     try {
       await exportLogs();
     } catch (error) {
-      logger.critical(error);
+      logger.critical(error as Error);
     } finally {
       setExporting(false);
     }
@@ -112,6 +115,9 @@ const ExportLogsBtn = ({
     [handleExportLogs],
   );
   const text = title || t("settings.exportLogs.btn");
+  if (customComponent) {
+    return customComponent(handleExportLogs);
+  }
   return hookToShortcut ? (
     <KeyHandler keyValue="e" onKeyHandle={onKeyHandle} />
   ) : (

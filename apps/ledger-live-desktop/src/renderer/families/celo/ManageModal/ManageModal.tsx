@@ -20,8 +20,9 @@ import { Account } from "@ledgerhq/types-live";
 type Props = {
   name?: string;
   account: Account;
+  source?: string;
 };
-const ManageModal = ({ name, account, ...rest }: Props) => {
+const ManageModal = ({ name, account, source, ...rest }: Props) => {
   const { t } = useTranslation();
   const { celoResources } = account;
   invariant(celoResources, "celo account expected");
@@ -32,11 +33,12 @@ const ManageModal = ({ name, account, ...rest }: Props) => {
       dispatch(
         openModal(name, {
           account,
+          source,
           ...params,
         }),
       );
     },
-    [dispatch, account],
+    [dispatch, account, source],
   );
   const groupsVotedFor = [...new Set(celoResources.votes.map(v => v.validatorGroup))];
   const canVoteForNewGroup = celoResources.maxNumGroupsVotedFor.gt(groupsVotedFor.length);

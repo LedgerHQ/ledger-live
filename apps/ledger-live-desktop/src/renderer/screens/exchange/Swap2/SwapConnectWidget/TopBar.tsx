@@ -11,9 +11,9 @@ import LightBulb from "~/renderer/icons/LightBulb";
 import IconReload from "~/renderer/icons/UpdateCircle";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import { rgba } from "~/renderer/styles/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { iconByProviderName } from "../utils";
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
+import { WebviewTag } from "~/renderer/components/Web3AppWebview/types";
+const Container = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
   alignItems: "center",
@@ -22,7 +22,7 @@ const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({
   background-color: ${p => p.theme.colors.palette.background.paper};
   border-bottom: 1px solid ${p => p.theme.colors.palette.text.shade10};
 `;
-const TitleContainer: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const TitleContainer = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
   alignItems: "center",
@@ -36,26 +36,22 @@ const TitleContainer: ThemedComponent<{}> = styled(Box).attrs(() => ({
     margin-left: 8px;
   }
 `;
-const RightContainer: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const RightContainer = styled(Box).attrs(() => ({
   horizontal: true,
   grow: 0,
   alignItems: "center",
   ml: "auto",
 }))``;
-const ItemContainer: ThemedComponent<{
-  "data-e2e"?: string;
-  isInteractive?: boolean;
-  onClick?: () => void;
-  disabled?: boolean;
-  children: React.ReactNode;
-  justifyContent?: string;
-}> = styled(Tabbable).attrs(p => ({
+const ItemContainer = styled(Tabbable).attrs(p => ({
   padding: 1,
   alignItems: "center",
   cursor: p.disabled ? "not-allowed" : "default",
   horizontal: true,
   borderRadius: 1,
-}))`
+}))<{
+  "data-e2e"?: string;
+  disabled?: boolean;
+}>`
   -webkit-app-region: no-drag;
   height: 24px;
   position: relative;
@@ -80,13 +76,13 @@ const ItemContainer: ThemedComponent<{
     background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.1))};
   }
 `;
-const ItemContent: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const ItemContent = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
 }))`
   font-size: 14px;
   line-height: 20px;
 `;
-export const Separator: ThemedComponent<any> = styled.div`
+export const Separator = styled.div`
   margin-right: 16px;
   height: 15px;
   width: 1px;
@@ -94,34 +90,33 @@ export const Separator: ThemedComponent<any> = styled.div`
 `;
 export type Props = {
   provider: string;
-  onClose?: Function;
-
-  webviewRef: React.MutableRefObject<any>;
+  onClose?: () => void;
+  webviewRef: React.MutableRefObject<WebviewTag> | null;
 };
 const TopBar = ({ provider, onClose, webviewRef }: Props) => {
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const handleReload = () => {
-    const webview = webviewRef.current;
+    const webview = webviewRef?.current;
     if (webview) {
       webview.reloadIgnoringCache();
     }
   };
   const handleOpenDevTools = () => {
-    const webview = webviewRef.current;
+    const webview = webviewRef?.current;
     if (webview) {
       webview.openDevTools();
     }
   };
-  const ProviderIcon = provider && iconByProviderName[provider.toLowerCase()];
+  const ProviderIcon = (provider && iconByProviderName[provider.toLowerCase()]) || null;
   const name = getProviderName(provider);
   return (
     <Container>
       <TitleContainer>
-        <ProviderIcon size={19} />
+        {ProviderIcon && <ProviderIcon size={19} />}
         <ItemContent>{name}</ItemContent>
       </TitleContainer>
       <Separator />
-      <ItemContainer isInteractive onClick={handleReload}>
+      <ItemContainer onClick={handleReload}>
         <IconReload size={16} />
         <ItemContent>
           <Trans i18nKey="common.sync.refresh" />
@@ -131,7 +126,7 @@ const TopBar = ({ provider, onClose, webviewRef }: Props) => {
       {enablePlatformDevTools ? (
         <>
           <Separator />
-          <ItemContainer isInteractive onClick={handleOpenDevTools}>
+          <ItemContainer onClick={handleOpenDevTools}>
             <LightBulb size={16} />
             <ItemContent>
               <Trans i18nKey="common.sync.devTools" />
@@ -140,7 +135,7 @@ const TopBar = ({ provider, onClose, webviewRef }: Props) => {
         </>
       ) : null}
       <RightContainer>
-        <ItemContainer isInteractive onClick={onClose}>
+        <ItemContainer onClick={onClose}>
           <IconClose size={16} />
         </ItemContainer>
       </RightContainer>

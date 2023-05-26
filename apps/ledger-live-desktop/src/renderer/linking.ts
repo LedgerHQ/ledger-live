@@ -1,6 +1,6 @@
 import { track } from "~/renderer/analytics/segment";
 import electron from "electron";
-let shell;
+let shell: Electron.Shell | undefined;
 if (!process.env.STORYBOOK_ENV) {
   shell = electron.shell;
 }

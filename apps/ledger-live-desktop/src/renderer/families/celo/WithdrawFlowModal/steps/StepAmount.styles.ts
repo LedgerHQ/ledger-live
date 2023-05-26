@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 export const Description: ThemedComponent<{
   isPill?: boolean;
 }> = styled(Text).attrs(({ isPill }) => ({
@@ -36,7 +36,7 @@ export const SelectResource: ThemedComponent<{
         `
       : ``}
 `;
-export const TimerWrapper: ThemedComponent<{}> = styled(Box).attrs(() => ({
+export const TimerWrapper = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   ff: "Inter|Medium",

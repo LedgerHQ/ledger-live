@@ -9,7 +9,7 @@ import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 const renderItem = ({
-  data: { validatorAddress, validator, formattedAmount, status },
+  data: { validatorAddress, validator, formattedAmount },
 }: {
   data: CosmosMappedDelegation;
 }) => {

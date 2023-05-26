@@ -32,7 +32,6 @@ const AutoRepair = ({ onDone }: Props) => {
       analyticsName="RepairDevice"
       isOpened
       isLoading
-      onClose={onDone}
       onReject={onDone}
       repair={noop}
       desc={<Trans i18nKey="settings.repairDevice.desc" />}

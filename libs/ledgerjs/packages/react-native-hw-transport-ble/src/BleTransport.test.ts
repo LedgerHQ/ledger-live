@@ -12,13 +12,29 @@ import { Subscription } from "rxjs";
  * to cover test cases. It should be noted that this mock is not comprehensive
  * and may require further refinement to meet all requirements.
  */
+
 jest.mock("react-native-ble-plx", () => {
+  class BleError {
+    iosErrorCode: number;
+    reason: string;
+    constructor(iosErrorCode: number, reason: string) {
+      this.iosErrorCode = iosErrorCode;
+      this.reason = reason;
+    }
+  }
+
   // Set of callbacks that we can trigger from our tests.
   const callbacks: { [key: string]: (...args: any[]) => void } = {};
 
   return {
     BleErrorCode: {
       ScanStartFailed: 0,
+    },
+    BleError,
+    ConnectionPriority: {
+      Balanced: 0,
+      High: 1,
+      LowPower: 2,
     },
     BleManager: function () {
       const dynamicProps = {
@@ -52,6 +68,10 @@ jest.mock("react-native-ble-plx", () => {
             id: "20EDD96F-7430-6E33-AB22-DD8AAB857CD4",
             manufacturerData: null,
             solicitedServiceUUIDs: null,
+
+            requestConnectionPriority: async () => {
+              return null; // Should return self.
+            },
 
             isConnected: () => {
               return dynamicProps.isConnected;
@@ -116,7 +136,7 @@ jest.mock("react-native-ble-plx", () => {
                     serviceID: 105553179758272,
                     writeWithoutResponse: async (raw) => {
                       if (!dynamicProps.isConnected)
-                        throw new Error("Device is not connected");
+                        throw new BleError(22, "Device is not connected");
 
                       const hex = Buffer.from(raw, "base64").toString("hex");
                       let value: Buffer;
@@ -246,7 +266,7 @@ describe("BleTransport connectivity test coverage", () => {
       await BleTransport.disconnect(deviceId);
       await expect(
         transport.exchange(Buffer.from("b010000000", "hex"))
-      ).rejects.toThrow("Device is not connected"); // More specific errors some day.
+      ).rejects.toThrow(); // More specific errors some day.
     });
 
     it("should disconnect if close is called, even if pending response", (done) => {

@@ -20,28 +20,32 @@ import { St, StepId } from "./types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import logger from "~/renderer/logger";
 import Text from "~/renderer/components/Text";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+
+export type Params = {
+  canEditFees: boolean;
+  useApp?: string;
+  account: AccountLike;
+  transactionData: PlatformTransaction & { gasLimit: BigNumber };
+  onResult: (signedOperation: SignedOperation) => void;
+  onCancel: (reason: unknown) => void;
+  parentAccount: Account | undefined | null;
+  startWithWarning?: boolean;
+  recipient?: string;
+  amount?: BigNumber;
+};
+
 type Props = {
   stepId: StepId;
   onChangeStepId: (a: StepId) => void;
   onClose: () => void;
-  params: {
-    canEditFees: boolean;
-    useApp?: string;
-    account: AccountLike;
-    transactionData: PlatformTransaction;
-    onResult: (signedOperation: SignedOperation) => void;
-    onCancel: (reason: any) => void;
-    parentAccount: Account | undefined | null;
-    startWithWarning?: boolean;
-    recipient?: string;
-    amount?: BigNumber;
-  };
+  params: Params;
   setError: (error?: Error) => void;
 };
 function useSteps(canEditFees = false): St[] {
   const { t } = useTranslation();
   return useMemo(() => {
-    const steps = [
+    const steps: St[] = [
       {
         id: "summary",
         label: t("send.steps.summary.title"),
@@ -90,9 +94,12 @@ function useSteps(canEditFees = false): St[] {
 const STATUS_KEYS_IGNORE = ["recipient", "gasLimit"];
 
 // returns the first error
-function getStatusError(status, type = "errors"): Error | undefined | null {
-  if (!status || !status[type]) return null;
-  const firstKey = Object.keys(status[type]).find(k => !STATUS_KEYS_IGNORE.includes(k));
+function getStatusError(status: TransactionStatus, type = "errors"): Error | undefined | null {
+  if (!status || !status[type as keyof TransactionStatus]) return null;
+  const firstKey = Object.keys(status[type as keyof TransactionStatus]!).find(
+    k => !STATUS_KEYS_IGNORE.includes(k),
+  );
+  // @ts-expect-error This is complicated to prove that type / firstKey are the right keys
   return firstKey ? status[type][firstKey] : null;
 }
 export default function Body({ onChangeStepId, onClose, setError, stepId, params }: Props) {
@@ -132,7 +139,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
       transaction,
     };
   });
-  const [transactionError, setTransactionError] = useState(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const handleOpenModal = useCallback((name, data) => dispatch(openModal(name, data)), [dispatch]);
   const handleCloseModal = useCallback(() => {
     dispatch(closeModal("MODAL_SIGN_TRANSACTION"));

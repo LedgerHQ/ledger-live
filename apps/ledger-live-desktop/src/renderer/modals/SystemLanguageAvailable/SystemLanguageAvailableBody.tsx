@@ -11,12 +11,12 @@ import Button from "~/renderer/components/Button";
 import LanguageIcon from "~/renderer/icons/Language";
 import { setLanguage } from "~/renderer/actions/settings";
 import { answerLanguageAvailable } from "~/renderer/components/IsSystemLanguageAvailable";
-type Props = {
+export type Props = {
   data: {
     currentLanguage: string;
     osLanguage: string;
   };
-  onClose: () => void;
+  onClose?: () => void;
   t?: TFunction;
 };
 const Title = styled(Text).attrs(() => ({
@@ -60,14 +60,14 @@ const SystemLanguageAvailableBody = (props: Props) => {
   const targetLanguageTranslated = t(`language.switcher.${osLanguage}`);
   const dontSwitchLanguage = () => {
     answerLanguageAvailable();
-    onClose();
+    onClose?.();
   };
   const switchLanguage = () => {
     dispatch(setLanguage(osLanguage));
     moment.locale(osLanguage);
     i18n.changeLanguage(osLanguage);
     answerLanguageAvailable();
-    onClose();
+    onClose?.();
   };
   return (
     <ModalBody

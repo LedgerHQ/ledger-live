@@ -17,11 +17,9 @@ import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 export default function StepAmount({
   account,
   transaction,
-  bridgePending,
   onUpdateTransaction,
   status,
   error,
-  validatorAddress,
 }: StepProps) {
   invariant(account && transaction && transaction.validators, "account and transaction required");
   const bridge = getAccountBridge(account);

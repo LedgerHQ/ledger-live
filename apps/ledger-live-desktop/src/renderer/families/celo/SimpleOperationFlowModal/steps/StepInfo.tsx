@@ -16,7 +16,6 @@ export const StepInfoFooter = ({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) => {
   invariant(account, "account required");
   const { errors } = status;
@@ -41,18 +40,7 @@ export const StepInfoFooter = ({
     </>
   );
 };
-const StepInfo = ({
-  account,
-  parentAccount,
-  onUpdateTransaction,
-  transaction,
-  status,
-  bridgePending,
-  warning,
-  error,
-  t,
-  mode,
-}: StepProps) => {
+const StepInfo = ({ account, transaction, warning, error, t, mode }: StepProps) => {
   invariant(account && account.celoResources && transaction, "account and transaction required");
   const description = t(`celo.simpleOperation.modes.${mode}.description`);
   return (

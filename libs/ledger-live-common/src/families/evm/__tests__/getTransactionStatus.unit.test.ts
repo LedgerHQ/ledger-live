@@ -14,6 +14,7 @@ import {
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
 import getTransactionStatus from "../getTransactionStatus";
 import { makeAccount, makeTokenAccount } from "../testUtils";
+import { PriorityFeeTooLow } from "@ledgerhq/errors";
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");
@@ -197,6 +198,28 @@ describe("EVM Family", () => {
         );
       });
 
+      it("should detect a gasLimit = 0 in a 1559 tx and have an error", async () => {
+        const tx = { ...eip1559Tx, gasLimit: new BigNumber(0) };
+        const res = await getTransactionStatus(account, tx as any);
+
+        expect(res.errors).toEqual(
+          expect.objectContaining({
+            gasLimit: new FeeNotLoaded(),
+          })
+        );
+      });
+
+      it("should detect a gasLimit = 0 in a legacy tx and have an error", async () => {
+        const tx = { ...legacyTx, gasLimit: new BigNumber(0) };
+        const res = await getTransactionStatus(account, tx as any);
+
+        expect(res.errors).toEqual(
+          expect.objectContaining({
+            gasLimit: new FeeNotLoaded(),
+          })
+        );
+      });
+
       it("should detect gas limit being too low in a tx and have an error", async () => {
         const tx = { ...eip1559Tx, gasLimit: new BigNumber(20000) }; // min should be 21000
         const res = await getTransactionStatus(account, tx);
@@ -226,6 +249,22 @@ describe("EVM Family", () => {
         expect(enoughhBalanceResponse.errors).not.toEqual(
           expect.objectContaining({
             gasPrice: new NotEnoughGas(),
+          })
+        );
+      });
+
+      it("should detect a maxPriorityFee = 0 in a 1559 tx and have an error", async () => {
+        const res = await getTransactionStatus(
+          { ...account, balance: new BigNumber(2100000) },
+          {
+            ...eip1559Tx,
+            maxPriorityFeePerGas: new BigNumber(0),
+          }
+        );
+
+        expect(res.errors).toEqual(
+          expect.objectContaining({
+            maxPriorityFee: new PriorityFeeTooLow(),
           })
         );
       });
@@ -308,47 +347,6 @@ describe("EVM Family", () => {
             estimatedFees: new BigNumber(2100000),
             amount: legacyTx.amount,
             totalSpent: new BigNumber(2100000).plus(legacyTx.amount),
-          })
-        );
-      });
-
-      it("should return a 1559 transaction that will use 100% of an account balance", async () => {
-        const res = await getTransactionStatus(
-          { ...account, balance: new BigNumber(10000000) },
-          {
-            ...eip1559Tx,
-            useAllAmount: true,
-          }
-        );
-        const estimatedFees = new BigNumber(2100000);
-
-        expect(res).toEqual(
-          expect.objectContaining({
-            errors: expect.any(Object),
-            warnings: expect.any(Object),
-            estimatedFees,
-            amount: new BigNumber(10000000).minus(estimatedFees),
-            totalSpent: new BigNumber(10000000),
-          })
-        );
-      });
-
-      it("should return an legacy transaction that will use 100% of an account balance", async () => {
-        const res = await getTransactionStatus(
-          { ...account, balance: new BigNumber(10000000) },
-          {
-            ...legacyTx,
-            useAllAmount: true,
-          }
-        );
-
-        expect(res).toEqual(
-          expect.objectContaining({
-            errors: expect.any(Object),
-            warnings: expect.any(Object),
-            estimatedFees: new BigNumber(2100000),
-            amount: new BigNumber(10000000).minus(2100000),
-            totalSpent: new BigNumber(10000000),
           })
         );
       });

@@ -24,7 +24,7 @@ type staxFetchAndRestoreJobOpts = ScanCommonOpts & {
 const exec = async (opts: staxFetchAndRestoreJobOpts) => {
   const { fileInput, device: deviceId = "" } = opts;
   const hexImageWithoutHeader = fs.readFileSync(fileInput, "utf-8");
-  const hexImage = await generateStaxImageFormat(hexImageWithoutHeader, true);
+  const hexImage = await generateStaxImageFormat(hexImageWithoutHeader, true, true);
 
   await new Promise<void>(async (resolve) => {
     let hash = crypto.createHash("sha256").update(hexImage).digest("hex");
@@ -50,7 +50,7 @@ const exec = async (opts: staxFetchAndRestoreJobOpts) => {
 
     console.log("Restoring the image we backedup");
     await new Promise<void>((resolve) =>
-      staxLoadImage({ deviceId, hexImage: hexImageWithoutHeader }).subscribe(
+      staxLoadImage({ deviceId, request: { hexImage: hexImageWithoutHeader } }).subscribe(
         (x) => console.log(x),
         (e) => {
           console.error(e);

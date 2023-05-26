@@ -1,9 +1,8 @@
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import React from "react";
 import styled from "styled-components";
 import { GradientHover } from "~/renderer/drawers/OperationDetails/styledComponents";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
-const CopiableFieldContainer: ThemedComponent<{}> = styled.div`
+const CopiableFieldContainer = styled.div`
   display: inline-flex;
   position: relative;
   max-width: 100%;

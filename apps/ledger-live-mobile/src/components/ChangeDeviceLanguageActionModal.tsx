@@ -15,6 +15,7 @@ type Props = {
   onResult?: () => void;
 };
 
+const action = createAction(installLanguage);
 const ChangeDeviceLanguageActionModal: React.FC<Props> = ({
   device,
   language,
@@ -22,22 +23,14 @@ const ChangeDeviceLanguageActionModal: React.FC<Props> = ({
   onError,
   onResult,
 }) => {
-  const action = useMemo(
-    () =>
-      createAction(() =>
-        installLanguage({
-          deviceId: device?.deviceId ?? "",
-          language,
-        }),
-      ),
-    [language, device?.deviceId],
-  );
+  const request = useMemo(() => ({ language }), [language]);
 
   return (
     <DeviceActionModal
       action={action}
       onClose={onClose}
       onError={onError}
+      request={request}
       device={device}
       renderOnResult={() => (
         <DeviceLanguageInstalled

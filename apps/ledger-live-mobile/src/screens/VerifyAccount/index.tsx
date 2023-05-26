@@ -71,17 +71,24 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
     },
     [account, onSuccess, onError, onDone],
   );
+
   const onConfirmSkip = useCallback(() => {
     onSuccess(account);
     onDone();
   }, [account, onSuccess, onDone]);
+
   const onSkipDevice = useCallback(() => {
     setSkipDevice(true);
   }, []);
+
   const handleClose = useCallback(() => {
     onClose();
     onDone();
   }, [onClose, onDone]);
+
+  // Does not react to an header update request, the header stays the same.
+  const requestToSetHeaderOptions = useCallback(() => undefined, []);
+
   if (!account) return null;
 
   if (error) {
@@ -108,7 +115,11 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
       <TrackScreen category="VerifyAccount" name="ConnectDevice" />
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex px={16} py={8} flex={1}>
-          <SelectDevice2 onSelect={setDevice} stopBleScanning={!!device} />
+          <SelectDevice2
+            onSelect={setDevice}
+            stopBleScanning={!!device}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
+          />
         </Flex>
       ) : (
         <NavigationScrollView

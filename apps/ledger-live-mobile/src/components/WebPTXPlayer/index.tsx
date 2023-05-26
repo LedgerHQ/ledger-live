@@ -30,13 +30,21 @@ import {
 } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
-import HeaderRightClose from "../HeaderRightClose";
+import { track } from "../../analytics";
+import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
+import { NavigatorName } from "../../const";
 
 type BackToWhitelistedDomainProps = {
   manifest: AppManifest;
+  webviewURL: string;
+  lastMatchingURL: string | null;
 };
 
-function BackToWhitelistedDomain({ manifest }: BackToWhitelistedDomainProps) {
+function BackToWhitelistedDomain({
+  manifest,
+  webviewURL,
+  lastMatchingURL,
+}: BackToWhitelistedDomainProps) {
   const { t } = useTranslation();
   const navigation =
     useNavigation<
@@ -45,13 +53,44 @@ function BackToWhitelistedDomain({ manifest }: BackToWhitelistedDomainProps) {
       >
     >();
 
+  const getButtonLabel = () => {
+    if (manifest.id === "multibuy" && lastMatchingURL) {
+      const url = new URL(lastMatchingURL);
+      const urlParams = new URLSearchParams(url.searchParams);
+      const flowName = urlParams.get("liveAppFlow");
+      if (flowName === "compare_providers") return "Quote";
+    }
+
+    return manifest.name;
+  };
+
+  const handleBackClick = () => {
+    if (manifest.id === "multibuy" && lastMatchingURL) {
+      const currentHostname = new URL(webviewURL).hostname;
+      const url = new URL(lastMatchingURL);
+      const urlParams = new URLSearchParams(url.searchParams);
+      const flowName = urlParams.get("liveAppFlow")!;
+
+      track("button_clicked", {
+        button:
+          flowName === "compare_providers"
+            ? "back to quote"
+            : "back to liveapp",
+        provider: currentHostname,
+        flow: flowName,
+      });
+    }
+
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.headerLeft}>
-      <TouchableOpacity onPress={navigation.goBack}>
+      <TouchableOpacity onPress={handleBackClick}>
         <Flex alignItems="center" flexDirection="row" height={40}>
           <Icon name="ChevronLeft" color="neutral.c100" size={30} />
           <Text fontWeight="semiBold" fontSize={16} color="neutral.c100">
-            {t("common.backTo", { to: manifest.name })}
+            {t("common.backTo", { to: getButtonLabel() })}
           </Text>
         </Flex>
       </TouchableOpacity>
@@ -59,10 +98,15 @@ function BackToWhitelistedDomain({ manifest }: BackToWhitelistedDomainProps) {
   );
 }
 
-function HeaderRight() {
+function HeaderRight({ onClose }: { onClose?: () => void }) {
   const { colors } = useTheme();
 
-  return <HeaderRightClose color={colors.neutral.c100} />;
+  return (
+    <NavigationHeaderCloseButtonAdvanced
+      onClose={onClose}
+      color={colors.neutral.c100}
+    />
+  );
 }
 
 type Props = {
@@ -129,6 +173,12 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
     }
   }, [handleHardwareBackPress]);
 
+  const onClose = () => {
+    navigation.navigate(NavigatorName.Base, {
+      screen: NavigatorName.Main,
+    });
+  };
+
   useEffect(() => {
     const handler = (e: { preventDefault: () => void }) => {
       const webviewAPI = safeGetRefValue(webviewAPIRef);
@@ -146,10 +196,14 @@ export const WebPTXPlayer = ({ manifest, inputs }: Props) => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => <HeaderRight />,
+      headerRight: () => <HeaderRight onClose={onClose} />,
       headerLeft: () =>
         isWhitelistedDomain ? null : (
-          <BackToWhitelistedDomain manifest={manifest} />
+          <BackToWhitelistedDomain
+            manifest={manifest}
+            webviewURL={webviewState.url}
+            lastMatchingURL={lastMatchingURL.current}
+          />
         ),
       headerTitle: () => null,
     });

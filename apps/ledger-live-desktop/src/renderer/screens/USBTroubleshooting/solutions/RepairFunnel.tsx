@@ -16,7 +16,7 @@ const RepairFunnelSolution = ({
   done: boolean;
 }) => {
   const { t } = useTranslation();
-  const repairRef = useRef<any>();
+  const repairRef = useRef<HTMLButtonElement>(null);
   const onContactSupport = useCallback(() => {
     openURL(urls.contactSupport);
   }, []);

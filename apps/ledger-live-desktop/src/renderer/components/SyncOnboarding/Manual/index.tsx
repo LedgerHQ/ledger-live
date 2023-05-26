@@ -1,10 +1,9 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
+import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import { useTheme } from "styled-components";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
@@ -12,7 +11,8 @@ import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
-
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import HelpDrawer from "./HelpDrawer";
@@ -22,11 +22,10 @@ import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
 import { StepText } from "./shared";
 import Header from "./Header";
-import Animation from "~/renderer/animations";
-import { getDeviceAnimation } from "../../DeviceAction/animations";
-import DeviceIllustration from "../../DeviceIllustration";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
+import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
+import { RecoverState } from "~/renderer/screens/recover/Player";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -74,12 +73,14 @@ export type SyncOnboardingManualProps = {
  */
 const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardingManualProps) => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const history = useHistory();
+  const history = useHistory<RecoverState>();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
   const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
+
+  const servicesConfig = useFeature("protectServicesDesktop");
+  const postOnboardingPath = usePostOnboardingPath(servicesConfig);
 
   const device = useSelector(getCurrentDevice);
 
@@ -117,7 +118,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         key: StepKey.Paired,
         status: "active",
         title: t("syncOnboarding.manual.pairedContent.title", {
-          deviceName: productName,
+          deviceName,
         }),
         renderBody: () => (
           <Flex flexDirection="column">
@@ -131,6 +132,10 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
                 deviceName: productName,
               })}
             </StepText>
+            <ContinueOnDeviceWithAnim
+              deviceModelId={deviceModelId}
+              text={t("syncOnboarding.manual.pairedContent.continueOnDevice", { productName })}
+            />
           </Flex>
         ),
       },
@@ -146,16 +151,20 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
                 deviceName: productName,
               })}
             </StepText>
+            <ContinueOnDeviceWithAnim
+              deviceModelId={deviceModelId}
+              text={t("syncOnboarding.manual.pinContent.continueOnDevice", { productName })}
+            />
           </Flex>
         ),
-        estimatedTime: 120,
       },
       {
         key: StepKey.Seed,
         status: "inactive",
         title: t("syncOnboarding.manual.seedContent.title"),
-        renderBody: () => <SeedStep seedPathStatus={seedPathStatus} />,
-        estimatedTime: 300,
+        renderBody: () => (
+          <SeedStep seedPathStatus={seedPathStatus} deviceModelId={deviceModelId} />
+        ),
       },
       {
         key: StepKey.SoftwareCheck,
@@ -173,7 +182,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       {
         key: StepKey.Applications,
         status: "inactive",
-        title: "Nano applications",
+        title: t("syncOnboarding.manual.installApplications.title"),
         renderBody: () => (
           <OnboardingAppInstallStep
             device={device}
@@ -186,12 +195,14 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       {
         key: StepKey.Ready,
         status: "inactive",
-        title: "Nano is ready",
+        title: t("syncOnboarding.manual.endOfSetup.title"),
       },
     ],
     [
       t,
+      deviceName,
       productName,
+      deviceModelId,
       seedPathStatus,
       lastKnownDeviceModelId,
       handleSoftwareCheckComplete,
@@ -212,10 +223,9 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     onboardingState: deviceOnboardingState,
     allowedError,
     fatalError,
-    lockedDevice: lockedDeviceDuringPolling,
   } = useOnboardingStatePolling({
     getOnboardingStatePolling,
-    device,
+    device: device || null,
     pollingPeriodMs,
     stopPolling,
   });
@@ -362,10 +372,19 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     }
   }, [isTroubleshootingDrawerOpen]);
 
-  const displayUnlockOrPlugDeviceAnimation = !device || (lockedDeviceDuringPolling && !stopPolling);
+  useEffect(() => {
+    if (seedPathStatus === "recover_seed" && postOnboardingPath) {
+      const [pathname, search] = postOnboardingPath.split("?");
+      history.push({
+        pathname,
+        search: search ? `?${search}` : undefined,
+        state: { fromOnboarding: true },
+      });
+    }
+  }, [history, postOnboardingPath, seedPathStatus]);
 
   return (
-    <Flex bg="background.main" width="100%" height="100%" flexDirection="column">
+    <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
       <Header onClose={handleClose} onHelp={() => setHelpDrawerOpen(true)} />
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <TroubleshootingDrawer
@@ -373,34 +392,24 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         isOpen={isTroubleshootingDrawerOpen}
         onClose={handleTroubleshootingDrawerClose}
       />
-      <Flex flex={1} position="relative" overflow="hidden">
-        <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} productName={productName} />
-        <Flex flex={1} px="120px" py={0}>
-          <Flex flex={1} flexDirection="column" overflow="hidden" justifyContent="center">
-            <Flex flex={1} flexGrow={0} alignItems="center" mb={12}>
-              <Text variant="h3Inter" fontSize="28px" fontWeight="semiBold">
-                {t("syncOnboarding.manual.title", { deviceName })}
-              </Text>
-            </Flex>
-            <Flex maxWidth="680px" flexShrink={1} overflowY="scroll">
-              <VerticalTimeline flex={1} steps={steps} />
-            </Flex>
-          </Flex>
-          <Flex flex={1} justifyContent="center" alignItems="center">
-            {displayUnlockOrPlugDeviceAnimation ? (
-              <Animation
-                height="540px"
-                animation={getDeviceAnimation(
-                  lastKnownDeviceModelId,
-                  theme.theme,
-                  lockedDeviceDuringPolling ? "enterPinCode" : "plugAndPinCode",
-                )}
-              />
-            ) : (
-              <DeviceIllustration deviceId={lastKnownDeviceModelId} />
-            )}
-          </Flex>
-        </Flex>
+      <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} productName={productName} />
+      <Flex
+        height="100%"
+        overflow="hidden"
+        width="432px"
+        flexDirection="column"
+        justifyContent="flex-start"
+        alignSelf="center"
+        overflowY="scroll"
+        flexGrow={0}
+        flexShrink={1}
+      >
+        <Text variant="h3Inter" fontSize="28px" fontWeight="semiBold" mb={8}>
+          {t("syncOnboarding.manual.title", { deviceName })}
+        </Text>
+        <Box>
+          <VerticalTimeline steps={steps} />
+        </Box>
       </Flex>
     </Flex>
   );

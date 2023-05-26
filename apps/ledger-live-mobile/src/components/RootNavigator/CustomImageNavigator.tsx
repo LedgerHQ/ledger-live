@@ -6,7 +6,9 @@ import { ScreenName } from "../../const";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Step1Cropping from "../../screens/CustomImage/Step1Crop";
 import Step2ChooseContrast from "../../screens/CustomImage/Step2ChooseContrast";
-import Step3Transfer from "../../screens/CustomImage/Step3Transfer";
+import Step3Transfer, {
+  step3TransferHeaderOptions,
+} from "../../screens/CustomImage/Step3Transfer";
 import ErrorScreen from "../../screens/CustomImage/ErrorScreen";
 import Step0Welcome from "../../screens/CustomImage/Step0Welcome";
 import PreviewPreEdit from "../../screens/CustomImage/PreviewPreEdit";
@@ -45,7 +47,7 @@ export default function CustomImageNavigator() {
       <Stack.Screen
         name={ScreenName.CustomImageStep3Transfer}
         component={Step3Transfer}
-        options={{ title: "", headerRight: undefined }}
+        options={{ ...step3TransferHeaderOptions }}
       />
       <Stack.Screen
         name={ScreenName.CustomImageErrorScreen}

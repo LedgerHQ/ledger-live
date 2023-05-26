@@ -8,13 +8,23 @@ import {
 import styled from "styled-components/native";
 import Touchable from "./Touchable";
 
-const StyledTouchableRow = styled(Touchable)<{ compact?: boolean }>`
-  background-color: ${p => p.theme.colors.palette.background.main};
+const StyledTouchableRow = styled(Touchable)<{
+  compact?: boolean;
+  hasBorderTop?: boolean;
+}>`
+  background-color: ${p => p.theme.colors.background.main};
   padding: ${p => p.theme.space[p.compact ? 6 : 7]}px ${p => p.theme.space[6]}px;
   flex-direction: row;
   align-items: center;
-  border-bottom-color: ${p => p.theme.colors.palette.neutral.c40};
+  border-bottom-color: ${p => p.theme.colors.neutral.c40};
   border-bottom-width: ${p => (p.compact ? 0 : 1)}px;
+  ${p =>
+    p.hasBorderTop
+      ? `
+    border-top-color: ${p.theme.colors.neutral.c40};
+    border-top-width: ${p.compact ? 0 : 1}px;
+  `
+      : ``}
 `;
 
 export default function SettingsRow({
@@ -38,6 +48,7 @@ export default function SettingsRow({
   compact,
   label,
   testID,
+  hasBorderTop,
 }: {
   onPress?: () => void;
   onLongPress?: () => void;
@@ -58,6 +69,7 @@ export default function SettingsRow({
   eventProperties?: Record<string, unknown>;
   compact?: boolean;
   label?: string;
+  hasBorderTop?: boolean;
   testID?: string;
 }) {
   let title$ = (
@@ -107,6 +119,7 @@ export default function SettingsRow({
       eventProperties={eventProperties}
       style={style}
       compact={compact}
+      hasBorderTop={hasBorderTop}
       testID={testID}
     >
       {iconLeft && (

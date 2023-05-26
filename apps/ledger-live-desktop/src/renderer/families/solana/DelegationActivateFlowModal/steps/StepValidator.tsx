@@ -60,7 +60,6 @@ export default function StepValidator({
 export function StepValidatorFooter({
   transitionTo,
   account,
-  parentAccount,
   onClose,
   status,
   bridgePending,

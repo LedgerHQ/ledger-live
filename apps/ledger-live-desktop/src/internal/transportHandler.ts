@@ -10,6 +10,7 @@ import {
   transportExchangeBulkUnsubscribeChannel,
   transportListenChannel,
 } from "~/config/transportChannels";
+import { MessagesMap } from "./types";
 
 type APDUMessage =
   | { type: "exchange"; apduHex: string; requestId: string }
@@ -19,13 +20,7 @@ type APDUMessage =
 const transports = new Map<string, Subject<APDUMessage>>();
 const transportsBulkSubscriptions = new Map<string, { unsubscribe: () => void }>();
 
-export const transportOpen = ({
-  data,
-  requestId,
-}: {
-  data: { descriptor: string };
-  requestId: string;
-}) => {
+export const transportOpen = ({ data, requestId }: MessagesMap["transport:open"]) => {
   const subjectExist = transports.get(data.descriptor);
 
   const onEnd = () => {
@@ -75,7 +70,7 @@ export const transportOpen = ({
             error: error => {
               process.send?.({
                 type: transportExchangeBulkChannel,
-                error: serializeError(error),
+                error: serializeError(error as Parameters<typeof serializeError>[0]),
                 requestId: e.requestId,
               });
             },
@@ -116,13 +111,7 @@ export const transportOpen = ({
   });
 };
 
-export const transportExchange = ({
-  data,
-  requestId,
-}: {
-  data: { descriptor: string; apduHex: string };
-  requestId: string;
-}) => {
+export const transportExchange = ({ data, requestId }: MessagesMap["transport:exchange"]) => {
   const subject = transports.get(data.descriptor);
   if (!subject) {
     process.send?.({
@@ -140,10 +129,7 @@ export const transportExchange = ({
 export const transportExchangeBulk = ({
   data,
   requestId,
-}: {
-  data: { descriptor: string; apdusHex: string[] };
-  requestId: string;
-}) => {
+}: MessagesMap["transport:exchangeBulk"]) => {
   const subject = transports.get(data.descriptor);
   if (!subject) {
     process.send?.({
@@ -162,10 +148,7 @@ export const transportExchangeBulk = ({
 export const transportExchangeBulkUnsubscribe = ({
   data,
   requestId,
-}: {
-  data: { descriptor: string };
-  requestId: string;
-}) => {
+}: MessagesMap["transport:exchangeBulk:unsubscribe"]) => {
   const subject = transports.get(data.descriptor);
   if (!subject) {
     process.send?.({
@@ -182,7 +165,7 @@ export const transportExchangeBulkUnsubscribe = ({
 
 const transportListenListeners = new Map<string, { unsubscribe: () => void }>();
 
-export const transportListen = ({ requestId }: { requestId: string }) => {
+export const transportListen = ({ requestId }: MessagesMap["transport:listen"]) => {
   const observable = new Observable(TransportNodeHidSingleton.listen);
   const subscription = observable.subscribe({
     next: e => {
@@ -203,7 +186,9 @@ export const transportListen = ({ requestId }: { requestId: string }) => {
   transportListenListeners.set(requestId, subscription);
 };
 
-export const transportListenUnsubscribe = ({ requestId }: { requestId: string }) => {
+export const transportListenUnsubscribe = ({
+  requestId,
+}: MessagesMap["transport:listen:unsubscribe"]) => {
   const listener = transportListenListeners.get(requestId);
   if (listener) {
     listener.unsubscribe();
@@ -211,13 +196,7 @@ export const transportListenUnsubscribe = ({ requestId }: { requestId: string })
   }
 };
 
-export const transportClose = ({
-  data,
-  requestId,
-}: {
-  data: { descriptor: string };
-  requestId: string;
-}) => {
+export const transportClose = ({ data, requestId }: MessagesMap["transport:close"]) => {
   const subject = transports.get(data.descriptor);
   if (!subject) {
     process.send?.({

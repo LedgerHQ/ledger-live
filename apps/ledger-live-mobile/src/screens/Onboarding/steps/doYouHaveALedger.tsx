@@ -10,7 +10,10 @@ import { ScreenName } from "../../../const";
 import StyledStatusBar from "../../../components/StyledStatusBar";
 import Button from "../../../components/wrappedUi/Button";
 import { TrackScreen, updateIdentify } from "../../../analytics";
-import { setFirstConnectionHasDevice } from "../../../actions/settings";
+import {
+  setFirstConnectionHasDevice,
+  setReadOnlyMode,
+} from "../../../actions/settings";
 import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
@@ -59,12 +62,13 @@ function OnboardingStepDoYouHaveALedgerDevice({ navigation }: NavigationProps) {
 
   useFocusEffect(
     useCallback(() => {
+      dispatch(setReadOnlyMode(true));
       setScreen && setScreen("Has Device?");
 
       return () => {
         setSource("Has Device?");
       };
-    }, [setSource, setScreen]),
+    }, [dispatch, setScreen, setSource]),
   );
 
   const imageSource = useFeature("staxWelcomeScreen")?.enabled

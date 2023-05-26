@@ -1,9 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import Box from "~/renderer/components/Box";
-const Disclaimer: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Disclaimer = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
   color: "palette.background.paper",

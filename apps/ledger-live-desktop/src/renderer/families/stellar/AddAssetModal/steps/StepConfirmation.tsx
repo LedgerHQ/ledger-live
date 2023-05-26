@@ -4,7 +4,6 @@ import styled, { withTheme } from "styled-components";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
@@ -23,15 +22,7 @@ const Container: ThemedComponent<{
 }))`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
-function StepConfirmation({
-  account,
-  t,
-  optimisticOperation,
-  error,
-  device,
-  signed,
-  transaction,
-}: StepProps) {
+function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
   const options = account && listTokensForCryptoCurrency(account.currency);
   const token = useMemo(
     () => transaction && options && options.find(({ id }) => id === transaction.assetId),
@@ -87,12 +78,10 @@ function StepConfirmation({
   return null;
 }
 export function StepConfirmationFooter({
-  transitionTo,
   account,
   parentAccount,
   onRetry,
   error,
-  openModal,
   onClose,
   optimisticOperation,
 }: StepProps) {

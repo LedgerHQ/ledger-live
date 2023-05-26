@@ -21,7 +21,7 @@ const Bridge = ({
 }: {
   origin: string | undefined | null;
   appName: string | undefined | null;
-  onClose: () => void;
+  onClose?: () => void;
 }) => {
   const { t } = useTranslation();
   return (

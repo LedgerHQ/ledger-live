@@ -1,12 +1,11 @@
 import React, { memo, useMemo } from "react";
 import { useNftCollectionMetadata } from "@ledgerhq/live-common/nft/index";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import NFTCollectionContextMenu from "~/renderer/components/ContextMenu/NFTCollectionContextMenu";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import IconDots from "~/renderer/icons/Dots";
 import styled from "styled-components";
-const Dots: ThemedComponent<{}> = styled.div`
+const Dots = styled.div`
   justify-content: flex-end;
   display: flex;
   align-items: center;
@@ -17,7 +16,7 @@ const Dots: ThemedComponent<{}> = styled.div`
     color: ${p => p.theme.colors.palette.text.shade40};
   }
 `;
-const Container: ThemedComponent<{}> = styled.div`
+const Container = styled.div`
   display: flex;
   column-gap: 10px;
 `;

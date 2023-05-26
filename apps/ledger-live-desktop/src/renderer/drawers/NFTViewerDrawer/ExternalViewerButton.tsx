@@ -9,16 +9,14 @@ import IconExternal from "~/renderer/icons/ExternalLink";
 import useNftLinks from "~/renderer/hooks/useNftLinks";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Separator: ThemedComponent<{}> = styled.div`
+
+const Separator = styled.div`
   background-color: ${p => p.theme.colors.palette.divider};
   height: 1px;
   margin-top: 8px;
   margin-bottom: 8px;
 `;
-const Item: ThemedComponent<{
-  disableHover?: boolean;
-}> = styled(DropDownItem)`
+const Item = styled(DropDownItem)`
   width: 100%;
   cursor: pointer;
   white-space: pre-wrap;
@@ -26,25 +24,25 @@ const Item: ThemedComponent<{
   align-items: center;
   display: flex;
 `;
-const renderItem = ({ item }) => {
+
+type Inner<A> = A extends Array<infer T> ? T : never;
+type Item = Inner<ReturnType<typeof useNftLinks>>;
+
+const renderItem = ({ item }: { item: Item }) => {
   if (item.type === "separator") {
     return <Separator />;
   }
   const Icon = item.Icon ? (
-    React.createElement(item.Icon, {
+    // TODO: the icons have incompatible props (size: string / number)
+    // eslint-disable-next-line
+    React.createElement(item.Icon as any, {
       size: 16,
     })
   ) : (
     <></>
   );
   return (
-    <Item
-      id={`external-popout-${item.id}`}
-      horizontal
-      flow={2}
-      onClick={item.callback}
-      disableHover={item.id === "hideEmpty"}
-    >
+    <Item id={`external-popout-${item.id}`} horizontal flow={2} onClick={item.callback}>
       <Box horizontal>
         {item.Icon ? <Box mr={2}>{Icon}</Box> : null}
         {item.label}
@@ -70,12 +68,7 @@ const ExternalViewerButton = ({ nft, account, metadata }: ExternalViewerButtonPr
   }, [account.id, history]);
   const items = useNftLinks(account, nft, metadata, onHideCollection, true);
   return (
-    <DropDownSelector
-      buttonId="accounts-options-button"
-      horizontal
-      items={items}
-      renderItem={renderItem}
-    >
+    <DropDownSelector buttonId="accounts-options-button" items={items} renderItem={renderItem}>
       {() => (
         <Box horizontal>
           <Button

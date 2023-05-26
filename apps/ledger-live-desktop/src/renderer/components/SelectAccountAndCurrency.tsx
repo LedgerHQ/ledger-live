@@ -13,25 +13,24 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import FakeLink from "~/renderer/components/FakeLink";
 import PlusIcon from "~/renderer/icons/Plus";
 import { openModal } from "~/renderer/actions/modals";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { useCurrencyAccountSelect } from "~/renderer/components/PerCurrencySelectAccount/state";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
-const Container: ThemedComponent<{}> = styled.div`
+const Container = styled.div`
   min-width: 365px;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
-const ConfirmButton: ThemedComponent<{}> = styled(Button)`
+const ConfirmButton = styled(Button)`
   width: 100%;
   display: flex;
   justify-content: center;
 `;
-const FormContainer: ThemedComponent<{}> = styled.div`
+const FormContainer = styled.div`
   width: 100%;
   margin-top: 8px;
 `;
-const FormContent: ThemedComponent<{}> = styled.div`
+const FormContent = styled.div`
   margin-top: 24px;
   width: 100%;
 `;
@@ -40,8 +39,6 @@ type Props = {
   allCurrencies: Array<TokenCurrency | CryptoCurrency>;
   defaultCurrencyId?: string | null;
   defaultAccountId?: string | null;
-  allowAddAccount?: boolean;
-  allowedCurrencies?: string[];
   confirmCb?: (a: Account) => void;
   flow?: string;
 };
@@ -55,8 +52,6 @@ const SelectAccountAndCurrency = ({
   allCurrencies,
   defaultCurrencyId,
   defaultAccountId,
-  allowAddAccount,
-  allowedCurrencies,
   confirmCb,
   flow,
 }: Props) => {
@@ -107,14 +102,16 @@ const SelectAccountAndCurrency = ({
                 </Text>
               </FakeLink>
             </AccountSelectorLabel>
-            <SelectAccount
-              accounts={availableAccounts}
-              value={{
-                account,
-                subAccount,
-              }}
-              onChange={setAccount}
-            />
+            {account && (
+              <SelectAccount
+                accounts={availableAccounts}
+                value={{
+                  account,
+                  subAccount,
+                }}
+                onChange={setAccount}
+              />
+            )}
           </FormContent>
           <FormContent>
             <ConfirmButton

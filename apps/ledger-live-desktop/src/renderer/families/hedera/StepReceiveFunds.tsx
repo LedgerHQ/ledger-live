@@ -75,7 +75,6 @@ const StepReceiveFunds = ({
   onResetSkip,
   verifyAddressError,
   token,
-  onClose,
   eventType,
   currencyName,
 }: StepProps) => {

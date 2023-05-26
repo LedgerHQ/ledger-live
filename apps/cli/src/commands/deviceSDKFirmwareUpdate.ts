@@ -3,7 +3,7 @@ import { from, of, concat } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { UnknownMCU } from "@ledgerhq/errors";
-import ManagerAPI from "@ledgerhq/live-common/api/Manager";
+import ManagerAPI from "@ledgerhq/live-common/manager/api";
 import network from "@ledgerhq/live-common/network";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getProviderId } from "@ledgerhq/live-common/manager/provider";

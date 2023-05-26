@@ -1,9 +1,8 @@
 import { handleActions } from "redux-actions";
-import {
-  AvailableProviderV3,
-  Transaction,
-  ExchangeRate,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { AvailableProviderV3, Pair, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Handlers } from "./types";
+
 export type SwapStateType = {
   providers: Array<AvailableProviderV3> | undefined | null;
   pairs: AvailableProviderV3["pairs"] | undefined | null;
@@ -18,46 +17,35 @@ const initialState: SwapStateType = {
   exchangeRate: null,
   exchangeRateExpiration: null,
 };
+
+type HandlersPayloads = {
+  UPDATE_PROVIDERS: NonNullable<SwapStateType["providers"]>;
+  UPDATE_TRANSACTION: Transaction | undefined | null;
+  UPDATE_RATE: ExchangeRate | undefined | null;
+  RESET_STATE: never;
+};
+type SwapHandlers<PreciseKey = true> = Handlers<SwapStateType, HandlersPayloads, PreciseKey>;
+
 export const ratesExpirationThreshold = 60000;
-export const flattenPairs = (
-  acc: Array<{
-    from: string;
-    to: string;
-  }>,
-  value: AvailableProviderV3,
-) => [...acc, ...value.pairs];
-export type UPDATE_PROVIDERS_TYPE = {
-  payload: $NonMaybeType<SwapStateType["providers"]>;
-};
-const updateProviders = (state: SwapStateType, { payload: providers }: UPDATE_PROVIDERS_TYPE) => {
-  const pairs = providers.reduce(flattenPairs, []);
-  return {
-    ...state,
-    providers: providers,
-    pairs,
-  };
-};
-const handlers = {
-  UPDATE_PROVIDERS: updateProviders,
-  UPDATE_TRANSACTION: (
-    state: SwapStateType,
-    {
-      payload,
-    }: {
-      payload: Transaction | undefined | null;
-    },
-  ) => ({
+export const flattenPairs = (acc: Array<Pair>, value: AvailableProviderV3) => [
+  ...acc,
+  ...value.pairs,
+];
+
+const handlers: SwapHandlers = {
+  UPDATE_PROVIDERS: (state, { payload: providers }) => {
+    const pairs = providers.reduce(flattenPairs, []);
+    return {
+      ...state,
+      providers: providers,
+      pairs,
+    };
+  },
+  UPDATE_TRANSACTION: (state, { payload }) => ({
     ...state,
     transaction: payload,
   }),
-  UPDATE_RATE: (
-    state: SwapStateType,
-    {
-      payload,
-    }: {
-      payload: ExchangeRate | undefined | null;
-    },
-  ) => ({
+  UPDATE_RATE: (state, { payload }) => ({
     ...state,
     exchangeRate: payload,
     exchangeRateExpiration:
@@ -72,4 +60,8 @@ const handlers = {
 const options = {
   prefix: "SWAP",
 };
-export default handleActions(handlers, initialState, options);
+export default handleActions<SwapStateType, HandlersPayloads[keyof HandlersPayloads]>(
+  (handlers as unknown) as SwapHandlers<false>,
+  initialState,
+  options,
+);

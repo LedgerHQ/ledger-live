@@ -4,14 +4,13 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 import WarnBox from "~/renderer/components/WarnBox";
 import Box from "~/renderer/components/Box";
 import { OperationDetailsValidators } from "./operationDetails";
 import Alert from "~/renderer/components/Alert";
-const Info: ThemedComponent<{}> = styled(Box).attrs(() => ({
+const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
   mt: 6,
@@ -31,7 +30,7 @@ const PolkadotValidatorsField = ({
   const { validators } = transaction;
   if (!validators) return null;
   return (
-    <Box vertical justifyContent="space-between" mb={2}>
+    <Box justifyContent="space-between" mb={2}>
       <TransactionConfirmField label={field.label} />
 
       <OperationDetailsValidators

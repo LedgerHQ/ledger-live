@@ -30,6 +30,8 @@ import { ScreenName } from "../../const";
 import { track, TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import byFamily from "../../generated/Confirmation";
+import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
+
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import {
   BaseComposite,
@@ -204,6 +206,17 @@ function ReceiveConfirmationInner({
     }
   }
 
+  let CustomConfirmationAlert;
+  if (
+    currency.type === "CryptoCurrency" &&
+    Object.keys(byFamilyPostAlert).includes(currency.family)
+  ) {
+    CustomConfirmationAlert =
+      currency.type === "CryptoCurrency"
+        ? byFamilyPostAlert[currency.family as keyof typeof byFamilyPostAlert]
+        : null;
+  }
+
   return (
     <Flex flex={1} mb={9}>
       <PreventNativeBack />
@@ -214,7 +227,13 @@ function ReceiveConfirmationInner({
           currency={currency.name}
         />
         <Flex p={6} alignItems="center" justifyContent="center">
-          <Text color="neutral.c100" fontWeight="semiBold" variant="h4" mb={3}>
+          <Text
+            testID="receive-header-step3-title"
+            color="neutral.c100"
+            fontWeight="semiBold"
+            variant="h4"
+            mb={3}
+          >
             {t("transfer.receive.receiveConfirmation.title", {
               currencyTicker: currency.ticker,
             })}
@@ -226,9 +245,9 @@ function ReceiveConfirmationInner({
                 justifyContent="center"
                 flexDirection="row"
               >
-                <Icons.ShieldCheckMedium color="success.c100" size={16} />
+                <Icons.ShieldCheckMedium color="success.c50" size={16} />
                 <Text
-                  color="success.c100"
+                  color="success.c50"
                   fontWeight="medium"
                   variant="paragraphLineHeight"
                   ml={2}
@@ -244,12 +263,9 @@ function ReceiveConfirmationInner({
                     justifyContent="center"
                     flexDirection="row"
                   >
-                    <Icons.ShieldSecurityMedium
-                      color="warning.c100"
-                      size={16}
-                    />
+                    <Icons.ShieldSecurityMedium color="warning.c50" size={16} />
                     <Text
-                      color="warning.c100"
+                      color="warning.c50"
                       fontWeight="medium"
                       variant="paragraphLineHeight"
                       ml={2}
@@ -332,6 +348,9 @@ function ReceiveConfirmationInner({
             })}
           </Text>
         </Flex>
+        {CustomConfirmationAlert && (
+          <CustomConfirmationAlert mainAccount={mainAccount} />
+        )}
       </NavigationScrollView>
       <Flex m={6}>
         {isToastDisplayed ? (

@@ -68,7 +68,7 @@ const stylesFn = <O, M extends boolean, G extends GroupBase<O>>(
     ...provided,
     cursor: "pointer",
     ":hover": {
-      color: theme.colors.error.c100,
+      color: theme.colors.error.c50,
       backgroundColor: theme.colors.error.c30,
     },
   }),

@@ -7,7 +7,9 @@ import { openModal } from "~/renderer/actions/modals";
 const LottieTester = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const onOpenModal = useCallback(() => dispatch(openModal("MODAL_LOTTIE_DEBUGGER")), [dispatch]);
+  const onOpenModal = useCallback(() => dispatch(openModal("MODAL_LOTTIE_DEBUGGER", undefined)), [
+    dispatch,
+  ]);
   return (
     <SettingsSectionRow title={t("settings.experimental.features.testAnimations.title")} desc="">
       <Button onClick={onOpenModal} primary>

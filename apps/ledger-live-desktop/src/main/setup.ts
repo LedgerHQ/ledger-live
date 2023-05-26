@@ -15,14 +15,8 @@ ipcMain.on("updater", (e, type) => {
 });
 ipcMain.handle(
   "save-logs",
-  async (
-    event,
-    path: {
-      canceled: boolean;
-      filePath: string;
-    },
-    experimentalLogs: string,
-  ) => !path.canceled && path.filePath && fsWriteFile(path.filePath, experimentalLogs),
+  async (event, path: Electron.SaveDialogReturnValue, experimentalLogs: string) =>
+    !path.canceled && path.filePath && fsWriteFile(path.filePath, experimentalLogs),
 );
 ipcMain.handle(
   "export-operations",
@@ -63,7 +57,7 @@ ipcMain.handle(
 );
 ipcMain.handle(
   "delete-lss-config",
-  async (event): Promise<boolean> => {
+  async (): Promise<boolean> => {
     const userDataDirectory = resolveUserDataDirectory();
     const filePath = path.resolve(userDataDirectory, lssFileName);
     if (filePath) {
@@ -76,7 +70,7 @@ ipcMain.handle(
 );
 ipcMain.handle(
   "load-lss-config",
-  async (event): Promise<string | undefined | null> => {
+  async (): Promise<string | undefined | null> => {
     try {
       const userDataDirectory = resolveUserDataDirectory();
       const filePath = path.resolve(userDataDirectory, lssFileName);

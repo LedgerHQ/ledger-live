@@ -42,7 +42,6 @@ export default function StepStake({
 export function StepStakeFooter({
   transitionTo,
   account,
-  parentAccount,
   onClose,
   status,
   bridgePending,

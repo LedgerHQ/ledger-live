@@ -7,9 +7,9 @@ import {
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
-import { space, layout, position } from "styled-system";
+import { space, layout, position, PositionProps, LayoutProps, SpaceProps } from "styled-system";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { Account, FloorPrice } from "@ledgerhq/types-live";
+import { Account, FloorPrice, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -27,6 +27,7 @@ import Media from "~/renderer/components/Nft/Media";
 import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
+import { State } from "~/renderer/reducers";
 const NFTViewerDrawerContainer = styled.div`
   flex: 1;
   overflow-y: hidden;
@@ -53,7 +54,9 @@ const Pre = styled.span`
   line-break: anywhere;
   line-height: 15px;
 `;
-const StickyWrapper = styled.div`
+
+type StickyWrapperProps = { transparent?: boolean } & PositionProps & LayoutProps & SpaceProps;
+const StickyWrapper = styled.div<StickyWrapperProps>`
   background: ${({ theme, transparent }) =>
     transparent
       ? "transparent"
@@ -83,7 +86,8 @@ const NFTAttributes = styled.div`
 `;
 const NFTImageContainer = styled.div`
   position: relative;
-  cursor: ${({ contentType }) => (contentType === "image" ? "pointer" : "initial")};
+  cursor: ${({ contentType }: { contentType: string | undefined }) =>
+    contentType === "image" ? "pointer" : "initial"};
 `;
 const NFTImageOverlay = styled.div`
   opacity: 0;
@@ -150,7 +154,7 @@ type NFTViewerDrawerProps = {
   nftId: string;
   isOpen: boolean;
   height?: number;
-  onRequestClose: () => void;
+  onRequestClose?: () => void;
 };
 const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
   const { t } = useTranslation();
@@ -159,11 +163,11 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
   // FIXME Need some memoized selector here
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const protoNft =
-    useSelector(state =>
+    useSelector((state: State) =>
       getNFTById(state, {
         nftId,
       }),
-    ) || {};
+    ) || ({} as ProtoNFT); // This seems really wrong to fallback to an empty object here…
   const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
     protoNft.contract,
     protoNft.currencyId,
@@ -177,12 +181,14 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
     collectionStatus,
     nftStatus,
   ]);
-  const contentType = useMemo(() => getMetadataMediaType(metadata, "big"), [metadata]);
+  const contentType = useMemo(() => getMetadataMediaType(metadata as NFTMetadata, "big"), [
+    metadata,
+  ]);
   const currency = useMemo(() => getCryptoCurrencyById(protoNft.currencyId), [protoNft.currencyId]);
-  const name = metadata?.nftName || protoNft.tokenId;
+  const name = (metadata && "nftName" in metadata && metadata.nftName) || protoNft.tokenId;
   const [floorPriceLoading, setFloorPriceLoading] = useState(false);
   const [ticker, setTicker] = useState("");
-  const [floorPrice, setFloorPrice] = useState(null);
+  const [floorPrice, setFloorPrice] = useState<number | null>(null);
   useEffect(() => {
     setFloorPriceLoading(true);
     getFloorPrice(protoNft, currency)
@@ -205,7 +211,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
     );
   }, [dispatch, nftId, account]);
   const [isPanAndZoomOpen, setPanAndZoomOpen] = useState(false);
-  const openNftPanAndZoom = useCallback(() => {
+  const openNftPanAndZoom: React.MouseEventHandler<HTMLDivElement> = useCallback(() => {
     setPanAndZoomOpen(true);
   }, [setPanAndZoomOpen]);
   const closeNftPanAndZoom = useCallback(() => {
@@ -213,9 +219,9 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
   }, [setPanAndZoomOpen]);
   return (
     <Box height={height}>
-      {isPanAndZoomOpen && (
+      {isPanAndZoomOpen && metadata && (
         <NftPanAndZoom
-          metadata={metadata}
+          metadata={metadata as NFTMetadata}
           tokenId={protoNft.tokenId}
           onClose={closeNftPanAndZoom}
         />
@@ -255,10 +261,10 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
           <Skeleton show={loading} width={393}>
             <NFTImageContainer
               contentType={contentType}
-              onClick={contentType === "image" ? openNftPanAndZoom : null}
+              onClick={contentType === "image" ? openNftPanAndZoom : undefined}
             >
               <Media
-                metadata={metadata}
+                metadata={metadata as NFTMetadata}
                 tokenId={protoNft.tokenId}
                 mediaFormat="big"
                 full
@@ -289,14 +295,18 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
               </Text>
             </Button>
 
-            <ExternalViewerButton nft={protoNft} account={account} metadata={metadata} />
+            <ExternalViewerButton
+              nft={protoNft}
+              account={account}
+              metadata={metadata as NFTMetadata}
+            />
           </NFTActions>
           <NFTAttributes>
-            <NFTProperties metadata={metadata} status={status} />
+            <NFTProperties metadata={metadata as NFTMetadata} status={status} />
             <NFTAttribute
               skeleton={loading}
               title={t("NFT.viewer.attributes.description")}
-              value={metadata?.description}
+              value={(metadata as NFTMetadata)?.description}
               separatorBottom
             />
             <Text

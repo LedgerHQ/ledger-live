@@ -227,11 +227,11 @@ const PickAmount = (props: PickAmountPropsType) => {
             >
               {hasErrors && (
                 <View style={styles.labelContainer}>
-                  <Warning size={16} color={colors.error.c100} />
+                  <Warning size={16} color={colors.error.c50} />
 
                   <LText
                     style={styles.assetsRemaining}
-                    color={colors.error.c100}
+                    color={colors.error.c50}
                   >
                     <Trans
                       i18nKey={
@@ -252,10 +252,10 @@ const PickAmount = (props: PickAmountPropsType) => {
 
               {allAssetsUndelegated && (
                 <View style={styles.labelContainer}>
-                  <Check size={16} color={colors.success.c100} />
+                  <Check size={16} color={colors.success.c50} />
                   <LText
                     style={styles.assetsRemaining}
-                    color={colors.success.c100}
+                    color={colors.success.c50}
                   >
                     <Trans i18nKey="elrond.undelegation.flow.steps.amount.allAssetsUsed" />
                   </LText>

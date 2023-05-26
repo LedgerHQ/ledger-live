@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const Separator: ThemedComponent<{}> = styled.div`
+
+const Separator = styled.div`
   display: flex;
   align-items: center;
   & > div {

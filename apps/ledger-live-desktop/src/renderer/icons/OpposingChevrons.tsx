@@ -2,7 +2,6 @@ import React from "react";
 const OpposingChevrons = ({
   size = 14,
   color = "currentColor",
-  ...p
 }: {
   size: number;
   color: string;

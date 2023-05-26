@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { getAccountCurrency, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import SelectAccountAndCurrency from "~/renderer/components/SelectAccountAndCurrency";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { DProps } from "~/renderer/screens/exchange";
@@ -13,7 +12,8 @@ import { useRampCatalogCurrencies } from "../hooks";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { currenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
 import BigSpinner from "~/renderer/components/BigSpinner";
-const BuyContainer: ThemedComponent<{}> = styled.div`
+import { Account, AccountLike } from "@ledgerhq/types-live";
+const BuyContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -29,7 +29,7 @@ const OnRamp = ({ defaultCurrencyId, defaultAccountId, defaultTicker, rampCatalo
     sortedCurrencies: [],
     isLoading: false,
   });
-  const allCurrencies = useRampCatalogCurrencies(rampCatalog.value.onRamp);
+  const allCurrencies = useRampCatalogCurrencies(rampCatalog?.value?.onRamp);
   useEffect(
     () => {
       const filteredCurrencies = defaultTicker
@@ -50,18 +50,14 @@ const OnRamp = ({ defaultCurrencyId, defaultAccountId, defaultTicker, rampCatalo
     [],
   );
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const [state, setState] = useState({
+  const [state, setState] = useState<{
+    account: AccountLike | undefined;
+    parentAccount: Account | undefined;
+  }>({
     account: undefined,
     parentAccount: undefined,
   });
   const { account, parentAccount } = state;
-  const reset = useCallback(() => {
-    track("Page Buy Reset");
-    setState({
-      account: undefined,
-      parentAccount: undefined,
-    });
-  }, []);
   const selectAccount = useCallback((account, parentAccount) => {
     setState(oldState => ({
       ...oldState,
@@ -84,11 +80,11 @@ const OnRamp = ({ defaultCurrencyId, defaultAccountId, defaultTicker, rampCatalo
         <ProviderList
           account={account}
           parentAccount={parentAccount}
-          providers={rampCatalog.value.onRamp}
-          onBack={reset}
+          providers={rampCatalog?.value?.onRamp}
           trade={{
             type: "onRamp",
-            cryptoCurrencyId: account.token ? account.token.id : account.currency.id,
+            cryptoCurrencyId:
+              account?.type === "TokenAccount" ? account.token.id : account.currency.id,
             fiatCurrencyId: fiatCurrency.ticker,
             fiatAmount: 400,
           }}

@@ -30,7 +30,7 @@ exports.ENTRIES_CHECKS = {
     invariant(typeof name === "string" && name, "name is required");
     return name;
   },
-  ticker: (ticker) => {
+  ticker: (ticker, chain) => {
     const uppercaseTicker = ticker.toUpperCase();
     invariant(
       typeof uppercaseTicker === "string" && uppercaseTicker,
@@ -41,7 +41,7 @@ exports.ENTRIES_CHECKS = {
       "ticker '%s' alphanum uppercase expected",
       uppercaseTicker
     );
-    return uppercaseTicker;
+    return chain.isTestNet ? "t" + uppercaseTicker : uppercaseTicker;
   },
   decimals: (decimals) => {
     invariant(

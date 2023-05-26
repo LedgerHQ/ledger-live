@@ -9,43 +9,40 @@ import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import { dismissBanner } from "~/renderer/actions/settings";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
-import {
-  PlatformAppDrawers as AppDrawerPayload,
-  platformAppDrawerStateSelector,
-} from "~/renderer/reducers/UI";
+import { platformAppDrawerStateSelector } from "~/renderer/reducers/UI";
 import Text from "../Text";
 import AppDetails from "../Platform/AppDetails";
 import ExternalLink from "../ExternalLink/index";
 import LiveAppDisclaimer from "./LiveAppDisclaimer";
+
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
 `;
+
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
-  const {
-    isOpen,
-    payload,
-  }: {
-    isOpen: boolean;
-    payload: AppDrawerPayload;
-  } = useSelector(platformAppDrawerStateSelector);
-  const { manifest, type, title, disclaimerId, next } = payload ?? {};
+  const { isOpen, payload } = useSelector(platformAppDrawerStateSelector);
+
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onContinue = useCallback(() => {
-    if (dismissDisclaimerChecked && disclaimerId) {
-      dispatch(dismissBanner(disclaimerId));
+    if (payload && payload.type === "DAPP_DISCLAIMER") {
+      const { disclaimerId, next } = payload;
+      if (dismissDisclaimerChecked && disclaimerId) {
+        dispatch(dismissBanner(disclaimerId));
+      }
+      dispatch(closePlatformAppDrawer());
+      next();
     }
-    dispatch(closePlatformAppDrawer());
-    next();
-  }, [dismissDisclaimerChecked, dispatch, disclaimerId, next]);
-  const drawerContent = () => {
-    if (!manifest) {
+  }, [dismissDisclaimerChecked, dispatch, payload]);
+  const drawerContent = useCallback(() => {
+    if (!payload || (payload && !payload.manifest)) {
       return null;
     }
+    const { type, manifest } = payload;
     switch (type) {
       case "DAPP_INFO":
-        return (
+        return manifest ? (
           <Box pt={7} px={6}>
             <AppDetails manifest={manifest} />
             <Divider my={6} />
@@ -58,14 +55,12 @@ export const LiveAppDrawer = () => {
               />
             </Text>
           </Box>
-        );
+        ) : null;
       case "DAPP_DISCLAIMER":
         return (
           <>
             <Box px={6} flex={1} justifyContent="center">
-              <Box>
-                <LiveAppDisclaimer manifest={manifest} />
-              </Box>
+              <Box>{manifest ? <LiveAppDisclaimer manifest={manifest} /> : null}</Box>
             </Box>
 
             <Box pb={24}>
@@ -107,10 +102,11 @@ export const LiveAppDrawer = () => {
       default:
         return null;
     }
-  };
+  }, [payload, dismissDisclaimerChecked, onContinue, t]);
+
   return (
     <SideDrawer
-      title={t(title)}
+      title={payload ? t(payload.title) : ""}
       isOpen={isOpen}
       onRequestClose={() => {
         dispatch(closePlatformAppDrawer());

@@ -71,10 +71,10 @@ const CheckCard = ({ title, index, status, ...props }: CheckCardProps) => {
       checkIcon = <InfiniteLoader color="primary.c80" size={24} />;
       break;
     case "completed":
-      checkIcon = <CircledCheckSolidMedium color="success.c100" size={24} />;
+      checkIcon = <CircledCheckSolidMedium color="success.c50" size={24} />;
       break;
     case "failed":
-      checkIcon = <WarningSolidMedium color="warning.c80" size={24} />;
+      checkIcon = <WarningSolidMedium color="warning.c40" size={24} />;
       break;
     case "inactive":
     default:

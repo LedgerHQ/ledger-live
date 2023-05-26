@@ -37,16 +37,41 @@ export type Loadable<T> = {
   value: T | null;
 };
 
-export type AppPlatform =
-  | "desktop" // == windows || mac || linux
-  | "mobile" // == android || ios
-  | "all";
+export type AppPlatform = "ios" | "android" | "desktop";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
+export type Visibility = "complete" | "searchable" | "deep";
 
 export type AppPermission = {
   method: string;
   params?: any;
+};
+
+export type LiveAppManifestParams =
+  | {
+      dappName: string;
+      dappUrl: string;
+      nanoApp: string;
+      networks: Array<LiveAppManifestParamsNetwork>;
+    }
+  | {
+      currencies: string[];
+      webAppName: string;
+      webUrl: string;
+    }
+  | {
+      dappUrl: string;
+      networks: Array<LiveAppManifestParamsNetwork>;
+    }
+  | {
+      networks: Array<LiveAppManifestParamsNetwork>;
+    }
+  | Array<string>;
+
+export type LiveAppManifestParamsNetwork = {
+  currency: string;
+  chainID: number;
+  nodeURL?: string;
 };
 
 export type LiveAppManifest = {
@@ -55,11 +80,11 @@ export type LiveAppManifest = {
   private?: boolean;
   name: string;
   url: string | URL;
-  params?: string[];
+  params?: LiveAppManifestParams;
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;
-  platform: AppPlatform;
+  platforms: AppPlatform[];
   apiVersion: string;
   manifestVersion: string;
   branch: AppBranch;
@@ -67,6 +92,7 @@ export type LiveAppManifest = {
   domains: string[];
   categories: string[];
   currencies: string[] | "*";
+  visibility: Visibility;
   content: {
     shortDescription: TranslatableString;
     description: TranslatableString;

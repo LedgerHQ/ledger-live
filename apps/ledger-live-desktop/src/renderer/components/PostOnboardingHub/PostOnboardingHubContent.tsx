@@ -2,7 +2,6 @@ import React, { useCallback, useEffect } from "react";
 import { Flex, Link } from "@ledgerhq/react-ui";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
 import { useAllPostOnboardingActionsCompleted } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import PostOnboardingHub from ".";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";

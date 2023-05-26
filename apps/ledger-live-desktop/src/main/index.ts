@@ -3,7 +3,7 @@ require("@electron/remote/main").initialize();
 
 /* eslint-disable import/first */
 import "./setup";
-import { app, Menu, ipcMain, session, webContents, shell } from "electron";
+import { app, Menu, ipcMain, session, webContents, shell, BrowserWindow } from "electron";
 import Store from "electron-store";
 import menu from "./menu";
 import {
@@ -17,6 +17,8 @@ import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
+import { SettingsState } from "~/renderer/reducers/settings";
+import { User } from "~/renderer/storage";
 
 Store.initRenderer();
 
@@ -25,7 +27,7 @@ const userDataDirectory = resolveUserDataDirectory();
 if (!gotLock) {
   app.quit();
 } else {
-  app.on("second-instance", (event, commandLine, workingDirectory) => {
+  app.on("second-instance", (event, commandLine) => {
     const w = getMainWindow();
     if (w) {
       if (w.isMinimized()) {
@@ -64,7 +66,7 @@ app.on("will-finish-launching", () => {
           }
         }
       })
-      .catch(err => console.log(err));
+      .catch((err: unknown) => console.log(err));
   });
 });
 app.on("ready", async () => {
@@ -73,8 +75,8 @@ app.on("ready", async () => {
     await installExtensions();
   }
   db.init(userDataDirectory);
-  const settings = await db.getKey("app", "settings");
-  const user = await db.getKey("app", "user");
+  const settings = (await db.getKey("app", "settings")) as SettingsState;
+  const user: User = (await db.getKey("app", "user")) as User;
   const userId = user?.id;
   if (userId) {
     setUserId(userId);
@@ -143,7 +145,9 @@ app.on("ready", async () => {
     });
   });
   Menu.setApplicationMenu(menu);
-  const windowParams = await db.getKey("windowParams", "MainWindow", {});
+  const windowParams = (await db.getKey("windowParams", "MainWindow", {})) as Parameters<
+    typeof createMainWindow
+  >[0];
   const window = await createMainWindow(windowParams, settings);
   window.on(
     "resize",
@@ -200,12 +204,10 @@ async function installExtensions() {
     ),
   ).catch(console.error);
 }
-function clearSessionCache(session) {
-  return new Promise(resolve => {
-    session.clearCache(resolve);
-  });
+function clearSessionCache(session: Electron.Session): Promise<void> {
+  return session.clearCache();
 }
-function show(win) {
+function show(win: BrowserWindow) {
   win.show();
   setImmediate(() => win.focus());
 }

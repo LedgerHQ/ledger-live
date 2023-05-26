@@ -1,7 +1,7 @@
 import Transport from "@ledgerhq/hw-transport";
 import { Observable, from, concat, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import ManagerAPI from "../api/Manager";
+import ManagerAPI from "../manager/api";
 import getDeviceInfo from "./getDeviceInfo";
 import { getProviderId } from "../manager";
 import type { DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";

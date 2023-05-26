@@ -21,4 +21,4 @@ function EmptyState() {
     </Box>
   );
 }
-export default React.memo<Props>(EmptyState);
+export default React.memo(EmptyState);

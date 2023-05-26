@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { AssertionError } from "assert";
+import { AssertionError, fail } from "assert";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { makeAccount, makeOperation, makeTokenAccount } from "../testUtils";
@@ -520,7 +520,7 @@ describe("EVM Family", () => {
           operations: [tokenOperation1, tokenOperation2],
           operationsCount: 2,
           starred: undefined,
-          swapHistory: undefined,
+          swapHistory: [],
         };
         const expectedUsdtAccount = {
           ...makeTokenAccount(account.freshAddress, tokenCurrency2),
@@ -529,7 +529,7 @@ describe("EVM Family", () => {
           operations: [tokenOperation4],
           operationsCount: 1,
           starred: undefined,
-          swapHistory: undefined,
+          swapHistory: [],
         };
 
         expect(tokenAccounts).toEqual([
@@ -572,7 +572,7 @@ describe("EVM Family", () => {
           operations: [tokenOperation3],
           operationsCount: 1,
           starred: undefined,
-          swapHistory: undefined,
+          swapHistory: [],
         };
 
         expect(tokenAccounts).toEqual([expectedUsdcAccount]);
@@ -647,7 +647,7 @@ describe("EVM Family", () => {
           operations: [tokenOperation1, tokenOperation2, tokenOperation3],
           operationsCount: 3,
           starred: undefined,
-          swapHistory: undefined,
+          swapHistory: [],
         });
       });
     });

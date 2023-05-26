@@ -8,23 +8,29 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
+
 type Props = {
   isAdvanceMode: boolean;
-  setAdvanceMode: any;
+  setAdvanceMode: (isAdvanceMode: boolean) => void;
 };
+
 const SelectorContainer = styled.div`
   display: inline-flex;
   cursor: pointer;
   overflow: hidden;
   border-radius: 9999px;
 `;
-const Selector = styled(Tabbable)`
+
+const Selector = styled(Tabbable)<{
+  active: boolean;
+}>`
   color: ${p =>
     p.active ? p.theme.colors.palette.primary.contrastText : p.theme.colors.palette.text.shade20};
   background: ${p =>
     p.active ? p.theme.colors.palette.primary.main : p.theme.colors.palette.action.disabled};
   padding: 4px 12px 4px 12px;
 `;
+
 const SendFeeMode = ({ isAdvanceMode, setAdvanceMode }: Props) => {
   const { t } = useTranslation();
   const setAdvanced = useCallback(() => setAdvanceMode(true), [setAdvanceMode]);

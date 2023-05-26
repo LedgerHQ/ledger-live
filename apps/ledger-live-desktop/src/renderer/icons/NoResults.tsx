@@ -1,7 +1,7 @@
 import React from "react";
 type Props = {
   size?: number;
-  color?: number;
+  color?: string;
 };
 const NoResults = ({ size = 109, color = "currentColor" }: Props) => (
   <svg width={size} height={size} viewBox="0 0 109 121" fill="none">

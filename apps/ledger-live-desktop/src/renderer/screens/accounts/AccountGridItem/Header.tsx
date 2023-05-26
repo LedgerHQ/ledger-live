@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
   getAccountUnit,
@@ -16,7 +16,7 @@ import Tooltip from "~/renderer/components/Tooltip";
 import AccountSyncStatusIndicator from "../AccountSyncStatusIndicator";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 class HeadText extends PureComponent<{
-  account: Account | TokenAccount;
+  account: AccountLike;
   title: string;
   name: string;
 }> {
@@ -53,7 +53,7 @@ class HeadText extends PureComponent<{
   }
 }
 class Header extends PureComponent<{
-  account: Account | TokenAccount;
+  account: AccountLike;
   parentAccount: Account | undefined | null;
 }> {
   render() {
@@ -64,7 +64,6 @@ class Header extends PureComponent<{
     let title;
     switch (account.type) {
       case "Account":
-      case "AccountChild":
         title = currency.name;
         break;
       case "TokenAccount":

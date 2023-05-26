@@ -30,10 +30,13 @@ import QRCode from "~/renderer/components/QRCode";
 import { getEnv } from "@ledgerhq/live-common/env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import byFamily from "~/renderer/generated/StepReceiveFunds";
+import byFamilyPostAlert from "~/renderer/generated/StepReceiveFundsPostAlert";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+
 const Separator = styled.div`
   border-top: 1px solid #99999933;
   margin: 50px 0;
@@ -47,9 +50,6 @@ const QRCodeWrapper = styled.div`
   height: 208px;
   width: 208px;
   background: white;
-`;
-const AlertBoxContainer = styled.div`
-  margin-top: 20px;
 `;
 const Receive1ShareAddress = ({
   account,
@@ -93,16 +93,8 @@ const Receive1ShareAddress = ({
     </>
   );
 };
-const Receive2Device = ({
-  onVerify,
-  name,
-  device,
-}: {
-  onVerify: () => void;
-  name: string;
-  device: any;
-}) => {
-  const type = useTheme("colors.palette.type");
+const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
+  const type = useTheme().colors.palette.type;
   return (
     <>
       <Box horizontal alignItems="center" flow={2}>
@@ -190,7 +182,7 @@ const StepReceiveFunds = (props: StepProps) => {
         transitionTo("receive");
       }
     } catch (err) {
-      onChangeAddressVerified(false, err);
+      onChangeAddressVerified(false, err as Error);
       hideQRCodeModal();
     }
   }, [device, mainAccount, transitionTo, onChangeAddressVerified, hideQRCodeModal]);
@@ -203,7 +195,7 @@ const StepReceiveFunds = (props: StepProps) => {
     onResetSkip();
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
   const onFinishReceiveFlow = useCallback(() => {
-    const id = account?.currency?.id;
+    const id = mainAccount?.currency?.id;
     const dismissModal = global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`) === "true";
     if (
       !dismissModal &&
@@ -218,7 +210,7 @@ const StepReceiveFunds = (props: StepProps) => {
           .join("/"),
         currency: currencyName,
         modal: "receive",
-        account,
+        account: name,
       });
       if (receiveStakingFlowConfig?.params?.[id]?.direct) {
         dispatch(
@@ -238,8 +230,10 @@ const StepReceiveFunds = (props: StepProps) => {
     }
   }, [
     account,
+    mainAccount?.currency?.id,
     currencyName,
     dispatch,
+    name,
     onClose,
     receiveStakingFlowConfig?.enabled,
     receiveStakingFlowConfig?.params,
@@ -254,10 +248,14 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [isAddressVerified, confirmAddress]);
 
   // custom family UI for StepReceiveFunds
-  const CustomStepReceiveFunds = byFamily[mainAccount.currency.family];
+  const CustomStepReceiveFunds = byFamily[mainAccount.currency.family as keyof typeof byFamily];
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
   }
+
+  const CustomPostAlertReceiveFunds =
+    byFamilyPostAlert[mainAccount.currency.family as keyof typeof byFamilyPostAlert];
+
   return (
     <>
       <Box px={2}>
@@ -304,13 +302,7 @@ const StepReceiveFunds = (props: StepProps) => {
               address={address}
               showQRCodeModal={showQRCodeModal}
             />
-            {mainAccount.derivationMode === "taproot" ? (
-              <AlertBoxContainer>
-                <Alert type="warning">
-                  <Trans i18nKey="currentAddress.taprootWarning" />
-                </Alert>
-              </AlertBoxContainer>
-            ) : null}
+            {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
             <Alert type="security" learnMoreUrl={urls.recipientAddressInfo} mt={4}>
               <Trans
                 i18nKey="currentAddress.messageIfSkipped"
@@ -323,7 +315,6 @@ const StepReceiveFunds = (props: StepProps) => {
             <Receive2NoDevice
               onVerify={onVerify}
               onContinue={() => onChangeAddressVerified(true)}
-              name={name}
             />
           </>
         ) : device ? (
@@ -335,15 +326,9 @@ const StepReceiveFunds = (props: StepProps) => {
               address={address}
               showQRCodeModal={showQRCodeModal}
             />
-            {mainAccount.derivationMode === "taproot" ? (
-              <AlertBoxContainer>
-                <Alert type="warning">
-                  <Trans i18nKey="currentAddress.taprootWarning" />
-                </Alert>
-              </AlertBoxContainer>
-            ) : null}
+            {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
             <Separator />
-            <Receive2Device device={device} onVerify={onVerify} name={name} />
+            <Receive2Device device={device} name={name} />
           </>
         ) : null // should not happen
         }

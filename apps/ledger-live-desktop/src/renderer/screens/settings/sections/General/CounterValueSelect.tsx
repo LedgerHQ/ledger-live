@@ -24,8 +24,8 @@ const CounterValueSelect = React.memo<{}>(function CounterValueSelect() {
         small
         minWidth={260}
         onChange={handleChangeCounterValue}
-        itemToString={item => (item ? item.name : "")}
-        renderSelected={item => item && item.name}
+        itemToString={(item: { name: string }) => item.name}
+        renderSelected={(item: { name: string }) => item && item.name}
         options={supportedCountervalues}
         value={cvOption}
       />

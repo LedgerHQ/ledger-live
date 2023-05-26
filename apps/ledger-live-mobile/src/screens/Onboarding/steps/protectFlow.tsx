@@ -3,6 +3,8 @@ import { useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import { Linking } from "react-native";
+import { usePostOnboardingURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName } from "../../../const";
 import BaseStepperView, {
   RestoreWithProtect,
@@ -19,7 +21,6 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { Step } from "./setupDevice/scenes/BaseStepperView";
-import { usePostOnboardingURI } from "../../../hooks/recoverFeatureFlag";
 
 type Metadata = {
   id: string;
@@ -40,7 +41,8 @@ function OnboardingStepProtectFlow() {
   const { theme } = useTheme();
   const route = useRoute<NavigationProps["route"]>();
 
-  const postOnboardingURI = usePostOnboardingURI();
+  const protectFeature = useFeature("protectServicesMobile");
+  const postOnboardingURI = usePostOnboardingURI(protectFeature);
 
   const dispatch = useDispatch();
   const { resetCurrentStep } = useNavigationInterceptor();

@@ -64,7 +64,7 @@ const NftPanAndZoomBody = ({ metadata, tokenId }: BodyProps) => (
         full
         square={false}
         objectFit="scale-down"
-        onClick={(e: Event) => {
+        onClick={(e: React.MouseEvent) => {
           e.preventDefault();
           e.stopPropagation();
         }}

@@ -16,7 +16,6 @@ const Body = ({
   const { t } = useTranslation();
   return (
     <ModalBody
-      preventBackdropClick
       onClose={onClose}
       title={t("hideNftCollection.title")}
       render={() => (

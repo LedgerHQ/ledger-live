@@ -1,5 +1,5 @@
 import React from "react";
-export default function Trophy({ size, color = "currentColor" }: { size: number; color?: string }) {
+export default function Trophy({ size }: { size: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 18 18" fill="none">
       <path

@@ -12,23 +12,40 @@ import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
-import SelectDevice2 from "../../components/SelectDevice2";
+import SelectDevice2, {
+  SetHeaderOptionsRequest,
+} from "../../components/SelectDevice2";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import DeviceActionModal from "../../components/DeviceActionModal";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type {
+  ReactNavigationHeaderOptions,
+  StackNavigatorProps,
+} from "../../components/RootNavigator/types/helpers";
 import type { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
 import SkipSelectDevice from "../SkipSelectDevice";
 import {
   setLastConnectedDevice,
   setReadOnlyMode,
 } from "../../actions/settings";
+import AddAccountsHeaderRightClose from "./AddAccountsHeaderRightClose";
+import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
 
 type Props = StackNavigatorProps<
   AddAccountsNavigatorParamList,
   ScreenName.AddAccountsSelectDevice
 >;
 
+// Defines some of the header options for this screen.
+// headerRight and headerLeft for this screen were originally set by its associated Stack.Navigator.
+export const addAccountsSelectDeviceHeaderOptions: ReactNavigationHeaderOptions =
+  {
+    headerShown: true,
+    headerRight: AddAccountsHeaderRightClose,
+    headerLeft: () => <NavigationHeaderBackButton />,
+  };
+
 const action = createAction(connectApp);
+
 export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   const { currency, analyticsPropertyFlow } = route.params;
   const { colors } = useTheme();
@@ -64,6 +81,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
     },
     [navigation, route],
   );
+
   useEffect(() => {
     // load ahead of time
     currency &&
@@ -71,6 +89,27 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
         isTokenCurrency(currency) ? currency.parentCurrency : currency,
       );
   }, [currency]);
+
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        navigation.setOptions({
+          headerShown: true,
+          headerLeft: request.options.headerLeft,
+          headerRight: request.options.headerRight,
+        });
+      } else {
+        // Sets back the header to its initial values set for this screen
+        navigation.setOptions({
+          headerLeft: () => null,
+          headerRight: () => null,
+          ...addAccountsSelectDeviceHeaderOptions,
+        });
+      }
+    },
+    [navigation],
+  );
+
   return (
     <SafeAreaView
       style={[
@@ -86,6 +125,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
           <SelectDevice2
             onSelect={setDevice}
             stopBleScanning={!!device || !isFocused}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
           />
         </Flex>
       ) : (

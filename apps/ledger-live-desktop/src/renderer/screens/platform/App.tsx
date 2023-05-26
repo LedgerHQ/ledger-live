@@ -30,14 +30,19 @@ type Props = {
 export default function PlatformApp({ match, appId: propsAppId, location }: Props) {
   const history = useHistory();
   const { params: internalParams, search } = location;
-  const { state: urlParams, customDappUrl } = useLocation();
+  const { state: urlParams, customDappUrl } = useLocation() as ReturnType<typeof useLocation> &
+    Props["location"] & {
+      state: {
+        [key: string]: string;
+      };
+    };
   const appId = propsAppId || match.params?.appId;
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
     return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;
   }, [search, urlParams?.returnTo, internalParams?.returnTo]);
   const handleClose = useCallback(() => history.push(returnTo || `/platform`), [history, returnTo]);
-  const themeType = useTheme("colors.palette.type");
+  const themeType = useTheme().colors.palette.type;
   const lang = useSelector(languageSelector);
   const params = {
     theme: themeType,
@@ -48,7 +53,7 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   let manifest = localManifest || remoteManifest;
-  if (customDappUrl) {
+  if (customDappUrl && manifest && manifest.params && "dappUrl" in manifest.params) {
     manifest = {
       ...manifest,
       params: {

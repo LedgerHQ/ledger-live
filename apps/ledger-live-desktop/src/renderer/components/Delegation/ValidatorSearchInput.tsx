@@ -1,11 +1,11 @@
 import React, { memo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import Box from "~/renderer/components/Box";
 import SearchBox from "~/renderer/screens/accounts/AccountList/SearchBox";
 import ExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import Text from "~/renderer/components/Text";
+
 const SearchContainer = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -13,7 +13,9 @@ const SearchContainer = styled(Box).attrs(() => ({
   py: 2,
   px: 3,
   borderRadius: 4,
-}))`
+}))<{
+  noMargin: boolean;
+}>`
   margin: 0 ${p => (p.noMargin === true ? "0px" : p.theme.overflow.trackSize)}px;
   border: 1px solid ${p => p.theme.colors.palette.divider};
 
@@ -22,8 +24,7 @@ const SearchContainer = styled(Box).attrs(() => ({
     font-size: 13px;
   }
 `;
-const Placeholder: ThemedComponent<any> = styled(Box).attrs(() => ({
-  vertical: true,
+const Placeholder = styled(Box).attrs(() => ({
   alignItems: "center",
   justifyContent: "center",
   borderRadius: 4,
@@ -36,7 +37,7 @@ const Placeholder: ThemedComponent<any> = styled(Box).attrs(() => ({
   margin-right: ${p => p.theme.overflow.trackSize}px;
 `;
 type ValidatorSearchInputProps = {
-  onSearch: (evt: SyntheticInputEvent<HTMLInputElement>) => void;
+  onSearch: (evt: React.SyntheticEvent<HTMLInputElement>) => void;
   search?: string;
   noMargin: boolean;
 };

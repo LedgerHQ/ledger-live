@@ -8,6 +8,17 @@ export type CacheRes<A extends Array<any>, T> = {
   reset: () => void;
 };
 
+/**
+ * Creates an LRU cache function that wraps the given async function `f`.
+ * By default it will have a lifespan of 300 seconds and a change in the key
+ * will invalidate its value.
+ *
+ * @param {(...args: A) => Promise<T>} f - The async function to be cached.
+ * @param {(...args: A) => string} [keyExtractor] - A function that extracts a cache key from the arguments passed to `f`.
+ * @param {LRU.Options<string, any>} [lruOpts] - Options for the internal LRU cache.
+ *
+ * @returns {CacheRes<A, T>} A cached version of the async function `f`.
+ */
 export const makeLRUCache = <A extends Array<any>, T>(
   f: (...args: A) => Promise<T>,
   keyExtractor: (...args: A) => string = () => "",

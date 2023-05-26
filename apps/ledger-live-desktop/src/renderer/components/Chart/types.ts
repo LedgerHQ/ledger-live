@@ -1,16 +1,20 @@
-import { BigNumber } from "bignumber.js";
 export type Item = {
   date: Date;
-  value: BigNumber;
-} & object;
+  value: number;
+  countervalue?: number;
+};
+
 type EnrichedItem = {
   date: string;
-  value: BigNumber;
+  value: number;
   parsedDate: Date;
   ref: Item;
 };
+
 export type Data = Item[];
+
 export type EnrichedData = EnrichedItem[];
+
 export type CTX = {
   NODES: object;
   MARGINS: object;

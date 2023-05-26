@@ -11,7 +11,7 @@ export type KYCItem = {
 };
 
 export type UsePollKYCStatusProps = {
-  provider?: string;
+  provider?: string | undefined;
   kyc?: KYCItem;
   onChange: (item: KYCItem) => void;
 };

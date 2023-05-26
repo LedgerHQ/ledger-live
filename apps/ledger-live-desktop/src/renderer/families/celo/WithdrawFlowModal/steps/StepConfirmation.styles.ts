@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 export const Container: ThemedComponent<{
   shouldSpace?: boolean;
 }> = styled(Box).attrs(() => ({

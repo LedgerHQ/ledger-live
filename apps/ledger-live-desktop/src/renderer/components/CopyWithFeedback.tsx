@@ -4,7 +4,7 @@ import { withTranslation, TFunction } from "react-i18next";
 import { darken, lighten } from "~/renderer/styles/helpers";
 import IconCopy from "~/renderer/icons/Copy";
 import Box from "~/renderer/components/Box";
-let clipboard = null;
+let clipboard: Electron.Clipboard | null = null;
 if (!process.env.STORYBOOK_ENV) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const electron = require("electron");

@@ -18,7 +18,7 @@ const ExposeUpdaterWhenInMock = () => {
   const context = useContext<MaybeUpdateContextType>(UpdaterContext);
   const { setStatus, quitAndInstall } = context || {};
   useEffect(() => {
-    if (getEnv("MOCK")) {
+    if (getEnv("MOCK") && window.mock) {
       window.mock.updater = {
         setStatus: setStatus,
         quitAndInstall: quitAndInstall,
@@ -34,7 +34,7 @@ const DebugUpdater = () => {
   const { setStatus, quitAndInstall } = context || {};
   const toggleExpanded = useCallback(() => setExpanded(!expanded), [expanded, setExpanded]);
   useEffect(() => {
-    if (getEnv("MOCK")) {
+    if (getEnv("MOCK") && window.mock) {
       window.mock.updater = {
         setStatus: setStatus,
       };
@@ -47,7 +47,7 @@ const DebugUpdater = () => {
           {expanded ? "updater [ - ]" : "u"}
         </Item>
         {expanded ? (
-          <Box vertical>
+          <Box>
             {statusToDebug.map((s, i) => (
               <Box horizontal key={i}>
                 <Text
@@ -56,13 +56,13 @@ const DebugUpdater = () => {
                   ff={"Inter|Medium"}
                   color="palette.text.shade100"
                   fontSize={3}
-                  onClick={() => setStatus(s)}
+                  onClick={() => setStatus?.(s)}
                 >
                   {s}
                 </Text>
               </Box>
             ))}
-            <Box vertical>
+            <Box>
               <Box horizontal>
                 <Text
                   mx={1}

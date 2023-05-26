@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 import { TableLine } from "./Header.styles";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-export const Wrapper: ThemedComponent<any> = styled.div`
+
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -29,13 +29,13 @@ export const Column: ThemedComponent<{
     `
       : ``}
 `;
-export const Ellipsis: ThemedComponent<{}> = styled.div`
+export const Ellipsis = styled.div`
   flex: 1;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-export const ManageInfoIconWrapper: ThemedComponent<{}> = styled.div`
+export const ManageInfoIconWrapper = styled.div`
   margin-right: 20%;
 `;

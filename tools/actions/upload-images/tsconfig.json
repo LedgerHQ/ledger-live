@@ -1,7 +1,3 @@
 {
-  "compilerOptions": {
-    "target": "es2015",
-    "esModuleInterop": true,
-    "moduleResolution": "node"
-  }
+  "extends": "../../../tsconfig.base"
 }

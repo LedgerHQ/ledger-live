@@ -32,6 +32,26 @@ export type CosmosUnbonding = {
   amount: BigNumber;
   completionDate: Date;
 };
+
+export type CosmosTx = {
+  code: number;
+  codespace: string;
+  data: string;
+  events: {
+    type: string;
+    attributes: { index: boolean; key: string; value: string }[];
+  }[];
+  gas_used: string;
+  gas_wanted: string;
+  height: string;
+  info: string;
+  logs: any[];
+  raw_log: string;
+  timestamp: string;
+  tx: { "@type": string; body: any; auth_info: any; signatures: any[] };
+  txhash: string;
+};
+
 export type CosmosResources = {
   delegations: CosmosDelegation[];
   redelegations: CosmosRedelegation[];
@@ -228,4 +248,10 @@ export type CosmosDistributionParams = {
   base_proposer_reward: string;
   bonus_proposer_reward: string;
   withdraw_addr_enabled: boolean;
+};
+
+export type CosmosCurrencyConfig = {
+  lcd: string;
+  minGasPrice: number;
+  ledgerValidator?: string;
 };

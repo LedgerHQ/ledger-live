@@ -226,7 +226,6 @@ export type SettingsState = {
   };
   notifications: NotificationsSettings;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
-  displayStatusCenter: boolean;
   overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
   featureFlagsBannerVisible: boolean;
   debugAppLevelDrawerOpened: boolean;

@@ -26,7 +26,7 @@ export default function AppProgressButton({
   const isPrimary = updating || installing;
   const isCurrentAppOp = currentAppOp?.name === name;
 
-  const mainColor = isPrimary ? colors.primary.c80 : colors.error.c100;
+  const mainColor = isPrimary ? colors.primary.c80 : colors.error.c50;
   const secondaryColor = isPrimary ? colors.primary.c30 : colors.error.c30;
 
   return (

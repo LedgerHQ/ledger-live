@@ -22,11 +22,13 @@ import { rgba } from "~/renderer/styles/helpers";
 import CounterValue from "~/renderer/components/CounterValue";
 import Alert from "~/renderer/components/Alert";
 import RecipientField from "../RecipientField";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-const FromToWrapper: ThemedComponent<{}> = styled.div``;
-const Circle: ThemedComponent<{}> = styled.div`
+import { TransactionStatusCommon } from "@ledgerhq/types-live";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
+
+const FromToWrapper = styled.div``;
+const Circle = styled.div`
   height: 32px;
   width: 32px;
   border-radius: 32px;
@@ -37,13 +39,13 @@ const Circle: ThemedComponent<{}> = styled.div`
   justify-content: center;
   margin-right: 12px;
 `;
-const VerticalSeparator: ThemedComponent<{}> = styled.div`
+const VerticalSeparator = styled.div`
   height: 18px;
   background: ${p => p.theme.colors.palette.text.shade20};
   width: 1px;
   margin: 1px 0px 0px 15px;
 `;
-const Separator: ThemedComponent<{}> = styled.div`
+const Separator = styled.div`
   height: 1px;
   background: ${p => p.theme.colors.palette.text.shade20};
   width: 100%;
@@ -56,7 +58,13 @@ export default class StepSummary extends PureComponent<StepProps> {
     if (!account) return null;
     const mainAccount = getMainAccount(account, parentAccount);
     if (!mainAccount || !transaction) return null;
-    const { estimatedFees, amount, totalSpent, warnings, txInputs } = status;
+    const {
+      estimatedFees,
+      amount,
+      totalSpent,
+      warnings,
+      txInputs,
+    } = status as TransactionStatusCommon & { txInputs: unknown[] };
     const feeTooHigh = warnings.feeTooHigh;
     const currency = getAccountCurrency(account);
     const feesUnit = getAccountUnit(mainAccount);
@@ -67,7 +75,7 @@ export default class StepSummary extends PureComponent<StepProps> {
       account.type === "Account" &&
       (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
-    const memo = transaction.memo;
+    const memo = (transaction as Transaction & { memo?: React.ReactNode }).memo;
     return (
       <Box flow={4} mx={40}>
         <TrackPage category="Sign Flow" name="Step Summary" />

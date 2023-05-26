@@ -92,11 +92,18 @@ export default class LedgerStoreProvider extends Component<
 
     const cachedCurrencyIds = await listCachedCurrencyIds();
     // hydrate the store with the bridge/cache
-    await Promise.allSettled(
-      cachedCurrencyIds.map(id => {
-        const currency = findCryptoCurrencyById?.(id);
-        return currency ? hydrateCurrency(currency) : Promise.reject();
-      }),
+    // Promise.allSettled doesn't exist in RN
+    await Promise.all(
+      cachedCurrencyIds
+        .map(id => {
+          const currency = findCryptoCurrencyById?.(id);
+          return currency ? hydrateCurrency(currency) : Promise.reject();
+        })
+        .map(promise =>
+          promise
+            .then((value: unknown) => ({ status: "fulfilled", value }))
+            .catch((reason: unknown) => ({ status: "rejected", reason })),
+        ),
     );
 
     if (

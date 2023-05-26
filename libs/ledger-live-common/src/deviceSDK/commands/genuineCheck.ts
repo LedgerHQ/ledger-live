@@ -8,9 +8,9 @@ import {
   createMockSocket,
   resultMock,
   secureChannelMock,
-} from "../../api/socket.mock";
+} from "../../socket/socket.mock";
 import { log } from "@ledgerhq/logs";
-import { createDeviceSocket } from "../../api/socket";
+import { createDeviceSocket } from "../../socket";
 import { map } from "rxjs/operators";
 
 export type GenuineCheckCommandRequest = {

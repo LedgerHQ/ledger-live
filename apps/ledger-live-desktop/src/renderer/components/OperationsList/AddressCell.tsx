@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import styled from "styled-components";
 import { Operation } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 export const SplitAddress = ({
   value,
   color,
@@ -37,13 +37,13 @@ export const SplitAddress = ({
 export const Address = ({ value }: { value: string }) => (
   <SplitAddress value={value} color="palette.text.shade80" ff="Inter" fontSize={3} />
 );
-const Left: ThemedComponent<{}> = styled.div`
+const Left = styled.div`
   overflow: hidden;
   white-space: nowrap;
   font-kerning: none;
   letter-spacing: 0px;
 `;
-const Right: ThemedComponent<{}> = styled.div`
+const Right = styled.div`
   display: inline-block;
   flex-shrink: 1;
   direction: rtl;
@@ -55,9 +55,9 @@ const Right: ThemedComponent<{}> = styled.div`
   min-width: 3ex;
   letter-spacing: 0px;
 `;
-export const Cell: ThemedComponent<{
+export const Cell = styled(Box).attrs<{
   px?: number;
-}> = styled(Box).attrs(p => ({
+}>(p => ({
   px: p.px === 0 ? p.px : p.px || 4,
   horizontal: true,
   alignItems: "center",
@@ -70,9 +70,9 @@ export const Cell: ThemedComponent<{
 type Props = {
   operation: Operation;
 };
-const showSender = o => o.senders[0];
-const showRecipient = o => o.recipients[0];
-const showNothing = o => null;
+const showSender = (o: Operation) => o.senders[0];
+const showRecipient = (o: Operation) => o.recipients[0];
+const showNothing = () => null;
 const perOperationType = {
   IN: showSender,
   REVEAL: showSender,
@@ -84,7 +84,8 @@ const perOperationType = {
 class AddressCell extends PureComponent<Props> {
   render() {
     const { operation } = this.props;
-    const lense = perOperationType[operation.type] || perOperationType._;
+    const lense =
+      perOperationType[operation.type as keyof typeof perOperationType] || perOperationType._;
     const value = lense(operation);
     return value ? (
       <Cell>

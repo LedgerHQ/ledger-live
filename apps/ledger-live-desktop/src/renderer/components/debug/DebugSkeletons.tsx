@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleSkeletonVisibility } from "~/renderer/actions/application";
 import { alwaysShowSkeletonsSelector } from "~/renderer/reducers/application";
 import Box from "~/renderer/components/Box";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import styled from "styled-components";
-const Item: ThemedComponent<{}> = styled.div`
+const Item = styled.div`
   padding: 2px 13px;
   background: ${p => p.theme.colors.alertRed};
   opacity: 0.9;
@@ -20,7 +19,7 @@ const DebugSkeletons = () => {
   }, [alwaysShowSkeletons, dispatch]);
   return (
     <Box p={0} horizontal>
-      <Item ff="Inter|Medium" fontSize={3} onClick={handleToggleSkeletons}>
+      <Item onClick={handleToggleSkeletons}>
         {alwaysShowSkeletons ? "Hide skeletons" : "Show skeletons"}
       </Item>
     </Box>

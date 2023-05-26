@@ -2,12 +2,13 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import get from "lodash/get";
 import { darken, lighten } from "~/renderer/styles/helpers";
+
 export default styled(Box).attrs(p => ({
   cursor: "pointer",
   color: p.color || "wallet",
   horizontal: true,
   className: "fake-link",
-}))`
+}))<{ underline?: boolean; color?: string }>`
   align-items: center;
   display: inline-flex;
   text-decoration: ${p => (p.underline ? "underline" : "none")};

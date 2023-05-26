@@ -63,6 +63,11 @@ export default function SelectDevice({
     },
     [dispatchRedux, onNavigate],
   );
+
+  // Does not react to an header update request: too many flows use this screen.
+  // Keeping the header from the original flow.
+  const requestToSetHeaderOptions = useCallback(() => undefined, []);
+
   return (
     <SafeAreaView
       style={[
@@ -82,7 +87,10 @@ export default function SelectDevice({
       />
       {newDeviceSelectionFeatureFlag?.enabled ? (
         <Flex px={16} pb={8} flex={1}>
-          <SelectDeviceComp2 onSelect={onSelect} />
+          <SelectDeviceComp2
+            onSelect={onSelect}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
+          />
         </Flex>
       ) : (
         <NavigationScrollView

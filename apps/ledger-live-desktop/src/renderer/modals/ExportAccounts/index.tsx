@@ -6,10 +6,8 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Exporter from "~/renderer/components/Exporter";
 type ModalRenderProps = {
-  onClose: () => void;
-  data?: {
-    accounts?: Account[];
-  };
+  onClose?: (() => void) | undefined;
+  data?: unknown;
 };
 const ExportAccountsModal = () => {
   const { t } = useTranslation();
@@ -21,7 +19,13 @@ const ExportAccountsModal = () => {
           <ModalBody
             onClose={onClose}
             title={t("settings.export.modal.title")}
-            render={() => <Exporter {...data} />}
+            render={() => (
+              <Exporter
+                {...(data as {
+                  accounts?: Account[];
+                })}
+              />
+            )}
             renderFooter={() => (
               <Box>
                 <Button data-test-id={"modal-confirm-button"} small onClick={onClose} primary>

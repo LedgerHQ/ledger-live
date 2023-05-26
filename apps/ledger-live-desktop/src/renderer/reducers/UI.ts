@@ -1,27 +1,29 @@
 import { handleActions } from "redux-actions";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { State } from "~/renderer/reducers";
+import { Handlers } from "./types";
+
 export type PlatformAppDrawerInfo = {
   type: "DAPP_INFO";
-  manifest: LiveAppManifest | undefined | null;
+  manifest?: LiveAppManifest | null;
   title: string;
 };
 export type PlatformAppDrawerDisclaimer = {
   type: "DAPP_DISCLAIMER";
-  manifest: LiveAppManifest | undefined | null;
+  manifest?: LiveAppManifest | null;
   disclaimerId: string;
   title: string;
   next: () => void;
 };
-export type PlatformAppDrawers = PlatformAppDrawerInfo & PlatformAppDrawerDisclaimer;
+export type PlatformAppDrawers = PlatformAppDrawerInfo | PlatformAppDrawerDisclaimer;
 export type UIState = {
   informationCenter: {
     isOpen: boolean;
-    tabId: string;
+    tabId?: string;
   };
   platformAppDrawer: {
     isOpen: boolean;
-    payload: PlatformAppDrawers | undefined | null;
+    payload?: PlatformAppDrawers | null;
   };
 };
 const initialState: UIState = {
@@ -37,15 +39,18 @@ const initialState: UIState = {
 type OpenPayload = {
   tabId?: string;
 };
-const handlers = {
-  INFORMATION_CENTER_OPEN: (
-    state,
-    {
-      payload,
-    }: {
-      payload: OpenPayload;
-    },
-  ) => {
+
+type HandlersPayloads = {
+  INFORMATION_CENTER_OPEN: OpenPayload;
+  INFORMATION_CENTER_SET_TAB: OpenPayload;
+  INFORMATION_CENTER_CLOSE: never;
+  PLATFORM_APP_DRAWER_OPEN: PlatformAppDrawers;
+  PLATFORM_APP_DRAWER_CLOSE: never;
+};
+type UIHandlers<PreciseKey = true> = Handlers<UIState, HandlersPayloads, PreciseKey>;
+
+const handlers: UIHandlers = {
+  INFORMATION_CENTER_OPEN: (state, { payload }) => {
     const { tabId } = payload;
     return {
       ...state,
@@ -56,14 +61,7 @@ const handlers = {
       },
     };
   },
-  INFORMATION_CENTER_SET_TAB: (
-    state,
-    {
-      payload,
-    }: {
-      payload: OpenPayload;
-    },
-  ) => {
+  INFORMATION_CENTER_SET_TAB: (state, { payload }) => {
     const { tabId } = payload;
     return {
       ...state,
@@ -82,14 +80,7 @@ const handlers = {
       },
     };
   },
-  PLATFORM_APP_DRAWER_OPEN: (
-    state,
-    {
-      payload,
-    }: {
-      payload: PlatformAppDrawers;
-    },
-  ) => {
+  PLATFORM_APP_DRAWER_OPEN: (state, { payload }) => {
     return {
       ...state,
       platformAppDrawer: {
@@ -112,8 +103,14 @@ const handlers = {
 // Selectors
 
 export const UIStateSelector = (state: State): UIState => state.UI;
-export const informationCenterStateSelector = (state: object) => state.UI.informationCenter;
-export const platformAppDrawerStateSelector = (state: object) => state.UI.platformAppDrawer;
+export const informationCenterStateSelector = (state: State): UIState["informationCenter"] =>
+  state.UI.informationCenter;
+export const platformAppDrawerStateSelector = (state: State): UIState["platformAppDrawer"] =>
+  state.UI.platformAppDrawer;
+
 // Exporting reducer
 
-export default handleActions(handlers, initialState);
+export default handleActions<UIState, HandlersPayloads[keyof HandlersPayloads]>(
+  (handlers as unknown) as UIHandlers<false>,
+  initialState,
+);

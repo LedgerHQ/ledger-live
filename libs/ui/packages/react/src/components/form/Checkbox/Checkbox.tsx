@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import Text from "../../asorted/Text";
-import CheckAloneRegular from "@ledgerhq/icons-ui/react/CheckAloneRegular";
+import CheckAloneMedium from "@ledgerhq/icons-ui/react/CheckAloneMedium";
 import { renderToStaticMarkup } from "react-dom/server";
 
 const Icon = () =>
-  React.cloneElement(CheckAloneRegular({ size: 13, color: "currentColor" }), {
+  React.cloneElement(CheckAloneMedium({ size: 13, color: "currentColor" }), {
     // the xmlns attribute is required to properly display the checkbox
     xmlns: "http://www.w3.org/2000/svg",
   });
@@ -73,11 +73,11 @@ const Container = styled.div`
   }
 
   &[data-variant="success"] {
-    --ll-checkbox-color: ${(props) => props.theme.colors.success.c100};
+    --ll-checkbox-color: ${(props) => props.theme.colors.success.c50};
   }
 
   &[data-variant="error"] {
-    --ll-checkbox-color: ${(props) => props.theme.colors.error.c100};
+    --ll-checkbox-color: ${(props) => props.theme.colors.error.c50};
   }
 
   &[data-disabled="true"] {

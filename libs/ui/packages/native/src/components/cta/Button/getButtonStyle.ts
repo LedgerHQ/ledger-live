@@ -24,21 +24,21 @@ export function getButtonColors(colors: Theme["colors"]): {
     main: {
       primaryColor: colors.neutral.c00,
       secondaryColor: colors.neutral.c100,
-      pressedColor: colors.neutral.c100a06,
-      pressedOutlineColor: colors.neutral.c100a01,
+      pressedColor: colors.opacityDefault.c60,
+      pressedOutlineColor: colors.opacityDefault.c10,
     },
     shade: {
       primaryColor: colors.neutral.c00,
       secondaryColor: colors.neutral.c100,
       tertiaryColor: colors.neutral.c40,
-      pressedColor: colors.neutral.c100a06,
-      pressedOutlineColor: colors.neutral.c100a01,
+      pressedColor: colors.opacityDefault.c60,
+      pressedOutlineColor: colors.opacityDefault.c10,
     },
     error: {
       primaryColor: colors.neutral.c00,
-      secondaryColor: colors.error.c100,
-      pressedColor: colors.error.c100a07,
-      pressedOutlineColor: colors.error.c100a025,
+      secondaryColor: colors.error.c50,
+      pressedColor: colors.error.c50a07,
+      pressedOutlineColor: colors.error.c50a025,
     },
     color: {
       primaryColor: colors.neutral.c00,

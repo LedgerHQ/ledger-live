@@ -13,7 +13,6 @@ import AccountFooter from "../AccountFooter";
 import SendAmountFields from "../SendAmountFields";
 import { StepProps } from "../types";
 const StepAmount = ({
-  t,
   account,
   parentAccount,
   transaction,

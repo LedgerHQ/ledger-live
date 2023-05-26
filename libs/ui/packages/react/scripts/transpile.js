@@ -19,6 +19,7 @@ const commonjs = () =>
       entryPoints,
       outdir: "lib/cjs",
       format: "cjs",
+      target: "node16",
     }),
   );
 

@@ -1,9 +1,12 @@
 import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
-import React, { useState } from "react";
+import React from "react";
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import Animated, {
   Extrapolate,
-  interpolateNode,
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
 } from "react-native-reanimated";
 
 type PageHeaderContentLayoutProps = {
@@ -35,30 +38,26 @@ export function Layout({
   listStickyElement,
   isTitleVisible,
 }: PageHeaderContentLayoutProps) {
-  const [scrollY] = useState(new Animated.Value(0));
-  const eventArgs = [
-    {
-      nativeEvent: {
-        contentOffset: {
-          y: scrollY,
-        },
-      },
-    },
-    {
-      useNativeDriver: true,
-    },
-  ];
-  const event = Animated.event<typeof eventArgs>(eventArgs);
-  const opacity = interpolateNode(scrollY, {
-    inputRange: [0, 76],
-    outputRange: [0, 1],
-    extrapolate: Extrapolate.CLAMP,
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler(event => {
+    scrollY.value = event.contentOffset.y;
   });
+
+  const opacityStyle = useAnimatedStyle(() => {
+    const opacity = isTitleVisible
+      ? 1
+      : interpolate(scrollY.value, [0, 76], [0, 1], Extrapolate.CLAMP);
+
+    return {
+      opacity,
+    };
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <Flex
         style={[
-          styles.topHeader,
           styles.marginHorizontal,
           {
             flexDirection: "row",
@@ -67,7 +66,7 @@ export function Layout({
         ]}
       >
         {topHeaderContent}
-        <Animated.View style={[{ opacity: isTitleVisible ? 1 : opacity }]}>
+        <Animated.View style={[opacityStyle]}>
           <Text
             fontSize={20}
             marginLeft={4}
@@ -80,7 +79,7 @@ export function Layout({
       </Flex>
       <Flex style={[styles.marginHorizontal]}>{searchContent}</Flex>
       <ScrollContainer
-        onScroll={event}
+        onScroll={scrollHandler}
         scrollEventThrottle={10}
         showsVerticalScrollIndicator={false}
         stickyHeaderIndices={listStickyElement}

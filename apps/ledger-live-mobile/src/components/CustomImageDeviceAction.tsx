@@ -1,4 +1,10 @@
-import React, { ComponentProps, useCallback, useEffect, useState } from "react";
+import React, {
+  ComponentProps,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useDispatch } from "react-redux";
 import { Image } from "react-native";
 import { Flex, Icons } from "@ledgerhq/native-ui";
@@ -59,7 +65,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   source,
   remountMe,
 }) => {
-  const commandRequest = hexImage;
+  const commandRequest = useMemo(() => ({ hexImage }), [hexImage]);
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -127,7 +133,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
               error,
               device,
               ...(isRefusedOnStaxError
-                ? { Icon: Icons.CircledAlertMedium, iconColor: "warning.c100" }
+                ? { Icon: Icons.CircledAlertMedium, iconColor: "warning.c50" }
                 : {}),
             })}
             {}

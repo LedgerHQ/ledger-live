@@ -1,18 +1,47 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Box, Icons, Alert, Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import SettingsRow from "../../../../components/SettingsRow";
 import { ScreenName } from "../../../../const";
-import SelectDevice from "../../../../components/SelectDevice2";
+import SelectDevice, {
+  SetHeaderOptionsRequest,
+} from "../../../../components/SelectDevice2";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
-import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
+import {
+  ReactNavigationHeaderOptions,
+  StackNavigatorNavigation,
+} from "../../../../components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
+import { NavigationHeaderBackButton } from "../../../../components/NavigationHeaderBackButton";
+
+// Defines here some of the header options for this screen to be able to reset back to them.
+export const connectivityHeaderOptions: ReactNavigationHeaderOptions = {
+  headerShown: true,
+  title: "Connectivity",
+  headerRight: () => null,
+  headerLeft: () => <NavigationHeaderBackButton />,
+};
 
 export default function Connectivity() {
   const navigation =
     useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device | null>(null);
+
+  const requestToSetHeaderOptions = useCallback(
+    (request: SetHeaderOptionsRequest) => {
+      if (request.type === "set") {
+        navigation.setOptions({
+          headerLeft: request.options.headerLeft,
+          headerRight: request.options.headerRight,
+        });
+      } else {
+        // Sets back the header to its initial values set for this screen
+        navigation.setOptions(connectivityHeaderOptions);
+      }
+    },
+    [navigation],
+  );
 
   return (
     <SettingsNavigationScrollView>
@@ -24,7 +53,11 @@ export default function Connectivity() {
       />
       {!device ? (
         <Box p={6}>
-          <SelectDevice onSelect={setDevice} stopBleScanning={!!device} />
+          <SelectDevice
+            onSelect={setDevice}
+            stopBleScanning={!!device}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
+          />
         </Box>
       ) : (
         <Flex>

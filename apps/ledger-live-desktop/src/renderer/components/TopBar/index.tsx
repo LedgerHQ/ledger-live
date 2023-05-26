@@ -1,24 +1,16 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Route, useHistory, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { lock } from "~/renderer/actions/application";
-import { openModal } from "~/renderer/actions/modals";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import { hasAccountsSelector } from "~/renderer/reducers/accounts";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Bar, ItemContainer } from "./shared";
 import Box from "~/renderer/components/Box";
 import Tooltip from "~/renderer/components/Tooltip";
 import Breadcrumb from "~/renderer/components/Breadcrumb";
 import HelpSideBar from "~/renderer/modals/Help";
-import IconLock from "~/renderer/icons/Lock";
-import IconEye from "~/renderer/icons/Eye";
-import IconHelp from "~/renderer/icons/Question";
-import IconEyeOff from "~/renderer/icons/EyeOff";
-import IconSettings from "~/renderer/icons/Settings";
-import HomePromotionalTag from "./HomePromotionalTag";
 
 // TODO: ActivityIndicator
 import ActivityIndicator from "./ActivityIndicator";
@@ -27,7 +19,8 @@ import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { NotificationIndicator } from "~/renderer/components/TopBar/NotificationIndicator";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { LiveAppDrawer } from "~/renderer/components/WebPlatformPlayer/LiveAppDrawer";
-const Container: ThemedComponent<{}> = styled(Box).attrs(() => ({}))`
+import { Icons } from "@ledgerhq/react-ui";
+const Container = styled(Box).attrs(() => ({}))`
   height: ${p => p.theme.sizes.topBarHeight}px;
   box-sizing: content-box;
   background-color: transparent;
@@ -41,7 +34,7 @@ const Inner = styled(Box).attrs(() => ({
 }))`
   height: 100%;
 `;
-export const SeparatorBar: ThemedComponent<{}> = styled.div`
+export const SeparatorBar = styled.div`
   height: 1px;
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
   width: calc(100% - ${p => p.theme.space[6] * 2}px);
@@ -49,7 +42,6 @@ export const SeparatorBar: ThemedComponent<{}> = styled.div`
   position: relative;
 `;
 const TopBar = () => {
-  const settingsClickTimes = useRef([]);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -65,24 +57,17 @@ const TopBar = () => {
   ]);
   const navigateToSettings = useCallback(() => {
     const url = "/settings";
-    const now = Date.now();
-    settingsClickTimes.current = settingsClickTimes.current.filter(t => now - t < 3000).concat(now);
-    if (settingsClickTimes.current.length === 7) {
-      settingsClickTimes.current = [];
-      dispatch(openModal("MODAL_DEBUG"));
-    }
     if (location.pathname !== url) {
       setTrackingSource("topbar");
       history.push({
         pathname: url,
       });
     }
-  }, [history, location, dispatch]);
+  }, [history, location]);
   return (
     <Container color="palette.text.shade80">
       <Inner bg="palette.background.default">
         <Box grow horizontal justifyContent="space-between">
-          <Route exact path="/" component={HomePromotionalTag} />
           <Breadcrumb />
           <Box horizontal>
             {hasAccounts && (
@@ -104,7 +89,7 @@ const TopBar = () => {
                 isInteractive
                 onClick={handleDiscreet}
               >
-                {discreetMode ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+                {discreetMode ? <Icons.EyeNoneMedium size={18} /> : <Icons.EyeMedium size={18} />}
               </ItemContainer>
             </Tooltip>
             <Box justifyContent="center">
@@ -116,7 +101,7 @@ const TopBar = () => {
                 isInteractive
                 onClick={() => setHelpSideBarVisible(true)}
               >
-                <IconHelp size={16} />
+                <Icons.HelpMedium size={18} />
               </ItemContainer>
             </Tooltip>
             <HelpSideBar
@@ -135,7 +120,7 @@ const TopBar = () => {
                     justifyContent="center"
                     onClick={handleLock}
                   >
-                    <IconLock size={16} />
+                    <Icons.LockAltMedium size={18} />
                   </ItemContainer>
                 </Tooltip>
               </>
@@ -149,7 +134,7 @@ const TopBar = () => {
                 isInteractive
                 onClick={navigateToSettings}
               >
-                <IconSettings size={16} />
+                <Icons.SettingsMedium size={18} />
               </ItemContainer>
             </Tooltip>
           </Box>

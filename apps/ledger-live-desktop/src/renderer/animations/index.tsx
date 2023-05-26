@@ -1,39 +1,47 @@
 import React from "react";
-import Lottie from "react-lottie";
+import Lottie, { LottieProps } from "react-lottie";
+import { Flex } from "@ledgerhq/react-ui";
 const Animation = ({
   animation,
-  width = "100%",
-  height = "100%",
   loop = true,
   autoplay = true,
+  width = "100%",
+  height = "auto",
   rendererSettings = {
     preserveAspectRatio: "xMidYMin",
   },
   isPaused = false,
   isStopped = false,
 }: {
-  animation: object;
+  animation: any;
   width?: string;
   height?: string;
   loop?: boolean;
   autoplay?: boolean;
-  rendererSettings?: any;
+  rendererSettings?: LottieProps["options"]["rendererSettings"];
   isPaused?: boolean;
   isStopped?: boolean;
-}) => (
-  <Lottie
-    isClickToPauseDisabled
-    ariaRole="animation"
-    height={height}
-    width={width}
-    isPaused={isPaused}
-    isStopped={isStopped}
-    options={{
-      loop: loop,
-      autoplay: autoplay,
-      animationData: animation,
-      rendererSettings,
-    }}
-  />
-);
+}) =>
+  animation ? (
+    <Flex
+      style={{
+        maxHeight: `200px`,
+        maxWidth: `500px`,
+      }}
+    >
+      <Lottie
+        style={{ width, height }}
+        isClickToPauseDisabled
+        ariaRole="animation"
+        isPaused={isPaused}
+        isStopped={isStopped}
+        options={{
+          loop: loop,
+          autoplay: autoplay,
+          animationData: animation,
+          rendererSettings,
+        }}
+      />
+    </Flex>
+  ) : null;
 export default Animation;

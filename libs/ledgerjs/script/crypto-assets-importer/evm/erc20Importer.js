@@ -6,7 +6,7 @@ const getDefinition = (chain, tokenId, definitionJSON, signature) => {
   try {
     const currencyId = ENTRIES_CHECKS.currencyId(chain.name);
     const name = ENTRIES_CHECKS.name(definitionJSON.name);
-    const ticker = ENTRIES_CHECKS.ticker(definitionJSON.ticker);
+    const ticker = ENTRIES_CHECKS.ticker(definitionJSON.ticker, chain);
     const decimals = ENTRIES_CHECKS.decimals(definitionJSON.decimals);
     const contractAddress = ENTRIES_CHECKS.contractAddress(
       definitionJSON.contract_address
@@ -134,10 +134,10 @@ module.exports = async (chain, outputFolder) => {
   await fs.writeFile(
     path.join(outputDir, "index.ts"),
     // eslint-disable-next-line prettier/prettier
-    'import tokens from "./erc20.json";' +
+    "import tokens from \"./erc20.json\";" +
       String.fromCharCode(10) + // lf line break for linter
       // eslint-disable-next-line prettier/prettier
-      'import signatures from "./erc20-signatures.json";' +
+      "import signatures from \"./erc20-signatures.json\";" +
       String.fromCharCode(10) + // lf line break for linter
       "export default { tokens, signatures };\r" +
       String.fromCharCode(10) // lf line break for linter

@@ -14,7 +14,7 @@ export const CARD_APP_ID = "cl-card";
 export default function CardPlatformApp() {
   const { state: urlParams } = useLocation();
   const manifest = useRemoteLiveAppManifest(CARD_APP_ID);
-  const themeType = useTheme("colors.palette.type");
+  const themeType = useTheme().colors.palette.type;
 
   // TODO for next urlscheme evolutions:
   // - check if local settings allow to launch an app from this branch, else display an error
@@ -40,7 +40,7 @@ export default function CardPlatformApp() {
           manifest={manifest}
           inputs={{
             theme: themeType,
-            ...urlParams,
+            ...(urlParams as Record<string, string>),
           }}
         />
       ) : null}

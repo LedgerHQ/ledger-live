@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
-import { Flex } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
+import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
@@ -34,6 +34,10 @@ const ConnectNanoScene = ({
   const [device, setDevice] = useState<Device | undefined>();
 
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
+
+  // Does not react to an header update request:
+  // Keeping the header (back arrow and information button) from the onboarding.
+  const requestToSetHeaderOptions = useCallback(() => undefined, []);
 
   const onSetDevice = useCallback(
     async (device: Device) => {
@@ -90,7 +94,11 @@ const ConnectNanoScene = ({
       <TrackScreen category="Onboarding" name="PairNew" />
       <Flex flex={1}>
         {newDeviceSelectionFeatureFlag?.enabled ? (
-          <SelectDevice2 onSelect={onSetDevice} stopBleScanning={!!device} />
+          <SelectDevice2
+            onSelect={onSetDevice}
+            stopBleScanning={!!device}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
+          />
         ) : (
           <SelectDevice
             withArrows

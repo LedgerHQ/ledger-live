@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
-const ModalFooter: ThemedComponent<{}> = styled.div`
+
+const ModalFooter = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;

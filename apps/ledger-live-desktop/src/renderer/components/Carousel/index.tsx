@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useTransition, animated } from "react-spring";
@@ -9,13 +9,12 @@ import Button from "~/renderer/components/Button";
 import TimeBasedProgressBar from "~/renderer/components/Carousel/TimeBasedProgressBar";
 import IconCross from "~/renderer/icons/Cross";
 import { getTransitions, useDefaultSlides } from "~/renderer/components/Carousel/helpers";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { setCarouselVisibility } from "~/renderer/actions/settings";
 import { carouselVisibilitySelector } from "~/renderer/reducers/settings";
 import { Trans } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 
-const CarouselWrapper: ThemedComponent<{}> = styled(Card)`
+const CarouselWrapper = styled(Card)`
   position: relative;
   height: 100px;
   margin: 20px 0;
@@ -64,7 +63,7 @@ const ProgressBarWrapper = styled.div`
   display: none;
 `;
 
-const Bullets = styled.div`
+const Bullets = styled.div<{ index: number }>`
   position: absolute;
   bottom: 16px;
   left: 0;
@@ -88,7 +87,7 @@ const Bullets = styled.div`
   }
 `;
 
-const Disclaimer: ThemedComponent<{}> = styled(Card)`
+const Disclaimer = styled(Card)`
   padding: 40px;
   height: 100px;
   margin: 20px 0;
@@ -124,7 +123,7 @@ const Slides = styled.div`
   }
 `;
 
-export const Label: ThemedComponent<{}> = styled(Text)`
+export const Label = styled(Text)`
   color: ${p => p.theme.colors.palette.text.shade100};
   margin-bottom: 8px;
   max-width: 404px;
@@ -132,7 +131,7 @@ export const Label: ThemedComponent<{}> = styled(Text)`
   letter-spacing: 0.1em;
 `;
 
-export const IllustrationWrapper: ThemedComponent<{}> = styled.div`
+export const IllustrationWrapper = styled.div`
   width: 257px;
   height: 100%;
   pointer-events: none;
@@ -141,7 +140,7 @@ export const IllustrationWrapper: ThemedComponent<{}> = styled.div`
   align-self: flex-end;
 `;
 
-export const Wrapper: ThemedComponent<{}> = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
   height: 100px;
   overflow: hidden;
@@ -163,7 +162,7 @@ const Carousel = ({
   speed?: number;
   type?: "slide" | "flip";
 }) => {
-  const slides = useDefaultSlides();
+  const { slides, logSlideImpression } = useDefaultSlides();
   const [index, setIndex] = useState(0);
   const hidden = useSelector(carouselVisibilitySelector);
   const [paused, setPaused] = useState(false);
@@ -171,32 +170,45 @@ const Carousel = ({
   const [reverse, setReverse] = useState(false);
   const transitions = useTransition(index, p => p, getTransitions(type, reverse));
 
+  useEffect(() => {
+    logSlideImpression(0);
+  }, [logSlideImpression]);
+
+  const changeVisibleSlide = useCallback(
+    index => {
+      setIndex(index);
+      logSlideImpression(index);
+    },
+    [logSlideImpression],
+  );
+
   const dispatch = useDispatch();
+
   const onChooseSlide = useCallback(
     newIndex => {
       setReverse(index > newIndex);
-      setIndex(newIndex);
+      changeVisibleSlide(newIndex);
     },
-    [index],
+    [index, changeVisibleSlide],
   );
 
   const onNext = useCallback(() => {
     setReverse(false);
-    setIndex((index + 1) % slides.length);
+    changeVisibleSlide((index + 1) % slides.length);
     track("contentcards_slide", {
       button: "next",
       page: "Portfolio",
     });
-  }, [index, slides.length]);
+  }, [index, slides.length, changeVisibleSlide]);
 
   const onPrev = useCallback(() => {
     setReverse(true);
-    setIndex(!index ? slides.length - 1 : index - 1);
+    changeVisibleSlide(!index ? slides.length - 1 : index - 1);
     track("contentcards_slide", {
       button: "previous",
       page: "Portfolio",
     });
-  }, [index, slides.length]);
+  }, [index, slides.length, changeVisibleSlide]);
 
   const onDismiss = useCallback(() => {
     setWantToDismiss(true);

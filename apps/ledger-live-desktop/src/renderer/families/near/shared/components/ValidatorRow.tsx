@@ -14,7 +14,7 @@ import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 import LedgerValidatorIcon from "~/renderer/families/near/shared/components/LedgerValidatorIcon";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   currency: CryptoCurrency;
   validator: NearValidatorItem;

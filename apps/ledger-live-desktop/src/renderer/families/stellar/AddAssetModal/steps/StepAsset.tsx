@@ -17,7 +17,6 @@ export default function StepAsset({
   onUpdateTransaction,
   transaction,
   status,
-  bridgePending,
   warning,
   error,
   t,
@@ -64,7 +63,6 @@ export function StepAssetFooter({
   onClose,
   status,
   bridgePending,
-  transaction,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;

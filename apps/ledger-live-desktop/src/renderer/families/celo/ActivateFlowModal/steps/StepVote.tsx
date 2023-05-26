@@ -86,7 +86,7 @@ const StepVote = ({
     <Box flow={1}>
       <TrackPage category="Celo Activate" name="Step 1" />
       {error ? <ErrorBanner error={error} /> : null}
-      <Box vertical>
+      <Box>
         {mappedVotes.map(({ vote, validatorGroup }) => {
           return (
             <ActivateValidatorGroupRow

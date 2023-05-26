@@ -28,7 +28,10 @@ const appendPendingOp = (ops: Operation[], op: Operation) => {
   return filtered;
 };
 
-export const addPendingOperation = (account: Account, operation: Operation) => {
+export const addPendingOperation = (
+  account: Account,
+  operation: Operation
+): Account => {
   const accountCopy = { ...account };
   const { subOperations } = operation;
   const { subAccounts } = account;

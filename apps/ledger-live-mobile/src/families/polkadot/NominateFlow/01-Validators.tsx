@@ -396,20 +396,20 @@ function NominateSelectValidator({ navigation, route }: Props) {
               </TouchableOpacity>
             ) : (
               <>
-                {maxSelected && <Check size={12} color={colors.success.c100} />}
+                {maxSelected && <Check size={12} color={colors.success.c50} />}
                 <LText
                   style={[
                     styles.footerMessage,
                     maxSelected && {
-                      color: colors.success.c100,
+                      color: colors.success.c50,
                     },
                     !ignoreError &&
                       warning && {
-                        color: colors.warning.c100,
+                        color: colors.warning.c50,
                       },
                     !ignoreError &&
                       error && {
-                        color: colors.error.c100,
+                        color: colors.error.c50,
                       },
                   ]}
                 >

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { inferDynamicRange, Range } from "@ledgerhq/live-common/range";
 import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 
@@ -31,7 +31,9 @@ export const inferMaxFeeRange = (
     return defaultMaxFeePerGasRange;
 
   const { maxPriorityFeePerGas, nextBaseFeePerGas } = networkInfo;
-  const amplifiedBaseFee = nextBaseFeePerGas.times(2); // ensuring 6 blocks of base fee
+  const amplifiedBaseFee = nextBaseFeePerGas
+    .times(getEnv("EIP1559_BASE_FEE_MULTIPLIER"))
+    .integerValue(); // ensuring valid base fee for 6 blocks with a mutliplier of 2
 
   return inferDynamicRange(
     amplifiedBaseFee.plus(maxPriorityFeePerGas.initial),

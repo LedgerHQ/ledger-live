@@ -28,7 +28,7 @@ const DebugFirmwareUpdater = () => {
                 {latestFirmware ? `Fw version available: ${latestFirmware.final.version}` : ""}
               </Text>
             </Box>
-            <Box vertical>
+            <Box>
               <Text mx={1} ff={"Inter|Medium"} color="palette.text.shade100" fontSize={3}>
                 <pre>
                   {JSON.stringify(

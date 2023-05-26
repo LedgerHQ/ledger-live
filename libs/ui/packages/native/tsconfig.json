@@ -1,13 +1,12 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "jsx": "react-native",
     "composite": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "strict": true,
     "baseUrl": ".",
-    "noEmit": true,
-    "skipLibCheck": true,
     "preserveSymlinks": true
   },
   "include": ["src/**/*", "storybook/**/*"],

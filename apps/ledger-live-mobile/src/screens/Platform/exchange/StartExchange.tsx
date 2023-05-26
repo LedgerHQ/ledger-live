@@ -40,6 +40,9 @@ const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
     [device, route.params],
   );
 
+  // Does not react to an header update request, the header stays the same.
+  const requestToSetHeaderOptions = useCallback(() => undefined, []);
+
   return (
     <SafeAreaView style={styles.root}>
       {newDeviceSelectionFeatureFlag?.enabled ? (
@@ -47,6 +50,7 @@ const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
           <SelectDevice2
             onSelect={setDevice}
             stopBleScanning={!!device || !isFocused}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
           />
         </Flex>
       ) : (

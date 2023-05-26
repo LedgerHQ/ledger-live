@@ -18,7 +18,7 @@ import {
 } from "@ledgerhq/live-common/families/elrond/constants";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 export type Recipient = {
   address: string;
 };

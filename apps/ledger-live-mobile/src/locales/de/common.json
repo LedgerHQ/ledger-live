@@ -118,19 +118,9 @@
       "title" : "Entschuldigung, Bluetooth ist deaktiviert",
       "description" : "Bitte aktivieren Sie Bluetooth in den Einstellungen Ihres Telefons. ({{state}} Status)"
     },
-    "FwUpdateBluetoothNotSupported" : {
-      "title" : "Firmware-Updates werden nur für Kabelverbindungen unterstützt"
-    },
-    "BtcUnmatchedApp" : {
-      "title" : "Das ist die falsche App",
-      "description" : "Bitte öffnen Sie die {{managerAppName}} App auf Ihrem Gerät."
-    },
     "CantOpenDevice" : {
       "title" : "Entschuldigung, Verbindung fehlgeschlagen",
       "description" : "Ihr Ledger-Gerät muss entsperrt und in Reichweite sein, um Bluetooth zu verwenden."
-    },
-    "CantScanQRCode" : {
-      "title" : "Dieser QR-Code konnte nicht gescannt werden: Auto-Verifizierung wird von dieser Adresse nicht unterstützt."
     },
     "ConnectAppTimeout" : {
       "title" : "Entschuldigung, kein Gerät gefunden",
@@ -167,9 +157,6 @@
     "ClaimRewardsFeesWarning" : {
       "title" : "Die Prämien sind kleiner als die geschätzten Gebühren, die anfallen, um sie zu beanspruchen.",
       "description" : ""
-    },
-    "CompoundLowerAllowanceOfActiveAccountError" : {
-      "title" : "Sie können den freigegebenen Betrag nicht reduzieren, während Sie eine aktive Einzahlung haben."
     },
     "CosmosBroadcastCodeInternal" : {
       "title" : "Etwas ist schief gelaufen (Fehler 1)",
@@ -330,11 +317,13 @@
     },
     "ImageCommitRefusedOnDevice" : {
       "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
-      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
+      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen.",
+      "primaryCTA" : "Ein weiteres Bild hochladen"
     },
     "ImageLoadRefusedOnDevice" : {
       "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
-      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
+      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen.",
+      "primaryCTA" : "Ein weiteres Bild hochladen"
     },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
@@ -483,6 +472,10 @@
       "title" : "Passwort stimmt nicht überein",
       "description" : "Bitte versuchen Sie es erneut."
     },
+    "PeerRemovedPairing" : {
+      "title" : "Ihr {{ productName }} muss erneut gekoppelt werden.",
+      "description" : "Gehen Sie zu den Bluetooth-Einstellungen Ihres Mobiltelefons und vergessen Sie Ihre {{ productName }}. Gehen Sie dann zurück in Ledger Live und versuchen Sie es erneut."
+    },
     "SelectExchangesLoadError" : {
       "title" : "Kann nicht geladen werden",
       "description" : "Kann die Exchanges nicht laden."
@@ -559,7 +552,8 @@
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
-      "description" : "Bitte deinstallieren Sie die App {{managerAppName}} im Manager und installieren Sie sie dann neu."
+      "description" : "Bitte deinstallieren Sie die App {{managerAppName}} im Manager und installieren Sie sie dann neu.",
+      "primaryCTA" : "Manager öffnen"
     },
     "UserRefusedAllowManager" : {
       "title" : "Manager auf dem Gerät deaktiviert",
@@ -678,7 +672,8 @@
     },
     "generic" : {
       "title" : "{{message}}",
-      "description" : "Etwas ist schief gelaufen.  Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
+      "description" : "Etwas ist schief gelaufen.  Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung.",
+      "primaryCTA" : "Wiederholen"
     },
     "SolanaAccountNotFunded" : {
       "title" : "Konto nicht gedeckt"
@@ -1843,7 +1838,8 @@
           "title" : "Ihr Gerät ist gesperrt",
           "subtitle" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
         },
-        "retryCta" : "Wiederholen"
+        "retryCta" : "Wiederholen",
+        "openSettingsCta" : "Gehen Sie zu den Bluetooth-Einstellungen"
       }
     }
   },
@@ -2128,8 +2124,6 @@
       "OPT_IN" : "Zustimmen",
       "OPT_OUT" : "Ablehnen",
       "CLOSE_ACCOUNT" : "Konto schließen",
-      "SUPPLY" : "Hinterlegt",
-      "REDEEM" : "Ausgezahlt",
       "APPROVE" : "Aktiviert",
       "BOND" : "Binden",
       "UNBOND" : "Ungebunden",
@@ -2395,6 +2389,7 @@
     },
     "earn" : "Verdienen",
     "quickActions" : "Schnellaktionen",
+    "referralProgram" : "Einen Freund empfehlen und $10 in Bitcoin erhalten",
     "banner" : {
       "redelegation" : {
         "description" : "Schon gewusst? Der Ledger-Validator erledigt das Staking zu einer günstigeren Provision als Ihr derzeitiger Validator.",
@@ -2690,6 +2685,10 @@
           "title" : "Experimentelle Explorer-API",
           "description" : "Probieren Sie eine kommende Version von Ledgers Blockchain-Explorern aus. Das Ändern dieser Einstellung kann den Kontostand und die Synchronisation sowie die Sendefunktion beeinflussen."
         },
+        "experimentalListAppsV2" : {
+          "title" : "Experimentelle Apps-Liste für My Ledger",
+          "description" : "Leistungsverbesserung für den Zugriff auf My Ledger und Inline-Flows."
+        },
         "experimentalCountervalues" : {
           "title" : "Experimentelle Gegenwerte API",
           "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
@@ -2702,6 +2701,10 @@
       "developerFeatures" : {
         "experimentalApps" : {
           "title" : "Experimentelle Apps erlauben",
+          "description" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben."
+        },
+        "debugApps" : {
+          "title" : "Erlauben von Debug-Apps",
           "description" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben."
         },
         "staggingUrl" : {
@@ -2730,7 +2733,12 @@
       "featureFlagsTabGroups" : "Gruppen",
       "firebaseProject" : "Firebase-Projekt, auf das diese Entwicklung abzielt",
       "showBannerDesc" : "Banner anzeigen, wenn Flags überschrieben werden",
-      "bannerTitle" : "Flags lokal überschrieben"
+      "bannerTitle" : "Flags lokal überschrieben",
+      "features" : {
+        "firmwareUpdate" : {
+          "headerTitle" : "Debug-Firmware-Update"
+        }
+      }
     }
   },
   "notifications" : {
@@ -2741,49 +2749,10 @@
       "later" : "Vielleicht später"
     }
   },
-  "migrateAccounts" : {
-    "banner" : "Ledger Live-Konten Update",
-    "overview" : {
-      "headerTitle" : "Update für Konto",
-      "title" : "Ledger Live-Konten Update",
-      "subtitle" : "Neue Funktionen in Ledger Live bedeuten, dass Ihre Konten aktualisiert werden müssen",
-      "notice" : "{{accountCount}} Konto konnte nicht aktualisiert werden. Bitte verbinden Sie das mit dem nachstehenden Konto verbundene Gerät.",
-      "notice_plural" : "{{accountCount}} Konten konnten nicht aktualisiert werden. Bitte verbinden Sie das mit den nachstehenden Konten verbundene Gerät.",
-      "currency" : "1 {{currency}}-Konto muss aktualisiert werden",
-      "currency_plural" : "{{count}} {{currency}} Konten müssen aktualisiert werden",
-      "start" : "Update starten",
-      "continue" : "Update fortsetzen"
-    },
-    "progress" : {
-      "headerTitle" : "Konten aktualisieren",
-      "pending" : {
-        "title" : "{{currency}} Update in Arbeit",
-        "subtitle" : "Bitte warten Sie, bis Ihr Konto aktualisiert wird."
-      },
-      "notice" : {
-        "title" : "{{currency}} Aktualisierung unvollständig",
-        "subtitle" : "Mit diesem Gerät konnten keine {{currency}}-Konten aktualisiert werden.",
-        "cta" : "Weiter",
-        "ctaNextCurrency" : "Weiter mit {{currency}}"
-      },
-      "done" : {
-        "title" : "{{currency}} Update abgeschlossen",
-        "subtitle" : "Glückwunsch, Ihre {{currency}}-Konten wurden erfolgreich aktualisiert.",
-        "cta" : "Weiter",
-        "ctaNextCurrency" : "Weiter mit {{currency}}",
-        "ctaDone" : "Fertig"
-      },
-      "error" : {
-        "cta" : "Wiederholen"
-      }
-    },
-    "connectDevice" : {
-      "headerTitle" : "Verbundenes Gerät"
-    }
-  },
   "transfer" : {
     "recipient" : {
-      "input" : "Adresse eingeben"
+      "input" : "Adresse eingeben",
+      "inputEns" : "Adresse oder ENS eingeben"
     },
     "send" : {
       "title" : "Senden",
@@ -2839,7 +2808,8 @@
         "addressVerified" : "Adresse verifizieren",
         "verifyAddress" : "Tippen Sie hier, um Ihre Adresse zu verifizieren",
         "adviceVerify" : "Wir empfehlen immer Ihre Adresse mit Ihrem Ledger Gerät zu verifizieren",
-        "sendWarning" : "Senden Sie nur {{currencyName}} ({{currencyTicker}}) an diese Adresse. Die Zusendung anderer Coins kann zu einem dauerhaften Verlust führen."
+        "sendWarning" : "Senden Sie nur {{currencyName}} ({{currencyTicker}}) an diese Adresse. Die Zusendung anderer Coins kann zu einem dauerhaften Verlust führen.",
+        "dashStakingWarning" : "Bitte stellen Sie sicher, dass Sie diese Adresse nicht für den Erhalt von Staking Belohnungen verwenden"
       },
       "securityVerify" : {
         "title" : "Zu Ihrer Sicherheit empfehlen wir, diese Adresse mit Ihrem Ledger-Gerät zu verifizieren.",
@@ -3412,7 +3382,19 @@
       "scan" : "QR-Code scannen",
       "enterAddress" : "Adresse eingeben",
       "input" : "Adresse eingeben",
-      "verifyAddress" : "Bitte überprüfen Sie, ob die Adresse mit der des Empfängers übereinstimmt."
+      "verifyAddress" : "Bitte überprüfen Sie, ob die Adresse mit der des Empfängers übereinstimmt.",
+      "domainService" : {
+        "reverse" : "Diese Adresse ist verknüpft mit {{domain}}",
+        "forward" : "Dies ist eine gültige ENS-Adresse",
+        "supportLink" : "Was ist ein „Ethereum Name Service“?",
+        "invalidDomain" : {
+          "title" : "Domain wird nicht unterstützt",
+          "description" : "Zurzeit werden nur ENS mit einer Länge von unter 30 alphanumerischen Zeichen unterstützt."
+        },
+        "noResolution" : {
+          "title" : "Für diese Domain wurde keine Adresse gefunden"
+        }
+      }
     },
     "amount" : {
       "available" : "Insgesamt verfügbar",
@@ -4642,7 +4624,8 @@
             "noResultsFound" : "Kein Validator für \"<0>{{search}}</0>\" gefunden."
           },
           "amount" : {
-            "newRedelegatedBalance" : "Neue Summe für <0>{{name}}</0> nach Aktion: <0>{{amount}}</0>"
+            "newRedelegatedBalance" : "Neue Summe für <0>{{name}}</0> nach Aktion: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Vermögenswerte"
           },
           "verification" : {
             "success" : {
@@ -4941,6 +4924,7 @@
       "header" : "Abstimmungen ({{total}})",
       "Amount" : "Betrag",
       "noRewards" : "Keine Prämien verfügbar",
+      "warnDisableStakingMessage" : "Die Staking-Funktion für Tron ist derzeit nicht verfügbar",
       "votes" : {
         "title" : "Abstimmungen",
         "description" : "Geben Sie Ihre Stimme für einen oder mehrere Repräsentanten ab und beginnen Sie mit dem Verdienen von Prämien.",
@@ -5746,22 +5730,7 @@
       }
     },
     "status" : {
-      "title" : "Ein Problem könnte Ihre Aufmerksamkeit erfordern",
-      "title_plural" : "Einige Probleme könnten Ihre Aufmerksamkeit erfordern",
-      "desc" : {
-        "0" : "Sie werden derzeit untersucht und in Kürze behoben.",
-        "1" : "Wenn Sie von einem der Probleme betroffen sind, wenden Sie sich an unseren <0>Kundenservice</0>"
-      },
-      "cta" : {
-        "ok" : "Verstanden"
-      },
-      "ok" : {
-        "title" : "Ledger Live ist eingerichtet und läuft",
-        "desc" : "<0>Haben Sie Probleme? Gehen Sie auf unsere <0><1>Hilfe-Seite<1>"
-      },
-      "error" : {
-        "title" : "Bei Ledger Live treten Probleme auf"
-      }
+      "header" : "Status"
     }
   },
   "browseWeb3" : {
@@ -5914,7 +5883,7 @@
       "noCurrencySearchResultsFor" : "Leider haben wir keine Coins für <0>{{search}}</0> gefunden. Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
       "noSearchResults" : "Sorry, wir haben keine Suchergebnisse gefunden.",
       "retrySearchKeyword" : "Bitte wiederholen Sie die Suche mit einem anderen Stichwort.",
-      "retrySearchKeywordAndUrl" : "Please retry the search with another keyword or open <Link>{{search}}</Link> outside Ledger Live.",
+      "retrySearchKeywordAndUrl" : "Bitte wiederholen Sie die Suche mit einem anderen Suchbegriff oder öffnen Sie <Link>{{search}}</Link> außerhalb von Ledger Live.",
       "retrySearchParams" : "Bitte versuchen Sie die Suche mit anderen Parametern erneut.",
       "trackFavAssets" : "Verfolgen Sie Ihre Favoriten",
       "clickOnStarIcon" : "Klicken Sie auf das Sternsymbol neben einem Wert, um ihn zu Ihren Favoriten hinzuzufügen.",
@@ -5933,6 +5902,13 @@
     "gallery" : {
       "allNft" : "Alle NFT",
       "addNew" : "Neu hinzufügen"
+    },
+    "designedForStax" : {
+      "title" : "<0>Entwickelt für</0><1>Ledger</1><2>Stax</2>",
+      "drawer" : {
+        "description" : "Diese NFT enthält ein zusätzliches Bild der NFT, das speziell für den E-Ink-Bildschirm des Ledger Stax entwickelt wurde.\n\nDieses Bild wird verwendet, wenn Sie dieses NFT als Sperrbildschirm festlegen.",
+        "cta" : "Verstanden"
+      }
     },
     "viewer" : {
       "properties" : "Eigenschaften",
@@ -6008,7 +5984,7 @@
     },
     "confirmCrop" : "Ausschnitt bestätigen",
     "confirmContrast" : "Kontrast bestätigen",
-    "nftEntryPointButtonLabel" : "Als Bild für den Ledger Stax Sperrbildschirm festlegen",
+    "nftEntryPointButtonLabel" : "Als Sperrbildschirm für das Ledger Stax festlegen",
     "customImage" : "Benutzerdefiniertes Bild",
     "doThisLater" : "Vielleicht später",
     "preview" : {
@@ -6110,7 +6086,8 @@
       "media" : {
         "tag" : "{{count}} NFTs"
       }
-    }
+    },
+    "referralProgram" : "10 USD"
   },
   "servicesWidget" : {
     "title" : "Services",

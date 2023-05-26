@@ -49,12 +49,12 @@ class CopyLink extends PureComponent<Props, State> {
       <Touchable style={[styles.linkContainer, style]} onPress={this.onPress}>
         <Icons.CheckAloneMedium
           size={16}
-          color={copied ? "success.c100" : "neutral.c30"}
+          color={copied ? "success.c50" : "neutral.c30"}
         />
         <Text
           variant="body"
           fontWeight="semiBold"
-          color={copied ? "success.c100" : "primary.c80"}
+          color={copied ? "success.c50" : "primary.c80"}
           ml={2}
         >
           {copied && replacement ? replacement : children}

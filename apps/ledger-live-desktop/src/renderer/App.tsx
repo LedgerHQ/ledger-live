@@ -14,9 +14,7 @@ import { UpdaterProvider } from "~/renderer/components/Updater/UpdaterContext";
 import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import { RemoteConfigProvider } from "~/renderer/components/RemoteConfig";
-
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
-
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
 import DrawerProvider from "~/renderer/drawers/Provider";
@@ -25,28 +23,27 @@ import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementP
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
-
 import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrapper";
-
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
-const reloadApp = event => {
+import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
-    window.api.reloadRenderer();
+    window.api?.reloadRenderer();
   }
 };
 type Props = {
-  store: Store<State, any>;
-  initialCountervalues: any;
+  store: Store<State>;
+  initialCountervalues: CounterValuesStateRaw;
 };
-const InnerApp = ({ initialCountervalues }: { initialCountervalues: any }) => {
+const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
   useBraze();
 
   useEffect(() => {
-    const reload = e => {
+    const reload = (e: KeyboardEvent) => {
       if (reloadEnabled) {
         reloadApp(e);
       }

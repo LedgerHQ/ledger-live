@@ -10,7 +10,7 @@ const AccountsHeader = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const openAddAccounts = useCallback(() => {
-    dispatch(openModal("MODAL_ADD_ACCOUNTS"));
+    dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
   }, [dispatch]);
   return (
     <Box

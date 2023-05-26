@@ -10,6 +10,7 @@ import {
 import { DrawerTitle } from "../DrawerTitle";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
+import { Account } from "@ledgerhq/types-live";
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
   updateTransaction: SwapTransactionType["updateTransaction"];
@@ -49,9 +50,9 @@ export default function FeesDrawer({
       />
       <DrawerTitle i18nKey="swap2.form.details.label.fees" />
       <Box mt={3} flow={4} mx={3}>
-        {transaction?.networkInfo && (
+        {transaction && "networkInfo" in transaction && transaction.networkInfo && mainAccount && (
           <SendAmountFields
-            account={mainAccount}
+            account={mainAccount as Account}
             status={status}
             transaction={transaction}
             onChange={setTransaction}

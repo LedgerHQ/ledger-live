@@ -298,6 +298,38 @@ export default class BtcNew {
   }
 
   /**
+   * Signs an arbitrary hex-formatted message with the private key at
+   * the provided derivation path according to the Bitcoin Signature format
+   * and returns v, r, s.
+   */
+  async signMessage({
+    path,
+    messageHex,
+  }: {
+    path: string;
+    messageHex: string;
+  }): Promise<{
+    v: number;
+    r: string;
+    s: string;
+  }> {
+    const pathElements: number[] = pathStringToArray(path);
+    const message = Buffer.from(messageHex, "hex");
+    const sig = await this.client.signMessage(message, pathElements);
+    const buf = Buffer.from(sig, "base64");
+
+    const v = buf.readUInt8() - 27 - 4;
+    const r = buf.slice(1, 33).toString("hex");
+    const s = buf.slice(33, 65).toString("hex");
+
+    return {
+      v,
+      r,
+      s,
+    };
+  }
+
+  /**
    * Calculates an output script along with public key and possible redeemScript
    * from a path and accountType. The accountPath must be a prefix of path.
    *

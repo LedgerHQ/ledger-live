@@ -1,20 +1,32 @@
 import React, { useReducer, useEffect, useCallback } from "react";
 import { DrawerProps as SideDrawerProps } from "~/renderer/components/SideDrawer";
-type State = {
-  Component: React$ComponentType<any> | undefined | null;
-  props?: null | any;
+
+export type State<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  C extends React.ComponentType<P> | undefined | null = React.ComponentType<any> | undefined | null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  P = any
+> = {
+  Component: C;
+  props?: P;
   open: boolean;
-  options: Omit<SideDrawerProps, "children" | "isOpen" | "onRequestBack" | "onRequestClose">;
+  options: Omit<SideDrawerProps, "children" | "isOpen" | "onRequestBack">;
 }; // actions
+
 // it makes them available and current from connector events handlers
-export let setDrawer: (
-  Component?: State["Component"],
-  props?: State["props"],
-  options?: State["options"],
+export let setDrawer: <
+  P,
+  C extends React.ComponentType<P> | undefined | null = P extends null
+    ? null
+    : React.ComponentType<P>
+>(
+  Component?: C,
+  props?: State<C, P>["props"],
+  options?: State<C, P>["options"],
 ) => void = () => null;
 
 // reducer
-const reducer = (state: State, update) => {
+const reducer = (state: State, update: Partial<State>) => {
   return {
     ...state,
     ...update,

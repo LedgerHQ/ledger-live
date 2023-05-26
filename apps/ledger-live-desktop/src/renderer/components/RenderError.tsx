@@ -15,7 +15,7 @@ import Space from "~/renderer/components/Space";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import Button from "~/renderer/components/Button";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
-import { ThemedComponent } from "~/renderer/styles/StyleProvider";
+
 type Props = {
   error: Error;
   withoutAppData?: boolean;
@@ -47,7 +47,7 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
     setIsHardResetting(true);
     try {
       await hardReset();
-      window.api.reloadRenderer();
+      window.api?.reloadRenderer();
     } catch (err) {
       setIsHardResetting(false);
     }
@@ -111,7 +111,7 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
     </Box>
   );
 }
-const printError = (error: unknown) => {
+const printError = (error: undefined | { message?: string; stack?: string; name?: string }) => {
   const print = [];
   if (!error) {
     return "bad error";
@@ -129,12 +129,19 @@ const printError = (error: unknown) => {
   }
   return print.join("\n");
 };
-class Unsafe extends PureComponent<any, any> {
+class Unsafe extends PureComponent<
+  {
+    children: React.ReactNode;
+  },
+  {
+    error: Error | null;
+  }
+> {
   state = {
     error: null,
   };
 
-  componentDidCatch(error) {
+  componentDidCatch(error: Error) {
     this.setState({
       error,
     });
@@ -169,7 +176,7 @@ const ErrContainer = styled.pre`
   cursor: text;
   user-select: text;
 `;
-export const IconWrapperCircle: ThemedComponent<{}> = styled(Box)`
+export const IconWrapperCircle = styled(Box)`
   width: 50px;
   height: 50px;
   border-radius: 50%;

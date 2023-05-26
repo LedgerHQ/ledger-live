@@ -2,7 +2,6 @@ import React from "react";
 import { AppRequest, AppState } from "@ledgerhq/live-common/hw/actions/app";
 import { Popin } from "@ledgerhq/react-ui";
 import styled from "styled-components";
-
 import { DeviceActionDefaultRendering } from "../DeviceAction";
 
 const AppInstallPopin = styled(Popin)`

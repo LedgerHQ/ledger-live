@@ -1,10 +1,11 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { getCryptoCurrencyById, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
-import { App } from "@ledgerhq/types-live";
+import { App, FeatureId } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import ByteSize from "~/renderer/components/ByteSize";
 import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -13,6 +14,9 @@ import IconCheckFull from "~/renderer/icons/CheckFull";
 import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
+import { formatCurrencyIdToFeatureKey } from "~/renderer/components/FirebaseRemoteConfig";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
 const AppRow = styled.div`
   display: flex;
   flex-direction: row;
@@ -21,6 +25,7 @@ const AppRow = styled.div`
   padding: 20px;
   font-size: 12px;
 `;
+
 const AppName = styled.div`
   flex: 1;
   flex-direction: column;
@@ -31,6 +36,7 @@ const AppName = styled.div`
     display: block;
   }
 `;
+
 type Props = {
   optimisticState: State;
   state: State;
@@ -41,11 +47,12 @@ type Props = {
   onlyUpdate?: boolean;
   forceUninstall?: boolean;
   showActions?: boolean;
-  setAppInstallDep?: (a: any) => void;
-  setAppUninstallDep?: (a: any) => void;
-  addAccount?: (a: any) => void;
-}; // eslint-disable-next-line react/display-name
-const Item: React$ComponentType<Props> = ({
+  setAppInstallDep?: (a: { app: App; dependencies: App[] }) => void;
+  setAppUninstallDep?: (a: { dependents: App[]; app: App }) => void;
+  addAccount?: (a: CryptoCurrency | undefined) => void;
+};
+
+const Item = ({
   optimisticState,
   state,
   app,
@@ -59,12 +66,13 @@ const Item: React$ComponentType<Props> = ({
   setAppUninstallDep,
   addAccount,
 }: Props) => {
-  const { name, type } = app;
+  const { name, type, currencyId } = app;
   const { deviceModel, deviceInfo } = state;
   const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, name);
-  const currency = useMemo(() => app.currencyId && getCryptoCurrencyById(app.currencyId), [
-    app.currencyId,
-  ]);
+  const currency = useMemo(
+    () => (app.currencyId && getCryptoCurrencyById(app.currencyId)) || undefined,
+    [app.currencyId],
+  );
   const currencySupported = !!currency && isCurrencySupported(currency);
   const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
   const onAddAccount = useCallback(() => {
@@ -76,14 +84,20 @@ const Item: React$ComponentType<Props> = ({
     app.name,
     state.apps,
   ]);
+
+  const ffKey = currencyId ? formatCurrencyIdToFeatureKey(currencyId) : "";
+  const feature = useFeature(ffKey as FeatureId);
+  const currencyFlagEnabled = !feature || feature.enabled;
+
   const bytes = useMemo(
     () =>
       (onlyUpdate && availableApp?.bytes) ||
       ((installed && installed.blocks) || 0) * deviceModel.getBlockSize(deviceInfo.version) ||
       app.bytes ||
       0,
-    [app.bytes, availableApp.bytes, deviceInfo.version, deviceModel, installed, onlyUpdate],
+    [app.bytes, availableApp?.bytes, deviceInfo.version, deviceModel, installed, onlyUpdate],
   );
+
   return (
     <AppRow id={`managerAppsList-${name}`}>
       <Box flex="0.7" horizontal>
@@ -102,7 +116,6 @@ const Item: React$ComponentType<Props> = ({
             •{" "}
             <ByteSize
               value={bytes}
-              formatFunction={Math.ceil}
               deviceModel={deviceModel}
               firmwareVersion={deviceInfo.version}
             />
@@ -110,7 +123,7 @@ const Item: React$ComponentType<Props> = ({
         </AppName>
       </Box>
       <Box flex="0.7" horizontal alignContent="center" justifyContent="flex-start" ml={5}>
-        {isLiveSupported ? (
+        {isLiveSupported && currencyFlagEnabled ? (
           <>
             <Box>
               <IconCheckFull size={16} />
@@ -130,6 +143,7 @@ const Item: React$ComponentType<Props> = ({
           </>
         ) : null}
       </Box>
+
       <AppActions
         state={state}
         app={app}
@@ -144,8 +158,10 @@ const Item: React$ComponentType<Props> = ({
         setAppUninstallDep={setAppUninstallDep}
         isLiveSupported={isLiveSupported}
         addAccount={onAddAccount}
+        featureFlagActivated={currencyFlagEnabled}
       />
     </AppRow>
   );
 };
+
 export default memo<Props>(Item);

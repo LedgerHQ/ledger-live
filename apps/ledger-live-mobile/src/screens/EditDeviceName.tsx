@@ -1,12 +1,21 @@
-import React, { memo, useCallback, useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
 import { connect } from "react-redux";
+import { TextInput as NativeTextInput } from "react-native";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { Button, Text, Icons, Flex } from "@ledgerhq/native-ui";
 import { createAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
+import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLength";
 import { TrackScreen } from "../analytics";
 import KeyboardBackgroundDismiss from "../components/KeyboardBackgroundDismiss";
 import TextInput from "../components/TextInput";
@@ -23,7 +32,6 @@ import { ScreenName } from "../const";
 import { BaseOnboardingNavigatorParamList } from "../components/RootNavigator/types/BaseOnboardingNavigator";
 import { BleSaveDeviceNamePayload } from "../actions/types";
 
-const MAX_DEVICE_NAME = 20;
 const action = createAction(renameDevice);
 
 const mapDispatchToProps = {
@@ -44,13 +52,29 @@ type Props = {
 function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const originalName = route.params?.deviceName;
   const device = route.params?.device;
+  const deviceInfo = route.params?.deviceInfo;
+
+  const textInputRef = useRef<NativeTextInput | null>(null);
 
   const { t } = useTranslation();
   const { pushToast } = useToasts();
-  const [name, setName] = useState<string>(originalName);
+
+  const maxDeviceName = useMemo(
+    () =>
+      getDeviceNameMaxLength({
+        deviceModelId: device.modelId,
+        version: deviceInfo.version,
+      }),
+    [device.modelId, deviceInfo.version],
+  );
+
+  const [name, setName] = useState<string>(
+    originalName.slice(0, maxDeviceName),
+  );
   const [completed, setCompleted] = useState<boolean>(false);
   const [error, setError] = useState<Error | undefined | null>(null);
   const [running, setRunning] = useState(false);
+  const request = useMemo(() => ({ name }), [name]);
 
   const onChangeText = useCallback((name: string) => {
     // Nb mobile devices tend to use U+2018 for single quote, not supported
@@ -98,10 +122,30 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     }
   }, [completed, navigation]);
 
-  const remainingCount = MAX_DEVICE_NAME - name.length;
+  const remainingCount = maxDeviceName - name.length;
   const cleanName = name.trim();
   const disabled =
     !cleanName || !!error || running || cleanName === originalName;
+
+  /**
+   * Blurring the input when "running" (when the device action modal is mounted)
+   * allows to avoid a glitch in case of success: on iOS, if the input was
+   * focused when the modal got initially mounted, on the unmount of the modal
+   * it would refocus the input, so the keyboard would reappear. In this
+   * specific case, on success of the renaming action, the input gets unmounted
+   * as well (because we navigate away from this screen), resulting in a glitch
+   * where the keyboard appears and then quickly disappears.
+   */
+  useEffect(() => {
+    let handle: number;
+    if (running) textInputRef.current?.blur();
+    else {
+      handle = requestAnimationFrame(() => textInputRef.current?.focus());
+    }
+    return () => {
+      handle && cancelAnimationFrame(handle);
+    };
+  }, [running]);
 
   return (
     <KeyboardBackgroundDismiss>
@@ -110,10 +154,10 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
           <TrackScreen category="EditDeviceName" />
           <Flex flex={1} p={6} bg="background.main">
             <TextInput
+              ref={textInputRef}
               value={name}
               onChangeText={onChangeText}
-              maxLength={MAX_DEVICE_NAME}
-              autoFocus
+              maxLength={maxDeviceName}
               selectTextOnFocus
               blurOnSubmit={true}
               clearButtonMode="always"
@@ -122,10 +166,10 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
 
             {error ? (
               <Flex alignItems={"center"} flexDirection={"row"} mt={1}>
-                <Icons.WarningMedium color="error.c100" size={16} />
+                <Icons.WarningMedium color="error.c50" size={16} />
                 <Text
                   variant="small"
-                  color="error.c100"
+                  color="error.c50"
                   ml={2}
                   numberOfLines={2}
                 >
@@ -149,7 +193,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
           {running ? (
             <DeviceActionModal
               device={device}
-              request={name}
+              request={request}
               action={action}
               onClose={onClose}
               onResult={onSuccess}
