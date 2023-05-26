@@ -15,12 +15,10 @@ import {
   getPortfolio,
   getCurrencyPortfolio,
   getAssetsDistribution,
-} from "../portfolio/v2";
-import {
   getPortfolioRangeConfig,
   getDates,
   getRanges,
-} from "@ledgerhq/live-portfolio";
+} from "../portfolio/v2";
 import { setEnv } from "../env";
 import { genAccount } from "../mock/account";
 import { getAccountCurrency } from "../account";
