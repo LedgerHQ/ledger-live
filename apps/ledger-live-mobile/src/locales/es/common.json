@@ -587,6 +587,12 @@
       "title" : "Algo ha salido mal",
       "description" : "Comprueba que tu billetera de hardware esté configurada con la Frase de recuperación o Passphrase asociada a la cuenta seleccionada."
     },
+    "WebPTXPlayerNetworkFail" : {
+      "title" : "Error de red",
+      "description" : "Check your internet connection and try again. Contact Ledger Support if the problem continues.",
+      "contactSupport" : "Ponte en contacto con el Soporte de Ledger",
+      "primaryCTA" : "Inténtalo de nuevo"
+    },
     "UnexpectedBootloader" : {
       "title" : "Tu dispositivo no debe estar en modo Bootloader",
       "description" : "Reinicia tu dispositivo sin tocar los botones cuando aparezca el logotipo. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que se muestra a continuación y envíalos al Soporte de Ledger."
@@ -1191,7 +1197,8 @@
       "terms" : "Al tocar “Empezar” otorgas tu consentimiento y aceptas nuestros ",
       "termsLink" : "Términos del Servicio",
       "privacyLink" : "Política de Privacidad",
-      "and" : "Y"
+      "and" : "Y",
+      "recoverLogIn" : "Iniciar sesión para acceder a Ledger Recover"
     },
     "stepDoYouHaveALedgerDevice" : {
       "title" : "¿Tienes un Ledger?",
@@ -2668,6 +2675,10 @@
       "title" : "Funciones experimentales",
       "desc" : "Prueba las funciones experimentales y dinos qué te parecen.",
       "disclaimer" : "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que fallen, sufran cambios o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad.",
+      "provider" : "El ajuste experimental “Proveedor de Mi Ledger ({{forcedProvider}})” puede mostrar SO y aplicaciones no publicados y causar problemas de compatibilidad. Puedes desactivarlo en los ajustes.",
+      "providerDevMode" : "El ajuste experimental “Proveedor de Mi Ledger ({{forcedProvider}})” y el “Modo desarrollador” pueden mostrar SO y aplicaciones no publicadas y causar problemas de compatibilidad. Puedes desactivarlo en los ajustes.",
+      "devMode" : "El ajuste experimental “Modo desarrollador” puede mostrar SO y aplicaciones no publicadas y causar problemas de compatibilidad. Puedes desactivarlo en los ajustes.",
+      "providerCTA" : "Ir a Ajustes",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "Integraciones experimentales",
@@ -2689,13 +2700,13 @@
           "title" : "Aplicaciones experimentales de lista para Mi Ledger",
           "description" : "Mejora de rendimiento en el acceso y los flujos en línea de Mi Ledger."
         },
-        "experimentalCountervalues" : {
-          "title" : "API experimental de contrapartes",
-          "description" : "Puede provocar que las contrapartes que se muestran de tus cuentas no sean las correctas."
-        },
         "experimentalSwap" : {
           "title" : "Nueva interfaz de PERMUTA",
           "description" : "Usa la nueva interfaz experimental de permuta"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "Activar registros de red",
+          "description" : "Activar registros de red en la consola (los registros de error están siempre activados)"
         }
       },
       "developerFeatures" : {
@@ -3674,6 +3685,8 @@
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
     "allowManagerPermission" : "Permite {{wording}} en tu {{productName}}",
+    "allowRemoveCustomLockscreen" : "Confirmar eliminación de imagen en tu Ledger Stax",
+    "allowSecureConnection" : "Permitir una conexión segura con Ledger",
     "loading" : "Cargando...",
     "turnOnAndUnlockDevice" : "Enciende y desbloquea tu dispositivo",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
@@ -4025,16 +4038,34 @@
   },
   "FirmwareUpdate" : {
     "title" : "Actualizar firmware",
+    "updateDevice" : "Actualizar {{deviceName}}",
+    "updateDone" : "¡Listo! Tu {{deviceName}} se ha actualizado",
+    "updateDoneDescription" : "Nueva versión del sistema operativo: {{firmwareVersion}}",
     "preparing" : "Preparando la actualización de firmware. No desconectes ni dejes entrar en suspensión a tu dispositivo. Te informaremos del progreso",
     "confirmIdentifierText" : "Comprueba que el identificador de tu dispositivo coincida con el identificador a continuación. Confirma e introduce tu código PIN, si así lo indica la aplicación.",
     "pleaseReinstallApps" : "Vuelve a instalar las aplicaciones en tu dispositivo.",
     "pleaseConfirmUpdate" : "Confirma la actualización en tu dispositivo",
+    "pleaseConfirmUpdateOnYourDevice" : "Confirmar instalación en {{deviceName}}",
+    "finishUpdateCTA" : "Finalizar",
     "finishUpdate" : "Finaliza la actualización en tu {{deviceName}}",
     "identifierTitle" : "Identificador:",
     "pleaseWaitDownload" : "Espera a que se descargue el instalador",
+    "doNotLeaveLedgerLive" : "No cierres la aplicación Ledger Live hasta que finalice la actualización.",
     "preparingDevice" : "Preparando tu dispositivo",
     "pleaseWaitUpdate" : "Espera a que finalice la actualización",
+    "viewUpdateChangelog" : "Ver registro de cambios de la actualización",
     "waitForFirmwareUpdate" : "Espera a que finalice la actualización de firmware en tu dispositivo",
+    "waitForInstallationToFinish" : "Espera a que finalice la instalación en {{deviceName}}",
+    "staxBatteryLow" : "Ledger Stax no tiene suficiente batería para realizar la actualización",
+    "staxBatteryLowDescription" : "Para actualizar el SO, tu dispositivo Ledger debe estar, como mínimo, al 20% de carga o en carga.",
+    "updateCancelled" : "Se ha cancelado la actualización en {{deviceName}}",
+    "updateCancelledDescription" : "Se ha rechazado la instalación de la actualización del SO {{newFirmwareVersion}} en {{deviceName}}. Si se trata de un error, vuelve a iniciar la actualización",
+    "updateNotYetComplete" : "La actualización no ha finalizado todavía",
+    "updateNotYetCompleteDescription" : "Si interrumpes la actualización, es posible que no puedas restaurar correctamente las aplicaciones, el idioma y la imagen de pantalla de bloqueo.",
+    "restartUpdate" : "Reiniciar actualización de SO",
+    "quitUpdate" : "Cerrar actualización",
+    "continueUpdate" : "Continuar con la actualización",
+    "unlockDeviceToComplete" : "Desbloquear {{deviceName}} para finalizar la instalación",
     "unlockDeviceWithPin" : "Desbloquea tu dispositivo con el PIN",
     "reinstallApps" : "Vuelve a instalar las aplicaciones.",
     "currentVersionNumber" : "Versión actual",
@@ -4056,7 +4087,23 @@
       "flash-bootloader" : "Actualizando Bootloader",
       "flash" : "Flashing a tu dispositivo",
       "preparing" : "Preparando actualización",
-      "firmware" : "Descargando actualización"
+      "firmware" : "Descargando actualización",
+      "prepareUpdate" : {
+        "titleActive" : "Preparando actualización para instalar",
+        "description" : "Estamos haciendo una copia de seguridad de la configuración y transfiriendo la actualización a {{deviceName}}."
+      },
+      "installUpdate" : {
+        "titleInactive" : "Instalar actualización",
+        "titleActive" : "Instalando actualización",
+        "description" : "{{deviceName}} se reiniciará varias veces.\n\nUna vez que finalice la instalación en {{deviceName}}, desbloquea el dispositivo para finalizar la instalación"
+      },
+      "restoreSettings" : {
+        "titleInactive" : "Restaurar aplicaciones y ajustes",
+        "description" : "Los ajustes y las aplicaciones de cadena de bloques se restaurarán.",
+        "restoreLockScreenPicture" : "Restaurando imagen de pantalla de bloqueo",
+        "restoreLanguage" : "Restaurando idioma",
+        "installingApps" : "Instalando aplicaciones"
+      }
     },
     "newVersion" : "Actualización {{version}} disponible para {{deviceName}}",
     "drawerUpdate" : {
@@ -4064,6 +4111,12 @@
       "description" : "Actualiza tu firmware Ledger Nano conectándolo a la aplicación Ledger Live Desktop",
       "pleaseConnectUsbTitle" : "Es necesario un cable USB",
       "pleaseConnectUsbDescription" : "Para iniciar la actualización del firmware, conecta tu {{deviceName}} a tu teléfono mediante un cable USB."
+    },
+    "errors" : {
+      "TimeoutError" : {
+        "title" : "Tiempo de actualización agotado",
+        "description" : "No ha sido posible finalizar la actualización porque hemos perdido la conexión con {{deviceName}}"
+      }
     }
   },
   "firmwareUpdateRequired" : {
@@ -5929,9 +5982,10 @@
       "txDetails" : "Detalles de las transacciones"
     },
     "modalDisabled" : {
-      "title" : "Función de envío no disponible",
+      "title" : "Send function is not available on iOS",
       "body" : "Para cumplir con actualizaciones recientes de la App Store de Apple, el envío de NFTs no está disponible temporalmente. Puedes seguir utilizando Ledger Live Desktop para enviar NFTs.",
-      "contactSupport" : "Lee nuestro artículo de soporte para obtener más información."
+      "learnMore" : "Más información",
+      "continue" : "¡Entendido!"
     }
   },
   "ApplicationVersion" : "v. {{version}}",
@@ -5966,9 +6020,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Elegir de mi galería de fotos",
-        "selectFromNFTGallery" : "Elegir de la galería de NFTs"
+        "selectFromNFTGallery" : "Elegir de la galería de NFTs",
+        "remove" : "Eliminar imagen actual"
       }
     },
+    "toastRemove" : "Imagen de pantalla de bloqueo eliminada",
     "cropImage" : "Recortar imagen",
     "chooseConstrast" : "Elegir contraste",
     "uploadAnotherImage" : "Cargar otra imagen",
@@ -6102,20 +6158,6 @@
             "alreadySubscribed" : "¿Ya has ingresado? <LinkAccount>Ver mi suscripción</LinkAccount>"
           }
         }
-      }
-    }
-  },
-  "protect" : {
-    "login" : {
-      "title" : "Inicia sesión",
-      "desc" : "Inicia sesión con tu cuenta de Ledger para gestionar tu suscripción de Protect.",
-      "email" : "Correo electrónico",
-      "password" : "Contraseña",
-      "cta" : "Usuario",
-      "forgotPassword" : "¿Has olvidado tu contraseña?",
-      "errors" : {
-        "emptyEmail" : "El correo electrónico no puede estar en blanco",
-        "emptyPassword" : "La contraseña no puede estar en blanco"
       }
     }
   },
