@@ -16,42 +16,42 @@ runs:
   steps:
     # ⚠️ We have issues with the runners and proto,
     # so for the moment we're not using it at all in the CI.
-    - uses: pnpm/action-setup@v2
-      if: inputs.pnpm_dest != '' && runner.os == 'Windows'
-      # if: ${{ runner.os == 'Windows' }}
-      with:
-        version: 8.1
-        dest: ${{ inputs.pnpm_dest }}
-    - uses: pnpm/action-setup@v2
-      if: inputs.pnpm_dest == '' && runner.os == 'Windows'
-      # if: ${{ runner.os == 'Windows' }}
-      with:
-        version: 8.1
-    - uses: actions/setup-node@v3
-      if: ${{ runner.os == 'Windows' }}
-      with:
-        node-version: 18
-        cache: pnpm
-        cache-dependency-path: "**/pnpm-lock.yaml"
-        registry-url: "https://registry.npmjs.org"
-    - name: upgrade npm
-      if: inputs.upgrade_npm == 'true'
-      run: |
-        npm i -g npm
-      shell: bash
+    # - uses: pnpm/action-setup@v2
+    #   if: inputs.pnpm_dest != '' && runner.os == 'Windows'
+    #   # if: ${{ runner.os == 'Windows' }}
+    #   with:
+    #     version: 8.1
+    #     dest: ${{ inputs.pnpm_dest }}
+    # - uses: pnpm/action-setup@v2
+    #   if: inputs.pnpm_dest == '' && runner.os == 'Windows'
+    #   # if: ${{ runner.os == 'Windows' }}
+    #   with:
+    #     version: 8.1
+    # - uses: actions/setup-node@v3
+    #   if: ${{ runner.os == 'Windows' }}
+    #   with:
+    #     node-version: 18
+    #     cache: pnpm
+    #     cache-dependency-path: "**/pnpm-lock.yaml"
+    #     registry-url: "https://registry.npmjs.org"
+    # - name: upgrade npm
+    #   if: inputs.upgrade_npm == 'true'
+    #   run: |
+    #     npm i -g npm
+    #   shell: bash
     # Using the proto toolchain manager:
-    - name: Setup proto
-      if: ${{ runner.os != 'Windows' }}
-      shell: bash
-      run: |
-        curl -fsSL https://moonrepo.dev/install/proto.sh | bash
-        echo "Adding $HOME/.proto/bin to GITHUB_PATH"
-        echo "$HOME/.proto/bin" >> $GITHUB_PATH
-        if [[ -z "${HOME}" ]]; then
-          # EC2 runners don't have a HOME variable
-          echo "Adding /root/.proto/bin to PATH"
-          echo "/root/.proto/bin" >> $GITHUB_PATH
-        fi
+    # - name: Setup proto
+    #   if: ${{ runner.os != 'Windows' }}
+    #   shell: bash
+    #   run: |
+    #     curl -fsSL https://moonrepo.dev/install/proto.sh | bash
+    #     echo "Adding $HOME/.proto/bin to GITHUB_PATH"
+    #     echo "$HOME/.proto/bin" >> $GITHUB_PATH
+    #     if [[ -z "${HOME}" ]]; then
+    #       # EC2 runners don't have a HOME variable
+    #       echo "Adding /root/.proto/bin to PATH"
+    #       echo "/root/.proto/bin" >> $GITHUB_PATH
+    #     fi
     # - name: Setup proto (Windows)
     #   if: ${{ runner.os == 'Windows' }}
     #   shell: powershell
@@ -65,6 +65,7 @@ runs:
     #   shell: bash
     #   run: |
     #     proto upgrade
+    - uses: moonrepo/setup-proto@v0
     - name: Use proto (bash)
       if: ${{ runner.os != 'Windows' }}
       shell: bash
@@ -80,18 +81,18 @@ runs:
         which npm
         proto run npm -- --version
         npm --version
-    # - name: Use proto (powershell)
-    #   if: ${{ runner.os == 'Windows' }}
-    #   shell: powershell
-    #   run: |
-    #     proto use
-    #     echo ${env:PATH}
-    #     Get-Command node
-    #     node --version
-    #     Get-Command pnpm
-    #     pnpm --version
-    #     Get-Command npm
-    #     npm --version
+    - name: Use proto (powershell)
+      if: ${{ runner.os == 'Windows' }}
+      shell: pwsh
+      run: |
+        proto use
+        echo ${env:PATH}
+        Get-Command node
+        node --version
+        Get-Command pnpm
+        pnpm --version
+        Get-Command npm
+        npm --version
     - name: Get pnpm store directory
       if: ${{ runner.os != 'Windows' }}
       id: pnpm-cache
