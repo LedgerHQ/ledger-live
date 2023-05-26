@@ -222,7 +222,7 @@ export function addTokens(list: TokenCurrency[]): void {
 
     /**
      * We clean all the reference of an existing token, if an hash doesn't  match.
-     * Like this we can update any change from a already added token coming from Dynamic CAL 
+     * Like this we can update any change from a already added token coming from Dynamic CAL
      * and maintain it up to date without having to release a new version of LLD or LLM
      */
     removeTokenFromAllLists(token);
