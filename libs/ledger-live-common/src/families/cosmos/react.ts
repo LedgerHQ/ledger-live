@@ -36,11 +36,13 @@ export function useCosmosFamilyPreloadData(
     const sub = getUpdates().subscribe(setState);
     return () => sub.unsubscribe();
   }, [getCurrent, getUpdates]);
-  return (
-    state[currencyId] ?? {
-      validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
-    }
-  );
+  return currencyId
+    ? state[currencyId] ?? {
+        validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
+      }
+    : {
+        validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
+      };
 }
 
 export function useCosmosFamilyMappedDelegations(
