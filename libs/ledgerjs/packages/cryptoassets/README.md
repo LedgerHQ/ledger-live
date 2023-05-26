@@ -66,8 +66,9 @@ There are two modes of usage of this library.
     *   [Parameters](#parameters-20)
 *   [getTokenById](#gettokenbyid)
     *   [Parameters](#parameters-21)
-*   [cleanExistingTokenInArray](#cleanexistingtokeninarray)
+*   [removeTokenFromAllLists](#removetokenfromalllists)
     *   [Parameters](#parameters-22)
+*   [removeTokenFromAllLists](#removetokenfromalllists-1)
 
 ### abandonSeedAddresses
 
@@ -275,13 +276,19 @@ Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 Returns **TokenCurrency** 
 
-### cleanExistingTokenInArray
+### removeTokenFromAllLists
 
 Delete previous token entry to all array
 
 #### Parameters
 
 *   `token` **TokenCurrency** 
+
+### removeTokenFromAllLists
+
+We clean all the reference of an existing token, if an hash doesn't  match.
+Like this we can update any change from a already added token coming from Dynamic CAL
+and maintain it up to date without having to release a new version of LLD or LLM
 
 ## Maintainance notes
 
