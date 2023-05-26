@@ -99,6 +99,14 @@ const App = () => {
     // not implemented
   };
 
+  const openGoogle = () => {
+    window.open("https://google.com");
+  };
+
+  const openGoogleBlank = () => {
+    window.open("https://google.com", "_blank");
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -106,6 +114,12 @@ const App = () => {
         <h3>Ledger Live Dummy Test App</h3>
         <p>App for testing the Ledger Live SDK manually and in Automated tests</p>
         <div className="button-container">
+          <button onClick={openGoogle} data-test-id="google">
+            Open Google
+          </button>
+          <button onClick={openGoogleBlank} data-test-id="google-blank">
+            Open google (_blank)
+          </button>
           <button onClick={getAccounts} data-test-id="get-all-accounts-button">
             Get all accounts
           </button>

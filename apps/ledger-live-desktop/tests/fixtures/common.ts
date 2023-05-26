@@ -1,9 +1,10 @@
-import { _electron as electron } from "playwright";
+import { Route, Request, _electron as electron } from "playwright";
 import { test as base, Page, ElectronApplication } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
+import { mock } from "node:test";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -102,6 +103,74 @@ const test = base.extend<TestFixtures>({
 
     // app is ready
     const page = await electronApp.firstWindow();
+
+    // start process to log network requests
+    const requestLogs = path.join(__dirname, "../artifacts/requests.log");
+
+    if (requestLogs) {
+      fs.unlink(requestLogs, error => {
+        if (error) {
+          console.log("could not remove requests.log file");
+          return;
+        }
+
+        console.log("previous requests.log file removed");
+      });
+    }
+
+    page.on("response", async data => {
+      console.log(data.url());
+
+      const headers = await data.allHeaders();
+
+      console.log({ headers });
+
+      if (headers.teststatus && headers.teststatus === "mocked") {
+        console.log(`setting to true`);
+        fs.appendFileSync(requestLogs, `MOCKED RESPONSE: ${data.request().url()}\n`);
+      } else {
+        console.log(`setting to false`);
+        fs.appendFileSync(requestLogs, `REAL RESPONSE: ${data.request().url()}\n`);
+      }
+    });
+
+    // await page.route("**/*", async (route: Route) => {
+    //   let mockedResponse = false;
+
+    //   page.on("response", async data => {
+    //     console.log(data.url());
+
+    //     const headers = await data.allHeaders();
+
+    //     console.log({ headers });
+
+    //     if (headers.teststatus && headers.teststatus === "mocked") {
+    //       mockedResponse = true;
+    //       console.log(`setting to true: ${mockedResponse}`);
+    //       fs.appendFileSync(
+    //         requestLogs,
+    //         `${mockedResponse ? "MOCKED" : "REAL"} RESPONSE: ${route?.request().url()}\n`,
+    //       );
+    //     } else {
+    //       // mockedResponse = false;
+    //       console.log(`setting to false: ${mockedResponse}`);
+    //       fs.appendFileSync(
+    //         requestLogs,
+    //         `${mockedResponse ? "MOCKED" : "REAL"} RESPONSE: ${route?.request().url()}\n`,
+    //       );
+    //     }
+    //   });
+    //   console.log({ mockedResponse });
+    //   // console.log(`mockedresponse for ${route.request().url()}:`, mockedResponse);
+
+    //   fs.appendFileSync(
+    //     requestLogs,
+    //     `${mockedResponse ? "MOCKED" : "REAL"} RESPONSE: ${route?.request().url()}\n`,
+    //   );
+    //   mockedResponse = false;
+
+    //   route.continue();
+    // });
 
     if (IS_DEBUG_MODE) {
       // Direct Electron console to Node terminal.
