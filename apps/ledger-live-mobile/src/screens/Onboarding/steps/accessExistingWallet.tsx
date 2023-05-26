@@ -48,6 +48,7 @@ const Card = ({
     });
     onPress?.();
   }, [event, eventProperties, onPress]);
+
   return (
     <Touchable onPress={pressAndTrack} {...props} testID={testID}>
       <Flex
