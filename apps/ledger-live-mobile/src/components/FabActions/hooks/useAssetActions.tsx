@@ -276,6 +276,7 @@ export default function useAssetActions({
       hasMultipleAccounts,
       readOnlyModeEnabled,
       t,
+      route,
     ],
   );
 

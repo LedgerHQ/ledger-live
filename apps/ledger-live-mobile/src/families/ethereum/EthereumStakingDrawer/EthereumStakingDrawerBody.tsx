@@ -1,7 +1,7 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Linking, ScrollView } from "react-native";
+import { Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
@@ -84,7 +84,7 @@ export function EthereumStakingDrawerBody({
         onProviderPress({ manifest, provider });
       }
     },
-    [],
+    [onProviderPress, singleProviderRedirectMode, providers.length],
   );
 
   return (
