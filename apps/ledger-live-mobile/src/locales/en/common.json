@@ -587,6 +587,12 @@
       "title": "Something went wrong",
       "description": "Please check that your hardware wallet is set up with the recovery phrase or passphrase associated to the selected account."
     },
+    "WebPTXPlayerNetworkFail": {
+      "title": "Network error",
+      "description": "Check your internet connection and try again. Contact Ledger Support if the problem continues.",
+      "contactSupport": "Contact Ledger support",
+      "primaryCTA": "Try again"
+    },
     "UnexpectedBootloader": {
       "title": "Sorry, your device must not be in Bootloader mode",
       "description": "Please restart your device without touching the buttons when the logo appears. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
@@ -1191,7 +1197,8 @@
       "terms": "By tapping “Get Started” you consent and agree to our",
       "termsLink": "Terms of Service",
       "privacyLink": "Privacy Policy",
-      "and": "and"
+      "and": "and",
+      "recoverLogIn": "Log in for Ledger Recover"
     },
     "stepDoYouHaveALedgerDevice": {
       "title": "Do you own a Ledger?",
@@ -6162,20 +6169,6 @@
             "alreadySubscribed": "Already logged in? <LinkAccount>View my subscription</LinkAccount>"
           }
         }
-      }
-    }
-  },
-  "protect": {
-    "login": {
-      "title": "Log In",
-      "desc": "Log in with your Ledger account to manage your Protect subscription.",
-      "email": "Email",
-      "password": "Password",
-      "cta": "Login",
-      "forgotPassword": "Forgot password?",
-      "errors": {
-        "emptyEmail": "Email cannot be empty",
-        "emptyPassword": "Password cannot be empty"
       }
     }
   },
