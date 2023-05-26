@@ -3,7 +3,6 @@ import {
   AccountLike,
   Operation,
   SignedOperation,
-  TransactionCommon,
 } from "@ledgerhq/types-live";
 
 import {
