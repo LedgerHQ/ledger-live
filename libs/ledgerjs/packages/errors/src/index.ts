@@ -52,10 +52,10 @@ export const FirmwareNotRecognized = createCustomErrorClass("FirmwareNotRecogniz
 export const HardResetFail = createCustomErrorClass("HardResetFail");
 export const InvalidXRPTag = createCustomErrorClass("InvalidXRPTag");
 export const InvalidAddress = createCustomErrorClass("InvalidAddress");
-export const InvalidMemoICP = createCustomErrorClass("InvalidMemoICP");
 export const InvalidAddressBecauseDestinationIsAlsoSource = createCustomErrorClass(
   "InvalidAddressBecauseDestinationIsAlsoSource",
 );
+export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalledError");
 export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalledError");
 export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalledError");
 export const UnknownMCU = createCustomErrorClass("UnknownMCU");

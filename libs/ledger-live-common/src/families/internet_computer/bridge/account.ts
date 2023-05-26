@@ -17,7 +17,6 @@ import {
   AmountRequired,
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
-  InvalidMemoICP,
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
@@ -33,6 +32,7 @@ import {
   signICPTransaction,
 } from "./utils/icp";
 import { getPath } from "../utils";
+import { InvalidMemoICP } from "../errors";
 
 const sync = makeSync({ getAccountShape });
 
