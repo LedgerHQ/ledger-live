@@ -1,5 +1,24 @@
 # @ledgerhq/live-cli
 
+## 22.8.2
+
+### Patch Changes
+
+- [#3322](https://github.com/LedgerHQ/ledger-live/pull/3322) [`4da51fc11e`](https://github.com/LedgerHQ/ledger-live/commit/4da51fc11eb3244c74a499167c0de77913ded68b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Implemented remove custom image command for stax and exposed it on CLI.
+
+- Updated dependencies [[`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`186e82c88b`](https://github.com/LedgerHQ/ledger-live/commit/186e82c88b196976f62e776e9d060eab565234f9), [`4da51fc11e`](https://github.com/LedgerHQ/ledger-live/commit/4da51fc11eb3244c74a499167c0de77913ded68b), [`817a8dd811`](https://github.com/LedgerHQ/ledger-live/commit/817a8dd8112ff7c4640852ab4e47ea0436df2ec1), [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`22491091f7`](https://github.com/LedgerHQ/ledger-live/commit/22491091f7b4e06ee6a0cdf964498aa5b08d6eb0), [`6d09361b6b`](https://github.com/LedgerHQ/ledger-live/commit/6d09361b6b8de34c6b202e00c9bac8f4844eb105), [`4da51fc11e`](https://github.com/LedgerHQ/ledger-live/commit/4da51fc11eb3244c74a499167c0de77913ded68b), [`eb3997d762`](https://github.com/LedgerHQ/ledger-live/commit/eb3997d7621c78e2f7f224d5f62a7857aae873e2), [`2b24af44c3`](https://github.com/LedgerHQ/ledger-live/commit/2b24af44c3f77f2bc46f7a2d9ebcf1ae3759ef80), [`034c68fe40`](https://github.com/LedgerHQ/ledger-live/commit/034c68fe40220dbb2c33a549a26bd0d67097eb45), [`6036036c92`](https://github.com/LedgerHQ/ledger-live/commit/6036036c92ff7236468e748a936d50b0feb65c92), [`7cf49e1919`](https://github.com/LedgerHQ/ledger-live/commit/7cf49e1919466836e9025693ed07b18ebf99041a)]:
+  - @ledgerhq/errors@6.12.6
+  - @ledgerhq/live-common@30.0.0
+  - @ledgerhq/cryptoassets@9.6.0
+  - @ledgerhq/coin-framework@0.3.4
+  - @ledgerhq/hw-transport@6.28.4
+  - @ledgerhq/hw-transport-http@6.27.15
+  - @ledgerhq/hw-transport-node-ble@6.27.15
+  - @ledgerhq/hw-transport-node-hid@6.27.15
+  - @ledgerhq/hw-transport-node-speculos@6.27.15
+  - @ledgerhq/hw-app-btc@10.0.4
+  - @ledgerhq/hw-transport-mocker@6.27.15
+
 ## 22.8.2-next.0
 
 ### Patch Changes

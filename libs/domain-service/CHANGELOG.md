@@ -1,5 +1,14 @@
 # @ledgerhq/domain-service
 
+## 1.1.2
+
+### Patch Changes
+
+- Updated dependencies [[`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`817a8dd811`](https://github.com/LedgerHQ/ledger-live/commit/817a8dd8112ff7c4640852ab4e47ea0436df2ec1), [`745fbf2a54`](https://github.com/LedgerHQ/ledger-live/commit/745fbf2a54cdc34aea938d7fbe4c8b198dc36b54), [`7cf49e1919`](https://github.com/LedgerHQ/ledger-live/commit/7cf49e1919466836e9025693ed07b18ebf99041a)]:
+  - @ledgerhq/errors@6.12.6
+  - @ledgerhq/cryptoassets@9.6.0
+  - @ledgerhq/types-live@6.34.1
+
 ## 1.1.2-next.0
 
 ### Patch Changes
