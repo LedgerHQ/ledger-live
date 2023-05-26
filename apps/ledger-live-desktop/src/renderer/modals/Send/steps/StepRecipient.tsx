@@ -37,10 +37,7 @@ const StepRecipient = ({
   if (!status || !account) return null;
   const mainAccount = getMainAccount(account, parentAccount);
   // for ethereum family, check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
-  const stuckAccountAndOperation = getStuckAccountAndOperation(
-    account,
-    parentAccount,
-  );
+  const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
 
   return (
     <Box flow={4}>

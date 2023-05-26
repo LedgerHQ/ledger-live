@@ -60,22 +60,18 @@ const StepMethod = ({
     if (!disableSpeedup) {
       setEditType("speedup");
     }
-  }, [haveFundToSpeedup, isOldestEditableOperation, setEditType]);
+  }, [disableSpeedup, setEditType]);
   const handleCancelClick = useCallback(() => {
     if (!disableCancel) {
       setEditType("cancel");
     }
-  }, [haveFundToCancel, setEditType]);
+  }, [disableCancel, setEditType]);
   const handleLearnMoreClick = useCallback(() => {
     openURL(urls.editEthTx.learnMore);
   }, []);
   return (
     <Box flow={4}>
-      <EditTypeWrapper
-        key={0}
-        selected={isSpeedup}
-        onClick={handleSpeedupClick}
-      >
+      <EditTypeWrapper key={0} selected={isSpeedup} onClick={handleSpeedupClick}>
         <Flex flexDirection="row" justifyContent="left" alignItems="center">
           <CheckBox isChecked={isSpeedup} disabled={disableSpeedup} />
           <Box>
@@ -98,11 +94,7 @@ const StepMethod = ({
           </Box>
         </Flex>
       </EditTypeWrapper>
-      <EditTypeWrapper
-        key={1}
-        selected={isCancel}
-        onClick={handleCancelClick}
-      >
+      <EditTypeWrapper key={1} selected={isCancel} onClick={handleCancelClick}>
         <Flex flexDirection="row" justifyContent="left" alignItems="center">
           <CheckBox isChecked={editType === "cancel"} disabled={disableCancel} />
           <Box>
@@ -167,7 +159,7 @@ export class StepMethodFooter extends PureComponent<StepProps> {
     console.log("nonce", transactionRaw.nonce);
     console.log("amount", transactionRaw.amount.toString());
     if (editType === "speedup") {
-      updateTransaction((tx) =>
+      updateTransaction(tx =>
         bridge.updateTransaction(tx, {
           amount: new BigNumber(transactionRaw.amount),
           data: transactionRaw.data ? Buffer.from(transactionRaw.data, "hex") : undefined,
@@ -183,7 +175,7 @@ export class StepMethodFooter extends PureComponent<StepProps> {
       );
     } else {
       const mainAccount = getMainAccount(account, parentAccount);
-      updateTransaction((tx) =>
+      updateTransaction(tx =>
         bridge.updateTransaction(tx, {
           amount: new BigNumber(0),
           allowZeroAmount: true,
@@ -231,12 +223,7 @@ export class StepMethodFooter extends PureComponent<StepProps> {
   }
 
   render() {
-    const {
-      t,
-      haveFundToSpeedup,
-      haveFundToCancel,
-      isOldestEditableOperation,
-    } = this.props;
+    const { t, haveFundToSpeedup, haveFundToCancel, isOldestEditableOperation } = this.props;
 
     return (
       <>
@@ -246,7 +233,10 @@ export class StepMethodFooter extends PureComponent<StepProps> {
         <Button
           id={"send-recipient-continue-button"}
           primary
-          disabled={this.state.transactionHasBeenValidated || ((!haveFundToSpeedup || !isOldestEditableOperation) && !haveFundToCancel)} // continue button is disable if both "speedup" and "cancel" are not possible
+          disabled={
+            this.state.transactionHasBeenValidated ||
+            ((!haveFundToSpeedup || !isOldestEditableOperation) && !haveFundToCancel)
+          } // continue button is disable if both "speedup" and "cancel" are not possible
           onClick={this.handleContinueClick}
         >
           {t("common.continue")}

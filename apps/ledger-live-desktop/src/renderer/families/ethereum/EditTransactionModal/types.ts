@@ -5,7 +5,6 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 
-
 export type StepId = "method" | "fees" | "summary" | "device" | "confirmation";
 
 export type StepProps = {

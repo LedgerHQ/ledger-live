@@ -109,7 +109,12 @@ const FeesField = ({
   );
 
   // give user an error if maxFeePerGas is lower than pending transaction maxFeePerGas + 10% of pending transaction maxPriorityFeePerGas for edit eth transaction feature
-  if (!status.errors.maxFee && transactionRaw && transactionRaw.maxPriorityFeePerGas && transactionRaw.maxFeePerGas) {
+  if (
+    !status.errors.maxFee &&
+    transactionRaw &&
+    transactionRaw.maxPriorityFeePerGas &&
+    transactionRaw.maxFeePerGas
+  ) {
     const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
     const lowerLimitMaxFeePerGas = new BigNumber(transactionRaw.maxFeePerGas).plus(
       new BigNumber(transactionRaw.maxPriorityFeePerGas).times(maxPriorityFeeGap),

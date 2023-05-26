@@ -114,14 +114,24 @@ const FeesField = ({
       1 + maxPriorityFeeGap,
     );
     const newMaxPriorityFeePerGasinGwei = formatCurrencyUnit(unit, newMaxPriorityFeePerGas);
-    if ((new BigNumber(newMaxPriorityFeePerGasinGwei)).isGreaterThan(new BigNumber(lowPriorityFeeValue))) {
+    if (
+      new BigNumber(newMaxPriorityFeePerGasinGwei).isGreaterThan(new BigNumber(lowPriorityFeeValue))
+    ) {
       lowPriorityFeeValue = newMaxPriorityFeePerGasinGwei;
     }
-    if ((new BigNumber(newMaxPriorityFeePerGasinGwei)).isGreaterThan(new BigNumber(highPriorityFeeValue))) {
+    if (
+      new BigNumber(newMaxPriorityFeePerGasinGwei).isGreaterThan(
+        new BigNumber(highPriorityFeeValue),
+      )
+    ) {
       highPriorityFeeValue = newMaxPriorityFeePerGasinGwei;
     }
     // give user an error if maxPriorityFeePerGas is lower than pending transaction maxPriorityFeePerGas + 10% for edit eth transaction feature
-    if (!status.errors.maxPriorityFee && transaction.maxPriorityFeePerGas && transaction.maxPriorityFeePerGas.isLessThan(newMaxPriorityFeePerGas)) {
+    if (
+      !status.errors.maxPriorityFee &&
+      transaction.maxPriorityFeePerGas &&
+      transaction.maxPriorityFeePerGas.isLessThan(newMaxPriorityFeePerGas)
+    ) {
       status.errors.maxPriorityFee = new PriorityFeeTooLow();
     }
   }

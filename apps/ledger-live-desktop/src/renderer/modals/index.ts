@@ -2,7 +2,6 @@ import generated from "../generated/modals";
 import MODAL_WEBSOCKET_BRIDGE from "./WebSocketBridge";
 import MODAL_EXPORT_OPERATIONS from "./ExportOperations";
 import MODAL_PASSWORD from "./PasswordModal";
-import MODAL_EDIT_TRANSACTION from "../families/ethereum/EditTransactionModal";
 import MODAL_DISABLE_PASSWORD from "./DisablePasswordModal";
 import MODAL_ADD_ACCOUNTS from "./AddAccounts";
 import MODAL_RECEIVE from "./Receive";
@@ -38,7 +37,6 @@ const modals: Modals = {
   MODAL_DISABLE_PASSWORD,
   MODAL_ADD_ACCOUNTS,
   MODAL_RECEIVE,
-  MODAL_EDIT_TRANSACTION,
   MODAL_SEND,
   MODAL_SIGN_MESSAGE,
   MODAL_SIGN_TRANSACTION,

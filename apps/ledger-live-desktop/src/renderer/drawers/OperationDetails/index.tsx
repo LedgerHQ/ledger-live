@@ -249,13 +249,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
   const editable = editEthTx?.enabled && isEditableOperation(mainAccount, operation);
   const dispatch = useDispatch();
   const handleOpenEditModal = useCallback(
-    (
-      account,
-      parentAccount,
-      transactionRaw,
-      transactionHash,
-      isNftOperation,
-    ) => {
+    (account, parentAccount, transactionRaw, transactionHash, isNftOperation) => {
       setDrawer(undefined);
       dispatch(
         openModal("MODAL_EDIT_TRANSACTION", {

@@ -8,7 +8,7 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { Account, AccountLike, Operation, TransactionCommonRaw } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
@@ -158,9 +158,7 @@ const Body = ({
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
 
-  const currency = getAccountCurrency(account);
-
-  const currencyName = currency.name;
+  const currencyName = getAccountCurrency(account).name;
 
   const handleCloseModal = useCallback(() => {
     closeModal("MODAL_EDIT_TRANSACTION");

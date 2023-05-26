@@ -19,10 +19,7 @@ const EditStuckTransactionPanelBodyHeader = (props: Props) => {
   }
   invariant(account, "account required");
   // for ethereum family, check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
-  const stuckAccountAndOperation = getStuckAccountAndOperation(
-    account,
-    parentAccount,
-  );
+  const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
   return (
     <Box>
       {stuckAccountAndOperation ? (

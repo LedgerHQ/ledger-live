@@ -106,6 +106,7 @@ export class StepFeesFooter extends PureComponent<StepProps> {
   state = {
     transactionHasBeenValidated: false,
   };
+
   onNext = async () => {
     const { transitionTo } = this.props;
     transitionTo("summary");
