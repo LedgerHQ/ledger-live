@@ -1,5 +1,5 @@
 import { ContractKit, newKit } from "@celo/contractkit";
-import { makeLRUCache } from "@ledgerhq/live-network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { getEnv } from "../../../env";
 import { CeloVote } from "../types";
 

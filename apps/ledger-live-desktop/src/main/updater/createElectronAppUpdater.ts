@@ -2,7 +2,7 @@ import crypto from "crypto";
 import path from "path";
 import fs from "fs";
 import { UpdateFetchFileFail } from "@ledgerhq/errors";
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import { fsReadFile } from "~/helpers/fs";
 import createAppUpdater from "./createAppUpdater";
 import pubKey from "./ledger-pubkey";

@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   listCryptoCurrencies,

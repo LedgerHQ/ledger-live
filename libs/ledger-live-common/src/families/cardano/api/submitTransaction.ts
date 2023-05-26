@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   CARDANO_API_ENDPOINT,

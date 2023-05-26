@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import { getEnv } from "../../../../env";
 import {
   BalanceResponse,

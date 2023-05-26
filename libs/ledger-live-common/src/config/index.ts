@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { makeLRUCache } from "@ledgerhq/live-network";
-import network from "@ledgerhq/live-network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import defaultConfig from "./defaultConfig";
 import { CurrencyConfigCommon } from "./types";

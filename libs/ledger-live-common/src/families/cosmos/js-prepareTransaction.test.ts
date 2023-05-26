@@ -1,10 +1,10 @@
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import * as jsPrepareTransaction from "./js-prepareTransaction";
 import { calculateFees, getEstimatedFees } from "./js-prepareTransaction";
 import { CosmosAccount, Transaction } from "./types";
-jest.mock("@ledgerhq/live-network");
+jest.mock("@ledgerhq/live-network/network");
 
 const account = {
   id: "accountId",

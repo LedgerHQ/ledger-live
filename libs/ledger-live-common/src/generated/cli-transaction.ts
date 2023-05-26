@@ -13,8 +13,8 @@ import solana from "../families/solana/cli-transaction";
 import stellar from "../families/stellar/cli-transaction";
 import tezos from "../families/tezos/cli-transaction";
 import tron from "../families/tron/cli-transaction";
-import { makeLRUCache } from "@ledgerhq/live-network";
-import network from "@ledgerhq/live-network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network/network";
 import polkadotCreateCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
 import algorandCreateCliTools from "@ledgerhq/coin-algorand/cli-transaction";
 

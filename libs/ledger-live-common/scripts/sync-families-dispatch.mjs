@@ -79,12 +79,12 @@ function genCoinFrameworkTarget(targetFile) {
 
   // In case of cli-transaction, add special import
   if (targetFile === "cli-transaction.ts") {
-    imports += `import { makeLRUCache } from "@ledgerhq/live-network";\n`;
-    imports += `import network from "@ledgerhq/live-network";\n`;
+    imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
+    imports += `import network from "@ledgerhq/live-network/network";\n`;
   }
   if (targetFile === "bridge/js.ts") {
-    imports += `import { makeLRUCache } from "@ledgerhq/live-network";\n`;
-    imports += `import network from "@ledgerhq/live-network";\n`;
+    imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
+    imports += `import network from "@ledgerhq/live-network/network";\n`;
     imports += `import { withDevice } from "../../hw/deviceAccess";\n`;
   }
 

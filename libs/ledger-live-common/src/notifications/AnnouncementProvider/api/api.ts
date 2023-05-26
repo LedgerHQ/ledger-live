@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import { getEnv } from "../../../env";
 import type { AnnouncementsApi, RawAnnouncement } from "../types";
 

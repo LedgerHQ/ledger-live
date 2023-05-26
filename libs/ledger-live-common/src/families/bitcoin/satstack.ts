@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { Observable, from, interval } from "rxjs";
 import { filter, share, switchMap } from "rxjs/operators";

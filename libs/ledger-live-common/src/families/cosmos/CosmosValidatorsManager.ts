@@ -1,5 +1,5 @@
-import { makeLRUCache } from "@ledgerhq/live-network";
-import network from "@ledgerhq/live-network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { EnvName, EnvValue } from "../../env";

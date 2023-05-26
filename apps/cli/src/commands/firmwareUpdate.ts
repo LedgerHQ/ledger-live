@@ -7,7 +7,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { UnknownMCU } from "@ledgerhq/errors";
 import ManagerAPI from "@ledgerhq/live-common/manager/api";
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { getProviderId } from "@ledgerhq/live-common/manager/provider";
 import manager from "@ledgerhq/live-common/manager/index";

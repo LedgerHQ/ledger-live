@@ -1,4 +1,4 @@
-import { makeLRUCache } from "@ledgerhq/live-network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import { cached, Config, getChainAPI, queued } from "../api";
 import { minutes } from "../api/cached";

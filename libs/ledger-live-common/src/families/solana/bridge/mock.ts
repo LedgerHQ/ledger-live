@@ -1,4 +1,4 @@
-import { makeLRUCache } from "@ledgerhq/live-network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { Message } from "@solana/web3.js";
 import {
   flow,

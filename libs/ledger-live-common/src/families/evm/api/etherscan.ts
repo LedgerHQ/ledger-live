@@ -2,7 +2,7 @@ import { delay } from "@ledgerhq/live-promise";
 import { Operation } from "@ledgerhq/types-live";
 import axios, { AxiosRequestConfig } from "axios";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { makeLRUCache } from "@ledgerhq/live-network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { EtherscanERC20Event, EtherscanOperation } from "../types";
 import { EtherscanAPIError } from "../errors";
 import {

@@ -2,7 +2,7 @@ import {
   errorInterceptor,
   requestInterceptor,
   responseInterceptor,
-} from "@ledgerhq/live-network";
+} from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AxiosRequestConfig } from "axios";
 import axios, { AxiosInstance } from "axios";

@@ -4,7 +4,7 @@ import URL from "url";
 import { ParsedUrlQueryInput } from "node:querystring";
 
 jest.mock(
-  "@ledgerhq/live-network",
+  "@ledgerhq/live-network/network",
   () => () =>
     Promise.resolve({
       data: {

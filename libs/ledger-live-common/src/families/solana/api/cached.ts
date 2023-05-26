@@ -1,4 +1,4 @@
-import { makeLRUCache } from "@ledgerhq/live-network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import hash from "object-hash";
 import { ChainAPI } from "./chain";
 

@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import { Cluster } from "@solana/web3.js";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { compact } from "lodash/fp";

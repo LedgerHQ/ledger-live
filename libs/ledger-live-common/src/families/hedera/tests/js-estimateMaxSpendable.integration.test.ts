@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";

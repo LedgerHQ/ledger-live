@@ -1,5 +1,5 @@
 // @flow
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import URL from "url";
 import { getEnv } from "../../../env";
 

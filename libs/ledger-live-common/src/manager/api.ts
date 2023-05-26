@@ -11,8 +11,8 @@ import {
   UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
 import Transport from "@ledgerhq/hw-transport";
-import { makeLRUCache } from "@ledgerhq/live-network";
-import network from "@ledgerhq/live-network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import {
   App,

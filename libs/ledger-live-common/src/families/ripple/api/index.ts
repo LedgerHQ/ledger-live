@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
 import { getEnv } from "../../../env";

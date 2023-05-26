@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network";
+import network from "@ledgerhq/live-network/network";
 import qs from "qs";
 import { getEnv } from "../../../../env";
 import { FilterParams } from "../../../filters";
