@@ -325,6 +325,10 @@
       "description": "If this image wasn't the right fit, you can try again with another image.",
       "primaryCTA": "Upload another picture"
     },
+    "ImageDoesNotExistOnDevice": {
+      "title": "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description": "The customized lock screen picture was previously removed."
+    },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
     },
