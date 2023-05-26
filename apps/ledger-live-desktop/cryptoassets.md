@@ -134,7 +134,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (11277)
+## Tokens (11291)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin | countervalues disabled | algorand/asa/163650 |
@@ -8016,9 +8016,22 @@
 | Ethereum Ropsten | WETH | 0xc778417E063141139Fce010982780140Aa0cD5Ab | Uniswap Wrapped Ether | delisted, countervalues disabled | ethereum_ropsten/erc20/uniswap_weth |
 | Ethereum Ropsten | VLC | 0xF62ef17b7c919b84A9D9f33609bb2cf4405a5682 | Vault Coin | countervalues disabled | ethereum_ropsten/erc20/vault_coin |
 | Ethereum Ropsten | HASKELL | 0x63652B9Dd39565332B22BB815104c8210934Ae45 | haskell | delisted, countervalues disabled | ethereum_ropsten/erc20/haskell |
+| MultiversX | AERO | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Aerovek |  | elrond/esdt/4145524f2d343538626266 |
+| MultiversX | ASH | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | AshSwap |  | elrond/esdt/4153482d613634326431 |
+| MultiversX | BHAT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | BHNetwork |  | elrond/esdt/424841542d633166646533 |
+| MultiversX | CRU | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | CrustNetwork |  | elrond/esdt/4352552d613566346161 |
+| MultiversX | ISET | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | IsengardToken |  | elrond/esdt/495345542d383465353565 |
+| MultiversX | ITHEUM | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Itheum |  | elrond/esdt/49544845554d2d646636663236 |
 | MultiversX | MEX | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | MEX |  | elrond/esdt/4d45582d343535633537 |
+| MultiversX | QWT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | QoWatt |  | elrond/esdt/5157542d343661633031 |
+| MultiversX | SUPER | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | SUPER |  | elrond/esdt/53555045522d353037616136 |
+| MultiversX | SFIT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Sense4FIT |  | elrond/esdt/534649542d616562633930 |
 | MultiversX | UTK | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Utrust |  | elrond/esdt/55544B2D326638306539 |
+| MultiversX | WAM | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WAM |  | elrond/esdt/57414d2d353130653432 |
+| MultiversX | BUSD | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WrappedBUSD |  | elrond/esdt/425553442d343062353765 |
 | MultiversX | USDC | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WrappedUSDC |  | elrond/esdt/555344432d633736663166 |
+| MultiversX | USDT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WrappedUSDT |  | elrond/esdt/555344542d663863303863 |
+| MultiversX | ZPAY | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | ZoidPay |  | elrond/esdt/5a5041592d323437383735 |
 | MultiversX | RIDE | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | holoride |  | elrond/esdt/524944452d376431386539 |
 | Polygon | DEL | 0xec6432B90e7fD4d9f872cc5C781f05B617DB861E | (DEL) |  | polygon/erc20/(del) |
 | Polygon | COMP | 0x8505b9d2254A7Ae468c0E9dd10Ccea3A837aef5c | (PoS) Compound |  | polygon/erc20/(pos)_compound |
@@ -8552,6 +8565,7 @@
 | Polygon | WFIL | 0xEde1B77C0Ccc45BFa949636757cd2cA7eF30137F | Wrapped Filecoin (PoS) |  | polygon/erc20/wrapped_filecoin_(pos) |
 | Polygon | WIXS | 0x1BA17C639BdaeCd8DC4AAc37df062d17ee43a1b8 | Wrapped Ixs Token |  | polygon/erc20/wrapped_ixs_token |
 | Polygon | WMATIC | 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270 | Wrapped Matic |  | polygon/erc20/wrapped_matic |
+| Polygon | SOL | 0xd93f7E271cB87c23AaA73edC008A79646d1F9912 | Wrapped SOL (Wormhole) |  | polygon/erc20/wrapped_sol_(wormhole) |
 | Polygon | UST | 0x692597b009d13C4049a947CAB2239b7d6517875F | Wrapped UST Token |  | polygon/erc20/wrapped_ust_token |
 | Polygon | MXEN | 0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e | XEN Crypto |  | polygon/erc20/xen_crypto |
 | Polygon | XYO | 0xd2507e7b5794179380673870d88B22F94da6abe0 | XY Oracle |  | polygon/erc20/xy_oracle |

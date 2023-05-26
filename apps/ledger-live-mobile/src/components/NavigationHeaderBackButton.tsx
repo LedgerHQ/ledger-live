@@ -24,7 +24,10 @@ export const NavigationHeaderBackButton: React.FC<Props> = React.memo(
   ({ onPress }) => {
     const navigation = useNavigation();
     return (
-      <Touchable onPress={() => (onPress ? onPress() : navigation.goBack())}>
+      <Touchable
+        testID="navigation-header-back-button"
+        onPress={() => (onPress ? onPress() : navigation.goBack())}
+      >
         <NavigationHeaderBackImage />
       </Touchable>
     );

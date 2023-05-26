@@ -43,6 +43,7 @@ type ManagerState = State & {
 export type ManagerRequest =
   | {
       autoQuitAppDisabled?: boolean;
+      cancelExecution?: boolean;
     }
   | null
   | undefined;
@@ -183,6 +184,8 @@ export const createAction = (
     } | null>(null);
 
     useEffect(() => {
+      if (request?.cancelExecution) return;
+
       const impl = getImplementation(currentMode)<
         ConnectManagerEvent,
         ManagerRequest
