@@ -6,7 +6,7 @@ import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "styled-components/native";
-import { TrackScreen, track } from "../../../analytics";
+import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import OnboardingView from "../OnboardingView";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
@@ -51,21 +51,12 @@ const OnboardingStepUseCaseSelection = () => {
     navigation.navigate(ScreenName.OnboardingModalSetupNewDevice, {
       deviceModelId,
     });
-    track("button_clicked", {
-      button: "Setup as new",
-      page: "Onboarding setup new options",
-    });
   }, [deviceModelId, navigation]);
 
   const onPressRecoveryPhrase = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingRecoveryPhrase, {
       deviceModelId,
       showSeedWarning: true,
-    });
-
-    track("button_clicked", {
-      button: "Restore from recovery phrase",
-      page: "Onboarding setup new options",
     });
   }, [navigation, deviceModelId]);
 
@@ -79,18 +70,11 @@ const OnboardingStepUseCaseSelection = () => {
     } else {
       setIsProtectDrawerOpen(true);
     }
-
-    track("button_clicked", {
-      button: "Restore with ledger recover",
-      page: "Onboarding setup new options",
-      timestamp: Date.now(),
-    });
   }, [deviceModelId, navigation]);
 
   return (
     <OnboardingView hasBackButton>
-      <TrackScreen category="Onboarding" name={""} />
-      <TrackScreen category="Onboarding" name="SelectDevice" />
+      <TrackScreen category="Onboarding" name="Onboarding setup new options" />
       <Text variant="h4" fontWeight="semiBold" mb={7}>
         {t("onboarding.stepUseCase.firstUse.section", {
           model: getProductName(deviceModelId),
@@ -99,31 +83,31 @@ const OnboardingStepUseCaseSelection = () => {
 
       <SelectionCard
         title={t("onboarding.stepUseCase.firstUse.title")}
-        subTitle={t("onboarding.stepUseCase.firstUse.title")}
-        event="banner_clicked"
+        subTitle={t("onboarding.stepUseCase.firstUse.subTitle")}
+        event="button_clicked"
         eventProperties={{
-          banner: "Explore LL",
+          button: "Setup as new",
+          page: "Onboarding setup new options",
         }}
-        testID={`Onboarding PostWelcome - Selection|ExploreLedger`}
+        testID={`Onboarding UseCase - Selection|New Wallet`}
         onPress={onPressNew}
         Icon={<Icons.PlusMedium color={colors.primary.c80} size={14} />}
       />
 
-      <Text variant="paragraph" fontWeight="medium" my={6} color={colors.opacityDefault.c70}>
-        {t("onboarding.stepUseCase.devicePairing.title")}
-      </Text>
-
-      <SelectionCard
-        title={t("onboarding.stepUseCase.restoreDevice.title")}
-        subTitle={t("onboarding.stepUseCase.restoreDevice.subTitle")}
-        event="banner_clicked"
-        eventProperties={{
-          banner: "Explore LL",
-        }}
-        testID={`Onboarding PostWelcome - Selection|ExploreLedger`}
-        onPress={onPressRecoveryPhrase}
-        Icon={<Icons.ListMedium color={colors.primary.c80} size={14} />}
-      />
+      <Box mt={6}>
+        <SelectionCard
+          title={t("onboarding.stepUseCase.restoreDevice.title")}
+          subTitle={t("onboarding.stepUseCase.restoreDevice.subTitle")}
+          event="banner_clicked"
+          eventProperties={{
+            button: "Restore from recovery phrase",
+            page: "Onboarding setup new options",
+          }}
+          testID={`Onboarding UseCase - Selection|Recovery phrase`}
+          onPress={onPressRecoveryPhrase}
+          Icon={<Icons.ListMedium color={colors.primary.c80} size={14} />}
+        />
+      </Box>
 
       {servicesConfig?.enabled && (
         <Box mt={6}>
@@ -132,16 +116,15 @@ const OnboardingStepUseCaseSelection = () => {
             subTitle={t("onboarding.stepUseCase.protect.subTitle")}
             event="banner_clicked"
             eventProperties={{
-              banner: "Explore LL",
+              button: "Restore with ledger recover",
+              page: "Onboarding setup new options",
             }}
-            testID={`Onboarding PostWelcome - Selection|ExploreLedger`}
+            testID={`Onboarding UseCase - Selection|Ledger Recover`}
             onPress={onPressProtect}
             Icon={<Icons.ShieldMedium color={colors.primary.c80} size={14} />}
           />
         </Box>
       )}
-
-      <TrackScreen category="Onboarding" name="UseCase" />
 
       <QueuedDrawer isRequestingToBeOpened={isProtectDrawerOpen} onClose={onCloseProtectDrawer}>
         <Flex>

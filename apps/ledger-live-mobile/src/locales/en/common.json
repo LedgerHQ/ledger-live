@@ -1205,24 +1205,21 @@
       "recoverLogIn": "Log in for Ledger Recover"
     },
     "postWelcomeStep": {
-      "title": "Let's get you started",
-      "subtitle_yes": "Set up your Ledger, or take a look around the app first.",
-      "subtitle_no": "You can choose to take a look around the app first or buy a Nano X device",
-      "noLedgerLink": "I don’t have a Ledger and I would like to buy one",
+      "title": "Let’s get started",
       "noLedgerYet": "I don’t have a Ledger yet",
       "noLedgerYetModal": {
-        "title": "Benefit driven statement of having a Ledger",
-        "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+        "title": "Millions of users. 0 hacks.",
+        "desc": "Experience peace of mind with a Ledger securing your digital assets.",
         "buy": "Buy a Ledger",
-        "explore": "Explore the app"
+        "explore": "Explore this app"
       },
       "setupLedger": {
-        "title": "Set up a new Ledger",
-        "subtitle": "Choose this if you are setting up your Ledger for the first time"
+        "title": "Set up your Ledger",
+        "subtitle": "Select if your Ledger is new or was reset."
       },
       "accessWallet": {
-        "title": "Access an existing wallet",
-        "subtitle": "Connect your Ledger or sync your assets from Ledger Live desktop."
+        "title": "Access your wallet",
+        "subtitle": "Select if your Ledger is already set up."
       },
       "buyNano": {
         "title": "Buy a Ledger Nano X",
@@ -1239,10 +1236,9 @@
     },
     "welcomeBackStep": {
       "title": "Welcome back",
-      "subtitle": "How would you like to access your wallet?",
+      "subtitle": "Select how you’d like to access your wallet:",
       "connect": "Connect your Ledger",
-      "sync": "Sync with Ledger Live desktop",
-      "recover": "Login to Ledger Recover"
+      "sync": "Sync with Ledger Live desktop"
     },
     "discoverLive": {
       "exploreWithoutADevice": "Explore without a device",
@@ -1288,9 +1284,9 @@
       "title": "Hello!",
       "or": "Or",
       "firstUse": {
-        "section": "Set up your {{model}}",
-        "title": "Set up as new",
-        "subTitle": "Set up a new Nano",
+        "section": "Set up your Ledger {{model}}",
+        "title": "Create a new wallet",
+        "subTitle": "This generates a new Secret Recovery Phrase.",
         "desc": "Let’s start and set up your device!",
         "label": "30 mins"
       },
@@ -1313,14 +1309,14 @@
       },
       "restoreDevice": {
         "label": "Restore device",
-        "title": "Restore from your Secret  Recovery Phrase",
-        "subTitle": "Connect your Ledger or sync your assets from Ledger Live desktop.",
+        "title": "Restore with your Secret  Recovery Phrase",
+        "subTitle": "You will need access to your Secret Recovery Phrase.",
         "desc": "Use an existing recovery phrase to restore your private keys on a new Nano!"
       },
       "recovery": "Already have a recovery phrase?",
       "protect": {
-        "title": "Restore with Ledger Recover",
-        "subTitle":"Connect your Ledger or sync your assets from Ledger Live desktop.",
+        "title": "Restore using Ledger Recover",
+        "subTitle":"You need to have a Ledger Recover subscription.",
         "drawer": {
           "title": "Use Ledger Nano X",
           "desc": "Ledger Recover soft launch is exclusively for Ledger Nano X",
@@ -1878,13 +1874,13 @@
     "title": "Setup {{deviceName}}",
     "estimatedTimeFormat": "{{estimatedTime}} min",
     "deviceSelection": {
-      "title": "Which Ledger do you own?",
+      "title": "Select the Ledger you want  to set up:",
       "brand": "Ledger",
       "setupTime": "{{time}} mins",
       "notCompatible": "No iPhone compatibility",
       "modal":{
-        "title": "Nano S and Nano S Plus not supported on iOS",
-        "desc": "iOS does not permit cable connection of devices. Use your Nano S or Nano S Plus with Ledger Live on your computer."
+        "title": "Ledger Nano S and Ledger Nano S Plus not supported on iOS devices",
+        "desc": "Use your Ledger Nano S or Ledger Nano S Plus with Ledger Live on your computer."
       }
     },
     "scanning": {

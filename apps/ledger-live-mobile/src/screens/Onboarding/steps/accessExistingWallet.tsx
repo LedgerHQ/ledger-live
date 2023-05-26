@@ -35,6 +35,7 @@ const Card = ({ title, event, eventProperties, testID, onPress, Icon }: CardProp
     });
     onPress?.();
   }, [event, eventProperties, onPress]);
+
   return (
     <Touchable onPress={pressAndTrack} {...props} testID={testID}>
       <Flex
