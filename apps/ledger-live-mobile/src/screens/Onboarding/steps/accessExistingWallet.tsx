@@ -78,10 +78,6 @@ function AccessExistingWallet() {
     navigation.navigate(ScreenName.OnboardingImportAccounts);
   }, [navigation]);
 
-  const recover = useCallback(() => {
-    console.log("recover");
-  }, []);
-
   return (
     <ScrollListContainer flex={1} mx={6} mt={3}>
       <TrackScreen category="Onboarding" name="SelectDevice" />
@@ -117,16 +113,6 @@ function AccessExistingWallet() {
           Icon={<Icons.QrCodeMedium color="primary.c80" size={30} />}
         />
       </Box>
-      <Card
-        title={t("onboarding.welcomeBackStep.recover")}
-        event={"button_clicked"}
-        eventProperties={{
-          button: "Login to Ledger recover",
-        }}
-        testID={"Existing Wallet | Recover"}
-        onPress={recover}
-        Icon={<Icons.ShieldMedium color="primary.c80" size={30} />}
-      />
     </ScrollListContainer>
   );
 }
