@@ -113,6 +113,7 @@ export type BaseNavigatorStackParamList = {
     mode?: string;
     currency?: string;
     account?: string;
+    accountId?: string;
     defaultAccountId?: string;
     defaultCurrencyId?: string;
     defaultTicker?: string;
@@ -166,6 +167,13 @@ export type BaseNavigatorStackParamList = {
     parentId?: string;
     currencyId?: string;
     currencyType?: "CryptoCurrency" | "TokenCurrency";
+    drawer?: {
+      id: string;
+      props: {
+        singleProviderRedirectMode: boolean;
+        accountId: string;
+      };
+    };
   };
   [ScreenName.ScanRecipient]: {
     accountId?: string;
@@ -213,7 +221,7 @@ export type BaseNavigatorStackParamList = {
       id: string;
       props: {
         singleProviderRedirectMode: boolean;
-        account: Account;
+        accountId: string;
       };
     };
   };

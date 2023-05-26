@@ -1,17 +1,13 @@
 import React, { useCallback, useEffect } from "react";
-import { Flex, Icon, Text, Link, Icons, Tag } from "@ledgerhq/native-ui";
-import { Linking, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/core";
+import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
+
+import { Flex, Icon, Text, Link, Icons, Tag } from "@ledgerhq/native-ui";
 import { useManifest } from "@ledgerhq/live-common/platform/hooks/useManifest";
-import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 import { ListProvider } from "./types";
-import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import { ScreenName } from "../../../const";
 import Kiln from "../../../icons/Kiln";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 type Props = {
   provider: ListProvider;

@@ -5,7 +5,6 @@ import { Linking, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
-import { Account } from "@ledgerhq/types-live";
 
 import { ListProvider } from "./types";
 import { EthereumStakingDrawerProvider } from "./EthereumStakingDrawerProvider";
@@ -15,13 +14,13 @@ import { ScreenName } from "../../../const";
 type Props = {
   providers: ListProvider[];
   singleProviderRedirectMode: boolean;
-  account: Account;
+  accountId: string;
 };
 
 export function EthereumStakingDrawerBody({
   providers,
   singleProviderRedirectMode,
-  account,
+  accountId,
 }: Props) {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
@@ -50,12 +49,12 @@ export function EthereumStakingDrawerBody({
         navigate(ScreenName.PlatformApp, {
           platform: manifest.id,
           name: manifest.name,
-          account: account.id,
+          accountId,
           ...(customDappURL ? { customDappURL } : {}),
         });
       }
     },
-    [track, page, navigate, account],
+    [track, page, navigate, accountId],
   );
 
   const onSupportLinkPress = useCallback(

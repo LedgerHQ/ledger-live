@@ -5,7 +5,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
@@ -42,6 +42,7 @@ import useAccountActions from "./hooks/useAccountActions";
 import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { EthereumStakingDrawer } from "../../families/ethereum/EthereumStakingDrawer";
 
 type Props =
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
@@ -71,6 +72,7 @@ const AccountScreenInner = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const route = useRoute();
   const navigation =
     useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
   const dispatch = useDispatch();
@@ -207,6 +209,7 @@ const AccountScreenInner = ({
           countervalueAvailable={countervalueAvailable}
           parentAccount={parentAccount}
         />
+        <EthereumStakingDrawer drawer={route?.params?.drawer} />
       </TabBarSafeAreaView>
     </ReactNavigationPerformanceView>
   );

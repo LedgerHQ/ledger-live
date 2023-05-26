@@ -3,8 +3,6 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 
-import { Account } from "@ledgerhq/types-live";
-
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import { EthStakingProviders } from "./types";
 import { EthereumStakingDrawerBody } from "./EthereumStakingDrawerBody";
@@ -14,7 +12,7 @@ type Props = {
   drawer?: {
     id: string;
     props: {
-      account: Account;
+      accountId: string;
       singleProviderRedirectMode?: boolean;
     };
   };
@@ -51,7 +49,7 @@ export function EthereumStakingDrawer({ drawer }: Props) {
           singleProviderRedirectMode={
             drawer.props.singleProviderRedirectMode ?? true
           }
-          account={drawer.props.account}
+          accountId={drawer.props.accountId}
           providers={ethStakingProviders.params!.listProvider}
         />
         <Button onPress={onClose} type="main">

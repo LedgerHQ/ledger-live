@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const";
 
 export type MarketNavigatorStackParamList = {
@@ -10,7 +9,7 @@ export type MarketNavigatorStackParamList = {
       id: string;
       props: {
         singleProviderRedirectMode: boolean;
-        account: Account;
+        accountId: string;
       };
     };
   };

@@ -30,11 +30,13 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props) {
     screen: parentRoute.name,
     params: {
       ...(parentRoute.params ?? {}),
+      account,
+      parentAccount,
       drawer: {
         id: "EthStakingDrawer",
         props: {
           singleProviderRedirectMode: true,
-          account,
+          accountId: account.id,
         },
       },
     },

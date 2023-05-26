@@ -73,8 +73,6 @@ function MarketDetail({ navigation, route }: NavigationProps) {
     loc = "en";
   }
 
-  console.log("%cindex.tsx line:76 params", "color: #007acc;", params);
-
   const {
     selectedCoinData: currency,
     selectCurrency,
