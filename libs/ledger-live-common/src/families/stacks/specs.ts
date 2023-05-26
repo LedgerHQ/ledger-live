@@ -11,11 +11,11 @@ import { acceptTransaction } from "./speculos-deviceActions";
 
 const MIN_SAFE = new BigNumber(10000);
 const stacksSpecs: AppSpec<Transaction> = {
-  name: "STX",
+  name: "Stacks",
   currency: getCryptoCurrencyById("stacks"),
   appQuery: {
-    model: DeviceModelId.nanoX,
-    appName: "STX",
+    model: DeviceModelId.nanoSP,
+    appName: "Stacks",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 25 * 60 * 1000,
@@ -75,7 +75,7 @@ const stacksSpecs: AppSpec<Transaction> = {
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
         botTest("account balance is 0", () =>
-            expect(account.balance.toFixed()).toBe("0")
+          expect(account.balance.toFixed()).toBe("0")
         );
       },
     },
