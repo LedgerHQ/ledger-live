@@ -18,16 +18,10 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { LendingEnableFlowParamsList } from "../../components/RootNavigator/types/LendingEnableFlowNavigator";
-import { LendingSupplyFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingSupplyFlowNavigator";
-import { LendingWithdrawFlowNavigatorParamList } from "../../components/RootNavigator/types/LendingWithdrawFlowNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<
-    | LendingEnableFlowParamsList
-    | LendingSupplyFlowNavigatorParamList
-    | LendingWithdrawFlowNavigatorParamList
     | SendFundsNavigatorStackParamList
     | SignTransactionNavigatorParamList
     | SwapNavigatorParamList,
