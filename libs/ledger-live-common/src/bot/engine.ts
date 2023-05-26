@@ -14,6 +14,7 @@ import {
   distinctUntilChanged,
 } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
 import { promiseAllBatched } from "../promise";
 import { isAccountEmpty, formatAccount } from "../account";
@@ -119,7 +120,14 @@ export async function runWithAppSpec<T extends Transaction>(
   );
   const deviceParams = {
     ...(appCandidate as AppCandidate),
-    appName: spec.currency.managerAppName,
+    // For some weird reason, path of NanoX .elf files in coin-apps repo don't use the app name but the ticker...
+    // Compare for example:
+    // https://github.com/LedgerHQ/coin-apps/tree/master/nanos%2B/1.1.0
+    // https://github.com/LedgerHQ/coin-apps/tree/master/nanox/2.2.1
+    appName:
+      spec.appQuery.model === DeviceModelId.nanoX
+        ? spec.currency.ticker
+        : spec.currency.managerAppName,
     seed,
     dependency,
     coinapps,
