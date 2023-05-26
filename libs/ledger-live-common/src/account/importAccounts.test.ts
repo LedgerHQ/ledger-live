@@ -5,12 +5,9 @@ import {
   fromAccountRaw,
 } from ".";
 import { setSupportedCurrencies } from "../currencies";
-import { PLATFORM_VERSION } from "../platform/constants";
-import { setPlatformVersion } from "../platform/version";
 import { WALLET_API_VERSION } from "../wallet-api/constants";
 import { setWalletAPIVersion } from "../wallet-api/version";
 
-setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies(["ethereum"]);
