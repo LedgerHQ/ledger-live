@@ -6584,6 +6584,7 @@ Array [
   "polygon/erc20/wrapped_filecoin_(pos)",
   "polygon/erc20/wrapped_ixs_token",
   "polygon/erc20/wrapped_matic",
+  "polygon/erc20/wrapped_sol_(wormhole)",
   "polygon/erc20/wrapped_ust_token",
   "polygon/erc20/xen_crypto",
   "polygon/erc20/xtoken",
