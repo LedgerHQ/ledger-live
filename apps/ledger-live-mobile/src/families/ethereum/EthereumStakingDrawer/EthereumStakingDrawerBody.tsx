@@ -95,19 +95,18 @@ export function EthereumStakingDrawerBody({
           {t("stake.ethereum.subTitle")}
         </Text>
       </Flex>
-      <ScrollView>
-        <Flex rowGap={52}>
-          {providers.map(provider => (
-            <EthereumStakingDrawerProvider
-              key={provider.id}
-              provider={provider}
-              onProviderPress={onProviderPress}
-              onSupportLinkPress={onSupportLinkPress}
-              redirectIfOneProvider={redirectIfOneProvider}
-            />
-          ))}
-        </Flex>
-      </ScrollView>
+
+      <Flex rowGap={52}>
+        {providers.map(provider => (
+          <EthereumStakingDrawerProvider
+            key={provider.id}
+            provider={provider}
+            onProviderPress={onProviderPress}
+            onSupportLinkPress={onSupportLinkPress}
+            redirectIfOneProvider={redirectIfOneProvider}
+          />
+        ))}
+      </Flex>
     </Flex>
   );
 }

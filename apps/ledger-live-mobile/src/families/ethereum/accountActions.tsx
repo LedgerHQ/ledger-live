@@ -44,6 +44,10 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props) {
 
   switch (parentRoute.name) {
     // since we have to go to different navigators b
+    case ScreenName.Account:
+      return [NavigatorName.Accounts, params];
+    case ScreenName.Asset:
+      return [NavigatorName.Accounts, params];
     case ScreenName.MarketDetail:
       return [NavigatorName.Market, params];
     default:

@@ -10,6 +10,13 @@ export type AccountsNavigatorParamList = {
         address?: string;
         currencyTicker?: string;
         currencyId?: string;
+        drawer?: {
+          id: string;
+          props: {
+            singleProviderRedirectMode: boolean;
+            accountId: string;
+          };
+        };
       }
     | undefined;
   [ScreenName.Account]: {
@@ -40,5 +47,12 @@ export type AccountsNavigatorParamList = {
   [ScreenName.Assets]: undefined;
   [ScreenName.Asset]: {
     currency: CryptoOrTokenCurrency;
+    drawer?: {
+      id: string;
+      props: {
+        singleProviderRedirectMode: boolean;
+        accountId: string;
+      };
+    };
   };
 };
