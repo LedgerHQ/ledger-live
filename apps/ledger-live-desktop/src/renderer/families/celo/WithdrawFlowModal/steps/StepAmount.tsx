@@ -47,6 +47,11 @@ export const StepAmountFooter = ({
     </>
   );
 };
+
+const isTransactionRefuse = (error: unknown) => {
+  return (error && (error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice))
+}
+
 const StepAmount = ({
   account,
   parentAccount,
@@ -76,7 +81,7 @@ const StepAmount = ({
     <Box flow={1}>
       <TrackPage category="Celo Withdraw" name="Step 1" />
       {error &&
-      !(error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice) ? (
+      !(isTransactionRefuse(error)) ? (
         <ErrorBanner error={error} />
       ) : null}
       <Box>
