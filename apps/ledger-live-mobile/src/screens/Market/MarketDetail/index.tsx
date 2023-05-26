@@ -67,18 +67,13 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   const isStarred = starredMarketCoins.includes(currencyId);
   const { triggerMarketPushNotificationModal } = useNotifications();
 
-  console.log(
-    "%c xxxxxxx index.tsx line:70 params",
-    "color: #007acc;",
-    params,
-    route,
-  );
-
   let loc = locale;
   // TEMPORARY : quick win to transform arabic to english
   if (locale === "ar") {
     loc = "en";
   }
+
+  console.log("%cindex.tsx line:76 params", "color: #007acc;", params);
 
   const {
     selectedCoinData: currency,
@@ -308,7 +303,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
           <MarketStats currency={currency} counterCurrency={counterCurrency} />
         )}
       </ScrollContainerHeader>
-      <EthereumStakingDrawer />
+      <EthereumStakingDrawer drawer={params.drawer} />
     </TabBarSafeAreaView>
   );
 }

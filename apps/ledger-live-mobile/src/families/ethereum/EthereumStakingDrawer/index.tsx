@@ -1,41 +1,57 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { useRoute } from "@react-navigation/native";
+
+import { Account } from "@ledgerhq/types-live";
 
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import { EthStakingProviders } from "./types";
 import { EthereumStakingDrawerBody } from "./EthereumStakingDrawerBody";
 import { Track } from "../../../analytics";
 
-type Props = unknown;
+type Props = {
+  drawer?: {
+    id: string;
+    props: {
+      account: Account;
+      singleProviderRedirectMode?: boolean;
+    };
+  };
+};
 
-export function EthereumStakingDrawer(_: Props) {
+export function EthereumStakingDrawer({ drawer }: Props) {
   const { t } = useTranslation();
-  const { params } = useRoute();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const ethStakingProviders = useFeature<EthStakingProviders>(
     "ethStakingProviders",
   );
-
-  console.log("%cindex.tsx line:22 params", "color: #007acc;", params);
 
   const onClose = useCallback(() => {
     setIsOpen(false);
   }, [setIsOpen]);
 
+  useEffect(() => {
+    setIsOpen(drawer?.id === "EthStakingDrawer");
+  }, [drawer]);
+
   if (
+    !drawer ||
     !ethStakingProviders?.enabled ||
     (ethStakingProviders.params?.listProvider ?? []).length < 1
-  )
+  ) {
     return null;
+  }
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
       <Flex rowGap={52}>
         <Track onMount event="ETH Stake Modal" />
         <EthereumStakingDrawerBody
+          singleProviderRedirectMode={
+            drawer.props.singleProviderRedirectMode ?? true
+          }
+          account={drawer.props.account}
           providers={ethStakingProviders.params!.listProvider}
         />
         <Button onPress={onClose} type="main">

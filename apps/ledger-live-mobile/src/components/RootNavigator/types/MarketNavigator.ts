@@ -7,10 +7,10 @@ export type MarketNavigatorStackParamList = {
     currencyId: string;
     resetSearchOnUmount?: boolean;
     drawer?: {
-      name: string;
-      props?: {
+      id: string;
+      props: {
         singleProviderRedirectMode: boolean;
-        account?: Account;
+        account: Account;
       };
     };
   };
