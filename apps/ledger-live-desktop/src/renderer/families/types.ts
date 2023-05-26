@@ -51,6 +51,7 @@ export type OperationDetailsExtraProps<A> = {
   operation: Operation;
   account: A;
   type: OperationType;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extra: Record<string, any>; // TODO check if we can use unknown instead of any
 };
 

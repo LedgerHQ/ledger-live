@@ -49,8 +49,10 @@ export const StepAmountFooter = ({
 };
 
 const isTransactionRefuse = (error: unknown) => {
-  return (error && (error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice))
-}
+  return (
+    error && (error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice)
+  );
+};
 
 const StepAmount = ({
   account,
@@ -80,10 +82,7 @@ const StepAmount = ({
   return (
     <Box flow={1}>
       <TrackPage category="Celo Withdraw" name="Step 1" />
-      {error &&
-      !(isTransactionRefuse(error)) ? (
-        <ErrorBanner error={error} />
-      ) : null}
+      {error && !isTransactionRefuse(error) ? <ErrorBanner error={error} /> : null}
       <Box>
         {pendingWithdrawals.map(({ value, time, index }) => {
           const withdrawalTime = new Date(time.toNumber() * 1000);

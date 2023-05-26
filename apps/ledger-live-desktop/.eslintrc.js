@@ -88,11 +88,11 @@ module.exports = {
         "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
         "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
         "no-use-before-define": "off",
+        "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/ban-types": 0, // FIXME make an error later
         "@typescript-eslint/no-use-before-define": 0, // FIXME make an error later
         "react/jsx-filename-extension": 0,
         "@typescript-eslint/no-non-null-assertion": 0, // Useful sometimes. Should not be abused.
-        "react/prop-types": 0,
         "@typescript-eslint/no-unused-vars": [
           "error",
           {
