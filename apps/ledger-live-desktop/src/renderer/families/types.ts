@@ -69,44 +69,44 @@ export type LLDCoinFamily<
 > = {
   operationDetails?: {
     /**
-     * TODO document me
+     * Cell amount before the amount cell in operation row
      */
     amountCellExtra?: Partial<Record<OperationType, React.ComponentType<AmountCellExtraProps>>>;
 
     /**
-     * TODO document me
+     * Replace amount cell
      */
     amountCell?: Partial<Record<OperationType, React.ComponentType<AmountCellProps>>>;
 
     /**
-     * TODO document me
+     * Change operation first cell (mostly icons)
      */
     confirmationCell?: Partial<Record<OperationType, React.ComponentType<ConfirmationCellProps>>>;
 
     /**
-     * TODO document me
+     * Tooltip on amount in operation details drawer (upper part of screen)
      */
     amountTooltip?: Partial<Record<OperationType, React.ComponentType<AmountTooltipProps>>>;
 
     /**
-     * TODO document me
+     * Open external url on operation type with an icon info
      */
     getURLWhatIsThis?: (_: { op: Operation; currencyId: string }) => string | null | undefined;
 
     /**
-     * TODO document me
+     * Open external url on operation fees with an icon info
      */
     getURLFeesInfo?: (_: { op: Operation; currencyId: string }) => string | null | undefined;
 
     /**
-     * TODO document me
+     * Add extra info
      */
     OperationDetailsExtra?: React.ComponentType<OperationDetailsExtraProps<A>>;
   };
 
   accountActions?: {
     /**
-     * TODO document me
+     * Custom Send button action on account page header
      */
     SendAction?: React.ComponentType<{
       account: A | SubAccount;
@@ -115,7 +115,7 @@ export type LLDCoinFamily<
     }>;
 
     /**
-     * TODO document me
+     * Custom Receive button action on account page header
      */
     ReceiveAction?: React.ComponentType<{
       account: A | SubAccount;
@@ -125,7 +125,7 @@ export type LLDCoinFamily<
   };
 
   /**
-   * TODO document me
+   * allow to add buttons on account page header before swap and buy button
    */
   accountHeaderManageActions?: (_: {
     account: A | SubAccount;
@@ -134,7 +134,7 @@ export type LLDCoinFamily<
   }) => ManageAction[] | null | undefined;
 
   /**
-   * TODO document me
+   * On confirmation screen device step allow to add multiple fields
    */
   transactionConfirmFields?: {
     fieldComponents?: Record<string, React.ComponentType<FieldComponentProps<A, T, TS>>>;
@@ -160,7 +160,7 @@ export type LLDCoinFamily<
   };
 
   /**
-   * TODO document me
+   * Allow to add component between graph and delegations / operation details section
    */
   AccountBodyHeader?: React.ComponentType<{
     account: A | SubAccount;
@@ -168,7 +168,7 @@ export type LLDCoinFamily<
   }>;
 
   /**
-   * TODO document me
+   * Allow to add component below account body header
    */
   AccountSubHeader?: React.ComponentType<{
     account: A | SubAccount;
@@ -176,7 +176,7 @@ export type LLDCoinFamily<
   }>;
 
   /**
-   * TODO document me
+   * Replace amount field on send modal
    */
   sendAmountFields?: {
     component: React.ComponentType<{
@@ -197,7 +197,7 @@ export type LLDCoinFamily<
   };
 
   /**
-   * TODO document me
+   * Allow to add component below recipient field
    *
    * FIXME: account will have to be A | SubAccount
    */
@@ -234,7 +234,7 @@ export type LLDCoinFamily<
   };
 
   /**
-   * TODO document me
+   * Component that change footer of graph
    */
   AccountBalanceSummaryFooter?: React.ComponentType<{
     account: A | SubAccount;
@@ -243,7 +243,7 @@ export type LLDCoinFamily<
   }>;
 
   /**
-   * TODO document me
+   * Opt-in or allow to add token for coin that need
    */
   tokenList?: {
     hasSpecificTokenWording?: boolean;
@@ -254,22 +254,22 @@ export type LLDCoinFamily<
   };
 
   /**
-   * TODO document me
+   * Change Receive funds with this component (example: Hedera)
    */
   StepReceiveFunds?: React.ComponentType<ReceiveStepProps>;
 
   /**
-   * TODO document me
+   * Allow to add component below the confirmation address box on receive step
    */
   StepReceiveFundsPostAlert?: React.ComponentType<ReceiveStepProps>;
 
   /**
-   * TODO document me
+   * It was for Hedera specifc, when we do not find any account it show a specific component
    */
   NoAssociatedAccounts?: React.ComponentType<AddAccountsStepProps>;
 
   /**
-   * TODO document me
+   * Component banner before Account body header
    */
   StakeBanner?: React.ComponentType<{
     account: A;
