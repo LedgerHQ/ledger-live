@@ -154,11 +154,11 @@ const prepareTransaction = async (
   a: Account,
   t: Transaction
 ): Promise<Transaction> => {
+  const { balance } = a;
   const { address } = getAddress(a);
-  const { recipient } = t;
+  const { recipient, useAllAmount } = t;
 
   if (recipient && address) {
-
     if (
       validateAddress(recipient).isValid &&
       validateAddress(address).isValid
@@ -170,6 +170,9 @@ const prepareTransaction = async (
       newTx.gasPremium = new BigNumber(result.gas_premium);
       newTx.gasLimit = new BigNumber(result.gas_limit);
       newTx.nonce = result.nonce;
+
+      const fee = calculateEstimatedFees(newTx.gasFeeCap, newTx.gasLimit);
+      if (useAllAmount) newTx.amount = balance.minus(fee);
 
       return newTx;
     }
@@ -216,10 +219,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             gasFeeCap,
             gasLimit,
             gasPremium,
-            useAllAmount,
           } = transaction;
-          let { amount } = transaction;
-          const { id: accountId, balance } = account;
+          const { amount } = transaction;
+          const { id: accountId } = account;
           const { address, derivationPath } = getAddress(account);
 
           if (!gasFeeCap.gt(0) || !gasLimit.gt(0)) {
@@ -238,9 +240,6 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             });
 
             const fee = calculateEstimatedFees(gasFeeCap, gasLimit);
-            if (useAllAmount) amount = balance.minus(fee);
-
-            transaction = { ...transaction, amount };
 
             // Serialize tx
             const serializedTx = toCBOR(account, transaction);
