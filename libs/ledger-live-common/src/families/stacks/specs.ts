@@ -11,12 +11,11 @@ import { acceptTransaction } from "./speculos-deviceActions";
 
 const MIN_SAFE = new BigNumber(10000);
 const stacksSpecs: AppSpec<Transaction> = {
-  disabled: false,
-  name: "Stacks",
+  name: "STX",
   currency: getCryptoCurrencyById("stacks"),
   appQuery: {
-    model: DeviceModelId.nanoSP,
-    appName: "Stacks",
+    model: DeviceModelId.nanoX,
+    appName: "STX",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 25 * 60 * 1000,
