@@ -214,6 +214,7 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   polkadot: ["polkadotbip44"],
   hedera: ["hederaBip44"],
   filecoin: ["gliflegacy", "glif"],
+  internet_computer: ["internet_computer"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
   near: ["nearbip44h"],
