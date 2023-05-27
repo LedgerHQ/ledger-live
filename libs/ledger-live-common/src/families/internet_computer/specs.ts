@@ -4,10 +4,10 @@ import BigNumber from "bignumber.js";
 
 import type { Transaction } from "../../families/internet_computer/types";
 import { getCryptoCurrencyById } from "../../currencies";
-import { genericTestDestination, pickSiblings } from "../../bot/specs";
+import { genericTestDestination, pickSiblings, botTest } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { acceptTransaction } from "./speculos-deviceActions";
-// import { ICP_FEES } from "./consts";
+import { getRandomTransferID } from "./utils";
 
 const MIN_SAFE = new BigNumber(10);
 const maxAccount = 6;
@@ -27,51 +27,90 @@ const internetComputerSpecs: AppSpec<Transaction> = {
   },
   mutations: [
     {
-      name: "Send really small",
+      name: "Send ~50%",
       maxRun: 1,
       testDestination: genericTestDestination,
-      transaction: ({ account, siblings, bridge }) => {
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
         const sibling = pickSiblings(siblings, maxAccount);
-        let amount = MIN_SAFE;
+        const recipient = sibling.freshAddress;
+        const amount = maxSpendable.div(2).integerValue();
 
-        if (!sibling.used && amount.lt(MIN_SAFE)) {
-          invariant(
-            account.spendableBalance.gt(MIN_SAFE),
-            "send is too low to activate account"
-          );
-          amount = MIN_SAFE;
+        const transaction = bridge.createTransaction(account);
+        const updates: Array<Partial<Transaction>> = [
+          {
+            recipient,
+          },
+          { amount },
+        ];
+
+        if (Math.random() < 0.5) {
+          updates.push({
+            memo: getRandomTransferID(),
+          });
         }
 
         return {
-          transaction: bridge.createTransaction(account),
-          updates: [
-            {
-              recipient: sibling.freshAddress,
-            },
-            {
-              amount,
-            },
-          ],
+          transaction,
+          updates,
         };
       },
+
+      test: ({ accountBeforeTransaction, operation, account, transaction }) => {
+        botTest("account spendable balance decreased with operation", () =>
+          expect(account.spendableBalance).toEqual(
+            accountBeforeTransaction.spendableBalance.minus(operation.value)
+          )
+        );
+
+        if (transaction.memo) {
+          botTest("operation memo", () =>
+            expect(operation.extra).toMatchObject({
+              memo: transaction.memo,
+            })
+          );
+        }
+      },
     },
-    // {
-    //   name: "Transfer Max",
-    //   maxRun: 1,
-    //   transaction: ({ account, siblings, bridge }) => {
-    //     return {
-    //       transaction: bridge.createTransaction(account),
-    //       updates: [
-    //         {
-    //           recipient: pickSiblings(siblings, maxAccount).freshAddress,
-    //         },
-    //         {
-    //           useAllAmount: true,
-    //         },
-    //       ],
-    //     };
-    //   },
-    // },
+    {
+      name: "Transfer Max",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge }) => {
+        const transaction = bridge.createTransaction(account);
+        const updates: Array<Partial<Transaction>> = [
+          {
+            recipient: pickSiblings(siblings, maxAccount).freshAddress,
+          },
+          {
+            useAllAmount: true,
+          },
+        ];
+
+        if (Math.random() < 0.5) {
+          updates.push({
+            memo: getRandomTransferID(),
+          });
+        }
+
+        return {
+          transaction,
+          updates,
+        };
+      },
+      test: ({ account, transaction, operation }) => {
+        botTest("account spendable balance is zero", () =>
+          expect(account.spendableBalance.toString()).toBe("0")
+        );
+
+        if (transaction.memo) {
+          botTest("operation memo", () =>
+            expect(operation.extra).toMatchObject({
+              memo: transaction.memo,
+            })
+          );
+        }
+      },
+    },
   ],
 };
 
