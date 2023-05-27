@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.23.0-nightly.3
+
+### Minor Changes
+
+- [#3468](https://github.com/LedgerHQ/ledger-live/pull/3468) [`5c28db16a5`](https://github.com/LedgerHQ/ledger-live/commit/5c28db16a5b7e804dff8e51062baca311574a50c) Thanks [@RamyEB](https://github.com/RamyEB)! - Chnage api call + type
+
+- [#3477](https://github.com/LedgerHQ/ledger-live/pull/3477) [`53e6254926`](https://github.com/LedgerHQ/ledger-live/commit/53e62549269047a242985b5b000ab15372a7f2bd) Thanks [@marianasrv](https://github.com/marianasrv)! - update ui of modal "send function not available in ios"
+
+### Patch Changes
+
+- Updated dependencies [[`5c28db16a5`](https://github.com/LedgerHQ/ledger-live/commit/5c28db16a5b7e804dff8e51062baca311574a50c), [`eb258d57c2`](https://github.com/LedgerHQ/ledger-live/commit/eb258d57c2abd8d0db9154a82932e1fd83bfce9a), [`b40fa18379`](https://github.com/LedgerHQ/ledger-live/commit/b40fa18379bcadb56e8cbd902a299426d97e2345)]:
+  - @ledgerhq/live-common@30.0.0-nightly.2
+  - @ledgerhq/coin-framework@0.3.4-nightly.1
+  - @ledgerhq/domain-service@1.1.2-nightly.1
+
 ## 3.23.0-nightly.2
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.6.0-nightly.2
+
+### Minor Changes
+
+- [#3192](https://github.com/LedgerHQ/ledger-live/pull/3192) [`7439b63325`](https://github.com/LedgerHQ/ledger-live/commit/7439b63325a9b0181a3af4310ba787f00faa80c9) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Allow addtoken to replace existing token
+
 ## 9.6.0-nightly.1
 
 ### Minor Changes
