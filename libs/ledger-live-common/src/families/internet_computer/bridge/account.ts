@@ -11,7 +11,7 @@ import {
 import { Transaction, TransactionStatus } from "../types";
 import { getAccountShape } from "./utils/account";
 import BigNumber from "bignumber.js";
-import { getEstimatedFees } from "./utils/token";
+import { getEstimatedFees } from "../utils";
 import { getAddress, validateAddress, validateMemo } from "./utils/addresses";
 import {
   AmountRequired,

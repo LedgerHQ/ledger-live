@@ -31,7 +31,7 @@ const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
     const toAccount = amount.isNegative()
       ? counterOperation.account.address
       : ownerOperation.account.address;
-    const memo = txInfo.transaction.metadata.memo;
+    const memo = txInfo.transaction.metadata.memo.toString();
     const blockHeight = txInfo.transaction.metadata.block_height;
 
     const date = new Date(normalizeEpochTimestamp(timeStamp.toString()));
