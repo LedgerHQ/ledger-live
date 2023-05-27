@@ -183,7 +183,7 @@ const NftCollection = ({ route }: NavigationProps) => {
       <InfoModal
         isOpened={isOpen}
         onClose={onCloseModal}
-        data={notAvailableModalInfo}
+        data={notAvailableModalInfo(onCloseModal)}
       />
       <TabBarSafeAreaView
         style={{

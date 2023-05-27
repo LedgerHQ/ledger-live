@@ -69,20 +69,18 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   section: {
-    marginVertical: 8,
+    marginVertical: 2,
   },
   header: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 12,
+    marginBottom: 16,
   },
   iconWrapper: {
-    marginRight: 12,
+    marginBottom: 24,
   },
   title: {
     fontSize: 20,
-    flex: 1,
   },
   footer: {
     marginTop: 12,
