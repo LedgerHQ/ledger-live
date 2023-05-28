@@ -1,6 +1,12 @@
 # @ledgerhq/live-env
 
-## 0.3.0-nightly.0
+## 0.3.0
+
+### Minor Changes
+
+- [#3338](https://github.com/LedgerHQ/ledger-live/pull/3338) [`22491091f7`](https://github.com/LedgerHQ/ledger-live/commit/22491091f7b4e06ee6a0cdf964498aa5b08d6eb0) Thanks [@chabroA](https://github.com/chabroA)! - Restore full network logs under env var and with experimental setting
+
+## 0.3.0-next.0
 
 ### Minor Changes
 

@@ -1,24 +1,20 @@
 # @ledgerhq/cryptoassets
 
-## 9.6.0-nightly.2
-
-### Minor Changes
-
-- [#3192](https://github.com/LedgerHQ/ledger-live/pull/3192) [`7439b63325`](https://github.com/LedgerHQ/ledger-live/commit/7439b63325a9b0181a3af4310ba787f00faa80c9) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Allow addtoken to replace existing token
-
-## 9.6.0-nightly.1
-
-### Minor Changes
-
-- [#3397](https://github.com/LedgerHQ/ledger-live/pull/3397) [`5cce6e3593`](https://github.com/LedgerHQ/ledger-live/commit/5cce6e359309110df53e16ef989c5b8b94492dfd) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for more ESDT tokens
-
-- [#3458](https://github.com/LedgerHQ/ledger-live/pull/3458) [`7cf49e1919`](https://github.com/LedgerHQ/ledger-live/commit/7cf49e1919466836e9025693ed07b18ebf99041a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - add Cardano CLAY token
-
-## 9.6.0-nightly.0
+## 9.6.0
 
 ### Minor Changes
 
 - [#3410](https://github.com/LedgerHQ/ledger-live/pull/3410) [`817a8dd811`](https://github.com/LedgerHQ/ledger-live/commit/817a8dd8112ff7c4640852ab4e47ea0436df2ec1) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+- [#3458](https://github.com/LedgerHQ/ledger-live/pull/3458) [`7cf49e1919`](https://github.com/LedgerHQ/ledger-live/commit/7cf49e1919466836e9025693ed07b18ebf99041a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - add Cardano CLAY token
+
+## 9.6.0-next.0
+
+### Minor Changes
+
+- [#3410](https://github.com/LedgerHQ/ledger-live/pull/3410) [`817a8dd811`](https://github.com/LedgerHQ/ledger-live/commit/817a8dd8112ff7c4640852ab4e47ea0436df2ec1) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - update CAL
+
+- [#3458](https://github.com/LedgerHQ/ledger-live/pull/3458) [`7cf49e1919`](https://github.com/LedgerHQ/ledger-live/commit/7cf49e1919466836e9025693ed07b18ebf99041a) Thanks [@adrienlacombe-ledger](https://github.com/adrienlacombe-ledger)! - add Cardano CLAY token
 
 ## 9.5.0
 

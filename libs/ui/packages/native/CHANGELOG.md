@@ -1,20 +1,18 @@
 # @ledgerhq/native-ui
 
-## 0.20.0-nightly.1
-
-### Minor Changes
-
-- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Memo vertical timeline component and export ItemStatus differently
-
-- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Add IconBadge component
+## 0.19.1
 
 ### Patch Changes
 
 - [#3324](https://github.com/LedgerHQ/ledger-live/pull/3324) [`186e82c88b`](https://github.com/LedgerHQ/ledger-live/commit/186e82c88b196976f62e776e9d060eab565234f9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: bumped react-native-reanimated to v3.1.0
 
-## 0.19.1-nightly.0
+- [#3365](https://github.com/LedgerHQ/ledger-live/pull/3365) [`ff962bbe95`](https://github.com/LedgerHQ/ledger-live/commit/ff962bbe95ec68c6de09fbe4c76cb164f139936a) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Vertical Timeline (fixed crash + pixel polish) + pixel polish of the Sync Onboarding including language selection (now used in welcome screen)
+
+## 0.19.1-next.0
 
 ### Patch Changes
+
+- [#3324](https://github.com/LedgerHQ/ledger-live/pull/3324) [`186e82c88b`](https://github.com/LedgerHQ/ledger-live/commit/186e82c88b196976f62e776e9d060eab565234f9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: bumped react-native-reanimated to v3.1.0
 
 - [#3365](https://github.com/LedgerHQ/ledger-live/pull/3365) [`ff962bbe95`](https://github.com/LedgerHQ/ledger-live/commit/ff962bbe95ec68c6de09fbe4c76cb164f139936a) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Vertical Timeline (fixed crash + pixel polish) + pixel polish of the Sync Onboarding including language selection (now used in welcome screen)
 
