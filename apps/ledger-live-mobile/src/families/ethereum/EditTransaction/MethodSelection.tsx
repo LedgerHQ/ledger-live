@@ -75,7 +75,9 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     .times(feePerGas)
     .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
 
-  const haveFundToCancel = mainAccount.balance.gt(feeValue.times(1.3));
+  const haveFundToCancel = mainAccount.balance.gt(
+    feeValue.times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")),
+  );
   const haveFundToSpeedup = mainAccount.balance.gt(
     feeValue
       .times(1.1)
@@ -98,7 +100,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
             const mainAccount = getMainAccount(account, parentAccount);
             const updatedTransaction: Partial<Transaction> = {
               amount: new BigNumber(0),
-              data: Buffer.from(""),
+              data: undefined,
               nonce: operation.transactionSequenceNumber,
               allowZeroAmount: true,
               mode: "send",
