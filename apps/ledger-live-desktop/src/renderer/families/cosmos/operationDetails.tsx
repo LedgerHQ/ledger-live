@@ -136,11 +136,33 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
     discreet,
     locale,
   };
+
+  const OpDetails = (
+    <>
+      {extra.memo && (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey={"operationDetails.extra.memo"} />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Ellipsis ml={2}>{extra.memo}</Ellipsis>
+          </OpDetailsData>
+        </OpDetailsSection>
+      )}
+    </>
+  );
+
   let ret = null;
+
+  const { validators } = extra;
+  if (!validators || validators.length <= 0) {
+    return <>{OpDetails}</>;
+  }
+
   switch (type) {
     case "DELEGATE": {
       const { validators: delegations } = extra;
-      if (!delegations || !delegations.length) return null;
+      if (!delegations || !delegations.length) return <>{OpDetails}</>;
       return (
         <OperationDetailsDelegation
           discreet={discreet}
@@ -153,12 +175,8 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
       );
     }
     case "UNDELEGATE": {
-      const { validators } = extra;
-      if (!validators || validators.length <= 0) return null;
       const validator = extra.validators[0];
-      const formattedValidator = cosmosValidators.find(
-        v => v.validatorAddress === validator.address,
-      );
+      const formattedValidator = getValidatorName(validator.address);
       const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
       ret = (
         <>
@@ -169,7 +187,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
             </OpDetailsTitle>
             <OpDetailsData>
               <Address onClick={redirectAddress(currency, validator.address)}>
-                {formattedValidator ? formattedValidator.name : validator.address}
+                {formattedValidator}
               </Address>
             </OpDetailsData>
           </OpDetailsSection>
@@ -185,15 +203,11 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
       break;
     }
     case "REDELEGATE": {
-      const { sourceValidator, validators } = extra;
-      if (!validators || validators.length <= 0 || !sourceValidator) return null;
+      const { sourceValidator } = extra;
+      if (!sourceValidator) return <>{OpDetails}</>;
       const validator = extra.validators[0];
-      const formattedValidator = cosmosValidators.find(
-        v => v.validatorAddress === validator.address,
-      );
-      const formattedSourceValidator = cosmosValidators.find(
-        v => v.validatorAddress === sourceValidator,
-      );
+      const formattedValidator = getValidatorName(validator.address);
+      const formattedSourceValidator = getValidatorName(sourceValidator);
       const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
       ret = (
         <>
@@ -204,7 +218,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
             </OpDetailsTitle>
             <OpDetailsData>
               <Address onClick={redirectAddress(currency, sourceValidator)}>
-                {formattedSourceValidator ? formattedSourceValidator.name : sourceValidator}
+                {formattedSourceValidator}
               </Address>
             </OpDetailsData>
           </OpDetailsSection>
@@ -216,7 +230,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
             </OpDetailsTitle>
             <OpDetailsData>
               <Address onClick={redirectAddress(currency, validator.address)}>
-                {formattedValidator ? formattedValidator.name : validator.address}
+                {formattedValidator}
               </Address>
             </OpDetailsData>
           </OpDetailsSection>
@@ -232,7 +246,6 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
     }
     case "REWARD": {
       const { validators } = extra;
-      if (validators == null || validators.length === 0) return null;
       ret = (
         <>
           <OpDetailsSection>
@@ -241,8 +254,11 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
             </OpDetailsTitle>
           </OpDetailsSection>
           {validators.map((validatorReward: { amount: BigNumber; address: string }) => (
-            <React.Fragment key={validatorReward.address}>
-              <OpDetailsSection style={{ "justify-content": "flex-end" }}>
+            <>
+              <OpDetailsSection
+                key={validatorReward.address}
+                style={{ "justify-content": "flex-end" }}
+              >
                 <OpDetailsData style={{ "max-width": "fit-content" }}>
                   <Address onClick={redirectAddress(currency, validatorReward.address)}>
                     {getValidatorName(validatorReward.address)}
@@ -255,7 +271,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
                   />
                 </OpDetailsData>
               </OpDetailsSection>
-            </React.Fragment>
+            </>
           ))}
         </>
       );
@@ -268,16 +284,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
   return (
     <>
       {ret}
-      {extra.memo && (
-        <OpDetailsSection>
-          <OpDetailsTitle>
-            <Trans i18nKey={"operationDetails.extra.memo"} />
-          </OpDetailsTitle>
-          <OpDetailsData>
-            <Ellipsis ml={2}>{extra.memo}</Ellipsis>
-          </OpDetailsData>
-        </OpDetailsSection>
-      )}
+      {OpDetails}
     </>
   );
 };
