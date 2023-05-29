@@ -141,7 +141,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         renderBody: () => (
           <Flex flexDirection="column">
             <TrackPage
-              category="Set up Ledger Stax: Step 1 device paired"
+              category={`Set up ${productName}: Step 1 device paired`}
               flow={analyticsFlowName}
             />
             <StepText mb={6}>
@@ -167,7 +167,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         title: t("syncOnboarding.manual.pinContent.title"),
         renderBody: () => (
           <Flex flexDirection="column">
-            <TrackPage category="Set up Ledger Stax: Step 2 PIN" flow={analyticsFlowName} />
+            <TrackPage category={`Set up ${productName}: Step 2 PIN`} flow={analyticsFlowName} />
             <StepText mb={6}>{t("syncOnboarding.manual.pinContent.description")}</StepText>
             <StepText>
               {t("syncOnboarding.manual.pinContent.text", {
@@ -187,7 +187,10 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         title: t("syncOnboarding.manual.seedContent.title"),
         renderBody: () => (
           <>
-            <TrackPage category="Set up Ledger Stax: Step 3 Seed Intro" flow={analyticsFlowName} />
+            <TrackPage
+              category={`Set up ${productName}: Step 3 Seed Intro`}
+              flow={analyticsFlowName}
+            />
             <SeedStep seedPathStatus={seedPathStatus} deviceModelId={deviceModelId} />
           </>
         ),
@@ -199,7 +202,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         renderBody: (isDisplayed?: boolean) => (
           <>
             <TrackPage
-              category="Set up Ledger Stax: Step 4 Software & Hardware check"
+              category={`Set up ${productName}: Step 4 Software & Hardware check`}
               flow={analyticsFlowName}
             />
             <SoftwareCheckStep
@@ -321,7 +324,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       !analyticsSeedingTracked.current
     ) {
       trackPage(
-        "Set up Ledger Stax: Step 3 Seed Success",
+        `Set up ${productName}: Step 3 Seed Success`,
         undefined,
         {
           seedPhraseType: analyticsSeedPhraseType.current
@@ -336,7 +339,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
       analyticsSeedingTracked.current = true;
     }
     lastCompanionStepKey.current = stepKey;
-  }, [stepKey]);
+  }, [productName, stepKey]);
 
   useEffect(() => {
     // When the device is seeded, there are 2 cases before triggering the software check step:
