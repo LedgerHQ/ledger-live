@@ -8,7 +8,6 @@ import {
 import {
   AccountShapeInfo,
   GetAccountShape,
-  makeScanAccounts,
   makeSync,
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -311,8 +310,6 @@ export const postSync = (initial: Account, synced: Account): Account => {
   };
 };
 
-// FIXME
-export const scanAccounts = makeScanAccounts({ getAccountShape });
 export const sync = makeSync({
   getAccountShape,
   postSync,

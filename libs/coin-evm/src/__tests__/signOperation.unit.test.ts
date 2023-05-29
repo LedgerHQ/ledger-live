@@ -1,11 +1,10 @@
+import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import signOperation, { applyEIP155 } from "../signOperation";
+import { buildSignOperation, applyEIP155 } from "../signOperation";
 import { Transaction as EvmTransaction } from "../types";
-// FIXME: dependency injection
-import * as Device from "../../../hw/deviceAccess";
 import * as rpcAPI from "../api/rpc.common";
 import { getEstimatedFees } from "../logic";
 import { makeAccount } from "../testUtils";
@@ -39,6 +38,11 @@ const transactionEIP1559: EvmTransaction = {
 };
 const estimatedFees = getEstimatedFees(transactionEIP1559);
 
+const mockWithDevice: DeviceCommunication =
+  () =>
+  (job: any): any =>
+    job({});
+
 // Mocking here in order to be ack by the signOperation.ts file
 jest.mock("@ledgerhq/hw-app-eth", () => ({
   __esModule: true,
@@ -64,11 +68,6 @@ describe("EVM Family", () => {
   describe("signOperation.ts", () => {
     describe("signOperation", () => {
       beforeAll(() => {
-        jest.spyOn(Device, "withDevice").mockImplementation(
-          () =>
-            (job: any): any =>
-              job({})
-        );
         jest
           .spyOn(rpcAPI, "getTransactionCount")
           .mockImplementation(async () => 1);
@@ -79,6 +78,8 @@ describe("EVM Family", () => {
       });
 
       it("should return an optimistic operation and a signed hash based on hardware ECDSA signatures returned by the app bindings", (done) => {
+        const signOperation = buildSignOperation(mockWithDevice);
+
         const signOpObservable = signOperation({
           account,
           transaction: transactionEIP1559,

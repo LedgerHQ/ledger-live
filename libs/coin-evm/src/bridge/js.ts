@@ -1,17 +1,20 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import {
+  DeviceCommunication,
+  makeAccountBridgeReceive,
+  makeScanAccounts,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-// FIXME
-import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { broadcast } from "../broadcast";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
+import getAddress from "../hw-getAddress";
 import { hydrate, preload } from "../preload";
 import { prepareTransaction } from "../prepareTransaction";
-import { signOperation } from "../signOperation";
-import { scanAccounts, sync } from "../synchronization";
-import type { Transaction as EvmTransaction } from "../types";
-
-const receive = makeAccountBridgeReceive();
+import { buildSignOperation } from "../signOperation";
+import { getAccountShape, sync } from "../synchronization";
+import type { Transaction as EvmTransaction, Transaction } from "../types";
 
 const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
   transaction,
@@ -20,25 +23,47 @@ const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
   return { ...transaction, ...patch } as EvmTransaction;
 };
 
-const currencyBridge: CurrencyBridge = {
-  preload,
-  hydrate,
-  scanAccounts,
-};
+export function buildCurrencyBridge(
+  deviceCommunication: DeviceCommunication
+): CurrencyBridge {
+  const scanAccounts = makeScanAccounts({
+    getAccountShape,
+    deviceCommunication,
+    getAddressFn: getAddress,
+  });
 
-const accountBridge: AccountBridge<EvmTransaction> = {
-  createTransaction,
-  updateTransaction,
-  prepareTransaction,
-  getTransactionStatus,
-  sync,
-  receive,
-  signOperation,
-  broadcast,
-  estimateMaxSpendable,
-};
+  return {
+    preload,
+    hydrate,
+    scanAccounts,
+  };
+}
 
-export default {
-  currencyBridge,
-  accountBridge,
-};
+export function buildAccountBridge(
+  deviceCommunication: DeviceCommunication
+): AccountBridge<Transaction> {
+  const receive = makeAccountBridgeReceive(
+    getAddressWrapper(getAddress),
+    deviceCommunication
+  );
+  const signOperation = buildSignOperation(deviceCommunication);
+
+  return {
+    createTransaction,
+    updateTransaction,
+    prepareTransaction,
+    getTransactionStatus,
+    sync,
+    receive,
+    signOperation,
+    broadcast,
+    estimateMaxSpendable,
+  };
+}
+
+export function createBridges(deviceCommunication: DeviceCommunication) {
+  return {
+    currencyBridge: buildCurrencyBridge(deviceCommunication),
+    accountBridge: buildAccountBridge(deviceCommunication),
+  };
+}

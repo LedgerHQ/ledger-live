@@ -1,13 +1,16 @@
 import { Observable } from "rxjs";
 import Eth, { ledgerService } from "@ledgerhq/hw-app-eth";
-import { AccountBridge, SignOperationEvent } from "@ledgerhq/types-live";
+import {
+  Account,
+  SignOperationFnSignature,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
-import { Transaction as EvmTransaction } from "./types";
-// FIXME: dependency injection
-import { withDevice } from "../../hw/deviceAccess";
+import { Transaction } from "./types";
+import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 /**
  * Transforms the ECDSA signature paremeter v hexadecimal string received
@@ -38,83 +41,87 @@ export const applyEIP155 = (vAsHex: string, chainId: number): number => {
 /**
  * Sign Transaction with Ledger hardware
  */
-export const signOperation: AccountBridge<EvmTransaction>["signOperation"] = ({
-  account,
-  deviceId,
-  transaction,
-}): Observable<SignOperationEvent> =>
-  withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
-        async function main() {
-          const preparedTransaction = await prepareForSignOperation(
-            account,
-            transaction
+export const buildSignOperation =
+  (withDevice: DeviceCommunication): SignOperationFnSignature<Transaction> =>
+  ({
+    account,
+    deviceId,
+    transaction,
+  }: {
+    account: Account;
+    deviceId: any;
+    transaction: Transaction;
+  }): Observable<SignOperationEvent> =>
+    withDevice(deviceId)(
+      (transport) =>
+        new Observable((o) => {
+          async function main() {
+            const preparedTransaction = await prepareForSignOperation(
+              account,
+              transaction
+            );
+            const serializedTxHexString =
+              getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
+
+            // Configure type of resolutions necessary for the clear signing
+            const resolutionConfig: ResolutionConfig = {
+              externalPlugins: true,
+              erc20: true,
+              domains: transaction.recipientDomain
+                ? [transaction.recipientDomain]
+                : [],
+            };
+            // Look for resolutions for external plugins and ERC20
+            const resolution = await ledgerService.resolveTransaction(
+              serializedTxHexString,
+              {},
+              resolutionConfig
+            );
+
+            o.next({
+              type: "device-signature-requested",
+            });
+
+            // Instanciate Eth app bindings
+            const eth = new Eth(transport);
+            // Request signature on the nano
+            const sig = await eth.signTransaction(
+              account.freshAddressPath,
+              serializedTxHexString,
+              resolution
+            );
+
+            o.next({ type: "device-signature-granted" }); // Signature is done
+
+            const { chainId = 0 } = account.currency.ethereumLikeInfo || {};
+            // Create a new serialized tx with the signature now
+            const signature = await getSerializedTransaction(
+              preparedTransaction,
+              {
+                r: "0x" + sig.r,
+                s: "0x" + sig.s,
+                v: applyEIP155(sig.v, chainId),
+              }
+            );
+
+            const operation = buildOptimisticOperation(account, {
+              ...transaction,
+              nonce: preparedTransaction.nonce,
+            });
+
+            o.next({
+              type: "signed",
+              signedOperation: {
+                operation,
+                signature,
+                expirationDate: null,
+              },
+            });
+          }
+
+          main().then(
+            () => o.complete(),
+            (e) => o.error(e)
           );
-          const serializedTxHexString =
-            getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
-
-          // Configure type of resolutions necessary for the clear signing
-          const resolutionConfig: ResolutionConfig = {
-            externalPlugins: true,
-            erc20: true,
-            domains: transaction.recipientDomain
-              ? [transaction.recipientDomain]
-              : [],
-          };
-          // Look for resolutions for external plugins and ERC20
-          const resolution = await ledgerService.resolveTransaction(
-            serializedTxHexString,
-            {},
-            resolutionConfig
-          );
-
-          o.next({
-            type: "device-signature-requested",
-          });
-
-          // Instanciate Eth app bindings
-          const eth = new Eth(transport);
-          // Request signature on the nano
-          const sig = await eth.signTransaction(
-            account.freshAddressPath,
-            serializedTxHexString,
-            resolution
-          );
-
-          o.next({ type: "device-signature-granted" }); // Signature is done
-
-          const { chainId = 0 } = account.currency.ethereumLikeInfo || {};
-          // Create a new serialized tx with the signature now
-          const signature = await getSerializedTransaction(
-            preparedTransaction,
-            {
-              r: "0x" + sig.r,
-              s: "0x" + sig.s,
-              v: applyEIP155(sig.v, chainId),
-            }
-          );
-
-          const operation = buildOptimisticOperation(account, {
-            ...transaction,
-            nonce: preparedTransaction.nonce,
-          });
-
-          o.next({
-            type: "signed",
-            signedOperation: {
-              operation,
-              signature,
-              expirationDate: null,
-            },
-          });
-        }
-
-        main().then(
-          () => o.complete(),
-          (e) => o.error(e)
-        );
-      })
-  );
-
-export default signOperation;
+        })
+    );
