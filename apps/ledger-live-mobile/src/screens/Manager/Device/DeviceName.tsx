@@ -61,6 +61,7 @@ export default function DeviceName({
         uppercase={false}
         numberOfLines={2}
         ellipsizeMode="tail"
+        flexShrink={1}
       >
         {displayedName}
       </Text>

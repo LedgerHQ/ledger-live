@@ -5,7 +5,7 @@ import { SharedTaskEvent } from "../tasks/core";
 // The type of the error prop is specific to the action
 export type SharedActionState = {
   lockedDevice: boolean;
-  error: { type: "SharedError"; message?: string } | null;
+  error: { type: "SharedError"; message: string; name: string } | null;
 };
 
 // Mix the specific action state with the shared state
@@ -42,7 +42,8 @@ export function sharedReducer({
       return {
         error: {
           type: "SharedError",
-          message: `${name}: ${message}`,
+          name,
+          message,
         },
       };
     }

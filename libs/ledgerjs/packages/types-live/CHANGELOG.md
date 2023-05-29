@@ -1,5 +1,29 @@
 # @ledgerhq/types-live
 
+## 6.34.1
+
+### Patch Changes
+
+- [#3466](https://github.com/LedgerHQ/ledger-live/pull/3466) [`745fbf2a54`](https://github.com/LedgerHQ/ledger-live/commit/745fbf2a54cdc34aea938d7fbe4c8b198dc36b54) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix bad merge in README.md file for ledgerjs types-live package
+
+## 6.34.1-next.0
+
+### Patch Changes
+
+- [#3466](https://github.com/LedgerHQ/ledger-live/pull/3466) [`745fbf2a54`](https://github.com/LedgerHQ/ledger-live/commit/745fbf2a54cdc34aea938d7fbe4c8b198dc36b54) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix bad merge in README.md file for ledgerjs types-live package
+
+## 6.34.0
+
+### Minor Changes
+
+- [#2967](https://github.com/LedgerHQ/ledger-live/pull/2967) [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - add feature flag protectServicesDesktop
+
+## 6.34.0-next.0
+
+### Minor Changes
+
+- [#2967](https://github.com/LedgerHQ/ledger-live/pull/2967) [`30e28ef881`](https://github.com/LedgerHQ/ledger-live/commit/30e28ef8817018f4ff637bf38626c2da8cfd20b9) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - add feature flag protectServicesDesktop
+
 ## 6.33.0
 
 ### Minor Changes

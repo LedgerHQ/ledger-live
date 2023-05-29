@@ -3,6 +3,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking, StyleSheet, SafeAreaView } from "react-native";
+import { usePostOnboardingURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import {
   RootComposite,
@@ -12,8 +13,7 @@ import { ScreenName } from "../../const";
 import { useNavigationInterceptor } from "../Onboarding/onboardingContext";
 import BleDevicePairingFlow from "../../components/BleDevicePairingFlow";
 import { useIncrementOnNavigationFocusState } from "../../helpers/useIncrementOnNavigationFocusState";
-import { usePostOnboardingURI } from "../../hooks/recoverFeatureFlag";
-import { ServicesConfig } from "../../components/ServicesWidget/types";
+import { ServicesConfigParams } from "../../components/ServicesWidget/types";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<
@@ -26,10 +26,10 @@ export function RedirectToRecoverStaxFlowScreen({
   navigation,
 }: NavigationProps) {
   const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
-  const recoverRestoreFlowURI = usePostOnboardingURI();
-  const recoverConfig: ServicesConfig | null = useFeature(
+  const recoverConfig = useFeature<ServicesConfigParams>(
     "protectServicesMobile",
   );
+  const recoverRestoreFlowURI = usePostOnboardingURI(recoverConfig);
 
   useEffect(() => {
     setShowWelcome(false);

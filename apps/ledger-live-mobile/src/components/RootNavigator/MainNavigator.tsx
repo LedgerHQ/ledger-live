@@ -22,9 +22,7 @@ import {
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
-import { StackNavigatorProps } from "./types/helpers";
 import { MainNavigatorParamList } from "./types/MainNavigator";
-import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { isMainNavigatorVisibleSelector } from "../../reducers/appstate";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
@@ -34,14 +32,11 @@ const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 // override the navigation from tabs.
 // https://github.com/react-navigation/react-navigation/issues/6674#issuecomment-562813152
 
-export default function MainNavigator({
-  route: { params },
-}: StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.Main>) {
+export default function MainNavigator() {
   const { colors } = useTheme();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
   const isMainNavigatorVisible = useSelector(isMainNavigatorVisibleSelector);
-  const { hideTabNavigation } = params || {};
   const managerNavLockCallback = useManagerNavLockCallback();
 
   const insets = useSafeAreaInsets();
@@ -79,9 +74,8 @@ export default function MainNavigator({
             borderTopWidth: 1,
             elevation: 5,
             shadowColor: colors.neutral.c30,
-            backgroundColor: colors.background.main,
+            backgroundColor: colors.opacityDefault.c10,
           },
-          hideTabNavigation ? { display: "none" } : {},
         ],
         unmountOnBlur: true, // Nb prevents ghost device interactions
         tabBarShowLabel: false,

@@ -10,9 +10,6 @@ export const defaultFeatures: DefaultFeatures = {
   brazeLearn: {
     enabled: false,
   },
-  deviceLocalization: {
-    enabled: false,
-  },
   buyDeviceFromLive: {
     enabled: false,
     params: {
@@ -154,7 +151,7 @@ export const defaultFeatures: DefaultFeatures = {
   llmNewDeviceSelection: {
     enabled: false,
   },
-  llmUsbFirmwareUpdate: {
+  llmNewFirmwareUpdateUx: {
     enabled: false,
   },
   ptxSmartRouting: {
@@ -268,7 +265,7 @@ export const defaultFeatures: DefaultFeatures = {
           supportLinkURI: "https://support.ledger.com",
         },
         postOnboardingURI:
-          "ledgerlive://discover/protect-simu?redirectTo=restore",
+          "ledgerlive://recover/protect-simu?redirectTo=restore",
       },
       onboardingCompleted: {
         upsellURI: "ledgerlive://recover/protect-simu?redirectTo=upsell",
@@ -276,7 +273,7 @@ export const defaultFeatures: DefaultFeatures = {
           "ledgerlive://recover/protect-simu?redirectTo=login",
       },
       login: {
-        loginURI: "ledgerlive://discover/protect-simu?redirectTo=login",
+        loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
       },
       protectId: "protect-simu",
     },

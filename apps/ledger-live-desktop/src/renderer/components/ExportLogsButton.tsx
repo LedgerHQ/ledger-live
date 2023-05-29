@@ -41,6 +41,7 @@ type Props = {
   title?: React.ReactNode;
   withoutAppData?: boolean;
   accounts?: Account[];
+  customComponent?: React.FC<() => Promise<void>>;
 } & RestProps;
 const ExportLogsBtnWrapper = (args: Props) => {
   if (args.withoutAppData) {
@@ -59,6 +60,7 @@ const ExportLogsBtn = ({
   small = true,
   title,
   accounts = [],
+  customComponent,
   ...rest
 }: Props) => {
   const { t } = useTranslation();
@@ -113,6 +115,9 @@ const ExportLogsBtn = ({
     [handleExportLogs],
   );
   const text = title || t("settings.exportLogs.btn");
+  if (customComponent) {
+    return customComponent(handleExportLogs);
+  }
   return hookToShortcut ? (
     <KeyHandler keyValue="e" onKeyHandle={onKeyHandle} />
   ) : (

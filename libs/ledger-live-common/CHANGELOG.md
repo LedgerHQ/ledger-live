@@ -1,5 +1,151 @@
 # @ledgerhq/live-common
 
+## 30.0.0
+
+### Major Changes
+
+- [#3306](https://github.com/LedgerHQ/ledger-live/pull/3306) [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546) Thanks [@chabroA](https://github.com/chabroA)! - Move algorand coin logic in own package
+
+### Minor Changes
+
+- [#3338](https://github.com/LedgerHQ/ledger-live/pull/3338) [`22491091f7`](https://github.com/LedgerHQ/ledger-live/commit/22491091f7b4e06ee6a0cdf964498aa5b08d6eb0) Thanks [@chabroA](https://github.com/chabroA)! - Restore full network logs under env var and with experimental setting
+
+- [#3405](https://github.com/LedgerHQ/ledger-live/pull/3405) [`eb3997d762`](https://github.com/LedgerHQ/ledger-live/commit/eb3997d7621c78e2f7f224d5f62a7857aae873e2) Thanks [@Justkant](https://github.com/Justkant)! - feat: stax recover onboarding [PROTECT-1710]
+
+- [#3411](https://github.com/LedgerHQ/ledger-live/pull/3411) [`2b24af44c3`](https://github.com/LedgerHQ/ledger-live/commit/2b24af44c3f77f2bc46f7a2d9ebcf1ae3759ef80) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Change Speculos Transport with http one
+
+- [#3418](https://github.com/LedgerHQ/ledger-live/pull/3418) [`034c68fe40`](https://github.com/LedgerHQ/ledger-live/commit/034c68fe40220dbb2c33a549a26bd0d67097eb45) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - upgrade wallet-api to support EIP-1559 on dapp browser
+
+### Patch Changes
+
+- [#3324](https://github.com/LedgerHQ/ledger-live/pull/3324) [`186e82c88b`](https://github.com/LedgerHQ/ledger-live/commit/186e82c88b196976f62e776e9d060eab565234f9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: clean filtering on toasts
+
+- [#3322](https://github.com/LedgerHQ/ledger-live/pull/3322) [`4da51fc11e`](https://github.com/LedgerHQ/ledger-live/commit/4da51fc11eb3244c74a499167c0de77913ded68b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - implementation of cls removal on llc
+
+- [#3452](https://github.com/LedgerHQ/ledger-live/pull/3452) [`6d09361b6b`](https://github.com/LedgerHQ/ledger-live/commit/6d09361b6b8de34c6b202e00c9bac8f4844eb105) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Correctly serialize feesCurrency
+
+- [#3322](https://github.com/LedgerHQ/ledger-live/pull/3322) [`4da51fc11e`](https://github.com/LedgerHQ/ledger-live/commit/4da51fc11eb3244c74a499167c0de77913ded68b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Implemented remove custom image command for stax and exposed it on CLI.
+
+- [#3489](https://github.com/LedgerHQ/ledger-live/pull/3489) [`6036036c92`](https://github.com/LedgerHQ/ledger-live/commit/6036036c92ff7236468e748a936d50b0feb65c92) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add validators to persistence, onomy, quicksilver, axelar
+
+- Updated dependencies [[`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`817a8dd811`](https://github.com/LedgerHQ/ledger-live/commit/817a8dd8112ff7c4640852ab4e47ea0436df2ec1), [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`22491091f7`](https://github.com/LedgerHQ/ledger-live/commit/22491091f7b4e06ee6a0cdf964498aa5b08d6eb0), [`7cf49e1919`](https://github.com/LedgerHQ/ledger-live/commit/7cf49e1919466836e9025693ed07b18ebf99041a)]:
+  - @ledgerhq/errors@6.12.6
+  - @ledgerhq/coin-algorand@0.2.0
+  - @ledgerhq/cryptoassets@9.6.0
+  - @ledgerhq/coin-framework@0.3.4
+  - @ledgerhq/live-env@0.3.0
+  - @ledgerhq/coin-polkadot@0.1.5
+  - @ledgerhq/domain-service@1.1.2
+  - @ledgerhq/devices@8.0.3
+  - @ledgerhq/hw-app-cosmos@6.28.1
+  - @ledgerhq/hw-app-eth@6.33.4
+  - @ledgerhq/hw-app-exchange@0.1.2
+  - @ledgerhq/hw-app-near@6.27.10
+  - @ledgerhq/hw-app-polkadot@6.27.15
+  - @ledgerhq/hw-app-solana@7.0.9
+  - @ledgerhq/hw-app-trx@6.27.15
+  - @ledgerhq/hw-transport@6.28.4
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.15
+  - @ledgerhq/live-portfolio@0.0.6
+  - @ledgerhq/hw-app-btc@10.0.4
+  - @ledgerhq/hw-app-str@6.27.15
+  - @ledgerhq/hw-app-tezos@6.27.15
+  - @ledgerhq/hw-app-xrp@6.27.15
+  - @ledgerhq/hw-transport-mocker@6.27.15
+
+## 30.0.0-next.0
+
+### Major Changes
+
+- [#3306](https://github.com/LedgerHQ/ledger-live/pull/3306) [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546) Thanks [@chabroA](https://github.com/chabroA)! - Move algorand coin logic in own package
+
+### Minor Changes
+
+- [#3338](https://github.com/LedgerHQ/ledger-live/pull/3338) [`22491091f7`](https://github.com/LedgerHQ/ledger-live/commit/22491091f7b4e06ee6a0cdf964498aa5b08d6eb0) Thanks [@chabroA](https://github.com/chabroA)! - Restore full network logs under env var and with experimental setting
+
+- [#3405](https://github.com/LedgerHQ/ledger-live/pull/3405) [`eb3997d762`](https://github.com/LedgerHQ/ledger-live/commit/eb3997d7621c78e2f7f224d5f62a7857aae873e2) Thanks [@Justkant](https://github.com/Justkant)! - feat: stax recover onboarding [PROTECT-1710]
+
+- [#3411](https://github.com/LedgerHQ/ledger-live/pull/3411) [`2b24af44c3`](https://github.com/LedgerHQ/ledger-live/commit/2b24af44c3f77f2bc46f7a2d9ebcf1ae3759ef80) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Change Speculos Transport with http one
+
+- [#3418](https://github.com/LedgerHQ/ledger-live/pull/3418) [`034c68fe40`](https://github.com/LedgerHQ/ledger-live/commit/034c68fe40220dbb2c33a549a26bd0d67097eb45) Thanks [@JunichiSugiura](https://github.com/JunichiSugiura)! - upgrade wallet-api to support EIP-1559 on dapp browser
+
+### Patch Changes
+
+- [#3324](https://github.com/LedgerHQ/ledger-live/pull/3324) [`186e82c88b`](https://github.com/LedgerHQ/ledger-live/commit/186e82c88b196976f62e776e9d060eab565234f9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: clean filtering on toasts
+
+- [#3322](https://github.com/LedgerHQ/ledger-live/pull/3322) [`4da51fc11e`](https://github.com/LedgerHQ/ledger-live/commit/4da51fc11eb3244c74a499167c0de77913ded68b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - implementation of cls removal on llc
+
+- [#3452](https://github.com/LedgerHQ/ledger-live/pull/3452) [`6d09361b6b`](https://github.com/LedgerHQ/ledger-live/commit/6d09361b6b8de34c6b202e00c9bac8f4844eb105) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Correctly serialize feesCurrency
+
+- [#3322](https://github.com/LedgerHQ/ledger-live/pull/3322) [`4da51fc11e`](https://github.com/LedgerHQ/ledger-live/commit/4da51fc11eb3244c74a499167c0de77913ded68b) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Implemented remove custom image command for stax and exposed it on CLI.
+
+- [#3489](https://github.com/LedgerHQ/ledger-live/pull/3489) [`6036036c92`](https://github.com/LedgerHQ/ledger-live/commit/6036036c92ff7236468e748a936d50b0feb65c92) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add validators to persistence, onomy, quicksilver, axelar
+
+- Updated dependencies [[`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`817a8dd811`](https://github.com/LedgerHQ/ledger-live/commit/817a8dd8112ff7c4640852ab4e47ea0436df2ec1), [`77f990e207`](https://github.com/LedgerHQ/ledger-live/commit/77f990e2075c7c9a4be69b364e3754b449c7a546), [`22491091f7`](https://github.com/LedgerHQ/ledger-live/commit/22491091f7b4e06ee6a0cdf964498aa5b08d6eb0), [`7cf49e1919`](https://github.com/LedgerHQ/ledger-live/commit/7cf49e1919466836e9025693ed07b18ebf99041a)]:
+  - @ledgerhq/errors@6.12.6-next.0
+  - @ledgerhq/coin-algorand@0.2.0-next.0
+  - @ledgerhq/cryptoassets@9.6.0-next.0
+  - @ledgerhq/coin-framework@0.3.4-next.0
+  - @ledgerhq/live-env@0.3.0-next.0
+  - @ledgerhq/coin-polkadot@0.1.5-next.0
+  - @ledgerhq/domain-service@1.1.2-next.0
+  - @ledgerhq/devices@8.0.3-next.0
+  - @ledgerhq/hw-app-cosmos@6.28.1-next.0
+  - @ledgerhq/hw-app-eth@6.33.4-next.0
+  - @ledgerhq/hw-app-exchange@0.1.2-next.0
+  - @ledgerhq/hw-app-near@6.27.10-next.0
+  - @ledgerhq/hw-app-polkadot@6.27.15-next.0
+  - @ledgerhq/hw-app-solana@7.0.9-next.0
+  - @ledgerhq/hw-app-trx@6.27.15-next.0
+  - @ledgerhq/hw-transport@6.28.4-next.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.27.15-next.0
+  - @ledgerhq/live-portfolio@0.0.6-next.0
+  - @ledgerhq/hw-app-btc@10.0.4-next.0
+  - @ledgerhq/hw-app-str@6.27.15-next.0
+  - @ledgerhq/hw-app-tezos@6.27.15-next.0
+  - @ledgerhq/hw-app-xrp@6.27.15-next.0
+  - @ledgerhq/hw-transport-mocker@6.27.15-next.0
+
+## 29.6.0
+
+### Minor Changes
+
+- [#3366](https://github.com/LedgerHQ/ledger-live/pull/3366) [`491b37f08d`](https://github.com/LedgerHQ/ledger-live/commit/491b37f08d9a17404eaf32c491628e65d2d8666a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating the `shouldUpgrade` & `mustUpgrade` helpers to allow for pre-release tags
+
+- [#3255](https://github.com/LedgerHQ/ledger-live/pull/3255) [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36) Thanks [@RamyEB](https://github.com/RamyEB)! - add field visibility to manifest and tests
+
+### Patch Changes
+
+- [#3386](https://github.com/LedgerHQ/ledger-live/pull/3386) [`dfccb01b94`](https://github.com/LedgerHQ/ledger-live/commit/dfccb01b94d545af80ee5e77bf1d04d9d2fd0faa) Thanks [@grsoares21](https://github.com/grsoares21)! - Throttle the events coming from inline app installs. They were causing the UI to slow down as they weren't being properly throttled.
+
+- Updated dependencies [[`fb1fcc47e4`](https://github.com/LedgerHQ/ledger-live/commit/fb1fcc47e444c35b0908d528b58e096d79d6f967)]:
+  - @ledgerhq/hw-app-btc@10.0.3
+  - @ledgerhq/coin-framework@0.3.3
+  - @ledgerhq/coin-polkadot@0.1.4
+  - @ledgerhq/domain-service@1.1.1
+  - @ledgerhq/live-portfolio@0.0.5
+  - @ledgerhq/hw-app-eth@6.33.3
+
+## 29.6.0-next.0
+
+### Minor Changes
+
+- [#3366](https://github.com/LedgerHQ/ledger-live/pull/3366) [`491b37f08d`](https://github.com/LedgerHQ/ledger-live/commit/491b37f08d9a17404eaf32c491628e65d2d8666a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating the `shouldUpgrade` & `mustUpgrade` helpers to allow for pre-release tags
+
+- [#3255](https://github.com/LedgerHQ/ledger-live/pull/3255) [`0e4f34fac2`](https://github.com/LedgerHQ/ledger-live/commit/0e4f34fac2ceebdece29d408e914b3664228db36) Thanks [@RamyEB](https://github.com/RamyEB)! - add field visibility to manifest and tests
+
+### Patch Changes
+
+- [#3386](https://github.com/LedgerHQ/ledger-live/pull/3386) [`dfccb01b94`](https://github.com/LedgerHQ/ledger-live/commit/dfccb01b94d545af80ee5e77bf1d04d9d2fd0faa) Thanks [@grsoares21](https://github.com/grsoares21)! - Throttle the events coming from inline app installs. They were causing the UI to slow down as they weren't being properly throttled.
+
+- Updated dependencies [[`fb1fcc47e4`](https://github.com/LedgerHQ/ledger-live/commit/fb1fcc47e444c35b0908d528b58e096d79d6f967)]:
+  - @ledgerhq/hw-app-btc@10.0.3-next.0
+  - @ledgerhq/coin-framework@0.3.3-next.0
+  - @ledgerhq/coin-polkadot@0.1.4-next.0
+  - @ledgerhq/domain-service@1.1.1-next.0
+  - @ledgerhq/live-portfolio@0.0.5-next.0
+  - @ledgerhq/hw-app-eth@6.33.3-next.0
+
 ## 29.5.0
 
 ### Minor Changes

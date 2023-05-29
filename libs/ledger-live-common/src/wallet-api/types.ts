@@ -5,6 +5,7 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { Transaction } from "../generated/types";
+import { LiveAppManifest } from "../platform/types";
 
 export type { WalletAPITransaction };
 
@@ -37,30 +38,7 @@ export type AppPermission = {
 };
 
 // TODO update to the new manifest types from wallet-api when released
-export type AppManifest = {
-  id: string;
-  author?: string;
-  private?: boolean;
-  name: string;
-  url: string | URL;
-  params?: string[];
-  homepageUrl: string;
-  supportUrl?: string;
-  icon?: string | null;
-  platforms: AppPlatform[];
-  apiVersion: string;
-  manifestVersion: string;
-  branch: AppBranch;
-  permissions: AppPermission[];
-  domains: string[];
-  categories: string[];
-  currencies: string[] | "*";
-  content: {
-    shortDescription: TranslatableString;
-    description: TranslatableString;
-  };
-  visibility: Visibility;
-};
+export type AppManifest = LiveAppManifest;
 
 export type WalletAPISignedTransaction = SignedOperation;
 

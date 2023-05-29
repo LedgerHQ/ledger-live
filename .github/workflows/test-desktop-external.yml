@@ -396,7 +396,7 @@ jobs:
   allure-report:
     name: "Allure Reports Export on Server"
     needs: [e2e-tests-windows, e2e-tests-linux, e2e-tests-mac]
-    runs-on: [ledger-live, linux]
+    runs-on: [ledger-live-medium-linux]
     if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     steps:
       - name: checkout
