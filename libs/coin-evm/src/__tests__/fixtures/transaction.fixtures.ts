@@ -9,9 +9,25 @@ import {
   EvmTransactionLegacy,
   EvmTransactionLegacyRaw,
   Transaction as EvmTransaction,
+  EvmNftTransactionRaw,
+  EvmNftTransaction,
 } from "../../types";
 
 export const testData = Object.freeze(Buffer.from("testBufferString").toString("hex"));
+
+const rawNft = Object.freeze({
+  tokenId: "123",
+  contract: "0xContract",
+  quantity: "10",
+  collectionName: "collectionName",
+});
+
+const nft = Object.freeze({
+  tokenId: "123",
+  contract: "0xContract",
+  quantity: new BigNumber("10"),
+  collectionName: "collectionName",
+});
 
 export const rawEip1559Tx: EvmTransactionEIP1559Raw = Object.freeze(
   Object.freeze({
@@ -33,6 +49,12 @@ export const rawEip1559Tx: EvmTransactionEIP1559Raw = Object.freeze(
   }),
 );
 
+export const rawNftEip1559Tx: EvmTransactionEIP1559Raw & EvmNftTransactionRaw = Object.freeze({
+  ...rawEip1559Tx,
+  mode: "erc721",
+  nft: rawNft,
+});
+
 export const eip1559Tx: EvmTransactionEIP1559 = Object.freeze(
   Object.freeze({
     amount: new BigNumber(100),
@@ -53,24 +75,34 @@ export const eip1559Tx: EvmTransactionEIP1559 = Object.freeze(
   }),
 );
 
-export const rawLegacyTx: EvmTransactionLegacyRaw = Object.freeze(
-  Object.freeze({
-    amount: "100",
-    useAllAmount: false,
-    subAccountId: "id",
-    recipient: "0xkvn",
-    feesStrategy: "custom",
-    family: "evm",
-    mode: "send",
-    nonce: 0,
-    gasLimit: "21000",
-    chainId: 1,
-    data: testData,
-    gasPrice: "10000",
-    additionalFees: "420",
-    type: 0,
-  }),
-);
+export const nftEip1559tx = Object.freeze({
+  ...eip1559Tx,
+  mode: "erc721",
+  nft,
+});
+
+export const rawLegacyTx: EvmTransactionLegacyRaw = Object.freeze({
+  amount: "100",
+  useAllAmount: false,
+  subAccountId: "id",
+  recipient: "0xkvn",
+  feesStrategy: "custom",
+  family: "evm",
+  mode: "send",
+  nonce: 0,
+  gasLimit: "21000",
+  chainId: 1,
+  data: testData,
+  gasPrice: "10000",
+  additionalFees: "420",
+  type: 0,
+});
+
+export const nftRawLegacyTx: EvmTransactionLegacyRaw & EvmNftTransactionRaw = Object.freeze({
+  ...rawLegacyTx,
+  mode: "erc721",
+  nft: rawNft,
+});
 
 export const legacyTx: EvmTransactionLegacy = Object.freeze(
   Object.freeze({
@@ -90,6 +122,12 @@ export const legacyTx: EvmTransactionLegacy = Object.freeze(
     type: 0,
   }),
 );
+
+export const nftLegacyTx: EvmTransactionLegacy & EvmNftTransaction = Object.freeze({
+  ...legacyTx,
+  mode: "erc721",
+  nft,
+});
 
 export const currency: CryptoCurrency = Object.freeze({
   ...getCryptoCurrencyById("ethereum"),

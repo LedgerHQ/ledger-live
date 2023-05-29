@@ -6,8 +6,12 @@ import * as rpcAPI from "../../api/rpc/rpc.common";
 import {
   eip1559Tx,
   legacyTx,
+  nftEip1559tx,
+  nftLegacyTx,
+  nftRawLegacyTx,
   rawEip1559Tx,
   rawLegacyTx,
+  rawNftEip1559Tx,
   testData,
   tokenTransaction,
 } from "../fixtures/transaction.fixtures";
@@ -29,13 +33,21 @@ describe("EVM Family", () => {
         expect(fromTransactionRaw(rawLegacyTx)).toEqual(legacyTx);
       });
 
-      it("should deserialize a legacy transaction without type into a ledger live transaction", () => {
+      it("should deserialize a raw legacy transaction without type into a ledger live transaction", () => {
         expect(
           fromTransactionRaw({
             ...rawLegacyTx,
             type: undefined,
           }),
         ).toEqual(legacyTx);
+      });
+
+      it("should deserialize an nft legacy transaction into a ledger live transaction", () => {
+        expect(fromTransactionRaw(nftRawLegacyTx)).toEqual(nftLegacyTx);
+      });
+
+      it("should deserialize an nft EIP1559 transaction into a ledger live transaction", () => {
+        expect(fromTransactionRaw(rawNftEip1559Tx)).toEqual(nftEip1559tx);
       });
     });
 
@@ -46,6 +58,10 @@ describe("EVM Family", () => {
 
       it("should serialize a ledger live legacy transaction into a raw transaction", () => {
         expect(toTransactionRaw(legacyTx)).toEqual(rawLegacyTx);
+      });
+
+      it("should serialize an nft ledger live transaction without type into a raw live transaction", () => {
+        expect(toTransactionRaw(nftLegacyTx)).toEqual(nftRawLegacyTx);
       });
     });
 

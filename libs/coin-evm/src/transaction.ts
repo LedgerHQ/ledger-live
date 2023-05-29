@@ -79,6 +79,15 @@ export const fromTransactionRaw = (rawTx: EvmTransactionRaw): EvmTransaction => 
     tx.additionalFees = new BigNumber(rawTx.additionalFees);
   }
 
+  if (rawTx.nft) {
+    tx.nft = {
+      tokenId: rawTx.nft.tokenId,
+      contract: rawTx.nft.contract,
+      quantity: new BigNumber(rawTx.nft.quantity),
+      collectionName: rawTx.nft.collectionName,
+    };
+  }
+
   return tx as EvmTransaction;
 };
 
@@ -116,6 +125,15 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
 
   if (tx.additionalFees) {
     txRaw.additionalFees = tx.additionalFees.toFixed();
+  }
+
+  if (tx.nft) {
+    txRaw.nft = {
+      tokenId: tx.nft.tokenId,
+      contract: tx.nft.contract,
+      quantity: tx.nft.quantity.toFixed(),
+      collectionName: tx.nft.collectionName,
+    };
   }
 
   return txRaw as EvmTransactionRaw;
