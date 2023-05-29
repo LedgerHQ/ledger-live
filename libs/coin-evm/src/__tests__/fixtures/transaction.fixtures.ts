@@ -141,21 +141,68 @@ export const currency: CryptoCurrency = Object.freeze({
   },
 });
 export const tokenCurrency = Object.freeze(getTokenById("ethereum/erc20/usd__coin"));
-export const tokenAccount = makeTokenAccount("0xkvn", tokenCurrency);
-export const account = makeAccount("0xkvn", currency, [tokenAccount]);
+export const tokenAccount = makeTokenAccount(
+  "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+  tokenCurrency,
+);
+export const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency, [
+  tokenAccount,
+]);
 
-export const tokenTransaction: EvmTransaction = {
+export const tokenTransaction: EvmTransaction = Object.freeze({
+  family: "evm",
+  mode: "send",
   amount: new BigNumber(100),
   useAllAmount: false,
   subAccountId: tokenAccount.id,
   recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
   feesStrategy: "custom",
-  family: "evm",
-  mode: "send",
   nonce: 0,
   gasLimit: new BigNumber(60000),
   chainId: 1,
   maxFeePerGas: new BigNumber(100),
   maxPriorityFeePerGas: new BigNumber(100),
   type: 2,
-};
+});
+
+export const erc721Transaction: EvmTransaction = Object.freeze({
+  family: "evm",
+  mode: "erc721",
+  amount: new BigNumber(0),
+  useAllAmount: false,
+  recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
+  feesStrategy: "custom",
+  nonce: 0,
+  gasLimit: new BigNumber(60000),
+  chainId: 1,
+  nft: {
+    contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+    tokenId: "1",
+    quantity: new BigNumber(1),
+    collectionName: "BAYC",
+  },
+  maxFeePerGas: new BigNumber(100),
+  maxPriorityFeePerGas: new BigNumber(100),
+  type: 2,
+});
+
+export const erc1155Transaction: EvmTransaction = Object.freeze({
+  family: "evm",
+  mode: "erc1155",
+  amount: new BigNumber(0),
+  useAllAmount: false,
+  recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
+  feesStrategy: "custom",
+  nonce: 0,
+  gasLimit: new BigNumber(60000),
+  chainId: 1,
+  nft: {
+    contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+    tokenId: "1",
+    quantity: new BigNumber(10),
+    collectionName: "BAYC",
+  },
+  maxFeePerGas: new BigNumber(100),
+  maxPriorityFeePerGas: new BigNumber(100),
+  type: 2,
+});

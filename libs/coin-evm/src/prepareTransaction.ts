@@ -78,7 +78,7 @@ export const prepareTokenTransaction = async (
   const [recipientErrors] = validateRecipient(account, typedTransaction);
   const amount = typedTransaction.useAllAmount ? tokenAccount.balance : typedTransaction.amount;
   const data = !Object.keys(recipientErrors).length
-    ? getTransactionData({ ...typedTransaction, amount })
+    ? getTransactionData(account, { ...typedTransaction, amount })
     : undefined;
   // As we're interacting with a smart contract,
   // it's going to be the real recipient for the tx

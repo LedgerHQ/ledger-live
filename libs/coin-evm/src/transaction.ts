@@ -1,5 +1,6 @@
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { ethers } from "ethers";
+import { BigNumber } from "bignumber.js";
+import type { Account } from "@ledgerhq/types-live";
 import {
   formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
@@ -7,10 +8,11 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/transaction/common";
-import { ethers } from "ethers";
-import { BigNumber } from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
+import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { transactionToEthersTransaction } from "./adapters";
+import ERC1155ABI from "./abis/erc1155.abi.json";
+import ERC721ABI from "./abis/erc721.abi.json";
 import ERC20ABI from "./abis/erc20.abi.json";
 import type {
   Transaction as EvmTransaction,
@@ -143,15 +145,47 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
  * Returns the data necessary to execute smart contracts.
  * As of now, only used to create ERC20 transfers' data
  */
-export const getTransactionData = (transaction: EvmTransaction): Buffer | undefined => {
-  const contract = new ethers.utils.Interface(ERC20ABI);
-  const data = contract.encodeFunctionData("transfer", [
-    transaction.recipient,
-    transaction.amount.toFixed(),
-  ]);
+export const getTransactionData = (
+  account: Account,
+  transaction: EvmTransaction,
+): Buffer | undefined => {
+  switch (transaction.mode) {
+    case "send": {
+      const contract = new ethers.utils.Interface(ERC20ABI);
+      const data = contract.encodeFunctionData("transfer", [
+        transaction.recipient,
+        transaction.amount.toFixed(),
+      ]);
 
-  // removing 0x prefix
-  return Buffer.from(data.slice(2), "hex");
+      // removing 0x prefix
+      return Buffer.from(data.slice(2), "hex");
+    }
+    case "erc721": {
+      const contract = new ethers.utils.Interface(ERC721ABI);
+      const data = contract.encodeFunctionData("safeTransferFrom(address,address,uint256,bytes)", [
+        account.freshAddress,
+        transaction.recipient,
+        transaction.nft.tokenId,
+        "0x",
+      ]);
+
+      // removing 0x prefix
+      return Buffer.from(data.slice(2), "hex");
+    }
+    case "erc1155": {
+      const contract = new ethers.utils.Interface(ERC1155ABI);
+      const data = contract.encodeFunctionData("safeTransferFrom", [
+        account.freshAddress,
+        transaction.recipient,
+        transaction.nft.tokenId,
+        transaction.nft.quantity.toFixed(),
+        "0x",
+      ]);
+
+      // removing 0x prefix
+      return Buffer.from(data.slice(2), "hex");
+    }
+  }
 };
 
 /**
