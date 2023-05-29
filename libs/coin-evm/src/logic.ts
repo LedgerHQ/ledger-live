@@ -104,10 +104,13 @@ export const mergeSubAccounts = (
     const updates: Partial<SubAccount> = {};
     for (const { name, isOps } of updatableSubAccountProperties) {
       if (!isOps) {
+        // @ts-expect-error FIXME: fix typings
         if (newSubAccount[name] !== duplicatedAccount[name]) {
+          // @ts-expect-error FIXME: fix typings
           updates[name] = newSubAccount[name];
         }
       } else {
+        // @ts-expect-error FIXME: fix typings
         updates[name] = mergeOps(duplicatedAccount[name], newSubAccount[name]);
       }
     }

@@ -324,6 +324,7 @@ const evmBasicMutations: ({
 export default Object.values(cryptocurrenciesById)
   .filter((currency) => currency.family === "evm")
   .reduce((acc, currency) => {
+    // @ts-expect-error FIXME: fix typings
     acc[currency.id] = {
       name: currency.name,
       currency,

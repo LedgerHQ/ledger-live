@@ -340,11 +340,13 @@ describe("EVM Family", () => {
       it("should provide a hash not dependent on reference", () => {
         jest
           .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
-          .mockImplementationOnce((currency) => {
+          .mockImplementationOnce((currency): TokenCurrency[] => {
             const { listTokensForCryptoCurrency } = jest.requireActual(
               "@ledgerhq/cryptoassets/tokens"
             );
-            return listTokensForCryptoCurrency(currency).map((t) => ({ ...t }));
+            return listTokensForCryptoCurrency(currency).map(
+              (t: TokenCurrency) => ({ ...t })
+            );
           });
         expect(getSyncHash(currency)).toEqual(getSyncHash(currency));
       });
