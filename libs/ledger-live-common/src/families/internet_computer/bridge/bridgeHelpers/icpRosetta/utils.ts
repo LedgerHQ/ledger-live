@@ -1,9 +1,9 @@
 import * as cbor from "simple-cbor";
 import {
-  ConstructionCombineRequest,
-  ConstructionPayloadsResponse,
-  Operation,
-} from "../types";
+  ICPRosettaConstructionCombineRequest,
+  ICPRosettaConstructionPayloadsResponse,
+  ICPRosettaICPRosettaOperation,
+} from "./types";
 import { PipeArrayBuffer } from "@dfinity/candid";
 import BigInteger from "big-integer";
 import { Transaction } from "../../../types";
@@ -14,14 +14,14 @@ import BigNumber from "bignumber.js";
 export const generateOperations = (
   tr: Transaction,
   a: Account
-): Operation[] => {
+): ICPRosettaICPRosettaOperation[] => {
   const { address } = getAddress(a);
   const currency = {
     symbol: "ICP",
     decimals: 8,
   };
   const type = "TRANSACTION";
-  const operations: Operation[] = [];
+  const operations: ICPRosettaICPRosettaOperation[] = [];
   operations.push({
     operation_identifier: {
       index: 0,
@@ -111,10 +111,10 @@ export class ingressExpiry {
 
 export const generateSignaturesPayload = (
   signs: { txnSig: string; readSig: string },
-  payloads: ConstructionPayloadsResponse["payloads"],
+  payloads: ICPRosettaConstructionPayloadsResponse["payloads"],
   pubkey: string
-): ConstructionCombineRequest["signatures"] => {
-  const signatures: ConstructionCombineRequest["signatures"] = [];
+): ICPRosettaConstructionCombineRequest["signatures"] => {
+  const signatures: ICPRosettaConstructionCombineRequest["signatures"] = [];
   const [txnPayload, readStatePayload] = payloads;
   signatures.push({
     signing_payload: {

@@ -5,13 +5,15 @@ import { fetchBalances, fetchBlockHeight, fetchTxns } from "./network";
 import { flatMap } from "lodash";
 import { Account, Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { GetTxnsHistoryResponse } from "./types";
+import { ICPRosettaGetTxnsHistoryResponse } from "./icpRosetta/types";
 import { ICP_FEES } from "../../consts";
 import { encodeOperationId } from "../../../../operation";
 import { normalizeEpochTimestamp } from "../../utils";
 
 const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
-  return (txInfo: GetTxnsHistoryResponse["transactions"][0]): Operation[] => {
+  return (
+    txInfo: ICPRosettaGetTxnsHistoryResponse["transactions"][0]
+  ): Operation[] => {
     const ops: Operation[] = [];
     const ownerOperation = txInfo.transaction.operations.find(
       (cur) => cur.account.address === address

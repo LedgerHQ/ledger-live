@@ -9,7 +9,7 @@ import {
   InvalidAddress,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
-import { getEstimatedFees } from "./utils";
+import { getEstimatedFees } from "./bridge/bridgeHelpers/fee";
 
 const SEED_IDENTIFIER =
   "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";

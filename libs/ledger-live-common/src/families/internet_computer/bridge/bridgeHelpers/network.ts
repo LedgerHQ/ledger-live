@@ -4,10 +4,10 @@ import { getEnv } from "../../../../env";
 import network from "../../../../network";
 import { ICP_BLK_NAME_ROSETTA, ICP_NET_ID_ROSETTA } from "../../consts";
 import {
-  BlockHeightResponse,
-  GetBalancesResponse,
-  GetTxnsHistoryResponse,
-} from "./types";
+  ICPRosettaBlockHeightResponse,
+  ICPRosettaGetBalancesResponse,
+  ICPRosettaGetTxnsHistoryResponse,
+} from "./icpRosetta/types";
 
 const getICPURL = (path?: string): string => {
   const baseUrl = getEnv("API_ICP_ENDPOINT");
@@ -16,7 +16,7 @@ const getICPURL = (path?: string): string => {
   return `${baseUrl}${path ? path : ""}`;
 };
 
-const fetch = async <T>(path: string, body: any) => {
+const ICPFetchWrapper = async <T>(path: string, body: any) => {
   const url = getICPURL(path);
 
   // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
@@ -50,17 +50,18 @@ export const getICPRosettaNetworkIdentifier = () => {
   };
 };
 
-export const fetchBlockHeight = async (): Promise<BlockHeightResponse> => {
-  const data = await fetch<BlockHeightResponse>(
-    "network/status",
-    getICPRosettaNetworkIdentifier()
-  );
-  return data;
-};
+export const fetchBlockHeight =
+  async (): Promise<ICPRosettaBlockHeightResponse> => {
+    const data = await ICPFetchWrapper<ICPRosettaBlockHeightResponse>(
+      "network/status",
+      getICPRosettaNetworkIdentifier()
+    );
+    return data;
+  };
 
 export const fetchBalances = async (
   accountId: string
-): Promise<GetBalancesResponse> => {
+): Promise<ICPRosettaGetBalancesResponse> => {
   const body = {
     ...getICPRosettaNetworkIdentifier(),
     account_identifier: {
@@ -68,13 +69,16 @@ export const fetchBalances = async (
       metadata: {},
     },
   };
-  const data = await fetch<GetBalancesResponse>("account/balance", body);
+  const data = await ICPFetchWrapper<ICPRosettaGetBalancesResponse>(
+    "account/balance",
+    body
+  );
   return data;
 };
 
 export const fetchTxns = async (
   accountId: string
-): Promise<GetTxnsHistoryResponse> => {
+): Promise<ICPRosettaGetTxnsHistoryResponse> => {
   const body = {
     ...getICPRosettaNetworkIdentifier(),
     account_identifier: {
@@ -82,7 +86,10 @@ export const fetchTxns = async (
       metadata: {},
     },
   };
-  const data = await fetch<GetTxnsHistoryResponse>("search/transactions", body);
+  const data = await ICPFetchWrapper<ICPRosettaGetTxnsHistoryResponse>(
+    "search/transactions",
+    body
+  );
   return data;
 };
 
@@ -94,7 +101,7 @@ export const constructionInvoke = async <TRequest, TResponse>(
     ...opts,
   };
 
-  const data = await fetch<TResponse>(`construction/${method}`, body);
+  const data = await ICPFetchWrapper<TResponse>(`construction/${method}`, body);
 
   return data;
 };

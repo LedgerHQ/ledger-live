@@ -9,10 +9,14 @@ import {
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "../types";
-import { getAccountShape } from "./utils/account";
+import { getAccountShape } from "./bridgeHelpers/account";
 import BigNumber from "bignumber.js";
-import { getEstimatedFees } from "../utils";
-import { getAddress, validateAddress, validateMemo } from "./utils/addresses";
+import { getEstimatedFees } from "./bridgeHelpers/fee";
+import {
+  getAddress,
+  validateAddress,
+  validateMemo,
+} from "./bridgeHelpers/addresses";
 import {
   AmountRequired,
   InvalidAddress,
@@ -30,7 +34,7 @@ import {
   getTxnMetadata,
   getUnsignedTransaction,
   signICPTransaction,
-} from "./utils/icp";
+} from "./bridgeHelpers/icpRosetta";
 import { getPath } from "../utils";
 import { InvalidMemoICP } from "../errors";
 

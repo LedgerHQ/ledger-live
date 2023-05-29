@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import { ICP_FEES, ICP_SEND_TXN_TYPE, MAX_MEMO_VALUE } from "./consts";
+import { ICP_SEND_TXN_TYPE, MAX_MEMO_VALUE } from "./consts";
 
 const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
 const validBase64RegExp = new RegExp(
@@ -39,18 +39,9 @@ export const getBufferFromString = (message: string): Buffer =>
     ? Buffer.from(message, "base64")
     : Buffer.from(message);
 
-export const calculateEstimatedFees = (
-  gasFeeCap: BigNumber,
-  gasLimit: BigNumber
-): BigNumber => gasFeeCap.multipliedBy(gasLimit);
-
 export const normalizeEpochTimestamp = (timestamp: string): number => {
   return parseInt(timestamp.slice(0, 13));
 };
-
-export function getEstimatedFees(): BigNumber {
-  return new BigNumber(ICP_FEES);
-}
 
 function randomIntFromInterval(min, max): string {
   const minBig = new BigNumber(min);

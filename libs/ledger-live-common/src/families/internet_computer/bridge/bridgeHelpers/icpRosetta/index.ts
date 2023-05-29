@@ -4,15 +4,15 @@ import { Transaction } from "../../../types";
 import ICP from "@zondax/ledger-icp";
 import { constructionInvoke, getICPRosettaNetworkIdentifier } from "../network";
 import {
-  ConstructionCombineRequest,
-  ConstructionCombineResponse,
-  ConstructionHashRequest,
-  ConstructionHashResponse,
-  ConstructionPayloadsRequest,
-  ConstructionPayloadsResponse,
-  ConstructionSubmitRequest,
-  ConstructionSubmitResponse,
-} from "../types";
+  ICPRosettaConstructionCombineRequest,
+  ICPRosettaConstructionCombineResponse,
+  ICPRosettaConstructionHashRequest,
+  ICPRosettaConstructionHashResponse,
+  ICPRosettaConstructionPayloadsRequest,
+  ICPRosettaConstructionPayloadsResponse,
+  ICPRosettaConstructionSubmitRequest,
+  ICPRosettaConstructionSubmitResponse,
+} from "./types";
 import {
   ingressExpiry,
   generateOperations,
@@ -28,7 +28,7 @@ export const getUnsignedTransaction = async (
   account: Account
 ): Promise<{
   unsignedTxn: string;
-  payloads: ConstructionPayloadsResponse["payloads"];
+  payloads: ICPRosettaConstructionPayloadsResponse["payloads"];
 }> => {
   const ops = generateOperations(transaction, account);
   const pubkeys = [
@@ -38,7 +38,7 @@ export const getUnsignedTransaction = async (
     },
   ];
 
-  const reqOpts: ConstructionPayloadsRequest = {
+  const reqOpts: ICPRosettaConstructionPayloadsRequest = {
     ...getICPRosettaNetworkIdentifier(),
     operations: ops,
     public_keys: pubkeys,
@@ -47,8 +47,8 @@ export const getUnsignedTransaction = async (
     },
   };
   const { payloads, unsigned_transaction } = await constructionInvoke<
-    ConstructionPayloadsRequest,
-    ConstructionPayloadsResponse
+    ICPRosettaConstructionPayloadsRequest,
+    ICPRosettaConstructionPayloadsResponse
   >(reqOpts, "payloads");
 
   return { unsignedTxn: unsigned_transaction, payloads };
@@ -64,7 +64,7 @@ export const signICPTransaction = async ({
   unsignedTxn: string;
   transport: Transport;
   path: string;
-  payloads: ConstructionPayloadsResponse["payloads"];
+  payloads: ICPRosettaConstructionPayloadsResponse["payloads"];
   pubkey: string;
 }): Promise<{
   signatures: { txnSig: string; readSig: string };
@@ -107,8 +107,8 @@ export const signICPTransaction = async ({
   );
 
   const { signed_transaction: signedTxn } = await constructionInvoke<
-    ConstructionCombineRequest,
-    ConstructionCombineResponse
+    ICPRosettaConstructionCombineRequest,
+    ICPRosettaConstructionCombineResponse
   >(
     {
       ...getICPRosettaNetworkIdentifier(),
@@ -127,8 +127,8 @@ export const getTxnMetadata = async (
   const {
     transaction_identifier: { hash },
   } = await constructionInvoke<
-    ConstructionHashRequest,
-    ConstructionHashResponse
+    ICPRosettaConstructionHashRequest,
+    ICPRosettaConstructionHashResponse
   >(
     { ...getICPRosettaNetworkIdentifier(), signed_transaction: signedTxn },
     "hash"
@@ -143,8 +143,8 @@ export const getTxnExpirationDate = (_unsignedTxn: string): Date => {
 
 export const broadcastTxn = async (signedTxn: string) => {
   await constructionInvoke<
-    ConstructionSubmitRequest,
-    ConstructionSubmitResponse
+    ICPRosettaConstructionSubmitRequest,
+    ICPRosettaConstructionSubmitResponse
   >(
     { ...getICPRosettaNetworkIdentifier(), signed_transaction: signedTxn },
     "submit"
