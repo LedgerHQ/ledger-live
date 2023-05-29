@@ -80,12 +80,12 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
   );
 
   const handlePressSkip = useCallback(() => {
-    track("button_click", { button: "maybe later", flow: analyticsFlowName });
+    track("button_clicked", { button: "maybe later", flow: analyticsFlowName });
     onComplete();
   }, [onComplete]);
 
   const handlePressInstall = useCallback(() => {
-    track("button_click", {
+    track("button_clicked", {
       button: deviceToRestore ? "Restore applications" : "Install applications",
       flow: analyticsFlowName,
     });
@@ -93,7 +93,7 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
   }, [deviceToRestore]);
 
   const handleCancelModalRetryPressed = useCallback(() => {
-    track("button_click", {
+    track("button_clicked", {
       button: "Install now",
       flow: analyticsFlowName,
     });
@@ -101,7 +101,7 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
   }, [handleRetry]);
 
   const handleCancelModalSkipPressed = useCallback(() => {
-    track("button_click", {
+    track("button_clicked", {
       button: "I'll do this later",
       flow: analyticsFlowName,
     });
