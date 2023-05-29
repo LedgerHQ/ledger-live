@@ -175,6 +175,7 @@ export const track = (
 
   const eventPropertiesWithoutExtra = {
     ...properties,
+    page: currentRouteNameRef.current,
   };
   const allProperties = {
     ...eventPropertiesWithoutExtra,
