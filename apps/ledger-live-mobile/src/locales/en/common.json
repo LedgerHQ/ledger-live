@@ -1874,7 +1874,7 @@
     "title": "Setup {{deviceName}}",
     "estimatedTimeFormat": "{{estimatedTime}} min",
     "deviceSelection": {
-      "title": "Select the Ledger you want  to set up:",
+      "title": "Select the Ledger you want to set up:",
       "brand": "Ledger",
       "setupTime": "{{time}} mins",
       "notCompatible": "No iPhone compatibility",
