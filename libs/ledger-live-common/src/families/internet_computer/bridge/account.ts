@@ -26,7 +26,6 @@ import {
 } from "@ledgerhq/errors";
 import { Observable } from "rxjs";
 import { withDevice } from "../../../hw/deviceAccess";
-import { close } from "../../../hw";
 import { encodeOperationId } from "../../../operation";
 import {
   broadcastTxn,
@@ -66,6 +65,7 @@ const prepareTransaction = async (
   const { address } = getAddress(a);
   const { recipient } = t;
 
+  let amount: BigNumber = t.amount;
   if (recipient && address) {
     // log("debug", "[prepareTransaction] fetching estimated fees");
 
@@ -74,13 +74,13 @@ const prepareTransaction = async (
       (await validateAddress(address)).isValid
     ) {
       if (t.useAllAmount) {
-        t.amount = a.spendableBalance.minus(t.fees);
+        amount = a.spendableBalance.minus(t.fees);
       }
     }
   }
 
   // log("debug", "[prepareTransaction] finish fn");
-  return t;
+  return { ...t, amount };
 };
 
 const getTransactionStatus = async (
@@ -95,16 +95,21 @@ const getTransactionStatus = async (
   const { recipient, useAllAmount } = t;
   let { amount } = t;
 
-  if (!recipient) errors.recipient = new RecipientRequired();
-  else if (!(await validateAddress(recipient)).isValid)
+  if (!recipient) {
+    errors.recipient = new RecipientRequired();
+  } else if (!(await validateAddress(recipient)).isValid) {
     errors.recipient = new InvalidAddress();
-  else if (recipient.toLowerCase() === address.toLowerCase())
+  } else if (recipient.toLowerCase() === address.toLowerCase()) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+  }
 
-  if (!(await validateAddress(address)).isValid)
+  if (!(await validateAddress(address)).isValid) {
     errors.sender = new InvalidAddress();
+  }
 
-  if (!validateMemo(t.memo).isValid) errors.transaction = new InvalidMemoICP();
+  if (!validateMemo(t.memo).isValid) {
+    errors.transaction = new InvalidMemoICP();
+  }
 
   // This is the worst case scenario (the tx won't cost more than this value)
   const estimatedFees = t.fees;
@@ -167,69 +172,59 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
         async function main() {
           // log("debug", "[signOperation] start fn");
 
-          const { recipient, useAllAmount } = transaction;
-          let { amount } = transaction;
-          const { id: accountId, balance, xpub } = account;
+          const { recipient, amount } = transaction;
+          const { id: accountId, xpub } = account;
           const { address, derivationPath } = getAddress(account);
           const fee = transaction.fees;
-          if (useAllAmount) amount = balance.minus(fee);
 
-          transaction = { ...transaction, amount };
+          const { unsignedTxn, payloads } = await getUnsignedTransaction(
+            transaction,
+            account
+          );
 
-          try {
-            const { unsignedTxn, payloads } = await getUnsignedTransaction(
-              transaction,
-              account
-            );
+          o.next({
+            type: "device-signature-requested",
+          });
 
-            o.next({
-              type: "device-signature-requested",
-            });
+          const { signedTxn } = await signICPTransaction({
+            unsignedTxn,
+            transport,
+            path: getPath(derivationPath),
+            payloads,
+            pubkey: xpub ?? "",
+          });
 
-            const { signedTxn } = await signICPTransaction({
-              unsignedTxn,
-              transport,
-              path: getPath(derivationPath),
-              payloads,
-              pubkey: xpub ?? "",
-            });
+          const { hash } = await getTxnMetadata(signedTxn);
 
-            const { hash } = await getTxnMetadata(signedTxn);
+          o.next({
+            type: "device-signature-granted",
+          });
 
-            o.next({
-              type: "device-signature-granted",
-            });
+          const operation: Operation = {
+            id: encodeOperationId(accountId, hash, "OUT"),
+            hash,
+            type: "OUT",
+            senders: [address],
+            recipients: [recipient],
+            accountId,
+            value: amount.plus(fee),
+            fee,
+            blockHash: null,
+            blockHeight: null,
+            date: new Date(),
+            extra: {
+              memo: transaction.memo,
+            },
+          };
 
-            const operation: Operation = {
-              id: encodeOperationId(accountId, hash, "OUT"),
-              hash,
-              type: "OUT",
-              senders: [address],
-              recipients: [recipient],
-              accountId,
-              value: amount.plus(fee),
-              fee,
-              blockHash: null,
-              blockHeight: null,
-              date: new Date(),
-              extra: {
-                memo: transaction.memo,
-              },
-            };
-
-            o.next({
-              type: "signed",
-              signedOperation: {
-                operation,
-                signature: signedTxn,
-                expirationDate: getTxnExpirationDate(unsignedTxn),
-              },
-            });
-          } finally {
-            close(transport, deviceId);
-
-            // log("debug", "[signOperation] finish fn");
-          }
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature: signedTxn,
+              expirationDate: getTxnExpirationDate(unsignedTxn),
+            },
+          });
         }
 
         main().then(
