@@ -294,18 +294,12 @@ export type SignTransactionNavigatorParamList = {
     parentId?: string;
     transaction: ICPTransaction;
     currentNavigation:
-      | ScreenName.LendingWithdrawSummary
-      | ScreenName.LendingSupplySummary
       | ScreenName.SignTransactionSummary
-      | ScreenName.LendingEnableSummary
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
       | ScreenName.SwapForm;
     nextNavigation:
-      | ScreenName.LendingWithdrawSelectDevice
-      | ScreenName.LendingSupplySelectDevice
       | ScreenName.SignTransactionSelectDevice
-      | ScreenName.LendingEnableSelectDevice
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
