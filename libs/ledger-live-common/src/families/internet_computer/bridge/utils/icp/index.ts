@@ -23,10 +23,6 @@ import { Principal } from "@dfinity/principal";
 import { isError } from "../../../utils";
 import BigNumber from "bignumber.js";
 
-if (typeof BigInt === "undefined") {
-  global.BigInt = require("big-integer");
-}
-
 export const getUnsignedTransaction = async (
   transaction: Transaction,
   account: Account
