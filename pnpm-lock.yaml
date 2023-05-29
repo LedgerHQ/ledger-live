@@ -2165,9 +2165,6 @@ importers:
       '@ethereumjs/tx':
         specifier: ^3.5.0
         version: 3.5.1
-      '@ethersproject/shims':
-        specifier: ^5.7.0
-        version: 5.7.0
       '@hashgraph/sdk':
         specifier: ^2.10.1
         version: 2.14.2(react-native@0.71.6)(react@17.0.2)
@@ -2180,6 +2177,9 @@ importers:
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-algorand
+      '@ledgerhq/coin-evm':
+        specifier: workspace:^
+        version: link:../coin-evm
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../coin-framework
@@ -2447,9 +2447,6 @@ importers:
       qs:
         specifier: ^6.10.1
         version: 6.10.3
-      react-native-get-random-values:
-        specifier: ^1.8.0
-        version: 1.8.0(react-native@0.71.6)
       redux:
         specifier: ^4.1.2
         version: 4.2.0
@@ -50320,15 +50317,6 @@ packages:
       react-native: '>=0.56'
     dependencies:
       fast-base64-decode: 1.0.0
-    dev: false
-
-  /react-native-get-random-values@1.8.0(react-native@0.71.6):
-    resolution: {integrity: sha512-H/zghhun0T+UIJLmig3+ZuBCvF66rdbiWUfRSNS6kv5oDSpa1ZiVyvRWtuPesQpT8dXj+Bv7WJRQOUP+5TB1sA==}
-    peerDependencies:
-      react-native: '>=0.56'
-    dependencies:
-      fast-base64-decode: 1.0.0
-      react-native: 0.71.6(react@17.0.2)
     dev: false
 
   /react-native-gradle-plugin@0.71.16:
