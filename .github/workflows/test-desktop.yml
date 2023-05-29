@@ -128,7 +128,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: network responses
+          name: windows-network-responses
           path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
@@ -193,7 +193,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: network responses
+          name: linux-network-responses
           path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
@@ -258,7 +258,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: network responses
+          name: macos-network-responses
           path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
