@@ -105,6 +105,7 @@ const test = base.extend<TestFixtures>({
     // app is ready
     const page = await electronApp.firstWindow();
 
+    // start recording all network responses in artifacts/networkResponse.log
     page.on("response", async data => {
       const now = Date.now();
       const timestamp = new Date(now).toISOString();
@@ -139,7 +140,7 @@ const test = base.extend<TestFixtures>({
     // close app
     await electronApp.close();
   },
-  // below is used for the logging file at `artifacts/responses.log`
+  // below is used for the logging file at `artifacts/networkResponses.log`
   recordTestNamesForApiResponseLogging: [
     async ({}, use, testInfo) => {
       fs.appendFileSync(

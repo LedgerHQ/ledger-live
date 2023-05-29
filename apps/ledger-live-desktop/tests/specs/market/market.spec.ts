@@ -72,6 +72,5 @@ test("Market", async ({ page }) => {
   await test.step("buy bitcoin from coin page", async () => {
     await marketCoinPage.openBuyPage();
     await expect.soft(page).toHaveScreenshot("market-btc-buy-page.png");
-    // await page.pause();
   });
 });
