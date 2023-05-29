@@ -111,17 +111,6 @@ interface AccountIdentifier {
   address: string;
 }
 
-export interface ConstructionParseRequest {
-  network_identifier: NetworkIdentifier;
-  signed: boolean;
-  transaction: string;
-}
-
-export interface ConstructionParseResponse {
-  operations: Operation[];
-  account_identifier_signers: any[];
-}
-
 export interface ConstructionCombineRequest {
   network_identifier: NetworkIdentifier;
   unsigned_transaction: string; // cbor
