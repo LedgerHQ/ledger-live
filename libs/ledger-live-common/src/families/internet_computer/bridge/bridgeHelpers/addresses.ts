@@ -25,7 +25,7 @@ export async function validateAddress(
 export function validateMemo(memo?: string): { isValid: boolean } {
   const res = BigNumber(memo ?? 0);
 
-  if (res.isNaN() || res.gt(BigNumber(MAX_MEMO_VALUE))) {
+  if (res.isNaN() || res.lt(0) || res.gt(BigNumber(MAX_MEMO_VALUE))) {
     return { isValid: false };
   }
 

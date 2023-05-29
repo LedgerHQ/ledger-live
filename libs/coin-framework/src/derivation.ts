@@ -196,7 +196,7 @@ const modes = Object.freeze({
     mandatoryEmptyAccountSkip: 1,
   },
   internet_computer: {
-    overridesDerivation: "44'/223'/0'/0'/<account>'",
+    overridesDerivation: "44'/223'/0'/0/<account>",
   },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
