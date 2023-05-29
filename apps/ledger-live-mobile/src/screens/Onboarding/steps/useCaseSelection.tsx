@@ -101,7 +101,7 @@ const OnboardingStepUseCaseSelection = () => {
         <SelectionCard
           title={t("onboarding.stepUseCase.restoreDevice.title")}
           subTitle={t("onboarding.stepUseCase.restoreDevice.subTitle")}
-          event="banner_clicked"
+          event="button_clicked"
           eventProperties={{
             button: "Restore from recovery phrase",
           }}
@@ -116,7 +116,7 @@ const OnboardingStepUseCaseSelection = () => {
           <SelectionCard
             title={t("onboarding.stepUseCase.protect.title")}
             subTitle={t("onboarding.stepUseCase.protect.subTitle")}
-            event="banner_clicked"
+            event="button_clicked"
             eventProperties={{
               button: "Restore with ledger recover",
             }}
