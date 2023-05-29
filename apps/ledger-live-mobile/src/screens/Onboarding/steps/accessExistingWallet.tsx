@@ -74,9 +74,8 @@ function AccessExistingWallet() {
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
   const connect = useCallback(() => {
-    navigation.navigate(ScreenName.OnboardingPairNew, {
-      deviceModelId: undefined,
-      showSeedWarning: false,
+    navigation.navigate(ScreenName.OnboardingDeviceSelection, {
+      next: ScreenName.OnboardingPairNew,
     });
   }, [navigation]);
 

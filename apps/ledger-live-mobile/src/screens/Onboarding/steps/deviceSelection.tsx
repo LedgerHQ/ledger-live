@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Image, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Text, ScrollListContainer } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -20,6 +20,7 @@ import { NavigateInput } from "../../../components/RootNavigator/types/BaseNavig
 import ChoiceCard from "./ChoiceCard";
 import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 import { NotCompatibleModal } from "./setupDevice/drawers/NotCompatibleModal";
+import { NavigationProps } from "../../AccountSettings";
 
 const nanoX = {
   source: require("../../../../assets/images/devices/NanoXCropped.png"),
@@ -55,6 +56,7 @@ const NOT_SUPPORTED_DEVICES_IOS = [DeviceModelId.nanoS, DeviceModelId.nanoSP];
 
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<NavigationProps["route"]>();
   const { t } = useTranslation();
   const syncOnboarding = useFeature("syncOnboarding" as const);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -73,6 +75,12 @@ function OnboardingStepDeviceSelection() {
     modelId;
 
   const next = (deviceModelId: DeviceModelId) => {
+    if (route.params?.next) {
+      navigation.navigate(route.params?.next, {
+        deviceModelId,
+      });
+      return;
+    }
     // Add NanoX.id, NanoSP.id etc. when they will support the sync-onboarding
     if ([stax.id].includes(deviceModelId)) {
       const navigateInput: NavigateInput<RootStackParamList> = {
