@@ -251,14 +251,16 @@ export class CosmosAPI {
       method: "GET",
       url:
         `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
-        encodeURI(`transfer.recipient='${address}'`),
+        encodeURI(`transfer.recipient='${address}'`) +
+        "&order_by=ORDER_BY_DESC",
     });
 
     const send = await network({
       method: "GET",
       url:
         `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
-        encodeURI(`message.sender='${address}'`),
+        encodeURI(`message.sender='${address}'`) +
+        "&order_by=ORDER_BY_DESC",
     });
     return [...receive.data.tx_responses, ...send.data.tx_responses];
   };
