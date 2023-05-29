@@ -6,14 +6,10 @@ import FramedImage, {
   ImageSourceContext,
 } from "./FramedImage";
 
-/**
- * squareRoot(width of the lottie bounding box / width of the device frame in the lottie)
- * */
-const lottieScale = Math.sqrt(1182 / 502);
-
 const lottiesStyle = {
   width: transferLottieConfig.frameWidth,
-  transform: [{ scale: lottieScale }],
+  height: transferLottieConfig.frameHeight,
+  transform: [{ scale: 2.3 }],
 };
 
 export type Props = {
