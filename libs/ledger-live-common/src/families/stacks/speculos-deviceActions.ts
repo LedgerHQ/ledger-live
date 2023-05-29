@@ -6,6 +6,10 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
       {
+        title: "Please review",
+        button: SpeculosButton.RIGHT,
+      },
+      {
         title: "Origin",
         button: SpeculosButton.RIGHT,
         expectedValue: ({ account }) => account.freshAddress,
