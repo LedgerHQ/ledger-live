@@ -1,4 +1,4 @@
-import { expect, Route, Request } from "@playwright/test";
+import { expect, Route } from "@playwright/test";
 import test from "../../fixtures/common";
 import { MarketPage } from "../../models/MarketPage";
 import { Layout } from "../../models/Layout";
@@ -7,7 +7,6 @@ import { getProvidersMock } from "../services/services-api-mocks/getProviders.mo
 
 test.use({
   userdata: "skip-onboarding",
-  //  env: { DEV_TOOLS: true }
 });
 
 test("Market", async ({ page }) => {
@@ -16,11 +15,6 @@ test("Market", async ({ page }) => {
   const layout = new Layout(page);
 
   await page.route("https://swap.ledger.com/v4/providers**", async (route: Route) => {
-    // const response = await route.fetch();
-
-    // console.log(response.headers);
-    // const headers = { ...response.headers(), teststatus: "mocked" };
-
     const mockProvidersResponse = getProvidersMock();
     route.fulfill({
       headers: { teststatus: "mocked" },
