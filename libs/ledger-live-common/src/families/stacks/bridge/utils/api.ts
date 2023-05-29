@@ -1,4 +1,3 @@
-import { log } from "@ledgerhq/logs";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 
 import {

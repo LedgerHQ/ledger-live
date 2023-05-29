@@ -86,7 +86,8 @@ const getTransactionStatus = async (
   const { balance } = a;
   const { address } = getAddress(a);
   const { recipient, useAllAmount, fee } = t;
-  let { amount, memo } = t;
+  const { memo } = t;
+  let { amount } = t;
 
   if (!recipient) {
     errors.recipient = new RecipientRequired();

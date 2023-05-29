@@ -1,6 +1,5 @@
 import BlockstackApp from "@zondax/ledger-stacks";
 import { AddressVersion } from "@stacks/transactions/dist";
-import { log } from "@ledgerhq/logs";
 
 import type { Resolver } from "../../hw/getAddress/types";
 import { getPath, throwIfError } from "./utils";

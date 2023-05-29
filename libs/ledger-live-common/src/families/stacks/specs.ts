@@ -73,7 +73,7 @@ const stacksSpecs: AppSpec<Transaction> = {
           updates,
         };
       },
-      test: ({ account, accountBeforeTransaction, operation }) => {
+      test: ({ account }) => {
         botTest("account balance is 0", () =>
           expect(account.balance.toFixed()).toBe("0")
         );
