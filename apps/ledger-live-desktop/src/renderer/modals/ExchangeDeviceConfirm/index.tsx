@@ -100,7 +100,7 @@ const VerifyOnDevice = ({
   useEffect(() => {
     confirmAddress();
   }, [confirmAddress]);
-  const type = useTheme("colors.palette.type");
+  const type = useTheme().colors.palette.type;
   return device || skipDevice ? (
     <>
       <Receive1ShareAddress name={name} address={address} />

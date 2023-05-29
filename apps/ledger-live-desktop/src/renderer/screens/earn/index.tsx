@@ -16,7 +16,7 @@ const Earn = () => {
   const localManifest = useLocalLiveAppManifest(DEFAULT_EARN_APP_ID);
   const remoteManifest = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
   const manifest = localManifest || remoteManifest;
-  const themeType = useTheme("colors.palette.type");
+  const themeType = useTheme().colors.palette.type;
 
   useDeepLinkListener();
 

@@ -116,6 +116,19 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     ? videoSources.welcomeScreenStax
     : videoSources.welcomeScreen;
 
+  const recoverFeature = useFeature("protectServicesMobile");
+
+  const recoverLogIn = useCallback(() => {
+    acceptTerms();
+    dispatch(setAnalytics(true));
+
+    const url = `${recoverFeature?.params?.account?.loginURI}&shouldBypassLLOnboarding=true`;
+
+    Linking.canOpenURL(url).then(canOpen => {
+      if (canOpen) Linking.openURL(url);
+    });
+  }, [acceptTerms, dispatch, recoverFeature?.params?.account?.loginURI]);
+
   return (
     <ForceTheme selectedPalette={"dark"}>
       <Flex flex={1} position="relative" bg="constant.purple">
@@ -207,6 +220,19 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           >
             {t("onboarding.stepWelcome.start")}
           </Button>
+          {recoverFeature?.enabled &&
+          recoverFeature?.params?.onboardingLogin ? (
+            <Button
+              outline
+              type="main"
+              size="large"
+              onPress={recoverLogIn}
+              mt={0}
+              mb={7}
+            >
+              {t("onboarding.stepWelcome.recoverLogIn")}
+            </Button>
+          ) : null}
           <Text variant="small" textAlign="center" color="neutral.c100">
             {t("onboarding.stepWelcome.terms")}
           </Text>

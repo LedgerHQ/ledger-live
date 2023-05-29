@@ -26,11 +26,9 @@ export function ToastProvider({ children }: Props): ReactElement {
   const api = useMemo(
     () => ({
       dismissToast: (id: string) => {
-        setToasts((currentToasts) => {
-          return currentToasts.find((item) => item.id === id)
-            ? currentToasts.filter((item) => item.id !== id)
-            : currentToasts;
-        });
+        setToasts((currentToasts) =>
+          currentToasts.filter((item) => item.id !== id)
+        );
       },
       pushToast: (newToast: ToastData) => {
         setToasts((currentToasts) => [...currentToasts, newToast]);

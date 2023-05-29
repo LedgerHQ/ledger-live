@@ -6,7 +6,6 @@ import React, {
   RefObject,
   forwardRef,
 } from "react";
-
 import { useSelector } from "react-redux";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import VersionNumber from "react-native-version-number";
@@ -36,6 +35,7 @@ import getOrCreateUser from "../../user";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import deviceStorage from "../../logic/storeWrapper";
+import { NetworkError } from "./NetworkError";
 
 const wallet = {
   name: "ledger-live-mobile",
@@ -365,6 +365,9 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}
+        renderError={() => (
+          <NetworkError handleTryAgain={() => webviewRef.current?.reload()} />
+        )}
         {...webviewProps}
       />
     );

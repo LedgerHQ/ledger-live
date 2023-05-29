@@ -121,7 +121,7 @@ type Props = {
 };
 const TransactionConfirm = ({ t, device, account, parentAccount, transaction, status }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const type = useTheme("colors.palette.type");
+  const type = useTheme().colors.palette.type;
   if (!device) return null;
   const r =
     transactionConfirmFieldsPerFamily[

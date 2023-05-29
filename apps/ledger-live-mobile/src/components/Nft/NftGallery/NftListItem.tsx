@@ -26,7 +26,7 @@ type Props = {
 };
 
 const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>`
-  margin-bottom: ${p => p.theme.space[3]}px;
+  margin-bottom: ${p => p.theme.space[7]}px;
   border-radius: ${p => p.theme.radii[1]}px;
   background-color: ${props => props.theme.colors.background.main};
 `;

@@ -40,6 +40,7 @@ export class AccountPage {
   }
 
   async clickBannerCTA() {
+    await this.stakeBannerButton.scrollIntoViewIfNeeded();
     await this.stakeBannerButton.click();
   }
 }

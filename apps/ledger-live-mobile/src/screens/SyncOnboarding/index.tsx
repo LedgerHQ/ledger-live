@@ -5,6 +5,7 @@ import React, {
   useMemo,
   ReactNode,
   useRef,
+  useLayoutEffect,
 } from "react";
 import type { StackScreenProps } from "@react-navigation/stack";
 import {
@@ -29,7 +30,7 @@ import { useDispatch } from "react-redux";
 import { CompositeScreenProps } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
-import { StorylyInstanceID } from "@ledgerhq/types-live";
+import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "../../actions/ble";
 import { ScreenName } from "../../const";
@@ -49,7 +50,7 @@ import { RootStackParamList } from "../../components/RootNavigator/types/RootNav
 import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
 import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
 import Stories from "../../components/StorylyStories";
-import { TrackScreen, track } from "../../analytics";
+import { TrackScreen, screen, track } from "../../analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
 
@@ -86,6 +87,15 @@ const longResyncOverlayDisplayDelayMs = 60000;
 const readyRedirectDelayMs = 2500;
 
 const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
+
+const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<
+  SeedPhraseType,
+  string
+>([
+  [SeedPhraseType.TwentyFour, "TwentyFour"],
+  [SeedPhraseType.Eighteen, "Eighteen"],
+  [SeedPhraseType.Twelve, "Twelve"],
+]);
 
 // Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
 enum CompanionStepKey {
@@ -132,6 +142,7 @@ export const SyncOnboarding = ({
   const [companionStepKey, setCompanionStepKey] = useState<CompanionStepKey>(
     CompanionStepKey.Paired,
   );
+  const lastCompanionStepKey = useRef<CompanionStepKey>();
   const [seedPathStatus, setSeedPathStatus] = useState<
     | "choice_new_or_restore"
     | "new_seed"
@@ -285,6 +296,69 @@ export const SyncOnboarding = ({
     }
   }, [isDesyncDrawerOpen]);
 
+  /**
+   * True if the device was initially onboarded/seeded when this component got
+   * mounted. False otherwise.
+   * Value is undefined until the onboarding state polling returns a first
+   * result.
+   * */
+  const deviceInitiallyOnboarded = useRef<boolean>();
+  /**
+   * Variable holding the seed phrase type (number of words) until we are
+   * ready to track the event (when the seeding step finishes).
+   * Should only be maintained if the device is not onboarded/not seeded as the
+   * onboarding flags can only be trusted for a non-onboarded device.
+   */
+  const analyticsSeedPhraseType = useRef<SeedPhraseType>();
+  useEffect(() => {
+    if (!deviceOnboardingState) return;
+    if (deviceInitiallyOnboarded.current === undefined)
+      deviceInitiallyOnboarded.current = deviceOnboardingState.isOnboarded;
+    if (
+      !deviceOnboardingState.isOnboarded && // onboarding state flags can only be trusted for a non-onboarded/non-seeded device
+      deviceOnboardingState.seedPhraseType
+    )
+      analyticsSeedPhraseType.current = deviceOnboardingState.seedPhraseType;
+  }, [deviceOnboardingState]);
+
+  const analyticsSeedConfiguration = useRef<
+    "new_seed" | "restore_seed" | "recover_seed"
+  >();
+
+  const analyticsSeedingTracked = useRef(false);
+  /**
+   * Analytics: track complete seeding of device
+   * We use useLayoutEffect to ensure the event is sent before the following
+   * step gets rendered and its corresponding analytics event gets dispatched
+   */
+  useLayoutEffect(() => {
+    if (
+      deviceInitiallyOnboarded.current === false && // can't just use ! operator because value can be undefined
+      lastCompanionStepKey.current !== undefined &&
+      lastCompanionStepKey.current <= CompanionStepKey.Seed &&
+      companionStepKey > CompanionStepKey.Seed &&
+      !analyticsSeedingTracked.current
+    ) {
+      screen(
+        "Set up Ledger Stax: Step 3 Seed Success",
+        undefined,
+        {
+          seedPhraseType: analyticsSeedPhraseType.current
+            ? fromSeedPhraseTypeToAnalyticsPropertyString.get(
+                analyticsSeedPhraseType.current,
+              )
+            : undefined,
+          seedConfiguration: analyticsSeedConfiguration.current,
+        },
+        true,
+        true,
+      );
+
+      analyticsSeedingTracked.current = true;
+    }
+    lastCompanionStepKey.current = companionStepKey;
+  }, [companionStepKey]);
+
   useEffect(() => {
     // When the device is seeded, there are 2 cases before triggering the software check step:
     // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
@@ -322,6 +396,7 @@ export const SyncOnboarding = ({
         setShouldRestoreApps(false);
         setCompanionStepKey(CompanionStepKey.Seed);
         setSeedPathStatus("new_seed");
+        analyticsSeedConfiguration.current = "new_seed";
         break;
       case DeviceOnboardingStep.SetupChoiceRestore:
         setCompanionStepKey(CompanionStepKey.Seed);
@@ -331,11 +406,13 @@ export const SyncOnboarding = ({
         setShouldRestoreApps(true);
         setCompanionStepKey(CompanionStepKey.Seed);
         setSeedPathStatus("restore_seed");
+        analyticsSeedConfiguration.current = "restore_seed";
         break;
       case DeviceOnboardingStep.RecoverRestore:
         setShouldRestoreApps(true);
         setCompanionStepKey(CompanionStepKey.Seed);
         setSeedPathStatus("recover_seed");
+        analyticsSeedConfiguration.current = "recover_seed";
         break;
       default:
         break;
@@ -445,7 +522,7 @@ export const SyncOnboarding = ({
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
           renderBody: () => (
             <Flex>
-              <TrackScreen category="Set up Ledger Stax: Step 3 Seed" />
+              <TrackScreen category="Set up Ledger Stax: Step 3 Seed Intro" />
               {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
                   <BodyText mb={6}>

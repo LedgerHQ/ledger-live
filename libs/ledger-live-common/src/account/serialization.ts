@@ -492,13 +492,16 @@ export function toAccountRaw(account: Account): AccountRaw {
     operations: (operations || []).map((o) => toOperationRaw(o)),
     pendingOperations: (pendingOperations || []).map((o) => toOperationRaw(o)),
     currencyId: currency.id,
-    feesCurrencyId: feesCurrency?.id,
     unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),
     balance: balance.toFixed(),
     spendableBalance: spendableBalance.toFixed(),
     nfts: nfts?.map((n) => toNFTRaw(n)),
   };
+
+  if (feesCurrency) {
+    res.feesCurrencyId = feesCurrency.id;
+  }
 
   if (balanceHistoryCache) {
     res.balanceHistoryCache = balanceHistoryCache;

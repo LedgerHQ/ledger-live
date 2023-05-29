@@ -508,6 +508,7 @@ export const createAction = (
         appRequest.appName, // eslint-disable-next-line react-hooks/exhaustive-deps
         appRequest.account && appRequest.account.id, // eslint-disable-next-line react-hooks/exhaustive-deps
         appRequest.currency && appRequest.currency.id,
+        appRequest.dependencies,
       ]
     );
 

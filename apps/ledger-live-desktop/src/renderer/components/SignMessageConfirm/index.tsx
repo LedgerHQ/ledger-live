@@ -57,7 +57,7 @@ type Props = {
 };
 
 const SignMessageConfirm = ({ device, account, parentAccount, signMessageRequested }: Props) => {
-  const type = useTheme("colors.palette.type");
+  const type = useTheme().colors.palette.type;
   const { t } = useTranslation();
   const { currency } = getMainAccount(account, parentAccount);
   const [inferredNanoFields, setInferredNanoFields] = useState<{
