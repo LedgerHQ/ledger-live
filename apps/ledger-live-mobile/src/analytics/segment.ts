@@ -135,6 +135,7 @@ const extraProperties = async (store: AppStore) => {
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
+    modelIdList: devices.map(d => d.modelId),
     onboardingHasDevice,
     ...(satisfaction
       ? {
