@@ -6,8 +6,8 @@ export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({
     steps: [
       {
-        title: "Please review",
-        button: SpeculosButton.RIGHT,
+        title: "Please",
+        expectedValue: "review"
       },
       {
         title: "Origin",
