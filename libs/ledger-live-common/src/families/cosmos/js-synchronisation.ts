@@ -51,6 +51,11 @@ const txToOps = (
 
     const mainMessage = getMainMessage(messages);
 
+    if (mainMessage === undefined) {
+      // happens when we don't know this message type in our implementation, example : proposal_vote
+      continue;
+    }
+
     const correspondingMessages = messages.filter(
       (m) => m.type === mainMessage.type
     );
