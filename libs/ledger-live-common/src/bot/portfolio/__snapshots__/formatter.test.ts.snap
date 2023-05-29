@@ -43,35 +43,35 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum | [🙏](https://etherscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
 | Ethereum Classic | [🙏](https://blockscout.com/etc/mainnet/address/0x932E8214E25AceC996aD7d195339AF5139625065/transactions) | ? |
 | Ethereum Goerli | [🙏](https://goerli.etherscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
-| Arbitrum Goerli | [🙏](https://goerli.arbiscan.io/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
-| Cronos | ❌ | ? |
-| Fantom | ⚠️ | ? |
-| Flare | [🙏](https://flare-explorer.flare.network/address/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f/transactions) | ? |
-| Songbird | ❌ | ? |
-| Moonbeam | [🙏](https://moonbeam.moonscan.io/address/rnmiQggEzwTHNqwJFpqYGgqt1rM7K5qPhw) | ? |
-| RSK | [🙏](https://explorer.rsk.co/address/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) | ? |
-| Bittorent Chain | ❌ | ? |
-| Kava EVM | ✅ | ? |
-| Evmos EVM | ✅ | ? |
-| Optimism | [🙏](https://optimistic.etherscan.io/address/SU26L3FCVKVC6BDCOGDDV6QYDS72MB7DCYSF6RVUV6CW45FQI7PC7HKXCQ) | ? |
-| Optimism Goerli | [🙏](https://goerli-optimism.etherscan.io/address/bc1q4wwuhvp882637t80khxxph6mx5wyfzy7t0j82m) | ? |
-| Energy Web | ❌ | ? |
-| Astar | ✅ | ? |
-| Metis | [🙏](https://andromeda-explorer.metis.io/address/AQXzh2M3TsveC7MSoH94TTHM3q2HM6UAvt) | ? |
-| Boba | [🙏](https://bobascan.com/address/Xkt8DxeCUnB911XsAch34Bwe6qqSBbjE3r) | ? |
-| Moonriver | [🙏](https://moonriver.moonscan.io/address/dgb1qht909kw83mz0gaerewqnv88206wf94legzy7r4) | ? |
-| Velas EVM | ✅ | ? |
-| Syscoin | [🙏](https://explorer.syscoin.org/address/RWksZkxzcEYoBqC1DM6PrXyKurXRew9EP2) | ? |
-| Filecoin | [🙏](https://filfox.info/en/address/ltc1qv29jhv9fgevexgezrds4jrll87sqdnmz2q7ah5) | ? |
-| Hedera | [🙏](https://hashscan.io/mainnet/account/P9xs8oGpD87RUWTvGuHqrzCZu1J6vP6tr2) | ? |
-| NEAR | [🙏](https://explorer.near.org/accounts/D7jqj2UpQqWe4EZhwcWDBDcatGjeVFzakr) | ? |
-| XRP | [🙏](https://bithomp.com/explorer/MFd4ugE9STPXmTGQqqxsfSdhNP5rx1y7we) | ? |
-| Solana | [🙏](https://explorer.solana.com/address/3CGsK5NhQWmdsCu5Ryq3thu1ufNYwPoYA3) | ? |
+| Filecoin | [🙏](https://filfox.info/en/address/0x932E8214E25AceC996aD7d195339AF5139625065) | ? |
+| Hedera | ❌ | ? |
+| NEAR | ⚠️ | ? |
+| XRP | [🙏](https://bithomp.com/explorer/4fa92eaaac5210f1fec2228388f803dbf39428725dadfa025c0df125fcc6788f) | ? |
+| Solana | ❌ | ? |
 | Stellar | ⚠️ | ? |
-| Tezos | ✅ | ? |
-| Tron | [🙏](https://tronscan.org/#/address/zneoegLhr8hh1JS6XaXrD7qGnnxqfcm4bRV) | ? |
-| Polkadot | [🙏](https://polkadot.subscan.io/account/DsZZvqfbnb2FtHmCzxXTMGXWqDNcrvGn4Ni) | ? |
-| Algorand | ❌ | ? |
+| Tezos | [🙏](https://tzkt.io/8J1jPhJ1beLUJ9BLLZbRLFQtX1UWKrxiVbrvRtiPeEc9) | ? |
+| Tron | ❌ | ? |
+| Polkadot | [🙏](https://polkadot.subscan.io/account/tz1TGUYUhWujaab8LfmrA55rfDzn5zvyBJUe) | ? |
+| Algorand | ✅ | ? |
+| Arbitrum Goerli | [🙏](https://goerli.arbiscan.io/address/SU26L3FCVKVC6BDCOGDDV6QYDS72MB7DCYSF6RVUV6CW45FQI7PC7HKXCQ) | ? |
+| Cronos | [🙏](https://cronoscan.com/address/bc1q4wwuhvp882637t80khxxph6mx5wyfzy7t0j82m) | ? |
+| Fantom | ❌ | ? |
+| Flare | ✅ | ? |
+| Songbird | [🙏](https://songbird-explorer.flare.network/address/AQXzh2M3TsveC7MSoH94TTHM3q2HM6UAvt/transactions) | ? |
+| Moonbeam | [🙏](https://moonbeam.moonscan.io/address/Xkt8DxeCUnB911XsAch34Bwe6qqSBbjE3r) | ? |
+| RSK | [🙏](https://explorer.rsk.co/address/dgb1qht909kw83mz0gaerewqnv88206wf94legzy7r4) | ? |
+| Bittorent Chain | ✅ | ? |
+| Kava EVM | [🙏](https://explorer.kava.io/address/RWksZkxzcEYoBqC1DM6PrXyKurXRew9EP2) | ? |
+| Evmos EVM | [🙏](https://blockscout.evmos.org/address/ltc1qv29jhv9fgevexgezrds4jrll87sqdnmz2q7ah5) | ? |
+| Optimism | [🙏](https://optimistic.etherscan.io/address/P9xs8oGpD87RUWTvGuHqrzCZu1J6vP6tr2) | ? |
+| Optimism Goerli | [🙏](https://goerli-optimism.etherscan.io/address/D7jqj2UpQqWe4EZhwcWDBDcatGjeVFzakr) | ? |
+| Energy Web | [🙏](https://explorer.energyweb.org/address/MFd4ugE9STPXmTGQqqxsfSdhNP5rx1y7we) | ? |
+| Astar | [🙏](https://blockscout.com/astar/address/3CGsK5NhQWmdsCu5Ryq3thu1ufNYwPoYA3) | ? |
+| Metis | [🙏](https://andromeda-explorer.metis.io/address/EZjc4W42JjgYyGt5YUGV4W2eGYD63vbYtw) | ? |
+| Boba | ✅ | ? |
+| Moonriver | [🙏](https://moonriver.moonscan.io/address/zneoegLhr8hh1JS6XaXrD7qGnnxqfcm4bRV) | ? |
+| Velas EVM | [🙏](https://evmexplorer.velas.com/address/DsZZvqfbnb2FtHmCzxXTMGXWqDNcrvGn4Ni) | ? |
+| Syscoin | ❌ | ? |
 
 </details>
 
@@ -114,35 +114,35 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum | 0 ETH | ? |0 ETH |
 | Ethereum Classic | 0 ETC | ? |0 ETC |
 | Ethereum Goerli | 0 𝚝ETH | ? |0 𝚝ETH |
+| Filecoin | 0 FIL | ? |0 FIL |
+| Hedera | ❌ | ? |0 HBAR |
+| NEAR | 0 NEAR | ? |0 NEAR |
+| XRP | 0 XRP | ? |0 XRP |
+| Solana | ❌ | ? |0 SOL |
+| Stellar | 0 XLM | ? |0 XLM |
+| Tezos | 0 XTZ | ? |0 XTZ |
+| Tron | ❌ | ? |0 TRX |
+| Polkadot | 0.00002064 DOT | ? |0.00002064 DOT |
+| Algorand | 16.4056 ALGO | ? |16.4056 ALGO |
 | Arbitrum Goerli | 0 𝚝ETH | ? |0 𝚝ETH |
-| Cronos | ❌ | ? |0 CRO |
-| Fantom | 0 FTM | ? |0 FTM |
+| Cronos | 0 CRO | ? |0 CRO |
+| Fantom | ❌ | ? |0 FTM |
 | Flare | 0 FLR | ? |0 FLR |
-| Songbird | ❌ | ? |0 SGB |
+| Songbird | 0 SGB | ? |0 SGB |
 | Moonbeam | 0 GLMR | ? |0 GLMR |
 | RSK | 0 RBTC | ? |0 RBTC |
-| Bittorent Chain | ❌ | ? |0 BTT |
+| Bittorent Chain | 0 BTT | ? |0 BTT |
 | Kava EVM | 0 KAVA | ? |0 KAVA |
 | Evmos EVM | 0 EVMOS | ? |0 EVMOS |
 | Optimism | 0 ETH | ? |0 ETH |
 | Optimism Goerli | 0 𝚝ETH | ? |0 𝚝ETH |
-| Energy Web | ❌ | ? |0 EWT |
+| Energy Web | 0 EWT | ? |0 EWT |
 | Astar | 0 ASTR | ? |0 ASTR |
 | Metis | 0 METIS | ? |0 METIS |
 | Boba | 0 ETH | ? |0 ETH |
 | Moonriver | 0 MOVR | ? |0 MOVR |
 | Velas EVM | 0 VLX | ? |0 VLX |
-| Syscoin | 0 SYS | ? |0 SYS |
-| Filecoin | 0 FIL | ? |0 FIL |
-| Hedera | 0 HBAR | ? |0 HBAR |
-| NEAR | 0 NEAR | ? |0 NEAR |
-| XRP | 0 XRP | ? |0 XRP |
-| Solana | 0 SOL | ? |0 SOL |
-| Stellar | 0 XLM | ? |0 XLM |
-| Tezos | 0.656479 XTZ | ? |0.656479 XTZ |
-| Tron | 0 TRX | ? |0 TRX |
-| Polkadot | 0 DOT | ? |0 DOT |
-| Algorand | ❌ | ? |0 ALGO |
+| Syscoin | ❌ | ? |0 SYS |
 
 </details>
 
@@ -188,36 +188,36 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum | 1 | ? |1 |
 | Ethereum Classic | 1 | ? |1 |
 | Ethereum Goerli | 1 | ? |1 |
+| **Filecoin** | 1 | ? |1 |
+| **Hedera** | ❌ | ? |0 |
+| **NEAR** | 0 | ? |0 |
+| **XRP** | 2 | ? |2 |
+| **Solana** | ❌ | ? |0 |
+| **Stellar** | 1 | ? |1 |
+| **Tezos** | 1 | ? |1 |
+| **Tron** | ❌ | ? |0 |
+| **Polkadot** | 5 | ? |5 |
+| **Algorand** | 8 | ? |8 |
 | **evm** family | 44 |0 |44 |
 | Arbitrum Goerli | 1 | ? |1 |
-| Cronos | ❌ | ? |0 |
-| Fantom | 0 | ? |0 |
-| Flare | 2 | ? |2 |
-| Songbird | ❌ | ? |0 |
+| Cronos | 4 | ? |4 |
+| Fantom | ❌ | ? |0 |
+| Flare | 7 | ? |7 |
+| Songbird | 2 | ? |2 |
 | Moonbeam | 1 | ? |1 |
-| RSK | 1 | ? |1 |
-| Bittorent Chain | ❌ | ? |0 |
-| Kava EVM | 5 | ? |5 |
-| Evmos EVM | 8 | ? |8 |
+| RSK | 3 | ? |3 |
+| Bittorent Chain | 7 | ? |7 |
+| Kava EVM | 1 | ? |1 |
+| Evmos EVM | 3 | ? |3 |
 | Optimism | 1 | ? |1 |
-| Optimism Goerli | 4 | ? |4 |
-| Energy Web | ❌ | ? |0 |
-| Astar | 7 | ? |7 |
+| Optimism Goerli | 1 | ? |1 |
+| Energy Web | 2 | ? |2 |
+| Astar | 2 | ? |2 |
 | Metis | 2 | ? |2 |
-| Boba | 1 | ? |1 |
-| Moonriver | 3 | ? |3 |
-| Velas EVM | 7 | ? |7 |
-| Syscoin | 1 | ? |1 |
-| **Filecoin** | 3 | ? |3 |
-| **Hedera** | 1 | ? |1 |
-| **NEAR** | 1 | ? |1 |
-| **XRP** | 2 | ? |2 |
-| **Solana** | 2 | ? |2 |
-| **Stellar** | 2 | ? |2 |
-| **Tezos** | 5 | ? |5 |
-| **Tron** | 1 | ? |1 |
-| **Polkadot** | 1 | ? |1 |
-| **Algorand** | ❌ | ? |0 |
+| Boba | 5 | ? |5 |
+| Moonriver | 1 | ? |1 |
+| Velas EVM | 1 | ? |1 |
+| Syscoin | ❌ | ? |0 |
 | **Total** | 155 |67 |222 |
 
 </details>
@@ -264,36 +264,36 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum | 0 | ? |0 |
 | Ethereum Classic | 0 | ? |0 |
 | Ethereum Goerli | 0 | ? |0 |
-| **evm** family | 737 |0 |737 |
-| Arbitrum Goerli | 0 | ? |0 |
-| Cronos | ❌ | ? |0 |
-| Fantom | 0 | ? |0 |
-| Flare | 0 | ? |0 |
-| Songbird | ❌ | ? |0 |
-| Moonbeam | 0 | ? |0 |
-| RSK | 0 | ? |0 |
-| Bittorent Chain | ❌ | ? |0 |
-| Kava EVM | 48 | ? |48 |
-| Evmos EVM | 205 | ? |205 |
-| Optimism | 0 | ? |0 |
-| Optimism Goerli | 0 | ? |0 |
-| Energy Web | ❌ | ? |0 |
-| Astar | 172 | ? |172 |
-| Metis | 0 | ? |0 |
-| Boba | 0 | ? |0 |
-| Moonriver | 0 | ? |0 |
-| Velas EVM | 312 | ? |312 |
-| Syscoin | 0 | ? |0 |
 | **Filecoin** | 0 | ? |0 |
-| **Hedera** | 0 | ? |0 |
+| **Hedera** | ❌ | ? |0 |
 | **NEAR** | 0 | ? |0 |
 | **XRP** | 0 | ? |0 |
-| **Solana** | 0 | ? |0 |
+| **Solana** | ❌ | ? |0 |
 | **Stellar** | 0 | ? |0 |
-| **Tezos** | 260 | ? |260 |
-| **Tron** | 0 | ? |0 |
-| **Polkadot** | 0 | ? |0 |
-| **Algorand** | ❌ | ? |0 |
+| **Tezos** | 0 | ? |0 |
+| **Tron** | ❌ | ? |0 |
+| **Polkadot** | 48 | ? |48 |
+| **Algorand** | 205 | ? |205 |
+| **evm** family | 744 |0 |744 |
+| Arbitrum Goerli | 0 | ? |0 |
+| Cronos | 0 | ? |0 |
+| Fantom | ❌ | ? |0 |
+| Flare | 172 | ? |172 |
+| Songbird | 0 | ? |0 |
+| Moonbeam | 0 | ? |0 |
+| RSK | 0 | ? |0 |
+| Bittorent Chain | 312 | ? |312 |
+| Kava EVM | 0 | ? |0 |
+| Evmos EVM | 0 | ? |0 |
+| Optimism | 0 | ? |0 |
+| Optimism Goerli | 0 | ? |0 |
+| Energy Web | 0 | ? |0 |
+| Astar | 0 | ? |0 |
+| Metis | 0 | ? |0 |
+| Boba | 260 | ? |260 |
+| Moonriver | 0 | ? |0 |
+| Velas EVM | 0 | ? |0 |
+| Syscoin | ❌ | ? |0 |
 | **Total** | 2150 |662 |2812 |
 
 </details>
@@ -343,36 +343,36 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum | 1.09s | ? |1.09s |
 | Ethereum Classic | 1.20s | ? |1.20s |
 | Ethereum Goerli | 0.93s | ? |0.93s |
+| **Filecoin** | 0.98s | ? |0.98s |
+| **Hedera** | ❌ | ? | |
+| **NEAR** | 0.69s | ? |0.69s |
+| **XRP** | 15s | ? |15s |
+| **Solana** | ❌ | ? | |
+| **Stellar** | 0.53s | ? |0.53s |
+| **Tezos** | 22s | ? |22s |
+| **Tron** | ❌ | ? | |
+| **Polkadot** | 14s | ? |14s |
+| **Algorand** | 175s | ? |175s |
 | **evm** family |  | | |
-| Arbitrum Goerli | 0.98s | ? |0.98s |
-| Cronos | ❌ | ? | |
-| Fantom | 0.69s | ? |0.69s |
-| Flare | 15s | ? |15s |
-| Songbird | ❌ | ? | |
-| Moonbeam | 0.53s | ? |0.53s |
+| Arbitrum Goerli | 4.68s | ? |4.68s |
+| Cronos | 31s | ? |31s |
+| Fantom | ❌ | ? | |
+| Flare | 550s | ? |550s |
+| Songbird | 25s | ? |25s |
+| Moonbeam | 17s | ? |17s |
 | RSK | 22s | ? |22s |
-| Bittorent Chain | ❌ | ? | |
-| Kava EVM | 14s | ? |14s |
-| Evmos EVM | 175s | ? |175s |
-| Optimism | 4.68s | ? |4.68s |
-| Optimism Goerli | 31s | ? |31s |
-| Energy Web | ❌ | ? | |
-| Astar | 550s | ? |550s |
-| Metis | 25s | ? |25s |
-| Boba | 17s | ? |17s |
-| Moonriver | 22s | ? |22s |
-| Velas EVM | 120s | ? |120s |
-| Syscoin | 7.01s | ? |7.01s |
-| **Filecoin** | 124s | ? |124s |
-| **Hedera** | 8.39s | ? |8.39s |
-| **NEAR** | 3.48s | ? |3.48s |
-| **XRP** | 23s | ? |23s |
-| **Solana** | 30s | ? |30s |
-| **Stellar** | 13s | ? |13s |
-| **Tezos** | 317s | ? |317s |
-| **Tron** | 31s | ? |31s |
-| **Polkadot** | 91s | ? |91s |
-| **Algorand** | ❌ | ? | |
+| Bittorent Chain | 120s | ? |120s |
+| Kava EVM | 7.01s | ? |7.01s |
+| Evmos EVM | 124s | ? |124s |
+| Optimism | 8.39s | ? |8.39s |
+| Optimism Goerli | 3.48s | ? |3.48s |
+| Energy Web | 23s | ? |23s |
+| Astar | 30s | ? |30s |
+| Metis | 13s | ? |13s |
+| Boba | 317s | ? |317s |
+| Moonriver | 31s | ? |31s |
+| Velas EVM | 91s | ? |91s |
+| Syscoin | ❌ | ? | |
 | **Total** |  | | |
 
 </details>
@@ -419,36 +419,36 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum | 0 | ? |0 |
 | Ethereum Classic | 0 | ? |0 |
 | Ethereum Goerli | 0 | ? |0 |
+| **Filecoin** | 0 | ? |0 |
+| **Hedera** | ❌ | ? |0 |
+| **NEAR** | 0 | ? |0 |
+| **XRP** | 0 | ? |0 |
+| **Solana** | ❌ | ? |0 |
+| **Stellar** | 0 | ? |0 |
+| **Tezos** | 0 | ? |0 |
+| **Tron** | ❌ | ? |0 |
+| **Polkadot** | 0 | ? |0 |
+| **Algorand** | 0 | ? |0 |
 | **evm** family | 0 |0 |0 |
 | Arbitrum Goerli | 0 | ? |0 |
-| Cronos | ❌ | ? |0 |
-| Fantom | 0 | ? |0 |
+| Cronos | 0 | ? |0 |
+| Fantom | ❌ | ? |0 |
 | Flare | 0 | ? |0 |
-| Songbird | ❌ | ? |0 |
+| Songbird | 0 | ? |0 |
 | Moonbeam | 0 | ? |0 |
 | RSK | 0 | ? |0 |
-| Bittorent Chain | ❌ | ? |0 |
+| Bittorent Chain | 0 | ? |0 |
 | Kava EVM | 0 | ? |0 |
 | Evmos EVM | 0 | ? |0 |
 | Optimism | 0 | ? |0 |
 | Optimism Goerli | 0 | ? |0 |
-| Energy Web | ❌ | ? |0 |
+| Energy Web | 0 | ? |0 |
 | Astar | 0 | ? |0 |
 | Metis | 0 | ? |0 |
 | Boba | 0 | ? |0 |
 | Moonriver | 0 | ? |0 |
 | Velas EVM | 0 | ? |0 |
-| Syscoin | 0 | ? |0 |
-| **Filecoin** | 0 | ? |0 |
-| **Hedera** | 0 | ? |0 |
-| **NEAR** | 0 | ? |0 |
-| **XRP** | 0 | ? |0 |
-| **Solana** | 0 | ? |0 |
-| **Stellar** | 0 | ? |0 |
-| **Tezos** | 0 | ? |0 |
-| **Tron** | 0 | ? |0 |
-| **Polkadot** | 0 | ? |0 |
-| **Algorand** | ❌ | ? |0 |
+| Syscoin | ❌ | ? |0 |
 | **Total** | 0 |0 |0 |
 
 </details>
@@ -495,36 +495,36 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum |  | ? | |
 | Ethereum Classic |  | ? | |
 | Ethereum Goerli |  | ? | |
+| **Filecoin** |  | ? | |
+| **Hedera** | ❌ | ? | |
+| **NEAR** |  | ? | |
+| **XRP** |  | ? | |
+| **Solana** | ❌ | ? | |
+| **Stellar** |  | ? | |
+| **Tezos** |  | ? | |
+| **Tron** | ❌ | ? | |
+| **Polkadot** |  | ? | |
+| **Algorand** |  | ? | |
 | **evm** family |  | | |
 | Arbitrum Goerli |  | ? | |
-| Cronos | ❌ | ? | |
-| Fantom |  | ? | |
+| Cronos |  | ? | |
+| Fantom | ❌ | ? | |
 | Flare |  | ? | |
-| Songbird | ❌ | ? | |
+| Songbird |  | ? | |
 | Moonbeam |  | ? | |
 | RSK |  | ? | |
-| Bittorent Chain | ❌ | ? | |
+| Bittorent Chain |  | ? | |
 | Kava EVM |  | ? | |
 | Evmos EVM |  | ? | |
 | Optimism |  | ? | |
 | Optimism Goerli |  | ? | |
-| Energy Web | ❌ | ? | |
+| Energy Web |  | ? | |
 | Astar |  | ? | |
 | Metis |  | ? | |
 | Boba |  | ? | |
 | Moonriver |  | ? | |
 | Velas EVM |  | ? | |
-| Syscoin |  | ? | |
-| **Filecoin** |  | ? | |
-| **Hedera** |  | ? | |
-| **NEAR** |  | ? | |
-| **XRP** |  | ? | |
-| **Solana** |  | ? | |
-| **Stellar** |  | ? | |
-| **Tezos** |  | ? | |
-| **Tron** |  | ? | |
-| **Polkadot** |  | ? | |
-| **Algorand** | ❌ | ? | |
+| Syscoin | ❌ | ? | |
 | **Total** |  | | |
 
 </details>
@@ -571,36 +571,36 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum | 0 | ? |0 |
 | Ethereum Classic | 0 | ? |0 |
 | Ethereum Goerli | 0 | ? |0 |
+| **Filecoin** | 0 | ? |0 |
+| **Hedera** | ❌ | ? |0 |
+| **NEAR** | 0 | ? |0 |
+| **XRP** | 0 | ? |0 |
+| **Solana** | ❌ | ? |0 |
+| **Stellar** | 0 | ? |0 |
+| **Tezos** | 0 | ? |0 |
+| **Tron** | ❌ | ? |0 |
+| **Polkadot** | 0 | ? |0 |
+| **Algorand** | 0 | ? |0 |
 | **evm** family | 0 |0 |0 |
 | Arbitrum Goerli | 0 | ? |0 |
-| Cronos | ❌ | ? |0 |
-| Fantom | 0 | ? |0 |
+| Cronos | 0 | ? |0 |
+| Fantom | ❌ | ? |0 |
 | Flare | 0 | ? |0 |
-| Songbird | ❌ | ? |0 |
+| Songbird | 0 | ? |0 |
 | Moonbeam | 0 | ? |0 |
 | RSK | 0 | ? |0 |
-| Bittorent Chain | ❌ | ? |0 |
+| Bittorent Chain | 0 | ? |0 |
 | Kava EVM | 0 | ? |0 |
 | Evmos EVM | 0 | ? |0 |
 | Optimism | 0 | ? |0 |
 | Optimism Goerli | 0 | ? |0 |
-| Energy Web | ❌ | ? |0 |
+| Energy Web | 0 | ? |0 |
 | Astar | 0 | ? |0 |
 | Metis | 0 | ? |0 |
 | Boba | 0 | ? |0 |
 | Moonriver | 0 | ? |0 |
 | Velas EVM | 0 | ? |0 |
-| Syscoin | 0 | ? |0 |
-| **Filecoin** | 0 | ? |0 |
-| **Hedera** | 0 | ? |0 |
-| **NEAR** | 0 | ? |0 |
-| **XRP** | 0 | ? |0 |
-| **Solana** | 0 | ? |0 |
-| **Stellar** | 0 | ? |0 |
-| **Tezos** | 0 | ? |0 |
-| **Tron** | 0 | ? |0 |
-| **Polkadot** | 0 | ? |0 |
-| **Algorand** | ❌ | ? |0 |
+| Syscoin | ❌ | ? |0 |
 | **Total** | 0 |0 |0 |
 
 </details>
@@ -647,36 +647,36 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum |  | ? | |
 | Ethereum Classic |  | ? | |
 | Ethereum Goerli |  | ? | |
+| **Filecoin** |  | ? | |
+| **Hedera** | ❌ | ? | |
+| **NEAR** |  | ? | |
+| **XRP** |  | ? | |
+| **Solana** | ❌ | ? | |
+| **Stellar** |  | ? | |
+| **Tezos** |  | ? | |
+| **Tron** | ❌ | ? | |
+| **Polkadot** |  | ? | |
+| **Algorand** |  | ? | |
 | **evm** family |  | | |
 | Arbitrum Goerli |  | ? | |
-| Cronos | ❌ | ? | |
-| Fantom |  | ? | |
+| Cronos |  | ? | |
+| Fantom | ❌ | ? | |
 | Flare |  | ? | |
-| Songbird | ❌ | ? | |
+| Songbird |  | ? | |
 | Moonbeam |  | ? | |
 | RSK |  | ? | |
-| Bittorent Chain | ❌ | ? | |
+| Bittorent Chain | 827kb | ? |827kb |
 | Kava EVM |  | ? | |
 | Evmos EVM |  | ? | |
 | Optimism |  | ? | |
 | Optimism Goerli |  | ? | |
-| Energy Web | ❌ | ? | |
+| Energy Web |  | ? | |
 | Astar |  | ? | |
 | Metis |  | ? | |
 | Boba |  | ? | |
 | Moonriver |  | ? | |
-| Velas EVM | 827kb | ? |827kb |
-| Syscoin |  | ? | |
-| **Filecoin** |  | ? | |
-| **Hedera** |  | ? | |
-| **NEAR** |  | ? | |
-| **XRP** |  | ? | |
-| **Solana** |  | ? | |
-| **Stellar** |  | ? | |
-| **Tezos** |  | ? | |
-| **Tron** |  | ? | |
-| **Polkadot** |  | ? | |
-| **Algorand** | ❌ | ? | |
+| Velas EVM |  | ? | |
+| Syscoin | ❌ | ? | |
 | **Total** |  | | |
 
 </details>
@@ -723,36 +723,36 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum |  | ? | |
 | Ethereum Classic |  | ? | |
 | Ethereum Goerli |  | ? | |
+| **Filecoin** |  | ? | |
+| **Hedera** | ❌ | ? | |
+| **NEAR** |  | ? | |
+| **XRP** |  | ? | |
+| **Solana** | ❌ | ? | |
+| **Stellar** |  | ? | |
+| **Tezos** |  | ? | |
+| **Tron** | ❌ | ? | |
+| **Polkadot** |  | ? | |
+| **Algorand** |  | ? | |
 | **evm** family |  | | |
 | Arbitrum Goerli |  | ? | |
-| Cronos | ❌ | ? | |
-| Fantom |  | ? | |
+| Cronos |  | ? | |
+| Fantom | ❌ | ? | |
 | Flare |  | ? | |
-| Songbird | ❌ | ? | |
+| Songbird |  | ? | |
 | Moonbeam |  | ? | |
 | RSK |  | ? | |
-| Bittorent Chain | ❌ | ? | |
+| Bittorent Chain | 0kb | ? |0kb |
 | Kava EVM |  | ? | |
 | Evmos EVM |  | ? | |
 | Optimism |  | ? | |
 | Optimism Goerli |  | ? | |
-| Energy Web | ❌ | ? | |
+| Energy Web |  | ? | |
 | Astar |  | ? | |
 | Metis |  | ? | |
 | Boba |  | ? | |
 | Moonriver |  | ? | |
-| Velas EVM | 0kb | ? |0kb |
-| Syscoin |  | ? | |
-| **Filecoin** |  | ? | |
-| **Hedera** |  | ? | |
-| **NEAR** |  | ? | |
-| **XRP** |  | ? | |
-| **Solana** |  | ? | |
-| **Stellar** |  | ? | |
-| **Tezos** |  | ? | |
-| **Tron** |  | ? | |
-| **Polkadot** |  | ? | |
-| **Algorand** | ❌ | ? | |
+| Velas EVM |  | ? | |
+| Syscoin | ❌ | ? | |
 | **Total** |  | | |
 
 </details>
@@ -799,36 +799,36 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum | 0.07s | ? |0.07s |
 | Ethereum Classic | 0.08s | ? |0.08s |
 | Ethereum Goerli | 0.07s | ? |0.07s |
+| **Filecoin** | 0.08s | ? |0.08s |
+| **Hedera** | ❌ | ? | |
+| **NEAR** | 0.04s | ? |0.04s |
+| **XRP** | 0.44s | ? |0.44s |
+| **Solana** | ❌ | ? | |
+| **Stellar** | 0.04s | ? |0.04s |
+| **Tezos** | 0.37s | ? |0.37s |
+| **Tron** | ❌ | ? | |
+| **Polkadot** | 0.15s | ? |0.15s |
+| **Algorand** | 4.20s | ? |4.20s |
 | **evm** family |  | | |
-| Arbitrum Goerli | 0.08s | ? |0.08s |
-| Cronos | ❌ | ? | |
-| Fantom | 0.04s | ? |0.04s |
-| Flare | 0.44s | ? |0.44s |
-| Songbird | ❌ | ? | |
-| Moonbeam | 0.04s | ? |0.04s |
-| RSK | 0.37s | ? |0.37s |
-| Bittorent Chain | ❌ | ? | |
+| Arbitrum Goerli | 0.04s | ? |0.04s |
+| Cronos | 1.14s | ? |1.14s |
+| Fantom | ❌ | ? | |
+| Flare | 2.67s | ? |2.67s |
+| Songbird | 1.14s | ? |1.14s |
+| Moonbeam | 0.16s | ? |0.16s |
+| RSK | 0.51s | ? |0.51s |
+| Bittorent Chain | 3.34s | ? |3.34s |
 | Kava EVM | 0.15s | ? |0.15s |
-| Evmos EVM | 4.20s | ? |4.20s |
-| Optimism | 0.04s | ? |0.04s |
-| Optimism Goerli | 1.14s | ? |1.14s |
-| Energy Web | ❌ | ? | |
-| Astar | 2.67s | ? |2.67s |
-| Metis | 1.14s | ? |1.14s |
-| Boba | 0.16s | ? |0.16s |
-| Moonriver | 0.51s | ? |0.51s |
-| Velas EVM | 3.34s | ? |3.34s |
-| Syscoin | 0.15s | ? |0.15s |
-| **Filecoin** | 1.16s | ? |1.16s |
-| **Hedera** | 0.15s | ? |0.15s |
-| **NEAR** | 0.14s | ? |0.14s |
-| **XRP** | 0.76s | ? |0.76s |
-| **Solana** | 1.06s | ? |1.06s |
-| **Stellar** | 0.20s | ? |0.20s |
-| **Tezos** | 1.84s | ? |1.84s |
-| **Tron** | 0.99s | ? |0.99s |
-| **Polkadot** | 0.98s | ? |0.98s |
-| **Algorand** | ❌ | ? | |
+| Evmos EVM | 1.16s | ? |1.16s |
+| Optimism | 0.15s | ? |0.15s |
+| Optimism Goerli | 0.14s | ? |0.14s |
+| Energy Web | 0.76s | ? |0.76s |
+| Astar | 1.06s | ? |1.06s |
+| Metis | 0.20s | ? |0.20s |
+| Boba | 1.84s | ? |1.84s |
+| Moonriver | 0.99s | ? |0.99s |
+| Velas EVM | 0.98s | ? |0.98s |
+| Syscoin | ❌ | ? | |
 | **Total** |  | | |
 
 </details>
@@ -872,35 +872,35 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum | 271mb | ? |
 | Ethereum Classic | 262mb | ? |
 | Ethereum Goerli | 272mb | ? |
-| Arbitrum Goerli | 276mb | ? |
-| Cronos | ❌ | ? |
-| Fantom | 277mb | ? |
-| Flare | 257mb | ? |
-| Songbird | ❌ | ? |
-| Moonbeam | 269mb | ? |
-| RSK | 288mb | ? |
-| Bittorent Chain | ❌ | ? |
-| Kava EVM | 265mb | ? |
-| Evmos EVM | 239mb | ? |
-| Optimism | 279mb | ? |
-| Optimism Goerli | 226mb | ? |
-| Energy Web | ❌ | ? |
-| Astar | 223mb | ? |
-| Metis | 224mb | ? |
-| Boba | 279mb | ? |
-| Moonriver | 230mb | ? |
-| Velas EVM | 241mb | ? |
-| Syscoin | 271mb | ? |
-| Filecoin | 182mb | ? |
-| Hedera | 273mb | ? |
-| NEAR | 279mb | ? |
-| XRP | 224mb | ? |
-| Solana | 224mb | ? |
+| Filecoin | 276mb | ? |
+| Hedera | ❌ | ? |
+| NEAR | 277mb | ? |
+| XRP | 257mb | ? |
+| Solana | ❌ | ? |
 | Stellar | 269mb | ? |
-| Tezos | 231mb | ? |
-| Tron | 224mb | ? |
-| Polkadot | 222mb | ? |
-| Algorand | ❌ | ? |
+| Tezos | 288mb | ? |
+| Tron | ❌ | ? |
+| Polkadot | 265mb | ? |
+| Algorand | 239mb | ? |
+| Arbitrum Goerli | 279mb | ? |
+| Cronos | 226mb | ? |
+| Fantom | ❌ | ? |
+| Flare | 223mb | ? |
+| Songbird | 224mb | ? |
+| Moonbeam | 279mb | ? |
+| RSK | 230mb | ? |
+| Bittorent Chain | 241mb | ? |
+| Kava EVM | 271mb | ? |
+| Evmos EVM | 182mb | ? |
+| Optimism | 273mb | ? |
+| Optimism Goerli | 279mb | ? |
+| Energy Web | 224mb | ? |
+| Astar | 224mb | ? |
+| Metis | 269mb | ? |
+| Boba | 231mb | ? |
+| Moonriver | 224mb | ? |
+| Velas EVM | 222mb | ? |
+| Syscoin | ❌ | ? |
 
 </details>
 
@@ -943,35 +943,35 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum |  | ? |
 | Ethereum Classic |  | ? |
 | Ethereum Goerli |  | ? |
+| Filecoin |  | ? |
+| Hedera | ❌ | ? |
+| NEAR |  | ? |
+| XRP |  | ? |
+| Solana | ❌ | ? |
+| Stellar |  | ? |
+| Tezos |  | ? |
+| Tron | ❌ | ? |
+| Polkadot |  | ? |
+| Algorand |  | ? |
 | Arbitrum Goerli |  | ? |
-| Cronos | ❌ | ? |
-| Fantom |  | ? |
+| Cronos |  | ? |
+| Fantom | ❌ | ? |
 | Flare |  | ? |
-| Songbird | ❌ | ? |
+| Songbird |  | ? |
 | Moonbeam |  | ? |
 | RSK |  | ? |
-| Bittorent Chain | ❌ | ? |
+| Bittorent Chain |  | ? |
 | Kava EVM |  | ? |
 | Evmos EVM |  | ? |
 | Optimism |  | ? |
 | Optimism Goerli |  | ? |
-| Energy Web | ❌ | ? |
+| Energy Web |  | ? |
 | Astar |  | ? |
 | Metis |  | ? |
 | Boba |  | ? |
 | Moonriver |  | ? |
 | Velas EVM |  | ? |
-| Syscoin |  | ? |
-| Filecoin |  | ? |
-| Hedera |  | ? |
-| NEAR |  | ? |
-| XRP |  | ? |
-| Solana |  | ? |
-| Stellar |  | ? |
-| Tezos |  | ? |
-| Tron |  | ? |
-| Polkadot |  | ? |
-| Algorand | ❌ | ? |
+| Syscoin | ❌ | ? |
 
 </details>
 
@@ -1017,36 +1017,36 @@ exports[`finalMarkdownReport sample 1`] = `
 | Ethereum |  | ? |✅ |
 | Ethereum Classic |  | ? |✅ |
 | Ethereum Goerli |  | ? |✅ |
+| **Filecoin** |  | ? |✅ |
+| **Hedera** | ❌ | ? |✅ |
+| **NEAR** |  | ? |✅ |
+| **XRP** |  | ? |✅ |
+| **Solana** | ❌ | ? |✅ |
+| **Stellar** |  | ? |✅ |
+| **Tezos** |  | ? |✅ |
+| **Tron** | ❌ | ? |✅ |
+| **Polkadot** |  | ? |✅ |
+| **Algorand** |  | ? |✅ |
 | **evm** family | ✅ |✅ |✅ |
 | Arbitrum Goerli |  | ? |✅ |
-| Cronos | ❌ | ? |✅ |
-| Fantom |  | ? |✅ |
+| Cronos |  | ? |✅ |
+| Fantom | ❌ | ? |✅ |
 | Flare |  | ? |✅ |
-| Songbird | ❌ | ? |✅ |
+| Songbird |  | ? |✅ |
 | Moonbeam |  | ? |✅ |
 | RSK |  | ? |✅ |
-| Bittorent Chain | ❌ | ? |✅ |
+| Bittorent Chain |  | ? |✅ |
 | Kava EVM |  | ? |✅ |
 | Evmos EVM |  | ? |✅ |
 | Optimism |  | ? |✅ |
 | Optimism Goerli |  | ? |✅ |
-| Energy Web | ❌ | ? |✅ |
+| Energy Web |  | ? |✅ |
 | Astar |  | ? |✅ |
 | Metis |  | ? |✅ |
 | Boba |  | ? |✅ |
 | Moonriver |  | ? |✅ |
 | Velas EVM |  | ? |✅ |
-| Syscoin |  | ? |✅ |
-| **Filecoin** |  | ? |✅ |
-| **Hedera** |  | ? |✅ |
-| **NEAR** |  | ? |✅ |
-| **XRP** |  | ? |✅ |
-| **Solana** |  | ? |✅ |
-| **Stellar** |  | ? |✅ |
-| **Tezos** |  | ? |✅ |
-| **Tron** |  | ? |✅ |
-| **Polkadot** |  | ? |✅ |
-| **Algorand** | ❌ | ? |✅ |
+| Syscoin | ❌ | ? |✅ |
 | **Total** | ✅ |✅ |✅ |
 
 </details>
@@ -1054,14 +1054,14 @@ exports[`finalMarkdownReport sample 1`] = `
 
 
 # Errors
-- SEED1: Algorand: DeviceVersionUnsupported: Device app version 6.0.1 unsupported, recommended version is 5.0.
 - SEED1: Bitcoin Cash: Error: scan accounts timeout for currency Bitcoin Testnet
-- SEED1: Bittorent Chain: TypeError: Cannot read properties of undefined (reading 'length')
 - SEED1: Celo: DeviceVersionUnsupported: Device app version 6.0.1 unsupported, recommended version is 5.0.
 - SEED2: Celo: Error: no app found for Polkadot. Are you sure your COINAPPS is up to date?
-- SEED1: Cronos: LedgerAPI5xx: API HTTP 503
-- SEED1: Energy Web: Error: scan accounts timeout for currency Bitcoin Testnet
+- SEED1: Fantom: Error: scan accounts timeout for currency Bitcoin Testnet
+- SEED1: Hedera: LedgerAPI5xx: API HTTP 503
 - SEED2: Horizen: LedgerAPI5xx: API HTTP 503
 - SEED2: osmosis: TypeError: Cannot read properties of undefined (reading 'length')
-- SEED1: Songbird: Error: no app found for Polkadot. Are you sure your COINAPPS is up to date?"
+- SEED1: Solana: Error: no app found for Polkadot. Are you sure your COINAPPS is up to date?
+- SEED1: Syscoin: DeviceVersionUnsupported: Device app version 6.0.1 unsupported, recommended version is 5.0.
+- SEED1: Tron: TypeError: Cannot read properties of undefined (reading 'length')"
 `;
