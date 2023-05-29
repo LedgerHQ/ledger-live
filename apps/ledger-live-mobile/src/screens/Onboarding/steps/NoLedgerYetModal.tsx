@@ -104,8 +104,8 @@ const StyledHeader = styled(Flex)`
 const StyledImageContainer = styled(Flex)`
   transform: rotate(-20deg);
   position: static;
-  top: -100;
-  left: -50;
+  top: -100px;
+  left: -50px;
   align-items: center;
   justify-content: center;
 `;
