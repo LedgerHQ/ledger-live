@@ -1,6 +1,6 @@
 import fs from "fs";
 import { FullConfig } from "@playwright/test";
-import { responseLogfilePath } from "./responseLogger";
+import { responseLogfilePath } from "./networkResponseLogger";
 
 export default async function globalSetup(config: FullConfig) {
   if (responseLogfilePath) {

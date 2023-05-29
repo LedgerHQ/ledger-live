@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
-import { responseLogfilePath } from "../utils/responseLogger";
+import { responseLogfilePath } from "../utils/networkResponseLogger";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -20,7 +20,7 @@ type TestFixtures = {
   env: Record<string, any>;
   page: Page;
   featureFlags: { [key in FeatureId]?: Feature };
-  recordApiCallsPerTest: void;
+  recordTestNamesForApiResponseLogging: void;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -139,9 +139,13 @@ const test = base.extend<TestFixtures>({
     // close app
     await electronApp.close();
   },
-  recordApiCallsPerTest: [
+  // below is used for the logging file at `artifacts/responses.log`
+  recordTestNamesForApiResponseLogging: [
     async ({}, use, testInfo) => {
-      fs.appendFileSync(responseLogfilePath, `Network calls for ${testInfo.title}:\n`);
+      fs.appendFileSync(
+        responseLogfilePath,
+        `Network call responses for test: '${testInfo.title}':\n`,
+      );
 
       await use();
 
