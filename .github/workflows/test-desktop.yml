@@ -124,6 +124,12 @@ jobs:
         with:
           name: images
           path: images-windows.json
+      - name: upload network responses
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: network responses
+          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -183,6 +189,12 @@ jobs:
         with:
           name: images
           path: images-linux.json
+      - name: upload network responses
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: network responses
+          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -242,6 +254,12 @@ jobs:
         with:
           name: images
           path: images-macos.json
+      - name: upload network responses
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: network responses
+          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
