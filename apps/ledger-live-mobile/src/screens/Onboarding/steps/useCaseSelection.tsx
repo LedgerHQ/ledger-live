@@ -62,15 +62,20 @@ const OnboardingStepUseCaseSelection = () => {
 
   const onPressProtect = useCallback(() => {
     if (deviceModelId === "nanoX") {
-      navigation.navigate(ScreenName.OnboardingPairNew, {
-        deviceModelId,
-        next: ScreenName.OnboardingProtectFlow,
-        isProtectFlow: true,
-      });
+      const deeplink = String(servicesConfig?.params.deeplink);
+      if (deeplink.length) {
+        Linking.openURL(deeplink);
+      } else {
+        navigation.navigate(ScreenName.OnboardingPairNew, {
+          deviceModelId,
+          next: ScreenName.OnboardingProtectFlow,
+          isProtectFlow: true,
+        });
+      }
     } else {
       setIsProtectDrawerOpen(true);
     }
-  }, [deviceModelId, navigation]);
+  }, [deviceModelId, navigation, servicesConfig?.params.deeplink]);
 
   return (
     <OnboardingView hasBackButton>
