@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
-import { Flex, Button, InfiniteLoader, Divider } from "@ledgerhq/react-ui";
+import { Flex, InfiniteLoader, Divider } from "@ledgerhq/react-ui";
+import ButtonV3 from "~/renderer/components/ButtonV3";
 import { Step } from "./types";
-import { useTrack } from "~/renderer/analytics/segment";
 
 type Props = {
   setStep?: (step: Step) => void;
@@ -48,17 +48,13 @@ const StepFooter: React.FC<Props> = props => {
     onClickNext,
   } = props;
 
-  const track = useTrack();
-
   const handleNext = useCallback(() => {
-    nextEventProperties && track("button_clicked", nextEventProperties);
     onClickNext ? onClickNext() : nextStep && setStep && setStep(nextStep);
-  }, [nextEventProperties, track, onClickNext, nextStep, setStep]);
+  }, [onClickNext, nextStep, setStep]);
 
   const handlePrevious = useCallback(() => {
-    previousEventProperties && track("button_clicked", previousEventProperties);
     onClickPrevious ? onClickPrevious() : previousStep && setStep && setStep(previousStep);
-  }, [onClickPrevious, previousEventProperties, previousStep, setStep, track]);
+  }, [onClickPrevious, previousStep, setStep]);
 
   const showPrevious = !previousHidden && (previousStep || onClickPrevious);
   const showNext = !nextHidden && (nextStep || onClickNext);
@@ -76,29 +72,33 @@ const StepFooter: React.FC<Props> = props => {
         pb={1}
       >
         {showPrevious ? (
-          <Button
+          <ButtonV3
             variant="main"
             outline
             onClick={previousDisabled ? undefined : handlePrevious}
             disabled={previousDisabled}
             Icon={previousLoading ? InfiniteLoader : undefined}
             data-test-id={previousTestId}
+            event="button_clicked"
+            eventProperties={previousEventProperties}
           >
             {previousLabel}
-          </Button>
+          </ButtonV3>
         ) : (
           <Flex flex={1} />
         )}
         {showNext ? (
-          <Button
+          <ButtonV3
             variant="main"
             onClick={nextDisabled ? undefined : handleNext}
             disabled={nextDisabled}
             Icon={nextLoading ? InfiniteLoader : undefined}
             data-test-id={nextTestId}
+            event="button_clicked"
+            eventProperties={nextEventProperties}
           >
             {nextLabel}
-          </Button>
+          </ButtonV3>
         ) : null}
       </Flex>
     </Flex>

@@ -27,7 +27,7 @@ export type Props = BaseButtonProps & {
   buttonTestId?: string;
 };
 
-export default function Button({
+function Button({
   onClick,
   inverted,
   disabled,
@@ -60,3 +60,5 @@ export default function Button({
   );
   return inverted ? <InvertTheme>{inner} </InvertTheme> : inner;
 }
+
+export default React.memo(Button);
