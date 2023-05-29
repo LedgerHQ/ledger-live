@@ -1,6 +1,6 @@
-import type { Resolver } from "../../hw/getAddress/types";
-import eip55 from "eip55";
+import type { Resolver } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import Eth from "@ledgerhq/hw-app-eth";
+import eip55 from "eip55";
 
 /**
  * Eth app binding request for the address

@@ -4,8 +4,11 @@ import BigNumber from "bignumber.js";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
-import { decodeAccountId, encodeTokenAccountId } from "../../account";
-import { encodeOperationId } from "../../operation";
+import {
+  decodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/coin-framework/account/index";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,

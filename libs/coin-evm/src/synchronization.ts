@@ -1,28 +1,28 @@
-import { log } from "@ledgerhq/logs";
-import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getSyncHash, mergeSubAccounts } from "./logic";
-import etherscanLikeApi from "./api/etherscan";
-import {
-  mergeOps,
-  makeSync,
-  makeScanAccounts,
-  GetAccountShape,
-  AccountShapeInfo,
-} from "../../bridge/jsHelpers";
 import {
   decodeAccountId,
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
   shouldRetainPendingOperation,
-} from "../../account";
+} from "@ledgerhq/coin-framework/account/index";
+import {
+  AccountShapeInfo,
+  GetAccountShape,
+  makeScanAccounts,
+  makeSync,
+  mergeOps,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { log } from "@ledgerhq/logs";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
+import etherscanLikeApi from "./api/etherscan";
 import {
   getBalanceAndBlock,
   getBlock,
   getTokenBalance,
   getTransaction,
 } from "./api/rpc";
+import { getSyncHash, mergeSubAccounts } from "./logic";
 
 /**
  * Switch to select one of the compatible explorer
@@ -311,6 +311,7 @@ export const postSync = (initial: Account, synced: Account): Account => {
   };
 };
 
+// FIXME
 export const scanAccounts = makeScanAccounts({ getAccountShape });
 export const sync = makeSync({
   getAccountShape,

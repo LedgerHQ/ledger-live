@@ -1,6 +1,5 @@
-import { ethers } from "ethers";
-import { BigNumber } from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
+import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
@@ -8,16 +7,17 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/transaction/common";
-import { transactionToEthersTransaction } from "./adapters";
-import { formatCurrencyUnit } from "../../currencies";
-import { getAccountUnit } from "../../account";
+import type { Account } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { ethers } from "ethers";
 import ERC20ABI from "./abis/erc20.abi.json";
+import { transactionToEthersTransaction } from "./adapters";
 import type {
+  Transaction as EvmTransaction,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
-  FeeData,
-  Transaction as EvmTransaction,
   TransactionRaw as EvmTransactionRaw,
+  FeeData,
 } from "./types";
 
 export const DEFAULT_GAS_LIMIT = new BigNumber(21000);

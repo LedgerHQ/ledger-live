@@ -9,8 +9,15 @@ import {
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrencyIds } from "@ledgerhq/types-live";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
-import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
+import {
+  botTest,
+  genericTestDestination,
+  pickSiblings,
+} from "@ledgerhq/coin-framework/bot/specs";
+import {
+  getCryptoCurrencyById,
+  parseCurrencyUnit,
+} from "@ledgerhq/coin-framework/currencies/index";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
 
@@ -135,7 +142,7 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
 
 const transactionCheck =
   (currencyId: string) =>
-  ({ maxSpendable }) => {
+  ({ maxSpendable }: { maxSpendable: BigNumber }) => {
     const currency = getCryptoCurrencyById(currencyId);
     invariant(
       maxSpendable.gt(

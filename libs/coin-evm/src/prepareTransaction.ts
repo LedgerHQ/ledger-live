@@ -1,15 +1,15 @@
-import BigNumber from "bignumber.js";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { getTransactionData, getTypedTransaction } from "./transaction";
-import { validateRecipient } from "./getTransactionStatus";
-import { Transaction as EvmTransaction } from "./types";
-import { findSubAccountById } from "../../account";
-import { getAdditionalLayer2Fees, getEstimatedFees } from "./logic";
+import BigNumber from "bignumber.js";
 import {
   getFeesEstimation,
   getGasEstimation,
   getTransactionCount,
 } from "./api/rpc";
+import { validateRecipient } from "./getTransactionStatus";
+import { getAdditionalLayer2Fees, getEstimatedFees } from "./logic";
+import { getTransactionData, getTypedTransaction } from "./transaction";
+import { Transaction as EvmTransaction } from "./types";
 
 /**
  * Prepare basic coin transactions or smart contract interactions (other than live ERC20 transfers)

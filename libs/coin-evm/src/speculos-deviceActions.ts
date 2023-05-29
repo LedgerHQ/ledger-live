@@ -1,14 +1,20 @@
-import type { DeviceAction } from "../../bot/types";
-import type { Transaction } from "./types";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
-} from "../../bot/specs";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/coin-framework/bot/specs";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
+import type { Transaction } from "./types";
 
-const maxFeesExpectedValue = ({ account, status }) =>
-  formatDeviceAmount(account.currency, status.estimatedFees);
+// FIXME: fix types
+const maxFeesExpectedValue = ({
+  account,
+  status,
+}: {
+  account: any;
+  status: any;
+}) => formatDeviceAmount(account.currency, status.estimatedFees);
 
 export const acceptTransaction: DeviceAction<Transaction, any> =
   deviceActionFlow({

@@ -1,9 +1,7 @@
-import BigNumber from "bignumber.js";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
-import { makeAccount, makeOperation, makeTokenAccount } from "../testUtils";
+import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import * as RPC_API from "../api/rpc.common";
 import {
   eip1559TransactionHasFees,
@@ -13,6 +11,8 @@ import {
   legacyTransactionHasFees,
   mergeSubAccounts,
 } from "../logic";
+import { makeAccount, makeOperation, makeTokenAccount } from "../testUtils";
+import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {

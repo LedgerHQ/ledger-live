@@ -1,7 +1,7 @@
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { AccountBridge, Operation } from "@ledgerhq/types-live";
-import { Transaction as EvmTransaction } from "./types";
-import { encodeOperationId } from "../../operation";
 import { broadcastTransaction } from "./api/rpc";
+import { Transaction as EvmTransaction } from "./types";
 
 /**
  * Broadcast a transaction and update the operation linked

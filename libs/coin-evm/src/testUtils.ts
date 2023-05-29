@@ -1,23 +1,23 @@
-import BigNumber from "bignumber.js";
+import {
+  decodeAccountId,
+  decodeTokenAccountId,
+  encodeTokenAccountId,
+  shortAddressPreview,
+} from "@ledgerhq/coin-framework/account/index";
+import {
+  DerivationMode,
+  getDerivationScheme,
+  runDerivationScheme,
+} from "@ledgerhq/coin-framework/derivation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   Account,
   Operation,
   SubAccount,
   TokenAccount,
 } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  DerivationMode,
-  getDerivationScheme,
-  runDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
-import {
-  decodeAccountId,
-  decodeTokenAccountId,
-  encodeTokenAccountId,
-  shortAddressPreview,
-} from "../../account";
-import { encodeOperationId } from "../../operation";
+import BigNumber from "bignumber.js";
 
 export const makeAccount = (
   address: string,

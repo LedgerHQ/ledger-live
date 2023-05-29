@@ -1,6 +1,6 @@
-import BigNumber from "bignumber.js";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 import { createTransaction } from "../createTransaction";
 import { makeAccount } from "../testUtils";
 

@@ -1,7 +1,6 @@
-import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import { transactionToEthersTransaction } from "../adapters";
-import { Transaction as EvmTransaction } from "../types";
 import * as rpcAPI from "../api/rpc.common";
 import {
   fromTransactionRaw,
@@ -9,9 +8,10 @@ import {
   toTransactionRaw,
 } from "../transaction";
 import {
+  Transaction as EvmTransaction,
   EvmTransactionEIP1559,
-  EvmTransactionLegacy,
   EvmTransactionEIP1559Raw,
+  EvmTransactionLegacy,
   EvmTransactionLegacyRaw,
 } from "../types";
 

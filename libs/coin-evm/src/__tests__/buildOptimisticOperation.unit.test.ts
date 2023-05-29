@@ -1,10 +1,10 @@
-import BigNumber from "bignumber.js";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import BigNumber from "bignumber.js";
 import buildOptimisticOperation from "../buildOptimisticOperation";
+import { getEstimatedFees } from "../logic";
 import { makeAccount, makeTokenAccount } from "../testUtils";
 import { Transaction as EvmTransaction } from "../types";
-import { encodeOperationId } from "../../../operation";
-import { getEstimatedFees } from "../logic";
 
 const currency = getCryptoCurrencyById("ethereum");
 const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");

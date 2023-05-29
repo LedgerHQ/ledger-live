@@ -1,14 +1,14 @@
-import BigNumber from "bignumber.js";
-import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import buildOptimisticOperation from "../buildOptimisticOperation";
-import { Transaction as EvmTransaction } from "../types";
-import { encodeOperationId } from "../../../operation";
-import { getEstimatedFees } from "../logic";
-import { makeAccount, makeTokenAccount } from "../testUtils";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import * as API from "../api/rpc.common";
 import broadcast from "../broadcast";
+import buildOptimisticOperation from "../buildOptimisticOperation";
+import { getEstimatedFees } from "../logic";
+import { makeAccount, makeTokenAccount } from "../testUtils";
+import { Transaction as EvmTransaction } from "../types";
 
 const currency: CryptoCurrency = getCryptoCurrencyById("ethereum");
 const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");

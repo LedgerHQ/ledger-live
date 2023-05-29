@@ -1,15 +1,15 @@
-import eip55 from "eip55";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   Account,
   Operation,
   OperationType,
   TokenAccount,
 } from "@ledgerhq/types-live";
-import { Transaction as EvmTransaction } from "./types";
-import { encodeOperationId } from "../../operation";
-import { findSubAccountById } from "../../account";
-import { getEstimatedFees } from "./logic";
 import BigNumber from "bignumber.js";
+import eip55 from "eip55";
+import { getEstimatedFees } from "./logic";
+import { Transaction as EvmTransaction } from "./types";
 
 /**
  * Build an optimistic operation for the coin of the integration (e.g. Ether for Ethereum)

@@ -1,9 +1,9 @@
-import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
+import BigNumber from "bignumber.js";
+import * as rpcAPI from "../api/rpc.common";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { makeAccount, makeTokenAccount } from "../testUtils";
-import * as rpcAPI from "../api/rpc.common";
+import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
 
 const tokenAccount = {
   ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),

@@ -1,7 +1,7 @@
-import evms from "@ledgerhq/cryptoassets/data/evm/index";
-import { ERC20Token } from "@ledgerhq/cryptoassets/types";
-import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import evms from "@ledgerhq/cryptoassets/data/evm/index";
+import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
+import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import network from "@ledgerhq/live-network/network";
 import { fetchERC20Tokens, hydrate, preload } from "../preload";
 

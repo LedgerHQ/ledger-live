@@ -1,15 +1,15 @@
-import BigNumber from "bignumber.js";
-import { AssertionError, fail } from "assert";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { makeAccount, makeOperation, makeTokenAccount } from "../testUtils";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import * as synchronization from "../synchronization";
-import { decodeAccountId } from "../../../account";
+import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { AssertionError, fail } from "assert";
+import BigNumber from "bignumber.js";
+import { getEnv } from "../../../env";
 import * as etherscanAPI from "../api/etherscan";
 import * as rpcAPI from "../api/rpc.common";
-import { getEnv } from "../../../env";
 import * as logic from "../logic";
+import * as synchronization from "../synchronization";
+import { makeAccount, makeOperation, makeTokenAccount } from "../testUtils";
 
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
 

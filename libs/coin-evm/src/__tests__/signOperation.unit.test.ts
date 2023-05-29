@@ -1,13 +1,14 @@
-import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import signOperation, { applyEIP155 } from "../signOperation";
 import { Transaction as EvmTransaction } from "../types";
+// FIXME: dependency injection
 import * as Device from "../../../hw/deviceAccess";
+import * as rpcAPI from "../api/rpc.common";
 import { getEstimatedFees } from "../logic";
 import { makeAccount } from "../testUtils";
-import * as rpcAPI from "../api/rpc.common";
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),

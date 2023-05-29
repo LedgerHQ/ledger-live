@@ -1,14 +1,15 @@
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+// FIXME
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
-import { getTransactionStatus } from "../getTransactionStatus";
-import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import type { Transaction as EvmTransaction } from "../types";
-import { prepareTransaction } from "../prepareTransaction";
-import { createTransaction } from "../createTransaction";
-import { sync, scanAccounts } from "../synchronization";
-import { signOperation } from "../signOperation";
-import { hydrate, preload } from "../preload";
 import { broadcast } from "../broadcast";
+import { createTransaction } from "../createTransaction";
+import { estimateMaxSpendable } from "../estimateMaxSpendable";
+import { getTransactionStatus } from "../getTransactionStatus";
+import { hydrate, preload } from "../preload";
+import { prepareTransaction } from "../prepareTransaction";
+import { signOperation } from "../signOperation";
+import { scanAccounts, sync } from "../synchronization";
+import type { Transaction as EvmTransaction } from "../types";
 
 const receive = makeAccountBridgeReceive();
 

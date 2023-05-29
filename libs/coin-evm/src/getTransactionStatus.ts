@@ -12,7 +12,7 @@ import {
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { Account, AccountBridge, SubAccount } from "@ledgerhq/types-live";
-import { findSubAccountById } from "../../account";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import {
   eip1559TransactionHasFees,
   getEstimatedFees,

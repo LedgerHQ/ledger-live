@@ -1,12 +1,12 @@
-import { ethers } from "ethers";
-import BigNumber from "bignumber.js";
-import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { EvmTransactionLegacy, Transaction as EvmTransaction } from "../types";
+import { AssertionError, fail } from "assert";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import * as RPC_API from "../api/rpc.common";
-import { makeAccount } from "../testUtils";
 import { GasEstimationError, InsufficientFunds } from "../errors";
+import { makeAccount } from "../testUtils";
+import { Transaction as EvmTransaction, EvmTransactionLegacy } from "../types";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,

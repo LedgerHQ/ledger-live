@@ -1,19 +1,22 @@
-import { ethers } from "ethers";
-import BigNumber from "bignumber.js";
-import { Operation } from "@ledgerhq/types-live";
+import {
+  encodeAccountId,
+  encodeTokenAccountId,
+} from "@ledgerhq/coin-framework/account/index";
 import { findTokenById } from "@ledgerhq/cryptoassets";
-import { encodeAccountId, encodeTokenAccountId } from "../../../account";
+import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
+import {
+  etherscanERC20EventToOperation,
+  etherscanOperationToOperation,
+  transactionToEthersTransaction,
+} from "../adapters";
 import {
   EtherscanERC20Event,
   EtherscanOperation,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
 } from "../types";
-import {
-  etherscanERC20EventToOperation,
-  etherscanOperationToOperation,
-  transactionToEthersTransaction,
-} from "../adapters";
 
 const testData = Buffer.from("testBufferString").toString("hex");
 const eip1559Tx: EvmTransactionEIP1559 = {

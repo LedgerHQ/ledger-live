@@ -6,6 +6,7 @@ import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
 import { Transaction as EvmTransaction } from "./types";
+// FIXME: dependency injection
 import { withDevice } from "../../hw/deviceAccess";
 
 /**

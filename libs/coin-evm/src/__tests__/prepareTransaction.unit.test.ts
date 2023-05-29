@@ -1,14 +1,14 @@
-import { ethers } from "ethers";
-import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { makeAccount, makeTokenAccount } from "../testUtils";
-import { Transaction as EvmTransaction } from "../types";
+import BigNumber from "bignumber.js";
+import { ethers } from "ethers";
 import ERC20ABI from "../abis/erc20.abi.json";
 import * as rpcAPI from "../api/rpc.common";
 import {
   prepareForSignOperation,
   prepareTransaction,
 } from "../prepareTransaction";
+import { makeAccount, makeTokenAccount } from "../testUtils";
+import { Transaction as EvmTransaction } from "../types";
 
 const currency = getCryptoCurrencyById("ethereum");
 const tokenAccount = makeTokenAccount(

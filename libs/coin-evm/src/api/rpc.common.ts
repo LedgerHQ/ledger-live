@@ -258,21 +258,24 @@ export const getBlock = (
 export const getSubAccount: (
   currency: CryptoCurrency,
   addr: string
-) => Promise<{ blockHeight: number; balance: BigNumber; nonce: number }> =
-  async (currency, addr) =>
-    withApi(currency, async (api) => {
-      const [balance, nonce, blockHeight] = await Promise.all([
-        getCoinBalance(currency, addr),
-        getTransactionCount(currency, addr),
-        api.getBlockNumber(),
-      ]);
+) => Promise<{
+  blockHeight: number;
+  balance: BigNumber;
+  nonce: number;
+}> = async (currency, addr) =>
+  withApi(currency, async (api) => {
+    const [balance, nonce, blockHeight] = await Promise.all([
+      getCoinBalance(currency, addr),
+      getTransactionCount(currency, addr),
+      api.getBlockNumber(),
+    ]);
 
-      return {
-        blockHeight,
-        balance: new BigNumber(balance.toString()),
-        nonce,
-      };
-    });
+    return {
+      blockHeight,
+      balance: new BigNumber(balance.toString()),
+      nonce,
+    };
+  });
 
 /**
  * ⚠️ Blockchain specific

@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import {
-  NotEnoughGas,
-  FeeNotLoaded,
-  InvalidAddress,
-  ETHAddressNonEIP,
-  RecipientRequired,
   AmountRequired,
-  NotEnoughBalance,
+  ETHAddressNonEIP,
+  FeeNotLoaded,
   GasLessThanEstimate,
+  InvalidAddress,
+  NotEnoughBalance,
+  NotEnoughGas,
+  PriorityFeeTooLow,
+  RecipientRequired,
 } from "@ledgerhq/errors";
-import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
+import BigNumber from "bignumber.js";
 import getTransactionStatus from "../getTransactionStatus";
 import { makeAccount, makeTokenAccount } from "../testUtils";
-import { PriorityFeeTooLow } from "@ledgerhq/errors";
+import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");
