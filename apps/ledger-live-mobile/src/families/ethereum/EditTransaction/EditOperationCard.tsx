@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { SideImageCard } from "@ledgerhq/native-ui";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
@@ -13,19 +13,32 @@ type EditOperationCardProps = {
   isOperationStuck: boolean;
   account: AccountLike | undefined;
   parentAccount: Account | null | undefined;
-  onEditTransactionPress?: (operation: Operation) => void;
+  onPress?: (operation: Operation) => void;
 };
 
 export const EditOperationCard = ({
   oldestEditableOperation,
   isOperationStuck,
-  onEditTransactionPress,
+  onPress,
   account,
   parentAccount,
 }: EditOperationCardProps) => {
   const { t } = useTranslation();
   const flag = useFeature("editEthTx");
   const navigation = useNavigation();
+
+  const onEditTrnasctionCardPress = useCallback(() => {
+    if (account) {
+      navigation.navigate(NavigatorName.EditTransaction, {
+        screen: ScreenName.EditTransactionMethodSelection,
+        params: {
+          operation: oldestEditableOperation,
+          account,
+          parentAccount,
+        },
+      });
+    }
+  }, [account, oldestEditableOperation, parentAccount]);
 
   return flag?.enabled ? (
     <SectionContainer px={6}>
@@ -37,19 +50,8 @@ export const EditOperationCard = ({
         )}
         cta={t("editTransaction.cta")}
         onPress={() => {
-          if (account) {
-            navigation.navigate(NavigatorName.EditTransaction, {
-              screen: ScreenName.EditTransactionMethodSelection,
-              params: {
-                operation: oldestEditableOperation,
-                account,
-                parentAccount,
-              },
-            });
-          }
-
-          onEditTransactionPress &&
-            onEditTransactionPress(oldestEditableOperation);
+          onEditTrnasctionCardPress();
+          onPress && onPress(oldestEditableOperation);
         }}
       />
     </SectionContainer>
