@@ -78,7 +78,7 @@ const OnboardingStepUseCaseSelection = () => {
 
   return (
     <OnboardingView hasBackButton>
-      <TrackScreen category="Onboarding" name="Onboarding setup new options" />
+      <TrackScreen category="Onboarding" name="setup new options" />
       <Text variant="h4" fontWeight="semiBold" mb={7}>
         {t("onboarding.stepUseCase.firstUse.section", {
           model: getProductName(deviceModelId),
@@ -91,7 +91,6 @@ const OnboardingStepUseCaseSelection = () => {
         event="button_clicked"
         eventProperties={{
           button: "Setup as new",
-          page: "Onboarding setup new options",
         }}
         testID={`Onboarding UseCase - Selection|New Wallet`}
         onPress={onPressNew}
@@ -105,7 +104,6 @@ const OnboardingStepUseCaseSelection = () => {
           event="banner_clicked"
           eventProperties={{
             button: "Restore from recovery phrase",
-            page: "Onboarding setup new options",
           }}
           testID={`Onboarding UseCase - Selection|Recovery phrase`}
           onPress={onPressRecoveryPhrase}
@@ -121,7 +119,6 @@ const OnboardingStepUseCaseSelection = () => {
             event="banner_clicked"
             eventProperties={{
               button: "Restore with ledger recover",
-              page: "Onboarding setup new options",
             }}
             testID={`Onboarding UseCase - Selection|Ledger Recover`}
             onPress={onPressProtect}

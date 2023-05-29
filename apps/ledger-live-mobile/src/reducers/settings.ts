@@ -36,7 +36,6 @@ import type {
   SettingsSetAvailableUpdatePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
-  SettingsSetFirstConnectHasDeviceUpdatedPayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
@@ -74,6 +73,7 @@ import type {
   SettingsSetHasSeenStaxEnabledNftsPopupPayload,
   SettingsSetCustomImageTypePayload,
   SettingsSetGeneralTermsVersionAccepted,
+  SettingsSetOnboardingHasDevicePayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -165,7 +165,6 @@ export const INITIAL_STATE: SettingsState = {
   marketFilterByStarredAccounts: false,
   sensitiveAnalytics: false,
   onboardingHasDevice: null,
-  firstConnectHasDeviceUpdated: null,
   notifications: {
     areNotificationsAllowed: true,
     announcementsCategory: true,
@@ -604,10 +603,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       .payload,
   }),
 
-  [SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE]: (state, action) => ({
+  [SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE]: (state, action) => ({
     ...state,
-    firstConnectHasDeviceUpdated: (
-      action as Action<SettingsSetFirstConnectHasDeviceUpdatedPayload>
+    onboardingHasDevice: (
+      action as Action<SettingsSetOnboardingHasDevicePayload>
     ).payload,
   }),
 
@@ -902,8 +901,6 @@ export const sensitiveAnalyticsSelector = (state: State) =>
   state.settings.sensitiveAnalytics;
 export const onboardingHasDeviceSelector = (state: State) =>
   state.settings.onboardingHasDevice;
-export const firstConnectHasDeviceUpdatedSelector = (state: State) =>
-  state.settings.firstConnectHasDeviceUpdated;
 export const notificationsSelector = (state: State) =>
   state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>

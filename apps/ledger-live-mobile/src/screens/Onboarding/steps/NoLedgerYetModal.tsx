@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback } from "react";
+import React, { ReactNode, useCallback, useState } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/core";
@@ -28,6 +28,7 @@ type NavigationProps = StackNavigatorProps<
   ScreenName.OnboardingPostWelcomeSelection
 >;
 export function NoLedgerYetModal({ onClose, isOpen }: Props) {
+  const [isFromBuy, setFromBuy] = useState(false);
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -52,6 +53,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   }, [navigation, dispatch]);
 
   const buyLedger = useCallback(() => {
+    setFromBuy(true);
     (
       navigation as unknown as StackNavigatorNavigation<BaseNavigatorStackParamList>
     ).navigate(NavigatorName.BuyDevice);
@@ -60,7 +62,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   return (
     <QueuedDrawer
       isRequestingToBeOpened={!!isOpen}
-      onClose={onCloseAndTrack}
+      onClose={isFromBuy ? onClose : onCloseAndTrack}
       CustomHeader={CustomHeader}
     >
       <Flex alignItems="center" mt={7}>

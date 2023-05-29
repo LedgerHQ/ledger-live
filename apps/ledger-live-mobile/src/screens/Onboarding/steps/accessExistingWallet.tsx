@@ -15,6 +15,7 @@ import { TrackScreen, track } from "../../../analytics";
 import { ScreenName } from "../../../const/navigation";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
 
 type CardProps = {
   title: string;
@@ -27,7 +28,7 @@ type CardProps = {
 };
 
 type NavigationProps = StackNavigatorProps<
-  OnboardingNavigatorParamList,
+  OnboardingNavigatorParamList & BaseNavigatorStackParamList,
   ScreenName.OnboardingWelcomeBack
 >;
 
@@ -43,7 +44,6 @@ const Card = ({
 
   const pressAndTrack = useCallback(() => {
     track(event, {
-      page: "Onboarding choose access to wallet",
       ...eventProperties,
     });
     onPress?.();
@@ -92,7 +92,7 @@ function AccessExistingWallet() {
 
   return (
     <ScrollListContainer flex={1} mx={6} mt={3}>
-      <TrackScreen category="Onboarding" name="SelectDevice" />
+      <TrackScreen category="Onboarding" name="Choose Access to Wallet" />
       <Text variant="h4" fontWeight="semiBold" color="neutral.c100">
         {t("onboarding.welcomeBackStep.title")}
       </Text>

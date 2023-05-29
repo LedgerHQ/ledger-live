@@ -217,7 +217,6 @@ export type SettingsState = {
   marketFilterByStarredAccounts: boolean;
   sensitiveAnalytics: boolean;
   onboardingHasDevice: boolean | null;
-  firstConnectHasDeviceUpdated: boolean | null;
   customImageType: ImageType | null;
   customImageBackup?: { hex: string; hash: string };
   lastSeenCustomImage: {

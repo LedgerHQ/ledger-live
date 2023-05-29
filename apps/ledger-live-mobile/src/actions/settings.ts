@@ -247,7 +247,7 @@ export const setSensitiveAnalytics =
   );
 export const setOnboardingHasDevice =
   createAction<SettingsSetOnboardingHasDevicePayload>(
-    SettingsActionTypes.SET_FIRST_CONNECTION_HAS_DEVICE,
+    SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE,
   );
 export const setNotifications = createAction<SettingsSetNotificationsPayload>(
   SettingsActionTypes.SET_NOTIFICATIONS,
