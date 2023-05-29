@@ -31,7 +31,6 @@ import {
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
   onboardingHasDeviceSelector,
-  firstConnectHasDeviceUpdatedSelector,
   readOnlyModeEnabledSelector,
   hasOrderedNanoSelector,
   notificationsSelector,
@@ -85,7 +84,6 @@ const extraProperties = async (store: AppStore) => {
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key);
-  const firstConnectHasDeviceUpdated = firstConnectHasDeviceUpdatedSelector(state);
   const { user } = await getOrCreateUser();
   const accountsWithFunds = accounts
     ? [
@@ -120,7 +118,6 @@ const extraProperties = async (store: AppStore) => {
     sessionId,
     devicesCount: devices.length,
     onboardingHasDevice,
-    firstConnectHasDeviceUpdated,
     ...(satisfaction
       ? {
           satisfaction,

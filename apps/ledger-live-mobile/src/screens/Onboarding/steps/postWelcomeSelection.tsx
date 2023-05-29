@@ -44,7 +44,6 @@ function PostWelcomeSelection() {
     setOpen(true);
     track("button_clicked", {
       button: "I don’t have a Ledger yet",
-      page: "Onboarding Get Started",
     });
     identifyUser(false);
   }, [identifyUser]);
@@ -65,7 +64,7 @@ function PostWelcomeSelection() {
 
   return (
     <Flex flex={1} mx={6} mt={3}>
-      <TrackScreen category="Onboarding" name="Onboarding Get Started" />
+      <TrackScreen category="Onboarding" name="Get Started" />
       <Text variant="h4" fontWeight="semiBold" mb={7}>
         {t("onboarding.postWelcomeStep.title")}
       </Text>
