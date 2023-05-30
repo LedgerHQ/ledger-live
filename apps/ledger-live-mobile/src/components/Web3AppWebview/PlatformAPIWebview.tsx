@@ -532,6 +532,10 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       tracking.platformLoad(manifest);
     }, [manifest]);
 
+    // See https://ledgerhq.atlassian.net/browse/LIVE-7646 : (temporary ?) workaround for binance buy integration
+    const javaScriptCanOpenWindowsAutomatically =
+      manifest.id === "binancecnt" || manifest.id === "multibuy";
+
     return (
       <RNWebView
         ref={webviewRef}
@@ -550,6 +554,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}
+        javaScriptCanOpenWindowsAutomatically={
+          javaScriptCanOpenWindowsAutomatically
+        }
         {...webviewProps}
       />
     );

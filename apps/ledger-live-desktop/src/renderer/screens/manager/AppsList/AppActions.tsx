@@ -139,6 +139,7 @@ const AppActions = React.memo(
     const hasSpecificAction =
       [AppType.swap, AppType.plugin].includes(type) || (isCurrencyApp && isLiveSupported);
     const hasTwoCTAS = showLearnMore || installed;
+
     return (
       <AppActionsWrapper right={!hasTwoCTAS}>
         {showLearnMore ? (
@@ -335,4 +336,5 @@ const AppActions = React.memo(
     );
   },
 );
+
 export default memo<Props>(AppActions);
