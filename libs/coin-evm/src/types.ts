@@ -8,7 +8,7 @@ import {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
-type EvmTransactionMode = "send" | "erc721" | "erc1155";
+export type EvmTransactionMode = "send" | "erc721" | "erc1155";
 
 export type EvmTransactionBase = TransactionCommon & {
   family: "evm";
@@ -39,7 +39,7 @@ type EvmSendTransaction = EvmTransactionBase & {
 };
 
 // NFT transactions are used for ERC721 & ERC1155 transactions
-type EvmNftTransaction = EvmTransactionBase & {
+export type EvmNftTransaction = EvmTransactionBase & {
   mode: "erc721" | "erc1155";
   nft: EvmTransactionNftParam;
 };
