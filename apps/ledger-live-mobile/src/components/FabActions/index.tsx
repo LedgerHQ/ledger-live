@@ -30,10 +30,7 @@ export type ModalOnDisabledClickComponentProps = {
 };
 
 export type ActionButtonEventProps = {
-  navigationParams?: readonly [
-    name: string,
-    options: { screen?: ScreenName; [key: string]: unknown },
-  ];
+  navigationParams?: readonly [name: string, options: object];
   linkUrl?: string;
   confirmModalProps?: {
     withCancel?: boolean;
@@ -103,14 +100,13 @@ export const FabButtonBarProvider = ({
   const route = useRoute();
 
   const onNavigate = useCallback(
-    (
-      name: string,
-      options?: { screen?: ScreenName; [key: string]: unknown },
-    ) => {
-      if (options?.screen && route.name === options.screen) {
+    (name: string, options?: object) => {
+      if (options && "screen" in options && route.name === options.screen) {
         // if current route is equal to the screen we want to go to then just update the params.
         navigation.setParams({
-          ...(options ? (options as { params: object }).params : {}),
+          ...(options
+            ? (options as { screen: string; params: object }).params
+            : {}),
           ...navigationProps,
         });
         return;

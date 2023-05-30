@@ -6,8 +6,8 @@ import { Flex, Icon, Text, Link, Icons, Tag } from "@ledgerhq/native-ui";
 import { useManifest } from "@ledgerhq/live-common/platform/hooks/useManifest";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
+import { EthereumStakingDrawerProviderIcon } from "./EthereumStakingDrawerProviderIcon";
 import { ListProvider } from "./types";
-import Kiln from "../../../icons/Kiln";
 
 type Props = {
   provider: ListProvider;
@@ -57,7 +57,7 @@ export function EthereumStakingDrawerProvider({
   return (
     <TouchableOpacity onPress={providerPress}>
       <Flex flexDirection="row" columnGap={16}>
-        <Kiln size={32} />
+        <EthereumStakingDrawerProviderIcon icon={provider.icon} />
         <Flex rowGap={12} alignItems="flex-start" flex={1}>
           <Flex rowGap={2}>
             <Flex
