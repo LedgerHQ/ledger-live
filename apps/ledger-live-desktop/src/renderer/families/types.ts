@@ -216,7 +216,7 @@ export type LLDCoinFamily<
   };
 
   /**
-   * TODO document me
+   *  One time modal that is trigger only one time on a account that never send
    */
   sendWarning?: {
     // FIXME: StepProps is not the right type here: we could precide the type with A,T,TS
@@ -225,7 +225,7 @@ export type LLDCoinFamily<
   };
 
   /**
-   * TODO document me
+   * One time modal that is trigger only one time on a account that never send
    */
   receiveWarning?: {
     // FIXME: StepProps is not the right type here: we could precide the type with A,T,TS
