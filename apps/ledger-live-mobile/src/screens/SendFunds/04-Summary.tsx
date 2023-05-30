@@ -9,10 +9,14 @@ import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { isEditableOperation } from "@ledgerhq/live-common/operation";
-import { NotEnoughGas } from "@ledgerhq/errors";
-import { useTheme } from "@react-navigation/native";
+import {
+  NotEnoughGas,
+  TransactionHasBeenValidatedError,
+} from "@ledgerhq/errors";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
+import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
@@ -154,6 +158,21 @@ function SendSummary({ navigation, route }: Props) {
       },
     });
   }, [navigation, account?.id, currencyOrToken?.id]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const errorNavigation = useNavigation<any>();
+
+  apiForCurrency(mainAccount.currency)
+    .getTransactionByHash(operation?.hash || "")
+    .then(tx => {
+      if (tx?.confirmations) {
+        errorNavigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
+          error: new TransactionHasBeenValidatedError(
+            "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
+          ),
+        });
+      }
+    });
 
   // FIXME: why is recipient sometimes empty?
   if (!account || !transaction || !transaction.recipient || !currencyOrToken) {

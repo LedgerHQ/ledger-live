@@ -4,9 +4,9 @@ import { SideImageCard } from "@ledgerhq/native-ui";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/core";
-import SectionContainer from "../../../screens/WalletCentricSections/SectionContainer";
+import SectionContainer from "../screens/WalletCentricSections/SectionContainer";
 
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "../const";
 
 type EditOperationCardProps = {
   oldestEditableOperation: Operation;

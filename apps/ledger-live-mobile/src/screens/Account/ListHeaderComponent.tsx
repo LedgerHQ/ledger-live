@@ -34,7 +34,7 @@ import {
   FabAccountMainActions,
 } from "../../components/FabActions/actionsList/account";
 import { ActionButtonEvent } from "../../components/FabActions";
-import { EditOperationCard } from "../../families/ethereum/EditTransaction/EditOperationCard";
+import { EditOperationCard } from "../../components/EditOperationCard";
 
 type Props = {
   account?: AccountLike;
