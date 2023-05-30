@@ -16,7 +16,7 @@ import Touchable from "../../../components/Touchable";
 import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorImage from "../shared/ValidatorImage";
-import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
+import SelectValidatorSearchBox from "../../../components/SearchBox";
 import {
   BaseComposite,
   StackNavigatorProps,

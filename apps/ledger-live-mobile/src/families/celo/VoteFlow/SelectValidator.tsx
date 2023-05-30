@@ -10,7 +10,7 @@ import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";
-import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
+import SelectValidatorSearchBox from "../../../components/SearchBox";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import type { CeloVoteFlowParamList } from "./types";
 
