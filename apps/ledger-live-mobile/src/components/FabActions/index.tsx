@@ -30,7 +30,10 @@ export type ModalOnDisabledClickComponentProps = {
 };
 
 export type ActionButtonEventProps = {
-  navigationParams?: readonly [name: string, options: object];
+  navigationParams?: readonly [
+    name: string,
+    options: { screen?: ScreenName; [key: string]: unknown },
+  ];
   linkUrl?: string;
   confirmModalProps?: {
     withCancel?: boolean;

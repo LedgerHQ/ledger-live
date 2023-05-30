@@ -5,7 +5,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
@@ -72,7 +72,8 @@ const AccountScreenInner = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const route = useRoute();
+  const route =
+    useRoute<RouteProp<AccountsNavigatorParamList, ScreenName.Account>>();
   const navigation =
     useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
   const dispatch = useDispatch();
@@ -209,7 +210,7 @@ const AccountScreenInner = ({
           countervalueAvailable={countervalueAvailable}
           parentAccount={parentAccount}
         />
-        <EthereumStakingDrawer drawer={route?.params?.drawer} />
+        <EthereumStakingDrawer drawer={route.params.drawer} />
       </TabBarSafeAreaView>
     </ReactNavigationPerformanceView>
   );
