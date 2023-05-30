@@ -60,6 +60,7 @@
   "common" : {
     "never" : "从不",
     "new" : "新",
+    "skip" : "跳过",
     "apply" : "应用",
     "done" : "完成",
     "confirm" : "确认",
@@ -221,7 +222,7 @@
     "lend" : "借出",
     "catalog" : "发现",
     "market" : "市场",
-    "protect" : "恢复"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "星标账户以在此显示。",
@@ -1492,7 +1493,7 @@
     "sectionArticles" : "文章"
   },
   "market" : {
-    "title" : "Market（市场）",
+    "title" : "市场",
     "currency" : "货币",
     "rangeLabel" : "时间",
     "goBack" : "返回",
@@ -1759,7 +1760,8 @@
     "loading" : "正在加载……",
     "connectAndUnlockDevice" : "连接并解锁您的设备",
     "unlockDevice" : "解锁您的设备",
-    "unlockDeviceAfterFirmwareUpdate" : "等待固件更新并使用您的 PIN 识别密码解锁您的设备",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "等待在 {{productName}} 上完成安装",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "解锁 {{productName}} 以完成安装",
     "quitApp" : "在您的设备上退出该应用程序",
     "appNotInstalledTitle" : "缺少所需的应用程序",
     "appNotInstalledTitle_plural" : "缺少所需的应用程序",
@@ -1824,9 +1826,8 @@
       "installed" : "应用程序",
       "capacity" : "容量",
       "used" : "已用",
-      "firmwareAvailable" : "固件版本过期：",
-      "firmwareUpToDate" : "固件为最新版本：",
-      "genuine" : "您的设备是正版的",
+      "OSVersion" : "操作系统版本",
+      "genuine" : "设备是正版的",
       "incomplete" : "部分应用程序没有被识别。请卸载并重新安装。"
     },
     "applist" : {
@@ -1918,7 +1919,7 @@
       "dontHaveSeed" : "没有您的恢复短语？ ",
       "followTheGuide" : "请按照我们的更新指南的步骤操作",
       "removeApps" : "更新前卸载所有应用程序",
-      "update" : "固件更新",
+      "update" : "更新 {{productName}}",
       "updateBtn" : "更新固件",
       "banner" : {
         "warning" : "可将固件更新到 {{latestFirmware}} 版本",
@@ -1933,25 +1934,30 @@
       "contactSupport" : "联系客服",
       "deprecated" : "设备固件版本太旧而无法更新。请联系 Ledger 客服以获取替代版本。",
       "prepareSeed" : "预防起见，请确保将您的 24 词恢复短语写在所提供的恢复表中。",
-      "disclaimerTitle" : "您即将安装 <1>固件版本 {{version}}</1>。",
-      "downloadingUpdateDesc" : "请等待更新安装程序下载"
+      "disclaimerTitle" : "您即将安装 <1>固件版本 {{version}}</1>。"
     },
     "modal" : {
+      "title" : "更新 {{productName}}",
       "steps" : {
-        "downloadingUpdate" : "正在下载更新",
+        "preparingUpdate" : "正在准备更新",
+        "transferringUpdate" : "正在向 {{productName}} 传输更新",
+        "prepare" : "准备更新",
+        "install" : "安装更新",
+        "restore" : "恢复设置",
+        "apps" : "恢复应用程序",
         "updateMCU" : "固件更新",
         "updating" : "固件更新",
         "reset" : "准备设备",
         "osu" : "正在安装 OSU ……",
         "flash-mcu" : "MCU 更新中……",
         "flash-bootloader" : "正在更新 Bootloader 启动装载程序……",
+        "progress" : "Installing update {{current}}/{{total}}",
         "firmware" : "正在更新固件……",
         "flash" : "正在准备您的设备……"
       },
       "confirmIdentifier" : "验证标识符",
-      "confirmIdentifierText" : "请确认您设备上的标识符和下方的标识符一致。如果需要，请确认并输入您的 PIN 识别密码。",
+      "confirmIdentifierText" : "在 {{productName}} 上确认安装",
       "identifier" : "标识符",
-      "preparation" : "准备工作",
       "newFirmware" : "新固件 {{version}}",
       "confirmUpdate" : "请在您的设备上确认更新",
       "mcuTitle" : "完成更新",
@@ -1961,7 +1967,7 @@
       "mcuSecondNanoX" : "长按左键，直到 <1><0>{{bootloaderOption}}</0></1> 显示出来。同时按下两个按钮来确认并重新连接您的设备。",
       "mcuBlueFirst" : "持续按住设备侧面按钮10秒来关闭设备。松开按钮。",
       "mcuBlueSecond" : "持续按住设备侧面按钮至少5秒直至设备显示 Boot Options（启动选项）。轻击 Bootloader Mode（启动装载模式）。",
-      "successTitle" : "固件已更新",
+      "successTitle" : "操作系统更新成功。",
       "successTextApps" : "请在设备上重新安装应用程序",
       "successTextNoApps" : "您现在可以在您的设备上安装应用程序",
       "sucessCTAApps" : "重新安装应用程序",
@@ -2269,12 +2275,16 @@
     "remainingCharacters" : "剩余 {{ remainingCharacters }} 个字符",
     "renamed" : "{{ productName }} 名称已更改为\n“{{ name }}” "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "删除",
+    "confirmation" : "确认移除 Ledger Stax 上的图片",
+    "success" : "锁屏图片已移除"
+  },
   "deviceLocalization" : {
     "language" : "语言",
-    "deviceLanguage" : "语言",
+    "deviceLanguage" : "更改设备语言",
     "changeLanguage" : "更改语言",
     "changeDeviceLanguage" : "要更改您的设备语言？",
-    "chooseLanguage" : "为您的 {{deviceName}} 选择语言。",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}}同样适用于您的 {{deviceName}}",
       "description" : "是否要将语言更改为{{language}}？"
@@ -3493,17 +3503,25 @@
   },
   "ethereum" : {
     "stake" : {
-      "title" : "赚取以太币",
+      "title" : "增长您的以太币持有量",
+      "subTitle" : "质押您的以太币，通过直接在 Ledger Live 中接收每日奖励来增长您的持有量",
       "lido" : {
+        "title" : "使用 Lido 赚取",
         "tag" : "无最低限制",
-        "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无锁定期。无最低限制。"
+        "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无锁定期。无最低限制。",
+        "supportLink" : "了解关于 Lido 的更多信息"
       },
       "kiln" : {
+        "title" : "Kiln 专属质押",
         "tag" : "需要 32 枚以太币",
-        "description" : "有超过 32 枚以太币？不妨使用 Kiln 安全权益质押您的以太币来每天赚取奖励。"
+        "description" : "使用专属验证者进行权益质押需要 32 ETH 的倍数奖励需手动领取",
+        "supportLink" : "了解关于 Kiln 验证者的更多信息"
       },
-      "providerTitle" : "使用 {{provider}} 赚取收益",
-      "providerLink" : "了解关于 {{provider}} 的更多信息..."
+      "kiln_pooling" : {
+        "title" : "Kiln 质押池",
+        "description" : "加入质押池无最低以太币数量要求奖励为自动领取",
+        "supportLink" : "了解关于 Kiln 池的更多信息"
+      }
     }
   },
   "near" : {
@@ -3861,6 +3879,10 @@
     },
     "experimental" : {
       "disclaimer" : "这些是我们以“按现状”为基准提供的实验性功能，以供我们的专业爱好者社区测试。这些功能随时可能会更改、中断或删除。启用这些功能，意味着您同意自行承担使用过程中的风险。",
+      "provider" : "实验性设置“我的 Ledger 提供商 ({{forcedProvider}})”可能会显示未发布的操作系统和应用程序，从而导致兼容性问题。您可以在设置中禁用此设置。",
+      "providerDevMode" : "实验性设置“我的 Ledger 提供商 ({{forcedProvider}})”和“开发者模式”可能会显示未发布的操作系统和应用程序，从而导致兼容性问题。您可以在设置中禁用这些设置。",
+      "devMode" : "实验性设置“开发者模式”可能会显示未发布的操作系统和应用程序，从而导致兼容性问题。您可以在设置中禁用此设置。",
+      "providerCTA" : "前往设置选项",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "实验性集成",
@@ -3921,6 +3943,10 @@
         "1559CustomBaseFeeMultiplier" : {
           "title" : "基本费用的自定义倍数",
           "description" : "自定义组成 EIP1559 交易 maxFeePerGas 的基础费用的倍数"
+        },
+        "enableNetworkLogs" : {
+          "title" : "启用网络日志",
+          "description" : "在控制台启用网络日志（错误日志已始终启用）"
         }
       }
     },
@@ -4226,6 +4252,10 @@
           "3" : {
             "title" : "在新设备上还原您的恢复短语",
             "description" : "在新的 Nano 设备上使用现有的恢复短语来还原您的私钥！"
+          },
+          "4" : {
+            "title" : "使用 Ledger Recover 恢复",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4371,6 +4401,25 @@
             "help" : {
               "help" : "需要帮助",
               "descr" : "不知道如何操作？获取完成此步骤的帮助。"
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "选择“使用 Ledger Recover 重置”",
+            "1" : {
+              "title" : "选择“重置”",
+              "descr" : "同时按下两个按钮进行选择。"
+            },
+            "2" : {
+              "title" : "选择“使用 Ledger Recover 重置”"
+            },
+            "help" : {
+              "iDontSee" : "我没有看到“使用 Ledger Recover 重置”",
+              "modal" : {
+                "title" : "Ledger Nano X 的操作系统需要更新",
+                "subtitle" : " 您可以尝试更新操作系统或联系 Ledger 客服寻求帮助。",
+                "learnHowToUpdate" : "了解如何更新",
+                "contactLedgerSupport" : "联系 Ledger 客服"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -5043,6 +5092,10 @@
       "title" : "语言安装被设备端拒绝",
       "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
+    "RestoreLanguageInstallRefusedOnDevice" : {
+      "title" : "Restoration of Language was cancelled on Ledger Stax",
+      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+    },
     "LanguageNotFound" : {
       "title" : "未找到语言",
       "description" : "未找到您尝试安装的语言。请尝试安装其他语言。"
@@ -5223,8 +5276,8 @@
       "title" : "My Ledger（我的 Ledger）在设备上被拒绝"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "设备上的更新已取消",
-      "description" : "您设备上的所有应用程序已经卸载。请保持设备更新，从而享受安全性和功能性提升带来的好处。"
+      "title" : "Update was cancelled on device",
+      "description" : "The installation of OS update was refused on your device. If this was a mistake, restart the update."
     },
     "UserRefusedOnDevice" : {
       "title" : "操作被拒绝",
@@ -5602,12 +5655,20 @@
       "description" : "请使用另一张图片重试"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "图像提交在设备上被拒绝",
+      "title" : "Ledger Stax 锁屏已取消",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "图像加载在设备上被拒绝",
+      "title" : "Ledger Stax 锁屏已取消",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
+    },
+    "RestoreImageCommitRefusedOnDevice" : {
+      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
+      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+    },
+    "RestoreImageLoadRefusedOnDevice" : {
+      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
+      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
     },
     "NearNewAccountWarning" : {
       "title" : "尚未创建接收人账户。该协议需要 {{formattedNewAccountStorageCost}} 转账才能创建账户。"
@@ -5686,6 +5747,7 @@
   "customImage" : {
     "title" : "自定义锁屏界面",
     "managerCTA" : "锁屏图片",
+    "managerCTARemove" : "删除",
     "steps" : {
       "choose" : {
         "stepLabel" : "选择一张图片",
@@ -5694,6 +5756,7 @@
         "myNfts" : "我的 NFT",
         "upload" : "从我的计算机上传",
         "chooseNft" : "选择 NFT",
+        "remove" : "移除当前图片",
         "selectNft" : "选择 NFT",
         "previousSelectNft" : "返回",
         "nftEmptyStateTitle" : "暂时没有 NFT 可显示",
@@ -5710,9 +5773,11 @@
         "stepLabel" : "转移",
         "uploadAnotherImage" : "上传另一张图片",
         "allowPreview" : "允许在您的 {{productName}} 上加载锁屏图片",
+        "allowConfirmPreview" : "允许在 {{productName}} 上恢复锁屏图片",
         "loadingPicture" : "正在加载……",
         "imageLoaded" : "图片已加载到 {{productName}}",
         "confirmPicture" : "很合心意？\n用此设定！",
+        "confirmRestorePicture" : "确认恢复锁屏图片",
         "doThisLater" : "以后再说"
       }
     },

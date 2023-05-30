@@ -3,7 +3,6 @@ import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 import { Platform } from "react-native";
 
 type PlatformAppProviderWrapperProps = {
@@ -32,9 +31,7 @@ export default function PlatformAppProviderWrapper({
     <RemoteLiveAppProvider
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
       parameters={{
-        apiVersion: getPlatformVersion(),
         platform: PLATFORM,
-        private: false,
         allowDebugApps: isDebugAppEnabled,
         allowExperimentalApps: isExperimentalAppEnabled,
       }}

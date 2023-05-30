@@ -1,6 +1,5 @@
 import React, { memo, useRef, useState, useCallback, useMemo, useEffect } from "react";
 import styled from "styled-components";
-import { log } from "@ledgerhq/logs";
 import { withTranslation } from "react-i18next";
 import { App, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Exec, InstalledItem, ListAppsResult } from "@ledgerhq/live-common/apps/types";
@@ -196,7 +195,6 @@ const AppsList = ({
           device={device}
           deviceName={deviceName}
           isIncomplete={isIncomplete}
-          firmware={firmware}
         />
         <ProviderWarning />
         <AppList

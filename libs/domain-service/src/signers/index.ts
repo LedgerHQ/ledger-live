@@ -37,6 +37,7 @@ export const signDomainResolution = async (
     })
     .then(({ data }) => data.payload)
     .catch((error) => {
+      /* istanbul ignore next: don't test logs */
       if (error.status !== 404) {
         log("domain-service", "failed to get APDU for a domain", {
           domain,
@@ -75,6 +76,7 @@ export const signAddressResolution = async (
     })
     .then(({ data }) => data.payload)
     .catch((error) => {
+      /* istanbul ignore next: don't test logs */
       if (error.status !== 404) {
         log("domain-service", "failed to get APDU for an address", {
           address,

@@ -6,6 +6,7 @@ const defaultConfig = {
       axelar: {
         lcd: "https://axelar-api.polkachu.com",
         minGasPrice: 0.07,
+        ledgerValidator: "axelarvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx7vd805",
       },
       cosmos: {
         lcd: "https://cosmoshub4.coin.ledger.com",
@@ -23,6 +24,7 @@ const defaultConfig = {
       onomy: {
         lcd: "https://rest-mainnet.onomy.io",
         minGasPrice: 0.003,
+        ledgerValidator: "onomyvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxu9mtmf",
       },
       osmo: {
         lcd: "https://osmosis-api.polkachu.com",
@@ -32,10 +34,13 @@ const defaultConfig = {
       persistence: {
         lcd: "https://rest-persistence.architectnodes.com",
         minGasPrice: 0.025,
+        ledgerValidator:
+          "persistencevaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxatty38",
       },
       quicksilver: {
         lcd: "https://lcd.quicksilver.zone",
         minGasPrice: 0.0025,
+        ledgerValidator: "quickvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx02n4pp",
       },
       secret_network: {
         lcd: "https://lcd.secret.express",

@@ -76,6 +76,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> =
         useState(false);
       const [onModalHide, setOnModalHide] =
         useState<BottomModalProps["onModalHide"]>();
+
       const close = useCallback(() => {
         if (skipNavigation) {
           // onClose should always be called at the end of the close method,
@@ -91,6 +92,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> =
           navigation
             .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
             .pop();
+
           onClose && onClose();
           return;
         }
@@ -100,9 +102,11 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> =
         navigation.goBack();
         onClose();
       }, [navigation, onClose, preferDismiss, skipNavigation]);
+
       const openConfirmationModal = useCallback(() => {
         setIsConfirmationModalOpened(true);
       }, []);
+
       const onPress = useCallback(() => {
         if (withConfirmation) {
           openConfirmationModal();
@@ -110,13 +114,16 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> =
           close();
         }
       }, [close, openConfirmationModal, withConfirmation]);
+
       const closeConfirmationModal = useCallback(() => {
         setIsConfirmationModalOpened(false);
       }, []);
+
       const onConfirm = useCallback(() => {
         setOnModalHide(close);
         setIsConfirmationModalOpened(false);
       }, [close]);
+
       return (
         <>
           <NavigationHeaderCloseButton onPress={onPress} color={color} />

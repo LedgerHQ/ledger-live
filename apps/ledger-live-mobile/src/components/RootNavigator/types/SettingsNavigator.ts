@@ -60,6 +60,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.BenchmarkQRStream]: undefined;
   [ScreenName.OnboardingLanguage]: undefined;
   [ScreenName.PostOnboardingDebugScreen]: undefined;
+  [ScreenName.DebugSnackbars]: undefined;
   [ScreenName.DebugStoryly]: undefined;
   [ScreenName.DebugFetchCustomImage]: undefined;
   [ScreenName.DebugFirmwareUpdate]: undefined;

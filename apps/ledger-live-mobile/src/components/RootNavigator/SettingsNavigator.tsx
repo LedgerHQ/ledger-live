@@ -24,9 +24,7 @@ import DebugFeatures from "../../screens/Settings/Debug/Features";
 import DebugFetchCustomImage, {
   debugFetchCustomImageHeaderOptions,
 } from "../../screens/Settings/Debug/Features/FetchCustomImage";
-import DebugFirmwareUpdate, {
-  debugFirmwareUpdateHeaderOptions,
-} from "../../screens/Settings/Debug/Features/FirmwareUpdate";
+import DebugFirmwareUpdate from "../../screens/Settings/Debug/Features/FirmwareUpdate";
 import DebugGenerators from "../../screens/Settings/Debug/Generators";
 import DebugHttpTransport from "../../screens/Settings/Debug/Connectivity/DebugHttpTransport";
 import DebugInformation from "../../screens/Settings/Debug/Information";
@@ -39,6 +37,7 @@ import DebugCommandSender from "../../screens/Settings/Debug/Connectivity/Comman
 import DebugPlayground from "../../screens/Settings/Debug/Playground";
 import DebugBluetoothAndLocationServices from "../../screens/Settings/Debug/Debugging/BluetoothAndLocationServices";
 import DebugSettings from "../../screens/Settings/Debug";
+import DebugSnackbars from "../../screens/Settings/Debug/Features/Snackbars";
 import DebugStore from "../../screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "../../screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "../../screens/Settings/Debug/Features/Swap";
@@ -385,13 +384,22 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugFirmwareUpdate}
         component={DebugFirmwareUpdate}
-        options={useMemo(() => debugFirmwareUpdateHeaderOptions(t), [t])}
+        options={{
+          title: "Debug Firmware update",
+        }}
       />
       <Stack.Screen
         name={ScreenName.DebugCustomImageGraphics}
         component={DebugCustomImageGraphics}
         options={{
           title: "Custom image graphics",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugSnackbars}
+        component={DebugSnackbars}
+        options={{
+          title: "Debug snackbars",
         }}
       />
       <Stack.Screen

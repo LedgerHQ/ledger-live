@@ -25,7 +25,9 @@ export const resolveDomain = async (
       const registry = registries.find(
         (r) => r.name === registryName && r.patterns.forward.test(domain)
       );
-      return registry ? [registry] : [];
+      return registry
+        ? [registry]
+        : /* istanbul ignore next: don't test emptiness of resolutions */ [];
     }
     return getRegistriesForDomain(domain);
   })();
@@ -43,6 +45,7 @@ export const resolveDomain = async (
     promises.reduce((result, promise, index) => {
       if (promise.status !== "fulfilled") {
         // ignore 404 error
+        /* istanbul ignore next: don't test logs */
         if (
           axios.isAxiosError(promise.reason) &&
           promise.reason.response?.status !== 404
@@ -92,7 +95,9 @@ export const resolveAddress = async (
       const registry = registries.find(
         (r) => r.name === registryName && r.patterns.reverse.test(address)
       );
-      return registry ? [registry] : [];
+      return registry
+        ? [registry]
+        : /* istanbul ignore next: don't test emptiness of resolutions */ [];
     }
     return getRegistriesForAddress(address);
   })();
@@ -118,6 +123,7 @@ export const resolveAddress = async (
     promises.reduce((result, promise, index) => {
       if (promise.status !== "fulfilled") {
         // ignore 404 error
+        /* istanbul ignore next: don't test logs */
         if (
           axios.isAxiosError(promise.reason) &&
           promise.reason.response?.status !== 404

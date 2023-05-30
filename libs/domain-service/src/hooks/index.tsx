@@ -27,7 +27,8 @@ import {
 const DomainServiceContext = createContext<DomainServiceContextType>({
   cache: {},
   loadDomainServiceAPI: () => Promise.resolve(),
-  clearCache: () => {},
+  clearCache:
+    /* istanbul ignore next: don't test default state because it's gonna be overriden */ () => {},
 });
 
 export const useDomain = (
