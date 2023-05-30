@@ -52,7 +52,7 @@ const NOT_SUPPORTED_DEVICES_IOS = [DeviceModelId.nanoS, DeviceModelId.nanoSP];
 
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation<NavigationProp>();
-  const route = useRoute<NavigationProps["route"]>();
+  const route = useRoute<NavigationProp["route"]>();
   const { t } = useTranslation();
   const syncOnboarding = useFeature("syncOnboarding" as const);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
