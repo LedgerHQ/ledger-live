@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.24.0-nightly.0
+
+### Minor Changes
+
+- [#3529](https://github.com/LedgerHQ/ledger-live/pull/3529) [`5d6aeab55c`](https://github.com/LedgerHQ/ledger-live/commit/5d6aeab55c275ab308b612a849ae2a758d64c83c) Thanks [@cpellizzari-ledger](https://github.com/cpellizzari-ledger)! - Fix: Binance.com redirection to browser perform authentication on iOS was not triggered
+
+### Patch Changes
+
+- Updated dependencies [[`b574c30b2b`](https://github.com/LedgerHQ/ledger-live/commit/b574c30b2ba9ba49e12ab20ce1fd7c68c2220acf)]:
+  - @ledgerhq/live-common@30.0.1-nightly.0
+
 ## 3.23.0
 
 ### Minor Changes

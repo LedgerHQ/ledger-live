@@ -93,6 +93,7 @@
     "@ledgerhq/coin-algorand": "0.1.0"
   },
   "changesets": [
+    "beige-gorillas-fold",
     "brown-jokes-cross",
     "cuddly-bobcats-accept",
     "eight-colts-double",
@@ -111,6 +112,7 @@
     "silent-phones-cover",
     "silly-olives-tan",
     "spicy-cats-rest",
+    "strange-peaches-leave",
     "strong-tools-fix",
     "swift-apples-hope",
     "tame-yaks-sit",

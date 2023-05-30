@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.60.1-nightly.0
+
+### Patch Changes
+
+- [#3320](https://github.com/LedgerHQ/ledger-live/pull/3320) [`b574c30b2b`](https://github.com/LedgerHQ/ledger-live/commit/b574c30b2ba9ba49e12ab20ce1fd7c68c2220acf) Thanks [@lvndry](https://github.com/lvndry)! - Rework add account feature flagging in manager app
+
+- Updated dependencies [[`b574c30b2b`](https://github.com/LedgerHQ/ledger-live/commit/b574c30b2ba9ba49e12ab20ce1fd7c68c2220acf)]:
+  - @ledgerhq/live-common@30.0.1-nightly.0
+
 ## 2.60.0
 
 ### Minor Changes
