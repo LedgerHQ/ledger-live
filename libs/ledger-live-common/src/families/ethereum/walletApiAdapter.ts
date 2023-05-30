@@ -4,10 +4,7 @@ import {
   ConvertToLiveTransaction,
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
-import { Transaction as EthereumTx } from "./types";
-import { Transaction as EvmTx } from "../evm/types";
-
-type Transaction = EthereumTx | EvmTx;
+import { Transaction } from "./types";
 
 const CAN_EDIT_FEES = true;
 
