@@ -40,7 +40,6 @@ import OnboardingSyncDesktopInformation from "../../screens/Onboarding/steps/set
 import OnboardingRecoveryPhraseWarning from "../../screens/Onboarding/steps/setupDevice/drawers/RecoveryPhraseWarning";
 import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
 import GetDeviceScreen from "../../screens/GetDeviceScreen";
-import OnboardingStepDoYouHaveALedgerDevice from "../../screens/Onboarding/steps/doYouHaveALedger";
 import OnboardingProtectFlow from "../../screens/Onboarding/steps/protectFlow";
 
 import {
@@ -192,16 +191,16 @@ export default function OnboardingNavigator() {
         component={OnboardingWelcome}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingDoYouHaveALedgerDevice}
-        component={OnboardingStepDoYouHaveALedgerDevice}
+        name={ScreenName.OnboardingPostWelcomeSelection}
+        component={PostWelcomeSelection}
         options={{
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
         }}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingPostWelcomeSelection}
-        component={PostWelcomeSelection}
+        name={ScreenName.OnboardingWelcomeBack}
+        component={AccessExistingWallet}
         options={{
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,

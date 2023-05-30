@@ -272,7 +272,7 @@ export enum SettingsActionTypes {
   SET_MARKET_COUNTER_CURRENCY = "SET_MARKET_COUNTER_CURRENCY",
   SET_MARKET_FILTER_BY_STARRED_ACCOUNTS = "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
-  SET_FIRST_CONNECTION_HAS_DEVICE = "SET_FIRST_CONNECTION_HAS_DEVICE",
+  SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
   RESET_SWAP_LOGIN_AND_KYC_DATA = "RESET_SWAP_LOGIN_AND_KYC_DATA",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
@@ -373,10 +373,8 @@ export type SettingsSetMarketFilterByStarredAccountsPayload =
   SettingsState["marketFilterByStarredAccounts"];
 export type SettingsSetSensitiveAnalyticsPayload =
   SettingsState["sensitiveAnalytics"];
-export type SettingsSetFirstConnectionHasDevicePayload =
-  SettingsState["firstConnectionHasDevice"];
-export type SettingsSetFirstConnectHasDeviceUpdatedPayload =
-  SettingsState["firstConnectHasDeviceUpdated"];
+export type SettingsSetOnboardingHasDevicePayload =
+  SettingsState["onboardingHasDevice"];
 export type SettingsSetNotificationsPayload = Partial<
   SettingsState["notifications"]
 >;
@@ -446,7 +444,7 @@ export type SettingsPayload =
   | SettingsSetMarketCounterCurrencyPayload
   | SettingsSetMarketFilterByStarredAccountsPayload
   | SettingsSetSensitiveAnalyticsPayload
-  | SettingsSetFirstConnectHasDeviceUpdatedPayload
+  | SettingsSetOnboardingHasDevicePayload
   | SettingsSetNotificationsPayload
   | SettingsDangerouslyOverrideStatePayload
   | DangerouslyOverrideStatePayload

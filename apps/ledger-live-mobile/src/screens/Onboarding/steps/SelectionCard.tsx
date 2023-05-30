@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useTheme } from "styled-components/native";
-import { Flex, Box, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Box, Text } from "@ledgerhq/native-ui";
 import { props } from "lodash/fp";
 import Touchable from "../../../components/Touchable";
+import { track } from "../../../analytics";
 
 type CardProps = {
   title: string;
@@ -26,8 +27,13 @@ export const SelectionCard = ({
   Icon,
 }: CardProps) => {
   const { colors, space } = useTheme();
+
+  const pressAndTrack = useCallback(() => {
+    track(event, eventProperties);
+    onPress?.();
+  }, [event, eventProperties, onPress]);
   return (
-    <Touchable onPress={onPress} {...props}>
+    <Touchable onPress={pressAndTrack} {...props} testID={testID}>
       <Flex
         flexDirection="row"
         px={7}

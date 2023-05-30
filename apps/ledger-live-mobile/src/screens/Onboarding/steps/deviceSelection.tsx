@@ -20,7 +20,6 @@ import { NavigateInput } from "../../../components/RootNavigator/types/BaseNavig
 import ChoiceCard from "./ChoiceCard";
 import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 import { NotCompatibleModal } from "./setupDevice/drawers/NotCompatibleModal";
-import { NavigationProps } from "../../AccountSettings";
 
 const nanoX = {
   source: require("../../../../assets/images/devices/NanoXCropped.png"),
@@ -142,8 +141,8 @@ function OnboardingStepDeviceSelection() {
       {devices.map(device => (
         <ChoiceCard
           key={device.id}
-          event="Onboarding Device - Selection"
-          eventProperties={{ id: device.id }}
+          event="button_clicked"
+          eventProperties={{ button: device.id }}
           testID={`onboarding-device-selection-${device.id}`}
           title={getProductName(device.id)}
           onPress={() =>

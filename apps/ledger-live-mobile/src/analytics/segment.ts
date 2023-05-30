@@ -33,8 +33,7 @@ import {
   localeSelector,
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
-  firstConnectionHasDeviceSelector,
-  firstConnectHasDeviceUpdatedSelector,
+  onboardingHasDeviceSelector,
   readOnlyModeEnabledSelector,
   hasOrderedNanoSelector,
   notificationsSelector,
@@ -87,7 +86,7 @@ const extraProperties = async (store: AppStore) => {
         modelId: lastDevice.modelId,
       }
     : {};
-  const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+  const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
   const notificationsAllowed = notifications.areNotificationsAllowed;
   const notificationsBlacklisted = Object.entries(notifications)
@@ -95,8 +94,6 @@ const extraProperties = async (store: AppStore) => {
       ([key, value]) => key !== "areNotificationsAllowed" && value === false,
     )
     .map(([key]) => key);
-  const firstConnectHasDeviceUpdated =
-    firstConnectHasDeviceUpdatedSelector(state);
   const { user } = await getOrCreateUser();
   const accountsWithFunds = accounts
     ? [
@@ -138,8 +135,8 @@ const extraProperties = async (store: AppStore) => {
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
-    firstConnectionHasDevice,
-    firstConnectHasDeviceUpdated,
+    modelIdList: devices.map(d => d.modelId),
+    onboardingHasDevice,
     ...(satisfaction
       ? {
           satisfaction,

@@ -1,8 +1,9 @@
-import React, { useCallback } from "react";
+import React, { ReactNode, useCallback, useState } from "react";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/core";
 import { useDispatch } from "react-redux";
+import styled from "styled-components/native";
 import { setHasOrderedNano } from "../../../actions/settings";
 import { NavigatorName, ScreenName } from "../../../const";
 import QueuedDrawer from "../../../components/QueuedDrawer";
@@ -12,6 +13,10 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { track } from "../../../analytics";
+import Illustration from "../../../images/illustration/Illustration";
+
+import ImageLedger from "../../../images/double-ledger.png";
 
 type Props = {
   onClose: () => void;
@@ -23,23 +28,43 @@ type NavigationProps = StackNavigatorProps<
   ScreenName.OnboardingPostWelcomeSelection
 >;
 export function NoLedgerYetModal({ onClose, isOpen }: Props) {
+  const [isFromBuy, setFromBuy] = useState(false);
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const onCloseAndTrack = useCallback(() => {
+    onClose();
+
+    track("button_clicked", {
+      button: "Close",
+      drawer: "Get Started Upsell",
+    });
+  }, [onClose]);
+
   const exploreLedger = useCallback(() => {
     dispatch(setHasOrderedNano(false));
     navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
+
+    track("button_clicked", {
+      button: "Explore the app",
+      drawer: "Get Started Upsell",
+    });
   }, [navigation, dispatch]);
 
   const buyLedger = useCallback(() => {
+    setFromBuy(true);
     (
       navigation as unknown as StackNavigatorNavigation<BaseNavigatorStackParamList>
     ).navigate(NavigatorName.BuyDevice);
   }, [navigation]);
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={!!isOpen} onClose={onClose}>
+    <QueuedDrawer
+      isRequestingToBeOpened={!!isOpen}
+      onClose={isFromBuy ? onClose : onCloseAndTrack}
+      CustomHeader={CustomHeader}
+    >
       <Flex alignItems="center" mt={7}>
         <Text variant="h4" fontWeight="semiBold" color="neutral.c100">
           {t("onboarding.postWelcomeStep.noLedgerYetModal.title")}
@@ -66,3 +91,36 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
     </QueuedDrawer>
   );
 }
+
+type HeaderProps = {
+  children?: ReactNode;
+};
+
+const StyledHeader = styled(Flex)`
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  padding: ${p => p.theme.space[6]}px;
+  background-color: ${p => p.theme.colors.primary.c80};
+`;
+
+const StyledImageContainer = styled(Flex)`
+  transform: rotate(-20deg);
+  position: static;
+  top: -100px;
+  left: -50px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const CustomHeader = ({ children }: HeaderProps) => (
+  <StyledHeader height={200}>
+    {children}
+    <StyledImageContainer>
+      <Illustration
+        size={550}
+        lightSource={ImageLedger}
+        darkSource={ImageLedger}
+      />
+    </StyledImageContainer>
+  </StyledHeader>
+);
