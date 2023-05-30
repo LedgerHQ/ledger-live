@@ -53,7 +53,7 @@ export function useWebviewState(
 
       return url.toString();
     } catch (e) {
-      if (e instanceof Error) console.error("Invalid URL : ", e.message);
+      if (e instanceof Error) console.error(e.message);
       return manifest.url.toString();
     }
   }, [manifest, inputs]);
