@@ -207,14 +207,6 @@ export default function OnboardingNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingWelcomeBack}
-        component={AccessExistingWallet}
-        options={{
-          headerShown: true,
-          headerLeft: () => <NavigationHeaderBackButton />,
-        }}
-      />
-      <Stack.Screen
         name={ScreenName.GetDevice}
         component={GetDeviceScreen}
         options={{ headerShown: false }}
