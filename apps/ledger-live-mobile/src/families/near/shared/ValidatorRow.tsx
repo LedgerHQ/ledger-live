@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { NearValidatorItem } from "@ledgerhq/live-common/families/near/types";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";

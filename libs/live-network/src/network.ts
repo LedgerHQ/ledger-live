@@ -1,10 +1,10 @@
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
+import { changes, getEnv } from "@ledgerhq/live-env";
+import { retry } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
 import type { AxiosError, AxiosRequestConfig, Method } from "axios";
 import axios, { AxiosPromise, AxiosResponse } from "axios";
 import invariant from "invariant";
-import { changes, getEnv } from "./env";
-import { retry } from "./promise";
 
 type Metadata = { startTime: number };
 type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
