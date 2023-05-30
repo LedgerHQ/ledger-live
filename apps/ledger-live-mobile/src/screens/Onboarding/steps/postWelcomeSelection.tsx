@@ -45,8 +45,7 @@ function PostWelcomeSelection() {
     track("button_clicked", {
       button: "I don’t have a Ledger yet",
     });
-    identifyUser(false);
-  }, [identifyUser]);
+  }, []);
 
   const closeModal = useCallback(() => setOpen(false), []);
 

@@ -4,7 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/core";
 import { useDispatch } from "react-redux";
 import styled from "styled-components/native";
-import { setHasOrderedNano } from "../../../actions/settings";
+import {
+  setHasOrderedNano,
+  setOnboardingHasDevice,
+} from "../../../actions/settings";
 import { NavigatorName, ScreenName } from "../../../const";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import {
@@ -13,7 +16,7 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import { track } from "../../../analytics";
+import { TrackScreen, track, updateIdentify } from "../../../analytics";
 import Illustration from "../../../images/illustration/Illustration";
 
 import ImageLedger from "../../../images/double-ledger.png";
@@ -33,11 +36,20 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const identifyUser = useCallback(
+    (hasDevice: boolean) => {
+      dispatch(setOnboardingHasDevice(hasDevice));
+      updateIdentify();
+    },
+    [dispatch],
+  );
+
   const onCloseAndTrack = useCallback(() => {
     onClose();
 
     track("button_clicked", {
       button: "Close",
+      page: "Onboarding Get Started",
       drawer: "Get Started Upsell",
     });
   }, [onClose]);
@@ -45,12 +57,13 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
   const exploreLedger = useCallback(() => {
     dispatch(setHasOrderedNano(false));
     navigation.navigate(ScreenName.OnboardingModalDiscoverLive);
-
+    identifyUser(false);
     track("button_clicked", {
       button: "Explore the app",
+      page: "Onboarding Get Started",
       drawer: "Get Started Upsell",
     });
-  }, [navigation, dispatch]);
+  }, [dispatch, navigation, identifyUser]);
 
   const buyLedger = useCallback(() => {
     setFromBuy(true);
@@ -65,6 +78,7 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
       onClose={isFromBuy ? onClose : onCloseAndTrack}
       CustomHeader={CustomHeader}
     >
+      <TrackScreen category="Onboard" name="Start Upsell" />
       <Flex alignItems="center" mt={7}>
         <Text variant="h4" fontWeight="semiBold" color="neutral.c100">
           {t("onboarding.postWelcomeStep.noLedgerYetModal.title")}
