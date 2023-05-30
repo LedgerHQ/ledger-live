@@ -36,7 +36,6 @@ import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { trackPage } from "~/renderer/analytics/segment";
-import Track from "~/renderer/analytics/Track";
 
 const readyRedirectDelayMs = 2500;
 const pollingPeriodMs = 1000;
@@ -431,7 +430,13 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
     }
 
     if (stepKey === StepKey.Exit) {
-      trackPage("Stax Set Up - Final step: Stax is ready", undefined, { flow: analyticsFlowName });
+      trackPage(
+        `Set up ${productName}: Final Step ${productName} is ready`,
+        undefined,
+        { flow: analyticsFlowName },
+        true,
+        true,
+      );
       setTimeout(handleDeviceReady, readyRedirectDelayMs / 2);
     }
 

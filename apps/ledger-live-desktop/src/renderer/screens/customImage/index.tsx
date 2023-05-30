@@ -29,7 +29,7 @@ import StepFooter from "./StepFooter";
 import { analyticsDrawerContext, setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useTrack } from "~/renderer/analytics/segment";
 
 type Props = {
@@ -183,6 +183,7 @@ const CustomImage: React.FC<Props> = props => {
     exit();
     dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.customImage }));
     if (isFromPostOnboardingEntryPoint) {
+      setTrackingSource(analyticsPageNames.success);
       openPostOnboarding();
     }
   }, [exit, dispatch, isFromPostOnboardingEntryPoint, openPostOnboarding]);
@@ -207,6 +208,7 @@ const CustomImage: React.FC<Props> = props => {
                 <TrackPage
                   category={analyticsPageNames.error + error.name}
                   type="drawer"
+                  flow={analyticsFlowName}
                   refreshSource={false}
                 />
                 <ErrorDisplayV2 error={error} onRetry={handleErrorRetryClicked} />

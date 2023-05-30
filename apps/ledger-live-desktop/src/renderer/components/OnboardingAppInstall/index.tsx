@@ -109,9 +109,15 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
   }, [onComplete]);
 
   const handleInstallComplete = useCallback(() => {
-    trackPage("Stax Set Up - Step 5: Successful", "", { flow: analyticsFlowName });
+    trackPage(
+      `Set up ${productName}: Step 5  Successful`,
+      undefined,
+      { flow: analyticsFlowName },
+      true,
+      true,
+    );
     onComplete();
-  }, [onComplete]);
+  }, [onComplete, productName]);
 
   return (
     <>
@@ -133,8 +139,8 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
       <TrackPage
         category={
           deviceToRestore
-            ? "Stax Set Up - Step 5: Install Apps"
-            : "Stax Set Up - Step 5: Restore Apps"
+            ? `Set up ${productName}: Step 5 Restore Apps`
+            : `Set up ${productName}: Step 5 Install Apps`
         }
         flow={analyticsFlowName}
       />

@@ -2,9 +2,6 @@ import { memo, useEffect } from "react";
 import { trackPage } from "./segment";
 import { currentRouteNameRef } from "./screenRefs";
 
-/**
- * @deprecated
- */
 export const setTrackingSource = (s?: string) => {
   currentRouteNameRef.current = s;
 };
