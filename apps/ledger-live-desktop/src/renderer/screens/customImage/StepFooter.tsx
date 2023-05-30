@@ -78,7 +78,7 @@ const StepFooter: React.FC<Props> = props => {
             onClick={previousDisabled ? undefined : handlePrevious}
             disabled={previousDisabled}
             Icon={previousLoading ? InfiniteLoader : undefined}
-            data-test-id={previousTestId}
+            buttonTestId={previousTestId}
             event="button_clicked"
             eventProperties={previousEventProperties}
           >
@@ -93,7 +93,7 @@ const StepFooter: React.FC<Props> = props => {
             onClick={nextDisabled ? undefined : handleNext}
             disabled={nextDisabled}
             Icon={nextLoading ? InfiniteLoader : undefined}
-            data-test-id={nextTestId}
+            buttonTestId={nextTestId}
             event="button_clicked"
             eventProperties={nextEventProperties}
           >
