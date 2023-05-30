@@ -1,5 +1,5 @@
 import React from "react";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { Transaction } from "@ledgerhq/live-common/families/near/types";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { useTranslation } from "react-i18next";

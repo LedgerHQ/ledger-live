@@ -441,16 +441,6 @@
   ],
   [
     "cardano",
-    "c88bbd1848db5ea665b1fffbefba86e8dcd723b5085348e8a8d2260f",
-    "44414e41",
-    "DANA",
-    "DANA",
-    6,
-    false,
-    false
-  ],
-  [
-    "cardano",
     "47959e79846b8bdcacb91f586408d97e2dff44f31a04f03902cba818",
     "5357454554",
     "SWEET",
@@ -514,7 +504,7 @@
     "0c442180dd6163682d8e03b271caefb4944a24412bdd07adafb04ccb",
     "50494e41434f4c414441",
     "PinacolADA",
-    "PinacolADA",
+    "Pina",
     0,
     false,
     true
@@ -525,7 +515,7 @@
     "4d4b41",
     "Merkaba",
     "MKA",
-    2,
+    5,
     false,
     true
   ],
@@ -541,30 +531,10 @@
   ],
   [
     "cardano",
-    "86abe45be4d8fb2e8f28e8047d17d0ba5592f2a6c8c452fc88c2c143",
-    "58524159",
-    "XRAY",
-    "XRAY",
-    0,
-    false,
-    true
-  ],
-  [
-    "cardano",
     "0fd9819a9d7fb414880883f43a42d33458f12bc5f9841cec6457dc15",
     "5669527553",
     "Virus",
     "virus",
-    0,
-    false,
-    true
-  ],
-  [
-    "cardano",
-    "df0172804f8418afc4e5b0a15b8fc78bdc3ca6d179405a7cd194f3b4",
-    "464c49434b",
-    "Flickto",
-    "FLICK",
     0,
     false,
     true
@@ -616,16 +586,6 @@
     "Gotchi",
     "GTCHI",
     6,
-    false,
-    true
-  ],
-  [
-    "cardano",
-    "14a3455f71c435a04ea1fdb50a3ef4c1cab0e79fb1565627ac66a575",
-    "52415645",
-    "Ravendex",
-    "RAVE",
-    0,
     false,
     true
   ],
@@ -721,16 +681,6 @@
   ],
   [
     "cardano",
-    "57684adcb032c8dbc40179841bed987d8dee7472617a0e5c25ef4140",
-    "59617953776170",
-    "YaySwap",
-    "YAY",
-    0,
-    false,
-    true
-  ],
-  [
-    "cardano",
     "c9f955eeffa84e42363b4992281d32dd2f9239153d6c66420a9acc15",
     "4c4f47",
     "Life Log Token",
@@ -781,16 +731,6 @@
   ],
   [
     "cardano",
-    "208a2ca888886921513cb777bb832a8dc685c04de990480151f12150",
-    "53484942414441",
-    "SHIBADA",
-    "SHIBA",
-    0,
-    false,
-    true
-  ],
-  [
-    "cardano",
     "c4c00fbd8fa227442a5e7cdecde33b24588494d05a2c50fda8938c6d",
     "4b49445a",
     "Kidz Coin",
@@ -814,7 +754,7 @@
     "d0af056c509b6b1133cd83a750b7245e561169281fde3df1cb6e2d96",
     "506f6f6c5065656b436f696e",
     "PoolPeekCoin",
-    "PoolPeekCoin",
+    "PPC",
     0,
     false,
     true
@@ -864,7 +804,7 @@
     "ccb3577601d6cf0e021288871112926338bee685c6c37eeadf6dddd9",
     "43617264616e6961466f756e646572426c7565",
     "CardaniaFounderBlue",
-    "CardaniaFounderBlue",
+    "CDFC5",
     0,
     false,
     true
@@ -874,7 +814,7 @@
     "ccb3577601d6cf0e021288871112926338bee685c6c37eeadf6dddd9",
     "43617264616e6961466f756e646572526564",
     "CardaniaFounderRed",
-    "CardaniaFounderRed",
+    "CDFC4",
     0,
     false,
     true
@@ -894,7 +834,7 @@
     "ccb3577601d6cf0e021288871112926338bee685c6c37eeadf6dddd9",
     "43617264616e6961466f756e646572477265656e",
     "CardaniaFounderGreen",
-    "CardaniaFounderGreen",
+    "CDFC6",
     0,
     false,
     true
@@ -1011,11 +951,81 @@
   ],
   [
     "cardano",
+    "5dac8536653edc12f6f5e1045d8164b9f59998d3bdc300fc92843489",
+    "4e4d4b52",
+    "NMKR",
+    "NMKR",
+    6,
+    false,
+    false
+  ],
+  [
+    "cardano",
+    "c0ee29a85b13209423b10447d3c2e6a50641a15c57770e27cb9d5073",
+    "57696e67526964657273",
+    "WingRiders Governance Token",
+    "WRT",
+    6,
+    false,
+    false
+  ],
+  [
+    "cardano",
+    "8e51398904a5d3fc129fbf4f1589701de23c7824d5c90fdb9490e15a",
+    "434841524c4933",
+    "CHARLI3",
+    "C3",
+    6,
+    false,
+    false
+  ],
+  [
+    "cardano",
     "38ad9dc3aec6a2f38e220142b9aa6ade63ebe71f65e7cc2b7d8a8535",
     "434c4159",
     "CLAY",
     "CLAY",
     4,
+    false,
+    false
+  ],
+  [
+    "cardano",
+    "f43a62fdc3965df486de8a0d32fe800963589c41b38946602a0dc535",
+    "41474958",
+    "SingularityNet AGIX Token",
+    "AGIX",
+    8,
+    false,
+    false
+  ],
+  [
+    "cardano",
+    "533bb94a8850ee3ccbe483106489399112b74c905342cb1792a797a0",
+    "494e4459",
+    "Indigo DAO Token",
+    "INDY",
+    6,
+    false,
+    false
+  ],
+  [
+    "cardano",
+    "8db269c3ec630e06ae29f74bc39edd1f87c819f1056206e879a1cd61",
+    "446a65644d6963726f555344",
+    "Djed USD",
+    "DJED",
+    6,
+    false,
+    false
+  ],
+  [
+    "cardano",
+    "f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b69880",
+    "69555344",
+    "iUSD",
+    "iUSD",
+    6,
     false,
     false
   ]
