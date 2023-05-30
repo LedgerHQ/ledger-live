@@ -1618,6 +1618,136 @@ importers:
         specifier: ^4.9.5
         version: 4.9.5
 
+  libs/coin-evm:
+    dependencies:
+      '@ethersproject/shims':
+        specifier: ^5.7.0
+        version: 5.7.0
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/devices
+      '@ledgerhq/domain-service':
+        specifier: workspace:^
+        version: link:../domain-service
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-app-eth':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-eth
+      '@ledgerhq/live-app-sdk':
+        specifier: ^0.8.1
+        version: 0.8.1
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../live-network
+      '@ledgerhq/live-portfolio':
+        specifier: workspace:^
+        version: link:../live-portfolio
+      '@ledgerhq/live-promise':
+        specifier: workspace:^
+        version: link:../promise
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
+      '@polkadot/types':
+        specifier: 9.8.1
+        version: 9.8.1
+      '@polkadot/types-known':
+        specifier: 9.8.1
+        version: 9.8.1
+      '@polkadot/util':
+        specifier: 10.3.1
+        version: 10.3.1
+      '@polkadot/util-crypto':
+        specifier: 10.3.1
+        version: 10.3.1(@polkadot/util@10.3.1)
+      axios:
+        specifier: 0.26.1
+        version: 0.26.1
+      bignumber.js:
+        specifier: ^9.1.0
+        version: 9.1.0
+      eip55:
+        specifier: ^2.1.0
+        version: 2.1.0
+      ethers:
+        specifier: ^5.6.9
+        version: 5.7.0
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      react-native-get-random-values:
+        specifier: ^1.8.0
+        version: 1.8.0
+      rxjs:
+        specifier: ^6.6.7
+        version: 6.6.7
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.35
+      '@types/jest':
+        specifier: ^29.2.4
+        version: 29.5.0
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.14.191
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.46.1
+        version: 5.57.0(@typescript-eslint/parser@5.57.0)(eslint@7.32.0)(typescript@4.9.5)
+      '@typescript-eslint/parser':
+        specifier: ^5.46.1
+        version: 5.57.0(eslint@7.32.0)(typescript@4.9.5)
+      eslint:
+        specifier: ^7.32.0
+        version: 7.32.0
+      eslint-config-prettier:
+        specifier: ^8.3.0
+        version: 8.5.0(eslint@7.32.0)
+      eslint-config-typescript:
+        specifier: ^3.0.0
+        version: 3.0.0(@typescript-eslint/eslint-plugin@5.57.0)(@typescript-eslint/parser@5.57.0)(eslint@7.32.0)(typescript@4.9.5)
+      eslint-formatter-pretty:
+        specifier: ^3.0.1
+        version: 3.0.1
+      eslint-plugin-prettier:
+        specifier: ^3.4.0
+        version: 3.4.1(eslint-config-prettier@8.5.0)(eslint@7.32.0)(prettier@2.8.3)
+      eslint-plugin-typescript:
+        specifier: ^0.14.0
+        version: 0.14.0
+      jest:
+        specifier: ^28.1.1
+        version: 28.1.3
+      prettier:
+        specifier: ^2.8.1
+        version: 2.8.3
+      ts-jest:
+        specifier: ^28.0.5
+        version: 28.0.8(jest@28.1.3)(typescript@4.9.5)
+
   libs/coin-framework:
     dependencies:
       '@ledgerhq/compressjs':
@@ -2035,9 +2165,6 @@ importers:
       '@ethereumjs/tx':
         specifier: ^3.5.0
         version: 3.5.1
-      '@ethersproject/shims':
-        specifier: ^5.7.0
-        version: 5.7.0
       '@hashgraph/sdk':
         specifier: ^2.10.1
         version: 2.14.2(react-native@0.71.6)(react@17.0.2)
@@ -2050,6 +2177,9 @@ importers:
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-algorand
+      '@ledgerhq/coin-evm':
+        specifier: workspace:^
+        version: link:../coin-evm
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../coin-framework
@@ -2314,9 +2444,6 @@ importers:
       qs:
         specifier: ^6.10.1
         version: 6.10.3
-      react-native-get-random-values:
-        specifier: ^1.8.0
-        version: 1.8.0(react-native@0.71.6)
       redux:
         specifier: ^4.1.2
         version: 4.2.0
@@ -50272,13 +50399,12 @@ packages:
       react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
-  /react-native-get-random-values@1.8.0(react-native@0.71.6):
+  /react-native-get-random-values@1.8.0:
     resolution: {integrity: sha512-H/zghhun0T+UIJLmig3+ZuBCvF66rdbiWUfRSNS6kv5oDSpa1ZiVyvRWtuPesQpT8dXj+Bv7WJRQOUP+5TB1sA==}
     peerDependencies:
       react-native: '>=0.56'
     dependencies:
       fast-base64-decode: 1.0.0
-      react-native: 0.71.6(react@17.0.2)
     dev: false
 
   /react-native-gradle-plugin@0.71.16:
