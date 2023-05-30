@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import type {
   Account,
   AccountLike,
@@ -5,7 +6,7 @@ import type {
   Operation,
   SubAccount,
 } from "@ledgerhq/types-live";
-import { decodeAccountId, getMainAccount } from "./account";
+import { decodeAccountId, findSubAccountById, getMainAccount } from "./account";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 
 import { encodeERC1155OperationId, encodeERC721OperationId } from "./nft/nftOperationId";
@@ -119,20 +120,55 @@ export const isOldestEditableOperation = (
   );
 };
 
-export function getEthStuckAccountAndOperation(
-  account: AccountLike | undefined,
+export function getStuckAccountAndOperation(
+  account: AccountLike,
   parentAccount: Account | undefined | null
-): [
-  stuckAccount: AccountLike | undefined,
-  stuckParentAccount: Account | undefined,
-  stuckOperation: Operation | undefined
-] {
-  let stuckAccount: AccountLike | undefined;
+):
+  | {
+      stuckAccount?: AccountLike | null;
+      stuckParentAccount?: Account;
+      stuckOperation?: Operation;
+    }
+  | undefined {
+  let stuckAccount: AccountLike | null | undefined;
   let stuckParentAccount: Account | undefined;
   let stuckOperation: Operation | undefined;
-  const mainAccount = account
-    ? getMainAccount(account, parentAccount)
-    : undefined;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const SUPPORTED_FAMILIES = ["ethereum"];
+
+  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) {
+    return undefined;
+  }
+
+  const now = new Date().getTime();
+
+  const stuckOperations = mainAccount.pendingOperations.filter(
+    (pendingOp) =>
+      isEditableOperation(mainAccount, pendingOp) &&
+      now - pendingOp.date.getTime() >
+        getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
+  );
+  if (stuckOperations.length === 0) return undefined;
+  const oldestStuckOperation = stuckOperations.reduce((oldestOp, currentOp) => {
+    if (!oldestOp) return currentOp;
+    return oldestOp.transactionSequenceNumber !== undefined &&
+      currentOp.transactionSequenceNumber !== undefined &&
+      oldestOp.transactionSequenceNumber > currentOp.transactionSequenceNumber
+      ? currentOp
+      : oldestOp;
+  });
+  if (oldestStuckOperation?.transactionRaw?.subAccountId) {
+    stuckAccount = findSubAccountById(
+      mainAccount,
+      oldestStuckOperation.transactionRaw.subAccountId
+    );
+    stuckParentAccount = mainAccount;
+  } else {
+    stuckAccount = mainAccount;
+    stuckParentAccount = undefined;
+  }
+
+  invariant(stuckAccount, "stuckAccount required");
 
   if (mainAccount && mainAccount.currency.family === "ethereum") {
     if (mainAccount.subAccounts && mainAccount.subAccounts.length > 0) {
@@ -180,5 +216,5 @@ export function getEthStuckAccountAndOperation(
     });
   }
 
-  return [stuckAccount, stuckParentAccount, stuckOperation];
+  return { stuckAccount, stuckParentAccount, stuckOperation };
 }
