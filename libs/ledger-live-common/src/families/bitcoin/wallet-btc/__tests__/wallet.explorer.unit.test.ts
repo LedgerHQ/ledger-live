@@ -1,7 +1,8 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BitcoinLikeExplorer from "../explorer";
-import network from "../../../../network";
-jest.mock("../../../../network");
+import network from "@ledgerhq/live-network/network";
+
+jest.mock("@ledgerhq/live-network/network");
 
 describe("BitcoinApi", () => {
   let explorer: BitcoinLikeExplorer;

@@ -1,5 +1,5 @@
 import { Address, Block, TX } from "../storage/types";
-import network from "../../../../network";
+import network from "@ledgerhq/live-network/network";
 import { IExplorer } from "./types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { blockchainBaseURL } from "../../../../explorer";
