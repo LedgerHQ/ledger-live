@@ -8,7 +8,7 @@ import {
   getCommission,
   getGasPrice,
 } from "./api";
-import { FALLBACK_STORAGE_AMOUNT_PER_BYTE } from "./logic";
+import { FALLBACK_STORAGE_AMOUNT_PER_BYTE } from "./constants";
 import { NearProtocolConfigNotLoaded } from "./errors";
 
 const PRELOAD_MAX_AGE = 30 * 60 * 1000;

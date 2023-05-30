@@ -1,7 +1,8 @@
 import invariant from "invariant";
 import { useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS, mapStakingPositions } from "./logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "./constants";
+import { mapStakingPositions } from "./logic";
 import {
   NearValidatorItem,
   Transaction,

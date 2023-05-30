@@ -1,0 +1,84 @@
+{
+  "name": "@ledgerhq/live-network",
+  "version": "1.0.0",
+  "description": "Ledger Live network and cache utilities",
+  "keywords": [
+    "Ledger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/network",
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "*.json": [
+        "*.json"
+      ],
+      "*": [
+        "lib/*"
+      ],
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib/*.js": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib-es/*.js": "./lib-es/*.js",
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./*.js": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-promise": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "axios": "0.26.1",
+    "invariant": "^2.2.2",
+    "lru-cache": "^7.14.1"
+  },
+  "devDependencies": {
+    "@types/invariant": "^2.2.35",
+    "@types/jest": "^29.2.4",
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-typescript": "^3.0.0",
+    "eslint-formatter-pretty": "^3.0.1",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "jest": "^28.1.1",
+    "prettier": "^2.8.1",
+    "ts-jest": "^28.0.5"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  }
+}

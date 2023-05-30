@@ -86,7 +86,6 @@ yarn upgrade-interactive -i --latest
 | json-rpc-2.0                                | Ethereum coin integration                                         | monthly                                                              |
 | lodash                                      | generic helper                                                    | monthly                                                              |
 | long                                        | Osmosis coin integration                                          | monthly                                                              |
-| lru-cache                                   | generic helper                                                    | monthly                                                              |
 | numeral                                     | for very concise amount display (on graph)                        | monthly – **TBD if can be dropped**                                  |
 | object-hash                                 | Solana coin integration                                           | monthly                                                              |
 | performance-now                             | bot                                                               | monthly – may not strongly need                                      |

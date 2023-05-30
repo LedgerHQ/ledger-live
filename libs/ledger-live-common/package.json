@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "29.6.0",
+  "version": "30.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -151,6 +151,7 @@
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-portfolio": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
@@ -206,7 +207,6 @@
     "json-rpc-2.0": "^0.2.19",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
-    "lru-cache": "^7.14.1",
     "minimatch": "^5.1.0",
     "near-api-js": "^0.44.2",
     "numeral": "^2.0.6",

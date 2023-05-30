@@ -134,7 +134,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (11290)
+## Tokens (11291)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | ARCC | MESEJMPXKL7YUWEQGNRCKSLMQDKHOHWIZ3RBWP7BV4JDMUJXFUVQZWUBJM | Asia Reserve Currency Coin | countervalues disabled | algorand/asa/163650 |
@@ -8565,6 +8565,7 @@
 | Polygon | WFIL | 0xEde1B77C0Ccc45BFa949636757cd2cA7eF30137F | Wrapped Filecoin (PoS) |  | polygon/erc20/wrapped_filecoin_(pos) |
 | Polygon | WIXS | 0x1BA17C639BdaeCd8DC4AAc37df062d17ee43a1b8 | Wrapped Ixs Token |  | polygon/erc20/wrapped_ixs_token |
 | Polygon | WMATIC | 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270 | Wrapped Matic |  | polygon/erc20/wrapped_matic |
+| Polygon | SOL | 0xd93f7E271cB87c23AaA73edC008A79646d1F9912 | Wrapped SOL (Wormhole) |  | polygon/erc20/wrapped_sol_(wormhole) |
 | Polygon | UST | 0x692597b009d13C4049a947CAB2239b7d6517875F | Wrapped UST Token |  | polygon/erc20/wrapped_ust_token |
 | Polygon | MXEN | 0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e | XEN Crypto |  | polygon/erc20/xen_crypto |
 | Polygon | XYO | 0xd2507e7b5794179380673870d88B22F94da6abe0 | XY Oracle |  | polygon/erc20/xy_oracle |

@@ -1,5 +1,5 @@
+import network from "@ledgerhq/live-network/network";
 import { getEnv } from "../../env";
-import network from "../../network";
 import { getSwapAPIBaseURL } from "./";
 import { mockPostSwapAccepted, mockPostSwapCancelled } from "./mock";
 import type { PostSwapAccepted, PostSwapCancelled } from "./types";
