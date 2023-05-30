@@ -83,7 +83,9 @@ function AccessExistingWallet() {
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
   const connect = useCallback(() => {
-    navigation.navigate(ScreenName.OnboardingBluetoothInformation);
+    navigation.navigate(ScreenName.OnboardingDeviceSelection, {
+      next: ScreenName.OnboardingPairNew,
+    });
   }, [navigation]);
 
   const sync = useCallback(() => {
