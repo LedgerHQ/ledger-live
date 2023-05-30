@@ -21,7 +21,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { useTheme } from "@react-navigation/native";
-import SelectValidatorSearchBox from "../../../components/SearchBox";
+import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import ValidatorRow from "../shared/ValidatorRow";
 import ValidatorHead from "../shared/ValidatorHead";
 import { accountScreenSelector } from "../../../reducers/accounts";

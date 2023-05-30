@@ -10,7 +10,7 @@ import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import ValidatorHead from "../shared/ValidatorHead";
 import ValidatorRow from "../shared/ValidatorRow";
-import SelectValidatorSearchBox from "../../../components/SearchBox";
+import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { NearStakingFlowParamList } from "./types";
 
