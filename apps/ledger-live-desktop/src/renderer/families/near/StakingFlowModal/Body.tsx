@@ -86,12 +86,11 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     transaction,
     setTransaction,
     updateTransaction,
-    parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+    const bridge: AccountBridge<Transaction> = getAccountBridge(account);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "stake",
@@ -138,7 +137,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     title: t("near.stake.flow.title"),
     device,
     account,
-    parentAccount,
     transaction,
     signed,
     stepId,
