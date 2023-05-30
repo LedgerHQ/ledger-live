@@ -86,7 +86,8 @@ export function currencyToWalletAPICurrency(
     id: currency.id,
     ticker: currency.ticker,
     name: currency.name,
-    family: currency.family as Families,
+    family:
+      currency.family === "evm" ? "ethereum" : (currency.family as Families),
     color: currency.color,
     decimals: currency.units[0].magnitude,
   };
@@ -95,11 +96,15 @@ export function currencyToWalletAPICurrency(
 export const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPITransaction,
   Transaction
-> = (tx) => {
+> = ({ tx, account, parentAccount }) => {
   const family = byFamily[tx.family];
 
   if (family) {
-    return family.getWalletAPITransactionSignFlowInfos(tx);
+    return family.getWalletAPITransactionSignFlowInfos({
+      tx,
+      account,
+      parentAccount,
+    });
   }
 
   return {

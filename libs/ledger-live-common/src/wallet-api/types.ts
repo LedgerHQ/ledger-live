@@ -1,4 +1,8 @@
-import type { SignedOperation } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  SignedOperation,
+} from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
   TokenCurrency,
@@ -47,7 +51,15 @@ export type WalletAPISupportedCurrency = CryptoCurrency | TokenCurrency;
 export type GetWalletAPITransactionSignFlowInfos<
   T extends WalletAPITransaction,
   U extends Transaction
-> = (tx: T) => {
+> = ({
+  tx,
+  account,
+  parentAccount,
+}: {
+  tx: T;
+  account: AccountLike;
+  parentAccount?: Account;
+}) => {
   canEditFees: boolean;
   hasFeesProvided: boolean;
   liveTx: Partial<U>;
@@ -60,4 +72,8 @@ export type AreFeesProvided<T extends WalletAPITransaction> = (
 export type ConvertToLiveTransaction<
   T extends WalletAPITransaction,
   U extends Transaction
-> = (tx: T) => Partial<U>;
+> = (params: {
+  tx: T;
+  account: AccountLike;
+  parentAccount?: Account;
+}) => Partial<U>;
