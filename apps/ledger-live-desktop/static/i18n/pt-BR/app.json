@@ -25,10 +25,17 @@
     },
     "catalog" : {
       "title" : "Explorar",
+      "section" : {
+        "recentlyUsed" : "Usado recentemente",
+        "browse" : "Navegar"
+      },
+      "filter" : {
+        "categories" : "Categorias"
+      },
       "branch" : {
-        "soon" : "em breve",
-        "experimental" : "experimental",
-        "debug" : "debugar"
+        "soon" : "Em breve",
+        "experimental" : "Experimental",
+        "debug" : "Debug"
       },
       "banner" : {
         "title" : "Explore o Catálogo de Aplicativos Live",
@@ -47,6 +54,11 @@
         "title" : "Para Desenvolvedores",
         "description" : "Todas as informações que você precisa para integrar seus aplicativos no Ledger Live.",
         "button" : "Ir para o portal"
+      },
+      "warnings" : {
+        "notFound" : "Não encontrado",
+        "retrySearchKeyword" : "Tente buscar novamente com outra palavra-chave.",
+        "retrySearchKeywordAndUrl" : "Tente buscar novamente com outra palavra-chave ou abra <Link>{{search}}</Link> fora do Ledger Live."
       }
     },
     "disclaimer" : {
@@ -60,7 +72,7 @@
   "common" : {
     "never" : "Nunca",
     "new" : "Novo",
-    "skip" : "Skip",
+    "skip" : "Pular",
     "apply" : "Aplicar",
     "done" : "Concluído",
     "confirm" : "Confirmar",
@@ -129,7 +141,8 @@
     "info" : "Informações",
     "connectDevice" : "Conecte seu dispositivo",
     "add" : "Adicionar",
-    "or" : "OU"
+    "or" : "OU",
+    "clearAll" : "Limpar tudo"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -851,10 +864,10 @@
           }
         },
         "near" : {
-          "description" : "Faça staking de NEAR com o validador Ledger by Figment. As suas moedas continuam sendo suas, suportadas pela segurança absoluta da Ledger."
+          "description" : "Faça staking de NEAR com o validador Ledger by Figment. Suas moedas continuam sendo suas, protegidas pela segurança impenetrável da Ledger."
         },
         "elrond" : {
-          "description" : "Faça staking de ELROND com o validador Ledger by Figment. As suas moedas continuam sendo suas, suportadas pela segurança absoluta da Ledger."
+          "description" : "Faça staking de ELROND com o validador Ledger by Figment. Suas moedas continuam sendo suas, protegidas pela segurança impenetrável da Ledger."
         }
       }
     }
@@ -1338,7 +1351,7 @@
     },
     "ledgerAcademy" : {
       "title" : "Ledger Academy",
-      "description" : "Tudo o que você precisa saber sobre blockchain, segurança, criptomoedas e seu dispositivo Ledger",
+      "description" : "O essencial sobre blockchain, segurança, criptoativos e seu dispositivo Ledger.",
       "cta" : "Comece a aprender"
     },
     "stakeCosmos" : {
@@ -1348,7 +1361,7 @@
     },
     "buyCrypto" : {
       "title" : "Comprar Cripto",
-      "description" : "Compre criptoativos com nossos parceiros e os receba diretamente na sua conta Ledger",
+      "description" : "Compre criptoativos com provedores externos e os receba diretamente em sua conta Ledger",
       "cta" : "Comprar agora"
     },
     "familyPack" : {
@@ -1370,7 +1383,7 @@
     },
     "swap" : {
       "title" : "Trocar Cripto",
-      "description" : "Troque uma criptomoeda por outra no Ledger Live com nosso parceiro."
+      "description" : "Troque uma criptomoeda por outra no Ledger Live, com um provedor externo."
     },
     "lending" : {
       "title" : "Emprestar Cripto",
@@ -1382,7 +1395,7 @@
     },
     "referralProgram" : {
       "title" : "Indique e ganhe US$ 10",
-      "description" : "Indique com sucesso um amigo para ambos ganharem US$ 10 em Bitcoin."
+      "description" : "Quando sua indicação tem sucesso, você e seu amigo ganham US$10 em Bitcoin."
     }
   },
   "signmessage" : {
@@ -1951,7 +1964,7 @@
         "osu" : "Instalando OSU...",
         "flash-mcu" : "Atualizando MCU...",
         "flash-bootloader" : "Atualizando Bootloader...",
-        "progress" : "Installing update {{current}}/{{total}}",
+        "progress" : "Instalando atualização {{current}}/{{total}}",
         "firmware" : "Atualizando Firmware...",
         "flash" : "Preparando seu dispositivo..."
       },
@@ -2144,7 +2157,7 @@
         },
         "cosmos" : {
           "title" : "Aumente seus ATOM. Faça staking com o validador da Ledger.",
-          "description" : "Faça staking de ATOM com o validador confiável da Ledger. As suas moedas continuam sendo suas, suportadas pela segurança impenetrável da Ledger."
+          "description" : "Faça staking de ATOM com o validador confiável da Ledger. Suas moedas continuam sendo suas, protegidas pela segurança impenetrável da Ledger."
         },
         "osmo" : {
           "title" : "Aumente seu OSMO. Faça staking com a Ledger by Figment.",
@@ -2152,7 +2165,7 @@
         },
         "solana" : {
           "title" : "Aumente seus SOL. Faça staking com a Ledger by Figment.",
-          "description" : "Faça staking dos seus SOL com o validador Ledger by Figment. As suas moedas continuam sendo suas, suportadas pela segurança impenetrável da Ledger."
+          "description" : "Faça staking de SOL com o validador Ledger by Figment. Suas moedas continuam sendo suas, protegidas pela segurança impenetrável da Ledger."
         },
         "celo" : {
           "title" : "Aumente seus CELO. Faça staking com a Ledger by Figment.",
@@ -4201,8 +4214,8 @@
     },
     "screens" : {
       "welcome" : {
-        "title" : "A carteira de criptomoedas e NFTs mais segura",
-        "description" : "Gerencie, compre e multiplique suas criptos e NFTs em segurança no Ledger Live.",
+        "title" : "A mais segura carteira de criptomoedas e NFTs.",
+        "description" : "Gerencie, compre e multiplique suas criptos e NFTs de forma segura no Ledger Live.",
         "nextButton" : "Começar",
         "noDevice" : "Sem Dispositivo?",
         "buyLink" : "Sem Dispositivo? Comprar uma Ledger Nano X",
@@ -4374,7 +4387,7 @@
           },
           "quizFailure" : {
             "title" : "Você logo se tornará profissional...",
-            "paragraph" : "Não se preocupe, a Ledger está aqui para guiar você em sua jornada. Em breve, você se sentirá confortável em relação à segurança das suas criptos.\n\nFalta apenas um passo rápido!",
+            "paragraph" : "Não se preocupe, a Ledger está aqui para guiar você em sua jornada. Em breve, você se sentirá confortável em relação à segurança dos seus criptoativos.\n\nFalta apenas um passo rápido!",
             "buttons" : {
               "next" : "Próximo Passo",
               "prev" : "Passo Anterior"
@@ -4591,7 +4604,7 @@
     "quizz" : {
       "heading" : "Quiz",
       "title" : "O jogo começou!",
-      "descr" : "Responda 3 perguntas simples para evitar equívocos comuns sobre sua carteira hardware.",
+      "descr" : "Responda 3 perguntas simples para evitar enganos comuns sobre sua carteira hardware.",
       "buttons" : {
         "start" : "Vamos às perguntas",
         "next" : "Próxima Pergunta",
@@ -5093,8 +5106,8 @@
       "description" : "Tente Novamente. Se o problema persistir, salve seus registros usando o botão abaixo e os forneça ao Suporte Ledger."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
-      "title" : "Restoration of Language was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "A Restauração do Idioma foi cancelada na Ledger Stax",
+      "description" : "Se isso foi um engano, você pode tentar novamente a restauração ou pode pular esta etapa."
     },
     "LanguageNotFound" : {
       "title" : "Idioma não encontrado",
@@ -5276,8 +5289,8 @@
       "title" : "My Ledger negado no dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "Update was cancelled on device",
-      "description" : "The installation of OS update was refused on your device. If this was a mistake, restart the update."
+      "title" : "A atualização foi cancelada no dispositivo",
+      "description" : "A instalação da atualização do sistema operacional foi recusada em seu dispositivo. Se isso foi um engano, reinicie a atualização."
     },
     "UserRefusedOnDevice" : {
       "title" : "Ação Rejeitada",
@@ -5663,12 +5676,12 @@
       "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem."
     },
     "RestoreImageCommitRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "A restauração da imagem da tela de bloqueio foi cancelada na Ledger Stax",
+      "description" : "Se isso foi um engano, você pode tentar novamente a restauração ou pode pular esta etapa."
     },
     "RestoreImageLoadRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "A restauração da imagem da tela de bloqueio foi cancelada na Ledger Stax",
+      "description" : "Se isso foi um engano, você pode tentar novamente a restauração ou pode pular esta etapa."
     },
     "NearNewAccountWarning" : {
       "title" : "A conta receptora ainda não foi criada. O protocolo requer uma transferência de {{formattedNewAccountStorageCost}} para criá-la."
@@ -5828,5 +5841,14 @@
     "description" : "Sua Frase de Recuperação Secreta nem sempre estará ao alcance.\nLançamento piloto exclusivo para a Ledger Nano X. Inscreva-se gratuitamente até 30 de junho de 2023",
     "cta" : "Por que devo me inscrever?",
     "downloadLLM" : "Inscreva-se no <purple>Ledger Recover</purple> usando o aplicativo Ledger Live mobile"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "Erro de rede",
+      "subtitle" : "Algo deu errado. Tente novamente. Se o problema persistir, salve seu registro e entre em contato com o Suporte Ledger.",
+      "tryAgain" : "Tente novamente",
+      "contactSupport" : "Fale com o Suporte Ledger",
+      "saveLog" : "Salvar registro"
+    }
   }
 }
