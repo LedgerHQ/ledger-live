@@ -80,7 +80,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   );
   const haveFundToSpeedup = mainAccount.balance.gt(
     feeValue
-      .times(1.1)
+      .times(1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR"))
       .plus(account.type === "Account" ? transactionToEdit.amount : 0),
   );
 

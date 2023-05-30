@@ -85,9 +85,15 @@ const Ethereum1559CustomFees = ({
     }
   }
 
+  const mainAccount = getMainAccount(account, parentAccount);
   const maxPriorityFeeRange = useMemo(
-    () => inferMaxPriorityFeeRange(transaction?.networkInfo, transactionRaw),
-    [transaction?.networkInfo, transactionRaw],
+    () =>
+      inferMaxPriorityFeeRange(
+        mainAccount,
+        transaction?.networkInfo,
+        transactionRaw,
+      ),
+    [mainAccount, transaction?.networkInfo, transactionRaw],
   );
   const maxFeePerGasRange = useMemo(() => {
     return inferMaxFeeRange(transaction?.networkInfo);
