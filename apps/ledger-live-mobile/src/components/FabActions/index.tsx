@@ -16,7 +16,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import InfoModal from "../InfoModal";
 import { useAnalytics } from "../../analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
-import { ScreenName } from "../../const";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
