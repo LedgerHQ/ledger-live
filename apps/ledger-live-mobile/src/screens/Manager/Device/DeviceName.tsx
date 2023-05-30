@@ -73,14 +73,19 @@ export default function DeviceName({
         >
           <Flex
             ml={3}
-            backgroundColor={"palette.primary.c30"}
+            backgroundColor={
+              disabled ? "palette.neutral.c30" : "palette.primary.c30"
+            }
             borderRadius={14}
             width={28}
             height={28}
             alignItems="center"
             justifyContent="center"
           >
-            <PenMedium size={16} color={"palette.primary.c80"} />
+            <PenMedium
+              size={16}
+              color={disabled ? "palette.neutral.c80" : "palette.primary.c80"}
+            />
           </Flex>
         </TouchableOpacity>
       )}
