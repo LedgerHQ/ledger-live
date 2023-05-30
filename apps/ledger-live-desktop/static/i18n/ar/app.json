@@ -25,6 +25,13 @@
     },
     "catalog" : {
       "title" : "اكتشف",
+      "section" : {
+        "recentlyUsed" : "مُستخدَم مؤخراً",
+        "browse" : "تصفح"
+      },
+      "filter" : {
+        "categories" : "الفئات"
+      },
       "branch" : {
         "soon" : "سيأتي قريباً",
         "experimental" : "تجريبي",
@@ -47,6 +54,11 @@
         "title" : "للمطوّرين",
         "description" : "جميع المعلومات التي تحتاج إليها لدمج تطبيقاتك على Ledger Live.",
         "button" : "الذهاب إلى البوابة"
+      },
+      "warnings" : {
+        "notFound" : "لم يتم العثور عليه",
+        "retrySearchKeyword" : "يرجى إعادة محاولة البحث بكلمة رئيسية أخرى.",
+        "retrySearchKeywordAndUrl" : "يرجى إعادة محاولة البحث بكلمة رئيسية أخرى أو افتح <Link>{{search}}</Link> خارج Ledger Live."
       }
     },
     "disclaimer" : {
@@ -129,7 +141,8 @@
     "info" : "معلومات",
     "connectDevice" : "توصيل جهازك",
     "add" : "إضافة",
-    "or" : "أو"
+    "or" : "أو",
+    "clearAll" : "إزالة الكل"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -5828,5 +5841,14 @@
     "description" : "عبارة الاسترداد السرية الخاصة بك لن تكون دائماً في متناول اليد.\nإطلاق تجريبي حصرياً لـ Ledger Nano X. اشترك مجاناً حتى 30 يونيو 2023",
     "cta" : "لماذا يجب أن اشترك؟",
     "downloadLLM" : "اشترك في <purple>Ledger Recover</purple> باستخدام تطبيق Ledger Live للجوّال"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "Network Error",
+      "subtitle" : "Something went wrong. Please try again. If the problem persists, save your log and contact Ledger support.",
+      "tryAgain" : "أعد المحاولة",
+      "contactSupport" : "تواصل مع دعم Ledger",
+      "saveLog" : "Save log"
+    }
   }
 }
