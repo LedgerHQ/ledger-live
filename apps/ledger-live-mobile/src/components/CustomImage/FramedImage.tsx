@@ -1,11 +1,10 @@
-import { Box, Flex } from "@ledgerhq/native-ui";
+import { Box, Flex, PixelRatio } from "@ledgerhq/native-ui";
 import React, { ComponentProps, useContext } from "react";
 import { Image, ImageProps, StyleSheet } from "react-native";
 import styled from "styled-components/native";
 import ForceTheme from "../theme/ForceTheme";
 import transferBackground from "./assets/transferBackground.png";
 import previewBackground from "./assets/previewBackground.png";
-import { PixelRatio } from "react-native";
 
 /**
  * Set this to true to have visual indicators of how the foreground image (the content)
