@@ -98,6 +98,13 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Main]:
     | (NavigatorScreenParams<MainNavigatorParamList> & {
         hideTabNavigation?: boolean;
+        drawer?: {
+          id: string;
+          props: {
+            singleProviderRedirectMode: boolean;
+            accountId: string;
+          };
+        };
       })
     | undefined;
   [NavigatorName.BuyDevice]:
