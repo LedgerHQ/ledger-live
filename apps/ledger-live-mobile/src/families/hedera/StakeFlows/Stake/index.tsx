@@ -8,14 +8,14 @@ import { getStackNavigatorConfig } from "../../../../navigation/navigatorConfig"
 import { ScreenName } from "../../../../const";
 
 import StepHeader from "../../../../components/StepHeader";
-import StepStakingInfo from "./01-StepStakingInfo";
-import NodeListScreen from "./01a-NodeListScreen";
-import StepSummary from "./02-StepSummary";
+import StepStakingType from "./02-StepStakingType";
+import StepSummary from "./03-StepSummary";
 import ConnectDevice from "../../../../screens/ConnectDevice";
 import SelectDevice from "../../../../screens/SelectDevice";
-import ValidationError from "./02-ValidationError";
-import ValidationSuccess from "./02-ValidationSuccess";
+import ValidationError from "./04-ValidationError";
+import ValidationSuccess from "./04-ValidationSuccess";
 import { HederaStakeFlowParamList } from "../types";
+import StepStakingStarted from "./01-StepStakingStarted";
 
 const totalSteps = "3";
 
@@ -34,10 +34,9 @@ function StakeFlow() {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
-      {/* Staking Information Form */}
       <Stack.Screen
-        name={ScreenName.HederaStakeInfo}
-        component={StepStakingInfo}
+        name={ScreenName.HederaStakingStarted}
+        component={StepStakingStarted}
         options={{
           headerTitle: () => (
             <StepHeader
@@ -48,7 +47,7 @@ function StakeFlow() {
               })}
             />
           ),
-          headerLeft: () => null,
+          // headerLeft: () => null,
           headerStyle: {
             elevation: 0,
             shadowOpacity: 0,
@@ -58,25 +57,26 @@ function StakeFlow() {
         }}
       />
 
-      {/* Staking Information Form (sub-screen) — Node List */}
       <Stack.Screen
-        name={ScreenName.HederaStakeNodeList}
-        component={NodeListScreen}
+        name={ScreenName.HederaStakingType}
+        component={StepStakingType}
         options={{
           headerTitle: () => (
             <StepHeader
               title={t("hedera.stake.stepperHeader.stake")}
               subtitle={t("hedera.stake.stepperHeader.stepRange", {
-                currentStep: "1",
+                currentStep: "2",
                 totalSteps,
               })}
             />
           ),
+          // headerLeft: () => null,
           headerStyle: {
             elevation: 0,
             shadowOpacity: 0,
             borderBottomWidth: 0,
           },
+          gestureEnabled: false,
         }}
       />
 
@@ -86,7 +86,13 @@ function StakeFlow() {
         component={StepSummary}
         options={{
           headerTitle: () => (
-            <StepHeader title={t("hedera.stake.stepperHeader.summary")} />
+            <StepHeader
+              title={t("hedera.stake.stepperHeader.summary")}
+              subtitle={t("hedera.stake.stepperHeader.stepRange", {
+                currentStep: "3",
+                totalSteps,
+              })}
+            />
           ),
         }}
       />
@@ -100,7 +106,7 @@ function StakeFlow() {
             <StepHeader
               title={t("hedera.stake.stepperHeader.selectDevice")}
               subtitle={t("hedera.stake.stepperHeader.stepRange", {
-                currentStep: "2",
+                currentStep: "4",
                 totalSteps,
               })}
             />
@@ -119,7 +125,7 @@ function StakeFlow() {
             <StepHeader
               title={t("hedera.stake.stepperHeader.connectDevice")}
               subtitle={t("hedera.stake.stepperHeader.stepRange", {
-                currentStep: "3",
+                currentStep: "5",
                 totalSteps,
               })}
             />

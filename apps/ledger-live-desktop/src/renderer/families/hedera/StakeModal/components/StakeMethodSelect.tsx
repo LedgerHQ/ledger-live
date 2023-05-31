@@ -14,37 +14,37 @@ import { openURL } from "~/renderer/linking";
 // const { t } = useTranslation();
 
 type Item = {
-  label: React$Node,
-  key: string,
+  label: React$Node;
+  key: string;
 };
 
 type Props = {
-  items: Array<Item>,
-  activeKey: string,
-  selectNode: () => void,
-  selectAccount: () => void,
+  items: Array<Item>;
+  activeKey: string;
+  selectNode: () => void;
+  selectAccount: () => void;
 };
 
 const radioBoxStyle = {
-  border: "1px solid #3C3C3C", 
+  border: "1px solid #3C3C3C",
   borderRadius: "8px",
   padding: "15px",
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
   gap: "16px",
-}
+};
 
 const radioBoxActiveStyle = {
   background: "#2D2A3D",
   color: "#D4CCFF",
-  borderRadius: "8px", 
-  padding: "16px", 
+  borderRadius: "8px",
+  padding: "16px",
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
   gap: "16px",
-}
+};
 
 const iconBackgroundStyle = {
   borderRadius: "32px",
@@ -54,15 +54,20 @@ const iconBackgroundStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-}
+};
 
 const textArea = {
-  width: "292px"
-}
+  width: "292px",
+};
 
 // FIXME: Icons are stand ins until the real ones can be imported/located
 
-const StakeMethodSelect: React.FC<Props> = ({ items, activeKey, selectNode, selectAccount }: Props) => {
+const StakeMethodSelect: React.FC<Props> = ({
+  items,
+  activeKey,
+  selectNode,
+  selectAccount,
+}: Props) => {
   const { t } = useTranslation();
   return (
     <div
@@ -73,9 +78,12 @@ const StakeMethodSelect: React.FC<Props> = ({ items, activeKey, selectNode, sele
         alignItems: "center",
       }}
     >
-      <Box vertical style={{ gap: "16px", }}>
-        <Box onClick={selectNode} style={ activeKey === STAKE_METHOD.NODE ? radioBoxActiveStyle : radioBoxStyle }>
-          <Box style={ iconBackgroundStyle }>
+      <Box vertical style={{ gap: "16px" }}>
+        <Box
+          onClick={selectNode}
+          style={activeKey === STAKE_METHOD.NODE ? radioBoxActiveStyle : radioBoxStyle}
+        >
+          <Box style={iconBackgroundStyle}>
             <Icon size={14} />
           </Box>
           <Box style={textArea}>
@@ -86,14 +94,13 @@ const StakeMethodSelect: React.FC<Props> = ({ items, activeKey, selectNode, sele
               <Trans i18nKey="hedera.stake.flow.stake.nodeSubtitle" />
             </Text>
           </Box>
-          <CheckBox
-            isRadio
-            isChecked={activeKey === STAKE_METHOD.NODE}
-            onChange={selectNode}
-          />
+          <CheckBox isRadio isChecked={activeKey === STAKE_METHOD.NODE} onChange={selectNode} />
         </Box>
-        <Box onClick={selectAccount} style={ activeKey === STAKE_METHOD.ACCOUNT ? radioBoxActiveStyle : radioBoxStyle }>
-          <Box style={ iconBackgroundStyle }>
+        <Box
+          onClick={selectAccount}
+          style={activeKey === STAKE_METHOD.ACCOUNT ? radioBoxActiveStyle : radioBoxStyle}
+        >
+          <Box style={iconBackgroundStyle}>
             <Icon size={14} />
           </Box>
           <Box style={textArea}>
@@ -112,7 +119,7 @@ const StakeMethodSelect: React.FC<Props> = ({ items, activeKey, selectNode, sele
         </Box>
       </Box>
       <LinkWithExternalIcon
-        style={{ marginTop: "34px", }}
+        style={{ marginTop: "34px" }}
         fontSize={14}
         onClick={() => openURL("https://docs.hedera.com/hedera/core-concepts/staking/stake-hbar")}
         label={t("hedera.stake.flow.stake.howItWorks")}

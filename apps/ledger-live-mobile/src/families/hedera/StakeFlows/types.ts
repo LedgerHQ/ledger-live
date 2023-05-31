@@ -8,26 +8,28 @@ import { Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const/navigation";
 
 export type Node = {
-  data: number;
+  description: string;
   label: string;
   value: number;
+  stake: number;
+  rewarding: boolean;
 };
 
 export type NodeList = Node[];
 
 export type HederaStakeFlowParamList = {
-  [ScreenName.HederaStakeInfo]: {
+  [ScreenName.HederaStakingStarted]: {
     account: HederaAccount;
-    transaction: Transaction;
-    stakeType: StakeType;
   };
-  [ScreenName.HederaStakeNodeList]: {
-    nodeList: NodeList;
-    onChange: (node: Node) => void;
+  [ScreenName.HederaStakingType]: {
+    account: HederaAccount;
   };
   [ScreenName.HederaStakeSummary]: {
     account: HederaAccount;
     transaction: Transaction;
+    nodeId: string;
+    accountId: string;
+    nodeList: NodeList;
   };
   // [ScreenName.HederaStakeSelectDevice]: {
   //   accountId: string;

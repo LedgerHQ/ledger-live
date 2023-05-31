@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
-import { Text } from "@ledgerhq/native-ui";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -17,40 +16,29 @@ import {
 } from "@ledgerhq/live-common/families/hedera/types";
 
 import type { StakeMethod } from "@ledgerhq/live-common/families/hedera/types";
+import { Flex, Icons } from "@ledgerhq/native-ui";
+import {
+  ExternalLinkMedium,
+  PlusMedium,
+} from "@ledgerhq/native-ui/assets/icons";
 import { ScreenName } from "../../../../const";
 import { accountScreenSelector } from "../../../../reducers/accounts";
 
 import Button from "../../../../components/Button";
-import TranslatedError from "../../../../components/TranslatedError";
 import StakeMethodSelect from "../components/StakeMethodSelect";
 import StakeToAccountInput from "../components/StakeToAccountInput";
 import StakeToNodeSelect from "../components/StakeToNodeSelect";
-import DeclineRewardsCheckBox from "../components/DeclineRewardsCheckBox";
 
 import type { HederaStakeFlowParamList, Node, NodeList } from "../types";
 import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
-
-// type RouteParams = {
-//   transaction: Transaction;
-//   stakeType: StakeType;
-// };
-
-// type Props = {
-//   navigation: any;
-//   route: {
-//     params: RouteParams;
-//   };
-// };
+import Link from "../../../../components/wrappedUi/Link";
 
 type Props = StackNavigatorProps<
   HederaStakeFlowParamList,
-  ScreenName.HederaStakeInfo
+  ScreenName.HederaStakingType
 >;
 
-function StepStakingInfo({ navigation, route }: Props) {
-  const {
-    params: { stakeType },
-  } = route;
+function StepStakingType({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const hederaAccount = account as HederaAccount;
@@ -62,20 +50,14 @@ function StepStakingInfo({ navigation, route }: Props) {
     () => {
       const t = bridge.createTransaction(mainAccount);
 
-      let transaction = bridge.updateTransaction(t, {
+      const transaction = bridge.updateTransaction(t, {
         mode: "stake",
-        staked: { ...t.staked, stakeMethod: STAKE_METHOD.NODE, stakeType },
+        staked: {
+          ...t.staked,
+          stakeMethod: STAKE_METHOD.NODE,
+          stakeType: STAKE_TYPE.NEW,
+        },
       });
-
-      // account should have staking info in its `hederaResources`; set and update into `transaction`
-      if (stakeType === STAKE_TYPE.CHANGE) {
-        transaction = bridge.updateTransaction(transaction, {
-          staked: {
-            ...transaction.staked,
-            ...hederaAccount.hederaResources.staked,
-          },
-        });
-      }
 
       return {
         transaction,
@@ -89,23 +71,27 @@ function StepStakingInfo({ navigation, route }: Props) {
     Object.keys(status.errors).length > 0 &&
     Object.values(status.errors)[0];
 
-  // fetch list of stake-able nodes
-  const [loadingNodeList, setLoadingNodeList] = useState(true); // pre-emptively start loading indicator, so it won't flash the `StakeToNodeSelect` component
+  const [currentScreen, setCurrentScreen] = useState("started");
+
+  const [validation, setValidation] = useState(false);
+
   const [nodeList, setNodeList] = useState<NodeList>([]);
+
   useEffect(() => {
     const fetchNodeList = async () => {
-      setLoadingNodeList(true);
-
       try {
         const nodeList = (await getNodeList()).map(node => ({
+          description: node.description,
           label: node.node_account_id,
           value: node.node_id,
-          data: node.node_id,
+          stake: node.stake,
+          rewarding: node.stake > node.min_stake,
         }));
 
         setNodeList(nodeList);
-      } finally {
-        setLoadingNodeList(false);
+      } catch {
+        // eslint-disable-next-line no-console
+        console.log("nodes not loaded");
       }
     };
 
@@ -115,11 +101,11 @@ function StepStakingInfo({ navigation, route }: Props) {
   const stakeMethods = [
     {
       label: capitalize(STAKE_METHOD.NODE),
-      value: STAKE_METHOD.NODE,
+      key: STAKE_METHOD.NODE,
     },
     {
       label: capitalize(STAKE_METHOD.ACCOUNT),
-      value: STAKE_METHOD.ACCOUNT,
+      key: STAKE_METHOD.ACCOUNT,
     },
   ];
 
@@ -130,66 +116,73 @@ function StepStakingInfo({ navigation, route }: Props) {
   const [stakeToAccount, setStakeToAccount] = useState(
     transaction?.staked?.accountId ?? "",
   );
-  const [stakeToNode, setStakeToNode] = useState(
-    transaction?.staked?.nodeId ?? null,
-  );
-  const [declineRewards, setDeclineRewards] = useState(
-    transaction?.staked?.declineRewards ?? false,
-  );
 
-  // TODO: think of whether it's worth making a fnc
-  // that uses `switch` and filters via `type` param
-  // for the bottom three or so functions (fnc body are all _very_ similar)
   const handleAccountIdChange = (accountId: string) => {
     setStakeToAccount(accountId);
+    const accountIdValidator = new RegExp("[0-9]+.[0-9]+.[0-9]+");
+    setValidation(accountIdValidator.test(accountId));
+    if (validation) {
+      invariant(transaction, "transaction required");
+      updateTransaction(stakeToAccount =>
+        bridge.updateTransaction(transaction, {
+          staked: {
+            ...transaction.staked,
 
+            accountId: stakeToAccount,
+            stakeMethod: STAKE_METHOD.ACCOUNT,
+          },
+        }),
+      );
+    }
+  };
+
+  const handleAccountIdNext = () => {
     invariant(transaction, "transaction required");
-    updateTransaction(() =>
-      bridge.updateTransaction(transaction, {
-        staked: {
-          ...transaction.staked,
 
-          accountId,
-          stakeMethod: STAKE_METHOD.ACCOUNT,
-        },
-      }),
-    );
+    navigation.navigate(ScreenName.HederaStakeSummary, {
+      ...route.params,
+      account: hederaAccount,
+      transaction,
+      accountId: stakeToAccount as string,
+      nodeId: "",
+      nodeList,
+    });
   };
 
   const handleNodeIdChange = (node: Node) => {
-    const nodeId = node.value;
-    setStakeToNode(nodeId);
+    const nodeId = node.label;
 
     invariant(transaction, "transaction required");
-    updateTransaction(() =>
+
+    updateTransaction(stakeToNode =>
       bridge.updateTransaction(transaction, {
         staked: {
           ...transaction.staked,
 
-          nodeId,
+          nodeId: stakeToNode,
           stakeMethod: STAKE_METHOD.NODE,
         },
       }),
     );
+
+    navigation.navigate(ScreenName.HederaStakeSummary, {
+      ...route.params,
+      account: hederaAccount,
+      transaction,
+      accountId: "",
+      nodeId,
+      nodeList,
+    });
   };
 
-  const handleDeclineRewardsChange = (result: boolean) => {
-    setDeclineRewards(result);
-
-    invariant(transaction, "transaction required");
-    updateTransaction(() =>
-      bridge.updateTransaction(transaction, {
-        staked: {
-          ...transaction.staked,
-
-          declineRewards: result,
-        },
-      }),
-    );
+  // FIXME: Don't know how to force this component to display
+  const onBack = () => {
+    setCurrentScreen("started");
   };
 
-  const handleStakeMethodChange = (stakeMethod: StakeMethod | string) => {
-    // need to update bridge `transaction` to trigger for `status` errors
+  const handleStakeMethodChange = async (stakeMethod: StakeMethod | string) => {
+    setStakeMethod(stakeMethod);
+
     clearOtherStakeMethod(stakeMethod);
   };
 
@@ -199,8 +192,6 @@ function StepStakingInfo({ navigation, route }: Props) {
    */
   const clearOtherStakeMethod = (stakeMethod: StakeMethod | string) => {
     invariant(transaction, "transaction required");
-
-    setStakeMethod(stakeMethod);
 
     if (stakeMethod === STAKE_METHOD.NODE) {
       setStakeToAccount("");
@@ -218,8 +209,6 @@ function StepStakingInfo({ navigation, route }: Props) {
     }
 
     if (stakeMethod === STAKE_METHOD.ACCOUNT) {
-      setStakeToNode(null);
-
       updateTransaction(() =>
         bridge.updateTransaction(transaction, {
           staked: {
@@ -234,103 +223,84 @@ function StepStakingInfo({ navigation, route }: Props) {
   };
 
   const onNext = () => {
-    navigation.navigate(ScreenName.HederaStakeSummary, {
-      account: hederaAccount,
-      transaction,
-    });
+    if (stakeMethod === STAKE_METHOD.NODE) {
+      setCurrentScreen("node");
+    } else if (stakeMethod === STAKE_METHOD.ACCOUNT) {
+      setCurrentScreen("account");
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* stake method selector */}
-      <StakeMethodSelect
-        value={stakeMethod}
-        options={stakeMethods}
-        onChange={handleStakeMethodChange}
-      />
-
-      <View style={styles.methodInputWrapper}>
-        {/* stake to node */}
-        {stakeMethod === STAKE_METHOD.NODE ? (
-          loadingNodeList ? (
-            <View style={styles.loadingNodeListContainer}>
-              <Text>
-                <Trans i18nKey="hedera.stake.flow.stake.nodeList.loading" />
-              </Text>
-            </View>
-          ) : (
-            <StakeToNodeSelect
-              selected={stakeToNode}
-              nodeList={nodeList}
-              onChange={handleNodeIdChange}
-              navigation={navigation}
-            />
-          )
+      <View>
+        {currentScreen === "started" ? (
+          <StakeMethodSelect
+            items={stakeMethods}
+            activeKey={stakeMethod}
+            selectNode={() => handleStakeMethodChange(STAKE_METHOD.NODE)}
+            selectAccount={() => handleStakeMethodChange(STAKE_METHOD.ACCOUNT)}
+          />
         ) : null}
 
-        {/* stake to account */}
-        {stakeMethod === STAKE_METHOD.ACCOUNT ? (
+        {currentScreen === "node" ? (
+          <StakeToNodeSelect
+            onNodeSelect={handleNodeIdChange}
+            nodeList={nodeList}
+            onBack={onBack}
+          />
+        ) : null}
+
+        {currentScreen === "account" ? (
           <StakeToAccountInput
             value={stakeToAccount}
             onChange={handleAccountIdChange}
+            validation={validation}
+            onNext={handleAccountIdNext}
           />
         ) : null}
       </View>
-
-      {/* separator */}
-      <View style={styles.separatorContainer}>
+      {currentScreen === "started" ? (
         <View
           style={[
-            styles.separatorLine,
+            styles.footer,
             {
-              borderBottomColor: colors.lightFog,
+              backgroundColor: colors.background,
             },
           ]}
-        />
-      </View>
-
-      {/* `Receive rewards` checkbox */}
-      <DeclineRewardsCheckBox
-        isChecked={declineRewards}
-        onChange={handleDeclineRewardsChange}
-      />
-
-      {/* Continue button */}
-      <View
-        style={[
-          styles.footer,
-          {
-            backgroundColor: colors.background,
-          },
-        ]}
-      >
-        <View style={styles.warningSection}>
-          {error && error instanceof Error ? (
-            <Text selectable style={styles.warning} color="alert">
-              <TranslatedError error={error} />
-            </Text>
-          ) : null}
+        >
+          <Button
+            disabled={error instanceof Error}
+            event="Hedera StepStakingStartedContinueBtn"
+            onPress={onNext}
+            title={<Trans i18nKey="hedera.common.continue" />}
+            type="main"
+          />
+          <Link
+            Icon={() => (
+              <Flex
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <ExternalLinkMedium size={20} color="#FFFFFF" />
+              </Flex>
+            )}
+          >
+            <Trans
+              style={styles.linkText}
+              i18nKey="hedera.stake.flow.stake.howWorks"
+            />
+          </Link>
         </View>
-        <Button
-          disabled={error instanceof Error}
-          event="Hedera StepStakingInfoContinueBtn"
-          onPress={onNext}
-          title={<Trans i18nKey="hedera.common.continue" />}
-          type="primary"
-        />
-      </View>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    marginTop: 32,
-    marginHorizontal: 16,
+    flex: 1,
+    justifyContent: "space-between",
   },
   methodInputWrapper: {
     marginBottom: 48,
@@ -345,8 +315,9 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   footer: {
-    width: "100%",
-    marginTop: 32,
+    paddingBottom: 24,
+    gap: 24,
+    paddingHorizontal: 16,
   },
   warningSection: {
     padding: 16,
@@ -361,6 +332,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  linkText: {
+    fontSize: 16,
+  },
 });
 
-export default StepStakingInfo;
+export default StepStakingType;

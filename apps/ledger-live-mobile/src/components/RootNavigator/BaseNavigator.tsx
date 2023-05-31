@@ -265,11 +265,12 @@ export default function BaseNavigator() {
               route.params?.onError ||
               (route.params as unknown as typeof route)?.params?.onError;
             // @TODO replace with correct error
-            if (onError && typeof onError === "function")
+            if (onError && typeof onError === "function") {
               onError(
                 route.params.error ||
                   new Error("Request account interrupted by user"),
               );
+            }
           },
         })}
       />

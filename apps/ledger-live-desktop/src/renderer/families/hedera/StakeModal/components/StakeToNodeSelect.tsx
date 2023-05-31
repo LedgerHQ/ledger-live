@@ -38,13 +38,13 @@ const StakeToNodeSelect = ({ selected, nodeListOptions, onChange }: Props) => {
 
   const descriptionStyle = {
     display: "block",
+    whiteSpace: "nowrap", 
+    overflow: "hidden",
+    textOverflow: "ellipsis", 
     fontFamily: "Inter", 
     fontWeight: "600", 
     fontSize: "14px", 
-    textOverflow: "ellipsis", 
     maxWidth: "201px", 
-    whiteSpace: "nowrap", 
-    overflow: "hidden",
     lineHeight: "17px", 
   };
 

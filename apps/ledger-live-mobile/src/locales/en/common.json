@@ -6037,18 +6037,33 @@
       },
       "flow": {
         "stake": {
+          "startedTitle": "Stake HBAR directly from Ledger Live",
+          "startedSubTitle": "Here is what you can do next:",
+          "startedStake": "Stake your Hedera account to a Node or user account",
+          "startedNoLock": "No lock-up period when you staked to a Node",
+          "startedReceive": "Receive rewards when staking to a node account",
+          "startedNoLock2": "No lock-up period when you staked to a Node",
+          "nodeTitle": "Node account staking",
+          "howWorks": "How Hedera staking works",
+          "nodeSubtitle": "Earn daily rewards by delegating your Hedera holdings to a Node",
+          "accountTitle": "User account staking",
+          "accountSubtitle": "Giveaway your daily rewards by delegating Hedera holdings to an account",
           "to": "Stake To",
           "declineRewards": "Do not receive rewards",
           "nodeList": {
             "loading": "Loading node list ...",
             "nodeNotFound": "No node found."
-          }
+          },
+          "amount": "AMOUNT TO STAKE",
+          "type": "STAKING TYPE",
+          "node": "NODE",
+          "account": "ACCOUNT",
+          "totalFees": "TOTAL FEES (INC)",
+          "nodeType": "Node Account Staking",
+          "accountType": "Account Staking"
         },
         "stopStake": {
           "confirmation": "Are you sure you would like to stop staking your account?"
-        },
-        "summary": {
-          "receiveRewards": "Receive Rewards?"
         },
         "success": {
           "title": "Transaction sent",

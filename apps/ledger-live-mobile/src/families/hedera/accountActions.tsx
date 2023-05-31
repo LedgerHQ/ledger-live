@@ -5,10 +5,17 @@ import {
   HederaAccount,
   STAKE_TYPE,
 } from "@ledgerhq/live-common/families/hedera/types";
+import type { Account } from "@ledgerhq/types-live";
 
 import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({ account }: { account: HederaAccount }) => {
+const getMainActions = ({
+  account,
+  parentAccount,
+}: {
+  account: HederaAccount;
+  parentAccount: Account;
+}) => {
   const {
     hederaResources,
     pendingOperations,
@@ -24,67 +31,38 @@ const getActions = ({ account }: { account: HederaAccount }) => {
   // Check for whether any pending operation does not exist
   // in list of confirmed operations (implying that the pending operation
   // isn't confirmed yet)
-  let allOpsConfirmed = true;
-  for (const pendingOp of pendingOperations) {
-    allOpsConfirmed = confirmedOperations.some(
-      confirmedOp => pendingOp.id === confirmedOp.id,
-    );
+  // let allOpsConfirmed = true;
+  // for (const pendingOp of pendingOperations) {
+  //   allOpsConfirmed = confirmedOperations.some(
+  //     confirmedOp => pendingOp.id === confirmedOp.id,
+  //   );
 
-    if (!allOpsConfirmed) break;
-  }
+  //   if (!allOpsConfirmed) break;
+  // }
 
-  const stakeAction = {
-    navigationParams: [
-      NavigatorName.HederaStakeFlow,
-      {
-        screen: ScreenName.HederaStakeForm,
-        params: { stakeType: STAKE_TYPE.NEW },
+  const navigationParams = [
+    NavigatorName.HederaStakeFlow,
+    {
+      screen: ScreenName.HederaStakingStarted,
+    },
+  ];
+
+  return [
+    {
+      id: "stake",
+      navigationParams,
+      label: <Trans i18nKey="account.stake" />,
+      Icon: Icons.ClaimRewardsMedium,
+      event: "button_clicked",
+      eventProperties: {
+        button: "stake",
+        currency: "HEDERA",
+        page: "Account Page",
       },
-    ],
-    icon: Icons.ClaimRewardsMedium,
-    label: <Trans i18nKey="hedera.stake.stepperHeader.stake" />,
-    disabled: !allOpsConfirmed,
-  };
-  const changeStakedToAction = {
-    navigationParams: [
-      NavigatorName.HederaStakeFlow,
-      {
-        screen: ScreenName.HederaStakeForm,
-        params: { stakeType: STAKE_TYPE.CHANGE },
-      },
-    ],
-    icon: Icons.ClaimRewardsMedium,
-    label: <Trans i18nKey="hedera.stake.stepperHeader.changeStake" />,
-    disabled: !allOpsConfirmed,
-  };
-  const stopStakingAction = {
-    navigationParams: [
-      NavigatorName.HederaStopStakeFlow,
-      {
-        screen: ScreenName.HederaStakeStopConfirmation,
-        params: { stakeType: STAKE_TYPE.STOP },
-      },
-    ],
-    icon: Icons.ClaimRewardsMedium,
-    label: <Trans i18nKey="hedera.stake.stepperHeader.stopStake" />,
-    disabled: !allOpsConfirmed,
-  };
-
-  // array containing which buttons to show depending on account's staking status
-  const actionList = [];
-
-  // if account is already staking to a node or account id,
-  // show `Change Stake` and `Stop Stake` buttons
-  if (hederaResources?.staked?.stakeMethod != null) {
-    actionList.push(stopStakingAction, changeStakedToAction);
-  } else {
-    // otherwise, show `Stake` button
-    actionList.push(stakeAction);
-  }
-
-  return actionList;
+    },
+  ];
 };
 
 export default {
-  getActions,
+  getMainActions,
 };
