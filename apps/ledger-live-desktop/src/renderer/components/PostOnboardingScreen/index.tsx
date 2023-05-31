@@ -24,14 +24,13 @@ const PostOnboardingScreen = () => {
         paddingLeft={100}
         paddingRight={50}
       >
-        {
-          <TrackPage
-            category={
-              allDone ? "User has completed all post-onboarding actions" : "Post-onboarding hub"
-            }
-            flow={"post-onboarding"}
-          />
-        }
+        <TrackPage
+          category={
+            allDone ? "User has completed all post-onboarding actions" : "Post-onboarding hub"
+          }
+          flow={"post-onboarding"}
+        />
+
         <Text variant="paragraph" fontSize={48} mb={8} whiteSpace="pre-wrap">
           {allDone
             ? t("postOnboarding.postOnboardingScreen.titleCompleted")
