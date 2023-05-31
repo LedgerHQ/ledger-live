@@ -9,7 +9,6 @@ import FramedImage, {
 const lottiesStyle = {
   width: transferLottieConfig.frameWidth,
   height: transferLottieConfig.frameHeight,
-  transform: [{ scale: 2.3 }],
 };
 
 export type Props = {
