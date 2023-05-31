@@ -15,7 +15,7 @@ export async function estimateTxFee(
   const tx = createDummyTx(account, kind);
   const [onChainTx] = await buildTransactionWithAPI(account, tx, api);
 
-  const fee = await api.getFeeForMessage(onChainTx.compileMessage());
+  const fee = await api.getFeeForMessage(onChainTx.message);
 
   if (typeof fee !== "number") {
     log("error", `api.getFeeForMessage returned invalid fee: <${fee}>`);
