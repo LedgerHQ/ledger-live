@@ -1,14 +1,14 @@
 import AnimatedLottieView from "lottie-react-native";
 import React, { useContext } from "react";
 import FramedImage, {
-  transferLottieConfig,
+  transferConfig,
   Props as FramedImageProps,
   ImageSourceContext,
 } from "./FramedImage";
 
 const lottiesStyle = {
-  width: transferLottieConfig.frameWidth,
-  height: transferLottieConfig.frameHeight,
+  width: transferConfig.frameWidth,
+  height: transferConfig.frameHeight,
 };
 
 export type Props = {
@@ -24,7 +24,7 @@ const FramedImageWithLottie: React.FC<Props> = ({
 }) => {
   return (
     <FramedImage
-      frameConfig={transferLottieConfig}
+      frameConfig={transferConfig}
       source={source}
       loadingProgress={loadingProgress}
       background={

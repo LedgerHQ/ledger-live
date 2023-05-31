@@ -5,6 +5,7 @@ import styled from "styled-components/native";
 import ForceTheme from "../theme/ForceTheme";
 import transferBackground from "./assets/transferBackground.png";
 import previewBackground from "./assets/previewBackground.png";
+import { PixelRatio } from "react-native";
 
 /**
  * Set this to true to have visual indicators of how the foreground image (the content)
@@ -37,25 +38,15 @@ export type Props = Partial<ComponentProps<typeof Image>> & {
   scale?: number;
 };
 
-export const transferConfigBase: FrameConfig = {
-  frameHeight: 222,
-  frameWidth: 141,
-  innerHeight: 210,
-  innerWidth: 133,
-  innerRight: 8,
-  innerTop: 6,
+export const transferConfig: FrameConfig = {
+  frameHeight: PixelRatio.roundToNearestPixel(222),
+  frameWidth: PixelRatio.roundToNearestPixel(141),
+  innerHeight: PixelRatio.roundToNearestPixel(210),
+  innerWidth: PixelRatio.roundToNearestPixel(133),
+  innerRight: PixelRatio.roundToNearestPixel(7.8),
+  innerTop: PixelRatio.roundToNearestPixel(6),
   borderRightRadius: 5,
   resizeMode: "cover",
-};
-
-export const transferConfig: FrameConfig = {
-  ...transferConfigBase,
-  backgroundSource: transferBackground,
-};
-
-export const transferLottieConfig: FrameConfig = {
-  ...transferConfigBase,
-  innerTop: 4.5,
   backgroundSource: transferBackground,
 };
 
