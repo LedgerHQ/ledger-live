@@ -9,8 +9,13 @@ import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
 import { CosmosDelegationInfo } from "./types";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
+import type {
+  Operation,
+  OperationType,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const getBlankOperation = (tx, fees, id) => ({
   id: "",
@@ -187,9 +192,48 @@ export const getAccountShape: GetAccountShape = async (info) => {
 
   let balance = new BigNumber(0);
 
+  let subAccounts: TokenAccount[] | undefined = undefined;
+
   for (const elem of balances) {
-    if (elem.denom === currency.units[1].code)
+    if (elem.denom === currency.units[1].code) {
       balance = balance.plus(elem.amount);
+    } else {
+      if (subAccounts === undefined) subAccounts = [];
+      subAccounts.push({
+        type: "TokenAccount",
+        token: {
+          name: elem.denom,
+          units: [
+            {
+              name: elem.denom,
+              code: elem.denom,
+              magnitude: 6,
+            },
+          ],
+          ticker: elem.denom,
+        },
+        parentId: accountId,
+        id: accountId + ":" + elem.denom,
+        balance: new BigNumber(elem.amount),
+        spendableBalance: new BigNumber(elem.amount),
+        creationDate: new Date(),
+        operationsCount: 0,
+        operations: [],
+        pendingOperations: [],
+        starred: false,
+        swapHistory: [],
+        currency: {
+          name: elem.denom,
+          units: [
+            {
+              name: elem.denom,
+              code: elem.denom,
+              magnitude: 6,
+            },
+          ],
+        },
+      } as unknown as TokenAccount);
+    }
   }
 
   for (const delegation of delegations) {
@@ -219,6 +263,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     spendableBalance,
     operationsCount: operations.length,
     blockHeight,
+    subAccounts,
     cosmosResources: {
       delegations,
       redelegations,
