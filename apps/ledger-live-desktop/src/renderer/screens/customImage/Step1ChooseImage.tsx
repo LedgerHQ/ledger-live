@@ -119,21 +119,12 @@ const StepChooseImage: React.FC<Props> = props => {
         ) : null
       }
     >
-      {isShowingNftGallery ? (
-        <TrackPage
-          category={analyticsPageNames.chooseNftGallery}
+       <TrackPage
+          category={isShowingNftGallery ? analyticsPageNames.chooseNftGallery : analyticsPageNames.chooseImage}
           type="drawer"
           flow={analyticsFlowName}
           refreshSource={false}
-        />
-      ) : (
-        <TrackPage
-          category={analyticsPageNames.chooseImage}
-          type="drawer"
-          flow={analyticsFlowName}
-          refreshSource={false}
-        />
-      )}
+        />    
       {loading ? (
         <Flex flex={1} justifyContent="center" alignItems="center">
           <InfiniteLoader />
