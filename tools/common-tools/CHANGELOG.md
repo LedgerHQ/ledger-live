@@ -1,5 +1,22 @@
 # live-common-tools
 
+## 0.5.0-nightly.1
+
+### Minor Changes
+
+- [#3536](https://github.com/LedgerHQ/ledger-live/pull/3536) [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16) Thanks [@chabroA](https://github.com/chabroA)! - Move evm familly logic in own package
+
+- [#3515](https://github.com/LedgerHQ/ledger-live/pull/3515) [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796) Thanks [@chabroA](https://github.com/chabroA)! - Create live-network package to host network and cache logics
+
+### Patch Changes
+
+- Updated dependencies [[`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796), [`76699bc304`](https://github.com/LedgerHQ/ledger-live/commit/76699bc304204232b280984644a7c5709fdff063), [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16), [`b30ead9d22`](https://github.com/LedgerHQ/ledger-live/commit/b30ead9d22a4bce5f8ee27febf0190fccd2ca25b)]:
+  - @ledgerhq/live-common@31.0.0-nightly.1
+  - @ledgerhq/cryptoassets@9.6.1-nightly.0
+  - @ledgerhq/coin-framework@0.3.5-nightly.0
+  - @ledgerhq/domain-service@1.1.3-nightly.0
+  - @ledgerhq/hw-app-eth@6.33.5-nightly.0
+
 ## 0.4.3-nightly.0
 
 ### Patch Changes

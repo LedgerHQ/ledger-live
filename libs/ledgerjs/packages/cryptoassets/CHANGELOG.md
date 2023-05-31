@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.6.1-nightly.0
+
+### Patch Changes
+
+- [#3391](https://github.com/LedgerHQ/ledger-live/pull/3391) [`b30ead9d22`](https://github.com/LedgerHQ/ledger-live/commit/b30ead9d22a4bce5f8ee27febf0190fccd2ca25b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Support new Cardano tokens and update existing ones
+
 ## 9.6.0
 
 ### Minor Changes

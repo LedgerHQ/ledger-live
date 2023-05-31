@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.24.0-nightly.1
+
+### Minor Changes
+
+- [#3515](https://github.com/LedgerHQ/ledger-live/pull/3515) [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796) Thanks [@chabroA](https://github.com/chabroA)! - Use live-network package
+
+### Patch Changes
+
+- [#3441](https://github.com/LedgerHQ/ledger-live/pull/3441) [`499dee28bf`](https://github.com/LedgerHQ/ledger-live/commit/499dee28bf09c06d71cc9b5560ff6387edb04068) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed language switcher on Sync Onboardings (LLM & LLD)
+
+- [#3478](https://github.com/LedgerHQ/ledger-live/pull/3478) [`9b68e8e543`](https://github.com/LedgerHQ/ledger-live/commit/9b68e8e5434e50c92dbd26590b6f10e0f8b21afb) Thanks [@YarnSh39](https://github.com/YarnSh39)! - updated the copy of the Success toast in NFT select. Also added by pass for connecting hardwallet device.
+
+- Updated dependencies [[`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796), [`76699bc304`](https://github.com/LedgerHQ/ledger-live/commit/76699bc304204232b280984644a7c5709fdff063), [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16)]:
+  - @ledgerhq/live-common@31.0.0-nightly.1
+  - @ledgerhq/coin-framework@0.3.5-nightly.0
+  - @ledgerhq/domain-service@1.1.3-nightly.0
+
 ## 3.24.0-nightly.0
 
 ### Minor Changes
