@@ -17,10 +17,12 @@ const CurrentNetworkFeeComponent = ({
   account,
   parentAccount,
   operation,
+  advancedMode = false,
 }: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   operation: Operation;
+  advancedMode?: boolean;
 }) => {
   const { t } = useTranslation();
 
@@ -61,6 +63,10 @@ const CurrentNetworkFeeComponent = ({
         </LText>
       </Alert>
     ) : null;
+  }
+
+  if (advancedMode) {
+    return null;
   }
 
   return null;
