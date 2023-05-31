@@ -181,10 +181,16 @@ export const getAccountShape: GetAccountShape = async (info) => {
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);
   const operations = mergeOps(oldOperations, newOperations);
-  let balance = balances;
   let delegatedBalance = new BigNumber(0);
   let pendingRewardsBalance = new BigNumber(0);
   let unbondingBalance = new BigNumber(0);
+
+  let balance = new BigNumber(0);
+
+  for (const elem of balances) {
+    if (elem.denom === currency.units[1].code)
+      balance = balance.plus(elem.amount);
+  }
 
   for (const delegation of delegations) {
     delegatedBalance = delegatedBalance.plus(delegation.amount);

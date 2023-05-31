@@ -26,7 +26,7 @@ export class CosmosAPI {
     address: string,
     currency: CryptoCurrency
   ): Promise<{
-    balances: BigNumber;
+    balances: { denom: string; amount: BigNumber }[];
     blockHeight: number;
     txs: CosmosTx[];
     delegations: CosmosDelegation[];
@@ -44,7 +44,7 @@ export class CosmosAPI {
         unbondings,
         withdrawAddress,
       ] = await Promise.all([
-        this.getAllBalances(address, currency),
+        this.getAllBalances(address),
         this.getHeight(),
         this.getTransactions(address),
         this.getDelegations(address, currency),
@@ -114,22 +114,17 @@ export class CosmosAPI {
   };
 
   getAllBalances = async (
-    address: string,
-    currency: CryptoCurrency
-  ): Promise<BigNumber> => {
+    address: string
+  ): Promise<{ denom: string; amount: BigNumber }[]> => {
     const { data } = await network({
       method: "GET",
       url: `${this.defaultEndpoint}/cosmos/bank/${this.version}/balances/${address}`,
     });
 
-    let amount = new BigNumber(0);
-
-    for (const elem of data.balances) {
-      if (elem.denom === currency.units[1].code)
-        amount = amount.plus(elem.amount);
-    }
-
-    return amount;
+    return data.balances.map(({ denom, amount }) => ({
+      denom,
+      amount: new BigNumber(amount),
+    }));
   };
 
   getDelegations = async (
