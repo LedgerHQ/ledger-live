@@ -103,7 +103,8 @@ export default function DebugCustomImageGraphics() {
       )}
       <Flex
         style={{ paddingBottom: insets.bottom }}
-        backgroundColor="neutral.c40"
+        borderTopWidth={1}
+        borderColor="neutral.c100"
       >
         <Flex p={4}>
           <Switch
@@ -111,21 +112,13 @@ export default function DebugCustomImageGraphics() {
             label="Show all assets"
             onChange={setShowAllAssets}
           />
+          <Divider />
           <Flex
-            mt={3}
+            mt={2}
             opacity={showAllAssets ? 0.3 : 1}
             pointerEvents={showAllAssets ? "none" : "auto"}
           >
-            <Flex
-              flexDirection="row"
-              alignItems="center"
-              opacity={deviceActionStep !== "loading" ? 0.3 : 1}
-              pointerEvents={deviceActionStep !== "loading" ? "none" : "auto"}
-            >
-              <Text>loading progress: </Text>
-              <Flex flex={1}>{slider}</Flex>
-            </Flex>
-            <Flex mt={3} flexDirection={"row"}>
+            <Flex flexDirection={"row"}>
               {["confirmLoad", "loading", "confirmCommit"].map(val => (
                 <Button
                   key={val}
@@ -137,6 +130,16 @@ export default function DebugCustomImageGraphics() {
                   {val}
                 </Button>
               ))}
+            </Flex>
+            <Flex
+              mt={2}
+              flexDirection="row"
+              alignItems="center"
+              opacity={deviceActionStep !== "loading" ? 0.3 : 1}
+              pointerEvents={deviceActionStep !== "loading" ? "none" : "auto"}
+            >
+              <Text>loading progress: </Text>
+              <Flex flex={1}>{slider}</Flex>
             </Flex>
           </Flex>
         </Flex>
