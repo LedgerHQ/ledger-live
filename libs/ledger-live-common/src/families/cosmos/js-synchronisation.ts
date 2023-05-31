@@ -5,7 +5,7 @@ import {
   GetAccountShape,
   mergeOps,
 } from "../../bridge/jsHelpers";
-import { encodeAccountId } from "../../account";
+import { encodeAccountId, emptyHistoryCache } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
 import { CosmosDelegationInfo } from "./types";
@@ -13,9 +13,12 @@ import type {
   Operation,
   OperationType,
   TokenAccount,
+  SubAccount,
 } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
+
 
 const getBlankOperation = (tx, fees, id) => ({
   id: "",
@@ -192,26 +195,40 @@ export const getAccountShape: GetAccountShape = async (info) => {
 
   let balance = new BigNumber(0);
 
-  let subAccounts: TokenAccount[] | undefined = undefined;
+  let subAccounts: SubAccount[]=[];
 
   for (const elem of balances) {
     if (elem.denom === currency.units[1].code) {
       balance = balance.plus(elem.amount);
     } else {
-      if (subAccounts === undefined) subAccounts = [];
-      subAccounts.push({
+      if (!(elem.denom.indexOf("ibc") === 0))
+      {
+        continue;
+      }
+      //if (subAccounts === undefined) subAccounts = [];
+      const tokenCurrency: TokenCurrency =
+      {
+        id :elem.denom,
+        name: elem.denom,
+        units: [
+          {
+            name: elem.denom,
+            code: elem.denom,
+            magnitude: 6,
+          },
+        ],
+        ticker: elem.denom,
+        tokenType: "IPC-token",
+        contractAddress: "elem.denom",
+        parentCurrency: currency,
+        type: "TokenCurrency",
+      };
+
+
+
+      const subAccount:TokenAccount={
         type: "TokenAccount",
-        token: {
-          name: elem.denom,
-          units: [
-            {
-              name: elem.denom,
-              code: elem.denom,
-              magnitude: 6,
-            },
-          ],
-          ticker: elem.denom,
-        },
+        token: tokenCurrency,
         parentId: accountId,
         id: accountId + ":" + elem.denom,
         balance: new BigNumber(elem.amount),
@@ -222,17 +239,9 @@ export const getAccountShape: GetAccountShape = async (info) => {
         pendingOperations: [],
         starred: false,
         swapHistory: [],
-        currency: {
-          name: elem.denom,
-          units: [
-            {
-              name: elem.denom,
-              code: elem.denom,
-              magnitude: 6,
-            },
-          ],
-        },
-      } as unknown as TokenAccount);
+        balanceHistoryCache: emptyHistoryCache,
+      };
+      subAccounts.push(subAccount);
     }
   }
 
@@ -255,7 +264,6 @@ export const getAccountShape: GetAccountShape = async (info) => {
   if (spendableBalance.lt(0)) {
     spendableBalance = new BigNumber(0);
   }
-
   const shape = {
     id: accountId,
     xpub: address,
