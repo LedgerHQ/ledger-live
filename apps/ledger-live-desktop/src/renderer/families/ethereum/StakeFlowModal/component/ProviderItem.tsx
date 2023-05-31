@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Flex, Text, Icons, Link, Icon, Tag as TagCore } from "@ledgerhq/react-ui";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { ListProvider } from "../types";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { Manifest } from "~/types/manifest";
 import { StakeOnClickProps } from "../EthStakingModalBody";
 import { StakingIcon } from "../StakingIcon";
 
@@ -37,8 +36,8 @@ type Props = {
 const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvider }: Props) => {
   const { t, i18n } = useTranslation();
 
-  const localManifest = useLocalLiveAppManifest(provider.liveAppId) as Manifest;
-  const remoteManifest = useRemoteLiveAppManifest(provider.liveAppId) as Manifest;
+  const localManifest = useLocalLiveAppManifest(provider.liveAppId);
+  const remoteManifest = useRemoteLiveAppManifest(provider.liveAppId);
 
   const manifest = useMemo(() => remoteManifest || localManifest, [localManifest, remoteManifest]);
 

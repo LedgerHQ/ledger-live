@@ -6182,6 +6182,30 @@
     "title": "Connect device"
   },
   "stake": {
+    "ethereum": {
+      "title": "Grow your ETH holdings",
+      "subTitle": "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
+      "close": "Close",
+      "providers": {
+        "lido": {
+          "title": "Earn with Lido",
+          "tag": "No minimum",
+          "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum.",
+          "supportLink": "Learn more about Lido"
+        },
+        "kiln": {
+          "title": "Kiln dedicated staking",
+          "tag": "Requires 32 ETH",
+          "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed.",
+          "supportLink": "Learn more about Kiln validator"
+        },
+        "kiln_pooling": {
+          "title": "Kiln staking pool",
+          "description": "Join a staking pool. No minimum ETH is required. Rewards are automatically claimed.",
+          "supportLink": "Learn more about Kiln pooling"
+        }
+      }
+    },
     "noFundsModal": {
       "title": "Buy, swap or receive",
       "text": "You do not have enough {{coin}} available to stake",
