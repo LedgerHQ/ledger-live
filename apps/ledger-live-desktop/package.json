@@ -55,6 +55,7 @@
     "@ledgerhq/hw-transport-node-hid-singleton": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/react-ui": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

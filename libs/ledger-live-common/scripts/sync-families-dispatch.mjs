@@ -21,7 +21,7 @@ const targets = [
 ];
 
 // Coins using coin-framework
-const familiesWPackage = ["polkadot", "algorand"];
+const familiesWPackage = ["polkadot", "algorand", "evm"];
 
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");
@@ -79,12 +79,12 @@ function genCoinFrameworkTarget(targetFile) {
 
   // In case of cli-transaction, add special import
   if (targetFile === "cli-transaction.ts") {
-    imports += `import { makeLRUCache } from "../cache";\n`;
-    imports += `import network from "../network";\n`;
+    imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
+    imports += `import network from "@ledgerhq/live-network/network";\n`;
   }
   if (targetFile === "bridge/js.ts") {
-    imports += `import { makeLRUCache } from "../../cache";\n`;
-    imports += `import network from "../../network";\n`;
+    imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
+    imports += `import network from "@ledgerhq/live-network/network";\n`;
     imports += `import { withDevice } from "../../hw/deviceAccess";\n`;
   }
 
