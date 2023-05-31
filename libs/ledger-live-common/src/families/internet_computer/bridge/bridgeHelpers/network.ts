@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getEnv } from "../../../../env";
-import network from "../../../../network";
+import network from "@ledgerhq/live-network/network";
 import { ICP_BLK_NAME_ROSETTA, ICP_NET_ID_ROSETTA } from "../../consts";
 import {
   ICPRosettaBlockHeightResponse,

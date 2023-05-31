@@ -197,6 +197,8 @@ const modes = Object.freeze({
   },
   internet_computer: {
     overridesDerivation: "44'/223'/0'/0/<account>",
+    startsAt: 1,
+    tag: "third-party",
   },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
