@@ -23,7 +23,7 @@ const StyledImgLink = styled("a")<BaseStyledProps>`
 
 const ProtectDiscoverBody = ({ onClose }: Props) => {
   const { t } = useTranslation();
-  const protectServicesDiscoverDesktopFeature = useFeature("protectServicesDiscoverDesktop");
+  const protectServicesDesktopFeature = useFeature("protectServicesDesktop");
 
   const onAppStoreClick = () => openURL(urls.ledgerLiveMobile.appStore);
   const onPlayStoreClick = () => openURL(urls.ledgerLiveMobile.playStore);
@@ -31,7 +31,7 @@ const ProtectDiscoverBody = ({ onClose }: Props) => {
     track("button_clicked", {
       button: "Discover the benefits",
     });
-    openURL(protectServicesDiscoverDesktopFeature?.params?.discoverTheBenefitsLink);
+    openURL(protectServicesDesktopFeature?.params?.discoverTheBenefitsLink);
   };
 
   return (

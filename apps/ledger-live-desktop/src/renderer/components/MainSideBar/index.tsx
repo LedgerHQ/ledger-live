@@ -308,12 +308,23 @@ const MainSideBar = () => {
     dispatch(openModal("MODAL_RECEIVE", undefined));
   }, [dispatch, maybeRedirectToAccounts]);
 
+  const recoverFeature = useFeature("protectServicesDesktop");
+
+  const availableOnDesktop = recoverFeature?.params?.availableOnDesktop;
+  const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
+  const liveAppId = recoverFeature?.params?.protectId;
+
   const handleClickRecover = useCallback(() => {
     track("button_clicked", {
       button: "Protect",
     });
-    dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
-  }, [dispatch]);
+
+    if (availableOnDesktop && openRecoverFromSidebar && liveAppId) {
+      history.push(`/recover/${liveAppId}`);
+    } else {
+      dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
+    }
+  }, [availableOnDesktop, dispatch, history, liveAppId, openRecoverFromSidebar]);
 
   return (
     <Transition
