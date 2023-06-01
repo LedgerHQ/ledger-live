@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.24.0-nightly.2
+
+### Minor Changes
+
+- [#3526](https://github.com/LedgerHQ/ledger-live/pull/3526) [`15f299aceb`](https://github.com/LedgerHQ/ledger-live/commit/15f299acebf1d6629b2cb91e0152f0d2f3fb4868) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Introduce eth staking modals on asset, market detail and account screens
+
+### Patch Changes
+
+- [#3543](https://github.com/LedgerHQ/ledger-live/pull/3543) [`870c838d57`](https://github.com/LedgerHQ/ledger-live/commit/870c838d57ecb829aae59eb46d17da8492eb6961) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add visual indicator of disabled state for flows while apps are being installed/uninstalled
+
+- Updated dependencies [[`db1a6f92e1`](https://github.com/LedgerHQ/ledger-live/commit/db1a6f92e17dcd63b0c9fa6700496f5f4722f1e5)]:
+  - @ledgerhq/live-common@31.0.0-nightly.2
+
 ## 3.24.0-nightly.1
 
 ### Minor Changes

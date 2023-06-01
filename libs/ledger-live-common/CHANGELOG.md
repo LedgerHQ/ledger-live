@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.0.0-nightly.2
+
+### Patch Changes
+
+- [#3542](https://github.com/LedgerHQ/ledger-live/pull/3542) [`db1a6f92e1`](https://github.com/LedgerHQ/ledger-live/commit/db1a6f92e17dcd63b0c9fa6700496f5f4722f1e5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add fake delay before device action failures for better UX
+
 ## 31.0.0-nightly.1
 
 ### Major Changes
