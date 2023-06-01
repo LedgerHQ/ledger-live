@@ -2276,6 +2276,7 @@
     "renamed" : "{{ productName }} 名称已更改为\n“{{ name }}” "
   },
   "removeCustomLockscreen" : {
+    "title" : "Remove lock screen picture",
     "cta" : "删除",
     "confirmation" : "确认移除 Ledger Stax 上的图片",
     "success" : "锁屏图片已移除"
@@ -3903,10 +3904,6 @@
         "scanForInvalidPaths" : {
           "title" : "扩展的账户搜索",
           "description" : "扫描有错误派生路径的账户。请将可能找到的资产发送到一个常规账户。"
-        },
-        "experimentalCountervalues" : {
-          "title" : "实验性对价 API",
-          "description" : "这可能会导致您的账户对价显示错误。"
         },
         "experimentalExplorers" : {
           "title" : "实验性浏览器 API 应用程序界面",
@@ -5662,6 +5659,10 @@
       "title" : "Ledger Stax 锁屏已取消",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description" : "The customized lock screen picture was previously removed."
+    },
     "RestoreImageCommitRefusedOnDevice" : {
       "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
       "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
@@ -5828,5 +5829,14 @@
     "description" : "您的秘密恢复短语并非总在身边。\n专用于 Ledger Nano X 的测试发布。2023 年 6 月 30 日前免费订阅",
     "cta" : "为什么要订阅？",
     "downloadLLM" : "使用 Ledger Live 手机应用程序订阅 <purple>Ledger Recover</purple>"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "网络错误",
+      "subtitle" : "Something went wrong. Please try again. If the problem persists, save your log and contact Ledger support.",
+      "tryAgain" : "请重试",
+      "contactSupport" : "联系 Ledger 客服",
+      "saveLog" : "Save log"
+    }
   }
 }
