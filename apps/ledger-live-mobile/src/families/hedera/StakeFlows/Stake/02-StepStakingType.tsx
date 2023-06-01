@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
@@ -46,8 +46,8 @@ function StepStakingType({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, undefined);
   const bridge = getAccountBridge(account, undefined);
 
-  const { transaction, status, updateTransaction } = useBridgeTransaction(
-    () => {
+  const { transaction, status, updateTransaction, bridgePending } =
+    useBridgeTransaction(() => {
       const t = bridge.createTransaction(mainAccount);
 
       const transaction = bridge.updateTransaction(t, {
@@ -62,8 +62,7 @@ function StepStakingType({ navigation, route }: Props) {
       return {
         transaction,
       };
-    },
-  );
+    });
 
   // check if there are any errors in `status`
   const error =
@@ -116,25 +115,28 @@ function StepStakingType({ navigation, route }: Props) {
   const [stakeToAccount, setStakeToAccount] = useState(
     transaction?.staked?.accountId ?? "",
   );
+  const [stakeToNode, setStakeToNode] = useState(
+    transaction?.staked?.nodeId ?? "",
+  );
 
-  const handleAccountIdChange = (accountId: string) => {
-    setStakeToAccount(accountId);
-    const accountIdValidator = new RegExp("[0-9]+.[0-9]+.[0-9]+");
-    setValidation(accountIdValidator.test(accountId));
-    if (validation) {
-      invariant(transaction, "transaction required");
-      updateTransaction(stakeToAccount =>
-        bridge.updateTransaction(transaction, {
-          staked: {
-            ...transaction.staked,
+  // const handleAccountIdChange = (accountId: string) => {
+  //   setStakeToAccount(accountId);
+  //   const accountIdValidator = new RegExp("[0-9]+.[0-9]+.[0-9]+");
+  //   setValidation(accountIdValidator.test(accountId));
+  //   if (validation) {
+  //     invariant(transaction, "transaction required");
+  //     updateTransaction(transaction =>
+  //       bridge.updateTransaction(transaction, {
+  //         staked: {
+  //           ...transaction.staked,
 
-            accountId: stakeToAccount,
-            stakeMethod: STAKE_METHOD.ACCOUNT,
-          },
-        }),
-      );
-    }
-  };
+  //           accountId: stakeToAccount,
+  //           stakeMethod: STAKE_METHOD.ACCOUNT,
+  //         },
+  //       }),
+  //     );
+  //   }
+  // };
 
   const handleAccountIdNext = () => {
     invariant(transaction, "transaction required");
@@ -149,17 +151,71 @@ function StepStakingType({ navigation, route }: Props) {
     });
   };
 
-  const handleNodeIdChange = (node: Node) => {
+  const handleAccountIdChange = useCallback(
+    accountId => {
+      const accountIdValidator = new RegExp("[0-9]+.[0-9]+.[0-9]+");
+      setValidation(accountIdValidator.test(accountId));
+      updateTransaction(transaction =>
+        bridge.updateTransaction(transaction, {
+          staked: {
+            ...transaction.staked,
+
+            accountId,
+            stakeMethod: STAKE_METHOD.NODE,
+          },
+        }),
+      );
+    },
+    [bridge, updateTransaction],
+  );
+
+  const accountId = transaction.staked.accountId
+    ? transaction.staked.accountId
+    : "";
+
+  // const handleNodeIdSelect = (node: Node) => {
+  //   handleNodeIdChange(node);
+
+  //   navigation.navigate(ScreenName.HederaStakeSummary, {
+  //     ...route.params,
+  //     account: hederaAccount,
+  //     transaction,
+  //     accountId: "",
+  //     nodeId: node.label,
+  //     nodeList,
+  //   });
+  // };
+
+  // const handleNodeIdChange = useCallback(
+  //   node => {
+  //     const accountIdValidator = new RegExp("[0-9]+.[0-9]+.[0-9]+");
+  //     setValidation(accountIdValidator.test(accountId));
+  //     updateTransaction(transaction =>
+  //       bridge.updateTransaction(transaction, {
+  //         staked: {
+  //           ...transaction.staked,
+
+  //           nodeId: node.label,
+  //           stakeMethod: STAKE_METHOD.NODE,
+  //         },
+  //       }),
+  //     );
+  //   },
+  //   [bridge, updateTransaction, accountId],
+  // );
+
+  const handleNodeIdSelect = (node: Node) => {
     const nodeId = node.label;
+    setStakeToNode(nodeId);
 
     invariant(transaction, "transaction required");
 
-    updateTransaction(stakeToNode =>
+    updateTransaction(transaction =>
       bridge.updateTransaction(transaction, {
         staked: {
           ...transaction.staked,
 
-          nodeId: stakeToNode,
+          nodeId,
           stakeMethod: STAKE_METHOD.NODE,
         },
       }),
@@ -244,7 +300,7 @@ function StepStakingType({ navigation, route }: Props) {
 
         {currentScreen === "node" ? (
           <StakeToNodeSelect
-            onNodeSelect={handleNodeIdChange}
+            onNodeSelect={handleNodeIdSelect}
             nodeList={nodeList}
             onBack={onBack}
           />
@@ -252,7 +308,7 @@ function StepStakingType({ navigation, route }: Props) {
 
         {currentScreen === "account" ? (
           <StakeToAccountInput
-            value={stakeToAccount}
+            value={accountId}
             onChange={handleAccountIdChange}
             validation={validation}
             onNext={handleAccountIdNext}
