@@ -83,12 +83,11 @@ export enum AppStateActionTypes {
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
-  SET_WIRED_DEVICE = "SET_WIRED_DEVICE",
 }
 
 export type AppStateIsConnectedPayload = AppState["isConnected"];
-export type AppStateSetHasConnectedDevicePayload = AppState["hasConnectedDevice"];
-export type AppStateSetWiredDevicePayload = AppState["wiredDevice"];
+export type AppStateSetHasConnectedDevicePayload =
+  AppState["hasConnectedDevice"];
 export type AppStateSetModalLockPayload = AppState["modalLock"];
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
