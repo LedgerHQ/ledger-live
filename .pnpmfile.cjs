@@ -258,6 +258,12 @@ function readPackage(pkg, context) {
       addPeerDependencies("asyncstorage-down", {
         "@react-native-async-storage/async-storage": "*",
       }),
+      addDependencies("@dfinity/candid", {
+        "@dfinity/principal": "*",
+      }),
+      addDependencies("@dfinity/agent", {
+        "buffer": "*",
+      }),
     ],
     pkg,
     context

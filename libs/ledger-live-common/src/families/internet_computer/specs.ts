@@ -1,5 +1,6 @@
 import invariant from "invariant";
 import { DeviceModelId } from "@ledgerhq/devices";
+import expect from "expect";
 import BigNumber from "bignumber.js";
 
 import type { Transaction } from "../../families/internet_computer/types";
