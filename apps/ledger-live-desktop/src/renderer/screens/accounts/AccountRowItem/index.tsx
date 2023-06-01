@@ -208,7 +208,7 @@ class AccountRowItem extends PureComponent<Props, State> {
       mainAccount = account;
       tokens = listSubAccounts(account);
       disabled = !matchesSearch(search, account);
-      isToken = listTokenTypesForCryptoCurrency(currency).length > 0;
+      isToken = listTokenTypesForCryptoCurrency(currency).length > 0 || currency.family === "cosmos";
       if (tokens) tokens = tokens.filter(t => matchesSearch(search, t));
     }
     const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);

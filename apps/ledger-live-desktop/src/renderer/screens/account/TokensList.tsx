@@ -56,7 +56,7 @@ function TokensList({ account }: Props) {
   const { currency } = account;
   const family = currency.family;
   const tokenTypes = listTokenTypesForCryptoCurrency(currency);
-  const isTokenAccount = tokenTypes.length > 0;
+  const isTokenAccount = tokenTypes.length > 0 || currency.family === "cosmos";
   const isEmpty = subAccounts.length === 0;
   const shouldSliceList = subAccounts.length >= 5;
   if (!isTokenAccount && isEmpty) return null;
