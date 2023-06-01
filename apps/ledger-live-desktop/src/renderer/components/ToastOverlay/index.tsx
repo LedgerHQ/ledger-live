@@ -14,6 +14,7 @@ const Wrapper = styled.div`
   & *:nth-child(n + 6) {
     display: none;
   }
+  pointer-events: none;
 `;
 export function ToastOverlay() {
   const { toasts, dismissToast } = useToasts();
@@ -24,6 +25,7 @@ export function ToastOverlay() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
+  if (toasts.length === 0) return null;
   return (
     <Wrapper>
       {toasts.length < 2 ? (
