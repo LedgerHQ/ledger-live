@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
-import {
-  Button,
-  Divider,
-  Flex,
-  InfiniteLoader,
-  Switch,
-  Text,
-} from "@ledgerhq/native-ui";
+import { Button, Divider, Flex, Switch, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -44,12 +37,6 @@ export default function DebugCustomImageGraphics() {
   const { t } = useTranslation();
 
   const insets = useSafeAreaInsets();
-
-  const loader = (
-    <Flex flex={1} justifyContent="center" alignItems="center">
-      <InfiniteLoader />
-    </Flex>
-  );
 
   const slider = (
     <Slider
