@@ -2276,6 +2276,7 @@
     "renamed" : "اسم {{ productName }} تم تغييره إلى \n\"{{ name }}\" "
   },
   "removeCustomLockscreen" : {
+    "title" : "Remove lock screen picture",
     "cta" : "حذف",
     "confirmation" : "قم بتأكيد إزالة الصورة على Ledger Stax الخاص بك",
     "success" : "تم إزالة صورة شاشة القفل"
@@ -3903,10 +3904,6 @@
         "scanForInvalidPaths" : {
           "title" : "بحث موسع عن الحساب",
           "description" : "البحث عن الحسابات ذات مسارات اشتقاق غير صحيحة. يرجى إرسال الأصول التي يحتمل العثور عليها إلى حساب عادي."
-        },
-        "experimentalCountervalues" : {
-          "title" : "API للقيم المقابلة التجريبية",
-          "description" : "قد يتسبب هذا في أن تكون القيم المقابلة المعروضة لحساباتك غير صحيحة."
         },
         "experimentalExplorers" : {
           "title" : "API للمستكشفين التجريبيين",
@@ -5662,6 +5659,10 @@
       "title" : "تم إلغاء شاشة القَفل على Ledger Stax",
       "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description" : "The customized lock screen picture was previously removed."
+    },
     "RestoreImageCommitRefusedOnDevice" : {
       "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
       "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
@@ -5828,5 +5829,14 @@
     "description" : "عبارة الاسترداد السرية الخاصة بك لن تكون دائماً في متناول اليد.\nإطلاق تجريبي حصرياً لـ Ledger Nano X. اشترك مجاناً حتى 30 يونيو 2023",
     "cta" : "لماذا يجب أن اشترك؟",
     "downloadLLM" : "اشترك في <purple>Ledger Recover</purple> باستخدام تطبيق Ledger Live للجوّال"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "Network Error",
+      "subtitle" : "Something went wrong. Please try again. If the problem persists, save your log and contact Ledger support.",
+      "tryAgain" : "أعد المحاولة",
+      "contactSupport" : "تواصل مع دعم Ledger",
+      "saveLog" : "Save log"
+    }
   }
 }
