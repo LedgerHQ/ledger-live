@@ -305,7 +305,3 @@ export type ManageAction = {
   tooltip?: string;
   accountActionsTestId?: string;
 };
-
-// the AllCoinFamilies type is the only time we accept to go "any" because it's the generated entry point where the bridge is rooted.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AllCoinFamilies = Record<string, LLDCoinFamily<any, any, any>>;
