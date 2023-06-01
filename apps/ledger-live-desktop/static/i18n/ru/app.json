@@ -25,10 +25,17 @@
     },
     "catalog" : {
       "title" : "Исследуйте",
+      "section" : {
+        "recentlyUsed" : "Недавние",
+        "browse" : "Посмотреть"
+      },
+      "filter" : {
+        "categories" : "Категории"
+      },
       "branch" : {
-        "soon" : "уже скоро",
-        "experimental" : "экспериментальная функция",
-        "debug" : "отладка"
+        "soon" : "Скоро",
+        "experimental" : "Экспериментальный режим",
+        "debug" : "Отладка"
       },
       "banner" : {
         "title" : "Исследуйте наш Каталог приложений",
@@ -47,6 +54,11 @@
         "title" : "Для разработчиков",
         "description" : "Информация о том, как интегрировать собственные приложения в Ledger Live.",
         "button" : "Перейти в Портал"
+      },
+      "warnings" : {
+        "notFound" : "Ничего нет",
+        "retrySearchKeyword" : "Повторите поиск по другому запросу.",
+        "retrySearchKeywordAndUrl" : "Повторите поиск с другим запросом или откройте <Link>{{search}}</Link> вне приложения Ledger Live."
       }
     },
     "disclaimer" : {
@@ -129,7 +141,8 @@
     "info" : "Информация",
     "connectDevice" : "Подключите устройство",
     "add" : "Добавить",
-    "or" : "ИЛИ"
+    "or" : "ИЛИ",
+    "clearAll" : "Очистить все"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -1951,7 +1964,7 @@
         "osu" : "Устанавливаем обновление ОС...",
         "flash-mcu" : "Обновление микроконтроллера...",
         "flash-bootloader" : "Обновляем Bootloader...",
-        "progress" : "Installing update {{current}}/{{total}}",
+        "progress" : "Установка обновления: {{current}}/{{total}}",
         "firmware" : "Обновляем прошивку...",
         "flash" : "Готовим ваше устройство..."
       },
@@ -2276,6 +2289,7 @@
     "renamed" : "Название {{ productName }} изменено на\n«{{ name }}» "
   },
   "removeCustomLockscreen" : {
+    "title" : "Remove lock screen picture",
     "cta" : "Удалить",
     "confirmation" : "Подтвердите удаление изображения на Ledger Stax",
     "success" : "Изображение экрана блокировки удалено"
@@ -5093,8 +5107,8 @@
       "description" : "Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
-      "title" : "Restoration of Language was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Восстановление языка отменено на Ledger Stax",
+      "description" : "Если это произошло по ошибке, перезапустите его или пропустите данный этап."
     },
     "LanguageNotFound" : {
       "title" : "Язык не найден",
@@ -5276,8 +5290,8 @@
       "title" : "Использование «Мой Ledger» отклонено на устройстве"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "Update was cancelled on device",
-      "description" : "The installation of OS update was refused on your device. If this was a mistake, restart the update."
+      "title" : "Обновление отменено на устройстве",
+      "description" : "Обновление ОС прервано на устройстве. Если это произошло по ошибке, перезапустите его."
     },
     "UserRefusedOnDevice" : {
       "title" : "Действие отклонено",
@@ -5662,13 +5676,17 @@
       "title" : "Экран блокировки отключён на Ledger Stax",
       "description" : "Если это изображение не подошло, вы можете попробовать другое."
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description" : "The customized lock screen picture was previously removed."
+    },
     "RestoreImageCommitRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Восстановление картинки экрана блокировки отменено на Ledger Stax",
+      "description" : "Если это произошло по ошибке, перезапустите его или пропустите данный этап."
     },
     "RestoreImageLoadRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Восстановление картинки экрана блокировки отменено на Ledger Stax",
+      "description" : "Если это произошло по ошибке, перезапустите его или пропустите данный этап."
     },
     "NearNewAccountWarning" : {
       "title" : "Адрес получателя ещё не создан. Для его создания протокол требует перевод {{formattedNewAccountStorageCost}}."
@@ -5828,5 +5846,14 @@
     "description" : "Ваша секретная фраза восстановления не всегда будет под рукой.\nМягкий запуск только для Ledger Nano X. Бесплатная подписка до 30 июня 2023 года",
     "cta" : "Почему мне стоит подписаться?",
     "downloadLLM" : "Подпишитесь на <purple>Ledger Recover</purple> в мобильном приложении Ledger Live"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "Ошибка сети",
+      "subtitle" : "Что-то пошло не так. Пожалуйста, попробуйте ещё раз. Если проблема повторяется, сохраните логи и свяжитесь с Поддержкой Ledger.",
+      "tryAgain" : "Попробовать ещё раз",
+      "contactSupport" : "Связаться с Поддержкой",
+      "saveLog" : "Сохранить логи"
+    }
   }
 }
