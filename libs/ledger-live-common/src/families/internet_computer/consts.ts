@@ -7,5 +7,5 @@ export const ICP_NET_ID_ROSETTA = "00000000000000020101";
 // Mac ICP fees
 export const ICP_FEES = 1e4;
 
-// Max transferId value on ICP network
-export const MAX_MEMO_VALUE = "9223372036854775807";
+// Max Memo value on ICP network
+export const MAX_MEMO_VALUE = Number.MAX_SAFE_INTEGER;
