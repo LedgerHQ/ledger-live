@@ -24,19 +24,6 @@ const PostOnboardingHubTester = () => {
           onClick={() =>
             handleInitPostOnboarding({
               deviceModelId: DeviceModelId.stax,
-              mock: false,
-              fallbackIfNoAction: () => history.push("/"),
-            })
-          }
-          primary
-        >
-          {t("postOnboardingDebugger.buttonTitle")}
-        </Button>
-        <Button
-          data-test-id="postonboarding-tester-button"
-          onClick={() =>
-            handleInitPostOnboarding({
-              deviceModelId: DeviceModelId.stax,
               mock: true,
               fallbackIfNoAction: () => history.push("/"),
             })
@@ -44,6 +31,18 @@ const PostOnboardingHubTester = () => {
           primary
         >
           {t("postOnboardingDebugger.buttonTitle")} (mock)
+        </Button>
+        <Button
+          onClick={() =>
+            handleInitPostOnboarding({
+              deviceModelId: DeviceModelId.stax,
+              mock: false,
+              fallbackIfNoAction: () => history.push("/"),
+            })
+          }
+          primary
+        >
+          {t("postOnboardingDebugger.buttonTitle")}
         </Button>
       </Flex>
     </SettingsSectionRow>
