@@ -3,12 +3,9 @@ import { deviceInfo155, mockListAppsResult } from "./mock";
 import type { FilterOptions, SortOptions } from "./filtering";
 import { sortFilterApps } from "./filtering";
 import { setSupportedCurrencies } from "../currencies/index";
-import { setPlatformVersion } from "../platform/version";
-import { PLATFORM_VERSION } from "../platform/constants";
 import { WALLET_API_VERSION } from "../wallet-api/constants";
 import { setWalletAPIVersion } from "../wallet-api/version";
 
-setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 type FilteringScenario = {

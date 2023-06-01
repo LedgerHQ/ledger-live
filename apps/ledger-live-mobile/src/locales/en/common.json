@@ -1197,7 +1197,8 @@
       "terms": "By tapping “Get Started” you consent and agree to our",
       "termsLink": "Terms of Service",
       "privacyLink": "Privacy Policy",
-      "and": "and"
+      "and": "and",
+      "recoverLogIn": "Log in for Ledger Recover"
     },
     "stepDoYouHaveALedgerDevice": {
       "title": "Do you own a Ledger?",
@@ -5993,9 +5994,10 @@
       "txDetails": "Transaction details"
     },
     "modalDisabled": {
-      "title": "Send function not available",
+      "title": "Send function is not available on iOS",
       "body": "In order to comply with Apple's recent updates on their App Store, sending NFTs is temporary unavailable. You can still use Ledger Live on Desktop to send NFTs.",
-      "contactSupport": "Please read our support article for more information."
+      "learnMore": "Learn more",
+      "continue": "Got it!"
     }
   },
   "ApplicationVersion": "v{{version}}",
@@ -6168,20 +6170,6 @@
             "alreadySubscribed": "Already logged in? <LinkAccount>View my subscription</LinkAccount>"
           }
         }
-      }
-    }
-  },
-  "protect": {
-    "login": {
-      "title": "Log In",
-      "desc": "Log in with your Ledger account to manage your Protect subscription.",
-      "email": "Email",
-      "password": "Password",
-      "cta": "Login",
-      "forgotPassword": "Forgot password?",
-      "errors": {
-        "emptyEmail": "Email cannot be empty",
-        "emptyPassword": "Password cannot be empty"
       }
     }
   },

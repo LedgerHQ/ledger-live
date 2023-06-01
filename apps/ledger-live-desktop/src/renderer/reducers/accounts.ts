@@ -73,7 +73,7 @@ export const accountsSelector = (state: { accounts: AccountsState }): Account[] 
 const accountHash = (a: AccountLike) =>
   `${a.type === "Account" ? a.name : ""}-${a.id}${
     a.starred ? "-*" : ""
-  }-${a.balance.toString()}-swapHistory(${a.swapHistory.length})`;
+  }-${a.balance.toString()}-swapHistory(${a.swapHistory?.length || "0"})`;
 const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b) =>
   isEqual(flattenAccounts(a).map(accountHash), flattenAccounts(b).map(accountHash)),
 );

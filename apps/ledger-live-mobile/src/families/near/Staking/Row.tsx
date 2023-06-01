@@ -5,7 +5,7 @@ import { NearMappedStakingPosition } from "@ledgerhq/live-common/families/near/t
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 
 import CounterValue from "../../../components/CounterValue";
 import ArrowRight from "../../../icons/ArrowRight";
