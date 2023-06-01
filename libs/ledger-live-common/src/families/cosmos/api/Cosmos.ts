@@ -33,6 +33,7 @@ export class CosmosAPI {
     redelegations: CosmosRedelegation[];
     unbondings: CosmosUnbonding[];
     withdrawAddress: string;
+    denomTraces: { [denom: string]: string };
   }> => {
     try {
       const [
@@ -53,6 +54,19 @@ export class CosmosAPI {
         this.getWithdrawAddress(address),
       ]);
 
+      const validDenoms: string[] = balances
+        .map(({ denom }) => denom)
+        .filter((d) => d.includes("ibc/"));
+
+      const queries = validDenoms.map((denom) => this.getDenomTrace(denom));
+      const denomValues = await Promise.all(queries);
+
+      let map = {};
+
+      denomValues.forEach((val) => {
+        map[val.denom_hash] = val.base_denom;
+      });
+
       return {
         balances,
         blockHeight,
@@ -61,6 +75,7 @@ export class CosmosAPI {
         redelegations,
         unbondings,
         withdrawAddress,
+        denomTraces: map,
       };
     } catch (e) {
       throw new Error(
@@ -125,6 +140,19 @@ export class CosmosAPI {
       denom,
       amount: new BigNumber(amount),
     }));
+  };
+
+  getDenomTrace = async (
+    denom: string
+  ): Promise<{ base_denom: string; path: string; denom_hash: string }> => {
+    const { data } = await network({
+      method: "GET",
+      url: `${
+        this.defaultEndpoint
+      }/ibc/apps/transfer/v1/denom_traces/${denom.replace("ibc/", "")}`,
+    });
+
+    return { ...data.denom_trace, denom_hash: denom };
   };
 
   getDelegations = async (

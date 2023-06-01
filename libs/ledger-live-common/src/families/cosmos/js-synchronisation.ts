@@ -18,8 +18,6 @@ import type {
 import { getMainMessage } from "./helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-
-
 const getBlankOperation = (tx, fees, id) => ({
   id: "",
   hash: tx.txhash,
@@ -185,6 +183,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     redelegations,
     unbondings,
     withdrawAddress,
+    denomTraces,
   } = await new CosmosAPI(currency.id).getAccountInfo(address, currency);
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);
@@ -193,25 +192,28 @@ export const getAccountShape: GetAccountShape = async (info) => {
   let pendingRewardsBalance = new BigNumber(0);
   let unbondingBalance = new BigNumber(0);
 
+  console.log(denomTraces);
+
   let balance = new BigNumber(0);
 
-  let subAccounts: SubAccount[]=[];
+  let subAccounts: SubAccount[] = [];
 
   for (const elem of balances) {
     if (elem.denom === currency.units[1].code) {
       balance = balance.plus(elem.amount);
     } else {
-      if (!(elem.denom.indexOf("ibc") === 0))
-      {
+      if (!(elem.denom.indexOf("ibc") === 0)) {
         continue;
       }
       //if (subAccounts === undefined) subAccounts = [];
-      const tokenName = elem.denom.replace('/', '').substring(0,8);
+      const tokenName = elem.denom.replace("/", "").substring(0, 8);
+      const tokenNameWithoutIbc = elem.denom.replace("ibc/", "");
       console.log("tokenName: " + tokenName);
-      const tokenCurrency: TokenCurrency =
-      {
-        id : elem.denom.substring(4),
-        name: tokenName,
+      const tokenCurrency: TokenCurrency = {
+        id: elem.denom.substring(4),
+        name: denomTraces[elem.denom]
+          ? denomTraces[elem.denom]
+          : tokenNameWithoutIbc,
         units: [
           {
             name: tokenName,
@@ -225,7 +227,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
         parentCurrency: currency,
         type: "TokenCurrency",
       };
-      const subAccount:TokenAccount={
+      const subAccount: TokenAccount = {
         type: "TokenAccount",
         token: tokenCurrency,
         parentId: accountId,
