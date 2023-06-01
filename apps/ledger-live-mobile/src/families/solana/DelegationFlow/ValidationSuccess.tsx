@@ -16,7 +16,11 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { SolanaDelegationFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import { getTrackingDelegationType, getTrackingSource } from "../../helpers";
+import {
+  getCurrencyTickerFromAccount,
+  getTrackingDelegationType,
+  getTrackingSource,
+} from "../../helpers";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -29,23 +33,14 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
-  const validator = useMemo(
-    () => route.params.validator?.name ?? "unknown",
-    [route.params.validator?.name],
-  );
-
-  const source = useMemo(
-    () =>
-      getTrackingSource({
-        state: navigation.getParent()?.getState() ?? navigation.getState(),
-      }),
-    [navigation],
-  );
-
-  const delegation = useMemo(
-    () => getTrackingDelegationType({ type: route.params.result.type }),
-    [route.params.result.type],
-  );
+  const validator = route.params.validatorName ?? "unknown";
+  const source = getTrackingSource({
+    state: navigation.getParent()?.getState() ?? navigation.getState(),
+  });
+  const delegation = getTrackingDelegationType({
+    type: route.params.result.type,
+  });
+  const currency = getCurrencyTickerFromAccount({ account, fallback: "SOL" });
 
   const onClose = useCallback(() => {
     navigation
@@ -56,12 +51,12 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   useEffect(() => {
     if (delegation)
       track("staking_completed", {
-        currency: "SOL",
+        currency,
         validator,
         source,
         delegation,
       });
-  }, [source, validator, delegation]);
+  }, [source, validator, delegation, currency]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

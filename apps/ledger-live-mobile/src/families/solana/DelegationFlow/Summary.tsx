@@ -166,7 +166,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
       parentId: parentAccount?.id,
       transaction: transaction as SolanaTransaction,
       status,
-      validator: chosenValidator,
+      validatorName: chosenValidator?.name,
     });
   }, [
     navigation,

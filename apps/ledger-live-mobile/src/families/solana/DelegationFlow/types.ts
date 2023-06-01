@@ -64,7 +64,7 @@ export type SolanaDelegationFlowParamList = {
     parentId?: string;
     transaction: Transaction;
     status: TransactionStatus;
-    validator?: ValidatorsAppValidator;
+    validatorName?: ValidatorsAppValidator["name"];
   };
   [ScreenName.DelegationValidationSuccess]: {
     accountId: string;
@@ -72,7 +72,7 @@ export type SolanaDelegationFlowParamList = {
     deviceId: string;
     transaction: Transaction;
     result: Operation;
-    validator?: ValidatorsAppValidator;
+    validatorName?: ValidatorsAppValidator["name"];
   };
   [ScreenName.DelegationValidationError]: {
     accountId: string;
