@@ -206,14 +206,13 @@ export const getAccountShape: GetAccountShape = async (info) => {
         continue;
       }
       //if (subAccounts === undefined) subAccounts = [];
-      const tokenName = elem.denom.replace("/", "").substring(0, 8);
       const tokenNameWithoutIbc = elem.denom.replace("ibc/", "");
-      console.log("tokenName: " + tokenName);
+      const tokenName = denomTraces[elem.denom]
+        ? denomTraces[elem.denom]
+        : tokenNameWithoutIbc;
       const tokenCurrency: TokenCurrency = {
         id: elem.denom.substring(4),
-        name: denomTraces[elem.denom]
-          ? denomTraces[elem.denom]
-          : tokenNameWithoutIbc,
+        name: tokenName,
         units: [
           {
             name: tokenName,
