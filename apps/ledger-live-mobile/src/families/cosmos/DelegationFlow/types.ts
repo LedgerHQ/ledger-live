@@ -42,6 +42,7 @@ export type CosmosDelegationFlowParamList = {
     parentId?: string;
     transaction?: Transaction;
     status?: TransactionStatus;
+    validatorName?: CosmosValidatorItem["name"];
   };
   [ScreenName.CosmosDelegationConnectDevice]: {
     device: Device;
@@ -67,5 +68,6 @@ export type CosmosDelegationFlowParamList = {
     deviceId: string;
     transaction: Transaction;
     result: Operation;
+    validatorName?: CosmosValidatorItem["name"];
   };
 };

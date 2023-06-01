@@ -4,6 +4,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type {
   Account,
+  AccountLike,
   DomainServiceResolution,
   OperationType,
 } from "@ledgerhq/types-live";
@@ -103,4 +104,17 @@ export function getTrackingDelegationType({ type }: { type: OperationType }) {
     default:
       return undefined;
   }
+}
+
+export function getCurrencyTickerFromAccount({
+  account,
+  fallback,
+}: {
+  account?: AccountLike;
+  fallback: string;
+}) {
+  if (account && "currency" in account && account.currency) {
+    return account.currency.ticker;
+  }
+  return fallback;
 }

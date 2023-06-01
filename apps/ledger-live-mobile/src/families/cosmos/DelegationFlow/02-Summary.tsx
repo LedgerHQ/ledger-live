@@ -206,8 +206,16 @@ export default function DelegationSummary({ navigation, route }: Props) {
       parentId: parentAccount?.id,
       transaction,
       status,
+      validatorName: chosenValidator.name,
     });
-  }, [navigation, account.id, parentAccount?.id, transaction, status]);
+  }, [
+    navigation,
+    account.id,
+    parentAccount?.id,
+    transaction,
+    status,
+    chosenValidator.name,
+  ]);
 
   const hasErrors = Object.keys(status.errors).length > 0;
 
