@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useAllPostOnboardingActionsCompleted } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import PostOnboardingHub from ".";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import { track } from "~/renderer/analytics/segment";
 
 const PostOnboardingHubContent = () => {
   const { t } = useTranslation();
@@ -12,6 +13,7 @@ const PostOnboardingHubContent = () => {
   const allDone = useAllPostOnboardingActionsCompleted();
 
   const handleSkipButton = useCallback(() => {
+    track("button_clicked", { button: "I'll do this later", flow: "post-onboarding" });
     history.push("/");
   }, [history]);
 

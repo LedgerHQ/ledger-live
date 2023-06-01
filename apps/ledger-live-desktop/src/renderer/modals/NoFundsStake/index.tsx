@@ -12,7 +12,7 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import CoinsIcon from "./assets/CoinsIcon";
-import { page, track } from "~/renderer/analytics/segment";
+import { trackPage, track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -108,7 +108,7 @@ const NoFundsStakeModal = ({ account, parentAccount }: NoFundsStakeModalProps) =
   }, [dispatch]);
 
   useEffect(() => {
-    page("Stake", "Service_modal", {
+    trackPage("Stake", "Service_modal", {
       source: history.location.pathname,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -3,6 +3,7 @@ import { context, State } from "./Provider";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import styled from "styled-components";
 import { Transition, TransitionGroup, TransitionStatus } from "react-transition-group";
+import { useTrack } from "../analytics/segment";
 const transitionStyles = {
   entering: {},
   entered: {
@@ -57,7 +58,11 @@ export const Drawer = () => {
       if (t) clearTimeout(t);
     };
   }, [queue]);
-  const onRequestClose = useCallback(() => setDrawer(), [setDrawer]);
+  const track = useTrack();
+  const onRequestClose = useCallback(() => {
+    track("button_clicked", { button: "Close" });
+    setDrawer();
+  }, [setDrawer, track]);
   return (
     <SideDrawer
       isOpen={!!state.open}
