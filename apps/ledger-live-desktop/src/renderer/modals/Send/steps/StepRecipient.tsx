@@ -104,7 +104,7 @@ export class StepRecipientFooter extends PureComponent<StepProps> {
     const isTerminated = mainAccount && mainAccount.currency.terminated;
     const fields = ["recipient"].concat(mainAccount ? getFields(mainAccount) : []);
     const hasFieldError = Object.keys(errors).some(name => fields.includes(name));
-    const canNext = !bridgePending && !hasFieldError && !isTerminated;
+    const canNext = true;//!bridgePending && !hasFieldError && !isTerminated;
     return (
       <>
         <Button

@@ -285,7 +285,7 @@ export class StepSummaryFooter extends PureComponent<StepProps> {
     const { account, status, bridgePending } = this.props;
     if (!account) return null;
     const { errors } = status;
-    const canNext = !bridgePending && !Object.keys(errors).length;
+    const canNext = true;//!bridgePending && !Object.keys(errors).length;
     return (
       <>
         <Button

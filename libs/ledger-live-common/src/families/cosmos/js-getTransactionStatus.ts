@@ -164,7 +164,7 @@ export class CosmosTransactionStatusManager {
       errors.fees = new FeeNotLoaded();
     }
     const amount = t.useAllAmount
-      ? getMaxEstimatedBalance(a, estimatedFees)
+      ? getMaxEstimatedBalance(a, estimatedFees, t)
       : t.amount;
     const totalSpent = amount.plus(estimatedFees);
 
@@ -235,7 +235,7 @@ export class CosmosTransactionStatusManager {
       errors.fees = new FeeNotLoaded();
     }
 
-    amount = t.useAllAmount ? getMaxEstimatedBalance(a, estimatedFees) : amount;
+    amount = t.useAllAmount ? getMaxEstimatedBalance(a, estimatedFees, t) : amount;
     const totalSpent = amount.plus(estimatedFees);
 
     if (

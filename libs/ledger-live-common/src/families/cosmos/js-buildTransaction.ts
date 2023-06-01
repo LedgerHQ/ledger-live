@@ -42,9 +42,27 @@ export const buildTransaction = async (
 ): Promise<{ aminoMsgs: AminoMsg[]; protoMsgs: ProtoMsg[] }> => {
   const aminoMsgs: Array<AminoMsg> = [];
   const protoMsgs: Array<ProtoMsg> = [];
+
   switch (transaction.mode) {
     case "send":
       if (transaction.recipient && transaction.amount.gt(0)) {
+        let ibcDenom = "";
+        if (transaction.subAccountId && account.subAccounts) {
+          console.log(account.subAccounts);
+          console.log(transaction.subAccountId);
+          account.subAccounts.forEach((a) => {
+            if (a.id === transaction.subAccountId) {
+              console.log("subaccount found");
+              ibcDenom = a.id;
+              //get the substring of ibcDenom after the last ":" character
+              ibcDenom = ibcDenom.substring(ibcDenom.lastIndexOf(":") + 1);
+              ibcDenom = "ibc/" + ibcDenom;
+              console.log(ibcDenom);
+            }
+          }
+          );
+        }
+
         const aminoMsg: AminoMsgSend = {
           type: "cosmos-sdk/MsgSend",
           value: {
@@ -52,7 +70,7 @@ export const buildTransaction = async (
             to_address: transaction.recipient,
             amount: [
               {
-                denom: account.currency.units[1].code,
+                denom: ibcDenom? ibcDenom : account.currency.units[1].code,
                 amount: transaction.amount.toString(),
               },
             ],
@@ -68,7 +86,7 @@ export const buildTransaction = async (
             toAddress: transaction.recipient,
             amount: [
               {
-                denom: account.currency.units[1].code,
+                denom: ibcDenom? ibcDenom : account.currency.units[1].code,
                 amount: transaction.amount.toString(),
               },
             ],

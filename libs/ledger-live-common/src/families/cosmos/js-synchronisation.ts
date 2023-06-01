@@ -206,18 +206,20 @@ export const getAccountShape: GetAccountShape = async (info) => {
         continue;
       }
       //if (subAccounts === undefined) subAccounts = [];
+      const tokenName = elem.denom.replace('/', '').substring(0,8);
+      console.log("tokenName: " + tokenName);
       const tokenCurrency: TokenCurrency =
       {
-        id :elem.denom.replace('/', ''), // remove the '/'
-        name: elem.denom,
+        id : elem.denom.substring(4),
+        name: tokenName,
         units: [
           {
-            name: elem.denom,
-            code: elem.denom,
+            name: tokenName,
+            code: tokenName,
             magnitude: 6,
           },
         ],
-        ticker: elem.denom.replace('/', ''),
+        ticker: tokenName,
         tokenType: "IPC-token",
         contractAddress: "elem.denom",
         parentCurrency: currency,
@@ -227,7 +229,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
         type: "TokenAccount",
         token: tokenCurrency,
         parentId: accountId,
-        id: accountId + ":" + elem.denom.replace('/', ''),
+        id: accountId + ":" + elem.denom.substring(4),
         balance: new BigNumber(elem.amount),
         spendableBalance: new BigNumber(elem.amount),
         creationDate: new Date(),

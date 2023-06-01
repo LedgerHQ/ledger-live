@@ -108,7 +108,6 @@ export const prepareTransaction = async (
 ): Promise<Transaction> => {
   let memo = transaction.memo;
   let amount = transaction.amount;
-
   if (transaction.mode !== "send" && !transaction.memo) {
     memo = "Ledger Live";
   }
@@ -123,9 +122,8 @@ export const prepareTransaction = async (
       memo,
     },
   });
-
   if (transaction.useAllAmount) {
-    amount = getMaxEstimatedBalance(account as CosmosAccount, estimatedFees);
+    amount = getMaxEstimatedBalance(account as CosmosAccount, estimatedFees, transaction);
   }
 
   if (

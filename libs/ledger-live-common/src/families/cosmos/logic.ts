@@ -145,8 +145,21 @@ export function getMaxDelegationAvailable(
 }
 export const getMaxEstimatedBalance = (
   a: CosmosAccount,
-  estimatedFees: BigNumber
+  estimatedFees: BigNumber,
+  transaction: any
 ): BigNumber => {
+  let resAmount = new BigNumber(0);
+  if (transaction.subAccountId && a.subAccounts) {
+    a.subAccounts.forEach((sa) => {
+      if (sa.id === transaction.subAccountId) {
+        resAmount = sa.balance;
+      }
+    }
+    );
+  }
+  if (resAmount.gt(0)) {
+    return resAmount;
+  }
   const { cosmosResources } = a;
   let blockBalance = new BigNumber(0);
 
