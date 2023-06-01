@@ -22,7 +22,6 @@ const tokensById: Record<string, TokenCurrency> = {};
 const tokensByTicker: Record<string, TokenCurrency> = {};
 const tokensByAddress: Record<string, TokenCurrency> = {};
 const tokensByCurrencyAddress: Record<string, TokenCurrency> = {};
-const tokenListHashes = new Set();
 addTokens(erc20tokens.map(convertERC20));
 addTokens(polygonTokens.map(convertERC20));
 addTokens(trc10tokens.map(convertTRONTokens("trc10")));
@@ -39,37 +38,6 @@ type TokensListOptions = {
 const defaultTokenListOptions: TokensListOptions = {
   withDelisted: false,
 };
-export function createTokenHash(token: TokenCurrency): string {
-  return token
-    ? `${token.id}${token.contractAddress}${token.delisted}${token.disableCountervalue}${token.ticker}${token.countervalueTicker}${token.ledgerSignature}`
-    : "";
-}
-
-/**
- * Only for jest purpose, clean object to be empty
- * @param obj
- */
-const __clearObject = (
-  obj: Record<string, TokenCurrency | TokenCurrency[]>
-): void => {
-  for (const key in obj) {
-    delete obj[key];
-  }
-};
-/**
- * Only for jest purpose, clear all the init list
- */
-export function __clearAllLists(): void {
-  tokensArray.length = 0;
-  tokensArrayWithDelisted.length = 0;
-  __clearObject(tokensByCryptoCurrency);
-  __clearObject(tokensByCryptoCurrencyWithDelisted);
-  __clearObject(tokensById);
-  __clearObject(tokensByTicker);
-  __clearObject(tokensByAddress);
-  __clearObject(tokensByCurrencyAddress);
-  tokenListHashes.clear();
-}
 
 /**
  *
@@ -172,75 +140,23 @@ function comparePriority(a: TokenCurrency, b: TokenCurrency) {
   return Number(!!b.disableCountervalue) - Number(!!a.disableCountervalue);
 }
 
-function removeTokenFromArray(array: TokenCurrency[], tokenId: string) {
-  if (array && array.length > 0) {
-    const index = array.findIndex(
-      (currentToken) => currentToken && currentToken.id === tokenId
-    );
-    if (index === -1) return array;
-    return array.splice(index, 1);
-  }
-}
-
-function removeTokenFromRecord(
-  record: Record<string, TokenCurrency>,
-  key: string
-) {
-  tokenListHashes.delete(record[key]);
-  delete record[key];
-}
-
-/**
- * Delete previous token entry to all array
- * @param token
- */
-function removeTokenFromAllLists(token: TokenCurrency) {
-  const { id, contractAddress, parentCurrency, ticker } = token;
-  const lowCaseContract = contractAddress.toLowerCase();
-
-  removeTokenFromRecord(tokensById, id);
-  removeTokenFromRecord(
-    tokensByCurrencyAddress,
-    parentCurrency.id + ":" + lowCaseContract
-  );
-  removeTokenFromRecord(tokensByAddress, lowCaseContract);
-  removeTokenFromRecord(tokensByTicker, ticker);
-  removeTokenFromArray(tokensArray, id);
-  removeTokenFromArray(tokensArrayWithDelisted, id);
-  removeTokenFromArray(tokensByCryptoCurrency[parentCurrency.id], id);
-  removeTokenFromArray(
-    tokensByCryptoCurrencyWithDelisted[parentCurrency.id],
-    id
-  );
-}
-
 export function addTokens(list: TokenCurrency[]): void {
   list.forEach((token) => {
-    if (!token) return;
-    const tokenHash = createTokenHash(token);
-    if (tokenListHashes.has(tokenHash)) return;
-
-    /**
-     * We clean all the reference of an existing token, if an hash doesn't  match.
-     * Like this we can update any change from a already added token coming from Dynamic CAL
-     * and maintain it up to date without having to release a new version of LLD or LLM
-     */
-    removeTokenFromAllLists(token);
-    const { id, contractAddress, parentCurrency, delisted, ticker } = token;
-    const lowCaseContract = contractAddress.toLowerCase();
-
-    if (!delisted) tokensArray.push(token);
+    if (tokensById[token.id]) return;
+    if (!token.delisted) tokensArray.push(token);
     tokensArrayWithDelisted.push(token);
-    tokensById[id] = token;
+    tokensById[token.id] = token;
 
     if (
-      !tokensByTicker[ticker] ||
-      comparePriority(token, tokensByTicker[ticker]) > 0
+      !tokensByTicker[token.ticker] ||
+      comparePriority(token, tokensByTicker[token.ticker]) > 0
     ) {
-      tokensByTicker[ticker] = token;
+      tokensByTicker[token.ticker] = token;
     }
 
+    const lowCaseContract = token.contractAddress.toLowerCase();
     tokensByAddress[lowCaseContract] = token;
+    const { parentCurrency } = token;
     tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract] = token;
 
     if (!(parentCurrency.id in tokensByCryptoCurrency)) {
@@ -251,10 +167,8 @@ export function addTokens(list: TokenCurrency[]): void {
       tokensByCryptoCurrencyWithDelisted[parentCurrency.id] = [];
     }
 
-    if (!delisted) tokensByCryptoCurrency[parentCurrency.id].push(token);
+    if (!token.delisted) tokensByCryptoCurrency[parentCurrency.id].push(token);
     tokensByCryptoCurrencyWithDelisted[parentCurrency.id].push(token);
-
-    tokenListHashes.add(tokenHash);
   });
 }
 

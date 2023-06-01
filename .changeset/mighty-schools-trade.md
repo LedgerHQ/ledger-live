@@ -2,4 +2,4 @@
 "@ledgerhq/cryptoassets": minor
 ---
 
-Allow addtoken to replace existing token
+revert crypto asset dyn cal change
