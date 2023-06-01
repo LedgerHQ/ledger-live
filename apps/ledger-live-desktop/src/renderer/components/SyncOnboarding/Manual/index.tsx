@@ -451,7 +451,7 @@ const SyncOnboardingManual = ({ deviceModelId: strDeviceModelId }: SyncOnboardin
         };
       }),
     );
-  }, [stepKey, defaultSteps, handleDeviceReady]);
+  }, [stepKey, defaultSteps, handleDeviceReady, productName]);
 
   useEffect(() => {
     if (!fatalError) {
