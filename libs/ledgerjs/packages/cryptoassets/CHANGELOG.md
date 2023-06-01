@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.7.0-next.1
+
+### Minor Changes
+
+- [#3564](https://github.com/LedgerHQ/ledger-live/pull/3564) [`30bf4d92c7`](https://github.com/LedgerHQ/ledger-live/commit/30bf4d92c7d79cb81b1e4ad014857459739c33be) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - revert crypto asset dyn cal change
+
 ## 9.7.0-next.0
 
 ### Minor Changes

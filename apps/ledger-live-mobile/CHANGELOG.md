@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.24.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.3.5-next.1
+  - @ledgerhq/domain-service@1.1.3-next.1
+  - @ledgerhq/live-common@31.0.0-next.1
+
 ## 3.24.0-next.0
 
 ### Minor Changes

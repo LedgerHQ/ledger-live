@@ -1,5 +1,14 @@
 # @ledgerhq/live-cli
 
+## 22.9.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`30bf4d92c7`](https://github.com/LedgerHQ/ledger-live/commit/30bf4d92c7d79cb81b1e4ad014857459739c33be)]:
+  - @ledgerhq/cryptoassets@9.7.0-next.1
+  - @ledgerhq/coin-framework@0.3.5-next.1
+  - @ledgerhq/live-common@31.0.0-next.1
+
 ## 22.9.0-next.0
 
 ### Minor Changes
