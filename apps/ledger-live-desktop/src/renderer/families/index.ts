@@ -9,7 +9,7 @@ export function getLLDCoinFamily<
 >(name: string): LLDCoinFamily<A, T, TS> {
   const f = generated[name as keyof typeof generated];
   if (!f) {
-    throw new Error(`family ${name} not found`);
+    return {};
   }
   return f as LLDCoinFamily<A, T, TS>;
 }
