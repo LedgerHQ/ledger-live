@@ -1,6 +1,6 @@
-import { Box, Flex, PixelRatio } from "@ledgerhq/native-ui";
+import { Box, Flex } from "@ledgerhq/native-ui";
 import React, { ComponentProps, useContext } from "react";
-import { Image, ImageProps, StyleSheet } from "react-native";
+import { Image, ImageProps, StyleSheet, PixelRatio } from "react-native";
 import styled from "styled-components/native";
 import ForceTheme from "../theme/ForceTheme";
 import transferBackground from "./assets/transferBackground.png";
