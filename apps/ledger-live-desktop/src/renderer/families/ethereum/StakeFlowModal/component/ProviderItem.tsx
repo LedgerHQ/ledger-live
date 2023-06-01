@@ -49,11 +49,11 @@ const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvi
   const hasTag = i18n.exists(`ethereum.stake.${provider.id}.tag`);
 
   useEffect(() => {
-    redirectIfOnlyProvider({ provider, manifest });
+    if (manifest) redirectIfOnlyProvider({ provider, manifest });
   }, [redirectIfOnlyProvider, provider, manifest]);
 
   const stakeLink = useCallback(() => {
-    stakeOnClick({ provider, manifest });
+    if (manifest) stakeOnClick({ provider, manifest });
   }, [provider, stakeOnClick, manifest]);
 
   const infoLink = useCallback(
