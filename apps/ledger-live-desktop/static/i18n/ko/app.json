@@ -25,9 +25,16 @@
     },
     "catalog" : {
       "title" : "탐색",
+      "section" : {
+        "recentlyUsed" : "최근 사용된 항목",
+        "browse" : "둘러보기"
+      },
+      "filter" : {
+        "categories" : "카테고리"
+      },
       "branch" : {
         "soon" : "곧 출시 예정",
-        "experimental" : "실험적",
+        "experimental" : "실험",
         "debug" : "디버그"
       },
       "banner" : {
@@ -47,6 +54,11 @@
         "title" : "개발자용",
         "description" : "Ledger Live로 애플리케이션을 통합하는 데 필요한 모든 정보입니다.",
         "button" : "포털로 이동"
+      },
+      "warnings" : {
+        "notFound" : "찾을 수 없음",
+        "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
+        "retrySearchKeywordAndUrl" : "다른 키워드로 검색을 다시 시도하거나 Ledger Live 외부에서 <Link>{{search}}</Link>을 열어 주세요."
       }
     },
     "disclaimer" : {
@@ -60,7 +72,7 @@
   "common" : {
     "never" : "절대",
     "new" : "신규",
-    "skip" : "Skip",
+    "skip" : "건너뛰기",
     "apply" : "적용",
     "done" : "완료",
     "confirm" : "확인",
@@ -129,7 +141,8 @@
     "info" : "정보",
     "connectDevice" : "내 장치 연결하기",
     "add" : "추가",
-    "or" : "또는"
+    "or" : "또는",
+    "clearAll" : "모두 지우기"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -1951,7 +1964,7 @@
         "osu" : "OSU를 설치하는 중...",
         "flash-mcu" : "MCU 업데이트 중...",
         "flash-bootloader" : "부트로더 업데이트 중...",
-        "progress" : "Installing update {{current}}/{{total}}",
+        "progress" : "업데이트 {{current}}/{{total}} 설치 중",
         "firmware" : "펌웨어 업데이트 중...",
         "flash" : "장치 준비 중..."
       },
@@ -2276,6 +2289,7 @@
     "renamed" : "{{ productName }} 이름이 “{{ name }}”로 변경되었습니다 "
   },
   "removeCustomLockscreen" : {
+    "title" : "Remove lock screen picture",
     "cta" : "제거",
     "confirmation" : "Ledger Stax에서 이미지 삭제 확인",
     "success" : "잠금 화면 사진이 삭제됨"
@@ -5093,8 +5107,8 @@
       "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
-      "title" : "Restoration of Language was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Ledger Stax에서 언어 복구가 취소되었습니다.",
+      "description" : "실수로 취소한 경우 복구를 다시 시도하거나 이 단계를 건너뛸 수 있습니다."
     },
     "LanguageNotFound" : {
       "title" : "언어를 찾을 수 없습니다",
@@ -5276,8 +5290,8 @@
       "title" : "장치에서 내 Ledger가 거부됨"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "Update was cancelled on device",
-      "description" : "The installation of OS update was refused on your device. If this was a mistake, restart the update."
+      "title" : "장치의 업데이트가 취소되었습니다",
+      "description" : "장치에서 OS 업데이트 설치가 거부되었습니다. 실수로 거절한 경우, 업데이트를 다시 시작하세요."
     },
     "UserRefusedOnDevice" : {
       "title" : "거부된 조치",
@@ -5662,13 +5676,17 @@
       "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description" : "The customized lock screen picture was previously removed."
+    },
     "RestoreImageCommitRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Ledger Stax에서 잠금 화면 사진 복구가 취소되었습니다",
+      "description" : "실수로 취소한 경우 복구를 다시 시도하거나 이 단계를 건너뛸 수 있습니다."
     },
     "RestoreImageLoadRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Ledger Stax에서 잠금 화면 사진 복구가 취소되었습니다",
+      "description" : "실수로 취소한 경우 복구를 다시 시도하거나 이 단계를 건너뛸 수 있습니다."
     },
     "NearNewAccountWarning" : {
       "title" : "수령인 계정이 아직 생성되지 않았습니다. 프로토콜을 생성하려면 {{formattedNewAccountStorageCost}} 전송이 필요합니다."
@@ -5828,5 +5846,14 @@
     "description" : "비밀 복구 문구가 항상 사용자의 손이 닿는 곳에 있는 것은 아닙니다.\nLedger Nano X 전용 소프트 런칭. 2023년 6월 30일까지 무료 구독",
     "cta" : "구독이 왜 필요한가요?",
     "downloadLLM" : "Ledger Live 모바일 앱으로 <purple>Ledger Recover</purple> 구독"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "네트워크 오류",
+      "subtitle" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 로그를 저장하고 Ledger 지원 부서에 연락하세요.",
+      "tryAgain" : "다시 시도하세요",
+      "contactSupport" : "Ledger 지원 부서에 문의해주세요",
+      "saveLog" : "로그 저장"
+    }
   }
 }
