@@ -2276,6 +2276,7 @@
     "renamed" : "{{ productName }}の名前が\n「{{ name }}」に変更されました "
   },
   "removeCustomLockscreen" : {
+    "title" : "Remove lock screen picture",
     "cta" : "削除",
     "confirmation" : "Ledger Staxの画像の削除を確定する",
     "success" : "ロック画面の画像が削除されました"
@@ -3903,10 +3904,6 @@
         "scanForInvalidPaths" : {
           "title" : "拡張アカウント検索",
           "description" : "誤った派生パスを持つアカウントをスキャンする検出された資産は、通常のアカウントに送金してください。"
-        },
-        "experimentalCountervalues" : {
-          "title" : "実験的なカウンターバリューAPI",
-          "description" : "これにより、アカウントに表示されるカウンター値が不正確となる可能性があります。"
         },
         "experimentalExplorers" : {
           "title" : "試験的なエクスプローラーAPI",
@@ -5662,6 +5659,10 @@
       "title" : "Ledger Staxでロック画面がキャンセルされました",
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description" : "The customized lock screen picture was previously removed."
+    },
     "RestoreImageCommitRefusedOnDevice" : {
       "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
       "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
@@ -5828,5 +5829,14 @@
     "description" : "秘密のリカバリーフレーズは、安全に保管されなければなりません。\nLedger Nano X限定のソフトローンチ。2023年6月30日まで登録無料。",
     "cta" : "サブスクリプション契約のメリットとは？",
     "downloadLLM" : "Ledger Live Mobileアプリを使用して<purple>Ledger Recover</purple>のサブスクリプション契約をする"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "ネットワークエラー",
+      "subtitle" : "何か問題が発生しました。もう一度お試しください。問題が解決しない場合は、ログを保存し、Ledgerサポートにご連絡ください。",
+      "tryAgain" : "再試行",
+      "contactSupport" : "Ledgerサポートへ問い合わせ",
+      "saveLog" : "ログを保存"
+    }
   }
 }
