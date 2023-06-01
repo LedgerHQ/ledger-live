@@ -98,6 +98,13 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Main]:
     | (NavigatorScreenParams<MainNavigatorParamList> & {
         hideTabNavigation?: boolean;
+        drawer?: {
+          id: string;
+          props: {
+            singleProviderRedirectMode: boolean;
+            accountId: string;
+          };
+        };
       })
     | undefined;
   [NavigatorName.BuyDevice]:
@@ -113,9 +120,11 @@ export type BaseNavigatorStackParamList = {
     mode?: string;
     currency?: string;
     account?: string;
+    accountId?: string;
     defaultAccountId?: string;
     defaultCurrencyId?: string;
     defaultTicker?: string;
+    customDappURL?: string;
   };
   [ScreenName.Recover]: {
     platform?: string;
@@ -165,6 +174,13 @@ export type BaseNavigatorStackParamList = {
     parentId?: string;
     currencyId?: string;
     currencyType?: "CryptoCurrency" | "TokenCurrency";
+    drawer?: {
+      id: string;
+      props: {
+        singleProviderRedirectMode: boolean;
+        accountId: string;
+      };
+    };
   };
   [ScreenName.ScanRecipient]: {
     accountId?: string;
@@ -208,6 +224,13 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.MarketDetail]: {
     currencyId: string;
     resetSearchOnUmount?: boolean;
+    drawer?: {
+      id: string;
+      props: {
+        singleProviderRedirectMode: boolean;
+        accountId: string;
+      };
+    };
   };
 
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;

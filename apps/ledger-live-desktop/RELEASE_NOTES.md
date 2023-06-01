@@ -1,3 +1,13 @@
+# 2.60.0
+
+### 🚀 Features
+
+Those who want to buy crypto worth 50000€ and more can now use the OTC Desk and enjoy competitive rates, high liquidity, and personalized service.
+
+### 🐛 Fixes
+
+We fixed a few minor bugs.
+
 # 2.58.0
 
 This release features small security improvements, UI tweaks, and minor bug fixes.

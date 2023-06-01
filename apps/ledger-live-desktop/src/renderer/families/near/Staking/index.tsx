@@ -16,10 +16,8 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import IconChartLine from "~/renderer/icons/ChartLine";
 import { Header } from "./Header";
 import { Row } from "./Row";
-import {
-  FIGMENT_NEAR_VALIDATOR_ADDRESS,
-  canStake,
-} from "@ledgerhq/live-common/families/near/logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
+import { canStake } from "@ledgerhq/live-common/families/near/logic";
 import ToolTip from "~/renderer/components/Tooltip";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";

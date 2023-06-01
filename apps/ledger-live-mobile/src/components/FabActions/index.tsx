@@ -8,7 +8,7 @@ import React, {
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Box } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Linking, TouchableOpacityProps } from "react-native";
 import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
@@ -96,11 +96,24 @@ export const FabButtonBarProvider = ({
   const [isModalInfoOpened, setIsModalInfoOpened] = useState<boolean>();
 
   const navigation = useNavigation();
+  const route = useRoute();
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
+      if (options && "screen" in options && route.name === options.screen) {
+        // if current route is equal to the screen we want to go to then just update the params.
+        navigation.setParams({
+          ...(options
+            ? (options as { screen: string; params: object }).params
+            : {}),
+          ...navigationProps,
+        });
+        return;
+      }
       (
-        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
+        navigation as StackNavigationProp<{
+          [key: string]: object | undefined;
+        }>
       ).navigate(name, {
         ...options,
         params: {
@@ -109,7 +122,7 @@ export const FabButtonBarProvider = ({
         },
       });
     },
-    [navigation, navigationProps],
+    [navigation, navigationProps, route],
   );
 
   const onPress = useCallback(

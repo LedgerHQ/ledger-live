@@ -17,11 +17,11 @@ import type {
   NearMappedStakingPosition,
   NearAccount,
 } from "@ledgerhq/live-common/families/near/types";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import {
   canStake,
   canUnstake,
   canWithdraw,
-  FIGMENT_NEAR_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/near/logic";
 import { Account } from "@ledgerhq/types-live";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";

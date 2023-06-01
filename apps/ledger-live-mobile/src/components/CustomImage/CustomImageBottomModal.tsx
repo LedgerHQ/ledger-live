@@ -6,6 +6,7 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/staxRemoveImage";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import removeImage from "@ledgerhq/live-common/hw/staxRemoveImage";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import { NavigatorName, ScreenName } from "../../const";
 import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
 import ModalChoice from "./ModalChoice";
@@ -111,6 +112,17 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     });
   }, [setDeviceHasImage, wrappedOnClose, pushToast, t]);
 
+  const onError = useCallback(
+    error => {
+      if (error instanceof ImageDoesNotExistOnDevice) {
+        if (setDeviceHasImage) {
+          setDeviceHasImage(false);
+        }
+      }
+    },
+    [setDeviceHasImage],
+  );
+
   return (
     <QueuedDrawer
       isRequestingToBeOpened={!!isOpened}
@@ -130,6 +142,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
               request={request}
               action={action}
               onResult={onSuccess}
+              onError={onError}
             />
           </Flex>
         </Flex>

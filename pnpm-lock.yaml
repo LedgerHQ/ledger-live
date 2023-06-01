@@ -98,6 +98,9 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../libs/live-network
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/logs
@@ -226,6 +229,9 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../libs/live-network
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/logs
@@ -1612,6 +1618,136 @@ importers:
         specifier: ^4.9.5
         version: 4.9.5
 
+  libs/coin-evm:
+    dependencies:
+      '@ethersproject/shims':
+        specifier: ^5.7.0
+        version: 5.7.0
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/devices
+      '@ledgerhq/domain-service':
+        specifier: workspace:^
+        version: link:../domain-service
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-app-eth':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-eth
+      '@ledgerhq/live-app-sdk':
+        specifier: ^0.8.1
+        version: 0.8.1
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../live-network
+      '@ledgerhq/live-portfolio':
+        specifier: workspace:^
+        version: link:../live-portfolio
+      '@ledgerhq/live-promise':
+        specifier: workspace:^
+        version: link:../promise
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
+      '@polkadot/types':
+        specifier: 9.8.1
+        version: 9.8.1
+      '@polkadot/types-known':
+        specifier: 9.8.1
+        version: 9.8.1
+      '@polkadot/util':
+        specifier: 10.3.1
+        version: 10.3.1
+      '@polkadot/util-crypto':
+        specifier: 10.3.1
+        version: 10.3.1(@polkadot/util@10.3.1)
+      axios:
+        specifier: 0.26.1
+        version: 0.26.1
+      bignumber.js:
+        specifier: ^9.1.0
+        version: 9.1.0
+      eip55:
+        specifier: ^2.1.0
+        version: 2.1.0
+      ethers:
+        specifier: ^5.6.9
+        version: 5.7.0
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      react-native-get-random-values:
+        specifier: ^1.8.0
+        version: 1.8.0
+      rxjs:
+        specifier: ^6.6.7
+        version: 6.6.7
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.35
+      '@types/jest':
+        specifier: ^29.2.4
+        version: 29.5.0
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.14.191
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.46.1
+        version: 5.57.0(@typescript-eslint/parser@5.57.0)(eslint@7.32.0)(typescript@4.9.5)
+      '@typescript-eslint/parser':
+        specifier: ^5.46.1
+        version: 5.57.0(eslint@7.32.0)(typescript@4.9.5)
+      eslint:
+        specifier: ^7.32.0
+        version: 7.32.0
+      eslint-config-prettier:
+        specifier: ^8.3.0
+        version: 8.5.0(eslint@7.32.0)
+      eslint-config-typescript:
+        specifier: ^3.0.0
+        version: 3.0.0(@typescript-eslint/eslint-plugin@5.57.0)(@typescript-eslint/parser@5.57.0)(eslint@7.32.0)(typescript@4.9.5)
+      eslint-formatter-pretty:
+        specifier: ^3.0.1
+        version: 3.0.1
+      eslint-plugin-prettier:
+        specifier: ^3.4.0
+        version: 3.4.1(eslint-config-prettier@8.5.0)(eslint@7.32.0)(prettier@2.8.3)
+      eslint-plugin-typescript:
+        specifier: ^0.14.0
+        version: 0.14.0
+      jest:
+        specifier: ^28.1.1
+        version: 28.1.3
+      prettier:
+        specifier: ^2.8.1
+        version: 2.8.3
+      ts-jest:
+        specifier: ^28.0.5
+        version: 28.0.8(jest@28.1.3)(typescript@4.9.5)
+
   libs/coin-framework:
     dependencies:
       '@ledgerhq/compressjs':
@@ -2029,9 +2165,6 @@ importers:
       '@ethereumjs/tx':
         specifier: ^3.5.0
         version: 3.5.1
-      '@ethersproject/shims':
-        specifier: ^5.7.0
-        version: 5.7.0
       '@hashgraph/sdk':
         specifier: ^2.10.1
         version: 2.14.2(react-native@0.71.6)(react@17.0.2)
@@ -2044,6 +2177,9 @@ importers:
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-algorand
+      '@ledgerhq/coin-evm':
+        specifier: workspace:^
+        version: link:../coin-evm
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../coin-framework
@@ -2113,6 +2249,9 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../live-network
       '@ledgerhq/live-portfolio':
         specifier: workspace:^
         version: link:../live-portfolio
@@ -2278,9 +2417,6 @@ importers:
       expect:
         specifier: ^27.4.6
         version: 27.5.1
-      generic-pool:
-        specifier: ^3.8.2
-        version: 3.8.2
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -2299,9 +2435,6 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      lru-cache:
-        specifier: ^7.14.1
-        version: 7.14.1
       minimatch:
         specifier: ^5.1.0
         version: 5.1.0
@@ -2326,9 +2459,6 @@ importers:
       qs:
         specifier: ^6.10.1
         version: 6.10.3
-      react-native-get-random-values:
-        specifier: ^1.8.0
-        version: 1.8.0(react-native@0.71.6)
       redux:
         specifier: ^4.1.2
         version: 4.2.0
@@ -4185,6 +4315,73 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.7.0(@types/node@18.15.3)(source-map-support@0.5.21)(typescript@4.9.5)
+
+  libs/live-network:
+    dependencies:
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
+      '@ledgerhq/live-promise':
+        specifier: workspace:^
+        version: link:../promise
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/logs
+      '@types/node':
+        specifier: ^20.2.5
+        version: 20.2.5
+      axios:
+        specifier: 0.26.1
+        version: 0.26.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lru-cache:
+        specifier: ^7.14.1
+        version: 7.14.1
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.35
+        version: 2.2.35
+      '@types/jest':
+        specifier: ^29.2.4
+        version: 29.5.0
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.46.1
+        version: 5.57.0(@typescript-eslint/parser@5.57.0)(eslint@7.32.0)(typescript@4.9.5)
+      '@typescript-eslint/parser':
+        specifier: ^5.46.1
+        version: 5.57.0(eslint@7.32.0)(typescript@4.9.5)
+      eslint:
+        specifier: ^7.32.0
+        version: 7.32.0
+      eslint-config-prettier:
+        specifier: ^8.3.0
+        version: 8.5.0(eslint@7.32.0)
+      eslint-config-typescript:
+        specifier: ^3.0.0
+        version: 3.0.0(@typescript-eslint/eslint-plugin@5.57.0)(@typescript-eslint/parser@5.57.0)(eslint@7.32.0)(typescript@4.9.5)
+      eslint-formatter-pretty:
+        specifier: ^3.0.1
+        version: 3.0.1
+      eslint-plugin-prettier:
+        specifier: ^3.4.0
+        version: 3.4.1(eslint-config-prettier@8.5.0)(eslint@7.32.0)(prettier@2.8.3)
+      eslint-plugin-typescript:
+        specifier: ^0.14.0
+        version: 0.14.0
+      jest:
+        specifier: ^28.1.1
+        version: 28.1.3(@types/node@20.2.5)
+      prettier:
+        specifier: ^2.8.1
+        version: 2.8.3
+      ts-jest:
+        specifier: ^28.0.5
+        version: 28.0.8(jest@28.1.3)(typescript@4.9.5)
 
   libs/live-portfolio:
     dependencies:
@@ -9167,7 +9364,7 @@ packages:
     resolution: {integrity: sha512-8SegXApWe6VoNw0r9JHpSteLKTpTiLZ4rMlGIm9JQ18KiCtyQiAMEazujAHrUS5flrcqYZa75ukev3P6QmUwUw==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/code-frame': 7.18.6
+      '@babel/code-frame': 7.21.4
       '@babel/parser': 7.21.4
       '@babel/types': 7.21.4
 
@@ -11730,18 +11927,6 @@ packages:
       '@ethersproject/properties': 5.7.0
       '@ethersproject/strings': 5.7.0
 
-  /@ethersproject/abstract-provider@5.6.0:
-    resolution: {integrity: sha512-oPMFlKLN+g+y7a79cLK3WiLcjWFnZQtXWgnLAbHZcN3s7L4v90UHpTOrLk+m3yr0gt+/h9STTM6zrr7PM8uoRw==}
-    dependencies:
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/networks': 5.6.2
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/transactions': 5.7.0
-      '@ethersproject/web': 5.6.0
-    dev: false
-
   /@ethersproject/abstract-provider@5.7.0:
     resolution: {integrity: sha512-R41c9UkchKCpAqStMYUpdunjo3pkEvZC3FAwZn5S5MGbXoMQOHIdHItezTETxAO5bevtMApSyEhn9+CHcDsWBw==}
     dependencies:
@@ -11752,16 +11937,6 @@ packages:
       '@ethersproject/properties': 5.7.0
       '@ethersproject/transactions': 5.7.0
       '@ethersproject/web': 5.7.0
-
-  /@ethersproject/abstract-signer@5.6.0:
-    resolution: {integrity: sha512-WOqnG0NJKtI8n0wWZPReHtaLkDByPL67tn4nBaDAhmVq8sjHTPbCdz4DRhVu/cfTOvfy9w3iq5QZ7BX7zw56BQ==}
-    dependencies:
-      '@ethersproject/abstract-provider': 5.6.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/properties': 5.7.0
-    dev: false
 
   /@ethersproject/abstract-signer@5.7.0:
     resolution: {integrity: sha512-a16V8bq1/Cz+TGCkE2OPMTOUDLS3grCpdjoJCYNnVBbdYEMSgKrU0+B90s8b6H+ByYTBZN7a3g76jdIJi7UfKQ==}
@@ -11775,11 +11950,11 @@ packages:
   /@ethersproject/address@5.6.0:
     resolution: {integrity: sha512-6nvhYXjbXsHPS+30sHZ+U4VMagFC/9zAk6Gd/h3S21YW4+yfb0WfRtaAIZ4kfM4rrVwqiy284LP0GtL5HXGLxQ==}
     dependencies:
-      '@ethersproject/bignumber': 5.6.0
-      '@ethersproject/bytes': 5.6.1
-      '@ethersproject/keccak256': 5.6.0
-      '@ethersproject/logger': 5.6.0
-      '@ethersproject/rlp': 5.6.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/keccak256': 5.7.0
+      '@ethersproject/logger': 5.7.0
+      '@ethersproject/rlp': 5.7.0
     dev: false
 
   /@ethersproject/address@5.7.0:
@@ -11790,12 +11965,6 @@ packages:
       '@ethersproject/keccak256': 5.7.0
       '@ethersproject/logger': 5.7.0
       '@ethersproject/rlp': 5.7.0
-
-  /@ethersproject/base64@5.6.0:
-    resolution: {integrity: sha512-2Neq8wxJ9xHxCF9TUgmKeSh9BXJ6OAxWfeGWvbauPh8FuHEjamgHilllx8KkSd5ErxyHIX7Xv3Fkcud2kY9ezw==}
-    dependencies:
-      '@ethersproject/bytes': 5.7.0
-    dev: false
 
   /@ethersproject/base64@5.7.0:
     resolution: {integrity: sha512-Dr8tcHt2mEbsZr/mwTPIQAf3Ai0Bks/7gTw9dSqk1mQvhW3XvRlmDJr/4n+wg1JmCl16NZue17CDh8xb/vZ0sQ==}
@@ -11811,8 +11980,8 @@ packages:
   /@ethersproject/bignumber@5.6.0:
     resolution: {integrity: sha512-VziMaXIUHQlHJmkv1dlcd6GY2PmT0khtAqaMctCIDogxkrarMzA9L94KN1NeXqqOfFD6r0sJT3vCTOFSmZ07DA==}
     dependencies:
-      '@ethersproject/bytes': 5.6.1
-      '@ethersproject/logger': 5.6.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/logger': 5.7.0
       bn.js: 4.12.0
     dev: false
 
@@ -11826,7 +11995,7 @@ packages:
   /@ethersproject/bytes@5.6.1:
     resolution: {integrity: sha512-NwQt7cKn5+ZE4uDn+X5RAXLp46E1chXoaMmrxAyA0rblpxz8t58lVkrHXoRIn0lz1joQElQ8410GqhTqMOwc6g==}
     dependencies:
-      '@ethersproject/logger': 5.6.0
+      '@ethersproject/logger': 5.7.0
     dev: false
 
   /@ethersproject/bytes@5.7.0:
@@ -11837,7 +12006,7 @@ packages:
   /@ethersproject/constants@5.6.0:
     resolution: {integrity: sha512-SrdaJx2bK0WQl23nSpV/b1aq293Lh0sUaZT/yYKPDKn4tlAbkH96SPJwIhwSwTsoQQZxuh1jnqsKwyymoiBdWA==}
     dependencies:
-      '@ethersproject/bignumber': 5.6.0
+      '@ethersproject/bignumber': 5.7.0
     dev: false
 
   /@ethersproject/constants@5.7.0:
@@ -11862,14 +12031,14 @@ packages:
   /@ethersproject/hash@5.6.0:
     resolution: {integrity: sha512-fFd+k9gtczqlr0/BruWLAu7UAOas1uRRJvOR84uDf4lNZ+bTkGl366qvniUZHKtlqxBRU65MkOobkmvmpHU+jA==}
     dependencies:
-      '@ethersproject/abstract-signer': 5.6.0
-      '@ethersproject/address': 5.6.0
-      '@ethersproject/bignumber': 5.6.0
-      '@ethersproject/bytes': 5.6.1
-      '@ethersproject/keccak256': 5.6.0
-      '@ethersproject/logger': 5.6.0
-      '@ethersproject/properties': 5.6.0
-      '@ethersproject/strings': 5.6.0
+      '@ethersproject/abstract-signer': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/keccak256': 5.7.0
+      '@ethersproject/logger': 5.7.0
+      '@ethersproject/properties': 5.7.0
+      '@ethersproject/strings': 5.7.0
     dev: false
 
   /@ethersproject/hash@5.7.0:
@@ -11921,7 +12090,7 @@ packages:
   /@ethersproject/keccak256@5.6.0:
     resolution: {integrity: sha512-tk56BJ96mdj/ksi7HWZVWGjCq0WVl/QvfhFQNeL8fxhBlGoP+L80uDCiQcpJPd+2XxkivS3lwRm3E0CXTfol0w==}
     dependencies:
-      '@ethersproject/bytes': 5.6.1
+      '@ethersproject/bytes': 5.7.0
       js-sha3: 0.8.0
     dev: false
 
@@ -11938,12 +12107,6 @@ packages:
   /@ethersproject/logger@5.7.0:
     resolution: {integrity: sha512-0odtFdXu/XHtjQXJYA3u9G0G8btm0ND5Cu8M7i5vhEcE8/HmF4Lbdqanwyv4uQTr2tx6b7fQRmgLrsnpQlmnig==}
 
-  /@ethersproject/networks@5.6.2:
-    resolution: {integrity: sha512-9uEzaJY7j5wpYGTojGp8U89mSsgQLc40PCMJLMCnFXTs7nhBveZ0t7dbqWUNrepWTszDbFkYD6WlL8DKx5huHA==}
-    dependencies:
-      '@ethersproject/logger': 5.7.0
-    dev: false
-
   /@ethersproject/networks@5.7.0:
     resolution: {integrity: sha512-MG6oHSQHd4ebvJrleEQQ4HhVu8Ichr0RDYEfHzsVAVjHNM+w36x9wp9r+hf1JstMXtseXDtkiVoARAG6M959AA==}
     dependencies:
@@ -11958,7 +12121,7 @@ packages:
   /@ethersproject/properties@5.6.0:
     resolution: {integrity: sha512-szoOkHskajKePTJSZ46uHUWWkbv7TzP2ypdEK6jGMqJaEt2sb0jCgfBo0gH0m2HBpRixMuJ6TBRaQCF7a9DoCg==}
     dependencies:
-      '@ethersproject/logger': 5.6.0
+      '@ethersproject/logger': 5.7.0
     dev: false
 
   /@ethersproject/properties@5.7.0:
@@ -12046,9 +12209,9 @@ packages:
   /@ethersproject/strings@5.6.0:
     resolution: {integrity: sha512-uv10vTtLTZqrJuqBZR862ZQjTIa724wGPWQqZrofaPI/kUsf53TBG0I0D+hQ1qyNtllbNzaW+PDPHHUI6/65Mg==}
     dependencies:
-      '@ethersproject/bytes': 5.6.1
-      '@ethersproject/constants': 5.6.0
-      '@ethersproject/logger': 5.6.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/constants': 5.7.0
+      '@ethersproject/logger': 5.7.0
     dev: false
 
   /@ethersproject/strings@5.7.0:
@@ -12096,16 +12259,6 @@ packages:
       '@ethersproject/signing-key': 5.7.0
       '@ethersproject/transactions': 5.7.0
       '@ethersproject/wordlists': 5.7.0
-
-  /@ethersproject/web@5.6.0:
-    resolution: {integrity: sha512-G/XHj0hV1FxI2teHRfCGvfBUHFmU+YOSbCxlAMqJklxSa7QMiHFQfAxvwY2PFqgvdkxEKwRNr/eCjfAPEm2Ctg==}
-    dependencies:
-      '@ethersproject/base64': 5.6.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/logger': 5.7.0
-      '@ethersproject/properties': 5.7.0
-      '@ethersproject/strings': 5.7.0
-    dev: false
 
   /@ethersproject/web@5.7.0:
     resolution: {integrity: sha512-ApHcbbj+muRASVDSCl/tgxaH2LBkRMEYfLOLVa0COipx0+nlu0QKet7U2lEg0vdkh8XRSLf2nd1f1Uk9SrVSGA==}
@@ -15499,9 +15652,12 @@ packages:
       webpack: 4.46.0
     dev: true
 
-  /@polkadot/keyring@10.3.1:
+  /@polkadot/keyring@10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1):
     resolution: {integrity: sha512-xBkUtyQ766NVS1ccSYbQssWpxAhSf0uwkw9Amj8TFhu++pnZcVm+EmM2VczWqgOkmWepO7MGRjEXeOIw1YUGiw==}
     engines: {node: '>=14.0.0'}
+    peerDependencies:
+      '@polkadot/util': 10.3.1
+      '@polkadot/util-crypto': 10.3.1
     dependencies:
       '@babel/runtime': 7.20.13
       '@polkadot/util': 10.3.1
@@ -15526,7 +15682,7 @@ packages:
       styled-components: '*'
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1
+      '@polkadot/keyring': 10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/ui-settings': 2.11.1
       '@polkadot/ui-shared': 2.11.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/util': 10.3.1
@@ -15601,7 +15757,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@babel/runtime': 7.20.13
-      '@polkadot/keyring': 10.3.1
+      '@polkadot/keyring': 10.3.1(@polkadot/util-crypto@10.3.1)(@polkadot/util@10.3.1)
       '@polkadot/types-augment': 9.8.1
       '@polkadot/types-codec': 9.8.1
       '@polkadot/types-create': 9.8.1
@@ -22498,6 +22654,9 @@ packages:
   /@types/node@18.15.7:
     resolution: {integrity: sha512-LFmUbFunqmBn26wJZgZPYZPrDR1RwGOu2v79Mgcka1ndO6V0/cwjivPTc4yoK6n9kmw4/ls1r8cLrvh2iMibFA==}
     dev: true
+
+  /@types/node@20.2.5:
+    resolution: {integrity: sha512-JJulVEQXmiY9Px5axXHeYGLSjhkZEnD+MDPDGbCbIAbMslkKwmygtZFy1X6s/075Yo94sf8GuSlFfPzysQrWZQ==}
 
   /@types/normalize-package-data@2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
@@ -36415,11 +36574,6 @@ packages:
       wide-align: 1.1.5
     dev: true
 
-  /generic-pool@3.8.2:
-    resolution: {integrity: sha512-nGToKy6p3PAbYQ7p1UlWl6vSPwfwU6TMSWK7TTu+WUY4ZjyZQGniGGt2oNVvyNSpyZYSB43zMXVLcBm08MTMkg==}
-    engines: {node: '>= 4'}
-    dev: false
-
   /gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
@@ -39280,6 +39434,35 @@ packages:
       - ts-node
     dev: true
 
+  /jest-cli@28.1.3(@types/node@20.2.5):
+    resolution: {integrity: sha512-roY3kvrv57Azn1yPgdTebPAXvdR2xfezaKKYzVxZ6It/5NCxzJym6tUI5P1zkdWhfUYkxEI9uZWcQdaFLo8mJQ==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    hasBin: true
+    peerDependencies:
+      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      '@jest/core': 28.1.3
+      '@jest/test-result': 28.1.3
+      '@jest/types': 28.1.3
+      chalk: 4.1.2
+      exit: 0.1.2
+      graceful-fs: 4.2.10
+      import-local: 3.1.0
+      jest-config: 28.1.3(@types/node@20.2.5)
+      jest-util: 28.1.3
+      jest-validate: 28.1.3
+      prompts: 2.4.2
+      yargs: 17.5.1
+    transitivePeerDependencies:
+      - '@types/node'
+      - metro
+      - supports-color
+      - ts-node
+    dev: true
+
   /jest-cli@28.1.3(metro@0.76.0)(ts-node@10.7.0):
     resolution: {integrity: sha512-roY3kvrv57Azn1yPgdTebPAXvdR2xfezaKKYzVxZ6It/5NCxzJym6tUI5P1zkdWhfUYkxEI9uZWcQdaFLo8mJQ==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
@@ -39717,6 +39900,46 @@ packages:
       '@jest/test-sequencer': 28.1.3
       '@jest/types': 28.1.3
       '@types/node': 18.15.7
+      babel-jest: 28.1.3(@babel/core@7.21.0)
+      chalk: 4.1.2
+      ci-info: 3.3.2
+      deepmerge: 4.3.0
+      glob: 7.2.3
+      graceful-fs: 4.2.10
+      jest-circus: 28.1.3
+      jest-environment-node: 28.1.3
+      jest-get-type: 28.0.2
+      jest-regex-util: 28.0.2
+      jest-resolve: 28.1.3
+      jest-runner: 28.1.3
+      jest-util: 28.1.3
+      jest-validate: 28.1.3
+      micromatch: 4.0.5
+      parse-json: 5.2.0
+      pretty-format: 28.1.3
+      slash: 3.0.0
+      strip-json-comments: 3.1.1
+    transitivePeerDependencies:
+      - metro
+      - supports-color
+    dev: true
+
+  /jest-config@28.1.3(@types/node@20.2.5):
+    resolution: {integrity: sha512-MG3INjByJ0J4AsNBm7T3hsuxKQqFIiRo/AUqb1q9LRKI5UU6Aar9JHbr9Ivn1TVwfUD9KirRoM/T6u8XlcQPHQ==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    peerDependencies:
+      '@types/node': '*'
+      ts-node: '>=9.0.0'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      ts-node:
+        optional: true
+    dependencies:
+      '@babel/core': 7.21.0
+      '@jest/test-sequencer': 28.1.3
+      '@jest/types': 28.1.3
+      '@types/node': 20.2.5
       babel-jest: 28.1.3(@babel/core@7.21.0)
       chalk: 4.1.2
       ci-info: 3.3.2
@@ -41484,6 +41707,27 @@ packages:
       '@jest/types': 28.1.3
       import-local: 3.1.0
       jest-cli: 28.1.3(@types/node@18.15.7)
+    transitivePeerDependencies:
+      - '@types/node'
+      - metro
+      - supports-color
+      - ts-node
+    dev: true
+
+  /jest@28.1.3(@types/node@20.2.5):
+    resolution: {integrity: sha512-N4GT5on8UkZgH0O5LUavMRV1EDEhNTL0KEfRmDIeZHSV7p2XgLoY9t9VDUgL6o+yfdgYHVxuz81G8oB9VG5uyA==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+    hasBin: true
+    peerDependencies:
+      node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      '@jest/core': 28.1.3
+      '@jest/types': 28.1.3
+      import-local: 3.1.0
+      jest-cli: 28.1.3(@types/node@20.2.5)
     transitivePeerDependencies:
       - '@types/node'
       - metro
@@ -50242,13 +50486,12 @@ packages:
       react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
     dev: false
 
-  /react-native-get-random-values@1.8.0(react-native@0.71.6):
+  /react-native-get-random-values@1.8.0:
     resolution: {integrity: sha512-H/zghhun0T+UIJLmig3+ZuBCvF66rdbiWUfRSNS6kv5oDSpa1ZiVyvRWtuPesQpT8dXj+Bv7WJRQOUP+5TB1sA==}
     peerDependencies:
       react-native: '>=0.56'
     dependencies:
       fast-base64-decode: 1.0.0
-      react-native: 0.71.6(react@17.0.2)
     dev: false
 
   /react-native-gradle-plugin@0.71.16:

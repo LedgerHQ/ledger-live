@@ -373,6 +373,54 @@ const dataset: DatasetTest<Transaction> = {
             unitMagnitude: 7,
           },
         },
+        {
+          FIXME_tests: ["balance is sum of ops"],
+          raw: {
+            id: "libcore:1:stellar:GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M:sep5",
+            seedIdentifier:
+              "25d6c355a7960dc1e390aa13fbc83bf51277552896582a46897f553320d2a6b3",
+            name: "Stellar 4",
+            xpub: "GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M",
+            derivationMode: "sep5",
+            index: 0,
+            freshAddress:
+              "GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M",
+            freshAddressPath: "44'/148'/0'",
+            freshAddresses: [
+              {
+                address:
+                  "GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M",
+                derivationPath: "44'/148'/0'",
+              },
+            ],
+            balance: "0",
+            blockHeight: 0,
+            currencyId: "stellar",
+            lastSyncDate: "",
+            operations: [],
+            pendingOperations: [],
+            unitMagnitude: 7,
+          },
+          transactions: [
+            {
+              name: "check spendable balance (selling_liabilities is not zero)",
+              transaction: (t) => ({
+                ...t,
+                useAllAmount: true,
+                fees: new BigNumber("0"),
+                recipient:
+                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+              }),
+              expectedStatus: {
+                // You can get the spenaable balance here
+                // https://stellar.expert/explorer/public/account/GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M
+                amount: new BigNumber(12485498),
+                errors: {},
+                warnings: {},
+              },
+            },
+          ],
+        },
       ],
     },
   },

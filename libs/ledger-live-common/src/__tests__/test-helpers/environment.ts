@@ -1,14 +1,11 @@
 import winston from "winston";
 import { listen } from "@ledgerhq/logs";
 import { setSupportedCurrencies } from "../../currencies";
-import { setPlatformVersion } from "../../platform/version";
 import { EnvName, setEnvUnsafe } from "../../env";
 import { setWalletAPIVersion } from "../../wallet-api/version";
 import { WALLET_API_VERSION } from "../../wallet-api/constants";
-import { PLATFORM_VERSION } from "../../platform/constants";
 import { setEnv } from "../../env";
 
-setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "avalanche_c_chain",
