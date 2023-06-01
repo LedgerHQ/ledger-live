@@ -10,7 +10,7 @@ import {
   TransactionResponse,
   TransactionsResponse,
 } from "./api.types";
-import network from "../../../../network";
+import network from "@ledgerhq/live-network/network";
 import { getEnv } from "../../../../env";
 
 const getStacksURL = (path?: string): string => {
