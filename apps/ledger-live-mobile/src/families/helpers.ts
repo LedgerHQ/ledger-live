@@ -1,10 +1,9 @@
-import { NavigationState, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type {
   Account,
-  AccountLike,
   DomainServiceResolution,
   OperationType,
 } from "@ledgerhq/types-live";
