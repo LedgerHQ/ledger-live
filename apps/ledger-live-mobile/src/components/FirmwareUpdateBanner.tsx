@@ -37,37 +37,9 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
 
-  const [staxBattery, setStaxBattery] = useState<
-    { percentage: number; charging: boolean } | undefined
-  >();
+  const [disableUpdateButton, setDisableUpdateButton] = useState(false);
+  const [staxUpdateTriggerNonce, setStaxUpdateTriggerNonce] = useState(0);
   const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (lastConnectedDevice?.modelId === DeviceModelId.stax) {
-      const sub = withDevice(lastConnectedDevice.deviceId)(transport =>
-        from(
-          getBatteryStatus(transport, [
-            BatteryStatusTypes.BATTERY_PERCENTAGE,
-            BatteryStatusTypes.BATTERY_FLAGS,
-          ] as const),
-        ),
-      ).subscribe({
-        next: ([percentage, statusFlags]) => {
-          setStaxBattery({
-            percentage,
-            charging: statusFlags.charging !== 0,
-          });
-        },
-        error: err => {
-          log("FirmwareUpdateBanner", "Unable to retrieve Stax's battery", err);
-        },
-      });
-
-      return () => sub.unsubscribe();
-    }
-
-    return undefined;
-  }, [lastConnectedDevice]);
 
   const [showUnsupportedUpdateDrawer, setShowUnsupportedUpdateDrawer] = useState<boolean>(false);
 
@@ -115,6 +87,41 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     onBackFromUpdate,
   ]);
 
+  // Effect that will check the battery of stax before triggering the update and display a warning preventing the update
+  // in case the battery is too low and the device is not charging
+  useEffect(() => {
+    if (staxUpdateTriggerNonce > 0 && lastConnectedDevice) {
+      setDisableUpdateButton(true);
+      const sub = withDevice(lastConnectedDevice.deviceId)(transport =>
+        from(
+          getBatteryStatus(transport, [
+            BatteryStatusTypes.BATTERY_PERCENTAGE,
+            BatteryStatusTypes.BATTERY_FLAGS,
+          ] as const),
+        ),
+      ).subscribe({
+        next: ([percentage, statusFlags]) => {
+          percentage < 20 && statusFlags.charging === 0
+            ? setShowBatteryWarningDrawer(true)
+            : onExperimentalFirmwareUpdate();
+          setDisableUpdateButton(false);
+        },
+        error: err => {
+          log("FirmwareUpdateBanner", "Unable to retrieve Stax's battery", err);
+          setShowBatteryWarningDrawer(true);
+          setDisableUpdateButton(false);
+        },
+      });
+
+      return () => {
+        setDisableUpdateButton(false);
+        sub.unsubscribe();
+      };
+    }
+
+    return undefined;
+  }, [lastConnectedDevice, onExperimentalFirmwareUpdate, staxUpdateTriggerNonce]);
+
   const showBanner = Boolean(latestFirmware);
   const version = latestFirmware?.final?.name ?? "";
 
@@ -141,11 +148,11 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
   const onClickUpdate = useCallback(() => {
     // Path with Stax and the new firmware update flow (can be BLE or wired)
     if (lastConnectedDevice?.modelId === DeviceModelId.stax && newFwUpdateUxFeatureFlag?.enabled) {
-      staxBattery && staxBattery.percentage < 20 && !staxBattery.charging
-        ? setShowBatteryWarningDrawer(true)
-        : onExperimentalFirmwareUpdate();
+      // This leads to a check on the battery before triggering update, it is only necessary for Stax and on the new UX
+      // (because it's the only type of update that can happen via BLE)
+      setStaxUpdateTriggerNonce(staxUpdateTriggerNonce + 1);
     }
-    // Path with any device model, wired and on android, and the former firmware update flow
+    // Path with any device model, wired and on android
     else if (isUsbFwVersionUpdateSupported && wiredDevice && Platform.OS === "android") {
       onExperimentalFirmwareUpdate();
     } else {
@@ -155,7 +162,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     isUsbFwVersionUpdateSupported,
     newFwUpdateUxFeatureFlag?.enabled,
     lastConnectedDevice?.modelId,
-    staxBattery,
+    staxUpdateTriggerNonce,
     onExperimentalFirmwareUpdate,
     wiredDevice,
   ]);
@@ -193,6 +200,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
                 flex={1}
                 event="button_clicked"
                 eventProperties={{ button: "Update" }}
+                disabled={disableUpdateButton}
                 type="main"
                 title={t("FirmwareUpdate.update")}
                 onPress={onClickUpdate}
