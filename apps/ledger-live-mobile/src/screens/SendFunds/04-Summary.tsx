@@ -248,7 +248,7 @@ function SendSummary({ navigation, route }: Props) {
           <CurrentNetworkFee
             account={account}
             parentAccount={parentAccount}
-            operation={operation}
+            transactionRaw={operation.transactionRaw}
           />
         ) : null}
 

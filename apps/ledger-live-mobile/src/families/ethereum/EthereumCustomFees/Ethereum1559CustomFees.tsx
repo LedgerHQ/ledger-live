@@ -21,6 +21,7 @@ import EthereumGasLimit from "../SendRowGasLimit";
 import EditFeeUnitEthereum from "../EditFeeUnitEthereum";
 import SectionSeparator from "../../../components/SectionSeparator";
 import { inferMaxFeeRange, inferMaxPriorityFeeRange } from "./utils";
+import { CurrentNetworkFee } from "../CurrentNetworkFee";
 
 type Props = {
   account: AccountLike;
@@ -206,6 +207,15 @@ const Ethereum1559CustomFees = ({
           title={t("send.summary.validateFees")}
           disabled={Boolean(maxPriorityFeeError || maxFeeError)}
           onPress={onValidateFees(transactionPatch)}
+        />
+      </View>
+
+      <View>
+        <CurrentNetworkFee
+          advancedMode
+          account={account}
+          parentAccount={parentAccount}
+          transactionRaw={transactionRaw}
         />
       </View>
     </View>
