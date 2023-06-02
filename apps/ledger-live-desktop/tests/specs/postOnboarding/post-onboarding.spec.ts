@@ -4,7 +4,6 @@ import { expect } from "@playwright/test";
 import { SettingsPage } from "../../models/SettingsPage";
 import { Layout } from "../../models/Layout";
 import { PostOnboarding } from "../../models/PostOnboarding";
-import { PortfolioPage } from "../../models/PortfolioPage";
 import padStart from "lodash/padStart";
 
 test.use({
@@ -34,8 +33,7 @@ test("PostOnboarding state logic", async ({ page }) => {
 
   await test.step("go to post onboarding screen", async () => {
     await layout.goToSettings();
-    await settingsPage.goToExperimentalTab();
-    await postOnboarding.waitForLaunch();
+    await settingsPage.enableAndGoToDeveloperTab();
     await postOnboarding.startNewMockPostOnboarding();
     await expect(page).toHaveScreenshot(`${generateScreenshotPrefix()}postonboarding-screen.png`);
   });

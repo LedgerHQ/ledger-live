@@ -1,11 +1,8 @@
 // @flow
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies/index";
-import { setPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
-import { PLATFORM_VERSION } from "@ledgerhq/live-common/lib/platform/constants";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/lib/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/lib/wallet-api/constants";
 
-setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
