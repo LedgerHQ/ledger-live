@@ -1,28 +1,21 @@
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
+import { SolanaFamily } from "./types";
 
-type Props = {
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
-  source?: string;
-};
-
-const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
+const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({ account, source }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = getMainAccount(account);
   const { solanaResources } = mainAccount;
   const onClick = useCallback(() => {
     if (isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
-          parentAccount,
         }),
       );
     } else {
@@ -32,13 +25,13 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
             ? "MODAL_SOLANA_DELEGATE"
             : "MODAL_SOLANA_REWARDS_INFO",
           {
-            account,
+            account: mainAccount,
             source,
           },
         ),
       );
     }
-  }, [account, dispatch, source, parentAccount, solanaResources]);
+  }, [account, dispatch, source, solanaResources, mainAccount]);
   return [
     {
       key: "Stake",

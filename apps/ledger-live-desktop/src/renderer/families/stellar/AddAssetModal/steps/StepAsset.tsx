@@ -10,7 +10,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import AssetSelector from "../fields/AssetSelector";
+import AssetSelector, { getAssetObject } from "../fields/AssetSelector";
 export default function StepAsset({
   account,
   parentAccount,
@@ -23,14 +23,6 @@ export default function StepAsset({
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);
-  const getAssetObject = (assetId: string) => {
-    const assetString = assetId.split("/")[2];
-    const [assetCode, assetIssuer] = assetString.split(":");
-    return {
-      assetCode,
-      assetIssuer,
-    };
-  };
   const onUpdateAsset = useCallback(
     ({ id: assetId }) => {
       onUpdateTransaction(transaction =>

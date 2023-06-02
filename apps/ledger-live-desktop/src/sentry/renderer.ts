@@ -20,7 +20,7 @@ export default async (shouldSendCallback: () => boolean) => {
 export const captureException = (e: Error) => {
   Sentry.captureException(e);
 };
-export const captureBreadcrumb = (o: any) => {
+export const captureBreadcrumb = (o: Sentry.Breadcrumb) => {
   Sentry.addBreadcrumb(o);
 };
 export const setTags = (tags: { [key: string]: Primitive }) => {

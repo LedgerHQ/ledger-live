@@ -84,7 +84,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                     tracking.platformReceiveSuccess(manifest);
                     resolve(accountAddress);
                   },
-                  onCancel: (error: Error) => {
+                  onCancel: error => {
                     tracking.platformReceiveFail(manifest);
                     reject(error);
                   },
@@ -196,7 +196,6 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             transaction,
             binaryPayload,
             signature,
-            feesStrategy,
             exchangeType,
           }: CompleteExchangeUiRequest): Promise<Operation> =>
             new Promise((resolve, reject) => {
@@ -207,7 +206,6 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   transaction,
                   binaryPayload,
                   signature,
-                  feesStrategy,
                   exchangeType,
                   onResult: (operation: Operation) => {
                     tracking.platformCompleteExchangeSuccess(manifest);

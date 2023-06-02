@@ -11,26 +11,24 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import { ValidatorField, AmountField } from "../fields";
-import { AccountBridge } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { DelegationType } from "~/renderer/families/elrond/types";
 import { StepProps } from "../types";
+
 const StepAmount = (props: StepProps) => {
   const { account, onUpdateTransaction, status, error, contract, amount, delegations } = props;
   const [initialAmount, setInitialAmount] = useState(BigNumber(amount));
   const [value, setValue] = useState(BigNumber(amount));
-  const bridge = getAccountBridge(account);
+  const bridge = account && getAccountBridge(account);
   const updateValidator = useCallback(
-    (payload: Transaction) => {
-      onUpdateTransaction(
-        (transaction: Transaction): AccountBridge<Transaction> =>
-          bridge.updateTransaction(transaction, payload),
-      );
+    (payload: Partial<Transaction>) => {
+      onUpdateTransaction(transaction => bridge?.updateTransaction(transaction, payload));
     },
     [onUpdateTransaction, bridge],
   );
   const onChangeValidator = useCallback(
-    (delegation: DelegationType) => {
+    (delegation: DelegationType | null | undefined) => {
+      if (!delegation) return;
       updateValidator({
         recipient: delegation.contract,
         amount: BigNumber(delegation.userActiveStake),
@@ -50,17 +48,16 @@ const StepAmount = (props: StepProps) => {
     [updateValidator],
   );
   useEffect(() => {
-    onUpdateTransaction(
-      (transaction: Transaction): AccountBridge<Transaction> => {
-        if (transaction.amount.isEqualTo(value)) {
-          return transaction;
-        }
-        return bridge.updateTransaction(transaction, {
-          amount: value,
-        });
-      },
-    );
+    onUpdateTransaction(transaction => {
+      if (transaction.amount.isEqualTo(value)) {
+        return transaction;
+      }
+      return bridge?.updateTransaction(transaction, {
+        amount: value,
+      });
+    });
   }, [bridge, onUpdateTransaction, value]);
+  if (!account) return null;
   return (
     <Box flow={1}>
       <TrackPage category="Undelegation Flow" name="Step 1" />
@@ -87,7 +84,7 @@ const StepAmount = (props: StepProps) => {
         label={<Trans i18nKey="elrond.undelegation.flow.steps.amount.fields.amount" />}
       />
 
-      <Alert info="primary" mt={2}>
+      <Alert mt={2}>
         <Trans i18nKey="elrond.undelegation.flow.steps.amount.warning">
           <b></b>
         </Trans>
@@ -96,14 +93,15 @@ const StepAmount = (props: StepProps) => {
   );
 };
 const StepAmountFooter = (props: StepProps) => {
-  const { transitionTo, account, parentAccount, onClose, status, bridgePending } = props;
+  const { transitionTo, account, onClose, status, bridgePending } = props;
   const { t } = useTranslation();
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const canNext = !bridgePending && !hasErrors;
+  if (!account) return null;
   return (
     <Fragment>
-      <AccountFooter account={account} parentAccount={parentAccount} status={status} />
+      <AccountFooter account={account} status={status} />
 
       <Box horizontal>
         <Button mr={1} secondary={true} onClick={onClose}>

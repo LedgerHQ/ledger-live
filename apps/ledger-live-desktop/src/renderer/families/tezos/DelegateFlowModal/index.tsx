@@ -1,12 +1,14 @@
 import React, { PureComponent } from "react";
-import Modal from "~/renderer/components/Modal";
-import Body from "./Body";
 import { StepId } from "./types";
+import Modal from "~/renderer/components/Modal";
+import Body, { Data } from "./Body";
+
 type State = {
   stepId: StepId;
 };
-class SendModal extends PureComponent<{}, State> {
-  state = {
+
+class SendModal extends PureComponent<Data, State> {
+  state: State = {
     stepId: "starter",
   };
 
@@ -28,7 +30,6 @@ class SendModal extends PureComponent<{}, State> {
       <Modal
         name="MODAL_DELEGATE"
         centered
-        refocusWhenChange={stepId}
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}
         render={({ onClose, data }) => (
