@@ -135,12 +135,14 @@ export const createAction = (
         return;
       }
 
+      const keyringConfig: any = {};
       const bridge = getAccountBridge(mainAccount);
       const sub = bridge
         .signOperation({
           account: mainAccount,
           transaction,
           deviceId: device.deviceId,
+          keyringConfig,
         })
         .pipe(
           catchError((error) =>

@@ -9,8 +9,20 @@ import { ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
-import { Transaction } from "./types";
-import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { Transaction as EvmTransaction } from "./types";
+import {
+  DeviceCommunication,
+  KeyringInjection,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { EthKeyring } from "./keyrings/EthKeyring";
+import LedgerEthKeyring, {
+  LedgerEthKeyringConfig,
+} from "./keyrings/LedgerEthKeyring";
+import MetaMaskKeyring, {
+  MetaMaskKeyringConfig,
+} from "./keyrings/MetamaskKeyring";
+import Transport from "@ledgerhq/hw-transport";
+import { transactionToEthersTransaction } from "./adapters";
 
 /**
  * Transforms the ECDSA signature paremeter v hexadecimal string received
@@ -38,24 +50,100 @@ export const applyEIP155 = (vAsHex: string, chainId: number): number => {
   return v;
 };
 
+type KeyringConfig = LedgerEthKeyringConfig | MetaMaskKeyringConfig;
+
+const keyringFactory = (
+  keyringConfig: KeyringConfig,
+  transport?: Transport
+): EthKeyring => {
+  switch (keyringConfig.name) {
+    case "LedgerEthKeyring":
+      if (!transport) throw new Error();
+      return new LedgerEthKeyring(
+        transport,
+        keyringConfig.derivationPath,
+        keyringConfig.clearSigningOptions
+      );
+    case "MetaMaskKeyring":
+      return new MetaMaskKeyring(keyringConfig.connectorPort);
+  }
+};
+
 /**
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (withDevice: DeviceCommunication): SignOperationFnSignature<Transaction> =>
+  (
+    withDeviceOrKeyring: DeviceCommunication | KeyringInjection
+  ): SignOperationFnSignature<EvmTransaction, KeyringConfig> =>
   ({
     account,
     deviceId,
+    keyringConfig,
     transaction,
   }: {
     account: Account;
     deviceId: any;
-    transaction: Transaction;
+    keyringConfig?: KeyringConfig;
+    transaction: EvmTransaction;
   }): Observable<SignOperationEvent> =>
-    withDevice(deviceId)(
-      (transport) =>
+    withDeviceOrKeyring<SignOperationEvent>(deviceId)(
+      (transport: Transport | undefined) =>
         new Observable((o) => {
-          async function main() {
+          async function keyringHandler(keyring: EthKeyring) {
+            const preparedTransaction = await prepareForSignOperation(
+              account,
+              transaction
+            );
+            const ethersTransaction =
+              transactionToEthersTransaction(preparedTransaction);
+
+            o.next({
+              type: "device-signature-requested",
+            });
+            const response = await keyring.signTransaction(ethersTransaction);
+
+            o.next({ type: "device-signature-granted" }); // Signature is done
+
+            if (typeof response === "string") {
+              const optimisticOperation = buildOptimisticOperation(account, {
+                ...transaction,
+                nonce: preparedTransaction.nonce,
+              });
+
+              o.next({
+                type: "broadcasted",
+                optimisticOperation,
+              });
+            } else {
+              const { chainId = 0 } = account.currency.ethereumLikeInfo || {};
+              // Create a new serialized tx with the signature now
+              const signature = await getSerializedTransaction(
+                preparedTransaction,
+                {
+                  r: "0x" + response.r,
+                  s: "0x" + response.s,
+                  v: applyEIP155(response.v, chainId),
+                }
+              );
+
+              const operation = buildOptimisticOperation(account, {
+                ...transaction,
+                nonce: preparedTransaction.nonce,
+              });
+
+              o.next({
+                type: "signed",
+                signedOperation: {
+                  operation,
+                  signature,
+                  expirationDate: null,
+                },
+              });
+            }
+          }
+
+          async function deviceHandler(transport: Transport) {
             const preparedTransaction = await prepareForSignOperation(
               account,
               transaction
@@ -119,9 +207,28 @@ export const buildSignOperation =
             });
           }
 
+          async function main() {
+            if (transport && !keyringConfig) {
+              return deviceHandler(transport);
+            }
+            const keyring = keyringFactory(keyringConfig!, transport);
+            return keyringHandler(keyring);
+          }
+
           main().then(
             () => o.complete(),
             (e) => o.error(e)
           );
         })
     );
+
+// const account = {
+//   ...{},
+//   signersConfig: [
+//     {
+//       type: "LedgerEthKeyring",
+//       derivationPath: "m/44'/0'/0'/0",
+//       transport: "webusb",
+//     },
+//   ],
+// };

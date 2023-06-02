@@ -41,6 +41,7 @@ import type {
   ScanAccountEvent,
   SyncConfig,
 } from "@ledgerhq/types-live";
+import { Keyring } from "../keyrings";
 
 // Customize the way to iterate on the keychain derivation
 type IterateResult = ({
@@ -272,7 +273,14 @@ export const makeSync =
 // Use for withDevice
 export type DeviceCommunication = (
   deviceId: string
-) => <T>(job: (transport: Transport) => Observable<T>) => Observable<T>;
+) => <T>(
+  job: (
+    transport: Transport,
+    keyringConfig?: Record<string, any>
+  ) => Observable<T>
+) => Observable<T>;
+
+export type KeyringInjection = <T>(keyring: Keyring) => () => Observable<T>;
 
 const defaultIterateResultBuilder = (getAddressFn: Resolver) => () =>
   Promise.resolve(

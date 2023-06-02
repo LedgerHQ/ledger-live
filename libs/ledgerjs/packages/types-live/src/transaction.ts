@@ -50,6 +50,10 @@ export type SignOperationEvent = // Used when lot of exchange is needed with the
   | {
       type: "signed";
       signedOperation: SignedOperation;
+    }
+  | {
+      type: "broadcasted";
+      optimisticOperation: Operation;
     };
 
 /**
@@ -71,6 +75,11 @@ export type SignOperationEventRaw =
   | {
       type: "signed";
       signedOperation: SignedOperationRaw;
+      broadcasted?: boolean;
+    }
+  | {
+      type: "broadcasted";
+      optimisticOperation: OperationRaw;
     };
 /**
  * Transaction is a generic object that holds all state for all transactions

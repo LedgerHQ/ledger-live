@@ -87,7 +87,7 @@ const deviceQueues: { [deviceId: string]: Promise<void> } = {};
 let withDeviceNonce = 0;
 
 export const withDevice =
-  (deviceId: string) =>
+  (deviceId: string, keyringConfig?: Record<string, any>) =>
   <T>(job: (t: Transport) => Observable<T>): Observable<T> =>
     new Observable((o) => {
       const nonce = withDeviceNonce++;
@@ -178,6 +178,24 @@ export const withDevice =
         if (sub) sub.unsubscribe();
       };
     });
+
+export const withKeyring =
+  (keyringConfig: Record<string, any>) =>
+  <T>(
+    job: (keyringConfig: Record<string, any>) => Observable<T>
+  ): Observable<T> => {
+    return job(keyringConfig);
+  };
+
+export const withDeviceOrKeyring = (
+  deviceId: string,
+  keyringConfig?: Record<string, any>
+): ReturnType<typeof withDevice | typeof withKeyring> => {
+  if (!keyringConfig || "requireTransport" in keyringConfig) {
+    return withDevice(deviceId, keyringConfig);
+  }
+  return withKeyring(keyringConfig);
+};
 
 export const genericCanRetryOnError = (err: unknown): boolean => {
   if (err instanceof WrongAppForCurrency) return false;

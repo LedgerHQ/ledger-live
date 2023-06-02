@@ -59,17 +59,18 @@ export type BroadcastArg0 = {
 /**
  *
  */
-export type SignOperationArg0<T> = {
+export type SignOperationArg0<T, K extends unknown = any> = {
   account: Account;
   transaction: T;
   deviceId: DeviceId;
+  keyringConfig?: K;
 };
 
 /**
  *
  */
-export type SignOperationFnSignature<T> = (
-  arg0: SignOperationArg0<T>
+export type SignOperationFnSignature<T, K extends unknown = any> = (
+  arg0: SignOperationArg0<T, K>
 ) => Observable<SignOperationEvent>;
 
 export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;

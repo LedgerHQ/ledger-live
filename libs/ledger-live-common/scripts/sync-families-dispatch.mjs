@@ -85,7 +85,7 @@ function genCoinFrameworkTarget(targetFile) {
   if (targetFile === "bridge/js.ts") {
     imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
     imports += `import network from "@ledgerhq/live-network/network";\n`;
-    imports += `import { withDevice } from "../../hw/deviceAccess";\n`;
+    imports += `import { withDeviceOrKeyring } from "../../hw/deviceAccess";\n`;
   }
 
   // Behavior for coin family with their own package
@@ -106,7 +106,7 @@ function genCoinFrameworkTarget(targetFile) {
     if (targetFile === "bridge/js.ts") {
       const bridgeFn = family + "CreateBridges";
       imports += `import { createBridges as ${bridgeFn} } from "${targetImportPath}";\n`;
-      exprts += `\n  ${family}: ${bridgeFn}(withDevice, network, makeLRUCache),`;
+      exprts += `\n  ${family}: ${bridgeFn}(withDeviceOrKeyring, network, makeLRUCache),`;
     }
     if (targetFile === "cli-transaction.ts") {
       const cliToolsFn = family + "CreateCliTools";
