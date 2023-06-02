@@ -17,6 +17,7 @@ import Button from "../../../components/Button";
 import EthereumGasLimit from "../SendRowGasLimit";
 import EditFeeUnitEthereum from "../EditFeeUnitEthereum";
 import SectionSeparator from "../../../components/SectionSeparator";
+import { CurrentNetworkFee } from "../CurrentNetworkFee";
 
 type Props = {
   account: AccountLike;
@@ -115,6 +116,15 @@ const EthereumLegacyCustomFees = ({
           type="primary"
           title={<Trans i18nKey="send.summary.validateFees" />}
           onPress={onValidateFees(transactionPatch)}
+        />
+      </View>
+
+      <View>
+        <CurrentNetworkFee
+          advancedMode
+          account={account}
+          parentAccount={parentAccount}
+          transactionRaw={transactionRaw}
         />
       </View>
     </View>
