@@ -160,15 +160,6 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
     wiredDevice,
   ]);
 
-  const onContinueWithLowBattery = useCallback(() => {
-    if (newFwUpdateUxFeatureFlag?.enabled) {
-      onExperimentalFirmwareUpdate();
-    } else {
-      setShowBatteryWarningDrawer(false);
-      setShowUnsupportedUpdateDrawer(true);
-    }
-  }, [newFwUpdateUxFeatureFlag?.enabled, onExperimentalFirmwareUpdate]);
-
   const deviceName = lastConnectedDevice
     ? getDeviceModel(lastConnectedDevice.modelId).productName
     : "";
@@ -267,11 +258,11 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
           <Button
             type="main"
             outline={false}
-            onPress={onContinueWithLowBattery}
+            onPress={() => setShowBatteryWarningDrawer(false)}
             mt={8}
             alignSelf="stretch"
           >
-            {t("common.continue")}
+            {t("common.close")}
           </Button>
         </Flex>
       </QueuedDrawer>
