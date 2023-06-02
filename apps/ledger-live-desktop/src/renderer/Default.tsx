@@ -89,8 +89,7 @@ export const TopBannerContainer = styled.div`
     display: none;
   }
 `;
-
-const NightlyLayerR = () => {
+const NightlyLayer = () => {
   const children = [];
   const w = 200;
   const h = 100;
@@ -132,7 +131,25 @@ const NightlyLayerR = () => {
   );
 };
 
-const NightlyLayer = React.memo(NightlyLayerR);
+const ObamaLayer = () => {
+  return (
+    <div
+      style={{
+        position: "fixed",
+        pointerEvents: "none",
+        opacity: 0.1,
+        color: "#777",
+        width: "100%",
+        height: "100%",
+        top: 0,
+        right: 0,
+        zIndex: 999999999999,
+        backgroundImage: "url('./images/yobama.jpg')",
+        backgroundSize: "cover",
+      }}
+    ></div>
+  );
+};
 
 export default function Default() {
   const history = useHistory();
@@ -261,6 +278,10 @@ export default function Default() {
                       {__PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha") ? (
                         <NightlyLayer />
                       ) : null}
+
+                      <KeyboardContent sequence="STYLE_YOBAMA">
+                        <ObamaLayer />
+                      </KeyboardContent>
 
                       <KeyboardContent sequence="CRASH_TEST">
                         <LetThisCrashForCrashTest />
