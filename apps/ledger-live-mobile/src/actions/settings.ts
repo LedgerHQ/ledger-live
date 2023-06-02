@@ -62,6 +62,7 @@ import {
   SettingsSetHasSeenStaxEnabledNftsPopupPayload,
   SettingsSetCustomImageTypePayload,
   SettingsSetGeneralTermsVersionAccepted,
+  SettingsSetOnboardingTypePayload,
 } from "./types";
 import { ImageType } from "../components/CustomImage/types";
 
@@ -223,6 +224,9 @@ export const setOnboardingHasDevice =
   createAction<SettingsSetOnboardingHasDevicePayload>(
     SettingsActionTypes.SET_ONBOARDING_HAS_DEVICE,
   );
+export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
+  SettingsActionTypes.SET_ONBOARDING_TYPE,
+);
 export const setNotifications = createAction<SettingsSetNotificationsPayload>(
   SettingsActionTypes.SET_NOTIFICATIONS,
 );
