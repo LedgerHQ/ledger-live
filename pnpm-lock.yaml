@@ -1675,6 +1675,9 @@ importers:
       bignumber.js:
         specifier: ^9.1.0
         version: 9.1.0
+      eip55:
+        specifier: ^2.1.0
+        version: 2.1.0
       expect:
         specifier: ^27.4.6
         version: 27.5.1
