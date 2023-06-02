@@ -18,7 +18,6 @@ import type { BaseNavigatorStackParamList } from "../../../components/RootNaviga
 import {
   getCurrencyTickerFromAccount,
   getTrackingDelegationType,
-  getTrackingSource,
 } from "../../helpers";
 
 type Props = BaseComposite<
@@ -46,9 +45,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   }, [account, route.params, navigation]);
 
   const validator = route.params.validatorName ?? "unknown";
-  const source = getTrackingSource({
-    state: navigation.getParent()?.getState() ?? navigation.getState(),
-  });
+  const source = route.params.source?.name ?? "unknown";
   const delegation = getTrackingDelegationType({
     type: route.params.result.type,
   });

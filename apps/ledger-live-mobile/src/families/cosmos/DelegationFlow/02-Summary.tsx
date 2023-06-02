@@ -202,6 +202,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.CosmosDelegationSelectDevice, {
+      source: route.params.source,
       accountId: account.id,
       parentId: parentAccount?.id,
       transaction,
@@ -215,6 +216,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     transaction,
     status,
     chosenValidator.name,
+    route.params.source,
   ]);
 
   const hasErrors = Object.keys(status.errors).length > 0;

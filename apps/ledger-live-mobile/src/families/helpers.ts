@@ -78,21 +78,6 @@ export function hasStatusError(status: TransactionStatus): boolean {
 }
 
 /**
- *  Returns the source where the delegation flow was initiated from.
- */
-export function getTrackingSource({
-  state: { routes, index },
-}: {
-  state: NavigationState;
-}) {
-  const { name, params = {} } = routes[index > 0 ? index - 1 : index];
-  if ("screen" in params) {
-    return `${name}:${params.screen}`;
-  }
-  return `${name}`;
-}
-
-/**
  *  Returns the delegation type for tracking purposes.
  */
 export function getTrackingDelegationType({ type }: { type: OperationType }) {

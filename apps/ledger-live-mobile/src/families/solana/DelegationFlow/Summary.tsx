@@ -162,6 +162,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.DelegationSelectDevice, {
+      ...route.params,
       accountId: account.id,
       parentId: parentAccount?.id,
       transaction: transaction as SolanaTransaction,
@@ -169,6 +170,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
       validatorName: chosenValidator?.name,
     });
   }, [
+    route.params,
     navigation,
     account.id,
     parentAccount?.id,
