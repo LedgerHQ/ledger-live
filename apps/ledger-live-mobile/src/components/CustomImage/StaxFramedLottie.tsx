@@ -1,10 +1,10 @@
 import AnimatedLottieView from "lottie-react-native";
 import React, { useContext } from "react";
-import FramedImage, {
+import StaxFramedImage, {
   transferConfig,
   Props as FramedImageProps,
   ImageSourceContext,
-} from "./FramedImage";
+} from "./StaxFramedImage";
 
 const lottiesStyle = {
   width: transferConfig.frameWidth,
@@ -17,13 +17,13 @@ export type Props = {
   loadingProgress?: FramedImageProps["loadingProgress"];
 };
 
-const FramedImageWithLottie: React.FC<Props> = ({
+const StaxFramedLottie: React.FC<Props> = ({
   source,
   lottieSource,
   loadingProgress,
 }) => {
   return (
-    <FramedImage
+    <StaxFramedImage
       frameConfig={transferConfig}
       source={source}
       loadingProgress={loadingProgress}
@@ -39,11 +39,11 @@ const FramedImageWithLottie: React.FC<Props> = ({
   );
 };
 
-export default FramedImageWithLottie;
+export default StaxFramedLottie;
 
-export const FramedImageWithLottieWithContext: React.FC<
+export const StaxFramedLottieWithContext: React.FC<
   Omit<Props, "source">
 > = props => {
   const { source } = useContext(ImageSourceContext);
-  return <FramedImageWithLottie {...props} source={source} />;
+  return <StaxFramedLottie {...props} source={source} />;
 };

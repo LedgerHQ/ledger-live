@@ -9,12 +9,12 @@ import NavigationScrollView from "../../../../components/NavigationScrollView";
 import {
   transferConfig,
   previewConfig,
-  FramedImageWithContext,
+  StaxFramedImageWithContext,
   ImageSourceContext,
-} from "../../../../components/CustomImage/FramedImage";
+} from "../../../../components/CustomImage/StaxFramedImage";
 import confirmLockscreen from "../../../../animations/stax/customimage/confirmLockscreen.json";
 import allowConnection from "../../../../animations/stax/customimage/allowConnection.json";
-import { FramedImageWithLottieWithContext } from "../../../../components/CustomImage/FramedImageWithLottie";
+import { StaxFramedLottieWithContext } from "../../../../components/CustomImage/StaxFramedLottie";
 import {
   renderImageCommitRequested,
   renderImageLoadRequested,
@@ -45,7 +45,7 @@ function getStepRenderFunction(
     loading: (t: TFunction, progress: number) =>
       renderLoadingImage({ t, device, progress }),
     confirmCommit: (t: TFunction) => renderImageCommitRequested({ t, device }),
-    preview: () => <FramedImageWithContext frameConfig={previewConfig} />,
+    preview: () => <StaxFramedImageWithContext frameConfig={previewConfig} />,
   }[step];
 }
 
@@ -75,20 +75,20 @@ export default function DebugCustomImageGraphics() {
         <NavigationScrollView>
           <Flex style={styles.root}>
             <Text mb={3}>lottie: allowConnection</Text>
-            <FramedImageWithLottieWithContext
+            <StaxFramedLottieWithContext
               loadingProgress={0}
               lottieSource={allowConnection}
             />
             <Divider />
             <Text mb={3}>lottie: confirmLockscreen</Text>
-            <FramedImageWithLottieWithContext
+            <StaxFramedLottieWithContext
               loadingProgress={0.89}
               lottieSource={confirmLockscreen}
             />
             <Divider />
             <Text>FramedImage component, transferConfig</Text>
             <Text mb={3}>progress={Math.round(progress * 100) / 100}</Text>
-            <FramedImageWithContext
+            <StaxFramedImageWithContext
               frameConfig={transferConfig}
               style={{ backgroundColor: "red" }}
               loadingProgress={progress}
@@ -97,7 +97,7 @@ export default function DebugCustomImageGraphics() {
             {slider}
             <Divider />
             <Text mb={3}>FramedImage component, previewConfig</Text>
-            <FramedImageWithContext frameConfig={previewConfig} />
+            <StaxFramedImageWithContext frameConfig={previewConfig} />
           </Flex>
         </NavigationScrollView>
       ) : (

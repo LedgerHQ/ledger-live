@@ -12,9 +12,9 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
 import { NavigatorName, ScreenName } from "../../const";
-import FramedImage, {
+import StaxFramedImage, {
   previewConfig,
-} from "../../components/CustomImage/FramedImage";
+} from "../../components/CustomImage/StaxFramedImage";
 import { TrackScreen } from "../../analytics";
 import Link from "../../components/wrappedUi/Link";
 
@@ -97,7 +97,7 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
             alignItems="center"
             justifyContent="center"
           >
-            <FramedImage
+            <StaxFramedImage
               onError={handlePreviewImageError}
               fadeDuration={0}
               source={{ uri: imagePreview?.imageBase64DataUri }}

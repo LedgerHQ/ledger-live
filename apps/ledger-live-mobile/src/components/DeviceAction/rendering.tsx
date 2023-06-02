@@ -68,13 +68,13 @@ import CurrencyUnitValue from "../CurrencyUnitValue";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
 import {
-  FramedImageWithContext,
+  StaxFramedImageWithContext,
   transferConfig,
-} from "../CustomImage/FramedImage";
+} from "../CustomImage/StaxFramedImage";
 import {
   Props as FramedImageWithLottieProps,
-  FramedImageWithLottieWithContext,
-} from "../CustomImage/FramedImageWithLottie";
+  StaxFramedLottieWithContext,
+} from "../CustomImage/StaxFramedLottie";
 import ModalLock from "../ModalLock";
 import confirmLockscreen from "../../animations/stax/customimage/confirmLockscreen.json";
 import allowConnection from "../../animations/stax/customimage/allowConnection.json";
@@ -1172,19 +1172,19 @@ const ImageLoadingGeneric: React.FC<{
       </Flex>
       <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
         {lottieSource ? (
-          <FramedImageWithLottieWithContext
+          <StaxFramedLottieWithContext
             loadingProgress={progress}
             lottieSource={lottieSource}
           >
             {children}
-          </FramedImageWithLottieWithContext>
+          </StaxFramedLottieWithContext>
         ) : (
-          <FramedImageWithContext
+          <StaxFramedImageWithContext
             loadingProgress={progress}
             frameConfig={transferConfig}
           >
             {children}
-          </FramedImageWithContext>
+          </StaxFramedImageWithContext>
         )}
       </Flex>
     </Flex>
