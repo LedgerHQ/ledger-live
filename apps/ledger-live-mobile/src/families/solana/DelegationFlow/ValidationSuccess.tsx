@@ -1,9 +1,10 @@
 import { useTheme } from "@react-navigation/native";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import invariant from "invariant";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { TrackScreen, track } from "../../../analytics";
 import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
@@ -16,10 +17,7 @@ import {
 } from "../../../components/RootNavigator/types/helpers";
 import { SolanaDelegationFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import {
-  getCurrencyTickerFromAccount,
-  getTrackingDelegationType,
-} from "../../helpers";
+import { getTrackingDelegationType } from "../../helpers";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -37,7 +35,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const delegation = getTrackingDelegationType({
     type: route.params.result.type,
   });
-  const currency = getCurrencyTickerFromAccount({ account, fallback: "SOL" });
+  const currency = getAccountCurrency(account);
 
   const onClose = useCallback(() => {
     navigation

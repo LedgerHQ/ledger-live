@@ -90,16 +90,3 @@ export function getTrackingDelegationType({ type }: { type: OperationType }) {
       return undefined;
   }
 }
-
-export function getCurrencyTickerFromAccount({
-  account,
-  fallback,
-}: {
-  account?: AccountLike;
-  fallback: string;
-}) {
-  if (account && "currency" in account && account.currency) {
-    return account.currency.ticker;
-  }
-  return fallback;
-}
