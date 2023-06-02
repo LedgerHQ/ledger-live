@@ -94,58 +94,34 @@ export type Props = Partial<ComponentProps<typeof Image>> & {
   scale?: number;
 };
 
-function scaleFrameConfig(
-  frameConfig: StaxFrameConfig,
-  scale: number,
-): StaxFrameConfig {
-  const { backgroundSource, resizeMode, leftPaddingColor, ...rest } =
-    frameConfig;
-  return {
-    backgroundSource,
-    resizeMode,
-    leftPaddingColor,
-    ...Object.fromEntries(
-      Object.entries(rest).map(([key, value]) => {
-        return [key, value * scale];
-      }),
-    ),
-  } as StaxFrameConfig;
-}
+// NB: measures taken directly in px on the .png and then scaled down (1/4)
+// to the expected display size.
+export const transferConfig: StaxFrameConfig = {
+  frameHeight: 888,
+  frameWidth: 564,
+  innerHeight: 840,
+  innerWidth: (840 * 400) / 670,
+  innerRight: 30, // measured 32px on png and it seems to be 30px on lotties ... using 30 to avoid "long white 1px wide line"
+  innerTop: 24,
+  borderRightRadius: 24,
+  resizeMode: "cover", // the lotties and static images used with this configuration are not matching in a pixel perfect way so to avoid a "long white 1px wide line" effect we use "contain"
+  backgroundSource: transferBackground,
+  leftPaddingColor: "#272727",
+};
 
 // NB: measures taken directly in px on the .png and then scaled down (1/4)
 // to the expected display size.
-export const transferConfig: StaxFrameConfig = scaleFrameConfig(
-  {
-    frameHeight: 888,
-    frameWidth: 564,
-    innerHeight: 840,
-    innerWidth: (840 * 400) / 670,
-    innerRight: 31, // measured 32px on png and it seems to be 31px on lotties ... using 31 to avoid "long white 1px wide line"
-    innerTop: 24,
-    borderRightRadius: 24,
-    resizeMode: "cover", // the lotties and static images used with this configuration are not matching in a pixel perfect way so to avoid a "long white 1px wide line" effect we use "contain"
-    backgroundSource: transferBackground,
-    leftPaddingColor: "#272727",
-  },
-  1 / 4,
-);
-
-// NB: measures taken directly in px on the .png and then scaled down (1/4)
-// to the expected display size.
-export const previewConfig: StaxFrameConfig = scaleFrameConfig(
-  {
-    frameHeight: 1283,
-    frameWidth: 810,
-    innerHeight: 1211,
-    innerWidth: 1211 * (400 / 670),
-    innerRight: 35,
-    innerTop: 38,
-    borderRightRadius: 57,
-    backgroundSource: previewBackground,
-    resizeMode: "cover",
-  },
-  1 / 4,
-);
+export const previewConfig: StaxFrameConfig = {
+  frameHeight: 1283,
+  frameWidth: 810,
+  innerHeight: 1211,
+  innerWidth: 1211 * (400 / 670),
+  innerRight: 35,
+  innerTop: 38,
+  borderRightRadius: 57,
+  backgroundSource: previewBackground,
+  resizeMode: "cover",
+};
 
 const Container = styled(Box).attrs({})``;
 
@@ -170,7 +146,7 @@ const StaxFramedImage: React.FC<Props> = ({
   loadingProgress = 1,
   children,
   frameConfig = transferConfig,
-  scale,
+  scale = 1 / 4,
   background,
   ...imageProps
 }) => {
@@ -185,76 +161,94 @@ const StaxFramedImage: React.FC<Props> = ({
     backgroundSource,
     resizeMode,
     leftPaddingColor,
-  } = scaleFrameConfig(frameConfig, scale || 1);
+  } = frameConfig;
+
   return (
-    <Container height={frameHeight} width={frameWidth}>
-      <ForceTheme selectedPalette="light">
-        <AbsoluteBackgroundContainer height={frameHeight} width={frameWidth}>
-          {backgroundSource ? (
-            <Image
-              source={backgroundSource}
-              fadeDuration={0}
-              resizeMode="contain"
+    <Box
+      /**
+       * trick to scale down both pictures together and avoid rounding errors
+       * that are causing "long white 1px white lines" with the background
+       * picture and the foreground picture getting misaligned by 1px
+       */
+      height={frameHeight * scale}
+      width={frameWidth * scale}
+      style={{
+        transform: [
+          { scale },
+          { translateX: (frameWidth * (scale - 1)) / 2 }, // centering the content after scaling
+          { translateY: (frameHeight * (scale - 1)) / 2 },
+        ],
+      }}
+    >
+      <Container height={frameHeight} width={frameWidth}>
+        <ForceTheme selectedPalette="light">
+          <AbsoluteBackgroundContainer height={frameHeight} width={frameWidth}>
+            {backgroundSource ? (
+              <Image
+                source={backgroundSource}
+                fadeDuration={0}
+                resizeMode="contain"
+                style={{
+                  height: frameHeight,
+                  width: frameWidth,
+                }}
+              />
+            ) : null}
+          </AbsoluteBackgroundContainer>
+          {background ? (
+            <Flex
+              {...StyleSheet.absoluteFillObject}
+              height={frameHeight}
+              justifyContent="center"
+              width={frameWidth}
+            >
+              {background}
+            </Flex>
+          ) : null}
+          {leftPaddingColor ? (
+            <AbsoluteInnerImageContainer
               style={{
-                height: frameHeight,
-                width: frameWidth,
+                right: innerRight + borderRightRadius,
+                top: innerTop,
+                left: 0,
+                height: loadingProgress * innerHeight,
+                backgroundColor: leftPaddingColor,
               }}
             />
           ) : null}
-        </AbsoluteBackgroundContainer>
-        {background ? (
-          <Flex
-            {...StyleSheet.absoluteFillObject}
-            height={frameHeight}
-            justifyContent="center"
-            width={frameWidth}
-          >
-            {background}
-          </Flex>
-        ) : null}
-        {leftPaddingColor ? (
           <AbsoluteInnerImageContainer
             style={{
-              right: innerRight + borderRightRadius,
+              right: innerRight,
               top: innerTop,
-              left: 0,
               height: loadingProgress * innerHeight,
-              backgroundColor: leftPaddingColor,
+              width: innerWidth,
+              backgroundColor: DEBUG ? "red" : undefined,
             }}
-          />
-        ) : null}
-        <AbsoluteInnerImageContainer
-          style={{
-            right: innerRight,
-            top: innerTop,
-            height: loadingProgress * innerHeight,
-            width: innerWidth,
-            backgroundColor: DEBUG ? "red" : undefined,
-          }}
-        >
-          {!DEBUG && source ? (
-            <Image
-              {...imageProps}
-              fadeDuration={0}
-              resizeMode={resizeMode}
-              source={source}
-              style={{
-                height: innerHeight,
-                width: innerWidth,
-                borderTopRightRadius: borderRightRadius,
-                borderBottomRightRadius: borderRightRadius,
-              }}
-            />
-          ) : null}
-        </AbsoluteInnerImageContainer>
-        <Flex
-          key="childrencontainer"
-          style={{ height: innerHeight, width: innerWidth }}
-        >
-          {children}
-        </Flex>
-      </ForceTheme>
-    </Container>
+          >
+            {!DEBUG && source ? (
+              <Image
+                {...imageProps}
+                fadeDuration={0}
+                resizeMode={resizeMode}
+                source={source}
+                style={{
+                  height: innerHeight,
+                  width: innerWidth,
+                  borderTopRightRadius: borderRightRadius,
+                  borderBottomRightRadius: borderRightRadius,
+                }}
+              />
+            ) : null}
+          </AbsoluteInnerImageContainer>
+          <Flex
+            key="childrencontainer"
+            style={{ height: innerHeight, width: innerWidth }}
+          >
+            {children}
+          </Flex>
+        </ForceTheme>
+      </Container>
+    </Box>
   );
 };
 
