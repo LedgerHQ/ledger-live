@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Button, Divider, Flex, Switch, Text } from "@ledgerhq/native-ui";
-import { useTranslation } from "react-i18next";
+import { TFunction, useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Slider from "react-native-slider";
@@ -29,9 +29,30 @@ const device = {
   wired: false,
 };
 
+type DeviceActionStep = "confirmLoad" | "loading" | "confirmCommit" | "preview";
+const steps: DeviceActionStep[] = [
+  "confirmLoad",
+  "loading",
+  "confirmCommit",
+  "preview",
+];
+
+function getStepRenderFunction(
+  step: DeviceActionStep,
+): (t: TFunction, progress: number) => React.ReactNode {
+  return {
+    confirmLoad: (t: TFunction) => renderImageLoadRequested({ t, device }),
+    loading: (t: TFunction, progress: number) =>
+      renderLoadingImage({ t, device, progress }),
+    confirmCommit: (t: TFunction) => renderImageCommitRequested({ t, device }),
+    preview: () => <FramedImageWithContext frameConfig={previewConfig} />,
+  }[step];
+}
+
 export default function DebugCustomImageGraphics() {
   const [showAllAssets, setShowAllAssets] = useState(false);
-  const [deviceActionStep, setDeviceActionStep] = useState("confirmLoad");
+  const [deviceActionStep, setDeviceActionStep] =
+    useState<DeviceActionStep>("confirmLoad");
   const [progress, setProgress] = useState(0);
 
   const { t } = useTranslation();
@@ -80,12 +101,8 @@ export default function DebugCustomImageGraphics() {
           </Flex>
         </NavigationScrollView>
       ) : (
-        <Flex flex={1}>
-          {deviceActionStep === "confirmLoad"
-            ? renderImageLoadRequested({ t, device })
-            : deviceActionStep === "loading"
-            ? renderLoadingImage({ t, device, progress })
-            : renderImageCommitRequested({ t, device })}
+        <Flex flex={1} alignItems="center" justifyContent="center">
+          {getStepRenderFunction(deviceActionStep)(t, progress)}
         </Flex>
       )}
       <Flex
@@ -105,8 +122,13 @@ export default function DebugCustomImageGraphics() {
             opacity={showAllAssets ? 0.3 : 1}
             pointerEvents={showAllAssets ? "none" : "auto"}
           >
-            <Flex flexDirection={"row"}>
-              {["confirmLoad", "loading", "confirmCommit"].map(val => (
+            <Flex
+              flexDirection={"row"}
+              flexGrow={1}
+              flexWrap={"wrap"}
+              style={{ rowGap: 3 }}
+            >
+              {steps.map(val => (
                 <Button
                   key={val}
                   type="main"
