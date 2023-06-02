@@ -6,7 +6,7 @@ import {
   fromTransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { useTranslation } from "react-i18next";
-import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { log } from "@ledgerhq/logs";
 
@@ -16,20 +16,18 @@ import LText from "../../components/LText";
 const CurrentNetworkFeeComponent = ({
   account,
   parentAccount,
-  operation,
+  transactionRaw,
   advancedMode = false,
 }: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
-  operation: Operation;
+  transactionRaw?: TransactionRaw;
   advancedMode?: boolean;
 }) => {
   const { t } = useTranslation();
 
-  if (operation && operation.transactionRaw) {
-    const transaction = fromTransactionRaw(
-      operation.transactionRaw as TransactionRaw,
-    );
+  if (transactionRaw) {
+    const transaction = fromTransactionRaw(transactionRaw as TransactionRaw);
 
     log(
       "Edit Transaction",
@@ -54,19 +52,57 @@ const CurrentNetworkFeeComponent = ({
       .times(feePerGas)
       .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
 
+    if (advancedMode) {
+      const maxPriorityFeePerGasinGwei = new BigNumber(
+        transaction.maxPriorityFeePerGas ?? 0,
+      )
+        .dividedBy(1000000000)
+        .toFixed();
+
+      const maxFeePerGasinGwei = new BigNumber(transaction.maxFeePerGas ?? 0)
+        .dividedBy(1000000000)
+        .toFixed();
+
+      const maxGasPriceinGwei = new BigNumber(transaction?.gasPrice ?? 0)
+        .dividedBy(1000000000)
+        .toFixed();
+
+      return (
+        <Alert type="hint">
+          {EIP1559ShouldBeUsed(mainAccount.currency) ? (
+            <>
+              <LText>
+                {t("editTransaction.previousFeesInfo.maxPriorityFee", {
+                  amount: maxPriorityFeePerGasinGwei,
+                })}
+              </LText>
+              <LText>
+                {t("editTransaction.previousFeesInfo.maxFee", {
+                  amount: maxFeePerGasinGwei,
+                })}
+              </LText>
+            </>
+          ) : (
+            <LText>
+              {t("editTransaction.previousFeesInfo.gasPrice", {
+                amount: maxGasPriceinGwei,
+              })}
+            </LText>
+          )}
+        </Alert>
+      );
+    }
+
     return feeValue.toNumber() > 0 ? (
       <Alert type="hint">
         <LText>
-          {t("editTransaction.previousFeesInfo", {
+          {t("editTransaction.previousFeesInfo.networkfee", {
             amount: feeValue.toNumber(),
+            unit: mainAccount.currency.ticker,
           })}
         </LText>
       </Alert>
     ) : null;
-  }
-
-  if (advancedMode) {
-    return null;
   }
 
   return null;
