@@ -74,6 +74,7 @@ import type {
   SettingsSetCustomImageTypePayload,
   SettingsSetGeneralTermsVersionAccepted,
   SettingsSetOnboardingHasDevicePayload,
+  SettingsSetOnboardingTypePayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -610,6 +611,12 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ).payload,
   }),
 
+  [SettingsActionTypes.SET_ONBOARDING_TYPE]: (state, action) => ({
+    ...state,
+    onboardingType: (action as Action<SettingsSetOnboardingTypePayload>)
+      .payload,
+  }),
+
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({
     ...state,
     notifications: {
@@ -901,6 +908,8 @@ export const sensitiveAnalyticsSelector = (state: State) =>
   state.settings.sensitiveAnalytics;
 export const onboardingHasDeviceSelector = (state: State) =>
   state.settings.onboardingHasDevice;
+export const onboardingTypeSelector = (state: State) =>
+  state.settings.onboardingType;
 export const notificationsSelector = (state: State) =>
   state.settings.notifications;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>

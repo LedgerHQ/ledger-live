@@ -6,6 +6,7 @@ import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "styled-components/native";
+import { useDispatch } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import OnboardingView from "../OnboardingView";
@@ -14,6 +15,8 @@ import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/
 import Button from "../../../components/Button";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import { SelectionCard } from "./SelectionCard";
+import { setOnboardingType } from "../../../actions/settings";
+import { OnboardingType } from "../../../reducers/types";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList,
@@ -25,6 +28,7 @@ const OnboardingStepUseCaseSelection = () => {
   const route = useRoute<NavigationProps["route"]>();
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { colors } = useTheme();
+  const dispatch = useDispatch();
   const [isProtectDrawerOpen, setIsProtectDrawerOpen] = useState(false);
 
   const servicesConfig = useFeature("protectServicesMobile");
@@ -47,17 +51,19 @@ const OnboardingStepUseCaseSelection = () => {
   }, []);
 
   const onPressNew = useCallback(() => {
+    dispatch(setOnboardingType(OnboardingType.setupNew));
     navigation.navigate(ScreenName.OnboardingModalSetupNewDevice, {
       deviceModelId,
     });
-  }, [deviceModelId, navigation]);
+  }, [deviceModelId, dispatch, navigation]);
 
   const onPressRecoveryPhrase = useCallback(() => {
+    dispatch(setOnboardingType(OnboardingType.restore));
     navigation.navigate(ScreenName.OnboardingRecoveryPhrase, {
       deviceModelId,
       showSeedWarning: true,
     });
-  }, [navigation, deviceModelId]);
+  }, [dispatch, navigation, deviceModelId]);
 
   const onPressProtect = useCallback(() => {
     if (deviceModelId === "nanoX") {

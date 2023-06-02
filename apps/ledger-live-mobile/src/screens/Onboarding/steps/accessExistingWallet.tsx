@@ -10,12 +10,15 @@ import {
 import { props } from "lodash/fp";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
 import Touchable from "../../../components/Touchable";
 import { TrackScreen, track } from "../../../analytics";
 import { ScreenName } from "../../../const/navigation";
 import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { setOnboardingType } from "../../../actions/settings";
+import { OnboardingType } from "../../../reducers/types";
 
 type CardProps = {
   title: string;
@@ -80,14 +83,17 @@ const Card = ({
 function AccessExistingWallet() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProps["navigation"]>();
 
   const connect = useCallback(() => {
+    dispatch(setOnboardingType(OnboardingType.connect));
+    
     navigation.navigate(ScreenName.OnboardingPairNew, {
       deviceModelId: undefined,
       showSeedWarning: false,
     });
-  }, [navigation]);
+  }, [dispatch, navigation]);
 
   const sync = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingImportAccounts);
