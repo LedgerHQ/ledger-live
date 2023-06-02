@@ -1675,6 +1675,7 @@ importers:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         version: 28.1.3(metro@0.76.0)(ts-node@10.7.0)
 <<<<<<< HEAD
 >>>>>>> 190bbc789c (hore(llm): fix jest setup)
@@ -1682,10 +1683,9 @@ importers:
 =======
 <<<<<<< HEAD
 =======
-        version: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
 =======
-        version: 28.1.3(metro@0.76.0)(ts-node@10.7.0)
->>>>>>> a0c554aa18 (lockfile)
+>>>>>>> fad2c6945d (lockfile)
+        version: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
       jest-circus:
         specifier: ^28.1.1
 >>>>>>> df43fd5e82 (locckfile)
@@ -2519,11 +2519,7 @@ importers:
         version: 0.17.1
       '@ledgerhq/wallet-api-server':
         specifier: ^0.13.3
-<<<<<<< HEAD
         version: 0.13.4(react@17.0.2)
-=======
-        version: 0.13.3(react@17.0.2)
->>>>>>> a0c554aa18 (lockfile)
       '@solana/spl-token':
         specifier: ^0.3.7
         version: 0.3.8(@solana/web3.js@1.77.2)
@@ -4807,18 +4803,12 @@ importers:
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
-      styled-components:
-        specifier: ^5.3.3
-        version: 5.3.5(react@18.0.0)
       styled-system:
         specifier: ^5.1.5
         version: 5.1.5
       tiny-glob:
         specifier: ^0.2.9
         version: 0.2.9
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
 
   libs/ui/packages/icons:
     devDependencies:
@@ -4864,18 +4854,12 @@ importers:
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
-      styled-components:
-        specifier: ^5.3.3
-        version: 5.3.5(react@18.0.0)
       styled-system:
         specifier: ^5.1.5
         version: 5.1.5
       tiny-glob:
         specifier: ^0.2.9
         version: 0.2.9
-      typescript:
-        specifier: ^4.9.5
-        version: 4.9.5
 
   libs/ui/packages/native:
     dependencies:
@@ -15055,6 +15039,7 @@ packages:
       '@babel/helper-plugin-utils': 7.20.2
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -15163,10 +15148,9 @@ packages:
 =======
 =======
 >>>>>>> df43fd5e82 (locckfile)
-      '@babel/helper-skip-transparent-expression-wrappers': 7.20.0
 =======
-      '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
->>>>>>> a0c554aa18 (lockfile)
+>>>>>>> fad2c6945d (lockfile)
+      '@babel/helper-skip-transparent-expression-wrappers': 7.20.0
       '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.21.0)
 >>>>>>> 0c99f8ce62 (lockfile)
 >>>>>>> 4bce1b31a6 (lockfile)
@@ -17317,11 +17301,7 @@ packages:
     dependencies:
       '@babel/core': 7.21.0
       '@babel/helper-plugin-utils': 7.20.2
-<<<<<<< HEAD
       '@babel/helper-skip-transparent-expression-wrappers': 7.20.0
-=======
-      '@babel/helper-skip-transparent-expression-wrappers': 7.16.0
->>>>>>> a0c554aa18 (lockfile)
       '@babel/plugin-syntax-optional-chaining': 7.8.3(@babel/core@7.21.0)
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -30652,6 +30632,7 @@ packages:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 5a57ff2bd8 (hore(llm): fix jest setup)
 =======
 <<<<<<< HEAD
@@ -30669,10 +30650,9 @@ packages:
 >>>>>>> fd5ef4f29a (lockfile)
 =======
 >>>>>>> 0fb7b62b38 (locckfile)
-      '@babel/helper-function-name': 7.19.0
 =======
-      '@babel/helper-function-name': 7.21.0
->>>>>>> a0c554aa18 (lockfile)
+>>>>>>> 117494c6bd (lockfile)
+      '@babel/helper-function-name': 7.19.0
       '@babel/helper-hoist-variables': 7.18.6
       '@babel/helper-split-export-declaration': 7.18.6
       '@babel/parser': 7.21.4
@@ -37532,6 +37512,7 @@ packages:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       jest-config: 28.1.3(@types/node@20.2.5)(metro@0.76.0)(ts-node@10.9.1)
 =======
       jest-config: 28.1.3(@types/node@18.15.11)(metro@0.76.0)(ts-node@10.7.0)
@@ -37605,6 +37586,9 @@ packages:
       jest-config: 28.1.3(@types/node@18.15.11)(metro@0.76.0)(ts-node@10.7.0)
 >>>>>>> a0c554aa18 (lockfile)
 >>>>>>> 9645c7b9bc (lockfile)
+=======
+      jest-config: 28.1.3(@types/node@20.2.5)(metro@0.76.0)(ts-node@10.9.1)
+>>>>>>> 299f14b6da (lockfile)
       jest-haste-map: 28.1.3(metro@0.76.0)
       jest-message-util: 28.1.3
       jest-regex-util: 28.0.2
@@ -40617,13 +40601,8 @@ packages:
       zod: 3.19.1
     dev: false
 
-<<<<<<< HEAD
   /@ledgerhq/wallet-api-core@0.17.1:
     resolution: {integrity: sha512-JiPhjthLJST1efqubouoTZYqeoiMnlsN2IEiei4oBZWgM0mrKGrVjMeGOGAfKaM+P3aIREvVIwsrIzYwNQALFw==}
-=======
-  /@ledgerhq/wallet-api-core@0.17.0:
-    resolution: {integrity: sha512-2YjMfhQoy3cfnSNcI14VwdA7KGfUVElqbcH4GTjzTu4uH9JUASbBNDC0Fk6P/Kvp1pfmuNuEN5a9lPQy6//JXQ==}
->>>>>>> a0c554aa18 (lockfile)
     dependencies:
       '@ledgerhq/errors': 6.12.3
       bignumber.js: 9.1.0
@@ -40631,24 +40610,15 @@ packages:
       zod: 3.19.1
     dev: false
 
-<<<<<<< HEAD
   /@ledgerhq/wallet-api-server@0.13.4(react@17.0.2):
     resolution: {integrity: sha512-b/6K7TdfVIMLNq/MhTRpA7tPXS+zqS6XXn5J7zkdGo6xU8arcah7EUy0urOrQuvdDbLS0KdPDZhYntgfvW0PdQ==}
-=======
-  /@ledgerhq/wallet-api-server@0.13.3(react@17.0.2):
-    resolution: {integrity: sha512-FjWK+kIpGR3nYH0bgfdDgvc68S8PSADzPZ343PzGSk2v2U7aHOliB8p6kfvGvzRNxhAdNhv9oK2wAsncXoB29w==}
->>>>>>> a0c554aa18 (lockfile)
     peerDependencies:
       react: ^17.x || ^18.x
     peerDependenciesMeta:
       react:
         optional: true
     dependencies:
-<<<<<<< HEAD
       '@ledgerhq/wallet-api-core': 0.17.1
-=======
-      '@ledgerhq/wallet-api-core': 0.17.0
->>>>>>> a0c554aa18 (lockfile)
       bignumber.js: 9.1.0
       json-rpc-2.0: 1.1.0
       picomatch: 2.3.1
@@ -50205,6 +50175,7 @@ packages:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       jest: 29.5.0(metro@0.76.0)(ts-node@10.9.1)
 =======
       jest: 28.1.3(metro@0.76.0)(ts-node@10.7.0)
@@ -50285,10 +50256,9 @@ packages:
 =======
 =======
 >>>>>>> df43fd5e82 (locckfile)
-      jest: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
 =======
-      jest: 28.1.3(metro@0.76.0)(ts-node@10.7.0)
->>>>>>> a0c554aa18 (lockfile)
+>>>>>>> fad2c6945d (lockfile)
+      jest: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
       pretty-format: 29.5.0
       react: 18.0.0
       react-native: 0.71.6(@babel/core@7.21.0)(@babel/preset-env@7.17.10)(metro-resolver@0.76.0)(metro-transform-worker@0.76.0)(react@18.0.0)
@@ -68567,6 +68537,7 @@ packages:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       jest: 29.5.0(metro@0.76.0)(ts-node@10.9.1)
       jest-circus: 29.5.0(metro@0.76.0)
       jest-environment-node: 29.5.0
@@ -68622,6 +68593,9 @@ packages:
       jest: 28.1.3(metro@0.76.0)(ts-node@10.7.0)
 >>>>>>> a0c554aa18 (lockfile)
 >>>>>>> df43fd5e82 (locckfile)
+=======
+      jest: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
+>>>>>>> fad2c6945d (lockfile)
       jest-circus: 28.1.3(metro@0.76.0)
       jest-environment-node: 29.3.1
 >>>>>>> 190bbc789c (hore(llm): fix jest setup)
@@ -70978,11 +70952,7 @@ packages:
       tsconfig-paths: 3.14.1
 =======
       eslint: 7.32.0
-<<<<<<< HEAD
       jest: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
-=======
-      jest: 28.1.3(metro@0.76.0)(ts-node@10.7.0)
->>>>>>> a0c554aa18 (lockfile)
     dev: true
 
   /eslint-plugin-jest@22.4.1(eslint@8.15.0):
@@ -102113,28 +102083,6 @@ packages:
       supports-color: 5.5.0
     dev: false
 
-  /styled-components@5.3.5(react@18.0.0):
-    resolution: {integrity: sha512-ndETJ9RKaaL6q41B69WudeqLzOpY1A/ET/glXkNZ2T7dPjPqpPCXXQjDFYZWwNnE5co0wX+gTCqx9mfxTmSIPg==}
-    engines: {node: '>=10'}
-    requiresBuild: true
-    peerDependencies:
-      react: '>= 16.8.0'
-      react-dom: '>= 16.8.0'
-      react-is: '>= 16.8.0'
-    dependencies:
-      '@babel/helper-module-imports': 7.18.6
-      '@babel/traverse': 7.21.4(supports-color@5.5.0)
-      '@emotion/is-prop-valid': 1.1.2
-      '@emotion/stylis': 0.8.5
-      '@emotion/unitless': 0.7.5
-      babel-plugin-styled-components: 2.0.7(styled-components@5.3.5)
-      css-to-react-native: 3.0.0
-      hoist-non-react-statics: 3.3.2
-      react: 18.0.0
-      shallowequal: 1.1.0
-      supports-color: 5.5.0
-    dev: true
-
   /styled-system@5.1.5:
     resolution: {integrity: sha512-7VoD0o2R3RKzOzPK0jYrVnS8iJdfkKsQJNiLRDjikOpQVqQHns/DXWaPZOH4tIKkhAT7I6wIsy9FWTWh2X3q+A==}
     dependencies:
@@ -103468,11 +103416,7 @@ packages:
       babel-jest: 28.1.3(@babel/core@7.21.0)(metro@0.76.0)
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-<<<<<<< HEAD
       jest: 28.1.3(metro@0.76.0)(ts-node@10.9.1)
-=======
-      jest: 28.1.3(metro@0.76.0)(ts-node@10.7.0)
->>>>>>> a0c554aa18 (lockfile)
       jest-util: 28.1.3
       json5: 2.2.3
       lodash.memoize: 4.1.2
