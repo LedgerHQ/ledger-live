@@ -1,17 +1,8 @@
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import EventList from "./EventList";
-import StyleProviderV3, { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import {
-  Box,
-  Divider,
-  Flex,
-  Icons,
-  InvertTheme,
-  InvertThemeV3,
-  Switch,
-  Text,
-} from "@ledgerhq/react-ui";
+import StyleProviderV3 from "~/renderer/styles/StyleProviderV3";
+import { Divider, Flex, Icons, Switch, Text } from "@ledgerhq/react-ui";
 
 const Root = styled.div`
   position: fixed;
