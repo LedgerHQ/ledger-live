@@ -1,5 +1,12 @@
 # @ledgerhq/live-cli
 
+## 22.9.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`24483331fe`](https://github.com/LedgerHQ/ledger-live/commit/24483331fe19b9ae4a24544e2f3e1d2ad1892492)]:
+  - @ledgerhq/live-common@31.0.0-nightly.3
+
 ## 22.9.0-nightly.2
 
 ### Patch Changes

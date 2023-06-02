@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.0.0-nightly.3
+
+### Patch Changes
+
+- [#3528](https://github.com/LedgerHQ/ledger-live/pull/3528) [`24483331fe`](https://github.com/LedgerHQ/ledger-live/commit/24483331fe19b9ae4a24544e2f3e1d2ad1892492) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve the image removal flow for Stax
+
 ## 31.0.0-nightly.2
 
 ### Patch Changes

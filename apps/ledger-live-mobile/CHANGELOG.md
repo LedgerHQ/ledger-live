@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.24.0-nightly.3
+
+### Patch Changes
+
+- [#3528](https://github.com/LedgerHQ/ledger-live/pull/3528) [`24483331fe`](https://github.com/LedgerHQ/ledger-live/commit/24483331fe19b9ae4a24544e2f3e1d2ad1892492) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve the image removal flow for Stax
+
+- [#3498](https://github.com/LedgerHQ/ledger-live/pull/3498) [`1d39a6cbd4`](https://github.com/LedgerHQ/ledger-live/commit/1d39a6cbd4a5e1dcc848c4a3e33c68dd4b55c4c3) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sync onboarding analytics: fix hardcoded event names
+
+- [#3554](https://github.com/LedgerHQ/ledger-live/pull/3554) [`4cf8520b24`](https://github.com/LedgerHQ/ledger-live/commit/4cf8520b242c4510f4edc1fc668b9489313dec5e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Custom lock screen: fix error handling in case of an error when loading an image from the phone gallery
+
+- Updated dependencies [[`24483331fe`](https://github.com/LedgerHQ/ledger-live/commit/24483331fe19b9ae4a24544e2f3e1d2ad1892492)]:
+  - @ledgerhq/live-common@31.0.0-nightly.3
+
 ## 3.24.0-nightly.2
 
 ### Minor Changes
