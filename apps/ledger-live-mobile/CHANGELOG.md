@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.24.0-nightly.4
+
+### Patch Changes
+
+- [#3519](https://github.com/LedgerHQ/ledger-live/pull/3519) [`927201ec77`](https://github.com/LedgerHQ/ledger-live/commit/927201ec77da1daaca99872cc9812c7084381f83) Thanks [@mderrick](https://github.com/mderrick)! - LIVE-4142 added empty state and hide NFT Detox tests
+
+- Updated dependencies [[`5bc987cd8f`](https://github.com/LedgerHQ/ledger-live/commit/5bc987cd8f850bb63e4ced62c28218d7c75744e8)]:
+  - @ledgerhq/live-common@31.0.0-nightly.4
+
 ## 3.24.0-nightly.3
 
 ### Patch Changes
