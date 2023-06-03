@@ -5,15 +5,15 @@ import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ethereum/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import FeeSliderField from "~/renderer/components/FeeSliderField";
-import { inferDynamicRange } from "@ledgerhq/live-common/range";
+import { Range, inferDynamicRange } from "@ledgerhq/live-common/range";
 type Props = {
   account: Account;
   transaction: Transaction;
   status: TransactionStatus;
-  updateTransaction: (updater: any) => void;
+  updateTransaction: (updater: (_: Transaction) => Transaction) => void;
 };
 const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
-let lastNetworkGasPrice; // local cache of last value to prevent extra blinks
+let lastNetworkGasPrice: Range | undefined; // local cache of last value to prevent extra blinks
 
 const FeesField = ({ account, transaction, status, updateTransaction }: Props) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");

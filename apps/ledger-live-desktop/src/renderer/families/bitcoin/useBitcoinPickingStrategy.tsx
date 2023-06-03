@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import { bitcoinPickingStrategy } from "@ledgerhq/live-common/families/bitcoin/types";
+type Keys = keyof typeof bitcoinPickingStrategy;
 type Option = {
-  value: string;
+  value: Keys;
   label: React.ReactNode;
 };
-const keys = Object.keys(bitcoinPickingStrategy);
+const keys = Object.keys(bitcoinPickingStrategy) as Keys[];
+
 const options: Array<Option> = keys.map(value => ({
   value,
   label: <Trans i18nKey={`bitcoin.pickingStrategyLabels.${value}`} />,

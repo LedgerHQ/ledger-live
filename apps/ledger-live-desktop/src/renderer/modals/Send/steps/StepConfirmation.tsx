@@ -98,7 +98,6 @@ export function StepConfirmationFooter({
           onClick={() => {
             closeModal();
             if (account && concernedOperation) {
-              // @ts-expect-error TODO: fix types
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,

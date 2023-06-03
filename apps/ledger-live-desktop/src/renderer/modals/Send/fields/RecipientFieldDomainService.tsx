@@ -16,22 +16,22 @@ import Box from "~/renderer/components/Box";
 import { urls } from "~/config/urls";
 import { OnChangeExtra } from "~/renderer/components/RecipientAddress";
 
-type Props = {
+type Props<T extends Transaction, TS extends TransactionStatus> = {
   account: Account;
-  transaction: Transaction;
+  transaction: T;
   autoFocus?: boolean;
-  status: TransactionStatus;
-  onChangeTransaction: (tx: Transaction) => void;
+  status: TS;
+  onChangeTransaction: (tx: T) => void;
   t: TFunction;
   label?: React.ReactNode;
   initValue?: string;
   resetInitValue?: () => void;
   value: string | string;
-  bridge: AccountBridge<Transaction>;
+  bridge: AccountBridge<T>;
   onChange: (recipient: string, maybeExtra?: OnChangeExtra | null) => void;
 };
 
-const RecipientFieldDomainService = ({
+const RecipientFieldDomainService = <T extends Transaction, TS extends TransactionStatus>({
   t,
   account,
   transaction,
@@ -42,7 +42,7 @@ const RecipientFieldDomainService = ({
   value = "",
   bridge,
   onChange,
-}: Props) => {
+}: Props<T, TS>) => {
   const onSupportLinkClick = useCallback(() => openURL(urls.ens), []);
 
   const domainServiceResponse = useDomain(value, "ens");
@@ -91,6 +91,7 @@ const RecipientFieldDomainService = ({
       const hasDomain = !!recipientDomain;
       if (!recipientUpdated || hasDomain) {
         onChangeTransaction(
+          // @ts-expect-error blockchain team must move this global component back to Ethereum world. it doesn't exist in the generic Transaction type
           bridge.updateTransaction(transaction, {
             recipient: value,
             recipientDomain: undefined,
@@ -109,6 +110,7 @@ const RecipientFieldDomainService = ({
         recipient === value;
     if (!domainSet || !recipientSet) {
       onChangeTransaction(
+        // @ts-expect-error blockchain team must move this global component back to Ethereum world. it doesn't exist in the generic Transaction type
         bridge.updateTransaction(transaction, {
           recipient: isForwardResolution ? ensResolution.address : value,
           recipientDomain: ensResolution,
@@ -171,4 +173,4 @@ const RecipientFieldDomainService = ({
   );
 };
 
-export default memo(RecipientFieldDomainService);
+export default memo(RecipientFieldDomainService) as typeof RecipientFieldDomainService;

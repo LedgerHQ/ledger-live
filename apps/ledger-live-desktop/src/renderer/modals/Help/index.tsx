@@ -48,7 +48,7 @@ const Item = ({
   desc,
   url,
 }: {
-  Icon: any;
+  Icon: React.ComponentType<{ size: number }>;
   title: string;
   desc: string;
   url: string;

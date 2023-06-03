@@ -10,6 +10,8 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
+import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { SubAccount } from "@ledgerhq/types-live";
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
@@ -44,13 +46,14 @@ const AmountValue = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
 }))``;
+
 type Props = {
-  account: any;
+  account: CosmosAccount | SubAccount;
 };
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  if (!account.cosmosResources) return null;
+  if (account.type !== "Account") return null;
   const { spendableBalance: _spendableBalance, cosmosResources } = account;
   const {
     delegatedBalance: _delegatedBalance,

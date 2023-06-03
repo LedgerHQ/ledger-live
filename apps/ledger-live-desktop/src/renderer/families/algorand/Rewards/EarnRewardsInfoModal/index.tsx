@@ -1,34 +1,29 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-import { openModal, closeModal } from "~/renderer/actions/modals";
+import { SubAccount } from "@ledgerhq/types-live";
+import { openModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
-type Props = {
-  name?: string;
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
+
+export type Props = {
+  account: AlgorandAccount | SubAccount;
 };
-export default function AlgorandEarnRewardsInfoModal({ name, account }: Props) {
+export default function AlgorandEarnRewardsInfoModal({ account }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
-    dispatch(closeModal(name));
-    dispatch(
-      openModal("MODAL_RECEIVE", {
-        account,
-      }),
-    );
-  }, [account, dispatch, name]);
+    dispatch(openModal("MODAL_RECEIVE", { account }));
+  }, [account, dispatch]);
   const onLearnMore = useCallback(() => {
     openURL(urls.algorandStakingRewards);
   }, []);
   return (
     <EarnRewardsInfoModal
-      name={name}
+      name="MODAL_ALGORAND_EARN_REWARDS_INFO"
       onNext={onNext}
       nextLabel={t("algorand.claimRewards.flow.steps.starter.button.cta")}
       description={t("algorand.claimRewards.flow.steps.starter.description")}

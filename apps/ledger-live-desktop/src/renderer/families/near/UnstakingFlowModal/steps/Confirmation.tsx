@@ -72,18 +72,17 @@ export default function StepConfirmation({
   }
   return null;
 }
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 export function StepConfirmationFooter({
   account,
-  parentAccount,
   error,
   onClose,
   onRetry,
@@ -101,10 +100,9 @@ export function StepConfirmationFooter({
       setDrawer(OperationDetails, {
         operationId: concernedOperation.id,
         accountId: account.id,
-        parentId: parentAccount && parentAccount.id,
       });
     }
-  }, [onClose, account, concernedOperation, parentAccount]);
+  }, [onClose, account, concernedOperation]);
   return (
     <Box horizontal alignItems="right">
       <Button ml={2} onClick={onClose}>
