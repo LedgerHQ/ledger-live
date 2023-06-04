@@ -29,15 +29,18 @@ ${mode.toUpperCase()} ${
 TO ${recipient}
 with fees=${fees ? formatCurrencyUnit(getAccountUnit(account), fees) : "?"}`;
 
-export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
-  const common = fromTransactionCommonRaw(tr);
+export const fromTransactionRaw = (t: TransactionRaw): Transaction => {
+  const common = fromTransactionCommonRaw(t);
   return {
     ...common,
-    family: tr.family,
-    mode: tr.mode,
-    fees: tr.fees ? new BigNumber(tr.fees) : null,
-    gasLimit: tr.gasLimit,
-    gasUnitPrice: tr.gasUnitPrice,
+    family: t.family,
+    mode: t.mode,
+    fees: t.fees ? new BigNumber(t.fees) : null,
+    options: JSON.parse(t.options),
+    estimate: JSON.parse(t.estimate),
+    firstEmulation: JSON.parse(t.firstEmulation),
+    skipEmulation: t.skipEmulation ? JSON.parse(t.skipEmulation) : null,
+    errors: t.errors ? JSON.parse(t.errors) : {},
   };
 };
 
@@ -48,8 +51,11 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     family: t.family,
     mode: t.mode,
     fees: t.fees ? t.fees.toString() : null,
-    gasLimit: t.gasLimit,
-    gasUnitPrice: t.gasUnitPrice,
+    options: JSON.stringify(t.options),
+    estimate: JSON.stringify(t.estimate),
+    firstEmulation: JSON.stringify(t.firstEmulation),
+    skipEmulation: JSON.stringify(t.skipEmulation || false),
+    errors: JSON.stringify(t.errors),
   };
 };
 

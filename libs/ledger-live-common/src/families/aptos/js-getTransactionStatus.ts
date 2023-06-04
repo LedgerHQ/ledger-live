@@ -4,12 +4,18 @@ import {
   RecipientRequired,
   InvalidAddress,
   FeeNotLoaded,
+  GasLessThanEstimate,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "../..//generated/types";
 import type { Transaction } from "./types";
 
 import { isValidAddress } from "./logic";
+import {
+  SequenseNumberTooNewError,
+  SequenseNumberTooOldError,
+  TransactionExpiredError,
+} from "./errors";
 
 const getTransactionStatus = async (
   a: Account,
@@ -25,13 +31,11 @@ const getTransactionStatus = async (
 
   const estimatedFees = t.fees || BigNumber(0);
 
+  const amount = t.amount;
+
   const totalSpent = useAllAmount
     ? a.balance
     : BigNumber(t.amount).plus(estimatedFees);
-
-  const amount = useAllAmount
-    ? a.balance.minus(estimatedFees)
-    : BigNumber(t.amount);
 
   if (totalSpent.gt(a.balance)) {
     errors.amount = new NotEnoughBalance();
@@ -41,6 +45,34 @@ const getTransactionStatus = async (
     errors.recipient = new RecipientRequired();
   } else if (!isValidAddress(t.recipient)) {
     errors.recipient = new InvalidAddress();
+  }
+
+  if (
+    t.options.maxGasAmount &&
+    t.estimate.maxGasAmount &&
+    +t.options.maxGasAmount < +t.estimate.maxGasAmount
+  ) {
+    errors.maxGasAmount = new GasLessThanEstimate();
+  }
+
+  if (
+    t.options.gasUnitPrice &&
+    t.estimate.gasUnitPrice &&
+    +t.options.gasUnitPrice < +t.estimate.gasUnitPrice
+  ) {
+    errors.gasUnitPrice = new GasLessThanEstimate();
+  }
+
+  if (t.errors?.sequenceNumber) {
+    if (t.errors.sequenceNumber.includes("TOO_OLD")) {
+      errors.sequenceNumber = new SequenseNumberTooOldError();
+    } else if (t.errors.sequenceNumber.includes("TOO_NEW")) {
+      errors.sequenceNumber = new SequenseNumberTooNewError();
+    }
+  }
+
+  if (t.errors?.expirationTimestampSecs) {
+    errors.expirationTimestampSecs = new TransactionExpiredError();
   }
 
   return Promise.resolve({

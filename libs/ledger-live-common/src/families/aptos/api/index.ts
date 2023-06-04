@@ -9,7 +9,9 @@ import type {
   AptosResource,
   AptosCoinStoreResource,
   AptosTransaction,
+  Transaction,
 } from "../types";
+import { isUndefined } from "lodash";
 
 const getApiEndpoint = (_: string) => getEnv("APTOS_TESTNET_API_ENDPOINT");
 // TODO: uncomment before release
@@ -59,16 +61,37 @@ export class AptosAPI {
   async generateTransaction(
     address: string,
     payload: AptosTypes.EntryFunctionPayload,
-    options?: Partial<AptosTypes.SubmitTransactionRequest>
+    options: Transaction["options"]
   ): Promise<TxnBuilderTypes.RawTransaction> {
-    const tx = await this.client.generateTransaction(address, payload, options);
+    const opts: Partial<AptosTypes.SubmitTransactionRequest> = {};
+    if (!isUndefined(options.maxGasAmount)) {
+      opts.max_gas_amount = BigNumber(options.maxGasAmount).toString();
+    }
+
+    if (!isUndefined(options.gasUnitPrice)) {
+      opts.gas_unit_price = BigNumber(options.gasUnitPrice).toString();
+    }
+
+    if (!isUndefined(options.sequenceNumber)) {
+      opts.sequence_number = BigNumber(options.sequenceNumber).toString();
+    }
+
+    if (!isUndefined(options.expirationTimestampSecs)) {
+      opts.expiration_timestamp_secs = BigNumber(
+        options.expirationTimestampSecs
+      ).toString();
+    }
+
+    const tx = await this.client.generateTransaction(address, payload, opts);
 
     let serverTimestamp = tx.expiration_timestamp_secs;
-    try {
-      const ts = (await this.client.getLedgerInfo()).ledger_timestamp;
-      serverTimestamp = BigInt(Math.ceil(+ts / 1_000_000 + 2 * 60)); // in microseconds
-    } catch (e) {
-      // nothing
+    if (isUndefined(opts.expiration_timestamp_secs)) {
+      try {
+        const ts = (await this.client.getLedgerInfo()).ledger_timestamp;
+        serverTimestamp = BigInt(Math.ceil(+ts / 1_000_000 + 2 * 60)); // in microseconds
+      } catch (e) {
+        // nothing
+      }
     }
 
     const ntx = new TxnBuilderTypes.RawTransaction(

@@ -90,7 +90,7 @@ const getAccountShape: GetAccountShape = async (info) => {
 
   const oldOperations = initialAccount?.operations || [];
 
-  let xpub;
+  let xpub = initialAccount?.xpub;
   if (!initialAccount?.xpub && transport) {
     const aptos = new Aptos(transport);
     const r = await aptos.getAddress(derivationPath);

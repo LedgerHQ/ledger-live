@@ -3,7 +3,11 @@ import { TxnBuilderTypes } from "aptos";
 import type { Account } from "@ledgerhq/types-live";
 
 import { AptosAPI } from "./api";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "./logic";
+import {
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
+  normalizeTransactionOptions,
+} from "./logic";
 import type { Transaction } from "./types";
 
 const buildTransaction = async (
@@ -20,13 +24,11 @@ const buildTransaction = async (
     : transaction.amount;
 
   const txPayload = getPayload(transaction.recipient, amount);
+  const txOptions = normalizeTransactionOptions(transaction.options);
   const tx = await aptosClient.generateTransaction(
     account.freshAddresses[0].address,
     txPayload,
-    {
-      max_gas_amount: transaction.gasLimit || DEFAULT_GAS.toString(),
-      gas_unit_price: transaction.gasUnitPrice || DEFAULT_GAS_PRICE.toString(),
-    }
+    txOptions
   );
 
   return tx;

@@ -2213,6 +2213,14 @@
         "ethereumGasPrice": "Gas price",
         "ethereumMaxFee": "Max Fee ({{unitName}})",
         "ethereumPriorityFee": "Max Priority Fee ({{unitName}})",
+        "aptosGasFee": "Gas Fee",
+        "aptosGasLimit": "Gas Limit",
+        "aptosGasPrice": "Gas Price (OCTAS)",
+        "aptosSetOptimalGas": "SET OPTIMAL GAS",
+        "aptosAdditionalSettings": "Additional settings",
+        "aptosSequenceNumber": "Sequence Number",
+        "aptosExpTimestamp": "Exp. Timestamp",
+        "aptosResetSettings": "RESET SETTINGS",
         "nextBlock": "Next block",
         "suggested": "Suggested",
         "unitPerByte": "{{unit}} per byte",
@@ -5232,6 +5240,16 @@
     "SatStackDescriptorNotImported": {
       "title": "Account not scanned by full node",
       "description": "Please configure your full node to scan for the accounts associated with this device. Your full node must first scan the blockchain for this account before you can add it to your portfolio."
+    },
+    "SequenseNumberTooNew": {
+      "title": "Sequence number too new"
+    },
+    "SequenseNumberTooOld": {
+      "title": "Sequence number too old",
+      "description": "Sequence number too old"
+    },
+    "TransactionExpired": {
+      "title": "Transaction expired"
     },
     "SwapGenericAPIError": {
       "title": "Something went wrong",

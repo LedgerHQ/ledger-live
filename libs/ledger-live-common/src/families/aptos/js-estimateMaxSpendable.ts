@@ -1,16 +1,12 @@
-import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "../../account";
-import createTransaction from "./js-createTransaction";
-import getTransactionStatus from "./js-getTransactionStatus";
-import prepareTransaction from "./js-prepareTransaction";
 import type { Transaction } from "./types";
+import { getMaxSendBalance } from "./logic";
 
 const estimateMaxSpendable = async ({
   account,
   parentAccount,
-  transaction,
 }: {
   account: AccountLike;
   parentAccount: Account;
@@ -18,16 +14,7 @@ const estimateMaxSpendable = async ({
 }): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const t = await prepareTransaction(mainAccount, {
-    ...createTransaction(),
-    ...transaction,
-    recipient:
-      transaction?.recipient || getAbandonSeedAddress(mainAccount.currency.id),
-    useAllAmount: true,
-  });
-
-  const s = await getTransactionStatus(mainAccount, t);
-  return s.amount;
+  return getMaxSendBalance(mainAccount.spendableBalance);
 };
 
 export default estimateMaxSpendable;
