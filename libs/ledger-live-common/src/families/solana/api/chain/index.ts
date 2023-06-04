@@ -187,7 +187,11 @@ export function getChainAPI(
         .catch(remapErrors),
 
     getParsedTransactions: (signatures: string[]) =>
-      connection().getParsedTransactions(signatures).catch(remapErrors),
+      connection()
+        .getParsedTransactions(signatures, {
+          maxSupportedTransactionVersion: 0,
+        })
+        .catch(remapErrors),
 
     getAccountInfo: (address: string) =>
       connection()
