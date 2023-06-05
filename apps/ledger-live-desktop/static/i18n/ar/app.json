@@ -2276,6 +2276,7 @@
     "renamed" : "اسم {{ productName }} تم تغييره إلى \n\"{{ name }}\" "
   },
   "removeCustomLockscreen" : {
+    "title" : "Remove lock screen picture",
     "cta" : "حذف",
     "confirmation" : "قم بتأكيد إزالة الصورة على Ledger Stax الخاص بك",
     "success" : "تم إزالة صورة شاشة القفل"
@@ -4867,6 +4868,11 @@
       "memoPlaceholder" : "اختياري",
       "memo" : "ملاحظة (تسمية الوجهة)"
     },
+    "stacks" : {
+      "memoPlaceholder" : "اختياري",
+      "memo" : "ملاحظة (تسمية الوجهة)",
+      "memoWarningText" : "عند استخدام ملاحظة، تحقق بعناية من النوع المستخدم مع المستلم"
+    },
     "stellar" : {
       "memo" : "ملاحظة (تسمية الوجهة)",
       "memoType" : {
@@ -5318,6 +5324,9 @@
     "InvalidAddress" : {
       "title" : "هذا ليس عنوان {{currencyName}} صحيح"
     },
+    "InvalidNonce" : {
+      "title" : "الرقم الخاص (nonce) مطلوب"
+    },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "تم تفويض حسابك بالفعل إلى هذا المدقق"
     },
@@ -5573,6 +5582,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "يرجى التأكد أن لديك أرصدة مالية كافية لدفع الرسوم."
     },
+    "StacksMemoTooLong" : {
+      "title" : "الملاحظة (تسمية الوجهة) طويلة جداً"
+    },
     "StellarWrongMemoFormat" : {
       "title" : "صيغة الملاحظة خاطئة"
     },
@@ -5661,6 +5673,10 @@
     "ImageLoadRefusedOnDevice" : {
       "title" : "تم إلغاء شاشة القَفل على Ledger Stax",
       "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
+    },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description" : "The customized lock screen picture was previously removed."
     },
     "RestoreImageCommitRefusedOnDevice" : {
       "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
@@ -5828,5 +5844,14 @@
     "description" : "عبارة الاسترداد السرية الخاصة بك لن تكون دائماً في متناول اليد.\nإطلاق تجريبي حصرياً لـ Ledger Nano X. اشترك مجاناً حتى 30 يونيو 2023",
     "cta" : "لماذا يجب أن اشترك؟",
     "downloadLLM" : "اشترك في <purple>Ledger Recover</purple> باستخدام تطبيق Ledger Live للجوّال"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "خطأ في الشبكة",
+      "subtitle" : "حدث خطأ ما. يُرجى إعادة المحاولة. إذا استمرت المشكلة، احفظ السجل وتواصل مع دعم Ledger.",
+      "tryAgain" : "أعد المحاولة",
+      "contactSupport" : "تواصل مع دعم Ledger",
+      "saveLog" : "حفظ السجل"
+    }
   }
 }
