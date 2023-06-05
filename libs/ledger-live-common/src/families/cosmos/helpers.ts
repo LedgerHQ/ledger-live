@@ -1,9 +1,6 @@
-type Message = {
-  type: string;
-  attributes: { [key: string]: any };
-};
+import { CosmosMessage } from "./types";
 
-export const getMainMessage = (messages: Message[]): Message => {
+export const getMainMessage = (messages: CosmosMessage[]): CosmosMessage => {
   const messagePriorities: string[] = [
     "unbond",
     "redelegate",
