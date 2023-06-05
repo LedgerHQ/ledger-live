@@ -1951,7 +1951,7 @@
         "osu" : "جاري تثبيت OSU...",
         "flash-mcu" : "جاري تحديث MCU...",
         "flash-bootloader" : "جاري تحديث Bootloader...",
-        "progress" : "Installing update {{current}}/{{total}}",
+        "progress" : "تثبيت التحديث {{current}} من {{total}}",
         "firmware" : "جاري تحديث البرنامج الثابت...",
         "flash" : "جاري تحضير جهازك..."
       },
@@ -2276,6 +2276,7 @@
     "renamed" : "اسم {{ productName }} تم تغييره إلى \n\"{{ name }}\" "
   },
   "removeCustomLockscreen" : {
+    "title" : "إزالة صورة شاشة القَفل",
     "cta" : "حذف",
     "confirmation" : "قم بتأكيد إزالة الصورة على Ledger Stax الخاص بك",
     "success" : "تم إزالة صورة شاشة القفل"
@@ -3507,19 +3508,19 @@
       "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال تلقي مكافآت يومية مباشرةً في Ledger Live لديك.",
       "lido" : {
         "title" : "اكسب مع Lido",
-        "tag" : "ليس هناك حد أدنى",
         "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. ليس هناك فترة قَفل. ليس هناك حد أدنى.",
         "supportLink" : "تعرف على المزيد عن Lido"
       },
       "kiln" : {
         "title" : "تكديس Kiln المُخصص",
         "tag" : "يتطلب 32 ETH",
-        "description" : "قم بالتكديس مع مدققين مخصصين. يتطلب مضاعفات 32 ETH. المطالبة بالمكافآت تتم يدوياً.",
+        "description" : "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
         "supportLink" : "تعرف على المزيد عن مدقق Kiln"
       },
       "kiln_pooling" : {
         "title" : "مُجمِع تكديس Kiln",
-        "description" : "انضم إلى مُجمِع تكديس. لا يوجد حد أدنى مطلوب من ETH. المطالبة بالمكافآت تتم تلقائياً.",
+        "tag" : "No minimum",
+        "description" : "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
         "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln"
       }
     }
@@ -3903,10 +3904,6 @@
         "scanForInvalidPaths" : {
           "title" : "بحث موسع عن الحساب",
           "description" : "البحث عن الحسابات ذات مسارات اشتقاق غير صحيحة. يرجى إرسال الأصول التي يحتمل العثور عليها إلى حساب عادي."
-        },
-        "experimentalCountervalues" : {
-          "title" : "API للقيم المقابلة التجريبية",
-          "description" : "قد يتسبب هذا في أن تكون القيم المقابلة المعروضة لحساباتك غير صحيحة."
         },
         "experimentalExplorers" : {
           "title" : "API للمستكشفين التجريبيين",
@@ -5093,8 +5090,8 @@
       "description" : "يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
-      "title" : "Restoration of Language was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "تم إلغاء استعادة اللغة على Ledger Stax",
+      "description" : "إذا كان هذا خطأ يمكنك إعادة محاولة الاستعادة، أو يمكنك تخطي هذه الخطوة."
     },
     "LanguageNotFound" : {
       "title" : "لم يتم العثور على اللغة",
@@ -5276,8 +5273,8 @@
       "title" : "تم رفض My Ledger على الجهاز"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "Update was cancelled on device",
-      "description" : "The installation of OS update was refused on your device. If this was a mistake, restart the update."
+      "title" : "تم إلغاء التحديث على الجهاز",
+      "description" : "تثبيت تحديث نظام التشغيل تم رفضه على جهازك. إذا كان هذا خطأ، قم بإعادة بدء التحديث."
     },
     "UserRefusedOnDevice" : {
       "title" : "تم رفض الإجراء",
@@ -5662,13 +5659,17 @@
       "title" : "تم إلغاء شاشة القَفل على Ledger Stax",
       "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "ليس لدى Ledger Stax الخاص بك صورة شاشة قفل لإزالتها",
+      "description" : "صورة شاشة القَفل المخصصة تمت إزالتها من قَبل."
+    },
     "RestoreImageCommitRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "تم إلغاء استعادة صورة شاشة القفل على Ledger Stax",
+      "description" : "إذا كان هذا خطأ يمكنك إعادة محاولة الاستعادة، أو يمكنك تخطي هذه الخطوة."
     },
     "RestoreImageLoadRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "تم إلغاء استعادة صورة شاشة القفل على Ledger Stax",
+      "description" : "إذا كان هذا خطأ يمكنك إعادة محاولة الاستعادة، أو يمكنك تخطي هذه الخطوة."
     },
     "NearNewAccountWarning" : {
       "title" : "حساب المُستلِم لم يتم إنشاؤه بعد. البروتوكول يتطلب تحويل {{formattedNewAccountStorageCost}} لإنشائه."
@@ -5828,5 +5829,14 @@
     "description" : "عبارة الاسترداد السرية الخاصة بك لن تكون دائماً في متناول اليد.\nإطلاق تجريبي حصرياً لـ Ledger Nano X. اشترك مجاناً حتى 30 يونيو 2023",
     "cta" : "لماذا يجب أن اشترك؟",
     "downloadLLM" : "اشترك في <purple>Ledger Recover</purple> باستخدام تطبيق Ledger Live للجوّال"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "خطأ في الشبكة",
+      "subtitle" : "حدث خطأ ما. يُرجى إعادة المحاولة. إذا استمرت المشكلة، احفظ السجل وتواصل مع دعم Ledger.",
+      "tryAgain" : "أعد المحاولة",
+      "contactSupport" : "تواصل مع دعم Ledger",
+      "saveLog" : "حفظ السجل"
+    }
   }
 }
