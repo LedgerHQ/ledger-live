@@ -6,6 +6,8 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
+import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
+import { SignerFactory } from "@ledgerhq/coin-framework/signer";
 import type {
   AccountBridge,
   CurrencyBridge,
@@ -24,8 +26,7 @@ import { loadPolkadotCrypto } from "../polkadot-crypto";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { getPreloadStrategy, hydrate, preload } from "../preload";
 import type { Transaction } from "../types";
-import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
-import { SignerFactory } from "../signer";
+import { PolkadotSigner } from "../signer";
 
 const updateTransaction = (t: Transaction, patch: Partial<Transaction>) => ({
   ...t,
@@ -49,7 +50,7 @@ const broadcast =
   };
 
 export function buildCurrencyBridge(
-  signerFactory: SignerFactory,
+  signerFactory: SignerFactory<PolkadotSigner>,
   network: NetworkRequestCall,
   cacheFn: LRUCacheFn,
 ): CurrencyBridge {
@@ -71,7 +72,7 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerFactory: SignerFactory,
+  signerFactory: SignerFactory<PolkadotSigner>,
   network: NetworkRequestCall,
   cacheFn: LRUCacheFn,
 ): AccountBridge<Transaction> {
@@ -99,7 +100,7 @@ export function buildAccountBridge(
 }
 
 export function createBridges(
-  signerFactory: SignerFactory,
+  signerFactory: SignerFactory<PolkadotSigner>,
   network: NetworkRequestCall,
   cacheFn: LRUCacheFn,
 ) {

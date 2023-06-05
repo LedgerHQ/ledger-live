@@ -13,30 +13,23 @@ import solana from "../../families/solana/bridge/js";
 import stellar from "../../families/stellar/bridge/js";
 import tezos from "../../families/tezos/bridge/js";
 import tron from "../../families/tron/bridge/js";
-import { of } from "rxjs";
-import {
-  AccountBridge,
-  CurrencyBridge,
-  TransactionCommon,
-} from "@ledgerhq/types-live";
+import { signerFactory } from "../../bridge/jsHelpers";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
-import { withDevice, withDevicePromise } from "../../hw/deviceAccess";
-type Bridge<T extends TransactionCommon> = {
-  currencyBridge: CurrencyBridge;
-  accountBridge: AccountBridge<T>;
-};
+import { withDevice } from "../../hw/deviceAccess";
 import { createBridges as polkadotCreateBridges } from "@ledgerhq/coin-polkadot/bridge/js";
 import { createBridges as algorandCreateBridges } from "@ledgerhq/coin-algorand/bridge/js";
 import { createBridges as evmCreateBridges } from "@ledgerhq/coin-evm/bridge/js";
-import { SignerFactory as PolkadotSignerFactory } from "@ledgerhq/coin-polkadot/lib/signer";
+import type { PolkadotSigner } from "@ledgerhq/coin-polkadot/signer";
 import * as polkadotSigner from "@ledgerhq/hw-app-polkadot";
-const signerFactory: PolkadotSignerFactory = async (deviceId: string) => {
-  return await withDevicePromise(deviceId, (transport) =>
-    of(new polkadotSigner.default(transport))
-  );
+const createPolkadotSigner = (transport): PolkadotSigner => {
+  return new polkadotSigner.default(transport);
 };
-const polkadot = polkadotCreateBridges(signerFactory, network, makeLRUCache);
+const polkadot = polkadotCreateBridges(
+  signerFactory(createPolkadotSigner),
+  network,
+  makeLRUCache
+);
 
 export default {
   bitcoin,

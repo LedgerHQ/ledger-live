@@ -13,10 +13,12 @@ import type {
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { SignerFactory } from "@ledgerhq/coin-framework/signer";
 import { buildTransaction } from "./js-buildTransaction";
 import { calculateAmount, getNonce, isFirstBond } from "./logic";
 import { PolkadotAPI } from "./api";
-import { SignerFactory } from "./signer";
+import { PolkadotSigner } from "./signer";
+
 const MODE_TO_TYPE = {
   send: "OUT",
   bond: "BOND",
@@ -142,7 +144,10 @@ export const fakeSignExtrinsic = async (
  * Sign Transaction with Ledger hardware
  */
 const buildSignOperation =
-  (signerFactory: SignerFactory, polkadotAPI: PolkadotAPI): SignOperationFnSignature<Transaction> =>
+  (
+    signerFactory: SignerFactory<PolkadotSigner>,
+    polkadotAPI: PolkadotAPI,
+  ): SignOperationFnSignature<Transaction> =>
   ({
     account,
     deviceId,

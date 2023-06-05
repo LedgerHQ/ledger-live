@@ -83,26 +83,13 @@ function genCoinFrameworkTarget(targetFile) {
     imports += `import network from "@ledgerhq/live-network/network";\n`;
   }
   if (targetFile === "bridge/js.ts") {
-    imports += `import { of } from "rxjs";\n`;
-    imports += `import {\n`;
-    imports += `  AccountBridge,\n`;
-    imports += `  CurrencyBridge,\n`;
-    imports += `  TransactionCommon,\n`;
-    imports += `} from "@ledgerhq/types-live";\n`;
     imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
     imports += `import network from "@ledgerhq/live-network/network";\n`;
-    imports += `import { withDevice, withDevicePromise } from "../../hw/deviceAccess";\n`;
-    imports += `type Bridge<T extends TransactionCommon> = {\n`;
-    imports += `  currencyBridge: CurrencyBridge;\n`;
-    imports += `  accountBridge: AccountBridge<T>;\n`;
-    imports += `};\n`;
+    imports += `import { signerFactory } from "../../bridge/jsHelpers";\n`;
+    imports += `import { withDevice } from "../../hw/deviceAccess";\n`;
   }
   if (targetFile === "hw-getAddress.ts") {
-    imports += `import type Transport from "@ledgerhq/hw-transport";\n`;
-    imports += `import type {\n`;
-    imports += `  Result,\n`;
-    imports += `  GetAddressOptions,\n`;
-    imports += `} from "@ledgerhq/coin-framework/derivation";\n`;
+    imports += `import { createResolver } from "../bridge/jsHelpers";\n`;
     imports += `import { Resolver } from "../hw/getAddress/types";\n`;
   }
 
@@ -122,19 +109,21 @@ function genCoinFrameworkTarget(targetFile) {
       exprts += `\n  ${family},`;
     }
 
+    const capitalizeFamily = family[0].toUpperCase() + family.slice(1);
+    const signer = family + "Signer";
     if (targetFile === "bridge/js.ts") {
       const bridgeFn = family + "CreateBridges";
-      const signer = family + "Signer";
-      const capitalizeFamily = family[0].toUpperCase() + family.slice(1);
       imports += `import { createBridges as ${bridgeFn} } from "${targetImportPath}";\n`;
-      imports += `import { SignerFactory as ${capitalizeFamily}SignerFactory } from "@ledgerhq/coin-polkadot/lib/signer";\n`;
+      imports += `import type { ${capitalizeFamily}Signer } from "@ledgerhq/coin-polkadot/signer";\n`;
       imports += `import * as ${signer} from "@ledgerhq/hw-app-${family}";\n`;
-      imports += `const signerFactory: ${capitalizeFamily}SignerFactory = async (deviceId: string) => {\n`;
-      imports += `  return await withDevicePromise(deviceId, (transport) =>\n`;
-      imports += `    of(new ${signer}.default(transport))\n`;
-      imports += `  );\n`;
+      imports += `const create${capitalizeFamily}Signer = (transport): ${capitalizeFamily}Signer => {\n`;
+      imports += `  return new ${signer}.default(transport);\n`;
       imports += `};\n`;
-      imports += `const ${family} = ${bridgeFn}(signerFactory, network, makeLRUCache);\n`;
+      imports += `const ${family} = ${bridgeFn}(\n`;
+      imports += `  signerFactory(create${capitalizeFamily}Signer),\n`;
+      imports += `  network,\n`;
+      imports += `  makeLRUCache\n`;
+      imports += `);\n`;
       exprts += `\n  ${family},`;
     }
     if (targetFile === "cli-transaction.ts") {
@@ -143,16 +132,12 @@ function genCoinFrameworkTarget(targetFile) {
       exprts += `\n  ${family}: ${cliToolsFn}(network, makeLRUCache),`;
     }
     if (targetFile === "hw-getAddress.ts") {
+      imports += `import type { ${capitalizeFamily}Signer } from "@ledgerhq/coin-polkadot/signer";\n`;
       imports += `import * as ${family}Signer from "@ledgerhq/hw-app-${family}";\n`;
       imports += `import ${family}Resolver from "${targetImportPath}";\n`;
-      imports += `const ${family}: Resolver = async (\n`;
-      imports += `  transport: Transport,\n`;
-      imports += `  opts: GetAddressOptions\n`;
-      imports += `): Promise<Result> => {\n`;
-      imports += `  const signerFactory = (_: string) =>\n`;
-      imports += `    Promise.resolve(new polkadotSigner.default(transport));\n`;
-      imports += `  return ${family}Resolver(signerFactory)("", opts);\n`;
-      imports += `};\n`;
+      imports += `const ${family}: Resolver = createResolver<PolkadotSigner>((transport) => {\n`;
+      imports += `  return new ${signer}.default(transport);\n`;
+      imports += `}, ${family}Resolver);\n`;
       exprts += `\n  ${family},`;
     }
   }

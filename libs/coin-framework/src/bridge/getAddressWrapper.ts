@@ -6,7 +6,7 @@ export type GetAddressFn = (deviceId: string, addressOpt: GetAddressOptions) => 
 
 const getAddressWrapper =
   (getAddressFn: GetAddressFn) =>
-  (deviceId: string, opts: GetAddressOptions): Promise<Result> => {
+  async (deviceId: string, opts: GetAddressOptions): Promise<Result> => {
     const { currency, path, verify } = opts;
     return getAddressFn(deviceId, opts)
       .then(result => {
