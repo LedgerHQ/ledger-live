@@ -4,7 +4,7 @@ import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepCo
 import StepAmount, { StepAmountFooter } from "./Amount";
 import StepConfirmation, { StepConfirmationFooter } from "./Confirmation";
 import { StepProps, St } from "../types";
-export function useSteps(currencyName): St[] {
+export function useSteps(): St[] {
   const { t } = useTranslation();
   return useMemo<St[]>(
     () => [

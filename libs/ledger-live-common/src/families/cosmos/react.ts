@@ -26,7 +26,7 @@ import useMemoOnce from "../../hooks/useMemoOnce";
 import cryptoFactory from "./chain/chain";
 
 export function useCosmosFamilyPreloadData(
-  currencyId: string
+  currencyId?: string
 ): CosmosPreloadData {
   const getCurrent = getCurrentCosmosPreloadData;
   const getUpdates = getCosmosPreloadDataUpdates;
@@ -36,11 +36,13 @@ export function useCosmosFamilyPreloadData(
     const sub = getUpdates().subscribe(setState);
     return () => sub.unsubscribe();
   }, [getCurrent, getUpdates]);
-  return (
-    state[currencyId] ?? {
-      validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
-    }
-  );
+  return currencyId
+    ? state[currencyId] ?? {
+        validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
+      }
+    : {
+        validators: [], // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
+      };
 }
 
 export function useCosmosFamilyMappedDelegations(

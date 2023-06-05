@@ -18,7 +18,10 @@ import { NavigatorName, ScreenName } from "../../../const";
 import CustomImageBottomModal from "../../../components/CustomImage/CustomImageBottomModal";
 import DeviceOptionRow from "./DeviceOptionRow";
 
-const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
+const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
+  device,
+  disabled,
+}) => {
   const navigation = useNavigation();
   const [isCustomImageOpen, setIsCustomImageOpen] = useState(false);
   const [deviceHasImage, setDeviceHasImage] = useState(false);
@@ -63,7 +66,7 @@ const CustomLockScreen: React.FC<{ device: Device }> = ({ device }) => {
         Icon={Icons.PhotographMedium}
         iconSize={20}
         label={t("customImage.title")}
-        onPress={handleStartCustomImage}
+        onPress={disabled ? undefined : handleStartCustomImage}
         linkLabel={t(deviceHasImage ? "customImage.replace" : "common.add")}
       />
       <CustomImageBottomModal

@@ -17,6 +17,7 @@ export type Opts = Omit<BaseTextProps, "children"> & {
   children?: React.ReactNode;
   variant?: string;
   fontFamily?: string;
+  textAlign?: string;
 };
 
 export type Res = {

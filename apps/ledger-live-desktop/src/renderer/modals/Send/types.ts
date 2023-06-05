@@ -1,14 +1,6 @@
 import { TFunction } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import {
-  Account,
-  AccountBridge,
-  AccountLike,
-  NFT,
-  Operation,
-  ProtoNFT,
-  TransactionCommon,
-} from "@ledgerhq/types-live";
+import { Account, AccountLike, NFT, Operation, ProtoNFT } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
@@ -28,7 +20,7 @@ export type StepProps = {
   closeModal: (a: void) => void;
   openModal: (b: string, a: unknown) => void;
   onChangeAccount: (b?: AccountLike | null, a?: Account | null) => void;
-  onChangeTransaction: (a: AccountBridge<TransactionCommon> | Transaction) => void;
+  onChangeTransaction: (a: Transaction) => void;
   onTransactionError: (a: Error) => void;
   onOperationBroadcasted: (a: Operation) => void;
   onRetry: (a: void) => void;
@@ -38,7 +30,7 @@ export type StepProps = {
   onResetMaybeRecipient: () => void;
   maybeAmount?: BigNumber;
   onResetMaybeAmount: () => void;
-  updateTransaction: (updater: any) => void;
+  updateTransaction: (updater: (t: Transaction) => Transaction) => void;
   onConfirmationHandler: Function;
   onFailHandler: Function;
   currencyName: string | undefined | null;

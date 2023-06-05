@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useRoute } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
@@ -40,6 +41,7 @@ export default function useAccountActions({
   secondaryActions: ActionButtonEvent[];
 } {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const route = useRoute();
   const { t } = useTranslation();
 
   const currency = getAccountCurrency(account);
@@ -204,6 +206,7 @@ export default function useAccountActions({
         account,
         parentAccount,
         colors,
+        parentRoute: route,
       })) ||
     [];
 

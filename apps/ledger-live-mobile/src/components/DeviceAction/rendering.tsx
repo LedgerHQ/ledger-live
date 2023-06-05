@@ -658,6 +658,7 @@ export function renderError({
   Icon,
   iconColor,
   device,
+  hasExportLogButton,
 }: RawProps & {
   navigation?: StackNavigationProp<ParamListBase>;
   error: Error;
@@ -666,6 +667,7 @@ export function renderError({
   Icon?: React.ComponentProps<typeof GenericErrorView>["Icon"];
   iconColor?: string;
   device?: Device;
+  hasExportLogButton?: boolean;
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
@@ -702,6 +704,7 @@ export function renderError({
         withIcon
         Icon={Icon}
         iconColor={iconColor}
+        hasExportLogButton={hasExportLogButton}
       >
         {showRetryIfAvailable && (onRetry || managerAppName) ? (
           <ActionContainer marginBottom={0} marginTop={32}>

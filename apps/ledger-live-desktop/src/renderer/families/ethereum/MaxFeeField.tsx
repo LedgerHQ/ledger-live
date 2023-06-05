@@ -11,20 +11,28 @@ import {
 } from "@ledgerhq/live-common/families/ethereum/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { Account, AccountBridge, AccountLike } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
+import { getEnv } from "@ledgerhq/live-env";
+import { AccountBridge } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import invariant from "invariant";
+import React, { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import styled from "styled-components";
+import { urls } from "~/config/urls";
+import { track } from "~/renderer/analytics/segment";
+import Box from "~/renderer/components/Box";
+import InputCurrency from "~/renderer/components/InputCurrency";
+import Label from "~/renderer/components/Label";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import InputCurrency from "~/renderer/components/InputCurrency";
-import { track } from "~/renderer/analytics/segment";
-import Label from "~/renderer/components/Label";
-import Box from "~/renderer/components/Box";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { MaxFeeTooLow } from "@ledgerhq/errors";
+import { EthereumFamily } from "./types";
 
-const ErrorContainer = styled(Box)`
+const ErrorContainer = styled(Box)<{ hasError: Error }>`
   margin-top: 0px;
   font-size: 10px;
   width: 100%;
@@ -60,7 +68,7 @@ type Props = {
   transactionRaw?: TransactionRaw;
 };
 
-const FeesField = ({
+const FeesField: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = ({
   account,
   parentAccount,
   transaction,

@@ -21,7 +21,22 @@ export function LiveApp({ route }: Props) {
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
-  const manifest = localManifest || remoteManifest;
+  let manifest = localManifest || remoteManifest;
+
+  if (
+    route.params.customDappURL &&
+    manifest &&
+    manifest.params &&
+    "dappUrl" in manifest.params
+  ) {
+    manifest = {
+      ...manifest,
+      params: {
+        ...manifest.params,
+        dappUrl: route.params.customDappURL,
+      },
+    };
+  }
 
   return manifest ? (
     <>

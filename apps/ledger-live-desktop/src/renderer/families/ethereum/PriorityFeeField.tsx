@@ -25,7 +25,7 @@ import { urls } from "~/config/urls";
 import { getEnv } from "@ledgerhq/live-env";
 import { PriorityFeeTooLow } from "@ledgerhq/errors";
 
-const ErrorContainer = styled(Box)`
+const ErrorContainer = styled(Box)<{ hasError?: boolean }>`
   margin-top: 0px;
   font-size: 10px;
   width: 100%;
@@ -159,7 +159,7 @@ const FeesField = ({
           onChange={onPriorityFeeChange}
         />
       </Box>
-      <ErrorContainer hasError={validTransactionError || validTransactionWarning}>
+      <ErrorContainer hasError={!!validTransactionError || !!validTransactionWarning}>
         {validTransactionError ? (
           <ErrorDisplay id="input-error">
             <TranslatedError error={validTransactionError} />

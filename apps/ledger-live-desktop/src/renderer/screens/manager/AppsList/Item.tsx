@@ -1,11 +1,11 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { getCryptoCurrencyById, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
-import { App, FeatureId } from "@ledgerhq/types-live";
+import { App, Feature } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 import ByteSize from "~/renderer/components/ByteSize";
 import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -14,7 +14,6 @@ import IconCheckFull from "~/renderer/icons/CheckFull";
 import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
-import { formatCurrencyIdToFeatureKey } from "~/renderer/components/FirebaseRemoteConfig";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const AppRow = styled.div`
@@ -42,11 +41,12 @@ type Props = {
   state: State;
   app: App;
   installed: InstalledItem | undefined | null;
-  dispatch: (a: Action) => void;
   appStoreView: boolean;
   onlyUpdate?: boolean;
   forceUninstall?: boolean;
   showActions?: boolean;
+  currencyFlags: Record<string, Feature>;
+  dispatch: (a: Action) => void;
   setAppInstallDep?: (a: { app: App; dependencies: App[] }) => void;
   setAppUninstallDep?: (a: { dependents: App[]; app: App }) => void;
   addAccount?: (a: CryptoCurrency | undefined) => void;
@@ -57,11 +57,12 @@ const Item = ({
   state,
   app,
   installed,
-  dispatch,
   appStoreView,
   onlyUpdate,
   forceUninstall,
   showActions = true,
+  currencyFlags,
+  dispatch,
   setAppInstallDep,
   setAppUninstallDep,
   addAccount,
@@ -73,8 +74,6 @@ const Item = ({
     () => (app.currencyId && getCryptoCurrencyById(app.currencyId)) || undefined,
     [app.currencyId],
   );
-  const currencySupported = !!currency && isCurrencySupported(currency);
-  const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
   const onAddAccount = useCallback(() => {
     if (addAccount) addAccount(currency);
   }, [addAccount, currency]);
@@ -85,9 +84,18 @@ const Item = ({
     state.apps,
   ]);
 
-  const ffKey = currencyId ? formatCurrencyIdToFeatureKey(currencyId) : "";
-  const feature = useFeature(ffKey as FeatureId);
-  const currencyFlagEnabled = !feature || feature.enabled;
+  const flag = currencyId
+    ? Object.entries(currencyFlags || {}).find(([flagName]) => {
+        return flagName.includes(currencyId);
+      })
+    : undefined;
+
+  // when the flag doesn't exist it's equivalent to being enabled
+  // flag[0]: name of the feature flag
+  // flag[1]: { enabled: boolean }
+  const currencyFlagEnabled = !flag || flag[1].enabled;
+  const currencySupported = !!currency && isCurrencySupported(currency) && currencyFlagEnabled;
+  const isLiveSupported = currencySupported || ["swap", "plugin"].includes(type);
 
   const bytes = useMemo(
     () =>

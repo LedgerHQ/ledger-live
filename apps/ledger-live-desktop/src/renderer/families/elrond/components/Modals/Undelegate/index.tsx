@@ -2,31 +2,24 @@ import React, { useState, useCallback } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
-export interface Props {
-  name: string;
-}
-const UndelegationModal = (props: Props) => {
-  const { name } = props;
+
+const UndelegationModal = () => {
   const [stepId, setStepId] = useState<StepId>("amount");
   const onHide = useCallback(() => {
     setStepId("amount");
   }, []);
-  const onChange = useCallback((id: string) => {
-    setStepId(id);
-  }, []);
+  const onChange = useCallback((id: StepId) => setStepId(id), []);
   const isModalLocked = ["device", "confirmation"].includes(stepId);
   return (
     <Modal
-      name={name}
+      name="MODAL_ELROND_UNDELEGATE"
       centered={true}
-      refocusWhenChange={stepId}
       onHide={onHide}
       preventBackdropClick={isModalLocked}
       render={({ onClose, data }) => (
         <Body
           account={data.account}
           stepId={stepId}
-          name={name}
           onClose={onClose}
           onChangeStepId={onChange}
           contract={data.contract}

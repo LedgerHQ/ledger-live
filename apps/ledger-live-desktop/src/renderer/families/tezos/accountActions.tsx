@@ -1,15 +1,16 @@
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { SubAccount } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import {
   SendActionDefault,
   ReceiveActionDefault,
 } from "~/renderer/screens/account/AccountActionsDefault";
+import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 type Props = {
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+  account: TezosAccount | SubAccount;
+  parentAccount: TezosAccount | undefined | null;
   onClick: () => void;
 };
 const SendAction = ({ account, parentAccount, onClick }: Props) => {
@@ -29,9 +30,7 @@ const SendAction = ({ account, parentAccount, onClick }: Props) => {
       onClick();
     }
   }, [sendShouldWarnDelegation, dispatch, parentAccount, account, onClick]);
-  return (
-    <SendActionDefault onClick={onClickDecorated} account={account} parentAccount={parentAccount} />
-  );
+  return <SendActionDefault onClick={onClickDecorated} />;
 };
 const ReceiveAction = ({ account, parentAccount, onClick }: Props) => {
   const delegation = useDelegation(account);
@@ -50,13 +49,7 @@ const ReceiveAction = ({ account, parentAccount, onClick }: Props) => {
       onClick();
     }
   }, [receiveShouldWarnDelegation, dispatch, parentAccount, account, onClick]);
-  return (
-    <ReceiveActionDefault
-      onClick={onClickDecorated}
-      account={account}
-      parentAccount={parentAccount}
-    />
-  );
+  return <ReceiveActionDefault onClick={onClickDecorated} />;
 };
 export default {
   SendAction,

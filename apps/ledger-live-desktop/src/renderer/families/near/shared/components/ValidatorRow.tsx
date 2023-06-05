@@ -1,25 +1,25 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/logic";
+import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { NearValidatorItem } from "@ledgerhq/live-common/families/near/types";
-import { CryptoCurrency, Unit } from "@ledgerhq/live-common/types/index";
+import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { urls } from "~/config/urls";
 import Box from "~/renderer/components/Box";
-import ValidatorRow, { ValidatorRowProps } from "~/renderer/components/Delegation/ValidatorRow";
+import ValidatorRow from "~/renderer/components/Delegation/ValidatorRow";
 import Text from "~/renderer/components/Text";
+import LedgerValidatorIcon from "~/renderer/families/near/shared/components/LedgerValidatorIcon";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
-import LedgerValidatorIcon from "~/renderer/families/near/shared/components/LedgerValidatorIcon";
 
 type Props = {
   currency: CryptoCurrency;
   validator: NearValidatorItem;
   active?: boolean;
-  onClick?: (v: NearValidatorItem) => void;
+  onClick: (a: { address: string }) => void;
   unit: Unit;
 };
 function NearValidatorRow({ validator, active, onClick, unit, currency }: Props) {
@@ -67,7 +67,7 @@ function NearValidatorRow({ validator, active, onClick, unit, currency }: Props)
             </Text>
           </Box>
           <Box ml={2} justifyContent="center" alignContent="center">
-            <ChosenMark active={active ?? false} />
+            <ChosenMark active={active ?? false} size={14} />
           </Box>
         </Box>
       }
@@ -81,14 +81,16 @@ function NearValidatorRow({ validator, active, onClick, unit, currency }: Props)
     ></StyledValidatorRow>
   );
 }
-const StyledValidatorRow: ThemedComponent<ValidatorRowProps> = styled(ValidatorRow)`
+const StyledValidatorRow = styled(ValidatorRow)`
   border-color: transparent;
   margin-bottom: 0;
 `;
-const ChosenMark: ThemedComponent<{
-  active: boolean;
-}> = styled(Check).attrs(p => ({
+const ChosenMark = styled(Check).attrs<{
+  active?: boolean;
+}>(p => ({
   color: p.active ? p.theme.colors.palette.primary.main : "transparent",
   size: 14,
-}))``;
+}))<{
+  active?: boolean;
+}>``;
 export default NearValidatorRow;

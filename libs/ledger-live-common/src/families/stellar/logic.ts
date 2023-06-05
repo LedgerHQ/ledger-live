@@ -1,28 +1,28 @@
-import { BigNumber } from "bignumber.js";
-import StellarSdk, { ServerApi } from "stellar-sdk";
-import { findSubAccountById } from "../../account";
-import type { CacheRes } from "../../cache";
-import { makeLRUCache } from "../../cache";
+import type { CacheRes } from "@ledgerhq/live-network/cache";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type {
   Account,
   Operation,
   OperationType,
   TokenAccount,
 } from "@ledgerhq/types-live";
-import {
-  fetchSigners,
-  fetchBaseFee,
-  loadAccount,
-  BASE_RESERVE,
-  BASE_RESERVE_MIN_COUNT,
-} from "./api";
+import { BigNumber } from "bignumber.js";
+import StellarSdk, { ServerApi } from "stellar-sdk";
+import { findSubAccountById } from "../../account";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";
+import {
+  BASE_RESERVE,
+  BASE_RESERVE_MIN_COUNT,
+  fetchBaseFee,
+  fetchSigners,
+  loadAccount,
+} from "./api";
 import type {
-  Transaction,
-  TransactionRaw,
   BalanceAsset,
   RawOperation,
+  Transaction,
+  TransactionRaw,
 } from "./types";
 
 export const STELLAR_BURN_ADDRESS =
@@ -92,7 +92,7 @@ export const getReservedBalance = (
     (b) => b.asset_type === "native"
   ) as BalanceAsset;
 
-  const amountInOffers = new BigNumber(nativeAsset?.buying_liabilities || 0);
+  const amountInOffers = new BigNumber(nativeAsset?.selling_liabilities || 0);
   const numOfEntries = new BigNumber(account.subentry_count);
 
   return new BigNumber(BASE_RESERVE_MIN_COUNT)

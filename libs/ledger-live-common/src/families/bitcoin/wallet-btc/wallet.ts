@@ -68,7 +68,7 @@ class BitcoinLikeWallet {
     };
   }
 
-  async syncAccount(account: Account): Promise<number> {
+  async syncAccount(account: Account): Promise<void> {
     return account.xpub.sync();
   }
 

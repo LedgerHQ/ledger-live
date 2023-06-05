@@ -15,6 +15,7 @@ type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
   updateTransaction: SwapTransactionType["updateTransaction"];
   mainAccount: SwapSelectorStateType["account"];
+  parentAccount: SwapSelectorStateType["parentAccount"];
   currency: SwapSelectorStateType["currency"];
   status: SwapTransactionType["status"];
   disableSlowStrategy?: boolean;
@@ -24,6 +25,7 @@ export default function FeesDrawer({
   setTransaction,
   updateTransaction,
   mainAccount,
+  parentAccount,
   status,
   provider,
   disableSlowStrategy = false,
@@ -53,6 +55,7 @@ export default function FeesDrawer({
         {transaction && "networkInfo" in transaction && transaction.networkInfo && mainAccount && (
           <SendAmountFields
             account={mainAccount as Account}
+            parentAccount={parentAccount}
             status={status}
             transaction={transaction}
             onChange={setTransaction}

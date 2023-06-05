@@ -12,7 +12,6 @@ import Alert from "~/renderer/components/Alert";
 import AsaSelector from "../fields/AsaSelector";
 export default function StepAsset({
   account,
-  parentAccount,
   onUpdateTransaction,
   transaction,
   warning,
@@ -20,7 +19,7 @@ export default function StepAsset({
   t,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = getAccountBridge(account);
   const onUpdateAsset = useCallback(
     ({ id: assetId }) => {
       onUpdateTransaction(transaction =>
@@ -46,7 +45,6 @@ export default function StepAsset({
 export function StepAssetFooter({
   transitionTo,
   account,
-  parentAccount,
   onClose,
   status,
   bridgePending,
@@ -57,7 +55,7 @@ export function StepAssetFooter({
   const canNext = !bridgePending && !hasErrors;
   return (
     <>
-      <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+      <AccountFooter account={account} status={status} />
       <Box horizontal>
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />

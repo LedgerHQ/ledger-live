@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -13,19 +13,27 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+import { getAssetObject } from "../fields/AssetSelector";
+
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
   const options = account && listTokensForCryptoCurrency(account.currency);
   const token = useMemo(
-    () => transaction && options && options.find(({ id }) => id === transaction.assetId),
+    () =>
+      transaction &&
+      options &&
+      options.find(({ id }) => {
+        const { assetCode, assetIssuer } = getAssetObject(id);
+        return assetCode === transaction.assetCode && assetIssuer === transaction.assetIssuer;
+      }),
     [options, transaction],
   );
   if (optimisticOperation) {
@@ -120,4 +128,4 @@ export function StepConfirmationFooter({
     </Box>
   );
 }
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

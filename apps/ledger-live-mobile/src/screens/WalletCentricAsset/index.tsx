@@ -40,6 +40,7 @@ import AssetDynamicContent from "./AssetDynamicContent";
 import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
 import { ReferralProgram } from "./referralProgram";
+import { EthereumStakingDrawer } from "../../families/ethereum/EthereumStakingDrawer";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -199,6 +200,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           currencyBalance={currencyBalance}
         />
       </TabBarSafeAreaView>
+      <EthereumStakingDrawer drawer={route.params.drawer} />
     </ReactNavigationPerformanceView>
   );
 };

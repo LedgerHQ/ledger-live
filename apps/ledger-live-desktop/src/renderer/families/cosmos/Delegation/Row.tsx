@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import moment from "moment";
 import {
+  CosmosAccount,
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { Account } from "@ledgerhq/types-live";
 import {
   canRedelegate,
   canUndelegate,
@@ -21,19 +21,24 @@ import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import ToolTip from "~/renderer/components/Tooltip";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
+import { DelegationActionsModalName } from "../modals";
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 16px 20px;
 `;
-export const Column: ThemedComponent<{
+export const Column = styled(TableLine).attrs<{
   clickable?: boolean;
-}> = styled(TableLine).attrs(p => ({
+  strong?: boolean;
+}>(p => ({
   ff: "Inter|SemiBold",
   color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
   fontSize: 3,
-}))`
+}))<{
+  clickable?: boolean;
+  strong?: boolean;
+}>`
   cursor: ${p => (p.clickable ? "pointer" : "cursor")};
   ${p =>
     p.clickable
@@ -63,9 +68,9 @@ export const ManageDropDownItem = ({
 }: {
   item: {
     key: string;
-    label: string;
-    disabled: boolean;
-    tooltip: React.ReactNode;
+    label: JSX.Element;
+    disabled?: boolean;
+    tooltip?: React.ReactNode;
   };
   isActive: boolean;
 }) => {
@@ -87,12 +92,9 @@ export const ManageDropDownItem = ({
   );
 };
 type Props = {
-  account: Account;
+  account: CosmosAccount;
   delegation: CosmosMappedDelegation;
-  onManageAction: (
-    address: string,
-    action: "MODAL_COSMOS_REDELEGATE" | "MODAL_COSMOS_UNDELEGATE" | "MODAL_COSMOS_CLAIM_REWARDS",
-  ) => void;
+  onManageAction: (address: string, action: DelegationActionsModalName) => void;
   onExternalLink: (address: string) => void;
 };
 export function Row({
@@ -216,7 +218,7 @@ export function Row({
           onChange={onSelect}
         >
           {() => (
-            <Box flex horizontal alignItems="center">
+            <Box flex={1} horizontal alignItems="center">
               <Trans i18nKey="common.manage" />
               <div
                 style={{

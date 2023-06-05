@@ -98,6 +98,7 @@ const GenericErrorView = ({
             color="neutral.c80"
             textAlign="center"
             numberOfLines={6}
+            mt={5}
           >
             <TranslatedError error={error} field="description" />
           </Text>

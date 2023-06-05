@@ -7,7 +7,8 @@ import Box from "~/renderer/components/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { colors } from "~/renderer/styles/theme";
-import perFamilyOperationDetails from "~/renderer/generated/operationDetails";
+import { getLLDCoinFamily } from "~/renderer/families";
+
 const Cell = styled(Box).attrs(() => ({
   px: 4,
   horizontal: false,
@@ -31,35 +32,28 @@ class AmountCell extends PureComponent<Props> {
     const { currency, unit, operation, isConfirmed } = this.props;
     const amount = getOperationAmountNumber(operation);
 
-    const specific =
-      "family" in currency && currency.family
-        ? perFamilyOperationDetails[currency.family as keyof typeof perFamilyOperationDetails]
-        : null;
-    const Element =
-      specific && "amountCellExtra" in specific && specific.amountCellExtra
-        ? specific.amountCellExtra[operation.type as keyof typeof specific.amountCellExtra]
-        : null;
-    const AmountElement =
-      specific && "amountCell" in specific && specific.amountCell
-        ? specific.amountCell[operation.type as keyof typeof specific.amountCell]
-        : null;
+    const cryptoCurrency = "family" in currency && currency.family ? currency : null;
+    const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
+    const amountCellExtra = specific?.operationDetails?.amountCellExtra;
+    const Element = amountCellExtra ? amountCellExtra[operation.type] : null;
+    const amountCell = specific?.operationDetails?.amountCell;
+    const AmountElement = amountCell ? amountCell[operation.type] : null;
+
     return (
       <>
-        {Element && (
+        {Element && cryptoCurrency && (
           <Cell>
-            {/* @ts-expect-error TODO: check why TS is unable to reconciliate Element as a react component */}
-            <Element operation={operation} unit={unit} currency={currency} />
+            <Element operation={operation} unit={unit} currency={cryptoCurrency} />
           </Cell>
         )}
         {(!amount.isZero() || AmountElement) && (
           <Cell>
-            {AmountElement ? (
+            {AmountElement && cryptoCurrency ? (
               <AmountElement
-                // @ts-expect-error TODO: double check if any of the families have a component accepting an amount prop
                 amount={amount}
                 operation={operation}
                 unit={unit}
-                currency={currency}
+                currency={cryptoCurrency}
               />
             ) : (
               <>

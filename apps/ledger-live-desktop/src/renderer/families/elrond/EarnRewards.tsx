@@ -19,11 +19,11 @@ import Delegations from "~/renderer/families/elrond/components/Delegations";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { modals } from "./modals";
-import { DelegationType, UnbondingType } from "~/renderer/families/elrond/types";
-import { Account } from "@ledgerhq/types-live";
+import { DelegationType, ElrondFamily, UnbondingType } from "~/renderer/families/elrond/types";
+import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+
 export interface DelegationPropsType {
-  account: Account;
+  account: ElrondAccount;
 }
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -34,8 +34,6 @@ const Wrapper = styled(Box).attrs(() => ({
 `;
 
 /* eslint-disable react/display-name */
-const withDelegation = (Component: JSX.Element) => (props: DelegationPropsType) =>
-  props.account.elrondResources ? <Component {...props} /> : null;
 const Delegation = (props: DelegationPropsType) => {
   const { account } = props;
   const validators = useElrondRandomizedValidators();
@@ -47,7 +45,7 @@ const Delegation = (props: DelegationPropsType) => {
     (): boolean =>
       BigNumber(
         denominate({
-          input: account.spendableBalance,
+          input: account.spendableBalance.toString(),
           showLastNonZeroDecimal: true,
         }),
       ).gte(1),
@@ -113,7 +111,7 @@ const Delegation = (props: DelegationPropsType) => {
   }, [account.elrondResources]);
   const onEarnRewards = useCallback(() => {
     dispatch(
-      openModal(modals.rewards, {
+      openModal("MODAL_ELROND_REWARDS_INFO", {
         account,
         validators,
         delegations,
@@ -123,7 +121,7 @@ const Delegation = (props: DelegationPropsType) => {
   const onDelegate = useCallback(() => {
     if (validators) {
       dispatch(
-        openModal(modals.stake, {
+        openModal("MODAL_ELROND_DELEGATE", {
           account,
           validators,
           delegations,
@@ -134,7 +132,7 @@ const Delegation = (props: DelegationPropsType) => {
   const onClaimRewards = useCallback(() => {
     if (validators && delegations) {
       dispatch(
-        openModal(modals.claim, {
+        openModal("MODAL_ELROND_CLAIM_REWARDS", {
           account,
           validators,
           delegations,
@@ -261,4 +259,9 @@ const Delegation = (props: DelegationPropsType) => {
     </Fragment>
   );
 };
-export default withDelegation(Delegation);
+
+const EarnRewards: ElrondFamily["AccountBodyHeader"] = ({ account }) => {
+  return account.type === "Account" ? <Delegation account={account} /> : null;
+};
+
+export default EarnRewards;
