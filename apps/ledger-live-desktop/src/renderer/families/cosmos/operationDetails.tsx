@@ -259,9 +259,9 @@ const OperationDetailsExtra = ({
               <>
                 <OpDetailsSection
                   key={validatorReward.address}
-                  style={{ "justify-content": "flex-end" }}
+                  style={{ justifyContent: "flex-end" }}
                 >
-                  <OpDetailsData style={{ "max-width": "fit-content" }}>
+                  <OpDetailsData style={{ maxWidth: "fit-content" }}>
                     <Address onClick={redirectAddress(currency, validatorReward.address)}>
                       {getValidatorName(validatorReward.address)}
                     </Address>
