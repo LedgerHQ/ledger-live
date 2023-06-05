@@ -65,7 +65,7 @@ export function EthereumStakingDrawerProvider({
               columnGap={8}
               rowGap={8}
               mb={2}
-              flexWrap="wrap"
+              flexWrap="nowrap"
             >
               <Text variant="body" fontWeight="semiBold">
                 {t(`stake.ethereum.providers.${provider.id}.title`)}
