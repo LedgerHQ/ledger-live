@@ -32,6 +32,7 @@ import StepConfirmation, {
 } from "~/renderer/modals/Send/steps/StepConfirmation";
 import { St, StepId } from "./types";
 import invariant from "invariant";
+import { getEnv } from "@ledgerhq/live-env";
 
 export type Data = {
   account: AccountLike | undefined | null;
@@ -204,9 +205,13 @@ const Body = ({
   )
     .times(feePerGas)
     .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
-  const haveFundToCancel = mainAccount.balance.gt(feeValue.times(1.3));
+  const haveFundToCancel = mainAccount.balance.gt(
+    feeValue.times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")),
+  );
   const haveFundToSpeedup = mainAccount.balance.gt(
-    feeValue.times(1.1).plus(account.type === "Account" ? params.transactionRaw.amount : 0),
+    feeValue
+      .times(1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR"))
+      .plus(account.type === "Account" ? params.transactionRaw.amount : 0),
   );
   // log account and fees info
   logger.log(`main account address: ${mainAccount.freshAddress}`);
