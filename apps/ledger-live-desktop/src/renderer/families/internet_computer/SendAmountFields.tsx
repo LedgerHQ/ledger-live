@@ -1,21 +1,22 @@
 import React from "react";
-import { Trans, withTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import MemoField from "./MemoField";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
-import { Transaction } from "@ledgerhq/live-common/families/internet_computer/types";
-import { TransactionStatusCommon } from "@ledgerhq/types-live";
-import { Account } from "@ledgerhq/live-common/lib/types";
+import {
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/internet_computer/types";
+import { Account } from "@ledgerhq/types-live";
 
-const Root = (
-  props: JSX.IntrinsicAttributes & {
-    onChange: (a: Transaction) => void;
-    account: Account;
-    transaction: Transaction;
-    status: TransactionStatusCommon;
-  },
-) => {
+const Root = (props: {
+  account: Account;
+  transaction: Transaction;
+  status: TransactionStatus;
+  onChange: (a: Transaction) => void;
+  trackProperties?: object;
+}) => {
   return (
     <Box flow={1}>
       <Box
@@ -42,7 +43,7 @@ const Root = (
 };
 
 export default {
-  component: withTranslation()(Root),
+  component: Root,
   // Transaction is used here to prevent user to forward
   fields: ["memo", "transaction"],
 };
