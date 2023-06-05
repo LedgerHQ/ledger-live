@@ -325,6 +325,10 @@
       "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى.",
       "primaryCTA" : "تحميل صورة أخرى"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "ليس لدى Ledger Stax الخاص بك صورة شاشة قفل لإزالتها",
+      "description" : "صورة شاشة القَفل المخصصة تمت إزالتها من قَبل."
+    },
     "InvalidAddress" : {
       "title" : "هذا ليس عنوان {{currencyName}} صحيح"
     },
@@ -586,6 +590,12 @@
     "WrongDeviceForAccount" : {
       "title" : "حدث خطأ ما",
       "description" : "يرجى التحقق من أن محفظة الأجهزة الخاصة بك قد تم إعدادها بعبارة الاسترداد أو عبارة المرور المرتبطة بالحساب الذي تم اختياره."
+    },
+    "WebPTXPlayerNetworkFail" : {
+      "title" : "خطأ في الشبكة",
+      "description" : "تحقق من اتصالك بالإنترنت وحاول مرة أخرى. تواصل مع دعم Ledger إذا استمرت المشكلة.",
+      "contactSupport" : "تواصل مع دعم Ledger",
+      "primaryCTA" : "أعد المحاولة"
     },
     "UnexpectedBootloader" : {
       "title" : "عذراً، يجب ألا يكون جهازك في وضع Bootloader",
@@ -1191,7 +1201,8 @@
       "terms" : "بالضغط على \"Get Started (بدء الاستخدام)\" أنت توافق على وتقبل",
       "termsLink" : "Terms of Service",
       "privacyLink" : "سياسة الخصوصية",
-      "and" : "و"
+      "and" : "و",
+      "recoverLogIn" : "تسجيل الدخول إلى Ledger Recover"
     },
     "stepDoYouHaveALedgerDevice" : {
       "title" : "هل لديك Ledger؟",
@@ -2668,6 +2679,10 @@
       "title" : "الميزات التجريبية",
       "desc" : "جرّب الميزات التجريبية وأخبرنا برأيك.",
       "disclaimer" : "هذه ميزات تجريبية نقدمها \"كما هي\" لكي يختبرها مجتمعنا المهتمين بالتكنولوجيا. من الممكن أن يتم تغيير هذه الميزات أو تعطيلها أو إزالتها في أي وقت. من خلال تمكينها، فإنك توافق على استخدامها على مسؤوليتك الخاصة.",
+      "provider" : "الإعداد التجريبي \"My Ledger provider ({{forcedProvider}})\" قد يعرض نظام تشغيل وتطبيقات لم تُطرح بعد، مما يؤدي إلى مشكلات توافق. يمكنك تعطيله في الإعدادات.",
+      "providerDevMode" : "الإعدادات التجريبية \"My Ledger provider ({{forcedProvider}})\" و \"Developer mode (وضع المطور)\" قد يعرضا نظام تشغيل وتطبيقات لم تُطرح بعد، مما يؤدي إلى مشكلات توافق. يمكنك تعطيلهما في الإعدادات.",
+      "devMode" : "الإعداد التجريبي \"Developer mode (وضع المطور)\" قد يعرض نظام تشغيل وتطبيقات لم تُطرح بعد، مما يؤدي إلى مشكلات توافق. يمكنك تعطيله في الإعدادات.",
+      "providerCTA" : "انتقل إلى الإعدادات",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "تكاملات تجريبية",
@@ -2689,13 +2704,13 @@
           "title" : "الإدراج التجريبي للتطبيقات في My Ledger",
           "description" : "تحسين الأداء لوصول My Ledger والتدفقات المُضمَّنة."
         },
-        "experimentalCountervalues" : {
-          "title" : "API للقيم المقابلة التجريبية",
-          "description" : "قد يتسبب هذا في أن تكون القيم المقابلة المعروضة لحساباتك غير صحيحة."
-        },
         "experimentalSwap" : {
           "title" : "واجهة مبادلة جديدة",
           "description" : "استخدم واجهة المبادلة التجريبية الجديدة"
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "تمكين سجلات الشبكة",
+          "description" : "تمكين سجلات الشبكة في وحدة التحكم (سجلات الأخطاء دائماً مُمَكَّنة)"
         }
       },
       "developerFeatures" : {
@@ -3674,6 +3689,8 @@
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
     "allowManagerPermission" : "السماح بـ {{wording}} على {{productName}} الخاص بك",
+    "allowRemoveCustomLockscreen" : "قم بتأكيد إزالة الصورة على Ledger Stax الخاص بك",
+    "allowSecureConnection" : "السماح باتصال آمن مع Ledger",
     "loading" : "جاري التحميل...",
     "turnOnAndUnlockDevice" : "قم بتشغيل جهازك وإلغاء قفله",
     "connectAndUnlockDevice" : "قم بتوصيل جهازك وإلغاء قفله",
@@ -4025,16 +4042,34 @@
   },
   "FirmwareUpdate" : {
     "title" : "قم بتحديث البرنامج الثابت",
+    "updateDevice" : "تحديث {{deviceName}}",
+    "updateDone" : "تمت! {{deviceName}} الخاص بك مُحدَّث إلى آخر إصدار",
+    "updateDoneDescription" : "الإصدار الجديد لنظام التشغيل: {{firmwareVersion}}",
     "preparing" : "جاري إعداد تحديث البرنامج الثابت، رجاءً ابقِ جهازك يقظاً ومتصلاً. سنقوم بإخطارك بالتقدم",
     "confirmIdentifierText" : "تحقق من أن المُعرّف على جهازك هو المُعرّف ذاته أدناه. قم بتأكيد وإدخال رمز PINال الخاص بك إذا طُلب.",
     "pleaseReinstallApps" : "رجاءً أعد تثبيت التطبيقات على جهازك.",
     "pleaseConfirmUpdate" : "أكّد التحديث على جهازك",
+    "pleaseConfirmUpdateOnYourDevice" : "تأكيد التثبيت على {{deviceName}}",
+    "finishUpdateCTA" : "إنهاء",
     "finishUpdate" : "قم بإنهاء التحديث على {{deviceName}}",
     "identifierTitle" : "المُعرّف:",
     "pleaseWaitDownload" : "يُرجى الانتظار حتى يتم تنزيل المُثبت",
+    "doNotLeaveLedgerLive" : "لا تغادر تطبيق Ledger Live حتى اكتمال التحديث.",
     "preparingDevice" : "جاري إعداد جهازك",
     "pleaseWaitUpdate" : "يُرجى انتظار الانتهاء من التحديث",
+    "viewUpdateChangelog" : "عرض سِجل تغييرات التحديث",
     "waitForFirmwareUpdate" : "انتظر حتى انتهاء تحديث البرنامج الثابت على جهازك",
+    "waitForInstallationToFinish" : "انتظر حتى انتهاء التثبيت على جهازك {{deviceName}}",
+    "staxBatteryLow" : "مستوى بطارية Ledger Stax منخفضة جداً ليتم التحديث",
+    "staxBatteryLowDescription" : "لإجراء تحديث لنظام التشغيل، يجب ألا يقل مستوى شحن جهازك Ledger عن %20، أو أن يكون قيد الشحن.",
+    "updateCancelled" : "تم إلغاء التحديث على {{deviceName}}",
+    "updateCancelledDescription" : "تثبيت تحديث نظام التشغيل {{newFirmwareVersion}} رُفِض على {{deviceName}}. إذا كان هذا خطأً، قم بإعادة بدء التحديث",
+    "updateNotYetComplete" : "التحديث لم يكتمل بعد",
+    "updateNotYetCompleteDescription" : "إذا قاطعت التحديث، التطبيقات واللغة وصورة شاشة القفل لديك قد لا يتم استعادتهم بشكل صحيح.",
+    "restartUpdate" : "إعادة بدء تحديث نظام التشغيل",
+    "quitUpdate" : "الخروج من التحديث",
+    "continueUpdate" : "متابعة التحديث",
+    "unlockDeviceToComplete" : "قم بإلغاء قفل {{deviceName}} لإكمال التثبيت",
     "unlockDeviceWithPin" : "قم بإلغاء قفل جهازك باستخدام كود PIN الخاص بك",
     "reinstallApps" : "أعد تثبيت التطبيقات.",
     "currentVersionNumber" : "الإصدار الحالي",
@@ -4056,7 +4091,23 @@
       "flash-bootloader" : "جاري تحديث Bootloader",
       "flash" : "إعادة ضبط نسخة نظام التشغيل على جهازك",
       "preparing" : "جاري إعداد التحديث",
-      "firmware" : "جاري تنزيل التحديث"
+      "firmware" : "جاري تنزيل التحديث",
+      "prepareUpdate" : {
+        "titleActive" : "جارٍ إعداد التحديث للتثبيت",
+        "description" : "نسخ التكوين لديك احتياطياً ونقل التحديث إلى {{deviceName}}."
+      },
+      "installUpdate" : {
+        "titleInactive" : "تثبيت التحديث",
+        "titleActive" : "جارٍ تثبيت التحديث",
+        "description" : "{{deviceName}} سيُعاد تشغيله مرات عديدة.\n\nبعد انتهاء التثبيت على جهازك {{deviceName}}، قم بإلغاء قفل جهازك لإكمال التثبيت"
+      },
+      "restoreSettings" : {
+        "titleInactive" : "استعادة التطبيقات والإعدادات",
+        "description" : "الإعدادات وتطبيقات سلسلة الكتل ليدك سيتم استعادتها.",
+        "restoreLockScreenPicture" : "استعادة صورة شاشة القَفل",
+        "restoreLanguage" : "استعادة اللغة",
+        "installingApps" : "تثبيت التطبيقات"
+      }
     },
     "newVersion" : "التحديث {{version}} متاح لجهازك {{deviceName}}",
     "drawerUpdate" : {
@@ -4064,6 +4115,12 @@
       "description" : "قم بتحديث برنامج Ledger Nano الثابت عن طريق توصيله إلى تطبيق Ledger Live على سطح المكتب",
       "pleaseConnectUsbTitle" : "كبل USB مطلوب",
       "pleaseConnectUsbDescription" : "لبدء تحديث البرنامج الثابت، قم بتوصيل {{deviceName}} خاصتك بهاتفك الجوال باستخدام كبل USB."
+    },
+    "errors" : {
+      "TimeoutError" : {
+        "title" : "انقضت مهلة التحديث",
+        "description" : "التحديث لم يتمكن من الإنتهاء لانقطاع اتصالنا مع {{deviceName}}"
+      }
     }
   },
   "firmwareUpdateRequired" : {
@@ -5929,9 +5986,10 @@
       "txDetails" : "تفاصيل المعاملة"
     },
     "modalDisabled" : {
-      "title" : "وظيفة الإرسال غير متاحة",
+      "title" : "وظيفة الإرسال غير متاحة على iOS",
       "body" : "من أجل الامتثال لتحديثات Apple الأخيرة على App Store، فإن إرسال الرموز غير القابلة للاستبدال (NFTs) غير متاح مؤقتاً. لا يزال بوسعك استخدام Ledger Live على سطح المكتب لإرسال الرموز غير القابلة للاستبدال.",
-      "contactSupport" : "يُرجى قراءة مقالة الدعم لدينا للمزيد من المعلومات."
+      "learnMore" : "تعرّف على المزيد",
+      "continue" : "فهمت ذلك!"
     }
   },
   "ApplicationVersion" : "إصدار {{version}}",
@@ -5966,9 +6024,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "اختر من معرض الصور خاصتي",
-        "selectFromNFTGallery" : "اختر من معرض الرموز غير القابلة للاستبدال (NFT)"
+        "selectFromNFTGallery" : "اختر من معرض الرموز غير القابلة للاستبدال (NFT)",
+        "remove" : "إزالة الصورة الحالية"
       }
     },
+    "toastRemove" : "تم إزالة صورة شاشة القفل",
     "cropImage" : "قُصّ الصورة",
     "chooseConstrast" : "اختر التباين",
     "uploadAnotherImage" : "قم بتحميل صورة أخرى",
@@ -6060,8 +6120,8 @@
         "selectAndHide" : "اختيار وإخفاء",
         "hide" : "إخفاء {{count}} مجموعة",
         "hide_plural" : "إخفاء {{count}} مجموعة",
-        "alertHide" : "تم إخفاء مجموعة واحدة. انتقل إلى الإعدادات لعرضها وإلغاء إخفاءها في أي وقت",
-        "alertHide_plural" : "تم إخفاء {{count}} مجموعة. انتقل إلى الإعدادات لعرضها وإلغاء إخفاءها في أي وقت"
+        "alertHide" : "تم إخفاء 1 مجموعة. انتقل إلى قسم Account (الحساب) في Settings (الإعدادات) لعرضها وإلغاء إخفائها في أي وقت",
+        "alertHide_plural" : "تم إخفاء {{count}} مجموعة. انتقل إلى قسم Account (الحساب) في Settings (الإعدادات) لعرضها وإلغاء إخفائها في أي وقت"
       },
       "empty" : {
         "title" : "لا توجد رموز غير قابلة للاستبدال لعرضها، ومع ذلك",
@@ -6105,20 +6165,6 @@
       }
     }
   },
-  "protect" : {
-    "login" : {
-      "title" : "تسجيل الدخول",
-      "desc" : "قم بتسجيل الدخول عن طريق حسابك Ledger لإدارة اشتراك Protect الخاص بك.",
-      "email" : "البريد الإلكتروني",
-      "password" : "كلمة المرور",
-      "cta" : "تسجيل الدخول",
-      "forgotPassword" : "نسيت كلمة المرور؟",
-      "errors" : {
-        "emptyEmail" : "لا يمكن أن يكون البريد الإلكتروني فارغاً",
-        "emptyPassword" : "لا يمكن أن تكون كلمة المرور فارغة"
-      }
-    }
-  },
   "newsfeed" : {
     "title" : "موجز الأخبار",
     "poweredByCryptopanic" : "يعمل بواسطة Cryptopanic",
@@ -6128,6 +6174,30 @@
     "title" : "توصيل الجهاز"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "قم بتنمية ما تملك من ETH",
+      "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال كسب مكافآت يومية مباشرةً في Ledger Live لديك.",
+      "close" : "إغلاق",
+      "providers" : {
+        "lido" : {
+          "title" : "اكسب مع Lido",
+          "tag" : "ليس هناك حد أدنى",
+          "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. ليس هناك فترة قَفل. ليس هناك حد أدنى.",
+          "supportLink" : "تعرف على المزيد عن Lido"
+        },
+        "kiln" : {
+          "title" : "تكديس Kiln المُخصص",
+          "tag" : "يتطلب 32 ETH",
+          "description" : "قم بالتكديس مع مدققين مخصصين. يتطلب مضاعفات 32 ETH. المطالبة بالمكافآت تتم يدوياً.",
+          "supportLink" : "تعرف على المزيد عن مدقق Kiln"
+        },
+        "kiln_pooling" : {
+          "title" : "مُجمِع تكديس Kiln",
+          "description" : "انضم إلى مُجمِع تكديس. لا يوجد حد أدنى مطلوب من ETH. المطالبة بالمكافآت تتم تلقائياً.",
+          "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "شراء أو تبادل أو تلقَى",
       "text" : "ليس لديك ما يكفي من {{coin}} متاحة للتكديس",
