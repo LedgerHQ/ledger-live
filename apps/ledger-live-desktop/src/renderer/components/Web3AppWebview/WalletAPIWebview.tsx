@@ -29,6 +29,7 @@ import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { useWebviewState } from "./helpers";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
+import { NetworkErrorScreen } from "./NetworkError";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 const tracking = trackingWrapper(track);
@@ -274,8 +275,10 @@ interface Props {
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
-    const { webviewState, webviewRef, webviewProps } = useWebviewState({ manifest, inputs }, ref);
-
+    const { webviewState, webviewRef, webviewProps, handleRefresh } = useWebviewState(
+      { manifest, inputs },
+      ref,
+    );
     useEffect(() => {
       if (onStateChange) {
         onStateChange(webviewState);
@@ -291,6 +294,9 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     return (
       <>
+        {!webviewState.loading && webviewState.isAppUnavailable && (
+          <NetworkErrorScreen refresh={handleRefresh} />
+        )}
         <webview
           ref={webviewRef}
           /**

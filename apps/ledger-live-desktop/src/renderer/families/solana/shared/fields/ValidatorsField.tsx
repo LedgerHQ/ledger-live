@@ -1,11 +1,10 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
-import { ValidatorAppValidator } from "@ledgerhq/live-common/families/solana/validator-app";
-import { Account } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import invariant from "invariant";
-import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { TFunction, Trans } from "react-i18next";
+import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
+import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
+
+import React, { useMemo, useState, useCallback } from "react";
+import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import ValidatorSearchInput, {
@@ -15,13 +14,13 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "../components/ValidatorRow";
+
 type Props = {
-  account: Account;
+  account: SolanaAccount;
   chosenVoteAccAddr: string | undefined | null;
-  onChangeValidator: (v: ValidatorAppValidator) => void;
+  onChangeValidator: (v: { address: string }) => void;
 };
 const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
-  invariant(account && account.solanaResources, "solana account and resources required");
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
   const unit = getAccountUnit(account);
@@ -31,17 +30,9 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
       return validators.find(v => v.voteAccount === chosenVoteAccAddr);
     }
   }, [validators, chosenVoteAccAddr]);
-  const containerRef = useRef();
 
-  /** auto focus first input on mount */
-  useEffect(() => {
-    if (containerRef && containerRef.current && containerRef.current.querySelector) {
-      const firstInput = containerRef.current.querySelector("input");
-      if (firstInput && firstInput.focus) firstInput.focus();
-    }
-  }, []);
   const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
-  const renderItem = (validator: ValidatorAppValidator) => {
+  const renderItem = (validator: ValidatorsAppValidator) => {
     return (
       <ValidatorRow
         currency={account.currency}
@@ -85,9 +76,9 @@ const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
 `;
-const SeeAllButton: ThemedComponent<{
+const SeeAllButton = styled.div<{
   expanded: boolean;
-}> = styled.div`
+}>`
   display: flex;
   color: ${p => p.theme.colors.wallet};
   align-items: center;

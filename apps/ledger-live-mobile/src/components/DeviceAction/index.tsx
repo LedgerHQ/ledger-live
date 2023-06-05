@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   DeviceNotOnboarded,
+  ImageDoesNotExistOnDevice,
   LatestFirmwareVersionRequired,
 } from "@ledgerhq/live-common/errors";
 import {
@@ -342,14 +343,18 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   // level instead of being an exception here.
   if (imageRemoveRequested) {
     if (error) {
-      if ((error as Status["error"]) instanceof UserRefusedOnDevice) {
+      const refused = (error as Status["error"]) instanceof UserRefusedOnDevice;
+      const noImage =
+        (error as Status["error"]) instanceof ImageDoesNotExistOnDevice;
+      if (refused || noImage) {
         return renderError({
           t,
           navigation,
           error,
-          onRetry,
+          onRetry: refused ? onRetry : undefined,
           colors,
           theme,
+          hasExportLogButton: false,
           iconColor: palette.neutral.c20,
           Icon: () => (
             <Icons.InfoAltFillMedium size={28} color={palette.primary.c80} />

@@ -26,6 +26,19 @@ export const urls = {
     ko: "https://www.ledger.com/ko/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     ru: "https://www.ledger.com/ru/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
   },
+  contactSupportWebview: {
+    ar: "https://support.ledger.com/hc/ar/articles/4423020306705-%D8%AA%D9%88%D8%A7%D8%B5%D9%84-%D9%85%D8%B9%D9%86%D8%A7?support=true",
+    de: "https://support.ledger.com/hc/de/articles/4423020306705-Kontakt?support=true",
+    en: "https://support.ledger.com/hc/en-us/articles/4423020306705-Contact-Us?support=true",
+    es: "https://support.ledger.com/hc/es/articles/4423020306705-Contacto?support=true",
+    fr: "https://support.ledger.com/hc/fr-fr/articles/4423020306705-Nous-contacter?support=true",
+    ja: "https://support.ledger.com/hc/ja/articles/4423020306705-%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B?support=true",
+    ko: "https://support.ledger.com/hc/ko/articles/4423020306705-%EA%B3%A0%EA%B0%9D-%EB%AC%B8%EC%9D%98?support=true",
+    pt: "https://support.ledger.com/hc/pt-br/articles/4423020306705-Entre-em-contato-conosco?support=true",
+    ru: "https://support.ledger.com/hc/ru/articles/4423020306705-%D0%A1%D0%B2%D1%8F%D0%B6%D0%B8%D1%82%D0%B5%D1%81%D1%8C-%D1%81-%D0%BD%D0%B0%D0%BC%D0%B8?support=true",
+    tr: "https://support.ledger.com/hc/tr/articles/4423020306705-Bize-Ula%C5%9F%C4%B1n?support=true",
+    zh: "https://support.ledger.com/hc/zh-cn/articles/4423020306705-%E8%81%94%E7%B3%BB%E6%88%91%E4%BB%AC?support=true",
+  },
   pairingIssues:
     "https://support.ledger.com/hc/en-us/articles/360025864773-Fix-Bluetooth-pairing-issues?support=true",
   ratingsContact:
@@ -208,6 +221,16 @@ export const urls = {
     supportDisableIos:
       "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
     howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
+  },
+  fwUpdateReleaseNotes: {
+    nanoS:
+      "https://support.ledger.com/hc/en-us/articles/360010446000-Ledger-Nano-S-firmware-release-notes?docs=true",
+    nanoSP:
+      "https://support.ledger.com/hc/en-us/articles/4494540771997-Ledger-Nano-S-Plus-Firmware-Release-Notes?docs=true",
+    nanoX:
+      "https://support.ledger.com/hc/en-us/articles/360014980580-Ledger-Nano-X-firmware-release-notes?docs=true",
+    stax: "https://support.ledger.com/hc/en-us/articles/9950654827293?docs=true",
+    blue: "https://support.ledger.com/hc/en-us/articles/360014980580-Ledger-Nano-X-firmware-release-notes?docs=true",
   },
   lnxFirmwareUpdate:
     "https://support.ledger.com/hc/en-us/articles/9305992683165?docs=true",

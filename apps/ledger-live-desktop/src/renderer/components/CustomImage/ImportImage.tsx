@@ -13,6 +13,7 @@ type Props = {
   onResult: (res: ImageBase64Data) => void;
   onError: (error: Error) => void;
   setLoading: (_: boolean) => void;
+  onClick: () => void;
 };
 
 const ImageInput = styled.input.attrs({
@@ -31,7 +32,7 @@ const ImageInput = styled.input.attrs({
   opacity: 0;
 `;
 
-const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError }) => {
+const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError, onClick }) => {
   const { t } = useTranslation();
   const handleFile = useCallback(
     (file: File) => {
@@ -75,6 +76,7 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError }) => {
       text={t("customImage.steps.choose.upload")}
       Icon={Icons.UploadMedium}
       data-test-id="custom-image-import-image-button"
+      onClick={onClick}
     >
       <ImageInput onChange={onChange} data-test-id="custom-image-import-image-input" />
     </ImportButton>

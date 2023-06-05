@@ -47,13 +47,40 @@ export type AppPermission = {
   params?: any;
 };
 
+export type LiveAppManifestParams =
+  | {
+      dappName: string;
+      dappUrl: string;
+      nanoApp: string;
+      networks: Array<LiveAppManifestParamsNetwork>;
+    }
+  | {
+      currencies: string[];
+      webAppName: string;
+      webUrl: string;
+    }
+  | {
+      dappUrl: string;
+      networks: Array<LiveAppManifestParamsNetwork>;
+    }
+  | {
+      networks: Array<LiveAppManifestParamsNetwork>;
+    }
+  | Array<string>;
+
+export type LiveAppManifestParamsNetwork = {
+  currency: string;
+  chainID: number;
+  nodeURL?: string;
+};
+
 export type LiveAppManifest = {
   id: string;
   author?: string;
   private?: boolean;
   name: string;
   url: string | URL;
-  params?: string[];
+  params?: LiveAppManifestParams;
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;

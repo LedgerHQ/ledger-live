@@ -14,10 +14,8 @@ import {
   NearValidatorItem,
   NearAccount,
 } from "@ledgerhq/live-common/families/near/types";
-import {
-  FIGMENT_NEAR_VALIDATOR_ADDRESS,
-  getMaxAmount,
-} from "@ledgerhq/live-common/families/near/logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
+import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";

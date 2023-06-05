@@ -104,6 +104,7 @@ const ignoreErrors = [
   "530 undefined",
   "524 undefined",
   "Missing or invalid topic field", // wallet connect issue
+  "Bad status on response: 503", // cryptoorg node
 ];
 
 export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMainOptions>) {

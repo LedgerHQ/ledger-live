@@ -117,6 +117,7 @@ export function Row({
     <Wrapper>
       <ValidatorName onClick={onExternalLinkClick}>
         <Box mr={2}>
+          {/* @ts-expect-error issue in the underlying lib that unexpectedly have publicKey prop */}
           <PolkadotIdenticon address={address} size={24} />
         </Box>
         <ToolTip content={validator?.identity ? address : null}>

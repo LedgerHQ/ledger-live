@@ -18,7 +18,17 @@ import StepConnectDevice, { StepConnectDeviceFooter } from "./steps/StepConnectD
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import StepReceiveFunds from "./steps/StepReceiveFunds";
 import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepReceiveStakingFlow";
+
 export type StepId = "warning" | "account" | "device" | "receive" | "stakingFlow";
+
+export type Data = {
+  account?: AccountLike | undefined | null;
+  parentAccount?: Account | undefined | null;
+  startWithWarning?: boolean;
+  receiveTokenMode?: boolean;
+  eventType?: string;
+};
+
 type OwnProps = {
   stepId: StepId;
   onClose?: () => void | undefined;
@@ -26,13 +36,7 @@ type OwnProps = {
   isAddressVerified: boolean | undefined | null;
   verifyAddressError: Error | undefined | null;
   onChangeAddressVerified: (isAddressVerified?: boolean | null, err?: Error | null) => void;
-  params: {
-    account: AccountLike | undefined | null;
-    parentAccount: Account | undefined | null;
-    startWithWarning?: boolean;
-    receiveTokenMode?: boolean;
-    eventType?: string;
-  };
+  params: Data;
 };
 type StateProps = {
   t: TFunction;

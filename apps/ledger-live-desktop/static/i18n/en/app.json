@@ -2277,6 +2277,7 @@
     "renamed": "{{ productName }} name changed to \n“{{ name }}” "
   },
   "removeCustomLockscreen": {
+    "title": "Remove lock screen picture",
     "cta": "Remove",
     "confirmation": "Confirm removal of image on your Ledger Stax",
     "success": "Lock screen picture removed"
@@ -5682,6 +5683,10 @@
       "title": "Lock screen cancelled on Ledger Stax",
       "description": "If this image wasn't the right fit, you can try again with another image."
     },
+    "ImageDoesNotExistOnDevice": {
+      "title": "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description": "The customized lock screen picture was previously removed."
+    },
     "RestoreImageCommitRefusedOnDevice": {
       "title": "Restoration of Lock screen picture was cancelled on Ledger Stax",
       "description": "If this was a mistake you can retry the restoration, or you may skip this step."
@@ -5848,5 +5853,14 @@
     "description": "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until June 30th 2023",
     "cta": "Why should I subscribe?",
     "downloadLLM": "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+  },
+  "webview": {
+    "networkError": {
+      "title": "Network Error",
+      "subtitle": "Something went wrong. Please try again. If the problem persists, save your log and contact Ledger support.",
+      "tryAgain": "Try again",
+      "contactSupport": "Contact Ledger support",
+      "saveLog": "Save log"
+    }
   }
 }

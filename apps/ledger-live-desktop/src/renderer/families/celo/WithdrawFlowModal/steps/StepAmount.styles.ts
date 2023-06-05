@@ -2,13 +2,15 @@ import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 
-export const Description: ThemedComponent<{
+export const Description = styled(Text).attrs<{
   isPill?: boolean;
-}> = styled(Text).attrs(({ isPill }) => ({
+}>(({ isPill }) => ({
   ff: isPill ? "Inter|SemiBold" : "Inter|Regular",
   fontSize: isPill ? 2 : 3,
   color: "palette.text.shade60",
-}))`
+}))<{
+  isPill?: boolean;
+}>`
   ${p =>
     p.isPill
       ? `
@@ -16,15 +18,15 @@ export const Description: ThemedComponent<{
   `
       : ""}
 `;
-export const SelectResource: ThemedComponent<{
-  isDisabled?: boolean;
-}> = styled(Box).attrs(() => ({
+export const SelectResource = styled(Box).attrs(() => ({
   horizontal: true,
   p: 3,
   mt: 2,
   alignItems: "center",
   justifyContent: "space-between",
-}))`
+}))<{
+  disabled?: boolean;
+}>`
   height: 58px;
   border: 1px solid ${p => p.theme.colors.palette.text.shade20};
   border-radius: 4px;

@@ -1,21 +1,21 @@
+import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
-import { Observable, interval, from } from "rxjs";
+import { Observable, from, interval } from "rxjs";
+import { filter, share, switchMap } from "rxjs/operators";
 import semver from "semver";
-import { share, switchMap, filter } from "rxjs/operators";
+import { getCryptoCurrencyById } from "../../currencies";
+import { getEnv } from "../../env";
 import {
-  SatStackVersionTooOld,
+  RPCHostInvalid,
+  RPCHostRequired,
+  RPCPassRequired,
+  RPCUserRequired,
   SatStackAccessDown,
   SatStackStillSyncing,
-  RPCHostRequired,
-  RPCUserRequired,
-  RPCPassRequired,
-  RPCHostInvalid,
+  SatStackVersionTooOld,
 } from "../../errors";
-import { getCryptoCurrencyById } from "../../currencies";
-import network from "../../network";
-import type { AccountDescriptor } from "./descriptor";
-import { getEnv } from "../../env";
 import { getCurrencyExplorer } from "../../explorer";
+import type { AccountDescriptor } from "./descriptor";
 const minVersionMatch = ">=0.11.1";
 
 function isAcceptedVersion(version: string | null | undefined) {
@@ -35,6 +35,7 @@ export type RPCNodeConfig = {
   username: string;
   password: string;
   tls?: boolean;
+  notls?: boolean;
 };
 
 export function isValidHost(host: string): boolean {
