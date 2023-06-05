@@ -19,6 +19,9 @@ import {
   getAccountSpendableBalance,
   getAccountUnit,
   getFeesCurrency,
+  startOfHour,
+  startOfDay,
+  startOfWeek,
 } from ".";
 import {
   isAccountEmpty,
@@ -496,6 +499,30 @@ describe(clearAccount.name, () => {
       withSubAccounts.nfts = [];
       const clearedAccount = clearAccount(withSubAccounts);
       expect(Object.keys(clearedAccount).indexOf("nfts")).toEqual(-1);
+    });
+  });
+});
+
+describe("date utils", () => {
+  describe("startOfHour", () => {
+    test("basic test", () => {
+      expect(startOfHour(new Date(1655827384305)).toISOString()).toBe(
+        "2022-06-21T16:00:00.000Z"
+      );
+    });
+  });
+  describe("startOfDay", () => {
+    test("basic test", () => {
+      expect(startOfDay(new Date(1655827384305)).toISOString()).toBe(
+        "2022-06-21T04:00:00.000Z"
+      );
+    });
+  });
+  describe("startOfWeek", () => {
+    test("basic test", () => {
+      expect(startOfWeek(new Date(1655827384305)).toISOString()).toBe(
+        "2022-06-19T04:00:00.000Z"
+      );
     });
   });
 });

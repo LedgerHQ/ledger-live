@@ -38,13 +38,13 @@ const hourIncrement = 60 * 60 * 1000;
 const dayIncrement = 24 * hourIncrement;
 const weekIncrement = 7 * dayIncrement;
 
-function startOfHour(t: Date): Date {
+export function startOfHour(t: Date): Date {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate(), t.getHours());
 }
-function startOfDay(t: Date): Date {
+export function startOfDay(t: Date): Date {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
-function startOfWeek(t: Date): Date {
+export function startOfWeek(t: Date): Date {
   const d = startOfDay(t);
   return new Date(d.getTime() - d.getDay() * dayIncrement);
 }
