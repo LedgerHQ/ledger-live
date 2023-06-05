@@ -24,8 +24,8 @@ export type Props<
 > = {
   onChange: (a?: ValueType<OptionType, IsMulti> | null) => void;
   // custom renders
-  renderOption?: (a: { data: OptionType }) => React.ReactNode;
-  renderValue?: (a: { data: OptionType }) => React.ReactNode;
+  renderOption?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
+  renderValue?: (a: { data: OptionType; isDisabled: boolean }) => React.ReactNode;
   // optional
   async?: boolean;
   isRight?: boolean;

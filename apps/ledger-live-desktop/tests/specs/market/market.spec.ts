@@ -1,26 +1,25 @@
-import { expect } from "@playwright/test";
+import { expect, Route } from "@playwright/test";
 import test from "../../fixtures/common";
 import { MarketPage } from "../../models/MarketPage";
 import { Layout } from "../../models/Layout";
 import { MarketCoinPage } from "../../models/MarketCoinPage";
 import { getProvidersMock } from "../services/services-api-mocks/getProviders.mock";
 
-test.use({ userdata: "skip-onboarding" });
+test.use({
+  userdata: "skip-onboarding",
+});
 
 test("Market", async ({ page }) => {
   const marketPage = new MarketPage(page);
   const marketCoinPage = new MarketCoinPage(page);
   const layout = new Layout(page);
 
-  await page.route("https://swap.ledger.com/v4/providers**", async route => {
-    /* 
-      note: the providers endpoint is called when LLD loads which doesn't get mocked with this response,
-      as this test and page object only kick in once LLD is loaded. However this will mock providers
-      when we navigate to the market page so it's all good
-    */
-
+  await page.route("https://swap.ledger.com/v4/providers**", async (route: Route) => {
     const mockProvidersResponse = getProvidersMock();
-    route.fulfill({ body: mockProvidersResponse });
+    route.fulfill({
+      headers: { teststatus: "mocked" },
+      body: mockProvidersResponse,
+    });
   });
 
   await test.step("go to market", async () => {

@@ -19,6 +19,8 @@ import Item from "./Item";
 import Progress from "~/renderer/components/Progress";
 import ToolTip from "~/renderer/components/Tooltip";
 import { useLocation } from "react-router";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+
 const UpdatableHeader = styled.div`
   display: flex;
   flex-direction: row;
@@ -82,6 +84,10 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
     },
     [dispatch, open],
   );
+
+  const { getAllFlags } = useFeatureFlags();
+  const currencyFlags = getAllFlags();
+
   const updateHeader =
     updateAllQueue.length > 0 ? (
       <>
@@ -170,9 +176,10 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
         appStoreView={false}
         onlyUpdate={true}
         showActions={false}
+        currencyFlags={currencyFlags}
       />
     ),
-    [optimisticState, state, dispatch, isIncomplete],
+    [optimisticState, state, dispatch, isIncomplete, currencyFlags],
   );
   return (
     <FadeInOutBox in={visible} mt={4}>
@@ -186,4 +193,5 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
     </FadeInOutBox>
   );
 };
+
 export default memo<Props>(UpdateAllApps);

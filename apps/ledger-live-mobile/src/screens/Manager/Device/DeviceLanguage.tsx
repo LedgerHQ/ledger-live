@@ -11,7 +11,7 @@ import { track } from "../../../analytics";
 import DeviceOptionRow from "./DeviceOptionRow";
 
 type Props = {
-  pendingInstalls: boolean;
+  disabled: boolean;
   currentDeviceLanguage: Language;
   device: Device;
   deviceInfo: DeviceInfo;
@@ -19,7 +19,7 @@ type Props = {
 };
 
 const DeviceLanguage: React.FC<Props> = ({
-  pendingInstalls,
+  disabled,
   currentDeviceLanguage,
   device,
   deviceInfo,
@@ -94,7 +94,7 @@ const DeviceLanguage: React.FC<Props> = ({
       <DeviceOptionRow
         Icon={Icons.LanguageMedium}
         label={t("deviceLocalization.language")}
-        onPress={pendingInstalls ? undefined : openChangeLanguageModal}
+        onPress={disabled ? undefined : openChangeLanguageModal}
         linkLabel={t(`deviceLocalization.languages.${currentDeviceLanguage}`)}
         right={
           availableLanguages.length ? undefined : (

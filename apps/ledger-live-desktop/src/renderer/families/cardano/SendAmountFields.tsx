@@ -1,16 +1,26 @@
 import React from "react";
-import { Trans, withTranslation } from "react-i18next";
-import MemoValueField from "./MemoValueField";
+import { useTranslation } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
-const Root = (props: any) => {
+import MemoValueField from "./MemoValueField";
+import {
+  CardanoAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/cardano/types";
+const Root = (props: {
+  account: CardanoAccount;
+  transaction: Transaction;
+  status: TransactionStatus;
+  onChange: (t: Transaction) => void;
+  trackProperties?: Record<string, unknown>;
+}) => {
+  const { t } = useTranslation();
   return (
     <Box flow={1}>
       <Box mb={10}>
         <Label>
-          <span>
-            <Trans i18nKey="families.cardano.memo" />
-          </span>
+          <span>{t("families.cardano.memo")}</span>
         </Label>
       </Box>
       <Box mb={15} horizontal grow alignItems="center" justifyContent="space-between">
@@ -22,6 +32,6 @@ const Root = (props: any) => {
   );
 };
 export default {
-  component: withTranslation()(Root),
+  component: Root,
   fields: ["memo"],
 };

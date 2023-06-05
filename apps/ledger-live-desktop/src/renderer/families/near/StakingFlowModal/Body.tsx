@@ -1,4 +1,3 @@
-import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
@@ -10,36 +9,36 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { StepId, StepProps, St } from "./types";
-import { Account, Operation } from "@ledgerhq/live-common/types/index";
+
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
+
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import Stepper from "~/renderer/components/Stepper";
 import StepStake, { StepStakeFooter } from "./steps/StepStake";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
+import { NearAccount, Transaction } from "@ledgerhq/live-common/families/near/types";
+import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+export type Data = {
+  account: NearAccount;
+  source?: string;
+};
 type OwnProps = {
   stepId: StepId;
   onClose: () => void;
   onChangeStepId: (a: StepId) => void;
-  params: {
-    account: Account;
-    parentAccount: Account | undefined | null;
-    source?: string;
-  };
-  name: string;
+  params: Data;
 };
 type StateProps = {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  device: Device | undefined | null;
-  closeModal: (a: string) => void;
-  openModal: (a: string) => void;
+  openModal: OpenModal;
 };
 type Props = OwnProps & StateProps;
 const steps: Array<St> = [
@@ -75,21 +74,11 @@ const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
 });
 const mapDispatchToProps = {
-  closeModal,
   openModal,
 };
-const Body = ({
-  t,
-  stepId,
-  device,
-  closeModal,
-  openModal,
-  onChangeStepId,
-  params,
-  name,
-}: Props) => {
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }: Props) => {
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const { account, source = "Account Page" } = params;
@@ -97,13 +86,11 @@ const Body = ({
     transaction,
     setTransaction,
     updateTransaction,
-    parentAccount,
     status,
     bridgeError,
     bridgePending,
   } = useBridgeTransaction(() => {
-    invariant(account && account.nearResources, "near: account and near resources required");
-    const bridge = getAccountBridge(account, undefined);
+    const bridge: AccountBridge<Transaction> = getAccountBridge(account);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "stake",
@@ -114,9 +101,7 @@ const Body = ({
       transaction,
     };
   });
-  const handleCloseModal = useCallback(() => {
-    closeModal(name);
-  }, [closeModal, name]);
+
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
@@ -152,7 +137,6 @@ const Body = ({
     title: t("near.stake.flow.title"),
     device,
     account,
-    parentAccount,
     transaction,
     signed,
     stepId,
@@ -162,7 +146,7 @@ const Body = ({
     hideBreadcrumb: !!error && ["validator"].includes(stepId),
     onRetry: handleRetry,
     onStepChange: handleStepChange,
-    onClose: handleCloseModal,
+    onClose,
     error,
     status,
     optimisticOperation,
@@ -183,7 +167,7 @@ const Body = ({
     </Stepper>
   );
 };
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);

@@ -13,7 +13,7 @@ const Animation = ({
   isPaused = false,
   isStopped = false,
 }: {
-  animation: any;
+  animation: unknown;
   width?: string;
   height?: string;
   loop?: boolean;

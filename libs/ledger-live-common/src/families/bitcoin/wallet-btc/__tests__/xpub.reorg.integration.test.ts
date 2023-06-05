@@ -21,7 +21,6 @@ describe.skip("testing xpub reorg management", () => {
   const explorer = new Explorer({
     cryptoCurrency: getCryptoCurrencyById("bitcoin_testnet"),
     forcedExplorerURI: "http://localhost:20000/blockchain/v3",
-    disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
   const crypto = new Crypto({
     network,

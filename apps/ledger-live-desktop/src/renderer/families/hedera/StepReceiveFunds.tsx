@@ -30,7 +30,7 @@ const Receive1ShareAddress = ({
   showQRCodeModal,
 }: {
   account: AccountLike;
-  name: string;
+  name?: string;
   address: string;
   showQRCodeModal: () => void;
 }) => {
@@ -109,7 +109,6 @@ const StepReceiveFunds = ({
           <>
             <Receive1ShareAddress
               account={mainAccount}
-              name={name}
               address={address}
               showQRCodeModal={showQRCodeModal}
             />

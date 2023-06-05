@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
@@ -41,6 +41,7 @@ export default function TransferDrawer({
   onClose,
 }: Omit<ModalProps, "isRequestingToBeOpened">) {
   const navigation = useNavigation();
+  const route = useRoute();
   const { t } = useTranslation();
 
   const { page, track } = useAnalytics();
@@ -84,8 +85,11 @@ export default function TransferDrawer({
       page,
       flow: "stake",
     });
-    onNavigate(NavigatorName.StakeFlow);
-  }, [onNavigate, page, track]);
+    onNavigate(NavigatorName.StakeFlow, {
+      screen: ScreenName.Stake,
+      params: { parentRoute: route },
+    });
+  }, [onNavigate, page, track, route]);
 
   const onWalletConnect = useCallback(
     () =>

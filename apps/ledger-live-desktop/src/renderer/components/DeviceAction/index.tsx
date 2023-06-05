@@ -9,6 +9,7 @@ import {
   NoSuchAppOnProvider,
   EConnResetError,
   LanguageInstallRefusedOnDevice,
+  ImageDoesNotExistOnDevice,
 } from "@ledgerhq/live-common/errors";
 import { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -290,12 +291,15 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (imageRemoveRequested) {
+    const refused = error instanceof UserRefusedOnDevice;
+    const noImage = error instanceof ImageDoesNotExistOnDevice;
     if (error) {
-      if (error instanceof UserRefusedOnDevice) {
+      if (refused || noImage) {
         return renderError({
           t,
+          inlineRetry,
           error,
-          onRetry,
+          onRetry: refused ? onRetry : undefined,
           info: true,
         });
       }

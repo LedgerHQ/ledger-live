@@ -1,7 +1,7 @@
 import React from "react";
 import { getEnv } from "@ledgerhq/live-common/env";
-import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
-import Modal, { ModalBody, RenderProps } from "~/renderer/components/Modal";
+import { createAction } from "@ledgerhq/live-common/hw/actions/app";
+import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
@@ -13,14 +13,7 @@ export default function ConnectDevice() {
       name="MODAL_CONNECT_DEVICE"
       centered
       preventBackdropClick
-      render={({
-        data,
-        onClose,
-      }: RenderProps<{
-        onCancel?: (reason: string) => void;
-        appName?: string;
-        onResult: (result: AppResult) => void;
-      }>) => (
+      render={({ data, onClose }) => (
         <ModalBody
           onClose={() => {
             if (data?.onCancel) {

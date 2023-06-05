@@ -1,18 +1,19 @@
+import { getMainAccount, shortAddressPreview } from "@ledgerhq/live-common/account/index";
+import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
-import { shortAddressPreview, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { openURL } from "~/renderer/linking";
-import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import Text from "~/renderer/components/Text";
-import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
+import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
+import { openURL } from "~/renderer/linking";
+import { TezosFieldComponentProps } from "./types";
+
 const TezosDelegateValidator = ({
   account,
   parentAccount,
   transaction,
   field,
-}: FieldComponentProps) => {
+}: TezosFieldComponentProps) => {
   invariant(transaction.family === "tezos", "tezos transaction");
   const mainAccount = getMainAccount(account, parentAccount);
   const baker = useBaker(transaction.recipient);
@@ -29,8 +30,8 @@ const TezosDelegateValidator = ({
     </TransactionConfirmField>
   );
 };
-const TezosStorageLimit = ({ transaction, field }: FieldComponentProps) => {
-  invariant(transaction.family === "tezos", "tezos transaction");
+
+const TezosStorageLimit = ({ transaction, field }: TezosFieldComponentProps) => {
   return (
     <TransactionConfirmField label={field.label}>
       <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
@@ -39,6 +40,7 @@ const TezosStorageLimit = ({ transaction, field }: FieldComponentProps) => {
     </TransactionConfirmField>
   );
 };
+
 const fieldComponents = {
   "tezos.delegateValidator": TezosDelegateValidator,
   "tezos.storageLimit": TezosStorageLimit,
