@@ -12,15 +12,7 @@ import {
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { Transaction as EthereumTransaction } from "@ledgerhq/live-common/families/ethereum/types";
-import { getEnv } from "@ledgerhq/live-env";
 import { AccountBridge } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
-import invariant from "invariant";
-import React, { useCallback, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import styled from "styled-components";
-import { urls } from "~/config/urls";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";

@@ -1,8 +1,8 @@
 import { MakeModalsType } from "~/renderer/modals/types";
 import MODAL_ETH_STAKE from "./StakeFlowModal";
 import MODAL_EDIT_TRANSACTION from "./EditTransactionModal";
-import { Account, AccountLike } from "@ledgerhq/types-live";
-import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
+import { Account } from "@ledgerhq/types-live";
+import { StepId } from "./EditTransactionModal/types";
 
 export type ModalsData = {
   MODAL_ETH_STAKE: {
@@ -12,11 +12,8 @@ export type ModalsData = {
     source?: string;
   };
   MODAL_EDIT_TRANSACTION: {
-    account: AccountLike | undefined | null;
-    parentAccount: Account | undefined | null;
-    transactionRaw: EthereumTransactionRaw;
-    transactionHash: string;
-    isNftOperation: boolean;
+    stepId: StepId;
+    onClose: () => void;
   };
 };
 
