@@ -35,6 +35,7 @@ const getAccountsOrSubAccountsByCurrency = (
   }
   return accounts.filter(predicateFn);
 };
+
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
@@ -145,13 +146,21 @@ export function useDeepLinkHandler() {
           navigate("/swap");
           break;
         case "account": {
-          const { currency } = query;
+          const { address, currency } = query;
+
           if (!currency || typeof currency !== "string") return;
           const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
           if (!c || c.type === "FiatCurrency") return;
           const found = getAccountsOrSubAccountsByCurrency(c, accounts || []);
           if (!found.length) return;
           const [chosen] = found;
+
+          if (address && typeof address === "string") {
+            const account = accounts.find(acc => acc.freshAddress === address);
+            navigate(`/account/${account.id}`);
+            break;
+          }
+
           if (chosen?.type === "Account") {
             navigate(`/account/${chosen.id}`);
           } else {
