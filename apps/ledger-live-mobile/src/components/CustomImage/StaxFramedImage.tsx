@@ -94,9 +94,8 @@ export type Props = Partial<ComponentProps<typeof Image>> & {
   scale?: number;
 };
 
-// NB: measures taken directly in px on the .png and then scaled down (1/4)
-// to the expected display size.
 export const transferConfig: StaxFrameConfig = {
+  // NB: measures in px taken directly on the .png
   frameHeight: 888,
   frameWidth: 564,
   innerHeight: 840,
@@ -104,14 +103,13 @@ export const transferConfig: StaxFrameConfig = {
   innerRight: 30, // measured 32px on png and it seems to be 30px on lotties ... using 30 to avoid "long white 1px wide line"
   innerTop: 24,
   borderRightRadius: 24,
-  resizeMode: "cover", // the lotties and static images used with this configuration are not matching in a pixel perfect way so to avoid a "long white 1px wide line" effect we use "contain"
+  resizeMode: "cover",
   backgroundSource: transferBackground,
   leftPaddingColor: "#272727",
 };
 
-// NB: measures taken directly in px on the .png and then scaled down (1/4)
-// to the expected display size.
 export const previewConfig: StaxFrameConfig = {
+  // NB: measures in px taken directly on the .png
   frameHeight: 1283,
   frameWidth: 810,
   innerHeight: 1211,
@@ -122,8 +120,6 @@ export const previewConfig: StaxFrameConfig = {
   backgroundSource: previewBackground,
   resizeMode: "cover",
 };
-
-const Container = styled(Box).attrs({})``;
 
 const AbsoluteBackgroundContainer = styled(Flex).attrs({
   ...StyleSheet.absoluteFillObject,
@@ -180,7 +176,7 @@ const StaxFramedImage: React.FC<Props> = ({
         ],
       }}
     >
-      <Container height={frameHeight} width={frameWidth}>
+      <Box height={frameHeight} width={frameWidth}>
         <ForceTheme selectedPalette="light">
           <AbsoluteBackgroundContainer height={frameHeight} width={frameWidth}>
             {backgroundSource ? (
@@ -240,14 +236,11 @@ const StaxFramedImage: React.FC<Props> = ({
               />
             ) : null}
           </AbsoluteInnerImageContainer>
-          <Flex
-            key="childrencontainer"
-            style={{ height: innerHeight, width: innerWidth }}
-          >
+          <Flex style={{ height: innerHeight, width: innerWidth }}>
             {children}
           </Flex>
         </ForceTheme>
-      </Container>
+      </Box>
     </Box>
   );
 };
