@@ -1,14 +1,14 @@
-import BigNumber from "bignumber.js";
-import network from "../../../network";
-import { patchOperationWithHash } from "../../../operation";
+import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { patchOperationWithHash } from "../../../operation";
 import cryptoFactory from "../chain/chain";
 import {
   CosmosDelegation,
   CosmosDelegationStatus,
-  CosmosTx,
   CosmosRedelegation,
+  CosmosTx,
   CosmosUnbonding,
 } from "../types";
 
@@ -247,21 +247,49 @@ export class CosmosAPI {
   };
 
   getTransactions = async (address: string): Promise<CosmosTx[]> => {
-    const receive = await network({
-      method: "GET",
-      url:
-        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
-        encodeURI(`transfer.recipient='${address}'`),
-    });
+    let receive;
+    let send;
 
-    const send = await network({
-      method: "GET",
-      url:
-        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
-        encodeURI(`message.sender='${address}'`),
-    });
+    try {
+      send = await this.getSendingTransactions(address, "ORDER_BY_DESC");
+      receive = await this.getReceivingTransactions(address, "ORDER_BY_DESC");
+    } catch (e) {
+      // FIXME: remove and always orderBy once pagination is implemented or every nodes are upgraded to 0.47
+      // See https://github.com/cosmos/cosmos-sdk/issues/15437
+      if ((e as Error).message.includes("ORDER_BY_DESC")) {
+        send = await this.getSendingTransactions(address);
+        receive = await this.getReceivingTransactions(address);
+      }
+    }
+
     return [...receive.data.tx_responses, ...send.data.tx_responses];
   };
+
+  private async getReceivingTransactions(
+    address: string,
+    orderBy?: "ORDER_BY_DESC" | "ORDER_BY_ASC"
+  ) {
+    return await network({
+      method: "GET",
+      url:
+        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
+        encodeURI(`transfer.recipient='${address}'`) +
+        (orderBy ? `&order_by=${orderBy}` : ""),
+    });
+  }
+
+  private async getSendingTransactions(
+    address: string,
+    orderBy?: "ORDER_BY_DESC" | "ORDER_BY_ASC"
+  ) {
+    return await network({
+      method: "GET",
+      url:
+        `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs?events=` +
+        encodeURI(`message.sender='${address}'`) +
+        (orderBy ? `&order_by=${orderBy}` : ""),
+    });
+  }
 
   broadcast = async ({
     signedOperation: { operation, signature },

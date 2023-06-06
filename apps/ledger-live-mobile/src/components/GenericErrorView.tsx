@@ -23,11 +23,12 @@ type Props = {
   Icon?: IconType;
   iconColor?: string;
   children?: React.ReactNode;
+  footerComponent?: React.ReactNode;
+  exportLogIcon?: typeof Icons.DownloadMedium | typeof Icons.ImportMedium;
+  exportLogIconPosition?: "left" | "right";
 };
 
-const StyledLink = styled(Link).attrs({
-  iconPosition: "left",
-})`
+const StyledLink = styled(Link)`
   margin-top: 32px;
   margin-bottom: 10px;
 `;
@@ -42,6 +43,9 @@ const GenericErrorView = ({
   children,
   Icon = CloseMedium,
   iconColor = "error.c60",
+  footerComponent,
+  exportLogIcon = Icons.DownloadMedium,
+  exportLogIconPosition = "left",
 }: Props) => {
   const { t } = useTranslation();
 
@@ -94,6 +98,7 @@ const GenericErrorView = ({
             color="neutral.c80"
             textAlign="center"
             numberOfLines={6}
+            mt={5}
           >
             <TranslatedError error={error} field="description" />
           </Text>
@@ -102,10 +107,15 @@ const GenericErrorView = ({
       ) : null}
       {children}
       {hasExportLogButton ? (
-        <StyledLink Icon={Icons.DownloadMedium} onPress={onExport}>
+        <StyledLink
+          Icon={exportLogIcon}
+          onPress={onExport}
+          iconPosition={exportLogIconPosition}
+        >
           {t("common.saveLogs")}
         </StyledLink>
       ) : null}
+      {footerComponent}
     </Flex>
   );
 };

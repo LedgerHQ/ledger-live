@@ -1,6 +1,6 @@
 import { findLast, filter, uniqBy, findIndex } from "lodash";
 import Base from "../crypto/base";
-import { Input, IStorage, Output, TX, Address } from "./types";
+import { Input, IStorage, Output, TX, Address, Block } from "./types";
 
 // a mock storage class that just use js objects
 // sql.js would be perfect for the job
@@ -23,30 +23,58 @@ class BitcoinLikeStorage implements IStorage {
   // returning unordered tx within the same block)
   spentUtxos: { [key: string]: Input[] } = {};
 
-  getLastTx(txFilter: {
+  hasTx(txFilter: { account: number; index: number }): boolean {
+    const index = `${txFilter.account}-${txFilter.index}`;
+    return !!this.accountIndex[index] && this.accountIndex[index].length > 0;
+  }
+
+  txsSize(): number {
+    return this.txs.length;
+  }
+
+  hasPendingTx(txFilter: { account: number; index: number }): boolean {
+    const index = `${txFilter.account}-${txFilter.index}`;
+    return (
+      !!this.accountIndex[index] &&
+      this.accountIndex[index].map((i) => this.txs[i]).some((tx) => !tx.block)
+    );
+  }
+  getHighestBlockHeightAndHash(): Block | null {
+    let highestBlock: Block | null = null;
+    this.txs.forEach((tx) => {
+      if (
+        !!tx.block &&
+        (!highestBlock || tx.block.height > highestBlock.height)
+      ) {
+        highestBlock = tx.block;
+      }
+    });
+    return highestBlock;
+  }
+
+  getLastConfirmedTxBlock(txFilter: {
     account: number;
     index: number;
-    confirmed?: boolean;
-  }): TX | undefined {
+  }): Block | null {
     if (
       typeof this.accountIndex[`${txFilter.account}-${txFilter.index}`] ===
       "undefined"
     ) {
-      return undefined;
+      return null;
     }
-    const tx: TX | undefined = findLast(
-      this.accountIndex[`${txFilter.account}-${txFilter.index}`].map(
-        (i) => this.txs[i]
-      ),
-      (t) => {
-        return (
-          typeof txFilter.confirmed === "undefined" ||
-          (txFilter.confirmed && !!t.block) ||
-          (!txFilter.confirmed && !t.block)
-        );
-      }
-    );
-    return tx;
+    let lastConfirmedTxBlock: Block | null = null;
+    this.accountIndex[`${txFilter.account}-${txFilter.index}`]
+      .map((i) => this.txs[i])
+      .forEach((tx) => {
+        if (
+          !!tx.block &&
+          (!lastConfirmedTxBlock ||
+            tx.block.height > lastConfirmedTxBlock.height)
+        ) {
+          lastConfirmedTxBlock = tx.block;
+        }
+      });
+    return lastConfirmedTxBlock;
   }
 
   getLastUnconfirmedTx(): TX | undefined {

@@ -11,9 +11,9 @@ import ValidatorSearchInput, {
 import { Trans } from "react-i18next";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "~/renderer/families/near/shared/components/ValidatorRow";
-import { Account } from "@ledgerhq/live-common/types/index";
+import { Account } from "@ledgerhq/types-live";
 import { NearValidatorItem } from "@ledgerhq/live-common/families/near/types";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 type Props = {
   account: Account;
   onChangeValidator: (a: { address: string }) => void;
@@ -79,9 +79,9 @@ const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
 `;
-const SeeAllButton: ThemedComponent<{
+const SeeAllButton = styled.div<{
   expanded: boolean;
-}> = styled.div`
+}>`
   display: flex;
   color: ${p => p.theme.colors.wallet};
   align-items: center;

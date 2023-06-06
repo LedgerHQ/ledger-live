@@ -6,13 +6,15 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import Text from "~/renderer/components/Text";
 import styled from "styled-components";
-import { Account } from "@ledgerhq/types-live";
+import { SubAccount } from "@ledgerhq/types-live";
 import Label from "~/renderer/components/Label";
 import Button from "~/renderer/components/ButtonV3";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
+
 type Props = {
-  account: Account;
-  parentAccount: Account | null;
+  account: TezosAccount | SubAccount;
+  parentAccount: TezosAccount | undefined | null;
 };
 const Wrapper = styled(Box).attrs(() => ({
   p: 4,

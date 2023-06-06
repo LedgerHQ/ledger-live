@@ -16,12 +16,10 @@ import type {
 } from "./types";
 import {
   isValidAddress,
-  NEW_ACCOUNT_SIZE,
   isImplicitAccount,
   getMaxAmount,
   getTotalSpent,
   getYoctoThreshold,
-  YOCTO_THRESHOLD_VARIATION,
 } from "./logic";
 import { fetchAccountDetails } from "./api";
 import { getCurrentNearPreloadData } from "./preload";
@@ -35,6 +33,7 @@ import {
   NearRecommendUnstake,
   NearStakingThresholdNotMet,
 } from "./errors";
+import { NEW_ACCOUNT_SIZE, YOCTO_THRESHOLD_VARIATION } from "./constants";
 
 const getTransactionStatus = async (
   a: NearAccount,

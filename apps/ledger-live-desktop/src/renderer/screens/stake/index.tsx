@@ -6,7 +6,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
 import { stakeDefaultTrack } from "./constants";
-import { track, page } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
@@ -29,7 +29,7 @@ const useStakeFlow = () => {
         currencies: currencies || list,
       });
 
-      page("Stake", "Drawer - Choose Asset", {
+      trackPage("Stake", "Drawer - Choose Asset", {
         ...stakeDefaultTrack,
         page: history.location.pathname,
         type: "drawer",

@@ -8,32 +8,35 @@ import { TableLine } from "./Header";
 import Trophy from "~/renderer/icons/Trophy";
 import Medal from "~/renderer/icons/Medal";
 import Discreet from "~/renderer/components/Discreet";
+import { SuperRepresentative } from "@ledgerhq/live-common/families/tron/types";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 16px 20px;
 `;
-const Column: ThemedComponent<{
-  clickable?: boolean;
-}> = styled(TableLine).attrs(p => ({
+const Column = styled(TableLine).attrs<{
+  strong?: boolean;
+}>(p => ({
   ff: "Inter|SemiBold",
   color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
   fontSize: 3,
-}))`
+}))<{
+  clickable?: boolean;
+  strong?: boolean;
+}>`
   cursor: ${p => (p.clickable ? "pointer" : "cursor")};
 `;
 type Props = {
-  validator: any;
+  validator: SuperRepresentative | null | undefined;
   address: string;
   isSR: boolean;
   amount: React.ReactNode;
   duration: React.ReactNode;
   percentTP: React.ReactNode;
-  currency: any;
   explorerView: ExplorerView | undefined | null;
 };
-const IconContainer = styled.div`
+const IconContainer = styled.div<{ isSR: boolean }>`
   display: flex;
   margin-right: 15px;
   align-items: center;

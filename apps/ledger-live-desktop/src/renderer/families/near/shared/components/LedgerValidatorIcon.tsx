@@ -1,6 +1,6 @@
 import { NearValidatorItem } from "@ledgerhq/live-common/families/near/types";
 import React from "react";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
 import Logo from "~/renderer/icons/Logo";
@@ -9,8 +9,8 @@ const LedgerValidatorIcon = ({
   validator,
   validatorId,
 }: {
-  validator: NearValidatorItem;
-  validatorId: string;
+  validator?: NearValidatorItem | null;
+  validatorId?: string;
 }) => {
   const address = (validator && validator.validatorAddress) || validatorId;
   return (
