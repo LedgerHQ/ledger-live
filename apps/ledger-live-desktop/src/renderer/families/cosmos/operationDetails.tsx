@@ -127,6 +127,9 @@ const OperationDetailsExtra = ({
   const locale = useSelector(localeSelector);
   const currencyId = account.currency.id;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
+  const getValidatorName = (address: string): string => {
+    return cosmosValidators.find(v => v.validatorAddress === address)?.name || address;
+  };
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -134,12 +137,34 @@ const OperationDetailsExtra = ({
     discreet,
     locale,
   };
+
+  const OpDetails = (
+    <>
+      {extra.memo && (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey={"operationDetails.extra.memo"} />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Ellipsis ml={2}>{extra.memo}</Ellipsis>
+          </OpDetailsData>
+        </OpDetailsSection>
+      )}
+    </>
+  );
+
   let ret = null;
+
+  const { validators } = extra;
+  if (!validators || validators.length <= 0) {
+    return <>{OpDetails}</>;
+  }
+
   if (currency.type === "CryptoCurrency") {
     switch (type) {
       case "DELEGATE": {
         const { validators: delegations } = extra;
-        if (!delegations || !delegations.length) return null;
+        if (!delegations || !delegations.length) return <>{OpDetails}</>;
         return (
           <OperationDetailsDelegation
             discreet={discreet}
@@ -152,12 +177,8 @@ const OperationDetailsExtra = ({
         );
       }
       case "UNDELEGATE": {
-        const { validators } = extra;
-        if (!validators || validators.length <= 0) return null;
         const validator = extra.validators[0];
-        const formattedValidator = cosmosValidators.find(
-          v => v.validatorAddress === validator.address,
-        );
+        const formattedValidator = getValidatorName(validator.address);
         const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
         ret = (
           <>
@@ -168,7 +189,7 @@ const OperationDetailsExtra = ({
               </OpDetailsTitle>
               <OpDetailsData>
                 <Address onClick={redirectAddress(currency, validator.address)}>
-                  {formattedValidator ? formattedValidator.name : validator.address}
+                  {formattedValidator}
                 </Address>
               </OpDetailsData>
             </OpDetailsSection>
@@ -184,15 +205,11 @@ const OperationDetailsExtra = ({
         break;
       }
       case "REDELEGATE": {
-        const { sourceValidator, validators } = extra;
-        if (!validators || validators.length <= 0 || !sourceValidator) return null;
+        const { sourceValidator } = extra;
+        if (!sourceValidator) return <>{OpDetails}</>;
         const validator = extra.validators[0];
-        const formattedValidator = cosmosValidators.find(
-          v => v.validatorAddress === validator.address,
-        );
-        const formattedSourceValidator = cosmosValidators.find(
-          v => v.validatorAddress === sourceValidator,
-        );
+        const formattedValidator = getValidatorName(validator.address);
+        const formattedSourceValidator = getValidatorName(sourceValidator);
         const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), formatConfig);
         ret = (
           <>
@@ -203,7 +220,7 @@ const OperationDetailsExtra = ({
               </OpDetailsTitle>
               <OpDetailsData>
                 <Address onClick={redirectAddress(currency, sourceValidator)}>
-                  {formattedSourceValidator ? formattedSourceValidator.name : sourceValidator}
+                  {formattedSourceValidator}
                 </Address>
               </OpDetailsData>
             </OpDetailsSection>
@@ -215,7 +232,7 @@ const OperationDetailsExtra = ({
               </OpDetailsTitle>
               <OpDetailsData>
                 <Address onClick={redirectAddress(currency, validator.address)}>
-                  {formattedValidator ? formattedValidator.name : validator.address}
+                  {formattedValidator}
                 </Address>
               </OpDetailsData>
             </OpDetailsSection>
@@ -231,45 +248,44 @@ const OperationDetailsExtra = ({
       }
       case "REWARD": {
         const { validators } = extra;
-        if (!validators || validators.length <= 0) return null;
-        const validator = extra.validators[0];
-        const formattedValidator = cosmosValidators.find(
-          v => v.validatorAddress === validator.address,
-        );
         ret = (
           <>
-            <B />
             <OpDetailsSection>
               <OpDetailsTitle>
                 <Trans i18nKey={"operationDetails.extra.rewardFrom"} />
               </OpDetailsTitle>
-              <OpDetailsData>
-                <Address onClick={redirectAddress(currency, validator.address)}>
-                  {formattedValidator ? formattedValidator.name : validator.address}
-                </Address>
-              </OpDetailsData>
             </OpDetailsSection>
+            {validators.map((validatorReward: { amount: BigNumber; address: string }) => (
+              <>
+                <OpDetailsSection
+                  key={validatorReward.address}
+                  style={{ justifyContent: "flex-end" }}
+                >
+                  <OpDetailsData style={{ maxWidth: "fit-content" }}>
+                    <Address onClick={redirectAddress(currency, validatorReward.address)}>
+                      {getValidatorName(validatorReward.address)}
+                    </Address>
+                    <FormattedVal
+                      unit={unit}
+                      showCode
+                      val={validatorReward.amount}
+                      color="palette.text.shade80"
+                    />
+                  </OpDetailsData>
+                </OpDetailsSection>
+              </>
+            ))}
           </>
         );
+
         break;
       }
-      default:
-        break;
     }
   }
   return (
     <>
       {ret}
-      {extra.memo && (
-        <OpDetailsSection>
-          <OpDetailsTitle>
-            <Trans i18nKey={"operationDetails.extra.memo"} />
-          </OpDetailsTitle>
-          <OpDetailsData>
-            <Ellipsis ml={2}>{extra.memo}</Ellipsis>
-          </OpDetailsData>
-        </OpDetailsSection>
-      )}
+      {OpDetails}
     </>
   );
 };

@@ -5,11 +5,11 @@ describe("getMainMessage", () => {
     const exec = getMainMessage([
       {
         type: "delegate",
-        attributes: {},
+        attributes: [],
       },
       {
         type: "withdraw_rewards",
-        attributes: {},
+        attributes: [],
       },
     ]);
     expect(exec.type).toEqual("delegate");
@@ -20,11 +20,11 @@ describe("getMainMessage", () => {
       getMainMessage([
         {
           type: "unbond",
-          attributes: {},
+          attributes: [],
         },
         {
           type: "transfer",
-          attributes: {},
+          attributes: [],
         },
       ]).type
     ).toEqual("unbond");
@@ -33,14 +33,14 @@ describe("getMainMessage", () => {
   it("should return first transfer message with multiple transfer messages", () => {
     const firstTransfer = {
       type: "transfer",
-      attributes: {},
+      attributes: [],
     };
     expect(
       getMainMessage([
         firstTransfer,
         {
           type: "transfer",
-          attributes: {},
+          attributes: [],
         },
       ])
     ).toEqual(firstTransfer);
@@ -51,11 +51,11 @@ describe("getMainMessage", () => {
       getMainMessage([
         {
           type: "delegate",
-          attributes: {},
+          attributes: [],
         },
         {
           type: "redelegate",
-          attributes: {},
+          attributes: [],
         },
       ]).type
     ).toEqual("redelegate");
