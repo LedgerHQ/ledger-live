@@ -169,6 +169,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   if (!account || !transaction) return null;
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
+  const isSomeTxPending = account.pendingOperations?.length > 0;
+
   return (
     <>
       <SafeAreaView
@@ -253,6 +255,13 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             )}
           </NavigationScrollView>
           <View style={styles.container}>
+            {isSomeTxPending ? (
+              <View style={styles.infoBox}>
+                <Alert type="warning">
+                  {t("send.pendingTxWarning")}
+                </Alert>
+              </View>
+            ) : null}
             {(!isDomainResolutionEnabled || !isCurrencySupported) &&
             transaction.recipient &&
             !(error || warning) ? (
