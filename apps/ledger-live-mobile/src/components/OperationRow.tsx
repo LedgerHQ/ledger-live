@@ -3,7 +3,10 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
+import {
+  getOperationAmountNumber,
+  isConfirmedOperation,
+} from "@ledgerhq/live-common/operation";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -14,6 +17,7 @@ import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
 import { isEqual } from "lodash";
+import { useSelector } from "react-redux";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import OperationIcon from "./OperationIcon";
@@ -24,6 +28,8 @@ import perFamilyOperationDetails from "../generated/operationDetails";
 import { track } from "../analytics";
 import { UnionToIntersection } from "../types/helpers";
 import { BaseNavigation } from "./RootNavigator/types/helpers";
+import { currencySettingsForAccountSelector } from "../reducers/settings";
+import type { State } from "../reducers/types";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   typeof perFamilyOperationDetails[keyof typeof perFamilyOperationDetails]
@@ -144,8 +150,23 @@ function OperationRow({
   }, [account, operation, parentAccount]);
 
   const amount = getOperationAmountNumber(operation);
-  const valueColor = amount.isNegative() ? "neutral.c100" : "success.c50";
   const currency = getAccountCurrency(account);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const currencySettings = useSelector((s: State) =>
+    currencySettingsForAccountSelector(s, {
+      account: mainAccount,
+    }),
+  );
+  const isConfirmed = isConfirmedOperation(
+    operation,
+    mainAccount,
+    currencySettings.confirmationsNb,
+  );
+  const valueColor = amount.isNegative()
+    ? "neutral.c100"
+    : isConfirmed
+    ? "success.c50"
+    : "warning.c50";
   const unit = getAccountUnit(account);
 
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;

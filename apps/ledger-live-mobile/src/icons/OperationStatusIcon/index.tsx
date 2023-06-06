@@ -67,12 +67,16 @@ const OperationStatusIcon = ({
       : confirmed
       ? undefined
       : Icons.HistoryMedium);
-  const borderColor = failed ? "error.c40" : "neutral.c40";
+  const borderColor = failed
+    ? "error.c40"
+    : confirmed
+    ? "neutral.c40"
+    : "warning.c40";
   const iconColor = failed
     ? "error.c50"
     : confirmed
     ? "neutral.c100"
-    : "neutral.c50";
+    : "warning.c50";
   const badgeColor = failed ? "error.c50" : "neutral.c70";
   return (
     <BoxedIcon
