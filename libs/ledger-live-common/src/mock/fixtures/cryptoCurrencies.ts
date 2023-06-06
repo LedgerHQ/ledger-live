@@ -15,7 +15,6 @@ export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
     name: "MyCoin",
     managerAppName: "MyCoin",
     ticker: "MYC",
-    countervalueTicker: "MYC",
     scheme: "mycoin",
     color: "#ff0000",
     family,
