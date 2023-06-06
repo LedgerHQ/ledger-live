@@ -99,18 +99,19 @@ const FeesField: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = 
   );
 
   // give user an error if maxFeePerGas is lower than pending transaction maxFeePerGas + 10% of pending transaction maxPriorityFeePerGas for edit eth transaction feature
-  if (!status.errors.maxFee && transactionRaw) {
-    const pendingMaxPriorityFeePerGas = (transactionRaw as EthereumTransactionRaw)
-      .maxPriorityFeePerGas;
-    const pendingMaxFeePerGas = (transactionRaw as EthereumTransactionRaw).maxFeePerGas;
-    if (pendingMaxFeePerGas && pendingMaxPriorityFeePerGas) {
-      const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
-      const lowerLimitMaxFeePerGas = new BigNumber(pendingMaxFeePerGas).plus(
-        new BigNumber(pendingMaxPriorityFeePerGas).times(maxPriorityFeeGap),
-      );
-      if (transaction.maxFeePerGas && transaction.maxFeePerGas.isLessThan(lowerLimitMaxFeePerGas)) {
-        status.errors.maxFee = new MaxFeeTooLow();
-      }
+  const ethTransactionRaw = transactionRaw as EthereumTransactionRaw | undefined;
+  if (
+    !status.errors.maxFee &&
+    ethTransactionRaw &&
+    ethTransactionRaw.maxPriorityFeePerGas &&
+    ethTransactionRaw.maxFeePerGas
+  ) {
+    const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
+    const lowerLimitMaxFeePerGas = new BigNumber(ethTransactionRaw.maxFeePerGas).plus(
+      new BigNumber(ethTransactionRaw.maxPriorityFeePerGas).times(maxPriorityFeeGap),
+    );
+    if (transaction.maxFeePerGas && transaction.maxFeePerGas.isLessThan(lowerLimitMaxFeePerGas)) {
+      status.errors.maxFee = new MaxFeeTooLow();
     }
   }
   const validTransactionError = status.errors.maxFee;

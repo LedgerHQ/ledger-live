@@ -7,10 +7,10 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { useTranslation, Trans } from "react-i18next";
-import { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
+import { Account, AccountLike, FeeStrategy, TransactionCommonRaw } from "@ledgerhq/types-live";
 import {
   Transaction as EthereumTransaction,
-  TransactionRaw,
+  TransactionRaw as EthereumTransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import CounterValue from "~/renderer/components/CounterValue";
@@ -37,7 +37,7 @@ type Props = {
   strategies: FeeStrategy[];
   mapStrategies?: (arg: FeeStrategy) => FeeStrategy;
   suffixPerByte?: boolean;
-  transactionRaw?: TransactionRaw;
+  transactionRaw?: TransactionCommonRaw;
 };
 
 const FeesWrapper = styled(Tabbable)`
@@ -102,9 +102,10 @@ const SelectFeeStrategy = ({
   strategies = mapStrategies ? strategies.map(mapStrategies) : strategies;
   if (transactionRaw) {
     // disable low transaction fee options in case of edit transaction modal
+    const ethTransactionRaw = transactionRaw as EthereumTransactionRaw;
     if (EIP1559ShouldBeUsed(mainAccount.currency)) {
-      const oldMaxPriorityFeePerGas = transactionRaw.maxPriorityFeePerGas;
-      const oldMaxFeePerGas = transactionRaw.maxFeePerGas;
+      const oldMaxPriorityFeePerGas = ethTransactionRaw.maxPriorityFeePerGas;
+      const oldMaxFeePerGas = ethTransactionRaw.maxFeePerGas;
       const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
       strategies.forEach(strategy => {
         const strategyMaxPriorityFeePerGas = strategy.extra?.maxPriorityFeePerGas;
@@ -131,7 +132,7 @@ const SelectFeeStrategy = ({
       });
     } else {
       const gaspriceGap: number = getEnv("EDIT_TX_LEGACY_GASPRICE_GAP_SPEEDUP_FACTOR");
-      const oldGasPrice = transactionRaw.gasPrice;
+      const oldGasPrice = ethTransactionRaw.gasPrice;
       if (oldGasPrice) {
         strategies.forEach(strategy => {
           strategy.disabled =
