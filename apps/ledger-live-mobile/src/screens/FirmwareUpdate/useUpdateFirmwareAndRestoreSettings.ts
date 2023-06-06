@@ -24,8 +24,14 @@ import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   LockedDeviceError,
+  UserRefusedAllowManager,
 } from "@ledgerhq/errors";
-import { ConnectManagerTimeout } from "@ledgerhq/live-common/errors";
+import {
+  ConnectManagerTimeout,
+  ImageCommitRefusedOnDevice,
+  ImageLoadRefusedOnDevice,
+  LanguageInstallRefusedOnDevice,
+} from "@ledgerhq/live-common/errors";
 
 export const reconnectDeviceErrors: LedgerErrorConstructor<{
   [key: string]: unknown;
@@ -221,7 +227,12 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "languageRestore":
         unrecoverableError =
           installLanguageState.error &&
-          !reconnectDeviceErrors.some(err => installLanguageState.error instanceof err);
+          !reconnectDeviceErrors.some(
+            err => installLanguageState.error instanceof err,
+          ) &&
+          !(
+            installLanguageState.error instanceof LanguageInstallRefusedOnDevice
+          );
         if (installLanguageState.languageInstalled || unrecoverableError) {
           if (installLanguageState.error)
             log("FirmwareUpdate", "error while restoring language", installLanguageState.error);
@@ -231,8 +242,21 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "imageRestore":
         unrecoverableError =
           staxLoadImageState.error &&
-          !reconnectDeviceErrors.some(err => staxLoadImageState.error instanceof err);
-        if (staxLoadImageState.imageLoaded || unrecoverableError || !staxFetchImageState.hexImage) {
+          !reconnectDeviceErrors.some(
+            err => staxLoadImageState.error instanceof err,
+          ) &&
+          !(staxLoadImageState.error instanceof ImageLoadRefusedOnDevice) &&
+          // TypeScript doesn't work well with our custom error classes. It seems to think that if the error is not an
+          // instance of ImageLoadRefusedOnDevice then it's of type "never", this is why we're casting it here to unkown
+          !(
+            (staxLoadImageState.error as unknown) instanceof
+            ImageCommitRefusedOnDevice
+          );
+        if (
+          staxLoadImageState.imageLoaded ||
+          unrecoverableError ||
+          !staxFetchImageState.hexImage
+        ) {
           if (staxLoadImageState.error) {
             log("FirmwareUpdate", "error while restoring stax image", staxLoadImageState.error);
           }
@@ -242,7 +266,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       case "appsRestore":
         unrecoverableError =
           restoreAppsState.error &&
-          !reconnectDeviceErrors.some(err => restoreAppsState.error instanceof err);
+          !reconnectDeviceErrors.some(
+            err => restoreAppsState.error instanceof err,
+          ) &&
+          !(restoreAppsState.error instanceof UserRefusedAllowManager);
         if (restoreAppsState.opened || unrecoverableError) {
           if (restoreAppsState.error) {
             log("FirmwareUpdate", "error while restoring apps", restoreAppsState.error);
@@ -298,6 +325,41 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     ],
   );
 
+  const restoreStepDeniedError = useMemo(() => {
+    if (
+      updateStep === "languageRestore" &&
+      installLanguageState.error &&
+      installLanguageState.error instanceof LanguageInstallRefusedOnDevice
+    ) {
+      return installLanguageState.error;
+    }
+
+    if (
+      updateStep === "imageRestore" &&
+      staxLoadImageState.error &&
+      (staxLoadImageState.error instanceof ImageLoadRefusedOnDevice ||
+        (staxLoadImageState.error as unknown) instanceof
+          ImageCommitRefusedOnDevice)
+    ) {
+      return staxLoadImageState.error;
+    }
+
+    if (
+      updateStep === "appsRestore" &&
+      restoreAppsState.error &&
+      restoreAppsState.error instanceof UserRefusedAllowManager
+    ) {
+      return restoreAppsState.error;
+    }
+
+    return undefined;
+  }, [
+    installLanguageState.error,
+    staxLoadImageState.error,
+    restoreAppsState.error,
+    updateStep,
+  ]);
+
   const deviceLockedOrUnresponsive = useMemo(
     () =>
       updateActionState.lockedDevice ||
@@ -349,6 +411,27 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     updateStep,
   ]);
 
+  const skipCurrentRestoreStep = useCallback(() => {
+    switch (updateStep) {
+      case "languageRestore":
+        proceedToImageRestore();
+        break;
+      case "imageRestore":
+        proceedToAppsRestore();
+        break;
+      case "appsRestore":
+        proceedToUpdateCompleted();
+        break;
+      default:
+        break;
+    }
+  }, [
+    updateStep,
+    proceedToImageRestore,
+    proceedToAppsRestore,
+    proceedToUpdateCompleted,
+  ]);
+
   return {
     updateStep,
     connectManagerState,
@@ -358,8 +441,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     installLanguageState,
     restoreAppsState,
     retryCurrentStep,
+    skipCurrentRestoreStep,
     noOfAppsToReinstall: installedApps.length,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
+    restoreStepDeniedError,
   };
 };
