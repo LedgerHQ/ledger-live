@@ -114,8 +114,10 @@ function SelectAccount({ navigation, route }: Props) {
         navigation.getParent<
           StackNavigatorNavigation<BaseNavigatorStackParamList>
         >() || navigation;
-      n.pop();
       onSuccess && onSuccess(account, parentAccount);
+      if (navigation.getState().index > 0) {
+        n.pop();
+      }
     },
     [navigation, onSuccess],
   );
