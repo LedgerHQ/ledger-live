@@ -62,6 +62,9 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+
 const Wrapper = styled(Box).attrs({
   p: 20,
   mt: 12,
@@ -116,6 +119,7 @@ const SwapForm = () => {
     [dispatch],
   );
   const showDexQuotes: Feature<boolean> | null = useFeature("swapShowDexQuotes");
+  const walletApiPartnerList: Feature<boolean> | null = useFeature("swapWalletApiPartnerList");
   const onNoRates = useCallback(
     ({ toState }) => {
       track("error_message", {
@@ -374,7 +378,7 @@ const SwapForm = () => {
     });
     if (providerType === "DEX") {
       const from = swapTransaction.swap.from;
-      const fromAddress = from.parentAccount?.id || from.account?.id;
+      const fromAccountId = from.parentAccount?.id || from.account?.id;
       const customParams = {
         provider,
         providerURL: providerURL || undefined,
@@ -383,6 +387,18 @@ const SwapForm = () => {
         ...customParams,
       });
       const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
+      const getAccountId = (accountId, provider) => {
+        if (!walletApiPartnerList?.enabled || !walletApiPartnerList?.list.includes(provider)) {
+          return accountId;
+        }
+        const account = accounts.find(a => a.id === accountId);
+        const parentAccount = isTokenAccount(account)
+          ? getParentAccount(account, accounts)
+          : undefined;
+        const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
+        return walletApiId || accountId;
+      };
+      const accountId = getAccountId(fromAccountId, provider);
       history.push({
         // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
         // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
@@ -391,7 +407,7 @@ const SwapForm = () => {
         pathname,
         state: {
           returnTo: "/swap",
-          accountId: fromAddress,
+          accountId,
         },
       });
     } else {
