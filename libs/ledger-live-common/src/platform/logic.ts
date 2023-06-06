@@ -112,7 +112,10 @@ export function signTransactionLogic(
     ? parentAccount?.currency.family
     : account.currency.family;
 
-  if (accountFamily !== platformTransaction.family) {
+  if (
+    accountFamily !== platformTransaction.family &&
+    !(accountFamily === "evm" && transaction.family === "ethereum")
+  ) {
     return Promise.reject(
       new Error(`Transaction family not matching account currency family. Account family: ${accountFamily}, Transaction family: ${platformTransaction.family}
       `)

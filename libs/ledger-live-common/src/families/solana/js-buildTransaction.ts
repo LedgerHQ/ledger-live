@@ -13,8 +13,10 @@ import {
 import { assertUnreachable } from "./utils";
 import {
   PublicKey,
-  Transaction as OnChainTransaction,
+  VersionedTransaction as OnChainTransaction,
   TransactionInstruction,
+  TransactionMessage,
+  VersionedTransaction,
 } from "@solana/web3.js";
 import { ChainAPI } from "./api";
 
@@ -31,12 +33,13 @@ export const buildTransactionWithAPI = async (
 
   const feePayer = new PublicKey(account.freshAddress);
 
-  const tx = new OnChainTransaction({
-    feePayer,
+  const tm = new TransactionMessage({
+    payerKey: feePayer,
     recentBlockhash,
+    instructions,
   });
 
-  tx.add(...instructions);
+  const tx = new VersionedTransaction(tm.compileToV0Message());
 
   return [
     tx,

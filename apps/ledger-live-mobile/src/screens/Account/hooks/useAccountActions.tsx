@@ -21,6 +21,7 @@ import perFamilyAccountActions from "../../../generated/accountActions";
 import WalletConnect from "../../../icons/WalletConnect";
 import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
 import { ActionButtonEvent } from "../../../components/FabActions";
+import { useCanShowStake } from "./useCanShowStake";
 
 type Props = {
   account: AccountLike;
@@ -45,6 +46,7 @@ export default function useAccountActions({
   const { t } = useTranslation();
 
   const currency = getAccountCurrency(account);
+  const canShowStake = useCanShowStake(currency);
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -199,7 +201,7 @@ export default function useAccountActions({
     ...extraReceiveActionParams,
   };
 
-  const familySpecificMainActions =
+  const familySpecificMainActions: Array<ActionButtonEvent> =
     (decorators &&
       decorators.getMainActions &&
       decorators.getMainActions({
@@ -214,7 +216,11 @@ export default function useAccountActions({
     ...(availableOnSwap ? [actionButtonSwap] : []),
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
-    ...(!readOnlyModeEnabled ? familySpecificMainActions : []),
+    ...(!readOnlyModeEnabled
+      ? familySpecificMainActions.filter(
+          action => action.id !== "stake" || canShowStake,
+        )
+      : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,
   ];

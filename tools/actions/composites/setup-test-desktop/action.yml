@@ -51,7 +51,7 @@ runs:
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}
-      run: npx playwright@1.31.2 install --with-deps chromium
+      run: npx playwright@^1.34.3 install --with-deps chromium
       shell: bash
     - name: TurboRepo local caching server
       id: turborepo-cache-server
