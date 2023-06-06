@@ -1,22 +1,20 @@
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import React from "react";
 import { Trans } from "react-i18next";
-import { withTheme } from "styled-components";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
-import RetryButton from "~/renderer/components/RetryButton";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
-import { setDrawer } from "~/renderer/drawers/Provider";
+import Button from "~/renderer/components/Button";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import RetryButton from "~/renderer/components/RetryButton";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-import * as S from "./StepConfirmation.styles";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
+import * as S from "./StepConfirmation.styles";
 export const StepConfirmationFooter = ({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -45,7 +43,6 @@ export const StepConfirmationFooter = ({
               setDrawer(OperationDetails, {
                 operationId: optimisticOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
@@ -58,26 +55,14 @@ export const StepConfirmationFooter = ({
     </Box>
   );
 };
-const StepConfirmation = ({
-  t,
-  transaction,
-  optimisticOperation,
-  error,
-  signed,
-}: StepProps & {
-  theme: any;
-}) => {
+const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps) => {
   if (optimisticOperation) {
     return (
       <S.Container>
         <TrackPage category="Celo Withdraw" name="Step Confirmed" />
         <SuccessDisplay
           title={<Trans i18nKey="celo.withdraw.steps.confirmation.success.title" />}
-          description={multiline(
-            t("celo.withdraw.steps.confirmation.success.text", {
-              resource: transaction && transaction.resource && transaction.resource.toLowerCase(),
-            }),
-          )}
+          description={multiline(t("celo.withdraw.steps.confirmation.success.text"))}
         />
       </S.Container>
     );
@@ -97,4 +82,4 @@ const StepConfirmation = ({
   }
   return null;
 };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

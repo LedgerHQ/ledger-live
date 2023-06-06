@@ -1,8 +1,7 @@
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
-import { SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
-import { Account } from "@ledgerhq/types-live";
-import invariant from "invariant";
+import { SolanaAccount, SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -19,9 +18,8 @@ import DelegateIcon from "~/renderer/icons/Delegate";
 import { openURL } from "~/renderer/linking";
 import { Header } from "./Header";
 import { Row } from "./Row";
-type Props = {
-  account: Account;
-};
+import { DelegateModalName } from "../modals";
+
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
 }))`
@@ -29,9 +27,8 @@ const Wrapper = styled(Box).attrs(() => ({
   justify-content: space-between;
   align-items: center;
 `;
-const Delegation = ({ account }: Props) => {
+const Delegation = ({ account }: { account: SolanaAccount }) => {
   const { solanaResources } = account;
-  invariant(solanaResources, "solana account and resources expected");
   const dispatch = useDispatch();
   const stakesWithMeta = useSolanaStakesWithMeta(account.currency, solanaResources.stakes);
   const onEarnRewards = useCallback(() => {
@@ -49,7 +46,7 @@ const Delegation = ({ account }: Props) => {
     );
   }, [account, dispatch]);
   const onRedirect = useCallback(
-    (stakeWithMeta: SolanaStakeWithMeta, modalName: string) => {
+    (stakeWithMeta: SolanaStakeWithMeta, modalName: DelegateModalName) => {
       dispatch(
         openModal(modalName, {
           account,
@@ -156,8 +153,8 @@ function EarnRewardsCTA({ account, onEarnRewards }: EarnRewardsCTAProps) {
     </Wrapper>
   );
 }
-const Delegations = ({ account }: Props) => {
-  if (!account.solanaResources) return null;
+const Delegations = ({ account }: { account: SolanaAccount | SubAccount }) => {
+  if (account.type !== "Account") return null;
   return <Delegation account={account} />;
 };
 export default Delegations;

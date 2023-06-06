@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import logger from "~/renderer/logger";
-import Modal, { RenderProps } from "~/renderer/components/Modal";
-import Body, { StepId, Props as BodyProps } from "./Body";
+import Modal from "~/renderer/components/Modal";
+import Body, { StepId } from "./Body";
 type State = {
   stepId: StepId;
   isAddressVerified: boolean | undefined | null;
@@ -43,7 +43,7 @@ class ReceiveModal extends PureComponent<{}, State> {
         centered
         onHide={this.handleReset}
         preventBackdropClick={isModalLocked}
-        render={({ data, onClose }: RenderProps<BodyProps["params"]>) => (
+        render={({ data, onClose }) => (
           <Body
             onClose={onClose}
             stepId={stepId}

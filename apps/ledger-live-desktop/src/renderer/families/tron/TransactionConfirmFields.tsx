@@ -2,14 +2,19 @@ import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
-import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 import Text from "~/renderer/components/Text";
 import WarnBox from "~/renderer/components/WarnBox";
 import Box from "~/renderer/components/Box";
 import { OperationDetailsVotes } from "./operationDetails";
+import {
+  TronAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/tron/types";
+import { FieldComponentProps } from "../types";
+
 const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
@@ -29,7 +34,9 @@ const AddressText = styled(Text).attrs(() => ({
   text-align: right;
   max-width: 50%;
 `;
-const TronResourceField = ({ field }: FieldComponentProps) => {
+const TronResourceField = ({
+  field,
+}: FieldComponentProps<TronAccount, Transaction, TransactionStatus>) => {
   invariant(field.type === "tron.resource", "TronResourceField invalid");
   return (
     <TransactionConfirmField label={field.label}>
@@ -37,7 +44,12 @@ const TronResourceField = ({ field }: FieldComponentProps) => {
     </TransactionConfirmField>
   );
 };
-const TronVotesField = ({ account, parentAccount, transaction, field }: FieldComponentProps) => {
+const TronVotesField = ({
+  account,
+  parentAccount,
+  transaction,
+  field,
+}: FieldComponentProps<TronAccount, Transaction, TransactionStatus>) => {
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(transaction.family === "tron", "tron transaction");
   const { votes } = transaction;

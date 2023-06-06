@@ -3,12 +3,17 @@ import { Flex, Text, Icons, Link, Icon, Tag as TagCore } from "@ledgerhq/react-u
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import { ListProvider } from "../types";
 import { StakeOnClickProps } from "../EthStakingModalBody";
 import { StakingIcon } from "../StakingIcon";
 
-const Container = styled(Flex)`
+export const Container: StyledComponent<
+  "div",
+  DefaultTheme,
+  Record<string, unknown>,
+  never
+> = styled(Flex)`
   cursor: pointer;
   border-radius: 8px;
   :hover {
@@ -16,7 +21,7 @@ const Container = styled(Flex)`
   }
 `;
 
-const Tag = styled(TagCore)`
+export const Tag = styled(TagCore)`
   padding: 3px 6px;
   > span {
     font-size: 11px;
@@ -44,11 +49,11 @@ const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvi
   const hasTag = i18n.exists(`ethereum.stake.${provider.id}.tag`);
 
   useEffect(() => {
-    redirectIfOnlyProvider({ provider, manifest });
+    if (manifest) redirectIfOnlyProvider({ provider, manifest });
   }, [redirectIfOnlyProvider, provider, manifest]);
 
   const stakeLink = useCallback(() => {
-    stakeOnClick({ provider, manifest });
+    if (manifest) stakeOnClick({ provider, manifest });
   }, [provider, stakeOnClick, manifest]);
 
   const infoLink = useCallback(

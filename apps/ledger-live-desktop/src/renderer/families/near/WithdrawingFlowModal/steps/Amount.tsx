@@ -18,7 +18,6 @@ export default function StepAmount({
   status,
   error,
 }: StepProps) {
-  invariant(account && account.nearResources && transaction, "account and transaction required");
   const [available, setAvailable] = useState(transaction.amount);
   const bridge = getAccountBridge(account);
   const updateValidator = useCallback(
@@ -35,11 +34,12 @@ export default function StepAmount({
     [onUpdateTransaction, bridge, available],
   );
   const onChangeValidator = useCallback(
-    ({ validatorId, available }: NearMappedStakingPosition) => {
-      setAvailable(available);
+    (validator?: NearMappedStakingPosition | null) => {
+      if (!validator) return;
+      setAvailable(validator.available);
       updateValidator({
-        address: validatorId,
-        amount: available,
+        address: validator.validatorId,
+        amount: validator.available,
       });
     },
     [updateValidator],

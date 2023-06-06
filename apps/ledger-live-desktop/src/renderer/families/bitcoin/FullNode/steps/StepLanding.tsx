@@ -5,10 +5,10 @@ import Text from "~/renderer/components/Text";
 import Alert from "~/renderer/components/Alert";
 import { Trans } from "react-i18next";
 import IconCheckFull from "~/renderer/icons/CheckFull";
-import { colors } from "~/renderer/styles/theme";
 import fullnodeIllustration from "~/renderer/images/fullnode.png";
 import Button from "~/renderer/components/Button";
 import { urls } from "~/config/urls";
+
 const Illustration = styled.div`
   margin-bottom: 24px;
   width: 193px;
@@ -40,19 +40,17 @@ const Landing = () => (
     </Text>
     <List>
       <Item>
-        <IconCheckFull size={16} color={colors.positiveGreen} />
+        <IconCheckFull size={16} />
         <Text ml={2} ff="Inter|Medium" fontSize={4} color="palette.text.shade100">
           <Trans i18nKey="fullNode.modal.steps.landing.list.item1" />
         </Text>
       </Item>
       <Item>
-        <IconCheckFull size={16} color={colors.positiveGreen} />
         <Text ml={2} ff="Inter|Medium" fontSize={4} color="palette.text.shade100">
           <Trans i18nKey="fullNode.modal.steps.landing.list.item2" />
         </Text>
       </Item>
       <Item>
-        <IconCheckFull size={16} color={colors.positiveGreen} />
         <Text ml={2} ff="Inter|Medium" fontSize={4} color="palette.text.shade100">
           <Trans i18nKey="fullNode.modal.steps.landing.list.item3" />
         </Text>

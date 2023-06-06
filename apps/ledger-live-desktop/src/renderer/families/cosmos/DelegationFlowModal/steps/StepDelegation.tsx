@@ -1,10 +1,9 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -23,14 +22,13 @@ export default function StepDelegation({
   error,
   t,
 }: StepProps) {
-  invariant(account && transaction && transaction.validators, "account and transaction required");
+  invariant(transaction && transaction.validators, "transaction required");
   const { cosmosResources } = account;
-  invariant(cosmosResources, "cosmosResources required");
   const delegations = cosmosResources.delegations || [];
   const updateValidator = useCallback(
     ({ address }: { address: string }) => {
       const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
-      onUpdateTransaction(tx => {
+      onUpdateTransaction(_tx => {
         return bridge.updateTransaction(transaction, {
           validators: [
             {
@@ -69,7 +67,6 @@ export function StepDelegationFooter({
   bridgePending,
   transaction,
 }: StepProps) {
-  invariant(account, "account required");
   const { errors } = status;
   const canNext =
     !bridgePending && !errors.validators && transaction && transaction.validators.length > 0;

@@ -5,6 +5,8 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
+import { StepId } from "~/renderer/modals/Send/types";
+
 const IconWrapper = styled(Box).attrs(() => ({
   p: 4,
 }))`
@@ -27,7 +29,7 @@ const SendWarning = () => (
     </Box>
   </Box>
 );
-const SendWarningFooter = ({ transitionTo }: any) => (
+const SendWarningFooter = ({ transitionTo }: { transitionTo: (st: StepId) => void }) => (
   <Box horizontal alignItems="center" flow={2}>
     <Button primary onClick={() => transitionTo("recipient")}>
       <Trans i18nKey="common.continue" />

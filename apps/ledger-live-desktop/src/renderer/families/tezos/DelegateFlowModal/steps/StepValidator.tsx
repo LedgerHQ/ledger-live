@@ -83,7 +83,7 @@ const StepValidator = ({
   eventType,
 }: StepProps) => {
   invariant(account, "account is required");
-  const contentRef = useRef();
+  const contentRef = useRef(null);
   const bakers = useBakers(bakersWhitelistDefault);
   const onBakerClick = useCallback(
     baker => {

@@ -9,7 +9,6 @@ import CounterValueSelect from "./CountervalueSelect";
 import MarketList from "./MarketList";
 import SideDrawerFilter from "./SideDrawerFilter";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import Track from "~/renderer/analytics/Track";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 const Container = styled(Flex).attrs({
