@@ -11,12 +11,16 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
 import * as S from "./AmountField.styles";
-import { Account, TransactionStatus } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/families/celo/types";
+import {
+  Transaction,
+  TransactionStatus,
+  CeloAccount,
+} from "@ledgerhq/live-common/families/celo/types";
+
 type Props = {
   t: TFunction;
-  account: Account | undefined | null;
-  parentAccount: Account | undefined | null;
+  account: CeloAccount | undefined | null;
+  parentAccount: CeloAccount | undefined | null;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;
   onChangeTransaction: (a: Transaction) => void;
@@ -56,7 +60,7 @@ const AmountField = ({
   if (!status) return null;
   const { useAllAmount } = transaction;
   const { amount, errors, warnings } = status;
-  let { amount: amountError } = errors;
+  let amountError: Error | null = errors.amount;
 
   // we ignore zero case for displaying field error because field is empty.
   if (amount.eq(0)) {

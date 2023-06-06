@@ -3,6 +3,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
+import { OpenModal } from "~/renderer/actions/modals";
 export type StepId = "assets" | "connectDevice" | "confirmation";
 export type StepProps = {
   t: TFunction;
@@ -12,10 +13,10 @@ export type StepProps = {
   parentAccount: Account | undefined | null;
   onRetry: (a: void) => void;
   onClose: () => void;
-  openModal: (key: string, config?: any) => void;
-  optimisticOperation: any;
-  error: any;
-  warning: any;
+  openModal: OpenModal;
+  optimisticOperation: Operation | undefined;
+  error: Error | undefined;
+  warning: Error | undefined;
   signed: boolean;
   transaction: Transaction | undefined | null;
   status: TransactionStatus;

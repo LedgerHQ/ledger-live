@@ -62,16 +62,32 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
     },
     [account],
   );
+
+  const getValidatorName = (validatorAddress: string) => {
+    const relatedValidator = cosmosValidators.find(
+      v => v.validatorAddress === validatorAddress,
+    );
+    return relatedValidator ? relatedValidator.name : validatorAddress;
+  };
+
+  const OperationDetailsSection = (
+    <>
+      {extra.memo && (
+        <Section title={t("operationDetails.extra.memo")} value={extra.memo} />
+      )}
+    </>
+  );
+
+  if (!extra.validators || extra.validators.length <= 0) {
+    return <>{OperationDetailsSection}</>;
+  }
+
   let ret = null;
 
   switch (type) {
     case "DELEGATE": {
-      const { validators } = extra;
-      if (!validators || validators.length <= 0) break;
       const validator = extra.validators[0];
-      const formattedValidator = cosmosValidators.find(
-        v => v.validatorAddress === validator.address,
-      );
+      const formattedValidator = getValidatorName(validator.address);
       const formattedAmount = formatCurrencyUnit(
         unit,
         BigNumber(validator.amount),
@@ -87,11 +103,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
         <>
           <Section
             title={t("operationDetails.extra.delegatedTo")}
-            value={
-              formattedValidator?.name ??
-              formattedValidator?.validatorAddress ??
-              ""
-            }
+            value={formattedValidator}
           />
           <Section
             title={t("operationDetails.extra.delegatedAmount")}
@@ -103,12 +115,8 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
     }
 
     case "UNDELEGATE": {
-      const { validators } = extra;
-      if (!validators || validators.length <= 0) break;
       const validator = extra.validators[0];
-      const formattedValidator = cosmosValidators.find(
-        v => v.validatorAddress === validator.address,
-      );
+      const formattedValidator = getValidatorName(validator.address);
       const formattedAmount = formatCurrencyUnit(
         unit,
         BigNumber(validator.amount),
@@ -124,7 +132,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
         <>
           <Section
             title={t("operationDetails.extra.undelegatedFrom")}
-            value={formattedValidator?.name ?? validator.address}
+            value={formattedValidator}
             onPress={() => {
               redirectAddressCreator(validator.address);
             }}
@@ -139,15 +147,11 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
     }
 
     case "REDELEGATE": {
-      const { sourceValidator, validators } = extra;
-      if (!validators || validators.length <= 0 || !sourceValidator) break;
+      const { sourceValidator } = extra;
+      if (!sourceValidator) break;
       const validator = extra.validators[0];
-      const formattedValidator = cosmosValidators.find(
-        v => v.validatorAddress === validator.address,
-      );
-      const formattedSourceValidator = cosmosValidators.find(
-        v => v.validatorAddress === sourceValidator,
-      );
+      const formattedValidator = getValidatorName(validator.address);
+      const formattedSourceValidator = getValidatorName(sourceValidator);
       const formattedAmount = formatCurrencyUnit(
         unit,
         BigNumber(validator.amount),
@@ -163,20 +167,14 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
         <>
           <Section
             title={t("operationDetails.extra.redelegatedFrom")}
-            value={
-              formattedSourceValidator
-                ? formattedSourceValidator.name
-                : sourceValidator
-            }
+            value={formattedSourceValidator}
             onPress={() => {
               redirectAddressCreator(sourceValidator);
             }}
           />
           <Section
             title={t("operationDetails.extra.redelegatedTo")}
-            value={
-              formattedValidator ? formattedValidator.name : validator.address
-            }
+            value={formattedValidator}
             onPress={() => {
               redirectAddressCreator(validator.address);
             }}
@@ -192,20 +190,28 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
 
     case "REWARD": {
       const { validators } = extra;
-      if (!validators || validators.length <= 0) break;
-      const validator = extra.validators[0];
-      const formattedValidator = cosmosValidators.find(
-        v => v.validatorAddress === validator.address,
-      );
       ret = (
         <>
-          <Section
-            title={t("operationDetails.extra.rewardFrom")}
-            value={formattedValidator?.name ?? validator.address}
-            onPress={() => {
-              redirectAddressCreator(validator.address);
-            }}
-          />
+          {validators.map(v => (
+            <Section
+              key={v.address}
+              title={t("operationDetails.extra.rewardFrom")}
+              value={
+                getValidatorName(v.address) +
+                " " +
+                formatCurrencyUnit(unit, BigNumber(v.amount), {
+                  disableRounding: true,
+                  alwaysShowSign: false,
+                  showCode: true,
+                  discreet,
+                  locale,
+                })
+              }
+              onPress={() => {
+                redirectAddressCreator(v.address);
+              }}
+            />
+          ))}
         </>
       );
       break;
@@ -218,9 +224,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
   return (
     <>
       {ret}
-      {extra.memo && (
-        <Section title={t("operationDetails.extra.memo")} value={extra.memo} />
-      )}
+      {OperationDetailsSection}
     </>
   );
 }

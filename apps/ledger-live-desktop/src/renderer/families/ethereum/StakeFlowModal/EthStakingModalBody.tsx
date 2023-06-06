@@ -1,16 +1,17 @@
 import React, { useCallback } from "react";
 import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
-
 import { Flex, Text } from "@ledgerhq/react-ui";
+
 import { track } from "~/renderer/analytics/segment";
 import { useTranslation } from "react-i18next";
 import { openURL } from "~/renderer/linking";
+import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
 import { ListProvider, ListProviders } from "./types";
 import { getTrackProperties } from "./utils/getTrackProperties";
-import { generateValidDappURLWithParams } from "~/helpers/generateValidDappURLWithParams";
-import { Manifest } from "~/types/manifest";
+
 import ProviderItem from "./component/ProviderItem";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 type Props = {
   account: Account;
@@ -23,7 +24,7 @@ type Props = {
 
 export type StakeOnClickProps = {
   provider: ListProvider;
-  manifest: Manifest;
+  manifest: LiveAppManifest;
 };
 
 export function EthStakingModalBody({
@@ -42,7 +43,7 @@ export function EthStakingModalBody({
       manifest,
     }: StakeOnClickProps) => {
       const value = `/platform/${liveAppId}`;
-      const customDappUrl = queryParams && generateValidDappURLWithParams(manifest, queryParams);
+      const customDappUrl = queryParams && appendQueryParamsToDappURL(manifest, queryParams);
       track("button_clicked", {
         button: providerConfigID,
         ...getTrackProperties({ value, modal: source }),

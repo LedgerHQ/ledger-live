@@ -1,5 +1,3 @@
-import { ClassicCard } from "@braze/web-sdk";
-
 export enum LocationContentCard {
   Portfolio = "portfolio",
   NotificationCenter = "notification_center",
@@ -25,7 +23,7 @@ export type ContentCard = {
   url?: string;
   path?: string;
   image?: string;
-  onClickOnSlide?: (cardId: any) => void;
+  onClickOnSlide?: (cardId: string) => void;
 };
 
 export type PortfolioContentCard = ContentCard;

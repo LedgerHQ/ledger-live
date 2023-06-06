@@ -17,6 +17,7 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import polkadotCreateCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
 import algorandCreateCliTools from "@ledgerhq/coin-algorand/cli-transaction";
+import evmCreateCliTools from "@ledgerhq/coin-evm/cli-transaction";
 
 export default {
   bitcoin,
@@ -36,4 +37,5 @@ export default {
   tron,
   polkadot: polkadotCreateCliTools(network, makeLRUCache),
   algorand: algorandCreateCliTools(network, makeLRUCache),
+  evm: evmCreateCliTools(network, makeLRUCache),
 };

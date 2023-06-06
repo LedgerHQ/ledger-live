@@ -8,13 +8,11 @@ export const Wrapper = styled.div`
   justify-content: space-between;
   padding: 16px 20px;
 `;
-export const Column: ThemedComponent<{
-  clickable?: boolean;
-}> = styled(TableLine).attrs(p => ({
+export const Column = styled(TableLine).attrs<{ strong?: boolean; clickable?: boolean }>(p => ({
   ff: "Inter|SemiBold",
   color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
   fontSize: 3,
-}))`
+}))<{ strong?: boolean; clickable?: boolean }>`
   cursor: ${p => (p.clickable ? "pointer" : "cursor")};
   ${IconContainer} {
     color: ${p => p.theme.colors.palette.text.shade80};

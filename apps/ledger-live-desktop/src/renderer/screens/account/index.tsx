@@ -23,8 +23,6 @@ import {
   hiddenNftCollectionsSelector,
 } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import perFamilyAccountBodyHeader from "~/renderer/generated/AccountBodyHeader";
-import perFamilyAccountSubHeader from "~/renderer/generated/AccountSubHeader";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -37,6 +35,7 @@ import TokensList from "./TokensList";
 import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 type Params = {
   id: string;
@@ -89,16 +88,9 @@ const AccountPage = ({
   setCountervalueFirst,
 }: Props) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const AccountBodyHeader = mainAccount
-    ? perFamilyAccountBodyHeader[
-        mainAccount.currency.family as keyof typeof perFamilyAccountBodyHeader
-      ]
-    : null;
-  const AccountSubHeader = mainAccount
-    ? perFamilyAccountSubHeader[
-        mainAccount.currency.family as keyof typeof perFamilyAccountSubHeader
-      ]
-    : null;
+  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const AccountBodyHeader = specific?.AccountBodyHeader;
+  const AccountSubHeader = specific?.AccountSubHeader;
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
@@ -153,7 +145,6 @@ const AccountPage = ({
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
       {AccountSubHeader ? (
-        // @ts-expect-error Need to update type in families
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}
       {!isAccountEmpty(account) ? (
@@ -170,7 +161,6 @@ const AccountPage = ({
           </Box>
           <AccountStakeBanner account={account} />
           {AccountBodyHeader ? (
-            // @ts-expect-error Need to update type in families
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
           {account.type === "Account" && isNFTActive(account.currency) ? (

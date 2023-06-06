@@ -86,7 +86,7 @@ export function NftList({ data }: Props) {
             : 1
         }
         mr={(index + 1) % NB_COLUMNS > 0 ? 6 : 0}
-        testID={"wallet-nft-gallery-list-item"}
+        testID={`wallet-nft-gallery-list-item-${index}`}
       >
         {item.id === ADD_NEW.id ? (
           <>{!multiSelectModeEnabled && <AddNewItem />}</>
@@ -139,6 +139,7 @@ export function NftList({ data }: Props) {
                   justifyContent="flex-start"
                 >
                   <StyledButton
+                    testID="wallet-nft-gallery-select-and-hide"
                     onPress={onPressMultiselect}
                     type="default"
                     iconName="Tasks"
@@ -173,6 +174,7 @@ export function NftList({ data }: Props) {
 
             <ButtonsContainer width="100%" justifyContent={"space-between"}>
               <StyledButton
+                testID="wallet-nft-gallery-confirm-hide"
                 onPress={onPressHide}
                 type="main"
                 iconName="EyeNone"

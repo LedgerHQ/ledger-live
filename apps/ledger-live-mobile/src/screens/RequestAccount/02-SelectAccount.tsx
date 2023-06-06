@@ -110,12 +110,12 @@ function SelectAccount({ navigation, route }: Props) {
   ) as { account: AccountLike; subAccount: SubAccount | null }[];
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {
-      onSuccess && onSuccess(account, parentAccount);
       const n =
         navigation.getParent<
           StackNavigatorNavigation<BaseNavigatorStackParamList>
         >() || navigation;
       n.pop();
+      onSuccess && onSuccess(account, parentAccount);
     },
     [navigation, onSuccess],
   );

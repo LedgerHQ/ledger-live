@@ -325,6 +325,10 @@
       "description": "If this image wasn't the right fit, you can try again with another image.",
       "primaryCTA": "Upload another picture"
     },
+    "ImageDoesNotExistOnDevice": {
+      "title": "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description": "The customized lock screen picture was previously removed."
+    },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
     },
@@ -2701,10 +2705,6 @@
         "experimentalListAppsV2": {
           "title": "Experimental list apps for My Ledger",
           "description": "Performance improvement for My Ledger access and inline flows."
-        },
-        "experimentalCountervalues": {
-          "title": "Experimental countervalues API",
-          "description": "This may cause the countervalues displayed for your accounts to become incorrect."
         },
         "experimentalSwap": {
           "title": "New SWAP interface",
@@ -6128,8 +6128,8 @@
         "selectAndHide": "Select and hide",
         "hide": "Hide {{count}} collection",
         "hide_plural": "Hide {{count}} collections",
-        "alertHide": "1 Collection hidden. Go to the settings to display and unhide it at any time",
-        "alertHide_plural": "{{count}} Collections hidden. Go to the settings to display and unhide them at any time"
+        "alertHide": "1 Collection hidden. Go to the Account section in Settings to display and unhide them at any time",
+        "alertHide_plural": "{{count}} Collections hidden. Go to the Account section in Settings to display and unhide them at any time"
       },
       "empty": {
         "title": "No NFTs to show, yet",
@@ -6182,6 +6182,30 @@
     "title": "Connect device"
   },
   "stake": {
+    "ethereum": {
+      "title": "Grow your ETH holdings",
+      "subTitle": "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
+      "close": "Close",
+      "providers": {
+        "lido": {
+          "title": "Earn with Lido",
+          "description": "Stake your Ethereum with Lido and earn rewards daily. No minimum ETH is required. No lock-up period.",
+          "supportLink": "Learn more about Lido"
+        },
+        "kiln": {
+          "title": "Kiln dedicated staking",
+          "tag": "Requires 32 ETH",
+          "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
+          "supportLink": "Learn more about Kiln validator"
+        },
+        "kiln_pooling": {
+          "title": "Kiln staking pool",
+          "description": "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
+          "supportLink": "Learn more about Kiln pooling",
+          "tag": "No minimum"
+        }
+      }
+    },
     "noFundsModal": {
       "title": "Buy, swap or receive",
       "text": "You do not have enough {{coin}} available to stake",

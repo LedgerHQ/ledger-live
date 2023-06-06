@@ -94,10 +94,12 @@ export function Toast({
     },
     enter: {
       height: "auto",
+      pointerEvents: "auto",
       opacity: 1,
     },
     leave: {
       height: 0,
+      pointerEvents: "none",
       opacity: 0,
     },
     config: {

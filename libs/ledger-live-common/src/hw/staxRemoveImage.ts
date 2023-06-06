@@ -9,6 +9,7 @@ import { Observable, from, of } from "rxjs";
 import { withDevice } from "./deviceAccess";
 import { delay, mergeMap } from "rxjs/operators";
 import getDeviceInfo from "./getDeviceInfo";
+import { ImageDoesNotExistOnDevice } from "../errors";
 
 export type RemoveImageEvent =
   | {
@@ -36,6 +37,7 @@ export const command = async (transport: Transport): Promise<void> => {
     StatusCodes.OK,
     StatusCodes.CUSTOM_IMAGE_BOOTLOADER,
     StatusCodes.USER_REFUSED_ON_DEVICE,
+    StatusCodes.CUSTOM_IMAGE_EMPTY,
     StatusCodes.UNKNOWN_APDU,
   ]);
 
@@ -44,6 +46,8 @@ export const command = async (transport: Transport): Promise<void> => {
   switch (status) {
     case StatusCodes.OK:
       return;
+    case StatusCodes.CUSTOM_IMAGE_EMPTY:
+      throw new ImageDoesNotExistOnDevice();
     case StatusCodes.CUSTOM_IMAGE_BOOTLOADER:
       throw new UnexpectedBootloader();
     case StatusCodes.USER_REFUSED_ON_DEVICE:

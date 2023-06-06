@@ -339,7 +339,7 @@ export const SyncOnboarding = ({
       !analyticsSeedingTracked.current
     ) {
       screen(
-        "Set up Ledger Stax: Step 3 Seed Success",
+        `Set up ${productName}: Step 3 Seed Success`,
         undefined,
         {
           seedPhraseType: analyticsSeedPhraseType.current
@@ -483,7 +483,9 @@ export const SyncOnboarding = ({
           title: t("syncOnboarding.pairingStep.title", { productName }),
           renderBody: () => (
             <>
-              <TrackScreen category="Set up Ledger Stax: Step 1 device paired" />
+              <TrackScreen
+                category={`Set up ${productName}: Step 1 device paired`}
+              />
               <BodyText>
                 {t("syncOnboarding.pairingStep.description", { productName })}
               </BodyText>
@@ -502,7 +504,7 @@ export const SyncOnboarding = ({
           doneTitle: t("syncOnboarding.pinStep.doneTitle"),
           renderBody: () => (
             <Flex>
-              <TrackScreen category="Set up Ledger Stax: Step 2 PIN" />
+              <TrackScreen category={`Set up ${productName}: Step 2 PIN`} />
               <BodyText>
                 {t("syncOnboarding.pinStep.description", { productName })}
               </BodyText>
@@ -521,7 +523,9 @@ export const SyncOnboarding = ({
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
           renderBody: () => (
             <Flex>
-              <TrackScreen category="Set up Ledger Stax: Step 3 Seed Intro" />
+              <TrackScreen
+                category={`Set up ${productName}: Step 3 Seed Intro`}
+              />
               {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
                   <BodyText mb={6}>

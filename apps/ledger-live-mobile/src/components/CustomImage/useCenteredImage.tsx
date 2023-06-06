@@ -35,12 +35,13 @@ function useCenteredImage(params: Params) {
       };
 
     const load = async () => {
-      const realImageDimensions = await loadImageSizeAsync(imageFileUri).catch(
-        e => {
-          console.error(e);
-          throw new ImageMetadataLoadingError();
-        },
-      );
+      let realImageDimensions;
+      try {
+        realImageDimensions = await loadImageSizeAsync(imageFileUri);
+      } catch (e) {
+        console.error(e);
+        throw new ImageMetadataLoadingError();
+      }
 
       const imageDimensions = {
         width: realImageDimensions.width / 2,

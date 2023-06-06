@@ -5,6 +5,7 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { useTranslation } from "react-i18next";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
+
 const LedgerByFigmentTC = ({ transaction }: { transaction: Transaction }) => {
   const { t } = useTranslation();
   const openLedgerByFigmentTC = () => openURL(urls.ledgerByFigmentTC);

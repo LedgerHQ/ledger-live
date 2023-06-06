@@ -37,9 +37,9 @@ const Placeholder = styled(Box).attrs(() => ({
   margin-right: ${p => p.theme.overflow.trackSize}px;
 `;
 type ValidatorSearchInputProps = {
-  onSearch: (evt: React.SyntheticEvent<HTMLInputElement>) => void;
+  onSearch: (evt: React.ChangeEvent<HTMLInputElement>) => void;
   search?: string;
-  noMargin: boolean;
+  noMargin?: boolean;
 };
 const ValidatorSearchInput = ({
   search,
