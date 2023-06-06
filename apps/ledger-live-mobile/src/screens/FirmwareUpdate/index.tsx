@@ -104,8 +104,11 @@ export const FirmwareUpdate = ({
   const dispatch = useDispatch();
 
   const quitUpdate = useCallback(() => {
-    if (onBackFromUpdate) onBackFromUpdate();
-    navigation.goBack();
+    if (onBackFromUpdate){
+      onBackFromUpdate();
+    } else {
+      navigation.goBack();
+    }
   }, [navigation, onBackFromUpdate]);
 
   const onOpenReleaseNotes = useCallback(() => {
