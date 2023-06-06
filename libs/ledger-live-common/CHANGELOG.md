@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 31.0.0-next.2
+
+### Patch Changes
+
+- [#3584](https://github.com/LedgerHQ/ledger-live/pull/3584) [`5c53afd2c2`](https://github.com/LedgerHQ/ledger-live/commit/5c53afd2c2a343c52f5bf36cc08f55c06f313eed) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent endless loop in swap request
+
 ## 31.0.0-next.1
 
 ### Patch Changes
