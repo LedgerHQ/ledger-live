@@ -19,7 +19,7 @@ import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/inde
 import invariant from "invariant";
 
 const EditTypeWrapper = styled(Box)<{ selected: boolean }>`
-  border: ${(p: any) =>
+  border: ${p =>
     `1px solid ${
       p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.divider
     }`};
@@ -30,13 +30,13 @@ const EditTypeWrapper = styled(Box)<{ selected: boolean }>`
   }
 `;
 const EditTypeHeader = styled(Box)<{ selected: boolean }>`
-  color: ${(p: any) =>
+  color: ${p =>
     p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade50};
   margin-left: 10px;
 `;
 
 const Description = styled(Box)<{ selected: boolean }>`
-  color: ${(p: any) => (p.selected ? "white" : "gray")};
+  color: ${p => (p.selected ? "white" : "gray")};
   margin-top: 5px;
   margin-left: 15px;
   width: 400px;
@@ -156,8 +156,6 @@ export class StepMethodFooter extends PureComponent<StepProps> {
     if (isNftOperation) {
       setIsNFTSend(editType === "speedup");
     }
-    console.log("nonce", transactionRaw.nonce);
-    console.log("amount", transactionRaw.amount.toString());
     if (editType === "speedup") {
       updateTransaction(tx =>
         bridge.updateTransaction(tx, {
@@ -215,7 +213,6 @@ export class StepMethodFooter extends PureComponent<StepProps> {
     apiForCurrency(mainAccount.currency)
       .getTransactionByHash(transactionHash)
       .then((tx: { confirmations?: number }) => {
-        console.log("tx.con", tx.confirmations);
         if (tx.confirmations) {
           this.setState({ transactionHasBeenValidated: true });
         }

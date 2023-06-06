@@ -6,6 +6,7 @@ import Link from "~/renderer/components/Link";
 import { openModal, closeModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import invariant from "invariant";
 
 type Props = {
   operation: Operation;
@@ -18,6 +19,7 @@ const EditOperationPanel = (props: Props) => {
   const dispatch = useDispatch();
   const editEthTx = useFeature("editEthTx");
   const handleOpenEditModal = useCallback(() => {
+    invariant(operation.transactionRaw, "operation.transactionRaw is required");
     dispatch(closeModal("MODAL_SEND"));
     dispatch(
       openModal("MODAL_EDIT_TRANSACTION", {

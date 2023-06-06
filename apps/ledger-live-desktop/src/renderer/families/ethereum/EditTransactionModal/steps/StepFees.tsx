@@ -67,6 +67,7 @@ const StepFees = (props: StepProps) => {
         <Fragment key={account.id}>
           <SendAmountFields
             account={mainAccount}
+            parentAccount={parentAccount}
             status={status}
             transaction={transaction}
             onChange={onChangeTransaction}

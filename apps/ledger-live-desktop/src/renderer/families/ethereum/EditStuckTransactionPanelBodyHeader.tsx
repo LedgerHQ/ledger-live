@@ -7,8 +7,8 @@ import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import invariant from "invariant";
 
 type Props = {
-  account?: AccountLike;
-  parentAccount?: Account;
+  account: AccountLike;
+  parentAccount: Account | undefined | null;
 };
 
 const EditStuckTransactionPanelBodyHeader = (props: Props) => {

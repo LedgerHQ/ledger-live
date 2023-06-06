@@ -39,10 +39,7 @@ export type Data = {
   parentAccount: Account | undefined | null;
   recipient?: string;
   amount?: BigNumber;
-  disableBacks?: string[];
   transaction?: Transaction;
-  onConfirmationHandler: Function;
-  onFailHandler: Function;
   transactionRaw: EthereumTransactionRaw;
   transactionHash: string;
   isNftOperation: boolean;
@@ -135,7 +132,6 @@ const Body = ({
   isNFTSend,
 }: Props) => {
   const [steps] = useState(() => createSteps());
-
   const {
     transaction,
     setTransaction,
@@ -261,8 +257,6 @@ const Body = ({
     onOperationBroadcasted: handleOperationBroadcasted,
     onTransactionError: handleTransactionError,
     updateTransaction,
-    onConfirmationHandler: params.onConfirmationHandler,
-    onFailHandler: params.onFailHandler,
     setEditType: handleSetEditType,
     editType,
     setIsNFTSend,

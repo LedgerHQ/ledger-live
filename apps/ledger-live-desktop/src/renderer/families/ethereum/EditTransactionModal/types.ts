@@ -19,7 +19,7 @@ export type StepProps = {
   error: Error | undefined | null;
   optimisticOperation: Operation | undefined | null;
   closeModal: (a: void) => void;
-  openModal: (b: string, a: any) => void;
+  openModal: (b: string, a: unknown) => void;
   onChangeTransaction: (a: Transaction) => void;
   onTransactionError: (a: Error) => void;
   onOperationBroadcasted: (a: Operation) => void;
@@ -27,8 +27,6 @@ export type StepProps = {
   setSigned: (a: boolean) => void;
   signed: boolean;
   updateTransaction: (updater: (a: Transaction) => void) => void;
-  onConfirmationHandler: Function;
-  onFailHandler: Function;
   currencyName: string | undefined | null;
   transactionRaw: EthereumTransactionRaw;
   transactionHash: string;
@@ -41,4 +39,5 @@ export type StepProps = {
   setIsNFTSend: (a: boolean) => void;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type St = Step<StepId, any>;
