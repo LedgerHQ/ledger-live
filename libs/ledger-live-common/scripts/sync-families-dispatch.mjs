@@ -21,7 +21,7 @@ const targets = [
 ];
 
 // Coins using coin-framework
-const familiesWPackage = ["polkadot", "algorand", "evm"];
+const familiesWPackage = ["algorand", "evm", "polkadot"];
 
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");
@@ -86,7 +86,6 @@ function genCoinFrameworkTarget(targetFile) {
     imports += `import { makeLRUCache } from "@ledgerhq/live-network/cache";\n`;
     imports += `import network from "@ledgerhq/live-network/network";\n`;
     imports += `import { signerFactory } from "../../bridge/jsHelpers";\n`;
-    imports += `import { withDevice } from "../../hw/deviceAccess";\n`;
   }
   if (targetFile === "hw-getAddress.ts") {
     imports += `import { createResolver } from "../bridge/jsHelpers";\n`;
@@ -110,13 +109,14 @@ function genCoinFrameworkTarget(targetFile) {
     }
 
     const capitalizeFamily = family[0].toUpperCase() + family.slice(1);
+    const typeSigner = capitalizeFamily + "Signer";
     const signer = family + "Signer";
+    const hwAppImport = family !== "evm" ? `hw-app-${family}` : "hw-app-eth";
     if (targetFile === "bridge/js.ts") {
       const bridgeFn = family + "CreateBridges";
       imports += `import { createBridges as ${bridgeFn} } from "${targetImportPath}";\n`;
-      imports += `import type { ${capitalizeFamily}Signer } from "@ledgerhq/coin-polkadot/signer";\n`;
-      imports += `import * as ${signer} from "@ledgerhq/hw-app-${family}";\n`;
-      imports += `const create${capitalizeFamily}Signer = (transport): ${capitalizeFamily}Signer => {\n`;
+      imports += `import * as ${signer} from "@ledgerhq/${hwAppImport}";\n`;
+      imports += `const create${capitalizeFamily}Signer = (transport) => {\n`;
       imports += `  return new ${signer}.default(transport);\n`;
       imports += `};\n`;
       imports += `const ${family} = ${bridgeFn}(\n`;
@@ -132,10 +132,10 @@ function genCoinFrameworkTarget(targetFile) {
       exprts += `\n  ${family}: ${cliToolsFn}(network, makeLRUCache),`;
     }
     if (targetFile === "hw-getAddress.ts") {
-      imports += `import type { ${capitalizeFamily}Signer } from "@ledgerhq/coin-polkadot/signer";\n`;
-      imports += `import * as ${family}Signer from "@ledgerhq/hw-app-${family}";\n`;
+      imports += `import type { ${typeSigner} } from "@ledgerhq/coin-${family}/signer";\n`;
+      imports += `import * as ${signer} from "@ledgerhq/${hwAppImport}";\n`;
       imports += `import ${family}Resolver from "${targetImportPath}";\n`;
-      imports += `const ${family}: Resolver = createResolver<PolkadotSigner>((transport) => {\n`;
+      imports += `const ${family}: Resolver = createResolver<${typeSigner}>((transport) => {\n`;
       imports += `  return new ${signer}.default(transport);\n`;
       imports += `}, ${family}Resolver);\n`;
       exprts += `\n  ${family},`;

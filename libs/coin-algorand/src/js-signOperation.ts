@@ -1,17 +1,18 @@
-import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import Algorand from "@ledgerhq/hw-app-algorand";
 import type {
   Account,
+  DeviceId,
   Operation,
   SignOperationEvent,
   SignOperationFnSignature,
   SignedOperation,
 } from "@ledgerhq/types-live";
+import { SignerFactory } from "@ledgerhq/coin-framework/signer";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { AlgorandAPI } from "./api";
 import { buildTransactionPayload, encodeToBroadcast, encodeToSign } from "./buildTransaction";
+import { AlgorandSigner } from "./signer";
 import type { Transaction } from "./types";
 
 /**
@@ -19,7 +20,7 @@ import type { Transaction } from "./types";
  */
 export const buildSignOperation =
   (
-    withDevice: DeviceCommunication,
+    signerFactory: SignerFactory<AlgorandSigner>,
     algorandAPI: AlgorandAPI,
   ): SignOperationFnSignature<Transaction> =>
   ({
@@ -29,61 +30,58 @@ export const buildSignOperation =
   }: {
     account: Account;
     transaction: Transaction;
-    deviceId: any;
+    deviceId: DeviceId;
   }): Observable<SignOperationEvent> =>
-    withDevice(deviceId)(
-      transport =>
-        new Observable(o => {
-          let cancelled = false;
+    new Observable(o => {
+      let cancelled = false;
 
-          async function main() {
-            if (!transaction.fees) {
-              throw new FeeNotLoaded();
-            }
+      async function main() {
+        if (!transaction.fees) {
+          throw new FeeNotLoaded();
+        }
 
-            const algoTx = await buildTransactionPayload(algorandAPI)(account, transaction);
+        const algoTx = await buildTransactionPayload(algorandAPI)(account, transaction);
 
-            const toSign = encodeToSign(algoTx);
+        const toSign = encodeToSign(algoTx);
 
-            const hwApp = new Algorand(transport);
-            const { freshAddressPath } = account;
+        const { freshAddressPath } = account;
 
-            o.next({ type: "device-signature-requested" });
+        o.next({ type: "device-signature-requested" });
 
-            const { signature } = await hwApp.sign(freshAddressPath, toSign);
+        const signer = await signerFactory(deviceId);
+        const { signature } = await signer.sign(freshAddressPath, toSign);
 
-            if (cancelled) return;
+        if (cancelled) return;
 
-            o.next({ type: "device-signature-granted" });
+        o.next({ type: "device-signature-granted" });
 
-            if (!signature) {
-              throw new Error("No signature");
-            }
+        if (!signature) {
+          throw new Error("No signature");
+        }
 
-            const toBroadcast = encodeToBroadcast(algoTx, signature);
+        const toBroadcast = encodeToBroadcast(algoTx, signature);
 
-            const operation = buildOptimisticOperation(account, transaction);
+        const operation = buildOptimisticOperation(account, transaction);
 
-            o.next({
-              type: "signed",
-              signedOperation: {
-                operation,
-                signature: toBroadcast.toString("hex"),
-                expirationDate: null,
-              } as SignedOperation,
-            });
-          }
+        o.next({
+          type: "signed",
+          signedOperation: {
+            operation,
+            signature: toBroadcast.toString("hex"),
+            expirationDate: null,
+          } as SignedOperation,
+        });
+      }
 
-          main().then(
-            () => o.complete(),
-            e => o.error(e),
-          );
+      main().then(
+        () => o.complete(),
+        e => o.error(e),
+      );
 
-          return () => {
-            cancelled = true;
-          };
-        }),
-    );
+      return () => {
+        cancelled = true;
+      };
+    });
 
 const buildOptimisticOperation = (account: Account, transaction: Transaction): Operation => {
   const { spendableBalance, id, freshAddress, subAccounts } = account;

@@ -1,20 +1,21 @@
-import type { Resolver } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import Eth from "@ledgerhq/hw-app-eth";
 import eip55 from "eip55";
+import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { SignerFactory } from "@ledgerhq/coin-framework/signer";
+import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
+import { EvmSigner } from "./signer";
 
-/**
- * Eth app binding request for the address
- */
-const getAddress: Resolver = async (transport, { path, verify }) => {
-  const ethBindings = new Eth(transport);
-  const { address, publicKey, chainCode } = await ethBindings.getAddress(path, verify, false);
+const resolver = (signerFactory: SignerFactory<EvmSigner>): GetAddressFn => {
+  return async (deviceId: string, { path, verify }: GetAddressOptions) => {
+    const signer = await signerFactory(deviceId);
+    const { address, publicKey, chainCode } = await signer.getAddress(path, verify, false);
 
-  return {
-    address: eip55.encode(address),
-    publicKey,
-    chainCode,
-    path,
+    return {
+      address: eip55.encode(address),
+      publicKey,
+      chainCode,
+      path,
+    };
   };
 };
 
-export default getAddress;
+export default resolver;

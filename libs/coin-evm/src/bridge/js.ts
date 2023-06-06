@@ -1,19 +1,20 @@
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import {
-  DeviceCommunication,
   makeAccountBridgeReceive,
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { SignerFactory } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "../broadcast";
 import { createTransaction } from "../createTransaction";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
-import getAddress from "../hw-getAddress";
+import resolver from "../hw-getAddress";
 import { hydrate, preload } from "../preload";
 import { prepareTransaction } from "../prepareTransaction";
 import { buildSignOperation } from "../signOperation";
 import { getAccountShape, sync } from "../synchronization";
+import { EvmSigner } from "../signer";
 import type { Transaction as EvmTransaction, Transaction } from "../types";
 
 const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
@@ -23,10 +24,11 @@ const updateTransaction: AccountBridge<EvmTransaction>["updateTransaction"] = (
   return { ...transaction, ...patch } as EvmTransaction;
 };
 
-export function buildCurrencyBridge(deviceCommunication: DeviceCommunication): CurrencyBridge {
+export function buildCurrencyBridge(signerFactory: SignerFactory<EvmSigner>): CurrencyBridge {
+  const getAddress = resolver(signerFactory);
+
   const scanAccounts = makeScanAccounts({
     getAccountShape,
-    deviceCommunication,
     getAddressFn: getAddress,
   });
 
@@ -38,10 +40,12 @@ export function buildCurrencyBridge(deviceCommunication: DeviceCommunication): C
 }
 
 export function buildAccountBridge(
-  deviceCommunication: DeviceCommunication,
+  signerFactory: SignerFactory<EvmSigner>,
 ): AccountBridge<Transaction> {
-  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress), deviceCommunication);
-  const signOperation = buildSignOperation(deviceCommunication);
+  const getAddress = resolver(signerFactory);
+
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
+  const signOperation = buildSignOperation(signerFactory);
 
   return {
     createTransaction,
@@ -61,12 +65,12 @@ export function buildAccountBridge(
  * libs/ledger-live-common/scripts/sync-families-dispatch.mjs script works.
  */
 export function createBridges(
-  deviceCommunication: DeviceCommunication,
+  signerFactory: SignerFactory<EvmSigner>,
   _network: unknown,
   _cacheFn: unknown,
 ) {
   return {
-    currencyBridge: buildCurrencyBridge(deviceCommunication),
-    accountBridge: buildAccountBridge(deviceCommunication),
+    currencyBridge: buildCurrencyBridge(signerFactory),
+    accountBridge: buildAccountBridge(signerFactory),
   };
 }

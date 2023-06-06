@@ -13,10 +13,20 @@ import solana from "../families/solana/hw-getAddress";
 import stellar from "../families/stellar/hw-getAddress";
 import tezos from "../families/tezos/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
-import algorand from "@ledgerhq/coin-algorand/hw-getAddress";
-import evm from "@ledgerhq/coin-evm/hw-getAddress";
 import { createResolver } from "../bridge/jsHelpers";
 import { Resolver } from "../hw/getAddress/types";
+import type { AlgorandSigner } from "@ledgerhq/coin-algorand/signer";
+import * as algorandSigner from "@ledgerhq/hw-app-algorand";
+import algorandResolver from "@ledgerhq/coin-algorand/hw-getAddress";
+const algorand: Resolver = createResolver<AlgorandSigner>((transport) => {
+  return new algorandSigner.default(transport);
+}, algorandResolver);
+import type { EvmSigner } from "@ledgerhq/coin-evm/signer";
+import * as evmSigner from "@ledgerhq/hw-app-eth";
+import evmResolver from "@ledgerhq/coin-evm/hw-getAddress";
+const evm: Resolver = createResolver<EvmSigner>((transport) => {
+  return new evmSigner.default(transport);
+}, evmResolver);
 import type { PolkadotSigner } from "@ledgerhq/coin-polkadot/signer";
 import * as polkadotSigner from "@ledgerhq/hw-app-polkadot";
 import polkadotResolver from "@ledgerhq/coin-polkadot/hw-getAddress";
@@ -40,7 +50,7 @@ export default {
   stellar,
   tezos,
   tron,
-  polkadot,
   algorand,
   evm,
+  polkadot,
 };

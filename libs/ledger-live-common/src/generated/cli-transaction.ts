@@ -15,9 +15,9 @@ import tezos from "../families/tezos/cli-transaction";
 import tron from "../families/tron/cli-transaction";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
-import polkadotCreateCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
 import algorandCreateCliTools from "@ledgerhq/coin-algorand/cli-transaction";
 import evmCreateCliTools from "@ledgerhq/coin-evm/cli-transaction";
+import polkadotCreateCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
 
 export default {
   bitcoin,
@@ -35,7 +35,7 @@ export default {
   stellar,
   tezos,
   tron,
-  polkadot: polkadotCreateCliTools(network, makeLRUCache),
   algorand: algorandCreateCliTools(network, makeLRUCache),
   evm: evmCreateCliTools(network, makeLRUCache),
+  polkadot: polkadotCreateCliTools(network, makeLRUCache),
 };

@@ -1,4 +1,3 @@
-import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
@@ -8,6 +7,8 @@ import { Transaction as EvmTransaction } from "../types";
 import * as rpcAPI from "../api/rpc.common";
 import { getEstimatedFees } from "../logic";
 import { makeAccount } from "../testUtils";
+import { EvmSigner } from "../signer";
+import { SignerFactory } from "@ledgerhq/coin-framework/signer";
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
@@ -38,21 +39,21 @@ const transactionEIP1559: EvmTransaction = {
 };
 const estimatedFees = getEstimatedFees(transactionEIP1559);
 
-const mockWithDevice: DeviceCommunication =
-  () =>
-  (job: any): any =>
-    job({});
+const mockSignerFactory: SignerFactory<EvmSigner> = (_: string) => {
+  return Promise.resolve({
+    getAddress: jest.fn(),
+    signTransaction: () =>
+      Promise.resolve({
+        r: "123",
+        s: "abc",
+        v: "27",
+      }),
+  });
+};
 
 // Mocking here in order to be ack by the signOperation.ts file
 jest.mock("@ledgerhq/hw-app-eth", () => ({
   __esModule: true,
-  default: class {
-    signTransaction = () => ({
-      r: "123",
-      s: "abc",
-      v: "27",
-    });
-  },
   ledgerService: {
     resolveTransaction: () =>
       Promise.resolve({
@@ -76,7 +77,7 @@ describe("EVM Family", () => {
       });
 
       it("should return an optimistic operation and a signed hash based on hardware ECDSA signatures returned by the app bindings", done => {
-        const signOperation = buildSignOperation(mockWithDevice);
+        const signOperation = buildSignOperation(mockSignerFactory);
 
         const signOpObservable = signOperation({
           account,
