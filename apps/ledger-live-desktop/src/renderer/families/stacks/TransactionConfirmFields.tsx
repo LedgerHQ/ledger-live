@@ -5,23 +5,17 @@ import Text from "~/renderer/components/Text";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { Transaction } from "@ledgerhq/live-common/families/stacks/types";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 
-const addressStyle = {
+const addressStyle: React.CSSProperties = {
   wordBreak: "break-all",
   textAlign: "right",
   maxWidth: "70%",
 };
 
-const StacksExtendedAmountField = ({
-  account,
-  status: { amount },
-  transaction,
-  field,
-}: FieldComponentProps) => {
-  invariant(transaction.family === "stacks", "stacks transaction");
+const StacksExtendedAmountField = ({ account, status: { amount }, field }: FieldComponentProps) => {
+  invariant(field.type === "stacks.extendedAmount", "stacks.extendedAmount field expected");
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const specifiedAmount = field.value != null ? field.value : null;
@@ -56,15 +50,8 @@ const StacksExtendedAmountField = ({
   );
 };
 
-const StacksMemoField = ({
-  transaction,
-  field,
-}: {
-  transaction: Transaction;
-  field: DeviceTransactionField;
-}) => {
-  invariant(transaction.family === "stacks", "stacks transaction");
-
+const StacksMemoField = ({ field }: { field: DeviceTransactionField }) => {
+  invariant(field.type === "stacks.memo", "stacks.memo field expected");
   return (
     <TransactionConfirmField label={field.label}>
       <Text style={addressStyle} ml={1} ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
