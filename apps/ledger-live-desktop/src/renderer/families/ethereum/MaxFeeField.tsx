@@ -6,8 +6,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { useTranslation } from "react-i18next";
 import {
   Transaction as EthereumTransaction,
-  TransactionStatus,
-  TransactionRaw,
+  TransactionRaw as EthereumTransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -51,15 +50,6 @@ const WhiteSpacedLabel = styled(Label)`
   color: ${p => p.theme.colors.neutral.c60};
 `;
 
-type Props = {
-  account: AccountLike;
-  parentAccount: Account | undefined;
-  transaction: EthereumTransaction;
-  status: TransactionStatus;
-  updateTransaction: Result<EthereumTransaction>["updateTransaction"];
-  transactionRaw?: TransactionRaw;
-};
-
 const FeesField: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = ({
   account,
   parentAccount,
@@ -67,7 +57,7 @@ const FeesField: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = 
   status,
   updateTransaction,
   transactionRaw,
-}: Props) => {
+}) => {
   invariant(transaction.family === "ethereum", "FeeField: ethereum family expected");
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -109,24 +99,22 @@ const FeesField: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = 
   );
 
   // give user an error if maxFeePerGas is lower than pending transaction maxFeePerGas + 10% of pending transaction maxPriorityFeePerGas for edit eth transaction feature
-  if (
-    !status.errors.maxFee &&
-    transactionRaw &&
-    transactionRaw.maxPriorityFeePerGas &&
-    transactionRaw.maxFeePerGas
-  ) {
-    const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
-    const lowerLimitMaxFeePerGas = new BigNumber(transactionRaw.maxFeePerGas).plus(
-      new BigNumber(transactionRaw.maxPriorityFeePerGas).times(maxPriorityFeeGap),
-    );
-    if (transaction.maxFeePerGas && transaction.maxFeePerGas.isLessThan(lowerLimitMaxFeePerGas)) {
-      status.errors.maxFee = new MaxFeeTooLow();
+  if (!status.errors.maxFee && transactionRaw) {
+    const pendingMaxPriorityFeePerGas = (transactionRaw as EthereumTransactionRaw)
+      .maxPriorityFeePerGas;
+    const pendingMaxFeePerGas = (transactionRaw as EthereumTransactionRaw).maxFeePerGas;
+    if (pendingMaxFeePerGas && pendingMaxPriorityFeePerGas) {
+      const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
+      const lowerLimitMaxFeePerGas = new BigNumber(pendingMaxFeePerGas).plus(
+        new BigNumber(pendingMaxPriorityFeePerGas).times(maxPriorityFeeGap),
+      );
+      if (transaction.maxFeePerGas && transaction.maxFeePerGas.isLessThan(lowerLimitMaxFeePerGas)) {
+        status.errors.maxFee = new MaxFeeTooLow();
+      }
     }
   }
-
   const validTransactionError = status.errors.maxFee;
   const validTransactionWarning = status.warnings.maxFee;
-
   return (
     <Box mb={1}>
       <LabelWithExternalIcon
