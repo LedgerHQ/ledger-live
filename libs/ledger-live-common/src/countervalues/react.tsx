@@ -1,7 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import React, {
   createContext,
-  useRef,
   useMemo,
   useContext,
   useEffect,
@@ -85,19 +84,17 @@ export function useTrackingPairForAccounts(
   accounts: Account[],
   countervalue: Currency
 ): TrackingPair[] {
-  const memo = useMemo(
-    () => inferTrackingPairForAccounts(accounts, countervalue),
-    [accounts, countervalue]
-  );
-  const ref = useRef(memo);
-
-  if (trackingPairsHash(ref.current) === trackingPairsHash(memo)) {
-    return ref.current;
-  }
-
-  ref.current = memo;
-  return memo;
+  // first we cache the tracking pairs with its hash
+  const c = useMemo(() => {
+    const pairs = inferTrackingPairForAccounts(accounts, countervalue);
+    return { pairs, hash: trackingPairsHash(pairs) };
+  }, [accounts, countervalue]);
+  // we only want to return the pairs when the hash changes
+  // to not recalculate pairs as fast as accounts resynchronizes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => c.pairs, [c.hash]);
 }
+
 export function Countervalues({
   children,
   userSettings,
