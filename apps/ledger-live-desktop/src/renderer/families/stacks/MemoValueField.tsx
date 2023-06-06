@@ -3,21 +3,17 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Input from "~/renderer/components/Input";
 import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stacks/types";
 import { useTranslation } from "react-i18next";
 
-const MemoValueField = ({
-  onChange,
-  account,
-  transaction,
-  status,
-}: {
-  onChange: (a: string) => void;
+type Props = {
+  onChange: (t: Transaction) => void;
   account: Account;
   transaction: Transaction;
-
   status: TransactionStatus;
-}) => {
+};
+
+const MemoValueField = ({ onChange, account, transaction, status }: Props) => {
   invariant(transaction.family === "stacks", "MemoField: stacks family expected");
 
   const { t } = useTranslation();

@@ -5,7 +5,7 @@ import Text from "~/renderer/components/Text";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/families/stacks/types";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 

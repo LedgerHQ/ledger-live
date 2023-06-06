@@ -1,20 +1,15 @@
 import React from "react";
 import { Trans } from "react-i18next";
+import { Account } from "@ledgerhq/types-live";
 import {
   OpDetailsTitle,
   OpDetailsData,
   OpDetailsSection,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import { Account } from "@ledgerhq/types-live";
+import { OperationDetailsExtraProps } from "~/renderer/families/types";
 
-type OperationDetailsExtraProps = {
-  extra: { [key: string]: any };
-  type: string;
-  account: Account;
-};
-
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
+const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps<Account>) => {
   return (
     <>
       {Object.keys(extra).map(key => {
