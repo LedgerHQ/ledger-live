@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 31.0.0-nightly.5
+
+### Patch Changes
+
+- [#3329](https://github.com/LedgerHQ/ledger-live/pull/3329) [`b93f543a20`](https://github.com/LedgerHQ/ledger-live/commit/b93f543a207f35edbe25f3d609533120c9babbe1) Thanks [@loouis-t](https://github.com/loouis-t)! - Add icon for EUROC ERC20 token
+
+- [#3400](https://github.com/LedgerHQ/ledger-live/pull/3400) [`3cf4397b60`](https://github.com/LedgerHQ/ledger-live/commit/3cf4397b60a2da5c1ee92cff42e9f979e30ad489) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix cosmos rewards value
+
 ## 31.0.0-nightly.4
 
 ### Patch Changes
