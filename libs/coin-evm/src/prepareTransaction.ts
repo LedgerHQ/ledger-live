@@ -118,7 +118,24 @@ export const prepareTransaction = async (
 ): Promise<EvmTransaction> => {
   const { currency } = account;
   // Get the current network status fees
-  const feeData = await getFeesEstimation(currency);
+  const feeData = await (async () => {
+    if (!transaction.feesStrategy) {
+      return await getFeesEstimation(currency);
+    }
+
+    if (transaction.feesStrategy === "custom") {
+      return {
+        gasPrice: transaction.gasPrice ?? null,
+        maxFeePerGas: transaction.maxFeePerGas ?? null,
+        maxPriorityFeePerGas: transaction.maxPriorityFeePerGas ?? null,
+      };
+    }
+
+    const gasOption = transaction.gasOptions?.[transaction.feesStrategy];
+
+    return gasOption ?? (await getFeesEstimation(currency));
+  })();
+
   const subAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = subAccount?.type === "TokenAccount";
   const typedTransaction = getTypedTransaction(transaction, feeData);
