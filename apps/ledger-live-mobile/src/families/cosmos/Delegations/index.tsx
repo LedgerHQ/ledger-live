@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import {
   getAccountCurrency,
@@ -61,6 +61,7 @@ import DateFromNow from "../../../components/DateFromNow";
 import AccountBanner from "../../../components/AccountBanner";
 import { getAccountBannerProps as getCosmosBannerProps } from "../utils";
 import ValidatorImage from "../shared/ValidatorImage";
+import { useCanShowStake } from "../../../screens/Account/hooks/useCanShowStake";
 
 type Props = {
   account: CosmosAccount;
@@ -79,6 +80,7 @@ function Delegations({ account }: Props) {
   const currency = getAccountCurrency(mainAccount);
   const unit = getAccountUnit(mainAccount);
   const navigation = useNavigation();
+  const route = useRoute();
 
   const { validators } = useCosmosFamilyPreloadData(account.currency.id);
 
@@ -103,6 +105,7 @@ function Delegations({ account }: Props) {
   });
   const [delegation, setDelegation] = useState<CosmosMappedDelegation>();
   const [undelegation, setUndelegation] = useState<CosmosMappedUnbonding>();
+  const canShowStake = useCanShowStake(currency);
   const [banner, setBanner] = useState<
     AccountBannerState & { description: string; cta: string }
   >({
@@ -149,25 +152,34 @@ function Delegations({ account }: Props) {
         delegations.length === 0
           ? ScreenName.CosmosDelegationValidator
           : ScreenName.CosmosDelegationStarted,
+      params: {
+        source: route,
+      },
     });
-  }, [onNavigate, delegations]);
+  }, [onNavigate, delegations, route]);
 
   const onRedelegate = useCallback(() => {
     onNavigate({
       route: NavigatorName.CosmosRedelegationFlow,
       screen: ScreenName.CosmosRedelegationValidator,
       params: {
+        source: route,
+        validatorName: delegation?.validator?.name,
         accountId: account.id,
         validatorSrcAddress: delegation?.validatorAddress,
       },
     });
-  }, [onNavigate, delegation, account]);
+  }, [onNavigate, delegation, account, route]);
 
   useEffect(() => {
     const state = getCosmosBannerState({ ...account });
     const bannerText = getCosmosBannerProps(state, { t }, account);
-    setBanner({ ...state, ...bannerText });
-  }, [account, t]);
+    setBanner({
+      ...state,
+      ...bannerText,
+      display: state.display && canShowStake,
+    });
+  }, [account, t, canShowStake]);
 
   const onRedelegateLedger = () => {
     const { validatorSrcAddress, ledgerValidator } = { ...banner };
@@ -178,12 +190,14 @@ function Delegations({ account }: Props) {
       route: NavigatorName.CosmosRedelegationFlow,
       screen: ScreenName.CosmosDefaultRedelegationAmount,
       params: {
+        source: route,
         accountId: account.id,
         validatorSrcAddress,
         transaction: {
           ...transaction,
           sourceValidator: validatorSrcAddress,
         },
+        validatorName: ledgerValidator?.name,
         validatorSrc: worstValidator?.validator,
         validator: ledgerValidator,
         max: worstValidator?.amount,
