@@ -17,6 +17,7 @@ export type RequestAccountNavigatorParamList = {
   };
   [ScreenName.RequestAccountsSelectAccount]: {
     accounts$?: Observable<WalletAPIAccount[]>;
+    currencies?: CryptoOrTokenCurrency[];
     currency: CryptoOrTokenCurrency;
     allowAddAccount?: boolean;
     onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
