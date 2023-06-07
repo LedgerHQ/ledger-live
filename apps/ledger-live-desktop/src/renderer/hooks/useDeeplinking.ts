@@ -151,22 +151,23 @@ export function useDeepLinkHandler() {
           if (!currency || typeof currency !== "string") return;
           const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
           if (!c || c.type === "FiatCurrency") return;
-          const found = getAccountsOrSubAccountsByCurrency(c, accounts || []);
-          if (!found.length) return;
-          const [chosen] = found;
+          const foundAccounts = getAccountsOrSubAccountsByCurrency(c, accounts || []);
+          if (!foundAccounts.length) return;
+          const [chosenAccount] = foundAccounts;
 
+          // Navigate to a specific account if a valid 'address' is provided and the account currency matches the 'currency' param in the deeplink URL
           if (address && typeof address === "string") {
             const account = accounts.find(acc => acc.freshAddress === address);
-            if (account && account.currency.name === currency) {
+            if (account && account.currency.id === currency) {
               navigate(`/account/${account.id}`);
             }
             break;
           }
 
-          if (chosen?.type === "Account") {
-            navigate(`/account/${chosen.id}`);
+          if (chosenAccount?.type === "Account") {
+            navigate(`/account/${chosenAccount.id}`);
           } else {
-            navigate(`/account/${chosen?.parentId}/${chosen?.id}`);
+            navigate(`/account/${chosenAccount?.parentId}/${chosenAccount?.id}`);
           }
           break;
         }
