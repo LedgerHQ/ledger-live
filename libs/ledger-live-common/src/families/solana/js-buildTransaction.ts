@@ -39,7 +39,7 @@ export const buildTransactionWithAPI = async (
     instructions,
   });
 
-  const tx = new VersionedTransaction(tm.compileToV0Message());
+  const tx = new VersionedTransaction(tm.compileToLegacyMessage());
 
   return [
     tx,
