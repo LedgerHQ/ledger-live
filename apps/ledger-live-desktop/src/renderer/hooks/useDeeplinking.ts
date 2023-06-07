@@ -157,7 +157,9 @@ export function useDeepLinkHandler() {
 
           if (address && typeof address === "string") {
             const account = accounts.find(acc => acc.freshAddress === address);
-            navigate(`/account/${account.id}`);
+            if (account && account.currency.name === currency) {
+              navigate(`/account/${account.id}`);
+            }
             break;
           }
 
