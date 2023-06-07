@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Flex, InfiniteLoader, Text } from "@ledgerhq/react-ui";
+import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
@@ -13,6 +14,7 @@ import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
 // import { stringToDeviceModelId } from "@ledgerhq/devices/lib/helpers";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { EarlySecurityCheck } from "./EarlySecurityCheck";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -42,27 +44,6 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
   const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
 
-  const handleClose = useCallback(() => {
-    history.push("/onboarding/select-device");
-  }, [history]);
-
-  // TODO: to check with UX
-  const handleTroubleshootingDrawerClose = useCallback(() => {
-    // setTroubleshootingDrawerOpen(false);
-    // setStopPolling(false);
-    history.push("/onboarding/select-device");
-  }, [history]);
-
-  // TODO: to remove ?
-  // const handleDeviceReady = useCallback(() => {
-  //   history.push("/onboarding/sync/completion");
-  // }, [history]);
-
-  // const handleDesyncTimerRunsOut = useCallback(() => {
-  //   setTroubleshootingDrawerOpen(true);
-  // }, []);
-
-  // HERE
   const device = useSelector(getCurrentDevice);
 
   // TODO: to only keep in screen ?
@@ -73,9 +54,13 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const [lastKnownDeviceModelId, setLastKnownDeviceModelId] =
     useState<DeviceModelId>(deviceModelId);
 
+  // When the device is disconnected/reconnected, `device` is set to null.
+  const [lastSeenDevice, setLastSeenDevice] = useState<Device | null>(device ?? null);
+
   useEffect(() => {
     if (device) {
       setLastKnownDeviceModelId(device.modelId);
+      setLastSeenDevice(device);
     }
   }, [device]);
 
@@ -99,9 +84,9 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   });
 
   // // Called when the ESC is complete
-  // const notifyOnboardingEarlyCheckEnded = useCallback(() => {
-  //   setToggleOnboardingEarlyCheckType("exit");
-  // }, []);
+  const notifyOnboardingEarlyCheckEnded = useCallback(() => {
+    setToggleOnboardingEarlyCheckType("exit");
+  }, []);
 
   // Called when the companion component thinks the device is not in a correct state anymore
   const notifySyncOnboardingShouldReset = useCallback(() => {
@@ -188,46 +173,45 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   }, [toggleOnboardingEarlyCheckState, toggleOnboardingEarlyCheckType]);
 
   const onLostDevice = useCallback(() => {
+    console.log(`🍕 lost device`);
     setTroubleshootingDrawerOpen(true);
   }, []);
 
-  // const handleDesyncRetry = useCallback(() => {
-  //   track("button_clicked", {
-  //     button: "Try again",
-  //     drawer: "Could not connect to Stax",
-  //   });
-  //   // handleDesyncClose is then called once the drawer is fully closed
-  //   setDesyncDrawerOpen(false);
-  // }, []);
+  const handleClose = useCallback(() => {
+    history.push("/onboarding/select-device");
+  }, [history]);
 
-  // const handleDesyncClose = useCallback(() => {
-  //   setDesyncDrawerOpen(false);
-  //   navigation.goBack();
-  // }, [navigation]);
+  // TODO: to check with UX
+  const handleTroubleshootingDrawerClose = useCallback(() => {
+    // setTroubleshootingDrawerOpen(false);
+    // setStopPolling(false);
+    history.push("/onboarding/select-device");
+  }, [history]);
+
+  console.log(
+    `🦀 currentStep: ${currentStep} && isPollingOn: ${isPollingOn} && device: ${JSON.stringify(
+      device,
+    )}`,
+  );
 
   let stepContent = (
     <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
+      Intermediary 🐬
       <InfiniteLoader />
     </Flex>
   );
 
-  if (currentStep === "early-security-check" && device) {
-    // stepContent = (
-    //   <EarlySecurityCheck
-    //     device={device}
-    //     notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
-    //   />
-    // );
+  if (currentStep === "early-security-check" && lastSeenDevice) {
     stepContent = (
-      <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
-        <Text>ESC 🐬</Text>
-        <InfiniteLoader />
-      </Flex>
+      <EarlySecurityCheck
+        device={lastSeenDevice}
+        notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
+      />
     );
-  } else if (currentStep === "companion" && device) {
+  } else if (currentStep === "companion" && lastSeenDevice) {
     stepContent = (
       <SyncOnboardingCompanion
-        device={device}
+        device={lastSeenDevice}
         notifySyncOnboardingShouldReset={notifySyncOnboardingShouldReset}
         onLostDevice={onLostDevice}
       />

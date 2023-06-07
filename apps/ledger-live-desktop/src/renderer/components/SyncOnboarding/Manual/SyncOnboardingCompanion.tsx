@@ -21,12 +21,10 @@ import {
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
-import HelpDrawer from "./HelpDrawer";
 import SoftwareCheckStep from "./SoftwareCheckStep";
 import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
 import { StepText, analyticsFlowName } from "./shared";
-import Header from "./Header";
 import OnboardingAppInstallStep from "../../OnboardingAppInstall";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import ContinueOnDeviceWithAnim from "./ContinueOnDeviceWithAnim";
@@ -35,8 +33,9 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
+// TODO
 const readyRedirectDelayMs = 2500;
-const pollingPeriodMs = 1000;
+const POLLING_PERIOD_MS = 1000;
 const desyncTimeoutMs = 60000;
 const longDesyncTimeoutMs = 100000;
 const resyncDelayMs = 1000;
@@ -133,8 +132,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
   const deviceName = device?.deviceName || productName;
-
-  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
 
   const handleSoftwareCheckComplete = useCallback(() => {
     setStepKey(nextStepKey(StepKey.SoftwareCheck));
@@ -264,8 +261,8 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 
   const [steps, setSteps] = useState<Step[]>(defaultSteps);
   const [stopPolling, setStopPolling] = useState<boolean>(false);
-  const [desyncTimer, setDesyncTimer] = useState<NodeJS.Timeout | null>(null);
   const [resyncDelay, setResyncDelay] = useState<number>(resyncDelayMs);
+  const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] = useState<boolean>(false);
   const [desyncTimeout, setDesyncTimeout] = useState<number>(desyncTimeoutMs);
 
   const {
@@ -275,13 +272,9 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   } = useOnboardingStatePolling({
     getOnboardingStatePolling,
     device: device || null,
-    pollingPeriodMs,
+    pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling,
   });
-
-  const handleClose = useCallback(() => {
-    history.push("/onboarding/select-device");
-  }, [history]);
 
   // TODO: we were re-starting the polling ?
   // const handleTroubleshootingDrawerClose = useCallback(() => {
@@ -294,6 +287,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [history]);
 
   const handleDesyncTimerRunsOut = useCallback(() => {
+    setIsDesyncOverlayOpen(false);
     onLostDevice();
     setStopPolling(true);
   }, [onLostDevice]);
@@ -485,13 +479,24 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [fatalError, onLostDevice]);
 
   useEffect(() => {
-    if ((!device || allowedError) && !desyncTimer) {
-      setDesyncTimer(setTimeout(handleDesyncTimerRunsOut, desyncTimeout));
-    } else if (!!device && !allowedError && desyncTimer) {
-      clearTimeout(desyncTimer);
-      setDesyncTimer(null);
+    let desyncTimer: NodeJS.Timeout | null = null;
+
+    console.log(`🦕 allowedError: ${JSON.stringify(allowedError)}`);
+
+    if (allowedError) {
+      setIsDesyncOverlayOpen(true);
+      desyncTimer = setTimeout(handleDesyncTimerRunsOut, desyncTimeout);
+    } else {
+      // desyncTimer is cleared in the useEffect cleanup function
+      setIsDesyncOverlayOpen(false);
     }
-  }, [device, allowedError, handleDesyncTimerRunsOut, desyncTimer, desyncTimeout]);
+
+    return () => {
+      if (desyncTimer) {
+        clearTimeout(desyncTimer);
+      }
+    };
+  }, [device, allowedError, handleDesyncTimerRunsOut, desyncTimeout]);
 
   useEffect(() => {
     if (seedPathStatus === "recover_seed" && postOnboardingPath) {
@@ -506,9 +511,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
-      <Header onClose={handleClose} onHelp={() => setHelpDrawerOpen(true)} />
-      <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
-      <DesyncOverlay isOpen={!!desyncTimer} delay={resyncDelay} productName={productName} />
+      <DesyncOverlay isOpen={isDesyncOverlayOpen} delay={resyncDelay} productName={productName} />
       <Flex
         height="100%"
         overflow="hidden"
