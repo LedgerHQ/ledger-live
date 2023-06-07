@@ -541,15 +541,38 @@ export const FirmwareUpdate = ({
     }
 
     if (staxLoadImageState.imageLoadRequested) {
-      return renderImageLoadRequested({ t, device, fullScreen: false });
+      return renderImageLoadRequested({
+        t,
+        device,
+        fullScreen: false,
+        wording: t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
+          deviceName,
+        }),
+      });
     }
 
     if (staxLoadImageState.imageCommitRequested) {
-      return renderImageCommitRequested({ t, device, fullScreen: false });
+      return renderImageCommitRequested({
+        t,
+        device,
+        fullScreen: false,
+        wording: t(
+          "FirmwareUpdate.steps.restoreSettings.imageCommitRequested",
+          { deviceName },
+        ),
+      });
     }
 
     if (restoreAppsState.allowManagerRequestedWording) {
-      return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
+      return (
+        <AllowManager
+          device={device}
+          wording={t(
+            "FirmwareUpdate.steps.restoreSettings.allowAppsRestoration",
+            { deviceName },
+          )}
+        />
+      );
     }
 
     if (installLanguageState.languageInstallationRequested) {
@@ -558,6 +581,10 @@ export const FirmwareUpdate = ({
         device,
         theme,
         fullScreen: false,
+        wording: t(
+          "FirmwareUpdate.steps.restoreSettings.allowLanguageInstallation",
+          { deviceName },
+        ),
       });
     }
 
@@ -583,6 +610,7 @@ export const FirmwareUpdate = ({
     installLanguageState.languageInstallationRequested,
     restoreAppsState.allowManagerRequestedWording,
     device,
+    deviceName,
     t,
     theme,
     quitUpdate,

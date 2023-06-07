@@ -383,9 +383,11 @@ export function renderAllowLanguageInstallation({
   device,
   theme,
   fullScreen = true,
+  wording,
 }: RawProps & {
   device: Device;
   fullScreen?: boolean;
+  wording?: string;
 }) {
   const deviceName = getDeviceModel(device.modelId).productName;
   const key = device.modelId === "stax" ? "allowManager" : "sign";
@@ -400,7 +402,10 @@ export function renderAllowLanguageInstallation({
     >
       <TrackScreen category="Allow language installation on Stax" refreshSource={false} />
       <Text variant="h4" textAlign="center">
-        {t("deviceLocalization.allowLanguageInstallation", { deviceName })}
+        {wording ??
+          t("deviceLocalization.allowLanguageInstallation", {
+            deviceName,
+          })}
       </Text>
       <AnimationContainer>
         <Animation source={getDeviceAnimation({ device, key, theme })} />
@@ -1063,13 +1068,18 @@ export const renderImageLoadRequested = ({
   t,
   device,
   fullScreen = true,
-}: RawProps & { device: Device; fullScreen?: boolean }) => {
+  wording,
+}: RawProps & { device: Device; fullScreen?: boolean; wording?: string }) => {
   return (
     <ImageLoadingGeneric
       fullScreen={fullScreen}
-      title={t("customImage.allowPreview", {
-        productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-      })}
+      title={
+        wording ??
+        t("customImage.allowPreview", {
+          productName:
+            device.deviceName || getDeviceModel(device.modelId)?.productName,
+        })
+      }
       lottieSource={allowConnection}
       progress={0}
     />
@@ -1098,13 +1108,18 @@ export const renderImageCommitRequested = ({
   t,
   device,
   fullScreen = true,
-}: RawProps & { device: Device; fullScreen?: boolean }) => {
+  wording,
+}: RawProps & { device: Device; fullScreen?: boolean; wording?: string }) => {
   return (
     <ImageLoadingGeneric
       fullScreen={fullScreen}
-      title={t("customImage.commitRequested", {
-        productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-      })}
+      title={
+        wording ??
+        t("customImage.commitRequested", {
+          productName:
+            device.deviceName || getDeviceModel(device.modelId)?.productName,
+        })
+      }
       lottieSource={confirmLockscreen}
       progress={0.89} // hardcoded value to not have the image overflowing the "confirm button" in the lottie
     />
