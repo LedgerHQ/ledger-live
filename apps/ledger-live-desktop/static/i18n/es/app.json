@@ -25,10 +25,17 @@
     },
     "catalog" : {
       "title" : "Discover",
+      "section" : {
+        "recentlyUsed" : "Usadas recientemente",
+        "browse" : "Examinar"
+      },
+      "filter" : {
+        "categories" : "Categorías"
+      },
       "branch" : {
-        "soon" : "próximamente",
-        "experimental" : "experimental",
-        "debug" : "depuración"
+        "soon" : "Próximamente",
+        "experimental" : "Experimental",
+        "debug" : "Depuración"
       },
       "banner" : {
         "title" : "Descubre nuestro catálogo de aplicaciones de Live",
@@ -47,6 +54,11 @@
         "title" : "Para desarrolladores",
         "description" : "Toda la información que necesitas para integrar tus aplicaciones en Ledger Live.",
         "button" : "Ir al portal"
+      },
+      "warnings" : {
+        "notFound" : "No hay coincidencias",
+        "retrySearchKeyword" : "Por favor, intenta de nuevo con otra palabra clave.",
+        "retrySearchKeywordAndUrl" : "Intenta realizar la búsqueda con otra palabra clave o abre <Link>{{search}}</Link> fuera de Ledger Live."
       }
     },
     "disclaimer" : {
@@ -129,7 +141,8 @@
     "info" : "Info",
     "connectDevice" : "Conecta tu dispositivo",
     "add" : "Agregar",
-    "or" : "O"
+    "or" : "O",
+    "clearAll" : "Borrar todo"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -1651,12 +1664,12 @@
     "tokensTip" : "{{token}} ({{ticker}}) es un token {{tokenType}}. Puedes recibir tokens directamente en una cuenta de {{currency}}.",
     "accountToImportSubtitle_plural" : "Agregar cuentas existentes",
     "selectAll" : "Seleccionar todas ({{count}})",
-    "unselectAll" : "Deseleccionar todas ({{count}})",
+    "unselectAll" : "Desmarcar todas ({{count}})",
     "noAccountToImport" : "No existen cuentas de {{currencyName}} para agregar.",
     "success" : "Cuenta agregada con éxito",
     "success_plural" : "Cuentas agregadas correctamente",
-    "successDescription" : "Agregar otras cuentas o volver al Portfolio",
-    "successDescription_plural" : "Agregar otras cuentas o volver al Portfolio",
+    "successDescription" : "Agrega otra cuenta o vuelve al Portfolio",
+    "successDescription_plural" : "Agrega otra cuenta o vuelve al Portfolio",
     "createNewAccount" : {
       "noOperationOnLastAccount" : "No es posible agregar una cuenta nueva antes de haber recibido activos en tu cuenta de <1><0>{{accountName}}</0></1>",
       "noAccountToCreate" : "No fue creada ninguna cuenta de <1><0>{{currencyName}}</0></1>",
@@ -1951,7 +1964,7 @@
         "osu" : "Instalando OSU...",
         "flash-mcu" : "Actualizando MCU...",
         "flash-bootloader" : "Actualizando Bootloader...",
-        "progress" : "Installing update {{current}}/{{total}}",
+        "progress" : "Instalando actualización {{current}}/{{total}}",
         "firmware" : "Actualizando firmware...",
         "flash" : "Preparando tu dispositivo..."
       },
@@ -2276,6 +2289,7 @@
     "renamed" : "El nombre de {{ productName }} se cambió a \n“{{ name }}” "
   },
   "removeCustomLockscreen" : {
+    "title" : "Quitar imagen de pantalla de bloqueo",
     "cta" : "Eliminar",
     "confirmation" : "Confirmar eliminación de imagen en tu Ledger Stax",
     "success" : "Imagen de pantalla de bloqueo eliminada"
@@ -3507,19 +3521,19 @@
       "subTitle" : "Pon en participación ETH y haz crecer tus tenencias al recibir recompensas diarias directamente en Ledger Live.",
       "lido" : {
         "title" : "Gana con Lido",
-        "tag" : "Sin mínimos",
         "description" : "Pon tus Ethereum en participación con Lido y gana recompensas diarias. Sin periodo de inmovilización. Sin mínimos.",
         "supportLink" : "Obtén más información acerca de Lido"
       },
       "kiln" : {
         "title" : "Puesta en participación dedicada de Kiln",
         "tag" : "Requiere 32 ETH",
-        "description" : "Pon en participación con validadores dedicados. Requiere múltiplos de 32 ETH. Las recompensas se reclaman manualmente.",
+        "description" : "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
         "supportLink" : "Obtener más información acerca del validador Kiln"
       },
       "kiln_pooling" : {
         "title" : "Pool de puesta en participación de Kiln",
-        "description" : "Únete a un Pool de puesta en participación. No es necesario un mínimo de ETH. Las recompensas se reclaman automáticamente.",
+        "tag" : "Sin mínimos",
+        "description" : "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
         "supportLink" : "Obtener más información acerca de pooling con Kiln"
       }
     }
@@ -3904,10 +3918,6 @@
           "title" : "Búsqueda de cuenta extendida",
           "description" : "Busca cuentas con rutas de derivación incorrectas. Envía los activos que encuentres a una cuenta normal."
         },
-        "experimentalCountervalues" : {
-          "title" : "API experimental de contrapartes",
-          "description" : "Puede provocar que las contrapartes que se muestran de tus cuentas no sean las correctas."
-        },
         "experimentalExplorers" : {
           "title" : "API de Experimental Explorers",
           "description" : "Prueba la siguiente versión de los exploradores de cadena de bloques de Ledger. La modificación de esta configuración puede afectar el saldo de la cuenta y la sincronización, como así también la opción de envío.(<0></0>)"
@@ -4156,7 +4166,7 @@
       "recoverySeed" : {
         "title1" : "¿Cómo funciona una Frase de recuperación?",
         "paragraph1" : "Tu Frase de recuperación funciona como una llave maestra única. Tu dispositivo Ledger la utiliza para calcular las claves privadas de cada activo cripto que posees.",
-        "paragraph2" : "Para restaurar el acceso a tus criptos, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de recuperación.",
+        "paragraph2" : "Para restaurar el acceso a tus cripto, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de recuperación.",
         "link" : "Más información acerca del funcionamiento de la Frase de recuperación",
         "title2" : "¿Qué pasa si pierdo el acceso a mi Nano?",
         "paragraph3" : "No te preocupes, sigue estos pasos:",
@@ -4164,7 +4174,7 @@
         "points" : {
           "1" : "Utiliza una billetera de hardware distinta.",
           "2" : "Selecciona “Restore recovery phrase on a new device” en la aplicación Ledger.",
-          "3" : "Ingresa tu Frase de recuperación en tu nuevo dispositivo para restaurar el acceso a tus criptos."
+          "3" : "Ingresa tu Frase de recuperación en tu nuevo dispositivo para restaurar el acceso a tus cripto."
         }
       },
       "whereToHide" : {
@@ -4172,7 +4182,7 @@
         "points" : {
           "1" : "<0>NUNCA</0> lo ingreses en una PC, smartphone o cualquier otro dispositivo. No le tomes fotografías.",
           "2" : "<0>NUNCA</0> compartas tus 24 Palabras con nadie.",
-          "3" : "<0>SIEMPRE</0> guárdalo en un lugar seguro, fuera de la vista.",
+          "3" : "<0>SIEMPRE</0> guárdala en un lugar seguro, fuera de la vista.",
           "4" : "Ledger nunca te pedirá tu Frase de recuperación.",
           "5" : "Si alguien (o alguna aplicación) te la pide, ¡tiene fines deshonestos!"
         }
@@ -4206,7 +4216,7 @@
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
         "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
-        "byTapping" : "Al tocar “Empezar” otorgas tu consentimiento y aceptas nuestros",
+        "byTapping" : "Al tocar “Comenzar” otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
         "privacyPolicy" : "Política de Privacidad",
@@ -4271,7 +4281,7 @@
           "importYourRecoveryPhrase" : {
             "title" : "Restaurar a partir de Frase de recuperación",
             "paragraph1" : "Restaura tu Nano a partir de tu Frase de recuperación para restaurar, reemplazar o hacer una copia de seguridad de tu billetera de hardware Ledger.",
-            "paragraph2" : "Tu Nano restaurará tus claves privadas y podrás acceder a tus criptos y administrarlas.",
+            "paragraph2" : "Tu Nano restaurará tus claves privadas y podrás acceder a tus cripto y administrarlas.",
             "buttons" : {
               "next" : "De acuerdo, ¡todo listo!",
               "prev" : "Paso anterior",
@@ -5093,8 +5103,8 @@
       "description" : "Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
-      "title" : "Restoration of Language was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "La restauración del idioma se canceló en Ledger Stax",
+      "description" : "Si ha sido un error, puedes intentar la restauración de nuevo u omitir este paso."
     },
     "LanguageNotFound" : {
       "title" : "No se ha encontrado el idioma",
@@ -5276,8 +5286,8 @@
       "title" : "Mi Ledger denegado en el dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "Update was cancelled on device",
-      "description" : "The installation of OS update was refused on your device. If this was a mistake, restart the update."
+      "title" : "La actualización se canceló en el dispositivo",
+      "description" : "Se ha rechazado la instalación de la actualización del SO en tu dispositivo. Si se trata de un error, vuelve a iniciar la actualización."
     },
     "UserRefusedOnDevice" : {
       "title" : "Acción rechazada",
@@ -5662,13 +5672,17 @@
       "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
       "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Tu Ledger Stax no tiene una imagen de pantalla de bloqueo que quitar",
+      "description" : "La imagen de pantalla de bloqueo personalizada ya se ha quitado."
+    },
     "RestoreImageCommitRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "La restauración de la imagen de pantalla de bloqueo se canceló en Ledger Stax",
+      "description" : "Si ha sido un error, puedes intentar la restauración de nuevo u omitir este paso."
     },
     "RestoreImageLoadRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "La restauración de la imagen de pantalla de bloqueo se canceló en Ledger Stax",
+      "description" : "Si ha sido un error, puedes intentar la restauración de nuevo u omitir este paso."
     },
     "NearNewAccountWarning" : {
       "title" : "La cuenta del destinatario todavía no está creada. El protocolo requiere una transferencia de {{formattedNewAccountStorageCost}} para crearla."
@@ -5828,5 +5842,14 @@
     "description" : "No siempre tendrás a mano tu Frase de recuperación secreta.\nLanzamiento inicial exclusivo para el Ledger Nano X. Suscríbete gratis hasta el 30 de junio de 2023",
     "cta" : "¿Por qué debería suscribirme?",
     "downloadLLM" : "Suscríbete a <purple>Ledger Recover</purple> desde la aplicación Ledger Live Mobile"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "Error de red",
+      "subtitle" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda el registro y ponte en contacto con el Soporte de Ledger.",
+      "tryAgain" : "Inténtalo de nuevo",
+      "contactSupport" : "Ponte en contacto con el Soporte de Ledger",
+      "saveLog" : "Guardar registro"
+    }
   }
 }
