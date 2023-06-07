@@ -12,8 +12,8 @@ import {
 import { getEstimatedFees } from "./bridge/bridgeHelpers/fee";
 import { InvalidMemoICP } from "./errors";
 
-const SEED_IDENTIFIER =
-  "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";
+// const SEED_IDENTIFIER =
+// "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";
 const ACCOUNT_2 =
   "fdb7db0d3ae67368cb5010b7de7d98566c072f0a4eda871f45cd6582bf08aeb4";
 
@@ -34,21 +34,37 @@ const internet_computer: CurrenciesData<Transaction> = {
   accounts: [
     {
       raw: {
-        id: `js:2:icp:${SEED_IDENTIFIER}:internet_computer`,
-        seedIdentifier: SEED_IDENTIFIER,
-        name: "",
-        derivationMode: "internet_computer" as const,
-        index: 0,
-        freshAddress: SEED_IDENTIFIER,
-        freshAddressPath: "44'/223'/0'/0/0",
-        freshAddresses: [],
-        blockHeight: 0,
-        operations: [],
-        pendingOperations: [],
+        balance: "1000000",
         currencyId: "internet_computer",
-        unitMagnitude: 8,
+        derivationMode: "",
+        freshAddress:
+          "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
+        freshAddressPath: "44'/223'/0'/0/0",
+        freshAddresses: [
+          {
+            address:
+              "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
+            derivationPath: "44'/223'/0'/0/0",
+          },
+        ],
+        id: "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:",
+        index: 0,
+        name: "Internet Computer 1",
+        nfts: undefined,
+        operationsCount: 1,
+        blockHeight: 0,
+        pendingOperations: [],
+        operations: [],
         lastSyncDate: "",
-        balance: "1000",
+        seedIdentifier:
+          "046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf",
+        spendableBalance: "1000000",
+        starred: false,
+        swapHistory: [],
+        syncHash: undefined,
+        unitMagnitude: 8,
+        used: true,
+        xpub: "046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf",
       },
       transactions: [
         {
