@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.61.0-nightly.6
+
+### Patch Changes
+
+- [#3483](https://github.com/LedgerHQ/ledger-live/pull/3483) [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e) Thanks [@gre](https://github.com/gre)! - use ledger currency id on Countervalues API usage.
+
+- Updated dependencies [[`7aa7d7dcd3`](https://github.com/LedgerHQ/ledger-live/commit/7aa7d7dcd31e5135aabb9441ad460ce1793d48dc), [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e), [`ac205cce9f`](https://github.com/LedgerHQ/ledger-live/commit/ac205cce9f328165369c5c270681be1d7ba7d0f2)]:
+  - @ledgerhq/live-common@31.0.0-nightly.6
+  - @ledgerhq/types-cryptoassets@7.2.1-nightly.0
+  - @ledgerhq/coin-framework@0.3.5-nightly.1
+  - @ledgerhq/domain-service@1.1.3-nightly.1
+  - @ledgerhq/types-live@6.34.1
+
 ## 2.61.0-nightly.5
 
 ### Patch Changes

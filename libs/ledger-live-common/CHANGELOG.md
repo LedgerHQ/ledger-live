@@ -1,5 +1,26 @@
 # @ledgerhq/live-common
 
+## 31.0.0-nightly.6
+
+### Minor Changes
+
+- [#3556](https://github.com/LedgerHQ/ledger-live/pull/3556) [`7aa7d7dcd3`](https://github.com/LedgerHQ/ledger-live/commit/7aa7d7dcd31e5135aabb9441ad460ce1793d48dc) Thanks [@jnwng](https://github.com/jnwng)! - Updated `@solana/web3.js`, enabled versioned transactions
+
+### Patch Changes
+
+- [#3483](https://github.com/LedgerHQ/ledger-live/pull/3483) [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e) Thanks [@gre](https://github.com/gre)! - use ledger currency id on Countervalues API usage.
+
+- [#3590](https://github.com/LedgerHQ/ledger-live/pull/3590) [`ac205cce9f`](https://github.com/LedgerHQ/ledger-live/commit/ac205cce9f328165369c5c270681be1d7ba7d0f2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent endless loop in swap request
+
+- Updated dependencies [[`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e)]:
+  - @ledgerhq/cryptoassets@9.6.1-nightly.1
+  - @ledgerhq/coin-algorand@0.2.1-nightly.1
+  - @ledgerhq/coin-evm@0.2.0-nightly.1
+  - @ledgerhq/coin-framework@0.3.5-nightly.1
+  - @ledgerhq/coin-polkadot@0.1.6-nightly.1
+  - @ledgerhq/domain-service@1.1.3-nightly.1
+  - @ledgerhq/hw-app-eth@6.33.5-nightly.1
+
 ## 31.0.0-nightly.5
 
 ### Patch Changes

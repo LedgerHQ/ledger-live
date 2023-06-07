@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 9.6.1-nightly.1
+
+### Patch Changes
+
+- [#3483](https://github.com/LedgerHQ/ledger-live/pull/3483) [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e) Thanks [@gre](https://github.com/gre)! - use ledger currency id on Countervalues API usage.
+
 ## 9.6.1-nightly.0
 
 ### Patch Changes
