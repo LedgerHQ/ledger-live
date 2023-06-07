@@ -49,7 +49,7 @@ const StepConfirmation = ({ error, appsToBeReinstalled }: StepProps) => {
       <BoxedIcon Icon={Icons.CheckAloneMedium} iconColor="success.c50" size={64} iconSize={24} />
       <Title mt={9}>{t("manager.modal.successTitle")}</Title>
       <Box mt={2} mb={5}>
-        <Text ff="Inter|Regular" fontSize={4} color="palette.text.shade80">
+        <Text ff="Inter|Regular" fontSize={4} color="palette.text.shade80" textAlign="center">
           {appsToBeReinstalled
             ? t("manager.modal.successTextApps")
             : t("manager.modal.successTextNoApps")}

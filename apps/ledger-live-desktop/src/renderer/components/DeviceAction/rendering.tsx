@@ -133,7 +133,6 @@ export const Title = styled(Text).attrs({
   fontSize: 6,
 })`
   white-space: pre-line;
-  flex: 1;
 `;
 
 export const SubTitle = styled(Text).attrs({
@@ -793,7 +792,7 @@ const renderFirmwareUpdatingBase = ({
               {"1"}
             </Text>
           </Circle>
-          <Title>
+          <Title flex={1}>
             <Trans
               i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
               values={{ productName: getDeviceModel(modelId).productName }}
@@ -806,7 +805,7 @@ const renderFirmwareUpdatingBase = ({
               {"2"}
             </Text>
           </Circle>
-          <Title>
+          <Title flex={1}>
             <Trans
               i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep2"
               values={{ productName: getDeviceModel(modelId).productName }}
