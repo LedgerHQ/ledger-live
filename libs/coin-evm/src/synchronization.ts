@@ -14,7 +14,7 @@ import {
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
-import etherscanLikeApi from "./api/etherscan";
+
 import {
   getBalanceAndBlock,
   getBlock,
@@ -22,22 +22,7 @@ import {
   getTransaction,
 } from "./api/rpc";
 import { getSyncHash, mergeSubAccounts } from "./logic";
-
-/**
- * Switch to select one of the compatible explorer
- */
-const getExplorerApi = (currency: CryptoCurrency) => {
-  const apiType = currency.ethereumLikeInfo?.explorer?.type;
-
-  switch (apiType) {
-    case "etherscan":
-    case "blockscout":
-      return etherscanLikeApi;
-
-    default:
-      throw new Error("API type not supported");
-  }
-};
+import { getExplorerApi } from "./api/explorer";
 
 /**
  * Main synchronization process
