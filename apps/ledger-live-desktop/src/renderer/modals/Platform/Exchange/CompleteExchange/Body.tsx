@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -54,6 +54,16 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       onCancel(error);
     }
   }, [onCancel, error]);
+  const signRequest = useMemo(
+    () => ({
+      tokenCurrency,
+      parentAccount,
+      account,
+      transaction,
+      appName: "Exchange",
+    }),
+    [account, parentAccount, tokenCurrency, transaction],
+  );
   return (
     <ModalBody
       onClose={() => {
@@ -87,13 +97,8 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
                 key="sign"
                 action={sendAction}
                 // TODO: the proper team should investigate why the types mismatch
-                request={{
-                  tokenCurrency,
-                  parentAccount,
-                  account,
-                  transaction,
-                  appName: "Exchange",
-                }}
+                // @ts-expect-error This type is not compatible with the one expected by the action
+                request={signRequest}
                 onResult={result => {
                   if ("transactionSignError" in result) {
                     setError(result.transactionSignError);

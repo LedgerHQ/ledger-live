@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import DeviceAction from "~/renderer/components/DeviceAction";
@@ -23,14 +23,19 @@ const StepConnectDevice = ({ currency, transitionTo, flow }: StepProps) => {
       ? currency.parentCurrency.name
       : currency.name
     : undefined;
+
+  const request = useMemo(
+    () => ({
+      currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
+    }),
+    [currency],
+  );
   return (
     <>
       <TrackPage category="AddAccounts" name="Step2" currencyName={currencyName} />
       <DeviceAction
         action={action}
-        request={{
-          currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
-        }}
+        request={request}
         onResult={() => {
           transitionTo("import");
         }}
