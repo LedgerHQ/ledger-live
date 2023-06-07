@@ -5,7 +5,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssertionError, fail } from "assert";
 import BigNumber from "bignumber.js";
 import { getEnv } from "../../../env";
-import * as etherscanAPI from "../api/etherscan";
+import * as etherscanAPI from "../api/explorer/etherscan";
 import * as rpcAPI from "../api/rpc.common";
 import * as logic from "../logic";
 import * as synchronization from "../synchronization";
