@@ -3,7 +3,7 @@ import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import * as API from "../api/rpc.common";
+import * as API from "../api/rpc/rpc.common";
 import broadcast from "../broadcast";
 import buildOptimisticOperation from "../buildOptimisticOperation";
 import { getEstimatedFees } from "../logic";

@@ -2,7 +2,7 @@ import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import ERC20ABI from "../abis/erc20.abi.json";
-import * as rpcAPI from "../api/rpc.common";
+import * as rpcAPI from "../api/rpc/rpc.common";
 import {
   prepareForSignOperation,
   prepareTransaction,

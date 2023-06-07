@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { transactionToEthersTransaction } from "../adapters";
-import * as rpcAPI from "../api/rpc.common";
+import * as rpcAPI from "../api/rpc/rpc.common";
 import {
   fromTransactionRaw,
   getSerializedTransaction,

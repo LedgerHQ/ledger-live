@@ -2,7 +2,7 @@ import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import * as RPC_API from "../api/rpc.common";
+import * as RPC_API from "../api/rpc/rpc.common";
 import {
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,

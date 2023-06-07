@@ -3,7 +3,7 @@ import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { AssertionError, fail } from "assert";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import * as RPC_API from "../api/rpc.common";
+import * as RPC_API from "../api/rpc/rpc.common";
 import { GasEstimationError, InsufficientFunds } from "../errors";
 import { makeAccount } from "../testUtils";
 import { Transaction as EvmTransaction, EvmTransactionLegacy } from "../types";

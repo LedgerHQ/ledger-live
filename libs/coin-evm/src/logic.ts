@@ -4,7 +4,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
-import { getOptimismAdditionalFees } from "./api/rpc.common";
+import { getOptimismAdditionalFees } from "./api/rpc/rpc.common";
 import {
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,

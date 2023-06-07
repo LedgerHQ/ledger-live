@@ -5,7 +5,7 @@ import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { buildSignOperation, applyEIP155 } from "../signOperation";
 import { Transaction as EvmTransaction } from "../types";
-import * as rpcAPI from "../api/rpc.common";
+import * as rpcAPI from "../api/rpc/rpc.common";
 import { getEstimatedFees } from "../logic";
 import { makeAccount } from "../testUtils";
 
