@@ -12,6 +12,7 @@ on:
         required: true
       base_ref:
         description: The base branch to merge the head into when checking out the code
+        required: false
 
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
@@ -28,7 +29,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ github.ref_name }}
-          base_ref: ${{ inputs.base_ref }}
+          base: ${{ inputs.base_ref }}
       - name: set git user
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
@@ -97,7 +98,7 @@ jobs:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
           ref: ${{ github.ref_name }}
-          base_ref: ${{ inputs.base_ref }}
+          base: ${{ inputs.base_ref }}
       - name: set git user
         run: |
           git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"

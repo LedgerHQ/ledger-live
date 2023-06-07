@@ -1,9 +1,12 @@
 import React from "react";
+import { Trans } from "react-i18next";
+import { ParamListBase, RouteProp } from "@react-navigation/native";
+
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { Icons } from "@ledgerhq/native-ui";
-import { Trans } from "react-i18next";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
+
 import { NavigatorName, ScreenName } from "../../const";
 import { ActionButtonEvent } from "../../components/FabActions";
 
@@ -12,9 +15,11 @@ type NavigationParamsType = readonly [name: string, options: object];
 const getMainActions = ({
   account,
   parentAccount,
+  parentRoute,
 }: {
   account: CosmosAccount;
   parentAccount?: Account;
+  parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] | null | undefined => {
   const delegationDisabled = !canDelegate(account);
   const navigationParams = delegationDisabled
@@ -36,6 +41,9 @@ const getMainActions = ({
             account.cosmosResources?.delegations.length > 0
               ? ScreenName.CosmosDelegationValidator
               : ScreenName.CosmosDelegationStarted,
+          params: {
+            source: parentRoute,
+          },
         },
       ];
   return [

@@ -45,6 +45,7 @@ test("Cosmos staking flows via portfolio. Check stake flow modals and stake bann
       await portfolioPage.startStakeFlow();
       await drawer.waitForDrawerToBeVisible();
       await drawer.selectCurrency("cosmos");
+      // FIXME: this tests relies on the order of accounts to be "by countervalues" and there is no guarantee of that / it is not the purpose of this test. so it is recommended to use another way to select an account.
       await drawer.selectAccount("cosmos", 0);
       await expect
         .soft(modal.container)

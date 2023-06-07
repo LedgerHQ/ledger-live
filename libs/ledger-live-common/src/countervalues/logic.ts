@@ -91,6 +91,7 @@ export function inferTrackingPairForAccounts(
 ): TrackingPair[] {
   const yearAgo = new Date();
   yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+  yearAgo.setHours(0, 0, 0, 0);
   return resolveTrackingPairs(
     flattenAccounts(accounts).map((a) => {
       const currency = getAccountCurrency(a);
