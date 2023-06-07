@@ -133,6 +133,7 @@ export const Title = styled(Text).attrs({
   fontSize: 6,
 })`
   white-space: pre-line;
+  flex: 1;
 `;
 
 export const SubTitle = styled(Text).attrs({
