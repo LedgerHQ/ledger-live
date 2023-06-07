@@ -286,6 +286,11 @@ export const setLastSeenDevice = ({ deviceInfo }: { deviceInfo: DeviceInfo }) =>
     deviceInfo,
   },
 });
+
+export const addNewDevice = ({ seenDevice }: { seenDevice: DeviceModelInfo }) => ({
+  type: "ADD_SEEN_DEVICE",
+  payload: seenDevice,
+});
 export const setDeepLinkUrl = (url?: string | null) => ({
   type: "SET_DEEPLINK_URL",
   payload: url,
