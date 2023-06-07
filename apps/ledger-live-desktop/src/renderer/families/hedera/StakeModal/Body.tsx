@@ -21,6 +21,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 
 import Stepper from "~/renderer/components/Stepper";
 
+import StepStakingStarted, { StepStakingStartedFooter } from "./steps/StepStakingStarted";
 import StepStakingInfo, { StepStakingInfoFooter } from "./steps/StepStakingInfo";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
@@ -58,10 +59,17 @@ type Props = OwnProps & StateProps;
 
 const steps: Array<St> = [
   {
+    id: "started",
+    label: <Trans i18nKey="hedera.stake.stepperHeader.started" />,
+    component: StepStakingStarted,
+    footer: StepStakingStartedFooter,
+  },
+  {
     id: "stake",
     label: <Trans i18nKey="hedera.stake.stepperHeader.stake" />,
     component: StepStakingInfo,
     footer: StepStakingInfoFooter,
+    onBack: ({ transitionTo }: StepProps) => transitionTo("started"),
   },
   {
     id: "summary",

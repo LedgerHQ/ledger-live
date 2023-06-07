@@ -8,7 +8,7 @@ import type { Step } from "~/renderer/components/Stepper";
 import type { Option } from "~/renderer/components/Select";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
-export type StepId = "stake" | "summary" | "connectDevice" | "success";
+export type StepId = "started" | "stake" | "summary" | "connectDevice" | "success";
 
 // `StepProps` is shared amongst `StakeModal` and `StopStakingModal`
 export type StepProps = {

@@ -5762,6 +5762,7 @@
     },
     "stake": {
       "stepperHeader": {
+        "started": "Started",
         "stake": "Delegate",
         "changeStake": "Change Stake",
         "stopStake": "Stop Stake",
@@ -5773,6 +5774,13 @@
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
+        "started": {
+          "title": "Stake HBAR directly from Ledger Live",
+          "stake": "Stake your Hedera account to a Node or user account",
+          "noLock": "No lock-up period when you staked to a Node",
+          "receive": "Receive rewards when staking to a node account",
+          "donate": "Donate your rewards when staking to an user account"
+        },
         "stake": {
           "nodeTitle": "Node account staking",
           "nodeSubtitle": "Earn daily rewards by delegating your Hedera holdings to a Node",

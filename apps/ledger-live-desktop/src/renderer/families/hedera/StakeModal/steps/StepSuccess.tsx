@@ -47,8 +47,8 @@ function StepSuccess({
         {/* This "component" is purely to sync the account? */}
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
-          title={<Trans i18nKey="hedera.stake.flow.stake.success.title" />}
-          description={multiline(t("hedera.stake.flow.stake.success.description"))}
+          title={<Trans i18nKey="hedera.stake.flow.success.title" />}
+          description={multiline(t("hedera.stake.flow.success.description"))}
         />
       </Container>
     );
@@ -107,7 +107,7 @@ export function StepSuccessFooter({
           }}
           primary
         >
-          {t("hedera.stake.flow.stake.success.viewDetails")}
+          {t("hedera.stake.flow.success.viewDetails")}
         </Button>
       ) : error ? (
         <RetryButton

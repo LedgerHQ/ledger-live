@@ -10,6 +10,7 @@ import Icon from "~/renderer/icons/Apps";
 import { STAKE_METHOD } from "@ledgerhq/live-common/families/hedera/types";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
+import { Icons } from "@ledgerhq/react-ui";
 
 // const { t } = useTranslation();
 
@@ -84,7 +85,7 @@ const StakeMethodSelect: React.FC<Props> = ({
           style={activeKey === STAKE_METHOD.NODE ? radioBoxActiveStyle : radioBoxStyle}
         >
           <Box style={iconBackgroundStyle}>
-            <Icon size={14} />
+            <Icons.CubeMedium size={14} />
           </Box>
           <Box style={textArea}>
             <Text ff="Inter|SemiBold" fontSize={14} lineHeight="130%" mb="2px">
@@ -101,7 +102,7 @@ const StakeMethodSelect: React.FC<Props> = ({
           style={activeKey === STAKE_METHOD.ACCOUNT ? radioBoxActiveStyle : radioBoxStyle}
         >
           <Box style={iconBackgroundStyle}>
-            <Icon size={14} />
+            <Icons.HandHoldingCoinMedium size={14} />
           </Box>
           <Box style={textArea}>
             <Text ff="Inter|SemiBold" fontSize={14} lineHeight="130%" mb="2px">
