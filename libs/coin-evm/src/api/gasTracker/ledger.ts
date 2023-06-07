@@ -4,7 +4,41 @@ import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { GasOptions } from "../../types";
-import { blockchainBaseURL } from "./explorer";
+
+import invariant from "invariant";
+
+//#region Ledger Explorer URL
+type LedgerExplorer = {
+  version: string;
+  id: string;
+  endpoint: string;
+};
+
+const findCurrencyExplorer = (
+  currency: CryptoCurrency
+): LedgerExplorer | null | undefined => {
+  if (currency.explorerId == null) {
+    console.warn("no explorerId for", currency.id);
+  }
+
+  return {
+    endpoint: getEnv("EXPLORER"),
+    id: currency.explorerId ?? currency.id,
+    version: "v4",
+  };
+};
+
+const getCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer => {
+  const res = findCurrencyExplorer(currency);
+  invariant(res, `no Ledger explorer for ${currency.id}`);
+  return <LedgerExplorer>res;
+};
+
+const blockchainBaseURL = (currency: CryptoCurrency): string => {
+  const { id, version, endpoint } = getCurrencyExplorer(currency);
+  return `${endpoint}/blockchain/${version}/${id}`;
+};
+//#endregion
 
 const EIP1559ShouldBeUsed = (currency: CryptoCurrency): boolean => {
   return getEnv("EIP1559_ENABLED_CURRENCIES").includes(currency.id);
