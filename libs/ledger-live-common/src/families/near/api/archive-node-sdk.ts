@@ -294,9 +294,8 @@ export const getCommission = async (
   if (Array.isArray(result) && result.length) {
     const parsedResult = JSON.parse(Buffer.from(result).toString());
 
-    return (
-      Math.round((parsedResult.numerator / parsedResult.denominator) * 100) /
-      100
+    return Math.round(
+      (parsedResult.numerator / parsedResult.denominator) * 100
     );
   }
 
