@@ -195,12 +195,12 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             flex: 1,
           }}
         >
-          {stuckOperationAndOperation?.oldestEditableOperation ? (
+          {stuckOperationAndOperation?.stuckOperation ? (
             <EditOperationCard
-              oldestEditableOperation={
-                stuckOperationAndOperation.oldestEditableOperation
-              }
               isOperationStuck
+              oldestEditableOperation={
+                stuckOperationAndOperation.stuckOperation
+              }
               account={account}
               parentAccount={parentAccount}
             />

@@ -8,6 +8,7 @@ import {
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { View } from "react-native";
 import { log } from "@ledgerhq/logs";
 
 import Alert from "../../components/Alert";
@@ -70,18 +71,19 @@ const CurrentNetworkFeeComponent = ({
       return (
         <Alert type="hint">
           {EIP1559ShouldBeUsed(mainAccount.currency) ? (
-            <>
+            <View>
               <LText>
                 {t("editTransaction.previousFeesInfo.maxPriorityFee", {
                   amount: maxPriorityFeePerGasinGwei,
                 })}
               </LText>
+
               <LText>
                 {t("editTransaction.previousFeesInfo.maxFee", {
                   amount: maxFeePerGasinGwei,
                 })}
               </LText>
-            </>
+            </View>
           ) : (
             <LText>
               {t("editTransaction.previousFeesInfo.gasPrice", {

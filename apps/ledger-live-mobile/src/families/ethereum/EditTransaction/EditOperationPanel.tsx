@@ -4,6 +4,7 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/core";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { isOldestEditableOperation } from "@ledgerhq/live-common/operation";
 
 import LText from "../../../components/LText";
 import Link from "../../../components/wrappedUi/Link";
@@ -39,7 +40,9 @@ export const EditOperationPanel = ({
     }
   }, []);
 
-  return flag?.enabled ? (
+  return flag?.enabled &&
+    account &&
+    isOldestEditableOperation(operation, account) ? (
     <Flex
       backgroundColor={isOperationStuck ? "warning.c70" : "primary.c80"}
       color={"primary.c80"}
