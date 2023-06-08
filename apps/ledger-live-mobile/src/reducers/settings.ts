@@ -171,7 +171,7 @@ export const INITIAL_STATE: SettingsState = {
     announcementsCategory: true,
     recommendationsCategory: true,
     largeMoverCategory: true,
-    transactionAlertsCategory: true,
+    transactionAlertsCategory: false,
   },
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
   overriddenFeatureFlags: {},
