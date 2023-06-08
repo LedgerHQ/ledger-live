@@ -6,10 +6,10 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { EtherscanAPIError } from "../../errors";
 import {
-  etherscanOperationToOperation,
-  etherscanERC20EventToOperation,
-  etherscanERC721EventToOperation,
-  etherscanERC1155EventToOperation,
+  etherscanOperationToOperations,
+  etherscanERC20EventToOperations,
+  etherscanERC721EventToOperations,
+  etherscanERC1155EventToOperations,
 } from "../../adapters";
 import {
   EtherscanERC1155Event,
@@ -75,7 +75,7 @@ export const getLastCoinOperations = async (
     url,
   });
 
-  return ops.map(tx => etherscanOperationToOperation(accountId, tx)).filter(Boolean) as Operation[];
+  return ops.map(tx => etherscanOperationToOperations(accountId, tx)).flat();
 };
 
 /**
@@ -102,9 +102,7 @@ export const getLastTokenOperations = async (
     url,
   });
 
-  return ops
-    .map((event, index) => etherscanERC20EventToOperation(accountId, event, index))
-    .filter(Boolean) as Operation[];
+  return ops.map((event, index) => etherscanERC20EventToOperations(accountId, event, index)).flat();
 };
 
 /**
@@ -150,9 +148,9 @@ export const getLastERC721Operations = async (
 
   return Object.values(opsByHash)
     .map(events =>
-      events.map((event, index) => etherscanERC721EventToOperation(accountId, event, index)),
+      events.map((event, index) => etherscanERC721EventToOperations(accountId, event, index)),
     )
-    .flat();
+    .flat(2);
 };
 
 /**
@@ -198,9 +196,9 @@ export const getLastERC1155Operations = async (
 
   return Object.values(opsByHash)
     .map(events =>
-      events.map((event, index) => etherscanERC1155EventToOperation(accountId, event, index)),
+      events.map((event, index) => etherscanERC1155EventToOperations(accountId, event, index)),
     )
-    .flat();
+    .flat(2);
 };
 
 /**
