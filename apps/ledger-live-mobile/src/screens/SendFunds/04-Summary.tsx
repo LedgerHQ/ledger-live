@@ -159,8 +159,10 @@ function SendSummary({ navigation, route }: Props) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const errorNavigation = useNavigation<any>();
+  const editableOperation =
+    operation && isEditableOperation(account, operation);
 
-  if (operation && isEditableOperation(account, operation)) {
+  if (editableOperation) {
     apiForCurrency(mainAccount.currency)
       .getTransactionByHash(operation?.hash || "")
       .then(tx => {
@@ -247,7 +249,7 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
-        {operation && isEditableOperation(account, operation) ? (
+        {editableOperation ? (
           <CurrentNetworkFee
             account={account}
             parentAccount={parentAccount}

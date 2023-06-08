@@ -99,6 +99,12 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
   const onSelect = useCallback(
     (option: "cancel" | "speedup") => {
+      log(
+        "Edit Transaction - Method Selection",
+        "onSelect Cancel/Speed up",
+        option,
+      );
+
       switch (option) {
         case "cancel":
           {
