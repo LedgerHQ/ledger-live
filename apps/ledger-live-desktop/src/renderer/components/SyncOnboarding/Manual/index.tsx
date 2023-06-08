@@ -6,14 +6,14 @@ import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hook
 import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/hooks/useToggleOnboardingEarlyChecks";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { stringToDeviceModelId } from "@ledgerhq/devices/helpers";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import HelpDrawer from "./HelpDrawer";
 import TroubleshootingDrawer from "./TroubleshootingDrawer";
 import Header from "./Header";
 import { RecoverState } from "~/renderer/screens/recover/Player";
 import SyncOnboardingCompanion from "./SyncOnboardingCompanion";
-// import { stringToDeviceModelId } from "@ledgerhq/devices/lib/helpers";
-import { DeviceModelId } from "@ledgerhq/devices";
 import { EarlySecurityCheck } from "./EarlySecurityCheck";
 
 const POLLING_PERIOD_MS = 1000;
@@ -41,28 +41,19 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 }) => {
   const history = useHistory<RecoverState>();
 
-  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
-  const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
-
   const device = useSelector(getCurrentDevice);
+  const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
 
-  // TODO: to only keep in screen ?
-  // ALSO why is it failing ? wtf
-  const deviceModelId = strDeviceModelId as DeviceModelId; // stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
-
-  // Needed because the device object can be null or changed if disconnected/reconnected
-  const [lastKnownDeviceModelId, setLastKnownDeviceModelId] =
-    useState<DeviceModelId>(deviceModelId);
-
-  // When the device is disconnected/reconnected, `device` is set to null.
+  // Needed because `device` object can be null or changed if disconnected/reconnected
   const [lastSeenDevice, setLastSeenDevice] = useState<Device | null>(device ?? null);
-
   useEffect(() => {
     if (device) {
-      setLastKnownDeviceModelId(device.modelId);
       setLastSeenDevice(device);
     }
   }, [device]);
+
+  const [isHelpDrawerOpen, setHelpDrawerOpen] = useState<boolean>(false);
+  const [isTroubleshootingDrawerOpen, setTroubleshootingDrawerOpen] = useState<boolean>(false);
 
   const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
     "loading",
@@ -174,7 +165,6 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   }, [toggleOnboardingEarlyCheckState, toggleOnboardingEarlyCheckType]);
 
   const onLostDevice = useCallback(() => {
-    console.log(`🍕 lost device`);
     setTroubleshootingDrawerOpen(true);
   }, []);
 
@@ -186,15 +176,8 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     history.push("/onboarding/select-device");
   }, [history]);
 
-  console.log(
-    `🦀 currentStep: ${currentStep} && isPollingOn: ${isPollingOn} && device: ${JSON.stringify(
-      device,
-    )}`,
-  );
-
   let stepContent = (
     <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
-      Intermediary 🐬
       <InfiniteLoader />
     </Flex>
   );
@@ -221,7 +204,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
       <Header onClose={handleClose} onHelp={() => setHelpDrawerOpen(true)} />
       <HelpDrawer isOpen={isHelpDrawerOpen} onClose={() => setHelpDrawerOpen(false)} />
       <TroubleshootingDrawer
-        lastKnownDeviceId={lastKnownDeviceModelId}
+        lastKnownDeviceId={deviceModelId}
         isOpen={isTroubleshootingDrawerOpen}
         onClose={handleTroubleshootingDrawerClose}
       />
