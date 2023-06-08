@@ -15,7 +15,7 @@ let passwordEntryPage: PasswordEntryPage;
 
 describe("Password Lock Screen", () => {
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETH", true);
+    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
     portfolioPage = new PortfolioPage();
     settingsPage = new SettingsPage();
     generalSettingsPage = new GeneralSettingsPage();
