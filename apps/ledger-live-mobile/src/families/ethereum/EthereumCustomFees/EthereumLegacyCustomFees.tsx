@@ -23,8 +23,8 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
-  onValidateFees: (transaction: Partial<Transaction>) => () => void;
   transactionRaw?: TransactionRaw;
+  onValidateFees: (transaction: Partial<Transaction>) => () => void;
 };
 
 const fallbackGasPrice = inferDynamicRange(new BigNumber(10e9));
@@ -33,9 +33,9 @@ let lastNetworkGasPrice: Range; // local cache of last value to prevent extra bl
 const EthereumLegacyCustomFees = ({
   account,
   parentAccount,
-  onValidateFees,
   transaction,
   transactionRaw,
+  onValidateFees,
 }: Props) => {
   const { colors } = useTheme();
 

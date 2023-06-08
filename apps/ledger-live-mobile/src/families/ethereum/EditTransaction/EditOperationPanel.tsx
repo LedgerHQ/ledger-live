@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -18,7 +18,7 @@ type EditOperationPanelProps = {
   onPress?: () => void;
 };
 
-export const EditOperationPanel = ({
+const EditOperationPanelComponent = ({
   isOperationStuck,
   operation,
   account,
@@ -94,3 +94,7 @@ export const EditOperationPanel = ({
     </Flex>
   ) : null;
 };
+
+export const EditOperationPanel = memo<EditOperationPanelProps>(
+  EditOperationPanelComponent,
+);

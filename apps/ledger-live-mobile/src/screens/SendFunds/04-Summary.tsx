@@ -162,17 +162,22 @@ function SendSummary({ navigation, route }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const errorNavigation = useNavigation<any>();
 
-  apiForCurrency(mainAccount.currency)
-    .getTransactionByHash(operation?.hash || "")
-    .then(tx => {
-      if (tx?.confirmations) {
-        errorNavigation.navigate(ScreenName.TransactionAlreadyValidatedError, {
-          error: new TransactionHasBeenValidatedError(
-            "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
-          ),
-        });
-      }
-    });
+  if (operation && isEditableOperation(account, operation)) {
+    apiForCurrency(mainAccount.currency)
+      .getTransactionByHash(operation?.hash || "")
+      .then(tx => {
+        if (tx?.confirmations) {
+          errorNavigation.navigate(
+            ScreenName.TransactionAlreadyValidatedError,
+            {
+              error: new TransactionHasBeenValidatedError(
+                "The transaction has already been validated. You can't cancel or speedup a validated transaction.",
+              ),
+            },
+          );
+        }
+      });
+  }
 
   // FIXME: why is recipient sometimes empty?
   if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
