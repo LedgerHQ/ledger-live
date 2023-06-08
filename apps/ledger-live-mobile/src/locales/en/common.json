@@ -2649,7 +2649,7 @@
       },
       "transactionAlerts": {
         "title": "Transaction Alerts",
-        "desc": "Be notified on your transactions for Ethereum, Polygon, Binance Smart Chain, Avalanche, Ethereum Classic"
+        "desc": "Be notified on your transactions for Ethereum, Polygon, and Avalanche"
       },
       "price": {
         "title": "Price Alerts",
@@ -3371,7 +3371,6 @@
     "loading": "Searching devices..."
   },
   "send": {
-    "pendingTxWarning": "You have incoming transactions pending. Please beware, pending transactions can be reversed.",
     "tooMuchUTXOBottomModal": {
       "cta": "Continue",
       "description": "This transaction may take long to verify and sign because the account has a significant number of coins.",
