@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
-import { Trans, withTranslation } from "react-i18next";
+import { TFunction, Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -10,36 +10,38 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
+
 import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import StepWithdraw, { StepWithdrawFooter } from "./steps/StepWithdraw";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { AccountBridge, Operation } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { StepProps, St } from "./types";
+import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { StepProps, St, StepId } from "./types";
+import { ElrondAccount, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { Device } from "@ledgerhq/types-devices";
+import { UnbondingType } from "../../../types";
+
+export type Data = {
+  account: ElrondAccount;
+  unbondings?: UnbondingType[];
+  validator?: ElrondProvider;
+  contract?: string;
+  amount?: string;
+};
 interface OwnProps {
   stepId: StepId;
   onClose: () => void;
   onChangeStepId: (step: StepId) => void;
-  params: {
-    account: Account;
-    parentAccount: Account | undefined | null;
-    unbondings?: any;
-    contract?: string;
-    amount?: string;
-  };
-  name: string;
+  params: Data;
 }
 interface StateProps {
   t: TFunction;
   device: Device | undefined | null;
   accounts: Account[];
-  device: Device | undefined | null;
-  closeModal: (name: string) => void;
-  openModal: (name: string) => void;
+  openModal: OpenModal;
 }
 type Props = OwnProps & StateProps;
 const steps: Array<St> = [
@@ -67,13 +69,12 @@ const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
 });
 const mapDispatchToProps = {
-  closeModal,
   openModal,
 };
 const Body = (props: Props) => {
-  const { t, stepId, device, closeModal, openModal, onChangeStepId, params, name } = props;
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+  const { t, stepId, device, onClose, openModal, onChangeStepId, params } = props;
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const {
@@ -95,9 +96,7 @@ const Body = (props: Props) => {
       }),
     };
   });
-  const handleCloseModal = useCallback(() => {
-    closeModal(name);
-  }, [closeModal, name]);
+
   const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
@@ -144,7 +143,7 @@ const Body = (props: Props) => {
     hideBreadcrumb: (!!error || !!warning) && ["withdraw"].includes(stepId),
     onRetry: handleRetry,
     onStepChange: handleStepChange,
-    onClose: handleCloseModal,
+    onClose,
     error,
     warning,
     status,
@@ -169,7 +168,7 @@ const Body = (props: Props) => {
     </Stepper>
   );
 };
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);

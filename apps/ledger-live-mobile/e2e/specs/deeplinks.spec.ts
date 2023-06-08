@@ -55,7 +55,7 @@ const openNCheckApp = (l10n: { name: string; url: string }) => {
 
 describe("DeepLinks Tests", () => {
   beforeAll(async () => {
-    await loadConfig("1AccountBTC1AccountETH", true);
+    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
     accountPage = new AccountPage();
     accountsPage = new AccountsPage();
     customLockscreenPage = new CustomLockscreenPage();

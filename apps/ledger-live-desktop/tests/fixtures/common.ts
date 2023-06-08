@@ -1,9 +1,9 @@
-import { _electron as electron } from "playwright";
-import { test as base, Page, ElectronApplication } from "@playwright/test";
+import { test as base, Page, ElectronApplication, _electron as electron } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
+import { responseLogfilePath } from "../utils/networkResponseLogger";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -19,6 +19,7 @@ type TestFixtures = {
   env: Record<string, any>;
   page: Page;
   featureFlags: { [key in FeatureId]?: Feature };
+  recordTestNamesForApiResponseLogging: void;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -103,6 +104,26 @@ const test = base.extend<TestFixtures>({
     // app is ready
     const page = await electronApp.firstWindow();
 
+    // start recording all network responses in artifacts/networkResponse.log
+    page.on("response", async data => {
+      const now = Date.now();
+      const timestamp = new Date(now).toISOString();
+
+      const headers = await data.allHeaders();
+
+      if (headers.teststatus && headers.teststatus === "mocked") {
+        fs.appendFileSync(
+          responseLogfilePath,
+          `[${timestamp}] MOCKED RESPONSE: ${data.request().url()}\n`,
+        );
+      } else {
+        fs.appendFileSync(
+          responseLogfilePath,
+          `[${timestamp}] REAL RESPONSE: ${data.request().url()}\n`,
+        );
+      }
+    });
+
     if (IS_DEBUG_MODE) {
       // Direct Electron console to Node terminal.
       page.on("console", console.log);
@@ -118,6 +139,20 @@ const test = base.extend<TestFixtures>({
     // close app
     await electronApp.close();
   },
+  // below is used for the logging file at `artifacts/networkResponses.log`
+  recordTestNamesForApiResponseLogging: [
+    async ({}, use, testInfo) => {
+      fs.appendFileSync(
+        responseLogfilePath,
+        `Network call responses for test: '${testInfo.title}':\n`,
+      );
+
+      await use();
+
+      fs.appendFileSync(responseLogfilePath, `\n`);
+    },
+    { auto: true },
+  ],
 });
 
 export default test;

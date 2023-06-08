@@ -1,7 +1,12 @@
 module.exports = function override(webpackConfig) {
   const babelRule = webpackConfig.module.rules[2].oneOf[2];
-  babelRule.options.plugins = ["@babel/plugin-proposal-class-properties"];
-  // console.log(babelRule.options);
+  babelRule.options.plugins = [
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-private-methods",
+    "@babel/plugin-transform-logical-assignment-operators",
+    "@babel/plugin-transform-nullish-coalescing-operator",
+  ];
+  console.log(babelRule.options);
 
   webpackConfig.module.rules.push({
     test: /\.js$/i,
@@ -34,8 +39,12 @@ module.exports = function override(webpackConfig) {
     "@ledgerhq/coin-polkadot/lib-es";
   webpackConfig.resolve.alias["@ledgerhq/coin-algorand"] =
     "@ledgerhq/coin-algorand/lib-es";
+  webpackConfig.resolve.alias["@ledgerhq/coin-evm"] =
+    "@ledgerhq/coin-evm/lib-es";
   webpackConfig.resolve.alias["@ledgerhq/domain-service"] =
     "@ledgerhq/domain-service/lib-es";
+  webpackConfig.resolve.alias["@ledgerhq/live-network"] =
+    "@ledgerhq/live-network/lib-es";
 
   return webpackConfig;
 };

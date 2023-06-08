@@ -111,7 +111,10 @@ export function signTransactionLogic(
     ? parentAccount?.currency.family
     : account.currency.family;
 
-  if (accountFamily !== transaction.family) {
+  if (
+    accountFamily !== transaction.family &&
+    !(accountFamily === "evm" && transaction.family === "ethereum")
+  ) {
     return Promise.reject(
       new Error(`Transaction family not matching account currency family. Account family: ${accountFamily}, Transaction family: ${transaction.family}
       `)
@@ -119,7 +122,11 @@ export function signTransactionLogic(
   }
 
   const { canEditFees, liveTx, hasFeesProvided } =
-    getWalletAPITransactionSignFlowInfos(transaction);
+    getWalletAPITransactionSignFlowInfos({
+      tx: transaction,
+      account,
+      parentAccount,
+    });
 
   return uiNavigation(account, parentAccount, {
     canEditFees,
@@ -255,7 +262,7 @@ export type CompleteExchangeRequest = {
 export type CompleteExchangeUiRequest = {
   provider: string;
   exchange: Exchange;
-  transaction: WalletAPITransaction;
+  transaction: Transaction;
   binaryPayload: string;
   signature: string;
   feesStrategy: string;
@@ -329,7 +336,11 @@ export function completeExchangeLogic(
     );
   }
 
-  const { liveTx } = getWalletAPITransactionSignFlowInfos(transaction);
+  const { liveTx } = getWalletAPITransactionSignFlowInfos({
+    tx: transaction,
+    account: fromAccount,
+    parentAccount: fromParentAccount,
+  });
 
   /**
    * 'subAccountId' is used for ETH and it's ERC-20 tokens.

@@ -5,7 +5,8 @@ import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import Modal from "~/renderer/components/Modal";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
-type Props = {
+
+export type Props = {
   isOpened: boolean;
   isDanger?: boolean;
   title?: React.ReactNode;
@@ -23,8 +24,8 @@ type Props = {
   centered?: boolean;
   children?: React.ReactNode;
   narrow?: boolean;
-  name?: string;
 };
+
 const ConfirmModal = ({
   cancellable,
   isOpened,
@@ -43,7 +44,6 @@ const ConfirmModal = ({
   centered,
   children,
   narrow,
-  name,
   ...props
 }: Props) => {
   const { t } = useTranslation();
@@ -51,7 +51,7 @@ const ConfirmModal = ({
   const realCancelText = cancelText || t("common.cancel");
   return (
     <Modal
-      name={name}
+      name="MODAL_CONFIRM"
       isOpened={isOpened}
       centered={centered}
       width={narrow ? 380 : undefined}

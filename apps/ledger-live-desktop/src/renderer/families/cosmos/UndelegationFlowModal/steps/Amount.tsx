@@ -14,6 +14,7 @@ import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+
 export default function StepAmount({
   account,
   transaction,
@@ -43,7 +44,9 @@ export default function StepAmount({
     [onUpdateTransaction, bridge],
   );
   const onChangeValidator = useCallback(
-    ({ validatorAddress, amount }: CosmosMappedDelegation) => {
+    (delegation?: CosmosMappedDelegation | null) => {
+      if (!delegation) return;
+      const { validatorAddress, amount } = delegation;
       updateValidator({
         address: validatorAddress,
         amount,
@@ -89,7 +92,7 @@ export default function StepAmount({
         onChange={onChangeAmount}
         label={<Trans i18nKey={"cosmos.undelegation.flow.steps.amount.fields.amount"} />}
       />
-      <Alert info="primary" mt={2}>
+      <Alert type="primary" mt={2}>
         <Trans
           i18nKey={"cosmos.undelegation.flow.steps.amount.warning"}
           values={{

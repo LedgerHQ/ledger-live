@@ -1,24 +1,20 @@
-import * as nearAPI from "near-api-js";
+import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
-import network from "../../../network";
+import * as nearAPI from "near-api-js";
 import { getEnv } from "../../../env";
+import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
+import { getCurrentNearPreloadData } from "../preload";
 import { NearAccount } from "../types";
 import { getStakingDeposits } from "./index";
 import {
   NearAccessKey,
-  NearProtocolConfig,
-  NearStakingPosition,
-  NearRawValidator,
   NearAccountDetails,
   NearContract,
+  NearProtocolConfig,
+  NearRawValidator,
+  NearStakingPosition,
 } from "./sdk.types";
-import { getCurrentNearPreloadData } from "../preload";
-import {
-  getYoctoThreshold,
-  canUnstake,
-  canWithdraw,
-  MIN_ACCOUNT_BALANCE_BUFFER,
-} from "../logic";
+import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
 
 export const fetchAccountDetails = async (
   address: string
@@ -298,9 +294,8 @@ export const getCommission = async (
   if (Array.isArray(result) && result.length) {
     const parsedResult = JSON.parse(Buffer.from(result).toString());
 
-    return (
-      Math.round((parsedResult.numerator / parsedResult.denominator) * 100) /
-      100
+    return Math.round(
+      (parsedResult.numerator / parsedResult.denominator) * 100
     );
   }
 

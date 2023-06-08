@@ -22,7 +22,7 @@ import {
   clearLastSeenCustomImage,
 } from "../actions/settings";
 import { DeviceActionDefaultRendering } from "./DeviceAction";
-import { ImageSourceContext } from "./CustomImage/FramedImage";
+import { ImageSourceContext } from "./CustomImage/StaxFramedImage";
 import { renderError } from "./DeviceAction/rendering";
 import CustomImageBottomModal from "./CustomImage/CustomImageBottomModal";
 import Button from "./wrappedUi/Button";

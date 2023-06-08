@@ -106,6 +106,14 @@ const buildViteConfig = argv =>
           path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-algorand"),
           "lib-es",
         ),
+        "@ledgerhq/coin-evm": path.join(
+          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-evm"),
+          "lib-es",
+        ),
+        "@ledgerhq/live-network": path.join(
+          path.resolve(__dirname, "..", "..", "..", "..", "libs", "live-network"),
+          "lib-es",
+        ),
         electron: path.join(__dirname, "electronRendererStubs.js"),
       },
     },

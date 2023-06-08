@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import styled, { css, keyframes } from "styled-components";
 import { Trans } from "react-i18next";
 import { Transition, TransitionGroup, TransitionStatus } from "react-transition-group";
-import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { DeviceInfo } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModel, DeviceModelId } from "@ledgerhq/devices";

@@ -1,54 +1,41 @@
-import React, { ComponentType } from "react";
+import React from "react";
 import { Trans } from "react-i18next";
-import { Currency, Unit, Operation, Account } from "@ledgerhq/live-common/types/index";
 import Box from "~/renderer/components/Box";
-import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
+import FormattedVal from "~/renderer/components/FormattedVal";
 import {
-  OpDetailsTitle,
   OpDetailsData,
   OpDetailsSection,
+  OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
-type AmountCellExtraProps = {
-  operation: Operation;
-  currency: Currency;
-  unit: Unit;
-};
+import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
+import { NearAccount } from "@ledgerhq/live-common/families/near/types";
+
 const AmountCellExtra = ({ operation, currency, unit }: AmountCellExtraProps) => {
   const amount = operation.value;
-  return (
-    !amount.isZero() && (
-      <>
-        <FormattedVal
-          val={amount}
-          unit={unit}
-          showCode
-          fontSize={4}
-          color={"palette.text.shade80"}
-        />
+  return !amount.isZero() ? (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
 
-        <CounterValue
-          color="palette.text.shade60"
-          fontSize={3}
-          date={operation.date}
-          currency={currency}
-          value={amount}
-        />
-      </>
-    )
-  );
+      <CounterValue
+        color="palette.text.shade60"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  ) : null;
 };
-const amountCellExtra: {
-  [key: string]: ComponentType<any>;
-} = {
+const amountCellExtra = {
   STAKE: AmountCellExtra,
 };
-type OperationDetailsExtraProps = {
-  operation: Operation;
-  type: string;
-  account: Account;
-};
-const OperationDetailsExtra = ({ operation, type, account }: OperationDetailsExtraProps) => {
+
+const OperationDetailsExtra = ({
+  operation,
+  type,
+  account,
+}: OperationDetailsExtraProps<NearAccount>) => {
   const amount = operation.value;
   let i18nKey = "";
   if (type === "STAKE") {

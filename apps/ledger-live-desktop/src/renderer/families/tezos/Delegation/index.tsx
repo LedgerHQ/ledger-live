@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
-import { AccountLike, Account } from "@ledgerhq/types-live";
+import { SubAccount } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
@@ -15,9 +15,11 @@ import IconChartLine from "~/renderer/icons/ChartLine";
 import Header from "./Header";
 import Row from "./Row";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
+import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
+
 type Props = {
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
+  account: TezosAccount | SubAccount;
+  parentAccount: TezosAccount | undefined | null;
 };
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,

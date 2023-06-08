@@ -38,6 +38,7 @@ const StepAmount = ({
         <Fragment key={account.id}>
           <SendAmountFields
             account={mainAccount}
+            parentAccount={parentAccount}
             status={status}
             transaction={transaction}
             onChange={onChangeTransaction}

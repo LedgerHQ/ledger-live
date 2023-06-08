@@ -1,11 +1,11 @@
-import eip55 from "eip55";
-import BigNumber from "bignumber.js";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { makeAccount, makeTokenAccount } from "@ledgerhq/coin-evm/testUtils";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { makeAccount, makeTokenAccount } from "../../../evm/testUtils";
+import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import BigNumber from "bignumber.js";
+import eip55 from "eip55";
 import { modes } from "../../modules/send";
 import { Transaction } from "../../types";
-import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const usdc = getTokenById("ethereum/erc20/usd__coin");

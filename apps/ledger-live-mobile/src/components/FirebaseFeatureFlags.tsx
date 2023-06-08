@@ -160,6 +160,15 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
     dispatch(setOverriddenFeatureFlags({}));
   };
 
+  const getAllFlags = useCallback((): Record<string, Feature> => {
+    const allFeatures = remoteConfig().getAll();
+    const parsedFeatures = Object.entries(allFeatures).map(([key, value]) => {
+      return [key, JSON.parse(value.asString())];
+    });
+
+    return Object.fromEntries(parsedFeatures);
+  }, []);
+
   // Nb wrapped because the method is also called from outside.
   const wrappedGetFeature = useCallback(
     (key: FeatureId): Feature =>
@@ -174,6 +183,7 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
       overrideFeature={overrideFeature}
       resetFeature={resetFeature}
       resetFeatures={resetFeatures}
+      getAllFlags={getAllFlags}
     >
       {children}
     </FeatureFlagsProvider>

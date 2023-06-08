@@ -5,9 +5,10 @@ import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import { Account, TransactionStatus } from "@ledgerhq/types-live";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { ElrondAccount, TransactionStatus } from "@ledgerhq/live-common/families/elrond/types";
+
 const InputLeft = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
   color: "palette.text.shade60",
@@ -27,7 +28,10 @@ const InputRight = styled(Box).attrs(() => ({
 `;
 const AmountButton = styled.button.attrs(() => ({
   type: "button",
-}))`
+}))<{
+  error: boolean;
+  active: boolean;
+}>`
   background-color: ${p =>
     p.error
       ? p.theme.colors.lightRed
@@ -54,7 +58,9 @@ const AmountButton = styled.button.attrs(() => ({
     filter: contrast(2);
   }
 `;
-const ErrorContainer = styled(Box)`
+const ErrorContainer = styled(Box)<{
+  hasError: Error | undefined;
+}>`
   margin-top: 0px;
   font-size: 12px;
   width: 100%;
@@ -72,9 +78,9 @@ const WarningDisplay = styled(Box)`
 export interface Props {
   amount: BigNumber;
   initialAmount: BigNumber;
-  account: Account;
+  account: ElrondAccount;
   label: JSX.Element;
-  onChange: (amount: BigNumber) => void;
+  onChange: (amount: BigNumber, unit?: Unit) => void;
   status: TransactionStatus;
 }
 interface OptionType {
@@ -117,7 +123,7 @@ const AmountField = (props: Props) => {
     [initialAmount],
   );
   const error = errors.amount || errors.unbonding;
-  const warning: string | undefined = useMemo(() => focused && Object.values(warnings || {})[0], [
+  const warning = useMemo(() => (focused && Object.values(warnings || {})[0]) || undefined, [
     focused,
     warnings,
   ]);

@@ -1,25 +1,22 @@
-import React, { useEffect } from "react";
-import { Trans } from "react-i18next";
-import { withTheme } from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import { Theme } from "@ledgerhq/react-ui";
-import { track } from "~/renderer/analytics/segment";
+import React, { useEffect } from "react";
+import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { multiline } from "~/renderer/styles/helpers";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
-import RetryButton from "~/renderer/components/RetryButton";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
-import { setDrawer } from "~/renderer/drawers/Provider";
+import Button from "~/renderer/components/Button";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import RetryButton from "~/renderer/components/RetryButton";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
-import * as S from "./StepConfirmation.styles";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
+import * as S from "./StepConfirmation.styles";
 export const StepConfirmationFooter = ({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -48,7 +45,6 @@ export const StepConfirmationFooter = ({
               setDrawer(OperationDetails, {
                 operationId: optimisticOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
@@ -68,9 +64,7 @@ const StepConfirmation = ({
   error,
   signed,
   source,
-}: StepProps & {
-  theme: Theme;
-}) => {
+}: StepProps) => {
   const voteAccAddress = transaction?.recipient;
   const validators = useValidatorGroups();
   useEffect(() => {
@@ -78,7 +72,7 @@ const StepConfirmation = ({
       const chosenValidator = validators.find(v => v.address === voteAccAddress);
       track("staking_completed", {
         currency: "CELO",
-        validator: chosenValidator.name || voteAccAddress,
+        validator: chosenValidator?.name || voteAccAddress,
         source,
         delegation: "activate",
         flow: "stake",
@@ -92,11 +86,7 @@ const StepConfirmation = ({
         <TrackPage category="Celo Activate" name="Step Confirmed" />
         <SuccessDisplay
           title={<Trans i18nKey="celo.activate.steps.confirmation.success.title" />}
-          description={multiline(
-            t("celo.activate.steps.confirmation.success.text", {
-              resource: transaction && transaction.resource && transaction.resource.toLowerCase(),
-            }),
-          )}
+          description={multiline(t("celo.activate.steps.confirmation.success.text"))}
         />
       </S.Container>
     );
@@ -116,4 +106,4 @@ const StepConfirmation = ({
   }
   return null;
 };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

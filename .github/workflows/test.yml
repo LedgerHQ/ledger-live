@@ -49,6 +49,27 @@ jobs:
           echo "diff=$diff" >> $GITHUB_OUTPUT
           exit $diff
 
+
+  test-common-tools:
+    name: "Test common-tools"
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+    outputs:
+      fail: ${{ steps.diff.outputs.diff }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || github.sha }}
+          base: ${{ inputs.since_branch }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+      - name: Install dependencies
+        run: pnpm i -F "live-common-tools..." -F "ledger-live"
+      - name: build common-tools
+        run: pnpm turbo run build --filter="live-common-tools"
+
   test-cli:
     name: "Test CLI"
     env:
@@ -154,7 +175,7 @@ jobs:
           path: ${{ github.workspace }}/summary-${{ matrix.os }}.txt
 
   report:
-    needs: [test-cli, test-docs, test-libraries]
+    needs: [test-cli, test-docs, test-libraries, test-common-tools]
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:

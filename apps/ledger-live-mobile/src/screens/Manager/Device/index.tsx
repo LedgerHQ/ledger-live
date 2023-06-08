@@ -122,6 +122,8 @@ const DeviceCard = ({
   const hasCustomImage =
     useFeature("customImage")?.enabled && deviceModel.id === DeviceModelId.stax;
 
+  const disableFlows = pendingInstalls;
+
   return (
     <BorderCard>
       <Flex flexDirection={"row"} mt={20} mx={4} mb={8} alignItems="center">
@@ -137,7 +139,7 @@ const DeviceCard = ({
             device={device}
             deviceInfo={deviceInfo}
             initialDeviceName={initialDeviceName}
-            disabled={pendingInstalls}
+            disabled={disableFlows}
           />
           <Flex
             backgroundColor={"neutral.c30"}
@@ -174,11 +176,13 @@ const DeviceCard = ({
       {hasCustomImage || showDeviceLanguage ? (
         <>
           <Flex px={6}>
-            {hasCustomImage && <CustomLockScreen device={device} />}
+            {hasCustomImage && (
+              <CustomLockScreen disabled={disableFlows} device={device} />
+            )}
             {showDeviceLanguage && (
               <Flex mt={hasCustomImage ? 6 : 0}>
                 <DeviceLanguage
-                  pendingInstalls={pendingInstalls}
+                  disabled={disableFlows}
                   currentDeviceLanguage={
                     idsToLanguage[
                       deviceInfo.languageId as keyof typeof idsToLanguage

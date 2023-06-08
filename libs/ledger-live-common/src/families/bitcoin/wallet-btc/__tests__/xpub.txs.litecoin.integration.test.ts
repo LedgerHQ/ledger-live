@@ -22,7 +22,6 @@ TICKER=ltc TAG=latest LOG_LEVEL=debug docker-compose -f ./environments/explorer-
 describe.skip("testing xpub legacy litecoin transactions", () => {
   const explorer = new BitcoinLikeExplorer({
     cryptoCurrency: getCryptoCurrencyById("litecoin"),
-    disableBatchSize: true, // https://ledgerhq.atlassian.net/browse/BACK-2191
   });
 
   const network = coininfo.litecoin.test.toBitcoinJS();

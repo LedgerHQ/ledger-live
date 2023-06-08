@@ -16,6 +16,9 @@ import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import EnableStagingNftMetadataServiceToggle from "./EnableStagingNftMetadataServiceToggle";
+import LottieTester from "../Experimental/LottieTester";
+import StorylyTester from "../Experimental/StorylyTester";
+import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -79,6 +82,9 @@ const Default = () => {
       >
         <OnboardingAppInstallDebugButton />
       </Row>
+      <LottieTester />
+      <PostOnboardingHubTester />
+      <StorylyTester />
     </Body>
   );
 };

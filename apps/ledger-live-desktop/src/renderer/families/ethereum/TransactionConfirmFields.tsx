@@ -1,8 +1,8 @@
-import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/families/ethereum/types";
 import WarnBox from "~/renderer/components/WarnBox";
+
 const Warning = ({
   transaction,
   recipientWording,
@@ -10,7 +10,6 @@ const Warning = ({
   transaction: Transaction;
   recipientWording: string;
 }) => {
-  invariant(transaction.family === "ethereum", "ethereum transaction");
   switch (transaction.mode) {
     case "erc20.approve":
       return (

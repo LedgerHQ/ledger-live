@@ -1,19 +1,15 @@
 const currencyFamiliesRules = {
   files: ["src/**"],
-  excludedFiles: [
-    "src/generated/**",
-    "src/renderer/families/**",
-    "src/renderer/screens/lend/**", // FIXME lend screen should be migrated to ethereum family (if we don't sunset it)
-  ],
+  excludedFiles: ["**/families/generated.ts", "**/families/*/**"],
   rules: {
     "no-restricted-imports": [
       "error",
       {
         patterns: [
           {
-            group: ["**/families/**"],
+            group: ["**/families/*/**"],
             message:
-              "families files must not be imported directly. use the bridge or export through 'generated/' folder instead.",
+              "families files must not be imported directly. use the bridge or export them through the LLDCoinFamily interface instead.",
           },
         ],
       },
@@ -88,13 +84,25 @@ module.exports = {
         "space-before-function-paren": 0,
         "no-prototype-builtins": 0,
         "promise/param-names": 0,
+        "react/prop-types": 0,
         "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
         "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
         "no-use-before-define": "off",
+        "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/ban-types": 0, // FIXME make an error later
         "@typescript-eslint/no-use-before-define": 0, // FIXME make an error later
         "react/jsx-filename-extension": 0,
         "@typescript-eslint/no-non-null-assertion": 0, // Useful sometimes. Should not be abused.
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            argsIgnorePattern: "^_",
+            destructuredArrayIgnorePattern: "^_",
+            vars: "all",
+            args: "after-used",
+            ignoreRestSiblings: true,
+          },
+        ],
 
         // Ignore live-common for the moment because this rule does not work with subpath exports
         // See: https://github.com/import-js/eslint-plugin-import/issues/1810

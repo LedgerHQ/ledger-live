@@ -3,7 +3,7 @@ import { captureException } from "~/sentry/main";
 import { ipcMain } from "electron";
 import contextMenu from "electron-context-menu";
 import { log } from "@ledgerhq/logs";
-import { fsWriteFile, fsReadFile, fsUnlink } from "~/helpers/fs";
+import fs from "fs/promises";
 import updater from "./updater";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import path from "path";
@@ -16,7 +16,7 @@ ipcMain.on("updater", (e, type) => {
 ipcMain.handle(
   "save-logs",
   async (event, path: Electron.SaveDialogReturnValue, experimentalLogs: string) =>
-    !path.canceled && path.filePath && fsWriteFile(path.filePath, experimentalLogs),
+    !path.canceled && path.filePath && fs.writeFile(path.filePath, experimentalLogs),
 );
 ipcMain.handle(
   "export-operations",
@@ -30,7 +30,7 @@ ipcMain.handle(
   ): Promise<boolean> => {
     try {
       if (!path.canceled && path.filePath && csv) {
-        await fsWriteFile(path.filePath, csv);
+        await fs.writeFile(path.filePath, csv);
         return true;
       }
     } catch (error) {}
@@ -45,9 +45,7 @@ ipcMain.handle(
     const filePath = path.resolve(userDataDirectory, lssFileName);
     if (filePath) {
       if (filePath && data) {
-        await fsWriteFile(filePath, data, {
-          mode: "640",
-        });
+        await fs.writeFile(filePath, data, { mode: "640" });
         log("satstack", "wrote to lss.json file");
         return true;
       }
@@ -61,7 +59,7 @@ ipcMain.handle(
     const userDataDirectory = resolveUserDataDirectory();
     const filePath = path.resolve(userDataDirectory, lssFileName);
     if (filePath) {
-      await fsUnlink(filePath);
+      await fs.unlink(filePath);
       log("satstack", "deleted lss.json file");
       return true;
     }
@@ -75,7 +73,7 @@ ipcMain.handle(
       const userDataDirectory = resolveUserDataDirectory();
       const filePath = path.resolve(userDataDirectory, lssFileName);
       if (filePath) {
-        const contents = await fsReadFile(filePath, "utf8");
+        const contents = await fs.readFile(filePath, "utf8");
         log("satstack", `loaded lss.json file with length ${contents.length}`);
         return contents;
       }

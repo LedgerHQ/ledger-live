@@ -2,7 +2,11 @@ import { useRoute } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { Account, DomainServiceResolution } from "@ledgerhq/types-live";
+import type {
+  Account,
+  DomainServiceResolution,
+  OperationType,
+} from "@ledgerhq/types-live";
 import type {
   BaseComposite,
   StackNavigatorProps,
@@ -70,4 +74,18 @@ export function getFirstStatusError(
 export function hasStatusError(status: TransactionStatus): boolean {
   if (!status || !status.errors) return false;
   return !!Object.keys(status.errors).length;
+}
+
+/**
+ *  Returns the delegation type for tracking purposes.
+ */
+export function getTrackingDelegationType({ type }: { type: OperationType }) {
+  switch (type) {
+    case "DELEGATE":
+      return "delegation";
+    case "REDELEGATE":
+      return "redelegation";
+    default:
+      return undefined;
+  }
 }

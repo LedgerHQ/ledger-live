@@ -10,9 +10,7 @@ import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
-import { modals } from "~/renderer/families/elrond/modals";
 import { AccountBannerState } from "@ledgerhq/live-common/lib/families/elrond/banner";
-import { ElrondDelegation } from "@ledgerhq/live-common/lib/families/elrond/types";
 
 const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
   const { t } = useTranslation();
@@ -62,15 +60,13 @@ const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
       const findValidator = (validator: string) =>
         elrondPreloadData.validators.find((item: ElrondProvider) => item.contract === validator);
 
-      const mappedDelegations = account.elrondResources.delegations.map(
-        (delegation: ElrondDelegation) => ({
-          ...delegation,
-          validator: findValidator(delegation.contract),
-        }),
-      );
+      const mappedDelegations = account.elrondResources.delegations.map(delegation => ({
+        ...delegation,
+        validator: findValidator(delegation.contract),
+      }));
 
       dispatch(
-        openModal(modals.unstake, {
+        openModal("MODAL_ELROND_UNDELEGATE", {
           account,
           contract: bannerState.worstDelegation.contract,
           validators: elrondPreloadData.validators,
@@ -80,7 +76,7 @@ const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
       );
     } else {
       dispatch(
-        openModal(modals.stake, {
+        openModal("MODAL_ELROND_DELEGATE", {
           account,
           validators: elrondPreloadData.validators,
           delegations: account.elrondResources.delegations,
