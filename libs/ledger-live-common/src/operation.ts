@@ -183,7 +183,7 @@ export function getStuckAccountAndOperation(
               getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
           ) {
             if (
-              !stuckAccount ||
+              !stuckOperation ||
               (pendingOperation.transactionSequenceNumber !== undefined &&
                 stuckOperation?.transactionSequenceNumber !== undefined &&
                 pendingOperation.transactionSequenceNumber <
@@ -205,7 +205,7 @@ export function getStuckAccountAndOperation(
           getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
       ) {
         if (
-          !stuckAccount ||
+          !stuckOperation ||
           (pendingOperation.transactionSequenceNumber !== undefined &&
             stuckOperation?.transactionSequenceNumber !== undefined &&
             pendingOperation.transactionSequenceNumber <
