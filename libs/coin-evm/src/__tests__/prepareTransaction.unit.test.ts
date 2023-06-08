@@ -5,7 +5,7 @@ import ERC20ABI from "../abis/erc20.abi.json";
 import * as rpcAPI from "../api/rpc/rpc.common";
 import { prepareForSignOperation, prepareTransaction } from "../prepareTransaction";
 import { makeAccount, makeTokenAccount } from "../testUtils";
-import { Transaction as EvmTransaction } from "../types";
+import { Transaction as EvmTransaction, GasOptions } from "../types";
 
 const currency = getCryptoCurrencyById("ethereum");
 const tokenAccount = makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin"));
@@ -15,7 +15,7 @@ const transaction: EvmTransaction = {
   useAllAmount: false,
   subAccountId: "id",
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
-  feesStrategy: "custom",
+  feesStrategy: "medium",
   family: "evm",
   mode: "send",
   gasPrice: new BigNumber(0),
@@ -322,6 +322,100 @@ describe("EVM Family", () => {
             data: expectedData(tokenTransaction.recipient, tokenTransaction.amount),
             gasPrice: new BigNumber(1),
             type: 0,
+          });
+        });
+      });
+
+      describe("When feesStrategy provided", () => {
+        it("should call getFeesEstimation once", async () => {
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            feesStrategy: undefined,
+          });
+
+          expect(rpcAPI.getFeesEstimation).toBeCalledTimes(1);
+
+          expect(tx).toEqual({
+            ...transaction,
+            feesStrategy: undefined,
+            additionalFees: undefined,
+            maxFeePerGas: new BigNumber(1),
+            maxPriorityFeePerGas: new BigNumber(1),
+            type: 2,
+          });
+        });
+      });
+
+      describe("When custom feesStrategy provided", () => {
+        it("should use transaction provided data for fees", async () => {
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            feesStrategy: "custom",
+          });
+
+          expect(rpcAPI.getFeesEstimation).toBeCalledTimes(0);
+
+          expect(tx).toEqual({
+            ...transaction,
+            additionalFees: undefined,
+            feesStrategy: "custom",
+            gasPrice: new BigNumber(0),
+            type: 0,
+          });
+        });
+      });
+
+      describe("When gasOptions provided", () => {
+        it("should call getFeesEstimation once", async () => {
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            gasOptions: undefined,
+          });
+
+          expect(rpcAPI.getFeesEstimation).toBeCalledTimes(1);
+
+          expect(tx).toEqual({
+            ...transaction,
+            maxFeePerGas: new BigNumber(1),
+            maxPriorityFeePerGas: new BigNumber(1),
+            type: 2,
+          });
+        });
+      });
+
+      describe("When gasOptions provided", () => {
+        const gasOptions: GasOptions = {
+          slow: {
+            maxFeePerGas: new BigNumber(10),
+            maxPriorityFeePerGas: new BigNumber(1),
+            gasPrice: null,
+          },
+          medium: {
+            maxFeePerGas: new BigNumber(20),
+            maxPriorityFeePerGas: new BigNumber(2),
+            gasPrice: null,
+          },
+          fast: {
+            maxFeePerGas: new BigNumber(30),
+            maxPriorityFeePerGas: new BigNumber(3),
+            gasPrice: null,
+          },
+        };
+        it("should use gasOptions values for fee data", async () => {
+          const tx = await prepareTransaction(account, {
+            ...transaction,
+            gasOptions,
+          });
+
+          expect(rpcAPI.getFeesEstimation).toBeCalledTimes(0);
+
+          expect(tx).toEqual({
+            ...transaction,
+            gasOptions,
+            additionalFees: undefined,
+            maxFeePerGas: new BigNumber(20),
+            maxPriorityFeePerGas: new BigNumber(2),
+            type: 2,
           });
         });
       });
