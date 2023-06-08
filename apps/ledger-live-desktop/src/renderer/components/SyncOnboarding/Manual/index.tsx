@@ -73,17 +73,17 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   >(null);
 
   const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({
-    device: device || null,
+    device: lastSeenDevice,
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn,
   });
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
-    deviceId: device?.deviceId ?? "",
+    deviceId: lastSeenDevice?.deviceId ?? "",
     toggleType: toggleOnboardingEarlyCheckType,
   });
 
-  // // Called when the ESC is complete
+  // Called when the ESC is complete
   const notifyOnboardingEarlyCheckEnded = useCallback(() => {
     setToggleOnboardingEarlyCheckType("exit");
   }, []);
@@ -98,9 +98,10 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     if (!onboardingState) {
       return;
     }
-    const { currentOnboardingStep } = onboardingState;
+    const { currentOnboardingStep, isOnboarded } = onboardingState;
 
     if (
+      !isOnboarded &&
       [
         OnboardingStep.WelcomeScreen1,
         OnboardingStep.WelcomeScreen2,
@@ -111,7 +112,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     ) {
       setIsPollingOn(false);
       setToggleOnboardingEarlyCheckType("enter");
-    } else if (currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
+    } else if (!isOnboarded && currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
       setIsPollingOn(false);
       // Resets the `useToggleOnboardingEarlyCheck` hook. Avoids having a case where for ex
       // check type == "exit" and toggle status still being == "success" from the previous toggle
@@ -181,10 +182,7 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
     history.push("/onboarding/select-device");
   }, [history]);
 
-  // TODO: to check with UX
   const handleTroubleshootingDrawerClose = useCallback(() => {
-    // setTroubleshootingDrawerOpen(false);
-    // setStopPolling(false);
     history.push("/onboarding/select-device");
   }, [history]);
 

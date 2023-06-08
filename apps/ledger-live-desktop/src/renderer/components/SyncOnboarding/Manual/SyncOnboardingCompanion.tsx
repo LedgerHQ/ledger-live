@@ -33,13 +33,12 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-// TODO
-const readyRedirectDelayMs = 2500;
+const READY_REDIRECT_DELAY_MS = 2500;
 const POLLING_PERIOD_MS = 1000;
-const desyncTimeoutMs = 60000;
-const longDesyncTimeoutMs = 100000;
-const resyncDelayMs = 1000;
-const longResyncDelayMs = 30000;
+const DESYNC_TIMEOUT_MS = 60000;
+const LONG_DESYNC_TIMEOUT_MS = 100000;
+const DESYNC_OVERLAY_DELAY_MS = 1000;
+const LONG_DESYNC_OVERLAY_DELAY_MS = 30000;
 
 enum StepKey {
   Paired = 0,
@@ -260,10 +259,11 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   );
 
   const [steps, setSteps] = useState<Step[]>(defaultSteps);
-  const [stopPolling, setStopPolling] = useState<boolean>(false);
-  const [resyncDelay, setResyncDelay] = useState<number>(resyncDelayMs);
+  const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
+
+  const [desyncOverlayDelay, setDesyncOverlayDelay] = useState<number>(DESYNC_OVERLAY_DELAY_MS);
   const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] = useState<boolean>(false);
-  const [desyncTimeout, setDesyncTimeout] = useState<number>(desyncTimeoutMs);
+  const [desyncTimeout, setDesyncTimeout] = useState<number>(DESYNC_TIMEOUT_MS);
 
   const {
     onboardingState: deviceOnboardingState,
@@ -273,7 +273,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     getOnboardingStatePolling,
     device: device || null,
     pollingPeriodMs: POLLING_PERIOD_MS,
-    stopPolling,
+    stopPolling: !isPollingOn,
   });
 
   // TODO: we were re-starting the polling ?
@@ -289,7 +289,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const handleDesyncTimerRunsOut = useCallback(() => {
     setIsDesyncOverlayOpen(false);
     onLostDevice();
-    setStopPolling(true);
+    setIsPollingOn(false);
   }, [onLostDevice]);
 
   /**
@@ -430,19 +430,19 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       );
 
       if (nbOfSeedWords && deviceOnboardingState?.currentSeedWordIndex >= nbOfSeedWords - 2) {
-        setResyncDelay(longResyncDelayMs);
-        setDesyncTimeout(longDesyncTimeoutMs);
+        setDesyncOverlayDelay(LONG_DESYNC_OVERLAY_DELAY_MS);
+        setDesyncTimeout(LONG_DESYNC_TIMEOUT_MS);
       }
     }
   }, [deviceOnboardingState]);
 
   useEffect(() => {
     if (stepKey >= StepKey.SoftwareCheck) {
-      setStopPolling(true);
+      setIsPollingOn(false);
     }
 
     if (stepKey === StepKey.Ready) {
-      setTimeout(() => setStepKey(StepKey.Exit), readyRedirectDelayMs / 2);
+      setTimeout(() => setStepKey(StepKey.Exit), READY_REDIRECT_DELAY_MS / 2);
     }
 
     if (stepKey === StepKey.Exit) {
@@ -453,7 +453,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         true,
         true,
       );
-      setTimeout(handleDeviceReady, readyRedirectDelayMs / 2);
+      setTimeout(handleDeviceReady, READY_REDIRECT_DELAY_MS / 2);
     }
 
     setSteps(
@@ -475,7 +475,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       return;
     }
     onLostDevice();
-    setStopPolling(true);
+    setIsPollingOn(false);
   }, [fatalError, onLostDevice]);
 
   useEffect(() => {
@@ -511,7 +511,11 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
-      <DesyncOverlay isOpen={isDesyncOverlayOpen} delay={resyncDelay} productName={productName} />
+      <DesyncOverlay
+        isOpen={isDesyncOverlayOpen}
+        delay={desyncOverlayDelay}
+        productName={productName}
+      />
       <Flex
         height="100%"
         overflow="hidden"

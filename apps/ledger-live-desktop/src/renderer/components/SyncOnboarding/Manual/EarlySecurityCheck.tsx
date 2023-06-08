@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { Device } from "@ledgerhq/types-devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 export type EarlySecurityCheckProps = {
   /**
