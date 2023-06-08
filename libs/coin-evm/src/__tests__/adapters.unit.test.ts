@@ -4,8 +4,8 @@ import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import {
-  etherscanERC20EventToOperation,
-  etherscanOperationToOperation,
+  etherscanERC20EventToOperations,
+  etherscanOperationToOperations,
   transactionToEthersTransaction,
 } from "../adapters";
 import {
@@ -133,7 +133,7 @@ describe("EVM Family", () => {
           extra: {},
         };
 
-        expect(etherscanOperationToOperation(accountId, etherscanOp)).toEqual(expectedOperation);
+        expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual(expectedOperation);
       });
 
       it("should convert a etherscan-like coin out operation (from their API) to a Ledger Live Operation", () => {
@@ -184,7 +184,7 @@ describe("EVM Family", () => {
           extra: {},
         };
 
-        expect(etherscanOperationToOperation(accountId, etherscanOp)).toEqual(expectedOperation);
+        expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual(expectedOperation);
       });
 
       it("should convert a etherscan-like coin in operation (from their API) to a Ledger Live Operation", () => {
@@ -235,7 +235,7 @@ describe("EVM Family", () => {
           extra: {},
         };
 
-        expect(etherscanOperationToOperation(accountId, etherscanOp)).toEqual(expectedOperation);
+        expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual(expectedOperation);
       });
 
       it("should convert a etherscan-like coin none operation (from their API) to a Ledger Live Operation", () => {
@@ -286,7 +286,7 @@ describe("EVM Family", () => {
           extra: {},
         };
 
-        expect(etherscanOperationToOperation(accountId, etherscanOp)).toEqual(expectedOperation);
+        expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual(expectedOperation);
       });
     });
 
@@ -322,7 +322,7 @@ describe("EVM Family", () => {
           derivationMode: "",
         });
 
-        expect(etherscanERC20EventToOperation(accountId, etherscanOp)).toEqual(null);
+        expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual(null);
       });
 
       it("should convert a etherscan-like usdc out event (from their API) to a Ledger Live Operation", () => {
@@ -375,7 +375,7 @@ describe("EVM Family", () => {
           extra: {},
         };
 
-        expect(etherscanERC20EventToOperation(accountId, etherscanOp)).toEqual({
+        expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual({
           operation: expectedOperation,
           tokenCurrency,
         });
@@ -431,7 +431,7 @@ describe("EVM Family", () => {
           extra: {},
         };
 
-        expect(etherscanERC20EventToOperation(accountId, etherscanOp)).toEqual({
+        expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual({
           operation: expectedOperation,
           tokenCurrency,
         });
@@ -487,7 +487,7 @@ describe("EVM Family", () => {
           extra: {},
         };
 
-        expect(etherscanERC20EventToOperation(accountId, etherscanOp)).toEqual({
+        expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual({
           operation: expectedOperation,
           tokenCurrency,
         });
