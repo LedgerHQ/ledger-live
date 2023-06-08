@@ -165,10 +165,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   ]);
 
   if (!account || !transaction) return null;
+
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
 
-  const stuckOperationAndOperation = getStuckAccountAndOperation(
+  const stuckAccountAndOperation = getStuckAccountAndOperation(
     account,
     mainAccount,
   );
@@ -195,12 +196,10 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             flex: 1,
           }}
         >
-          {stuckOperationAndOperation?.stuckOperation ? (
+          {stuckAccountAndOperation?.stuckOperation ? (
             <EditOperationCard
               isOperationStuck
-              oldestEditableOperation={
-                stuckOperationAndOperation.stuckOperation
-              }
+              oldestEditableOperation={stuckAccountAndOperation.stuckOperation}
               account={account}
               parentAccount={parentAccount}
             />
