@@ -85,7 +85,7 @@ export const signOperationWithAPI = (
 
           const { signature } = await hwApp.signTransaction(
             account.freshAddressPath,
-            Buffer.from(tx.serialize())
+            Buffer.from(tx.message.serialize())
           );
 
           subscriber.next({

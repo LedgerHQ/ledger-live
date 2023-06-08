@@ -16,7 +16,6 @@ import {
   VersionedTransaction as OnChainTransaction,
   TransactionInstruction,
   TransactionMessage,
-  VersionedTransaction,
 } from "@solana/web3.js";
 import { ChainAPI } from "./api";
 
@@ -39,7 +38,7 @@ export const buildTransactionWithAPI = async (
     instructions,
   });
 
-  const tx = new VersionedTransaction(tm.compileToLegacyMessage());
+  const tx = new OnChainTransaction(tm.compileToLegacyMessage());
 
   return [
     tx,
