@@ -9,20 +9,12 @@ export function SearchBar({
   inputRef,
   onChange,
   onFocus,
-}: Omit<
-  SearchBarValues<LiveAppManifest>,
-  "result" | "isSearching" | "isActive" | "onCancel"
->) {
+}: Omit<SearchBarValues<LiveAppManifest>, "result" | "isSearching" | "isActive" | "onCancel">) {
   const { t } = useTranslation();
 
   return (
     <>
-      <Flex
-        backgroundColor="background.main"
-        marginBottom={16}
-        flexDirection={"row"}
-        zIndex={10}
-      >
+      <Flex backgroundColor="background.main" marginBottom={16} flexDirection={"row"} zIndex={10}>
         <SearchInput
           containerStyle={{
             flexGrow: 1,

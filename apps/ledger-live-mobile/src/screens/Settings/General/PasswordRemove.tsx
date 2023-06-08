@@ -12,10 +12,7 @@ import { ScreenName } from "../../../const";
 import type { PasswordModifyFlowParamList } from "../../../components/RootNavigator/types/PasswordModifyFlowNavigator";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 
-type NavigationProps = StackNavigatorProps<
-  PasswordModifyFlowParamList,
-  ScreenName.PasswordRemove
->;
+type NavigationProps = StackNavigatorProps<PasswordModifyFlowParamList, ScreenName.PasswordRemove>;
 
 type Props = {
   t: TFunction;

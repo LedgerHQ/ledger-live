@@ -44,9 +44,10 @@ const TokenParentSelection = ({
   onChangeAccount: OnChangeAccount;
   mainAccount: Account;
 }) => {
-  const filterAccountSelect = useCallback(a => getAccountCurrency(a) === mainAccount.currency, [
-    mainAccount,
-  ]);
+  const filterAccountSelect = useCallback(
+    a => getAccountCurrency(a) === mainAccount.currency,
+    [mainAccount],
+  );
   return (
     <>
       <Label>

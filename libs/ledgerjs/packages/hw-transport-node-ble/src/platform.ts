@@ -1,31 +1,26 @@
 import noble, { Characteristic, Service } from "@abandonware/noble";
 import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import {
-  getInfosForServiceUuid,
-  getBluetoothServiceUuids,
-} from "@ledgerhq/devices";
+import { getInfosForServiceUuid, getBluetoothServiceUuids } from "@ledgerhq/devices";
 import { TransportError } from "@ledgerhq/errors";
-noble.on("warning", (message) => {
+noble.on("warning", message => {
   log("ble-warning", message);
 });
 
 const POWERED_ON = "poweredOn";
 
-export const availability: Observable<boolean> = Observable.create(
-  (observer) => {
-    const onAvailabilityChanged = (e) => {
-      observer.next(e === POWERED_ON);
-    };
+export const availability: Observable<boolean> = Observable.create(observer => {
+  const onAvailabilityChanged = e => {
+    observer.next(e === POWERED_ON);
+  };
 
-    noble.on("stateChanged", onAvailabilityChanged); // events lib?
+  noble.on("stateChanged", onAvailabilityChanged); // events lib?
 
-    observer.next(noble.state === POWERED_ON);
-    return () => {
-      noble.removeListener("stateChanged", onAvailabilityChanged);
-    };
-  }
-);
+  observer.next(noble.state === POWERED_ON);
+  return () => {
+    noble.removeListener("stateChanged", onAvailabilityChanged);
+  };
+});
 
 export const listenDeviceDisconnect = (device: any, onDisconnect: any) => {
   device.addListener("disconnect", onDisconnect);
@@ -36,7 +31,7 @@ export const listenDeviceDisconnect = (device: any, onDisconnect: any) => {
 
 export const connectDevice = (device: any): Promise<void> =>
   new Promise((resolve, reject) => {
-    device.connect((error) => {
+    device.connect(error => {
       if (error) {
         reject(error);
       } else {
@@ -47,7 +42,7 @@ export const connectDevice = (device: any): Promise<void> =>
 
 export const disconnectDevice = (device: any): Promise<void> =>
   new Promise((resolve, reject) => {
-    device.disconnect((error) => {
+    device.disconnect(error => {
       if (error) {
         reject(error);
       } else {
@@ -56,15 +51,14 @@ export const disconnectDevice = (device: any): Promise<void> =>
     });
   });
 
-export const isDeviceDisconnected = (device: any): boolean =>
-  device.state === "disconnected";
+export const isDeviceDisconnected = (device: any): boolean => device.state === "disconnected";
 
 const discoverDeviceServices = (device): Promise<Service[]> =>
   new Promise((resolve, reject) =>
     device.discoverServices(null, (error, services) => {
       if (error) reject(error);
       else resolve(services);
-    })
+    }),
   );
 
 const discoverServiceCharacteristics = (service): Promise<Characteristic[]> =>
@@ -72,19 +66,17 @@ const discoverServiceCharacteristics = (service): Promise<Characteristic[]> =>
     service.discoverCharacteristics(null, (error, chs) => {
       if (error) reject(error);
       else resolve(chs);
-    })
+    }),
   );
 
 export const listen = (): Observable<any> =>
-  Observable.create((observer) => {
+  Observable.create(observer => {
     const discoveredDevices = {};
 
-    const onDiscover = (peripheral) => {
+    const onDiscover = peripheral => {
       const { uuid: id } = peripheral;
       const { localName } = peripheral.advertisement;
-      const name =
-        localName ||
-        (discoveredDevices[id] ? discoveredDevices[id].name : null);
+      const name = localName || (discoveredDevices[id] ? discoveredDevices[id].name : null);
       discoveredDevices[id] = {
         peripheral,
         name,
@@ -116,8 +108,7 @@ export const retrieveServiceAndCharacteristics = async (device: any) => {
     throw new TransportError("service not found", "BLEServiceNotFound");
   }
 
-  const characteristics: Characteristic[] =
-    await discoverServiceCharacteristics(service);
+  const characteristics: Characteristic[] = await discoverServiceCharacteristics(service);
   let writeC;
   let notifyC;
 
@@ -130,10 +121,7 @@ export const retrieveServiceAndCharacteristics = async (device: any) => {
   }
 
   if (!writeC || !notifyC) {
-    throw new TransportError(
-      "missing characteristics",
-      "BLEMissingCharacteristics"
-    );
+    throw new TransportError("missing characteristics", "BLEMissingCharacteristics");
   }
 
   return {
@@ -143,16 +131,14 @@ export const retrieveServiceAndCharacteristics = async (device: any) => {
   };
 };
 
-export const monitorCharacteristic = (
-  characteristic: any
-): [Observable<Buffer>, Promise<void>] => {
+export const monitorCharacteristic = (characteristic: any): [Observable<Buffer>, Promise<void>] => {
   let resolve;
   let reject;
   const readyness: Promise<void> = new Promise((res, rej) => {
     resolve = res;
     reject = rej;
   });
-  const observable = Observable.create((o) => {
+  const observable = Observable.create(o => {
     function onCharacteristicValueChanged(data) {
       o.next(Buffer.from(data));
     }
@@ -178,12 +164,9 @@ export const monitorCharacteristic = (
   return [observable, readyness];
 };
 
-export const write = (
-  writeCharacteristic: any,
-  buffer: Buffer
-): Promise<void> =>
+export const write = (writeCharacteristic: any, buffer: Buffer): Promise<void> =>
   new Promise((resolve, reject) => {
-    writeCharacteristic.write(buffer, false, (e) => {
+    writeCharacteristic.write(buffer, false, e => {
       if (e) reject(e);
       else resolve();
     });

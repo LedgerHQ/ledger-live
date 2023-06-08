@@ -42,10 +42,7 @@ function useCategoriesRaw(manifests: AppManifest[]): {
     return res;
   }, [manifests]);
 
-  const categories = useMemo(
-    () => [...manifestsByCategories.keys()],
-    [manifestsByCategories],
-  );
+  const categories = useMemo(() => [...manifestsByCategories.keys()], [manifestsByCategories]);
 
   return {
     categories,
@@ -75,9 +72,7 @@ export function useDeeplinkEffect(
 
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
-export function useDisclaimer(
-  appendRecentlyUsed: (manifest: AppManifest) => void,
-) {
+export function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void) {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();
   const { platform, ...params } = route.params ?? {};
@@ -236,9 +231,7 @@ export function useRecentlyUsed(manifests: AppManifest[]) {
 
   const data = useMemo(
     () =>
-      ids
-        .map(id => manifests.find(m => m.id === id))
-        .filter(m => m !== undefined) as AppManifest[],
+      ids.map(id => manifests.find(m => m.id === id)).filter(m => m !== undefined) as AppManifest[],
     [ids, manifests],
   );
 

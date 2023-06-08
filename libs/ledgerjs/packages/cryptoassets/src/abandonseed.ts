@@ -97,7 +97,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
 export const getAbandonSeedAddress = (currencyId: string): string => {
   invariant(
     abandonSeedAddresses[currencyId] !== undefined,
-    `No abandonseed available for ${currencyId}`
+    `No abandonseed available for ${currencyId}`,
   );
 
   return abandonSeedAddresses[currencyId]!;

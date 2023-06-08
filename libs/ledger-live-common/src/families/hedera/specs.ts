@@ -22,10 +22,7 @@ const memoTestMessage = "This is a test memo.";
 const checkSendableToEmptyAccount = (amount, recipient) => {
   const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
   if (isAccountEmpty(recipient) && amount.lte(minBalanceNewAccount)) {
-    invariant(
-      amount.gt(minBalanceNewAccount),
-      "not enough funds to send to new account"
-    );
+    invariant(amount.gt(minBalanceNewAccount), "not enough funds to send to new account");
   }
 };
 
@@ -60,9 +57,7 @@ const hedera: AppSpec<Transaction> = {
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
 
-        const amount = account.balance
-          .div(1.9 + 0.2 * Math.random())
-          .integerValue();
+        const amount = account.balance.div(1.9 + 0.2 * Math.random()).integerValue();
 
         checkSendableToEmptyAccount(amount, sibling);
 
@@ -78,8 +73,8 @@ const hedera: AppSpec<Transaction> = {
       }: TransactionTestInput<Transaction>): void => {
         botTest("account balance moved with operation value", () =>
           expect(account.balance.toString()).toBe(
-            accountBeforeTransaction.balance.minus(operation.value).toString()
-          )
+            accountBeforeTransaction.balance.minus(operation.value).toString(),
+          ),
         );
       },
     },
@@ -104,7 +99,7 @@ const hedera: AppSpec<Transaction> = {
       test: ({ account, accountBeforeTransaction, operation }) => {
         botTest("Account balance should have decreased", () => {
           expect(account.balance.toNumber()).toEqual(
-            accountBeforeTransaction.balance.minus(operation.value).toNumber()
+            accountBeforeTransaction.balance.minus(operation.value).toNumber(),
           );
         });
       },
@@ -121,9 +116,7 @@ const hedera: AppSpec<Transaction> = {
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
 
-        const amount = account.balance
-          .div(1.9 + 0.2 * Math.random())
-          .integerValue();
+        const amount = account.balance.div(1.9 + 0.2 * Math.random()).integerValue();
 
         checkSendableToEmptyAccount(amount, sibling);
 
@@ -133,9 +126,7 @@ const hedera: AppSpec<Transaction> = {
         };
       },
       test: ({ transaction }: TransactionTestInput<Transaction>): void => {
-        botTest("transaction.memo is set", () =>
-          expect(transaction.memo).toBe(memoTestMessage)
-        );
+        botTest("transaction.memo is set", () => expect(transaction.memo).toBe(memoTestMessage));
       },
       testDestination: genericTestDestination,
     },

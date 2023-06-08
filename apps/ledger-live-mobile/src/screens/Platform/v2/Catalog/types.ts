@@ -7,10 +7,7 @@ import { DiscoverNavigatorStackParamList } from "../../../../components/RootNavi
 import { ScreenName } from "../../../../const";
 
 export type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    DiscoverNavigatorStackParamList,
-    ScreenName.PlatformCatalog
-  >
+  StackNavigatorProps<DiscoverNavigatorStackParamList, ScreenName.PlatformCatalog>
 >;
 
 export interface PlatformState {

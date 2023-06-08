@@ -21,10 +21,7 @@ import { track } from "../../analytics";
 import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
 
 export type SyncOnboardingScreenProps = CompositeScreenProps<
-  StackScreenProps<
-    SyncOnboardingStackParamList,
-    ScreenName.SyncOnboardingCompanion
-  >,
+  StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompanion>,
   CompositeScreenProps<
     StackScreenProps<BaseNavigatorStackParamList>,
     StackScreenProps<RootStackParamList>
@@ -41,24 +38,21 @@ const DESYNC_TIMEOUT_MS = 20000;
  * - toggle the onboarding early checks (enter/exit) on the device if needed
  * - know which steps it should display
  */
-export const SyncOnboarding = ({
-  navigation,
-  route,
-}: SyncOnboardingScreenProps) => {
+export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps) => {
   const { device } = route.params;
-  const [currentStep, setCurrentStep] = useState<
-    "loading" | "early-security-check" | "companion"
-  >("loading");
+  const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
+    "loading",
+  );
   const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
-  const [toggleOnboardingEarlyCheckType, setToggleOnboardingEarlyCheckType] =
-    useState<null | "enter" | "exit">(null);
+  const [toggleOnboardingEarlyCheckType, setToggleOnboardingEarlyCheckType] = useState<
+    null | "enter" | "exit"
+  >(null);
 
   const [isDesyncDrawerOpen, setDesyncDrawerOpen] = useState<boolean>(false);
 
   // States handling a UI trick to hide the header while the resync alert overlay
   // is displayed from the companion
-  const [isHeaderOverlayOpen, setIsHeaderOverlayOpen] =
-    useState<boolean>(false);
+  const [isHeaderOverlayOpen, setIsHeaderOverlayOpen] = useState<boolean>(false);
   const [headerOverlayDelayMs, setHeaderOverlayDelayMs] = useState<number>(
     NORMAL_RESYNC_OVERLAY_DISPLAY_DELAY_MS,
   );
@@ -70,36 +64,26 @@ export const SyncOnboarding = ({
       header: () => (
         <>
           <SafeAreaView edges={["top", "left", "right"]}>
-            <Flex
-              my={5}
-              flexDirection="row"
-              justifyContent="flex-end"
-              alignItems="center"
-            >
+            <Flex my={5} flexDirection="row" justifyContent="flex-end" alignItems="center">
               <NavigationHeaderCloseButton />
             </Flex>
           </SafeAreaView>
-          <PlainOverlay
-            isOpen={isHeaderOverlayOpen}
-            delay={headerOverlayDelayMs}
-          />
+          <PlainOverlay isOpen={isHeaderOverlayOpen} delay={headerOverlayDelayMs} />
         </>
       ),
     });
   }, [device, navigation, isHeaderOverlayOpen, headerOverlayDelayMs]);
 
-  const { onboardingState, allowedError, fatalError } =
-    useOnboardingStatePolling({
-      device,
-      pollingPeriodMs: POLLING_PERIOD_MS,
-      stopPolling: !isPollingOn,
-    });
+  const { onboardingState, allowedError, fatalError } = useOnboardingStatePolling({
+    device,
+    pollingPeriodMs: POLLING_PERIOD_MS,
+    stopPolling: !isPollingOn,
+  });
 
-  const { state: toggleOnboardingEarlyCheckState } =
-    useToggleOnboardingEarlyCheck({
-      deviceId: device.deviceId,
-      toggleType: toggleOnboardingEarlyCheckType,
-    });
+  const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({
+    deviceId: device.deviceId,
+    toggleType: toggleOnboardingEarlyCheckType,
+  });
 
   const notifyOnboardingEarlyCheckEnded = useCallback(() => {
     setToggleOnboardingEarlyCheckType("exit");
@@ -129,10 +113,7 @@ export const SyncOnboarding = ({
     ) {
       setIsPollingOn(false);
       setToggleOnboardingEarlyCheckType("enter");
-    } else if (
-      !isOnboarded &&
-      currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck
-    ) {
+    } else if (!isOnboarded && currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
       setIsPollingOn(false);
       // Resets the `useToggleOnboardingEarlyCheck` hook. Avoids having a case where for ex
       // check type == "exit" and toggle status still being == "success" from the previous toggle
@@ -211,12 +192,7 @@ export const SyncOnboarding = ({
   }, [navigation]);
 
   let stepContent = (
-    <Flex
-      height="100%"
-      width="100%"
-      justifyContent="center"
-      alignItems="center"
-    >
+    <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
       <InfiniteLoader />
     </Flex>
   );

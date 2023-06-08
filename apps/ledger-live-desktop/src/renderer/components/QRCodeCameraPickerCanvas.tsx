@@ -159,13 +159,8 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
               raf = requestAnimationFrame(loop);
               const { ctxMain, ctxSecond } = this;
               if (!ctxMain || !ctxSecond || !video) return;
-              const {
-                centerSize,
-                cameraBorderSize,
-                cameraBorderLength,
-                dpr,
-                intervalCheck,
-              } = this.props;
+              const { centerSize, cameraBorderSize, cameraBorderLength, dpr, intervalCheck } =
+                this.props;
               const cs = centerSize * dpr;
               const cbs = cameraBorderSize * dpr;
               const cbl = cameraBorderLength * dpr;

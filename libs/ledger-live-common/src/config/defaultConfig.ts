@@ -34,8 +34,7 @@ const defaultConfig = {
       persistence: {
         lcd: "https://rest-persistence.architectnodes.com",
         minGasPrice: 0.025,
-        ledgerValidator:
-          "persistencevaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxatty38",
+        ledgerValidator: "persistencevaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxatty38",
       },
       quicksilver: {
         lcd: "https://lcd.quicksilver.zone",

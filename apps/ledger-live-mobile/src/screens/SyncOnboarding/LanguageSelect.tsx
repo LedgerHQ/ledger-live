@@ -13,10 +13,7 @@ import { languages, supportedLocales } from "../../languages";
 import { updateIdentify, track } from "../../analytics";
 import QueuedDrawer from "../../components/QueuedDrawer";
 
-type UiDrawerStatus =
-  | "none"
-  | "language-selection"
-  | "firmware-language-update";
+type UiDrawerStatus = "none" | "language-selection" | "firmware-language-update";
 
 type LanguageSelectStatus =
   | "unrequested"
@@ -100,12 +97,7 @@ const LanguageSelect = () => {
         isRequestingToBeOpened={nextDrawerToDisplay === "language-selection"}
         onClose={handleLanguageSelectOnClose}
       >
-        <Flex
-          mb={4}
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
+        <Flex mb={4} flexDirection="row" alignItems="center" justifyContent="space-between">
           <Flex flex={1} />
           <Text variant="h5" fontWeight="semiBold" justifyContent="center">
             {t("syncOnboarding.languageSelect.title")}
@@ -116,10 +108,7 @@ const LanguageSelect = () => {
         </Flex>
         <ScrollViewContainer>
           <Flex>
-            <SelectableList
-              currentValue={currentLocale}
-              onChange={handleLanguageSelectOnChange}
-            >
+            <SelectableList currentValue={currentLocale} onChange={handleLanguageSelectOnChange}>
               {supportedLocales.map((locale, index: number) => (
                 <SelectableList.Element key={index + locale} value={locale}>
                   {languages[locale]}

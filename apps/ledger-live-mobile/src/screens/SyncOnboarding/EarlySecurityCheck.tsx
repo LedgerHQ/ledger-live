@@ -35,12 +35,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   }, [notifyOnboardingEarlyCheckEnded]);
 
   return (
-    <Flex
-      height="100%"
-      width="100%"
-      justifyContent="center"
-      alignItems="center"
-    >
+    <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
       <Text>Early Security Check placeholder</Text>
     </Flex>
   );

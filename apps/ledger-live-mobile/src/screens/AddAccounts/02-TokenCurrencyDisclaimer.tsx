@@ -20,17 +20,11 @@ import {
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    AddAccountsNavigatorParamList,
-    ScreenName.AddAccountsTokenCurrencyDisclaimer
-  >,
+  StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsTokenCurrencyDisclaimer>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
-export default function AddAccountsTokenCurrencyDisclaimer({
-  navigation,
-  route,
-}: Props) {
+export default function AddAccountsTokenCurrencyDisclaimer({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
@@ -40,9 +34,7 @@ export default function AddAccountsTokenCurrencyDisclaimer({
   const accountData = findTokenAccountByCurrency(token, accounts);
   const parentTokenAccount = accountData ? accountData.parentAccount : null;
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   // specific cta in case of token accounts
   const onTokenCta = useCallback(() => {
@@ -64,14 +56,7 @@ export default function AddAccountsTokenCurrencyDisclaimer({
         currency: parentCurrency,
       });
     }
-  }, [
-    parentTokenAccount,
-    onClose,
-    navigation,
-    token,
-    route.params,
-    parentCurrency,
-  ]);
+  }, [parentTokenAccount, onClose, navigation, token, route.params, parentCurrency]);
   return (
     <SafeAreaView
       style={[

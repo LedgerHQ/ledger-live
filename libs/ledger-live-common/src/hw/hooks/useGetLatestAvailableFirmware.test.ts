@@ -9,7 +9,7 @@ jest.mock("../getLatestAvailableFirmwareFromDeviceId");
 jest.useFakeTimers();
 
 const mockedGetLatestAvailableFirmwareFromDeviceId = jest.mocked(
-  getLatestAvailableFirmwareFromDeviceId
+  getLatestAvailableFirmwareFromDeviceId,
 );
 
 describe("useGetLatestAvailableFirmware", () => {
@@ -31,14 +31,13 @@ describe("useGetLatestAvailableFirmware", () => {
           firmwareUpdateContext: null,
           lockedDevice: false,
           status: "done",
-        })
+        }),
       );
       const { result } = renderHook(() =>
         useGetLatestAvailableFirmware({
-          getLatestAvailableFirmwareFromDeviceId:
-            mockedGetLatestAvailableFirmwareFromDeviceId,
+          getLatestAvailableFirmwareFromDeviceId: mockedGetLatestAvailableFirmwareFromDeviceId,
           deviceId: "A_DEVICE_ID",
-        })
+        }),
       );
 
       await act(async () => {
@@ -58,14 +57,13 @@ describe("useGetLatestAvailableFirmware", () => {
           firmwareUpdateContext: aLatestFirmwareContext,
           lockedDevice: false,
           status: "done",
-        })
+        }),
       );
       const { result } = renderHook(() =>
         useGetLatestAvailableFirmware({
-          getLatestAvailableFirmwareFromDeviceId:
-            mockedGetLatestAvailableFirmwareFromDeviceId,
+          getLatestAvailableFirmwareFromDeviceId: mockedGetLatestAvailableFirmwareFromDeviceId,
           deviceId: "A_DEVICE_ID",
-        })
+        }),
       );
 
       await act(async () => {
@@ -85,15 +83,14 @@ describe("useGetLatestAvailableFirmware", () => {
           firmwareUpdateContext: null,
           lockedDevice: true,
           status: "started",
-        })
+        }),
       );
 
       const { result } = renderHook(() =>
         useGetLatestAvailableFirmware({
-          getLatestAvailableFirmwareFromDeviceId:
-            mockedGetLatestAvailableFirmwareFromDeviceId,
+          getLatestAvailableFirmwareFromDeviceId: mockedGetLatestAvailableFirmwareFromDeviceId,
           deviceId: "A_DEVICE_ID",
-        })
+        }),
       );
 
       await act(async () => {

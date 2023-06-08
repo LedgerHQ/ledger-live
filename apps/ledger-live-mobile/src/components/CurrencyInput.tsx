@@ -1,24 +1,11 @@
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import type {
-  NativeSyntheticEvent,
-  TextInputFocusEventData,
-} from "react-native";
+import type { NativeSyntheticEvent, TextInputFocusEventData } from "react-native";
 
 import React, { PureComponent } from "react";
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  StyleProp,
-  ViewStyle,
-  TextInputProps,
-} from "react-native";
+import { StyleSheet, View, Dimensions, StyleProp, ViewStyle, TextInputProps } from "react-native";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
-import {
-  formatCurrencyUnit,
-  sanitizeValueString,
-} from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit, sanitizeValueString } from "@ledgerhq/live-common/currencies/index";
 import noop from "lodash/noop";
 import clamp from "lodash/clamp";
 
@@ -53,10 +40,7 @@ function format(
 
 type Props = {
   isActive: boolean;
-  onFocus: (
-    _: boolean,
-    event?: NativeSyntheticEvent<TextInputFocusEventData>,
-  ) => void;
+  onFocus: (_: boolean, event?: NativeSyntheticEvent<TextInputFocusEventData>) => void;
   onChange: (_: BigNumber, keepRatio?: boolean) => void;
   unit: Unit;
   value: BigNumber | null | undefined;
@@ -119,8 +103,7 @@ class CurrencyInput extends PureComponent<Props, State> {
   }
 
   setDisplayValue = (isFocused = false) => {
-    const { value, showAllDigits, unit, subMagnitude, allowZero, locale } =
-      this.props;
+    const { value, showAllDigits, unit, subMagnitude, allowZero, locale } = this.props;
     this.setState({
       isFocused,
       displayValue:
@@ -188,11 +171,7 @@ class CurrencyInput extends PureComponent<Props, State> {
     // calculating an approximative font size
     const screenWidth = Dimensions.get("window").width * dynamicFontRatio;
     const dynamicFontSize = Math.round(
-      clamp(
-        Math.sqrt((screenWidth * 32) / displayValue.length),
-        8,
-        isActive ? 32 : 24,
-      ),
+      clamp(Math.sqrt((screenWidth * 32) / displayValue.length), 8, isActive ? 32 : 24),
     );
     return (
       <View style={[styles.wrapper, style]}>

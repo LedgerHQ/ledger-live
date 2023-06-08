@@ -30,10 +30,8 @@ export default function Validation({ route }: Props) {
     context: "StellarAddAsset",
     account,
     parentAccount: undefined,
-    updateAccountWithUpdater: (
-      accountId: string,
-      updater: (account: Account) => Account,
-    ) => dispatch(updateAccountWithUpdater({ accountId, updater })),
+    updateAccountWithUpdater: (accountId: string, updater: (account: Account) => Account) =>
+      dispatch(updateAccountWithUpdater({ accountId, updater })),
   });
   const { status, transaction, modelId, wired, deviceId } = route.params;
   const device = useMemo(
@@ -53,11 +51,7 @@ export default function Validation({ route }: Props) {
         },
       ]}
     >
-      <TrackScreen
-        category="StellarAddAsset"
-        name="Validation"
-        signed={signed}
-      />
+      <TrackScreen category="StellarAddAsset" name="Validation" signed={signed} />
       {signing && (
         <>
           <PreventNativeBack />

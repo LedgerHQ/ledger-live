@@ -47,29 +47,17 @@ export function Catalog() {
     [],
   );
 
-  const {
-    manifestsByCategories,
-    categories,
-    selected,
-    setSelected,
-    initialSelectedState,
-  } = useCategories(manifestsCompleteVisibility);
+  const { manifestsByCategories, categories, selected, setSelected, initialSelectedState } =
+    useCategories(manifestsCompleteVisibility);
 
   const recentlyUsed = useRecentlyUsed(manifests);
 
-  const {
-    input,
-    inputRef,
-    onChange,
-    onCancel,
-    onFocus,
-    isActive,
-    isSearching,
-    result,
-  } = useSearch({
-    list: manifests,
-    options,
-  });
+  const { input, inputRef, onChange, onCancel, onFocus, isActive, isSearching, result } = useSearch(
+    {
+      list: manifests,
+      options,
+    },
+  );
 
   // TODO: Move inside the custom hook
   useEffect(() => {

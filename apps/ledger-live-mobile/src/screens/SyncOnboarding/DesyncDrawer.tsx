@@ -18,8 +18,7 @@ export type Props = {
 
 const DesyncDrawer = ({ isOpen, onClose, onRetry, device }: Props) => {
   const { t } = useTranslation();
-  const productName =
-    getDeviceModel(device.modelId).productName || device.modelId;
+  const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
   const handleSupportPress = useCallback(() => {
     track("button_clicked", {
@@ -36,11 +35,7 @@ const DesyncDrawer = ({ isOpen, onClose, onRetry, device }: Props) => {
       preventBackdropClick
       noCloseButton
     >
-      <TrackScreen
-        category="Could not connect to Stax"
-        type="drawer"
-        refreshSource={false}
-      />
+      <TrackScreen category="Could not connect to Stax" type="drawer" refreshSource={false} />
       <Text variant="h4" fontWeight="semiBold" mb={4}>
         {t("syncOnboarding.desyncDrawer.title", { productName })}
       </Text>

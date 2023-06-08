@@ -63,12 +63,7 @@ export default function TransferButton({
               {title}
             </Text>
             {tag && (
-              <Tag
-                size={"small"}
-                type={"color"}
-                ml={3}
-                opacity={disabled ? 0.3 : 1}
-              >
+              <Tag size={"small"} type={"color"} ml={3} opacity={disabled ? 0.3 : 1}>
                 {tag}
               </Tag>
             )}

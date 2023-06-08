@@ -2,10 +2,7 @@ import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  getAccountCurrency,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "../../components/Circle";

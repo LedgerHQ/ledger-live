@@ -36,13 +36,7 @@ const Triangle = styled(Box).attrs({
   borderRightColor: "transparent",
 })``;
 
-const ContrastChoice: React.FC<Props> = ({
-  loading,
-  selected,
-  color,
-  isFirst,
-  isLast,
-}) => (
+const ContrastChoice: React.FC<Props> = ({ loading, selected, color, isFirst, isLast }) => (
   <Container ml={isFirst ? 0 : 1} mr={isLast ? 0 : 1} selected={selected}>
     {selected && loading ? (
       <InfiniteLoader size={28} />

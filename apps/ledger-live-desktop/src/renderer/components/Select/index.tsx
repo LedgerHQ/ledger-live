@@ -20,7 +20,7 @@ import { ThemeConfig } from "react-select/src/theme";
 export type Props<
   OptionType extends OptionTypeBase = { label: string; value: string },
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 > = {
   onChange: (a?: ValueType<OptionType, IsMulti> | null) => void;
   // custom renders
@@ -54,7 +54,7 @@ const Row = styled.div`
 class MenuList<
   OptionType extends OptionTypeBase,
   IsMulti extends boolean,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 > extends PureComponent<
   MenuListComponentProps<OptionType, IsMulti, GroupType> & Props<OptionType, IsMulti, GroupType>
 > {
@@ -151,7 +151,7 @@ class MenuList<
 class Select<
   OptionType extends OptionTypeBase = { label: string; value: string },
   IsMulti extends boolean = false,
-  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>
+  GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 > extends PureComponent<Props<OptionType, IsMulti, GroupType>> {
   componentDidMount() {
     if (this.ref && this.props.autoFocus) {
@@ -284,4 +284,4 @@ class Select<
     );
   }
 }
-export default (withTranslation()(withTheme(Select)) as unknown) as typeof Select;
+export default withTranslation()(withTheme(Select)) as unknown as typeof Select;

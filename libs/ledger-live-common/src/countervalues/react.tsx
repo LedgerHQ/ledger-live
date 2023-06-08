@@ -70,19 +70,14 @@ const CountervaluesContext = createContext<CounterValuesState>(initialState);
 
 function trackingPairsHash(a: TrackingPair[]) {
   return a
-    .map(
-      (p) =>
-        `${p.from.ticker}:${p.to.ticker}:${
-          p.startDate?.toISOString().slice(0, 10) || ""
-        }`
-    )
+    .map(p => `${p.from.ticker}:${p.to.ticker}:${p.startDate?.toISOString().slice(0, 10) || ""}`)
     .sort()
     .join("|");
 }
 
 export function useTrackingPairForAccounts(
   accounts: Account[],
-  countervalue: Currency
+  countervalue: Currency,
 ): TrackingPair[] {
   // first we cache the tracking pairs with its hash
   const c = useMemo(() => {
@@ -104,10 +99,7 @@ export function Countervalues({
   savedState,
 }: Props): ReactElement {
   const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
-  const [{ state, pending, error }, dispatch] = useReducer(
-    fetchReducer,
-    initialFetchState
-  );
+  const [{ state, pending, error }, dispatch] = useReducer(fetchReducer, initialFetchState);
 
   // flag used to trigger a loadCountervalues
   const [triggerLoad, setTriggerLoad] = useState(false);
@@ -123,18 +115,18 @@ export function Countervalues({
       type: "pending",
     });
     loadCountervalues(state, userSettings).then(
-      (state) => {
+      state => {
         dispatch({
           type: "success",
           payload: state,
         });
       },
-      (error) => {
+      error => {
         dispatch({
           type: "error",
           payload: error,
         });
-      }
+      },
     );
   }, [pending, state, userSettings, triggerLoad]);
   // save the state when it changes
@@ -172,13 +164,11 @@ export function Countervalues({
       pending,
       error,
     }),
-    [pending, error]
+    [pending, error],
   );
   return (
     <CountervaluesPollingContext.Provider value={polling}>
-      <CountervaluesContext.Provider value={state}>
-        {children}
-      </CountervaluesContext.Provider>
+      <CountervaluesContext.Provider value={state}>{children}</CountervaluesContext.Provider>
     </CountervaluesPollingContext.Provider>
   );
 }
@@ -274,7 +264,7 @@ export function useCalculateMany(
     to: Currency;
     disableRounding?: boolean;
     reverse?: boolean;
-  }
+  },
 ): Array<number | null | undefined> {
   const state = useCountervaluesState();
   // TODO how to approach perf for this? hash function of the datapoints? responsability on user land?
@@ -295,11 +285,9 @@ export function useCalculateCountervalueCallback({
         to,
         disableRounding: true,
       });
-      return typeof countervalue === "number"
-        ? new BigNumber(countervalue)
-        : countervalue;
+      return typeof countervalue === "number" ? new BigNumber(countervalue) : countervalue;
     },
-    [to, state]
+    [to, state],
   );
 }
 
@@ -336,11 +324,11 @@ export function useSendAmount({
           to: fiatCurrency,
           value: fiatAmount.toNumber(),
           reverse: true,
-        }) ?? 0
+        }) ?? 0,
       );
       return cryptoAmount;
     },
-    [state, cryptoCurrency, fiatCurrency]
+    [state, cryptoCurrency, fiatCurrency],
   );
   return {
     cryptoUnit,

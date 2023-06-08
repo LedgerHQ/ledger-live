@@ -15,7 +15,7 @@ class BIP32 {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     network: any,
     depth = 0,
-    index = 0
+    index = 0,
   ) {
     invariant(publicKey && publicKey.length > 0, "publicKey must not be empty");
     invariant(chainCode && chainCode.length > 0, "chainCode must not be empty");
@@ -32,9 +32,7 @@ class BIP32 {
     const I = createHmac("sha512", this.chainCode).update(data).digest();
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
-    const Ki = Buffer.from(
-      await getSecp256k1Instance().publicKeyTweakAdd(this.publicKey, IL)
-    );
+    const Ki = Buffer.from(await getSecp256k1Instance().publicKeyTweakAdd(this.publicKey, IL));
     return new BIP32(Ki, IR, this.network, this.depth + 1, index);
   }
 }

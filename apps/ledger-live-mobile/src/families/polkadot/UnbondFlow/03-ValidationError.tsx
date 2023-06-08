@@ -4,24 +4,15 @@ import { useTheme } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
-import {
-  BaseComposite,
-  BaseNavigation,
-} from "../../../components/RootNavigator/types/helpers";
+import { BaseComposite, BaseNavigation } from "../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../const";
 import { PolkadotUnbondFlowParamList } from "./type";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<
-    PolkadotUnbondFlowParamList,
-    ScreenName.PolkadotUnbondValidationError
-  >
+  StackScreenProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondValidationError>
 >;
 
-export default function ValidationError({
-  navigation,
-  route,
-}: NavigationProps) {
+export default function ValidationError({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
     navigation.getParent<BaseNavigation>().pop();
@@ -39,11 +30,7 @@ export default function ValidationError({
       ]}
     >
       <TrackScreen category="UnbondFlow" name="ValidationError" />
-      <ValidateError
-        error={route.params.error}
-        onRetry={retry}
-        onClose={onClose}
-      />
+      <ValidateError error={route.params.error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );
 }

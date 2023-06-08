@@ -3,16 +3,13 @@ import { partition } from "lodash/fp";
 import { getEnv } from "../../env";
 import { ValidatorsAppValidator } from "./validator-app";
 
-export const LEDGER_VALIDATOR_ADDRESS =
-  "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx";
+export const LEDGER_VALIDATOR_ADDRESS = "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx";
 
 export const assertUnreachable = (_: never): never => {
   throw new Error("unreachable assertion failed");
 };
 
-export async function drainSeqAsyncGen<T>(
-  ...asyncGens: AsyncGenerator<T>[]
-): Promise<T[]> {
+export async function drainSeqAsyncGen<T>(...asyncGens: AsyncGenerator<T>[]): Promise<T[]> {
   const items: T[] = [];
   for (const gen of asyncGens) {
     for await (const item of gen) {
@@ -42,7 +39,7 @@ export function endpointByCurrencyId(currencyId: string): string {
   }
 
   throw Error(
-    `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`
+    `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`,
   );
 }
 
@@ -58,13 +55,11 @@ export function clusterByCurrencyId(currencyId: string): Cluster {
   }
 
   throw Error(
-    `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`
+    `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`,
   );
 }
 
-export function defaultVoteAccAddrByCurrencyId(
-  currencyId: string
-): string | undefined {
+export function defaultVoteAccAddrByCurrencyId(currencyId: string): string | undefined {
   const voteAccAddrs: Record<string, string | undefined> = {
     solana: LEDGER_VALIDATOR_ADDRESS,
     solana_devnet: undefined,
@@ -76,7 +71,7 @@ export function defaultVoteAccAddrByCurrencyId(
   }
 
   throw new Error(
-    `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`
+    `unexpected currency id format <${currencyId}>, should be like solana[_(testnet | devnet)]`,
   );
 }
 
@@ -140,33 +135,27 @@ export type Functions<T> = keyof {
 
 // move Ledger validator to the first position
 export function ledgerFirstValidators(
-  validators: ValidatorsAppValidator[]
+  validators: ValidatorsAppValidator[],
 ): ValidatorsAppValidator[] {
   const [ledgerValidator, restValidators] = partition(
-    (v) => v.voteAccount === LEDGER_VALIDATOR_ADDRESS,
-    validators
+    v => v.voteAccount === LEDGER_VALIDATOR_ADDRESS,
+    validators,
   );
   return ledgerValidator.concat(restValidators);
 }
 
 export function profitableValidators(validators: ValidatorsAppValidator[]) {
-  return validators.filter((v) => v.commission < 100);
+  return validators.filter(v => v.commission < 100);
 }
 
 // https://stackoverflow.com/a/60132060
 export const tupleOfUnion =
   <T>() =>
   <U extends T[]>(
-    array: U &
-      ([T] extends [U[number]]
-        ? unknown
-        : "The array must contain all union values")
+    array: U & ([T] extends [U[number]] ? unknown : "The array must contain all union values"),
   ) =>
     array;
 
-export function sweetch<T extends keyof any, R>(
-  caze: T,
-  cases: Record<T, R>
-): R {
+export function sweetch<T extends keyof any, R>(caze: T, cases: Record<T, R>): R {
   return cases[caze];
 }

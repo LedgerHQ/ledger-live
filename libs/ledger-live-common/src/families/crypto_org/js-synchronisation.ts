@@ -3,7 +3,7 @@ import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 
-const getAccountShape: GetAccountShape = async (info) => {
+const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
   const {
@@ -25,21 +25,11 @@ const getAccountShape: GetAccountShape = async (info) => {
   let startAt = 0;
   let maxIteration = 20;
   let operations = oldOperations;
-  let newOperations = await getOperations(
-    accountId,
-    address,
-    startAt++,
-    currency.id
-  );
+  let newOperations = await getOperations(accountId, address, startAt++, currency.id);
 
   do {
     operations = mergeOps(operations, newOperations);
-    newOperations = await getOperations(
-      accountId,
-      address,
-      startAt++,
-      currency.id
-    );
+    newOperations = await getOperations(accountId, address, startAt++, currency.id);
   } while (--maxIteration && newOperations.length != 0);
 
   const shape = {

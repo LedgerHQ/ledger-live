@@ -7,24 +7,18 @@ import network from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
 
 export const fetchERC20Tokens: (
-  currency: CryptoCurrency
-) => Promise<ERC20Token[]> = async (currency) => {
+  currency: CryptoCurrency,
+) => Promise<ERC20Token[]> = async currency => {
   const { ethereumLikeInfo } = currency;
 
-  const url = `${getEnv("DYNAMIC_CAL_BASE_URL")}/evm/${
-    ethereumLikeInfo?.chainId || 0
-  }/erc20.json`;
+  const url = `${getEnv("DYNAMIC_CAL_BASE_URL")}/evm/${ethereumLikeInfo?.chainId || 0}/erc20.json`;
   const dynamicTokens: ERC20Token[] | null = await network({
     method: "GET",
     url,
   })
     .then(({ data }: { data: ERC20Token[] }) => (data.length ? data : null))
-    .catch((e) => {
-      log(
-        "error",
-        "EVM Family: Couldn't fetch dynamic CAL tokens from " + url,
-        e
-      );
+    .catch(e => {
+      log("error", "EVM Family: Couldn't fetch dynamic CAL tokens from " + url, e);
       return null;
     });
   if (dynamicTokens) return dynamicTokens;
@@ -33,11 +27,7 @@ export const fetchERC20Tokens: (
   const tokens = tokensByChainId[ethereumLikeInfo?.chainId || ""];
   if (tokens) return tokens;
 
-  log(
-    "warning",
-    `EVM Family: No tokens found in CAL for currency: ${currency.id}`,
-    currency
-  );
+  log("warning", `EVM Family: No tokens found in CAL for currency: ${currency.id}`, currency);
   return [];
 };
 

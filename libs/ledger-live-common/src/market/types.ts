@@ -89,6 +89,6 @@ export type MarketDataApi = {
   listPaginated: (params: MarketListRequestParams) => Promise<CurrencyData[]>;
   supportedCounterCurrencies: () => Promise<string[]>;
   currencyChartData: (
-    params: MarketCurrencyChartDataRequestParams
+    params: MarketCurrencyChartDataRequestParams,
   ) => Promise<{ [range: string]: number[][] }>;
 };

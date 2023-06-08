@@ -26,10 +26,7 @@ test("Countervalues: at least one call is made and successful to the API", async
 
   layout.topbarSynchronizeButton.click();
 
-  await test.step(
-    "has used countervalues api in HTTP and at least one HTTP 200 happened",
-    async () => {
-      expect(await firstSuccessfulQuery).toBeDefined();
-    },
-  );
+  await test.step("has used countervalues api in HTTP and at least one HTTP 200 happened", async () => {
+    expect(await firstSuccessfulQuery).toBeDefined();
+  });
 });

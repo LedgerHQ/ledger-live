@@ -8,11 +8,7 @@ import { LiveApp as LiveApp2 } from "./v2/LiveApp";
 export function Catalog(props: CatalogProps) {
   const config = useFeature("discover");
 
-  return config?.enabled && config?.params.version === "2" ? (
-    <Catalog2 />
-  ) : (
-    <Catalog1 {...props} />
-  );
+  return config?.enabled && config?.params.version === "2" ? <Catalog2 /> : <Catalog1 {...props} />;
 }
 
 export function LiveApp(props: LiveAppProps) {

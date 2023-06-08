@@ -12,13 +12,13 @@ export default {
   job: () =>
     of(
       listSupportedCurrencies()
-        .map((currency) => {
+        .map(currency => {
           const value = getEnv("SCAN_FOR_INVALID_PATHS");
           setEnv("SCAN_FOR_INVALID_PATHS", true);
           const modes = getDerivationModesForCurrency(currency);
           setEnv("SCAN_FOR_INVALID_PATHS", value);
           return modes
-            .map((derivationMode) => {
+            .map(derivationMode => {
               const scheme = getDerivationScheme({
                 derivationMode,
                 currency,
@@ -43,6 +43,6 @@ export default {
             })
             .join("\n");
         })
-        .join("\n")
+        .join("\n"),
     ),
 };

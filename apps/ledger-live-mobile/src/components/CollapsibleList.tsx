@@ -76,11 +76,7 @@ const CollapsibleList = <T,>({
   // Animated style updating the height depending on the opening anim state of the list container
   const heightStyle = useAnimatedStyle(() => {
     return {
-      height: interpolate(
-        openState.value,
-        [0, 1],
-        [itemHeight, 61 + itemHeight * data.length],
-      ),
+      height: interpolate(openState.value, [0, 1], [itemHeight, 61 + itemHeight * data.length]),
     };
   });
 

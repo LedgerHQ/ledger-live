@@ -2,12 +2,7 @@ import React, { useCallback, useState, memo } from "react";
 import type { ViewProps } from "react-native";
 import { useNftCollectionMetadata } from "@ledgerhq/live-common/nft/index";
 import { FlatList, View, SafeAreaView, StyleSheet } from "react-native";
-import {
-  Account,
-  ProtoNFT,
-  NFTMetadata,
-  NFTMetadataResponse,
-} from "@ledgerhq/types-live";
+import { Account, ProtoNFT, NFTMetadata, NFTMetadataResponse } from "@ledgerhq/types-live";
 import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import {
   NFTResource,
@@ -43,28 +38,14 @@ const NftCollectionWithNameList = ({
   const nft = collection?.[0] || {};
   const [isCollectionMenuOpen, setIsCollectionMenuOpen] = useState(false);
 
-  const onOpenCollectionMenu = useCallback(
-    () => setIsCollectionMenuOpen(true),
-    [],
-  );
-  const onCloseCollectionMenu = useCallback(
-    () => setIsCollectionMenuOpen(false),
-    [],
-  );
+  const onOpenCollectionMenu = useCallback(() => setIsCollectionMenuOpen(true), []);
+  const onCloseCollectionMenu = useCallback(() => setIsCollectionMenuOpen(false), []);
 
   return (
     <SafeAreaView style={contentContainerStyle}>
       <View style={styles.title}>
-        <Skeleton
-          style={styles.tokenNameSkeleton}
-          loading={status === "loading"}
-        >
-          <LText
-            numberOfLines={2}
-            ellipsizeMode="tail"
-            semiBold
-            style={styles.tokenName}
-          >
+        <Skeleton style={styles.tokenNameSkeleton} loading={status === "loading"}>
+          <LText numberOfLines={2} ellipsizeMode="tail" semiBold style={styles.tokenName}>
             {metadata?.tokenName || nft?.contract}
           </LText>
         </Skeleton>
@@ -99,11 +80,7 @@ type Props = {
   account: Account;
 };
 
-const NftCollectionWithName = ({
-  collection,
-  contentContainerStyle,
-  account,
-}: Props) => {
+const NftCollectionWithName = ({ collection, contentContainerStyle, account }: Props) => {
   const nft: ProtoNFT | null = collection[0];
   const { status, metadata } = useNftCollectionMetadata(
     nft?.contract,

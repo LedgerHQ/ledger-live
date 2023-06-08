@@ -60,11 +60,11 @@ const StyledCircle = styled.circle.attrs({
   transform-origin: 50% 50%;
 `;
 
-const StyledCircleBackground = styled(StyledCircle).attrs((props) => ({
+const StyledCircleBackground = styled(StyledCircle).attrs(props => ({
   stroke: props.stroke || props.theme.colors.primary.c30,
 }))``;
 
-const StyledCircleFront = styled(StyledCircle).attrs((props) => ({
+const StyledCircleFront = styled(StyledCircle).attrs(props => ({
   stroke: props.stroke || props.theme.colors.primary.c80,
 }))``;
 

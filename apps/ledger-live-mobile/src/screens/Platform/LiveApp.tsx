@@ -16,10 +16,7 @@ import { BaseNavigatorStackParamList } from "../../components/RootNavigator/type
 import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
-export type Props = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.PlatformApp
->;
+export type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PlatformApp>;
 
 export function LiveApp({ route }: Props) {
   const { theme } = useTheme();
@@ -37,12 +34,7 @@ export function LiveApp({ route }: Props) {
     });
   }, [manifest, setParams]);
 
-  if (
-    route.params.customDappURL &&
-    manifest &&
-    manifest.params &&
-    "dappUrl" in manifest.params
-  ) {
+  if (route.params.customDappURL && manifest && manifest.params && "dappUrl" in manifest.params) {
     manifest = {
       ...manifest,
       params: {

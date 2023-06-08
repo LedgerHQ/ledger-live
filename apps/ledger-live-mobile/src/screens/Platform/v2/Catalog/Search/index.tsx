@@ -111,12 +111,7 @@ export function Search({
           </TouchableOpacity>
         }
         searchContent={
-          <SearchBar
-            input={input}
-            inputRef={inputRef}
-            onChange={onChange}
-            onFocus={onFocus}
-          />
+          <SearchBar input={input} inputRef={inputRef} onChange={onChange} onFocus={onFocus} />
         }
         bodyContent={
           isSearching ? (

@@ -20,8 +20,7 @@ type ProgressEvent = {
   total: number;
 };
 
-const filterProgressEvent = (e: SocketEvent): e is ProgressEvent =>
-  e.type === "bulk-progress";
+const filterProgressEvent = (e: SocketEvent): e is ProgressEvent => e.type === "bulk-progress";
 
 export type FlashMcuCommandEvent = {
   type: "progress";
@@ -37,7 +36,7 @@ export type FlashMcuCommandEvent = {
  */
 export function flashMcuOrBootloaderCommand(
   transport: Transport,
-  { targetId, version }: FlashMcuOrBootloaderCommandRequest
+  { targetId, version }: FlashMcuOrBootloaderCommandRequest,
 ): Observable<FlashMcuCommandEvent> {
   log("device-command", "flashMcuOrBootloader", {
     targetId,
@@ -55,9 +54,9 @@ export function flashMcuOrBootloaderCommand(
     }),
   }).pipe(
     filter<SocketEvent, ProgressEvent>(filterProgressEvent),
-    map((e) => ({
+    map(e => ({
       type: "progress",
       progress: e.progress,
-    }))
+    })),
   );
 }

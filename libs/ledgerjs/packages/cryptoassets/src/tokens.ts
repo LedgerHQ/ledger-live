@@ -1,7 +1,4 @@
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "./currencies";
 import asatokens, { AlgorandASAToken } from "./data/asa";
 import bep20tokens, { BEP20Token } from "./data/bep20";
@@ -42,9 +39,7 @@ const defaultTokenListOptions: TokensListOptions = {
 /**
  *
  */
-export function listTokens(
-  options?: Partial<TokensListOptions>
-): TokenCurrency[] {
+export function listTokens(options?: Partial<TokensListOptions>): TokenCurrency[] {
   const { withDelisted } = { ...defaultTokenListOptions, ...options };
   return withDelisted ? tokensArrayWithDelisted : tokensArray;
 }
@@ -54,7 +49,7 @@ export function listTokens(
  */
 export function listTokensForCryptoCurrency(
   currency: CryptoCurrency,
-  options?: Partial<TokensListOptions>
+  options?: Partial<TokensListOptions>,
 ): TokenCurrency[] {
   const { withDelisted } = { ...defaultTokenListOptions, ...options };
 
@@ -68,9 +63,7 @@ export function listTokensForCryptoCurrency(
 /**
  *
  */
-export function listTokenTypesForCryptoCurrency(
-  currency: CryptoCurrency
-): string[] {
+export function listTokenTypesForCryptoCurrency(currency: CryptoCurrency): string[] {
   return listTokensForCryptoCurrency(currency).reduce<string[]>((acc, cur) => {
     const tokenType = cur.tokenType;
 
@@ -85,9 +78,7 @@ export function listTokenTypesForCryptoCurrency(
 /**
  *
  */
-export function findTokenByTicker(
-  ticker: string
-): TokenCurrency | null | undefined {
+export function findTokenByTicker(ticker: string): TokenCurrency | null | undefined {
   return tokensByTicker[ticker];
 }
 
@@ -99,21 +90,17 @@ export function findTokenById(id: string): TokenCurrency | null | undefined {
 }
 
 let deprecatedDisplayed = false;
-export function findTokenByAddress(
-  address: string
-): TokenCurrency | null | undefined {
+export function findTokenByAddress(address: string): TokenCurrency | null | undefined {
   if (!deprecatedDisplayed) {
     deprecatedDisplayed = true;
-    console.warn(
-      "findTokenByAddress is deprecated. use findTokenByAddressInCurrency"
-    );
+    console.warn("findTokenByAddress is deprecated. use findTokenByAddressInCurrency");
   }
   return tokensByAddress[address.toLowerCase()];
 }
 
 export function findTokenByAddressInCurrency(
   address: string,
-  currencyId: string
+  currencyId: string,
 ): TokenCurrency | null | undefined {
   return tokensByCurrencyAddress[currencyId + ":" + address.toLowerCase()];
 }
@@ -141,16 +128,13 @@ function comparePriority(a: TokenCurrency, b: TokenCurrency) {
 }
 
 export function addTokens(list: TokenCurrency[]): void {
-  list.forEach((token) => {
+  list.forEach(token => {
     if (tokensById[token.id]) return;
     if (!token.delisted) tokensArray.push(token);
     tokensArrayWithDelisted.push(token);
     tokensById[token.id] = token;
 
-    if (
-      !tokensByTicker[token.ticker] ||
-      comparePriority(token, tokensByTicker[token.ticker]) > 0
-    ) {
+    if (!tokensByTicker[token.ticker] || comparePriority(token, tokensByTicker[token.ticker]) > 0) {
       tokensByTicker[token.ticker] = token;
     }
 
@@ -304,8 +288,7 @@ function convertElrondESDTTokens([
   name,
   disableCountervalue,
 ]: ElrondESDTToken): TokenCurrency {
-  const ELROND_ESDT_CONTRACT =
-    "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
+  const ELROND_ESDT_CONTRACT = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
 
   return {
     type: "TokenCurrency",

@@ -111,6 +111,6 @@ export const platformAppDrawerStateSelector = (state: State): UIState["platformA
 // Exporting reducer
 
 export default handleActions<UIState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as UIHandlers<false>,
+  handlers as unknown as UIHandlers<false>,
   initialState,
 );

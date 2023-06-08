@@ -25,18 +25,9 @@ const options = {
 };
 
 type Navigation = CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.BitcoinEditCustomFees
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.BitcoinEditCustomFees
-    >
-  | StackNavigatorProps<
-      SwapNavigatorParamList,
-      ScreenName.BitcoinEditCustomFees
-    >,
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.BitcoinEditCustomFees>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.BitcoinEditCustomFees>
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.BitcoinEditCustomFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
@@ -51,9 +42,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(transaction.family === "bitcoin", "not bitcoin family");
   invariant(account, "no account found");
-  const [ownSatPerByte, setOwnSatPerByte] = useState(
-    satPerByte ? satPerByte.toString() : "",
-  );
+  const [ownSatPerByte, setOwnSatPerByte] = useState(satPerByte ? satPerByte.toString() : "");
 
   const onChange = useCallback((text: string) => {
     setOwnSatPerByte(text.replace(/\D/g, ""));
@@ -74,15 +63,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
         feesStrategy: "custom",
       }),
     });
-  }, [
-    setSatPerByte,
-    ownSatPerByte,
-    account,
-    parentAccount,
-    route.params,
-    navigation,
-    transaction,
-  ]);
+  }, [setSatPerByte, ownSatPerByte, account, parentAccount, route.params, navigation, transaction]);
   return (
     <SafeAreaView
       style={{

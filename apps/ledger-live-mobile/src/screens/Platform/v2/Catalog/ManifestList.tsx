@@ -12,11 +12,7 @@ export function ManifestList({
   return (
     <>
       {manifests.map((manifest: LiveAppManifest) => (
-        <AppCard
-          key={`${manifest.id}.${manifest.branch}`}
-          manifest={manifest}
-          onPress={onSelect}
-        />
+        <AppCard key={`${manifest.id}.${manifest.branch}`} manifest={manifest} onPress={onSelect} />
       ))}
     </>
   );

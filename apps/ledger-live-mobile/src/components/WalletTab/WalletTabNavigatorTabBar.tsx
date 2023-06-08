@@ -85,10 +85,7 @@ function Tab({
   }, [isActive, navigation, route.key, route.name]);
 
   return (
-    <StyledTouchableOpacity
-      onPress={onPress}
-      testID={`wallet-tab-${route.name}`}
-    >
+    <StyledTouchableOpacity onPress={onPress} testID={`wallet-tab-${route.name}`}>
       <StyledAnimatedView
         backgroundColor={rgba(colors.constant.white, 0.08)}
         borderRadius={2}
@@ -129,9 +126,7 @@ function WalletTabNavigatorTabBar({
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
 
-  const { scrollY, headerHeight, tabBarHeight } = useContext(
-    WalletTabNavigatorScrollContext,
-  );
+  const { scrollY, headerHeight, tabBarHeight } = useContext(WalletTabNavigatorScrollContext);
 
   const y = scrollY.interpolate({
     inputRange: [0, headerHeight],
@@ -163,9 +158,7 @@ function WalletTabNavigatorTabBar({
     <>
       <WalletTabBackgroundGradient
         scrollX={position}
-        color={
-          readOnlyModeEnabled && hasNoAccounts ? colors.neutral.c30 : undefined
-        }
+        color={readOnlyModeEnabled && hasNoAccounts ? colors.neutral.c30 : undefined}
       />
       <AnimatedFlex
         style={{
@@ -188,11 +181,7 @@ function WalletTabNavigatorTabBar({
           }}
         />
         <Flex px={6} py={2} justifyContent={"flex-end"}>
-          <Flex
-            flexDirection={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
+          <Flex flexDirection={"row"} justifyContent={"space-between"} alignItems={"center"}>
             <Flex flexDirection={"row"}>
               {state.routes.map((route, index) => {
                 const { options } = descriptors[route.key];
@@ -211,15 +200,14 @@ function WalletTabNavigatorTabBar({
               })}
             </Flex>
 
-            {referralProgramMobile?.enabled &&
-              referralProgramMobile?.params?.path && (
-                <StyledReferral onPress={accessReferralProgram}>
-                  <Icons.GiftMedium />
-                  <Text ml={"6px"} variant="small" fontWeight="semiBold">
-                    {t("wallet.referralProgram")}
-                  </Text>
-                </StyledReferral>
-              )}
+            {referralProgramMobile?.enabled && referralProgramMobile?.params?.path && (
+              <StyledReferral onPress={accessReferralProgram}>
+                <Icons.GiftMedium />
+                <Text ml={"6px"} variant="small" fontWeight="semiBold">
+                  {t("wallet.referralProgram")}
+                </Text>
+              </StyledReferral>
+            )}
           </Flex>
         </Flex>
       </AnimatedFlex>

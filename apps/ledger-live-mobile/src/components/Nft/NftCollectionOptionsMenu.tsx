@@ -14,12 +14,7 @@ type Props = {
   account: Account;
 };
 
-const NftCollectionOptionsMenu = ({
-  isOpen,
-  onClose,
-  collection,
-  account,
-}: Props) => {
+const NftCollectionOptionsMenu = ({ isOpen, onClose, collection, account }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 

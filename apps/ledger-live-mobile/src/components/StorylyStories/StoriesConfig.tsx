@@ -73,8 +73,7 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
   );
 
   const openCameraModal = useCallback(() => {
-    if (!permission?.granted)
-      requestPermission().then(() => setShowCameraModal(true));
+    if (!permission?.granted) requestPermission().then(() => setShowCameraModal(true));
     else setShowCameraModal(true);
   }, [permission, requestPermission]);
 
@@ -112,8 +111,8 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
         <Flex>
           <Text variant="h4">Story QR code scanning</Text>
           <Text mb={5}>
-            Go to dashboard.storyly.io/settings/apps and open any instance QR
-            code then you can scan it here
+            Go to dashboard.storyly.io/settings/apps and open any instance QR code then you can scan
+            it here
           </Text>
           <Camera
             type={CameraType.back}

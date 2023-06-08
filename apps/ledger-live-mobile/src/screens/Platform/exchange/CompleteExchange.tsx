@@ -22,8 +22,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
   },
   navigation,
 }) => {
-  const { fromAccount: account, fromParentAccount: parentAccount } =
-    request.exchange;
+  const { fromAccount: account, fromParentAccount: parentAccount } = request.exchange;
   let tokenCurrency;
   if (account.type === "TokenAccount") tokenCurrency = account.token;
 
@@ -50,16 +49,13 @@ const PlatformCompleteExchange: React.FC<Props> = ({
     navigation.pop();
   }, [navigation]);
 
-  const onCompleteExchange = useCallback(
-    ({ completeExchangeResult, completeExchangeError }) => {
-      if (completeExchangeError) {
-        setError(completeExchangeError);
-      } else {
-        setTransaction(completeExchangeResult);
-      }
-    },
-    [],
-  );
+  const onCompleteExchange = useCallback(({ completeExchangeResult, completeExchangeError }) => {
+    if (completeExchangeError) {
+      setError(completeExchangeError);
+    } else {
+      setTransaction(completeExchangeResult);
+    }
+  }, []);
 
   const onSign = useCallback(({ signedOperation, transactionSignError }) => {
     if (transactionSignError) {

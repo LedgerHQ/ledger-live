@@ -5,27 +5,24 @@ import { toOperationRaw } from "@ledgerhq/live-common/account/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import type { InferSignedOperationsOpts } from "../signedOperation";
-import {
-  inferSignedOperations,
-  inferSignedOperationsOpts,
-} from "../signedOperation";
+import { inferSignedOperations, inferSignedOperationsOpts } from "../signedOperation";
 export default {
   description: "Broadcast signed operation(s)",
   args: [...scanCommonOpts, ...inferSignedOperationsOpts],
   job: (opts: ScanCommonOpts & InferSignedOperationsOpts) =>
     scan(opts).pipe(
-      concatMap((account) =>
+      concatMap(account =>
         inferSignedOperations(account, opts).pipe(
-          concatMap((signedOperation) =>
+          concatMap(signedOperation =>
             from(
               getAccountBridge(account).broadcast({
                 account,
                 signedOperation,
-              })
-            )
-          )
-        )
+              }),
+            ),
+          ),
+        ),
       ),
-      map((obj) => JSON.stringify(toOperationRaw(obj)))
+      map(obj => JSON.stringify(toOperationRaw(obj))),
     ),
 };

@@ -23,12 +23,7 @@ export function LiveApp({ route }: Props) {
   const { locale } = useLocale();
   let manifest = localManifest || remoteManifest;
 
-  if (
-    route.params.customDappURL &&
-    manifest &&
-    manifest.params &&
-    "dappUrl" in manifest.params
-  ) {
+  if (route.params.customDappURL && manifest && manifest.params && "dappUrl" in manifest.params) {
     manifest = {
       ...manifest,
       params: {

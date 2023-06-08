@@ -4,10 +4,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
@@ -32,26 +29,14 @@ type Props = {
   parentAccount?: Account | null;
   transaction: Transaction;
 } & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<CeloLockFlowParamList, ScreenName.CeloLockAmount>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
-  | StackNavigatorProps<
-      CeloRevokeFlowFlowParamList,
-      ScreenName.CeloRevokeAmount
-    >
+  | StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeAmount>
   | StackNavigatorProps<CeloUnlockFlowParamList, ScreenName.CeloUnlockAmount>
   | StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteAmount>
-  | StackNavigatorProps<
-      CeloWithdrawFlowParamList,
-      ScreenName.CeloWithdrawAmount
-    >,
+  | StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawAmount>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 export default function CeloFeeRow({ account, transaction }: Props) {
@@ -81,9 +66,7 @@ export default function CeloFeeRow({ account, transaction }: Props) {
           </LText>
         ) : null}
         <LText style={styles.countervalue} color="grey">
-          {fees ? (
-            <CounterValue before="≈ " value={fees} currency={currency} />
-          ) : null}
+          {fees ? <CounterValue before="≈ " value={fees} currency={currency} /> : null}
         </LText>
       </View>
     </SummaryRow>

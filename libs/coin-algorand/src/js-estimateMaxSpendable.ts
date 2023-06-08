@@ -29,16 +29,14 @@ export const estimateMaxSpendable =
       ...createTransaction(),
       subAccountId: account.type === "Account" ? null : account.id,
       ...transaction,
-      recipient:
-        transaction?.recipient ||
-        getAbandonSeedAddress(mainAccount.currency.id),
+      recipient: transaction?.recipient || getAbandonSeedAddress(mainAccount.currency.id),
       useAllAmount: true,
     };
 
     const tokenAccount =
       tx.subAccountId &&
       mainAccount.subAccounts &&
-      mainAccount.subAccounts.find((ta) => ta.id === tx.subAccountId);
+      mainAccount.subAccounts.find(ta => ta.id === tx.subAccountId);
 
     if (tokenAccount) {
       return tokenAccount.balance;

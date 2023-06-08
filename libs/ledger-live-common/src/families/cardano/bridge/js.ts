@@ -1,11 +1,7 @@
 import type { Transaction } from "../types";
 import { scanAccounts, sync } from "../js-synchronisation";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import {
-  createTransaction,
-  prepareTransaction,
-  updateTransaction,
-} from "../js-transaction";
+import { createTransaction, prepareTransaction, updateTransaction } from "../js-transaction";
 import getTransactionStatus from "../js-getTransactionStatus";
 import signOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";

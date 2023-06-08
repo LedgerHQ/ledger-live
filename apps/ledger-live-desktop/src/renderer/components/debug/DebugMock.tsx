@@ -390,9 +390,10 @@ const DebugMock = () => {
   const toggleExpanded = useCallback(() => setExpanded(!expanded), [expanded, setExpanded]);
   const toggleExpandedQueue = useCallback(() => setExpandedQueue(!expandedQueue), [expandedQueue]);
   const toggleExpandedQuick = useCallback(() => setExpandedQuick(!expandedQuick), [expandedQuick]);
-  const toggleExpandedHistory = useCallback(() => setExpandedHistory(!expandedHistory), [
-    expandedHistory,
-  ]);
+  const toggleExpandedHistory = useCallback(
+    () => setExpandedHistory(!expandedHistory),
+    [expandedHistory],
+  );
   const toggleExpandedSwap = useCallback(() => setExpandedSwap(!expandedSwap), [expandedSwap]);
   const toggleExpandedLocalization = useCallback(
     () => setExpandedLocalization(!expandedLocalization),
@@ -414,10 +415,7 @@ const DebugMock = () => {
     [setQueue],
   );
   const formatInputValue = useCallback((inputValue: string): string[] | undefined | null => {
-    const val: string[] = inputValue
-      .replace(/\s/g, "")
-      .split(",")
-      .filter(Boolean);
+    const val: string[] = inputValue.replace(/\s/g, "").split(",").filter(Boolean);
     return val.length > 0 ? val : undefined;
   }, []);
   const onNotifClick = useCallback(() => {

@@ -33,11 +33,7 @@ const iconBuy = Icons.PlusMedium;
 const iconSell = Icons.MinusMedium;
 const iconSwap = Icons.BuyCryptoMedium;
 
-export default function useAccountActions({
-  account,
-  parentAccount,
-  colors,
-}: Props): {
+export default function useAccountActions({ account, parentAccount, colors }: Props): {
   mainActions: ActionButtonEvent[];
   secondaryActions: ActionButtonEvent[];
 } {
@@ -54,9 +50,7 @@ export default function useAccountActions({
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
 
-  const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(
-    currency.id,
-  );
+  const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(currency.id);
 
   const rampCatalog = useRampCatalog();
 
@@ -65,9 +59,7 @@ export default function useAccountActions({
       return [false, false];
     }
 
-    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
-      rampCatalog.value.onRamp,
-    );
+    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
     const allSellableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(
       rampCatalog.value.offRamp,
     );
@@ -78,9 +70,7 @@ export default function useAccountActions({
     ];
   }, [rampCatalog.value, currency]);
 
-  const swapSelectableCurrencies = useSelector(
-    swapSelectableCurrenciesSelector,
-  );
+  const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
   const availableOnSwap = swapSelectableCurrencies.includes(currency.id);
 
   const extraSendActionParams = useMemo(
@@ -217,9 +207,7 @@ export default function useAccountActions({
     ...(!readOnlyModeEnabled && canBeBought ? [actionButtonBuy] : []),
     ...(!readOnlyModeEnabled && canBeSold ? [actionButtonSell] : []),
     ...(!readOnlyModeEnabled
-      ? familySpecificMainActions.filter(
-          action => action.id !== "stake" || canShowStake,
-        )
+      ? familySpecificMainActions.filter(action => action.id !== "stake" || canShowStake)
       : []),
     ...(!readOnlyModeEnabled ? [SendAction] : []),
     ReceiveAction,

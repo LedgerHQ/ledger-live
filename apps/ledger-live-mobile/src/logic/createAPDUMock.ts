@@ -46,10 +46,7 @@ export default (arg: {
 
       case "e0d2": {
         // get name
-        return Buffer.concat([
-          Buffer.from(await arg.getDeviceName()),
-          successResponse,
-        ]);
+        return Buffer.concat([Buffer.from(await arg.getDeviceName()), successResponse]);
       }
 
       case "e0d4": {

@@ -75,24 +75,14 @@ const InfoModal = ({
           ))}
         </View>
       ) : null}
-      <View
-        style={[
-          !title && !desc && !bullets ? styles.childrenContainer : null,
-          containerStyle,
-        ]}
-      >
+      <View style={[!title && !desc && !bullets ? styles.childrenContainer : null, containerStyle]}>
         {children}
       </View>
     </Flex>
 
     <Flex pt={6}>
       {withCancel ? (
-        <Button
-          event={(id || "") + "InfoModalClose"}
-          type={undefined}
-          onPress={onClose}
-          mt={7}
-        >
+        <Button event={(id || "") + "InfoModalClose"} type={undefined} onPress={onClose} mt={7}>
           <Trans i18nKey="common.cancel" />
         </Button>
       ) : null}

@@ -35,23 +35,14 @@ const Illustration = styled(Image).attrs({
 
 const Border: React.FC<{ seen: boolean }> = ({ seen }) => {
   const { colors } = useTheme();
-  const containerSize =
-    innerImageSize + 2 * borderWidth + 2 * borderInnerPadding;
+  const containerSize = innerImageSize + 2 * borderWidth + 2 * borderInnerPadding;
   return (
     <Flex position="absolute" height={containerSize} width={containerSize}>
       <Svg height={containerSize} width={containerSize}>
         <Defs>
           <LinearGradient id="grad" x1="0" y1="1" x2="1" y2="0">
-            <Stop
-              offset="0"
-              stopColor={seen ? colors.neutral.c30 : "#461AF7"}
-              stopOpacity="1"
-            />
-            <Stop
-              offset="1"
-              stopColor={seen ? colors.neutral.c30 : "#FF6E33"}
-              stopOpacity="1"
-            />
+            <Stop offset="0" stopColor={seen ? colors.neutral.c30 : "#461AF7"} stopOpacity="1" />
+            <Stop offset="1" stopColor={seen ? colors.neutral.c30 : "#FF6E33"} stopOpacity="1" />
           </LinearGradient>
         </Defs>
         <Circle

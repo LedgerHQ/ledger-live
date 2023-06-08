@@ -35,8 +35,7 @@ function ConnectDevice({
     account: mainAccount,
     transaction: route.params.transaction,
   }));
-  const tokenCurrency =
-    account.type === "TokenAccount" ? account.token : undefined;
+  const tokenCurrency = account.type === "TokenAccount" ? account.token : undefined;
   const handleTx = useSignedTxHandlerWithoutBroadcast({
     onSuccess,
   });
@@ -51,10 +50,7 @@ function ConnectDevice({
         },
       ]}
     >
-      <TrackScreen
-        category={route.name.replace("ConnectDevice", "")}
-        name="ConnectDevice"
-      />
+      <TrackScreen category={route.name.replace("ConnectDevice", "")} name="ConnectDevice" />
       <DeviceAction
         action={action}
         request={{

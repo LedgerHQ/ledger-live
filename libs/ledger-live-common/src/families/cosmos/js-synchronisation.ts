@@ -31,23 +31,19 @@ const getBlankOperation = (tx, fees, id) => ({
   transactionSequenceNumber: parseInt(tx.tx.auth_info.signer_infos[0].sequence),
 });
 
-const txToOps = (
-  info: AccountShapeInfo,
-  accountId: string,
-  txs: CosmosTx[]
-): Operation[] => {
+const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Operation[] => {
   const { address, currency } = info;
   const ops: Operation[] = [];
   for (const tx of txs) {
     let fees = new BigNumber(0);
 
-    tx.tx.auth_info.fee.amount.forEach((elem) => {
+    tx.tx.auth_info.fee.amount.forEach(elem => {
       if (elem.denom === currency.units[1].code) fees = fees.plus(elem.amount);
     });
 
     const op: Operation = getBlankOperation(tx, fees, accountId);
 
-    const messages: CosmosMessage[] = tx.logs.map((log) => log.events).flat(1);
+    const messages: CosmosMessage[] = tx.logs.map(log => log.events).flat(1);
 
     const mainMessage = getMainMessage(messages);
 
@@ -56,9 +52,7 @@ const txToOps = (
       continue;
     }
 
-    const correspondingMessages = messages.filter(
-      (m) => m.type === mainMessage.type
-    );
+    const correspondingMessages = messages.filter(m => m.type === mainMessage.type);
 
     if (correspondingMessages.length === 0) {
       continue;
@@ -66,9 +60,7 @@ const txToOps = (
 
     // TODO: This mechanism should be removed
     const attributes: { [id: string]: any } = {};
-    mainMessage.attributes.forEach(
-      (item) => (attributes[item.key] = item.value)
-    );
+    mainMessage.attributes.forEach(item => (attributes[item.key] = item.value));
 
     // https://docs.cosmos.network/v0.42/modules/staking/07_events.html
     switch (mainMessage.type) {
@@ -78,9 +70,7 @@ const txToOps = (
           op.recipients.push(attributes.recipient);
 
           if (attributes.amount.indexOf(currency.units[1].code) != -1) {
-            op.value = op.value.plus(
-              attributes.amount.replace(currency.units[1].code, "")
-            );
+            op.value = op.value.plus(attributes.amount.replace(currency.units[1].code, ""));
           }
 
           if (!op.type && attributes.sender === address) {
@@ -100,9 +90,7 @@ const txToOps = (
         let txRewardValue = new BigNumber(0);
 
         for (const message of correspondingMessages) {
-          const validatorAttribute = message.attributes.find(
-            (attr) => attr.key === "validator"
-          );
+          const validatorAttribute = message.attributes.find(attr => attr.key === "validator");
 
           if (validatorAttribute == null) {
             continue;
@@ -112,16 +100,13 @@ const txToOps = (
 
           let messageRewardValue = new BigNumber(0);
           const amountAttributes = message.attributes.filter(
-            (attribute) =>
-              attribute.key === "amount" &&
-              attribute.value.includes(currency.units[1].code)
+            attribute =>
+              attribute.key === "amount" && attribute.value.includes(currency.units[1].code),
           );
 
-          amountAttributes.forEach((amountAttribute) => {
+          amountAttributes.forEach(amountAttribute => {
             messageRewardValue = messageRewardValue.plus(
-              new BigNumber(
-                amountAttribute.value.replace(currency.units[1].code, "")
-              )
+              new BigNumber(amountAttribute.value.replace(currency.units[1].code, "")),
             );
           });
 
@@ -140,10 +125,7 @@ const txToOps = (
       }
 
       case "delegate":
-        if (
-          attributes.amount &&
-          attributes.amount.indexOf(currency.units[1].code) != -1
-        ) {
+        if (attributes.amount && attributes.amount.indexOf(currency.units[1].code) != -1) {
           op.type = "DELEGATE";
           op.value = new BigNumber(fees);
           op.extra.validators.push({
@@ -206,7 +188,7 @@ const txToOps = (
   return ops;
 };
 
-export const getAccountShape: GetAccountShape = async (info) => {
+export const getAccountShape: GetAccountShape = async info => {
   const { address, currency, derivationMode, initialAccount } = info;
   const accountId = encodeAccountId({
     type: "js",
@@ -216,15 +198,8 @@ export const getAccountShape: GetAccountShape = async (info) => {
     derivationMode,
   });
 
-  const {
-    balances,
-    blockHeight,
-    txs,
-    delegations,
-    redelegations,
-    unbondings,
-    withdrawAddress,
-  } = await new CosmosAPI(currency.id).getAccountInfo(address, currency);
+  const { balances, blockHeight, txs, delegations, redelegations, unbondings, withdrawAddress } =
+    await new CosmosAPI(currency.id).getAccountInfo(address, currency);
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);
   const operations = mergeOps(oldOperations, newOperations);
@@ -237,9 +212,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     delegatedBalance = delegatedBalance.plus(delegation.amount);
     balance = balance.plus(delegation.amount);
 
-    pendingRewardsBalance = pendingRewardsBalance.plus(
-      delegation.pendingRewards
-    );
+    pendingRewardsBalance = pendingRewardsBalance.plus(delegation.pendingRewards);
   }
 
   for (const unbonding of unbondings) {

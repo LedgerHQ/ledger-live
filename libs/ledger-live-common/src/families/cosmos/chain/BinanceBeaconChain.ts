@@ -10,8 +10,7 @@ class BinanceBeaconChain extends CosmosBase {
   ledgerValidator!: string;
   constructor() {
     super();
-    this.stakingDocUrl =
-      "https://support.ledger.com/hc/en-us/articles/9605007135133?support=true";
+    this.stakingDocUrl = "https://support.ledger.com/hc/en-us/articles/9605007135133?support=true";
     this.unbondingPeriod = 21;
     this.prefix = "bnb";
     this.validatorPrefix = `${this.prefix}valoper`;

@@ -7,11 +7,7 @@ import sampleSize from "lodash/sampleSize";
 import get from "lodash/get";
 import type { Transaction, TronAccount } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import {
-  botTest,
-  expectSiblingsHaveSpendablePartGreaterThan,
-  pickSiblings,
-} from "../../bot/specs";
+import { botTest, expectSiblingsHaveSpendablePartGreaterThan, pickSiblings } from "../../bot/specs";
 import type { AppSpec, TransactionDestinationTestInput } from "../../bot/types";
 import { getUnfreezeData, getNextRewardDate } from "./react";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -26,11 +22,7 @@ const getDecimalPart = (value: BigNumber, magnitude: number) =>
   value.minus(value.modulo(10 ** magnitude));
 
 // FIXME TRON have a bug where the amounts from the API have imprecisions
-const expectedApproximate = (
-  value: BigNumber,
-  expected: BigNumber,
-  delta = 50
-) => {
+const expectedApproximate = (value: BigNumber, expected: BigNumber, delta = 50) => {
   if (value.minus(expected).abs().gt(delta)) {
     expect(value.toString()).toEqual(value.toString());
   }
@@ -44,13 +36,10 @@ const testDestination = <T>({
 }: TransactionDestinationTestInput<T>): void => {
   const amount = sendingOperation.value.minus(sendingOperation.fee);
   botTest("account balance increased with transaction amount", () =>
-    expectedApproximate(
-      destination.balance,
-      destinationBeforeTransaction.balance.plus(amount)
-    )
+    expectedApproximate(destination.balance, destinationBeforeTransaction.balance.plus(amount)),
   );
   botTest("operation amount is consistent with sendingOperation", () =>
-    expectedApproximate(operation.value, amount)
+    expectedApproximate(operation.value, amount),
   );
 };
 
@@ -90,8 +79,8 @@ const tron: AppSpec<Transaction> = {
         botTest("account spendable balance decreased with operation", () =>
           expectedApproximate(
             account.spendableBalance,
-            accountBeforeTransaction.spendableBalance.minus(operation.value)
-          )
+            accountBeforeTransaction.spendableBalance.minus(operation.value),
+          ),
         );
       },
     },
@@ -117,7 +106,7 @@ const tron: AppSpec<Transaction> = {
       },
       test: ({ account }) => {
         botTest("account spendable balance is zero", () =>
-          expectedApproximate(account.spendableBalance, new BigNumber(0))
+          expectedApproximate(account.spendableBalance, new BigNumber(0)),
         );
       },
     },
@@ -130,7 +119,7 @@ const tron: AppSpec<Transaction> = {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         let amount = getDecimalPart(
           maxSpendable.div(4),
-          currency.units[0].magnitude
+          currency.units[0].magnitude,
         ).integerValue();
 
         if (amount.lt(minimalAmount)) {
@@ -158,20 +147,16 @@ const tron: AppSpec<Transaction> = {
         const resourceBeforeTransaction = get(
           accountBeforeTransaction,
           `tronResources.frozen.${resourceType}.amount`,
-          new BigNumber(0)
+          new BigNumber(0),
         );
-        const expectedAmount = new BigNumber(transaction.amount).plus(
-          resourceBeforeTransaction
-        );
+        const expectedAmount = new BigNumber(transaction.amount).plus(resourceBeforeTransaction);
         const currentRessourceAmount = get(
           account,
           `tronResources.frozen.${resourceType}.amount`,
-          new BigNumber(0)
+          new BigNumber(0),
         );
         botTest("frozen amount is accumulated in resources", () =>
-          expect(expectedAmount.toString()).toBe(
-            currentRessourceAmount.toString()
-          )
+          expect(expectedAmount.toString()).toBe(currentRessourceAmount.toString()),
         );
       },
     },
@@ -181,16 +166,9 @@ const tron: AppSpec<Transaction> = {
       transaction: ({ account, bridge }) => {
         const TP = new BigNumber(get(account, "tronResources.tronPower", "0"));
         invariant(TP.gt(0), "no frozen assets");
-        const { canUnfreezeBandwidth, canUnfreezeEnergy } = getUnfreezeData(
-          account as TronAccount
-        );
-        invariant(
-          canUnfreezeBandwidth || canUnfreezeEnergy,
-          "freeze period not expired yet"
-        );
-        const resourceToUnfreeze = canUnfreezeBandwidth
-          ? "BANDWIDTH"
-          : "ENERGY";
+        const { canUnfreezeBandwidth, canUnfreezeEnergy } = getUnfreezeData(account as TronAccount);
+        invariant(canUnfreezeBandwidth || canUnfreezeEnergy, "freeze period not expired yet");
+        const resourceToUnfreeze = canUnfreezeBandwidth ? "BANDWIDTH" : "ENERGY";
         return {
           transaction: bridge.createTransaction(account),
           updates: [
@@ -205,24 +183,14 @@ const tron: AppSpec<Transaction> = {
       },
       test: ({ account, accountBeforeTransaction, transaction }) => {
         const TxResource = (transaction.resource || "").toLocaleLowerCase();
-        const currentFrozen = get(
-          account,
-          `tronResources.frozen.${TxResource}`,
-          undefined
-        );
-        botTest("no current frozen", () =>
-          expect(currentFrozen).toBeUndefined()
-        );
+        const currentFrozen = get(account, `tronResources.frozen.${TxResource}`, undefined);
+        botTest("no current frozen", () => expect(currentFrozen).toBeUndefined());
         const TPBeforeTx = new BigNumber(
-          get(accountBeforeTransaction, "tronResources.tronPower", 0)
+          get(accountBeforeTransaction, "tronResources.tronPower", 0),
         );
-        const currentTP = new BigNumber(
-          get(account, "tronResources.tronPower", 0)
-        );
+        const currentTP = new BigNumber(get(account, "tronResources.tronPower", 0));
         const expectedTronPower = TPBeforeTx.minus(transaction.amount);
-        botTest("tron power", () =>
-          expectedApproximate(currentTP, expectedTronPower)
-        );
+        botTest("tron power", () => expectedApproximate(currentTP, expectedTronPower));
       },
     },
     {
@@ -233,19 +201,19 @@ const tron: AppSpec<Transaction> = {
         invariant(TP.gt(0), "no tron power to vote");
         const currentTPVoted = get(account, "tronResources.votes", []).reduce(
           (acc, curr) => acc.plus(new BigNumber(get(curr, "voteCount", 0))),
-          new BigNumber(0)
+          new BigNumber(0),
         );
         invariant(TP.gt(currentTPVoted), "you have no tron power left");
         const { superRepresentatives } = preloadedData;
         invariant(
           superRepresentatives && superRepresentatives.length,
-          "there are no super representatives to vote for, or the list has not been loaded yet"
+          "there are no super representatives to vote for, or the list has not been loaded yet",
         );
         const count = 1 + Math.floor(5 * Math.random());
         const candidates = sampleSize(superRepresentatives.slice(0, 40), count);
         let remaining = TP;
         const votes = candidates
-          .map((c) => {
+          .map(c => {
             if (!remaining.gt(0)) return null;
             const voteCount = remaining.eq(1)
               ? remaining.integerValue().toNumber()
@@ -272,9 +240,7 @@ const tron: AppSpec<Transaction> = {
       },
       test: ({ account, transaction }) => {
         const votes = sortBy(transaction.votes, ["address"]);
-        const currentVotes = sortBy(get(account, "tronResources.votes", []), [
-          "address",
-        ]);
+        const currentVotes = sortBy(get(account, "tronResources.votes", []), ["address"]);
         botTest("current votes", () => expect(currentVotes).toEqual(votes));
       },
     },
@@ -459,12 +425,12 @@ const tron: AppSpec<Transaction> = {
         const nextRewardDate = getNextRewardDate(account as TronAccount);
         const today = Date.now();
         const unwithdrawnReward = new BigNumber(
-          get(account, "tronResources.unwithdrawnReward", "0")
+          get(account, "tronResources.unwithdrawnReward", "0"),
         );
         invariant(unwithdrawnReward.gt(0), "no rewards to claim");
         invariant(
           nextRewardDate && nextRewardDate <= today,
-          "you can't claim twice in less than 24 hours"
+          "you can't claim twice in less than 24 hours",
         );
         return {
           transaction: bridge.createTransaction(account),
@@ -476,13 +442,11 @@ const tron: AppSpec<Transaction> = {
         };
       },
       test: ({ account }) => {
-        const rewards = new BigNumber(
-          get(account, "tronResources.unwithdrawnReward", "0")
-        );
+        const rewards = new BigNumber(get(account, "tronResources.unwithdrawnReward", "0"));
         const nextRewardDate = getNextRewardDate(account as TronAccount);
         botTest("rewards is zero", () => expect(rewards.eq(0)).toBe(true));
         botTest("next reward date settled", () =>
-          expect(nextRewardDate && nextRewardDate > Date.now()).toBe(true)
+          expect(nextRewardDate && nextRewardDate > Date.now()).toBe(true),
         );
       },
     },

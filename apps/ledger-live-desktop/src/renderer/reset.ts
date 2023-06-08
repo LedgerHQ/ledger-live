@@ -22,9 +22,7 @@ export async function killInternalProcess() {
 }
 function reload() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require("@electron/remote")
-    .getCurrentWindow()
-    .webContents.reload();
+  require("@electron/remote").getCurrentWindow().webContents.reload();
 }
 export async function hardReset() {
   log("clear-cache", "clearBridgeCache()");

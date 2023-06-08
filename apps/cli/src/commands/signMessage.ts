@@ -5,8 +5,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import signMessage from "@ledgerhq/live-common/hw/signMessage/index";
 import { currencyOpt, inferCurrency } from "../scan";
 export default {
-  description:
-    "Sign a message with the device on specific derivations (advanced)",
+  description: "Sign a message with the device on specific derivations (advanced)",
   args: [
     currencyOpt,
     {
@@ -33,7 +32,7 @@ export default {
   ],
   job: (arg: any) =>
     inferCurrency(arg).pipe(
-      mergeMap((currency) => {
+      mergeMap(currency => {
         if (!currency) {
           throw new Error("no currency provided");
         }
@@ -59,9 +58,7 @@ export default {
             break;
         }
 
-        return withDevice(arg.device || "")((t) =>
-          from(signMessage(t, { ...arg, currency }))
-        );
-      })
+        return withDevice(arg.device || "")(t => from(signMessage(t, { ...arg, currency })));
+      }),
     ),
 };

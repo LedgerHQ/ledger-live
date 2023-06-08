@@ -242,12 +242,8 @@ const Separator = styled.div`
 `;
 
 export function AnnouncementPanel() {
-  const {
-    notificationsCards,
-    logNotificationImpression,
-    groupNotifications,
-    onClickNotif,
-  } = useNotifications();
+  const { notificationsCards, logNotificationImpression, groupNotifications, onClickNotif } =
+    useNotifications();
 
   const timeoutByUUID = useRef<Record<string, NodeJS.Timeout>>({});
   const handleInViewNotif = useCallback(

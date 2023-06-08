@@ -60,7 +60,7 @@ export default function Dropdown<O>(props: Props<O>): JSX.Element {
       placeholder=""
       isSearchable={false}
       styles={{
-        singleValue: (provided) => ({
+        singleValue: provided => ({
           ...provided,
           color: theme.colors.neutral.c100,
           margin: 0,
@@ -71,7 +71,7 @@ export default function Dropdown<O>(props: Props<O>): JSX.Element {
           transform: undefined,
         }),
         input: () => ({ display: "none" }),
-        menu: (provided) => ({
+        menu: provided => ({
           ...provided,
           border: 0,
           boxShadow: "none",

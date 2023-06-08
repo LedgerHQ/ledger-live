@@ -1,8 +1,6 @@
 import { Observable, from } from "rxjs";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import getBatteryStatus, {
-  BatteryStatusTypes,
-} from "@ledgerhq/live-common/hw/getBatteryStatus";
+import getBatteryStatus, { BatteryStatusTypes } from "@ledgerhq/live-common/hw/getBatteryStatus";
 import { currencyOpt, deviceOpt } from "../scan";
 export default {
   description: "Get the battery status of the current device",
@@ -19,9 +17,9 @@ export default {
     arg: Partial<{
       device: string;
       p2: string;
-    }>
+    }>,
   ): Observable<number[]> =>
-    withDevice(arg.device || "")((t) =>
-      from(getBatteryStatus(t, [parseInt(arg.p2 || "0") as BatteryStatusTypes]))
+    withDevice(arg.device || "")(t =>
+      from(getBatteryStatus(t, [parseInt(arg.p2 || "0") as BatteryStatusTypes])),
     ),
 };
