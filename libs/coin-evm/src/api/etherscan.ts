@@ -54,164 +54,154 @@ async function fetchWithRetries<T>(
 /**
  * Get all the last "normal" transactions (no tokens / NFTs)
  */
-export const getLastCoinOperations = makeLRUCache<
-  [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
-  Operation[]
->(
-  async (currency, address, accountId, fromBlock) => {
-    const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-    if (!apiDomain) {
-      return [];
-    }
+export const getLastCoinOperations = async (
+  currency: CryptoCurrency,
+  address: string,
+  accountId: string,
+  fromBlock: number,
+): Promise<Operation[]> => {
+  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
+  if (!apiDomain) {
+    return [];
+  }
 
-    let url = `${apiDomain}/api?module=account&action=txlist&address=${address}&tag=latest&page=1&sort=desc`;
-    if (fromBlock) {
-      url += `&startBlock=${fromBlock}`;
-    }
+  let url = `${apiDomain}/api?module=account&action=txlist&address=${address}&tag=latest&page=1&sort=desc`;
+  if (fromBlock) {
+    url += `&startBlock=${fromBlock}`;
+  }
 
-    const ops = await fetchWithRetries<EtherscanOperation[]>({
-      method: "GET",
-      url,
-    });
+  const ops = await fetchWithRetries<EtherscanOperation[]>({
+    method: "GET",
+    url,
+  });
 
-    return ops
-      .map(tx => etherscanOperationToOperation(accountId, tx))
-      .filter(Boolean) as Operation[];
-  },
-  (currency, address, accountId, fromBlock) => accountId + fromBlock,
-  { ttl: 5 * 1000 },
-);
+  return ops.map(tx => etherscanOperationToOperation(accountId, tx)).filter(Boolean) as Operation[];
+};
 
 /**
  * Get all the last ERC20 transactions
  */
-export const getLastTokenOperations = makeLRUCache<
-  [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
-  Operation[]
->(
-  async (currency, address, accountId, fromBlock) => {
-    const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-    if (!apiDomain) {
-      return [];
-    }
+export const getLastTokenOperations = async (
+  currency: CryptoCurrency,
+  address: string,
+  accountId: string,
+  fromBlock: number,
+): Promise<Operation[]> => {
+  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
+  if (!apiDomain) {
+    return [];
+  }
 
-    let url = `${apiDomain}/api?module=account&action=tokentx&address=${address}&tag=latest&page=1&sort=desc`;
-    if (fromBlock) {
-      url += `&startBlock=${fromBlock}`;
-    }
+  let url = `${apiDomain}/api?module=account&action=tokentx&address=${address}&tag=latest&page=1&sort=desc`;
+  if (fromBlock) {
+    url += `&startBlock=${fromBlock}`;
+  }
 
-    const ops = await fetchWithRetries<EtherscanERC20Event[]>({
-      method: "GET",
-      url,
-    });
+  const ops = await fetchWithRetries<EtherscanERC20Event[]>({
+    method: "GET",
+    url,
+  });
 
-    return ops
-      .map((event, index) => etherscanERC20EventToOperation(accountId, event, index))
-      .filter(Boolean) as Operation[];
-  },
-  (currency, address, accountId, fromBlock) => accountId + fromBlock,
-  { ttl: 5 * 1000 },
-);
+  return ops
+    .map((event, index) => etherscanERC20EventToOperation(accountId, event, index))
+    .filter(Boolean) as Operation[];
+};
 
 /**
  * Get all the last ERC721 transactions
  */
-export const getLastERC721Operations = makeLRUCache<
-  [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
-  Operation[]
->(
-  async (currency, address, accountId, fromBlock) => {
-    const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-    if (!apiDomain) {
-      return [];
+export const getLastERC721Operations = async (
+  currency: CryptoCurrency,
+  address: string,
+  accountId: string,
+  fromBlock: number,
+): Promise<Operation[]> => {
+  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
+  if (!apiDomain) {
+    return [];
+  }
+
+  let url = `${apiDomain}/api?module=account&action=tokennfttx&address=${address}&tag=latest&page=1&sort=desc`;
+  if (fromBlock) {
+    url += `&startBlock=${fromBlock}`;
+  }
+
+  const ops = await fetchWithRetries<EtherscanERC721Event[]>({
+    method: "GET",
+    url,
+  });
+
+  // Why this thing ?
+  // Multiple events can be fired by the same transactions and
+  // those transfer events can go from anyone to anyone, which
+  // means that multiple events could be sent to or from the
+  // same address during the same transaction.
+  //
+  // To make sure every event (transformed into an operation here)
+  // has a unique id, we're groupping them by transaction hash
+  // and using the index for each event fired.
+  const opsByHash: Record<string, EtherscanERC721Event[]> = {};
+  for (const op of ops) {
+    if (!opsByHash[op.hash]) {
+      opsByHash[op.hash] = [];
     }
+    opsByHash[op.hash].push(op);
+  }
 
-    let url = `${apiDomain}/api?module=account&action=tokennfttx&address=${address}&tag=latest&page=1&sort=desc`;
-    if (fromBlock) {
-      url += `&startBlock=${fromBlock}`;
-    }
-
-    const ops = await fetchWithRetries<EtherscanERC721Event[]>({
-      method: "GET",
-      url,
-    });
-
-    // Why this thing ?
-    // Multiple events can be fired by the same transactions and
-    // those transfer events can go from anyone to anyone, which
-    // means that multiple events could be sent to or from the
-    // same address during the same transaction.
-    //
-    // To make sure every event (transformed into an operation here)
-    // has a unique id, we're groupping them by transaction hash
-    // and using the index for each event fired.
-    const opsByHash: Record<string, EtherscanERC721Event[]> = {};
-    for (const op of ops) {
-      if (!opsByHash[op.hash]) {
-        opsByHash[op.hash] = [];
-      }
-      opsByHash[op.hash].push(op);
-    }
-
-    return Object.values(opsByHash)
-      .map(events =>
-        events.map((event, index) => etherscanERC721EventToOperation(accountId, event, index)),
-      )
-      .flat();
-  },
-  (currency, address, accountId, fromBlock) => accountId + fromBlock,
-  { ttl: 5 * 1000 },
-);
+  return Object.values(opsByHash)
+    .map(events =>
+      events.map((event, index) => etherscanERC721EventToOperation(accountId, event, index)),
+    )
+    .flat();
+};
 
 /**
  * Get all the last ERC71155 transactions
  */
-export const getLastERC1155Operations = makeLRUCache<
-  [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
-  Operation[]
->(
-  async (currency, address, accountId, fromBlock) => {
-    const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
-    if (!apiDomain) {
-      return [];
+export const getLastERC1155Operations = async (
+  currency: CryptoCurrency,
+  address: string,
+  accountId: string,
+  fromBlock: number,
+): Promise<Operation[]> => {
+  const apiDomain = currency.ethereumLikeInfo?.explorer?.uri;
+  if (!apiDomain) {
+    return [];
+  }
+
+  let url = `${apiDomain}/api?module=account&action=token1155tx&address=${address}&tag=latest&page=1&sort=desc`;
+  if (fromBlock) {
+    url += `&startBlock=${fromBlock}`;
+  }
+
+  const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
+    method: "GET",
+    url,
+  });
+
+  // Why this thing ?
+  // Multiple events can be fired by the same transactions and
+  // those transfer events can go from anyone to anyone, which
+  // means that multiple events could be sent to or from the
+  // same address during the same transaction.
+  //
+  // To make sure every event (transformed into an operation here)
+  // has a unique id, we're groupping them by transaction hash
+  // and using the index for each event fired.
+  const opsByHash: Record<string, EtherscanERC1155Event[]> = {};
+  for (const op of ops) {
+    if (!opsByHash[op.hash]) {
+      opsByHash[op.hash] = [];
     }
+    opsByHash[op.hash].push(op);
+  }
 
-    let url = `${apiDomain}/api?module=account&action=token1155tx&address=${address}&tag=latest&page=1&sort=desc`;
-    if (fromBlock) {
-      url += `&startBlock=${fromBlock}`;
-    }
-
-    const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
-      method: "GET",
-      url,
-    });
-
-    // Why this thing ?
-    // Multiple events can be fired by the same transactions and
-    // those transfer events can go from anyone to anyone, which
-    // means that multiple events could be sent to or from the
-    // same address during the same transaction.
-    //
-    // To make sure every event (transformed into an operation here)
-    // has a unique id, we're groupping them by transaction hash
-    // and using the index for each event fired.
-    const opsByHash: Record<string, EtherscanERC1155Event[]> = {};
-    for (const op of ops) {
-      if (!opsByHash[op.hash]) {
-        opsByHash[op.hash] = [];
-      }
-      opsByHash[op.hash].push(op);
-    }
-
-    return Object.values(opsByHash)
-      .map(events =>
-        events.map((event, index) => etherscanERC1155EventToOperation(accountId, event, index)),
-      )
-      .flat();
-  },
-  (currency, address, accountId, fromBlock) => accountId + fromBlock,
-  { ttl: 5 * 1000 },
-);
+  return Object.values(opsByHash)
+    .map(events =>
+      events.map((event, index) => etherscanERC1155EventToOperation(accountId, event, index)),
+    )
+    .flat();
+};
 
 /**
  * Get all NFT related operations (ERC721 + ERC1155)
@@ -238,30 +228,37 @@ export const getLastNftOperations = async (
  * do not use a Promise.all here, it would
  * break because of the rate limits
  */
-export const getLastOperations = async (
-  currency: CryptoCurrency,
-  address: string,
-  accountId: string,
-  fromBlock: number,
-): Promise<{
-  lastCoinOperations: Operation[];
-  lastTokenOperations: Operation[];
-  lastNftOperations: Operation[];
-}> => {
-  const lastCoinOperations = await getLastCoinOperations(currency, address, accountId, fromBlock);
+export const getLastOperations = makeLRUCache<
+  [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
+  {
+    lastCoinOperations: Operation[];
+    lastTokenOperations: Operation[];
+    lastNftOperations: Operation[];
+  }
+>(
+  async (currency, address, accountId, fromBlock) => {
+    const lastCoinOperations = await getLastCoinOperations(currency, address, accountId, fromBlock);
 
-  const lastTokenOperations = await getLastTokenOperations(currency, address, accountId, fromBlock);
+    const lastTokenOperations = await getLastTokenOperations(
+      currency,
+      address,
+      accountId,
+      fromBlock,
+    );
 
-  const lastNftOperations = isNFTActive(currency)
-    ? await getLastNftOperations(currency, address, accountId, fromBlock)
-    : [];
+    const lastNftOperations = isNFTActive(currency)
+      ? await getLastNftOperations(currency, address, accountId, fromBlock)
+      : [];
 
-  return {
-    lastCoinOperations,
-    lastTokenOperations,
-    lastNftOperations,
-  };
-};
+    return {
+      lastCoinOperations,
+      lastTokenOperations,
+      lastNftOperations,
+    };
+  },
+  (currency, address, accountId, fromBlock) => accountId + fromBlock,
+  { ttl: ETHERSCAN_TIMEOUT },
+);
 
 export default {
   getLastCoinOperations,
