@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.24.0-next.3
+
+### Patch Changes
+
+- [#3600](https://github.com/LedgerHQ/ledger-live/pull/3600) [`debf6215d0`](https://github.com/LedgerHQ/ledger-live/commit/debf6215d04c2337d9d2556ad123126a568f5c07) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Memoize requests for device actions to prevent rendering loops
+
 ## 3.24.0-next.2
 
 ### Patch Changes
