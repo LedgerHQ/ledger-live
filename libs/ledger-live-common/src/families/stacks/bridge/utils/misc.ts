@@ -15,7 +15,7 @@ import {
 import { decodeAccountId, encodeAccountId } from "../../../../account";
 import {
   fetchBalances,
-  fetchBlockHeight,
+  fetchBlockHeight, fetchFullMempoolTxs,
   fetchFullTxs,
 } from "../../bridge/utils/api";
 import { StacksNetwork, TransactionResponse } from "./api.types";
@@ -136,15 +136,24 @@ export const getAccountShape: GetAccountShape = async (info) => {
   });
 
   const blockHeight = await fetchBlockHeight();
-  const balance = await fetchBalances(address);
+  const balanceResp = await fetchBalances(address);
   const rawTxs = await fetchFullTxs(address);
+  const mempoolTxs = await fetchFullMempoolTxs(address);
+
+  const balance = new BigNumber(balanceResp.balance);
+  let spendableBalance = new BigNumber(balanceResp.balance);
+  for (const tx of mempoolTxs) {
+    spendableBalance = spendableBalance
+      .minus(new BigNumber(tx.fee_rate))
+      .minus(new BigNumber(tx.token_transfer.amount));
+  }
 
   const result = {
     id: accountId,
     xpub: publicKey,
     freshAddress: address,
-    balance: new BigNumber(balance.balance),
-    spendableBalance: new BigNumber(balance.balance),
+    balance,
+    spendableBalance,
     operations: flatMap(rawTxs, mapTxToOps(accountId, info)),
     blockHeight: blockHeight.chain_tip.block_height,
   };

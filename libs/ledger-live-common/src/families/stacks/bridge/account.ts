@@ -38,7 +38,7 @@ import {
 import { StacksNetwork } from "./utils/api.types";
 import { Transaction, TransactionStatus } from "../types";
 import { getAccountShape, getTxToBroadcast } from "./utils/misc";
-import {broadcastTx, fetchFullMempoolTxs, fetchMempoolTxs} from "./utils/api";
+import {broadcastTx, fetchFullMempoolTxs} from "./utils/api";
 import { getAddress } from "../../filecoin/bridge/utils/utils";
 import { withDevice } from "../../../hw/deviceAccess";
 import { getPath, throwIfError } from "../utils";
@@ -83,7 +83,7 @@ const getTransactionStatus = async (
   const errors: TransactionStatus["errors"] = {};
   const warnings: TransactionStatus["warnings"] = {};
 
-  const { balance } = a;
+  const { spendableBalance } = a;
   const { address } = getAddress(a);
   const { recipient, useAllAmount, fee } = t;
   const { memo } = t;
@@ -101,11 +101,13 @@ const getTransactionStatus = async (
 
   const estimatedFees = fee || new BigNumber(0);
 
-  const totalSpent = useAllAmount ? balance : amount.plus(estimatedFees);
-  amount = useAllAmount ? balance.minus(estimatedFees) : amount;
+  const totalSpent = useAllAmount
+    ? spendableBalance
+    : amount.plus(estimatedFees);
+  amount = useAllAmount ? spendableBalance.minus(estimatedFees) : amount;
 
   if (amount.lte(0)) errors.amount = new AmountRequired();
-  if (totalSpent.gt(a.spendableBalance)) errors.amount = new NotEnoughBalance();
+  if (totalSpent.gt(spendableBalance)) errors.amount = new NotEnoughBalance();
   if (memo && memo.length > 34) errors.transaction = new StacksMemoTooLong();
 
   return {
@@ -141,7 +143,7 @@ const prepareTransaction = async (
   a: Account,
   t: Transaction
 ): Promise<Transaction> => {
-  const { id: accountID, balance } = a;
+  const { id: accountID, spendableBalance } = a;
   const { recipient, useAllAmount } = t;
   const { xpubOrAddress: xpub } = decodeAccountId(accountID);
 
@@ -178,7 +180,7 @@ const prepareTransaction = async (
     newTx.fee = new BigNumber(fee.toString());
     newTx.nonce = new BigNumber(nonce.toString());
 
-    if (useAllAmount) newTx.amount = balance.minus(newTx.fee);
+    if (useAllAmount) newTx.amount = spendableBalance.minus(newTx.fee);
 
     return newTx;
   }
