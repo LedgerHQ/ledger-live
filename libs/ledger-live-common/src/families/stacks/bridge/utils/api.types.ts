@@ -44,6 +44,30 @@ export interface TransactionResponse {
   }[];
 }
 
+
+export interface MempoolTransaction {
+  tx_id: string;
+  tx_status: string;
+  tx_type: string;
+  receipt_time: number;
+  receipt_time_iso: string;
+  fee_rate: string;
+  sender_address: string;
+  sponsored: boolean;
+  token_transfer: {
+    recipient_address: string;
+    amount: string;
+    memo: string;
+  };
+}
+
+export interface MempoolResponse {
+  limit: number;
+  offset: number;
+  total: number;
+  results: MempoolTransaction[];
+}
+
 export interface BalanceResponse {
   balance: string;
 }

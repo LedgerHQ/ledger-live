@@ -5,7 +5,7 @@ import {
   BroadcastTransactionRequest,
   BroadcastTransactionResponse,
   EstimatedFeesRequest,
-  EstimatedFeesResponse,
+  EstimatedFeesResponse, MempoolResponse, MempoolTransaction,
   NetworkStatusResponse,
   TransactionResponse,
   TransactionsResponse,
@@ -130,4 +130,32 @@ export const broadcastTx = async (
 
   if (response != "") response = `0x${response}`;
   return response; // TODO Validate if the response fits this interface
+};
+
+export const fetchMempoolTxs = async (
+  addr: string,
+  offset = 0
+): Promise<MempoolResponse> => {
+  const response = await fetch<MempoolResponse>(
+    `/extended/v1/tx/mempool?sender_address=${addr}&offset=${offset}`
+  );
+  return response; // TODO Validate if the response fits this interface
+};
+
+export const fetchFullMempoolTxs = async (
+  addr: string
+): Promise<MempoolTransaction[]> => {
+  let qty,
+    offset = 0;
+  let txs: MempoolTransaction[] = [];
+
+  do {
+    const { results, total, limit } = await fetchMempoolTxs(addr, offset);
+    txs = txs.concat(results);
+
+    offset += limit;
+    qty = total;
+  } while (offset < qty);
+
+  return txs; // TODO Validate if the response fits this interface
 };
