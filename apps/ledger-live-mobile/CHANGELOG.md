@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.24.0-nightly.7
+
+### Patch Changes
+
+- [#3607](https://github.com/LedgerHQ/ledger-live/pull/3607) [`d7e9975868`](https://github.com/LedgerHQ/ledger-live/commit/d7e9975868b13f07a6b295df054fd0b79e696151) Thanks [@cksanders](https://github.com/cksanders)! - Fix regression on Select Account onSuccess LLM
+
+- [#3497](https://github.com/LedgerHQ/ledger-live/pull/3497) [`aaa84e8d64`](https://github.com/LedgerHQ/ledger-live/commit/aaa84e8d64ad8b76c1fe791092e533054fc038ac) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: new architecture for the sync onboarding with the early security check
+
+  Implementing the new architecture on LLM for the sync onboarding:
+
+  - a new SyncOnboardingCompanion component getting (almost) all the logic that existed directly in the screen
+  - an empty EarlySecurityCheck component that directly notifies (for now) that everything is good
+  - a screen that orchestrate which of the 2 components should be rendered by checking the onboarding state of the device, and calling the new device action toggleOnboardingEarlyCheckAction when needed
+
+- [#3538](https://github.com/LedgerHQ/ledger-live/pull/3538) [`8613959ec6`](https://github.com/LedgerHQ/ledger-live/commit/8613959ec64a6443329b0ad1712e5dc7f9bf0edc) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix non rendering lotties in CLS flows
+
+- Updated dependencies [[`81dd0c3ef3`](https://github.com/LedgerHQ/ledger-live/commit/81dd0c3ef38a3d6d69c27c65864bf1b41c52643c)]:
+  - @ledgerhq/live-common@31.0.0-nightly.7
+
 ## 3.24.0-nightly.6
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # @ledgerhq/live-cli
 
+## 22.9.0-nightly.7
+
+### Patch Changes
+
+- [#3497](https://github.com/LedgerHQ/ledger-live/pull/3497) [`81dd0c3ef3`](https://github.com/LedgerHQ/ledger-live/commit/81dd0c3ef38a3d6d69c27c65864bf1b41c52643c) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: new toggleOnboardingEarlyCheckAction device action
+
+  Introducing a new device action (implemented in the device SDK): toggleOnboardingEarlyCheckAction with
+
+  - its associated new command and task
+  - its associated new onboarding state
+  - a hook useToggleOnboardingEarlyCheck for simple usage on LLM and LLD
+  - unit tests
+  - its associated cli command deviceSDKToggleOnboardingEarlyCheck
+
+  This new action uses a new APDU to enter and exit the "early security check" blocking step during the onboarding of Stax.
+
+- Updated dependencies [[`81dd0c3ef3`](https://github.com/LedgerHQ/ledger-live/commit/81dd0c3ef38a3d6d69c27c65864bf1b41c52643c)]:
+  - @ledgerhq/live-common@31.0.0-nightly.7
+
 ## 22.9.0-nightly.6
 
 ### Patch Changes

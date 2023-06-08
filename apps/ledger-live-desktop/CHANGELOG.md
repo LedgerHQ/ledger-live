@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.61.0-nightly.7
+
+### Patch Changes
+
+- [#3594](https://github.com/LedgerHQ/ledger-live/pull/3594) [`8517d3ed41`](https://github.com/LedgerHQ/ledger-live/commit/8517d3ed41ad3718df9aae4d2d6fffa5a622f9ad) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Added ability for navigation to specific account via the account deeplink if a valid currency and account address are provided as params
+
+- Updated dependencies [[`81dd0c3ef3`](https://github.com/LedgerHQ/ledger-live/commit/81dd0c3ef38a3d6d69c27c65864bf1b41c52643c)]:
+  - @ledgerhq/live-common@31.0.0-nightly.7
+
 ## 2.61.0-nightly.6
 
 ### Patch Changes
