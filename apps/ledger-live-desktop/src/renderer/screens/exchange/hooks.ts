@@ -47,7 +47,7 @@ let exchangeProvider = PROVIDERS.COINIFY;
 // @TODO move this switch logic in settings maybe
 export const useExchangeProvider = () => {
   const setProvider = useCallback(
-    (p: { id: string; iconResource: any }) => (exchangeProvider = p),
+    (p: { id: string; iconResource: unknown }) => (exchangeProvider = p),
     [],
   );
   return [exchangeProvider, setProvider];

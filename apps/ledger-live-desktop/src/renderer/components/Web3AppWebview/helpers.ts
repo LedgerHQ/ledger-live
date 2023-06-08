@@ -11,6 +11,7 @@ import { addParamsToURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { LiveAppManifest } from "~/../../../libs/ledger-live-common/lib/platform/types";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
+import { track } from "~/renderer/analytics/segment";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -18,6 +19,7 @@ export const initialWebviewState: WebviewState = {
   canGoForward: false,
   title: "",
   loading: false,
+  isAppUnavailable: false,
 };
 
 type UseWebviewStateParams = {
@@ -31,6 +33,7 @@ type UseWebviewStateReturn = {
     src: string;
   };
   webviewRef: RefObject<WebviewTag>;
+  handleRefresh: () => void;
 };
 
 export function useWebviewState(
@@ -41,12 +44,18 @@ export function useWebviewState(
   const { manifest, inputs } = params;
 
   const initialURL = useMemo(() => {
-    const url = new URL(manifest.url);
-    addParamsToURL(url, inputs);
-    if (manifest.params) {
-      url.searchParams.set("params", JSON.stringify(manifest.params));
+    try {
+      const url = new URL(manifest.url);
+      addParamsToURL(url, inputs);
+      if (manifest.params) {
+        url.searchParams.set("params", JSON.stringify(manifest.params));
+      }
+
+      return url.toString();
+    } catch (e) {
+      if (e instanceof Error) console.error(e.message);
+      return manifest.url.toString();
     }
-    return url.toString();
   }, [manifest, inputs]);
 
   const [state, setState] = useState<WebviewState>(initialWebviewState);
@@ -154,6 +163,7 @@ export function useWebviewState(
     setState(oldState => ({
       ...oldState,
       loading: true,
+      isAppUnavailable: false,
     }));
   }, []);
 
@@ -166,18 +176,58 @@ export function useWebviewState(
 
   const handleDomReady = useCallback(() => {
     const webview = webviewRef.current;
-
     if (!webview) {
       return;
     }
 
-    setState({
+    setState(oldState => ({
       url: webview.getURL(),
       canGoBack: webview.canGoBack(),
       canGoForward: webview.canGoForward(),
       title: webview.getTitle(),
       loading: webview.isLoading(),
-    });
+      isAppUnavailable: oldState.isAppUnavailable,
+    }));
+  }, [webviewRef]);
+
+  const handleFailLoad = (useCallback(
+    (errorEvent: {
+      errorCode: number;
+      errorDescription: string;
+      validatedURL: string;
+      isMainFrame: boolean;
+    }) => {
+      const { errorCode, validatedURL, isMainFrame } = errorEvent;
+      const fullURL = new URL(validatedURL);
+      const errorInfo = {
+        errorCode,
+        url: fullURL.hostname,
+      };
+      console.error("Web3AppView handleFailLoad", { errorInfo, isMainFrame });
+      track("useWebviewState", errorInfo);
+
+      if (isMainFrame) {
+        setState(oldState => ({
+          ...oldState,
+          loading: false,
+          isAppUnavailable: true,
+        }));
+      }
+    },
+    [],
+  ) as unknown) as EventListenerOrEventListenerObject;
+
+  const handleCrashed = useCallback(() => {
+    setState(oldState => ({
+      ...oldState,
+      loading: false,
+      isAppUnavailable: true,
+    }));
+  }, []);
+
+  const handleRefresh = useCallback(() => {
+    const webview = safeGetRefValue(webviewRef);
+    webview.reload();
   }, [webviewRef]);
 
   useEffect(() => {
@@ -193,6 +243,8 @@ export function useWebviewState(
     webview.addEventListener("did-start-loading", handleDidStartLoading);
     webview.addEventListener("did-stop-loading", handleDidStopLoading);
     webview.addEventListener("dom-ready", handleDomReady);
+    webview.addEventListener("did-fail-load", handleFailLoad);
+    webview.addEventListener("crashed", handleCrashed);
 
     return () => {
       webview.removeEventListener("page-title-updated", handlePageTitleUpdated);
@@ -201,6 +253,8 @@ export function useWebviewState(
       webview.removeEventListener("did-start-loading", handleDidStartLoading);
       webview.removeEventListener("did-stop-loading", handleDidStopLoading);
       webview.removeEventListener("dom-ready", handleDomReady);
+      webview.removeEventListener("did-fail-load", handleFailLoad);
+      webview.removeEventListener("crashed", handleCrashed);
     };
   }, [
     handleDidNavigate,
@@ -209,6 +263,8 @@ export function useWebviewState(
     handleDidStopLoading,
     handlePageTitleUpdated,
     handleDomReady,
+    handleFailLoad,
+    handleCrashed,
     webviewRef,
     isMounted,
   ]);
@@ -221,5 +277,6 @@ export function useWebviewState(
     webviewState: state,
     webviewProps: props,
     webviewRef,
+    handleRefresh,
   };
 }

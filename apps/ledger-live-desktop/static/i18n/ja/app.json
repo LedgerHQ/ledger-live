@@ -59,6 +59,8 @@
   },
   "common" : {
     "never" : "なし",
+    "new" : "New",
+    "skip" : "Skip",
     "apply" : "適用",
     "done" : "完了",
     "confirm" : "確認",
@@ -126,7 +128,8 @@
     "exchange" : "取引",
     "info" : "情報",
     "connectDevice" : "デバイスを接続",
-    "add" : "追加"
+    "add" : "追加",
+    "or" : "または"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -215,10 +218,11 @@
     "earn" : "報酬獲得",
     "exchange" : "購入/売却",
     "swap" : "スワップ",
+    "refer" : "ご友人紹介",
     "lend" : "レンディング",
     "catalog" : "Discover",
     "market" : "マーケット",
-    "protect" : "Recover"
+    "recover" : "Ledger Recover"
   },
   "stars" : {
     "placeholder" : "お気に入りに登録したアカウントは、こちらに表示されます。",
@@ -1203,23 +1207,33 @@
     },
     "manual" : {
       "title" : "{{deviceName}}をセットアップ",
+      "continueOnDevice" : "{{productName}}でこのアクションを実行する",
       "pairedContent" : {
         "title" : "{{deviceName}}接続済み",
         "description" : "{{deviceName}}でセットアップを続行する",
-        "text" : "こちらの画面は、{{deviceName}}のセットアップ中に動的に変化し、関連情報をご提供します。"
+        "text" : "こちらの画面は、{{deviceName}}のセットアップ中に動的に変化し、関連情報をご提供します。",
+        "continueOnDevice" : "{{productName}}をタップして、次の画面を表示します。"
       },
       "pinContent" : {
         "title" : "PINコードを設定する",
         "description" : "PINコードの長さは4～8桁で設定可能です",
-        "text" : "お客様の{{deviceName}}とPINコードにアクセスできる人は誰でも、お客様の暗号資産とNFT資産すべてにアクセスできます。"
+        "text" : "お客様の{{deviceName}}とPINコードにアクセスできる人は誰でも、お客様の暗号資産とNFT資産すべてにアクセスできます。",
+        "continueOnDevice" : "{{productName}}にPINコードを設定する"
       },
       "seedContent" : {
         "title" : "秘密のリカバリーフレーズ",
-        "choiceNewOrRestore" : "最適な設定オプションを選択してください。",
-        "newSeed" : "下の動画をタップして、秘密のリカバリーフレーズを詳しく学ぶ",
-        "choiceRestoreDirectOrRecover" : "Placeholder－直接復元を選択するか、Recoverを使用する",
         "recoverSeed" : "Placeholder：Recover",
-        "restoreSeed" : "リカバリーには、資産の安全性を保証するため、必ずLedgerが生成した秘密のリカバリーフレーズを使用してください。\n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
+        "restoreSeed" : "リカバリーには、資産の安全性を保証するため、必ずLedgerが生成した秘密のリカバリーフレーズを使用してください。\n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
+        "selection" : "{{productName}}で、最適な設定オプションを選択する。",
+        "selectionContinueOnDevice" : "{{productName}}のオプションをタップする",
+        "newSeedDescription" : "以下の動画で、秘密の単語の詳細を学ぶ。",
+        "newSeedContinueOnDevice" : "{{productName}}でこの操作を行う",
+        "recovery" : "リカバリーには、資産の安全性を保証するため、必ずLedgerが生成した秘密のリカバリーフレーズを使用してください。\n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
+        "restoreChoiceContinueOnDevice" : "{{productName}}のオプションを選択する",
+        "restoreChoiceSRPTitle" : "秘密のリカバリーフレーズを使用して復元する",
+        "restoreChoiceSRPDescription" : "資産のセキュリティを保証するために、必ず、Ledgerによって生成されたフレーズを使用してください。",
+        "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元",
+        "restoreChoiceRecoverDescription" : "Ledgerアカウントにログインして本人確認を行い、リカバリーフレーズのバックアップを復元します。"
       },
       "softwareCheckContent" : {
         "title" : "ソフトウェアのチェック",
@@ -1238,10 +1252,13 @@
         }
       },
       "installApplications" : {
-        "title" : "既定のアプリ一式をダウンロードすることをお勧めします。ダウンロードは後でさらに可能です",
+        "title" : "ブロックチェーンアプリをインストールする",
         "install" : "インストール",
         "skip" : "後で",
         "info" : "{{deviceName}}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
+      },
+      "endOfSetup" : {
+        "title" : "セットアップの終了"
       },
       "genuineCheckModal" : {
         "title" : "真正性確認",
@@ -1441,7 +1458,8 @@
     "messageIfUnverified" : "共有アドレスが、お使いのデバイスのアドレスと完全に一致していることを確認してください。",
     "messageIfSkipped" : "{{name}} のアドレスが、Ledgerデバイスで確認できません。セキュリティを最適化するために、アドレスを確認してください。",
     "showQrCode" : "QRコードを表示",
-    "taprootWarning" : "送信者がタップルートをサポートしていることを確認する"
+    "taprootWarning" : "送信者がタップルートをサポートしていることを確認する",
+    "dashStakingWarning" : "このアドレスは、ステーキング報酬の受け取りに使用しないでください。"
   },
   "emptyState" : {
     "dashboard" : {
@@ -1742,7 +1760,8 @@
     "loading" : "読み込み中...",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
     "unlockDevice" : "デバイスのロックを解除する",
-    "unlockDeviceAfterFirmwareUpdate" : "ファームウェアのアップデート完了を待ってから、デバイスのロックをPINコードで解除してください。",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "{{productName}}のインストールが完了するまでお待ちください",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "{{productName}}のロックを解除してインストールを完了",
     "quitApp" : "デバイスのアプリケーションを終了する",
     "appNotInstalledTitle" : "必要なアプリが揃っていません。",
     "appNotInstalledTitle_plural" : "必要なアプリが揃っていません。",
@@ -1807,8 +1826,7 @@
       "installed" : "アプリ",
       "capacity" : "容量",
       "used" : "使用中",
-      "firmwareAvailable" : "ファームウェアが最新ではありません。",
-      "firmwareUpToDate" : "最新のファームウェア：",
+      "OSVersion" : "OSバージョン",
       "genuine" : "お使いのデバイスは正規品です。",
       "incomplete" : "一部のアプリが認識されませんでした。アンインストールしてから、再インストールしてください。"
     },
@@ -1874,7 +1892,7 @@
         "plugin" : "アプリに移動",
         "swap" : "スワップ",
         "tool" : "詳細はこちら",
-        "app" : "詳細はこちら"
+        "currency" : "詳細はこちら"
       },
       "uninstall" : {
         "title" : "すべてアンインストール",
@@ -1901,7 +1919,7 @@
       "dontHaveSeed" : "リカバリーフレーズをお持ちでないですか？ ",
       "followTheGuide" : "アップデートの手順はこちらをご覧ください。",
       "removeApps" : "アップデート前に全アプリをアンインストールする",
-      "update" : "ファームウェアをアップデート",
+      "update" : "{{productName}}をアップデートする",
       "updateBtn" : "ファームウェアをアップデート",
       "banner" : {
         "warning" : "ファームウェアを{{latestFirmware}}にアップデートできます",
@@ -1916,25 +1934,30 @@
       "contactSupport" : "サポートへのお問い合わせ",
       "deprecated" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
       "prepareSeed" : "万が一に備えて、書き留めた24単語のリカバリーフレーズを用意してください。",
-      "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。",
-      "downloadingUpdateDesc" : "アップデートインストーラーのダウンロードが完了するまでお待ちください"
+      "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。"
     },
     "modal" : {
+      "title" : "{{productName}}をアップデートする",
       "steps" : {
-        "downloadingUpdate" : "アップデートをダウンロードしています",
+        "preparingUpdate" : "アップデートを準備中",
+        "transferringUpdate" : "アップデートを{{productName}}に転送中",
+        "prepare" : "アップデートの準備",
+        "install" : "アップデートをインストール",
+        "restore" : "設定の復元",
+        "apps" : "アプリの復元",
         "updateMCU" : "ファームウェアをアップデート",
         "updating" : "ファームウェアをアップデート",
         "reset" : "デバイスの準備中...",
         "osu" : "OSUをインストール中...",
         "flash-mcu" : "MCUをアップデート中...",
         "flash-bootloader" : "Bootloaderをアップデート中...",
+        "progress" : "Installing update {{current}}/{{total}}",
         "firmware" : "ファームウェアのアップデート中...",
         "flash" : "デバイスの準備中..."
       },
       "confirmIdentifier" : "識別子を確認する",
-      "confirmIdentifierText" : "デバイスの識別子が以下の識別子と同じであることを認証します。必要に応じて、PINコードを確認して入力します。",
+      "confirmIdentifierText" : "{{productName}}へのインストールを確定",
       "identifier" : "識別子",
-      "preparation" : "準備",
       "newFirmware" : "新しいファームウェア{{version}}",
       "confirmUpdate" : "アップデートをデバイスで確定してください。",
       "mcuTitle" : "アップデートの最終確認",
@@ -1944,7 +1967,7 @@
       "mcuSecondNanoX" : "<1><0> {{bootloaderOption}}</0></1>が表示されるまで左ボタンを長押しする。両方のボタンを押して、デバイスを確認して再接続します。",
       "mcuBlueFirst" : "ボタンを10秒間長押しして、デバイスの電源をオフにする。ボタンから指を離す。",
       "mcuBlueSecond" : "<strong>Boot Options(起動オプション)</strong>が表示されるまで、ボタンを5秒以上押し続ける。Bootloader(ブートローダモード)をタップする",
-      "successTitle" : "ファームウェアのアップデート完了",
+      "successTitle" : "OSアップデートが成功しました。",
       "successTextApps" : "デバイスにアプリを再インストールしてください。",
       "successTextNoApps" : "デバイスにアプリをインストールできるようになりました。",
       "sucessCTAApps" : "アプリを再インストール",
@@ -2150,7 +2173,14 @@
         "domainService" : {
           "resolve" : "これは、次のアドレスにリンクされている有効なENSです。",
           "supportLink" : "イーサリアム・ネーム・サービスとは？",
-          "reverse" : "このアドレスは{{domain}}にリンクされています"
+          "reverse" : "このアドレスは{{domain}}にリンクされています",
+          "invalidDomain" : {
+            "title" : "ドメイン未対応",
+            "description" : "現在、英数字が30文字未満のENSへ対応しています。"
+          },
+          "noResolution" : {
+            "title" : "このドメインのアドレスが見つかりません"
+          }
         }
       },
       "amount" : {
@@ -2245,12 +2275,16 @@
     "remainingCharacters" : "残り{{ remainingCharacters }}文字",
     "renamed" : "{{ productName }}の名前が\n「{{ name }}」に変更されました "
   },
+  "removeCustomLockscreen" : {
+    "cta" : "削除",
+    "confirmation" : "Ledger Staxの画像の削除を確定する",
+    "success" : "ロック画面の画像が削除されました"
+  },
   "deviceLocalization" : {
     "language" : "言語",
-    "deviceLanguage" : "言語",
+    "deviceLanguage" : "デバイスの言語を変更する",
     "changeLanguage" : "言語の変更",
     "changeDeviceLanguage" : "デバイスの言語を変更しますか？",
-    "chooseLanguage" : "{{deviceName}}の言語を選択してください。",
     "changeDeviceLanguagePrompt" : {
       "title" : "{{language}}が{{deviceName}}でもご利用可能になりました",
       "description" : "言語を{{language}}に変更しますか？"
@@ -3469,17 +3503,25 @@
   },
   "ethereum" : {
     "stake" : {
-      "title" : "Ethereumを獲得する",
+      "title" : "所有するETHを運用",
+      "subTitle" : "ETHをステーキングして、報酬をLedger Liveで直接受け取り、資産を増やしましょう。",
       "lido" : {
+        "title" : "Lidoで報酬を稼ぐ",
         "tag" : "最小数量なし",
-        "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ロックアップ（凍結）期間なし。最小数量なし。"
+        "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ロックアップ（凍結）期間なし。最小数量なし。",
+        "supportLink" : "Lidoの詳細について"
       },
       "kiln" : {
+        "title" : "Kiln専用ステーキング",
         "tag" : "32ETHが必要",
-        "description" : "32ETH以上をお持ちですか？KilnでETHを安全にステーキングすることで、毎日報酬を獲得できます。"
+        "description" : "専用のバリデーターでステーキング32ETHの倍数が必要です。報酬は手動で請求されます。",
+        "supportLink" : "Kilnバリデーターの詳細を確認"
       },
-      "providerTitle" : "{{provider}}で獲得",
-      "providerLink" : "{{provider}}の詳細"
+      "kiln_pooling" : {
+        "title" : "Kilnステーキングプール",
+        "description" : "ステーキングプールに参加。ETHの必要最低額の設定なし。報酬は自動的に受け取り可能。",
+        "supportLink" : "Kilnプールについての詳細を確認"
+      }
     }
   },
   "near" : {
@@ -3761,6 +3803,7 @@
         "title" : "デベロッパーになりました！",
         "text" : "ワンダーランドへようこそ"
       },
+      "userId" : "ユーザーID",
       "debugApps" : "デバッグアプリを許可する",
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
       "experimentalApps" : "試験的なアプリを許可する",
@@ -3790,6 +3833,8 @@
       "runLocalAppOpenButton" : "開く",
       "enableLearnStagingUrl" : "学習ページのステージングURL",
       "enableLearnStagingUrlDesc" : "学習ページのステージングURLを有効にする。",
+      "enableStagingNftMetadataService" : "NFTメタデータサービスの実装",
+      "enableStagingNftMetadataServiceDesc" : "NFTメタデータサービスの実装を有効化して、NFT Cacheをリセットする",
       "openOnboardingAppInstallDebug" : "オンボーディングアプリのインストールデバッグ画面を開く",
       "openOnboardingAppInstallDebugDesc" : "同期オンボーディングアプリのインストール手順の構成要素で画面を開きます"
     },
@@ -3834,6 +3879,10 @@
     },
     "experimental" : {
       "disclaimer" : "テクノロジーファンのコミュニティ向けに提供される試験的な機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にすると、あなたは自己責任でこれらの機能を使用することに同意したことになります。",
+      "provider" : "試験的設定「マイLedgerプロバイダー（{{forcedProvider}}）」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。これは設定で無効にできます。",
+      "providerDevMode" : "試験的設定「My Ledgerプロバイダー（{{forcedProvider}}）」と「デベロッパーモード」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。設定にて無効にできます。",
+      "devMode" : "試験的設定「デベロッパーモード」では、リリースされていないOSとアプリが表示され、互換性の問題が発生する場合があります。設定にて無効にできます。",
+      "providerCTA" : "設定を開く",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "試験的統合",
@@ -3846,6 +3895,10 @@
         "managerDevMode" : {
           "title" : "デベロッパーモード",
           "description" : "開発者用アプリとテストネットアプリをMy Ledgerに表示する。"
+        },
+        "listAppsV2" : {
+          "title" : "My Ledger用アプリの試験的リスト",
+          "description" : "My Ledgerアクセスとインラインフローのパフォーマンスの向上。"
         },
         "scanForInvalidPaths" : {
           "title" : "拡張アカウント検索",
@@ -3886,6 +3939,14 @@
         "1559CustomPriorityLowerGate" : {
           "title" : "カスタム優先手数料ゲート",
           "description" : "高度なEIP1559トランザクションで許可される、当社の推定最小優先手数料の割合をカスタマイズします"
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "基本手数料のカスタム乗数",
+          "description" : "EIP1559トランザクションのmaxFeePerGasを構成する基本手数料に使用される乗数をカスタマイズ"
+        },
+        "enableNetworkLogs" : {
+          "title" : "ネットワークログを有効にする",
+          "description" : "コンソールでネットワークログを有効にする（エラーログは常に有効になっています）。"
         }
       }
     },
@@ -4191,6 +4252,10 @@
           "3" : {
             "title" : "新しいデバイスでリカバリーフレーズを復元",
             "description" : "既存のリカバリーフレーズを使って、新しいNanoに秘密鍵を復元できます。"
+          },
+          "4" : {
+            "title" : "Ledger Recoverを使用して復元",
+            "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do"
           }
         }
       },
@@ -4336,6 +4401,25 @@
             "help" : {
               "help" : "お困りですか？",
               "descr" : "何をすればいいか分からず、お困りですか？サポートをご利用ください。"
+            }
+          },
+          "recoverHowTo" : {
+            "title" : "「Ledger Recoverを使用して復元する」を選択",
+            "1" : {
+              "title" : "「復元」を選択",
+              "descr" : "両方のボタンを同時に押して選択します。"
+            },
+            "2" : {
+              "title" : "「Ledger Recoverを使用して復元する」を選択"
+            },
+            "help" : {
+              "iDontSee" : "「Ledger Recoverを使用して復元する」が表示されません",
+              "modal" : {
+                "title" : "Ledger Nano XのOSをアップデートしてください",
+                "subtitle" : " OSをアップデートしてみるか、Ledgerサポートにご連絡ください。",
+                "learnHowToUpdate" : "アップデート方法を確認",
+                "contactLedgerSupport" : "Ledgerサポートへ問い合わせ"
+              }
             }
           },
           "existingRecoveryPhrase" : {
@@ -4755,7 +4839,8 @@
     "votes" : "{{count}} 票"
   },
   "RecipientField" : {
-    "placeholder" : "{{currencyName}} アドレスを入力"
+    "placeholder" : "{{currencyName}} アドレスを入力",
+    "placeholderEns" : "{{currencyName}}アドレスまたはENSを入力してください"
   },
   "Terms" : {
     "title" : "利用規約",
@@ -5007,6 +5092,10 @@
       "title" : "言語のインストールがデバイス上で拒否されました",
       "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
     },
+    "RestoreLanguageInstallRefusedOnDevice" : {
+      "title" : "Restoration of Language was cancelled on Ledger Stax",
+      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+    },
     "LanguageNotFound" : {
       "title" : "言語が見つかりません",
       "description" : "インストールしようとしている言語が見つかりませんでした。他の言語のインストールをお試しください。"
@@ -5187,8 +5276,8 @@
       "title" : "My Ledgerがデバイスで拒否されました"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "デバイス上でアップデートがキャンセルされました。",
-      "description" : "デバイス上のすべてのアプリがアンインストールされました。セキュリティや改善された機能を利用するために、お使いのデバイスを常に最新の状態に保ってください。"
+      "title" : "Update was cancelled on device",
+      "description" : "The installation of OS update was refused on your device. If this was a mistake, restart the update."
     },
     "UserRefusedOnDevice" : {
       "title" : "アクションが拒否されました。",
@@ -5566,12 +5655,20 @@
       "description" : "別の画像でもう一度お試しください"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "デバイスで画像のコミットが拒否されました",
+      "title" : "Ledger Staxでロック画面がキャンセルされました",
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "デバイスで画像の読み込みが拒否されました",
+      "title" : "Ledger Staxでロック画面がキャンセルされました",
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+    },
+    "RestoreImageCommitRefusedOnDevice" : {
+      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
+      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+    },
+    "RestoreImageLoadRefusedOnDevice" : {
+      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
+      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
     },
     "NearNewAccountWarning" : {
       "title" : "受取人アカウントはまだ作成されていません。このプロトコルでは、作成するのに{{formattedNewAccountStorageCost}}の転送コストが必要です。"
@@ -5650,6 +5747,7 @@
   "customImage" : {
     "title" : "カスタムロック画面",
     "managerCTA" : "画面写真をロック",
+    "managerCTARemove" : "削除",
     "steps" : {
       "choose" : {
         "stepLabel" : "画像を選択してください",
@@ -5658,9 +5756,10 @@
         "myNfts" : "私のNFT",
         "upload" : "パソコンからアップロード",
         "chooseNft" : "NFTを選択",
+        "remove" : "現在の画像を削除する",
         "selectNft" : "NFTを選択",
         "previousSelectNft" : "戻る",
-        "nftEmptyStateTitle" : "表示できるNFTはまだありません",
+        "nftEmptyStateTitle" : "表示できるNFTがありません",
         "nftEmptyStateDescription" : "NFTをウォレットに追加して始めます。"
       },
       "adjust" : {
@@ -5674,9 +5773,11 @@
         "stepLabel" : "送金",
         "uploadAnotherImage" : "他の画像をアップロードする",
         "allowPreview" : "{{productName}}でのロック画面の画像の読み込みを許可します",
+        "allowConfirmPreview" : "{{productName}}でロック画面の画像の復元を許可する",
         "loadingPicture" : "読み込み中...",
         "imageLoaded" : "{{productName}}に画像が読み込まれました",
         "confirmPicture" : "気に入りましたか？\n",
+        "confirmRestorePicture" : "ロック画面の画像の復元を確定する",
         "doThisLater" : "後で"
       }
     },
@@ -5685,7 +5786,7 @@
       "description" : "画面をカスタマイズ",
       "actionCompletedPopupLabel" : "デバイスがパーソナライズされました"
     },
-    "customImageSet" : "ロック画面が設定されました",
+    "customImageSet" : "スクリーン設定をロック",
     "finishCTA" : "終了する"
   },
   "onboardingAppInstall" : {
@@ -5723,9 +5824,9 @@
     }
   },
   "discoverProtect" : {
-    "title" : "Recover your keys using\nyour identity",
-    "description" : "Your Secret Recovery Phrase won't always be within reach.\nSoft launch exclusively for Ledger Nano X. Subscribe for free until 31st May 2023",
-    "cta" : "Why should I subscribe?",
-    "downloadLLM" : "Subscribe to <purple>Ledger Recover</purple> using the Ledger Live mobile app"
+    "title" : "お客様のIDで\n鍵を復元",
+    "description" : "秘密のリカバリーフレーズは、安全に保管されなければなりません。\nLedger Nano X限定のソフトローンチ。2023年6月30日まで登録無料。",
+    "cta" : "サブスクリプション契約のメリットとは？",
+    "downloadLLM" : "Ledger Live Mobileアプリを使用して<purple>Ledger Recover</purple>のサブスクリプション契約をする"
   }
 }

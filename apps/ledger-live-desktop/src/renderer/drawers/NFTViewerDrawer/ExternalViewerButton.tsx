@@ -3,10 +3,7 @@ import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import DropDownSelector, {
-  DropDownItem,
-  DropDownItemType,
-} from "~/renderer/components/DropDownSelector";
+import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import IconDots from "~/renderer/icons/Dots";
 import IconExternal from "~/renderer/icons/ExternalLink";
 import useNftLinks from "~/renderer/hooks/useNftLinks";
@@ -71,11 +68,7 @@ const ExternalViewerButton = ({ nft, account, metadata }: ExternalViewerButtonPr
   }, [account.id, history]);
   const items = useNftLinks(account, nft, metadata, onHideCollection, true);
   return (
-    <DropDownSelector
-      buttonId="accounts-options-button"
-      items={items as DropDownItemType[]}
-      renderItem={renderItem}
-    >
+    <DropDownSelector buttonId="accounts-options-button" items={items} renderItem={renderItem}>
       {() => (
         <Box horizontal>
           <Button

@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
@@ -9,8 +8,9 @@ import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 import { getAccountBannerState as getNearBannerState } from "@ledgerhq/live-common/families/near/banner";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
+import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 
-const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
+const StakeBanner: React.FC<{ account: NearAccount }> = ({ account }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");

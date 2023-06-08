@@ -76,7 +76,6 @@ const createCryptoCurrency = (family: string): CryptoCurrency => ({
   name: "ethereum",
   managerAppName: "ethereum",
   ticker: "MYC",
-  countervalueTicker: "MYC",
   scheme: "ethereum",
   color: "#ff0000",
   family,

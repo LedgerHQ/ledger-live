@@ -30,7 +30,6 @@ import AddAccountsNavigator from "./AddAccountsNavigator";
 import ExchangeNavigator from "./ExchangeNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
-import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
@@ -88,6 +87,7 @@ import {
   NavigationHeaderCloseButton,
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
+import { RedirectToRecoverStaxFlowScreen } from "../../screens/Protect/RedirectToRecoverStaxFlow";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -290,11 +290,6 @@ export default function BaseNavigator() {
             }
           },
         })}
-      />
-      <Stack.Screen
-        name={NavigatorName.FirmwareUpdate}
-        component={FirmwareUpdateNavigator}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={NavigatorName.Exchange}
@@ -563,6 +558,11 @@ export default function BaseNavigator() {
         name={ScreenName.RedirectToOnboardingRecoverFlow}
         options={{ headerShown: false }}
         component={RedirectToOnboardingRecoverFlowScreen}
+      />
+      <Stack.Screen
+        name={ScreenName.RedirectToRecoverStaxFlow}
+        options={{ headerShown: false }}
+        component={RedirectToRecoverStaxFlowScreen}
       />
       <Stack.Screen
         name={NavigatorName.NoFundsFlow}

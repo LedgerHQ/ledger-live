@@ -116,7 +116,7 @@ dist
 !jsconfig.json
 !tools/dist
 
-src/renderer/generated/
+src/renderer/families/generated.ts
 tests/coverage/
 tests/artifacts/*
 !tests/artifacts/.gitkeep

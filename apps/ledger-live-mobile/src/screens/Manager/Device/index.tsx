@@ -100,8 +100,6 @@ const DeviceCard = ({
     }
   }, [dispatch, lastSeenCustomImage]);
 
-  const deviceLocalizationFeatureFlag = useFeature("deviceLocalization");
-
   const openAppsModal = useCallback(() => {
     setAppsModalOpen(true);
   }, [setAppsModalOpen]);
@@ -119,12 +117,12 @@ const DeviceCard = ({
   );
 
   const showDeviceLanguage =
-    deviceLocalizationFeatureFlag?.enabled &&
-    isLocalizationSupported &&
-    deviceInfo.languageId !== undefined;
+    isLocalizationSupported && deviceInfo.languageId !== undefined;
 
   const hasCustomImage =
     useFeature("customImage")?.enabled && deviceModel.id === DeviceModelId.stax;
+
+  const disableFlows = pendingInstalls;
 
   return (
     <BorderCard>
@@ -141,7 +139,7 @@ const DeviceCard = ({
             device={device}
             deviceInfo={deviceInfo}
             initialDeviceName={initialDeviceName}
-            disabled={pendingInstalls}
+            disabled={disableFlows}
           />
           <Flex
             backgroundColor={"neutral.c30"}
@@ -178,11 +176,13 @@ const DeviceCard = ({
       {hasCustomImage || showDeviceLanguage ? (
         <>
           <Flex px={6}>
-            {hasCustomImage && <CustomLockScreen device={device} />}
+            {hasCustomImage && (
+              <CustomLockScreen disabled={disableFlows} device={device} />
+            )}
             {showDeviceLanguage && (
               <Flex mt={hasCustomImage ? 6 : 0}>
                 <DeviceLanguage
-                  pendingInstalls={pendingInstalls}
+                  disabled={disableFlows}
                   currentDeviceLanguage={
                     idsToLanguage[
                       deviceInfo.languageId as keyof typeof idsToLanguage
@@ -203,8 +203,11 @@ const DeviceCard = ({
       <DeviceAppStorage
         distribution={distribution}
         deviceModel={deviceModel}
+        installQueue={state.installQueue}
+        uninstallQueue={state.uninstallQueue}
         deviceInfo={deviceInfo}
       />
+
       {appList.length > 0 && (
         <Flex mx={6} mb={6}>
           <Button size="small" type="color" onPress={openAppsModal}>

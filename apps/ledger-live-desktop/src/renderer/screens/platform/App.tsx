@@ -42,7 +42,7 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
     return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;
   }, [search, urlParams?.returnTo, internalParams?.returnTo]);
   const handleClose = useCallback(() => history.push(returnTo || `/platform`), [history, returnTo]);
-  const themeType = useTheme("colors.palette.type");
+  const themeType = useTheme().colors.palette.type;
   const lang = useSelector(languageSelector);
   const params = {
     theme: themeType,
@@ -53,14 +53,11 @@ export default function PlatformApp({ match, appId: propsAppId, location }: Prop
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   let manifest = localManifest || remoteManifest;
-  if (customDappUrl) {
+  if (customDappUrl && manifest && manifest.params && "dappUrl" in manifest.params) {
     manifest = {
       ...manifest,
       params: {
-        // manifest.params is supposed to be a string[] in the common types
-        // @ts-expect-error TODO: investigate because common types seem to be wrong
         ...manifest.params,
-        // @ts-expect-error Same here, params should be a Record<string, ?> but it's a string[]
         dappUrl: customDappUrl,
       },
     };

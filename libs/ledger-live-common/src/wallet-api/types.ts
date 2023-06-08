@@ -1,10 +1,15 @@
-import type { SignedOperation } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  SignedOperation,
+} from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { Transaction } from "../generated/types";
+import { LiveAppManifest } from "../platform/types";
 
 export type { WalletAPITransaction };
 
@@ -37,30 +42,7 @@ export type AppPermission = {
 };
 
 // TODO update to the new manifest types from wallet-api when released
-export type AppManifest = {
-  id: string;
-  author?: string;
-  private?: boolean;
-  name: string;
-  url: string | URL;
-  params?: string[];
-  homepageUrl: string;
-  supportUrl?: string;
-  icon?: string | null;
-  platforms: AppPlatform[];
-  apiVersion: string;
-  manifestVersion: string;
-  branch: AppBranch;
-  permissions: AppPermission[];
-  domains: string[];
-  categories: string[];
-  currencies: string[] | "*";
-  content: {
-    shortDescription: TranslatableString;
-    description: TranslatableString;
-  };
-  visibility: Visibility;
-};
+export type AppManifest = LiveAppManifest;
 
 export type WalletAPISignedTransaction = SignedOperation;
 
@@ -69,7 +51,15 @@ export type WalletAPISupportedCurrency = CryptoCurrency | TokenCurrency;
 export type GetWalletAPITransactionSignFlowInfos<
   T extends WalletAPITransaction,
   U extends Transaction
-> = (tx: T) => {
+> = ({
+  tx,
+  account,
+  parentAccount,
+}: {
+  tx: T;
+  account: AccountLike;
+  parentAccount?: Account;
+}) => {
   canEditFees: boolean;
   hasFeesProvided: boolean;
   liveTx: Partial<U>;
@@ -82,4 +72,8 @@ export type AreFeesProvided<T extends WalletAPITransaction> = (
 export type ConvertToLiveTransaction<
   T extends WalletAPITransaction,
   U extends Transaction
-> = (tx: T) => Partial<U>;
+> = (params: {
+  tx: T;
+  account: AccountLike;
+  parentAccount?: Account;
+}) => Partial<U>;

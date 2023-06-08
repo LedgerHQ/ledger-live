@@ -15,6 +15,7 @@ export type WebviewState = {
   canGoForward: boolean;
   title: string;
   loading: boolean;
+  isAppUnavailable: boolean;
 };
 
 export type WebviewAPI = {

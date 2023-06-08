@@ -10,13 +10,14 @@ import Alert from "~/renderer/components/Alert";
 import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
+
 const FeeField = ({
   onChange,
   account,
   transaction,
   status,
 }: {
-  onChange: (a: string) => void;
+  onChange: (t: Transaction) => void;
   account: Account;
   transaction: Transaction;
   status: TransactionStatus;

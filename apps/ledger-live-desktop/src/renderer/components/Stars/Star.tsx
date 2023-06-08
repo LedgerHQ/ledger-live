@@ -9,6 +9,7 @@ import starAnim2 from "~/renderer/images/starAnim2.png";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Transition } from "react-transition-group";
 import { track } from "~/renderer/analytics/segment";
+import { State } from "~/renderer/reducers";
 type Props = {
   accountId: string;
   parentId?: string;
@@ -16,7 +17,7 @@ type Props = {
   rounded?: boolean;
 };
 export default function Star({ accountId, parentId, yellow, rounded }: Props) {
-  const isAccountStarred = useSelector(state =>
+  const isAccountStarred = useSelector((state: State) =>
     isStarredAccountSelector(state, {
       accountId,
     }),

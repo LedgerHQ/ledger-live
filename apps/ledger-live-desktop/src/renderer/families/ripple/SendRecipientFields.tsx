@@ -1,9 +1,8 @@
 import React, { useCallback } from "react";
-import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { Trans, withTranslation, TFunction } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/families/ripple/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import Box from "~/renderer/components/Box";
 import Input from "~/renderer/components/Input";
@@ -12,11 +11,10 @@ type Props = {
   onChange: (a: Transaction) => void;
   transaction: Transaction;
   account: Account;
-  t: TFunction;
 };
 const uint32maxPlus1 = BigNumber(2).pow(32);
-const TagField = ({ onChange, account, transaction, t }: Props) => {
-  invariant(transaction.family === "ripple", "TagField: ripple family expected");
+const TagField = ({ onChange, account, transaction }: Props) => {
+  const { t } = useTranslation();
   const onChangeTag = useCallback(
     str => {
       const bridge = getAccountBridge(account);
@@ -56,6 +54,6 @@ const TagField = ({ onChange, account, transaction, t }: Props) => {
   );
 };
 export default {
-  component: withTranslation()(TagField),
+  component: TagField,
   fields: ["tag"],
 };

@@ -211,6 +211,42 @@
     "visibility": "complete"
   },
   {
+    "id": "kiln",
+    "name": "Kiln",
+    "url": "https://dapp-browser.apps.ledger.com",
+    "params": {
+      "dappUrl": "https://ledger-live-eth-dapp.kiln.fi/",
+      "nanoApp": "Kiln",
+      "dappName": "Kiln",
+      "networks": [
+        {
+          "currency": "ethereum",
+          "chainID": 1,
+          "nodeURL": "https://eth-dapps.api.live.ledger.com"
+        }
+      ]
+    },
+    "homepageUrl": "https://kiln.fi",
+    "icon": "https://cdn.live.ledger.com/icons/platform/kiln.png",
+    "platforms": ["ios", "android", "desktop"],
+    "apiVersion": "^1.0.0 || ~0.0.1",
+    "manifestVersion": "1",
+    "branch": "stable",
+    "categories": ["staking/lending"],
+    "currencies": "*",
+    "content": {
+      "shortDescription": {
+        "en": "Kiln is Ledger’s native ETH staking partner. Stake ETH in a couple of clicks by becoming your own validator. Earn rewards for helping secure the Ethereum blockchain."
+      },
+      "description": {
+        "en": "Kiln is Ledger’s native ETH staking partner. Stake ETH in a couple of clicks by becoming your own validator. Earn rewards for helping secure the Ethereum blockchain."
+      }
+    },
+    "permissions": [],
+    "domains": ["http://", "https://"],
+    "visibility": "complete"
+  },
+  {
     "id": "lido",
     "name": "Lido",
     "url": "https://dapp-browser.apps.ledger.com/?params=%7B%22dappUrl%22%3A%22https%3A%2F%2Fstake.lido.fi%2F%3Fref%3D0x558247e365be655f9144e1a0140D793984372Ef3%26embed%3Dtrue%22%2C%22nanoApp%22%3A%22Lido%22%2C%22dappName%22%3A%22Lido%22%2C%22networks%22%3A%5B%7B%22currency%22%3A%22ethereum%22%2C%22chainID%22%3A1%2C%22nodeURL%22%3A%22wss%3A%2F%2Feth-mainnet.ws.alchemyapi.io%2Fv2%2F0fyudoTG94QWC0tEtfJViM9v2ZXJuij2%22%7D%5D%7D",

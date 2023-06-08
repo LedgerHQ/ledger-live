@@ -25,9 +25,9 @@ import SelectDevice2, {
 import CustomImageDeviceAction from "../../../../components/CustomImageDeviceAction";
 import ResultDataTester from "../../../../components/CustomImage/ResultDataTester";
 import { ProcessorPreviewResult } from "../../../../components/CustomImage/ImageProcessor";
-import FramedImage, {
+import StaxFramedImage, {
   transferConfig,
-} from "../../../../components/CustomImage/FramedImage";
+} from "../../../../components/CustomImage/StaxFramedImage";
 import { NavigationHeaderBackButton } from "../../../../components/NavigationHeaderBackButton";
 import { ReactNavigationHeaderOptions } from "../../../../components/RootNavigator/types/helpers";
 
@@ -61,6 +61,7 @@ export default function DebugFetchCustomImage() {
   // when we implement the screens of the flow.
   const status = deviceAction.useHook(action === "fetch" ? device : undefined, {
     backupHash: currentBackup.current,
+    allowedEmpty: false,
   });
 
   const onReset = useCallback(() => {
@@ -207,7 +208,7 @@ export default function DebugFetchCustomImage() {
             />
             {imageSource ? (
               <Flex flexDirection="row" flexGrow={0}>
-                <FramedImage
+                <StaxFramedImage
                   frameConfig={transferConfig}
                   source={imageSource}
                 />

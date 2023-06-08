@@ -8,6 +8,7 @@ import { useNavigateToPostOnboardingHubCallback } from "./logic/useNavigateToPos
 import Illustration from "~/renderer/components/Illustration";
 import bannerStaxLight from "./assets/bannerStaxLight.svg";
 import bannerStaxDark from "./assets/bannerStaxDark.svg";
+import { track } from "~/renderer/analytics/segment";
 
 const CloseButtonWrapper = styled(Box).attrs(() => ({
   top: 4,
@@ -22,9 +23,10 @@ const PostOnboardingHubBanner = () => {
   const dispatch = useDispatch();
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
 
-  const handleNavigateToPostOnboardingHub = useCallback(() => navigateToPostOnboardingHub(), [
-    navigateToPostOnboardingHub,
-  ]);
+  const handleNavigateToPostOnboardingHub = useCallback(() => {
+    track("button_clicked", { button: "What’s next for your Ledger Stax" });
+    navigateToPostOnboardingHub();
+  }, [navigateToPostOnboardingHub]);
 
   const handleHidePostOnboardingHubBanner = useCallback(() => {
     dispatch(hidePostOnboardingWalletEntryPoint());

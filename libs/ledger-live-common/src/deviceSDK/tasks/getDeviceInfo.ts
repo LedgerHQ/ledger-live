@@ -1,6 +1,6 @@
 import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import type { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
+import type { DeviceId, DeviceInfo, FirmwareInfo } from "@ledgerhq/types-live";
 
 import { getVersion } from "../commands/getVersion";
 
@@ -56,69 +56,7 @@ function internalGetDeviceInfoTask({
 
             const { firmwareInfo } = value;
 
-            const {
-              isBootloader,
-              rawVersion,
-              targetId,
-              seVersion,
-              seTargetId,
-              mcuBlVersion,
-              mcuVersion,
-              mcuTargetId,
-              flags,
-              bootloaderVersion,
-              hardwareVersion,
-              languageId,
-            } = firmwareInfo;
-
-            const isOSU = rawVersion.includes("-osu");
-            const version = rawVersion.replace("-osu", "");
-            const m = rawVersion.match(/([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/);
-            const [, majMin, , , postDash] = m || [];
-            const providerName = PROVIDERS[postDash] ? postDash : null;
-            const flag = flags.length > 0 ? flags[0] : 0;
-            const managerAllowed = !!(flag & ManagerAllowedFlag);
-            const pinValidated = !!(flag & PinValidatedFlag);
-
-            let isRecoveryMode = false;
-            let onboarded = true;
-            if (flags.length === 4) {
-              // Nb Since LNS+ unseeded devices are visible + extra flags
-              isRecoveryMode = !!(flags[0] & 0x01);
-              onboarded = !!(flags[0] & 0x04);
-            }
-
-            log(
-              "hw",
-              "deviceInfo: se@" +
-                version +
-                " mcu@" +
-                mcuVersion +
-                (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : "")
-            );
-
-            const hasDevFirmware = isDevFirmware(seVersion);
-            const deviceInfo: DeviceInfo = {
-              version,
-              mcuVersion,
-              seVersion,
-              mcuBlVersion,
-              majMin,
-              providerName: providerName || null,
-              targetId,
-              hasDevFirmware,
-              seTargetId,
-              mcuTargetId,
-              isOSU,
-              isBootloader,
-              isRecoveryMode,
-              managerAllowed,
-              pinValidated,
-              onboarded,
-              bootloaderVersion,
-              hardwareVersion,
-              languageId,
-            };
+            const deviceInfo = parseDeviceInfo(firmwareInfo);
 
             return { type: "data" as const, deviceInfo };
           })
@@ -129,6 +67,74 @@ function internalGetDeviceInfoTask({
     );
   });
 }
+
+export const parseDeviceInfo = (firmwareInfo: FirmwareInfo): DeviceInfo => {
+  const {
+    isBootloader,
+    rawVersion,
+    targetId,
+    seVersion,
+    seTargetId,
+    mcuBlVersion,
+    mcuVersion,
+    mcuTargetId,
+    flags,
+    bootloaderVersion,
+    hardwareVersion,
+    languageId,
+  } = firmwareInfo;
+
+  const isOSU = rawVersion.includes("-osu");
+  const version = rawVersion.replace("-osu", "");
+  const m = rawVersion.match(/([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/);
+  const [, majMin, , , postDash] = m || [];
+  const providerName = PROVIDERS[postDash] ? postDash : null;
+  const flag = flags.length > 0 ? flags[0] : 0;
+  const managerAllowed = !!(flag & ManagerAllowedFlag);
+  const pinValidated = !!(flag & PinValidatedFlag);
+
+  let isRecoveryMode = false;
+  let onboarded = true;
+  if (flags.length === 4) {
+    // Nb Since LNS+ unseeded devices are visible + extra flags
+    isRecoveryMode = !!(flags[0] & 0x01);
+    onboarded = !!(flags[0] & 0x04);
+  }
+
+  log(
+    "hw",
+    "deviceInfo: se@" +
+      version +
+      " mcu@" +
+      mcuVersion +
+      (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : "")
+  );
+
+  const hasDevFirmware = isDevFirmware(seVersion);
+  const deviceInfo: DeviceInfo = {
+    version,
+    mcuVersion,
+    seVersion,
+    mcuBlVersion,
+    majMin,
+    providerName: providerName || null,
+    targetId,
+    hasDevFirmware,
+    seTargetId,
+    mcuTargetId,
+    isOSU,
+    isBootloader,
+    isRecoveryMode,
+    managerAllowed,
+    pinValidated,
+    onboarded,
+    bootloaderVersion,
+    hardwareVersion,
+    languageId,
+  };
+
+  return deviceInfo;
+};
 
 export const getDeviceInfoTask = sharedLogicTaskWrapper(
   internalGetDeviceInfoTask

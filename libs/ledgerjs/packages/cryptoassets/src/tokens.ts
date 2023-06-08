@@ -182,7 +182,6 @@ export function convertERC20([
   contractAddress,
   disableCountervalue,
   delisted,
-  countervalueTicker,
 ]: ERC20Token | PolygonERC20Token): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById(parentCurrencyId);
   return {
@@ -196,7 +195,6 @@ export function convertERC20([
     ticker,
     delisted,
     disableCountervalue: !!parentCurrency.isTestnetFor || !!disableCountervalue,
-    countervalueTicker,
     units: [
       {
         name,
@@ -217,7 +215,6 @@ function convertBEP20([
   contractAddress,
   disableCountervalue,
   delisted,
-  countervalueTicker,
 ]: BEP20Token): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById(parentCurrencyId);
   return {
@@ -231,7 +228,6 @@ function convertBEP20([
     ticker,
     delisted,
     disableCountervalue: !!parentCurrency.isTestnetFor || !!disableCountervalue,
-    countervalueTicker,
     units: [
       {
         name,
@@ -306,6 +302,7 @@ function convertElrondESDTTokens([
   decimals,
   signature,
   name,
+  disableCountervalue,
 ]: ElrondESDTToken): TokenCurrency {
   const ELROND_ESDT_CONTRACT =
     "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
@@ -317,6 +314,7 @@ function convertElrondESDTTokens([
     ledgerSignature: signature,
     parentCurrency: getCryptoCurrencyById("elrond"),
     tokenType: "esdt",
+    disableCountervalue,
     name,
     ticker,
     units: [

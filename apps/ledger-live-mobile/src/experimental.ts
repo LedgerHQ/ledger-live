@@ -91,14 +91,6 @@ export const experimentalFeatures: Feature[] = [
   },
   {
     type: "toggle",
-    name: "LEDGER_COUNTERVALUES_API",
-    title: i18n.t(i18nKey("experimentalCountervalues", "title")),
-    description: i18n.t(i18nKey("experimentalCountervalues", "description")),
-    valueOn: "https://countervalues-experimental.live.ledger.com",
-    valueOff: "https://countervalues.live.ledger.com",
-  },
-  {
-    type: "toggle",
     name: "EIP1559_MINIMUM_FEES_GATE",
     title: "Deactivate EIP-1559 minimum priority fee gate",
     description:
@@ -123,6 +115,14 @@ export const experimentalFeatures: Feature[] = [
       "Customize the multiplier used for the base fee composing the maxFeePerGas",
     minValue: 0,
     maxValue: 10,
+  },
+  {
+    type: "toggle",
+    name: "ENABLE_NETWORK_LOGS",
+    title: i18n.t(i18nKey("experimentalEnableNetworkLogs", "title")),
+    description: i18n.t(
+      i18nKey("experimentalEnableNetworkLogs", "description"),
+    ),
   },
   ...(__DEV__
     ? [

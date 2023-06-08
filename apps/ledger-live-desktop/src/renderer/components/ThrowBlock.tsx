@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import logger from "~/renderer/logger";
 import RenderError from "./RenderError";
 type Props = {
-  children: any;
+  children: React.ReactNode;
   onError?: Function;
 };
 type State = {

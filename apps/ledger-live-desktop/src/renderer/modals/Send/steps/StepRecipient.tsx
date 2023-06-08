@@ -23,7 +23,6 @@ const StepRecipient = ({
   onChangeTransaction,
   error,
   status,
-  bridgePending,
   maybeRecipient,
   onResetMaybeRecipient,
   maybeNFTId,
@@ -83,6 +82,7 @@ const StepRecipient = ({
           />
           <SendRecipientFields
             account={mainAccount}
+            parentAccount={parentAccount}
             status={status}
             transaction={transaction}
             onChange={onChangeTransaction}

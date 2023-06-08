@@ -9,7 +9,7 @@ import BigNumber from "bignumber.js";
 type Props<T extends TransactionCommon> = {
   account: AccountLike;
   transaction: T;
-  parentAccount: Account | undefined | null;
+  parentAccount?: Account | undefined | null;
   prefix?: string;
   showAllDigits?: boolean;
   disableRounding?: boolean;

@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
-import { Box, Flex, Icons, Link, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Link, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { CloseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
@@ -23,11 +23,12 @@ type Props = {
   Icon?: IconType;
   iconColor?: string;
   children?: React.ReactNode;
+  footerComponent?: React.ReactNode;
+  exportLogIcon?: typeof Icons.DownloadMedium | typeof Icons.ImportMedium;
+  exportLogIconPosition?: "left" | "right";
 };
 
-const StyledLink = styled(Link).attrs({
-  iconPosition: "left",
-})`
+const StyledLink = styled(Link)`
   margin-top: 32px;
   margin-bottom: 10px;
 `;
@@ -41,7 +42,10 @@ const GenericErrorView = ({
   hasExportLogButton = true,
   children,
   Icon = CloseMedium,
-  iconColor = "error.c50",
+  iconColor = "error.c60",
+  footerComponent,
+  exportLogIcon = Icons.DownloadMedium,
+  exportLogIconPosition = "left",
 }: Props) => {
   const { t } = useTranslation();
 
@@ -50,7 +54,7 @@ const GenericErrorView = ({
   const titleError = outerError || error;
   const subtitleError = outerError ? error : null;
 
-  const { space } = useTheme();
+  const { colors } = useTheme();
 
   // To avoid regression, but this case should not happen if RequiresBle component is correctly used.
   if (error instanceof BluetoothRequired) {
@@ -60,25 +64,25 @@ const GenericErrorView = ({
   return (
     <Flex flexDirection={"column"} alignItems={"center"} alignSelf="stretch">
       {withIcon ? (
-        <Box mb={7}>
-          <Flex
-            backgroundColor={iconColor}
-            height={space[11]}
-            width={space[11]}
-            borderRadius={999}
-            justifyContent="center"
-            alignItems="center"
-          >
-            <Icon size={24} color="neutral.c00" />
-          </Flex>
-        </Box>
+        <Flex height={100} justifyContent="center">
+          <BoxedIcon
+            Icon={Icon}
+            backgroundColor={colors.opacityDefault.c05}
+            size={64}
+            variant="circle"
+            borderColor="none"
+            iconSize={32}
+            iconColor={iconColor}
+          />
+        </Flex>
       ) : null}
       <Text
         variant={"h4"}
         fontWeight="semiBold"
         textAlign={"center"}
         numberOfLines={3}
-        mb={6}
+        mb={2}
+        mt={24}
       >
         <TranslatedError error={titleError} />
       </Text>
@@ -94,6 +98,7 @@ const GenericErrorView = ({
             color="neutral.c80"
             textAlign="center"
             numberOfLines={6}
+            mt={5}
           >
             <TranslatedError error={error} field="description" />
           </Text>
@@ -102,10 +107,15 @@ const GenericErrorView = ({
       ) : null}
       {children}
       {hasExportLogButton ? (
-        <StyledLink Icon={Icons.DownloadMedium} onPress={onExport}>
+        <StyledLink
+          Icon={exportLogIcon}
+          onPress={onExport}
+          iconPosition={exportLogIconPosition}
+        >
           {t("common.saveLogs")}
         </StyledLink>
       ) : null}
+      {footerComponent}
     </Flex>
   );
 };

@@ -448,7 +448,7 @@ export function useWalletAPIServer({
               message,
               onSuccess: (signature) => {
                 tracking.signMessageSuccess(manifest);
-                resolve(Buffer.from(signature));
+                resolve(Buffer.from(signature.replace("0x", ""), "hex"));
               },
               onCancel: () => {
                 tracking.signMessageFail(manifest);

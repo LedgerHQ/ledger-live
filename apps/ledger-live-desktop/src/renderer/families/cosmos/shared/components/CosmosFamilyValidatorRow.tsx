@@ -19,7 +19,7 @@ type Props = {
   currency: CryptoCurrency;
   validator: CosmosValidatorItem;
   active?: boolean;
-  onClick?: (v: CosmosValidatorItem) => void;
+  onClick?: (v: { address: string }) => void;
   unit: Unit;
 };
 function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }: Props) {
@@ -45,7 +45,7 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
         address: validator.validatorAddress,
       }}
       icon={<CosmosFamilyLedgerValidatorIcon validator={validator} />}
-      title={validator.name || validator.voteAccount}
+      title={validator.name || validator.validatorAddress}
       onExternalLink={onExternalLink}
       unit={unit}
       sideInfo={
@@ -84,14 +84,17 @@ function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }
     ></StyledValidatorRow>
   );
 }
-const StyledValidatorRow: ThemedComponent<ValidatorRowProps> = styled(ValidatorRow)`
+const StyledValidatorRow = styled(ValidatorRow)<ValidatorRowProps>`
   border-color: transparent;
   margin-bottom: 0;
 `;
-const ChosenMark: ThemedComponent<{
-  active: boolean;
-}> = styled(Check).attrs(p => ({
+const ChosenMark = styled(Check).attrs<{
+  active?: boolean;
+}>(p => ({
   color: p.active ? p.theme.colors.palette.primary.main : "transparent",
   size: 14,
-}))``;
+}))<{
+  active?: boolean;
+  size?: number;
+}>``;
 export default CosmosFamilyValidatorRow;

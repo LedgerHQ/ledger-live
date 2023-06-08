@@ -99,7 +99,7 @@ function DelegationAmount({ navigation, route }: Props) {
         : validators;
     const transaction = bridge.updateTransaction(
       tx,
-      ["delegate", "redelegate", "undelegate"].includes(tx.mode)
+      tx.mode === "delegate"
         ? {
             amount: new BigNumber(value),
             validators: filteredValidators,
@@ -111,6 +111,7 @@ function DelegationAmount({ navigation, route }: Props) {
     // @ts-expect-error navigate cannot infer the correct navigator + route
     navigation.navigate(route.params.nextScreen, {
       ...route.params,
+      validatorName: route.params.validator.name,
       transaction,
       fromSelectAmount: true,
     });

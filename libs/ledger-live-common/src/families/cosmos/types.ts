@@ -37,10 +37,7 @@ export type CosmosTx = {
   code: number;
   codespace: string;
   data: string;
-  events: {
-    type: string;
-    attributes: { index: boolean; key: string; value: string }[];
-  }[];
+  events: CosmosMessage[];
   gas_used: string;
   gas_wanted: string;
   height: string;
@@ -50,6 +47,11 @@ export type CosmosTx = {
   timestamp: string;
   tx: { "@type": string; body: any; auth_info: any; signatures: any[] };
   txhash: string;
+};
+
+export type CosmosMessage = {
+  type: string;
+  attributes: { key: string; value: string; index?: boolean }[];
 };
 
 export type CosmosResources = {

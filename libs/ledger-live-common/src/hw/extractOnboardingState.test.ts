@@ -77,6 +77,21 @@ describe("@hw/extractOnboardingState", () => {
         });
       });
 
+      describe("and the user is on the onboarding early check screen", () => {
+        beforeEach(() => {
+          flagsBytes[3] = 15;
+        });
+
+        it("should return an onboarding step that is set at the onboarding early check screen", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(
+            OnboardingStep.OnboardingEarlyCheck
+          );
+        });
+      });
+
       describe("and the user is on 'choose name' step", () => {
         beforeEach(() => {
           flagsBytes[3] = 12;

@@ -16,12 +16,14 @@ import {
   revokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
 import * as S from "./ManageModal.styles";
-import { Account } from "@ledgerhq/types-live";
-type Props = {
-  name?: string;
-  account: Account;
+import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+
+export type Props = {
+  account: CeloAccount;
+  source?: string;
 };
-const ManageModal = ({ name, account, ...rest }: Props) => {
+
+const ManageModal = ({ account, source, ...rest }: Props) => {
   const { t } = useTranslation();
   const { celoResources } = account;
   invariant(celoResources, "celo account expected");
@@ -32,13 +34,14 @@ const ManageModal = ({ name, account, ...rest }: Props) => {
       dispatch(
         openModal(name, {
           account,
+          source,
           ...params,
         }),
       );
     },
-    [dispatch, account],
+    [dispatch, account, source],
   );
-  const groupsVotedFor = [...new Set(celoResources.votes.map(v => v.validatorGroup))];
+  const groupsVotedFor = [...new Set(celoResources.votes?.map(v => v.validatorGroup))];
   const canVoteForNewGroup = celoResources.maxNumGroupsVotedFor.gt(groupsVotedFor.length);
   const unlockingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
   const votingEnabled = celoResources.nonvotingLockedBalance?.gt(0) && canVoteForNewGroup;
@@ -48,7 +51,7 @@ const ManageModal = ({ name, account, ...rest }: Props) => {
   return (
     <Modal
       {...rest}
-      name={name}
+      name="MODAL_CELO_MANAGE"
       centered
       render={({ onClose }) => (
         <ModalBody

@@ -21,9 +21,11 @@ export class DiscoverPage {
   readonly signNetworkWarning: Locator;
   readonly signContinueButton: Locator;
   readonly confirmText: Locator;
+  readonly webview: Locator;
 
   constructor(page: Page) {
     this.page = page;
+    this.webview = page.locator("webview");
     this.discoverMenuButton = page.locator("data-test-id=drawer-catalog-button");
     this.discoverTitle = page.locator("data-test-id=discover-title");
     this.testAppCatalogItem = page.locator("#platform-catalog-app-dummy-live-app");
@@ -53,6 +55,19 @@ export class DiscoverPage {
 
   async getLiveAppTitle() {
     return await this.liveAppTitle.textContent();
+  }
+
+  async getLiveAppDappURL() {
+    try {
+      const src = await this.webview.getAttribute("src");
+      const url = new URL(src ?? "");
+      const { dappUrl }: { dappUrl: string | null } = JSON.parse(
+        url.searchParams.get("params") ?? "",
+      );
+      return dappUrl;
+    } catch (e) {
+      return null;
+    }
   }
 
   async getAccountsList() {

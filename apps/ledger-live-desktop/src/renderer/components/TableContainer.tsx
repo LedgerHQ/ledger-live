@@ -48,7 +48,7 @@ export const TableRow = styled(Box)`
 type TableHeaderProps = {
   title?: React.ReactNode;
   children?: React.ReactNode;
-  titleProps?: any;
+  titleProps?: React.ComponentProps<typeof TableHeaderTitle>;
   tooltip?: React.ReactNode;
 };
 const TableHeaderTooltip = ({ tooltip, title, titleProps }: TableHeaderProps) =>

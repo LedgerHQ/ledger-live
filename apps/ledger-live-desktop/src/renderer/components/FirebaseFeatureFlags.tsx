@@ -4,7 +4,7 @@ import semver from "semver";
 import { useDispatch, useSelector } from "react-redux";
 import { FeatureFlagsProvider } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
-import { getValue } from "firebase/remote-config";
+import { getAll, getValue } from "firebase/remote-config";
 import { getEnv } from "@ledgerhq/live-common/env";
 import { formatToFirebaseFeatureId, useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
 import { overriddenFeatureFlagsSelector } from "../reducers/settings";
@@ -35,23 +35,39 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
   const localOverrides = useSelector(overriddenFeatureFlagsSelector);
   const dispatch = useDispatch();
 
-  const isFeature = (key: string): boolean => {
-    if (!remoteConfig) {
-      return false;
+  const getAllFlags = useCallback((): Record<string, Feature> => {
+    if (remoteConfig) {
+      const allFeatures = getAll(remoteConfig);
+      const parsedFeatures = Object.entries(allFeatures).map(([key, value]) => {
+        return [key, JSON.parse(value.asString())];
+      });
+
+      return Object.fromEntries(parsedFeatures);
     }
 
-    try {
-      const value = getValue(remoteConfig, formatToFirebaseFeatureId(key));
+    return {};
+  }, [remoteConfig]);
 
-      if (!value || !value.asString()) {
+  const isFeature = useCallback(
+    (key: string): boolean => {
+      if (!remoteConfig) {
         return false;
       }
-      return true;
-    } catch (error) {
-      console.error(`Failed to check if feature "${key}" exists`);
-      return false;
-    }
-  };
+
+      try {
+        const value = getValue(remoteConfig, formatToFirebaseFeatureId(key));
+
+        if (!value || !value.asString()) {
+          return false;
+        }
+        return true;
+      } catch (error) {
+        console.error(`Failed to check if feature "${key}" exists`);
+        return false;
+      }
+    },
+    [remoteConfig],
+  );
 
   const getFeature = useCallback(
     (key: FeatureId, allowOverride = true): Feature | null => {
@@ -117,6 +133,7 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
       overrideFeature={overrideFeature}
       resetFeature={resetFeature}
       resetFeatures={resetFeatures}
+      getAllFlags={getAllFlags}
     >
       {children}
     </FeatureFlagsProvider>

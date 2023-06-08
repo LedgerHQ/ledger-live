@@ -11,6 +11,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
 import { deepLinkUrlSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
 import { setDeepLinkUrl } from "~/renderer/actions/settings";
+import { track } from "~/renderer/analytics/segment";
 import { setTrackingSource } from "../analytics/TrackPage";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Account, SubAccount } from "@ledgerhq/types-live";
@@ -34,13 +35,20 @@ const getAccountsOrSubAccountsByCurrency = (
   }
   return accounts.filter(predicateFn);
 };
+
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
   const location = useLocation();
   const history = useHistory();
   const navigate = useCallback(
-    (pathname: string, state?: any, search?: string) => {
+    (
+      pathname: string,
+      state?: {
+        [k: string]: string;
+      },
+      search?: string,
+    ) => {
       const hasNewPathname = pathname !== location.pathname;
       const hasNewSearch = typeof search === "string" && search !== location.search;
       const hasNewState = JSON.stringify(state) !== JSON.stringify(location.state);
@@ -63,7 +71,7 @@ export function useDeepLinkHandler() {
     [history, location],
   );
   const handler = useCallback(
-    (event: any, deeplink: string) => {
+    (_, deeplink: string) => {
       const { pathname, searchParams, search } = new URL(deeplink);
       /**
        * TODO: handle duplicated query params
@@ -93,6 +101,18 @@ export function useDeepLinkHandler() {
       const query = Object.fromEntries(searchParams);
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
       const [url, path] = fullUrl.split("/");
+      // Track deeplink only when ajsPropSource attribute exists.
+      const ajsPropSource = searchParams.get("ajs_prop_source");
+      if (ajsPropSource) {
+        const { currency, installApp, appName } = query;
+        track("deeplink_clicked", {
+          deeplinkSource: ajsPropSource,
+          url,
+          currency,
+          installApp,
+          appName,
+        });
+      }
       switch (url) {
         case "accounts": {
           const { address } = query;
@@ -126,17 +146,28 @@ export function useDeepLinkHandler() {
           navigate("/swap");
           break;
         case "account": {
-          const { currency } = query;
+          const { address, currency } = query;
+
           if (!currency || typeof currency !== "string") return;
           const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
           if (!c || c.type === "FiatCurrency") return;
-          const found = getAccountsOrSubAccountsByCurrency(c, accounts || []);
-          if (!found.length) return;
-          const [chosen] = found;
-          if (chosen?.type === "Account") {
-            navigate(`/account/${chosen.id}`);
+          const foundAccounts = getAccountsOrSubAccountsByCurrency(c, accounts || []);
+          if (!foundAccounts.length) return;
+          const [chosenAccount] = foundAccounts;
+
+          // Navigate to a specific account if a valid 'address' is provided and the account currency matches the 'currency' param in the deeplink URL
+          if (address && typeof address === "string") {
+            const account = accounts.find(acc => acc.freshAddress === address);
+            if (account && account.currency.id === currency) {
+              navigate(`/account/${account.id}`);
+            }
+            break;
+          }
+
+          if (chosenAccount?.type === "Account") {
+            navigate(`/account/${chosenAccount.id}`);
           } else {
-            navigate(`/account/${chosen?.parentId}/${chosen?.id}`);
+            navigate(`/account/${chosenAccount?.parentId}/${chosenAccount?.id}`);
           }
           break;
         }
@@ -227,7 +258,11 @@ export function useDeepLinkHandler() {
           break;
         }
         case "discover":
-          navigate(`/platform/${path ?? ""}`, query);
+          if (path.startsWith("protect")) {
+            navigate(`/recover/${path}`, undefined, search);
+          } else {
+            navigate(`/platform/${path ?? ""}`, query);
+          }
           break;
         case "wc": {
           setTrackingSource("deeplink");
@@ -237,6 +272,9 @@ export function useDeepLinkHandler() {
         }
         case "market":
           navigate(`/market`);
+          break;
+        case "recover":
+          navigate(`/recover/${path}`, undefined, search);
           break;
         case "portfolio":
         default:

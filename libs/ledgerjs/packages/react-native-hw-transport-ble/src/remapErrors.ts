@@ -22,7 +22,9 @@ export const remapError = (error: IOBleErrorRemap): IOBleErrorRemap => {
     } else if (error?.attErrorCode === 22) {
       return new PairingFailed();
     }
-  } else if (
+  }
+
+  if (
     error.message.includes("was disconnected") ||
     error.message.includes("not found")
   ) {
