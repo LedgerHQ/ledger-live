@@ -3,7 +3,6 @@ import "zx/globals";
 import rimraf from "rimraf";
 
 const targets = [
-  "customAddressValidation.ts",
   "hw-getAddress.ts",
   "hw-signMessage.ts",
   "transaction.ts",
