@@ -213,7 +213,9 @@ function NotificationsSettings() {
               />
             ) : null}
             {!notificationsCategoriesHidden ||
-            !notificationsCategoriesHidden.includes("transactionAlertsCategory") ? (
+            !notificationsCategoriesHidden.includes(
+              "transactionAlertsCategory",
+            ) ? (
               <NotificationSettingsRow
                 notificationKey={"transactionAlertsCategory"}
                 disabled={disableSubSettings}
