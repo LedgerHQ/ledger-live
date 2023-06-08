@@ -14,7 +14,7 @@ type Props = {
 };
 
 function Footer({ url, urlWhatIsThis, currency }: Props) {
-  const { name } = currency;
+  const { name: currencyId } = currency;
 
   return (
     <Flex bg={"background.main"} px={6} my={6}>
@@ -35,7 +35,7 @@ function Footer({ url, urlWhatIsThis, currency }: Props) {
           type="main"
           onPress={() => Linking.openURL(url)}
           eventProperties={{
-            currencyId: name,
+            currencyId,
           }}
           outline
           mt={4}

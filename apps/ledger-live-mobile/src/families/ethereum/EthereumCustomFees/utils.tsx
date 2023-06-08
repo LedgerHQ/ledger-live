@@ -39,9 +39,8 @@ export const inferMaxPriorityFeeRange = (
 
     const { units } = mainAccount.currency;
     const unit = units.length > 1 ? units[1] : units[0];
-    const newMaxPriorityFeePerGasinGwei = formatCurrencyUnit(
-      unit,
-      newMaxPriorityFeePerGas,
+    const newMaxPriorityFeePerGasinGwei = new BigNumber(
+      formatCurrencyUnit(unit, newMaxPriorityFeePerGas),
     );
 
     if (
@@ -52,8 +51,8 @@ export const inferMaxPriorityFeeRange = (
       minValue = newMaxPriorityFeePerGas;
     }
 
-    if (newMaxPriorityFeePerGas.isGreaterThan(new BigNumber(maxValue))) {
-      maxValue = newMaxPriorityFeePerGas;
+    if (newMaxPriorityFeePerGasinGwei.isGreaterThan(new BigNumber(maxValue))) {
+      maxValue = newMaxPriorityFeePerGasinGwei;
     }
   }
 
