@@ -130,17 +130,27 @@ export class StepFeesFooter extends PureComponent<StepProps> {
   render() {
     const { bridgePending, status } = this.props;
     const { errors } = status;
-    const hasErrors = Object.keys(errors).length;
+    // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
+    if (
+      errors.amount &&
+      (errors.amount.name.includes("NotOwnedNft") ||
+        errors.amount.name.includes("NotEnoughNftOwned"))
+    ) {
+      delete errors.amount;
+    }
+    const errorCount = Object.keys(errors).length;
     return (
       <>
         {this.state.transactionHasBeenValidated ? (
           <ErrorBanner error={new TransactionHasBeenValidatedError()} />
+        ) : errorCount ? (
+          <ErrorBanner error={Object.values(errors)[0]} />
         ) : null}
         <Button
           id={"send-amount-continue-button"}
           isLoading={bridgePending}
           primary
-          disabled={this.state.transactionHasBeenValidated || bridgePending || hasErrors}
+          disabled={this.state.transactionHasBeenValidated || bridgePending || errorCount}
           onClick={this.onNext}
         >
           <Trans i18nKey="common.continue" />
