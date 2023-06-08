@@ -85,7 +85,7 @@ export const signOperationWithAPI = (
 
           const { signature } = await hwApp.signTransaction(
             account.freshAddressPath,
-            Buffer.from(tx.serialize())
+            tx.compileMessage().serialize()
           );
 
           subscriber.next({
@@ -98,7 +98,7 @@ export const signOperationWithAPI = (
             type: "signed",
             signedOperation: {
               operation: buildOptimisticOperation(account, transaction),
-              signature: Buffer.from(signedTx.serialize()).toString("hex"),
+              signature: signedTx.serialize().toString("hex"),
               expirationDate: null,
             },
           });
