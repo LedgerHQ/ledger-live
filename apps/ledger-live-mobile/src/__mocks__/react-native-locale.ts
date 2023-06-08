@@ -17,7 +17,6 @@ const NativeLocale = {
   quotationBeginDelimiterKey: "“",
   quotationEndDelimiterKey: "”",
 };
-
 const m = {
   constants() {
     return NativeLocale;
@@ -40,5 +39,4 @@ const m = {
     return NativeLocale.dateFormat(date, dateStyle, timeStyle);
   },
 };
-
 export default m;
