@@ -122,7 +122,9 @@ const SwapForm = () => {
     [dispatch],
   );
   const showDexQuotes: Feature<boolean> | null = useFeature("swapShowDexQuotes");
-  const walletApiPartnerList: Feature<any> | null = useFeature("swapWalletApiPartnerList");
+  const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
+    "swapWalletApiPartnerList",
+  );
   const onNoRates = useCallback(
     ({ toState }) => {
       track("error_message", {
