@@ -212,7 +212,7 @@ export const isAddressPoisoningOperation = (
   );
 };
 
-export const isEditableOperation = (account: AccountLike, operation: Operation): boolean => {
+export function isEditableOperation(account: AccountLike, operation: Operation): boolean {
   let isEthFamily = false;
   if (account.type === "Account") {
     isEthFamily = account.currency.family === "ethereum";
@@ -220,7 +220,7 @@ export const isEditableOperation = (account: AccountLike, operation: Operation):
     isEthFamily = account.token.parentCurrency.family === "ethereum";
   }
   return isEthFamily && operation.blockHeight === null && !!operation.transactionRaw;
-};
+}
 
 // return the oldest stuck pending operation and its corresponding account according to a eth account or a token subaccount. If no stuck pending operation is found, return undefined
 export function getStuckAccountAndOperation(
@@ -273,6 +273,7 @@ export function getStuckAccountAndOperation(
     stuckAccount = mainAccount;
     stuckParentAccount = undefined;
   }
+
   invariant(stuckAccount, "stuckAccount required");
 
   return {

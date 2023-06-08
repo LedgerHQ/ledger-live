@@ -6,7 +6,11 @@ import {
   fromTransactionRaw,
 } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { useTranslation } from "react-i18next";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  TransactionCommonRaw,
+} from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { View } from "react-native";
 import { log } from "@ledgerhq/logs";
@@ -22,7 +26,7 @@ const CurrentNetworkFeeComponent = ({
 }: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
-  transactionRaw?: TransactionRaw;
+  transactionRaw?: TransactionCommonRaw;
   advancedMode?: boolean;
 }) => {
   const { t } = useTranslation();

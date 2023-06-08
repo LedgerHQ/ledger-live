@@ -10,7 +10,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
-import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+import { getStuckAccountAndOperation } from "@ledgerhq/coin-framework/operation";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -196,10 +196,10 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
             flex: 1,
           }}
         >
-          {stuckAccountAndOperation?.stuckOperation ? (
+          {stuckAccountAndOperation?.operation ? (
             <EditOperationCard
               isOperationStuck
-              oldestEditableOperation={stuckAccountAndOperation.stuckOperation}
+              oldestEditableOperation={stuckAccountAndOperation.operation}
               account={account}
               parentAccount={parentAccount}
             />
