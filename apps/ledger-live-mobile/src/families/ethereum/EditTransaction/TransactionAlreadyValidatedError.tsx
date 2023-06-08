@@ -31,8 +31,8 @@ const TransactionAlreadyValidatedErrorComponent = ({
   route,
 }: Props) => {
   const { colors } = useTheme();
-  const { error } = route.params;
   const { t } = useTranslation();
+  const { error } = route.params;
 
   return (
     <View
