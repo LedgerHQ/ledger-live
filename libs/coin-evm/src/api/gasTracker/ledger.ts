@@ -40,11 +40,11 @@ const blockchainBaseURL = (currency: CryptoCurrency): string => {
 };
 //#endregion
 
-const EIP1559ShouldBeUsed = (currency: CryptoCurrency): boolean => {
+export const EIP1559ShouldBeUsed = (currency: CryptoCurrency): boolean => {
   return getEnv("EIP1559_ENABLED_CURRENCIES").includes(currency.id);
 };
 
-const getGasTrackerBarometer: (currency: CryptoCurrency) => Promise<{
+export const getGasTrackerBarometer: (currency: CryptoCurrency) => Promise<{
   low: BigNumber;
   medium: BigNumber;
   high: BigNumber;
