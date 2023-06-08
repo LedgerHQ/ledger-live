@@ -32,9 +32,9 @@ import {
 } from "../../components/CustomImage/imageUtils";
 import { ImageFileUri } from "../../components/CustomImage/types";
 import { targetDisplayDimensions } from "./shared";
-import FramedImage, {
+import StaxFramedImage, {
   previewConfig,
-} from "../../components/CustomImage/FramedImage";
+} from "../../components/CustomImage/StaxFramedImage";
 import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
@@ -329,7 +329,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
               alignItems="center"
               justifyContent="center"
             >
-              <FramedImage
+              <StaxFramedImage
                 onError={handlePreviewImageError}
                 fadeDuration={0}
                 source={{ uri: processorPreviewImage?.imageBase64DataUri }}

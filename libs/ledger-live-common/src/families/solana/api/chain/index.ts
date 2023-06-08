@@ -6,7 +6,7 @@ import {
 import {
   Connection,
   FetchMiddleware,
-  VersionedMessage,
+  Message,
   PublicKey,
   sendAndConfirmRawTransaction,
   SignaturesForAddressOptions,
@@ -25,7 +25,7 @@ export type ChainAPI = Readonly<{
 
   getLatestBlockhash: () => Promise<string>;
 
-  getFeeForMessage: (message: VersionedMessage) => Promise<number | null>;
+  getFeeForMessage: (message: Message) => Promise<number>;
 
   getBalanceAndContext: (
     address: string
@@ -120,7 +120,7 @@ export function getChainAPI(
         .then((r) => r.blockhash)
         .catch(remapErrors),
 
-    getFeeForMessage: (msg: VersionedMessage) =>
+    getFeeForMessage: (msg: Message) =>
       connection()
         .getFeeForMessage(msg)
         .then((r) => r.value)
@@ -187,11 +187,7 @@ export function getChainAPI(
         .catch(remapErrors),
 
     getParsedTransactions: (signatures: string[]) =>
-      connection()
-        .getParsedTransactions(signatures, {
-          maxSupportedTransactionVersion: 0,
-        })
-        .catch(remapErrors),
+      connection().getParsedTransactions(signatures).catch(remapErrors),
 
     getAccountInfo: (address: string) =>
       connection()

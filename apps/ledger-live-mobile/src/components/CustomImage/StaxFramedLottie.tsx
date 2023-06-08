@@ -1,19 +1,14 @@
 import AnimatedLottieView from "lottie-react-native";
 import React, { useContext } from "react";
-import FramedImage, {
-  transferLottieConfig,
+import StaxFramedImage, {
+  transferConfig,
   Props as FramedImageProps,
   ImageSourceContext,
-} from "./FramedImage";
-
-/**
- * squareRoot(width of the lottie bounding box / width of the device frame in the lottie)
- * */
-const lottieScale = Math.sqrt(1182 / 502);
+} from "./StaxFramedImage";
 
 const lottiesStyle = {
-  width: transferLottieConfig.frameWidth,
-  transform: [{ scale: lottieScale }],
+  width: transferConfig.frameWidth,
+  height: transferConfig.frameHeight,
 };
 
 export type Props = {
@@ -22,14 +17,14 @@ export type Props = {
   loadingProgress?: FramedImageProps["loadingProgress"];
 };
 
-const FramedImageWithLottie: React.FC<Props> = ({
+const StaxFramedLottie: React.FC<Props> = ({
   source,
   lottieSource,
   loadingProgress,
 }) => {
   return (
-    <FramedImage
-      frameConfig={transferLottieConfig}
+    <StaxFramedImage
+      frameConfig={transferConfig}
       source={source}
       loadingProgress={loadingProgress}
       background={
@@ -44,11 +39,11 @@ const FramedImageWithLottie: React.FC<Props> = ({
   );
 };
 
-export default FramedImageWithLottie;
+export default StaxFramedLottie;
 
-export const FramedImageWithLottieWithContext: React.FC<
+export const StaxFramedLottieWithContext: React.FC<
   Omit<Props, "source">
 > = props => {
   const { source } = useContext(ImageSourceContext);
-  return <FramedImageWithLottie {...props} source={source} />;
+  return <StaxFramedLottie {...props} source={source} />;
 };
