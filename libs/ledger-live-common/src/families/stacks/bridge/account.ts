@@ -38,7 +38,7 @@ import {
 import { StacksNetwork } from "./utils/api.types";
 import { Transaction, TransactionStatus } from "../types";
 import { getAccountShape, getTxToBroadcast } from "./utils/misc";
-import { broadcastTx } from "./utils/api";
+import {broadcastTx, fetchFullMempoolTxs, fetchMempoolTxs} from "./utils/api";
 import { getAddress } from "../../filecoin/bridge/utils/utils";
 import { withDevice } from "../../../hw/deviceAccess";
 import { getPath, throwIfError } from "../utils";
@@ -126,7 +126,14 @@ const estimateMaxSpendable = async ({
   transaction?: Transaction | null | undefined;
 }): Promise<BigNumber> => {
   const a = getMainAccount(account, parentAccount);
-  const { balance } = a;
+  const { address } = getAddress(a);
+  let { balance } = a;
+  const mempoolTxs = await fetchFullMempoolTxs(address);
+  for (const tx of mempoolTxs) {
+    balance = balance
+      .minus(new BigNumber(tx.fee_rate))
+      .minus(new BigNumber(tx.token_transfer.amount));
+  }
   return balance;
 };
 
