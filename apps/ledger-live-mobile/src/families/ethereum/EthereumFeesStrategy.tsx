@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { FeeStrategy } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { isEditableOperation } from "@ledgerhq/live-common/operation";
+import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
 import { getEnv } from "@ledgerhq/live-env";
 
 import SelectFeesStrategy from "../../components/SelectFeesStrategy";
