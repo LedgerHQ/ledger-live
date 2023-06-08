@@ -23,6 +23,12 @@ import { attachOperations, getSyncHash, mergeSubAccounts } from "./logic";
 import { getExplorerApi } from "./api/explorer";
 
 /**
+ * Number of blocks that are considered "unsafe" due to a potential reorg.
+ * Everything oldest than this number, should be considered immutable.
+ */
+export const SAFE_REORG_THRESHOLD = 80;
+
+/**
  * Main synchronization process
  * Get the main Account and the potential TokenAccounts linked to it
  */
@@ -57,7 +63,9 @@ export const getAccountShape: GetAccountShape = async infos => {
         currency,
         address,
         accountId,
-        latestSyncedOperation?.blockHeight || 0,
+        latestSyncedOperation?.blockHeight
+          ? Math.max(latestSyncedOperation.blockHeight - SAFE_REORG_THRESHOLD, 0)
+          : 0,
       );
     } catch (e) {
       log("EVM Family", "Failed to get latest transactions", {
@@ -87,7 +95,6 @@ export const getAccountShape: GetAccountShape = async infos => {
     lastTokenOperations,
     lastNftOperations,
   );
-
   const newOperations = [...confirmedOperations, ...lastCoinOperationsWithAttachements];
   const operations = mergeOps(initialAccount?.operations || [], newOperations);
   const operationsWithPendings = mergeOps(operations, initialAccount?.pendingOperations || []);
