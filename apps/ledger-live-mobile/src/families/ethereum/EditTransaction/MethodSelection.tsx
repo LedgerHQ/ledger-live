@@ -17,7 +17,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { isOldestEditableOperation } from "@ledgerhq/live-common/operation";
+import { getStuckAccountAndOperation } from "@ledgerhq/coin-framework/operation";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
@@ -88,7 +88,11 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     "cancel" | "speedup" | null
   >();
 
-  const oldestOperation = isOldestEditableOperation(operation, account);
+  const stuckAccountAndOperation = getStuckAccountAndOperation(
+    account,
+    parentAccount,
+  );
+  const oldestOperation = stuckAccountAndOperation?.operation;
   const currency = getAccountCurrency(account);
   const bridge = getAccountBridge(account, parentAccount as Account);
 

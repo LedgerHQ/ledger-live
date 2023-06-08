@@ -3,10 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import {
-  getOperationAmountNumber,
-  isEditableOperation,
-} from "@ledgerhq/live-common/operation";
+import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -19,6 +16,7 @@ import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
 import { isEqual } from "lodash";
 import { getEnv } from "@ledgerhq/live-common/env";
+import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
 
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import CounterValue from "../CounterValue";

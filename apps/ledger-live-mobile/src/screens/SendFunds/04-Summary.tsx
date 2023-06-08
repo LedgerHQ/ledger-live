@@ -8,7 +8,7 @@ import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import { isEditableOperation } from "@ledgerhq/live-common/operation";
+import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
 import {
   NotEnoughGas,
   TransactionHasBeenValidatedError,
