@@ -1,4 +1,9 @@
-import { AmountRequired, CurrencyNotSupported } from "./index";
+import {
+  AmountRequired,
+  CurrencyNotSupported,
+  TransportStatusError,
+  StatusCodes,
+} from "./index";
 
 function functionA() {
   throw new AmountRequired();
@@ -73,5 +78,10 @@ describe("custom errors", () => {
   test("error is instance of Error", () => {
     const error: Error = new AmountRequired();
     expect(error instanceof Error).toBeTruthy();
+  });
+
+  test("transport status error contains message", () => {
+    const error: Error = new TransportStatusError(StatusCodes.UNKNOWN_APDU);
+    expect(error.stack).toContain("Ledger device: UNKNOWN_APDU (0x6d02)");
   });
 });
