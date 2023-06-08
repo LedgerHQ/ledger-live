@@ -69,7 +69,7 @@ const TransactionAlreadyValidatedErrorComponent = ({
             mb={2}
             mt={24}
           >
-            {t("errors.transactionAlreadyValidated.title")}
+            {t("errors.TransactionAlreadyValidated.title")}
           </Text>
 
           <>

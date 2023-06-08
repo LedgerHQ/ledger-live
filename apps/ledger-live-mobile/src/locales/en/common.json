@@ -412,6 +412,9 @@
     "MaxFeeLow": {
       "title": "Your max fee is too low. Your transaction might stay pending for a while"
     },
+    "MaxPriorityFeeLowerThanInitial": {
+      "title": "Priority fee too low, please enter an amount superior to priority fee value of the initial transaction"
+    },
     "NetworkDown": {
       "title": "Sorry, internet seems to be down",
       "description": "Please check your internet connection."

@@ -1,4 +1,4 @@
-import React, { useState, memo, useMemo, useCallback } from "react";
+import React, { useState, memo, useMemo, useCallback, useEffect } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getDefaultFeeUnit } from "@ledgerhq/live-common/families/ethereum/logic";
@@ -34,9 +34,9 @@ type Props = {
 const Ethereum1559CustomFees = ({
   account,
   parentAccount,
-  onValidateFees,
   transaction: originalTransaction,
   transactionRaw,
+  onValidateFees,
 }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -78,6 +78,7 @@ const Ethereum1559CustomFees = ({
   // give user a warning if maxFeePerGas is lower than pending transaction maxFeePerGas + 10% of pending transaction maxPriorityFeePerGas for edit eth transaction feature
   if (!maxFeeWarning && transactionRaw?.maxPriorityFeePerGas) {
     const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
+
     const lowerLimitMaxFeePerGas = new BigNumber(transactionRaw.maxFeePerGas || 0).plus(
       new BigNumber(transactionRaw.maxPriorityFeePerGas).times(maxPriorityFeeGap),
     );
@@ -88,14 +89,10 @@ const Ethereum1559CustomFees = ({
 
   const mainAccount = getMainAccount(account, parentAccount);
   const maxPriorityFeeRange = useMemo(
-    () =>
-      inferMaxPriorityFeeRange(
-        mainAccount,
-        transaction?.networkInfo,
-        transactionRaw,
-      ),
+    () => inferMaxPriorityFeeRange(mainAccount, transaction?.networkInfo, transactionRaw),
     [mainAccount, transaction?.networkInfo, transactionRaw],
   );
+
   const maxFeePerGasRange = useMemo(() => {
     return inferMaxFeeRange(transaction?.networkInfo);
   }, [transaction?.networkInfo]);
@@ -111,6 +108,19 @@ const Ethereum1559CustomFees = ({
     }),
     [gasLimit, maxPriorityFeePerGas, maxFeePerGas],
   );
+
+  const [maxPriorityFeePerGasError, setMaxPriorityFeePerGasError] = useState("");
+
+  useEffect(() => {
+    if (
+      transactionRaw?.maxPriorityFeePerGas &&
+      maxPriorityFeePerGas.isLessThan(new BigNumber(transactionRaw.maxPriorityFeePerGas))
+    ) {
+      setMaxPriorityFeePerGasError(t("errors.MaxPriorityFeeLowerThanInitial.title"));
+    } else {
+      setMaxPriorityFeePerGasError("");
+    }
+  }, [maxPriorityFeePerGas, transactionRaw, t]);
 
   const onFeesChange = useCallback(
     (setter: React.Dispatch<React.SetStateAction<BigNumber>>) => (value: BigNumber) => {
@@ -159,6 +169,12 @@ const Ethereum1559CustomFees = ({
       ) : null}
 
       <SectionSeparator style={styles.sectionSeparator} lineColor={"transparent"} />
+      {maxPriorityFeePerGasError ? (
+        <LText style={styles.warning} color="orange">
+          {maxPriorityFeePerGasError}
+        </LText>
+      ) : null}
+      <SectionSeparator style={styles.sectionSeparator} lineColor={"transparent"} />
 
       <EditFeeUnitEthereum
         account={account}
@@ -200,6 +216,15 @@ const Ethereum1559CustomFees = ({
         />
       </View>
 
+      <View>
+        <CurrentNetworkFee
+          advancedMode
+          account={account}
+          parentAccount={parentAccount}
+          transactionRaw={transactionRaw}
+        />
+      </View>
+
       <View style={styles.flex}>
         <Button
           event="EthereumSetCustomFees"
@@ -207,15 +232,6 @@ const Ethereum1559CustomFees = ({
           title={t("send.summary.validateFees")}
           disabled={Boolean(maxPriorityFeeError || maxFeeError)}
           onPress={onValidateFees(transactionPatch)}
-        />
-      </View>
-
-      <View>
-        <CurrentNetworkFee
-          advancedMode
-          account={account}
-          parentAccount={parentAccount}
-          transactionRaw={transactionRaw}
         />
       </View>
     </View>

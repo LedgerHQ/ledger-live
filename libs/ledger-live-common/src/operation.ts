@@ -148,7 +148,9 @@ export function getStuckAccountAndOperation(
       now - pendingOp.date.getTime() >
         getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
   );
+
   if (stuckOperations.length === 0) return undefined;
+
   const oldestStuckOperation = stuckOperations.reduce((oldestOp, currentOp) => {
     if (!oldestOp) return currentOp;
     return oldestOp.transactionSequenceNumber !== undefined &&
@@ -157,6 +159,7 @@ export function getStuckAccountAndOperation(
       ? currentOp
       : oldestOp;
   });
+
   if (oldestStuckOperation?.transactionRaw?.subAccountId) {
     stuckAccount = findSubAccountById(
       mainAccount,
