@@ -239,7 +239,7 @@ export const defaultFeatures: DefaultFeatures = {
           alreadySubscribedURI: `ledgerlive://recover/protect-simu?redirectTo=login`,
         },
       },
-      login: {
+      account: {
         loginURI: "ledgerlive://recover/protect-simu?redirectTo=login",
       },
       protectId: "protect-simu",
@@ -254,12 +254,11 @@ export const defaultFeatures: DefaultFeatures = {
       version: "1",
     },
   },
-  protectServicesDiscoverDesktop: {
-    enabled: false,
-  },
   protectServicesDesktop: {
     enabled: false,
     params: {
+      openRecoverFromSidebar: true,
+      discoverTheBenefitsLink: "https://www.ledger.com/recover",
       onboardingRestore: {
         restoreInfoDrawer: {
           enabled: true,

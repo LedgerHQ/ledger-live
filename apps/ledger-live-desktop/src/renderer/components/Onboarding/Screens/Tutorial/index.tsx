@@ -46,6 +46,8 @@ import { UseCase } from "../../index";
 import { track } from "~/renderer/analytics/segment";
 import { RecoverHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverHowTo";
 import { RecoverPinCodeHowTo } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/RecoverPinCodeHowTo";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -228,6 +230,8 @@ export default function Tutorial({ useCase }: Props) {
   const [quizzOpen, setQuizOpen] = useState(false);
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const servicesConfig = useFeature("protectServicesDesktop");
+  const upsellPath = useUpsellPath(servicesConfig);
 
   const [userUnderstandConsequences, setUserUnderstandConsequences] = useState(false);
   const [userChosePinCodeHimself, setUserChosePinCodeHimself] = useState(false);
@@ -497,6 +501,9 @@ export default function Tutorial({ useCase }: Props) {
           if (useCase === UseCase.recover) {
             history.push(`${path}/${ScreenId.recoverHowTo}`);
           } else {
+            if (upsellPath) {
+              history.push(upsellPath);
+            }
             dispatch(saveSettings({ hasCompletedOnboarding: true }));
             track("Onboarding - End");
             setOnboardingDone(true);
@@ -516,13 +523,13 @@ export default function Tutorial({ useCase }: Props) {
       },
     ],
     [
+      userChosePinCodeHimself,
+      useCase,
+      userUnderstandConsequences,
       connectedDevice,
       history,
       path,
-      useCase,
-      userChosePinCodeHimself,
-      userUnderstandConsequences,
-      setOnboardingDone,
+      upsellPath,
       dispatch,
     ],
   );
