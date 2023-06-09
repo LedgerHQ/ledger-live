@@ -7,6 +7,12 @@ export function useReplacedURI(uri?: string, id?: string): string | undefined {
   }, [id, uri]);
 }
 
+function usePath(servicesConfig: Feature<any> | null, uri?: string) {
+  return useMemo(() => {
+    return servicesConfig?.enabled ? uri?.replace("ledgerlive://", "/") : undefined;
+  }, [servicesConfig?.enabled, uri]);
+}
+
 export function usePostOnboardingURI(servicesConfig: Feature<any> | null): string | undefined {
   const uri = servicesConfig?.params?.onboardingRestore?.postOnboardingURI;
   const id = servicesConfig?.params?.protectId;
@@ -17,9 +23,7 @@ export function usePostOnboardingURI(servicesConfig: Feature<any> | null): strin
 export function usePostOnboardingPath(servicesConfig: Feature<any> | null): string | undefined {
   const uri = usePostOnboardingURI(servicesConfig);
 
-  return useMemo(() => {
-    return servicesConfig?.enabled ? uri?.replace("ledgerlive://", "/") : undefined;
-  }, [servicesConfig?.enabled, uri]);
+  return usePath(servicesConfig, uri);
 }
 
 export function useLearnMoreURI(servicesConfig: Feature<any> | null): string | undefined {
@@ -34,4 +38,17 @@ export function useAlreadySubscribedURI(servicesConfig: Feature<any> | null): st
   const id = servicesConfig?.params?.protectId;
 
   return useReplacedURI(uri, id);
+}
+
+export function useUpsellURI(servicesConfig: Feature<any> | null): string | undefined {
+  const uri = servicesConfig?.params?.onboardingCompleted?.upsellURI;
+  const id = servicesConfig?.params?.protectId;
+
+  return useReplacedURI(uri, id);
+}
+
+export function useUpsellPath(servicesConfig: Feature<any> | null): string | undefined {
+  const uri = useUpsellURI(servicesConfig);
+
+  return usePath(servicesConfig, uri);
 }

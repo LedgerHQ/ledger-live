@@ -5953,5 +5953,8 @@
       "contactSupport": "Contact Ledger support",
       "saveLog": "Save log"
     }
+  },
+  "recoverRestore": {
+    "title": "Connect and unlock your Ledger"
   }
 }
