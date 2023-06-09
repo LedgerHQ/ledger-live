@@ -106,18 +106,32 @@ export default function SwapAction({
       );
     }
   }, [broadcast, onCompletion, onError, initData, signedOperation]);
+  const request = useMemo(
+    () => ({
+      exchange: exchange as Exchange,
+      exchangeRate,
+      transaction: transaction as SwapTransaction,
+      status,
+      device: deviceRef,
+      userId: providerKYC?.id,
+    }),
+    [exchange, exchangeRate, providerKYC?.id, status, transaction],
+  );
+  const signRequest = useMemo(
+    () => ({
+      tokenCurrency,
+      parentAccount: fromParentAccount,
+      account: fromAccount!,
+      transaction: initData?.transaction,
+      appName: "Exchange",
+    }),
+    [fromAccount, fromParentAccount, initData?.transaction, tokenCurrency],
+  );
   return !initData || !transaction ? (
     <DeviceAction
       key={"initSwap"}
       action={initAction}
-      request={{
-        exchange: exchange as Exchange,
-        exchangeRate,
-        transaction: transaction as SwapTransaction,
-        status,
-        device: deviceRef,
-        userId: providerKYC?.id,
-      }}
+      request={request}
       onResult={result => {
         if ("initSwapError" in result && result.initSwapError) {
           onError({
@@ -134,13 +148,8 @@ export default function SwapAction({
     <DeviceAction
       key={"send"}
       action={transactionAction}
-      request={{
-        tokenCurrency,
-        parentAccount: fromParentAccount,
-        account: fromAccount!,
-        transaction: initData.transaction,
-        appName: "Exchange",
-      }}
+      // @ts-expect-error This type is not compatible with the one expected by the action
+      request={signRequest}
       Result={TransactionResult}
       onResult={result => {
         if ("transactionSignError" in result) {

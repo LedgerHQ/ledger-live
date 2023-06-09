@@ -23,7 +23,7 @@ release:
   catalog:
     en-US:
       name: "Ledger Live: Crypto & NFT App"
-      short_description: Ledger Live Mobile 3.22.0
+      short_description: Ledger Live Mobile 3.24.0
       long_description: >-
         From the company that produced the world's most secure crypto hardware
         device comes the world's most accessible and complete Web3 wallet:
@@ -116,10 +116,10 @@ release:
         recommendations on use of staking services.
       new_in_version: >-
         Features
-        Those who want to buy crypto worth 50000€ and more can now use the OTC Desk and enjoy competitive rates, high liquidity, and personalized service.
+        Ledger Live now supports eight new Cardano tokens and twelve ESDT tokens, including WrappedUSDT (USDT).
 
         Fixes
-        This release includes small security improvements, UI tweaks, and minor bug fixes.
+        Some users reported issues when trying to send XLM. We fixed this.
       saga_features: ""
   media:
     - purpose: screenshot

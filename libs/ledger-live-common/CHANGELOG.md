@@ -1,5 +1,112 @@
 # @ledgerhq/live-common
 
+## 31.0.0
+
+### Major Changes
+
+- [#3536](https://github.com/LedgerHQ/ledger-live/pull/3536) [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16) Thanks [@chabroA](https://github.com/chabroA)! - Move evm familly logic in own package
+
+### Minor Changes
+
+- [#3515](https://github.com/LedgerHQ/ledger-live/pull/3515) [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796) Thanks [@chabroA](https://github.com/chabroA)! - Use live-network package
+
+- [#3468](https://github.com/LedgerHQ/ledger-live/pull/3468) [`5c28db16a5`](https://github.com/LedgerHQ/ledger-live/commit/5c28db16a5b7e804dff8e51062baca311574a50c) Thanks [@RamyEB](https://github.com/RamyEB)! - Chnage api call + type
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Minor changes on several device actions to allow for retries and to better manage the state in memory
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Add new commands to the device SDK, refactorings on the firmware update device actions and hook
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Retrieve the updated firmware info after the execution of the new firmware update device action
+
+- [#3491](https://github.com/LedgerHQ/ledger-live/pull/3491) [`f13bf2e2cc`](https://github.com/LedgerHQ/ledger-live/commit/f13bf2e2ccd1684692e1f641b66f0f3b4d457c2d) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Update LiveAppManifest params type whilst keeping it backwards compatible. Add helper functions to fetch and augment the manifest.params.dappUrl
+
+### Patch Changes
+
+- [#3320](https://github.com/LedgerHQ/ledger-live/pull/3320) [`b574c30b2b`](https://github.com/LedgerHQ/ledger-live/commit/b574c30b2ba9ba49e12ab20ce1fd7c68c2220acf) Thanks [@lvndry](https://github.com/lvndry)! - Rework add account feature flagging in manager app
+
+- [#3194](https://github.com/LedgerHQ/ledger-live/pull/3194) [`76699bc304`](https://github.com/LedgerHQ/ledger-live/commit/76699bc304204232b280984644a7c5709fdff063) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - improve bitcoin sync performance
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Minor code style fixes
+
+- [#3454](https://github.com/LedgerHQ/ledger-live/pull/3454) [`eb258d57c2`](https://github.com/LedgerHQ/ledger-live/commit/eb258d57c2abd8d0db9154a82932e1fd83bfce9a) Thanks [@overcat](https://github.com/overcat)! - fix the calculation of spendable balance in Stellar accounts.
+
+- [#3525](https://github.com/LedgerHQ/ledger-live/pull/3525) [`b40fa18379`](https://github.com/LedgerHQ/ledger-live/commit/b40fa18379bcadb56e8cbd902a299426d97e2345) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix `mustUpgrade` & `shouldUpgrade` for pre-release tags with higher than exepected versions
+
+- [#3584](https://github.com/LedgerHQ/ledger-live/pull/3584) [`5c53afd2c2`](https://github.com/LedgerHQ/ledger-live/commit/5c53afd2c2a343c52f5bf36cc08f55c06f313eed) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent endless loop in swap request
+
+- Updated dependencies [[`5cce6e3593`](https://github.com/LedgerHQ/ledger-live/commit/5cce6e359309110df53e16ef989c5b8b94492dfd), [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16), [`30bf4d92c7`](https://github.com/LedgerHQ/ledger-live/commit/30bf4d92c7d79cb81b1e4ad014857459739c33be), [`b30ead9d22`](https://github.com/LedgerHQ/ledger-live/commit/b30ead9d22a4bce5f8ee27febf0190fccd2ca25b), [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796)]:
+  - @ledgerhq/cryptoassets@9.7.0
+  - @ledgerhq/coin-evm@0.2.0
+  - @ledgerhq/live-network@1.1.0
+  - @ledgerhq/coin-algorand@0.2.1
+  - @ledgerhq/coin-framework@0.3.5
+  - @ledgerhq/coin-polkadot@0.1.6
+  - @ledgerhq/domain-service@1.1.3
+  - @ledgerhq/hw-app-eth@6.33.5
+  - @ledgerhq/live-portfolio@0.0.7
+
+## 31.0.0-next.2
+
+### Patch Changes
+
+- [#3584](https://github.com/LedgerHQ/ledger-live/pull/3584) [`5c53afd2c2`](https://github.com/LedgerHQ/ledger-live/commit/5c53afd2c2a343c52f5bf36cc08f55c06f313eed) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent endless loop in swap request
+
+## 31.0.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`30bf4d92c7`](https://github.com/LedgerHQ/ledger-live/commit/30bf4d92c7d79cb81b1e4ad014857459739c33be)]:
+  - @ledgerhq/cryptoassets@9.7.0-next.1
+  - @ledgerhq/coin-algorand@0.2.1-next.1
+  - @ledgerhq/coin-evm@0.2.0-next.1
+  - @ledgerhq/coin-framework@0.3.5-next.1
+  - @ledgerhq/coin-polkadot@0.1.6-next.1
+  - @ledgerhq/domain-service@1.1.3-next.1
+  - @ledgerhq/hw-app-eth@6.33.5-next.1
+
+## 31.0.0-next.0
+
+### Major Changes
+
+- [#3536](https://github.com/LedgerHQ/ledger-live/pull/3536) [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16) Thanks [@chabroA](https://github.com/chabroA)! - Move evm familly logic in own package
+
+### Minor Changes
+
+- [#3515](https://github.com/LedgerHQ/ledger-live/pull/3515) [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796) Thanks [@chabroA](https://github.com/chabroA)! - Use live-network package
+
+- [#3468](https://github.com/LedgerHQ/ledger-live/pull/3468) [`5c28db16a5`](https://github.com/LedgerHQ/ledger-live/commit/5c28db16a5b7e804dff8e51062baca311574a50c) Thanks [@RamyEB](https://github.com/RamyEB)! - Chnage api call + type
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Minor changes on several device actions to allow for retries and to better manage the state in memory
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Add new commands to the device SDK, refactorings on the firmware update device actions and hook
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Retrieve the updated firmware info after the execution of the new firmware update device action
+
+- [#3491](https://github.com/LedgerHQ/ledger-live/pull/3491) [`f13bf2e2cc`](https://github.com/LedgerHQ/ledger-live/commit/f13bf2e2ccd1684692e1f641b66f0f3b4d457c2d) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Update LiveAppManifest params type whilst keeping it backwards compatible. Add helper functions to fetch and augment the manifest.params.dappUrl
+
+### Patch Changes
+
+- [#3320](https://github.com/LedgerHQ/ledger-live/pull/3320) [`b574c30b2b`](https://github.com/LedgerHQ/ledger-live/commit/b574c30b2ba9ba49e12ab20ce1fd7c68c2220acf) Thanks [@lvndry](https://github.com/lvndry)! - Rework add account feature flagging in manager app
+
+- [#3194](https://github.com/LedgerHQ/ledger-live/pull/3194) [`76699bc304`](https://github.com/LedgerHQ/ledger-live/commit/76699bc304204232b280984644a7c5709fdff063) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - improve bitcoin sync performance
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Minor code style fixes
+
+- [#3454](https://github.com/LedgerHQ/ledger-live/pull/3454) [`eb258d57c2`](https://github.com/LedgerHQ/ledger-live/commit/eb258d57c2abd8d0db9154a82932e1fd83bfce9a) Thanks [@overcat](https://github.com/overcat)! - fix the calculation of spendable balance in Stellar accounts.
+
+- [#3525](https://github.com/LedgerHQ/ledger-live/pull/3525) [`b40fa18379`](https://github.com/LedgerHQ/ledger-live/commit/b40fa18379bcadb56e8cbd902a299426d97e2345) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix `mustUpgrade` & `shouldUpgrade` for pre-release tags with higher than exepected versions
+
+- Updated dependencies [[`5cce6e3593`](https://github.com/LedgerHQ/ledger-live/commit/5cce6e359309110df53e16ef989c5b8b94492dfd), [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16), [`b30ead9d22`](https://github.com/LedgerHQ/ledger-live/commit/b30ead9d22a4bce5f8ee27febf0190fccd2ca25b), [`7439b63325`](https://github.com/LedgerHQ/ledger-live/commit/7439b63325a9b0181a3af4310ba787f00faa80c9), [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796)]:
+  - @ledgerhq/cryptoassets@9.7.0-next.0
+  - @ledgerhq/coin-evm@0.2.0-next.0
+  - @ledgerhq/live-network@1.1.0-next.0
+  - @ledgerhq/coin-algorand@0.2.1-next.0
+  - @ledgerhq/coin-framework@0.3.5-next.0
+  - @ledgerhq/coin-polkadot@0.1.6-next.0
+  - @ledgerhq/domain-service@1.1.3-next.0
+  - @ledgerhq/hw-app-eth@6.33.5-next.0
+  - @ledgerhq/live-portfolio@0.0.7-next.0
+
 ## 30.0.0
 
 ### Major Changes
