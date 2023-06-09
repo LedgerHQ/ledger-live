@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.35.1
+
+### Patch Changes
+
+- [#3591](https://github.com/LedgerHQ/ledger-live/pull/3591) [`809065c571`](https://github.com/LedgerHQ/ledger-live/commit/809065c57198646a49adea112b9d799e35a57d25) Thanks [@sarneijim](https://github.com/sarneijim)! - Add swapWalletApiPartnerList Feature Flag
+
 ## 6.35.0
 
 ### Minor Changes

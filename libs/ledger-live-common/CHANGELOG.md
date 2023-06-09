@@ -1,5 +1,51 @@
 # @ledgerhq/live-common
 
+## 31.1.0
+
+### Minor Changes
+
+- [#3497](https://github.com/LedgerHQ/ledger-live/pull/3497) [`81dd0c3ef3`](https://github.com/LedgerHQ/ledger-live/commit/81dd0c3ef38a3d6d69c27c65864bf1b41c52643c) Thanks [@alexandremgo](https://github.com/alexandremgo)! - feat: new toggleOnboardingEarlyCheckAction device action
+
+  Introducing a new device action (implemented in the device SDK): toggleOnboardingEarlyCheckAction with
+
+  - its associated new command and task
+  - its associated new onboarding state
+  - a hook useToggleOnboardingEarlyCheck for simple usage on LLM and LLD
+  - unit tests
+  - its associated cli command deviceSDKToggleOnboardingEarlyCheck
+
+  This new action uses a new APDU to enter and exit the "early security check" blocking step during the onboarding of Stax.
+
+- [#3618](https://github.com/LedgerHQ/ledger-live/pull/3618) [`8f50c4d927`](https://github.com/LedgerHQ/ledger-live/commit/8f50c4d927f368fd869401b752a51ba7398e59e1) Thanks [@jnwng](https://github.com/jnwng)! - Updated `@solana/web3.js`, enabled versioned transactions
+
+### Patch Changes
+
+- [#3528](https://github.com/LedgerHQ/ledger-live/pull/3528) [`24483331fe`](https://github.com/LedgerHQ/ledger-live/commit/24483331fe19b9ae4a24544e2f3e1d2ad1892492) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve the image removal flow for Stax
+
+- [#3329](https://github.com/LedgerHQ/ledger-live/pull/3329) [`b93f543a20`](https://github.com/LedgerHQ/ledger-live/commit/b93f543a207f35edbe25f3d609533120c9babbe1) Thanks [@loouis-t](https://github.com/loouis-t)! - Add icon for EUROC ERC20 token
+
+- [#3400](https://github.com/LedgerHQ/ledger-live/pull/3400) [`3cf4397b60`](https://github.com/LedgerHQ/ledger-live/commit/3cf4397b60a2da5c1ee92cff42e9f979e30ad489) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix cosmos rewards value
+
+- [#3483](https://github.com/LedgerHQ/ledger-live/pull/3483) [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e) Thanks [@gre](https://github.com/gre)! - use ledger currency id on Countervalues API usage.
+
+- [#3542](https://github.com/LedgerHQ/ledger-live/pull/3542) [`db1a6f92e1`](https://github.com/LedgerHQ/ledger-live/commit/db1a6f92e17dcd63b0c9fa6700496f5f4722f1e5) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Add fake delay before device action failures for better UX
+
+- [#3545](https://github.com/LedgerHQ/ledger-live/pull/3545) [`5bc987cd8f`](https://github.com/LedgerHQ/ledger-live/commit/5bc987cd8f850bb63e4ced62c28218d7c75744e8) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - Fixed a wallet-api message signature issue
+
+- [#3617](https://github.com/LedgerHQ/ledger-live/pull/3617) [`42d8be7694`](https://github.com/LedgerHQ/ledger-live/commit/42d8be76949e258d6360a1fda3ca5a1df50c8bcb) Thanks [@JesseKuntz](https://github.com/JesseKuntz)! - Adjusting the commission calculation for NEAR validators as the value from the API has changed.
+
+- [#3590](https://github.com/LedgerHQ/ledger-live/pull/3590) [`ac205cce9f`](https://github.com/LedgerHQ/ledger-live/commit/ac205cce9f328165369c5c270681be1d7ba7d0f2) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Prevent endless loop in swap request
+
+- Updated dependencies [[`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e), [`ebe5b07afe`](https://github.com/LedgerHQ/ledger-live/commit/ebe5b07afec441ea3e2d9103da9e1175972add47)]:
+  - @ledgerhq/cryptoassets@9.8.0
+  - @ledgerhq/coin-algorand@0.2.2
+  - @ledgerhq/coin-evm@0.2.1
+  - @ledgerhq/coin-framework@0.3.6
+  - @ledgerhq/coin-polkadot@0.1.7
+  - @ledgerhq/domain-service@1.1.4
+  - @ledgerhq/hw-app-eth@6.33.6
+  - @ledgerhq/live-portfolio@0.0.8
+
 ## 31.0.0
 
 ### Major Changes
