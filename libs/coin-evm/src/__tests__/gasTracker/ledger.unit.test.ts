@@ -1,11 +1,13 @@
+import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { GasOptions } from "../../types";
-import * as ledgerGasTracker from "../../api/gasTracker/ledger";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getGasOptions } from "../../api/gasTracker/ledger";
+jest.mock("@ledgerhq/live-network/network");
 
 const fakeCurrency: Partial<CryptoCurrency> = {
-  id: "my_new_chain" as CryptoCurrencyId,
+  id: "ethereum" as CryptoCurrencyId,
   ethereumLikeInfo: {
     chainId: 1,
     gasTracker: {
@@ -33,29 +35,27 @@ describe("EVM Family", () => {
     });
 
     beforeEach(() => {
-      jest
-        .spyOn(ledgerGasTracker, "getGasTrackerBarometer")
-        .mockImplementation(async () => ({
-          low: new BigNumber(1),
-          medium: new BigNumber(2),
-          high: new BigNumber(3),
-          next_base: new BigNumber(4),
-        }));
-    });
+      const gastrackerBarometerMock = new Promise((resolve, _) => {
+        resolve({
+          data: {
+            low: "1",
+            medium: "2",
+            high: "3",
+            next_base: "4",
+          },
+        });
+      });
 
-    afterEach(() => {
-      jest.restoreAllMocks();
+      // @ts-expect-error method is mocked
+      network.mockReturnValueOnce(gastrackerBarometerMock);
     });
 
     describe("ledger", () => {
       it("should return EIP-1559 gas options", async () => {
-        jest
-          .spyOn(ledgerGasTracker, "EIP1559ShouldBeUsed")
-          .mockReturnValue(true);
-
-        const gasOptions: GasOptions = await ledgerGasTracker.getGasOptions(
-          fakeCurrency as CryptoCurrency
-        );
+        const gasOptions: GasOptions = await getGasOptions({
+          currency: fakeCurrency as CryptoCurrency,
+          shouldUseEip1559: true,
+        });
 
         const expectedGasOptions: GasOptions = {
           slow: {
@@ -79,13 +79,10 @@ describe("EVM Family", () => {
       });
 
       it("should return legacy gas options", async () => {
-        jest
-          .spyOn(ledgerGasTracker, "EIP1559ShouldBeUsed")
-          .mockReturnValue(false);
-
-        const gasOptions: GasOptions = await ledgerGasTracker.getGasOptions(
-          fakeCurrency as CryptoCurrency
-        );
+        const gasOptions: GasOptions = await getGasOptions({
+          currency: fakeCurrency as CryptoCurrency,
+          shouldUseEip1559: false,
+        });
 
         const expectedGasOptions: GasOptions = {
           slow: {

@@ -11,30 +11,38 @@ import { useEffect, useState } from "react";
  */
 export const useGasOptions = ({
   currency,
+  shouldUseEip1559,
   interval,
 }: {
   currency: CryptoCurrency;
+  shouldUseEip1559: boolean;
   interval?: number;
-}): GasOptions | null | undefined => {
-  const [gasOptions, setGasOptions] = useState<GasOptions | null | undefined>(
-    null
-  );
+}): GasOptions | null => {
+  const [gasOptions, setGasOptions] = useState<GasOptions | null>(null);
   const gasTracker = getGasTracker(currency);
 
   useEffect(() => {
+    if (!gasTracker) {
+      return;
+    }
+
     if (!interval) {
-      gasTracker.getGasOptions(currency).then(setGasOptions);
+      gasTracker
+        .getGasOptions({ currency, shouldUseEip1559 })
+        .then(setGasOptions);
       return;
     }
 
     const intervalId = setInterval(() => {
-      gasTracker.getGasOptions(currency).then(setGasOptions);
+      gasTracker
+        .getGasOptions({ currency, shouldUseEip1559 })
+        .then(setGasOptions);
     }, interval);
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [gasTracker, interval, currency]);
+  }, [gasTracker, interval, currency, shouldUseEip1559]);
 
   return gasOptions;
 };
