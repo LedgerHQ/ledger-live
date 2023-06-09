@@ -325,8 +325,15 @@
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen.",
       "primaryCTA" : "Ein weiteres Bild hochladen"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Ihr Ledger Stax hat kein entfernbares Sperrbildschirm-Bild",
+      "description" : "Das benutzerdefinierte Sperrbildschirm-Bild wurde bereits entfernt."
+    },
     "InvalidAddress" : {
       "title" : "Dies ist keine gültige {{currencyName}} Adresse"
+    },
+    "InvalidNonce" : {
+      "title" : "Nonce ist erforderlich"
     },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "Ihr Konto wurde bereits an diesen Validator delegiert"
@@ -704,6 +711,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "Bitte vergewissern Sie sich, dass Sie genügend Geld für die Bezahlung der Gebühren haben"
+    },
+    "StacksMemoTooLong" : {
+      "title" : "Memo ist zu lang"
     },
     "StellarWrongMemoFormat" : {
       "title" : "Memo-Format ist falsch"
@@ -2699,10 +2709,6 @@
         "experimentalListAppsV2" : {
           "title" : "Experimentelle Apps-Liste für My Ledger",
           "description" : "Leistungsverbesserung für den Zugriff auf My Ledger und Inline-Flows."
-        },
-        "experimentalCountervalues" : {
-          "title" : "Experimentelle Gegenwerte API",
-          "description" : "Dies kann dazu führen, dass die für Ihre Konten angezeigten Gegenwerte nicht mehr stimmen."
         },
         "experimentalSwap" : {
           "title" : "Neue SWAP-Schnittstelle",
@@ -6174,6 +6180,30 @@
     "title" : "Gerät verbinden"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "Vermehren Sie Ihr ETH-Guthaben",
+      "subTitle" : "Staken Sie Ihre ETH und vermehren Sie Ihr Vermögen – durch tägliche Prämien direkt in Ledger Live.",
+      "close" : "Schließen",
+      "providers" : {
+        "lido" : {
+          "title" : "Verdienen mit Lido",
+          "description" : "Staken Sie Ihr Ethereum mit Lido und verdienen Sie täglich Belohnungen. Kein ETH-Minimum erforderlich. Keine Sperrfrist.",
+          "supportLink" : "Mehr über Lido lernen"
+        },
+        "kiln" : {
+          "title" : "Staking mit Kiln",
+          "tag" : "Benötigt 32 ETH",
+          "description" : "Staken Sie mit speziellen Validatoren. Hierfür wird ein Vielfaches von 32 ETH benötigt. Prämien werden manuell beansprucht. Kann jederzeit beendet werden.",
+          "supportLink" : "Mehr über Kiln-Validator erfahren"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln Staking Pool",
+          "description" : "Treten Sie einem Staking-Pool bei. Kein ETH-Minimum erforderlich. Prämien werden automatisch zusammengeführt. Kann jederzeit beendet werden.",
+          "supportLink" : "Mehr über Kiln Pooling erfahren.",
+          "tag" : "Kein Minimum"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "Kaufen, umtauschen oder empfangen",
       "text" : "Sie haben nicht genug {{coin}} verfügbar um am Staking teilzunehmen",
