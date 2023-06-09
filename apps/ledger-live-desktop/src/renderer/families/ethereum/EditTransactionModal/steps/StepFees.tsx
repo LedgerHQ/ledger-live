@@ -13,10 +13,8 @@ import { StepProps } from "../types";
 import { BigNumber } from "bignumber.js";
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
 import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { TransactionHasBeenValidatedError, NotEnoughGas } from "@ledgerhq/errors";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
-import { NotEnoughGas } from "@ledgerhq/errors";
-
 
 const StepFees = (props: StepProps) => {
   const {
@@ -144,10 +142,9 @@ export class StepFeesFooter extends PureComponent<StepProps> {
       <>
         {this.state.transactionHasBeenValidated ? (
           <ErrorBanner error={new TransactionHasBeenValidatedError()} />
-        ) : 
-        errors.gasPrice && errors.gasPrice instanceof NotEnoughGas ? (
+        ) : errors.gasPrice && errors.gasPrice instanceof NotEnoughGas ? (
           <Box width={"70%"}>
-            <Alert type={"error"} title={<TranslatedError error={errors.gasPrice} />}/>
+            <Alert type={"error"} title={<TranslatedError error={errors.gasPrice} />} />
           </Box>
         ) : null}
         <Button
