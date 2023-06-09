@@ -325,8 +325,15 @@
       "description" : "Si cette image ne vous plaît pas, choisissez une autre image.",
       "primaryCTA" : "Télécharger une autre image"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Pas d’image à supprimer sur l’écran de verrouillage de votre Ledger Stax",
+      "description" : "L’image personnalisée de l’écran de verrouillage a déjà été supprimée."
+    },
     "InvalidAddress" : {
       "title" : "Adresse {{currencyName}} invalide"
+    },
+    "InvalidNonce" : {
+      "title" : "Nonce requis"
     },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "Votre compte est déjà délégué à ce validateur"
@@ -704,6 +711,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "Vérifiez que votre solde est suffisant pour couvrir les frais"
+    },
+    "StacksMemoTooLong" : {
+      "title" : "Mémo trop long"
     },
     "StellarWrongMemoFormat" : {
       "title" : "Format du mémo incorrect"
@@ -2699,10 +2709,6 @@
         "experimentalListAppsV2" : {
           "title" : "Listage expérimental des apps pour My Ledger",
           "description" : "Améliorez les performances de l’accès à My Ledger et des flux inline."
-        },
-        "experimentalCountervalues" : {
-          "title" : "API Devises de contrepartie expérimentales",
-          "description" : "Avec cette fonctionnalité, les devises de contrepartie affichées dans vos comptes peuvent devenir incorrectes."
         },
         "experimentalSwap" : {
           "title" : "Nouvelle interface de Swap",
@@ -6174,6 +6180,30 @@
     "title" : "Connectez votre appareil"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "Faites fructifier vos ETH",
+      "subTitle" : "Stakez vos ETH et gagnez des récompenses quotidiennes directement dans Ledger Live.",
+      "close" : "Fermer",
+      "providers" : {
+        "lido" : {
+          "title" : "Staker avec Lido",
+          "description" : "Stakez vos ETH avec Lido et gagnez des récompenses quotidiennes. Sans durée, ni montant minimum.",
+          "supportLink" : "En savoir plus sur Lido"
+        },
+        "kiln" : {
+          "title" : "Staker avec un validateur Kiln",
+          "tag" : "32 ETH minimum",
+          "description" : "Stakez avec un validateur personnalisé. Minimum de 32 ETH (ou un multiple) requis. Récompenses à demander manuellement. Quittez à tout moment.",
+          "supportLink" : "En savoir plus sur le validateur Kiln"
+        },
+        "kiln_pooling" : {
+          "title" : "Staker avec un pool sur Kiln",
+          "description" : "Rejoignez un pool de staking. Pas de montant minimum d’ETH requis. Récompenses capitalisées automatiquement. Quittez à tout moment.",
+          "supportLink" : "En savoir plus sur les pools sur Kiln",
+          "tag" : "Pas de minimum"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "Acheter, échanger ou recevoir",
       "text" : "Votre solde de {{coin}} est insuffisant pour staker",
