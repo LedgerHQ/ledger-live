@@ -11,10 +11,11 @@ import type {
   CounterValuesStatus,
 } from "@ledgerhq/live-common/countervalues/types";
 import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
+import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
+import { Dispatch, SetStateAction } from "react";
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
 import type { BleState, ProtectState, SettingsState } from "./reducers/types";
-import { PlatformState } from "./screens/Platform/v2/Catalog/types";
 
 export type Notifications = {
   announcements: Announcement[];
@@ -296,10 +297,16 @@ export async function deleteProtect(): Promise<void> {
   await store.delete("protect");
 }
 
-export function getPlatform(): Promise<PlatformState> {
-  return store.get("platform") as Promise<PlatformState>;
-}
-
-export function savePlatform(state: PlatformState): Promise<void> {
-  return store.save("platform", state);
+export function useDB<State, Selected>(
+  key: string,
+  initialState: State,
+  // @ts-expect-error State !== Selected
+  selector: (state: State) => Selected = state => state,
+): [Selected, Dispatch<SetStateAction<State>>] {
+  return useDBRaw<State, Selected>({
+    initialState,
+    getter: () => store.get(key) as Promise<State>,
+    setter: (state: State) => store.save(key, state),
+    selector,
+  });
 }
