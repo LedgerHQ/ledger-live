@@ -1,7 +1,7 @@
 import { AptosClient, TxnBuilderTypes } from "aptos";
 import type { Types as AptosTypes } from "aptos";
 import BigNumber from "bignumber.js";
-import network from "../../../network";
+import network from "@ledgerhq/live-network/network";
 import { getEnv } from "../../../env";
 
 // import { isTestnet } from "../logic";

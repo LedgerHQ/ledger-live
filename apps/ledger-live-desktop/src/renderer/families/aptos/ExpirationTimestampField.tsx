@@ -57,7 +57,7 @@ const ExpirationTimestampField = forwardRef(function ExpirationTimestampComponen
     [updateTransaction, bridge],
   );
 
-  const expirationTimestampSecs = localValue ?? "";
+  const expirationTimestampSecs = transaction.firstEmulation ? "" : localValue ?? "";
   const { expirationTimestampSecs: expirationTimestampSecsError } = status.errors;
   const { expirationTimestampSecs: expirationTimestampSecsWarning } = status.warnings;
 

@@ -57,7 +57,7 @@ const SequenceNumberField = forwardRef(function SequenceNumberFieldComponent(
     [updateTransaction, bridge],
   );
 
-  const sequenceNumber = localValue ?? "";
+  const sequenceNumber = transaction.firstEmulation ? "" : localValue ?? "";
   const { sequenceNumber: sequenceNumberError } = status.errors;
   const { sequenceNumber: sequenceNumberWarning } = status.warnings;
 

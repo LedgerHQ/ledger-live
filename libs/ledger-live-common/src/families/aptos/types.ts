@@ -5,6 +5,7 @@ import type {
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
+  Account,
 } from "@ledgerhq/types-live";
 
 export type AptosTransaction = AptosTypes.UserTransaction & {
@@ -13,6 +14,8 @@ export type AptosTransaction = AptosTypes.UserTransaction & {
     hash: string;
   };
 };
+
+export type AptosAccount = Account;
 
 export type TransactionStatus = TransactionStatusCommon;
 

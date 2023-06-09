@@ -42,7 +42,7 @@ const FeesField = forwardRef(function FeesFieldComponent(
     (str: string) => {
       if (str && !BigNumber(str).isFinite()) return;
       setLocalValue(str);
-      updateTransaction(transaction =>
+      updateTransaction((transaction: AptosTransaction) =>
         bridge.updateTransaction(transaction, {
           options: {
             ...transaction.options,
@@ -55,7 +55,9 @@ const FeesField = forwardRef(function FeesFieldComponent(
     [updateTransaction, bridge],
   );
 
-  const gasUnitPrice = localValue ?? transaction.estimate.gasUnitPrice;
+  const gasUnitPrice = transaction.firstEmulation
+    ? transaction.estimate.gasUnitPrice
+    : localValue ?? transaction.options.gasUnitPrice ?? transaction.estimate.gasUnitPrice;
   const { gasUnitPrice: gasPriceError } = status.errors;
   const { gasUnitPrice: gasPriceWarning } = status.warnings;
   return (

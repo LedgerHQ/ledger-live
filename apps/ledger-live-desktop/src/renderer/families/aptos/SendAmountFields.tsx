@@ -1,9 +1,7 @@
 import invariant from "invariant";
-import React, { useState, useCallback, useRef, useMemo, useEffect } from "react";
+import React, { useState, useCallback, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Account, FeeStrategy } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { Result } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { Transaction } from "@ledgerhq/live-common/generated/types";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
@@ -13,23 +11,12 @@ import GasPriceField from "./GasPriceField";
 import MaxGasAmountField from "./MaxGasAmountField";
 import SequenceNumberField from "./SequenceNumberField";
 import ExpirationTimestampField from "./ExpirationTimestampField";
+import { AptosFamily } from "./types";
 
 type AptosTransaction = Extract<Transaction, { family: "aptos" }>;
-type Props = {
-  account: Account;
-  parentAccount: Account | undefined | null;
-  transaction: AptosTransaction;
-  onChange: (a: AptosTransaction) => void;
-  status: TransactionStatus;
-  bridgePending: boolean;
-  updateTransaction: Result<AptosTransaction>["updateTransaction"];
-  mapStrategies?: (
-    a: FeeStrategy,
-  ) => FeeStrategy & {
-    [x: string]: any;
-  };
-  trackProperties?: object;
-};
+
+type Props = NonNullable<AptosFamily["sendAmountFields"]>["component"];
+
 const Fields = ({ account, parentAccount, transaction, updateTransaction, status }: Props) => {
   invariant(transaction.family === "aptos", "SendAmountFields: aptos family expected");
   const mainAccount = getMainAccount(account, parentAccount);

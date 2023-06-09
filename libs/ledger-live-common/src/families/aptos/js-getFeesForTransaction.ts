@@ -77,7 +77,11 @@ export const getFee = async (
         )
       ).toString();
 
-      if (transaction.skipEmulation) {
+      if (
+        transaction.skipEmulation ||
+        +transaction.options.gasUnitPrice !== DEFAULT_GAS_PRICE ||
+        +transaction.options.maxGasAmount !== DEFAULT_GAS
+      ) {
         res.fees = res.fees
           .plus(
             BigNumber(

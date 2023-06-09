@@ -56,7 +56,9 @@ const MaxGasAmountField = forwardRef(function MaxGasAmountFieldComponent(
     [bridge, updateTransaction],
   );
 
-  const maxGasAmount = localValue ?? transaction.estimate.maxGasAmount;
+  const maxGasAmount = transaction.firstEmulation
+    ? transaction.estimate.maxGasAmount
+    : localValue ?? transaction.options.maxGasAmount ?? transaction.estimate.maxGasAmount;
   const { maxGasAmount: maxGasAmountError } = status.errors;
   const { maxGasAmount: maxGasAmountWarning } = status.warnings;
 

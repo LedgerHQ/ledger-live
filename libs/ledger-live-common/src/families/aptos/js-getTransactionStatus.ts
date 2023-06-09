@@ -10,7 +10,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "../..//generated/types";
 import type { Transaction } from "./types";
 
-import { isValidAddress } from "./logic";
+import { isValidAddress, DEFAULT_GAS } from "./logic";
 import {
   SequenseNumberTooNewError,
   SequenseNumberTooOldError,
@@ -22,7 +22,7 @@ const getTransactionStatus = async (
   t: Transaction
 ): Promise<TransactionStatus> => {
   const errors: Record<string, any> = {};
-  const warnings = {};
+  const warnings: Record<string, any> = {};
   const useAllAmount = !!t.useAllAmount;
 
   if (!t.fees) {
@@ -52,7 +52,11 @@ const getTransactionStatus = async (
     t.estimate.maxGasAmount &&
     +t.options.maxGasAmount < +t.estimate.maxGasAmount
   ) {
-    errors.maxGasAmount = new GasLessThanEstimate();
+    if (+t.options.maxGasAmount >= DEFAULT_GAS) {
+      warnings.maxGasAmount = new GasLessThanEstimate();
+    } else {
+      errors.maxGasAmount = new GasLessThanEstimate();
+    }
   }
 
   if (
