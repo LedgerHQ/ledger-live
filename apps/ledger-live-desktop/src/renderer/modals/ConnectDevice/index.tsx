@@ -25,9 +25,8 @@ export default function ConnectDevice() {
             <Box alignItems={"center"} px={32}>
               <DeviceAction
                 action={appAction}
-                request={{
-                  appName: data?.appName || "BOLOS",
-                }}
+                // @ts-expect-error This type is not compatible with the one expected by the action
+                request={request}
                 onResult={res => {
                   data?.onResult(res);
                   onClose && onClose();
