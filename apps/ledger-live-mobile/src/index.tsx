@@ -25,7 +25,10 @@ import {
 } from "@shopify/react-native-performance";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
-import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import {
+  LocalLiveAppProvider,
+  useLocalLiveAppContext,
+} from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { init, e2eBridgeSubject } from "../e2e/bridge/client";
 import logger from "./logger";
 import {
@@ -86,6 +89,7 @@ import { DeeplinksProvider } from "./navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
 import { performanceReportSubject } from "./components/PerformanceConsole/usePerformanceReportsLog";
 import { setOsTheme } from "./actions/settings";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -107,6 +111,8 @@ const styles = StyleSheet.create({
 function App() {
   useAppStateListener();
   useListenToHidDevices();
+
+  const { addLocalManifest } = useLocalLiveAppContext();
 
   const getSettingsChanged = useCallback(
     (a, b) => a.settings !== b.settings,
@@ -142,12 +148,23 @@ function App() {
     [],
   );
 
+  if (Config.MOCK) {
+    e2eBridgeSubject.subscribe(message => {
+      if (message.type === "loadLocalManifest") {
+        // eslint-disable-next-line no-console
+        console.log("Manifest to add:", message.payload);
+        addLocalManifest(message);
+      }
+    });
+  }
+
   const rawState = useCountervaluesExport();
   const trackingPairs = useTrackingPairs();
   const pairIds = useMemo(
     () => trackingPairs.map(p => pairId(p)),
     [trackingPairs],
   );
+
   useDBSaveEffect({
     save: saveCountervalues,
     throttle: 2000,
@@ -265,14 +282,6 @@ export default class Root extends Component {
 
   onInitFinished = () => {
     if (Config.MOCK) {
-      e2eBridgeSubject.subscribe(message => {
-        if (message.type === "loadLocalManifest") {
-          // eslint-disable-next-line no-console
-          console.log("wtffffffffff", { message });
-          // const json = JSON.parse(message.payload);
-          // json.map(m => LocalLiveAppProvider.addLocalManifest(m));
-        }
-      });
       init();
     }
   };

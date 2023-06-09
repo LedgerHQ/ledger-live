@@ -2,6 +2,7 @@ import { z } from "zod";
 import { Platform } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { store } from "../../src/context/LedgerStore";
 import { importSettings } from "../../src/actions/settings";
 import { setAccounts } from "../../src/actions/accounts";
@@ -9,31 +10,16 @@ import { acceptGeneralTermsLastVersion } from "../../src/logic/terms";
 import accountModel from "../../src/logic/accountModel";
 import { navigate } from "../../src/rootnavigation";
 
-const schemaLocalLoadManifest = z.object({
-  type: z.literal("loadLocalManifest"),
-  payload: z.string(),
-});
-
-const schemaOpenNano = z.object({
-  type: z.literal("openNano"),
-});
-
-const schemaAddNano = z.object({
-  type: z.literal("add"),
-  payload: z.object({
-    id: z.string(),
-    name: z.string(),
-    serviceUUID: z.string(),
-  }),
-});
-
-const schemaSubjectData = z.discriminatedUnion("type", [
-  schemaLocalLoadManifest,
-  schemaOpenNano,
-  schemaAddNano,
-]);
-
-type SubjectData = z.infer<typeof schemaSubjectData>;
+type SubjectData =
+  | {
+      type: "add";
+      payload: { id: string; name: string; serviceUUID: string };
+    }
+  | { type: "openNano" }
+  | {
+      type: "loadLocalManifest";
+      payload: LiveAppManifest;
+    };
 
 export const e2eBridgeSubject = new Subject<SubjectData>();
 

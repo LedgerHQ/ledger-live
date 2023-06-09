@@ -4,9 +4,11 @@ import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/L
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { Platform } from "react-native";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
+  localManifest?: LiveAppManifest;
 };
 
 const AUTO_UPDATE_DEFAULT_DELAY = 1800 * 1000; // 1800 seconds
