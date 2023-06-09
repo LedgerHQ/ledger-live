@@ -18,6 +18,8 @@ const stacksSpecs: AppSpec<Transaction> = {
     appName: "Stacks",
   },
   genericDeviceAction: acceptTransaction,
+  // FIXME Stacks operations can take much longer to be confirmed
+  // Need an evolution of the bot to tolerate unconfirmed ops and just warn maybe instead of error
   testTimeout: 25 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");

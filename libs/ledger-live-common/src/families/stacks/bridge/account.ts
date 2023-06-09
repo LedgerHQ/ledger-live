@@ -122,14 +122,41 @@ const getTransactionStatus = async (
 const estimateMaxSpendable = async ({
   account,
   parentAccount,
+  transaction,
 }: {
   account: AccountLike;
   parentAccount?: Account | null | undefined;
   transaction?: Transaction | null | undefined;
 }): Promise<BigNumber> => {
   const a = getMainAccount(account, parentAccount);
-  const { spendableBalance } = a;
-  return spendableBalance;
+  const { id: accountId, spendableBalance } = a;
+  const { xpubOrAddress: xpub } = decodeAccountId(accountId);
+
+  const dummyTx = {
+    ...createTransaction(),
+    ...transaction,
+    useAllAmount: true,
+  };
+
+  // Compute fees
+  const { recipient, anchorMode, memo, amount } = dummyTx;
+  const network = StacksNetwork[dummyTx.network] || new StacksMainnet();
+
+  const options: UnsignedTokenTransferOptions = {
+    recipient,
+    anchorMode,
+    memo,
+    network,
+    publicKey: xpub,
+    amount: new BN(amount.toFixed()),
+  };
+
+  const tx = await makeUnsignedSTXTokenTransfer(options);
+
+  const fee = await estimateTransfer(tx);
+
+  const diff = spendableBalance.minus(new BigNumber(fee.toString()));
+  return diff.gte(0) ? diff : new BigNumber(0);
 };
 
 const prepareTransaction = async (
