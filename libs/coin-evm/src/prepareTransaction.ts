@@ -161,19 +161,30 @@ export const prepareForSignOperation = async (
 ): Promise<EvmTransaction> => {
   const nonce = await getTransactionCount(account.currency, account.freshAddress);
 
-  const subAccount = findSubAccountById(account, transaction.subAccountId || "");
-  const isTokenTransaction = subAccount?.type === "TokenAccount";
+  if (isNftTransaction(transaction)) {
+    return {
+      ...transaction,
+      amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
+      recipient: transaction.nft.contract, // recipient is then the NFT smart contract
+      // data as already been added by the `prepareTokenTransaction` method
+      nonce,
+    };
+  }
 
-  return isTokenTransaction
-    ? {
-        ...transaction,
-        amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
-        recipient: subAccount.token.contractAddress, // recipient is then the token smart contract
-        // data as already been added by the `prepareTokenTransaction` method
-        nonce,
-      }
-    : {
-        ...transaction,
-        nonce,
-      };
+  const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+  const isTokenTransaction = subAccount?.type === "TokenAccount";
+  if (isTokenTransaction) {
+    return {
+      ...transaction,
+      amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
+      recipient: subAccount.token.contractAddress, // recipient is then the token smart contract
+      // data as already been added by the `prepareTokenTransaction` method
+      nonce,
+    };
+  }
+
+  return {
+    ...transaction,
+    nonce,
+  };
 };

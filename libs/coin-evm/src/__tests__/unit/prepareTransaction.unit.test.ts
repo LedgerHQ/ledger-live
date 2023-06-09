@@ -1,39 +1,14 @@
-import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { prepareForSignOperation, prepareTransaction } from "../../prepareTransaction";
-import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
-import { Transaction as EvmTransaction, GasOptions } from "../../types";
+import {
+  account,
+  expectedData,
+  nftTransaction,
+  tokenAccount,
+  tokenTransaction,
+  transaction,
+} from "../fixtures/prepareTransaction.fixtures";
 import * as rpcAPI from "../../api/rpc/rpc.common";
-import ERC20ABI from "../../abis/erc20.abi.json";
-
-const currency = getCryptoCurrencyById("ethereum");
-const tokenAccount = makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin"));
-const account = makeAccount("0xkvn", currency, [tokenAccount]);
-const transaction: EvmTransaction = {
-  amount: new BigNumber(100),
-  useAllAmount: false,
-  subAccountId: "id",
-  recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
-  feesStrategy: "medium",
-  family: "evm",
-  mode: "send",
-  gasPrice: new BigNumber(0),
-  gasLimit: new BigNumber(21000),
-  nonce: 0,
-  chainId: 1,
-};
-const tokenTransaction: EvmTransaction = {
-  ...transaction,
-  subAccountId: tokenAccount.id,
-};
-const expectedData = (recipient: string, amount: BigNumber): Buffer =>
-  Buffer.from(
-    new ethers.utils.Interface(ERC20ABI)
-      .encodeFunctionData("transfer", [recipient, amount.toFixed()])
-      .slice(2),
-    "hex",
-  );
+import { prepareForSignOperation, prepareTransaction } from "../../prepareTransaction";
 
 describe("EVM Family", () => {
   describe("prepareTransaction.ts", () => {
@@ -54,7 +29,7 @@ describe("EVM Family", () => {
 
     describe("prepareTransaction", () => {
       it("should preserve the reference when no change is detected on the transaction", async () => {
-        const tx = await prepareTransaction(account, transaction);
+        const tx = await prepareTransaction(account, { ...transaction });
         const tx2 = await prepareTransaction(account, tx);
 
         expect(tx).toBe(tx2);
@@ -104,10 +79,11 @@ describe("EVM Family", () => {
         });
 
         it("should return an EIP1559 coin transaction", async () => {
-          const tx = await prepareTransaction(account, transaction);
+          const tx = await prepareTransaction(account, { ...transaction });
 
           expect(tx).toEqual({
             ...transaction,
+            gasPrice: undefined,
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(1),
             type: 2,
@@ -121,11 +97,13 @@ describe("EVM Family", () => {
             maxPriorityFeePerGas: null,
           }));
 
-          const tx = await prepareTransaction(account, transaction);
+          const tx = await prepareTransaction(account, { ...transaction });
 
           expect(tx).toEqual({
             ...transaction,
             gasPrice: new BigNumber(1),
+            maxFeePerGas: undefined,
+            maxPriorityFeePerGas: undefined,
             type: 0,
           });
         });
@@ -140,12 +118,15 @@ describe("EVM Family", () => {
             useAllAmount: true,
           };
 
-          const tx = await prepareTransaction(accountWithBalance, transactionWithUseAllAmount);
+          const tx = await prepareTransaction(accountWithBalance, {
+            ...transactionWithUseAllAmount,
+          });
           const estimatedFees = new BigNumber(21000); // 21000 gasLimit * 1 maxFeePerGas
 
           expect(tx).toEqual({
             ...transactionWithUseAllAmount,
             amount: accountWithBalance.balance.minus(estimatedFees),
+            gasPrice: undefined,
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(1),
             type: 2,
@@ -169,6 +150,7 @@ describe("EVM Family", () => {
           expect(tx).toEqual({
             ...transaction,
             data: Buffer.from("Sm4rTC0ntr4ct", "hex"),
+            gasPrice: undefined,
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(1),
             gasLimit: new BigNumber(12),
@@ -296,11 +278,14 @@ describe("EVM Family", () => {
             ...account,
             subAccounts: [tokenAccountWithBalance],
           };
-          const tx = await prepareTransaction(account2, tokenTransaction);
+          const tx = await prepareTransaction(account2, {
+            ...tokenTransaction,
+          });
 
           expect(tx).toEqual({
             ...tokenTransaction,
             data: expectedData(tokenTransaction.recipient, tokenTransaction.amount),
+            gasPrice: undefined,
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(1),
             type: 2,
@@ -322,11 +307,15 @@ describe("EVM Family", () => {
             ...account,
             subAccounts: [tokenAccountWithBalance],
           };
-          const tx = await prepareTransaction(account2, tokenTransaction);
+          const tx = await prepareTransaction(account2, {
+            ...tokenTransaction,
+          });
 
           expect(tx).toEqual({
             ...tokenTransaction,
             data: expectedData(tokenTransaction.recipient, tokenTransaction.amount),
+            maxFeePerGas: undefined,
+            maxPriorityFeePerGas: undefined,
             gasPrice: new BigNumber(1),
             type: 0,
           });
@@ -448,6 +437,15 @@ describe("EVM Family", () => {
           ...tokenTransaction,
           amount: new BigNumber(0),
           recipient: tokenAccount.token.contractAddress,
+          nonce: 10,
+        });
+      });
+
+      it("should update an NFT transaction with the correct recipient", async () => {
+        expect(await prepareForSignOperation(account, nftTransaction)).toEqual({
+          ...nftTransaction,
+          amount: new BigNumber(0),
+          recipient: nftTransaction.nft.contract,
           nonce: 10,
         });
       });
