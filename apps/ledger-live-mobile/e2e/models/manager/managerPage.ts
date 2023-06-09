@@ -32,7 +32,7 @@ export default class ManagerPage {
     await waitForElementByText(deviceName, 3000);
     await tapByText(deviceName);
     bridge.setInstalledApps(); // tell LLM what apps the mock device has
-    bridge.open();
+    bridge.openNano();
     await this.waitProceedButton();
     await this.getProceedButton();
   }

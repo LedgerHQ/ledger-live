@@ -51,7 +51,7 @@ export default (opts: Opts) => {
     ) {
       return e2eBridgeSubject
         .pipe(
-          filter(msg => msg.type === "add"),
+          filter(msg => msg.type === "addNano"),
           take(3),
         )
         .subscribe(msg => {
@@ -71,7 +71,7 @@ export default (opts: Opts) => {
     static async open(device: string | Device) {
       await e2eBridgeSubject
         .pipe(
-          filter(msg => msg.type === "open"),
+          filter(msg => msg.type === "openNano"),
           first(),
         )
         .toPromise();

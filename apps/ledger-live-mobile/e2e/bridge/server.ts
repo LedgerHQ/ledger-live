@@ -31,8 +31,8 @@ export async function loadConfig(
 
   const f = fs.readFileSync(
     path.resolve(
-      "apps",
-      "ledger-live-mobile",
+      // "apps",
+      // "ledger-live-mobile",
       "e2e",
       "setups",
       `${fileName}.json`,
@@ -67,7 +67,7 @@ export function addDevices(
 ): string[] {
   deviceNames.forEach((name, i) => {
     postMessage({
-      type: "add",
+      type: "addNano",
       payload: { id: `mock_${i + 1}`, name, serviceUUID: `uuid_${i + 1}` },
     });
   });
@@ -81,8 +81,12 @@ export function setInstalledApps(apps: string[] = []) {
   });
 }
 
-export function open() {
-  postMessage({ type: "open", payload: null });
+export function openNano() {
+  postMessage({ type: "openNano", payload: null });
+}
+
+export function loadLocalManifest(message: string) {
+  postMessage({ type: "loadLocalManifest", payload: message });
 }
 
 function onMessage(messageStr: string) {

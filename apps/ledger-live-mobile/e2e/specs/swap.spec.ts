@@ -1,4 +1,4 @@
-import { loadConfig } from "../bridge/server";
+import { loadConfig, loadLocalManifest } from "../bridge/server";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import SwapFormPage from "../models/trade/swapFormPage";
 import ErrorElement from "../models/generic/errorElement";
@@ -10,6 +10,7 @@ let error: ErrorElement;
 describe("Swap", () => {
   beforeAll(async () => {
     await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+    await loadLocalManifest("it is a message lol");
     portfolioPage = new PortfolioPage();
     swapPage = new SwapFormPage();
     error = new ErrorElement();

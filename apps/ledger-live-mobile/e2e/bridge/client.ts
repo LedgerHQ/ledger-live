@@ -1,5 +1,5 @@
+import { z } from "zod";
 import { Platform } from "react-native";
-import { DescriptorEventType } from "@ledgerhq/hw-transport";
 import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "../../src/context/LedgerStore";
@@ -8,6 +8,34 @@ import { setAccounts } from "../../src/actions/accounts";
 import { acceptGeneralTermsLastVersion } from "../../src/logic/terms";
 import accountModel from "../../src/logic/accountModel";
 import { navigate } from "../../src/rootnavigation";
+
+const schemaLocalLoadManifest = z.object({
+  type: z.literal("loadLocalManifest"),
+  payload: z.string(),
+});
+
+const schemaOpenNano = z.object({
+  type: z.literal("openNano"),
+});
+
+const schemaAddNano = z.object({
+  type: z.literal("addNano"),
+  payload: z.object({
+    id: z.string(),
+    name: z.string(),
+    serviceUUID: z.string(),
+  }),
+});
+
+const schemaSubjectData = z.discriminatedUnion("type", [
+  schemaLocalLoadManifest,
+  schemaOpenNano,
+  schemaAddNano,
+]);
+
+type SubjectData = z.infer<typeof schemaSubjectData>;
+
+export const e2eBridgeSubject = new Subject<SubjectData>();
 
 let ws: WebSocket;
 
@@ -38,8 +66,9 @@ async function onMessage(event: { data: unknown }) {
   log(`Message type: ${msg.type}`);
 
   switch (msg.type) {
-    case "add":
-    case "open":
+    case "addNano":
+    case "openNano":
+    case "loadLocalManifest":
       e2eBridgeSubject.next(msg);
       break;
     case "setGlobals":
@@ -66,15 +95,6 @@ async function onMessage(event: { data: unknown }) {
       break;
   }
 }
-
-type SubjectData =
-  | {
-      type: DescriptorEventType;
-      payload: { id: string; name: string; serviceUUID: string };
-    }
-  | { type: "open" };
-
-export const e2eBridgeSubject = new Subject<SubjectData>();
 
 function log(message: string) {
   // eslint-disable-next-line no-console

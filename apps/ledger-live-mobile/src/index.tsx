@@ -25,7 +25,8 @@ import {
 } from "@shopify/react-native-performance";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
-import { init } from "../e2e/bridge/client";
+import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { init, e2eBridgeSubject } from "../e2e/bridge/client";
 import logger from "./logger";
 import {
   saveAccounts,
@@ -264,6 +265,14 @@ export default class Root extends Component {
 
   onInitFinished = () => {
     if (Config.MOCK) {
+      e2eBridgeSubject.subscribe(message => {
+        if (message.type === "loadLocalManifest") {
+          // eslint-disable-next-line no-console
+          console.log("wtffffffffff", { message });
+          // const json = JSON.parse(message.payload);
+          // json.map(m => LocalLiveAppProvider.addLocalManifest(m));
+        }
+      });
       init();
     }
   };

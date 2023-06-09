@@ -13,6 +13,7 @@
     "detox": "./node_modules/.bin/detox",
     "e2e:build": "pnpm detox build",
     "e2e:test": "pnpm detox test",
+    "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts",
     "prebeta": "bundle install",
     "ios:staging": "ENVFILE=.env.ios.staging react-native run-ios --configuration Staging",
     "preios:local:ipa": "bundle install",
@@ -55,8 +56,7 @@
     "test": "pnpm test:jest && pnpm test:env",
     "sync-locales": "./scripts/sync-locales.sh",
     "test-deep-links": "ws --spa ./deep-links-test-page.html",
-    "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs",
-    "e2e:loadConfig": "ts-node ./e2e/bridge/start-server.ts"
+    "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs"
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "^1.0.2",
@@ -190,7 +190,8 @@
     "styled-components": "^5.3.3",
     "styled-system": "^5.1.5",
     "text-encoding-polyfill": "^0.6.7",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@actions/core": "^1.5.0",
