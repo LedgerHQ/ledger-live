@@ -325,8 +325,15 @@
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。",
       "primaryCTA" : "別の写真をアップロード"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "お持ちのLedger Staxには削除するロック画面の画像がありません",
+      "description" : "カスタマイズされたロック画面の画像は既に削除済みです。"
+    },
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
+    },
+    "InvalidNonce" : {
+      "title" : "ナンスは必須です"
     },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "アカウントは既にバリデーターへデリゲート済みです"
@@ -704,6 +711,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "お支払いに十分な資金があることをご確認ください"
+    },
+    "StacksMemoTooLong" : {
+      "title" : "メモの長さが長すぎます"
     },
     "StellarWrongMemoFormat" : {
       "title" : "メモのフォーマットに誤りがあります。"
@@ -2699,10 +2709,6 @@
         "experimentalListAppsV2" : {
           "title" : "My Ledger用アプリの試験的リスト",
           "description" : "My Ledgerアクセスとインラインフローのパフォーマンスの向上。"
-        },
-        "experimentalCountervalues" : {
-          "title" : "試験的なカウンターバリューAPI",
-          "description" : "これにより、アカウントに表示されるカウンター値が不正確になる可能性があります。"
         },
         "experimentalSwap" : {
           "title" : "新しいスワップインタフェース",
@@ -6174,6 +6180,30 @@
     "title" : "デバイスを接続"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "所有するETHを運用",
+      "subTitle" : "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
+      "close" : "閉じる",
+      "providers" : {
+        "lido" : {
+          "title" : "Lidoで報酬を稼ぐ",
+          "description" : "Stake your Ethereum with Lido and earn rewards daily. No minimum ETH is required. No lock-up period.",
+          "supportLink" : "Lidoの詳細を確認"
+        },
+        "kiln" : {
+          "title" : "Kiln専用ステーキング",
+          "tag" : "32ETHが必要",
+          "description" : "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
+          "supportLink" : "Kilnバリデーターの詳細を確認"
+        },
+        "kiln_pooling" : {
+          "title" : "Kilnステーキングプール",
+          "description" : "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
+          "supportLink" : "Kilnプールの詳細を確認",
+          "tag" : "No minimum"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "購入、スワップ、受け取り",
       "text" : "ステーキングに十分な{{coin}}がありません",
