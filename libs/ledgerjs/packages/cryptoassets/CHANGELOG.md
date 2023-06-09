@@ -1,5 +1,35 @@
 # @ledgerhq/cryptoassets
 
+## 9.7.0
+
+### Minor Changes
+
+- [#3397](https://github.com/LedgerHQ/ledger-live/pull/3397) [`5cce6e3593`](https://github.com/LedgerHQ/ledger-live/commit/5cce6e359309110df53e16ef989c5b8b94492dfd) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for more ESDT tokens
+
+- [#3564](https://github.com/LedgerHQ/ledger-live/pull/3564) [`30bf4d92c7`](https://github.com/LedgerHQ/ledger-live/commit/30bf4d92c7d79cb81b1e4ad014857459739c33be) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - revert crypto asset dyn cal change
+
+### Patch Changes
+
+- [#3391](https://github.com/LedgerHQ/ledger-live/pull/3391) [`b30ead9d22`](https://github.com/LedgerHQ/ledger-live/commit/b30ead9d22a4bce5f8ee27febf0190fccd2ca25b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Support new Cardano tokens and update existing ones
+
+## 9.7.0-next.1
+
+### Minor Changes
+
+- [#3564](https://github.com/LedgerHQ/ledger-live/pull/3564) [`30bf4d92c7`](https://github.com/LedgerHQ/ledger-live/commit/30bf4d92c7d79cb81b1e4ad014857459739c33be) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - revert crypto asset dyn cal change
+
+## 9.7.0-next.0
+
+### Minor Changes
+
+- [#3397](https://github.com/LedgerHQ/ledger-live/pull/3397) [`5cce6e3593`](https://github.com/LedgerHQ/ledger-live/commit/5cce6e359309110df53e16ef989c5b8b94492dfd) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for more ESDT tokens
+
+- [#3192](https://github.com/LedgerHQ/ledger-live/pull/3192) [`7439b63325`](https://github.com/LedgerHQ/ledger-live/commit/7439b63325a9b0181a3af4310ba787f00faa80c9) Thanks [@henrily-ledger](https://github.com/henrily-ledger)! - Allow addtoken to replace existing token
+
+### Patch Changes
+
+- [#3391](https://github.com/LedgerHQ/ledger-live/pull/3391) [`b30ead9d22`](https://github.com/LedgerHQ/ledger-live/commit/b30ead9d22a4bce5f8ee27febf0190fccd2ca25b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Support new Cardano tokens and update existing ones
+
 ## 9.6.0
 
 ### Minor Changes
