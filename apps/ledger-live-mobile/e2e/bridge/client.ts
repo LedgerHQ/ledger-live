@@ -19,7 +19,7 @@ const schemaOpenNano = z.object({
 });
 
 const schemaAddNano = z.object({
-  type: z.literal("addNano"),
+  type: z.literal("add"),
   payload: z.object({
     id: z.string(),
     name: z.string(),
@@ -66,7 +66,7 @@ async function onMessage(event: { data: unknown }) {
   log(`Message type: ${msg.type}`);
 
   switch (msg.type) {
-    case "addNano":
+    case "add":
     case "openNano":
     case "loadLocalManifest":
       e2eBridgeSubject.next(msg);

@@ -68,7 +68,6 @@ export async function clearTextByElement(elem: Detox.IndexableNativeElement) {
 }
 
 export async function getElementAttributes(elem: Detox.IndexableNativeElement) {
-  console.log("element to get attr", { elem });
   return elem.getAttributes();
 }
 

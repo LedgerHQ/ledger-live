@@ -51,7 +51,7 @@ export default (opts: Opts) => {
     ) {
       return e2eBridgeSubject
         .pipe(
-          filter(msg => msg.type === "addNano"),
+          filter(msg => msg.type === "add"),
           take(3),
         )
         .subscribe(msg => {

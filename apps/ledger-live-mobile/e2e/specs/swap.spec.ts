@@ -1,11 +1,9 @@
 import { loadConfig, loadLocalManifest } from "../bridge/server";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import SwapFormPage from "../models/trade/swapFormPage";
-import ErrorElement from "../models/generic/errorElement";
 
 let portfolioPage: PortfolioPage;
 let swapPage: SwapFormPage;
-let error: ErrorElement;
 
 describe("Swap", () => {
   beforeAll(async () => {
@@ -13,7 +11,6 @@ describe("Swap", () => {
     await loadLocalManifest("it is a message lol");
     portfolioPage = new PortfolioPage();
     swapPage = new SwapFormPage();
-    error = new ErrorElement();
   });
 
   it("should load the Swap page from the Transfer menu", async () => {
@@ -29,19 +26,23 @@ describe("Swap", () => {
 
   it("should show an error for too low an amount", async () => {
     await swapPage.enterSourceAmount("0.00001");
-    // await expect(
-    //   element(by.text("Amount must be higher than 0.0001U+00a0BTC")), // Should fix this space character in the code
-    // ).toBeVisible();
-    await expect(error.errorMessage()).toBeVisible();
+    // unfortunately there's no way to check if a button that is disabled in the JS is actuall disabled on the native side (which is what Detox checks)
+    // we do `startExchange` to see if the next step fails as a way of checking if the exchange button disabled
+    await swapPage.startExchange();
   });
 
   it("should show an error for not enough funds", async () => {
     await swapPage.enterSourceAmount("10");
-    // await expect(element(by.id("error"))).toBeVisible();
+    await swapPage.startExchange();
   });
 
   it("should be able to select a different destination account", async () => {
     await swapPage.openDestinationAccountSelector();
     await swapPage.selectAccount("Ethereum");
+  });
+
+  it("should be able to send the maximum available amount", async () => {
+    await swapPage.sendMax();
+    await swapPage.startExchange();
   });
 });

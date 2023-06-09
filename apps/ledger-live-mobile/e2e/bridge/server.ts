@@ -67,7 +67,7 @@ export function addDevices(
 ): string[] {
   deviceNames.forEach((name, i) => {
     postMessage({
-      type: "addNano",
+      type: "add",
       payload: { id: `mock_${i + 1}`, name, serviceUUID: `uuid_${i + 1}` },
     });
   });
