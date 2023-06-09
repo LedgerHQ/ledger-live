@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.24.0-nightly.8
+
+### Patch Changes
+
+- [#3601](https://github.com/LedgerHQ/ledger-live/pull/3601) [`c8a673c9e0`](https://github.com/LedgerHQ/ledger-live/commit/c8a673c9e069822cf59194b9b526aeebaf915d5a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Memoize requests for device actions to prevent rendering loops
+
+- Updated dependencies [[`8f50c4d927`](https://github.com/LedgerHQ/ledger-live/commit/8f50c4d927f368fd869401b752a51ba7398e59e1), [`809065c571`](https://github.com/LedgerHQ/ledger-live/commit/809065c57198646a49adea112b9d799e35a57d25), [`42d8be7694`](https://github.com/LedgerHQ/ledger-live/commit/42d8be76949e258d6360a1fda3ca5a1df50c8bcb)]:
+  - @ledgerhq/live-common@31.0.0-nightly.8
+  - @ledgerhq/types-live@6.34.2-nightly.0
+  - @ledgerhq/coin-framework@0.3.5-nightly.2
+  - @ledgerhq/domain-service@1.1.3-nightly.2
+
 ## 3.24.0-nightly.7
 
 ### Patch Changes

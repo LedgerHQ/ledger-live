@@ -1,5 +1,24 @@
 # @ledgerhq/live-common
 
+## 31.0.0-nightly.8
+
+### Minor Changes
+
+- [#3618](https://github.com/LedgerHQ/ledger-live/pull/3618) [`8f50c4d927`](https://github.com/LedgerHQ/ledger-live/commit/8f50c4d927f368fd869401b752a51ba7398e59e1) Thanks [@jnwng](https://github.com/jnwng)! - Updated `@solana/web3.js`, enabled versioned transactions
+
+### Patch Changes
+
+- [#3617](https://github.com/LedgerHQ/ledger-live/pull/3617) [`42d8be7694`](https://github.com/LedgerHQ/ledger-live/commit/42d8be76949e258d6360a1fda3ca5a1df50c8bcb) Thanks [@JesseKuntz](https://github.com/JesseKuntz)! - Adjusting the commission calculation for NEAR validators as the value from the API has changed.
+
+- Updated dependencies []:
+  - @ledgerhq/coin-algorand@0.2.1-nightly.2
+  - @ledgerhq/coin-evm@0.2.0-nightly.2
+  - @ledgerhq/coin-framework@0.3.5-nightly.2
+  - @ledgerhq/coin-polkadot@0.1.6-nightly.2
+  - @ledgerhq/domain-service@1.1.3-nightly.2
+  - @ledgerhq/live-portfolio@0.0.7-nightly.0
+  - @ledgerhq/hw-app-eth@6.33.5-nightly.2
+
 ## 31.0.0-nightly.7
 
 ### Minor Changes
