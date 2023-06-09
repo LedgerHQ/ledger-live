@@ -325,6 +325,10 @@
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
       "primaryCTA" : "上传另一张图片"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "description" : "The customized lock screen picture was previously removed."
+    },
     "InvalidAddress" : {
       "title" : "该{{currencyName}} 地址无效"
     },
@@ -2699,10 +2703,6 @@
         "experimentalListAppsV2" : {
           "title" : "我的 Ledger 的实验性应用程序列表",
           "description" : "我的 Ledger 访问和内部流程的性能改进。"
-        },
-        "experimentalCountervalues" : {
-          "title" : "实验性对价 API",
-          "description" : "这可能会导致您的账户对价显示错误。"
         },
         "experimentalSwap" : {
           "title" : "新的互换界面",
@@ -5801,7 +5801,7 @@
       },
       "branch" : {
         "soon" : "敬请期待",
-        "experimental" : "实验性的",
+        "experimental" : "实验性功能",
         "debug" : "除错"
       },
       "banner" : {
@@ -5819,6 +5819,11 @@
       "developerCTA" : {
         "title" : "面向开发者",
         "description" : "您所需要的将您的应用程序整合到 Ledger Live 的全部信息。"
+      },
+      "warnings" : {
+        "notFound" : "未能找到",
+        "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
+        "retrySearchKeywordAndUrl" : "请使用其他关键字重试搜索或在 Ledger Live 外打开 <Link>{{search}}</Link>。"
       }
     },
     "disclaimer" : {
@@ -5934,13 +5939,10 @@
       "reload" : "重新加载",
       "noCryptosFound" : "未找到币",
       "noCurrencyFound" : "没有找到货币",
-      "noAppFound" : "未找到应用程序",
-      "notFound" : "未能找到",
       "noSearchResultsFor" : "对不起，我们没有找到任何币， <0>{{search}}</0> 。请用另一个关键词重新进行搜索。",
       "noCurrencySearchResultsFor" : "对不起，我们没有为<0>{{search}}</0>找到任何货币。请用另一个关键词重新进行搜索。",
       "noSearchResults" : "对不起，我们没有找到任何搜索结果。",
       "retrySearchKeyword" : "请用另一个关键词重新进行搜索。",
-      "retrySearchKeywordAndUrl" : "请使用其他关键字重试搜索或在 Ledger Live 外打开 <Link>{{search}}</Link>。",
       "retrySearchParams" : "请用其他参数重新进行搜索。",
       "trackFavAssets" : "追踪您最喜爱的",
       "clickOnStarIcon" : "点击资产旁边的星形图标将自动把它们添加到您的收藏夹。",
@@ -6174,6 +6176,30 @@
     "title" : "连接设备"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "Grow your ETH holdings",
+      "subTitle" : "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
+      "close" : "Close",
+      "providers" : {
+        "lido" : {
+          "title" : "Earn with Lido",
+          "description" : "Stake your Ethereum with Lido and earn rewards daily. No minimum ETH is required. No lock-up period.",
+          "supportLink" : "Learn more about Lido"
+        },
+        "kiln" : {
+          "title" : "Kiln dedicated staking",
+          "tag" : "Requires 32 ETH",
+          "description" : "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
+          "supportLink" : "Learn more about Kiln validator"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln staking pool",
+          "description" : "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
+          "supportLink" : "Learn more about Kiln pooling",
+          "tag" : "No minimum"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "买入、互换或接收",
       "text" : "您没有足够的 {{coin}} 可供权益质押",
