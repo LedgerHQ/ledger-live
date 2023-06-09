@@ -2,11 +2,11 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { GasOptions } from "../../types";
 import { getGasOptions as ledgerGetGasOptions } from "./ledger";
 
-export const getGasTracker = (
-  currency: CryptoCurrency
-): {
+type GasTrackerApi = {
   getGasOptions: (currency: CryptoCurrency) => Promise<GasOptions>;
-} => {
+};
+
+export const getGasTracker = (currency: CryptoCurrency): GasTrackerApi => {
   switch (currency.ethereumLikeInfo?.gasTracker?.type) {
     case "ledger":
       return {
