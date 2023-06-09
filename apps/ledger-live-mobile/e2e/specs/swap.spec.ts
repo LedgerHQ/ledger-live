@@ -8,7 +8,7 @@ let swapPage: SwapFormPage;
 describe("Swap", () => {
   beforeAll(async () => {
     await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
-    await loadLocalManifest("it is a message lol");
+    await loadLocalManifest();
     portfolioPage = new PortfolioPage();
     swapPage = new SwapFormPage();
   });
@@ -26,7 +26,7 @@ describe("Swap", () => {
 
   it("should show an error for too low an amount", async () => {
     await swapPage.enterSourceAmount("0.00001");
-    // unfortunately there's no way to check if a button that is disabled in the JS is actuall disabled on the native side (which is what Detox checks)
+    // unfortunately there's no way to check if a button that is disabled in the JS is actually disabled on the native side (which is what Detox checks)
     // we do `startExchange` to see if the next step fails as a way of checking if the exchange button disabled
     await swapPage.startExchange();
   });

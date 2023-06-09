@@ -2,6 +2,7 @@ import { Server } from "ws";
 import path from "path";
 import fs from "fs";
 import { NavigatorName } from "../../src/const";
+import { getTestManifest } from "../setups/manifests/testManifest";
 
 let wss: Server;
 
@@ -85,8 +86,9 @@ export function openNano() {
   postMessage({ type: "openNano", payload: null });
 }
 
-export function loadLocalManifest(message: string) {
-  postMessage({ type: "loadLocalManifest", payload: message });
+// in future pass the manifest in as an argument
+export function loadLocalManifest() {
+  postMessage({ type: "loadLocalManifest", payload: getTestManifest() });
 }
 
 function onMessage(messageStr: string) {

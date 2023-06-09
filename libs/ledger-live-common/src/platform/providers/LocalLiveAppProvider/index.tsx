@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useState,
   useCallback,
+  useEffect,
 } from "react";
 import { LiveAppRegistry } from "./types";
 import { LiveAppManifest } from "../../types";
@@ -62,6 +63,11 @@ export function LocalLiveAppProvider({
       };
     });
   }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log({ state });
+  }, [state]);
 
   const removeLocalManifestById = useCallback((manifestId: string) => {
     setState((oldState) => {
