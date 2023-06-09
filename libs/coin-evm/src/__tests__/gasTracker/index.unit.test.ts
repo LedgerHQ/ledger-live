@@ -1,6 +1,6 @@
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { getGasTracker } from "../api/gasTracker";
-import { getGasOptions as ledgerGetGasOptions } from "../api/gasTracker/ledger";
+import { getGasTracker } from "../../api/gasTracker";
+import { getGasOptions as ledgerGetGasOptions } from "../../api/gasTracker/ledger";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,

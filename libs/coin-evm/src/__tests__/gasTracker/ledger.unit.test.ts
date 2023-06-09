@@ -1,7 +1,7 @@
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { GasOptions } from "../../types";
-import * as ledgerGasTracker from "./ledger";
+import * as ledgerGasTracker from "../../api/gasTracker/ledger";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
