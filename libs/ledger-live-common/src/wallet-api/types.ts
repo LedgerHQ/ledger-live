@@ -34,6 +34,7 @@ export type TranslatableString = {
 export type AppPlatform = "ios" | "android" | "desktop";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
+
 export type Visibility = "complete" | "searchable" | "deep";
 
 export type AppPermission = {
@@ -77,3 +78,12 @@ export type ConvertToLiveTransaction<
   account: AccountLike;
   parentAccount?: Account;
 }) => Partial<U>;
+
+export type DiscoverDB = {
+  recentlyUsed: RecentlyUsed[];
+};
+
+export type RecentlyUsed = {
+  id: string;
+  usedAt: string;
+};

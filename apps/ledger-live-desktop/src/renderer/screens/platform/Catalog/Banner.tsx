@@ -2,7 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import PlatformCatalogIllu from "~/renderer/images/platform-catalog-illu.svg";
-import Box from "../../components/Box";
+import Box from "../../../components/Box";
+
 const Container = styled(Box).attrs(p => ({
   flex: 0,
   horizontal: true,
@@ -38,7 +39,8 @@ const Illustration = styled.img.attrs(() => ({
   width: auto;
   height: 100%;
 `;
-export default function CatalogBanner() {
+
+export function Banner() {
   const { t } = useTranslation();
   return (
     <Container>
