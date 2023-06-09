@@ -60,7 +60,7 @@
   "common" : {
     "never" : "なし",
     "new" : "New",
-    "skip" : "Skip",
+    "skip" : "スキップ",
     "apply" : "適用",
     "done" : "完了",
     "confirm" : "確認",
@@ -1951,7 +1951,7 @@
         "osu" : "OSUをインストール中...",
         "flash-mcu" : "MCUをアップデート中...",
         "flash-bootloader" : "Bootloaderをアップデート中...",
-        "progress" : "Installing update {{current}}/{{total}}",
+        "progress" : "アップデートをインストール中{{current}}/{{total}}",
         "firmware" : "ファームウェアのアップデート中...",
         "flash" : "デバイスの準備中..."
       },
@@ -2276,6 +2276,7 @@
     "renamed" : "{{ productName }}の名前が\n「{{ name }}」に変更されました "
   },
   "removeCustomLockscreen" : {
+    "title" : "ロック画面の画像を削除する",
     "cta" : "削除",
     "confirmation" : "Ledger Staxの画像の削除を確定する",
     "success" : "ロック画面の画像が削除されました"
@@ -3507,19 +3508,19 @@
       "subTitle" : "ETHをステーキングして、報酬をLedger Liveで直接受け取り、資産を増やしましょう。",
       "lido" : {
         "title" : "Lidoで報酬を稼ぐ",
-        "tag" : "最小数量なし",
         "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ロックアップ（凍結）期間なし。最小数量なし。",
         "supportLink" : "Lidoの詳細について"
       },
       "kiln" : {
         "title" : "Kiln専用ステーキング",
         "tag" : "32ETHが必要",
-        "description" : "専用のバリデーターでステーキング32ETHの倍数が必要です。報酬は手動で請求されます。",
+        "description" : "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
         "supportLink" : "Kilnバリデーターの詳細を確認"
       },
       "kiln_pooling" : {
         "title" : "Kilnステーキングプール",
-        "description" : "ステーキングプールに参加。ETHの必要最低額の設定なし。報酬は自動的に受け取り可能。",
+        "tag" : "No minimum",
+        "description" : "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
         "supportLink" : "Kilnプールについての詳細を確認"
       }
     }
@@ -3903,10 +3904,6 @@
         "scanForInvalidPaths" : {
           "title" : "拡張アカウント検索",
           "description" : "誤った派生パスを持つアカウントをスキャンする検出された資産は、通常のアカウントに送金してください。"
-        },
-        "experimentalCountervalues" : {
-          "title" : "実験的なカウンターバリューAPI",
-          "description" : "これにより、アカウントに表示されるカウンター値が不正確となる可能性があります。"
         },
         "experimentalExplorers" : {
           "title" : "試験的なエクスプローラーAPI",
@@ -4867,6 +4864,11 @@
       "memoPlaceholder" : "任意",
       "memo" : "メモ"
     },
+    "stacks" : {
+      "memoPlaceholder" : "任意",
+      "memo" : "メモ",
+      "memoWarningText" : "メモを使用する場合は、受取先とタイプを確認してください。"
+    },
     "stellar" : {
       "memo" : "メモ",
       "memoType" : {
@@ -5093,8 +5095,8 @@
       "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
-      "title" : "Restoration of Language was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Ledger Staxで言語の復元がキャンセルされました",
+      "description" : "誤った操作である場合は、復元を再試行、または手順をスキップすることができます。"
     },
     "LanguageNotFound" : {
       "title" : "言語が見つかりません",
@@ -5276,8 +5278,8 @@
       "title" : "My Ledgerがデバイスで拒否されました"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "Update was cancelled on device",
-      "description" : "The installation of OS update was refused on your device. If this was a mistake, restart the update."
+      "title" : "デバイス上でアップデートがキャンセルされました",
+      "description" : "デバイスでOSアップデートのインストールが拒否されました。誤った操作である場合は、アップデートを再開してください。"
     },
     "UserRefusedOnDevice" : {
       "title" : "アクションが拒否されました。",
@@ -5317,6 +5319,9 @@
     },
     "InvalidAddress" : {
       "title" : "これは有効な{{currencyName}} アドレスではありません。"
+    },
+    "InvalidNonce" : {
+      "title" : "ナンスは必須です"
     },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "アカウントは既にバリデーターへデリゲート済みです"
@@ -5573,6 +5578,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "お支払いに十分な資金があることをご確認ください"
     },
+    "StacksMemoTooLong" : {
+      "title" : "メモの長さが長すぎます"
+    },
     "StellarWrongMemoFormat" : {
       "title" : "メモのフォーマットに誤りがあります。"
     },
@@ -5662,13 +5670,17 @@
       "title" : "Ledger Staxでロック画面がキャンセルされました",
       "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "お持ちのLedger Staxには削除するロック画面の画像がありません",
+      "description" : "カスタマイズされたロック画面の画像は以前に削除されました。"
+    },
     "RestoreImageCommitRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Ledger Staxでロック画面の画像の復元がキャンセルされました",
+      "description" : "誤った操作である場合は、復元を再試行、または手順をスキップすることができます。"
     },
     "RestoreImageLoadRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Ledger Staxでロック画面の画像の復元がキャンセルされました",
+      "description" : "誤った操作である場合は、復元を再試行、または手順をスキップすることができます。"
     },
     "NearNewAccountWarning" : {
       "title" : "受取人アカウントはまだ作成されていません。このプロトコルでは、作成するのに{{formattedNewAccountStorageCost}}の転送コストが必要です。"
@@ -5828,5 +5840,14 @@
     "description" : "秘密のリカバリーフレーズは、安全に保管されなければなりません。\nLedger Nano X限定のソフトローンチ。2023年6月30日まで登録無料。",
     "cta" : "サブスクリプション契約のメリットとは？",
     "downloadLLM" : "Ledger Live Mobileアプリを使用して<purple>Ledger Recover</purple>のサブスクリプション契約をする"
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "ネットワークエラー",
+      "subtitle" : "何か問題が発生しました。もう一度お試しください。問題が解決しない場合は、ログを保存し、Ledgerサポートにご連絡ください。",
+      "tryAgain" : "再試行",
+      "contactSupport" : "Ledgerサポートへ問い合わせ",
+      "saveLog" : "ログを保存"
+    }
   }
 }
