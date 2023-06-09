@@ -587,6 +587,12 @@
       "title" : "Une erreur est survenue.",
       "description" : "Vérifiez que votre wallet physique est bien configuré avec la phrase de récupération associée au compte sélectionné."
     },
+    "WebPTXPlayerNetworkFail" : {
+      "title" : "Erreur réseau",
+      "description" : "Vérifiez votre connexion Internet et réessayez. Contactez l’Assistance Ledger si le problème persiste.",
+      "contactSupport" : "Contacter l’Assistance Ledger",
+      "primaryCTA" : "Réessayer"
+    },
     "UnexpectedBootloader" : {
       "title" : "Votre appareil ne doit pas être en mode Bootloader.",
       "description" : "Redémarrez votre appareil sans toucher les boutons lorsque le logo apparaît. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
@@ -1154,7 +1160,7 @@
       },
       "referralProgram" : {
         "title" : "Parrainage",
-        "desc" : "Parrainez un(e) ami(e) et gagnez tous les deux 10 $ US en BTC."
+        "desc" : "Parrainez un(e) ami(e) et gagnez tous les deux 10 USD en BTC."
       }
     },
     "comingSoon" : "Prochainement",
@@ -1191,7 +1197,8 @@
       "terms" : "En appuyant sur Commencer, vous acceptez nos",
       "termsLink" : "Conditions d’utilisation",
       "privacyLink" : "Politique de confidentialité",
-      "and" : "et"
+      "and" : "et",
+      "recoverLogIn" : "Se connecter à Ledger Recover"
     },
     "stepDoYouHaveALedgerDevice" : {
       "title" : "Avez-vous un Ledger ?",
@@ -1308,7 +1315,7 @@
       "1" : {
         "label" : "Les bases",
         "title" : "Détenez votre clé privée",
-        "desc" : "Votre clé privée est stockée dans votre Nano. Vous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
+        "desc" : "Votre clé privée est stockée dans votre wallet Ledger. Vous devez être la seule personne à la détenir pour contrôler vos cryptos."
       },
       "2" : {
         "label" : "Les bases",
@@ -1323,7 +1330,7 @@
       "4" : {
         "label" : "Les bases",
         "title" : "Configurez votre Nano",
-        "desc" : "Commencez par configurer les paramètres de votre nouveau Nano."
+        "desc" : "Commencez par configurer votre nouveau Nano."
       },
       "cta" : "Configurer le Nano",
       "title" : "LES BASES"
@@ -2389,7 +2396,7 @@
     },
     "earn" : "Gagner",
     "quickActions" : "Raccourcis",
-    "referralProgram" : "Parrainez un ami et gagnez 10 $ US en bitcoins",
+    "referralProgram" : "Parrainez un ami et gagnez 10 USD en bitcoins",
     "banner" : {
       "redelegation" : {
         "description" : "Bon à savoir : le validateur Ledger offre des frais de staking inférieurs à ceux prélevés par votre validateur actuel.",
@@ -2668,6 +2675,10 @@
       "title" : "Fonctionnalités expérimentales",
       "desc" : "Essayez les Fonctionnalités expérimentales et donnez-nous votre avis.",
       "disclaimer" : "Il s’agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause.",
+      "provider" : "Le paramètre expérimental « Fournisseur de My Ledger ({{forcedProvider}}) » peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
+      "providerDevMode" : "Les paramètres expérimentaux « Fournisseur de My Ledger ({{forcedProvider}}) » et « Mode développeur » peuvent afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez les désactiver dans les Paramètres.",
+      "devMode" : "Le paramètre expérimental « Mode développeur » peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
+      "providerCTA" : "Accéder aux Paramètres",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "Intégrations expérimentales",
@@ -2696,6 +2707,10 @@
         "experimentalSwap" : {
           "title" : "Nouvelle interface de Swap",
           "description" : "Utilisez la nouvelle interface expérimentale de swap."
+        },
+        "experimentalEnableNetworkLogs" : {
+          "title" : "Activer les logs réseau",
+          "description" : "Activez les logs réseau dans la console (les logs d’erreur sont toujours activés)."
         }
       },
       "developerFeatures" : {
@@ -3674,6 +3689,8 @@
     "allowAppPermission" : "Ouvrez l’app {{wording}} sur votre appareil",
     "allowAppPermissionSubtitleToken" : "pour gérer vos tokens {{token}}",
     "allowManagerPermission" : "Autorisez {{wording}} sur votre {{productName}}.",
+    "allowRemoveCustomLockscreen" : "Confirmez la suppression de l’image sur votre Ledger Stax",
+    "allowSecureConnection" : "Autorisez la connexion sécurisée avec Ledger",
     "loading" : "Chargement...",
     "turnOnAndUnlockDevice" : "Allumez et déverrouillez votre appareil.",
     "connectAndUnlockDevice" : "Connectez et déverrouillez votre appareil.",
@@ -3900,7 +3917,7 @@
     },
     "storage" : {
       "title" : "Stockage",
-      "used" : "utilisés",
+      "used" : "Utilisés",
       "genuine" : "Votre Ledger est authentique.",
       "appsInstalled" : "<0>{{number}}</0> app",
       "appsInstalled_plural" : "<0>{{number}}</0> apps",
@@ -4025,16 +4042,34 @@
   },
   "FirmwareUpdate" : {
     "title" : "Mettre à jour le micrologiciel",
+    "updateDevice" : "Mettez à jour votre {{deviceName}}",
+    "updateDone" : "Vous avez terminé ! Votre {{deviceName}} est à jour",
+    "updateDoneDescription" : "Nouvelle version du système d’exploitation : {{firmwareVersion}}",
     "preparing" : "Préparation de la mise à jour du micrologiciel... Veuillez garder votre appareil allumé et connecté. Nous vous informerons de la progression de la mise à jour.",
     "confirmIdentifierText" : "Vérifiez que l’identifiant sur votre appareil est le même que l’identifiant affiché ci-dessous. Confirmez et saisissez votre code PIN si demandé.",
     "pleaseReinstallApps" : "Veuillez réinstaller les apps sur votre appareil.",
     "pleaseConfirmUpdate" : "Confirmez la mise à jour sur votre appareil",
+    "pleaseConfirmUpdateOnYourDevice" : "Confirmez l’installation sur votre {{deviceName}}",
+    "finishUpdateCTA" : "Terminer",
     "finishUpdate" : "Terminez la mise à jour sur votre {{deviceName}}",
     "identifierTitle" : "Identifiant :",
     "pleaseWaitDownload" : "Patientez pendant le téléchargement du programme d’installation",
+    "doNotLeaveLedgerLive" : "Ne quittez pas l’application Ledger Live avant la fin de la mise à jour.",
     "preparingDevice" : "Préparation de votre appareil",
     "pleaseWaitUpdate" : "Merci d’attendre que la mise à jour soit terminée.",
+    "viewUpdateChangelog" : "Voir le changelog de la mise à jour",
     "waitForFirmwareUpdate" : "Attendez la fin de la mise à jour du micrologiciel sur votre appareil",
+    "waitForInstallationToFinish" : "Attendez la fin de l’installation sur votre {{deviceName}}",
+    "staxBatteryLow" : "Batterie de votre Ledger Stax trop faible pour la mise à jour",
+    "staxBatteryLowDescription" : "Pour mettre à jour le système d’exploitation, votre appareil Ledger doit disposer d’au moins 20 % de batterie ou être en charge.",
+    "updateCancelled" : "Mise à jour annulée sur votre {{deviceName}}",
+    "updateCancelledDescription" : "L’installation de la mise à jour du système d’exploitation {{newFirmwareVersion}} a été refusée sur votre {{deviceName}}. S’il s’agit d’une erreur, veuillez relancer la mise à jour.",
+    "updateNotYetComplete" : "La mise à jour n’est pas encore terminée",
+    "updateNotYetCompleteDescription" : "Si vous interrompez la mise à jour, vos apps, la langue et l’image de votre écran de verrouillage peuvent ne pas être restaurées correctement.",
+    "restartUpdate" : "Relancer la mise à jour",
+    "quitUpdate" : "Quitter la mise à jour",
+    "continueUpdate" : "Continuer la mise à jour",
+    "unlockDeviceToComplete" : "Déverrouillez votre {{deviceName}} pour terminer l’installation",
     "unlockDeviceWithPin" : "Déverrouillez votre appareil avec votre code PIN",
     "reinstallApps" : "Réinstaller les apps",
     "currentVersionNumber" : "Version actuelle",
@@ -4056,7 +4091,23 @@
       "flash-bootloader" : "Mise à jour du Bootloader",
       "flash" : "Mise à jour du micrologiciel de votre appareil",
       "preparing" : "Préparation de la mise à jour",
-      "firmware" : "Téléchargement de la mise à jour"
+      "firmware" : "Téléchargement de la mise à jour",
+      "prepareUpdate" : {
+        "titleActive" : "Préparation de l’installation de la mise à jour",
+        "description" : "Sauvegarde de vos réglages et transfert de la mise à jour vers votre {{deviceName}}."
+      },
+      "installUpdate" : {
+        "titleInactive" : "Installer la mise à jour",
+        "titleActive" : "Installation de la mise à jour",
+        "description" : "Votre {{deviceName}} redémarrera plusieurs fois.\n\nUne fois la mise à jour installée sur votre {{deviceName}}, déverrouillez votre appareil pour terminer le processus."
+      },
+      "restoreSettings" : {
+        "titleInactive" : "Restaurer les apps et les paramètres",
+        "description" : "Vos paramètres et vos apps blockchain seront restaurés.",
+        "restoreLockScreenPicture" : "Restauration de l’image de verrouillage",
+        "restoreLanguage" : "Restauration de la langue",
+        "installingApps" : "Installation des apps"
+      }
     },
     "newVersion" : "Nouvelle version {{version}} disponible pour votre {{deviceName}}",
     "drawerUpdate" : {
@@ -4064,6 +4115,12 @@
       "description" : "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live pour l’ordinateur",
       "pleaseConnectUsbTitle" : "Câble USB nécessaire",
       "pleaseConnectUsbDescription" : "Connectez votre {{deviceName}} à votre téléphone avec un câble USB pour lancer la mise à jour du micrologiciel."
+    },
+    "errors" : {
+      "TimeoutError" : {
+        "title" : "Délai écoulé",
+        "description" : "La connexion avec votre {{deviceName}} a été perdue. La mise à jour n’a pas pu être terminée."
+      }
     }
   },
   "firmwareUpdateRequired" : {
@@ -5929,9 +5986,10 @@
       "txDetails" : "Détails de la transaction"
     },
     "modalDisabled" : {
-      "title" : "Envoi indisponible",
+      "title" : "Envoi indisponible sur iOS",
       "body" : "Afin de se conformer aux récentes mises à jour d’Apple sur l’App Store, l’envoi de NFT est temporairement indisponible. Vous pouvez utiliser Ledger Live pour l’ordinateur pour envoyer des NFT.",
-      "contactSupport" : "Consultez notre article d’assistance pour en savoir plus."
+      "learnMore" : "En savoir plus",
+      "continue" : "Compris"
     }
   },
   "ApplicationVersion" : "v. {{version}}",
@@ -5966,9 +6024,11 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Choisir dans ma galerie d’images",
-        "selectFromNFTGallery" : "Choisir dans ma galerie de NFT"
+        "selectFromNFTGallery" : "Choisir dans ma galerie de NFT",
+        "remove" : "Retirer l’image actuelle"
       }
     },
+    "toastRemove" : "Image de verrouillage retirée",
     "cropImage" : "Recadrer l’image",
     "chooseConstrast" : "Choisissez un contraste",
     "uploadAnotherImage" : "Télécharger une autre image",
@@ -6060,8 +6120,8 @@
         "selectAndHide" : "Sélectionner et masquer",
         "hide" : "Masquer {{count}} collection",
         "hide_plural" : "Masquer {{count}} collections",
-        "alertHide" : "1 collection masquée. Accédez aux Paramètres pour l’afficher à nouveau.",
-        "alertHide_plural" : "{{count}} collections masquées. Accédez aux Paramètres pour les afficher à nouveau."
+        "alertHide" : "1 collection masquée. Accédez à la section Comptes dans les Paramètres pour l’afficher à nouveau.",
+        "alertHide_plural" : "{{count}} collections masquées. Accédez à la section Comptes dans les Paramètres pour les afficher à nouveau."
       },
       "empty" : {
         "title" : "Pas (encore) de NFT",
@@ -6087,7 +6147,7 @@
         "tag" : "{{count}} NFT"
       }
     },
-    "referralProgram" : "10 $ US"
+    "referralProgram" : "10 USD"
   },
   "servicesWidget" : {
     "title" : "Services",
@@ -6102,20 +6162,6 @@
             "alreadySubscribed" : "Déjà connecté(e) ? <LinkAccount>Voir mon abonnement</LinkAccount>"
           }
         }
-      }
-    }
-  },
-  "protect" : {
-    "login" : {
-      "title" : "Connexion",
-      "desc" : "Connectez-vous avec votre compte Ledger pour gérer votre abonnement à Protect.",
-      "email" : "Email",
-      "password" : "Mot de passe",
-      "cta" : "Me connecter",
-      "forgotPassword" : "J’ai oublié mon mot de passe.",
-      "errors" : {
-        "emptyEmail" : "Le champ Email ne peut pas être vide.",
-        "emptyPassword" : "Le champ Mot de passe ne peut pas être vide."
       }
     }
   },
