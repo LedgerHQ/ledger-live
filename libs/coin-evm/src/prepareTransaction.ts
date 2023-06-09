@@ -2,11 +2,12 @@ import { isEqual } from "lodash";
 import BigNumber from "bignumber.js";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { getFeesEstimation, getGasEstimation, getTransactionCount } from "./api/rpc";
+import { EvmNftTransaction, Transaction as EvmTransaction } from "./types";
 import { getTransactionData, getTypedTransaction } from "./transaction";
-import { getAdditionalLayer2Fees, getEstimatedFees } from "./logic";
 import { validateRecipient } from "./getTransactionStatus";
-import { Transaction as EvmTransaction } from "./types";
+import { getNftCollectionMetadata } from "./api/nft";
+import { getFeesEstimation, getGasEstimation, getTransactionCount } from "./api/rpc";
+import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
 
 /**
  * Prepare basic coin transactions or smart contract interactions (other than live ERC20 transfers)
@@ -77,6 +78,7 @@ export const prepareTokenTransaction = async (
 ): Promise<EvmTransaction> => {
   const [recipientErrors] = validateRecipient(account, typedTransaction);
   const amount = typedTransaction.useAllAmount ? tokenAccount.balance : typedTransaction.amount;
+
   const data = !Object.keys(recipientErrors).length
     ? getTransactionData(account, { ...typedTransaction, amount })
     : undefined;
@@ -100,12 +102,68 @@ export const prepareTokenTransaction = async (
 
   // Recipient isn't changed here as it would change on the UI end as well
   // The change will be handled by the `prepareForSignOperation` method
+  // right before the device signature by the signOperation step
   return {
     ...typedTransaction,
     amount,
     data,
     gasLimit,
     additionalFees,
+  };
+};
+
+/**
+ * Prepare ERC721/ERC1155 transactions.
+ * Handling addition of NFT safeTransferFrom data and gas limit
+ */
+export const prepareNftTransaction = async (
+  account: Account,
+  typedTransaction: EvmNftTransaction & EvmTransaction,
+): Promise<EvmTransaction> => {
+  const { currency } = account;
+  const [recipientErrors] = validateRecipient(account, typedTransaction);
+
+  const data = !Object.keys(recipientErrors).length
+    ? getTransactionData(account, typedTransaction)
+    : undefined;
+  // As we're interacting with a smart contract,
+  // it's going to be the real recipient for the tx
+  const gasLimit = data
+    ? await getGasEstimation(account, {
+        ...typedTransaction,
+        amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
+        recipient: typedTransaction.nft.contract, // recipient is then the nft smart contract
+        data, // buffer containing the calldata bytecode
+      }).catch(() => new BigNumber(0)) // this catch returning 0 should be handled by the `getTransactionStatus` method
+    : new BigNumber(0);
+  const additionalFees = await getAdditionalLayer2Fees(account.currency, {
+    ...typedTransaction,
+    amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
+    recipient: typedTransaction.nft.contract, // recipient is then the token smart contract
+    data, // buffer containing the calldata bytecode
+    gasLimit,
+  });
+
+  // Providing the collection name to the transaction for the
+  // deviceTransactionConfig step (so purely UI)
+  const [collectionMetadata] = await getNftCollectionMetadata(
+    [{ contract: typedTransaction.nft.contract }],
+    currency?.ethereumLikeInfo?.chainId || 0,
+  );
+  const nft = {
+    ...typedTransaction.nft,
+    collectionName: collectionMetadata.result?.tokenName || "",
+  };
+
+  // Recipient isn't changed here as it would change on the UI end as well
+  // The change will be handled by the `prepareForSignOperation` method
+  // right before the device signature by the signOperation step
+  return {
+    ...typedTransaction,
+    data,
+    gasLimit,
+    additionalFees,
+    nft,
   };
 };
 
@@ -141,9 +199,15 @@ export const prepareTransaction = async (
   const isTokenTransaction = subAccount?.type === "TokenAccount";
   const typedTransaction = getTypedTransaction(transaction, feeData);
 
-  const newTransaction = isTokenTransaction
-    ? await prepareTokenTransaction(account, subAccount, typedTransaction)
-    : await prepareCoinTransaction(account, typedTransaction);
+  const newTransaction = await (() => {
+    if (isNftTransaction(typedTransaction)) {
+      return prepareNftTransaction(account, typedTransaction);
+    }
+    const isTokenTransaction = subAccount?.type === "TokenAccount";
+    return isTokenTransaction
+      ? prepareTokenTransaction(account, subAccount, typedTransaction)
+      : prepareCoinTransaction(account, typedTransaction);
+  })();
 
   // maintaining reference if the transaction hasn't change
   return isEqual(transaction, newTransaction) ? transaction : newTransaction;
