@@ -41,7 +41,7 @@ const defaultTokenListOptions: TokensListOptions = {
 };
 export function createTokenHash(token: TokenCurrency): string {
   return token
-    ? `${token.id}${token.contractAddress}${token.delisted}${token.disableCountervalue}${token.ticker}${token.countervalueTicker}${token.ledgerSignature}`
+    ? `${token.id}${token.contractAddress}${token.delisted}${token.disableCountervalue}${token.ticker}${token.ledgerSignature}`
     : "";
 }
 
