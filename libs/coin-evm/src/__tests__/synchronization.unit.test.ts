@@ -147,7 +147,7 @@ describe("EVM Family", () => {
           if (e instanceof AssertionError) {
             throw e;
           }
-          expect(e.message).toEqual("API type not supported");
+          expect(e.message).toMatch("No explorer found for currency");
         }
       });
 
@@ -174,7 +174,7 @@ describe("EVM Family", () => {
           if (e instanceof AssertionError) {
             throw e;
           }
-          expect(e.message).toEqual("API type not supported");
+          expect(e.message).toMatch("No explorer found for currency");
         }
       });
 
@@ -574,7 +574,7 @@ describe("EVM Family", () => {
           if (e instanceof AssertionError) {
             throw e;
           }
-          expect(e.message).toEqual("API type not supported");
+          expect(e.message).toMatch("No explorer found for currency");
         }
       });
     });

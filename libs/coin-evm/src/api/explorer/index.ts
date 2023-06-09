@@ -13,6 +13,6 @@ export const getExplorerApi = (currency: CryptoCurrency) => {
       return etherscanLikeApi;
 
     default:
-      throw new Error("API type not supported");
+      throw new Error(`No explorer found for currency "${currency.id}"`);
   }
 };
