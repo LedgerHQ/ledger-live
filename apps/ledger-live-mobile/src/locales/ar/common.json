@@ -325,8 +325,15 @@
       "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى.",
       "primaryCTA" : "تحميل صورة أخرى"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "ليس لدى Ledger Stax الخاص بك صورة شاشة قفل لإزالتها",
+      "description" : "صورة شاشة القَفل المخصصة تمت إزالتها من قَبل."
+    },
     "InvalidAddress" : {
       "title" : "هذا ليس عنوان {{currencyName}} صحيح"
+    },
+    "InvalidNonce" : {
+      "title" : "الرقم الخاص (nonce) مطلوب"
     },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "تم تفويض حسابك بالفعل إلى هذا المدقق"
@@ -704,6 +711,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "رجاء التأكد أن لديك أرصدة مالية كافية لدفع الرسوم."
+    },
+    "StacksMemoTooLong" : {
+      "title" : "الملاحظة (تسمية الوجهة) طويلة جداً"
     },
     "StellarWrongMemoFormat" : {
       "title" : "صيغة الملاحظة خاطئة"
@@ -2699,10 +2709,6 @@
         "experimentalListAppsV2" : {
           "title" : "الإدراج التجريبي للتطبيقات في My Ledger",
           "description" : "تحسين الأداء لوصول My Ledger والتدفقات المُضمَّنة."
-        },
-        "experimentalCountervalues" : {
-          "title" : "API للقيم المقابلة التجريبية",
-          "description" : "قد يتسبب هذا في أن تكون القيم المقابلة المعروضة لحساباتك غير صحيحة."
         },
         "experimentalSwap" : {
           "title" : "واجهة مبادلة جديدة",
@@ -6174,6 +6180,30 @@
     "title" : "توصيل الجهاز"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "قم بتنمية ما تملك من ETH",
+      "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال كسب مكافآت يومية مباشرةً في Ledger Live لديك.",
+      "close" : "إغلاق",
+      "providers" : {
+        "lido" : {
+          "title" : "اكسب مع Lido",
+          "description" : "Stake your Ethereum with Lido and earn rewards daily. No minimum ETH is required. No lock-up period.",
+          "supportLink" : "تعرف على المزيد عن Lido"
+        },
+        "kiln" : {
+          "title" : "تكديس Kiln المُخصص",
+          "tag" : "يتطلب 32 ETH",
+          "description" : "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
+          "supportLink" : "تعرف على المزيد عن مدقق Kiln"
+        },
+        "kiln_pooling" : {
+          "title" : "مُجمِع تكديس Kiln",
+          "description" : "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
+          "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln",
+          "tag" : "No minimum"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "شراء أو تبادل أو تلقَى",
       "text" : "ليس لديك ما يكفي من {{coin}} متاحة للتكديس",
