@@ -2,9 +2,10 @@ import completeExchange from "@ledgerhq/live-common/exchange/platform/completeEx
 import { createAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
 import { createAction as txCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import DeviceActionModal from "../../../components/DeviceActionModal";
 import { useBroadcast } from "../../../components/useBroadcast";
 import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
@@ -24,7 +25,8 @@ const PlatformCompleteExchange: React.FC<Props> = ({
 }) => {
   const { fromAccount: account, fromParentAccount: parentAccount } =
     request.exchange;
-  let tokenCurrency;
+  let tokenCurrency: TokenCurrency | undefined;
+
   if (account.type === "TokenAccount") tokenCurrency = account.token;
 
   const broadcast = useBroadcast({ account, parentAccount });
@@ -69,6 +71,17 @@ const PlatformCompleteExchange: React.FC<Props> = ({
     }
   }, []);
 
+  const signRequest = useMemo(
+    () => ({
+      tokenCurrency,
+      parentAccount,
+      account,
+      transaction,
+      appName: "Exchange",
+    }),
+    [account, parentAccount, tokenCurrency, transaction],
+  );
+
   return (
     <SafeAreaView style={styles.root}>
       {!transaction ? (
@@ -88,13 +101,8 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           action={sendAction}
           onClose={onClose}
           onResult={onSign}
-          request={{
-            tokenCurrency,
-            parentAccount,
-            account,
-            transaction,
-            appName: "Exchange",
-          }}
+          // @ts-expect-error Wrong types?
+          request={signRequest}
         />
       )}
     </SafeAreaView>

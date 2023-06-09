@@ -4,7 +4,7 @@ import { buildTransactionWithAPI } from "./js-buildTransaction";
 import createTransaction from "./js-createTransaction";
 import { Transaction, TransactionModel } from "./types";
 import { assertUnreachable } from "./utils";
-import { Transaction as OnChainTransaction } from "@solana/web3.js";
+import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
 
 export async function estimateTxFee(
@@ -15,7 +15,7 @@ export async function estimateTxFee(
   const tx = createDummyTx(account, kind);
   const [onChainTx] = await buildTransactionWithAPI(account, tx, api);
 
-  const fee = await api.getFeeForMessage(onChainTx.compileMessage());
+  const fee = await api.getFeeForMessage(onChainTx.message);
 
   if (typeof fee !== "number") {
     log("error", `api.getFeeForMessage returned invalid fee: <${fee}>`);
@@ -165,16 +165,16 @@ async function retryWithNewBlockhash(
   api: ChainAPI,
   onChainTx: OnChainTransaction
 ) {
-  if (onChainTx.recentBlockhash === undefined) {
+  if (onChainTx.message.recentBlockhash === undefined) {
     throw new Error("expected recentBlockhash");
   }
 
-  onChainTx.recentBlockhash = await waitNextBlockhash(
+  onChainTx.message.recentBlockhash = await waitNextBlockhash(
     api,
-    onChainTx.recentBlockhash
+    onChainTx.message.recentBlockhash
   );
 
-  const fee = await api.getFeeForMessage(onChainTx.compileMessage());
+  const fee = await api.getFeeForMessage(onChainTx.message);
 
   if (typeof fee !== "number") {
     throw new Error(
