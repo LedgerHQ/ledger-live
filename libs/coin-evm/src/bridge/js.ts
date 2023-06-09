@@ -1,3 +1,4 @@
+/* istanbul ignore file: pure exports, bridge tested by live-common with bridge.integration.test.ts */
 import {
   makeAccountBridgeReceive,
   makeScanAccounts,

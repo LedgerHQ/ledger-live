@@ -1,3 +1,5 @@
+/* istanbul ignore file: don't test the test. */
+
 import expect from "expect";
 import invariant from "invariant";
 import sample from "lodash/sample";
