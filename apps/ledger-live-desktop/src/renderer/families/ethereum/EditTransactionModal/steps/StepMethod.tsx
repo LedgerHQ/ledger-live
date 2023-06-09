@@ -147,15 +147,10 @@ export class StepMethodFooter extends PureComponent<StepProps> {
       updateTransaction,
       account,
       parentAccount,
-      isNftOperation,
-      setIsNFTSend,
       transactionRaw,
     } = this.props;
     invariant(account && transactionRaw, "account and transactionRaw required");
     const bridge = getAccountBridge(account, parentAccount);
-    if (isNftOperation) {
-      setIsNFTSend(editType === "speedup");
-    }
     if (editType === "speedup") {
       updateTransaction(tx =>
         bridge.updateTransaction(tx, {

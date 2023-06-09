@@ -6,6 +6,7 @@ import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import SendAmountFields from "../../../../modals/Send/SendAmountFields";
 import logger from "~/renderer/logger";
 import { StepProps } from "../types";
@@ -14,6 +15,8 @@ import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/tra
 import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
+import { NotEnoughGas } from "@ledgerhq/errors";
+
 
 const StepFees = (props: StepProps) => {
   const {
@@ -22,7 +25,6 @@ const StepFees = (props: StepProps) => {
     parentAccount,
     transaction,
     onChangeTransaction,
-    error,
     status,
     bridgePending,
     updateTransaction,
@@ -62,7 +64,6 @@ const StepFees = (props: StepProps) => {
   return (
     <Box flow={4}>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
-      {error ? <ErrorBanner error={error} /> : null}
       {account && transaction && mainAccount && (
         <Fragment key={account.id}>
           <SendAmountFields
@@ -131,20 +132,23 @@ export class StepFeesFooter extends PureComponent<StepProps> {
     const { bridgePending, status } = this.props;
     const { errors } = status;
     // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
+    let errorCount = Object.keys(errors).length;
     if (
       errors.amount &&
       (errors.amount.name.includes("NotOwnedNft") ||
         errors.amount.name.includes("NotEnoughNftOwned"))
     ) {
-      delete errors.amount;
+      errorCount = errorCount - 1;
     }
-    const errorCount = Object.keys(errors).length;
     return (
       <>
         {this.state.transactionHasBeenValidated ? (
           <ErrorBanner error={new TransactionHasBeenValidatedError()} />
-        ) : errorCount ? (
-          <ErrorBanner error={Object.values(errors)[0]} />
+        ) : 
+        errors.gasPrice && errors.gasPrice instanceof NotEnoughGas ? (
+          <Box width={"70%"}>
+            <Alert type={"error"} title={<TranslatedError error={errors.gasPrice} />}/>
+          </Box>
         ) : null}
         <Button
           id={"send-amount-continue-button"}

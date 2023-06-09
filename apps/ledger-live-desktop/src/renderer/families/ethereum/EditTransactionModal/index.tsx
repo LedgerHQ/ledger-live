@@ -11,7 +11,6 @@ export type Props = {
   parentAccount: Account | undefined | null;
   transactionRaw: TransactionCommonRaw;
   transactionHash: string;
-  isNftOperation: boolean;
 };
 
 const EditTransactionModal = ({
@@ -19,13 +18,10 @@ const EditTransactionModal = ({
   parentAccount,
   transactionRaw,
   transactionHash,
-  isNftOperation,
 }: Props) => {
   const [stepId, setStepId] = useState<StepId>("method");
-  const [isNftSend, setIsNFTSend] = useState(false);
   const handleReset = useCallback(() => setStepId("method"), []);
   const handleStepChange = useCallback(stepId => setStepId(stepId), []);
-  const handleSetIsNFTSend = useCallback(isNftSend => setIsNFTSend(isNftSend), []);
   return (
     <DomainServiceProvider>
       <Modal
@@ -36,8 +32,6 @@ const EditTransactionModal = ({
         render={({ onClose }) => (
           <Body
             stepId={stepId}
-            setIsNFTSend={handleSetIsNFTSend}
-            isNftSend={isNftSend}
             onChangeStepId={handleStepChange}
             onClose={onClose}
             params={{
@@ -45,7 +39,6 @@ const EditTransactionModal = ({
               parentAccount: parentAccount,
               transactionRaw: transactionRaw as EthereumTransactionRaw,
               transactionHash: transactionHash,
-              isNftOperation: isNftOperation,
             }}
           />
         )}

@@ -56,6 +56,7 @@ export type FeatureId =
   | "protectServicesMobile"
   | "protectServicesDesktop"
   | "swapShowDexQuotes"
+  | "swapWalletApiPartnerList"
   | "stakePrograms"
   | "portfolioExchangeBanner"
   | "objkt"

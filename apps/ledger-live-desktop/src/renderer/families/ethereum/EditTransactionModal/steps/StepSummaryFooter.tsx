@@ -36,14 +36,14 @@ export class StepSummaryFooter extends PureComponent<StepProps> {
     if (!account) return null;
     const { errors } = status;
     // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft speedup operation
+    let errorCount = Object.keys(errors).length;
     if (
       errors.amount &&
       (errors.amount.name.includes("NotOwnedNft") ||
         errors.amount.name.includes("NotEnoughNftOwned"))
     ) {
-      delete errors.amount;
+      errorCount = errorCount - 1;
     }
-    const errorCount = Object.keys(errors).length;
     const canNext = !bridgePending && !errorCount && !this.state.transactionHasBeenValidated;
     return (
       <>

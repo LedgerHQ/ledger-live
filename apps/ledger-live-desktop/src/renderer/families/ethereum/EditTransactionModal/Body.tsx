@@ -42,15 +42,12 @@ export type Data = {
   transaction?: Transaction;
   transactionRaw: EthereumTransactionRaw;
   transactionHash: string;
-  isNftOperation: boolean;
 };
 
 type OwnProps = {
   stepId: StepId;
   onChangeStepId: (a: StepId) => void;
   onClose?: () => void | undefined;
-  setIsNFTSend?: (a: boolean) => void;
-  isNftSend?: boolean;
   params: Data;
 };
 
@@ -61,8 +58,6 @@ type StateProps = {
   closeModal: (a: string) => void;
   openModal: (b: string, a: unknown) => void;
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
-  setIsNFTSend: (a: boolean) => void;
-  isNFTSend: boolean;
 };
 type Props = {} & OwnProps & StateProps;
 
@@ -128,8 +123,6 @@ const Body = ({
   params,
   accounts,
   updateAccountWithUpdater,
-  setIsNFTSend,
-  isNFTSend,
 }: Props) => {
   const [steps] = useState(() => createSteps());
   const {
@@ -259,10 +252,7 @@ const Body = ({
     updateTransaction,
     setEditType: handleSetEditType,
     editType,
-    setIsNFTSend,
-    isNFTSend,
     transactionRaw: params.transactionRaw,
-    isNftOperation: params.isNftOperation,
     transactionHash: params.transactionHash,
     haveFundToSpeedup,
     haveFundToCancel,

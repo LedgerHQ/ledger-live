@@ -243,7 +243,7 @@ const OperationD = (props: Props) => {
   const editable = editEthTx?.enabled && isEditableOperation(mainAccount, operation);
   const dispatch = useDispatch();
   const handleOpenEditModal = useCallback(
-    (account, parentAccount, transactionRaw, transactionHash, isNftOperation) => {
+    (account, parentAccount, transactionRaw, transactionHash) => {
       setDrawer(undefined);
       dispatch(
         openModal("MODAL_EDIT_TRANSACTION", {
@@ -251,7 +251,6 @@ const OperationD = (props: Props) => {
           parentAccount,
           transactionRaw,
           transactionHash,
-          isNftOperation,
         }),
       );
     },
@@ -388,7 +387,6 @@ const OperationD = (props: Props) => {
                   parentAccount,
                   operation.transactionRaw,
                   operation.hash,
-                  isNftOperation,
                 );
               }}
             >

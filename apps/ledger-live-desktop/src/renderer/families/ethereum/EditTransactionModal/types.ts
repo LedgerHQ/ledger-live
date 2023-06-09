@@ -30,13 +30,11 @@ export type StepProps = {
   currencyName: string | undefined | null;
   transactionRaw: EthereumTransactionRaw;
   transactionHash: string;
-  isNftOperation: boolean;
   editType: string | undefined | null;
   haveFundToSpeedup: boolean;
   haveFundToCancel: boolean;
   isOldestEditableOperation: boolean;
   setEditType: (a: string) => void;
-  setIsNFTSend: (a: boolean) => void;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

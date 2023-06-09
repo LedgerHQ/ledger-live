@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { reduce } from "rxjs/operators";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import DeviceAction from "~/renderer/components/DeviceAction";
@@ -34,6 +34,7 @@ const StepConnectDevice = ({
   const currency = getCryptoCurrencyById("bitcoin");
   const [device, setDevice] = useState<Device>(null);
   const [scanStatus, setScanStatus] = useState<ConnectionStatus>(connectionStatus.IDLE);
+  const request = useMemo(() => ({ currency }), [currency]);
   useEffect(() => {
     if (device) {
       const sub = scanDescriptors(
@@ -67,9 +68,7 @@ const StepConnectDevice = ({
       {scanStatus === connectionStatus.IDLE ? (
         <DeviceAction
           action={action}
-          request={{
-            currency,
-          }}
+          request={request}
           onResult={({ device }) => {
             setDevice(device);
             setScanStatus(connectionStatus.PENDING);
