@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { concat, Observable, of } from "rxjs";
 import { catchError, scan, tap } from "rxjs/operators";
 import { getMainAccount } from "../../account";
@@ -12,7 +12,7 @@ import type {
   SwapTransaction,
 } from "../../exchange/swap/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
-import type { AppState } from "./app";
+import type { AppRequest, AppState } from "./app";
 import { createAction as createAppAction } from "./app";
 import type { Action, Device } from "./types";
 import { TransactionStatus } from "../../generated/types";
@@ -145,9 +145,9 @@ export const createAction = (
       exchange;
     const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
     const maintoAccount = getMainAccount(toAccount, toParentAccount);
-    const appState = createAppAction(connectAppExec).useHook(
-      reduxDeviceFrozen,
-      {
+
+    const request: AppRequest = useMemo(() => {
+      return {
         appName: "Exchange",
         dependencies: [
           {
@@ -158,7 +158,11 @@ export const createAction = (
           },
         ],
         requireLatestFirmware,
-      }
+      };
+    }, [mainFromAccount, maintoAccount, requireLatestFirmware]);
+    const appState = createAppAction(connectAppExec).useHook(
+      reduxDeviceFrozen,
+      request
     );
     const { device, opened, error } = appState;
     const hasError = error || state.error;

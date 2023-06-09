@@ -1,5 +1,17 @@
 # @ledgerhq/types-live
 
+## 6.35.0
+
+### Minor Changes
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Add new feature flag for controlling the new firmware update UX
+
+## 6.35.0-next.0
+
+### Minor Changes
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Add new feature flag for controlling the new firmware update UX
+
 ## 6.34.1
 
 ### Patch Changes

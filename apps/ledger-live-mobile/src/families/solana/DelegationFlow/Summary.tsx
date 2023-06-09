@@ -162,12 +162,22 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.DelegationSelectDevice, {
+      ...route.params,
       accountId: account.id,
       parentId: parentAccount?.id,
       transaction: transaction as SolanaTransaction,
       status,
+      validatorName: chosenValidator?.name,
     });
-  }, [navigation, account.id, parentAccount?.id, transaction, status]);
+  }, [
+    route.params,
+    navigation,
+    account.id,
+    parentAccount?.id,
+    transaction,
+    status,
+    chosenValidator?.name,
+  ]);
 
   const hasErrors = Object.keys(status.errors).length > 0;
 

@@ -17,6 +17,7 @@ import deviceAppVersion from "./commands/deviceAppVersion";
 import deviceInfo from "./commands/deviceInfo";
 import deviceSDKFirmwareUpdate from "./commands/deviceSDKFirmwareUpdate";
 import deviceSDKGetDeviceInfo from "./commands/deviceSDKGetDeviceInfo";
+import deviceSDKToggleOnboardingEarlyCheck from "./commands/deviceSDKToggleOnboardingEarlyCheck";
 import deviceVersion from "./commands/deviceVersion";
 import discoverDevices from "./commands/discoverDevices";
 import envs from "./commands/envs";
@@ -78,6 +79,7 @@ export default {
   deviceInfo,
   deviceSDKFirmwareUpdate,
   deviceSDKGetDeviceInfo,
+  deviceSDKToggleOnboardingEarlyCheck,
   deviceVersion,
   discoverDevices,
   envs,

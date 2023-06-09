@@ -1,7 +1,12 @@
 module.exports = function override(webpackConfig) {
   const babelRule = webpackConfig.module.rules[2].oneOf[2];
-  babelRule.options.plugins = ["@babel/plugin-proposal-class-properties"];
-  // console.log(babelRule.options);
+  babelRule.options.plugins = [
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-private-methods",
+    "@babel/plugin-transform-logical-assignment-operators",
+    "@babel/plugin-transform-nullish-coalescing-operator",
+  ];
+  console.log(babelRule.options);
 
   webpackConfig.module.rules.push({
     test: /\.js$/i,

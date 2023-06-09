@@ -246,8 +246,7 @@ export const isUpToDateAccount = (account: Account | null | undefined) => {
   const { blockAvgTime } = currency;
   if (!blockAvgTime) return true;
   const outdated =
-    // FIXME: same here, we need to use valueOf for typescript to compare dates
-    Date.now().valueOf() - (lastSyncDate.valueOf() || 0) >
+    Date.now() - lastSyncDate.getTime() >
     blockAvgTime * 1000 + getEnv("SYNC_OUTDATED_CONSIDERED_DELAY");
   return !outdated;
 };

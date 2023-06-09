@@ -30,6 +30,7 @@ export enum OnboardingStep {
   WelcomeScreen3 = "WELCOME_SCREEN_3",
   WelcomeScreen4 = "WELCOME_SCREEN_4",
   WelcomeScreenReminder = "WELCOME_SCREEN_REMINDER",
+  OnboardingEarlyCheck = "ONBOARDING_EARLY_CHECK",
   ChooseName = "CHOOSE_NAME",
   Pin = "PIN",
   SetupChoice = "SETUP_CHOICE",
@@ -58,6 +59,7 @@ const fromBitsToOnboardingStep = new Map<number, OnboardingStep>([
   [12, OnboardingStep.ChooseName],
   [13, OnboardingStep.RecoverRestore],
   [14, OnboardingStep.SetupChoiceRestore],
+  [15, OnboardingStep.OnboardingEarlyCheck],
 ]);
 
 export type OnboardingState = {
@@ -74,7 +76,7 @@ export type OnboardingState = {
 
 /**
  * Extracts the onboarding state of the device
- * @param flagsBytes Buffer of bytes of length onboardingFlagsBytesLength reprensenting the device state flags
+ * @param flagsBytes Buffer of bytes of length onboardingFlagsBytesLength representing the device state flags
  * @returns An OnboardingState
  */
 export const extractOnboardingState = (flagsBytes: Buffer): OnboardingState => {

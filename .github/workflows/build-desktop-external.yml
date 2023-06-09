@@ -12,6 +12,11 @@ on:
         required: true
       base_ref:
         description: The base branch to merge the head into when checking out the code
+        required: false
+      draft:
+        description: true if the PR is in draft
+        required: false
+        default: "false"
 
 concurrency:
   # See: https://github.com/orgs/community/discussions/35341
