@@ -119,10 +119,6 @@ export const prepareTransaction = async (
   const { currency } = account;
   // Get the current network status fees
   const feeData = await (async () => {
-    if (!transaction.feesStrategy) {
-      return await getFeesEstimation(currency);
-    }
-
     if (transaction.feesStrategy === "custom") {
       return {
         gasPrice: transaction.gasPrice ?? null,
@@ -131,9 +127,13 @@ export const prepareTransaction = async (
       };
     }
 
+    if (!transaction.feesStrategy) {
+      return getFeesEstimation(currency);
+    }
+
     const gasOption = transaction.gasOptions?.[transaction.feesStrategy];
 
-    return gasOption ?? (await getFeesEstimation(currency));
+    return gasOption ?? getFeesEstimation(currency);
   })();
 
   const subAccount = findSubAccountById(account, transaction.subAccountId || "");
