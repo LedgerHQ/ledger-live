@@ -59,7 +59,7 @@
   },
   "common" : {
     "never" : "Jamais",
-    "new" : "Nouveau",
+    "new" : "Nouv.",
     "skip" : "Passer",
     "apply" : "Appliquer",
     "done" : "Terminé",
@@ -618,7 +618,7 @@
         "swap" : {
           "title" : "Échanger",
           "label" : "Populaire",
-          "body" : "Convertissez vos cryptos en toute sécurité."
+          "body" : "Échangez vos cryptos en toute sécurité."
         },
         "receive" : {
           "title" : "Recevoir",
@@ -1381,8 +1381,8 @@
       "description" : "Profitez de 40 % de réduction sur les wallets Ledger avec le code promo BLACKFRIDAY20"
     },
     "referralProgram" : {
-      "title" : "Parrainez et gagnez 10 $ US",
-      "description" : "Parrainez un ami et gagnez tous les deux 10 $ US en bitcoins."
+      "title" : "Parrainez et gagnez 10 USD",
+      "description" : "Parrainez un ami et gagnez tous les deux 10 USD en bitcoins."
     }
   },
   "signmessage" : {
@@ -1443,7 +1443,7 @@
       },
       "swap" : {
         "title" : "Swap",
-        "description" : "Convertissez vos cryptos en cryptos en toute sécurité.",
+        "description" : "Échangez vos cryptos en toute sécurité.",
         "label" : "Populaire"
       },
       "earn" : {
@@ -1951,7 +1951,7 @@
         "osu" : "Installation de l’OSU...",
         "flash-mcu" : "Mise à jour du MCU...",
         "flash-bootloader" : "Mise à jour du Bootloader...",
-        "progress" : "Installing update {{current}}/{{total}}",
+        "progress" : "Installation de la mise à jour {{current}}/{{total}}",
         "firmware" : "Mise à jour du micrologiciel...",
         "flash" : "Préparation de votre appareil..."
       },
@@ -2276,6 +2276,7 @@
     "renamed" : "Le nouveau nom de votre {{ productName }} est \n« {{ name }} » "
   },
   "removeCustomLockscreen" : {
+    "title" : "Supprimer l’image de verrouillage",
     "cta" : "Retirer",
     "confirmation" : "Confirmez la suppression de l’image sur votre Ledger Stax",
     "success" : "Image de verrouillage retirée"
@@ -3507,19 +3508,19 @@
       "subTitle" : "Stakez vos ETH et et recevez des récompenses quotidiennes directement dans Ledger Live.",
       "lido" : {
         "title" : "Staker avec Lido",
-        "tag" : "Pas de minimum",
         "description" : "Stakez vos ETH avec Lido et gagnez des récompenses quotidiennes. Pas de période de blocage. Pas de montant minimum.",
         "supportLink" : "En savoir plus sur Lido"
       },
       "kiln" : {
         "title" : "Staker avec un validateur Kiln",
         "tag" : "32 ETH minimum",
-        "description" : "Stakez avec un validateur personnalisé. Minimum de 32 ETH (ou un multiple) requis. Récompenses à demander manuellement.",
+        "description" : "Stakez avec un validateur personnalisé. Minimum de 32 ETH (ou un multiple) requis. Récompenses à demander manuellement. Quittez à tout moment.",
         "supportLink" : "En savoir plus sur le validateur Kiln"
       },
       "kiln_pooling" : {
         "title" : "Staker avec un pool sur Kiln",
-        "description" : "Rejoignez un pool de staking. Pas de montant minimum d’ETH requis. Récompenses acquises automatiquement.",
+        "tag" : "Pas de minimum",
+        "description" : "Rejoignez un pool de staking. Pas de montant minimum d’ETH requis. Récompenses capitalisées automatiquement. Quittez à tout moment.",
         "supportLink" : "En savoir plus sur les pools sur Kiln"
       }
     }
@@ -3863,7 +3864,7 @@
       "analyticsDesc" : "Autoriser les statistiques pour aider Ledger à améliorer l’expérience utilisateur. Ces statistiques comprennent les clics, les visites de pages, les redirections, les actions (envoyer, recevoir, verrouiller, etc.), les défilements en bas de page, les installations, désinstallations et mises à jour des applications, les versions des applications, le nombre de comptes, de crypto-actifs et d’opérations, la durée des sessions, le type d’appareil Ledger et de micrologiciel.",
       "reportErrors" : "Rapports de bugs",
       "reportErrorsDesc" : "Envoyer automatiquement des rapports pour aider Ledger à améliorer ses produits.",
-      "launchOnboarding" : "Configurer votre appareil",
+      "launchOnboarding" : "Configurer un appareil Ledger",
       "launchOnboardingDesc" : "Configurez un nouvel appareil ou restaurez un appareil existant. Vos comptes et paramètres sont conservés."
     },
     "help" : {
@@ -3903,10 +3904,6 @@
         "scanForInvalidPaths" : {
           "title" : "Recherche de compte étendue",
           "description" : "Recherchez des comptes ayant des chemins de dérivation erronés. Veuillez envoyer tout actif trouvé vers un compte classique."
-        },
-        "experimentalCountervalues" : {
-          "title" : "API Devises de contrepartie expérimentales",
-          "description" : "Avec cette fonctionnalité, les devises de contrepartie affichées dans vos comptes peuvent devenir incorrectes."
         },
         "experimentalExplorers" : {
           "title" : "API Explorateurs Expérimentales",
@@ -4217,7 +4214,7 @@
           },
           "1" : {
             "title" : "Détenez votre clé privée",
-            "desc" : "Votre clé privée est stockée dans votre Nano.\nVous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
+            "desc" : "Votre clé privée est stockée dans votre wallet Ledger.\nVous devez être la seule personne à la détenir pour contrôler vos cryptos."
           },
           "2" : {
             "title" : "Restez hors ligne",
@@ -4571,7 +4568,7 @@
         },
         "ownYourPrivateKey" : {
           "title" : "Détenez votre clé privée",
-          "description" : "Votre clé privée est stockée dans votre Nano. Vous devez être la seule personne à la posséder pour conserver le contrôle de votre argent."
+          "description" : "Votre clé privée est stockée dans votre wallet Ledger. Vous devez être la seule personne à la détenir pour contrôler vos cryptos."
         },
         "stayOffline" : {
           "title" : "Restez hors ligne",
@@ -4583,7 +4580,7 @@
         },
         "setUpNanoWallet" : {
           "title" : "Configurez votre Nano",
-          "description" : "Commencez par configurer les paramètres de votre nouveau Nano.",
+          "description" : "Commencez par configurer votre nouveau Nano.",
           "CTA" : "Configurer"
         }
       }
@@ -4867,6 +4864,11 @@
       "memoPlaceholder" : "Facultatif",
       "memo" : "Mémo"
     },
+    "stacks" : {
+      "memoPlaceholder" : "Facultatif",
+      "memo" : "Mémo",
+      "memoWarningText" : "Lorsque vous utilisez un mémo, vérifiez bien le type à utiliser auprès du bénéficiaire."
+    },
     "stellar" : {
       "memo" : "Mémo",
       "memoType" : {
@@ -5093,8 +5095,8 @@
       "description" : "Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
-      "title" : "Restoration of Language was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Restauration de la langue annulée sur le Ledger Stax",
+      "description" : "Vous pouvez réessayer de restaurer, ou choisir de sauter cette étape."
     },
     "LanguageNotFound" : {
       "title" : "Langue non trouvée",
@@ -5276,8 +5278,8 @@
       "title" : "My Ledger refusé sur l’appareil"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "Update was cancelled on device",
-      "description" : "The installation of OS update was refused on your device. If this was a mistake, restart the update."
+      "title" : "Mise à jour annulée sur l’appareil",
+      "description" : "L’installation de la mise à jour du système d’exploitation a été refusée sur votre appareil. S’il s’agit d’une erreur, veuillez relancer la mise à jour."
     },
     "UserRefusedOnDevice" : {
       "title" : "Action rejetée",
@@ -5317,6 +5319,9 @@
     },
     "InvalidAddress" : {
       "title" : "Adresse {{currencyName}} invalide"
+    },
+    "InvalidNonce" : {
+      "title" : "Nonce requis"
     },
     "InvalidAddressBecauseAlreadyDelegated" : {
       "title" : "Votre compte est déjà délégué à ce validateur"
@@ -5573,6 +5578,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "Vérifiez que votre solde est suffisant pour couvrir les frais"
     },
+    "StacksMemoTooLong" : {
+      "title" : "Mémo trop long"
+    },
     "StellarWrongMemoFormat" : {
       "title" : "Format du mémo incorrect"
     },
@@ -5662,13 +5670,17 @@
       "title" : "Image refusée sur votre Ledger Stax",
       "description" : "Si cette image ne vous plaît pas, choisissez une autre image."
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Pas d’image à supprimer sur l’écran de verrouillage de votre Ledger Stax",
+      "description" : "L’image personnalisée de l’écran de verrouillage a déjà été supprimée."
+    },
     "RestoreImageCommitRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Restauration de l’image de verrouillage annulée sur le Ledger Stax",
+      "description" : "Vous pouvez réessayer de restaurer, ou choisir de sauter cette étape."
     },
     "RestoreImageLoadRefusedOnDevice" : {
-      "title" : "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description" : "If this was a mistake you can retry the restoration, or you may skip this step."
+      "title" : "Restauration de l’image de verrouillage annulée sur le Ledger Stax",
+      "description" : "Vous pouvez réessayer de restaurer, ou choisir de sauter cette étape."
     },
     "NearNewAccountWarning" : {
       "title" : "Le compte du bénéficiaire n’a pas encore été créé. Pour le créer, le protocole nécessite un transfert de {{formattedNewAccountStorageCost}}."
@@ -5746,7 +5758,7 @@
   },
   "customImage" : {
     "title" : "Écran de verrouillage personnalisé",
-    "managerCTA" : "Écran de verrouillage",
+    "managerCTA" : "Image de verrouillage",
     "managerCTARemove" : "Retirer",
     "steps" : {
       "choose" : {
@@ -5773,11 +5785,11 @@
         "stepLabel" : "Transfert",
         "uploadAnotherImage" : "Télécharger une autre image",
         "allowPreview" : "Autorisez le chargement de l’image sur votre {{productName}}",
-        "allowConfirmPreview" : "Autorisez la restauration de l’écran de verrouillage sur votre{{productName}}.",
+        "allowConfirmPreview" : "Autorisez la restauration de l’image de verrouillage sur votre {{productName}}.",
         "loadingPicture" : "Chargement...",
         "imageLoaded" : "Image chargée sur votre {{productName}}",
         "confirmPicture" : "C’est parfait ?\nValidez !",
-        "confirmRestorePicture" : "Confirmez la restauration de l’écran de verrouillage.",
+        "confirmRestorePicture" : "Confirmez la restauration de l’image de verrouillage.",
         "doThisLater" : "Pas maintenant"
       }
     },
@@ -5828,5 +5840,14 @@
     "description" : "Vous n’aurez pas toujours votre phrase de récupération secrète à portée de main.\nLancement en avant-première exclusivement pour le Ledger Nano X. Abonnez-vous gratuitement jusqu’au 30 juin 2023.",
     "cta" : "Pourquoi devrais-je m’abonner ?",
     "downloadLLM" : "Abonnez-vous à <purple>Ledger Recover</purple> via l’app Ledger Live pour le mobile."
+  },
+  "webview" : {
+    "networkError" : {
+      "title" : "Erreur réseau",
+      "subtitle" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez votre log et contactez l’Assistance Ledger.",
+      "tryAgain" : "Réessayer",
+      "contactSupport" : "Contacter l’Assistance Ledger",
+      "saveLog" : "Enregistrer le log"
+    }
   }
 }
