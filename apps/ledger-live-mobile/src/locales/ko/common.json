@@ -325,6 +325,10 @@
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다.",
       "primaryCTA" : "다른 사진을 업로드하세요"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Ledger Stax에 제거할 잠금 화면 이미지가 없습니다",
+      "description" : "사용자 지정 잠금 화면 이미지가 이미 제거된 상태입니다."
+    },
     "InvalidAddress" : {
       "title" : "유효한 {{currencyName}} 주소가 아닙니다"
     },
@@ -2699,10 +2703,6 @@
         "experimentalListAppsV2" : {
           "title" : "My Ledger용 실험 앱 목록",
           "description" : "My Ledger 액세스와 즉각 처리 흐름을 개선합니다."
-        },
-        "experimentalCountervalues" : {
-          "title" : "실험적 등가 API",
-          "description" : "이로 인해 계정과 관련하여 올바른 등가 값이 표시되지 않을 수 있습니다."
         },
         "experimentalSwap" : {
           "title" : "새로운 스왑 인터페이스",
@@ -5819,6 +5819,11 @@
       "developerCTA" : {
         "title" : "개발자용",
         "description" : "Ledger Live로 애플리케이션을 통합하는 데 필요한 모든 정보입니다."
+      },
+      "warnings" : {
+        "notFound" : "찾을 수 없음",
+        "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
+        "retrySearchKeywordAndUrl" : "다른 키워드로 검색을 다시 시도하거나 Ledger Live 외부에서 <Link>{{search}}</Link>을 열어 주세요."
       }
     },
     "disclaimer" : {
@@ -5934,13 +5939,10 @@
       "reload" : "새로고침",
       "noCryptosFound" : "발견된 코인이 없습니다",
       "noCurrencyFound" : "통화를 찾을 수 없습니다",
-      "noAppFound" : "발견된 앱 없음",
-      "notFound" : "찾을 수 없음",
       "noSearchResultsFor" : "죄송합니다. <0>{{search}}</0>에 대한 코인을 찾지 못했습니다. 다른 키워드로 검색을 다시 시도해 주세요.",
       "noCurrencySearchResultsFor" : "죄송합니다. <0>{{search}}</0>에 대한 통화를 찾지 못했습니다. 다른 키워드로 검색을 다시 시도해 주세요.",
       "noSearchResults" : "죄송합니다. 검색 결과를 찾지 못했습니다.",
       "retrySearchKeyword" : "다른 키워드로 검색을 다시 시도해 주세요.",
-      "retrySearchKeywordAndUrl" : "다른 키워드로 검색을 다시 시도하거나 Ledger Live 외부에서 <Link>{{search}}</Link>을 열어 주세요.",
       "retrySearchParams" : "다른 매개변수로 검색을 다시 시도해 주세요.",
       "trackFavAssets" : "즐겨찾기를 찾아보세요",
       "clickOnStarIcon" : "자산 옆에 있는 별 아이콘을 클릭하면 자산이 자동으로 즐겨찾기에 추가됩니다.",
@@ -6174,6 +6176,30 @@
     "title" : "장치 연결"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "ETH 보유량 늘리기",
+      "subTitle" : "Ledger Live에서 일일 보상을 바로 수령하여 ETH를 스테이킹하고 보유량을 늘려보세요.",
+      "close" : "종료",
+      "providers" : {
+        "lido" : {
+          "title" : "Lido로 수익 창출",
+          "description" : "Lido를 통해 이더리움을 스테이킹하고 매일 보상을 받으세요. 최소 ETH가 필요하지 않습니다. 락업 기간 없음.",
+          "supportLink" : "Lido에 대해 더 알아보기"
+        },
+        "kiln" : {
+          "title" : "Kiln 전용 스테이킹",
+          "tag" : "32 ETH 필요",
+          "description" : "전용 검증인을 통해 스테이킹하세요. 32 ETH의 배수가 필요합니다. 보상은 수동으로 청구됩니다. 언제든지 중단할 수도 있습니다.",
+          "supportLink" : "Kiln 검증인에 대해 자세히 알아보기"
+        },
+        "kiln_pooling" : {
+          "title" : "Kiln 스테이킹 풀",
+          "description" : "스테이킹 풀에 가입하세요. 최소 ETH가 필요하지 않습니다. 보상은 자동 합산됩니다. 언제든지 중단할 수도 있습니다.",
+          "supportLink" : "Kiln 풀링에 대해 자세히 알아보기",
+          "tag" : "최소 한도 없음"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "구매, 스왑 또는 수령",
       "text" : "스테이킹에 이용 가능한 {{coin}} 잔액이 충분하지 않습니다",
