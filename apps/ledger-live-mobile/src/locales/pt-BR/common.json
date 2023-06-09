@@ -325,6 +325,10 @@
       "description" : "Se esta imagem não era a mais adequada, você pode tentar novamente com outra imagem.",
       "primaryCTA" : "Enviar outra imagem"
     },
+    "ImageDoesNotExistOnDevice" : {
+      "title" : "Sua Ledger Stax não tem uma imagem na tela de bloqueio para ser removida",
+      "description" : "A imagem personalizada na tela de bloqueio foi removida anteriormente."
+    },
     "InvalidAddress" : {
       "title" : "Este não é um endereço válido de {{currencyName}}."
     },
@@ -2699,10 +2703,6 @@
         "experimentalListAppsV2" : {
           "title" : "Lista de aplicativos experimentais em Minha Ledger",
           "description" : "Melhorias de desempenho para acessar Minha Ledger e fluxos inline."
-        },
-        "experimentalCountervalues" : {
-          "title" : "API experimental de contravalores",
-          "description" : "Isso pode fazer com que os contravalores incorretos sejam exibidos nas suas contas."
         },
         "experimentalSwap" : {
           "title" : "Nova Interface de Troca",
@@ -5800,9 +5800,9 @@
         "clearAll" : "Limpar Tudo"
       },
       "branch" : {
-        "soon" : "em breve",
-        "experimental" : "experimental",
-        "debug" : "debugar"
+        "soon" : "Em breve",
+        "experimental" : "Experimental",
+        "debug" : "Debug"
       },
       "banner" : {
         "title" : "Explore o Catálogo Live",
@@ -5819,6 +5819,11 @@
       "developerCTA" : {
         "title" : "Para Desenvolvedores",
         "description" : "Todas as informações que você precisa para integrar seus aplicativos no Ledger Live."
+      },
+      "warnings" : {
+        "notFound" : "Não encontrado",
+        "retrySearchKeyword" : "Tente buscar novamente com outra palavra-chave.",
+        "retrySearchKeywordAndUrl" : "Tente buscar novamente com outra palavra-chave ou abra <Link>{{search}}</Link> fora do Ledger Live."
       }
     },
     "disclaimer" : {
@@ -5934,13 +5939,10 @@
       "reload" : "Recarregar",
       "noCryptosFound" : "Nenhuma moeda encontrada",
       "noCurrencyFound" : "Nenhuma moeda encontrada",
-      "noAppFound" : "Nenhum aplicativo encontrado",
-      "notFound" : "Não encontrado",
       "noSearchResultsFor" : "Não encontramos nenhuma moeda para <0>{{search}}</0>. Tente pesquisar novamente usando outra palavra-chave.",
       "noCurrencySearchResultsFor" : "Desculpe, não encontramos nenhuma moeda para <0>{{search}}</0>. Tente pesquisar novamente usando outra palavra-chave.",
       "noSearchResults" : "Desculpe, não encontramos nenhum resultado de busca.",
       "retrySearchKeyword" : "Tente pesquisar novamente usando outra palavra-chave.",
-      "retrySearchKeywordAndUrl" : "Tente pesquisar novamente com outra palavra-chave ou abra <Link>{{search}}</Link> fora do Ledger Live.",
       "retrySearchParams" : "Tente pesquisar novamente usando outros parâmetros.",
       "trackFavAssets" : "Acompanhe seus favoritos",
       "clickOnStarIcon" : "Selecione o ícone de estrela ao lado de um ativo para adicioná-lo automaticamente aos seus favoritos.",
@@ -6174,6 +6176,30 @@
     "title" : "Conectar dispositivo"
   },
   "stake" : {
+    "ethereum" : {
+      "title" : "Multiplique suas posições de ETH",
+      "subTitle" : "Aplique seu ETH e multiplique suas posições ganhando recompensas diárias de staking diretamente no Ledger Live.",
+      "close" : "Fechar",
+      "providers" : {
+        "lido" : {
+          "title" : "Ganhar com a Lido",
+          "description" : "Aplique seu Ethereum com o staking da Lido e ganhe recompensas diariamente. Sem mínimo de ETH. Sem período de bloqueio.",
+          "supportLink" : "Saiba mais sobre a Lido"
+        },
+        "kiln" : {
+          "title" : "Staking Dedicado Kiln",
+          "tag" : "Requer 32 ETH",
+          "description" : "Aplique em staking com validadores dedicados. Requer múltiplos de 32 ETH. Recompensas são resgatadas manualmente. Saia a qualquer momento.",
+          "supportLink" : "Saiba mais sobre o validador Kiln"
+        },
+        "kiln_pooling" : {
+          "title" : "Reserva de staking Kiln",
+          "description" : "Junte-se a uma reserva de staking. Não requer mínimo de ETH. Recompensas são compostas automaticamente Saia a qualquer momento.",
+          "supportLink" : "Saiba mais sobre a reserva da Kiln",
+          "tag" : "Sem mínimo"
+        }
+      }
+    },
     "noFundsModal" : {
       "title" : "Compre, troque ou receba",
       "text" : "Você não tem {{coin}} disponível o suficiente para fazer staking",
