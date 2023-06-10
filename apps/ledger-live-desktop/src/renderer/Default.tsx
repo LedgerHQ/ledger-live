@@ -60,6 +60,7 @@ import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
 import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
 import SyncOnboarding from "./components/SyncOnboarding";
 import RecoverPlayer from "~/renderer/screens/recover/Player";
+import { updateIdentify } from "./analytics/segment";
 import { useDiscoverDB } from "./screens/platform/v2/hooks";
 
 // in order to test sentry integration, we need the ability to test it out.
@@ -165,6 +166,7 @@ export default function Default() {
     if (!hasCompletedOnboarding) {
       history.push("/onboarding");
     }
+    updateIdentify();
   }, [history, hasCompletedOnboarding]);
   return (
     <>
