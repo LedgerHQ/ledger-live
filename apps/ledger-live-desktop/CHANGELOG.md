@@ -1,112 +1,70 @@
 # ledger-live-desktop
 
-## 2.61.0-nightly.8
-
-### Patch Changes
-
-- [#3591](https://github.com/LedgerHQ/ledger-live/pull/3591) [`809065c571`](https://github.com/LedgerHQ/ledger-live/commit/809065c57198646a49adea112b9d799e35a57d25) Thanks [@sarneijim](https://github.com/sarneijim)! - Integrate swapWalletApiPartnerList
-
-- Updated dependencies [[`8f50c4d927`](https://github.com/LedgerHQ/ledger-live/commit/8f50c4d927f368fd869401b752a51ba7398e59e1), [`809065c571`](https://github.com/LedgerHQ/ledger-live/commit/809065c57198646a49adea112b9d799e35a57d25), [`42d8be7694`](https://github.com/LedgerHQ/ledger-live/commit/42d8be76949e258d6360a1fda3ca5a1df50c8bcb)]:
-  - @ledgerhq/live-common@31.0.0-nightly.8
-  - @ledgerhq/types-live@6.34.2-nightly.0
-  - @ledgerhq/coin-framework@0.3.5-nightly.2
-  - @ledgerhq/domain-service@1.1.3-nightly.2
-
-## 2.61.0-nightly.7
-
-### Patch Changes
-
-- [#3594](https://github.com/LedgerHQ/ledger-live/pull/3594) [`8517d3ed41`](https://github.com/LedgerHQ/ledger-live/commit/8517d3ed41ad3718df9aae4d2d6fffa5a622f9ad) Thanks [@ggilchrist-ledger](https://github.com/ggilchrist-ledger)! - Added ability for navigation to specific account via the account deeplink if a valid currency and account address are provided as params
-
-- Updated dependencies [[`81dd0c3ef3`](https://github.com/LedgerHQ/ledger-live/commit/81dd0c3ef38a3d6d69c27c65864bf1b41c52643c)]:
-  - @ledgerhq/live-common@31.0.0-nightly.7
-
-## 2.61.0-nightly.6
-
-### Patch Changes
-
-- [#3483](https://github.com/LedgerHQ/ledger-live/pull/3483) [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e) Thanks [@gre](https://github.com/gre)! - use ledger currency id on Countervalues API usage.
-
-- Updated dependencies [[`7aa7d7dcd3`](https://github.com/LedgerHQ/ledger-live/commit/7aa7d7dcd31e5135aabb9441ad460ce1793d48dc), [`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e), [`ac205cce9f`](https://github.com/LedgerHQ/ledger-live/commit/ac205cce9f328165369c5c270681be1d7ba7d0f2)]:
-  - @ledgerhq/live-common@31.0.0-nightly.6
-  - @ledgerhq/types-cryptoassets@7.2.1-nightly.0
-  - @ledgerhq/coin-framework@0.3.5-nightly.1
-  - @ledgerhq/domain-service@1.1.3-nightly.1
-  - @ledgerhq/types-live@6.34.1
-
-## 2.61.0-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`b93f543a20`](https://github.com/LedgerHQ/ledger-live/commit/b93f543a207f35edbe25f3d609533120c9babbe1), [`3cf4397b60`](https://github.com/LedgerHQ/ledger-live/commit/3cf4397b60a2da5c1ee92cff42e9f979e30ad489)]:
-  - @ledgerhq/live-common@31.0.0-nightly.5
-
-## 2.61.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`5bc987cd8f`](https://github.com/LedgerHQ/ledger-live/commit/5bc987cd8f850bb63e4ced62c28218d7c75744e8)]:
-  - @ledgerhq/live-common@31.0.0-nightly.4
-
-## 2.61.0-nightly.3
-
-### Patch Changes
-
-- [#3528](https://github.com/LedgerHQ/ledger-live/pull/3528) [`24483331fe`](https://github.com/LedgerHQ/ledger-live/commit/24483331fe19b9ae4a24544e2f3e1d2ad1892492) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Improve the image removal flow for Stax
-
-- [#3498](https://github.com/LedgerHQ/ledger-live/pull/3498) [`1d39a6cbd4`](https://github.com/LedgerHQ/ledger-live/commit/1d39a6cbd4a5e1dcc848c4a3e33c68dd4b55c4c3) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Implementation of a part of the analytics tracking plan for Stax on LLD + analytics dev experience improvement:
-
-  - Improved the in-app analytics console of LLD for better readability and ease of use. (start LLD with env variable `ANALYTICS_CONSOLE=1`)
-    - pretty printing of event properties
-    - optional toggling of the visibility of redundant properties (sent with every event)
-    - 3 visibility modes of the console: opaque, transparent, hidden
-    - events are visible for longer (now the list of events is just limited in length, previously they would just fade out after a couple of seconds)
-    - possibility to filter out "sync\*" events
-  - Improved the tracking of the `source` property, used a similar logic to the one used in LLM. This might be breaking for existing analytics as in some events will have an extra source property where they didn't have one before.
-  - Tracking plan: sync onboarding: everything was implemented except for the software checks analytics, as this part will be removed to be reimplemented in the Early Security Checks, before the release of Stax.
-  - Tracking plan: post-onboarding hub
-  - Tracking plan: custom lock screen
-
-- Updated dependencies [[`24483331fe`](https://github.com/LedgerHQ/ledger-live/commit/24483331fe19b9ae4a24544e2f3e1d2ad1892492)]:
-  - @ledgerhq/live-common@31.0.0-nightly.3
-
-## 2.61.0-nightly.2
-
-### Patch Changes
-
-- [#3488](https://github.com/LedgerHQ/ledger-live/pull/3488) [`1d3d38c40a`](https://github.com/LedgerHQ/ledger-live/commit/1d3d38c40a7532b84aa74e240ca3994825752dfa) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Fix bad rendering for old firmware update hash veritification
-
-- [#3540](https://github.com/LedgerHQ/ledger-live/pull/3540) [`acebc67d55`](https://github.com/LedgerHQ/ledger-live/commit/acebc67d554e69250417f0f4b2279420943ddc41) Thanks [@RamyEB](https://github.com/RamyEB)! - bugfix avoid crash when url is invalid in manifest
-
-- Updated dependencies [[`db1a6f92e1`](https://github.com/LedgerHQ/ledger-live/commit/db1a6f92e17dcd63b0c9fa6700496f5f4722f1e5)]:
-  - @ledgerhq/live-common@31.0.0-nightly.2
-
-## 2.61.0-nightly.1
+## 2.61.0
 
 ### Minor Changes
 
 - [#3515](https://github.com/LedgerHQ/ledger-live/pull/3515) [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796) Thanks [@chabroA](https://github.com/chabroA)! - Use live-network package
 
+- [#3468](https://github.com/LedgerHQ/ledger-live/pull/3468) [`5c28db16a5`](https://github.com/LedgerHQ/ledger-live/commit/5c28db16a5b7e804dff8e51062baca311574a50c) Thanks [@RamyEB](https://github.com/RamyEB)! - Chnage api call + type
+
 - [#3536](https://github.com/LedgerHQ/ledger-live/pull/3536) [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16) Thanks [@chabroA](https://github.com/chabroA)! - Move evm familly logic in own package
-
-### Patch Changes
-
-- [#3441](https://github.com/LedgerHQ/ledger-live/pull/3441) [`499dee28bf`](https://github.com/LedgerHQ/ledger-live/commit/499dee28bf09c06d71cc9b5560ff6387edb04068) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed language switcher on Sync Onboardings (LLM & LLD)
-
-- Updated dependencies [[`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796), [`76699bc304`](https://github.com/LedgerHQ/ledger-live/commit/76699bc304204232b280984644a7c5709fdff063), [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16), [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796)]:
-  - @ledgerhq/live-common@31.0.0-nightly.1
-  - @ledgerhq/live-network@1.1.0-nightly.0
-  - @ledgerhq/coin-framework@0.3.5-nightly.0
-  - @ledgerhq/domain-service@1.1.3-nightly.0
-
-## 2.60.1-nightly.0
 
 ### Patch Changes
 
 - [#3320](https://github.com/LedgerHQ/ledger-live/pull/3320) [`b574c30b2b`](https://github.com/LedgerHQ/ledger-live/commit/b574c30b2ba9ba49e12ab20ce1fd7c68c2220acf) Thanks [@lvndry](https://github.com/lvndry)! - Rework add account feature flagging in manager app
 
-- Updated dependencies [[`b574c30b2b`](https://github.com/LedgerHQ/ledger-live/commit/b574c30b2ba9ba49e12ab20ce1fd7c68c2220acf)]:
-  - @ledgerhq/live-common@30.0.1-nightly.0
+- [#3460](https://github.com/LedgerHQ/ledger-live/pull/3460) [`74b2a95831`](https://github.com/LedgerHQ/ledger-live/commit/74b2a95831f4bfd6ff076b1beef9c039f7bfe916) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add error handling in desktop webview component
+
+- [#3441](https://github.com/LedgerHQ/ledger-live/pull/3441) [`499dee28bf`](https://github.com/LedgerHQ/ledger-live/commit/499dee28bf09c06d71cc9b5560ff6387edb04068) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed language switcher on Sync Onboardings (LLM & LLD)
+
+- Updated dependencies [[`b574c30b2b`](https://github.com/LedgerHQ/ledger-live/commit/b574c30b2ba9ba49e12ab20ce1fd7c68c2220acf), [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796), [`5c28db16a5`](https://github.com/LedgerHQ/ledger-live/commit/5c28db16a5b7e804dff8e51062baca311574a50c), [`76699bc304`](https://github.com/LedgerHQ/ledger-live/commit/76699bc304204232b280984644a7c5709fdff063), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500), [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500), [`eb258d57c2`](https://github.com/LedgerHQ/ledger-live/commit/eb258d57c2abd8d0db9154a82932e1fd83bfce9a), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500), [`b40fa18379`](https://github.com/LedgerHQ/ledger-live/commit/b40fa18379bcadb56e8cbd902a299426d97e2345), [`f13bf2e2cc`](https://github.com/LedgerHQ/ledger-live/commit/f13bf2e2ccd1684692e1f641b66f0f3b4d457c2d), [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500), [`5c53afd2c2`](https://github.com/LedgerHQ/ledger-live/commit/5c53afd2c2a343c52f5bf36cc08f55c06f313eed)]:
+  - @ledgerhq/live-common@31.0.0
+  - @ledgerhq/live-network@1.1.0
+  - @ledgerhq/types-live@6.35.0
+  - @ledgerhq/coin-framework@0.3.5
+  - @ledgerhq/domain-service@1.1.3
+
+## 2.61.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`5c53afd2c2`](https://github.com/LedgerHQ/ledger-live/commit/5c53afd2c2a343c52f5bf36cc08f55c06f313eed)]:
+  - @ledgerhq/live-common@31.0.0-next.2
+
+## 2.61.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.3.5-next.1
+  - @ledgerhq/domain-service@1.1.3-next.1
+  - @ledgerhq/live-common@31.0.0-next.1
+
+## 2.61.0-next.0
+
+### Minor Changes
+
+- [#3515](https://github.com/LedgerHQ/ledger-live/pull/3515) [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796) Thanks [@chabroA](https://github.com/chabroA)! - Use live-network package
+
+- [#3468](https://github.com/LedgerHQ/ledger-live/pull/3468) [`5c28db16a5`](https://github.com/LedgerHQ/ledger-live/commit/5c28db16a5b7e804dff8e51062baca311574a50c) Thanks [@RamyEB](https://github.com/RamyEB)! - Chnage api call + type
+
+- [#3536](https://github.com/LedgerHQ/ledger-live/pull/3536) [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16) Thanks [@chabroA](https://github.com/chabroA)! - Move evm familly logic in own package
+
+### Patch Changes
+
+- [#3320](https://github.com/LedgerHQ/ledger-live/pull/3320) [`b574c30b2b`](https://github.com/LedgerHQ/ledger-live/commit/b574c30b2ba9ba49e12ab20ce1fd7c68c2220acf) Thanks [@lvndry](https://github.com/lvndry)! - Rework add account feature flagging in manager app
+
+- [#3460](https://github.com/LedgerHQ/ledger-live/pull/3460) [`74b2a95831`](https://github.com/LedgerHQ/ledger-live/commit/74b2a95831f4bfd6ff076b1beef9c039f7bfe916) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add error handling in desktop webview component
+
+- [#3441](https://github.com/LedgerHQ/ledger-live/pull/3441) [`499dee28bf`](https://github.com/LedgerHQ/ledger-live/commit/499dee28bf09c06d71cc9b5560ff6387edb04068) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Removed language switcher on Sync Onboardings (LLM & LLD)
+
+- Updated dependencies [[`b574c30b2b`](https://github.com/LedgerHQ/ledger-live/commit/b574c30b2ba9ba49e12ab20ce1fd7c68c2220acf), [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796), [`5c28db16a5`](https://github.com/LedgerHQ/ledger-live/commit/5c28db16a5b7e804dff8e51062baca311574a50c), [`76699bc304`](https://github.com/LedgerHQ/ledger-live/commit/76699bc304204232b280984644a7c5709fdff063), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500), [`a380bfc53a`](https://github.com/LedgerHQ/ledger-live/commit/a380bfc53a25bf196031337cd7ab8bc459731e16), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500), [`eb258d57c2`](https://github.com/LedgerHQ/ledger-live/commit/eb258d57c2abd8d0db9154a82932e1fd83bfce9a), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500), [`b40fa18379`](https://github.com/LedgerHQ/ledger-live/commit/b40fa18379bcadb56e8cbd902a299426d97e2345), [`f13bf2e2cc`](https://github.com/LedgerHQ/ledger-live/commit/f13bf2e2ccd1684692e1f641b66f0f3b4d457c2d), [`ce675302c7`](https://github.com/LedgerHQ/ledger-live/commit/ce675302c78311571e1087cfa35ee67580263796), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500)]:
+  - @ledgerhq/live-common@31.0.0-next.0
+  - @ledgerhq/live-network@1.1.0-next.0
+  - @ledgerhq/types-live@6.35.0-next.0
+  - @ledgerhq/coin-framework@0.3.5-next.0
+  - @ledgerhq/domain-service@1.1.3-next.0
 
 ## 2.60.0
 

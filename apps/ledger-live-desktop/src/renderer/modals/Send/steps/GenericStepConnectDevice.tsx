@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -61,17 +61,23 @@ export default function StepConnectDevice({
     parentAccount,
   });
   const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || undefined;
+  const request = useMemo(
+    () => ({
+      tokenCurrency,
+      parentAccount,
+      account,
+      transaction,
+      status,
+    }),
+    [account, parentAccount, status, tokenCurrency, transaction],
+  );
   if (!transaction || !account) return null;
+
   return (
     <DeviceAction
       action={action}
-      request={{
-        tokenCurrency,
-        parentAccount,
-        account,
-        transaction,
-        status,
-      }}
+      // @ts-expect-error This type is not compatible with the one expected by the action
+      request={request}
       Result={Result}
       onResult={result => {
         if ("signedOperation" in result) {

@@ -1,30 +1,30 @@
 # @ledgerhq/coin-algorand
 
-## 0.2.1-nightly.2
+## 0.2.1
 
 ### Patch Changes
 
-- Updated dependencies [[`809065c571`](https://github.com/LedgerHQ/ledger-live/commit/809065c57198646a49adea112b9d799e35a57d25)]:
-  - @ledgerhq/types-live@6.34.2-nightly.0
-  - @ledgerhq/coin-framework@0.3.5-nightly.2
+- Updated dependencies [[`5cce6e3593`](https://github.com/LedgerHQ/ledger-live/commit/5cce6e359309110df53e16ef989c5b8b94492dfd), [`30bf4d92c7`](https://github.com/LedgerHQ/ledger-live/commit/30bf4d92c7d79cb81b1e4ad014857459739c33be), [`b30ead9d22`](https://github.com/LedgerHQ/ledger-live/commit/b30ead9d22a4bce5f8ee27febf0190fccd2ca25b), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500)]:
+  - @ledgerhq/cryptoassets@9.7.0
+  - @ledgerhq/types-live@6.35.0
+  - @ledgerhq/coin-framework@0.3.5
 
-## 0.2.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`4a1454beb3`](https://github.com/LedgerHQ/ledger-live/commit/4a1454beb3f86405ba2686e07879c12a7d35ad8e)]:
-  - @ledgerhq/cryptoassets@9.6.1-nightly.1
-  - @ledgerhq/types-cryptoassets@7.2.1-nightly.0
-  - @ledgerhq/coin-framework@0.3.5-nightly.1
-  - @ledgerhq/types-live@6.34.1
-
-## 0.2.1-nightly.0
+## 0.2.1-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`b30ead9d22`](https://github.com/LedgerHQ/ledger-live/commit/b30ead9d22a4bce5f8ee27febf0190fccd2ca25b)]:
-  - @ledgerhq/cryptoassets@9.6.1-nightly.0
-  - @ledgerhq/coin-framework@0.3.5-nightly.0
+- Updated dependencies [[`30bf4d92c7`](https://github.com/LedgerHQ/ledger-live/commit/30bf4d92c7d79cb81b1e4ad014857459739c33be)]:
+  - @ledgerhq/cryptoassets@9.7.0-next.1
+  - @ledgerhq/coin-framework@0.3.5-next.1
+
+## 0.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5cce6e3593`](https://github.com/LedgerHQ/ledger-live/commit/5cce6e359309110df53e16ef989c5b8b94492dfd), [`b30ead9d22`](https://github.com/LedgerHQ/ledger-live/commit/b30ead9d22a4bce5f8ee27febf0190fccd2ca25b), [`7439b63325`](https://github.com/LedgerHQ/ledger-live/commit/7439b63325a9b0181a3af4310ba787f00faa80c9), [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500)]:
+  - @ledgerhq/cryptoassets@9.7.0-next.0
+  - @ledgerhq/types-live@6.35.0-next.0
+  - @ledgerhq/coin-framework@0.3.5-next.0
 
 ## 0.2.0
 
