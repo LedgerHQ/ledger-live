@@ -1,5 +1,24 @@
 # ledger-live-desktop
 
+## 2.62.0-nightly.0
+
+### Minor Changes
+
+- [#3641](https://github.com/LedgerHQ/ledger-live/pull/3641) [`05a2c48860`](https://github.com/LedgerHQ/ledger-live/commit/05a2c488601ca5c5daae5602d4de60ddbd969adf) Thanks [@IAmMorrow](https://github.com/IAmMorrow)! - wallet-api wallet.userId now return the old userId
+
+### Patch Changes
+
+- [#3603](https://github.com/LedgerHQ/ledger-live/pull/3603) [`580972f6a1`](https://github.com/LedgerHQ/ledger-live/commit/580972f6a14d20ea0cca4e2a1c3b0825f0e2f00a) Thanks [@juan-cortes](https://github.com/juan-cortes)! - Memoize all device action requests to prevent loops on LLD
+
+- [#3582](https://github.com/LedgerHQ/ledger-live/pull/3582) [`fbbd5be88c`](https://github.com/LedgerHQ/ledger-live/commit/fbbd5be88c3c5792dacccc89fb4f9f8e7e45a722) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - LLD - Analytics - Modifications to menu_entry_click_flagged
+
+- [#3020](https://github.com/LedgerHQ/ledger-live/pull/3020) [`96328477c6`](https://github.com/LedgerHQ/ledger-live/commit/96328477c684d9d7a91d8d754eef38344d76aadf) Thanks [@valpinkman](https://github.com/valpinkman)! - add image as asset
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.3.6-nightly.0
+  - @ledgerhq/domain-service@1.1.4-nightly.0
+  - @ledgerhq/live-common@31.0.1-nightly.0
+
 ## 2.61.0
 
 ### Minor Changes
