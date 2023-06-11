@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.62.0-nightly.1
+
+### Patch Changes
+
+- [#3642](https://github.com/LedgerHQ/ledger-live/pull/3642) [`95f62f4af9`](https://github.com/LedgerHQ/ledger-live/commit/95f62f4af9668f8730f0b9431d81fd8949caceb2) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Add a property braze_external_user_id to identify events which is needed by braze with this exact name + trigger the identify analytics event on the dashboard screen
+
 ## 2.62.0-nightly.0
 
 ### Minor Changes

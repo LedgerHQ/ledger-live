@@ -95,6 +95,7 @@
     "@ledgerhq/live-network": "1.0.0"
   },
   "changesets": [
+    "blue-apes-perform",
     "calm-glasses-design",
     "clever-dolls-lie",
     "clever-rivers-fix",
@@ -111,6 +112,7 @@
     "gold-turkeys-shop",
     "heavy-countries-crash",
     "heavy-mails-wait",
+    "kind-moons-do",
     "lazy-wolves-accept",
     "lucky-roses-develop",
     "nasty-papayas-peel",
