@@ -7,6 +7,9 @@ import fs from "fs/promises";
 import updater from "./updater";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import path from "path";
+
+console.log("HELLO WORLD");
+
 ipcMain.on("mainCrashTest", () => {
   captureException(new Error("CrashTestMain"));
 });
