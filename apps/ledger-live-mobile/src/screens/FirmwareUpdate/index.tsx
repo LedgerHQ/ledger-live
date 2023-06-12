@@ -104,7 +104,7 @@ export const FirmwareUpdate = ({
   const dispatch = useDispatch();
 
   const quitUpdate = useCallback(() => {
-    if (onBackFromUpdate){
+    if (onBackFromUpdate) {
       onBackFromUpdate();
     } else {
       navigation.goBack();
