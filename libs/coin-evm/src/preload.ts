@@ -38,9 +38,7 @@ export async function preload(currency: CryptoCurrency): Promise<ERC20Token[]> {
   // to get tokens despite the different currency_id
   // registered in the CAL for those chain ids
   // We should remove this after the merge
-  addTokens(
-    erc20.map(([, ...tokenRest]) => convertERC20([currency.id, ...tokenRest]))
-  );
+  addTokens(erc20.map(([, ...tokenRest]) => convertERC20([currency.id, ...tokenRest])));
   return erc20;
 }
 

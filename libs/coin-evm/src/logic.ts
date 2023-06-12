@@ -140,9 +140,7 @@ export const getSyncHash = (currency: CryptoCurrency): string => {
     .join("");
   const isNftSupported = isNFTActive(currency);
 
-  return ethers.utils.sha256(
-    Buffer.from(basicTokensListString + isNftSupported)
-  );
+  return ethers.utils.sha256(Buffer.from(basicTokensListString + isNftSupported));
 };
 
 /**
