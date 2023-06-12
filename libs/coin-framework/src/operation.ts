@@ -212,25 +212,20 @@ export const isAddressPoisoningOperation = (
   );
 };
 
-export function isEditableOperation(
-  account: AccountLike,
-  operation: Operation
-): boolean {
+export function isEditableOperation(account: AccountLike, operation: Operation): boolean {
   let isEthFamily = false;
   if (account.type === "Account") {
     isEthFamily = account.currency.family === "ethereum";
   } else if (account.type === "TokenAccount") {
     isEthFamily = account.token.parentCurrency.family === "ethereum";
   }
-  return (
-    isEthFamily && operation.blockHeight === null && !!operation.transactionRaw
-  );
+  return isEthFamily && operation.blockHeight === null && !!operation.transactionRaw;
 }
 
 // return the oldest stuck pending operation and its corresponding account according to a eth account or a token subaccount. If no stuck pending operation is found, return undefined
 export function getStuckAccountAndOperation(
   account: AccountLike,
-  parentAccount: Account | undefined | null
+  parentAccount: Account | undefined | null,
 ):
   | {
       account: AccountLike;
@@ -243,14 +238,12 @@ export function getStuckAccountAndOperation(
   const mainAccount = getMainAccount(account, parentAccount);
 
   const SUPPORTED_FAMILIES = ["ethereum"];
-  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family))
-    return undefined;
+  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) return undefined;
   const now = new Date().getTime();
   const stuckOperations = mainAccount.pendingOperations.filter(
-    (pendingOp) =>
+    pendingOp =>
       isEditableOperation(mainAccount, pendingOp) &&
-      now - pendingOp.date.getTime() >
-        getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT")
+      now - pendingOp.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
   );
   if (stuckOperations.length === 0) return undefined;
   const oldestStuckOperation = stuckOperations.reduce((oldestOp, currentOp) => {
@@ -264,7 +257,7 @@ export function getStuckAccountAndOperation(
   if (oldestStuckOperation?.transactionRaw?.subAccountId) {
     stuckAccount = findSubAccountById(
       mainAccount,
-      oldestStuckOperation.transactionRaw.subAccountId
+      oldestStuckOperation.transactionRaw.subAccountId,
     );
     stuckParentAccount = mainAccount;
   } else {

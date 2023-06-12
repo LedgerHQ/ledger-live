@@ -58,11 +58,13 @@ class DateCell extends PureComponent<Props> {
         {editable ? (
           <Box fontSize={3} color="palette.text.shade80">
             <Box ff="Inter|SemiBold" fontSize={3} color="palette.text.shade80" style={ellipsis}>
-              {// display pending icon (less than 5 minutes: loading spinner; more than 5 minutes: yellow warning icon)
-              this.pendingLoadingIcon(
-                new Date().getTime() - operation.date.getTime() >
-                  getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
-              )}
+              {
+                // display pending icon (less than 5 minutes: loading spinner; more than 5 minutes: yellow warning icon)
+                this.pendingLoadingIcon(
+                  new Date().getTime() - operation.date.getTime() >
+                    getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
+                )
+              }
               <Box
                 style={{
                   marginLeft: "4px",

@@ -141,14 +141,8 @@ export class StepMethodFooter extends PureComponent<StepProps> {
   };
 
   handleContinueClick = () => {
-    const {
-      transitionTo,
-      editType,
-      updateTransaction,
-      account,
-      parentAccount,
-      transactionRaw,
-    } = this.props;
+    const { transitionTo, editType, updateTransaction, account, parentAccount, transactionRaw } =
+      this.props;
     invariant(account && transactionRaw, "account and transactionRaw required");
     const bridge = getAccountBridge(account, parentAccount);
     if (editType === "speedup") {

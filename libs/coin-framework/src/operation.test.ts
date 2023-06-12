@@ -78,12 +78,7 @@ describe("Operation.ts", () => {
       const account = genAccount("myAccount", { currency: cardano });
       const tokenAccount = genTokenAccount(0, account, lobster);
       const operation = {
-        ...genOperation(
-          account,
-          tokenAccount,
-          account.operations,
-          new Prando("")
-        ),
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         value: new BigNumber(0),
       };
 
@@ -95,12 +90,7 @@ describe("Operation.ts", () => {
       const account = genAccount("myAccount", { currency: ethereum });
       const tokenAccount = genTokenAccount(0, account, usdc);
       const operation = {
-        ...genOperation(
-          account,
-          tokenAccount,
-          account.operations,
-          new Prando("")
-        ),
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         value: new BigNumber(0),
         blockHeight: null, // pending transaction
       };
@@ -127,12 +117,7 @@ describe("Operation.ts", () => {
         recipient: "MockRecipient",
       };
       const pendingOperation = {
-        ...genOperation(
-          account,
-          tokenAccount,
-          account.operations,
-          new Prando("")
-        ),
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         transactionRaw,
         blockHeight: null,
         value: new BigNumber(0),
@@ -151,12 +136,7 @@ describe("Operation.ts", () => {
         recipient: "MockRecipient",
       };
       const pendingOperation = {
-        ...genOperation(
-          account,
-          tokenAccount,
-          account.operations,
-          new Prando("")
-        ),
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         transactionRaw,
         blockHeight: null,
         value: new BigNumber(0),
@@ -165,8 +145,7 @@ describe("Operation.ts", () => {
       };
       account.pendingOperations.push(pendingOperation);
       expect(
-        getStuckAccountAndOperation(account, undefined)?.operation
-          .transactionSequenceNumber
+        getStuckAccountAndOperation(account, undefined)?.operation.transactionSequenceNumber,
       ).toBe(0);
     });
 
@@ -179,12 +158,7 @@ describe("Operation.ts", () => {
         recipient: "MockRecipient",
       };
       const pendingOperation1 = {
-        ...genOperation(
-          account,
-          tokenAccount,
-          account.operations,
-          new Prando("")
-        ),
+        ...genOperation(account, tokenAccount, account.operations, new Prando("")),
         transactionRaw,
         blockHeight: null,
         value: new BigNumber(0),
@@ -199,15 +173,10 @@ describe("Operation.ts", () => {
         ...pendingOperation1,
         transactionSequenceNumber: 2,
       };
-      account.pendingOperations.push(
-        pendingOperation1,
-        pendingOperation2,
-        pendingOperation3
-      );
+      account.pendingOperations.push(pendingOperation1, pendingOperation2, pendingOperation3);
       expect(account.pendingOperations.length).toBe(3);
       expect(
-        getStuckAccountAndOperation(account, undefined)?.operation
-          .transactionSequenceNumber
+        getStuckAccountAndOperation(account, undefined)?.operation.transactionSequenceNumber,
       ).toBe(0);
     });
   });

@@ -393,7 +393,10 @@ const send: ModeModule = {
       if (!t.data) {
         if (!t.allowZeroAmount && !result.errors.amount && result.amount.eq(0)) {
           result.errors.amount = new AmountRequired();
-        } else if ((!result.totalSpent.gt(0) && !t.allowZeroAmount) || result.totalSpent.gt(account.spendableBalance)) {
+        } else if (
+          (!result.totalSpent.gt(0) && !t.allowZeroAmount) ||
+          result.totalSpent.gt(account.spendableBalance)
+        ) {
           result.errors.amount = new NotEnoughBalance();
         }
       }
