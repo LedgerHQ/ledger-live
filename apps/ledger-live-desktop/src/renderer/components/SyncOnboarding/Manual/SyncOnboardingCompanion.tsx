@@ -12,7 +12,7 @@ import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo, SeedPhraseType } from "@ledgerhq/types-live";
 import {
   OnboardingStep as DeviceOnboardingStep,
@@ -92,9 +92,6 @@ export type SyncOnboardingCompanionProps = {
 
 /**
  * Component rendering the synchronous onboarding companion
- *
- * @param deviceModelId: a device model used to render the animation and text.
- *  Needed because the device object can be null if disconnected.
  */
 const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   device,
@@ -111,21 +108,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 
   const servicesConfig = useFeature("protectServicesDesktop");
   const postOnboardingPath = usePostOnboardingPath(servicesConfig);
-
-  // TODO: remove
-  // const device = useSelector(getCurrentDevice);
-  const deviceModelId = device.modelId; // stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
-
-  // TODO: move to screen ? <- used in screen too
-  // Needed because the device object can be null or changed if disconnected/reconnected
-  const [lastKnownDeviceModelId, setLastKnownDeviceModelId] = useState<DeviceModelId>(
-    deviceModelId,
-  );
-  useEffect(() => {
-    if (device) {
-      setLastKnownDeviceModelId(device.modelId);
-    }
-  }, [device]);
 
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
@@ -165,7 +147,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
               })}
             </StepText>
             <ContinueOnDeviceWithAnim
-              deviceModelId={deviceModelId}
+              deviceModelId={device.modelId}
               text={t("syncOnboarding.manual.pairedContent.continueOnDevice", { productName })}
             />
           </Flex>
@@ -185,7 +167,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
               })}
             </StepText>
             <ContinueOnDeviceWithAnim
-              deviceModelId={deviceModelId}
+              deviceModelId={device.modelId}
               text={t("syncOnboarding.manual.pinContent.continueOnDevice", { productName })}
             />
           </Flex>
@@ -201,7 +183,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
               category={`Set up ${productName}: Step 3 Seed Intro`}
               flow={analyticsFlowName}
             />
-            <SeedStep seedPathStatus={seedPathStatus} deviceModelId={deviceModelId} />
+            <SeedStep seedPathStatus={seedPathStatus} deviceModelId={device.modelId} />
           </>
         ),
       },
@@ -216,7 +198,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
               flow={analyticsFlowName}
             />
             <SoftwareCheckStep
-              deviceModelId={lastKnownDeviceModelId}
+              deviceModelId={device.modelId}
               isDisplayed={isDisplayed}
               onComplete={handleSoftwareCheckComplete}
               productName={productName}
@@ -247,11 +229,9 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       t,
       deviceName,
       productName,
-      deviceModelId,
       seedPathStatus,
-      lastKnownDeviceModelId,
-      handleSoftwareCheckComplete,
       device,
+      handleSoftwareCheckComplete,
       shouldRestoreApps,
       deviceToRestore,
       handleInstallRecommendedApplicationComplete,
@@ -275,12 +255,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     pollingPeriodMs: POLLING_PERIOD_MS,
     stopPolling: !isPollingOn,
   });
-
-  // TODO: we were re-starting the polling ?
-  // const handleTroubleshootingDrawerClose = useCallback(() => {
-  //   setTroubleshootingDrawerOpen(false);
-  //   setStopPolling(false);
-  // }, []);
 
   const handleDeviceReady = useCallback(() => {
     history.push("/onboarding/sync/completion");
@@ -480,8 +454,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 
   useEffect(() => {
     let desyncTimer: NodeJS.Timeout | null = null;
-
-    console.log(`🦕 allowedError: ${JSON.stringify(allowedError)}`);
 
     if (allowedError) {
       setIsDesyncOverlayOpen(true);
