@@ -191,9 +191,7 @@ const Body = ({
     (params.transactionRaw as EthereumTransactionRaw).userGasLimit ||
       (params.transactionRaw as EthereumTransactionRaw).estimatedGasLimit ||
       0,
-  )
-    .times(feePerGas)
-    .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
+  ).times(feePerGas);
   const haveFundToCancel = mainAccount.balance.gt(
     feeValue.times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")),
   );

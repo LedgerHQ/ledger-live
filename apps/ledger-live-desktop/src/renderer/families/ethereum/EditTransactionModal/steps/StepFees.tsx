@@ -8,7 +8,6 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import SendAmountFields from "../../../../modals/Send/SendAmountFields";
-import logger from "~/renderer/logger";
 import { StepProps } from "../types";
 import { BigNumber } from "bignumber.js";
 import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/transaction";
