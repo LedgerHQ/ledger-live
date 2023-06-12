@@ -80,7 +80,7 @@ describe("useSwapProviders", () => {
     expect(result.current.isLoading).toBeFalsy();
     expect(result.current.error).toBeNull();
     expect(result.current.providers).toEqual(
-      mockedProviders.filter((provider) => provider.provider !== "wyre")
+      mockedProviders.filter(provider => provider.provider !== "wyre"),
     );
   });
 
@@ -99,9 +99,7 @@ describe("useSwapProviders", () => {
   });
 
   test("only fetch providers on mount", async () => {
-    const { rerender, waitForNextUpdate } = renderHook(() =>
-      useSwapProviders()
-    );
+    const { rerender, waitForNextUpdate } = renderHook(() => useSwapProviders());
 
     await waitForNextUpdate();
     rerender();

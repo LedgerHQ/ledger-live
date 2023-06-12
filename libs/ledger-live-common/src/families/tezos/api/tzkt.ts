@@ -96,14 +96,12 @@ const api = {
     query: {
       lastId?: number;
       sort?: number;
-    }
+    },
   ): Promise<APIOperation[]> {
     const { data } = await network({
       method: "GET",
       url: URL.format({
-        pathname: `${getEnv(
-          "API_TEZOS_TZKT_API"
-        )}/v1/accounts/${address}/operations`,
+        pathname: `${getEnv("API_TEZOS_TZKT_API")}/v1/accounts/${address}/operations`,
         query,
       }),
     });

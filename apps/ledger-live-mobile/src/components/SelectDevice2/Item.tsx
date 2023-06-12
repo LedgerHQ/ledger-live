@@ -17,8 +17,7 @@ type Props = {
 // This item will also come from the pr from alexandre.
 const Item = ({ device, onPress }: Props) => {
   const { wired, available } = device;
-  const [isRemoveDeviceMenuOpen, setIsRemoveDeviceMenuOpen] =
-    useState<boolean>(false);
+  const [isRemoveDeviceMenuOpen, setIsRemoveDeviceMenuOpen] = useState<boolean>(false);
 
   const wording = wired ? "usb" : available ? "available" : "unavailable";
   const color = wording === "unavailable" ? "neutral.c60" : "primary.c80";

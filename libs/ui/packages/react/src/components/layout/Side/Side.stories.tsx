@@ -8,9 +8,9 @@ import SideProvider, { setSide } from "./Provider";
 
 const DummyContentWrapper = styled.div`
   width: 100%;
-  background-color: ${(p) => p.color};
+  background-color: ${p => p.color};
   align-items: center;
-  padding: ${(p) => p.theme.space[4]}px;
+  padding: ${p => p.theme.space[4]}px;
 `;
 
 const onBackLvl1 = () =>

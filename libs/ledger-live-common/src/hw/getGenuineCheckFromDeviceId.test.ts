@@ -29,7 +29,7 @@ jest.mock("./deviceAccess", () => {
 
   return {
     ...originalModule, // import and retain the original functionalities
-    withDevice: jest.fn().mockReturnValue((job) => {
+    withDevice: jest.fn().mockReturnValue(job => {
       return from(job(new Transport()));
     }),
   };
@@ -68,19 +68,19 @@ describe("getGenuineCheckFromDeviceId", () => {
 
   describe("When the device is locked BEFORE doing a genuine check", () => {
     describe("And the mechanism to know that a device is locked is timing out", () => {
-      it("should notify the function consumer of the need to unlock the device, and once done, continue the genuine check flow", (done) => {
+      it("should notify the function consumer of the need to unlock the device, and once done, continue the genuine check flow", done => {
         // Delays the device info response
         mockedGetDeviceInfo.mockReturnValue(
           of(aDeviceInfo as DeviceInfo)
             .pipe(delay(1001))
-            .toPromise()
+            .toPromise(),
         );
 
         mockedGenuineCheck.mockReturnValue(
           of({
             type: "device-permission-requested",
             wording: "",
-          })
+          }),
         );
 
         let step = 1;
@@ -88,10 +88,7 @@ describe("getGenuineCheckFromDeviceId", () => {
           deviceId: "A_DEVICE_ID",
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
-          next: ({
-            socketEvent,
-            lockedDevice,
-          }: GetGenuineCheckFromDeviceIdResult) => {
+          next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
             try {
               switch (step) {
                 case 1:
@@ -126,14 +123,14 @@ describe("getGenuineCheckFromDeviceId", () => {
     });
 
     describe("And the mechanism to know that a device is locked is a 0x5515 locked-device response", () => {
-      it("should notify the function consumer of the need to unlock the device, and once done, continue the genuine check flow", (done) => {
+      it("should notify the function consumer of the need to unlock the device, and once done, continue the genuine check flow", done => {
         let count = 0;
         // Could not simply mockedRejectValueOnce followed by a mockedResolveValueOnce.
         // Needed to transform getDeviceInfo into an Observable.
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore returning an Observable and not a Promise.
         mockedGetDeviceInfo.mockImplementation(() => {
-          return new Observable<DeviceInfo>((o) => {
+          return new Observable<DeviceInfo>(o => {
             if (count < 1) {
               count++;
               o.error(new LockedDeviceError("Locked device"));
@@ -147,7 +144,7 @@ describe("getGenuineCheckFromDeviceId", () => {
           of({
             type: "device-permission-requested",
             wording: "",
-          })
+          }),
         );
 
         let step = 1;
@@ -155,10 +152,7 @@ describe("getGenuineCheckFromDeviceId", () => {
           deviceId: "A_DEVICE_ID",
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
-          next: ({
-            socketEvent,
-            lockedDevice,
-          }: GetGenuineCheckFromDeviceIdResult) => {
+          next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
             try {
               switch (step) {
                 case 1:
@@ -196,7 +190,7 @@ describe("getGenuineCheckFromDeviceId", () => {
         // Needed so the retry is not triggered before unsubscribing during our test
         mockedTimer.mockImplementation((dueTime?: number | Date) => {
           if (typeof dueTime === "number") {
-            return new Observable<number>((subscriber) => {
+            return new Observable<number>(subscriber => {
               setTimeout(() => {
                 subscriber.next(1);
               }, dueTime);
@@ -207,14 +201,14 @@ describe("getGenuineCheckFromDeviceId", () => {
         });
       });
 
-      it("should stop the genuine check flow, to avoid sending an allow-secure-channel request to the device after unlocking it", (done) => {
+      it("should stop the genuine check flow, to avoid sending an allow-secure-channel request to the device after unlocking it", done => {
         let count = 0;
         // Could not simply mockedRejectValueOnce followed by a mockedResolveValueOnce.
         // Needed to transform getDeviceInfo into an Observable.
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore returning an Observable and not a Promise.
         mockedGetDeviceInfo.mockImplementation(() => {
-          return new Observable<DeviceInfo>((o) => {
+          return new Observable<DeviceInfo>(o => {
             if (count < 1) {
               count++;
               o.error(new LockedDeviceError("Locked device"));
@@ -228,7 +222,7 @@ describe("getGenuineCheckFromDeviceId", () => {
           of({
             type: "device-permission-requested",
             wording: "",
-          })
+          }),
         );
 
         let step = 1;
@@ -236,10 +230,7 @@ describe("getGenuineCheckFromDeviceId", () => {
           deviceId: "A_DEVICE_ID",
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
-          next: ({
-            socketEvent,
-            lockedDevice,
-          }: GetGenuineCheckFromDeviceIdResult) => {
+          next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
             try {
               switch (step) {
                 case 1:
@@ -276,12 +267,12 @@ describe("getGenuineCheckFromDeviceId", () => {
 
   describe("When the device is locked DURING the genuine check", () => {
     describe("And the mechanism to know that a device is locked is a 0x5515 locked-device response", () => {
-      it("should notify the function consumer of the need to unlock the device, and once done, continue the genuine check flow", (done) => {
+      it("should notify the function consumer of the need to unlock the device, and once done, continue the genuine check flow", done => {
         mockedGetDeviceInfo.mockResolvedValue(aDeviceInfo);
 
         let count = 0;
         mockedGenuineCheck.mockImplementation(() => {
-          return new Observable<SocketEvent>((o) => {
+          return new Observable<SocketEvent>(o => {
             if (count < 1) {
               count++;
               o.error(new LockedDeviceError("Locked device"));
@@ -299,10 +290,7 @@ describe("getGenuineCheckFromDeviceId", () => {
           deviceId: "A_DEVICE_ID",
           lockedDeviceTimeoutMs: 1000,
         }).subscribe({
-          next: ({
-            socketEvent,
-            lockedDevice,
-          }: GetGenuineCheckFromDeviceIdResult) => {
+          next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
             try {
               switch (step) {
                 // No locked device at first

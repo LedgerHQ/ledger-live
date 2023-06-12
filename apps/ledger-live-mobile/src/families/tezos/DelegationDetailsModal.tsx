@@ -204,11 +204,7 @@ export default function DelegationDetailsModal({
   const height = Math.min(getWindowDimensions().height - 400, 280);
   return (
     // TODO use DelegationDrawer component
-    <QueuedDrawer
-      isRequestingToBeOpened={isOpened}
-      onClose={onClose}
-      style={styles.modal}
-    >
+    <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose} style={styles.modal}>
       <View style={styles.root}>
         <DelegatingContainer
           left={
@@ -236,11 +232,7 @@ export default function DelegationDetailsModal({
         >
           {baker ? (
             <Property label={<Trans i18nKey="delegation.validator" />}>
-              <LText
-                semiBold
-                style={styles.propertyValueText}
-                numberOfLines={1}
-              >
+              <LText semiBold style={styles.propertyValueText} numberOfLines={1}>
                 {baker.name}
               </LText>
             </Property>
@@ -284,10 +276,7 @@ export default function DelegationDetailsModal({
             </LText>
           </Property>
           <Property last label={<Trans i18nKey="delegation.transactionID" />}>
-            <Touchable
-              event="DelegationDetailsOpenTx"
-              onPress={onOpenTransaction}
-            >
+            <Touchable event="DelegationDetailsOpenTx" onPress={onOpenTransaction}>
               <LText
                 semiBold
                 style={[styles.propertyValueText]}

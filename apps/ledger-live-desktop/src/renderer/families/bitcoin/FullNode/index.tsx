@@ -13,7 +13,7 @@ export const connectionStatus = Object.freeze({
   SUCCESS: "success",
   FAILURE: "failure",
 });
-export type ConnectionStatus = typeof connectionStatus[keyof typeof connectionStatus];
+export type ConnectionStatus = (typeof connectionStatus)[keyof typeof connectionStatus];
 export const CheckWrapper = styled.div<{ size: number }>`
   display: flex;
   align-items: center;

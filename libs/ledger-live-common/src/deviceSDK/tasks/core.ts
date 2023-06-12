@@ -6,13 +6,7 @@ import {
   createCustomErrorClass,
 } from "@ledgerhq/errors";
 import { Observable, from, of, throwError, timer } from "rxjs";
-import {
-  catchError,
-  concatMap,
-  retryWhen,
-  switchMap,
-  timeout,
-} from "rxjs/operators";
+import { catchError, concatMap, retryWhen, switchMap, timeout } from "rxjs/operators";
 import { Transport, TransportRef } from "../transports/core";
 
 export type SharedTaskEvent = { type: "error"; error: Error };
@@ -31,17 +25,17 @@ export const RETRY_ON_ERROR_DELAY_MS = 500;
  */
 export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
   task: (args: TaskArgsType) => Observable<TaskEventsType | SharedTaskEvent>,
-  defaultTimeoutOverride?: number
+  defaultTimeoutOverride?: number,
 ) {
   return (args: TaskArgsType): Observable<TaskEventsType | SharedTaskEvent> => {
-    return new Observable((subscriber) => {
+    return new Observable(subscriber => {
       return task(args)
         .pipe(
           timeout(defaultTimeoutOverride ?? NO_RESPONSE_TIMEOUT_MS),
-          retryWhen((attempts) =>
+          retryWhen(attempts =>
             attempts.pipe(
               // concatMap to sequentially handle errors
-              concatMap((error) => {
+              concatMap(error => {
                 let acceptedError = false;
 
                 // - LockedDeviceError: on every transport if there is a device but it is locked
@@ -55,21 +49,19 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
                   error instanceof TransportRaceCondition
                 ) {
                   // Emits to the action a locked device error event so it is aware of it before retrying
-                  subscriber.next({ type: "error", error });
+                  subscriber.next({ type: "error" as const, error });
                   acceptedError = true;
                 }
 
-                return acceptedError
-                  ? timer(RETRY_ON_ERROR_DELAY_MS)
-                  : throwError(error);
-              })
-            )
+                return acceptedError ? timer(RETRY_ON_ERROR_DELAY_MS) : throwError(error);
+              }),
+            ),
           ),
 
           catchError((error: Error) => {
             // Emits the error to the action, without throwing
             return of<SharedTaskEvent>({ type: "error", error });
-          })
+          }),
         )
         .subscribe(subscriber);
     });
@@ -93,15 +85,12 @@ type CommandTransportArgs = { transport: Transport };
  *  - errorClass: the error class to retry on
  *  - maxRetries: the maximum number of retries for this error
  */
-export function retryOnErrorsCommandWrapper<
-  CommandArgsWithoutTransportType,
-  CommandEventsType
->({
+export function retryOnErrorsCommandWrapper<CommandArgsWithoutTransportType, CommandEventsType>({
   command,
   allowedErrors,
 }: {
   command: (
-    args: CommandArgsWithoutTransportType & CommandTransportArgs
+    args: CommandArgsWithoutTransportType & CommandTransportArgs,
   ) => Observable<CommandEventsType>;
   allowedErrors: {
     errorClass: ErrorClass;
@@ -112,7 +101,7 @@ export function retryOnErrorsCommandWrapper<
   // No need to pass the transport to the wrapped command
   return (
     transportRef: TransportRef,
-    argsWithoutTransport: CommandArgsWithoutTransportType
+    argsWithoutTransport: CommandArgsWithoutTransportType,
   ): Observable<CommandEventsType> => {
     let sameErrorInARowCount = 0;
     let shouldRefreshTransport = false;
@@ -140,10 +129,10 @@ export function retryOnErrorsCommandWrapper<
           transport: transportRef.current,
         });
       }),
-      retryWhen((attempts) =>
+      retryWhen(attempts =>
         attempts.pipe(
           // concatMap to sequentially handle errors
-          concatMap((error) => {
+          concatMap(error => {
             let isAllowedError = false;
 
             if (latestErrorName !== error.name) {
@@ -156,10 +145,7 @@ export function retryOnErrorsCommandWrapper<
 
             for (const { errorClass, maxRetries } of allowedErrors) {
               if (error instanceof errorClass) {
-                if (
-                  maxRetries === "infinite" ||
-                  sameErrorInARowCount < maxRetries
-                ) {
+                if (maxRetries === "infinite" || sameErrorInARowCount < maxRetries) {
                   isAllowedError = true;
                 }
 
@@ -174,9 +160,9 @@ export function retryOnErrorsCommandWrapper<
 
             // If the error is not part of the allowed errors, it is thrown
             return throwError(error);
-          })
-        )
-      )
+          }),
+        ),
+      ),
     );
   };
 }

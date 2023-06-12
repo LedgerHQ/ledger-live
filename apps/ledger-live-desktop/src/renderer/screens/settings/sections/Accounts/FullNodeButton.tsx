@@ -8,9 +8,10 @@ import Button from "~/renderer/components/Button";
 const FullNodeButton = () => {
   const fullNodeEnabled = useEnv("SATSTACK");
   const dispatch = useDispatch();
-  const onOpenModal = useCallback(() => dispatch(openModal("MODAL_BITCOIN_FULL_NODE", undefined)), [
-    dispatch,
-  ]);
+  const onOpenModal = useCallback(
+    () => dispatch(openModal("MODAL_BITCOIN_FULL_NODE", undefined)),
+    [dispatch],
+  );
 
   return (
     <>

@@ -26,10 +26,7 @@ import { StackNavigatorProps } from "../../../components/RootNavigator/types/hel
 import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
 import { ScreenName } from "../../../const";
 
-type NavigationProps = StackNavigatorProps<
-  AccountsNavigatorParamList,
-  ScreenName.Accounts
->;
+type NavigationProps = StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Accounts>;
 
 const maxReadOnlyCryptoCurrencies = 10;
 
@@ -57,11 +54,7 @@ function ReadOnlyAccounts({ navigation, route }: NavigationProps) {
 
   const renderItem = useCallback(
     ({ item }: { item: CryptoCurrency | TokenCurrency }) => (
-      <ReadOnlyAccountRow
-        navigation={navigation}
-        currency={item}
-        screen="Assets"
-      />
+      <ReadOnlyAccountRow navigation={navigation} currency={item} screen="Assets" />
     ),
     [navigation],
   );
@@ -105,12 +98,7 @@ function ReadOnlyAccounts({ navigation, route }: NavigationProps) {
           ListFooterComponent={
             <GradientContainer containerStyle={{ width: "100%" }}>
               <Flex p={6} alignItems="center" justifyContent="center">
-                <Text
-                  variant="large"
-                  fontWeight="semiBold"
-                  color="neutral.c100"
-                  textAlign="center"
-                >
+                <Text variant="large" fontWeight="semiBold" color="neutral.c100" textAlign="center">
                   {t("accounts.readOnly.moreCrypto.title")}
                 </Text>
                 <Text

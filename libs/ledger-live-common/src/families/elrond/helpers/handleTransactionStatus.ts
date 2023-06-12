@@ -13,9 +13,7 @@ export interface handleTransactionStatusType {
  * Return an object, of the function, with the error and warning keys, as boolean values.
  */
 
-export const handleTransactionStatus = (
-  status: TransactionStatus
-): handleTransactionStatusType => {
+export const handleTransactionStatus = (status: TransactionStatus): handleTransactionStatusType => {
   const [[warning], [error]] = [
     Object.keys(status.warnings || {}),
     Object.keys(status.errors || {}),

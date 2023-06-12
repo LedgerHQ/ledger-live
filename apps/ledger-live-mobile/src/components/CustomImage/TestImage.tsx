@@ -66,18 +66,11 @@ const TestImage: React.FC<Props> = props => {
   );
 
   const [showReconstructed, setShowReconstructed] = useState(true);
-  const handlePressIn = useCallback(
-    () => setShowReconstructed(false),
-    [setShowReconstructed],
-  );
-  const handlePressOut = useCallback(
-    () => setShowReconstructed(true),
-    [setShowReconstructed],
-  );
+  const handlePressIn = useCallback(() => setShowReconstructed(false), [setShowReconstructed]);
+  const handlePressOut = useCallback(() => setShowReconstructed(true), [setShowReconstructed]);
 
   const isDataMatching =
-    reconstructedPreviewResult?.imageBase64DataUri ===
-    previewData?.imageBase64DataUri;
+    reconstructedPreviewResult?.imageBase64DataUri === previewData?.imageBase64DataUri;
 
   return (
     <Flex flex={1} pt={6} flexDirection="column" alignItems="center">

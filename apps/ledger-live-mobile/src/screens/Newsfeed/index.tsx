@@ -33,17 +33,10 @@ function NewsfeedPage() {
   const theme = useTheme();
   const { colors, space, radii } = theme;
   const inAppBrowserParams = inAppBrowserDefaultParams(theme);
-  const {
-    posts,
-    hasMore,
-    loadingState,
-    ready,
-    loadMore,
-    refresh,
-    lastDataLoadingDate,
-  } = useCryptopanicPosts({
-    ...CRYPTOPANIC_DEFAULT_PARAMS,
-  });
+  const { posts, hasMore, loadingState, ready, loadMore, refresh, lastDataLoadingDate } =
+    useCryptopanicPosts({
+      ...CRYPTOPANIC_DEFAULT_PARAMS,
+    });
 
   const onClickItem = useCallback(
     async (news: CryptopanicNewsWithMetadata) => {
@@ -76,10 +69,7 @@ function NewsfeedPage() {
         my={`${space[3]}px`}
         borderRadius={`${radii[2]}px`}
       >
-        <Container
-          underlayColor={colors.neutral.c30}
-          onPress={() => onClickItem(item)}
-        >
+        <Container underlayColor={colors.neutral.c30} onPress={() => onClickItem(item)}>
           <InformativeCard
             imageUrl={item?.metadata?.image || undefined}
             tag={
@@ -97,14 +87,7 @@ function NewsfeedPage() {
         </Container>
       </Skeleton>
     ),
-    [
-      colors.neutral.c30,
-      lastDataLoadingDate,
-      loadingState,
-      onClickItem,
-      radii,
-      space,
-    ],
+    [colors.neutral.c30, lastDataLoadingDate, loadingState, onClickItem, radii, space],
   );
 
   const ListHeaderComponent = useMemo(

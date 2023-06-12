@@ -28,22 +28,13 @@ import { SignTransactionNavigatorParamList } from "../../components/RootNavigato
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
 
 type Navigation = CompositeNavigationProp<
-  StackNavigatorNavigation<
-    SendFundsNavigatorStackParamList,
-    ScreenName.SendSummary
-  >,
+  StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>,
   StackNavigatorNavigation<BaseNavigatorStackParamList>
 >;
 
 type Route = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >["route"];
 
@@ -52,11 +43,7 @@ type Props = {
   parentAccount?: Account | null;
   transaction: Transaction;
 };
-export default function RippleFeeRow({
-  account,
-  transaction,
-  parentAccount,
-}: Props) {
+export default function RippleFeeRow({ account, transaction, parentAccount }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<Route>();
@@ -92,10 +79,7 @@ export default function RippleFeeRow({
         <View style={styles.accountContainer}>
           {fee ? (
             <LText style={styles.valueText}>
-              <CurrencyUnitValue
-                unit={feeCustomUnit || account.unit}
-                value={fee}
-              />
+              <CurrencyUnitValue unit={feeCustomUnit || account.unit} value={fee} />
             </LText>
           ) : null}
 
@@ -113,9 +97,7 @@ export default function RippleFeeRow({
           </LText>
         </View>
         <LText style={styles.countervalue} color="grey">
-          {fee ? (
-            <CounterValue before="≈ " value={fee} currency={account.currency} />
-          ) : null}
+          {fee ? <CounterValue before="≈ " value={fee} currency={account.currency} /> : null}
         </LText>
       </View>
     </SummaryRow>

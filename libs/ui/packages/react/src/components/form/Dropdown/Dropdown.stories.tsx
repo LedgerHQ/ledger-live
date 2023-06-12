@@ -22,7 +22,7 @@ const options = [
   { value: "lemon", label: "Lemon" },
   { value: "vanilla", label: "Vanilla" },
 ];
-type Option = typeof options[0];
+type Option = (typeof options)[0];
 
 export const Dropdown = (args: DropdownProps<Option>): React.ReactNode => {
   const [value, setValue] = React.useState<Option | null>(null);

@@ -10,19 +10,13 @@ import ExternalLink from "../ExternalLink";
 import { useLocale } from "../../context/Locale";
 import { urls } from "../../config/urls";
 
-const WebPTXPlayerNetworkFail = createCustomErrorClass(
-  "WebPTXPlayerNetworkFail",
-);
+const WebPTXPlayerNetworkFail = createCustomErrorClass("WebPTXPlayerNetworkFail");
 
 const ExternalLinkWrapper = styled.View`
   margin-top: 19px;
 `;
 
-export const NetworkError = ({
-  handleTryAgain,
-}: {
-  handleTryAgain: () => void;
-}) => {
+export const NetworkError = ({ handleTryAgain }: { handleTryAgain: () => void }) => {
   const { locale } = useLocale();
 
   return (
@@ -36,14 +30,11 @@ export const NetworkError = ({
             <ExternalLink
               onPress={() =>
                 Linking.openURL(
-                  urls.contactSupportWebview[
-                    locale as keyof typeof urls.contactSupportWebview
-                  ] ?? urls.contactSupportWebview.en,
+                  urls.contactSupportWebview[locale as keyof typeof urls.contactSupportWebview] ??
+                    urls.contactSupportWebview.en,
                 )
               }
-              text={
-                <Trans i18nKey="errors.WebPTXPlayerNetworkFail.contactSupport" />
-              }
+              text={<Trans i18nKey="errors.WebPTXPlayerNetworkFail.contactSupport" />}
               type="main"
             />
           </ExternalLinkWrapper>
@@ -62,10 +53,7 @@ export const NetworkError = ({
           minWidth="143px"
           height="40px"
         >
-          <Trans
-            marginWidth={40}
-            i18nKey="errors.WebPTXPlayerNetworkFail.primaryCTA"
-          />
+          <Trans marginWidth={40} i18nKey="errors.WebPTXPlayerNetworkFail.primaryCTA" />
         </Button>
       </GenericErrorView>
     </Flex>

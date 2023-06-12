@@ -44,7 +44,7 @@ const osTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dar
 const palette = palettes[theme && theme !== "null" ? theme : osTheme] || palettes.dark;
 remote.getCurrentWindow().setBackgroundColor(palette.background.default);
 window.addEventListener("DOMContentLoaded", () => {
-  const imgNode = (document.getElementById("loading-logo") as unknown) as HTMLImageElement;
+  const imgNode = document.getElementById("loading-logo") as unknown as HTMLImageElement;
   const loaderContainer = document.getElementById("loader-container");
   if (imgNode && loaderContainer) {
     imgNode.src = logo;

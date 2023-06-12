@@ -20,17 +20,13 @@ import { isDebugMenuVisible } from "../../reducers/appstate";
 
 export default function Settings({
   navigation,
-}: StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.SettingsScreen
->) {
+}: StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.SettingsScreen>) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
   const { handleSettingsRateApp } = useRatings();
 
-  const debugVisible =
-    useSelector(isDebugMenuVisible) || Config.FORCE_DEBUG_VISIBLE;
+  const debugVisible = useSelector(isDebugMenuVisible) || Config.FORCE_DEBUG_VISIBLE;
   const count = useRef(0);
   const debugTimeout = useRef(onTimeout);
 

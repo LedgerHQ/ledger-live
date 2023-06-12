@@ -22,12 +22,7 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <Flex alignItems="center">
-        <IconBox
-          Icon={Icons.WarningMedium}
-          color="warning.c50"
-          iconSize={24}
-          boxSize={64}
-        />
+        <IconBox Icon={Icons.WarningMedium} color="warning.c50" iconSize={24} boxSize={64} />
       </Flex>
 
       <Text variant="h2" mt={8} textAlign="center">
@@ -36,10 +31,7 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
       <Text variant="body" mb={8} textAlign="center">
         <Trans i18nKey="onboarding.warning.seed.desc" values={{ deviceName }} />
       </Text>
-      <Alert
-        type="info"
-        title={<Trans i18nKey="onboarding.warning.seed.warning" />}
-      />
+      <Alert type="info" title={<Trans i18nKey="onboarding.warning.seed.warning" />} />
       <Button
         type="main"
         testID={"Onboarding - Seed warning"}

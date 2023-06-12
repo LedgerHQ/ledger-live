@@ -43,14 +43,8 @@ const extractNftBase64 = (metadata: NFTMetadata) => {
 };
 
 const StepChooseImage: React.FC<Props> = props => {
-  const {
-    loading,
-    setLoading,
-    onResult,
-    onError,
-    isShowingNftGallery,
-    setIsShowingNftGallery,
-  } = props;
+  const { loading, setLoading, onResult, onError, isShowingNftGallery, setIsShowingNftGallery } =
+    props;
   const isMounted = useIsMounted();
   const { t } = useTranslation();
   const track = useTrack();

@@ -1,8 +1,6 @@
 import type { CardanoLikeNetworkParameters } from "./types";
 
-export const getNetworkParameters = (
-  networkName: string
-): CardanoLikeNetworkParameters => {
+export const getNetworkParameters = (networkName: string): CardanoLikeNetworkParameters => {
   if (networkName === "cardano") {
     return {
       identifier: "cardano",

@@ -1,11 +1,7 @@
 import BigNumber from "bignumber.js";
 import { useCallback, useEffect, useState } from "react";
 import { getAccountBridge } from "../../../bridge";
-import {
-  SwapDataType,
-  SwapSelectorStateType,
-  SwapTransactionType,
-} from "../types";
+import { SwapDataType, SwapSelectorStateType, SwapTransactionType } from "../types";
 import { Transaction } from "../../../generated/types";
 
 export const ZERO = new BigNumber(0);
@@ -27,20 +23,19 @@ export const useUpdateMaxAmount = ({
   toggleMax: SwapTransactionType["toggleMax"];
   isMaxLoading: SwapDataType["isMaxLoading"];
 } => {
-  const [isMaxEnabled, setIsMaxEnabled] =
-    useState<SwapDataType["isMaxEnabled"]>(false);
+  const [isMaxEnabled, setIsMaxEnabled] = useState<SwapDataType["isMaxEnabled"]>(false);
   const [isMaxLoading, setIsMaxLoading] = useState(false);
 
   const toggleMax: SwapTransactionType["toggleMax"] = useCallback(
     () =>
-      setIsMaxEnabled((previous) => {
+      setIsMaxEnabled(previous => {
         if (previous) {
           setFromAmount(ZERO);
           setIsMaxLoading(false);
         }
         return !previous;
       }),
-    [setFromAmount]
+    [setFromAmount],
   );
 
   /* UPDATE from amount to the estimate max spendable on account
@@ -65,7 +60,7 @@ export const useUpdateMaxAmount = ({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [setFromAmount, isMaxEnabled, account, parentAccount, feesStrategy]
+    [setFromAmount, isMaxEnabled, account, parentAccount, feesStrategy],
   );
 
   return { isMaxEnabled, toggleMax, isMaxLoading };

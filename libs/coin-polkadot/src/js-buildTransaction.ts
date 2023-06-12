@@ -15,10 +15,7 @@ type ExtrinsicParams = {
   pallet: "staking" | "balances";
   args: Record<string, any>;
 };
-const getExtrinsicParams = (
-  a: PolkadotAccount,
-  t: Transaction
-): ExtrinsicParams => {
+const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams => {
   const validator = t.validators ? t.validators[0] : null;
 
   switch (t.mode) {
@@ -156,9 +153,7 @@ export const buildTransaction =
     const extrinsicParams = getExtrinsicParams(a, t);
     const address = a.freshAddress;
     const { blockHash, genesisHash } = info;
-    const blockNumber = registry
-      .createType("BlockNumber", info.blockNumber)
-      .toHex();
+    const blockNumber = registry.createType("BlockNumber", info.blockNumber).toHex();
     const era = registry
       .createType("ExtrinsicEra", {
         current: info.blockNumber,
@@ -167,28 +162,23 @@ export const buildTransaction =
       .toHex();
     const nonce = registry.createType("Compact<Index>", getNonce(a)).toHex();
     const specVersion = registry.createType("u32", info.specVersion).toHex();
-    const tip = registry
-      .createType("Compact<Balance>", info.tip || DEFAULTS.tip)
-      .toHex();
-    const transactionVersion = registry
-      .createType("u32", info.transactionVersion)
-      .toHex();
-    const methodFunction =
-      extrinsics[extrinsicParams.pallet][extrinsicParams.name];
+    const tip = registry.createType("Compact<Balance>", info.tip || DEFAULTS.tip).toHex();
+    const transactionVersion = registry.createType("u32", info.transactionVersion).toHex();
+    const methodFunction = extrinsics[extrinsicParams.pallet][extrinsicParams.name];
     const methodArgs = methodFunction.meta.args;
     const method = methodFunction(
-      ...methodArgs.map((arg) => {
+      ...methodArgs.map(arg => {
         const param = extrinsicParams.args[stringCamelCase(arg.name)];
         if (param === undefined) {
           throw new Error(
             `Method ${extrinsicParams.pallet}::${
               extrinsicParams.name
-            } expects argument ${arg.toString()}, but got undefined`
+            } expects argument ${arg.toString()}, but got undefined`,
           );
         }
 
         return param;
-      })
+      }),
     ).toHex();
     const unsigned = {
       address,

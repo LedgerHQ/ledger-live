@@ -9,10 +9,7 @@ import LText from "../../components/LText";
 import type { State } from "../../reducers/types";
 import { ScreenName } from "../../const";
 import makeGenericSelectScreen from "../../screens/makeGenericSelectScreen";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
@@ -23,14 +20,8 @@ const items = StellarMemoType.map(type => ({
 }));
 
 type NavigationProps = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.StellarEditMemoType
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.StellarEditMemoType
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.StellarEditMemoType>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.StellarEditMemoType>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.StellarEditMemoType>
 >;
 

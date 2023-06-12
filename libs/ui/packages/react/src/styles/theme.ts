@@ -200,7 +200,7 @@ const overflow = {
     overflow-x: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.neutral.c30};
+      --track-color: ${p => p.theme.colors.neutral.c30};
     }
   `,
   y: css`
@@ -208,7 +208,7 @@ const overflow = {
     overflow-y: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.neutral.c30};
+      --track-color: ${p => p.theme.colors.neutral.c30};
     }
   `,
   yAuto: css`
@@ -216,14 +216,14 @@ const overflow = {
     overflow-y: auto;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.neutral.c30};
+      --track-color: ${p => p.theme.colors.neutral.c30};
     }
   `,
   xy: css`
     overflow: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.neutral.c30};
+      --track-color: ${p => p.theme.colors.neutral.c30};
     }
   `,
   trackSize: 12,

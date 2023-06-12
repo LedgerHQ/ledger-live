@@ -17,12 +17,9 @@ const generalTermsVersionRequired = "2022-05-10";
  * The migration of that data is done in the `GeneralTermsContextProvider`
  * component below.
  * */
-const LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY =
-  "acceptedTermsVersion";
+const LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY = "acceptedTermsVersion";
 async function loadLegacyStorageAcceptedTermsVersion() {
-  return AsyncStorage.getItem(
-    LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY,
-  );
+  return AsyncStorage.getItem(LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY);
 }
 async function eraseLegacyStorageAcceptedTermsVersion() {
   AsyncStorage.removeItem(LEGACY_ACCEPTED_GENERAL_TERMS_VERSION_STORAGE_KEY);
@@ -75,9 +72,7 @@ export const TermsContext = React.createContext<TermsContextValue>({
 export const GeneralTermsContextProvider: React.FC<{
   children?: React.ReactNode | null | undefined;
 }> = ({ children }) => {
-  const generalTermsVersionAccepted = useSelector(
-    generalTermsVersionAcceptedSelector,
-  );
+  const generalTermsVersionAccepted = useSelector(generalTermsVersionAcceptedSelector);
 
   useEffect(() => {
     // migration of the "accepted version" data from legacy storage key to redux
@@ -101,9 +96,7 @@ export const GeneralTermsContextProvider: React.FC<{
     [generalTermsVersionAccepted],
   );
 
-  return (
-    <TermsContext.Provider value={value}>{children}</TermsContext.Provider>
-  );
+  return <TermsContext.Provider value={value}>{children}</TermsContext.Provider>;
 };
 
 export function useLocalizedTermsUrl() {

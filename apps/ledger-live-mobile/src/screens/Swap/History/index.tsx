@@ -2,18 +2,9 @@ import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/inde
 import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/csvExport";
 import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
 import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
-import {
-  MappedSwapOperation,
-  SwapHistorySection,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
 import { useTheme } from "@react-navigation/native";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import {
   Animated,
@@ -39,10 +30,9 @@ import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
 
 // const SList : SectionList<MappedSwapOperation, SwapHistorySection> = SectionList;
-const AnimatedSectionList: typeof SectionList =
-  Animated.createAnimatedComponent(
-    SectionList,
-  ) as unknown as typeof SectionList;
+const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent(
+  SectionList,
+) as unknown as typeof SectionList;
 
 const History = () => {
   const { colors } = useTheme();
@@ -123,9 +113,7 @@ const History = () => {
       await Share.open(options);
     } catch (err) {
       // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
-      if (
-        (err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500"
-      ) {
+      if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
         logger.critical(err as Error);
       }
     }
@@ -148,10 +136,7 @@ const History = () => {
         contentContainerStyle={styles.contentContainer}
         ListEmptyComponent={_ => <EmptyState />}
         refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={() => setIsRefreshing(true)}
-          />
+          <RefreshControl refreshing={isRefreshing} onRefresh={() => setIsRefreshing(true)} />
         }
         ListHeaderComponent={
           sections.length ? (
@@ -164,13 +149,9 @@ const History = () => {
             />
           ) : null
         }
-        keyExtractor={({
-          swapId,
-          operation,
-        }: {
-          swapId: string;
-          operation?: { id: string };
-        }) => swapId + operation?.id}
+        keyExtractor={({ swapId, operation }: { swapId: string; operation?: { id: string } }) =>
+          swapId + operation?.id
+        }
         renderItem={renderItem}
         renderSectionHeader={({ section }: { section: SwapHistorySection }) => (
           <LText semiBold style={styles.section} color="grey">

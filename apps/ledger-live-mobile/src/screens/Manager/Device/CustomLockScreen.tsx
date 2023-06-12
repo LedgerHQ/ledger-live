@@ -27,9 +27,7 @@ const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
   const [deviceHasImage, setDeviceHasImage] = useState(false);
   const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
 
-  const hasCompletedCustomImageFlow = useSelector(
-    hasCompletedCustomImageFlowSelector,
-  );
+  const hasCompletedCustomImageFlow = useSelector(hasCompletedCustomImageFlowSelector);
 
   const { t } = useTranslation();
 
@@ -38,9 +36,7 @@ const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
   }, [lastSeenCustomImage]);
 
   useEffect(() => {
-    withDevice(device.deviceId)(transport =>
-      from(staxFetchImageHash(transport)),
-    )
+    withDevice(device.deviceId)(transport => from(staxFetchImageHash(transport)))
       .toPromise()
       .then(hash => {
         setDeviceHasImage(hash !== "");

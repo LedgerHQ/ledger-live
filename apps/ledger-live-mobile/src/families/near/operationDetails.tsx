@@ -23,24 +23,17 @@ function OperationDetailsExtra({ account, operation }: Props) {
   }
 
   const unit = getAccountUnit(account);
-  const formattedAmount = formatCurrencyUnit(
-    unit,
-    new BigNumber(operation.value),
-    {
-      disableRounding: true,
-      alwaysShowSign: false,
-      showCode: true,
-      discreet,
-      locale,
-    },
-  );
+  const formattedAmount = formatCurrencyUnit(unit, new BigNumber(operation.value), {
+    disableRounding: true,
+    alwaysShowSign: false,
+    showCode: true,
+    discreet,
+    locale,
+  });
 
   return (
     <>
-      <Section
-        title={t("operationDetails.extra.stakedAmount")}
-        value={formattedAmount}
-      />
+      <Section title={t("operationDetails.extra.stakedAmount")} value={formattedAmount} />
     </>
   );
 }

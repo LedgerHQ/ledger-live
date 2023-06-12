@@ -117,9 +117,10 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     },
     [account, dispatch],
   );
-  const statusError = useMemo(() => status.errors && Object.values(status.errors)[0], [
-    status.errors,
-  ]);
+  const statusError = useMemo(
+    () => status.errors && Object.values(status.errors)[0],
+    [status.errors],
+  );
   const error =
     transactionError || bridgeError || (statusError instanceof Error ? statusError : null);
   const stepperProps = {

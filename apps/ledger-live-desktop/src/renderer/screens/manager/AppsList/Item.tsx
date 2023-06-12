@@ -79,10 +79,10 @@ const Item = ({
   }, [addAccount, currency]);
   const version = (installed && installed.version) || app.version;
   const newVersion = installed && installed.availableVersion;
-  const availableApp = useMemo(() => state.apps.find(({ name }) => name === app.name), [
-    app.name,
-    state.apps,
-  ]);
+  const availableApp = useMemo(
+    () => state.apps.find(({ name }) => name === app.name),
+    [app.name, state.apps],
+  );
 
   const flag = currencyId
     ? Object.entries(currencyFlags || {}).find(([flagName]) => {

@@ -34,16 +34,13 @@ const EthereumLegacyCustomFees = ({
   invariant(transaction.family === "ethereum", "not ethereum family");
   invariant(account, "no account found");
 
-  const networkGasPrice =
-    transaction.networkInfo && transaction.networkInfo.gasPrice;
+  const networkGasPrice = transaction.networkInfo && transaction.networkInfo.gasPrice;
   if (!lastNetworkGasPrice && networkGasPrice) {
     lastNetworkGasPrice = networkGasPrice;
   }
 
   const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
-  const [gasPrice, setGasPrice] = useState(
-    transaction.gasPrice || range.initial,
-  );
+  const [gasPrice, setGasPrice] = useState(transaction.gasPrice || range.initial);
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
 
   const transactionPatch = useMemo<Partial<Transaction>>(
@@ -69,10 +66,7 @@ const EthereumLegacyCustomFees = ({
         title={"send.summary.gasPrice"}
       />
 
-      <SectionSeparator
-        style={styles.sectionSeparator}
-        lineColor={colors.fog}
-      />
+      <SectionSeparator style={styles.sectionSeparator} lineColor={colors.fog} />
 
       <View style={styles.container}>
         <EthereumGasLimit

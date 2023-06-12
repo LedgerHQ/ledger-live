@@ -119,8 +119,12 @@ export const start = async (store: ReduxStore) => {
   storeInstance = store;
   const analytics = getAnalytics();
   if (!analytics) return;
-  logger.analyticsStart(id, extraProperties(store));
-  analytics.identify(id, extraProperties(store), {
+  const allProperties = {
+    ...extraProperties(store),
+    braze_external_id: id, // Needed for braze with this exact name
+  };
+  logger.analyticsStart(id, allProperties);
+  analytics.identify(id, allProperties, {
     context: getContext(),
   });
 };
@@ -165,6 +169,21 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
     ...filterAccount,
     ...filterParentAccount,
   };
+};
+
+export const updateIdentify = async () => {
+  if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) return;
+
+  const analytics = getAnalytics();
+  const { id } = await user();
+
+  const allProperties = {
+    ...extraProperties(storeInstance),
+    braze_external_id: id, // Needed for braze with this exact name
+  };
+  analytics.identify(id, allProperties, {
+    context: getContext(),
+  });
 };
 
 export const track = (

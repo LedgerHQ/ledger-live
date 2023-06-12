@@ -489,7 +489,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (request && device && deviceSignatureRequested) {
-    const { account, parentAccount, status, transaction } = (request as unknown) as {
+    const { account, parentAccount, status, transaction } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;
       status: TransactionStatus;
@@ -509,7 +509,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (request && signMessageRequested) {
-    const { account, parentAccount } = (request as unknown) as {
+    const { account, parentAccount } = request as unknown as {
       account: AccountLike;
       parentAccount: Account | null;
     };

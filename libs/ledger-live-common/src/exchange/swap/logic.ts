@@ -11,18 +11,13 @@ import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 import { isCurrencyExchangeSupported } from "../";
 import { isCurrencySupported } from "../../currencies";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const validCurrencyStatus = { ok: 1, noApp: 1, noAccounts: 1, outdatedApp: 1 };
 
-export const getSwapSelectableCurrencies = (
-  rawProviderData: Array<AvailableProviderV3>
-) => {
+export const getSwapSelectableCurrencies = (rawProviderData: Array<AvailableProviderV3>) => {
   const ids: string[] = [];
-  rawProviderData.forEach((provider) => {
+  rawProviderData.forEach(provider => {
     const { pairs } = provider;
     pairs.forEach(({ from, to }) => ids.push(from, to));
   });
@@ -42,25 +37,21 @@ export const getCurrenciesWithStatus = ({
   const statuses = {};
   const installedAppMap = {};
   const notEmptyCurrencies = flattenAccounts(accounts)
-    .filter((a) => a.balance.gt(0))
-    .map((a) => getAccountCurrency(a).id);
+    .filter(a => a.balance.gt(0))
+    .map(a => getAccountCurrency(a).id);
 
   for (const data of installedApps) installedAppMap[data.name] = data;
 
   for (const c of selectableCurrencies) {
     if (c.type !== "CryptoCurrency" && c.type !== "TokenCurrency") continue;
     const mainCurrency =
-      c.type === "TokenCurrency"
-        ? c.parentCurrency
-        : c.type === "CryptoCurrency"
-        ? c
-        : null;
+      c.type === "TokenCurrency" ? c.parentCurrency : c.type === "CryptoCurrency" ? c : null;
     if (!mainCurrency) continue;
     statuses[c.id] =
       mainCurrency.managerAppName in installedAppMap
         ? isExchangeSupportedByApp(
             mainCurrency.id,
-            installedAppMap[mainCurrency.managerAppName].version
+            installedAppMap[mainCurrency.managerAppName].version,
           )
           ? notEmptyCurrencies.includes(c.id)
             ? "ok"
@@ -94,9 +85,7 @@ export const getValidToCurrencies = ({
     const currenciesForTradeMethod = selectableCurrencies[tradeMethod];
 
     if (currenciesForTradeMethod.includes(fromCurrency)) {
-      out.push(
-        ...selectableCurrencies[tradeMethod].filter((c) => c !== fromCurrency)
-      );
+      out.push(...selectableCurrencies[tradeMethod].filter(c => c !== fromCurrency));
     }
   }
 
@@ -114,7 +103,7 @@ export const getSupportedCurrencies = ({
   tradeMethod?: string;
   fromCurrency?: CryptoCurrency | TokenCurrency;
 }): Array<CryptoCurrency | TokenCurrency> => {
-  const providerData = providers.find((p) => p.provider === provider);
+  const providerData = providers.find(p => p.provider === provider);
   invariant(providerData, `No provider matching ${provider} was found`);
   if (!providerData) {
     throw new Error(`No provider matching ${provider} was found`);
@@ -130,7 +119,7 @@ export const getSupportedCurrencies = ({
       ) {
         return isTo ? to : from;
       }
-    })
+    }),
   );
 
   const tokenCurrencies = ids
@@ -143,8 +132,8 @@ export const getSupportedCurrencies = ({
     .filter(Boolean)
     .filter((t: any) => isCurrencySupported(t));
 
-  return ([...cryptoCurrencies, ...tokenCurrencies] as CryptoCurrency[]).filter(
-    (c) => isCurrencyExchangeSupported(c)
+  return ([...cryptoCurrencies, ...tokenCurrencies] as CryptoCurrency[]).filter(c =>
+    isCurrencyExchangeSupported(c),
   );
 };
 
@@ -159,13 +148,11 @@ export const getEnabledTradingMethods = ({
   fromCurrency: CryptoCurrency | TokenCurrency;
   toCurrency: CryptoCurrency | TokenCurrency;
 }) => {
-  const providerData = providers.find((p) => p.provider === provider);
+  const providerData = providers.find(p => p.provider === provider);
   invariant(provider, `No provider matching ${provider} was found`);
 
   const { pairs } = providerData;
-  const match = pairs.find(
-    (p) => p.from === fromCurrency.id && p.to === toCurrency.id
-  );
+  const match = pairs.find(p => p.from === fromCurrency.id && p.to === toCurrency.id);
 
   return match?.tradeMethod || [];
 };
@@ -182,17 +169,15 @@ export const getEnabledTradeMethods = ({
   fromCurrency: (TokenCurrency | CryptoCurrency) | null | undefined;
 }): TradeMethod[] => {
   const tradeMethods: TradeMethod[] = <TradeMethod[]>(
-    Object.keys(selectableCurrencies).filter((m) =>
-      allTradeMethods.includes(<TradeMethod>m)
-    )
+    Object.keys(selectableCurrencies).filter(m => allTradeMethods.includes(<TradeMethod>m))
   );
 
   return fromCurrency && toCurrency
     ? tradeMethods.filter(
-        (method) =>
+        method =>
           allTradeMethods.includes(method) &&
           selectableCurrencies[method].includes(fromCurrency) &&
-          selectableCurrencies[method].includes(toCurrency)
+          selectableCurrencies[method].includes(toCurrency),
       )
     : tradeMethods;
 };
@@ -205,7 +190,7 @@ export const reducer = (
   }: {
     type: string;
     payload: $Shape<SwapState>;
-  }
+  },
 ): SwapState => {
   switch (type) {
     case "onResetRate":
@@ -216,10 +201,7 @@ export const reducer = (
         ...state,
         fromCurrency: payload.fromCurrency,
         useAllAmount: false,
-        toCurrency:
-          state.toCurrency === payload.fromCurrency
-            ? undefined
-            : state.toCurrency,
+        toCurrency: state.toCurrency === payload.fromCurrency ? undefined : state.toCurrency,
         exchangeRate: undefined,
       };
 

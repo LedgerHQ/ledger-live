@@ -44,8 +44,7 @@ const OperationsHistory = ({ accounts }: Props) => {
     (operation, account) => {
       // Remove operations linked to address poisoning
       const removeZeroAmountTokenOp =
-        shouldFilterTokenOpsZeroAmount &&
-        isAddressPoisoningOperation(operation, account);
+        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
 
       return !removeZeroAmountTokenOp;
     },
@@ -63,11 +62,7 @@ const OperationsHistory = ({ accounts }: Props) => {
   );
 
   const renderItem = useCallback(
-    ({
-      item,
-      index,
-      section,
-    }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
+    ({ item, index, section }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
       const account = accounts.find(a => a.id === item.accountId) as SubAccount;
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const parentAccount = useSelector((state: State) =>
@@ -109,13 +104,7 @@ const OperationsHistory = ({ accounts }: Props) => {
         stickySectionHeadersEnabled={false}
       />
       {!completed ? (
-        <Button
-          type="shade"
-          size="large"
-          outline
-          mt={6}
-          onPress={goToAnalyticsOperations}
-        >
+        <Button type="shade" size="large" outline mt={6} onPress={goToAnalyticsOperations}>
           {t("common.seeAll")}
         </Button>
       ) : null}

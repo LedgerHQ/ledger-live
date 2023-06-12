@@ -4,7 +4,7 @@ import { Infer } from "superstruct";
 import { PARSED_PROGRAMS } from "../../program/constants";
 
 export function parseSplMemoInstruction(
-  ix: ParsedInstruction & { program: typeof PARSED_PROGRAMS.SPL_MEMO }
+  ix: ParsedInstruction & { program: typeof PARSED_PROGRAMS.SPL_MEMO },
 ): MemoInstructionDescriptor {
   return {
     title: "Save",
@@ -17,8 +17,8 @@ export function parseSplMemoInstruction(
 
 export type MemoInstructionDescriptor = {
   [K in MemoInstructionType]: {
-    title: typeof IX_TITLES[K];
+    title: (typeof IX_TITLES)[K];
     type: K;
-    info: Infer<typeof IX_STRUCTS[K]>;
+    info: Infer<(typeof IX_STRUCTS)[K]>;
   };
 }[MemoInstructionType];

@@ -12,15 +12,10 @@ import { PlatformExchangeNavigatorParamList } from "./types/PlatformExchangeNavi
 export default function PlatformExchangeNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
-    <Stack.Navigator
-      screenOptions={{ ...stackNavigationConfig, headerShown: false }}
-    >
+    <Stack.Navigator screenOptions={{ ...stackNavigationConfig, headerShown: false }}>
       <Stack.Screen
         name={ScreenName.PlatformStartExchange}
         component={PlatformStartExchange}

@@ -19,15 +19,11 @@ const Language = ({ updatedDeviceInfo, deviceInfo: oldDeviceInfo, onDone, setErr
 
   const currentLocale = useSelector(languageSelector) as Locale;
 
-  const {
-    availableLanguages: newAvailableLanguages,
-    loaded: newLanguagesLoaded,
-  } = useAvailableLanguagesForDevice(updatedDeviceInfo);
+  const { availableLanguages: newAvailableLanguages, loaded: newLanguagesLoaded } =
+    useAvailableLanguagesForDevice(updatedDeviceInfo);
 
-  const {
-    availableLanguages: oldAvailableLanguages,
-    loaded: oldLanguagesLoaded,
-  } = useAvailableLanguagesForDevice(oldDeviceInfo);
+  const { availableLanguages: oldAvailableLanguages, loaded: oldLanguagesLoaded } =
+    useAvailableLanguagesForDevice(oldDeviceInfo);
 
   const installLanguage = useCallback((language: LanguageType) => {
     setLanguageToInstall(language);

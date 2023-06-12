@@ -1,10 +1,7 @@
 import React, { ReactNode } from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import { Box, Checkbox, Flex, Text, Tag } from "@ledgerhq/native-ui";
-import {
-  ChevronRightMedium,
-  InfoMedium,
-} from "@ledgerhq/native-ui/assets/icons";
+import { ChevronRightMedium, InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import styled from "styled-components/native";
 import Touchable from "./Touchable";
 
@@ -73,29 +70,15 @@ export default function SettingsRow({
   testID?: string;
 }) {
   let title$ = (
-    <Flex
-      flexDirection={"row"}
-      alignItems={"center"}
-      style={titleContainerStyle}
-    >
+    <Flex flexDirection={"row"} alignItems={"center"} style={titleContainerStyle}>
       <Flex flexDirection={"row"} alignItems={"center"}>
-        <Text
-          variant={"large"}
-          fontWeight={"semiBold"}
-          color={"neutral.c100"}
-          style={[titleStyle]}
-        >
+        <Text variant={"large"} fontWeight={"semiBold"} color={"neutral.c100"} style={[titleStyle]}>
           {title}
         </Text>
         {label ? <Tag ml={3}>{label}</Tag> : null}
       </Flex>
       {subtitle && (
-        <Text
-          variant={"body"}
-          fontWeight={"medium"}
-          color={"neutral.c70"}
-          ml={3}
-        >
+        <Text variant={"body"} fontWeight={"medium"} color={"neutral.c70"} ml={3}>
           {subtitle}
         </Text>
       )}
@@ -123,10 +106,7 @@ export default function SettingsRow({
       testID={testID}
     >
       {iconLeft && (
-        <Flex
-          paddingRight={6}
-          justifyContent={centeredIcon ? "center" : undefined}
-        >
+        <Flex paddingRight={6} justifyContent={centeredIcon ? "center" : undefined}>
           {iconLeft}
         </Flex>
       )}

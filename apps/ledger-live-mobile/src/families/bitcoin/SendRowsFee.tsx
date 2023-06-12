@@ -22,14 +22,8 @@ type Props = {
   parentAccount?: Account | null;
   setTransaction: (..._: Array<Transaction>) => void;
 } & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
@@ -44,10 +38,7 @@ export default function BitcoinSendRowsFee({
   ...props
 }: Props) {
   invariant(account.type === "Account", "account not found");
-  const defaultStrategies = useFeesStrategy(
-    account,
-    transaction as BitcoinTransaction,
-  );
+  const defaultStrategies = useFeesStrategy(account, transaction as BitcoinTransaction);
   const [satPerByte, setSatPerByte] = useState<BigNumber | null>(null);
   const strategies = useMemo(
     () =>
@@ -85,14 +76,7 @@ export default function BitcoinSendRowsFee({
       satPerByte,
       setSatPerByte,
     });
-  }, [
-    navigation,
-    route.params,
-    account.id,
-    parentAccount?.id,
-    transaction,
-    satPerByte,
-  ]);
+  }, [navigation, route.params, account.id, parentAccount?.id, transaction, satPerByte]);
   return (
     <SelectFeesStrategy
       {...props}

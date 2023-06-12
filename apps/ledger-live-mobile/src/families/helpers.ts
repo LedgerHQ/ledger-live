@@ -2,15 +2,8 @@ import { useRoute } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type {
-  Account,
-  DomainServiceResolution,
-  OperationType,
-} from "@ledgerhq/types-live";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../components/RootNavigator/types/helpers";
+import type { Account, DomainServiceResolution, OperationType } from "@ledgerhq/types-live";
+import type { BaseComposite, StackNavigatorProps } from "../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../const";
 
@@ -23,9 +16,7 @@ export function useFieldByFamily(
 ): BigNumber | string | boolean | DomainServiceResolution | null | undefined {
   const route = useRoute<Navigation["route"]>();
 
-  return route.params?.transaction[
-    field as keyof typeof route.params.transaction
-  ];
+  return route.params?.transaction[field as keyof typeof route.params.transaction];
 }
 export function useEditTxFeeByFamily() {
   const transaction = useRoute<Navigation["route"]>().params?.transaction;

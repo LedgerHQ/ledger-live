@@ -1,36 +1,41 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import styled, { DefaultTheme } from "styled-components";
+import styled from "styled-components";
+import { Theme } from "@ledgerhq/react-ui/styles/theme";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import Box from "~/renderer/components/Box";
 import LiveAppIcon from "~/renderer/components/WebPlatformPlayer/LiveAppIcon";
 
-const getBranchColor = (branch: string, colors: DefaultTheme["colors"]) => {
+function getBranchColor(branch: LiveAppManifest["branch"], colors: Theme["colors"]) {
   switch (branch) {
     case "soon":
-      return colors.palette.text.shade100;
+      return colors.neutral.c00;
     case "experimental":
       return colors.warning;
     case "debug":
-      return colors.palette.text.shade40;
+      return colors.opacityDefault.c40;
     default:
       return "currentColor";
   }
-};
+}
+
 const HeaderContainer = styled(Box)`
   width: 100%;
   flex-direction: row;
   align-items: center;
 `;
-export const IconContainer = styled(Box).attrs(() => ({
+
+export const IconContainer = styled(Box).attrs({
   mr: 2,
-}))`
+})`
   user-select: none;
   pointer-events: none;
 `;
+
 const TitleContainer = styled.div`
   flex-shrink: 1;
 `;
+
 const AppName = styled(Box).attrs(p => ({
   ff: "Inter|SemiBold",
   fontSize: 5,
@@ -39,6 +44,7 @@ const AppName = styled(Box).attrs(p => ({
 }))`
   line-height: 18px;
 `;
+
 const Content = styled(Box)`
   margin-top: 16px;
   width: 100%;
@@ -47,7 +53,8 @@ const Content = styled(Box)`
     display: none;
   }
 `;
-const BranchBadge = styled(Box).attrs<{ branch: string }>(p => ({
+
+const BranchBadge = styled(Box).attrs<{ branch: LiveAppManifest["branch"] }>(p => ({
   ff: "Inter|SemiBold",
   fontSize: 1,
   color: getBranchColor(p.branch, p.theme.colors),
@@ -68,12 +75,15 @@ const BranchBadge = styled(Box).attrs<{ branch: string }>(p => ({
     border-width: 0;
   `}
 `;
+
 type Props = {
   manifest: LiveAppManifest;
 };
-const AppDetails = ({ manifest }: Props) => {
+
+export function AppDetails({ manifest }: Props) {
   const { t } = useTranslation();
   const description = manifest.content.description.en;
+
   return (
     <>
       <HeaderContainer>
@@ -92,5 +102,4 @@ const AppDetails = ({ manifest }: Props) => {
       <Content>{description}</Content>
     </>
   );
-};
-export default AppDetails;
+}

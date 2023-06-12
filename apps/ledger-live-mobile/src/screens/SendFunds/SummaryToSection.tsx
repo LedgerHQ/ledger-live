@@ -19,57 +19,50 @@ type Props = {
   currency: CryptoCurrency;
 };
 
-const DefaultRecipientTemplate = memo(
-  ({ transaction }: Pick<Props, "transaction">) => {
-    const { recipient, recipientDomain } = transaction;
+const DefaultRecipientTemplate = memo(({ transaction }: Pick<Props, "transaction">) => {
+  const { recipient, recipientDomain } = transaction;
 
-    return (
-      <>
-        <LText numberOfLines={2} style={styles.domainRowText}>
-          {recipientDomain?.domain}
-        </LText>
-        <LText
-          numberOfLines={2}
-          style={recipientDomain ? styles.domainRowText : styles.summaryRowText}
-          color={recipientDomain ? "neutral.c70" : "neutral.c100"}
-        >
-          {recipient}
-        </LText>
-      </>
-    );
-  },
-);
+  return (
+    <>
+      <LText numberOfLines={2} style={styles.domainRowText}>
+        {recipientDomain?.domain}
+      </LText>
+      <LText
+        numberOfLines={2}
+        style={recipientDomain ? styles.domainRowText : styles.summaryRowText}
+        color={recipientDomain ? "neutral.c70" : "neutral.c100"}
+      >
+        {recipient}
+      </LText>
+    </>
+  );
+});
 DefaultRecipientTemplate.displayName = "DefaultRecipientTemplate";
 
-const RecipientWithResolutionTemplate = memo(
-  ({ transaction }: Pick<Props, "transaction">) => {
-    const { recipient } = transaction;
+const RecipientWithResolutionTemplate = memo(({ transaction }: Pick<Props, "transaction">) => {
+  const { recipient } = transaction;
 
-    const domainResolution = useDomain(recipient, "ens");
-    const recipientDomain = useMemo(
-      () =>
-        isLoaded(domainResolution)
-          ? domainResolution.resolutions[0]
-          : undefined,
-      [domainResolution],
-    );
+  const domainResolution = useDomain(recipient, "ens");
+  const recipientDomain = useMemo(
+    () => (isLoaded(domainResolution) ? domainResolution.resolutions[0] : undefined),
+    [domainResolution],
+  );
 
-    return (
-      <>
-        <LText numberOfLines={2} style={styles.domainRowText}>
-          {recipientDomain?.domain}
-        </LText>
-        <LText
-          numberOfLines={2}
-          style={recipientDomain ? styles.domainRowText : styles.summaryRowText}
-          color={recipientDomain ? "neutral.c70" : "neutral.c100"}
-        >
-          {recipient}
-        </LText>
-      </>
-    );
-  },
-);
+  return (
+    <>
+      <LText numberOfLines={2} style={styles.domainRowText}>
+        {recipientDomain?.domain}
+      </LText>
+      <LText
+        numberOfLines={2}
+        style={recipientDomain ? styles.domainRowText : styles.summaryRowText}
+        color={recipientDomain ? "neutral.c70" : "neutral.c100"}
+      >
+        {recipient}
+      </LText>
+    </>
+  );
+});
 RecipientWithResolutionTemplate.displayName = "RecipientWithResolutionTemplate";
 
 function SummaryToSection({ transaction, currency }: Props) {
@@ -77,23 +70,16 @@ function SummaryToSection({ transaction, currency }: Props) {
   const { t } = useTranslation();
 
   const { enabled: isDomainResolutionEnabled, params } =
-    useFeature<{ supportedCurrencyIds: CryptoCurrencyId[] }>(
-      "domainInputResolution",
-    ) || {};
+    useFeature<{ supportedCurrencyIds: CryptoCurrencyId[] }>("domainInputResolution") || {};
   const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(currency.id as CryptoCurrencyId) ||
-    false;
+    params?.supportedCurrencyIds?.includes(currency.id as CryptoCurrencyId) || false;
 
   const shouldTryResolvingDomain = useMemo<boolean>(() => {
     if (transaction.recipientDomain) {
       return false;
     }
     return !!isDomainResolutionEnabled && isCurrencySupported;
-  }, [
-    transaction.recipientDomain,
-    isDomainResolutionEnabled,
-    isCurrencySupported,
-  ]);
+  }, [transaction.recipientDomain, isDomainResolutionEnabled, isCurrencySupported]);
 
   return (
     <SummaryRowCustom

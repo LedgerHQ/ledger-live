@@ -25,7 +25,7 @@ import { map } from "rxjs/operators";
  */
 export function throwIf<T>(
   conditionFn: (value: T, index: number) => boolean,
-  errorFn: (value: T, index: number) => any
+  errorFn: (value: T, index: number) => any,
 ) {
   return (input: Observable<T>) =>
     input.pipe(
@@ -35,6 +35,6 @@ export function throwIf<T>(
         }
 
         return value;
-      })
+      }),
     );
 }

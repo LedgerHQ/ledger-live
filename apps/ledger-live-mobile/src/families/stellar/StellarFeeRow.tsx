@@ -1,19 +1,10 @@
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import {
-  View,
-  StyleSheet,
-  Linking,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
+import { View, StyleSheet, Linking, TouchableOpacity, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import {
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
@@ -37,14 +28,8 @@ type Props = {
   parentAccount?: Account | null;
   setTransaction: (..._: Array<Transaction>) => void;
 } & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
@@ -121,9 +106,7 @@ export default function StellarFeeRow({
             ) : null}
           </View>
           <LText style={styles.countervalue} color="grey">
-            {fee ? (
-              <CounterValue before="≈ " value={fee} currency={currency} />
-            ) : null}
+            {fee ? <CounterValue before="≈ " value={fee} currency={currency} /> : null}
           </LText>
         </View>
       </View>

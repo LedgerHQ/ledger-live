@@ -118,17 +118,10 @@ export default function NotificationCenter() {
       });
 
       dispatch(
-        setDynamicContentNotificationCards(
-          orderedNotificationsCards.filter(n => n.id !== item.id),
-        ),
+        setDynamicContentNotificationCards(orderedNotificationsCards.filter(n => n.id !== item.id)),
       );
     },
-    [
-      dispatch,
-      logDismissCard,
-      orderedNotificationsCards,
-      trackContentCardEvent,
-    ],
+    [dispatch, logDismissCard, orderedNotificationsCards, trackContentCardEvent],
   );
 
   const onClickCard = useCallback(
@@ -152,10 +145,7 @@ export default function NotificationCenter() {
       extrapolate: "clamp",
     });
     return (
-      <RemoveContainer
-        onPress={() => deleteNotification(item)}
-        underlayColor={colors.primary.c20}
-      >
+      <RemoveContainer onPress={() => deleteNotification(item)} underlayColor={colors.primary.c20}>
         <AnimatedView style={{ transform: [{ scale }] }}>
           <TrashMedium color="neutral.c100" size={20} />
         </AnimatedView>
@@ -170,9 +160,7 @@ export default function NotificationCenter() {
     return (
       <Swipeable
         key={item.id}
-        renderRightActions={(_progress, dragX) =>
-          renderRightActions(_progress, dragX, item)
-        }
+        renderRightActions={(_progress, dragX) => renderRightActions(_progress, dragX, item)}
         ref={ref => {
           if (ref && !rowRefs.get(item.id)) {
             rowRefs.set(item.id, ref);
@@ -215,16 +203,9 @@ export default function NotificationCenter() {
         data={orderedNotificationsCards}
         keyExtractor={(card: NotificationContentCard) => card.id}
         renderItem={elem => ListItem(elem.item)}
-        ItemSeparatorComponent={() => (
-          <Box height={1} width="100%" backgroundColor="neutral.c30" />
-        )}
+        ItemSeparatorComponent={() => <Box height={1} width="100%" backgroundColor="neutral.c30" />}
         ListEmptyComponent={
-          <Flex
-            alignItems="center"
-            justifyContent="center"
-            height={height * 0.7}
-            px={6}
-          >
+          <Flex alignItems="center" justifyContent="center" height={height * 0.7} px={6}>
             <Text
               variant="large"
               fontWeight="semiBold"
@@ -234,12 +215,7 @@ export default function NotificationCenter() {
             >
               {t("notificationCenter.news.emptyState.title")}
             </Text>
-            <Text
-              variant="paragraph"
-              fontWeight="medium"
-              color="neutral.c70"
-              textAlign="center"
-            >
+            <Text variant="paragraph" fontWeight="medium" color="neutral.c70" textAlign="center">
               {t("notificationCenter.news.emptyState.desc")}
             </Text>
           </Flex>

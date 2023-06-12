@@ -62,9 +62,10 @@ export default function StepAmount({
     },
     [updateValidator],
   );
-  const validator = useMemo(() => transaction.validators && transaction.validators[0], [
-    transaction,
-  ]);
+  const validator = useMemo(
+    () => transaction.validators && transaction.validators[0],
+    [transaction],
+  );
   const amount = useMemo(() => (validator ? validator.amount : BigNumber(0)), [validator]);
   const crypto = cryptoFactory(account.currency.id);
   return (

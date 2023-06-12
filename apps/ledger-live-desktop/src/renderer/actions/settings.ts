@@ -20,9 +20,7 @@ import {
   SettingsState,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
-export type SaveSettings = (
-  a: Partial<Settings>,
-) => {
+export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
 };
@@ -248,9 +246,7 @@ type ExchangePairs = Array<{
   exchange: string | undefined | null;
 }>;
 
-type SetExchangePairs = (
-  a: ExchangePairs,
-) => {
+type SetExchangePairs = (a: ExchangePairs) => {
   type: "SETTINGS_SET_PAIRS";
   payload: ExchangePairs;
 };
@@ -337,11 +333,9 @@ export const setOverriddenFeatureFlag = (key: FeatureId, value: Feature | undefi
   },
 });
 export const setOverriddenFeatureFlags = (
-  overriddenFeatureFlags: Partial<
-    {
-      [key in FeatureId]: Feature;
-    }
-  >,
+  overriddenFeatureFlags: Partial<{
+    [key in FeatureId]: Feature;
+  }>,
 ) => ({
   type: "SET_OVERRIDDEN_FEATURE_FLAGS",
   payload: {

@@ -1,7 +1,4 @@
-import type {
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Device } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
 import { ScreenName } from "../../../const";

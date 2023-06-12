@@ -6,7 +6,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsup -d build src/main.ts"
+    "build": "tsup -d build src/main.ts",
+    "lint": "eslint ./ --cache",
+    "lint:fix": "pnpm lint --fix"
   },
   "devDependencies": {
     "@actions/core": "^1.10.0",

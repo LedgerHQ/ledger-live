@@ -23,11 +23,7 @@ export default function StatusCenter() {
       <IncidentBox flexDirection="row" px={7} justifyContent="center">
         <Box mr={3} pt={1}>
           <Icons.WarningSolidMedium
-            color={
-              incident.impact === "critical"
-                ? colors.error.c60
-                : colors.warning.c70
-            }
+            color={incident.impact === "critical" ? colors.error.c60 : colors.warning.c70}
             size={14}
           />
         </Box>
@@ -47,11 +43,7 @@ export default function StatusCenter() {
 
   return (
     <Container>
-      <TrackScreen
-        category={DATA_TRACKING_DRAWER_NAME}
-        type="page"
-        refreshSource={false}
-      />
+      <TrackScreen category={DATA_TRACKING_DRAWER_NAME} type="page" refreshSource={false} />
       <FlatList
         data={incidents}
         contentContainerStyle={{

@@ -30,9 +30,7 @@ type NavigationParamsType = readonly [name: string, options: object];
 const getMainActions = (props: getActionsType): getActionsReturnType => {
   const { account, parentAccount } = props;
 
-  const delegationEnabled = account.spendableBalance.isGreaterThanOrEqualTo(
-    MIN_DELEGATION_AMOUNT,
-  );
+  const delegationEnabled = account.spendableBalance.isGreaterThanOrEqualTo(MIN_DELEGATION_AMOUNT);
 
   /*
    * Get a list of all the providers, randomize, and also the screen, conditionally, based on existing amount of delegations.
@@ -57,10 +55,7 @@ const getMainActions = (props: getActionsType): getActionsReturnType => {
    * Return the array of actions.
    */
   const navigationParams = delegationEnabled
-    ? [
-        NavigatorName.ElrondDelegationFlow,
-        { screen, params: { account, validators } },
-      ]
+    ? [NavigatorName.ElrondDelegationFlow, { screen, params: { account, validators } }]
     : [
         NavigatorName.NoFundsFlow,
         {
