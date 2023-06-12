@@ -20,18 +20,13 @@ const fakeCurrency: Partial<CryptoCurrency> = {
 
 describe("EVM Family", () => {
   describe("gasTracker", () => {
-    const originalEIP1559_BASE_FEE_MULTIPLIER: number = getEnv(
-      "EIP1559_BASE_FEE_MULTIPLIER"
-    );
+    const originalEIP1559_BASE_FEE_MULTIPLIER: number = getEnv("EIP1559_BASE_FEE_MULTIPLIER");
 
     beforeAll(() => {
       setEnv("EIP1559_BASE_FEE_MULTIPLIER", 2);
     });
     afterAll(() => {
-      setEnv(
-        "EIP1559_BASE_FEE_MULTIPLIER",
-        originalEIP1559_BASE_FEE_MULTIPLIER
-      );
+      setEnv("EIP1559_BASE_FEE_MULTIPLIER", originalEIP1559_BASE_FEE_MULTIPLIER);
     });
 
     beforeEach(() => {

@@ -7,5 +7,5 @@ export const InsufficientFunds = createCustomErrorClass("InsufficientFunds");
 // GasTracker errors
 export const NoGasTrackerFound = createCustomErrorClass("NoGasTrackerFound");
 export const GasTrackerDoesNotSupportEIP1559 = createCustomErrorClass(
-  "GasTrackerDoesNotSupportEIP1559"
+  "GasTrackerDoesNotSupportEIP1559",
 );

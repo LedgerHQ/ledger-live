@@ -7,11 +7,7 @@ import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
-import {
-  FeeData,
-  FeeHistory,
-  Transaction as EvmTransaction,
-} from "../../types";
+import { FeeData, FeeHistory, Transaction as EvmTransaction } from "../../types";
 import { GasEstimationError, InsufficientFunds } from "../../errors";
 import { transactionToEthersTransaction } from "../../adapters";
 import { getSerializedTransaction } from "../../transaction";

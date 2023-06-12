@@ -14,9 +14,7 @@ type GasTrackerApi = {
   }) => Promise<GasOptions>;
 };
 
-export const getGasTracker = (
-  currency: CryptoCurrency
-): GasTrackerApi | null => {
+export const getGasTracker = (currency: CryptoCurrency): GasTrackerApi | null => {
   switch (currency.ethereumLikeInfo?.gasTracker?.type) {
     case "ledger":
       return {

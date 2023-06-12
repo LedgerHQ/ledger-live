@@ -5,21 +5,11 @@ import etherscanLikeApi from "./etherscan";
 
 type ExplorerApi = {
   getLastCoinOperations: CacheRes<
-    [
-      currency: CryptoCurrency,
-      address: string,
-      accountId: string,
-      fromBlock: number
-    ],
+    [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
     Operation[]
   >;
   getLastTokenOperations: CacheRes<
-    [
-      currency: CryptoCurrency,
-      address: string,
-      accountId: string,
-      fromBlock: number
-    ],
+    [currency: CryptoCurrency, address: string, accountId: string, fromBlock: number],
     {
       tokenCurrency: TokenCurrency;
       operation: Operation;

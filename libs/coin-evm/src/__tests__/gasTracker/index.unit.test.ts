@@ -24,9 +24,7 @@ const fakeCurrencyWithoutGasTracker: Partial<CryptoCurrency> = {
 describe("EVM Family", () => {
   describe("gasTracker", () => {
     it("should return null if no gas tracker is found", () => {
-      expect(
-        getGasTracker(fakeCurrencyWithoutGasTracker as CryptoCurrency)
-      ).toBeNull();
+      expect(getGasTracker(fakeCurrencyWithoutGasTracker as CryptoCurrency)).toBeNull();
     });
 
     it("should return a gas tracker for type 'ledger'", () => {
