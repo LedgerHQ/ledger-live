@@ -9,9 +9,7 @@ export const getAddress = (a: Account): Address =>
     ? a.freshAddresses[0]
     : { address: a.freshAddress, derivationPath: a.freshAddressPath };
 
-export async function validateAddress(
-  address: string
-): Promise<{ isValid: boolean }> {
+export async function validateAddress(address: string): Promise<{ isValid: boolean }> {
   try {
     const res = await fetchBalances(address);
     if (!res.balances) throw Error(res.details?.error_message);

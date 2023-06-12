@@ -3,7 +3,7 @@ import { ICP_SEND_TXN_TYPE, MAX_MEMO_VALUE } from "./consts";
 
 const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
 const validBase64RegExp = new RegExp(
-  /^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$/
+  /^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$/,
 );
 
 export const isNoErrorReturnCode = (code: number): boolean => code === 0x9000;
@@ -12,15 +12,10 @@ export const getPath = (path: string): string =>
   path && path.substr(0, 2) !== "m/" ? `m/${path}` : path;
 
 export const isValidHex = (msg: string): boolean => validHexRegExp.test(msg);
-export const isValidBase64 = (msg: string): boolean =>
-  validBase64RegExp.test(msg);
+export const isValidBase64 = (msg: string): boolean => validBase64RegExp.test(msg);
 
-export const isError = (r: {
-  returnCode: number;
-  errorMessage?: string;
-}): void => {
-  if (!isNoErrorReturnCode(r.returnCode))
-    throw new Error(`${r.returnCode} - ${r.errorMessage}`);
+export const isError = (r: { returnCode: number; errorMessage?: string }): void => {
+  if (!isNoErrorReturnCode(r.returnCode)) throw new Error(`${r.returnCode} - ${r.errorMessage}`);
 };
 
 export const methodToString = (method: number): string => {
@@ -47,9 +42,7 @@ function randomIntFromInterval(min, max): string {
   const minBig = new BigNumber(min);
   const maxBig = new BigNumber(max);
 
-  const random = BigNumber.random()
-    .multipliedBy(maxBig.minus(minBig).plus(1))
-    .plus(minBig);
+  const random = BigNumber.random().multipliedBy(maxBig.minus(minBig).plus(1)).plus(minBig);
   const randomInt = random.integerValue(BigNumber.ROUND_FLOOR);
 
   return randomInt.toString();

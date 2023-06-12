@@ -11,15 +11,13 @@ import { encodeOperationId } from "../../../../operation";
 import { normalizeEpochTimestamp } from "../../utils";
 
 const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
-  return (
-    txInfo: ICPRosettaGetTxnsHistoryResponse["transactions"][0]
-  ): Operation[] => {
+  return (txInfo: ICPRosettaGetTxnsHistoryResponse["transactions"][0]): Operation[] => {
     const ops: Operation[] = [];
     const ownerOperation = txInfo.transaction.operations.find(
-      (cur) => cur.account.address === address
+      cur => cur.account.address === address,
     );
     const counterOperation = txInfo.transaction.operations.find(
-      (cur) => cur.account.address !== address
+      cur => cur.account.address !== address,
     );
 
     if (!ownerOperation || !counterOperation) return ops;
@@ -85,7 +83,7 @@ const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
   };
 };
 
-export const getAccountShape: GetAccountShape = async (info) => {
+export const getAccountShape: GetAccountShape = async info => {
   const { address, currency, derivationMode, rest = {}, initialAccount } = info;
   const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
 
@@ -108,10 +106,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     id: accountId,
     balance: BigNumber(balance.value),
     spendableBalance: BigNumber(balance.value),
-    operations: flatMap(
-      txns.transactions.reverse(),
-      mapTxToOps(accountId, address)
-    ),
+    operations: flatMap(txns.transactions.reverse(), mapTxToOps(accountId, address)),
     blockHeight: blockHeight.current_block_identifier.index,
     operationsCount: txns.transactions.length,
     xpub: publicKey,
@@ -120,10 +115,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
   return result;
 };
 
-function reconciliatePublicKey(
-  publicKey?: string,
-  initialAccount?: Account
-): string {
+function reconciliatePublicKey(publicKey?: string, initialAccount?: Account): string {
   if (publicKey) return publicKey;
   if (initialAccount) {
     const { xpubOrAddress } = decodeAccountId(initialAccount.id);

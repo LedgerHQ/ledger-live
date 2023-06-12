@@ -6,17 +6,11 @@ import { getBufferFromString, getPath, isError } from "./utils";
 import { ICP_SEND_TXN_TYPE } from "./consts";
 
 function bufferToArrayBuffer(buffer: Buffer): Buffer {
-  const sig = buffer.buffer.slice(
-    buffer.byteOffset,
-    buffer.byteOffset + buffer.byteLength
-  );
+  const sig = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
   return Buffer.from(sig);
 }
 
-const signMessage: SignMessage = async (
-  transport,
-  { path, message }
-): Promise<Result> => {
+const signMessage: SignMessage = async (transport, { path, message }): Promise<Result> => {
   log("debug", "start signMessage process");
 
   const icp = new ICP(transport as any);
@@ -26,7 +20,7 @@ const signMessage: SignMessage = async (
   const r: ResponseSign = await icp.sign(
     getPath(path),
     getBufferFromString(message as string),
-    ICP_SEND_TXN_TYPE
+    ICP_SEND_TXN_TYPE,
   );
   isError(r);
   if (!r.signatureRS) {

@@ -60,15 +60,15 @@ const internetComputerSpecs: AppSpec<Transaction> = {
       test: ({ accountBeforeTransaction, operation, account, transaction }) => {
         botTest("account spendable balance decreased with operation", () =>
           expect(account.spendableBalance).toEqual(
-            accountBeforeTransaction.spendableBalance.minus(operation.value)
-          )
+            accountBeforeTransaction.spendableBalance.minus(operation.value),
+          ),
         );
 
         if (transaction.memo) {
           botTest("operation memo", () =>
             expect(operation.extra).toMatchObject({
               memo: transaction.memo,
-            })
+            }),
           );
         }
       },
@@ -100,14 +100,14 @@ const internetComputerSpecs: AppSpec<Transaction> = {
       },
       test: ({ account, transaction, operation }) => {
         botTest("account spendable balance is zero", () =>
-          expect(account.spendableBalance.toString()).toBe("0")
+          expect(account.spendableBalance.toString()).toBe("0"),
         );
 
         if (transaction.memo) {
           botTest("operation memo", () =>
             expect(operation.extra).toMatchObject({
               memo: transaction.memo,
-            })
+            }),
           );
         }
       },

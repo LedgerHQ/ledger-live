@@ -13,7 +13,7 @@ import BigNumber from "bignumber.js";
 
 export const generateOperations = (
   tr: Transaction,
-  a: Account
+  a: Account,
 ): ICPRosettaICPRosettaOperation[] => {
   const { address } = getAddress(a);
   const currency = {
@@ -74,8 +74,7 @@ function expiryEncode(val: BigNumber): ArrayBuffer {
     throw new Error("Cannot leb encode negative values.");
   }
 
-  const byteLength =
-    (value === BigInteger(0) ? 0 : Math.ceil(Math.log2(Number(value)))) + 1;
+  const byteLength = (value === BigInteger(0) ? 0 : Math.ceil(Math.log2(Number(value)))) + 1;
   const pipe = new PipeArrayBuffer(new ArrayBuffer(byteLength), 0);
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -112,7 +111,7 @@ export class ingressExpiry {
 export const generateSignaturesPayload = (
   signs: { txnSig: string; readSig: string },
   payloads: ICPRosettaConstructionPayloadsResponse["payloads"],
-  pubkey: string
+  pubkey: string,
 ): ICPRosettaConstructionCombineRequest["signatures"] => {
   const signatures: ICPRosettaConstructionCombineRequest["signatures"] = [];
   const [txnPayload, readStatePayload] = payloads;

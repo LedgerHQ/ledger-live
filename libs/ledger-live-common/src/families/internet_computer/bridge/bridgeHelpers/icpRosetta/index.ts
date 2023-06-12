@@ -13,11 +13,7 @@ import {
   ICPRosettaConstructionSubmitRequest,
   ICPRosettaConstructionSubmitResponse,
 } from "./types";
-import {
-  ingressExpiry,
-  generateOperations,
-  generateSignaturesPayload,
-} from "./utils";
+import { ingressExpiry, generateOperations, generateSignaturesPayload } from "./utils";
 import { Cbor } from "@dfinity/agent";
 import { Principal } from "@dfinity/principal";
 import { isError } from "../../../utils";
@@ -25,7 +21,7 @@ import BigNumber from "bignumber.js";
 
 export const getUnsignedTransaction = async (
   transaction: Transaction,
-  account: Account
+  account: Account,
 ): Promise<{
   unsignedTxn: string;
   payloads: ICPRosettaConstructionPayloadsResponse["payloads"];
@@ -73,9 +69,7 @@ export const signICPTransaction = async ({
   const icp = new ICP(transport);
   const decodedTxn: any = Cbor.decode(Buffer.from(unsignedTxn, "hex"));
   const txnReqFromCbor = decodedTxn.updates[0][1];
-  const expiry = new ingressExpiry(
-    BigNumber(decodedTxn.ingress_expiries[0].toString())
-  );
+  const expiry = new ingressExpiry(BigNumber(decodedTxn.ingress_expiries[0].toString()));
 
   const submitReq = {
     request_type: "call",
@@ -100,11 +94,7 @@ export const signICPTransaction = async ({
     },
   };
 
-  const signaturesPayload = generateSignaturesPayload(
-    result.signatures,
-    payloads,
-    pubkey
-  );
+  const signaturesPayload = generateSignaturesPayload(result.signatures, payloads, pubkey);
 
   const { signed_transaction: signedTxn } = await constructionInvoke<
     ICPRosettaConstructionCombineRequest,
@@ -115,24 +105,19 @@ export const signICPTransaction = async ({
       signatures: signaturesPayload,
       unsigned_transaction: unsignedTxn,
     },
-    "combine"
+    "combine",
   );
 
   return { ...result, signedTxn };
 };
 
-export const getTxnMetadata = async (
-  signedTxn: string
-): Promise<{ hash: string }> => {
+export const getTxnMetadata = async (signedTxn: string): Promise<{ hash: string }> => {
   const {
     transaction_identifier: { hash },
   } = await constructionInvoke<
     ICPRosettaConstructionHashRequest,
     ICPRosettaConstructionHashResponse
-  >(
-    { ...getICPRosettaNetworkIdentifier(), signed_transaction: signedTxn },
-    "hash"
-  );
+  >({ ...getICPRosettaNetworkIdentifier(), signed_transaction: signedTxn }, "hash");
 
   return { hash };
 };
@@ -145,8 +130,5 @@ export const broadcastTxn = async (signedTxn: string) => {
   await constructionInvoke<
     ICPRosettaConstructionSubmitRequest,
     ICPRosettaConstructionSubmitResponse
-  >(
-    { ...getICPRosettaNetworkIdentifier(), signed_transaction: signedTxn },
-    "submit"
-  );
+  >({ ...getICPRosettaNetworkIdentifier(), signed_transaction: signedTxn }, "submit");
 };

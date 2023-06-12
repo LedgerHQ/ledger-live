@@ -13,7 +13,7 @@ import BigNumber from "bignumber.js";
 
 export const formatTransaction = (
   { recipient, useAllAmount, amount }: Transaction,
-  account: Account
+  account: Account,
 ): string => `
 SEND ${
   useAllAmount
