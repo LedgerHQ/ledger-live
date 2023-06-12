@@ -110,7 +110,7 @@ const FeesField = ({
   const ethTransactionRaw = transactionRaw as EthereumTransactionRaw | undefined;
   if (ethTransactionRaw && ethTransactionRaw.maxPriorityFeePerGas) {
     // update the range to make sure that new maxPriorityFeePerGas is at least 10% higher than the pending transaction
-    const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
+    const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
     const newMaxPriorityFeePerGas = new BigNumber(ethTransactionRaw.maxPriorityFeePerGas).times(
       1 + maxPriorityFeeGap,
     );

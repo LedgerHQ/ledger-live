@@ -106,9 +106,9 @@ const FeesField: NonNullable<EthereumFamily["sendAmountFields"]>["component"] = 
     ethTransactionRaw.maxPriorityFeePerGas &&
     ethTransactionRaw.maxFeePerGas
   ) {
-    const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
-    const lowerLimitMaxFeePerGas = new BigNumber(ethTransactionRaw.maxFeePerGas).plus(
-      new BigNumber(ethTransactionRaw.maxPriorityFeePerGas).times(maxPriorityFeeGap),
+    const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
+    const lowerLimitMaxFeePerGas = new BigNumber(ethTransactionRaw.maxFeePerGas).times(
+      1 + maxPriorityFeeGap,
     );
     if (transaction.maxFeePerGas && transaction.maxFeePerGas.isLessThan(lowerLimitMaxFeePerGas)) {
       status.errors.maxFee = new MaxFeeTooLow();

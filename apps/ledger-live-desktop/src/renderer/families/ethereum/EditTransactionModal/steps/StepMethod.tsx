@@ -178,7 +178,7 @@ export class StepMethodFooter extends PureComponent<StepProps> {
             : null,
           maxPriorityFeePerGas: transactionRaw.maxPriorityFeePerGas
             ? new BigNumber(transactionRaw.maxPriorityFeePerGas)
-                .times(1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR"))
+                .times(1 + getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR"))
                 .integerValue()
             : null,
           gasPrice: transactionRaw.gasPrice

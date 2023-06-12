@@ -106,7 +106,7 @@ const SelectFeeStrategy = ({
     if (EIP1559ShouldBeUsed(mainAccount.currency)) {
       const oldMaxPriorityFeePerGas = ethTransactionRaw.maxPriorityFeePerGas;
       const oldMaxFeePerGas = ethTransactionRaw.maxFeePerGas;
-      const maxPriorityFeeGap: number = getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR");
+      const feesGap: number = getEnv("EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR");
       strategies.forEach(strategy => {
         const strategyMaxPriorityFeePerGas = strategy.extra?.maxPriorityFeePerGas;
         const strategyMaxFeePerGas = strategy.extra?.maxFeePerGas;
@@ -121,13 +121,9 @@ const SelectFeeStrategy = ({
           strategy.disabled =
             strategy.disabled ||
             strategyMaxPriorityFeePerGas.isLessThan(
-              BigNumber(oldMaxPriorityFeePerGas).times(1 + maxPriorityFeeGap),
+              BigNumber(oldMaxPriorityFeePerGas).times(1 + feesGap),
             ) ||
-            strategyMaxFeePerGas.isLessThan(
-              BigNumber(oldMaxFeePerGas).plus(
-                BigNumber(oldMaxPriorityFeePerGas).times(maxPriorityFeeGap),
-              ),
-            );
+            strategyMaxFeePerGas.isLessThan(BigNumber(oldMaxFeePerGas).times(1 + feesGap));
         }
       });
     } else {

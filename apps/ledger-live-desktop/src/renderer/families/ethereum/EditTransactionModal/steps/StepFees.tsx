@@ -15,6 +15,7 @@ import { EIP1559ShouldBeUsed } from "@ledgerhq/live-common/families/ethereum/tra
 import { TransactionRaw as EthereumTransactionRaw } from "@ledgerhq/live-common/families/ethereum/types";
 import { TransactionHasBeenValidatedError, NotEnoughGas } from "@ledgerhq/errors";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
+import logger from "~/renderer/logger";
 
 const StepFees = (props: StepProps) => {
   const {
@@ -78,7 +79,7 @@ const StepFees = (props: StepProps) => {
       )}
       <Alert type="primary">
         {EIP1559ShouldBeUsed(mainAccount.currency) ? ( // Display the fees info of the pending transaction (network fee, maxPriorityFeePerGas, maxFeePerGas, maxGasPrice)
-          <ul>
+          <ul style={{ marginLeft: "5px" }}>
             {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
             <li>{`${t("operation.edit.previousFeesInfo.networkfee")} ${feeValue} ${
               mainAccount.currency.ticker
@@ -89,7 +90,7 @@ const StepFees = (props: StepProps) => {
             <li>{`${t("operation.edit.previousFeesInfo.maxFee")} ${maxFeePerGasinGwei} Gwei`}</li>
           </ul>
         ) : (
-          <ul>
+          <ul style={{ marginLeft: "5px" }}>
             {t("operation.edit.previousFeesInfo.pendingTransactionFeesInfo")}
             <li>{`${t("operation.edit.previousFeesInfo.networkfee")} ${feeValue} ${
               mainAccount.currency.ticker
@@ -137,6 +138,11 @@ export class StepFeesFooter extends PureComponent<StepProps> {
         errors.amount.name.includes("NotEnoughNftOwned"))
     ) {
       errorCount = errorCount - 1;
+    }
+    if (errorCount > 0) {
+      for (const [key, value] of Object.entries(errors)) {
+        logger.log(`edit transaction fees error:  ${key}: ${value.name}`);
+      }
     }
     return (
       <>
