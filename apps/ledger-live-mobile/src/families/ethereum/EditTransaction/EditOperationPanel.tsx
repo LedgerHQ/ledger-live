@@ -4,7 +4,6 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/core";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { getStuckAccountAndOperation } from "@ledgerhq/coin-framework/operation";
 
 import LText from "../../../components/LText";
 import Link from "../../../components/wrappedUi/Link";
@@ -38,13 +37,9 @@ const EditOperationPanelComponent = ({
         params: { operation, account, parentAccount },
       });
     }
-  }, []);
+  }, [account, parentAccount, operation, onPress]);
 
-  const stuckAccountAndOperation = account
-    ? getStuckAccountAndOperation(account, parentAccount)
-    : undefined;
-
-  return flag?.enabled && account && stuckAccountAndOperation?.operation ? (
+  return flag?.enabled && account ? (
     <Flex
       backgroundColor={isOperationStuck ? "warning.c70" : "primary.c80"}
       color={"primary.c80"}
