@@ -16,10 +16,10 @@ export type Data = {
   onResult: (result: AppResult) => void;
 };
 
-export default function ConnectDevice({ appName }: Data) {
+export default function ConnectDevice({ appName = "BOLOS" }: Data) {
   const request = useMemo(() => {
     return {
-      appName: appName || "BOLOS",
+      appName,
     };
   }, [appName]);
 
