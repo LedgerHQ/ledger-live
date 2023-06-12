@@ -1,9 +1,4 @@
-import {
-  AmountRequired,
-  CurrencyNotSupported,
-  TransportStatusError,
-  StatusCodes,
-} from "./index";
+import { AmountRequired, CurrencyNotSupported, TransportStatusError, StatusCodes } from "./index";
 
 function functionA() {
   throw new AmountRequired();
