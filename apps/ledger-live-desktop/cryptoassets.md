@@ -32,6 +32,7 @@
 | Flare | FLR | YES | flare |
 | Hedera | HBAR | YES | hedera |
 | Horizen | ZEN | YES | zencash |
+| Internet Computer | ICP | YES | internet_computer |
 | Kava EVM | KAVA | YES | kava_evm |
 | Komodo | KMD | YES | komodo |
 | Litecoin | LTC | YES | litecoin |
@@ -91,7 +92,6 @@
 | ICON | ICX | NO | icon |
 | IOTA | MIOTA | NO | iota |
 | IOV | IOV | NO | iov |
-| Internet Computer (ICP) | ICP | NO | icp |
 | Kin | KIN | NO | kin |
 | Kusama | KSM | NO | kusama |
 | LBRY | LBRY | NO | LBRY |
@@ -8067,6 +8067,7 @@
 | Ethereum Ropsten | WETH | 0xc778417E063141139Fce010982780140Aa0cD5Ab | Uniswap Wrapped Ether | delisted, countervalues disabled | ethereum_ropsten/erc20/uniswap_weth |
 | Ethereum Ropsten | VLC | 0xF62ef17b7c919b84A9D9f33609bb2cf4405a5682 | Vault Coin | countervalues disabled | ethereum_ropsten/erc20/vault_coin |
 | Ethereum Ropsten | HASKELL | 0x63652B9Dd39565332B22BB815104c8210934Ae45 | haskell | delisted, countervalues disabled | ethereum_ropsten/erc20/haskell |
+| Internet Computer | USDC | GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN | USDC |  | icp/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN |
 | MultiversX | AERO | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Aerovek |  | elrond/esdt/4145524f2d343538626266 |
 | MultiversX | ASH | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | AshSwap |  | elrond/esdt/4153482d613634326431 |
 | MultiversX | BHAT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | BHNetwork |  | elrond/esdt/424841542d633166646533 |
