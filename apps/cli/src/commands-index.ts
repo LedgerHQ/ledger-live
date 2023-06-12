@@ -16,6 +16,7 @@ import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
 import deviceAppVersion from "./commands/deviceAppVersion";
 import deviceInfo from "./commands/deviceInfo";
 import deviceSDKFirmwareUpdate from "./commands/deviceSDKFirmwareUpdate";
+import deviceSDKGetBatteryStatuses from "./commands/deviceSDKGetBatteryStatuses";
 import deviceSDKGetDeviceInfo from "./commands/deviceSDKGetDeviceInfo";
 import deviceSDKToggleOnboardingEarlyCheck from "./commands/deviceSDKToggleOnboardingEarlyCheck";
 import deviceVersion from "./commands/deviceVersion";
@@ -78,6 +79,7 @@ export default {
   deviceAppVersion,
   deviceInfo,
   deviceSDKFirmwareUpdate,
+  deviceSDKGetBatteryStatuses,
   deviceSDKGetDeviceInfo,
   deviceSDKToggleOnboardingEarlyCheck,
   deviceVersion,
