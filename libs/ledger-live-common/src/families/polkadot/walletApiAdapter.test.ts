@@ -23,11 +23,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         mode: dotPlatformTx.mode,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        dot.getWalletAPITransactionSignFlowInfos({
-          tx: dotPlatformTx,
-          account: dummyAccount,
-        });
+      const { canEditFees, hasFeesProvided, liveTx } = dot.getWalletAPITransactionSignFlowInfos({
+        tx: dotPlatformTx,
+        account: dummyAccount,
+      });
 
       expect(canEditFees).toBe(false);
 
@@ -53,11 +52,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         era: `${dotPlatformTx.era}`,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        dot.getWalletAPITransactionSignFlowInfos({
-          tx: dotPlatformTx,
-          account: dummyAccount,
-        });
+      const { canEditFees, hasFeesProvided, liveTx } = dot.getWalletAPITransactionSignFlowInfos({
+        tx: dotPlatformTx,
+        account: dummyAccount,
+      });
 
       expect(canEditFees).toBe(false);
 

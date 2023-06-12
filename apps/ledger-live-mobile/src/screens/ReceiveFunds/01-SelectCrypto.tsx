@@ -30,10 +30,7 @@ const SEARCH_KEYS = ["name", "ticker"];
 
 type Props = {
   devMode?: boolean;
-} & StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveSelectCrypto
->;
+} & StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveSelectCrypto>;
 
 const keyExtractor = (currency: CryptoCurrency | TokenCurrency) => currency.id;
 
@@ -45,18 +42,12 @@ const renderEmptyList = () => (
   </Flex>
 );
 
-const listSupportedTokens = () =>
-  listTokens().filter(t => isCurrencySupported(t.parentCurrency));
+const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
-const findAccountByCurrency = (
-  accounts: AccountLike[],
-  currency: CryptoCurrency | TokenCurrency,
-) =>
+const findAccountByCurrency = (accounts: AccountLike[], currency: CryptoCurrency | TokenCurrency) =>
   accounts.filter(
     (acc: AccountLike) =>
-      (acc.type === "Account"
-        ? acc.currency?.id
-        : (acc as TokenAccount).token?.id) === currency.id,
+      (acc.type === "Account" ? acc.currency?.id : (acc as TokenAccount).token?.id) === currency.id,
   );
 
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
@@ -71,10 +62,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     () =>
       (listSupportedCurrencies() as (CryptoCurrency | TokenCurrency)[])
         .concat(listSupportedTokens())
-        .filter(
-          ({ id }) =>
-            filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id),
-        ),
+        .filter(({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id)),
     [filterCurrencyIds],
   );
 
@@ -102,10 +90,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         });
       } else if (currency.type === "TokenCurrency") {
         // cases for token currencies
-        const parentAccounts = findAccountByCurrency(
-          accounts,
-          currency.parentCurrency,
-        );
+        const parentAccounts = findAccountByCurrency(accounts, currency.parentCurrency);
 
         if (parentAccounts.length > 1) {
           // if we found one or more accounts of the parent currency we select account
@@ -140,9 +125,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   useEffect(() => {
     if (paramsCurrency) {
-      const selectedCurrency = findCryptoCurrencyByKeyword(
-        paramsCurrency.toUpperCase(),
-      );
+      const selectedCurrency = findCryptoCurrencyByKeyword(paramsCurrency.toUpperCase());
 
       if (selectedCurrency) {
         onPressItem(selectedCurrency);

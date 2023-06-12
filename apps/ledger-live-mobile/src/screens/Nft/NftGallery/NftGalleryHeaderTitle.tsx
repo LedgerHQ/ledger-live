@@ -7,10 +7,7 @@ import { scrollToTop } from "../../../navigation/utils";
 import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
 import { ScreenName } from "../../../const";
 
-type NavigationProps = StackScreenProps<
-  AccountsNavigatorParamList,
-  ScreenName.NftGallery
->;
+type NavigationProps = StackScreenProps<AccountsNavigatorParamList, ScreenName.NftGallery>;
 
 const NftGalleryHeaderTitle = () => {
   const { params } = useRoute<NavigationProps["route"]>();

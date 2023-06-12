@@ -15,12 +15,9 @@ import { useIsNewsfeedAvailable } from "../../hooks/newsfeed/useIsNewsfeedAvaila
 import useDynamicContent from "../../dynamicContent/dynamicContent";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
-const ExploreTab =
-  createMaterialTopTabNavigator<ExploreTabNavigatorStackParamList>();
+const ExploreTab = createMaterialTopTabNavigator<ExploreTabNavigatorStackParamList>();
 
-const tabBarOptions = (props: MaterialTopTabBarProps) => (
-  <ExploreTabNavigatorTabBar {...props} />
-);
+const tabBarOptions = (props: MaterialTopTabBarProps) => <ExploreTabNavigatorTabBar {...props} />;
 
 const tabBarDisabledOptions = (props: MaterialTopTabBarProps) => (
   <ExploreTabNavigatorTabBarDisabled {...props} />
@@ -39,11 +36,7 @@ export default function ExploreTabNavigator() {
     <ExploreTab.Navigator
       initialRouteName={ScreenName.Newsfeed}
       backBehavior={"history"}
-      tabBar={
-        isNewsfeedAvailable && isLearnAvailable
-          ? tabBarOptions
-          : tabBarDisabledOptions
-      }
+      tabBar={isNewsfeedAvailable && isLearnAvailable ? tabBarOptions : tabBarDisabledOptions}
       style={{ backgroundColor: "transparent" }}
       sceneContainerStyle={{ backgroundColor: "transparent" }}
     >

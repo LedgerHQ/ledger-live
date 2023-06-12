@@ -51,29 +51,24 @@ export const useRequireBluetooth = ({
   isHookEnabled = true,
 }: UseRequireBluetoothArgs): UseRequireBluetoothOutput => {
   // Only handles bluetooth permissions for Android. For iOS, directly handled with useEnableBluetooth
-  const isAndroidBluetoothPermissionsHookEnabled =
-    isHookEnabled && Platform.OS === "android";
+  const isAndroidBluetoothPermissionsHookEnabled = isHookEnabled && Platform.OS === "android";
 
   const {
     hasPermissions: androidHasBluetoothPermissions,
     neverAskAgain: androidBluetoothPermissionsNeverAskAgain,
-    requestForPermissionsAgain:
-      androidBluetoothPermissionsRequestForPermissionsAgain,
+    requestForPermissionsAgain: androidBluetoothPermissionsRequestForPermissionsAgain,
   } = useAndroidBluetoothPermissions({
     isHookEnabled: isAndroidBluetoothPermissionsHookEnabled,
   });
 
   // Handles bluetooth services once bluetooth permissions are granted for Android, or directly for iOS
   const isEnableBluetoothHookEnabled =
-    isHookEnabled &&
-    (Platform.OS === "ios" || androidHasBluetoothPermissions === "granted");
+    isHookEnabled && (Platform.OS === "ios" || androidHasBluetoothPermissions === "granted");
 
-  const {
-    bluetoothServicesState,
-    checkAndRequestAgain: enableBluetoothCheckAndRequestAgain,
-  } = useEnableBluetooth({
-    isHookEnabled: isEnableBluetoothHookEnabled,
-  });
+  const { bluetoothServicesState, checkAndRequestAgain: enableBluetoothCheckAndRequestAgain } =
+    useEnableBluetooth({
+      isHookEnabled: isEnableBluetoothHookEnabled,
+    });
 
   // Handles location permission on Android if necessary and once bluetooth permisions are granted and bluetooth services are enabled
   const isAndroidLocationPermissionHookEnabled =
@@ -86,8 +81,7 @@ export const useRequireBluetooth = ({
   const {
     hasPermission: androidHasLocationPermission,
     neverAskAgain: androidLocationPermissionNeverAskAgain,
-    requestForPermissionAgain:
-      androidLocationPermissionRequestForPermissionsAgain,
+    requestForPermissionAgain: androidLocationPermissionRequestForPermissionsAgain,
   } = useAndroidLocationPermission({
     isHookEnabled: isAndroidLocationPermissionHookEnabled,
   });
@@ -102,12 +96,10 @@ export const useRequireBluetooth = ({
     bluetoothServicesState === "enabled" &&
     androidHasLocationPermission === "granted";
 
-  const {
-    locationServicesState,
-    checkAndRequestAgain: androidEnableLocationCheckAndRequestAgain,
-  } = useAndroidEnableLocation({
-    isHookEnabled: isAndroidEnableLocationHookEnabled,
-  });
+  const { locationServicesState, checkAndRequestAgain: androidEnableLocationCheckAndRequestAgain } =
+    useAndroidEnableLocation({
+      isHookEnabled: isAndroidEnableLocationHookEnabled,
+    });
 
   let bluetoothRequirementsState: BluetoothRequirementsState = "unknown";
   let retryRequestOnIssue = null;
@@ -120,8 +112,7 @@ export const useRequireBluetooth = ({
   if (isAndroidBluetoothPermissionsHookEnabled) {
     if (androidHasBluetoothPermissions === "denied") {
       bluetoothRequirementsState = "bluetooth_permissions_ungranted";
-      retryRequestOnIssue =
-        androidBluetoothPermissionsRequestForPermissionsAgain;
+      retryRequestOnIssue = androidBluetoothPermissionsRequestForPermissionsAgain;
       cannotRetryRequest = androidBluetoothPermissionsNeverAskAgain;
     } else if (androidHasBluetoothPermissions !== "granted") {
       someUnknown = true;
@@ -162,11 +153,7 @@ export const useRequireBluetooth = ({
     }
   }
 
-  if (
-    isHookEnabled &&
-    !someUnknown &&
-    bluetoothRequirementsState === "unknown"
-  ) {
+  if (isHookEnabled && !someUnknown && bluetoothRequirementsState === "unknown") {
     bluetoothRequirementsState = "all_respected";
   }
 
@@ -212,14 +199,10 @@ export const useDebouncedRequireBluetooth = ({
 }: UseRequireBluetoothArgs & {
   debounceTimeMs?: number;
 }): UseRequireBluetoothOutput => {
-  const [debouncedState, setDebouncedState] =
-    useState<BluetoothRequirementsState>("unknown");
+  const [debouncedState, setDebouncedState] = useState<BluetoothRequirementsState>("unknown");
 
-  const {
-    bluetoothRequirementsState,
-    retryRequestOnIssue,
-    cannotRetryRequest,
-  } = useRequireBluetooth({ requiredFor, isHookEnabled });
+  const { bluetoothRequirementsState, retryRequestOnIssue, cannotRetryRequest } =
+    useRequireBluetooth({ requiredFor, isHookEnabled });
 
   useEffect(() => {
     const timeout = setTimeout(() => {

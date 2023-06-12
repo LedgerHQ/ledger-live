@@ -20,11 +20,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         ...xrpPlatformTx,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        xrp.getWalletAPITransactionSignFlowInfos({
-          tx: xrpPlatformTx,
-          account: dummyAccount,
-        });
+      const { canEditFees, hasFeesProvided, liveTx } = xrp.getWalletAPITransactionSignFlowInfos({
+        tx: xrpPlatformTx,
+        account: dummyAccount,
+      });
 
       expect(canEditFees).toBe(true);
 
@@ -46,11 +45,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         ...xrpPlatformTx,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        xrp.getWalletAPITransactionSignFlowInfos({
-          tx: xrpPlatformTx,
-          account: dummyAccount,
-        });
+      const { canEditFees, hasFeesProvided, liveTx } = xrp.getWalletAPITransactionSignFlowInfos({
+        tx: xrpPlatformTx,
+        account: dummyAccount,
+      });
 
       expect(canEditFees).toBe(true);
 

@@ -1,16 +1,6 @@
-import {
-  useMemo,
-  useState,
-  useEffect,
-  useCallback,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import { useMemo, useState, useEffect, useCallback, Dispatch, SetStateAction } from "react";
 
-export type StateDB<State, Selected> = [
-  Selected,
-  Dispatch<SetStateAction<State>>
-];
+export type StateDB<State, Selected> = [Selected, Dispatch<SetStateAction<State>>];
 
 export function useDBRaw<State, Selected>({
   initialState,
@@ -26,7 +16,7 @@ export function useDBRaw<State, Selected>({
   const [state, setState] = useState<State>(initialState);
 
   useEffect(() => {
-    getter().then((state) => {
+    getter().then(state => {
       if (!state) {
         setterRaw(initialState);
         return;
@@ -39,13 +29,13 @@ export function useDBRaw<State, Selected>({
   }, []);
 
   const setter = useCallback(
-    (newState) => {
+    newState => {
       const val = typeof newState === "function" ? newState(state) : newState;
 
       setState(val);
       setterRaw(val);
     },
-    [state, setterRaw]
+    [state, setterRaw],
   );
 
   const result = useMemo(() => selector(state), [state, selector]);

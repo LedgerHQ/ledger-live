@@ -76,14 +76,7 @@ const FlatListContainer = styled(FlatList).attrs({
   marginBottom: 20,
 })`` as unknown as typeof FlatList;
 
-const UpdateAllModal = ({
-  isOpened,
-  onClose,
-  onConfirm,
-  apps,
-  installed,
-  state,
-}: Props) => {
+const UpdateAllModal = ({ isOpened, onClose, onConfirm, apps, installed, state }: Props) => {
   const { deviceInfo } = state;
 
   const data = apps.map(app => ({
@@ -102,26 +95,13 @@ const UpdateAllModal = ({
 
       return (
         <AppLine>
-          <Flex
-            flexDirection="row"
-            alignItems="center"
-            style={{ width: "60%" }}
-          >
+          <Flex flexDirection="row" alignItems="center" style={{ width: "60%" }}>
             <AppIcon size={32} radius={10} app={item} />
-            <AppName
-              color="neutral.c100"
-              fontWeight="semiBold"
-              variant="body"
-              numberOfLines={1}
-            >
+            <AppName color="neutral.c100" fontWeight="semiBold" variant="body" numberOfLines={1}>
               {name}
             </AppName>
           </Flex>
-          <Flex
-            flexDirection="row"
-            justifyContent="space-between"
-            style={{ width: "35%" }}
-          >
+          <Flex flexDirection="row" justifyContent="space-between" style={{ width: "35%" }}>
             <AppVersion
               color="neutral.c80"
               fontWeight="semiBold"

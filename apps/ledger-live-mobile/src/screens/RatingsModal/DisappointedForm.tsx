@@ -17,9 +17,7 @@ import { knownDevicesSelector } from "../../reducers/ble";
 
 const { height } = getWindowDimensions();
 
-const appVersion = `${VersionNumber.appVersion || ""} (${
-  VersionNumber.buildVersion || ""
-})`;
+const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
 
 const injectedJavascript = `
 const submitInterval = setInterval(addListenerOnFormSubmitButton, 100);
@@ -64,15 +62,12 @@ const DisappointedForm = ({ setStep }: Props) => {
   const { ratingsHappyMoment, ratingsFeatureParams } = useRatings();
   const language = useSelector(languageSelector);
   const devices = useSelector(knownDevicesSelector);
-  const lastDevice =
-    useSelector(lastSeenDeviceSelector) || devices[devices.length - 1];
+  const lastDevice = useSelector(lastSeenDeviceSelector) || devices[devices.length - 1];
 
   const notifications = useSelector(notificationsSelector);
   const notificationsAllowed = notifications.areNotificationsAllowed;
   const notificationsBlacklisted = Object.entries(notifications)
-    .filter(
-      ([key, value]) => key !== "areNotificationsAllowed" && value === false,
-    )
+    .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key)
     .join(",");
 

@@ -9,9 +9,7 @@ import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StackNavigationProp } from "@react-navigation/stack";
-import getBatteryStatus, {
-  BatteryStatusTypes,
-} from "@ledgerhq/live-common/hw/getBatteryStatus";
+import getBatteryStatus, { BatteryStatusTypes } from "@ledgerhq/live-common/hw/getBatteryStatus";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { from } from "rxjs";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
@@ -23,10 +21,7 @@ import {
   hasCompletedOnboardingSelector,
   lastConnectedDeviceSelector,
 } from "../reducers/settings";
-import {
-  getWiredDeviceSelector,
-  hasConnectedDeviceSelector,
-} from "../reducers/appstate";
+import { getWiredDeviceSelector, hasConnectedDeviceSelector } from "../reducers/appstate";
 import Button from "./Button";
 import QueuedDrawer from "./QueuedDrawer";
 import InvertTheme from "./theme/InvertTheme";
@@ -36,24 +31,17 @@ type FirmwareUpdateBannerProps = {
   onBackFromUpdate?: () => void;
 };
 
-const FirmwareUpdateBanner = ({
-  onBackFromUpdate,
-}: FirmwareUpdateBannerProps) => {
-  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
-    lastSeenDeviceSelector,
-  );
+const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) => {
+  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
   const wiredDevice = useSelector(getWiredDeviceSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
-  const hasCompletedOnboarding: boolean = useSelector(
-    hasCompletedOnboardingSelector,
-  );
+  const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
 
   const [staxBattery, setStaxBattery] = useState<
     { percentage: number; charging: boolean } | undefined
   >();
-  const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] =
-    useState<boolean>(false);
+  const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] = useState<boolean>(false);
 
   useEffect(() => {
     if (lastConnectedDevice?.modelId === DeviceModelId.stax) {
@@ -82,14 +70,12 @@ const FirmwareUpdateBanner = ({
     return undefined;
   }, [lastConnectedDevice]);
 
-  const [showUnsupportedUpdateDrawer, setShowUnsupportedUpdateDrawer] =
-    useState<boolean>(false);
+  const [showUnsupportedUpdateDrawer, setShowUnsupportedUpdateDrawer] = useState<boolean>(false);
 
   const { t } = useTranslation();
 
   const route = useRoute();
-  const navigation =
-    useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
+  const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
 
   const newFwUpdateUxFeatureFlag = useFeature("llmNewFirmwareUpdateUx");
 
@@ -145,32 +131,21 @@ const FirmwareUpdateBanner = ({
 
   const isUsbFwVersionUpdateSupported =
     lastSeenDevice &&
-    isFirmwareUpdateVersionSupported(
-      lastSeenDevice.deviceInfo,
-      lastSeenDevice.modelId,
-    );
+    isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, lastSeenDevice.modelId);
 
-  const usbFwUpdateActivated =
-    Platform.OS === "android" && isUsbFwVersionUpdateSupported;
+  const usbFwUpdateActivated = Platform.OS === "android" && isUsbFwVersionUpdateSupported;
 
   const fwUpdateActivatedButNotWired = usbFwUpdateActivated && !wiredDevice;
 
   const onClickUpdate = useCallback(() => {
     // Path with Stax and the new firmware update flow (can be BLE or wired)
-    if (
-      lastConnectedDevice?.modelId === DeviceModelId.stax &&
-      newFwUpdateUxFeatureFlag?.enabled
-    ) {
+    if (lastConnectedDevice?.modelId === DeviceModelId.stax && newFwUpdateUxFeatureFlag?.enabled) {
       staxBattery && staxBattery.percentage < 20 && !staxBattery.charging
         ? setShowBatteryWarningDrawer(true)
         : onExperimentalFirmwareUpdate();
     }
     // Path with any device model, wired and on android, and the former firmware update flow
-    else if (
-      isUsbFwVersionUpdateSupported &&
-      wiredDevice &&
-      Platform.OS === "android"
-    ) {
+    else if (isUsbFwVersionUpdateSupported && wiredDevice && Platform.OS === "android") {
       onExperimentalFirmwareUpdate();
     } else {
       setShowUnsupportedUpdateDrawer(true);
@@ -203,13 +178,7 @@ const FirmwareUpdateBanner = ({
         <Flex backgroundColor="neutral.c100" borderRadius={8} px={5} py={6}>
           <Flex flexDirection="row" alignItems="center" mb={5}>
             <Icons.CloudDownloadMedium color="neutral.c00" size={32} />
-            <Text
-              ml={5}
-              flexShrink={1}
-              flexGrow={1}
-              color="neutral.c00"
-              fontWeight="semiBold"
-            >
+            <Text ml={5} flexShrink={1} flexGrow={1} color="neutral.c00" fontWeight="semiBold">
               {t("FirmwareUpdate.newVersion", {
                 version,
                 deviceName,
@@ -277,22 +246,14 @@ const FirmwareUpdateBanner = ({
         }
         noCloseButton
       >
-        <Button
-          type="primary"
-          title={t("common.close")}
-          onPress={onCloseUsbWarningDrawer}
-        />
+        <Button type="primary" title={t("common.close")} onPress={onCloseUsbWarningDrawer} />
       </QueuedDrawer>
       <QueuedDrawer
         isRequestingToBeOpened={showBatteryWarningDrawer}
         onClose={() => setShowBatteryWarningDrawer(false)}
       >
         <Flex alignItems="center" justifyContent="center" px={1}>
-          <IconBadge
-            iconColor="primary.c100"
-            iconSize={32}
-            Icon={Icons.BatteryHalfMedium}
-          />
+          <IconBadge iconColor="primary.c100" iconSize={32} Icon={Icons.BatteryHalfMedium} />
           <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
             {t("FirmwareUpdate.staxBatteryLow")}
           </Text>

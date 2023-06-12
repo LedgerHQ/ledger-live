@@ -9,11 +9,7 @@ export let appStartupTime: number;
 let nativeMethodInvokedOnce = false;
 
 // Store time from app launch to first React render
-export const StartupTimeMarker = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export const StartupTimeMarker = ({ children }: { children: React.ReactNode }) => {
   const onLayout = React.useCallback(() => {
     if (!nativeMethodInvokedOnce) {
       // react-native-startup-time get startup timestamp by running a native module before react-native launch

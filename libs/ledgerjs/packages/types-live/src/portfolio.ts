@@ -1,8 +1,5 @@
 import type { AccountLike, AccountLikeArray, GranularityId } from "./account";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  *

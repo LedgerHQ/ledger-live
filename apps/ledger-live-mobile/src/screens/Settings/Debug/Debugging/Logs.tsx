@@ -19,10 +19,7 @@ export default function Logs() {
   }, []);
 
   const filteredLogs = useMemo(
-    () =>
-      logs.filter(
-        log => log.type.includes(filter) || log.message?.includes(filter),
-      ),
+    () => logs.filter(log => log.type.includes(filter) || log.message?.includes(filter)),
     [filter, logs],
   );
 

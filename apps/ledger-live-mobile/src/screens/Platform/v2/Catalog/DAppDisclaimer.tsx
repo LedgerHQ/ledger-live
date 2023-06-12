@@ -1,28 +1,13 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Flex,
-  IconBox,
-  Text,
-  Checkbox,
-  Icons,
-  Button,
-} from "@ledgerhq/native-ui";
+import { Flex, IconBox, Text, Checkbox, Icons, Button } from "@ledgerhq/native-ui";
 import { Disclaimer } from "../hooks";
 import { AppIcon } from "../AppIcon";
 import LedgerIcon from "../../../../icons/Ledger";
 import QueuedDrawer from "../../../../components/QueuedDrawer";
 
 export function DAppDisclaimer({
-  disclaimer: {
-    name,
-    icon,
-    isChecked,
-    isOpened,
-    onClose,
-    toggleCheck,
-    onConfirm,
-  },
+  disclaimer: { name, icon, isChecked, isOpened, onClose, toggleCheck, onConfirm },
 }: {
   disclaimer: Disclaimer;
 }) {
@@ -30,12 +15,7 @@ export function DAppDisclaimer({
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
-      <Flex
-        flexDirection="row"
-        justifyContent="center"
-        alignItems="center"
-        mb={10}
-      >
+      <Flex flexDirection="row" justifyContent="center" alignItems="center" mb={10}>
         <IconBox iconSize={28} boxSize={40} Icon={LedgerIcon} />
         {icon && (
           <>
@@ -47,13 +27,7 @@ export function DAppDisclaimer({
         )}
       </Flex>
 
-      <Text
-        variant="h2"
-        mb={6}
-        textAlign="center"
-        color="neutral.c100"
-        uppercase
-      >
+      <Text variant="h2" mb={6} textAlign="center" color="neutral.c100" uppercase>
         {name}
       </Text>
 
@@ -105,13 +79,7 @@ const IconsSeparator = React.memo(() => (
     {Array(6)
       .fill(undefined)
       .map((_, i) => (
-        <Flex
-          key={i}
-          width="3px"
-          height={1}
-          marginX={2}
-          backgroundColor="neutral.c40"
-        />
+        <Flex key={i} width="3px" height={1} marginX={2} backgroundColor="neutral.c40" />
       ))}
   </Flex>
 ));

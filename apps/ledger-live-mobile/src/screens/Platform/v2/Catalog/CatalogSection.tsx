@@ -12,26 +12,15 @@ export function CatalogSection({
 
   return (
     <Flex backgroundColor="background.main">
-      <Text
-        variant={"h4"}
-        fontWeight={"semiBold"}
-        marginBottom={16}
-        marginLeft={16}
-      >
+      <Text variant={"h4"} fontWeight={"semiBold"} marginBottom={16} marginLeft={16}>
         {t("browseWeb3.catalog.section.categories")}
       </Text>
-      <ScrollContainer
-        paddingLeft={16}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
+      <ScrollContainer paddingLeft={16} horizontal showsHorizontalScrollIndicator={false}>
         {categories.map((value: string, index) => (
           <Flex
             key={index}
             marginRight={index === categories.length - 1 ? 8 : 4}
-            borderBottomColor={
-              value === selected ? "neutral.c100" : "neutral.c50"
-            }
+            borderBottomColor={value === selected ? "neutral.c100" : "neutral.c50"}
             borderBottomWidth={value === selected ? 3 : 0}
             paddingBottom={2}
           >

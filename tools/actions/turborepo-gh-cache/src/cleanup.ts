@@ -24,7 +24,7 @@ try {
       fs.readFileSync(logFilePath, {
         encoding: "utf8",
         flag: "r",
-      })
+      }),
     );
   }
   // Remove the turbo cache folder to avoid node_modules caching including it.

@@ -16,10 +16,7 @@ const hydrate = (): void => {};
 
 const receive = makeAccountBridgeReceive();
 
-const updateTransaction = (
-  t: Transaction,
-  patch: Transaction
-): Transaction => ({ ...t, ...patch });
+const updateTransaction = (t: Transaction, patch: Transaction): Transaction => ({ ...t, ...patch });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getPreloadStrategy = (currency: CryptoCurrency): any => ({});

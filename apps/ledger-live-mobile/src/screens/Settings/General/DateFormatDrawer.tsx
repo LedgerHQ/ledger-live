@@ -67,11 +67,7 @@ export function DateFormatDrawer({ isOpen, closeModal }: Props) {
       preventBackdropClick
       title={t("settings.display.DateFormatModal.title")}
     >
-      <TrackScreen
-        category={drawerNameAnalytics}
-        type="drawer"
-        refreshSource={false}
-      />
+      <TrackScreen category={drawerNameAnalytics} type="drawer" refreshSource={false} />
       {options.map((option, index) => (
         <Row
           title={option.title}
@@ -100,11 +96,7 @@ const Row = ({ isSelected, title, onClickRow, hasMarginBottom }: RowProps) => {
         marginBottom: hasMarginBottom ? space[9] : 0,
       }}
     >
-      <Flex
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="center"
-      >
+      <Flex flexDirection="row" justifyContent="space-between" alignItems="center">
         <Text
           fontSize="body"
           fontWeight="semiBold"

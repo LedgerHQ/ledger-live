@@ -29,9 +29,7 @@ export type CosmosRedelegationFlowParamList = {
     value?: BigNumber;
     redelegatedBalance?: BigNumber;
     mode?: string;
-    nextScreen:
-      | ScreenName.CosmosRedelegationValidator
-      | ScreenName.CosmosRedelegationSelectDevice;
+    nextScreen: ScreenName.CosmosRedelegationValidator | ScreenName.CosmosRedelegationSelectDevice;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.CosmosRedelegationAmount]: {
@@ -45,9 +43,7 @@ export type CosmosRedelegationFlowParamList = {
     value?: BigNumber;
     redelegatedBalance?: BigNumber;
     mode?: string;
-    nextScreen:
-      | ScreenName.CosmosRedelegationValidator
-      | ScreenName.CosmosRedelegationSelectDevice;
+    nextScreen: ScreenName.CosmosRedelegationValidator | ScreenName.CosmosRedelegationSelectDevice;
     source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.CosmosRedelegationSelectDevice]: {

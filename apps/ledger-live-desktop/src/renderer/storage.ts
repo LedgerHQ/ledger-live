@@ -227,7 +227,7 @@ export function useDB<
   Selected,
   K extends keyof DatabaseValues,
   V = DatabaseValue<K>,
-  DV extends V = V
+  DV extends V = V,
 >(
   ns: string,
   keyPath: K,

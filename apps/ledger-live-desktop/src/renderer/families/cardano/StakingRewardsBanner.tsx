@@ -22,7 +22,7 @@ const CardHeader = styled(Text)`
   font-size: 12px;
   margin-left: 8px;
 `;
-const AccountBodyHeader = function() {
+const AccountBodyHeader = function () {
   const { t } = useTranslation();
   return (
     <Card px={2} py={2} mb={3} mt={-5}>

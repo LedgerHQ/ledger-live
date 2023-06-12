@@ -22,18 +22,16 @@ type GroupOpsByDayOpts = {
 };
 
 const hasStableOperation = (account: AccountLike, hash: string) =>
-  account.operations.some((op) => op.hash === hash);
+  account.operations.some(op => op.hash === hash);
 
 /**
  * @memberof account
  */
 export function groupAccountsOperationsByDay(
   inputAccounts: AccountLikeArray,
-  { count, withSubAccounts, filterOperation }: GroupOpsByDayOpts
+  { count, withSubAccounts, filterOperation }: GroupOpsByDayOpts,
 ): DailyOperations {
-  const accounts = withSubAccounts
-    ? flattenAccounts(inputAccounts)
-    : inputAccounts;
+  const accounts = withSubAccounts ? flattenAccounts(inputAccounts) : inputAccounts;
   // Track indexes of account.operations[] for each account
   const indexes: number[] = Array(accounts.length).fill(0);
   // Track indexes of account.pendingOperations[] for each account
@@ -157,7 +155,7 @@ export function groupAccountsOperationsByDay(
  */
 export function groupAccountOperationsByDay(
   account: AccountLike,
-  arg: GroupOpsByDayOpts
+  arg: GroupOpsByDayOpts,
 ): DailyOperations {
   const accounts: AccountLike[] = [account];
   return groupAccountsOperationsByDay(accounts, arg);

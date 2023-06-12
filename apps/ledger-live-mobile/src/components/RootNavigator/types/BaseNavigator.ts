@@ -1,18 +1,7 @@
-import type {
-  Operation,
-  AccountLike,
-  Account,
-  DeviceInfo,
-} from "@ledgerhq/types-live";
-import type {
-  NavigatorScreenParams,
-  ParamListBase,
-} from "@react-navigation/native";
+import type { Operation, AccountLike, Account, DeviceInfo } from "@ledgerhq/types-live";
+import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 import type { RampCatalogEntry } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/types";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { PropertyPath } from "lodash";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -107,9 +96,7 @@ export type BaseNavigatorStackParamList = {
         };
       })
     | undefined;
-  [NavigatorName.BuyDevice]:
-    | NavigatorScreenParams<BuyDeviceNavigatorParamList>
-    | undefined;
+  [NavigatorName.BuyDevice]: NavigatorScreenParams<BuyDeviceNavigatorParamList> | undefined;
   [ScreenName.NoDeviceWallScreen]: undefined;
   [ScreenName.PostBuyDeviceSetupNanoWallScreen]: undefined;
 
@@ -234,17 +221,13 @@ export type BaseNavigatorStackParamList = {
   };
 
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
-  [NavigatorName.ReceiveFunds]:
-    | NavigatorScreenParams<ReceiveFundsStackParamList>
-    | undefined;
+  [NavigatorName.ReceiveFunds]: NavigatorScreenParams<ReceiveFundsStackParamList> | undefined;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;
   [NavigatorName.SignMessage]: NavigatorScreenParams<SignMessageNavigatorStackParamList> & {
     onClose?: () => void;
   };
   [NavigatorName.SignTransaction]: NavigatorScreenParams<SignTransactionNavigatorParamList>;
-  [NavigatorName.Swap]:
-    | NavigatorScreenParams<SwapNavigatorParamList>
-    | undefined;
+  [NavigatorName.Swap]: NavigatorScreenParams<SwapNavigatorParamList> | undefined;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
   [NavigatorName.Unfreeze]: NavigatorScreenParams<UnfreezeNavigatorParamList>;
   [NavigatorName.ClaimRewards]: NavigatorScreenParams<ClaimRewardsNavigatorParamList>;
@@ -274,9 +257,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.ImportAccounts]:
     | NavigatorScreenParams<ImportAccountsNavigatorParamList>
     | undefined;
-  [NavigatorName.PasswordAddFlow]:
-    | NavigatorScreenParams<PasswordAddFlowParamList>
-    | undefined;
+  [NavigatorName.PasswordAddFlow]: NavigatorScreenParams<PasswordAddFlowParamList> | undefined;
   [NavigatorName.PasswordModifyFlow]:
     | NavigatorScreenParams<PasswordModifyFlowParamList>
     | undefined;

@@ -1,7 +1,4 @@
-import {
-  createExchangeProviderNameAndSignature,
-  SwapProviderConfig,
-} from "../";
+import { createExchangeProviderNameAndSignature, SwapProviderConfig } from "../";
 import { getEnv } from "../../env";
 import {
   AccessDeniedError,
@@ -34,7 +31,7 @@ export const operationStatusList = {
 };
 
 // A swap operation is considered pending if it is not in a finishedOK or finishedKO state
-export const isSwapOperationPending: (status: string) => boolean = (status) =>
+export const isSwapOperationPending: (status: string) => boolean = status =>
   !operationStatusList.finishedOK.includes(status) &&
   !operationStatusList.finishedKO.includes(status);
 
@@ -42,12 +39,10 @@ const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 
 const SWAP_API_BASE_PATTERN = /.*\/v(?<version>\d+)\/*$/;
 const getSwapAPIVersion: () => number = () => {
-  const version = Number(
-    getSwapAPIBaseURL().match(SWAP_API_BASE_PATTERN)?.groups?.version
-  );
+  const version = Number(getSwapAPIBaseURL().match(SWAP_API_BASE_PATTERN)?.groups?.version);
   if (version == null || isNaN(version)) {
     throw new SwapGenericAPIError(
-      "Configured swap API base URL is invalid, should end with /v<number>"
+      "Configured swap API base URL is invalid, should end with /v<number>",
     );
   }
   return version;
@@ -212,8 +207,7 @@ const swapBackendErrorCodes = {
 };
 
 export const getSwapAPIError = (errorCode: number, errorMessage?: string) => {
-  if (errorCode in swapBackendErrorCodes)
-    return new swapBackendErrorCodes[errorCode](errorMessage);
+  if (errorCode in swapBackendErrorCodes) return new swapBackendErrorCodes[errorCode](errorMessage);
   return new Error(errorMessage);
 };
 

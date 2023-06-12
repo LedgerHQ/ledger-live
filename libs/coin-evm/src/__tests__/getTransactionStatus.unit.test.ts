@@ -18,13 +18,8 @@ import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../types";
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");
-const tokenAccount = makeTokenAccount(
-  "0xkvn",
-  getTokenById("ethereum/erc20/usd__coin")
-);
-const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [
-  tokenAccount,
-]);
+const tokenAccount = makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin"));
+const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [tokenAccount]);
 const legacyTx: EvmTransactionLegacy = {
   amount: new BigNumber(100),
   useAllAmount: false,
@@ -66,7 +61,7 @@ describe("EVM Family", () => {
         expect(res.errors).toEqual(
           expect.objectContaining({
             recipient: new RecipientRequired(),
-          })
+          }),
         );
       });
 
@@ -78,7 +73,7 @@ describe("EVM Family", () => {
             recipient: new InvalidAddress("", {
               currency: account.currency,
             }),
-          })
+          }),
         );
       });
 
@@ -93,7 +88,7 @@ describe("EVM Family", () => {
             recipient: new InvalidAddress("", {
               currency: account.currency,
             }),
-          })
+          }),
         );
       });
 
@@ -103,7 +98,7 @@ describe("EVM Family", () => {
         expect(res.warnings).toEqual(
           expect.objectContaining({
             recipient: new ETHAddressNonEIP(),
-          })
+          }),
         );
       });
     });
@@ -120,7 +115,7 @@ describe("EVM Family", () => {
         expect(res.errors).toEqual(
           expect.objectContaining({
             amount: new AmountRequired(),
-          })
+          }),
         );
       });
 
@@ -131,7 +126,7 @@ describe("EVM Family", () => {
         };
         const res = await getTransactionStatus(
           { ...account, balance: new BigNumber(10000000) },
-          tx
+          tx,
         );
 
         expect(res.errors).toEqual({});
@@ -155,7 +150,7 @@ describe("EVM Family", () => {
               },
             ],
           },
-          tx
+          tx,
         );
 
         expect(res.errors).toEqual({});
@@ -164,13 +159,13 @@ describe("EVM Family", () => {
       it("should detect account not having enough balance for a tx and have an error", async () => {
         const res = await getTransactionStatus(
           { ...account, balance: new BigNumber(0) },
-          eip1559Tx
+          eip1559Tx,
         );
 
         expect(res.errors).toEqual(
           expect.objectContaining({
             amount: new NotEnoughBalance(),
-          })
+          }),
         );
       });
     });
@@ -183,7 +178,7 @@ describe("EVM Family", () => {
         expect(res.errors).toEqual(
           expect.objectContaining({
             gasPrice: new FeeNotLoaded(),
-          })
+          }),
         );
       });
 
@@ -194,7 +189,7 @@ describe("EVM Family", () => {
         expect(res.errors).toEqual(
           expect.objectContaining({
             gasPrice: new FeeNotLoaded(),
-          })
+          }),
         );
       });
 
@@ -205,7 +200,7 @@ describe("EVM Family", () => {
         expect(res.errors).toEqual(
           expect.objectContaining({
             gasLimit: new FeeNotLoaded(),
-          })
+          }),
         );
       });
 
@@ -216,7 +211,7 @@ describe("EVM Family", () => {
         expect(res.errors).toEqual(
           expect.objectContaining({
             gasLimit: new FeeNotLoaded(),
-          })
+          }),
         );
       });
 
@@ -227,29 +222,29 @@ describe("EVM Family", () => {
         expect(res.errors).toEqual(
           expect.objectContaining({
             gasLimit: new GasLessThanEstimate(),
-          })
+          }),
         );
       });
 
       it("should detect gas being too high in a 1559 tx for the account balance and have an error", async () => {
         const notEnoughBalanceResponse = await getTransactionStatus(
           { ...account, balance: new BigNumber(2099999) },
-          eip1559Tx
+          eip1559Tx,
         );
         const enoughhBalanceResponse = await getTransactionStatus(
           { ...account, balance: new BigNumber(2100000) },
-          eip1559Tx
+          eip1559Tx,
         );
 
         expect(notEnoughBalanceResponse.errors).toEqual(
           expect.objectContaining({
             gasPrice: new NotEnoughGas(),
-          })
+          }),
         );
         expect(enoughhBalanceResponse.errors).not.toEqual(
           expect.objectContaining({
             gasPrice: new NotEnoughGas(),
-          })
+          }),
         );
       });
 
@@ -259,79 +254,79 @@ describe("EVM Family", () => {
           {
             ...eip1559Tx,
             maxPriorityFeePerGas: new BigNumber(0),
-          }
+          },
         );
 
         expect(res.errors).toEqual(
           expect.objectContaining({
             maxPriorityFee: new PriorityFeeTooLow(),
-          })
+          }),
         );
       });
 
       it("should detect gas being too high in a legacy tx for the account balance and have an error", async () => {
         const notEnoughBalanceResponse = await getTransactionStatus(
           { ...account, balance: new BigNumber(2099999) },
-          legacyTx
+          legacyTx,
         );
         const enoughhBalanceResponse = await getTransactionStatus(
           { ...account, balance: new BigNumber(2100001) },
-          legacyTx
+          legacyTx,
         );
 
         expect(notEnoughBalanceResponse.errors).toEqual(
           expect.objectContaining({
             gasPrice: new NotEnoughGas(),
-          })
+          }),
         );
         expect(enoughhBalanceResponse.errors).not.toEqual(
           expect.objectContaining({
             gasPrice: new NotEnoughGas(),
-          })
+          }),
         );
       });
 
       it("should not detect gas being too high in a 1559 tx when there is no recipient and have an error", async () => {
         const notEnoughBalanceResponse = await getTransactionStatus(
           { ...account, balance: new BigNumber(2099999) },
-          { ...eip1559Tx, recipient: "" }
+          { ...eip1559Tx, recipient: "" },
         );
         const enoughhBalanceResponse = await getTransactionStatus(
           { ...account, balance: new BigNumber(2100000) },
-          { ...eip1559Tx, recipient: "" }
+          { ...eip1559Tx, recipient: "" },
         );
 
         expect(notEnoughBalanceResponse.errors).not.toEqual(
           expect.objectContaining({
             gasPrice: new NotEnoughGas(),
-          })
+          }),
         );
         expect(enoughhBalanceResponse.errors).not.toEqual(
           expect.objectContaining({
             gasPrice: new NotEnoughGas(),
-          })
+          }),
         );
       });
 
       it("should not detect gas being too high in a legacy tx when there is no recipient and have an error", async () => {
         const notEnoughBalanceResponse = await getTransactionStatus(
           { ...account, balance: new BigNumber(2099999) },
-          { ...legacyTx, recipient: "" }
+          { ...legacyTx, recipient: "" },
         );
         const enoughhBalanceResponse = await getTransactionStatus(
           { ...account, balance: new BigNumber(2100001) },
-          { ...legacyTx, recipient: "" }
+          { ...legacyTx, recipient: "" },
         );
 
         expect(notEnoughBalanceResponse.errors).not.toEqual(
           expect.objectContaining({
             gasPrice: new NotEnoughGas(),
-          })
+          }),
         );
         expect(enoughhBalanceResponse.errors).not.toEqual(
           expect.objectContaining({
             gasPrice: new NotEnoughGas(),
-          })
+          }),
         );
       });
     });
@@ -347,7 +342,7 @@ describe("EVM Family", () => {
             estimatedFees: new BigNumber(2100000),
             amount: legacyTx.amount,
             totalSpent: new BigNumber(2100000).plus(legacyTx.amount),
-          })
+          }),
         );
       });
     });

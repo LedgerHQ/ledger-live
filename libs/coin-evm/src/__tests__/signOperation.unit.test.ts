@@ -18,7 +18,7 @@ const currency: CryptoCurrency = {
 };
 const account: Account = makeAccount(
   "0x7265a60acAeaf3A5E18E10BC1128e72F27B2e176", // trump.eth
-  currency
+  currency,
 );
 
 const transactionEIP1559: EvmTransaction = {
@@ -68,16 +68,14 @@ describe("EVM Family", () => {
   describe("signOperation.ts", () => {
     describe("signOperation", () => {
       beforeAll(() => {
-        jest
-          .spyOn(rpcAPI, "getTransactionCount")
-          .mockImplementation(async () => 1);
+        jest.spyOn(rpcAPI, "getTransactionCount").mockImplementation(async () => 1);
       });
 
       afterAll(() => {
         jest.restoreAllMocks();
       });
 
-      it("should return an optimistic operation and a signed hash based on hardware ECDSA signatures returned by the app bindings", (done) => {
+      it("should return an optimistic operation and a signed hash based on hardware ECDSA signatures returned by the app bindings", done => {
         const signOperation = buildSignOperation(mockWithDevice);
 
         const signOpObservable = signOperation({
@@ -86,7 +84,7 @@ describe("EVM Family", () => {
           deviceId: "",
         });
 
-        signOpObservable.subscribe((obs) => {
+        signOpObservable.subscribe(obs => {
           if (obs.type === "signed") {
             const {
               signedOperation: { signature, operation },
@@ -108,7 +106,7 @@ describe("EVM Family", () => {
               extra: {},
             });
             expect(signature).toBe(
-              "0x02e601016464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c080820123820abc"
+              "0x02e601016464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c080820123820abc",
             );
             done();
           }
@@ -135,15 +133,15 @@ describe("EVM Family", () => {
         "1c", // 28
       ];
 
-      chainIds.forEach((chainId) => {
-        possibleHexV.forEach((v) => {
+      chainIds.forEach(chainId => {
+        possibleHexV.forEach(v => {
           it(`should return an EIP155 compatible v for chain id ${chainId} with v = ${parseInt(
             v,
-            16
+            16,
           )}`, () => {
             const eip155Logic = chainId * 2 + 35;
             expect(
-              [eip155Logic, eip155Logic + 1] // eip155 + parity
+              [eip155Logic, eip155Logic + 1], // eip155 + parity
             ).toContain(applyEIP155(v, chainId));
           });
         });

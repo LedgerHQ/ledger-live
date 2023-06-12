@@ -1,8 +1,5 @@
 import type { Resolver } from "../../hw/getAddress/types";
-import Ada, {
-  Networks,
-  AddressType,
-} from "@cardano-foundation/ledgerjs-hw-app-cardano";
+import Ada, { Networks, AddressType } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
 import { getBipPathFromString, getBipPathString } from "./logic";
 import { StakeChain } from "./types";
@@ -20,9 +17,7 @@ const resolver: Resolver = async (transport, { path, verify, currency }) => {
   });
   const networkParams = getNetworkParameters(currency.id);
   const network =
-    networkParams.networkId === Networks.Mainnet.networkId
-      ? Networks.Mainnet
-      : Networks.Testnet;
+    networkParams.networkId === Networks.Mainnet.networkId ? Networks.Mainnet : Networks.Testnet;
 
   const ada = new Ada(transport);
   const r = await ada.deriveAddress({
@@ -47,9 +42,7 @@ const resolver: Resolver = async (transport, { path, verify, currency }) => {
       },
     });
   }
-  const address = TyphonUtils.getAddressFromHex(
-    r.addressHex
-  ) as TyphonAddress.BaseAddress;
+  const address = TyphonUtils.getAddressFromHex(r.addressHex) as TyphonAddress.BaseAddress;
   return {
     address: address.getBech32(),
     // Here, we use publicKey hash, as cardano app doesn't export the public key

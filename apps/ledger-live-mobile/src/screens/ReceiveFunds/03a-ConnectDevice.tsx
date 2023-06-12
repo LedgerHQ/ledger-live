@@ -16,9 +16,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen, track } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
-import SelectDevice2, {
-  SetHeaderOptionsRequest,
-} from "../../components/SelectDevice2";
+import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import ReadOnlyWarning from "./ReadOnlyWarning";
@@ -40,9 +38,7 @@ export const connectDeviceHeaderOptions = (
   onHeaderBackButtonPress: () => void,
 ): ReactNavigationHeaderOptions => ({
   headerRight: () => <NavigationHeaderCloseButton />,
-  headerLeft: () => (
-    <NavigationHeaderBackButton onPress={onHeaderBackButtonPress} />
-  ),
+  headerLeft: () => <NavigationHeaderBackButton onPress={onHeaderBackButtonPress} />,
 });
 
 const action = createAction(connectApp);
@@ -50,10 +46,7 @@ const action = createAction(connectApp);
 export default function ConnectDevice({
   navigation,
   route,
-}: StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveConnectDevice
->) {
+}: StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
@@ -142,23 +135,18 @@ export default function ConnectDevice({
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(mainAccount);
   if (currency.type !== "CryptoCurrency") return null; // this should not happen: currency of main account is a crypto currency
-  const tokenCurrency =
-    account && account.type === "TokenAccount" ? account.token : undefined;
+  const tokenCurrency = account && account.type === "TokenAccount" ? account.token : undefined;
 
   // check for coin specific UI
-  const CustomConnectDevice =
-    byFamily[currency.family as keyof typeof byFamily];
-  if (CustomConnectDevice)
-    return <CustomConnectDevice {...{ navigation, route }} />;
+  const CustomConnectDevice = byFamily[currency.family as keyof typeof byFamily];
+  if (CustomConnectDevice) return <CustomConnectDevice {...{ navigation, route }} />;
 
   if (readOnlyModeEnabled) {
     return <ReadOnlyWarning continue={onSkipDevice} />;
   }
 
   if (!mainAccount.freshAddress) {
-    return (
-      <NotSyncedWarning continue={onSkipDevice} accountId={mainAccount.id} />
-    );
+    return <NotSyncedWarning continue={onSkipDevice} accountId={mainAccount.id} />;
   }
 
   return (
@@ -174,15 +162,10 @@ export default function ConnectDevice({
           />
         </Flex>
       ) : (
-        <NavigationScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContainer}
-        >
+        <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
           <SelectDevice
             onSelect={setDevice}
-            onWithoutDevice={
-              route.params?.notSkippable ? undefined : onSkipDevice
-            }
+            onWithoutDevice={route.params?.notSkippable ? undefined : onSkipDevice}
           />
         </NavigationScrollView>
       )}

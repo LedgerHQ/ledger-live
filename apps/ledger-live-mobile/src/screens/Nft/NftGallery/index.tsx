@@ -54,26 +54,18 @@ const NftGallery = () => {
 
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
 
-  const [collectionsCount, setCollectionsCount] = useState(
-    MAX_COLLECTIONS_FIRST_RENDER,
-  );
+  const [collectionsCount, setCollectionsCount] = useState(MAX_COLLECTIONS_FIRST_RENDER);
 
   const collections = useMemo(
     () =>
       Object.entries(nftsByCollections((account as Account).nfts)).filter(
-        ([contract]) =>
-          !hiddenNftCollections.includes(
-            `${(account as Account).id}|${contract}`,
-          ),
+        ([contract]) => !hiddenNftCollections.includes(`${(account as Account).id}|${contract}`),
       ),
     [account, hiddenNftCollections],
   ) as [string, ProtoNFT[]][];
 
   const collectionsSlice: Array<ProtoNFT[]> = useMemo(
-    () =>
-      collections
-        .slice(0, collectionsCount)
-        .map(([, collection]) => collection),
+    () => collections.slice(0, collectionsCount).map(([, collection]) => collection),
     [collections, collectionsCount],
   );
 
@@ -89,9 +81,7 @@ const NftGallery = () => {
     ) : null;
 
   const onEndReached = useCallback(() => {
-    setCollectionsCount(
-      collectionsCount + COLLECTIONS_TO_ADD_ON_LIST_END_REACHED,
-    );
+    setCollectionsCount(collectionsCount + COLLECTIONS_TO_ADD_ON_LIST_END_REACHED);
   }, [collectionsCount]);
 
   const goToCollectionSelection = () =>
@@ -103,8 +93,7 @@ const NftGallery = () => {
       },
     });
 
-  const isNFTDisabled =
-    useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
+  const isNFTDisabled = useFeature("disableNftSend")?.enabled && Platform.OS === "ios";
 
   return (
     <>

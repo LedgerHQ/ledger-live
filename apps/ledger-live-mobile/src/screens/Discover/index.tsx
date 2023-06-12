@@ -38,15 +38,12 @@ const images = {
 function Discover() {
   const { t } = useTranslation();
   const navigation =
-    useNavigation<
-      StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>
-    >();
+    useNavigation<StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>>();
 
   const learn = useFeature("brazeLearn");
   const isNewsfeedAvailable = useIsNewsfeedAvailable();
   const referralProgramConfig = useFeature("referralProgramDiscoverCard");
-  const isNFTDisabled =
-    useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
+  const isNFTDisabled = useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
 
   const readOnlyTrack = useCallback((bannerName: string) => {
     track("banner_clicked", {
@@ -269,30 +266,26 @@ function Discover() {
           </Text>
         </Flex>
       </Flex>
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-      >
-        {featuresList.map(
-          ({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (
-            <DiscoverCard
-              key={i}
-              title={title}
-              subTitle={subTitle}
-              onPress={onPress}
-              disabled={disabled}
-              labelBadge={labelBadge}
-              imageContainerProps={{
-                position: "relative",
-                height: "auto",
-                alignItems: "center",
-                justifyContent: "center",
-                flex: 1,
-                paddingRight: 4,
-              }}
-              Image={Image}
-            />
-          ),
-        )}
+      <ScrollView contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}>
+        {featuresList.map(({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (
+          <DiscoverCard
+            key={i}
+            title={title}
+            subTitle={subTitle}
+            onPress={onPress}
+            disabled={disabled}
+            labelBadge={labelBadge}
+            imageContainerProps={{
+              position: "relative",
+              height: "auto",
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              paddingRight: 4,
+            }}
+            Image={Image}
+          />
+        ))}
       </ScrollView>
     </Flex>
   );

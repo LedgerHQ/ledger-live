@@ -5,28 +5,19 @@ import { useTranslation } from "react-i18next";
 import { Flex, Icons, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  getAccountCurrency,
-  flattenAccounts,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
 import { TrackScreen, useAnalytics } from "../../../analytics";
 import AccountCard from "../../../components/AccountCard";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
 import KeyboardView from "../../../components/KeyboardView";
-import {
-  formatSearchResults,
-  SearchResult,
-} from "../../../helpers/formatAccountSearchResults";
+import { formatSearchResults, SearchResult } from "../../../helpers/formatAccountSearchResults";
 import { SelectAccountParamList } from "../types";
 import { NavigatorName, ScreenName } from "../../../const";
 import { accountsSelector } from "../../../reducers/accounts";
 import { sharedSwapTracking } from "../utils";
 
-export function SelectAccount({
-  navigation,
-  route: { params },
-}: SelectAccountParamList) {
+export function SelectAccount({ navigation, route: { params } }: SelectAccountParamList) {
   const { provider, target, selectableCurrencyIds, selectedCurrency } = params;
 
   const { track } = useAnalytics();
@@ -34,9 +25,7 @@ export function SelectAccount({
 
   const accounts: Account[] = useMemo(
     () =>
-      unfilteredAccounts.filter(acc =>
-        selectableCurrencyIds.includes(getAccountCurrency(acc).id),
-      ),
+      unfilteredAccounts.filter(acc => selectableCurrencyIds.includes(getAccountCurrency(acc).id)),
     [selectableCurrencyIds, unfilteredAccounts],
   );
 
@@ -53,9 +42,7 @@ export function SelectAccount({
           : selectedCurrency.id),
     );
     if (selectedCurrency.type === "TokenCurrency") {
-      return filteredAccounts.map(acc =>
-        accountWithMandatoryTokens(acc, [selectedCurrency]),
-      );
+      return filteredAccounts.map(acc => accountWithMandatoryTokens(acc, [selectedCurrency]));
     }
     return filteredAccounts;
   }, [accounts, selectedCurrency]);
@@ -74,8 +61,7 @@ export function SelectAccount({
           return {
             ...a,
             disabled:
-              (selectedCurrency.type === "TokenCurrency" &&
-                c.type === "CryptoCurrency") ||
+              (selectedCurrency.type === "TokenCurrency" && c.type === "CryptoCurrency") ||
               c.id !== selectedCurrency.id,
           };
         });
@@ -83,9 +69,7 @@ export function SelectAccount({
 
     return accounts.map(a => ({
       ...a,
-      disabled:
-        !a.balance.gt(0) ||
-        !selectableCurrencyIds.includes(getAccountCurrency(a).id),
+      disabled: !a.balance.gt(0) || !selectableCurrencyIds.includes(getAccountCurrency(a).id),
     }));
   }, [target, selectedCurrency, enhancedAccounts, selectableCurrencyIds]);
 
@@ -190,11 +174,7 @@ export function SelectAccount({
 
   return (
     <KeyboardView>
-      <TrackScreen
-        category="Swap Form"
-        name="Edit Source Account"
-        provider={provider}
-      />
+      <TrackScreen category="Swap Form" name="Edit Source Account" provider={provider} />
       <FilteredSearchBar
         keys={["name", "unit.code", "token.name", "token.ticker"]}
         inputWrapperStyle={[styles.searchBarContainer]}

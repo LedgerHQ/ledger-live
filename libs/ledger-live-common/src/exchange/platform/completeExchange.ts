@@ -18,7 +18,7 @@ type CompleteExchangeInput =
   | CompleteExchangeInputFund;
 
 const completeExchange = (
-  input: CompleteExchangeInput
+  input: CompleteExchangeInput,
 ): Observable<CompleteExchangeRequestEvent> => {
   switch (input.exchangeType) {
     case ExchangeTypes.Swap:

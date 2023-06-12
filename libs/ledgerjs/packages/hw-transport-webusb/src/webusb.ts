@@ -15,7 +15,7 @@ export async function requestLedgerDevice(): Promise<USBDevice> {
 
 export async function getLedgerDevices(): Promise<USBDevice[]> {
   const devices = await navigator.usb.getDevices();
-  return devices.filter((d) => d.vendorId === ledgerUSBVendorId);
+  return devices.filter(d => d.vendorId === ledgerUSBVendorId);
 }
 
 export async function getFirstLedgerDevice(): Promise<USBDevice> {
@@ -25,8 +25,4 @@ export async function getFirstLedgerDevice(): Promise<USBDevice> {
 }
 
 export const isSupported = (): Promise<boolean> =>
-  Promise.resolve(
-    !!navigator &&
-      !!navigator.usb &&
-      typeof navigator.usb.getDevices === "function"
-  );
+  Promise.resolve(!!navigator && !!navigator.usb && typeof navigator.usb.getDevices === "function");

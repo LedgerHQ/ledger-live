@@ -6,8 +6,8 @@ import styled from "styled-components";
 
 // TODO: Replace me with a real button as soon as they are designed
 const MaxButton = styled.button<{ active?: boolean }>`
-  color: ${(p) => (p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c70)};
-  background-color: ${(p) => (p.active ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c00)};
+  color: ${p => (p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c70)};
+  background-color: ${p => (p.active ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c00)};
   border-radius: 100px;
   border-width: 0;
   height: 31px;
@@ -16,8 +16,8 @@ const MaxButton = styled.button<{ active?: boolean }>`
   cursor: pointer;
 
   &:disabled {
-    color: ${(p) => p.theme.colors.neutral.c50};
-    background-color: ${(p) => (p.active ? p.theme.colors.neutral.c30 : "transparent")};
+    color: ${p => p.theme.colors.neutral.c50};
+    background-color: ${p => (p.active ? p.theme.colors.neutral.c30 : "transparent")};
     cursor: unset;
   }
 `;
@@ -57,7 +57,7 @@ function NumberInput(
       disabled={disabled}
       renderRight={
         <FlexBox alignItems={"center"} justifyContent={"center"} py={"3px"} mr={"8px"}>
-          {[0.25, 0.5, 0.75, 1].map((percent) => (
+          {[0.25, 0.5, 0.75, 1].map(percent => (
             <MaxButton
               key={percent}
               onClick={() => onPercentClick(percent)}

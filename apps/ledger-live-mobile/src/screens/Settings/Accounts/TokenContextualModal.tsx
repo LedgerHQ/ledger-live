@@ -3,10 +3,7 @@ import { connect } from "react-redux";
 import type { TokenAccount, Account, SubAccount } from "@ledgerhq/types-live";
 import { View, StyleSheet } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
-import {
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   getAccountContractExplorer,
   getDefaultExplorerView,
@@ -47,8 +44,7 @@ const TokenContextualModal = ({
   blacklistToken,
 }: Props) => {
   const { t } = useTranslation();
-  const navigation =
-    useNavigation<StackNavigatorNavigation<PortfolioNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<PortfolioNavigatorStackParamList>>();
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showContract, setShowContract] = useState(false);
@@ -67,9 +63,7 @@ const TokenContextualModal = ({
 
   if (!isOpened || !account) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const explorerView = mainAccount
-    ? getDefaultExplorerView(mainAccount.currency)
-    : null;
+  const explorerView = mainAccount ? getDefaultExplorerView(mainAccount.currency) : null;
   const url = explorerView
     ? getAccountContractExplorer(explorerView, account, parentAccount!)
     : null;
@@ -79,10 +73,7 @@ const TokenContextualModal = ({
       preventBackdropClick={false}
       Icon={
         showingContextMenu ? (
-          <ParentCurrencyIcon
-            size={48}
-            currency={getAccountCurrency(account)}
-          />
+          <ParentCurrencyIcon size={48} currency={getAccountCurrency(account)} />
         ) : undefined
       }
       title={showingContextMenu ? account.token.name : undefined}
@@ -95,11 +86,7 @@ const TokenContextualModal = ({
       ) : null}
 
       {showContract && url ? (
-        <TokenContractAddress
-          token={account.token}
-          onClose={onCloseModal}
-          url={url || ""}
-        />
+        <TokenContractAddress token={account.token} onClose={onCloseModal} url={url || ""} />
       ) : showConfirmation ? (
         <View style={styles.body}>
           <LText style={styles.confirmationDesc} color="smoke">
@@ -120,14 +107,9 @@ const TokenContextualModal = ({
             />
             <Button
               event="ConfirmationModalConfirm"
-              containerStyle={[
-                styles.confirmationButton,
-                styles.confirmationLastButton,
-              ]}
+              containerStyle={[styles.confirmationButton, styles.confirmationLastButton]}
               type={"primary"}
-              title={
-                <Trans i18nKey="settings.accounts.blacklistedTokensModal.confirm" />
-              }
+              title={<Trans i18nKey="settings.accounts.blacklistedTokensModal.confirm" />}
               onPress={onBlacklistToken}
             />
           </View>

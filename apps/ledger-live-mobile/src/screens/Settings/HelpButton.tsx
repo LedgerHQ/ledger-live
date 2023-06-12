@@ -8,8 +8,7 @@ import { StackNavigatorNavigation } from "../../components/RootNavigator/types/h
 import { SettingsNavigatorStackParamList } from "../../components/RootNavigator/types/SettingsNavigator";
 
 const HelpButton = () => {
-  const { navigate } =
-    useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const { navigate } = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   return (
     <Box mr={6}>
       <TouchableOpacity onPress={() => navigate(ScreenName.Resources)}>

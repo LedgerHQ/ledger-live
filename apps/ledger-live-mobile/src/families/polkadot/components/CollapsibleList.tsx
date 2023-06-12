@@ -27,12 +27,7 @@ const CollapsibleList = <Item,>({
 
   return (
     <>
-      <View
-        style={[
-          styles.list,
-          !!collapsedItems.length && collapsed && styles.elevated,
-        ]}
-      >
+      <View style={[styles.list, !!collapsedItems.length && collapsed && styles.elevated]}>
         {children}
         {uncollapsedItems.map((item, i) =>
           renderItem(item, i, collapsed && i === uncollapsedItems.length - 1),

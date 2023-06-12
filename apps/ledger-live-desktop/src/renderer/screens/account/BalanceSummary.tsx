@@ -33,15 +33,11 @@ export default function AccountBalanceSummary({
 }: Props) {
   const [range] = useTimeRange();
   const counterValue = useSelector(counterValueCurrencySelector);
-  const {
-    history,
-    countervalueAvailable,
-    countervalueChange,
-    cryptoChange,
-  } = useBalanceHistoryWithCountervalue({
-    account,
-    range,
-  });
+  const { history, countervalueAvailable, countervalueChange, cryptoChange } =
+    useBalanceHistoryWithCountervalue({
+      account,
+      range,
+    });
   const discreetMode = useSelector(discreetModeSelector);
   const renderTooltip = useCallback(
     (d: Item) => {

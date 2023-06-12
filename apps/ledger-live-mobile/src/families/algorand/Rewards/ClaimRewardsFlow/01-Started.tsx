@@ -3,10 +3,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import {
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/helpers";
+import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -41,10 +38,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account, undefined) as AlgorandAccount;
   const bridge = getAccountBridge(mainAccount, undefined);
-  invariant(
-    mainAccount && mainAccount.algorandResources,
-    "algorand Account required",
-  );
+  invariant(mainAccount && mainAccount.algorandResources, "algorand Account required");
   const { rewards } = mainAccount.algorandResources;
   const unit = getAccountUnit(mainAccount);
   const { transaction, status } = useBridgeTransaction(() => {
@@ -68,9 +62,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
     });
   }, [navigation, route.params, transaction]);
   const warning =
-    status.warnings &&
-    Object.keys(status.warnings).length > 0 &&
-    Object.values(status.warnings)[0];
+    status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
   return (
     <SafeAreaView
       style={[
@@ -80,10 +72,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         },
       ]}
     >
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen category="DelegationFlow" name="Started" />
         <Flex alignItems="center" justifyContent="center" mb={6}>
           <Illustration
@@ -109,13 +98,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
       <View style={[styles.footer]}>
         {warning && warning instanceof Error ? (
           <View style={styles.warningSection}>
-            <LText
-              selectable
-              secondary
-              semiBold
-              style={styles.warningText}
-              color="alert"
-            >
+            <LText selectable secondary semiBold style={styles.warningText} color="alert">
               <TranslatedError error={warning} />
             </LText>
           </View>
@@ -123,9 +106,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <Button
           event="DelegationStartedBtn"
           onPress={onNext}
-          title={
-            <Trans i18nKey="algorand.claimRewards.flow.steps.starter.cta" />
-          }
+          title={<Trans i18nKey="algorand.claimRewards.flow.steps.starter.cta" />}
           type="primary"
         />
       </View>

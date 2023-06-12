@@ -14,8 +14,7 @@ describe("Unit tests for bitcoin storage", () => {
             output_index: 0,
             value: "5000000000",
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            output_hash:
-              "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
+            output_hash: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
             block_height: 1,
             rbf: false,
           },
@@ -23,8 +22,7 @@ describe("Unit tests for bitcoin storage", () => {
             output_index: 1,
             value: "0",
             address: "<unknown>",
-            output_hash:
-              "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
+            output_hash: "9e1b337875c21f751e70ee2c2c6ee93d8a6733d0f3ba6d139ae6a0479ebcefb0",
             block_height: 1,
             rbf: false,
           },
@@ -43,8 +41,7 @@ describe("Unit tests for bitcoin storage", () => {
         id: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
         inputs: [
           {
-            output_hash:
-              "2772f3963856f3eb38cb706ec8c2b62fcdeb2ce10f32cf7160afb3873be6f60d",
+            output_hash: "2772f3963856f3eb38cb706ec8c2b62fcdeb2ce10f32cf7160afb3873be6f60d",
             output_index: 0,
             value: "5000000000",
             address: "2NCDBM9DAuMrD1T8XDHMxvbTmLutP7at4AB",
@@ -56,8 +53,7 @@ describe("Unit tests for bitcoin storage", () => {
             output_index: 0,
             value: "300000000",
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            output_hash:
-              "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
+            output_hash: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
             block_height: 120,
             rbf: false,
           },
@@ -65,8 +61,7 @@ describe("Unit tests for bitcoin storage", () => {
             output_index: 1,
             value: "4699983200",
             address: "2MynSTpze5SDcuLr1DekSV7RVrFpQCo3LeP",
-            output_hash:
-              "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
+            output_hash: "0b9f98d07eb418fa20573112d3cba6b871d429a06c724a7888ff0886be5213d1",
             block_height: 120,
             rbf: false,
           },
@@ -85,8 +80,7 @@ describe("Unit tests for bitcoin storage", () => {
         id: "446a5364d109a01bb079ae3ce95577c25ac7169ef2e29ce82578ba4739fb5a36",
         inputs: [
           {
-            output_hash:
-              "2772f3963856f3eb38cb706ec8c2b62fcdeb2ce10f32cf7160afb3873be6f60d",
+            output_hash: "2772f3963856f3eb38cb706ec8c2b62fcdeb2ce10f32cf7160afb3873be6f60d",
             output_index: 0,
             value: "5000000000",
             address: "2NCDBM9DAuMrD1T8XDHMxvbTmLutP7at4AB",
@@ -98,8 +92,7 @@ describe("Unit tests for bitcoin storage", () => {
             output_index: 0,
             value: "300000000",
             address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
-            output_hash:
-              "446a5364d109a01bb079ae3ce95577c25ac7169ef2e29ce82578ba4739fb5a36",
+            output_hash: "446a5364d109a01bb079ae3ce95577c25ac7169ef2e29ce82578ba4739fb5a36",
             block_height: 120,
             rbf: false,
           },
@@ -107,8 +100,7 @@ describe("Unit tests for bitcoin storage", () => {
             output_index: 1,
             value: "4699983200",
             address: "2MynSTpze5SDcuLr1DekSV7RVrFpQCo3LeP",
-            output_hash:
-              "446a5364d109a01bb079ae3ce95577c25ac7169ef2e29ce82578ba4739fb5a36",
+            output_hash: "446a5364d109a01bb079ae3ce95577c25ac7169ef2e29ce82578ba4739fb5a36",
             block_height: 120,
             rbf: false,
           },
@@ -150,7 +142,7 @@ describe("Unit tests for bitcoin storage", () => {
     // 1 pending txs and 2 confirmed txs
     expect(storage.getHighestBlockHeightAndHash()?.height).toEqual(120);
     expect(storage.getHighestBlockHeightAndHash()?.hash).toEqual(
-      "305d4b8d4a6d6ecca0a3dd0216f8ecd090978ed346d1845883c8aa4529d72fc8"
+      "305d4b8d4a6d6ecca0a3dd0216f8ecd090978ed346d1845883c8aa4529d72fc8",
     );
 
     expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(true);
@@ -160,21 +152,15 @@ describe("Unit tests for bitcoin storage", () => {
     storage.removePendingTxs({ account: 0, index: 0 });
     expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(false);
     expect(storage.hasTx({ account: 0, index: 0 })).toBe(true);
-    expect(
-      storage.getLastConfirmedTxBlock({ account: 0, index: 0 })?.height
-    ).toEqual(120);
-    expect(
-      storage.getLastConfirmedTxBlock({ account: 0, index: 0 })?.hash
-    ).toEqual(
-      "305d4b8d4a6d6ecca0a3dd0216f8ecd090978ed346d1845883c8aa4529d72fc8"
+    expect(storage.getLastConfirmedTxBlock({ account: 0, index: 0 })?.height).toEqual(120);
+    expect(storage.getLastConfirmedTxBlock({ account: 0, index: 0 })?.hash).toEqual(
+      "305d4b8d4a6d6ecca0a3dd0216f8ecd090978ed346d1845883c8aa4529d72fc8",
     );
 
     expect(storage.getLastUnconfirmedTx()).toBeUndefined();
     // remove all tx
     storage.removeTxs({ account: 0, index: 0 });
-    expect(
-      storage.getLastConfirmedTxBlock({ account: 0, index: 0 })
-    ).toBeNull();
+    expect(storage.getLastConfirmedTxBlock({ account: 0, index: 0 })).toBeNull();
     expect(storage.hasPendingTx({ account: 0, index: 0 })).toBe(false);
     expect(storage.hasTx({ account: 0, index: 0 })).toBe(false);
     expect(storage.getHighestBlockHeightAndHash()).toBeNull();

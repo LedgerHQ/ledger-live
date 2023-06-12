@@ -36,13 +36,7 @@ const LinkBox = React.memo(({ text, url, event, mb = 0 }: LinkBoxProps) => (
       backgroundColor="palette.primary.c20"
       mb={mb}
     >
-      <Text
-        color="palette.primary.c80"
-        variant="body"
-        fontSize="14px"
-        fontWeight="semiBold"
-        mr={3}
-      >
+      <Text color="palette.primary.c80" variant="body" fontSize="14px" fontWeight="semiBold" mr={3}>
         {text}
       </Text>
       <Icons.ExternalLinkMedium color="palette.primary.c80" size="18px" />
@@ -80,12 +74,7 @@ function OnboardingStepTerms() {
       title={t("Terms.title")}
       subTitle={t("Terms.subTitle")}
       footer={
-        <Button
-          disabled={!toggle}
-          onPress={next}
-          testID="Onboarding - ToU accepted"
-          type="main"
-        >
+        <Button disabled={!toggle} onPress={next} testID="Onboarding - ToU accepted" type="main">
           {t("Terms.cta")}
         </Button>
       }
@@ -98,18 +87,11 @@ function OnboardingStepTerms() {
       />
       <LinkBox
         text={t("settings.about.privacyPolicy")}
-        url={
-          urls.privacyPolicy[locale as keyof typeof urls.privacyPolicy] ??
-          urls.privacyPolicy.en
-        }
+        url={urls.privacyPolicy[locale as keyof typeof urls.privacyPolicy] ?? urls.privacyPolicy.en}
         event="OpenPrivacyPolicy"
       />
       <Flex flexDirection="row" mt={9}>
-        <Checkbox
-          checked={toggle}
-          onChange={onSwitch}
-          label={t("Terms.switchLabelFull")}
-        />
+        <Checkbox checked={toggle} onChange={onSwitch} label={t("Terms.switchLabelFull")} />
       </Flex>
       <TrackScreen category="Onboarding" name="Terms" />
     </OnboardingView>

@@ -28,14 +28,10 @@ const Stack = createStackNavigator<AccountsNavigatorParamList>();
 
 export default function AccountsNavigator() {
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
-  const readOnlyModeEnabled =
-    useSelector(readOnlyModeEnabledSelector) && hasNoAccounts;
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && hasNoAccounts;
 
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>

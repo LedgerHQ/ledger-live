@@ -41,13 +41,11 @@ type Props = {
 const CustomImageBottomModal: React.FC<Props> = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRemovingCustomImage, setIsRemovingCustomImage] = useState(false);
-  const { isOpened, onClose, device, deviceHasImage, setDeviceHasImage } =
-    props;
+  const { isOpened, onClose, device, deviceHasImage, setDeviceHasImage } = props;
   const { t } = useTranslation();
   const { pushToast } = useToasts();
 
-  const navigation =
-    useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
   const handleUploadFromPhone = useCallback(async () => {
     try {
@@ -82,10 +80,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     onClose && onClose();
   }, [navigation, device, onClose]);
 
-  const request = useMemo(
-    () => ({ deviceId: device?.deviceId || "", request: {} }),
-    [device],
-  );
+  const request = useMemo(() => ({ deviceId: device?.deviceId || "", request: {} }), [device]);
 
   useEffect(() => {
     return () => {
@@ -129,11 +124,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
       onClose={wrappedOnClose}
       preventBackdropClick={isRemovingCustomImage}
     >
-      <TrackScreen
-        category={analyticsDrawerName}
-        type="drawer"
-        refreshSource={false}
-      />
+      <TrackScreen category={analyticsDrawerName} type="drawer" refreshSource={false} />
       {isRemovingCustomImage && device ? (
         <Flex alignItems="center">
           <Flex flexDirection="row">

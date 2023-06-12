@@ -28,9 +28,7 @@ describe("estimateGasLimit", () => {
   };
 
   beforeEach(() => {
-    jest
-      .spyOn(ethereumApi, "apiForCurrency")
-      .mockImplementation(() => api as unknown as API);
+    jest.spyOn(ethereumApi, "apiForCurrency").mockImplementation(() => api as unknown as API);
   });
 
   afterEach(() => {
@@ -50,13 +48,9 @@ describe("estimateGasLimit", () => {
     it("should return value multiplied by amplifier if value isn't 21k", async () => {
       setEnv("ETHEREUM_GAS_LIMIT_AMPLIFIER", MULTIPLIER);
       const definitelyNotTwentyOneK = new BigNumber(100);
-      api.getDryRunGasLimit.mockReturnValueOnce(
-        Promise.resolve(definitelyNotTwentyOneK)
-      );
+      api.getDryRunGasLimit.mockReturnValueOnce(Promise.resolve(definitelyNotTwentyOneK));
       const gas = await estimateGasLimit(accountMock, transactionMock);
-      expect(gas).toEqual(
-        definitelyNotTwentyOneK.times(MULTIPLIER).integerValue()
-      );
+      expect(gas).toEqual(definitelyNotTwentyOneK.times(MULTIPLIER).integerValue());
       expect(api.getFallbackGasLimit).not.toHaveBeenCalledTimes(1);
     });
   });
@@ -65,9 +59,7 @@ describe("estimateGasLimit", () => {
     it("should return fallback gas service value", async () => {
       const fallbackValue = new BigNumber(777);
       api.getDryRunGasLimit.mockRejectedValueOnce(new Error("ups"));
-      api.getFallbackGasLimit.mockReturnValueOnce(
-        Promise.resolve(fallbackValue)
-      );
+      api.getFallbackGasLimit.mockReturnValueOnce(Promise.resolve(fallbackValue));
       const gas = await estimateGasLimit(accountMock, transactionMock);
       expect(gas).toEqual(fallbackValue);
       expect(api.getFallbackGasLimit).toHaveBeenCalledTimes(1);

@@ -1,10 +1,11 @@
 import { Observable } from "rxjs";
-import { toggleOnboardingEarlyCheckAction } from "@ledgerhq/live-common/deviceSDK/actions/toggleOnboardingEarlyCheck"; 
+import { toggleOnboardingEarlyCheckAction } from "@ledgerhq/live-common/deviceSDK/actions/toggleOnboardingEarlyCheck";
 import { deviceOpt } from "../scan";
 
 export default {
   description: "Device SDK: toggle the onboarding early checks",
-  args: [deviceOpt,
+  args: [
+    deviceOpt,
     {
       name: "toggleType",
       alias: "t",
@@ -14,10 +15,10 @@ export default {
   ],
   job: ({
     device,
-    toggleType
+    toggleType,
   }: Partial<{
     device: string;
-    toggleType: "enter" | "exit" 
+    toggleType: "enter" | "exit";
   }>) => {
     return new Observable(o => {
       if (toggleType && !["enter", "exit"].includes(toggleType)) {
@@ -27,8 +28,8 @@ export default {
 
       return toggleOnboardingEarlyCheckAction({
         deviceId: device ?? "",
-        toggleType: toggleType ?? "enter"
+        toggleType: toggleType ?? "enter",
       }).subscribe(o);
-    })
-  }
+    });
+  },
 };

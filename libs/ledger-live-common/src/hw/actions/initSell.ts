@@ -7,10 +7,7 @@ import type { Transaction, TransactionStatus } from "../../generated/types";
 import type { AppState } from "./app";
 import { log } from "@ledgerhq/logs";
 import { createAction as createAppAction } from "./app";
-import type {
-  InitSellResult,
-  SellRequestEvent,
-} from "../../exchange/sell/types";
+import type { InitSellResult, SellRequestEvent } from "../../exchange/sell/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
 type State = {
@@ -38,10 +35,7 @@ type Result =
 
 type InitSellAction = Action<InitSellRequest, InitSellState, Result>;
 
-const mapResult = ({
-  initSellResult,
-  initSellError,
-}: InitSellState): Result | null | undefined =>
+const mapResult = ({ initSellResult, initSellError }: InitSellState): Result | null | undefined =>
   initSellResult
     ? {
         initSellResult,
@@ -94,9 +88,7 @@ function useFrozenValue<T>(value: T, frozen: boolean): T {
 
 export const createAction = (
   connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
-  getTransactionId: (arg0: {
-    deviceId: string;
-  }) => Observable<SellRequestEvent>,
+  getTransactionId: (arg0: { deviceId: string }) => Observable<SellRequestEvent>,
   checkSignatureAndPrepare: (arg0: {
     deviceId: string;
     binaryPayload: string;
@@ -106,11 +98,11 @@ export const createAction = (
     transaction: Transaction;
     status: TransactionStatus;
   }) => Observable<SellRequestEvent>,
-  onTransactionId: (arg0: string) => Promise<any> // FIXME define the type for the context?
+  onTransactionId: (arg0: string) => Promise<any>, // FIXME define the type for the context?
 ): InitSellAction => {
   const useHook = (
     reduxDevice: Device | null | undefined,
-    initSellRequest: InitSellRequest
+    initSellRequest: InitSellRequest,
   ): InitSellState => {
     const [state, setState] = useState<State>(initialState);
     const [coinifyContext, setCoinifyContext] = useState<{
@@ -119,16 +111,10 @@ export const createAction = (
       transaction: Transaction;
       status: TransactionStatus;
     } | null>(null);
-    const reduxDeviceFrozen = useFrozenValue(
-      reduxDevice,
-      state.freezeReduxDevice
-    );
-    const appState = createAppAction(connectAppExec).useHook(
-      reduxDeviceFrozen,
-      {
-        appName: "Exchange",
-      }
-    );
+    const reduxDeviceFrozen = useFrozenValue(reduxDevice, state.freezeReduxDevice);
+    const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, {
+      appName: "Exchange",
+    });
     const { device, opened } = appState;
     const { parentAccount, account } = initSellRequest;
     useEffect(() => {
@@ -143,7 +129,7 @@ export const createAction = (
         }),
         getTransactionId({
           deviceId: device.deviceId,
-        })
+        }),
       )
         .pipe(
           tap((e: SellRequestEvent) => {
@@ -157,9 +143,9 @@ export const createAction = (
             of(<SellRequestEvent>{
               type: "init-sell-error",
               error,
-            })
+            }),
           ),
-          scan(reducer, initialState)
+          scan(reducer, initialState),
         )
         .subscribe(setState);
       return () => {
@@ -168,8 +154,7 @@ export const createAction = (
     }, [device, opened, account, parentAccount]);
     useEffect(() => {
       if (!coinifyContext || !device) return;
-      const { binaryPayload, payloadSignature, transaction, status } =
-        coinifyContext;
+      const { binaryPayload, payloadSignature, transaction, status } = coinifyContext;
       const sub = checkSignatureAndPrepare({
         deviceId: device.deviceId,
         binaryPayload,
@@ -180,13 +165,13 @@ export const createAction = (
         status,
       })
         .pipe(
-          catchError((error) =>
+          catchError(error =>
             of(<SellRequestEvent>{
               type: "init-sell-error",
               error,
-            })
+            }),
           ),
-          scan(reducer, initialState)
+          scan(reducer, initialState),
         )
         .subscribe(setState);
       return () => {

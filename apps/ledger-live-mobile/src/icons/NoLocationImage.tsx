@@ -1,9 +1,7 @@
 import React, { PureComponent } from "react";
 import Svg, { Path, G, Circle } from "react-native-svg";
 
-export default class NoLocationImage extends PureComponent<
-  React.ComponentProps<typeof Svg>
-> {
+export default class NoLocationImage extends PureComponent<React.ComponentProps<typeof Svg>> {
   render() {
     return (
       <Svg width={113} height={114} {...this.props}>
@@ -20,13 +18,7 @@ export default class NoLocationImage extends PureComponent<
             strokeWidth={2}
             d="M54 89.905C41.333 74.593 35 61.247 35 49.867 35 39.447 43.507 31 54 31s19 8.447 19 18.867c0 11.38-6.333 24.726-19 40.038zM54.5 58a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15z"
           />
-          <Circle
-            cx={95.5}
-            cy={17.5}
-            r={17.5}
-            fill="#EA2E49"
-            fillRule="nonzero"
-          />
+          <Circle cx={95.5} cy={17.5} r={17.5} fill="#EA2E49" fillRule="nonzero" />
           <Path
             fill="#FFF"
             d="M96.471 20.498h-.896a1 1 0 0 1-.999-.944l-.472-8.499A1 1 0 0 1 95.103 10h1.84a1 1 0 0 1 .998 1.055l-.471 8.499a1 1 0 0 1-.999.944zM94 24.173c0-.601.171-1.056.514-1.364.343-.308.842-.462 1.497-.462.633 0 1.122.157 1.469.472.347.316.52.767.52 1.354 0 .566-.175 1.012-.526 1.338-.35.326-.838.489-1.463.489-.64 0-1.135-.16-1.485-.478-.35-.319-.526-.768-.526-1.349z"

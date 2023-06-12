@@ -17,7 +17,7 @@ function inferTransactions(
     account: AccountLike;
     transaction: Transaction;
   }>,
-  opts: Record<string, string>
+  opts: Record<string, string>,
 ): Transaction[] {
   return flatMap(transactions, ({ transaction }) => {
     invariant(transaction.family === "near", "near family");

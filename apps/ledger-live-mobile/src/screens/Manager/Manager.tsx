@@ -22,10 +22,7 @@ import { setLastSeenDeviceInfo } from "../../actions/settings";
 import { ScreenName } from "../../const";
 import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
 import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -87,8 +84,10 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     dependencies: App[];
   } | null>(null);
   /** uninstall app with dependencies modal state */
-  const [appUninstallWithDependencies, setAppUninstallWithDependencies] =
-    useState<{ dependents: App[]; app: App } | null>(null);
+  const [appUninstallWithDependencies, setAppUninstallWithDependencies] = useState<{
+    dependents: App[];
+    app: App;
+  } | null>(null);
 
   /** open error modal each time a new error appears in state.currentError */
   useEffect(() => {
@@ -113,10 +112,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     reduxDispatch(setLastSeenDeviceInfo(dmi));
   }, [device, state.installed, deviceInfo, reduxDispatch]);
 
-  const installedApps = useMemo(
-    () => state.installed.map(({ name }) => name),
-    [state.installed],
-  );
+  const installedApps = useMemo(() => state.installed.map(({ name }) => name), [state.installed]);
 
   /**
    * Resets the navigation params in order to unlock navigation
@@ -144,10 +140,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     [setQuitManagerAction],
   );
 
-  const resetStorageWarning = useCallback(
-    () => setStorageWarning(null),
-    [setStorageWarning],
-  );
+  const resetStorageWarning = useCallback(() => setStorageWarning(null), [setStorageWarning]);
 
   const onCloseFirmwareUpdate = useCallback(
     (restoreApps?: boolean) => {
@@ -219,10 +212,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
         installQueue={installQueue}
         uninstallQueue={uninstallQueue}
       />
-      <StorageWarningModal
-        warning={storageWarning}
-        onClose={resetStorageWarning}
-      />
+      <StorageWarningModal warning={storageWarning} onClose={resetStorageWarning} />
       <AppDependenciesModal
         appInstallWithDependencies={appInstallWithDependencies!}
         onClose={resetAppInstallWithDependencies}

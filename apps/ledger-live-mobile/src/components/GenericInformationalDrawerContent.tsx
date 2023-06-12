@@ -63,9 +63,7 @@ function GenericInformationalDrawerContent({
     }
 
     if (iconName) {
-      renderedIcon = (
-        <Icon name={iconName} color={iconColor} size={40} weight="Medium" />
-      );
+      renderedIcon = <Icon name={iconName} color={iconColor} size={40} weight="Medium" />;
     }
   }
 
@@ -90,13 +88,7 @@ function GenericInformationalDrawerContent({
       <Text variant="h4" textAlign="center" color="neutral.c100" mb={4}>
         {title}
       </Text>
-      <Text
-        mb={10}
-        variant={"body"}
-        fontWeight={"medium"}
-        textAlign="center"
-        color={"neutral.c80"}
-      >
+      <Text mb={10} variant={"body"} fontWeight={"medium"} textAlign="center" color={"neutral.c80"}>
         {description}
       </Text>
       {primaryButtonLabel ? (

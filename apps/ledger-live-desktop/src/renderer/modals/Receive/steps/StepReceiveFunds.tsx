@@ -262,73 +262,78 @@ const StepReceiveFunds = (props: StepProps) => {
           name="Step 3"
           currencyName={currencyName}
         />
-        {verifyAddressError ? (
-          <ErrorDisplay error={verifyAddressError} onRetry={onVerify} />
-        ) : isAddressVerified === true ? (
-          // Address was confirmed on device! we display a success screen!
+        {
+          verifyAddressError ? (
+            <ErrorDisplay error={verifyAddressError} onRetry={onVerify} />
+          ) : isAddressVerified === true ? (
+            // Address was confirmed on device! we display a success screen!
 
-          <Box alignItems="center">
-            <SuccessDisplay
-              title={<Trans i18nKey="receive.successTitle" />}
-              description={
-                <LinkWithExternalIcon
-                  style={{
-                    display: "inline-flex",
-                    marginLeft: "10px",
-                  }}
-                  onClick={() => openURL(urls.recipientAddressInfo)}
-                  label={<Trans i18nKey="common.learnMore" />}
-                />
-              }
-            >
-              <Box flow={4} pt={4} horizontal justifyContent="center">
-                <Button event="Page Receive Step 3 re-verify" outlineGrey onClick={onVerify}>
-                  <Trans i18nKey="common.reverify" />
-                </Button>
-                <Button data-test-id="modal-continue-button" primary onClick={onFinishReceiveFlow}>
-                  <Trans i18nKey="common.done" />
-                </Button>
-              </Box>
-            </SuccessDisplay>
-          </Box>
-        ) : isAddressVerified === false ? (
-          // User explicitly bypass device verification (no device)
-          <>
-            <Receive1ShareAddress
-              account={mainAccount}
-              name={name}
-              address={address}
-              showQRCodeModal={showQRCodeModal}
-            />
-            {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
-            <Alert type="security" learnMoreUrl={urls.recipientAddressInfo} mt={4}>
-              <Trans
-                i18nKey="currentAddress.messageIfSkipped"
-                values={{
-                  name,
-                }}
+            <Box alignItems="center">
+              <SuccessDisplay
+                title={<Trans i18nKey="receive.successTitle" />}
+                description={
+                  <LinkWithExternalIcon
+                    style={{
+                      display: "inline-flex",
+                      marginLeft: "10px",
+                    }}
+                    onClick={() => openURL(urls.recipientAddressInfo)}
+                    label={<Trans i18nKey="common.learnMore" />}
+                  />
+                }
+              >
+                <Box flow={4} pt={4} horizontal justifyContent="center">
+                  <Button event="Page Receive Step 3 re-verify" outlineGrey onClick={onVerify}>
+                    <Trans i18nKey="common.reverify" />
+                  </Button>
+                  <Button
+                    data-test-id="modal-continue-button"
+                    primary
+                    onClick={onFinishReceiveFlow}
+                  >
+                    <Trans i18nKey="common.done" />
+                  </Button>
+                </Box>
+              </SuccessDisplay>
+            </Box>
+          ) : isAddressVerified === false ? (
+            // User explicitly bypass device verification (no device)
+            <>
+              <Receive1ShareAddress
+                account={mainAccount}
+                name={name}
+                address={address}
+                showQRCodeModal={showQRCodeModal}
               />
-            </Alert>
-            <Separator2 />
-            <Receive2NoDevice
-              onVerify={onVerify}
-              onContinue={() => onChangeAddressVerified(true)}
-            />
-          </>
-        ) : device ? (
-          // verification with device
-          <>
-            <Receive1ShareAddress
-              account={mainAccount}
-              name={name}
-              address={address}
-              showQRCodeModal={showQRCodeModal}
-            />
-            {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
-            <Separator />
-            <Receive2Device device={device} name={name} />
-          </>
-        ) : null // should not happen
+              {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
+              <Alert type="security" learnMoreUrl={urls.recipientAddressInfo} mt={4}>
+                <Trans
+                  i18nKey="currentAddress.messageIfSkipped"
+                  values={{
+                    name,
+                  }}
+                />
+              </Alert>
+              <Separator2 />
+              <Receive2NoDevice
+                onVerify={onVerify}
+                onContinue={() => onChangeAddressVerified(true)}
+              />
+            </>
+          ) : device ? (
+            // verification with device
+            <>
+              <Receive1ShareAddress
+                account={mainAccount}
+                name={name}
+                address={address}
+                showQRCodeModal={showQRCodeModal}
+              />
+              {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
+              <Separator />
+              <Receive2Device device={device} name={name} />
+            </>
+          ) : null // should not happen
         }
       </Box>
       <Modal isOpened={modalVisible} onClose={hideQRCodeModal} centered width={460}>

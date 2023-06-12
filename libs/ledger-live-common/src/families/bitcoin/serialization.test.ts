@@ -1,11 +1,6 @@
 import BigNumber from "bignumber.js";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
-import {
-  BitcoinAccount,
-  BitcoinAccountRaw,
-  BitcoinOutput,
-  BitcoinOutputRaw,
-} from "./types";
+import { BitcoinAccount, BitcoinAccountRaw, BitcoinOutput, BitcoinOutputRaw } from "./types";
 
 describe("assignToAccountRaw", () => {
   let accountMock: BitcoinAccount = {} as BitcoinAccount;
@@ -36,10 +31,10 @@ describe("assignToAccountRaw", () => {
       };
       assignToAccountRaw(accountMock, accountRawMock);
       expect(accountRawMock.bitcoinResources.utxos[0][0]).toEqual(
-        accountMock.bitcoinResources.utxos[0].hash
+        accountMock.bitcoinResources.utxos[0].hash,
       );
       expect(accountRawMock.bitcoinResources.utxos[1][0]).toEqual(
-        accountMock.bitcoinResources.utxos[1].hash
+        accountMock.bitcoinResources.utxos[1].hash,
       );
     });
 
@@ -57,19 +52,19 @@ describe("assignToAccountRaw", () => {
       };
       assignToAccountRaw(accountMock, accountRawMock);
       expect(accountRawMock.bitcoinResources.utxos[0][0]).toEqual(
-        accountMock.bitcoinResources.utxos[0].hash
+        accountMock.bitcoinResources.utxos[0].hash,
       );
       expect(accountRawMock.bitcoinResources.utxos[0][1]).toEqual(
-        accountMock.bitcoinResources.utxos[0].outputIndex
+        accountMock.bitcoinResources.utxos[0].outputIndex,
       );
       expect(accountRawMock.bitcoinResources.utxos[0][2]).toEqual(
-        accountMock.bitcoinResources.utxos[0].blockHeight
+        accountMock.bitcoinResources.utxos[0].blockHeight,
       );
       expect(accountRawMock.bitcoinResources.utxos[0][3]).toEqual(
-        accountMock.bitcoinResources.utxos[0].address
+        accountMock.bitcoinResources.utxos[0].address,
       );
       expect(accountRawMock.bitcoinResources.utxos[0][4]).toEqual(
-        accountMock.bitcoinResources.utxos[0].value.toString()
+        accountMock.bitcoinResources.utxos[0].value.toString(),
       );
     });
   });
@@ -109,34 +104,32 @@ describe("assignFromAccountRaw", () => {
       };
       assignFromAccountRaw(accountRawMock, accountMock);
       expect(accountMock.bitcoinResources.utxos[0].hash).toEqual(
-        accountRawMock.bitcoinResources.utxos[0][0]
+        accountRawMock.bitcoinResources.utxos[0][0],
       );
       expect(accountMock.bitcoinResources.utxos[1].hash).toEqual(
-        accountRawMock.bitcoinResources.utxos[1][0]
+        accountRawMock.bitcoinResources.utxos[1][0],
       );
     });
 
     it("should convert utxos to account", () => {
       accountRawMock.bitcoinResources = {
-        utxos: [
-          ["firstUtxo", 42, 10, "address", "17", 0, 0],
-        ] as BitcoinOutputRaw[],
+        utxos: [["firstUtxo", 42, 10, "address", "17", 0, 0]] as BitcoinOutputRaw[],
       };
       assignFromAccountRaw(accountRawMock, accountMock);
       expect(accountMock.bitcoinResources.utxos[0].hash).toEqual(
-        accountRawMock.bitcoinResources.utxos[0][0]
+        accountRawMock.bitcoinResources.utxos[0][0],
       );
       expect(accountMock.bitcoinResources.utxos[0].outputIndex).toEqual(
-        accountRawMock.bitcoinResources.utxos[0][1]
+        accountRawMock.bitcoinResources.utxos[0][1],
       );
       expect(accountMock.bitcoinResources.utxos[0].blockHeight).toEqual(
-        accountRawMock.bitcoinResources.utxos[0][2]
+        accountRawMock.bitcoinResources.utxos[0][2],
       );
       expect(accountMock.bitcoinResources.utxos[0].address).toEqual(
-        accountRawMock.bitcoinResources.utxos[0][3]
+        accountRawMock.bitcoinResources.utxos[0][3],
       );
       expect(accountMock.bitcoinResources.utxos[0].value).toEqual(
-        new BigNumber(accountRawMock.bitcoinResources.utxos[0][4])
+        new BigNumber(accountRawMock.bitcoinResources.utxos[0][4]),
       );
     });
   });

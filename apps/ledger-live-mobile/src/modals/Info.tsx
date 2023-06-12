@@ -10,10 +10,7 @@ type Props = {
 };
 export type ModalInfo = {
   description?: React.ReactNode;
-  Icon?: () => React.ReactElement<
-    React.ComponentProps<React.ElementType>,
-    React.ElementType
-  >;
+  Icon?: () => React.ReactElement<React.ComponentProps<React.ElementType>, React.ElementType>;
   title?: React.ReactNode;
   footer?: React.ReactNode;
   titleProps?: Opts;
@@ -21,23 +18,9 @@ export type ModalInfo = {
 };
 export default function InfoModal({ data, isOpened, onClose }: Props) {
   return (
-    <QueuedDrawer
-      style={styles.root}
-      isRequestingToBeOpened={isOpened}
-      onClose={onClose}
-    >
+    <QueuedDrawer style={styles.root} isRequestingToBeOpened={isOpened} onClose={onClose}>
       {data.map(
-        (
-          {
-            description,
-            Icon,
-            title,
-            footer,
-            titleProps = {},
-            descriptionProps = {},
-          },
-          i,
-        ) => (
+        ({ description, Icon, title, footer, titleProps = {}, descriptionProps = {} }, i) => (
           <View style={styles.section} key={i}>
             <View style={styles.header}>
               {Icon && (

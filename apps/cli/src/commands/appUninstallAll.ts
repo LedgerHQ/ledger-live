@@ -14,22 +14,22 @@ export default {
   }: Partial<{
     device: string;
   }>) =>
-    withDevice(device || "")((t) => {
+    withDevice(device || "")(t => {
       const exec = execWithTransport(t);
       return from(getDeviceInfo(t)).pipe(
-        mergeMap((deviceInfo) =>
+        mergeMap(deviceInfo =>
           listApps(t, deviceInfo).pipe(
-            filter((e) => e.type === "result"),
+            filter(e => e.type === "result"),
             map(
               (e: any) =>
                 reducer(e.result, {
                   type: "wipe",
                 }),
-              exec
+              exec,
             ),
-            mergeMap((s) => runAll(s, exec))
-          )
-        )
+            mergeMap(s => runAll(s, exec)),
+          ),
+        ),
       );
     }),
 };

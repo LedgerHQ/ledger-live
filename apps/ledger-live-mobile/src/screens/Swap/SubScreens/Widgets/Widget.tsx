@@ -1,18 +1,9 @@
-import React, {
-  useMemo,
-  useCallback,
-  useRef,
-  useEffect,
-  useState,
-} from "react";
+import React, { useMemo, useCallback, useRef, useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { WebView } from "react-native-webview";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import {
-  WidgetTypes,
-  getFTXURL,
-} from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { WidgetTypes, getFTXURL } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Icon, Flex } from "@ledgerhq/native-ui";
 import { Message } from "@ledgerhq/live-common/exchange/swap/types";
 import { swapKYCSelector } from "../../../../reducers/settings";
@@ -28,8 +19,7 @@ interface Props {
 }
 
 export function Widget({ provider, type }: Props) {
-  const navigation =
-    useNavigation<StackNavigatorNavigation<SwapFormNavigatorParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<SwapFormNavigatorParamList>>();
   const dispatch = useDispatch();
   const { dark } = useTheme();
 
@@ -155,10 +145,7 @@ function useAuthToken(provider: Props["provider"]): string | undefined {
   return kyc?.id;
 }
 
-function useWidgetURL(
-  provider: Props["provider"],
-  type: Props["type"],
-): string {
+function useWidgetURL(provider: Props["provider"], type: Props["type"]): string {
   return useMemo(() => {
     switch (provider) {
       case "ftx":

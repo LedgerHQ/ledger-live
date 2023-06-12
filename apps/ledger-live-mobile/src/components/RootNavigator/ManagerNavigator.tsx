@@ -6,10 +6,7 @@ import { useSelector } from "react-redux";
 import { Box, Icons, Flex, Button } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "../../const";
-import {
-  hasAvailableUpdateSelector,
-  lastSeenDeviceSelector,
-} from "../../reducers/settings";
+import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "../../reducers/settings";
 import Manager, { managerHeaderOptions } from "../../screens/Manager";
 import ManagerMain from "../../screens/Manager/Manager";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
@@ -42,10 +39,7 @@ const Badge = () => {
 
 export default function ManagerNavigator() {
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   return (
     <Stack.Navigator
@@ -71,24 +65,14 @@ export default function ManagerNavigator() {
           gestureEnabled: false,
         }}
       />
-      <Stack.Screen
-        name={ScreenName.ManagerMain}
-        component={ManagerMain}
-        options={{ title: "" }}
-      />
+      <Stack.Screen name={ScreenName.ManagerMain} component={ManagerMain} options={{ title: "" }} />
     </Stack.Navigator>
   );
 }
 
 const Stack = createStackNavigator<ManagerNavigatorStackParamList>();
 
-const DeviceIcon = ({
-  color,
-  size = 16,
-}: {
-  color?: string;
-  size?: number;
-}) => {
+const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => {
   const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
@@ -122,9 +106,7 @@ export function ManagerTabIcon(
 ) {
   const isNavLocked = useIsNavLocked();
 
-  const content = (
-    <TabIcon {...props} Icon={DeviceIcon} i18nKey="tabs.manager" />
-  );
+  const content = <TabIcon {...props} Icon={DeviceIcon} i18nKey="tabs.manager" />;
 
   if (isNavLocked) {
     // eslint-disable-next-line @typescript-eslint/no-empty-function

@@ -4,9 +4,7 @@ import { Box, Icons, Alert, Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import SettingsRow from "../../../../components/SettingsRow";
 import { ScreenName } from "../../../../const";
-import SelectDevice, {
-  SetHeaderOptionsRequest,
-} from "../../../../components/SelectDevice2";
+import SelectDevice, { SetHeaderOptionsRequest } from "../../../../components/SelectDevice2";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import {
   ReactNavigationHeaderOptions,
@@ -24,8 +22,7 @@ export const connectivityHeaderOptions: ReactNavigationHeaderOptions = {
 };
 
 export default function Connectivity() {
-  const navigation =
-    useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device | null>(null);
 
   const requestToSetHeaderOptions = useCallback(
@@ -61,15 +58,10 @@ export default function Connectivity() {
         </Box>
       ) : (
         <Flex>
-          <Alert
-            type="info"
-            title="The following actions will use the selected device"
-          />
+          <Alert type="info" title="The following actions will use the selected device" />
           <SettingsRow
             title="Ble tool"
-            desc={`Debugging tool using ${
-              device.deviceName || device.deviceId
-            }`}
+            desc={`Debugging tool using ${device.deviceName || device.deviceId}`}
             iconLeft={<Icons.BluetoothMedium size={32} color="black" />}
             onPress={() =>
               navigation.navigate(ScreenName.DebugBLE, {

@@ -10,10 +10,7 @@ import { log, listen } from "@ledgerhq/logs";
 import WalletConnect from "@walletconnect/client";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { parseCallRequest } from "@ledgerhq/live-common/walletconnect/index";
-import type {
-  WCCallRequest,
-  WCPayload,
-} from "@ledgerhq/live-common/walletconnect/index";
+import type { WCCallRequest, WCPayload } from "@ledgerhq/live-common/walletconnect/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import signMessage from "@ledgerhq/live-common/hw/signMessage/index";
 import { apiForCurrency } from "@ledgerhq/live-common/families/ethereum/api/index";
@@ -46,12 +43,10 @@ const start = async (opts: Opts) => {
           clientMeta: {
             description: "LedgerLive CLI",
             url: "https://ledger.fr",
-            icons: [
-              "https://avatars0.githubusercontent.com/u/9784193?s=400&v=4",
-            ],
+            icons: ["https://avatars0.githubusercontent.com/u/9784193?s=400&v=4"],
             name: "LedgerLive CLI",
           },
-        }
+        },
   );
 
   const rejectRequest = (id, message) => {
@@ -76,10 +71,7 @@ const start = async (opts: Opts) => {
 
   const handleCallRequest = async (payload: WCPayload) => {
     log("walletconnect", "call_request", payload);
-    const wcCallRequest: WCCallRequest = await parseCallRequest(
-      account,
-      payload
-    );
+    const wcCallRequest: WCCallRequest = await parseCallRequest(account, payload);
     let result;
     const bridge = getAccountBridge(account);
 
@@ -92,8 +84,8 @@ const start = async (opts: Opts) => {
 
     if (wcCallRequest.type === "message") {
       log("walletconnect", "message to sign", wcCallRequest.data);
-      result = await withDevice(opts.device || "")((t) =>
-        from(signMessage(t, wcCallRequest.data as MessageData))
+      result = await withDevice(opts.device || "")(t =>
+        from(signMessage(t, wcCallRequest.data as MessageData)),
       ).toPromise();
       result = result.signature;
       log("walletconnect", "message signature", result);
@@ -108,13 +100,13 @@ const start = async (opts: Opts) => {
           transaction: wcCallRequest.data,
         })
         .pipe(
-          tap((e) => console.log(e)),
-          first((e) => e.type === "signed"),
-          map((e) => {
+          tap(e => console.log(e)),
+          first(e => e.type === "signed"),
+          map(e => {
             if (e.type === "signed") {
               return e.signedOperation;
             }
-          })
+          }),
         )
         .toPromise();
       log("walletconnect", "operation", operation);
@@ -157,16 +149,12 @@ const start = async (opts: Opts) => {
       rejectRequest(payload.id, e.message);
     }
   });
-  connector.on("connect", (error) => {
+  connector.on("connect", error => {
     if (error) {
       throw error;
     }
 
-    log(
-      "walletconnect",
-      "connected",
-      JSON.stringify(connector.session).replace(/"/g, `\\"`)
-    );
+    log("walletconnect", "connected", JSON.stringify(connector.session).replace(/"/g, `\\"`));
   });
 };
 
@@ -197,7 +185,7 @@ export default {
     },
   ],
   job: (opts: Opts) =>
-    Observable.create((o) => {
+    Observable.create(o => {
       const unsub = listen((l: any) => {
         if (opts.verbose) {
           o.next(l.type + ": " + l.message);

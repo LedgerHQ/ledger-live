@@ -2,10 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
-import {
-  getCryptoCurrencyById,
-  toLocaleString,
-} from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById, toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import type { Account } from "@ledgerhq/types-live";
@@ -46,10 +43,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
   }, []);
-  const onPressInfoCreator = useCallback(
-    (infoName: InfoName) => () => setInfoName(infoName),
-    [],
-  );
+  const onPressInfoCreator = useCallback((infoName: InfoName) => () => setInfoName(infoName), []);
   return (
     <>
       <Alert type="warning" learnMoreUrl={urls.TronStakingDisable}>
@@ -70,9 +64,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         <InfoItem
           title={t("account.availableBalance")}
           onPress={onPressInfoCreator("available")}
-          value={
-            <CurrencyUnitValue unit={unit} value={account.spendableBalance} />
-          }
+          value={<CurrencyUnitValue unit={unit} value={account.spendableBalance} />}
         />
         <InfoItem
           title={t("account.tronFrozen")}
@@ -82,20 +74,12 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         <InfoItem
           title={t("account.bandwidth")}
           onPress={onPressInfoCreator("bandwidth")}
-          value={
-            formattedBandwidth.isZero()
-              ? "-"
-              : toLocaleString(formattedBandwidth, locale)
-          }
+          value={formattedBandwidth.isZero() ? "-" : toLocaleString(formattedBandwidth, locale)}
         />
         <InfoItem
           title={t("account.energy")}
           onPress={onPressInfoCreator("energy")}
-          value={
-            formattedEnergy.isZero()
-              ? "-"
-              : toLocaleString(formattedEnergy, locale)
-          }
+          value={formattedEnergy.isZero() ? "-" : toLocaleString(formattedEnergy, locale)}
           isLast={true}
         />
       </ScrollView>

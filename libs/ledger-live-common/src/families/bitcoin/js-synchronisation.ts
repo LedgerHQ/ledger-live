@@ -23,9 +23,7 @@ import { decodeAccountId } from "../../account/index";
 import { startSpan } from "../../performance";
 
 // Map LL's DerivationMode to wallet-btc's
-const toWalletDerivationMode = (
-  mode: DerivationMode
-): WalletDerivationModes => {
+const toWalletDerivationMode = (mode: DerivationMode): WalletDerivationModes => {
   if (isTaprootDerivationMode(mode)) {
     return WalletDerivationModes.TAPROOT;
   }
@@ -44,10 +42,7 @@ const toWalletNetwork = (currencyId: string): "testnet" | "mainnet" => {
 };
 
 // Map wallet-btc's Output to LL's BitcoinOutput
-const fromWalletUtxo = (
-  utxo: WalletOutput,
-  changeAddresses: Set<string>
-): BitcoinOutput => {
+const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): BitcoinOutput => {
   return {
     hash: utxo.output_hash,
     outputIndex: utxo.output_index,
@@ -61,9 +56,7 @@ const fromWalletUtxo = (
 
 // wallet-btc limitation: returns all transactions twice (for each side of the tx)
 // so we need to deduplicate them...
-const deduplicateOperations = (
-  operations: (Operation | undefined)[]
-): Operation[] => {
+const deduplicateOperations = (operations: (Operation | undefined)[]): Operation[] => {
   const seen = {};
   const out: Operation[] = [];
   let j = 0;
@@ -80,25 +73,16 @@ const deduplicateOperations = (
   return out;
 };
 
-const getAccountShape: GetAccountShape = async (info) => {
+const getAccountShape: GetAccountShape = async info => {
   let span;
-  const {
-    transport,
-    currency,
-    index,
-    derivationPath,
-    derivationMode,
-    initialAccount,
-  } = info;
+  const { transport, currency, index, derivationPath, derivationMode, initialAccount } = info;
   // In case we get a full derivation path, extract the seed identification part
   // 44'/0'/0'/0/0 --> 44'/0'
   // FIXME Only the CLI provides a full derivationPath: why?
   const rootPath = derivationPath.split("/", 2).join("/");
   const accountPath = `${rootPath}/${index}'`;
 
-  const paramXpub = initialAccount
-    ? decodeAccountId(initialAccount.id).xpubOrAddress
-    : undefined;
+  const paramXpub = initialAccount ? decodeAccountId(initialAccount.id).xpubOrAddress : undefined;
 
   let generatedXpub;
   if (!paramXpub) {
@@ -128,9 +112,7 @@ const getAccountShape: GetAccountShape = async (info) => {
   });
 
   const walletNetwork = toWalletNetwork(currency.id);
-  const walletDerivationMode = toWalletDerivationMode(
-    derivationMode as DerivationMode
-  );
+  const walletDerivationMode = toWalletDerivationMode(derivationMode as DerivationMode);
 
   span = startSpan("sync", "generateAccount");
   const walletAccount =
@@ -144,7 +126,7 @@ const getAccountShape: GetAccountShape = async (info) => {
         network: walletNetwork,
         derivationMode: walletDerivationMode,
       },
-      currency
+      currency,
     ));
   span.finish();
 
@@ -156,37 +138,26 @@ const getAccountShape: GetAccountShape = async (info) => {
   const blockHeight = currentBlock?.height;
   const balance = await wallet.getAccountBalance(walletAccount);
   span = startSpan("sync", "getAccountTransactions");
-  const { txs: transactions } = await wallet.getAccountTransactions(
-    walletAccount
-  );
+  const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
   span.finish();
 
   span = startSpan("sync", "getXpubAddresses");
   const accountAddresses: Set<string> = new Set<string>();
   const accountAddressesWithInfo = await walletAccount.xpub.getXpubAddresses();
-  accountAddressesWithInfo.forEach((a) => accountAddresses.add(a.address));
+  accountAddressesWithInfo.forEach(a => accountAddresses.add(a.address));
   span.finish();
 
   span = startSpan("sync", "getUniquesAddresses");
   const changeAddresses: Set<string> = new Set<string>();
-  const changeAddressesWithInfo =
-    await walletAccount.xpub.storage.getUniquesAddresses({
-      account: 1,
-    });
-  changeAddressesWithInfo.forEach((a) => changeAddresses.add(a.address));
+  const changeAddressesWithInfo = await walletAccount.xpub.storage.getUniquesAddresses({
+    account: 1,
+  });
+  changeAddressesWithInfo.forEach(a => changeAddresses.add(a.address));
   span.finish();
 
   span = startSpan("sync", "mapTxToOperations");
   const newOperations = transactions
-    ?.map((tx) =>
-      mapTxToOperations(
-        tx,
-        currency.id,
-        accountId,
-        accountAddresses,
-        changeAddresses
-      )
-    )
+    ?.map(tx => mapTxToOperations(tx, currency.id, accountId, accountAddresses, changeAddresses))
     .flat();
   span.finish();
 
@@ -197,7 +168,7 @@ const getAccountShape: GetAccountShape = async (info) => {
 
   span = startSpan("sync", "gather utxos");
   const rawUtxos = await wallet.getAccountUnspentUtxos(walletAccount);
-  const utxos = rawUtxos.map((utxo) => fromWalletUtxo(utxo, changeAddresses));
+  const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
   span.finish();
 
   return {
@@ -225,24 +196,20 @@ const postSync = (initial: Account, synced: Account) => {
     const { postBuildBitcoinResources, syncReplaceAddress } = perCoin;
 
     if (postBuildBitcoinResources) {
-      syncedBtc.bitcoinResources = postBuildBitcoinResources(
-        syncedBtc,
-        syncedBtc.bitcoinResources
-      );
+      syncedBtc.bitcoinResources = postBuildBitcoinResources(syncedBtc, syncedBtc.bitcoinResources);
     }
 
     if (syncReplaceAddress) {
       syncedBtc.freshAddress = syncReplaceAddress(syncedBtc.freshAddress);
-      syncedBtc.freshAddresses = syncedBtc.freshAddresses.map((a) => ({
+      syncedBtc.freshAddresses = syncedBtc.freshAddresses.map(a => ({
         ...a,
         address: syncReplaceAddress(a.address),
       }));
       if (syncedBtc.bitcoinResources) {
-        syncedBtc.bitcoinResources.utxos =
-          syncedBtc.bitcoinResources?.utxos.map((u) => ({
-            ...u,
-            address: u.address && syncReplaceAddress(u.address),
-          }));
+        syncedBtc.bitcoinResources.utxos = syncedBtc.bitcoinResources?.utxos.map(u => ({
+          ...u,
+          address: u.address && syncReplaceAddress(u.address),
+        }));
       }
     }
   }
@@ -251,8 +218,8 @@ const postSync = (initial: Account, synced: Account) => {
   return syncedBtc;
 };
 
-const getAddressFn = (transport) => {
-  return (opts) => getAddress(transport, opts);
+const getAddressFn = transport => {
+  return opts => getAddress(transport, opts);
 };
 
 export const scanAccounts = makeScanAccounts({

@@ -44,10 +44,10 @@ const HiddenNftCollectionRow = ({
     contractAddress,
     firstNft?.currencyId,
   );
-  const loading = useMemo(() => nftStatus === "loading" || collectionStatus === "loading", [
-    collectionStatus,
-    nftStatus,
-  ]);
+  const loading = useMemo(
+    () => nftStatus === "loading" || collectionStatus === "loading",
+    [collectionStatus, nftStatus],
+  );
 
   return (
     <HiddenNftCollectionRowContainer>

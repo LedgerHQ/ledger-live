@@ -1,9 +1,5 @@
 import React from "react";
-import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedStyle,
-} from "react-native-reanimated";
+import Animated, { Extrapolate, interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import CurrencyGradient from "./CurrencyGradient";
 

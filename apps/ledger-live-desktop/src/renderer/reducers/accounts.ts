@@ -60,7 +60,7 @@ const handlers: AccountsHandlers = {
 };
 
 export default handleActions<AccountsState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as AccountsHandlers<false>,
+  handlers as unknown as AccountsHandlers<false>,
   state,
 );
 
@@ -159,8 +159,9 @@ export const accountSelector = createSelector(
   ) => accountId,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
-export const getAccountById = createSelector(accountsSelector, accounts => (accountId: string) =>
-  accounts.find(a => a.id === accountId),
+export const getAccountById = createSelector(
+  accountsSelector,
+  accounts => (accountId: string) => accounts.find(a => a.id === accountId),
 );
 
 export const starredAccountsSelector = createSelector(shallowAccountsSelector, accounts =>

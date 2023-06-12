@@ -13,12 +13,8 @@ import { StartupTimeMarker } from "../../StartupTimeMarker";
 export default function RootNavigator() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const goToOnboarding = !hasCompletedOnboarding && !Config.SKIP_ONBOARDING;
-  const [analyticsSource, setAnalyticsSource] = useState<undefined | string>(
-    undefined,
-  );
-  const [analyticsScreen, setAnalyticsScreen] = useState<undefined | string>(
-    undefined,
-  );
+  const [analyticsSource, setAnalyticsSource] = useState<undefined | string>(undefined);
+  const [analyticsScreen, setAnalyticsScreen] = useState<undefined | string>(undefined);
   return (
     <StartupTimeMarker>
       <AnalyticsContext.Provider
@@ -35,17 +31,11 @@ export default function RootNavigator() {
           }}
         >
           {goToOnboarding ? (
-            <Stack.Screen
-              name={NavigatorName.BaseOnboarding}
-              component={BaseOnboardingNavigator}
-            />
+            <Stack.Screen name={NavigatorName.BaseOnboarding} component={BaseOnboardingNavigator} />
           ) : null}
           <Stack.Screen name={NavigatorName.Base} component={BaseNavigator} />
           {hasCompletedOnboarding ? (
-            <Stack.Screen
-              name={NavigatorName.BaseOnboarding}
-              component={BaseOnboardingNavigator}
-            />
+            <Stack.Screen name={NavigatorName.BaseOnboarding} component={BaseOnboardingNavigator} />
           ) : null}
         </Stack.Navigator>
       </AnalyticsContext.Provider>

@@ -10,10 +10,7 @@ import type { OperationType } from "@ledgerhq/types-live";
  *
  * @returns {string} - OperationType
  */
-export const getOperationType = (
-  pallet: string,
-  palletMethod: string
-): OperationType => {
+export const getOperationType = (pallet: string, palletMethod: string): OperationType => {
   switch (palletMethod) {
     case "transfer":
     case "transferKeepAlive":
@@ -43,10 +40,7 @@ export const getOperationType = (
       return "FEES";
 
     default:
-      log(
-        "polkadot/api",
-        `Unknown operation type ${pallet}.${palletMethod} - fallback to FEES`
-      );
+      log("polkadot/api", `Unknown operation type ${pallet}.${palletMethod} - fallback to FEES`);
       return "FEES";
   }
 };

@@ -21,10 +21,7 @@ const totalSteps = "3";
 function VoteFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -36,9 +33,7 @@ function VoteFlow() {
         name={ScreenName.CeloVoteStarted}
         component={VoteStarted}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("delegation.started.title")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.started.title")} />,
         }}
       />
       <Stack.Screen
@@ -63,9 +58,7 @@ function VoteFlow() {
         component={SelectValidator}
         options={{
           gestureEnabled: false,
-          headerTitle: () => (
-            <StepHeader title={t("delegation.selectValidatorTitle")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.selectValidatorTitle")} />,
         }}
       />
 
@@ -74,9 +67,7 @@ function VoteFlow() {
         component={VoteAmount}
         options={{
           gestureEnabled: false,
-          headerTitle: () => (
-            <StepHeader title={t("send.stepperHeader.selectAmount")} />
-          ),
+          headerTitle: () => <StepHeader title={t("send.stepperHeader.selectAmount")} />,
         }}
       />
 

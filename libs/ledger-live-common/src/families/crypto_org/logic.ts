@@ -37,14 +37,9 @@ export function getCroSdk(currencyId: string) {
  * @param {string} address
  * @param {boolean} useTestNet
  */
-export const isValidAddress = (
-  address: string,
-  currencyId: string
-): boolean => {
+export const isValidAddress = (address: string, currencyId: string): boolean => {
   if (!address) return false;
-  const network = isTestNet(currencyId)
-    ? CroNetwork.TestnetCroeseid4
-    : CroNetwork.Mainnet;
+  const network = isTestNet(currencyId) ? CroNetwork.TestnetCroeseid4 : CroNetwork.Mainnet;
   const addressProps = {
     address: address,
     network: network,

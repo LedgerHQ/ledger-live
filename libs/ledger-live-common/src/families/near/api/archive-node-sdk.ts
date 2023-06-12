@@ -16,9 +16,7 @@ import {
 } from "./sdk.types";
 import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
 
-export const fetchAccountDetails = async (
-  address: string
-): Promise<NearAccountDetails> => {
+export const fetchAccountDetails = async (address: string): Promise<NearAccountDetails> => {
   const { data } = await network({
     method: "POST",
     url: getEnv("API_NEAR_ARCHIVE_NODE"),
@@ -37,9 +35,7 @@ export const fetchAccountDetails = async (
   return data.result;
 };
 
-export const getAccount = async (
-  address: string
-): Promise<Partial<NearAccount>> => {
+export const getAccount = async (address: string): Promise<Partial<NearAccount>> => {
   let accountDetails: NearAccountDetails;
 
   accountDetails = await fetchAccountDetails(address);
@@ -52,8 +48,9 @@ export const getAccount = async (
     };
   }
 
-  const { stakingPositions, totalStaked, totalAvailable, totalPending } =
-    await getStakingPositions(address);
+  const { stakingPositions, totalStaked, totalAvailable, totalPending } = await getStakingPositions(
+    address,
+  );
 
   const { storageCost } = getCurrentNearPreloadData();
 
@@ -139,9 +136,7 @@ export const getAccessKey = async ({
   return data.result || {};
 };
 
-export const broadcastTransaction = async (
-  transaction: string
-): Promise<string> => {
+export const broadcastTransaction = async (transaction: string): Promise<string> => {
   const { data } = await network({
     method: "POST",
     url: getEnv("API_NEAR_ARCHIVE_NODE"),
@@ -157,7 +152,7 @@ export const broadcastTransaction = async (
 };
 
 export const getStakingPositions = async (
-  address: string
+  address: string,
 ): Promise<{
   stakingPositions: NearStakingPosition[];
   totalStaked: BigNumber;
@@ -241,12 +236,12 @@ export const getStakingPositions = async (
         rewards: rewards.gt(0) ? rewards : new BigNumber(0),
         validatorId,
       };
-    })
+    }),
   );
 
   return {
     stakingPositions: stakingPositions.filter(
-      (sp) => canUnstake(sp) || canWithdraw(sp) || sp.pending.gt(0)
+      sp => canUnstake(sp) || canWithdraw(sp) || sp.pending.gt(0),
     ),
     totalStaked,
     totalAvailable,
@@ -269,9 +264,7 @@ export const getValidators = async (): Promise<NearRawValidator[]> => {
   return data?.result?.current_validators || [];
 };
 
-export const getCommission = async (
-  address: string
-): Promise<number | null> => {
+export const getCommission = async (address: string): Promise<number | null> => {
   const { data } = await network({
     method: "POST",
     url: getEnv("API_NEAR_ARCHIVE_NODE"),
@@ -294,9 +287,7 @@ export const getCommission = async (
   if (Array.isArray(result) && result.length) {
     const parsedResult = JSON.parse(Buffer.from(result).toString());
 
-    return Math.round(
-      (parsedResult.numerator / parsedResult.denominator) * 100
-    );
+    return Math.round((parsedResult.numerator / parsedResult.denominator) * 100);
   }
 
   return null;

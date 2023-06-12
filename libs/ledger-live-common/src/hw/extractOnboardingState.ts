@@ -15,10 +15,7 @@ const fromBitsToSeedPhraseType = new Map<number, SeedPhraseType>([
   [2, SeedPhraseType.Twelve],
 ]);
 
-export const fromSeedPhraseTypeToNbOfSeedWords = new Map<
-  SeedPhraseType,
-  number
->([
+export const fromSeedPhraseTypeToNbOfSeedWords = new Map<SeedPhraseType, number>([
   [SeedPhraseType.TwentyFour, 24],
   [SeedPhraseType.Eighteen, 18],
   [SeedPhraseType.Twelve, 12],
@@ -81,32 +78,27 @@ export type OnboardingState = {
  */
 export const extractOnboardingState = (flagsBytes: Buffer): OnboardingState => {
   if (!flagsBytes || flagsBytes.length < onboardingFlagsBytesLength) {
-    throw new DeviceExtractOnboardingStateError(
-      "Incorrect onboarding flags bytes"
-    );
+    throw new DeviceExtractOnboardingStateError("Incorrect onboarding flags bytes");
   }
 
   const isOnboarded = Boolean(flagsBytes[0] & onboardedMask);
   const isInRecoveryMode = Boolean(flagsBytes[0] & inRecoveryModeMask);
 
-  const seedPhraseTypeBits =
-    (flagsBytes[2] & seedPhraseTypeMask) >> seedPhraseTypeFlagOffset;
+  const seedPhraseTypeBits = (flagsBytes[2] & seedPhraseTypeMask) >> seedPhraseTypeFlagOffset;
   const seedPhraseType = fromBitsToSeedPhraseType.get(seedPhraseTypeBits);
 
   if (!seedPhraseType) {
     throw new DeviceExtractOnboardingStateError(
-      "Incorrect onboarding bits for the seed phrase type"
+      "Incorrect onboarding bits for the seed phrase type",
     );
   }
 
   const currentOnboardingStepBits = flagsBytes[3];
-  const currentOnboardingStep = fromBitsToOnboardingStep.get(
-    currentOnboardingStepBits
-  );
+  const currentOnboardingStep = fromBitsToOnboardingStep.get(currentOnboardingStepBits);
 
   if (!currentOnboardingStep) {
     throw new DeviceExtractOnboardingStateError(
-      "Incorrect onboarding bits for the current onboarding step"
+      "Incorrect onboarding bits for the current onboarding step",
     );
   }
 

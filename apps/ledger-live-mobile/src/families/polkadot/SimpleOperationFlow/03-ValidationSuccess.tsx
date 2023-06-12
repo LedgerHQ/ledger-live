@@ -29,9 +29,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -56,9 +54,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="polkadot.simpleOperation.steps.validation.success.title" />
-        }
+        title={<Trans i18nKey="polkadot.simpleOperation.steps.validation.success.title" />}
         description={
           <Trans i18nKey="polkadot.simpleOperation.steps.validation.success.description" />
         }

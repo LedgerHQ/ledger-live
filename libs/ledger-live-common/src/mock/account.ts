@@ -21,28 +21,24 @@ import { TezosAccount } from "../families/tezos/types";
 export function genAddingOperationsInAccount(
   account: Account,
   count: number,
-  seed: number | string
+  seed: number | string,
 ): Account {
   const rng = new Prando(seed);
   const copy: Account = { ...account };
   copy.operations = Array(count)
     .fill(null)
-    .reduce((ops) => {
+    .reduce(ops => {
       const op = genOperation(copy, copy, ops, rng);
       return ops.concat(op);
     }, copy.operations);
   copy.spendableBalance = copy.balance = ensureNoNegative(copy.operations);
   const perFamilyOperation = perFamilyMock[account.currency.id];
-  const postSyncAccount =
-    perFamilyOperation && perFamilyOperation.postSyncAccount;
+  const postSyncAccount = perFamilyOperation && perFamilyOperation.postSyncAccount;
   if (postSyncAccount) postSyncAccount(copy);
   return copy;
 }
 
-export function genAccount(
-  id: number | string,
-  opts: GenAccountOptions = {}
-): Account {
+export function genAccount(id: number | string, opts: GenAccountOptions = {}): Account {
   return genAccountCommon(
     id,
     opts,
@@ -105,6 +101,6 @@ export function genAccount(
       if (genAccountEnhanceOperations) {
         genAccountEnhanceOperations(account, rng);
       }
-    }
+    },
   );
 }

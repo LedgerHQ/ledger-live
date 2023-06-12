@@ -1,18 +1,7 @@
-import React, {
-  createContext,
-  useMemo,
-  useCallback,
-  useContext,
-  ReactElement,
-} from "react";
+import React, { createContext, useMemo, useCallback, useContext, ReactElement } from "react";
 import differenceBy from "lodash/differenceBy";
 import { useMachine } from "@xstate/react";
-import type {
-  Announcement,
-  AnnouncementsUserSettings,
-  State,
-  AnnouncementsApi,
-} from "./types";
+import type { Announcement, AnnouncementsUserSettings, State, AnnouncementsApi } from "./types";
 import { localizeAnnouncements, filterAnnouncements } from "./logic";
 import defaultFetchApi from "./api";
 import { announcementMachine } from "./machine";
@@ -65,25 +54,17 @@ export const AnnouncementProvider = ({
   const fetchData = useCallback(
     async ({ allIds, cache }) => {
       const rawAnnouncements = await fetchApi.fetchAnnouncements();
-      const localizedAnnouncements = localizeAnnouncements(
-        rawAnnouncements,
-        context
-      );
-      const announcements = filterAnnouncements(
-        localizedAnnouncements,
-        context
-      );
-      const oldAnnouncements: Announcement[] = allIds.map(
-        (uuid: string) => cache[uuid]
-      );
+      const localizedAnnouncements = localizeAnnouncements(rawAnnouncements, context);
+      const announcements = filterAnnouncements(localizedAnnouncements, context);
+      const oldAnnouncements: Announcement[] = allIds.map((uuid: string) => cache[uuid]);
       const newAnnouncements = differenceBy(
         announcements,
         oldAnnouncements,
-        (announcement) => announcement.uuid
+        announcement => announcement.uuid,
       );
 
       if (onNewAnnouncement) {
-        newAnnouncements.forEach((announcement) => {
+        newAnnouncements.forEach(announcement => {
           onNewAnnouncement(announcement);
         });
       }
@@ -93,7 +74,7 @@ export const AnnouncementProvider = ({
         updateTime: Date.now(),
       };
     },
-    [context, onNewAnnouncement, fetchApi]
+    [context, onNewAnnouncement, fetchApi],
   );
   const emitNewAnnouncement = useCallback(
     ({ cache }, { seenId }) => {
@@ -101,7 +82,7 @@ export const AnnouncementProvider = ({
         onAnnouncementRead(cache[seenId]);
       }
     },
-    [onAnnouncementRead]
+    [onAnnouncementRead],
   );
   const loadData = useCallback(async () => {
     const { announcements, lastUpdateTime, seenIds } = await handleLoad();
@@ -112,7 +93,7 @@ export const AnnouncementProvider = ({
     };
   }, [handleLoad]);
   const saveData = useCallback(
-    (context) => {
+    context => {
       const { cache, lastUpdateTime, seenIds, allIds } = context;
       const announcements = allIds.map((id: string) => cache[id]);
       handleSave({
@@ -121,7 +102,7 @@ export const AnnouncementProvider = ({
         lastUpdateTime,
       });
     },
-    [handleSave]
+    [handleSave],
   );
   const [state, send] = useMachine(announcementMachine, {
     actions: {
@@ -150,12 +131,8 @@ export const AnnouncementProvider = ({
         });
       },
     }),
-    [send]
+    [send],
   );
   const value = { ...state.context, ...api };
-  return (
-    <AnnouncementsContext.Provider value={value}>
-      {children}
-    </AnnouncementsContext.Provider>
-  );
+  return <AnnouncementsContext.Provider value={value}>{children}</AnnouncementsContext.Provider>;
 };

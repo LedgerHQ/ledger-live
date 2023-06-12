@@ -49,10 +49,7 @@ export const getAddressRaw = (address: string) => {
       data: { address, protocol },
     } = result;
 
-    return Buffer.concat([
-      Buffer.from(`0${protocol.toString()}`, "hex"),
-      address,
-    ]);
+    return Buffer.concat([Buffer.from(`0${protocol.toString()}`, "hex"), address]);
   }
 
   throw new Error("The address is not valid");
@@ -72,7 +69,7 @@ export const validateAddress = (input: string): ValidateAddressResult => {
     case "0":
       log(
         "debug",
-        `String Address: ${input} --> Network:${prefix} - Protocol:${protocol} - PkHash:${addrAndCksum.toLowerCase()}`
+        `String Address: ${input} --> Network:${prefix} - Protocol:${protocol} - PkHash:${addrAndCksum.toLowerCase()}`,
       );
 
       if (addrAndCksum.length > ID_MAX_LEN) return { isValid: false };
@@ -84,17 +81,13 @@ export const validateAddress = (input: string): ValidateAddressResult => {
     case "2":
     case "3":
       [addr, rcvCksum] = splitAddFromCkSum(
-        toBuffer(base32Decode(addrAndCksum, BASE_64_VARIANT_TYPE))
+        toBuffer(base32Decode(addrAndCksum, BASE_64_VARIANT_TYPE)),
       );
 
-      if (
-        (protocol === "1" || protocol === "2") &&
-        addr.length > SECP256K1_ACTOR_LEN
-      )
+      if ((protocol === "1" || protocol === "2") && addr.length > SECP256K1_ACTOR_LEN)
         return { isValid: false };
 
-      if (protocol === "3" && addr.length > BLS_MAX_LEN)
-        return { isValid: false };
+      if (protocol === "3" && addr.length > BLS_MAX_LEN) return { isValid: false };
 
       context = blake2bInit(4);
       blake2bUpdate(context, Buffer.concat([protocolBuf, addr]));
@@ -103,12 +96,11 @@ export const validateAddress = (input: string): ValidateAddressResult => {
       log(
         "debug",
         `String Address: ${input} --> Network:${prefix} - Protocol:${protocol} - PkHash:${addr.toString(
-          "hex"
-        )} - CkSum: ${rcvCksum.toString("hex")}`
+          "hex",
+        )} - CkSum: ${rcvCksum.toString("hex")}`,
       );
 
-      if (rcvCksum.toString("hex") !== newCksum.toString("hex"))
-        return { isValid: false };
+      if (rcvCksum.toString("hex") !== newCksum.toString("hex")) return { isValid: false };
       break;
 
     default:

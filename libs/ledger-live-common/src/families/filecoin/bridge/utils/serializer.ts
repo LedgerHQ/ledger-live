@@ -23,21 +23,8 @@ const bigNumberToArray = (v: BigNumber) => {
   return Buffer.concat([Buffer.from(signByte, "hex"), Buffer.from(tmp, "hex")]);
 };
 
-export const toCBOR = (
-  from: Buffer,
-  recipient: Buffer,
-  tx: Transaction
-): Buffer => {
-  const {
-    method,
-    version,
-    nonce,
-    gasLimit,
-    gasPremium,
-    gasFeeCap,
-    params,
-    amount,
-  } = tx;
+export const toCBOR = (from: Buffer, recipient: Buffer, tx: Transaction): Buffer => {
+  const { method, version, nonce, gasLimit, gasPremium, gasFeeCap, params, amount } = tx;
   const answer: any[] = [];
 
   // "version" field
