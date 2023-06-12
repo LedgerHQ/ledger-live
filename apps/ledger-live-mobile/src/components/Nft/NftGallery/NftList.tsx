@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from "react";
-import { FlatListProps } from "react-native";
+import React, { useCallback, useMemo, useState, useContext } from "react";
+import { FlatListProps, FlatList } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
@@ -13,6 +13,8 @@ import globalSyncRefreshControl from "../../globalSyncRefreshControl";
 import { TrackScreen } from "../../../analytics";
 import { useNftList } from "./NftList.hook";
 import BackgroundGradient from "../../TabBar/BackgroundGradient";
+
+import { WalletTabNavigatorScrollContext } from "../../WalletTab/WalletTabNavigatorScrollManager";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
   FlatListProps<ProtoNFT>
@@ -39,6 +41,8 @@ const keyExtractor = (item: ProtoNFT) => item.id;
 export function NftList({ data }: Props) {
   const { space, colors } = useTheme();
   const dataWithAdd = data.concat(ADD_NEW);
+  const [showGoToTopButton, setGoToTopButton] = useState(false);
+  const { scrollableRefArray } = useContext(WalletTabNavigatorScrollContext);
 
   const {
     t,
@@ -122,12 +126,55 @@ export function NftList({ data }: Props) {
     [nftsToHide],
   );
 
+  const goToTop = () => {
+    if (scrollableRefArray.current) {
+      const NftListRef = scrollableRefArray.current.find(
+        e => e.key === "WalletNftGallery",
+      );
+      if (NftListRef?.value instanceof FlatList) {
+        NftListRef?.value.scrollToOffset({
+          animated: true,
+          offset: 0,
+        });
+      }
+    }
+  };
+
   return (
     <>
       <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
+      {showGoToTopButton && (
+        <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
+          <ScrollButtonContainer>
+            <StyledButtonToTop
+              onPress={goToTop}
+              iconName="ArrowTop"
+              type="main"
+              iconPosition="left"
+              size="medium"
+              flexGrow={1}
+            >
+              {t("common.scrollToTop")}
+            </StyledButtonToTop>
+          </ScrollButtonContainer>
+        </Animated.View>
+      )}
 
       <RefreshableCollapsibleHeaderFlatList
         numColumns={2}
+        testScroll={event => {
+          const currentOffset = event.nativeEvent.contentOffset.y;
+          // eslint-disable-next-line react/no-this-in-sfc
+          const direction = currentOffset > this.offset ? "down" : "up";
+          // eslint-disable-next-line react/no-this-in-sfc
+          this.offset = currentOffset;
+          if (currentOffset > 600 && direction === "up") {
+            setGoToTopButton(true);
+          }
+          if (currentOffset < 10) {
+            setGoToTopButton(false);
+          }
+        }}
         ListHeaderComponent={
           <Animated.View>
             {!multiSelectModeEnabled && (
@@ -164,7 +211,11 @@ export function NftList({ data }: Props) {
         showsVerticalScrollIndicator={false}
         initialNumToRender={6}
         windowSize={11}
-        contentContainerStyle={{ marginTop: 0, marginHorizontal: space[6] }}
+        contentContainerStyle={{
+          marginTop: 0,
+          marginHorizontal: space[6],
+          zIndex: 1,
+        }}
         testID={"wallet-nft-gallery-list"}
       />
       <Animated.View>
@@ -207,6 +258,18 @@ export function NftList({ data }: Props) {
 const StyledButton = styled(Button)`
   padding: 0;
   margin: 0;
+`;
+
+const StyledButtonToTop = styled(Button)`
+  padding: ${props => props.theme.space[3]}px ${props => props.theme.space[6]}px;
+`;
+
+const ScrollButtonContainer = styled(Flex)`
+  position: absolute;
+  z-index: 5;
+  top: ${props => props.theme.space[14]}px;
+  align-items: center;
+  width: 100%;
 `;
 
 const ButtonsContainer = styled(Flex)`
