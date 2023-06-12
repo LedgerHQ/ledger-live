@@ -14,8 +14,7 @@ import { getSerializedTransaction } from "../../transaction";
 import ERC20Abi from "../../abis/erc20.abi.json";
 
 export const RPC_TIMEOUT = process.env.NODE_ENV === "test" ? 100 : 5000; // wait 5 sec after a fail
-export const DEFAULT_RETRIES_RPC_METHODS =
-  process.env.NODE_ENV === "test" ? 1 : 3;
+export const DEFAULT_RETRIES_RPC_METHODS = process.env.NODE_ENV === "test" ? 1 : 3;
 
 /**
  * Cache for RPC providers to avoid recreating the connection on every usage of `withApi`
