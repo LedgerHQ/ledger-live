@@ -20,6 +20,7 @@ import AppDepsInstallModal from "./AppDepsInstallModal";
 import AppDepsUnInstallModal from "./AppDepsUnInstallModal";
 import ErrorModal from "~/renderer/modals/ErrorModal/index";
 import {
+  addNewDevice,
   clearLastSeenCustomImage,
   setHasInstalledApps,
   setLastSeenDeviceInfo,
@@ -148,6 +149,7 @@ const AppsList = ({
         latestFirmware: firmware,
       }),
     );
+    reduxDispatch(addNewDevice({ seenDevice: lastSeenDevice }));
   }, [device, state.installed, deviceInfo, reduxDispatch, firmware]);
 
   useEffect(() => {
