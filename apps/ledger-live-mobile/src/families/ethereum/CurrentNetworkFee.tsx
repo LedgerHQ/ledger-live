@@ -61,15 +61,15 @@ const CurrentNetworkFeeComponent = ({
       const maxPriorityFeePerGasinGwei = new BigNumber(
         transaction.maxPriorityFeePerGas ?? 0,
       )
-        .dividedBy(1000000000)
+        .dividedBy(1_000_000_000)
         .toFixed();
 
       const maxFeePerGasinGwei = new BigNumber(transaction.maxFeePerGas ?? 0)
-        .dividedBy(1000000000)
+        .dividedBy(1_000_000_000)
         .toFixed();
 
       const maxGasPriceinGwei = new BigNumber(transaction?.gasPrice ?? 0)
-        .dividedBy(1000000000)
+        .dividedBy(1_000_000_000)
         .toFixed();
 
       return (
