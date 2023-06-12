@@ -99,6 +99,7 @@ const SelectCurrency = ({
         : null,
     [value, isCurrencyDisabled],
   );
+
   const fuseOptions = useMemo(
     () => ({
       threshold: 0.1,
@@ -107,11 +108,12 @@ const SelectCurrency = ({
     }),
     [],
   );
-  const manualFilter = useCallback(() => {
+
+  const filteredOptions = useMemo(() => {
     const fuse = new Fuse(options, fuseOptions);
-    return searchInputValue.length > 0 ? fuse.search(searchInputValue) : options;
-  }, [searchInputValue, options, fuseOptions]);
-  const filteredOptions = manualFilter();
+    return searchInputValue.length > 0 ? fuse.search(searchInputValue).map(res => res.item) : options;
+  }, [searchInputValue, options, fuseOptions])
+
   return (
     <Select
       id={id}
