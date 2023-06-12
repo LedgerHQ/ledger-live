@@ -5,10 +5,12 @@ import { getGasOptions as ledgerGetGasOptions } from "./ledger";
 type GasTrackerApi = {
   getGasOptions: ({
     currency,
-    shouldUseEip1559,
+    options,
   }: {
     currency: CryptoCurrency;
-    shouldUseEip1559: boolean;
+    options?: {
+      useEIP1559: boolean;
+    };
   }) => Promise<GasOptions>;
 };
 

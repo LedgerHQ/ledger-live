@@ -54,7 +54,9 @@ describe("EVM Family", () => {
       it("should return EIP-1559 gas options", async () => {
         const gasOptions: GasOptions = await getGasOptions({
           currency: fakeCurrency as CryptoCurrency,
-          shouldUseEip1559: true,
+          options: {
+            useEIP1559: true,
+          },
         });
 
         const expectedGasOptions: GasOptions = {
@@ -81,7 +83,9 @@ describe("EVM Family", () => {
       it("should return legacy gas options", async () => {
         const gasOptions: GasOptions = await getGasOptions({
           currency: fakeCurrency as CryptoCurrency,
-          shouldUseEip1559: false,
+          options: {
+            useEIP1559: false,
+          },
         });
 
         const expectedGasOptions: GasOptions = {
