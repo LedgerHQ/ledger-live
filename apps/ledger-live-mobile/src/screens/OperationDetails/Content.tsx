@@ -141,11 +141,11 @@ export default function Content({
     currencySettings.confirmationsNb,
   );
 
-  const isOperationStuck =
-    operation.date.getTime() <=
-    new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
-
   const isEditable = isEditableOperation(mainAccount, operation);
+  const isOperationStuck =
+    isEditable &&
+    operation.date.getTime() <=
+      new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
 
   const specific =
     byFamiliesOperationDetails[

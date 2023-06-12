@@ -69,18 +69,18 @@ function MethodSelectionComponent({ navigation, route }: Props) {
       : transactionToEdit.gasPrice!,
   );
 
-  const gasLimit = new BigNumber(
+  const estimatedFees = new BigNumber(
     transactionToEdit.userGasLimit || transactionToEdit.estimatedGasLimit || 0,
   )
     .times(feePerGas)
     .div(new BigNumber(10).pow(mainAccount.unit.magnitude));
 
   const haveFundToCancel = mainAccount.balance.gt(
-    gasLimit.times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")),
+    estimatedFees.times(1 + getEnv("EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR")),
   );
 
   const haveFundToSpeedup = mainAccount.balance.gt(
-    gasLimit
+    estimatedFees
       .times(1 + getEnv("EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_SPEEDUP_FACTOR"))
       .plus(account.type === "Account" ? transactionToEdit.amount : 0),
   );

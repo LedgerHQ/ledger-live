@@ -244,7 +244,9 @@ export function getStuckAccountAndOperation(
   const mainAccount = getMainAccount(account, parentAccount);
 
   const SUPPORTED_FAMILIES = ["ethereum"];
-  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) return undefined;
+  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) {
+    return undefined;
+  }
   const now = new Date().getTime();
   const stuckOperations = mainAccount.pendingOperations.filter(
     pendingOp =>
