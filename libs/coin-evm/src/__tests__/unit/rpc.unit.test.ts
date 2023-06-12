@@ -118,7 +118,10 @@ describe("EVM Family", () => {
     describe("withApi", () => {
       it("should throw if the currency doesn't have an RPC node", async () => {
         try {
-          await RPC_API.withApi(fakeCurrencyWithoutRPC as CryptoCurrency, (() => {}) as any);
+          await RPC_API.withApi(
+            fakeCurrencyWithoutRPC as CryptoCurrency,
+            (() => Promise.resolve()) as any,
+          );
           fail("Promise should have been rejected");
         } catch (e) {
           if (e instanceof AssertionError) {
