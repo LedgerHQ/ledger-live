@@ -56,8 +56,6 @@ export const InvalidAddressBecauseDestinationIsAlsoSource = createCustomErrorCla
   "InvalidAddressBecauseDestinationIsAlsoSource",
 );
 export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalledError");
-export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalledError");
-export const LatestMCUInstalledError = createCustomErrorClass("LatestMCUInstalledError");
 export const UnknownMCU = createCustomErrorClass("UnknownMCU");
 export const LedgerAPIError = createCustomErrorClass("LedgerAPIError");
 export const LedgerAPIErrorWithMessage = createCustomErrorClass("LedgerAPIErrorWithMessage");

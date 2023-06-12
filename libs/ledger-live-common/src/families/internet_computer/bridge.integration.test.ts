@@ -4,18 +4,13 @@ import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { fromTransactionRaw } from "./transaction";
 import BigNumber from "bignumber.js";
-import {
-  AmountRequired,
-  InvalidAddress,
-  NotEnoughBalance,
-} from "@ledgerhq/errors";
+import { AmountRequired, InvalidAddress, NotEnoughBalance } from "@ledgerhq/errors";
 import { getEstimatedFees } from "./bridge/bridgeHelpers/fee";
 import { InvalidMemoICP } from "./errors";
 
 // const SEED_IDENTIFIER =
 // "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";
-const ACCOUNT_2 =
-  "fdb7db0d3ae67368cb5010b7de7d98566c072f0a4eda871f45cd6582bf08aeb4";
+const ACCOUNT_2 = "fdb7db0d3ae67368cb5010b7de7d98566c072f0a4eda871f45cd6582bf08aeb4";
 
 const internet_computer: CurrenciesData<Transaction> = {
   scanAccounts: [
@@ -37,13 +32,11 @@ const internet_computer: CurrenciesData<Transaction> = {
         balance: "1000000",
         currencyId: "internet_computer",
         derivationMode: "",
-        freshAddress:
-          "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
+        freshAddress: "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
         freshAddressPath: "44'/223'/0'/0/0",
         freshAddresses: [
           {
-            address:
-              "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
+            address: "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
             derivationPath: "44'/223'/0'/0/0",
           },
         ],

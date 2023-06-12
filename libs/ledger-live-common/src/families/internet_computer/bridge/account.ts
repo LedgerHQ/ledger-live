@@ -12,11 +12,7 @@ import { Transaction, TransactionStatus } from "../types";
 import { getAccountShape } from "./bridgeHelpers/account";
 import BigNumber from "bignumber.js";
 import { getEstimatedFees } from "./bridgeHelpers/fee";
-import {
-  getAddress,
-  validateAddress,
-  validateMemo,
-} from "./bridgeHelpers/addresses";
+import { getAddress, validateAddress, validateMemo } from "./bridgeHelpers/addresses";
 import {
   AmountRequired,
   InvalidAddress,
@@ -56,10 +52,7 @@ const updateTransaction = (t: Transaction, patch: Transaction): Transaction => {
   return { ...t, ...patch };
 };
 
-const prepareTransaction = async (
-  a: Account,
-  t: Transaction
-): Promise<Transaction> => {
+const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
   // log("debug", "[prepareTransaction] start fn");
 
   const { address } = getAddress(a);
@@ -69,10 +62,7 @@ const prepareTransaction = async (
   if (recipient && address) {
     // log("debug", "[prepareTransaction] fetching estimated fees");
 
-    if (
-      (await validateAddress(recipient)).isValid &&
-      (await validateAddress(address)).isValid
-    ) {
+    if ((await validateAddress(recipient)).isValid && (await validateAddress(address)).isValid) {
       if (t.useAllAmount) {
         amount = a.spendableBalance.minus(t.fees);
       }
@@ -83,10 +73,7 @@ const prepareTransaction = async (
   return { ...t, amount };
 };
 
-const getTransactionStatus = async (
-  a: Account,
-  t: Transaction
-): Promise<TransactionStatus> => {
+const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
   const errors: TransactionStatus["errors"] = {};
   const warnings: TransactionStatus["warnings"] = {};
 
@@ -167,8 +154,8 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
   transaction,
 }): Observable<SignOperationEvent> =>
   withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
+    transport =>
+      new Observable(o => {
         async function main() {
           // log("debug", "[signOperation] start fn");
 
@@ -177,10 +164,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           const { address, derivationPath } = getAddress(account);
           const fee = transaction.fees;
 
-          const { unsignedTxn, payloads } = await getUnsignedTransaction(
-            transaction,
-            account
-          );
+          const { unsignedTxn, payloads } = await getUnsignedTransaction(transaction, account);
 
           o.next({
             type: "device-signature-requested",
@@ -229,16 +213,14 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
 
         main().then(
           () => o.complete(),
-          (e) => o.error(e)
+          e => o.error(e),
         );
-      })
+      }),
   );
 
 const receive = makeAccountBridgeReceive();
 
-const broadcast: BroadcastFnSignature = async ({
-  signedOperation: { signature, operation },
-}) => {
+const broadcast: BroadcastFnSignature = async ({ signedOperation: { signature, operation } }) => {
   // log("debug", "[broadcast] start fn");
 
   await broadcastTxn(signature);
